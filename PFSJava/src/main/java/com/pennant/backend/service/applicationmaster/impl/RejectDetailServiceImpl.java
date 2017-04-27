@@ -43,9 +43,6 @@
 
 package com.pennant.backend.service.applicationmaster.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -60,6 +57,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.RejectDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>RejectDetail</b>.<br>
@@ -96,7 +94,6 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 		this.rejectDetailDAO = rejectDetailDAO;
 	}
 
-
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business
 	 * validation by using businessValidation(auditHeader) method if there is
@@ -116,25 +113,28 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
+		
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType = "";
+		
 		RejectDetail rejectDetail = (RejectDetail) auditHeader.getAuditDetail().getModelData();
-
+		
+		TableType tableType = TableType.MAIN_TAB;
 		if (rejectDetail.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (rejectDetail.isNew()) {
-			rejectDetail.setRejectCode(getRejectDetailDAO().save(rejectDetail,tableType));
+			rejectDetail.setRejectCode(getRejectDetailDAO().save(rejectDetail, tableType));
 			auditHeader.getAuditDetail().setModelData(rejectDetail);
 			auditHeader.setAuditReference(rejectDetail.getRejectCode());
 		} else {
 			getRejectDetailDAO().update(rejectDetail, tableType);
 		}
+		
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -155,13 +155,13 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader, "delete");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		RejectDetail rejectDetail = (RejectDetail) auditHeader.getAuditDetail().getModelData();
-		getRejectDetailDAO().delete(rejectDetail, "");
+		getRejectDetailDAO().delete(rejectDetail, TableType.MAIN_TAB);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -177,6 +177,7 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 	 *            (String) ""/_Temp/_View
 	 * @return RejectDetail
 	 */
+	
 	@Override
 	public RejectDetail getRejectDetailById(String id) {
 		return getRejectDetailDAO().getRejectDetailById(id, "_View");
@@ -217,17 +218,27 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
+		
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
+		
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
+		
 		RejectDetail rejectDetail = new RejectDetail();
 		BeanUtils.copyProperties((RejectDetail) auditHeader.getAuditDetail().getModelData(), rejectDetail);
+		
+		getRejectDetailDAO().delete(rejectDetail, TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(rejectDetail.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(rejectDetailDAO.getRejectDetailById(rejectDetail.getRejectCode(), ""));
+		}
+		
 		if (rejectDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getRejectDetailDAO().delete(rejectDetail, "");
+			getRejectDetailDAO().delete(rejectDetail, TableType.MAIN_TAB);
 		} else {
 			rejectDetail.setRoleCode("");
 			rejectDetail.setNextRoleCode("");
@@ -238,14 +249,13 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 			if (rejectDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				rejectDetail.setRecordType("");
-				getRejectDetailDAO().save(rejectDetail, "");
+				getRejectDetailDAO().save(rejectDetail, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				rejectDetail.setRecordType("");
-				getRejectDetailDAO().update(rejectDetail, "");
+				getRejectDetailDAO().update(rejectDetail, TableType.MAIN_TAB);
 			}
 		}
-		getRejectDetailDAO().delete(rejectDetail, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -272,14 +282,17 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader, "doReject");
+		
+		auditHeader = businessValidation(auditHeader);
+		
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		RejectDetail rejectDetail = (RejectDetail) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getRejectDetailDAO().delete(rejectDetail, "_Temp");
+		getRejectDetailDAO().delete(rejectDetail, TableType.TEMP_TAB);
+		
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -295,10 +308,9 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -307,92 +319,34 @@ public class RejectDetailServiceImpl extends GenericService<RejectDetail> implem
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getAcademicDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getRejectDetailDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
 
+		// Get the model object.
 		RejectDetail rejectDetail = (RejectDetail) auditDetail.getModelData();
-		RejectDetail tempRejectDetail = null;
 
-		if (rejectDetail.isWorkflow()) {
-			tempRejectDetail = getRejectDetailDAO().getRejectDetailById(rejectDetail.getId(), "_Temp");
-		}
+		// Check the unique keys.
+		if (rejectDetail.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(rejectDetail.getRecordType())
+				&& rejectDetailDAO.isDuplicateKey(rejectDetail.getRejectCode(),
+						rejectDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
 
-		RejectDetail befRejectDetail = getRejectDetailDAO().getRejectDetailById(rejectDetail.getId(), "");
-		RejectDetail oldRejectDetail = rejectDetail.getBefImage();
+			parameters[0] = PennantJavaUtil.getLabel("label_RejectCode") + ": " + rejectDetail.getRejectCode();
 
-		String[] valueParm = new String[2];
-		String[] errParm = new String[2];
-
-		valueParm[0] = rejectDetail.getRejectCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_RejectCode") + ":"+ valueParm[0];
-
-		if (rejectDetail.isNew()) { // for New record or new record into work flow
-
-			if (!rejectDetail.isWorkflow()) {// With out Work flow only new records
-				if (befRejectDetail != null) { // Record Already Exists in the table then error
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm, null));
-				}
-			} else { // with work flow
-				if (rejectDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new 
-					if (befRejectDetail != null || tempRejectDetail != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm,null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befRejectDetail == null || tempRejectDetail != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm,null));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!rejectDetail.isWorkflow()) { // With out Work flow for update and delete
-				if (befRejectDetail == null) { // if records not exists in the main table
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41002",errParm, null));
-				} else {
-					if (oldRejectDetail != null
-							&& !oldRejectDetail.getLastMntOn().equals(befRejectDetail.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41003",errParm, null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004",errParm, null));
-						}
-					}
-				}
-			} else {
-				if (tempRejectDetail == null) { // if records not exists in the Work flow table
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
-				}
-
-				if (tempRejectDetail != null
-						&& oldRejectDetail != null
-						&& !oldRejectDetail.getLastMntOn().equals(tempRejectDetail.getLastMntOn())) {
-					auditDetail
-					.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",errParm, null));
-				}
-			}
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !rejectDetail.isWorkflow()) {
-			auditDetail.setBefImage(befRejectDetail);
-		}
+
 		logger.debug("Leaving");
 		return auditDetail;
 	}

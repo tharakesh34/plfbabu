@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.model.applicationmaster;
 
+import java.sql.Timestamp;
+
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -141,5 +143,9 @@ public class RejectDetail extends AbstractWorkflowEntity {
 
 	public void setRejectType(String rejectType) {
 		this.rejectType = rejectType;
+	}
+	
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
 	}
 }

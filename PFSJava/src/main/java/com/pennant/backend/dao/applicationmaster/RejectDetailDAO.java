@@ -41,14 +41,27 @@
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster;
+
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.RejectDetail;
+import com.pennanttech.pff.core.TableType;
 
 /**
- * DAO methods declaration for the <b>RejectDetail model</b> class.<br>
+ * Data access layer for <code>Academic</code> with set of CRUD operations.
+ * 
+ * @param <T>
  */
-public interface RejectDetailDAO {
+public interface RejectDetailDAO extends BasicCrudDao<RejectDetail>{
 	RejectDetail getRejectDetailById(String id, String type);
-	void update(RejectDetail rejectDetail, String type);
-	void delete(RejectDetail rejectDetail, String type);
-	String save(RejectDetail rejectDetail, String type);
+
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param rejectCode
+	 *            rejectCode of the rejectDetail.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return true if the record exists.
+	 */
+	boolean isDuplicateKey(String rejectCode, TableType tableType);
 }
