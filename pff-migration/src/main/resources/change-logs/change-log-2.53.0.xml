@@ -2081,5 +2081,16 @@ WHERE     NOT EXISTS
 			WHERE DISB.STATUS='APPROVED'
 		</createView>
 	</changeSet>
+	<changeSet id="108" author="Madhubabu">
+		<createView replaceIfExists="true" viewName="JVPostings_AView">
+        SELECT     T1.BatchReference, T1.Batch, T1.Filename, T1.DebitCount, T1.CreditsCount, T1.TotDebitsByBatchCcy, T1.TotCreditsByBatchCcy, T1.BatchPurpose, T1.Currency, 
+                      T1.ExchangeRateType, T1.ValidationStatus, T1.Version, T1.LastMntBy, T1.LastMntOn, T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, 
+                      T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T3.CcyEditField  CurrencyEditField, T3.CcyDesc  CurrencyDesc, 
+                      T1.BatchPostingStatus, T3.CcyNumber, T1.Branch, T1.PostingDate,T1.expReference
+FROM                  JVPostings  T1 INNER JOIN
+                      SecUsers  T2 ON T1.LastMntBy = T2.UsrID INNER JOIN
+                      RMTCurrencies  T3 ON T1.Currency = T3.CcyCode
+	</createView>
+	</changeSet>
 	
 </databaseChangeLog>
