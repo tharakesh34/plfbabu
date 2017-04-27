@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
@@ -234,6 +236,28 @@ public class NPABucketDAOImpl extends BasisNextidDaoImpl<NPABucket> implements N
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	public List<NPABucket> getNPABuckets() {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" bucketID, bucketCode ");
+		sql.append(" From NPABUCKETS");
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		RowMapper<NPABucket> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(NPABucket.class);
+
+		List<NPABucket> list = namedParameterJdbcTemplate.query(sql.toString(), rowMapper);
+
+		logger.debug(Literal.LEAVING);
+		return list;
+	}
+
+	
+	
 	/**
 	 * Sets a new <code>JDBC Template</code> for the given data source.
 	 * 

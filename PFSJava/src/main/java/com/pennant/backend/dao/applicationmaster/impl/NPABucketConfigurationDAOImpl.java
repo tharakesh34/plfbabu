@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -284,6 +286,28 @@ public class NPABucketConfigurationDAOImpl extends BasisNextidDaoImpl<NPABucketC
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
+
+	@Override
+	public List<NPABucketConfiguration> getNPABucketConfigurations() {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" configID, productCode, bucketID, dueDays, suspendProfit ");
+		sql.append(" From NPABUCKETSCONFIG");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		RowMapper<NPABucketConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(NPABucketConfiguration.class);
+
+		List<NPABucketConfiguration> list = namedParameterJdbcTemplate.query(sql.toString(), rowMapper);
+
+		logger.debug(Literal.LEAVING);
+		return list;
+	}
+
 
 
 }

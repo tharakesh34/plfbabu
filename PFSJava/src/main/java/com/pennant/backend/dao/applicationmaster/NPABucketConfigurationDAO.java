@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.dao.applicationmaster;
 
+import java.util.List;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
 import com.pennanttech.pff.core.TableType;
@@ -74,6 +76,7 @@ public interface NPABucketConfigurationDAO extends BasicCrudDao<NPABucketConfigu
 	 */
 	boolean isDuplicateKey(long configID, String productCode, long bucketID, TableType tableType);
 	public int getByProductCode(String producCode,int dueDys, String type);
+	List<NPABucketConfiguration> getNPABucketConfigurations();
 
 	int getNPABucketConfigurationById(long bucketID, String type);
 
