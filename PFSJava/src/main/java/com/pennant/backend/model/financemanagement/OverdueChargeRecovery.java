@@ -71,10 +71,11 @@ public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 	private String penaltyCalOn;
 	private BigDecimal penaltyAmtPerc = BigDecimal.ZERO;
 	private BigDecimal penalty = BigDecimal.ZERO;
-	private BigDecimal maxWaiver = BigDecimal.ZERO;
-	private BigDecimal waivedAmt = BigDecimal.ZERO;
-	private BigDecimal penaltyPaid = BigDecimal.ZERO;
-	private BigDecimal penaltyBal = BigDecimal.ZERO;
+	private BigDecimal maxWaiver = BigDecimal.ZERO;//FIXME TO be deleted
+	private BigDecimal waivedAmt = BigDecimal.ZERO;//FIXME TO be deleted
+	private BigDecimal penaltyPaid = BigDecimal.ZERO;//FIXME TO be deleted
+	private BigDecimal penaltyBal = BigDecimal.ZERO;//FIXME TO be deleted
+	
 	private boolean rcdCanDel = false;
 	
 	//Screen Level Maintenance

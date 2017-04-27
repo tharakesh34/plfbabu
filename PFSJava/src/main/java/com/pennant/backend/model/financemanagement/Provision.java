@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.model.financemanagement;
 
@@ -56,41 +56,47 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
  * Model class for the <b>Provision table</b>.<br>
- *
+ * 
  */
 public class Provision extends AbstractWorkflowEntity {
-	private static final long serialVersionUID = 1L;
-	private String finReference = null;
-	private String finBranch;
-	private String finType;
-	private long custID;
-	private Date provisionCalDate;
-	private BigDecimal provisionedAmt = BigDecimal.ZERO;
-	private BigDecimal provisionAmtCal = BigDecimal.ZERO;
-	private BigDecimal provisionDue = BigDecimal.ZERO;
-	private BigDecimal nonFormulaProv = BigDecimal.ZERO;
-	private boolean useNFProv;
-	private boolean autoReleaseNFP;
-	private BigDecimal principalDue = BigDecimal.ZERO;
-	private BigDecimal profitDue  = BigDecimal.ZERO;
-	private Date dueFromDate;
-	private Date lastFullyPaidDate;
-	private boolean newRecord=false;
-	private String lovValue;
-	private Provision befImage;
-	private LoggedInUser userDetails;
-	private Date prevProvisionCalDate;
-	private BigDecimal prevProvisionedAmt;
-	private String transRef;
-	
-	private String finCcy;
-	private String lovDescCustCIF;
-	private String lovDescCustShrtName;
-	private String lovDescFinDivision;
-	
-	private FinanceDetail financeDetail;
-	
-	private List<ProvisionMovement> provisionMovementList = new ArrayList<ProvisionMovement>();
+	private static final long		serialVersionUID		= 1L;
+	private String					finReference			= null;
+	private String					finBranch;
+	private String					finType;
+	private long					custID;
+	private Date					provisionCalDate;
+	private BigDecimal				provisionedAmt			= BigDecimal.ZERO;
+	private BigDecimal				provisionAmtCal			= BigDecimal.ZERO;
+	private BigDecimal				provisionDue			= BigDecimal.ZERO;
+	private BigDecimal				nonFormulaProv			= BigDecimal.ZERO;
+	private boolean					useNFProv;
+	private boolean					autoReleaseNFP;
+	private BigDecimal				principalDue			= BigDecimal.ZERO;
+	private BigDecimal				profitDue				= BigDecimal.ZERO;
+	private Date					dueFromDate;
+	private Date					lastFullyPaidDate;
+	private boolean					newRecord				= false;
+	private String					lovValue;
+	private Provision				befImage;
+	private LoggedInUser			userDetails;
+	private Date					prevProvisionCalDate;
+	private BigDecimal				prevProvisionedAmt;
+	private String					transRef;
+
+	private String					finCcy;
+	private String					lovDescCustCIF;
+	private String					lovDescCustShrtName;
+	private String					lovDescFinDivision;
+	private int						duedays;
+	private long					dpdBucketID;
+	private long					npaBucketID;
+	private BigDecimal				pftBal;
+	private BigDecimal				priBal;
+	private BigDecimal				prvovisionRate;
+
+	private FinanceDetail			financeDetail;
+
+	private List<ProvisionMovement>	provisionMovementList	= new ArrayList<ProvisionMovement>();
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -114,49 +120,55 @@ public class Provision extends AbstractWorkflowEntity {
 		excludeFields.add("financeDetail");
 		return excludeFields;
 	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return finReference;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.finReference = id;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
-	
+
 	public String getFinBranch() {
 		return finBranch;
 	}
+
 	public void setFinBranch(String finBranch) {
 		this.finBranch = finBranch;
 	}
-	
+
 	public String getFinType() {
 		return finType;
 	}
+
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
-	
+
 	public long getCustID() {
 		return custID;
 	}
+
 	public void setCustID(long custID) {
 		this.custID = custID;
 	}
-	
+
 	public Date getProvisionCalDate() {
 		return provisionCalDate;
 	}
+
 	public void setProvisionCalDate(Date provisionCalDate) {
 		this.provisionCalDate = provisionCalDate;
 	}
@@ -164,69 +176,79 @@ public class Provision extends AbstractWorkflowEntity {
 	public BigDecimal getProvisionedAmt() {
 		return provisionedAmt;
 	}
+
 	public void setProvisionedAmt(BigDecimal provisionedAmt) {
 		this.provisionedAmt = provisionedAmt;
 	}
-	
+
 	public BigDecimal getProvisionAmtCal() {
 		return provisionAmtCal;
 	}
+
 	public void setProvisionAmtCal(BigDecimal provisionAmtCal) {
 		this.provisionAmtCal = provisionAmtCal;
 	}
-	
+
 	public BigDecimal getProvisionDue() {
 		return provisionDue;
 	}
+
 	public void setProvisionDue(BigDecimal provisionDue) {
 		this.provisionDue = provisionDue;
 	}
-	
+
 	public BigDecimal getNonFormulaProv() {
 		return nonFormulaProv;
 	}
+
 	public void setNonFormulaProv(BigDecimal nonFormulaProv) {
 		this.nonFormulaProv = nonFormulaProv;
 	}
-	
+
 	public boolean isUseNFProv() {
 		return useNFProv;
 	}
+
 	public void setUseNFProv(boolean useNFProv) {
 		this.useNFProv = useNFProv;
 	}
-	
+
 	public boolean isAutoReleaseNFP() {
 		return autoReleaseNFP;
 	}
+
 	public void setAutoReleaseNFP(boolean autoReleaseNFP) {
 		this.autoReleaseNFP = autoReleaseNFP;
 	}
-	
+
 	public BigDecimal getPrincipalDue() {
 		return principalDue;
 	}
+
 	public void setPrincipalDue(BigDecimal principalDue) {
 		this.principalDue = principalDue;
 	}
-	
+
 	public BigDecimal getProfitDue() {
 		return profitDue;
 	}
+
 	public void setProfitDue(BigDecimal profitDue) {
 		this.profitDue = profitDue;
 	}
-	
+
 	public Date getDueFromDate() {
 		return dueFromDate;
 	}
+
 	public void setDueFromDate(Date dueFromDate) {
 		this.dueFromDate = dueFromDate;
 	}
-	
+
 	public Date getLastFullyPaidDate() {
 		return lastFullyPaidDate;
 	}
+
 	public void setLastFullyPaidDate(Date lastFullyPaidDate) {
 		this.lastFullyPaidDate = lastFullyPaidDate;
 	}
@@ -234,27 +256,31 @@ public class Provision extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public Provision getBefImage(){
+	public Provision getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(Provision beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(Provision beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -262,6 +288,7 @@ public class Provision extends AbstractWorkflowEntity {
 	public String getLovDescCustCIF() {
 		return lovDescCustCIF;
 	}
+
 	public void setLovDescCustCIF(String lovDescCustCIF) {
 		this.lovDescCustCIF = lovDescCustCIF;
 	}
@@ -269,6 +296,7 @@ public class Provision extends AbstractWorkflowEntity {
 	public String getLovDescCustShrtName() {
 		return lovDescCustShrtName;
 	}
+
 	public void setLovDescCustShrtName(String lovDescCustShrtName) {
 		this.lovDescCustShrtName = lovDescCustShrtName;
 	}
@@ -284,6 +312,7 @@ public class Provision extends AbstractWorkflowEntity {
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
 	}
+
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}
@@ -295,7 +324,6 @@ public class Provision extends AbstractWorkflowEntity {
 	public void setLovDescFinDivision(String lovDescFinDivision) {
 		this.lovDescFinDivision = lovDescFinDivision;
 	}
-
 
 	public Date getPrevProvisionCalDate() {
 		return prevProvisionCalDate;
@@ -327,6 +355,54 @@ public class Provision extends AbstractWorkflowEntity {
 
 	public void setFinCcy(String finCcy) {
 		this.finCcy = finCcy;
+	}
+
+	public int getDuedays() {
+		return duedays;
+	}
+
+	public void setDuedays(int duedays) {
+		this.duedays = duedays;
+	}
+
+	public long getDpdBucketID() {
+		return dpdBucketID;
+	}
+
+	public void setDpdBucketID(long dpdBucketID) {
+		this.dpdBucketID = dpdBucketID;
+	}
+
+	public long getNpaBucketID() {
+		return npaBucketID;
+	}
+
+	public void setNpaBucketID(long npaBucketID) {
+		this.npaBucketID = npaBucketID;
+	}
+
+	public BigDecimal getPftBal() {
+		return pftBal;
+	}
+
+	public void setPftBal(BigDecimal pftBal) {
+		this.pftBal = pftBal;
+	}
+
+	public BigDecimal getPriBal() {
+		return priBal;
+	}
+
+	public void setPriBal(BigDecimal priBal) {
+		this.priBal = priBal;
+	}
+
+	public BigDecimal getPrvovisionRate() {
+		return prvovisionRate;
+	}
+
+	public void setPrvovisionRate(BigDecimal prvovisionRate) {
+		this.prvovisionRate = prvovisionRate;
 	}
 
 }
