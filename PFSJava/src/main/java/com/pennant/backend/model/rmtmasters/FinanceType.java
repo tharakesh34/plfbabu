@@ -1473,21 +1473,25 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setRollOverFrq(String rollOverFrq) {
 	    this.rollOverFrq = rollOverFrq;
     }
-
+	
 	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> map = new HashMap<String, Object>();	
+		HashMap<String, Object> financeTypeMap = new HashMap<String, Object>();	
+		getDeclaredFieldValues(financeTypeMap);
+		return financeTypeMap;
+	}
+
+	public void getDeclaredFieldValues(HashMap<String, Object> financeTypeMap){
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				//"ft_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
-				map.put("ft_"+this.getClass().getDeclaredFields()[i].getName(),
+				financeTypeMap.put("ft_"+this.getClass().getDeclaredFields()[i].getName(),
 						this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				// Nothing TO DO
 			}
 		}
-		return map;
 	}
-
+	
 	public String getFinSuspTrigger() {
 		return finSuspTrigger;
 	}
