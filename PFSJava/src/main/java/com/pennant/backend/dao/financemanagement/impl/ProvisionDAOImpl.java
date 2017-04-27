@@ -224,12 +224,14 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 		insertSql.append(" ProvisionedAmt, ProvisionAmtCal, ProvisionDue, NonFormulaProv, UseNFProv, AutoReleaseNFP,");
 		insertSql.append(" PrincipalDue, ProfitDue, DueFromDate, LastFullyPaidDate, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
-		insertSql.append(" RecordType, WorkflowId)");
+		insertSql.append(" RecordType, WorkflowId,");
+		insertSql.append(" Duedays,DpdBucketID,NpaBucketID,PftBal,PriBal,PrvovisionRate)");
 		insertSql.append(" Values(:FinReference, :FinBranch, :FinType, :CustID, :ProvisionCalDate,");
 		insertSql.append(" :ProvisionedAmt, :ProvisionAmtCal, :ProvisionDue, :NonFormulaProv,");
 		insertSql.append(" :UseNFProv, :AutoReleaseNFP, :PrincipalDue, :ProfitDue, :DueFromDate, :LastFullyPaidDate, " );
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
-		insertSql.append(" :RecordType, :WorkflowId)");
+		insertSql.append(" :RecordType, :WorkflowId,");
+		insertSql.append(" :Duedays,:DpdBucketID,:NpaBucketID,:PftBal,:PriBal,:PrvovisionRate)");
 		
 		logger.debug("insertSql: " + insertSql.toString());
 		
@@ -362,6 +364,47 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 		}
 		logger.debug("Leaving");
 		return provision.getId();
+	}
+	
+	@Override
+	public Provision getCurNPABucket(final String id) {
+		logger.debug("Entering");
+		Provision provision = new Provision();
+		
+		provision.setId(id);
+		
+		StringBuilder selectSql = new StringBuilder("Select NpaBucketID " );
+		selectSql.append(" From FinProvisions");
+		selectSql.append(" Where FinReference =:FinReference");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
+		RowMapper<Provision> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Provision.class);
+		
+		try{
+			provision = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+		}catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			provision = null;
+		}
+		logger.debug("Leaving");
+		return provision;
+	}
+	
+	@Override
+	public void updateProvisonAmounts(Provision provision) {
+		logger.debug("Entering");
+		StringBuilder	updateSql =new StringBuilder("Update FinProvisions");
+		updateSql.append(" Set ProvisionCalDate = :ProvisionCalDate,");
+		updateSql.append(" ProvisionedAmt = :ProvisionedAmt, Duedays = :Duedays, DpdBucketID = :DpdBucketID,");
+		updateSql.append(" NpaBucketID = :NpaBucketID, PftBal = :PftBal, PriBal = :PriBal, PrvovisionRate = :PrvovisionRate " );
+		updateSql.append(" Where FinReference =:FinReference " );
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
+		 this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug("Leaving");
 	}
 
 	

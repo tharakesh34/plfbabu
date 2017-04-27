@@ -58,4 +58,6 @@ public interface ProvisionDAO {
 	void updateProvAmt(ProvisionMovement provisionMovement, String type);
 	List<Provision> getProcessedProvisions();
 	String saveProcessedProvisions(Provision provision);
+	Provision getCurNPABucket(String id);
+	void updateProvisonAmounts(Provision provision);
 }
