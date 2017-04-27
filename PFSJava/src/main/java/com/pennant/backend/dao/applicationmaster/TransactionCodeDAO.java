@@ -39,17 +39,29 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster;
+
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.TransactionCode;
+import com.pennanttech.pff.core.TableType;
 
 /**
- * DAO methods declaration for the <b>TransactionCode model</b> class.<br>
+ * Data access layer for <code>TransactionCode</code> with set of CRUD operations.
+ * 
+ * @param <T>
  */
-public interface TransactionCodeDAO {
-
+public interface TransactionCodeDAO extends BasicCrudDao<TransactionCode> {
 	TransactionCode getTransactionCodeById(String id, String type);
-	void update(TransactionCode transactionCode, String type);
-	void delete(TransactionCode transactionCode, String type);
-	String save(TransactionCode transactionCode, String type);
+
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param tranCode
+	 *            TranCode of the transactionCode.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return true if the record exists.
+	 */
+	boolean isDuplicateKey(String tranCode, TableType tableType);
 }

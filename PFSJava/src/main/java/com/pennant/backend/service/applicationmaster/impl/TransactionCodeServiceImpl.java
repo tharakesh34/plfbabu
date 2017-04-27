@@ -42,9 +42,6 @@
 */
 package com.pennant.backend.service.applicationmaster.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -59,12 +56,14 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.TransactionCodeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>TransactionCode</b>.<br>
  * 
  */
 public class TransactionCodeServiceImpl extends GenericService<TransactionCode> implements TransactionCodeService {
+	
 	private final static Logger logger = Logger.getLogger(TransactionCodeServiceImpl.class);
 	
 	private AuditHeaderDAO auditHeaderDAO;
@@ -111,17 +110,19 @@ public class TransactionCodeServiceImpl extends GenericService<TransactionCode> 
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");	
 		
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
+		
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
-		TransactionCode transactionCode = (TransactionCode) auditHeader.
-														getAuditDetail().getModelData();
 		
+		TransactionCode transactionCode = (TransactionCode) auditHeader
+				.getAuditDetail().getModelData();
+		
+		TableType tableType = TableType.MAIN_TAB;
 		if (transactionCode.isWorkflow()) {
-			tableType="_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (transactionCode.isNew()) {
@@ -129,7 +130,7 @@ public class TransactionCodeServiceImpl extends GenericService<TransactionCode> 
 			auditHeader.getAuditDetail().setModelData(transactionCode);
 			auditHeader.setAuditReference(transactionCode.getTranCode());
 		}else{
-			getTransactionCodeDAO().update(transactionCode,tableType);
+			getTransactionCodeDAO().update(transactionCode, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -153,15 +154,17 @@ public class TransactionCodeServiceImpl extends GenericService<TransactionCode> 
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		auditHeader = businessValidation(auditHeader,"delete");
+		
+		auditHeader = businessValidation(auditHeader);
+	
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		
-		TransactionCode transactionCode = (TransactionCode) auditHeader.
-														getAuditDetail().getModelData();
-		getTransactionCodeDAO().delete(transactionCode,"");
+		TransactionCode transactionCode = (TransactionCode) auditHeader
+				.getAuditDetail().getModelData();
+		getTransactionCodeDAO().delete(transactionCode, TableType.MAIN_TAB);
 		
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -222,21 +225,25 @@ public class TransactionCodeServiceImpl extends GenericService<TransactionCode> 
 		logger.debug("Entering");
 
 		String tranType="";
-		auditHeader = businessValidation(auditHeader,"doApprove");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		TransactionCode transactionCode = new TransactionCode();
-		BeanUtils.copyProperties((TransactionCode) auditHeader.getAuditDetail().
-											getModelData(), transactionCode);
+		BeanUtils.copyProperties((TransactionCode) auditHeader.getAuditDetail()
+				.getModelData(), transactionCode);
+		
+		getTransactionCodeDAO().delete(transactionCode, TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(transactionCode.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(transactionCodeDAO.getTransactionCodeById(transactionCode.getTranCode(), ""));
+		}
 
 		if (transactionCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType=PennantConstants.TRAN_DEL;
-
-			getTransactionCodeDAO().delete(transactionCode,"");
-
+			getTransactionCodeDAO().delete(transactionCode, TableType.MAIN_TAB);
 		} else {
 			transactionCode.setRoleCode("");
 			transactionCode.setNextRoleCode("");
@@ -247,26 +254,23 @@ public class TransactionCodeServiceImpl extends GenericService<TransactionCode> 
 			if (transactionCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType=PennantConstants.TRAN_ADD;
 				transactionCode.setRecordType("");
-				getTransactionCodeDAO().save(transactionCode,"");
+				getTransactionCodeDAO().save(transactionCode, TableType.MAIN_TAB);
 			} else {
 				tranType=PennantConstants.TRAN_UPD;
 				transactionCode.setRecordType("");
-				getTransactionCodeDAO().update(transactionCode,"");
+				getTransactionCodeDAO().update(transactionCode, TableType.MAIN_TAB);
 			}
 		}
-
-		getTransactionCodeDAO().delete(transactionCode,"_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(transactionCode);
-
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");		
-
 		return auditHeader;
+		
 	}
 
 	/**
@@ -285,21 +289,19 @@ public class TransactionCodeServiceImpl extends GenericService<TransactionCode> 
 	public AuditHeader  doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader,"doReject");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
-		TransactionCode transactionCode = (TransactionCode) auditHeader.
-		getAuditDetail().getModelData();
-
+		TransactionCode transactionCode = (TransactionCode) auditHeader
+				.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getTransactionCodeDAO().delete(transactionCode,"_Temp");
+		getTransactionCodeDAO().delete(transactionCode, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
-
 		return auditHeader;
 	}
 
@@ -310,13 +312,13 @@ public class TransactionCodeServiceImpl extends GenericService<TransactionCode> 
 	 * 3)	Validate the Record based on the record details. 
 	 * 4) 	Validate for any business validation.
 	 *
-	 * @param AuditHeader (auditHeader)    
+	 * @param AuditHeader 
+	 * 				(auditHeader)    
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader, String method){
+	private AuditHeader businessValidation(AuditHeader auditHeader){
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), 
-				auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader=nextProcess(auditHeader);
@@ -332,102 +334,29 @@ public class TransactionCodeServiceImpl extends GenericService<TransactionCode> 
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail,String usrLanguage,String method){
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());			
-		TransactionCode transactionCode= (TransactionCode) auditDetail.getModelData();
+		// Get the model object.
+		TransactionCode transactionCode = (TransactionCode) auditDetail.getModelData();
 
-		TransactionCode tempTransactionCode= null;
-		if (transactionCode.isWorkflow()){
-			tempTransactionCode = getTransactionCodeDAO().getTransactionCodeById(
-					transactionCode.getId(), "_Temp");
-		}
-		TransactionCode befTransactionCode= getTransactionCodeDAO().getTransactionCodeById(
-				transactionCode.getId(), "");
+		// Check the unique keys.
+		if (transactionCode.isNew() 
+				&& PennantConstants.RECORD_TYPE_NEW.equals(transactionCode.getRecordType())
+				&& transactionCodeDAO.isDuplicateKey(transactionCode.getTranCode(), 
+				transactionCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
 
-		TransactionCode oldTransactionCode= transactionCode.getBefImage();
+			parameters[0] = PennantJavaUtil.getLabel("label_TranCode") + ": " + transactionCode.getTranCode();
 
-
-		String[] errParm= new String[1];
-		String[] valueParm= new String[1];
-		valueParm[0]=transactionCode.getId();
-		errParm[0]=PennantJavaUtil.getLabel("label_TranCode")+":"+valueParm[0];
-
-		if (transactionCode.isNew()){ // for New record or new record into work flow
-
-			if (!transactionCode.isWorkflow()){// With out Work flow only new records  
-				if (befTransactionCode !=null){	// Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41001", 
-									errParm,valueParm), usrLanguage));
-				}	
-			}else{ // with work flow
-				if (transactionCode.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){ // if records type is new
-					if (befTransactionCode !=null || tempTransactionCode!=null ){ // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "41001", 
-										errParm,valueParm), usrLanguage));
-					}
-				}else{ // if records not exists in the Main flow table
-					if (befTransactionCode ==null || tempTransactionCode!=null ){
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 
-										errParm,valueParm), usrLanguage));
-					}
-				}
-			}
-		}else{
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!transactionCode.isWorkflow()){	// With out Work flow for update and delete
-
-				if (befTransactionCode ==null){ // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41002", 
-									errParm,valueParm), usrLanguage));
-				}else{
-					if (oldTransactionCode!=null && !oldTransactionCode.getLastMntOn().equals(
-							befTransactionCode.getLastMntOn())){
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).
-								equalsIgnoreCase(PennantConstants.TRAN_DEL)){
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41003", 
-											errParm,valueParm), usrLanguage));
-						}else{
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetails(PennantConstants.KEY_FIELD, "41004",
-											errParm,valueParm), usrLanguage));
-						}
-					}
-				}
-			}else{
-
-				if (tempTransactionCode==null ){ // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 
-									errParm,valueParm), usrLanguage));
-				}
-
-				if (tempTransactionCode!=null  && oldTransactionCode!=null && !oldTransactionCode.getLastMntOn().
-						equals(tempTransactionCode.getLastMntOn())){ 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetails(PennantConstants.KEY_FIELD, "41005", 
-									errParm,valueParm), usrLanguage));
-				}
-			}
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(
-				auditDetail.getErrorDetails(), usrLanguage));
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !transactionCode.isWorkflow()){
-			auditDetail.setBefImage(befTransactionCode);	
-		}
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-
 }
