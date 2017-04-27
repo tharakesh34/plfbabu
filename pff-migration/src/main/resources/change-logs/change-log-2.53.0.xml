@@ -1781,5 +1781,13 @@ UPDATE SEQ_DATA_ENGINE_STATUS SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_E
 	
 	</sql>
 	</changeSet>
-	
+
+	<changeSet id="95" author="SreeRavali">
+		<sql>
+			INSERT INTO ReportList
+			Values('ManualAdvise','ManualAdvise','listheader_AdviseType.label,listheader_FinReference.label,listheader_FeeTypeID.label,listheader_RecordStatus.label,
+			listheader_RecordType.label','adviseType,finReference,feeTypeDesc,recordStatus,recordType','int,String,String,String,String','','ReportList05','ManualAdvise','Loan
+			Management',0,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
