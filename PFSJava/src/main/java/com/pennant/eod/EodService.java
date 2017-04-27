@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -19,10 +20,12 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.DateRollOverService;
+import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.core.LatePayInterestService;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.core.LatePayPenaltyService;
+import com.pennant.app.core.NPAService;
 import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.RepayQueueService;
 import com.pennant.app.core.ServiceUtil;
@@ -43,17 +46,18 @@ public class EodService {
 	private CustomerDatesDAO			customerDatesDAO;
 	private CustomerQueuingService		customerQueuingService;
 
-	private ServiceUtil					serviceUtil;
+	private RepayQueueService			repayQueueService;
 	private LatePayMarkingService		latePayMarkingService;
 	private LatePayPenaltyService		latePayPenaltyService;
 	private LatePayInterestService		latePayInterestService;
-
-	private AccrualService				accrualService;
-	private RateReviewService			rateReviewService;
-	private StatusMovementService		statusMovementService;
-	private RepayQueueService			repayQueueService;
+	private NPAService					npaService;
 	private DateRollOverService			dateRollOverService;
+	private RateReviewService			rateReviewService;
+	private AccrualService				accrualService;
+
 	private InstallmentDueService		installmentDueService;
+	private ServiceUtil					serviceUtil;
+	private StatusMovementService		statusMovementService;
 
 	// Constants
 	private static final String			SQL		= "select * from CustomerQueuing where ThreadId=? And ( Progress is null or Status= ?)";
@@ -144,10 +148,6 @@ public class EodService {
 
 	private void doProcess(Connection connection, long custId, Date date) throws Exception {
 
-		//Rate review
-		//FIXME Rate review process should checked after the completion new method in schedule calculator
-		rateReviewService.processRateReview(connection, custId, date);
-
 		//prepare customer queue
 		repayQueueService.prepareRepayQueue(connection, custId, date);
 
@@ -155,10 +155,10 @@ public class EodService {
 		latePayMarkingService.processLatePayMarking(connection, custId, date);
 
 		//DPD Bucketing
-//		latePayMarkingService.processDPDBuketing(connection, custId, date);
+		latePayMarkingService.processDPDBuketing(connection, custId, date);
 
 		//customer status update
-//		latePayMarkingService.processCustomerStatus(connection, custId, date);
+		latePayMarkingService.processCustomerStatus(connection, custId, date);
 
 		//late pay penalty
 		latePayPenaltyService.processLatePayPenalty(connection, custId, date);
@@ -166,17 +166,25 @@ public class EodService {
 		//late pay interest
 		latePayInterestService.processLatePayInterest(connection, custId, date);
 
+		//NPA Service
+		npaService.processNPABuckets(connection, custId, date);
+
 		//process payments from queue
-		//		serviceUtil.processQueue(connection, custId, date);
+		//serviceUtil.processQueue(connection, custId, date);
 
 		//Date roll over
-		dateRollOverService.process(connection, custId, date);
+		List<FinEODEvent> finEODEvents = dateRollOverService.prepareFinEODEvents(connection, custId, date);
+
+		dateRollOverService.process(connection, finEODEvents);
+
+		//Rate review
+		rateReviewService.processRateReview(connection, finEODEvents);
 
 		//Accrual
 		accrualService.processAccrual(connection, custId, date);
 
 		//Status movements
-		//		statusMovementService.processMovements(connection, custId, date);
+		//statusMovementService.processMovements(connection, custId, date);
 
 		//installment 
 		installmentDueService.processDueDatePostings(connection, custId, date);
@@ -250,5 +258,9 @@ public class EodService {
 
 	public void setLatePayInterestService(LatePayInterestService latePayInterestService) {
 		this.latePayInterestService = latePayInterestService;
+	}
+
+	public void setNpaService(NPAService npaService) {
+		this.npaService = npaService;
 	}
 }
