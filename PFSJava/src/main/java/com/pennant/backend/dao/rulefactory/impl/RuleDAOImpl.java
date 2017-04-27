@@ -799,5 +799,28 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
     }
+
+	@Override
+	public List<String> getAEAmountCodesList(String event) {
+		MapSqlParameterSource source = null;
+		List<String> aeAmountCodesList = new ArrayList<String>();
+
+		StringBuilder selectSql = new StringBuilder("Select AmountCode From BmtAmountCodes");
+		selectSql.append(" Where AllowedEvent = :AllowedEvent");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("AllowedEvent", event);
+
+		try {
+			aeAmountCodesList = this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), source, String.class);
+		} catch (DataAccessException e) {
+			logger.error(e);
+		}
+
+		logger.debug("Leaving");
+
+		return aeAmountCodesList;
+	}
 	
 }

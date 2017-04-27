@@ -52,5 +52,8 @@ public interface FinFeeScheduleDetailDAO {
 	void saveFeeScheduleBatch(List<FinFeeScheduleDetail> feeScheduleList, boolean isWIF, String tableType);
 	void deleteFeeScheduleBatch(long feeId, boolean isWIF, String tableType);
 	List<FinFeeScheduleDetail> getFeeScheduleByFeeID(long feeID, boolean isWIF, String tableType);
+
 	List<FinFeeScheduleDetail> getFeeScheduleByFinID(List<Long> feeIDList, boolean isWIF, String tableType);
+	void updateFeeSchdPaids(List<FinFeeScheduleDetail> updateFeeList);
+
 }

@@ -184,5 +184,19 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		logger.debug("Leaving");
 		return feeSchdList;
 	}
+
+	@Override
+	public void updateFeeSchdPaids(List<FinFeeScheduleDetail> updateFeeList) {
+		logger.debug("Entering");
+		
+		StringBuilder updateSql = new StringBuilder("Update FinFeeScheduleDetail");
+		updateSql.append(" Set PaidAmount = PaidAmount + :PaidAmount, OsAmount = OsAmount - :PaidAmount ");
+		updateSql.append(" Where FeeID =:FeeID");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(updateFeeList.toArray());
+		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
 	
 }

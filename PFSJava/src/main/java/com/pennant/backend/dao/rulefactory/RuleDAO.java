@@ -79,4 +79,6 @@ public interface RuleDAO {
 	Rule getRuleById(String ruleCode, String module, String type);
 	Rule getRuleByID(long ruleId, String type);
 	List<Rule> getRuleDetailList(List<String> ruleCodeList, String ruleModule, String ruleEvent);
+	
+	List<String> getAEAmountCodesList(String event);
   }
