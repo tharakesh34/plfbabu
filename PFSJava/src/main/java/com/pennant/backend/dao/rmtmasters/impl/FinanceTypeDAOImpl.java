@@ -498,30 +498,6 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		logger.debug("Leaving");
 	}
 
-	@Override
-    public boolean checkRIAFinance(String finType) {
-		logger.debug("Entering");
-		FinanceType financeType = new FinanceType();
-		financeType.setId(finType);
-
-		StringBuilder selectSql = new StringBuilder("SELECT AllowRIAInvestment ");
-		selectSql.append(" FROM RMTFinanceTypes");
-		selectSql.append(" Where FinType = :FinType");
-
-		logger.debug("selectListSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
-
-		boolean isAllowRIAFinacne = false;
-		try {
-			isAllowRIAFinacne = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Boolean.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			isAllowRIAFinacne = false;
-		}
-		logger.debug("Leaving");
-		return isAllowRIAFinacne;
-    }
-
 	/**
 	 * Method for get total number of records related to specific financeType
 	 * 

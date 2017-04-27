@@ -62,8 +62,6 @@ public interface FinanceTypeDAO {
 
 	String save(FinanceType financeType, String type);
 
-	boolean checkRIAFinance(String finType);
-
 	List<FinanceType> getFinTypeDetailForBatch();
 
 	int getFinanceTypeCountById(String finType);
