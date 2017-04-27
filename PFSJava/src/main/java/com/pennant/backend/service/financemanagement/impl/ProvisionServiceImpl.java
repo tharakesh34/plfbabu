@@ -177,10 +177,8 @@ public class ProvisionServiceImpl extends  GenericFinanceDetailService implement
 		if(!provision.isWorkflow()){
 
 			//Check Finance is RIA Finance Type or Not
-			boolean isRIAFinance = getFinanceTypeDAO().checkRIAFinance(provision.getFinType());
-
 			Date dateValueDate = DateUtility.getValueDate();
-			getProvisionCalculationUtil().processProvCalculations(provision, dateValueDate, false, true, isRIAFinance,false);
+			getProvisionCalculationUtil().processProvCalculations(provision, dateValueDate, false, true, false);
 		}else{
 
 			if (provision.isNew()) {
@@ -305,12 +303,10 @@ public class ProvisionServiceImpl extends  GenericFinanceDetailService implement
 		
 		FinanceDetail financeDetail = provision.getFinanceDetail();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		//Check Finance is RIA Finance Type or Not
-		boolean isRIAFinance = financeDetail.getFinScheduleData().getFinanceType().isAllowRIAInvestment();
 
 		//Provision Postings Process
 		Date dateValueDate = DateUtility.getValueDate();
-		getProvisionCalculationUtil().processProvCalculations(provision, dateValueDate, false, true, isRIAFinance,false);
+		getProvisionCalculationUtil().processProvCalculations(provision, dateValueDate, false, true, false);
 		
 		//Fee Charge Details
 		//=======================================
