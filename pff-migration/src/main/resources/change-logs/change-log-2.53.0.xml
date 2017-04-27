@@ -1982,4 +1982,24 @@ Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroup
 
 		</sql>
 	</changeSet>
+	
+	<changeSet id="97" author="Amit">
+		<dropPrimaryKey tableName="RMTPROVINCEVSCITY" constraintName="PK_RMTPROVINCEVSCITY"/>
+	</changeSet>
+	
+	<changeSet id="98" author="Amit">
+		<addPrimaryKey tableName="RMTPROVINCEVSCITY" constraintName="PK_RMTPROVINCEVSCITY" columnNames="PCCITY"/>
+	</changeSet>
+	
+	<changeSet id="99" author="Amit">
+	<addNotNullConstraint tableName="BANKBRANCHES"
+		columnName="CITY" columnDataType="VARCHAR2(50)" />
+   </changeSet>
+   
+   <changeSet id="101" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_BankBranches_City"
+			baseTableName="BankBranches" baseColumnNames="City"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+   
 </databaseChangeLog>
