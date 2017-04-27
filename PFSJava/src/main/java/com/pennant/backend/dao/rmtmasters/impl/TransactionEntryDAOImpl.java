@@ -291,7 +291,7 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 		}
 		selectSql.append(" From RMTTransactionEntry");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where AccountSetid IN ( SELECT FinRefId from LMTFinRefDetail_ACView  " );
+		selectSql.append(" Where AccountSetid IN ( SELECT FinRefId from LMTFinRefDetail " );
 		selectSql.append(" where Fintype='");
 		selectSql.append(finType );
 		selectSql.append("' AND FinEvent='");
