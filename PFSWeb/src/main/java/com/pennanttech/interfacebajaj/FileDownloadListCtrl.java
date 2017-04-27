@@ -44,6 +44,7 @@
 package com.pennanttech.interfacebajaj;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -265,9 +266,20 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 			lc.appendChild(downlaod);
 			downlaod.setLabel("Download");
 			downlaod.setAttribute("object", fileDownlaod);
-
-			if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
+			
+			StringBuilder builder = new StringBuilder();
+			builder.append(fileDownlaod.getFileLocation());
+			builder.append(File.separator);
+			builder.append(fileDownlaod.getFileName());
+			
+			File file = new File(builder.toString());
+			
+			if(!file.exists()) {
+				 downlaod.setDisabled(true);
+				 downlaod.setTooltiptext("File not available.");
+			} else  if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
 				downlaod.setDisabled(true);
+				downlaod.setTooltiptext("Disbursement request for file generation failed.");
 			}
 
 			FileControl fileContol = FileControl.valueOf(module);

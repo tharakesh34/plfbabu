@@ -49,7 +49,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
@@ -57,10 +56,10 @@ import org.zkoss.zhtml.Messagebox;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Center;
@@ -81,11 +80,12 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -111,9 +111,11 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected Listbox					listBoxDisbursementRegistration;
 
 	protected Listheader				listheader_Disbursement_DisbTypes;
-	protected Listheader				listheader_Disbursement_FromDate;
-	protected Listheader				listheader_Disbursement_ToDate;
+	protected Listheader				listheader_Disbursement_FinRef;
 	protected Listheader				listheader_Disbursement_FinType;
+	protected Listheader				listheader_Disbursement_Custname;
+	protected Listheader				listheader_Disbursement_BenName;
+	protected Listheader				listheader_Disbursement_BenAcctno;
 	protected Listheader				listheader_Disbursement_Branch;
 	
 	protected Combobox					disbTypes;
@@ -174,15 +176,21 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 		// Register buttons and fields.
 		registerButton(button_Search);
-		registerField("paymentid");
-		registerField("BranchDesc");
+		registerField("paymentId");
 		registerField("LLDATE");
+		registerField("PartnerBankId");
+		registerField("BranchDesc");
+		
+		registerField("FromDate", fromDate,SortOrder.NONE ,sortOperator_FromDate,Operators.DATE);
+		registerField("ToDate", toDate,SortOrder.NONE ,sortOperator_ToDate,Operators.DATE);
 		
 		registerField("PartnerBankCode", partnerBank, SortOrder.NONE, sortOperator_PartnerBank, Operators.STRING);
 		registerField("PaymentType", listheader_Disbursement_DisbTypes, SortOrder.NONE, disbTypes, sortOperator_DisbType, Operators.STRING);
-		registerField("FromDate", listheader_Disbursement_FromDate, SortOrder.NONE, fromDate, sortOperator_FromDate, Operators.DATE);
-		registerField("ToDate ", listheader_Disbursement_ToDate, SortOrder.NONE, toDate, sortOperator_ToDate, Operators.DATE);
+		registerField("FinReference", listheader_Disbursement_FinRef, SortOrder.NONE);
 		registerField("FINTYPE", listheader_Disbursement_FinType, SortOrder.NONE, finType, sortOperator_FinType, Operators.STRING);
+		registerField("CUSTSHRTNAME", listheader_Disbursement_Custname, SortOrder.NONE);
+		registerField("BENEFICIARYNAME", listheader_Disbursement_BenName, SortOrder.NONE);
+		registerField("BENEFICIARYACCNO", listheader_Disbursement_BenAcctno, SortOrder.NONE);
 		registerField("BranchCode", listheader_Disbursement_Branch, SortOrder.NONE, branch, sortOperator_Branch, Operators.STRING);
 			
 		// Render the page and display the data.
@@ -308,14 +316,20 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			
 			lc = new Listcell(payments.getPaymentType());
 			lc.setParent(item);
+			
+			lc = new Listcell(payments.getFinReference());
+			lc.setParent(item);
 				
-			lc = new Listcell(DateUtility.formatToLongDate(payments.getLlDate()));
-			lc.setParent(item);
-			
-			lc = new Listcell(DateUtility.formatToLongDate(payments.getLlDate()));
-			lc.setParent(item);
-			
 			lc = new Listcell(payments.getFinType());
+			lc.setParent(item);
+			
+			lc = new Listcell(payments.getCustShrtName());
+			lc.setParent(item);
+			
+			lc = new Listcell(payments.getBeneficiaryName());
+			lc.setParent(item);
+			
+			lc = new Listcell(payments.getBeneficiaryAccNo());
 			lc.setParent(item);
 			
 			lc = new Listcell(payments.getBranchDesc());
@@ -393,20 +407,45 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	}
 	
 	private void doSetValidations() {
-	
-		Clients.clearWrongValue(this.partnerBank);
-		Clients.clearWrongValue(this.finType);
-		this.partnerBank.setErrorMessage("");
-		this.finType.setErrorMessage("");
-	
-		if(StringUtils.trimToNull(this.partnerBank.getValue()) == null){
-			throw new WrongValueException(this.partnerBank, "Partner Bank should be mandatory. ");
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+
+		try {
+			if (!this.partnerBank.isReadonly())
+				this.partnerBank.setConstraint(new PTStringValidator(Labels
+						.getLabel("label_DisbursementList_PartnerBank.value"),
+						PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.partnerBank.getValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
 		}
-		
-		if(StringUtils.trimToNull(this.finType.getValue()) == null){
-			throw new WrongValueException(this.finType, "Loan Type should be mandatory. ");
+
+		try {
+			if (!this.finType.isReadonly())
+				this.finType.setConstraint(new PTStringValidator(Labels
+						.getLabel("label_DisbursementList_LoanType.value"),
+						PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.finType.getValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		doRemoveValidation();
+
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = (WrongValueException) wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
 		}
 	}
+
+	private void doRemoveValidation() {
+		logger.debug("Entering ");
+		this.partnerBank.setConstraint("");
+		this.finType.setConstraint("");
+
+		logger.debug("Leaving ");}
 
 	/**
 	 * The framework calls this event handler when user clicks the refresh
@@ -462,7 +501,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		
 		// Show a confirm box
 		
-		String msg = " " + this.disbursementMap.size() + "/" + this.pagingDisbursementList.getTotalSize()  + " Disbursements selected for process.\n Do you want to continue? ";
+		String msg = "You have selected " + this.disbursementMap.size() + " disbursements out of " + this.pagingDisbursementList.getTotalSize()  + ".\n Do you want to continue?";
 		MultiLineMessageBox.doSetTemplate();
 		int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Conformation"), MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
 		if (conf == MultiLineMessageBox.NO) {

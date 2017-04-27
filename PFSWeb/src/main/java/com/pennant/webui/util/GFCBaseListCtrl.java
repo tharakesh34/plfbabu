@@ -50,6 +50,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
+import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.financemanagement.FinanceFlag;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -135,6 +136,11 @@ public class GFCBaseListCtrl<T> extends AbstractListController<T> {
 					if (details != null) {
 						searchField.setValue(details.getRoleDesc());
 					}
+
+				} else if ("DataEngine".equals(module)) {
+					BankBranch details = (BankBranch) dataObject;
+					if (details != null);
+					searchField.setValue(details.getBranchCode());
 
 				}
 			}

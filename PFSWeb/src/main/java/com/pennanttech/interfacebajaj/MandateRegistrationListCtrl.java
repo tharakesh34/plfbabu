@@ -60,10 +60,10 @@ import org.zkoss.zhtml.Messagebox;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Center;
@@ -97,9 +97,9 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
@@ -172,6 +172,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 
 	private transient MandateService mandateService;
 	private DataSource dataSource;
+	private transient boolean validationOn;
 
 	private Map<Long, String> mandateIdMap = new HashMap<Long, String>();
 	 
@@ -423,6 +424,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	public void search() {
 		logger.debug("Entering");
 
+		this.searchObject.clearFilters();
+
 		if (paging != null) {
 			this.paging.setActivePage(0);
 		}
@@ -482,55 +485,60 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		logger.debug("Leaving");
 	}
 
+	
+	public void onClick$btnbranchDetails(Event event) {
+		logger.debug("Entering  " + event.toString());
+
+		setSearchValue(sortOperator_btnbranchDetails, this.branchDetails, "DataEngine");
+
+		logger.debug("Leaving" + event.toString());
+	}
+
+	
 	private void doSetValidations() {
 
-		Clients.clearWrongValue(this.fromDate);
-		Clients.clearWrongValue(this.toDate);
-		Clients.clearWrongValue(this.branchDetails);
-		this.fromDate.setErrorMessage("");
-		this.toDate.setErrorMessage("");
-		this.branchDetails.setErrorMessage("");
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		if (this.fromDate.getValue() == null) {
-			throw new WrongValueException(this.fromDate, "From date mandatory.");
+		try {
+			if (!this.fromDate.isDisabled())
+				this.fromDate.setConstraint(new PTDateValidator("From Date", true));
+			this.fromDate.getValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
 		}
 
-		if (this.toDate.getValue() == null) {
-			throw new WrongValueException(this.toDate, "To date mandatory.");
+		try {
+			if (!this.toDate.isDisabled())
+				this.toDate.setConstraint(new PTDateValidator("To Date", true));
+			this.toDate.getValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
 		}
-
+		
+		doRemoveValidation();
+		
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = (WrongValueException) wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+		
 		if (this.fromDate.getValue().compareTo(this.toDate.getValue()) == 1) {
 			throw new WrongValueException(this.toDate, "To date should greater than or equal to From date.");
 		}
 
 	}
 
-	public void onClick$btnbranchDetails(Event event) {
-		logger.debug("Entering  " + event.toString());
-		Object dataObject = MultiSelectionSearchListBox.show(this.window_MandateRegistrationList, "DataEngine",
-				this.branchDetails.getValue(), null);
-		if (dataObject instanceof String) {
-			this.branchDetails.setValue(dataObject.toString());
-		} else {
-			@SuppressWarnings("unchecked")
-			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
-			if (details != null) {
-				String tempflagcode = "";
-				List<String> flagKeys = new ArrayList<>(details.keySet());
-				for (int i = 0; i < flagKeys.size(); i++) {
-					if (StringUtils.isEmpty(flagKeys.get(i))) {
-						continue;
-					}
-					if (i == 0) {
-						tempflagcode = flagKeys.get(i);
-					} else {
-						tempflagcode = tempflagcode + "," + flagKeys.get(i);
-					}
-				}
-				this.branchDetails.setValue(tempflagcode);
-			}
-		}
-		logger.debug("Leaving " + event.toString());
+
+	private void doRemoveValidation() {
+		logger.debug("Entering ");
+		this.fromDate.setConstraint("");
+		this.toDate.setConstraint("");
+		
+		logger.debug("Leaving ");
+		
 	}
 
 	/**
@@ -544,6 +552,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		this.mandateIdMap.clear();
 		this.listHeader_CheckBox_Comp.setChecked(false);
 		this.listBoxMandateRegistration.getItems().clear();
+		this.fromDate.setValue(null);
+		this.toDate.setValue(null);
 
 		if (listBoxMandateRegistration.getItems().size() > 0) {
 			listHeader_CheckBox_Comp.setDisabled(false);
@@ -643,8 +653,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		}
 
 		// Show a confirm box
-		String msg = " " + this.pagingMandateList.getTotalSize() + "/" + this.mandateIdMap.size()
-				+ " Selected.\n Do you want to continue? ";
+		String msg = "You have selected " + this.mandateIdMap.size() + " Mandates out of " + this.pagingMandateList.getTotalSize()
+				+ ".\nDo you want to continue?";
 		MultiLineMessageBox.doSetTemplate();
 		int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Conformation"), MultiLineMessageBox.YES
 				| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
@@ -653,19 +663,24 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		}
 		try {
 			btnDownload.setDisabled(true);
-			DataEngineExport dataEngine = new DataEngineExport(dataSource, getUserWorkspace().getLoggedInUser()
-					.getLoginUsrID(), App.DATABASE.name());
+			DataEngineExport dataEngine = null;
+			dataEngine = new DataEngineExport(dataSource, getUserWorkspace().getLoggedInUser().getLoginUsrID(),
+					App.DATABASE.name());
 
 			Map<String, Object> filterMap = new HashMap<>();
+			Map<String, Object> parameterMap = new HashMap<>();
 			filterMap.put("MANDATEID", mandateIdList);
 			filterMap.put("FROMDATE", this.fromDate.getValue());
 			filterMap.put("TODATE", this.toDate.getValue());
+			parameterMap.put("USER_NAME", getUserWorkspace().getLoggedInUser().getUserName());
 
 			if (StringUtils.trimToNull(this.branchDetails.getValue()) != null) {
 				filterMap.put("BRANCHCODE", Arrays.asList(this.branchDetails.getValue().split(",")));
 			}
 
 			dataEngine.setFilterMap(filterMap);
+			dataEngine.setParameterMap(parameterMap);
+			dataEngine.setUserName(getUserWorkspace().getLoggedInUser().getUserName());
 			dataEngine.exportData("MANDATES_EXPORT");
 
 			
@@ -722,5 +737,13 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
+	}
+	
+	public void setValidationOn(boolean validationOn) {
+		this.validationOn = validationOn;
+	}
+
+	public boolean isValidationOn() {
+		return this.validationOn;
 	}
 }

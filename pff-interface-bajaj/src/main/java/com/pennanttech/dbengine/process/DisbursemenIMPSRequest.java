@@ -45,9 +45,11 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 		executionStatus.setRemarks("Loading configuration..");
 
 		PreparedStatement statement = null;
-		ResultSet resultSet = null;
+		ResultSet rs = null;
 		StringBuilder remarks = new StringBuilder();
 		long keyValue = 0;
+		long partnerBankId = 0;
+		String finReferenceNo = null;
 		long fileId;
 		try {
 
@@ -61,26 +63,28 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 
 			executionStatus.setRemarks("Fetching data from source table...");
 			statement = getStatement(paymentIds);
-			resultSet = getResultSet(paymentIds, statement);
+			rs = getResultSet(paymentIds, statement);
 
-			if (resultSet != null) {
-				resultSet.last();
-				totalRecords = resultSet.getRow();
-				resultSet.beforeFirst();
+			if (rs != null) {
+				rs.last();
+				totalRecords = rs.getRow();
+				rs.beforeFirst();
 				executionStatus.setTotalRecords(totalRecords);
 			}
-			while (resultSet.next()) {
+			while (rs.next()) {
 				executionStatus.setRemarks("Saving data to destination table...");
 				try {
 					processedCount++;
-					keyValue = getIntValue(resultSet, "PAYMENTID");
-					saveDisbursement(resultSet);
+					keyValue = getLongValue(rs, "PAYMENTID");
+					partnerBankId = getLongValue(rs, "PARTNERBANKID");
+					finReferenceNo = getValue(rs, "FINREFERENCE");
+					saveDisbursement(rs);
 					updateDisbursement(keyValue);
 					successCount++;
-					saveBatchLog(processedCount, fileId, keyValue, "DBImport", "S", "Success.", null);
+					saveBatchLog(processedCount, fileId, keyValue, partnerBankId, finReferenceNo, "DBImport", "S", "Success.", null);
 				} catch (Exception e) {
 					failedCount++;
-					saveBatchLog(processedCount, fileId, keyValue, "DBImport", "F", e.getMessage(), null);
+					saveBatchLog(processedCount, fileId, keyValue, partnerBankId, finReferenceNo, "DBImport", "F", e.getMessage(), null);
 					logger.error("Exception :", e);
 				}
 				executionStatus.setProcessedRecords(processedCount);
@@ -120,8 +124,8 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 			remarks.append(e.getMessage());
 			executionStatus.setStatus(ExecutionStatus.F.name());
 		} finally {
-			releaseResorces(resultSet, statement, destConnection);
-			resultSet = null;
+			releaseResorces(rs, statement, destConnection);
+			rs = null;
 			executionStatus.setRemarks(remarks.toString());
 		}
 
@@ -245,7 +249,7 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 		return statement;
 	}
 
-	private void saveBatchLog(int seqNo, long fileId, long ref, String category, String status, String remarks,
+	private void saveBatchLog(int seqNo, long fileId, long paymentId, long partnerBankId, String finReferenceNo, String category, String status, String remarks,
 			Date valueDate) throws Exception {
 
 		MapSqlParameterSource source = null;
@@ -255,15 +259,18 @@ public class DisbursemenIMPSRequest extends DBProcessEngine {
 			source.addValue("ID", getNextId("SEQ_DATA_ENGINE_PROCESS_LOG", true));
 			source.addValue("SEQNO", Long.valueOf(seqNo));
 			source.addValue("FILEID", fileId);
-			source.addValue("REFID1", ref);
+			source.addValue("REFID1", paymentId);
+			source.addValue("REFID2", partnerBankId);
+			source.addValue("REFNO1", finReferenceNo);
+			source.addValue("REFNO2", "IMPS");
 			source.addValue("CATEGORY", category);
 			source.addValue("STATUS", status);
 			source.addValue("REMARKS", remarks.length() > 1000 ? remarks.substring(0, 998) : remarks);
 			source.addValue("VALUEDATE", DateUtil.getSysDate());
 
 			sql = new StringBuilder();
-			sql.append(" INSERT INTO DATA_ENGINE_PROCESS_LOG (ID, SEQNO, FILEID, REFID1, CATEGORY, STATUS, REMARKS, VALUEDATE)");
-			sql.append(" Values (:ID, :SEQNO, :FILEID, :REFID1, :CATEGORY, :STATUS, :REMARKS, :VALUEDATE)");
+			sql.append(" INSERT INTO DATA_ENGINE_PROCESS_LOG (ID, SEQNO, FILEID, REFID1, REFID2, REFNO1, REFNO2, CATEGORY, STATUS, REMARKS, VALUEDATE)");
+			sql.append(" Values (:ID, :SEQNO, :FILEID, :REFID1, :REFID2, :REFNO1, :REFNO2, :CATEGORY, :STATUS, :REMARKS, :VALUEDATE)");
 
 			saveBatchLog(source, sql.toString());
 		} finally {

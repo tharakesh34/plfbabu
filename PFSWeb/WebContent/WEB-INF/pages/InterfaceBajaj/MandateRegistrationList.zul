@@ -85,7 +85,7 @@
 							</rows>
 						</grid>
 						
-					<grid id="searczhGrid" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:5px; padding-right:5px;">
+						<grid id="searczhGrid" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:5px; padding-right:5px;">
 							<columns>
 								<column width="150px" />
 								<column />
@@ -97,30 +97,28 @@
 										<space spacing="15px"></space>
 										<listbox id="sortOperator_btnbranchDetails" width="43px" mold="select" rows="1" />
 										<space spacing="8px"></space>
-										<uppercasebox id="branchDetails" width="285px" />
+										<uppercasebox id="branchDetails" width="132px" />
 										<button id="btnbranchDetails" image="/images/icons/LOVSearch.png" />
 									</hbox>
 								</row>
 							</rows>
 						</grid> 
-
+						
 						<grid sclass="GridLayoutNoBorder" fixedLayout="true">
 							<columns>
+								<column width="20%" />
+								<column width="30%" />
+								<column width="5%" />
 								<column width="15%" />
-								<column width="10%" />
-								<column width="25%" />
-								<column width="15%" />
-								<column width="10%" />
-								<column width="25%" />
 							</columns>
 							<rows>
 							
 								<row>
-									<label value="${c:l('label_MandateList_InputDate.value')}" />
 									<label value="${c:l('label_MandateList_FromDate.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
 									<datebox id="fromDate" width="171px" />
+									
 									</hbox>
 
 									<label value="${c:l('label_MandateList_ToDate.value')}" />
@@ -132,6 +130,10 @@
 								</row>
 							</rows>
 						</grid>
+						
+					
+
+						
 
 						<listbox id="listBoxMandateRegistration" fixedLayout="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="true" autopaging="true">
 							<listhead sizable="true">

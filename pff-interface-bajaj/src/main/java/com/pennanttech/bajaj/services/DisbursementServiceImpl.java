@@ -132,7 +132,7 @@ public class DisbursementServiceImpl extends BajajServices implements Disburseme
 	private synchronized void processImpsDisbursements(String configName, StringBuilder paymentIds) {
 		DataEngineDBProcess proce = new DataEngineDBProcess(dataSource, userId, App.DATABASE.name());
 		try {
-			proce.setValueDate((Date)getSMTParameter("APP_VALUEDATE", Date.class));
+			proce.setValueDate(getAppDate());
 			proce.processData(configName, paymentIds.toString());
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);

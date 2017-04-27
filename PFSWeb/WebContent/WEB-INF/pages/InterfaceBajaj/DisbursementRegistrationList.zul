@@ -36,7 +36,10 @@
 								<row>
 									<label value="${c:l('label_DisbursementList_disbInstrctuionType.value')}" />
 									<listbox id="sortOperator_DisbType" width="43px" mold="select" rows="1" />
+									<hbox>
+									<space spacing = "2px"></space>
 									<combobox id="disbTypes" width="171px" />
+									</hbox>
 									
 									<label value="${c:l('label_DisbursementList_PartnerBank.value')}" />
 									<listbox id="sortOperator_PartnerBank" width="43px" mold="select" rows="1" />
@@ -46,11 +49,16 @@
 								<row>
 									<label  value="${c:l('label_Disbursement_FromDate.value')}" />
 									<listbox id="sortOperator_FromDate" width="43px" mold="select" rows="1" />
+									<hbox>
+									<space spacing = "2px"></space>
 									<datebox id="fromDate" width="171px" />
-									
+									</hbox>
 									<label value="${c:l('label_Disbursement_ToDate.value')}" />
-									<listbox id="sortOperator_ToDate" width="43px" mold="select" rows="1" />
-									<datebox id="toDate" width="171px" />
+									<listbox id="sortOperator_ToDate" width="43px" mold="select" rows="1"/>
+								<hbox>
+									<space spacing = "2px"></space>
+									<datebox id="toDate" width="171px"/>
+									</hbox>
 								</row>
 								
 								<row>
@@ -60,7 +68,7 @@
 									
 									<label value="${c:l('label_DisbursementList_Branch.value')}" />
 									<listbox id="sortOperator_Branch" width="43px" mold="select" rows="1" />
-									<extendedcombobox id="branch" />
+									<extendedcombobox id="branch" width="125px" />
 								</row>
 								
 								<row>
@@ -72,11 +80,13 @@
 						<listbox id="listBoxDisbursementRegistration" fixedLayout="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" sizedByContent="true">
 							<listhead sizable="true">
 								<listheader id="listHeader_CheckBox_Name"   hflex="min" align="center"/>
-								<listheader id="listheader_Disbursement_DisbTypes" label="${c:l('listheader_Disbursement_DisbType.label')}"  hflex="min" />
-								<listheader id="listheader_Disbursement_FromDate" label="${c:l('listheader_Disbursement_FromDate.label')}" hflex="min" />
-								<listheader id="listheader_Disbursement_ToDate" label="${c:l('listheader_Disbursement_ToDate.label')}"  hflex="min" />
-								<listheader id="listheader_Disbursement_FinType" label="${c:l('listheader_Disbursement_LoanType.label')}" hflex="min" />
-								<listheader id="listheader_Disbursement_Branch" label="${c:l('listheader_Disbursement_Branch.label')}"  hflex="min" />
+								<listheader id="listheader_Disbursement_DisbTypes" label="${c:l('listheader_Disbursement_DisbType.label')}"  hflex="min"/>
+								<listheader id="listheader_Disbursement_FinRef" label="${c:l('listheader_Disbursement_FinRef.label')}"  hflex="min"/>
+								<listheader id="listheader_Disbursement_FinType" label="${c:l('listheader_Disbursement_LoanType.label')}"  hflex="min"/>
+								<listheader id="listheader_Disbursement_Custname" label="${c:l('listheader_Disbursement_CustName.label')}" hflex="min"/>
+								<listheader id="listheader_Disbursement_BenName" label="${c:l('listheader_Disbursement_BenName.label')}" hflex="min"/>
+								<listheader id="listheader_Disbursement_BenAcctno" label="${c:l('listheader_Disbursement_BenAcctNo.label')}" hflex="min"/>
+								<listheader id="listheader_Disbursement_Branch" label="${c:l('listheader_Disbursement_Branch.label')}"  hflex="min"/>
 							 </listhead>
 					 </listbox>
 					</div>
