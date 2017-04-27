@@ -82,24 +82,6 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 		super();
 	}
 	
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-	
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public RuleDAO getRuleDAO() {
-		return ruleDAO;
-	}
-	public void setRuleDAO(RuleDAO ruleDAO) {
-		this.ruleDAO = ruleDAO;
-	}
-
 	/**
 	 * saveOrUpdate	method method do the following steps.
 	 * 1)	Do the Business validation by using businessValidation(auditHeader) method
@@ -489,6 +471,29 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 		return getRuleDAO().getRuleDetailList(ruleCodeList, ruleModule, ruleEvent);
 	}
 	
+	@Override
+	public List<String> getAEAmountCodesList(String event) {
+		return getRuleDAO().getAEAmountCodesList(event);
+	}
+	
+	// ******************************************************//
+	// ****************** getter / setter *******************//
+	// ******************************************************//
+	
+	public AuditHeaderDAO getAuditHeaderDAO() {
+		return auditHeaderDAO;
+	}
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public RuleDAO getRuleDAO() {
+		return ruleDAO;
+	}
+	public void setRuleDAO(RuleDAO ruleDAO) {
+		this.ruleDAO = ruleDAO;
+	}
+
 	public LimitGroupService getLimitGroupService() {
 		return limitGroupService;
 	}
@@ -496,6 +501,4 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	public void setLimitGroupService(LimitGroupService limitGroupService) {
 		this.limitGroupService = limitGroupService;
 	}
-
-
 }
