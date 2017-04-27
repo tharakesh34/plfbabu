@@ -43,9 +43,6 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -60,6 +57,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.IncomeTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>IncomeType</b>.<br>
@@ -115,17 +113,19 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
+		
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType = "";
+		
 		IncomeType incomeType = (IncomeType) auditHeader.getAuditDetail()
 				.getModelData();
-
+		
+		TableType tableType = TableType.MAIN_TAB;
 		if (incomeType.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 
 		if (incomeType.isNew()) {
@@ -158,7 +158,8 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "delete");
+		auditHeader = businessValidation(auditHeader);
+		
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -166,7 +167,7 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 		IncomeType incomeType = (IncomeType) auditHeader.getAuditDetail()
 				.getModelData();
 
-		getIncomeTypeDAO().delete(incomeType, "");
+		getIncomeTypeDAO().delete(incomeType, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -224,7 +225,8 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 		logger.debug("Entering");
 
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
+		
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -232,32 +234,34 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 		IncomeType incomeType = new IncomeType();
 		BeanUtils.copyProperties((IncomeType) auditHeader.getAuditDetail()
 				.getModelData(), incomeType);
+		
+		getIncomeTypeDAO().delete(incomeType, TableType.TEMP_TAB);
+		
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(incomeType.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(incomeTypeDAO.getIncomeTypeById(incomeType.getId(), incomeType.getIncomeExpense(), incomeType.getCategory(), ""));
+		}
 
 		if (incomeType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-
-			getIncomeTypeDAO().delete(incomeType, "");
-
-		} else {
+			getIncomeTypeDAO().delete(incomeType, TableType.MAIN_TAB);
+		} else { 
 			incomeType.setRoleCode("");
 			incomeType.setNextRoleCode("");
 			incomeType.setTaskId("");
 			incomeType.setNextTaskId("");
 			incomeType.setWorkflowId(0);
 
-			if (incomeType.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (incomeType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				incomeType.setRecordType("");
-				getIncomeTypeDAO().save(incomeType, "");
+				getIncomeTypeDAO().save(incomeType, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				incomeType.setRecordType("");
-				getIncomeTypeDAO().update(incomeType, "");
+				getIncomeTypeDAO().update(incomeType, TableType.MAIN_TAB);
 			}
 		}
 
-		getIncomeTypeDAO().delete(incomeType, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -285,16 +289,17 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "doReject");
+		auditHeader = businessValidation(auditHeader);
+		
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
+		
 		IncomeType incomeType = (IncomeType) auditHeader.getAuditDetail()
 				.getModelData();
-
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getIncomeTypeDAO().delete(incomeType, "_Temp");
+		getIncomeTypeDAO().delete(incomeType, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -311,18 +316,16 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-
+	
 	/**
 	 * For Validating AuditDetals object getting from Audit Header, if any
 	 * mismatch conditions Fetch the error details from
@@ -331,119 +334,30 @@ public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
 
+		// Get the model object.
 		IncomeType incomeType = (IncomeType) auditDetail.getModelData();
-		IncomeType tempIncomeType = null;
 
-		if (incomeType.isWorkflow()) {
-			tempIncomeType = getIncomeTypeDAO().getIncomeTypeById(incomeType.getId(),incomeType.getIncomeExpense(),incomeType.getCategory(), "_Temp");
+		// Check the unique keys.
+		if (incomeType.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(incomeType.getRecordType())
+				&& incomeTypeDAO.isDuplicateKey(incomeType.getIncomeTypeCode(), incomeType.getIncomeExpense(),
+						incomeType.getCategory(), incomeType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[2];
+
+			parameters[0] = PennantJavaUtil.getLabel("label_IncomeTypeCode") + ":" + incomeType.getIncomeTypeCode();
+
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
-		IncomeType befIncomeType = getIncomeTypeDAO().getIncomeTypeById(incomeType.getId(),incomeType.getIncomeExpense(),incomeType.getCategory(),"");
-		IncomeType oldIncomeType = incomeType.getBefImage();
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		String[] valueParm = new String[2];
-		String[] errParm = new String[2];
-
-		valueParm[0] = incomeType.getIncomeTypeCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_IncomeTypeCode") + ":"
-				+ valueParm[0];
-
-		if (incomeType.isNew()) { // for New record or new record into work flow
-
-			if (!incomeType.isWorkflow()) {// With out Work flow only new
-											// records
-				if (befIncomeType != null) { // Record Already Exists in the
-												// table then error
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41001",
-									errParm, null));
-				}
-			} else { // with work flow
-
-				if (incomeType.getRecordType().equals(
-						PennantConstants.RECORD_TYPE_NEW)) { // if records type
-																// is new
-					if (befIncomeType != null || tempIncomeType != null) { // if
-						  								// records already exists
-							 							// in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(
-								PennantConstants.KEY_FIELD, "41001", errParm,
-								null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befIncomeType == null || tempIncomeType != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(
-								PennantConstants.KEY_FIELD, "41005", errParm,
-								null));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!incomeType.isWorkflow()) { // With out Work flow for update and
-				// delete
-
-				if (befIncomeType == null) { // if records not exists in the
-					// main table
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41002",
-									errParm, null));
-				} else {
-					if (oldIncomeType != null
-							&& !oldIncomeType.getLastMntOn().equals(
-									befIncomeType.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(
-								auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41003",
-									errParm, null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41004",
-									errParm, null));
-						}
-					}
-				}
-			} else {
-				if (tempIncomeType == null) { // if records not exists in the
-					// Work flow table
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
-				}
-				if (tempIncomeType != null
-						&& oldIncomeType != null
-						&& !oldIncomeType.getLastMntOn().equals(
-								tempIncomeType.getLastMntOn())) {
-					auditDetail
-							.setErrorDetail(new ErrorDetails(
-									PennantConstants.KEY_FIELD, "41005",
-									errParm, null));
-				}
-			}
-		}
-
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(
-				auditDetail.getErrorDetails(), usrLanguage));
-		if("doApprove".equals(StringUtils.trimToEmpty(method))
-				|| !incomeType.isWorkflow()) {
-			auditDetail.setBefImage(befIncomeType);
-		}
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-
+	
 }
