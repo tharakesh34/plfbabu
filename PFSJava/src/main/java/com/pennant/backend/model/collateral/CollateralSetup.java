@@ -549,4 +549,16 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	public void setBankValuation(BigDecimal bankValuation) {
 		this.bankValuation = bankValuation;
 	}
+	
+	public void getDeclaredFieldValues(HashMap<String, Object> collateralSetupMap){
+		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
+			try {
+				//"ft_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
+				collateralSetupMap.put("cs_"+this.getClass().getDeclaredFields()[i].getName(),
+						this.getClass().getDeclaredFields()[i].get(this));
+			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+				// Nothing TO DO
+			}
+		}
+	}
 }
