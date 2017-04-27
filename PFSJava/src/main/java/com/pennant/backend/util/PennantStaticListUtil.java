@@ -8,9 +8,11 @@ import org.apache.commons.lang.StringUtils;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 
 public class PennantStaticListUtil {
 	
@@ -156,6 +158,10 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> feeTypes;
 	private static ArrayList<ValueLabel> ruleModulesList;
 	private static ArrayList<ValueLabel> securityTypes;
+	private static ArrayList<AccountEngineEvent> accountingEventsOrg;
+	private static ArrayList<AccountEngineEvent> accountingEventsODOrg;
+	private static ArrayList<AccountEngineEvent> accountingEventsServicing;
+	private static ArrayList<AccountEngineEvent> accountingEventsOverdraft;
 	private static ArrayList<ValueLabel> paymentType;
 	private static ArrayList<ValueLabel> calType;
 	private static ArrayList<ValueLabel> calculateOn;
@@ -2302,6 +2308,91 @@ public class PennantStaticListUtil {
 		}
 		return securityTypes;
 	}
+	
+	public static List<AccountEngineEvent> getOriginationAccountingEvents() {
+		if (accountingEventsOrg == null) {
+			accountingEventsOrg = new ArrayList<AccountEngineEvent>();
+			accountingEventsOrg.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_ADDDBSF, Labels.getLabel("label_AccountingEvent_ADDDBSF"),AccountEventConstants.ACCEVENT_ADDDBSF_REQ));
+			accountingEventsOrg.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_ADDDBSN, Labels.getLabel("label_AccountingEvent_ADDDBSN"),true));
+			accountingEventsOrg.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_ADDDBSP, Labels.getLabel("label_AccountingEvent_ADDDBSP"),true));
+		}
+		return accountingEventsOrg;
+	}
+	
+	public static List<AccountEngineEvent> getOverdraftOrgAccountingEvents() {
+		if (accountingEventsODOrg == null) {
+			accountingEventsODOrg = new ArrayList<AccountEngineEvent>();
+			accountingEventsODOrg.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_CMTDISB, Labels.getLabel("label_AccountingEvent_FinODFacilityCreation"),true));
+		}
+		return accountingEventsODOrg;
+	}
+	
+	
+	public static  List<AccountEngineEvent> getOverdraftAccountingEvents() {
+		if (accountingEventsOverdraft == null) {
+			accountingEventsOverdraft = new ArrayList<AccountEngineEvent>();
+			accountingEventsOverdraft.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_CMTDISB, Labels.getLabel("label_AccountingEvent_FinODFacilityCreation"),true));
+			accountingEventsOverdraft.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_ADDDBSP, Labels.getLabel("label_AccountingEvent_FinAEAddDsbOD"),true));
+			accountingEventsOverdraft.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_ADDDBSF, Labels.getLabel("label_AccountingEvent_FinAEAddDsbFD"),false));
+			accountingEventsOverdraft.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_ADDDBSN, Labels.getLabel("label_AccountingEvent_FinAEAddDsbFDA"),false));
+			accountingEventsOverdraft.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_AMZ, Labels.getLabel("label_AccountingEvent_FinAEAmzNorm"),true));
+			accountingEventsOverdraft.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_AMZPD, Labels.getLabel("label_AccountingEvent_FinAEAmzPD"),true));
+			accountingEventsOverdraft.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_AMZSUSP, Labels.getLabel("label_AccountingEvent_FinAEAmzSusp"),true));
+			accountingEventsOverdraft.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_NORM_PD, Labels.getLabel("label_AccountingEvent_FinAENormToPD"),true));
+			accountingEventsOverdraft.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_NORM_PIS, Labels.getLabel("label_AccountingEvent_FinAENormToPIS"),true));
+			accountingEventsOverdraft.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_PD_NORM, Labels.getLabel("label_AccountingEvent_FinAEPDToNorm"),true));
+			accountingEventsOverdraft.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_PD_PIS, Labels.getLabel("label_AccountingEvent_FinAEPDToPIS"),true));
+			accountingEventsOverdraft.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_PIS_NORM, Labels.getLabel("label_AccountingEvent_FinAEPISToNorm"),true));
+			accountingEventsOverdraft.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_PIS_PD, Labels.getLabel("label_AccountingEvent_FinAEPISToPD"),true));
+			accountingEventsOverdraft.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_REPAY, Labels.getLabel("label_AccountingEvent_FinAERepay"),true));
+			accountingEventsOverdraft.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_CANCELFIN, Labels.getLabel("label_AccountingEvent_FinAECancel"),true));
+			accountingEventsOverdraft.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_PROVSN, Labels.getLabel("label_AccountingEvent_FinProvision"),true));
+			accountingEventsOverdraft.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_LATEPAY, Labels.getLabel("label_AccountingEvent_FinLatePayRule"),true));
+			accountingEventsOverdraft.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_WRITEOFF, Labels.getLabel("label_AccountingEvent_FinAEWriteOff"),true));
+			accountingEventsOverdraft.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_WRITEBK, Labels.getLabel("label_AccountingEvent_FinAEWriteOffBK"),true));
+		}
+		return accountingEventsOverdraft;
+	}
+	
+	public static List<AccountEngineEvent> getAccountingEvents() {
+		if (accountingEventsServicing == null) {
+			accountingEventsServicing = new ArrayList<AccountEngineEvent>();
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_ADDDBSP, Labels.getLabel("label_AccountingEvent_FinAEAddDsbOD"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_ADDDBSF, Labels.getLabel("label_AccountingEvent_FinAEAddDsbFD"),false));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_ADDDBSN, Labels.getLabel("label_AccountingEvent_FinAEAddDsbFDA"),false));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_AMZ, Labels.getLabel("label_AccountingEvent_FinAEAmzNorm"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_AMZPD, Labels.getLabel("label_AccountingEvent_FinAEAmzPD"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_AMZSUSP, Labels.getLabel("label_AccountingEvent_FinAEAmzSusp"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_NORM_PD, Labels.getLabel("label_AccountingEvent_FinAENormToPD"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_NORM_PIS, Labels.getLabel("label_AccountingEvent_FinAENormToPIS"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_PD_NORM, Labels.getLabel("label_AccountingEvent_FinAEPDToNorm"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_PD_PIS, Labels.getLabel("label_AccountingEvent_FinAEPDToPIS"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_PIS_NORM, Labels.getLabel("label_AccountingEvent_FinAEPISToNorm"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_PIS_PD, Labels.getLabel("label_AccountingEvent_FinAEPISToPD"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_REPAY, Labels.getLabel("label_AccountingEvent_FinAERepay"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_CANCELFIN, Labels.getLabel("label_AccountingEvent_FinAECancel"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_PROVSN, Labels.getLabel("label_AccountingEvent_FinProvision"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_LATEPAY, Labels.getLabel("label_AccountingEvent_FinLatePayRule"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_WRITEOFF, Labels.getLabel("label_AccountingEvent_FinAEWriteOff"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_WRITEBK, Labels.getLabel("label_AccountingEvent_FinAEWriteOffBK"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_RATCHG, Labels.getLabel("label_AccountingEvent_RATCHG"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_GRACEEND, Labels.getLabel("label_AccountingEvent_GRACEEND"),false));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_SCDCHG, Labels.getLabel("label_AccountingEvent_SCDCHG"),true));
+			if (ImplementationConstants.ALLOW_DEPRECIATION) {
+				accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_DPRCIATE, Labels
+						.getLabel("label_AccountingEvent_DPRCIATE"), false));
+			}
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_REAGING, Labels.getLabel("label_AccountingEvent_REAGING"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_EMIHOLIDAY, Labels.getLabel("label_AccountingEvent_EMIHOLIDAY"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_EARLYSTL, Labels.getLabel("label_AccountingEvent_EARLYSTL"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_EARLYPAY, Labels.getLabel("label_AccountingEvent_EARLYPAY"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_AMENDMENT, Labels.getLabel("label_AccountingEvent_AMENDMENT"),true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_DEFRPY, Labels.getLabel("label_AccountingEvent_POSTPONEMENT"), true));
+			accountingEventsServicing.add(new AccountEngineEvent(AccountEventConstants.ACCEVENT_HOLDEMI, Labels.getLabel("label_AccountingEvent_HOLDEMI"), false));
+		}
+		return accountingEventsServicing;
+	}
+	
 	
 	public static ArrayList<ValueLabel> getInsurancePaymentType() {
 

@@ -128,5 +128,9 @@ public class RepayConstants {
 	public static final int PEXC_CLEARED = 5;
 	public static final int PEXC_BOUNCED = 6;
 	
+	// Receipt Payment Statuses
+	public static final String	PAYSTATUS_APPROVED		= "A";
+	public static final String	PAYSTATUS_REALIZED		= "R";
+	public static final String	PAYSTATUS_BOUNCE		= "B";
 
 }

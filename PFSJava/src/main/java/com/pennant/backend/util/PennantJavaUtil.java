@@ -199,6 +199,7 @@ import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinInsurances;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
@@ -355,6 +356,7 @@ public class PennantJavaUtil {
 	private static String facilityCommitWF = "FACILITY_COMMITMENT";
 	private static String scoreGrpWF = "SCORGRP";
 	private static String comInvenWF = "COMMODITY_INVENTORY";
+	private static String realizationWF   = "REALIZATION_PROCESS";
 
 	public static String getLabel(String label) {
 		if(StringUtils.isEmpty(StringUtils.trimToEmpty(label))){
@@ -1234,6 +1236,10 @@ public class PennantJavaUtil {
 		ModuleUtil.register("Receipt", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
 				"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
 				null, 300));
+		
+		ModuleUtil.register("FinReceiptHeader", new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] {
+				"FinReceiptHeader" }, realizationWF, new String[] { "ReceiptID", "ReceiptPurpose" },
+				null, 300));
 
 		ModuleUtil.register("EarlyPayment", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
 				"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
@@ -1854,7 +1860,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("InsuranceTypePolicy", new ModuleMapping("InsuranceTypePolicy",
 				InsurancePolicy.class, new String[] { "InsurancePolicy", "InsurancePolicy_View" },
 				masterWF, new String[] { "InsuranceType", "InsuranceTypeDesc" }, null, 300));
-
+ 
 		ModuleUtil.register("AmountCode", new ModuleMapping("Amountcode",
 				AmountCode.class, new String[] { "BMTAmountCodes", "BMTAmountCodes" },
 				masterWF, new String[] { "AllowedEvent", "AmountCode", "AmountCodeDesc" }, new String[][] { { "AmountCodeIsActive", "0", "1" } }, 300));
@@ -1870,7 +1876,7 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("DPDBucket", new ModuleMapping("DPDBucket", DPDBucket.class, new String[] {
 			"DPDBUCKETS", "DPDBUCKETS_AView" }, masterWF, new String[] { "BucketCode", "BucketDesc" }, null, 700));
-		
+ 
 		ModuleUtil.register("NPABucket", new ModuleMapping("NPABucket", NPABucket.class,
 				new String[]{"NPABUCKETS", "NPABUCKETS_AView"},masterWF,
 				new String[] {"BucketCode","BucketDesc"} , null,300));
@@ -1902,7 +1908,6 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FinTypePartner", new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
 				new String[] { "FinTypePartnerBanks","FinTypePartnerBanks_AView" }, masterWF,
 				new String[] { "partnerBankCode", "partnerBankName" }, null, 300));
-
 	}
 
 	public static ModuleMapping getModuleMap(String code) {

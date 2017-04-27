@@ -67,6 +67,7 @@ public class RuleConstants {
 	public static final String DFT_FEE_FINANCE = "F";
 	public static final String DFT_FEE_WAIVERBYBANK = "W";
 	public static final String DFT_FEE_PAIDBYCUST = "P";
+	public static final String DFT_FEE_DEDUCTFROMDISB = "D";
 
 	// Rule Builder Constants
 	public static final String EQUALS_LABEL = " === ";
@@ -116,6 +117,7 @@ public class RuleConstants {
 	public static final String ft = "FinanceType";
 	public static final String cust = "Customer";
 	public static final String custEmp = "CustEmployeeDetail";
+	
 	public static final String financeMain = "fm";
 	public static final String financeType = "ft";
 	public static final String customer = "ct";
