@@ -641,5 +641,22 @@ public class Commitment extends AbstractWorkflowEntity {
 	public void setLimitLineCodeDesc(String limitLineCodeDesc) {
 		this.limitLineCodeDesc = limitLineCodeDesc;
 	}
+	
+	public HashMap<String, Object> getDeclaredFieldValues() {
+		HashMap<String, Object> commitmentMap = new HashMap<String, Object>();	
+		
+		return getDeclaredFieldValues(commitmentMap);
+	}
+
+	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> commitmentMap) {
+		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
+			try {
+				commitmentMap.put("cmt_" + this.getClass().getDeclaredFields()[i].getName(), this.getClass().getDeclaredFields()[i].get(this));
+			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+				// Nothing TO DO
+			}
+		}
+		return commitmentMap;
+	}
 
 }
