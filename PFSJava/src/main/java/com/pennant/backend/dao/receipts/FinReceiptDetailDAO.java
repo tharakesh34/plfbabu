@@ -10,5 +10,6 @@ public interface FinReceiptDetailDAO {
 	List<FinReceiptDetail> getReceiptHeaderByID(long receiptID, String type);
 	long save(FinReceiptDetail receiptDetail, TableType tableType);
 	void deleteByReceiptID(long receiptID, TableType tableType);
+	void updateReceiptStatus(long receiptID, long receiptSeqID, String status);
 
 }

@@ -9,5 +9,5 @@ public interface FinReceiptHeaderDAO {
 	long save(FinReceiptHeader receiptHeader, TableType tableType);
 	void update(FinReceiptHeader receiptHeader, TableType tableType);
 	void deleteByReceiptID(long receiptID, TableType tableType);
-
+	FinReceiptHeader getReceiptHeaderByID(long receiptID, String type);
 }
