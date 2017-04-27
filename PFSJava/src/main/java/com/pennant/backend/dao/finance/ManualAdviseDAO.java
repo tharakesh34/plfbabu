@@ -42,11 +42,13 @@
 */
 package com.pennant.backend.dao.finance;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
+import com.pennanttech.pff.core.TableType;
 
 public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	
@@ -64,7 +66,8 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	// Receipts
 	List<ManualAdvise> getManualAdviseByRef(String finReference, int adviseType, String type);
-
+	void saveMovement(ManualAdviseMovements movement);
+	void updateAdvPayment(long adviseID, BigDecimal paidAmount, BigDecimal waivedAmount, TableType tableType);
 	List<ManualAdviseMovements> getAdviseMovements(long id);
 	
 }

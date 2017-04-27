@@ -14,13 +14,13 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
-import com.pennant.backend.dao.impl.BasisCodeDAO;
+import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 
-public class FinODPenaltyRateDAOImpl extends BasisCodeDAO<FinODPenaltyRate> implements FinODPenaltyRateDAO{
+public class FinODPenaltyRateDAOImpl extends BasisNextidDaoImpl<FinODPenaltyRate> implements FinODPenaltyRateDAO{
 
 	private static Logger logger = Logger.getLogger(FinODPenaltyRateDAOImpl.class);
 
@@ -113,6 +113,33 @@ public class FinODPenaltyRateDAOImpl extends BasisCodeDAO<FinODPenaltyRate> impl
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return finODPenaltyRate.getFinReference();
+
+	}
+	
+
+	/**
+	 * Method for Finance Overdue penalty rates Insertion
+	 */
+	@Override
+	public void saveLog(FinODPenaltyRate finODPenaltyRate, String type) {
+		logger.debug("Entering");
+		
+		if (finODPenaltyRate.getLogKey() == 0 || finODPenaltyRate.getLogKey() == Long.MIN_VALUE) {
+			finODPenaltyRate.setLogKey(getNextidviewDAO().getNextId("SeqFinODPenaltyRates"));
+			logger.debug("get NextID:" + finODPenaltyRate.getLogKey());
+		}
+
+		StringBuilder insertSql = new StringBuilder("Insert Into FinODPenaltyRates");
+		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(" (LogKey, FinReference ,FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays,");
+		insertSql.append(" ODChargeCalOn , ODChargeAmtOrPerc ,ODAllowWaiver , ODMaxWaiverPerc )");
+		insertSql.append(" Values(:LogKey , :FinReference ,:FinEffectDate, :ApplyODPenalty, :ODIncGrcDays, :ODChargeType, :ODGraceDays, :ODChargeCalOn, ");
+		insertSql.append(" :ODChargeAmtOrPerc, :ODAllowWaiver , :ODMaxWaiverPerc )");
+
+		logger.debug("insertSql: " + insertSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODPenaltyRate);
+		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		logger.debug("Leaving");
 
 	}
 

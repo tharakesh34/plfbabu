@@ -1104,18 +1104,29 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT TotalProfit, TotalCpz From FinanceMain");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference ='" + finReference + "'");
+		selectSql.append(" Where FinReference =:FinReference");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 		logger.debug("Leaving");
 
-		financeMain = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-				typeRowMapper);
+		try {
+			financeMain = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
+		} catch (DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		List<BigDecimal> list = new ArrayList<BigDecimal>();
-		list.add(financeMain.getTotalProfit());
-		list.add(financeMain.getTotalCpz());
+		if (financeMain!=null) {
+			list.add(financeMain.getTotalProfit());
+			list.add(financeMain.getTotalCpz());
+		}else{
+			list.add(BigDecimal.ZERO);
+			list.add(BigDecimal.ZERO);
+		}
+
 		return list;
 	}
 
@@ -2689,5 +2700,25 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		logger.debug(Literal.LEAVING);
 		return namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, BigDecimal.class);
+	}
+	
+	@Override
+	public void updateBucketStatus(String finReference, String status,int bucket, String statusReason) {
+		
+		logger.debug("Entering");
+		
+		FinanceMain financeMain = new FinanceMain();
+		financeMain.setFinStatus(status);
+		financeMain.setFinStsReason(statusReason);
+		financeMain.setFinReference(finReference);
+		financeMain.setDueBucket(bucket);
+		StringBuilder updateSql = new StringBuilder("Update FinanceMain");
+		updateSql.append(" Set FinStatus = :FinStatus, FinStsReason = :FinStsReason, DueBucket=:DueBucket ");
+		updateSql.append(" Where FinReference =:FinReference");
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+
 	}
 }

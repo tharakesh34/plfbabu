@@ -252,4 +252,7 @@ public interface FinanceMainDAO {
 	 * @return The total maximum re-payment amount against the specified mandate excluding the finance.
 	 */
 	BigDecimal getTotalMaxRepayAmount(long mandateId, String finReference);
+
+	void updateBucketStatus(String finReference, String status, int bucket,
+			String statusReason);
 }

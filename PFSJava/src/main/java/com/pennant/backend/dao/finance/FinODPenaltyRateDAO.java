@@ -8,4 +8,5 @@ public interface FinODPenaltyRateDAO {
 	void update(FinODPenaltyRate penaltyRate,String type);
 	void delete(String finReference,String type);
 	String save(FinODPenaltyRate penaltyRate,String type);
+	void saveLog(FinODPenaltyRate finODPenaltyRate, String type);
 }

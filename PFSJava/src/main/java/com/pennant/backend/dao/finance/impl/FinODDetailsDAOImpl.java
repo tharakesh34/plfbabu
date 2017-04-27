@@ -407,8 +407,9 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		selectSql.append(" sum(TotPenaltyPaid) TotPenaltyPaid, sum(TotPenaltyBal) TotPenaltyBal, ");
 		selectSql.append(" SUM(FinCurODPri) FinCurODPri, SUM(FinCurODPft) FinCurODPft, ");
 		//First and last od Date 
+
 		selectSql
-				.append(" max(FinODSchdDate) FinODSchdDate ,MIN(FinODSchdDate) FinODTillDate, MAX(FinCurODDays) finCurODDays ");
+				.append(" MIN(FinODSchdDate) FinODSchdDate ,MAX(FinODSchdDate) FinODTillDate, MAX(FinCurODDays) finCurODDays ");
 		selectSql.append(" From FinODDetails");
 
 		if (App.DATABASE == Database.SQL_SERVER) {
@@ -427,6 +428,29 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		}
 		logger.debug("Leaving");
 		return finODDetails;
+	}
+
+	@Override
+	public Date getFinDueFromDate(String finReference) {
+		logger.debug("Entering");
+		FinODDetails finODDetails = new FinODDetails();
+		finODDetails.setFinReference(finReference);
+		StringBuilder selectSql = new StringBuilder("select MIN(FinODSchdDate) FinODSchdDate  ");
+		selectSql.append(" From FinODDetails");
+		if (App.DATABASE == Database.SQL_SERVER) {
+			selectSql.append(" WITH(NOLOCK) ");
+		}
+		selectSql.append(" Where FinReference =:FinReference AND FinCurODAmt > 0 GROUP BY FinReference ");
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
+		try {
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Date.class);
+		} catch (Exception e) {
+			logger.warn("Exception: ", e);
+			finODDetails = null;
+		}
+		logger.debug("Leaving");
+		return null;
 	}
 
 	/**

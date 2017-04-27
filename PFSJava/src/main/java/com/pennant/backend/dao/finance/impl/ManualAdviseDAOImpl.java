@@ -42,6 +42,7 @@
 */
 package com.pennant.backend.dao.finance.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -245,8 +246,67 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		List<ManualAdvise> adviseList = namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		logger.debug(Literal.LEAVING);
 		return adviseList;
-	}
+	}	
+	
+	/**
+	 * Method for updating Manual advise Payment Details
+	 * @param adviseID
+	 * @param paidAmount
+	 * @param waivedAmount
+	 * @param tableType
+	 */
+	@Override
+	public void updateAdvPayment(long adviseID, BigDecimal paidAmount , BigDecimal waivedAmount, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		
+		ManualAdvise manualAdvise = new ManualAdvise();
+		manualAdvise.setAdviseID(adviseID);
+		manualAdvise.setPaidAmount(paidAmount);
+		manualAdvise.setWaivedAmount(waivedAmount);
+		
+		StringBuilder	sql =new StringBuilder("update ManualAdvise" );
+		sql.append(tableType.getSuffix());
+		sql.append(" set ");
+		if(paidAmount.compareTo(BigDecimal.ZERO) > 0){
+			sql.append(" PaidAmount = PaidAmount + :PaidAmount ");
+		}
+		if(waivedAmount.compareTo(BigDecimal.ZERO) > 0){
+			if(paidAmount.compareTo(BigDecimal.ZERO) > 0){
+				sql.append(" , ");
+			}
+			sql.append(" WaivedAmount = WaivedAmount+:WaivedAmount ");
+		}
+		sql.append(" WHERE AdviseID = :AdviseID ");
 
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
+		this.namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		logger.debug(Literal.LEAVING);
+	}	
+	
+	@Override
+	public void saveMovement(ManualAdviseMovements movement) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql =new StringBuilder(" insert into ManualAdviseMovements ");
+		sql.append(" ( MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount, Status)" );
+		sql.append(" VALUES(:MovementID, :AdviseID, :MovementDate, :MovementAmount, :PaidAmount, :WaivedAmount, :Status)");
+		
+		// Get the identity sequence number.
+		if (movement.getMovementID() <= 0) {
+			movement.setAdviseID(getNextidviewDAO().getNextId("SeqManualAdviseMovements"));
+		}
+
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(movement);
+		this.namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		logger.debug(Literal.LEAVING);
+	}	
+	
 	@Override
 	public List<ManualAdviseMovements> getAdviseMovements(long id) {
 		logger.debug("Entering");
