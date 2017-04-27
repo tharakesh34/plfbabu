@@ -94,7 +94,8 @@ public class FinReceiptHeaderDAOImpl extends BasisNextidDaoImpl<FinReceiptHeader
 		header.setReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder(" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose, ");
-		selectSql.append(" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod " );
+		selectSql.append(" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod, ReceiptModeStatus, " );
+		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From FinReceiptHeader");
 		selectSql.append(StringUtils.trim(type));
 		selectSql.append(" Where Reference =:Reference ");
@@ -117,7 +118,7 @@ public class FinReceiptHeaderDAOImpl extends BasisNextidDaoImpl<FinReceiptHeader
 	@Override
 	public long save(FinReceiptHeader receiptHeader, TableType tableType) {
 		logger.debug("Entering");
-		if (receiptHeader.getId() == Long.MIN_VALUE) {
+		if (receiptHeader.getId() == 0 || receiptHeader.getId() == Long.MIN_VALUE) {
 			receiptHeader.setId(getNextidviewDAO().getNextId("SeqFinReceiptHeader"));
 			logger.debug("get NextID:" + receiptHeader.getId());
 		}
@@ -125,9 +126,11 @@ public class FinReceiptHeaderDAOImpl extends BasisNextidDaoImpl<FinReceiptHeader
 		StringBuilder insertSql = new StringBuilder("Insert Into FinReceiptHeader");
 		insertSql.append(tableType.getSuffix());
 		insertSql.append(" (ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose, ");
-		insertSql.append(" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod)");
+		insertSql.append(" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod, ReceiptModeStatus, ");
+		insertSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId )");
 		insertSql.append(" Values(:ReceiptID, :ReceiptDate , :ReceiptType, :RecAgainst, :Reference , :ReceiptPurpose, ");
-		insertSql.append(" :ReceiptMode, :ExcessAdjustTo , :AllocationType , :ReceiptAmount, :EffectSchdMethod)");
+		insertSql.append(" :ReceiptMode, :ExcessAdjustTo , :AllocationType , :ReceiptAmount, :EffectSchdMethod, :ReceiptModeStatus, ");
+		insertSql.append(" :Version, :LastMntOn, :LastMntBy, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId )");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -146,7 +149,9 @@ public class FinReceiptHeaderDAOImpl extends BasisNextidDaoImpl<FinReceiptHeader
 		updateSql.append(tableType.getSuffix());
 		updateSql.append(" Set ReceiptID=:ReceiptID, ReceiptDate=:ReceiptDate , ReceiptType=:ReceiptType, RecAgainst=RecAgainst, ");
 		updateSql.append(" Reference=:Reference , ReceiptPurpose=:ReceiptPurpose , ReceiptMode=:ReceiptMode, ExcessAdjustTo=:ExcessAdjustTo , ");
-		updateSql.append(" AllocationType=:AllocationType , ReceiptAmount=:ReceiptAmount, EffectSchdMethod=:EffectSchdMethod  ");
+		updateSql.append(" AllocationType=:AllocationType , ReceiptAmount=:ReceiptAmount, EffectSchdMethod=:EffectSchdMethod, ReceiptModeStatus=:ReceiptModeStatus,  ");
+		updateSql.append(" Version =:Version, LastMntOn=:LastMntOn, LastMntBy=:LastMntBy, RecordStatus=:RecordStatus, RoleCode=:RoleCode, ");
+		updateSql.append(" NextRoleCode=:NextRoleCode, TaskId=:TaskId, NextTaskId=:NextTaskId, RecordType=:RecordType, WorkflowId=:WorkflowId  ");
 		updateSql.append(" Where ReceiptID =:ReceiptID");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -175,6 +180,38 @@ public class FinReceiptHeaderDAOImpl extends BasisNextidDaoImpl<FinReceiptHeader
 		logger.debug("selectSql: " + deleteSql.toString());
 		this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
 		logger.debug("Leaving");
+	}
+
+	/**
+	 * Method for Fetching Finance Receipt Header by using Receipt ID
+	 */
+	@Override
+	public FinReceiptHeader getReceiptHeaderByID(long receiptID, String type) {
+		logger.debug("Entering");
+
+		FinReceiptHeader header = new FinReceiptHeader();
+		header.setReceiptID(receiptID);
+
+		StringBuilder selectSql = new StringBuilder(" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose, ");
+		selectSql.append(" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod, ReceiptModeStatus, " );
+		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" From FinReceiptHeader");
+		selectSql.append(StringUtils.trim(type));
+		selectSql.append(" Where ReceiptID =:ReceiptID ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
+		RowMapper<FinReceiptHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinReceiptHeader.class);
+
+		try {
+			header = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			header = null;
+		}
+
+		logger.debug("Leaving");
+		return header;
 	}
 
 	private ErrorDetails getError(String errorId, long receiptID, String userLanguage) {

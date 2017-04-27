@@ -107,7 +107,7 @@ public class FinReceiptDetailDAOImpl extends BasisNextidDaoImpl<FinReceiptDetail
 	@Override
 	public long save(FinReceiptDetail receiptDetail, TableType tableType) {
 		logger.debug("Entering");
-		if (receiptDetail.getId() == Long.MIN_VALUE) {
+		if (receiptDetail.getId() == 0 || receiptDetail.getId() == Long.MIN_VALUE) {
 			receiptDetail.setId(getNextidviewDAO().getNextId("SeqFinReceiptDetail"));
 			logger.debug("get NextID:" + receiptDetail.getId());
 		}
@@ -145,6 +145,22 @@ public class FinReceiptDetailDAOImpl extends BasisNextidDaoImpl<FinReceiptDetail
 		logger.debug("Leaving");
 	}
 
+	@Override
+	public void updateReceiptStatus(long receiptID, long receiptSeqID, String status) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReceiptID", receiptID);
+		source.addValue("ReceiptSeqID", receiptSeqID);
+		source.addValue("Status", status);
+		
+		StringBuilder updateSql = new StringBuilder("Update FinReceiptDetail");
+		updateSql.append(" Set Status=:Status ");
+		updateSql.append(" Where ReceiptID =:ReceiptID AND ReceiptSeqID=:ReceiptSeqID ");
 
+		logger.debug("updateSql: " + updateSql.toString());
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		logger.debug("Leaving");
+	}
 
 }
