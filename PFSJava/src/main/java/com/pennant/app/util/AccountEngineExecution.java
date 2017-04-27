@@ -45,7 +45,6 @@ package com.pennant.app.util;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,13 +61,11 @@ import com.pennant.Interface.model.IAccounts;
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.FinancePremiumDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
@@ -81,17 +78,12 @@ import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.commitment.Commitment;
-import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinancePremiumDetail;
 import com.pennant.backend.model.masters.SystemInternalAccountDefinition;
-import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
-import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AECommitment;
-import com.pennant.backend.model.rulefactory.DataSet;
-import com.pennant.backend.model.rulefactory.DataSetFiller;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -120,7 +112,6 @@ public class AccountEngineExecution implements Serializable {
 	private AccountInterfaceService accountInterfaceService;
 	private RuleExecutionUtil ruleExecutionUtil;
 	private AccountingSetDAO accountingSetDAO;
-	private FinancePremiumDetailDAO financePremiumDetailDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private FinTypeAccountingDAO finTypeAccountingDAO;
 	private CollateralSetupDAO		collateralSetupDAO;
@@ -132,249 +123,127 @@ public class AccountEngineExecution implements Serializable {
 	
 	/**
 	 * Method for Execution of Accounting Sets depend on Event 
-	 * @param dataSet
-	 * @param aeAmountCodes
-	 * @param type
-	 * @return
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 * @throws PFFInterfaceException 
-	 */
-	public List<ReturnDataSet> getAccEngineExecResults(DataSet dataSet,AEAmountCodes aeAmountCodes
-			,String createNow, Map<String, FeeRule> feeRuleDetailMap, boolean isAccrualCal, FinanceType finType)
-					throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
-		
-		return processAccountExecution(dataSet, aeAmountCodes, createNow, feeRuleDetailMap, isAccrualCal, finType, null);
-	}
-	
-	/**
-	 * Method for Execution of Accounting Sets depend on Event 
-	 * @param dataSet
-	 * @param aeAmountCodes
-	 * @param type
-	 * @return
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 * @throws PFFInterfaceException 
-	 */
-	public List<ReturnDataSet> getAccEngineExecResults(DataSet dataSet,AEAmountCodes aeAmountCodes
-			,String createNow, Map<String, FeeRule> feeRuleDetailMap, boolean isAccrualCal, FinanceType finType, FinancePremiumDetail financePremiumDetail)
-					throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
-		
-		return processAccountExecution(dataSet, aeAmountCodes, createNow, feeRuleDetailMap, isAccrualCal, finType, financePremiumDetail);
-	}
-	
-	/**
-	 * Method for Execution Stage entries for RIA Investments
-	 * @param dataSet
-	 * @param aeAmountCodes
 	 * @param createNow
-	 * @param feeRuleDetailMap
-	 * @return
-	 * @throws PFFInterfaceException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 */
-	public List<ReturnDataSet> getStageExecResults(DataSet dataSet,AEAmountCodes aeAmountCodes
-			,String createNow, String roleCode, Map<String, FeeRule> feeRuleDetailMap, FinanceType finType, FinancePremiumDetail premiumDetail) 
-					throws PFFInterfaceException, IllegalAccessException, InvocationTargetException{
-		
-		return processStageAccountExecution(dataSet, aeAmountCodes, createNow, roleCode, feeRuleDetailMap, finType, premiumDetail);
-	}
-	
-	/**
-	 * Method for Execution Of Fee & Charges Rules
-	 * @param dataSet
-	 * @param amountCode
-	 * @return
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 * @throws PFFInterfaceException 
-	 */
-	public List<FeeRule> getFeeChargesExecResults(DataSet dataSet,
-			AEAmountCodes aeAmountCodes, int formatter, boolean isWIF, FinanceType finType) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException{
-		
-		return processFeeChargesExecResults(dataSet,aeAmountCodes, isWIF, finType);
-	}
-	
-	/**
-	 * Method for Execution Of Fee & Charges Rules
-	 * @param dataSet
-	 * @param amountCode
-	 * @return
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 * @throws PFFInterfaceException 
-	 */
-	public List<FeeRule> getReExecFeeResults(DataSet dataSet,
-			AEAmountCodes aeAmountCodes, int formatter, boolean isWIF, FinanceType finType, List<FeeRule> existFeeList) 
-					throws IllegalAccessException, InvocationTargetException, PFFInterfaceException{
-		return processReExecFeeResults(dataSet,aeAmountCodes, formatter, isWIF, finType, existFeeList);
-	}
-	
-	/**
-	 * Method For execution of Provision Rule For Provision Calculated Amount
-	 * @param dataSet
-	 * @param aeAmountCodes
-	 * @return
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws PFFInterfaceException 
-	 */
-	public BigDecimal getProvisionExecResults(DataSet dataSet, AEAmountCodes aeAmountCodes) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException{
-		return processProvExecResults(dataSet,aeAmountCodes);
-	}
-	
-	/**
-	 * Method for Commitment posting Entries Execution
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 * @throws PFFInterfaceException 
-	 */
-	public List<ReturnDataSet> getCommitmentExecResults(AECommitment aeCommitment, Commitment commitment, String acSetEvent, 
-			String createNow, Map<String, FeeRule> feeRuleDetailMap) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException{
-	
-		return processCommitmentExecResults(aeCommitment, commitment, acSetEvent, createNow, feeRuleDetailMap);
-	}
-	/**
-	 * Method for VasRecording posting Entries Execution
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 * @throws PFFInterfaceException 
-	 */
-	public List<ReturnDataSet> getVasExecResults(VASRecording vASRecording, String acSetEvent, 
-			String createNow, Map<String, FeeRule> feeRuleDetailMap) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException{
-		
-		return processVASRecordingExecResults(vASRecording, acSetEvent, createNow, feeRuleDetailMap);
-	}
-	
-
-
-	/**
-	 * Method for Process Accounting Transaction Entry Details
-	 * @param dataSet
-	 * @param aeAmountCodes
-	 * @param createNow
-	 * @param feeRuleDetailMap
+	 * @param executingMap
 	 * @param isAccrualCal
-	 * @param finType
-	 * @param financePremiumDetail
 	 * @return
-	 * @throws PFFInterfaceException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
+	 * @throws PFFInterfaceException 
 	 */
-	private List<ReturnDataSet> processAccountExecution(DataSet dataSet,AEAmountCodes aeAmountCodes
-			,String createNow, Map<String, FeeRule> feeRuleDetailMap, boolean isAccrualCal, FinanceType finType, FinancePremiumDetail premiumDetail)
-			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException{
+	public List<ReturnDataSet> getAccEngineExecResults(String createNow, HashMap<String, Object> executingMap, boolean isAccrualCal)
+			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
-		
 
 		// Fill Amount Code Detail Object with Respect to Schedule Details
-		DataSetFiller	dataSetFiller=prepareAmountCodes(dataSet, aeAmountCodes, false, isAccrualCal, finType, premiumDetail);
+		prepareAmountCodes(false, isAccrualCal, executingMap);
 
 		// Execute entries depend on Finance Event
 		long accountingSetId;
-
-		String promotionCode = dataSet.getPromotionCode();
+		String promotionCode = (String) executingMap.get("fm_promotionCode");
+		String finType = (String) executingMap.get("ft_finType");
 
 		if (StringUtils.isNotBlank(promotionCode)) {
-			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, dataSet.getFinEvent(),
+			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, (String) executingMap.get("ae_finEvent"),
 					FinanceConstants.MODULEID_PROMOTION);
 		} else {
-			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), dataSet.getFinEvent(),
+			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(finType, (String) executingMap.get("ae_finEvent"),
 					FinanceConstants.MODULEID_FINTYPE);
 		}
-		
+
 		List<TransactionEntry> transactionEntries = null;
-		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
-		if (phase.equals(PennantConstants.APP_PHASE_DAY)) {
+		
+		if (PennantConstants.APP_PHASE_DAY.equals(SysParamUtil.getValueAsString(PennantConstants.APP_PHASE))) {
 			transactionEntries = getTransactionEntryDAO().getListTransactionEntryById(accountingSetId, "_AEView", true);
 		} else {
 			transactionEntries = EODProperties.getTransactionEntryList(accountingSetId);
 		}
 
-		List<ReturnDataSet> returnList = getPrepareAccountingSetResults(dataSet, transactionEntries,createNow,false, feeRuleDetailMap, finType,dataSetFiller,null,null);
-		
+		List<ReturnDataSet> returnList = getPrepareAccountingSetResults(new HashMap<String, Object>(), transactionEntries, createNow, false, executingMap);
+
 		logger.debug("Leaving");
+
 		return returnList;
 	}
 	
-	
 	/**
 	 * Method for Execution Stage entries for RIA Investments
-	 * @param dataSet
-	 * @param aeAmountCodes
 	 * @param createNow
-	 * @param feeRuleDetailMap
+	 * @param roleCode
+	 * @param executingMap
+	 * @param premiumDetail
 	 * @return
 	 * @throws PFFInterfaceException
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private List<ReturnDataSet> processStageAccountExecution(DataSet dataSet,AEAmountCodes aeAmountCodes
-			,String createNow, String roleCode, Map<String, FeeRule> feeRuleDetailMap, FinanceType finType, FinancePremiumDetail premiumDetail) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException{
+	public List<ReturnDataSet> getStageExecResults(String createNow, String roleCode, HashMap<String, Object> executingMap) 
+					throws PFFInterfaceException, IllegalAccessException, InvocationTargetException{
 		logger.debug("Entering");
 
-		//Fill Amount Code Detail Object with FinanceMain Object
-		DataSetFiller dataSetFiller = doFillDataSetFiller(dataSet ,dataSet.isNewRecord(),  false,finType, premiumDetail);
-		setAmountCodes(dataSetFiller,aeAmountCodes,dataSet.isNewRecord(), false, false);//set data to DataSetFiller Object		
+		// Fill Amount Code Detail Object with FinanceMain Object
+		doFillExecutingMap(executingMap);
+		setAmountCodes(executingMap, false, false);
 
 		List<TransactionEntry> transactionEntries = getTransactionEntryDAO().getListTransactionEntryByRefType(
-				dataSet.getFinType(),dataSet.getModuledefiner(), FinanceConstants.PROCEDT_STAGEACC, roleCode,  "_AEView",true);
-		
-		List<ReturnDataSet> returnList = getPrepareAccountingSetResults(dataSet,
-				transactionEntries,createNow,false, feeRuleDetailMap, finType,dataSetFiller,null,null);
+				(String) executingMap.get("ft_finType"), (String) executingMap.get("moduleDefiner"),
+				FinanceConstants.PROCEDT_STAGEACC, roleCode, "_AEView", true);
+
+		List<ReturnDataSet> returnList = getPrepareAccountingSetResults(new HashMap<String, Object>(), transactionEntries, createNow, false, executingMap);
+
 		logger.debug("Leaving");
+
 		return returnList;
 	}
-
-
+	
 	/**
 	 * Method for Execution Of Fee & Charges Rules
-	 * @param dataSet
-	 * @param amountCode
+	 * 
+	 * @param formatter
+	 * @param isWIF
+	 * @param executingMap
 	 * @return
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws PFFInterfaceException
 	 */
-	private List<FeeRule> processFeeChargesExecResults(DataSet dataSet,
-			AEAmountCodes aeAmountCodes,boolean isWIF, FinanceType finType) throws IllegalAccessException, InvocationTargetException{
+	public List<FeeRule> getFeeChargesExecResults(int formatter, boolean isWIF, HashMap<String, Object> executingMap)
+			throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
 		
 		//Prepare AmountCode Details
 		
-		DataSetFiller dataSetFiller =	prepareAmountCodes(dataSet, aeAmountCodes, isWIF, false,finType, null);
+		prepareAmountCodes(isWIF, false, executingMap);
 		
 		//Execute entries depend on Finance Event
 		long accountingSetId;
 
-		String promotionCode = dataSet.getPromotionCode();
+		String promotionCode = (String) executingMap.get("fm_promotionCode");
 
 		if (StringUtils.isNotBlank(promotionCode)) {
-			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, dataSet.getFinEvent(),
+			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, (String)executingMap.get("ae_finEvent"),
 					FinanceConstants.MODULEID_PROMOTION);
 		} else {
-			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), dataSet.getFinEvent(),
+			accountingSetId = getFinTypeAccountingDAO().getAccountSetID((String) executingMap.get("ft_finType"), (String)executingMap.get("ae_finEvent"),
 					FinanceConstants.MODULEID_FINTYPE);
 		}
 
 		List<FeeRule> feeRules = new ArrayList<FeeRule>();
-		String ruleEvent= dataSet.getFinEvent();
+		String ruleEvent= (String)executingMap.get("ae_finEvent");
 		if(ruleEvent.startsWith(AccountEventConstants.ACCEVENT_ADDDBS) || 
 				ruleEvent.startsWith(AccountEventConstants.ACCEVENT_DEFAULT)){
 			ruleEvent = AccountEventConstants.ACCEVENT_ADDDBS;
 		}
 		
-		if(dataSetFiller.getDISBURSE() == null){
-			dataSetFiller.setDISBURSE(BigDecimal.ZERO);
+		if(executingMap.get("ae_disburse") == null){
+			executingMap.put("ae_disburse", BigDecimal.ZERO);
 		}
 		
 		//Fetch Stage Accounting AccountingSetId List 
 		List<Long> accSetIdList = new ArrayList<Long>();
-		accSetIdList.addAll(getFinanceReferenceDetailDAO().getRefIdListByFinType(finType.getFinType(), 
-				("").equals(dataSet.getModuledefiner())? FinanceConstants.FINSER_EVENT_ORG : dataSet.getModuledefiner(), null , "_ACView"));
-		if (!FinanceConstants.FINSER_EVENT_PREAPPROVAL.equals(dataSet.getModuledefiner())) {
+		accSetIdList.addAll(getFinanceReferenceDetailDAO().getRefIdListByFinType((String) executingMap.get("ft_finType"), 
+				("").equals((String) executingMap.get("moduleDefiner"))? FinanceConstants.FINSER_EVENT_ORG : (String) executingMap.get("moduleDefiner"), null , "_ACView"));
+		if (!FinanceConstants.FINSER_EVENT_PREAPPROVAL.equals((String) executingMap.get("moduleDefiner"))) {
 			accSetIdList.add(accountingSetId);
         }
 		
@@ -397,45 +266,49 @@ public class AccountEngineExecution implements Serializable {
 				feeRule.setCalFeeModify(rule.isCalFeeModify());
 				
 				BigDecimal amount = BigDecimal.ZERO;
-				HashMap<String, Object> fieldsAndValues = dataSetFiller.getDeclaredFieldValues();
-				amount = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), fieldsAndValues,
-						dataSet.getFinCcy(), RuleReturnType.DECIMAL);
+				amount = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), executingMap,
+						(String) executingMap.get("fm_finCcy"), RuleReturnType.DECIMAL);
 
 				totalSchdFeeAmt = totalSchdFeeAmt.add(amount);
-				dataSetFiller.setFEETOSCHD(totalSchdFeeAmt);
+				executingMap.put("FEETOSCHD", totalSchdFeeAmt);
 				feeRule.setFeeAmount(amount);
 				feeRules.add(feeRule);
 			}
 		}
+		
 		logger.debug("Leaving");
+		
 		return feeRules;
 	}
 	
 	/**
 	 * Method for Execution Of Fee & Charges Rules
-	 * @param dataSet
-	 * @param amountCode
+	 * 
+	 * @param formatter
+	 * @param isWIF
+	 * @param existFeeList
+	 * @param executingMap
 	 * @return
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws PFFInterfaceException
 	 */
-	private List<FeeRule> processReExecFeeResults(DataSet dataSet,
-			AEAmountCodes aeAmountCodes, int formatter, boolean isWIF, FinanceType finType, List<FeeRule> existFeeList) throws IllegalAccessException, InvocationTargetException{
+	public List<FeeRule> getReExecFeeResults(int formatter, boolean isWIF, List<FeeRule> existFeeList,
+			HashMap<String, Object> executingMap) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
 		
 		//Prepare AmountCode Details
-		DataSetFiller dataSetFiller=prepareAmountCodes(dataSet, aeAmountCodes, isWIF, false,finType, null);
+		prepareAmountCodes(isWIF, false, executingMap);
 		
 		//Execute entries depend on Finance Event
 		long accountingSetId;
-
-		String promotionCode = dataSet.getPromotionCode();
+		String promotionCode = (String) executingMap.get("fm_promotionCode");
 
 		if (StringUtils.isNotBlank(promotionCode)) {
-			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, dataSet.getFinEvent(),
+			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, (String)executingMap.get("ae_finEvent"),
 					FinanceConstants.MODULEID_PROMOTION);
 		} else {
-			accountingSetId = getFinTypeAccountingDAO().getAccountSetID(finType.getFinType(), dataSet.getFinEvent(),
+			accountingSetId = getFinTypeAccountingDAO().getAccountSetID((String) executingMap.get("ft_finType"), (String)executingMap.get("ae_finEvent"),
 					FinanceConstants.MODULEID_FINTYPE);
 		}
 
@@ -443,22 +316,22 @@ public class AccountEngineExecution implements Serializable {
 		int feeOrder = 0;
 		if(existFeeList != null && !existFeeList.isEmpty()){
 			for (FeeRule feeRule : existFeeList) {
-				dataSetFiller.setDISBURSE(dataSetFiller.getDISBURSE().add(feeRule.getFeeAmount().subtract(
-						feeRule.getWaiverAmount()).subtract(feeRule.getPaidAmount())));
+				executingMap.put("ae_disburse", 
+						((BigDecimal)executingMap.get("ae_disburse")).add(feeRule.getFeeAmount().subtract(feeRule.getWaiverAmount()).subtract(feeRule.getPaidAmount())));
 				feeOrder = feeRule.getFeeOrder();
 			}
 		}
 		
 		List<FeeRule> feeRules = existFeeList;
-		String ruleEvent= dataSet.getFinEvent();
+		String ruleEvent= (String)executingMap.get("ae_finEvent");
 		if(ruleEvent.startsWith(AccountEventConstants.ACCEVENT_ADDDBS)){
 			ruleEvent = AccountEventConstants.ACCEVENT_ADDDBS;
 		}
 		
 		//Fetch Stage Accounting AccountingSetId List 
 		List<Long> accSetIdList = new ArrayList<Long>();
-		if(dataSet.isNewRecord() && ruleEvent.startsWith(AccountEventConstants.ACCEVENT_ADDDBS)){
-			accSetIdList.addAll(getFinanceReferenceDetailDAO().getRefIdListByFinType(finType.getFinType(),
+		if((boolean) executingMap.get("ae_newRecord") && ruleEvent.startsWith(AccountEventConstants.ACCEVENT_ADDDBS)){
+			accSetIdList.addAll(getFinanceReferenceDetailDAO().getRefIdListByFinType((String) executingMap.get("ft_finType"),
 					FinanceConstants.FINSER_EVENT_ORG,null , "_ACView"));
 		}
 		accSetIdList.add(accountingSetId);
@@ -478,114 +351,84 @@ public class AccountEngineExecution implements Serializable {
 				feeRule.setAllowWaiver(rule.isWaiver());
 				feeRule.setWaiverPerc(rule.getWaiverPerc());
 				
-				BigDecimal amount = BigDecimal.ZERO;
-				HashMap<String, Object> fieldsAndValues = dataSetFiller.getDeclaredFieldValues();
+				BigDecimal amount = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), executingMap, (String) executingMap.get("fm_finCcy"), RuleReturnType.DECIMAL);
 
-				amount = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), fieldsAndValues, dataSet.getFinCcy(), RuleReturnType.DECIMAL);
-
-				dataSetFiller.setDISBURSE(dataSetFiller.getDISBURSE().add(amount));
+				executingMap.put("ae_disburse",((BigDecimal)executingMap.get("ae_disburse")).add(amount));
 				feeRule.setFeeAmount(amount);
 				feeRules.add(feeRule);
 			}
 		}
 
 		logger.debug("Leaving");
+	
 		return feeRules;
 	}
-
+	
 	/**
 	 * Method For execution of Provision Rule For Provision Calculated Amount
-	 * @param dataSet
-	 * @param aeAmountCodes
+	 * 
+	 * @param executingMap
 	 * @return
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
+	 * @throws PFFInterfaceException
 	 */
-	private BigDecimal processProvExecResults(DataSet dataSet, AEAmountCodes aeAmountCodes) throws IllegalAccessException, InvocationTargetException{
+	public BigDecimal getProvisionExecResults(HashMap<String, Object> executingMap) throws IllegalAccessException,
+			InvocationTargetException, PFFInterfaceException {
 
-		//Fill Amount Code Detail Object with FinanceMain Object
-		
-		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
-		boolean isEODProcess = false;
-		if (phase.equals(PennantConstants.APP_PHASE_EOD)) {
-			isEODProcess = true;
-		}
-		
-		FinanceType financeType = null;
-		if(isEODProcess){
-			financeType = EODProperties.getFinanceType(dataSet.getFinType());
-		}else{
-			financeType = getFinanceTypeDAO().getFinanceTypeByFinType(dataSet.getFinType());
-		}
-		
-		DataSetFiller dataSetFiller = doFillDataSetFiller(dataSet ,dataSet.isNewRecord(), false,financeType, null);
-		setAmountCodes(dataSetFiller,aeAmountCodes,dataSet.isNewRecord(), false, false);//set data to DataSetFiller Object	
+		doFillExecutingMap(executingMap);
+		setAmountCodes(executingMap, false, false);	
 		BigDecimal provCalAmount = BigDecimal.ZERO;
 
 		String rule = getRuleDAO().getAmountRule("PROV", RuleConstants.MODULE_PROVSN, RuleConstants.EVENT_PROVSN);
-		if(rule != null){
-			
-			Object result = getRuleExecutionUtil().executeRule(rule, dataSetFiller.getDeclaredFieldValues(),
-					dataSet.getFinCcy(), RuleReturnType.DECIMAL);
+	
+		if (rule != null) {
+			Object result = getRuleExecutionUtil().executeRule(rule, executingMap, (String) executingMap.get("fm_finCcy"), RuleReturnType.DECIMAL);
 			provCalAmount = new BigDecimal(result == null ? "0" : result.toString());
 		}
 		
 		return provCalAmount;
 	}
+	
 	/**
-	 * Method for VASRecording posting Entries Execution
+	 * Method for Commitment posting Entries Execution
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 * @throws PFFInterfaceException 
 	 */
-	private List<ReturnDataSet> processVASRecordingExecResults(VASRecording vASRecording, String acSetEvent, 
-			String createNow, Map<String, FeeRule> feeRuleDetailMap) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException{
+	public List<ReturnDataSet> getCommitmentExecResults(AECommitment aeCommitment, Commitment commitment, String acSetEvent, 
+			String createNow, HashMap<String, Object> executingMap) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException{
 		
 		logger.debug("Entering");
 		
-		//DataSet Object preparation
-		DataSet dataSet = new DataSet();
-		dataSet.setFinReference(vASRecording.getVasReference());
-		dataSet.setFinEvent(acSetEvent);
-		dataSet.setPostDate(DateUtility.getSysDate());
-		dataSet.setValueDate(DateUtility.getSysDate());
-		dataSet.setFeeAmount(vASRecording.getFee());
-
-		//Setting Branch based on the VAS selection
+		HashMap<String, Object> aeCommitmentMap = new HashMap<String, Object>();
 		
-		if(StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER,vASRecording.getPostingAgainst())){
-			
-			Customer customer = getCustomerDAO().getCustomerByCIF(vASRecording.getPrimaryLinkRef(),"");
-			
-			dataSet.setCustId(customer.getCustID());
-			dataSet.setFinBranch(customer.getCustDftBranch());
-			dataSet.setFinCcy(customer.getCustBaseCcy());
-			dataSet.setCustCIF(customer.getCustCIF());
-			
-		}else if(StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE,vASRecording.getPostingAgainst())){
-			
-			FinanceMain finMain = getFinanceMainDAO().getFinanceMainForBatch(vASRecording.getPrimaryLinkRef());
-			
-			dataSet.setFinBranch(finMain.getFinBranch());
-			dataSet.setFinCcy(finMain.getFinCcy());
-			dataSet.setCustId(finMain.getCustID());
-			dataSet.setCustCIF(finMain.getLovDescCustCIF());
-			
-		}else if(StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL,vASRecording.getPostingAgainst())){
-			
-			CollateralSetup collateralSetup = getCollateralSetupDAO().getCollateralSetupByRef(vASRecording.getPrimaryLinkRef(),"");
-			Customer customer = getCustomerDAO().getCustomerByID(collateralSetup.getDepositorId(),"");
-			
-			dataSet.setCustId(customer.getCustID());
-			dataSet.setFinBranch(customer.getCustDftBranch());
-			dataSet.setCustCIF(customer.getCustCIF());
-			dataSet.setFinCcy(collateralSetup.getCollateralCcy());
-			
+		aeCommitmentMap.put("cmt_postDate", DateUtility.getSysDate());
+		aeCommitmentMap.put("cmt_valueDate", DateUtility.getSysDate());
+		
+		//Commitment Execution Data Preparation
+		doFillCommitmentData(commitment, aeCommitment, executingMap);
+		
+		Customer customer = getCustomerDAO().getCustomerForPostings(commitment.getCustID());
+		
+		if (customer != null) {
+			BeanUtils.copyProperties(aeCommitment, customer);
 		}
-
+	
+		aeCommitment.setCmtAmount(commitment.getCmtAmount());
+		aeCommitment.setCmtAmountOther(commitment.getCmtAvailable());
+		aeCommitment.setCmtUtilized(commitment.getCmtUtilizedAmount());
+		aeCommitment.setCmtUtilizedOther(commitment.getCmtUtilizedAmount());
+		aeCommitment.setCmtMultiBrach(commitment.isMultiBranch());
+		aeCommitment.setCmtRevolving(commitment.isRevolving());
+		aeCommitment.setCmtShared(commitment.isSharedCmt());
+		aeCommitment.setCmtUsedEarlier(commitment.isNonperformingStatus());
+		
+		commitment.getDeclaredFieldValues(aeCommitmentMap);
+		
 		//Accounting Set Details
 		List<TransactionEntry> transactionEntries = null;
-		long accountingSetId = vASRecording.getVasConfiguration().getFeeAccounting();
+		long accountingSetId = getAccountingSetDAO().getAccountingSetId(acSetEvent, acSetEvent);
 		if (accountingSetId != 0) {
 			//get List of transaction entries
 			transactionEntries = getTransactionEntryDAO().getListTransactionEntryById(accountingSetId, "_AEView",true);
@@ -593,14 +436,70 @@ public class AccountEngineExecution implements Serializable {
 		
 		List<ReturnDataSet> returnDataSets = null;
 		if(transactionEntries != null && transactionEntries.size() > 0){
-			returnDataSets =  getPrepareAccountingSetResults(dataSet, transactionEntries, createNow,true, feeRuleDetailMap, null,null,null,vASRecording);
+			returnDataSets =  getPrepareAccountingSetResults(aeCommitmentMap, transactionEntries, createNow,true, executingMap);
+		}
+		
+		logger.debug("Leaving");
+		
+		return returnDataSets;
+	}
+	
+	/**
+	 * Method for VasRecording posting Entries Execution
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
+	 * @throws PFFInterfaceException 
+	 */
+	public List<ReturnDataSet> getVasExecResults(String acSetEvent, String createNow, HashMap<String, Object> executingMap) 
+			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException{
+		
+		logger.debug("Entering");
+		
+		executingMap.put("ae_finEvent", acSetEvent);
+		executingMap.put("PostDate", DateUtility.getSysDate());
+		executingMap.put("ValueDate", DateUtility.getSysDate());
+
+		//Setting Branch based on the VAS selection
+		
+		if(StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER,(String) executingMap.get("vr_postingAgainst"))){
+			
+			Customer customer = getCustomerDAO().getCustomerByCIF((String) executingMap.get("vr_primaryLinkRef"),"");
+			
+			customer.getDeclaredFieldValues(executingMap);
+			
+		}else if(StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE,(String) executingMap.get("vr_postingAgainst"))){
+			
+			FinanceMain finMain = getFinanceMainDAO().getFinanceMainForBatch((String) executingMap.get("vr_primaryLinkRef"));
+			
+			finMain.getDeclaredFieldValues(executingMap);
+			
+		}else if(StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL,(String) executingMap.get("vr_postingAgainst"))){
+			
+			CollateralSetup collateralSetup = getCollateralSetupDAO().getCollateralSetupByRef((String) executingMap.get("vr_primaryLinkRef"),"");
+			Customer customer = getCustomerDAO().getCustomerByID(collateralSetup.getDepositorId(),"");
+			
+			customer.getDeclaredFieldValues(executingMap);
+			collateralSetup.getDeclaredFieldValues(executingMap);
+		}
+
+		//Accounting Set Details
+		List<TransactionEntry> transactionEntries = null;
+		VASConfiguration vASConfiguration = (VASConfiguration)executingMap.get("vr_vasConfiguration");
+		long accountingSetId = vASConfiguration.getFeeAccounting();
+		if (accountingSetId != 0) {
+			//get List of transaction entries
+			transactionEntries = getTransactionEntryDAO().getListTransactionEntryById(accountingSetId, "_AEView",true);
+		}
+		
+		List<ReturnDataSet> returnDataSets = null;
+		HashMap<String, Object> aeCommitmentMap = new HashMap<String, Object>();
+		if(transactionEntries != null && transactionEntries.size() > 0){
+			returnDataSets =  getPrepareAccountingSetResults(aeCommitmentMap, transactionEntries, createNow,true, executingMap);
 		}
 		
 		//Method for Checking for Reverse Calculations Based upon Negative Amounts
 		for (ReturnDataSet set : returnDataSets) {
-
 			if (set.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
-
 				String tranCode = set.getTranCode();
 				String revTranCode = set.getRevTranCode();
 				String debitOrCredit = set.getDrOrCr();
@@ -619,60 +518,14 @@ public class AccountEngineExecution implements Serializable {
 		}
 		
 		logger.debug("Leaving");
+		
 		return returnDataSets;
 	}
 	
-	/**
-	 * Method for Commitment posting Entries Execution
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 * @throws PFFInterfaceException 
-	 */
-	private List<ReturnDataSet> processCommitmentExecResults(AECommitment aeCommitment, Commitment commitment, String acSetEvent, 
-			String createNow, Map<String, FeeRule> feeRuleDetailMap) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException{
-		
-		logger.debug("Entering");
-		
-		//DataSet Object preparation
-		DataSet dataSet = new DataSet();
-		dataSet.setFinReference(commitment.getCmtReference());
-		dataSet.setFinEvent(acSetEvent);
-		dataSet.setPostDate(DateUtility.getSysDate());
-		dataSet.setValueDate(DateUtility.getSysDate());
-		dataSet.setFinBranch(commitment.getCmtBranch());
-		dataSet.setFinCcy(commitment.getCmtCcy());
-		dataSet.setCmtAccount(commitment.getCmtAccount());
-		dataSet.setCustId(commitment.getCustID());		
-		dataSet.setOpenNewCmtAc(commitment.isOpenAccount());
-		dataSet.setCmtChargeAccount(commitment.getChargesAccount());
-		dataSet.setCmtChargeAmount(commitment.getCmtCharges());
-		
-		//Commitment Execution Data Preparation
-		doFillCommitmentData(dataSet, commitment, aeCommitment);
-			
-		//Accounting Set Details
-		List<TransactionEntry> transactionEntries = null;
-		long accountingSetId = getAccountingSetDAO().getAccountingSetId(acSetEvent, acSetEvent);
-		if (accountingSetId != 0) {
-			//get List of transaction entries
-			transactionEntries = getTransactionEntryDAO().getListTransactionEntryById(accountingSetId, "_AEView",true);
-		}
-		
-		List<ReturnDataSet> returnDataSets = null;
-		if(transactionEntries != null && transactionEntries.size() > 0){
-			returnDataSets =  getPrepareAccountingSetResults(dataSet, transactionEntries, createNow,true, feeRuleDetailMap, null,null,aeCommitment,null);
-		}
-		
-		
-		logger.debug("Leaving");
-		return returnDataSets;
-	}	
-	
-	public List<ReturnDataSet> processAccountingByEvent(DataSet dataSet,DataSetFiller dataSetFiller,String acSetEvent, String createNow) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	public List<ReturnDataSet> processAccountingByEvent(HashMap<String, Object> executingMap,String createNow) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
 	
-		//DataSet Object preparation
-		dataSet.setFinEvent(acSetEvent);
+		String acSetEvent = (String) executingMap.get("ae_finEvent");
 		
 		//Accounting Set Details
 		List<TransactionEntry> transactionEntries = null;
@@ -684,8 +537,9 @@ public class AccountEngineExecution implements Serializable {
 		}
 		
 		List<ReturnDataSet> returnDataSets = null;
+
 		if(transactionEntries != null && transactionEntries.size() > 0){
-			returnDataSets =  getPrepareAccountingSetResults(dataSet, transactionEntries, createNow,true, null, null,dataSetFiller,null,null);
+			returnDataSets =  getPrepareAccountingSetResults(new HashMap<String, Object>(), transactionEntries, createNow,true, executingMap);
 		}
 		
 		
@@ -697,45 +551,52 @@ public class AccountEngineExecution implements Serializable {
 
 	/**
 	 * Method for Preparing List of FeeRule Objects 
-	 * @param dataSet
-	 * @param amountCode
+	 * @param isWIF
+	 * @param isAccrualCal
+	 * @param premiumDetail
+	 * @param executingMap
 	 * @return
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	private DataSetFiller prepareAmountCodes(DataSet dataSet,AEAmountCodes aeAmountCodes, boolean isWIF, boolean isAccrualCal, FinanceType financeType, FinancePremiumDetail premiumDetail) 
-			throws IllegalAccessException, InvocationTargetException{
+	private HashMap<String, Object> prepareAmountCodes(boolean isWIF, boolean isAccrualCal, HashMap<String, Object> executingMap) 
+			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
-		//Fill Amount Code Detail Object with FinanceMain Object
-		DataSetFiller dataSetFiller = doFillDataSetFiller(dataSet ,dataSet.isNewRecord(), isAccrualCal,financeType, premiumDetail);
-		
-		setAmountCodes(dataSetFiller,aeAmountCodes,dataSet.isNewRecord(), isWIF, isAccrualCal);//set data to DataSetFiller Object	
+		// Fill Amount Code Detail Object with FinanceMain Object
+		doFillExecutingMap(executingMap);
+		setAmountCodes(executingMap, isWIF, isAccrualCal);
+
 		logger.debug("Leaving");
-		return dataSetFiller;
+
+		return executingMap;
 	}
 	
 	/**
 	 * Method for preparing List of ReturnDataSet objects by executing rules
-	 * @param dataSet
-	 * @param accountingSetId
+	 * @param aeCommitmentMap
+	 * @param transactionEntries
+	 * @param createNow
+	 * @param isCommitment
+	 * @param executingMap
+	 * @param aeCommitment
 	 * @return
 	 * @throws PFFInterfaceException 
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	private List<ReturnDataSet> getPrepareAccountingSetResults(DataSet dataSet, List<TransactionEntry> transactionEntries,
-			String createNow,boolean isCommitment, Map<String, FeeRule> feeRuleDetailMap, FinanceType financeType,DataSetFiller dataSetFiller,AECommitment aeCommitment,VASRecording vASRecording) 
+	private List<ReturnDataSet> getPrepareAccountingSetResults(HashMap<String, Object> aeCommitmentMap, List<TransactionEntry> transactionEntries,
+			String createNow,boolean isCommitment, HashMap<String, Object> executingMap) 
 					throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
-		logger.trace("FIN REFERENCE: " + dataSet.getFinReference());
+		logger.trace("FIN REFERENCE: " + (String)executingMap.get("fm_finReference"));
 		
-		Customer customer = getCustomerDAO().getCustomerForPostings(dataSet.getCustId());//TODO : Only using for Customer CIF, better remove DB hitting
+		Customer customer = getCustomerDAO().getCustomerForPostings((long)executingMap.get("fm_custID"));//TODO : Only using for Customer CIF, better remove DB hitting
 		if (customer == null) {
 			Messagebox.show(Labels.getLabel("Cust_NotFound"),Labels.getLabel("message.Error"),Messagebox.OK,"z-msgbox z-msgbox-error");
 			return null;
 		}else{
-			dataSet.setCustCIF(customer.getCustCIF());
+			executingMap.put("ct_custCIF", customer.getCustCIF());
 		}
 
 		List<ReturnDataSet> returnDataSets = new ArrayList<ReturnDataSet>();
@@ -787,16 +648,15 @@ public class AccountEngineExecution implements Serializable {
 		
 		Map<String, String> ruleResultMap = null;
 		if(ImplementationConstants.CLIENTTYPE.equals(ImplementationConstants.BANK)){
-			ruleResultMap =  doProcessSubHeadRules(subHeadSqlList, aeCommitment,vASRecording, dataSetFiller, 
-					dataSet.getFinCcy());
+			ruleResultMap =  doProcessSubHeadRules(subHeadSqlList, executingMap);
 		}
 
 		//Set Account number generation
 		for (TransactionEntry transactionEntry : transactionEntries) {
 			
 			if("N".equals(createNow)){
-				IAccounts account = getAccountNumber(dataSet,transactionEntry,isCommitment,false, financeType, accountsMap, 
-						accountCcyMap, sysIntAccMap, ruleResultMap, dataSetFiller);
+				IAccounts account = getAccountNumber(transactionEntry,isCommitment,false, accountsMap, 
+						accountCcyMap, sysIntAccMap, ruleResultMap, executingMap);
 				if(account != null){
 					accountsList.add(account);
 				}
@@ -804,8 +664,8 @@ public class AccountEngineExecution implements Serializable {
 				account = null;
 				
 			}else{
-				IAccounts account = getAccountNumber(dataSet,transactionEntry,isCommitment,true, financeType, accountsMap, 
-						accountCcyMap, sysIntAccMap, ruleResultMap, dataSetFiller);
+				IAccounts account = getAccountNumber(transactionEntry,isCommitment,true, accountsMap, 
+						accountCcyMap, sysIntAccMap, ruleResultMap, executingMap);
 				if(account != null){
 					logger.trace("Refactoring of Account Engine: accountsList Size := " + accountsList.size());
 					accountsList.add(account);
@@ -846,39 +706,47 @@ public class AccountEngineExecution implements Serializable {
 			
 			returnDataSet = new ReturnDataSet();
 			//Set Object Data of ReturnDataSet(s)
-			returnDataSet.setFinReference(dataSet.getFinReference());
-			returnDataSet.setFinBranch(dataSet.getFinBranch());
-			returnDataSet.setFinEvent(dataSet.getFinEvent());
+			
+			String finReference = (String) executingMap.get("fm_finReference");
+			String finBranch = (String) executingMap.get("fm_finBranch");
+			String finEvent = (String) executingMap.get("ae_finEvent");
+			String finPurpose = (String) executingMap.get("fm_finPurpose");
+			String finCcy = (String) executingMap.get("fm_finCcy");
+			long custID = (long) executingMap.get("fm_custID");
+			Date postDate = (Date) executingMap.get("PostDate");
+			
+			returnDataSet.setFinReference(finReference);
+			returnDataSet.setFinBranch(finBranch);
+			returnDataSet.setFinEvent(finEvent);
 			returnDataSet.setLovDescEventCodeName(transactionEntry.getLovDescEventCodeDesc());
 			returnDataSet.setAccSetCodeName(transactionEntry.getLovDescAccSetCodeName());
 			returnDataSet.setAccSetId(transactionEntry.getAccountSetid());
-			returnDataSet.setCustId(dataSet.getCustId());
+			returnDataSet.setCustId(custID);
 			returnDataSet.setTranDesc(transactionEntry.getTransDesc());
-			returnDataSet.setPostDate(dataSet.getPostDate());
-			returnDataSet.setValueDate(dataSet.getPostDate());
+			returnDataSet.setPostDate(postDate);
+			returnDataSet.setValueDate(postDate);
 			returnDataSet.setShadowPosting(transactionEntry.isShadowPosting());
 			returnDataSet.setPostToSys(transactionEntry.getPostToSys());
 			returnDataSet.setDerivedTranOrder(transactionEntry.getDerivedTranOrder());
 			returnDataSet.setTransOrder(transactionEntry.getTransOrder());
-			String ref = dataSet.getFinReference() + "/" + dataSet.getFinEvent() + "/" + transactionEntry.getTransOrder();
+			String ref = finReference + "/" + finEvent + "/" + transactionEntry.getTransOrder();
 			returnDataSet.setPostingId(ref);
-			returnDataSet.setFinPurpose(dataSet.getFinPurpose());
+			returnDataSet.setFinPurpose(finPurpose);
 			if("N".equals(createNow)){
 				returnDataSet.setAccountType(transactionEntry.getAccount());
 			}
 
 			//Post Reference
-			String branch = StringUtils.isBlank(transactionEntry.getAccountBranch())? dataSet.getFinBranch():transactionEntry.getAccountBranch();
+			String branch = StringUtils.isBlank(transactionEntry.getAccountBranch())? finBranch:transactionEntry.getAccountBranch();
 					
 			String accType = "";
-			if(financeType != null){
-				accType = StringUtils.isBlank(transactionEntry.getAccountType())? financeType.getFinAcType():transactionEntry.getAccountType();
+			if(executingMap.containsKey("ft_finAcType")){
+				accType = StringUtils.isBlank(transactionEntry.getAccountType())? StringUtils.trimToEmpty((String) executingMap.get("ft_finAcType")):transactionEntry.getAccountType();
 			}else{
 				accType = StringUtils.isBlank(transactionEntry.getAccountType())? "":transactionEntry.getAccountType();
 			}
 			
-			returnDataSet.setPostref(branch+"-"+accType+"-"+dataSet.getFinCcy());
-
+			returnDataSet.setPostref(branch + "-" + accType + "-" + finCcy);
 			returnDataSet.setPostStatus("S");
 			returnDataSet.setAmountType(transactionEntry.getChargeType());
 			
@@ -897,16 +765,22 @@ public class AccountEngineExecution implements Serializable {
 			//Regarding to Posting Data
 			if(!"N".equals(createNow)){
 				returnDataSet.setAccountType(acc.getAcType());
-				returnDataSet.setFinType(financeType == null ? "" :financeType.getFinType());
+				
+				String finType = "";
+				if(executingMap.containsKey("ft_finType")) {
+					finType = ((String)executingMap.get("ft_finType"));
+				}
+				returnDataSet.setFinType(finType);
+				
 				returnDataSet.setCustCIF(customer.getCustCIF());
-				returnDataSet.setFinBranch(dataSet.getFinBranch());
+				returnDataSet.setFinBranch(finBranch);
 				returnDataSet.setFlagCreateNew(acc.getFlagCreateNew());
 				returnDataSet.setFlagCreateIfNF(acc.getFlagCreateIfNF());
 				returnDataSet.setInternalAc(acc.getInternalAc());
 			}
 			
 			//Amount Rule Execution for Amount Calculation
-			BigDecimal postAmt = executeAmountRule(dataSet.getFinEvent(), transactionEntry, feeRuleDetailMap, dataSet.getFinCcy(),dataSetFiller,aeCommitment,vASRecording);
+			BigDecimal postAmt = executeAmountRule(finEvent, transactionEntry, finCcy, executingMap);
 			if(postAmt.compareTo(BigDecimal.ZERO) >= 0 ){
 				returnDataSet.setPostAmount(postAmt);
 				returnDataSet.setTranCode(transactionEntry.getTranscationCode());
@@ -923,37 +797,35 @@ public class AccountEngineExecution implements Serializable {
 				}
 			}
 			//post amount in Local currency
-			returnDataSet.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(dataSet.getFinCcy(), SysParamUtil.getAppCurrency(), postAmt));
-			returnDataSet.setExchangeRate(CurrencyUtil.getExChangeRate(dataSet.getFinCcy()));
+			returnDataSet.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(finCcy, SysParamUtil.getAppCurrency(), postAmt));
+			returnDataSet.setExchangeRate(CurrencyUtil.getExChangeRate(finCcy));
 			
 			//Converting Post Amount Based on Account Currency
-			returnDataSet.setAcCcy(dataSet.getFinCcy());
-			returnDataSet.setFormatter(CurrencyUtil.getFormat(dataSet.getFinCcy()));
+			returnDataSet.setAcCcy(finCcy);
+			returnDataSet.setFormatter(CurrencyUtil.getFormat(finCcy));
 			
 			BigDecimal postAmount = null;
 			List<ReturnDataSet> newEntries = null;
 			if("N".equals(createNow)){
-				
-				if(!dataSet.getFinCcy().equals(acc.getAcCcy())){
+				if(!StringUtils.equals(finCcy, acc.getAcCcy())){
 					postAmount = returnDataSet.getPostAmount();
-					returnDataSet.setPostAmount(CalculationUtil.getConvertedAmount(dataSet.getFinCcy(), acc.getAcCcy(), postAmount));
+					returnDataSet.setPostAmount(CalculationUtil.getConvertedAmount(finCcy, acc.getAcCcy(), postAmount));
 					
 					//Add Extra Entries For Debit & Credit
-					newEntries = createAccOnCCyConversion(returnDataSet,acc.getAcCcy(), postAmount, dataSet);
+					newEntries = createAccOnCCyConversion(returnDataSet,acc.getAcCcy(), postAmount, executingMap);
 					
 					returnDataSet.setAcCcy(acc.getAcCcy());
 				}
 			}else{
-				
 				if(accountCcyMap.containsKey(acc.getAccountId())){
 					String acCcy = accountCcyMap.get(acc.getAccountId());
 					
-					if(!dataSet.getFinCcy().equals(acCcy)){
+					if(!StringUtils.equals(finCcy, acCcy)){
 						postAmount = returnDataSet.getPostAmount();
-						returnDataSet.setPostAmount(CalculationUtil.getConvertedAmount(dataSet.getFinCcy(), acCcy, postAmount));
+						returnDataSet.setPostAmount(CalculationUtil.getConvertedAmount(finCcy, acCcy, postAmount));
 						
 						//Add Extra Entries For Debit & Credit
-						newEntries = createAccOnCCyConversion(returnDataSet, acCcy,  postAmount, dataSet);
+						newEntries = createAccOnCCyConversion(returnDataSet, acCcy,  postAmount, executingMap);
 						
 						returnDataSet.setAcCcy(acCcy);
 					}
@@ -978,35 +850,19 @@ public class AccountEngineExecution implements Serializable {
 	 * Method for fetch the list of sub head rules and execute the rules to get Result object
 	 * 
 	 * @param subHeadSqlList
-	 * @param aeCommitment
-	 * @param dataSetFiller
-	 * @param finCcy
-	 * @param isEODProcess
+	 * @param executingMap
 	 * @return
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private Map<String, String> doProcessSubHeadRules(List<Rule> subHeadSqlList, AECommitment aeCommitment,VASRecording vASRecording,
-			DataSetFiller dataSetFiller, String finCcy) throws IllegalAccessException, InvocationTargetException {
+	private Map<String, String> doProcessSubHeadRules(List<Rule> subHeadSqlList, HashMap<String, Object> executingMap) throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		Map<String, String> ruleResultMap = new HashMap<String, String>();
-		HashMap<String, Object> fieldValues = null;
-
-		if (aeCommitment != null) {
-			fieldValues = aeCommitment.getDeclaredFieldValues();
-		} else if(vASRecording!= null){
-			fieldValues = vASRecording.getDeclaredFieldValues();
-		}else{
-			fieldValues = dataSetFiller.getDeclaredFieldValues();
-		}
 
 		if (subHeadSqlList != null) {
 			for (Rule rule : subHeadSqlList) {
-
-				String result = (String) getRuleExecutionUtil().executeRule(rule.getSQLRule(), fieldValues, finCcy,
-						RuleReturnType.STRING);
-
+				String result = (String) getRuleExecutionUtil().executeRule(rule.getSQLRule(), executingMap, (String)executingMap.get("fm_finCcy"), RuleReturnType.STRING);
 				ruleResultMap.put(rule.getRuleCode(), result);
 			}
 		}
@@ -1031,11 +887,11 @@ public class AccountEngineExecution implements Serializable {
 			SystemInternalAccountDefinition sysIntAcc = new SystemInternalAccountDefinition();
 			sysIntAcc.setSIACode(siaCode);
 			sysIntAcc.setSIANumber(EODProperties.getSIANumber(siaCode));
-			
 			sysIntAccList.add(sysIntAcc);
 		}
 		
 		logger.debug("Leaving");
+		
 		return sysIntAccList;
 	}
 
@@ -1059,12 +915,17 @@ public class AccountEngineExecution implements Serializable {
 		}
 		
 		logger.debug("Leaving");
+		
 		return amountRuleList;
 	}
 
-	private List<ReturnDataSet> createAccOnCCyConversion(ReturnDataSet existDataSet, String acCcy, BigDecimal unconvertedPostAmt, DataSet dataSet){
+	private List<ReturnDataSet> createAccOnCCyConversion(ReturnDataSet existDataSet, String acCcy, BigDecimal unconvertedPostAmt, HashMap<String, Object> executingMap){
 		
 		List<ReturnDataSet> newEntries = new ArrayList<ReturnDataSet>(2);
+		
+		String finBranch = (String) executingMap.get("fm_finBranch");
+		String finCcy = (String) executingMap.get("fm_finCcy");
+		
 		String actTranType = existDataSet.getDrOrCr();
 		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
 		String finCcyNum = "";
@@ -1072,10 +933,10 @@ public class AccountEngineExecution implements Serializable {
 		int formatter = 0;
 		
 		if(phase.equals(PennantConstants.APP_PHASE_EOD)){
-			finCcyNum = EODProperties.getCcyNumber(dataSet.getFinCcy());
+			finCcyNum = EODProperties.getCcyNumber(finCcy);
 			acCcyNum = EODProperties.getCcyNumber(acCcy);
 		}else{
-			finCcyNum = getCurrencyDAO().getCurrencyById(dataSet.getFinCcy());
+			finCcyNum = getCurrencyDAO().getCurrencyById(finCcy);
 			
 			Currency currency = getCurrencyDAO().getCurrencyByCode(acCcy);
 			acCcyNum = currency.getCcyNumber();
@@ -1102,17 +963,15 @@ public class AccountEngineExecution implements Serializable {
 		newDataSet2.setTransOrder(existDataSet.getTransOrder() + 2);
 		newDataSet2.setTranCode(SysParamUtil.getValueAsString("CCYCNV_" + crDr + "RTRANCODE"));
 		newDataSet2.setRevTranCode(SysParamUtil.getValueAsString("CCYCNV_" + drCr + "RTRANCODE"));
-		newDataSet2.setAccount(dataSet.getFinBranch()+"881"+finCcyNum+acCcyNum);
+		newDataSet2.setAccount(finBranch + "881" + finCcyNum + acCcyNum);
 		newDataSet2.setPostAmount(unconvertedPostAmt);
-		newDataSet2.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(dataSet.getFinCcy(), SysParamUtil.getAppCurrency(), unconvertedPostAmt));
+		newDataSet2.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(finCcy, SysParamUtil.getAppCurrency(), unconvertedPostAmt));
 		newEntries.add(newDataSet2);
 		
 		existDataSet.setFormatter(formatter);
 		
 		return newEntries;
 	}
-	
-	
 
 	/**
 	 * Fill Data For DataFiller Object depend on Event Condition
@@ -1120,116 +979,27 @@ public class AccountEngineExecution implements Serializable {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	private DataSetFiller doFillDataSetFiller(DataSet dataSet,boolean isNewFinance, boolean isAccrualCal,FinanceType financeType, FinancePremiumDetail premiumDetail) throws IllegalAccessException, InvocationTargetException{
-
-		DataSetFiller dataSetFiller=new DataSetFiller();
+	private void doFillExecutingMap(HashMap<String, Object> executingMap) throws IllegalAccessException, InvocationTargetException{
 		logger.debug("Entering");
-		Customer customer = getCustomerDAO().getCustomerForPostings(dataSet.getCustId());
+
+		//boolean isNewFinance = (boolean)executingMap.get("NEWRECORD");
+		Customer customer = getCustomerDAO().getCustomerForPostings((long) executingMap.get("fm_custID"));
 		if(customer != null){
-			
-			dataSetFiller.setCustCIF(customer.getCustCIF());
-			dataSetFiller.setCustCOB(customer.getCustCOB());
-			dataSetFiller.setCustCtgCode(customer.getCustCtgCode());
-			dataSetFiller.setCustIndustry(customer.getCustIndustry());
-			dataSetFiller.setCustIsStaff(customer.isCustIsStaff());
-			dataSetFiller.setCustNationality(customer.getCustNationality());
-			dataSetFiller.setCustParentCountry(customer.getCustParentCountry());
-			dataSetFiller.setCustResdCountry(customer.getCustResdCountry());
-			dataSetFiller.setCustRiskCountry(customer.getCustRiskCountry());
-			dataSetFiller.setCustSector(customer.getCustSector());
-			dataSetFiller.setCustSubSector(customer.getCustSubSector());
-			dataSetFiller.setCustTypeCode(customer.getCustTypeCode());
-			
+			customer.getDeclaredFieldValues(executingMap);
 		}
-
-		dataSetFiller.setReqCampaign("");
-		dataSetFiller.setReqFinAcType(financeType.getFinAcType());
-		dataSetFiller.setReqFinCcy(dataSet.getFinCcy());
-		dataSetFiller.setReqFinType(financeType.getFinType());
-		dataSetFiller.setReqProduct(financeType.getFinCategory());
-		dataSetFiller.setTerms(dataSet.getNoOfTerms());
-		dataSetFiller.setTenure(dataSet.getTenure());
-		dataSetFiller.setDOWNPAY(dataSet.getDownPayment());
-		dataSetFiller.setDOWNPAYB(dataSet.getDownPayBank());
-		dataSetFiller.setDOWNPAYS(dataSet.getDownPaySupl());
-		dataSetFiller.setReqFinPurpose(dataSet.getFinPurpose());
-		dataSetFiller.setFinJointAcCount(dataSet.getFinJointAcCount());
-		dataSetFiller.setSECDEPST(dataSet.getSecurityDeposit());
-		dataSetFiller.setDEDUCTFEEDISB(dataSet.getDeductFeeDisb());
-		dataSetFiller.setDEDUCTINSDISB(dataSet.getDeductInsDisb());
-		dataSetFiller.setDISBURSE(dataSet.getDisburseAmount());
-		dataSetFiller.setRETAMT(dataSet.getCurDisbRet());
-		dataSetFiller.setNETRET(dataSet.getNetRetDue());
-		dataSetFiller.setGRCPFTTB(dataSet.getGrcPftTillNow());
-		dataSetFiller.setGRCPFTCH(dataSet.getGrcPftChg());
-		dataSetFiller.setADVDUE(dataSet.getAdvDue());
-		dataSetFiller.setCLAIMAMT(dataSet.getClaimAmt());
-		dataSetFiller.setFEEAMOUNT(dataSet.getFeeAmount());
-		dataSetFiller.setFinRepayMethod(dataSet.getFinRepayMethod());
-		
-		dataSetFiller.setRebate(dataSet.getRebate());
-
-		int frqDfrCount = 0;
-		int rpyDfrCount = 0;
-		if(!isAccrualCal){
-			if(dataSet.getSchdDate() != null){
-				//frqDfrCount = getFinanceScheduleDetailDAO().getFrqDfrCount(dataSet.getFinReference()); 
-			}
-		}
-		dataSetFiller.setFrqDfrCount(frqDfrCount);
-		if(dataSet.getCurRpyDefCount() > rpyDfrCount){
-			dataSetFiller.setRpyDfrCount(dataSet.getCurRpyDefCount() - rpyDfrCount);
-		}else{
-			dataSetFiller.setRpyDfrCount(rpyDfrCount);
-		}
-		
-		if(financeType.getFinCategory().equals(FinanceConstants.PRODUCT_SUKUK)){
-			if(premiumDetail != null){
-				
-				dataSetFiller.setFACEVAL(premiumDetail.getFaceValue().multiply(new BigDecimal(premiumDetail.getNoOfUnits())));
-				dataSetFiller.setPRMVALUE(dataSet.getFinAmount().subtract(dataSetFiller.getFACEVAL()));
-				Date curBussDate = DateUtility.getAppDate();
-				int totalDays = DateUtility.getDaysBetween(dataSet.getMaturityDate(), premiumDetail.getPurchaseDate());
-				int curPrmDays = DateUtility.getDaysBetween(curBussDate, premiumDetail.getPurchaseDate());
-				
-				dataSetFiller.setPRMAMZ(dataSetFiller.getPRMVALUE().multiply(new BigDecimal(curPrmDays)).divide(
-						new BigDecimal(totalDays), 0, RoundingMode.HALF_DOWN));
-				dataSetFiller.setACCRBAL(premiumDetail.getAccruedProfit());
-				
-				//Calculation Of  Fair Value ReValuation Amount
-				if(!isNewFinance && dataSet.getFinEvent().equals(AccountEventConstants.ACCEVENT_COMPOUND)){
-					BigDecimal prvFairValueAmount = getFinancePremiumDetailDAO().getFairValueAmount(dataSet.getFinReference(), "");
-					if(prvFairValueAmount != null){
-						dataSetFiller.setREVALAMT(premiumDetail.getFairValueAmount().subtract(prvFairValueAmount));
-					}
-				}
-			}
-		}
-
-		dataSetFiller.setReqFinBranch(dataSet.getFinBranch());
-		dataSetFiller.setFinAmount(dataSet.getFinAmount());
-		dataSetFiller.setFINAMT(dataSet.getFinAmount());
-		dataSetFiller.setNewLoan(dataSet.isNewRecord());
-		
-		dataSetFiller.setDEDUCTFEEDISB(dataSet.getDeductFeeDisb());
-		dataSetFiller.setADDFEETOFINANCE(dataSet.getAddFeeToFinance());
-		dataSetFiller.setPAIDFEE(dataSet.getPaidFee());
-		dataSetFiller.setWAIVEDFEE(dataSet.getWaivedFee());
-		dataSetFiller.setBPI(dataSet.getBpiAmount());
 		
 		logger.debug("Leaving");
-		return dataSetFiller;
 	}
 	
-	private void doFillCommitmentData(DataSet dataSet, Commitment commitment, 
-			AECommitment aeCommitment) throws IllegalAccessException, InvocationTargetException{
-
+	
+	private void doFillCommitmentData(Commitment commitment, AECommitment aeCommitment, HashMap<String, Object> executingMap) 
+			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
-		Customer customer = getCustomerDAO().getCustomerForPostings(dataSet.getCustId());
-		if(customer != null){
+		Customer customer = getCustomerDAO().getCustomerForPostings((long)executingMap.get("fm_custID"));
+		if (customer != null) {
 			BeanUtils.copyProperties(aeCommitment, customer);
 		}
-	
+
 		aeCommitment.setCmtAmount(commitment.getCmtAmount());
 		aeCommitment.setCmtAmountOther(commitment.getCmtAvailable());
 		aeCommitment.setCmtUtilized(commitment.getCmtUtilizedAmount());
@@ -1244,24 +1014,27 @@ public class AccountEngineExecution implements Serializable {
 
 	/**
 	 * Method for Prepare Account Number based on  Transaction Entry Account
-	 * @param dataSet
 	 * @param transactionEntry
-	 * @param amountRuleMap 
-	 * @param sysIntAccMap 
-	 * @param finType
+	 * @param isCommitment
+	 * @param createNow 
+	 * @param accountsMap 
+	 * @param accountCcyMap
+	 * @param sysIntAccMap
+	 * @param ruleResultMap
+	 * @param executingMap
 	 * @return
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	private IAccounts getAccountNumber(DataSet dataSet,TransactionEntry transactionEntry, boolean isCommitment,boolean createNow,
-			FinanceType financeType, Map<String, Object> accountsMap, Map<String, String> accountCcyMap, Map<String, String> sysIntAccMap,
-			Map<String, String> ruleResultMap, DataSetFiller dataSetFiller) throws IllegalAccessException, InvocationTargetException {
-
+	private IAccounts getAccountNumber(TransactionEntry transactionEntry, boolean isCommitment,boolean createNow,
+			Map<String, Object> accountsMap, Map<String, String> accountCcyMap, Map<String, String> sysIntAccMap,
+			Map<String, String> ruleResultMap, HashMap<String, Object> executingMap) throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
+
 		IAccounts newAccount = new IAccounts();
-		newAccount.setAcCustCIF(dataSet.getCustCIF());
-		newAccount.setAcBranch(dataSet.getFinBranch());
-		newAccount.setAcCcy(dataSet.getFinCcy());
+		newAccount.setAcCustCIF((String)executingMap.get("ct_custCIF"));
+		newAccount.setAcBranch((String)executingMap.get("fm_finBranch"));
+		newAccount.setAcCcy((String)executingMap.get("fm_finCcy"));
 		newAccount.setFlagCreateIfNF(true);
 		newAccount.setFlagCreateNew(false);
 		newAccount.setInternalAc(false);
@@ -1275,7 +1048,7 @@ public class AccountEngineExecution implements Serializable {
 			
 			newAccount.setAcType(AccountConstants.TRANACC_DISB);
 			newAccount.setFlagCreateIfNF(false);
-			newAccount.setAccountId(dataSet.getDisburseAccount());
+			newAccount.setAccountId((String)executingMap.get("fm_disbAccountId"));
 			
 			if(!createNow){
 				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+transactionEntry.getTransOrder());
@@ -1284,9 +1057,9 @@ public class AccountEngineExecution implements Serializable {
 			}
 			
 			//Account Saving For Currency Conversion Check
-			if(StringUtils.isNotBlank(dataSet.getDisburseAccount()) && 
-					!accountCcyMap.containsKey(dataSet.getDisburseAccount())){
-				accountCcyMap.put(dataSet.getDisburseAccount(), "");
+			if(executingMap.containsKey("fm_disbAccountId") && StringUtils.isNotBlank((String)executingMap.get("fm_disbAccountId")) && 
+					!accountCcyMap.containsKey((String)executingMap.get("fm_disbAccountId"))){
+				accountCcyMap.put((String)executingMap.get("fm_disbAccountId"), "");
 			}
 			
 			return newAccount;
@@ -1294,18 +1067,17 @@ public class AccountEngineExecution implements Serializable {
 
 		//Set Customer Repayments Account
 		if(transactionEntry.getAccount().equals(AccountConstants.TRANACC_REPAY)){
-			
 			newAccount.setAcType(AccountConstants.TRANACC_REPAY);
 			
 			if(isCommitment){
-				if(dataSet.getCmtChargeAmount().compareTo(BigDecimal.ZERO) != 0){
+				if(((BigDecimal)executingMap.get("cmt_cmtChargeAmount")).compareTo(BigDecimal.ZERO) != 0){
 					newAccount.setFlagCreateIfNF(true);
-					newAccount.setAccountId(dataSet.getCmtChargeAccount());
+					newAccount.setAccountId(((String)executingMap.get("cmt_cmtChargeAccount")));
 					
 					//Account Saving For Currency Conversion Check
-					if(StringUtils.isNotBlank(dataSet.getCmtChargeAccount()) && 
-							!accountCcyMap.containsKey(dataSet.getCmtChargeAccount())){
-						accountCcyMap.put(dataSet.getCmtChargeAccount(), "");
+					if(StringUtils.isNotBlank(((String)executingMap.get("cmt_cmtChargeAccount"))) && 
+							!accountCcyMap.containsKey(((String)executingMap.get("cmt_cmtChargeAccount")))){
+						accountCcyMap.put(((String)executingMap.get("cmt_cmtChargeAccount")), "");
 					}
 				}else{
 					logger.debug("Leaving");
@@ -1313,12 +1085,12 @@ public class AccountEngineExecution implements Serializable {
 				}
 			}else{
 				newAccount.setFlagCreateIfNF(false);
-				newAccount.setAccountId(dataSet.getRepayAccount());
+				newAccount.setAccountId(((String)executingMap.get("fm_repayAccountId")));
 				
 				//Account Saving For Currency Conversion Check
-				if(StringUtils.isNotBlank(dataSet.getRepayAccount()) && 
-						!accountCcyMap.containsKey(dataSet.getRepayAccount())){
-					accountCcyMap.put(dataSet.getRepayAccount(), "");
+				if(StringUtils.isNotBlank(((String)executingMap.get("fm_repayAccountId"))) && 
+						!accountCcyMap.containsKey(((String)executingMap.get("fm_repayAccountId")))){
+					accountCcyMap.put(((String)executingMap.get("fm_repayAccountId")), "");
 				}
 			}
 			
@@ -1329,9 +1101,9 @@ public class AccountEngineExecution implements Serializable {
 			}
 			
 			//Account Saving For Currency Conversion Check
-			if(StringUtils.isNotBlank(dataSet.getDisburseAccount()) && 
-					!accountCcyMap.containsKey(dataSet.getDisburseAccount())){
-				accountCcyMap.put(dataSet.getDisburseAccount(), "");
+			if(StringUtils.isNotBlank(((String)executingMap.get("fm_disbAccountId"))) && 
+					!accountCcyMap.containsKey(((String)executingMap.get("fm_disbAccountId")))){
+				accountCcyMap.put(((String)executingMap.get("fm_disbAccountId")), "");
 			}
 			
 			logger.debug("Leaving");
@@ -1343,7 +1115,7 @@ public class AccountEngineExecution implements Serializable {
 			
 			newAccount.setAcType(AccountConstants.TRANACC_DOWNPAY);
 			newAccount.setFlagCreateIfNF(false);
-			newAccount.setAccountId(dataSet.getDownPayAccount());
+			newAccount.setAccountId(((String)executingMap.get("fm_downPayAccount")));
 			
 			if(!createNow){
 				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+transactionEntry.getTransOrder());
@@ -1352,9 +1124,9 @@ public class AccountEngineExecution implements Serializable {
 			}
 			
 			//Account Saving For Currency Conversion Check
-			if(StringUtils.isNotBlank(dataSet.getDownPayAccount()) && 
-					!accountCcyMap.containsKey(dataSet.getRepayAccount())){
-				accountCcyMap.put(dataSet.getDownPayAccount(), "");
+			if(StringUtils.isNotBlank(((String)executingMap.get("fm_downPayAccount"))) && 
+					!accountCcyMap.containsKey(((String)executingMap.get("fm_repayAccountId")))){
+				accountCcyMap.put(((String)executingMap.get("fm_downPayAccount")), "");
 			}
 			
 			return newAccount;
@@ -1365,7 +1137,7 @@ public class AccountEngineExecution implements Serializable {
 
 			newAccount.setAcType(AccountConstants.TRANACC_CANFIN);
 			newAccount.setFlagCreateIfNF(false);
-			newAccount.setAccountId(dataSet.getFinCancelAc());
+			newAccount.setAccountId((String)executingMap.get("fm_finCancelAct"));
 
 			if(!createNow){
 				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+transactionEntry.getTransOrder());
@@ -1374,9 +1146,9 @@ public class AccountEngineExecution implements Serializable {
 			}
 
 			//Account Saving For Currency Conversion Check
-			if(StringUtils.isNotBlank(dataSet.getFinCancelAc()) && 
-					!accountCcyMap.containsKey(dataSet.getFinCancelAc())){
-				accountCcyMap.put(dataSet.getFinCancelAc(), "");
+			if(StringUtils.isNotBlank((String)executingMap.get("fm_finCancelAct")) && 
+					!accountCcyMap.containsKey((String)executingMap.get("fm_finCancelAct"))){
+				accountCcyMap.put((String)executingMap.get("fm_finCancelAct"), "");
 			}
 
 			return newAccount;
@@ -1387,7 +1159,7 @@ public class AccountEngineExecution implements Serializable {
 
 			newAccount.setAcType(AccountConstants.TRANACC_WRITEOFF);
 			newAccount.setFlagCreateIfNF(false);
-			newAccount.setAccountId(dataSet.getFinWriteoffAc());
+			newAccount.setAccountId((String)executingMap.get("fm_finWriteoffAc"));
 
 			if(!createNow){
 				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+transactionEntry.getTransOrder());
@@ -1396,9 +1168,9 @@ public class AccountEngineExecution implements Serializable {
 			}
 
 			//Account Saving For Currency Conversion Check
-			if(StringUtils.isNotBlank(dataSet.getFinWriteoffAc()) && 
-					!accountCcyMap.containsKey(dataSet.getFinWriteoffAc())){
-				accountCcyMap.put(dataSet.getFinWriteoffAc(), "");
+			if(StringUtils.isNotBlank((String)executingMap.get("fm_finWriteoffAc")) && 
+					!accountCcyMap.containsKey((String)executingMap.get("fm_finWriteoffAc"))){
+				accountCcyMap.put((String)executingMap.get("fm_finWriteoffAc"), "");
 			}
 
 			return newAccount;
@@ -1409,7 +1181,7 @@ public class AccountEngineExecution implements Serializable {
 
 			newAccount.setAcType(AccountConstants.TRANACC_FEEAC);
 			newAccount.setFlagCreateIfNF(false);
-			newAccount.setAccountId(dataSet.getFeeAccountId());
+			newAccount.setAccountId((String)executingMap.get("fm_feeAccountId"));
 
 			if(!createNow){
 				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+transactionEntry.getTransOrder());
@@ -1418,16 +1190,17 @@ public class AccountEngineExecution implements Serializable {
 			}
 
 			//Account Saving For Currency Conversion Check
-			if(StringUtils.isNotBlank(dataSet.getFeeAccountId()) && 
-					!accountCcyMap.containsKey(dataSet.getFeeAccountId())){
-				accountCcyMap.put(dataSet.getFeeAccountId(), "");
+			if(StringUtils.isNotBlank((String)executingMap.get("fm_feeAccountId")) && 
+					!accountCcyMap.containsKey((String)executingMap.get("fm_feeAccountId"))){
+				accountCcyMap.put((String)executingMap.get("fm_feeAccountId"), "");
 			}
 
 			return newAccount;
 		}
 
+		//FIXME Kesav : writeOffPayAccount
 		//Set Writeoff Payment Account
-		if(transactionEntry.getAccount().equals(AccountConstants.TRANACC_WRITEOFFPAY)){
+		/*if(transactionEntry.getAccount().equals(AccountConstants.TRANACC_WRITEOFFPAY)){
 
 
 			newAccount.setAcType(AccountConstants.TRANACC_WRITEOFFPAY);
@@ -1448,15 +1221,15 @@ public class AccountEngineExecution implements Serializable {
 
 			return newAccount;
 
-		}
+		}*/
 		
 		//Set GL&PL Account
 		if(transactionEntry.getAccount().equals(AccountConstants.TRANACC_GLNPL)){
 			
 			newAccount.setAcType(transactionEntry.getAccountType());
 			newAccount.setInternalAc(true);
-			newAccount.setAccountId(generateAccount(dataSet, transactionEntry.getAccountType(), false, transactionEntry.getAccountSubHeadRule(), 
-					transactionEntry.getDebitcredit(), sysIntAccMap, ruleResultMap));
+			newAccount.setAccountId(generateAccount(transactionEntry.getAccountType(), false, transactionEntry.getAccountSubHeadRule(), 
+					transactionEntry.getDebitcredit(), sysIntAccMap, ruleResultMap, executingMap));
 			
 			if(!createNow){
 				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+transactionEntry.getTransOrder());
@@ -1471,12 +1244,12 @@ public class AccountEngineExecution implements Serializable {
 		//Set Customer Loan Account
 		if(transactionEntry.getAccount().equals(AccountConstants.TRANACC_FIN)){
 			
-			newAccount.setAcType(financeType.getFinAcType());
-			if(StringUtils.isNotBlank(dataSet.getFinAccount())){
-				newAccount.setAccountId(dataSet.getFinAccount());
+			newAccount.setAcType((String)executingMap.get("ft_finAcType"));
+			if(StringUtils.isNotBlank((String)executingMap.get("fm_finAccount"))){
+				newAccount.setAccountId((String)executingMap.get("fm_finAccount"));
 			}else{
 				
-				if (financeType.isFinIsOpenNewFinAc()) {
+				if ((boolean)executingMap.get("ft_finIsOpenNewFinAc")) {
 					newAccount.setFlagCreateNew(true);
 				}
 			}
@@ -1494,7 +1267,7 @@ public class AccountEngineExecution implements Serializable {
 		//Finance Unearned Profit Account
 		if (transactionEntry.getAccount().equals(AccountConstants.TRANACC_UNEARN)) {
 
-			newAccount.setAcType(financeType.getPftPayAcType());
+			newAccount.setAcType((String)executingMap.get("ft_pftPayAcType"));
 
 			if (!createNow) {
 				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+transactionEntry.getTransOrder());
@@ -1509,7 +1282,7 @@ public class AccountEngineExecution implements Serializable {
 		//Finance Unearned Suspense Account
 		if (transactionEntry.getAccount().equals(AccountConstants.TRANACC_SUSP)) {
 
-			newAccount.setAcType(financeType.getFinSuspAcType());
+			newAccount.setAcType((String)executingMap.get("ft_finSuspAcType"));
 
 			if (!createNow) {
 				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+transactionEntry.getTransOrder());
@@ -1524,7 +1297,7 @@ public class AccountEngineExecution implements Serializable {
 		//Finance Provision Account
 		if (transactionEntry.getAccount().equals(AccountConstants.TRANACC_PROVSN)) {
 
-			newAccount.setAcType(financeType.getFinProvisionAcType());
+			newAccount.setAcType((String)executingMap.get("ft_finProvisionAcType"));
 
 			if (!createNow) {
 				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+transactionEntry.getTransOrder());
@@ -1552,8 +1325,9 @@ public class AccountEngineExecution implements Serializable {
 			return newAccount;
 		}
 		
+		//FIXME Kesav : CommitmentAccount
 		//Set Customer Loan Account
-		if(transactionEntry.getAccount().equals(AccountConstants.TRANACC_COMMIT)){
+		/*if(transactionEntry.getAccount().equals(AccountConstants.TRANACC_COMMIT)){
 			
 			String acType = SysParamUtil.getValueAsString("COMMITMENT_AC_TYPE");
 			newAccount.setAcType(acType);
@@ -1563,7 +1337,7 @@ public class AccountEngineExecution implements Serializable {
 				newAccount.setAccountId(StringUtils.trimToEmpty(dataSet.getCmtAccount()));
 			}
 			
-			if(!dataSet.getFinEvent().equals(AccountEventConstants.ACCEVENT_NEWCMT)){
+			if(!(String)executingMap.get("finEvent").equals(AccountEventConstants.ACCEVENT_NEWCMT)){
 				newAccount.setFlagCreateNew(false);
 				newAccount.setAccountId(StringUtils.trimToEmpty(dataSet.getCmtAccount()));
 			}
@@ -1576,7 +1350,7 @@ public class AccountEngineExecution implements Serializable {
 			
 			logger.debug("Leaving");
 			return newAccount;
-		}
+		}*/
 		
 		//Set Build Account
 		if(transactionEntry.getAccount().equals(AccountConstants.TRANACC_BUILD)){
@@ -1587,13 +1361,12 @@ public class AccountEngineExecution implements Serializable {
 			//FIXME Constant to be changed
 			if(ImplementationConstants.CLIENTTYPE.equals(ImplementationConstants.NBFC)){
 				Rule rule = getRuleDAO().getRuleByID(transactionEntry.getAccountSubHeadRule(),RuleConstants.MODULE_SUBHEAD, RuleConstants.MODULE_SUBHEAD, "");
-				HashMap<String, Object> map = dataSetFiller.getDeclaredFieldValues();
-				map.put("reqFinAcType", transactionEntry.getAccountType());
-				newAccount.setAccountId((String) getRuleExecutionUtil().executeRule(rule.getSQLRule(), map,
-						dataSet.getFinCcy(), RuleReturnType.STRING));
+				executingMap.put("acType", transactionEntry.getAccountType());
+				newAccount.setAccountId((String) getRuleExecutionUtil().executeRule(rule.getSQLRule(), executingMap,
+						(String) executingMap.get("fm_finCcy"), RuleReturnType.STRING));
 			}else{
-				newAccount.setAccountId(generateAccount(dataSet, transactionEntry.getAccountType(), true, transactionEntry.getAccountSubHeadRule(), 
-					transactionEntry.getDebitcredit(), sysIntAccMap, ruleResultMap));
+				newAccount.setAccountId(generateAccount(transactionEntry.getAccountType(), true, transactionEntry.getAccountSubHeadRule(), 
+					transactionEntry.getDebitcredit(), sysIntAccMap, ruleResultMap, executingMap));
 			}
 			if(!createNow){
 				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+transactionEntry.getTransOrder());
@@ -1611,33 +1384,35 @@ public class AccountEngineExecution implements Serializable {
 
 	/**
 	 * Generate Account Number For GLNPL Account
-	 * @param finBranch
-	 * @param finCcy
+	 * 
 	 * @param accountType
+	 * @param isBuildAc
 	 * @param subHeadRuleCode
 	 * @param dbOrCr
-	 * @param amountRuleMap 
-	 * @param sysIntAccMap 
+	 * @param amountRuleMap
+	 * @param sysIntAccMap
+	 * @param ruleResultMap
+	 * @param executingMap
 	 * @return
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	private String generateAccount(DataSet dataSet, String accountType, boolean isBuildAc, String subHeadRuleCode, String dbOrCr,
-			Map<String, String> sysIntAccMap, Map<String, String> ruleResultMap) 
-					throws IllegalAccessException, InvocationTargetException{
-		
-		//System Internal Account Number Fetching
-		String sysIntAcNum =StringUtils.trimToEmpty( sysIntAccMap.get(accountType));
+	private String generateAccount(String accountType, boolean isBuildAc, String subHeadRuleCode, String dbOrCr,
+			Map<String, String> sysIntAccMap, Map<String, String> ruleResultMap, HashMap<String, Object> executingMap)
+			throws IllegalAccessException, InvocationTargetException {
 
-		String currencyNymber =CurrencyUtil.getCcyNumber(dataSet.getFinCcy());
-		
-		int glplAcLength = 0 ;
+		// System Internal Account Number Fetching
+		String sysIntAcNum = StringUtils.trimToEmpty(sysIntAccMap.get(accountType));
+
+		String currencyNymber = CurrencyUtil.getCcyNumber((String) executingMap.get("fm_finCcy"));
+
+		int glplAcLength = 0;
 		if (StringUtils.isNotEmpty(sysIntAcNum)) {
 			glplAcLength = sysIntAcNum.length() - SysParamUtil.getValueAsInt("SYSINT_ACCOUNT_LEN");
 		}
-		String accNumber = dataSet.getFinBranch()+sysIntAcNum.substring(glplAcLength)+currencyNymber;
-	
-		if(StringUtils.isNotBlank(subHeadRuleCode)){
+		String accNumber = executingMap.get("fm_finBranch") + sysIntAcNum.substring(glplAcLength) + currencyNymber;
+
+		if (StringUtils.isNotBlank(subHeadRuleCode)) {
 
 			// Get Rule execution result from map object
 			String subHeadCode = ruleResultMap.get(subHeadRuleCode);
@@ -1645,24 +1420,24 @@ public class AccountEngineExecution implements Serializable {
 			if (StringUtils.trimToEmpty(subHeadCode).contains(".")) {
 				subHeadCode = subHeadCode.substring(0, subHeadCode.indexOf('.'));
 			}
-			
-			if(isBuildAc){
+
+			if (isBuildAc) {
 				logger.debug("Leaving");
 				return subHeadCode;
 			}
-			
-			if(StringUtils.isNotBlank(subHeadCode)){
-				if(sysIntAcNum.length() > subHeadCode.length()){
+
+			if (StringUtils.isNotBlank(subHeadCode)) {
+				if (sysIntAcNum.length() > subHeadCode.length()) {
 					String sIANumber = sysIntAcNum.substring(glplAcLength, sysIntAcNum.length() - subHeadCode.length());
 					logger.debug("Leaving");
-					return dataSet.getFinBranch() + sIANumber + subHeadCode + currencyNymber;
+					return executingMap.get("fm_finBranch") + sIANumber + subHeadCode + currencyNymber;
 				}
 			}
-			
+
 			logger.debug("Leaving");
 			return accNumber;
-			
-		}else{
+
+		} else {
 			logger.debug("Leaving");
 			return accNumber;
 		}
@@ -1680,8 +1455,7 @@ public class AccountEngineExecution implements Serializable {
 	 * @throws InvocationTargetException  BigDecimal
 	 */
 	private BigDecimal executeAmountRule(String event, TransactionEntry transactionEntry ,
-			Map<String, FeeRule> feeRuleDetailMap, String finCcy,DataSetFiller dataSetFiller,
-			AECommitment aeCommitment, VASRecording vASRecording) throws IllegalAccessException,
+			String finCcy,HashMap<String, Object> executingMap) throws IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
 
@@ -1692,120 +1466,17 @@ public class AccountEngineExecution implements Serializable {
 		}
 
 		String amountRule = transactionEntry.getAmountRule();
-		String[] res = StringUtils.trimToEmpty(transactionEntry.getFeeCode()).split(",");
-
-		if (res.length > 0) {
-			for (int i = 0; i < res.length; i++) {
-				if (!(StringUtils.isBlank(res[i]) || "Result".equalsIgnoreCase(res[i]))) {
-					String trim = res[i].trim();
-
-					if (feeRuleDetailMap != null
-							&& feeRuleDetailMap.containsKey(trim.substring(0, trim.contains("_") ? trim.indexOf('_')
-									: trim.length()))) {
-						FeeRule feeRule = feeRuleDetailMap.get(trim.substring(0, trim.contains("_") ? trim.indexOf('_')
-								: trim.length()));
-
-						if (amountRule.contains(trim + "_C")) {
-							amountRule = amountRule.replace(trim + "_C", feeRule.getFeeAmount().toString());
-						}
-						if (amountRule.contains(trim + "_W")) {
-							amountRule = amountRule.replace(trim + "_W", feeRule.getWaiverAmount().toString());
-						}
-						if (amountRule.contains(trim + "_P")) {
-							amountRule = amountRule.replace(trim + "_P", feeRule.getPaidAmount().toString());
-						}
-						if (amountRule.contains(trim + "_AF")) {
-							if (StringUtils.equals(feeRule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)) {
-								amountRule = amountRule.replace(trim + "_AF",
-										(feeRule.getFeeAmount().subtract(feeRule.getWaiverAmount()).subtract(feeRule
-												.getPaidAmount())).toString());
-							} else {
-								amountRule = amountRule.replace(trim + "_AF", "0");
-							}
-						}
-						if (amountRule.contains(trim + "_SCH")) {
-							if (feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
-									|| feeRule.getFeeToFinance().equals(
-											CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
-									|| feeRule.getFeeToFinance().equals(
-											CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
-								amountRule = amountRule.replace(trim + "_SCH", feeRule.getFeeAmount().toString());
-							} else {
-								amountRule = amountRule.replace(trim + "_SCH", "0");
-							}
-						}
-					} else {
-						Rule rule = getRuleDAO().getRuleByID(trim, RuleConstants.MODULE_FEES, event, "");
-						if (event.equals(AccountEventConstants.ACCEVENT_NEWCMT)
-								|| event.equals(AccountEventConstants.ACCEVENT_MNTCMT)) {
-							if (rule != null) {
-								try {
-									amount = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(),
-											aeCommitment.getDeclaredFieldValues(), finCcy, RuleReturnType.DECIMAL);
-
-									if (amountRule.contains(trim + "_C")) {
-										amountRule = amountRule.replace(trim + "_C", amount.toString());
-									}
-									if (amountRule.contains(trim + "_W")) {
-										amountRule = amountRule.replace(trim + "_W", "0");
-									}
-									if (amountRule.contains(trim + "_P")) {
-										amountRule = amountRule.replace(trim + "_P", "0");
-									}
-									if (amountRule.contains(trim + "_AF")) {
-										if (StringUtils.equals(rule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)) {
-											amountRule = amountRule.replace(trim + "_AF", amount.toString());
-										} else {
-											amountRule = amountRule.replace(trim + "_AF", "0");
-										}
-									}
-								} catch (Exception e) {
-									logger.error("Exception: ", e);
-								}
-							}
-						} else {
-							if (rule != null) {
-								try {
-									Object result = getRuleExecutionUtil().executeRule(rule.getSQLRule(),
-											dataSetFiller.getDeclaredFieldValues(), finCcy, RuleReturnType.DECIMAL);
-									amount = new BigDecimal(result == null ? "0" : result.toString());
-
-									if (amountRule.contains(trim + "_W")) {
-										amountRule = amountRule.replace(trim + "_W", "0");
-									}
-									if (amountRule.contains(trim + "_C")) {
-										amountRule = amountRule.replace(trim + "_C", amount.toString());
-									}
-									if (amountRule.contains(trim + "_P")) {
-										amountRule = amountRule.replace(trim + "_P", "0");
-									}
-									if (amountRule.contains(trim + "_AF")) {
-										if (StringUtils.equals(rule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)) {
-											amountRule = amountRule.replace(trim + "_AF", amount.toString());
-										} else {
-											amountRule = amountRule.replace(trim + "_AF", "0");
-										}
-									}
-								} catch (Exception e) {
-									logger.error("Exception: ", e);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
+ 
 		Object result = null;
 
 		if (event.contains("CMT")) {
-			result = getRuleExecutionUtil().executeRule(amountRule, aeCommitment.getDeclaredFieldValues(), finCcy,
+			result = getRuleExecutionUtil().executeRule(amountRule, executingMap, finCcy,
 					RuleReturnType.DECIMAL);
 		} else if (event.contains("VAS")) {
-			result = getRuleExecutionUtil().executeRule(amountRule, vASRecording.getDeclaredFieldValues(), finCcy,
+			result = getRuleExecutionUtil().executeRule(amountRule, executingMap, finCcy,
 					RuleReturnType.DECIMAL);
 		} else {
-			result = getRuleExecutionUtil().executeRule(amountRule, dataSetFiller.getDeclaredFieldValues(), finCcy,
+			result = getRuleExecutionUtil().executeRule(amountRule, executingMap, finCcy,
 					RuleReturnType.DECIMAL);
 		}
 		amount = (BigDecimal) result;
@@ -1820,108 +1491,31 @@ public class AccountEngineExecution implements Serializable {
 	 * @param amountCode
 	 * @return
 	 */
-	private void setAmountCodes(DataSetFiller dataSetFiller,AEAmountCodes aeAmountCodes,boolean isNewFinance, boolean isWIF, boolean isAccrualCal){
+	private void setAmountCodes(HashMap<String, Object> executingMap, boolean isWIF, boolean isAccrualCal){
 		logger.debug("Entering");
 
-		dataSetFiller.setPFT(aeAmountCodes.getPft());
-		dataSetFiller.setPFTS(aeAmountCodes.getPftS());
-		dataSetFiller.setPFTSP(aeAmountCodes.getPftSP());
-		dataSetFiller.setPFTSB(aeAmountCodes.getPftSB());
-		dataSetFiller.setPFTAP(aeAmountCodes.getPftAP());
-		dataSetFiller.setPFTAB(aeAmountCodes.getPftAB());
-		dataSetFiller.setPRI(aeAmountCodes.getPri());
-		dataSetFiller.setPRIS(aeAmountCodes.getPriS());
-		dataSetFiller.setPRISP(aeAmountCodes.getPriSP());
-		dataSetFiller.setPRISB(aeAmountCodes.getPriSB());
-		dataSetFiller.setPRIAP(aeAmountCodes.getPriAP());
-		dataSetFiller.setPRIAB(aeAmountCodes.getPriAB());
-		dataSetFiller.setDACCRUE(aeAmountCodes.getDAccrue());
-		dataSetFiller.setRPPFT(aeAmountCodes.getRpPft());
-		dataSetFiller.setRPPRI(aeAmountCodes.getRpPri());
-		dataSetFiller.setRPTOT(aeAmountCodes.getRpTot());
-		dataSetFiller.setACCRUE(aeAmountCodes.getAccrue());
-		dataSetFiller.setACCRUE_S(aeAmountCodes.getAccrueS());
-		dataSetFiller.setREFUND(aeAmountCodes.getRefund());
-		dataSetFiller.setINSREFUND(aeAmountCodes.getInsRefund());
-		dataSetFiller.setCPZTOT(aeAmountCodes.getCpzTot());
-		dataSetFiller.setCPZPRV(aeAmountCodes.getCpzPrv());
-		dataSetFiller.setCPZCUR(aeAmountCodes.getCpzCur());
-		dataSetFiller.setCPZNXT(aeAmountCodes.getCpzNxt());
-		dataSetFiller.setTPPNoOfDays(aeAmountCodes.getTtlDays());
-
-		dataSetFiller.setFinOverDueCntInPast(aeAmountCodes.getODInst());
-		dataSetFiller.setODDays(aeAmountCodes.getODDays());
-		dataSetFiller.setODInst(aeAmountCodes.getODInst());
-
-		dataSetFiller.setALWDPSP(aeAmountCodes.isAlwDPSP());
-		dataSetFiller.setRolloverFinance(aeAmountCodes.isRolloverFinance());
+		boolean finOverDueInPast = false;
 		
-		if(aeAmountCodes.getODInst() > 0){
-			dataSetFiller.setFinOverDueInPast(true);
-		}else{
-			dataSetFiller.setFinOverDueInPast(false);
+		if((int)executingMap.get("ae_ODInst") > 0){
+			finOverDueInPast = true;
 		}
 
 		BigDecimal actualTotalSchdProfit = BigDecimal.ZERO;
 		BigDecimal actualTotalCpzProfit = BigDecimal.ZERO;
 
-		if(!isAccrualCal && !isNewFinance && !isWIF){
-			List<BigDecimal> list= getFinanceMainDAO().getActualPftBal(aeAmountCodes.getFinReference(),"");
+		if(!isAccrualCal && !(boolean)executingMap.get("ae_newRecord") && !isWIF){
+			List<BigDecimal> list= getFinanceMainDAO().getActualPftBal((String)executingMap.get("fm_finReference"),"");
 			actualTotalSchdProfit = list.get(0);
 			actualTotalCpzProfit = list.get(1);
 		}
 
-		dataSetFiller.setPFTCHG(aeAmountCodes.getPft().subtract(actualTotalSchdProfit));
-		dataSetFiller.setCPZCHG(aeAmountCodes.getCpzTot().subtract(actualTotalCpzProfit));
-		dataSetFiller.setPROVAMT(aeAmountCodes.getProvAmt());
+		BigDecimal PFTCHG = ((BigDecimal)executingMap.get("ae_pft")).subtract(actualTotalSchdProfit);
+		BigDecimal CPZCHG = ((BigDecimal)executingMap.get("ae_cpzTot")).subtract(actualTotalCpzProfit);
 		
-		dataSetFiller.setELPDAYS(aeAmountCodes.getElpDays());
-		dataSetFiller.setELPMNTS(aeAmountCodes.getElpMnts());
-		dataSetFiller.setELPTERMS(aeAmountCodes.getElpTerms());
-		dataSetFiller.setTTLDAYS(aeAmountCodes.getTtlDays());
-		dataSetFiller.setTTLMNTS(aeAmountCodes.getTtlMnts());
-		dataSetFiller.setTTLTERMS(aeAmountCodes.getTtlTerms());
+		executingMap.put("PFTCHG", PFTCHG);
+		executingMap.put("CPZCHG", CPZCHG);
+		executingMap.put("finOverDueInPast", finOverDueInPast);
 		
-		dataSetFiller.setPROVDUE(aeAmountCodes.getPROVDUE());
-		dataSetFiller.setSUSPNOW(aeAmountCodes.getSUSPNOW());
-		dataSetFiller.setSUSPRLS(aeAmountCodes.getSUSPRLS());
-		dataSetFiller.setPENALTY(aeAmountCodes.getPENALTY());
-		dataSetFiller.setWAIVER(aeAmountCodes.getWAIVER());
-		dataSetFiller.setODCPLShare(aeAmountCodes.getODCPLShare());
-		dataSetFiller.setAstValO(aeAmountCodes.getAstValO());
-		
-		dataSetFiller.setDEFFEREDCOST(aeAmountCodes.getDEFFEREDCOST());
-		dataSetFiller.setCURRETBILL(aeAmountCodes.getCURRETBILL());
-		dataSetFiller.setTTLRETBILL(aeAmountCodes.getTTLRETBILL());
-		
-		dataSetFiller.setACCDPRPRI(aeAmountCodes.getAccumulatedDepPri());
-		dataSetFiller.setDPRPRI(aeAmountCodes.getDepreciatePri());
-		dataSetFiller.setFINISACTIVE(aeAmountCodes.isFinisActive());
-		
-		//Customer Details
-		dataSetFiller.setCustEmpSts(aeAmountCodes.getCustEmpSts());
-		dataSetFiller.setSalariedCustomer(aeAmountCodes.isSalariedCustomer());
-		dataSetFiller.setCommissionRate(aeAmountCodes.getCommissionRate());
-		dataSetFiller.setCommissionType(aeAmountCodes.getCommissionType());
-		dataSetFiller.setDdaModified(aeAmountCodes.isDdaModified());
-		dataSetFiller.setWOPAYAMT(aeAmountCodes.getWoPayAmt());
-		
-		//Asset Details
-		dataSetFiller.setAssetProduct(aeAmountCodes.getAssetProduct());
-		dataSetFiller.setAssetPurpose(aeAmountCodes.getAssetPurpose());
-		
-		// Repay Account Selection Flags
-		dataSetFiller.setRepayInAdv(aeAmountCodes.isRepayInAdv());
-		dataSetFiller.setRepayInPD(aeAmountCodes.isRepayInPD());
-		dataSetFiller.setRepayInSusp(aeAmountCodes.isRepayInSusp());
-		
-		dataSetFiller.setSuplRentPay(aeAmountCodes.getSuplRentPay());
-		dataSetFiller.setIncrCostPay(aeAmountCodes.getIncrCostPay());
-		dataSetFiller.setSchFeePay(aeAmountCodes.getSchFeePay());
-		
-		dataSetFiller.setPreApprovalExpired(aeAmountCodes.isPreApprovalExpired());
-		dataSetFiller.setPreApprovalFinance(aeAmountCodes.isPreApprovalFinance());
-
 		logger.debug("Leaving");
 	}
 
@@ -2014,13 +1608,6 @@ public class AccountEngineExecution implements Serializable {
 		this.accountingSetDAO = accountingSetDAO;
     }
 
-	public FinancePremiumDetailDAO getFinancePremiumDetailDAO() {
-    	return financePremiumDetailDAO;
-    }
-	public void setFinancePremiumDetailDAO(FinancePremiumDetailDAO financePremiumDetailDAO) {
-		this.financePremiumDetailDAO = financePremiumDetailDAO;
-    }
-	
 	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
 		return financeReferenceDetailDAO;
 	}

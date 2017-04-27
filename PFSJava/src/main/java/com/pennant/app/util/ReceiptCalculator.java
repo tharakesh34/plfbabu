@@ -235,7 +235,7 @@ public class ReceiptCalculator implements Serializable {
 		if (allocationList != null && !allocationList.isEmpty()) {
 			for (int a = 0; a < allocationList.size(); a++) {
 				ReceiptAllocationDetail allocate = allocationList.get(a);
-				if (StringUtils.isEmpty(allocate.getAllocationTo())) {
+				if (allocate.getAllocationTo() == 0 || allocate.getAllocationTo() == Long.MIN_VALUE) {
 					paidAllocationMap.put(allocate.getAllocationType(), allocate.getPaidAmount());
 				}else{
 					paidAllocationMap.put(allocate.getAllocationType()+"~"+allocate.getAllocationTo(), allocate.getPaidAmount());
@@ -260,7 +260,8 @@ public class ReceiptCalculator implements Serializable {
 				continue;
 			}
 
-			List<RepayScheduleDetail> rpySchdList = new ArrayList<>();
+			List<RepayScheduleDetail> pastdueRpySchdList = new ArrayList<>();
+			List<RepayScheduleDetail> partialRpySchdList = new ArrayList<>();
 			String repayHierarchy = scheduleData.getFinanceType().getRpyHierarchy();
 			char[] rpyOrder = repayHierarchy.replace("CS", "C").toCharArray();
 			int lastRenderSeq = 0;
@@ -270,6 +271,9 @@ public class ReceiptCalculator implements Serializable {
 			BigDecimal totFeePaidNow = BigDecimal.ZERO;
 			BigDecimal totInsPaidNow = BigDecimal.ZERO;
 			BigDecimal totPenaltyPaidNow = BigDecimal.ZERO;
+			
+			boolean isPartialPayNow = false; 
+			BigDecimal partialSettleAmount = BigDecimal.ZERO;
 
 			// Load Pending Schedules until balance available for payment
 			for (int s = 1; s < tempScheduleDetails.size(); s++) {
@@ -281,6 +285,47 @@ public class ReceiptCalculator implements Serializable {
 				if (schdDate.compareTo(curBussniessDate) > 0 && 
 						!StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 					break;
+				}
+				
+				// Find out early payment/ partial Settlement schedule term and amount
+				if (schdDate.compareTo(curBussniessDate) == 0 && 
+						StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+					
+					// Manual Advises 
+					if (totalReceiptAmt.compareTo(BigDecimal.ZERO) > 0) {
+
+						if(!adviseMap.isEmpty()){
+							List<Long> adviseIdList = new ArrayList<Long>(adviseMap.keySet());
+							Collections.sort(adviseIdList);
+							for (int a = 0; a < adviseIdList.size(); a++) {
+
+								ManualAdvise advise = adviseMap.get(adviseIdList.get(a));
+								if(advise != null){
+									
+									if(paidAllocationMap.containsKey(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID())){
+										BigDecimal insAllocateBal = paidAllocationMap.get(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID());
+										if(insAllocateBal.compareTo(BigDecimal.ZERO) > 0){
+											BigDecimal balAdvise = advise.getAdviseAmount().subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
+											if(balAdvise.compareTo(BigDecimal.ZERO) > 0){
+												if(totalReceiptAmt.compareTo(insAllocateBal) >= 0 && insAllocateBal.compareTo(balAdvise) < 0){
+													balAdvise = insAllocateBal;
+												}else if(totalReceiptAmt.compareTo(insAllocateBal) < 0 && balAdvise.compareTo(totalReceiptAmt) > 0){
+													balAdvise = totalReceiptAmt;
+												}
+
+												// Reset Total Receipt Amount
+												totalReceiptAmt = totalReceiptAmt.subtract(balAdvise);
+												paidAllocationMap.put(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID(), insAllocateBal.subtract(balAdvise));
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					
+					isPartialPayNow = true;
+					partialSettleAmount = totalReceiptAmt;
 				}
 
 				for (int j = 0; j < rpyOrder.length; j++) {
@@ -295,14 +340,16 @@ public class ReceiptCalculator implements Serializable {
 								if(balPri.compareTo(BigDecimal.ZERO) > 0){
 									if(totalReceiptAmt.compareTo(priAllocateBal) >= 0 && priAllocateBal.compareTo(balPri) < 0){
 										balPri = priAllocateBal;
-									}else if(totalReceiptAmt.compareTo(priAllocateBal) < 0){
+									}else if(totalReceiptAmt.compareTo(priAllocateBal) < 0 && balPri.compareTo(totalReceiptAmt) > 0){
 										balPri = totalReceiptAmt;
 									}
 									rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPri);
 
 									// Reset Total Receipt Amount
 									totalReceiptAmt = totalReceiptAmt.subtract(balPri);
-									totPriPaidNow = totPriPaidNow.add(balPri);
+									if(!isPartialPayNow){
+										totPriPaidNow = totPriPaidNow.add(balPri);
+									}
 									paidAllocationMap.put(RepayConstants.ALLOCATION_PRI, priAllocateBal.subtract(balPri));
 
 									// Update Schedule to avoid on Next loop Payment
@@ -324,7 +371,7 @@ public class ReceiptCalculator implements Serializable {
 										if(balPft.compareTo(BigDecimal.ZERO) > 0){
 											if(totalReceiptAmt.compareTo(pftAllocateBal) >= 0 && pftAllocateBal.compareTo(balPft) < 0){
 												balPft = pftAllocateBal;
-											}else if(totalReceiptAmt.compareTo(pftAllocateBal) < 0){
+											}else if(totalReceiptAmt.compareTo(pftAllocateBal) < 0 && balPft.compareTo(totalReceiptAmt) > 0){
 												balPft = totalReceiptAmt;
 											}
 											rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPft);
@@ -351,7 +398,7 @@ public class ReceiptCalculator implements Serializable {
 											if(balLatePft.compareTo(BigDecimal.ZERO) > 0){
 												if(totalReceiptAmt.compareTo(latePftAllocateBal) >= 0 && latePftAllocateBal.compareTo(balLatePft) < 0){
 													balLatePft = latePftAllocateBal;
-												}else if(totalReceiptAmt.compareTo(latePftAllocateBal) < 0){
+												}else if(totalReceiptAmt.compareTo(latePftAllocateBal) < 0 && balLatePft.compareTo(totalReceiptAmt) > 0){
 													balLatePft = totalReceiptAmt;
 												}
 												rsd = prepareRpyRecord(curSchd, rsd, repayTo, balLatePft);
@@ -381,7 +428,7 @@ public class ReceiptCalculator implements Serializable {
 									if(balPenalty.compareTo(BigDecimal.ZERO) > 0){
 										if(totalReceiptAmt.compareTo(penaltyAllocateBal) >= 0 && penaltyAllocateBal.compareTo(balPenalty) < 0){
 											balPenalty = penaltyAllocateBal;
-										}else if(totalReceiptAmt.compareTo(penaltyAllocateBal) < 0){
+										}else if(totalReceiptAmt.compareTo(penaltyAllocateBal) < 0 && balPenalty.compareTo(totalReceiptAmt) > 0){
 											balPenalty = totalReceiptAmt;
 										}
 										rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPenalty);
@@ -434,7 +481,7 @@ public class ReceiptCalculator implements Serializable {
 												if(balFee.compareTo(BigDecimal.ZERO) > 0){
 													if(totalReceiptAmt.compareTo(feeAllocateBal) >= 0 && feeAllocateBal.compareTo(balFee) < 0){
 														balFee = feeAllocateBal;
-													}else if(totalReceiptAmt.compareTo(feeAllocateBal) < 0){
+													}else if(totalReceiptAmt.compareTo(feeAllocateBal) < 0 && balFee.compareTo(totalReceiptAmt) > 0){
 														balFee = totalReceiptAmt;
 													}
 													rsd = prepareRpyRecord(curSchd, rsd, repayTo, balFee);
@@ -488,7 +535,7 @@ public class ReceiptCalculator implements Serializable {
 												if(balIns.compareTo(BigDecimal.ZERO) > 0){
 													if(totalReceiptAmt.compareTo(insAllocateBal) >= 0 && insAllocateBal.compareTo(balIns) < 0){
 														balIns = insAllocateBal;
-													}else if(totalReceiptAmt.compareTo(insAllocateBal) < 0){
+													}else if(totalReceiptAmt.compareTo(insAllocateBal) < 0 && balIns.compareTo(totalReceiptAmt) > 0){
 														balIns = totalReceiptAmt;
 													}
 													rsd = prepareRpyRecord(curSchd, rsd, repayTo, balIns);
@@ -519,7 +566,11 @@ public class ReceiptCalculator implements Serializable {
 				
 				// Add Repay Schedule detail List
 				if(rsd != null){
-					rpySchdList.add(rsd);
+					if(isPartialPayNow){
+						partialRpySchdList.add(rsd);
+					}else{
+						pastdueRpySchdList.add(rsd);
+					}
 				}
 				
 				// No more Receipt amount left for next schedules
@@ -532,7 +583,7 @@ public class ReceiptCalculator implements Serializable {
 			}
 			
 			// Manual Advises 
-			if (totalReceiptAmt.compareTo(BigDecimal.ZERO) > 0) {
+			if (!isPartialPayNow && totalReceiptAmt.compareTo(BigDecimal.ZERO) > 0) {
 
 				if(!adviseMap.isEmpty()){
 					List<Long> adviseIdList = new ArrayList<Long>(adviseMap.keySet());
@@ -549,15 +600,12 @@ public class ReceiptCalculator implements Serializable {
 									if(balAdvise.compareTo(BigDecimal.ZERO) > 0){
 										if(totalReceiptAmt.compareTo(insAllocateBal) >= 0 && insAllocateBal.compareTo(balAdvise) < 0){
 											balAdvise = insAllocateBal;
-										}else if(totalReceiptAmt.compareTo(insAllocateBal) < 0){
+										}else if(totalReceiptAmt.compareTo(insAllocateBal) < 0 && balAdvise.compareTo(totalReceiptAmt) > 0){
 											balAdvise = totalReceiptAmt;
 										}
-										//rsd = prepareRpyRecord(curSchd, rsd, repayTo, balAdvise); TODO
 
 										// Reset Total Receipt Amount
 										totalReceiptAmt = totalReceiptAmt.subtract(balAdvise);
-										//totInsPaidNow = totInsPaidNow.add(balAdvise);
-
 										paidAllocationMap.put(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID(), insAllocateBal.subtract(balAdvise));
 									}
 								}
@@ -568,13 +616,14 @@ public class ReceiptCalculator implements Serializable {
 			}
 			
 			FinRepayHeader repayHeader = null;
-			if(receiptDetail.getAmount().compareTo(totalReceiptAmt) > 0){
+			if(receiptDetail.getAmount().compareTo(totalReceiptAmt) > 0 && 
+					receiptDetail.getAmount().compareTo(partialSettleAmount) > 0){
 				// Prepare Repay Header Details
 				repayHeader = new FinRepayHeader();
 				repayHeader.setFinReference(receiptData.getFinReference());
 				repayHeader.setValueDate(DateUtility.getAppDate());
-				repayHeader.setRepayAmount(receiptDetail.getAmount().subtract(totalReceiptAmt));
-				repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_SCHDRPY);
+				repayHeader.setRepayAmount(receiptDetail.getAmount().subtract(totalReceiptAmt).subtract(partialSettleAmount));
+				repayHeader.setFinEvent(receiptPurpose);
 				repayHeader.setPriAmount(totPriPaidNow);
 				repayHeader.setPftAmount(totPftPaidNow);
 				repayHeader.setLatePftAmount(totLPftPaidNow);
@@ -584,27 +633,51 @@ public class ReceiptCalculator implements Serializable {
 				repayHeader.setTotalWaiver(BigDecimal.ZERO);//TODO : Need to Discuss , how to adjust
 
 				// Adding Repay Schedule Details to Repay Header
-				repayHeader.setRepayScheduleDetails(rpySchdList);
+				repayHeader.setRepayScheduleDetails(pastdueRpySchdList);
 				repayHeaderList.add(repayHeader);
 			}
 			
-			// Prepare Remaining Balance Amount as Partial Settlement , If selected Receipt Purpose is same
-			if (totalReceiptAmt.compareTo(BigDecimal.ZERO) > 0) {
-
-				// Prepare Repay Schedule detail Object and Principal paid Amount set as Remaining Balance
-				
-				// Prepare Repay Header for Partial Settlement 
+			if(totalReceiptAmt.compareTo(BigDecimal.ZERO) > 0 && 
+					(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY) || 
+							StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE))){
+				// Prepare Repay Header Details
 				repayHeader = new FinRepayHeader();
 				repayHeader.setFinReference(receiptData.getFinReference());
 				repayHeader.setValueDate(DateUtility.getAppDate());
 				repayHeader.setRepayAmount(totalReceiptAmt);
-				repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_EARLYRPY);
-				repayHeader.setPriAmount(totalReceiptAmt);
+				repayHeader.setFinEvent(receiptData.getReceiptHeader().getExcessAdjustTo());
+				repayHeader.setPriAmount(BigDecimal.ZERO);
 				repayHeader.setPftAmount(BigDecimal.ZERO);
 				repayHeader.setLatePftAmount(BigDecimal.ZERO);
 				repayHeader.setTotalPenalty(BigDecimal.ZERO);
 				repayHeader.setTotalIns(BigDecimal.ZERO);
 				repayHeader.setTotalSchdFee(BigDecimal.ZERO);
+				repayHeader.setTotalWaiver(BigDecimal.ZERO);
+
+				// Adding Repay Schedule Details to Repay Header
+				repayHeader.setRepayScheduleDetails(pastdueRpySchdList);
+				repayHeaderList.add(repayHeader);
+			}
+			
+			// Prepare Remaining Balance Amount as Partial Settlement , If selected Receipt Purpose is same
+			if (partialSettleAmount.compareTo(BigDecimal.ZERO) > 0 && 
+					StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+
+				// Prepare Repay Header for Partial Settlement 
+				repayHeader = new FinRepayHeader();
+				repayHeader.setFinReference(receiptData.getFinReference());
+				repayHeader.setValueDate(DateUtility.getAppDate());
+				repayHeader.setRepayAmount(partialSettleAmount);
+				repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_EARLYRPY);
+				repayHeader.setPriAmount(partialSettleAmount);
+				repayHeader.setPftAmount(BigDecimal.ZERO);
+				repayHeader.setLatePftAmount(BigDecimal.ZERO);
+				repayHeader.setTotalPenalty(BigDecimal.ZERO);
+				repayHeader.setTotalIns(BigDecimal.ZERO);
+				repayHeader.setTotalSchdFee(BigDecimal.ZERO);
+
+				// Adding Repay Schedule Details to Repay Header
+				repayHeader.setRepayScheduleDetails(partialRpySchdList);
 				repayHeaderList.add(repayHeader);
 			}
 			
