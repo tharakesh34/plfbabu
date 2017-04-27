@@ -1790,4 +1790,10 @@ UPDATE SEQ_DATA_ENGINE_STATUS SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_E
 			Management',0,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
 		</sql>
 	</changeSet>
+	<changeSet id="96" author="SreeRavali">
+		<sql>
+			Delete from ReportList where code = 'ManualAdvise';
+			INSERT INTO ReportList Values('ManualAdvise','ManualAdvise','listheader_AdviseType.label,listheader_FinReference.label,listheader_FeeTypeID.label,listheader_RecordStatus.label,listheader_RecordType.label','adviseType,finReference,feeTypeDesc,recordStatus,recordType','int,String,String,String,String','','ReportList05','ManualAdvise','LoanManagement',0,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
