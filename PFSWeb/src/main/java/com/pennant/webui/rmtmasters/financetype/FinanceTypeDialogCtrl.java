@@ -6780,9 +6780,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	private List<AccountEngineEvent> getAccountingEvents() {
 		if (this.isOverdraft) {
-			return PennantStaticListUtil.getOverdraftAccountingEvents();
+			return PennantAppUtil.getOverdraftAccountingEvents();
 		} else {
-			return PennantStaticListUtil.getAccountingEvents();
+			return PennantAppUtil.getAccountingEvents();
 		}
 	}
 

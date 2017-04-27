@@ -398,12 +398,12 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		
 		if (isOriginationFee) {
 			if (isOverdraft) {
-				this.finEvent.setList(PennantStaticListUtil.getOverdraftOrgAccountingEvents());
+				this.finEvent.setList(PennantAppUtil.getOverdraftOrgAccountingEvents());
 			} else {
-				this.finEvent.setList(PennantStaticListUtil.getOriginationAccountingEvents());
+				this.finEvent.setList(PennantAppUtil.getOriginationAccountingEvents());
 			}
 		} else {
-			this.finEvent.setList(PennantStaticListUtil.getAccountingEvents());
+			this.finEvent.setList(PennantAppUtil.getAccountingEvents());
 		}
 
 		if (StringUtils.equals(aFinTypeFees.getFinEvent(), AccountEventConstants.ACCEVENT_CMTDISB)) {

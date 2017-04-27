@@ -72,6 +72,7 @@ import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 
@@ -225,9 +226,9 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 	
 	private List<AccountEngineEvent> getAccountingEvents() {
 		if (this.isOverdraft) {
-			return PennantStaticListUtil.getOverdraftAccountingEvents();
+			return PennantAppUtil.getOverdraftAccountingEvents();
 		} else {
-			return PennantStaticListUtil.getAccountingEvents();
+			return PennantAppUtil.getAccountingEvents();
 		}
 	}
 	

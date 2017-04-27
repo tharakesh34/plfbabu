@@ -65,8 +65,10 @@ import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Listbox;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
@@ -83,6 +85,7 @@ import com.pennant.backend.model.applicationmaster.RBFieldDetail;
 import com.pennant.backend.model.applicationmaster.RejectDetail;
 import com.pennant.backend.model.applicationmaster.TargetDetail;
 import com.pennant.backend.model.applicationmasters.Flag;
+import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.bmtmasters.Product;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.customermasters.Customer;
@@ -1905,4 +1908,101 @@ public class PennantAppUtil {
 		return null;
 	}
 
+	/**
+	 * Get the BMTAEevents list for LoanType
+	 * 
+	 * @return
+	 */
+	public static List<AccountEngineEvent> getAccountingEvents() {
+
+		List<AccountEngineEvent> accountEngineEventsList = new ArrayList<AccountEngineEvent>();
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+
+		JdbcSearchObject<AccountEngineEvent> searchObject = new JdbcSearchObject<AccountEngineEvent>(AccountEngineEvent.class);
+
+		Filter[] filters = null;
+
+		if (ImplementationConstants.ALLOW_DEPRECIATION) {
+			filters = new Filter[1];
+			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+		} else {
+			filters = new Filter[2];
+			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+			filters[1] = new Filter("AEEventCode", AccountEventConstants.ACCEVENT_DPRCIATE, Filter.OP_NOT_EQUAL);
+		}
+		searchObject.addFilters(filters);
+		searchObject.addTabelName("BMTAEevents");
+		accountEngineEventsList = pagedListService.getBySearchObject(searchObject);
+
+		return accountEngineEventsList;
+	}
+	
+	public static List<AccountEngineEvent> getOriginationAccountingEvents() {
+
+		List<AccountEngineEvent> accountEngineEventsList = new ArrayList<AccountEngineEvent>();
+		List<String> accountEngineEvents = new ArrayList<String>();
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+
+		JdbcSearchObject<AccountEngineEvent> searchObject = new JdbcSearchObject<AccountEngineEvent>(
+				AccountEngineEvent.class);
+		accountEngineEvents.add(AccountEventConstants.ACCEVENT_ADDDBSF);
+		accountEngineEvents.add(AccountEventConstants.ACCEVENT_ADDDBSN);
+		accountEngineEvents.add(AccountEventConstants.ACCEVENT_ADDDBSP);
+
+		Filter[] filters = new Filter[2];
+		filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+		filters[1] = new Filter("AEEventCode", accountEngineEvents, Filter.OP_IN);
+
+		searchObject.addFilters(filters);
+		searchObject.addTabelName("BMTAEevents");
+		accountEngineEventsList = pagedListService.getBySearchObject(searchObject);
+		
+		for(AccountEngineEvent accountEngineEvent : accountEngineEventsList) {
+			if(StringUtils.equals(AccountEventConstants.ACCEVENT_ADDDBSF, accountEngineEvent.getId())) {
+				accountEngineEvent.setMandatory(AccountEventConstants.ACCEVENT_ADDDBSF_REQ);
+				break;
+			}
+		}
+
+		return accountEngineEventsList;
+	}
+	
+	public static List<AccountEngineEvent> getOverdraftOrgAccountingEvents() {
+		
+		List<AccountEngineEvent> accountEngineEventsList = new ArrayList<AccountEngineEvent>();
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+
+		JdbcSearchObject<AccountEngineEvent> searchObject = new JdbcSearchObject<AccountEngineEvent>(
+				AccountEngineEvent.class);
+
+		Filter[] filters = new Filter[2];
+		filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+		filters[1] = new Filter("AEEventCode", AccountEventConstants.ACCEVENT_CMTDISB, Filter.OP_EQUAL);
+
+		searchObject.addFilters(filters);
+		searchObject.addTabelName("BMTAEevents");
+		accountEngineEventsList = pagedListService.getBySearchObject(searchObject);
+		
+		return accountEngineEventsList;
+	}
+	
+	public static List<AccountEngineEvent> getOverdraftAccountingEvents() {
+
+		List<AccountEngineEvent> accountEngineEventsList = new ArrayList<AccountEngineEvent>();
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+
+		JdbcSearchObject<AccountEngineEvent> searchObject = new JdbcSearchObject<AccountEngineEvent>(
+				AccountEngineEvent.class);
+
+		Filter[] filters = new Filter[2];
+		filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+		filters[1] = new Filter("ODApplicable", 1, Filter.OP_EQUAL);
+
+		searchObject.addFilters(filters);
+		searchObject.addTabelName("BMTAEevents");
+		accountEngineEventsList = pagedListService.getBySearchObject(searchObject);
+
+		return accountEngineEventsList;
+	}
+	
 }

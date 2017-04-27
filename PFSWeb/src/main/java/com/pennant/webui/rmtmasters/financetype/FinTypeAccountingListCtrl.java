@@ -70,8 +70,8 @@ import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -397,9 +397,9 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 	
 	private List<AccountEngineEvent> getAccountingEvents(){
 		if(this.isOverdraft){
-			return PennantStaticListUtil.getOverdraftAccountingEvents();
+			return PennantAppUtil.getOverdraftAccountingEvents();
 		}else{
-			return PennantStaticListUtil.getAccountingEvents();
+			return PennantAppUtil.getAccountingEvents();
 		}
 	}
 	

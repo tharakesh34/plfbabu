@@ -54,12 +54,13 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  */
 public class AccountEngineEvent extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 105815151562496959L;
-	
+
 	private String aEEventCode = null;
 	private String aEEventCodeDesc;
-	private boolean active=false;
-	private boolean newRecord=false;
-	private boolean mandatory=false;
+	private boolean active = false;
+	private boolean newRecord = false;
+	private boolean mandatory = false;
+	private boolean oDApplicable = false;
 	private String lovValue;
 	private AccountEngineEvent befImage;
 	private LoggedInUser userDetails;
@@ -76,8 +77,8 @@ public class AccountEngineEvent extends AbstractWorkflowEntity {
 		super();
 		this.setId(id);
 	}
-	
-	public AccountEngineEvent(String id,String desc,boolean mandatory) {
+
+	public AccountEngineEvent(String id, String desc, boolean mandatory) {
 		super();
 		this.setId(id);
 		this.setAEEventCodeDesc(desc);
@@ -86,39 +87,43 @@ public class AccountEngineEvent extends AbstractWorkflowEntity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		excludeFields.add("mandatory");
-		
+		//excludeFields.add("mandatory");
+
 		return excludeFields;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public String getId() {
 		return aEEventCode;
 	}
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.aEEventCode = id;
 	}
-	
+
 	public String getAEEventCode() {
 		return aEEventCode;
 	}
+
 	public void setAEEventCode(String aEEventCode) {
 		this.aEEventCode = aEEventCode;
 	}
-	
+
 	public String getAEEventCodeDesc() {
 		return aEEventCodeDesc;
 	}
+
 	public void setAEEventCodeDesc(String aEEventCodeDesc) {
 		this.aEEventCodeDesc = aEEventCodeDesc;
 	}
-	
+
 	public boolean isMandatory() {
 		return mandatory;
 	}
+
 	public void setMandatory(boolean mandatory) {
 		this.mandatory = mandatory;
 	}
@@ -126,36 +131,48 @@ public class AccountEngineEvent extends AbstractWorkflowEntity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public AccountEngineEvent getBefImage(){
+	public AccountEngineEvent getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(AccountEngineEvent beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(AccountEngineEvent beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	public boolean isActive() {
-	    return active;
-    }
+		return active;
+	}
 
 	public void setActive(boolean active) {
-	    this.active = active;
-    }
+		this.active = active;
+	}
+
+	public boolean isoDApplicable() {
+		return oDApplicable;
+	}
+
+	public void setoDApplicable(boolean oDApplicable) {
+		this.oDApplicable = oDApplicable;
+	}
 }

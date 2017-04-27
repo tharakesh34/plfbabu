@@ -97,6 +97,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -1061,9 +1062,9 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		List<AccountEngineEvent> eventList = null;
 		List<String> eventCodes = new ArrayList<String>();
 		if(isOrigination){
-			eventList = PennantStaticListUtil.getOriginationAccountingEvents();
+			eventList = PennantAppUtil.getOriginationAccountingEvents();
 		}else{
-			eventList = PennantStaticListUtil.getOverdraftAccountingEvents();
+			eventList = PennantAppUtil.getOverdraftAccountingEvents();
 		}
 		for (AccountEngineEvent accountEngineEvent : eventList) {
 			eventCodes.add(accountEngineEvent.getAEEventCode());
