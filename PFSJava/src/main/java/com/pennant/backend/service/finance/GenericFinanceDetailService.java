@@ -165,7 +165,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private FinCollateralsDAO				finCollateralsDAO;
 	private FinTypeAccountingDAO			finTypeAccountingDAO;
 	private FinPlanEmiHolidayDAO			finPlanEmiHolidayDAO;
-	private OverdraftScheduleDetailDAO 		overdraftScheduleDetailDAO;
+	private OverdraftScheduleDetailDAO		overdraftScheduleDetailDAO;
 
 	// DocumentManagerDAO
 	private DocumentManagerDAO				documentManagerDAO;
@@ -226,8 +226,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @param finDetail
 	 * @param tableType
 	 * @return auditList
-	 * */
-	public List<AuditDetail> jointGuarantorDeletion(FinanceDetail financeDetail, String tableType, String auditTranType) {
+	 */
+	public List<AuditDetail> jointGuarantorDeletion(FinanceDetail financeDetail, String tableType,
+			String auditTranType) {
 		logger.debug("Entering ");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -304,8 +305,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			contributorDetail.setUserDetails(contributorHeader.getUserDetails());
 			contributorDetail.setLastMntOn(contributorHeader.getLastMntOn());
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], contributorDetail
-					.getBefImage(), contributorDetail));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+					contributorDetail.getBefImage(), contributorDetail));
 		}
 		logger.debug("Leaving");
 		return auditDetails;
@@ -382,7 +383,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @param method
 	 * @return
 	 */
-	public List<AuditDetail> setCollateralAssignmentAuditData(FinanceDetail detail, String auditTranType, String method) {
+	public List<AuditDetail> setCollateralAssignmentAuditData(FinanceDetail detail, String auditTranType,
+			String method) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -430,8 +432,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			collateralAssignment.setUserDetails(financeMain.getUserDetails());
 			collateralAssignment.setLastMntOn(financeMain.getLastMntOn());
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], collateralAssignment
-					.getBefImage(), collateralAssignment));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+					collateralAssignment.getBefImage(), collateralAssignment));
 		}
 
 		logger.debug("Leaving");
@@ -557,8 +559,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			insuranceDetails.setUserDetails(detail.getFinScheduleData().getFinanceMain().getUserDetails());
 			insuranceDetails.setLastMntOn(detail.getFinScheduleData().getFinanceMain().getLastMntOn());
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-					insuranceDetails.getBefImage(), insuranceDetails));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], insuranceDetails.getBefImage(),
+					insuranceDetails));
 		}
 
 		logger.debug("Leaving");
@@ -1185,8 +1187,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			pftDetail = getProfitDetailsDAO().getFinProfitDetailsById(financeMain.getFinReference());
 		}
 
-		pftDetail = AEAmounts.calProfitDetails(financeMain, financeDetail.getFinScheduleData()
-				.getFinanceScheduleDetails(), pftDetail, curBDay);
+		pftDetail = AEAmounts.calProfitDetails(financeMain,
+				financeDetail.getFinScheduleData().getFinanceScheduleDetails(), pftDetail, curBDay);
 		amountCodes = AEAmounts.procCalAEAmounts(financeMain, pftDetail, curBDay);
 
 		try {
@@ -1278,9 +1280,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 			if (!financeDetail.getFinScheduleData().getFinanceType().isAllowRIAInvestment()) {
 
-				if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)
-						&& !StringUtils
-								.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ROLLOVER)) {
+				if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && !StringUtils
+						.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ROLLOVER)) {
 
 					List<FinanceDisbursement> disbursementDetails = financeDetail.getFinScheduleData()
 							.getDisbursementDetails();
@@ -1342,8 +1343,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 								advPendingDueMap.put(disbursement.getContractorId(), netAdvDue);
 							}
 
-							List<ReturnDataSet> returnSetEntries = getEngineExecution().getAccEngineExecResults(
-									dataSet, amountCodes, "Y", feeRuleDetailsMap, false,
+							List<ReturnDataSet> returnSetEntries = getEngineExecution().getAccEngineExecResults(dataSet,
+									amountCodes, "Y", feeRuleDetailsMap, false,
 									financeDetail.getFinScheduleData().getFinanceType(),
 									financeDetail.getPremiumDetail());
 
@@ -1395,28 +1396,25 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 										ReturnDataSet set = returnSetEntries.get(i);
 										set.setLinkedTranId(linkedTranId);
 										set.setPostDate(curBDay);
-										if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils
-												.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
-											errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(),
-													"E", set.getErrorMsg()
-															+ " "
-															+ PennantApplicationUtil.formatAccountNumber(set
-																	.getAccount()), new String[] {}, new String[] {}));
+										if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId()))
+												|| StringUtils.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
+											errorDetails
+													.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
+															set.getErrorMsg() + " "
+																	+ PennantApplicationUtil
+																			.formatAccountNumber(set.getAccount()),
+															new String[] {}, new String[] {}));
 										} else {
 											set.setPostStatus("S");
 										}
 
-										if (!isFetchFinAc
-												&& set.getAccountType().equals(
-														financeDetail.getFinScheduleData().getFinanceType()
-																.getFinAcType())) {
+										if (!isFetchFinAc && set.getAccountType().equals(
+												financeDetail.getFinScheduleData().getFinanceType().getFinAcType())) {
 											isFetchFinAc = true;
 											financeMain.setFinAccount(set.getAccount());
 										}
-										if (!isFetchCistIntAc
-												&& set.getAccountType().equals(
-														financeDetail.getFinScheduleData().getFinanceType()
-																.getPftPayAcType())) {
+										if (!isFetchCistIntAc && set.getAccountType().equals(financeDetail
+												.getFinScheduleData().getFinanceType().getPftPayAcType())) {
 											isFetchCistIntAc = true;
 											financeMain.setFinCustPftAccount(set.getAccount());
 										}
@@ -1487,12 +1485,15 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 											ReturnDataSet set = returnSetEntries.get(i);
 											set.setLinkedTranId(linkedTranId);
 											set.setPostDate(curBDay);
-											if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils
-													.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
-												errorDetails.add(new ErrorDetails(set.getAccountType(), set
-														.getErrorId(), "E", set.getErrorMsg() + " "
-														+ PennantApplicationUtil.formatAccountNumber(set.getAccount()),
-														new String[] {}, new String[] {}));
+											if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId()))
+													|| StringUtils
+															.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
+												errorDetails.add(
+														new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
+																set.getErrorMsg() + " "
+																		+ PennantApplicationUtil
+																				.formatAccountNumber(set.getAccount()),
+																new String[] {}, new String[] {}));
 											} else {
 												set.setPostStatus("S");
 											}
@@ -1609,12 +1610,15 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 											ReturnDataSet set = returnSetEntries.get(k);
 											set.setLinkedTranId(linkedTranId);
 											set.setPostDate(curBDay);
-											if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils
-													.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
-												errorDetails.add(new ErrorDetails(set.getAccountType(), set
-														.getErrorId(), "E", set.getErrorMsg() + " "
-														+ PennantApplicationUtil.formatAccountNumber(set.getAccount()),
-														new String[] {}, new String[] {}));
+											if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId()))
+													|| StringUtils
+															.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
+												errorDetails.add(
+														new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
+																set.getErrorMsg() + " "
+																		+ PennantApplicationUtil
+																				.formatAccountNumber(set.getAccount()),
+																new String[] {}, new String[] {}));
 											} else {
 												set.setPostStatus("S");
 											}
@@ -1648,9 +1652,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 								for (int j = 0; j < oldDisbList.size(); j++) {
 									FinanceDisbursement oldDisb = oldDisbList.get(j);
 									if (curDisb.getDisbDate().compareTo(oldDisb.getDisbDate()) == 0
-											&& (curDisb.getDisbSeq() == oldDisb.getDisbSeq())
-											&& StringUtils.equals(oldDisb.getDisbStatus(),
-													FinanceConstants.DISB_STATUS_CANCEL)) {
+											&& (curDisb.getDisbSeq() == oldDisb.getDisbSeq()) && StringUtils.equals(
+													oldDisb.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)) {
 										isCancelDisbExists = true;
 										break;
 									}
@@ -1724,8 +1727,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 									ReturnDataSet set = returnSetEntries.get(i);
 									set.setLinkedTranId(linkedTranId);
 									set.setPostDate(curBDay);
-									if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils
-											.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
+									if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId()))
+											|| StringUtils.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
 										errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
 												set.getErrorMsg() + " "
 														+ PennantApplicationUtil.formatAccountNumber(set.getAccount()),
@@ -1743,7 +1746,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				}
 
 				//Stage Accounting Process Execution
-				if (financeDetail.getStageAccountingList() != null && financeDetail.getStageAccountingList().size() > 0) {
+				if (financeDetail.getStageAccountingList() != null
+						&& financeDetail.getStageAccountingList().size() > 0) {
 					dataSet.setFinEvent(AccountEventConstants.ACCEVENT_STAGE);
 					List<ReturnDataSet> returnSetEntries = getEngineExecution().getStageExecResults(dataSet,
 							amountCodes, "Y", financeMain.getRoleCode(), feeRuleDetailsMap,
@@ -1793,12 +1797,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 								ReturnDataSet set = returnSetEntries.get(i);
 								set.setLinkedTranId(linkedTranId);
 								set.setPostDate(curBDay);
-								if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils
-										.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
-									errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E", set
-											.getErrorMsg()
-											+ " "
-											+ PennantApplicationUtil.formatAccountNumber(set.getAccount()),
+								if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId()))
+										|| StringUtils.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
+									errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
+											set.getErrorMsg() + " "
+													+ PennantApplicationUtil.formatAccountNumber(set.getAccount()),
 											new String[] {}, new String[] {}));
 								} else {
 									set.setPostStatus("S");
@@ -1825,9 +1828,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					}
 				}
 
-				if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)
-						&& !StringUtils
-								.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ROLLOVER)) {
+				if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && !StringUtils
+						.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ROLLOVER)) {
 
 					// Loop Repetition for Multiple Disbursement
 					List<FinanceDisbursement> disbursementDetails = financeDetail.getFinScheduleData()
@@ -1896,8 +1898,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 									ReturnDataSet set = returnSetEntries.get(i);
 									set.setLinkedTranId(linkedTranId);
 									set.setPostDate(curBDay);
-									if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils
-											.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
+									if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId()))
+											|| StringUtils.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
 										errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
 												set.getErrorMsg() + " "
 														+ PennantApplicationUtil.formatAccountNumber(set.getAccount()),
@@ -1915,9 +1917,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 					// Finance GraceEnd Posting Details
 					if (StringUtils.trimToEmpty(productType).equalsIgnoreCase(FinanceConstants.PRODUCT_IJARAH)
-							|| StringUtils.trimToEmpty(productType).equalsIgnoreCase(FinanceConstants.PRODUCT_FWIJARAH)) {
-						if (StringUtils.trimToEmpty(financeMain.getRecordType()).equals(
-								PennantConstants.RECORD_TYPE_NEW)
+							|| StringUtils.trimToEmpty(productType)
+									.equalsIgnoreCase(FinanceConstants.PRODUCT_FWIJARAH)) {
+						if (StringUtils.trimToEmpty(financeMain.getRecordType())
+								.equals(PennantConstants.RECORD_TYPE_NEW)
 								&& !StringUtils.equals(financeDetail.getModuleDefiner(),
 										FinanceConstants.FINSER_EVENT_ROLLOVER)) {
 							if (financeMain.getGrcPeriodEndDate() != null
@@ -1926,8 +1929,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 										financeDetail.getAccountingEventCode(), financeMain.getFinStartDate(),
 										financeMain.getFinStartDate());
 								dataset.setFinEvent(AccountEventConstants.ACCEVENT_GRACEEND);
-								returnSetEntries = getEngineExecutionRIA().getAccEngineExecResults(dataset,
-										amountCodes, "Y", riaDetailList, feeRuleDetailsMap);
+								returnSetEntries = getEngineExecutionRIA().getAccEngineExecResults(dataset, amountCodes,
+										"Y", riaDetailList, feeRuleDetailsMap);
 
 								if (returnSetEntries != null && !returnSetEntries.isEmpty()) {
 
@@ -1973,12 +1976,15 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 											ReturnDataSet set = returnSetEntries.get(i);
 											set.setLinkedTranId(linkedTranId);
 											set.setPostDate(curBDay);
-											if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils
-													.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
-												errorDetails.add(new ErrorDetails(set.getAccountType(), set
-														.getErrorId(), "E", set.getErrorMsg() + " "
-														+ PennantApplicationUtil.formatAccountNumber(set.getAccount()),
-														new String[] {}, new String[] {}));
+											if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId()))
+													|| StringUtils
+															.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
+												errorDetails.add(
+														new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
+																set.getErrorMsg() + " "
+																		+ PennantApplicationUtil
+																				.formatAccountNumber(set.getAccount()),
+																new String[] {}, new String[] {}));
 											} else {
 												set.setPostStatus("S");
 											}
@@ -2040,12 +2046,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 								ReturnDataSet set = returnSetEntries.get(i);
 								set.setLinkedTranId(linkedTranId);
 								set.setPostDate(curBDay);
-								if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils
-										.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
-									errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E", set
-											.getErrorMsg()
-											+ " "
-											+ PennantApplicationUtil.formatAccountNumber(set.getAccount()),
+								if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId()))
+										|| StringUtils.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
+									errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
+											set.getErrorMsg() + " "
+													+ PennantApplicationUtil.formatAccountNumber(set.getAccount()),
 											new String[] {}, new String[] {}));
 								} else {
 									set.setPostStatus("S");
@@ -2069,13 +2074,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				AECommitment aeCommitment = new AECommitment();
 				aeCommitment.setCMTAMT(commitment.getCmtAmount());
 				aeCommitment.setCHGAMT(commitment.getCmtCharges());
-				aeCommitment
-						.setDISBURSE(CalculationUtil.getConvertedAmount(
-								financeMain.getFinCcy(),
-								commitment.getCmtCcy(),
-								financeMain.getFinAmount().subtract(
-										financeMain.getDownPayment() == null ? BigDecimal.ZERO : financeMain
-												.getDownPayment())));
+				aeCommitment.setDISBURSE(CalculationUtil.getConvertedAmount(financeMain.getFinCcy(),
+						commitment.getCmtCcy(), financeMain.getFinAmount().subtract(financeMain.getDownPayment() == null
+								? BigDecimal.ZERO : financeMain.getDownPayment())));
 				aeCommitment.setRPPRI(BigDecimal.ZERO);
 
 				List<ReturnDataSet> returnSetEntries = getEngineExecution().getCommitmentExecResults(aeCommitment,
@@ -2124,12 +2125,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 							ReturnDataSet set = returnSetEntries.get(i);
 							set.setLinkedTranId(linkedTranId);
 							set.setPostDate(curBDay);
-							if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || StringUtils
-									.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
-								errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E", set
-										.getErrorMsg()
-										+ " "
-										+ PennantApplicationUtil.formatAccountNumber(set.getAccount()),
+							if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId()))
+									|| StringUtils.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
+								errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
+										set.getErrorMsg() + " "
+												+ PennantApplicationUtil.formatAccountNumber(set.getAccount()),
 										new String[] {}, new String[] {}));
 							} else {
 								set.setPostStatus("S");
@@ -2157,23 +2157,23 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		if (auditHeader.getErrorMessage() == null || auditHeader.getErrorMessage().size() == 0) {
 
 			// Past due Deferment Details Process
-			if (!financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)
-					&& (StringUtils.trimToEmpty(financeMain.getRcdMaintainSts()).equals(
-							FinanceConstants.FINSER_EVENT_POSTPONEMENT) || StringUtils.trimToEmpty(
-							financeMain.getRcdMaintainSts()).equals(FinanceConstants.FINSER_EVENT_CHGFRQ))) {
+			if (!financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && (StringUtils
+					.trimToEmpty(financeMain.getRcdMaintainSts()).equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT)
+					|| StringUtils.trimToEmpty(financeMain.getRcdMaintainSts())
+							.equals(FinanceConstants.FINSER_EVENT_CHGFRQ))) {
 
 				List<Date> pastdueDefDateList = new ArrayList<Date>();
 
-				if (StringUtils.trimToEmpty(financeMain.getRcdMaintainSts()).equals(
-						FinanceConstants.FINSER_EVENT_CHGFRQ)) {
+				if (StringUtils.trimToEmpty(financeMain.getRcdMaintainSts())
+						.equals(FinanceConstants.FINSER_EVENT_CHGFRQ)) {
 
 					List<FinanceScheduleDetail> schDetailList = financeDetail.getFinScheduleData()
 							.getFinanceScheduleDetails();
 					List<Date> schDateList = new ArrayList<Date>();
 					for (int i = 0; i < schDetailList.size(); i++) {
 						FinanceScheduleDetail curSchd = schDetailList.get(i);
-						if (!(curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate() && curSchd.getRepayAmount()
-								.compareTo(BigDecimal.ZERO) > 0))) {
+						if (!(curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate()
+								&& curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))) {
 							continue;
 						}
 						if (curSchd.getSchDate().compareTo(curBDay) > 0) {
@@ -2193,8 +2193,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				if (!pastdueDefDateList.isEmpty()) {
 
 					//Fetching Overdue Penalty Recovery Details, If any Paid either Partially or Fully
-					BigDecimal totPenaltyPaid = getRecoveryDAO().getPaidPenaltiesbySchDates(
-							financeMain.getFinReference(), pastdueDefDateList);
+					BigDecimal totPenaltyPaid = getRecoveryDAO()
+							.getPaidPenaltiesbySchDates(financeMain.getFinReference(), pastdueDefDateList);
 
 					// DataSet Creation
 					dataSet.setFinEvent(AccountEventConstants.ACCEVENT_LATEPAY);
@@ -2231,8 +2231,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 						getFinODDetailsDAO().deleteODDeferHistory(financeMain.getFinReference(), pastdueDefDateList);
 
 						//Finance Status Insertion newly with today's Value date on this Finance
-						String curFinStatus = getCustomerStatusCodeDAO().getFinanceStatus(
-								financeMain.getFinReference(), true);
+						String curFinStatus = getCustomerStatusCodeDAO().getFinanceStatus(financeMain.getFinReference(),
+								true);
 						String finStsReason = FinanceConstants.FINSTSRSN_MANUAL;
 						boolean isStsChanged = false;
 
@@ -2247,7 +2247,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 							statusDetail.setValueDate(dateValueDate);
 							statusDetail.setCustId(financeMain.getCustID());
 							statusDetail.setFinStatus(curFinStatus);
-//							statusDetail.setFinStatusReason(finStsReason);
+							//							statusDetail.setFinStatusReason(finStsReason);
 
 							getFinStatusDetailDAO().saveOrUpdateFinStatus(statusDetail);
 						}
@@ -2267,16 +2267,16 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 							}
 						}
 
-						if (StringUtils.trimToEmpty(financeMain.getRcdMaintainSts()).equals(
-								FinanceConstants.FINSER_EVENT_POSTPONEMENT)) {
-							suspenseCheckProcess(financeMain, FinanceConstants.FINSER_EVENT_POSTPONEMENT,
-									dateValueDate, financeDetail.getFinScheduleData().getFinanceType()
-											.isAllowRIAInvestment(), curFinStatus, maxODDays);
+						if (StringUtils.trimToEmpty(financeMain.getRcdMaintainSts())
+								.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT)) {
+							suspenseCheckProcess(financeMain, FinanceConstants.FINSER_EVENT_POSTPONEMENT, dateValueDate,
+									financeDetail.getFinScheduleData().getFinanceType().isAllowRIAInvestment(),
+									curFinStatus, maxODDays);
 						}
 
 						//AEAmounts Recalculation after Removing Overdue Details 
-						amountCodes = AEAmounts.procAEAmounts(financeMain, financeDetail.getFinScheduleData()
-								.getFinanceScheduleDetails(), pftDetail, curBDay);
+						amountCodes = AEAmounts.procAEAmounts(financeMain,
+								financeDetail.getFinScheduleData().getFinanceScheduleDetails(), pftDetail, curBDay);
 					} else {
 
 						String error = (String) resultList.get(2);
@@ -2338,8 +2338,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @param maxODDays
 	 * @throws AccountNotFoundException
 	 */
-	protected void suspenseCheckProcess(FinanceMain financeMain, String processType, Date dateValueDate,
-			boolean alwRIA, String curFinsts, int maxODDays) throws PFFInterfaceException {
+	protected void suspenseCheckProcess(FinanceMain financeMain, String processType, Date dateValueDate, boolean alwRIA,
+			String curFinsts, int maxODDays) throws PFFInterfaceException {
 
 		boolean chkSuspProcess = false;
 
@@ -2441,8 +2441,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				financeMain.getFinStartDate(), financeMain.getFinStartDate());
 		dataSet.setModuledefiner(financeDetail.getModuleDefiner());
 
-		amountCodes = AEAmounts.procAEAmounts(financeMain, financeDetail.getFinScheduleData()
-				.getFinanceScheduleDetails(), new FinanceProfitDetail(), financeMain.getFinStartDate());
+		amountCodes = AEAmounts.procAEAmounts(financeMain,
+				financeDetail.getFinScheduleData().getFinanceScheduleDetails(), new FinanceProfitDetail(),
+				financeMain.getFinStartDate());
 
 		Map<String, FeeRule> feeRuleDetailsMap = null;
 		/*
@@ -2487,8 +2488,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			return auditHeader;
 		}
 
-		if (!prvStageAccountingCheck(newStageAcEntries, financeMain.getFinReference(),
-				financeDetail.getModuleDefiner(), financeMain.getRoleCode())) {
+		if (!prvStageAccountingCheck(newStageAcEntries, financeMain.getFinReference(), financeDetail.getModuleDefiner(),
+				financeMain.getRoleCode())) {
 			logger.debug(Labels.getLabel("label_Finance_Recal_StageAccountings"));
 			logger.debug("Leaving");
 			return auditHeader;
@@ -2583,15 +2584,19 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	/**
 	 * Method for Checking Process of Stage accounting Entry Details with Previous Execution if any. </br>
 	 * 
-	 * If already Stage Accounting Done in same same Role </br> a) Get Transaction ID of Previously executed List using
-	 * Reference & RoleID </br> b) Get transactions/Postings with Transaction ID </br> c) Cross check with Existing List
-	 * & Previously executed List </br> d) Any Mismatch, Reverse Earlier Transaction and Do New Transaction on next step
-	 * </br> e) Update Movements List if Reversal happens on next step </br> </br>
+	 * If already Stage Accounting Done in same same Role </br>
+	 * a) Get Transaction ID of Previously executed List using Reference & RoleID </br>
+	 * b) Get transactions/Postings with Transaction ID </br>
+	 * c) Cross check with Existing List & Previously executed List </br>
+	 * d) Any Mismatch, Reverse Earlier Transaction and Do New Transaction on next step </br>
+	 * e) Update Movements List if Reversal happens on next step </br>
+	 * </br>
 	 * 
 	 * If There are no Previous Stage Accounting Entries on Same Role with Same Finance Reference </br>
 	 * 
-	 * a) Nothing check on Previous Posting Entries </br> b) Do Normal Stage accounting Postings on next step </br> c)
-	 * Create a Movement of Stage Accounting after successful postings on next step </br>
+	 * a) Nothing check on Previous Posting Entries </br>
+	 * b) Do Normal Stage accounting Postings on next step </br>
+	 * c) Create a Movement of Stage Accounting after successful postings on next step </br>
 	 * 
 	 * @return
 	 * @throws AccountNotFoundException
@@ -2737,12 +2742,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @param finScheduleData
 	 * @param oldSchd
 	 */
-	protected void saveFinSalPayment(FinScheduleData finScheduleData, FinanceScheduleDetail oldSchd, boolean dftZeoPay) {
+	protected void saveFinSalPayment(FinScheduleData finScheduleData, FinanceScheduleDetail oldSchd,
+			boolean dftZeoPay) {
 		logger.debug("Entering");
 
-		if (oldSchd == null
-				|| !StringUtils.equals(finScheduleData.getFinanceMain().getFinRepayMethod(),
-						FinanceConstants.REPAYMTH_AUTO)) {
+		if (oldSchd == null || !StringUtils.equals(finScheduleData.getFinanceMain().getFinRepayMethod(),
+				FinanceConstants.REPAYMTH_AUTO)) {
 			logger.debug("Leaving");
 			return;
 		}
@@ -2863,7 +2868,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * Method to save profit details
 	 * 
 	 * @param finScheduleData
-	 * */
+	 */
 	protected FinanceProfitDetail doSave_PftDetails(FinanceProfitDetail profitDetail, boolean isNew) {
 		logger.debug("Entering");
 
@@ -3062,7 +3067,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 *            (String)
 	 * @param isWIF
 	 *            (boolean)
-	 * **/
+	 **/
 	public FinScheduleData getFinSchDataByFinRef(String finReference, String type, long logKey) {
 		logger.debug("Entering");
 
@@ -3071,12 +3076,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			finSchData.setFinanceMain(getFinanceMainDAO().getFinanceMainById(finReference, type, false));
 		}
 
-		finSchData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type,
-				false));
+		finSchData.setFinanceScheduleDetails(
+				getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
 
 		if (logKey != 0) {
-			finSchData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference,
-					type, false));
+			finSchData.setDisbursementDetails(
+					getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
 		}
 
 		finSchData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
