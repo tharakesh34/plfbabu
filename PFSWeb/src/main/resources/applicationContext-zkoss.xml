@@ -1831,19 +1831,11 @@
 		<property name="financeMainExtService" ref="financeMainExtService" />
 	</bean>
 
-	<bean id="dealFinanceListCtrl"
-		class="com.pennant.webui.finance.investment.DealFinanceListCtrl"
-		parent="basisListCtrl" scope="prototype">
-		<property name="financeDetailService" ref="financeDetailService" />
-		<property name="treasuaryFinanceService" ref="treasuaryFinanceService" />
-	</bean>
-
 	<bean id="financeBaseCtrl" abstract="true" scope="prototype"
 		class="com.pennant.webui.finance.financemain.FinanceBaseCtrl" parent="basisCtrl">
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="accountsService" ref="accountsService" />
 		<property name="engineExecution" ref="engineExecution" />
-		<property name="engineExecutionRIA" ref="engineExecutionRIA" />
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="customerService" ref="customerService" />
 		<property name="commitmentService" ref="commitmentService" />
@@ -1861,7 +1853,6 @@
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="accountsService" ref="accountsService" />
 		<property name="engineExecution" ref="engineExecution" />
-		<property name="engineExecutionRIA" ref="engineExecutionRIA" />
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="customerService" ref="customerService" />
 		<property name="commitmentService" ref="commitmentService" />
@@ -2844,7 +2835,6 @@
 		<property name="accountsService" ref="accountsService" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="engineExecution" ref="engineExecution" />
-		<property name="engineExecutionRIA" ref="engineExecutionRIA" />
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="repayCalculator" ref="repayCalculator" />
 		<property name="mailUtil" ref="mailUtil" />
@@ -2871,11 +2861,25 @@
 		<property name="accountsService" ref="accountsService" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="engineExecution" ref="engineExecution" />
-		<property name="engineExecutionRIA" ref="engineExecutionRIA" />
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="receiptCalculator" ref="receiptCalculator" />
 		<property name="mailUtil" ref="mailUtil" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
+	</bean>
+	
+	<!--============ Receipt Realization Process Details ============== -->
+	<!-- (Schedule Repayment /Partial Settlement / Early Settlement ) -->
+
+	<bean id="receiptRealizationListCtrl"
+		class="com.pennant.webui.financemanagement.receipts.ReceiptRealizationListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="receiptRealizationService" ref="receiptRealizationService" />
+	</bean>
+
+	<bean id="receiptRealizationDialogCtrl"
+		class="com.pennant.webui.financemanagement.receipts.ReceiptRealizationDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="receiptRealizationService" ref="receiptRealizationService" />
 	</bean>
 
 	<!--============ Manual Write-off Details ============== -->
@@ -2932,19 +2936,6 @@
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
 	</bean>
 
-	<!--============ Inventory Settlement Details ============== -->
-	<bean id="inventorySettlementListCtrl"
-		class="com.pennant.webui.inventorysettlement.inventorysettlement.InventorySettlementListCtrl"
-		parent="basisListCtrl" scope="prototype">
-		<property name="inventorySettlementService" ref="inventorySettlementService" />
-	</bean>
-	<bean id="inventorySettlementDialogCtrl"
-		class="com.pennant.webui.inventorysettlement.inventorysettlement.InventorySettlementDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="pagedListService" ref="pagedListService" />
-		<property name="inventorySettlementService" ref="inventorySettlementService" />
-		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
-	</bean>
 
 	<!--============ Manual Repayment Cancellation Details ============== -->
 	<bean id="repayCancellationDialogCtrl"
@@ -3578,25 +3569,6 @@
 		<property name="mailUtil" ref="mailUtil" />
 	</bean>
 
-	<bean id="investmentDealDialogCtrl"
-		class="com.pennant.webui.finance.financemain.InvestmentDealDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="treasuaryFinanceService" ref="treasuaryFinanceService" />
-		<property name="agreementDetailService" ref="finAgreementDetailService" />
-		<property name="accountsService" ref="accountsService" />
-		<property name="accountInterfaceService" ref="accountInterfaceService" />
-	</bean>
-
-	<bean id="dealFinanceDialogCtrl"
-		class="com.pennant.webui.finance.investment.DealFinanceDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="treasuaryFinanceService" ref="treasuaryFinanceService" />
-		<property name="agreementDetailService" ref="finAgreementDetailService" />
-		<property name="accountsService" ref="accountsService" />
-		<property name="accountInterfaceService" ref="accountInterfaceService" />
-		<property name="engineExecution" ref="engineExecution" />
-		<property name="mailUtil" ref="mailUtil" />
-	</bean>
 
 	<!--============ Facility Reference Detail ============== -->
 
@@ -3796,22 +3768,6 @@
 		parent="basisListCtrl" scope="prototype">
 		<property name="queueAssignmentService" ref="queueAssignmentService" />
 	</bean>
-
-
-	<!-- Commodity Inventory Details -->
-	<bean id="commodityInventoryListCtrl"
-		class="com.pennant.webui.commodity.commodityinventory.CommodityInventoryListCtrl"
-		parent="basisListCtrl" scope="prototype">
-		<property name="commodityInventoryService" ref="commodityInventoryService" />
-	</bean>
-	<bean id="commodityInventoryDialogCtrl"
-		class="com.pennant.webui.commodity.commodityinventory.CommodityInventoryDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="pagedListService" ref="pagedListService" />
-		<property name="commodityInventoryService" ref="commodityInventoryService" />
-		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
-	</bean>
-
 
 	<!-- Sukuk Bonds -->
 	<bean id="sukukBondListCtrl"

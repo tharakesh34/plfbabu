@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  TransactionEntryListModelItemRenderer.java                                                   * 	  
+ * FileName    		:  AcademicListModelItemRenderer.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  14-12-2011    														*
+ * Creation Date    :  23-05-2011    														*
  *                                                                  						*
- * Modified Date    :  14-12-2011    														*
+ * Modified Date    :  23-05-2011    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 14-12-2011       Pennant	                 0.1                                            * 
+ * 23-05-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,68 +39,57 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
-package com.pennant.webui.rmtmasters.accountingset.model;
+package com.pennant.webui.financemanagement.receipts.model;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
-import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.backend.model.rmtmasters.TransactionEntry;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 
 /**
- * Item renderer for listitems in the listbox.
- * 
+ * Item renderer for listItems in the listBox.
  */
-public class TransactionEntryListModelItemRenderer implements ListitemRenderer<TransactionEntry>, Serializable {
+public class ReceiptRealizationListModelItemRenderer implements ListitemRenderer<FinReceiptHeader>, Serializable {
 
-	private static final long serialVersionUID = 6906998807263283546L;
+	private static final long serialVersionUID = 3736186724610414895L;
 	
-	public TransactionEntryListModelItemRenderer() {
+	public ReceiptRealizationListModelItemRenderer() {
 		
 	}
-
+	
 	@Override
-	public void render(Listitem item, TransactionEntry transactionEntry, int count) throws Exception {
+	public void render(Listitem item, FinReceiptHeader header, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(PennantAppUtil.formateInt(transactionEntry.getTransOrder()));
-	  	lc.setParent(item);
-	  	lc = new Listcell(transactionEntry.getTransDesc());
+		lc = new Listcell(header.getReference());
 		lc.setParent(item);
-		lc = new Listcell();
-		Checkbox checkbox = new Checkbox();
-		checkbox.setDisabled(true);
-		checkbox.setChecked(transactionEntry.isEntryByInvestment());
-		lc.appendChild(checkbox);
+		lc = new Listcell(header.getReceiptPurpose());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(transactionEntry.getDebitcredit(),PennantStaticListUtil.getTranType()));
-	  	lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.getlabelDesc(transactionEntry.getAccount(),
-				PennantStaticListUtil.getTransactionalAccount(ImplementationConstants.ALLOW_RIA)));
+		lc = new Listcell(header.getReceiptMode());
 		lc.setParent(item);
-		lc = new Listcell(StringUtils.trimToEmpty(transactionEntry.getPostToSys()).equals(AccountConstants.POSTTOSYS_CORE)? "T24" : "ERP");
+		lc = new Listcell(header.getAllocationType());
 		lc.setParent(item);
-	  	lc = new Listcell(transactionEntry.getTranscationCode());
+		lc = new Listcell(header.getFinType());
 		lc.setParent(item);
-	  	lc = new Listcell(transactionEntry.getRecordStatus());
+		lc = new Listcell(header.getFinBranch());
 		lc.setParent(item);
-		lc = new Listcell(PennantJavaUtil.getLabel(transactionEntry.getRecordType()));
+		lc = new Listcell(header.getCustCIF());
 		lc.setParent(item);
-		if(transactionEntry.getDerivedTranOrder() == 0){
-			item.setAttribute("data", transactionEntry);
-			ComponentsCtrl.applyForward(item, "onDoubleClick=onTransactionEntryItemDoubleClicked");
-		}
+		lc = new Listcell(header.getCustShrtName());
+		lc.setParent(item);
+		lc = new Listcell(header.getRecordStatus());
+		lc.setParent(item);
+		lc = new Listcell(PennantJavaUtil.getLabel(header.getRecordType()));
+		lc.setParent(item);
+		
+		item.setAttribute("id", header.getReceiptID());
+		ComponentsCtrl.applyForward(item, "onDoubleClick=onReceiptRealizationItemDoubleClicked");
 	}
 }

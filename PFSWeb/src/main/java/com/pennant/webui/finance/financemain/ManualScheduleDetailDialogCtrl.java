@@ -1926,8 +1926,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			finRender = new FinScheduleListItemRenderer();
 			List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(getFinScheduleData());
 			list.add(subList1);
-			List<FinanceScheduleReportData> subList = finRender.getScheduleData(getFinScheduleData(), null, null,
-					feeChargesMap, true);
+			List<FinanceScheduleReportData> subList = finRender.getPrintScheduleData(getFinScheduleData(), null, null,true);
 			list.add(subList);
 			// To get Parent Window i.e Finance main based on product
 			Component component = this.window_ScheduleDetailDialog.getParent().getParent().getParent().getParent()

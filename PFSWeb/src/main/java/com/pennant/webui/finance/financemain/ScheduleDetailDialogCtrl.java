@@ -1465,8 +1465,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			finRender = new FinScheduleListItemRenderer();
 			List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(getFinScheduleData());
 			list.add(subList1);
-			List<FinanceScheduleReportData> subList = finRender.getScheduleData(getFinScheduleData(), null, null,
-					feeChargesMap, true);
+			List<FinanceScheduleReportData> subList = finRender.getPrintScheduleData(getFinScheduleData(), null, null, true);
 			list.add(subList);
 			
 			boolean isSchdFee = false;
@@ -2360,7 +2359,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			// Event Dates and Reschedule method setting
 			getFinScheduleData().getFinanceMain().setEventFromDate(getFinScheduleData().getFinanceMain().getFinStartDate());
 			getFinScheduleData().getFinanceMain().setEventToDate(getFinScheduleData().getFinanceMain().getMaturityDate());
-			getFinScheduleData().getFinanceMain().setRecalFromDate(getFinScheduleData().getFinanceMain().getNextRepayDate());
+			getFinScheduleData().getFinanceMain().setRecalFromDate(getFinScheduleData().getFinanceMain().getNextRepayPftDate());
 			getFinScheduleData().getFinanceMain().setRecalToDate(getFinScheduleData().getFinanceMain().getMaturityDate());
 			getFinScheduleData().getFinanceMain().setRecalSchdMethod(getFinScheduleData().getFinanceMain().getScheduleMethod());
 			

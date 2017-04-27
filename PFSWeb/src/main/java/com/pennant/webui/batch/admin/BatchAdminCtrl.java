@@ -82,6 +82,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 	protected ProcessExecution		threadAllocation;
 	protected ProcessExecution		microEOD;
+	protected ProcessExecution		microEODMonitor;
 
 	protected ProcessExecution		snapShotPreparation;
 
@@ -93,6 +94,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		prepareCustomerQueue,
 		threadAllocation,
 		microEOD,
+		microEODMonitor,
 		snapShotPreparation
 	}
 
@@ -443,6 +445,14 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 					setRunningProcess(this.microEOD);
 				}
 				break;
+			case microEODMonitor:
+				this.microEODMonitor.setProcess(status);
+				this.microEODMonitor.render();
+				setRunningProcess(this.microEODMonitor);
+				if ("EXECUTING".equals(status.getStatus())) {
+					setRunningProcess(this.microEODMonitor);
+				}
+				break;
 
 			case snapShotPreparation:
 				this.snapShotPreparation.setProcess(status);
@@ -481,6 +491,9 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		}
 		if (microEOD.getChildren() != null) {
 			microEOD.getChildren().clear();
+		}
+		if (microEODMonitor.getChildren() != null) {
+			microEODMonitor.getChildren().clear();
 		}
 
 		if (snapShotPreparation.getChildren() != null) {

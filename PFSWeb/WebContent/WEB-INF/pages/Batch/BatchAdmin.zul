@@ -90,9 +90,11 @@
 								<rows>
 									<row>
 										<hbox widths="25%,25%,25%,25%" pack="stretch" width="100%">
-										<exePannel id="threadAllocation" border="normal" title="${c:l('label_threadAllocation')}" imgSrc="/images/icons/send.gif" />
-										<exePannel id="microEOD" border="normal" title="${c:l('label_microEOD')}" imgSrc="/images/icons/send.gif" />
-											<hbox></hbox>
+											<exePannel id="threadAllocation" border="normal" title="${c:l('label_threadAllocation')}" imgSrc="/images/icons/send.gif" />
+											<exePannel id="microEOD" border="normal" title="${c:l('label_microEOD')}" imgSrc="/images/icons/send.gif" />
+											<hbox>
+												<exePannel id="microEODMonitor" border="normal" title="${c:l('label_microEOD')}" imgSrc="/images/icons/send.gif" visible="false" />
+											</hbox>
 											<hbox></hbox>
 										</hbox>
 									</row>

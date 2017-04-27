@@ -104,7 +104,6 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
-import com.pennant.app.util.AccountEngineExecutionRIA;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -139,8 +138,6 @@ import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.AEAmountCodesRIA;
-import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -312,7 +309,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Button										btnChangeRepay;
 	protected Button										btnCalcRepayments;
 	protected Listbox										listBoxPayment;
-	
+
 	private transient OverdueChargeRecoveryService			overdueChargeRecoveryService;
 	private transient AccountsService						accountsService;
 	private transient AccountInterfaceService				accountInterfaceService;
@@ -323,7 +320,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private transient FinanceDetailService					financeDetailService;
 	private transient RuleExecutionUtil						ruleExecutionUtil;
 	private transient AccountEngineExecution				engineExecution;
-	private transient AccountEngineExecutionRIA				engineExecutionRIA;
 	private transient CommitmentService						commitmentService;
 	private transient RepayCalculator						repayCalculator;
 	private transient FinanceReferenceDetailService			financeReferenceDetailService;
@@ -350,9 +346,12 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private boolean											isSchdRecal							= false;
 	private boolean											refundAmtValidated					= true;
 
-	private final List<ValueLabel> profitDayList = PennantStaticListUtil.getProfitDaysBasis();
-	private final List<ValueLabel> earlyRpyEffectList = PennantStaticListUtil.getEarlyPayEffectOn();
-	private final List<ValueLabel> payApprtnList = PennantStaticListUtil.getPaymentApportionment();
+	private final List<ValueLabel>							profitDayList						= PennantStaticListUtil
+																										.getProfitDaysBasis();
+	private final List<ValueLabel>							earlyRpyEffectList					= PennantStaticListUtil
+																										.getEarlyPayEffectOn();
+	private final List<ValueLabel>							payApprtnList						= PennantStaticListUtil
+																										.getPaymentApportionment();
 
 	private MailUtil										mailUtil;
 
@@ -459,16 +458,17 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				doWriteBeanToComponents();
 
 				this.borderlayout_ManualPayment.setHeight(getBorderLayoutHeight());
-				this.listBoxPayment.setHeight(getListBoxHeight(this.grid_Repayment.getRows().getVisibleItemCount()+3));
+				this.listBoxPayment
+						.setHeight(getListBoxHeight(this.grid_Repayment.getRows().getVisibleItemCount() + 3));
 				this.listBoxSchedule.setHeight(getListBoxHeight(6));
 				this.repaymentDetailsTab.setSelected(true);
 				this.rpyAmount.setFocus(true);
-				
+
 				// Setting tile Name based on Service Action
-				if(StringUtils.isNotEmpty(moduleDefiner)){
-					this.windowTitle.setValue(Labels.getLabel(moduleDefiner+"_Window.Title"));
+				if (StringUtils.isNotEmpty(moduleDefiner)) {
+					this.windowTitle.setValue(Labels.getLabel(moduleDefiner + "_Window.Title"));
 				}
-				
+
 				setDialog(DialogType.EMBEDDED);
 			}
 		} catch (Exception e) {
@@ -514,8 +514,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 		//Empty sent any required attributes
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		int formatter =CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		
+		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
 		this.finType.setMaxlength(8);
 		this.finReference.setMaxlength(20);
@@ -554,7 +553,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.repayAccount.setBranchCode(financeMain.getFinBranch());
 		this.repayAccount.setCustCIF(financeMain.getLovDescCustCIF());
 		this.repayAccount.setMandatoryStyle(true);
-		if(!ImplementationConstants.ACCOUNTS_APPLICABLE && !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)){
+		if (!ImplementationConstants.ACCOUNTS_APPLICABLE
+				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
 			this.label_PaymentDialog_RepayAccount.setVisible(false);
 			this.repayAccount.setMandatoryStyle(false);
 			this.hbox_repayAccount.setVisible(false);
@@ -664,10 +664,12 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		repayData.setBuildProcess("I");
 
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		int finformatter = CurrencyUtil.getFormat(financeMain.getFinCcy());;
-		
+		int finformatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
+		;
+
 		Customer customer = null;
-		if(getFinanceDetail().getCustomerDetails() != null && getFinanceDetail().getCustomerDetails().getCustomer() != null){
+		if (getFinanceDetail().getCustomerDetails() != null
+				&& getFinanceDetail().getCustomerDetails().getCustomer() != null) {
 			customer = getFinanceDetail().getCustomerDetails().getCustomer();
 		}
 
@@ -721,7 +723,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.finCcy.setValue(getRepayMain().getFinCcy());
 		fillComboBox(this.profitDayBasis, getRepayMain().getProfitDaysBais(), profitDayList, "");
 		this.custID.setValue(getRepayMain().getCustID());
-		if(customer != null){
+		if (customer != null) {
 			this.lovDescCustCIF.setValue(customer.getCustCIF());
 			this.custShrtName.setValue(customer.getCustShrtName());
 		}
@@ -753,7 +755,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.finCcy1.setValue(getRepayMain().getFinCcy());
 		this.lovDescFinCcyName1.setValue(getRepayMain().getFinCcy());
 		this.custID1.setValue(getRepayMain().getCustID());
-		if(customer != null){
+		if (customer != null) {
 			this.lovDescCustCIF1.setValue(customer.getCustCIF());
 			this.custShrtName1.setValue(customer.getCustShrtName());
 		}
@@ -875,9 +877,10 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			arrayList.add(7, false);
 		}
 		arrayList.add(8, getFinanceType().getFinCategory());
-		if(getFinanceDetail().getCustomerDetails() != null && getFinanceDetail().getCustomerDetails().getCustomer() != null){
+		if (getFinanceDetail().getCustomerDetails() != null
+				&& getFinanceDetail().getCustomerDetails().getCustomer() != null) {
 			arrayList.add(9, getFinanceDetail().getCustomerDetails().getCustomer().getCustShrtName());
-		}else{
+		} else {
 			arrayList.add(9, "");
 		}
 		arrayList.add(10, false);
@@ -894,7 +897,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnPay.isVisible());
 	}
-
 
 	/**
 	 * Method for calculation of Schedule Repayment details List of data
@@ -950,8 +952,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if (repayData.getRepayMain().isEarlyPay() && moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 
 				// Show a confirm box
-				final String msg = Labels.getLabel("label_EarlypayEffectOnSchedule_Method_Confirm", 
-						new String[]{this.earlyRpyEffectOnSchd.getSelectedItem().getLabel()});
+				final String msg = Labels.getLabel("label_EarlypayEffectOnSchedule_Method_Confirm",
+						new String[] { this.earlyRpyEffectOnSchd.getSelectedItem().getLabel() });
 				final String title = Labels.getLabel("message.Deleting.Record");
 				MultiLineMessageBox.doSetTemplate();
 
@@ -1096,7 +1098,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		Rule refundRule = getRuleService().getApprovedRuleById("REFUND", RuleConstants.MODULE_REFUND,
 				RuleConstants.EVENT_REFUND);
 		String sqlRule = null;
-		if(refundRule != null){
+		if (refundRule != null) {
 			sqlRule = refundRule.getSQLRule();
 		}
 		Customer customer = getCustomerDetailsService().getCustomerForPostings(financeMain.getCustID());
@@ -1247,20 +1249,20 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			finScheduleData = ScheduleCalculator.recalEarlyPaySchedule(finScheduleData, repayData.getRepayMain()
 					.getEarlyPayOnSchDate(), repayData.getRepayMain().getEarlyPayNextSchDate(), repayData
 					.getRepayMain().getEarlyPayAmount(), method);
-			
+
 			// Validation against Future Disbursements, if Closing balance is becoming zero before future disbursement date
 			List<FinanceDisbursement> disbList = finScheduleData.getDisbursementDetails();
 			Date actualMaturity = finScheduleData.getFinanceMain().getCalMaturity();
 			for (int i = 0; i < disbList.size(); i++) {
 				FinanceDisbursement curDisb = disbList.get(i);
-				if(curDisb.getDisbDate().compareTo(actualMaturity) >= 0){
+				if (curDisb.getDisbDate().compareTo(actualMaturity) >= 0) {
 					MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(new ErrorDetails("30577", null)));
 					Events.sendEvent(Events.ON_CLICK, this.btnChangeRepay, null);
 					logger.debug("Leaving");
 					return;
 				}
 			}
-			
+
 			financeDetail.setFinScheduleData(finScheduleData);
 			aFinanceMain = finScheduleData.getFinanceMain();
 			aFinanceMain.setWorkflowId(getFinanceDetail().getFinScheduleData().getFinanceMain().getWorkflowId());
@@ -1383,7 +1385,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.listBoxSchedule.getItems().clear();
 			this.listBoxSchedule.setSizedByContent(true);
 			this.listBoxSchedule.setStyle("hflex:min;");
-			
+
 			aFinScheduleData.setFinanceScheduleDetails(sortSchdDetails(aFinScheduleData.getFinanceScheduleDetails()));
 
 			for (int i = 0; i < aFinScheduleData.getFinanceScheduleDetails().size(); i++) {
@@ -1442,7 +1444,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				|| moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
 			Rule rule = getRuleService().getApprovedRuleById("REFUND", RuleConstants.MODULE_REFUND,
 					RuleConstants.EVENT_REFUND);
-			if(rule != null){
+			if (rule != null) {
 				sqlRule = rule.getSQLRule();
 			}
 			Customer customer = getFinanceDetail().getCustomerDetails().getCustomer();
@@ -1475,8 +1477,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				FeeRule insAmount = getFinanceDetailService().getInsFee(financeMain.getFinReference());
 				if (insAmount != null) {
-					subHeadRule.setCALFEE(insAmount.getFeeAmount() == null ? BigDecimal.ZERO : insAmount
-							.getFeeAmount());
+					subHeadRule
+							.setCALFEE(insAmount.getFeeAmount() == null ? BigDecimal.ZERO : insAmount.getFeeAmount());
 					subHeadRule.setWAVFEE(insAmount.getWaiverAmount() == null ? BigDecimal.ZERO : insAmount
 							.getWaiverAmount());
 					subHeadRule.setPAIDFEE(insAmount.getPaidAmount() == null ? BigDecimal.ZERO : insAmount
@@ -1511,15 +1513,15 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			Rule insRefundRule = getRuleService().getApprovedRuleById("INSREFND", RuleConstants.MODULE_REFUND,
 					RuleConstants.EVENT_REFUND);
 			if (insRefundRule != null) {
- 
+
 				BigDecimal refundResult = (BigDecimal) getRuleExecutionUtil().executeRule(insRefundRule.getSQLRule(),
 						subHeadRule.getDeclaredFieldValues(), financeMain.getFinCcy(), RuleReturnType.DECIMAL);
 				repayData.getRepayMain().setInsRefund(refundResult);
 				this.insRefundAmt.setValue(PennantApplicationUtil.formateAmount(refundResult, repayData.getRepayMain()
 						.getLovDescFinFormatter()));
-			}else{
-				this.insRefundAmt.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, repayData.getRepayMain()
-						.getLovDescFinFormatter()));
+			} else {
+				this.insRefundAmt.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, repayData
+						.getRepayMain().getLovDescFinFormatter()));
 			}
 		}
 
@@ -2079,7 +2081,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private FinRepayHeader doWriteComponentsToBean(boolean isSchdRegenerated) {
 		logger.debug("Entering");
 
-		int finFormatter =CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+		int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
 		FinRepayHeader header = getFinRepayHeader();
 		if (header == null || (isSchdRecal && moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY))) {
@@ -2137,7 +2139,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			getCustomerDialogCtrl().doSave_CustomerDetail(getFinanceDetail(), custDetailTab, false);
 		}
 
-
 		// refresh template tab
 		if (getAgreementDetailDialogCtrl() != null) {
 			getAgreementDetailDialogCtrl().doSetLabels(getFinBasicDetails());
@@ -2185,37 +2186,30 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 
 		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		int format=CurrencyUtil.getFormat(finMain.getFinCcy());
+		int format = CurrencyUtil.getFormat(finMain.getFinCcy());
 		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
 		Date dateValueDate = DateUtility.getValueDate();
 
 		finMain.setRepayAccountId(PennantApplicationUtil.unFormatAccountNumber(repayAccount.getValue()));
-		DataSet dataSet = AEAmounts.createDataSet(finMain, eventCode, dateValueDate, dateValueDate);
 
 		Date curBDay = DateUtility.getAppDate();
 		amountCodes = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
-				.getFinanceScheduleDetails(), profitDetail, curBDay);
+				.getFinanceScheduleDetails(), profitDetail, eventCode, curBDay, dateValueDate);
 
 		//Set Repay Amount Codes
 		amountCodes.setRpTot(PennantApplicationUtil.unFormateAmount(
 				this.pftPayment.getValue().add(this.priPayment.getValue()), format));
-		amountCodes.setRpPft(PennantApplicationUtil.unFormateAmount(this.pftPayment.getValue(),
-				format));
-		amountCodes.setRpPri(PennantApplicationUtil.unFormateAmount(this.priPayment.getValue(),
-				format));
-		amountCodes.setRefund(PennantApplicationUtil.unFormateAmount(this.totRefundAmt.getValue(),
-				format));
-		amountCodes.setInsRefund(PennantApplicationUtil.unFormateAmount(this.insRefundAmt.getValue(),
-				format));
-		amountCodes.setInsPay(PennantApplicationUtil.unFormateAmount(this.insPayment.getValue(),
-				format));
-		amountCodes.setSchFeePay(PennantApplicationUtil.unFormateAmount(this.schdFeeAmount.getValue(),
-				format));
-		amountCodes.setSuplRentPay(PennantApplicationUtil.unFormateAmount(this.suplRentAmount.getValue(),
-				format));
-		amountCodes.setIncrCostPay(PennantApplicationUtil.unFormateAmount(this.incrCostAmount.getValue(),
-				format));
+		amountCodes.setRpPft(PennantApplicationUtil.unFormateAmount(this.pftPayment.getValue(), format));
+		amountCodes.setRpPri(PennantApplicationUtil.unFormateAmount(this.priPayment.getValue(), format));
+		amountCodes.setRefund(PennantApplicationUtil.unFormateAmount(this.totRefundAmt.getValue(), format));
+		amountCodes.setInsRefund(PennantApplicationUtil.unFormateAmount(this.insRefundAmt.getValue(), format));
+		amountCodes.setInsPay(PennantApplicationUtil.unFormateAmount(this.insPayment.getValue(), format));
+		amountCodes.setSchFeePay(PennantApplicationUtil.unFormateAmount(this.schdFeeAmount.getValue(), format));
+		amountCodes.setSuplRentPay(PennantApplicationUtil.unFormateAmount(this.suplRentAmount.getValue(), format));
+		amountCodes.setIncrCostPay(PennantApplicationUtil.unFormateAmount(this.incrCostAmount.getValue(), format));
 		setAmountCodes(amountCodes);
+
+		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
 		List<ReturnDataSet> returnSetEntries = null;
 
@@ -2224,17 +2218,10 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			feeRuleMap = getFeeDetailDialogCtrl().getFeeRuleDetailsMap();
 		}
 
-		if (!getFinanceType().isAllowRIAInvestment()) {
+		executingMap.putAll(feeRuleMap);
+		getFinanceType().getDeclaredFieldValues(executingMap);
 
-			returnSetEntries = getEngineExecution().getAccEngineExecResults(dataSet, getAmountCodes(), "N", feeRuleMap,
-					false, getFinanceType());
-		} else {
-
-			List<AEAmountCodesRIA> riaDetailList = getEngineExecutionRIA().prepareRIADetails(null,
-					dataSet.getFinReference());
-			returnSetEntries = getEngineExecutionRIA().getAccEngineExecResults(dataSet, getAmountCodes(), "N",
-					riaDetailList, feeRuleMap);
-		}
+		returnSetEntries = getEngineExecution().getAccEngineExecResults("N", executingMap, false);
 
 		if (getAccountingDetailDialogCtrl() != null) {
 			getAccountingDetailDialogCtrl().doFillAccounting(returnSetEntries);
@@ -2951,7 +2938,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
-		if (isChgRpy && StringUtils.isBlank(this.repayAccount.getValue()) && ImplementationConstants.ACCOUNTS_APPLICABLE) {
+		if (isChgRpy && StringUtils.isBlank(this.repayAccount.getValue())
+				&& ImplementationConstants.ACCOUNTS_APPLICABLE) {
 			String validationMsg = "Please Enter " + Labels.getLabel("label_PaymentDialog_RepayAccount.value");
 			MessageUtil.showErrorMessage(validationMsg);
 			return false;
@@ -2964,46 +2952,46 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 
 				// Check Whether Any Future Payments already done in Schedule or not
-				List<FinanceScheduleDetail> scheduleList = getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails();
+				List<FinanceScheduleDetail> scheduleList = getFinanceDetail().getFinScheduleData()
+						.getFinanceScheduleDetails();
 				BigDecimal closingBal = null;
 				boolean futureInstPaid = false;
 				for (int i = 0; i < scheduleList.size(); i++) {
 					FinanceScheduleDetail curSchd = scheduleList.get(i);
-					if(DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) > 0){
+					if (DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) > 0) {
 						closingBal = curSchd.getClosingBalance();
 						continue;
 					}
-					
-					if(DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) == 0 || closingBal == null){
+
+					if (DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) == 0 || closingBal == null) {
 						closingBal = curSchd.getClosingBalance();
 					}
 
-					if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 
-							|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0 
-							|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0 
-							|| curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0 
-							|| curSchd.getSuplRentPaid().compareTo(BigDecimal.ZERO) > 0 
-							|| curSchd.getIncrCostPaid().compareTo(BigDecimal.ZERO) > 0 ) {
+					if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
+							|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0
+							|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0
+							|| curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0
+							|| curSchd.getSuplRentPaid().compareTo(BigDecimal.ZERO) > 0
+							|| curSchd.getIncrCostPaid().compareTo(BigDecimal.ZERO) > 0) {
 
 						futureInstPaid = true;
 						break;
 					}
 
 				}
-				if(futureInstPaid){
+				if (futureInstPaid) {
 					MessageUtil.showErrorMessage(Labels.getLabel("label_PaymentDialog_PartialSettlement_Future"));
 					return false;
-				}else if(closingBal != null){
-					BigDecimal payAmount = PennantApplicationUtil.unFormateAmount(this.rpyAmount.getActualValue(), formatter);
-					if(payAmount.compareTo(closingBal) > 0){
-						MessageUtil.showErrorMessage(Labels.getLabel(
-								"FIELD_IS_EQUAL_OR_LESSER",
-								new String[] {
-										Labels.getLabel("label_PaymentDialog_RpyAmount.value"),
+				} else if (closingBal != null) {
+					BigDecimal payAmount = PennantApplicationUtil.unFormateAmount(this.rpyAmount.getActualValue(),
+							formatter);
+					if (payAmount.compareTo(closingBal) > 0) {
+						MessageUtil.showErrorMessage(Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
+								new String[] { Labels.getLabel("label_PaymentDialog_RpyAmount.value"),
 										PennantApplicationUtil.amountFormate(closingBal, formatter) }));
 						return false;
 					}
-				}else {
+				} else {
 					//Checking Total Allowed Advance Amount must be less than or equal to Total Principal Due.
 					if (this.rpyAmount.getActualValue().compareTo(this.totPriDue.getValue()) > 0) {
 
@@ -3228,7 +3216,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		List<ChartSetElement> listChartSetElement = new ArrayList<ChartSetElement>();
 		List<FinanceScheduleDetail> listScheduleDetail = scheduleData.getFinanceScheduleDetails();
-		int format=CurrencyUtil.getFormat(scheduleData.getFinanceMain().getFinCcy());
+		int format = CurrencyUtil.getFormat(scheduleData.getFinanceMain().getFinCcy());
 		ChartSetElement chartSetElement;
 		if (listScheduleDetail != null) {
 			for (int i = 0; i < listScheduleDetail.size(); i++) {
@@ -3237,9 +3225,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
-							"Payment Amount", PennantAppUtil.formateAmount(curSchd.getRepayAmount(),
-									format).setScale(formatter,
-									RoundingMode.HALF_UP));
+							"Payment Amount", PennantAppUtil.formateAmount(curSchd.getRepayAmount(), format).setScale(
+									formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
 			}
@@ -3248,9 +3235,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
-							"Principal", PennantAppUtil.formateAmount(curSchd.getPrincipalSchd(),
-									format).setScale(formatter,
-									RoundingMode.HALF_UP));
+							"Principal", PennantAppUtil.formateAmount(curSchd.getPrincipalSchd(), format).setScale(
+									formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
 
@@ -3260,9 +3246,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
-							"Interest", PennantAppUtil.formateAmount(curSchd.getProfitSchd(),
-									format).setScale(formatter,
-									RoundingMode.HALF_UP));
+							"Interest", PennantAppUtil.formateAmount(curSchd.getProfitSchd(), format).setScale(
+									formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 
 				}
@@ -3280,11 +3265,11 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public List<ChartSetElement> getReportDataForFinVsAmount(FinScheduleData scheduleData, int formatter) {
 		logger.debug("Entering ");
 
-		BigDecimal downPayment= BigDecimal.ZERO.setScale(formatter, RoundingMode.HALF_UP);
-		BigDecimal capitalized= BigDecimal.ZERO.setScale(formatter, RoundingMode.HALF_UP);
-		BigDecimal scheduleProfit= BigDecimal.ZERO.setScale(formatter, RoundingMode.HALF_UP); 
-		BigDecimal schedulePrincipal= BigDecimal.ZERO.setScale(formatter, RoundingMode.HALF_UP);
-		int format=CurrencyUtil.getFormat(scheduleData.getFinanceMain().getFinCcy());
+		BigDecimal downPayment = BigDecimal.ZERO.setScale(formatter, RoundingMode.HALF_UP);
+		BigDecimal capitalized = BigDecimal.ZERO.setScale(formatter, RoundingMode.HALF_UP);
+		BigDecimal scheduleProfit = BigDecimal.ZERO.setScale(formatter, RoundingMode.HALF_UP);
+		BigDecimal schedulePrincipal = BigDecimal.ZERO.setScale(formatter, RoundingMode.HALF_UP);
+		int format = CurrencyUtil.getFormat(scheduleData.getFinanceMain().getFinCcy());
 
 		List<ChartSetElement> listChartSetElement = new ArrayList<ChartSetElement>();
 		List<FinanceScheduleDetail> listScheduleDetail = scheduleData.getFinanceScheduleDetails();
@@ -3296,12 +3281,10 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				financeAmount = financeAmount.add(PennantAppUtil.formateAmount(curSchd.getDisbAmount(), format));
-				downPayment = downPayment
-						.add(PennantAppUtil.formateAmount(curSchd.getDownPaymentAmount(), format));
+				downPayment = downPayment.add(PennantAppUtil.formateAmount(curSchd.getDownPaymentAmount(), format));
 				capitalized = capitalized.add(PennantAppUtil.formateAmount(curSchd.getCpzAmount(), format));
 
-				scheduleProfit = scheduleProfit
-						.add(PennantAppUtil.formateAmount(curSchd.getProfitSchd(), format));
+				scheduleProfit = scheduleProfit.add(PennantAppUtil.formateAmount(curSchd.getProfitSchd(), format));
 				schedulePrincipal = schedulePrincipal.add(PennantAppUtil.formateAmount(curSchd.getPrincipalSchd(),
 						format));
 
@@ -3391,9 +3374,12 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		FinanceProfitDetail profitDetail = getManualPaymentService().getPftDetailForEarlyStlReport(
 				financeMain.getFinReference());
 		if (profitDetail != null) {
-			BigDecimal financeAmount = financeMain.getFinAmount().add(financeMain.getFeeChargeAmt() != null ? financeMain.getFeeChargeAmt() : BigDecimal.ZERO)
-					.subtract(financeMain.getDownPayment()).add(financeMain.getInsuranceAmt() != null ? financeMain.getInsuranceAmt() : BigDecimal.ZERO);
-			earlySettlement.setTotalPaidAmount(financeMain.getFinCcy() +" "+PennantApplicationUtil.amountFormate(financeAmount, formatter));
+			BigDecimal financeAmount = financeMain.getFinAmount()
+					.add(financeMain.getFeeChargeAmt() != null ? financeMain.getFeeChargeAmt() : BigDecimal.ZERO)
+					.subtract(financeMain.getDownPayment())
+					.add(financeMain.getInsuranceAmt() != null ? financeMain.getInsuranceAmt() : BigDecimal.ZERO);
+			earlySettlement.setTotalPaidAmount(financeMain.getFinCcy() + " "
+					+ PennantApplicationUtil.amountFormate(financeAmount, formatter));
 			earlySettlement.setTotalTerms(String.valueOf(profitDetail.getNOInst()));
 			earlySettlement.setTotalPaidTerms(String.valueOf(profitDetail.getNOPaidInst()));
 			earlySettlement
@@ -3563,6 +3549,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public List<RepayScheduleDetail> getRepaySchdList() {
 		return repaySchdList;
 	}
+
 	public void setRepaySchdList(List<RepayScheduleDetail> repaySchdList) {
 		this.repaySchdList = repaySchdList;
 	}
@@ -3570,6 +3557,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public OverdueChargeRecoveryService getOverdueChargeRecoveryService() {
 		return overdueChargeRecoveryService;
 	}
+
 	public void setOverdueChargeRecoveryService(OverdueChargeRecoveryService overdueChargeRecoveryService) {
 		this.overdueChargeRecoveryService = overdueChargeRecoveryService;
 	}
@@ -3577,6 +3565,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public void setAccountsService(AccountsService accountsService) {
 		this.accountsService = accountsService;
 	}
+
 	public AccountsService getAccountsService() {
 		return accountsService;
 	}
@@ -3584,6 +3573,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public AccountInterfaceService getAccountInterfaceService() {
 		return accountInterfaceService;
 	}
+
 	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
 		this.accountInterfaceService = accountInterfaceService;
 	}
@@ -3591,6 +3581,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public RuleService getRuleService() {
 		return ruleService;
 	}
+
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
@@ -3598,6 +3589,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public CustomerDetailsService getCustomerDetailsService() {
 		return customerDetailsService;
 	}
+
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
@@ -3605,6 +3597,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public void setManualPaymentService(ManualPaymentService manualPaymentService) {
 		this.manualPaymentService = manualPaymentService;
 	}
+
 	public ManualPaymentService getManualPaymentService() {
 		return manualPaymentService;
 	}
@@ -3612,6 +3605,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public ProvisionService getProvisionService() {
 		return provisionService;
 	}
+
 	public void setProvisionService(ProvisionService provisionService) {
 		this.provisionService = provisionService;
 	}
@@ -3619,6 +3613,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
 	}
+
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
@@ -3626,6 +3621,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
+
 	public RuleExecutionUtil getRuleExecutionUtil() {
 		return ruleExecutionUtil;
 	}
@@ -3633,6 +3629,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public FinRepayHeader getFinRepayHeader() {
 		return finRepayHeader;
 	}
+
 	public void setFinRepayHeader(FinRepayHeader finRepayHeader) {
 		this.finRepayHeader = finRepayHeader;
 	}
@@ -3640,6 +3637,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public FinanceSelectCtrl getFinanceSelectCtrl() {
 		return financeSelectCtrl;
 	}
+
 	public void setFinanceSelectCtrl(FinanceSelectCtrl financeSelectCtrl) {
 		this.financeSelectCtrl = financeSelectCtrl;
 	}
@@ -3647,6 +3645,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public AccountingDetailDialogCtrl getAccountingDetailDialogCtrl() {
 		return accountingDetailDialogCtrl;
 	}
+
 	public void setAccountingDetailDialogCtrl(AccountingDetailDialogCtrl accountingDetailDialogCtrl) {
 		this.accountingDetailDialogCtrl = accountingDetailDialogCtrl;
 	}
@@ -3654,20 +3653,15 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public AccountEngineExecution getEngineExecution() {
 		return engineExecution;
 	}
+
 	public void setEngineExecution(AccountEngineExecution engineExecution) {
 		this.engineExecution = engineExecution;
-	}
-
-	public AccountEngineExecutionRIA getEngineExecutionRIA() {
-		return engineExecutionRIA;
-	}
-	public void setEngineExecutionRIA(AccountEngineExecutionRIA engineExecutionRIA) {
-		this.engineExecutionRIA = engineExecutionRIA;
 	}
 
 	public AEAmountCodes getAmountCodes() {
 		return amountCodes;
 	}
+
 	public void setAmountCodes(AEAmountCodes amountCodes) {
 		this.amountCodes = amountCodes;
 	}
@@ -3675,6 +3669,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public CommitmentService getCommitmentService() {
 		return commitmentService;
 	}
+
 	public void setCommitmentService(CommitmentService commitmentService) {
 		this.commitmentService = commitmentService;
 	}
@@ -3682,6 +3677,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public FeeDetailDialogCtrl getFeeDetailDialogCtrl() {
 		return feeDetailDialogCtrl;
 	}
+
 	public void setFeeDetailDialogCtrl(FeeDetailDialogCtrl feeDetailDialogCtrl) {
 		this.feeDetailDialogCtrl = feeDetailDialogCtrl;
 	}
@@ -3689,6 +3685,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public DocumentDetailDialogCtrl getDocumentDetailDialogCtrl() {
 		return documentDetailDialogCtrl;
 	}
+
 	public void setDocumentDetailDialogCtrl(DocumentDetailDialogCtrl documentDetailDialogCtrl) {
 		this.documentDetailDialogCtrl = documentDetailDialogCtrl;
 	}
@@ -3696,6 +3693,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public AgreementDetailDialogCtrl getAgreementDetailDialogCtrl() {
 		return agreementDetailDialogCtrl;
 	}
+
 	public void setAgreementDetailDialogCtrl(AgreementDetailDialogCtrl agreementDetailDialogCtrl) {
 		this.agreementDetailDialogCtrl = agreementDetailDialogCtrl;
 	}
@@ -3703,6 +3701,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public MailUtil getMailUtil() {
 		return mailUtil;
 	}
+
 	public void setMailUtil(MailUtil mailUtil) {
 		this.mailUtil = mailUtil;
 	}
@@ -3710,6 +3709,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public CustomerDialogCtrl getCustomerDialogCtrl() {
 		return customerDialogCtrl;
 	}
+
 	public void setCustomerDialogCtrl(CustomerDialogCtrl customerDialogCtrl) {
 		this.customerDialogCtrl = customerDialogCtrl;
 	}
@@ -3717,6 +3717,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public StageAccountingDetailDialogCtrl getStageAccountingDetailDialogCtrl() {
 		return stageAccountingDetailDialogCtrl;
 	}
+
 	public void setStageAccountingDetailDialogCtrl(StageAccountingDetailDialogCtrl stageAccountingDetailDialogCtrl) {
 		this.stageAccountingDetailDialogCtrl = stageAccountingDetailDialogCtrl;
 	}
@@ -3724,6 +3725,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public FinanceCheckListReferenceDialogCtrl getFinanceCheckListReferenceDialogCtrl() {
 		return financeCheckListReferenceDialogCtrl;
 	}
+
 	public void setFinanceCheckListReferenceDialogCtrl(
 			FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl) {
 		this.financeCheckListReferenceDialogCtrl = financeCheckListReferenceDialogCtrl;
@@ -3732,6 +3734,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public RepayCalculator getRepayCalculator() {
 		return repayCalculator;
 	}
+
 	public void setRepayCalculator(RepayCalculator repayCalculator) {
 		this.repayCalculator = repayCalculator;
 	}
@@ -3739,6 +3742,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public FinanceType getFinanceType() {
 		return financeType;
 	}
+
 	public void setFinanceType(FinanceType financeType) {
 		this.financeType = financeType;
 	}
@@ -3746,6 +3750,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public FinanceReferenceDetailService getFinanceReferenceDetailService() {
 		return financeReferenceDetailService;
 	}
+
 	public void setFinanceReferenceDetailService(FinanceReferenceDetailService financeReferenceDetailService) {
 		this.financeReferenceDetailService = financeReferenceDetailService;
 	}

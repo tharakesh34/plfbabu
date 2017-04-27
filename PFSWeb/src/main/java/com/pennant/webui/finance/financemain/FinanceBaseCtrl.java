@@ -110,7 +110,6 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.AccountEngineExecution;
-import com.pennant.app.util.AccountEngineExecutionRIA;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -579,7 +578,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	private FinanceDetailService							financeDetailService;
 	private AccountsService									accountsService;
 	private AccountEngineExecution							engineExecution;
-	private AccountEngineExecutionRIA						engineExecutionRIA;
 	private CustomerService									customerService;
 	private CommitmentService								commitmentService;
 	private MailUtil										mailUtil;
@@ -596,7 +594,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected Commitment									commitment;
 	protected String										custCtgType							= "";
 	protected Tab											listWindowTab;
-	protected boolean										isRIAExist							= false;
 	// not auto wired variables
 	private FinanceDetail									financeDetail						= null;											// over handed per parameters
 
@@ -7302,13 +7299,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		super.closeDialog();
 	}
 
-	public AEAmountCodes doGetFeeCustomerData(AEAmountCodes amountCodes) {
-		if (getCustomerDialogCtrl() != null) {
-			amountCodes = getCustomerDialogCtrl().doGetFeeCustomerData(amountCodes);
-		}
-		return amountCodes;
-	}
-
 	/**
 	 * This method is to fetch EID Number and calling it from DocumentTypeSelectDialogCtrl when document type is 01.
 	 * 
@@ -7923,14 +7913,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	public void setAdditionalDetailValidation(AdditionalDetailValidation additionalDetailValidation) {
 		this.additionalDetailValidation = additionalDetailValidation;
-	}
-
-	public AccountEngineExecutionRIA getEngineExecutionRIA() {
-		return engineExecutionRIA;
-	}
-
-	public void setEngineExecutionRIA(AccountEngineExecutionRIA engineExecutionRIA) {
-		this.engineExecutionRIA = engineExecutionRIA;
 	}
 
 	public Window getMainWindow() {

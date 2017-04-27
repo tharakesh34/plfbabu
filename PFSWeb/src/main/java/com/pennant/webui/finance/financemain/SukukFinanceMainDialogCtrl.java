@@ -70,10 +70,8 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.FrequencyUtil;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinancePremiumDetail;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -369,29 +367,7 @@ public class SukukFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		this.row_downPaySupl.setVisible(false);
 				
 		super.doWriteBeanToComponents(aFinanceDetail, onLoadProcess);
-		
-		//Finance Premium/Discount Details
-		FinancePremiumDetail premiumDetail = getFinanceDetail().getPremiumDetail();
-		if(premiumDetail == null){
-			premiumDetail = new FinancePremiumDetail();
-		}
-		
-		int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		this.issueNumber.setValue(premiumDetail.getIssueNumber());
-		this.noOfUnits.setValue(premiumDetail.getNoOfUnits());
-		this.faceValue.setValue(PennantApplicationUtil.formateAmount(premiumDetail.getFaceValue(), finFormatter));
-		fillComboBox(this.premiumType, premiumDetail.getPremiumType(), PennantStaticListUtil.getPremiumTypeList(), "");
-		this.premiumValue.setValue(PennantApplicationUtil.formateAmount(premiumDetail.getPremiumValue(), finFormatter));
-		this.pricePerUnit.setValue(PennantApplicationUtil.formateAmount(premiumDetail.getPricePerUnit(), finFormatter));
-		this.yieldValue.setValue(premiumDetail.getYieldValue());
-		this.lastCouponDate.setValue(premiumDetail.getLastCouponDate());
-		this.accruedProfit.setValue(PennantApplicationUtil.formateAmount(premiumDetail.getAccruedProfit(), finFormatter));
-		if(premiumDetail.getPurchaseDate() == null && StringUtils.isEmpty(moduleDefiner)){
-			premiumDetail.setPurchaseDate(appDate);
-		}
-		this.purchaseDate.setValue(premiumDetail.getPurchaseDate());
-		this.fairValuePerUnit.setValue(PennantApplicationUtil.formateAmount(premiumDetail.getFairValuePerUnit(), finFormatter));
-		this.fairValueAmount.setValue(PennantApplicationUtil.formateAmount(premiumDetail.getFairValueAmount(), finFormatter));
+		//FIXME : DataSet Removal to be worked on if it requires in future
 		
 		logger.debug("Leaving");
 	}
@@ -407,10 +383,11 @@ public class SukukFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		logger.debug("Entering");
 		
 		ArrayList<WrongValueException> wve = super.doWriteComponentsToBean(aFinanceDetail.getFinScheduleData());
-		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
+		//FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
+		//FIXME : DataSet Removal to be worked on if it requires in future
 		//Premium Detail Validation
-		aFinanceDetail.setPremiumDetail(doPreparePremiumDetail(aFinanceDetail, aFinanceMain.getRepayPftFrq(), wve));
+		//aFinanceDetail.setPremiumDetail(doPreparePremiumDetail(aFinanceDetail, aFinanceMain.getRepayPftFrq(), wve));
 		
 		//FinanceMain Details Tab Validation Error Throwing
 		showErrorDetails(wve, financeTypeDetailsTab);
@@ -422,7 +399,7 @@ public class SukukFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	 * Method for Preparing Premium Details
 	 * @param financeDetail
 	 */
-	private FinancePremiumDetail doPreparePremiumDetail(FinanceDetail detail, String repayPftFrq, ArrayList<WrongValueException> wve){
+	/*private FinancePremiumDetail doPreparePremiumDetail(FinanceDetail detail, String repayPftFrq, ArrayList<WrongValueException> wve){
 		logger.debug("Entering");
 		
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
@@ -535,7 +512,7 @@ public class SukukFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 
 		logger.debug("Leaving");
 		return premiumDetail;
-	}
+	}*/
 
 	/**
 	 * Checks, if data are changed since the last call of <br>

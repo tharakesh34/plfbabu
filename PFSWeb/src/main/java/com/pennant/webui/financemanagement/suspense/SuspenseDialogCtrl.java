@@ -100,8 +100,6 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.model.rulefactory.AEAmountCodesRIA;
-import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -123,54 +121,51 @@ import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/FinanceManagement/Suspense/SusoenseDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/FinanceManagement/Suspense/SusoenseDialog.zul file.
  */
 public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
-	private static final long serialVersionUID = 7798200490595650451L;
-	private final static Logger logger = Logger
-			.getLogger(SuspenseDialogCtrl.class);
+	private static final long							serialVersionUID	= 7798200490595650451L;
+	private final static Logger							logger				= Logger.getLogger(SuspenseDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_SuspenseDialog; // autowired
-	protected ExtendedCombobox finReference; // autowired
-	protected Textbox finBranch; // autowired
-	protected Textbox finType; // autowired
-	protected Longbox custID; // autowired
-	protected Textbox lovDescCustCIF; // autowired
-	protected Label custShrtName; // autowired
-	protected Intbox finSuspSeq; // autowired
-	protected Checkbox finIsInSusp; // autowired
-	protected Checkbox manualSusp; // autowired
-	protected Decimalbox finSuspAmt; // autowired
-	protected Decimalbox finCurSuspAmt; // autowired
-	protected Datebox finSuspDate; // autowired
-	protected Datebox finSuspTrfDate; // autowired
+	protected Window									window_SuspenseDialog;													// autowired
+	protected ExtendedCombobox							finReference;															// autowired
+	protected Textbox									finBranch;																// autowired
+	protected Textbox									finType;																// autowired
+	protected Longbox									custID;																// autowired
+	protected Textbox									lovDescCustCIF;														// autowired
+	protected Label										custShrtName;															// autowired
+	protected Intbox									finSuspSeq;															// autowired
+	protected Checkbox									finIsInSusp;															// autowired
+	protected Checkbox									manualSusp;															// autowired
+	protected Decimalbox								finSuspAmt;															// autowired
+	protected Decimalbox								finCurSuspAmt;															// autowired
+	protected Datebox									finSuspDate;															// autowired
+	protected Datebox									finSuspTrfDate;														// autowired
 
 	// not auto wired vars
-	private FinanceSuspHead suspHead; // overhanded per param
-	private transient SuspenseListCtrl suspenseListCtrl; // overhanded per param
+	private FinanceSuspHead								suspHead;																// overhanded per param
+	private transient SuspenseListCtrl					suspenseListCtrl;														// overhanded per param
 
-	protected Label recordStatus; // autowired
-	protected Radiogroup userAction;
-	protected Groupbox groupboxWf;
+	protected Label										recordStatus;															// autowired
+	protected Radiogroup								userAction;
+	protected Groupbox									groupboxWf;
 
-	private transient boolean 		validationOn;
-	
-	private String 					menuItemRightName = null;
+	private transient boolean							validationOn;
+
+	private String										menuItemRightName	= null;
 
 	// ServiceDAOs / Domain Classes
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
-	private transient SuspenseService suspenseService;
-	private FinanceReferenceDetailService financeReferenceDetailService;
-	private CustomerDetailsService customerDetailsService;
-	private FinanceWorkFlowService financeWorkFlowService;
-	private MailUtil mailUtil;
-	private FinanceMain financeMain;
+	private HashMap<String, ArrayList<ErrorDetails>>	overideMap			= new HashMap<String, ArrayList<ErrorDetails>>();
+	private transient SuspenseService					suspenseService;
+	private FinanceReferenceDetailService				financeReferenceDetailService;
+	private CustomerDetailsService						customerDetailsService;
+	private FinanceWorkFlowService						financeWorkFlowService;
+	private MailUtil									mailUtil;
+	private FinanceMain									financeMain;
 
 	/**
 	 * default constructor.<br>
@@ -187,9 +182,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Suspense object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Suspense object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -234,8 +228,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateMenuRoleAuthorities(getRole(),
-						"SuspenseDialog", menuItemRightName);
+				getUserWorkspace().allocateMenuRoleAuthorities(getRole(), "SuspenseDialog", menuItemRightName);
 				for (int i = 0; i < userAction.getItemCount(); i++) {
 					userAction.getItemAtIndex(i).setDisabled(false);
 				}
@@ -261,8 +254,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 			// or
 			// delete Suspense here.
 			if (arguments.containsKey("suspenseListCtrl")) {
-				setSuspenseListCtrl((SuspenseListCtrl) arguments
-						.get("suspenseListCtrl"));
+				setSuspenseListCtrl((SuspenseListCtrl) arguments.get("suspenseListCtrl"));
 			} else {
 				setSuspenseListCtrl(null);
 			}
@@ -287,9 +279,9 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	 */
 	protected void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+
 		int format = CurrencyUtil.getFormat(getSuspHead().getFinCcy());
-		
+
 		// Empty sent any required attributes
 		this.finReference.setMandatoryStyle(true);
 		this.finReference.setModuleName("FinanceMain");
@@ -300,11 +292,9 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		this.finType.setMaxlength(8);
 		this.custID.setMaxlength(19);
 		this.finSuspAmt.setMaxlength(18);
-		this.finSuspAmt.setFormat(PennantApplicationUtil
-				.getAmountFormate(format));
+		this.finSuspAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
 		this.finCurSuspAmt.setMaxlength(18);
-		this.finCurSuspAmt.setFormat(PennantApplicationUtil
-				.getAmountFormate(format));
+		this.finCurSuspAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
 		this.finSuspDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.finSuspTrfDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
@@ -352,12 +342,11 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	 *            Suspense
 	 * @throws InterruptedException
 	 */
-	public void doWriteBeanToComponents(FinanceSuspHead aSuspHead)
-			throws InterruptedException {
+	public void doWriteBeanToComponents(FinanceSuspHead aSuspHead) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		int format = CurrencyUtil.getFormat(aSuspHead.getFinCcy());
-		
+
 		this.finReference.setValue(aSuspHead.getFinReference());
 		this.finBranch.setValue(aSuspHead.getFinBranch());
 		this.finType.setValue(aSuspHead.getFinType());
@@ -367,11 +356,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		this.finSuspSeq.setValue(aSuspHead.getFinSuspSeq());
 		this.finIsInSusp.setChecked(aSuspHead.isFinIsInSusp());
 		this.manualSusp.setChecked(aSuspHead.isManualSusp());
-		this.finSuspAmt.setValue(PennantAppUtil.formateAmount(
-				aSuspHead.getFinSuspAmt(), format));
-		this.finCurSuspAmt.setValue(PennantAppUtil.formateAmount(
-				aSuspHead.getFinCurSuspAmt(),
-				format));
+		this.finSuspAmt.setValue(PennantAppUtil.formateAmount(aSuspHead.getFinSuspAmt(), format));
+		this.finCurSuspAmt.setValue(PennantAppUtil.formateAmount(aSuspHead.getFinCurSuspAmt(), format));
 		this.finSuspDate.setValue(aSuspHead.getFinSuspDate());
 		this.finSuspTrfDate.setValue(aSuspHead.getFinSuspTrfDate());
 		if (aSuspHead.getFinSuspDate() == null) {
@@ -417,24 +403,20 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		logger.debug("Leaving");
 	}
 
-	public void onSelectCheckListDetailsTab(ForwardEvent event)
-			throws ParseException, InterruptedException,
+	public void onSelectCheckListDetailsTab(ForwardEvent event) throws ParseException, InterruptedException,
 			IllegalAccessException, InvocationTargetException {
 
 		this.doWriteComponentsToBean(suspHead);
 
-		if (getCustomerDialogCtrl() != null
-				&& getCustomerDialogCtrl().getCustomerDetails() != null) {
+		if (getCustomerDialogCtrl() != null && getCustomerDialogCtrl().getCustomerDetails() != null) {
 			getCustomerDialogCtrl().doSetLabels(getFinBasicDetails());
-			getCustomerDialogCtrl().doSave_CustomerDetail(getFinanceDetail(),
-					custDetailTab, false);
+			getCustomerDialogCtrl().doSave_CustomerDetail(getFinanceDetail(), custDetailTab, false);
 		}
 
 		if (getFinanceCheckListReferenceDialogCtrl() != null) {
-			getFinanceCheckListReferenceDialogCtrl().doSetLabels(
-					getFinBasicDetails());
-			getFinanceCheckListReferenceDialogCtrl().doWriteBeanToComponents(
-					getFinanceDetail().getCheckList(),getFinanceDetail().getFinanceCheckList(), false);
+			getFinanceCheckListReferenceDialogCtrl().doSetLabels(getFinBasicDetails());
+			getFinanceCheckListReferenceDialogCtrl().doWriteBeanToComponents(getFinanceDetail().getCheckList(),
+					getFinanceDetail().getFinanceCheckList(), false);
 		}
 
 	}
@@ -481,14 +463,12 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 			wve.add(we);
 		}
 		try {
-			aSuspHead.setFinSuspAmt(PennantAppUtil.unFormateAmount(
-					this.finSuspAmt.getValue(),format));
+			aSuspHead.setFinSuspAmt(PennantAppUtil.unFormateAmount(this.finSuspAmt.getValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aSuspHead.setFinCurSuspAmt(PennantAppUtil.unFormateAmount(
-					this.finCurSuspAmt.getValue(),format));
+			aSuspHead.setFinCurSuspAmt(PennantAppUtil.unFormateAmount(this.finCurSuspAmt.getValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -525,8 +505,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSuspHead
 	 * @throws Exception
@@ -572,20 +551,16 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		getUserWorkspace().allocateAuthorities("SuspenseDialog", getRole(),
-				menuItemRightName);
+		getUserWorkspace().allocateAuthorities("SuspenseDialog", getRole(), menuItemRightName);
 
 		this.btnNew.setVisible(false);
-		this.btnSave.setVisible(getUserWorkspace().isAllowed(
-				"button_SuspenseDialog_btnSave"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed(
-				"button_SuspenseDialog_btnEdit"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_SuspenseDialog_btnSave"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SuspenseDialog_btnEdit"));
 		this.btnNotes.setVisible(false);
 		this.btnDelete.setVisible(false);
 		this.btnCancel.setVisible(false);
@@ -642,18 +617,13 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 			doLoadWorkFlow(getSuspHead());
 
 			// Fetch Total Finance Details Object
-			FinanceDetail financeDetail = getFinanceDetailService()
-					.getFinSchdDetailById(main.getFinReference(), "_View",
-							false);
-			financeDetail.getFinScheduleData().getFinanceMain()
-					.setNewRecord(true);
-			financeDetail.setCustomerDetails(getCustomerDetailsService()
-					.getCustomerDetailsById(
-							financeDetail.getFinScheduleData().getFinanceMain()
-									.getCustID(), true, "_View"));
-			financeDetail = getFinanceDetailService()
-					.getFinanceReferenceDetails(financeDetail, getRole(),
-							"DDE", eventCode, moduleDefiner, false);
+			FinanceDetail financeDetail = getFinanceDetailService().getFinSchdDetailById(main.getFinReference(),
+					"_View", false);
+			financeDetail.getFinScheduleData().getFinanceMain().setNewRecord(true);
+			financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(
+					financeDetail.getFinScheduleData().getFinanceMain().getCustID(), true, "_View"));
+			financeDetail = getFinanceDetailService().getFinanceReferenceDetails(financeDetail, getRole(), "DDE",
+					eventCode, moduleDefiner, false);
 
 			getSuspHead().setFinReference(main.getFinReference());
 			getSuspHead().setFinBranch(main.getFinBranch());
@@ -667,10 +637,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 
 			// Outstanding Suspense Amount Calculation
 			BigDecimal totSuspAmt = BigDecimal.ZERO;
-			for (FinanceScheduleDetail curSchd : financeDetail
-					.getFinScheduleData().getFinanceScheduleDetails()) {
-				totSuspAmt = totSuspAmt.add(curSchd.getProfitSchd().subtract(
-						curSchd.getSchdPftPaid()));
+			for (FinanceScheduleDetail curSchd : financeDetail.getFinScheduleData().getFinanceScheduleDetails()) {
+				totSuspAmt = totSuspAmt.add(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
 			}
 
 			getSuspHead().setFinSuspAmt(totSuspAmt);
@@ -696,8 +664,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 					this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 				}
 				this.groupboxWf.setVisible(true);
-				getUserWorkspace().allocateMenuRoleAuthorities(getRole(),
-						"SuspenseDialog", menuItemRightName);
+				getUserWorkspace().allocateMenuRoleAuthorities(getRole(), "SuspenseDialog", menuItemRightName);
 				doShowDialog(getSuspHead());
 			}
 			this.finReference.setReadonly(true);
@@ -727,37 +694,28 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 				doLoadWorkFlow(getSuspHead());
 
 				// Fetch Total Finance Details Object
-				FinanceDetail financeDetail = getFinanceDetailService()
-						.getFinSchdDetailById(main.getFinReference(), "_View",
-								false);
-				financeDetail.getFinScheduleData().getFinanceMain()
-						.setNewRecord(true);
-				financeDetail.setCustomerDetails(getCustomerDetailsService()
-						.getCustomerDetailsById(
-								financeDetail.getFinScheduleData()
-										.getFinanceMain().getCustID(), true,
-								"_View"));
-				financeDetail = getFinanceDetailService()
-						.getFinanceReferenceDetails(financeDetail, getRole(),
-								"DDE", eventCode, moduleDefiner, false);
+				FinanceDetail financeDetail = getFinanceDetailService().getFinSchdDetailById(main.getFinReference(),
+						"_View", false);
+				financeDetail.getFinScheduleData().getFinanceMain().setNewRecord(true);
+				financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(
+						financeDetail.getFinScheduleData().getFinanceMain().getCustID(), true, "_View"));
+				financeDetail = getFinanceDetailService().getFinanceReferenceDetails(financeDetail, getRole(), "DDE",
+						eventCode, moduleDefiner, false);
 
 				getSuspHead().setFinReference(main.getFinReference());
 				getSuspHead().setFinBranch(main.getFinBranch());
 				getSuspHead().setFinType(main.getFinType());
 				getSuspHead().setCustId(main.getCustID());
 				getSuspHead().setLovDescCustCIFName(main.getLovDescCustCIF());
-				getSuspHead().setLovDescCustShrtName(
-						main.getLovDescCustShrtName());
+				getSuspHead().setLovDescCustShrtName(main.getLovDescCustShrtName());
 				getSuspHead().setFinSuspSeq(1);
 				getSuspHead().setFinIsInSusp(false);
 				getSuspHead().setManualSusp(false);
 
 				// Outstanding Suspense Amount Calculation
 				BigDecimal totSuspAmt = BigDecimal.ZERO;
-				for (FinanceScheduleDetail curSchd : financeDetail
-						.getFinScheduleData().getFinanceScheduleDetails()) {
-					totSuspAmt = totSuspAmt.add(curSchd.getProfitSchd()
-							.subtract(curSchd.getSchdPftPaid()));
+				for (FinanceScheduleDetail curSchd : financeDetail.getFinScheduleData().getFinanceScheduleDetails()) {
+					totSuspAmt = totSuspAmt.add(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
 				}
 
 				getSuspHead().setFinSuspAmt(totSuspAmt);
@@ -771,8 +729,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 				getSuspHead().setFinType(main.getFinType());
 				getSuspHead().setCustId(main.getCustID());
 				getSuspHead().setLovDescCustCIFName(main.getLovDescCustCIF());
-				getSuspHead().setLovDescCustShrtName(
-						main.getLovDescCustShrtName());
+				getSuspHead().setLovDescCustShrtName(main.getLovDescCustShrtName());
 				getSuspHead().setFinSuspSeq(1);
 				getSuspHead().setFinIsInSusp(false);
 				getSuspHead().setManualSusp(false);
@@ -794,8 +751,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 						this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 					}
 					this.groupboxWf.setVisible(true);
-					getUserWorkspace().allocateMenuRoleAuthorities(getRole(),
-							"SuspenseDialog", menuItemRightName);
+					getUserWorkspace().allocateMenuRoleAuthorities(getRole(), "SuspenseDialog", menuItemRightName);
 					doShowDialog(getSuspHead());
 				}
 
@@ -810,12 +766,10 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		// Finance Maintenance Workflow Check & Assignment
 		WorkFlowDetails workFlowDetails = null;
 		if (StringUtils.isNotEmpty(moduleDefiner)) {
-			FinanceWorkFlow financeWorkflow = getFinanceWorkFlowService()
-					.getApprovedFinanceWorkFlowById(finType, moduleDefiner, PennantConstants.WORFLOW_MODULE_FINANCE);//TODO: Check Promotion case
-			if (financeWorkflow != null
-					&& financeWorkflow.getWorkFlowType() != null) {
-				workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkflow
-						.getWorkFlowType());
+			FinanceWorkFlow financeWorkflow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(finType,
+					moduleDefiner, PennantConstants.WORFLOW_MODULE_FINANCE);//TODO: Check Promotion case
+			if (financeWorkflow != null && financeWorkflow.getWorkFlowType() != null) {
+				workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkflow.getWorkFlowType());
 			}
 		}
 
@@ -823,8 +777,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 			setWorkFlowEnabled(false);
 		} else {
 			setWorkFlowEnabled(true);
-			setFirstTask(getUserWorkspace().isRoleContains(
-					workFlowDetails.getFirstTaskOwner()));
+			setFirstTask(getUserWorkspace().isRoleContains(workFlowDetails.getFirstTaskOwner()));
 			setWorkFlowId(workFlowDetails.getId());
 		}
 	}
@@ -833,21 +786,16 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 			UnsupportedEncodingException, FactoryConfigurationError {
 		logger.debug("Entering");
 		String roleCode = null;
-		if (!suspHead.isNewRecord()
-				&& StringUtils.trimToEmpty(suspHead.getNextTaskId()).contains(
-						";")) {
+		if (!suspHead.isNewRecord() && StringUtils.trimToEmpty(suspHead.getNextTaskId()).contains(";")) {
 			roleCode = getFinanceDetailService().getUserRoleCodeByRefernce(
-					getUserWorkspace().getUserDetails().getUserId(),
-					suspHead.getFinReference(),
+					getUserWorkspace().getUserDetails().getUserId(), suspHead.getFinReference(),
 					getUserWorkspace().getUserRoles());
 		}
 
 		if (null == roleCode) {
-			doLoadWorkFlow(suspHead.isWorkflow(), suspHead.getWorkflowId(),
-					suspHead.getNextTaskId());
+			doLoadWorkFlow(suspHead.isWorkflow(), suspHead.getWorkflowId(), suspHead.getNextTaskId());
 		} else {
-			doLoadWorkFlow(suspHead.isWorkflow(), suspHead.getWorkflowId(),
-					null, roleCode);
+			doLoadWorkFlow(suspHead.isWorkflow(), suspHead.getWorkflowId(), null, roleCode);
 		}
 		logger.debug("Entering");
 	}
@@ -889,48 +837,37 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 
 		// fill the Suspense object with the components data
 		FinanceDetail aFinanceDetail = aFinanceSuspHead.getFinanceDetail();
-		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData()
-				.getFinanceMain();
+		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
 		if (this.userAction.getSelectedItem() != null) {
-			if ("Save".equalsIgnoreCase(this.userAction.getSelectedItem()
-					.getLabel())
-					|| "Cancel".equalsIgnoreCase(this.userAction
-							.getSelectedItem().getLabel())
-					|| this.userAction.getSelectedItem().getLabel()
-							.contains("Reject")
-					|| this.userAction.getSelectedItem().getLabel()
-							.contains("Resubmit")
-					|| this.userAction.getSelectedItem().getLabel()
-							.contains("Decline")) {
+			if ("Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+					|| "Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+					|| this.userAction.getSelectedItem().getLabel().contains("Reject")
+					|| this.userAction.getSelectedItem().getLabel().contains("Resubmit")
+					|| this.userAction.getSelectedItem().getLabel().contains("Decline")) {
 				recSave = true;
 				aFinanceDetail.setActionSave(true);
 			}
-			aFinanceDetail.setUserAction(this.userAction.getSelectedItem()
-					.getLabel());
+			aFinanceDetail.setUserAction(this.userAction.getSelectedItem().getLabel());
 		}
 
 		aFinanceDetail.setAccountingEventCode(eventCode);
-		aFinanceDetail
-				.setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG
-						: moduleDefiner);
+		aFinanceDetail.setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG
+				: moduleDefiner);
 
 		// Document Details Saving
 		if (getDocumentDetailDialogCtrl() != null) {
-			aFinanceDetail.setDocumentDetailsList(getDocumentDetailDialogCtrl()
-					.getDocumentDetailsList());
+			aFinanceDetail.setDocumentDetailsList(getDocumentDetailDialogCtrl().getDocumentDetailsList());
 		} else {
 			aFinanceDetail.setDocumentDetailsList(null);
 		}
 
 		// Finance Fee Charge Details Tab
-		if (getFeeDetailDialogCtrl() != null
-				&& getFinanceDetail().getFinScheduleData().getFeeRules() != null
+		if (getFeeDetailDialogCtrl() != null && getFinanceDetail().getFinScheduleData().getFeeRules() != null
 				&& getFinanceDetail().getFinScheduleData().getFeeRules().size() > 0) {
 			// check if fee & charges rules executed or not
 			if (!getFeeDetailDialogCtrl().isFeeChargesExecuted()) {
-				MessageUtil.showErrorMessage(Labels
-						.getLabel("label_Finance_Calc_Fee"));
+				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Fee"));
 				return;
 			}
 		}
@@ -938,18 +875,13 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		// Finance Stage Accounting Details Tab
 		if (!recSave && getStageAccountingDetailDialogCtrl() != null) {
 			// check if accounting rules executed or not
-			if (!getStageAccountingDetailDialogCtrl()
-					.isStageAccountingsExecuted()) {
-				MessageUtil.showErrorMessage(Labels
-						.getLabel("label_Finance_Calc_StageAccountings"));
+			if (!getStageAccountingDetailDialogCtrl().isStageAccountingsExecuted()) {
+				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_StageAccountings"));
 				return;
 			}
-			if (getStageAccountingDetailDialogCtrl().getStageDisbCrSum()
-					.compareTo(
-							getStageAccountingDetailDialogCtrl()
-									.getStageDisbDrSum()) != 0) {
-				MessageUtil.showErrorMessage(Labels
-						.getLabel("label_Finance_Acc_NotMatching"));
+			if (getStageAccountingDetailDialogCtrl().getStageDisbCrSum().compareTo(
+					getStageAccountingDetailDialogCtrl().getStageDisbDrSum()) != 0) {
+				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Acc_NotMatching"));
 				return;
 			}
 		} else {
@@ -960,14 +892,12 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		if (!recSave && getAccountingDetailDialogCtrl() != null) {
 			// check if accounting rules executed or not
 			if (!getAccountingDetailDialogCtrl().isAccountingsExecuted()) {
-				MessageUtil.showErrorMessage(Labels
-						.getLabel("label_Finance_Calc_Accountings"));
+				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Accountings"));
 				return;
 			}
-			if (getAccountingDetailDialogCtrl().getDisbCrSum().compareTo(
-					getAccountingDetailDialogCtrl().getDisbDrSum()) != 0) {
-				MessageUtil.showErrorMessage(Labels
-						.getLabel("label_Finance_Acc_NotMatching"));
+			if (getAccountingDetailDialogCtrl().getDisbCrSum()
+					.compareTo(getAccountingDetailDialogCtrl().getDisbDrSum()) != 0) {
+				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Acc_NotMatching"));
 				return;
 			}
 		}
@@ -991,11 +921,9 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 			if (StringUtils.isBlank(aFinanceSuspHead.getRecordType())) {
 				aFinanceSuspHead.setVersion(aFinanceSuspHead.getVersion() + 1);
 				if (isNew) {
-					aFinanceSuspHead
-							.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					aFinanceSuspHead.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					aFinanceSuspHead
-							.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aFinanceSuspHead.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					aFinanceSuspHead.setNewRecord(true);
 				}
 			}
@@ -1018,24 +946,20 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 				if (StringUtils.isBlank(aFinanceSuspHead.getNextTaskId())) {
 					aFinanceSuspHead.setNextRoleCode("");
 				}
-				String msg = PennantApplicationUtil.getSavingStatus(
-						aFinanceSuspHead.getRoleCode(),
-						aFinanceSuspHead.getNextRoleCode(),
-						aFinanceSuspHead.getFinReference(), " Suspense ",
+				String msg = PennantApplicationUtil.getSavingStatus(aFinanceSuspHead.getRoleCode(),
+						aFinanceSuspHead.getNextRoleCode(), aFinanceSuspHead.getFinReference(), " Suspense ",
 						aFinanceSuspHead.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);
 
 				// Mail Alert Notification for Customer/Dealer/Provider...etc
-				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem()
-						.getLabel())) {
+				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
 
 					List<String> templateTyeList = new ArrayList<String>();
 					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_AE);
 					templateTyeList.add(NotificationConstants.TEMPLATE_FOR_CN);
 
-					List<ValueLabel> referenceIdList = getFinanceReferenceDetailService()
-							.getTemplateIdList(aFinanceMain.getFinType(),
-									moduleDefiner, getRole(), templateTyeList);
+					List<ValueLabel> referenceIdList = getFinanceReferenceDetailService().getTemplateIdList(
+							aFinanceMain.getFinType(), moduleDefiner, getRole(), templateTyeList);
 
 					templateTyeList = null;
 					if (!referenceIdList.isEmpty()) {
@@ -1043,10 +967,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 						boolean isCustomerNotificationExists = false;
 						List<Long> notificationIdlist = new ArrayList<Long>();
 						for (ValueLabel valueLabel : referenceIdList) {
-							notificationIdlist.add(Long.valueOf(valueLabel
-									.getValue()));
-							if (NotificationConstants.TEMPLATE_FOR_CN
-									.equals(valueLabel.getLabel())) {
+							notificationIdlist.add(Long.valueOf(valueLabel.getValue()));
+							if (NotificationConstants.TEMPLATE_FOR_CN.equals(valueLabel.getLabel())) {
 								isCustomerNotificationExists = true;
 							}
 						}
@@ -1056,87 +978,77 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 
 						// Customer Email Preparation
 						if (isCustomerNotificationExists
-								&& aFinanceDetail.getCustomerDetails()
-										.getCustomerEMailList() != null
-								&& !aFinanceDetail.getCustomerDetails()
-										.getCustomerEMailList().isEmpty()) {
+								&& aFinanceDetail.getCustomerDetails().getCustomerEMailList() != null
+								&& !aFinanceDetail.getCustomerDetails().getCustomerEMailList().isEmpty()) {
 
-							List<CustomerEMail> emailList = aFinanceDetail
-									.getCustomerDetails()
-									.getCustomerEMailList();
+							List<CustomerEMail> emailList = aFinanceDetail.getCustomerDetails().getCustomerEMailList();
 							List<String> custMailIdList = new ArrayList<String>();
 							for (CustomerEMail customerEMail : emailList) {
-								custMailIdList
-										.add(customerEMail.getCustEMail());
+								custMailIdList.add(customerEMail.getCustEMail());
 							}
 							if (!custMailIdList.isEmpty()) {
-								mailIDMap.put(NotificationConstants.TEMPLATE_FOR_CN,
-										custMailIdList);
+								mailIDMap.put(NotificationConstants.TEMPLATE_FOR_CN, custMailIdList);
 							}
 						}
 
-						getMailUtil().sendMail(notificationIdlist,
-								aFinanceDetail, mailIDMap, null);
+						getMailUtil().sendMail(notificationIdlist, aFinanceDetail, mailIDMap, null);
 					}
 
 				}
+
 				// User Notifications Message/Alert
 				try {
 					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
-						String reference = aFinanceMain.getFinReference();
 
 						// Send message Notification to Users
-						if (aFinanceMain.getNextUserId() != null) {
-							String usrLogins = aFinanceMain.getNextUserId();
-							List<String> usrLoginList = new ArrayList<String>();
+						if (aFinanceDetail.getFinScheduleData().getFinanceMain().getNextUserId() != null) {
 
-							if (usrLogins.contains(",")) {
-								String[] to = usrLogins.split(",");
-								for (String roleCode : to) {
-									usrLoginList.add(roleCode);
+							Notify notify = Notify.valueOf("USER");
+							String[] to = aFinanceDetail.getFinScheduleData().getFinanceMain().getNextUserId()
+									.split(",");
+							if (StringUtils.isNotEmpty(aFinanceDetail.getFinScheduleData().getFinanceMain()
+									.getFinReference())) {
+
+								String reference = aFinanceDetail.getFinScheduleData().getFinanceMain()
+										.getFinReference();
+								if (!PennantConstants.RCD_STATUS_CANCELLED.equalsIgnoreCase(aFinanceDetail
+										.getFinScheduleData().getFinanceMain().getRecordStatus())) {
+									getEventManager().publish(
+											Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":"
+													+ reference, notify, to);
 								}
 							} else {
-								usrLoginList.add(usrLogins);
+								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
 							}
 
-							List<String> userLogins = getFinanceDetailService().getUsersLoginList(usrLoginList);
-
-							String[] to = new String[userLogins.size()];
-							for (int i = 0; i < userLogins.size(); i++) {
-								to[i] = String.valueOf(userLogins.get(i));
-							}
-
-							if (StringUtils.isNotEmpty(reference)) {
-								if (!PennantConstants.RCD_STATUS_CANCELLED
-										.equalsIgnoreCase(aFinanceMain.getRecordStatus())) {
-									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference"
-											+ ":" + reference, Notify.USER, to);
-								}
-							} else {
-								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), Notify.USER, to);
-							}
 						} else {
-							if (StringUtils.isNotEmpty(aFinanceMain.getNextRoleCode())) {
-								if (!PennantConstants.RCD_STATUS_CANCELLED.equals(aFinanceMain.getRecordStatus())) {
-									String[] to = aFinanceMain.getNextRoleCode().split(",");
-									String message;
 
-									if (StringUtils.isBlank(aFinanceMain.getNextTaskId())) {
-										message = Labels.getLabel("REC_FINALIZED_MESSAGE");
-									} else {
-										message = Labels.getLabel("REC_PENDING_MESSAGE");
+							String nextRoleCodes = aFinanceDetail.getFinScheduleData().getFinanceMain()
+									.getNextRoleCode();
+							if (StringUtils.isNotEmpty(nextRoleCodes)) {
+								Notify notify = Notify.valueOf("ROLE");
+								String[] to = nextRoleCodes.split(",");
+								if (StringUtils.isNotEmpty(aFinanceDetail.getFinScheduleData().getFinanceMain()
+										.getFinReference())) {
+
+									String reference = aFinanceDetail.getFinScheduleData().getFinanceMain()
+											.getFinReference();
+									if (!PennantConstants.RCD_STATUS_CANCELLED.equalsIgnoreCase(aFinanceDetail
+											.getFinScheduleData().getFinanceMain().getRecordStatus())) {
+										getEventManager().publish(
+												Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":"
+														+ reference, notify, to);
 									}
-									message += " with Reference" + ":" + reference;
-
-									getEventManager().publish(message, to, finDivision, aFinanceMain.getFinBranch());
+								} else {
+									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
 								}
 							}
 						}
 					}
 				} catch (Exception e) {
-					logger.error("Exception: ", e);
+					logger.error(e.getMessage());
 				}
 
 				closeDialog();
@@ -1160,37 +1072,30 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	private boolean doProcess(FinanceSuspHead aFinanceSuspHead, String tranType)
-			throws InterruptedException, PFFInterfaceException,
-			IllegalAccessException, InvocationTargetException {
+	private boolean doProcess(FinanceSuspHead aFinanceSuspHead, String tranType) throws InterruptedException,
+			PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		logger.debug("Entering");
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
 
-		aFinanceSuspHead.setLastMntBy(getUserWorkspace().getLoggedInUser()
-				.getLoginUsrID());
-		aFinanceSuspHead
-				.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		aFinanceSuspHead.setUserDetails(getUserWorkspace()
-				.getLoggedInUser());
+		aFinanceSuspHead.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFinanceSuspHead.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aFinanceSuspHead.setUserDetails(getUserWorkspace().getLoggedInUser());
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
-			aFinanceSuspHead.setRecordStatus(userAction.getSelectedItem()
-					.getValue().toString());
+			aFinanceSuspHead.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 
 			// Check for service tasks. If one exists perform the task(s)
 			String finishedTasks = "";
-			String serviceTasks = getServiceTasks(taskId, aFinanceSuspHead,
-					finishedTasks);
+			String serviceTasks = getServiceTasks(taskId, aFinanceSuspHead, finishedTasks);
 
 			if (isNotesMandatory(taskId, aFinanceSuspHead)) {
 				try {
 					if (!notesEntered) {
-						MessageUtil.showErrorMessage(Labels
-								.getLabel("Notes_NotEmpty"));
+						MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
 						return false;
 					}
 				} catch (InterruptedException e) {
@@ -1198,22 +1103,18 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 				}
 			}
 
-			auditHeader = getAuditHeader(aFinanceSuspHead,
-					PennantConstants.TRAN_WF);
+			auditHeader = getAuditHeader(aFinanceSuspHead, PennantConstants.TRAN_WF);
 
 			while (!"".equals(serviceTasks)) {
 
 				String method = serviceTasks.split(";")[0];
 
-				if (StringUtils.trimToEmpty(method).contains(
-						PennantConstants.method_DDAMaintenance)) {
+				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)) {
 					processCompleted = true;
-				} else if (StringUtils.trimToEmpty(method).contains(
-						PennantConstants.method_doCheckCollaterals)) {
+				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
 					processCompleted = true;
 				} else {
-					FinanceSuspHead tFinanceSuspHead = (FinanceSuspHead) auditHeader
-							.getAuditDetail().getModelData();
+					FinanceSuspHead tFinanceSuspHead = (FinanceSuspHead) auditHeader.getAuditDetail().getModelData();
 					setNextTaskDetails(taskId, aFinanceSuspHead);
 					auditHeader.getAuditDetail().setModelData(tFinanceSuspHead);
 					processCompleted = doSaveProcess(auditHeader, method);
@@ -1225,15 +1126,12 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 				}
 
 				finishedTasks += (method + ";");
-				FinanceSuspHead tFinanceSuspHead = (FinanceSuspHead) auditHeader
-						.getAuditDetail().getModelData();
-				serviceTasks = getServiceTasks(taskId, tFinanceSuspHead,
-						finishedTasks);
+				FinanceSuspHead tFinanceSuspHead = (FinanceSuspHead) auditHeader.getAuditDetail().getModelData();
+				serviceTasks = getServiceTasks(taskId, tFinanceSuspHead, finishedTasks);
 
 			}
 
-			FinanceSuspHead tFinanceSuspHead = (FinanceSuspHead) auditHeader
-					.getAuditDetail().getModelData();
+			FinanceSuspHead tFinanceSuspHead = (FinanceSuspHead) auditHeader.getAuditDetail().getModelData();
 
 			// Check whether to proceed further or not
 			String nextTaskId = getNextTaskIds(taskId, tFinanceSuspHead);
@@ -1245,9 +1143,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 			// Proceed further to save the details in WorkFlow
 			if (processCompleted) {
 
-				if (!"".equals(nextTaskId)
-						|| "Save".equals(userAction.getSelectedItem()
-								.getLabel())) {
+				if (!"".equals(nextTaskId) || "Save".equals(userAction.getSelectedItem().getLabel())) {
 					setNextTaskDetails(taskId, aFinanceSuspHead);
 					auditHeader.getAuditDetail().setModelData(tFinanceSuspHead);
 					processCompleted = doSaveProcess(auditHeader, null);
@@ -1262,12 +1158,10 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		return processCompleted;
 	}
 
-	protected String getServiceTasks(String taskId, FinanceSuspHead suspHead,
-			String finishedTasks) {
+	protected String getServiceTasks(String taskId, FinanceSuspHead suspHead, String finishedTasks) {
 		logger.debug("Entering");
 		// changes regarding parallel work flow
-		String nextRoleCode = StringUtils.trimToEmpty(suspHead
-				.getNextRoleCode());
+		String nextRoleCode = StringUtils.trimToEmpty(suspHead.getNextRoleCode());
 		String nextRoleCodes[] = nextRoleCode.split(",");
 
 		if (nextRoleCodes.length > 1) {
@@ -1354,62 +1248,48 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method)
-			throws PFFInterfaceException, IllegalAccessException,
-			InvocationTargetException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws PFFInterfaceException,
+			IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
-		FinanceSuspHead aFinanceSuspHead = (FinanceSuspHead) auditHeader
-				.getAuditDetail().getModelData();
+		FinanceSuspHead aFinanceSuspHead = (FinanceSuspHead) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
 		try {
 			while (retValue == PennantConstants.porcessOVERIDE) {
 				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(
-							PennantConstants.TRAN_DEL)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = getSuspenseService().delete(auditHeader);
 						deleteNotes = true;
 					} else {
-						auditHeader = getSuspenseService().saveOrUpdate(
-								auditHeader);
+						auditHeader = getSuspenseService().saveOrUpdate(auditHeader);
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(
-							PennantConstants.method_doApprove)) {
-						auditHeader = getSuspenseService().doApprove(
-								auditHeader);
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = getSuspenseService().doApprove(auditHeader);
 
-						if (aFinanceSuspHead.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_DEL)) {
+						if (aFinanceSuspHead.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
 
-					} else if (StringUtils.trimToEmpty(method)
-							.equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getSuspenseService()
-								.doReject(auditHeader);
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = getSuspenseService().doReject(auditHeader);
 
-						if (aFinanceSuspHead.getRecordType().equals(
-								PennantConstants.RECORD_TYPE_NEW)) {
+						if (aFinanceSuspHead.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(
-								PennantConstants.ERR_9999, Labels
-										.getLabel("InvalidWorkFlowMethod"),
-								null));
-						retValue = ErrorControl.showErrorControl(
-								this.window_SuspenseDialog, auditHeader);
+						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
+								.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_SuspenseDialog, auditHeader);
 						return processCompleted;
 					}
 				}
 
-				auditHeader = ErrorControl.showErrorDetails(
-						this.window_SuspenseDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_SuspenseDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
@@ -1452,8 +1332,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		logger.debug("Entering");
 		if (this.finReference.isVisible()) {
 			this.finReference.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_SuspenseDialog_FinReference.value"), null,
-					true, true));
+					.getLabel("label_SuspenseDialog_FinReference.value"), null, true, true));
 		}
 		logger.debug("Leaving");
 	}
@@ -1480,8 +1359,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	 */
 	public ArrayList<Object> getFinBasicDetails() {
 		ArrayList<Object> arrayList = new ArrayList<Object>();
-		FinanceMain financeMain = getFinanceDetail().getFinScheduleData()
-				.getFinanceMain();
+		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		arrayList.add(0, financeMain.getFinType());
 		arrayList.add(1, financeMain.getFinCcy());
 		arrayList.add(2, financeMain.getScheduleMethod());
@@ -1489,17 +1367,14 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		arrayList.add(4, financeMain.getProfitDaysBasis());
 		arrayList.add(5, financeMain.getGrcPeriodEndDate());
 		arrayList.add(6, financeMain.isAllowGrcPeriod());
-		FinanceType fianncetype = getFinanceDetail().getFinScheduleData()
-				.getFinanceType();
+		FinanceType fianncetype = getFinanceDetail().getFinScheduleData().getFinanceType();
 		if (fianncetype != null && !"".equals(fianncetype.getProduct())) {
 			arrayList.add(7, true);
 		} else {
 			arrayList.add(7, false);
 		}
-		arrayList.add(8, getFinanceDetail().getFinScheduleData()
-				.getFinanceType().getFinCategory());
-		arrayList.add(9, getFinanceDetail().getFinScheduleData()
-				.getFinanceMain().getLovDescCustShrtName());
+		arrayList.add(8, getFinanceDetail().getFinScheduleData().getFinanceType().getFinCategory());
+		arrayList.add(9, getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescCustShrtName());
 		arrayList.add(10, false);
 		arrayList.add(11, moduleDefiner);
 		return arrayList;
@@ -1514,14 +1389,11 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	 * 
 	 * @throws Exception
 	 */
-	public void onExecuteAccountingDetail(Boolean onLoadProcess)
-			throws Exception {
+	public void onExecuteAccountingDetail(Boolean onLoadProcess) throws Exception {
 		logger.debug("Entering");
 
-		getAccountingDetailDialogCtrl().getLabel_AccountingDisbCrVal()
-				.setValue("");
-		getAccountingDetailDialogCtrl().getLabel_AccountingDisbDrVal()
-				.setValue("");
+		getAccountingDetailDialogCtrl().getLabel_AccountingDisbCrVal().setValue("");
+		getAccountingDetailDialogCtrl().getLabel_AccountingDisbDrVal().setValue("");
 
 		// Finance Accounting Details Execution
 		executeAccounting(onLoadProcess);
@@ -1535,12 +1407,10 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	public FinanceDetail onExecuteStageAccDetail() throws InterruptedException,
-			IllegalAccessException, InvocationTargetException {
-		getFinanceDetail()
-				.setModuleDefiner(
-						StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG
-								: moduleDefiner);
+	public FinanceDetail onExecuteStageAccDetail() throws InterruptedException, IllegalAccessException,
+			InvocationTargetException {
+		getFinanceDetail().setModuleDefiner(
+				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
 		return getFinanceDetail();
 	}
 
@@ -1553,22 +1423,18 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	private void executeAccounting(boolean onLoadProcess) throws Exception {
 		logger.debug("Entering");
 
-		FinanceMain finMain = getFinanceDetail().getFinScheduleData()
-				.getFinanceMain();
-		FinanceProfitDetail profitDetail = getFinanceDetailService()
-				.getFinProfitDetailsById(finMain.getFinReference());
+		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
 		Date dateValueDate = DateUtility.getValueDate();
 
-		DataSet dataSet = AEAmounts.createDataSet(finMain, eventCode,
-				dateValueDate, dateValueDate);
 
-		Date curBDay = DateUtility.getAppDate();
-		amountCodes = AEAmounts.procAEAmounts(finMain, getFinanceDetail()
-				.getFinScheduleData().getFinanceScheduleDetails(),
-				profitDetail, curBDay);
+		amountCodes = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
+				.getFinanceScheduleDetails(), profitDetail, eventCode, dateValueDate, dateValueDate);
 
 		// Set Repay Amount Codes
 		setAmountCodes(amountCodes);
+
+		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
 		List<ReturnDataSet> returnSetEntries = null;
 
@@ -1577,36 +1443,27 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 			feeRuleMap = getFeeDetailDialogCtrl().getFeeRuleDetailsMap();
 		}
 
-		if (!getFinanceDetail().getFinScheduleData().getFinanceType()
-				.isAllowRIAInvestment()) {
+		executingMap.putAll(feeRuleMap);
+		getFinanceDetail().getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
 
-			returnSetEntries = getEngineExecution().getAccEngineExecResults(
-					dataSet, getAmountCodes(), "N", feeRuleMap, false,
-					getFinanceDetail().getFinScheduleData().getFinanceType());
+		if (!getFinanceDetail().getFinScheduleData().getFinanceType().isAllowRIAInvestment()) {
+			returnSetEntries = getEngineExecution().getAccEngineExecResults("N", executingMap, false);
 		} else {
-
-			List<AEAmountCodesRIA> riaDetailList = getEngineExecutionRIA()
-					.prepareRIADetails(null, dataSet.getFinReference());
-			returnSetEntries = getEngineExecutionRIA().getAccEngineExecResults(
-					dataSet, getAmountCodes(), "N", riaDetailList, feeRuleMap);
+			//FIXME : DataSet Removal to be worked on if it requires in future
 		}
 
 		if (getAccountingDetailDialogCtrl() != null) {
 			getAccountingDetailDialogCtrl().doFillAccounting(returnSetEntries);
-			getAccountingDetailDialogCtrl().getFinanceDetail()
-					.setReturnDataSetList(returnSetEntries);
+			getAccountingDetailDialogCtrl().getFinanceDetail().setReturnDataSetList(returnSetEntries);
 		}
 
 		logger.debug("Leaving");
 	}
 
-	private AuditHeader getAuditHeader(FinanceSuspHead aFinanceSuspHead,
-			String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aFinanceSuspHead.getBefImage(), aFinanceSuspHead);
-		return new AuditHeader(aFinanceSuspHead.getFinReference(), null, null,
-				null, auditDetail, aFinanceSuspHead.getUserDetails(),
-				getOverideMap());
+	private AuditHeader getAuditHeader(FinanceSuspHead aFinanceSuspHead, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinanceSuspHead.getBefImage(), aFinanceSuspHead);
+		return new AuditHeader(aFinanceSuspHead.getFinReference(), null, null, null, auditDetail,
+				aFinanceSuspHead.getUserDetails(), getOverideMap());
 	}
 
 	public void onClick$btnNotes(Event event) throws Exception {
@@ -1619,8 +1476,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 
 		// call the zul-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null,
-					map);
+			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null, map);
 		} catch (Exception e) {
 			logger.error("Exception: Opening window", e);
 			MessageUtil.showErrorMessage(e);
@@ -1663,8 +1519,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		this.suspHead = suspHead;
 	}
 
-	public void setOverideMap(
-			HashMap<String, ArrayList<ErrorDetails>> overideMap) {
+	public void setOverideMap(HashMap<String, ArrayList<ErrorDetails>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
@@ -1684,8 +1539,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		return financeReferenceDetailService;
 	}
 
-	public void setFinanceReferenceDetailService(
-			FinanceReferenceDetailService financeReferenceDetailService) {
+	public void setFinanceReferenceDetailService(FinanceReferenceDetailService financeReferenceDetailService) {
 		this.financeReferenceDetailService = financeReferenceDetailService;
 	}
 
@@ -1693,8 +1547,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		return customerDetailsService;
 	}
 
-	public void setCustomerDetailsService(
-			CustomerDetailsService customerDetailsService) {
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
 
@@ -1702,8 +1555,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		return financeWorkFlowService;
 	}
 
-	public void setFinanceWorkFlowService(
-			FinanceWorkFlowService financeWorkFlowService) {
+	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
 	}
 

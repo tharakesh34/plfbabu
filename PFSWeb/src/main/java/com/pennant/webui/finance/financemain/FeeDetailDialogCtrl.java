@@ -59,7 +59,6 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -90,7 +89,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -99,10 +97,8 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.Rule;
-import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.TakafulProviderService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -110,7 +106,6 @@ import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
-import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -178,7 +173,7 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 	protected Button						btnNew_FeeDetailDialog_FinInsurance;
 	private List<FinInsurances>				finInsuranceList		= new ArrayList<FinInsurances>();
 	private transient RuleExecutionUtil		ruleExecutionUtil;
-	private RuleService						ruleService; 
+	private RuleService						ruleService;
 
 	/**
 	 * default constructor.<br>
@@ -240,10 +235,11 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 	// GUI operations
 
 	public void doEdit() {
-		
-		if(!isWIF){			
+
+		if (!isWIF) {
 			getUserWorkspace().allocateAuthorities("FeeDetailDialog", getRole());
-			this.btnNew_FeeDetailDialog_FinInsurance.setVisible(getUserWorkspace().isAllowed("btnNew_FeeDetailDialog_FinInsurance"));
+			this.btnNew_FeeDetailDialog_FinInsurance.setVisible(getUserWorkspace().isAllowed(
+					"btnNew_FeeDetailDialog_FinInsurance"));
 		}
 
 		//Set Field Properties
@@ -392,7 +388,7 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		Customer customer = null;
-		if(financeDetail.getCustomerDetails() != null){
+		if (financeDetail.getCustomerDetails() != null) {
 			customer = financeDetail.getCustomerDetails().getCustomer();
 		}
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
@@ -425,8 +421,8 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 							insAmount = finAmount.multiply(insurance.getCalPerc()).divide(new BigDecimal(100),
 									RoundingMode.HALF_DOWN);
 						} else if (insurance.getCalOn().equals(InsuranceConstants.CALCON_OSAMT)) {
-							insAmount = (finAmount.subtract(downPayAmt)).multiply(insurance.getCalPerc()).divide(new BigDecimal(100),
-									RoundingMode.HALF_DOWN);
+							insAmount = (finAmount.subtract(downPayAmt)).multiply(insurance.getCalPerc()).divide(
+									new BigDecimal(100), RoundingMode.HALF_DOWN);
 						}
 					}
 					// Provider Rate Based then based on calculation Type, Amount to be calculated
@@ -435,8 +431,8 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 							insAmount = finAmount.multiply(insurance.getInsuranceRate()).divide(new BigDecimal(100),
 									RoundingMode.HALF_DOWN);
 						} else if (insurance.getCalOn().equals(InsuranceConstants.CALCON_OSAMT)) {
-							insAmount = (finAmount.subtract(downPayAmt)).multiply(insurance.getInsuranceRate()).divide(new BigDecimal(100),
-									RoundingMode.HALF_DOWN);
+							insAmount = (finAmount.subtract(downPayAmt)).multiply(insurance.getInsuranceRate()).divide(
+									new BigDecimal(100), RoundingMode.HALF_DOWN);
 						}
 					}
 					// Constant Amount not required any calculation
@@ -451,7 +447,7 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 				}
 			}
 		}
-		
+
 		if (StringUtils.isBlank(getFinanceDetail().getModuleDefiner())) {
 			//Fee Amounts
 			finScheduleData.getFinanceMain().setDeductFeeDisb(deductFeeFromDisb);
@@ -549,7 +545,7 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 				dofillFeeCharges(getFinanceDetail().getFeeCharges(), false, false, false, getFinScheduleData(), false);
 			}
 		}
-		
+
 		doFillFinInsurances(getFinanceDetail().getFinScheduleData().getFinInsuranceList());
 		doStoreInitValues();
 		logger.debug("Leaving");
@@ -587,14 +583,13 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 		doWriteBeanToComponents();
 
 		getBorderLayoutHeight();
-		/*if (isWIF) {
-			this.listBoxFinFeeCharges.setHeight(this.borderLayoutHeight - 320 + "px");
-			this.listBoxInsuranceDetails.setHeight(this.borderLayoutHeight - 320 + "px");
-			this.window_FeeDetailDialog.setHeight(this.borderLayoutHeight - 30 + "px");
-		} else {
-			this.listBoxInsuranceDetails.setHeight(getListBoxHeight(this.gridBasicDetail.getRows()
-					.getVisibleItemCount() + 3));
-		}*/
+		/*
+		 * if (isWIF) { this.listBoxFinFeeCharges.setHeight(this.borderLayoutHeight - 320 + "px");
+		 * this.listBoxInsuranceDetails.setHeight(this.borderLayoutHeight - 320 + "px");
+		 * this.window_FeeDetailDialog.setHeight(this.borderLayoutHeight - 30 + "px"); } else {
+		 * this.listBoxInsuranceDetails.setHeight(getListBoxHeight(this.gridBasicDetail.getRows() .getVisibleItemCount()
+		 * + 3)); }
+		 */
 		this.window_FeeDetailDialog.setHeight(this.borderLayoutHeight - 80 + "px");
 
 		logger.debug("Leaving");
@@ -1474,12 +1469,13 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 
 		if (this.listBoxFinFeeCharges.getFellowIfAny("pftCalFee_" + code) != null) {
 			Label feeToFinLabel = (Label) this.listBoxFinFeeCharges.getFellowIfAny("pftCalFee_" + code);
-			feeToFinLabel
-					.setValue(PennantAppUtil.amountFormate(feeToFinAmt, CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
+			feeToFinLabel.setValue(PennantAppUtil.amountFormate(feeToFinAmt,
+					CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
 		}
 		if (this.listBoxFinFeeCharges.getFellowIfAny("unpaid_" + code) != null) {
 			Label unpaidFeeId = (Label) this.listBoxFinFeeCharges.getFellowIfAny("unpaid_" + code);
-			unpaidFeeId.setValue(PennantAppUtil.amountFormate(unpaidFeeAmt, CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
+			unpaidFeeId.setValue(PennantAppUtil.amountFormate(unpaidFeeAmt,
+					CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -1551,81 +1547,18 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 			return finScheduleData;
 		}
 
-		DataSet dataSet = AEAmounts.createDataSet(finScheduleData.getFinanceMain(), eventCode, finScheduleData
-				.getFinanceMain().getFinStartDate(), finScheduleData.getFinanceMain().getFinStartDate());
-		dataSet.setModuledefiner(getFinanceDetail().getModuleDefiner());
+		AEAmountCodes amountCodes = AEAmounts.procAEAmounts(finScheduleData.getFinanceMain(), finScheduleData
+				.getFinanceScheduleDetails(), new FinanceProfitDetail(), eventCode, finScheduleData.getFinanceMain()
+				.getFinStartDate(), finScheduleData.getFinanceMain().getFinStartDate());
 
 		if (isWIF) {
-			dataSet.setNewRecord(true);
+			amountCodes.setNewRecord(true);
 		}
 
-		AEAmountCodes amountCodes = AEAmounts.procAEAmounts(finScheduleData.getFinanceMain(), finScheduleData
-				.getFinanceScheduleDetails(), new FinanceProfitDetail(), finScheduleData.getFinanceMain()
-				.getFinStartDate());
+		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
-		//Fee Details takaful Calculation fields
-		amountCodes.setAlwDPSP(finScheduleData.getFinanceType().isAllowDownpayPgm());
-		amountCodes.setRolloverFinance(finScheduleData.getFinanceType().isRollOverFinance());
-		if (StringUtils.isNotEmpty(finScheduleData.getFinanceMain().getFinPreApprovedRef())
-				&& !StringUtils.equals(finScheduleData.getFinanceMain().getFinPreApprovedRef(),
-						FinanceConstants.FINSER_EVENT_PREAPPROVAL)) {
-			amountCodes.setPreApprovalFinance(true);
-			amountCodes.setPreApprovalExpired(isPreApprovalExpired(finScheduleData.getFinanceMain()
-					.getFinPreApprovedRef()));
-		}
-
-		// DDA Modification Re-check with Existing Approved Data
-		if (StringUtils.equals(getFinanceDetail().getModuleDefiner(), FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN)) {
-			String oldRepayMethod = getFinanceDetailService().getApprovedRepayMethod(
-					finScheduleData.getFinanceMain().getFinReference(), "");
-			if (!StringUtils.equals(oldRepayMethod, finScheduleData.getFinanceMain().getFinRepayMethod())) {
-				amountCodes.setDdaModified(true);
-			}
-		}
-
-
-		//Customer Data Setup
-		amountCodes = getCustomerData(amountCodes);
-
-		if (finScheduleData.getFinanceMain().getCustID() != Long.MIN_VALUE
-				&& finScheduleData.getFinanceMain().getCustID() != 0) {
-			boolean jointCustExist = getCustomerService()
-					.isJointCustExist(finScheduleData.getFinanceMain().getCustID());
-			if (jointCustExist) {
-				dataSet.setFinJointAcCount(1);
-			}
-		}
-
-		//Guaranteer Details Count
-		if (getFinanceDetail().getGurantorsDetailList() != null
-				&& !getFinanceDetail().getGurantorsDetailList().isEmpty()) {
-			amountCodes.setGuarantorCount(getFinanceDetail().getGurantorsDetailList().size());
-		}
-
-		if (isWIF && getFinanceDetail().getCustomer() != null) {
-			if (getFinanceDetail().getCustomer().isJointCust()) {
-				dataSet.setFinJointAcCount(1);
-			}
-		}
-
-		if (!financeMain.isNewRecord() && !PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())
-				&& !isReBuild) {
-			dataSet.setDownPayment(BigDecimal.ZERO);
-			dataSet.setDownPayBank(BigDecimal.ZERO);
-			dataSet.setDownPaySupl(BigDecimal.ZERO);
-		}
-
-		String preAppRef = StringUtils.trimToEmpty(financeMain.getFinPreApprovedRef());
-		if (StringUtils.isNotEmpty(preAppRef) && !preAppRef.equals(FinanceConstants.FINSER_EVENT_PREAPPROVAL)) {
-			setPreApprovalFeeAmout(dataSet, preAppRef);
-		} else {
-			dataSet.setPREAPPFEE(BigDecimal.ZERO);
-			dataSet.setPREAPPFEEW(BigDecimal.ZERO);
-			dataSet.setPREAPPFEEP(BigDecimal.ZERO);
-		}
-
-		List<FeeRule> feeRules = getEngineExecution().getFeeChargesExecResults(dataSet, amountCodes,
-				CurrencyUtil.getFormat(getFinanceMain().getFinCcy()), isWIF, getFinScheduleData().getFinanceType());
+		List<FeeRule> feeRules = getEngineExecution().getFeeChargesExecResults(
+				CurrencyUtil.getFormat(getFinanceMain().getFinCcy()), isWIF, executingMap);
 
 		//Get Finance Fee Details For Schedule Render Purpose In maintenance Stage
 		List<FeeRule> approvedFeeRules = new ArrayList<FeeRule>();
@@ -1681,49 +1614,6 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 		return finScheduleData;
 	}
 
-	private boolean isPreApprovalExpired(String preAppReference) {
-		logger.debug("Entering");
-		boolean preAppExpired = false;
-		JdbcSearchObject<FinanceMain> jdbcFee = new JdbcSearchObject<FinanceMain>(FinanceMain.class);
-		jdbcFee.addTabelName("FinanceMain_PA");
-		jdbcFee.addFilterEqual("FinReference", preAppReference);
-		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-		List<FinanceMain> list = pagedListService.getBySearchObject(jdbcFee);
-		if (list != null && !list.isEmpty()) {
-			FinanceMain financeMainPA = list.get(0);
-			int maxDaystoProcessFin = SysParamUtil.getValueAsInt("PREAPPROVAL_EXPIRY_DAYS");
-			if (DateUtility.getDaysBetween(financeMainPA.getFinApprovedDate(), DateUtility.getAppDate()) > maxDaystoProcessFin) {
-				preAppExpired = true;
-			} else {
-				preAppExpired = false;
-			}
-		}
-		logger.debug("Leaving");
-		return preAppExpired;
-	}
-
-	private void setPreApprovalFeeAmout(DataSet dataSet, String preAppRef) {
-		JdbcSearchObject<FeeRule> jdbcFee = new JdbcSearchObject<FeeRule>(FeeRule.class);
-		jdbcFee.addTabelName("FinFeeCharges_PA");
-		jdbcFee.addFilterEqual("FinReference", preAppRef);
-		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-		List<FeeRule> list = pagedListService.getBySearchObject(jdbcFee);
-		BigDecimal PREAPPFEE = BigDecimal.ZERO;
-		BigDecimal PREAPPFEEW = BigDecimal.ZERO;
-		BigDecimal PREAPPFEEP = BigDecimal.ZERO;
-		if (list != null && !list.isEmpty()) {
-			for (FeeRule feeRule : list) {
-				PREAPPFEE = PREAPPFEE.add(feeRule.getFeeAmount());
-				PREAPPFEEW = PREAPPFEEW.add(feeRule.getWaiverAmount());
-				PREAPPFEEP = PREAPPFEEP.add(feeRule.getPaidAmount());
-			}
-		}
-		dataSet.setPREAPPFEE(PREAPPFEE);
-		dataSet.setPREAPPFEEW(PREAPPFEEW);
-		dataSet.setPREAPPFEEP(PREAPPFEEP);
-
-	}
-
 	/**
 	 * Method for Execution of Fee Details on Build Event / For Render Schedule process
 	 * 
@@ -1745,43 +1635,19 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 
 		finScheduleData.getFinanceMain().setCurDisbursementAmt(finScheduleData.getFinanceMain().getFinAmount());
 
-		DataSet dataSet = AEAmounts.createDataSet(finScheduleData.getFinanceMain(), eventCode, finScheduleData
-				.getFinanceMain().getFinStartDate(), finScheduleData.getFinanceMain().getFinStartDate());
-		dataSet.setModuledefiner(getFinanceDetail().getModuleDefiner());
 
 		AEAmountCodes amountCodes = AEAmounts.procAEAmounts(finScheduleData.getFinanceMain(), finScheduleData
-				.getFinanceScheduleDetails(), new FinanceProfitDetail(), finScheduleData.getFinanceMain()
-				.getFinStartDate());
-
-		amountCodes.setAlwDPSP(finScheduleData.getFinanceType().isAllowDownpayPgm());
-		amountCodes.setRolloverFinance(finScheduleData.getFinanceType().isRollOverFinance());
+				.getFinanceScheduleDetails(), new FinanceProfitDetail(), eventCode, finScheduleData.getFinanceMain()
+				.getFinStartDate(), finScheduleData.getFinanceMain().getFinStartDate());
 
 		//Customer Data Setup
-		amountCodes = getCustomerData(amountCodes);
+		amountCodes.setModuleDefiner(getFinanceDetail().getModuleDefiner());
+		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
-		if (finScheduleData.getFinanceMain().getCustID() != Long.MIN_VALUE
-				&& finScheduleData.getFinanceMain().getCustID() != 0) {
-			boolean jointCustExist = getCustomerService()
-					.isJointCustExist(finScheduleData.getFinanceMain().getCustID());
-			if (jointCustExist) {
-				dataSet.setFinJointAcCount(1);
-			}
-		}
+		getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
 
-		if (isWIF && getFinanceDetail().getCustomer() != null) {
-			if (getFinanceDetail().getCustomer().isJointCust()) {
-				dataSet.setFinJointAcCount(1);
-			}
-		}
-
-		if (!financeMain.isNewRecord() && !PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())) {
-			dataSet.setDownPayment(BigDecimal.ZERO);
-			dataSet.setDownPayBank(BigDecimal.ZERO);
-			dataSet.setDownPaySupl(BigDecimal.ZERO);
-		}
-
-		List<FeeRule> feeRules = getEngineExecution().getReExecFeeResults(dataSet, amountCodes,
-				CurrencyUtil.getFormat(getFinanceMain().getFinCcy()), isWIF, getFinScheduleData().getFinanceType(), existFeeRules);
+		List<FeeRule> feeRules = getEngineExecution().getReExecFeeResults(
+				CurrencyUtil.getFormat(getFinanceMain().getFinCcy()), isWIF, existFeeRules, executingMap);
 
 		//Get Finance Fee Details For Schedule Render Purpose In maintenance Stage
 		List<FeeRule> approvedFeeRules = new ArrayList<FeeRule>();
@@ -1840,26 +1706,6 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 	}
 
 	/**
-	 * Method for Fetching Customer Data to Calculate
-	 * 
-	 * @return
-	 */
-	public AEAmountCodes getCustomerData(AEAmountCodes amountCodes) {
-		logger.debug("Entering");
-		try {
-			amountCodes = (AEAmountCodes) getFinanceMainDialogCtrl().getClass()
-					.getMethod("doGetFeeCustomerData", AEAmountCodes.class)
-					.invoke(getFinanceMainDialogCtrl(), amountCodes);
-			logger.debug("Leaving");
-			return amountCodes;
-		} catch (Exception e) {
-			logger.info(e);
-		}
-		logger.debug("Leaving");
-		return amountCodes;
-	}
-
-	/**
 	 * This method is for append finance basic details to respective parent tabs
 	 */
 	private void appendFinBasicDetails() {
@@ -1896,7 +1742,6 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 		arg.put("feeDetailDialogCtrl", this);
 		arg.put("role", getRole());
 		arg.put("isWIF", isWIF);
-		
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinInsuranceDialog.zul", null, arg);
@@ -1933,7 +1778,7 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 
 			lc = new Listcell(finInsurance.getInsuranceTypeDesc());
 			lc.setParent(item);
-			
+
 			lc = new Listcell(finInsurance.getInsReference());
 			lc.setParent(item);
 
@@ -1964,14 +1809,14 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 			if (StringUtils.equals(finInsurance.getPaymentMethod(), InsuranceConstants.PAYTYPE_SCH_FRQ)) {
 
 				if (finInsurance.getCalType().equals(InsuranceConstants.CALTYPE_CON_AMT)) {
-					lc = new Listcell(PennantAppUtil.amountFormate(finInsurance.getAmount(),format));
+					lc = new Listcell(PennantAppUtil.amountFormate(finInsurance.getAmount(), format));
 				} else {
-					lc = new Listcell(PennantAppUtil.amountFormate(BigDecimal.ZERO,format));
+					lc = new Listcell(PennantAppUtil.amountFormate(BigDecimal.ZERO, format));
 				}
 			} else {
-				lc = new Listcell(PennantAppUtil.amountFormate(finInsurance.getAmount(),format));
+				lc = new Listcell(PennantAppUtil.amountFormate(finInsurance.getAmount(), format));
 			}
-            lc.setStyle("text-align:right;font-weight:bold;");
+			lc.setStyle("text-align:right;font-weight:bold;");
 			lc.setParent(item);
 
 			lc = new Listcell(finInsurance.getRecordStatus());
@@ -1999,7 +1844,7 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 		logger.debug("Leaving");
 
 	}
-	
+
 	/**
 	 * @param financeMain
 	 * @param customer
@@ -2019,15 +1864,12 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 		}
 		return dataMap;
 	}
-	
-	
+
 	public boolean isInsuranceReExecute() {
 
 		return feeChargesExecuted;
 
 	}
-	
-	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

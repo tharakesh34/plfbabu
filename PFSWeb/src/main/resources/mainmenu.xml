@@ -366,6 +366,7 @@
        <menuItem id="menu_Item_Provision" zulNavigation="/WEB-INF/pages/FinanceManagement/Provision/ProvisionList.zul?rightName=menuItem_FinanceManagement_Provision"  rightName="menuItem_FinanceManagement_Provision"/>
        <menuItem id="menu_Item_CoreProvision" zulNavigation="/WEB-INF/pages/CoreProvision/CoreProvisionList.zul"  rightName="menuItem_FinanceManagement_CoreProvision"/>
        <menuItem id="menu_Item_ReAgeHolidays" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_ReAgeHolidays"/>
+       <menuItem id="menu_Item_ReceiptRealization" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptRealizationList.zul"  rightName="menuItem_FinanceManagement_ReceiptRealization" />
 	   <menuItem id="menu_Item_Recalculate" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_Recalculate"/>
 	   <!-- <menuItem id="menu_Item_Receipts" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" rightName="menuItem_FinanceManagement_Receipts" /> -->
 	   <!-- <menuItem id="menu_Item_ReinstateFinance" zulNavigation="/WEB-INF/pages/Finance/ReinstateFinance/ReinstateFinanceList.zul" rightName="menuItem_FinanceManagement_ReinstateFinance"/> -->

@@ -8215,12 +8215,6 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public AEAmountCodes doGetFeeCustomerData(AEAmountCodes amountCodes) {
-		amountCodes.setCustEmpSts(this.custEmpSts.getValue());
-		amountCodes.setSalariedCustomer(this.salariedCustomer.isChecked());
-		return amountCodes;
-	}
-
 	public void onFulfill$custEmpName(Event event) {
 		logger.debug("Entering");
 

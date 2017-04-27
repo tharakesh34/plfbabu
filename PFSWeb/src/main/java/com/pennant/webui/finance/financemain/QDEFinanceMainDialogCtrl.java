@@ -1395,7 +1395,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		doWriteComponentsToBean(aFinanceDetail, true);
 
 		// Save Contributor List Details
-		if (isRIAExist) {
+/*		if (isRIAExist) {
 			Tab tab = null;
 			if (tabsIndexCenter.getFellowIfAny("contributorsTab") != null) {
 				tab = (Tab) tabsIndexCenter.getFellowIfAny("contributorsTab");
@@ -1403,9 +1403,9 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			aFinanceDetail = getContributorDetailsDialogCtrl().doSaveContributorsDetail(aFinanceDetail, tab);
 		} else {
-			aFinanceDetail.setFinContributorHeader(null);
-		}
-
+*/			aFinanceDetail.setFinContributorHeader(null);
+/*		}
+*/
 		// Validation For Mandatory Recommendation
 		if (!doValidateRecommendation()) {
 			return;

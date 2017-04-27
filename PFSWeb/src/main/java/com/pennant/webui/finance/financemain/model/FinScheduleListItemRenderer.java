@@ -1521,11 +1521,11 @@ public class FinScheduleListItemRenderer implements Serializable{
 					isGrcBaseRate = false;
 					isRpyBaseRate = false;
 
-					BigDecimal feeChargeAmt = getFinanceScheduleDetail().getFeeChargeAmt();
+					BigDecimal chargeAmt = getFinanceScheduleDetail().getFeeChargeAmt().add(getFinanceScheduleDetail().getInsuranceAmt());
 
 					doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_downPayment.label"),
 							BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO ,BigDecimal.ZERO , BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
-							getFinanceScheduleDetail().getDownPaymentAmount(),getFinanceScheduleDetail().getClosingBalance().subtract(feeChargeAmt),isEditable, isRate, 
+							getFinanceScheduleDetail().getDownPaymentAmount(),getFinanceScheduleDetail().getClosingBalance().subtract(chargeAmt),isEditable, isRate, 
 							showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "","",0, null,false, false);
 				}
 
@@ -2566,21 +2566,25 @@ public class FinScheduleListItemRenderer implements Serializable{
 	 * 
 	 * @param FinanceDetail (aFinanceDetail)
 	 * */
-	public List<FinanceScheduleReportData> getScheduleData(FinScheduleData aFinScheduleData, 
-			Map<Date,ArrayList<FinanceRepayments>> paymentDetailsMap,  Map<Date, ArrayList<OverdueChargeRecovery>> penaltyDetailsMap, 
-			Map<Date,ArrayList<FeeRule>> feeRuleDetails, boolean includeSummary) {
+	public List<FinanceScheduleReportData> getPrintScheduleData(FinScheduleData aFinScheduleData, 
+			Map<Date,ArrayList<FinanceRepayments>> paymentDetailsMap,  Map<Date, ArrayList<OverdueChargeRecovery>> penaltyDetailsMap, boolean includeSummary) {
 		logger.debug("Entering");
+		
 		BigDecimal odlimitDrop = BigDecimal.ZERO;
 		BigDecimal odAvailAmt = BigDecimal.ZERO;
 		BigDecimal limitIncreaseAmt = BigDecimal.ZERO;
+		
 		setFinScheduleData(aFinScheduleData);
 		FinanceScheduleDetail prvSchDetail = null; 
 		ArrayList<FinanceScheduleReportData> reportList = new ArrayList<FinanceScheduleReportData>();
+		
 		boolean lastRec=false;
 		FinanceScheduleReportData data;
+		
 		int count = 1;
 		for (int i = 0; i < aFinScheduleData.getFinanceScheduleDetails().size(); i++) {
 			FinanceScheduleDetail aScheduleDetail = getFinScheduleData().getFinanceScheduleDetails().get(i);
+			count = 1;
 			this.closingBal = aScheduleDetail.getClosingBalance();
 			if(aScheduleDetail.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 && 
 					i == aFinScheduleData.getFinanceScheduleDetails().size() - 1) {
@@ -2591,9 +2595,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 			} else {
 				prvSchDetail = aFinScheduleData.getFinanceScheduleDetails().get(i - 1);
 			}
-			
+
 			FinanceMain aFinanceMain = aFinScheduleData.getFinanceMain();
-			
+
 			//OverdraftSchedule drop Limits
 			if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory())){
 				boolean isLoopRepeat = true;
@@ -2620,7 +2624,6 @@ public class FinScheduleListItemRenderer implements Serializable{
 								label = Labels.getLabel("label_limitOverdraft");
 								odCount = 0;
 								odRcdExistsOnDate = true;
-
 							}
 						}
 
@@ -2700,7 +2703,6 @@ public class FinScheduleListItemRenderer implements Serializable{
 							data.setSchdPri("");
 							data.setNoOfDays("");
 							data.setTotalAmount("");
-
 							reportList.add(data);
 
 							if(DateUtility.compare(odSchedule.getDroplineDate(), aScheduleDetail.getSchDate())==0 || limitRcdOnSchDate){
@@ -2752,284 +2754,335 @@ public class FinScheduleListItemRenderer implements Serializable{
 					}
 				}
 			}
-		
-			if (aScheduleDetail.isDisbOnSchDate()) {
 
-				for (int j = 0; j < 2; j++) {
+			if (aScheduleDetail.isPftOnSchDate() && !(aScheduleDetail.isRepayOnSchDate() ||
+					(aScheduleDetail.isPftOnSchDate() && aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))
+					&& !aScheduleDetail.isDisbOnSchDate()) {
 
-					if(j == 0){
-						BigDecimal curTotDisbAmt = BigDecimal.ZERO;
-						for (int k = 0; k < aFinScheduleData.getDisbursementDetails().size(); k++) {
+				String label = Labels.getLabel("label_listcell_profitCalc.label");
+				if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
+					label = Labels.getLabel("label_listcell_BPIAmount.label");
+					if(aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+						label = Labels.getLabel("label_listcell_BPICalculated.label", new String[]{DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())});
+					}
+				}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
+					label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
+				}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
+					label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
+				}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
+					label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
+				}
 
-							FinanceDisbursement curDisb = aFinScheduleData.getDisbursementDetails().get(k);
-							if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())){
-								continue;
-							}
-							if(DateUtility.compare(curDisb.getDisbDate(), aScheduleDetail.getSchDate()) == 0){
-								curTotDisbAmt = curTotDisbAmt.add(curDisb.getDisbAmount());
+				data = new FinanceScheduleReportData();	
+				data.setInstNumber(getInstNumber(aScheduleDetail.getInstNumber(), count));
+				data.setLabel(label);
+				data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
+				data.setSchdPft(formatAmt(aScheduleDetail.getProfitSchd(),false,false));
+				data.setTdsAmount(formatAmt(aScheduleDetail.getTDSAmount(),false,false));
+				data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
+				data.setSchdPri(formatAmt(aScheduleDetail.getPrincipalSchd(),false,false));
+				data.setTotalAmount(formatAmt(aScheduleDetail.getRepayAmount().add(aScheduleDetail.getFeeSchd()).add(
+						aScheduleDetail.getInsSchd()).add(aScheduleDetail.getSuplRent().add(aScheduleDetail.getIncrCost())),false,false));
+				data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,false));
+				data.setLimitDrop(formatAmt(limitIncreaseAmt,false,false));
+				data.setTotalLimit(formatAmt(odAvailAmt,false,false));
+				BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
+				data.setAvailLimit(formatAmt(availLimit,false,false));
 
-								data = new FinanceScheduleReportData();	
-								data.setLabel(Labels.getLabel("label_listcell_disbursement.label")+"( Seq : "+curDisb.getDisbSeq()+")");
-								data.setPftAmount("");
-								data.setSchdPft("");
-								data.setTdsAmount("");
-								data.setSchdFee("");
-								data.setSchdPri(formatAmt(aScheduleDetail.getCpzAmount(),false,false));
-								data.setTotalAmount(formatAmt(curDisb.getDisbAmount(),false,false));
-								data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance().subtract(
-										aScheduleDetail.getFeeChargeAmt()==null? BigDecimal.ZERO :aScheduleDetail.getFeeChargeAmt()).subtract(
-												aScheduleDetail.getDisbAmount()).add(curTotDisbAmt)
-										.add(aScheduleDetail.getDownPaymentAmount()),false,false));
-								data.setLimitDrop(formatAmt(limitIncreaseAmt,false,false));
-								data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-								BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance().subtract(
-										aScheduleDetail.getDisbAmount()).add(curTotDisbAmt));
-								data.setAvailLimit(formatAmt(availLimit,false,false));
+				if (count == 1) {
+					if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
+						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
+					}else {
+						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
+					}
+					data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
+				}else{
+					data.setSchDate("");
+				}
+				reportList.add(data);
+				count = 2;
 
-								if (count == 1) {
-									if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
-										data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
-									}else {
-										data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
-									}
-									data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
-								}else{
-									data.setSchDate("");
-								}
-								reportList.add(data);
-							}
+			}else if(!aScheduleDetail.isPftOnSchDate() && !aScheduleDetail.isRepayOnSchDate() && 
+					!aScheduleDetail.isRvwOnSchDate() && !aScheduleDetail.isDisbOnSchDate()){
+
+				if(prvSchDetail.getCalculatedRate().compareTo(aScheduleDetail.getCalculatedRate()) == 0 &&
+						aScheduleDetail.getClosingBalance().compareTo(BigDecimal.ZERO) != 0){
+
+					data = new FinanceScheduleReportData();	
+					data.setInstNumber(getInstNumber(aScheduleDetail.getInstNumber(), count));
+					data.setLabel(Labels.getLabel("label_listcell_profitCalc.label"));
+					data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
+					data.setSchdPft("");
+					data.setTdsAmount("");
+					data.setSchdFee("");
+					data.setSchdPri("");
+					data.setTotalAmount("");
+					data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,false));
+					data.setLimitDrop(formatAmt(limitIncreaseAmt,false,false));
+					data.setTotalLimit(formatAmt(odAvailAmt,false,false));
+					BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
+					data.setAvailLimit(formatAmt(availLimit,false,false));
+
+					if (count == 1) {
+						if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
+							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
+						}else {
+							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
 						}
-
-						if (aScheduleDetail.isDownpaymentOnSchDate()) {
-
-							BigDecimal feeChargeAmt = aScheduleDetail.getFeeChargeAmt();
-							data = new FinanceScheduleReportData();
-							data.setLabel(Labels.getLabel("label_listcell_downPayment.label"));
-							if (count == 1){
-								data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
-								data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
-							}else{
-								data.setSchDate("");
-							}
-							data.setPftAmount("");
-							data.setSchdPft("");
-							data.setTdsAmount("");
-							data.setSchdFee("");
-							data.setSchdPri("");
-							data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-							BigDecimal odAvailLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
-							data.setAvailLimit(formatAmt(odAvailLimit,false,false));
-							data.setLimitDrop(formatAmt(odlimitDrop,false,false));
-							data.setTotalAmount(formatAmt(aScheduleDetail.getDownPaymentAmount(),false,false));
-							data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance().subtract(feeChargeAmt),false,false));
-							reportList.add(data);
-						}		
-
+						data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
+					}else{
+						data.setSchDate("");
 					}
-					if(j == 1){
-						if(aFinScheduleData.getFinFeeDetailList() != null && !aFinScheduleData.getFinFeeDetailList().isEmpty() &&
-								aScheduleDetail.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0 ){
-
-								List<FinFeeDetail> feeChargeList = aFinScheduleData.getFinFeeDetailList();
-
-								BigDecimal feeChargeAmt = aScheduleDetail.getFeeChargeAmt();
-								for (FinFeeDetail rule : feeChargeList) {
-
-									if(rule.getActualAmount().compareTo(BigDecimal.ZERO) >= 0){
-										data = new FinanceScheduleReportData();	
-
-										data.setLabel(rule.getFeeTypeDesc());
-										data.setPftAmount("");
-										data.setSchdPft("");
-										data.setSchdPri("");
-										data.setTdsAmount("");
-										data.setSchdFee("");
-										data.setLimitDrop("");
-										BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance()).add(aScheduleDetail.getDisbAmount());
-										data.setAvailLimit(formatAmt(availLimit,false,false));
-										data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-										data.setTotalAmount(formatAmt(rule.getActualAmount().subtract(rule.getWaivedAmount()).subtract(rule.getPaidAmount()),false,true));
-										data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance().subtract(feeChargeAmt)
-												.add(rule.getActualAmount().subtract(rule.getWaivedAmount()).subtract(rule.getPaidAmount())),false,false));
-										data.setSchDate("");
-										reportList.add(data);
-										feeChargeAmt = feeChargeAmt.subtract(rule.getActualAmount());
-									}
-								}
-						}else{
-							continue;
-						}					
-					}
-
+					reportList.add(data);
 					count = 2;
 				}
-				
-				if(!aScheduleDetail.isPftOnSchDate() && !aScheduleDetail.isRepayOnSchDate() && 
-						!aScheduleDetail.isRvwOnSchDate() && aScheduleDetail.isDisbOnSchDate()){
+			}
 
-					if(aScheduleDetail.getProfitCalc().compareTo(BigDecimal.ZERO) > 0){
+			if (aScheduleDetail.isDisbOnSchDate()) {
+
+				BigDecimal curTotDisbAmt = BigDecimal.ZERO;
+				for (int d = 0; d < getFinScheduleData().getDisbursementDetails().size(); d++) {
+					FinanceDisbursement curDisb = getFinScheduleData().getDisbursementDetails().get(d);
+					if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())){
+						continue;
+					}
+					if(DateUtility.compare(curDisb.getDisbDate(), aScheduleDetail.getSchDate()) == 0){
+
+						curTotDisbAmt = curTotDisbAmt.add(curDisb.getDisbAmount());
+
 						data = new FinanceScheduleReportData();	
+						data.setInstNumber(getInstNumber(aScheduleDetail.getInstNumber(), count));
+						data.setLabel(Labels.getLabel("label_listcell_disbursement.label")+"( Seq : "+curDisb.getDisbSeq()+")");
+						data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
+						data.setSchdPft("");
+						data.setTdsAmount("");
+						data.setSchdFee("");
+						data.setSchdPri("");
+						data.setTotalAmount(formatAmt(curDisb.getDisbAmount(),false,false));
+						data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance().subtract(aScheduleDetail.getFeeChargeAmt()).subtract(
+								aScheduleDetail.getInsuranceAmt()).subtract(aScheduleDetail.getDisbAmount()).add(curTotDisbAmt).add(
+										aScheduleDetail.getDownPaymentAmount()),false,false));
+						data.setLimitDrop(formatAmt(limitIncreaseAmt,false,false));
+						data.setTotalLimit(formatAmt(odAvailAmt,false,false));
+						BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance().subtract(aScheduleDetail.getDisbAmount()).add(curTotDisbAmt));
+						data.setAvailLimit(formatAmt(availLimit,false,false));
 
-						String label = Labels.getLabel("label_listcell_profitCalc.label");
-						if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
-							label = Labels.getLabel("label_listcell_BPIAmount.label");
-							if(aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
-								label = Labels.getLabel("label_listcell_BPICalculated.label", new String[]{DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())});
-							}
-						}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
-							label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
-						}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
-							label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
-						}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
-							label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
-						}
-
-						data.setLabel(label);
 						if (count == 1) {
-							data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
-							if( aScheduleDetail.isRvwOnSchDate()) {
+							if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
 								data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 							}else {
 								data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
 							}
-						}else {
+							data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
+						}else{
 							data.setSchDate("");
 						}
-						data.setInstNumber(String.valueOf(aScheduleDetail.getInstNumber()));
-						data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
-						data.setTdsAmount(formatAmt(aScheduleDetail.getTDSAmount(),false,false));
-						data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
-						data.setSchdPft(formatAmt(aScheduleDetail.getProfitSchd(),false,true));
-						data.setSchdPri(formatAmt(aScheduleDetail.getPrincipalSchd(),false,true));
-						data.setTotalAmount(formatAmt(aScheduleDetail.getRepayAmount().add(aScheduleDetail.getFeeSchd()),false,false));
-						data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,false));
-						if(odAvailAmt.compareTo(BigDecimal.ZERO)>0){
-							data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-							BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance()).add(aScheduleDetail.getDisbAmount());
-							data.setAvailLimit(formatAmt(availLimit,false,false));
-							data.setLimitDrop(formatAmt(odlimitDrop,false,false));
-						}else{
-							
-						}
 						reportList.add(data);
+						count = 2;
 					}
 				}
-			}
 
-			if (aScheduleDetail.isPftOnSchDate() && !(aScheduleDetail.isRepayOnSchDate() ||
-					(aScheduleDetail.isPftOnSchDate() && aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))) {
-				if(aScheduleDetail.getProfitCalc().compareTo(BigDecimal.ZERO) > 0){
+				if (aScheduleDetail.isDownpaymentOnSchDate()) {
+
 					data = new FinanceScheduleReportData();	
-
-					String label = Labels.getLabel("label_listcell_profitCalc.label");
-					if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
-						label = Labels.getLabel("label_listcell_BPIAmount.label");
-						if(aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
-							label = Labels.getLabel("label_listcell_BPICalculated.label", new String[]{DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())});
-						}
-					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
-						label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
-					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
-						label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
-					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
-						label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
-					}
-
-					data.setLabel(label);
-					if (count == 1) {
-						data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
-						if( aScheduleDetail.isRvwOnSchDate()) {
-							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
-						}else {
-							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
-						}
-					}else {
-						data.setSchDate("");
-					}
-					data.setInstNumber(String.valueOf(aScheduleDetail.getInstNumber()));
-					data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
-					data.setTdsAmount(formatAmt(aScheduleDetail.getTDSAmount(),false,false));
-					data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
-					data.setSchdPft(formatAmt(aScheduleDetail.getProfitSchd(),false,true));
-					data.setSchdPri(formatAmt(aScheduleDetail.getPrincipalSchd(),false,true));
-					data.setTotalAmount(formatAmt(aScheduleDetail.getRepayAmount().add(aScheduleDetail.getFeeSchd()),false,false));
-					data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,false));
+					data.setInstNumber(getInstNumber(aScheduleDetail.getInstNumber(), count));
+					data.setLabel(Labels.getLabel("label_listcell_downPayment.label"));
+					data.setPftAmount("");
+					data.setSchdPft("");
+					data.setTdsAmount("");
+					data.setSchdFee("");
+					data.setSchdPri("");
+					data.setTotalAmount(formatAmt(aScheduleDetail.getDownPaymentAmount(),false,false));
+					data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance().subtract(aScheduleDetail.getFeeChargeAmt()).subtract(
+							aScheduleDetail.getInsuranceAmt()),false,false));
+					data.setLimitDrop(formatAmt(limitIncreaseAmt,false,false));
 					data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-					BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance()).add(aScheduleDetail.getDisbAmount());
+					BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
 					data.setAvailLimit(formatAmt(availLimit,false,false));
-					data.setLimitDrop(formatAmt(odlimitDrop,false,false));
+					data.setSchDate("");
 					reportList.add(data);
 				}
-				count = 2;
-			}else if(!aScheduleDetail.isPftOnSchDate() && !aScheduleDetail.isRepayOnSchDate() && 
-					!aScheduleDetail.isRvwOnSchDate() && !aScheduleDetail.isDisbOnSchDate()){
 
-				if(prvSchDetail.getCalculatedRate().compareTo(aScheduleDetail.getCalculatedRate()) == 0){
+				// Fee Charge Details
+				if(getFinScheduleData().getFinFeeDetailList() != null && aScheduleDetail.getFeeChargeAmt() != null &&
+						aScheduleDetail.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0){
+
+					BigDecimal feeChargeAmt = aScheduleDetail.getFeeChargeAmt();
+					for (FinFeeDetail fee : aFinScheduleData.getFinFeeDetailList()) {
+
+						if(fee.getActualAmount().compareTo(BigDecimal.ZERO) >= 0){
+							data = new FinanceScheduleReportData();	
+							data.setLabel(fee.getFeeTypeDesc());
+							data.setPftAmount("");
+							data.setSchdPft("");
+							data.setSchdPri("");
+							data.setTdsAmount("");
+							data.setSchdFee("");
+							data.setLimitDrop("");
+							data.setTotalAmount(formatAmt(fee.getActualAmount().subtract(fee.getWaivedAmount()).subtract(fee.getPaidAmount()),false,true));
+							data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance().subtract(feeChargeAmt)
+									.add(fee.getActualAmount().subtract(fee.getWaivedAmount()).subtract(fee.getPaidAmount())),false,false));
+							BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
+							data.setAvailLimit(formatAmt(availLimit,false,false));
+							data.setTotalLimit(formatAmt(odAvailAmt,false,false));
+							data.setSchDate("");
+							reportList.add(data);
+							feeChargeAmt = feeChargeAmt.subtract(fee.getActualAmount());
+						}
+					}
+				}
+
+				// Insurance Details
+				if(aScheduleDetail.getInsuranceAmt() != null &&
+						aScheduleDetail.getInsuranceAmt().compareTo(BigDecimal.ZERO) > 0){
+
+					BigDecimal insuranceAmt = aScheduleDetail.getInsuranceAmt();
+					for (FinInsurances insurance : getFinScheduleData().getFinInsuranceList()) {
+
+						BigDecimal actInsuranceAmt = insurance.getAmount();
+						if(actInsuranceAmt.compareTo(BigDecimal.ZERO) >= 0){
+							data = new FinanceScheduleReportData();	
+							data.setLabel(insurance.getInsuranceTypeDesc() +"("+insurance.getInsReference()+")");
+							data.setPftAmount("");
+							data.setSchdPft("");
+							data.setSchdPri("");
+							data.setTdsAmount("");
+							data.setSchdFee("");
+							data.setTotalAmount(formatAmt(actInsuranceAmt,false,true));
+							data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance().subtract(insuranceAmt).add(actInsuranceAmt),false,false));
+							data.setLimitDrop("");
+							BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
+							data.setAvailLimit(formatAmt(availLimit,false,false));
+							data.setTotalLimit(formatAmt(odAvailAmt,false,false));
+							data.setSchDate("");
+							reportList.add(data);
+							insuranceAmt = insuranceAmt.subtract(actInsuranceAmt);
+						}
+					}
+				}
+
+				if(!aScheduleDetail.isPftOnSchDate() && !aScheduleDetail.isRepayOnSchDate() && 
+						!aScheduleDetail.isRvwOnSchDate() && aScheduleDetail.isDisbOnSchDate()){
 
 					data = new FinanceScheduleReportData();	
-
-					String label = Labels.getLabel("label_listcell_profitCalc.label");
-					if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
-						label = Labels.getLabel("label_listcell_BPIAmount.label");
-						if(aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
-							label = Labels.getLabel("label_listcell_BPICalculated.label", new String[]{DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())});
-						}
-					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
-						label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
-					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
-						label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
-					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
-						label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
-					}
-
-					data.setLabel(label);
-					if (count == 1) {
-						data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
-						if( aScheduleDetail.isRvwOnSchDate()) {
-							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
-						}else {
-							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
-						}
-					}else {
-						data.setSchDate("");
-					}
-					data.setInstNumber(String.valueOf(aScheduleDetail.getInstNumber()));
+					data.setInstNumber(getInstNumber(aScheduleDetail.getInstNumber(), count));
+					data.setLabel(Labels.getLabel("label_listcell_profitCalc.label"));
 					data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
-					data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
-					data.setTdsAmount("");
 					data.setSchdPft("");
+					data.setTdsAmount("");
+					data.setSchdFee("");
 					data.setSchdPri("");
 					data.setTotalAmount("");
 					data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,false));
+					data.setLimitDrop(formatAmt(limitIncreaseAmt,false,false));
 					data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-					BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance()).add(aScheduleDetail.getDisbAmount());
+					BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
 					data.setAvailLimit(formatAmt(availLimit,false,false));
-					data.setLimitDrop(formatAmt(odlimitDrop,false,false));
-					reportList.add(data);
 
+					if (count == 1) {
+						if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
+							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
+						}else {
+							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
+						}
+						data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
+					}else{
+						data.setSchDate("");
+					}
+					reportList.add(data);
+					count = 2;
+				}
+
+			}
+
+			if (aScheduleDetail.isRepayOnSchDate() ||
+					(aScheduleDetail.isPftOnSchDate() && aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
+
+				if(aScheduleDetail.getSchDate().compareTo(aFinanceMain.getFinStartDate()) != 0) {
+
+					String label = Labels.getLabel("label_listcell_repay.label");
+					if(aScheduleDetail.getSchDate().compareTo(aFinanceMain.getGrcPeriodEndDate()) < 0 &&
+							(StringUtils.equals(aFinanceMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_NOPAY) || 
+									StringUtils.equals(aFinanceMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_GRCENDPAY))){
+						label = Labels.getLabel("label_listcell_profitCalc.label");
+					}
+					if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
+						label = Labels.getLabel("label_listcell_BPIAmount.label");
+						if(aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+							label = Labels.getLabel("label_listcell_BPICalculated.label", new String[]{DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())});
+						}
+					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
+						label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
+					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
+						label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
+					}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
+						label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
+					}
+
+					//Checking Rollover Condition to make Closing Bal
+					BigDecimal closingBal = BigDecimal.ZERO;
+					if(getFinScheduleData().getFinanceMain().getNextRolloverDate() != null && 
+							aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getNextRolloverDate()) == 0)	{
+						closingBal = aScheduleDetail.getRolloverAmount().subtract(aScheduleDetail.getCpzAmount());
+					}else{
+						closingBal = aScheduleDetail.getClosingBalance().subtract(aScheduleDetail.getCpzAmount());
+					}
+
+					data = new FinanceScheduleReportData();	
+					data.setInstNumber(getInstNumber(aScheduleDetail.getInstNumber(), count));
+					data.setLabel(label);
+					data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
+					data.setSchdPft(formatAmt(aScheduleDetail.getProfitSchd(),false,false));
+					data.setTdsAmount(formatAmt(aScheduleDetail.getTDSAmount(),false,false));
+					data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
+					data.setSchdPri(formatAmt(aScheduleDetail.getPrincipalSchd(),false,false));
+					data.setTotalAmount(formatAmt(aScheduleDetail.getRepayAmount().add(aScheduleDetail.getFeeSchd()).add(
+							aScheduleDetail.getInsSchd()).add(aScheduleDetail.getSuplRent().add(aScheduleDetail.getIncrCost())),false,false));
+					data.setEndBal(formatAmt(closingBal,false,false));
+					data.setLimitDrop(formatAmt(limitIncreaseAmt,false,false));
+					data.setTotalLimit(formatAmt(odAvailAmt,false,false));
+					BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
+					data.setAvailLimit(formatAmt(availLimit,false,false));
+
+					if (count == 1) {
+						if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
+							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
+						}else {
+							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
+						}
+						data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
+					}else{
+						data.setSchDate("");
+					}
+					reportList.add(data);
 					count = 2;
 				}
 			}
-			
-			// Hold EMI Information 
+
 			if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLDEMI)){
+
 				data = new FinanceScheduleReportData();	
-				data.setLabel(Labels.getLabel("listcell_EMIHold_label.label", 
-						new String[]{ DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())}));
-				data.setSchDate("");
-				data.setEndBal("");
-				data.setSchdFee("");
+				data.setInstNumber(getInstNumber(aScheduleDetail.getInstNumber(), count));
+				data.setLabel(Labels.getLabel("listcell_EMIHold_label", new String[]{ DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())}));
+				data.setPftAmount("");
+				data.setSchdPft("");
 				data.setTdsAmount("");
-				data.setPftAmount("");				
-				data.setSchdPft("");				
+				data.setSchdFee("");
 				data.setSchdPri("");
 				data.setTotalAmount("");
+				data.setEndBal("");
+				data.setLimitDrop("");
+				data.setTotalLimit("");
+				data.setAvailLimit("");
+				data.setSchDate("");
 				reportList.add(data);
 				count = 2;
 
 			}
-			
-			if (aScheduleDetail.isCpzOnSchDate() && aScheduleDetail.getCpzAmount().compareTo(BigDecimal.ZERO) != 0) {
+
+			if (aScheduleDetail.isCpzOnSchDate() && 
+					aScheduleDetail.getCpzAmount().compareTo(BigDecimal.ZERO) != 0) {
+
 				data = new FinanceScheduleReportData();	
 				String label = Labels.getLabel("label_listcell_capital.label");
 				if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
@@ -3050,13 +3103,13 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}else{
 					data.setSchDate("");
 				}
-				data.setInstNumber(String.valueOf(aScheduleDetail.getInstNumber()));
+				data.setInstNumber(getInstNumber(aScheduleDetail.getInstNumber(), count));
 				data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
 				data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
 				data.setSchdPft("");
 				data.setTdsAmount("");
 				data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-				BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance()).add(aScheduleDetail.getDisbAmount());
+				BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
 				data.setAvailLimit(formatAmt(availLimit,false,false));
 				data.setLimitDrop(formatAmt(odlimitDrop,false,false));
 				data.setSchdPri(formatAmt(aScheduleDetail.getCpzAmount(),false,false));
@@ -3064,173 +3117,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 				data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,false));
 				reportList.add(data);
 				count = 2;
-			}
-			if (aFinanceMain.getMaturityDate().compareTo(aScheduleDetail.getSchDate()) != 0) {
-				if (aScheduleDetail.getCalculatedRate().compareTo(prvSchDetail.getCalculatedRate()) == 0) {
-
-					if(aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0 &&  
-							aScheduleDetail.getSchDate().compareTo(aFinanceMain.getFinStartDate()) != 0){
-						data = new FinanceScheduleReportData();	
-						// Calculated Profit Display
-						if(!aScheduleDetail.isDisbOnSchDate() && count == 1){
-
-							String label = Labels.getLabel("label_listcell_profitCalc.label");
-							if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
-								label = Labels.getLabel("label_listcell_BPIAmount.label");
-								if(aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
-									label = Labels.getLabel("label_listcell_BPICalculated.label", new String[]{DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())});
-								}
-							}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
-								label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
-							}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
-								label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
-							}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
-								label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
-							}
-							
-							data.setLabel(label);
-							data.setInstNumber(String.valueOf(aScheduleDetail.getInstNumber()));
-							if (count == 1){
-								data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
-								if( aScheduleDetail.isRvwOnSchDate()){
-									data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
-								}else {
-									data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
-								}
-							}else {
-								data.setSchDate("");
-							}
-							if(aScheduleDetail.getClosingBalance().compareTo(BigDecimal.ZERO)>0){
-								data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,true));
-							}else{
-								data.setEndBal("");
-							}
-							if(aScheduleDetail.getFeeSchd().compareTo(BigDecimal.ZERO)>0){
-								data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
-							}else{
-								data.setSchdFee("");
-							}
-							if(aScheduleDetail.getTDSAmount().compareTo(BigDecimal.ZERO)>0){
-								data.setTdsAmount(formatAmt(aScheduleDetail.getTDSAmount(),false,false));
-							}else{
-								data.setTdsAmount("");
-							}
-							
-							if(aScheduleDetail.getProfitCalc().compareTo(BigDecimal.ZERO)>0){
-								data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));				
-							}else{
-								data.setPftAmount("");				
-							}
-							
-							if(aScheduleDetail.getProfitSchd().compareTo(BigDecimal.ZERO)>0){
-								data.setSchdPft(formatAmt(aScheduleDetail.getProfitSchd(),false,true));	
-							}else{
-								data.setSchdPft("");		
-							}
-							
-							if(aScheduleDetail.getPrincipalSchd().compareTo(BigDecimal.ZERO)>0){
-								data.setSchdPri(formatAmt(aScheduleDetail.getPrincipalSchd(),false,true));				
-							}else{
-								data.setSchdPri("");		
-							}
-							
-							if(aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO)>0){
-								data.setTotalAmount(formatAmt(aScheduleDetail.getRepayAmount().add(aScheduleDetail.getFeeSchd()),false,false));			
-							}else{
-								data.setTotalAmount(formatAmt(aScheduleDetail.getFeeSchd(),false,false));				
-							}
-						
-							if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,getFinScheduleData().getFinanceMain().getProductCategory())){
-								data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-
-								if(data.getLabel().equals(Labels.getLabel("label_LimitIncrease"))){
-									data.setLimitDrop(formatAmt(limitIncreaseAmt,false,false));
-								}else{
-									data.setLimitDrop("");
-								}
-
-								BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
-								data.setAvailLimit(formatAmt(availLimit,false,false));
-							}else{
-								data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-								BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance()).add(aScheduleDetail.getDisbAmount());
-								data.setAvailLimit(formatAmt(availLimit,false,false));
-								data.setLimitDrop(formatAmt(odlimitDrop,false,false));
-							}
-							reportList.add(data);
-							count = 2;
-						}
-					}
-				}
-			}
-		
-			if (aScheduleDetail.isRepayOnSchDate() ||
-					(aScheduleDetail.isPftOnSchDate() && aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-				if(!(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) && 
-						aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
-					data = new FinanceScheduleReportData();	
-
-					String label = Labels.getLabel("label_listcell_repay.label");
-					data.setLabel(label);
-					if (count == 1){
-						data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
-						if( aScheduleDetail.isRvwOnSchDate()){
-							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
-						}else {
-							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
-						}
-					}else {
-						data.setSchDate("");
-					}
-					data.setInstNumber(String.valueOf(aScheduleDetail.getInstNumber()));
-					data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,true));
-					data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
-					data.setTdsAmount(formatAmt(aScheduleDetail.getTDSAmount(),false,false));
-					data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));				
-					data.setSchdPft(formatAmt(aScheduleDetail.getProfitSchd(),false,true));				
-					data.setSchdPri(formatAmt(aScheduleDetail.getPrincipalSchd(),false,true));
-					data.setTotalAmount(formatAmt(aScheduleDetail.getRepayAmount().add(aScheduleDetail.getFeeSchd()),false,false));
-
-					if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,getFinScheduleData().getFinanceMain().getProductCategory())){
-						data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-
-						if(data.getLabel().equals(Labels.getLabel("label_LimitIncrease"))){
-							data.setLimitDrop(formatAmt(limitIncreaseAmt,false,false));
-						}else{
-							data.setLimitDrop("");
-						}
-
-						BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
-						data.setAvailLimit(formatAmt(availLimit,false,false));
-					}else{
-						data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-						BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance()).add(aScheduleDetail.getDisbAmount());
-						data.setAvailLimit(formatAmt(availLimit,false,false));
-						data.setLimitDrop(formatAmt(odlimitDrop,false,false));
-					}
-					reportList.add(data);
-					count = 2;
-				}
 
 			}
-			// Hold EMI Information 
-			if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLDEMI) &&
-					DateUtility.compare(aScheduleDetail.getSchDate(),prvSchDetail.getSchDate())>0){
-				data = new FinanceScheduleReportData();	
-				data.setLabel(Labels.getLabel("listcell_EMIHold_label", 
-						new String[]{ DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())}));
-				data.setSchDate("");
-				data.setEndBal("");
-				data.setSchdFee("");
-				data.setTdsAmount("");
-				data.setPftAmount("");				
-				data.setSchdPft("");				
-				data.setSchdPri("");
-				data.setTotalAmount("");
-				reportList.add(data);
-				count = 2;
 
-			}
 			//To show repayment details 
 			if(paymentDetailsMap != null && paymentDetailsMap.containsKey(aScheduleDetail.getSchDate())) {
 				setFinanceRepayments(paymentDetailsMap.get(aScheduleDetail.getSchDate()));
@@ -3246,9 +3135,9 @@ public class FinScheduleListItemRenderer implements Serializable{
 					}
 
 					data.setSchdFee("");
-					data.setInstNumber(String.valueOf(aScheduleDetail.getInstNumber()));
+					data.setInstNumber(getInstNumber(aScheduleDetail.getInstNumber(), count));
 					data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-					BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance()).add(aScheduleDetail.getDisbAmount());
+					BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
 					data.setAvailLimit(formatAmt(availLimit,false,false));
 					data.setLimitDrop(formatAmt(odlimitDrop,false,false));
 					data.setEndBal(formatAmt(BigDecimal.ZERO,false,false));
@@ -3286,7 +3175,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					data.setSchdPft("");				
 					data.setSchdPri("");
 					data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-					BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance()).add(aScheduleDetail.getDisbAmount());
+					BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
 					data.setAvailLimit(formatAmt(availLimit,false,false));
 					data.setLimitDrop(formatAmt(odlimitDrop,false,false));
 					data.setTotalAmount(formatAmt(recovery.getPenaltyPaid(),false,false));
@@ -3311,344 +3200,538 @@ public class FinScheduleListItemRenderer implements Serializable{
 				}else {
 					data.setSchDate("");
 				}
-				data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,true));
 				data.setTdsAmount("");
-				data.setPftAmount(formatAmt(BigDecimal.ZERO,false,false));				
+				data.setPftAmount("");				
 				data.setSchdPft(formatAmt(aScheduleDetail.getWriteoffProfit(),false,true));				
 				data.setSchdPri(formatAmt(aScheduleDetail.getWriteoffPrincipal(),false,true));
 				data.setTotalAmount(formatAmt(aScheduleDetail.getWriteoffPrincipal().add(aScheduleDetail.getWriteoffProfit()),false,false));
 				data.setSchdFee(formatAmt(aScheduleDetail.getWriteoffSchFee(),false,false));
+				data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,true));
+				BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
 				data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-				BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance()).add(aScheduleDetail.getDisbAmount());
 				data.setAvailLimit(formatAmt(availLimit,false,false));
 				data.setLimitDrop(formatAmt(odlimitDrop,false,false));
 				reportList.add(data);
 				count = 2;
 			}
 
-			if(aScheduleDetail.getProfitCalc().compareTo(BigDecimal.ZERO) > 0 && 
-					aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0 &&
-					!aScheduleDetail.isDisbOnSchDate() && count == 1){
+
+
+			BigDecimal totalPaid = aScheduleDetail.getSchdPftPaid().add(aScheduleDetail.getSchdPriPaid()).add(aScheduleDetail.getSchdFeePaid());
+			BigDecimal totalSchd = aScheduleDetail.getProfitSchd().add(aScheduleDetail.getPrincipalSchd()).add(aScheduleDetail.getFeeSchd());
+
+			if(totalPaid.compareTo(BigDecimal.ZERO) > 0 && totalSchd.compareTo(totalPaid) > 0){
 				data = new FinanceScheduleReportData();	
-
-				String label = Labels.getLabel("label_listcell_profitCalc.label");
-				if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
-					label = Labels.getLabel("label_listcell_BPIAmount.label");
-					if(aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
-						label = Labels.getLabel("label_listcell_BPICalculated.label", new String[]{DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())});
-					}
-				}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
-					label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
-				}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
-					label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
-				}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
-					label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
-				}
-
-				data.setLabel(label);
-				data.setInstNumber(String.valueOf(aScheduleDetail.getInstNumber()));
-				if (count == 1) {
-					data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
-					if( aScheduleDetail.isRvwOnSchDate()) {
-						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
-					}else {
-						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
-					}
-				}else {
-					data.setSchDate("");
-				}
-				data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
-				data.setTdsAmount(formatAmt(aScheduleDetail.getTDSAmount(),false,false));
-				data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd(),false,false));
-				data.setSchdPft("");
-				data.setSchdPri("");
-				data.setTotalAmount("");
+				data.setLabel(Labels.getLabel("label_listcell_UnpaidAmount.label"));
+				data.setSchDate("");
+				data.setEndBal("");
+				data.setTdsAmount("");
+				data.setPftAmount("");				
+				data.setSchdPft(formatAmt(aScheduleDetail.getProfitSchd().subtract(aScheduleDetail.getSchdPftPaid()),false,true));				
+				data.setSchdPri(formatAmt(aScheduleDetail.getPrincipalSchd().subtract(aScheduleDetail.getSchdPriPaid()),false,true));
+				data.setTotalAmount(formatAmt(totalSchd.subtract(totalPaid),false,false));
+				data.setSchdFee(formatAmt(aScheduleDetail.getFeeSchd().subtract(aScheduleDetail.getSchdFeePaid()),false,false));
+				BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
 				data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-				BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance()).add(aScheduleDetail.getDisbAmount());
 				data.setAvailLimit(formatAmt(availLimit,false,false));
 				data.setLimitDrop(formatAmt(odlimitDrop,false,false));
-				data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,false));
 				reportList.add(data);
-				count = 2;
 			}
 
-			if (aScheduleDetail.getCalculatedRate().compareTo(prvSchDetail.getCalculatedRate()) != 0) {
+			if (aScheduleDetail.isRvwOnSchDate()) {
+				if (aFinanceMain.getMaturityDate().compareTo(aScheduleDetail.getSchDate()) != 0) {
+					if (aScheduleDetail.getCalculatedRate().compareTo(prvSchDetail.getCalculatedRate()) == 0) {
 
-				if(CalculationConstants.RATE_BASIS_C.equals(getFinScheduleData().getFinanceMain().getRepayRateBasis())){
-					data = new FinanceScheduleReportData();
-					data.setLabel(Labels.getLabel("label_listcell_flatRate.label"));
-					data.setSchDate("");
-					data.setPftAmount(formatAmt(aScheduleDetail.getActRate(),true,false));
-					data.setSchdPft("");
-					data.setSchdFee("");
-					data.setTdsAmount("");
-					data.setSchdPri("");
-					data.setTotalAmount("");
-					data.setEndBal("");
-					data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-					BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance()).add(aScheduleDetail.getDisbAmount());
-					data.setAvailLimit(formatAmt(availLimit,false,false));
-					data.setLimitDrop(formatAmt(odlimitDrop,false,false));
-					reportList.add(data);
-					count = 2;
+						if(aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0 &&  
+								aScheduleDetail.getSchDate().compareTo(aFinanceMain.getFinStartDate()) != 0){
+
+							// Calculated Profit Display
+							if(!aScheduleDetail.isDisbOnSchDate() && count == 1){
+
+								String label = Labels.getLabel("label_listcell_profitCalc.label");
+								if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
+									label = Labels.getLabel("label_listcell_BPIAmount.label");
+									if(aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+										label = Labels.getLabel("label_listcell_BPICalculated.label", new String[]{DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())});
+									}
+								}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
+									label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
+								}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
+									label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
+								}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
+									label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
+								}
+
+								data = new FinanceScheduleReportData();	
+								data.setInstNumber(getInstNumber(aScheduleDetail.getInstNumber(), count));
+								data.setLabel(label);
+								data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
+								data.setSchdPft("");
+								data.setTdsAmount("");
+								data.setSchdFee("");
+								data.setSchdPri("");
+								data.setTotalAmount("");
+								data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,false));
+								data.setLimitDrop(formatAmt(limitIncreaseAmt,false,false));
+								data.setTotalLimit(formatAmt(odAvailAmt,false,false));
+								BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
+								data.setAvailLimit(formatAmt(availLimit,false,false));
+
+								if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
+									data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
+								}else {
+									data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
+								}
+								data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
+								reportList.add(data);
+								count = 2;
+							}
+						}
+
+					}else {
+
+						// Calculated Profit Display
+						if(!aScheduleDetail.isDisbOnSchDate() && !aScheduleDetail.isRepayOnSchDate() &&
+								aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0 && count == 1){
+
+							String label = Labels.getLabel("label_listcell_profitCalc.label");
+							if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_BPI)){
+								label = Labels.getLabel("label_listcell_BPIAmount.label");
+								if(aScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+									label = Labels.getLabel("label_listcell_BPICalculated.label", new String[]{DateUtility.formatToLongDate(aScheduleDetail.getDefSchdDate())});
+								}
+							}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)){
+								label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
+							}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_UNPLANNED)){
+								label = Labels.getLabel("label_listcell_UnPlannedHMonth.label");
+							}else if(StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_REAGE)){
+								label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
+							}
+
+							data = new FinanceScheduleReportData();	
+							data.setInstNumber(getInstNumber(aScheduleDetail.getInstNumber(), count));
+							data.setLabel(label);
+							data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
+							data.setSchdPft("");
+							data.setTdsAmount("");
+							data.setSchdFee("");
+							data.setSchdPri("");
+							data.setTotalAmount("");
+							data.setEndBal(formatAmt(aScheduleDetail.getClosingBalance(),false,false));
+							data.setLimitDrop(formatAmt(limitIncreaseAmt,false,false));
+							data.setTotalLimit(formatAmt(odAvailAmt,false,false));
+							BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
+							data.setAvailLimit(formatAmt(availLimit,false,false));
+
+							if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
+								data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
+							}else {
+								data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
+							}
+							data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
+							reportList.add(data);
+							count = 2;
+						}
+
+						String flatRateConvert = "listcell_flatRateChangeAdded_label";
+						if(CalculationConstants.RATE_BASIS_C.equals(aFinanceMain.getRepayRateBasis())){
+
+							data = new FinanceScheduleReportData();
+							data.setLabel(Labels.getLabel("label_listcell_flatRate.label"));
+							data.setSchDate("");
+							data.setPftAmount(formatAmt(aScheduleDetail.getActRate(),true,false));
+							data.setSchdPft("");
+							data.setSchdFee("");
+							data.setTdsAmount("");
+							data.setSchdPri("");
+							data.setTotalAmount("");
+							data.setEndBal("");
+							data.setTotalLimit("");
+							data.setAvailLimit("");
+							data.setLimitDrop("");
+							reportList.add(data);
+							count = 2;
+
+							data = new FinanceScheduleReportData();
+							data.setLabel(Labels.getLabel(flatRateConvert, 
+									new String[]{String.valueOf(PennantApplicationUtil.formatRate(prvSchDetail.getActRate().doubleValue(),PennantConstants.rateFormate)),
+											String.valueOf(PennantApplicationUtil.formatRate(aScheduleDetail.getActRate().doubleValue(),PennantConstants.rateFormate))}));
+							data.setSchDate("");
+							data.setPftAmount("");
+							data.setSchdPft("");
+							data.setSchdFee("");
+							data.setTdsAmount("");
+							data.setSchdPri("");
+							data.setTotalAmount("");
+							data.setEndBal("");
+							data.setTotalLimit("");
+							data.setAvailLimit("");
+							data.setLimitDrop("");
+							reportList.add(data);
+							count = 2;
+							flatRateConvert = "listcell_flatRateConvertChangeAdded_label";
+						}
+
+						data = new FinanceScheduleReportData();
+						data.setLabel(Labels.getLabel("label_listcell_reviewRate.label"));
+						if (count == 1) {
+							data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
+							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
+						}else {
+							data.setSchDate("");
+						}
+						
+						if(StringUtils.isBlank(aScheduleDetail.getBaseRate())){
+							data.setPftAmount(formatAmt(aScheduleDetail.getCalculatedRate(),true,false));
+						}else{
+							data.setPftAmount("[ " +aScheduleDetail.getBaseRate()+(StringUtils.isEmpty(aScheduleDetail.getSplRate())?"":","+aScheduleDetail.getSplRate())+
+									(aScheduleDetail.getMrgRate() == null ?"":","+PennantApplicationUtil.formatRate(aScheduleDetail.getMrgRate().doubleValue(), 9))+" ]"+
+									PennantApplicationUtil.formatRate(aScheduleDetail.getCalculatedRate().doubleValue(), PennantConstants.rateFormate) + "%");
+						}
+						
+						data.setSchdPft("");
+						data.setSchdFee("");
+						data.setTdsAmount("");
+						data.setSchdPri("");
+						data.setTotalAmount("");
+						data.setEndBal("");
+						data.setAvailLimit("");
+						data.setTotalLimit("");
+						data.setLimitDrop("");
+						reportList.add(data);
+						count = 2;
+
+						data = new FinanceScheduleReportData();
+						data.setLabel(Labels.getLabel(flatRateConvert, 
+								new String[]{String.valueOf(PennantApplicationUtil.formatRate(prvSchDetail.getCalculatedRate().doubleValue(),PennantConstants.rateFormate)),
+										String.valueOf(PennantApplicationUtil.formatRate(aScheduleDetail.getCalculatedRate().doubleValue(),PennantConstants.rateFormate))}));
+						data.setSchDate("");
+						data.setPftAmount("");
+						data.setSchdPft("");
+						data.setSchdFee("");
+						data.setTdsAmount("");
+						data.setSchdPri("");
+						data.setTotalAmount("");
+						data.setEndBal("");
+						data.setTotalLimit("");
+						data.setAvailLimit("");
+						data.setLimitDrop("");
+						reportList.add(data);
+
+						if(showAdvRate){
+
+							//Advised profit rate
+							data = new FinanceScheduleReportData();
+							data.setLabel(Labels.getLabel("label_listcell_advisedProfitRate.label"));
+							data.setSchDate("");
+							data.setPftAmount(formatAmt(aScheduleDetail.getAdvCalRate(),true,false));
+							data.setSchdPft("");
+							data.setSchdFee("");
+							data.setTdsAmount("");
+							data.setSchdPri("");
+							data.setTotalAmount("");
+							data.setEndBal("");
+							data.setTotalLimit("");
+							data.setAvailLimit("");
+							data.setLimitDrop("");
+							reportList.add(data);
+							count = 2;
+						}
+
+						count = 2;
+					}
 				}
-
+			}else if(showAdvRate){
+				//Advised profit rate
 				data = new FinanceScheduleReportData();
-				data.setLabel(Labels.getLabel("label_listcell_reviewRate.label"));
-				if(aScheduleDetail.isCalOnIndRate()){
-					data.setLabel(Labels.getLabel("label_listcell_reviewIndRate.label"));
-				}
-				if (count == 1) {
-					data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
-					data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
-				}else {
-					data.setSchDate("");
-				}
-				data.setPftAmount(formatAmt(aScheduleDetail.getCalculatedRate(),true,false));
+				data.setLabel(Labels.getLabel("label_listcell_advisedProfitRate.label"));
+				data.setSchDate("");
+				data.setPftAmount(formatAmt(aScheduleDetail.getAdvCalRate(),true,false));
 				data.setSchdPft("");
 				data.setSchdFee("");
 				data.setTdsAmount("");
 				data.setSchdPri("");
 				data.setTotalAmount("");
 				data.setEndBal("");
-				BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
-				data.setAvailLimit(formatAmt(availLimit,false,false));
-				data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-
-				if(data.getLabel().equals(Labels.getLabel("label_LimitIncrease"))){
-					data.setLimitDrop(formatAmt(limitIncreaseAmt,false,false));
-				}else{
-					data.setLimitDrop("");
-				}
-
+				data.setTotalLimit("");
+				data.setAvailLimit("");
+				data.setLimitDrop("");
 				reportList.add(data);
 				count = 2;
-			}else if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0){
+			}
 
-				if(CalculationConstants.RATE_BASIS_C.equals(getFinScheduleData().getFinanceMain().getRepayRateBasis())){
-					data = new FinanceScheduleReportData();
-					data.setLabel(Labels.getLabel("label_listcell_flatRate.label"));
-					data.setSchDate("");
-					data.setSchdFee("");
-					data.setPftAmount(formatAmt(aScheduleDetail.getActRate(),true,false));
+			if (!aScheduleDetail.isRepayOnSchDate() && !aScheduleDetail.isPftOnSchDate() && 
+					!(aScheduleDetail.isRvwOnSchDate()) && StringUtils.equals(aScheduleDetail.getBpiOrHoliday(),FinanceConstants.FLAG_HOLIDAY)) {
+
+				if(aScheduleDetail.getSchDate().compareTo(aFinanceMain.getFinStartDate()) != 0) {
+
+					BigDecimal closingBal = BigDecimal.ZERO;
+					if(getFinScheduleData().getFinanceMain().getNextRolloverDate() != null && 
+							aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getNextRolloverDate()) == 0)	{
+						closingBal = aScheduleDetail.getRolloverAmount().subtract(aScheduleDetail.getCpzAmount());
+					}else{
+						closingBal = aScheduleDetail.getClosingBalance().subtract(aScheduleDetail.getCpzAmount());
+					}
+
+					data = new FinanceScheduleReportData();	
+					data.setInstNumber(getInstNumber(aScheduleDetail.getInstNumber(), count));
+					data.setLabel(Labels.getLabel("label_listcell_PlanEMIHMonth.label"));
+					data.setPftAmount(formatAmt(aScheduleDetail.getProfitCalc(),false,false));
 					data.setSchdPft("");
 					data.setTdsAmount("");
+					data.setSchdFee("");
 					data.setSchdPri("");
 					data.setTotalAmount("");
-					data.setEndBal("");
+					data.setEndBal(formatAmt(closingBal,false,false));
+					data.setLimitDrop(formatAmt(limitIncreaseAmt,false,false));
+					data.setTotalLimit(formatAmt(odAvailAmt,false,false));
 					BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
 					data.setAvailLimit(formatAmt(availLimit,false,false));
-					data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-					if(data.getLabel().equals(Labels.getLabel("label_LimitIncrease"))){
-						data.setLimitDrop(formatAmt(limitIncreaseAmt,false,false));
-					}else{
-						data.setLimitDrop("");
-					}
 
+					if (count == 1) {
+						if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
+							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
+						}else {
+							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
+						}
+						data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
+					}else{
+						data.setSchDate("");
+					}
 					reportList.add(data);
 					count = 2;
 				}
+			}
 
-				data = new FinanceScheduleReportData();
-				data.setLabel(Labels.getLabel("label_listcell_reviewRate.label"));
-				if(aScheduleDetail.isCalOnIndRate()){
-					data.setLabel(Labels.getLabel("label_listcell_reviewIndRate.label"));
-				}
-				data.setSchDate("");
-				data.setPftAmount(formatAmt(aScheduleDetail.getCalculatedRate(),true,false));
-				data.setSchdPft("");
-				data.setSchdFee("");
-				data.setSchdPri("");
-				data.setTdsAmount("");
-				data.setTotalAmount("");
-				data.setEndBal("");
-				if(data.getLabel().equals(Labels.getLabel("label_LimitIncrease"))){
-					data.setLimitDrop(formatAmt(limitIncreaseAmt,false,false));
-				}else{
-					data.setLimitDrop("");
-				}
+			if (aScheduleDetail.getSchDate().compareTo(aFinanceMain.getFinStartDate()) == 0) {
 
-				BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
-				data.setAvailLimit(formatAmt(availLimit,false,false));
-				data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-				reportList.add(data);
-				count = 2;
-			}else if (aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) == 0
-					&& aScheduleDetail.getCalculatedRate().compareTo(prvSchDetail.getCalculatedRate()) != 0) {
+				String flatRateConvert = "listcell_flatRateAdded_label";
+				BigDecimal rate = aScheduleDetail.getCalculatedRate();
+				if(CalculationConstants.RATE_BASIS_C.equals(aFinanceMain.getRepayRateBasis())){
 
-				boolean isFlatRatebasis = false;
-				if(CalculationConstants.RATE_BASIS_C.equals(getFinScheduleData().getFinanceMain().getRepayRateBasis())){
-					isFlatRatebasis = true;
 					data = new FinanceScheduleReportData();
 					data.setLabel(Labels.getLabel("label_listcell_flatRate.label"));
-					if (count == 1) {
-						data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
-						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
-					}else if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) != 0) {
-						data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
-					}else {
-						data.setSchDate("");
-					}
+					data.setSchDate("");
 					data.setPftAmount(formatAmt(aScheduleDetail.getActRate(),true,false));
 					data.setSchdPft("");
 					data.setSchdFee("");
+					data.setTdsAmount("");
 					data.setSchdPri("");
 					data.setTotalAmount("");
 					data.setEndBal("");
-					data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-					BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance()).add(aScheduleDetail.getDisbAmount());
-					data.setAvailLimit(formatAmt(availLimit,false,false));
-					data.setLimitDrop(formatAmt(odlimitDrop,false,false));
+					data.setTotalLimit("");
+					data.setAvailLimit("");
+					data.setLimitDrop("");
 					reportList.add(data);
 					count = 2;
+
+					data = new FinanceScheduleReportData();
+					data.setLabel(Labels.getLabel(flatRateConvert, 
+							new String[]{String.valueOf(PennantApplicationUtil.formatRate(aScheduleDetail.getActRate().doubleValue(),PennantConstants.rateFormate))}));
+					data.setSchDate("");
+					data.setPftAmount("");
+					data.setSchdPft("");
+					data.setSchdFee("");
+					data.setTdsAmount("");
+					data.setSchdPri("");
+					data.setTotalAmount("");
+					data.setEndBal("");
+					data.setTotalLimit("");
+					data.setAvailLimit("");
+					data.setLimitDrop("");
+					reportList.add(data);
+					count = 2;
+
+					flatRateConvert = "label_listcell_flatRateConvertAdded_label";
+					rate = aScheduleDetail.getActRate();
 				}
+
 				data = new FinanceScheduleReportData();
 				data.setLabel(Labels.getLabel("label_listcell_reviewRate.label"));
-				if(aScheduleDetail.isCalOnIndRate()){
-					data.setLabel(Labels.getLabel("label_listcell_reviewIndRate.label"));
-				}
 				if (count == 1) {
 					data.setNoOfDays(String.valueOf(DateUtility.getDaysBetween(aScheduleDetail.getSchDate(), prvSchDetail.getSchDate())));
-					data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
-				}else if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) != 0 && !isFlatRatebasis) {
 					data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 				}else {
 					data.setSchDate("");
 				}
-				data.setPftAmount(formatAmt(aScheduleDetail.getCalculatedRate(),true,false));
+
+				if(StringUtils.isBlank(aScheduleDetail.getBaseRate())){
+					data.setPftAmount(formatAmt(aScheduleDetail.getCalculatedRate(),true,false));
+				}else{
+					data.setPftAmount("[ " +aScheduleDetail.getBaseRate()+(StringUtils.isEmpty(aScheduleDetail.getSplRate())?"":","+aScheduleDetail.getSplRate())+
+							(aScheduleDetail.getMrgRate() == null ?"":","+PennantApplicationUtil.formatRate(aScheduleDetail.getMrgRate().doubleValue(), 9))+" ]"+
+							PennantApplicationUtil.formatRate(aScheduleDetail.getCalculatedRate().doubleValue(), PennantConstants.rateFormate) + "%");
+				}
+				
 				data.setSchdPft("");
 				data.setSchdFee("");
+				data.setTdsAmount("");
 				data.setSchdPri("");
 				data.setTotalAmount("");
-				data.setTdsAmount("");
 				data.setEndBal("");
-				data.setTotalLimit(formatAmt(odAvailAmt,false,false));
-				BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance()).add(aScheduleDetail.getDisbAmount());
-				data.setAvailLimit(formatAmt(availLimit,false,false));
-				data.setLimitDrop(formatAmt(odlimitDrop,false,false));
+				data.setAvailLimit("");
+				data.setTotalLimit("");
+				data.setLimitDrop("");
 				reportList.add(data);
 				count = 2;
-			} 
-
-			count = 1;
-			if(lastRec && includeSummary){
-				data = new FinanceScheduleReportData();
-				data.setSchDate(Labels.getLabel("listcell_summary.label"));
-				data.setLabel(Labels.getLabel("label_listcell_totalPftSch.label"));
-				data.setPftAmount(formatAmt(aFinScheduleData.getFinanceMain().getTotalProfit().subtract(aFinScheduleData.getFinanceMain().getTotalGracePft()),false,false));
-				data.setSchdPft("");
-				data.setSchdFee("");
-				data.setSchdPri("");
-				data.setTotalAmount("");
-				data.setTdsAmount("");
-				data.setEndBal("");
-				data.setLimitDrop("");
-				data.setAvailLimit("");
-				data.setTotalLimit("");
-				reportList.add(data);
-
-				if(aFinScheduleData.getFinanceMain().isAllowGrcPeriod()){
-					data = new FinanceScheduleReportData();
-					data.setSchDate("");
-					data.setLabel(Labels.getLabel("label_listcell_totalGrcPftSch.label"));
-					data.setPftAmount(formatAmt(aFinScheduleData.getFinanceMain().getTotalGracePft(),false,true));
-					data.setSchdPft("");
-					data.setSchdFee("");
-					data.setSchdPri("");
-					data.setTdsAmount("");
-					data.setTotalAmount("");
-					data.setEndBal("");
-					data.setLimitDrop("");
-					data.setAvailLimit("");
-					data.setTotalLimit("");
-					reportList.add(data);
-				}
-
-				if(aFinScheduleData.getFinanceMain().getTotalCpz().compareTo(BigDecimal.ZERO) != 0){
-					data = new FinanceScheduleReportData();
-					data.setSchDate("");
-					data.setLabel(Labels.getLabel("label_listcell_totalCpz.label"));
-					data.setPftAmount(formatAmt(aFinScheduleData.getFinanceMain().getTotalCpz(),false,true));
-					data.setSchdPft("");
-					data.setSchdFee("");
-					data.setTdsAmount("");
-					data.setSchdPri("");
-					data.setTotalAmount("");
-					data.setEndBal("");
-					data.setLimitDrop("");
-					data.setAvailLimit("");
-					data.setTotalLimit("");
-					reportList.add(data);
-				}
-
-				if(aFinScheduleData.getFinanceMain().isAllowGrcPeriod()){
-					data = new FinanceScheduleReportData();
-					data.setSchDate("");
-					data.setLabel(Labels.getLabel("label_listcell_totalGrossPft.label"));
-					data.setPftAmount(formatAmt(aFinScheduleData.getFinanceMain().getTotalGrossPft(),false,true));
-					data.setSchdPft("");
-					data.setSchdFee("");
-					data.setTdsAmount("");
-					data.setSchdPri("");
-					data.setTotalAmount("");
-					data.setEndBal("");
-					data.setLimitDrop("");
-					data.setAvailLimit("");
-					data.setTotalLimit("");
-					reportList.add(data);
-				}
 
 				data = new FinanceScheduleReportData();
+				data.setLabel(Labels.getLabel(flatRateConvert, 
+						new String[]{String.valueOf(PennantApplicationUtil.formatRate(rate.doubleValue(),PennantConstants.rateFormate)),
+								String.valueOf(PennantApplicationUtil.formatRate(aScheduleDetail.getCalculatedRate().doubleValue(),PennantConstants.rateFormate))}));
 				data.setSchDate("");
-				data.setLabel(Labels.getLabel("label_listcell_totalRepayAmt.label"));
-				data.setPftAmount(formatAmt(aFinScheduleData.getFinanceMain().getTotalRepayAmt(),false,true));
+				data.setPftAmount("");
 				data.setSchdPft("");
 				data.setSchdFee("");
-				data.setSchdPri("");
 				data.setTdsAmount("");
+				data.setSchdPri("");
 				data.setTotalAmount("");
 				data.setEndBal("");
-				data.setLimitDrop("");
-				data.setAvailLimit("");
 				data.setTotalLimit("");
+				data.setAvailLimit("");
+				data.setLimitDrop("");
 				reportList.add(data);
 
-				if(aFinScheduleData.getFinanceMain().isAllowGrcPeriod()){
+				//Advised profit rate
+				if(showAdvRate){
+
 					data = new FinanceScheduleReportData();
+					data.setLabel(Labels.getLabel("label_listcell_advisedProfitRate.label"));
 					data.setSchDate("");
-					data.setLabel(Labels.getLabel("label_listcell_totalGrcDays.label"));
-					data.setPftAmount(String.valueOf(DateUtility.getDaysBetween(getFinScheduleData().getFinanceMain().getFinStartDate(), 
-							getFinScheduleData().getFinanceMain().getGrcPeriodEndDate())));
+					data.setPftAmount(formatAmt(aScheduleDetail.getAdvCalRate(),true,false));
 					data.setSchdPft("");
 					data.setSchdFee("");
+					data.setTdsAmount("");
 					data.setSchdPri("");
 					data.setTotalAmount("");
-					data.setTdsAmount("");
 					data.setEndBal("");
-					data.setLimitDrop("");
-					data.setAvailLimit("");
 					data.setTotalLimit("");
+					data.setAvailLimit("");
+					data.setLimitDrop("");
 					reportList.add(data);
 				}
-
-				data = new FinanceScheduleReportData();
-				data.setSchDate("");
-				data.setLabel(Labels.getLabel("label_listcell_totalDays.label"));
-				data.setPftAmount(String.valueOf(DateUtility.getDaysBetween(getFinScheduleData().getFinanceMain().getFinStartDate(), 
-						getFinScheduleData().getFinanceMain().getMaturityDate())));
-				data.setSchdPft("");
-				data.setSchdFee("");
-				data.setSchdPri("");
-				data.setTdsAmount("");
-				data.setTotalAmount("");
-				data.setEndBal("");
-				data.setLimitDrop("");
-				data.setAvailLimit("");
-				data.setTotalLimit("");
-				reportList.add(data);
-
-				count = 2;				
+				count = 2;
 			}
+		}
+		
+		count = 1;
+		if(lastRec && includeSummary){
+			data = new FinanceScheduleReportData();
+			data.setSchDate(Labels.getLabel("listcell_summary.label"));
+			data.setLabel(Labels.getLabel("label_listcell_totalPftSch.label"));
+			data.setPftAmount(formatAmt(aFinScheduleData.getFinanceMain().getTotalProfit().subtract(aFinScheduleData.getFinanceMain().getTotalGracePft()),false,false));
+			data.setSchdPft("");
+			data.setSchdFee("");
+			data.setSchdPri("");
+			data.setTotalAmount("");
+			data.setTdsAmount("");
+			data.setEndBal("");
+			data.setLimitDrop("");
+			data.setAvailLimit("");
+			data.setTotalLimit("");
+			reportList.add(data);
+
+			if(aFinScheduleData.getFinanceMain().isAllowGrcPeriod()){
+				data = new FinanceScheduleReportData();
+				data.setSchDate("");
+				data.setLabel(Labels.getLabel("label_listcell_totalGrcPftSch.label"));
+				data.setPftAmount(formatAmt(aFinScheduleData.getFinanceMain().getTotalGracePft(),false,true));
+				data.setSchdPft("");
+				data.setSchdFee("");
+				data.setSchdPri("");
+				data.setTdsAmount("");
+				data.setTotalAmount("");
+				data.setEndBal("");
+				data.setLimitDrop("");
+				data.setAvailLimit("");
+				data.setTotalLimit("");
+				reportList.add(data);
+			}
+
+			if(aFinScheduleData.getFinanceMain().getTotalCpz().compareTo(BigDecimal.ZERO) != 0){
+				data = new FinanceScheduleReportData();
+				data.setSchDate("");
+				data.setLabel(Labels.getLabel("label_listcell_totalCpz.label"));
+				data.setPftAmount(formatAmt(aFinScheduleData.getFinanceMain().getTotalCpz(),false,true));
+				data.setSchdPft("");
+				data.setSchdFee("");
+				data.setTdsAmount("");
+				data.setSchdPri("");
+				data.setTotalAmount("");
+				data.setEndBal("");
+				data.setLimitDrop("");
+				data.setAvailLimit("");
+				data.setTotalLimit("");
+				reportList.add(data);
+			}
+
+			if(aFinScheduleData.getFinanceMain().isAllowGrcPeriod()){
+				data = new FinanceScheduleReportData();
+				data.setSchDate("");
+				data.setLabel(Labels.getLabel("label_listcell_totalGrossPft.label"));
+				data.setPftAmount(formatAmt(aFinScheduleData.getFinanceMain().getTotalGrossPft(),false,true));
+				data.setSchdPft("");
+				data.setSchdFee("");
+				data.setTdsAmount("");
+				data.setSchdPri("");
+				data.setTotalAmount("");
+				data.setEndBal("");
+				data.setLimitDrop("");
+				data.setAvailLimit("");
+				data.setTotalLimit("");
+				reportList.add(data);
+			}
+
+			data = new FinanceScheduleReportData();
+			data.setSchDate("");
+			data.setLabel(Labels.getLabel("label_listcell_totalRepayAmt.label"));
+			data.setPftAmount(formatAmt(aFinScheduleData.getFinanceMain().getTotalRepayAmt(),false,true));
+			data.setSchdPft("");
+			data.setSchdFee("");
+			data.setSchdPri("");
+			data.setTdsAmount("");
+			data.setTotalAmount("");
+			data.setEndBal("");
+			data.setLimitDrop("");
+			data.setAvailLimit("");
+			data.setTotalLimit("");
+			reportList.add(data);
+
+			if(aFinScheduleData.getFinanceMain().isAllowGrcPeriod()){
+				data = new FinanceScheduleReportData();
+				data.setSchDate("");
+				data.setLabel(Labels.getLabel("label_listcell_totalGrcDays.label"));
+				data.setPftAmount(String.valueOf(DateUtility.getDaysBetween(getFinScheduleData().getFinanceMain().getFinStartDate(), 
+						getFinScheduleData().getFinanceMain().getGrcPeriodEndDate())));
+				data.setSchdPft("");
+				data.setSchdFee("");
+				data.setSchdPri("");
+				data.setTotalAmount("");
+				data.setTdsAmount("");
+				data.setEndBal("");
+				data.setLimitDrop("");
+				data.setAvailLimit("");
+				data.setTotalLimit("");
+				reportList.add(data);
+			}
+
+			data = new FinanceScheduleReportData();
+			data.setSchDate("");
+			data.setLabel(Labels.getLabel("label_listcell_totalDays.label"));
+			data.setPftAmount(String.valueOf(DateUtility.getDaysBetween(getFinScheduleData().getFinanceMain().getFinStartDate(), 
+					getFinScheduleData().getFinanceMain().getMaturityDate())));
+			data.setSchdPft("");
+			data.setSchdFee("");
+			data.setSchdPri("");
+			data.setTdsAmount("");
+			data.setTotalAmount("");
+			data.setEndBal("");
+			data.setLimitDrop("");
+			data.setAvailLimit("");
+			data.setTotalLimit("");
+			reportList.add(data);
+
+			count = 2;				
 		}
 		logger.debug("Leaving");
 		return reportList;
@@ -3776,6 +3859,25 @@ public class FinScheduleListItemRenderer implements Serializable{
 			return PennantAppUtil.amountFormate(amount, format);
 		}else {
 			return "";
+		}
+	}
+
+	/**
+	 * Method to Set Installment Number
+	 *  
+	 * @param int (installment Number), int (count)
+	 * 
+	 * @return String
+	 * */
+	private String getInstNumber(int instNumber, int count) {
+		if(instNumber == 0){
+			return "";
+		}else{
+			if(count == 1){
+				return String.valueOf(instNumber);
+			}else{
+				return "";
+			}
 		}
 	}
 

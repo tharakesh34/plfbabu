@@ -123,7 +123,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.CustomerType;
-import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Department;
 import com.pennant.backend.model.systemmasters.Designation;
@@ -3402,12 +3401,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			return true;
 		}
 		return false;
-	}
-
-	public AEAmountCodes doGetFeeCustomerData(AEAmountCodes amountCodes) {
-		amountCodes.setCustEmpSts(this.empStatus.getValue());
-		amountCodes.setSalariedCustomer(this.salariedCustomer.isChecked());
-		return amountCodes;
 	}
 
 	/**

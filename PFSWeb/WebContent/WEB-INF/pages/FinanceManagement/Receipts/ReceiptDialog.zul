@@ -593,7 +593,7 @@
 													id="label_ReceiptDialog_BankCode"
 													value="${c:l('label_ReceiptDialog_BankCode.value')}" />
 												<extendedcombobox
-													id="bankCode" width="180px" />
+													id="bankCode" />
 												<label
 													id="label_ReceiptDialog_favourName"
 													value="${c:l('label_ReceiptDialog_favourName.value')}" />

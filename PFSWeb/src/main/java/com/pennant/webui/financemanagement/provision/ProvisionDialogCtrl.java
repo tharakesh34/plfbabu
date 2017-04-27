@@ -96,8 +96,6 @@ import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.model.rulefactory.AEAmountCodesRIA;
-import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -120,56 +118,54 @@ import com.pennant.webui.finance.financemain.FinanceBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Provision/Provision/provisionDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Provision/Provision/provisionDialog.zul file.
  */
 public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
-	private static final long serialVersionUID = 5139814152842315333L;
-	private final static Logger logger = Logger.getLogger(ProvisionDialogCtrl.class);
+	private static final long							serialVersionUID	= 5139814152842315333L;
+	private final static Logger							logger				= Logger.getLogger(ProvisionDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_ProvisionDialog; // autowired
+	protected Window									window_ProvisionDialog;												// autowired
 
-	protected ExtendedCombobox finReference; // autowired
-	protected Textbox finBranch; // autowired
-	protected Textbox finType; // autowired
-	protected Longbox custID; // autowired
-	protected Textbox lovDescCustCIF; // autowired
-	protected Label custShrtName; // autowired
-	protected Checkbox useNFProv; // autowired
-	protected Checkbox autoReleaseNFP; // autowired
-	protected Decimalbox principalDue; // autowired
-	protected Decimalbox profitDue; // autowired
-	protected Decimalbox dueTotal; // autowired
-	protected Decimalbox nonFormulaProv; // autowired
-	protected Datebox dueFromDate; // autowired
-	protected Decimalbox calProvisionedAmt; // autowired
-	protected Decimalbox provisionedAmt; // autowired
-	protected Datebox lastFullyPaidDate; // autowired
+	protected ExtendedCombobox							finReference;															// autowired
+	protected Textbox									finBranch;																// autowired
+	protected Textbox									finType;																// autowired
+	protected Longbox									custID;																// autowired
+	protected Textbox									lovDescCustCIF;														// autowired
+	protected Label										custShrtName;															// autowired
+	protected Checkbox									useNFProv;																// autowired
+	protected Checkbox									autoReleaseNFP;														// autowired
+	protected Decimalbox								principalDue;															// autowired
+	protected Decimalbox								profitDue;																// autowired
+	protected Decimalbox								dueTotal;																// autowired
+	protected Decimalbox								nonFormulaProv;														// autowired
+	protected Datebox									dueFromDate;															// autowired
+	protected Decimalbox								calProvisionedAmt;														// autowired
+	protected Decimalbox								provisionedAmt;														// autowired
+	protected Datebox									lastFullyPaidDate;														// autowired
 
 	// not auto wired vars
-	private Provision provision; // overhanded per param
-	private transient ProvisionListCtrl provisionListCtrl; // overhanded per
-															// param
-	private transient boolean validationOn;
-	
-	private String menuItemRightName = null;
+	private Provision									provision;																// overhanded per param
+	private transient ProvisionListCtrl					provisionListCtrl;														// overhanded per
+																																// param
+	private transient boolean							validationOn;
+
+	private String										menuItemRightName	= null;
 
 	// ServiceDAOs / Domain Classes
-	private transient ProvisionService provisionService;
+	private transient ProvisionService					provisionService;
 
-	private FinanceReferenceDetailService financeReferenceDetailService;
-	private FinanceWorkFlowService financeWorkFlowService;
-	private CustomerDetailsService customerDetailsService;
-	private OverdueChargeRecoveryService overdueChargeRecoveryService;
+	private FinanceReferenceDetailService				financeReferenceDetailService;
+	private FinanceWorkFlowService						financeWorkFlowService;
+	private CustomerDetailsService						customerDetailsService;
+	private OverdueChargeRecoveryService				overdueChargeRecoveryService;
 
-	private HashMap<String, ArrayList<ErrorDetails>> overideMap = new HashMap<String, ArrayList<ErrorDetails>>();
+	private HashMap<String, ArrayList<ErrorDetails>>	overideMap			= new HashMap<String, ArrayList<ErrorDetails>>();
 
-	private MailUtil mailUtil;
+	private MailUtil									mailUtil;
 
 	/**
 	 * default constructor.<br>
@@ -186,9 +182,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Provision object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Provision object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -297,7 +292,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setDescColumn("FinType");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
-		
+
 		int format = CurrencyUtil.getFormat(getProvision().getFinCcy());
 
 		this.finBranch.setMaxlength(LengthConstants.LEN_BRANCH);
@@ -324,8 +319,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -437,9 +431,9 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	public void doWriteBeanToComponents(Provision aProvision) throws InterruptedException {
 
 		logger.debug("Entering");
-		
+
 		int format = CurrencyUtil.getFormat(aProvision.getFinCcy());
-		
+
 		this.finReference.setValue(aProvision.getFinReference());
 		this.finBranch.setValue(aProvision.getFinBranch());
 		this.finType.setValue(aProvision.getFinType());
@@ -448,18 +442,13 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		this.custShrtName.setValue(aProvision.getLovDescCustShrtName());
 		this.useNFProv.setChecked(aProvision.isUseNFProv());
 		this.autoReleaseNFP.setChecked(aProvision.isAutoReleaseNFP());
-		this.principalDue.setValue(PennantAppUtil.formateAmount(aProvision.getPrincipalDue(),
-				format));
-		this.profitDue.setValue(PennantAppUtil.formateAmount(aProvision.getProfitDue(),
-				format));
+		this.principalDue.setValue(PennantAppUtil.formateAmount(aProvision.getPrincipalDue(), format));
+		this.profitDue.setValue(PennantAppUtil.formateAmount(aProvision.getProfitDue(), format));
 		this.dueTotal.setValue(PennantAppUtil.formateAmount(
 				aProvision.getPrincipalDue().add(aProvision.getProfitDue()), format));
-		this.nonFormulaProv.setValue(PennantAppUtil.formateAmount(aProvision.getNonFormulaProv(),
-				format));
-		this.calProvisionedAmt.setValue(PennantAppUtil.formateAmount(aProvision.getProvisionAmtCal(),
-				format));
-		this.provisionedAmt.setValue(PennantAppUtil.formateAmount(aProvision.getProvisionedAmt(),
-				format));
+		this.nonFormulaProv.setValue(PennantAppUtil.formateAmount(aProvision.getNonFormulaProv(), format));
+		this.calProvisionedAmt.setValue(PennantAppUtil.formateAmount(aProvision.getProvisionAmtCal(), format));
+		this.provisionedAmt.setValue(PennantAppUtil.formateAmount(aProvision.getProvisionedAmt(), format));
 
 		this.dueFromDate.setValue(aProvision.getDueFromDate());
 		this.lastFullyPaidDate.setValue(aProvision.getLastFullyPaidDate());
@@ -481,7 +470,6 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		// Schedule Details Tab Adding
 		appendScheduleDetailTab(true, false);
 
-
 		// Agreement Details Tab
 		appendAgreementsDetailTab(true);
 
@@ -501,7 +489,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		if ("Accounting".equals(getTaskTabs(getTaskId(getRole())))) {
 			appendAccountingDetailTab(true);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -517,7 +505,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 
 		if (getFinanceCheckListReferenceDialogCtrl() != null) {
 			getFinanceCheckListReferenceDialogCtrl().doSetLabels(getFinBasicDetails());
-			getFinanceCheckListReferenceDialogCtrl().doWriteBeanToComponents(getFinanceDetail().getCheckList(),getFinanceDetail().getFinanceCheckList(),false);
+			getFinanceCheckListReferenceDialogCtrl().doWriteBeanToComponents(getFinanceDetail().getCheckList(),
+					getFinanceDetail().getFinanceCheckList(), false);
 		}
 
 	}
@@ -530,7 +519,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	public void doWriteComponentsToBean(Provision aProvision) {
 		logger.debug("Entering");
 		doSetLOVValidation();
-		
+
 		int format = CurrencyUtil.getFormat(aProvision.getFinCcy());
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
@@ -582,34 +571,29 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 									String.valueOf(this.principalDue.getValue()) }));
 				}
 			}
-			aProvision.setNonFormulaProv(PennantAppUtil.unFormateAmount(this.nonFormulaProv.getValue(),
-					format));
+			aProvision.setNonFormulaProv(PennantAppUtil.unFormateAmount(this.nonFormulaProv.getValue(), format));
 
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			aProvision.setPrincipalDue(PennantAppUtil.unFormateAmount(this.principalDue.getValue(),
-					format));
+			aProvision.setPrincipalDue(PennantAppUtil.unFormateAmount(this.principalDue.getValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aProvision.setProfitDue(PennantAppUtil.unFormateAmount(this.profitDue.getValue(),
-					format));
+			aProvision.setProfitDue(PennantAppUtil.unFormateAmount(this.profitDue.getValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aProvision.setProvisionAmtCal(PennantAppUtil.unFormateAmount(this.calProvisionedAmt.getValue(),
-					format));
+			aProvision.setProvisionAmtCal(PennantAppUtil.unFormateAmount(this.calProvisionedAmt.getValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aProvision.setProvisionedAmt(PennantAppUtil.unFormateAmount(this.provisionedAmt.getValue(),
-					format));
+			aProvision.setProvisionedAmt(PennantAppUtil.unFormateAmount(this.provisionedAmt.getValue(), format));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -649,8 +633,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aProvision
 	 * @throws Exception
@@ -734,89 +717,39 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {/*
-														 * logger.debug("Entering"
-														 * ); final Provision
-														 * aProvision = new
-														 * Provision();
-														 * BeanUtils
-														 * .copyProperties
-														 * (getProvision(),
-														 * aProvision); String
-														 * tranType
-														 * =PennantConstants
-														 * .TRAN_WF;
+														 * logger.debug("Entering" ); final Provision aProvision = new
+														 * Provision(); BeanUtils .copyProperties (getProvision(),
+														 * aProvision); String tranType =PennantConstants .TRAN_WF;
 														 * 
-														 * // Show a confirm box
-														 * final String msg =
-														 * Labels.getLabel(
-														 * "message.Question.Are_you_sure_to_delete_this_record"
-														 * ) + "\n\n --> " +
-														 * aProvision
-														 * .getFinReference();
-														 * final String title =
-														 * Labels.getLabel(
-														 * "message.Deleting.Record"
-														 * );
-														 * MultiLineMessageBox
-														 * .doSetTemplate();
+														 * // Show a confirm box final String msg = Labels.getLabel(
+														 * "message.Question.Are_you_sure_to_delete_this_record" ) +
+														 * "\n\n --> " + aProvision .getFinReference(); final String
+														 * title = Labels.getLabel( "message.Deleting.Record" );
+														 * MultiLineMessageBox .doSetTemplate();
 														 * 
-														 * int conf =
-														 * (MultiLineMessageBox
-														 * .show(msg, title,
-														 * MultiLineMessageBox
-														 * .YES|
-														 * MultiLineMessageBox
-														 * .NO,
-														 * Messagebox.QUESTION,
-														 * true));
+														 * int conf = (MultiLineMessageBox .show(msg, title,
+														 * MultiLineMessageBox .YES| MultiLineMessageBox .NO,
+														 * Messagebox.QUESTION, true));
 														 * 
-														 * if (conf==
-														 * MultiLineMessageBox
-														 * .YES){ logger.debug(
+														 * if (conf== MultiLineMessageBox .YES){ logger.debug(
 														 * "doDelete: Yes");
 														 * 
-														 * if
-														 * (StringUtils.trimToEmpty
-														 * (
-														 * aProvision.getRecordType
-														 * ()).equals("")){
-														 * aProvision
-														 * .setVersion(
-														 * aProvision
-														 * .getVersion()+1);
-														 * aProvision
-														 * .setRecordType
-														 * (PennantConstants
+														 * if (StringUtils.trimToEmpty ( aProvision.getRecordType
+														 * ()).equals("")){ aProvision .setVersion( aProvision
+														 * .getVersion()+1); aProvision .setRecordType (PennantConstants
 														 * .RECORD_TYPE_DEL);
 														 * 
-														 * if
-														 * (isWorkFlowEnabled(
-														 * )){
-														 * aProvision.setNewRecord
-														 * (true);
-														 * tranType=PennantConstants
-														 * .TRAN_WF; }else{
-														 * tranType
-														 * =PennantConstants
-														 * .TRAN_DEL; } }
+														 * if (isWorkFlowEnabled( )){ aProvision.setNewRecord (true);
+														 * tranType=PennantConstants .TRAN_WF; }else{ tranType
+														 * =PennantConstants .TRAN_DEL; } }
 														 * 
-														 * try {
-														 * if(doProcess(aProvision
-														 * ,tranType)){
-														 * refreshList();
-														 * closeDialog(this.
-														 * window_ProvisionDialog
-														 * , "Provision"); }
+														 * try { if(doProcess(aProvision ,tranType)){ refreshList();
+														 * closeDialog(this. window_ProvisionDialog , "Provision"); }
 														 * 
-														 * }catch
-														 * (DataAccessException
-														 * e){ logger.error(
-														 * "Exception: ", e);
-														 * showMessage(e); }
+														 * }catch (DataAccessException e){ logger.error( "Exception: ",
+														 * e); showMessage(e); }
 														 * 
-														 * }
-														 * logger.debug("Leaving"
-														 * );
+														 * } logger.debug("Leaving" );
 														 */
 	}
 
@@ -1422,7 +1355,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		logger.debug("Entering");
 		doSetFieldProperties();
 		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		int format=CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+		int format = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		if (finMain != null) {
 			this.finReference.setValue(finMain.getFinReference());
 			// Workflow Details
@@ -1441,10 +1374,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 
 			OverdueChargeRecovery odcharges = getOverdueChargeRecoveryService().getOverdueChargeRecovery(
 					StringUtils.trim(finMain.getFinReference()));
-			getProvision().setPrincipalDue(
-					PennantAppUtil.formateAmount(odcharges.getLovDescCurSchPriDue(), format));
-			getProvision().setProfitDue(
-					PennantAppUtil.formateAmount(odcharges.getLovDescCurSchPftDue(),format));
+			getProvision().setPrincipalDue(PennantAppUtil.formateAmount(odcharges.getLovDescCurSchPriDue(), format));
+			getProvision().setProfitDue(PennantAppUtil.formateAmount(odcharges.getLovDescCurSchPftDue(), format));
 
 			// Last Fully Paid Date Details
 			FinanceProfitDetail detail = getProvisionService().getProfitDetailById(finMain.getFinReference());
@@ -1465,7 +1396,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 				for (int i = 0; i < userAction.getItemCount(); i++) {
 					userAction.getItemAtIndex(i).setDisabled(false);
 				}
-					if (getProvision().isNewRecord()) {
+				if (getProvision().isNewRecord()) {
 					this.btnCtrl.setBtnStatus_Edit();
 					btnCancel.setVisible(false);
 				} else {
@@ -1519,7 +1450,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		}
 		logger.debug("Entering");
 	}
-	
+
 	public void onCheck$useNFProv(Event event) {
 		logger.debug("Entering" + event.toString());
 		this.nonFormulaProv.setValue(BigDecimal.ZERO);
@@ -1657,14 +1588,12 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
 		Date dateValueDate = DateUtility.getValueDate();
 
-		DataSet dataSet = AEAmounts.createDataSet(finMain, eventCode, dateValueDate, dateValueDate);
-
-		Date curBDay = DateUtility.getAppDate();
 		amountCodes = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
-				.getFinanceScheduleDetails(), profitDetail, curBDay);
+				.getFinanceScheduleDetails(), profitDetail, eventCode, dateValueDate, dateValueDate);
 
 		// Set Repay Amount Codes
 		setAmountCodes(amountCodes);
+		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
 		List<ReturnDataSet> returnSetEntries = null;
 
@@ -1672,18 +1601,10 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		if (getFeeDetailDialogCtrl() != null) {
 			feeRuleMap = getFeeDetailDialogCtrl().getFeeRuleDetailsMap();
 		}
+		executingMap.putAll(feeRuleMap);
+		getFinanceDetail().getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
 
-		if (!getFinanceDetail().getFinScheduleData().getFinanceType().isAllowRIAInvestment()) {
-
-			returnSetEntries = getEngineExecution().getAccEngineExecResults(dataSet, getAmountCodes(), "N", feeRuleMap,
-					false, getFinanceDetail().getFinScheduleData().getFinanceType());
-		} else {
-
-			List<AEAmountCodesRIA> riaDetailList = getEngineExecutionRIA().prepareRIADetails(null,
-					dataSet.getFinReference());
-			returnSetEntries = getEngineExecutionRIA().getAccEngineExecResults(dataSet, getAmountCodes(), "N",
-					riaDetailList, feeRuleMap);
-		}
+		returnSetEntries = getEngineExecution().getAccEngineExecResults("N", executingMap, false);
 
 		if (getAccountingDetailDialogCtrl() != null) {
 			getAccountingDetailDialogCtrl().doFillAccounting(returnSetEntries);
@@ -1720,7 +1641,6 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	private void doRemoveLOVValidation() {
 	}
 
-	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.provision.getFinReference());
@@ -1769,14 +1689,15 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	public FinanceReferenceDetailService getFinanceReferenceDetailService() {
 		return financeReferenceDetailService;
 	}
-	public void setFinanceReferenceDetailService(
-			FinanceReferenceDetailService financeReferenceDetailService) {
+
+	public void setFinanceReferenceDetailService(FinanceReferenceDetailService financeReferenceDetailService) {
 		this.financeReferenceDetailService = financeReferenceDetailService;
 	}
 
 	public FinanceWorkFlowService getFinanceWorkFlowService() {
 		return financeWorkFlowService;
 	}
+
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
 	}
@@ -1784,6 +1705,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	public CustomerDetailsService getCustomerDetailsService() {
 		return customerDetailsService;
 	}
+
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}

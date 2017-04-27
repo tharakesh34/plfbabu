@@ -691,7 +691,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				finRender = new FinScheduleListItemRenderer();
 				List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(finScheduleData);
 				list.add(subList1);
-				List<FinanceScheduleReportData> subList = finRender.getScheduleData(finScheduleData,rpyDetailsMap, penaltyDetailsMap, feeChargesMap,true);
+				List<FinanceScheduleReportData> subList = finRender.getPrintScheduleData(finScheduleData,rpyDetailsMap, penaltyDetailsMap, true);
 				list.add(subList);
 
 				ReportGenerationUtil.generateReport("FINENQ_ScheduleDetail", finScheduleData.getFinanceMain(), list,

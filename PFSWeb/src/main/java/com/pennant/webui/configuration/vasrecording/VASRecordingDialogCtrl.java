@@ -2333,7 +2333,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			accountingSetEntries.addAll(getVASRecording().getReturnDataSetList());
 		}else{
 			getVASRecording().setFee(PennantAppUtil.unFormateAmount(this.fee.getActualValue(), getCcyFormat()));
-			List<ReturnDataSet> returnSetEntries = getEngineExecution().getVasExecResults(getVASRecording(), AccountEventConstants.ACCEVENT_VAS_FEE, "N", null);
+			HashMap<String, Object> executingMap = new HashMap<String, Object>();
+			getVASRecording().getDeclaredFieldValues(executingMap);
+			List<ReturnDataSet> returnSetEntries = getEngineExecution().getVasExecResults(AccountEventConstants.ACCEVENT_VAS_FEE, "N", executingMap);
 			getVASRecording().setReturnDataSetList(returnSetEntries);
 			accountingSetEntries.addAll(returnSetEntries);
 		}
