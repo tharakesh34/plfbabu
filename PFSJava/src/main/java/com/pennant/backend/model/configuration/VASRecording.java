@@ -536,18 +536,23 @@ public class VASRecording extends AbstractWorkflowEntity {
 	}
 
 	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> feeMap = new HashMap<String, Object>();	
+		HashMap<String, Object> vasRecordingMap = new HashMap<String, Object>();	
+		
+		return getDeclaredFieldValues(vasRecordingMap);
+	}
+
+	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> vasRecordingMap) {
 		//feeMap.put(String.valueOf(fee), getFee());
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
-				feeMap.put(this.getClass().getDeclaredFields()[i].getName(), this.getClass().getDeclaredFields()[i].get(this));
+				vasRecordingMap.put("vr_" + this.getClass().getDeclaredFields()[i].getName(), this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				// Nothing TO DO
 			}
 		}
-		return feeMap;
+		return vasRecordingMap;
 	}
-
+	
 	public List<FinFeeDetail> getFinFeeDetailsList() {
 		return finFeeDetailsList;
 	}
