@@ -1796,4 +1796,190 @@ UPDATE SEQ_DATA_ENGINE_STATUS SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_E
 			INSERT INTO ReportList Values('ManualAdvise','ManualAdvise','listheader_AdviseType.label,listheader_FinReference.label,listheader_FeeTypeID.label,listheader_RecordStatus.label,listheader_RecordType.label','adviseType,finReference,feeTypeDesc,recordStatus,recordType','int,String,String,String,String','','ReportList05','ManualAdvise','LoanManagement',0,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
 		</sql>
 	</changeSet>
+	<changeSet id="100" author="Madhubabu">
+		<sql>
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+
+Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER');
+Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'JVPOSTINGS_MAKER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER');
+Delete from SecGroups where GrpCode = 'JVPOSTINGS_MAKER';
+INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'JVPOSTINGS_MAKER','WF Maker for Rules', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_JVPostingDialog_btnNew');
+Delete from SecRights where RightName = 'button_JVPostingDialog_btnNew';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_JVPostingDialog_btnNew', 'JVPostingDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'button_JVPostingDialog_btnNew'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'JVPOSTINGS_MAKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_JVPostingDialog_btnEdit');
+Delete from SecRights where RightName = 'button_JVPostingDialog_btnEdit';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_JVPostingDialog_btnEdit', 'JVPostingDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'button_JVPostingDialog_btnEdit'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_JVPostingDialog_btnDelete');
+Delete from SecRights where RightName = 'button_JVPostingDialog_btnDelete';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_JVPostingDialog_btnDelete', 'JVPostingDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'button_JVPostingDialog_btnDelete'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_JVPostingDialog_btnSave');
+Delete from SecRights where RightName = 'button_JVPostingDialog_btnSave';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_JVPostingDialog_btnSave', 'JVPostingDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'button_JVPostingDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_JVPostingDialog_btnNewJVPostingEntry');
+Delete from SecRights where RightName = 'button_JVPostingDialog_btnNewJVPostingEntry';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_JVPostingDialog_btnNewJVPostingEntry', 'JVPostingDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'button_JVPostingDialog_btnNewJVPostingEntry'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_JVPostingDialog_btnValidate');
+Delete from SecRights where RightName = 'button_JVPostingDialog_btnValidate';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_JVPostingDialog_btnValidate', 'JVPostingDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'button_JVPostingDialog_btnValidate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_APPROVER');
+Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'JVPOSTINGS_APPROVER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER');
+Delete from SecGroups where GrpCode = 'JVPOSTINGS_APPROVER';
+INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'JVPOSTINGS_APPROVER','WF Approver for Rules', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_APPROVER'), (Select RightID from SecRights where RightName = 'button_JVPostingDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'JVPOSTINGS_APPROVER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_JVPostingEntryDialog_btnNew');
+Delete from SecRights where RightName = 'button_JVPostingEntryDialog_btnNew';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_JVPostingEntryDialog_btnNew', 'JVPostingEntryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'button_JVPostingEntryDialog_btnNew'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_JVPostingEntryDialog_btnEdit');
+Delete from SecRights where RightName = 'button_JVPostingEntryDialog_btnEdit';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_JVPostingEntryDialog_btnEdit', 'JVPostingEntryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'button_JVPostingEntryDialog_btnEdit'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_JVPostingEntryDialog_btnDelete');
+Delete from SecRights where RightName = 'button_JVPostingEntryDialog_btnDelete';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_JVPostingEntryDialog_btnDelete', 'JVPostingEntryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'button_JVPostingEntryDialog_btnDelete'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_JVPostingEntryDialog_btnSave');
+Delete from SecRights where RightName = 'button_JVPostingEntryDialog_btnSave';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_JVPostingEntryDialog_btnSave', 'JVPostingEntryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'button_JVPostingEntryDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_APPROVER'), (Select RightID from SecRights where RightName = 'button_JVPostingEntryDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_Account');
+Delete from SecRights where RightName = 'JVPostingEntryDialog_Account';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'JVPostingEntryDialog_Account', 'JVPostingEntryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_Account'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_AccountName');
+Delete from SecRights where RightName = 'JVPostingEntryDialog_AccountName';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'JVPostingEntryDialog_AccountName', 'JVPostingEntryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_AccountName'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_ExchangeRate');
+Delete from SecRights where RightName = 'JVPostingEntryDialog_ExchangeRate';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'JVPostingEntryDialog_ExchangeRate', 'JVPostingEntryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_ExchangeRate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_TxnCode');
+Delete from SecRights where RightName = 'JVPostingEntryDialog_TxnCode';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'JVPostingEntryDialog_TxnCode', 'JVPostingEntryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_TxnCode'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_TxnAmount');
+Delete from SecRights where RightName = 'JVPostingEntryDialog_TxnAmount';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'JVPostingEntryDialog_TxnAmount', 'JVPostingEntryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_TxnAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_TxnReference');
+Delete from SecRights where RightName = 'JVPostingEntryDialog_TxnReference';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'JVPostingEntryDialog_TxnReference', 'JVPostingEntryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_TxnReference'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_PostingDate');
+Delete from SecRights where RightName = 'JVPostingEntryDialog_PostingDate';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'JVPostingEntryDialog_PostingDate', 'JVPostingEntryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_PostingDate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_ValueDate');
+Delete from SecRights where RightName = 'JVPostingEntryDialog_ValueDate';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'JVPostingEntryDialog_ValueDate', 'JVPostingEntryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_ValueDate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_NarrLine1');
+Delete from SecRights where RightName = 'JVPostingEntryDialog_NarrLine1';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'JVPostingEntryDialog_NarrLine1', 'JVPostingEntryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_NarrLine1'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_NarrLine2');
+Delete from SecRights where RightName = 'JVPostingEntryDialog_NarrLine2';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'JVPostingEntryDialog_NarrLine2', 'JVPostingEntryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_NarrLine2'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_NarrLine3');
+Delete from SecRights where RightName = 'JVPostingEntryDialog_NarrLine3';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'JVPostingEntryDialog_NarrLine3', 'JVPostingEntryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_NarrLine3'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_NarrLine4');
+Delete from SecRights where RightName = 'JVPostingEntryDialog_NarrLine4';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'JVPostingEntryDialog_NarrLine4', 'JVPostingEntryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_NarrLine4'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_Account');
+Delete from SecRights where RightName = 'JVPostingEntryDialog_Account';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'JVPostingEntryDialog_Account', 'JVPostingEntryDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'JVPostingEntryDialog_Account'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'JVPostingDialog_expReference');
+Delete from SecRights where RightName = 'JVPostingDialog_expReference';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'JVPostingDialog_expReference', 'JVPostingDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'JVPostingDialog_expReference'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'JVPostingDialog_Batch');
+Delete from SecRights where RightName = 'JVPostingDialog_Batch';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'JVPostingDialog_Batch', 'JVPostingDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'JVPostingDialog_Batch'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'JVPostingDialog_BatchCcy');
+Delete from SecRights where RightName = 'JVPostingDialog_BatchCcy';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'JVPostingDialog_BatchCcy', 'JVPostingDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'JVPostingDialog_BatchCcy'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'JVPostingDialog_Branch');
+Delete from SecRights where RightName = 'JVPostingDialog_Branch';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'JVPostingDialog_Branch', 'JVPostingDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'JVPostingDialog_Branch'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'JVPostingDialog_ExchRateType');
+Delete from SecRights where RightName = 'JVPostingDialog_ExchRateType';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'JVPostingDialog_ExchRateType', 'JVPostingDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'JVPostingDialog_ExchRateType'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'JVPostingDialog_BatchPurpose');
+Delete from SecRights where RightName = 'JVPostingDialog_BatchPurpose';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'JVPostingDialog_BatchPurpose', 'JVPostingDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'JVPostingDialog_BatchPurpose'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'menuCat_FinanceManagement'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuItem_others_JVPosting');
+Delete from SecRights where RightName = 'menuItem_others_JVPosting';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuItem_others_JVPosting', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_others_JVPosting'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_APPROVER'), (Select RightID from SecRights where RightName = 'menuCat_FinanceManagement'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'JVPOSTINGS_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_others_JVPosting'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+
+		</sql>
+	</changeSet>
 </databaseChangeLog>
