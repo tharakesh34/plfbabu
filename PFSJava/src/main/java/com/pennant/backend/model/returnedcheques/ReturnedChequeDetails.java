@@ -1,6 +1,7 @@
 package com.pennant.backend.model.returnedcheques;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -137,4 +138,7 @@ public class ReturnedChequeDetails extends AbstractWorkflowEntity {
 	    this.ccyEditField = ccyEditField;
     }
 
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
+	}
 }

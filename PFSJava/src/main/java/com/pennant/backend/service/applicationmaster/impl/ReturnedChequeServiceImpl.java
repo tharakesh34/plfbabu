@@ -2,7 +2,6 @@ package com.pennant.backend.service.applicationmaster.impl;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -18,6 +17,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.ReturnedChequeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * @author sreeravali.s
@@ -34,7 +34,6 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 	public ReturnedChequeServiceImpl() {
 		super();
 	}
-	
 
 	/**
 	 * getReturnedChequesById fetch the details by using ReturnedChequeDAO's getReturnedChequeByID method.
@@ -79,16 +78,19 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
+		
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType = "";
-		ReturnedChequeDetails returnedCheque = (ReturnedChequeDetails) auditHeader.getAuditDetail()
-		        .getModelData();
+
+		ReturnedChequeDetails returnedCheque = (ReturnedChequeDetails) auditHeader
+				.getAuditDetail().getModelData();
+		
+		TableType tableType = TableType.MAIN_TAB;
 		if (returnedCheque.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 		}
 		if (returnedCheque.isNew()) {
 			getReturnedChequeDAO().save(returnedCheque, tableType);
@@ -119,14 +121,14 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering ");
 
-		auditHeader = businessValidation(auditHeader, "delete");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 		ReturnedChequeDetails returnedCheque = (ReturnedChequeDetails) auditHeader.getAuditDetail()
 		        .getModelData();
-		getReturnedChequeDAO().delete(returnedCheque, "");
+		getReturnedChequeDAO().delete(returnedCheque, TableType.MAIN_TAB);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.debug("Leaving ");
@@ -152,7 +154,7 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering ");
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -165,7 +167,7 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 		if (returnedCheque.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getReturnedChequeDAO().delete(returnedCheque, "");
+			getReturnedChequeDAO().delete(returnedCheque, TableType.MAIN_TAB);
 
 		} else {
 			returnedCheque.setRoleCode("");
@@ -177,15 +179,15 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 			if (returnedCheque.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				returnedCheque.setRecordType("");
-				getReturnedChequeDAO().save(returnedCheque, "");
+				getReturnedChequeDAO().save(returnedCheque, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				returnedCheque.setRecordType("");
-				getReturnedChequeDAO().update(returnedCheque, "");
+				getReturnedChequeDAO().update(returnedCheque, TableType.MAIN_TAB);
 			}
 		}
 
-		getReturnedChequeDAO().delete(returnedCheque, "_Temp");
+		getReturnedChequeDAO().delete(returnedCheque, TableType.TEMP_TAB);
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -211,7 +213,7 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering ");
 
-		auditHeader = businessValidation(auditHeader, "doReject");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -220,7 +222,7 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 		ReturnedChequeDetails returnedCheque = (ReturnedChequeDetails) auditHeader.getAuditDetail()
 		        .getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getReturnedChequeDAO().delete(returnedCheque, "_Temp");
+		getReturnedChequeDAO().delete(returnedCheque, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving ");
@@ -235,11 +237,11 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-		        auditHeader.getUsrLanguage(), method);
+		        auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -255,102 +257,33 @@ public class ReturnedChequeServiceImpl extends GenericService<ReturnedChequeDeta
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug("Entering");
 
+		// Get the model object.
 		ReturnedChequeDetails returnedCheque = (ReturnedChequeDetails) auditDetail.getModelData();
-		ReturnedChequeDetails tempReturnedCheque = null;
-		if (returnedCheque.isWorkflow()) {
-			tempReturnedCheque = getReturnedChequeDAO().getReturnedChequeById(
-			        returnedCheque.getCustCIF(), returnedCheque.getChequeNo(), "_Temp");
+
+		// Check the unique keys.
+		if (returnedCheque.isNew() 
+				&& PennantConstants.RECORD_TYPE_NEW.equals(returnedCheque.getRecordType())
+				&& returnedChequeDAO.isDuplicateKey(returnedCheque.getChequeNo(), returnedCheque.getCustCIF(), 
+				returnedCheque.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[2];
+
+			parameters[0] = PennantJavaUtil.getLabel("label_ReturnedChequeCustCIF") + ": " + returnedCheque.getChequeNo();
+			parameters[1] = PennantJavaUtil.getLabel("label_CheuqeNo") + ": " + returnedCheque.getCustCIF();
+
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		ReturnedChequeDetails befReturnedCheque = getReturnedChequeDAO().getReturnedChequeById(
-		        returnedCheque.getCustCIF(), returnedCheque.getChequeNo(), "");
-		ReturnedChequeDetails oldReturendCheque = returnedCheque.getBefImage();
 
-		String[] valueParm = new String[2];
-		String[] errParm = new String[2];
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		valueParm[0] = returnedCheque.getCustCIF();
-		valueParm[1] = returnedCheque.getChequeNo();
-
-		errParm[0] = PennantJavaUtil.getLabel("label_ReturnedChequeCustCIF") + ":" + valueParm[0];
-		errParm[1] = PennantJavaUtil.getLabel("label_CheuqeNo") + ":" + valueParm[1];
-		if (returnedCheque.isNew()) { // for New record or new record into work flow
-
-			if (!returnedCheque.isWorkflow()) {// With out Work flow only new records
-				if (befReturnedCheque != null) { // Record Already Exists in the table 
-					// then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
-					        "41008", errParm, null));
-				}
-			} else { // with work flow
-				if (returnedCheque.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befReturnedCheque != null || tempReturnedCheque != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
-						        "41008", errParm, null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befReturnedCheque == null || tempReturnedCheque != null) {
-						auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
-						        "41005", errParm, null));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!returnedCheque.isWorkflow()) { // With out Work flow for update and delete
-
-				if (befReturnedCheque == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
-					        "41002", errParm, null));
-				} else {
-
-					if (oldReturendCheque != null
-					        && !oldReturendCheque.getLastMntOn().equals(
-					                befReturnedCheque.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-						        .equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
-							        "41003", errParm, null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
-							        "41004", errParm, null));
-						}
-					}
-				}
-
-			} else {
-
-				if (tempReturnedCheque == null) { // if records not exists in the WorkFlow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
-					        "41005", errParm, null));
-				}
-
-				if (tempReturnedCheque != null
-				        && oldReturendCheque != null
-				        && !oldReturendCheque.getLastMntOn().equals(
-				                tempReturnedCheque.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
-					        "41005", errParm, null));
-				}
-
-			}
-		}
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(),
-		        usrLanguage));
-
-		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !returnedCheque.isWorkflow()) {
-			auditDetail.setBefImage(befReturnedCheque);
-		}
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-	
+		
 	@Override
     public List<ReturnedCheques> fetchReturnedCheques(ReturnedCheques returnedCheques) {
 	 logger.debug("Entering");
