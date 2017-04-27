@@ -1449,7 +1449,9 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		try {
 			
 			if(vASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-				list = getEngineExecution().getVasExecResults(vASRecording, AccountEventConstants.ACCEVENT_VAS_FEE, "N", null);
+				HashMap<String, Object> executingMap = new HashMap<String, Object>();
+				vASRecording.getDeclaredFieldValues(executingMap);
+				list = getEngineExecution().getVasExecResults(AccountEventConstants.ACCEVENT_VAS_FEE, "N", executingMap);
 			}else if(StringUtils.equals("C", vASRecording.getVasStatus())){
 				list = getPostingsDAO().getPostingsByPostref(vASRecording.getVasReference(), AccountEventConstants.ACCEVENT_VAS_FEE);
 				for(ReturnDataSet returnDataSet:list){
