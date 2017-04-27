@@ -1390,14 +1390,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		logger.debug("Leaving");
 		return getFinanceTypeDAO().getFinanceTypeByFinType(finType);
 	}
-
-	@Override
-	public boolean checkRIAFinance(String finType) {
-		logger.debug("Entering");
-		logger.debug("Leaving");
-		return getFinanceTypeDAO().checkRIAFinance(finType);
-	}
-	
+ 
 	@Override
 	public String getAllowedCollateralTypes(String finType) {
 		logger.debug("Entering");

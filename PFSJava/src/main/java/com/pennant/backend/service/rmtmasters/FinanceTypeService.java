@@ -65,7 +65,6 @@ public interface FinanceTypeService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	FinanceType getFinanceTypeByFinType(String finType);
-	boolean checkRIAFinance(String finType);
 	FinTypeAccount getFinTypeAccount();
 	FinTypeAccount getNewFinTypeAccount();
 	List<ProductAsset> getFinPurposeByAssetId(ArrayList<String> finAssetTypelist,String type);
