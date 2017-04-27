@@ -11,6 +11,8 @@ import org.apache.commons.lang.StringUtils;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.applicationmaster.DPDBucketConfigurationDAO;
 import com.pennant.backend.dao.applicationmaster.DPDBucketDAO;
+import com.pennant.backend.dao.applicationmaster.NPABucketConfigurationDAO;
+import com.pennant.backend.dao.applicationmaster.NPABucketDAO;
 import com.pennant.backend.dao.applicationmaster.TakafulProviderDAO;
 import com.pennant.backend.dao.masters.SystemInternalAccountDefinitionDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
@@ -20,6 +22,8 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
+import com.pennant.backend.model.applicationmaster.NPABucket;
+import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
 import com.pennant.backend.model.applicationmaster.TakafulProvider;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
@@ -46,8 +50,12 @@ public class EODProperties {
 	private static Map<String, String>							internalAccMap;
 	private static Map<String, TakafulProvider>					takafulProviders;
 	private static Map<Long, List<TransactionEntry>>			transactionEntriesMap;
-	private static Map<String, List<DPDBucketConfiguration>>	bucketConfigurations;
+	//DPD
+	private static Map<String, List<DPDBucketConfiguration>>	dpdBucketConfigurations;
 	private static Map<Long, String>							dPDBuckets;
+	//NPA
+	private static Map<String, List<NPABucketConfiguration>>	npaBucketConfigurations;
+	private static Map<Long, String>							npaBuckets;
 
 	private FinanceTypeDAO										financeTypeDAO;
 	private CurrencyDAO											currencyDAO;
@@ -55,8 +63,12 @@ public class EODProperties {
 	private RuleDAO												ruleDAO;
 	private TransactionEntryDAO									transactionEntryDAO;
 	private TakafulProviderDAO									takafulProviderDAO;
+	//DPD
 	private DPDBucketConfigurationDAO							dPDBucketConfigurationDAO;
 	private DPDBucketDAO										dPDBucketDAO;
+	//NPA
+	private NPABucketConfigurationDAO							nPABucketConfigurationDAO;
+	private NPABucketDAO										nPABucketDAO;
 
 	public EODProperties() {
 		super();
@@ -75,6 +87,10 @@ public class EODProperties {
 		List<TakafulProvider> listProviders = getTakafulProviderDAO().getTakafulProviders();
 		List<DPDBucketConfiguration> bucketConfigurationList = dPDBucketConfigurationDAO.getDPDBucketConfigurations();
 		List<DPDBucket> dpdBucketList = dPDBucketDAO.getDPDBuckets();
+		List<NPABucketConfiguration> npaBucketConfigurationsList = nPABucketConfigurationDAO
+				.getNPABucketConfigurations();
+
+		List<NPABucket> npaBucketList = nPABucketDAO.getNPABuckets();
 
 		finananceTypesMap = new HashMap<String, FinanceType>(finTypeList.size());
 		rulesMap = new HashMap<String, String>(ruleList.size());
@@ -82,9 +98,11 @@ public class EODProperties {
 		internalAccMap = new HashMap<String, String>(siaNumList.size());
 		takafulProviders = new HashMap<String, TakafulProvider>(siaNumList.size());
 		transactionEntriesMap = new HashMap<Long, List<TransactionEntry>>(accountSetIdList.size());
-		bucketConfigurations=new HashMap<String, List<DPDBucketConfiguration>>();
-		dPDBuckets=new HashMap<Long, String>();
-		
+		dpdBucketConfigurations = new HashMap<String, List<DPDBucketConfiguration>>();
+		dPDBuckets = new HashMap<Long, String>();
+		npaBucketConfigurations = new HashMap<String, List<NPABucketConfiguration>>();
+		npaBuckets = new HashMap<Long, String>();
+
 		for (FinanceType type : finTypeList) {
 			finananceTypesMap.put(type.getFinType().trim(), type);
 		}
@@ -109,20 +127,35 @@ public class EODProperties {
 		for (TakafulProvider takafulProvider : listProviders) {
 			takafulProviders.put(takafulProvider.getTakafulCode(), takafulProvider);
 		}
-		
+
 		for (DPDBucket bucket : dpdBucketList) {
 			dPDBuckets.put(bucket.getBucketID(), bucket.getBucketCode());
 		}
 
-		for (DPDBucketConfiguration bucketConfiguration : bucketConfigurationList) {
-			String prductCode = bucketConfiguration.getProductCode();
-			if (bucketConfigurations.containsKey(prductCode)) {
-				bucketConfigurations.get(prductCode).add(bucketConfiguration);
+		for (DPDBucketConfiguration dpdBucketConfiguration : bucketConfigurationList) {
+			String prductCode = dpdBucketConfiguration.getProductCode();
+			if (dpdBucketConfigurations.containsKey(prductCode)) {
+				dpdBucketConfigurations.get(prductCode).add(dpdBucketConfiguration);
 			} else {
 				List<DPDBucketConfiguration> list = new ArrayList<DPDBucketConfiguration>();
-				list.add(bucketConfiguration);
-				bucketConfigurations.put(prductCode, list);
+				list.add(dpdBucketConfiguration);
+				dpdBucketConfigurations.put(prductCode, list);
 			}
+		}
+
+		for (NPABucketConfiguration npaBucketConfiguration : npaBucketConfigurationsList) {
+			String prductCode = npaBucketConfiguration.getProductCode();
+			if (npaBucketConfigurations.containsKey(prductCode)) {
+				npaBucketConfigurations.get(prductCode).add(npaBucketConfiguration);
+			} else {
+				List<NPABucketConfiguration> list = new ArrayList<NPABucketConfiguration>();
+				list.add(npaBucketConfiguration);
+				npaBucketConfigurations.put(prductCode, list);
+			}
+		}
+
+		for (NPABucket bucket : npaBucketList) {
+			npaBuckets.put(bucket.getBucketID(), bucket.getBucketCode());
 		}
 
 		finTypeList = null;
@@ -133,6 +166,8 @@ public class EODProperties {
 		listProviders = null;
 		bucketConfigurationList = null;
 		dpdBucketList = null;
+		npaBucketConfigurationsList = null;
+		npaBucketList = null;
 	}
 
 	/**
@@ -213,8 +248,8 @@ public class EODProperties {
 	}
 
 	public static List<DPDBucketConfiguration> getBucketConfigurations(String productCode) {
-		if (bucketConfigurations.containsKey(productCode)) {
-			return bucketConfigurations.get(productCode);
+		if (dpdBucketConfigurations.containsKey(productCode)) {
+			return dpdBucketConfigurations.get(productCode);
 		} else {
 			return new ArrayList<DPDBucketConfiguration>();
 		}
@@ -234,6 +269,18 @@ public class EODProperties {
 		return new Long(0);
 	}
 
+	public static List<NPABucketConfiguration> getNPABucketConfigurations(String productCode) {
+		if (npaBucketConfigurations.containsKey(productCode)) {
+			return npaBucketConfigurations.get(productCode);
+		} else {
+			return new ArrayList<NPABucketConfiguration>();
+		}
+	}
+
+	public static String getNPABucket(long bucketID) {
+		return npaBuckets.get(bucketID);
+	}
+
 	public void destroy() {
 		finananceTypesMap = null;
 		rulesMap = null;
@@ -241,8 +288,10 @@ public class EODProperties {
 		internalAccMap = null;
 		transactionEntriesMap = null;
 		takafulProviders = null;
-		bucketConfigurations = null;
+		dpdBucketConfigurations = null;
 		dPDBuckets = null;
+		npaBucketConfigurations = null;
+		npaBuckets = null;
 	}
 
 	// ******************************************************//
@@ -304,5 +353,14 @@ public class EODProperties {
 	public void setdPDBucketDAO(DPDBucketDAO dPDBucketDAO) {
 		this.dPDBucketDAO = dPDBucketDAO;
 	}
+
+	public void setNPABucketConfigurationDAO(NPABucketConfigurationDAO nPABucketConfigurationDAO) {
+		this.nPABucketConfigurationDAO = nPABucketConfigurationDAO;
+	}
+
+	public void setNPABucketDAO(NPABucketDAO nPABucketDAO) {
+		this.nPABucketDAO = nPABucketDAO;
+	}
+
 
 }
