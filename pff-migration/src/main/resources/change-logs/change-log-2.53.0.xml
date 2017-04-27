@@ -2001,5 +2001,11 @@ Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroup
 			baseTableName="BankBranches" baseColumnNames="City"
 			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
 	</changeSet>
+	
+	 <changeSet id="103" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_BankBranches_Temp_City"
+			baseTableName="BankBranches_Temp" baseColumnNames="City"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
    
 </databaseChangeLog>
