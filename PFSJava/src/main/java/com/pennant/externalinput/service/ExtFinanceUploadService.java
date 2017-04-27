@@ -24,6 +24,7 @@ import org.jaxen.JaxenException;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.Interface.service.AccountInterfaceService;
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
@@ -59,7 +60,6 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -68,37 +68,37 @@ import com.pennant.exception.PFFInterfaceException;
 import com.pennant.externalinput.ExtFinanceData;
 
 public class ExtFinanceUploadService {
-	private final static Logger logger = Logger.getLogger(ExtFinanceUploadService.class);
+	private final static Logger		logger				= Logger.getLogger(ExtFinanceUploadService.class);
 
-	private boolean isError = false;
+	private boolean					isError				= false;
 
-	private FinanceTypeDAO financeTypeDAO;
-	private BranchDAO branchDAO;
-	private FinanceMainDAO financeMainDAO;
-	private CurrencyDAO currencyDAO;
-	private CustomerDAO customerDAO;
-	private BaseRateDAO baseRateDAO;
-	private SplRateDAO splRateDAO;
-	private AccountsDAO accountsDAO;
-	private StepPolicyDetailDAO stepPolicyDetailDAO;
-	private FinanceDetailService financeDetailService;
-	private AccountInterfaceService accountInterfaceService;
-	private AccountEngineExecution engineExecution;
-	private FinTypeAccountingDAO finTypeAccountingDAO;
+	private FinanceTypeDAO			financeTypeDAO;
+	private BranchDAO				branchDAO;
+	private FinanceMainDAO			financeMainDAO;
+	private CurrencyDAO				currencyDAO;
+	private CustomerDAO				customerDAO;
+	private BaseRateDAO				baseRateDAO;
+	private SplRateDAO				splRateDAO;
+	private AccountsDAO				accountsDAO;
+	private StepPolicyDetailDAO		stepPolicyDetailDAO;
+	private FinanceDetailService	financeDetailService;
+	private AccountInterfaceService	accountInterfaceService;
+	private AccountEngineExecution	engineExecution;
+	private FinTypeAccountingDAO	finTypeAccountingDAO;
 
-	private BigDecimal zeroValue = BigDecimal.ZERO;
-	private FinanceMain finMain;
-	private FinanceMain oldFinMain;
-	private FinanceDisbursement disbursementDetails = new FinanceDisbursement();
-	private FinScheduleData finScheduleData = new FinScheduleData();
-	private long userID = 1L;
-	private String userLangauge;
-	private RequestDetail requestDetail;
+	private BigDecimal				zeroValue			= BigDecimal.ZERO;
+	private FinanceMain				finMain;
+	private FinanceMain				oldFinMain;
+	private FinanceDisbursement		disbursementDetails	= new FinanceDisbursement();
+	private FinScheduleData			finScheduleData		= new FinScheduleData();
+	private long					userID				= 1L;
+	private String					userLangauge;
+	private RequestDetail			requestDetail;
 
-	FinanceType finType = null;
-	SplRate splRate = null;
-	BaseRate baseRate = null;
-	Customer customer = null;
+	FinanceType						finType				= null;
+	SplRate							splRate				= null;
+	BaseRate						baseRate			= null;
+	Customer						customer			= null;
 
 	/**
 	 * Method to process External finance Detail through Excel file
@@ -185,7 +185,7 @@ public class ExtFinanceUploadService {
 			List<StepPolicyDetail> stepPolicyList = getStepPolicyDetailDAO().getStepPolicyDetailListByID(
 					finType.getDftStepPolicy(), "_AView");
 			finScheduleData.resetStepPolicyDetails(stepPolicyList);
-			
+
 			if (finMain.isAllowGrcPeriod()) {
 				finScheduleData.getStepPolicyDetails().get(0).setInstallments(12);
 				finScheduleData.getStepPolicyDetails().get(1).setInstallments(12);
@@ -198,13 +198,11 @@ public class ExtFinanceUploadService {
 				finScheduleData.getStepPolicyDetails().get(2).setInstallments(15);
 				finScheduleData.getStepPolicyDetails().get(3).setInstallments(15);
 			}
-			
+
 			finScheduleData.getFinanceMain().setStepFinance(true);
 			finScheduleData.getFinanceMain().setStepPolicy(finType.getDftStepPolicy());
 		}
-		
-		
-		
+
 		finScheduleData = ScheduleGenerator.getNewSchd(finScheduleData);
 		if (finScheduleData.getFinanceScheduleDetails().size() != 0) {
 			finScheduleData = ScheduleCalculator.getCalSchd(finScheduleData, BigDecimal.ZERO);
@@ -236,12 +234,12 @@ public class ExtFinanceUploadService {
 			finScheduleData.getFinanceMain().setFinRemarks("FAILED-Mismatch in Last Repay");
 		} else if (!extFinData.getExpLastInstPft().equals(lastInstPft)) {
 			finScheduleData.getFinanceMain().setFinRemarks("FAILED-Mismatch in Last Repay Schd. Profit");
-		} /*else if (!extFinData.getExpRateAtStart().equals(financeMain.getGrcPftRate())) {
-			finScheduleData.getFinanceMain().setFinRemarks("FAILED-Mismatch in Grace Profit Rate");
-		} else if (!extFinData.getExpRateAtGrcEnd().equals(financeMain.getRepayProfitRate())) {
-			finScheduleData.getFinanceMain().setFinRemarks("FAILED-Mismatch in Repay Profit Rate");
-		}
-*/
+		} /*
+		 * else if (!extFinData.getExpRateAtStart().equals(financeMain.getGrcPftRate())) {
+		 * finScheduleData.getFinanceMain().setFinRemarks("FAILED-Mismatch in Grace Profit Rate"); } else if
+		 * (!extFinData.getExpRateAtGrcEnd().equals(financeMain.getRepayProfitRate())) {
+		 * finScheduleData.getFinanceMain().setFinRemarks("FAILED-Mismatch in Repay Profit Rate"); }
+		 */
 		finScheduleData.setFinanceMain(financeMain);
 
 		FinanceDetail afinanceDetail = new FinanceDetail();
@@ -266,28 +264,21 @@ public class ExtFinanceUploadService {
 
 	private List<ReturnDataSet> processAccounting(FinScheduleData data) {
 		logger.debug(" Entering ");
-		DataSet dataSet = new DataSet();
-		dataSet.setFinReference(data.getFinReference());
-		dataSet.setCustId(data.getFinanceMain().getCustID());
-		dataSet.setFinEvent("ADDDBSP");
-		dataSet.setPostDate(new Date());
-		dataSet.setValueDate(new Date());
-		dataSet.setSchdDate(new Date());
-		dataSet.setDisburseAccount(data.getFinanceMain().getDisbAccountId());
-		dataSet.setRepayAccount(data.getFinanceMain().getRepayAccountId());
-		dataSet.setFinAccount("");
-		dataSet.setFinCcy(data.getFinanceMain().getFinCcy());
-		dataSet.setFinBranch(data.getFinanceMain().getFinBranch());
-		dataSet.setNewRecord(true);
 
+		
+		//FIXME: PV: 25 APR 17: DOUBT WHETHER IT WORKS OR NOT. REQUIRES CLEANUP WHEN IT IS USED
 		// Amount Code details calculation
-		AEAmountCodes amountCodeDetail = AEAmounts.procAEAmounts(data.getFinanceMain(),
-				data.getFinanceScheduleDetails(), new FinanceProfitDetail(), new Date());
+		AEAmountCodes amountCodes = AEAmounts.procAEAmounts(data.getFinanceMain(),
+				data.getFinanceScheduleDetails(), new FinanceProfitDetail(), AccountEventConstants.ACCEVENT_ADDDBSP,
+				data.getFinanceMain().getFinStartDate(), data.getFinanceMain().getFinStartDate());
+
+		amountCodes.setDisbAccountID(data.getFinanceMain().getDisbAccountId());
+		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+		data.getFinanceType().getDeclaredFieldValues(executingMap);
 
 		// Building Account Entry Details
 		try {
-			return getEngineExecution().getAccEngineExecResults(dataSet, amountCodeDetail, "N", null, false,
-					data.getFinanceType());
+			return getEngineExecution().getAccEngineExecResults("N", executingMap, false);
 		} catch (Exception e) {
 			logger.debug(e);
 		}
@@ -416,20 +407,21 @@ public class ExtFinanceUploadService {
 		// PREPARE DEFAULT DATA
 
 		// Grace Base Rate
-		if(finType!=null){
-		extFinData.setGraceBaseRate(finType.getFinGrcBaseRate());
+		if (finType != null) {
+			extFinData.setGraceBaseRate(finType.getFinGrcBaseRate());
 
-		// Grace Special Rate
-		extFinData.setGraceSpecialRate(finType.getFinGrcSplRate());
+			// Grace Special Rate
+			extFinData.setGraceSpecialRate(finType.getFinGrcSplRate());
 
-		// Grace Margin
-		extFinData.setGrcMargin(finType.getFinGrcMargin());
+			// Grace Margin
+			extFinData.setGrcMargin(finType.getFinGrcMargin());
 		}
 
 		// Grace Profit Rate
 		if (extFinData.getGraceBaseRate() != null) {
-			baseRate = getBaseRate(extFinData.getGraceBaseRate(),extFinData.getFinCcy());
-			extFinData.setGrcPftRate(baseRate == null ? zeroValue : baseRate.getBRRate().add(zeroValue).add(extFinData.getGrcMargin()));
+			baseRate = getBaseRate(extFinData.getGraceBaseRate(), extFinData.getFinCcy());
+			extFinData.setGrcPftRate(baseRate == null ? zeroValue : baseRate.getBRRate().add(zeroValue)
+					.add(extFinData.getGrcMargin()));
 		} else {
 			extFinData.setGrcPftRate(finType.getFinGrcIntRate());
 		}
@@ -449,8 +441,9 @@ public class ExtFinanceUploadService {
 
 		// Repay Profit Rate
 		if (finType.getFinBaseRate() != null) {
-			baseRate = getBaseRate(finType.getFinBaseRate(),finType.getFinCcy());
-			extFinData.setRepayProfitRate(baseRate == null ? zeroValue : baseRate.getBRRate().add(zeroValue).add(extFinData.getRepayMargin()));
+			baseRate = getBaseRate(finType.getFinBaseRate(), finType.getFinCcy());
+			extFinData.setRepayProfitRate(baseRate == null ? zeroValue : baseRate.getBRRate().add(zeroValue)
+					.add(extFinData.getRepayMargin()));
 		} else {
 			extFinData.setRepayProfitRate(finType.getFinIntRate());
 		}
@@ -551,8 +544,8 @@ public class ExtFinanceUploadService {
 		}
 
 		// Collateral Reference
-		financeMain.setFinCommitmentRef(StringUtils.isBlank(extFinData.getFinCommitmentRef()) ? ""
-				: extFinData.getFinCommitmentRef());
+		financeMain.setFinCommitmentRef(StringUtils.isBlank(extFinData.getFinCommitmentRef()) ? "" : extFinData
+				.getFinCommitmentRef());
 
 		// Depreciation Frequency
 		if (finType.isFinDepreciationReq()) {
@@ -599,9 +592,10 @@ public class ExtFinanceUploadService {
 		// Repay Rate
 		if (finType.getFinBaseRate() != null) {
 			financeMain.setRepayBaseRate(finType.getFinBaseRate());
-			baseRate = getBaseRate(financeMain.getRepayBaseRate(),financeMain.getFinCcy());
+			baseRate = getBaseRate(financeMain.getRepayBaseRate(), financeMain.getFinCcy());
 			financeMain.setRepayMargin(finType.getFinMargin());
-			financeMain.setRepayProfitRate(baseRate == null ? zeroValue : baseRate.getBRRate().add(zeroValue).add(financeMain.getRepayMargin()));
+			financeMain.setRepayProfitRate(baseRate == null ? zeroValue : baseRate.getBRRate().add(zeroValue)
+					.add(financeMain.getRepayMargin()));
 		} else {
 			financeMain.setRepayProfitRate(finType.getFinIntRate());
 		}
@@ -721,10 +715,11 @@ public class ExtFinanceUploadService {
 
 		// Grace Base Rate
 		if (finType.getFinGrcBaseRate() != null) {
-			baseRate = getBaseRate(extFinData.getGraceBaseRate(),extFinData.getFinCcy());
+			baseRate = getBaseRate(extFinData.getGraceBaseRate(), extFinData.getFinCcy());
 			financeMain.setGraceBaseRate(extFinData.getGraceBaseRate());
 			financeMain.setGrcMargin(finType.getFinGrcMargin());
-			financeMain.setGrcPftRate(baseRate == null ? zeroValue : baseRate.getBRRate().add(zeroValue).add(financeMain.getGrcMargin()));
+			financeMain.setGrcPftRate(baseRate == null ? zeroValue : baseRate.getBRRate().add(zeroValue)
+					.add(financeMain.getGrcMargin()));
 		} else {
 			financeMain.setGrcPftRate(finType.getFinGrcIntRate());
 		}
@@ -791,14 +786,12 @@ public class ExtFinanceUploadService {
 	 * @param extFinData
 	 * @return BaseRate
 	 * */
-	private BaseRate getBaseRate(String baseRate,String currency) {
+	private BaseRate getBaseRate(String baseRate, String currency) {
 		Date dateValueDate = DateUtility.getAppDate();
 		return getBaseRateDAO().getBaseRateByType(baseRate, currency, dateValueDate);
 	}
-	
-	
-	public void processExtFinanceData(LoggedInUser userDetails,
-			ExtFinanceData extFinData) throws IOException,
+
+	public void processExtFinanceData(LoggedInUser userDetails, ExtFinanceData extFinData) throws IOException,
 			PFFInterfaceException, JaxenException {
 		logger.debug("Entering");
 
@@ -816,67 +809,48 @@ public class ExtFinanceUploadService {
 		finScheduleData.setRepayInstructions(new ArrayList<RepayInstruction>());
 
 		// Step Policy Details
-		if (finType!=null && finType.isStepFinance()) {
-			List<StepPolicyDetail> stepPolicyList = getStepPolicyDetailDAO()
-					.getStepPolicyDetailListByID(finType.getDftStepPolicy(),
-							"_AView");
+		if (finType != null && finType.isStepFinance()) {
+			List<StepPolicyDetail> stepPolicyList = getStepPolicyDetailDAO().getStepPolicyDetailListByID(
+					finType.getDftStepPolicy(), "_AView");
 			finScheduleData.resetStepPolicyDetails(stepPolicyList);
 
 			if (finMain.isAllowGrcPeriod()) {
-				finScheduleData.getStepPolicyDetails().get(0)
-						.setInstallments(12);
-				finScheduleData.getStepPolicyDetails().get(1)
-						.setInstallments(12);
-				finScheduleData.getStepPolicyDetails().get(2)
-						.setInstallments(12);
-				finScheduleData.getStepPolicyDetails().get(3)
-						.setInstallments(12);
+				finScheduleData.getStepPolicyDetails().get(0).setInstallments(12);
+				finScheduleData.getStepPolicyDetails().get(1).setInstallments(12);
+				finScheduleData.getStepPolicyDetails().get(2).setInstallments(12);
+				finScheduleData.getStepPolicyDetails().get(3).setInstallments(12);
 				finScheduleData.getFinanceMain().setGraceTerms(12);
 			} else {
-				finScheduleData.getStepPolicyDetails().get(0)
-						.setInstallments(15);
-				finScheduleData.getStepPolicyDetails().get(1)
-						.setInstallments(15);
-				finScheduleData.getStepPolicyDetails().get(2)
-						.setInstallments(15);
-				finScheduleData.getStepPolicyDetails().get(3)
-						.setInstallments(15);
+				finScheduleData.getStepPolicyDetails().get(0).setInstallments(15);
+				finScheduleData.getStepPolicyDetails().get(1).setInstallments(15);
+				finScheduleData.getStepPolicyDetails().get(2).setInstallments(15);
+				finScheduleData.getStepPolicyDetails().get(3).setInstallments(15);
 			}
 
 			finScheduleData.getFinanceMain().setStepFinance(true);
-			finScheduleData.getFinanceMain().setStepPolicy(
-					finType.getDftStepPolicy());
+			finScheduleData.getFinanceMain().setStepPolicy(finType.getDftStepPolicy());
 		}
 
 		finScheduleData = ScheduleGenerator.getNewSchd(finScheduleData);
 		if (finScheduleData.getFinanceScheduleDetails().size() != 0) {
-			finScheduleData = ScheduleCalculator.getCalSchd(finScheduleData,
-					BigDecimal.ZERO);
+			finScheduleData = ScheduleCalculator.getCalSchd(finScheduleData, BigDecimal.ZERO);
 			finScheduleData.setSchduleGenerated(true);
 		}
 
 		// Reset Data
-		finScheduleData.getFinanceMain().setEqualRepay(
-				this.oldFinMain.isEqualRepay());
-		finScheduleData.getFinanceMain().setCalculateRepay(
-				this.oldFinMain.isCalculateRepay());
-		finScheduleData.getFinanceMain().setRecalType(
-				this.oldFinMain.getRecalType());
-		finScheduleData.getFinanceMain().setLastRepayDate(
-				this.oldFinMain.getFinStartDate());
-		finScheduleData.getFinanceMain().setLastRepayPftDate(
-				this.oldFinMain.getFinStartDate());
-		finScheduleData.getFinanceMain().setLastRepayRvwDate(
-				this.oldFinMain.getFinStartDate());
-		finScheduleData.getFinanceMain().setLastRepayCpzDate(
-				this.oldFinMain.getFinStartDate());
+		finScheduleData.getFinanceMain().setEqualRepay(this.oldFinMain.isEqualRepay());
+		finScheduleData.getFinanceMain().setCalculateRepay(this.oldFinMain.isCalculateRepay());
+		finScheduleData.getFinanceMain().setRecalType(this.oldFinMain.getRecalType());
+		finScheduleData.getFinanceMain().setLastRepayDate(this.oldFinMain.getFinStartDate());
+		finScheduleData.getFinanceMain().setLastRepayPftDate(this.oldFinMain.getFinStartDate());
+		finScheduleData.getFinanceMain().setLastRepayRvwDate(this.oldFinMain.getFinStartDate());
+		finScheduleData.getFinanceMain().setLastRepayCpzDate(this.oldFinMain.getFinStartDate());
 
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		int lastIndx = finScheduleData.getFinanceScheduleDetails().size() - 1;
 		BigDecimal lastInstPft = BigDecimal.ZERO;
-		if(finScheduleData.getFinanceScheduleDetails().size()>0){
-		lastInstPft = finScheduleData.getFinanceScheduleDetails()
-				.get(lastIndx).getProfitSchd();
+		if (finScheduleData.getFinanceScheduleDetails().size() > 0) {
+			lastInstPft = finScheduleData.getFinanceScheduleDetails().get(lastIndx).getProfitSchd();
 		}
 
 		// VALIDATE RESULTS
@@ -884,27 +858,17 @@ public class ExtFinanceUploadService {
 		finScheduleData.getFinanceMain().setFinRemarks("SUCCESS");
 
 		if (!extFinData.getExpTotalPft().equals(financeMain.getTotalProfit())) {
-			finScheduleData.getFinanceMain().setFinRemarks(
-					"FAILED-Mismatch in Total Profit");
-		} else if (!extFinData.getExpFirstInst().equals(
-				financeMain.getFirstRepay())) {
-			finScheduleData.getFinanceMain().setFinRemarks(
-					"FAILED-Mismatch in First Repay");
-		} else if (!extFinData.getExpLastInst().equals(
-				financeMain.getLastRepay())) {
-			finScheduleData.getFinanceMain().setFinRemarks(
-					"FAILED-Mismatch in Last Repay");
+			finScheduleData.getFinanceMain().setFinRemarks("FAILED-Mismatch in Total Profit");
+		} else if (!extFinData.getExpFirstInst().equals(financeMain.getFirstRepay())) {
+			finScheduleData.getFinanceMain().setFinRemarks("FAILED-Mismatch in First Repay");
+		} else if (!extFinData.getExpLastInst().equals(financeMain.getLastRepay())) {
+			finScheduleData.getFinanceMain().setFinRemarks("FAILED-Mismatch in Last Repay");
 		} else if (!extFinData.getExpLastInstPft().equals(lastInstPft)) {
-			finScheduleData.getFinanceMain().setFinRemarks(
-					"FAILED-Mismatch in Last Repay Schd. Profit");
+			finScheduleData.getFinanceMain().setFinRemarks("FAILED-Mismatch in Last Repay Schd. Profit");
 		} /*
-		 * else if
-		 * (!extFinData.getExpRateAtStart().equals(financeMain.getGrcPftRate()))
-		 * { finScheduleData.getFinanceMain().setFinRemarks(
-		 * "FAILED-Mismatch in Grace Profit Rate"); } else if
-		 * (!extFinData.getExpRateAtGrcEnd
-		 * ().equals(financeMain.getRepayProfitRate())) {
-		 * finScheduleData.getFinanceMain
+		 * else if (!extFinData.getExpRateAtStart().equals(financeMain.getGrcPftRate())) {
+		 * finScheduleData.getFinanceMain().setFinRemarks( "FAILED-Mismatch in Grace Profit Rate"); } else if
+		 * (!extFinData.getExpRateAtGrcEnd ().equals(financeMain.getRepayProfitRate())) { finScheduleData.getFinanceMain
 		 * ().setFinRemarks("FAILED-Mismatch in Repay Profit Rate"); }
 		 */
 		finScheduleData.setFinanceMain(financeMain);
@@ -921,18 +885,14 @@ public class ExtFinanceUploadService {
 		afinanceDetail.setFinScheduleData(finScheduleData);
 		finScheduleData.getFinanceMain().setMigratedFinance(true);
 
-		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1,
-				null, afinanceDetail);
-		AuditHeader auditHeader = new AuditHeader(afinanceDetail
-				.getFinScheduleData().getFinReference(), null, null, null,
-				auditDetail, getFinMain().getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetails>>());
+		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, afinanceDetail);
+		AuditHeader auditHeader = new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null, null,
+				null, auditDetail, getFinMain().getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
 		getFinanceDetailService().doApprove(auditHeader, false);
 
 		logger.debug("Leaving");
 	}
 
-	
 	/*
 	 * ================================================================================================================
 	 * VALDIATE EXTERNAL INPUT DATA
@@ -954,7 +914,8 @@ public class ExtFinanceUploadService {
 		}
 
 		// Check whether Finance already exists with same reference and return if so
-		if (getFinanceDetailService()!=null && getFinanceDetailService().isFinReferenceExits(extFinData.getFinReference(), "", false)) {
+		if (getFinanceDetailService() != null
+				&& getFinanceDetailService().isFinReferenceExits(extFinData.getFinReference(), "", false)) {
 			extFinData.setRecordStatus("E");
 			extFinData.setErrDesc(ErrorUtil.getErrorDetail(
 					new ErrorDetails("30506", "", new String[] { "Finance Reference", extFinData.getFinReference() }),
@@ -971,22 +932,22 @@ public class ExtFinanceUploadService {
 		financeMain.setGrcRateBasis(finType.getFinGrcRateType());//Added by Ravi
 
 		try {
-			if(getCustomerDAO()!=null){
-			customer = getCustomerDAO().getCustomerByCIF(extFinData.getLovDescCustCIF(), "");
+			if (getCustomerDAO() != null) {
+				customer = getCustomerDAO().getCustomerByCIF(extFinData.getLovDescCustCIF(), "");
 
-			if (customer == null) {
-				extFinData.setRecordStatus("E");
-				extFinData.setErrDesc(ErrorUtil.getErrorDetail(
-						new ErrorDetails("41002", "", new String[] { "Customer", extFinData.getLovDescCustCIF() }),
-						userLangauge).getError());
-				return extFinData;
-			}
+				if (customer == null) {
+					extFinData.setRecordStatus("E");
+					extFinData.setErrDesc(ErrorUtil.getErrorDetail(
+							new ErrorDetails("41002", "", new String[] { "Customer", extFinData.getLovDescCustCIF() }),
+							userLangauge).getError());
+					return extFinData;
+				}
 
-			financeMain.setCustID(customer.getCustID());
-			financeMain.setLovDescCustCIF(extFinData.getLovDescCustCIF());
-			financeMain.setLovDescCustFName(customer.getCustFName());
-			financeMain.setLovDescCustShrtName(customer.getCustShrtName());
-			}else{
+				financeMain.setCustID(customer.getCustID());
+				financeMain.setLovDescCustCIF(extFinData.getLovDescCustCIF());
+				financeMain.setLovDescCustFName(customer.getCustFName());
+				financeMain.setLovDescCustShrtName(customer.getCustShrtName());
+			} else {
 				financeMain.setLovDescCustCIF(extFinData.getLovDescCustCIF());
 			}
 		} catch (Exception e) {
@@ -1010,7 +971,7 @@ public class ExtFinanceUploadService {
 		financeMain.setDownPayAccount(financeMain.getRepayAccountId());
 		financeMain.setDefferments(finType.getFinDftTerms());
 
-		if (finType.isAlwPlanDeferment()  ) {
+		if (finType.isAlwPlanDeferment()) {
 			financeMain.setPlanDeferCount(finType.getPlanDeferCount());
 		}
 
@@ -1152,7 +1113,7 @@ public class ExtFinanceUploadService {
 				.getFinSourceID());
 
 		// Set recal type from finance type
-		if (finType!= null && finType.isFinIsRvwAlw()) {
+		if (finType != null && finType.isFinIsRvwAlw()) {
 			financeMain.setRecalType(finType.getFinSchCalCodeOnRvw());
 		} else {
 			financeMain.setRecalType("");
@@ -1177,6 +1138,7 @@ public class ExtFinanceUploadService {
 				+ DateUtility.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 		return extFinData;
 	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -1325,7 +1287,7 @@ public class ExtFinanceUploadService {
 	public void setEngineExecution(AccountEngineExecution engineExecution) {
 		this.engineExecution = engineExecution;
 	}
-	
+
 	public RequestDetail getRequestDetail() {
 		return requestDetail;
 	}
@@ -1341,5 +1303,5 @@ public class ExtFinanceUploadService {
 	public void setFinTypeAccountingDAO(FinTypeAccountingDAO finTypeAccountingDAO) {
 		this.finTypeAccountingDAO = finTypeAccountingDAO;
 	}
-	
+
 }
