@@ -228,15 +228,18 @@ public class AECommitment {
 	}
 
 	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> feeMap = new HashMap<String, Object>();	
+		HashMap<String, Object> aeCommitmentMap = new HashMap<String, Object>();	
+		return getDeclaredFieldValues(aeCommitmentMap);
+	}
+	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> aeCommitmentMap) {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
-				feeMap.put(this.getClass().getDeclaredFields()[i].getName(), this.getClass().getDeclaredFields()[i].get(this));
+				aeCommitmentMap.put(this.getClass().getDeclaredFields()[i].getName(), this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				// Nothing TO DO
 			}
 		}
-		return feeMap;
+		return aeCommitmentMap;
 	}
 
 }
