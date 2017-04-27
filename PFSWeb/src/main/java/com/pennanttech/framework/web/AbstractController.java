@@ -58,7 +58,6 @@ import com.pennant.UserWorkspace;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.NotesService;
 import com.pennant.backend.service.UserService;
@@ -70,7 +69,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.pagging.PagedBindingListWrapper;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperators;
@@ -1116,11 +1114,6 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	 */
 	public String getUsrFinAuthenticationQry(boolean isForReports) {
 		StringBuilder wherQuery = new StringBuilder();
-		boolean buildQry=false;
-		if (getUserWorkspace().getDivisionBranches() == null) {
-			getUserWorkspace().setDivisionBranches(
-					PennantAppUtil.getSecurityUserDivList(getUserWorkspace().getLoggedInUser().getLoginUsrID()));
-		}
 
 		String divisionField = "";
 		if (isForReports) {
@@ -1128,29 +1121,13 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		} else {
 			divisionField = "lovDescFinDivision";
 		}
-
-		for (SecurityUserDivBranch divisionBranch : getUserWorkspace().getDivisionBranches()) {
-			
-			if(buildQry){
-				wherQuery.append(" or ");
-			}
-			wherQuery.append(" (");
+			wherQuery.append(" FinBranch In( Select UserBranch from SecurityUserDivBranch where userDivision =");
 			wherQuery.append(divisionField);
-			wherQuery.append(" ='");
-			
-			wherQuery.append(divisionBranch.getUserDivision());
-			wherQuery.append("' ) And FinBranch In( Select UserBranch from SecurityUserDivBranch where userDivision ='");
-			wherQuery.append(divisionBranch.getUserDivision());
-			wherQuery.append("' and usrid =");
+			wherQuery.append(" and usrid =");
 			wherQuery.append(getUserWorkspace().getLoggedInUser().getLoginUsrID());
 			wherQuery.append(")");
-			buildQry=true;
-		}
 		
-		if(buildQry){
 			return wherQuery.toString();	
-		}
-		return null;
 	}
 
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
