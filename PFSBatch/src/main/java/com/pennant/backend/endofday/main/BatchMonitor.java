@@ -63,6 +63,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.DateUtility;
+import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.App.Database;
 
 public class BatchMonitor {
 	private final static Logger logger = Logger.getLogger(BatchMonitor.class);
@@ -231,10 +233,16 @@ public class BatchMonitor {
 				statement = connection.createStatement();
 				StringBuilder query = new StringBuilder();	
 
-				query.append(" SELECT AVG(DATEDIFF (millisecond, START_TIME, END_TIME)) avg FROM");
-				query.append(" (SELECT * FROM BATCH_JOB_EXECUTION WHERE JOB_INSTANCE_ID NOT IN(SELECT JOB_INSTANCE_ID");
-				query.append(" FROM BATCH_JOB_EXECUTION WHERE STATUS IN ('FAILED', 'STARTED', 'STOPPED'))) T");
+				if (App.DATABASE == Database.ORACLE) {
+					query.append("  SELECT CEIL(AVG((END_TIME-START_TIME)*24*60*60*1000))  avg FROM");
+					query.append("  (SELECT * FROM BATCH_JOB_EXECUTION WHERE JOB_INSTANCE_ID NOT IN(SELECT JOB_INSTANCE_ID");
+					query.append("  FROM BATCH_JOB_EXECUTION WHERE STATUS IN ('FAILED', 'STARTED', 'STOPPED'))) T");
 
+				} else {
+					query.append(" SELECT AVG(DATEDIFF (millisecond, START_TIME, END_TIME))  avg FROM");
+					query.append(" (SELECT * FROM BATCH_JOB_EXECUTION WHERE JOB_INSTANCE_ID NOT IN(SELECT JOB_INSTANCE_ID");
+					query.append(" FROM BATCH_JOB_EXECUTION WHERE STATUS IN ('FAILED', 'STARTED', 'STOPPED')))  T");
+				}
 				resultSet = statement.executeQuery(query.toString());
 				if (resultSet.next()) {
 					avgTime = resultSet.getLong(1);

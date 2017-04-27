@@ -29,14 +29,14 @@
 			<fail on="FAILED" />
 		</step>
 		<step id="microEOD">
-			<tasklet ref="microEODTaskLet" >
+			<tasklet allow-start-if-complete="true" ref="microEODTaskLet"  >
 			<transaction-attributes propagation="NEVER"/>	
 			</tasklet>
 			<next on="*" to="microEODMonitor" />
 			<fail on="FAILED" />
 		</step>
 		<step id="microEODMonitor">
-			<tasklet ref="microEODMonitorTaskLet" />
+			<tasklet allow-start-if-complete="true" ref="microEODMonitorTaskLet" />
 			<next on="*" to="microEODDecision" />
 			<fail on="FAILED" />
 		</step>

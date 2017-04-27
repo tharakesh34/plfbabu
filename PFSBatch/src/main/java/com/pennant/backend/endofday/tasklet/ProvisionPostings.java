@@ -48,6 +48,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -74,40 +75,39 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.util.BatchUtil;
 
-public class ProvisionPostings  implements Tasklet {
-	private Logger logger = Logger.getLogger(ProvisionPostings.class);
-	
-	private FinanceMainDAO financeMainDAO;
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private FinanceProfitDetailDAO financeProfitDetailDAO;
-	private PostingsPreparationUtil postingsPreparationUtil;
-	private ProvisionDAO provisionDAO;
-	private ProvisionMovementDAO provisionMovementDAO;
-	private DataSource dataSource;
-	
-	private Date dateValueDate = null;
-	private Date dateAppDate = null;
-	
-	int postings = 0;
-	int processed = 0;
-	
+public class ProvisionPostings implements Tasklet {
+	private Logger						logger			= Logger.getLogger(ProvisionPostings.class);
+
+	private FinanceMainDAO				financeMainDAO;
+	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
+	private FinanceProfitDetailDAO		financeProfitDetailDAO;
+	private PostingsPreparationUtil		postingsPreparationUtil;
+	private ProvisionDAO				provisionDAO;
+	private ProvisionMovementDAO		provisionMovementDAO;
+	private DataSource					dataSource;
+
+	private Date						dateValueDate	= null;
+	private Date						dateAppDate		= null;
+
+	int									postings		= 0;
+	int									processed		= 0;
+
 	public ProvisionPostings() {
-		
+
 	}
-	
+
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		dateValueDate = DateUtility.getValueDate();
 		dateAppDate = DateUtility.getAppDate();
 
 		logger.debug("START: Provision Postings for Value Date: " + dateValueDate);
-		
+
 		//Process for Provision Posting IF only Bank Allowed for ALLOWED AUTO PROVISION
 		String alwAutoProv = SysParamUtil.getValueAsString("ALW_PROV_EOD");
-		if("Y".equals(alwAutoProv)){
+		if ("Y".equals(alwAutoProv)) {
 
 			// READ REPAYMENTS DUE TODAY
 			Connection connection = null;
@@ -120,17 +120,16 @@ public class ProvisionPostings  implements Tasklet {
 				connection = DataSourceUtils.doGetConnection(getDataSource());
 				sqlStatement = connection.prepareStatement(getCountQuery());
 				resultSet = sqlStatement.executeQuery();
-				int count=0;
+				int count = 0;
 				if (resultSet.next()) {
-					count=resultSet.getInt(1);
+					count = resultSet.getInt(1);
 				}
-				BatchUtil.setExecution(context,  "TOTAL", String.valueOf(count));
+				BatchUtil.setExecution(context, "TOTAL", String.valueOf(count));
 				sqlStatement.close();
 				resultSet.close();
-				
+
 				sqlStatement = connection.prepareStatement(prepareProvMovementSelectQuery());
 				resultSet = sqlStatement.executeQuery();
-
 
 				FinanceMain financeMain = null;
 				List<FinanceScheduleDetail> schdDetails = null;
@@ -141,7 +140,8 @@ public class ProvisionPostings  implements Tasklet {
 					ProvisionMovement movement = prepareProvisionMovementData(resultSet);
 
 					financeMain = getFinanceMainDAO().getFinanceMainForBatch(resultSet.getString("FinReference"));
-					schdDetails = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(resultSet.getString("FinReference"));
+					schdDetails = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(
+							resultSet.getString("FinReference"));
 
 					pftDetail = new FinanceProfitDetail();
 					pftDetail.setFinReference(resultSet.getString("FinReference"));
@@ -149,68 +149,71 @@ public class ProvisionPostings  implements Tasklet {
 					pftDetail.setPftAmzSusp(resultSet.getBigDecimal("PftAmzSusp"));
 					pftDetail.setAmzTillLBD(resultSet.getBigDecimal("AmzTillLBD"));
 
-					AEAmountCodes amountCodes = AEAmounts.procAEAmounts(financeMain, schdDetails, pftDetail, dateValueDate);
-					DataSet dataSet = AEAmounts.createDataSet(financeMain, AccountEventConstants.ACCEVENT_PROVSN, dateValueDate, resultSet.getDate("DueFromDate"));
-					dataSet.setNewRecord(false);
-					amountCodes.setPROVDUE(movement.getProvisionDue());
+					Date dueFromDate = resultSet.getDate("DueFromDate");
+					AEAmountCodes amountCodes = AEAmounts.procAEAmounts(financeMain, schdDetails, pftDetail,
+							AccountEventConstants.ACCEVENT_PROVSN, dateValueDate, dueFromDate);
+					amountCodes.setProvDue(movement.getProvisionDue());
 					amountCodes.setProvAmt(movement.getProvisionedAmt());
 
+					HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+
 					//Provision Posting Process
-					List<Object> odObjDetails = getPostingsPreparationUtil().processPostingDetails(dataSet, amountCodes, true,
-							resultSet.getBoolean("AllowRIAInvestment"), "Y", dateAppDate, false, Long.MIN_VALUE);
-					
-					if(odObjDetails!=null && !odObjDetails.isEmpty()) {
-						if((Boolean)odObjDetails .get(0)) {
-							
+					List<Object> odObjDetails = getPostingsPreparationUtil().processPostingDetails(executingMap, true,
+							"Y", dateAppDate, false, Long.MIN_VALUE);
+
+					if (odObjDetails != null && !odObjDetails.isEmpty()) {
+						if ((Boolean) odObjDetails.get(0)) {
+
 							movement.setProvisionedAmt(movement.getProvisionedAmt().add(movement.getProvisionDue()));
 							movement.setProvisionDue(BigDecimal.ZERO);
 							movement.setProvisionPostSts("C");
-							movement.setLinkedTranId((Long)odObjDetails.get(1));
+							movement.setLinkedTranId((Long) odObjDetails.get(1));
 
 							//Update Provision Movement Details
 							getProvisionDAO().updateProvAmt(movement, "");
 							getProvisionMovementDAO().update(movement, "");
-							
+
 							postings++;
 						}
 					}
 					odObjDetails = null;
 					pftDetail = null;
-					
+
 					processed = resultSet.getRow();
-					
-					BatchUtil.setExecution(context,  "PROCESSED", String.valueOf(processed));
-					BatchUtil.setExecution(context,  "INFO", getInfo());
+
+					BatchUtil.setExecution(context, "PROCESSED", String.valueOf(processed));
+					BatchUtil.setExecution(context, "INFO", getInfo());
 				}
-				
-				BatchUtil.setExecution(context,  "PROCESSED", String.valueOf(processed));
-				BatchUtil.setExecution(context,  "INFO", getInfo());
+
+				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(processed));
+				BatchUtil.setExecution(context, "INFO", getInfo());
 
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
 				throw e;
-			}  finally {
-				if(resultSet != null) {
+			} finally {
+				if (resultSet != null) {
 					resultSet.close();
 				}
-				
-				if(sqlStatement != null) {
+
+				if (sqlStatement != null) {
 					sqlStatement.close();
 				}
 			}
 		}
-		logger.debug("COMPLETED: Provision Postings for Value Date: "+ dateValueDate);
+		logger.debug("COMPLETED: Provision Postings for Value Date: " + dateValueDate);
 		return RepeatStatus.FINISHED;
 	}
 
 	/**
 	 * Method for Preparation for Provision Movement Details
+	 * 
 	 * @param provision
 	 * @param valueDate
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
-	private ProvisionMovement prepareProvisionMovementData(ResultSet resultSet) throws SQLException{
-		
+	private ProvisionMovement prepareProvisionMovementData(ResultSet resultSet) throws SQLException {
+
 		ProvisionMovement movement = new ProvisionMovement();
 		movement.setFinReference(resultSet.getString("FinReference"));
 		movement.setProvMovementDate(resultSet.getDate("ProvMovementDate"));
@@ -219,51 +222,54 @@ public class ProvisionPostings  implements Tasklet {
 		movement.setProvisionDue(resultSet.getBigDecimal("ProvisionDue"));
 		movement.setProvisionedAmt(resultSet.getBigDecimal("ProvisionedAmt"));
 		return movement;
-		
+
 	}
-	
+
 	/**
 	 * Method for get count of Provisions
-	 * @return selQuery 
+	 * 
+	 * @return selQuery
 	 */
 	private String getCountQuery() {
-		
-		StringBuilder selQuery = new StringBuilder(" SELECT count(T1.FinReference)" );
-		selQuery.append(" FROM FinProvMovements AS T1 " );
-		selQuery.append(" INNER JOIN FinanceMain AS T2 ON T1.FinReference = T2.FinReference " );
-		selQuery.append(" INNER JOIN FinPftDetails AS T4 ON T1.FinReference = T4.FinReference " );
-		selQuery.append(" INNER JOIN RMTFinanceTypes AS T3 ON T2.FinType = T3.FinType " );
-		selQuery.append(" WHERE T1.ProvisionPostSts = 'R'" );
+
+		StringBuilder selQuery = new StringBuilder(" SELECT count(T1.FinReference)");
+		selQuery.append(" FROM FinProvMovements AS T1 ");
+		selQuery.append(" INNER JOIN FinanceMain AS T2 ON T1.FinReference = T2.FinReference ");
+		selQuery.append(" INNER JOIN FinPftDetails AS T4 ON T1.FinReference = T4.FinReference ");
+		selQuery.append(" INNER JOIN RMTFinanceTypes AS T3 ON T2.FinType = T3.FinType ");
+		selQuery.append(" WHERE T1.ProvisionPostSts = 'R'");
 		return selQuery.toString();
-		
+
 	}
-	
+
 	/**
 	 * Method for preparation of Select Query To get Provision Details data
+	 * 
 	 * @param selQuery
 	 * @return
 	 */
 	private String prepareProvMovementSelectQuery() {
-		
-		StringBuilder selQuery = new StringBuilder(" SELECT T1.FinReference,T1.ProvMovementDate,T1.ProvMovementSeq , T1.DueFromDate, ");
-		selQuery.append(" T1.ProvisionedAmt, T1.ProvisionDue, T3.AllowRIAInvestment, T4.AcrTillLBD, T4.PftAmzSusp, T4.AmzTillLBD " );
-		selQuery.append(" FROM FinProvMovements AS T1 " );
-		selQuery.append(" INNER JOIN FinanceMain AS T2 ON T1.FinReference = T2.FinReference " );
-		selQuery.append(" INNER JOIN FinPftDetails AS T4 ON T1.FinReference = T4.FinReference " );
-		selQuery.append(" INNER JOIN RMTFinanceTypes AS T3 ON T2.FinType = T3.FinType " );
-		selQuery.append(" WHERE T1.ProvisionPostSts = 'R'" );
+
+		StringBuilder selQuery = new StringBuilder(
+				" SELECT T1.FinReference,T1.ProvMovementDate,T1.ProvMovementSeq , T1.DueFromDate, ");
+		selQuery.append(" T1.ProvisionedAmt, T1.ProvisionDue, T3.AllowRIAInvestment, T4.AcrTillLBD, T4.PftAmzSusp, T4.AmzTillLBD ");
+		selQuery.append(" FROM FinProvMovements AS T1 ");
+		selQuery.append(" INNER JOIN FinanceMain AS T2 ON T1.FinReference = T2.FinReference ");
+		selQuery.append(" INNER JOIN FinPftDetails AS T4 ON T1.FinReference = T4.FinReference ");
+		selQuery.append(" INNER JOIN RMTFinanceTypes AS T3 ON T2.FinType = T3.FinType ");
+		selQuery.append(" WHERE T1.ProvisionPostSts = 'R'");
 		return selQuery.toString();
-		
+
 	}
-	
+
 	private String getInfo() {
 		StringBuilder builder = new StringBuilder();
 
 		builder.append("Total Provision Posting's").append(": ").append(postings);
-		
+
 		return builder.toString();
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -271,37 +277,39 @@ public class ProvisionPostings  implements Tasklet {
 	public FinanceMainDAO getFinanceMainDAO() {
 		return financeMainDAO;
 	}
+
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
-	
+
 	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
 		return financeScheduleDetailDAO;
 	}
-	public void setFinanceScheduleDetailDAO(
-			FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
-	
+
 	public FinanceProfitDetailDAO getFinanceProfitDetailDAO() {
 		return financeProfitDetailDAO;
 	}
-	public void setFinanceProfitDetailDAO(
-			FinanceProfitDetailDAO financeProfitDetailDAO) {
+
+	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
 		this.financeProfitDetailDAO = financeProfitDetailDAO;
 	}
-	
+
 	public PostingsPreparationUtil getPostingsPreparationUtil() {
 		return postingsPreparationUtil;
 	}
-	public void setPostingsPreparationUtil(
-			PostingsPreparationUtil postingsPreparationUtil) {
+
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
-	
+
 	public ProvisionDAO getProvisionDAO() {
 		return provisionDAO;
 	}
+
 	public void setProvisionDAO(ProvisionDAO provisionDAO) {
 		this.provisionDAO = provisionDAO;
 	}
@@ -309,6 +317,7 @@ public class ProvisionPostings  implements Tasklet {
 	public ProvisionMovementDAO getProvisionMovementDAO() {
 		return provisionMovementDAO;
 	}
+
 	public void setProvisionMovementDAO(ProvisionMovementDAO provisionMovementDAO) {
 		this.provisionMovementDAO = provisionMovementDAO;
 	}
@@ -316,6 +325,7 @@ public class ProvisionPostings  implements Tasklet {
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
+
 	public DataSource getDataSource() {
 		return dataSource;
 	}

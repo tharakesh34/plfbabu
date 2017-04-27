@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -21,8 +22,6 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.core.ServiceHelper;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.rulefactory.DataSet;
-import com.pennant.backend.model.rulefactory.DataSetFiller;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.BatchUtil;
 
@@ -116,25 +115,22 @@ public class PostStudyAndDocFee extends ServiceHelper implements Tasklet {
 					}
 
 					if (upFrontCalcualted || amzCalculated) {
-
-						//DataSet Object preparation for AccountingSet Execution
-						DataSet dataSet = new DataSet();
-						dataSet.setFinReference(custref + limitRef);
-						dataSet.setFinBranch("9999");
-						dataSet.setFinType("");
-						dataSet.setFinEvent(AccountEventConstants.STUDY_DOCUMENTATION);
-
-						DataSetFiller filler = new DataSetFiller();
-						if (upFrontCalcualted) {
-							filler.setUpFrontSDFee(upFrontFee);
-						} else {
-							filler.setUpFrontSDFee(BigDecimal.ZERO);
-						}
-
-						filler.setTdSDFeeAmz(amortizedToday);
 						//Postings Process
+						HashMap<String, Object> executingMap = new HashMap<String, Object>();
+						executingMap.put("fm_finReference", custref + limitRef);
+						executingMap.put("finEvent", AccountEventConstants.STUDY_DOCUMENTATION);
+						executingMap.put("fm_finBranch", "9999");
+						executingMap.put("fm_finType", "");
+						BigDecimal fxAmount = BigDecimal.ZERO;
+						if (upFrontCalcualted) {
+							fxAmount = upFrontFee;
+						} 
+						executingMap.put("UpFrontSDFee", fxAmount);
+						executingMap.put("TdSDFeeAmz", amortizedToday);
 
-						List<ReturnDataSet> list = processAccountingByEvent(dataSet, filler, AccountEventConstants.STUDY_DOCUMENTATION);
+						//Postings Process
+						List<ReturnDataSet> list = processAccountingByEvent(executingMap);
+						
 						saveAccounting(list);
 					}
 					//update details

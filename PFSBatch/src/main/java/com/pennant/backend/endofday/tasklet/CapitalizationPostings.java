@@ -50,6 +50,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -69,8 +70,6 @@ import com.pennant.app.util.SuspensePostingUtil;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.DataSet;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.exception.PFFInterfaceException;
 
 public class CapitalizationPostings implements Tasklet {
@@ -134,30 +133,21 @@ public class CapitalizationPostings implements Tasklet {
 
 				// **** Accounting Set Execution for Amortization ******//
 
-				//DataSet Object preparation for AccountingSet Execution
-				DataSet dataSet = new DataSet();
-				dataSet.setFinReference(resultSet.getString("FinReference"));
-				dataSet.setFinEvent(AccountEventConstants.ACCEVENT_COMPOUND);
-				dataSet.setFinBranch(resultSet.getString("FinBranch"));
-				dataSet.setFinCcy(resultSet.getString("FinCcy"));
-				dataSet.setPostDate(dateAppDate);
-				dataSet.setValueDate(dateValueDate);
-				dataSet.setSchdDate(resultSet.getDate("NextRepayDate"));
-				dataSet.setFinType(resultSet.getString("FinType"));
-				dataSet.setCustId(resultSet.getLong("CustID"));
-				dataSet.setDisburseAccount(resultSet.getString("DisbAccountId"));
-				dataSet.setRepayAccount(resultSet.getString("RepayAccountId"));
-				dataSet.setFinAccount(resultSet.getString("FinAccount"));
-				dataSet.setFinCustPftAccount(resultSet.getString("FinCustPftAccount"));
-				dataSet.setFinAmount(resultSet.getBigDecimal("FinAmount"));
-				dataSet.setDisburseAmount(resultSet.getBigDecimal("DisburseAmount"));
-				dataSet.setDownPayment(resultSet.getBigDecimal("DownPayment"));
-				dataSet.setNoOfTerms(resultSet.getInt("NumberOfTerms") + resultSet.getInt("GraceTerms"));
-				dataSet.setNewRecord(false);
+				amountCodes.setFinReference(resultSet.getString("FinReference"));
+				amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_COMPOUND);
+				amountCodes.setBranch(resultSet.getString("FinBranch"));
+				amountCodes.setCcy(resultSet.getString("FinCcy"));
+				amountCodes.setPostDate(dateAppDate);
+				amountCodes.setValueDate(dateValueDate);
+				amountCodes.setSchdDate(resultSet.getDate("NextRepayDate"));
+				amountCodes.setFinType(resultSet.getString("FinType"));
+				amountCodes.setCustID(resultSet.getLong("CustID"));
+
+				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
 				//Postings Process
-				getPostingsPreparationUtil().processPostingDetails(dataSet, amountCodes, true,
-						resultSet.getBoolean("AllowRIAInvestment"), "Y", dateAppDate, false, Long.MIN_VALUE);
+				getPostingsPreparationUtil().processPostingDetails(executingMap, true, "Y", dateAppDate, false,
+						Long.MIN_VALUE);
 
 				//Update Finance Profit Details
 				pftDetail = new FinanceProfitDetail();
@@ -169,16 +159,6 @@ public class CapitalizationPostings implements Tasklet {
 					getFinanceProfitDetailDAO().updateCpzDetail(pftDetailsList, "");
 					pftDetailsList.clear();
 				}
-
-				//Capitalization Release from Suspense
-				amountCodes.setSUSPRLS(resultSet.getBigDecimal("CpzAmount"));
-				dataSet.setFinEvent(AccountEventConstants.ACCEVENT_PIS_NORM);
-				getSuspensePostingUtil().capitalizationSuspRelease(dataSet, amountCodes, true,
-						resultSet.getBoolean("AllowRIAInvestment"));
-
-				jobExecutionContext.putInt(context.getStepContext().getStepExecution().getStepName() + "_FIELD_COUNT",
-						resultSet.getRow());
-
 			}
 
 			if (pftDetailsList.size() > 0) {
@@ -224,23 +204,19 @@ public class CapitalizationPostings implements Tasklet {
 	 */
 	private String prepareSelectQuery() {
 
-		StringBuilder selQuery = new StringBuilder(
-				" SELECT T1.FinReference, T1.FinBranch, T1.FinType, T1.FinAccount, T1.FinCustPftAccount,");
-		selQuery.append(" T1.FinCcy ,T1.NextRepayDate ,T1.CustID , T1.DisbAccountId , T1.RepayAccountId , T1.GraceTerms, ");
-		selQuery.append(" T2.CpzAmount, T1.FinAmount  DisburseAmount , (T1.FinAmount - T1.FinRepaymentAmount)  FinAmount ,");
-		selQuery.append(" T1.DownPayment , T1.NumberOfTerms ,T1.TotalCpz ,");
+		StringBuilder selQuery = new StringBuilder(" SELECT T1.FinReference, T1.FinBranch, T1.FinType, ");
+		selQuery.append(" T1.FinCcy , T1.CustID , T2.CpzAmount, T1.TotalCpz ,");
 		selQuery.append(" (SELECT SUM(CpzAmount)  TotCurCpzAmt FROM  FinScheduleDetails ");
 		selQuery.append(" WHERE DefSchdDate < '");
 		selQuery.append(dateValueDate);
-		selQuery.append("' )  PrvCpzAmt, T3.AllowRIAInvestment ");
+		selQuery.append("' )  PrvCpzAmt ");
 		selQuery.append(" FROM FinanceMain  T1 INNER JOIN RMTFinanceTypes  T3  ");
 		selQuery.append(" ON T1.FinType = T3.FinType , FinScheduleDetails  T2 ");
 		selQuery.append(" WHERE T1.FinReference = T2.FinReference ");
 		selQuery.append(" AND T2.DefSchdDate = '");
 		selQuery.append(dateValueDate);
 		selQuery.append("'");
-		selQuery.append(" AND T2.CpzOnSchDate= 1 AND T2.CpzAmount > 0 ");
-		selQuery.append(" AND T1.FinIsActive = 1 AND T3.FinCategory !='" + FinanceConstants.PRODUCT_SUKUK + "'");
+		selQuery.append(" AND T2.CpzOnSchDate= 1 AND T2.CpzAmount > 0 AND T1.FinIsActive = 1");
 		return selQuery.toString();
 
 	}

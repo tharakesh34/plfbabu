@@ -46,6 +46,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -70,37 +71,36 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.util.BatchUtil;
 
 public class DisbursementPostings implements Tasklet {
 
-	private Logger logger = Logger.getLogger(DisbursementPostings.class);
+	private Logger						logger			= Logger.getLogger(DisbursementPostings.class);
 
-	private FinanceMainDAO financeMainDAO;
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private FinanceProfitDetailDAO financeProfitDetailDAO;
-	private FinanceDisbursementDAO financeDisbursementDAO;
-	private PostingsPreparationUtil postingsPreparationUtil;
-	private DataSource dataSource;
+	private FinanceMainDAO				financeMainDAO;
+	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
+	private FinanceProfitDetailDAO		financeProfitDetailDAO;
+	private FinanceDisbursementDAO		financeDisbursementDAO;
+	private PostingsPreparationUtil		postingsPreparationUtil;
+	private DataSource					dataSource;
 
-	private Date dateValueDate = null;
-	private Date dateAppDate = null;
-	
-	int postings = 0;
-	int processed = 0;
-	
+	private Date						dateValueDate	= null;
+	private Date						dateAppDate		= null;
+
+	int									postings		= 0;
+	int									processed		= 0;
+
 	public DisbursementPostings() {
-		
+
 	}
-	
+
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		dateValueDate = DateUtility.getValueDate();
 		dateAppDate = DateUtility.getAppDate();
 
 		logger.debug("START: Disbursement Postings for Value Date: " + dateValueDate);
-		
+
 		// READ REPAYMENTS DUE TODAY
 		Connection connection = null;
 		ResultSet resultSet = null;
@@ -110,23 +110,23 @@ public class DisbursementPostings implements Tasklet {
 
 			connection = DataSourceUtils.doGetConnection(getDataSource());
 			sqlStatement = connection.prepareStatement(getCountQuery());
-			sqlStatement.setDate(1, (java.sql.Date)dateValueDate);
+			sqlStatement.setDate(1, (java.sql.Date) dateValueDate);
 			resultSet = sqlStatement.executeQuery();
-			int count=0;
+			int count = 0;
 			if (resultSet.next()) {
-				count=resultSet.getInt(1);
+				count = resultSet.getInt(1);
 			}
 			BatchUtil.setExecution(context, "TOTAL", Integer.toString(count));
 			resultSet.close();
 			sqlStatement.close();
 			sqlStatement = connection.prepareStatement(prepareSelectQuery());
-			sqlStatement.setDate(1, (java.sql.Date)dateValueDate);
+			sqlStatement.setDate(1, (java.sql.Date) dateValueDate);
 			resultSet = sqlStatement.executeQuery();
-			
+
 			FinanceMain financeMain = null;
 			List<FinanceScheduleDetail> scheduleDetailList = null;
 			FinanceProfitDetail finPftDetail = null;
-			
+
 			while (resultSet.next()) {
 
 				FinanceDisbursement disbursement = new FinanceDisbursement();
@@ -137,26 +137,34 @@ public class DisbursementPostings implements Tasklet {
 				financeMain = getFinanceMainDAO().getFinanceMainForBatch(resultSet.getString("FinReference"));
 				financeMain.setCurDisbursementAmt(resultSet.getBigDecimal("DisbAmount"));
 				financeMain.setDisbAccountId(resultSet.getString("DisbAccountId"));
-				scheduleDetailList = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(resultSet.getString("FinReference"));
-				
+				scheduleDetailList = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(
+						resultSet.getString("FinReference"));
+
 				finPftDetail = new FinanceProfitDetail();
 				finPftDetail.setFinReference(resultSet.getString("FinReference"));
 				finPftDetail.setAcrTillLBD(resultSet.getBigDecimal("AcrTillLBD"));
 				finPftDetail.setPftAmzSusp(resultSet.getBigDecimal("PftAmzSusp"));
 				finPftDetail.setAmzTillLBD(resultSet.getBigDecimal("AmzTillLBD"));
 
-				DataSet dataSet = AEAmounts.createDataSet(financeMain, AccountEventConstants.ACCEVENT_ADDDBSN, dateValueDate, resultSet.getDate("DisbDate"));
-				dataSet.setNewRecord(false);
-
 				//AmountCodes Preparation
-				AEAmountCodes amountCodes = AEAmounts.procAEAmounts(financeMain, scheduleDetailList, finPftDetail, dateValueDate);
+				String finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
+				Date disbDate = resultSet.getDate("DisbDate");
+
+				if (disbDate.compareTo(DateUtility.getAppDate()) > 0) {
+					finEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
+				}
+
+				AEAmountCodes amountCodes = AEAmounts.procAEAmounts(financeMain, scheduleDetailList, finPftDetail,
+						finEvent, dateValueDate, disbDate);
+
+				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
 				//Postings Process
-				List<Object> odObjDetails = getPostingsPreparationUtil().processPostingDetails(dataSet,amountCodes, true, 
-						resultSet.getBoolean("AllowRIAInvestment"), "Y", dateAppDate,false, Long.MIN_VALUE);
-				
-				if(odObjDetails!=null && !odObjDetails.isEmpty()) {
-					if((Boolean)odObjDetails .get(0)) {
+				List<Object> odObjDetails = getPostingsPreparationUtil().processPostingDetails(executingMap, true, "Y",
+						dateAppDate, false, Long.MIN_VALUE);
+
+				if (odObjDetails != null && !odObjDetails.isEmpty()) {
+					if ((Boolean) odObjDetails.get(0)) {
 						postings++;
 					}
 				}
@@ -164,26 +172,26 @@ public class DisbursementPostings implements Tasklet {
 				//Disbursement Details Updation
 				disbursement.setDisbDisbursed(true);
 				getFinanceDisbursementDAO().updateBatchDisb(disbursement, "");
-				
+
 				processed = resultSet.getRow();
-				BatchUtil.setExecution(context,  "PROCESSED", String.valueOf(processed));
-				BatchUtil.setExecution(context,  "INFO", getInfo());
-				
+				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(processed));
+				BatchUtil.setExecution(context, "INFO", getInfo());
+
 				finPftDetail = null;
-				
+
 			}
-			
-			BatchUtil.setExecution(context,  "PROCESSED", String.valueOf(processed));
-			BatchUtil.setExecution(context,  "INFO", getInfo());
-			
+
+			BatchUtil.setExecution(context, "PROCESSED", String.valueOf(processed));
+			BatchUtil.setExecution(context, "INFO", getInfo());
+
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;
 		} finally {
-			if(resultSet !=null) {
+			if (resultSet != null) {
 				resultSet.close();
 			}
-			if(sqlStatement != null) {
+			if (sqlStatement != null) {
 				sqlStatement.close();
 			}
 		}
@@ -191,7 +199,7 @@ public class DisbursementPostings implements Tasklet {
 		logger.debug("COMPLETE: Disbursement Postings for Value Date: " + dateValueDate);
 		return RepeatStatus.FINISHED;
 	}
-	
+
 	/**
 	 * Method for preparation of Select Query To get Schedule data
 	 * 
@@ -199,15 +207,15 @@ public class DisbursementPostings implements Tasklet {
 	 * @return
 	 */
 	private String getCountQuery() {
-		
-		StringBuilder selQuery = new StringBuilder(" SELECT count(T1.FinReference)" );
-		selQuery.append(" FROM FinDisbursementDetails  T1 " );
-		selQuery.append(" INNER JOIN FinanceMain  T2 ON T1.FinReference = T2.FinReference " );
-		selQuery.append(" INNER JOIN FinPftDetails  T4 ON T1.FinReference = T4.FinReference " );
-		selQuery.append(" INNER JOIN RMTFinanceTypes  T3 ON T2.FinType = T3.FinType " );
+
+		StringBuilder selQuery = new StringBuilder(" SELECT count(T1.FinReference)");
+		selQuery.append(" FROM FinDisbursementDetails  T1 ");
+		selQuery.append(" INNER JOIN FinanceMain  T2 ON T1.FinReference = T2.FinReference ");
+		selQuery.append(" INNER JOIN FinPftDetails  T4 ON T1.FinReference = T4.FinReference ");
+		selQuery.append(" INNER JOIN RMTFinanceTypes  T3 ON T2.FinType = T3.FinType ");
 		selQuery.append(" WHERE T1.DisbDisbursed = 0 AND T1.DisbDate =?");
 		return selQuery.toString();
-		
+
 	}
 
 	/**
@@ -217,24 +225,25 @@ public class DisbursementPostings implements Tasklet {
 	 * @return
 	 */
 	private String prepareSelectQuery() {
-		
-		StringBuilder selQuery = new StringBuilder(" SELECT T1.FinReference, T1.DisbDate, T1.DisbSeq, T1.DisbAccountId, T1.DisbAmount, " );
-		selQuery.append(" T1.DisbDisbursed, T1.DisbRemarks, T3.AllowRIAInvestment, T4.AcrTillLBD, T4.PftAmzSusp, T4.AmzTillLBD " );
-		selQuery.append(" FROM FinDisbursementDetails  T1 " );
-		selQuery.append(" INNER JOIN FinanceMain  T2 ON T1.FinReference = T2.FinReference " );
-		selQuery.append(" INNER JOIN FinPftDetails  T4 ON T1.FinReference = T4.FinReference " );
-		selQuery.append(" INNER JOIN RMTFinanceTypes  T3 ON T2.FinType = T3.FinType " );
+
+		StringBuilder selQuery = new StringBuilder(
+				" SELECT T1.FinReference, T1.DisbDate, T1.DisbSeq, T1.DisbAccountId, T1.DisbAmount, ");
+		selQuery.append(" T1.DisbDisbursed, T1.DisbRemarks, T3.AllowRIAInvestment, T4.AcrTillLBD, T4.PftAmzSusp, T4.AmzTillLBD ");
+		selQuery.append(" FROM FinDisbursementDetails  T1 ");
+		selQuery.append(" INNER JOIN FinanceMain  T2 ON T1.FinReference = T2.FinReference ");
+		selQuery.append(" INNER JOIN FinPftDetails  T4 ON T1.FinReference = T4.FinReference ");
+		selQuery.append(" INNER JOIN RMTFinanceTypes  T3 ON T2.FinType = T3.FinType ");
 		selQuery.append(" WHERE T1.DisbDisbursed = 0 AND T1.DisbDate =?");
 		return selQuery.toString();
-		
+
 	}
-	
+
 	private String getInfo() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Total Depreciation Posting's").append(": ").append(postings);
 		return builder.toString();
 	}
-		
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -242,6 +251,7 @@ public class DisbursementPostings implements Tasklet {
 	public FinanceMainDAO getFinanceMainDAO() {
 		return financeMainDAO;
 	}
+
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
@@ -249,22 +259,23 @@ public class DisbursementPostings implements Tasklet {
 	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
 		return financeScheduleDetailDAO;
 	}
-	public void setFinanceScheduleDetailDAO(
-			FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
 	public FinanceProfitDetailDAO getFinanceProfitDetailDAO() {
 		return financeProfitDetailDAO;
 	}
-	public void setFinanceProfitDetailDAO(
-			FinanceProfitDetailDAO financeProfitDetailDAO) {
+
+	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
 		this.financeProfitDetailDAO = financeProfitDetailDAO;
 	}
 
 	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
 		this.financeDisbursementDAO = financeDisbursementDAO;
 	}
+
 	public FinanceDisbursementDAO getFinanceDisbursementDAO() {
 		return financeDisbursementDAO;
 	}
@@ -272,13 +283,15 @@ public class DisbursementPostings implements Tasklet {
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
+
 	public PostingsPreparationUtil getPostingsPreparationUtil() {
 		return postingsPreparationUtil;
 	}
-	
+
 	public DataSource getDataSource() {
 		return dataSource;
 	}
+
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}

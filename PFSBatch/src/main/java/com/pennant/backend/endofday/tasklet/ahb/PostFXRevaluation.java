@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -23,8 +24,6 @@ import com.pennant.app.core.ServiceHelper;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.rulefactory.DataSet;
-import com.pennant.backend.model.rulefactory.DataSetFiller;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.BatchUtil;
 
@@ -81,16 +80,15 @@ public class PostFXRevaluation extends ServiceHelper implements Tasklet {
 					BigDecimal fxAmount = postAmtLcCcyNow.subtract(postAmtLcCcy);
 
 					//DataSet Object preparation for AccountingSet Execution
-					DataSet dataSet = new DataSet();
-					dataSet.setFinReference(finRef);
-					dataSet.setFinBranch("9999");
-					dataSet.setFinType("");
-					dataSet.setFinEvent(AccountEventConstants.FX_REVALUATION);
+					HashMap<String, Object> executingMap = new HashMap<String, Object>();
+					executingMap.put("fm_finReference", finRef);
+					executingMap.put("finEvent", AccountEventConstants.FX_REVALUATION);
+					executingMap.put("fm_finBranch", "9999");
+					executingMap.put("fm_finType", "");
+					executingMap.put("fxAmount", fxAmount);
 
-					DataSetFiller filler = new DataSetFiller();
 					//Postings Process
-					filler.setFxAmount(fxAmount);
-					List<ReturnDataSet> list = processAccountingByEvent(dataSet, filler, AccountEventConstants.FX_REVALUATION);
+					List<ReturnDataSet> list = processAccountingByEvent(executingMap);
 					saveAccounting(list);
 
 				}

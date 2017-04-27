@@ -78,6 +78,13 @@
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 	</bean>
 
+	<!-- NPA Service -->
+	<bean id="npaService" class="com.pennant.app.core.NPAService" parent="serviceHelper">
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="provisionDAO" ref="provisionDAO" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+	</bean>
+
 
 	<!-- Suspense -->
 	<bean id="coreSuspenseService" class="com.pennant.app.core.SuspenseService" parent="serviceHelper">
@@ -88,6 +95,10 @@
 	</bean>
 	<!-- Accrual -->
 	<bean id="accrualService" class="com.pennant.app.core.AccrualService" parent="serviceHelper">
+		<property name="suspHeadDAO" ref="financeSuspHeadDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
 	</bean>
 	<!-- Finance Status movements -->
 	<bean id="statusMovementService" class="com.pennant.app.core.StatusMovementService" parent="serviceHelper">
@@ -167,6 +178,7 @@
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
 		<property name="latePayPenaltyService" ref="latePayPenaltyService" />
 		<property name="latePayInterestService" ref="latePayInterestService" />
+		<property name="npaService" ref="npaService" />
 	</bean>
 	<bean id="eodPaymentRequest" class="com.pennant.eod.EodPaymentRequest">
 		<property name="dataSource" ref="pfsDatasource" />
@@ -189,8 +201,6 @@
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 		<property name="eodProperties" ref="eodProperties" />
 		<property name="transactionManager" ref="pfsTransactionManager" />
-	</bean>
-	<bean id="thirdPartyPostingService" class="com.pennant.eod.ThirdPartyPostingService" parent="serviceHelper">
 	</bean>
 	<bean id="archivalService" class="com.pennant.eod.ArchivalService" parent="serviceHelper">
 	</bean>
