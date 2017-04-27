@@ -59,7 +59,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.BulkRateChangeProcessDAO;
 import com.pennant.backend.dao.finance.BulkRateChangeProcessDetailsDAO;
-import com.pennant.backend.dao.finance.FinancePremiumDetailDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.LoggedInUser;
@@ -94,7 +93,6 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	// DAO Classes
 	private BulkRateChangeProcessDAO bulkRateChangeProcessDAO;
 	private BulkRateChangeProcessDetailsDAO bulkRateChangeProcessDetailsDAO;
-	private FinancePremiumDetailDAO financePremiumDetailDAO;
 	private ExtendedFieldDetailDAO extendedFieldDetailDAO;
 
 	private FinanceDetailService financeDetailService;
@@ -1419,14 +1417,6 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 	public void setBulkRateChangeProcessDetailsDAO(BulkRateChangeProcessDetailsDAO bulkRateChangeProcessDetailsDAO) {
 		this.bulkRateChangeProcessDetailsDAO = bulkRateChangeProcessDetailsDAO;
-	}
-
-	public FinancePremiumDetailDAO getFinancePremiumDetailDAO() {
-		return financePremiumDetailDAO;
-	}
-
-	public void setFinancePremiumDetailDAO(FinancePremiumDetailDAO financePremiumDetailDAO) {
-		this.financePremiumDetailDAO = financePremiumDetailDAO;
 	}
 
 	public ExtendedFieldDetailDAO getExtendedFieldDetailDAO() {

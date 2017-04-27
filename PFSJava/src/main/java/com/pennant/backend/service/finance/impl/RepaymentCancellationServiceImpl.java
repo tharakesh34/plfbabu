@@ -13,7 +13,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.pennant.app.util.AEAmounts;
+import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -639,7 +639,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			List<FinanceScheduleDetail> finSchedeuleDetails = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(
 					finReference);
 			FinanceProfitDetail profitDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(finReference);
-			profitDetail = AEAmounts.calProfitDetails(financeMain, finSchedeuleDetails, profitDetail, curAppDate);
+			profitDetail = AccrualService.calProfitDetails(financeMain, finSchedeuleDetails, profitDetail, curAppDate);
 			String worstSts = getCustomerStatusCodeDAO().getFinanceStatus(profitDetail.getFinReference(), false);
 			profitDetail.setFinWorstStatus(worstSts);
 

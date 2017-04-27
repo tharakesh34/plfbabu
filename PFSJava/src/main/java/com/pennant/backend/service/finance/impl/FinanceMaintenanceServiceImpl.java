@@ -22,6 +22,7 @@ import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
+import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -41,7 +42,6 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.collateral.impl.FlagDetailValidation;
 import com.pennant.backend.service.finance.FinanceMaintenanceService;
@@ -55,19 +55,18 @@ import com.pennant.exception.PFFInterfaceException;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
-public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService implements
-        FinanceMaintenanceService {
+public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService implements FinanceMaintenanceService {
 
-	private final static Logger logger = Logger.getLogger(FinanceMaintenanceServiceImpl.class);
+	private final static Logger			logger	= Logger.getLogger(FinanceMaintenanceServiceImpl.class);
 
-	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
-	private FinanceWriteoffDAO	financeWriteoffDAO;
-	private GuarantorDetailDAO guarantorDetailDAO;
-	private JountAccountDetailDAO jountAccountDetailDAO;
-	private FlagDetailValidation	flagDetailValidation;
-	private FinFlagDetailsDAO 		finFlagDetailsDAO;
+	private FinanceReferenceDetailDAO	financeReferenceDetailDAO;
+	private FinanceWriteoffDAO			financeWriteoffDAO;
+	private GuarantorDetailDAO			guarantorDetailDAO;
+	private JountAccountDetailDAO		jountAccountDetailDAO;
+	private FlagDetailValidation		flagDetailValidation;
+	private FinFlagDetailsDAO			finFlagDetailsDAO;
 	private MandateDAO					mandateDAO;
-
+ 
 	public FinanceMaintenanceServiceImpl() {
 		super();
 	}
@@ -79,60 +78,61 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	 * @return
 	 */
 	@Override
-	public FinanceDetail getFinanceDetailById(String finReference, String type, String userRole,
-	        String procEdtEvent, String eventCode) {
+	public FinanceDetail getFinanceDetailById(String finReference, String type, String userRole, String procEdtEvent,
+			String eventCode) {
 		logger.debug("Entering");
 
 		//Finance Details
 		FinanceDetail financeDetail = new FinanceDetail();
 		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
 		scheduleData.setFinReference(finReference);
-		FinanceMain finMain = getFinanceMainDAO().getFinanceMainById(finReference, type,false);
-		scheduleData.setFinanceMain(getFinanceMainDAO().getFinanceMainById(finReference, type,false));
-		scheduleData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(scheduleData.getFinanceMain().getFinType(), "_AView"));
+		FinanceMain finMain = getFinanceMainDAO().getFinanceMainById(finReference, type, false);
+		scheduleData.setFinanceMain(getFinanceMainDAO().getFinanceMainById(finReference, type, false));
+		scheduleData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(scheduleData.getFinanceMain().getFinType(),
+				"_AView"));
 
 		//Finance Schedule Details
-		scheduleData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(
-		        finReference, type, false));
-		
+		scheduleData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type,
+				false));
+
 		// Finance Disbursement details
-		scheduleData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails( finReference, type, false));
+		scheduleData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference,
+				type, false));
 
 		//Finance Accounting Fee Charge Details
-		scheduleData.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finReference,
-		        procEdtEvent, false, "_View"));
+		scheduleData.setFeeRules(getFinFeeChargesDAO()
+				.getFeeChargesByFinRef(finReference, procEdtEvent, false, "_View"));
 
 		//Finance Customer Details			
 		if (scheduleData.getFinanceMain().getCustID() != 0
-		        && scheduleData.getFinanceMain().getCustID() != Long.MIN_VALUE) {
+				&& scheduleData.getFinanceMain().getCustID() != Long.MIN_VALUE) {
 			financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(
-			        scheduleData.getFinanceMain().getCustID(), true, "_View"));
+					scheduleData.getFinanceMain().getCustID(), true, "_View"));
 		}
 
 		//Finance Agreement Details	
 		//=======================================
 		String finType = scheduleData.getFinanceType().getFinType();
-		financeDetail.setAggrementList(getAgreementDetailService().getAggrementDetailList(finType,
-		        procEdtEvent, userRole));
+		financeDetail.setAggrementList(getAgreementDetailService().getAggrementDetailList(finType, procEdtEvent,
+				userRole));
 
 		// Finance Check List Details 
 		//=======================================
-		getCheckListDetailService().setFinanceCheckListDetails(financeDetail, finType,
-		        procEdtEvent, userRole);
+		getCheckListDetailService().setFinanceCheckListDetails(financeDetail, finType, procEdtEvent, userRole);
 
 		//Finance Fee Charge Details
 		//=======================================
 		List<Long> accSetIdList = new ArrayList<Long>();
-		accSetIdList.addAll(getFinanceReferenceDetailDAO().getRefIdListByFinType(finType,
-		        procEdtEvent, null, "_ACView"));
+		accSetIdList.addAll(getFinanceReferenceDetailDAO()
+				.getRefIdListByFinType(finType, procEdtEvent, null, "_ACView"));
 		if (!accSetIdList.isEmpty()) {
-			financeDetail.setFeeCharges(getTransactionEntryDAO().getListFeeChargeRules(
-			        accSetIdList, eventCode, "_AView", 0));
+			financeDetail.setFeeCharges(getTransactionEntryDAO().getListFeeChargeRules(accSetIdList, eventCode,
+					"_AView", 0));
 		}
 
 		//Finance Accounting Posting Details 
 		//=======================================
-		
+
 		Long accSetId = Long.MIN_VALUE;
 		String event = "";
 		if (StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
@@ -153,67 +153,66 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 					FinanceConstants.MODULEID_FINTYPE);
 		}
 
-		if(accSetId != Long.MIN_VALUE){
-			financeDetail.setTransactionEntries(getTransactionEntryDAO().getListTransactionEntryById(
-					accSetId, "_AEView", true));
+		if (accSetId != Long.MIN_VALUE) {
+			financeDetail.setTransactionEntries(getTransactionEntryDAO().getListTransactionEntryById(accSetId,
+					"_AEView", true));
 		}
-		
+
 		//Finance Flag Details
-		financeDetail.setFinFlagsDetails(getFinFlagDetailsDAO().getFinFlagsByFinRef(finReference, 
-				FinanceConstants.MODULE_NAME,"_View"));
-		
+		financeDetail.setFinFlagsDetails(getFinFlagDetailsDAO().getFinFlagsByFinRef(finReference,
+				FinanceConstants.MODULE_NAME, "_View"));
+
 		//Finance Stage Accounting Posting Details 
 		//=======================================
-		financeDetail.setStageTransactionEntries(getTransactionEntryDAO().getListTransactionEntryByRefType(
-		          finType,StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent, 
-		          FinanceConstants.PROCEDT_STAGEACC, userRole, "_AEView", true));
+		financeDetail.setStageTransactionEntries(getTransactionEntryDAO().getListTransactionEntryByRefType(finType,
+				StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent,
+				FinanceConstants.PROCEDT_STAGEACC, userRole, "_AEView", true));
 
 		//Finance Guaranteer Details		
-		if(StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_BASICMAINTAIN)) {
-			financeDetail.setGurantorsDetailList(getGuarantorDetailService().getGuarantorDetail(
-					finReference, "_View"));
+		if (StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_BASICMAINTAIN)) {
+			financeDetail.setGurantorsDetailList(getGuarantorDetailService().getGuarantorDetail(finReference, "_View"));
 
 			//Finance Joint Account Details
-			financeDetail.setJountAccountDetailList(getJointAccountDetailService()
-					.getJoinAccountDetail(finReference, "_View"));
+			financeDetail.setJountAccountDetailList(getJointAccountDetailService().getJoinAccountDetail(finReference,
+					"_View"));
 
 			// Collateral Details
-			if(ImplementationConstants.COLLATERAL_INTERNAL){
-				financeDetail.setCollateralAssignmentList(getCollateralAssignmentDAO().getCollateralAssignmentByFinRef(finReference,FinanceConstants.MODULE_NAME, "_View"));
-			}else{
-				financeDetail.setFinanceCollaterals(getFinCollateralService().getFinCollateralsByRef(finReference, "_View"));
+			if (ImplementationConstants.COLLATERAL_INTERNAL) {
+				financeDetail.setCollateralAssignmentList(getCollateralAssignmentDAO().getCollateralAssignmentByFinRef(
+						finReference, FinanceConstants.MODULE_NAME, "_View"));
+			} else {
+				financeDetail.setFinanceCollaterals(getFinCollateralService().getFinCollateralsByRef(finReference,
+						"_View"));
 			}
 		}
 
 		//Mandate
-		financeDetail.setMandate(mandateDAO.getMandateById(finMain.getMandateID(),""));
-		
+		financeDetail.setMandate(mandateDAO.getMandateById(finMain.getMandateID(), ""));
+
 		//Finance Overdue Penalty Rate Details
-		scheduleData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(
-		        finReference, type));
+		scheduleData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference, type));
 
 		// Document Details
-		financeDetail.setDocumentDetailsList(getDocumentDetailsDAO().getDocumentDetailsByRef(
-		        finReference,FinanceConstants.MODULE_NAME,procEdtEvent, "_View"));
-		
-		//Overdraft Details
-		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, finMain.getProductCategory())){
-			scheduleData.setOverdraftScheduleDetails(getOverdraftScheduleDetailDAO().getOverdraftScheduleDetails(finReference, "", false));
-		}
-		
-		if(StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
-			if(StringUtils.isNotBlank(scheduleData.getFinanceMain().getRecordType())){
-				financeDetail.setFinwriteoffPayment(getFinanceWriteoffDAO().getFinWriteoffPaymentById(finReference, "_Temp"));
+		financeDetail.setDocumentDetailsList(getDocumentDetailsDAO().getDocumentDetailsByRef(finReference,
+				FinanceConstants.MODULE_NAME, procEdtEvent, "_View"));
+
+		if (StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+			if (StringUtils.isNotBlank(scheduleData.getFinanceMain().getRecordType())) {
+				financeDetail.setFinwriteoffPayment(getFinanceWriteoffDAO().getFinWriteoffPaymentById(finReference,
+						"_Temp"));
 			}
-			if(financeDetail.getFinwriteoffPayment() == null){
+			if (financeDetail.getFinwriteoffPayment() == null) {
 				FinWriteoffPayment finwriteoffPay = new FinWriteoffPayment();
 				financeDetail.setFinwriteoffPayment(finwriteoffPay);
 			}
-			financeDetail.getFinwriteoffPayment().setWriteoffAmount(getFinanceWriteoffDAO().getTotalFinWriteoffDetailAmt(finReference));
-			financeDetail.getFinwriteoffPayment().setWriteoffDate(getFinanceWriteoffDAO().getFinWriteoffDate(finReference));
-			financeDetail.getFinwriteoffPayment().setWriteoffPaidAmount(getFinanceWriteoffDAO().getTotalWriteoffPaymentAmount(finReference));
+			financeDetail.getFinwriteoffPayment().setWriteoffAmount(
+					getFinanceWriteoffDAO().getTotalFinWriteoffDetailAmt(finReference));
+			financeDetail.getFinwriteoffPayment().setWriteoffDate(
+					getFinanceWriteoffDAO().getFinWriteoffDate(finReference));
+			financeDetail.getFinwriteoffPayment().setWriteoffPaidAmount(
+					getFinanceWriteoffDAO().getTotalWriteoffPaymentAmount(finReference));
 		}
-		
+
 		logger.debug("Leaving");
 		return financeDetail;
 	}
@@ -252,8 +251,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		//Finance Stage Accounting Process
 		//=======================================
-		if (financeDetail.getStageAccountingList() != null
-		        && financeDetail.getStageAccountingList().size() > 0) {
+		if (financeDetail.getStageAccountingList() != null && financeDetail.getStageAccountingList().size() > 0) {
 
 			List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
 			auditHeader = executeStageAccounting(auditHeader, list);
@@ -295,28 +293,31 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			getFinanceMainDAO().save(financeMain, tableType, false);
 
 			//Finance Penalty OD Rate Details
-			if (penaltyRate != null) {
-				getFinODPenaltyRateDAO().save(penaltyRate, tableType.getSuffix());
-			}
-			if(finWriteoffPay!=null){
+			getFinODPenaltyRateDAO().save(penaltyRate, tableType.getSuffix());
+
+			if (finWriteoffPay != null) {
 				finWriteoffPay.setFinReference(financeMain.getFinReference());
-				long seqNo = getFinanceWriteoffDAO().getfinWriteoffPaySeqNo(finWriteoffPay.getFinReference(),"");
-				finWriteoffPay.setSeqNo(seqNo+1);
+				long seqNo = getFinanceWriteoffDAO().getfinWriteoffPaySeqNo(finWriteoffPay.getFinReference(), "");
+				finWriteoffPay.setSeqNo(seqNo + 1);
 				getFinanceWriteoffDAO().saveFinWriteoffPayment(finWriteoffPay, "_Temp");
 			}
 		} else {
 			getFinanceMainDAO().update(financeMain, tableType, false);
 
 			//Finance Penalty OD Rate Details
-			if (penaltyRate != null) {
-				if (tableType == TableType.MAIN_TAB) {
-					getFinODPenaltyRateDAO().save(penaltyRate, tableType.getSuffix());
-					getFinODPenaltyRateDAO().delete(financeMain.getFinReference(), "_Temp");
-				} else {
-					getFinODPenaltyRateDAO().update(penaltyRate, tableType.getSuffix());
-				}
+			if (tableType == TableType.MAIN_TAB) {
+				FinODPenaltyRate oldPenaltyRate = getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(
+						financeMain.getFinReference(), "");
+				getFinODPenaltyRateDAO().saveLog(oldPenaltyRate, "_Log");
+
+				getFinODPenaltyRateDAO().delete(financeMain.getFinReference(), "");
+				getFinODPenaltyRateDAO().save(penaltyRate, tableType.getSuffix());
+				getFinODPenaltyRateDAO().delete(financeMain.getFinReference(), "_Temp");
+			} else {
+				getFinODPenaltyRateDAO().update(penaltyRate, tableType.getSuffix());
 			}
-			if(finWriteoffPay!=null){
+
+			if (finWriteoffPay != null) {
 				getFinanceWriteoffDAO().updateFinWriteoffPayment(finWriteoffPay, "_Temp");
 			}
 
@@ -325,66 +326,66 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		// Save Fee Charges List
 		//=======================================
 		if (tableType == TableType.TEMP_TAB) {
-			getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(),
-			        financeDetail.getModuleDefiner(), false, tableType.getSuffix());
+			getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner(),
+					false, tableType.getSuffix());
 		}
-		saveFeeChargeList(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(),
-		        false, tableType.getSuffix());
+		saveFeeChargeList(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), false,
+				tableType.getSuffix());
 
 		// set Finance Check List audit details to auditDetails
 		//=======================================
-		if (financeDetail.getFinanceCheckList() != null
-		        && !financeDetail.getFinanceCheckList().isEmpty()) {
+		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
 			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(financeDetail, tableType.getSuffix()));
 		}
 
 		// set Guarantor Details Audit
 		//=======================================
 		//String auditTranType = auditHeader.getAuditTranType();
-		if (financeDetail.getGurantorsDetailList() != null
-		        && !financeDetail.getGurantorsDetailList().isEmpty() && financeDetail.getGurantorsDetailList().size() > 0) {
+		if (financeDetail.getGurantorsDetailList() != null && !financeDetail.getGurantorsDetailList().isEmpty()
+				&& financeDetail.getGurantorsDetailList().size() > 0) {
 			financeDetail.setGurantorsDetailList(financeDetail.getGurantorsDetailList());
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("GuarantorDetails");
-			details = processingGuarantorDetailList(details, tableType.getSuffix(),financeMain.getFinReference());
+			details = processingGuarantorDetailList(details, tableType.getSuffix(), financeMain.getFinReference());
 			auditDetails.addAll(details);
 		}
 
 		// set JountAccount Details Audit
 		//=======================================
-		
-		if (financeDetail.getJountAccountDetailList() != null
-		        && !financeDetail.getJountAccountDetailList().isEmpty() && financeDetail.getJountAccountDetailList().size() > 0) {
+
+		if (financeDetail.getJountAccountDetailList() != null && !financeDetail.getJountAccountDetailList().isEmpty()
+				&& financeDetail.getJountAccountDetailList().size() > 0) {
 			financeDetail.setJountAccountDetailList(financeDetail.getJountAccountDetailList());
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("JointAccountDetails");
-			details = processingJointAccountDetailList(details, tableType.getSuffix(),financeMain.getFinReference());
+			details = processingJointAccountDetailList(details, tableType.getSuffix(), financeMain.getFinReference());
 			auditDetails.addAll(details);
 		}
 
 		// Save Document Details
-		if (financeDetail.getDocumentDetailsList() != null
-		        && financeDetail.getDocumentDetailsList().size() > 0) {
+		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, tableType.getSuffix(),
-			        financeDetail.getFinScheduleData().getFinanceMain(),financeDetail.getModuleDefiner());
+			details = processingDocumentDetailsList(details, tableType.getSuffix(), financeDetail.getFinScheduleData()
+					.getFinanceMain(), financeDetail.getModuleDefiner());
 			auditDetails.addAll(details);
 		}
 
-		if(ImplementationConstants.COLLATERAL_INTERNAL){
+		if (ImplementationConstants.COLLATERAL_INTERNAL) {
 			// set Finance Collateral Details Audit
 			//=======================================
-			if (financeDetail.getCollateralAssignmentList() != null && !financeDetail.getCollateralAssignmentList().isEmpty()) {
+			if (financeDetail.getCollateralAssignmentList() != null
+					&& !financeDetail.getCollateralAssignmentList().isEmpty()) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("CollateralAssignments");
-				details = processingCollateralAssignmentList(details, tableType.getSuffix(), financeDetail.getFinScheduleData().getFinanceMain());
+				details = processingCollateralAssignmentList(details, tableType.getSuffix(), financeDetail
+						.getFinScheduleData().getFinanceMain());
 				auditDetails.addAll(details);
 			}
-		}else{
+		} else {
 			//=======================================
-			
-			if (financeDetail.getFinanceCollaterals() != null
-			        && !financeDetail.getFinanceCollaterals().isEmpty()) {
+
+			if (financeDetail.getFinanceCollaterals() != null && !financeDetail.getFinanceCollaterals().isEmpty()) {
 				financeDetail.setFinanceCollaterals(financeDetail.getFinanceCollaterals());
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinCollateral");
-				details = processingFinCollateralDetailList(details, tableType.getSuffix(),financeMain.getFinReference());
+				details = processingFinCollateralDetailList(details, tableType.getSuffix(),
+						financeMain.getFinReference());
 				auditDetails.addAll(details);
 			}
 		}
@@ -395,12 +396,10 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			details = processingFinFlagDetailList(details, financeDetail, tableType.getSuffix());
 			auditDetails.addAll(details);
 		}
-					
-					
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(),
-		        financeMain.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0],
-		        fields[1], financeMain.getBefImage(), financeMain));
+
+		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain
+				.getBefImage(), financeMain));
 
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -409,10 +408,10 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		return auditHeader;
 	}
 
-	private List<AuditDetail> setGuarantorDetailAuditData(FinanceDetail financeDetail,
-	        String auditTranType, String method) {
+	private List<AuditDetail> setGuarantorDetailAuditData(FinanceDetail financeDetail, String auditTranType,
+			String method) {
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		GuarantorDetail guarantorDetail =  new GuarantorDetail();
+		GuarantorDetail guarantorDetail = new GuarantorDetail();
 		String[] fields = PennantJavaUtil.getFieldDetails(guarantorDetail, guarantorDetail.getExcludeFields());
 
 		for (int i = 0; i < financeDetail.getGurantorsDetailList().size(); i++) {
@@ -423,7 +422,6 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			}
 
 			finGuarantorDetailList.setWorkflowId(guarantorDetail.getWorkflowId());
-			
 
 			boolean isRcdType = false;
 
@@ -446,10 +444,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
 				if (finGuarantorDetailList.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (finGuarantorDetailList.getRecordType().equalsIgnoreCase(
-				        PennantConstants.RECORD_TYPE_DEL)
-				        || finGuarantorDetailList.getRecordType().equalsIgnoreCase(
-				                PennantConstants.RECORD_TYPE_CAN)) {
+				} else if (finGuarantorDetailList.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| finGuarantorDetailList.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					auditTranType = PennantConstants.TRAN_DEL;
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;
@@ -459,17 +455,17 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			finGuarantorDetailList.setRecordStatus(guarantorDetail.getRecordStatus());
 			finGuarantorDetailList.setLastMntOn(guarantorDetail.getLastMntOn());
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-			        finGuarantorDetailList.getBefImage(), finGuarantorDetailList));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finGuarantorDetailList
+					.getBefImage(), finGuarantorDetailList));
 		}
 
 		return auditDetails;
 	}
-	
-	private List<AuditDetail> setJointAccountDetailAuditData(FinanceDetail financeDetail,
-	        String auditTranType, String method) {
+
+	private List<AuditDetail> setJointAccountDetailAuditData(FinanceDetail financeDetail, String auditTranType,
+			String method) {
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		JointAccountDetail jointAccountDetail =  new JointAccountDetail();
+		JointAccountDetail jointAccountDetail = new JointAccountDetail();
 		String[] fields = PennantJavaUtil.getFieldDetails(jointAccountDetail, jointAccountDetail.getExcludeFields());
 
 		for (int i = 0; i < financeDetail.getJountAccountDetailList().size(); i++) {
@@ -480,7 +476,6 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			}
 
 			jointAccount.setWorkflowId(jointAccountDetail.getWorkflowId());
-			
 
 			boolean isRcdType = false;
 
@@ -503,10 +498,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
 				if (jointAccount.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (jointAccount.getRecordType().equalsIgnoreCase(
-				        PennantConstants.RECORD_TYPE_DEL)
-				        || jointAccount.getRecordType().equalsIgnoreCase(
-				                PennantConstants.RECORD_TYPE_CAN)) {
+				} else if (jointAccount.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| jointAccount.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					auditTranType = PennantConstants.TRAN_DEL;
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;
@@ -516,30 +509,30 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			jointAccount.setRecordStatus(jointAccountDetail.getRecordStatus());
 			jointAccount.setLastMntOn(jointAccountDetail.getLastMntOn());
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-					jointAccount.getBefImage(), jointAccount));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], jointAccount.getBefImage(),
+					jointAccount));
 		}
 
 		return auditDetails;
 	}
+
 	/*
 	 * FinCollteralDetail Audit Map
 	 */
-	private List<AuditDetail> setFinCollateralDetailAuditData(FinanceDetail financeDetail,
-	        String auditTranType, String method) {
+	private List<AuditDetail> setFinCollateralDetailAuditData(FinanceDetail financeDetail, String auditTranType,
+			String method) {
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		FinCollaterals collateralDetail =  new FinCollaterals();
+		FinCollaterals collateralDetail = new FinCollaterals();
 		String[] fields = PennantJavaUtil.getFieldDetails(collateralDetail, collateralDetail.getExcludeFields());
 
-		for (int i = 0; i <  financeDetail.getFinanceCollaterals().size(); i++) {
-			FinCollaterals finCollateralList =  financeDetail.getFinanceCollaterals().get(i);
+		for (int i = 0; i < financeDetail.getFinanceCollaterals().size(); i++) {
+			FinCollaterals finCollateralList = financeDetail.getFinanceCollaterals().get(i);
 
 			if (StringUtils.isEmpty(finCollateralList.getRecordType())) {
 				continue;
 			}
 
 			finCollateralList.setWorkflowId(collateralDetail.getWorkflowId());
-			
 
 			boolean isRcdType = false;
 
@@ -562,10 +555,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
 				if (finCollateralList.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (finCollateralList.getRecordType().equalsIgnoreCase(
-				        PennantConstants.RECORD_TYPE_DEL)
-				        || finCollateralList.getRecordType().equalsIgnoreCase(
-				                PennantConstants.RECORD_TYPE_CAN)) {
+				} else if (finCollateralList.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| finCollateralList.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					auditTranType = PennantConstants.TRAN_DEL;
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;
@@ -575,13 +566,13 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			finCollateralList.setRecordStatus(collateralDetail.getRecordStatus());
 			finCollateralList.setLastMntOn(collateralDetail.getLastMntOn());
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-			        finCollateralList.getBefImage(), finCollateralList));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finCollateralList
+					.getBefImage(), finCollateralList));
 		}
 
 		return auditDetails;
 	}
-	
+
 	/**
 	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
@@ -613,49 +604,46 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		cancelStageAccounting(financeMain.getFinReference(), financeDetail.getModuleDefiner());
 
 		// Fee charges deletion
-		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(),
-		        financeDetail.getModuleDefiner(), false, "_Temp");
+		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner(),
+				false, "_Temp");
 
 		// Checklist Details delete
 		//=======================================
 		auditDetailList.addAll(getCheckListDetailService().delete(financeDetail, "_Temp", tranType));
 
 		// Save Document Details
-		if (financeDetail.getDocumentDetailsList() != null
-		        && financeDetail.getDocumentDetailsList().size() > 0) {
+		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			for (DocumentDetails docDetails : financeDetail.getDocumentDetailsList()) {
 				docDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			}
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "_Temp",
-			       financeDetail.getFinScheduleData().getFinanceMain(),financeDetail.getModuleDefiner());
+			details = processingDocumentDetailsList(details, "_Temp", financeDetail.getFinScheduleData()
+					.getFinanceMain(), financeDetail.getModuleDefiner());
 			auditDetailList.addAll(details);
 		}
-		
+
 		// set Guarantor Details Audit
 		//=======================================
-		if (financeDetail.getGurantorsDetailList() != null
-				&& !financeDetail.getGurantorsDetailList().isEmpty()) {
+		if (financeDetail.getGurantorsDetailList() != null && !financeDetail.getGurantorsDetailList().isEmpty()) {
 			for (GuarantorDetail guarantorDetails : financeDetail.getGurantorsDetailList()) {
 				guarantorDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			}
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("GuarantorDetails");
-			details = processingGuarantorDetailList(details,"_Temp",financeMain.getFinReference());
+			details = processingGuarantorDetailList(details, "_Temp", financeMain.getFinReference());
 			auditDetailList.addAll(details);
 		}
-		
+
 		// set JointAccount Details Audit
 		//=======================================
-		if (financeDetail.getJountAccountDetailList() != null
-				&& !financeDetail.getJountAccountDetailList().isEmpty()) {
+		if (financeDetail.getJountAccountDetailList() != null && !financeDetail.getJountAccountDetailList().isEmpty()) {
 			for (JointAccountDetail jointAccountDetail : financeDetail.getJountAccountDetailList()) {
 				jointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			}
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("JointAccountDetails");
-			details = processingJointAccountDetailList(details,"_Temp",financeMain.getFinReference());
+			details = processingJointAccountDetailList(details, "_Temp", financeMain.getFinReference());
 			auditDetailList.addAll(details);
 		}
-		
+
 		// Finance Flag Details
 		if (financeDetail.getFinFlagsDetails() != null && !financeDetail.getFinFlagsDetails().isEmpty()) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinFlagsDetail");
@@ -669,36 +657,37 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		}
 
 		//Collateral assignment Details
-		if(financeDetail.getCollateralAssignmentList() != null && !financeDetail.getCollateralAssignmentList().isEmpty()){
+		if (financeDetail.getCollateralAssignmentList() != null
+				&& !financeDetail.getCollateralAssignmentList().isEmpty()) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("CollateralAssignments");
 			for (int i = 0; i < details.size(); i++) {
 				CollateralAssignment assignment = (CollateralAssignment) details.get(i).getModelData();
 				assignment.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			}
-			details = processingCollateralAssignmentList(details,"_Temp", financeDetail.getFinScheduleData().getFinanceMain());
+			details = processingCollateralAssignmentList(details, "_Temp", financeDetail.getFinScheduleData()
+					.getFinanceMain());
 			auditDetailList.addAll(details);
 		}
-		
-		if (financeDetail.getFinanceCollaterals() != null
-		        && !financeDetail.getFinanceCollaterals().isEmpty()) {
+
+		if (financeDetail.getFinanceCollaterals() != null && !financeDetail.getFinanceCollaterals().isEmpty()) {
 			financeDetail.setFinanceCollaterals(financeDetail.getFinanceCollaterals());
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinCollateral");
-			details = processingFinCollateralDetailList(details, "_Temp",financeMain.getFinReference());
+			details = processingFinCollateralDetailList(details, "_Temp", financeMain.getFinReference());
 			auditDetailList.addAll(details);
 		}
-		
+
 		// ScheduleDetails deletion
 		getFinODPenaltyRateDAO().delete(financeMain.getFinReference(), "_Temp");
-		if(financeDetail.getFinwriteoffPayment()!=null){
-			getFinanceWriteoffDAO().deletefinWriteoffPayment(financeMain.getFinReference(),financeDetail.getFinwriteoffPayment().getSeqNo(), "_Temp");
+		if (financeDetail.getFinwriteoffPayment() != null) {
+			getFinanceWriteoffDAO().deletefinWriteoffPayment(financeMain.getFinReference(),
+					financeDetail.getFinwriteoffPayment().getSeqNo(), "_Temp");
 		}
 		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, false);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(),
-		        financeMain.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0],
-		        fields[1], financeMain.getBefImage(), financeMain));
+		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain
+				.getBefImage(), financeMain));
 		auditHeader.setAuditDetails(auditDetailList);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -728,7 +717,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException  {
+	public AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException,
+			InvocationTargetException {
 		logger.debug("Entering");
 
 		String tranType = "";
@@ -744,8 +734,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		Date curBDay = DateUtility.getAppDate();
 		//Finance Stage Accounting Process
 		//=======================================
-		if (financeDetail.getStageAccountingList() != null
-		        && financeDetail.getStageAccountingList().size() > 0) {
+		if (financeDetail.getStageAccountingList() != null && financeDetail.getStageAccountingList().size() > 0) {
 
 			List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
 			auditHeader = executeStageAccounting(auditHeader, list);
@@ -754,53 +743,59 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			}
 			list = null;
 		}
-	
-		
+
 		//Finance Write off Posting Process Execution
 		//=====================================
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-
-		boolean isRIAFinance = getFinanceTypeDAO().checkRIAFinance(financeMain.getFinType());
 		FinanceProfitDetail profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(financeMain.getFinReference());
 
-		AEAmountCodes amountCodes = null;
-		DataSet dataSet = AEAmounts.createDataSet(financeMain, AccountEventConstants.ACCEVENT_WRITEBK, curBDay, financeMain.getMaturityDate());		
-		if(profitDetail!=null){
-			amountCodes = AEAmounts.procAEAmounts(financeMain, financeDetail.getFinScheduleData().getFinanceScheduleDetails(),profitDetail, curBDay);
-			//FinanceWriteoffPayment set the writeoffPayAmount,WriteoffPayAccount 
-			if(financeDetail.getFinwriteoffPayment()!=null){
-				dataSet.setFinWriteoffPayAc(financeDetail.getFinwriteoffPayment().getWriteoffPayAccount());
-				amountCodes.setWoPayAmt(financeDetail.getFinwriteoffPayment().getWriteoffPayAmount());
-			}
-
-			List<Object> returnList = getPostingsPreparationUtil().processPostingDetails(dataSet, amountCodes, false,
-					isRIAFinance, "Y", curBDay, false, Long.MIN_VALUE);
-
-			if(!(Boolean) returnList.get(0)){
-				String errParm = (String) returnList.get(3);
-				throw new PFFInterfaceException("9999",errParm);
-			}
-
-			long linkedTranId = (Long) returnList.get(1);
-
-			//Save Finance WriteOffPayment Details
-			FinWriteoffPayment financeWriteoffPayment = financeDetail.getFinwriteoffPayment();
-			if(financeDetail.getFinwriteoffPayment()!=null){
-				financeWriteoffPayment.setLinkedTranId(linkedTranId);
-				getFinanceWriteoffDAO().saveFinWriteoffPayment(financeWriteoffPayment, "");
-			}
+		String accEventCode = "";
+		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+			accEventCode = AccountEventConstants.ACCEVENT_WRITEBK;
+		} else if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_BASICMAINTAIN)) {
+			accEventCode = AccountEventConstants.ACCEVENT_AMENDMENT;
+		} else if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN)) {
+			accEventCode = AccountEventConstants.ACCEVENT_SEGMENT;
 		}
+
+		AEAmountCodes amountCodes = null;
+		amountCodes = AEAmounts.procAEAmounts(financeMain, financeDetail.getFinScheduleData()
+				.getFinanceScheduleDetails(), profitDetail, accEventCode, curBDay, financeMain.getMaturityDate());
+
+		//FinanceWriteoffPayment set the writeoffPayAmount,WriteoffPayAccount 
+		if (financeDetail.getFinwriteoffPayment() != null) {
+			amountCodes.setWoPayAmt(financeDetail.getFinwriteoffPayment().getWriteoffPayAmount());
+		}
+
+		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+
+		List<Object> returnList = getPostingsPreparationUtil().processPostingDetails(executingMap, false, "Y", curBDay,
+				false, Long.MIN_VALUE);
+
+		if (!(Boolean) returnList.get(0)) {
+			String errParm = (String) returnList.get(3);
+			throw new PFFInterfaceException("9999", errParm);
+		}
+
+		long linkedTranId = (Long) returnList.get(1);
 		financeMain.setRcdMaintainSts("");
 		financeMain.setRoleCode("");
 		financeMain.setNextRoleCode("");
 		financeMain.setTaskId("");
 		financeMain.setNextTaskId("");
 		financeMain.setWorkflowId(0);
+
 		tranType = PennantConstants.TRAN_UPD;
 		financeMain.setRecordType("");
-		
 		getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, false);
-		
+
+		//Save Finance WriteOffPayment Details
+		FinWriteoffPayment financeWriteoffPayment = financeDetail.getFinwriteoffPayment();
+		if (financeDetail.getFinwriteoffPayment() != null) {
+			financeWriteoffPayment.setLinkedTranId(linkedTranId);
+			getFinanceWriteoffDAO().saveFinWriteoffPayment(financeWriteoffPayment, "");
+		}
+
 		//Finance Penalty OD Rate Details
 		FinODPenaltyRate penaltyRate = financeDetail.getFinScheduleData().getFinODPenaltyRate();
 		if (penaltyRate == null) {
@@ -816,15 +811,18 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		}
 		penaltyRate.setFinReference(financeMain.getFinReference());
 		penaltyRate.setFinEffectDate(DateUtility.getSysDate());
+
+		FinODPenaltyRate oldPenaltyRate = getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(
+				financeMain.getFinReference(), "");
+		getFinODPenaltyRateDAO().saveLog(oldPenaltyRate, "_Log");
 		getFinODPenaltyRateDAO().delete(financeMain.getFinReference(), "");
 		getFinODPenaltyRateDAO().save(penaltyRate, "");
 
 		// Save Document Details
-		if (financeDetail.getDocumentDetailsList() != null
-		        && financeDetail.getDocumentDetailsList().size() > 0) {
+		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "",
-			        financeDetail.getFinScheduleData().getFinanceMain(),financeDetail.getModuleDefiner());
+			details = processingDocumentDetailsList(details, "", financeDetail.getFinScheduleData().getFinanceMain(),
+					financeDetail.getModuleDefiner());
 			auditDetails.addAll(details);
 			listDocDeletion(financeDetail, "_Temp");
 		}
@@ -840,23 +838,21 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		}
 
 		// Guarantor Details
-		if (financeDetail.getGurantorsDetailList() != null
-		        && !financeDetail.getGurantorsDetailList().isEmpty()) {
+		if (financeDetail.getGurantorsDetailList() != null && !financeDetail.getGurantorsDetailList().isEmpty()) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("GuarantorDetails");
-			details = processingGuarantorDetailList(details,"",financeMain.getFinReference());
-			auditDetails.addAll(details);
-			
-		}
-		
-		// JointAccount Details
-		if (financeDetail.getJountAccountDetailList() != null
-				&& !financeDetail.getJountAccountDetailList().isEmpty()) {
-			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("JointAccountDetails");
-			details = processingJointAccountDetailList(details,"",financeMain.getFinReference());
+			details = processingGuarantorDetailList(details, "", financeMain.getFinReference());
 			auditDetails.addAll(details);
 
 		}
-		
+
+		// JointAccount Details
+		if (financeDetail.getJountAccountDetailList() != null && !financeDetail.getJountAccountDetailList().isEmpty()) {
+			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("JointAccountDetails");
+			details = processingJointAccountDetailList(details, "", financeMain.getFinReference());
+			auditDetails.addAll(details);
+
+		}
+
 		// Fin Flag Details
 		if (financeDetail.getFinFlagsDetails() != null && financeDetail.getFinFlagsDetails().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinFlagsDetail");
@@ -870,99 +866,101 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			mandateDAO.updateOrgReferecne(financeMain.getMandateID(), financeMain.getFinReference(), "");
 
 		}
-		
-		if(ImplementationConstants.COLLATERAL_INTERNAL){
+
+		if (ImplementationConstants.COLLATERAL_INTERNAL) {
 			// Collateral Assignments Details
 			//=======================================
-			if (financeDetail.getCollateralAssignmentList() != null  && !financeDetail.getCollateralAssignmentList().isEmpty()) {
+			if (financeDetail.getCollateralAssignmentList() != null
+					&& !financeDetail.getCollateralAssignmentList().isEmpty()) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("CollateralAssignments");
-				details = processingCollateralAssignmentList(details, "", financeDetail.getFinScheduleData().getFinanceMain());
+				details = processingCollateralAssignmentList(details, "", financeDetail.getFinScheduleData()
+						.getFinanceMain());
 				auditDetails.addAll(details);
 			}
-		}else{
+		} else {
 			// set Finance Collateral Details Audit
-			if (financeDetail.getFinanceCollaterals() != null
-			        && !financeDetail.getFinanceCollaterals().isEmpty()) {
+			if (financeDetail.getFinanceCollaterals() != null && !financeDetail.getFinanceCollaterals().isEmpty()) {
 				financeDetail.setFinanceCollaterals(financeDetail.getFinanceCollaterals());
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinCollateral");
-				details = processingFinCollateralDetailList(details, "",financeMain.getFinReference());
+				details = processingFinCollateralDetailList(details, "", financeMain.getFinReference());
 				auditDetails.addAll(details);
 			}
 		}
 
 		//Finance Profit Details Updation - Repayment Account
-		getProfitDetailsDAO().updateRpyAccount(financeMain.getFinReference(),
-		        financeMain.getRepayAccountId());
+		getProfitDetailsDAO().updateRpyAccount(financeMain.getFinReference(), financeMain.getRepayAccountId());
 
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(),
-		        financeMain.getExcludeFields());
+		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
-		
+
 		getFinODPenaltyRateDAO().delete(financeMain.getFinReference(), "_Temp");
-		
-		if(financeDetail.getFinwriteoffPayment()!=null){
-			getFinanceWriteoffDAO().deletefinWriteoffPayment(financeMain.getFinReference(),financeDetail.getFinwriteoffPayment().getSeqNo(), "_Temp");
+
+		if (financeDetail.getFinwriteoffPayment() != null) {
+			getFinanceWriteoffDAO().deletefinWriteoffPayment(financeMain.getFinReference(),
+					financeDetail.getFinwriteoffPayment().getSeqNo(), "_Temp");
 		}
-		
+
 		//Guarantor Details
-		if (financeDetail.getGurantorsDetailList() != null
-				&& !financeDetail.getGurantorsDetailList().isEmpty()) {
+		if (financeDetail.getGurantorsDetailList() != null && !financeDetail.getGurantorsDetailList().isEmpty()) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("GuarantorDetails");
-			List<GuarantorDetail> guarantorDetail =  new ArrayList<GuarantorDetail>(); ;
+			List<GuarantorDetail> guarantorDetail = new ArrayList<GuarantorDetail>();
+			;
 			for (int i = 0; i < details.size(); i++) {
-			GuarantorDetail guarantor= (GuarantorDetail) details.get(i).getModelData();
-			guarantorDetail.add(guarantor);
+				GuarantorDetail guarantor = (GuarantorDetail) details.get(i).getModelData();
+				guarantorDetail.add(guarantor);
 			}
 			auditDetails.addAll(getGuarantorDetailService().delete(guarantorDetail, "_Temp", tranType));
 		}
 		//JointAccount Details
-		if (financeDetail.getJountAccountDetailList() != null
-				&& !financeDetail.getJountAccountDetailList().isEmpty()) {
+		if (financeDetail.getJountAccountDetailList() != null && !financeDetail.getJountAccountDetailList().isEmpty()) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("JointAccountDetails");
-			List<JointAccountDetail> jointAccountDetail =  new ArrayList<JointAccountDetail>(); ;
+			List<JointAccountDetail> jointAccountDetail = new ArrayList<JointAccountDetail>();
+			;
 			for (int i = 0; i < details.size(); i++) {
-				JointAccountDetail jointAcctDetail= (JointAccountDetail) details.get(i).getModelData();
+				JointAccountDetail jointAcctDetail = (JointAccountDetail) details.get(i).getModelData();
 				jointAccountDetail.add(jointAcctDetail);
 			}
 			auditDetails.addAll(getJointAccountDetailService().delete(jointAccountDetail, "_Temp", tranType));
 		}
-		
+
 		// Checklist Details delete
 		//=======================================
 		auditDetailList.addAll(getCheckListDetailService().delete(financeDetail, "_Temp", tranType));
-		
+
 		//Fee Charge Details Clearing before 
 		//=======================================
-		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(),financeDetail.getModuleDefiner(), false, "_Temp");
-		
+		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner(),
+				false, "_Temp");
+
 		//FinanceMain Details Clearing before 
 		//=======================================
 		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, true);
-		
+
 		// Collateral assignment Details
-		if(financeDetail.getCollateralAssignmentList() != null && !financeDetail.getCollateralAssignmentList().isEmpty()){
+		if (financeDetail.getCollateralAssignmentList() != null
+				&& !financeDetail.getCollateralAssignmentList().isEmpty()) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("CollateralAssignments");
-			auditDetailList.addAll(details);				
-			getCollateralAssignmentDAO().deleteByReference(financeMain.getFinReference(), "_Temp");					
+			auditDetailList.addAll(details);
+			getCollateralAssignmentDAO().deleteByReference(financeMain.getFinReference(), "_Temp");
 		}
-		
-		if(financeDetail.getFinanceCollaterals() != null){
-			auditDetailList.addAll(getFinCollateralService().delete(financeDetail.getFinanceCollaterals(),"_Temp", auditHeader.getAuditTranType()));
+
+		if (financeDetail.getFinanceCollaterals() != null) {
+			auditDetailList.addAll(getFinCollateralService().delete(financeDetail.getFinanceCollaterals(), "_Temp",
+					auditHeader.getAuditTranType()));
 		}
-		
-		FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail()
-		        .getModelData();
+
+		FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
 		FinanceMain tempfinanceMain = tempfinanceDetail.getFinScheduleData().getFinanceMain();
-		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0],
-		        fields[1], tempfinanceMain.getBefImage(), tempfinanceMain));
+		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				tempfinanceMain.getBefImage(), tempfinanceMain));
 
 		// Adding audit as deleted from TEMP table
 		auditHeader.setAuditDetails(auditDetailList);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0],
-		        fields[1], financeMain.getBefImage(), financeMain));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain
+				.getBefImage(), financeMain));
 
 		// Adding audit as Insert/Update/deleted into main table
 		auditHeader.setAuditDetails(auditDetails);
@@ -989,20 +987,20 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-		        auditHeader.getUsrLanguage(), method);
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
-		
+
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String usrLanguage = financeMain.getUserDetails().getUsrLanguage();
-		
+
 		//Collateral Assignments details
 		//=======================================
-		if (financeDetail.getCollateralAssignmentList() != null && !financeDetail.getCollateralAssignmentList().isEmpty()) {
-			
+		if (financeDetail.getCollateralAssignmentList() != null
+				&& !financeDetail.getCollateralAssignmentList().isEmpty()) {
+
 			//CoOwnerDetails Validation
 			List<CollateralAssignment> assignments = financeDetail.getCollateralAssignmentList();
 			if (assignments != null && !assignments.isEmpty()) {
@@ -1043,15 +1041,13 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetails>());
 		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		int format=CurrencyUtil.getFormat(financeMain.getFinCcy());
+		int format = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
 		FinanceMain tempFinanceMain = null;
 		if (financeMain.isWorkflow()) {
-			tempFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "_Temp",
-			        false);
+			tempFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "_Temp", false);
 		}
-		FinanceMain befFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getId(),
-		        "", false);
+		FinanceMain befFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "", false);
 		FinanceMain oldFinanceMain = financeMain.getBefImage();
 
 		String[] errParm = new String[1];
@@ -1065,8 +1061,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				// records
 				if (befFinanceMain != null) { // Record Already Exists in the
 					// table then error
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-					        PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+							"41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
@@ -1074,14 +1070,12 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 					if (befFinanceMain != null || tempFinanceMain != null) { // if
 						// records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-						        PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
-						        usrLanguage));
+								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befFinanceMain == null || tempFinanceMain != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-						        PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
-						        usrLanguage));
+								PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -1093,20 +1087,17 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 				if (befFinanceMain == null) { // if records not exists in the
 					// main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-					        PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+							"41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (oldFinanceMain != null
-					        && !oldFinanceMain.getLastMntOn().equals(befFinanceMain.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-						        .equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+					if (oldFinanceMain != null && !oldFinanceMain.getLastMntOn().equals(befFinanceMain.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
+								PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-							        PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
-							        usrLanguage));
+									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
 						} else {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-							        PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
-							        usrLanguage));
+									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
 						}
 					}
 				}
@@ -1114,46 +1105,48 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 				if (tempFinanceMain == null) { // if records not exists in the
 					// Work flow table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-					        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+							"41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempFinanceMain != null && oldFinanceMain != null
-				        && !oldFinanceMain.getLastMntOn().equals(tempFinanceMain.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-					        PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+						&& !oldFinanceMain.getLastMntOn().equals(tempFinanceMain.getLastMntOn())) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+							"41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
-		
+
 		// Checking , if Customer is in EOD process or not. if Yes, not allowed to do an action
 		int eodProgressCount = getCustomerQueuingDAO().getProgressCountByCust(financeMain.getCustID());
 
 		// If Customer Exists in EOD Processing, Not allowed to Maintenance till completion
-		if(eodProgressCount > 0){
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-					PennantConstants.KEY_FIELD, "60203", errParm, valueParm), usrLanguage));
+		if (eodProgressCount > 0) {
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "60203",
+					errParm, valueParm), usrLanguage));
 		}
 
 		FinWriteoffPayment finWriteoffPay = financeDetail.getFinwriteoffPayment();
-		if(finWriteoffPay!=null){
+		if (finWriteoffPay != null) {
 			//Save Finance WriteOff Details
-			BigDecimal financeWriteoffDetailAmt = getFinanceWriteoffDAO().getTotalFinWriteoffDetailAmt(financeMain.getFinReference());
-			BigDecimal finWriteoffPayAmt = getFinanceWriteoffDAO().getTotalWriteoffPaymentAmount(financeMain.getFinReference());
+			BigDecimal financeWriteoffDetailAmt = getFinanceWriteoffDAO().getTotalFinWriteoffDetailAmt(
+					financeMain.getFinReference());
+			BigDecimal finWriteoffPayAmt = getFinanceWriteoffDAO().getTotalWriteoffPaymentAmount(
+					financeMain.getFinReference());
 			BigDecimal finWriteoffTotAmt = financeWriteoffDetailAmt.subtract(finWriteoffPayAmt);
-			if(finWriteoffPay.getWriteoffPayAmount().compareTo(finWriteoffTotAmt)>0){
+			if (finWriteoffPay.getWriteoffPayAmount().compareTo(finWriteoffTotAmt) > 0) {
 				String[] errParm1 = new String[2];
 				String[] valueParm1 = new String[2];
-				valueParm1[0] = PennantApplicationUtil.amountFormate(finWriteoffPay.getWriteoffPayAmount(),format).toString();
+				valueParm1[0] = PennantApplicationUtil.amountFormate(finWriteoffPay.getWriteoffPayAmount(), format)
+						.toString();
 				errParm1[0] = PennantJavaUtil.getLabel("label_WriteoffPayAmount") + ":" + valueParm1[0];
-				valueParm1[1] = PennantApplicationUtil.formateAmount(finWriteoffTotAmt,format).toString();
+				valueParm1[1] = PennantApplicationUtil.formateAmount(finWriteoffTotAmt, format).toString();
 				errParm1[1] = PennantJavaUtil.getLabel("label_OutstandWriteoffAmount") + ":" + valueParm1[1];
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-						PennantConstants.KEY_FIELD, "30568", errParm1, valueParm1), usrLanguage));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+						"30568", errParm1, valueParm1), usrLanguage));
 			}
 		}
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(),
-		        usrLanguage));
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !financeMain.isWorkflow()) {
 			financeMain.setBefImage(befFinanceMain);
@@ -1172,25 +1165,21 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
 		String auditTranType = "";
-		if ("saveOrUpdate".equals(method) || "doApprove".equals(method)
-		        || "doReject".equals(method)) {
+		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
 			if (financeMain.isWorkflow()) {
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
 
-		
 		// Finance Flag details
 		if (financeDetail.getFinFlagsDetails() != null && financeDetail.getFinFlagsDetails().size() > 0) {
 			auditDetailMap.put("FinFlagsDetail", setFinFlagAuditData(financeDetail, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinFlagsDetail"));
 		}
-		
+
 		//Finance Document Details
-		if (financeDetail.getDocumentDetailsList() != null
-		        && financeDetail.getDocumentDetailsList().size() > 0) {
-			auditDetailMap.put("DocumentDetails",
-			        setDocumentDetailsAuditData(financeDetail, auditTranType, method));
+		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
+			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(financeDetail, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 		}
 
@@ -1200,38 +1189,39 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		if (StringUtils.equals(method, "saveOrUpdate")) {
 			if (financeCheckList != null && !financeCheckList.isEmpty()) {
-				auditDetails.addAll(getCheckListDetailService().getAuditDetail(auditDetailMap,
-				        financeDetail, auditTranType, method));
+				auditDetails.addAll(getCheckListDetailService().getAuditDetail(auditDetailMap, financeDetail,
+						auditTranType, method));
 			}
 		}
-		
+
 		//Finance Guarantor Details
 		//=======================================
 		List<GuarantorDetail> finGuarantor = financeDetail.getGurantorsDetailList();
 		if (finGuarantor != null && !finGuarantor.isEmpty()) {
-			auditDetailMap.put("GuarantorDetails",
-					setGuarantorDetailAuditData(financeDetail, auditTranType, method));
+			auditDetailMap.put("GuarantorDetails", setGuarantorDetailAuditData(financeDetail, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("GuarantorDetails"));
 		}
-		
+
 		//Joint Account Details
-				//=======================================
-				List<JointAccountDetail> finJointAccoutnDetail = financeDetail.getJountAccountDetailList();
-				if (finJointAccoutnDetail != null && !finJointAccoutnDetail.isEmpty()) {
-					auditDetailMap.put("JointAccountDetails",
-							setJointAccountDetailAuditData(financeDetail, auditTranType, method));
-					auditDetails.addAll(auditDetailMap.get("JointAccountDetails"));
-				}
-				
-		if(ImplementationConstants.COLLATERAL_INTERNAL){
+		//=======================================
+		List<JointAccountDetail> finJointAccoutnDetail = financeDetail.getJountAccountDetailList();
+		if (finJointAccoutnDetail != null && !finJointAccoutnDetail.isEmpty()) {
+			auditDetailMap.put("JointAccountDetails",
+					setJointAccountDetailAuditData(financeDetail, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("JointAccountDetails"));
+		}
+
+		if (ImplementationConstants.COLLATERAL_INTERNAL) {
 
 			// Collateral Assignment Details
 			//=======================================
-			if (financeDetail.getCollateralAssignmentList() != null && financeDetail.getCollateralAssignmentList().size() > 0) {
-				auditDetailMap.put("CollateralAssignments", setCollateralAssignmentAuditData(financeDetail, auditTranType, method));
+			if (financeDetail.getCollateralAssignmentList() != null
+					&& financeDetail.getCollateralAssignmentList().size() > 0) {
+				auditDetailMap.put("CollateralAssignments",
+						setCollateralAssignmentAuditData(financeDetail, auditTranType, method));
 				auditDetails.addAll(auditDetailMap.get("CollateralAssignments"));
 			}
-		}else{
+		} else {
 			//Finance Collaterals Details
 			//=======================================
 			List<FinCollaterals> finCollateral = financeDetail.getFinanceCollaterals();
@@ -1250,7 +1240,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		return auditHeader;
 
 	}
-	
+
 	/**
 	 * Methods for Creating List Finance Flag of Audit Details with detailed fields
 	 * 
@@ -1259,16 +1249,15 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	 * @param method
 	 * @return
 	 */
-	private List<AuditDetail> setFinFlagAuditData(FinanceDetail financeDetail, String auditTranType,
-			String method) {
+	private List<AuditDetail> setFinFlagAuditData(FinanceDetail financeDetail, String auditTranType, String method) {
 		logger.debug("Entering");
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		for (int i = 0; i < financeDetail.getFinFlagsDetails().size(); i++) {
 
 			FinFlagsDetail finFlagsDetail = financeDetail.getFinFlagsDetails().get(i);
 			boolean isRcdType = false;
-			if(StringUtils.isEmpty(finFlagsDetail.getRecordType())){
+			if (StringUtils.isEmpty(finFlagsDetail.getRecordType())) {
 				continue;
 			}
 
@@ -1305,11 +1294,10 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 						.getBefImage(), finFlagsDetail));
 			}
 		}
-		
+
 		logger.debug("Leaving");
 		return auditDetails;
 	}
-
 
 	/**
 	 * Method For Preparing List of AuditDetails for Guarantor Details
@@ -1319,7 +1307,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	 * @param Finreference
 	 * @return
 	 */
-	private List<AuditDetail> processingGuarantorDetailList(List<AuditDetail> auditDetails, String type,String finReference) {
+	private List<AuditDetail> processingGuarantorDetailList(List<AuditDetail> auditDetails, String type,
+			String finReference) {
 
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -1329,11 +1318,11 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		for (int i = 0; i < auditDetails.size(); i++) {
 
 			GuarantorDetail guarantorDetail = (GuarantorDetail) auditDetails.get(i).getModelData();
-			
-			if(StringUtils.isBlank(guarantorDetail.getRecordType())){
+
+			if (StringUtils.isBlank(guarantorDetail.getRecordType())) {
 				continue;
 			}
-			
+
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;
@@ -1350,7 +1339,6 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 			guarantorDetail.setWorkflowId(0);
 			guarantorDetail.setFinReference(finReference);
-			
 
 			if (guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
@@ -1358,26 +1346,21 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				saveRecord = true;
 				if (guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 					guarantorDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (guarantorDetail.getRecordType()
-				        .equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				} else if (guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 					guarantorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (guarantorDetail.getRecordType()
-				        .equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				} else if (guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 					guarantorDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 
-			} else if (guarantorDetail.getRecordType().equalsIgnoreCase(
-			        PennantConstants.RECORD_TYPE_NEW)) {
+			} else if (guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 				if (approveRec) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
 				}
-			} else if (guarantorDetail.getRecordType().equalsIgnoreCase(
-			        PennantConstants.RECORD_TYPE_UPD)) {
+			} else if (guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
 				updateRecord = true;
-			} else if (guarantorDetail.getRecordType().equalsIgnoreCase(
-			        PennantConstants.RECORD_TYPE_DEL)) {
+			} else if (guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
 				} else if (guarantorDetail.isNew()) {
@@ -1414,7 +1397,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		return auditDetails;
 
 	}
-	
+
 	/**
 	 * Method For Preparing List of AuditDetails for Joint Details
 	 * 
@@ -1423,7 +1406,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	 * @param Finreference
 	 * @return
 	 */
-	private List<AuditDetail> processingJointAccountDetailList(List<AuditDetail> auditDetails, String type,String finReference) {
+	private List<AuditDetail> processingJointAccountDetailList(List<AuditDetail> auditDetails, String type,
+			String finReference) {
 
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -1433,11 +1417,11 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		for (int i = 0; i < auditDetails.size(); i++) {
 
 			JointAccountDetail jointAccountDetail = (JointAccountDetail) auditDetails.get(i).getModelData();
-			
-			if(StringUtils.isBlank(jointAccountDetail.getRecordType())){
+
+			if (StringUtils.isBlank(jointAccountDetail.getRecordType())) {
 				continue;
 			}
-			
+
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;
@@ -1454,7 +1438,6 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 			jointAccountDetail.setWorkflowId(0);
 			jointAccountDetail.setFinReference(finReference);
-			
 
 			if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
@@ -1462,26 +1445,21 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				saveRecord = true;
 				if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 					jointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (jointAccountDetail.getRecordType()
-				        .equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				} else if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 					jointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (jointAccountDetail.getRecordType()
-				        .equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				} else if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 					jointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 
-			} else if (jointAccountDetail.getRecordType().equalsIgnoreCase(
-			        PennantConstants.RECORD_TYPE_NEW)) {
+			} else if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 				if (approveRec) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
 				}
-			} else if (jointAccountDetail.getRecordType().equalsIgnoreCase(
-			        PennantConstants.RECORD_TYPE_UPD)) {
+			} else if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
 				updateRecord = true;
-			} else if (jointAccountDetail.getRecordType().equalsIgnoreCase(
-			        PennantConstants.RECORD_TYPE_DEL)) {
+			} else if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
 				} else if (jointAccountDetail.isNew()) {
@@ -1518,7 +1496,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		return auditDetails;
 
 	}
-	
+
 	/**
 	 * Method For Preparing List of AuditDetails for FinCollateral Details
 	 * 
@@ -1527,7 +1505,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	 * @param Finreference
 	 * @return
 	 */
-	private List<AuditDetail> processingFinCollateralDetailList(List<AuditDetail> auditDetails, String type,String finReference) {
+	private List<AuditDetail> processingFinCollateralDetailList(List<AuditDetail> auditDetails, String type,
+			String finReference) {
 
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -1553,7 +1532,6 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 			finCollaterals.setWorkflowId(0);
 			finCollaterals.setFinReference(finReference);
-			
 
 			if (finCollaterals.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
@@ -1561,26 +1539,21 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				saveRecord = true;
 				if (finCollaterals.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 					finCollaterals.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (finCollaterals.getRecordType()
-				        .equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				} else if (finCollaterals.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 					finCollaterals.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (finCollaterals.getRecordType()
-				        .equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				} else if (finCollaterals.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 					finCollaterals.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 
-			} else if (finCollaterals.getRecordType().equalsIgnoreCase(
-			        PennantConstants.RECORD_TYPE_NEW)) {
+			} else if (finCollaterals.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 				if (approveRec) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
 				}
-			} else if (finCollaterals.getRecordType().equalsIgnoreCase(
-			        PennantConstants.RECORD_TYPE_UPD)) {
+			} else if (finCollaterals.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
 				updateRecord = true;
-			} else if (finCollaterals.getRecordType().equalsIgnoreCase(
-			        PennantConstants.RECORD_TYPE_DEL)) {
+			} else if (finCollaterals.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
 				} else if (finCollaterals.isNew()) {
@@ -1616,7 +1589,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		return auditDetails;
 
 	}
-	
+
 	/**
 	 * Method For Preparing List of AuditDetails for Check List for Fin Flag Details
 	 * 
@@ -1636,7 +1609,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		for (int i = 0; i < auditDetails.size(); i++) {
 			FinFlagsDetail finFlagsDetail = (FinFlagsDetail) auditDetails.get(i).getModelData();
-			if(StringUtils.isEmpty(finFlagsDetail.getRecordType())){
+			if (StringUtils.isEmpty(finFlagsDetail.getRecordType())) {
 				continue;
 			}
 			saveRecord = false;
@@ -1697,7 +1670,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			}
 
 			if (deleteRecord) {
-				getFinFlagDetailsDAO().delete(finFlagsDetail.getReference(), finFlagsDetail.getFlagCode(), finFlagsDetail.getModuleName(),type);
+				getFinFlagDetailsDAO().delete(finFlagsDetail.getReference(), finFlagsDetail.getFlagCode(),
+						finFlagsDetail.getModuleName(), type);
 			}
 
 			if (approveRec) {
@@ -1711,6 +1685,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		return auditDetails;
 
 	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
