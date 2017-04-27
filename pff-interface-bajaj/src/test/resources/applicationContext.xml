@@ -14,7 +14,7 @@
 		<property name="password" value="pff123" />
 	</bean>
 	
-	<bean id="SAPGLService" class="com.pennanttech.bajaj.services.SAPGLService">
+	<bean id="SAPGLService" class="com.pennanttech.bajaj.services.SAPGLServiceImpl">
 		<property name="dataSource" ref="dataSource"/>
 	</bean>
 	

@@ -23,7 +23,7 @@ public class TestSAPGL {
 	@Test
 	public void process() {
 		try {
-			sapglService.generateGLReport(1000);
+			sapglService.generateGLReport(new Long(1000));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

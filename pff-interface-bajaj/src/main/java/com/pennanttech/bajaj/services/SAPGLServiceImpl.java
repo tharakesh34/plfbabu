@@ -20,6 +20,7 @@ import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.generalledger.GeneralLedgerService;
 import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 public class SAPGLServiceImpl extends BajajServices implements GeneralLedgerService {
 	private final Logger logger = Logger.getLogger(getClass());
@@ -251,6 +252,10 @@ public class SAPGLServiceImpl extends BajajServices implements GeneralLedgerServ
 	private void prepareTransactionDetails() throws Exception {
 		int totalTransactions = extractTransactionsData();
 		totalTransactions = groupTranactions();
+		
+		if (totalTransactions == 0) {
+			throw new Exception("Transaction details not avialble for the dates between  "+DateUtil.format(monthStartDate, DateFormat.LONG_DATE) + " and "+DateUtil.format(monthEndDate, DateFormat.LONG_DATE) );
+		}
 
 		if (totalTransactions == 0) {
 			throw new Exception("Transaction details not avialble.");
