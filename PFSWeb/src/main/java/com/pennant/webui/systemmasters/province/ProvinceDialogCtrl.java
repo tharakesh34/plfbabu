@@ -89,12 +89,13 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	 * component with the same 'id' in the ZUL-file are getting autoWired by our
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window  window_ProvinceDialog;
-	protected ExtendedCombobox cPCountry; 			
-	protected Uppercasebox cPProvince; 			
-	protected Textbox cPProvinceName; 		
-	protected Checkbox 	systemDefault; 		
-	 protected Textbox bankRefNo;
+	protected Window window_ProvinceDialog;
+	protected ExtendedCombobox cPCountry;
+	protected Uppercasebox cPProvince;
+	protected Textbox cPProvinceName;
+	protected Checkbox systemDefault;
+	protected Textbox bankRefNo;
+	protected Checkbox cPIsActive; // autoWired
 
 	// not auto wired variables
 	private Province  province; // overHanded per parameter
@@ -319,11 +320,16 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.cPProvinceName.setValue(aProvince.getCPProvinceName());
 		this.systemDefault.setChecked(aProvince.isSystemDefault());
 		this.bankRefNo.setValue(aProvince.getBankRefNo());
-
+		this.cPIsActive.setChecked(aProvince.iscPIsActive());
+		
 		if (aProvince.isNewRecord()){
 			this.cPCountry.setDescription("");
 		}else{
 			this.cPCountry.setDescription(aProvince.getLovDescCPCountryName());
+		}
+		if(aProvince.isNew() || (aProvince.getRecordType() != null ? aProvince.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+			this.cPIsActive.setChecked(true);
+			this.cPIsActive.setDisabled(true);
 		}
 		this.recordStatus.setValue(aProvince.getRecordStatus());
 		logger.debug("Leaving");
@@ -369,6 +375,12 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
+		try {
+			aProvince.setcPIsActive(this.cPIsActive.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		doRemoveValidation();
 
 		if (wve.size()>0) {
@@ -560,6 +572,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 
 		this.cPProvinceName.setReadonly(isReadOnly("ProvinceDialog_cPProvinceName"));
 		this.bankRefNo.setReadonly(isReadOnly("ProvinceDialog_BankRefNo"));
+		this.cPIsActive.setDisabled(isReadOnly("ProvinceDialog_CPIsActive"));
 //		this.systemDefault.setDisabled(isReadOnly("ProvinceDialog_systemDefault"));
 		if (isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -589,6 +602,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.cPProvinceName.setReadonly(true);
 		this.bankRefNo.setReadonly(true);
 		this.systemDefault.setDisabled(true);
+		this.cPIsActive.setDisabled(true);
 
 		if(isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -614,6 +628,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		this.cPProvince.setValue("");
 		this.cPProvinceName.setValue("");
 		this.bankRefNo.setValue("");
+		this.cPIsActive.setChecked(false);
 		logger.debug("Leaving");
 	}
 

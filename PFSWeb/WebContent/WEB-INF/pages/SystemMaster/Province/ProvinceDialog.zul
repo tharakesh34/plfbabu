@@ -116,6 +116,16 @@
 										width="180px" />
 								</hbox>
 							</row>
+							<row>
+								<label
+									id="label_ProvinceDialog_CPIsActive"
+									value="${c:l('label_ProvinceDialog_CPIsActive.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="cPIsActive"
+										checked="false" />
+								</hbox>
+							</row>
 						</rows>
 					</grid>
 				</groupbox>

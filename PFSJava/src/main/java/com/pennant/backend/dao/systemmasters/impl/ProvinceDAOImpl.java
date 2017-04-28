@@ -96,7 +96,7 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 		province.setCPCountry(cPCountry);
 		province.setCPProvince(cPProvince);
 
-		StringBuilder selectSql = new StringBuilder("SELECT CPCountry, CPProvince, CPProvinceName,SystemDefault,BankRefNo," );
+		StringBuilder selectSql = new StringBuilder("SELECT CPCountry, CPProvince, CPProvinceName,SystemDefault,BankRefNo,CPIsActive," );
 		if(type.contains("View")){
 			selectSql.append(" lovDescCPCountryName, ");
 		}
@@ -187,10 +187,10 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTCountryVsProvince");
 		insertSql.append(tableType.getSuffix());
-		insertSql.append(" (CPCountry, CPProvince, CPProvinceName,SystemDefault,BankRefNo,");
+		insertSql.append(" (CPCountry, CPProvince, CPProvinceName,SystemDefault,BankRefNo,CPIsActive,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
-		insertSql.append(" Values(:CPCountry, :CPProvince, :CPProvinceName,:SystemDefault,:BankRefNo," );
+		insertSql.append(" Values(:CPCountry, :CPProvince, :CPProvinceName,:SystemDefault,:BankRefNo, :CPIsActive," );
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -228,7 +228,7 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder("Update RMTCountryVsProvince");
 		updateSql.append(tableType.getSuffix());
-		updateSql.append(" Set CPProvinceName = :CPProvinceName, SystemDefault=:SystemDefault,BankRefNo=:BankRefNo," );
+		updateSql.append(" Set CPProvinceName = :CPProvinceName, SystemDefault=:SystemDefault,BankRefNo=:BankRefNo,CPIsActive=:CPIsActive," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );

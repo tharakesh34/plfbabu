@@ -66,6 +66,7 @@ public class Province extends AbstractWorkflowEntity {
 	private String lovDescCPCountryName;
 	private boolean systemDefault;
 	private String bankRefNo;
+	private boolean cPIsActive;
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -161,6 +162,14 @@ public class Province extends AbstractWorkflowEntity {
 
 	public void setBankRefNo(String bankRefNo) {
 		this.bankRefNo = bankRefNo;
+	}
+
+	public boolean iscPIsActive() {
+		return cPIsActive;
+	}
+
+	public void setcPIsActive(boolean cPIsActive) {
+		this.cPIsActive = cPIsActive;
 	}
 
 	public Timestamp getPrevMntOn() {
