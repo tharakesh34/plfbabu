@@ -623,7 +623,7 @@
 		<menuItem id="menu_Item_PresentmentExtractDetail" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentDetailExtractList.zul" rightName="menuItem_PresentmentDetail_PresentmentExtract"/>
 		<menuItem id="menu_Item_PresentmentBatchCreation" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentDetailList.zul" rightName="menuItem_PresentmentDetail_PresentmentBatchCreation"/>
 		<menuItem id="menu_Item_PresentmentHeader" 	zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderList.zul" rightName="menuItem_PresentmentDetail_PresentmentReview" />
-		<menuItem id="menu_Item_PresentmentFileImport" 	zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/ImportPresentmentDetails.zul" rightName="menuItem_PresentmentDetail_FileImport" />															
+		<menuItem id="menu_Item_PresentmentFileImport" 	zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/ImportPresentmentDetails.zul" rightName="" />		<!-- //menuItem_PresentmentDetail_PresentmentReview -->													
 	</menu>												
 
 </ns2:XMLRootMenu>

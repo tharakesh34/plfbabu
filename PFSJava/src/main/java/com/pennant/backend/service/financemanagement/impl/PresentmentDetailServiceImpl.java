@@ -188,6 +188,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 		long id = presentmentDetailDAO.getSeqNumber("SeqPresentmentHeader");
 		String reference = StringUtils.leftPad(String.valueOf(id), 10, "0");
 		header.setId(id);
+		header.setStatus(RepayConstants.PEXC_EXTRACT);
 		header.setPresentmentDate(DateUtility.getSysDate());
 		header.setReference("PRE".concat(reference));// FIXME the reference preparation
 		presentmentDetailDAO.savePresentmentHeader(header);

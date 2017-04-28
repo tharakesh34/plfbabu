@@ -18,7 +18,7 @@ public class PresentmentExtractService extends AbstractFileExtractService implem
 		extractDetails.setBatchType("PRESENTMENT_RESPONSE_IMPORT");
 		extractDetails.setUserId(userId);
 		extractDetails.batchStatus.setBatchReference("Manual File Upload.");
-		extractDetails.setLogStatus(true);
+		extractDetails.setLogStatus(false);
 
 		return extractDetails;
 	}

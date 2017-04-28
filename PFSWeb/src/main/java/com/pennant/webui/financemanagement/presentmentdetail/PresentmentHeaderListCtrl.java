@@ -49,7 +49,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zhtml.Messagebox;
@@ -109,12 +108,16 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	}
 
 	@Override
+	protected void doAddFilters() {
+		this.searchObject.addFilterEqual("Status", 2);
+	}
+	
+	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "PresentmentHeader";
 		super.pageRightName = "PresentmentHeaderList";
 		super.tableName = "PresentmentHeader";
 		super.queueTableName = "PresentmentHeader";
-		super.enquiryTableName = "PresentmentHeader";
 	}
 
 	/**
@@ -126,13 +129,13 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	public void onCreate$window_PresentmentHeaderList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_PresentmentHeaderList, borderLayout_PresentmentHeaderList, listBoxPresentmentHeader,
-				pagingPresentmentHeaderList);
+		setPageComponents(window_PresentmentHeaderList, borderLayout_PresentmentHeaderList, listBoxPresentmentHeader, pagingPresentmentHeaderList);
 		setItemRender(new PresentmentHeaderListModelItemRenderer());
 
 		registerButton(btnApprove);
 
-		registerField("PresentmentID");
+		registerField("Id");
+		registerField("Reference");
 		registerField("LastMntBy");
 		registerField("LastMntOn");
 		registerField("Status");
@@ -181,7 +184,8 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	private Map<Long, Object> getPresentmentMap() {
 
 		JdbcSearchObject<Map<Long, Object>> searchObject = new JdbcSearchObject<>();
-		searchObject.addField("presentmentid");
+		searchObject.addField("Id");
+		searchObject.addFilterEqual("Status", 2);
 		searchObject.addTabelName(this.tableName);
 
 		List<Map<Long, Object>> list = getPagedListWrapper().getPagedListService().getBySearchObject(searchObject);
@@ -191,7 +195,7 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		if (list != null && !list.isEmpty()) {
 			for (int i = 0; i < list.size(); i++) {
 				Map<Long, Object> map = (Map<Long, Object>) list.get(i);
-				long paymentid = Long.parseLong(String.valueOf(map.get("presentmentid")));
+				long paymentid = Long.parseLong(String.valueOf(map.get("Id")));
 				preMap.put(paymentid, null);
 			}
 		}
@@ -285,8 +289,7 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		}
 
 		// Show a confirm box
-
-		String msg = " " + this.pagingPresentmentHeaderList.getTotalSize() + "/" + this.presentmentMap.size()
+		String msg = " " + this.presentmentMap.size() + "/" + this.pagingPresentmentHeaderList.getTotalSize()
 				+ " batches are selected for process.\n Do you want to continue? ";
 		MultiLineMessageBox.doSetTemplate();
 		int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Conformation"), MultiLineMessageBox.YES
@@ -320,19 +323,20 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		public void render(Listitem item, PresentmentHeader object, int count) throws Exception {
 
 			Listcell lc;
+
 			lc = new Listcell();
 			list_CheckBox = new Checkbox();
-			list_CheckBox.setAttribute("iD", object.getPresentmentID());
+			list_CheckBox.setAttribute("iD", object.getId());
 			list_CheckBox.addForward("onClick", self, "onClick_listCellCheckBox");
 			lc.appendChild(list_CheckBox);
 			if (listHeader_CheckBox_Comp.isChecked()) {
 				list_CheckBox.setChecked(true);
 			} else {
-				list_CheckBox.setChecked(presentmentMap.containsKey(object.getPresentmentID()));
+				list_CheckBox.setChecked(presentmentMap.containsKey(object.getId()));
 			}
 			lc.setParent(item);
 
-			lc = new Listcell("BT".concat(StringUtils.leftPad(String.valueOf(object.getPresentmentID()), 10, "0")));
+			lc = new Listcell(object.getReference());
 			lc.setParent(item);
 
 			lc = new Listcell(getUserWorkspace().getUserDetails().getUsername());

@@ -4612,7 +4612,11 @@
 		<property name="presentmentDetailService" ref="presentmentDetailService" />
 	</bean>
 	
-
+		<!-- PresentmentImports -->
+	<bean id="importPresentmentDetailCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.ImportPresentmentDetailCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="presentmentExtractService" ref="presentmentExtractService" />
+	</bean>
 	
 	<!-- FinType Partner Bank -->
 	<bean id="finTypePartnerBankListCtrl" class="com.pennant.webui.rmtmasters.financetype.FinTypePartnerBankListCtrl"

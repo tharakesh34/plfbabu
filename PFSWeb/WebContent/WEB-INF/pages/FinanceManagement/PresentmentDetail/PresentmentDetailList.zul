@@ -17,11 +17,12 @@
 							autodisable="button_PresentmentDetailList_PresentmentDetailSearch,print,button_PresentmentDetailList_NewPresentmentDetail,btnRefresh,help,button_PresentmentDetailList_CreateBatch"
 							tooltiptext="${c:l('button_PresentmentDetailList_PresentmentDetailSearch.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
+					
 					<!-- SEARCH AREA -->
 					<toolbar align="center" style="toolbar-center">
 						<button  id="button_PresentmentDetailList_PresentmentDetailSearch" label="${c:l('label_Filter')}"
 							autodisable="button_PresentmentDetailList_PresentmentDetailSearch,print,button_PresentmentDetailList_NewPresentmentDetail,btnRefresh,help"
-							tooltiptext="${c:l('button_PresentmentDetailList_PresentmentDetailSearch.tooltiptext')}" sclass="z-toolbarbutton" />
+							tooltiptext="${c:l('button_PresentmentDetailList_PresentmentDetailSearch.tooltiptext')}" sclass="z-toolbarbutton" visible="false"/>
 						<button id="print" label="${c:l('label_Print')}"
 							autodisable="button_PresentmentDetailList_PresentmentDetailSearch,print,button_PresentmentDetailList_NewPresentmentDetail,btnRefresh,help"
 							tooltiptext="${c:l('button_PresentmentDetailList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" visible="false"/>
@@ -44,47 +45,13 @@
 			<borderlayout id="borderLayout_PresentmentDetailList">
 				<north border="none" />
 				<center border="none">
-					<div>
-						<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true" >
-							<columns>
-								<column width="20%" />
-								<column width="30%" />
-								<column width="20%" />
-								<column width="30%" />
-							</columns>
-							<rows>
-								<row>
-									<label  value="${c:l('label_PresentmentDetailList_BatchReference.value')}" />
-									<hbox>
-									<space spacing="2px" sclass="mandatory" />
-									<combobox id="batchReference"  width="152px"/>
-									</hbox>
-									<label  value="${c:l('label_PresentmentDetailList_MandateType.value')}" />
-									<combobox id="mandateType"  width="200px"/>
-								</row>
-								
-								<row>
-									<label value="${c:l('label_PresentmentDetailList_Product.value')}" />
-									<extendedcombobox id = "product"/>
-									<label value="${c:l('label_PresentmentDetailList_ExclusionStatus.value')}" />
-									<combobox id = "exclusionStatus" width="200px"  />
-								</row>
-								
-								<row>
-									<label value="${c:l('label_PresentmentDetailList_PartnerBank.value')}" />
-									<extendedcombobox id = "partnerBank"/>
-								</row>
-							</rows>
-						</grid>
+				 <div>
 					<listbox id="listBoxPresentmentDetail" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"  multiple="false" sizedByContent="true" span="true">
 						<listhead sizable="true">
-								<listheader id="listheader_PresentmentDetail_Customer" label="${c:l('listheader_PresentmentDetail_Customer.label')}"  hflex="min" />
-								<listheader id="listheader_PresentmentDetail_LoanReference" label="${c:l('listheader_PresentmentDetail_LoanReference.label')}"  hflex="min" />
-								<listheader id="listheader_PresentmentDetail_LoanTypeOrProduct" label="${c:l('listheader_PresentmentDetail_LoanTypeOrProduct.label')}"  hflex="min" />
-								<listheader id="listheader_PresentmentDetail_EmiDate" label="${c:l('listheader_PresentmentDetail_EmiDate.label')}"  hflex="min" />
-								<listheader id="listheader_PresentmentDetail_Amount" label="${c:l('listheader_PresentmentDetail_Amount.label')}"  hflex="min" />
-								<listheader id="listheader_PresentmentDetail_MandateType" label="${c:l('listheader_PresentmentDetail_MandateType.label')}" hflex="min" />
-								<listheader id="listheader_PresentmentDetail_ExcludeStatus"  label="${c:l('listheader_PresentmentDetail_ExcludeStatus.label')}" hflex="min" align="center"/>
+								<listheader id="listheader_BatchId" label="${c:l('listheader_BatchId.label')}" hflex="min" />
+								<listheader id="listheader_CreatedBy" label="${c:l('listheader_CreatedBy.label')}"  hflex="min" />
+								<listheader id="listheader_CreatedDate" label="${c:l('listheader_CreatedDate.label')}"  hflex="min" />
+								<listheader id="listheader_Status" label="${c:l('listheader_Status.label')}" hflex="min" />
 						</listhead>		
 					</listbox>
 				</div>	

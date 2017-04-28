@@ -56,6 +56,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			Assert.notNull(endLineLength, "Presentment import file record length is not available in System paramers.");
 			rcdLegth = Integer.valueOf(StringUtils.trimToEmpty(endLineLength.toString()));
 
+			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setActualCount(getTotalRecords());
 			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStartTime(DateUtility.getSysDate());
 			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(PennantConstants.FILESTATUS_EXECUTING);
 			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setFileName(getFile().getName());
@@ -123,16 +124,16 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 					remarks.append(", Sucess: ");
 					remarks.append(successCount + ".");
 				}
-				updateBatchStatus("S", remarks.toString());
+				//updateBatchStatus("S", remarks.toString());
 
 				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(PennantConstants.FILESTATUS_FAILED);
 			} else {
 				remarks.append(" Uploaded File is empty please verify once");
-				updateBatchStatus("F", remarks.toString());
+				//updateBatchStatus("F", remarks.toString());
 				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(PennantConstants.FILESTATUS_FAILED);
 			}
 		} catch (Exception e) {
-			updateBatchStatus("F", e.getMessage());
+			//updateBatchStatus("F", e.getMessage());
 			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(PennantConstants.FILESTATUS_FAILED);
 
 		} finally {
@@ -154,7 +155,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		logger.debug("Entering");
 
 		StringBuffer query = new StringBuffer();
-		query.append("Update Presentmentdetails set Status = :Status Where PresentmentId = :Batchid ");
+		query.append("Update Presentmentdetails set Status = :Status Where Id = :Batchid ");
 
 		try {
 			this.jdbcTemplate.update(query.toString(), map);

@@ -44,19 +44,13 @@
 package com.pennant.webui.financemanagement.presentmentdetail;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.zkoss.spring.SpringUtil;
-import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
@@ -68,18 +62,11 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
-import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
-import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pff.core.Literal;
@@ -89,7 +76,7 @@ import com.pennanttech.pff.core.Literal;
  * /WEB-INF/pages/com.pennant.financemanagement/PresentmentDetail/PresentmentDetailList.zul file.
  * 
  */
-public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail> {
+public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader> {
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger logger = Logger.getLogger(PresentmentDetailListCtrl.class);
@@ -108,7 +95,6 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 	protected Combobox exclusionStatus;
 	protected Combobox batchReference;
 
-	private Map<Long, String> presentmentIdMap = new HashMap<Long, String>();
 	private transient PresentmentDetailService presentmentDetailService;
 
 	/**
@@ -119,11 +105,16 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 	}
 
 	@Override
+	protected void doAddFilters() {
+		this.searchObject.addFilterEqual("Status", 1);
+	}
+
+	@Override
 	protected void doSetProperties() {
-		super.moduleCode = "PresentmentDetail";
-		super.pageRightName = "PresentmentDetailList";
-		super.tableName = "PRESENTMENTDETAIL_SEARCHVIEW";
-		super.queueTableName = "PRESENTMENTDETAIL_SEARCHVIEW";
+		super.moduleCode = "PresentmentHeader";
+		super.pageRightName = "PresentmentHeader";
+		super.tableName = "PresentmentHeader";
+		super.queueTableName = "PresentmentHeader";
 	}
 
 	/**
@@ -135,42 +126,20 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 	public void onCreate$window_PresentmentDetailList(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		setPageComponents(window_PresentmentDetailList, borderLayout_PresentmentDetailList, listBoxPresentmentDetail, 	pagingPresentmentDetailList);
+		setPageComponents(window_PresentmentDetailList, borderLayout_PresentmentDetailList, listBoxPresentmentDetail,
+				pagingPresentmentDetailList);
 		setItemRender(new PresentmentDetailListModelItemRenderer());
+
+		registerField("Id");
+		registerField("Reference");
+		registerField("LastMntBy");
+		registerField("LastMntOn");
+		registerField("Status");
 
 		registerButton(button_PresentmentDetailList_PresentmentDetailSearch);
 		registerButton(button_PresentmentDetailList_CreateBatch);
-
 		doRenderPage();
-		doSetFieldProperties();
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Set the component level properties.
-	 */
-	private void doSetFieldProperties() {
-		logger.debug(Literal.ENTERING);
-
-		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
-		fillComboBox(this.exclusionStatus, "", PennantStaticListUtil.getPresentmentExclusionList(), "");
-		fillComboBox(this.batchReference, "", getPresentmentReference(), "");
-
-		this.product.setMaxlength(LengthConstants.LEN_MASTER_CODE);
-		this.product.setModuleName("FinanceType");
-		this.product.setValueColumn("FinType");
-		this.product.setDescColumn("FinTypeDesc");
-		this.product.setValidateColumns(new String[] { "FinType" });
-
-		this.partnerBank.setMaxlength(LengthConstants.LEN_MASTER_CODE);
-		this.partnerBank.setModuleName("PartnerBank");
-		this.partnerBank.setValueColumn("PartnerBankId");
-		this.partnerBank.setDescColumn("PartnerBankCode");
-		this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
-
-		this.presentmentIdMap.clear();
-
+		search();
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -181,135 +150,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$button_PresentmentDetailList_PresentmentDetailSearch(Event event) {
-		doSetValidations();
 		search();
-	}
-
-	@Override
-	public void search() {
-		logger.debug("Entering");
-		// Set the first page as the active page.
-
-		if (paging != null) {
-			this.paging.setActivePage(0);
-		}
-		this.searchObject.clearFilters();
-
-		this.searchObject.addFilterEqual("EXTRACTID", Long.valueOf(this.batchReference.getSelectedItem().getValue().toString()));
-
-		if (this.mandateType.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.mandateType.getSelectedItem().getValue())) {
-			this.searchObject.addFilterEqual("MandateType", this.mandateType.getSelectedItem().getValue());
-		}
-
-		if (!StringUtils.trimToEmpty(this.product.getValue()).equals("")) {
-			this.searchObject.addFilterEqual("FINTYPE", this.product.getValue());
-		}
-
-		if (this.exclusionStatus.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.exclusionStatus.getSelectedItem().getValue())) {
-			this.searchObject.addFilterEqual("ExcludeReason", this.exclusionStatus.getSelectedItem().getValue());
-		}
-
-		this.listbox.setItemRenderer(new PresentmentDetailListModelItemRenderer());
-		
-		getPagedListWrapper().getPagedListService().getBySearchObject(this.searchObject);
-		getPagedListWrapper().init(this.searchObject, this.listbox, this.paging);
-		logger.debug("Leaving");
-	}
-
-	private void doSetValidations() {
-		Clients.clearWrongValue(this.batchReference);
-
-		if (Labels.getLabel("Combo.Select").equals(this.batchReference.getSelectedItem().getLabel())) {
-			throw new WrongValueException(this.batchReference, " Batch Reference is mandatory.");
-		}
-	}
-
-	public void onClick$button_PresentmentDetailList_CreateBatch(Event event) throws InterruptedException {
-		logger.debug(Literal.ENTERING);
-
-		doSetValidations();
-
-		if (this.listBoxPresentmentDetail.getItems().size() <= 0) {
-			MessageUtil.showErrorMessage("No records are available to extract.");
-			return;
-		}
-
-		if (StringUtils.trimToNull(this.partnerBank.getValue()) == null) {
-			throw new WrongValueException(this.partnerBank, "Please select the partner bank.");
-		}
-
-		try {
-
-			long extractId = Long.valueOf(this.batchReference.getSelectedItem().getValue().toString());
-
-			List<Long> detaildList = getPresentmentIds(extractId);
-
-			if (detaildList != null && detaildList.size() <= 0) {
-				MessageUtil.showErrorMessage("No records are available to extract.");
-				return;
-			}
-
-			PresentmentHeader detail = new PresentmentHeader();
-			detail.setMandateType(this.mandateType.getValue());
-			detail.setPartnerBankId(Long.valueOf(this.partnerBank.getValue()));
-			detail.setPresentmentDate(DateUtility.getSysDate());
-			detail.setStatus(RepayConstants.PEXC_BATCH_CREATED);
-
-			detail.setVersion(0);
-			detail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
-			detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			detail.setRecordStatus("");
-			detail.setRoleCode("");
-			detail.setNextRoleCode("");
-			detail.setTaskId("");
-			detail.setNextTaskId("");
-			detail.setRecordType("");
-			detail.setWorkflowId(0);
-			long presentmentId = presentmentDetailService.savePresentmentHeader(detail);
-
-			presentmentDetailService.updatePresentmentDetails(presentmentId, detaildList);
-			presentmentDetailService.updatePresentmentDetailHeader(presentmentId, extractId);
-		} catch (Exception e) {
-			logger.error("Exception :", e);
-			MessageUtil.showErrorMessage(e.getMessage());
-			return;
-		}
-		logger.debug(Literal.LEAVING);
-
-		MessageUtil.showErrorMessage("Batch Created Successfully.");
-		return;
-	}
-
-	/**
-	 * Getting the Presentment list using JdbcSearchObject with search criteria..
-	 */
-	private List<Long> getPresentmentIds(long extractId) {
-
-		JdbcSearchObject<Map<String, Long>> searchObject = new JdbcSearchObject<>();
-		searchObject.addFilterEqual("EXTRACTID", extractId);
-		searchObject.addField("DETAILID");
-		searchObject.addFilterEqual("EXCLUDEREASON", 0);
-		searchObject.addTabelName(this.tableName);
-
-		if (this.mandateType.getSelectedItem() != null
-				&& !PennantConstants.List_Select.equals(this.mandateType.getSelectedItem().getValue())) {
-			searchObject.addFilterEqual("MandateType", this.mandateType.getSelectedItem().getValue());
-		}
-
-		if (!StringUtils.trimToEmpty(this.product.getValue()).equals("")) {
-			searchObject.addFilterEqual("FINTYPE", this.product.getValue());
-		}
-
-		List<Map<String, Long>> list = getPagedListWrapper().getPagedListService().getBySearchObject(searchObject);
-		List<Long> idList = new ArrayList<Long>();
-
-		if (list != null && !list.isEmpty()) {
-			for (int i = 0; i < list.size(); i++) {
-				Map<String, Long> map = (Map<String, Long>) list.get(i);
-				idList.add(Long.parseLong(String.valueOf(map.get("DETAILID"))));
-			}
-		}
-		return idList;
 	}
 
 	/**
@@ -319,32 +160,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
-		doResetInitValues();
-	}
-
-	/**
-	 * Resets the initial values from member variables. <br>
-	 */
-	private void doResetInitValues() {
-		logger.debug(Literal.ENTERING);
-
-		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
-		fillComboBox(this.exclusionStatus, "", PennantStaticListUtil.getPresentmentExclusionList(), "");
-		fillComboBox(this.batchReference, "", getPresentmentReference(), "");
-		this.batchReference.setSelectedIndex(0);
-		this.mandateType.setSelectedIndex(0);
-
-		this.product.setValue("");
-		this.product.setDescription("");
-		this.partnerBank.setValue("");
-		this.partnerBank.setDescription("");
-
-		if (listBoxPresentmentDetail.getItems() != null) {
-			this.listBoxPresentmentDetail.getItems().clear();
-
-		}
-		logger.debug(Literal.LEAVING);
-
+		search();
 	}
 
 	/**
@@ -367,63 +183,68 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 		doShowHelp(event);
 	}
 
-	private static ArrayList<ValueLabel> getPresentmentReference() {
-		ArrayList<ValueLabel> list = new ArrayList<ValueLabel>();
-		PagedListService service = (PagedListService) SpringUtil.getBean("pagedListService");
-
-		JdbcSearchObject<ValueLabel> so = new JdbcSearchObject<ValueLabel>(ValueLabel.class);
-
-		so.addTabelName("PRESENTMENTHEADER");
-		so.addField(" ID Label");
-		so.addField(" REFERENCE  Value");
-		//so.addFilterNotEqual("BATCHID", 0); need to add the satus filter
-		List<ValueLabel> ids = service.getBySearchObject(so);
-
-		ValueLabel label = null;
-		for (int i = 0; i < ids.size(); i++) {
-			label = new ValueLabel(ids.get(i).getLabel(), ids.get(i).getValue());
-			list.add(label);
+	/**
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of the component.
+	 */
+	public void onItemDoubleClicked(Event event) {
+		Listitem selectedItem = this.listBoxPresentmentDetail.getSelectedItem();
+		if (selectedItem == null) {
+			return;
 		}
-		return list;
-	}
 
+		// Get the selected entity.
+		final long  pcCountry = (long) selectedItem.getAttribute("Id");
+		Map<String, Object> arg = getDefaultArguments();
+		List<PresentmentDetail> presentmentDetailList = this.presentmentDetailService.getPresentmentDetailsList(6, "_View");
+		
+		arg.put("presentmentDetailList", presentmentDetailList);
+		arg.put("presentmentDetailListCtrl", this);
+
+		try {
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentDetailDialog.zul", null, arg);
+		} catch (Exception e) {
+			logger.error("Exception:", e);
+			MessageUtil.showError(e);
+		}
+
+	}
+	
+	
 	/**
 	 * Item renderer for list items in the list box.
 	 * 
 	 */
-	public class PresentmentDetailListModelItemRenderer implements ListitemRenderer<PresentmentDetail>, Serializable {
+	public class PresentmentDetailListModelItemRenderer implements ListitemRenderer<PresentmentHeader>, Serializable {
 
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 3736186724610414895L;
+
+		public PresentmentDetailListModelItemRenderer() {
+		
+		}
 
 		@Override
-		public void render(Listitem item, PresentmentDetail presentmentDetail, int count) throws Exception {
-
+		public void render(Listitem item, PresentmentHeader object, int count) throws Exception {
 			Listcell lc;
 
-			lc = new Listcell(presentmentDetail.getCustomerName());
+			lc = new Listcell(object.getReference());
 			lc.setParent(item);
 
-			lc = new Listcell(presentmentDetail.getFinReference());
+			lc = new Listcell(getUserWorkspace().getUserDetails().getUsername());
 			lc.setParent(item);
 
-			lc = new Listcell(presentmentDetail.getFinTypeDesc());
+			lc = new Listcell(DateUtility.formatToLongDate(object.getLastMntOn()));
 			lc.setParent(item);
 
-			lc = new Listcell(DateUtility.formatToLongDate(presentmentDetail.getSchDate()));
+			lc = new Listcell(PennantStaticListUtil.getlabelDesc(String.valueOf(object.getStatus()),
+					PennantStaticListUtil.getPresentmentBatchStatusList()));
 			lc.setParent(item);
 
-			lc = new Listcell(PennantApplicationUtil.formatRate(presentmentDetail.getPresentmentAmt().doubleValue(), 9));
-			lc.setStyle("text-align:right;");
-			lc.setParent(item);
-
-			lc = new Listcell(PennantStaticListUtil.getlabelDesc(presentmentDetail.getMandateType(),
-					PennantStaticListUtil.getMandateTypeList()));
-			lc.setParent(item);
-
-			lc = new Listcell(PennantStaticListUtil.getlabelDesc(String.valueOf(presentmentDetail.getExcludeReason()),
-					PennantStaticListUtil.getPresentmentExclusionList()));
-			lc.setParent(item);
-
+			item.setAttribute("Id", object.getId());
+			ComponentsCtrl.applyForward(item, "onDoubleClick=onItemDoubleClicked");
 		}
 	}
 

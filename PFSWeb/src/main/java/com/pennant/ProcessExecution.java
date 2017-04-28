@@ -38,6 +38,7 @@ public class ProcessExecution extends Panel {
 	Row row5 = null;
 	Row row6 = null;
 	Row row7 = null;
+	Row row8 = null;
 	Progressmeter meter = null;
 	Hbox hbox1 = null;
 	Hbox hBox6 = null;

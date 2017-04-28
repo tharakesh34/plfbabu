@@ -19,6 +19,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
 import com.pennanttech.interfacebajaj.fileextract.service.FileExtractService;
+import com.pennanttech.pff.core.Literal;
 
 public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 
@@ -55,6 +56,8 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	 * @throws Exception
 	 */
 	public void onCreate$window_ImportPresentmentDetails(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		
 		this.importPresentments.setProcess(PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT);
 		String status = PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.getStatus();
 		timer.start();
@@ -67,6 +70,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			this.btnSave.setDisabled(true);
 			this.btnUpload.setDisabled(true);
 		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -78,6 +82,8 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	 * @throws Exception
 	 */
 	public void onUpload$btnUpload(UploadEvent event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		
 		txtFileName.setText("");
 		errorMsg = null;
 		Media media = event.getMedia();
@@ -91,21 +97,32 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			errorMsg = e.getMessage();
 			MessageUtil.showErrorMessage(e.getMessage());
 		}
+		
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setFileImportData() throws Exception {
+		logger.debug(Literal.ENTERING);
+		
 		if (fileImport == null) {
 			fileImport = presentmentExtractService.getFileExtract(getUserWorkspace().getLoggedInUser().getLoginUsrID());
 		}
+		
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void renderPannel() {
+		logger.debug(Literal.ENTERING);
+		
 		renderPannel(fileImport);
 		importPresentments.render();
+		
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnSave(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+		
 		doValidations();
 
 		try {
@@ -118,17 +135,22 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			MessageUtil.showErrorMessage(e.getMessage());
 			return;
 		}
-		logger.debug("Leaving" + event.toString());
+		
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doValidations() {
+		logger.debug(Literal.ENTERING);
+		
 		if (StringUtils.trimToNull(this.txtFileName.getValue()) == null) {
 			throw new WrongValueException(this.txtFileName, Labels.getLabel("empty_file"));
 		}
+		
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doSave() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (importPresentments.getChildren() != null) {
 			importPresentments.getChildren().clear();
@@ -138,7 +160,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		thread.start();
 		Thread.sleep(1000);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onTimer$timer(Event event) {
