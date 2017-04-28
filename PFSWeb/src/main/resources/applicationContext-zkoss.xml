@@ -4162,6 +4162,7 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	<bean id="fileDownloadListCtrl" class="com.pennanttech.interfacebajaj.FileDownloadListCtrl" parent="basisListCtrl" scope="prototype"/>
+	<bean id="disbursementfileDownloadListCtrl" class="com.pennanttech.interfacebajaj.DisbursementFileDownloadListCtrl" parent="basisListCtrl" scope="prototype"/>
 	
 	
 	<!-- MandateStatusUpload -->

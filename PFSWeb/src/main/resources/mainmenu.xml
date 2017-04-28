@@ -161,7 +161,7 @@
  	</menu>
 	<menu id="menu_Category_Disbursement"  rightName="menuCat_Disbursement" >
 		<menuItem id="menu_Item_DisbursementRegistration" zulNavigation="/WEB-INF/pages/InterfaceBajaj/DisbursementRegistrationList.zul" rightName="menuItem_DisbursementRegistration"/>
-		<menuItem id="menu_Item_DisbursementFileDownlaods" zulNavigation="/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul?module=DISBURSEMENT" rightName="menuItem_DisbursementFileDownlaods"/>
+		<menuItem id="menu_Item_DisbursementFileDownlaods" zulNavigation="/WEB-INF/pages/InterfaceBajaj/DisbursementFileDownloadList.zul" rightName="menuItem_DisbursementFileDownlaods"/>
  	</menu>
  	
 	<!-- Rules   Factory -->

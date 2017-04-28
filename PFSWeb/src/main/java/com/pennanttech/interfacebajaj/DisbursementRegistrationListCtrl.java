@@ -438,6 +438,12 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			}
 			throw new WrongValuesException(wvea);
 		}
+		
+		if(this.fromDate.getValue()!=null && this.toDate.getValue()!= null){
+		if (this.fromDate.getValue().compareTo(this.toDate.getValue()) == 1) {
+			throw new WrongValueException(this.toDate, "To date should be greater than or equal to From date.");
+		}
+		}
 	}
 
 	private void doRemoveValidation() {
@@ -501,7 +507,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		
 		// Show a confirm box
 		
-		String msg = "You have selected " + this.disbursementMap.size() + " disbursements out of " + this.pagingDisbursementList.getTotalSize()  + ".\n Do you want to continue?";
+		String msg = "You have selected " + this.disbursementMap.size() + " Disbursement(s) out of " + this.pagingDisbursementList.getTotalSize()  + ".\n Do you want to continue?";
 		MultiLineMessageBox.doSetTemplate();
 		int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Conformation"), MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
 		if (conf == MultiLineMessageBox.NO) {
@@ -514,7 +520,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			args.put("module", "DISBURSEMENT");
 			
 			MessageUtil.showMessage("File download process initiated.");
-			createNewPage("/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul", "menu_Item_FileDownlaods", args);
+			createNewPage("/WEB-INF/pages/InterfaceBajaj/DisbursementFileDownloadList.zul", "menu_Item_FileDownlaods", args);
 			
 		} finally {
 			this.disbursementMap.clear();

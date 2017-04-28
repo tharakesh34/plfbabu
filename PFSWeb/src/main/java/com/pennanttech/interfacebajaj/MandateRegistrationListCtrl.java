@@ -357,7 +357,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 
 			item.setAttribute("id", mandate.getId());
 
-			ComponentsCtrl.applyForward(item, "onDoubleClick=onMandateItemDoubleClicked");
+			//ComponentsCtrl.applyForward(item, "onDoubleClick=onMandateItemDoubleClicked");
 		}
 	}
 
@@ -526,7 +526,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		}
 		
 		if (this.fromDate.getValue().compareTo(this.toDate.getValue()) == 1) {
-			throw new WrongValueException(this.toDate, "To date should greater than or equal to From date.");
+			throw new WrongValueException(this.toDate, "To date should be greater than or equal to From date.");
 		}
 
 	}
@@ -653,7 +653,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		}
 
 		// Show a confirm box
-		String msg = "You have selected " + this.mandateIdMap.size() + " Mandates out of " + this.pagingMandateList.getTotalSize()
+		String msg = "You have selected " + this.mandateIdMap.size() + " Mandate(s) out of " + this.pagingMandateList.getTotalSize()
 				+ ".\nDo you want to continue?";
 		MultiLineMessageBox.doSetTemplate();
 		int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Conformation"), MultiLineMessageBox.YES

@@ -2,6 +2,9 @@ package com.pennanttech.interfacebajaj.model;
 
 public class FileDownlaod {
 	
+	private int    Id;
+	private String finReference;
+	private String partnerBankCode;
 	private String name;
 	private String fileName;
 	private String fileLocation;
@@ -55,6 +58,30 @@ public class FileDownlaod {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getPartnerBankCode() {
+		return partnerBankCode;
+	}
+
+	public void setPartnerBankCode(String partnerBankCode) {
+		this.partnerBankCode = partnerBankCode;
+	}
+
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
+
+	public int getId() {
+		return Id;
+	}
+
+	public void setId(int id) {
+		Id = id;
 	}
 
 }
