@@ -93,7 +93,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTEmailValidator;
-import com.pennant.util.Constraint.PTPhoneNumberValidator;
+import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -126,8 +126,8 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	protected Uppercasebox				coOwnerIDNumber;
 	protected Textbox					coOwnerCIFName;
 
-	protected Textbox					phoneCountryCode;
-	protected Textbox					phoneAreaCode;
+//	protected Textbox					phoneCountryCode;
+	//protected Textbox					phoneAreaCode;
 	protected Textbox					mobileNo;
 	protected Textbox					emailId;
 
@@ -364,8 +364,6 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 				this.coOwnerCIFName.setValue("");
 				this.coOwnerIDNumber.setValue("");
 				this.mobileNo.setValue("");
-				this.phoneCountryCode.setValue("");
-				this.phoneAreaCode.setValue("");
 				this.emailId.setValue("");
 				this.coOwnerProofName.setValue("");
 			} else {
@@ -375,8 +373,6 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 					this.coOwnerCIFName.setValue(customer.getCustShrtName());
 					this.coOwnerIDNumber.setValue(customer.getCustCRCPR());
 					this.mobileNo.setValue(customer.getPhoneNumber());
-					this.phoneAreaCode.setValue(customer.getPhoneAreaCode());
-					this.phoneCountryCode.setValue(customer.getPhoneCountryCode());
 					this.emailId.setValue(customer.getEmailID());
 					getCoOwnerDetail().setCustomerId(customer.getCustID());
 					dosetCustAddress(customer.getCustID());
@@ -517,8 +513,6 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 		this.coOwnerCIFName.setReadonly(isReadOnly("CoOwnerDetailDialog_CoOwnerCIFName"));
 		this.coOwnerIDNumber.setReadonly(isReadOnly("CoOwnerDetailDialog_CoOwnerIDNumber"));
 		this.coOwnerProofName.setReadonly(isReadOnly("CoOwnerDetailDialog_CoOwnerProofName"));
-		this.phoneAreaCode.setReadonly(isReadOnly("CoOwnerDetailDialog_PhoneAreaCode"));
-		this.phoneCountryCode.setReadonly(isReadOnly("CoOwnerDetailDialog_PhoneCountryCode"));
 		this.mobileNo.setReadonly(isReadOnly("CoOwnerDetailDialog_MobileNo"));
 		this.emailId.setReadonly(isReadOnly("CoOwnerDetailDialog_EmailId"));
 
@@ -604,9 +598,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 		this.coOwnerPercentage.setMaxlength(6);
 		this.coOwnerPercentage.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		this.coOwnerPercentage.setScale(2);
-		this.phoneCountryCode.setMaxlength(3);
-		this.phoneAreaCode.setMaxlength(3);
-		this.mobileNo.setMaxlength(8);
+		this.mobileNo.setMaxlength(10);
 		this.emailId.setMaxlength(200);
 		this.remarks.setMaxlength(500);
 		this.coOwnerProofName.setMaxlength(500);
@@ -671,10 +663,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 		this.coOwnerCIFName.setValue(aCoOwnerDetail.getCoOwnerCIFName());
 		this.coOwnerIDNumber.setValue(aCoOwnerDetail.getCoOwnerIDNumber());
 		this.coOwnerPercentage.setValue(aCoOwnerDetail.getCoOwnerPercentage());
-		String[] phone = PennantApplicationUtil.unFormatPhoneNumber(aCoOwnerDetail.getMobileNo());
-		this.phoneCountryCode.setValue(phone[0]);
-		this.phoneAreaCode.setValue(phone[1]);
-		this.mobileNo.setValue(phone[2]);
+		this.mobileNo.setValue(aCoOwnerDetail.getMobileNo());
 		this.emailId.setValue(aCoOwnerDetail.getEmailId());
 		this.coOwnerProofContent = aCoOwnerDetail.getCoOwnerProof();
 		this.coOwnerProofName.setValue(aCoOwnerDetail.getCoOwnerProofName());
@@ -826,8 +815,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 
 		// Mobile No
 		try {
-			aCoOwnerDetail.setMobileNo(PennantApplicationUtil.formatPhoneNumber(this.phoneCountryCode.getValue(),
-					this.phoneAreaCode.getValue(), this.mobileNo.getValue()));
+			aCoOwnerDetail.setMobileNo(this.mobileNo.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -994,16 +982,8 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 				this.coOwnerCIFName.setConstraint(new PTStringValidator(Labels.getLabel("label_CoOwnerDetailDialog_Name.value"), PennantRegularExpressions.REGEX_NAME, true));
 			}
 
-			if (!this.phoneCountryCode.isReadonly()) {
-				this.phoneCountryCode.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_CoOwnerDetailDialog_PhoneCountryCode.value"), true, 1));
-			}
-			
-			if (!this.phoneAreaCode.isReadonly()) {
-				this.phoneAreaCode.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_CoOwnerDetailDialog_PhoneAreaCode.value"), true, 2));
-			} 
-			
 			if (!this.mobileNo.isReadonly()) {
-				this.mobileNo.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_CoOwnerDetailDialog_MobileNo.value"), true, 3));
+				this.mobileNo.setConstraint(new PTMobileNumberValidator(Labels.getLabel("label_CoOwnerDetailDialog_MobileNo.value"), true));
 			}
 			 
 			if (!this.emailId.isReadonly()) {
@@ -1064,8 +1044,6 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 		this.mobileNo.setConstraint("");
 		this.emailId.setConstraint("");
 		this.coOwnerProofName.setConstraint("");
-		this.phoneCountryCode.setConstraint("");
-		this.phoneAreaCode.setConstraint("");
 		this.addrHNbr.setConstraint("");
 		this.flatNbr.setConstraint("");
 		this.addrStreet.setConstraint("");
@@ -1111,8 +1089,6 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 		this.coOwnerIDNumber.setErrorMessage("");
 		this.coOwnerPercentage.setErrorMessage("");
 		this.mobileNo.setErrorMessage("");
-		this.phoneAreaCode.setErrorMessage("");
-		this.phoneCountryCode.setErrorMessage("");
 		this.emailId.setErrorMessage("");
 		this.coOwnerProofName.setErrorMessage("");
 		this.remarks.setErrorMessage("");
@@ -1149,8 +1125,6 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			this.coOwnerIDNumber.setReadonly(true);
 			this.coOwnerCIFName.setReadonly(true);
 			this.mobileNo.setReadonly(true);
-			this.phoneAreaCode.setReadonly(true);
-			this.phoneCountryCode.setReadonly(true);
 			this.emailId.setReadonly(true);
 			this.btnUploadCoOwnerProof.setVisible(false);
 
@@ -1197,8 +1171,6 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			this.coOwnerIDNumber.setReadonly(isReadOnly("CoOwnerDetailDialog_CoOwnerIDNumber"));
 			this.coOwnerCIF.setReadonly(isReadOnly("CoOwnerDetailDialog_CoOwnerCIFName"));
 			this.mobileNo.setReadonly(isReadOnly("CoOwnerDetailDialog_MobileNo"));
-			this.phoneAreaCode.setReadonly(isReadOnly("CoOwnerDetailDialog_MobileNo"));
-			this.phoneCountryCode.setReadonly(isReadOnly("CoOwnerDetailDialog_MobileNo"));
 			this.emailId.setReadonly(isReadOnly("CoOwnerDetailDialog_EmailId"));
 			this.btnUploadCoOwnerProof.setVisible(getUserWorkspace().isAllowed("button_CoOwnerDetailDialog_btnUploadCoOwnerProof"));
 			this.hlayout_CoOwnerCIF.setVisible(false);
@@ -1305,8 +1277,6 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 		this.coOwnerPercentage.setValue("0");
 		this.mobileNo.setValue("");
 		this.emailId.setValue("");
-		this.phoneAreaCode.setValue("");
-		this.phoneCountryCode.setValue("");
 		this.coOwnerProofName.setValue("");
 		this.addrHNbr.setValue("");
 		this.flatNbr.setValue("");

@@ -153,7 +153,7 @@ public class EmployerDetailDAOImpl extends BasisNextidDaoImpl<EmployerDetail> im
 		StringBuilder deleteSql = new StringBuilder("Delete From EmployerDetail");
 		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where EmployerId =:EmployerId");
-		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
+		//deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
 		logger.trace(Literal.SQL + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(employerDetail);
@@ -237,7 +237,7 @@ public class EmployerDetailDAOImpl extends BasisNextidDaoImpl<EmployerDetail> im
 		updateSql
 				.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where EmployerId =:EmployerId");
-		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
+		//updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		logger.trace(Literal.SQL + updateSql.toString());
 

@@ -154,16 +154,8 @@
 										<space id="space_MobileNo"
 											spacing="2px" sclass="mandatory" />
 										<hbox>
-											<textbox
-												id="phoneCountryCode" width="40px" />
-											<label value="-"
-												style="display:inline-block;padding-top:4px;" />
-											<textbox id="phoneAreaCode"
-												width="40px" />
-											<label value="-"
-												style="display:inline-block;padding-top:4px;" />
 											<textbox id="mobileNo"
-												width="80px" />
+												width="180px" />
 										</hbox>
 									</hlayout>
 									<label id="label_EmailId"

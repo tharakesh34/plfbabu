@@ -51,8 +51,8 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 	protected Textbox custEID;
 	protected Textbox passport;
 	protected Textbox mobileNum;
-	protected Textbox phoneCountryCode;
-	protected Textbox phoneAreaCode;
+	//protected Textbox phoneCountryCode;
+	//protected Textbox phoneAreaCode;
 	protected Textbox nationality;
 
 	protected Listbox sortOperator_customerCIF;
@@ -100,9 +100,7 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 	protected void doAddFilters() {
 
 		super.doAddFilters();
-		String phoneNumber = PennantApplicationUtil.formatPhoneNumber(this.phoneCountryCode.getValue(),
-				this.phoneAreaCode.getValue(), this.mobileNum.getValue());
-		Filter filter = SearchFilterControl.getFilter("mobileNumber", phoneNumber,
+		Filter filter = SearchFilterControl.getFilter("mobileNumber", this.mobileNum.getValue(),
 				sortOperator_mobileNum);
 		if(filter != null){
 			searchObject.addFilter(filter);
@@ -112,8 +110,6 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 	@Override
 	protected void doReset() {
 		super.doReset();
-		SearchFilterControl.resetFilters(phoneAreaCode, sortOperator_mobileNum);
-		SearchFilterControl.resetFilters(phoneCountryCode, sortOperator_mobileNum);
 		SearchFilterControl.resetFilters(mobileNum, sortOperator_mobileNum);
 	}
 
@@ -286,9 +282,7 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 
 	private void doSetFieldProperties() {
 		this.customerCIF.setMaxlength(12);
-		this.phoneAreaCode.setMaxlength(3);
-		this.phoneCountryCode.setMaxlength(3);
-		this.mobileNum.setMaxlength(8);
+		this.mobileNum.setMaxlength(10);
 		this.custFName.setMaxlength(50);
 		this.custLName.setMaxlength(50);
 		this.custEID.setMaxlength(20);

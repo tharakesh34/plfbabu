@@ -99,6 +99,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
+import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.payorderissue.PayOrderIssueDialogCtrl;
@@ -149,8 +150,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected Textbox							branch;
 	protected Textbox							city;
 	protected Space								contactNumber;
-	protected Textbox							phoneCountryCode;
-	protected Textbox							phoneAreaCode;
+	//protected Textbox							phoneCountryCode;
+	//protected Textbox							phoneAreaCode;
 	protected Textbox							phoneNumber;
 
 	protected Label								label_liabilityHoldName;
@@ -516,8 +517,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.bankBranchID.setReadonly(isReadOnly("FinAdvancePaymentsDialog_bankBranchID"));
 		this.beneficiaryAccNo.setReadonly(isReadOnly("FinAdvancePaymentsDialog_beneficiaryAccNo"));
 		this.beneficiaryName.setReadonly(isReadOnly("FinAdvancePaymentsDialog_beneficiaryName"));
-		this.phoneCountryCode.setReadonly(isReadOnly("FinAdvancePaymentsDialog_contactNumber"));
-		this.phoneAreaCode.setReadonly(isReadOnly("FinAdvancePaymentsDialog_contactNumber"));
 		this.phoneNumber.setReadonly(isReadOnly("FinAdvancePaymentsDialog_contactNumber"));
 		//3
 		this.bankCode.setReadonly(isReadOnly("FinAdvancePaymentsDialog_bankCode"));
@@ -566,8 +565,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.payableLoc.setDisabled(true);
 		this.printingLoc.setDisabled(true);
 		this.valueDate.setDisabled(true);
-		this.phoneCountryCode.setReadonly(true);
-		this.phoneAreaCode.setReadonly(true);
 		this.phoneNumber.setReadonly(true);
 		this.partnerBankID.setReadonly(true);
 
@@ -673,12 +670,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.partnerBankID.setMaxlength(8);
 		this.partnerBankID.setValidateColumns(new String[] { "PartnerBankCode" });
 		
-		this.phoneCountryCode.setMaxlength(3);
-		this.phoneCountryCode.setWidth("50px");
-		this.phoneAreaCode.setMaxlength(3);
-		this.phoneAreaCode.setWidth("50px");
-		this.phoneNumber.setMaxlength(8);
-		this.phoneNumber.setWidth("100px");
+		this.phoneNumber.setMaxlength(10);
+		this.phoneNumber.setWidth("180px");
 
 		if (StringUtils.isNotBlank(this.finAdvancePayments.getBranchBankCode())) {
 			accNoLength = bankDetailService.getAccNoLengthByCode(this.finAdvancePayments.getBranchBankCode());
@@ -762,8 +755,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.beneficiaryAccNo.setValue(aFinAdvnancePayments.getBeneficiaryAccNo());
 		this.beneficiaryName.setValue(aFinAdvnancePayments.getBeneficiaryName());
 
-		this.phoneCountryCode.setValue(aFinAdvnancePayments.getPhoneCountryCode());
-		this.phoneAreaCode.setValue(aFinAdvnancePayments.getPhoneAreaCode());
 		this.phoneNumber.setValue(aFinAdvnancePayments.getPhoneNumber());
 		//other 
 		this.bankCode.setAttribute("bankCode", aFinAdvnancePayments.getBankCode());
@@ -1061,29 +1052,15 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				mandatory = true;
 			}
 
-			this.phoneCountryCode.clearErrorMessage();
-			this.phoneAreaCode.clearErrorMessage();
 			this.phoneNumber.clearErrorMessage();
 
-			this.phoneCountryCode.setErrorMessage("");
-			this.phoneAreaCode.setErrorMessage("");
 			this.phoneNumber.setErrorMessage("");
 
-			if (!this.phoneCountryCode.isReadonly()) {
-				this.phoneCountryCode.setConstraint(new PTPhoneNumberValidator(Labels
-						.getLabel("label_FinAdvancePaymentsDialog_PhoneCountryCode.value"), mandatory, 1));
-			}
-			if (!this.phoneAreaCode.isReadonly()) {
-				this.phoneAreaCode.setConstraint(new PTPhoneNumberValidator(Labels
-						.getLabel("label_FinAdvancePaymentsDialog_PhoneAreaCode.value"), mandatory, 2));
-			}
 			if (!this.phoneNumber.isReadonly()) {
-				this.phoneNumber.setConstraint(new PTPhoneNumberValidator(Labels
-						.getLabel("label_FinAdvancePaymentsDialog_PhoneNumber.value"), mandatory, 3));
+				this.phoneNumber.setConstraint(new PTMobileNumberValidator(Labels
+						.getLabel("label_FinAdvancePaymentsDialog_PhoneNumber.value"), mandatory));
 			}
 
-			aFinAdvancePayments.setPhoneCountryCode(this.phoneCountryCode.getValue());
-			aFinAdvancePayments.setPhoneAreaCode(this.phoneAreaCode.getValue());
 			aFinAdvancePayments.setPhoneNumber(this.phoneNumber.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1264,8 +1241,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.printingLoc.setConstraint("");
 		this.valueDate.setConstraint("");
 		this.bankBranchID.setConstraint("");
-		this.phoneCountryCode.setConstraint("");
-		this.phoneAreaCode.setConstraint("");
 		this.phoneNumber.setConstraint("");
 		logger.debug("Leaving");
 	}
@@ -1295,8 +1270,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.printingLoc.setErrorMessage("");
 		this.valueDate.setErrorMessage("");
 		this.bankBranchID.setErrorMessage("");
-		this.phoneCountryCode.setErrorMessage("");
-		this.phoneAreaCode.setErrorMessage("");
 		this.phoneNumber.setErrorMessage("");
 		this.remarks.setErrorMessage("");
 		logger.debug("Leaving");
@@ -1701,8 +1674,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.branch.setValue("");
 			this.beneficiaryAccNo.setValue("");
 			this.beneficiaryName.setValue("");
-			this.phoneCountryCode.setValue("");
-			this.phoneAreaCode.setValue("");
 			this.phoneNumber.setValue("");
 			if (str.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)) {
 				readOnlyComponent(isReadOnly("FinAdvancePaymentsDialog_printingLoc"), this.printingLoc);
@@ -1768,8 +1739,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.beneficiaryAccNo.setValue(details.getAccNumber());
 				this.beneficiaryName.setValue(details.getAccHolderName());
 				this.city.setValue(details.getCity());
-				this.phoneCountryCode.setValue(details.getPhoneCountryCode());
-				this.phoneAreaCode.setValue(details.getPhoneAreaCode());
 				this.phoneNumber.setValue(details.getPhoneNumber());
 				if (StringUtils.isNotBlank(details.getBankCode())) {
 					accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());

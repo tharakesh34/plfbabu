@@ -99,6 +99,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
+import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -140,8 +141,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Datebox								expiryDate;
 	protected CurrencyBox							maxLimit;
 	protected FrequencyBox							periodicity;
-	protected Textbox								phoneCountryCode;
-	protected Textbox								phoneAreaCode;
+	//protected Textbox								phoneCountryCode;
+	//protected Textbox								phoneAreaCode;
 	protected Textbox								phoneNumber;
 	protected Combobox								status;
 	protected Textbox								approvalID;
@@ -353,12 +354,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.maxLimit.setMandatory(true);
 
 		this.periodicity.setMandatoryStyle(true);
-		this.phoneCountryCode.setMaxlength(3);
-		this.phoneCountryCode.setWidth("50px");
-		this.phoneAreaCode.setMaxlength(3);
-		this.phoneAreaCode.setWidth("50px");
-		this.phoneNumber.setMaxlength(8);
-		this.phoneNumber.setWidth("100px");
+		this.phoneNumber.setMaxlength(10);
+		this.phoneNumber.setWidth("180px");
 		this.approvalID.setMaxlength(50);
 
 		this.custID.setModuleName("Customer");
@@ -583,8 +580,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.accType);
 			readOnlyComponent(true, this.maxLimit);
 			readOnlyComponent(true, this.periodicity);
-			readOnlyComponent(true, this.phoneCountryCode);
-			readOnlyComponent(true, this.phoneAreaCode);
 			readOnlyComponent(true, this.phoneNumber);
 			readOnlyComponent(true, this.startDate);
 			readOnlyComponent(true, this.expiryDate);
@@ -599,9 +594,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(isReadOnly("MandateDialog_AccType"), this.accType);
 			readOnlyComponent(isReadOnly("MandateDialog_MaxLimit"), this.maxLimit);
 			readOnlyComponent(isReadOnly("MandateDialog_Periodicity"), this.periodicity);
-			readOnlyComponent(isReadOnly("MandateDialog_PhoneCountryCode"), this.phoneCountryCode);
-			readOnlyComponent(isReadOnly("MandateDialog_PhoneCountryCode"), this.phoneCountryCode);
-			readOnlyComponent(isReadOnly("MandateDialog_PhoneAreaCode"), this.phoneAreaCode);
 			readOnlyComponent(isReadOnly("MandateDialog_PhoneNumber"), this.phoneNumber);
 			readOnlyComponent(isReadOnly("MandateDialog_StartDate"), this.startDate);
 			readOnlyComponent(isReadOnly("MandateDialog_ExpiryDate"), this.expiryDate);
@@ -627,8 +619,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.accType.setValue("");
 		this.maxLimit.setValue(BigDecimal.ZERO);
 		this.periodicity.setValue("");
-		this.phoneCountryCode.setValue("");
-		this.phoneAreaCode.setValue("");
 		this.phoneNumber.setValue("");
 		//Frequency
 		this.approvalID.setValue("");
@@ -821,9 +811,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(isReadOnly("MandateDialog_ExpiryDate"), this.expiryDate);
 		readOnlyComponent(isReadOnly("MandateDialog_MaxLimit"), this.maxLimit);
 		readOnlyComponent(isReadOnly("MandateDialog_Periodicity"), this.periodicity);
-		readOnlyComponent(isReadOnly("MandateDialog_PhoneCountryCode"), this.phoneCountryCode);
-		readOnlyComponent(isReadOnly("MandateDialog_PhoneAreaCode"), this.phoneCountryCode);
-		readOnlyComponent(isReadOnly("MandateDialog_PhoneCountryCode"), this.phoneAreaCode);
 		readOnlyComponent(isReadOnly("MandateDialog_PhoneNumber"), this.phoneNumber);
 		readOnlyComponent(isReadOnly("MandateDialog_ApprovalID"), this.approvalID);
 		readOnlyComponent(isReadOnly("MandateDialog_Status"), this.status);
@@ -889,8 +876,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(true, this.expiryDate);
 		readOnlyComponent(true, this.maxLimit);
 		readOnlyComponent(true, this.periodicity);
-		readOnlyComponent(true, this.phoneCountryCode);
-		readOnlyComponent(true, this.phoneAreaCode);
 		readOnlyComponent(true, this.phoneNumber);
 		readOnlyComponent(true, this.status);
 		readOnlyComponent(true, this.approvalID);
@@ -1005,8 +990,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.expiryDate.setValue(aMandate.getExpiryDate());
 		this.maxLimit.setValue(PennantAppUtil.formateAmount(aMandate.getMaxLimit(), ccyFormatter));
 		this.periodicity.setValue(aMandate.getPeriodicity());
-		this.phoneCountryCode.setValue(aMandate.getPhoneCountryCode());
-		this.phoneAreaCode.setValue(aMandate.getPhoneAreaCode());
 		this.phoneNumber.setValue(aMandate.getPhoneNumber());
 		this.reason.setValue(aMandate.getReason());
 
@@ -1146,8 +1129,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		// Phone Country Code
 		try {
-			aMandate.setPhoneCountryCode(this.phoneCountryCode.getValue());
-			aMandate.setPhoneAreaCode(this.phoneAreaCode.getValue());
 			aMandate.setPhoneNumber(this.phoneNumber.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1284,17 +1265,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					ccyFormatter, validate, false));
 		}
 		// Periodicity
-		if (!this.phoneCountryCode.isReadonly()) {
-			this.phoneCountryCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_MandateDialog_PhoneCountryCode.value"), false, 1));
-		}
-		if (!this.phoneAreaCode.isReadonly()) {
-			this.phoneAreaCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_MandateDialog_PhoneAreaCode.value"), false, 2));
-		}
 		if (!this.phoneNumber.isReadonly()) {
-			this.phoneNumber.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_MandateDialog_PhoneNumber.value"), false, 3));
+			this.phoneNumber.setConstraint(new PTMobileNumberValidator(Labels.getLabel("label_MandateDialog_PhoneNumber.value"), false));
 		}
 		// Reason
 		if (!this.reason.isReadonly()) {
@@ -1325,8 +1297,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.startDate.setConstraint("");
 		this.expiryDate.setConstraint("");
 		this.maxLimit.setConstraint("");
-		this.phoneCountryCode.setConstraint("");
-		this.phoneAreaCode.setConstraint("");
 		this.phoneNumber.setConstraint("");
 		this.status.setConstraint("");
 		this.approvalID.setConstraint("");
@@ -1352,8 +1322,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.startDate.setErrorMessage("");
 		this.expiryDate.setErrorMessage("");
 		this.maxLimit.setErrorMessage("");
-		this.phoneCountryCode.setErrorMessage("");
-		this.phoneAreaCode.setErrorMessage("");
 		this.phoneNumber.setErrorMessage("");
 		this.status.setErrorMessage("");
 		this.approvalID.setErrorMessage("");
@@ -1519,8 +1487,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.expiryDate.setValue(null);
 		this.maxLimit.setValue(BigDecimal.ZERO);
 		this.periodicity.setValue("");
-		this.phoneCountryCode.setValue("");
-		this.phoneAreaCode.setValue("");
 		this.phoneNumber.setValue("");
 		this.status.setValue("");
 		this.approvalID.setValue("");

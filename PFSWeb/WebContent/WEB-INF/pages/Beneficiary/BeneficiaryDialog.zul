@@ -125,15 +125,9 @@
 										<textbox id="accHolderName" />
 									</hbox>
 									<label id="label_PhoneCountryCode"
-										value="${c:l('label_BeneficiaryDialog_PhoneCountryCode.value')}" />
+										value="${c:l('label_BeneficiaryDialog_PhoneNumber.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<textbox id="phoneCountryCode" />
-										<label value="-"
-											style="display:inline-block;padding-top:4px;" />
-										<textbox id="phoneAreaCode" />
-										<label value="-"
-											style="display:inline-block;padding-top:4px;" />
 										<textbox id="phoneNumber" />
 									</hbox>
 								</row>

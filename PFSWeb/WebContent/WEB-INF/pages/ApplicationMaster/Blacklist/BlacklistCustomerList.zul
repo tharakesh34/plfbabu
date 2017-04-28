@@ -123,16 +123,8 @@
 								<listbox id="sortOperator_mobileNum"
 									width="43px" mold="select" rows="1" />
 								<hbox>
-									<textbox id="phoneCountryCode"
-										width="40px" />
-									<label value="-"
-										style="display:inline-block;padding-top:4px;" />
-									<textbox id="phoneAreaCode"
-										width="40px" />
-									<label value="-"
-										style="display:inline-block;padding-top:4px;" />
 									<textbox id="mobileNum"
-										width="73px" />
+										width="170px" />
 								</hbox>
 								<label
 									id="label_BlacklistCustomerSearch_Nationality"

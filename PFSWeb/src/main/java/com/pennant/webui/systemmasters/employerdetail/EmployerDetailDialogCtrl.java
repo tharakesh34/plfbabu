@@ -81,6 +81,7 @@ import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTEmailValidator;
+import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.PTWebValidator;
@@ -177,8 +178,8 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	protected Space 		space_EmpPhone; 
 
 	protected Textbox 		empPhone; 
-	protected Textbox 		phoneCountryCode; 						
-	protected Textbox 		phoneAreaCode; 	
+	//protected Textbox 		phoneCountryCode; 						
+	//protected Textbox 		phoneAreaCode; 	
 	
 	protected Label 		label_EmpFax;
 	protected Hlayout 		hlayout_EmpFax;
@@ -220,8 +221,8 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	protected Space 		space_ContactPersonNo; 
 
 	protected Textbox 		contactPersonNo; 
-	protected Textbox 		cpPhoneCountryCode; 						
-	protected Textbox 		cpPhoneAreaCode; 	
+	//protected Textbox 		cpPhoneCountryCode; 						
+	//protected Textbox 		cpPhoneAreaCode; 	
 	
 	protected Label 		label_EmpAlocationType;
 	protected Hlayout 		hlayout_EmpAlocationType;
@@ -560,8 +561,6 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		setComponentAccessType("EmployerDetailDialog_EmpCity", tempReadOnly, this.empCity, this.space_EmpCity, this.label_EmpCity, this.hlayout_EmpCity,null);
 		setComponentAccessType("EmployerDetailDialog_EmpCity", tempReadOnly, this.cityName, this.space_EmpCity, this.label_EmpCity, this.hlayout_EmpCity,null);
 		setRowInvisible(this.row5, this.hlayout_EmpProvince,this.hlayout_EmpCity);
-		setComponentAccessType("EmployerDetailDialog_EmpPhone", tempReadOnly, this.phoneCountryCode, this.space_EmpPhone, this.label_EmpPhone, this.hlayout_EmpPhone,null);
-		setComponentAccessType("EmployerDetailDialog_EmpPhone", tempReadOnly, this.phoneAreaCode, this.space_EmpPhone, this.label_EmpPhone, this.hlayout_EmpPhone,null);
 		setComponentAccessType("EmployerDetailDialog_EmpPhone", tempReadOnly, this.empPhone, this.space_EmpPhone, this.label_EmpPhone, this.hlayout_EmpPhone,null);
 		setComponentAccessType("EmployerDetailDialog_EmpFax", tempReadOnly, this.empFax, this.space_EmpFax, this.label_EmpFax, this.hlayout_EmpFax,null);
 		setComponentAccessType("EmployerDetailDialog_EmpFax", tempReadOnly, this.empFaxAreaCode, this.space_EmpFax, this.label_EmpFax, this.hlayout_EmpFax,null);
@@ -575,8 +574,6 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		setComponentAccessType("EmployerDetailDialog_EmpWebSite", tempReadOnly, this.empWebSite, this.space_EmpWebSite, this.label_EmpWebSite, this.hlayout_EmpWebSite,null);
 		setComponentAccessType("EmployerDetailDialog_ContactPersonName", tempReadOnly, this.contactPersonName, this.space_ContactPersonName, this.label_ContactPersonName, this.hlayout_ContactPersonName,null);
 		setRowInvisible(this.row8, this.hlayout_EmpWebSite,this.hlayout_ContactPersonName);
-		setComponentAccessType("EmployerDetailDialog_ContactPersonNo", tempReadOnly, this.cpPhoneAreaCode, this.space_ContactPersonNo, this.label_ContactPersonNo, this.hlayout_ContactPersonNo,null);
-		setComponentAccessType("EmployerDetailDialog_ContactPersonNo", tempReadOnly, this.cpPhoneCountryCode, this.space_ContactPersonNo, this.label_ContactPersonNo, this.hlayout_ContactPersonNo,null);
 		setComponentAccessType("EmployerDetailDialog_ContactPersonNo", tempReadOnly, this.contactPersonNo, this.space_ContactPersonNo, this.label_ContactPersonNo, this.hlayout_ContactPersonNo,null);
 		setComponentAccessType("EmployerDetailDialog_EmpAlocationType", tempReadOnly, this.empAlocationType, this.space_EmpAlocationType, this.label_EmpAlocationType, this.hlayout_EmpAlocationType,null);
 		setRowInvisible(this.row9, this.hlayout_ContactPersonNo,this.hlayout_EmpAlocationType);
@@ -632,15 +629,11 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		this.empEmailId.setMaxlength(100);
 		this.empWebSite.setMaxlength(100);
 		this.contactPersonName.setMaxlength(20);
-		this.cpPhoneAreaCode.setMaxlength(4);
-		this.cpPhoneCountryCode.setMaxlength(4);
-		this.contactPersonNo.setMaxlength(8);
+		this.contactPersonNo.setMaxlength(10);
 		this.empFax.setMaxlength(8);
 		this.empFaxAreaCode.setMaxlength(4);
 		this.empFaxCountryCode.setMaxlength(4);
-		this.phoneAreaCode.setMaxlength(3);
-		this.phoneCountryCode.setMaxlength(3);
-		this.empPhone.setMaxlength(8);
+		this.empPhone.setMaxlength(10);
 		this.empTelexAreaCode.setMaxlength(3);
 		this.empTelexCountryCode.setMaxlength(3);
 		this.empTelexNo.setMaxlength(8);
@@ -693,10 +686,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		this.empProvince.setValue(aEmployerDetail.getEmpProvince());
 		this.empCity.setValue(aEmployerDetail.getEmpCity());
 		this.cityName.setValue(aEmployerDetail.getEmpCity());
-		String[] phone=PennantApplicationUtil.unFormatPhoneNumber(aEmployerDetail.getEmpPhone());
-		this.phoneCountryCode.setValue(phone[0]);
-		this.phoneAreaCode.setValue(phone[1]);
-		this.empPhone.setValue(phone[2]);
+		this.empPhone.setValue(aEmployerDetail.getEmpPhone());
 		String[]fax = PennantApplicationUtil.unFormatPhoneNumber(aEmployerDetail.getEmpFax());
 		this.empFaxCountryCode.setValue(fax[0]);
 		this.empFaxAreaCode.setValue(fax[1]);
@@ -708,10 +698,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		this.empEmailId.setValue(aEmployerDetail.getEmpEmailId());
 		this.empWebSite.setValue(aEmployerDetail.getEmpWebSite());
 		this.contactPersonName.setValue(aEmployerDetail.getContactPersonName());
-		String[]phoneNo = PennantApplicationUtil.unFormatPhoneNumber(aEmployerDetail.getContactPersonNo());
-		this.cpPhoneCountryCode.setValue(phoneNo[0]);
-		this.cpPhoneAreaCode.setValue(phoneNo[1]);
-		this.contactPersonNo.setValue(phoneNo[2]);
+		this.contactPersonNo.setValue(aEmployerDetail.getContactPersonNo());
 		fillComboBox(this.empAlocationType, aEmployerDetail.getEmpAlocationType(), PennantStaticListUtil.getEmpAlocList(),"");
 		this.bankRefNo.setValue(aEmployerDetail.getBankRefNo());
 		
@@ -831,8 +818,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		}
 		//Emp Phone
 		try {
-			aEmployerDetail.setEmpPhone(PennantApplicationUtil.formatPhoneNumber(this.phoneCountryCode.getValue(),
-					this.phoneAreaCode.getValue(),this.empPhone.getValue()));
+			aEmployerDetail.setEmpPhone(this.empPhone.getValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -870,8 +856,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		}
 		//Contact Person No
 		try {
-			aEmployerDetail.setContactPersonNo(PennantApplicationUtil.formatPhoneNumber(this.cpPhoneCountryCode.getValue(),
-					this.cpPhoneAreaCode.getValue(),this.contactPersonNo.getValue()));
+			aEmployerDetail.setContactPersonNo(this.contactPersonNo.getValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
@@ -959,16 +944,9 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 			this.empPOBox.setConstraint(new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpPOBox.value"),
 					PennantRegularExpressions.REGEX_NUMERIC, true));
 		}
-		if(!this.phoneCountryCode.isReadonly()){
-			this.phoneCountryCode.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_EmployerDetailDialog_phoneCountryCode.value"),true,1));
-		}
-		if(!this.phoneAreaCode.isReadonly()){
-			this.phoneAreaCode.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_EmployerDetailDialog_phoneAreaCode.value"),true,2));
-		}
-		
 		//Emp Phone
 		if (!this.empPhone.isReadonly()) {
-			this.empPhone.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_EmployerDetailDialog_EmpPhone.value"),true,3));
+			this.empPhone.setConstraint(new PTMobileNumberValidator(Labels.getLabel("label_EmployerDetailDialog_EmpPhone.value"), true));
 		}
 		if(!this.empFaxCountryCode.isReadonly()){
 			this.empFaxCountryCode.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_EmployerDetailDialog_faxCountryCode.value"),true,1));
@@ -1003,15 +981,9 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 			this.contactPersonName.setConstraint(new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_ContactPersonName.value"), 
 					PennantRegularExpressions.REGEX_NAME, true));
 		}
-		if(!this.cpPhoneCountryCode.isReadonly()){
-			this.cpPhoneCountryCode.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_EmployerDetailDialog_phoneNoCountryCode.value"),true,1));
-		}
-		if(!this.cpPhoneAreaCode.isReadonly()){
-			this.cpPhoneAreaCode.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_EmployerDetailDialog_phoneNoAreaCode.value"),true,2));
-		}
 		//Contact Person No
 		if (!this.contactPersonNo.isReadonly()) {
-			this.contactPersonNo.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_EmployerDetailDialog_ContactPersonNo.value"),true,3));
+			this.contactPersonNo.setConstraint(new PTMobileNumberValidator(Labels.getLabel("label_EmployerDetailDialog_ContactPersonNo.value"), true));
 		}
 		//Emp Alocation Type
 		if (!this.empAlocationType.isDisabled()){
@@ -1055,10 +1027,6 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		this.contactPersonName.setConstraint("");
 		this.contactPersonNo.setConstraint("");
 		this.empAlocationType.setConstraint("");
-		this.cpPhoneCountryCode.setConstraint("");
-		this.cpPhoneAreaCode.setConstraint("");
-		this.phoneCountryCode.setConstraint("");
-		this.phoneAreaCode.setConstraint("");
 		this.empFaxAreaCode.setConstraint("");
 		this.empFaxCountryCode.setConstraint("");
 		this.empTelexAreaCode.setConstraint("");
@@ -1124,10 +1092,6 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		this.contactPersonName.setErrorMessage("");
 		this.contactPersonNo.setErrorMessage("");
 		this.empAlocationType.setErrorMessage("");
-		this.cpPhoneCountryCode.setErrorMessage("");
-		this.cpPhoneAreaCode.setErrorMessage("");
-		this.phoneCountryCode.setErrorMessage("");
-		this.phoneAreaCode.setErrorMessage("");
 		this.empFaxAreaCode.setErrorMessage("");
 		this.empFaxCountryCode.setErrorMessage("");
 		this.empTelexAreaCode.setErrorMessage("");
@@ -1226,10 +1190,6 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		this.empWebSite.setValue("");
 		this.contactPersonName.setValue("");
 		this.contactPersonNo.setValue("");
-		this.cpPhoneCountryCode.setValue("");
-		this.cpPhoneAreaCode.setValue("");
-		this.phoneCountryCode.setValue("");
-		this.phoneAreaCode.setValue("");
 		this.empFaxAreaCode.setValue("");
 		this.empFaxCountryCode.setValue("");
 		this.empTelexAreaCode.setValue("");
@@ -1299,7 +1259,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

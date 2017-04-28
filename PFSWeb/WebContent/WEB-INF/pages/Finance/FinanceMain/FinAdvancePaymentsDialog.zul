@@ -218,10 +218,6 @@
 										<label id="label_PhoneNumber" value="${c:l('label_FinAdvancePaymentsDialog_PhoneNumber.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" id="contactNumber" />
-											<textbox id="phoneCountryCode" />
-											<label value="-" style="display:inline-block;padding-top:4px;" />
-											<textbox id="phoneAreaCode" />
-											<label value="-" style="display:inline-block;padding-top:4px;" />
 											<textbox id="phoneNumber" />
 										</hbox>
 									</row>

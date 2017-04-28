@@ -192,16 +192,8 @@
 										spacing="2px">
 										<space id="space_EmpPhone"
 											spacing="2px" />
-										<textbox id="phoneCountryCode"
-											width="40px" />
-										<label value="-"
-											style="display:inline-block;padding-top:4px;" />
-										<textbox id="phoneAreaCode"
-											width="40px" />
-										<label value="-"
-											style="display:inline-block;padding-top:4px;" />
 										<textbox id="empPhone"
-											width="70px" />
+											width="180px" />
 									</hlayout>
 									<label id="label_EmpFax"
 										value="${c:l('label_EmployerDetailDialog_EmpFax.value')}" />
@@ -276,16 +268,8 @@
 										id="hlayout_ContactPersonNo" spacing="2px">
 										<space
 											id="space_ContactPersonNo" spacing="2px" />
-										<textbox id="cpPhoneCountryCode"
-											width="40px" />
-										<label value="-"
-											style="display:inline-block;padding-top:4px;" />
-										<textbox id="cpPhoneAreaCode"
-											width="40px" />
-										<label value="-"
-											style="display:inline-block;padding-top:4px;" />
 										<textbox id="contactPersonNo"
-											width="70px" />
+											width="180px" />
 									</hlayout>
 									<label id="label_EmpAlocationType"
 										value="${c:l('label_EmployerDetailDialog_EmpAlocationType.value')}" />

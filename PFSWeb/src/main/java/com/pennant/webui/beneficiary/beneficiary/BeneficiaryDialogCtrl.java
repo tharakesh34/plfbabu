@@ -71,6 +71,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTEmailValidator;
+import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -89,8 +90,8 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 	protected ExtendedCombobox bankBranchID;
 	protected Textbox accNumber;
 	protected Textbox accHolderName;
-	protected Textbox phoneCountryCode;
-	protected Textbox phoneAreaCode;
+	//protected Textbox phoneCountryCode;
+	//protected Textbox phoneAreaCode;
 	protected Textbox phoneNumber;
 	protected Textbox email;
 	protected Textbox bank;
@@ -190,12 +191,8 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 
 		this.accNumber.setMaxlength(50);
 		this.accHolderName.setMaxlength(50);
-		this.phoneCountryCode.setMaxlength(3);
-		this.phoneCountryCode.setWidth("50px");
-		this.phoneAreaCode.setMaxlength(3);
-		this.phoneAreaCode.setWidth("50px");
-		this.phoneNumber.setMaxlength(8);
-		this.phoneNumber.setWidth("100px");
+		this.phoneNumber.setMaxlength(10);
+		this.phoneNumber.setWidth("180px");
 		this.email.setMaxlength(50);
 		
 		if(StringUtils.isNotBlank(this.beneficiary.getBankCode())){
@@ -381,8 +378,6 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		this.branch.setValue(beneficiary.getBranchDesc());
 		this.accNumber.setValue(beneficiary.getAccNumber());
 		this.accHolderName.setValue(beneficiary.getAccHolderName());
-		this.phoneCountryCode.setValue(beneficiary.getPhoneCountryCode());
-		this.phoneAreaCode.setValue(beneficiary.getPhoneAreaCode());
 		this.phoneNumber.setValue(beneficiary.getPhoneNumber());
 		this.email.setValue(beneficiary.getEmail());
 		this.recordStatus.setValue(beneficiary.getRecordStatus());
@@ -432,8 +427,6 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		}
 		// Phone Country Code
 		try {
-			aBeneficiary.setPhoneCountryCode(this.phoneCountryCode.getValue());
-			aBeneficiary.setPhoneAreaCode(this.phoneAreaCode.getValue());
 			aBeneficiary.setPhoneNumber(this.phoneNumber.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -514,11 +507,11 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 					.getLabel("label_BeneficiaryDialog_BankBranchID.value"), null, true));
 		}
 		// Acc Number
-		if (!this.accNumber.isReadonly()) {
+		/*if (!this.accNumber.isReadonly()) {
 			this.accNumber.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_BeneficiaryDialog_AccNumber.value"), PennantRegularExpressions.REGEX_ACCOUNTNUMBER,
 					true,accNoLength,accNoLength));
-		}
+		}*/
 		// Acc Holder Name
 		if (!this.accHolderName.isReadonly()) {
 			this.accHolderName.setConstraint(new PTStringValidator(Labels
@@ -527,17 +520,9 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		}
 
 		// Phone Number
-		if (!this.phoneCountryCode.isReadonly()) {
-			this.phoneCountryCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_BeneficiaryDialog_PhoneCountryCode.value"), false, 1));
-		}
-		if (!this.phoneAreaCode.isReadonly()) {
-			this.phoneAreaCode.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_BeneficiaryDialog_PhoneAreaCode.value"), false, 2));
-		}
 		if (!this.phoneNumber.isReadonly()) {
-			this.phoneNumber.setConstraint(new PTPhoneNumberValidator(Labels
-					.getLabel("label_BeneficiaryDialog_PhoneNumber.value"), false, 3));
+			this.phoneNumber.setConstraint(new PTMobileNumberValidator(Labels
+					.getLabel("label_BeneficiaryDialog_PhoneNumber.value"), false));
 		}
 		// Email
 		if (!this.email.isReadonly()) {
@@ -555,8 +540,6 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		this.bankBranchID.setConstraint("");
 		this.accNumber.setConstraint("");
 		this.accHolderName.setConstraint("");
-		this.phoneCountryCode.setConstraint("");
-		this.phoneAreaCode.setConstraint("");
 		this.phoneNumber.setConstraint("");
 		this.email.setConstraint("");
 		logger.debug("Leaving");
@@ -586,8 +569,6 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		this.bankBranchID.setErrorMessage("");
 		this.accNumber.setErrorMessage("");
 		this.accHolderName.setErrorMessage("");
-		this.phoneCountryCode.setErrorMessage("");
-		this.phoneAreaCode.setErrorMessage("");
 		this.phoneNumber.setErrorMessage("");
 		this.email.setErrorMessage("");
 		logger.debug("Leaving");
@@ -661,8 +642,6 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		readOnlyComponent(isReadOnly("BeneficiaryDialog_BankBranchID"), this.bankBranchID);
 		readOnlyComponent(isReadOnly("BeneficiaryDialog_AccNumber"), this.accNumber);
 		readOnlyComponent(isReadOnly("BeneficiaryDialog_AccHolderName"), this.accHolderName);
-		readOnlyComponent(isReadOnly("BeneficiaryDialog_PhoneCountryCode"), this.phoneCountryCode);
-		readOnlyComponent(isReadOnly("BeneficiaryDialog_PhoneAreaCode"), this.phoneAreaCode);
 		readOnlyComponent(isReadOnly("BeneficiaryDialog_PhoneNumber"), this.phoneNumber);
 		readOnlyComponent(isReadOnly("BeneficiaryDialog_Email"), this.email);
 
@@ -690,8 +669,6 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		readOnlyComponent(true, this.bankBranchID);
 		readOnlyComponent(true, this.accNumber);
 		readOnlyComponent(true, this.accHolderName);
-		readOnlyComponent(true, this.phoneCountryCode);
-		readOnlyComponent(true, this.phoneAreaCode);
 		readOnlyComponent(true, this.phoneNumber);
 		readOnlyComponent(true, this.email);
 
@@ -717,8 +694,6 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		this.bankBranchID.setDescription("");
 		this.accNumber.setValue("");
 		this.accHolderName.setValue("");
-		this.phoneCountryCode.setValue("");
-		this.phoneAreaCode.setValue("");
 		this.phoneNumber.setValue("");
 		this.email.setValue("");
 	}

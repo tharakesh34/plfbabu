@@ -140,11 +140,7 @@
 									<space spacing="2px"
 										sclass="mandatory" />
 									<hbox>
-										<textbox id="phoneCountryCode" width="40px"/>
-										<label value="-" style="display:inline-block;padding-top:4px;"/>
-										<textbox id="phoneAreaCode" width="40px"/>
-										<label value="-" style="display:inline-block;padding-top:4px;"/>
-										<textbox id="custMobileNum" width="80px"/>
+										<textbox id="custMobileNum" width="180px"/>
 									</hbox>
 								</hbox>
 								<label

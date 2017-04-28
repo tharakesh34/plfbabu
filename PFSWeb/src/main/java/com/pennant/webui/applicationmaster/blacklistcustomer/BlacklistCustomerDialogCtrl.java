@@ -31,6 +31,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -55,8 +56,8 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	protected Textbox 				custEID; // autoWired
 	protected Textbox 				custPassport; // autoWired
 	//protected Textbox 				custMobileNum; // autoWired
-	protected Textbox				phoneCountryCode; // autoWired						
-	protected Textbox				phoneAreaCode;	// autoWired									
+	//protected Textbox				phoneCountryCode; // autoWired						
+	//protected Textbox				phoneAreaCode;	// autoWired									
 	protected Textbox				custMobileNum;		// autoWired								
 	protected ExtendedCombobox		employer; // autoWired
 	protected ExtendedCombobox 		custNationality;
@@ -160,9 +161,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custLName.setMaxlength(50);
 		this.custEID.setMaxlength(20);
 		this.custPassport.setMaxlength(20);
-		this.phoneCountryCode.setMaxlength(3);
-		this.phoneAreaCode.setMaxlength(3);
-		this.custMobileNum.setMaxlength(8);
+		this.custMobileNum.setMaxlength(10);
 		
 		// Employer ExtendedCombobox
 		this.employer.setInputAllowed(true);
@@ -311,10 +310,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custLName.setValue(aBlackListCustomers.getCustLName());
 		this.custEID.setValue(PennantApplicationUtil.formatEIDNumber(aBlackListCustomers.getCustCRCPR()));
 		this.custPassport.setValue(aBlackListCustomers.getCustPassportNo());
-		String[]mobile = PennantApplicationUtil.unFormatPhoneNumber(aBlackListCustomers.getMobileNumber());
-		this.phoneCountryCode.setValue(mobile[0]);
-		this.phoneAreaCode.setValue(mobile[1]);
-		this.custMobileNum.setValue(mobile[2]);
+		this.custMobileNum.setValue(aBlackListCustomers.getMobileNumber());
 		this.custNationality.setValue(aBlackListCustomers.getCustNationality());
 		this.custNationality.setDescription(aBlackListCustomers.getLovDescNationalityDesc());
 		this.employer.setValue(aBlackListCustomers.getEmployer());
@@ -372,9 +368,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 			wve.add(we);
 		}
 		try {
-			finBlacklistCust.setMobileNumber(PennantApplicationUtil.formatPhoneNumber(this.phoneCountryCode.getValue()
-					,this.phoneAreaCode.getValue(),
-					 this.custMobileNum.getValue()));
+			finBlacklistCust.setMobileNumber(this.custMobileNum.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -514,14 +508,8 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 					.getLabel("label_BlacklistCustomerDialog_CustPassport.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
-		if(!this.phoneCountryCode.isReadonly()){
-			this.phoneCountryCode.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_BlacklistCustomerDialog_mobileCountryCode.value"),true,1));
-		}
-		if(!this.phoneAreaCode.isReadonly()){
-			this.phoneAreaCode.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_BlacklistCustomerDialog_mobileAreaCode.value"),true,2));
-		}
-		if(!this.custMobileNum.isReadonly()) {
-			this.custMobileNum.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"),true,3));
+		if (!this.custMobileNum.isReadonly()) {
+			this.custMobileNum.setConstraint(new PTMobileNumberValidator(Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"), true));
 		}
 		if (!this.custNationality.isReadonly()) {
 			this.custNationality.setConstraint(new PTStringValidator(Labels
@@ -550,8 +538,6 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custEID.setConstraint("");
 		this.custPassport.setConstraint("");
 		this.custMobileNum.setConstraint("");
-		this.phoneAreaCode.setConstraint("");
-		this.phoneCountryCode.setConstraint("");
 		this.custNationality.setConstraint("");
 		this.employer.setConstraint("");
 		
@@ -580,12 +566,9 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custLName.setErrorMessage("");
 		this.custEID.setErrorMessage("");
 		this.custPassport.setErrorMessage("");
-		this.phoneCountryCode.setErrorMessage("");
 		this.custMobileNum.setErrorMessage("");
 		this.custNationality.setErrorMessage("");
 		this.employer.setErrorMessage("");
-		this.phoneAreaCode.setErrorMessage("");
-		this.phoneCountryCode.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -665,8 +648,6 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custEID.setReadonly(isReadOnly("BlacklistCustomerDialog_CustEID"));
 		this.custPassport.setReadonly(isReadOnly("BlacklistCustomerDialog_CustPassport"));
 		this.custMobileNum.setReadonly(isReadOnly("BlacklistCustomerDialog_CustMobileNum"));
-		this.phoneAreaCode.setReadonly(isReadOnly("BlacklistCustomerDialog_CustMobileNum"));
-		this.phoneCountryCode.setReadonly(isReadOnly("BlacklistCustomerDialog_CustMobileNum"));
 		this.custNationality.setReadonly(isReadOnly("BlacklistCustomerDialog_CustNationality"));
 		this.employer.setReadonly(isReadOnly("BlacklistCustomerDialog_Employer"));
 		if (isWorkFlowEnabled()) {
@@ -700,8 +681,6 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custEID.setReadonly(true);
 		this.custPassport.setReadonly(true);
 		this.custMobileNum.setReadonly(true);
-		this.phoneAreaCode.setReadonly(true);
-		this.phoneCountryCode.setReadonly(true);
 		this.custNationality.setReadonly(true);
 		this.employer.setReadonly(true);
 
@@ -734,8 +713,6 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custMobileNum.setValue("");
 		this.custNationality.setValue("");
 		this.employer.setValue("");
-		this.phoneAreaCode.setValue("");
-		this.phoneCountryCode.setValue("");
 		logger.debug("Leaving ");
 	}
 
