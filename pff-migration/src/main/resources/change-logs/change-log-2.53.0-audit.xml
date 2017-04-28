@@ -77,4 +77,60 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="11" author="Irfan">
+	<dropTable tableName="AdtFinReceiptHeader"/>
+		<createTable tableName="AdtFinReceiptHeader">
+			<column name="AuditId" type="bigint" >
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditDate" type="datetime">
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditSeq" type="int">
+			<constraints nullable="false"/>
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="ReceiptID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ReceiptDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceiptType" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RecAgainst" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Reference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceiptPurpose" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceiptMode" type="varchar(10)" />
+			<column name="ExcessAdjustTo" type="char(1)" />
+			<column name="AllocationType" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceiptAmount" type="number(18,0)" />
+			<column name="EffectSchdMethod" type="varchar(10)" />
+			<column name="ReceiptModeStatus" type="char(1)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
 </databaseChangeLog>
