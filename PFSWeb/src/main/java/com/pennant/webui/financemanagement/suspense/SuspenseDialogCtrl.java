@@ -1001,54 +1001,58 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
+						String reference = aFinanceMain.getFinReference();
 
 						// Send message Notification to Users
-						if (aFinanceDetail.getFinScheduleData().getFinanceMain().getNextUserId() != null) {
+						if (aFinanceMain.getNextUserId() != null) {
+							String usrLogins = aFinanceMain.getNextUserId();
+							List<String> usrLoginList = new ArrayList<String>();
 
-							Notify notify = Notify.valueOf("USER");
-							String[] to = aFinanceDetail.getFinScheduleData().getFinanceMain().getNextUserId()
-									.split(",");
-							if (StringUtils.isNotEmpty(aFinanceDetail.getFinScheduleData().getFinanceMain()
-									.getFinReference())) {
-
-								String reference = aFinanceDetail.getFinScheduleData().getFinanceMain()
-										.getFinReference();
-								if (!PennantConstants.RCD_STATUS_CANCELLED.equalsIgnoreCase(aFinanceDetail
-										.getFinScheduleData().getFinanceMain().getRecordStatus())) {
-									getEventManager().publish(
-											Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":"
-													+ reference, notify, to);
+							if (usrLogins.contains(",")) {
+								String[] to = usrLogins.split(",");
+								for (String roleCode : to) {
+									usrLoginList.add(roleCode);
 								}
 							} else {
-								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
+								usrLoginList.add(usrLogins);
 							}
 
+							List<String> userLogins = getFinanceDetailService().getUsersLoginList(usrLoginList);
+
+							String[] to = new String[userLogins.size()];
+							for (int i = 0; i < userLogins.size(); i++) {
+								to[i] = String.valueOf(userLogins.get(i));
+							}
+
+							if (StringUtils.isNotEmpty(reference)) {
+								if (!PennantConstants.RCD_STATUS_CANCELLED
+										.equalsIgnoreCase(aFinanceMain.getRecordStatus())) {
+									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference"
+											+ ":" + reference, Notify.USER, to);
+								}
+							} else {
+								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), Notify.USER, to);
+							}
 						} else {
+							if (StringUtils.isNotEmpty(aFinanceMain.getNextRoleCode())) {
+								if (!PennantConstants.RCD_STATUS_CANCELLED.equals(aFinanceMain.getRecordStatus())) {
+									String[] to = aFinanceMain.getNextRoleCode().split(",");
+									String message;
 
-							String nextRoleCodes = aFinanceDetail.getFinScheduleData().getFinanceMain()
-									.getNextRoleCode();
-							if (StringUtils.isNotEmpty(nextRoleCodes)) {
-								Notify notify = Notify.valueOf("ROLE");
-								String[] to = nextRoleCodes.split(",");
-								if (StringUtils.isNotEmpty(aFinanceDetail.getFinScheduleData().getFinanceMain()
-										.getFinReference())) {
-
-									String reference = aFinanceDetail.getFinScheduleData().getFinanceMain()
-											.getFinReference();
-									if (!PennantConstants.RCD_STATUS_CANCELLED.equalsIgnoreCase(aFinanceDetail
-											.getFinScheduleData().getFinanceMain().getRecordStatus())) {
-										getEventManager().publish(
-												Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":"
-														+ reference, notify, to);
+									if (StringUtils.isBlank(aFinanceMain.getNextTaskId())) {
+										message = Labels.getLabel("REC_FINALIZED_MESSAGE");
+									} else {
+										message = Labels.getLabel("REC_PENDING_MESSAGE");
 									}
-								} else {
-									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
+									message += " with Reference" + ":" + reference;
+
+									getEventManager().publish(message, to, finDivision, aFinanceMain.getFinBranch());
 								}
 							}
 						}
 					}
 				} catch (Exception e) {
-					logger.error(e.getMessage());
+					logger.error("Exception: ", e);
 				}
 
 				closeDialog();
