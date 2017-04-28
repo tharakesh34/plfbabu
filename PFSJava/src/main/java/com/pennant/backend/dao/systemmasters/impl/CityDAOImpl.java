@@ -143,7 +143,6 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public void delete(City city, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		
@@ -221,7 +220,6 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(City city, TableType tableType) {
 		logger.debug(Literal.ENTERING);

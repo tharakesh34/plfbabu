@@ -11,7 +11,6 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
-import com.pennant.backend.model.finance.FinanceMain;
 
 public class ReceiptPaymentService extends ServiceHelper {
 	private static final long	serialVersionUID	= 1442146139821584760L;
