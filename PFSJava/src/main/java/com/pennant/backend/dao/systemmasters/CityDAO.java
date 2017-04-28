@@ -39,19 +39,34 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.systemmasters;
+
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.systemmasters.City;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>City model</b> class.<br>
  * 
  */
-public interface CityDAO {
+public interface CityDAO extends BasicCrudDao<City> {
 
-	City getCityById(String pCCountry,String pCProvince,String pCCity,String type);
-	void update(City city,String type);
-	void delete(City city,String type);
-	void save(City city,String type);
+	City getCityById(String pCCountry, String pCProvince, String pCCity, String type);
+
+	/**
+	 * Checks whether another record exists with the key attributes in the specified table type.
+	 * 
+	 * @param country
+	 *            country of city
+	 * @param state
+	 *            state of city
+	 * @param city
+	 *            city of city
+	 * @param tableType
+	 *            tableType of city
+	 * @return
+	 */
+	boolean isDuplicateKey(String country, String state, String city, TableType tableType);
 }

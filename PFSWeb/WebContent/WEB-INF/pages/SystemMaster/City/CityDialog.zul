@@ -125,6 +125,16 @@
 										width="180px" />
 								</hbox>
 							</row>
+							<row>
+								<label
+									id="label_CityDialog_CityIsActive"
+									value="${c:l('label_CityDialog_CityIsActive.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="cityIsActive"
+										checked="false" />
+								</hbox>
+							</row>
 						</rows>
 					</grid>
 				</groupbox>

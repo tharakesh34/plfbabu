@@ -49,12 +49,12 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
@@ -91,15 +91,16 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	 * component with the same 'id' in the ZUL-file are getting auto wired by our
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_CityDialog; 		
+	protected Window window_CityDialog;
 
-	protected ExtendedCombobox 		pCCountry; 				
-	protected ExtendedCombobox 		pCProvince; 			
-	protected Uppercasebox	pCCity; 				
-	protected Textbox 		pCCityName; 			
-	 private transient String  cityCountryTemp;
-	 protected Combobox pCCityClass;
-	 protected Textbox bankRefNo;
+	protected ExtendedCombobox pCCountry;
+	protected ExtendedCombobox pCProvince;
+	protected Uppercasebox pCCity;
+	protected Textbox pCCityName;
+	private transient String cityCountryTemp;
+	protected Combobox pCCityClass;
+	protected Textbox bankRefNo;
+	protected Checkbox cityIsActive;		// autoWired
 
 	// not autoWired Var's
 	private City city; // overHanded per parameter
@@ -354,6 +355,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		this.bankRefNo.setValue(aCity.getBankRefNo());
 		fillComboBox(this.pCCityClass,aCity.getpCCityClassification(),cityClassList,"");
 		this.recordStatus.setValue(aCity.getRecordStatus());
+		this.cityIsActive.setChecked(aCity.isCityIsActive());
 
 		if(aCity.isNewRecord()){
 			this.pCCountry.setDescription("");
@@ -361,6 +363,10 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		}else{
 			this.pCCountry.setDescription(aCity.getLovDescPCCountryName());
 			this.pCProvince.setDescription(aCity.getLovDescPCProvinceName());
+		}
+		if(aCity.isNew() || (aCity.getRecordType() != null ? aCity.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+			this.cityIsActive.setChecked(true);
+			this.cityIsActive.setDisabled(true);
 		}
 		cityCountryTemp = this.pCCountry.getValue();
 		doSetProvProp();
@@ -411,7 +417,11 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
-
+		try {
+			aCity.setCityIsActive(this.cityIsActive.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		doRemoveValidation();
 
 		if (wve.size()>0) {
@@ -585,18 +595,12 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 			}
 
 			try {
-				if(doProcess(aCity,tranType)){
+				if (doProcess(aCity, tranType)) {
 					refreshList();
-					closeDialog(); 
+					closeDialog();
 				}
-			} 
-			catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e.getMessage());
-			}
-			
-			catch (Exception e) {
-				MessageUtil.showErrorMessage(e);
+			}catch (Exception e) {
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving ");
@@ -620,7 +624,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		this.pCCityName.setReadonly(isReadOnly("CityDialog_pCCityName"));
 		this.pCCityClass.setDisabled(isReadOnly("CityDialog_pCCitylassification"));
 		this.bankRefNo.setDisabled(isReadOnly("CityDialog_BankRefNo"));
-
+		this.cityIsActive.setDisabled(isReadOnly("CityDialog_CityIsActive"));
 		if (isWorkFlowEnabled()){
 
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -650,7 +654,8 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		this.pCCityName.setReadonly(true);
 		this.pCCityClass.setReadonly(true);
 		this.bankRefNo.setReadonly(true);
-
+		this.cityIsActive.setDisabled(true);
+		
 		if(isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -675,6 +680,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		this.pCCityName.setValue("");
 		this.pCCityClass.setValue("");
 		this.bankRefNo.setValue("");
+		this.cityIsActive.setChecked(false);
 		logger.debug("Leaving ");
 	}
 
@@ -730,16 +736,10 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 				closeDialog();
 			}
 
-		} 
-		catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getMessage());
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
-		catch (Exception e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_CityDialog, e);
-		}
-		logger.debug("Leaving ");
+		logger.debug("Leaving");
 	}
 
 	/**	

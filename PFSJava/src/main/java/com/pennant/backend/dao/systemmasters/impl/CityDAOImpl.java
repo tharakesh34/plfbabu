@@ -48,20 +48,23 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.systemmasters.City;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>City model</b> class.<br>
@@ -88,13 +91,13 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 	 */
 	@Override
 	public City getCityById(final String pCCountry,String pCProvince,String pCCity, String type) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		City city = new City();
 		city.setPCCountry(pCCountry);
 		city.setPCProvince(pCProvince);
 		city.setPCCity(pCCity);
 		
-		StringBuilder selectSql = new StringBuilder("SELECT PCCountry, PCProvince, PCCity, PCCityName, PCCityClassification, BankRefNo,");
+		StringBuilder selectSql = new StringBuilder("SELECT PCCountry, PCProvince, PCCity, PCCityName, PCCityClassification, BankRefNo, CityIsActive,");
 		if(type.contains("View")){
 			selectSql.append(" LovDescPCProvinceName, LovDescPCCountryName," );
 		}
@@ -116,7 +119,7 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 			logger.error("Exception: ", e);
 			city = null;
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 		return city;
 	}
 	
@@ -141,33 +144,32 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 	 * 
 	 */
 	@SuppressWarnings("serial")
-	public void delete(City city,String type) {
-		logger.debug("Entering ");
+	public void delete(City city, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		
 		int recordCount = 0;
-		StringBuilder deleteSql = new StringBuilder(" Delete From RMTProvinceVsCity" );
-		deleteSql.append(StringUtils.trimToEmpty(type) );
+		StringBuilder deleteSql = new StringBuilder(" Delete From RMTProvinceVsCity");
+		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where PCCountry =:PCCountry and PCProvince=:PCProvince and PCCity=:PCCity ");
-		
-		logger.debug("deleteSql: "+ deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(city);
-		
-		try{
-			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
 
-			if (recordCount <= 0) {
-				ErrorDetails errorDetails=getError("41003", city.getPCCountry(),
-						city.getPCProvince(),city.getPCCity(),  city.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
-			}
-		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006", city.getPCCountry(),
-					city.getPCProvince(),city.getPCCity(),  city.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+		logger.trace(Literal.SQL + deleteSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(city);
+
+		try {
+			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving ");
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * This method insert new Records into RMTProvinceVsCity or
 	 * RMTProvinceVsCity_Temp.
@@ -183,22 +185,28 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 	 * 
 	 */
 	@Override
-	public void save(City city,String type) {
-		logger.debug("Entering ");
+	public String save(City city, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTProvinceVsCity" );
-		insertSql.append(StringUtils.trimToEmpty(type) );
-		insertSql.append(" (PCCountry, PCProvince, PCCity, PCCityName, PCCityClassification, BankRefNo," );
+		insertSql.append(tableType.getSuffix());
+		insertSql.append(" (PCCountry, PCProvince, PCCity, PCCityName, PCCityClassification, BankRefNo, CityIsActive," );
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
-		insertSql.append(" Values(:PCCountry, :PCProvince, :PCCity, :PCCityName, :PCCityClassification, :BankRefNo," );
+		insertSql.append(" Values(:PCCountry, :PCProvince, :PCCity, :PCCityName, :PCCityClassification, :BankRefNo, :CityIsActive," );
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode," );
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
-		logger.debug("insertSql: "+ insertSql.toString());
+		logger.trace(Literal.SQL + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(city);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving ");
+		try {
+			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 	
 	/**
@@ -215,48 +223,67 @@ public class CityDAOImpl extends BasisCodeDAO<City> implements CityDAO {
 	 */
 	@SuppressWarnings("serial")
 	@Override
-	public void update(City city,String type) {
-		int recordCount = 0;
-		logger.debug("Entering ");
+	public void update(City city, TableType tableType) {
+		logger.debug(Literal.ENTERING);
 		
+		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder("Update RMTProvinceVsCity" );
-		updateSql.append(StringUtils.trimToEmpty(type) ); 
-		updateSql.append(" Set PCCityName = :PCCityName, PCCityClassification = :PCCityClassification, BankRefNo = :BankRefNo," );
+		updateSql.append(tableType.getSuffix());
+		updateSql.append(" Set PCCityName = :PCCityName, PCCityClassification = :PCCityClassification, BankRefNo = :BankRefNo, CityIsActive = :CityIsActive," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn," );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId" );
 		updateSql.append(" Where PCCountry =:PCCountry and PCProvince=:PCProvince and PCCity=:PCCity ");
+		updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 		
-		if (!type.endsWith("_Temp")){
-			updateSql.append("  AND Version= :Version-1");
-		}
-		
+		logger.trace(Literal.SQL + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(city);
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
-		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004", city.getPCCountry(),
-					city.getPCProvince(),city.getPCCity(),  city.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving ");
-	}
-	
-	private ErrorDetails  getError(String errorId, String country,String province,
-			String city, String userLanguage){
-		String[][] parms= new String[2][3]; 
 
-		parms[1][0] = country;
-		parms[1][1] = province;
-		parms[1][2] = city;
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_PCCountry")+ ":" + parms[1][0]
-		                +" "+ PennantJavaUtil.getLabel("label_PCProvince")+ ":" + parms[1][1];
-		parms[0][1]= PennantJavaUtil.getLabel("label_PCCity")+ ":" + parms[1][2];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
-				errorId, parms[0],parms[1]), userLanguage);
+		logger.debug(Literal.LEAVING);
 	}
-	
+
+	@Override
+	public boolean isDuplicateKey(String country, String state, String city, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "PCCountry = :country and PCProvince = :state and PCCity = :city";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("RMTProvinceVsCity", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("RMTProvinceVsCity_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "RMTProvinceVsCity_Temp", "RMTProvinceVsCity" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("country", country);
+		paramSource.addValue("state", state);
+		paramSource.addValue("city", city);
+
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
+
 }
