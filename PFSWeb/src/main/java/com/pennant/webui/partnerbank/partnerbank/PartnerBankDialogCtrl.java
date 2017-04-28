@@ -1463,6 +1463,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	
 	public void onClick$btnSearchModeDisbursment(Event event) {
 		logger.debug("Entering  " + event.toString());
+		doRemoveValidation();
 		this.modeDisbursment.setErrorMessage("");
 		Textbox txtbx = (Textbox) btnSearchModeDisbursment.getPreviousSibling();
 		String selectedValues = (String) MultiSelectionStaticListBox.show(this.window_PartnerBankDialog,
@@ -1475,6 +1476,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	
 	public void onClick$btnSearchModePayments(Event event) {
 		logger.debug("Entering  " + event.toString());
+		doRemoveValidation();
 		this.modePayments.setErrorMessage("");
 		Textbox txtbx = (Textbox) btnSearchModePayments.getPreviousSibling();
 		String selectedValues = (String) MultiSelectionStaticListBox.show(this.window_PartnerBankDialog,
@@ -1488,6 +1490,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	public void onClick$btnSearchModeReceipts(Event event) {
 		logger.debug("Entering  " + event.toString());
 		this.modeReceipts.setErrorMessage("");
+		doRemoveValidation();
 		Textbox txtbx = (Textbox) btnSearchModeReceipts.getPreviousSibling();
 		String selectedValues = (String) MultiSelectionStaticListBox.show(this.window_PartnerBankDialog,
 				"AccountTypeRecptModes", txtbx.getValue());
@@ -1517,6 +1520,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	public void onClick$btnSearchBranchCode(Event event) {
 		logger.debug("Entering  " + event.toString());
 		this.alwBankBranchCode.setErrorMessage("");
+		doRemoveValidation();
 		Textbox txtbx = (Textbox) btnSearchBranchCode.getPreviousSibling();
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_PartnerBankDialog,"Branch",txtbx.getValue(), null);
 		
@@ -1549,6 +1553,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	
 	private void onCheckDisburment() {
 		logger.debug("Entering");
+		doRemoveValidation();
 		if (this.alwDisburment.isChecked()) {
 			this.btnSearchModeDisbursment.setDisabled(false);
 			this.modeDisbursment.setReadonly(true);
@@ -1567,6 +1572,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 
 	private void onCheckPayments() {
 		logger.debug("Entering");
+		doRemoveValidation();
 		if (this.alwPayments.isChecked()) {
 			this.modePayments.setReadonly(true);
 			this.btnSearchModePayments.setDisabled(false);
@@ -1584,6 +1590,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 
 	private void onCheckReceipts() {
 		logger.debug("Entering");
+		doRemoveValidation();
 		if (this.alwReceipts.isChecked()) {
 			this.modeReceipts.setReadonly(true);
 			this.btnSearchModeReceipts.setDisabled(false);
