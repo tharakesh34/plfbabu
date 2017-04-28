@@ -108,7 +108,6 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 	 * 'extends BaseCtrl' class wich extends Window and implements AfterCompose.
 	 */
 	private Window 		mainMenuWindow; 	// autowire
-	protected Button 	btnGo; 				// autowire
 	protected Textbox 	menuName; 			// autowired
 	
 	private static String bgColor = "#FF6600";
@@ -176,7 +175,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		image.addEventListener("onClick", new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) throws Exception {
-				onClick$btnMainMenuExpandAll(event);
+				expandMenus(event);
 			}
 		});
 		image = new Image("/images/icons/close4.png");
@@ -186,7 +185,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		image.addEventListener("onClick", new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) throws Exception {
-				onClick$btnMainMenuCollapseAll(event);
+				collapseMenus(event);
 			}
 		});
 
@@ -209,7 +208,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		btnGo.addEventListener("onClick", new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) throws Exception {
-				onClick$btnGo(event);
+				openMenu(event);
 			}
 		});
 
@@ -222,10 +221,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		// the menuTree
 		final Tree tree = new Tree();
 		tree.setSizedByContent(true);
-		//tree.setStyle("overflow:auto;");
 		tree.setParent(gb);
-
-		// tree.setZclass("z-dottree");
 		tree.setStyle("border: none");
 
 		final Treechildren treechildren = new Treechildren();
@@ -400,7 +396,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		this.mainMenuWindow = mainMenuWindow;
 	}
 
-	public void onClick$btnMainMenuExpandAll(Event event) throws Exception {
+	public void expandMenus(Event event) throws Exception {
 		logger.debug("Entering");
 
 		doCollapseExpandAll(getMainMenuWindow(), true);
@@ -408,7 +404,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$btnMainMenuCollapseAll(Event event) throws Exception {
+	public void collapseMenus(Event event) throws Exception {
 		logger.debug("Entering");
 
 		doCollapseExpandAll(getMainMenuWindow(), false);
@@ -431,7 +427,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		}
 	
 	}
-	public void onClick$btnGo(Event event) throws InterruptedException {
+	public void openMenu(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 		try{
 			if (StringUtils.isBlank(menuName.getValue())){

@@ -50,7 +50,7 @@ import com.pennant.backend.model.SecLoginlog;
 import com.pennant.backend.service.LoginLoggingService;
 
 public class LoginLoggingServiceImpl implements LoginLoggingService {
-	private final static Logger logger = Logger.getLogger(LoginLoggingServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(LoginLoggingServiceImpl.class);
 
 	private SecLoginlogDAO secLoginlogDAO;
 	private UserDAO userDAO;

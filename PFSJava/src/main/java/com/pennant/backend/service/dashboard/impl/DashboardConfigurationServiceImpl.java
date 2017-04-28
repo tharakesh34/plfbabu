@@ -453,13 +453,16 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 
 		return dashBrdConfigMap;
 	}
-	public DashBoard getDashBoardData(long userId,String roles){
+
+	@Override
+	public DashBoard getDashBoardData(long userId, String roles) {
 		DashBoard dashBoard = new DashBoard();
 		dashBoard.setDashBoardPosition(getDashboardPositionsByUser(userId));
 		dashBoard.setDashboardConfigMap(getDashboardConfigurations(userId));
 
 		return dashBoard;
 	}
+
 	/**
 	 * 
 	 */
