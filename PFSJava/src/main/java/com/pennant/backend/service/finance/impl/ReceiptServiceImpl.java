@@ -87,7 +87,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private FinReceiptDetailDAO				finReceiptDetailDAO;
 	private ReceiptAllocationDetailDAO		allocationDetailDAO;		
 	private ManualAdviseDAO					manualAdviseDAO;	
-	private RepaymentProcessUtil			repaymentProcessUtil;
+	private RepaymentProcessUtil			repayProcessUtil;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -671,7 +671,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				}
 				
 				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
-				List<Object> returnList = getRepaymentProcessUtil().processRepaymentPostings(financeMain, schdList,
+				List<Object> returnList = getRepayProcessUtil().processRepaymentPostings(financeMain, schdList,
 						profitDetail, repaySchdList, excessAmount, repayHeader.getFinEvent());
 
 				if (!(Boolean) returnList.get(0)) {
@@ -1387,12 +1387,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
-	public RepaymentProcessUtil getRepaymentProcessUtil() {
-		return repaymentProcessUtil;
+	public RepaymentProcessUtil getRepayProcessUtil() {
+		return repayProcessUtil;
 	}
-
-	public void setRepaymentProcessUtil(RepaymentProcessUtil repaymentProcessUtil) {
-		this.repaymentProcessUtil = repaymentProcessUtil;
+	public void setRepayProcessUtil(RepaymentProcessUtil repayProcessUtil) {
+		this.repayProcessUtil = repayProcessUtil;
 	}
 	
 }
