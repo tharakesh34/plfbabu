@@ -6438,6 +6438,7 @@
 		scope="prototype">
 		<property name="repayPostingUtil" ref="repayPostingUtil" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 	</bean>
 
 	<!--============ Finance Repayment Details ============== -->

@@ -12,6 +12,7 @@ public class FinRepayQueue {
 	private String		finType;
 	private String		Branch;
 	private long		customerID;
+	
 	private BigDecimal	schdPft					= BigDecimal.ZERO;
 	private BigDecimal	schdPri					= BigDecimal.ZERO;
 	private BigDecimal	schdPftPaid				= BigDecimal.ZERO;
@@ -23,30 +24,36 @@ public class FinRepayQueue {
 
 	private BigDecimal	schdPftPayNow			= BigDecimal.ZERO;
 	private BigDecimal	schdPriPayNow			= BigDecimal.ZERO;
+	private BigDecimal	schdPftWaivedNow		= BigDecimal.ZERO;
+	private BigDecimal	schdPriWaivedNow		= BigDecimal.ZERO;
 
 	// Scheduled Fee Amount
 	private BigDecimal	schdFee					= BigDecimal.ZERO;
 	private BigDecimal	schdFeePaid				= BigDecimal.ZERO;
 	private BigDecimal	schdFeeBal				= BigDecimal.ZERO;
 	private BigDecimal	schdFeePayNow			= BigDecimal.ZERO;
+	private BigDecimal	schdFeeWaivedNow			= BigDecimal.ZERO;
 
 	// Insurance Amount
 	private BigDecimal	schdIns				= BigDecimal.ZERO;
 	private BigDecimal	schdInsPaid			= BigDecimal.ZERO;
 	private BigDecimal	schdInsBal			= BigDecimal.ZERO;
 	private BigDecimal	schdInsPayNow		= BigDecimal.ZERO;
+	private BigDecimal	schdInsWaivedNow		= BigDecimal.ZERO;
 
 	// Supplementary Rent
 	private BigDecimal	schdSuplRent			= BigDecimal.ZERO;
 	private BigDecimal	schdSuplRentPaid		= BigDecimal.ZERO;
 	private BigDecimal	schdSuplRentBal			= BigDecimal.ZERO;
 	private BigDecimal	schdSuplRentPayNow		= BigDecimal.ZERO;
+	private BigDecimal	schdSuplRentWaivedNow		= BigDecimal.ZERO;
 
 	// Increased Cost Amount
 	private BigDecimal	schdIncrCost			= BigDecimal.ZERO;
 	private BigDecimal	schdIncrCostPaid		= BigDecimal.ZERO;
 	private BigDecimal	schdIncrCostBal			= BigDecimal.ZERO;
 	private BigDecimal	schdIncrCostPayNow		= BigDecimal.ZERO;
+	private BigDecimal	schdIncrCostWaivedNow		= BigDecimal.ZERO;
 
 	// External Fields Used for EOD process
 	private BigDecimal	refundAmount			= BigDecimal.ZERO;
@@ -69,6 +76,7 @@ public class FinRepayQueue {
 	// late pay profit calculations
 	private BigDecimal	schdRate				= BigDecimal.ZERO;
 	private BigDecimal	latePayPftPayNow		= BigDecimal.ZERO;
+	private BigDecimal	latePayPftWaivedNow		= BigDecimal.ZERO;
 	private BigDecimal	latePayPftBal			= BigDecimal.ZERO;
 
 	//Advised profit Rates
@@ -423,7 +431,6 @@ public class FinRepayQueue {
 	public String getLinkedFinRef() {
 		return linkedFinRef;
 	}
-
 	public void setLinkedFinRef(String linkedFinRef) {
 		this.linkedFinRef = linkedFinRef;
 	}
@@ -431,7 +438,6 @@ public class FinRepayQueue {
 	public String getFinStatus() {
 		return finStatus;
 	}
-
 	public void setFinStatus(String finStatus) {
 		this.finStatus = finStatus;
 	}
@@ -439,7 +445,6 @@ public class FinRepayQueue {
 	public String getFinStsReason() {
 		return finStsReason;
 	}
-
 	public void setFinStsReason(String finStsReason) {
 		this.finStsReason = finStsReason;
 	}
@@ -447,7 +452,6 @@ public class FinRepayQueue {
 	public String getFinEvent() {
 		return finEvent;
 	}
-
 	public void setFinEvent(String finEvent) {
 		this.finEvent = finEvent;
 	}
@@ -455,7 +459,6 @@ public class FinRepayQueue {
 	public String getProfitDaysBasis() {
 		return profitDaysBasis;
 	}
-
 	public void setProfitDaysBasis(String profitDaysBasis) {
 		this.profitDaysBasis = profitDaysBasis;
 	}
@@ -463,7 +466,6 @@ public class FinRepayQueue {
 	public BigDecimal getSchdRate() {
 		return schdRate;
 	}
-
 	public void setSchdRate(BigDecimal schdRate) {
 		this.schdRate = schdRate;
 	}
@@ -471,7 +473,6 @@ public class FinRepayQueue {
 	public BigDecimal getLatePayPftPayNow() {
 		return latePayPftPayNow;
 	}
-
 	public void setLatePayPftPayNow(BigDecimal latePayPftPayNow) {
 		this.latePayPftPayNow = latePayPftPayNow;
 	}
@@ -479,7 +480,6 @@ public class FinRepayQueue {
 	public BigDecimal getLatePayPftBal() {
 		return latePayPftBal;
 	}
-
 	public void setLatePayPftBal(BigDecimal latePayPftBal) {
 		this.latePayPftBal = latePayPftBal;
 	}
@@ -487,7 +487,6 @@ public class FinRepayQueue {
 	public BigDecimal getAdvProfit() {
 		return advProfit;
 	}
-
 	public void setAdvProfit(BigDecimal advProfit) {
 		this.advProfit = advProfit;
 	}
@@ -495,9 +494,58 @@ public class FinRepayQueue {
 	public BigDecimal getRebate() {
 		return rebate;
 	}
-
 	public void setRebate(BigDecimal rebate) {
 		this.rebate = rebate;
 	}
+
+	public BigDecimal getSchdPftWaivedNow() {
+		return schdPftWaivedNow;
+	}
+	public void setSchdPftWaivedNow(BigDecimal schdPftWaivedNow) {
+		this.schdPftWaivedNow = schdPftWaivedNow;
+	}
+
+	public BigDecimal getSchdPriWaivedNow() {
+		return schdPriWaivedNow;
+	}
+	public void setSchdPriWaivedNow(BigDecimal schdPriWaivedNow) {
+		this.schdPriWaivedNow = schdPriWaivedNow;
+	}
+
+	public BigDecimal getSchdFeeWaivedNow() {
+		return schdFeeWaivedNow;
+	}
+	public void setSchdFeeWaivedNow(BigDecimal schdFeeWaivedNow) {
+		this.schdFeeWaivedNow = schdFeeWaivedNow;
+	}
+
+	public BigDecimal getSchdInsWaivedNow() {
+		return schdInsWaivedNow;
+	}
+	public void setSchdInsWaivedNow(BigDecimal schdInsWaivedNow) {
+		this.schdInsWaivedNow = schdInsWaivedNow;
+	}
+
+	public BigDecimal getLatePayPftWaivedNow() {
+		return latePayPftWaivedNow;
+	}
+	public void setLatePayPftWaivedNow(BigDecimal latePayPftWaivedNow) {
+		this.latePayPftWaivedNow = latePayPftWaivedNow;
+	}
+
+	public BigDecimal getSchdSuplRentWaivedNow() {
+		return schdSuplRentWaivedNow;
+	}
+	public void setSchdSuplRentWaivedNow(BigDecimal schdSuplRentWaivedNow) {
+		this.schdSuplRentWaivedNow = schdSuplRentWaivedNow;
+	}
+
+	public BigDecimal getSchdIncrCostWaivedNow() {
+		return schdIncrCostWaivedNow;
+	}
+	public void setSchdIncrCostWaivedNow(BigDecimal schdIncrCostWaivedNow) {
+		this.schdIncrCostWaivedNow = schdIncrCostWaivedNow;
+	}
+	
 
 }

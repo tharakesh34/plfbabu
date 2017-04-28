@@ -83,7 +83,6 @@ public class ReceiptCalculator implements Serializable {
 
 	private static final long					serialVersionUID	= 8062681791631293126L;
 	private static Logger						logger				= Logger.getLogger(ReceiptCalculator.class);
-	private FinReceiptData						receiptData;
 
 	Date										curBussniessDate	= DateUtility.getAppDate();
 	private FinODDetailsDAO						finODDetailsDAO;
@@ -231,15 +230,25 @@ public class ReceiptCalculator implements Serializable {
 		
 		// Allocation Details Map Preparation based on key Details
 		Map<String, BigDecimal> paidAllocationMap = new HashMap<String, BigDecimal>();
+		Map<String, BigDecimal> waivedAllocationMap = new HashMap<String, BigDecimal>();
+		BigDecimal totalWaivedAmt = BigDecimal.ZERO;
 		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocations();
 		if (allocationList != null && !allocationList.isEmpty()) {
 			for (int a = 0; a < allocationList.size(); a++) {
 				ReceiptAllocationDetail allocate = allocationList.get(a);
 				if (allocate.getAllocationTo() == 0 || allocate.getAllocationTo() == Long.MIN_VALUE) {
-					paidAllocationMap.put(allocate.getAllocationType(), allocate.getPaidAmount());
+					paidAllocationMap.put(allocate.getAllocationType(), allocate.getPaidAmount().add(allocate.getWaivedAmount()));
+					waivedAllocationMap.put(allocate.getAllocationType(), allocate.getWaivedAmount());
 				}else{
-					paidAllocationMap.put(allocate.getAllocationType()+"~"+allocate.getAllocationTo(), allocate.getPaidAmount());
+					paidAllocationMap.put(allocate.getAllocationType()+"~"+allocate.getAllocationTo(), allocate.getPaidAmount().add(allocate.getWaivedAmount()));
+					
+					BigDecimal waivedAmount = BigDecimal.ZERO;
+					if(waivedAllocationMap.containsKey(allocate.getAllocationType())){
+						waivedAmount = waivedAllocationMap.get(allocate.getAllocationType());
+					}
+					waivedAllocationMap.put(allocate.getAllocationType(), waivedAmount.add(allocate.getWaivedAmount()));
 				}
+				totalWaivedAmt = totalWaivedAmt.add(allocate.getWaivedAmount());
 			}
 		}
 		
@@ -288,8 +297,10 @@ public class ReceiptCalculator implements Serializable {
 				}
 				
 				// Find out early payment/ partial Settlement schedule term and amount
-				if (schdDate.compareTo(curBussniessDate) == 0 && 
-						StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+				if ((schdDate.compareTo(curBussniessDate) == 0 && 
+						StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) ||
+						(schdDate.compareTo(curBussniessDate) >= 0 && 
+						StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE))) {
 					
 					// Manual Advises 
 					if (totalReceiptAmt.compareTo(BigDecimal.ZERO) > 0) {
@@ -303,19 +314,19 @@ public class ReceiptCalculator implements Serializable {
 								if(advise != null){
 									
 									if(paidAllocationMap.containsKey(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID())){
-										BigDecimal insAllocateBal = paidAllocationMap.get(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID());
-										if(insAllocateBal.compareTo(BigDecimal.ZERO) > 0){
+										BigDecimal advAllocateBal = paidAllocationMap.get(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID());
+										if(advAllocateBal.compareTo(BigDecimal.ZERO) > 0){
 											BigDecimal balAdvise = advise.getAdviseAmount().subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
 											if(balAdvise.compareTo(BigDecimal.ZERO) > 0){
-												if(totalReceiptAmt.compareTo(insAllocateBal) >= 0 && insAllocateBal.compareTo(balAdvise) < 0){
-													balAdvise = insAllocateBal;
-												}else if(totalReceiptAmt.compareTo(insAllocateBal) < 0 && balAdvise.compareTo(totalReceiptAmt) > 0){
+												if(totalReceiptAmt.compareTo(advAllocateBal) >= 0 && advAllocateBal.compareTo(balAdvise) < 0){
+													balAdvise = advAllocateBal;
+												}else if(totalReceiptAmt.compareTo(advAllocateBal) < 0 && balAdvise.compareTo(totalReceiptAmt) > 0){
 													balAdvise = totalReceiptAmt;
 												}
 
 												// Reset Total Receipt Amount
 												totalReceiptAmt = totalReceiptAmt.subtract(balAdvise);
-												paidAllocationMap.put(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID(), insAllocateBal.subtract(balAdvise));
+												paidAllocationMap.put(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID(), advAllocateBal.subtract(balAdvise));
 											}
 										}
 									}
@@ -324,8 +335,11 @@ public class ReceiptCalculator implements Serializable {
 						}
 					}
 					
-					isPartialPayNow = true;
-					partialSettleAmount = totalReceiptAmt;
+					// Only For Partial Settlement
+					if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){
+						isPartialPayNow = true;
+						partialSettleAmount = totalReceiptAmt;
+					}
 				}
 
 				for (int j = 0; j < rpyOrder.length; j++) {
@@ -374,7 +388,7 @@ public class ReceiptCalculator implements Serializable {
 											}else if(totalReceiptAmt.compareTo(pftAllocateBal) < 0 && balPft.compareTo(totalReceiptAmt) > 0){
 												balPft = totalReceiptAmt;
 											}
-											rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPft);
+											rsd = prepareRpyRecord(curSchd, rsd, pftPayTo, balPft);
 
 											// Reset Total Receipt Amount
 											totalReceiptAmt = totalReceiptAmt.subtract(balPft);
@@ -401,7 +415,7 @@ public class ReceiptCalculator implements Serializable {
 												}else if(totalReceiptAmt.compareTo(latePftAllocateBal) < 0 && balLatePft.compareTo(totalReceiptAmt) > 0){
 													balLatePft = totalReceiptAmt;
 												}
-												rsd = prepareRpyRecord(curSchd, rsd, repayTo, balLatePft);
+												rsd = prepareRpyRecord(curSchd, rsd, pftPayTo, balLatePft);
 
 												// Reset Total Receipt Amount
 												totalReceiptAmt = totalReceiptAmt.subtract(balLatePft);
@@ -629,7 +643,7 @@ public class ReceiptCalculator implements Serializable {
 				repayHeader.setTotalPenalty(totPenaltyPaidNow);
 				repayHeader.setTotalIns(totInsPaidNow);
 				repayHeader.setTotalSchdFee(totFeePaidNow);
-				repayHeader.setTotalWaiver(BigDecimal.ZERO);//TODO : Need to Discuss , how to adjust
+				repayHeader.setTotalWaiver(totalWaivedAmt);
 
 				// Adding Repay Schedule Details to Repay Header
 				repayHeader.setRepayScheduleDetails(pastdueRpySchdList);
@@ -684,10 +698,115 @@ public class ReceiptCalculator implements Serializable {
 			receiptDetail.setRepayHeaders(repayHeaderList);
 			
 		}
-
+		
 		overdueList = null;
 		overdueMap = null;
 		paidAllocationMap = null;
+		
+		// If Total Waived amount is Zero, no need to Waived amount settings
+		if(totalWaivedAmt.compareTo(BigDecimal.ZERO) == 0){
+			waivedAllocationMap = null;
+
+			logger.debug("Leaving");
+			return receiptData;
+		}
+		
+		// Waived Details Updation on Schedules
+		for (FinReceiptDetail rd : receiptDetailList) {
+			for (FinRepayHeader rh : rd.getRepayHeaders()) {
+				for (RepayScheduleDetail rsd : rh.getRepayScheduleDetails()) {
+					
+					// Principal Amount
+					if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_PRI)){
+						BigDecimal waivedNow = rsd.getPrincipalSchdPayNow();
+						BigDecimal balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_PRI);
+						if(waivedNow.compareTo(balWaived) > 0){
+							waivedNow = balWaived;
+						}
+						rsd.setPriSchdWaivedNow(waivedNow);
+						totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
+						waivedAllocationMap.put(RepayConstants.ALLOCATION_PRI, balWaived.subtract(waivedNow));
+					}
+					
+					// Profit Amount
+					if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_PFT)){
+						BigDecimal waivedNow = rsd.getProfitSchdPayNow();
+						BigDecimal balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_PFT);
+						if(waivedNow.compareTo(balWaived) > 0){
+							waivedNow = balWaived;
+						}
+						rsd.setPftSchdWaivedNow(waivedNow);
+						totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
+						waivedAllocationMap.put(RepayConstants.ALLOCATION_PFT, balWaived.subtract(waivedNow));
+					}
+					
+					// Late Payment Profit Amount
+					if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_LPFT)){
+						BigDecimal waivedNow = rsd.getLatePftSchdPayNow();
+						BigDecimal balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_LPFT);
+						if(waivedNow.compareTo(balWaived) > 0){
+							waivedNow = balWaived;
+						}
+						rsd.setLatePftSchdWaivedNow(waivedNow);
+						totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
+						waivedAllocationMap.put(RepayConstants.ALLOCATION_LPFT, balWaived.subtract(waivedNow));
+					}
+					
+					// Penalty Amount
+					if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_ODC)){
+						BigDecimal waivedNow = rsd.getPenaltyPayNow();
+						BigDecimal balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_ODC);
+						if(waivedNow.compareTo(balWaived) > 0){
+							waivedNow = balWaived;
+						}
+						rsd.setWaivedAmt(waivedNow);
+						totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
+						waivedAllocationMap.put(RepayConstants.ALLOCATION_ODC, balWaived.subtract(waivedNow));
+					}
+					
+					// Schedule Fee Amount
+					if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_FEE)){
+						BigDecimal waivedNow = rsd.getSchdFeePayNow();
+						BigDecimal balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_FEE);
+						if(waivedNow.compareTo(balWaived) > 0){
+							waivedNow = balWaived;
+						}
+						rsd.setSchdFeeWaivedNow(waivedNow);
+						totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
+						waivedAllocationMap.put(RepayConstants.ALLOCATION_FEE, balWaived.subtract(waivedNow));
+					}
+					
+					// Insurance Amount
+					if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_INS)){
+						BigDecimal waivedNow = rsd.getSchdInsPayNow();
+						BigDecimal balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_INS);
+						if(waivedNow.compareTo(balWaived) > 0){
+							waivedNow = balWaived;
+						}
+						rsd.setSchdInsWaivedNow(waivedNow);
+						totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
+						waivedAllocationMap.put(RepayConstants.ALLOCATION_INS, balWaived.subtract(waivedNow));
+					}
+					
+					// If No Outstanding Waiver amount
+					if(totalWaivedAmt.compareTo(BigDecimal.ZERO) == 0){
+						break;
+					}
+				}
+				
+				// If No Outstanding Waiver amount
+				if(totalWaivedAmt.compareTo(BigDecimal.ZERO) == 0){
+					break;
+				}
+			}
+			
+			// If No Outstanding Waiver amount
+			if(totalWaivedAmt.compareTo(BigDecimal.ZERO) == 0){
+				break;
+			}
+		}
+
+		waivedAllocationMap = null;
 		
 		logger.debug("Leaving");
 		return receiptData;
@@ -1014,7 +1133,6 @@ public class ReceiptCalculator implements Serializable {
 							}
 
 							// Calculate and set Fee Amount based on Fee ID
-							// TODO : Check/Confirm id Day of Frequency as same as Repay Frequency
 							for (int l = 0; l < insSchdList.size(); l++) {
 								if(insSchdList.get(l).getInsSchDate().compareTo(schdDate) == 0){
 
@@ -1382,13 +1500,6 @@ public class ReceiptCalculator implements Serializable {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public FinReceiptData getFinReceiptData() {
-		return this.receiptData;
-	}
-	public void setFinReceiptData(FinReceiptData receiptData) {
-		this.receiptData = receiptData;
-	}
-
 	public FinODDetailsDAO getFinODDetailsDAO() {
 		return finODDetailsDAO;
 	}
@@ -1399,7 +1510,6 @@ public class ReceiptCalculator implements Serializable {
 	public ManualAdviseDAO getManualAdviseDAO() {
 		return manualAdviseDAO;
 	}
-
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}

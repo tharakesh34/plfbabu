@@ -138,6 +138,34 @@ public class FinExcessAmountDAOImpl implements FinExcessAmountDAO {
 		}
 		logger.debug("Leaving");
 	}
+	
+	/**
+	 * Method for Update Excess Balance amount after amounts Approval
+	 */
+	@SuppressWarnings("serial")
+	@Override
+	public void updateExcessBal(long excessID, BigDecimal amount) {
+		logger.debug("Entering");
+
+		int recordCount = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ExcessID", excessID);
+		source.addValue("PaidNow", amount);
+
+		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
+		updateSql.append(" Set Amount = Amount + :PaidNow, BalanceAmt = BalanceAmt + :PaidNow ");
+		updateSql.append(" Where ExcessID =:ExcessID");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+
+		if (recordCount <= 0) {
+			logger.debug("Error Update Method Count :" + recordCount);
+			ErrorDetails errorDetails = getError("41004", excessID, PennantConstants.default_Language);
+			throw new DataAccessException(errorDetails.getError()) { };
+		}
+		logger.debug("Leaving");
+	}
 
 	/**
 	 * Method for Saving Excess Movements after Excess Utilization

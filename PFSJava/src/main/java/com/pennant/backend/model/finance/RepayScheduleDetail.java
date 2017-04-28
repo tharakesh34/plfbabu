@@ -40,42 +40,49 @@ public class RepayScheduleDetail {
 	private BigDecimal profitSchdPaid = BigDecimal.ZERO;
 	private BigDecimal profitSchdBal = BigDecimal.ZERO;
 	private BigDecimal profitSchdPayNow = BigDecimal.ZERO;
+	private BigDecimal pftSchdWaivedNow = BigDecimal.ZERO;
 	
 	// Profit Amount
 	private BigDecimal latePftSchd = BigDecimal.ZERO;
 	private BigDecimal latePftSchdPaid = BigDecimal.ZERO;
 	private BigDecimal latePftSchdBal = BigDecimal.ZERO;
 	private BigDecimal latePftSchdPayNow = BigDecimal.ZERO;
+	private BigDecimal latePftSchdWaivedNow = BigDecimal.ZERO;
 	
 	// Principal Amount
 	private BigDecimal principalSchd = BigDecimal.ZERO;
 	private BigDecimal principalSchdPaid = BigDecimal.ZERO;
 	private BigDecimal principalSchdBal = BigDecimal.ZERO;
 	private BigDecimal principalSchdPayNow = BigDecimal.ZERO;
+	private BigDecimal priSchdWaivedNow = BigDecimal.ZERO;
 	
 	// Scheduled Fee Amount
 	private BigDecimal schdFee = BigDecimal.ZERO;
 	private BigDecimal schdFeePaid = BigDecimal.ZERO;
 	private BigDecimal schdFeeBal = BigDecimal.ZERO;
 	private BigDecimal schdFeePayNow = BigDecimal.ZERO;
+	private BigDecimal schdFeeWaivedNow = BigDecimal.ZERO;
 	
 	// Insurance Amount
 	private BigDecimal schdIns = BigDecimal.ZERO;
 	private BigDecimal schdInsPaid = BigDecimal.ZERO;
 	private BigDecimal schdInsBal = BigDecimal.ZERO;
 	private BigDecimal schdInsPayNow = BigDecimal.ZERO;
+	private BigDecimal schdInsWaivedNow = BigDecimal.ZERO;
 	
 	// Supplementary Rent
 	private BigDecimal schdSuplRent = BigDecimal.ZERO;
 	private BigDecimal schdSuplRentPaid = BigDecimal.ZERO;
 	private BigDecimal schdSuplRentBal = BigDecimal.ZERO;
 	private BigDecimal schdSuplRentPayNow = BigDecimal.ZERO;
+	private BigDecimal schdSuplRentWaivedNow = BigDecimal.ZERO;
 	
 	// Increased Cost Amount
 	private BigDecimal schdIncrCost = BigDecimal.ZERO;
 	private BigDecimal schdIncrCostPaid = BigDecimal.ZERO;
 	private BigDecimal schdIncrCostBal = BigDecimal.ZERO;
 	private BigDecimal schdIncrCostPayNow = BigDecimal.ZERO;
+	private BigDecimal schdIncrCostWaivedNow = BigDecimal.ZERO;
 	
 	private BigDecimal refundMax = BigDecimal.ZERO;
 	private BigDecimal refundReq = BigDecimal.ZERO;
@@ -472,7 +479,6 @@ public class RepayScheduleDetail {
 	public BigDecimal getLatePftSchdPayNow() {
 		return latePftSchdPayNow;
 	}
-
 	public void setLatePftSchdPayNow(BigDecimal latePftSchdPayNow) {
 		this.latePftSchdPayNow = latePftSchdPayNow;
 	}
@@ -480,11 +486,57 @@ public class RepayScheduleDetail {
 	public int getRepaySchID() {
 		return repaySchID;
 	}
-
 	public void setRepaySchID(int repaySchID) {
 		this.repaySchID = repaySchID;
 	}
-	
-	
+
+	public BigDecimal getPftSchdWaivedNow() {
+		return pftSchdWaivedNow;
+	}
+	public void setPftSchdWaivedNow(BigDecimal pftSchdWaivedNow) {
+		this.pftSchdWaivedNow = pftSchdWaivedNow;
+	}
+
+	public BigDecimal getLatePftSchdWaivedNow() {
+		return latePftSchdWaivedNow;
+	}
+	public void setLatePftSchdWaivedNow(BigDecimal latePftSchdWaivedNow) {
+		this.latePftSchdWaivedNow = latePftSchdWaivedNow;
+	}
+
+	public BigDecimal getPriSchdWaivedNow() {
+		return priSchdWaivedNow;
+	}
+	public void setPriSchdWaivedNow(BigDecimal priSchdWaivedNow) {
+		this.priSchdWaivedNow = priSchdWaivedNow;
+	}
+
+	public BigDecimal getSchdFeeWaivedNow() {
+		return schdFeeWaivedNow;
+	}
+	public void setSchdFeeWaivedNow(BigDecimal schdFeeWaivedNow) {
+		this.schdFeeWaivedNow = schdFeeWaivedNow;
+	}
+
+	public BigDecimal getSchdInsWaivedNow() {
+		return schdInsWaivedNow;
+	}
+	public void setSchdInsWaivedNow(BigDecimal schdInsWaivedNow) {
+		this.schdInsWaivedNow = schdInsWaivedNow;
+	}
+
+	public BigDecimal getSchdSuplRentWaivedNow() {
+		return schdSuplRentWaivedNow;
+	}
+	public void setSchdSuplRentWaivedNow(BigDecimal schdSuplRentWaivedNow) {
+		this.schdSuplRentWaivedNow = schdSuplRentWaivedNow;
+	}
+
+	public BigDecimal getSchdIncrCostWaivedNow() {
+		return schdIncrCostWaivedNow;
+	}
+	public void setSchdIncrCostWaivedNow(BigDecimal schdIncrCostWaivedNow) {
+		this.schdIncrCostWaivedNow = schdIncrCostWaivedNow;
+	}
 	
 }

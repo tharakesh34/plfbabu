@@ -153,21 +153,23 @@ public class RepaymentPostingsUtil implements Serializable {
 		List<FinRepayQueue> finRepayQueueList = queueTotals.getQueueList();
 		
 		// Penalty Payments, if any Payment calculations done
-		// TODO: Make single transaction ID for Below schedule payments also
+		long linkedTranId = Long.MIN_VALUE;
 		if(queueTotals.getPenalty().compareTo(BigDecimal.ZERO) > 0){
-			actReturnList = doOverduePostings(Long.MIN_VALUE, finRepayQueueList, dateValueDate, financeMain);
-			if (actReturnList != null) {
+			actReturnList = doOverduePostings(linkedTranId, finRepayQueueList, dateValueDate, financeMain);
+			if (actReturnList != null && !(Boolean)actReturnList.get(0)) {
 				return actReturnList;
+			}else{
+				linkedTranId = (long) actReturnList.get(1);
 			}
 		}
 		
 		// Total Schedule Payments
 		BigDecimal totalPayAmount = queueTotals.getPrincipal().add(queueTotals.getProfit()).add(queueTotals.getLateProfit()).add(
-				queueTotals.getFee()).add(queueTotals.getInsurance()).add(queueTotals.getSuplRent()).add(queueTotals.getIncrCost()).add(queueTotals.getExcess());
+				queueTotals.getFee()).add(queueTotals.getInsurance()).add(queueTotals.getSuplRent()).add(queueTotals.getIncrCost());
 		
 		if (totalPayAmount.compareTo(BigDecimal.ZERO) > 0) {
 			actReturnList = doSchedulePostings(queueTotals, valueDate, dateValueDate, financeMain,
-					scheduleDetails, financeProfitDetail, eventCode);
+					scheduleDetails, financeProfitDetail, eventCode, linkedTranId);
 		} else {
 			if (actReturnList == null) {
 				actReturnList = new ArrayList<Object>();
@@ -199,7 +201,7 @@ public class RepaymentPostingsUtil implements Serializable {
 			Date dateValueDate, FinanceMain financeMain) throws PFFInterfaceException,
 			IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
-		
+		List<Object> returnList = null;
 		for (FinRepayQueue repayQueue : finRepayQueueList) {
 			
 			if (repayQueue.getRpyDate().compareTo(dateValueDate) < 0
@@ -212,22 +214,20 @@ public class RepaymentPostingsUtil implements Serializable {
 					fullyPaidSchd = true;
 				}
 
-				List<Object> returnList = getRecoveryPostingsUtil().recoveryPayment(financeMain, dateValueDate,
+				returnList = getRecoveryPostingsUtil().recoveryPayment(financeMain, dateValueDate,
 						repayQueue.getRpyDate(), repayQueue.getFinRpyFor(), dateValueDate,
 						repayQueue.getPenaltyPayNow(), BigDecimal.ZERO, repayQueue.getWaivedAmount(),
 						repayQueue.getChargeType(), linkedTranId, fullyPaidSchd);
 
 				if (!(Boolean) returnList.get(0)) {
-					List<Object> actReturnList = new ArrayList<Object>();
-					actReturnList.add(returnList.get(0));
-					actReturnList.add(returnList.get(2));
-					returnList = null;
-					return actReturnList;
+					return returnList;
+				}else{
+					linkedTranId = (long) returnList.get(1);
 				}
 			}
 		}
 		logger.debug("Leaving");
-		return null;
+		return returnList;
 	}
 
 	/**
@@ -246,14 +246,11 @@ public class RepaymentPostingsUtil implements Serializable {
 	 */
 	private List<Object> doSchedulePostings(FinRepayQueueTotals queueTotals, Date valueDate,
 			Date dateValueDate, FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail financeProfitDetail, String eventCode)
+			FinanceProfitDetail financeProfitDetail, String eventCode, long linkedTranId)
 			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		
 		List<Object> actReturnList = new ArrayList<Object>();
-
-		//Remove Below line for Single Transaction Posting Entry
-		long linkedTranId = Long.MIN_VALUE;
 
 		//Method for Postings Process
 		List<Object> resultList = postingEntryProcess(valueDate, dateValueDate, valueDate, false, financeMain,
@@ -496,6 +493,12 @@ public class RepaymentPostingsUtil implements Serializable {
 		return financeMain;
 	}
 	
+	/**
+	 * Method for Checking Schedule is Fully Paid or not
+	 * @param finReference
+	 * @param scheduleDetails
+	 * @return
+	 */
 	private boolean isSchdFullyPaid(String finReference, List<FinanceScheduleDetail> scheduleDetails){
 		//Check Total Finance profit Amount
 		boolean fullyPaid = true;
@@ -589,7 +592,6 @@ public class RepaymentPostingsUtil implements Serializable {
 		amountCodes.setRpTot(queueTotals.getPrincipal().add(queueTotals.getProfit()).add(queueTotals.getLateProfit()));
 		amountCodes.setRpPft(queueTotals.getProfit().add(queueTotals.getLateProfit()));
 		amountCodes.setRpPri(queueTotals.getPrincipal());
-		// Set Excess amount TODO
 
 		// Fee Details
 		amountCodes.setSchFeePay(queueTotals.getFee());
@@ -630,11 +632,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		logger.debug("Entering");
 
 		//Schedule Updation depends on Finance Repay Queue Details
-		if (scheduleDetail == null) {
-			scheduleDetail = updateSchdlDetail(finRepayQueue);
-		} else {
-			scheduleDetail = updateScheduleDetailsData(scheduleDetail, finRepayQueue);
-		}
+		scheduleDetail = updateScheduleDetailsData(scheduleDetail, finRepayQueue);
 		
 		// Late Profit Updation
 		if(finRepayQueue.getLatePayPftPayNow().compareTo(BigDecimal.ZERO) > 0){
@@ -645,56 +643,11 @@ public class RepaymentPostingsUtil implements Serializable {
 		// Finance Repayments Details
 		FinanceRepayments repayment = prepareRepayDetailData(finRepayQueue, dateValueDate, linkedTranId, totalRpyAmt);
 		getFinanceRepaymentsDAO().save(repayment, "");
-		
-		// Finance Repay Queue Data Updation
-		finRepayQueue = prepareQueueData(finRepayQueue);
-
-		// Check for overdue calculation required or not
-		boolean suspReleaseReq = false;
-		boolean isLatePay = false;
-		if (finRepayQueue.getRpyDate().compareTo(dateValueDate) < 0) {
-			isLatePay = true;
-			if (finRepayQueue.getSchdPftPayNow().compareTo(BigDecimal.ZERO) > 0) {
-				suspReleaseReq = true;
-			}
-		}
-
-		if (isLatePay) {
-
-			//Overdue Details preparation
-			getRecoveryPostingsUtil().recoveryCalculation(finRepayQueue, financeMain.getProfitDaysBasis(),
-					dateValueDate, false, false);
-
-			//SUSPENSE RELEASE
-			if (suspReleaseReq) {
-				getSuspensePostingUtil().suspReleasePreparation(financeMain, finRepayQueue.getSchdPftPayNow(),
-						finRepayQueue, dateValueDate, false);
-			}
-		}
 
 		logger.debug("Leaving");
 		return scheduleDetail;
 	}
-	
-	/**
-	 * Method for Processing Updating Schedule Details
-	 * 
-	 * @param finRepayQueue
-	 * @return
-	 */
-	public FinanceScheduleDetail updateSchdlDetail(FinRepayQueue finRepayQueue) {
-		logger.debug("Entering");
 
-		// Finance Schedule Details Update
-		FinanceScheduleDetail scheduleDetail = getFinanceScheduleDetailDAO().getFinanceScheduleDetailById(
-				finRepayQueue.getFinReference(), finRepayQueue.getRpyDate(), "", false);
-
-		scheduleDetail = updateScheduleDetailsData(scheduleDetail, finRepayQueue);
-		getFinanceScheduleDetailDAO().updateForRpy(scheduleDetail, finRepayQueue.getFinRpyFor());
-
-		logger.debug("Leaving");
-		return scheduleDetail;
-	}
 
 	/**
 	 * Method for Upadte Data for Finance schedule Details Object
@@ -780,32 +733,6 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		logger.debug("Leaving");
 		return repayment;
-	}
-
-	/**
-	 * Method for Updating the Finance RepayQueue Data
-	 * 
-	 * @param repayQueue
-	 * @param repayAmtBal
-	 * @return
-	 */
-	private FinRepayQueue prepareQueueData(FinRepayQueue repayQueue) {
-		logger.debug("Entering");
-		repayQueue.setSchdPftPaid(repayQueue.getSchdPftPaid().add(repayQueue.getSchdPftPayNow()));
-		repayQueue.setSchdPriPaid(repayQueue.getSchdPriPaid().add(repayQueue.getSchdPriPayNow()));
-		repayQueue.setSchdPftBal(repayQueue.getSchdPftBal().subtract(repayQueue.getSchdPftPayNow()));
-		repayQueue.setSchdPriBal(repayQueue.getSchdPriBal().subtract(repayQueue.getSchdPriPayNow()));
-
-		// Modified Conditions for Balances Paid or not
-		if (repayQueue.getSchdPftBal().compareTo(BigDecimal.ZERO) == 0) {
-			repayQueue.setSchdIsPftPaid(true);
-			if (repayQueue.getSchdPriBal().compareTo(BigDecimal.ZERO) == 0) {
-				repayQueue.setSchdIsPriPaid(true);
-			}
-		}
-
-		logger.debug("Leaving");
-		return repayQueue;
 	}
 	
 	/**
@@ -893,7 +820,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		BigDecimal totRpyAmt = totalsMap.get("totRpyTot");
 		if (totRpyAmt.compareTo(BigDecimal.ZERO) > 0) {
 			actReturnList = doSchedulePostings(null, valueDate, dateValueDate, financeMain,
-					scheduleDetails, financeProfitDetail, eventCode);
+					scheduleDetails, financeProfitDetail, eventCode, Long.MIN_VALUE);
 		} else {
 			if (actReturnList == null) {
 				actReturnList = new ArrayList<Object>();

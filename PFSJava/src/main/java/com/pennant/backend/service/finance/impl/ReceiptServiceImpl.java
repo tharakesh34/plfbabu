@@ -498,7 +498,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	/**
 	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getFinanceMainDAO().delete with parameters financeMain,"_Temp" 3) Audit the record in to
+	 * workFlow table by using getFinReceiptHeaderDAO().delete with parameters financeMain,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
@@ -583,10 +583,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getFinanceMainDAO().delete with
-	 * parameters financeMain,"" b) NEW Add new record in to main table by using getFinanceMainDAO().save with
-	 * parameters financeMain,"" c) EDIT Update record in the main table by using getFinanceMainDAO().update with
-	 * parameters financeMain,"" 3) Delete the record from the workFlow table by using getFinanceMainDAO().delete with
+	 * following actions a) DELETE Delete the record from the main table by using getFinReceiptHeaderDAO().delete with
+	 * parameters financeMain,"" b) NEW Add new record in to main table by using getFinReceiptHeaderDAO().save with
+	 * parameters financeMain,"" c) EDIT Update record in the main table by using getFinReceiptHeaderDAO().update with
+	 * parameters financeMain,"" 3) Delete the record from the workFlow table by using getFinReceiptHeaderDAO().delete with
 	 * parameters financeMain,"_Temp" 4) Audit the record in to AuditHeader and AdtFinanceMain by using
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtFinanceMain by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
@@ -663,16 +663,19 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			for (int j = 0; j < repayHeaderList.size(); j++) {
 				
 				FinRepayHeader repayHeader = repayHeaderList.get(j);
-				BigDecimal excessAmount = BigDecimal.ZERO;
 				if(!StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent()) &&
 						!StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent()) &&
 						!StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())){
-					excessAmount = repayHeader.getRepayAmount();
+					
+					// Update Excess amount (Adding amount and balance updation)
+					getFinExcessAmountDAO().updateExcessBal(receiptDetailList.get(i).getPayAgainstID(), repayHeader.getRepayAmount());
+					
+					continue;
 				}
 				
 				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
 				List<Object> returnList = getRepayProcessUtil().processRepaymentPostings(financeMain, schdList,
-						profitDetail, repaySchdList, excessAmount, repayHeader.getFinEvent());
+						profitDetail, repaySchdList, repayHeader.getFinEvent());
 
 				if (!(Boolean) returnList.get(0)) {
 					String errParm = (String) returnList.get(1);
@@ -1055,7 +1058,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	/**
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
-	 * for any mismatch conditions Fetch the error details from getFinanceMainDAO().getErrorDetail with Error ID and
+	 * for any mismatch conditions Fetch the error details from getFinReceiptHeaderDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader

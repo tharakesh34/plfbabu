@@ -233,5 +233,28 @@
 		<dropNotNullConstraint tableName="PRESENTMENTHEADER"
 			columnName="PARTNERBANKID" columnDataType="NUMBER(19)" />
 	  </changeSet>
+	  
+	  <changeSet id="24" author="Siva">
+		<addColumn tableName="FinRepayScheduleDetail">
+			<column name="PftSchdWaivedNow" type="decimal(18,0)" />
+			<column name="LatePftSchdWaivedNow" type="decimal(18,0)" />
+			<column name="PriSchdWaivedNow" type="decimal(18,0)" />
+			<column name="SchdFeeWaivedNow" type="decimal(18,0)" />
+			<column name="SchdInsWaivedNow" type="decimal(18,0)" />
+			<column name="SchdSuplRentWaivedNow" type="decimal(18,0)" />
+			<column name="SchdIncrCostWaivedNow" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	 <changeSet id="25" author="Siva">
+		<addColumn tableName="FinRepayScheduleDetail_Temp">
+			<column name="PftSchdWaivedNow" type="decimal(18,0)" />
+			<column name="LatePftSchdWaivedNow" type="decimal(18,0)" />
+			<column name="PriSchdWaivedNow" type="decimal(18,0)" />
+			<column name="SchdFeeWaivedNow" type="decimal(18,0)" />
+			<column name="SchdInsWaivedNow" type="decimal(18,0)" />
+			<column name="SchdSuplRentWaivedNow" type="decimal(18,0)" />
+			<column name="SchdIncrCostWaivedNow" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>

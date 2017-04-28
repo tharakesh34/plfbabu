@@ -918,12 +918,12 @@
 										<listheader id="listheader_LatePft" visible="false"
 											label="${c:l('listheader_LatePftPayNow.label')}" sort="false"
 											hflex="min" />
-										<listheader id="listheader_Penalty" visible="false"
+										<listheader 
 											label="${c:l('listheader_PriPayNow.label')}" sort="false"
 											hflex="min" />
-										<listheader
+										<listheader id="listheader_Penalty" visible="false"
 											label="${c:l('listheader_PenaltyPayNow.label')}" sort="false"
-											visible="true" hflex="min" />
+											hflex="min" />
 										<listheader
 											label="${c:l('listheader_MaxAlwRefund.label')}" sort="false"
 											visible="false" hflex="min" />

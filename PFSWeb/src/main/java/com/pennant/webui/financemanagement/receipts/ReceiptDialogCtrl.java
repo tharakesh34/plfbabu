@@ -1083,7 +1083,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		receiptData.setFinanceDetail(getFinanceDetail());
 		setReceiptData(getReceiptCalculator().initiateReceipt(receiptData, schData, tempReceiptPurpose));
 
-		doFillAllocationDetail(null, paidAllocationMap, false);
+		doFillAllocationDetail(null, null, false);
 		
 		// Allocation Process start
 		BigDecimal totReceiptAmount = getTotalReceiptAmount();
@@ -1509,7 +1509,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					allocationDetail.setPaidAmount(PennantApplicationUtil.unFormateAmount(paidAllocate.getActualValue(), finFormatter));
 				}
 				
-				if(this.listBoxManualAdvises.getFellowIfAny("AllocateWaived_"+allocateTypes.get(i)) != null){
+				if(this.listBoxManualAdvises.getFellowIfAny("AllocateAdvWaived_"+allocateTypes.get(i)) != null){
 					CurrencyBox waivedAllocate = (CurrencyBox) this.listBoxManualAdvises.getFellowIfAny("AllocateWaived_"+allocateTypes.get(i));
 					allocationDetail.setWaivedAmount(PennantApplicationUtil.unFormateAmount(waivedAllocate.getActualValue(), finFormatter));
 				}
@@ -2337,7 +2337,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			allocationWaived.setStyle("text-align:right;");
 			allocationWaived.setBalUnvisible(true);
 			setProps(allocationWaived, false, finFormatter, 120);
-			allocationWaived.setId("AllocateWaived_"+allocateTypes.get(i));
+			if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_MANADV)){
+				allocationWaived.setId("AllocateAdvWaived_"+allocateTypes.get(i));
+			}else{
+				allocationWaived.setId("AllocateWaived_"+allocateTypes.get(i));
+			}
 			if(allocatePaidMap != null){
 				if(waivedAllocationMap != null && waivedAllocationMap.containsKey(allocateTypes.get(i))){
 					allocationWaived.setValue(PennantApplicationUtil.formateAmount(waivedAllocationMap.get(allocateTypes.get(i)), finFormatter));
@@ -2368,6 +2372,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			// Setting On Change Event for Amounts
 			List<Object> waivedList = new ArrayList<>();
 			waivedList.add(totalCalAmount);
+			waivedList.add(allocationPaid);
 			waivedList.add(allocationWaived);
 			allocationWaived.addForward("onFulfill", this.window_ReceiptDialog, "onAllocateWaivedChange", waivedList);
 			
@@ -2546,7 +2551,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 	
-	
 	/**
 	 * Method for action Event of Changing Allocated Paid Amount on Past due Schedule term
 	 * @param event
@@ -2560,11 +2564,13 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		List<Object> list = (List<Object>) event.getData();
 		BigDecimal pastdueAmt = (BigDecimal) list.get(0);
-		CurrencyBox allocateWaived = (CurrencyBox) list.get(1);
+		CurrencyBox allocatePaid = (CurrencyBox) list.get(1);
+		CurrencyBox allocateWaived = (CurrencyBox) list.get(2);
 		
+		BigDecimal paidAllocateAmt = PennantApplicationUtil.unFormateAmount(allocatePaid.getActualValue(), finFormatter);
 		BigDecimal waivedAllocateAmt = PennantApplicationUtil.unFormateAmount(allocateWaived.getActualValue(), finFormatter);
-		if(waivedAllocateAmt.compareTo(pastdueAmt) > 0){
-			waivedAllocateAmt = pastdueAmt;
+		if(waivedAllocateAmt.compareTo(pastdueAmt.subtract(paidAllocateAmt)) > 0){
+			waivedAllocateAmt = pastdueAmt.subtract(paidAllocateAmt);
 			allocateWaived.setValue(PennantApplicationUtil.formateAmount(waivedAllocateAmt, finFormatter));
 		}
 		
@@ -2576,18 +2582,29 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			waivedAllocationMap.put(allocateWaived.getId(), waivedAllocateAmt);
 		}
 		
-		// Setting to Map for future usage on Rendering
-		Map<String, BigDecimal> allocateTypePaidMap = null;
-		if(paidAllocationMap != null){ 
-			allocateTypePaidMap = new HashMap<>();
-			List<String> keys = new ArrayList<>(paidAllocationMap.keySet());
-			for (int i = 0; i < keys.size(); i++) {
-				allocateTypePaidMap.put(keys.get(i).replace("AllocatePaid_", ""), paidAllocationMap.get(keys.get(i)));
+		List<String> waivedBoxKeys = new ArrayList<>(waivedAllocationMap.keySet());
+		BigDecimal totalPDWaived = BigDecimal.ZERO;
+		BigDecimal totalMAWaived = BigDecimal.ZERO;
+		for (int i = 0; i < waivedBoxKeys.size(); i++) {
+			String waivedBoxId = waivedBoxKeys.get(i);
+			if(waivedBoxId.startsWith("AllocateWaived_")){
+				totalPDWaived = totalPDWaived.add(waivedAllocationMap.get(waivedBoxId));
+			}else {
+				totalMAWaived = totalMAWaived.add(waivedAllocationMap.get(waivedBoxId));
 			}
 		}
-
-		// Render total List box on Change of Amounts
-		doFillAllocationDetail(null, allocateTypePaidMap, true);
+		
+		// Totals Pastdue Waived Amount Resetting
+		if(this.listBoxPastdues.getFellowIfAny("allocation_totalWaived") != null){
+			Label label = (Label) this.listBoxPastdues.getFellowIfAny("allocation_totalWaived");
+			label.setValue(PennantApplicationUtil.amountFormate(totalPDWaived, finFormatter));
+		}
+		
+		// Totals Manual Advises Waived Amount Resetting
+		if(this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalWaived") != null){
+			Label label = (Label) this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalWaived");
+			label.setValue(PennantApplicationUtil.amountFormate(totalMAWaived, finFormatter));
+		}
 		
 		logger.debug("Leaving");
 	}
@@ -3428,11 +3445,18 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				BigDecimal netPay = repaySchd.getProfitSchdPayNow().add(repaySchd.getPrincipalSchdPayNow())
 						.add(repaySchd.getSchdInsPayNow()).add(repaySchd.getSchdFeePayNow())
 						.add(repaySchd.getSchdSuplRentPayNow()).add(repaySchd.getSchdIncrCostPayNow())
+						.add(repaySchd.getPenaltyPayNow()).add(repaySchd.getLatePftSchdPayNow())
 						.subtract(refundPft);
 				lc = new Listcell(PennantAppUtil.amountFormate(netPay, finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getRepayBalance(), finFormatter));
+				
+				BigDecimal netBalance = repaySchd.getProfitSchdBal().add(repaySchd.getPrincipalSchdBal())
+						.add(repaySchd.getSchdInsBal()).add(repaySchd.getSchdFeeBal())
+						.add(repaySchd.getSchdSuplRentBal()).add(repaySchd.getSchdIncrCostBal());
+						
+				lc = new Listcell(PennantAppUtil.amountFormate(netBalance.subtract(netPay.subtract(
+						repaySchd.getPenaltyPayNow()).subtract(repaySchd.getLatePftSchdPayNow())), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				item.setAttribute("data", repaySchd);
@@ -3448,7 +3472,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			paymentMap.put("totalRefund", totalRefund);
 			paymentMap.put("totalCharge", totalCharge);
 			paymentMap.put("totalPft", totalPft);
-			paymentMap.put("totalLatePft", totalRefund);
+			paymentMap.put("totalLatePft", totalLatePft);
 			paymentMap.put("totalPri", totalPri);
 
 			paymentMap.put("insPaid", totInsPaid);
@@ -3486,12 +3510,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		if (paymentMap.get("totalRefund").compareTo(BigDecimal.ZERO) > 0) {
 			this.listheader_Refund.setVisible(true);
+			totalSchAmount = totalSchAmount.subtract(paymentMap.get("totalRefund"));
 			fillListItem(Labels.getLabel("listcell_totalRefund.label"), paymentMap.get("totalRefund"));
 		}else{
 			this.listheader_Refund.setVisible(false);
 		}
 		if (paymentMap.get("totalCharge").compareTo(BigDecimal.ZERO) > 0) {
 			this.listheader_Penalty.setVisible(true);
+			totalSchAmount = totalSchAmount.add(paymentMap.get("totalCharge"));
 			fillListItem(Labels.getLabel("listcell_totalPenalty.label"), paymentMap.get("totalCharge"));
 		}else{
 			this.listheader_Penalty.setVisible(false);
@@ -3668,6 +3694,13 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			return false;
 		}
 		
+		// Not allowed to pay more amount and adjust balance to Excess / EMI In Advance
+		BigDecimal rcptAmount = PennantApplicationUtil.unFormateAmount(receiptAmount.getValidateValue(), formatter);
+		if(totReceiptAmount.compareTo(rcptAmount) > 0 && this.excessAdjustTo.getSelectedIndex() > 0){
+			MessageUtil.showErrorMessage(Labels.getLabel("label_ReceiptDialog_Valid_NoExcessAmount"));
+			return false;
+		}
+		
 		BigDecimal totalDue = BigDecimal.ZERO;
 		BigDecimal totalPaid = BigDecimal.ZERO;
 		BigDecimal totalWaived = BigDecimal.ZERO;
@@ -3715,9 +3748,39 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		// No excess amount validation on partial Settlement
 		String tempReceiptPurpose = getComboboxValue(this.receiptPurpose);
-		if(StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY) && remBal.compareTo(BigDecimal.ZERO) <= 0){
-			MessageUtil.showErrorMessage(Labels.getLabel("label_ReceiptDialog_Valid_Amount_PartialSettlement"));
-			return false;
+		if(StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){ 
+			if(remBal.compareTo(BigDecimal.ZERO) <= 0){
+				MessageUtil.showErrorMessage(Labels.getLabel("label_ReceiptDialog_Valid_Amount_PartialSettlement"));
+				return false;
+			}else if(totalDue.subtract(totalPaid).compareTo(BigDecimal.ZERO) > 0){
+				MessageUtil.showErrorMessage(Labels.getLabel("label_ReceiptDialog_Valid_PastAmount_PartialSettlement"));
+				return false;
+			}else {
+
+				// Check the max Schedule payment amount
+				List<FinanceScheduleDetail> scheduleList = getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails();
+				BigDecimal closingBal = null;
+				for (int i = 0; i < scheduleList.size(); i++) {
+					FinanceScheduleDetail curSchd = scheduleList.get(i);
+					if (DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) > 0) {
+						closingBal = curSchd.getClosingBalance();
+						break;
+					}
+					if (DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) == 0 || closingBal == null) {
+						closingBal = curSchd.getClosingBalance();
+						break;
+					}
+				}
+				
+				if (closingBal != null) {
+					if (remBal.compareTo(closingBal) >= 0) {
+						MessageUtil.showErrorMessage(Labels.getLabel("FIELD_IS_LESSER",
+								new String[] { Labels.getLabel("label_ReceiptDialog_Valid_TotalReceiptAmount"),
+										PennantApplicationUtil.amountFormate(closingBal, formatter) }));
+						return false;
+					}
+				} 
+			}
 		}
 		
 		// Early settlement Validation , if entered amount not sufficient with paid and waived amounts

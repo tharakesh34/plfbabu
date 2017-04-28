@@ -13,7 +13,6 @@ public class FinRepayQueueTotals {
 	private BigDecimal	insurance	= BigDecimal.ZERO;
 	private BigDecimal	suplRent	= BigDecimal.ZERO;
 	private BigDecimal	incrCost	= BigDecimal.ZERO;
-	private BigDecimal	excess	= BigDecimal.ZERO;
 	
 	private List<FinRepayQueue> queueList = null;
 	
@@ -86,14 +85,6 @@ public class FinRepayQueueTotals {
 	}
 	public void setQueueList(List<FinRepayQueue> queueList) {
 		this.queueList = queueList;
-	}
-
-	public BigDecimal getExcess() {
-		return excess;
-	}
-
-	public void setExcess(BigDecimal excess) {
-		this.excess = excess;
 	}
 
 }

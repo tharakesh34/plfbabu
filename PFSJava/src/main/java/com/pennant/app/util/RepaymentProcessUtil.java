@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueTotals;
 import com.pennant.backend.model.finance.FinODDetails;
@@ -35,6 +36,7 @@ public class RepaymentProcessUtil {
 
 	private RepaymentPostingsUtil	repayPostingUtil;
 	private FinODDetailsDAO			finODDetailsDAO;
+	private FinExcessAmountDAO				finExcessAmountDAO;
 
 	public RepaymentProcessUtil() {
 		super();
@@ -262,16 +264,18 @@ public class RepaymentProcessUtil {
 		for (int j = 0; j < repayHeaderList.size(); j++) {
 
 			repayHeader = repayHeaderList.get(j);
-			BigDecimal excessAmount = BigDecimal.ZERO;
 			if (!StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent())
 					&& !StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent())
 					&& !StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())) {
-				excessAmount = repayHeader.getRepayAmount();
+
+				// Update Excess amount (Adding amount and balance updation)
+				getFinExcessAmountDAO().updateExcessBal(receiptDetail.getPayAgainstID(), repayHeader.getRepayAmount());
+				continue;
 			}
 
 			List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
-			List<Object> returnList = processRepaymentPostings(financeMain, scheduleDetails, profitDetail,
-					repaySchdList, excessAmount, repayHeader.getFinEvent());
+			List<Object> returnList = processRepaymentPostings(financeMain, scheduleDetails,
+					profitDetail, repaySchdList, repayHeader.getFinEvent());
 
 			if (!(Boolean) returnList.get(0)) {
 				String errParm = (String) returnList.get(1);
@@ -308,9 +312,9 @@ public class RepaymentProcessUtil {
 	 * @throws InvocationTargetException
 	 */
 	public List<Object> processRepaymentPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, BigDecimal excessAmount,
-			String finEvent) throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
-		return doRepayPostings(financeMain, scheduleDetails, profitDetail, repaySchdList, excessAmount, finEvent);
+			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String finEvent)
+			throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
+		return doRepayPostings(financeMain, scheduleDetails, profitDetail, repaySchdList, finEvent);
 	}
 
 	/**
@@ -326,8 +330,8 @@ public class RepaymentProcessUtil {
 	 * @throws InvocationTargetException
 	 */
 	private List<Object> doRepayPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, BigDecimal excessAmount,
-			String finEvent) throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
+			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String finEvent)
+			throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
 		logger.debug("Entering");
 
 		List<Object> returnList = new ArrayList<Object>();
@@ -379,7 +383,6 @@ public class RepaymentProcessUtil {
 
 			//Repayments Process For Schedule Repay List	
 			repayQueueTotals.setQueueList(finRepayQueues);
-			repayQueueTotals.setExcess(excessAmount);
 
 			returnList = getRepayPostingUtil().postingProcess(financeMain, scheduleDetails, profitDetail,
 					repayQueueTotals, finEvent);
@@ -414,14 +417,23 @@ public class RepaymentProcessUtil {
 		finRepayQueue.setCustomerID(financeMain.getCustID());
 		finRepayQueue.setFinPriority(9999);
 
+		// Principal Amount
 		finRepayQueue.setSchdPft(rsd.getProfitSchd());
-		finRepayQueue.setSchdPri(rsd.getPrincipalSchd());
-		finRepayQueue.setSchdPftBal(rsd.getProfitSchd().subtract(rsd.getProfitSchdPaid()));
-		finRepayQueue.setSchdPriBal(rsd.getPrincipalSchd().subtract(rsd.getPrincipalSchdPaid()));
-		finRepayQueue.setSchdPriPayNow(rsd.getPrincipalSchdPayNow());
-		finRepayQueue.setSchdPftPayNow(rsd.getProfitSchdPayNow());
-		finRepayQueue.setSchdPriPaid(rsd.getPrincipalSchdPaid());
 		finRepayQueue.setSchdPftPaid(rsd.getProfitSchdPaid());
+		finRepayQueue.setSchdPftBal(rsd.getProfitSchd().subtract(rsd.getProfitSchdPaid()));
+		finRepayQueue.setSchdPftPayNow(rsd.getProfitSchdPayNow());
+		finRepayQueue.setSchdPftWaivedNow(rsd.getPftSchdWaivedNow());
+		
+		// Profit Amount
+		finRepayQueue.setSchdPri(rsd.getPrincipalSchd());
+		finRepayQueue.setSchdPriBal(rsd.getPrincipalSchd().subtract(rsd.getPrincipalSchdPaid()));
+		finRepayQueue.setSchdPriPaid(rsd.getPrincipalSchdPaid());
+		finRepayQueue.setSchdPriPayNow(rsd.getPrincipalSchdPayNow());
+		finRepayQueue.setSchdPriWaivedNow(rsd.getPriSchdWaivedNow());
+		
+		// Late Pay Profit Amount
+		finRepayQueue.setLatePayPftPayNow(rsd.getLatePftSchdPayNow());
+		finRepayQueue.setLatePayPftWaivedNow(rsd.getLatePftSchdWaivedNow());
 
 		// Fee Details
 		//	1. Schedule Fee Amount
@@ -429,24 +441,28 @@ public class RepaymentProcessUtil {
 		finRepayQueue.setSchdFeeBal(rsd.getSchdFeeBal());
 		finRepayQueue.setSchdFeePayNow(rsd.getSchdFeePayNow());
 		finRepayQueue.setSchdFeePaid(rsd.getSchdFeePaid());
+		finRepayQueue.setSchdFeeWaivedNow(rsd.getSchdFeeWaivedNow());
 
 		//	2. Schedule Insurance Amount
 		finRepayQueue.setSchdIns(rsd.getSchdIns());
 		finRepayQueue.setSchdInsBal(rsd.getSchdInsBal());
 		finRepayQueue.setSchdInsPayNow(rsd.getSchdInsPayNow());
 		finRepayQueue.setSchdInsPaid(rsd.getSchdInsPaid());
+		finRepayQueue.setSchdInsWaivedNow(rsd.getSchdInsWaivedNow());
 
 		//	3. Schedule Supplementary Rent Amount
 		finRepayQueue.setSchdSuplRent(rsd.getSchdSuplRent());
 		finRepayQueue.setSchdSuplRentBal(rsd.getSchdSuplRentBal());
 		finRepayQueue.setSchdSuplRentPayNow(rsd.getSchdSuplRentPayNow());
 		finRepayQueue.setSchdSuplRentPaid(rsd.getSchdSuplRentPaid());
+		finRepayQueue.setSchdSuplRentWaivedNow(rsd.getSchdSuplRentWaivedNow());
 
 		//	4. Schedule Increased Cost Amount
 		finRepayQueue.setSchdIncrCost(rsd.getSchdIncrCost());
 		finRepayQueue.setSchdIncrCostBal(rsd.getSchdIncrCostBal());
 		finRepayQueue.setSchdIncrCostPayNow(rsd.getSchdIncrCostPayNow());
 		finRepayQueue.setSchdIncrCostPaid(rsd.getSchdIncrCostPaid());
+		finRepayQueue.setSchdIncrCostWaivedNow(rsd.getSchdIncrCostWaivedNow());
 
 		logger.debug("Leaving");
 		return finRepayQueue;
@@ -561,7 +577,6 @@ public class RepaymentProcessUtil {
 	public RepaymentPostingsUtil getRepayPostingUtil() {
 		return repayPostingUtil;
 	}
-
 	public void setRepayPostingUtil(RepaymentPostingsUtil repayPostingUtil) {
 		this.repayPostingUtil = repayPostingUtil;
 	}
@@ -569,9 +584,15 @@ public class RepaymentProcessUtil {
 	public FinODDetailsDAO getFinODDetailsDAO() {
 		return finODDetailsDAO;
 	}
-
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
+	}
+
+	public FinExcessAmountDAO getFinExcessAmountDAO() {
+		return finExcessAmountDAO;
+	}
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
 }

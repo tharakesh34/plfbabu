@@ -440,7 +440,8 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		selectSql.append(" RefundReq , WaivedAmt , RepayBalance, PenaltyPayNow, SchdFee, SchdFeePaid, SchdFeeBal, SchdFeePayNow, ");
 		selectSql.append(" SchdIns, SchdInsPaid, SchdInsBal, SchdInsPayNow,LatePftSchd, LatePftSchdPaid, LatePftSchdBal, LatePftSchdPayNow, ");
 		selectSql.append(" SchdSuplRent, SchdSuplRentPaid, SchdSuplRentBal,SchdSuplRentPayNow, SchdIncrCost, ");
-		selectSql.append(" SchdIncrCostPaid, SchdIncrCostBal, SchdIncrCostPayNow ");
+		selectSql.append(" SchdIncrCostPaid, SchdIncrCostBal, SchdIncrCostPayNow, PftSchdWaivedNow , LatePftSchdWaivedNow, ");
+		selectSql.append(" PriSchdWaivedNow, SchdFeeWaivedNow, SchdInsWaivedNow, SchdSuplRentWaivedNow, SchdIncrCostWaivedNow ");
 		selectSql.append(" From FinRepayScheduleDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" where FinReference=:FinReference ");
@@ -465,14 +466,16 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		insertSql.append(" RefundReq , WaivedAmt , RepayBalance, PenaltyPayNow, SchdFee, SchdFeePaid, SchdFeeBal, SchdFeePayNow,");
 		insertSql.append(" SchdIns, SchdInsPaid, SchdInsBal, SchdInsPayNow,  LatePftSchd, LatePftSchdPaid, LatePftSchdBal, LatePftSchdPayNow,  ");
 		insertSql.append(" SchdSuplRent, SchdSuplRentPaid, SchdSuplRentBal,SchdSuplRentPayNow, SchdIncrCost, ");
-		insertSql.append(" SchdIncrCostPaid, SchdIncrCostBal, SchdIncrCostPayNow) ");
+		insertSql.append(" SchdIncrCostPaid, SchdIncrCostBal, SchdIncrCostPayNow, PftSchdWaivedNow , LatePftSchdWaivedNow, ");
+		insertSql.append(" PriSchdWaivedNow, SchdFeeWaivedNow, SchdInsWaivedNow, SchdSuplRentWaivedNow, SchdIncrCostWaivedNow) ");
 		insertSql.append(" Values(:RepayID,:RepaySchID, :FinReference , :SchDate , :SchdFor , :LinkedTranId , :ProfitSchdBal , :PrincipalSchdBal , " );
 		insertSql.append(" :ProfitSchdPayNow , :PrincipalSchdPayNow , :PenaltyAmt , :DaysLate , :MaxWaiver , :AllowRefund , :AllowWaiver , " );
 		insertSql.append(" :ProfitSchd , :ProfitSchdPaid , :PrincipalSchd , :PrincipalSchdPaid  , " );
 		insertSql.append(" :RefundReq , :WaivedAmt , :RepayBalance, :PenaltyPayNow , :SchdFee, :SchdFeePaid, :SchdFeeBal, :SchdFeePayNow,");
 		insertSql.append(" :SchdIns, :SchdInsPaid, :SchdInsBal, :SchdInsPayNow, :LatePftSchd, :LatePftSchdPaid, :LatePftSchdBal, :LatePftSchdPayNow, ");
 		insertSql.append(" :SchdSuplRent, :SchdSuplRentPaid, :SchdSuplRentBal, :SchdSuplRentPayNow, :SchdIncrCost, ");
-		insertSql.append(" :SchdIncrCostPaid, :SchdIncrCostBal, :SchdIncrCostPayNow) ");
+		insertSql.append(" :SchdIncrCostPaid, :SchdIncrCostBal, :SchdIncrCostPayNow, :PftSchdWaivedNow , :LatePftSchdWaivedNow, ");
+		insertSql.append(" :PriSchdWaivedNow, :SchdFeeWaivedNow, :SchdInsWaivedNow, :SchdSuplRentWaivedNow, :SchdIncrCostWaivedNow) ");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(repaySchdList.toArray());
