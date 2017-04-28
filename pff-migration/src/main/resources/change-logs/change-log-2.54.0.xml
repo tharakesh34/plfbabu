@@ -256,5 +256,63 @@
 			<column name="SchdIncrCostWaivedNow" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
-
+	<changeSet id="26" author="Prasad">
+		<addColumn tableName="FinPftDetails">
+			<column name="FutureRpyPri" type="decimal(18,0)" />
+			<column name="FutureRpyPft" type="decimal(18,0)" />
+			<column name="TotChargesPaid" type="decimal(18,0)" />
+			<column name="LinkedFinRef" type="varchar(500)" />
+			<column name="ClosedLinkedFinRef" type="varchar(500)" />
+			<column name="UpFrontFee" type="decimal(18,0)" />
+			<column name="LastDisbDate" type="Datetime" />
+			<column name="BounceAmtDue" type="decimal(18,0)" />
+			<column name="BounceAmtPaid" type="decimal(18,0)" />
+			<column name="BounceAmt" type="decimal(18,0)" />
+			<column name="ReceivableAdvise" type="decimal(18,0)" />
+			<column name="ExcessAmtBal" type="decimal(18,0)" />
+			<column name="EMIInAdvanceBal" type="decimal(18,0)" />
+			<column name="ReceivableAdviseBal" type="decimal(18,0)" />
+			<column name="PayableAdviseBal" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="27" author="Prasad">
+		<addColumn tableName="FinPftDetails_Temp">
+			<column name="FutureRpyPri" type="decimal(18,0)" />
+			<column name="FutureRpyPft" type="decimal(18,0)" />
+			<column name="TotChargesPaid" type="decimal(18,0)" />
+			<column name="LinkedFinRef" type="varchar(500)" />
+			<column name="ClosedLinkedFinRef" type="varchar(500)" />
+			<column name="UpFrontFee" type="decimal(18,0)" />
+			<column name="LastDisbDate" type="Datetime" />
+			<column name="BounceAmtDue" type="decimal(18,0)" />
+			<column name="BounceAmtPaid" type="decimal(18,0)" />
+			<column name="BounceAmt" type="decimal(18,0)" />
+			<column name="ReceivableAdvise" type="decimal(18,0)" />
+			<column name="ExcessAmtBal" type="decimal(18,0)" />
+			<column name="EMIInAdvanceBal" type="decimal(18,0)" />
+			<column name="ReceivableAdviseBal" type="decimal(18,0)" />
+			<column name="PayableAdviseBal" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	
+		<changeSet id="28" author="Prasad">
+		<addColumn tableName="FinPftDetails_SnapShot">
+			<column name="FutureRpyPri" type="decimal(18,0)" />
+			<column name="FutureRpyPft" type="decimal(18,0)" />
+			<column name="TotChargesPaid" type="decimal(18,0)" />
+			<column name="LinkedFinRef" type="varchar(500)" />
+			<column name="ClosedLinkedFinRef" type="varchar(500)" />
+			<column name="UpFrontFee" type="decimal(18,0)" />
+			<column name="LastDisbDate" type="Datetime" />
+			<column name="BounceAmtDue" type="decimal(18,0)" />
+			<column name="BounceAmtPaid" type="decimal(18,0)" />
+			<column name="BounceAmt" type="decimal(18,0)" />
+			<column name="ReceivableAdvise" type="decimal(18,0)" />
+			<column name="ExcessAmtBal" type="decimal(18,0)" />
+			<column name="EMIInAdvanceBal" type="decimal(18,0)" />
+			<column name="ReceivableAdviseBal" type="decimal(18,0)" />
+			<column name="PayableAdviseBal" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
