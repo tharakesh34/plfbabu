@@ -143,7 +143,6 @@ public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public void delete(LovFieldDetail lovFieldDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
@@ -225,7 +224,6 @@ public class LovFieldDetailDAOImpl extends BasisNextidDaoImpl<LovFieldDetail>
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(LovFieldDetail lovFieldDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);

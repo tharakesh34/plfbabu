@@ -2281,4 +2281,16 @@ CUST.CUSTCIF, MANDATE.MANDATETYPE, MANDATE.MANDATEID, MANDATE.INPUTDATE,(SELECT 
 			UPDATE SEQ_DATA_ENGINE_STATUS SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_STATUS);
 		</sql>
 	</changeSet>
+
+	<changeSet id="134" author="Siva">
+		<createTable tableName="FinExcessAmountReserve">
+			<column name="ExcessID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ReceiptID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ReservedAmt" type="decimal(18,0)" />
+		</createTable>
+	</changeSet>
 </databaseChangeLog>

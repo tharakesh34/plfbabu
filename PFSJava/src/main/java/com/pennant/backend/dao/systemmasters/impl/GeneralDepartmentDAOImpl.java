@@ -138,7 +138,6 @@ public class GeneralDepartmentDAOImpl extends BasisCodeDAO<GeneralDepartment>
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public void delete(GeneralDepartment generalDepartment, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
@@ -212,7 +211,6 @@ public class GeneralDepartmentDAOImpl extends BasisCodeDAO<GeneralDepartment>
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(GeneralDepartment generalDepartment, TableType tableType) {
 		logger.debug(Literal.ENTERING);

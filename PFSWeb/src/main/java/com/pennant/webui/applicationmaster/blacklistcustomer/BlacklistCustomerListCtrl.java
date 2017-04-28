@@ -18,7 +18,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.service.applicationmaster.BlacklistCustomerService;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.applicationmaster.blacklistcustomer.model.BlacklistCustomerListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;

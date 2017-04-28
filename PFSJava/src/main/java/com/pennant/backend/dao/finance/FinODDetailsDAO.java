@@ -80,12 +80,12 @@ public interface FinODDetailsDAO {
 	void updatePenaltyTotals(FinODDetails detail);
 	FinODDetails getTotals(String finReference);
 	FinODDetails getFinODSummary(String finReference);
-	//Receipts
-	List<FinODDetails> getFinODBalByFinRef(String finReference);
 	BigDecimal getTotalPenaltyBal(String finReference);
 	BigDecimal getTotalODPftBal(String finReference);
 	boolean isODExist(String finReference, Date schdDate);
 
 	//Receipts
+	List<FinODDetails> getFinODBalByFinRef(String finReference);
 	Date getFinDueFromDate(String finReference);
+	void updateLatePftTotals(String finReference, Date odSchDate, BigDecimal paidNow);
 }

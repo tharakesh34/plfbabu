@@ -137,7 +137,6 @@ public class MaritalStatusCodeDAOImpl extends BasisCodeDAO<MaritalStatusCode> im
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public void delete(MaritalStatusCode maritalStatusCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
@@ -217,7 +216,6 @@ public class MaritalStatusCodeDAOImpl extends BasisCodeDAO<MaritalStatusCode> im
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(MaritalStatusCode maritalStatusCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);

@@ -407,7 +407,6 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		selectSql.append(" sum(TotPenaltyPaid) TotPenaltyPaid, sum(TotPenaltyBal) TotPenaltyBal, ");
 		selectSql.append(" SUM(FinCurODPri) FinCurODPri, SUM(FinCurODPft) FinCurODPft, ");
 		//First and last od Date 
-
 		selectSql
 				.append(" MIN(FinODSchdDate) FinODSchdDate ,MAX(FinODSchdDate) FinODTillDate, MAX(FinCurODDays) finCurODDays ");
 		selectSql.append(" From FinODDetails");
@@ -730,6 +729,25 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
+		logger.debug("Leaving");
+	}
+	
+	@Override
+	public void updateLatePftTotals(String finReference,Date odSchDate, BigDecimal paidNow) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("FinODSchdDate", odSchDate);
+		source.addValue("PaidNow", paidNow);
+		
+		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
+		updateSql.append(" Set LPIPaid= LPIPaid + :PaidNow, LPIBal=LPIBal - :PaidNow ");
+		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		
 		logger.debug("Leaving");
 	}
 

@@ -14,8 +14,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 
-import waffle.spring.WindowsAuthenticationToken;
-
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.administration.SecurityRight;
@@ -24,6 +22,8 @@ import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.service.UserService;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.AuthenticationType;
+
+import waffle.spring.WindowsAuthenticationToken;
 
 public class AuthenticationDetails {
 	private static final Logger logger = Logger.getLogger(AuthenticationDetails.class);

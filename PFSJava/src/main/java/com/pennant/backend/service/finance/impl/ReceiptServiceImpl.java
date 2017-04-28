@@ -31,6 +31,7 @@ import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
+import com.pennant.backend.model.FinRepayQueue.FinRepayQueueTotals;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -59,7 +60,6 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
@@ -655,6 +655,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
 		boolean isSchdRegenerated = false;
 		Map<Long, List<Object>> returnPostingsMap = new HashMap<>();
+		List<FinanceScheduleDetail> schdList = scheduleData.getFinanceScheduleDetails();
 		
 		for (int i = 0; i < receiptDetailList.size(); i++) {
 			
@@ -665,7 +666,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				
 				FinRepayHeader repayHeader = repayHeaderList.get(j);
 				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
-				List<Object> returnList = processRepaymentPostings(financeMain, scheduleData.getFinanceScheduleDetails(),
+				List<Object> returnList = processRepaymentPostings(financeMain, schdList,
 						profitDetail, repaySchdList, repayHeader.getFinEvent(), scheduleData.getFinanceType().getFinDivision());
 
 				if (!(Boolean) returnList.get(0)) {
@@ -674,8 +675,16 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				}
 
 				//Update Linked Transaction ID
+				linkedTranId = (long) returnList.get(1);
 				returnPostingsMap.put(linkedTranId, returnList);
 				repayHeader.setLinkedTranId(linkedTranId);
+				financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().add(repayHeader.getPriAmount()));
+				
+				String finAccount = (String) returnList.get(2);
+				if (finAccount != null) {
+					financeMain.setFinAccount(finAccount);
+				}
+				schdList = (List<FinanceScheduleDetail>) returnList.get(3);
 				
 				if(!isSchdRegenerated && (StringUtils.isNotEmpty(repayHeader.getEarlyPayEffMtd()) &&
 						!StringUtils.equals(PennantConstants.List_Select, repayHeader.getEarlyPayEffMtd()))){
@@ -703,29 +712,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			oldFinSchdData.setFinReference(finReference);
 			listSave(oldFinSchdData, "_Log", logKey);
 		}
-
-		//Repayments Postings Details Process
-		List<Long> returnMapList = new ArrayList<>(returnPostingsMap.keySet());
-		List<FinanceScheduleDetail> schdList = scheduleData.getFinanceScheduleDetails();
-		for (Long tranId : returnMapList) {
-			
-			List<Object> returnList = returnPostingsMap.get(tranId);
-			linkedTranId = (Long) returnList.get(1);
-			boolean partialPay = (Boolean) returnList.get(2);
-			AEAmountCodes aeAmountCodes = (AEAmountCodes) returnList.get(3);
-			String finAccount = (String) returnList.get(4);
-			List<FinRepayQueue> finRepayQueues = (List<FinRepayQueue>) returnList.get(5);
-			
-			returnList = getRepayPostingUtil().UpdateScreenPaymentsProcess(financeMain,
-					schdList, profitDetail, finRepayQueues, linkedTranId, partialPay,
-					aeAmountCodes);
-			
-			financeMain = (FinanceMain) returnList.get(3);
-			if (finAccount != null) {
-				financeMain.setFinAccount(finAccount);
-			}
-			schdList = (List<FinanceScheduleDetail>) returnList.get(4);
-		}
+		
+		// Update Status Details and Profit Details
+		financeMain = getRepayPostingUtil().updateStatus(financeMain, DateUtility.getAppDate(), schdList, profitDetail);
 
 		//Finance Main Updation
 		//=======================================
@@ -1007,15 +996,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		List<Object> returnList = new ArrayList<Object>();
 		try {
 
-			//Check Finance is RIA Finance Type or Not
-			BigDecimal totRpyPri = BigDecimal.ZERO;
-			BigDecimal totRpyPft = BigDecimal.ZERO;
-			BigDecimal totSchdFee = BigDecimal.ZERO;
-			BigDecimal totSchdIns = BigDecimal.ZERO;
-
 			List<FinRepayQueue> finRepayQueues = new ArrayList<FinRepayQueue>();
-			Map<String, BigDecimal> totalsMap = new HashMap<String, BigDecimal>();
 			FinRepayQueue finRepayQueue = null;
+			FinRepayQueueTotals repayQueueTotals = new FinRepayQueueTotals();
 
 			for (int i = 0; i < repaySchdList.size(); i++) {
 
@@ -1033,31 +1016,24 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				finRepayQueue.setChargeType(repaySchdList.get(i).getChargeType());
 
 				// Total Repayments Calculation for Principal, Profit 
-				totRpyPri = totRpyPri.add(repaySchdList.get(i).getPrincipalSchdPayNow());
-				totRpyPft = totRpyPft.add(repaySchdList.get(i).getProfitSchdPayNow());
+				repayQueueTotals.setPrincipal(repayQueueTotals.getPrincipal().add(repaySchdList.get(i).getPrincipalSchdPayNow()));
+				repayQueueTotals.setProfit(repayQueueTotals.getProfit().add(repaySchdList.get(i).getProfitSchdPayNow()));
+				repayQueueTotals.setLateProfit(repayQueueTotals.getLateProfit().add(repaySchdList.get(i).getLatePftSchdPayNow()));
+				repayQueueTotals.setPenalty(repayQueueTotals.getPenalty().add(repaySchdList.get(i).getPenaltyPayNow()));
 
 				// Fee Details
-				totSchdFee = totSchdFee.add(repaySchdList.get(i).getSchdFeePayNow());
-				totSchdIns = totSchdIns.add(repaySchdList.get(i).getSchdInsPayNow());
+				repayQueueTotals.setFee(repayQueueTotals.getFee().add(repaySchdList.get(i).getSchdFeePayNow()));
+				repayQueueTotals.setInsurance(repayQueueTotals.getInsurance().add(repaySchdList.get(i).getSchdInsPayNow()));
+				repayQueueTotals.setSuplRent(repayQueueTotals.getSuplRent().add(repaySchdList.get(i).getSchdSuplRentPayNow()));
+				repayQueueTotals.setIncrCost(repayQueueTotals.getIncrCost().add(repaySchdList.get(i).getSchdIncrCostPayNow()));
 
 				finRepayQueues.add(finRepayQueue);
 			}
 
-			totalsMap.put("totRpyTot", totRpyPri.add(totRpyPft));
-			totalsMap.put("totRpyPri", totRpyPri);
-			totalsMap.put("totRpyPft", totRpyPft);
-
-			//Fee Details
-			totalsMap.put("insPay", totSchdIns);
-			totalsMap.put("schFeePay", totSchdFee);
-
-			//Repayments Process For Schedule Repay List			
-			returnList = getRepayPostingUtil().postingsScreenRepayProcess(financeMain, scheduleDetails, profitDetail,
-					finRepayQueues, totalsMap, finEvent, null, finDivision);
-
-			if ((Boolean) returnList.get(0)) {
-				returnList.add(finRepayQueues);
-			}
+			//Repayments Process For Schedule Repay List	
+			repayQueueTotals.setQueueList(finRepayQueues);
+			returnList = getRepayPostingUtil().postingProcess(financeMain, scheduleDetails, profitDetail,
+					repayQueueTotals, finEvent,finDivision);
 
 		} catch (PFFInterfaceException e) {
 			logger.error("Exception: ", e);

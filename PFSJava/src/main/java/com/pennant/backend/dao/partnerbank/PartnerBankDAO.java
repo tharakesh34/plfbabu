@@ -48,8 +48,8 @@ import java.util.List;
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.partnerbank.PartnerBankModes;
-import com.pennanttech.pff.core.TableType;
 import com.pennant.backend.model.partnerbank.PartnerBranchModes;
+import com.pennanttech.pff.core.TableType;
 
 public interface PartnerBankDAO extends BasicCrudDao<PartnerBank> {
 	PartnerBank getPartnerBankById(long id, String type);

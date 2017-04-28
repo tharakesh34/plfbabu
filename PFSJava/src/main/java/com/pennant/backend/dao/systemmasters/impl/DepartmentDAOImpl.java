@@ -138,7 +138,6 @@ public class DepartmentDAOImpl extends BasisCodeDAO<Department> implements Depar
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public void delete(Department department, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
@@ -219,7 +218,6 @@ public class DepartmentDAOImpl extends BasisCodeDAO<Department> implements Depar
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(Department department, TableType tableType) {
 		logger.debug(Literal.ENTERING);

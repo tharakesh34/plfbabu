@@ -6,8 +6,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 
-import javassist.NotFoundException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -64,6 +62,8 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+
+import javassist.NotFoundException;
 
 public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	private static final long				serialVersionUID	= 9031340167587772517L;

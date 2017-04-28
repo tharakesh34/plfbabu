@@ -57,18 +57,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.systemmasters.EmployerDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>EmployerDetail model</b> class.<br>
@@ -145,7 +140,6 @@ public class EmployerDetailDAOImpl extends BasisNextidDaoImpl<EmployerDetail> im
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public void delete(EmployerDetail employerDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
@@ -224,8 +218,6 @@ public class EmployerDetailDAOImpl extends BasisNextidDaoImpl<EmployerDetail> im
 	 * @throws DataAccessException
 	 * 
 	 */
-	
-	@SuppressWarnings("serial")
 	@Override
 	public void update(EmployerDetail employerDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -249,13 +241,6 @@ public class EmployerDetailDAOImpl extends BasisNextidDaoImpl<EmployerDetail> im
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-	
-	private ErrorDetails  getError(String errorId, String employerName, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = employerName;
-		parms[0][0] = PennantJavaUtil.getLabel("label_EmployerId")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
 
 	@Override

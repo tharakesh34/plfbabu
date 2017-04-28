@@ -142,7 +142,6 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public void delete(Province province, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
@@ -222,7 +221,6 @@ public class ProvinceDAOImpl extends BasisCodeDAO<Province> implements	ProvinceD
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(Province province, TableType tableType) {
 		logger.debug(Literal.ENTERING);

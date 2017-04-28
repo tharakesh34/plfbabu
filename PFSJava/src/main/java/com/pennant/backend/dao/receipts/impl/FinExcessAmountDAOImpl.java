@@ -286,6 +286,7 @@ public class FinExcessAmountDAOImpl implements FinExcessAmountDAO {
 		logger.debug("Leaving");
 	}
 
+@SuppressWarnings("serial")
 @Override
 	public void updateExcessAmount(long excessID, String amountType, BigDecimal amount) {
 		logger.debug("Entering");

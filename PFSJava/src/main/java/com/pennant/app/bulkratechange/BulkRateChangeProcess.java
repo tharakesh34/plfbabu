@@ -42,6 +42,7 @@ package com.pennant.app.bulkratechange;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.log4j.Logger;
+
 import com.pennant.backend.model.finance.BulkRateChangeDetails;
 import com.pennant.backend.model.finance.BulkRateChangeHeader;
 import com.pennant.backend.service.finance.BulkRateChangeProcessService;

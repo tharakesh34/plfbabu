@@ -139,7 +139,6 @@ public class PhoneTypeDAOImpl extends BasisCodeDAO<PhoneType> implements PhoneTy
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public void delete(PhoneType phoneType, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
@@ -217,7 +216,6 @@ public class PhoneTypeDAOImpl extends BasisCodeDAO<PhoneType> implements PhoneTy
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(PhoneType phoneType, TableType tableType) {
 		logger.debug(Literal.ENTERING);

@@ -54,7 +54,6 @@ import com.pennant.backend.dao.systemmasters.EmployerDetailDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.systemmasters.Academic;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.EmployerDetailService;

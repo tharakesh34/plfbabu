@@ -60,8 +60,6 @@ import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.commitment.CommitmentMovement;
-import com.pennant.backend.model.commodity.CommodityInventory;
-import com.pennant.backend.model.inventorysettlement.InventorySettlement;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;

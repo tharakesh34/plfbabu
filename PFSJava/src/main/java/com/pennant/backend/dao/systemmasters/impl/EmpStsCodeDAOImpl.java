@@ -139,7 +139,6 @@ public class EmpStsCodeDAOImpl extends BasisCodeDAO<EmpStsCode> implements EmpSt
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public void delete(EmpStsCode empStsCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
@@ -218,7 +217,6 @@ public class EmpStsCodeDAOImpl extends BasisCodeDAO<EmpStsCode> implements EmpSt
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(EmpStsCode empStsCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);

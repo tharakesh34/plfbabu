@@ -7,6 +7,12 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.zkoss.util.media.AMedia;
+import org.zkoss.util.resource.Labels;
+import org.zkoss.zul.Filedownload;
+
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -18,12 +24,6 @@ import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 import net.sf.jasperreports.engine.fill.JRAbstractLRUVirtualizer;
 import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRSwapFile;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.zkoss.util.media.AMedia;
-import org.zkoss.util.resource.Labels;
-import org.zkoss.zul.Filedownload;
 
 public class ReportUtil implements Serializable {
     private static final long serialVersionUID = 7959183655705303553L;
