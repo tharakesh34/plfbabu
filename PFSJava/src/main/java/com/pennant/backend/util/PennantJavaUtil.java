@@ -389,7 +389,8 @@ public class PennantJavaUtil {
 						{ "BLRsnCode", "1", "NONE" } }, 350));
 
 		ModuleUtil.register("City", new ModuleMapping("City", City.class, new String[] { "RMTProvinceVsCity",
-				"RMTProvinceVsCity_AView" }, masterWF, new String[] { "PCCity", "PCCityName" }, null, 350));
+				"RMTProvinceVsCity_AView" }, masterWF, new String[] { "PCCity", "PCCityName" },new String[][] { {
+					"CityIsActive", "0", "1" } }, 350));
 
 		ModuleUtil.register("Country", new ModuleMapping("Country", Country.class, new String[] { "BMTCountries",
 				"BMTCountries_AView" }, masterWF, new String[] { "CountryCode", "CountryDesc" }, new String[][] { {
@@ -424,14 +425,16 @@ public class PennantJavaUtil {
 				new String[][] { { "EmailTypeIsActive", "0", "1" } }, 300));
 
 		ModuleUtil.register("EmployerDetail", new ModuleMapping("EmployerDetail", EmployerDetail.class, new String[] {
-				"EmployerDetail", "EmployerDetail_AView" }, masterWF, new String[] { "EmployerId", "EmpName" }, null, 350));
+				"EmployerDetail", "EmployerDetail_AView" }, masterWF, new String[] { "EmployerId", "EmpName" },
+				new String[][] { { "EmpIsActive", "0", "1" } }, 350));
 
 		ModuleUtil.register("TakafulProvider", new ModuleMapping("TakafulProvider", TakafulProvider.class,
 				new String[] { "TakafulProvider", "TakafulProvider_AView" }, masterWF, new String[] { "TakafulCode",
 						"TakafulName" }, null, 300));
 
 		ModuleUtil.register("EmploymentType", new ModuleMapping("EmploymentType", EmploymentType.class, new String[] {
-				"RMTEmpTypes", "RMTEmpTypes_AView" }, masterWF, new String[] { "EmpType", "EmpTypeDesc" }, null, 300));
+				"RMTEmpTypes", "RMTEmpTypes_AView" }, masterWF, new String[] { "EmpType", "EmpTypeDesc" },
+				new String[][] { { "EmpTypeIsActive", "0", "1" } }, 300));
 
 		ModuleUtil.register("EmpStsCode", new ModuleMapping("EmpStsCode", EmpStsCode.class, new String[] {
 				"BMTEmpStsCodes", "BMTEmpStsCodes_AView" }, masterWF, new String[] { "EmpStsCode", "EmpStsDesc" },
@@ -443,7 +446,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("GeneralDepartment", new ModuleMapping("GeneralDepartment", GeneralDepartment.class,
 				new String[] { "RMTGenDepartments", "RMTGenDepartments_AView" }, masterWF, new String[] { "GenDepartment",
-						"GenDeptDesc" }, null, 300));
+						"GenDeptDesc" }, new String[][] { { "GenDeptIsActive", "0", "1" } }, 300));
 
 		ModuleUtil.register("GeneralDesignation", new ModuleMapping("GeneralDesignation", GeneralDesignation.class,
 				new String[] { "RMTGenDesignations", "RMTGenDesignations_AView" }, masterWF, new String[] {
@@ -499,7 +502,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("Province", new ModuleMapping("Province", Province.class, new String[] {
 				"RMTCountryVsProvince", "RMTCountryVsProvince_AView" }, masterWF, new String[] { "CPProvince",
-				"CPProvinceName" }, null, 350));
+				"CPProvinceName" }, new String[][] { { "CPIsActive", "0", "1" } }, 350));
 
 		ModuleUtil.register("Salutation", new ModuleMapping("Salutation", Salutation.class, new String[] {
 				"BMTSalutations", "BMTSalutations_AView" }, masterWF, new String[] { "SalutationCode", "SaluationDesc" },
