@@ -64,6 +64,7 @@ import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>EmployerDetail model</b> class.<br>
@@ -147,7 +148,7 @@ public class EmployerDetailDAOImpl extends BasisNextidDaoImpl<EmployerDetail> im
 		StringBuilder deleteSql = new StringBuilder("Delete From EmployerDetail");
 		deleteSql.append(tableType.getSuffix());
 		deleteSql.append(" Where EmployerId =:EmployerId");
-		//deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
+		deleteSql.append(QueryUtil.getConcurrencyCondition(tableType));
 		logger.trace(Literal.SQL + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(employerDetail);
