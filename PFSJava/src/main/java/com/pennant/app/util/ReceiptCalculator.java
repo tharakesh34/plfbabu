@@ -636,7 +636,11 @@ public class ReceiptCalculator implements Serializable {
 				repayHeader.setFinReference(receiptData.getFinReference());
 				repayHeader.setValueDate(DateUtility.getAppDate());
 				repayHeader.setRepayAmount(receiptDetail.getAmount().subtract(totalReceiptAmt).subtract(partialSettleAmount));
-				repayHeader.setFinEvent(receiptPurpose);
+				if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+					repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_EARLYSETTLE);
+				}else{
+					repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_SCHDRPY);
+				}
 				repayHeader.setPriAmount(totPriPaidNow);
 				repayHeader.setPftAmount(totPftPaidNow);
 				repayHeader.setLatePftAmount(totLPftPaidNow);

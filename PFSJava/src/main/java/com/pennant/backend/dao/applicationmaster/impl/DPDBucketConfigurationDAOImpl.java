@@ -309,17 +309,16 @@ public class DPDBucketConfigurationDAOImpl extends BasisNextidDaoImpl<DPDBucketC
 		logger.debug(Literal.ENTERING);
 		// Prepare the SQL.
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("productCode", productCode);
+		source.addValue("ProductCode", productCode);
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" configID, productCode, bucketID, dueDays, suspendProfit ");
 		sql.append(" From DPDBUCKETSCONFIG");
-		sql.append(" Where productCode =:productCode ");
+		sql.append(" Where ProductCode =:ProductCode ");
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		RowMapper<DPDBucketConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(DPDBucketConfiguration.class);
-		List<DPDBucketConfiguration> list = namedParameterJdbcTemplate.query(sql.toString(), rowMapper);
-		;
+		List<DPDBucketConfiguration> list = namedParameterJdbcTemplate.query(sql.toString(), source, rowMapper);
 		logger.debug(Literal.LEAVING);
 		return list;
 	}

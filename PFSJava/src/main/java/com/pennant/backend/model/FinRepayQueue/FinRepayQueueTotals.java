@@ -14,6 +14,15 @@ public class FinRepayQueueTotals {
 	private BigDecimal	suplRent	= BigDecimal.ZERO;
 	private BigDecimal	incrCost	= BigDecimal.ZERO;
 	
+	private BigDecimal	priWaived		= BigDecimal.ZERO;
+	private BigDecimal	pftWaived		= BigDecimal.ZERO;
+	private BigDecimal	latePftWaived	= BigDecimal.ZERO;
+	private BigDecimal	penaltyWaived	= BigDecimal.ZERO;
+	private BigDecimal	feeWaived		= BigDecimal.ZERO;
+	private BigDecimal	insWaived		= BigDecimal.ZERO;
+	private BigDecimal	suplRentWaived	= BigDecimal.ZERO;
+	private BigDecimal	incrCostWaived	= BigDecimal.ZERO;
+	
 	private List<FinRepayQueue> queueList = null;
 	
 	public FinRepayQueueTotals() {
@@ -78,6 +87,62 @@ public class FinRepayQueueTotals {
 	}
 	public void setIncrCost(BigDecimal incrCost) {
 		this.incrCost = incrCost;
+	}
+	
+	public BigDecimal getPriWaived() {
+		return priWaived;
+	}
+	public void setPriWaived(BigDecimal priWaived) {
+		this.priWaived = priWaived;
+	}
+
+	public BigDecimal getPftWaived() {
+		return pftWaived;
+	}
+	public void setPftWaived(BigDecimal pftWaived) {
+		this.pftWaived = pftWaived;
+	}
+
+	public BigDecimal getLatePftWaived() {
+		return latePftWaived;
+	}
+	public void setLatePftWaived(BigDecimal latePftWaived) {
+		this.latePftWaived = latePftWaived;
+	}
+
+	public BigDecimal getPenaltyWaived() {
+		return penaltyWaived;
+	}
+	public void setPenaltyWaived(BigDecimal penaltyWaived) {
+		this.penaltyWaived = penaltyWaived;
+	}
+
+	public BigDecimal getFeeWaived() {
+		return feeWaived;
+	}
+	public void setFeeWaived(BigDecimal feeWaived) {
+		this.feeWaived = feeWaived;
+	}
+
+	public BigDecimal getInsWaived() {
+		return insWaived;
+	}
+	public void setInsWaived(BigDecimal insWaived) {
+		this.insWaived = insWaived;
+	}
+
+	public BigDecimal getSuplRentWaived() {
+		return suplRentWaived;
+	}
+	public void setSuplRentWaived(BigDecimal suplRentWaived) {
+		this.suplRentWaived = suplRentWaived;
+	}
+
+	public BigDecimal getIncrCostWaived() {
+		return incrCostWaived;
+	}
+	public void setIncrCostWaived(BigDecimal incrCostWaived) {
+		this.incrCostWaived = incrCostWaived;
 	}
 
 	public List<FinRepayQueue> getQueueList() {

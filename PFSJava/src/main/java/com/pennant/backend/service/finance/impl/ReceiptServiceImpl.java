@@ -528,21 +528,21 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// ScheduleDetails deletion
 		listDeletion(financeMain.getFinReference(), "_Temp");
 		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, false);
-
-		// Update Receipt Header
-		getFinReceiptHeaderDAO().deleteByReceiptID(receiptData.getReceiptHeader().getReceiptID(), TableType.TEMP_TAB);
-		
-		// Delete Save Receipt Detail List by Reference
-		getFinReceiptDetailDAO().deleteByReceiptID(receiptData.getReceiptHeader().getReceiptID(), TableType.TEMP_TAB);
-
-		// Delete and Save FinRepayHeader Detail list by Reference
-		getFinanceRepaymentsDAO().deleteByRef(financeMain.getFinReference(), TableType.TEMP_TAB);
 		
 		// Delete and Save Repayment Schedule details by setting Repay Header ID
 		getFinanceRepaymentsDAO().deleteRpySchdList(financeMain.getFinReference(), TableType.TEMP_TAB.getSuffix());
 		
+		// Delete and Save FinRepayHeader Detail list by Reference
+		getFinanceRepaymentsDAO().deleteByRef(financeMain.getFinReference(), TableType.TEMP_TAB);
+		
+		// Delete Save Receipt Detail List by Reference
+		getFinReceiptDetailDAO().deleteByReceiptID(receiptData.getReceiptHeader().getReceiptID(), TableType.TEMP_TAB);
+		
 		// Receipt Allocation Details
 		getAllocationDetailDAO().deleteByReceiptID(receiptData.getReceiptHeader().getReceiptID(), TableType.TEMP_TAB);
+		
+		// Update Receipt Header
+		getFinReceiptHeaderDAO().deleteByReceiptID(receiptData.getReceiptHeader().getReceiptID(), TableType.TEMP_TAB);
 		
 		// Receipt Header Audit Details Preparation
 		String[] rhFields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), receiptData.getReceiptHeader().getExcludeFields());
@@ -675,7 +675,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				
 				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
 				List<Object> returnList = getRepayProcessUtil().processRepaymentPostings(financeMain, schdList,
-						profitDetail, repaySchdList, repayHeader.getFinEvent());
+						profitDetail, repaySchdList, getEventCode(repayHeader.getFinEvent()));
 
 				if (!(Boolean) returnList.get(0)) {
 					String errParm = (String) returnList.get(1);
@@ -694,8 +694,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				}
 				schdList = (List<FinanceScheduleDetail>) returnList.get(3);
 				
-				if(!isSchdRegenerated && (StringUtils.isNotEmpty(repayHeader.getEarlyPayEffMtd()) &&
-						!StringUtils.equals(PennantConstants.List_Select, repayHeader.getEarlyPayEffMtd()))){
+				if(!isSchdRegenerated && (StringUtils.isNotEmpty(receiptHeader.getEffectSchdMethod()) &&
+						!StringUtils.equals(PennantConstants.List_Select, receiptHeader.getEffectSchdMethod()))){
 					isSchdRegenerated = true;
 				}
 			}
@@ -722,7 +722,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		
 		// Update Status Details and Profit Details
-		financeMain = getRepayPostingUtil().updateStatus(financeMain, DateUtility.getAppDate(), schdList, profitDetail);
+		financeMain = getRepayProcessUtil().updateStatus(financeMain, DateUtility.getAppDate(), schdList, profitDetail);
 
 		//Finance Main Updation
 		//=======================================
@@ -892,20 +892,20 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			//=======================================
 			tempAuditDetailList.addAll(getCheckListDetailService().delete(rceiptData.getFinanceDetail(), "_Temp", tranType));
 			
-			// Delete Receipt Header
-			getFinReceiptHeaderDAO().deleteByReceiptID(receiptID, TableType.TEMP_TAB);
-			
-			// Delete Save Receipt Detail List by Reference
-			getFinReceiptDetailDAO().deleteByReceiptID(receiptID, TableType.TEMP_TAB);
-
-			// Delete and Save FinRepayHeader Detail list by Reference
-			getFinanceRepaymentsDAO().deleteByRef(finReference, TableType.TEMP_TAB);
-			
 			// Delete and Save Repayments Schedule details by setting Repay Header ID
 			getFinanceRepaymentsDAO().deleteRpySchdList(finReference, TableType.TEMP_TAB.getSuffix());
 			
+			// Delete and Save FinRepayHeader Detail list by Reference
+			getFinanceRepaymentsDAO().deleteByRef(finReference, TableType.TEMP_TAB);
+			
+			// Delete Save Receipt Detail List by Reference
+			getFinReceiptDetailDAO().deleteByReceiptID(receiptID, TableType.TEMP_TAB);
+			
 			// Receipt Allocation Details
 			getAllocationDetailDAO().deleteByReceiptID(receiptID, TableType.TEMP_TAB);
+			
+			// Delete Receipt Header
+			getFinReceiptHeaderDAO().deleteByReceiptID(receiptID, TableType.TEMP_TAB);
 			
 			// Finance Main Deletion from temp
 			getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, true);
@@ -982,6 +982,23 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+	
+	/**
+	 * Method for Fetching Accounting Event Code based on Finance Event Action
+	 * @param finEvent
+	 * @return
+	 */
+	private String getEventCode(String finEvent){
+		
+		if(StringUtils.equals(finEvent, FinanceConstants.FINSER_EVENT_SCHDRPY)){
+			return AccountEventConstants.ACCEVENT_REPAY;
+		}else if(StringUtils.equals(finEvent, FinanceConstants.FINSER_EVENT_EARLYRPY)){
+			return AccountEventConstants.ACCEVENT_EARLYPAY;
+		}else if(StringUtils.equals(finEvent, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+			return AccountEventConstants.ACCEVENT_EARLYSTL;
+		}
+		return null;
 	}
 
 	/**

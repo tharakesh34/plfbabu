@@ -87,5 +87,5 @@ public interface FinODDetailsDAO {
 	//Receipts
 	List<FinODDetails> getFinODBalByFinRef(String finReference);
 	Date getFinDueFromDate(String finReference);
-	void updateLatePftTotals(String finReference, Date odSchDate, BigDecimal paidNow);
+	void updateLatePftTotals(String finReference, Date odSchDate, BigDecimal paidNow, BigDecimal waivedNow);
 }

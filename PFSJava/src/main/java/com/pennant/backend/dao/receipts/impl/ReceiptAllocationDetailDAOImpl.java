@@ -49,10 +49,10 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
@@ -120,15 +120,15 @@ public class ReceiptAllocationDetailDAOImpl implements ReceiptAllocationDetailDA
 	public void saveAllocations(List<ReceiptAllocationDetail> allocations, TableType tableType) {
 		logger.debug("Entering");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into FinReceiptDetail");
+		StringBuilder insertSql = new StringBuilder("Insert Into ReceiptAllocationDetail");
 		insertSql.append(tableType.getSuffix());
 		insertSql.append(" (ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount , WaivedAmount)");
 		insertSql.append(" Values(:ReceiptID , :AllocationID , :AllocationType , :AllocationTo , :PaidAmount , :WaivedAmount)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(allocations);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(allocations.toArray());
+		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 	

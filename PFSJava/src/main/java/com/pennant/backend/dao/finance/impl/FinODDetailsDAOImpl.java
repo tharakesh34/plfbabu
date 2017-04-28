@@ -733,16 +733,17 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 	}
 	
 	@Override
-	public void updateLatePftTotals(String finReference,Date odSchDate, BigDecimal paidNow) {
+	public void updateLatePftTotals(String finReference,Date odSchDate, BigDecimal paidNow, BigDecimal waivedNow) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 		source.addValue("FinODSchdDate", odSchDate);
 		source.addValue("PaidNow", paidNow);
+		source.addValue("WaivedNow", waivedNow);
 		
 		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
-		updateSql.append(" Set LPIPaid= LPIPaid + :PaidNow, LPIBal=LPIBal - :PaidNow ");
+		updateSql.append(" Set LPIPaid= LPIPaid + :PaidNow, LPIBal=LPIBal - :PaidNow - :WaivedNow, LPIWaived = LPIWaived + :WaivedNow ");
 		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
 		
 		logger.debug("updateSql: " + updateSql.toString());

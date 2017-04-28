@@ -108,45 +108,12 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 		String finReference = financeMain.getFinReference();
 		//Calculate Pending Penalty Balance
-		BigDecimal pendingPenalty = penalty.subtract(prvPenaltyPaid);
+		BigDecimal penaltyPaidNow = penalty.subtract(prvPenaltyPaid);
 
-		if (pendingPenalty.compareTo(BigDecimal.ZERO) > 0) {
+		if (penaltyPaidNow.compareTo(BigDecimal.ZERO) > 0) {
 
-			boolean isPayNow = false;
-
-			// Check Available Funding Account Balance
-			IAccounts iAccount = getAccountInterfaceService().fetchAccountAvailableBal(financeMain.getRepayAccountId());
-
-			BigDecimal penaltyPaidNow = BigDecimal.ZERO;
-			boolean accFound = false;
-
-			//Account Type Check
-			String acType = SysParamUtil.getValueAsString("ALWFULLPAY_NONTSR_ACTYPE");
-			String[] acTypeList = acType.split(",");
-			for (int i = 0; i < acTypeList.length; i++) {
-				if (StringUtils.trimToEmpty(iAccount.getAcType()).equals(acTypeList[i].trim())) {
-					accFound = true;
-					break;
-				}
-			}
-
-			// Set Requested Repayment Amount as RepayAmount Balance
-			if (iAccount.getAcAvailableBal().compareTo(pendingPenalty) >= 0) {
-				penaltyPaidNow = pendingPenalty;
-				isPayNow = true;
-				isPaidClear = true;
-			} else if (accFound) {
-
-				penaltyPaidNow = pendingPenalty;
-				isPayNow = true;
-				isPaidClear = true;
-
-			} else {
-				if (iAccount.getAcAvailableBal().compareTo(BigDecimal.ZERO) > 0) {
-					penaltyPaidNow = iAccount.getAcAvailableBal();
-					isPayNow = true;
-				}
-			}
+			boolean isPayNow = true;
+			isPaidClear = true;
 
 			if (isPayNow) {
 				// AmountCodes Preparation
@@ -169,6 +136,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
 				// Accounting Set Execution to get Posting Details List
+				financeMain.getDeclaredFieldValues(executingMap);
 				Date dateAppDate = DateUtility.getAppDate();
 				List<Object> resultList = getPostingsPreparationUtil().processPostingDetails(executingMap,
 						isEODProcess, "Y", dateAppDate, false, linkedTranId);
@@ -181,8 +149,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				if (isPostingSuccess) {
 
 					//Overdue Recovery Details Updation for Paid Amounts & Record Deletion Status
-					doUpdateRecoveryData(finReference, schdDate, finODFor, movementDate, chargeType, penaltyPaidNow,
-							waiverAmt, isPaidClear, fullyPaidSchd);
+					/*doUpdateRecoveryData(finReference, schdDate, finODFor, movementDate, chargeType, penaltyPaidNow,
+							waiverAmt, isPaidClear, fullyPaidSchd);*/
 
 					//Overdue Details Updation for Totals
 					FinODDetails detail = new FinODDetails();

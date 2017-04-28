@@ -15,6 +15,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -222,7 +223,7 @@ public class RepaymentProcessUtil {
 			repayHeader.setFinReference(financeMain.getFinReference());
 			repayHeader.setValueDate(valueDate);
 			repayHeader.setRepayAmount(receiptDetail.getAmount().subtract(totalReceiptAmt));
-			repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_SCHDRPY);
+			repayHeader.setFinEvent(AccountEventConstants.ACCEVENT_REPAY);
 			repayHeader.setPriAmount(totPriPaidNow);
 			repayHeader.setPftAmount(totPftPaidNow);
 			repayHeader.setLatePftAmount(totLPftPaidNow);
@@ -312,9 +313,22 @@ public class RepaymentProcessUtil {
 	 * @throws InvocationTargetException
 	 */
 	public List<Object> processRepaymentPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String finEvent)
+			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCode)
 			throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
-		return doRepayPostings(financeMain, scheduleDetails, profitDetail, repaySchdList, finEvent);
+		return doRepayPostings(financeMain, scheduleDetails, profitDetail, repaySchdList, eventCode);
+	}
+
+	/**
+	 * Method for Status updation on Finance
+	 * @param financeMain
+	 * @param valueDate
+	 * @param scheduleDetails
+	 * @param profitDetail
+	 * @return
+	 */
+	public FinanceMain updateStatus(FinanceMain financeMain, Date valueDate, List<FinanceScheduleDetail> scheduleDetails, 
+			FinanceProfitDetail profitDetail) {
+		return getRepayPostingUtil().updateStatus(financeMain, valueDate, scheduleDetails, profitDetail);
 	}
 
 	/**
@@ -330,7 +344,7 @@ public class RepaymentProcessUtil {
 	 * @throws InvocationTargetException
 	 */
 	private List<Object> doRepayPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String finEvent)
+			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCode)
 			throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -354,28 +368,30 @@ public class RepaymentProcessUtil {
 					finRepayQueue.setRefundAmount(repaySchdList.get(i).getRefundReq());
 					finRepayQueue.setPenaltyPayNow(repaySchdList.get(i).getPenaltyPayNow());
 					finRepayQueue.setWaivedAmount(repaySchdList.get(i).getWaivedAmt());
-					finRepayQueue.setPenaltyBal(repaySchdList.get(i).getPenaltyAmt()
-							.subtract(repaySchdList.get(i).getPenaltyPayNow()));
+					finRepayQueue.setPenaltyBal(repaySchdList.get(i).getPenaltyAmt().subtract(repaySchdList.get(i).getPenaltyPayNow()));
 					finRepayQueue.setChargeType(repaySchdList.get(i).getChargeType());
 
 					// Total Repayments Calculation for Principal, Profit 
-					repayQueueTotals.setPrincipal(repayQueueTotals.getPrincipal().add(
-							repaySchdList.get(i).getPrincipalSchdPayNow()));
-					repayQueueTotals.setProfit(repayQueueTotals.getProfit().add(
-							repaySchdList.get(i).getProfitSchdPayNow()));
-					repayQueueTotals.setLateProfit(repayQueueTotals.getLateProfit().add(
-							repaySchdList.get(i).getLatePftSchdPayNow()));
-					repayQueueTotals.setPenalty(repayQueueTotals.getPenalty().add(
-							repaySchdList.get(i).getPenaltyPayNow()));
+					repayQueueTotals.setPrincipal(repayQueueTotals.getPrincipal().add(repaySchdList.get(i).getPrincipalSchdPayNow()));
+					repayQueueTotals.setProfit(repayQueueTotals.getProfit().add(repaySchdList.get(i).getProfitSchdPayNow()));
+					repayQueueTotals.setLateProfit(repayQueueTotals.getLateProfit().add(repaySchdList.get(i).getLatePftSchdPayNow()));
+					repayQueueTotals.setPenalty(repayQueueTotals.getPenalty().add(repaySchdList.get(i).getPenaltyPayNow()));
 
 					// Fee Details
 					repayQueueTotals.setFee(repayQueueTotals.getFee().add(repaySchdList.get(i).getSchdFeePayNow()));
-					repayQueueTotals.setInsurance(repayQueueTotals.getInsurance().add(
-							repaySchdList.get(i).getSchdInsPayNow()));
-					repayQueueTotals.setSuplRent(repayQueueTotals.getSuplRent().add(
-							repaySchdList.get(i).getSchdSuplRentPayNow()));
-					repayQueueTotals.setIncrCost(repayQueueTotals.getIncrCost().add(
-							repaySchdList.get(i).getSchdIncrCostPayNow()));
+					repayQueueTotals.setInsurance(repayQueueTotals.getInsurance().add(repaySchdList.get(i).getSchdInsPayNow()));
+					repayQueueTotals.setSuplRent(repayQueueTotals.getSuplRent().add(repaySchdList.get(i).getSchdSuplRentPayNow()));
+					repayQueueTotals.setIncrCost(repayQueueTotals.getIncrCost().add(repaySchdList.get(i).getSchdIncrCostPayNow()));
+					
+					// Waiver Amounts
+					repayQueueTotals.setPriWaived(repayQueueTotals.getPriWaived().add(finRepayQueue.getSchdPriWaivedNow()));
+					repayQueueTotals.setPftWaived(repayQueueTotals.getPftWaived().add(finRepayQueue.getSchdPftWaivedNow()));
+					repayQueueTotals.setLatePftWaived(repayQueueTotals.getLatePftWaived().add(finRepayQueue.getLatePayPftWaivedNow()));
+					repayQueueTotals.setPenaltyWaived(repayQueueTotals.getPenaltyWaived().add(finRepayQueue.getWaivedAmount()));
+					repayQueueTotals.setFeeWaived(repayQueueTotals.getFeeWaived().add(finRepayQueue.getSchdFeeWaivedNow()));
+					repayQueueTotals.setInsWaived(repayQueueTotals.getInsWaived().add(finRepayQueue.getSchdInsWaivedNow()));
+					repayQueueTotals.setSuplRentWaived(repayQueueTotals.getSuplRentWaived().add(finRepayQueue.getSchdSuplRentWaivedNow()));
+					repayQueueTotals.setIncrCostWaived(repayQueueTotals.getIncrCostWaived().add(finRepayQueue.getSchdIncrCostWaivedNow()));
 
 					finRepayQueues.add(finRepayQueue);
 				}
@@ -385,7 +401,7 @@ public class RepaymentProcessUtil {
 			repayQueueTotals.setQueueList(finRepayQueues);
 
 			returnList = getRepayPostingUtil().postingProcess(financeMain, scheduleDetails, profitDetail,
-					repayQueueTotals, finEvent);
+					repayQueueTotals, eventCode);
 
 		} catch (PFFInterfaceException e) {
 			logger.error("Exception: ", e);

@@ -312,7 +312,9 @@ public class PostingsPreparationUtil implements Serializable {
 
 		finAcType = financeType.getFinAcType();
 
-		executingMap.putAll(feeChargeMap);
+		if(feeChargeMap != null){
+			executingMap.putAll(feeChargeMap);
+		}
 		financeType.getDeclaredFieldValues(executingMap);
 
 		list = getEngineExecution().getAccEngineExecResults("Y", executingMap, false);

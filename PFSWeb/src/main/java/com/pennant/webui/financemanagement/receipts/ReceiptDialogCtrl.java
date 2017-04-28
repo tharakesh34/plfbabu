@@ -2978,24 +2978,56 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
 		Date dateValueDate = DateUtility.getValueDate();
-
-
+		
 		amountCodes = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
 				.getFinanceScheduleDetails(), profitDetail, eventCode, dateValueDate, dateValueDate);
 		setAmountCodes(amountCodes);
-
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues(); 
-
-		List<ReturnDataSet> returnSetEntries = null;
-
-		Map<String, FeeRule> feeRuleMap = null;
-		if (getFeeDetailDialogCtrl() != null) {
-			feeRuleMap = getFeeDetailDialogCtrl().getFeeRuleDetailsMap();
-		}
 		
-		executingMap.putAll(feeRuleMap);
-		getFinanceType().getDeclaredFieldValues(executingMap);
-		returnSetEntries = getEngineExecution().getAccEngineExecResults("N", executingMap, false);
+		List<ReturnDataSet> returnSetEntries = new ArrayList<>();
+		for (FinReceiptDetail receiptDetail : getReceiptHeader().getReceiptDetails()) {
+			
+			for (FinRepayHeader repayHeader : receiptDetail.getRepayHeaders()) {
+
+				if(!StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent()) &&
+						!StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent()) &&
+						!StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())){
+					
+					continue;
+				}
+				
+				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
+				for (RepayScheduleDetail rsd : repaySchdList) {
+
+					//Set Repay Amount Codes
+					amountCodes.setRpTot(amountCodes.getRpPri().add(rsd.getPrincipalSchdPayNow()).add(rsd.getProfitSchdPayNow()).add(rsd.getLatePftSchdPayNow()));
+					amountCodes.setRpPft(amountCodes.getRpPft().add(rsd.getProfitSchdPayNow()).add(rsd.getLatePftSchdPayNow()));
+					amountCodes.setRpPri(amountCodes.getRpPri().add(rsd.getPrincipalSchdPayNow()));
+
+					// Fee Details
+					amountCodes.setSchFeePay(amountCodes.getSchFeePay().add(rsd.getSchdFeePayNow()));
+					amountCodes.setInsPay(amountCodes.getInsPay().add(rsd.getSchdInsPayNow()));
+					
+					// Waived Amounts
+					amountCodes.setPriWaived(amountCodes.getPriWaived().add(rsd.getPriSchdWaivedNow()));
+					amountCodes.setPftWaived(amountCodes.getPftWaived().add(rsd.getPftSchdWaivedNow()).add(rsd.getLatePftSchdWaivedNow()));
+					amountCodes.setFeeWaived(amountCodes.getFeeWaived().add(rsd.getSchdFeeWaivedNow()));
+					amountCodes.setInsWaived(amountCodes.getInsWaived().add(rsd.getSchdInsWaivedNow()));
+				}
+				
+				if(StringUtils.equals(repayHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_SCHDRPY)){
+					amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_REPAY);
+				}else if(StringUtils.equals(repayHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYRPY)){
+					amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_EARLYPAY);
+				}else if(StringUtils.equals(repayHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+					amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_EARLYSTL);
+				}
+				
+				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues(); 
+				getFinanceType().getDeclaredFieldValues(executingMap);
+				finMain.getDeclaredFieldValues(executingMap);
+				returnSetEntries.addAll(getEngineExecution().getAccEngineExecResults("N", executingMap, false));
+			}
+		}
 
 		if (getAccountingDetailDialogCtrl() != null) {
 			getAccountingDetailDialogCtrl().doFillAccounting(returnSetEntries);

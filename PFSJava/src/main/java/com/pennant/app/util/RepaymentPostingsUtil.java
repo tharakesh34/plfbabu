@@ -395,14 +395,14 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		Map<Date, FinanceScheduleDetail> scheduleMap = new HashMap<Date, FinanceScheduleDetail>();
 		for (FinanceScheduleDetail detail : scheduleDetails) {
-			scheduleMap.put(detail.getSchDate(), detail);
+			scheduleMap.put(DateUtility.getSqlDate(detail.getSchDate()), detail);
 		}
 
 		//Database Updations for Finance RepayQueue Details List
 		for (FinRepayQueue repayQueue : finRepayQueueList) {
 			FinanceScheduleDetail scheduleDetail = null;
-			if (scheduleMap.containsKey(repayQueue.getRpyDate())) {
-				scheduleDetail = scheduleMap.get(repayQueue.getRpyDate());
+			if (scheduleMap.containsKey(DateUtility.getSqlDate(repayQueue.getRpyDate()))) {
+				scheduleDetail = scheduleMap.get(DateUtility.getSqlDate(repayQueue.getRpyDate()));
 			}
 
 			scheduleDetail = paymentUpdate(financeMain, scheduleDetail, repayQueue, dateValueDate, linkedTranId, rpyTotal);
@@ -598,6 +598,13 @@ public class RepaymentPostingsUtil implements Serializable {
 		amountCodes.setInsPay(queueTotals.getInsurance());
 		amountCodes.setSuplRentPay(queueTotals.getSuplRent());
 		amountCodes.setIncrCostPay(queueTotals.getIncrCost());
+		
+		// Waived Amounts
+		amountCodes.setPriWaived(queueTotals.getPriWaived());
+		amountCodes.setPftWaived(queueTotals.getPftWaived());
+		amountCodes.setFeeWaived(queueTotals.getFeeWaived());
+		amountCodes.setInsWaived(queueTotals.getInsWaived());
+		
 
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 		financeMain.getDeclaredFieldValues(executingMap);
@@ -627,7 +634,8 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws PFFInterfaceException
 	 */
 	public FinanceScheduleDetail paymentUpdate(FinanceMain financeMain,FinanceScheduleDetail scheduleDetail,
-			FinRepayQueue finRepayQueue, Date dateValueDate, long linkedTranId, BigDecimal totalRpyAmt) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			FinRepayQueue finRepayQueue, Date dateValueDate, long linkedTranId, BigDecimal totalRpyAmt) 
+					throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 
 		logger.debug("Entering");
 
@@ -637,7 +645,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		// Late Profit Updation
 		if(finRepayQueue.getLatePayPftPayNow().compareTo(BigDecimal.ZERO) > 0){
 			getFinODDetailsDAO().updateLatePftTotals(finRepayQueue.getFinReference(), finRepayQueue.getRpyDate(),
-					finRepayQueue.getLatePayPftPayNow());
+					finRepayQueue.getLatePayPftPayNow(), finRepayQueue.getLatePayPftWaivedNow());
 		}
 
 		// Finance Repayments Details

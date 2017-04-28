@@ -109,6 +109,11 @@ public class AEAmountCodes {
 	private BigDecimal	cmtAmt				= BigDecimal.ZERO;
 	private BigDecimal	deductFeeDisb		= BigDecimal.ZERO;
 	private BigDecimal	deductInsDisb		= BigDecimal.ZERO;
+	
+	private BigDecimal	priWaived		= BigDecimal.ZERO;
+	private BigDecimal	pftWaived		= BigDecimal.ZERO;
+	private BigDecimal	feeWaived		= BigDecimal.ZERO;
+	private BigDecimal	insWaived		= BigDecimal.ZERO;
 
 	public AEAmountCodes() {
 
@@ -853,4 +858,38 @@ public class AEAmountCodes {
 	public void setExcessBal(BigDecimal excessBal) {
 		this.excessBal = excessBal;
 	}
+
+	public BigDecimal getPriWaived() {
+		return priWaived;
+	}
+
+	public void setPriWaived(BigDecimal priWaived) {
+		this.priWaived = priWaived;
+	}
+
+	public BigDecimal getPftWaived() {
+		return pftWaived;
+	}
+
+	public void setPftWaived(BigDecimal pftWaived) {
+		this.pftWaived = pftWaived;
+	}
+
+	public BigDecimal getFeeWaived() {
+		return feeWaived;
+	}
+
+	public void setFeeWaived(BigDecimal feeWaived) {
+		this.feeWaived = feeWaived;
+	}
+
+	public BigDecimal getInsWaived() {
+		return insWaived;
+	}
+
+	public void setInsWaived(BigDecimal insWaived) {
+		this.insWaived = insWaived;
+	}
+	
+	
 }
