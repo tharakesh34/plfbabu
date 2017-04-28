@@ -191,4 +191,42 @@
 		</createView>
 	</changeSet>
 	
+	<changeSet id="20" author="Kesav">
+		<createView viewName="AccountMapping_View" replaceIfExists="true">
+				SELECT		T1.Account, T1.HostAccount, T1.ProfitCenterID, T1.CostCenterID,	T1.FinType,	
+				            T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+				          	T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				          	T2.PROFITCENTERCODE, T2.PROFITCENTERDESC,
+				          	T3.COSTCENTERCODE, T3.COSTCENTERDESC
+				FROM    	AccountMapping_Temp  T1  INNER JOIN
+				         	ProfitCenters T2 ON T1.ProfitCenterID = T2.ProfitCenterID  INNER JOIN
+				         	CostCenters T3 ON T1.CostCenterID = T3.CostCenterID
+				UNION ALL
+				
+				SELECT		T1.Account, T1.HostAccount, T1.ProfitCenterID, T1.CostCenterID,	T1.FinType,	
+				          	T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+				         	T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				          	T2.PROFITCENTERCODE, T2.PROFITCENTERDESC,
+				          	T3.COSTCENTERCODE, T3.COSTCENTERDESC
+				FROM    	AccountMapping  T1  INNER JOIN
+				          	ProfitCenters T2 ON T1.ProfitCenterID = T2.ProfitCenterID  INNER JOIN
+				          	CostCenters T3 ON T1.CostCenterID = T3.CostCenterID
+				          
+				WHERE     	NOT EXISTS (SELECT 1 FROM AccountMapping_TEMP WHERE Account = T1.Account)
+		</createView>
+	</changeSet>
+	
+	<changeSet id="21" author="Kesav">
+		<createView viewName="AccountMapping_AView" replaceIfExists="true">
+				SELECT		T1.Account, T1.HostAccount, T1.ProfitCenterID, T1.CostCenterID,	T1.FinType,	
+				          	T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+				         	T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				          	T2.PROFITCENTERCODE, T2.PROFITCENTERDESC,
+				          	T3.COSTCENTERCODE, T3.COSTCENTERDESC
+				FROM    	AccountMapping  T1  INNER JOIN
+				          	ProfitCenters T2 ON T1.ProfitCenterID = T2.ProfitCenterID  INNER JOIN
+				          	CostCenters T3 ON T1.CostCenterID = T3.CostCenterID
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
