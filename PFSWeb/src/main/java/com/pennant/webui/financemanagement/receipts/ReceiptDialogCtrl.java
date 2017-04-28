@@ -1531,12 +1531,22 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		// Setting Extra amount for Partial Settlement case
 		if(StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYRPY)){
+			boolean isPriRcdFound = false;
 			for (ReceiptAllocationDetail detail : receiptHeader.getAllocations()) {
 				if(StringUtils.equals(detail.getAllocationType(), RepayConstants.ALLOCATION_PRI) && 
 						this.remBalAfterAllocation.getValue().compareTo(BigDecimal.ZERO) > 0){
 					detail.setPaidAmount(detail.getPaidAmount().add(PennantApplicationUtil.unFormateAmount(this.remBalAfterAllocation.getValue(), finFormatter)));
+					isPriRcdFound = true;
 					break;
 				}
+			}
+			if(!isPriRcdFound){
+				allocationDetail = new ReceiptAllocationDetail();
+				allocationDetail.setAllocationID(receiptHeader.getAllocations().size()+1);
+				allocationDetail.setAllocationType(RepayConstants.ALLOCATION_PRI);
+				allocationDetail.setAllocationTo(0);
+				allocationDetail.setPaidAmount(PennantApplicationUtil.unFormateAmount(this.remBalAfterAllocation.getValue(), finFormatter));
+				receiptHeader.getAllocations().add(allocationDetail);
 			}
 		}
 		

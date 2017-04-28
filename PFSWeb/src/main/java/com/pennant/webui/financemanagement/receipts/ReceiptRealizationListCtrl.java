@@ -115,7 +115,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 		// Set the page level components.
 		setPageComponents(window_ReceiptRealizationList, borderLayout_ReceiptRealizationList, listBoxReceiptRealization, pagingReceiptRealizationList);
 		setItemRender(new ReceiptRealizationListModelItemRenderer());
-
+		registerButton(btnNew, "button_AcademicList_NewAcademic", true);
 		registerButton(btnSearch);
 
 		registerField("receiptID");
