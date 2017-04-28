@@ -176,16 +176,19 @@ public class EodService {
 		//process payments from queue
 		//serviceUtil.processQueue(connection, custId, date);
 
+		//_____________________________________________________________________________________________________________
 		//Date roll over
-		List<FinEODEvent> finEODEvents = dateRollOverService.prepareFinEODEvents(connection, custId, date);
+		//_____________________________________________________________________________________________________________
 
-		dateRollOverService.process(connection, finEODEvents);
+		List<FinEODEvent> custEODEvents = dateRollOverService.prepareFinEODEvents(custId, date);
+
+		custEODEvents = dateRollOverService.process(custEODEvents);
 
 		//Rate review
-		rateReviewService.processRateReview(connection, finEODEvents);
+		custEODEvents = rateReviewService.processRateReview(custEODEvents);
 
 		//Accrual
-		accrualService.processAccrual(connection, custId, date);
+		custEODEvents = accrualService.processAccrual(custEODEvents);
 
 		//Auto disbursments
 		autoDisbursementService.processDisbursementPostings(connection, custId, date);

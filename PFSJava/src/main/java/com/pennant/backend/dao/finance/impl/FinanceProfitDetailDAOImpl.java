@@ -386,24 +386,6 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 	}
 
 	@Override
-	public void updateBatchList(List<FinanceProfitDetail> finProfitDetails, String type) {
-		logger.debug("Entering");
-
-		StringBuilder updateSql = new StringBuilder("Update FinPftDetails").append(type);
-		updateSql.append(" Set AcrTillLBD=:AcrTillLBD, LastMdfDate =:LastMdfDate,");
-		updateSql
-				.append(" AmzTillLBD= :AmzTillLBD, AmzTillLBDNormal =:AmzTillLBDNormal, AmzTillLBDPD = :AmzTillLBDPD, ");
-		updateSql.append(" AmzTillLBDPIS = :AmzTillLBDPIS ");
-		updateSql.append(" Where FinReference =:FinReference");
-
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finProfitDetails.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
-	}
-
-	@Override
 	public void updateLBDAccruals(FinanceProfitDetail finProfitDetail, boolean isMonthEnd) {
 		logger.debug("Entering");
 

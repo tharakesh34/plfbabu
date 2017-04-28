@@ -57,4 +57,5 @@ public interface RepayInstructionDAO {
 	void delete(RepayInstruction repayInstruction,String type,boolean isWIF);
 	void saveList(List<RepayInstruction> repayInstruction, String type,boolean isWIF);
 	void updateList(List<RepayInstruction> repayInstruction, String type, boolean isWIF);
+	List<RepayInstruction> getRepayInstrEOD(String id);
 }

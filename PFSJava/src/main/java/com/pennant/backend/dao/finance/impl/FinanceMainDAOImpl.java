@@ -2721,4 +2721,47 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 	}
+	
+	/**
+	 * Method for get the Finance Details and FinanceShedule Details
+	 */
+	@Override
+	public List<FinanceMain> getFinanceMainsByCustId(long custId) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder selectSql = new StringBuilder();
+
+		selectSql.append(" SELECT FinReference,GraceTerms, NumberOfTerms, GrcPeriodEndDate, AllowGrcPeriod,");
+		selectSql.append(" GraceBaseRate, GraceSpecialRate, GrcPftRate, GrcPftFrq,NextGrcPftDate, AllowGrcPftRvw,");
+		selectSql.append(" GrcPftRvwFrq, NextGrcPftRvwDate, AllowGrcCpz, GrcCpzFrq, NextGrcCpzDate,RepayBaseRate,");
+		selectSql.append(" RepaySpecialRate, RepayProfitRate, RepayFrq, NextRepayDate, RepayPftFrq, NextRepayPftDate,");
+		selectSql.append(" AllowRepayRvw,RepayRvwFrq, NextRepayRvwDate, AllowRepayCpz, RepayCpzFrq, NextRepayCpzDate,");
+		selectSql.append(" MaturityDate, CpzAtGraceEnd, ReqRepayAmount, ");
+		selectSql.append(" GrcRateBasis, RepayRateBasis, FinType, FinCcy, ScheduleMethod,");
+		selectSql.append(" ProfitDaysBasis, ReqMaturity, CalTerms, CalMaturity, FirstRepay, LastRepay,");
+		selectSql.append(" FinStartDate, FinAmount, CustID, FinBranch, FinSourceID, RecalType, FinIsActive, ");
+		selectSql.append(" LastRepayDate, LastRepayPftDate, LastRepayRvwDate, LastRepayCpzDate, AllowGrcRepay, ");
+		selectSql.append(" GrcSchdMthd, GrcMargin, RepayMargin, ClosingStatus, FinRepayPftOnFrq , ");
+		selectSql.append(" GrcProfitDaysBasis, StepFinance , StepPolicy, AlwManualSteps, NoOfSteps, StepType, ");
+		selectSql.append(" GrcMinRate, GrcMaxRate , RpyMinRate, RpyMaxRate, ManualSchedule,");
+		selectSql.append(" TDSApplicable, FeeChargeAmt, InsuranceAmt, AlwBPI , BpiTreatment , PlanEMIHAlw ,");
+		selectSql.append(" PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax, PlanEMIHLockPeriod, PlanEMICpz, ");
+		selectSql.append(" CalRoundingMode, BpiAmount, DeductFeeDisb, RvwRateApplFor, SchCalOnRvw, ");
+		selectSql.append(" PastduePftCalMthd, DroppingMethod, RateChgAnyDay, PastduePftMargin, FinRepayMethod ");
+		selectSql.append(" MigratedFinance, ScheduleMaintained, ScheduleRegenerated, MandateID, ");
+		selectSql.append(" FinStatus, FinStsReason, BankName, Iban, AccountType, DdaReferenceNo, ");
+		selectSql.append(" DroplineFrq, FirstDroplineDate, PftServicingODLimit, ");
+		selectSql.append(" UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, PromotionCode,  ");
+		selectSql.append("  MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH  ");
+		selectSql.append(" FROM FinanceMain Where CustID=:CustID ");
+
+		source.addValue("CustID", custId);
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+
+		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+	}
 }

@@ -1370,8 +1370,6 @@ public class ScheduleCalculator {
 	private FinScheduleData afterChangeRepay(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 
-		//TODO: COPIED FROM procChangeRepay. Both the places to be corrected or clubbed
-
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		String recaltype = finMain.getRecalType();
 
@@ -1638,7 +1636,6 @@ public class ScheduleCalculator {
 		}
 
 		//ADD new disbursement Record.
-		//TODO: PV 15JAN17### Identify when DisbAccountID, DISBREQDATE and other new disbursement instructions will be added
 		FinanceDisbursement dd = new FinanceDisbursement();
 		dd.setDisbAmount(newDisbAmount);
 		dd.setDisbDate(evtFromDate);
@@ -2832,14 +2829,6 @@ public class ScheduleCalculator {
 
 		Date dateAllowedChange = finMain.getLastRepayRvwDate();
 
-		// PROFIT REVIEW NOT ALLOWED THEN DO NO REBUILD
-		// PRADEEP COMMENTED BELOW.
-		// if (!finMain.isAllowGrcPftRvw()) {
-		// return finScheduleData;
-		// }
-
-		// PROFIT LAST REVIEW IS ON OR AFTER GRACE PERIOD END THEN NOT ALLOWED
-		// THEN DO NOT SET
 		if (dateAllowedChange.compareTo(finMain.getGrcPeriodEndDate()) >= 0) {
 			return finScheduleData;
 		}
@@ -2894,11 +2883,6 @@ public class ScheduleCalculator {
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 
 		Date dateAllowedChange = finMain.getLastRepayRvwDate();
-		// PROFIT REVIEW NOT ALLOWED THEN DO NO REBUILD
-		// PRADEEP COMMENTED BELOW.
-		// if (!finMain.isAllowRepayRvw()) {
-		// return finScheduleData;
-		// }
 
 		// PROFIT LAST REVIEW IS ON OR AFTER MATURITY THEN NOT ALLOWED THEN DO NOT SET
 		if (dateAllowedChange.compareTo(finMain.getMaturityDate()) >= 0) {
@@ -4671,13 +4655,6 @@ public class ScheduleCalculator {
 		List<FinanceStepPolicyDetail> stepPolicyDetails = finScheduleData.getStepPolicyDetails();
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 		FinanceScheduleDetail geSchd = finSchdDetails.get(finMain.getSchdIndex());
-
-		//FIXME: PV Repay Instructions are being added by from front end at the start date, which is not required.
-		/*
-		 * if (finScheduleData.getRepayInstructions().get(0).getRepayDate().compareTo(finMain.getFinStartDate()) == 0) {
-		 * finScheduleData.getRepayInstructions().remove(0); }
-		 */
-		//FIXED: Added isAllowGrace also before adding instruction. It remove above code once testing completed.
 
 		boolean isRateStepOnly = false;
 

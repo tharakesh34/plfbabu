@@ -35,9 +35,6 @@ package com.pennant.app.core;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -78,56 +75,46 @@ public class AccrualService extends ServiceHelper {
 	public static final String			accrual				= "SELECT F.FinReference FROM FinanceMain F"
 																	+ " WHERE F.FinIsActive = 1 AND F.FinStartDate <=? And F.CustID=? ";
 
-	public void processAccrual(Connection connection, long custId, Date date) throws Exception {
-		ResultSet resultSet = null;
-		PreparedStatement sqlStatement = null;
-		String finreference = "";
+	public List<FinEODEvent> processAccrual(List<FinEODEvent> custEODEvents) throws Exception {
 
-		try {
-			sqlStatement = connection.prepareStatement(accrual);
-			sqlStatement.setDate(1, DateUtility.getDBDate(date.toString()));
-			sqlStatement.setLong(2, custId);
-			resultSet = sqlStatement.executeQuery();
-			while (resultSet.next()) {
-				finreference = resultSet.getString("FinReference");
-				calculateAccruals(finreference, date);
-			}
-		} catch (Exception e) {
-			logger.error("Exception: Finreference :" + finreference, e);
-			throw new Exception("Exception: Finreference :" + finreference, e);
-		} finally {
-			if (resultSet != null) {
-				resultSet.close();
-			}
-			if (sqlStatement != null) {
-				sqlStatement.close();
-			}
+		for (FinEODEvent finEODEvent : custEODEvents) {
+			finEODEvent = calculateAccruals(finEODEvent);
 		}
+
+		return custEODEvents;
+
 	}
 
-	public void calculateAccruals(String finReference, Date valueDate) throws Exception {
+	public FinEODEvent calculateAccruals(FinEODEvent finEODEvent) throws Exception {
 		logger.debug(" Entering ");
 
-		// get Finance main
-		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainForPftCalc(finReference);
-		// get Schedule Details
-		List<FinanceScheduleDetail> scheduleDetailList = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(
-				finReference);
+		FinanceMain finMain = finEODEvent.getFinanceMain();
+		List<FinanceScheduleDetail> scheduleDetailList = finEODEvent.getFinanceScheduleDetails();
 
-		FinanceProfitDetail profitDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(finReference);
-
-		FinanceProfitDetail finPftDetail = calProfitDetails(financeMain, scheduleDetailList, profitDetail, valueDate);
-		if (profitDetail == null) {
-			return;
+		// Finance Profit Details
+		FinanceProfitDetail profitDetail = finEODEvent.getFinProfitDetail();
+		if (profitDetail.getFinReference() == null) {
+			profitDetail = getFinanceProfitDetailDAO().getFinProfitDetailsById(finMain.getFinReference());
 		}
 
+		String finReference = finEODEvent.getFinanceMain().getFinReference();
+		Date valueDate = finEODEvent.getEodValueDate();
+
+		FinanceProfitDetail finPftDetail = calProfitDetails(finMain, scheduleDetailList, profitDetail, valueDate);
 		String worstSts = getCustomerStatusCodeDAO().getFinanceStatus(finReference, false);
 		finPftDetail.setFinWorstStatus(worstSts);
-		getFinanceProfitDetailDAO().update(finPftDetail, false);
+
+		//FIXME: PV 28APR17 Update only once 
+		//getFinanceProfitDetailDAO().update(finPftDetail, false);
 
 		//post accruals
-		postAccruals(financeMain,finPftDetail, valueDate);
+		postAccruals(finMain, finPftDetail, valueDate);
+
+		finEODEvent.setFinProfitDetail(finPftDetail);
+		finEODEvent.setUpdFinPft(true);
+
 		logger.debug(" Leaving ");
+		return finEODEvent;
 	}
 
 	public static FinanceProfitDetail calProfitDetails(FinanceMain finMain, List<FinanceScheduleDetail> schdDetails,
@@ -602,11 +589,12 @@ public class AccrualService extends ServiceHelper {
 	}
 
 	/**
-	 * @param financeMain 
+	 * @param financeMain
 	 * @param resultSet
 	 * @throws Exception
 	 */
-	public void postAccruals(FinanceMain financeMain, FinanceProfitDetail finPftDetail, Date valueDate) throws Exception {
+	public void postAccruals(FinanceMain financeMain, FinanceProfitDetail finPftDetail, Date valueDate)
+			throws Exception {
 		logger.debug(" Entering ");
 
 		String eventCode = AccountEventConstants.ACCEVENT_AMZ;
@@ -631,13 +619,18 @@ public class AccrualService extends ServiceHelper {
 		finPftDetail.setAcrTillLBD(finPftDetail.getPftAccrued());
 		finPftDetail.setAcrSuspTillLBD(finPftDetail.getPftAccrueSusp());
 
-		boolean isMonthEnd = false;
-
+		//Month End move all the balances to previous month also
 		if (DateUtility.getDay(valueDate) == 1) {
-			isMonthEnd = true;
+			finPftDetail.setPrvMthAcr(finPftDetail.getPftAccrued());
+			finPftDetail.setPrvMthAcrSusp(finPftDetail.getPftAccrueSusp());
+			finPftDetail.setPrvMthAmz(finPftDetail.getPftAmz());
+			finPftDetail.setPrvMthAmzNrm(finPftDetail.getPftAmzNormal());
+			finPftDetail.setPrvMthAmzPD(finPftDetail.getPftAmzPD());
+			finPftDetail.setPrvMthAmzSusp(finPftDetail.getPftAmzSusp());
 		}
 
-		getFinanceProfitDetailDAO().updateLBDAccruals(finPftDetail, isMonthEnd);
+		//FIXME: PV 28APR17 Update only once 
+		//getFinanceProfitDetailDAO().updateLBDAccruals(finPftDetail, isMonthEnd);
 		logger.debug(" Leaving ");
 	}
 

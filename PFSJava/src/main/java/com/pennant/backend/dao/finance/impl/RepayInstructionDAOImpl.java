@@ -443,5 +443,25 @@ public class RepayInstructionDAOImpl extends BasisCodeDAO<RepayInstruction> impl
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
 
+
+	@Override
+	public List<RepayInstruction> getRepayInstrEOD(String id) {
+		logger.debug("Entering");
+
+		RepayInstruction repayInstruction = new RepayInstruction();
+		repayInstruction.setId(id);
+
+		StringBuilder selectSql = new StringBuilder("Select FinReference, RepayDate, RepayAmount, RepaySchdMethod");
+		selectSql.append(" From FinRepayInstruction  Where FinReference =:FinReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(repayInstruction);
+		RowMapper<RepayInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(RepayInstruction.class);
+
+		List<RepayInstruction> repayInstructions = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.debug("Leaving");
+		return repayInstructions;	}
+
 	
 }
