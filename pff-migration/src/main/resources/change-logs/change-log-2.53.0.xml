@@ -1994,7 +1994,7 @@ Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroup
 	<!-- <changeSet id="99" author="Amit">
 	<addNotNullConstraint tableName="BANKBRANCHES"
 		columnName="CITY" columnDataType="VARCHAR2(50)" />
-   </changeSet>
+   </changeSet> -->
    
    <changeSet id="101" author="Amit">
 		<addForeignKeyConstraint constraintName="FK_BankBranches_City"
@@ -2006,7 +2006,7 @@ Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroup
 		<addForeignKeyConstraint constraintName="FK_BankBranches_Temp_City"
 			baseTableName="BankBranches_Temp" baseColumnNames="City"
 			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
-	</changeSet> -->
+	</changeSet>
    <changeSet id="104" author="ManojKumar P">
 		<createView viewName="INT_DISBURSEMENT_EXPORT_VIEW" replaceIfExists="true">
 			SELECT BANKBRANCH.BANKCODE, CUST.CUSTSHRTNAME CUSTOMERNAME, BRANCH.BRANCHDESC AS BRANCHSWIFTBRNCDE, RMTFINTYPE.FINTYPEDESC AS FINTYPE , FIN.FINREFERENCE  APPLICATIONID, FIN.FINREFERENCE  LANNO,
