@@ -34,6 +34,7 @@ public class FinEODEvent extends AbstractEntity {
 	private Date						recalFromDate;
 	private Date						recalToDate;
 	private String						recalType;
+	private String						recalSchdMethod;
 	private String						rateOnChgDate;
 	private boolean						updFinMain				= false;
 	private boolean						updFinSchedule			= false;
@@ -190,6 +191,14 @@ public class FinEODEvent extends AbstractEntity {
 
 	public void setUpdRepayInstruct(boolean updRepayInstruct) {
 		this.updRepayInstruct = updRepayInstruct;
+	}
+
+	public String getRecalSchdMethod() {
+		return recalSchdMethod;
+	}
+
+	public void setRecalSchdMethod(String recalSchdMethod) {
+		this.recalSchdMethod = recalSchdMethod;
 	}
 
 }

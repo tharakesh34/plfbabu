@@ -49,6 +49,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -58,6 +59,7 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.util.AccountEngineExecution;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.finance.FinContributorDetailDAO;
@@ -129,6 +131,16 @@ abstract public class ServiceHelper implements Serializable {
 			logger.error("Exception :", e);
 			throw e;
 		}
+	}
+	
+	public Date formatDate(Date date){
+		if (date!=null) {
+			return DateUtility.getDate(
+					DateUtility.formateDate(date, PennantConstants.DBDateFormat),
+					PennantConstants.DBDateFormat);
+		}
+		return null;
+
 	}
 
 	/**

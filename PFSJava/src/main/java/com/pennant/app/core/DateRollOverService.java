@@ -97,11 +97,11 @@ public class DateRollOverService extends ServiceHelper {
 			return;
 		}
 
-		int i = datesMap.get(finMain.getNextGrcCpzDate());
+		int i = datesMap.get(formatDate(finMain.getNextGrcCpzDate()));
 		FinanceScheduleDetail curSchd = null;
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
-			curSchd = finSchdDetails.get(i);
+			curSchd = finSchdDetails.get(j);
 			if (curSchd.getSchDate().compareTo(finMain.getNextGrcCpzDate()) <= 0) {
 				continue;
 			}
@@ -128,11 +128,11 @@ public class DateRollOverService extends ServiceHelper {
 			return;
 		}
 
-		int i = datesMap.get(finMain.getNextGrcPftDate());
+		int i = datesMap.get(formatDate(finMain.getNextGrcPftDate()));
 		FinanceScheduleDetail curSchd = null;
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
-			curSchd = finSchdDetails.get(i);
+			curSchd = finSchdDetails.get(j);
 			if (curSchd.getSchDate().compareTo(finMain.getNextGrcPftDate()) <= 0) {
 				continue;
 			}
@@ -171,11 +171,11 @@ public class DateRollOverService extends ServiceHelper {
 			}
 		}
 
-		int i = datesMap.get(finMain.getNextGrcPftRvwDate());
+		int i = datesMap.get(formatDate(finMain.getNextGrcPftRvwDate()));
 		FinanceScheduleDetail curSchd = null;
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
-			curSchd = finSchdDetails.get(i);
+			curSchd = finSchdDetails.get(j);
 
 			if (curSchd.getSchDate().compareTo(finMain.getNextGrcPftRvwDate()) <= 0) {
 				continue;
@@ -207,11 +207,11 @@ public class DateRollOverService extends ServiceHelper {
 			return;
 		}
 
-		int i = datesMap.get(finMain.getNextRepayCpzDate());
+		int i = datesMap.get(formatDate(finMain.getNextRepayCpzDate()));
 		FinanceScheduleDetail curSchd = null;
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
-			curSchd = finSchdDetails.get(i);
+			curSchd = finSchdDetails.get(j);
 			if (curSchd.getSchDate().compareTo(finMain.getNextRepayCpzDate()) <= 0) {
 				continue;
 			}
@@ -239,11 +239,11 @@ public class DateRollOverService extends ServiceHelper {
 			return;
 		}
 
-		int i = datesMap.get(finMain.getNextRepayDate());
+		int i = datesMap.get(formatDate(finMain.getNextRepayDate()));
 		FinanceScheduleDetail curSchd = null;
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
-			curSchd = finSchdDetails.get(i);
+			curSchd = finSchdDetails.get(j);
 			if (curSchd.getSchDate().compareTo(finMain.getNextRepayDate()) <= 0) {
 				continue;
 			}
@@ -272,11 +272,11 @@ public class DateRollOverService extends ServiceHelper {
 			return;
 		}
 
-		int i = datesMap.get(finMain.getNextRepayPftDate());
+		int i = datesMap.get(formatDate(finMain.getNextRepayPftDate()));
 		FinanceScheduleDetail curSchd = null;
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
-			curSchd = finSchdDetails.get(i);
+			curSchd = finSchdDetails.get(j);
 			if (curSchd.getSchDate().compareTo(finMain.getNextRepayPftDate()) <= 0) {
 				continue;
 			}
@@ -315,11 +315,11 @@ public class DateRollOverService extends ServiceHelper {
 			}
 		}
 
-		int i = datesMap.get(finMain.getNextRepayRvwDate());
+		int i = datesMap.get(formatDate(finMain.getNextRepayRvwDate()));
 		FinanceScheduleDetail curSchd = null;
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
-			curSchd = finSchdDetails.get(i);
+			curSchd = finSchdDetails.get(j);
 			if (curSchd.getSchDate().compareTo(finMain.getNextRepayRvwDate()) <= 0) {
 				continue;
 			}
@@ -328,7 +328,6 @@ public class DateRollOverService extends ServiceHelper {
 				finMain.setLastRepayRvwDate(finMain.getNextRepayRvwDate());
 				finMain.setNextRepayRvwDate(curSchd.getSchDate());
 				finEODEvent.setUpdFinMain(true);
-				;
 				return;
 			}
 		}
@@ -338,7 +337,7 @@ public class DateRollOverService extends ServiceHelper {
 
 	public List<FinEODEvent> prepareFinEODEvents(long custId, Date date) throws Exception {
 
-		List<FinanceMain> custFinMains = getFinanceMainDAO().getFinanceMainsByCustId(custId);
+		List<FinanceMain> custFinMains = getFinanceMainDAO().getFinanceMainsByCustId(custId, true);
 		List<FinEODEvent> custEODEvents = new ArrayList<FinEODEvent>();
 
 		for (int i = 0; i < custFinMains.size(); i++) {

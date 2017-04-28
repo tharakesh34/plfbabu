@@ -2726,7 +2726,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 	 * Method for get the Finance Details and FinanceShedule Details
 	 */
 	@Override
-	public List<FinanceMain> getFinanceMainsByCustId(long custId) {
+	public List<FinanceMain> getFinanceMainsByCustId(long custId, boolean isActive) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -2749,13 +2749,17 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		selectSql.append(" TDSApplicable, FeeChargeAmt, InsuranceAmt, AlwBPI , BpiTreatment , PlanEMIHAlw ,");
 		selectSql.append(" PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax, PlanEMIHLockPeriod, PlanEMICpz, ");
 		selectSql.append(" CalRoundingMode, BpiAmount, DeductFeeDisb, RvwRateApplFor, SchCalOnRvw, ");
-		selectSql.append(" PastduePftCalMthd, DroppingMethod, RateChgAnyDay, PastduePftMargin, FinRepayMethod ");
+		selectSql.append(" PastduePftCalMthd, DroppingMethod, RateChgAnyDay, PastduePftMargin, FinRepayMethod, ");
 		selectSql.append(" MigratedFinance, ScheduleMaintained, ScheduleRegenerated, MandateID, ");
 		selectSql.append(" FinStatus, FinStsReason, BankName, Iban, AccountType, DdaReferenceNo, ");
 		selectSql.append(" DroplineFrq, FirstDroplineDate, PftServicingODLimit, ");
 		selectSql.append(" UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, PromotionCode,  ");
 		selectSql.append("  MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH  ");
 		selectSql.append(" FROM FinanceMain Where CustID=:CustID ");
+		
+		if (isActive) {
+			selectSql.append(" and FinIsActive = 1");
+		}
 
 		source.addValue("CustID", custId);
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);

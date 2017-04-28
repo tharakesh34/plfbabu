@@ -196,7 +196,8 @@ public class RateReviewService extends ServiceHelper {
 		finMain.setEventToDate(finEODEvent.getEventToDate());
 		finMain.setRecalFromDate(finEODEvent.getRecalFromDate());
 		finMain.setRecalToDate(finEODEvent.getRecalToDate());
-		finMain.setRecalSchdMethod(finEODEvent.getRecalType());
+		finMain.setRecalSchdMethod(finEODEvent.getRecalSchdMethod());
+		finMain.setRecalType(finEODEvent.getRecalType());
 
 		// Finance Profit Details
 		FinanceProfitDetail profitDetail = finEODEvent.getFinProfitDetail();
