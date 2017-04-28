@@ -16,4 +16,10 @@
 		<renameColumn columnDataType="varchar2(15)" newColumnName="CostCenterID"
 			oldColumnName="CrossCentre" tableName="AdtPartnerBanks" />
 	</changeSet>
+	<changeSet author="Kesav" id="03">
+		<addColumn tableName="AdtAccountMapping">
+			<column name="ProfitCenterID" type="bigint"/>
+			<column name="CostCenterID" type="bigint"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
