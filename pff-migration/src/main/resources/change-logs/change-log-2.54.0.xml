@@ -94,5 +94,12 @@
 			<column name="CostCenterID" type="bigint"/>
 		</addColumn>
 	</changeSet>
-	
+	<changeSet id="16" author="Srikanth">
+		<sql>
+		Delete From ErrorDetails where ErrorCode in('90103','90263'); 
+		INSERT INTO ErrorDetails VALUES('90103','EN','E','Invalid guarantor customer with cif {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		INSERT INTO ErrorDetails VALUES('90263','EN','E','Partner bankId should be match with configured LoanType and disbursement type.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		INSERT INTO ErrorDetails VALUES('90264','EN','E','{0} should be equal to configured value in Loantype i.e {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
