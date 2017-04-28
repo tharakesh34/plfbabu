@@ -74,4 +74,10 @@
 			WHERE     	NOT EXISTS (SELECT 1 FROM PartnerBanks_TEMP WHERE PartnerBankId = T1.PartnerBankId)						
 		</createView>
 	</changeSet>
+	<changeSet author="Durga Prasad D" id="08">
+		<sql>
+		INSERT INTO ErrorDetails VALUES('90268','EN','E','{0} should be equal to {1} for feeCode:{2}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		INSERT INTO ErrorDetails VALUES('90269','EN','E','{0} is not applicable for feeCode:{1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
