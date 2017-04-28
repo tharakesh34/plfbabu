@@ -256,18 +256,18 @@
 							</row>
 							<row>
 							<label
-								id="label_PartnerBankDialog_ProfitCentre"
-								value="${c:l('label_PartnerBankDialog_ProfitCentre.value')}" />
+								id="label_PartnerBankDialog_ProfitCenter"
+								value="${c:l('label_PartnerBankDialog_ProfitCenter.value')}" />
 							<hlayout>
 								<space spacing="2px" />
-								<textbox id="profitCenter" maxlength="15" width="100"/>
+								<textbox id="profitCenterID" maxlength="15" width="100"/>
 							</hlayout>
 							<label
-								id="label_PartnerBankDialog_CrossCentre"
-								value="${c:l('label_PartnerBankDialog_CrossCentre.value')}" />
+								id="label_PartnerBankDialog_CostCenter"
+								value="${c:l('label_PartnerBankDialog_CostCenter.value')}" />
 							<hlayout>
 								<space spacing="2px" />
-								<textbox id="crossCentre" maxlength="15" width="100"/>
+								<textbox id="costCenterID" maxlength="15" width="100"/>
 							</hlayout>
 							
 							</row>

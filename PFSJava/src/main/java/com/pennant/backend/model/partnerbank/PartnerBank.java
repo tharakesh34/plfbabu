@@ -88,8 +88,8 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 	private PartnerBank			befImage;
 	private LoggedInUser		userDetails;
 	private String				hostGLCode;
-	private String				profitCentre;
-	private String				crossCentre;
+	private String				profitCenterID;
+	private String				costCenterID;
 	
 	private List<PartnerBankModes>partnerBankModesList = new ArrayList<PartnerBankModes>();
 	private List<PartnerBranchModes>partnerBranchModesList = new ArrayList<PartnerBranchModes>();
@@ -342,22 +342,6 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 		this.hostGLCode = hostGLCode;
 	}
 
-	public String getProfitCentre() {
-		return profitCentre;
-	}
-
-	public void setProfitCentre(String profitCentre) {
-		this.profitCentre = profitCentre;
-	}
-
-	public String getCrossCentre() {
-		return crossCentre;
-	}
-
-	public void setCrossCentre(String crossCentre) {
-		this.crossCentre = crossCentre;
-	}
-
 	public List<PartnerBranchModes> getPartnerBranchModesList() {
 		return partnerBranchModesList;
 	}
@@ -365,5 +349,23 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 	public void setPartnerBranchModesList(List<PartnerBranchModes> partnerBranchModesList) {
 		this.partnerBranchModesList = partnerBranchModesList;
 	}
+
+	public String getProfitCenterID() {
+		return profitCenterID;
+	}
+
+	public void setProfitCenterID(String profitCenterID) {
+		this.profitCenterID = profitCenterID;
+	}
+
+	public String getCostCenterID() {
+		return costCenterID;
+	}
+
+	public void setCostCenterID(String costCenterID) {
+		this.costCenterID = costCenterID;
+	}
+
+
 
 }

@@ -134,8 +134,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	protected Checkbox						alwReceipts;
 	protected Label							label_PartnerBankDialog_ModeReceipts;
 	protected Textbox						sapGLCode;
-	protected Textbox						profitCenter;
-	protected Textbox 						crossCentre;
+	protected Textbox						profitCenterID;
+	protected Textbox 						costCenterID;
 	protected Row							AlwBranchCode;
 	protected Textbox						alwBankBranchCode;
 	protected Button						btnSearchBranchCode;
@@ -380,8 +380,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.inFavourLength.setValue(aPartnerBank.getInFavourLength());
 		this.active.setChecked(aPartnerBank.isActive());
 		this.sapGLCode.setValue(aPartnerBank.getHostGLCode());
-		this.profitCenter.setValue(aPartnerBank.getProfitCentre());
-		this.crossCentre.setValue(aPartnerBank.getCrossCentre());
+		this.profitCenterID.setValue(aPartnerBank.getProfitCenterID());
+		this.costCenterID.setValue(aPartnerBank.getCostCenterID());
 		
 		this.alwDisburment.setChecked(aPartnerBank.isAlwDisb());
 		if (this.alwDisburment.isChecked()) {
@@ -558,18 +558,17 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		
 		//Profit Centre
 		try {
-			aPartnerBank.setProfitCentre(this.profitCenter.getValue());
+			aPartnerBank.setProfitCenterID(this.profitCenterID.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		
 		//Cross Centre
 		try {
-			aPartnerBank.setCrossCentre(this.crossCentre.getValue());
+			aPartnerBank.setCostCenterID(this.costCenterID.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
 
 		//Active
 		try {
@@ -768,16 +767,16 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		}
 		
 		//Profit Centre
-		if (!this.profitCenter.isDisabled()) {
-			this.profitCenter.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_PartnerBankDialog_ProfitCentre.value"), PennantRegularExpressions.REGEX_ALPHANUM,
+		if (!this.profitCenterID.isDisabled()) {
+			this.profitCenterID.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_PartnerBankDialog_ProfitCenter.value"), PennantRegularExpressions.REGEX_ALPHANUM,
 					false));
 		}
 		
 		//Profit Centre
-		if (!this.crossCentre.isReadonly()) {
-			this.crossCentre.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_PartnerBankDialog_CrossCentre.value"), PennantRegularExpressions.REGEX_ALPHANUM,
+		if (!this.costCenterID.isReadonly()) {
+			this.costCenterID.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_PartnerBankDialog_CostCenter.value"), PennantRegularExpressions.REGEX_ALPHANUM,
 					false));
 		}
 		
@@ -810,8 +809,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.modeReceipts.setConstraint("");
 		this.modePayments.setConstraint("");
 		this.sapGLCode.setConstraint("");
-		this.profitCenter.setConstraint("");
-		this.crossCentre.setConstraint("");
+		this.profitCenterID.setConstraint("");
+		this.costCenterID.setConstraint("");
 		this.alwBankBranchCode.setConstraint("");
 		logger.debug("Leaving");
 	}
@@ -850,8 +849,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.modePayments.setErrorMessage("");
 		this.modeReceipts.setErrorMessage("");
 		this.sapGLCode.setErrorMessage("");
-		this.profitCenter.setErrorMessage("");
-		this.crossCentre.setErrorMessage("");
+		this.profitCenterID.setErrorMessage("");
+		this.costCenterID.setErrorMessage("");
 		this.alwBankBranchCode.setErrorMessage("");
 		logger.debug("Leaving");
 	}
@@ -1018,8 +1017,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.btnSearchModeReceipts.setDisabled(isReadOnly("button_PartnerBankDialog_ModeReceipts"));
 		this.btnSearchBranchCode.setDisabled(isReadOnly("button_PartnerBankDialog_BranchCode"));
 		this.sapGLCode.setReadonly(isReadOnly("PartnerBankDialog_HostGLCode"));
-		this.profitCenter.setReadonly(isReadOnly("PartnerBankDialog_ProfitCenter"));
-		this.crossCentre.setReadonly(isReadOnly("PartnerBankDialog_CrossCentre"));
+		this.profitCenterID.setReadonly(isReadOnly("PartnerBankDialog_ProfitCenter"));
+		this.costCenterID.setReadonly(isReadOnly("PartnerBankDialog_CrossCentre"));
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -1110,8 +1109,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.modePayments.setValue("");
 		this.modeReceipts.setValue("");
 		this.sapGLCode.setValue("");
-		this.profitCenter.setValue("");
-		this.crossCentre.setValue("");
+		this.profitCenterID.setValue("");
+		this.costCenterID.setValue("");
 		logger.debug("Leaving");
 	}
 
