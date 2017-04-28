@@ -112,9 +112,7 @@
 	</bean>
 	<!-- Rate review -->
 	<bean id="rateReviewService" class="com.pennant.app.core.RateReviewService" parent="serviceHelper">
-		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
-		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
 		<property name="financeRateReviewDAO" ref="financeRateReviewDAO" />
 	</bean>
 	<!-- Date Service -->
