@@ -42,7 +42,6 @@
 */
 package com.pennant.backend.service.systemmasters.impl;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -57,6 +56,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.CityService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>City</b>.<br>
@@ -109,16 +109,16 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering ");
 		
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tableType="";
-		City city = (City) auditHeader.getAuditDetail().getModelData();
 		
+		City city = (City) auditHeader.getAuditDetail().getModelData();
+		TableType tableType = TableType.MAIN_TAB;
 		if (city.isWorkflow()) {
-			tableType="_Temp";
+			tableType=TableType.TEMP_TAB;
 		}
 
 		if (city.isNew()) {
@@ -153,14 +153,14 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering ");
 
-		auditHeader = businessValidation(auditHeader,"delete");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		City city = (City) auditHeader.getAuditDetail().getModelData();
-		getCityDAO().delete(city,"");
+		getCityDAO().delete(city, TableType.MAIN_TAB);
 		
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving ");
@@ -211,7 +211,7 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 		logger.debug("Entering ");
 
 		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -219,11 +219,17 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 
 		City city = new City();
 		BeanUtils.copyProperties((City) auditHeader.getAuditDetail().getModelData(), city);
-
+		
+		getCityDAO().delete(city, TableType.TEMP_TAB);
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(city.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(cityDAO.getCityById(city.getPCCountry(),
+					city.getPCProvince(), city.getPCCity(), ""));
+		}
+		
 		if (city.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getCityDAO().delete(city, "");
+			getCityDAO().delete(city, TableType.MAIN_TAB);
 
 		} else {
 			city.setRoleCode("");
@@ -235,15 +241,15 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 			if (city.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				city.setRecordType("");
-				getCityDAO().save(city, "");
+				getCityDAO().save(city, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				city.setRecordType("");
-				getCityDAO().update(city, "");
+				getCityDAO().update(city, TableType.MAIN_TAB);
 			}
 		}
 
-		getCityDAO().delete(city, "_Temp");
+	
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -271,7 +277,7 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	public AuditHeader  doReject(AuditHeader auditHeader) {
 		logger.debug("Entering ");
 		
-		auditHeader = businessValidation(auditHeader,"doReject");
+		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()){
 			logger.debug("Leaving");
 			return auditHeader;
@@ -279,7 +285,7 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 
 		City city= (City) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getCityDAO().delete(city,"_Temp");
+		getCityDAO().delete(city, TableType.TEMP_TAB);
 		
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving ");
@@ -296,11 +302,10 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
-	private AuditHeader businessValidation(AuditHeader auditHeader,
-			String method) {
+	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(),
-				auditHeader.getUsrLanguage(), method);
+				auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader=nextProcess(auditHeader);
@@ -308,104 +313,41 @@ public class CityServiceImpl extends GenericService<City> implements CityService
 		return auditHeader;
 	}
 
+	
+	
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getCityDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getAcademicDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
-	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage,
-			String method) {
-		logger.debug("Entering ");
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		logger.debug("Entering");
+
+		// Get the model object.
 		City city = (City) auditDetail.getModelData();
-		City tempCity = null;
-		if (city.isWorkflow()) {
-			tempCity = getCityDAO().getCityById(city.getPCCountry(),
-					city.getPCProvince(), city.getPCCity(), "_Temp");
+
+		// Check the unique keys.
+		if (city.isNew()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(city.getRecordType())
+				&& cityDAO.isDuplicateKey(city.getPCCountry(), city.getPCProvince(), city.getPCCity(),
+						city.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[3];
+
+			parameters[0]=PennantJavaUtil.getLabel("label_PCCountry")+":"+city.getPCCountry();
+			parameters[1]=PennantJavaUtil.getLabel("label_PCProvince")+":"+city.getPCProvince();
+			parameters[2]=PennantJavaUtil.getLabel("label_PCCity")+":"+city.getPCCity();
+
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41008", parameters, null));
 		}
-		City befCity = getCityDAO().getCityById(city.getPCCountry(),
-				city.getPCProvince(), city.getPCCity(), "");
 
-		City oldCity = city.getBefImage();
-
-		String[] valueParm = new String[3];
-		String[] errParm= new String[3];
-
-		valueParm[0] = city.getPCCountry();
-		valueParm[1] = city.getPCProvince();
-		valueParm[2] = city.getPCCity();
-		
-		errParm[0]=PennantJavaUtil.getLabel("label_PCCountry")+":"+valueParm[0];
-		errParm[1]=PennantJavaUtil.getLabel("label_PCProvince")+":"+valueParm[1];
-		errParm[2]=PennantJavaUtil.getLabel("label_PCCity")+":"+valueParm[2];
-
-		if (city.isNew()) { // for New record or new record into work flow
-
-			if (!city.isWorkflow()) {// With out Work flow only new records
-				if (befCity != null) { // Record Already Exists in the table 
-										// then error
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41008",errParm,null));
-				}
-			} else { // with work flow
-				if (city.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-					if (befCity != null || tempCity != null) { // if records already exists in the main table
-						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41008", errParm, null));
-					}
-				} else {
-					if (befCity == null || tempCity != null) {
-						auditDetail
-								.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!city.isWorkflow()) { // With out Work flow for update and delete
-
-				if (befCity == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41002",errParm,null));
-				}else{
-
-					if (oldCity != null
-							&& !oldCity.getLastMntOn().equals(
-									befCity.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41003",errParm,null));
-						} else {
-							auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41004",errParm,null));
-						}
-					}
-				}
-
-			} else {
-
-				if (tempCity == null) { // if records not exists in the WorkFlow table
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
-				}
-
-				if (tempCity != null && oldCity != null
-						&& !oldCity.getLastMntOn().equals(
-								tempCity.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",errParm,null));
-				}
-
-			}
-		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !city.isWorkflow()) {
-			auditDetail.setBefImage(befCity);
-		}
-		logger.debug("Leaving ");
+		logger.debug("Leaving");
 		return auditDetail;
 	}
-
+	
 }

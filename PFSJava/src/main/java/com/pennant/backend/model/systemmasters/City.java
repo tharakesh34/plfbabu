@@ -43,6 +43,8 @@
 
 package com.pennant.backend.model.systemmasters;
 
+import java.sql.Timestamp;
+
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
@@ -66,7 +68,8 @@ public class City extends AbstractWorkflowEntity {
 	private String lovValue;
 	private City befImage;
 	private LoggedInUser userDetails;
-
+	private boolean cityIsActive;
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -176,5 +179,15 @@ public class City extends AbstractWorkflowEntity {
 	public void setBankRefNo(String bankRefNo) {
 		this.bankRefNo = bankRefNo;
 	}
+	public boolean isCityIsActive() {
+		return cityIsActive;
+	}
 
+	public void setCityIsActive(boolean cityIsActive) {
+		this.cityIsActive = cityIsActive;
+	}
+
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
+	}
 }
