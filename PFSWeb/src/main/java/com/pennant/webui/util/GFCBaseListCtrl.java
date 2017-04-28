@@ -139,9 +139,9 @@ public class GFCBaseListCtrl<T> extends AbstractListController<T> {
 
 				} else if ("DataEngine".equals(module)) {
 					BankBranch details = (BankBranch) dataObject;
-					if (details != null);
+					if (details != null){
 					searchField.setValue(details.getBranchCode());
-
+					}
 				}
 			}
 		}
