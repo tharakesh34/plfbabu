@@ -97,7 +97,7 @@ public class EmploymentTypeDAOImpl extends BasisCodeDAO<EmploymentType>
 		EmploymentType employmentType = new EmploymentType();
 		employmentType.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("Select EmpType, EmpTypeDesc," );
+		StringBuilder selectSql = new StringBuilder("Select EmpType, EmpTypeDesc, EmpTypeIsActive," );
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From RMTEmpTypes" );
@@ -165,10 +165,10 @@ public class EmploymentTypeDAOImpl extends BasisCodeDAO<EmploymentType>
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into RMTEmpTypes");
 		sql.append(tableType.getSuffix());
-		sql.append(" (EmpType, EmpTypeDesc,");
+		sql.append(" (EmpType, EmpTypeDesc, EmpTypeIsActive,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(:EmpType, :EmpTypeDesc,");
+		sql.append(" values(:EmpType, :EmpTypeDesc, :EmpTypeIsActive,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -193,7 +193,7 @@ public class EmploymentTypeDAOImpl extends BasisCodeDAO<EmploymentType>
 		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql = new StringBuilder("update RMTEmpTypes");
 		sql.append(tableType.getSuffix());
-		sql.append(" set EmpTypeDesc = :EmpTypeDesc,");
+		sql.append(" set EmpTypeDesc = :EmpTypeDesc, EmpTypeIsActive = :EmpTypeIsActive,");
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");

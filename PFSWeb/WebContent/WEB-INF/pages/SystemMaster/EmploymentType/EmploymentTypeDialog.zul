@@ -93,6 +93,16 @@
 										maxlength="50" width="450px" />
 								</hbox>
 							</row>
+							<row>
+								<label
+									id="label_EmploymentTypeDialog_EmpTypeIsActive"
+									value="${c:l('label_EmploymentTypeDialog_EmpTypeIsActive.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="empTypeIsActive"
+										checked="false" />
+								</hbox>
+							</row>
 						</rows>
 					</grid>
 				</groupbox>

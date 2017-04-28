@@ -53,6 +53,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -88,7 +89,8 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 	protected Window  		window_EmploymentTypeDialog;
 
 	protected Uppercasebox	empType; 					
-	protected Textbox 		empTypeDesc; 				
+	protected Textbox 		empTypeDesc; 		
+	protected Checkbox empTypeIsActive; 			// autoWired
 
 	// not auto wired Var's
 	private EmploymentType employmentType; // overHanded per parameter
@@ -306,6 +308,12 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 		this.empType.setValue(aEmploymentType.getEmpType());
 		this.empTypeDesc.setValue(aEmploymentType.getEmpTypeDesc());
 		this.recordStatus.setValue(aEmploymentType.getRecordStatus());
+		this.empTypeIsActive.setChecked(aEmploymentType.isEmpTypeIsActive());
+		
+		if(aEmploymentType.isNew() || (aEmploymentType.getRecordType() != null ? aEmploymentType.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+			this.empTypeIsActive.setChecked(true);
+			this.empTypeIsActive.setDisabled(true);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -327,6 +335,11 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 		}
 		try {
 			aEmploymentType.setEmpTypeDesc(this.empTypeDesc.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aEmploymentType.setEmpTypeIsActive(this.empTypeIsActive.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -519,6 +532,8 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 		}
 		this.empTypeDesc
 				.setReadonly(isReadOnly("EmploymentTypeDialog_empTypeDesc"));
+		this.empTypeIsActive.setDisabled(isReadOnly("EmploymentTypeDialog_EmpTypeIsActive"));
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -544,6 +559,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 		logger.debug("Entering");
 		this.empType.setReadonly(true);
 		this.empTypeDesc.setReadonly(true);
+		this.empTypeIsActive.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -566,6 +582,7 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 		// remove validation, if there are a save before
 		this.empType.setValue("");
 		this.empTypeDesc.setValue("");
+		this.empTypeIsActive.setChecked(false);
 		logger.debug("Leaving");
 	}
 

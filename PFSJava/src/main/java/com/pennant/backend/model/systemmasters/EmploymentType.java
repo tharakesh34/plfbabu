@@ -62,7 +62,8 @@ public class EmploymentType extends AbstractWorkflowEntity {
 	private String lovValue;
 	private EmploymentType befImage;
 	private LoggedInUser userDetails;
-
+	private boolean empTypeIsActive;
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -128,6 +129,14 @@ public class EmploymentType extends AbstractWorkflowEntity {
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
+	public boolean isEmpTypeIsActive() {
+		return empTypeIsActive;
+	}
+
+	public void setEmpTypeIsActive(boolean empTypeIsActive) {
+		this.empTypeIsActive = empTypeIsActive;
+	}
+	
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
