@@ -106,6 +106,14 @@
 		</sql>
 	</changeSet>
 	
+	 <changeSet id="55.1" author="Siva">
+    	<sql>
+			DELETE FROM FinRepayScheduleDetail_Temp;
+			DELETE FROM FinRepayScheduleDetail;
+			DELETE FROM FinRepayHeader_Temp;
+			DELETE FROM FinRepayHeader;
+    	</sql>
+	</changeSet>
 	 <changeSet id="56" author="Siva">
     	<addPrimaryKey 
             columnNames="REPAYID, RECEIPTSEQID"

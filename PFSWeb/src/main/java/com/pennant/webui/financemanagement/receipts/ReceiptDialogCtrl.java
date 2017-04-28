@@ -284,6 +284,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Decimalbox									payment_paidByCustomer;
 
 	// List Header Details on payent Details
+	protected Listheader									listheader_LatePft;
+	protected Listheader									listheader_Refund;
+	protected Listheader									listheader_Penalty;
 	protected Listheader									listheader_InsPayment;
 	protected Listheader									listheader_SchdFee;
 	protected Listheader									listheader_SuplRent;
@@ -883,7 +886,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// Do readonly to all components
 		doReadonly();
 		
-		this.repaymentDetailsTab.setSelected(true);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -1081,7 +1083,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		receiptData.setFinanceDetail(getFinanceDetail());
 		setReceiptData(getReceiptCalculator().initiateReceipt(receiptData, schData, tempReceiptPurpose));
 
-		doFillAllocationDetail(null, null, false);
+		doFillAllocationDetail(null, paidAllocationMap, false);
 		
 		// Allocation Process start
 		BigDecimal totReceiptAmount = getTotalReceiptAmount();
@@ -1568,7 +1570,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		for (int i = 0; i < receiptDetailList.size(); i++) {
 			List<FinRepayHeader> repayHeaderList = receiptDetailList.get(i).getRepayHeaders();
 			for (int j = 0; j < repayHeaderList.size(); j++) {
-				rpySchdList.addAll(repayHeaderList.get(j).getRepayScheduleDetails());
+				if(repayHeaderList.get(j).getRepayScheduleDetails() != null){
+					rpySchdList.addAll(repayHeaderList.get(j).getRepayScheduleDetails());
+				}
 			}
 		}
 		
@@ -1597,6 +1601,13 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		
 		doFillRepaySchedules(sortRpySchdDetails(new ArrayList<>(rpySchdMap.values())));
+		if(rpySchdMap.isEmpty()){
+			this.repaymentDetailsTab.setVisible(false);
+			this.receiptDetailsTab.setSelected(true);
+		}else{
+			this.repaymentDetailsTab.setVisible(true);
+			this.repaymentDetailsTab.setSelected(true);
+		}
 		
 		this.btnReceipt.setDisabled(!getUserWorkspace().isAllowed("button_ReceiptDialog_btnReceipt"));
 		this.btnChangeReceipt.setDisabled(!getUserWorkspace().isAllowed("button_ReceiptDialog_btnChangeReceipt"));
@@ -1677,6 +1688,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 
+		if(this.excessAdjustTo.getSelectedIndex() > 0){
+			readOnlyComponent(isReadOnly("ReceiptDialog_excessAdjustTo"), this.excessAdjustTo);
+		}else{
+			readOnlyComponent(true, this.excessAdjustTo);
+		}
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -3323,6 +3339,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		BigDecimal totalRefund = BigDecimal.ZERO;
 		BigDecimal totalWaived = BigDecimal.ZERO;
 		BigDecimal totalPft = BigDecimal.ZERO;
+		BigDecimal totalLatePft = BigDecimal.ZERO;
 		BigDecimal totalPri = BigDecimal.ZERO;
 		BigDecimal totalCharge = BigDecimal.ZERO;
 
@@ -3352,6 +3369,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				lc.setParent(item);
 				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getProfitSchdPayNow(), finFormatter));
 				totalPft = totalPft.add(repaySchd.getProfitSchdPayNow());
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getLatePftSchdPayNow(), finFormatter));
+				totalLatePft = totalLatePft.add(repaySchd.getLatePftSchdPayNow());
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getPrincipalSchdPayNow(), finFormatter));
@@ -3427,6 +3448,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			paymentMap.put("totalRefund", totalRefund);
 			paymentMap.put("totalCharge", totalCharge);
 			paymentMap.put("totalPft", totalPft);
+			paymentMap.put("totalLatePft", totalRefund);
 			paymentMap.put("totalPri", totalPri);
 
 			paymentMap.put("insPaid", totInsPaid);
@@ -3456,39 +3478,67 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		item = new Listitem();
 		lc = new Listcell(Labels.getLabel("listcell_summary.label"));
 		lc.setStyle("font-weight:bold;background-color: #C0EBDF;");
-		lc.setSpan(16);
+		lc.setSpan(15);
 		lc.setParent(item);
 		this.listBoxPayment.appendChild(item);
 
 		BigDecimal totalSchAmount = BigDecimal.ZERO;
 
-		fillListItem(Labels.getLabel("listcell_totalRefund.label"), paymentMap.get("totalRefund"));
-		fillListItem(Labels.getLabel("listcell_totalPenalty.label"), paymentMap.get("totalCharge"));
-		fillListItem(Labels.getLabel("listcell_totalPftPayNow.label"), paymentMap.get("totalPft"));
-		fillListItem(Labels.getLabel("listcell_totalPriPayNow.label"), paymentMap.get("totalPri"));
-
-		totalSchAmount = totalSchAmount.add(paymentMap.get("totalPft"));
-		totalSchAmount = totalSchAmount.add(paymentMap.get("totalPri"));
+		if (paymentMap.get("totalRefund").compareTo(BigDecimal.ZERO) > 0) {
+			this.listheader_Refund.setVisible(true);
+			fillListItem(Labels.getLabel("listcell_totalRefund.label"), paymentMap.get("totalRefund"));
+		}else{
+			this.listheader_Refund.setVisible(false);
+		}
+		if (paymentMap.get("totalCharge").compareTo(BigDecimal.ZERO) > 0) {
+			this.listheader_Penalty.setVisible(true);
+			fillListItem(Labels.getLabel("listcell_totalPenalty.label"), paymentMap.get("totalCharge"));
+		}else{
+			this.listheader_Penalty.setVisible(false);
+		}
+		if (paymentMap.get("totalPft").compareTo(BigDecimal.ZERO) > 0) {
+			totalSchAmount = totalSchAmount.add(paymentMap.get("totalPft"));
+			fillListItem(Labels.getLabel("listcell_totalPftPayNow.label"), paymentMap.get("totalPft"));
+		}
+		if (paymentMap.get("totalLatePft").compareTo(BigDecimal.ZERO) > 0) {
+			totalSchAmount = totalSchAmount.add(paymentMap.get("totalLatePft"));
+			this.listheader_LatePft.setVisible(true);
+			fillListItem(Labels.getLabel("listcell_totalLatePftPayNow.label"), paymentMap.get("totalLatePft"));
+		}else{
+			this.listheader_LatePft.setVisible(false);
+		}
+		if (paymentMap.get("totalPri").compareTo(BigDecimal.ZERO) > 0) {
+			totalSchAmount = totalSchAmount.add(paymentMap.get("totalPri"));
+			fillListItem(Labels.getLabel("listcell_totalPriPayNow.label"), paymentMap.get("totalPri"));
+		}
 
 		if (paymentMap.get("insPaid").compareTo(BigDecimal.ZERO) > 0) {
 			totalSchAmount = totalSchAmount.add(paymentMap.get("insPaid"));
 			this.listheader_InsPayment.setVisible(true);
 			fillListItem(Labels.getLabel("listcell_insFeePayNow.label"), paymentMap.get("insPaid"));
+		}else{
+			this.listheader_InsPayment.setVisible(false);
 		}
 		if (paymentMap.get("schdFeePaid").compareTo(BigDecimal.ZERO) > 0) {
 			totalSchAmount = totalSchAmount.add(paymentMap.get("schdFeePaid"));
 			this.listheader_SchdFee.setVisible(true);
 			fillListItem(Labels.getLabel("listcell_schdFeePayNow.label"), paymentMap.get("schdFeePaid"));
+		}else{
+			this.listheader_SchdFee.setVisible(false);
 		}
 		if (paymentMap.get("schdSuplRentPaid").compareTo(BigDecimal.ZERO) > 0) {
 			totalSchAmount = totalSchAmount.add(paymentMap.get("schdSuplRentPaid"));
 			this.listheader_SuplRent.setVisible(true);
 			fillListItem(Labels.getLabel("listcell_schdSuplRentPayNow.label"), paymentMap.get("schdSuplRentPaid"));
+		}else{
+			this.listheader_SuplRent.setVisible(false);
 		}
 		if (paymentMap.get("schdIncrCostPaid").compareTo(BigDecimal.ZERO) > 0) {
 			totalSchAmount = totalSchAmount.add(paymentMap.get("schdIncrCostPaid"));
 			this.listheader_IncrCost.setVisible(true);
 			fillListItem(Labels.getLabel("listcell_schdIncrCostPayNow.label"), paymentMap.get("schdIncrCostPaid"));
+		}else{
+			this.listheader_IncrCost.setVisible(false);
 		}
 
 		fillListItem(Labels.getLabel("listcell_totalSchAmount.label"), totalSchAmount);

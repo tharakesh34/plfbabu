@@ -781,67 +781,56 @@
 										</row>
 									</rows>
 								</grid>
-								<grid sclass="GridLayoutNoBorder"
-									fixedLayout="true" style="border:0px" width="100%">
-									<columns>
-										<column />
-										<column />
-									</columns>
-									<rows>
-										<row>
-											<groupbox style="align:top" closable="false">
-												<caption
-													label="${c:l('label_ReceiptDialog_PastduePayments')}" />
-												<listbox
-													id="listBoxPastdues" fixedLayout="true"
-													sizedByContent="true" span="true"
-													emptyMessage="${c:l('listbox.emptyMessage')}" width="99.8%"
-													height="100%" multiple="false">
-													<listhead
-														sizable="false" style="padding:0px;position:relative;">
-														<listheader
-															label="${c:l('listheader_ReceiptDialog_AmountRelatedTo.label')}"
-															sort="false" width="40%" />
-														<listheader
-															label="${c:l('listheader_ReceiptDialog_DueAmount.label')}"
-															align="right" sort="false" width="20%" />
-														<listheader
-															label="${c:l('listheader_ReceiptDialog_AmountPaidNow.label')}"
-															align="right" sort="false" width="20%" />
-														<listheader
-															label="${c:l('listheader_ReceiptDialog_AmountWaivedNow.label')}"
-															align="right" sort="false" width="20%" />
-													</listhead>
-												</listbox>
-											</groupbox>
-											<groupbox style="align:top"  closable="false">
-												<caption
-													label="${c:l('label_ReceiptDialog_ManualAdvise')}" />
-												<listbox
-													id="listBoxManualAdvises" fixedLayout="true"
-													sizedByContent="true" span="true"
-													emptyMessage="${c:l('listbox.emptyMessage')}" width="99.8%"
-													height="100%" multiple="false">
-													<listhead
-														sizable="false" style="padding:0px;position:relative;">
-														<listheader
-															label="${c:l('listheader_ReceiptDialog_AmountRelatedTo.label')}"
-															sort="false" width="40%" />
-														<listheader
-															label="${c:l('listheader_ReceiptDialog_DueAmount.label')}"
-															align="right" sort="false" width="20%" />
-														<listheader
-															label="${c:l('listheader_ReceiptDialog_AmountPaidNow.label')}"
-															align="right" sort="false" width="20%" />
-														<listheader
-															label="${c:l('listheader_ReceiptDialog_AmountWaivedNow.label')}"
-															align="right" sort="false" width="20%" />
-													</listhead>
-												</listbox>
-											</groupbox>
-										</row>
-									</rows>
-								</grid>
+								<groupbox style="align:top"
+									closable="false">
+									<caption
+										label="${c:l('label_ReceiptDialog_PastduePayments')}" />
+									<listbox id="listBoxPastdues"
+										fixedLayout="true" sizedByContent="true" span="true"
+										emptyMessage="${c:l('listbox.emptyMessage')}" width="99.8%"
+										height="100%" multiple="false">
+										<listhead sizable="false"
+											style="padding:0px;position:relative;">
+											<listheader
+												label="${c:l('listheader_ReceiptDialog_AmountRelatedTo.label')}"
+												sort="false" width="40%" />
+											<listheader
+												label="${c:l('listheader_ReceiptDialog_DueAmount.label')}"
+												align="right" sort="false" width="20%" />
+											<listheader
+												label="${c:l('listheader_ReceiptDialog_AmountPaidNow.label')}"
+												align="right" sort="false" width="20%" />
+											<listheader
+												label="${c:l('listheader_ReceiptDialog_AmountWaivedNow.label')}"
+												align="right" sort="false" width="20%" />
+										</listhead>
+									</listbox>
+								</groupbox>
+								<groupbox style="align:top"
+									closable="false">
+									<caption
+										label="${c:l('label_ReceiptDialog_ManualAdvise')}" />
+									<listbox id="listBoxManualAdvises"
+										fixedLayout="true" sizedByContent="true" span="true"
+										emptyMessage="${c:l('listbox.emptyMessage')}" width="99.8%"
+										height="100%" multiple="false">
+										<listhead sizable="false"
+											style="padding:0px;position:relative;">
+											<listheader
+												label="${c:l('listheader_ReceiptDialog_AmountRelatedTo.label')}"
+												sort="false" width="40%" />
+											<listheader
+												label="${c:l('listheader_ReceiptDialog_DueAmount.label')}"
+												align="right" sort="false" width="20%" />
+											<listheader
+												label="${c:l('listheader_ReceiptDialog_AmountPaidNow.label')}"
+												align="right" sort="false" width="20%" />
+											<listheader
+												label="${c:l('listheader_ReceiptDialog_AmountWaivedNow.label')}"
+												align="right" sort="false" width="20%" />
+										</listhead>
+									</listbox>
+								</groupbox>
 							</groupbox>
 						</tabpanel>
 						<tabpanel style="overflow:auto">
@@ -926,7 +915,10 @@
 										<listheader
 											label="${c:l('listheader_PftPayNow.label')}" sort="false"
 											hflex="min" />
-										<listheader
+										<listheader id="listheader_LatePft" visible="false"
+											label="${c:l('listheader_LatePftPayNow.label')}" sort="false"
+											hflex="min" />
+										<listheader id="listheader_Penalty" visible="false"
 											label="${c:l('listheader_PriPayNow.label')}" sort="false"
 											hflex="min" />
 										<listheader
@@ -935,7 +927,7 @@
 										<listheader
 											label="${c:l('listheader_MaxAlwRefund.label')}" sort="false"
 											visible="false" hflex="min" />
-										<listheader
+										<listheader id="listheader_Refund" visible="false"
 											label="${c:l('listheader_RefundPft.label')}" sort="false"
 											hflex="min" />
 										<listheader
