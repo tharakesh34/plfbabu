@@ -68,6 +68,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
@@ -263,7 +264,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 
 		this.phoneNumber.setMaxlength(10);
 		
-		this.mobileNumber.setMaxlength(10);
+		this.mobileNumber.setMaxlength(LengthConstants.LEN_MOBILE);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
