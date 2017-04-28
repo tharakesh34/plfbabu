@@ -183,7 +183,7 @@ public class EodService {
 		//Accrual
 		custEODEvents = accrualService.processAccrual(custEODEvents);
 
-		//Auto disbursments
+		//Auto disbursements
 		autoDisbursementService.processDisbursementPostings(connection, custId, date);
 
 		//receipt postings
