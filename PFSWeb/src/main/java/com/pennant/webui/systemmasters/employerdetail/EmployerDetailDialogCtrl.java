@@ -55,6 +55,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Hlayout;
@@ -237,7 +238,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
     protected Textbox       bankRefNo;
 	
 	private boolean 		enqModule=false;
-
+	protected Checkbox      empIsActive; 			// autoWired
 	// not auto wired vars
 	private EmployerDetail employerDetail; // overhanded per param
 	private transient EmployerDetailListCtrl employerDetailListCtrl; // overhanded per param
@@ -541,7 +542,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 				tempReadOnly=true;	
 		}
 		
-		
+		this.empIsActive.setDisabled(true);
 		setComponentAccessType("EmployerDetailDialog_EmpIndustry", tempReadOnly, this.empIndustry, this.space_EmpIndustry, this.label_EmpIndustry, this.hlayout_EmpIndustry,null);
 		setComponentAccessType("EmployerDetailDialog_EmpName", tempReadOnly, this.empName, this.space_EmpName, this.label_EmpName, this.hlayout_EmpName,null);
 		setRowInvisible(this.row0, this.hlayout_EmpIndustry,this.hlayout_EmpName);
@@ -701,6 +702,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		this.contactPersonNo.setValue(aEmployerDetail.getContactPersonNo());
 		fillComboBox(this.empAlocationType, aEmployerDetail.getEmpAlocationType(), PennantStaticListUtil.getEmpAlocList(),"");
 		this.bankRefNo.setValue(aEmployerDetail.getBankRefNo());
+		this.empIsActive.setChecked(aEmployerDetail.isEmpIsActive());
 		
 		if (aEmployerDetail.isNewRecord()){
 			this.empIndustry.setDescription("");
@@ -712,6 +714,10 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 			this.empCountry.setDescription(aEmployerDetail.getLovDescCountryDesc());
 			this.empProvince.setDescription(aEmployerDetail.getLovDescProvinceName());
 			this.empCity.setDescription(aEmployerDetail.getLovDescCityName());
+		}
+		if(aEmployerDetail.isNew() || (aEmployerDetail.getRecordType() != null ? aEmployerDetail.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+			this.empIsActive.setChecked(true);
+			this.empIsActive.setDisabled(true);
 		}
 		this.recordStatus.setValue(aEmployerDetail.getRecordStatus());
 		sEmpCountry = this.empCountry.getValue();
@@ -880,7 +886,12 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		
+		try {
+			aEmployerDetail.setEmpIsActive(this.empIsActive.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -1196,6 +1207,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		this.empTelexCountryCode.setValue("");
 		this.bankRefNo.setValue("");
 		this.empAlocationType.setSelectedIndex(0);
+		this.empIsActive.setChecked(false);
 		logger.debug("Leaving");
 	}
 

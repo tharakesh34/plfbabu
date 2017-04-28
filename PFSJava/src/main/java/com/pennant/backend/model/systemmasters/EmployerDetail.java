@@ -85,6 +85,7 @@ public class EmployerDetail extends AbstractWorkflowEntity implements Entity {
 	private String empAlocationType;
 	private String empAlocationTypeName;
 	private String bankRefNo;
+	private boolean empIsActive;
 	
 	private boolean newRecord;
 	private String lovValue;
@@ -416,6 +417,15 @@ public class EmployerDetail extends AbstractWorkflowEntity implements Entity {
 	public void setBankRefNo(String bankRefNo) {
 		this.bankRefNo = bankRefNo;
 	}
+	
+	public boolean isEmpIsActive() {
+		return empIsActive;
+	}
+
+	public void setEmpIsActive(boolean empIsActive) {
+		this.empIsActive = empIsActive;
+	}
+	
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

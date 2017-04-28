@@ -290,6 +290,15 @@
 										<textbox id="bankRefNo"
 											width="180px" />
 									</hlayout>
+									<label id="label_EmployerDetailDialog_empIsActive"
+										value="${c:l('label_EmployerDetailDialog_empIsActive.value')}" />
+									<hlayout
+										id="hlayout_EmployerDetailDialog_empIsActive" spacing="2px">
+										<space
+											id="space_EmployerDetailDialog_empIsActive" spacing="2px" />
+										<checkbox id="empIsActive"
+										checked="false" />
+									</hlayout>
 								</row>
 							</rows>
 						</grid>
