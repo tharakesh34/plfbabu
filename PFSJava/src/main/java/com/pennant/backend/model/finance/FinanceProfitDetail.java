@@ -145,6 +145,23 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal			emiInAdvanceResv	= BigDecimal.ZERO;
 	private BigDecimal			payableAdviseResv	= BigDecimal.ZERO;
 	private String 				productCategory;
+	
+	//Newly Added Fields for SOA 
+	private BigDecimal			futureRpyPri		= BigDecimal.ZERO;
+	private BigDecimal			futureRpyPft		= BigDecimal.ZERO;
+	private BigDecimal			totChargesPaid		= BigDecimal.ZERO;
+	private BigDecimal			linkedFinRef		= BigDecimal.ZERO;
+	private BigDecimal			closedlinkedFinRef	= BigDecimal.ZERO;
+	private BigDecimal			bounceAmt			= BigDecimal.ZERO;
+	private BigDecimal			bounceAmtDue		= BigDecimal.ZERO;
+	private BigDecimal			bounceAmtPaid		= BigDecimal.ZERO;
+	private BigDecimal			upfrontFee			= BigDecimal.ZERO;
+	private BigDecimal			lastDisburseDate	= BigDecimal.ZERO;
+	private BigDecimal			receivableAdvise	= BigDecimal.ZERO;
+ 	private BigDecimal			excessAmtBal		= BigDecimal.ZERO;
+ 	private BigDecimal			emiInAdvanceBal		= BigDecimal.ZERO;
+	private BigDecimal			receivableAdviseBal = BigDecimal.ZERO;
+	private BigDecimal			payableAdviseBal	= BigDecimal.ZERO;
 
 	public FinanceProfitDetail() {
 
@@ -1144,6 +1161,126 @@ public class FinanceProfitDetail implements Serializable {
 
 	public void setProductCategory(String productCategory) {
 		this.productCategory = productCategory;
+	}
+
+	public BigDecimal getFutureRpyPri() {
+		return futureRpyPri;
+	}
+
+	public void setFutureRpyPri(BigDecimal futureRpyPri) {
+		this.futureRpyPri = futureRpyPri;
+	}
+
+	public BigDecimal getFutureRpyPft() {
+		return futureRpyPft;
+	}
+
+	public void setFutureRpyPft(BigDecimal futureRpyPft) {
+		this.futureRpyPft = futureRpyPft;
+	}
+
+	public BigDecimal getTotChargesPaid() {
+		return totChargesPaid;
+	}
+
+	public void setTotChargesPaid(BigDecimal totChargesPaid) {
+		this.totChargesPaid = totChargesPaid;
+	}
+
+	public BigDecimal getLinkedFinRef() {
+		return linkedFinRef;
+	}
+
+	public void setLinkedFinRef(BigDecimal linkedFinRef) {
+		this.linkedFinRef = linkedFinRef;
+	}
+
+	public BigDecimal getClosedlinkedFinRef() {
+		return closedlinkedFinRef;
+	}
+
+	public void setClosedlinkedFinRef(BigDecimal closedlinkedFinRef) {
+		this.closedlinkedFinRef = closedlinkedFinRef;
+	}
+
+	public BigDecimal getBounceAmt() {
+		return bounceAmt;
+	}
+
+	public void setBounceAmt(BigDecimal bounceAmt) {
+		this.bounceAmt = bounceAmt;
+	}
+
+	public BigDecimal getBounceAmtDue() {
+		return bounceAmtDue;
+	}
+
+	public void setBounceAmtDue(BigDecimal bounceAmtDue) {
+		this.bounceAmtDue = bounceAmtDue;
+	}
+
+	public BigDecimal getBounceAmtPaid() {
+		return bounceAmtPaid;
+	}
+
+	public void setBounceAmtPaid(BigDecimal bounceAmtPaid) {
+		this.bounceAmtPaid = bounceAmtPaid;
+	}
+
+	public BigDecimal getUpfrontFee() {
+		return upfrontFee;
+	}
+
+	public void setUpfrontFee(BigDecimal upfrontFee) {
+		this.upfrontFee = upfrontFee;
+	}
+
+	public BigDecimal getLastDisburseDate() {
+		return lastDisburseDate;
+	}
+
+	public void setLastDisburseDate(BigDecimal lastDisburseDate) {
+		this.lastDisburseDate = lastDisburseDate;
+	}
+
+	public BigDecimal getExcessAmtBal() {
+		return excessAmtBal;
+	}
+
+	public void setExcessAmtBal(BigDecimal excessAmtBal) {
+		this.excessAmtBal = excessAmtBal;
+	}
+
+	public BigDecimal getEmiInAdvanceBal() {
+		return emiInAdvanceBal;
+	}
+
+	public void setEmiInAdvanceBal(BigDecimal emiInAdvanceBal) {
+		this.emiInAdvanceBal = emiInAdvanceBal;
+	}
+ 
+	public BigDecimal getReceivableAdviseBal() {
+		return receivableAdviseBal;
+	}
+
+	public void setReceivableAdviseBal(BigDecimal receivableAdviseBal) {
+		this.receivableAdviseBal = receivableAdviseBal;
+	}
+
+	public BigDecimal getPayableAdviseBal() {
+		return payableAdviseBal;
+	}
+
+	public void setPayableAdviseBal(BigDecimal payableAdviseBal) {
+		this.payableAdviseBal = payableAdviseBal;
+	}
+
+	public BigDecimal getReceivableAdvise() {
+		return receivableAdvise;
+	}
+
+	public void setReceivableAdvise(BigDecimal receivableAdvise) {
+		this.receivableAdvise = receivableAdvise;
 	}
 
 }

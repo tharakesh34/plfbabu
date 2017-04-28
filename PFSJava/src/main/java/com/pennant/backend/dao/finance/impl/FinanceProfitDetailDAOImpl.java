@@ -326,8 +326,9 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		updateSql.append(" TotalPftPaidInAdv = :TotalPftPaidInAdv,");
 		updateSql.append(" ExcessAmt = :ExcessAmt, ");
 		updateSql.append(" EmiInAdvance = :EmiInAdvance, PayableAdvise = :PayableAdvise, ExcessAmtResv = :ExcessAmtResv,");
-		updateSql.append(" EmiInAdvanceResv = :EmiInAdvanceResv, PayableAdviseResv = :PayableAdviseResv,  ");
-		updateSql.append(" LastMdfDate = :LastMdfDate");
+		updateSql.append(" EmiInAdvanceResv = :EmiInAdvanceResv, PayableAdviseResv = :PayableAdviseResv,");
+		updateSql.append(" FutureRpyPri = :FutureRpyPri, FutureRpyPft = :FutureRpyPft,");
+		updateSql.append(" TotChargesPaid = :TotChargesPaid, LinkedFinRef = :linkedFinRef, closedlinkedFinRef = :closedlinkedFinRef");
 		if (isRpyProcess) {
 			updateSql
 					.append(" ,LatestRpyDate = :LatestRpyDate, LatestRpyPri =:LatestRpyPri, LatestRpyPft = :LatestRpyPft ");
@@ -347,35 +348,31 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update FinPftDetails").append(type);
-		updateSql
-				.append(" Set TotalPftSchd = :TotalPftSchd , TotalPftCpz = :TotalPftCpz , TotalPftPaid = :TotalPftPaid , TotalPftBal = :TotalPftBal , ");
-		updateSql
-				.append(" TotalPftPaidInAdv = :TotalPftPaidInAdv , TotalPriPaid = :TotalPriPaid , TotalPriBal = :TotalPriBal , TdSchdPft = :TdSchdPft , ");
-		updateSql
-				.append(" TdPftCpz = :TdPftCpz , TdSchdPftPaid = :TdSchdPftPaid , TdSchdPftBal = :TdSchdPftBal , PftAccrued = :PftAccrued , ");
+		updateSql.append(" Set TotalPftSchd = :TotalPftSchd , TotalPftCpz = :TotalPftCpz , TotalPftPaid = :TotalPftPaid , TotalPftBal = :TotalPftBal , ");
+		updateSql.append(" TotalPftPaidInAdv = :TotalPftPaidInAdv , TotalPriPaid = :TotalPriPaid , TotalPriBal = :TotalPriBal , TdSchdPft = :TdSchdPft , ");
+		updateSql.append(" TdPftCpz = :TdPftCpz , TdSchdPftPaid = :TdSchdPftPaid , TdSchdPftBal = :TdSchdPftBal , PftAccrued = :PftAccrued , ");
 		updateSql.append(" PftAccrueSusp = :PftAccrueSusp , TdSchdPri = :TdSchdPri , ");
 		updateSql.append(" TdSchdPriPaid = :TdSchdPriPaid , TdSchdPriBal = :TdSchdPriBal , PftAmz = :PftAmz , ");
 		updateSql.append(" PftAmzSusp = :PftAmzSusp , ");
-		updateSql
-				.append(" FullPaidDate = :FullPaidDate , CurReducingRate = :CurReducingRate , CurFlatRate = :CurFlatRate , TotalpriSchd = :TotalpriSchd , ");
+		updateSql.append(" FullPaidDate = :FullPaidDate , CurReducingRate = :CurReducingRate , CurFlatRate = :CurFlatRate , TotalpriSchd = :TotalpriSchd , ");
 		updateSql.append(" ODPrincipal = :ODPrincipal , ODProfit = :ODProfit , PenaltyPaid = :PenaltyPaid , ");
-		updateSql
-				.append(" PenaltyDue = :PenaltyDue , PenaltyWaived = :PenaltyWaived , NSchdDate = :NSchdDate , NSchdPri = :NSchdPri , NSchdPft = :NSchdPft , ");
+		updateSql.append(" PenaltyDue = :PenaltyDue , PenaltyWaived = :PenaltyWaived , NSchdDate = :NSchdDate , NSchdPri = :NSchdPri , NSchdPft = :NSchdPft , ");
 		updateSql.append(" NSchdPriDue = :NSchdPriDue , NSchdPftDue = :NSchdPftDue , ");
-		updateSql
-				.append(" PftInSusp = :PftInSusp , AccumulatedDepPri=:AccumulatedDepPri, DepreciatePri=:DepreciatePri, ");
-		updateSql
-				.append(" FinWorstStatus = :FinWorstStatus , NOInst = :NOInst , NOPaidInst = :NOPaidInst , NOODInst = :NOODInst ,  ");
-		updateSql
-				.append(" FirstRepayAmt = :FirstRepayAmt , FinalRepayAmt = :FinalRepayAmt ,FinIsActive=:FinIsActive, ");
-		updateSql
-				.append(" CurODDays = :CurODDays, FirstODDate =:FirstODDate , PrvODDate = :PrvODDate,  FinStatus=:FinStatus, FinStsReason =:FinStsReason, ");
+		updateSql.append(" PftInSusp = :PftInSusp , AccumulatedDepPri=:AccumulatedDepPri, DepreciatePri=:DepreciatePri, ");
+		updateSql.append(" FinWorstStatus = :FinWorstStatus , NOInst = :NOInst , NOPaidInst = :NOPaidInst , NOODInst = :NOODInst ,  ");
+		updateSql.append(" FirstRepayAmt = :FirstRepayAmt , FinalRepayAmt = :FinalRepayAmt ,FinIsActive=:FinIsActive, ");
+		updateSql.append(" CurODDays = :CurODDays, FirstODDate =:FirstODDate , PrvODDate = :PrvODDate,  FinStatus=:FinStatus, FinStsReason =:FinStsReason, ");
 		updateSql.append(" ClosingStatus = :ClosingStatus, PrvRpySchDate = :PrvRpySchDate, ");
-		updateSql
-				.append(" PrvRpySchPri = :PrvRpySchPri, PrvRpySchPft = :PrvRpySchPft, TotalWriteoff = :TotalWriteoff, ");
-		updateSql
-				.append(" TotalAdvPftSchd = :TotalAdvPftSchd, TotalRbtSchd = :TotalRbtSchd, TotalPriPaidInAdv=:TotalPriPaidInAdv, TdSchdAdvPft=:TdSchdAdvPft, ");
-		updateSql.append(" TdSchdRbt = :TdSchdRbt, PftAmzNormal = :PftAmzNormal, PftAmzPD=:PftAmzPD ");
+		updateSql.append(" PrvRpySchPri = :PrvRpySchPri, PrvRpySchPft = :PrvRpySchPft, TotalWriteoff = :TotalWriteoff, ");
+		updateSql.append(" TotalAdvPftSchd = :TotalAdvPftSchd, TotalRbtSchd = :TotalRbtSchd, TotalPriPaidInAdv=:TotalPriPaidInAdv, TdSchdAdvPft=:TdSchdAdvPft, ");
+		updateSql.append(" TdSchdRbt = :TdSchdRbt, PftAmzNormal = :PftAmzNormal, PftAmzPD=:PftAmzPD, ");
+		updateSql.append(" FutureRpyPri = :FutureRpyPri, FutureRpyPft = :FutureRpyPft,");
+		updateSql.append(" TotChargesPaid = :TotChargesPaid, LinkedFinRef = :linkedFinRef, closedlinkedFinRef = :closedlinkedFinRef,");
+		updateSql.append(" bounceAmt = :bounceAmt, bounceAmtDue = :bounceAmtDue, bounceAmtPaid = :bounceAmtPaid,");
+		updateSql.append(" upfrontFee = :upfrontFee, lastDisburseDate = :lastDisburseDate, receivableAdvise = :receivableAdvise,");
+		updateSql.append(" excessAmtBal = :excessAmtBal, emiInAdvanceBal = :emiInAdvanceBal, receivableAdviseBal = :receivableAdviseBal,");
+		updateSql.append(" payableAdviseBal = :payableAdviseBal");
+
 		updateSql.append(" Where FinReference =:FinReference");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -443,9 +440,12 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		insertSql.append(" PftOnPDMrg, TotPftOnPD, TotPftOnPDPaid, TotPftOnPDWaived, TotPftOnPDDue,");
 		insertSql.append(" AcrSuspTillLBD, PrvMthAmz, PrvMthAmzNrm, PrvMthAmzPD, PrvMthAmzSusp, PrvMthAcr,");
 		insertSql.append(" PrvMthAcrSusp, FirstDisbDate, LatestDisbDate, FutureInst, RemainingTenor,");
-		insertSql.append(" TotalTenor");
-		insertSql.append(" ,ExcessAmt, EmiInAdvance, PayableAdvise, ");
-		insertSql.append(" ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv ");
+		insertSql.append(" TotalTenor,");
+		insertSql.append(" ExcessAmt, EmiInAdvance, PayableAdvise, ");
+		insertSql.append(" FutureRpyPri, FutureRpyPft, TotChargesPaid, ");
+		insertSql.append(" LinkedFinRef, ClosedlinkedFinRef, bounceAmt, bounceAmtDue, bounceAmtPaid, ");
+		insertSql.append(" upfrontFee, lastDisburseDate, receivableAdvise, excessAmtBal, emiInAdvanceBal ");
+		insertSql.append(" receivableAdviseBal, payableAdviseBal ");
 		insertSql.append(" ) Values");
 		insertSql.append(" (:FinReference, :CustId, :FinBranch, :FinType, :LastMdfDate, :TotalPftSchd, ");
 		insertSql.append(" :TotalPftCpz, :TotalPftPaid, :TotalPftBal, :TotalPftPaidInAdv, :TotalPriPaid, ");
@@ -467,9 +467,13 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		insertSql.append(" :PftOnPDMrg, :TotPftOnPD, :TotPftOnPDPaid, :TotPftOnPDWaived, :TotPftOnPDDue,");
 		insertSql.append(" :AcrSuspTillLBD, :PrvMthAmz, :PrvMthAmzNrm, :PrvMthAmzPD, :PrvMthAmzSusp, :PrvMthAcr,");
 		insertSql.append(" :PrvMthAcrSusp, :FirstDisbDate, :LatestDisbDate, :FutureInst, :RemainingTenor,");
-		insertSql.append(" :TotalTenor ");
-		insertSql.append(" , :ExcessAmt, :EmiInAdvance, :PayableAdvise, ");
-		insertSql.append(" :ExcessAmtResv, :EmiInAdvanceResv, :PayableAdviseResv ");
+		insertSql.append(" :TotalTenor,");
+		insertSql.append(" :ExcessAmt, :EmiInAdvance, :PayableAdvise,");
+		insertSql.append(" :ExcessAmtResv, :EmiInAdvanceResv, :PayableAdviseResv,");
+		insertSql.append(" :FutureRpyPri, :FutureRpyPft, :TotChargesPaid,");
+		insertSql.append(" :LinkedFinRef, :ClosedlinkedFinRef, :bounceAmt, :bounceAmtDue, :bounceAmtPaid, ");
+		insertSql.append(" :upfrontFee, :lastDisburseDate, :receivableAdvise, :excessAmtBal, :emiInAdvanceBal, ");
+		insertSql.append(" :receivableAdviseBal, :payableAdviseBal ");
 		insertSql.append(" ) ");
 
 		logger.debug("insertSql: " + insertSql.toString());
