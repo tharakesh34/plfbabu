@@ -229,4 +229,9 @@
 		</createView>
 	</changeSet>
 	
+		<changeSet id="22" author="Durgaprasad G">
+		<dropNotNullConstraint tableName="PRESENTMENTHEADER"
+			columnName="PARTNERBANKID" columnDataType="NUMBER(19)" />
+	  </changeSet>
+
 </databaseChangeLog>
