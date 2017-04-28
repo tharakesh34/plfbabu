@@ -146,4 +146,11 @@
 			baseTableName="CustomerEmpDetails_Temp" baseColumnNames="CustEmpDesg"
 			referencedTableName="RMTGenDesignations" referencedColumnNames="GenDesignation" />
 	</changeSet>
+	
+	<changeSet id="17" author="Durgaprasad G">
+		<addColumn tableName="SMTDIVISIONDETAIL">
+			<column name="ENTITYCODE" type="varchar(8)"/>
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
