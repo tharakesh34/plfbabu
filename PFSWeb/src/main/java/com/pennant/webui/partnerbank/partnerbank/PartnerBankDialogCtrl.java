@@ -781,7 +781,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 					false));
 		}
 		
-		if (!this.btnSearchBranchCode.isDisabled()) {
+		if (!this.btnSearchBranchCode.isDisabled() && !this.alwBankBranchCode.isVisible()) {
 			this.alwBankBranchCode.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_PartnerBankDialog_AlwBankBranchCode.value"), null,
 					true));

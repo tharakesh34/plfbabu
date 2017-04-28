@@ -701,10 +701,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		//Finance Customer Details			
 		if (financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE) {
-			if(ImplementationConstants.ALLOW_CUST_INSERVICE){
-				financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(
-						financeMain.getCustID(), true, "_View"));
-			}
+			financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(
+					financeMain.getCustID(), true, "_View"));
 		}
 
 		//Finance Reference Details List

@@ -105,5 +105,4 @@ public class ImplementationConstants {
 	
 	public static final boolean	ALLOW_INSURANCE					= false;					// Insurance Required or Not 
 	public static final boolean	ALLOW_RIA						= false;					// RIA Required or Not 
-	public static final boolean	ALLOW_CUST_INSERVICE			= false;					// RIA Required or Not 
 }

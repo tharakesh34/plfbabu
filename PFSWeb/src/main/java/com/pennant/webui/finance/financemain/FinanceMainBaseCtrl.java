@@ -1423,9 +1423,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		FinanceType financeType = aFinanceDetail.getFinScheduleData().getFinanceType();
 
 		//Customer Details   
-		if(StringUtils.isEmpty(moduleDefiner) || ImplementationConstants.ALLOW_CUST_INSERVICE){
-			appendCustomerDetailTab(onLoad);
-		}
+		appendCustomerDetailTab(onLoad);
 
 		if (isReadOnly("FinanceMainDialog_NoScheduleGeneration")) {
 
