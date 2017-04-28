@@ -2293,4 +2293,140 @@ CUST.CUSTCIF, MANDATE.MANDATETYPE, MANDATE.MANDATEID, MANDATE.INPUTDATE,(SELECT 
 			<column name="ReservedAmt" type="decimal(18,0)" />
 		</createTable>
 	</changeSet>
+ 
+   <changeSet id="109" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_EmployerDetail_City"
+			baseTableName="EmployerDetail" baseColumnNames="EmpCity"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+   
+   <changeSet id="110" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_EDetail_Temp_City"
+			baseTableName="EmployerDetail_Temp" baseColumnNames="EmpCity"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+	
+	<changeSet id="111" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_CollateralCoOwners_City"
+			baseTableName="CollateralCoOwners" baseColumnNames="AddrCity"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+	
+	<changeSet id="112" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_CCO_Temp_City"
+			baseTableName="CollateralCoOwners_Temp" baseColumnNames="AddrCity"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+	
+	<changeSet id="113" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_CustomerAddresses_City"
+			baseTableName="CustomerAddresses" baseColumnNames="CustAddrCity"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+	
+	<changeSet id="114" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_CA_Temp_City"
+			baseTableName="CustomerAddresses_Temp" baseColumnNames="CustAddrCity"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+	
+	<changeSet id="115" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_CustomerDirectorDetail_City"
+			baseTableName="CustomerDirectorDetail" baseColumnNames="CustAddrCity"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+	
+	<changeSet id="116" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_CDDetail_Temp_City"
+			baseTableName="CustomerDirectorDetail_Temp" baseColumnNames="CustAddrCity"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+	
+	<changeSet id="117" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_CustomersPRelations_City"
+			baseTableName="CustomersPRelations" baseColumnNames="PRAddrCity"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+	
+	<changeSet id="118" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_CPRelations_Temp_City"
+			baseTableName="CustomersPRelations_Temp" baseColumnNames="PRAddrCity"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+	
+	<changeSet id="119" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_FCMTBrokerDetail_City"
+			baseTableName="FCMTBrokerDetail" baseColumnNames="BrokerAddrCity"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+	
+	<changeSet id="120" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_FCMTBrokerDetail_Temp_City"
+			baseTableName="FCMTBrokerDetail_Temp" baseColumnNames="BrokerAddrCity"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+	
+	<changeSet id="121" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_FinGuarantorsDetails_City"
+			baseTableName="FinGuarantorsDetails" baseColumnNames="AddrCity"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+	
+	<changeSet id="122" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_FGDetails_PA_City"
+			baseTableName="FinGuarantorsDetails_PA" baseColumnNames="AddrCity"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+	
+	<changeSet id="123" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_FGDetails_Temp_City"
+			baseTableName="FinGuarantorsDetails_Temp" baseColumnNames="AddrCity"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+	
+	<changeSet id="126" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_Mandates_City"
+			baseTableName="Mandates" baseColumnNames="Periodicity"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+	
+	<changeSet id="127" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_Mandates_Temp_City"
+			baseTableName="Mandates_Temp" baseColumnNames="Periodicity"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+	
+	<changeSet id="128" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_RMTBranches_City"
+			baseTableName="RMTBranches" baseColumnNames="BranchCity"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+	
+	<changeSet id="129" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_RMTBranches_Temp_City"
+			baseTableName="RMTBranches_Temp" baseColumnNames="BranchCity"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+	
+	<changeSet id="130" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_TakafulProvider_City"
+			baseTableName="TakafulProvider" baseColumnNames="City"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+	
+	<changeSet id="131" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_TakafulProvider_Temp_City"
+			baseTableName="TakafulProvider_Temp" baseColumnNames="City"
+			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
+	</changeSet>
+	
+	<changeSet id="135" author="Amit">
+		<dropForeignKeyConstraint baseTableName="Mandates_Temp"
+			constraintName="FK_MANDATES_TEMP_CITY" />
+	</changeSet>
+	
+	<changeSet id="136" author="Amit">
+		<dropForeignKeyConstraint baseTableName="Mandates"
+			constraintName="FK_Mandates_City" />
+	</changeSet>
 </databaseChangeLog>
