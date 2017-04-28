@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.AEAmounts;
+import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
@@ -46,7 +46,7 @@ public class SummaryDetailService {
 			// fetch summary details from FinPftDetails
 			FinanceProfitDetail finPftDetail = financeProfitDetailDAO.getFinProfitDetailsForSummary(finReference);
 			if(finPftDetail==null){
-				finPftDetail=AEAmounts.calProfitDetails(financeMain, financeDetail.getFinScheduleData().getFinanceScheduleDetails(), new FinanceProfitDetail(), DateUtility.getAppDate());
+				finPftDetail=AccrualService.calProfitDetails(financeMain, financeDetail.getFinScheduleData().getFinanceScheduleDetails(), new FinanceProfitDetail(), DateUtility.getAppDate());
 			}
 			if(finPftDetail != null) {
 				summary.setTotalCpz(finPftDetail.getTotalPftCpz());

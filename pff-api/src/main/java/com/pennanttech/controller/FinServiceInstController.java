@@ -17,7 +17,7 @@ import org.jaxen.JaxenException;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.util.AEAmounts;
+import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.OverDueRecoveryPostingsUtil;
@@ -494,7 +494,6 @@ public class FinServiceInstController extends SummaryDetailService {
 		aFinanceDetail.setAdvancePaymentsList(null);
 		aFinanceDetail.setFinContributorHeader(null);
 		aFinanceDetail.setIndicativeTermDetail(null);
-		aFinanceDetail.setPremiumDetail(null);
 		aFinanceDetail.setEtihadCreditBureauDetail(null);
 		aFinanceDetail.setBundledProductsDetail(null);
 		aFinanceDetail.setTatDetail(null);
@@ -1318,12 +1317,11 @@ public class FinServiceInstController extends SummaryDetailService {
 			//=====================================
 			FinRepayHeader finRepayHeader = repayData.getFinRepayHeader();
 			financeMain.setRepayAccountId(finRepayHeader.getRepayAccountId());
-			boolean isRIAFinance = false;
 			FinanceProfitDetail profitDetail = profitDetailsDAO.getFinPftDetailForBatch(financeMain.getFinReference());
 			Date valuedate=finServiceInst.getFromDate();
 			
 			FinanceProfitDetail tempPftDetail = new FinanceProfitDetail();
-			AEAmounts.calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(), tempPftDetail, valuedate);
+			AccrualService.calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(), tempPftDetail, valuedate);
 
 			List<RepayScheduleDetail> repaySchdList = repayData.getRepayScheduleDetails();
 			BigDecimal totPriPayNow = BigDecimal.ZERO;
@@ -1351,7 +1349,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			
 			
 			List<Object> returnList = processRepaymentPostings(financeMain, scheduleData.getFinanceScheduleDetails(),
-					profitDetail, repaySchdList, finRepayHeader.getInsRefund(), isRIAFinance, repayData.getEventCodeRef(),
+					profitDetail, repaySchdList, finRepayHeader.getInsRefund(), repayData.getEventCodeRef(),
 					scheduleData.getFeeRules(), scheduleData.getFinanceType().getFinDivision());
 
 			if (!(Boolean) returnList.get(0)) {
@@ -1574,7 +1572,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	 */
 	public List<Object> processRepaymentPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
 			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, BigDecimal insRefund,
-			boolean isRIAFinance, String eventCodeRef, List<FeeRule> feeRuleList, String finDivision)
+			String eventCodeRef, List<FeeRule> feeRuleList, String finDivision)
 			throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -1601,8 +1599,6 @@ public class FinServiceInstController extends SummaryDetailService {
 			BigDecimal totRpyPft = BigDecimal.ZERO;
 			BigDecimal totRefund = BigDecimal.ZERO;
 			BigDecimal totSchdFee = BigDecimal.ZERO;
-			BigDecimal totSchdTakaful = BigDecimal.ZERO;
-			BigDecimal totSchdPptTakaful = BigDecimal.ZERO;
 			BigDecimal totSchdCrIns = BigDecimal.ZERO;
 			BigDecimal totSchdSuplRent = BigDecimal.ZERO;
 			BigDecimal totSchdIncrCost = BigDecimal.ZERO;
@@ -1654,8 +1650,6 @@ public class FinServiceInstController extends SummaryDetailService {
 			totalsMap.put("INSREFUND", insRefund);
 
 			//Fee Details
-			totalsMap.put("takafulPay", totSchdTakaful);
-			totalsMap.put("pptTakafulPay", totSchdPptTakaful);
 			totalsMap.put("crInsPay", totSchdCrIns);
 			totalsMap.put("schFeePay", totSchdFee);
 			totalsMap.put("suplRentPay", totSchdSuplRent);
@@ -1663,7 +1657,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 			//Repayments Process For Schedule Repay List			
 			returnList = repayPostingUtil.postingsScreenRepayProcess(financeMain, scheduleDetails, profitDetail,
-					finRepayQueues, totalsMap, isRIAFinance, eventCodeRef, feeRuleDetailsMap, finDivision);
+					finRepayQueues, totalsMap, eventCodeRef, feeRuleDetailsMap, finDivision);
 
 			if ((Boolean) returnList.get(0)) {
 				returnList.add(finRepayQueues);
