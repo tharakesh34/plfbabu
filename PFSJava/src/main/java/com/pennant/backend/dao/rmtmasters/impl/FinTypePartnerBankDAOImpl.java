@@ -53,6 +53,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -268,4 +269,34 @@ public class FinTypePartnerBankDAOImpl extends BasisNextidDaoImpl<FinTypePartner
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
+	/**
+	 * Method for fetch number of records from FinTypePartnerBanks
+	 * 
+	 * @param Fintype
+	 * @param PaymentMode
+	 * @param PartnerBankID
+	 * 
+	 * @return Integer
+	 */
+	@Override
+	public int getPartnerBankCount(String finType, String paymentType, long partnerBankID) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Fintype", finType);
+		source.addValue("PaymentMode", paymentType);
+		source.addValue("PartnerBankID", partnerBankID);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) From FinTypePartnerBanks");
+		selectSql.append(" Where Fintype = :Fintype AND PaymentMode = :PaymentMode AND PartnerBankID = :PartnerBankID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		try {
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug(dae);
+			return 0;
+		}
+	}
 }	

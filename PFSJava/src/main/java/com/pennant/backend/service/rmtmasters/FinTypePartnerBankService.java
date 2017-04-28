@@ -64,4 +64,6 @@ public interface FinTypePartnerBankService {
 	List<AuditDetail> delete(List<FinTypePartnerBank> finTypePartnerBankList,  String tableType, String auditTranType, String finType);
 	
 	List<FinTypePartnerBank> getFinTypePartnerBanksList(String finType, String type);
+	
+	int getPartnerBankCount(String finType, String paymentType, long partnerBankID);
 }

@@ -115,6 +115,9 @@ public class LimitServiceController {
 			if (headerDetail != null && headerDetail.getCustomerLimitDetailsList() != null) {
 				for (LimitDetails detail : headerDetail.getCustomerLimitDetailsList()) {
 					long limitStructureId = detail.getLimitStructureDetailsID();
+					detail.setReservedexposure(detail.getReservedexposure());
+					detail.setActualexposure(detail.getActualexposure());
+					detail.setActualLimit(detail.getActualLimit());
 					LimitStructureDetail limitStrucDetail = limitStructureDetailDAO.getLimitStructureDetail(
 							limitStructureId, "_AView");
 					detail.setLimitStructureDetails(limitStrucDetail);

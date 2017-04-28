@@ -46,6 +46,11 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
@@ -54,13 +59,18 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  * Model class for the <b>FinTypePartnerBank table</b>.<br>
  * 
  */
+@XmlType(propOrder = { "purpose","paymentMode","partnerBankID"})
+@XmlAccessorType(XmlAccessType.NONE)
 public class FinTypePartnerBank extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	private long iD = Long.MIN_VALUE;
 	private String finType;
+	@XmlElement
 	private String purpose;
+	@XmlElement
 	private String paymentMode;
+	@XmlElement(name="partnerBankId")
 	private long partnerBankID;
 	private String partnerBankCode;
 	private String partnerBankName;

@@ -223,6 +223,15 @@ public class FinanceDetailController extends SummaryDetailService {
 				AuditHeader auditHeader1 = getFinanceDetailService().doApprove(auditHeader, true);
 
 				FinScheduleData response = null;
+				if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().size() > 0) {
+					for (ErrorDetails errorDetail : auditHeader.getOverideMessage()) {
+						response = new FinScheduleData();
+						doEmptyResponseObject(response);
+						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+								errorDetail.getError()));
+						return response;
+					}
+				}
 				if (auditHeader1.getErrorMessage() != null) {
 					for (ErrorDetails errorDetail : auditHeader1.getErrorMessage()) {
 						response = new FinScheduleData();

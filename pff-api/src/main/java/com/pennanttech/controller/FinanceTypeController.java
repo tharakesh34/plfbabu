@@ -119,6 +119,10 @@ public class FinanceTypeController {
 			}
 			response.setFinTypeVASProductsList(finTypeVASProductsDAO.getVASProductsByFinType(
 					finTypeRequest.getFinType(), "_View"));
+			
+			if(finTypeRequest.isPartnerBankDetailReq()){
+				response.setFinTypePartnerBankList(financeType.getFinTypePartnerBankList());
+			}
 
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 		}

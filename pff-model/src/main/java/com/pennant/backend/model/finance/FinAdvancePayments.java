@@ -63,7 +63,7 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  */
 @XmlType(propOrder = { "paymentDetail", "paymentType", "llDate", "amtToBeReleased", "remarks", "bankCode",
 		"liabilityHoldName", "payableLoc", "printingLoc", "valueDate", "llReferenceNo", "branchBankCode", "branchCode",
-		"iFSC", "beneficiaryAccNo", "beneficiaryName", "phoneCountryCode", "phoneAreaCode", "phoneNumber" })
+		"iFSC", "beneficiaryAccNo", "beneficiaryName","partnerBankID", "phoneCountryCode", "phoneAreaCode", "phoneNumber" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity {
 	
@@ -149,6 +149,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	private String lovValue;
 	private FinAdvancePayments befImage;
 	private LoggedInUser userDetails;
+	@XmlElement(name = "partnerBankId")
 	private long partnerBankID;
 	private String partnerbankCode;
 	private String partnerBankName;

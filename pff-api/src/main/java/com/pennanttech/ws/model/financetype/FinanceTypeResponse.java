@@ -1,6 +1,7 @@
 package com.pennanttech.ws.model.financetype;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,10 +14,11 @@ import javax.xml.bind.annotation.XmlType;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
+import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rulefactory.FeeRule;
 
 @XmlType(propOrder = { "promotionDesc","startDate","endDate","finType", "finTypeDesc", "basicDetail", "graceDetail", "repayDetail", "overdueDetail",
-		"overdueProfitDetail", "insurance", "feeRule","finTypeFeesList", "stepDetail", "promotions","finTypeVASProductsList", "returnStatus" })
+		"overdueProfitDetail", "insurance", "feeRule","finTypeFeesList", "stepDetail", "promotions","finTypeVASProductsList","finTypePartnerBankList","returnStatus" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FinanceTypeResponse implements Serializable {
 
@@ -52,6 +54,11 @@ public class FinanceTypeResponse implements Serializable {
 	@XmlElementWrapper(name="vas")
 	@XmlElement(name="vas")
 	private List<FinTypeVASProducts> finTypeVASProductsList;
+	@XmlElementWrapper(name="partnerBanks")
+	@XmlElement(name="partnerBank")
+	private List<FinTypePartnerBank> finTypePartnerBankList = new ArrayList<FinTypePartnerBank>();
+	
+
 	// Return status
 	private WSReturnStatus returnStatus;
 
@@ -189,5 +196,12 @@ public class FinanceTypeResponse implements Serializable {
 
 	public void setFinTypeVASProductsList(List<FinTypeVASProducts> finTypeVASProductsList) {
 		this.finTypeVASProductsList = finTypeVASProductsList;
+	}
+	public List<FinTypePartnerBank> getFinTypePartnerBankList() {
+		return finTypePartnerBankList;
+	}
+
+	public void setFinTypePartnerBankList(List<FinTypePartnerBank> finTypePartnerBankList) {
+		this.finTypePartnerBankList = finTypePartnerBankList;
 	}
 }

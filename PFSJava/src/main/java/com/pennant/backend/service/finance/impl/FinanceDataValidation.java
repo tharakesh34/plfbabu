@@ -67,6 +67,7 @@ import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.mandate.MandateService;
+import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.service.systemmasters.GeneralDepartmentService;
@@ -78,23 +79,24 @@ import com.pennant.backend.util.PennantStaticListUtil;
 
 public class FinanceDataValidation {
 
-	private BaseRateDAO					baseRateDAO;
-	private SplRateDAO					splRateDAO;
-	private BranchDAO					branchDAO;
-	private FinanceTypeDAO				financeTypeDAO;
-	private CustomerDAO					customerDAO;
+	private BaseRateDAO		baseRateDAO;
+	private SplRateDAO		splRateDAO;
+	private BranchDAO		branchDAO;
+	private FinanceTypeDAO	financeTypeDAO;
+	private CustomerDAO		customerDAO;
 	private FinanceMainDAO				financeMainDAO;
-	private FinanceDetailService		financeDetailService;
-	private BankDetailService			bankDetailService;
-	private BankBranchService			bankBranchService;
-	private DocumentTypeService			documentTypeService;
-	private CustomerDetailsService		customerDetailsService;
-	private FlagDAO						flagDAO;
-	private CollateralSetupService		collateralSetupService;
-	private MandateService				mandateService;
-	private StepPolicyService			stepPolicyService;
-	private GeneralDepartmentService	generalDepartmentService;
-	private RelationshipOfficerService	relationshipOfficerService;
+	private FinanceDetailService financeDetailService; 
+	private BankDetailService bankDetailService;
+	private BankBranchService bankBranchService;
+	private DocumentTypeService documentTypeService;
+	private CustomerDetailsService customerDetailsService;
+	private FlagDAO flagDAO;
+	private CollateralSetupService collateralSetupService;
+	private MandateService mandateService;
+	private StepPolicyService stepPolicyService;
+	private GeneralDepartmentService generalDepartmentService;
+	private RelationshipOfficerService relationshipOfficerService;
+	private FinTypePartnerBankService finTypePartnerBankService;
 
 	public FinanceDataValidation() {
 		super();
@@ -984,7 +986,15 @@ public class FinanceDataValidation {
 		List<FinAdvancePayments> finAdvPayments = financeDetail.getAdvancePaymentsList();
 		if (finAdvPayments != null) {
 			for (FinAdvancePayments advPayment : finAdvPayments) {
-
+				//partnerbankid
+				if(advPayment.getPartnerBankID() <= 0){
+					String[] valueParm = new String[1];
+					valueParm[0] = "PartnerBankID";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+					return errorDetails;
+				}
+			
+				
 				// validate disbType
 				if (StringUtils.isNotBlank(advPayment.getPaymentType())) {
 					List<ValueLabel> paymentTypes = PennantStaticListUtil.getPaymentTypes(false);
@@ -1001,7 +1011,12 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90216", valueParm)));
 					}
 				}
-
+				int count=finTypePartnerBankService.getPartnerBankCount(financeDetail.getFinScheduleData().getFinanceMain().getFinType(),advPayment.getPaymentType(),advPayment.getPartnerBankID());
+				if (count <= 0) {
+					String[] valueParm = new String[1];
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90263", valueParm)));
+					return errorDetails;
+				}
 				if (StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
 						|| StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_DD)) {
 
@@ -1694,6 +1709,20 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90240", valueParm)));
 				return errorDetails;
 			}
+			if(finMain.getPlanEMIHMax() != financeType.getPlanEMIHMax()){
+				String[] valueParm = new String[2];
+				valueParm[0] = "PlanEMIHMax";
+				valueParm[1] = String.valueOf(financeType.getPlanEMIHMax());
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90264", valueParm)));
+				return errorDetails;	
+			}
+			if(finMain.getPlanEMIHMaxPerYear() != financeType.getPlanEMIHMaxPerYear()){
+				String[] valueParm = new String[2];
+				valueParm[0] = "PlanEMIHMaxPerYear";
+				valueParm[1] = String.valueOf(financeType.getPlanEMIHMaxPerYear());
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90264", valueParm)));
+				return errorDetails;	
+			}
 			if (StringUtils.equals(finMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
 				if (finScheduleData.getApiPlanEMIHmonths() == null || finScheduleData.getApiPlanEMIHmonths().isEmpty()) {
 					String[] valueParm = new String[1];
@@ -1727,6 +1756,7 @@ public class FinanceDataValidation {
 					return errorDetails;
 				} else {
 					if (finScheduleData.getApiPlanEMIHDates().size() >= finMain.getPlanEMIHMaxPerYear()) {
+
 						String[] valueParm = new String[2];
 						valueParm[0] = "PlanEMIHDates";
 						valueParm[1] = "PlanEMIHMaxPerYear";
@@ -3037,9 +3067,12 @@ public class FinanceDataValidation {
 	public void setRelationshipOfficerService(RelationshipOfficerService relationshipOfficerService) {
 		this.relationshipOfficerService = relationshipOfficerService;
 	}
+	public void setFinTypePartnerBankService(FinTypePartnerBankService finTypePartnerBankService) {
+		this.finTypePartnerBankService = finTypePartnerBankService;
+	}
+	
 	
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
-
 }

@@ -29,6 +29,7 @@ public class FinanceTypeRequest implements Serializable {
 	private boolean insuranceDetailReq;
 	private boolean stepDetailReq;
 	private boolean feeReq;
+	private boolean partnerBankDetailReq;
 
 	public String getFinType() {
 		return finType;
@@ -108,5 +109,13 @@ public class FinanceTypeRequest implements Serializable {
 
 	public void setFeeReq(boolean feeReq) {
 		this.feeReq = feeReq;
+	}
+
+	public boolean isPartnerBankDetailReq() {
+		return partnerBankDetailReq;
+	}
+
+	public void setPartnerBankDetailReq(boolean partnerBankDetailReq) {
+		this.partnerBankDetailReq = partnerBankDetailReq;
 	}
 }

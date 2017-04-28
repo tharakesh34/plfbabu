@@ -64,4 +64,6 @@ public interface FinTypePartnerBankDAO extends BasicCrudDao<FinTypePartnerBank> 
 	void deleteByFinType(String finType, String tableType);
 
 	List<FinTypePartnerBank> getFinTypePartnerBank(String finType, String type);
+
+	int getPartnerBankCount(String finType, String paymentType, long partnerBankID);
 }

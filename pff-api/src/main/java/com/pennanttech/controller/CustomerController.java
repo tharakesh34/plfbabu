@@ -369,14 +369,13 @@ public class CustomerController {
 					curCustDocument.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					curCustDocument.setCustDocImage(PennantApplicationUtil.decode(curCustDocument.getCustDocImage()));
 					curCustDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-					if(StringUtils.equals(curCustDocument.getCustDocCategory(), "03") && 
-							StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),PennantConstants.PFF_CUSTCTG_INDIV)) {
+					if(StringUtils.equals(curCustDocument.getCustDocCategory(), "03")) {
 						customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
 					}
-					if(StringUtils.equals(curCustDocument.getCustDocCategory(), "15") && 
+					/*if(StringUtils.equals(curCustDocument.getCustDocCategory(), "15") && 
 							StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),PennantConstants.PFF_CUSTCTG_CORP)){
 						customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
-					}
+					}*/
 				} else {
 					List<CustomerDocument> prvCustomerDocumentsList = prvCustomerDetails.getCustomerDocumentsList();
 					if (prvCustomerDocumentsList != null) {
