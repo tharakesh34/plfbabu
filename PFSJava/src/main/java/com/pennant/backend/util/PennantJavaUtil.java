@@ -1133,7 +1133,7 @@ public class PennantJavaUtil {
 		/************* JV Postings *************/
 
 		ModuleUtil.register("JVPosting", new ModuleMapping("JVPosting", JVPosting.class, new String[] { "JVPostings",
-				"JVPostings_AView" }, finMaintainWF, new String[] { "BatchReference", "Batch" }, null, 300));
+				"JVPostings_AView" }, masterWF, new String[] { "BatchReference", "Batch" }, null, 300));
 
 		ModuleUtil.register("JVPostingEntry", new ModuleMapping("JVPostingEntry", JVPostingEntry.class, new String[] {
 				"JVPostingEntry", "JVPostingEntry_AView" }, masterWF , new String[] { "BatchReference", "Account" }, null,
@@ -1444,7 +1444,7 @@ public class PennantJavaUtil {
 				null, null, 300));
 		ModuleUtil.register("UserDivBranch", new ModuleMapping("UserDivBranch",
 				SecurityUserDivBranch.class, new String[] { "SecurityUserDivBranch_view"}, null,
-				new String[] { "UsrID", "UserBranchDesc"}, null, 300));
+				new String[] { "UserBranch", "UserBranchDesc"}, null, 300));
 		ModuleUtil.register("SecurityUsers", new ModuleMapping("SecurityUser", SecurityUser.class,
 				new String[] { "SecUsers" }, securityWF,
 				new String[] { "UsrLogin", "UsrFName", "UsrMName", "UsrLName" }, null, 600));
@@ -1907,7 +1907,7 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("FinTypePartner", new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
 				new String[] { "FinTypePartnerBanks","FinTypePartnerBanks_AView" }, masterWF,
-				new String[] { "partnerBankCode", "partnerBankName" }, null, 300));
+				new String[] { "PartnerBankCode", "PartnerBankName" }, null, 300));
 	}
 
 	public static ModuleMapping getModuleMap(String code) {

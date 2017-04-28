@@ -35,7 +35,7 @@
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end"  sclass="toolbar-end">
 						<button id="button_JVPostingList_NewJVPosting"
-							 label="${c:l('label_New')}" visible="false"
+							 label="${c:l('label_New')}" 
 							autodisable="button_JVPostingList_JVPostingSearch,print,button_JVPostingList_NewJVPosting,btnRefresh,help"
 							tooltiptext="${c:l('button_JVPostingList_NewJVPosting.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnRefresh" 

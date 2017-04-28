@@ -113,7 +113,6 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 	protected Textbox totCreditsByBatchCcy;
 	protected Listbox sortOperator_TotCreditsByBatchCcy;
 
-	protected Textbox moduleType;
 
 	private transient boolean approvedList = false;
 	private transient boolean workFlowList = false;
@@ -145,23 +144,11 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 	public void onCreate$window_JVPostingList(Event event) throws Exception {
 		logger.debug("Entering");
 
-		if (this.moduleType != null && !"ENQ".equals(this.moduleType.getValue())) {
-			this.timer.setDelay(10000);
-			this.timer.start();
-		}
 
 		// Set the page level components.
 		setPageComponents(window_JVPostingList, borderLayout_JVPostingList, listBoxJVPosting, pagingJVPostingList);
 		setItemRender(new JVPostingListModelItemRenderer());
 
-		// Register buttons and fields.
-		if (this.moduleType == null
-				|| this.moduleType.getValue().equalsIgnoreCase(
-						PennantConstants.MODULETYPE_REPOSTING)) {
-		registerButton(button_JVPostingList_NewJVPosting, "button_JVPostingList_NewJVPosting", true);
-		} else  {
-			this.button_JVPostingList_NewJVPosting.setVisible(false);
-		}
 		registerButton(button_JVPostingList_JVPostingSearch);
 
 		registerField("batchReference", listheader_BatchReference, SortOrder.ASC, batchReference,
@@ -221,6 +208,8 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 		logger.debug("Entering");
 		this.timer.stop();
 		final JVPosting aJVPosting = new JVPosting();
+		aJVPosting.setNewRecord(true);
+		aJVPosting.setWorkflowId(getWorkFlowId());
 		isItemDoubleClicked = false;
 		doShowDialogPage(aJVPosting);
 		logger.debug("Leaving");
@@ -306,11 +295,11 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 		 */
 
 		Map<String, Object> arg = getDefaultArguments();
-		if (this.moduleType != null && this.moduleType.getValue().equalsIgnoreCase(PennantConstants.MODULETYPE_ENQ)) {
+		if (this.moduleCode != null && this.moduleCode.equalsIgnoreCase(PennantConstants.MODULETYPE_ENQ)) {
 			arg.put("enqModule", true);
 			arg.put("workFlowList", this.workFlowList);
-		} else if (this.moduleType != null
-				&& this.moduleType.getValue().equalsIgnoreCase(PennantConstants.MODULETYPE_REPOSTING)) {
+		} else if (this.moduleCode != null
+				&& this.moduleCode.equalsIgnoreCase(PennantConstants.MODULETYPE_REPOSTING)) {
 			arg.put("rePostingModule", true);
 		} else {
 			arg.put("enqModule", false);

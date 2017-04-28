@@ -539,40 +539,16 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/** Changing Credit Account number ,Account details fetch from host system ****/
-	public void onFulfill$account(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
-		doResetValues();
-		this.accountName.setValue(this.account.getAcShrtName());
-		this.label_AccountCurrency.setValue(this.account.getAcCcy());
-		this.exchange_Converted_txnAmount.setFormat(PennantApplicationUtil.getAmountFormate(this.account.getFormatter()));
-		
-		// Calculating Exchange rate and Amount
-		doCalculateExchangeAmount();
-		
-		logger.debug("Leaving" + event.toString());
-	}
+
 	
 	
 
 	private void doCalculateExchangeAmount() {
-		if (this.label_AccountCurrency.getValue() != ""
-				&& this.txnCCy.getValidatedValue() != null) {
-			this.label_ExTxnAmount_Ac.setValue(Labels.getLabel("label_JVPostingEntryDialog_ExTxnAmount.value", new String[]{this.label_AccountCurrency.getValue()}));
-			this.exchange_Converted_txnAmount.setFormat(PennantApplicationUtil.getAmountFormate(
-					CurrencyUtil.getFormat(getjVPosting().getCurrency())));
-			if(this.txnCCy.getValidatedValue().equals(this.label_AccountCurrency.getValue())){
-				this.exchange_Converted_txnAmount.setValue(this.txnAmount.getActualValue());
-			}else {
-				this.exchangeRate.setValue(String.valueOf(CalculationUtil.
-						getExchangeRate(this.txnCCy.getValue(), this.label_AccountCurrency.getValue())));
-				this.exchange_Converted_txnAmount.setValue(PennantAppUtil.formateAmount(CalculationUtil.getConvertedAmount(this.txnCCy.getValue(), 
-						this.label_AccountCurrency.getValue(), PennantAppUtil.unFormateAmount(this.txnAmount.getActualValue(), CurrencyUtil.getFormat(getJVPostingEntry().getTxnCCy()))),
-						CurrencyUtil.getFormat(	getJVPostingEntry().getAccCCy())));
-				
-				
-			}
-		}
+		
+		this.exchange_Converted_txnAmount.setFormat(PennantApplicationUtil.getAmountFormate(
+				CurrencyUtil.getFormat(getjVPosting().getCurrency())));
+		this.exchange_Converted_txnAmount.setValue(this.txnAmount.getActualValue());
+
 	}
 
 	private void doResetValues() {
@@ -1046,7 +1022,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		try {
 			aJVPostingEntry.setAccount(PennantApplicationUtil.unFormatAccountNumber(this.account.getValue()));
 			aJVPostingEntry.setAccountName(this.accountName.getValue());
-			aJVPostingEntry.setAccCCy(this.label_AccountCurrency.getValue());
+			aJVPostingEntry.setAccCCy(this.txnCCy.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

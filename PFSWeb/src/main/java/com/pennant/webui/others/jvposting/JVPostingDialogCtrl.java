@@ -294,8 +294,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 
 			if (isWorkFlowEnabled() && !enqModule) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"JVPostingDialog");
+				getUserWorkspace().allocateRoleAuthorities(getRole(),"JVPostingDialog");
 			} else {
 				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
@@ -601,6 +600,24 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	 */
 	public void doShowDialog(JVPosting aJVPosting) throws Exception {
 		logger.debug("Entering");
+		// set Read only mode accordingly if the object is new or not.
+		if (aJVPosting.isNew()) {
+			this.btnCtrl.setInitNew();
+			doEdit();
+			// setFocus
+		} else {
+			if (isWorkFlowEnabled()) {
+				if (StringUtils.isNotBlank(aJVPosting.getRecordType())) {
+					this.btnNotes.setVisible(true);
+				}
+				doEdit();
+			} else {
+				this.btnCtrl.setInitEdit();
+				doReadOnly(true);
+				btnCancel.setVisible(false);
+			}
+		}
+		
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aJVPosting);
@@ -617,6 +634,36 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			this.window_JVPostingDialog.onClose();
 		} catch (Exception e) {
 			throw e;
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Set the components for edit mode. <br>
+	 */
+	private void doEdit() {
+		logger.debug("Entering");
+
+		if (getJVPosting().isNewRecord()) {
+			this.btnCancel.setVisible(false);
+		} else {
+			this.btnCancel.setVisible(true);
+		}
+
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(false);
+			}
+
+			if (this.jVPosting.isNewRecord()) {
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(false);
+			} else {
+				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
+			}
+		} else {
+			this.btnCtrl.setBtnStatus_Edit();
+			//btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -804,7 +851,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		getUserWorkspace().allocateAuthorities("JVPostingDialog",getRole());
 		if (!enqModule) {
 			this.btnNew.setVisible(getUserWorkspace().isAllowed(
-					"button_JVPostingEntry_btnNew"));
+					"button_JVPostingDialog_btnNew"));
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed(
 					"button_JVPostingDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed(
@@ -1815,6 +1862,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		if(getJVPostingService().doAccountValidation(aJVPosting, getJVPostingEntryList())){
 			this.setProceed(true);
 		}
+		this.tab_Accounting.setSelected(true);
 		renderJVPostingEntries(getJVPostingEntryList());
 		
 		logger.debug("Leaving" + event.toString());
