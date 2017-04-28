@@ -59,6 +59,7 @@ import org.apache.log4j.Logger;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
+import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.backend.dao.FinRepayQueue.FinRepayQueueDAO;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
@@ -103,6 +104,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	private CustomerDAO					customerDAO;
 	private OverdueChargeRecoveryDAO	recoveryDAO;
 	private FinODDetailsDAO				finODDetailsDAO;
+	private LatePayMarkingService		latePayMarkingService;
 
 	public RepaymentPostingsUtil() {
 		super();
@@ -463,30 +465,16 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @param scheduleDetails
 	 * @param pftDetail
 	 * @return
+	 * @throws Exception 
 	 */
 	private FinanceMain updateRepayStatus(FinanceMain financeMain, Date dateValueDate,  
 			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail pftDetail){
 		logger.debug("Entering");
 		
-		String curFinStatus = getCustomerStatusCodeDAO().getFinanceStatus(financeMain.getFinReference(), true);
-		boolean isStsChanged = false;
-		if (!StringUtils.equals(financeMain.getFinStatus(), curFinStatus)) {
-			isStsChanged = true;
-		}
-
-		//Finance Status Details insertion, if status modified then change to High Risk Level
-		if (isStsChanged) {
-			FinStatusDetail statusDetail = new FinStatusDetail();
-			statusDetail.setFinReference(financeMain.getFinReference());
-			statusDetail.setValueDate(dateValueDate);
-			statusDetail.setCustId(financeMain.getCustID());
-			statusDetail.setFinStatus(curFinStatus);
-
-			getFinStatusDetailDAO().saveOrUpdateFinStatus(statusDetail);
-		}
-
-		// Finance Main Details Update
-		financeMain.setFinStatus(curFinStatus);
+		//Finance Profit Details Updation
+		pftDetail = AccrualService.calProfitDetails(financeMain, scheduleDetails, pftDetail,
+				dateValueDate);
+		latePayMarkingService.processDPDBuketing(pftDetail, dateValueDate,financeMain);
 		financeMain.setFinStsReason(FinanceConstants.FINSTSRSN_MANUAL);
 
 		// If Penalty fully paid && Schedule payment completed then make status as Inactive
@@ -495,44 +483,15 @@ public class RepaymentPostingsUtil implements Serializable {
 			financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
 		}
 
-		//Finance Profit Details Updation
-		pftDetail = AccrualService.calProfitDetails(financeMain, scheduleDetails, pftDetail,
-				dateValueDate);
 		pftDetail.setFinStatus(financeMain.getFinStatus());
 		pftDetail.setFinStsReason(financeMain.getFinStsReason());
 		pftDetail.setFinIsActive(financeMain.isFinIsActive());
 		pftDetail.setClosingStatus(financeMain.getClosingStatus());
 		pftDetail.setLatestRpyDate(dateValueDate);
-
-		String curFinWorstStatus = getCustomerStatusCodeDAO().getFinanceStatus(financeMain.getFinReference(), false);
-		pftDetail.setFinWorstStatus(curFinWorstStatus);
 		getProfitDetailsDAO().update(pftDetail, true);
-
-		//Customer Status & Status Change Date(Suspense From Date) Updation
-		String custSts = getCustomerDAO().getCustWorstSts(financeMain.getCustID());
-		List<Long> custIdList = new ArrayList<Long>(1);
-		custIdList.add(financeMain.getCustID());
-		List<FinStatusDetail> suspDateSts = getFinanceSuspHeadDAO().getCustSuspDate(custIdList);
-
-		Date suspFromdate = null;
-		if (suspDateSts != null && !suspDateSts.isEmpty()) {
-			suspFromdate = suspDateSts.get(0).getValueDate();
-		}
-
-		FinStatusDetail statusDetail = new FinStatusDetail();
-		List<FinStatusDetail> custStatuses = new ArrayList<FinStatusDetail>(1);
-		statusDetail.setCustId(financeMain.getCustID());
-		statusDetail.setFinStatus(custSts);
-		statusDetail.setValueDate(suspFromdate);
-		custStatuses.add(statusDetail);
-
-		getFinStatusDetailDAO().updateCustStatuses(custStatuses);
-
-		statusDetail = null;
-		custStatuses = null;
-		suspDateSts = null;
-		custIdList = null;
-
+		
+		latePayMarkingService.processCustomerStatus(financeMain.getCustID(), dateValueDate,financeMain.getFinStatus(),financeMain.getLovDescFinProduct());
+		
 		logger.debug("Leaving");
 		return financeMain;
 	}
@@ -1326,6 +1285,14 @@ public class RepaymentPostingsUtil implements Serializable {
 
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
+	}
+
+	public LatePayMarkingService getLatePayMarkingService() {
+		return latePayMarkingService;
+	}
+
+	public void setLatePayMarkingService(LatePayMarkingService latePayMarkingService) {
+		this.latePayMarkingService = latePayMarkingService;
 	}
 
 }

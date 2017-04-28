@@ -47,7 +47,6 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
 	@Override
 	public long getCountByProgress(Date date, String progress) {
-		logger.debug("Entering");
 
 		CustomerQueuing customerQueuing = new CustomerQueuing();
 		customerQueuing.setProgress(progress);
@@ -57,10 +56,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 			selectSql.append(" and (Progress = :Progress or Progress is null)");
 		}
 
-		logger.debug("selectSql: " + selectSql.toString());
-
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
-
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
 	}
 

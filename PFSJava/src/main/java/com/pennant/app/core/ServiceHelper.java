@@ -62,6 +62,8 @@ import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
+import com.pennant.backend.dao.applicationmaster.DPDBucketConfigurationDAO;
+import com.pennant.backend.dao.applicationmaster.DPDBucketDAO;
 import com.pennant.backend.dao.finance.FinContributorDetailDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
@@ -71,6 +73,7 @@ import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
+import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -97,6 +100,9 @@ abstract public class ServiceHelper implements Serializable {
 	private FinContributorDetailDAO		finContributorDetailDAO;
 	private AccountEngineExecution		engineExecution;
 	private FinTypeAccountingDAO		finTypeAccountingDAO;
+
+	private DPDBucketConfigurationDAO	dPDBucketConfigurationDAO;
+	private DPDBucketDAO				dPDBucketDAO;
 
 	/**
 	 * @param dataSet
@@ -132,11 +138,10 @@ abstract public class ServiceHelper implements Serializable {
 			throw e;
 		}
 	}
-	
-	public Date formatDate(Date date){
-		if (date!=null) {
-			return DateUtility.getDate(
-					DateUtility.formateDate(date, PennantConstants.DBDateFormat),
+
+	public Date formatDate(Date date) {
+		if (date != null) {
+			return DateUtility.getDate(DateUtility.formateDate(date, PennantConstants.DBDateFormat),
 					PennantConstants.DBDateFormat);
 		}
 		return null;
@@ -256,15 +261,41 @@ abstract public class ServiceHelper implements Serializable {
 	}
 
 	public List<DPDBucketConfiguration> getBucketConfigurations(String productCode) {
-		return EODProperties.getBucketConfigurations(productCode);
+		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
+		if (phase.equals(PennantConstants.APP_PHASE_DAY)) {
+			return dPDBucketConfigurationDAO.getDPDBucketConfigurations(productCode);
+		} else {
+			return EODProperties.getBucketConfigurations(productCode);
+		}
 	}
 
 	public String getBucket(long bucketID) {
-		return EODProperties.getBucket(bucketID);
+		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
+		if (phase.equals(PennantConstants.APP_PHASE_DAY)) {
+			DPDBucket dpdBucket = dPDBucketDAO.getDPDBucket(bucketID, "");
+			if (dpdBucket != null) {
+				return dpdBucket.getBucketCode();
+			}
+		} else {
+			return EODProperties.getBucket(bucketID);
+		}
+
+		return "";
 	}
 
 	public Long getBucketID(String finStatus) {
-		return EODProperties.getBucketID(finStatus);
+		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
+		if (phase.equals(PennantConstants.APP_PHASE_DAY)) {
+			DPDBucket dpdBucket = dPDBucketDAO.getDPDBucket(finStatus, "");
+			if (dpdBucket != null) {
+				return dpdBucket.getBucketID();
+			}
+
+		} else {
+			return EODProperties.getBucketID(finStatus);
+
+		}
+		return Long.valueOf(0);
 	}
 
 	public void sortBucketConfig(List<DPDBucketConfiguration> list) {
@@ -394,6 +425,14 @@ abstract public class ServiceHelper implements Serializable {
 
 	public void setFinTypeAccountingDAO(FinTypeAccountingDAO finTypeAccountingDAO) {
 		this.finTypeAccountingDAO = finTypeAccountingDAO;
+	}
+
+	public void setdPDBucketConfigurationDAO(DPDBucketConfigurationDAO dPDBucketConfigurationDAO) {
+		this.dPDBucketConfigurationDAO = dPDBucketConfigurationDAO;
+	}
+
+	public void setdPDBucketDAO(DPDBucketDAO dPDBucketDAO) {
+		this.dPDBucketDAO = dPDBucketDAO;
 	}
 
 }

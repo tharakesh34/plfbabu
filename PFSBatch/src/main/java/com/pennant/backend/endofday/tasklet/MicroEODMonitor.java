@@ -42,9 +42,6 @@
  */
 package com.pennant.backend.endofday.tasklet;
 
-import java.util.Date;
-
-import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -56,7 +53,6 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class MicroEODMonitor implements Tasklet {
 
-	private Logger				logger	= Logger.getLogger(MicroEODMonitor.class);
 
 	private CustomerQueuingDAO	customerQueuingDAO;
 
@@ -66,8 +62,6 @@ public class MicroEODMonitor implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date valueDate = DateUtility.getValueDate();
-		logger.debug("START: Micro EOD Monitor On : " + valueDate);
 
 		long running = customerQueuingDAO.getCountByProgress(DateUtility.getValueDate(), EodConstants.PROGRESS_START);
 
@@ -75,7 +69,6 @@ public class MicroEODMonitor implements Tasklet {
 			return RepeatStatus.CONTINUABLE;
 		}
 
-		logger.debug("COMPLETE: Micro EOD Monitor On :" + valueDate);
 		return RepeatStatus.FINISHED;
 
 	}

@@ -1765,6 +1765,31 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		logger.debug("Leaving");
 		this.namedParameterJdbcTemplate.update(selectSql.toString(), source);
     }
+
+	@Override
+	public Customer getCustomerStatus(long custId) {
+
+		logger.debug("Entering");
+		Customer customer = new Customer();
+		customer.setId(custId);		
+		
+		StringBuilder selectSql = new StringBuilder("SELECT  CustSts");
+		selectSql.append(" FROM  Customers");
+		selectSql.append(" Where CustID =:CustID");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
+		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		
+		try{
+			customer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+		}catch (EmptyResultDataAccessException e) {
+			customer = null;
+		}
+		logger.debug("Leaving");
+		return customer;
+		
+	}
 	
 	
 	

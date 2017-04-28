@@ -27,6 +27,8 @@
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="dataSource" ref="pfsDatasource" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
+		<property name="dPDBucketConfigurationDAO" ref="dPDBucketConfigurationDAO" />
+		<property name="dPDBucketDAO" ref="dPDBucketDAO" />
 	</bean>
 	<bean id="paymentRecoveryService" class="com.pennant.eod.PaymentRecoveryService">
 		<property name="paymentRecoveryHeaderDAO" ref="paymentRecoveryHeaderDAO" />
@@ -131,6 +133,7 @@
 	<bean id="installmentDueService" class="com.pennant.app.core.InstallmentDueService" parent="serviceHelper">
 	</bean>
 	<bean id="receiptPaymentService" class="com.pennant.app.core.ReceiptPaymentService" parent="serviceHelper">
+		<property name="repaymentProcessUtil" ref="repayProcessUtil" />
 	</bean>
 	<bean id="autoDisbursementService" class="com.pennant.app.core.AutoDisbursementService" parent="serviceHelper">
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
@@ -168,9 +171,7 @@
 	<!-- No end of day Service -->
 	<bean id="eodService" class="com.pennant.eod.EodService">
 		<property name="dataSource" ref="pfsDatasource" />
-		<property name="serviceUtil" ref="serviceUtil" />
 		<property name="accrualService" ref="accrualService" />
-		<property name="statusMovementService" ref="statusMovementService" />
 		<property name="rateReviewService" ref="rateReviewService" />
 		<property name="customerQueuingService" ref="customerQueuingService" />
 		<property name="repayQueueService" ref="repayQueueService" />

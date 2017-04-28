@@ -29,31 +29,31 @@ import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.exception.PFFInterfaceException;
-import com.rits.cloning.Cloner;
 
-public class RepaymentProcessUtil  {
-	private final static Logger				logger	= Logger.getLogger(RepaymentProcessUtil.class);
+public class RepaymentProcessUtil {
+	private final static Logger		logger	= Logger.getLogger(RepaymentProcessUtil.class);
 
-	private RepaymentPostingsUtil			repayPostingUtil;
-	private FinODDetailsDAO					finODDetailsDAO;
+	private RepaymentPostingsUtil	repayPostingUtil;
+	private FinODDetailsDAO			finODDetailsDAO;
 
 	public RepaymentProcessUtil() {
 		super();
 	}
-	
+
 	/**
 	 * Method for Calculation of Schedule payment based on Allocated Details from Receipts
+	 * 
 	 * @param receiptData
 	 * @param scheduleData
 	 * @return
-	 * @throws PFFInterfaceException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
+	 * @throws PFFInterfaceException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
 	@SuppressWarnings("unchecked")
 	public void recalReceipt(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail, FinReceiptDetail receiptDetail,
-			String repayHierarchy, String finEvent) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+			FinanceProfitDetail profitDetail, FinReceiptDetail receiptDetail, String repayHierarchy)
+			throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
 
 		// If no balance for repayment then return with out calculation
@@ -74,10 +74,8 @@ public class RepaymentProcessUtil  {
 			}
 		}
 
-		Cloner cloner = new Cloner();
-		List<FinanceScheduleDetail> tempScheduleDetails = cloner.deepClone(scheduleDetails);
-		tempScheduleDetails = sortSchdDetails(tempScheduleDetails);
-		
+		scheduleDetails = sortSchdDetails(scheduleDetails);
+
 		List<FinRepayHeader> repayHeaderList = new ArrayList<>();
 		List<RepayScheduleDetail> pastdueRpySchdList = new ArrayList<>();
 		char[] rpyOrder = repayHierarchy.replace("CS", "C").toCharArray();
@@ -90,24 +88,24 @@ public class RepaymentProcessUtil  {
 		Date valueDate = receiptDetail.getValueDate();
 
 		// Load Pending Schedules until balance available for payment
-		for (int s = 1; s < tempScheduleDetails.size(); s++) {
-			FinanceScheduleDetail curSchd = tempScheduleDetails.get(s);
+		for (int s = 1; s < scheduleDetails.size(); s++) {
+			FinanceScheduleDetail curSchd = scheduleDetails.get(s);
 			Date schdDate = curSchd.getSchDate();
 			RepayScheduleDetail rsd = null;
 
-			// Skip if repayment date after Current Business date
-			if (schdDate.compareTo(valueDate) > 0) {
-				break;
+			// Skip if Repayment date after Current Business date
+			if (schdDate.compareTo(valueDate) != 0) {
+				continue;
 			}
 
 			for (int j = 0; j < rpyOrder.length; j++) {
 
 				char repayTo = rpyOrder[j];
-				if(repayTo == RepayConstants.REPAY_PRINCIPAL){
+				if (repayTo == RepayConstants.REPAY_PRINCIPAL) {
 
 					BigDecimal balPri = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
-					if(balPri.compareTo(BigDecimal.ZERO) > 0){
-						if(balPri.compareTo(totalReceiptAmt) > 0){
+					if (balPri.compareTo(BigDecimal.ZERO) > 0) {
+						if (balPri.compareTo(totalReceiptAmt) > 0) {
 							balPri = totalReceiptAmt;
 						}
 						rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPri, valueDate);
@@ -115,16 +113,16 @@ public class RepaymentProcessUtil  {
 						totalReceiptAmt = totalReceiptAmt.subtract(balPri);
 						totPriPaidNow = totPriPaidNow.add(balPri);
 					}
-				}else if(repayTo == RepayConstants.REPAY_PROFIT){
+				} else if (repayTo == RepayConstants.REPAY_PROFIT) {
 
 					String profit = ImplementationConstants.REPAY_INTEREST_HIERARCHY;
 					char[] pftPayOrder = profit.toCharArray();
 					for (char pftPayTo : pftPayOrder) {
-						if(pftPayTo == RepayConstants.REPAY_PROFIT){
+						if (pftPayTo == RepayConstants.REPAY_PROFIT) {
 
 							BigDecimal balPft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
-							if(balPft.compareTo(BigDecimal.ZERO) > 0){
-								if(balPft.compareTo(totalReceiptAmt) > 0){
+							if (balPft.compareTo(BigDecimal.ZERO) > 0) {
+								if (balPft.compareTo(totalReceiptAmt) > 0) {
 									balPft = totalReceiptAmt;
 								}
 								rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPft, valueDate);
@@ -133,13 +131,13 @@ public class RepaymentProcessUtil  {
 								totPftPaidNow = totPftPaidNow.add(balPft);
 							}
 
-						}else if(pftPayTo == RepayConstants.REPAY_LATEPAY_PROFIT){
+						} else if (pftPayTo == RepayConstants.REPAY_LATEPAY_PROFIT) {
 
 							FinODDetails overdue = overdueMap.get(schdDate);
-							if(overdue != null){
+							if (overdue != null) {
 								BigDecimal balLatePft = overdue.getLPIBal();
-								if(balLatePft.compareTo(BigDecimal.ZERO) > 0){
-									if(balLatePft.compareTo(totalReceiptAmt) > 0){
+								if (balLatePft.compareTo(BigDecimal.ZERO) > 0) {
+									if (balLatePft.compareTo(totalReceiptAmt) > 0) {
 										balLatePft = totalReceiptAmt;
 									}
 									rsd = prepareRpyRecord(curSchd, rsd, repayTo, balLatePft, valueDate);
@@ -152,13 +150,13 @@ public class RepaymentProcessUtil  {
 						}
 					}
 
-				}else if(repayTo == RepayConstants.REPAY_PENALTY){
+				} else if (repayTo == RepayConstants.REPAY_PENALTY) {
 
 					FinODDetails overdue = overdueMap.get(schdDate);
-					if(overdue != null){
+					if (overdue != null) {
 						BigDecimal balPenalty = overdue.getTotPenaltyBal();
-						if(balPenalty.compareTo(BigDecimal.ZERO) > 0){
-							if(balPenalty.compareTo(totalReceiptAmt) > 0){
+						if (balPenalty.compareTo(BigDecimal.ZERO) > 0) {
+							if (balPenalty.compareTo(totalReceiptAmt) > 0) {
 								balPenalty = totalReceiptAmt;
 							}
 							rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPenalty, valueDate);
@@ -169,12 +167,12 @@ public class RepaymentProcessUtil  {
 						}
 					}
 
-				}else if(repayTo == RepayConstants.REPAY_OTHERS){
+				} else if (repayTo == RepayConstants.REPAY_OTHERS) {
 
 					// If Schedule has Unpaid Fee Amount
 					BigDecimal balFee = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
-					if(balFee.compareTo(BigDecimal.ZERO) > 0){
-						if(balFee.compareTo(totalReceiptAmt) > 0){
+					if (balFee.compareTo(BigDecimal.ZERO) > 0) {
+						if (balFee.compareTo(totalReceiptAmt) > 0) {
 							balFee = totalReceiptAmt;
 						}
 						rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_FEE, balFee, valueDate);
@@ -186,8 +184,8 @@ public class RepaymentProcessUtil  {
 
 					// If Schedule has Unpaid Insurance Amount
 					BigDecimal balIns = curSchd.getInsSchd().subtract(curSchd.getSchdInsPaid());
-					if(balIns.compareTo(BigDecimal.ZERO) > 0){
-						if(balIns.compareTo(totalReceiptAmt) > 0){
+					if (balIns.compareTo(BigDecimal.ZERO) > 0) {
+						if (balIns.compareTo(totalReceiptAmt) > 0) {
 							balIns = totalReceiptAmt;
 						}
 						rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_INS, balIns, valueDate);
@@ -205,7 +203,7 @@ public class RepaymentProcessUtil  {
 			}
 
 			// Add Repay Schedule detail List
-			if(rsd != null){
+			if (rsd != null) {
 				pastdueRpySchdList.add(rsd);
 			}
 
@@ -216,7 +214,7 @@ public class RepaymentProcessUtil  {
 		}
 
 		FinRepayHeader repayHeader = null;
-		if(receiptDetail.getAmount().compareTo(totalReceiptAmt) > 0){
+		if (receiptDetail.getAmount().compareTo(totalReceiptAmt) > 0) {
 			// Prepare Repay Header Details
 			repayHeader = new FinRepayHeader();
 			repayHeader.setFinReference(financeMain.getFinReference());
@@ -236,8 +234,8 @@ public class RepaymentProcessUtil  {
 			repayHeaderList.add(repayHeader);
 		}
 
-		if(totalReceiptAmt.compareTo(BigDecimal.ZERO) > 0){
-			
+		if (totalReceiptAmt.compareTo(BigDecimal.ZERO) > 0) {
+
 			// Prepare Repay Header Details
 			repayHeader = new FinRepayHeader();
 			repayHeader.setFinReference(financeMain.getFinReference());
@@ -260,20 +258,20 @@ public class RepaymentProcessUtil  {
 		// Adding Repay Headers to Receipt Details
 		receiptDetail.setRepayHeaders(repayHeaderList);
 		long linkedTranId = 0;
-		
+
 		for (int j = 0; j < repayHeaderList.size(); j++) {
-			
+
 			repayHeader = repayHeaderList.get(j);
 			BigDecimal excessAmount = BigDecimal.ZERO;
-			if(!StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent()) &&
-					!StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent()) &&
-					!StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())){
+			if (!StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent())
+					&& !StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent())
+					&& !StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())) {
 				excessAmount = repayHeader.getRepayAmount();
 			}
-			
+
 			List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
-			List<Object> returnList = processRepaymentPostings(financeMain, scheduleDetails,
-					profitDetail, repaySchdList, excessAmount, repayHeader.getFinEvent());
+			List<Object> returnList = processRepaymentPostings(financeMain, scheduleDetails, profitDetail,
+					repaySchdList, excessAmount, repayHeader.getFinEvent());
 
 			if (!(Boolean) returnList.get(0)) {
 				String errParm = (String) returnList.get(1);
@@ -283,7 +281,7 @@ public class RepaymentProcessUtil  {
 			//Update Linked Transaction ID
 			linkedTranId = (long) returnList.get(1);
 			repayHeader.setLinkedTranId(linkedTranId);
-			
+
 			String finAccount = (String) returnList.get(2);
 			if (finAccount != null) {
 				financeMain.setFinAccount(finAccount);
@@ -310,9 +308,9 @@ public class RepaymentProcessUtil  {
 	 * @throws InvocationTargetException
 	 */
 	public List<Object> processRepaymentPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, BigDecimal excessAmount, String finEvent)
-			throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
-		return doRepayPostings(financeMain, scheduleDetails, profitDetail, repaySchdList,excessAmount, finEvent);
+			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, BigDecimal excessAmount,
+			String finEvent) throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
+		return doRepayPostings(financeMain, scheduleDetails, profitDetail, repaySchdList, excessAmount, finEvent);
 	}
 
 	/**
@@ -328,8 +326,8 @@ public class RepaymentProcessUtil  {
 	 * @throws InvocationTargetException
 	 */
 	private List<Object> doRepayPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, BigDecimal excessAmount, String finEvent)
-			throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
+			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, BigDecimal excessAmount,
+			String finEvent) throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
 		logger.debug("Entering");
 
 		List<Object> returnList = new ArrayList<Object>();
@@ -339,7 +337,7 @@ public class RepaymentProcessUtil  {
 			FinRepayQueue finRepayQueue = null;
 			FinRepayQueueTotals repayQueueTotals = new FinRepayQueueTotals();
 
-			if(repaySchdList != null && !repaySchdList.isEmpty()){
+			if (repaySchdList != null && !repaySchdList.isEmpty()) {
 				for (int i = 0; i < repaySchdList.size(); i++) {
 
 					finRepayQueue = new FinRepayQueue();
@@ -352,20 +350,28 @@ public class RepaymentProcessUtil  {
 					finRepayQueue.setRefundAmount(repaySchdList.get(i).getRefundReq());
 					finRepayQueue.setPenaltyPayNow(repaySchdList.get(i).getPenaltyPayNow());
 					finRepayQueue.setWaivedAmount(repaySchdList.get(i).getWaivedAmt());
-					finRepayQueue.setPenaltyBal(repaySchdList.get(i).getPenaltyAmt().subtract(repaySchdList.get(i).getPenaltyPayNow()));
+					finRepayQueue.setPenaltyBal(repaySchdList.get(i).getPenaltyAmt()
+							.subtract(repaySchdList.get(i).getPenaltyPayNow()));
 					finRepayQueue.setChargeType(repaySchdList.get(i).getChargeType());
 
 					// Total Repayments Calculation for Principal, Profit 
-					repayQueueTotals.setPrincipal(repayQueueTotals.getPrincipal().add(repaySchdList.get(i).getPrincipalSchdPayNow()));
-					repayQueueTotals.setProfit(repayQueueTotals.getProfit().add(repaySchdList.get(i).getProfitSchdPayNow()));
-					repayQueueTotals.setLateProfit(repayQueueTotals.getLateProfit().add(repaySchdList.get(i).getLatePftSchdPayNow()));
-					repayQueueTotals.setPenalty(repayQueueTotals.getPenalty().add(repaySchdList.get(i).getPenaltyPayNow()));
+					repayQueueTotals.setPrincipal(repayQueueTotals.getPrincipal().add(
+							repaySchdList.get(i).getPrincipalSchdPayNow()));
+					repayQueueTotals.setProfit(repayQueueTotals.getProfit().add(
+							repaySchdList.get(i).getProfitSchdPayNow()));
+					repayQueueTotals.setLateProfit(repayQueueTotals.getLateProfit().add(
+							repaySchdList.get(i).getLatePftSchdPayNow()));
+					repayQueueTotals.setPenalty(repayQueueTotals.getPenalty().add(
+							repaySchdList.get(i).getPenaltyPayNow()));
 
 					// Fee Details
 					repayQueueTotals.setFee(repayQueueTotals.getFee().add(repaySchdList.get(i).getSchdFeePayNow()));
-					repayQueueTotals.setInsurance(repayQueueTotals.getInsurance().add(repaySchdList.get(i).getSchdInsPayNow()));
-					repayQueueTotals.setSuplRent(repayQueueTotals.getSuplRent().add(repaySchdList.get(i).getSchdSuplRentPayNow()));
-					repayQueueTotals.setIncrCost(repayQueueTotals.getIncrCost().add(repaySchdList.get(i).getSchdIncrCostPayNow()));
+					repayQueueTotals.setInsurance(repayQueueTotals.getInsurance().add(
+							repaySchdList.get(i).getSchdInsPayNow()));
+					repayQueueTotals.setSuplRent(repayQueueTotals.getSuplRent().add(
+							repaySchdList.get(i).getSchdSuplRentPayNow()));
+					repayQueueTotals.setIncrCost(repayQueueTotals.getIncrCost().add(
+							repaySchdList.get(i).getSchdIncrCostPayNow()));
 
 					finRepayQueues.add(finRepayQueue);
 				}
@@ -374,7 +380,7 @@ public class RepaymentProcessUtil  {
 			//Repayments Process For Schedule Repay List	
 			repayQueueTotals.setQueueList(finRepayQueues);
 			repayQueueTotals.setExcess(excessAmount);
-			
+
 			returnList = getRepayPostingUtil().postingProcess(financeMain, scheduleDetails, profitDetail,
 					repayQueueTotals, finEvent);
 
@@ -445,20 +451,20 @@ public class RepaymentProcessUtil  {
 		logger.debug("Leaving");
 		return finRepayQueue;
 	}
-	
-	
+
 	/**
 	 * Method for Preparation of Repayment Schedule Details
+	 * 
 	 * @param curSchd
 	 * @param rsd
 	 * @param rpyTo
 	 * @param balPayNow
 	 * @return
 	 */
-	private RepayScheduleDetail prepareRpyRecord(FinanceScheduleDetail curSchd, RepayScheduleDetail rsd, 
-			char rpyTo, BigDecimal balPayNow, Date valueDate){
-		
-		if(rsd == null){
+	private RepayScheduleDetail prepareRpyRecord(FinanceScheduleDetail curSchd, RepayScheduleDetail rsd, char rpyTo,
+			BigDecimal balPayNow, Date valueDate) {
+
+		if (rsd == null) {
 			rsd = new RepayScheduleDetail();
 			rsd.setFinReference(curSchd.getFinReference());
 			rsd.setSchDate(curSchd.getSchDate());
@@ -468,7 +474,7 @@ public class RepaymentProcessUtil  {
 			rsd.setProfitSchd(curSchd.getProfitSchd());
 			rsd.setProfitSchdPaid(curSchd.getSchdPftPaid());
 			rsd.setProfitSchdBal(rsd.getProfitSchd().subtract(rsd.getProfitSchdPaid()));
-			
+
 			rsd.setPrincipalSchd(curSchd.getPrincipalSchd());
 			rsd.setPrincipalSchdPaid(curSchd.getSchdPriPaid());
 			rsd.setPrincipalSchdBal(rsd.getPrincipalSchd().subtract(rsd.getPrincipalSchdPaid()));
@@ -476,60 +482,61 @@ public class RepaymentProcessUtil  {
 			rsd.setSchdIns(curSchd.getInsSchd());
 			rsd.setSchdInsPaid(curSchd.getSchdInsPaid());
 			rsd.setSchdInsBal(rsd.getSchdIns().subtract(rsd.getSchdInsPaid()));
-			
+
 			rsd.setSchdSuplRent(curSchd.getSuplRent());
 			rsd.setSchdSuplRentPaid(curSchd.getSuplRentPaid());
 			rsd.setSchdSuplRentBal(rsd.getSchdSuplRent().subtract(rsd.getSchdSuplRentPaid()));
-			
+
 			rsd.setSchdIncrCost(curSchd.getIncrCost());
 			rsd.setSchdIncrCostPaid(curSchd.getIncrCostPaid());
 			rsd.setSchdIncrCostBal(rsd.getSchdIncrCost().subtract(rsd.getSchdIncrCostPaid()));
-			
+
 			rsd.setSchdFee(curSchd.getFeeSchd());
 			rsd.setSchdFeePaid(curSchd.getSchdFeePaid());
 			rsd.setSchdFeeBal(rsd.getSchdFee().subtract(rsd.getSchdFeePaid()));
-			
+
 			rsd.setDaysLate(DateUtility.getDaysBetween(curSchd.getSchDate(), valueDate));
 			rsd.setDaysEarly(0);
 		}
-		
+
 		// Principal Payment 
-		if(rpyTo == RepayConstants.REPAY_PRINCIPAL){
+		if (rpyTo == RepayConstants.REPAY_PRINCIPAL) {
 			rsd.setPrincipalSchdPayNow(balPayNow);
 		}
-		
+
 		// Profit Payment 
-		if(rpyTo == RepayConstants.REPAY_PROFIT){
+		if (rpyTo == RepayConstants.REPAY_PROFIT) {
 			rsd.setProfitSchdPayNow(balPayNow);
 		}
-		
+
 		// Late Payment Profit Payment 
-		if(rpyTo == RepayConstants.REPAY_LATEPAY_PROFIT){
+		if (rpyTo == RepayConstants.REPAY_LATEPAY_PROFIT) {
 			rsd.setLatePftSchdPayNow(balPayNow);
 		}
-		
+
 		// Fee Detail Payment 
-		if(rpyTo == RepayConstants.REPAY_FEE){
+		if (rpyTo == RepayConstants.REPAY_FEE) {
 			rsd.setSchdFeePayNow(balPayNow);
-			
+
 		}
-		
+
 		// Insurance Detail Payment 
-		if(rpyTo == RepayConstants.REPAY_INS){
+		if (rpyTo == RepayConstants.REPAY_INS) {
 			rsd.setSchdInsPayNow(balPayNow);
 		}
-		
+
 		// Penalty Charge Detail Payment 
-		if(rpyTo == RepayConstants.REPAY_PENALTY){
+		if (rpyTo == RepayConstants.REPAY_PENALTY) {
 			rsd.setPenaltyPayNow(balPayNow);
 		}
-		
+
 		return rsd;
-		
+
 	}
-	
+
 	/**
 	 * Method for Sorting Schedule Details
+	 * 
 	 * @param financeScheduleDetail
 	 * @return
 	 */
@@ -546,7 +553,7 @@ public class RepaymentProcessUtil  {
 
 		return financeScheduleDetail;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -554,6 +561,7 @@ public class RepaymentProcessUtil  {
 	public RepaymentPostingsUtil getRepayPostingUtil() {
 		return repayPostingUtil;
 	}
+
 	public void setRepayPostingUtil(RepaymentPostingsUtil repayPostingUtil) {
 		this.repayPostingUtil = repayPostingUtil;
 	}

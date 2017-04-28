@@ -53,8 +53,10 @@ import com.pennant.backend.dao.finance.FinStatusDetailDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinStatusDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.util.FinanceConstants;
 
@@ -70,8 +72,6 @@ public class LatePayMarkingService extends ServiceHelper {
 															+ " FP.ExcessAmt,FP.EmiInAdvance,FP.PayableAdvise,FM.FinStatus,FP.FinCategory "
 															+ " FROM FINPFTDETAILS FP INNER JOIN Financemain FM ON FP.FINREFERENCE = FM.FINREFERENCE WHERE FP.CURODDAYS > 0 and FP.CustID=?";
 
-	public static final String	CUSTOMERSTATUS		= "SELECT FM.FinReference,FM.FinStatus,FP.FinCategory FROM FINANCEMAIN FM INNER JOIN FINPFTDETAILS FP ON  FM.FINREFERENCE = FP.FINREFERENCE"
-															+ " and FM.CustID = ?";
 	private FinODDetailsDAO		finODDetailsDAO;
 	private FinStatusDetailDAO	finStatusDetailDAO;
 	private CustomerDAO			customerDAO;
@@ -161,7 +161,7 @@ public class LatePayMarkingService extends ServiceHelper {
 				detail.setFinCategory(resultSet.getString("FinCategory"));
 				detail.setFinStatus(resultSet.getString("FinStatus"));
 				detail.setCustId(custId);
-				processDPDBuketing(detail, date);
+				processDPDBuketing(detail, date, null);
 			}
 
 		} catch (Exception e) {
@@ -177,13 +177,56 @@ public class LatePayMarkingService extends ServiceHelper {
 		}
 	}
 
+	public void processCustomerStatus(long custID, Date valueDate, String curFinStatus, String curFinproduct) {
+
+		Customer customer = customerDAO.getCustomerStatus(custID);
+		String currentStatus = StringUtils.trimToEmpty(customer.getCustSts());
+		List<FinanceMain> finList = financeMainDAO.getFinanceByCustId(custID);
+
+		String custStatus = "";
+		int maxDueDays = 0;
+
+		//Need to consider the current loan status as well when proceesed along with loan.
+		if (StringUtils.isNotBlank(curFinStatus)) {
+			long bucketId = getBucketID(curFinStatus);
+			List<DPDBucketConfiguration> list = getBucketConfigurations(curFinproduct);
+			for (DPDBucketConfiguration configuration : list) {
+				if (configuration.getBucketID() == bucketId && configuration.getDueDays() > maxDueDays) {
+					maxDueDays = configuration.getDueDays();
+					custStatus = getBucket(configuration.getBucketID());
+					break;
+				}
+			}
+		}
+
+		for (FinanceMain financeMain : finList) {
+			String finStatus = financeMain.getFinStatus();
+			String productCode = financeMain.getLovDescFinProduct();
+			if (StringUtils.isNotBlank(finStatus)) {
+				long bucketId = getBucketID(finStatus);
+				List<DPDBucketConfiguration> list = getBucketConfigurations(productCode);
+				for (DPDBucketConfiguration configuration : list) {
+					if (configuration.getBucketID() == bucketId && configuration.getDueDays() > maxDueDays) {
+						maxDueDays = configuration.getDueDays();
+						custStatus = getBucket(configuration.getBucketID());
+						break;
+					}
+				}
+			}
+		}
+		if (!StringUtils.equals(currentStatus, custStatus)) {
+			customerDAO.updateCustStatus(custStatus, valueDate, custID);
+		}
+
+	}
+
 	/**
 	 * @param connection
 	 * @param custId
 	 * @param date
 	 * @throws Exception
 	 */
-	public void processDPDBuketing(FinanceProfitDetail detail, Date date) throws Exception {
+	public void processDPDBuketing(FinanceProfitDetail detail, Date date, FinanceMain financeMain) {
 
 		String finreference = detail.getFinReference();
 		BigDecimal tdSchdPri = detail.getTdSchdPri();
@@ -195,7 +238,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		BigDecimal payableAdvise = detail.getPayableAdvise();
 		int dueDays = detail.getCurODDays();
 		String productCode = detail.getFinCategory();
-		String finStatus = detail.getFinStatus();
+		String finStatus = StringUtils.trimToEmpty(detail.getFinStatus());
 		long custId = detail.getCustId();
 
 		//Due bucket
@@ -246,54 +289,14 @@ public class LatePayMarkingService extends ServiceHelper {
 			statusDetail.setODDays(dueDays);
 			finStatusDetailDAO.saveOrUpdateFinStatus(statusDetail);
 		}
-		financeMainDAO.updateBucketStatus(finreference, bucketCode, dueBucket, FinanceConstants.FINSTSRSN_SYSTEM);
 
-	}
-
-	public void processCustomerStatus(Connection connection, long custId, Date date) throws Exception {
-		ResultSet resultSet = null;
-		PreparedStatement sqlStatement = null;
-		String finreference = "";
-
-		try {
-			//payments
-			sqlStatement = connection.prepareStatement(CUSTOMERSTATUS);
-			sqlStatement.setLong(1, custId);
-			resultSet = sqlStatement.executeQuery();
-
-			String custStatus = "";
-			int maxDueDays = 0;
-
-			while (resultSet.next()) {
-				finreference = resultSet.getString("FinReference");
-				String finStatus = resultSet.getString("FinStatus");
-				String productCode = resultSet.getString("FinCategory");
-				if (StringUtils.isNotBlank(finStatus)) {
-					long bucketId = getBucketID(finStatus);
-					List<DPDBucketConfiguration> list = getBucketConfigurations(productCode);
-					for (DPDBucketConfiguration configuration : list) {
-						if (configuration.getBucketID() == bucketId && configuration.getDueDays() > maxDueDays) {
-							maxDueDays = configuration.getDueDays();
-							custStatus = getBucket(configuration.getBucketID());
-							break;
-						}
-					}
-				}
-			}
-
-			customerDAO.updateCustStatus(custStatus, date, custId);
-
-		} catch (Exception e) {
-			logger.error("Exception: Finreference :" + finreference, e);
-			throw new Exception("Exception: Finreference : " + finreference, e);
-		} finally {
-			if (resultSet != null) {
-				resultSet.close();
-			}
-			if (sqlStatement != null) {
-				sqlStatement.close();
-			}
+		if (financeMain == null) {
+			financeMainDAO.updateBucketStatus(finreference, bucketCode, dueBucket, FinanceConstants.FINSTSRSN_SYSTEM);
+		} else {
+			financeMain.setFinStatus(bucketCode);
+			financeMain.setDueBucket(dueBucket);
 		}
+
 	}
 
 	/**
@@ -383,7 +386,6 @@ public class LatePayMarkingService extends ServiceHelper {
 		finODDetailsDAO.updateBatch(finODDetails);
 
 	}
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

@@ -76,4 +76,6 @@ public interface DPDBucketDAO extends BasicCrudDao<DPDBucket> {
 
 	List<DPDBucket> getDPDBuckets();
 
+	DPDBucket getDPDBucket(String bucketCode, String type);
+
 }

@@ -112,6 +112,37 @@ public class DPDBucketDAOImpl extends BasisNextidDaoImpl<DPDBucket> implements D
 	}
 	
 	@Override
+	public DPDBucket getDPDBucket(String bucketCode, String type) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" bucketID ");
+		sql.append(" From DPDBUCKETS");
+		sql.append(type);
+		sql.append(" Where BucketCode = :BucketCode");
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		
+		DPDBucket dPDBucket = new DPDBucket();
+		dPDBucket.setBucketCode(bucketCode);
+		
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(dPDBucket);
+		RowMapper<DPDBucket> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DPDBucket.class);
+		
+		try {
+			dPDBucket = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			dPDBucket = null;
+		}
+		
+		logger.debug(Literal.LEAVING);
+		return dPDBucket;
+	}
+	
+	@Override
 	public List<DPDBucket> getDPDBuckets() {
 		logger.debug(Literal.ENTERING);
 		

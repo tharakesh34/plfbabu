@@ -160,4 +160,7 @@ public interface CustomerDAO {
 	boolean getCustomerByCoreBankId(String custCoreBank);
 
 	void updateCustStatus(String custStatus, Date statusChgdate, long custId);
+
+
+	Customer getCustomerStatus(long custId);
 }

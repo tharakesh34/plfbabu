@@ -30,8 +30,6 @@ import com.pennant.app.core.NPAService;
 import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.ReceiptPaymentService;
 import com.pennant.app.core.RepayQueueService;
-import com.pennant.app.core.ServiceUtil;
-import com.pennant.app.core.StatusMovementService;
 import com.pennant.app.util.BusinessCalendar;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -60,8 +58,6 @@ public class EodService {
 	private ReceiptPaymentService		receiptPaymentService;
 
 	private InstallmentDueService		installmentDueService;
-	private ServiceUtil					serviceUtil;
-	private StatusMovementService		statusMovementService;
 
 	// Constants
 	private static final String			SQL		= "select * from CustomerQueuing where ThreadId=? And ( Progress is null or Status= ?)";
@@ -162,7 +158,7 @@ public class EodService {
 		latePayMarkingService.processDPDBuketing(connection, custId, date);
 
 		//customer status update
-		latePayMarkingService.processCustomerStatus(connection, custId, date);
+		latePayMarkingService.processCustomerStatus(custId, date,null,null);
 
 		//late pay penalty
 		latePayPenaltyService.processLatePayPenalty(connection, custId, date);
@@ -172,9 +168,6 @@ public class EodService {
 
 		//NPA Service
 		npaService.processNPABuckets(connection, custId, date);
-
-		//process payments from queue
-		//serviceUtil.processQueue(connection, custId, date);
 
 		//_____________________________________________________________________________________________________________
 		//Date roll over
@@ -194,11 +187,7 @@ public class EodService {
 		autoDisbursementService.processDisbursementPostings(connection, custId, date);
 
 		//receipt postings
-		receiptPaymentService.processrReceipts(connection, custId, date);
-		
-		
-		//Status movements
-		//statusMovementService.processMovements(connection, custId, date);
+		receiptPaymentService.processrReceipts(connection, custId, date, custEODEvents);
 
 		//installment 
 		installmentDueService.processDueDatePostings(connection, custId, date);
@@ -218,10 +207,6 @@ public class EodService {
 
 	}
 
-	public void setServiceUtil(ServiceUtil serviceUtil) {
-		this.serviceUtil = serviceUtil;
-	}
-
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
@@ -232,10 +217,6 @@ public class EodService {
 
 	public void setAccrualService(AccrualService accrualService) {
 		this.accrualService = accrualService;
-	}
-
-	public void setStatusMovementService(StatusMovementService statusMovementService) {
-		this.statusMovementService = statusMovementService;
 	}
 
 	public void setRateReviewService(RateReviewService rateReviewService) {

@@ -6429,6 +6429,7 @@
 		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
 		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="latePayMarkingService" ref="latePayMarkingService" />
 	</bean>
 
 	<!--============ Finance Repayment Process Util ============== -->
@@ -9329,6 +9330,8 @@
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="dataSource" ref="pfsDatasource" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
+		<property name="dPDBucketConfigurationDAO" ref="dPDBucketConfigurationDAO" />
+		<property name="dPDBucketDAO" ref="dPDBucketDAO" />
 	</bean>
 	<!-- Accrual -->
 	<bean id="accrualService" class="com.pennant.app.core.AccrualService" parent="serviceHelper">

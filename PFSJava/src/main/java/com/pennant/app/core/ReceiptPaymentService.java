@@ -5,79 +5,88 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
+import com.pennant.app.util.RepaymentProcessUtil;
+import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.util.RepayConstants;
 
 public class ReceiptPaymentService extends ServiceHelper {
-	private static final long	serialVersionUID	= 1442146139821584760L;
-	private Logger				logger				= Logger.getLogger(ReceiptPaymentService.class);
+	private static final long		serialVersionUID	= 1442146139821584760L;
+	private Logger					logger				= Logger.getLogger(ReceiptPaymentService.class);
 
-
-	private static final String	INSTALLMENTDUE		= "SELECT FM.CUSTID,FM.FINBRANCH,FM.FINTYPE, PD.DETAILID, PD.EXTRACTID, PD.PRESENTMENTID, PD.FINREFERENCE, PD.SCHDATE, PD.MANDATEID,"
-															+ " PD.SCHAMTDUE, PD.SCHPRIDUE, PD.SCHPFTDUE, PD.SCHFEEDUE, PD.SCHINSDUE, PD.SCHPENALTYDUE, PD.ADVANCEAMT,"
-															+ " PD.EXCESSID, PD.ADVISEAMT, PD.PRESENTMENTAMT, PD.EXCLUDEREASON, PD.BOUNCEID FROM PRESENTMENTDETAILS PD "
-															+ " INNER JOIN FINANCEMAIN FM ON PD.FINREFERENCE = FM.FINREFERENCE WHERE SCHDATE=? AND FM.CUSTID=? "
-															+ " AND STATUS=1 ";
+	//PD.SCHAMTDUE, PD.SCHPRIDUE, PD.SCHPFTDUE, PD.SCHFEEDUE, PD.SCHINSDUE, PD.SCHPENALTYDUE,PD.ADVISEAMT, 
+	private static final String		INSTALLMENTDUE		= "SELECT FM.CUSTID,FM.FINBRANCH,FM.FINTYPE, PD.DETAILID, PD.PRESENTMENTID, PD.FINREFERENCE, PD.SCHDATE, PD.MANDATEID,"
+																+ " PD.ADVANCEAMT,"
+																+ " PD.EXCESSID, PD.PRESENTMENTAMT, PD.EXCLUDEREASON, PD.BOUNCEID FROM PRESENTMENTDETAILS PD "
+																+ " INNER JOIN FINANCEMAIN FM ON PD.FINREFERENCE = FM.FINREFERENCE WHERE PD.SCHDATE=? AND FM.CUSTID=? "
+																+ " AND STATUS=1 ";
+	private RepaymentProcessUtil	repaymentProcessUtil;
 
 	/**
 	 * @param custId
+	 * @param custEODEvents
 	 * @param date
 	 * @throws Exception
 	 */
-	public void processrReceipts(Connection connection, long custId, Date valuedDate) throws Exception {
+	public void processrReceipts(Connection connection, long custId, Date valuedDate, List<FinEODEvent> custEODEvents)
+			throws Exception {
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
 		String finref = "";
 		try {
 			connection = DataSourceUtils.doGetConnection(getDataSource());
 			sqlStatement = connection.prepareStatement(INSTALLMENTDUE);
-			sqlStatement.setLong(1, custId);
-			sqlStatement.setDate(2, DateUtility.getDBDate(valuedDate.toString()));
+			sqlStatement.setDate(1, DateUtility.getDBDate(valuedDate.toString()));
+			sqlStatement.setLong(2, custId);
 			resultSet = sqlStatement.executeQuery();
 			while (resultSet.next()) {
 				finref = resultSet.getString("FINREFERENCE");
-				FinRepayQueue finRepayQueue = new FinRepayQueue();
-				finRepayQueue.setFinReference(finref);
-				finRepayQueue.setBranch(resultSet.getString("FINBRANCH"));
-				finRepayQueue.setFinType(resultSet.getString("FINTYPE"));
-				finRepayQueue.setCustomerID(resultSet.getLong("CustID"));
-				finRepayQueue.setRpyDate(resultSet.getDate("SchDate"));
-
-				finRepayQueue.setSchdPri(getDecimal(resultSet, "SCHPRIDUE"));
-				finRepayQueue.setSchdPriBal(getDecimal(resultSet, "SCHPRIDUE"));
-
-				finRepayQueue.setSchdPft(getDecimal(resultSet, "SCHPFTDUE"));
-				finRepayQueue.setSchdPftBal(getDecimal(resultSet, "SCHPFTDUE"));
-
-				finRepayQueue.setSchdFee(getDecimal(resultSet, "SCHFEEDUE"));
-				finRepayQueue.setSchdFeeBal(getDecimal(resultSet, "SCHFEEDUE"));
-
-				finRepayQueue.setPenaltyBal(getDecimal(resultSet, "SCHPENALTYDUE"));
-
+				Date schDate = resultSet.getDate("SchDate");
 				BigDecimal advanceAmt = getDecimal(resultSet, "ADVANCEAMT");
-				BigDecimal totalDue = getDecimal(resultSet, "SCHAMTDUE");
 				BigDecimal presentmentAmt = getDecimal(resultSet, "PRESENTMENTAMT");
 
-//				FinanceMain finMain = repaymentService.getFinanceMain(finref);
-//				
-//				if (advanceAmt.compareTo(BigDecimal.ZERO) > 0) {
-//					repaymentService.processRepayments(valuedDate, finMain, finRepayQueue, advanceAmt);
-//				}
-//
-//				if (presentmentAmt.compareTo(BigDecimal.ZERO) > 0) {
-//					repaymentService.processRepayments(valuedDate, finMain, finRepayQueue, advanceAmt);
-//				}
-//
-//				BigDecimal excess = totalDue.subtract(presentmentAmt.add(advanceAmt));
-//
-//				if (excess.compareTo(BigDecimal.ZERO) >= 0) {
-//					//post execess
-//
-//				}
+				FinEODEvent eodEvent = getFinEODEvent(custEODEvents, finref);
+				FinanceMain financeMain = eodEvent.getFinanceMain();
+				FinanceProfitDetail profitDetail = eodEvent.getFinProfitDetail();
+
+				List<FinanceScheduleDetail> scheduleDetails = eodEvent.getFinanceScheduleDetails();
+
+				String repayHeirarchy = eodEvent.getFinType().getRpyHierarchy();
+
+				FinReceiptDetail receiptDetail = null;
+				if (advanceAmt.compareTo(BigDecimal.ZERO) > 0) {
+					receiptDetail = new FinReceiptDetail();
+					receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+					receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+					receiptDetail.setPaymentType(RepayConstants.PAYTYPE_EMIINADV);
+					receiptDetail.setPayAgainstID(resultSet.getLong("EXCESSID"));
+					receiptDetail.setAmount(advanceAmt);
+					receiptDetail.setValueDate(schDate);
+					receiptDetail.setReceivedDate(valuedDate);
+					repaymentProcessUtil.recalReceipt(financeMain, scheduleDetails, profitDetail, receiptDetail,
+							repayHeirarchy);
+				}
+
+				if (presentmentAmt.compareTo(BigDecimal.ZERO) > 0) {
+					receiptDetail = new FinReceiptDetail();
+					receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+					receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+					receiptDetail.setPaymentType(RepayConstants.PAYTYPE_PAYABLE);
+					receiptDetail.setPayAgainstID(resultSet.getLong("EXCESSID"));
+					receiptDetail.setAmount(presentmentAmt);
+					receiptDetail.setValueDate(schDate);
+					receiptDetail.setReceivedDate(valuedDate);
+					repaymentProcessUtil.recalReceipt(financeMain, scheduleDetails, profitDetail, receiptDetail,
+							repayHeirarchy);
+				}
 
 			}
 		} catch (Exception e) {
@@ -93,5 +102,19 @@ public class ReceiptPaymentService extends ServiceHelper {
 		}
 	}
 
+	private FinEODEvent getFinEODEvent(List<FinEODEvent> custEODEvents, String finref) {
+
+		for (FinEODEvent finEODEvent : custEODEvents) {
+			if (finEODEvent.getFinanceMain().getFinReference().equals(finref)) {
+				return finEODEvent;
+			}
+
+		}
+		return null;
+	}
+
+	public void setRepaymentProcessUtil(RepaymentProcessUtil repaymentProcessUtil) {
+		this.repaymentProcessUtil = repaymentProcessUtil;
+	}
 
 }

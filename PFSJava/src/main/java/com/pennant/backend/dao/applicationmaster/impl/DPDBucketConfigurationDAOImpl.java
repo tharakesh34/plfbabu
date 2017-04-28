@@ -270,9 +270,9 @@ public class DPDBucketConfigurationDAOImpl extends BasisNextidDaoImpl<DPDBucketC
 	public void setDataSource(DataSource dataSource) {
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
-	
+
 	@Override
-	public int getByProductCode(String producCode,int dueDys, String type) {
+	public int getByProductCode(String producCode, int dueDys, String type) {
 		DPDBucketConfiguration dPDBucketConfiguration = new DPDBucketConfiguration();
 		dPDBucketConfiguration.setProductCode(producCode);
 		dPDBucketConfiguration.setDueDays(dueDys);
@@ -302,6 +302,26 @@ public class DPDBucketConfigurationDAOImpl extends BasisNextidDaoImpl<DPDBucketC
 
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+
+	@Override
+	public List<DPDBucketConfiguration> getDPDBucketConfigurations(String productCode) {
+		logger.debug(Literal.ENTERING);
+		// Prepare the SQL.
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("productCode", productCode);
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" configID, productCode, bucketID, dueDays, suspendProfit ");
+		sql.append(" From DPDBUCKETSCONFIG");
+		sql.append(" Where productCode =:productCode ");
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		RowMapper<DPDBucketConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(DPDBucketConfiguration.class);
+		List<DPDBucketConfiguration> list = namedParameterJdbcTemplate.query(sql.toString(), rowMapper);
+		;
+		logger.debug(Literal.LEAVING);
+		return list;
 	}
 
 }
