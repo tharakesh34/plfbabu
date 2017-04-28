@@ -41,7 +41,7 @@
  ********************************************************************************************
  */
 
-package com.pennant.webui.financemanagement.presentmentheader;
+package com.pennant.webui.financemanagement.presentmentdetail;
 
 import java.io.Serializable;
 import java.util.ArrayList;

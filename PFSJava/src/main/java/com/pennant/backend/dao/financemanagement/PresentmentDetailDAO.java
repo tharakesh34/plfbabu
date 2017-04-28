@@ -46,25 +46,16 @@ import java.sql.ResultSet;
 import java.util.List;
 
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
-import com.pennant.backend.model.financemanagement.PresentmentDetailHeader;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennanttech.pff.core.TableType;
 
 public interface PresentmentDetailDAO {
 
-	PresentmentDetail getPresentmentDetail(long detailID, String type);
-
-	void update(PresentmentDetail presentmentDetail, TableType tableType);
-
-	void delete(PresentmentDetail presentmentDetail, TableType tableType);
-
 	String save(PresentmentDetail presentmentDetail, TableType tableType);
 
-	long getPresentmentDetailRef(String tableName);
+	long getSeqNumber(String tableName);
 
-	void savePresentmentHeaderDetails(PresentmentDetailHeader detailHeader);
-
-	ResultSet getPresentmentDetails(PresentmentDetailHeader detailHeader) throws Exception;
+	ResultSet getPresentmentDetails(PresentmentHeader detailHeader) throws Exception;
 
 	long savePresentmentHeader(PresentmentHeader presentmentHeader);
 

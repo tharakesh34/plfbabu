@@ -135,8 +135,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 	public void onCreate$window_PresentmentDetailList(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		setPageComponents(window_PresentmentDetailList, borderLayout_PresentmentDetailList, listBoxPresentmentDetail,
-				pagingPresentmentDetailList);
+		setPageComponents(window_PresentmentDetailList, borderLayout_PresentmentDetailList, listBoxPresentmentDetail, 	pagingPresentmentDetailList);
 		setItemRender(new PresentmentDetailListModelItemRenderer());
 
 		registerButton(button_PresentmentDetailList_PresentmentDetailSearch);
@@ -196,11 +195,9 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 		}
 		this.searchObject.clearFilters();
 
-		this.searchObject.addFilterEqual("EXTRACTID",
-				Long.valueOf(this.batchReference.getSelectedItem().getValue().toString()));
+		this.searchObject.addFilterEqual("EXTRACTID", Long.valueOf(this.batchReference.getSelectedItem().getValue().toString()));
 
-		if (this.mandateType.getSelectedItem() != null
-				&& !PennantConstants.List_Select.equals(this.mandateType.getSelectedItem().getValue())) {
+		if (this.mandateType.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.mandateType.getSelectedItem().getValue())) {
 			this.searchObject.addFilterEqual("MandateType", this.mandateType.getSelectedItem().getValue());
 		}
 
@@ -208,12 +205,12 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 			this.searchObject.addFilterEqual("FINTYPE", this.product.getValue());
 		}
 
-		if (this.exclusionStatus.getSelectedItem() != null
-				&& !PennantConstants.List_Select.equals(this.exclusionStatus.getSelectedItem().getValue())) {
+		if (this.exclusionStatus.getSelectedItem() != null && !PennantConstants.List_Select.equals(this.exclusionStatus.getSelectedItem().getValue())) {
 			this.searchObject.addFilterEqual("ExcludeReason", this.exclusionStatus.getSelectedItem().getValue());
 		}
 
 		this.listbox.setItemRenderer(new PresentmentDetailListModelItemRenderer());
+		
 		getPagedListWrapper().getPagedListService().getBySearchObject(this.searchObject);
 		getPagedListWrapper().init(this.searchObject, this.listbox, this.paging);
 		logger.debug("Leaving");
@@ -242,9 +239,9 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 		}
 
 		try {
-			
+
 			long extractId = Long.valueOf(this.batchReference.getSelectedItem().getValue().toString());
-			
+
 			List<Long> detaildList = getPresentmentIds(extractId);
 
 			if (detaildList != null && detaildList.size() <= 0) {
@@ -254,7 +251,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 
 			PresentmentHeader detail = new PresentmentHeader();
 			detail.setMandateType(this.mandateType.getValue());
-			detail.setPartnerBankID(Long.valueOf(this.partnerBank.getValue()));
+			detail.setPartnerBankId(Long.valueOf(this.partnerBank.getValue()));
 			detail.setPresentmentDate(DateUtility.getSysDate());
 			detail.setStatus(RepayConstants.PEXC_BATCH_CREATED);
 
@@ -335,8 +332,8 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 		fillComboBox(this.exclusionStatus, "", PennantStaticListUtil.getPresentmentExclusionList(), "");
 		fillComboBox(this.batchReference, "", getPresentmentReference(), "");
 		this.batchReference.setSelectedIndex(0);
-        this.mandateType.setSelectedIndex(0);
-		
+		this.mandateType.setSelectedIndex(0);
+
 		this.product.setValue("");
 		this.product.setDescription("");
 		this.partnerBank.setValue("");
@@ -376,10 +373,10 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentDetail
 
 		JdbcSearchObject<ValueLabel> so = new JdbcSearchObject<ValueLabel>(ValueLabel.class);
 
-		so.addTabelName("PRESENTMENTDETAILHEADER");
-		so.addField(" ExtractId Label");
-		so.addField(" ExtractReference  Value");
-		so.addFilterNotEqual("BATCHID", 0);
+		so.addTabelName("PRESENTMENTHEADER");
+		so.addField(" ID Label");
+		so.addField(" REFERENCE  Value");
+		//so.addFilterNotEqual("BATCHID", 0); need to add the satus filter
 		List<ValueLabel> ids = service.getBySearchObject(so);
 
 		ValueLabel label = null;

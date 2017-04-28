@@ -4602,16 +4602,17 @@
 		<property name="presentmentDetailService" ref="presentmentDetailService" />
 	</bean>
 	
-	<bean id="presentmentDetailExtractListCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentDetailExtractListCtrl"
-		parent="basisListCtrl" scope="prototype">
+	<bean id="presentmentDetailExtractListCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentDetailExtractListCtrl" parent="basisListCtrl" scope="prototype">
 		<property name="presentmentDetailService" ref="presentmentDetailService" />
 	</bean>
 	
 		<!-- PresentmentHeader -->
-	<bean id="presentmentHeaderListCtrl" class="com.pennant.webui.financemanagement.presentmentheader.PresentmentHeaderListCtrl"
+	<bean id="presentmentHeaderListCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentHeaderListCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="presentmentDetailService" ref="presentmentDetailService" />
 	</bean>
+	
+
 	
 	<!-- FinType Partner Bank -->
 	<bean id="finTypePartnerBankListCtrl" class="com.pennant.webui.rmtmasters.financetype.FinTypePartnerBankListCtrl"
@@ -4629,6 +4630,5 @@
 		<property name="accountMappingService" ref="accountMappingService"/>
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
-	
 
 </beans>

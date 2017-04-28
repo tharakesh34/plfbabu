@@ -24,7 +24,7 @@
 							tooltiptext="${c:l('button_PresentmentDetailList_PresentmentDetailSearch.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="print" label="${c:l('label_Print')}"
 							autodisable="button_PresentmentDetailList_PresentmentDetailSearch,print,button_PresentmentDetailList_NewPresentmentDetail,btnRefresh,help"
-							tooltiptext="${c:l('button_PresentmentDetailList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
+							tooltiptext="${c:l('button_PresentmentDetailList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" visible="false"/>
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->

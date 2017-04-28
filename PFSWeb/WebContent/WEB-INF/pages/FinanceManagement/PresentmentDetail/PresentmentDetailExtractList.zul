@@ -56,12 +56,21 @@
 							</columns>
 							<rows>
 								<row>
-									<label value="${c:l('label_PresentmentDetailList_MandateType.value')}" />
-									<combobox id="mandateType" width="250px" />
+									<label
+										value="${c:l('label_PresentmentDetailList_MandateType.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<combobox id="mandateType" 	width="250px" />
+									</hbox>
 
 									<label value="${c:l('label_PresentmentDetailList_Product.value')}" />
-									<extendedcombobox id="loanType" />
+									<hbox>
+										<space spacing="2px" />
+										<uppercasebox id="loanType" width="250px" />
+										<button id="btnloanType" image="/images/icons/LOVSearch.png" />
+									</hbox>
 								</row>
+								
 								<row>
 									<label value="${c:l('label_PresentmentDetailList_Fromdate.value')}" />
 									<hbox>
@@ -75,9 +84,14 @@
 										<datebox id="toDate" width="155px" />
 									</hbox>
 								</row>
+								
+								<row>
+									<label value="${c:l('label_PresentmentDetailList_FinBranches.value')}" />
+									<extendedcombobox id="branches" />
+								</row>
 							</rows>
 						</grid>
-					<listbox id="listBoxPresentmentExtractDetail" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"  multiple="false" sizedByContent="true" span="true" />
+					<listbox id="listBoxPresentmentExtractDetail"  tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"  multiple="false" sizedByContent="true" span="true" />
 				</div>	
 				</center>
 				<south border="none">

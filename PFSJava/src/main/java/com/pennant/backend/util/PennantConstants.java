@@ -33,6 +33,8 @@
  */
 package com.pennant.backend.util;
 
+import com.pennant.backend.model.ExecutionStatus;
+
 /**
  * This stores all constants required for running the application
  */
@@ -664,5 +666,10 @@ public class PennantConstants {
 	public static final String VLD_CRT_LOAN					= "CRTLOAN";
 	public static final String VLD_SRV_LOAN					= "SRVLOAN";
 	public static final String NOT_AVAILABLE				= "NAV";
-
+	
+	public static final ExecutionStatus BATCH_TYPE_PRESENTMENT_IMPORT = new ExecutionStatus();
+	public static final String FILESTATUS_STARTING = "STARTING";
+	public static final String FILESTATUS_EXECUTING = "EXECUTING";
+	public static final String FILESTATUS_COMPLETED = "COMPLETED";
+	public static final String FILESTATUS_FAILED = "FAILED";
 }

@@ -44,7 +44,11 @@
 package com.pennant.webui.financemanagement.presentmentdetail;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
@@ -62,11 +66,14 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
-import com.pennant.backend.model.financemanagement.PresentmentDetailHeader;
+import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.component.Uppercasebox;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pff.core.Literal;
 
 /**
@@ -86,9 +93,11 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	protected Button button_PresentmentDetailList_Extract;
 
 	protected Combobox mandateType;
-	protected ExtendedCombobox loanType;
+	protected Uppercasebox loanType;
+	protected Button btnloanType;
 	protected Datebox fromdate;
 	protected Datebox toDate;
+	protected ExtendedCombobox branches;
 
 	private transient PresentmentDetailService presentmentDetailService;
 
@@ -122,8 +131,6 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		// Render the page and display the data.
 		doRenderPage();
 		doSetFieldProperties();
-		
-		registerField("FromDt");;
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -135,12 +142,14 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		logger.debug(Literal.ENTERING);
 
 		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
+		this.fromdate.setFormat(PennantConstants.dateFormat);
+		this.toDate.setFormat(PennantConstants.dateFormat);
 
-		this.loanType.setMaxlength(LengthConstants.LEN_MASTER_CODE);
-		this.loanType.setModuleName("FinanceType");
-		this.loanType.setValueColumn("FinType");
-		this.loanType.setDescColumn("FinTypeDesc");
-		this.loanType.setValidateColumns(new String[] { "FinType" });
+		this.branches.setMaxlength(LengthConstants.LEN_MASTER_CODE);
+		this.branches.setModuleName("Branch");
+		this.branches.setValueColumn("BranchCode");
+		this.branches.setDescColumn("BranchDesc");
+		this.branches.setValidateColumns(new String[] { "BranchCode" });
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -152,6 +161,8 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$button_PresentmentDetailList_Extract(Event event) {
+		logger.debug(Literal.ENTERING);
+
 		String errorMsg = null;
 		doSetValidations();
 		try {
@@ -161,10 +172,13 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		} catch (Exception e) {
 			MessageUtil.showError(e.getMessage());
 		}
-		
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doSetValidations() {
+		logger.debug(Literal.ENTERING);
+
 		Clients.clearWrongValue(this.fromdate);
 		Clients.clearWrongValue(this.toDate);
 		this.fromdate.setErrorMessage("");
@@ -183,21 +197,29 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		}
 
 		int diffentDays = SysParamUtil.getValueAsInt("PRESENTMENT_DAYS_DEF");
-		if (DateUtility.getDaysBetween(this.fromdate.getValue(), this.toDate.getValue()) >= diffentDays) {
-			throw new WrongValueException(this.toDate, " From Date and To Date difference should be should  be less than are equal to " + diffentDays);
+		if (DateUtility.getDaysBetween(this.fromdate.getValue(), this.toDate.getValue()) > diffentDays) {
+			throw new WrongValueException(this.toDate,
+					" From Date and To Date difference should be less than are equal to " + diffentDays);
 		}
+		logger.debug(Literal.LEAVING);
 	}
-	
 
 	private String extractDetails() throws Exception {
+		logger.debug(Literal.ENTERING);
 
-		PresentmentDetailHeader detailHeader = new PresentmentDetailHeader();
+		PresentmentHeader detailHeader = new PresentmentHeader();
+
 		detailHeader.setFromDate(this.fromdate.getValue());
 		detailHeader.setToDate(this.toDate.getValue());
-		detailHeader.setMandateType(this.mandateType.getValue());
-		detailHeader.setMandateType(this.loanType.getValue());
+		if (!"#".equals(this.mandateType.getSelectedItem().getValue().toString())) {
+			detailHeader.setMandateType(this.mandateType.getSelectedItem().getValue().toString());
+		}
+		detailHeader.setLoanType(this.loanType.getValue());
+		detailHeader.setFinBranch(this.branches.getValue());
 		detailHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
 		detailHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+
+		logger.debug(Literal.LEAVING);
 
 		return presentmentDetailService.savePresentmentDetails(detailHeader);
 	}
@@ -216,20 +238,42 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		logger.debug(Literal.ENTERING);
 
 		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
-
 		this.loanType.setValue("");
-		this.loanType.setDescription("");
-
 		this.fromdate.setValue(null);
 		this.toDate.setValue(null);
-
-		if (listBoxPresentmentExtractDetail.getItems() != null) {
-			this.listBoxPresentmentExtractDetail.getItems().clear();
-
-		}
+		this.branches.setValue("");
+		this.branches.setDescription("");
 
 		logger.debug(Literal.LEAVING);
+	}
 
+	public void onClick$btnloanType(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_PresentmentExtractDetailList, "FinanceType",
+				this.loanType.getValue(), null);
+		if (dataObject instanceof String) {
+			this.loanType.setValue(dataObject.toString());
+		} else {
+			@SuppressWarnings("unchecked")
+			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+			if (details != null) {
+				String tempflagcode = "";
+				List<String> flagKeys = new ArrayList<>(details.keySet());
+				for (int i = 0; i < flagKeys.size(); i++) {
+					if (StringUtils.isEmpty(flagKeys.get(i))) {
+						continue;
+					}
+					if (i == 0) {
+						tempflagcode = flagKeys.get(i);
+					} else {
+						tempflagcode = tempflagcode + "," + flagKeys.get(i);
+					}
+				}
+				this.loanType.setValue(tempflagcode);
+			}
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -255,5 +299,4 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	public void setPresentmentDetailService(PresentmentDetailService presentmentDetailService) {
 		this.presentmentDetailService = presentmentDetailService;
 	}
-
 }

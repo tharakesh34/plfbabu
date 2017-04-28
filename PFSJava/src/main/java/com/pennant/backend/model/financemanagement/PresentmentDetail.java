@@ -44,45 +44,22 @@ package com.pennant.backend.model.financemanagement;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import com.pennant.app.util.DateFormatterAdapter;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
-/**
- * Model class for the <b>PresentmentDetail table</b>.<br>
- * 
- */
-@XmlType(propOrder = { "detailID", "presentmentID", "finReference", "schDate", "schSeq", "mandateID", "schAmtDue",
-		"schPriDue", "schPftDue", "schFeeDue", "schInsDue", "schPenaltyDue", "advanceAmt", "excessID", "adviseAmt",
-		"excludeReason", "presentmentAmt", "status", "bounceID" })
-@XmlAccessorType(XmlAccessType.FIELD)
 public class PresentmentDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
-	private long detailID = Long.MIN_VALUE;
-	private long extractID  = Long.MIN_VALUE;
-	private long presentmentID = Long.MIN_VALUE;
-	private String presentmentIDName;
+	private long id = Long.MIN_VALUE;
+	private long presentmentId = Long.MIN_VALUE;
 	private String finReference;
-	private String finTypeDesc;
-	private String finReferenceName;
-	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Date schDate;
 	private Date defSchdDate;
-	private long schSeq;
-	private long mandateID;
-	private String mandateType;
-	private Date mandateExpiry;
+	private long mandateId;
 	private BigDecimal schAmtDue;
 	private BigDecimal schPriDue;
 	private BigDecimal schPftDue;
@@ -91,84 +68,53 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private BigDecimal schPenaltyDue;
 	private BigDecimal advanceAmt;
 	private Long excessID;
-	private String excessIDName;
 	private BigDecimal adviseAmt;
 	private int excludeReason;
-	private String excludeReasonName;
 	private BigDecimal presentmentAmt;
-	private int status;
-	private String statusName;
+	private int emiNo;
 	private long bounceID;
-	private String bounceIDName;
-	private String customerCif;
-	private String customerName;
-	private String loanType;
-	private String loanTypeName;
-	private String mandateStatus;
-
-
-	@XmlTransient
+	private String auxiliary1;
+	private String auxiliary2;
+	private long status;
 	private boolean newRecord = false;
-	@XmlTransient
-	private String lovValue;
+	private String customerName;
+	private String finTypeDesc;
+	private String mandateType;
+	private String mandateStatus;
+	private Date mandateExpiryDate;
+
+	public String getMandateStatus() {
+		return mandateStatus;
+	}
+
+	public void setMandateStatus(String mandateStatus) {
+		this.mandateStatus = mandateStatus;
+	}
+
 	@XmlTransient
 	private PresentmentDetail befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
 
+	@Override
 	public boolean isNew() {
-		return isNewRecord();
-	}
-
-	public PresentmentDetail() {
-		super();
-	}
-
-	public PresentmentDetail(long id) {
-		super();
-		this.setId(id);
-	}
-
-	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
-		excludeFields.add("presentmentIDName");
-		excludeFields.add("finReferenceName");
-		excludeFields.add("mandateIDName");
-		excludeFields.add("excessIDName");
-		excludeFields.add("excludeReasonName");
-		excludeFields.add("statusName");
-		excludeFields.add("bounceIDName");
-		excludeFields.add("customerCif");
-		excludeFields.add("customerName");
-		excludeFields.add("loanType");
-		excludeFields.add("loanTypeName");
-		excludeFields.add("mandateType");
-		excludeFields.add("finTypeDesc");
-		return excludeFields;
+		return false;
 	}
 
 	public long getId() {
-		return presentmentID;
+		return id;
 	}
 
 	public void setId(long id) {
-		this.presentmentID = id;
+		this.id = id;
 	}
 
-	public long getPresentmentID() {
-		return presentmentID;
+	public long getPresentmentId() {
+		return presentmentId;
 	}
 
-	public void setPresentmentID(long presentmentID) {
-		this.presentmentID = presentmentID;
-	}
-
-	public String getPresentmentIDName() {
-		return this.presentmentIDName;
-	}
-
-	public void setPresentmentIDName(String presentmentIDName) {
-		this.presentmentIDName = presentmentIDName;
+	public void setPresentmentId(long presentmentId) {
+		this.presentmentId = presentmentId;
 	}
 
 	public String getFinReference() {
@@ -179,14 +125,6 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.finReference = finReference;
 	}
 
-	public String getFinReferenceName() {
-		return this.finReferenceName;
-	}
-
-	public void setFinReferenceName(String finReferenceName) {
-		this.finReferenceName = finReferenceName;
-	}
-
 	public Date getSchDate() {
 		return schDate;
 	}
@@ -195,28 +133,12 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.schDate = schDate;
 	}
 
-	public long getSchSeq() {
-		return schSeq;
+	public Date getDefSchdDate() {
+		return defSchdDate;
 	}
 
-	public void setSchSeq(long schSeq) {
-		this.schSeq = schSeq;
-	}
-
-	public long getMandateID() {
-		return mandateID;
-	}
-
-	public void setMandateID(long mandateID) {
-		this.mandateID = mandateID;
-	}
-
-	public String getMandateType() {
-		return mandateType;
-	}
-
-	public void setMandateType(String mandateType) {
-		this.mandateType = mandateType;
+	public void setDefSchdDate(Date defSchdDate) {
+		this.defSchdDate = defSchdDate;
 	}
 
 	public BigDecimal getSchAmtDue() {
@@ -283,14 +205,6 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.excessID = excessID;
 	}
 
-	public String getExcessIDName() {
-		return this.excessIDName;
-	}
-
-	public void setExcessIDName(String excessIDName) {
-		this.excessIDName = excessIDName;
-	}
-
 	public BigDecimal getAdviseAmt() {
 		return adviseAmt;
 	}
@@ -307,14 +221,6 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.excludeReason = excludeReason;
 	}
 
-	public String getExcludeReasonName() {
-		return this.excludeReasonName;
-	}
-
-	public void setExcludeReasonName(String excludeReasonName) {
-		this.excludeReasonName = excludeReasonName;
-	}
-
 	public BigDecimal getPresentmentAmt() {
 		return presentmentAmt;
 	}
@@ -323,20 +229,12 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.presentmentAmt = presentmentAmt;
 	}
 
-	public int getStatus() {
-		return status;
+	public int getEmiNo() {
+		return emiNo;
 	}
 
-	public void setStatus(int status) {
-		this.status = status;
-	}
-
-	public String getStatusName() {
-		return this.statusName;
-	}
-
-	public void setStatusName(String statusName) {
-		this.statusName = statusName;
+	public void setEmiNo(int emiNo) {
+		this.emiNo = emiNo;
 	}
 
 	public long getBounceID() {
@@ -347,12 +245,28 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.bounceID = bounceID;
 	}
 
-	public String getBounceIDName() {
-		return this.bounceIDName;
+	public String getAuxiliary1() {
+		return auxiliary1;
 	}
 
-	public void setBounceIDName(String bounceIDName) {
-		this.bounceIDName = bounceIDName;
+	public void setAuxiliary1(String auxiliary1) {
+		this.auxiliary1 = auxiliary1;
+	}
+
+	public String getAuxiliary2() {
+		return auxiliary2;
+	}
+
+	public void setAuxiliary2(String auxiliary2) {
+		this.auxiliary2 = auxiliary2;
+	}
+
+	public long getStatus() {
+		return status;
+	}
+
+	public void setStatus(long status) {
+		this.status = status;
 	}
 
 	public boolean isNewRecord() {
@@ -363,20 +277,12 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.newRecord = newRecord;
 	}
 
-	public String getLovValue() {
-		return lovValue;
-	}
-
-	public void setLovValue(String lovValue) {
-		this.lovValue = lovValue;
-	}
-
 	public PresentmentDetail getBefImage() {
-		return this.befImage;
+		return befImage;
 	}
 
-	public void setBefImage(PresentmentDetail beforeImage) {
-		this.befImage = beforeImage;
+	public void setBefImage(PresentmentDetail befImage) {
+		this.befImage = befImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -387,70 +293,13 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.userDetails = userDetails;
 	}
 
-	public String getCustomerCif() {
-		return customerCif;
+	public String getCustomerName() {
+		return customerName;
 	}
 
-	public void setCustomerCif(String customerCif) {
-		this.customerCif = customerCif;
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
 	}
-
-	public String getLoanType() {
-		return loanType;
-	}
-
-	public void setLoanType(String loanType) {
-		this.loanType = loanType;
-	}
-
-	public String getLoanTypeName() {
-		return loanTypeName;
-	}
-
-	public void setLoanTypeName(String loanTypeName) {
-		this.loanTypeName = loanTypeName;
-	}
-
-	public Date getDefSchdDate() {
-		return defSchdDate;
-	}
-
-	public void setDefSchdDate(Date defSchdDate) {
-		this.defSchdDate = defSchdDate;
-	}
-
-	public long getDetailID() {
-		return detailID;
-	}
-
-	public void setDetailID(long detailID) {
-		this.detailID = detailID;
-	}
-
-	public long getExtractID() {
-		return extractID;
-	}
-
-	public void setExtractID(long extractID) {
-		this.extractID = extractID;
-	}
-
-	public String getMandateStatus() {
-		return mandateStatus;
-	}
-
-	public void setMandateStatus(String mandateStatus) {
-		this.mandateStatus = mandateStatus;
-	}
-
-	public Date getMandateExpiry() {
-		return mandateExpiry;
-	}
-
-	public void setMandateExpiry(Date mandateExpiry) {
-		this.mandateExpiry = mandateExpiry;
-	}
-
 
 	public String getFinTypeDesc() {
 		return finTypeDesc;
@@ -460,12 +309,28 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.finTypeDesc = finTypeDesc;
 	}
 
-	public String getCustomerName() {
-		return customerName;
+	public String getMandateType() {
+		return mandateType;
 	}
 
-	public void setCustomerName(String customerName) {
-		this.customerName = customerName;
+	public void setMandateType(String mandateType) {
+		this.mandateType = mandateType;
+	}
+
+	public Date getMandateExpiryDate() {
+		return mandateExpiryDate;
+	}
+
+	public void setMandateExpiryDate(Date mandateExpiryDate) {
+		this.mandateExpiryDate = mandateExpiryDate;
+	}
+
+	public long getMandateId() {
+		return mandateId;
+	}
+
+	public void setMandateId(long mandateId) {
+		this.mandateId = mandateId;
 	}
 
 }

@@ -56,6 +56,7 @@ public class PresentmentRequest extends DBProcessEngine {
 			destConnection = getConnection(config);
 			sourceConnection = DataSourceUtils.doGetConnection(dataSource);
 			executionStatus.setRemarks("Fetching data from source table...");
+
 			statement = getStatement(ids);
 			resultSet = getResultSet(ids, statement);
 
@@ -114,7 +115,7 @@ public class PresentmentRequest extends DBProcessEngine {
 			remarks.append(e.getMessage());
 			executionStatus.setStatus(ExecutionStatus.F.name());
 		} finally {
-			
+
 			try {
 				if (resultSet != null) {
 					resultSet.close();
@@ -122,16 +123,16 @@ public class PresentmentRequest extends DBProcessEngine {
 			} catch (Exception e) {
 				logger.info("Exception :", e);
 			}
-			//releaseResorces(resultSet, sourceConnection, sourceConnection);
+			releaseResorces(resultSet, sourceConnection, sourceConnection);
 			resultSet = null;
 			executionStatus.setRemarks(remarks.toString());
 		}
-
 		logger.debug("Leaving");
 	}
 
 	private void saveData(ResultSet rs) throws Exception {
 		logger.debug("Entering");
+
 		PreparedStatement ps = null;
 		try {
 			StringBuilder sb = new StringBuilder();
@@ -145,22 +146,24 @@ public class PresentmentRequest extends DBProcessEngine {
 			ps = destConnection.prepareStatement(sb.toString());
 
 			ps.setString(1, String.valueOf(getNextId("SEQ_PDC_CONSL_EMI_DTL", false)));
-			ps.setString(2, StringUtils.substring(getValue(rs, "FINBRANCH"),0,3));
+			ps.setString(2, getValue(rs, "BRANCHSWIFTBRNCDE"));
 			ps.setString(3, getValue(rs, "FINREFERENCE"));
 			ps.setString(4, getValue(rs, "MICR"));
 			ps.setInt(5, getIntValue(rs, "ACCTYPE"));
-			ps.setString(6, "000");
+			ps.setString(6, "000");// Always 000
 			ps.setString(7, getValue(rs, "ACCNUMBER"));
 			ps.setString(8, getValue(rs, "CUSTSHRTNAME"));
 			ps.setString(9, getValue(rs, "ACCHOLDERNAME"));
-
 			ps.setString(10, getValue(rs, "BANKNAME"));
-			ps.setString(11, getValue(rs, "BANKNAME"));//
-			ps.setInt(12, 1);// getIntValue(rs, "EMI_NO")
-			ps.setString(13, "405");//getValue(rs, "PARTNERBANKCODE")
-			
-			
-			
+			ps.setString(11, getValue(rs, "BRANCHDESC"));
+			ps.setInt(12, getIntValue(rs, "EMINO"));
+
+			String mnadteType = getValue(rs, "MANDATETYPE");
+			if (StringUtils.equals(mnadteType, "ECS") || StringUtils.equals(mnadteType, "DDM")) {
+				ps.setString(13, "405");// getValue(rs, "PARTNERBANKCODE")
+			} else {
+				ps.setString(11, StringUtils.substring(getValue(rs, "BRANCHCODE"), 0, 3));// BRANCHCODE code is 6 but in doc 3
+			}
 
 			ps.setString(14, getValue(rs, "PRESENTMENTID"));
 			ps.setBigDecimal(15, getBigDecimal(rs, "PRESENTMENTAMT"));
@@ -173,14 +176,21 @@ public class PresentmentRequest extends DBProcessEngine {
 			ps.setString(21, getValue(rs, "UTILITYCODE"));
 			ps.setDate(22, getDateValue(rs, "STARTDATE"));
 			ps.setDate(23, getDateValue(rs, "EXPIRYDATE"));
-			ps.setString(24, "E");//getValue(rs, "MANDATETYPE")
-			ps.setString(25, getValue(rs, "FINTYPE"));
 
+			if (StringUtils.equals(mnadteType, "ECS")) {
+				ps.setString(24, "E");
+			} else if (StringUtils.equals(mnadteType, "DDM")) {
+				ps.setString(24, "D");
+			} else if (StringUtils.equals(mnadteType, "NACH")) {
+				ps.setString(24, "Z");
+			}
+			ps.setString(25, getValue(rs, "FINTYPE"));
 			ps.setInt(26, getIntValue(rs, "CUSTID"));
 			ps.setInt(27, -1);
-			ps.setInt(28, 1);// getIntValue(rs, "ENTITY_CODE")
-			ps.setDate(29, com.pennanttech.pff.core.util.DateUtil.getSqlDate(com.pennanttech.pff.core.util.DateUtil
-					.getSysDate()));
+			// TXN_TYPE_CODE
+			// SOURCE_CODE
+			ps.setInt(28, getIntValue(rs, "ENTITYCODE"));
+			ps.setDate(29, com.pennanttech.pff.core.util.DateUtil.getSqlDate(com.pennanttech.pff.core.util.DateUtil.getSysDate()));
 			ps.setString(30, Status.N.name());
 
 			// execute query
@@ -189,8 +199,12 @@ public class PresentmentRequest extends DBProcessEngine {
 			logger.error("Exception: ", e);
 			throw e;
 		} finally {
-			ps = null;
+			if (ps != null) {
+				ps.close();
+				ps = null;
+			}
 		}
+
 		logger.debug("Leaving");
 	}
 
@@ -199,11 +213,9 @@ public class PresentmentRequest extends DBProcessEngine {
 
 		ResultSet rs = null;
 		try {
-
 			for (int i = 1; i <= paymentId.length; i++) {
 				statement.setLong(i, Long.parseLong(paymentId[i - 1]));
 			}
-
 			rs = statement.executeQuery();
 
 		} catch (Exception e) {
@@ -225,15 +237,18 @@ public class PresentmentRequest extends DBProcessEngine {
 			sql.append(" T6.BANKNAME, T1.PRESENTMENTID, T1.PRESENTMENTAMT,");
 			sql.append(" T0.PRESENTMENTDATE, T3.MANDATEREF, T4.IFSC, ");
 			sql.append(" T7.PARTNERBANKCODE, T7.UTILITYCODE, T3.STARTDATE, T3.EXPIRYDATE, T3.MANDATETYPE, ");
-			sql.append(" T2.FINTYPE, T2.CUSTID , T7.PARTNERBANKCODE ");
-			sql.append(" FROM PRESENTMENTHEADER T0 ");
-			sql.append(" INNER JOIN PRESENTMENTDETAILS T1 ON T0.PRESENTMENTID = T1.PRESENTMENTID ");
+			sql.append(" T2.FINTYPE, T2.CUSTID , T7.PARTNERBANKCODE, T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, ");
+			sql.append(" T8.BRANCHSWIFTBRNCDE, T10.ENTITYCODE FROM PRESENTMENTHEADER T0 ");
+			sql.append(" INNER JOIN PRESENTMENTDETAILS T1 ON T0.ID = T1.PRESENTMENTID ");
 			sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE ");
 			sql.append(" INNER JOIN CuSTOMERS T5 ON T5.CUSTID = T2.CUSTID ");
 			sql.append(" INNER JOIN MANDATES T3 ON T2.MANDATEID = T3.MANDATEID ");
 			sql.append(" INNER JOIN BANKBRANCHES T4 ON T3.BANKBRANCHID = T4.BANKBRANCHID ");
 			sql.append(" INNER JOIN BMTBANKDETAIL T6 ON T4.BANKCODE = T6.BANKCODE ");
 			sql.append(" INNER JOIN PARTNERBANKS T7 ON T7.PARTNERBANKID = T0.PARTNERBANKID ");
+			sql.append(" INNER JOIN RMTBRANCHES T8 ON T8.BRANCHCODE = T2.FINBRANCH ");
+			sql.append(" INNER JOIN RMTFINANCETYPES T9 ON T9.FINTYPE = T2.FINTYPE");
+			sql.append(" INNER JOIN SMTDIVISIONDETAIL T10 ON T10.DIVISIONCODE = T9.FINDIVISION");
 			sql.append(" WHERE T1.PRESENTMENTID IN (");
 
 			for (int i = 0; i < paymentId.length; i++) {
@@ -241,13 +256,9 @@ public class PresentmentRequest extends DBProcessEngine {
 					sql.append(",");
 				}
 				sql.append("?");
-
 			}
 			sql.append(")");
-
-			statement = destConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
-
+			statement = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 		} catch (SQLException e) {
 			logger.error("Exception: ", e);
 		}

@@ -58,7 +58,7 @@
 										</a>
 									</hbox>
 								</row>
-								<row id="row_Branches"
+								<row id="row_Branches" 	
 									visible="false">
 									<label
 										value="${c:l('label_Branches.value')}" />

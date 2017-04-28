@@ -44,28 +44,13 @@ package com.pennant.backend.service.financemanagement;
 
 import java.util.List;
 
-import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
-import com.pennant.backend.model.financemanagement.PresentmentDetailHeader;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 
 public interface PresentmentDetailService {
 
-	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-
-	PresentmentDetail getPresentmentDetail(long detailID);
-
-	PresentmentDetail getApprovedPresentmentDetail(long detailID);
-
-	AuditHeader delete(AuditHeader auditHeader);
-
-	AuditHeader doApprove(AuditHeader auditHeader);
-
-	AuditHeader doReject(AuditHeader auditHeader);
-
 	long savePresentmentHeader(PresentmentHeader presentmentHeader);
 
-	String savePresentmentDetails(PresentmentDetailHeader detailHeader) throws Exception;
+	String savePresentmentDetails(PresentmentHeader presentmentHeader) throws Exception;
 
 	void updatePresentmentDetails(long presentmentId, List<Long> detaildList) throws Exception;
 

@@ -695,4 +695,40 @@ public final class DateUtility extends DateUtil {
 
 		return new java.util.Date(xmlCalendar.toGregorianCalendar().getTimeInMillis());
 	}
+	
+	public static String timeBetween(java.util.Date endTime, java.util.Date startTime, String format) {
+		if(endTime == null || startTime == null ){
+			return "";
+		}
+		
+		long diff = endTime.getTime() - startTime.getTime();
+		
+		long diffSeconds = diff / 1000 % 60;
+		long diffMinutes = diff / (60 * 1000) % 60;
+		long diffHours = diff / (60 * 60 * 1000) % 24;
+		
+		int seconds = 0;
+		if(diffSeconds > 0) {
+			seconds = Integer.parseInt(String.valueOf(diffSeconds));
+		} 
+		
+		int minutes = 0;
+		if(diffMinutes > 0) {
+			minutes = Integer.parseInt(String.valueOf(diffMinutes));
+		} 
+		
+		int hours = 0;
+		if(diffHours > 0) {
+			hours = Integer.parseInt(String.valueOf(diffHours));
+		} 
+		
+		
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.HOUR_OF_DAY, hours);
+		cal.set(Calendar.MINUTE, minutes);
+		cal.set(Calendar.SECOND, seconds);
+		
+		
+		return  new SimpleDateFormat(format).format(cal.getTime());
+	}
 }

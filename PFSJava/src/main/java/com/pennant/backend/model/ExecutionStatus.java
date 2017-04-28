@@ -3,8 +3,11 @@ package com.pennant.backend.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.pennant.backend.util.PennantConstants;
+
 public class ExecutionStatus implements Serializable {
-    private static final long serialVersionUID = 4636563297252539705L;
+	private static final long serialVersionUID = 4636563297252539705L;
+	
 	private String executionName = "";
 	private int actualCount;
 	private int processedCount;
@@ -15,10 +18,15 @@ public class ExecutionStatus implements Serializable {
 	private Date valueDate;
 	private String status = "STARTING";
 
+	private int successCount;
+	private int failedCount;
+	private String fileName;
+	private String remarks;
+
+	
 	public ExecutionStatus() {
 		
 	}
-	
 	public String getExecutionName() {
 		return executionName;
 	}
@@ -44,12 +52,12 @@ public class ExecutionStatus implements Serializable {
 	}
 
 	public Date getStartTime() {
-    	return startTime;
-    }
+		return startTime;
+	}
 
 	public void setStartTime(Date startTime) {
-    	this.startTime = startTime;
-    }
+		this.startTime = startTime;
+	}
 
 	public Date getEndTime() {
 		if ("EXECUTING".equals(this.status)) {
@@ -59,32 +67,32 @@ public class ExecutionStatus implements Serializable {
 	}
 
 	public void setEndTime(Date endTime) {
-    	this.endTime = endTime;
-    }
+		this.endTime = endTime;
+	}
 
 	public String getStatus() {
-    	return status;
-    }
+		return status;
+	}
 
 	public void setStatus(String status) {
-    	this.status = status;
-    }
+		this.status = status;
+	}
 
 	public void setValueDate(Date valueDate) {
-	    this.valueDate = valueDate;
-    }
+		this.valueDate = valueDate;
+	}
 
 	public Date getValueDate() {
-	    return valueDate;
-    }
+		return valueDate;
+	}
 
 	public void setInfo(String info) {
-	    this.info = info;
-    }
+		this.info = info;
+	}
 
 	public String getInfo() {
-	    return info;
-    }
+		return info;
+	}
 
 	public String getWait() {
 		return wait;
@@ -93,7 +101,52 @@ public class ExecutionStatus implements Serializable {
 	public void setWait(String wait) {
 		this.wait = wait;
 	}
+
+	public int getSuccessCount() {
+		return successCount;
+	}
+
+	public void setSuccessCount(int successCount) {
+		this.successCount = successCount;
+	}
+
+	public int getFailedCount() {
+		return failedCount;
+	}
+
+	public void setFailedCount(int failedCount) {
+		this.failedCount = failedCount;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
 	
-	
+	public void reset() {
+		executionName = "";
+		actualCount = 0;
+		processedCount = 0;
+		successCount = 0;
+		failedCount = 0;
+		startTime = new Date(System.currentTimeMillis());
+		endTime = new Date(System.currentTimeMillis());
+		info = "";
+		valueDate = null;
+		fileName = "";
+		remarks = "";
+		status = PennantConstants.FILESTATUS_STARTING;
+	}
 
 }

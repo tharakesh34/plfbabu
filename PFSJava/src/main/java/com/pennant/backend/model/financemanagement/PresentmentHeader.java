@@ -43,122 +43,81 @@
 package com.pennant.backend.model.financemanagement;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import com.pennant.app.util.DateFormatterAdapter;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
-/**
- * Model class for the <b>PresentmentHeader table</b>.<br>
- * 
- */
-@XmlType(propOrder = { "presentmentID", "mandateType", "partnerBankID", "presentmentDate", "status" })
-@XmlAccessorType(XmlAccessType.FIELD)
 public class PresentmentHeader extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
-	private long presentmentID = Long.MIN_VALUE;
-	private String mandateType;
-	private String mandateTypeName;
-	private long partnerBankID;
-	private String partnerBankIDName;
-	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
+	private long Id = Long.MIN_VALUE;
+	private String reference;
 	private Date presentmentDate;
+	private long partnerBankId;
+	private Date fromDate;
+	private Date toDate;
 	private int status;
-	private String statusName;
-	@XmlTransient
+	private String mandateType;
+	private String loanType;
+	private String finBranch;
+	private String searchField1;
+	private String searchField2;
+	private String searchField3;
 	private boolean newRecord = false;
-	@XmlTransient
-	private String lovValue;
+
 	@XmlTransient
 	private PresentmentHeader befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
 
+	@Override
 	public boolean isNew() {
-		return isNewRecord();
+		return false;
 	}
 
-	public PresentmentHeader() {
-		super();
-	}
-
-	public PresentmentHeader(long id) {
-		super();
-		this.setId(id);
-	}
-
-	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
-		excludeFields.add("mandateTypeName");
-		excludeFields.add("partnerBankIDName");
-		excludeFields.add("statusName");
-		return excludeFields;
-	}
-
+	@Override
 	public long getId() {
-		return presentmentID;
+		return Id;
 	}
 
+	@Override
 	public void setId(long id) {
-		this.presentmentID = id;
+		Id = id;
 	}
 
-	public long getPresentmentID() {
-		return presentmentID;
+	public String getReference() {
+		return reference;
 	}
 
-	public void setPresentmentID(long presentmentID) {
-		this.presentmentID = presentmentID;
+	public void setReference(String reference) {
+		this.reference = reference;
 	}
 
-	public String getMandateType() {
-		return mandateType;
+	public long getPartnerBankId() {
+		return partnerBankId;
 	}
 
-	public void setMandateType(String mandateType) {
-		this.mandateType = mandateType;
+	public void setPartnerBankId(long partnerBankId) {
+		this.partnerBankId = partnerBankId;
 	}
 
-	public String getMandateTypeName() {
-		return this.mandateTypeName;
+	public Date getFromDate() {
+		return fromDate;
 	}
 
-	public void setMandateTypeName(String mandateTypeName) {
-		this.mandateTypeName = mandateTypeName;
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
 	}
 
-	public long getPartnerBankID() {
-		return partnerBankID;
+	public Date getToDate() {
+		return toDate;
 	}
 
-	public void setPartnerBankID(long partnerBankID) {
-		this.partnerBankID = partnerBankID;
-	}
-
-	public String getPartnerBankIDName() {
-		return this.partnerBankIDName;
-	}
-
-	public void setPartnerBankIDName(String partnerBankIDName) {
-		this.partnerBankIDName = partnerBankIDName;
-	}
-
-	public Date getPresentmentDate() {
-		return presentmentDate;
-	}
-
-	public void setPresentmentDate(Date presentmentDate) {
-		this.presentmentDate = presentmentDate;
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
 	}
 
 	public int getStatus() {
@@ -169,12 +128,44 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 		this.status = status;
 	}
 
-	public String getStatusName() {
-		return this.statusName;
+	public String getMandateType() {
+		return mandateType;
 	}
 
-	public void setStatusName(String statusName) {
-		this.statusName = statusName;
+	public void setMandateType(String mandateType) {
+		this.mandateType = mandateType;
+	}
+
+	public String getFinBranch() {
+		return finBranch;
+	}
+
+	public void setFinBranch(String finBranch) {
+		this.finBranch = finBranch;
+	}
+
+	public String getSearchField1() {
+		return searchField1;
+	}
+
+	public void setSearchField1(String searchField1) {
+		this.searchField1 = searchField1;
+	}
+
+	public String getSearchField2() {
+		return searchField2;
+	}
+
+	public void setSearchField2(String searchField2) {
+		this.searchField2 = searchField2;
+	}
+
+	public String getSearchField3() {
+		return searchField3;
+	}
+
+	public void setSearchField3(String searchField3) {
+		this.searchField3 = searchField3;
 	}
 
 	public boolean isNewRecord() {
@@ -185,20 +176,12 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 		this.newRecord = newRecord;
 	}
 
-	public String getLovValue() {
-		return lovValue;
-	}
-
-	public void setLovValue(String lovValue) {
-		this.lovValue = lovValue;
-	}
-
 	public PresentmentHeader getBefImage() {
-		return this.befImage;
+		return befImage;
 	}
 
-	public void setBefImage(PresentmentHeader beforeImage) {
-		this.befImage = beforeImage;
+	public void setBefImage(PresentmentHeader befImage) {
+		this.befImage = befImage;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -207,6 +190,22 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
+	}
+
+	public String getLoanType() {
+		return loanType;
+	}
+
+	public void setLoanType(String loanType) {
+		this.loanType = loanType;
+	}
+
+	public Date getPresentmentDate() {
+		return presentmentDate;
+	}
+
+	public void setPresentmentDate(Date presentmentDate) {
+		this.presentmentDate = presentmentDate;
 	}
 
 }
