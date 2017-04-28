@@ -8,4 +8,12 @@
 <property name="call.maindb" value="PLF.." dbms="mssql"/>
 <property name="call.maindb" value="PLF." dbms="oracle"/>
 
+	<changeSet author="Kesav" id="01">
+		<renameColumn columnDataType="varchar2(15)" newColumnName="ProfitCenterID"
+			oldColumnName="ProfitCentre" tableName="AdtPartnerBanks" />
+	</changeSet>
+	<changeSet author="Kesav" id="02">
+		<renameColumn columnDataType="varchar2(15)" newColumnName="CostCenterID"
+			oldColumnName="CrossCentre" tableName="AdtPartnerBanks" />
+	</changeSet>
 </databaseChangeLog>
