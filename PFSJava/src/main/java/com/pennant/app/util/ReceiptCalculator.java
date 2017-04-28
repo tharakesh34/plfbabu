@@ -484,7 +484,7 @@ public class ReceiptCalculator implements Serializable {
 													}else if(totalReceiptAmt.compareTo(feeAllocateBal) < 0 && balFee.compareTo(totalReceiptAmt) > 0){
 														balFee = totalReceiptAmt;
 													}
-													rsd = prepareRpyRecord(curSchd, rsd, repayTo, balFee);
+													rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_FEE, balFee);
 
 													// Reset Total Receipt Amount
 													totalReceiptAmt = totalReceiptAmt.subtract(balFee);
@@ -524,7 +524,6 @@ public class ReceiptCalculator implements Serializable {
 								}
 
 								// Calculate and set Fee Amount based on Fee ID
-								// TODO : Check/Confirm id Day of Frequency as same as Repay Frequency
 								for (int l = 0; l < insSchdList.size(); l++) {
 									if(insSchdList.get(l).getInsSchDate().compareTo(schdDate) == 0){
 
@@ -538,7 +537,7 @@ public class ReceiptCalculator implements Serializable {
 													}else if(totalReceiptAmt.compareTo(insAllocateBal) < 0 && balIns.compareTo(totalReceiptAmt) > 0){
 														balIns = totalReceiptAmt;
 													}
-													rsd = prepareRpyRecord(curSchd, rsd, repayTo, balIns);
+													rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_INS, balIns);
 
 													// Reset Total Receipt Amount
 													totalReceiptAmt = totalReceiptAmt.subtract(balIns);
@@ -655,7 +654,7 @@ public class ReceiptCalculator implements Serializable {
 				repayHeader.setTotalWaiver(BigDecimal.ZERO);
 
 				// Adding Repay Schedule Details to Repay Header
-				repayHeader.setRepayScheduleDetails(pastdueRpySchdList);
+				repayHeader.setRepayScheduleDetails(null);
 				repayHeaderList.add(repayHeader);
 			}
 			
@@ -775,13 +774,13 @@ public class ReceiptCalculator implements Serializable {
 		
 		// Fee Detail Payment 
 		if(rpyTo == RepayConstants.REPAY_FEE){
-			rsd.setSchdFeePayNow(rsd.getSchdFeePayNow().add(balPayNow));
+			rsd.setSchdFeePayNow(balPayNow);
 			
 		}
 		
 		// Insurance Detail Payment 
 		if(rpyTo == RepayConstants.REPAY_INS){
-			rsd.setSchdInsPayNow(rsd.getSchdInsPayNow().add(balPayNow));
+			rsd.setSchdInsPayNow(balPayNow);
 		}
 		
 		// Penalty Charge Detail Payment 

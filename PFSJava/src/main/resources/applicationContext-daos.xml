@@ -5565,7 +5565,7 @@
 	</bean>
 
 	<!--============ Manual Receipt Details ============== -->
-	<!-- Schedule Repayment / Early Pay Settlement / WriteOff -->
+	<!-- Schedule Repayment / Early Pay Settlement / Early Settlement -->
 
 	<bean id="receiptService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -5588,7 +5588,7 @@
 	<bean name="receiptServiceTarget"
 		class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl">
 		<property name="financeRepayPriorityDAO" ref="financeRepayPriorityDAO" />
-		<property name="repayPostingUtil" ref="repayPostingUtil" />
+		<property name="repayProcessUtil" ref="repayProcessUtil" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
@@ -6426,6 +6426,14 @@
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
 		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+	</bean>
+
+	<!--============ Finance Repayment Process Util ============== -->
+
+	<bean id="repayProcessUtil" class="com.pennant.app.util.RepaymentProcessUtil"
+		scope="prototype">
+		<property name="repayPostingUtil" ref="repayPostingUtil" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 	</bean>
 

@@ -121,9 +121,9 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws PFFInterfaceException
 	 */
 	public List<Object> postingProcess(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail financeProfitDetail,
-			FinRepayQueueTotals queueTotals, String eventCode, String finDivision) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			FinRepayQueueTotals queueTotals, String eventCode) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		
-		return postingProcessExecution(financeMain, scheduleDetails, financeProfitDetail, queueTotals, eventCode, finDivision);
+		return postingProcessExecution(financeMain, scheduleDetails, financeProfitDetail, queueTotals, eventCode);
 	}
 	
 	/**
@@ -139,8 +139,8 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws PFFInterfaceException
 	 */
 	private List<Object> postingProcessExecution(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail financeProfitDetail, FinRepayQueueTotals queueTotals, String eventCode, 
-			 String finDivison) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			FinanceProfitDetail financeProfitDetail, FinRepayQueueTotals queueTotals, String eventCode) 
+					throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		
 		List<Object> actReturnList = null;
@@ -153,7 +153,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		// Penalty Payments, if any Payment calculations done
 		// TODO: Make single transaction ID for Below schedule payments also
 		if(queueTotals.getPenalty().compareTo(BigDecimal.ZERO) > 0){
-			actReturnList = doOverduePostings(Long.MIN_VALUE, finRepayQueueList, dateValueDate, financeMain, finDivison);
+			actReturnList = doOverduePostings(Long.MIN_VALUE, finRepayQueueList, dateValueDate, financeMain);
 			if (actReturnList != null) {
 				return actReturnList;
 			}
@@ -161,7 +161,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		
 		// Total Schedule Payments
 		BigDecimal totalPayAmount = queueTotals.getPrincipal().add(queueTotals.getProfit()).add(queueTotals.getLateProfit()).add(
-				queueTotals.getFee()).add(queueTotals.getInsurance()).add(queueTotals.getSuplRent()).add(queueTotals.getIncrCost());
+				queueTotals.getFee()).add(queueTotals.getInsurance()).add(queueTotals.getSuplRent()).add(queueTotals.getIncrCost()).add(queueTotals.getExcess());
 		
 		if (totalPayAmount.compareTo(BigDecimal.ZERO) > 0) {
 			actReturnList = doSchedulePostings(queueTotals, valueDate, dateValueDate, financeMain,
@@ -194,7 +194,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 */
 	private List<Object> doOverduePostings(long linkedTranId, List<FinRepayQueue> finRepayQueueList,
-			Date dateValueDate, FinanceMain financeMain, String finDivison) throws PFFInterfaceException,
+			Date dateValueDate, FinanceMain financeMain) throws PFFInterfaceException,
 			IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		
@@ -213,7 +213,7 @@ public class RepaymentPostingsUtil implements Serializable {
 				List<Object> returnList = getRecoveryPostingsUtil().recoveryPayment(financeMain, dateValueDate,
 						repayQueue.getRpyDate(), repayQueue.getFinRpyFor(), dateValueDate,
 						repayQueue.getPenaltyPayNow(), BigDecimal.ZERO, repayQueue.getWaivedAmount(),
-						repayQueue.getChargeType(), linkedTranId, finDivison, fullyPaidSchd);
+						repayQueue.getChargeType(), linkedTranId, fullyPaidSchd);
 
 				if (!(Boolean) returnList.get(0)) {
 					List<Object> actReturnList = new ArrayList<Object>();
@@ -381,16 +381,23 @@ public class RepaymentPostingsUtil implements Serializable {
 		logger.debug("Entering");
 
 		Date dateValueDate = DateUtility.getValueDate();
+		
+		// Total Payment Amount
+		BigDecimal rpyTotal = queueTotals.getPrincipal().add(queueTotals.getProfit()).add(
+				queueTotals.getFee()).add(queueTotals.getInsurance()).add(queueTotals.getSuplRent()).add(queueTotals.getIncrCost());
+		
+		// If Postings Process only for Excess Accounts
+		if(rpyTotal.compareTo(BigDecimal.ZERO) == 0){
+			logger.debug("Leaving");
+			return scheduleDetails;
+		}
+		
 		List<FinRepayQueue> finRepayQueueList = queueTotals.getQueueList();
 
 		Map<Date, FinanceScheduleDetail> scheduleMap = new HashMap<Date, FinanceScheduleDetail>();
 		for (FinanceScheduleDetail detail : scheduleDetails) {
 			scheduleMap.put(detail.getSchDate(), detail);
 		}
-
-		// Total Payment Amount
-		BigDecimal rpyTotal = queueTotals.getPrincipal().add(queueTotals.getProfit()).add(
-				queueTotals.getFee()).add(queueTotals.getInsurance()).add(queueTotals.getSuplRent()).add(queueTotals.getIncrCost());
 
 		//Database Updations for Finance RepayQueue Details List
 		for (FinRepayQueue repayQueue : finRepayQueueList) {
@@ -399,7 +406,7 @@ public class RepaymentPostingsUtil implements Serializable {
 				scheduleDetail = scheduleMap.get(repayQueue.getRpyDate());
 			}
 
-			scheduleDetail = paymentProcessExecution(financeMain, scheduleDetail, repayQueue, dateValueDate, linkedTranId, rpyTotal);
+			scheduleDetail = paymentUpdate(financeMain, scheduleDetail, repayQueue, dateValueDate, linkedTranId, rpyTotal);
 			scheduleMap.remove(scheduleDetail.getSchDate());
 			scheduleMap.put(scheduleDetail.getSchDate(), scheduleDetail);
 		}
@@ -620,9 +627,10 @@ public class RepaymentPostingsUtil implements Serializable {
 				eventCode, dateValueDate, dateSchdDate);
 
 		//Set Repay Amount Codes
-		amountCodes.setRpTot(queueTotals.getPrincipal().add(queueTotals.getProfit()));
+		amountCodes.setRpTot(queueTotals.getPrincipal().add(queueTotals.getProfit()).add(queueTotals.getLateProfit()));
 		amountCodes.setRpPft(queueTotals.getProfit().add(queueTotals.getLateProfit()));
 		amountCodes.setRpPri(queueTotals.getPrincipal());
+		// Set Excess amount TODO
 
 		// Fee Details
 		amountCodes.setSchFeePay(queueTotals.getFee());
@@ -657,7 +665,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws PFFInterfaceException
 	 */
-	public FinanceScheduleDetail paymentProcessExecution(FinanceMain financeMain,FinanceScheduleDetail scheduleDetail,
+	public FinanceScheduleDetail paymentUpdate(FinanceMain financeMain,FinanceScheduleDetail scheduleDetail,
 			FinRepayQueue finRepayQueue, Date dateValueDate, long linkedTranId, BigDecimal totalRpyAmt) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 
 		logger.debug("Entering");
@@ -716,16 +724,6 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @return
 	 */
 	public FinanceScheduleDetail updateSchdlDetail(FinRepayQueue finRepayQueue) {
-		return scheduleUpdation(finRepayQueue);
-	}
-
-	/**
-	 * Method for updating Schedule Details
-	 * 
-	 * @param finRepayQueue
-	 * @return
-	 */
-	private FinanceScheduleDetail scheduleUpdation(FinRepayQueue finRepayQueue) {
 		logger.debug("Entering");
 
 		// Finance Schedule Details Update
@@ -841,7 +839,6 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		// Modified Conditions for Balances Paid or not
 		if (repayQueue.getSchdPftBal().compareTo(BigDecimal.ZERO) == 0) {
-
 			repayQueue.setSchdIsPftPaid(true);
 			if (repayQueue.getSchdPriBal().compareTo(BigDecimal.ZERO) == 0) {
 				repayQueue.setSchdIsPriPaid(true);
@@ -927,7 +924,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		// C - PENALTY / CHRAGES, P - PRINCIPAL , I - PROFIT / INTEREST
 		if ((ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FCPI))
 				|| (ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FCIP))) {
-			actReturnList = doOverduePostings(Long.MIN_VALUE, finRepayQueueList, dateValueDate, financeMain, finDivison);
+			actReturnList = doOverduePostings(Long.MIN_VALUE, finRepayQueueList, dateValueDate, financeMain);
 			if (actReturnList != null) {
 				return actReturnList;
 			}
@@ -956,7 +953,7 @@ public class RepaymentPostingsUtil implements Serializable {
 					|| (ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FIPCS))
 					|| (ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FPICS))) {
 				List<Object> returnList = doOverduePostings(Long.MIN_VALUE, finRepayQueueList, dateValueDate,
-						financeMain, finDivison);
+						financeMain);
 				if (returnList != null) {
 					return returnList;
 				}
@@ -1226,8 +1223,6 @@ public class RepaymentPostingsUtil implements Serializable {
 		return actReturnList;
 	}
 
-
-
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -1235,7 +1230,6 @@ public class RepaymentPostingsUtil implements Serializable {
 	public void setFinRepayQueueDAO(FinRepayQueueDAO finRepayQueueDAO) {
 		this.finRepayQueueDAO = finRepayQueueDAO;
 	}
-
 	public FinRepayQueueDAO getFinRepayQueueDAO() {
 		return finRepayQueueDAO;
 	}
@@ -1243,7 +1237,6 @@ public class RepaymentPostingsUtil implements Serializable {
 	public FinanceRepaymentsDAO getFinanceRepaymentsDAO() {
 		return financeRepaymentsDAO;
 	}
-
 	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
 		this.financeRepaymentsDAO = financeRepaymentsDAO;
 	}
@@ -1251,7 +1244,6 @@ public class RepaymentPostingsUtil implements Serializable {
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
-
 	public FinanceMainDAO getFinanceMainDAO() {
 		return financeMainDAO;
 	}
@@ -1259,7 +1251,6 @@ public class RepaymentPostingsUtil implements Serializable {
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
-
 	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
 		return financeScheduleDetailDAO;
 	}
@@ -1267,7 +1258,6 @@ public class RepaymentPostingsUtil implements Serializable {
 	public CustomerStatusCodeDAO getCustomerStatusCodeDAO() {
 		return customerStatusCodeDAO;
 	}
-
 	public void setCustomerStatusCodeDAO(CustomerStatusCodeDAO customerStatusCodeDAO) {
 		this.customerStatusCodeDAO = customerStatusCodeDAO;
 	}
@@ -1275,7 +1265,6 @@ public class RepaymentPostingsUtil implements Serializable {
 	public void setFinStatusDetailDAO(FinStatusDetailDAO finStatusDetailDAO) {
 		this.finStatusDetailDAO = finStatusDetailDAO;
 	}
-
 	public FinStatusDetailDAO getFinStatusDetailDAO() {
 		return finStatusDetailDAO;
 	}
@@ -1283,7 +1272,6 @@ public class RepaymentPostingsUtil implements Serializable {
 	public OverDueRecoveryPostingsUtil getRecoveryPostingsUtil() {
 		return recoveryPostingsUtil;
 	}
-
 	public void setRecoveryPostingsUtil(OverDueRecoveryPostingsUtil recoveryPostingsUtil) {
 		this.recoveryPostingsUtil = recoveryPostingsUtil;
 	}
@@ -1291,7 +1279,6 @@ public class RepaymentPostingsUtil implements Serializable {
 	public void setSuspensePostingUtil(SuspensePostingUtil suspensePostingUtil) {
 		this.suspensePostingUtil = suspensePostingUtil;
 	}
-
 	public SuspensePostingUtil getSuspensePostingUtil() {
 		return suspensePostingUtil;
 	}
@@ -1299,7 +1286,6 @@ public class RepaymentPostingsUtil implements Serializable {
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
-
 	public PostingsPreparationUtil getPostingsPreparationUtil() {
 		return postingsPreparationUtil;
 	}
@@ -1307,7 +1293,6 @@ public class RepaymentPostingsUtil implements Serializable {
 	public FinanceProfitDetailDAO getProfitDetailsDAO() {
 		return profitDetailsDAO;
 	}
-
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
 		this.profitDetailsDAO = profitDetailsDAO;
 	}
@@ -1315,7 +1300,6 @@ public class RepaymentPostingsUtil implements Serializable {
 	public CustomerDAO getCustomerDAO() {
 		return customerDAO;
 	}
-
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
 	}

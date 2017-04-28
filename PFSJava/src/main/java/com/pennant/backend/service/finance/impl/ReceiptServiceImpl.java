@@ -20,7 +20,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.RepaymentPostingsUtil;
+import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinanceRepayPriorityDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
@@ -30,8 +30,6 @@ import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.model.ErrorDetails;
-import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
-import com.pennant.backend.model.FinRepayQueue.FinRepayQueueTotals;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -78,7 +76,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private final static Logger				logger	= Logger.getLogger(ReceiptServiceImpl.class);
 
 	private FinanceRepayPriorityDAO			financeRepayPriorityDAO;
-	private RepaymentPostingsUtil			repayPostingUtil;
 	private AccountingSetDAO				accountingSetDAO;
 	private LimitCheckDetails				limitCheckDetails;
 	private FinanceDetailService			financeDetailService;
@@ -89,7 +86,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private FinReceiptHeaderDAO				finReceiptHeaderDAO;
 	private FinReceiptDetailDAO				finReceiptDetailDAO;
 	private ReceiptAllocationDetailDAO		allocationDetailDAO;		
-	private ManualAdviseDAO					manualAdviseDAO;		
+	private ManualAdviseDAO					manualAdviseDAO;	
+	private RepaymentProcessUtil			repaymentProcessUtil;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -665,9 +663,16 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			for (int j = 0; j < repayHeaderList.size(); j++) {
 				
 				FinRepayHeader repayHeader = repayHeaderList.get(j);
+				BigDecimal excessAmount = BigDecimal.ZERO;
+				if(!StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent()) &&
+						!StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent()) &&
+						!StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())){
+					excessAmount = repayHeader.getRepayAmount();
+				}
+				
 				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
-				List<Object> returnList = processRepaymentPostings(financeMain, schdList,
-						profitDetail, repaySchdList, repayHeader.getFinEvent(), scheduleData.getFinanceType().getFinDivision());
+				List<Object> returnList = getRepaymentProcessUtil().processRepaymentPostings(financeMain, schdList,
+						profitDetail, repaySchdList, excessAmount, repayHeader.getFinEvent());
 
 				if (!(Boolean) returnList.get(0)) {
 					String errParm = (String) returnList.get(1);
@@ -974,133 +979,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		
 		logger.debug("Leaving");
 		return auditHeader;
-	}
-
-	/**
-	 * Method for Repayment Details Posting Process
-	 * 
-	 * @param financeMain
-	 * @param scheduleDetails
-	 * @param repaySchdList
-	 * @param insRefund
-	 * @return
-	 * @throws IllegalAccessException
-	 * @throws AccountNotFoundException
-	 * @throws InvocationTargetException
-	 */
-	public List<Object> processRepaymentPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String finEvent, String finDivision)
-			throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
-		logger.debug("Entering");
-
-		List<Object> returnList = new ArrayList<Object>();
-		try {
-
-			List<FinRepayQueue> finRepayQueues = new ArrayList<FinRepayQueue>();
-			FinRepayQueue finRepayQueue = null;
-			FinRepayQueueTotals repayQueueTotals = new FinRepayQueueTotals();
-
-			for (int i = 0; i < repaySchdList.size(); i++) {
-
-				finRepayQueue = new FinRepayQueue();
-				finRepayQueue.setFinReference(financeMain.getFinReference());
-				finRepayQueue.setRpyDate(repaySchdList.get(i).getSchDate());
-				finRepayQueue.setFinRpyFor(repaySchdList.get(i).getSchdFor());
-				finRepayQueue.setRcdNotExist(true);
-				finRepayQueue = doWriteDataToBean(finRepayQueue, financeMain, repaySchdList.get(i));
-
-				finRepayQueue.setRefundAmount(repaySchdList.get(i).getRefundReq());
-				finRepayQueue.setPenaltyPayNow(repaySchdList.get(i).getPenaltyPayNow());
-				finRepayQueue.setWaivedAmount(repaySchdList.get(i).getWaivedAmt());
-				finRepayQueue.setPenaltyBal(repaySchdList.get(i).getPenaltyAmt().subtract(repaySchdList.get(i).getPenaltyPayNow()));
-				finRepayQueue.setChargeType(repaySchdList.get(i).getChargeType());
-
-				// Total Repayments Calculation for Principal, Profit 
-				repayQueueTotals.setPrincipal(repayQueueTotals.getPrincipal().add(repaySchdList.get(i).getPrincipalSchdPayNow()));
-				repayQueueTotals.setProfit(repayQueueTotals.getProfit().add(repaySchdList.get(i).getProfitSchdPayNow()));
-				repayQueueTotals.setLateProfit(repayQueueTotals.getLateProfit().add(repaySchdList.get(i).getLatePftSchdPayNow()));
-				repayQueueTotals.setPenalty(repayQueueTotals.getPenalty().add(repaySchdList.get(i).getPenaltyPayNow()));
-
-				// Fee Details
-				repayQueueTotals.setFee(repayQueueTotals.getFee().add(repaySchdList.get(i).getSchdFeePayNow()));
-				repayQueueTotals.setInsurance(repayQueueTotals.getInsurance().add(repaySchdList.get(i).getSchdInsPayNow()));
-				repayQueueTotals.setSuplRent(repayQueueTotals.getSuplRent().add(repaySchdList.get(i).getSchdSuplRentPayNow()));
-				repayQueueTotals.setIncrCost(repayQueueTotals.getIncrCost().add(repaySchdList.get(i).getSchdIncrCostPayNow()));
-
-				finRepayQueues.add(finRepayQueue);
-			}
-
-			//Repayments Process For Schedule Repay List	
-			repayQueueTotals.setQueueList(finRepayQueues);
-			returnList = getRepayPostingUtil().postingProcess(financeMain, scheduleDetails, profitDetail,
-					repayQueueTotals, finEvent,finDivision);
-
-		} catch (PFFInterfaceException e) {
-			logger.error("Exception: ", e);
-			throw e;
-		} catch (IllegalAccessException e) {
-			logger.error("Exception: ", e);
-			throw e;
-		} catch (InvocationTargetException e) {
-			logger.error("Exception: ", e);
-			throw e;
-		}
-
-		logger.debug("Leaving");
-		return returnList;
-	}
-
-	/**
-	 * Method for prepare RepayQueue data
-	 * 
-	 * @param resultSet
-	 * @return
-	 */
-	private FinRepayQueue doWriteDataToBean(FinRepayQueue finRepayQueue, FinanceMain financeMain,
-			RepayScheduleDetail rsd) {
-		logger.debug("Entering");
-
-		finRepayQueue.setBranch(financeMain.getFinBranch());
-		finRepayQueue.setFinType(financeMain.getFinType());
-		finRepayQueue.setCustomerID(financeMain.getCustID());
-		finRepayQueue.setFinPriority(9999);
-
-		finRepayQueue.setSchdPft(rsd.getProfitSchd());
-		finRepayQueue.setSchdPri(rsd.getPrincipalSchd());
-		finRepayQueue.setSchdPftBal(rsd.getProfitSchd().subtract(rsd.getProfitSchdPaid()));
-		finRepayQueue.setSchdPriBal(rsd.getPrincipalSchd().subtract(rsd.getPrincipalSchdPaid()));
-		finRepayQueue.setSchdPriPayNow(rsd.getPrincipalSchdPayNow());
-		finRepayQueue.setSchdPftPayNow(rsd.getProfitSchdPayNow());
-		finRepayQueue.setSchdPriPaid(rsd.getPrincipalSchdPaid());
-		finRepayQueue.setSchdPftPaid(rsd.getProfitSchdPaid());
-
-		// Fee Details
-		//	1. Schedule Fee Amount
-		finRepayQueue.setSchdFee(rsd.getSchdFee());
-		finRepayQueue.setSchdFeeBal(rsd.getSchdFeeBal());
-		finRepayQueue.setSchdFeePayNow(rsd.getSchdFeePayNow());
-		finRepayQueue.setSchdFeePaid(rsd.getSchdFeePaid());
-
-		//	2. Schedule Insurance Amount
-		finRepayQueue.setSchdIns(rsd.getSchdIns());
-		finRepayQueue.setSchdInsBal(rsd.getSchdInsBal());
-		finRepayQueue.setSchdInsPayNow(rsd.getSchdInsPayNow());
-		finRepayQueue.setSchdInsPaid(rsd.getSchdInsPaid());
-
-		//	3. Schedule Supplementary Rent Amount
-		finRepayQueue.setSchdSuplRent(rsd.getSchdSuplRent());
-		finRepayQueue.setSchdSuplRentBal(rsd.getSchdSuplRentBal());
-		finRepayQueue.setSchdSuplRentPayNow(rsd.getSchdSuplRentPayNow());
-		finRepayQueue.setSchdSuplRentPaid(rsd.getSchdSuplRentPaid());
-
-		//	4. Schedule Fee Amount
-		finRepayQueue.setSchdIncrCost(rsd.getSchdIncrCost());
-		finRepayQueue.setSchdIncrCostBal(rsd.getSchdIncrCostBal());
-		finRepayQueue.setSchdIncrCostPayNow(rsd.getSchdIncrCostPayNow());
-		finRepayQueue.setSchdIncrCostPaid(rsd.getSchdIncrCostPaid());
-
-		logger.debug("Leaving");
-		return finRepayQueue;
 	}
 
 	/**
@@ -1439,13 +1317,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		this.financeRepayPriorityDAO = financeRepayPriorityDAO;
 	}
 
-	public RepaymentPostingsUtil getRepayPostingUtil() {
-		return repayPostingUtil;
-	}
-	public void setRepayPostingUtil(RepaymentPostingsUtil repayPostingUtil) {
-		this.repayPostingUtil = repayPostingUtil;
-	}
-
 	public AccountingSetDAO getAccountingSetDAO() {
 		return accountingSetDAO;
 	}
@@ -1514,6 +1385,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	public RepaymentProcessUtil getRepaymentProcessUtil() {
+		return repaymentProcessUtil;
+	}
+
+	public void setRepaymentProcessUtil(RepaymentProcessUtil repaymentProcessUtil) {
+		this.repaymentProcessUtil = repaymentProcessUtil;
 	}
 	
 }

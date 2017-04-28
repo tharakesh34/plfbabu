@@ -98,7 +98,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 */
 	public List<Object> recoveryPayment(FinanceMain financeMain, Date dateValueDate, Date schdDate, String finODFor,
 			Date movementDate, BigDecimal penalty, BigDecimal prvPenaltyPaid, BigDecimal waiverAmt, String chargeType,
-			long linkedTranId, String finDivision, boolean fullyPaidSchd)
+			long linkedTranId, boolean fullyPaidSchd)
 			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 
 		logger.debug("Entering");
@@ -121,25 +121,12 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			boolean accFound = false;
 
 			//Account Type Check
-			if (StringUtils.trimToEmpty(finDivision).equals(FinanceConstants.FIN_DIVISION_TREASURY)) {
-				String acType = SysParamUtil.getValueAsString("ALWFULLPAY_TSR_ACTYPE");
-
-				String[] acTypeList = acType.split(",");
-				for (int i = 0; i < acTypeList.length; i++) {
-					if (StringUtils.trimToEmpty(iAccount.getAcType()).equals(acTypeList[i].trim())) {
-						accFound = true;
-						break;
-					}
-				}
-			} else {
-				String acType = SysParamUtil.getValueAsString("ALWFULLPAY_NONTSR_ACTYPE");
-
-				String[] acTypeList = acType.split(",");
-				for (int i = 0; i < acTypeList.length; i++) {
-					if (StringUtils.trimToEmpty(iAccount.getAcType()).equals(acTypeList[i].trim())) {
-						accFound = true;
-						break;
-					}
+			String acType = SysParamUtil.getValueAsString("ALWFULLPAY_NONTSR_ACTYPE");
+			String[] acTypeList = acType.split(",");
+			for (int i = 0; i < acTypeList.length; i++) {
+				if (StringUtils.trimToEmpty(iAccount.getAcType()).equals(acTypeList[i].trim())) {
+					accFound = true;
+					break;
 				}
 			}
 
