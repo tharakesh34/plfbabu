@@ -9,23 +9,7 @@
 	<property name="call.maindb" value="PLF." dbms="oracle" />
 
 
-	<changeSet author="Surekha" id="01">
-		<renameColumn columnDataType="bigint" newColumnName="ReturnCode"
-			oldColumnName="ReturnID" tableName="AdtBounceReasons" />
-	</changeSet>
-
-	<changeSet author="Surekha" id="02">
-		<modifyDataType columnName="ReturnCode" newDataType="varchar(8)"
-			tableName="AdtBounceReasons" />
-	</changeSet>
-	<changeSet id="03" author="Surekha">
-		<addColumn tableName="AdtRMTAccountTypes">
-			<column name="ProfitCenter" type="bigint" defaultValue="1">
-				<constraints nullable="false" />
-			</column>
-			<column name="CostCenter" type="bigint" />
-		</addColumn>
-	</changeSet>
+	
 
 	<changeSet id="15" author="Siva">
 		<createTable tableName="AdtFinReceiptHeader">
