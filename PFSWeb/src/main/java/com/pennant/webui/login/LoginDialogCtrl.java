@@ -75,7 +75,7 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 	}
 
 	public void onCreate$loginwin(Event event) throws Exception {
-		logger.debug(Literal.ENTERING);
+		logger.info(Literal.ENTERING);
 
 		// Invalidate the session if one exists.
 		try {
@@ -95,7 +95,7 @@ public class LoginDialogCtrl extends WindowBaseCtrl {
 		}
 
 		txtbox_randomKey.setValue(randomKey);
-		logger.debug(Literal.LEAVING);
+		logger.info(Literal.LEAVING);
 	}
 
 	/**

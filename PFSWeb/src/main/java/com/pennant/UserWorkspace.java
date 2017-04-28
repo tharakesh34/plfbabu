@@ -213,10 +213,9 @@ public class UserWorkspace implements Serializable, DisposableBean {
 
 	@Override
 	public void destroy() {
-		this.loginLoggingService.logLogOut(this.loggedInUser.getLoginLogId());
-		if (logger.isDebugEnabled()) {
-			logger.debug("destroy Workspace [" + this + "]");
-		}
+		loginLoggingService.logLogOut(loggedInUser.getLoginLogId());
+
+		logger.debug(loggedInUser.getUserName() + " logged out.");
 	}
 
 	public void allocateAuthorities(String page) {

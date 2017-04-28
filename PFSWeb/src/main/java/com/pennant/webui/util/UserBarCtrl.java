@@ -115,63 +115,10 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
-		logger.debug("Entering ");
+		logger.debug("Entering");
+		
 		super.doAfterCompose(comp);
 		user = getUserWorkspace().getLoggedInUser();
-
-		
-	/*	
-		// Listener for loginTime
-		EventQueues.lookup("loginTimeEventQueue", EventQueues.DESKTOP, true).subscribe(new EventListener<Event>() {
-			@Override
-			public void onEvent(Event event) throws Exception {
-				final String msg = (String) event.getData();
-				set_LoginTimeText(msg);
-				doShowLabel();
-			}
-		});
-	
-		// Listener for loginDate
-		EventQueues.lookup("loginDateEventQueue", EventQueues.DESKTOP, true).subscribe(new EventListener<Event>() {
-			@Override
-			public void onEvent(Event event) throws Exception {
-				final String msg = (String) event.getData();
-				set_LoginDateText(msg);
-				doShowLabel();
-			}
-		});
-		
-		// Listener for user
-		EventQueues.lookup("userNameEventQueue", EventQueues.DESKTOP, true).subscribe(new EventListener<Event>() {
-			@Override
-			public void onEvent(Event event) throws Exception {
-				final String msg = (String) event.getData();
-				set_UserText(msg);
-				doShowLabel();
-			}
-		});
-
-
-		// Listener for BranchCode
-		EventQueues.lookup("branchCodeEventQueue", EventQueues.DESKTOP, true).subscribe(new EventListener<Event>() {
-			@Override
-			public void onEvent(Event event) throws Exception {
-				final String msg = (String) event.getData();
-				set_BranchCodeText(msg);
-				doShowLabel();
-			}
-		});
-
-		// Listener for DepartmentCode
-		EventQueues.lookup("departmentCodeEventQueue", EventQueues.DESKTOP, true).subscribe(new EventListener<Event>() {
-			public void onEvent(Event event) throws Exception {
-				final String msg = (String) event.getData();
-				set_DepartmentCodeText(msg);
-				doShowLabel();
-			}
-		});
-		
-		*/
 		
 		set_LoginTimeText(PennantAppUtil.getTime(user.getLogonTime()).toString());
 		set_LoginDateText(DateUtility.getAppDate(DateFormat.SHORT_DATE));
@@ -186,7 +133,6 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 				doShowLastLogin();
 			}
 		});
-		logger.debug("Leaving ");
 		
 		switch (App.AUTH_TYPE) {
 		case SSO:
@@ -202,7 +148,8 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 			menuitem_changePasssword.setVisible(true);
 			break;
 		}		
-		
+
+		logger.debug("Leaving");
 	}
 
 	/**
