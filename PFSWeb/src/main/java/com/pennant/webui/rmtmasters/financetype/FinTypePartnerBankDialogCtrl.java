@@ -140,6 +140,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 
 		// Set the page level components.
 		setPageComponents(window_FinTypePartnerBankDialog);
+		
 		if (arguments.containsKey("fintypepartnerbank")) {
 			this.finTypePartnerBank = (FinTypePartnerBank) arguments.get("fintypepartnerbank");
 			FinTypePartnerBank befImage = new FinTypePartnerBank();
@@ -336,7 +337,6 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 			PartnerBankModes partnerBankModes = (PartnerBankModes) dataObject;
 			if (partnerBankModes != null) {
 				this.partnerBankID.setValue(String.valueOf(partnerBankModes.getPartnerBankId()));
-				this.partnerBankID.setObject(partnerBankModes);
 				this.partnerBankID.setDescription(partnerBankModes.getPartnerBankName());
 			}
 		}
@@ -359,10 +359,13 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		fillComboBox(this.purpose, aFinTypePartnerBank.getPurpose(), purposeList, "");
 		fillComboBox(this.paymentMode, aFinTypePartnerBank.getPaymentMode(), paymentModesList, "");
 		
-		this.partnerBankID.setValue(String.valueOf(aFinTypePartnerBank.getPartnerBankID()));
-		this.partnerBankID.setDescription(aFinTypePartnerBank.getPartnerBankName());
-		this.partnerBankID.setObject(new PartnerBankModes(aFinTypePartnerBank.getPartnerBankID()));
 		setPartnerBankProperties();
+		
+		if (!aFinTypePartnerBank.isNew()) {
+			this.partnerBankID.setObject(new PartnerBankModes(aFinTypePartnerBank.getPartnerBankID()));
+			this.partnerBankID.setValue(String.valueOf(aFinTypePartnerBank.getPartnerBankID()));
+			this.partnerBankID.setDescription(aFinTypePartnerBank.getPartnerBankName());
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -408,7 +411,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		try {
 			PartnerBankModes partnerBankModes = (PartnerBankModes) this.partnerBankID.getObject();
 			aFinTypePartnerBank.setPartnerBankID(partnerBankModes.getPartnerBankId());
-			aFinTypePartnerBank.setPartnerBankName(partnerBankModes.getPartnerBankName());
+			aFinTypePartnerBank.setPartnerBankName(this.partnerBankID.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -444,6 +447,8 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		} else {
 			this.finType.focus();
 			doEdit();
+			btnCancel.setVisible(false);
+			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinTypePartnerBankDialog_btnDelete"));
 		}
 
 		if (enqiryModule) {
@@ -526,7 +531,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		String tranType=PennantConstants.TRAN_WF;
 		
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aFinTypePartnerBank.getID();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aFinTypePartnerBank.getPartnerBankID();
 		final String title = Labels.getLabel("message.Deleting.Record");
 		MultiLineMessageBox.doSetTemplate();
 		
@@ -576,16 +581,17 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	private void doEdit() {
 		logger.debug(Literal.LEAVING);
 
-		if (this.finTypePartnerBank.isNewRecord()) {
-			this.btnCancel.setVisible(false);
-		} else {
-			this.btnCancel.setVisible(true);
-		}
-
 		readOnlyComponent(true, this.finType);
-		readOnlyComponent(isReadOnly("FinTypePartnerBankDialog_Purpose"), this.purpose);
-		readOnlyComponent(isReadOnly("FinTypePartnerBankDialog_PaymentMode"), this.paymentMode);
-		readOnlyComponent(isReadOnly("FinTypePartnerBankDialog_PartnerBankID"), this.partnerBankID);
+		
+		if(this.finTypePartnerBank.isNew()) {
+			readOnlyComponent(isReadOnly("FinTypePartnerBankDialog_Purpose"), this.purpose);
+			readOnlyComponent(isReadOnly("FinTypePartnerBankDialog_PaymentMode"), this.paymentMode);
+			readOnlyComponent(isReadOnly("FinTypePartnerBankDialog_PartnerBankID"), this.partnerBankID);
+		} else {
+			readOnlyComponent(true, this.purpose);
+			readOnlyComponent(true, this.paymentMode);
+			readOnlyComponent(true, this.partnerBankID);
+		}
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -641,10 +647,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		public void onChange$purpose(Event event) throws Exception {
 			logger.debug("Entering" + event.toString());
 
-			this.paymentMode.setSelectedIndex(0);
-			this.partnerBankID.setValue("");
-			this.partnerBankID.setDescription("");
-			this.partnerBankID.setObject(new PartnerBankModes());
+			fillComboBox(this.paymentMode, "", paymentModesList, "");
 			setPartnerBankProperties();
 			
 			logger.debug("Leaving" + event.toString());
@@ -659,9 +662,6 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		public void onChange$paymentMode(Event event) throws Exception {
 			logger.debug("Entering" + event.toString());
 			
-			this.partnerBankID.setValue("");
-			this.partnerBankID.setDescription("");
-			this.partnerBankID.setObject(new PartnerBankModes());
 			setPartnerBankProperties();
 			
 			logger.debug("Leaving" + event.toString());
@@ -677,6 +677,8 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 			filters[0] = new Filter("Purpose", purposeValue, Filter.OP_EQUAL);
 			filters[1] = new Filter("PaymentMode", paymentModeValue, Filter.OP_EQUAL);
 			
+			this.partnerBankID.setValue("");
+			this.partnerBankID.setDescription("");
 			this.partnerBankID.setFilters(filters);
 			
 			logger.debug("Leaving");
@@ -687,6 +689,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	 */
 	public void doClear() {
 		logger.debug("Entering");
+		
 		this.finType.setValue("");
 		this.purpose.setValue("");
 		this.paymentMode.setValue("");
@@ -725,7 +728,6 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 				}
 			}
 		} else {
-			aFinTypePartnerBank.setVersion(aFinTypePartnerBank.getVersion() + 1);
 			if (isNew) {
 				tranType = PennantConstants.TRAN_ADD;
 				aFinTypePartnerBank.setVersion(1);
@@ -774,6 +776,8 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	}
 	
 	private AuditHeader newFinTypePartnerBankEntryProcess(FinTypePartnerBank aFinTypePartnerBank, String tranType) {
+		logger.debug("Entering");
+		
 		boolean recordAdded = false;
 		AuditHeader auditHeader = getAuditHeader(aFinTypePartnerBank, tranType);
 		finTypePartnerBankList = new ArrayList<FinTypePartnerBank>();
@@ -785,10 +789,13 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		errParm[0] = PennantJavaUtil.getLabel("label_FinTypePartnerBankDialog_PartnerBankID.value") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_FinTypePartnerBankDialog_PaymentMode.value") + ":" + valueParm[1];
 		errParm[2] = PennantJavaUtil.getLabel("label_FinTypePartnerBankDialog_Purpose.value") + ":" + valueParm[2];
-		List<FinTypePartnerBank> list = getFinTypePartnerBankListCtrl().getFinTypePartnerBankList();
-		if (list != null && list.size() > 0) {
-			for (int i = 0; i < list.size(); i++) {
-				FinTypePartnerBank finTypePartnerBank = list.get(i);
+		
+		List<FinTypePartnerBank> existingList = getFinTypePartnerBankListCtrl().getFinTypePartnerBankList();
+		
+		if (existingList != null && existingList.size() > 0) {
+			for (int i = 0; i < existingList.size(); i++) {
+				FinTypePartnerBank finTypePartnerBank = existingList.get(i);
+				
 				if (StringUtils.equals(finTypePartnerBank.getPaymentMode(), aFinTypePartnerBank.getPaymentMode())
 						&& finTypePartnerBank.getPartnerBankID() == aFinTypePartnerBank.getPartnerBankID()
 						&& StringUtils.equals(finTypePartnerBank.getPurpose(), aFinTypePartnerBank.getPurpose())) {
@@ -799,6 +806,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 								.getUserLanguage()));
 						return auditHeader;
 					}
+					
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
 						if (PennantConstants.RECORD_TYPE_UPD.equals(aFinTypePartnerBank.getRecordType())) {
 							aFinTypePartnerBank.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -870,6 +878,4 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		public void setFinTypePartnerBank(FinTypePartnerBank finTypePartnerBank) {
 			this.finTypePartnerBank = finTypePartnerBank;
 		}
-
-			
 }
