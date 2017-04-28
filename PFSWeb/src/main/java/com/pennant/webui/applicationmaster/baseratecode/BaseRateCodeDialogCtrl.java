@@ -55,6 +55,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -86,10 +87,11 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 	 * component with the same 'id' in the ZUL-file are getting autoWired by our
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_BaseRateCodeDialog; 	// autoWired
+	protected Window window_BaseRateCodeDialog; // autoWired
 
-	protected Textbox 		bRType; 					// autoWired
-	protected Textbox 		bRTypeDesc; 				// autoWired
+	protected Textbox bRType; // autoWired
+	protected Textbox bRTypeDesc; // autoWired
+	protected Checkbox bRTypeIsActive; // autoWired
 
 	// not autoWired Var's
 	private BaseRateCode baseRateCode; 							 // overHanded per parameter
@@ -309,6 +311,11 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		this.bRType.setValue(aBaseRateCode.getBRType());
 		this.bRTypeDesc.setValue(aBaseRateCode.getBRTypeDesc());
 		this.recordStatus.setValue(aBaseRateCode.getRecordStatus());
+		this.bRTypeIsActive.setChecked(aBaseRateCode.isbRTypeIsActive());
+		if(aBaseRateCode.isNew() || (aBaseRateCode.getRecordType() != null ? aBaseRateCode.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+			this.bRTypeIsActive.setChecked(true);
+			this.bRTypeIsActive.setDisabled(true);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -333,7 +340,11 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
-
+		try {
+			aBaseRateCode.setbRTypeIsActive(this.bRTypeIsActive.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -518,6 +529,7 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 			this.btnCancel.setVisible(true);
 		}
 		this.bRTypeDesc.setReadonly(isReadOnly("BaseRateCodeDialog_bRTypeDesc"));
+		this.bRTypeIsActive.setDisabled(isReadOnly("BaseRateCodeDialog_BRTypeIsActive"));
 		if (isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -543,7 +555,8 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		logger.debug("Entering");
 		this.bRType.setReadonly(true);
 		this.bRTypeDesc.setReadonly(true);
-
+		this.bRTypeIsActive.setDisabled(true);
+		
 		if(isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -565,6 +578,7 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		// remove validation, if there are a save before		
 		this.bRType.setValue("");
 		this.bRTypeDesc.setValue("");
+		this.bRTypeIsActive.setChecked(false);
 		logger.debug("Leaving");
 	}
 
