@@ -43,6 +43,7 @@
 	<bean id="repaymentService" class="com.pennant.app.core.RepaymentService" parent="serviceHelper">
 		<property name="finRepayQueueDAO" ref="finRepayQueueDAO" />
 		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
+		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
 	</bean>
 	<!-- Over Due TO be removed after the work new classes completed -->
@@ -128,9 +129,16 @@
 		<property name="finRepayQueueDAO" ref="finRepayQueueDAO" />
 		<property name="financeRepayPriorityDAO" ref="financeRepayPriorityDAO" />
 	</bean>
-	<!-- Repay queue service Service -->
+
 	<bean id="installmentDueService" class="com.pennant.app.core.InstallmentDueService" parent="serviceHelper">
 	</bean>
+	<bean id="receiptPaymentService" class="com.pennant.app.core.ReceiptPaymentService" parent="serviceHelper">
+	</bean>
+	<bean id="autoDisbursementService" class="com.pennant.app.core.AutoDisbursementService" parent="serviceHelper">
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
+	</bean>
+
+
 	<bean id="snapshotService" class="com.pennant.app.core.SnapshotService">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
@@ -176,6 +184,8 @@
 		<property name="latePayPenaltyService" ref="latePayPenaltyService" />
 		<property name="latePayInterestService" ref="latePayInterestService" />
 		<property name="npaService" ref="npaService" />
+		<property name="autoDisbursementService" ref="autoDisbursementService" />
+		<property name="receiptPaymentService" ref="receiptPaymentService" />
 	</bean>
 	<bean id="eodPaymentRequest" class="com.pennant.eod.EodPaymentRequest">
 		<property name="dataSource" ref="pfsDatasource" />

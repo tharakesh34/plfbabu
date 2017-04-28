@@ -24,8 +24,6 @@
 		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
 		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
 		<property name="finContributorDetailDAO" ref="finContributorDetailDAO" />
-		<property name="premiumDetailDAO" ref="financePremiumDetailDAO" />
-		<property name="engineExecutionRIA" ref="engineExecutionRIA" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="dataSource" ref="pfsDatasource" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
@@ -71,7 +69,7 @@
 	</bean>
 
 	<!-- Late Pay Penalty -->
-	<bean id="LatePayPenaltyService" class="com.pennant.app.core.LatePayPenaltyService" parent="serviceHelper">
+	<bean id="latePayPenaltyService" class="com.pennant.app.core.LatePayPenaltyService" parent="serviceHelper">
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
@@ -131,9 +129,16 @@
 		<property name="finRepayQueueDAO" ref="finRepayQueueDAO" />
 		<property name="financeRepayPriorityDAO" ref="financeRepayPriorityDAO" />
 	</bean>
-	<!-- Repay queue service Service -->
+
 	<bean id="installmentDueService" class="com.pennant.app.core.InstallmentDueService" parent="serviceHelper">
 	</bean>
+	<bean id="receiptPaymentService" class="com.pennant.app.core.ReceiptPaymentService" parent="serviceHelper">
+	</bean>
+	<bean id="autoDisbursementService" class="com.pennant.app.core.AutoDisbursementService" parent="serviceHelper">
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
+	</bean>
+
+
 	<bean id="snapshotService" class="com.pennant.app.core.SnapshotService">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
@@ -179,6 +184,8 @@
 		<property name="latePayPenaltyService" ref="latePayPenaltyService" />
 		<property name="latePayInterestService" ref="latePayInterestService" />
 		<property name="npaService" ref="npaService" />
+		<property name="autoDisbursementService" ref="autoDisbursementService" />
+		<property name="receiptPaymentService" ref="receiptPaymentService" />
 	</bean>
 	<bean id="eodPaymentRequest" class="com.pennant.eod.EodPaymentRequest">
 		<property name="dataSource" ref="pfsDatasource" />

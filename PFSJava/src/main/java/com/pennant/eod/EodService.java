@@ -19,6 +19,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.core.AccrualService;
+import com.pennant.app.core.AutoDisbursementService;
 import com.pennant.app.core.DateRollOverService;
 import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.InstallmentDueService;
@@ -27,6 +28,7 @@ import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.core.LatePayPenaltyService;
 import com.pennant.app.core.NPAService;
 import com.pennant.app.core.RateReviewService;
+import com.pennant.app.core.ReceiptPaymentService;
 import com.pennant.app.core.RepayQueueService;
 import com.pennant.app.core.ServiceUtil;
 import com.pennant.app.core.StatusMovementService;
@@ -54,6 +56,8 @@ public class EodService {
 	private DateRollOverService			dateRollOverService;
 	private RateReviewService			rateReviewService;
 	private AccrualService				accrualService;
+	private AutoDisbursementService		autoDisbursementService;
+	private ReceiptPaymentService		receiptPaymentService;
 
 	private InstallmentDueService		installmentDueService;
 	private ServiceUtil					serviceUtil;
@@ -183,6 +187,13 @@ public class EodService {
 		//Accrual
 		accrualService.processAccrual(connection, custId, date);
 
+		//Auto disbursments
+		autoDisbursementService.processDisbursementPostings(connection, custId, date);
+
+		//receipt postings
+		receiptPaymentService.processrReceipts(connection, custId, date);
+		
+		
 		//Status movements
 		//statusMovementService.processMovements(connection, custId, date);
 
@@ -262,5 +273,13 @@ public class EodService {
 
 	public void setNpaService(NPAService npaService) {
 		this.npaService = npaService;
+	}
+
+	public void setAutoDisbursementService(AutoDisbursementService autoDisbursementService) {
+		this.autoDisbursementService = autoDisbursementService;
+	}
+
+	public void setReceiptPaymentService(ReceiptPaymentService receiptPaymentService) {
+		this.receiptPaymentService = receiptPaymentService;
 	}
 }

@@ -17,7 +17,6 @@ public class ReceiptPaymentService extends ServiceHelper {
 	private static final long	serialVersionUID	= 1442146139821584760L;
 	private Logger				logger				= Logger.getLogger(ReceiptPaymentService.class);
 
-	private RepaymentService	repaymentService;
 
 	private static final String	INSTALLMENTDUE		= "SELECT FM.CUSTID,FM.FINBRANCH,FM.FINTYPE, PD.DETAILID, PD.EXTRACTID, PD.PRESENTMENTID, PD.FINREFERENCE, PD.SCHDATE, PD.MANDATEID,"
 															+ " PD.SCHAMTDUE, PD.SCHPRIDUE, PD.SCHPFTDUE, PD.SCHFEEDUE, PD.SCHINSDUE, PD.SCHPENALTYDUE, PD.ADVANCEAMT,"
@@ -64,22 +63,22 @@ public class ReceiptPaymentService extends ServiceHelper {
 				BigDecimal totalDue = getDecimal(resultSet, "SCHAMTDUE");
 				BigDecimal presentmentAmt = getDecimal(resultSet, "PRESENTMENTAMT");
 
-				FinanceMain finMain = repaymentService.getFinanceMain(finref);
-				
-				if (advanceAmt.compareTo(BigDecimal.ZERO) > 0) {
-					repaymentService.processRepayments(valuedDate, finMain, finRepayQueue, advanceAmt);
-				}
-
-				if (presentmentAmt.compareTo(BigDecimal.ZERO) > 0) {
-					repaymentService.processRepayments(valuedDate, finMain, finRepayQueue, advanceAmt);
-				}
-
-				BigDecimal excess = totalDue.subtract(presentmentAmt.add(advanceAmt));
-
-				if (excess.compareTo(BigDecimal.ZERO) >= 0) {
-					//post execess
-
-				}
+//				FinanceMain finMain = repaymentService.getFinanceMain(finref);
+//				
+//				if (advanceAmt.compareTo(BigDecimal.ZERO) > 0) {
+//					repaymentService.processRepayments(valuedDate, finMain, finRepayQueue, advanceAmt);
+//				}
+//
+//				if (presentmentAmt.compareTo(BigDecimal.ZERO) > 0) {
+//					repaymentService.processRepayments(valuedDate, finMain, finRepayQueue, advanceAmt);
+//				}
+//
+//				BigDecimal excess = totalDue.subtract(presentmentAmt.add(advanceAmt));
+//
+//				if (excess.compareTo(BigDecimal.ZERO) >= 0) {
+//					//post execess
+//
+//				}
 
 			}
 		} catch (Exception e) {
@@ -95,12 +94,5 @@ public class ReceiptPaymentService extends ServiceHelper {
 		}
 	}
 
-	public RepaymentService getRepaymentService() {
-		return repaymentService;
-	}
-
-	public void setRepaymentService(RepaymentService repaymentService) {
-		this.repaymentService = repaymentService;
-	}
 
 }
