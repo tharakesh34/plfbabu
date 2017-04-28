@@ -190,7 +190,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 	 */
 	@Override
 	public AccountMapping getAccountMapping(String account) {
-		return getAccountMappingDAO().getAccountMapping(account,"");
+		return getAccountMappingDAO().getAccountMapping(account,"_View");
 	}
 
 	/**

@@ -83,9 +83,14 @@ public class AccountMappingDAOImpl extends BasisCodeDAO<AccountMapping> implemen
 		
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" account, hostAccount, FinType,");
+		sql.append(" account, hostAccount, FinType, CostCenterID, ProfitCenterID,");
 		
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		
+		if (type.contains("View")) {
+			sql.append(", costCenterCode, costCenterDesc, profitCenterCode, profitCenterDesc ");
+		}
+		
 		sql.append(" From AccountMapping");
 		sql.append(type);
 		sql.append(" Where Account = :Account");
@@ -119,12 +124,13 @@ public class AccountMappingDAOImpl extends BasisCodeDAO<AccountMapping> implemen
 		accountMapping.setFinType(finType);
 
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" account, hostAccount, FinType,");
-		if (type.contains("View")) {
-			sql.append("");
-		}
-
+		sql.append(" account, hostAccount, FinType, CostCenterID, ProfitCenterID,");
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		
+		if (type.contains("View")) {
+			sql.append(", costCenterCode, costCenterDesc, profitCenterCode, profitCenterDesc ");
+		}
+		
 		sql.append(" From AccountMapping");
 		sql.append(type);
 		sql.append(" Where FinType = :FinType");
@@ -149,10 +155,10 @@ public class AccountMappingDAOImpl extends BasisCodeDAO<AccountMapping> implemen
 		StringBuilder sql =new StringBuilder(" insert into AccountMapping");
 		sql.append(tableType.getSuffix());
 		sql.append(" (account, hostAccount, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, FinType)" );
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, FinType, CostCenterID, ProfitCenterID)" );
 		sql.append(" values(");
 		sql.append(" :account, :hostAccount, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :FinType)");
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :FinType, :CostCenterID, :ProfitCenterID)");
 		
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -178,7 +184,8 @@ public class AccountMappingDAOImpl extends BasisCodeDAO<AccountMapping> implemen
 		sql.append("  set hostAccount = :hostAccount, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, FinType = :FinType");
+		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, FinType = :FinType,");
+		sql.append(" CostCenterID = :CostCenterID, ProfitCenterID = :ProfitCenterID");
 		sql.append(" where account = :account ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 	

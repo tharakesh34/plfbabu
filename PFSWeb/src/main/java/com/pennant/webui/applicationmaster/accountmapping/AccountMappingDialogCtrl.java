@@ -68,6 +68,8 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.AccountMapping;
+import com.pennant.backend.model.applicationmaster.CostCenter;
+import com.pennant.backend.model.applicationmaster.ProfitCenter;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -142,6 +144,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 		setPageComponents(window_AccountMappingDialog);
 
 		doSetFieldProperties();
+		this.listBoxAccountMap.setHeight(borderLayoutHeight-75+"px");
 		
 		try {
 			// Get the required arguments.
@@ -216,8 +219,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 
 			List<TransactionEntry> transactionEntries = null;
 			if (financeType != null) {
-				transactionEntries = this.accountMappingService
-						.getTransactionEntriesByFintype(financeType.getFinType());
+				transactionEntries = this.accountMappingService.getTransactionEntriesByFintype(financeType.getFinType());
 			}
 
 			if (transactionEntries != null) {
@@ -240,24 +242,41 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 
 				Label glCode_Label = null;
 				Textbox sapGlCode_Textbox = null;
+				ExtendedCombobox profitCenter = null;
+				ExtendedCombobox costCenter = null;
+				
 				int count = 0;
 				AccountMapping accountMapping = null;
 				String hostAccount = null;
+				
 
 				for (TransactionEntry transactionEntry : transactionEntries) {
+					if (StringUtils.equals("BANK", transactionEntry.getAccountType())) {	//FIXME Hard-Code should be remove
+						continue;
+					}
 					executeMap = new HashMap<String, Object>();
 					rule = subHeadMap.get(transactionEntry.getAccountSubHeadRule());
 
-					executeMap.put("reqFinAcType", transactionEntry.getAccountType());
-					executeMap.put("reqFinType", financeType.getFinType());
+					executeMap.put("acType", transactionEntry.getAccountType());
+					executeMap.put("ft_finType", financeType.getFinType());
 					String glCode = (String) ruleExecutionUtil.executeRule(rule.getSQLRule(), executeMap, null,
 							RuleReturnType.CALCSTRING);
 
 					accountMapping = this.accountMappingService.getAccountMapping(glCode);
+					String profitCenterDesc = null;
+					String costCenterDesc = null;
+					String profitCenterCode = null;
+					String costCenterCode = null;
+					boolean newRecord = false;
 					if (accountMapping == null) {
 						hostAccount = "";
+						newRecord = true;
 					} else {
 						hostAccount = accountMapping.getHostAccount();
+						profitCenterCode = accountMapping.getProfitCenterCode();
+						costCenterCode = accountMapping.getCostCenterCode();
+						profitCenterDesc = accountMapping.getProfitCenterDesc();
+						costCenterDesc = accountMapping.getCostCenterDesc();
 					}
 
 					item = new Listitem();
@@ -274,6 +293,41 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 					sapGlCode_Textbox.setParent(cell);
 					sapGlCode_Textbox.setId("sapGlCode_" + count);
 					sapGlCode_Textbox.setValue(hostAccount);
+					cell.setParent(item);
+					
+					cell = new Listcell();
+					profitCenter = new ExtendedCombobox();
+					profitCenter.setId("profitCenter_" + count);
+					profitCenter.setModuleName("ProfitCenter");
+					profitCenter.setValueColumn("ProfitCenterCode");
+					profitCenter.setDescColumn("ProfitCenterDesc");
+					profitCenter.setDisplayStyle(2);
+					profitCenter.setValidateColumns(new String[] {"ProfitCenterCode", "ProfitCenterDesc" });
+					profitCenter.setMandatoryStyle(true);
+					if(!newRecord) {
+						profitCenter.setValue(profitCenterCode);
+						profitCenter.setDescription(profitCenterDesc);
+						profitCenter.setObject(new ProfitCenter(accountMapping.getProfitCenterID()));
+					}
+					profitCenter.setParent(cell);
+					cell.setParent(item);
+					
+					cell = new Listcell();
+					costCenter = new ExtendedCombobox();
+					costCenter.setModuleName("CostCenter");
+					costCenter.setId("costCenter_" + count);
+					costCenter.setMandatoryStyle(false);
+					costCenter.setValueColumn("CostCenterCode");
+					costCenter.setDescColumn("CostCenterDesc");
+					costCenter.setDisplayStyle(2);
+					costCenter.setValidateColumns(new String[] {"CostCenterCode" });
+					costCenter.setMandatoryStyle(true);
+					if(!newRecord) {
+						costCenter.setValue(costCenterCode);
+						costCenter.setObject(new CostCenter(accountMapping.getCostCenterID()));
+						costCenter.setDescription(costCenterDesc);
+					}
+					costCenter.setParent(cell);
 					cell.setParent(item);
 
 					count++;
@@ -313,6 +367,8 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 		List<Listitem> items = listBoxAccountMap.getItems();
 		int count = 0;
 		Textbox sapGlCode_Textbox = null;
+		ExtendedCombobox profitCenterId;
+		ExtendedCombobox costCenterId;
 		Label glCode_Label = null;
 		AccountMapping accountMapping = null;
 		//Finance Type
@@ -331,6 +387,10 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 			sapGlCode_Textbox = (Textbox) listItem.getFellow("sapGlCode_" + count);
 			sapGlCode_Textbox.setErrorMessage("");
 			sapGlCode_Textbox.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_HostAccount.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			profitCenterId = (ExtendedCombobox) listItem.getFellow("profitCenter_" + count);
+			costCenterId = (ExtendedCombobox) listItem.getFellow("costCenter_" + count);
+			profitCenterId.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_ProfitCenter.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
+			costCenterId.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_CostCenter.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
 			//GL Code
 			try {
 				accountMapping.setAccount(glCode_Label.getValue());
@@ -344,7 +404,25 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 				wve.add(we);
 			}
 			
+			try {
+				ProfitCenter profitCenterObj = (ProfitCenter) profitCenterId.getObject();
+				accountMapping.setProfitCenterID(profitCenterObj.getId());
+				accountMapping.setProfitCenterDesc(profitCenterId.getDescription());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			
+			try {
+				CostCenter costCenterObj = (CostCenter) costCenterId.getObject();
+				accountMapping.setCostCenterID(costCenterObj.getId());
+				accountMapping.setCostCenterDesc(costCenterId.getDescription());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			
 			sapGlCode_Textbox.setConstraint("");
+			profitCenterId.setConstraint("");
+			costCenterId.setConstraint("");
 			accountMapping.setFinType(finTypeValue);
 			accountMappingList.add(accountMapping);
 			count++;

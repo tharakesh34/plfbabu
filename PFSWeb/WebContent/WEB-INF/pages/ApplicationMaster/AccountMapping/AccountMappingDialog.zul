@@ -5,6 +5,7 @@
 <zk xmlns="http://www.zkoss.org/2005/zul"
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window id="window_AccountMappingDialog" border="normal"
@@ -91,13 +92,19 @@
 							emptyMessage="${c:l('listbox.emptyMessage')}"
 							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
 							height="100%" multiple="false" sizedByContent="true"
-							span="true">
+							span="true" ca:data-scrollable="true">
 							<listhead sizable="true">
  								<listheader id="listheader_Account"
 									label="${c:l('listheader_AccountMappingDialog_Account.label')}"
 									sort="auto" hflex="min" />
 								<listheader id="listheader_HostAccount"
 									label="${c:l('listheader_AccountMappingDialog_HostAccount.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_ProfitCenter"
+									label="${c:l('listheader_AccountMappingDialog_ProfitCenter.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_CostCenter"
+									label="${c:l('listheader_AccountMappingDialog_CostCenter.label')}"
 									sort="auto" hflex="min" />
 							</listhead>
 						</listbox>

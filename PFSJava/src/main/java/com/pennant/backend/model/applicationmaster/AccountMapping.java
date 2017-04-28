@@ -64,6 +64,13 @@ private static final long serialVersionUID = 1L;
 	private AccountMapping befImage;
 	private  LoggedInUser userDetails;
 	
+	private long profitCenterID;
+	private long costCenterID;
+	private String profitCenterDesc;
+	private String costCenterDesc;
+	private String costCenterCode;
+	private String profitCenterCode;
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -79,6 +86,10 @@ private static final long serialVersionUID = 1L;
 	
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
+		excludeFields.add("profitCenterDesc");
+		excludeFields.add("costCenterDesc");
+		excludeFields.add("costCenterCode");
+		excludeFields.add("profitCenterCode");
 	return excludeFields;
 	}
 
@@ -145,6 +156,54 @@ private static final long serialVersionUID = 1L;
 
 	public void setFinType(String finType) {
 		this.finType = finType;
+	}
+
+	public long getProfitCenterID() {
+		return profitCenterID;
+	}
+
+	public void setProfitCenterID(long profitCenterID) {
+		this.profitCenterID = profitCenterID;
+	}
+
+	public long getCostCenterID() {
+		return costCenterID;
+	}
+
+	public void setCostCenterID(long costCenterID) {
+		this.costCenterID = costCenterID;
+	}
+
+	public String getProfitCenterDesc() {
+		return profitCenterDesc;
+	}
+
+	public void setProfitCenterDesc(String profitCenterDesc) {
+		this.profitCenterDesc = profitCenterDesc;
+	}
+
+	public String getCostCenterDesc() {
+		return costCenterDesc;
+	}
+
+	public void setCostCenterDesc(String costCenterDesc) {
+		this.costCenterDesc = costCenterDesc;
+	}
+
+	public String getCostCenterCode() {
+		return costCenterCode;
+	}
+
+	public void setCostCenterCode(String costCenterCode) {
+		this.costCenterCode = costCenterCode;
+	}
+
+	public String getProfitCenterCode() {
+		return profitCenterCode;
+	}
+
+	public void setProfitCenterCode(String profitCenterCode) {
+		this.profitCenterCode = profitCenterCode;
 	}
 
 }
