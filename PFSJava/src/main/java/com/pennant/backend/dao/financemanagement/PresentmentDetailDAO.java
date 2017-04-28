@@ -62,4 +62,6 @@ public interface PresentmentDetailDAO {
 	void updatePresentmentDetailId(long presentmentId, List<Long> detaildList) throws Exception;
 
 	void updatePresentmentDetailId(long presentmentId, long extractId);
+
+	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, String type);
 }

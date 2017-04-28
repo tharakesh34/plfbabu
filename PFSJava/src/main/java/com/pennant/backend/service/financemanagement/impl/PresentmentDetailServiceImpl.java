@@ -276,4 +276,9 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	public List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, String type) {
+		return presentmentDetailDAO.getPresentmentDetailsList(presentmentId, type);
+	}
+
 }

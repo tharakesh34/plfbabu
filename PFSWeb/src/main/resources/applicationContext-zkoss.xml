@@ -4630,5 +4630,10 @@
 		<property name="accountMappingService" ref="accountMappingService"/>
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
+	<bean id="presentmentDetailDialogCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentDetailDialogCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="presentmentDetailService" ref="presentmentDetailService" />
+	</bean>
+	
 
 </beans>

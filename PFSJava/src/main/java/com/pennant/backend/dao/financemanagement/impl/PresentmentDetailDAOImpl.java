@@ -53,10 +53,12 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.DateUtility;
@@ -274,6 +276,40 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 			throw e;
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, String type) {
+
+		logger.debug(Literal.ENTERING);
+
+		PresentmentDetail presentmentDetail = new PresentmentDetail();
+		presentmentDetail.setPresentmentId(presentmentId);
+
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" Id, PresentmentId, FinReference, SchDate, MandateId, SchAmtDue, schPriDue, schPftDue, schFeeDue, schInsDue,");
+		sql.append(" schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, ExcludeReason, bounceID, emiNo, auxiliary1, auxiliary2, status,");
+		sql.append( " Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
+		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
+		
+		if (type.contains("View")) {
+			sql.append(", mandateType, finTypeDesc, customerName ");
+		}
+		
+		sql.append(" From PresentmentDetails");
+		sql.append(type);
+		sql.append(" Where PresentmentId = :PresentmentId");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(presentmentDetail);
+		RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(PresentmentDetail.class);
+
+		logger.debug(Literal.LEAVING);
+		
+		return this.namedParameterJdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
 }

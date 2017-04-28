@@ -44,6 +44,7 @@ package com.pennant.backend.service.financemanagement;
 
 import java.util.List;
 
+import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 
 public interface PresentmentDetailService {
@@ -57,5 +58,7 @@ public interface PresentmentDetailService {
 	void processDetails(List<Long> presentmentList) throws Exception;
 
 	void updatePresentmentDetailHeader(long presentmentId, long extractId);
+	
+	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, String type);
 
 }
