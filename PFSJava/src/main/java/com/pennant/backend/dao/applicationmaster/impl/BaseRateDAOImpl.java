@@ -105,7 +105,7 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 		baseRate.setCurrency(currency);
 		baseRate.setBREffDate(bREffDate);
 
-		StringBuilder selectSql = new StringBuilder("SELECT BRType, Currency, BREffDate, BRRate, DelExistingRates,");
+		StringBuilder selectSql = new StringBuilder("SELECT BRType, Currency, BREffDate, BRRate, DelExistingRates, BRTypeIsActive,");
 		if (type.contains("View")) {
 			selectSql.append(" LovDescBRTypeName, ");
 		}
@@ -175,10 +175,10 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into RMTBaseRates");
 		sql.append(tableType.getSuffix());
-		sql.append(" (BRType, Currency, BREffDate, BRRate, DelExistingRates,");
+		sql.append(" (BRType, Currency, BREffDate, BRRate, DelExistingRates, BRTypeIsActive,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		sql.append(" NextTaskId, RecordType, WorkflowId, LastMdfDate )");
-		sql.append(" Values(:BRType, :Currency, :BREffDate, :BRRate, :DelExistingRates,");
+		sql.append(" Values(:BRType, :Currency, :BREffDate, :BRRate, :DelExistingRates, :BRTypeIsActive,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :LastMdfDate)");
 
@@ -203,7 +203,7 @@ public class BaseRateDAOImpl extends BasisCodeDAO<BaseRate> implements BaseRateD
 		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql = new StringBuilder("update RMTBaseRates");
 		sql.append(tableType.getSuffix());
-		sql.append(" set BRRate = :BRRate,  DelExistingRates = :DelExistingRates,");
+		sql.append(" set BRRate = :BRRate,  DelExistingRates = :DelExistingRates, BRTypeIsActive = :BRTypeIsActive,");
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");

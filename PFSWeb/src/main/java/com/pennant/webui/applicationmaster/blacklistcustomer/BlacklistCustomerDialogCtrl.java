@@ -12,6 +12,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
@@ -60,6 +61,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	protected Textbox				custMobileNum;		// autoWired								
 	protected ExtendedCombobox		employer; // autoWired
 	protected ExtendedCombobox 		custNationality;
+	protected Checkbox              custIsActive; 
 	
 	private transient boolean validationOn;
 	
@@ -315,12 +317,14 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.employer.setValue(aBlackListCustomers.getEmployer());
 		this.employer.setDescription(aBlackListCustomers.getLovDescEmpName());
 		this.recordStatus.setValue(aBlackListCustomers.getRecordStatus());
+		this.custIsActive.setChecked(aBlackListCustomers.isCustIsActive());
 
 		if (aBlackListCustomers.isNew()
 				|| (aBlackListCustomers.getRecordType() != null ? aBlackListCustomers
 						.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
-
+				this.custIsActive.setChecked(true);
+				this.custIsActive.setDisabled(true);
 		}
 		logger.debug("Leaving ");
 	}
@@ -394,7 +398,11 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		try {
+			finBlacklistCust.setCustIsActive(this.custIsActive.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -649,6 +657,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custMobileNum.setReadonly(isReadOnly("BlacklistCustomerDialog_CustMobileNum"));
 		this.custNationality.setReadonly(isReadOnly("BlacklistCustomerDialog_CustNationality"));
 		this.employer.setReadonly(isReadOnly("BlacklistCustomerDialog_Employer"));
+		this.custIsActive.setDisabled(isReadOnly("BlacklistCustomerDialog_CustIsActive"));
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -682,6 +691,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custMobileNum.setReadonly(true);
 		this.custNationality.setReadonly(true);
 		this.employer.setReadonly(true);
+		this.custIsActive.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -712,6 +722,8 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 		this.custMobileNum.setValue("");
 		this.custNationality.setValue("");
 		this.employer.setValue("");
+		this.custIsActive.setChecked(false);
+		
 		logger.debug("Leaving ");
 	}
 

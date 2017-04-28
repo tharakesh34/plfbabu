@@ -101,6 +101,8 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	protected Datebox bREffDate;
 	protected Decimalbox bRRate;
 	protected Checkbox deleteRate;
+	protected Checkbox bRTypeIsActive;
+	
 	// not autoWired Var's
 	private BaseRate baseRate; // overHanded per parameter
 	private transient BaseRateListCtrl baseRateListCtrl; // overHanded per
@@ -343,6 +345,12 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 		this.bRRate.setValue(aBaseRate.getBRRate() == null ? BigDecimal.ZERO
 				: aBaseRate.getBRRate());
 		this.deleteRate.setChecked(aBaseRate.isDelExistingRates());
+		this.bRTypeIsActive.setChecked(aBaseRate.isbRTypeIsActive());
+		
+		if(aBaseRate.isNew() || (aBaseRate.getRecordType() != null ? aBaseRate.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+			this.bRTypeIsActive.setChecked(true);
+			this.bRTypeIsActive.setDisabled(true);
+		}
 
 		if (aBaseRate.isNewRecord()) {
 			this.bRType.setDescription("");
@@ -396,6 +404,13 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		try {
+			aBaseRate.setbRTypeIsActive(this.bRTypeIsActive.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		aBaseRate.setLastMdfDate(DateUtility.getAppDate());
 
 		doRemoveValidation();
@@ -629,7 +644,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 
 		this.bRRate.setReadonly(isReadOnly("BaseRateDialog_bRRate"));
 		this.deleteRate.setDisabled(isReadOnly("BaseRateDialog_deleteRate"));
-
+		this.bRTypeIsActive.setDisabled(isReadOnly("BaseRateDialog_BRTypeIsActive"));
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -658,6 +673,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 		this.bREffDate.setDisabled(true);
 		this.bRRate.setReadonly(true);
 		this.deleteRate.setDisabled(true);
+		this.bRTypeIsActive.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -682,6 +698,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 		this.currency.setDescription("");
 		this.bREffDate.setText("");
 		this.bRRate.setValue("0.00");
+		this.bRTypeIsActive.setChecked(false);
 		logger.debug("Leaving");
 	}
 

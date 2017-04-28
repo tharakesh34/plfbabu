@@ -450,7 +450,8 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("GeneralDesignation", new ModuleMapping("GeneralDesignation", GeneralDesignation.class,
 				new String[] { "RMTGenDesignations", "RMTGenDesignations_AView" }, masterWF, new String[] {
-						"GenDesignation", "GenDesgDesc" }, null, 350));
+						"GenDesignation", "GenDesgDesc" }, new String[][] { {
+							"GenDesgIsActive", "0", "1" } }, 350));
 
 		ModuleUtil.register("GroupStatusCode", new ModuleMapping("GroupStatusCode", GroupStatusCode.class,
 				new String[] { "BMTGrpStatusCodes", "BMTGrpStatusCodes_AView" }, masterWF, new String[] { "GrpStsCode",
@@ -565,7 +566,8 @@ public class PennantJavaUtil {
 			"BranchDesc", "MICR", "IFSC" }, null, 700));
 
 		ModuleUtil.register("BaseRate", new ModuleMapping("BaseRate", BaseRate.class, new String[] { "RMTBaseRates",
-				"RMTBaseRates_AView" }, masterWF, new String[] { "BRType", "Currency", "BREffDate" }, null, 300));
+				"RMTBaseRates_AView" }, masterWF, new String[] { "BRType", "Currency", "BREffDate" }, new String[][] { {
+					"BRTypeIsActive", "0", "1" } }, 300));
 
 		ModuleUtil.register("BaseRateCode", new ModuleMapping("BaseRateCode", BaseRateCode.class, new String[] {
 				"RMTBaseRateCodes", "RMTBaseRateCodes_AView" }, masterWF, new String[] { "BRType", "BRTypeDesc" },
@@ -663,7 +665,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("BlackListCustomers", new ModuleMapping("BlackListCustomers", BlackListCustomers.class,
 						new String[] { "BlackListCustomer", "" }, masterWF, new String[] { "CustCIF", "CustFName" },
-						null, 300));
+						new String[][] { { "CustIsActive", "0", "1" } }, 300));
 
 		ModuleUtil.register("OtherBankFinanceType", new ModuleMapping("OtherBankFinanceType",
 				OtherBankFinanceType.class, new String[] { "OtherBankFinanceType", "OtherBankFinanceType_AView" },

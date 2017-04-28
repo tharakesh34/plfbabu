@@ -33,7 +33,8 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	private String likeCustFName;
 	private String likeCustMName;
 	private String likeCustLName;
-	
+	private boolean custIsActive;	
+
 	// For Internal Use
 	private String finReference;
 	private String custCtgCode;
@@ -309,6 +310,14 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 
 	public void setLikeCustLName(String likeCustLName) {
 		this.likeCustLName = likeCustLName;
+	}
+	
+	public boolean isCustIsActive() {
+		return custIsActive;
+	}
+
+	public void setCustIsActive(boolean custIsActive) {
+		this.custIsActive = custIsActive;
 	}
 	
 	public Timestamp getPrevMntOn() {

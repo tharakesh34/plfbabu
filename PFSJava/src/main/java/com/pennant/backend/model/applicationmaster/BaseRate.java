@@ -69,6 +69,7 @@ public class BaseRate extends AbstractWorkflowEntity {
 	private String lovValue;
 	private BaseRate befImage;
 	private LoggedInUser userDetails;
+	private boolean bRTypeIsActive;
 
 	public BaseRate() {
 		super();
@@ -178,6 +179,15 @@ public class BaseRate extends AbstractWorkflowEntity {
 	public void setLastMdfDate(Date lastMdfDate) {
     	this.lastMdfDate = lastMdfDate;
     }
+	
+	public boolean isbRTypeIsActive() {
+		return bRTypeIsActive;
+	}
+
+	public void setbRTypeIsActive(boolean bRTypeIsActive) {
+		this.bRTypeIsActive = bRTypeIsActive;
+	}
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

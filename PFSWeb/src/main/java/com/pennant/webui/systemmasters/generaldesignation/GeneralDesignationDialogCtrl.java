@@ -53,6 +53,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -86,7 +87,8 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	protected Window 		window_GeneralDesignationDialog; 	
 
 	protected Textbox 		genDesignation; 					
-	protected Textbox 		genDesgDesc; 						
+	protected Textbox 		genDesgDesc; 
+	protected Checkbox 		genDesgIsActive;
 
 	// not auto wired Var's
 	private GeneralDesignation generalDesignation; // overHanded per param
@@ -306,7 +308,14 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		logger.debug("Entering");
 		this.genDesignation.setValue(aGeneralDesignation.getGenDesignation());
 		this.genDesgDesc.setValue(aGeneralDesignation.getGenDesgDesc());
+		this.genDesgIsActive.setChecked(aGeneralDesignation.isGenDesgIsActive());
 		this.recordStatus.setValue(aGeneralDesignation.getRecordStatus());
+		
+		if(aGeneralDesignation.isNew() || (aGeneralDesignation.getRecordType() != null ? aGeneralDesignation.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+			this.genDesgIsActive.setChecked(true);
+			this.genDesgIsActive.setDisabled(true);
+		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -329,6 +338,11 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		try {
 		    aGeneralDesignation.setGenDesgDesc(this.genDesgDesc.getValue());
 		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aGeneralDesignation.setGenDesgIsActive(this.genDesgIsActive.isChecked());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		
@@ -508,29 +522,30 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
-		
+
 		logger.debug("Entering");
-		if (getGeneralDesignation().isNewRecord()){
+		if (getGeneralDesignation().isNewRecord()) {
 			this.genDesignation.setReadonly(false);
 			this.btnCancel.setVisible(false);
-		}else{
+		} else {
 			this.genDesignation.setReadonly(true);
 			this.btnCancel.setVisible(true);
 		}
-			this.genDesgDesc.setReadonly(isReadOnly(
-					"GeneralDesignationDialog_genDesgDesc"));
-			if (isWorkFlowEnabled()){	
-				for (int i = 0; i < userAction.getItemCount(); i++) {
+		this.genDesgDesc.setReadonly(isReadOnly("GeneralDesignationDialog_genDesgDesc"));
+		this.genDesgIsActive.setDisabled(isReadOnly("GeneralDesignationDialog_GenDesgIsActive"));
+		
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
-			
-			if (this.generalDesignation.isNewRecord()){
+
+			if (this.generalDesignation.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
-			}else{
+			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		}else{
+		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 			// btnCancel.setVisible(true);
 		}
@@ -544,6 +559,7 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		logger.debug("Entering");
 		this.genDesignation.setReadonly(true);
 		this.genDesgDesc.setReadonly(true);
+		this.genDesgIsActive.setDisabled(true);
 		
 		if(isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -566,6 +582,7 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 		// remove validation, if there are a save before		
 		this.genDesignation.setValue("");
 		this.genDesgDesc.setValue("");
+		this.genDesgIsActive.setChecked(false);
 		logger.debug("Leaving");
 	}
 

@@ -113,6 +113,16 @@
 										checked="false" />
 								</hbox>
 							</row>
+							<row>
+								<label
+									id="label_BaseRateDialog_BRTypeIsActive"
+									value="${c:l('label_BaseRateDialog_BRTypeIsActive.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="bRTypeIsActive"
+										checked="false" />
+								</hbox>
+							</row>
 						</rows>
 					</grid>
 				</groupbox>

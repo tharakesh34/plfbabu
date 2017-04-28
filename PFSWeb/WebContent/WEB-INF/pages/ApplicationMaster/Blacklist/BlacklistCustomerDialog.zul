@@ -158,6 +158,16 @@
 									<extendedcombobox id="employer" />
 								</hbox>
 							</row>
+							<row>
+								<label
+									id="label_BlacklistCustomerDialog_CustIsActive"
+									value="${c:l('label_BlacklistCustomerDialog_CustIsActive.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="custIsActive"
+										checked="false" />
+								</hbox>
+							</row>
 						</rows>
 					</grid>
 				</groupbox>

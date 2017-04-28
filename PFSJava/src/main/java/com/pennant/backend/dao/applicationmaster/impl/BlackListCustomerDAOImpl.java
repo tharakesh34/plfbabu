@@ -99,7 +99,7 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		blacklistCustomer.setId(id);
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" Select CustCIF , CustFName , CustLName , ");
-		selectSql.append(" CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , Employer, ");
+		selectSql.append(" CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , Employer, CustIsActive, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if(type.contains("_View")) {
 			selectSql.append(" ,lovDescNationalityDesc,lovDescEmpName ");
@@ -208,7 +208,7 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		logger.debug(Literal.ENTERING);
 		
 		StringBuilder selectSql = new StringBuilder(" Select CustCIF , CustFName , CustLName , ");
-		selectSql.append(" CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , Employer ");
+		selectSql.append(" CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , Employer, CustIsActive ");
 		selectSql.append(" From BlackListCustomer ");
 		selectSql.append(watchRule);
 
@@ -266,8 +266,8 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		updateSql.append("Update BlackListCustomer");
 		updateSql.append(tableType.getSuffix());
 		updateSql.append(" Set CustFName=:CustFName , CustLName=:CustLName , " );
-		updateSql.append(" CustDOB=:CustDOB , CustCRCPR=:CustCRCPR , CustPassportNo=:CustPassportNo , MobileNumber=:MobileNumber , CustNationality=:CustNationality, " );
-		updateSql.append(" Employer=:Employer,Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
+		updateSql.append(" CustDOB=:CustDOB, CustCRCPR=:CustCRCPR , CustPassportNo=:CustPassportNo , MobileNumber=:MobileNumber , CustNationality=:CustNationality, " );
+		updateSql.append(" Employer=:Employer, CustIsActive = :CustIsActive, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
 		updateSql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
 		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" WHERE CustCIF=:CustCIF ");
@@ -317,11 +317,11 @@ public class BlackListCustomerDAOImpl extends BasisCodeDAO<BlackListCustomers> i
 		StringBuilder insertSql = new StringBuilder("Insert Into BlackListCustomer");
 		insertSql.append(tableType.getSuffix());
 		insertSql.append("(CustCIF, CustFName, CustLName , CustDOB, CustCRCPR, CustPassportNo ,MobileNumber,CustNationality, ");
-		insertSql.append(" Employer,Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
+		insertSql.append(" Employer, CustIsActive, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId," );
 		insertSql.append(" RecordType, WorkflowId)");
 		insertSql.append(" Values(");
-		insertSql.append(" :CustCIF , :CustFName , :CustLName , :CustDOB ,  :CustCRCPR , :CustPassportNo ,:MobileNumber , :CustNationality, ");
-		insertSql.append(" :Employer, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
+		insertSql.append(" :CustCIF , :CustFName , :CustLName, :CustDOB , :CustCRCPR , :CustPassportNo, :MobileNumber, :CustNationality, ");
+		insertSql.append(" :Employer, :CustIsActive, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
 		insertSql.append(" :RecordType, :WorkflowId)");
 
 		logger.trace(Literal.SQL + insertSql.toString());

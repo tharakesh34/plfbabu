@@ -96,7 +96,7 @@ public class GeneralDesignationDAOImpl extends BasisCodeDAO<GeneralDesignation>
 		GeneralDesignation generalDesignation = new GeneralDesignation();
 		generalDesignation.setId(id);
 		
-		StringBuilder selectSql = new StringBuilder("Select GenDesignation, GenDesgDesc," );
+		StringBuilder selectSql = new StringBuilder("Select GenDesignation, GenDesgDesc, GenDesgIsActive," );
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode," );
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
 		selectSql.append(" From RMTGenDesignations");
@@ -163,10 +163,10 @@ public class GeneralDesignationDAOImpl extends BasisCodeDAO<GeneralDesignation>
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into RMTGenDesignations");
 		sql.append(tableType.getSuffix());
-		sql.append(" (GenDesignation, GenDesgDesc,");
+		sql.append(" (GenDesignation, GenDesgDesc, GenDesgIsActive,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(:GenDesignation, :GenDesgDesc,");
+		sql.append(" values(:GenDesignation, :GenDesgDesc, :GenDesgIsActive,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -191,7 +191,7 @@ public class GeneralDesignationDAOImpl extends BasisCodeDAO<GeneralDesignation>
 		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql = new StringBuilder("update RMTGenDesignations");
 		sql.append(tableType.getSuffix());
-		sql.append(" set GenDesgDesc = :GenDesgDesc,");
+		sql.append(" set GenDesgDesc = :GenDesgDesc, GenDesgIsActive = :GenDesgIsActive,");
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");

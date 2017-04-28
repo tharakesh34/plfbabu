@@ -62,7 +62,8 @@ public class GeneralDesignation extends AbstractWorkflowEntity {
 	private String lovValue;
 	private GeneralDesignation befImage;
 	private LoggedInUser userDetails;
-
+	private boolean genDesgIsActive;
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -128,6 +129,14 @@ public class GeneralDesignation extends AbstractWorkflowEntity {
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
+	
+	public boolean isGenDesgIsActive() {
+		return genDesgIsActive;
+	}
+	public void setGenDesgIsActive(boolean genDesgIsActive) {
+		this.genDesgIsActive = genDesgIsActive;
+	}
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
