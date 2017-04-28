@@ -128,89 +128,132 @@
 		<dropColumn tableName="FINSTATUSDETAIL" columnName="FINSTATUSREASON" />
 	</changeSet>
 
-	<!-- <changeSet id="13" author="satish">
+	<changeSet id="13" author="satish">
 		<addColumn tableName="FinanceMain">
-			<column name="ProductCategory" type="varchar(8)" />
-			<column name="FinCategory" type="varchar(8)" />
+			<column name="DueBucket" type="int" />
 		</addColumn>
 	</changeSet>
-
 	<changeSet id="14" author="satish">
 		<addColumn tableName="FinanceMain_Temp">
-			<column name="ProductCategory" type="varchar(8)" />
-			<column name="FinCategory" type="varchar(8)" />
+			<column name="DueBucket" type="int" />
 		</addColumn>
 	</changeSet>
 	<changeSet id="15" author="satish">
 		<addColumn tableName="FinanceMain_PA">
-			<column name="ProductCategory" type="varchar(8)" />
-			<column name="FinCategory" type="varchar(8)" />
+			<column name="DueBucket" type="int" />
 		</addColumn>
 	</changeSet>
 	<changeSet id="16" author="satish">
 		<addColumn tableName="WIFFinanceMain">
-			<column name="ProductCategory" type="varchar(8)" />
-			<column name="FinCategory" type="varchar(8)" />
+			<column name="DueBucket" type="int" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="17" author="satish">
+		<addColumn tableName="REJECTFINANCEMAIN">
+			<column name="DueBucket" type="int" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="17" author="satish">
-		<addColumn tableName="REJECTFINANCEMAIN">
-			<column name="ProductCategory" type="varchar(8)" />
-			<column name="FinCategory" type="varchar(8)" />
-		</addColumn>
-	</changeSet> -->
-<changeSet id="18" author="satish">
-<sql>
+	<changeSet id="18" author="satish">
+		<sql>
 
-UPDATE RMTFINANCETYPES_TEMP set pastduePftCalMthd='N'  where pastduePftCalMthd='NOTAPP';
-UPDATE RMTFINANCETYPES_TEMP set pastduePftCalMthd='S'  where pastduePftCalMthd='SRATE';
-UPDATE RMTFINANCETYPES_TEMP set pastduePftCalMthd='M'  where pastduePftCalMthd='SRATEMRG';
-UPDATE RMTFINANCETYPES_TEMP set PastduePftMargin=0  where PastduePftMargin is null;
+			UPDATE RMTFINANCETYPES_TEMP set pastduePftCalMthd='N' where pastduePftCalMthd='NOTAPP';
+			UPDATE RMTFINANCETYPES_TEMP set pastduePftCalMthd='S' where pastduePftCalMthd='SRATE';
+			UPDATE RMTFINANCETYPES_TEMP set pastduePftCalMthd='M' where pastduePftCalMthd='SRATEMRG';
+			UPDATE RMTFINANCETYPES_TEMP set PastduePftMargin=0 where PastduePftMargin is null;
 
-UPDATE RMTFINANCETYPES set pastduePftCalMthd='N'  where pastduePftCalMthd='NOTAPP';
-UPDATE RMTFINANCETYPES set pastduePftCalMthd='S'  where pastduePftCalMthd='SRATE';
-UPDATE RMTFINANCETYPES set pastduePftCalMthd='M'  where pastduePftCalMthd='SRATEMRG';
+			UPDATE RMTFINANCETYPES set pastduePftCalMthd='N' where pastduePftCalMthd='NOTAPP';
+			UPDATE RMTFINANCETYPES set pastduePftCalMthd='S' where
+			pastduePftCalMthd='SRATE';
+			UPDATE RMTFINANCETYPES set pastduePftCalMthd='M' where pastduePftCalMthd='SRATEMRG';
 
-UPDATE RMTFINANCETYPES set PastduePftMargin=0  where PastduePftMargin is null;
-UPDATE FinanceMain set PastduePftMargin=0  where PastduePftMargin is null;
-UPDATE FinanceMain_Temp set PastduePftMargin=0  where PastduePftMargin is null;
+			UPDATE RMTFINANCETYPES set PastduePftMargin=0 where PastduePftMargin is null;
+			UPDATE FinanceMain set PastduePftMargin=0 where PastduePftMargin is null;
+			UPDATE FinanceMain_Temp set PastduePftMargin=0 where PastduePftMargin is null;
 
-UPDATE FinanceMain set pastduePftCalMthd=(select pastduePftCalMthd from RMTFINANCETYPES where RMTFINANCETYPES.FinType=FinanceMain.Fintype);
-UPDATE FinanceMain set PastduePftMargin=(select PastduePftMargin from RMTFINANCETYPES where RMTFINANCETYPES.FinType=FinanceMain.Fintype);
+			UPDATE FinanceMain set pastduePftCalMthd=(select pastduePftCalMthd from RMTFINANCETYPES where RMTFINANCETYPES.FinType=FinanceMain.Fintype);
+			UPDATE FinanceMain
+			set PastduePftMargin=(select PastduePftMargin from RMTFINANCETYPES where RMTFINANCETYPES.FinType=FinanceMain.Fintype);
 
-UPDATE FinanceMain_Temp set pastduePftCalMthd=(select pastduePftCalMthd from RMTFINANCETYPES where RMTFINANCETYPES.FinType=FinanceMain_Temp.Fintype);
-UPDATE FinanceMain_Temp set PastduePftMargin=(select PastduePftMargin from RMTFINANCETYPES where RMTFINANCETYPES.FinType=FinanceMain_Temp.Fintype);
+			UPDATE FinanceMain_Temp set pastduePftCalMthd=(select pastduePftCalMthd from RMTFINANCETYPES where RMTFINANCETYPES.FinType=FinanceMain_Temp.Fintype);
+			UPDATE FinanceMain_Temp set PastduePftMargin=(select PastduePftMargin from RMTFINANCETYPES where RMTFINANCETYPES.FinType=FinanceMain_Temp.Fintype);
 
-UPDATE FinPftDetails set PftOnPDMethod=(select pastduePftCalMthd from FinanceMain where FinanceMain.Finreference=FinPftDetails.Finreference);
-UPDATE FinPftDetails set PftOnPDMrg=(select PastduePftMargin from FinanceMain where FinanceMain.Finreference=FinPftDetails.Finreference);
+			UPDATE FinPftDetails set PftOnPDMethod=(select pastduePftCalMthd from FinanceMain
+			where FinanceMain.Finreference=FinPftDetails.Finreference);
+			UPDATE FinPftDetails set PftOnPDMrg=(select PastduePftMargin from FinanceMain where FinanceMain.Finreference=FinPftDetails.Finreference);
 
-UPDATE FinPftDetails set CalPftOnPD=0  where PftOnPDMethod='N';
-UPDATE FinPftDetails set CalPftOnPD=1  where PftOnPDMethod != 'N';
-</sql>
-</changeSet>
+			UPDATE FinPftDetails set CalPftOnPD=0 where PftOnPDMethod='N';
+			UPDATE FinPftDetails set CalPftOnPD=1 where PftOnPDMethod != 'N';
+		</sql>
+	</changeSet>
 
-<changeSet id="19" author="satish">
-	<renameColumn tableName="FinPftDetails" oldColumnName="ResvexcessAmt" newColumnName="excessAmtResv" />
-	<renameColumn tableName="FinPftDetails" oldColumnName="ResvemiInAdvance" newColumnName="emiInAdvanceResv" />
-	<renameColumn tableName="FinPftDetails" oldColumnName="ResvpayableAdvise" newColumnName="payableAdviseResv" />
-</changeSet>
-<changeSet id="20" author="satish">
+	<changeSet id="19" author="satish">
+		<renameColumn tableName="FinPftDetails" oldColumnName="ResvexcessAmt" newColumnName="excessAmtResv" />
+		<renameColumn tableName="FinPftDetails" oldColumnName="ResvemiInAdvance" newColumnName="emiInAdvanceResv" />
+		<renameColumn tableName="FinPftDetails" oldColumnName="ResvpayableAdvise" newColumnName="payableAdviseResv" />
+	</changeSet>
+	<changeSet id="20" author="satish">
 		<renameColumn tableName="Finpftdetails_temp" oldColumnName="ResvexcessAmt" newColumnName="excessAmtResv" />
 		<renameColumn tableName="Finpftdetails_temp" oldColumnName="ResvemiInAdvance" newColumnName="emiInAdvanceResv" />
-<renameColumn tableName="Finpftdetails_temp" oldColumnName="ResvpayableAdvise" newColumnName="payableAdviseResv" />
-</changeSet>
-<changeSet id="21" author="satish">
-	<renameColumn tableName="finpftdetails_snapshot" oldColumnName="ResvexcessAmt" newColumnName="excessAmtResv" />
-	<renameColumn tableName="finpftdetails_snapshot" oldColumnName="ResvemiInAdvance" newColumnName="emiInAdvanceResv" />
-	<renameColumn tableName="finpftdetails_snapshot" oldColumnName="ResvpayableAdvise" newColumnName="payableAdviseResv" />
-</changeSet>
+		<renameColumn tableName="Finpftdetails_temp" oldColumnName="ResvpayableAdvise" newColumnName="payableAdviseResv" />
+	</changeSet>
+	<changeSet id="21" author="satish">
+		<renameColumn tableName="finpftdetails_snapshot" oldColumnName="ResvexcessAmt" newColumnName="excessAmtResv" />
+		<renameColumn tableName="finpftdetails_snapshot" oldColumnName="ResvemiInAdvance" newColumnName="emiInAdvanceResv" />
+		<renameColumn tableName="finpftdetails_snapshot" oldColumnName="ResvpayableAdvise" newColumnName="payableAdviseResv" />
+	</changeSet>
 
-<changeSet id="22" author="Satish">
-<dropForeignKeyConstraint baseTableName="FinanceMain" constraintName="FK_FINMAIN_BMTCUSTSTATUSCODES"/>
-</changeSet>
-<changeSet id="23" author="Satish">
-<dropForeignKeyConstraint baseTableName="Customers" constraintName="FK_CUSTS_BMTCUSTSTATUSCODES"/>
-</changeSet>
+	<changeSet id="22" author="Satish">
+		<dropForeignKeyConstraint baseTableName="FinanceMain" constraintName="FK_FINMAIN_BMTCUSTSTATUSCODES" />
+	</changeSet>
+	<changeSet id="23" author="Satish">
+		<dropForeignKeyConstraint baseTableName="Customers" constraintName="FK_CUSTS_BMTCUSTSTATUSCODES" />
+	</changeSet>
+	<changeSet id="24" author="satish">
+		<addColumn tableName="FINPROVISIONS">
+			<column name="Duedays" type="int" />
+			<column name="DpdBucketID" type="bigint" />
+			<column name="NpaBucketID" type="bigint" />
+			<column name="PftBal" type="decimal(18,0)" />
+			<column name="PriBal" type="decimal(18,0)" />
+			<column name="PrvovisionRate" type="decimal(13,9)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="25" author="satish">
+		<addColumn tableName="FINPROVISIONS_TEMP">
+			<column name="Duedays" type="int" />
+			<column name="DpdBucketID" type="bigint" />
+			<column name="NpaBucketID" type="bigint" />
+			<column name="PftBal" type="decimal(18,0)" />
+			<column name="PriBal" type="decimal(18,0)" />
+			<column name="PrvovisionRate" type="decimal(13,9)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="26" author="satish">
+		<sql>
+			update FINPROVISIONS set Duedays=0;
+			update FINPROVISIONS set DpdBucketID=0;
+			update FINPROVISIONS set NpaBucketID=0;
+			update FINPROVISIONS set PftBal=0;
+			update FINPROVISIONS set PriBal=0;
+			update FINPROVISIONS set PrvovisionRate=0;
+
+			update FINPROVISIONS_TEMP set Duedays=0;
+			update FINPROVISIONS_TEMP set DpdBucketID=0;
+			update FINPROVISIONS_TEMP set NpaBucketID=0;
+			update FINPROVISIONS_TEMP set PftBal=0;
+			update FINPROVISIONS_TEMP set PriBal=0;
+			update FINPROVISIONS_TEMP set PrvovisionRate=0;
+		</sql>
+	</changeSet>
+	<changeSet id="27" author="satish">
+		<sql>
+			update Financemain set DueBucket=0;
+			update FinanceMain_Temp set DueBucket=0;
+			update FinanceMain_PA set DueBucket=0;
+			update WIFFinanceMain set DueBucket=0;
+			update REJECTFINANCEMAIN set DueBucket=0;
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
