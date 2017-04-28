@@ -53,6 +53,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -87,7 +88,8 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 	protected Window  window_GeneralDepartmentDialog; 	
 
 	protected Uppercasebox	 genDepartment; 					
-	protected Textbox 	 genDeptDesc; 		
+	protected Textbox 	 genDeptDesc; 	
+	protected Checkbox genDeptIsActive; // autoWired
 	
 	// not auto wired Var's
 	private GeneralDepartment generalDepartment; // overHanded per param
@@ -307,6 +309,11 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 		this.genDepartment.setValue(aGeneralDepartment.getGenDepartment());
 		this.genDeptDesc.setValue(aGeneralDepartment.getGenDeptDesc());
 		this.recordStatus.setValue(aGeneralDepartment.getRecordStatus());
+		this.genDeptIsActive.setChecked(aGeneralDepartment.isGenDeptIsActive());
+		if(aGeneralDepartment.isNew() || (aGeneralDepartment.getRecordType() != null ? aGeneralDepartment.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+			this.genDeptIsActive.setChecked(true);
+			this.genDeptIsActive.setDisabled(true);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -329,6 +336,11 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 		try {
 		    aGeneralDepartment.setGenDeptDesc(this.genDeptDesc.getValue());
 		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		try {
+			aGeneralDepartment.setGenDeptIsActive(this.genDeptIsActive.isChecked());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		
@@ -517,6 +529,7 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 			this.btnCancel.setVisible(true);
 		}
 			this.genDeptDesc.setReadonly(isReadOnly("GeneralDepartmentDialog_genDeptDesc"));
+			this.genDeptIsActive.setDisabled(isReadOnly("GeneralDepartmentDialog_GenDeptIsActive"));
 			if (isWorkFlowEnabled()){
 				for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -542,7 +555,7 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 		logger.debug("Entering");
 		this.genDepartment.setReadonly(true);
 		this.genDeptDesc.setReadonly(true);
-		
+		this.genDeptIsActive.setDisabled(true);
 		if(isWorkFlowEnabled()){
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -564,6 +577,7 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 		// remove validation, if there are a save before		
 		this.genDepartment.setValue("");
 		this.genDeptDesc.setValue("");
+		this.genDeptIsActive.setChecked(false);
 		logger.debug("Leaving");
 		
 	}

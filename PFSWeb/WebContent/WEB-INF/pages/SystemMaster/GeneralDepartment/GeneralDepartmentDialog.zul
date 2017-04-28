@@ -90,6 +90,16 @@
 										maxlength="50" width="450px" />
 								</hbox>
 							</row>
+							<row>
+								<label
+									id="label_GeneralDepartmentDialog_GenDeptIsActive"
+									value="${c:l('label_GeneralDepartmentDialog_GenDeptIsActive.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="genDeptIsActive"
+										checked="false" />
+								</hbox>
+							</row>
 						</rows>
 					</grid>
 				</groupbox>

@@ -62,6 +62,7 @@ public class GeneralDepartment extends AbstractWorkflowEntity {
 	private String lovValue;
 	private GeneralDepartment befImage;
 	private LoggedInUser userDetails;
+	private boolean genDeptIsActive;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -128,7 +129,14 @@ public class GeneralDepartment extends AbstractWorkflowEntity {
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+	public boolean isGenDeptIsActive() {
+		return genDeptIsActive;
+	}
+
+	public void setGenDeptIsActive(boolean genDeptIsActive) {
+		this.genDeptIsActive = genDeptIsActive;
+	}
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

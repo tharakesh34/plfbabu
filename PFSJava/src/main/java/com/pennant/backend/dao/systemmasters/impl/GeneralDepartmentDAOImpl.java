@@ -96,7 +96,7 @@ public class GeneralDepartmentDAOImpl extends BasisCodeDAO<GeneralDepartment>
 		GeneralDepartment generalDepartment = new GeneralDepartment();
 		generalDepartment.setId(id);
 		
-		StringBuilder selectSql = new StringBuilder("Select GenDepartment, GenDeptDesc," );
+		StringBuilder selectSql = new StringBuilder("Select GenDepartment, GenDeptDesc, GenDeptIsActive," );
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId" );
 		selectSql.append(" From RMTGenDepartments");
@@ -180,10 +180,10 @@ public class GeneralDepartmentDAOImpl extends BasisCodeDAO<GeneralDepartment>
 		logger.debug(Literal.ENTERING);
 		StringBuilder insertSql = new StringBuilder("Insert Into RMTGenDepartments" );
 		insertSql.append(tableType.getSuffix());
-		insertSql.append(" (GenDepartment, GenDeptDesc,");
+		insertSql.append(" (GenDepartment, GenDeptDesc, GenDeptIsActive,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)" );
-		insertSql.append(" Values(:GenDepartment, :GenDeptDesc," );
+		insertSql.append(" Values(:GenDepartment, :GenDeptDesc, :GenDeptIsActive," );
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode," );
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -218,7 +218,7 @@ public class GeneralDepartmentDAOImpl extends BasisCodeDAO<GeneralDepartment>
 		
 		StringBuilder updateSql = new StringBuilder("Update RMTGenDepartments");
 		updateSql.append(tableType.getSuffix());
-		updateSql.append(" Set GenDeptDesc = :GenDeptDesc," );
+		updateSql.append(" Set GenDeptDesc = :GenDeptDesc, GenDeptIsActive = :GenDeptIsActive," );
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode," );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId," );
