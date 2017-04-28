@@ -315,4 +315,74 @@
 			<column name="PayableAdviseBal" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="29" author="Prasad">
+		<createView viewName="RPT_SOA_LOAN_VIEW" replaceIfExists="true">
+				 Select FM.FinReference,FM.finamount/100 LoanAmount,
+		   FM.RepayBaseRate PLRRate,FM.repaymargin Variance,FM.EffectiveRateOfReturn IRR,FP.CURREDUCINGRATE ROI,
+		   FP.noinst Tenure,(TotalPriPaid + TotalPftPaid)/100 EMIReceived,
+		   0.00 PreferredCardLimit,(PRVRPYSCHPRI + PRVRPYSCHPFT)/100 PrevInstAmt,
+		   FM.RepayRateBasis intRateType,FP.LastDisbDate LastDisbursalDate,
+		   FP.FirstRepayDate FirstDueDate,FP.MaturityDate EndInstallmentDate,
+		   '0.00/ 0' AdvInstAmt,(Case when FP.FinIsActive = 1 then 'Active' when FM.closingstatus='C' then 'Cancelled' else 'Closed' END) Status,(FutureRpyPri+FutureRpyPft)/100 FutureInstAmt,
+		   FP.Futureinst FutureInstNo,FP.FutureRpyPri/100 FuturePriComponent,FP.FutureRpyPft/100 Future_inst_comp,
+		   FP.totchargespaid/100 Charge_coll_cust,
+		   FP.UpFrontFee Upfront_int_cust,	0 Int_paid_Dealer_upfront,'' Pre_emi_Int_Paid,
+		   '' Repo_Status,'' Repo_Date,'' Sale_Date,'' Release_Date,(Case when FP.finisactive =0 then FP.LATESTRPYDATE else FP.maturitydate end)  Closure_Date
+	From FinanceMain FM inner join
+		 FinPftDetails FP on FP.FinReference = FM.FinReference
+		</createView>
+	</changeSet>
+	<changeSet id="30" author="Prasad">
+		<createView viewName="RPT_SOA_FINSMRY_VIEW" replaceIfExists="true">
+				 Select FinReference,'Instalment Amount' comp,(TdSchdPft+TdSchdPri)/100 due,(TdSchdPriPaid+TdSchdPftPaid)/100 Receipt from FinPftDetails union all
+	Select FinReference,'Principal Component' comp,	TdSchdPri/100 due,TdSchdPriPaid/100 Receipt from FinPftDetails  union all
+	Select FinReference,'Interest Component' comp,coalesce(TdSchdPft,0)/100 due,coalesce(TdSchdPftPaid,0)/100 Receipt from FinPftDetails  union all
+	Select FinReference,'Late Payment Penalty' comp,coalesce(PenaltyDue,0)/100 due,	coalesce(PenaltyPaid,0)/100 Receipt from FinPftDetails union all
+	Select FinReference,'Bounce Charges' comp,coalesce(BounceAmt,0)/100 due,coalesce(BounceAmtPaid,0)/100 Receipt from FinPftDetails union all
+  Select Finreference,'Other Receivables' comp, coalesce(receivableAdviseBal,0)/100 due,coalesce(receivableadvise,0)/100 Receipt  from FinPftDetails union all
+   Select Finreference,'Unadjusted Amount' comp,coalesce((excessAmtBal + emiInAdvanceBal),0)/100 due,coalesce((excessAmt+ emiInAdvance),0)/100 Receipt from FinPftDetails union all
+    Select Finreference,'Other Payables' comp, coalesce(payableAdviseBal,0)/100 due,coalesce(payableAdvise,0)/100 Receipt from FinPftDetails
+		</createView>
+	</changeSet>
+	<changeSet id="31" author="Prasad">
+		<createView viewName="RPT_SOA_CUSTOMER_VIEW" replaceIfExists="true">
+				Select  T1.FinReference,T1.FinPurpose,T1.Finstartdate,t4.branchdesc FinBranch,productdesc FinType,'' Interest_Type,T1.LinkedFinRef Linked_Agreement_No,
+		T1.ClosedLinkedFinRef Closed_Linked_Agree_No,T.CustFName,T.CustMName,
+		CustLName,T.CustCIF,t.CustID,CustAddrHNbr,CustFlatNbr,CustAddrStreet,
+		CustPOBox,CustAddrCity,CustAddrProvince,CustAddrCountry,''PropertyDetails,''PropertyAddress,PhoneCountryCode,
+		PhoneAreaCode,T.PhoneNumber ,CustEMail,ActiveCnt,CloseCnt,Tot from (
+		Select CustFName,CustMName,CustLName,CustCIF,t1.CustID,CustAddrHNbr,CustFlatNbr,CustAddrStreet,
+		CustPOBox,CustAddrCity,CustAddrProvince,CustAddrCountry,PhoneCountryCode,
+		PhoneAreaCode,T3.PhoneNumber ,CustEMail,ActiveCnt,CloseCnt,ActiveCnt+coalesce(CloseCnt,0) Tot
+		from Customers T1 Left join
+		CustomerAddresses T2 ON t1.CustID =T2.CustID and t2.custAddrPriority=5 Left join
+		CustomerPhoneNumbers T3 ON t1.CustID =T3.PhoneCustID  and PHONETYPEPRIORITY=5 Left join
+		CustomerEMails T4 on T4.CustID =T1.CustID and CustEmailPriority=5 Left join
+		(Select CustID,COUNT(*)ActiveCnt from FinPftDetails
+		where (FinIsActive=1) group by CustID)T5 ON T1.CustID =T5.CustID  Left join
+		(Select CustID,COUNT(*)CloseCnt from FinPftDetails
+		where (FinIsActive!=1)group by CustID)T6 ON T1.CustID =T6.CustID)T Left join
+		finpftdetails T1 on T.CustID=T1.CustID inner join
+		RMTFinanceTypes T2 on T1.FinType =T2.FinType inner join
+	  BMTProduct T3 on T3.ProductCode =T2.FinCategory inner join
+	  RMTBRANCHES T4 on T4.branchcode = T1.FinBranch
+		</createView>
+	</changeSet>
+	<changeSet id="32" author="Prasad">
+		<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+				 Select Finreference,Schdate, (case when Disbonschdate=1 then 'Amount Financed - Payable ('||Finreference||')' 
+		when BPIORHOLIDAY='B' then 'Broken Period Interest Receivable -Due('||Finreference||')' else 
+		'Due for Installment '||INSTNUMBER||' ('||Finreference||')' end) Particulars,case when Disbonschdate=1 then 0 else Repayamount/100 end Debit,
+		case when Disbonschdate=1 then DisbAmount/100 else 0 end Credit
+		from finscheduledetails  where (BPIORHOLIDAY!='H' or BPIORHOLIDAY is null)  union 
+		Select finreference,m.lastmnton,feetypedesc ||'- Due ('||Finreference||')' ,m.ADVISEAMOUNT/100 Debit ,0 Credit from manualadvise m
+		inner join FEETYPES f on f.feetypeid = m.feetypeid union
+		Select REFERENCE,VALUEDATE,(Case when PAYMENTTYPE in ('DD','N') then cast('Payment Recieved vide '||PAYMENTTYPE||' No.:'||CHEQUEACNO||'('||REFERENCE||')' as varchar(700))
+		when PAYMENTTYPE in ('E') then cast('Amount Adjusted ('||REFERENCE||')'as varchar(700)) end) Particulars,
+		Case when PAYMENTTYPE in ('DD','N') then 0  when PAYMENTTYPE in ('E') then Amount/100 end debit,
+		Case when PAYMENTTYPE in ('DD','N') then Amount/100   when PAYMENTTYPE in ('E') then Amount/100 end credit
+		from FINRECEIPTHEADER T1 inner join 
+		FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID
+		</createView>
+	</changeSet>
 </databaseChangeLog>
