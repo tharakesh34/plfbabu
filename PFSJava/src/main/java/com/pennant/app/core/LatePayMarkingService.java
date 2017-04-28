@@ -38,8 +38,6 @@ import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -57,8 +55,8 @@ import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinStatusDetail;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.eod.util.EODProperties;
 
 public class LatePayMarkingService extends ServiceHelper {
 
@@ -150,67 +148,20 @@ public class LatePayMarkingService extends ServiceHelper {
 
 			while (resultSet.next()) {
 				finreference = resultSet.getString("FinReference");
-				BigDecimal tdSchdPri = getDecimal(resultSet, "tdSchdPri");
-				BigDecimal tdSchdPriPaid = getDecimal(resultSet, "tdSchdPriPaid");
-				BigDecimal tdSchdPft = getDecimal(resultSet, "tdSchdPft");
-				BigDecimal tdSchdPftPaid = getDecimal(resultSet, "tdSchdPftPaid");
-				BigDecimal excessAmt = getDecimal(resultSet, "excessAmt");
-				BigDecimal emiInAdvance = getDecimal(resultSet, "EmiInAdvance");
-				BigDecimal payableAdvise = getDecimal(resultSet, "PayableAdvise");
-				int dueDays = resultSet.getInt("CURODDAYS");
-				String productCode = resultSet.getString("FinCategory");
-				String finStatus = resultSet.getString("FinStatus");
-				//Due bucket
-				int dueBucket = (new BigDecimal(dueDays).divide(new BigDecimal(30), 0, RoundingMode.UP)).intValue();
-
-				//due percentage calculation
-				BigDecimal numerator = tdSchdPri.add(tdSchdPft).subtract(tdSchdPriPaid).subtract(tdSchdPftPaid)
-						.subtract(excessAmt).subtract(emiInAdvance).subtract(payableAdvise);
-
-				BigDecimal duePercentgae = (numerator.divide(tdSchdPri.add(tdSchdPft), 0, RoundingMode.HALF_DOWN))
-						.multiply(new BigDecimal(100));
-
-				//get ignore bucket configuration from SMT parameter
-				BigDecimal minDuePerc = BigDecimal.ZERO;
-				Object object = SysParamUtil.getValue("IGNORING_BUCKET");
-				if (object != null) {
-					minDuePerc = (BigDecimal) object;
-				}
-
-				long bucketID = 0;
-				String bucketCode = "";
-				if (duePercentgae.compareTo(minDuePerc) > 0) {
-					List<DPDBucketConfiguration> list = EODProperties.getBucketConfigurations(productCode);
-					sortBucketConfig(list);
-					for (DPDBucketConfiguration dpdBucketConfiguration : list) {
-						if (dpdBucketConfiguration.getDueDays() >= dueBucket) {
-							bucketID = dpdBucketConfiguration.getBucketID();
-							break;
-						}
-					}
-				}
-
-				if (bucketID != 0) {
-					bucketCode = EODProperties.getBucket(bucketID);
-				}
-
-				boolean isStsChanged = false;
-				if (!StringUtils.equals(finStatus, bucketCode)) {
-					isStsChanged = true;
-				}
-
-				if (isStsChanged) {
-					FinStatusDetail statusDetail = new FinStatusDetail();
-					statusDetail.setFinReference(finreference);
-					statusDetail.setValueDate(date);
-					statusDetail.setCustId(custId);
-					statusDetail.setFinStatus(bucketCode);
-					statusDetail.setODDays(dueDays);
-					finStatusDetailDAO.saveOrUpdateFinStatus(statusDetail);
-				}
-				financeMainDAO.updateBucketStatus(finreference, bucketCode, dueBucket,
-						FinanceConstants.FINSTSRSN_SYSTEM);
-
+				FinanceProfitDetail detail = new FinanceProfitDetail();
+				detail.setFinReference(resultSet.getString("FinReference"));
+				detail.setTdSchdPri(getDecimal(resultSet, "tdSchdPri"));
+				detail.setTdSchdPriPaid(getDecimal(resultSet, "tdSchdPriPaid"));
+				detail.setTdSchdPft(getDecimal(resultSet, "tdSchdPft"));
+				detail.setTdSchdPftPaid(getDecimal(resultSet, "tdSchdPftPaid"));
+				detail.setExcessAmt(getDecimal(resultSet, "excessAmt"));
+				detail.setEmiInAdvance(getDecimal(resultSet, "EmiInAdvance"));
+				detail.setPayableAdvise(getDecimal(resultSet, "PayableAdvise"));
+				detail.setCurODDays(resultSet.getInt("CURODDAYS"));
+				detail.setFinCategory(resultSet.getString("FinCategory"));
+				detail.setFinStatus(resultSet.getString("FinStatus"));
+				detail.setCustId(custId);
+				processDPDBuketing(detail, date);
 			}
 
 		} catch (Exception e) {
@@ -224,6 +175,79 @@ public class LatePayMarkingService extends ServiceHelper {
 				sqlStatement.close();
 			}
 		}
+	}
+
+	/**
+	 * @param connection
+	 * @param custId
+	 * @param date
+	 * @throws Exception
+	 */
+	public void processDPDBuketing(FinanceProfitDetail detail, Date date) throws Exception {
+
+		String finreference = detail.getFinReference();
+		BigDecimal tdSchdPri = detail.getTdSchdPri();
+		BigDecimal tdSchdPriPaid = detail.getTdSchdPriPaid();
+		BigDecimal tdSchdPft = detail.getTdSchdPft();
+		BigDecimal tdSchdPftPaid = detail.getTdSchdPftPaid();
+		BigDecimal excessAmt = detail.getExcessAmt();
+		BigDecimal emiInAdvance = detail.getEmiInAdvance();
+		BigDecimal payableAdvise = detail.getPayableAdvise();
+		int dueDays = detail.getCurODDays();
+		String productCode = detail.getFinCategory();
+		String finStatus = detail.getFinStatus();
+		long custId = detail.getCustId();
+
+		//Due bucket
+		int dueBucket = (new BigDecimal(dueDays).divide(new BigDecimal(30), 0, RoundingMode.UP)).intValue();
+
+		//due percentage calculation
+		BigDecimal numerator = tdSchdPri.add(tdSchdPft).subtract(tdSchdPriPaid).subtract(tdSchdPftPaid)
+				.subtract(excessAmt).subtract(emiInAdvance).subtract(payableAdvise);
+
+		BigDecimal duePercentgae = (numerator.divide(tdSchdPri.add(tdSchdPft), 0, RoundingMode.HALF_DOWN))
+				.multiply(new BigDecimal(100));
+
+		//get ignore bucket configuration from SMT parameter
+		BigDecimal minDuePerc = BigDecimal.ZERO;
+		Object object = SysParamUtil.getValue("IGNORING_BUCKET");
+		if (object != null) {
+			minDuePerc = (BigDecimal) object;
+		}
+
+		long bucketID = 0;
+		String bucketCode = "";
+		if (duePercentgae.compareTo(minDuePerc) > 0) {
+			List<DPDBucketConfiguration> list = getBucketConfigurations(productCode);
+			sortBucketConfig(list);
+			for (DPDBucketConfiguration dpdBucketConfiguration : list) {
+				if (dpdBucketConfiguration.getDueDays() >= dueBucket) {
+					bucketID = dpdBucketConfiguration.getBucketID();
+					break;
+				}
+			}
+		}
+
+		if (bucketID != 0) {
+			bucketCode = getBucket(bucketID);
+		}
+
+		boolean isStsChanged = false;
+		if (!StringUtils.equals(finStatus, bucketCode)) {
+			isStsChanged = true;
+		}
+
+		if (isStsChanged) {
+			FinStatusDetail statusDetail = new FinStatusDetail();
+			statusDetail.setFinReference(finreference);
+			statusDetail.setValueDate(date);
+			statusDetail.setCustId(custId);
+			statusDetail.setFinStatus(bucketCode);
+			statusDetail.setODDays(dueDays);
+			finStatusDetailDAO.saveOrUpdateFinStatus(statusDetail);
+		}
+		financeMainDAO.updateBucketStatus(finreference, bucketCode, dueBucket, FinanceConstants.FINSTSRSN_SYSTEM);
+
 	}
 
 	public void processCustomerStatus(Connection connection, long custId, Date date) throws Exception {
@@ -245,12 +269,12 @@ public class LatePayMarkingService extends ServiceHelper {
 				String finStatus = resultSet.getString("FinStatus");
 				String productCode = resultSet.getString("FinCategory");
 				if (StringUtils.isNotBlank(finStatus)) {
-					long bucketId = EODProperties.getBucketID(finStatus);
-					List<DPDBucketConfiguration> list = EODProperties.getBucketConfigurations(productCode);
+					long bucketId = getBucketID(finStatus);
+					List<DPDBucketConfiguration> list = getBucketConfigurations(productCode);
 					for (DPDBucketConfiguration configuration : list) {
 						if (configuration.getBucketID() == bucketId && configuration.getDueDays() > maxDueDays) {
 							maxDueDays = configuration.getDueDays();
-							custStatus = EODProperties.getBucket(configuration.getBucketID());
+							custStatus = getBucket(configuration.getBucketID());
 							break;
 						}
 					}
@@ -332,7 +356,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		finODDetails.setFinCurODDays(DateUtility.getDaysBetween(finODDetails.getFinODSchdDate(), businessdate));
 		finODDetails.setFinLMdfDate(valueDate);
 
-		if (finODDetails.getFinCurODDays()>0) {
+		if (finODDetails.getFinCurODDays() > 0) {
 			finODDetailsDAO.save(finODDetails);
 		}
 	}
@@ -360,18 +384,6 @@ public class LatePayMarkingService extends ServiceHelper {
 
 	}
 
-	private void sortBucketConfig(List<DPDBucketConfiguration> list) {
-
-		if (list != null && !list.isEmpty()) {
-			Collections.sort(list, new Comparator<DPDBucketConfiguration>() {
-				@Override
-				public int compare(DPDBucketConfiguration detail1, DPDBucketConfiguration detail2) {
-					return detail1.getDueDays() - detail2.getDueDays();
-				}
-			});
-		}
-
-	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

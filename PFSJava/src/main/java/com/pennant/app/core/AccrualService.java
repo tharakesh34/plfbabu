@@ -126,7 +126,7 @@ public class AccrualService extends ServiceHelper {
 		getFinanceProfitDetailDAO().update(finPftDetail, false);
 
 		//post accruals
-		postAccruals(finPftDetail, valueDate);
+		postAccruals(financeMain,finPftDetail, valueDate);
 		logger.debug(" Leaving ");
 	}
 
@@ -602,10 +602,11 @@ public class AccrualService extends ServiceHelper {
 	}
 
 	/**
+	 * @param financeMain 
 	 * @param resultSet
 	 * @throws Exception
 	 */
-	public void postAccruals(FinanceProfitDetail finPftDetail, Date valueDate) throws Exception {
+	public void postAccruals(FinanceMain financeMain, FinanceProfitDetail finPftDetail, Date valueDate) throws Exception {
 		logger.debug(" Entering ");
 
 		String eventCode = AccountEventConstants.ACCEVENT_AMZ;
@@ -617,7 +618,7 @@ public class AccrualService extends ServiceHelper {
 		AEAmountCodes amountCodes = AEAmounts.procCalAEAmounts(finPftDetail, eventCode, valueDate, valueDate);
 
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
-
+		financeMain.getDeclaredFieldValues(executingMap);
 		//Postings Process
 		FinanceType financeType = getFinanceType(finPftDetail.getFinType());
 		List<ReturnDataSet> list = prepareAccounting(executingMap, financeType);

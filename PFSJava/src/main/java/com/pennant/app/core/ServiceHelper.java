@@ -47,6 +47,8 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -67,6 +69,7 @@ import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
+import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.SecondaryAccount;
@@ -225,7 +228,6 @@ abstract public class ServiceHelper implements Serializable {
 	public final String getSecordayAccounts(List<SecondaryAccount> listSecondary) {
 
 		StringBuilder secordayAccounts = new StringBuilder(0);
-
 		if (listSecondary != null && !listSecondary.isEmpty()) {
 			for (SecondaryAccount secondaryAccount : listSecondary) {
 				if (secordayAccounts.length() == 0) {
@@ -238,6 +240,31 @@ abstract public class ServiceHelper implements Serializable {
 		}
 
 		return secordayAccounts.toString();
+
+	}
+
+	public List<DPDBucketConfiguration> getBucketConfigurations(String productCode) {
+		return EODProperties.getBucketConfigurations(productCode);
+	}
+
+	public String getBucket(long bucketID) {
+		return EODProperties.getBucket(bucketID);
+	}
+
+	public Long getBucketID(String finStatus) {
+		return EODProperties.getBucketID(finStatus);
+	}
+
+	public void sortBucketConfig(List<DPDBucketConfiguration> list) {
+
+		if (list != null && !list.isEmpty()) {
+			Collections.sort(list, new Comparator<DPDBucketConfiguration>() {
+				@Override
+				public int compare(DPDBucketConfiguration detail1, DPDBucketConfiguration detail2) {
+					return detail1.getDueDays() - detail2.getDueDays();
+				}
+			});
+		}
 
 	}
 
@@ -259,8 +286,7 @@ abstract public class ServiceHelper implements Serializable {
 
 		return paidAmount;
 	}
-	
-	
+
 	public BigDecimal getDecimal(ResultSet resultSet, String name) throws SQLException {
 		BigDecimal val = resultSet.getBigDecimal(name);
 		if (val == null) {
@@ -268,7 +294,7 @@ abstract public class ServiceHelper implements Serializable {
 		}
 		return val;
 	}
- 
+
 	public FinContributorDetailDAO getFinContributorDetailDAO() {
 		return finContributorDetailDAO;
 	}
@@ -299,7 +325,7 @@ abstract public class ServiceHelper implements Serializable {
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
-		AccrualService.financeTypeDAO=financeTypeDAO;
+		AccrualService.financeTypeDAO = financeTypeDAO;
 	}
 
 	public FinanceMainDAO getFinanceMainDAO() {

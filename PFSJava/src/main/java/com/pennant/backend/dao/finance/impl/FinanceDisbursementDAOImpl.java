@@ -390,7 +390,7 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FinDisbursementDetails");	
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append(" Set DisbDisbursed = :DisbDisbursed " );
+		updateSql.append(" Set DisbDisbursed = :DisbDisbursed , LinkedTranId=:LinkedTranId" );
 		updateSql.append(" Where FinReference =:FinReference and DisbDate = :DisbDate AND DisbSeq = :DisbSeq");
 		
 		logger.debug("updateSql: " + updateSql.toString());

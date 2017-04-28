@@ -111,7 +111,7 @@ public class NPAService extends ServiceHelper {
 				 */
 				if (StringUtils.isNotBlank(finStatus)) {
 					long bucketId = EODProperties.getBucketID(finStatus);
-//					sortBucketConfig(list);
+					sortNPABucketConfig(list);
 					for (NPABucketConfiguration configuration : list) {
 						if (configuration.getBucketID() == bucketId && configuration.getDueDays() > dueBucket) {
 							npaBucket = configuration.getBucketID();
@@ -204,18 +204,18 @@ public class NPAService extends ServiceHelper {
 		return provisonAmt;
 	}
 
-//	private void sortBucketConfig(List<NPABucketConfiguration> list) {
-//
-//		if (list != null && !list.isEmpty()) {
-//			Collections.sort(list, new Comparator<NPABucketConfiguration>() {
-//				@Override
-//				public int compare(NPABucketConfiguration detail1, NPABucketConfiguration detail2) {
-//					return detail1.getDueDays() - detail2.getDueDays();
-//				}
-//			});
-//		}
-//
-//	}
+	private void sortNPABucketConfig(List<NPABucketConfiguration> list) {
+
+		if (list != null && !list.isEmpty()) {
+			Collections.sort(list, new Comparator<NPABucketConfiguration>() {
+				@Override
+				public int compare(NPABucketConfiguration detail1, NPABucketConfiguration detail2) {
+					return detail1.getDueDays() - detail2.getDueDays();
+				}
+			});
+		}
+
+	}
 
 	public void setProvisionDAO(ProvisionDAO provisionDAO) {
 		this.provisionDAO = provisionDAO;
