@@ -80,4 +80,19 @@
 		INSERT INTO ErrorDetails VALUES('90269','EN','E','{0} is not applicable for feeCode:{1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		</sql>
 	</changeSet>
+	
+	<changeSet author="Kesav" id="10">
+		<addColumn tableName="AccountMapping">
+			<column name="ProfitCenterID" type="bigint"/>
+			<column name="CostCenterID" type="bigint"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="11">
+		<addColumn tableName="AccountMapping_Temp">
+			<column name="ProfitCenterID" type="bigint"/>
+			<column name="CostCenterID" type="bigint"/>
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
