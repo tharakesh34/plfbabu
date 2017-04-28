@@ -45,20 +45,20 @@ public class SummaryDetailService {
 
 			// fetch summary details from FinPftDetails
 			FinanceProfitDetail finPftDetail = financeProfitDetailDAO.getFinProfitDetailsForSummary(finReference);
-			if(finPftDetail==null){
-				finPftDetail=AccrualService.calProfitDetails(financeMain, financeDetail.getFinScheduleData().getFinanceScheduleDetails(), new FinanceProfitDetail(), DateUtility.getAppDate());
+			if (finPftDetail == null) {
+				finPftDetail = AccrualService.calProfitDetails(financeMain, financeDetail.getFinScheduleData()
+						.getFinanceScheduleDetails(), new FinanceProfitDetail(), DateUtility.getAppDate());
 			}
 			if(finPftDetail != null) {
 				summary.setTotalCpz(finPftDetail.getTotalPftCpz());
 				summary.setTotalProfit(finPftDetail.getTotalPftSchd());
-				summary.setTotalRepayAmt(finPftDetail.getTotalpriSchd().add(finPftDetail.getTotalPftSchd()));//doubt
+				summary.setTotalRepayAmt(finPftDetail.getTotalpriSchd().add(finPftDetail.getTotalPftSchd()));
 				summary.setNumberOfTerms(finPftDetail.getNOInst());
-				summary.setLoanTenor(DateUtility.getMonthsBetween(finPftDetail.getFinStartDate(),
-						finPftDetail.getMaturityDate()));
+				summary.setLoanTenor(DateUtility.getMonthsBetween(finPftDetail.getFinStartDate(), finPftDetail.getMaturityDate()));
 				summary.setMaturityDate(finPftDetail.getMaturityDate());
 				summary.setFirstEmiAmount(finPftDetail.getFirstRepayAmt());
 				summary.setNextSchDate(finPftDetail.getNSchdDate());
-				summary.setNextRepayAmount(finPftDetail.getNSchdPri().add(finPftDetail.getNSchdPft()));//doubt
+				summary.setNextRepayAmount(finPftDetail.getNSchdPri().add(finPftDetail.getNSchdPft()));
 
 				// Total future Installments
 				int futureInst = finPftDetail.getNOInst() - (finPftDetail.getNOPaidInst() + finPftDetail.getNOODInst());
@@ -68,11 +68,11 @@ public class SummaryDetailService {
 				summary.setFirstInstDate(finPftDetail.getFirstRepayDate());
 				summary.setSchdPriPaid(finPftDetail.getTotalPriPaid());
 				summary.setSchdPftPaid(finPftDetail.getTotalPftPaid());
-				summary.setPaidTotal(finPftDetail.getTotalPriPaid().add(finPftDetail.getTotalPftPaid()));//doubt
+				summary.setPaidTotal(finPftDetail.getTotalPriPaid().add(finPftDetail.getTotalPftPaid()));
 				summary.setFinLastRepayDate(finPftDetail.getPrvRpySchDate());
 				summary.setOutStandPrincipal(finPftDetail.getTotalPriBal());
 				summary.setOutStandProfit(finPftDetail.getTotalPftBal());
-				summary.setTotalOutStanding(finPftDetail.getTotalPriBal().add(finPftDetail.getTotalPftBal()));//doubt
+				summary.setTotalOutStanding(finPftDetail.getTotalPriBal().add(finPftDetail.getTotalPftBal()));
 
 				// overdue details
 				summary.setOverDuePrincipal(finPftDetail.getODPrincipal());
@@ -90,8 +90,7 @@ public class SummaryDetailService {
 			}
 
 			// setting first and last disbursement dates
-			List<FinanceDisbursement> disbList = getFinanceDisbursementDAO().getFinanceDisbursementDetails(
-					finReference, "", false);
+			List<FinanceDisbursement> disbList = getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, "", false);
 			if (disbList != null && disbList.size() > 0) {
 				if (disbList.size() == 1) {
 					summary.setFirstDisbDate(disbList.get(0).getDisbDate());
@@ -113,8 +112,7 @@ public class SummaryDetailService {
 					totDisbAmt = totDisbAmt.add(finDisb.getDisbAmount());
 					//totfeeChrgAmt = totfeeChrgAmt.add(finDisb.getFeeChargeAmt());
 				}
-				BigDecimal assetValue = financeMain.getFinAssetValue() == null ? BigDecimal.ZERO : financeMain
-						.getFinAssetValue();
+				BigDecimal assetValue = financeMain.getFinAssetValue() == null ? BigDecimal.ZERO : financeMain.getFinAssetValue();
 				if (assetValue.compareTo(BigDecimal.ZERO) == 0 || assetValue.compareTo(totDisbAmt) == 0) {
 					summary.setFullyDisb(true);
 				}

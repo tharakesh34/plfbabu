@@ -662,6 +662,7 @@ public class PennantConstants {
 	// Validation Groups
 	public static final String VLD_CRT_SCHD              	= "CRTSCHD";
 	public static final String VLD_CRT_LOAN					= "CRTLOAN";
+	public static final String VLD_SRV_LOAN					= "SRVLOAN";
 	public static final String NOT_AVAILABLE				= "NAV";
 
 }

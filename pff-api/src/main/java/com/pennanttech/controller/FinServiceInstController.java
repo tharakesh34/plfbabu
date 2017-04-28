@@ -20,6 +20,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.FeeScheduleCalculator;
 import com.pennant.app.util.OverDueRecoveryPostingsUtil;
 import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
@@ -77,6 +78,7 @@ import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.staticparms.ExtendedFieldRender;
+import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.ManualPaymentService;
@@ -89,33 +91,33 @@ import com.rits.cloning.Cloner;
 
 public class FinServiceInstController extends SummaryDetailService {
 
-	private final static Logger logger = Logger.getLogger(FinServiceInstController.class);
+	private final static Logger			logger	= Logger.getLogger(FinServiceInstController.class);
 
-	private FinanceDetailService 		financeDetailService;
-	private RateChangeService 			rateChangeService;
-	private AddRepaymentService 		addRepaymentService;
-	private RecalculateService 			recalService;
-	private ChangeProfitService 		changeProfitService;
-	private AddDisbursementService 		addDisbursementService;
-	private ChangeFrequencyService 		changeFrequencyService;
-	private ReScheduleService 			reScheduleService;
-	private ManualPaymentService 		manualPaymentService;
-	private PostponementService 		postponementService;
+	private FinanceDetailService		financeDetailService;
+	private RateChangeService			rateChangeService;
+	private AddRepaymentService			addRepaymentService;
+	private RecalculateService			recalService;
+	private ChangeProfitService			changeProfitService;
+	private AddDisbursementService		addDisbursementService;
+	private ChangeFrequencyService		changeFrequencyService;
+	private ReScheduleService			reScheduleService;
+	private ManualPaymentService		manualPaymentService;
+	private PostponementService			postponementService;
 
-	private RepayCalculator			    repayCalculator;
-	private FinanceScheduleDetailDAO 	financeScheduleDetailDAO;
+	private RepayCalculator				repayCalculator;
+	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
 
-	private FinanceTypeDAO 				financeTypeDAO;
-	private AddTermsService 			addTermsService;
-	private RemoveTermsService 			rmvTermsService;
-	private FinanceMainService 			financeMainService;
-	private FinODPenaltyRateDAO 		finODPenaltyRateDAO;
-	private FinanceProfitDetailDAO 		profitDetailsDAO;
+	private FinanceTypeDAO				financeTypeDAO;
+	private AddTermsService				addTermsService;
+	private RemoveTermsService			rmvTermsService;
+	private FinanceMainService			financeMainService;
+	private FinODPenaltyRateDAO			finODPenaltyRateDAO;
+	private FinanceProfitDetailDAO		profitDetailsDAO;
 	private RepaymentPostingsUtil		repayPostingUtil;
-	private OverDueRecoveryPostingsUtil recoveryPostingsUtil;
+	private OverDueRecoveryPostingsUtil	recoveryPostingsUtil;
 	private FinanceRepayPriorityDAO		financeRepayPriorityDAO;
+	private FeeDetailService 			feeDetailService;
 
-	
 	/**
 	 * Method for process AddRateChange request and re-calculate schedule details
 	 * 
@@ -124,7 +126,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	 * @throws PFFInterfaceException
 	 * @throws JaxenException
 	 */
-	public FinanceDetail doAddRateChange(FinServiceInstruction finServiceInst)  {
+	public FinanceDetail doAddRateChange(FinServiceInstruction finServiceInst) {
 		logger.debug("Enteing");
 
 		// fetch finance data
@@ -142,21 +144,35 @@ public class FinServiceInstController extends SummaryDetailService {
 
 			if (CalculationConstants.RPYCHG_TILLMDT.equals(finServiceInst.getRecalType())) {
 				financeMain.setRecalToDate(financeMain.getMaturityDate());
-			} else if(CalculationConstants.RPYCHG_TILLDATE.equals(finServiceInst.getRecalType())) {
+			} else if (CalculationConstants.RPYCHG_TILLDATE.equals(finServiceInst.getRecalType())) {
 				financeMain.setRecalToDate(finServiceInst.getRecalToDate());
 			}
 
-			if(StringUtils.isBlank(finServiceInst.getBaseRate())) {
+			if (StringUtils.isBlank(finServiceInst.getBaseRate())) {
 				finServiceInst.setBaseRate(null);
 			}
-			
-			if(StringUtils.isBlank(finServiceInst.getSplRate())) {
+
+			if (StringUtils.isBlank(finServiceInst.getSplRate())) {
 				finServiceInst.setSplRate(null);
 			}
-			
+
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 
 			try {
+				// execute fee charges
+				finScheduleData.setFinFeeDetailList(finServiceInst.getFinFeeDetails());
+				feeDetailService.doExecuteFeeCharges(financeDetail, AccountEventConstants.ACCEVENT_RATCHG);
+				
+				if (financeDetail.getFinScheduleData().getErrorDetails() != null) {
+					for (ErrorDetails errorDetail : financeDetail.getFinScheduleData().getErrorDetails()) {
+						FinanceDetail response = new FinanceDetail();
+						doEmptyResponseObject(response);
+						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+								errorDetail.getError()));
+						return response;
+					}
+				}
+				
 				// call schedule calculator for Rate change
 				finScheduleData = rateChangeService.getRateChangeDetails(finScheduleData, finServiceInst);
 
@@ -168,32 +184,15 @@ public class FinServiceInstController extends SummaryDetailService {
 						return response;
 					}
 				}
-
-				if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {
-					// Set Version value
-					int version = financeDetail.getFinScheduleData().getFinanceMain().getVersion();
-					financeDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
-					finScheduleData.setSchduleGenerated(true);
-					financeMain.setScheduleRegenerated(true);
-
-					// set generated schedule details to financeDetails
-					financeDetail.setFinScheduleData(finScheduleData);
-
-					// Save the Schedule details
-					AuditHeader auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
-					FinanceDetail aFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-					
-					aFinanceDetail = prepareInstructionObject(aFinanceDetail);
-					//get the header details from the request
-					APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-					//set the headerDetails to AuditHeader
-					auditHeader.setApiHeader(reqHeaderDetails);
-					financeDetailService.doApprove(auditHeader, finServiceInst.isWif());
-
-					financeDetail = getServiceInstResponse(finScheduleData);
-				} else {
-					financeDetail = getServiceInstResponse(finScheduleData);
+				
+				// fees calculation
+				if (!finScheduleData.getFinFeeDetailList().isEmpty()) {
+					finScheduleData = FeeScheduleCalculator.getFeeScheduleDetails(finScheduleData);
 				}
+
+				// Get the response
+				financeDetail = getResponse(financeDetail, finServiceInst);
+
 			} catch (Exception e) {
 				logger.error("Exception", e);
 				FinanceDetail response = new FinanceDetail();
@@ -218,7 +217,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	 * @throws PFFInterfaceException
 	 * @throws JaxenException
 	 */
-	public FinanceDetail doAddRepayment(FinServiceInstruction finServiceInst)  {
+	public FinanceDetail doAddRepayment(FinServiceInstruction finServiceInst) {
 		logger.debug("Enteing");
 
 		// fetch finance data
@@ -267,30 +266,9 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 				}
 
-				if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {
-					// Set Version value
-					int version = financeDetail.getFinScheduleData().getFinanceMain().getVersion();
-					financeDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
-					finScheduleData.setSchduleGenerated(true);
+				// Get the response
+				financeDetail = getResponse(financeDetail, finServiceInst);
 
-					// Save the Schedule details
-					AuditHeader auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
-					FinanceDetail aFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-					aFinanceDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
-					
-					aFinanceDetail = prepareInstructionObject(aFinanceDetail);
-					
-					//get the header details from the request
-					APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-					//set the headerDetails to AuditHeader
-					auditHeader.setApiHeader(reqHeaderDetails);
-					
-					financeDetailService.doApprove(auditHeader, finServiceInst.isWif());
-					
-					financeDetail = getServiceInstResponse(finScheduleData);
-				} else {
-					financeDetail = getServiceInstResponse(finScheduleData);
-				}
 			} catch (Exception e) {
 				logger.error("Exception", e);
 				FinanceDetail response = new FinanceDetail();
@@ -342,7 +320,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				financeMain.setRecalToDate(financeMain.getMaturityDate());
 				//financeMain.setScheduleRegenerated(true);
 			}
-			
+
 			finScheduleData.setFinServiceInstruction(finServiceInst);
 			try {
 				finScheduleData = postponementService.doUnPlannedEMIH(finScheduleData);
@@ -356,30 +334,9 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 				}
 
-				if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {
-					// Set Version value
-					int version = financeDetail.getFinScheduleData().getFinanceMain().getVersion();
-					financeDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
+				// Get the response
+				financeDetail = getResponse(financeDetail, finServiceInst);
 
-					// set generated schedule details to financeDetails
-					financeDetail.setFinScheduleData(finScheduleData);
-
-					// Save the Schedule details
-					AuditHeader auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
-					FinanceDetail aFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-
-					aFinanceDetail = prepareInstructionObject(aFinanceDetail);
-					//get the header details from the request
-					APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
-							.get(APIHeader.API_HEADER_KEY);
-					//set the headerDetails to AuditHeader
-					auditHeader.setApiHeader(reqHeaderDetails);
-					financeDetailService.doApprove(auditHeader, finServiceInst.isWif());
-
-					financeDetail = getServiceInstResponse(finScheduleData);
-				} else {
-					financeDetail = getServiceInstResponse(finScheduleData);
-				}
 			} catch (Exception e) {
 				logger.error("Exception", e);
 				FinanceDetail response = new FinanceDetail();
@@ -427,33 +384,9 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 				}
 
-				if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {
-					// Set Version value
-					int version = financeDetail.getFinScheduleData().getFinanceMain().getVersion();
-					financeDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
-					finScheduleData.setSchduleGenerated(true);
+				// Get the response
+				financeDetail = getResponse(financeDetail, finServiceInst);
 
-					// set generated schedule to financeDetails
-					financeDetail.setFinScheduleData(finScheduleData);
-
-					// Save the Schedule details
-					AuditHeader auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
-					FinanceDetail aFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-					aFinanceDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
-
-					aFinanceDetail = prepareInstructionObject(aFinanceDetail);
-
-					//get the header details from the request
-					APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-					//set the headerDetails to AuditHeader
-					auditHeader.setApiHeader(reqHeaderDetails);
-
-					financeDetailService.doApprove(auditHeader, finServiceInst.isWif());
-
-					financeDetail = getServiceInstResponse(finScheduleData);
-				} else {
-					financeDetail = getServiceInstResponse(finScheduleData);
-				}
 			} catch (Exception e) {
 				logger.error("Exception", e);
 				FinanceDetail response = new FinanceDetail();
@@ -466,57 +399,6 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 
-		logger.debug("Leaving");
-		return financeDetail;
-	}
-
-	/**
-	 * Method for prepare fianceDetail object.<br>
-	 * 	- Nullify the unnecessary data
-	 * 
-	 * @param aFinanceDetail
-	 * @return
-	 */
-	private FinanceDetail prepareInstructionObject(FinanceDetail aFinanceDetail) {
-		logger.debug("Entering");
-		
-		FinanceDetail financeDetail = new FinanceDetail();
-		FinScheduleData finScheduleData = aFinanceDetail.getFinScheduleData();
-		finScheduleData.getFinanceMain().setRecordType("");
-		
-		finScheduleData.setStepPolicyDetails(new ArrayList<FinanceStepPolicyDetail>(1));
-		finScheduleData.setInsuranceList(new ArrayList<Insurance>());
-		finScheduleData.setFinODPenaltyRate(null);
-		finScheduleData.setFinFeeDetailList(new ArrayList<FinFeeDetail>());
-		finScheduleData.setFeeRules(new ArrayList<FeeRule>());
-		financeDetail.setFinScheduleData(finScheduleData);
-		
-		aFinanceDetail.setAdvancePaymentsList(null);
-		aFinanceDetail.setFinContributorHeader(null);
-		aFinanceDetail.setIndicativeTermDetail(null);
-		aFinanceDetail.setEtihadCreditBureauDetail(null);
-		aFinanceDetail.setBundledProductsDetail(null);
-		aFinanceDetail.setTatDetail(null);
-		aFinanceDetail.setFinAssetEvaluation(null);
-		aFinanceDetail.setFinanceCheckList(new ArrayList<FinanceCheckListReference>(1));
-		aFinanceDetail.setCheckList(new ArrayList<FinanceReferenceDetail>(1));
-		aFinanceDetail.setAggrementList(new ArrayList<FinanceReferenceDetail>(1));
-		aFinanceDetail.setEligibilityRuleList(new ArrayList<FinanceReferenceDetail>(1));
-		aFinanceDetail.setFinElgRuleList(new ArrayList<FinanceEligibilityDetail>(1));
-		aFinanceDetail.setGurantorsDetailList(new ArrayList<GuarantorDetail>(1));
-		aFinanceDetail.setJountAccountDetailList(new ArrayList<JointAccountDetail>(1));
-		aFinanceDetail.setContractorAssetDetails(new ArrayList<ContractorAssetDetail>(1));
-		aFinanceDetail.setFinanceDeviations(new ArrayList<FinanceDeviations>());
-		aFinanceDetail.setApprovedFinanceDeviations(new ArrayList<FinanceDeviations>());
-		aFinanceDetail.setFinanceCollaterals(new ArrayList<FinCollaterals>(1));
-		aFinanceDetail.setCollateralAssignmentList(new ArrayList<CollateralAssignment>(1));
-		aFinanceDetail.setFinAssetTypesList(new ArrayList<FinAssetTypes>(1));
-		aFinanceDetail.setExtendedFieldRenderList(new ArrayList<ExtendedFieldRender>(1));
-		aFinanceDetail.setVasRecordingList(new ArrayList<VASRecording>(1));
-		aFinanceDetail.setCovenantTypeList(null);
-		aFinanceDetail.setMandate(null);
-		aFinanceDetail.setFinFlagsDetails(null);
-		aFinanceDetail.setCustomerDetails(null);
 		logger.debug("Leaving");
 		return financeDetail;
 	}
@@ -537,11 +419,9 @@ public class FinServiceInstController extends SummaryDetailService {
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
 
-			//financeMain.setEventFromDate(finServiceInst.getFromDate());
-			//financeMain.setEventToDate(financeMain.getMaturityDate());
 			financeMain.setAdjTerms(finServiceInst.getTerms());
 			financeMain.setRecalType(finServiceInst.getRecalType());
-			
+
 			switch (finServiceInst.getRecalType()) {
 			case CalculationConstants.RPYCHG_TILLMDT:
 				financeMain.setRecalFromDate(finServiceInst.getRecalFromDate());
@@ -566,7 +446,6 @@ public class FinServiceInstController extends SummaryDetailService {
 			}
 
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
-			financeMain.setVersion(financeMain.getVersion() + 1);
 
 			try {
 				// Call Schedule calculator for Rate change
@@ -581,39 +460,9 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 				}
 
-				if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {
-					finScheduleData.setSchduleGenerated(true);
+				// Get the response
+				financeDetail = getResponse(financeDetail, finServiceInst);
 
-					// set generated schedule details to financeDetails
-					financeDetail.setFinScheduleData(finScheduleData);
-
-					// Save the Schedule details
-					AuditHeader auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
-					FinanceDetail aFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-
-					aFinanceDetail = prepareInstructionObject(aFinanceDetail);
-
-					//get the header details from the request
-					APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-					//set the headerDetails to AuditHeader
-					auditHeader.setApiHeader(reqHeaderDetails);
-
-					auditHeader = financeDetailService.doApprove(auditHeader, finServiceInst.isWif());
-
-					if (auditHeader.getErrorMessage() != null) {
-						for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-							FinanceDetail response = new FinanceDetail();
-							doEmptyResponseObject(response);
-							response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
-									errorDetail.getError()));
-							return response;
-						}
-					}
-
-					financeDetail = getServiceInstResponse(finScheduleData);
-				} else {
-					financeDetail = getServiceInstResponse(finScheduleData);
-				}
 			} catch (Exception e) {
 				logger.error("Exception", e);
 				FinanceDetail response = new FinanceDetail();
@@ -649,7 +498,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setEventFromDate(finServiceInst.getFromDate());
 			financeMain.setEventToDate(finServiceInst.getToDate());
 			financeMain.setPftIntact(true);
-			
+
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 
 			// profit amount
@@ -667,43 +516,9 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 				}
 
-				if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {
-					// Set Version value
-					int version = financeDetail.getFinScheduleData().getFinanceMain().getVersion();
-					financeDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
-					finScheduleData.setSchduleGenerated(true);
+				// Get the response
+				financeDetail = getResponse(financeDetail, finServiceInst);
 
-					// set generated schedule details to financeDetails
-					financeDetail.setFinScheduleData(finScheduleData);
-					
-					// Save the Schedule details
-					AuditHeader auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
-					FinanceDetail aFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-					aFinanceDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
-					
-					aFinanceDetail = prepareInstructionObject(aFinanceDetail);
-					
-					//get the header details from the request
-					APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-					//set the headerDetails to AuditHeader
-					auditHeader.setApiHeader(reqHeaderDetails);
-					
-					auditHeader = financeDetailService.doApprove(auditHeader, finServiceInst.isWif());
-
-					if (auditHeader.getErrorMessage() != null) {
-						for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-							FinanceDetail response = new FinanceDetail();
-							doEmptyResponseObject(response);
-							response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
-									errorDetail.getError()));
-							return response;
-						}
-					}
-
-					financeDetail = getServiceInstResponse(finScheduleData);
-				} else {
-					financeDetail = getServiceInstResponse(finScheduleData);
-				}
 			} catch (Exception e) {
 				logger.error("Exception", e);
 				FinanceDetail response = new FinanceDetail();
@@ -741,13 +556,13 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeMain.setRecalSchdMethod(financeMain.getScheduleMethod());
 			financeMain.setRecalType(finServiceInst.getRecalType());
 
-			if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,financeMain.getProductCategory())){
+			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
 				financeMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 				financeMain.setEventFromDate(finServiceInst.getFromDate());
 				financeMain.setRecalFromDate(finServiceInst.getFromDate());
 				financeMain.setRecalToDate(financeMain.getMaturityDate());
 			}
-			
+
 			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 
 			if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
@@ -767,7 +582,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				financeMain.setRecalToDate(financeMain.getMaturityDate());
 				financeMain.setScheduleRegenerated(true);
 			}
-			
+
 			BigDecimal amount = finServiceInst.getAmount();
 			financeMain.setCurDisbursementAmt(amount);
 
@@ -785,43 +600,9 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 				}
 
-				if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {
-					// Set Version value
-					int version = financeDetail.getFinScheduleData().getFinanceMain().getVersion();
-					financeDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
-					finScheduleData.setSchduleGenerated(true);
-					
-					// set generated schedule details to financeDetails
-					financeDetail.setFinScheduleData(finScheduleData);
-					
-					// Save the Schedule details
-					AuditHeader auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
-					FinanceDetail aFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-					aFinanceDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
-					
-					aFinanceDetail = prepareInstructionObject(aFinanceDetail);
-					
-					//get the header details from the request
-					APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-					//set the headerDetails to AuditHeader
-					auditHeader.setApiHeader(reqHeaderDetails);
-					
-					auditHeader = financeDetailService.doApprove(auditHeader, finServiceInst.isWif());
-					
-					if (auditHeader.getErrorMessage() != null) {
-						for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-							FinanceDetail response = new FinanceDetail();
-							doEmptyResponseObject(response);
-							response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
-									errorDetail.getError()));
-							return response;
-						}
-					}
+				// Get the response
+				financeDetail = getResponse(financeDetail, finServiceInst);
 
-					financeDetail = getServiceInstResponse(finScheduleData);
-				} else {
-					financeDetail = getServiceInstResponse(finScheduleData);
-				}
 			} catch (Exception e) {
 				logger.error("Exception", e);
 				FinanceDetail response = new FinanceDetail();
@@ -854,8 +635,8 @@ public class FinServiceInstController extends SummaryDetailService {
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 			String repayFrq = finScheduleData.getFinanceMain().getRepayFrq();
 			String frqday = String.valueOf(finServiceInst.getFrqDay());
-			frqday = frqday.length() == 1?"0".concat(frqday):frqday;
-			finServiceInst.setRepayFrq(StringUtils.substring(repayFrq, 0, repayFrq.length()-2).concat(frqday));
+			frqday = frqday.length() == 1 ? "0".concat(frqday) : frqday;
+			finServiceInst.setRepayFrq(StringUtils.substring(repayFrq, 0, repayFrq.length() - 2).concat(frqday));
 
 			int rpyTermsCompleted = 0;
 			int adjRepayTerms = 0;
@@ -867,14 +648,14 @@ public class FinServiceInstController extends SummaryDetailService {
 			if (financeScheduleDetails != null) {
 				for (int i = 0; i < financeScheduleDetails.size(); i++) {
 					FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-					if (curSchd.isRepayOnSchDate() || 
-							(curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
+					if (curSchd.isRepayOnSchDate()
+							|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 						if (fromDate.compareTo(curSchd.getSchDate()) == 0) {
 							isFromDateFound = true;
 						}
 
 						totRepayTerms = totRepayTerms + 1;
-						if(!isFromDateFound){
+						if (!isFromDateFound) {
 							if (curSchd.getSchDate().compareTo(finScheduleData.getFinanceMain().getGrcPeriodEndDate()) > 0) {
 								rpyTermsCompleted = rpyTermsCompleted + 1;
 							}
@@ -886,44 +667,14 @@ public class FinServiceInstController extends SummaryDetailService {
 
 			finServiceInst.setAdjRpyTerms(adjRepayTerms);
 			finScheduleData.getFinanceMain().setFinSourceID(APIConstants.FINSOURCE_ID_API);
-			finScheduleData.getFinanceMain().setVersion(finScheduleData.getFinanceMain().getVersion() + 1);
 			try {
 				// call change frequency service
 				finScheduleData = changeFrequencyService.doChangeFrequency(finScheduleData, finServiceInst);
 				financeDetail.setFinScheduleData(finScheduleData);
 
-				if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {
-					finScheduleData.setSchduleGenerated(true);
+				// Get the response
+				financeDetail = getResponse(financeDetail, finServiceInst);
 
-					// set generated schedule details to financeDetails
-					financeDetail.setFinScheduleData(finScheduleData);
-
-					// Save the Schedule details
-					AuditHeader auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
-					FinanceDetail aFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-
-					aFinanceDetail = prepareInstructionObject(aFinanceDetail);
-
-					//get the header details from the request
-					APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-					//set the headerDetails to AuditHeader
-					auditHeader.setApiHeader(reqHeaderDetails);
-
-					auditHeader = financeDetailService.doApprove(auditHeader, finServiceInst.isWif());
-
-					if (auditHeader.getErrorMessage() != null) {
-						for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-							FinanceDetail response = new FinanceDetail();
-							doEmptyResponseObject(response);
-							response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
-									errorDetail.getError()));
-							return response;
-						}
-					}
-					financeDetail = getServiceInstResponse(finScheduleData);
-				} else {
-					financeDetail = getServiceInstResponse(finScheduleData);
-				}
 			} catch (Exception e) {
 				logger.error("Exception", e);
 				FinanceDetail response = new FinanceDetail();
@@ -967,7 +718,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			} else if (StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
 				financeMain.setRecalFromDate(finServiceInst.getFromDate());
 			}
-			
+
 			try {
 				// Call Schedule calculator for Rate change
 				finScheduleData = rmvTermsService.getRmvTermsDetails(finScheduleData);
@@ -977,38 +728,14 @@ public class FinServiceInstController extends SummaryDetailService {
 						FinanceDetail response = new FinanceDetail();
 						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
 								errorDetail.getError()));
-						
+
 						return response;
 					}
 				}
 
-				if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {
-					// Set Version value
-					int version = financeDetail.getFinScheduleData().getFinanceMain().getVersion();
-					financeDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
-					finScheduleData.setSchduleGenerated(true);
-
-					// set generated schedule details to financeDetails
-					financeDetail.setFinScheduleData(finScheduleData);
-					
-					// Save the Schedule details
-					AuditHeader auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
-					FinanceDetail aFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-					aFinanceDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
-					
-					aFinanceDetail = prepareInstructionObject(aFinanceDetail);
-					
-					//get the header details from the request
-					APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-					//set the headerDetails to AuditHeader
-					auditHeader.setApiHeader(reqHeaderDetails);
-					
-					financeDetailService.doApprove(auditHeader, finServiceInst.isWif());
-					
-					financeDetail = getServiceInstResponse(finScheduleData);
-				} else {
-					financeDetail = getServiceInstResponse(finScheduleData);
-				}
+				// Get the response
+				financeDetail = getResponse(financeDetail, finServiceInst);
+				
 			} catch (Exception e) {
 				logger.error("Exception", e);
 				FinanceDetail response = new FinanceDetail();
@@ -1074,33 +801,9 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 				}
 
-				if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {
-					// Set Version value
-					int version = financeDetail.getFinScheduleData().getFinanceMain().getVersion();
-					financeDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
-					finScheduleData.setSchduleGenerated(true);
-
-					// set generated schedule details to financeDetails
-					financeDetail.setFinScheduleData(finScheduleData);
-
-					// Save the Schedule details
-					AuditHeader auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
-					FinanceDetail aFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-					aFinanceDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
-
-					aFinanceDetail = prepareInstructionObject(aFinanceDetail);
-					
-					//get the header details from the request
-					APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-					//set the headerDetails to AuditHeader
-					auditHeader.setApiHeader(reqHeaderDetails);
-
-					financeDetailService.doApprove(auditHeader, finServiceInst.isWif());
-
-					financeDetail = getServiceInstResponse(finScheduleData);
-				} else {
-					financeDetail = getServiceInstResponse(finScheduleData);
-				}
+				// Get the response
+				financeDetail = getResponse(financeDetail, finServiceInst);
+				
 			} catch (Exception e) {
 				logger.error("Exception", e);
 				FinanceDetail response = new FinanceDetail();
@@ -1134,10 +837,10 @@ public class FinServiceInstController extends SummaryDetailService {
 		BigDecimal repayAmt = financeScheduleDetailDAO.getTotalRepayAmount(finServiceInst.getFinReference());
 		finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYSETTLE);
 		finServiceInst.setAmount(repayAmt);
-		
-		if(StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_INQUIRY)) {
+
+		if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_INQUIRY)) {
 			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYSTLENQ);
-			if(finServiceInst.getToDate() == null) {
+			if (finServiceInst.getToDate() == null) {
 				finServiceInst.setToDate(finScheduleData.getFinanceMain().getMaturityDate());
 			}
 		}
@@ -1211,7 +914,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		logger.debug("Leaving");
 		return response;
 	}
-	
+
 	/**
 	 * Method for process Early settlement and partial payment requests
 	 * 
@@ -1223,18 +926,18 @@ public class FinServiceInstController extends SummaryDetailService {
 	 * @throws PFFInterfaceException
 	 */
 	@SuppressWarnings("unchecked")
-	public FinanceDetail doProcessPayments(FinanceDetail aFinanceDetail, FinServiceInstruction finServiceInst) throws 
-	IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	public FinanceDetail doProcessPayments(FinanceDetail aFinanceDetail, FinServiceInstruction finServiceInst)
+			throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
-		
-		if(finServiceInst.getFromDate() == null) {
+
+		if (finServiceInst.getFromDate() == null) {
 			finServiceInst.setFromDate(DateUtility.getAppDate());
 		}
-		
+
 		Cloner cloner = new Cloner();
 		FinanceDetail financeDetail = cloner.deepClone(aFinanceDetail);
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		
+
 		RepayData repayData = new RepayData();
 		repayData.setBuildProcess("R");
 		repayData.setFinanceDetail(financeDetail);
@@ -1249,18 +952,18 @@ public class FinServiceInstController extends SummaryDetailService {
 		repayData.setRepayMain(repayData.getRepayMain());
 
 		String finEvent = AccountEventConstants.ACCEVENT_EARLYSTL;
-		if(StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+		if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
 			finEvent = AccountEventConstants.ACCEVENT_REPAY;
-			
+
 			aFinanceDetail = financeDetail;
-		} else if(StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+		} else if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 			finEvent = AccountEventConstants.ACCEVENT_EARLYPAY;
-			if(!StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.EARLYPAY_NOEFCT)) {
+			if (!StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.EARLYPAY_NOEFCT)) {
 				repayData = manualPaymentService.setEarlyRepayEffectOnSchedule(repayData, finServiceInst);
 				aFinanceDetail = repayData.getFinanceDetail();
 			}
 		}
-		
+
 		// call change frequency service
 		manualPaymentService.doCalcRepayments(repayData, aFinanceDetail, finServiceInst);
 
@@ -1291,12 +994,13 @@ public class FinServiceInstController extends SummaryDetailService {
 			RepayData aRepayData = (RepayData) auditHeader.getAuditDetail().getModelData();
 			aRepayData.getFinanceDetail().getFinScheduleData().getFinanceMain().setVersion(version + 1);
 			aRepayData.getFinanceDetail().getFinScheduleData().getFinanceMain().setRecordType("");
-			
+
 			//get the header details from the request
-			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
 			//set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
-			
+
 			auditHeader = manualPaymentService.doApprove(auditHeader);
 
 			if (auditHeader.getErrorMessage() != null) {
@@ -1312,14 +1016,14 @@ public class FinServiceInstController extends SummaryDetailService {
 			financeDetail = getServiceInstResponse(aRepayData.getFinanceDetail().getFinScheduleData());
 		} else {
 			FinScheduleData scheduleData = repayData.getFinanceDetail().getFinScheduleData();
-		
+
 			//Repayments Posting Process Execution
 			//=====================================
 			FinRepayHeader finRepayHeader = repayData.getFinRepayHeader();
 			financeMain.setRepayAccountId(finRepayHeader.getRepayAccountId());
 			FinanceProfitDetail profitDetail = profitDetailsDAO.getFinPftDetailForBatch(financeMain.getFinReference());
-			Date valuedate=finServiceInst.getFromDate();
-			
+			Date valuedate = finServiceInst.getFromDate();
+
 			FinanceProfitDetail tempPftDetail = new FinanceProfitDetail();
 			AccrualService.calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(), tempPftDetail, valuedate);
 
@@ -1327,31 +1031,29 @@ public class FinServiceInstController extends SummaryDetailService {
 			BigDecimal totPriPayNow = BigDecimal.ZERO;
 			BigDecimal totPftPayNow = BigDecimal.ZERO;
 			BigDecimal totPenaltyPayNow = BigDecimal.ZERO;
-			for(RepayScheduleDetail repayShdData: repaySchdList) {
+			for (RepayScheduleDetail repayShdData : repaySchdList) {
 				totPriPayNow = totPriPayNow.add(repayShdData.getPrincipalSchdPayNow());
 				totPenaltyPayNow = totPenaltyPayNow.add(repayShdData.getPenaltyPayNow());
 			}
 			totPftPayNow = totPftPayNow.add(tempPftDetail.getPftAmz().subtract(tempPftDetail.getTdSchdPftPaid()));
-			
+
 			// fore closure details
-			List<ForeClosure> foreClosureList = new ArrayList<ForeClosure>(); 
+			List<ForeClosure> foreClosureList = new ArrayList<ForeClosure>();
 			ForeClosure foreClosure = new ForeClosure();
 			foreClosure.setValueDate(finServiceInst.getFromDate());
 			foreClosure.setForeCloseAmount(totPriPayNow.add(totPenaltyPayNow).add(totPftPayNow));
 			foreClosure.setAccuredIntTillDate(totPftPayNow);
 			foreClosureList.add(foreClosure);
-			
+
 			// penalty details
 			List<FinODDetails> finODDetailList = new ArrayList<FinODDetails>();
 			FinODDetails finoDetail = new FinODDetails();
 			finoDetail.setFinCurODAmt(totPenaltyPayNow);
 			finODDetailList.add(finoDetail);
-			
-			
+
 			List<Object> returnList = processRepaymentPostings(financeMain, scheduleData.getFinanceScheduleDetails(),
 					profitDetail, repaySchdList, finRepayHeader.getInsRefund(), repayData.getEventCodeRef(),
 					scheduleData.getFeeRules(), scheduleData.getFinanceType().getFinDivision());
-
 			if (!(Boolean) returnList.get(0)) {
 				String errParm = (String) returnList.get(1);
 				throw new PFFInterfaceException("9999", errParm);
@@ -1371,7 +1073,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			//=======================================
 			scheduleData.setFinanceScheduleDetails((List<FinanceScheduleDetail>) returnList.get(4));
 			financeDetail = getServiceInstResponse(scheduleData);
-			
+
 			financeDetail.setForeClosureDetails(foreClosureList);
 			financeDetail.getFinScheduleData().setFinODDetails(finODDetailList);
 		}
@@ -1389,14 +1091,8 @@ public class FinServiceInstController extends SummaryDetailService {
 	public WSReturnStatus updateLoanBasicDetails(FinanceMain financeMain) {
 		logger.debug("Enteing");
 
-		/*AuditHeader auditHeader = getAuditHeader(financeMain, PennantConstants.TRAN_WF);
-		//get the header details from the request
-		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-		//set the headerDetails to AuditHeader
-		auditHeader.setApiHeader(reqHeaderDetails);*/
 		// update the Finance Basic Details
 		int count = financeMainService.updateFinanceBasicDetails(financeMain);
-
 		if (count > 0) {
 			logger.debug("Leaving");
 			return APIErrorHandlerService.getSuccessStatus();
@@ -1405,7 +1101,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		}
 
 	}
-	
+
 	/**
 	 * Method for updateLoanPenaltyDetails
 	 * 
@@ -1422,7 +1118,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			logger.error("Exception:" + e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
-		
+
 		logger.debug("Leaving");
 		if (StringUtils.equals(finODPenaltyRate.getFinReference(), finReference)) {
 			return APIErrorHandlerService.getSuccessStatus();
@@ -1431,7 +1127,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		}
 
 	}
-	
+
 	/**
 	 * Method for prepare finance detail response object
 	 * 
@@ -1485,20 +1181,12 @@ public class FinServiceInstController extends SummaryDetailService {
 	/**
 	 * Get Audit Header Details
 	 */
-	protected AuditHeader getAuditHeader(FinanceMain afinanceMain, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, afinanceMain.getBefImage(), afinanceMain);
-		return new AuditHeader(afinanceMain.getFinReference(), null, null, null, auditDetail,
-				afinanceMain.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
-	}
-	/**
-	 * Get Audit Header Details
-	 */
 	protected AuditHeader getAuditHeader(FinanceDetail afinanceDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, afinanceDetail.getBefImage(), afinanceDetail);
 		return new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null, null, null, auditDetail,
 				afinanceDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
 	}
-	
+
 	/**
 	 * Get Audit Header Details
 	 */
@@ -1506,6 +1194,101 @@ public class FinServiceInstController extends SummaryDetailService {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, repayData);
 		return new AuditHeader(repayData.getFinReference(), null, null, null, auditDetail, repayData.getFinanceDetail()
 				.getFinScheduleData().getFinanceMain().getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
+	}
+
+	/**
+	 * 
+	 * @param financeDetail
+	 * @param finServiceInst
+	 * @return
+	 * @throws PFFInterfaceException
+	 * @throws JaxenException
+	 */
+	private FinanceDetail getResponse(FinanceDetail financeDetail, FinServiceInstruction finServiceInst)
+			throws JaxenException, PFFInterfaceException {
+		logger.debug("Entering");
+		if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {
+			int version = financeDetail.getFinScheduleData().getFinanceMain().getVersion();
+			financeDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
+			financeDetail.getFinScheduleData().setSchduleGenerated(true);
+
+			AuditHeader auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
+			FinanceDetail aFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+
+			aFinanceDetail = prepareInstructionObject(aFinanceDetail);
+
+			//get the header details from the request
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			auditHeader.setApiHeader(reqHeaderDetails);
+
+			auditHeader = financeDetailService.doApprove(auditHeader, finServiceInst.isWif());
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
+					FinanceDetail response = new FinanceDetail();
+					doEmptyResponseObject(response);
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+							errorDetail.getError()));
+					return response;
+				}
+			}
+			financeDetail = getServiceInstResponse(financeDetail.getFinScheduleData());
+		} else {
+			financeDetail = getServiceInstResponse(financeDetail.getFinScheduleData());
+		}
+		logger.debug("Leaving");
+		return financeDetail;
+	}
+
+	/**
+	 * Method for prepare fianceDetail object.<br>
+	 * - Nullify the unnecessary data
+	 * 
+	 * @param aFinanceDetail
+	 * @return
+	 */
+	private FinanceDetail prepareInstructionObject(FinanceDetail aFinanceDetail) {
+		logger.debug("Entering");
+
+		FinanceDetail financeDetail = new FinanceDetail();
+		FinScheduleData finScheduleData = aFinanceDetail.getFinScheduleData();
+		finScheduleData.getFinanceMain().setRecordType("");
+
+		finScheduleData.setStepPolicyDetails(new ArrayList<FinanceStepPolicyDetail>(1));
+		finScheduleData.setInsuranceList(new ArrayList<Insurance>());
+		finScheduleData.setFinODPenaltyRate(null);
+		finScheduleData.setFinFeeDetailList(new ArrayList<FinFeeDetail>());
+		finScheduleData.setFeeRules(new ArrayList<FeeRule>());
+		financeDetail.setFinScheduleData(finScheduleData);
+
+		aFinanceDetail.setAdvancePaymentsList(null);
+		aFinanceDetail.setFinContributorHeader(null);
+		aFinanceDetail.setIndicativeTermDetail(null);
+		aFinanceDetail.setEtihadCreditBureauDetail(null);
+		aFinanceDetail.setBundledProductsDetail(null);
+		aFinanceDetail.setTatDetail(null);
+		aFinanceDetail.setFinAssetEvaluation(null);
+		aFinanceDetail.setFinanceCheckList(new ArrayList<FinanceCheckListReference>(1));
+		aFinanceDetail.setCheckList(new ArrayList<FinanceReferenceDetail>(1));
+		aFinanceDetail.setAggrementList(new ArrayList<FinanceReferenceDetail>(1));
+		aFinanceDetail.setEligibilityRuleList(new ArrayList<FinanceReferenceDetail>(1));
+		aFinanceDetail.setFinElgRuleList(new ArrayList<FinanceEligibilityDetail>(1));
+		aFinanceDetail.setGurantorsDetailList(new ArrayList<GuarantorDetail>(1));
+		aFinanceDetail.setJountAccountDetailList(new ArrayList<JointAccountDetail>(1));
+		aFinanceDetail.setContractorAssetDetails(new ArrayList<ContractorAssetDetail>(1));
+		aFinanceDetail.setFinanceDeviations(new ArrayList<FinanceDeviations>());
+		aFinanceDetail.setApprovedFinanceDeviations(new ArrayList<FinanceDeviations>());
+		aFinanceDetail.setFinanceCollaterals(new ArrayList<FinCollaterals>(1));
+		aFinanceDetail.setCollateralAssignmentList(new ArrayList<CollateralAssignment>(1));
+		aFinanceDetail.setFinAssetTypesList(new ArrayList<FinAssetTypes>(1));
+		aFinanceDetail.setExtendedFieldRenderList(new ArrayList<ExtendedFieldRender>(1));
+		aFinanceDetail.setVasRecordingList(new ArrayList<VASRecording>(1));
+		aFinanceDetail.setCovenantTypeList(null);
+		aFinanceDetail.setMandate(null);
+		aFinanceDetail.setFinFlagsDetails(null);
+		aFinanceDetail.setCustomerDetails(null);
+		logger.debug("Leaving");
+		return financeDetail;
 	}
 
 	/**
@@ -1557,7 +1340,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		detail.setGurantorsDetailList(null);
 		detail.setFinanceCollaterals(null);
 	}
-	
+
 	/**
 	 * Method for Repayment Details Posting Process
 	 * 
@@ -1677,7 +1460,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		logger.debug("Leaving");
 		return returnList;
 	}
-	
+
 	/**
 	 * Method for prepare RepayQueue data
 	 * 
@@ -1729,7 +1512,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		logger.debug("Leaving");
 		return finRepayQueue;
 	}
-	
+
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
 	}
@@ -1761,7 +1544,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	public void setChangeProfitService(ChangeProfitService changeProfitService) {
 		this.changeProfitService = changeProfitService;
 	}
-	
+
 	public void setAddDisbursementService(AddDisbursementService addDisbursementService) {
 		this.addDisbursementService = addDisbursementService;
 	}
@@ -1777,40 +1560,44 @@ public class FinServiceInstController extends SummaryDetailService {
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
 	}
-	
+
 	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
 		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
 	}
-	
+
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
-	
+
 	public void setManualPaymentService(ManualPaymentService manualPaymentService) {
 		this.manualPaymentService = manualPaymentService;
 	}
-	
+
 	public void setRepayCalculator(RepayCalculator repayCalculator) {
 		this.repayCalculator = repayCalculator;
 	}
-	
+
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
 		this.profitDetailsDAO = profitDetailsDAO;
 	}
-	
+
 	public void setRepayPostingUtil(RepaymentPostingsUtil repayPostingUtil) {
 		this.repayPostingUtil = repayPostingUtil;
 	}
-	
+
 	public void setRecoveryPostingsUtil(OverDueRecoveryPostingsUtil recoveryPostingsUtil) {
-	    this.recoveryPostingsUtil = recoveryPostingsUtil;
-    }
-	
+		this.recoveryPostingsUtil = recoveryPostingsUtil;
+	}
+
 	public void setFinanceRepayPriorityDAO(FinanceRepayPriorityDAO financeRepayPriorityDAO) {
 		this.financeRepayPriorityDAO = financeRepayPriorityDAO;
 	}
-	
+
 	public void setPostponementService(PostponementService postponementService) {
 		this.postponementService = postponementService;
+	}
+	
+	public void setFeeDetailService(FeeDetailService feeDetailService) {
+		this.feeDetailService = feeDetailService;
 	}
 }

@@ -34,8 +34,10 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.finance.ManualPaymentService;
+import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.exception.PFFInterfaceException;
@@ -63,28 +65,27 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 import com.pennanttech.ws.service.FinanceValidationService;
 
 @Service
-public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinServiceInstSOAPService {
+public class FinInstructionServiceImpl implements FinServiceInstRESTService, FinServiceInstSOAPService {
 
-	private final static Logger logger = Logger.getLogger(FinInstructionServiceImpl.class);
+	private final static Logger			logger	= Logger.getLogger(FinInstructionServiceImpl.class);
 
-	private FinServiceInstController finServiceInstController;
-	private AddRepaymentService addRepaymentService;
-	private RateChangeService rateChangeService;
-	//private DeffermentService deffermentService;
-	private ChangeProfitService changeProfitService;
-	private AddDisbursementService addDisbursementService;
-	private ChangeFrequencyService changeFrequencyService;
-	private ManualPaymentService manualPaymentService;
-	private ReScheduleService reScheduleService;
-	private RecalculateService recalService;
-	private RemoveTermsService rmvTermsService;
-	private PostponementService postponementService;
-	
-	private FinanceMainDAO financeMainDAO;
-	private RuleService ruleService;
-	private ValidationUtility validationUtility;
-	private FinanceValidationService financeValidationService;
-	
+	private FinServiceInstController	finServiceInstController;
+	private AddRepaymentService			addRepaymentService;
+	private RateChangeService			rateChangeService;
+	private ChangeProfitService			changeProfitService;
+	private AddDisbursementService		addDisbursementService;
+	private ChangeFrequencyService		changeFrequencyService;
+	private ManualPaymentService		manualPaymentService;
+	private ReScheduleService			reScheduleService;
+	private RecalculateService			recalService;
+	private RemoveTermsService			rmvTermsService;
+	private PostponementService			postponementService;
+
+	private FinanceMainDAO				financeMainDAO;
+	private RuleService					ruleService;
+	private ValidationUtility			validationUtility;
+	private FinanceValidationService	financeValidationService;
+	private FinanceDataValidation		financeDataValidation;
 
 	/**
 	 * Method for perform addRateChange operation
@@ -97,12 +98,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 		// bean validations
 		validationUtility.validate(finServiceInstruction, AddRateChangeGroup.class);
-		
+
 		FinanceDetail financeDetail = null;
 
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
-		
+
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
@@ -110,7 +111,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 			return financeDetail;
 		}
-		
+
 		// service level validations
 		returnStatus = validateFinReference(finServiceInstruction);
 
@@ -124,10 +125,6 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 		// validate service instruction data
 		AuditDetail auditDetail = rateChangeService.doValidations(finServiceInstruction);
-		
-		// validate fees
-		String eventCode = AccountEventConstants.ACCEVENT_RATCHG;
-		auditDetail = doFeeValidations(finServiceInstruction.getFinFeeDetails(), auditDetail, eventCode);
 
 		if (auditDetail.getErrorDetails() != null) {
 			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
@@ -136,6 +133,20 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
 						errorDetail.getError()));
 
+				return financeDetail;
+			}
+		}
+
+		// validate fees
+		String eventCode = AccountEventConstants.ACCEVENT_RATCHG;
+		List<ErrorDetails> errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN,
+				finServiceInstruction, eventCode);
+		if (!errors.isEmpty()) {
+			for (ErrorDetails errorDetails : errors) {
+				financeDetail = new FinanceDetail();
+				doEmptyResponseObject(financeDetail);
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
+						errorDetails.getError()));
 				return financeDetail;
 			}
 		}
@@ -159,12 +170,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 		// bean validations
 		validationUtility.validate(finServiceInstruction, ChangeRepaymentGroup.class);
-		
+
 		FinanceDetail financeDetail = null;
 
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
-		
+
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
@@ -172,7 +183,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 			return financeDetail;
 		}
-		
+
 		// service level validations
 		returnStatus = validateFinReference(finServiceInstruction);
 
@@ -186,7 +197,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 		// validate service instruction data
 		AuditDetail auditDetail = addRepaymentService.doValidations(finServiceInstruction);
-		
+
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
 		auditDetail = doFeeValidations(finServiceInstruction.getFinFeeDetails(), auditDetail, eventCode);
@@ -225,7 +236,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
-		
+
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
@@ -233,7 +244,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 			return financeDetail;
 		}
-		
+
 		// service level validations
 		returnStatus = validateFinReference(finServiceInstruction);
 
@@ -247,7 +258,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 		// validate service instruction data
 		AuditDetail auditDetail = postponementService.doValidations(finServiceInstruction);
-		
+
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_DEFRPY;
 		auditDetail = doFeeValidations(finServiceInstruction.getFinFeeDetails(), auditDetail, eventCode);
@@ -278,18 +289,18 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 	 * @throws JaxenException
 	 */
 	@Override
-	public FinanceDetail addTerms(FinServiceInstruction finServiceInstruction)  {
+	public FinanceDetail addTerms(FinServiceInstruction finServiceInstruction) {
 
 		logger.debug("Entering");
 
 		// bean validations
-		validationUtility.validate(finServiceInstruction, AddTermsGroup.class); 
-		
+		validationUtility.validate(finServiceInstruction, AddTermsGroup.class);
+
 		FinanceDetail financeDetail = null;
 
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
-		
+
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
@@ -297,7 +308,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 			return financeDetail;
 		}
-		
+
 		// service level validations
 		returnStatus = validateFinReference(finServiceInstruction);
 
@@ -311,7 +322,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 		// validate fees
 		String eventCode = FinanceConstants.FINSER_EVENT_ADDTERM;
-		AuditDetail auditDetail = doFeeValidations(finServiceInstruction.getFinFeeDetails(), new AuditDetail(), eventCode);
+		AuditDetail auditDetail = doFeeValidations(finServiceInstruction.getFinFeeDetails(), new AuditDetail(),
+				eventCode);
 
 		if (auditDetail.getErrorDetails() != null) {
 			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
@@ -330,7 +342,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 		logger.debug("Leaving");
 		return financeDetail;
 	}
-	
+
 	/**
 	 * Method for perform removeTerms operation
 	 * 
@@ -339,12 +351,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 	 * @throws JaxenException
 	 */
 	@Override
-	public FinanceDetail removeTerms(FinServiceInstruction finServiceInstruction)  {
+	public FinanceDetail removeTerms(FinServiceInstruction finServiceInstruction) {
 
 		logger.debug("Entering");
 
 		// bean validations
-		validationUtility.validate(finServiceInstruction, RemoveTermsGroup.class); 
+		validationUtility.validate(finServiceInstruction, RemoveTermsGroup.class);
 
 		FinanceDetail financeDetail = null;
 
@@ -360,8 +372,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 		}
 
 		// validate RecalType
-		if(StringUtils.isNotBlank(finServiceInstruction.getRecalType())) {
-			if(!StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADJMDT) 
+		if (StringUtils.isNotBlank(finServiceInstruction.getRecalType())) {
+			if (!StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)
 					&& !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finServiceInstruction.getRecalType();
@@ -400,7 +412,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 		logger.debug("Leaving");
 		return financeDetail;
 	}
-	
+
 	/**
 	 * Method for validate the request receiving from API and do schedule recalculation
 	 * 
@@ -412,13 +424,13 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 		logger.debug("Entering");
 
 		// bean validations
-		validationUtility.validate(finServiceInstruction, RecalculateGroup.class); 
-		
+		validationUtility.validate(finServiceInstruction, RecalculateGroup.class);
+
 		FinanceDetail financeDetail = null;
 
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
-		
+
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
@@ -426,7 +438,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 			return financeDetail;
 		}
-		
+
 		// service level validations
 		returnStatus = validateFinReference(finServiceInstruction);
 
@@ -440,7 +452,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 		// validate service instruction data
 		AuditDetail auditDetail = recalService.doValidations(finServiceInstruction);
-		
+
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
 		auditDetail = doFeeValidations(finServiceInstruction.getFinFeeDetails(), auditDetail, eventCode);
@@ -470,17 +482,17 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 	 * @return FinanceDetail
 	 */
 	@Override
-	public FinanceDetail changeInterest(FinServiceInstruction finServiceInstruction)  {
+	public FinanceDetail changeInterest(FinServiceInstruction finServiceInstruction) {
 		logger.debug("Entering");
 
 		// bean validations
-		validationUtility.validate(finServiceInstruction, ChangeInterestGroup.class); 
-		
+		validationUtility.validate(finServiceInstruction, ChangeInterestGroup.class);
+
 		FinanceDetail financeDetail = null;
 
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
-		
+
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
@@ -488,7 +500,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 			return financeDetail;
 		}
-		
+
 		// service level validations
 		returnStatus = validateFinReference(finServiceInstruction);
 
@@ -502,7 +514,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 		// validate service instruction data
 		AuditDetail auditDetail = changeProfitService.doValidations(finServiceInstruction);
-		
+
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
 		auditDetail = doFeeValidations(finServiceInstruction.getFinFeeDetails(), auditDetail, eventCode);
@@ -533,17 +545,17 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 	 * 
 	 */
 	@Override
-	public FinanceDetail addDisbursement(FinServiceInstruction finServiceInstruction)  {
+	public FinanceDetail addDisbursement(FinServiceInstruction finServiceInstruction) {
 		logger.debug("Entering");
 
 		// bean validations
-		validationUtility.validate(finServiceInstruction, AddDisbursementGroup.class); 
+		validationUtility.validate(finServiceInstruction, AddDisbursementGroup.class);
 
 		FinanceDetail financeDetail = null;
-		
+
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
-		
+
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
@@ -551,7 +563,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 			return financeDetail;
 		}
-		
+
 		// service level validations
 		returnStatus = validateFinReference(finServiceInstruction);
 
@@ -563,15 +575,16 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 			return financeDetail;
 		}
 
-		financeDetail = finServiceInstController.getFinanceDetails(finServiceInstruction, AccountEventConstants.ACCEVENT_SCDCHG);
-		
-		if(StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
+		financeDetail = finServiceInstController.getFinanceDetails(finServiceInstruction,
+				AccountEventConstants.ACCEVENT_SCDCHG);
+
+		if (StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
 			finServiceInstruction.setToDate(financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate());
 		}
-		
+
 		// validate service instruction data
 		AuditDetail auditDetail = addDisbursementService.doValidations(financeDetail, finServiceInstruction);
-		
+
 		// validate fees
 		String eventCode = "";
 		auditDetail = doFeeValidations(finServiceInstruction.getFinFeeDetails(), auditDetail, eventCode);
@@ -605,13 +618,13 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 		logger.debug("Entering");
 
 		// bean validations
-		validationUtility.validate(finServiceInstruction, ChangeInstallmentFrequencyGroup.class); 
-		
+		validationUtility.validate(finServiceInstruction, ChangeInstallmentFrequencyGroup.class);
+
 		FinanceDetail financeDetail = null;
 
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
-		
+
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
@@ -619,7 +632,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 			return financeDetail;
 		}
-		
+
 		// service level validations
 		returnStatus = validateFinReference(finServiceInstruction);
 
@@ -633,7 +646,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 		// validate service instruction data
 		AuditDetail auditDetail = changeFrequencyService.doValidations(finServiceInstruction);
-		
+
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
 		auditDetail = doFeeValidations(finServiceInstruction.getFinFeeDetails(), auditDetail, eventCode);
@@ -711,9 +724,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 		logger.debug("Leaving");
 		return financeDetail;
 	}
-	
+
 	/**
-	 * Method for perform updateLoanBasicDetails 
+	 * Method for perform updateLoanBasicDetails
 	 * 
 	 * @param finServiceInstruction
 	 * @throws PFFInterfaceException
@@ -756,9 +769,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 		logger.debug("Leaving");
 		return returnStatus;
 	}
-	
+
 	/**
-	 * Method for perform updateLoanPenaltyDetails 
+	 * Method for perform updateLoanPenaltyDetails
 	 * 
 	 * @param finServiceInstruction
 	 * @throws PFFInterfaceException
@@ -790,11 +803,13 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 					}
 				}
 			} else {
-				if (finServiceInstruction.getFinODPenaltyRate().getODGraceDays() > 0 
+				if (finServiceInstruction.getFinODPenaltyRate().getODGraceDays() > 0
 						|| StringUtils.isNotBlank(finServiceInstruction.getFinODPenaltyRate().getODChargeType())
 						|| StringUtils.isNotBlank(finServiceInstruction.getFinODPenaltyRate().getODChargeCalOn())
-						|| finServiceInstruction.getFinODPenaltyRate().getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) > 0) {
-					return APIErrorHandlerService.getFailedStatus("9999", "Overdue details only applicable for applyODPenalty.");
+						|| finServiceInstruction.getFinODPenaltyRate().getODChargeAmtOrPerc()
+								.compareTo(BigDecimal.ZERO) > 0) {
+					return APIErrorHandlerService.getFailedStatus("9999",
+							"Overdue details only applicable for applyODPenalty.");
 				}
 			}
 		} else {
@@ -843,17 +858,17 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 	 * @return FinanceDetail
 	 */
 	@Override
-	public FinanceDetail earlySettlement(FinServiceInstruction finServiceInstruction)  {
+	public FinanceDetail earlySettlement(FinServiceInstruction finServiceInstruction) {
 		logger.debug("Entering");
 
 		// bean validations
-		validationUtility.validate(finServiceInstruction, EarlySettlementGroup.class); 
-		
+		validationUtility.validate(finServiceInstruction, EarlySettlementGroup.class);
+
 		FinanceDetail financeDetail = null;
 
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
-		
+
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
@@ -861,10 +876,10 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 			return financeDetail;
 		}
-		
+
 		// service level validations
 		int count = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "", false);
-		if(count <= 0) {
+		if (count <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finServiceInstruction.getFinReference();
 			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
@@ -880,11 +895,11 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 		// validate service instruction data
 		String moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
-		if(StringUtils.equals(finServiceInstruction.getReqType(), APIConstants.REQTYPE_INQUIRY)) {
+		if (StringUtils.equals(finServiceInstruction.getReqType(), APIConstants.REQTYPE_INQUIRY)) {
 			moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYSTLENQ;
 		}
 		AuditDetail auditDetail = manualPaymentService.doValidations(finServiceInstruction, moduleDefiner);
-		
+
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
 		auditDetail = doFeeValidations(finServiceInstruction.getFinFeeDetails(), auditDetail, eventCode);
@@ -929,7 +944,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 		// service level validations
 		int count = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "", false);
-		if(count <= 0) {
+		if (count <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finServiceInstruction.getFinReference();
 			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
@@ -968,7 +983,6 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 		logger.debug("Leaving");
 		return financeDetail;
 	}
-	
 
 	/**
 	 * 
@@ -993,7 +1007,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 		// service level validations
 		int count = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "", false);
-		if(count <= 0) {
+		if (count <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finServiceInstruction.getFinReference();
 			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
@@ -1032,7 +1046,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 		logger.debug("Leaving");
 		return financeDetail;
 	}
-	
+
 	private WSReturnStatus beanValidation(String valueParam) {
 		String[] valueParm = new String[1];
 		valueParm[0] = valueParam;
@@ -1079,7 +1093,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 		return returnStatus;
 
 	}
-	
+
 	/**
 	 * Method for prepare response object with errorDetails.
 	 * 
@@ -1105,6 +1119,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 	/**
 	 * validate request type received from API.
+	 * 
 	 * @param reqType
 	 * @return WSReturnStatus
 	 */
@@ -1112,7 +1127,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 		logger.debug("Entering");
 		WSReturnStatus status = new WSReturnStatus();
 
-		if(!StringUtils.equals(reqType, APIConstants.REQTYPE_INQUIRY)
+		if (!StringUtils.equals(reqType, APIConstants.REQTYPE_INQUIRY)
 				&& !StringUtils.equals(reqType, APIConstants.REQTYPE_POST)) {
 			String valueParm[] = new String[1];
 			valueParm[0] = reqType;
@@ -1122,7 +1137,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 		logger.debug("Leaving");
 		return status;
 	}
-	
+
 	/**
 	 * Method for validate finance reference and check existence in origination or WIF
 	 * 
@@ -1151,12 +1166,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 		// validate maintained records.
 		int tempCount = financeMainDAO.getFinanceCountById(serviceInst.getFinReference(), "_Temp", serviceInst.isWif());
-		if(tempCount > 0) {
+		if (tempCount > 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = serviceInst.getFinReference();
 			return returnStatus = APIErrorHandlerService.getFailedStatus("90248", valueParm);
 		}
-		
+
 		logger.debug("Leaving");
 		return returnStatus;
 	}
@@ -1176,66 +1191,67 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 
 	/**
 	 * Validate fee codes
-	 * @param fees 
-	 * @param auditDetail 
+	 * 
+	 * @param fees
+	 * @param auditDetail
 	 * @return
 	 */
 	private AuditDetail doFeeValidations(List<FinFeeDetail> finFeeDetails, AuditDetail auditDetail, String eventCode) {
 		logger.debug("Entering");
-		
-		if(finFeeDetails != null) {
-			for(FinFeeDetail finFeeDetail: finFeeDetails) {
-				Rule rule = ruleService.getApprovedRuleById(finFeeDetail.getFeeTypeCode(), RuleConstants.MODULE_FEES, eventCode);
-				
-				if(rule == null) {
+
+		if (finFeeDetails != null) {
+			for (FinFeeDetail finFeeDetail : finFeeDetails) {
+				Rule rule = ruleService.getApprovedRuleById(finFeeDetail.getFeeTypeCode(), RuleConstants.MODULE_FEES,
+						eventCode);
+
+				if (rule == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = finFeeDetail.getFeeTypeCode();
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91107", "", valueParm), "EN"));
+					auditDetail
+							.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91107", "", valueParm), "EN"));
 				}
 			}
 		}
-		
+
 		logger.debug("Leaving");
 		return auditDetail;
 	}
-	
 
 	@Autowired
 	public void setFinServiceInstController(FinServiceInstController finServiceInstController) {
 		this.finServiceInstController = finServiceInstController;
 	}
-	
+
 	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
-	
+
 	@Autowired
 	public void setRateChangeService(RateChangeService rateChangeService) {
 		this.rateChangeService = rateChangeService;
 	}
-	
+
 	@Autowired
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
-	
+
 	@Autowired
 	public void setAddRepaymentService(AddRepaymentService addRepaymentService) {
 		this.addRepaymentService = addRepaymentService;
 	}
-	
-	/*	@Autowired
-	public void setDeffermentService(DeffermentService deffermentService) {
-		this.deffermentService = deffermentService;
-	}*/
 
-	
+	/*
+	 * @Autowired public void setDeffermentService(DeffermentService deffermentService) { this.deffermentService =
+	 * deffermentService; }
+	 */
+
 	@Autowired
 	public void setValidationUtility(ValidationUtility validationUtility) {
 		this.validationUtility = validationUtility;
 	}
-	
+
 	@Autowired
 	public void setRecalService(RecalculateService recalService) {
 		this.recalService = recalService;
@@ -1245,36 +1261,44 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService,FinS
 	public void setChangeProfitService(ChangeProfitService changeProfitService) {
 		this.changeProfitService = changeProfitService;
 	}
-	
+
 	@Autowired
 	public void setAddDisbursementService(AddDisbursementService addDisbursementService) {
 		this.addDisbursementService = addDisbursementService;
 	}
-	
+
 	@Autowired
 	public void setChangeFrequencyService(ChangeFrequencyService changeFrequencyService) {
 		this.changeFrequencyService = changeFrequencyService;
 	}
-	
+
 	@Autowired
 	public void setReScheduleService(ReScheduleService reScheduleService) {
 		this.reScheduleService = reScheduleService;
 	}
+
 	@Autowired
 	public void setFinanceValidationService(FinanceValidationService financeValidationService) {
 		this.financeValidationService = financeValidationService;
 	}
-	
+
 	@Autowired
 	public void setManualPaymentService(ManualPaymentService manualPaymentService) {
 		this.manualPaymentService = manualPaymentService;
 	}
+
 	@Autowired
 	public void setRmvTermsService(RemoveTermsService rmvTermsService) {
 		this.rmvTermsService = rmvTermsService;
 	}
+
 	@Autowired
 	public void setPostponementService(PostponementService postponementService) {
 		this.postponementService = postponementService;
+	}
+	
+	@Autowired
+	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
+		this.financeDataValidation = financeDataValidation;
 	}
 }

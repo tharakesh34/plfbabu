@@ -43,7 +43,12 @@ public class FeeDetailService {
 
 	private List<FinFeeDetail> finFeeDetailList = new ArrayList<FinFeeDetail>();
 	
-	public void doExecuteFeeCharges(boolean isSchdCal, FinanceDetail financeDetail) {
+	/**
+	 * Calculate and execute fee details
+	 *  
+	 * @param financeDetail
+	 */
+	private void executeFeeCharges(FinanceDetail financeDetail, boolean isOriginationFee) {
 		logger.debug("Entering");
 
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -56,7 +61,7 @@ public class FeeDetailService {
 		setFinFeeDetailList(actualFinFeeList);
 		
 		// Organize Fee detail changes
-		doSetFeeChanges(financeDetail);
+		doSetFeeChanges(financeDetail, isOriginationFee);
 
 		List<String> feeRuleCodes = new ArrayList<String>();
 	
@@ -326,8 +331,9 @@ public class FeeDetailService {
 	 * 
 	 * @param financeDetail
 	 */
-	private void doSetFeeChanges(FinanceDetail financeDetail) {
+	private void doSetFeeChanges(FinanceDetail financeDetail, boolean isOriginationFee) {
 		logger.debug("Entering");
+		
 		String feeEvent = "";
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		
@@ -340,9 +346,13 @@ public class FeeDetailService {
 		} else {
 			feeEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
 		}
+		
+		if(!isOriginationFee) {
+			feeEvent = financeDetail.getFinScheduleData().getFeeEvent();
+		}
 		if (!StringUtils.equals(finScheduleData.getFeeEvent(), feeEvent)) {
 			List<FinTypeFees> finTypeFeesList = financeDetailService.getFinTypeFees(
-					finScheduleData.getFinanceMain().getFinType(), feeEvent, true, FinanceConstants.MODULEID_FINTYPE);
+					finScheduleData.getFinanceMain().getFinType(), feeEvent, isOriginationFee, FinanceConstants.MODULEID_FINTYPE);
 
 			financeDetail.setFinTypeFeesList(finTypeFeesList);
 			for(FinFeeDetail finFeeDetail:getFinFeeDetailList()){
@@ -476,10 +486,38 @@ public class FeeDetailService {
 		}
 		return finFeeDetails;
 	}
+
+	/**
+	 * Method for execute finance fee details and validate with configured fees in loan type.<br>
+	 * 	- Execute Origination fees.<br>
+	 * 	- Execute Servicing fees.<br>
+	 * 	FinEvent is always empty for origination fees.
+	 * @param financeDetail
+	 * @param finEvent
+	 */
+	public void doExecuteFeeCharges(FinanceDetail financeDetail, String finEvent) {
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		boolean isOriginationFee = false;
+		if (StringUtils.isBlank(finEvent)) {
+			isOriginationFee = true;
+			if (financeMain.getFinStartDate().after(DateUtility.getAppDate())) {
+				if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
+					finEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
+				} else {
+					finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
+				}
+			} else {
+				finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
+			}
+		}
+		financeDetail.getFinScheduleData().setFeeEvent(finEvent);
+		financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), finEvent,
+				isOriginationFee, FinanceConstants.MODULEID_FINTYPE));
+		executeFeeCharges(financeDetail, isOriginationFee);
+	}
 	
-	private String getUniqueID(FinFeeDetail finFeeDetail){
-		return StringUtils.trimToEmpty(finFeeDetail.getFinEvent())+"_"+
-				String.valueOf(finFeeDetail.getFeeTypeID());
+	private String getUniqueID(FinFeeDetail finFeeDetail) {
+		return StringUtils.trimToEmpty(finFeeDetail.getFinEvent()) + "_" + String.valueOf(finFeeDetail.getFeeTypeID());
 	}
 	
 	public List<FinFeeDetail> getFinFeeDetailUpdateList() {

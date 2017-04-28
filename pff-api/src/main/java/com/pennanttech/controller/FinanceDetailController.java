@@ -15,7 +15,6 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
 
-import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FeeScheduleCalculator;
@@ -197,16 +196,17 @@ public class FinanceDetailController extends SummaryDetailService {
 				}
 				finScheduleData.setPlanEMIHDates(planEMIHDates);
 				finScheduleData.setPlanEMIHmonths(planEMIHmonths);
-				if(finScheduleData.getFinanceMain().isPlanEMIHAlw()){
+				if (finScheduleData.getFinanceMain().isPlanEMIHAlw()) {
 					finScheduleData.getFinanceMain().setEventFromDate(financeMain.getFinStartDate());
 					finScheduleData.getFinanceMain().setEventToDate(finScheduleData.getFinanceMain().getMaturityDate());
-					finScheduleData.getFinanceMain().setRecalFromDate(financeMain.getNextRepayDate());
+					finScheduleData.getFinanceMain().setRecalFromDate(financeMain.getNextRepayPftDate());
 					finScheduleData.getFinanceMain().setRecalToDate(finScheduleData.getFinanceMain().getMaturityDate());
 					finScheduleData.getFinanceMain().setRecalSchdMethod(finScheduleData.getFinanceMain().getScheduleMethod());
 
-					if(StringUtils.equals(finScheduleData.getFinanceMain().getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)){
+					if (StringUtils.equals(finScheduleData.getFinanceMain().getPlanEMIHMethod(),
+							FinanceConstants.PLANEMIHMETHOD_FRQ)) {
 						finScheduleData = ScheduleCalculator.getFrqEMIHoliday(finScheduleData);
-					}else{
+					} else {
 						finScheduleData = ScheduleCalculator.getAdhocEMIHoliday(finScheduleData);
 					}
 				}
@@ -299,19 +299,7 @@ public class FinanceDetailController extends SummaryDetailService {
 		
 		// fetch finType fees details
 		String finEvent = "";
-		if (financeMain.getFinStartDate().after(DateUtility.getAppDate())) {
-			if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
-				finEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
-			} else {
-				finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-			}
-		} else {
-			finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-		}
-		financeDetail.getFinScheduleData().setFeeEvent(finEvent);
-		financeDetail.setFinTypeFeesList(getFinanceDetailService().getFinTypeFees(financeMain.getFinType(),finEvent, true, FinanceConstants.MODULEID_FINTYPE));
-		
-		feeDetailService.doExecuteFeeCharges(true, financeDetail);
+		feeDetailService.doExecuteFeeCharges(financeDetail, finEvent);
 		
 		// Step Policy Details
 		if(financeMain.isStepFinance()) {

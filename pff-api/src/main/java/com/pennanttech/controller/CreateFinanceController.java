@@ -15,7 +15,6 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FeeScheduleCalculator;
@@ -138,10 +137,10 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			// set required mandatory values into finance details object
 			doSetRequiredDetails(financeDetail);
-			
-			if(financeDetail.getFinScheduleData().getErrorDetails() != null){
+
+			if (financeDetail.getFinScheduleData().getErrorDetails() != null) {
 				for (ErrorDetails errorDetail : financeDetail.getFinScheduleData().getErrorDetails()) {
-					FinanceDetail	response = new FinanceDetail();
+					FinanceDetail response = new FinanceDetail();
 					doEmptyResponseObject(response);
 					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
 							errorDetail.getError()));
@@ -459,18 +458,17 @@ public class CreateFinanceController extends SummaryDetailService {
 			detail.setUserDetails(financeMain.getUserDetails());
 			detail.setDocImage(PennantApplicationUtil.decode(detail.getDocImage()));
 		}
-		
+
 		// Fee Details
 		financeDetail.setFinScheduleData(finScheduleData);
 		if (financeMain.getCustID() > 0) {
-			CustomerDetails custDetails=customerDetailsService.getApprovedCustomerById(financeMain.getCustID());
+			CustomerDetails custDetails = customerDetailsService.getApprovedCustomerById(financeMain.getCustID());
 			financeDetail.setCustomerDetails(custDetails);
 		}
-		
+
 		// CollateralAssignment details
 		for (CollateralAssignment detail : financeDetail.getCollateralAssignmentList()) {
-			CollateralSetup collateralSetup = collateralSetupService.getApprovedCollateralSetupById(detail
-					.getCollateralRef());
+			CollateralSetup collateralSetup = collateralSetupService.getApprovedCollateralSetupById(detail.getCollateralRef());
 			if (collateralSetup != null) {
 				detail.setCollateralValue(collateralSetup.getCollateralValue());
 			}
@@ -483,21 +481,9 @@ public class CreateFinanceController extends SummaryDetailService {
 			detail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		}
 
-		// fetch finType fees details
+		// execute fee charges
 		String finEvent = "";
-		if (financeMain.getFinStartDate().after(DateUtility.getAppDate())) {
-			if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
-				finEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
-			} else {
-				finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-			}
-		} else {
-			finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-		}
-		financeDetail.getFinScheduleData().setFeeEvent(finEvent);
-		financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(),finEvent, true, FinanceConstants.MODULEID_FINTYPE));
-		
-		feeDetailService.doExecuteFeeCharges(true, financeDetail);
+		feeDetailService.doExecuteFeeCharges(financeDetail, finEvent);
 		
 		// Step Policy Details
 		if(financeMain.isStepFinance()) {

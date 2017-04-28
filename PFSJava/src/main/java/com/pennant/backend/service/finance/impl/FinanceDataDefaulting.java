@@ -220,7 +220,7 @@ public class FinanceDataDefaulting {
 					String[] valueParm = new String[2];
 					valueParm[0] = "Grace";
 					valueParm[1] = finMain.getGrcSchdMthd();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90210", null)));
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90210", valueParm)));
 				}
 			}
 
@@ -245,7 +245,7 @@ public class FinanceDataDefaulting {
 					String[] valueParm = new String[2];
 					valueParm[0] = "Repayment";
 					valueParm[1] = finMain.getScheduleMethod();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90210", null)));
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90210", valueParm)));
 				}
 			}
 
