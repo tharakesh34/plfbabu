@@ -122,4 +122,28 @@
 		 UPDATE DATA_ENGINE_CONFIG SET FILEPREFIXNAME = '${PAYMENT_TYPE}', FILENAMEFORMAT = '${PARTNER_BANK_CODE}, ${ddMMYYH24MM}', FILEEXTENSION = '.CSV' WHERE NAME = 'DISB_OTHER_CHEQUE_DD_EXPORT';
 	 	</sql>
 	</changeSet>
+	
+	<changeSet id="09" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_EMYRDTL_RMTEmpTypes"
+			baseTableName="EmployerDetail" baseColumnNames="EMPINDUSTRY"
+			referencedTableName="RMTEmpTypes" referencedColumnNames="EMPTYPE" />
+	</changeSet>
+	
+	<changeSet id="12" author="Amit">
+		<addForeignKeyConstraint constraintName="FK_EMYRDTL_TEMP_RMTEmpTypes"
+			baseTableName="EMPLOYERDETAIL_TEMP" baseColumnNames="EMPINDUSTRY"
+			referencedTableName="RMTEmpTypes" referencedColumnNames="EMPTYPE" />
+	</changeSet>
+
+	<changeSet id="13" author="Prakash">
+		<addForeignKeyConstraint constraintName="FK_CustEmpDtls_GenDes"
+			baseTableName="CustomerEmpDetails" baseColumnNames="CustEmpDesg"
+			referencedTableName="RMTGenDesignations" referencedColumnNames="GenDesignation" />
+	</changeSet>
+   
+   <changeSet id="14" author="Prakash">
+		<addForeignKeyConstraint constraintName="FK_CustEmpDtls_Temp_GenDes"
+			baseTableName="CustomerEmpDetails_Temp" baseColumnNames="CustEmpDesg"
+			referencedTableName="RMTGenDesignations" referencedColumnNames="GenDesignation" />
+	</changeSet>
 </databaseChangeLog>
