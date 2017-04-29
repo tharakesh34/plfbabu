@@ -25,46 +25,37 @@ import com.pennanttech.pff.core.App.Database;
 
 /**
  * <p>
- * A <code>Filter</code> is used by the <code>Search</code> class to specify a
- * restriction on what results should be returned in the search. For example, if
- * a filter <code>Filter.equal("name","Paul")</code> were added to the search,
- * only objects with the property "name" equal to the string "Paul" would be
- * returned.
+ * A <code>Filter</code> is used by the <code>Search</code> class to specify a restriction on what results should be
+ * returned in the search. For example, if a filter <code>Filter.equal("name","Paul")</code> were added to the search,
+ * only objects with the property "name" equal to the string "Paul" would be returned.
  * <p>
- * Nested properties can also be specified, for example
- * <code>Filter.greaterThan("employee.age",65)</code>.
+ * Nested properties can also be specified, for example <code>Filter.greaterThan("employee.age",65)</code>.
  * 
  * @author dwolverton
  */
 public class Filter implements Serializable {
+	private static final long	serialVersionUID	= 1L;
 
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * Property string representing the root entity of the search. This is just the empty string ("").
-	 */
-	public static final String ROOT_ENTITY = "";
-	
 	/**
 	 * The name of the property to filter on. It may be nested. Examples:
 	 * <code>"name", "dateOfBirth", "employee.age", "employee.spouse.job.title"</code>
 	 */
-	protected String property;
+	private String				property;
 
 	/**
-	 * The value to compare the property with. Should be of a compatible type
-	 * with the property. Examples: <code>"Fred", new Date(), 45</code>
+	 * The value to compare the property with. Should be of a compatible type with the property. Examples:
+	 * <code>"Fred", new Date(), 45</code>
 	 */
-	protected Object value;
+	protected Object			value;
 
 	/**
-	 * The type of comparison to do between the property and the value. The
-	 * options are limited to the integer constants on this class:
+	 * The type of comparison to do between the property and the value. The options are limited to the integer constants
+	 * on this class:
 	 * 
 	 * <code>OP_EQAUL, OP_NOT_EQUAL, OP_LESS_THAN, OP_GREATER_THAN, LESS_OR_EQUAL, OP_GREATER_OR_EQUAL, OP_IN, OP_NOT_IN, OP_LIKE, OP_ILIKE, OP_NULL, OP_NOT_NULL, OP_EMPTY, OP_NOT_EMPTY, OP_SOME, OP_ALL, OP_NONE, OP_AND, OP_OR, OP_NOT</code>
 	 * .
 	 */
-	protected int operator;
+	protected int				operator;
 
 	public Filter() {
 		super();
@@ -74,13 +65,12 @@ public class Filter implements Serializable {
 		this.property = property;
 		this.value = value;
 		this.operator = operator;
-		
-		if(App.DATABASE == Database.ORACLE && 
-				(value == null || ("").equals(value))){
+
+		if (App.DATABASE == Database.ORACLE && (value == null || ("").equals(value))) {
 			this.value = true;
-			if(operator == OP_EQUAL){
+			if (operator == OP_EQUAL) {
 				this.operator = OP_NULL;
-			}else if(operator == OP_NOT_EQUAL){
+			} else if (operator == OP_NOT_EQUAL) {
 				this.operator = OP_NOT_NULL;
 			}
 		}
@@ -92,13 +82,13 @@ public class Filter implements Serializable {
 		this.operator = OP_EQUAL;
 	}
 
-	public static final int OP_EQUAL = 0, OP_NOT_EQUAL = 1, OP_LESS_THAN = 2, OP_GREATER_THAN = 3,
+	public static final int	OP_EQUAL	= 0, OP_NOT_EQUAL = 1, OP_LESS_THAN = 2, OP_GREATER_THAN = 3,
 			OP_LESS_OR_EQUAL = 4, OP_GREATER_OR_EQUAL = 5, OP_LIKE = 6, OP_ILIKE = 7, OP_IN = 8, OP_NOT_IN = 9,
 			OP_NULL = 10, OP_NOT_NULL = 11, OP_EMPTY = 12, OP_NOT_EMPTY = 13;
-	public static final int OP_AND = 100, OP_OR = 101, OP_NOT = 102;
-	public static final int OP_SOME = 200, OP_ALL = 201, OP_NONE = 202;
-	public static final int OP_BETWEEN = 300; 
-	
+	public static final int	OP_AND		= 100, OP_OR = 101, OP_NOT = 102;
+	public static final int	OP_SOME		= 200, OP_ALL = 201, OP_NONE = 202;
+	public static final int	OP_BETWEEN	= 300;
+
 	/**
 	 * Create a new Filter using the == operator.
 	 */
@@ -138,8 +128,7 @@ public class Filter implements Serializable {
 	 * Create a new Filter using the IN operator.
 	 * 
 	 * <p>
-	 * This takes a variable number of parameters. Any number of values can be
-	 * specified.
+	 * This takes a variable number of parameters. Any number of values can be specified.
 	 */
 	public static Filter in(String property, Collection<?> value) {
 		return new Filter(property, value, OP_IN);
@@ -149,8 +138,7 @@ public class Filter implements Serializable {
 	 * Create a new Filter using the IN operator.
 	 * 
 	 * <p>
-	 * This takes a variable number of parameters. Any number of values can be
-	 * specified.
+	 * This takes a variable number of parameters. Any number of values can be specified.
 	 */
 	public static Filter in(String property, Object... value) {
 		return new Filter(property, value, OP_IN);
@@ -160,8 +148,7 @@ public class Filter implements Serializable {
 	 * Create a new Filter using the NOT IN operator.
 	 * 
 	 * <p>
-	 * This takes a variable number of parameters. Any number of values can be
-	 * specified.
+	 * This takes a variable number of parameters. Any number of values can be specified.
 	 */
 	public static Filter notIn(String property, Collection<?> value) {
 		return new Filter(property, value, OP_NOT_IN);
@@ -171,8 +158,7 @@ public class Filter implements Serializable {
 	 * Create a new Filter using the NOT IN operator.
 	 * 
 	 * <p>
-	 * This takes a variable number of parameters. Any number of values can be
-	 * specified.
+	 * This takes a variable number of parameters. Any number of values can be specified.
 	 */
 	public static Filter notIn(String property, Object... value) {
 		return new Filter(property, value, OP_NOT_IN);
@@ -231,8 +217,7 @@ public class Filter implements Serializable {
 	 * Create a new Filter using the AND operator.
 	 * 
 	 * <p>
-	 * This takes a variable number of parameters. Any number of
-	 * <code>Filter</code>s can be specified.
+	 * This takes a variable number of parameters. Any number of <code>Filter</code>s can be specified.
 	 */
 	public static Filter and(Filter... filters) {
 		Filter filter = new Filter("AND", null, OP_AND);
@@ -246,8 +231,7 @@ public class Filter implements Serializable {
 	 * Create a new Filter using the OR operator.
 	 * 
 	 * <p>
-	 * This takes a variable number of parameters. Any number of
-	 * <code>Filter</code>s can be specified.
+	 * This takes a variable number of parameters. Any number of <code>Filter</code>s can be specified.
 	 */
 	public static Filter or(Filter... filters) {
 		Filter filter = and(filters);
@@ -285,8 +269,8 @@ public class Filter implements Serializable {
 	}
 
 	/**
-	 * Used with OP_OR and OP_AND filters. These filters take a collection of
-	 * filters as their value. This method adds a filter to that list.
+	 * Used with OP_OR and OP_AND filters. These filters take a collection of filters as their value. This method adds a
+	 * filter to that list.
 	 */
 	@SuppressWarnings("unchecked")
 	public void add(Filter filter) {
@@ -297,14 +281,14 @@ public class Filter implements Serializable {
 	}
 
 	/**
-	 * Used with OP_OR and OP_AND filters. These filters take a collection of
-	 * filters as their value. This method removes a filter from that list.
+	 * Used with OP_OR and OP_AND filters. These filters take a collection of filters as their value. This method
+	 * removes a filter from that list.
 	 */
 	@SuppressWarnings("unchecked")
-    public void remove(Filter filter) {
+	public void remove(Filter filter) {
 		if (!(value instanceof List)) {
 			return;
-			}
+		}
 		((List<Filter>) value).remove(filter);
 	}
 
@@ -363,8 +347,7 @@ public class Filter implements Serializable {
 	}
 
 	/**
-	 * @return true if the operator should have a single Filter specified for
-	 *         the value.
+	 * @return true if the operator should have a single Filter specified for the value.
 	 * 
 	 *         <p>
 	 *         <code>NOT, ALL, SOME, NONE</code>
@@ -374,8 +357,7 @@ public class Filter implements Serializable {
 	}
 
 	/**
-	 * @return true if the operator should have a list of Filters specified for
-	 *         the value.
+	 * @return true if the operator should have a list of Filters specified for the value.
 	 * 
 	 *         <p>
 	 *         <code>AND, OR</code>
@@ -397,7 +379,7 @@ public class Filter implements Serializable {
 	/**
 	 * Get the hashCode
 	 * 
-	 *  @return int
+	 * @return int
 	 */
 	@Override
 	public int hashCode() {
@@ -412,35 +394,35 @@ public class Filter implements Serializable {
 	/**
 	 * Check object is equal or not with Other object
 	 * 
-	 *  @return boolean
+	 * @return boolean
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj){
+		if (this == obj) {
 			return true;
 		}
-		if (obj == null){
+		if (obj == null) {
 			return false;
 		}
-		if (getClass() != obj.getClass()){
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		Filter other = (Filter) obj;
-		if (operator != other.operator){
+		if (operator != other.operator) {
 			return false;
 		}
 		if (property == null) {
-			if (other.property != null){
+			if (other.property != null) {
 				return false;
 			}
-		} else if (!property.equals(other.property)){
+		} else if (!property.equals(other.property)) {
 			return false;
 		}
 		if (value == null) {
-			if (other.value != null){
+			if (other.value != null) {
 				return false;
 			}
-		} else if (!value.equals(other.value)){
+		} else if (!value.equals(other.value)) {
 			return false;
 		}
 		return true;
@@ -449,7 +431,7 @@ public class Filter implements Serializable {
 	/**
 	 * Get the String return type Value
 	 * 
-	 *  @return String
+	 * @return String
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -506,7 +488,7 @@ public class Filter implements Serializable {
 					sb.append("**INVALID VALUE - NOT A FILTER: (" + o + ") **");
 				}
 			}
-			if (first){
+			if (first) {
 				return (operator == Filter.OP_AND ? "AND: " : "OR: ") + "**EMPTY LIST**";
 			}
 
@@ -536,13 +518,14 @@ public class Filter implements Serializable {
 			return "**INVALID OPERATOR: (" + operator + ") - VALUE: " + InternalUtil.paramDisplayString(value) + " **";
 		}
 	}
+
 	/**
 	 * Get the Sql operator by constants
 	 * 
-	 *  @return String
+	 * @return String
 	 */
 	@SuppressWarnings("unchecked")
-    public String getSqlOperator() {
+	public String getSqlOperator() {
 		switch (operator) {
 		case Filter.OP_IN:
 			return " in ";
@@ -595,7 +578,7 @@ public class Filter implements Serializable {
 					sb.append("**INVALID VALUE - NOT A FILTER: (" + o + ") **");
 				}
 			}
-			if (first){
+			if (first) {
 				return (operator == Filter.OP_AND ? " AND " : " OR ") + "**EMPTY LIST**";
 			}
 
@@ -625,5 +608,5 @@ public class Filter implements Serializable {
 			return "**INVALID OPERATOR: (" + operator + ") - VALUE: " + InternalUtil.paramDisplayString(value) + " **";
 		}
 	}
-	
+
 }
