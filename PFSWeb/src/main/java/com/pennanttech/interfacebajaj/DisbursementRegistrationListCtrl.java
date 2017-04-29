@@ -92,58 +92,59 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.MultiLineMessageBox;
 import com.pennanttech.framework.web.components.SearchFilterControl;
+import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.disbursement.DisbursementRequest;
+
 /**
  * ************************************************************<br>
- * This is the controller class for the
- * /WEB-INF/pages/Mandate/MandateRegistration.zul file.<br>
+ * This is the controller class for the /WEB-INF/pages/Mandate/MandateRegistration.zul file.<br>
  * ************************************************************<br>
  * 
  */
 public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvancePayments> implements Serializable {
 
-	private static final long			serialVersionUID	= 1L;
-	private final static Logger			logger				= Logger.getLogger(DisbursementRegistrationListCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private final static Logger logger = Logger.getLogger(DisbursementRegistrationListCtrl.class);
 
-	protected Window					window_DisbursementRegistrationList;
-	protected Borderlayout				borderLayout_DisbursementList;
-	protected Paging					pagingDisbursementList;
-	protected Listbox					listBoxDisbursementRegistration;
+	protected Window window_DisbursementRegistrationList;
+	protected Borderlayout borderLayout_DisbursementList;
+	protected Paging pagingDisbursementList;
+	protected Listbox listBoxDisbursementRegistration;
 
-	protected Listheader				listheader_Disbursement_DisbTypes;
-	protected Listheader				listheader_Disbursement_FinRef;
-	protected Listheader				listheader_Disbursement_FinType;
-	protected Listheader				listheader_Disbursement_Custname;
-	protected Listheader				listheader_Disbursement_BenName;
-	protected Listheader				listheader_Disbursement_BenAcctno;
-	protected Listheader				listheader_Disbursement_Branch;
-	
-	protected Combobox					disbTypes;
-	protected ExtendedCombobox			partnerBank;
-	protected Datebox					fromDate;
-	protected Datebox					toDate;
-	protected ExtendedCombobox			finType;
-	protected ExtendedCombobox			branch;
-	protected Checkbox					qdp;
+	protected Listheader listheader_Disbursement_DisbTypes;
+	protected Listheader listheader_Disbursement_FinRef;
+	protected Listheader listheader_Disbursement_FinType;
+	protected Listheader listheader_Disbursement_Custname;
+	protected Listheader listheader_Disbursement_BenName;
+	protected Listheader listheader_Disbursement_BenAcctno;
+	protected Listheader listheader_Disbursement_Branch;
 
-	protected Listbox					sortOperator_DisbType;
-	protected Listbox					sortOperator_PartnerBank;
-	protected Listbox					sortOperator_FromDate;
-	protected Listbox					sortOperator_ToDate;
-	protected Listbox					sortOperator_FinType;
-	protected Listbox					sortOperator_Branch;
+	protected Combobox disbTypes;
+	protected ExtendedCombobox partnerBank;
+	protected Datebox fromDate;
+	protected Datebox toDate;
+	protected ExtendedCombobox finType;
+	protected ExtendedCombobox branch;
+	protected Checkbox qdp;
 
-	protected Listheader 				listHeader_CheckBox_Name;
-	protected Listcell 					listCell_Checkbox;
-	protected Listitem 					listItem_Checkbox;
-	protected Checkbox 					listHeader_CheckBox_Comp;
-	protected Checkbox 					list_CheckBox;
-	
-	protected Button					button_Search;
-	protected Button					btnDownload;
-	
+	protected Listbox sortOperator_DisbType;
+	protected Listbox sortOperator_PartnerBank;
+	protected Listbox sortOperator_FromDate;
+	protected Listbox sortOperator_ToDate;
+	protected Listbox sortOperator_FinType;
+	protected Listbox sortOperator_Branch;
+
+	protected Listheader listHeader_CheckBox_Name;
+	protected Listcell listCell_Checkbox;
+	protected Listitem listItem_Checkbox;
+	protected Checkbox listHeader_CheckBox_Comp;
+	protected Checkbox list_CheckBox;
+
+	protected Button button_Search;
+	protected Button btnDownload;
+
 	private Map<Long, FinAdvancePayments> disbursementMap = new HashMap<Long, FinAdvancePayments>();
-	
+
 	@Autowired
 	private DisbursementRequest disbursementRequest;
 
@@ -163,15 +164,15 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_DisbursementRegistrationList(Event event) {
 		// Set the page level components.
-		setPageComponents(window_DisbursementRegistrationList, borderLayout_DisbursementList, listBoxDisbursementRegistration, pagingDisbursementList);
+		setPageComponents(window_DisbursementRegistrationList, borderLayout_DisbursementList,
+				listBoxDisbursementRegistration, pagingDisbursementList);
 		setItemRender(new DisbursementListModelItemRenderer());
 
 		// Register buttons and fields.
@@ -180,27 +181,30 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		registerField("LLDATE");
 		registerField("PartnerBankId");
 		registerField("BranchDesc");
-		
-		registerField("FromDate", fromDate,SortOrder.NONE ,sortOperator_FromDate,Operators.DATE);
-		registerField("ToDate", toDate,SortOrder.NONE ,sortOperator_ToDate,Operators.DATE);
-		
+
+		registerField("FromDate", fromDate, SortOrder.NONE, sortOperator_FromDate, Operators.DATE);
+		registerField("ToDate", toDate, SortOrder.NONE, sortOperator_ToDate, Operators.DATE);
+
 		registerField("PartnerBankCode", partnerBank, SortOrder.NONE, sortOperator_PartnerBank, Operators.STRING);
-		registerField("PaymentType", listheader_Disbursement_DisbTypes, SortOrder.NONE, disbTypes, sortOperator_DisbType, Operators.STRING);
+		registerField("PaymentType", listheader_Disbursement_DisbTypes, SortOrder.NONE, disbTypes,
+				sortOperator_DisbType, Operators.STRING);
 		registerField("FinReference", listheader_Disbursement_FinRef, SortOrder.NONE);
-		registerField("FINTYPE", listheader_Disbursement_FinType, SortOrder.NONE, finType, sortOperator_FinType, Operators.STRING);
+		registerField("FINTYPE", listheader_Disbursement_FinType, SortOrder.NONE, finType, sortOperator_FinType,
+				Operators.STRING);
 		registerField("CUSTSHRTNAME", listheader_Disbursement_Custname, SortOrder.NONE);
 		registerField("BENEFICIARYNAME", listheader_Disbursement_BenName, SortOrder.NONE);
 		registerField("BENEFICIARYACCNO", listheader_Disbursement_BenAcctno, SortOrder.NONE);
-		registerField("BranchCode", listheader_Disbursement_Branch, SortOrder.NONE, branch, sortOperator_Branch, Operators.STRING);
-			
+		registerField("BranchCode", listheader_Disbursement_Branch, SortOrder.NONE, branch, sortOperator_Branch,
+				Operators.STRING);
+
 		// Render the page and display the data.
 		doRenderPage();
 		this.disbursementMap.clear();
 		doSetFieldProperties();
-		
-		if(listBoxDisbursementRegistration.getItems().size() > 0){
+
+		if (listBoxDisbursementRegistration.getItems().size() > 0) {
 			listHeader_CheckBox_Comp.setDisabled(false);
-		} else  {
+		} else {
 			listHeader_CheckBox_Comp.setDisabled(true);
 		}
 	}
@@ -218,23 +222,23 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			listHeader_CheckBox_Name.getChildren().clear();
 		}
 		listHeader_CheckBox_Name.appendChild(listHeader_CheckBox_Comp);
-		
+
 		this.finType.setMaxlength(LengthConstants.LEN_MASTER_CODE);
 		this.finType.setModuleName("FinanceType");
 		this.finType.setValueColumn("FinType");
 		this.finType.setDescColumn("FinTypeDesc");
 		this.finType.setValidateColumns(new String[] { "FinType" });
 		this.finType.setMandatoryStyle(true);
-		
+
 		fillComboBox(this.disbTypes, "", PennantStaticListUtil.getPaymentTypes(true), "");
-		
+
 		this.partnerBank.setModuleName("PartnerBank");
 		this.partnerBank.setDisplayStyle(2);
 		this.partnerBank.setValueColumn("PartnerBankCode");
 		this.partnerBank.setDescColumn("PartnerBankName");
 		this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
 		this.partnerBank.setMandatoryStyle(true);
-		
+
 		this.branch.setModuleName("BankBranch");
 		this.branch.setDisplayStyle(2);
 		this.branch.setValueColumn("BranchCode");
@@ -243,39 +247,37 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	}
 
 	/**
-	 * Filling the MandateIdMap details and  based on checked and unchecked events of
-	 * listCellCheckBox.
+	 * Filling the MandateIdMap details and based on checked and unchecked events of listCellCheckBox.
 	 */
 	public void onClick_listHeaderCheckBox(ForwardEvent event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		for (int i = 0; i < listBoxDisbursementRegistration.getItems().size(); i++) {
 			Listitem listitem = listBoxDisbursementRegistration.getItems().get(i);
 			Checkbox cb = (Checkbox) listitem.getChildren().get(0).getChildren().get(0);
 			cb.setChecked(listHeader_CheckBox_Comp.isChecked());
 		}
-		
+
 		if (listHeader_CheckBox_Comp.isChecked() && listBoxDisbursementRegistration.getItems().size() > 0) {
 			disbursementMap = getDisbursementDetails();
 		} else {
 			disbursementMap.clear();
 		}
-		
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * Filling the MandateIdMap details based on checked and unchecked events of
-	 * listCellCheckBox.
+	 * Filling the MandateIdMap details based on checked and unchecked events of listCellCheckBox.
 	 */
 	public void onClick_listCellCheckBox(ForwardEvent event) throws Exception {
-		logger.debug("Entering");
-		
+		logger.debug(Literal.ENTERING);
+
 		Checkbox checkBox = (Checkbox) event.getOrigin().getTarget();
-		
+
 		FinAdvancePayments advancePayments = (FinAdvancePayments) checkBox.getAttribute("finAdvancePayments");
-		
-		if(checkBox.isChecked()){
+
+		if (checkBox.isChecked()) {
 			disbursementMap.put(advancePayments.getPaymentId(), advancePayments);
 		} else {
 			disbursementMap.remove(advancePayments.getPaymentId());
@@ -286,22 +288,21 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		} else {
 			listHeader_CheckBox_Comp.setChecked(false);
 		}
-		
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
-	
-	
+
 	/**
 	 * Item renderer for listItems in the listBox.
 	 */
 	private class DisbursementListModelItemRenderer implements ListitemRenderer<FinAdvancePayments>, Serializable {
 		private static final long serialVersionUID = 1L;
-	
+
 		@Override
 		public void render(Listitem item, FinAdvancePayments payments, int count) throws Exception {
-			
+
 			Listcell lc;
-			
+
 			lc = new Listcell();
 			list_CheckBox = new Checkbox();
 			list_CheckBox.setAttribute("finAdvancePayments", payments);
@@ -313,35 +314,34 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 				list_CheckBox.setChecked(disbursementMap.containsKey(payments.getPaymentId()));
 			}
 			lc.setParent(item);
-			
+
 			lc = new Listcell(payments.getPaymentType());
 			lc.setParent(item);
-			
+
 			lc = new Listcell(payments.getFinReference());
 			lc.setParent(item);
-				
+
 			lc = new Listcell(payments.getFinType());
 			lc.setParent(item);
-			
+
 			lc = new Listcell(payments.getCustShrtName());
 			lc.setParent(item);
-			
+
 			lc = new Listcell(payments.getBeneficiaryName());
 			lc.setParent(item);
-			
+
 			lc = new Listcell(payments.getBeneficiaryAccNo());
 			lc.setParent(item);
-			
+
 			lc = new Listcell(payments.getBranchDesc());
 			lc.setParent(item);
-			
+
 			item.setAttribute("finAdvancePayments", payments);
-	
+
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onDisbursementDoubleClicked");
 		}
 	}
 
-	 
 	/**
 	 * Getting the Disbursement List using JdbcSearchObject with search criteria..
 	 */
@@ -358,15 +358,16 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		searchObject.addField("BranchDesc");
 		searchObject.addField("PARTNERBANKCODE");
 		searchObject.addTabelName(this.tableName);
-		
+
 		for (SearchFilterControl searchControl : searchControls) {
 			Filter filter = searchControl.getFilter();
 			if (filter != null) {
 				searchObject.addFilter(filter);
 			}
 		}
-		
-		List<Map<Long, FinAdvancePayments>> list = getPagedListWrapper().getPagedListService().getBySearchObject(searchObject);
+
+		List<Map<Long, FinAdvancePayments>> list = getPagedListWrapper().getPagedListService().getBySearchObject(
+				searchObject);
 
 		Map<Long, FinAdvancePayments> disbMap = new HashMap<Long, FinAdvancePayments>();
 
@@ -379,16 +380,15 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 				finAdvancePayments.setPaymentType(String.valueOf(map.get("PaymentType")));
 				finAdvancePayments.setPartnerBankID(Long.parseLong(String.valueOf(map.get("PartnerBankId"))));
 				finAdvancePayments.setPartnerbankCode(String.valueOf(map.get("PARTNERBANKCODE")));
-				
+
 				disbMap.put(paymentid, finAdvancePayments);
 			}
 		}
 		return disbMap;
 	}
-	
+
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -399,13 +399,13 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		doSetValidations();
 		search();
 
-		if(listBoxDisbursementRegistration.getItems().size() > 0){
+		if (listBoxDisbursementRegistration.getItems().size() > 0) {
 			listHeader_CheckBox_Comp.setDisabled(false);
-		} else  {
+		} else {
 			listHeader_CheckBox_Comp.setDisabled(true);
 		}
 	}
-	
+
 	private void doSetValidations() {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
@@ -438,11 +438,11 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
-		if(this.fromDate.getValue()!=null && this.toDate.getValue()!= null){
-		if (this.fromDate.getValue().compareTo(this.toDate.getValue()) == 1) {
-			throw new WrongValueException(this.toDate, "To date should be greater than or equal to From date.");
-		}
+
+		if (this.fromDate.getValue() != null && this.toDate.getValue() != null) {
+			if (this.fromDate.getValue().compareTo(this.toDate.getValue()) == 1) {
+				throw new WrongValueException(this.toDate, "To date should be greater than or equal to From date.");
+			}
 		}
 	}
 
@@ -451,11 +451,11 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.partnerBank.setConstraint("");
 		this.finType.setConstraint("");
 
-		logger.debug("Leaving ");}
+		logger.debug("Leaving ");
+	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -466,13 +466,12 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.listHeader_CheckBox_Comp.setChecked(false);
 		this.listBoxDisbursementRegistration.getItems().clear();
 
-		if(listBoxDisbursementRegistration.getItems().size() > 0){
+		if (listBoxDisbursementRegistration.getItems().size() > 0) {
 			listHeader_CheckBox_Comp.setDisabled(false);
-		} else  {
+		} else {
 			listHeader_CheckBox_Comp.setDisabled(true);
 		}
 	}
-	
 
 	/**
 	 * when the "Upload" button is clicked. <br>
@@ -493,35 +492,39 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		} else {
 			disbushmentList = new ArrayList<FinAdvancePayments>(disbursementMap.values());
 		}
-		 
-		if(listBoxDisbursementRegistration.getItems().size() > 0){
+
+		if (listBoxDisbursementRegistration.getItems().size() > 0) {
 			listHeader_CheckBox_Comp.setDisabled(false);
-		} else  {
+		} else {
 			listHeader_CheckBox_Comp.setDisabled(true);
 		}
-		
+
 		if (disbushmentList.isEmpty()) {
 			MessageUtil.showErrorMessage(Labels.getLabel("MandateDataList_NoEmpty"));
 			return;
 		}
-		
+
 		// Show a confirm box
-		
-		String msg = "You have selected " + this.disbursementMap.size() + " Disbursement(s) out of " + this.pagingDisbursementList.getTotalSize()  + ".\n Do you want to continue?";
+
+		String msg = "You have selected " + this.disbursementMap.size() + " Disbursement(s) out of "
+				+ this.pagingDisbursementList.getTotalSize() + ".\n Do you want to continue?";
 		MultiLineMessageBox.doSetTemplate();
-		int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Conformation"), MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
+		int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Conformation"), MultiLineMessageBox.YES
+				| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
 		if (conf == MultiLineMessageBox.NO) {
 			return;
 		}
 		try {
 			btnDownload.setDisabled(true);
-			disbursementRequest.sendReqest(this.finType.getValue(), disbushmentList, getUserWorkspace().getLoggedInUser().getLoginUsrID());
-			Map<String,Object> args = new HashMap<String, Object>();
+			disbursementRequest.sendReqest(this.finType.getValue(), disbushmentList, getUserWorkspace()
+					.getLoggedInUser().getLoginUsrID());
+			Map<String, Object> args = new HashMap<String, Object>();
 			args.put("module", "DISBURSEMENT");
-			
+
 			MessageUtil.showMessage("File download process initiated.");
-			createNewPage("/WEB-INF/pages/InterfaceBajaj/DisbursementFileDownloadList.zul", "menu_Item_FileDownlaods", args);
-			
+			createNewPage("/WEB-INF/pages/InterfaceBajaj/DisbursementFileDownloadList.zul", "menu_Item_FileDownlaods",
+					args);
+
 		} finally {
 			this.disbursementMap.clear();
 			this.listHeader_CheckBox_Comp.setChecked(false);
@@ -530,16 +533,17 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			logger.debug("Leaving");
 		}
 	}
-	
+
 	protected void createNewPage(String uri, String tabName, Map<String, Object> args) {
 		final Borderlayout bl = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
 		final Center center = bl.getCenter();
-		final Tabs tabs = (Tabs) center.getFellow("divCenter").getFellow("tabBoxIndexCenter").getFellow("tabsIndexCenter");	
-		
+		final Tabs tabs = (Tabs) center.getFellow("divCenter").getFellow("tabBoxIndexCenter")
+				.getFellow("tabsIndexCenter");
+
 		Tab tab = null;
-		if(tabs.getFellowIfAny(tabName.trim().replace("menu_Item_", "tab_"))  != null) {
-			tab = (Tab)tabs.getFellow(tabName.trim().replace("menu_Item_", "tab_"));		
-			if(tab != null) {
+		if (tabs.getFellowIfAny(tabName.trim().replace("menu_Item_", "tab_")) != null) {
+			tab = (Tab) tabs.getFellow(tabName.trim().replace("menu_Item_", "tab_"));
+			if (tab != null) {
 				tab.close();
 			}
 		}
@@ -555,7 +559,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		tabpanel.setHeight("100%");
 		tabpanel.setStyle("padding: 0px;");
 		tabpanel.setParent(tabpanels);
-			
+
 		Executions.createComponents(uri, tabpanel, args);
 		tab.setSelected(true);
 	}

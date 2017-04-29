@@ -71,7 +71,7 @@ import com.pennanttech.pff.core.Literal;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the /WEB-INF/pages/ApplicationMaster/FileDownload/FileDownloadList.zul file.<br>
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/FileDownload/DisbursementFileDownloadList.zul file.<br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
@@ -160,7 +160,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 	}
 
 	public void onClick_Downlaod(ForwardEvent event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 
 			Button downloadButt = (Button) event.getOrigin().getTarget();
@@ -190,7 +190,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -222,7 +222,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 				lc = new Listcell(fileDownlaod.getFileName());
 			}
 			lc.setParent(item);
-			
+
 			lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());
 			lc.setParent(item);
 

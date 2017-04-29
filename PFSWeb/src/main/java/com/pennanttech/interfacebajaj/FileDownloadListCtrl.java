@@ -198,7 +198,7 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 	}
 
 	public void onClick_Downlaod(ForwardEvent event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 
 			Button downloadButt = (Button) event.getOrigin().getTarget();
@@ -228,7 +228,7 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

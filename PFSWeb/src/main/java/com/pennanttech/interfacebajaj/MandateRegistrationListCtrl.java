@@ -174,7 +174,6 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	private transient boolean validationOn;
 
 	private Map<Long, String> mandateIdMap = new HashMap<Long, String>();
-	 
 
 	/**
 	 * default constructor.<br>
@@ -199,9 +198,10 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	 */
 	public void onCreate$window_MandateRegistrationList(Event event) {
 		// Set the page level components.
-		setPageComponents(window_MandateRegistrationList, borderLayout_MandateList, listBoxMandateRegistration, pagingMandateList);
+		setPageComponents(window_MandateRegistrationList, borderLayout_MandateList, listBoxMandateRegistration,
+				pagingMandateList);
 		setItemRender(new MandateListModelItemRenderer());
-	
+
 		// Register buttons and fields.
 		registerButton(button_MandateList_MandateSearch);
 
@@ -356,7 +356,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 
 			item.setAttribute("id", mandate.getId());
 
-			//ComponentsCtrl.applyForward(item, "onDoubleClick=onMandateItemDoubleClicked");
+			// ComponentsCtrl.applyForward(item, "onDoubleClick=onMandateItemDoubleClicked");
 		}
 	}
 
@@ -368,7 +368,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		JdbcSearchObject<Map<String, Long>> searchObject = new JdbcSearchObject<>();
 		searchObject.addFilterEqual("active", 1);
 		searchObject.addFilterEqual("Status", MandateConstants.STATUS_NEW);
-		//searchObject.addFilter(Filter.isNotNull("OrgReference"));
+		// searchObject.addFilter(Filter.isNotNull("OrgReference"));
 		searchObject.addField("mandateID");
 		searchObject.addTabelName(this.tableName);
 
@@ -383,10 +383,10 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		String toDate = PennantAppUtil.formateDate(this.toDate.getValue(), PennantConstants.DBDateFormat);
 
 		StringBuilder whereClause = new StringBuilder();
-		whereClause.append("(INPUTDATE >= ").append("'").append(fromDate).append("'").append(" AND INPUTDATE <= ").append("'").append(toDate).append("'").append(")");
+		whereClause.append("(INPUTDATE >= ").append("'").append(fromDate).append("'").append(" AND INPUTDATE <= ")
+				.append("'").append(toDate).append("'").append(")");
 		searchObject.addWhereClause(whereClause.toString());
-		
-		
+
 		List<Map<String, Long>> list = getPagedListWrapper().getPagedListService().getBySearchObject(searchObject);
 		List<Long> mandateLst = new ArrayList<Long>();
 
@@ -449,10 +449,11 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		searchObject.addFilterEqual("active", 1);
 		searchObject.addFilterEqual("Status", MandateConstants.STATUS_NEW);
 		// OrgReference
-		//searchObject.addFilter(Filter.isNotNull("OrgReference"));
+		// searchObject.addFilter(Filter.isNotNull("OrgReference"));
 
 		StringBuilder whereClause = new StringBuilder();
-		whereClause.append("(INPUTDATE >= ").append("'").append(fromDate).append("'").append(" AND INPUTDATE <= ").append("'").append(toDate).append("'").append(")");
+		whereClause.append("(INPUTDATE >= ").append("'").append(fromDate).append("'").append(" AND INPUTDATE <= ")
+				.append("'").append(toDate).append("'").append(")");
 		this.searchObject.addWhereClause(whereClause.toString());
 
 		this.listbox.setItemRenderer(new MandateListModelItemRenderer());
@@ -470,7 +471,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		for (SearchFilterControl searchControl : searchControls) {
 			Filter filter = searchControl.getFilter();
 			if (filter != null) {
-				if (App.DATABASE == Database.ORACLE && "recordType".equals(filter.getProperty()) && Filter.OP_NOT_EQUAL == filter.getOperator()) {
+				if (App.DATABASE == Database.ORACLE && "recordType".equals(filter.getProperty())
+						&& Filter.OP_NOT_EQUAL == filter.getOperator()) {
 					Filter[] filters = new Filter[2];
 					filters[0] = Filter.isNull(filter.getProperty());
 					filters[1] = filter;
@@ -484,7 +486,6 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		logger.debug("Leaving");
 	}
 
-	
 	public void onClick$btnbranchDetails(Event event) {
 		logger.debug("Entering  " + event.toString());
 
@@ -493,7 +494,6 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		logger.debug("Leaving" + event.toString());
 	}
 
-	
 	private void doSetValidations() {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -513,9 +513,9 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
-		
+
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -523,21 +523,20 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		if (this.fromDate.getValue().compareTo(this.toDate.getValue()) == 1) {
 			throw new WrongValueException(this.toDate, "To date should be greater than or equal to From date.");
 		}
 
 	}
 
-
 	private void doRemoveValidation() {
 		logger.debug("Entering ");
 		this.fromDate.setConstraint("");
 		this.toDate.setConstraint("");
-		
+
 		logger.debug("Leaving ");
-		
+
 	}
 
 	/**
@@ -652,8 +651,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		}
 
 		// Show a confirm box
-		String msg = "You have selected " + this.mandateIdMap.size() + " Mandate(s) out of " + this.pagingMandateList.getTotalSize()
-				+ ".\nDo you want to continue?";
+		String msg = "You have selected " + this.mandateIdMap.size() + " Mandate(s) out of "
+				+ this.pagingMandateList.getTotalSize() + ".\nDo you want to continue?";
 		MultiLineMessageBox.doSetTemplate();
 		int conf = MultiLineMessageBox.show(msg, Labels.getLabel("message.Conformation"), MultiLineMessageBox.YES
 				| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
@@ -682,10 +681,9 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			dataEngine.setUserName(getUserWorkspace().getLoggedInUser().getUserName());
 			dataEngine.exportData("MANDATES_EXPORT");
 
-			
-			Map<String,Object> args = new HashMap<String, Object>();
+			Map<String, Object> args = new HashMap<String, Object>();
 			args.put("module", "MANDATES");
-			
+
 			MessageUtil.showMessage("File Download process initiated.");
 			createNewPage("/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul", "menu_Item_FileDownlaods", args);
 
@@ -737,7 +735,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
-	
+
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
