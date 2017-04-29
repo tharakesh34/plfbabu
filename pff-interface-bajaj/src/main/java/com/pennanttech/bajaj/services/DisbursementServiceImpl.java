@@ -178,5 +178,25 @@ public class DisbursementServiceImpl extends BajajServices implements Disburseme
 			}
 		}
 	}
+	@Override
+	public Object receiveDisbursementResponse(Object object) throws Exception {
+		@SuppressWarnings("unchecked")
+		Map<String, Object> disbursement = (Map<String, Object>)object;
+		
+		long paymentId = (Long)disbursement.get("PAYMENTID");
+		String status = (String)disbursement.get("STATUS");
+		
+		if("E".equals(status)) {
+			return disbursement;
+		}
+		
+		
+		// Reverse the accounting postings
+		
+		
+		//SELECT * FROM FINADVANCEPAYMENTS WHERE STATUS= 'R';
+		
+		return disbursement;
+	}
 
 }
