@@ -241,22 +241,6 @@ public class Search implements IMutableSearch, Serializable {
 		return this;
 	}
 
-	/**
-	 * Add a filter that uses the ALL operator.
-	 */
-	public Search addFilterAll(String property, Filter filter) {
-		SearchUtil.addFilterAll(this, property, filter);
-		return this;
-	}
-
-	/**
-	 * Add a filter that uses the NONE operator.
-	 */
-	public Search addFilterNone(String property, Filter filter) {
-		SearchUtil.addFilterNone(this, property, filter);
-		return this;
-	}
-
 	public void removeFilter(Filter filter) {
 		SearchUtil.removeFilter(this, filter);
 	}

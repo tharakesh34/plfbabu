@@ -148,13 +148,6 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Add a filter that uses the ALL operator.
-	 */
-	public static void addFilterAll(IMutableSearch search, String property, Filter filter) {
-		addFilter(search, Filter.all(property, filter));
-	}
-
-	/**
 	 * Add a filter that uses the AND operator.
 	 * 
 	 * <p>
@@ -238,13 +231,6 @@ public class SearchUtil {
 	 */
 	public static void addFilterLike(IMutableSearch search, String property, String value) {
 		addFilter(search, Filter.like(property, value));
-	}
-
-	/**
-	 * Add a filter that uses the NONE operator.
-	 */
-	public static void addFilterNone(IMutableSearch search, String property, Filter filter) {
-		addFilter(search, Filter.none(property, filter));
 	}
 
 	/**

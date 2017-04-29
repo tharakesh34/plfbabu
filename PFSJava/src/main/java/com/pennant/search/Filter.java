@@ -26,12 +26,21 @@ import com.pennanttech.pff.core.App.Database;
 public class Filter implements Serializable {
 	private static final long	serialVersionUID	= 1L;
 
-	public static final int		OP_EQUAL			= 0, OP_NOT_EQUAL = 1, OP_LESS_THAN = 2, OP_GREATER_THAN = 3,
-			OP_LESS_OR_EQUAL = 4, OP_GREATER_OR_EQUAL = 5, OP_LIKE = 6, OP_ILIKE = 7, OP_IN = 8, OP_NOT_IN = 9,
-			OP_NULL = 10, OP_NOT_NULL = 11, OP_EMPTY = 12, OP_NOT_EMPTY = 13;
+	public static final int		OP_EQUAL			= 0;
+	public static final int		OP_NOT_EQUAL		= 1;
+	public static final int		OP_LESS_THAN		= 2;
+	public static final int		OP_GREATER_THAN		= 3;
+	public static final int		OP_LESS_OR_EQUAL	= 4;
+	public static final int		OP_GREATER_OR_EQUAL	= 5;
+	public static final int		OP_NULL				= 10;
+	public static final int		OP_NOT_NULL			= 11;
+	public static final int		OP_LIKE				= 6;
+	public static final int		OP_BETWEEN			= 300;									// Not implemented.
+	public static final int		OP_IN				= 8;
+	public static final int		OP_NOT_IN			= 9;
+
+	public static final int		OP_ILIKE			= 7, OP_EMPTY = 12, OP_NOT_EMPTY = 13;
 	public static final int		OP_AND				= 100, OP_OR = 101, OP_NOT = 102;
-	public static final int		OP_ALL				= 201, OP_NONE = 202;
-	public static final int		OP_BETWEEN			= 300;
 
 	/**
 	 * The name of the property to filter on.
@@ -45,8 +54,10 @@ public class Filter implements Serializable {
 
 	/**
 	 * The type of comparison to do between the property and the value.<br/>
-	 * <code>OP_EQAUL, OP_NOT_EQUAL, OP_LESS_THAN, OP_GREATER_THAN, LESS_OR_EQUAL, OP_GREATER_OR_EQUAL, OP_IN, OP_NOT_IN, OP_LIKE, OP_ILIKE, OP_NULL, OP_NOT_NULL, OP_EMPTY, OP_NOT_EMPTY, OP_SOME, OP_ALL, OP_NONE, OP_AND, OP_OR, OP_NOT</code>
-	 * .
+	 * Comparison Operators:
+	 * <code>OP_EQUAL, OP_NOT_EQUAL, OP_LESS_THAN, OP_GREATER_THAN, OP_LESS_OR_EQUAL, OP_GREATER_OR_EQUAL, 
+	 * OP_NULL, OP_NOT_NULL, OP_LIKE, OP_IN, OP_NOT_IN
+	 * OP_ILIKE, OP_EMPTY, OP_NOT_EMPTY, OP_SOME, OP_ALL, OP_NONE, OP_AND, OP_OR, OP_NOT</code>
 	 */
 	protected int				operator;
 
@@ -231,20 +242,6 @@ public class Filter implements Serializable {
 	 */
 	public static Filter not(Filter filter) {
 		return new Filter("NOT", filter, OP_NOT);
-	}
-
-	/**
-	 * Create a new Filter using the ALL operator.
-	 */
-	public static Filter all(String property, Filter filter) {
-		return new Filter(property, filter, OP_ALL);
-	}
-
-	/**
-	 * Create a new Filter using the NONE operator.
-	 */
-	public static Filter none(String property, Filter filter) {
-		return new Filter(property, filter, OP_NONE);
 	}
 
 	/**
@@ -478,16 +475,6 @@ public class Filter implements Serializable {
 				return "NOT: **INVALID VALUE - NOT A FILTER: (" + value + ") **";
 			}
 			return "not " + value.toString();
-		case Filter.OP_ALL:
-			if (!(value instanceof Filter)) {
-				return "ALL: **INVALID VALUE - NOT A FILTER: (" + value + ") **";
-			}
-			return "all " + property + " {" + value.toString() + "}";
-		case Filter.OP_NONE:
-			if (!(value instanceof Filter)) {
-				return "NONE: **INVALID VALUE - NOT A FILTER: (" + value + ") **";
-			}
-			return "none " + property + " {" + value.toString() + "}";
 		default:
 			return "**INVALID OPERATOR: (" + operator + ") - VALUE: " + InternalUtil.paramDisplayString(value) + " **";
 		}
@@ -563,16 +550,6 @@ public class Filter implements Serializable {
 				return "NOT: **INVALID VALUE - NOT A FILTER: (" + value + ") **";
 			}
 			return " not ";
-		case Filter.OP_ALL:
-			if (!(value instanceof Filter)) {
-				return "ALL: **INVALID VALUE - NOT A FILTER: (" + value + ") **";
-			}
-			return " all ";
-		case Filter.OP_NONE:
-			if (!(value instanceof Filter)) {
-				return "NONE: **INVALID VALUE - NOT A FILTER: (" + value + ") **";
-			}
-			return " none ";
 		default:
 			return "**INVALID OPERATOR: (" + operator + ") - VALUE: " + InternalUtil.paramDisplayString(value) + " **";
 		}
