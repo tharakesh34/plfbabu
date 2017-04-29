@@ -255,5 +255,18 @@
 			update REJECTFINANCEMAIN set DueBucket=0;
 		</sql>
 	</changeSet>
+	<changeSet id="28" author="satish">
+	<sql>
+insert into SMTparameters values('PROVISION_RULE','Provision rule','String',1,'PRVRULE',8,0,null,null,'Provision Rule',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+insert into SMTparameters values('PROVISION_ON_TOTAL','Provision Calculate on Total','int ',1,0,1,0,null,null,'Provision Rule',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+insert into SMTparameters values('IGNORING_BUCKET','Ignore Bucket Percentage','Double',1,0,6,0,null,null,'Provision Rule',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+	
+	</sql>
+	
+	
+	
+	</changeSet>
+	
+	
 
 </databaseChangeLog>
