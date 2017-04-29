@@ -1116,4 +1116,16 @@ update reportconfiguration set reportjaspername='NPA_Reports' where menuitemcode
 			);	
 		</sql>
 	</changeSet>
+	<changeSet id="65" author="Srikanth">
+	<addColumn tableName="FINADVANCEPAYMENTS">
+		<column name="TransactionRef" type="varchar(20)" />
+		<column name="RejectReason" type="varchar(100)" />
+	</addColumn>
+</changeSet>
+<changeSet id="66" author="Srikanth">
+	<addColumn tableName="FINADVANCEPAYMENTS_Temp">
+		<column name="TransactionRef" type="varchar(20)" />
+		<column name="RejectReason" type="varchar(100)" />
+	</addColumn>
+</changeSet>
 </databaseChangeLog>

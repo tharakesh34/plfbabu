@@ -22,4 +22,10 @@
 			<column name="CostCenterID" type="bigint"/>
 		</addColumn>
 	</changeSet>
+	<changeSet id="04" author="Srikanth">
+	<addColumn tableName="ADTFINADVANCEPAYMENTS">
+		<column name="TransactionRef" type="varchar(20)" />
+		<column name="RejectReason" type="varchar(100)" />
+	</addColumn>
+</changeSet>
 </databaseChangeLog>
