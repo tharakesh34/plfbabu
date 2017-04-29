@@ -431,16 +431,7 @@ public class SecurityRoleSearchCtrl extends GFCBaseCtrl<SecurityRole>  {
 		}
 		// Default Sort on the table
 		so.addSort("RoleID", false);
-		if (logger.isDebugEnabled()) {
-			final List<Filter> lf = so.getFilters();
-			for (final Filter filter : lf) {
-				logger.debug(filter.getProperty() + " / " + filter.getValue().toString());
 
-				if (Filter.OP_ILIKE == filter.getOperator()) {
-					logger.debug(filter.getOperator());
-				}
-			}
-		}
 		/*Here object is either SecurityRoleListCtrl object or securityRoleGroupsListCtrl object  */
 		// store the searchObject for reReading
 		object.getClass().getMethod("setSearchObj"

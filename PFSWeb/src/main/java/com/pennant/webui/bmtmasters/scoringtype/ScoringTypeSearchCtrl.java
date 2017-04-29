@@ -332,17 +332,6 @@ public class ScoringTypeSearchCtrl extends GFCBaseCtrl<ScoringType>  {
 		// Default Sort on the table
 		so.addSort("ScoType", false);
 
-		if (logger.isDebugEnabled()) {
-			final List<Filter> lf = so.getFilters();
-			for (final Filter filter : lf) {
-				logger.debug(filter.getProperty() + " / " + filter.getValue().toString());
-
-				if (Filter.OP_ILIKE == filter.getOperator()) {
-					logger.debug(filter.getOperator());
-				}
-			}
-		}
-
 		// store the searchObject for reReading
 		this.scoringTypeCtrl.setSearchObj(so);
 		final Listbox listBox = this.scoringTypeCtrl.listBoxScoringType;

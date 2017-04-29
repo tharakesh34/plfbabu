@@ -1034,26 +1034,11 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl<CorporateCust
 		// Default Sort on the table
 		so.addSort("CustId", false);
 
-		if (logger.isDebugEnabled()) {
-			final List<Filter> lf = so.getFilters();
-			for (final Filter filter : lf) {
-				logger.debug(filter.getProperty() + " / " + filter.getValue().toString());
-
-				if (Filter.OP_ILIKE == filter.getOperator()) {
-					logger.debug(filter.getOperator());
-				}
-			}
-		}
-
-		// store the searchObject for reReading
-		//this.corporateCustomerDetailCtrl.setSearchObj(so);
-
 		final Listbox listBox = this.corporateCustomerDetailCtrl.listBoxCorporateCustomerDetail;
 		final Paging paging = this.corporateCustomerDetailCtrl.pagingCorporateCustomerDetailList;
 
 		// set the model to the listBox with the initial resultSet get by the DAO method.
 		((PagedListWrapper<CorporateCustomerDetail>) listBox.getModel()).init(so, listBox, paging);
-		//this.corporateCustomerDetailCtrl.setSearchObj(so);
 
 		this.label_CorporateCustomerDetailSearchResult.setValue(Labels.getLabel(
 				"label_CorporateCustomerDetailSearchResult.value") + " "

@@ -361,16 +361,6 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup>  {
 		// Default Sort on the table
 		so.addSort("GrpID", false);
 
-		if (logger.isDebugEnabled()) {
-			final List<Filter> lf = so.getFilters();
-			for (final Filter filter : lf) {
-				logger.debug(filter.getProperty() + " / " + filter.getValue().toString());
-
-				if (Filter.OP_ILIKE == filter.getOperator()) {
-					logger.debug(filter.getOperator());
-				}
-			}
-		}
 		/*Here object is over handed parameter .object can be instance of securityGroupListCtrl
 		 * or securityGroupRightsListCtrl*/
 		// store the searchObject for reReading
