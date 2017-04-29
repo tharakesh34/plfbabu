@@ -5490,6 +5490,7 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="disbursementPostings" ref="disbursementPostings" />
 	</bean>
 
 
@@ -6352,6 +6353,7 @@
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
+		<property name="postingsDAO" ref="postingsDAO" />
 	</bean>
 
 	<!--============ Rule Execution Util ============== -->

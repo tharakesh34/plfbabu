@@ -1078,6 +1078,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		aFinAdvancePayments.setLinkedTranId(0);
 		doRemoveValidation();
 		doClearMessage();
 

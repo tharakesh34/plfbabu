@@ -171,11 +171,11 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 		selectSql.append(" LiabilityHoldName, BeneficiaryName,BeneficiaryAccNo, Description,PaymentType,BankCode,  ");
 		selectSql.append(" LlReferenceNo, LlDate, CustContribution, SellerContribution, Remarks, ");
 		selectSql.append(" PayableLoc, PrintingLoc, ValueDate, BankBranchID, PhoneCountryCode, PhoneAreaCode, ");
-		selectSql.append(" PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy,POIssued,PartnerBankID, ");
+		selectSql.append(" PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy,POIssued,PartnerBankID,LinkedTranId,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",BranchCode,BranchBankCode,BranchBankName,BranchDesc,BankName,City,IFSC,partnerbankCode,PartnerBankName");
+			selectSql.append(",BranchCode,BranchBankCode,BranchBankName,BranchDesc,BankName,City,IFSC,partnerbankCode,PartnerBankName,AcType");
 		}
 		selectSql.append(" From FinAdvancePayments");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -260,14 +260,14 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 		insertSql.append(" LiabilityHoldName, BeneficiaryName, BeneficiaryAccNo,Description, PaymentType, ");
 		insertSql.append("  LlReferenceNo, LlDate, CustContribution, SellerContribution, Remarks,BankCode, ");
 		insertSql.append(" PayableLoc, PrintingLoc, ValueDate, BankBranchID, PhoneCountryCode, PhoneAreaCode, ");
-		insertSql.append(" PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy,POIssued,PartnerBankID, ");
+		insertSql.append(" PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy,POIssued,PartnerBankID,LinkedTranId,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:PaymentId, :FinReference, :PaymentSeq ,:DisbSeq, :PaymentDetail, :AmtToBeReleased,");
 		insertSql.append("  :LiabilityHoldName, :BeneficiaryName,:BeneficiaryAccNo, :Description, :PaymentType, ");
 		insertSql.append(" :LlReferenceNo, :LlDate, :CustContribution,:SellerContribution, :Remarks, :BankCode,");
 		insertSql.append(" :PayableLoc, :PrintingLoc, :ValueDate, :BankBranchID, :PhoneCountryCode, :PhoneAreaCode, ");
-		insertSql.append(" :PhoneNumber, :ClearingDate, :Status, :Active, :InputDate, :DisbCCy, :POIssued, :PartnerBankID,");
+		insertSql.append(" :PhoneNumber, :ClearingDate, :Status, :Active, :InputDate, :DisbCCy, :POIssued, :PartnerBankID, :LinkedTranId,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		logger.debug("insertSql: " + insertSql.toString());
@@ -407,5 +407,35 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
+	
+	@SuppressWarnings("serial")
+	@Override
+	public void update(long paymentId, long linkedTranId) {
+		int recordCount = 0;
+		logger.debug("Entering");
+		FinAdvancePayments finAdvancePayments= new FinAdvancePayments();
+		finAdvancePayments.setLinkedTranId(linkedTranId);
+		finAdvancePayments.setPaymentId(paymentId);
+		
+		
+		StringBuilder updateSql = new StringBuilder("Update FinAdvancePayments");
+		updateSql.append(" Set LinkedTranId = :LinkedTranId ");
+		updateSql.append(" Where PaymentId = PaymentId");
+
+		logger.debug("updateSql: " + updateSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		if (recordCount <= 0) {
+			logger.debug("Error Update Method Count :" + recordCount);
+			ErrorDetails errorDetails = getError("41004", finAdvancePayments.getFinReference(), finAdvancePayments
+					.getUserDetails().getUsrLanguage());
+			throw new DataAccessException(errorDetails.getError()) {
+			};
+		}
+		logger.debug("Leaving");
+	}
+
 
 }

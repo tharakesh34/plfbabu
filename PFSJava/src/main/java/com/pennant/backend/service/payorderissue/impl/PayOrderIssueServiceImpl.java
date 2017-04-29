@@ -42,18 +42,14 @@
  */
 package com.pennant.backend.service.payorderissue.impl;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -69,13 +65,11 @@ import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.payorderissue.PayOrderIssueService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -92,6 +86,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	private FinanceDisbursementDAO	financeDisbursementDAO;
 	private PostingsPreparationUtil	postingsPreparationUtil;
 	private FinanceMainDAO			financeMainDAO;
+	private DisbursementPostings	disbursementPostings;
 
 	public PayOrderIssueServiceImpl() {
 		super();
@@ -278,31 +273,29 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		BeanUtils
 				.copyProperties((PayOrderIssueHeader) auditHeader.getAuditDetail().getModelData(), payOrderIssueHeader);
 		calcluatePOHeaderDetails(payOrderIssueHeader);
+		
 
 		if (payOrderIssueHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			List<Object> list = processPostings(payOrderIssueHeader, tranType);
-			//FIXME Accounting			
-			//			if (list == null || (!(Boolean) list.get(0))) {
-			//				String errorMessage = StringUtils.trimToEmpty(list.get(1).toString());
-			//
-			//				auditHeader.setErrorDetails(new ErrorDetails("0000", errorMessage, null));
-			//				return auditHeader;
-			//			}
+			List<Object> list = disbursementPostings.processPostings(payOrderIssueHeader, tranType);
+			if (list == null || (!(Boolean) list.get(0))) {
+				String errorMessage = StringUtils.trimToEmpty(list.get(1).toString());
+
+				auditHeader.setErrorDetails(new ErrorDetails("0000", errorMessage, null));
+				return auditHeader;
+			}
 
 			getPayOrderIssueHeaderDAO().delete(payOrderIssueHeader, "");
 		} else {
 
-			//Posting Process For Commodity inventory
-			List<Object> list = processPostings(payOrderIssueHeader, tranType);
-			//FIXME Accounting
-			//			if (list == null || (!(Boolean) list.get(0))) {
-			//				String errorMessage = StringUtils.trimToEmpty(list.get(1).toString());
-			//
-			//				auditHeader.setErrorDetails(new ErrorDetails("0000", errorMessage, null));
-			//				return auditHeader;
-			//			}
+			List<Object> list = disbursementPostings.processPostings(payOrderIssueHeader, tranType);
+			if (list == null || (!(Boolean) list.get(0))) {
+				String errorMessage = StringUtils.trimToEmpty(list.get(1).toString());
+
+				auditHeader.setErrorDetails(new ErrorDetails("0000", errorMessage, null));
+				return auditHeader;
+			}
 
 			payOrderIssueHeader.setRoleCode("");
 			payOrderIssueHeader.setNextRoleCode("");
@@ -631,41 +624,6 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		}
 	}
 
-	public List<Object> processPostings(PayOrderIssueHeader issueHeader, String tranType) {
-		logger.debug(" Entering ");
-		//get Accounting set and prepared return data set
-		List<Object> returnList = null;
-		try {
-
-			List<ReturnDataSet> returnDataSetList = getPostingsPreparationUtil().prepareAccountingDataSet(issueHeader,
-					AccountEventConstants.ACCEVENT_DISBINS, "Y");
-
-			if (returnDataSetList != null) {
-				return getPostingsPreparationUtil().processPostings(returnDataSetList);
-			} else {
-				returnList = new ArrayList<Object>();
-				returnList.add(false);
-				returnList.add("Accounting not defined");
-				return returnList;
-			}
-
-		} catch (PFFInterfaceException e) {
-			logger.debug(e);
-			returnList = new ArrayList<Object>();
-			returnList.add(false);
-			returnList.add(e.getErrorMessage());
-		} catch (IllegalAccessException e) {
-			logger.debug(e);
-		} catch (InvocationTargetException e) {
-			logger.debug(e);
-		} catch (AccountNotFoundException e) {
-			logger.debug(e);
-		}
-		logger.debug(" Leaving ");
-		return returnList;
-
-	}
-
 	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
 		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
 	}
@@ -693,4 +651,9 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
+
+	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
+		this.disbursementPostings = disbursementPostings;
+	}
+
 }

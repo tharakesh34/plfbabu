@@ -288,6 +288,7 @@ public class PostingsPreparationUtil implements Serializable {
 		}
 		returnList.add(isPostingSuccess);
 		returnList.add(errorMsg);
+		returnList.add(linkedTranId);
 
 		return returnList;
 	}

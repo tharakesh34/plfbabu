@@ -86,10 +86,10 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
-import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.payorderissue.PayOrderIssueService;
+import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -137,7 +137,6 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	protected Label										payOrderIssue_custCIF;
 	protected Checkbox									payOrderIssue_quickDisb;
 	protected Label										payOrderIssue_finCcy;
-	protected Decimalbox								payOrderIssue_FinAmount;
 	protected Label										payOrderIssue_startDate;
 	protected Label										payOrderIssue_maturityDate;
 
@@ -156,6 +155,9 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	protected Tab										tabPosting;
 	protected Listbox									listBoxFinAccountings;
 	private PostingsPreparationUtil						postingsPreparationUtil;
+	protected Decimalbox								payOrderIssue_FinAssetValue;
+	protected Decimalbox								payOrderIssue_FinCurrAssetValue;
+	private DisbursementPostings						disbursementPostings;
 
 	/**
 	 * default constructor.<br>
@@ -249,7 +251,8 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		// Empty sent any required attributes
-		this.payOrderIssue_FinAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyformat));
+		this.payOrderIssue_FinAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(ccyformat));
+		this.payOrderIssue_FinCurrAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(ccyformat));
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -385,14 +388,12 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		this.payOrderIssue_quickDisb.setChecked(financeMain.isQuickDisb());
 		this.payOrderIssue_custCIF.setValue(payIHeader.getCustCIF());
 
-		BigDecimal finAmount = financeMain.getFinAmount();
-		BigDecimal downPay = financeMain.getDownPaySupl();
-
-		this.payOrderIssue_FinAmount.setValue(formateAmount(finAmount.subtract(downPay)));
+		this.payOrderIssue_FinAssetValue.setValue(formateAmount(financeMain.getFinAssetValue()));
+		this.payOrderIssue_FinCurrAssetValue.setValue(formateAmount(financeMain.getFinCurrAssetValue()));
 		doFillFinAdvancePaymentsDetails(payIHeader.getFinAdvancePaymentsList());
 		this.recordStatus.setValue(payIHeader.getRecordStatus());
 
-		if (!enqiryModule && "Accounting".equals(getTaskTabs(getTaskId(getRole())))) {
+		if (!enqiryModule) {
 			//Accounting Details Tab Addition
 			showAccounting(payIHeader, false);
 		}
@@ -1016,30 +1017,10 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 				Listitem item = new Listitem();
 				Listcell lc;
-				if (accountingSetEntries.get(i) instanceof TransactionEntry) {
-					TransactionEntry entry = (TransactionEntry) accountingSetEntries.get(i);
-
-					lc = new Listcell(PennantAppUtil.getlabelDesc(entry.getDebitcredit(),
-							PennantStaticListUtil.getTranType()));
-					lc.setParent(item);
-					lc = new Listcell(entry.getTransDesc());
-					lc.setParent(item);
-					lc = new Listcell(entry.getTranscationCode());
-					lc.setParent(item);
-					lc = new Listcell(entry.getRvsTransactionCode());
-					lc.setParent(item);
-					lc = new Listcell(entry.getAccount());
-					lc.setParent(item);
-					lc = new Listcell("");
-					lc.setParent(item);
-					lc = new Listcell("");
-					lc.setParent(item);
-					lc = new Listcell("");
-					lc.setParent(item);
-					lc = new Listcell("");
-					lc.setParent(item);
-				} else if (accountingSetEntries.get(i) instanceof ReturnDataSet) {
+			 if (accountingSetEntries.get(i) instanceof ReturnDataSet) {
 					ReturnDataSet entry = (ReturnDataSet) accountingSetEntries.get(i);
+					
+					if(entry.getPostAmount().compareTo(BigDecimal.ZERO)!=0){
 
 					//Highlighting Failed Posting Details 
 					String sClassStyle = "";
@@ -1102,7 +1083,10 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 					lc.setStyle("font-weight:bold;color:red;");
 					lc.setTooltiptext(entry.getErrorMsg());
 					lc.setParent(item);
-				}
+				
+			  }
+			 
+			 }
 				this.listBoxFinAccountings.appendChild(item);
 			}
 
@@ -1112,18 +1096,12 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 	private void showAccounting(PayOrderIssueHeader issueHeader, boolean enquiry) {
 		try {
-
-			this.tabPosting.setVisible(true);
-
 			if (enquiry) {
 				List<ReturnDataSet> returnDataSetList = getPostings(issueHeader);
 				doFillAccounting(returnDataSetList);
 			} else {
-
-				List<ReturnDataSet> returnDataSetList = getPostingsPreparationUtil().prepareAccountingDataSet(
-						issueHeader, AccountEventConstants.ACCEVENT_DISBINS, "N");
-
-				doFillAccounting(returnDataSetList);
+				List<ReturnDataSet> datasetList = getDisbursementPostings().getDisbPosting(issueHeader);
+				doFillAccounting(datasetList);
 			}
 
 		} catch (Exception e) {
@@ -1206,6 +1184,14 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	public DisbursementPostings getDisbursementPostings() {
+		return disbursementPostings;
+	}
+
+	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
+		this.disbursementPostings = disbursementPostings;
 	}
 
 }

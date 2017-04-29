@@ -67,11 +67,17 @@
 										<label id="payOrderIssue_maturityDate" style="font-weight:bold;" />
 									</hbox>
 								</row>
-								<row id="row2" height="24px">
-									<label value="${c:l('label_ScheduleDetailDialog_PurchasePrice.value')}" />
+								<row id="row4" height="24px">
+									<label value="${c:l('label_ScheduleDetailDialog_FinAssetValue.value')}" />
 									<hbox>
-										<decimalbox id="payOrderIssue_FinAmount" tabindex="-1" readonly="true" width="150px" style="border:none; background-color:white ;font-weight:bold;" />
+										<decimalbox id="payOrderIssue_FinAssetValue" tabindex="-1" readonly="true" width="150px" style="border:none; background-color:white ;font-weight:bold;" />
 									</hbox>
+									<label value="${c:l('label_ScheduleDetailDialog_FinCurrAssetValue.value')}"/>
+									<hbox>
+										<decimalbox id="payOrderIssue_FinCurrAssetValue" tabindex="-1" readonly="true" width="150px" style="border:none; background-color:white ;font-weight:bold;" />
+									</hbox>
+								</row>
+								<row id="row2" height="24px">
 									<label value="${c:l('label_PaymentOrderIssueDialog_QuickDisb.value')}" visible="false" />
 									<hbox>
 										<checkbox id="payOrderIssue_quickDisb" disabled="true" visible="false"></checkbox>

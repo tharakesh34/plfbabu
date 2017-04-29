@@ -255,7 +255,7 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 		if(!isWIF){
 			insertSql.append(" DisbStatus, DisbType, DisbClaim, DisbExpType, ContractorId, DisbRetPerc, DisbRetAmount, " );
 			insertSql.append(" AutoDisb, NetAdvDue, NetRetDue, DisbRetPaid, RetPaidDate, ");
-			insertSql.append(" ConsultFeeFrq, ConsultFeeStartDate, ConsultFeeEndDate, ");
+			insertSql.append(" ConsultFeeFrq, ConsultFeeStartDate, ConsultFeeEndDate,");
 		}
 		insertSql.append(" DisbDisbursed, DisbIsActive, DisbRemarks, Version , LastMntBy, LastMntOn, RecordStatus,");
 		insertSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
@@ -305,7 +305,7 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 		if(!isWIF){
 			insertSql.append(" DisbStatus, DisbType, DisbClaim, DisbExpType, ContractorId, DisbRetPerc, DisbRetAmount, " );
 			insertSql.append(" AutoDisb, NetAdvDue, NetRetDue, DisbRetPaid, RetPaidDate, ");	
-			insertSql.append(" ConsultFeeFrq, ConsultFeeStartDate, ConsultFeeEndDate, ");	
+			insertSql.append(" ConsultFeeFrq, ConsultFeeStartDate, ConsultFeeEndDate,LinkedTranId, ");	
 			if(type.contains("Log")){
 				insertSql.append(" LogKey , ");
 			}
@@ -316,7 +316,7 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 		if(!isWIF){
 			insertSql.append(" :DisbStatus, :DisbType, :DisbClaim, :DisbExpType, :ContractorId, :DisbRetPerc, :DisbRetAmount, " );
 			insertSql.append(" :AutoDisb, :NetAdvDue, :NetRetDue, :DisbRetPaid, :RetPaidDate, ");
-			insertSql.append(" :ConsultFeeFrq, :ConsultFeeStartDate, :ConsultFeeEndDate, ");
+			insertSql.append(" :ConsultFeeFrq, :ConsultFeeStartDate, :ConsultFeeEndDate,:LinkedTranId, ");
 			if(type.contains("Log")){
 				insertSql.append(" :LogKey , ");
 			}

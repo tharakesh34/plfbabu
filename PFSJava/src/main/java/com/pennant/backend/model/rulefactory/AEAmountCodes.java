@@ -18,6 +18,7 @@ public class AEAmountCodes {
 	private boolean		newRecord			= false;
 	private String		moduleDefiner;
 	private String		disbAccountID;
+	private String      partnerBank;
 
 	private BigDecimal	accrue				= BigDecimal.ZERO;
 	private BigDecimal	dAccrue				= BigDecimal.ZERO;
@@ -109,11 +110,13 @@ public class AEAmountCodes {
 	private BigDecimal	cmtAmt				= BigDecimal.ZERO;
 	private BigDecimal	deductFeeDisb		= BigDecimal.ZERO;
 	private BigDecimal	deductInsDisb		= BigDecimal.ZERO;
+	private BigDecimal	disbInstAmt		    = BigDecimal.ZERO;
 	
 	private BigDecimal	priWaived		= BigDecimal.ZERO;
 	private BigDecimal	pftWaived		= BigDecimal.ZERO;
 	private BigDecimal	feeWaived		= BigDecimal.ZERO;
 	private BigDecimal	insWaived		= BigDecimal.ZERO;
+	
 
 	public AEAmountCodes() {
 
@@ -859,7 +862,23 @@ public class AEAmountCodes {
 		this.excessBal = excessBal;
 	}
 
-	public BigDecimal getPriWaived() {
+	public String getPartnerBank() {
+		return partnerBank;
+	}
+
+	public void setPartnerBank(String partnerBank) {
+		this.partnerBank = partnerBank;
+	}
+
+	public BigDecimal getDisbInstAmt() {
+		return disbInstAmt;
+	}
+
+	public void setDisbInstAmt(BigDecimal disbInstAmt) {
+		this.disbInstAmt = disbInstAmt;
+	}
+	
+		public BigDecimal getPriWaived() {
 		return priWaived;
 	}
 
@@ -890,6 +909,5 @@ public class AEAmountCodes {
 	public void setInsWaived(BigDecimal insWaived) {
 		this.insWaived = insWaived;
 	}
-	
 	
 }

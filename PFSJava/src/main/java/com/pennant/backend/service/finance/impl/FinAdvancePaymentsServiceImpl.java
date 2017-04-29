@@ -572,4 +572,11 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		this.limitCheckDetails = limitCheckDetails;
 	}
 
+	@Override
+	public void Update(long paymentId, long linkedTranId) {
+		finAdvancePaymentsDAO.update(paymentId, linkedTranId);
+		
+		
+	}
+
 }

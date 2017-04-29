@@ -2698,6 +2698,14 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="payOrderIssueService" ref="payOrderIssueService" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="disbursementPostings" ref="disbursementPostings" />
+	</bean>
+
+	<bean id="disbursementPostings"
+		class="com.pennant.backend.service.payorderissue.impl.DisbursementPostings" scope="prototype">
+		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
+		<property name="engineExecution" ref="engineExecution" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil"/>
 	</bean>
 
 	<!-- ====================================================== -->
@@ -4458,7 +4466,7 @@
 	</bean>
 	
 	<!-- Data Engine -->
-	 <bean id="dataEngineConfig" class="com.pennanttech.dataengine.config.DataEngineConfig">
+	<!--  <bean id="dataEngineConfig" class="com.pennanttech.dataengine.config.DataEngineConfig">
 	 	<constructor-arg ref="pfsDatasource"/>
 	 </bean>
 	 <bean id="dataImportCtrl" class="com.pennanttech.framework.component.dataengine.DataImportCtrl"  parent="basisCtrl" scope="prototype" >
@@ -4468,7 +4476,7 @@
 	   <bean id="dataExportCtrl" class="com.pennanttech.framework.component.dataengine.DataExportCtrl"  parent="basisCtrl" scope="prototype" >
 	  	<property name="dataEngineConfig" ref="dataEngineConfig"/>
 	  	<property name="dataSource" ref="pfsDatasource" />
-	  </bean>
+	  </bean> -->
 	  
 	  	
 	<!-- Promotion -->

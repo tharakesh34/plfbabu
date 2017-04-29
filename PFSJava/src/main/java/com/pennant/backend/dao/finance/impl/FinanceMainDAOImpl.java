@@ -363,7 +363,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		StringBuilder selectSql = new StringBuilder("SELECT T1.FinCcy,T1.FinType,T1.CustID,T1.FinStartDate,");
 		selectSql.append(" T1.FinReference,T1.MaturityDate,T1.FeeChargeAmt,T1.DownPayment,T1.DeductFeeDisb, ");
 		selectSql.append(" T1.BpiAmount,T1.DeductInsDisb,T1.FinisActive, T2.alwMultiPartyDisb,T2.FinTypeDesc,");
-		selectSql.append(" T1.BpiTreatment,T3.CustCIF,T3.CustShrtName,T1.quickDisb From FinanceMain");
+		selectSql.append(" T1.BpiTreatment,T3.CustCIF,T3.CustShrtName,T1.quickDisb ,T1.FinAssetValue,T1.FinCurrAssetValue From FinanceMain");
 		selectSql.append(tableType.getSuffix());
 		selectSql.append(" T1 INNER JOIN RMTFinanceTypes T2 ON T1.FinType=T2.FinType ");
 		selectSql.append(" INNER JOIN Customers T3 ON T1.CustID = T3.CustID ");

@@ -155,6 +155,8 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	private String partnerBankName;
 	private String finType;
 	private String custShrtName;
+	private long linkedTranId;
+	private String acType;
 	
 	
 
@@ -180,6 +182,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("partnerBankName");
 		excludeFields.add("finType");
 		excludeFields.add("custShrtName");
+		excludeFields.add("acType");
 		return excludeFields;
 	}
 
@@ -570,5 +573,23 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	public void setCustShrtName(String custShrtName) {
 		this.custShrtName = custShrtName;
 	}
+
+	public long getLinkedTranId() {
+		return linkedTranId;
+	}
+
+	public void setLinkedTranId(long linkedTranId) {
+		this.linkedTranId = linkedTranId;
+	}
+
+	public String getAcType() {
+		return acType;
+	}
+
+	public void setAcType(String acType) {
+		this.acType = acType;
+	}
+
+
 
 }

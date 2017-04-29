@@ -11265,9 +11265,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		FinanceProfitDetail financeProfitDetail = new FinanceProfitDetail();
-		amountCodes = AEAmounts.procAEAmounts(getFinanceDetail().getFinScheduleData().getFinanceMain(), 
-						getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), financeProfitDetail, finEvent, curBDay, curBDay);
-		
+		amountCodes = AEAmounts.procAEAmounts(getFinanceDetail().getFinScheduleData().getFinanceMain(),
+				getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), financeProfitDetail, finEvent,
+				curBDay, curBDay);
+
 		amountCodes.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
 		setAmountCodes(amountCodes);
 
@@ -11284,14 +11285,103 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Call Map Build Method
 		accountingSetEntries.addAll(getEngineExecution().getAccEngineExecResults("N", executingMap, false));
+		
+		//Disbursement Postings
+		prepareDisbursementPosting(accountingSetEntries);
+		//Disb Instruction Posting
+		prepareDisbInstructionPosting(accountingSetEntries);
 
 		getFinanceDetail().setReturnDataSetList(accountingSetEntries);
-		
+
 		if (accountingDetailDialogCtrl != null) {
 			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
 		}
 
 		logger.debug("Leaving");
+	}
+
+	private void prepareDisbursementPosting(List<ReturnDataSet> accountingSetEntries) throws Exception {
+
+		String finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
+		FinanceProfitDetail financeProfitDetail = new FinanceProfitDetail();
+		Date curBDay = DateUtility.getAppDate();
+		List<FinanceDisbursement> disbList = getFinanceDetail().getFinScheduleData().getDisbursementDetails();
+		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+		FinanceType finType = getFinanceDetail().getFinScheduleData().getFinanceType();
+
+		//loop through the disbursements.
+		if (disbList != null && !disbList.isEmpty()) {
+			for (int i = 0; i < disbList.size(); i++) {
+				FinanceDisbursement disbursement = disbList.get(i);
+				if ("".equals(eventCode)) {
+					if (disbursement.getDisbDate().after(DateUtility.getAppDate())) {
+						if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
+							finEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
+						}
+					}
+				}
+				amountCodes = AEAmounts.procAEAmounts(getFinanceDetail().getFinScheduleData().getFinanceMain(),
+						getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), financeProfitDetail,
+						finEvent, curBDay, curBDay);
+
+				amountCodes.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
+				setAmountCodes(amountCodes);
+				amountCodes.setDisburse(disbursement.getDisbAmount());
+				
+				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+				if (disbursement.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(disbursement.getRecordType())) {
+					amountCodes.setNewRecord(true);
+				}
+				
+				finType.getDeclaredFieldValues(executingMap);
+				finMain.getDeclaredFieldValues(executingMap);
+
+				// Call Map Build Method
+				accountingSetEntries.addAll(getEngineExecution().getAccEngineExecResults("N", executingMap, false));
+
+			}
+		}
+
+	}
+	
+	private void prepareDisbInstructionPosting(List<ReturnDataSet> accountingSetEntries) throws Exception {
+
+		String finEvent = AccountEventConstants.ACCEVENT_DISBINS;
+		FinanceProfitDetail financeProfitDetail = new FinanceProfitDetail();
+		Date curBDay = DateUtility.getAppDate();
+		
+		List<FinAdvancePayments> advPayList = getFinanceDetail().getAdvancePaymentsList();
+		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+		FinanceType finType = getFinanceDetail().getFinScheduleData().getFinanceType();
+
+		//loop through the disbursements.
+		if (advPayList != null && !advPayList.isEmpty()) {
+			
+			for (int i = 0; i < advPayList.size(); i++) {
+				FinAdvancePayments advPayment = advPayList.get(i);
+				amountCodes = AEAmounts.procAEAmounts(getFinanceDetail().getFinScheduleData().getFinanceMain(),
+						getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), financeProfitDetail,
+						finEvent, curBDay, curBDay);
+
+				amountCodes.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
+				setAmountCodes(amountCodes);
+				amountCodes.setDisbInstAmt(advPayment.getAmtToBeReleased());
+
+				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+				executingMap.put("disb_partnerBank", advPayment.getAcType());
+				if (advPayment.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(advPayment.getRecordType())) {
+					amountCodes.setNewRecord(true);
+				}
+
+				finType.getDeclaredFieldValues(executingMap);
+				finMain.getDeclaredFieldValues(executingMap);
+
+				// Call Map Build Method
+				accountingSetEntries.addAll(getEngineExecution().getAccEngineExecResults("N", executingMap, false));
+
+			}
+		}
+
 	}
 
 	private void prepareFeeRulesMap(HashMap<String, Object> executingMap) {

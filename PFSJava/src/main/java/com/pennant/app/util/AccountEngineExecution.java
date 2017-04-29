@@ -74,6 +74,7 @@ import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
+import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -115,6 +116,7 @@ public class AccountEngineExecution implements Serializable {
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private FinTypeAccountingDAO finTypeAccountingDAO;
 	private CollateralSetupDAO		collateralSetupDAO;
+	private PostingsDAO				postingsDAO;
 
 	//Default Constructor
 	public AccountEngineExecution() {
@@ -134,9 +136,6 @@ public class AccountEngineExecution implements Serializable {
 	public List<ReturnDataSet> getAccEngineExecResults(String createNow, HashMap<String, Object> executingMap, boolean isAccrualCal)
 			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
-
-		// Fill Amount Code Detail Object with Respect to Schedule Details
-		prepareAmountCodes(false, isAccrualCal, executingMap);
 
 		// Execute entries depend on Finance Event
 		long accountingSetId;
@@ -160,6 +159,30 @@ public class AccountEngineExecution implements Serializable {
 		}
 
 		List<ReturnDataSet> returnList = getPrepareAccountingSetResults(new HashMap<String, Object>(), transactionEntries, createNow, false, executingMap);
+		
+		//Method for Checking for Reverse Calculations Based upon Negative Amounts
+		for (ReturnDataSet returnDataSet : returnList) {
+
+			//returnDataSet.setLinkedTranId(linkedTranId);
+
+			if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
+
+				String tranCode = returnDataSet.getTranCode();
+				String revTranCode = returnDataSet.getRevTranCode();
+				String debitOrCredit = returnDataSet.getDrOrCr();
+
+				returnDataSet.setTranCode(revTranCode);
+				returnDataSet.setRevTranCode(tranCode);
+
+				returnDataSet.setPostAmount(returnDataSet.getPostAmount().negate());
+
+				if (debitOrCredit.equals(AccountConstants.TRANTYPE_CREDIT)) {
+					returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
+				} else {
+					returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
+				}
+			}
+		}
 
 		logger.debug("Leaving");
 
@@ -1518,6 +1541,35 @@ public class AccountEngineExecution implements Serializable {
 		
 		logger.debug("Leaving");
 	}
+	
+	public List<ReturnDataSet> cancelPostings(long linkedTranid) {
+		logger.debug("Entering");
+		List<ReturnDataSet> returnSetEntries = getPostingsDAO().getPostingsByLinkTransId(linkedTranid);
+		
+		for (ReturnDataSet returnDataSet : returnSetEntries) {
+			
+			returnDataSet.setLinkedTranId(linkedTranid);
+			
+			if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) > 0) {
+				
+				String tranCode = returnDataSet.getTranCode();
+				String revTranCode = returnDataSet.getRevTranCode();
+				String debitOrCredit = returnDataSet.getDrOrCr();
+				
+				returnDataSet.setTranCode(revTranCode);
+				returnDataSet.setRevTranCode(tranCode);
+				
+				if (debitOrCredit.equals(AccountConstants.TRANTYPE_CREDIT)) {
+					returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
+				} else {
+					returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
+				}
+			}
+		}
+		
+		return returnSetEntries;
+	}
+	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1628,6 +1680,14 @@ public class AccountEngineExecution implements Serializable {
 
 	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
 		this.collateralSetupDAO = collateralSetupDAO;
+	}
+
+	public PostingsDAO getPostingsDAO() {
+		return postingsDAO;
+	}
+
+	public void setPostingsDAO(PostingsDAO postingsDAO) {
+		this.postingsDAO = postingsDAO;
 	}
 
 }
