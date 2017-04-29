@@ -160,13 +160,6 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Add a filter that uses the IS EMPTY operator.
-	 */
-	public static void addFilterEmpty(IMutableSearch search, String property) {
-		addFilter(search, Filter.isEmpty(property));
-	}
-
-	/**
 	 * Add a filter that uses the == operator.
 	 */
 	public static void addFilterEqual(IMutableSearch search, String property, Object value) {
@@ -185,13 +178,6 @@ public class SearchUtil {
 	 */
 	public static void addFilterGreaterThan(IMutableSearch search, String property, Object value) {
 		addFilter(search, Filter.greaterThan(property, value));
-	}
-
-	/**
-	 * Add a filter that uses the ILIKE operator.
-	 */
-	public static void addFilterILike(IMutableSearch search, String property, String value) {
-		addFilter(search, Filter.ilike(property, value));
 	}
 
 	/**
@@ -234,13 +220,6 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Add a filter that uses the NOT operator.
-	 */
-	public static void addFilterNot(IMutableSearch search, Filter filter) {
-		addFilter(search, Filter.not(filter));
-	}
-
-	/**
 	 * Add a filter that uses the != operator.
 	 */
 	public static void addFilterNotEqual(IMutableSearch search, String property, Object value) {
@@ -263,13 +242,6 @@ public class SearchUtil {
 	 */
 	public static void addFilterNotIn(IMutableSearch search, String property, Object... value) {
 		addFilter(search, Filter.notIn(property, value));
-	}
-
-	/**
-	 * Add a filter that uses the IS NOT EMPTY operator.
-	 */
-	public static void addFilterNotEmpty(IMutableSearch search, String property) {
-		addFilter(search, Filter.isNotEmpty(property));
 	}
 
 	/**

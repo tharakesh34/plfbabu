@@ -162,14 +162,6 @@ public class Search implements IMutableSearch, Serializable {
 	}
 
 	/**
-	 * Add a filter that uses the ILIKE operator.
-	 */
-	public Search addFilterILike(String property, String value) {
-		SearchUtil.addFilterILike(this, property, value);
-		return this;
-	}
-
-	/**
 	 * Add a filter that uses the != operator.
 	 */
 	public Search addFilterNotEqual(String property, Object value) {
@@ -194,22 +186,6 @@ public class Search implements IMutableSearch, Serializable {
 	}
 
 	/**
-	 * Add a filter that uses the IS EMPTY operator.
-	 */
-	public Search addFilterEmpty(String property) {
-		SearchUtil.addFilterEmpty(this, property);
-		return this;
-	}
-
-	/**
-	 * Add a filter that uses the IS NOT EMPTY operator.
-	 */
-	public Search addFilterNotEmpty(String property) {
-		SearchUtil.addFilterNotEmpty(this, property);
-		return this;
-	}
-
-	/**
 	 * Add a filter that uses the AND operator.
 	 * 
 	 * <p>
@@ -230,14 +206,6 @@ public class Search implements IMutableSearch, Serializable {
 	 */
 	public Search addFilterOr(Filter... filters) {
 		SearchUtil.addFilterOr(this, filters);
-		return this;
-	}
-
-	/**
-	 * Add a filter that uses the NOT operator.
-	 */
-	public Search addFilterNot(Filter filter) {
-		SearchUtil.addFilterNot(this, filter);
 		return this;
 	}
 

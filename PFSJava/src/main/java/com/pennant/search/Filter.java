@@ -35,12 +35,12 @@ public class Filter implements Serializable {
 	public static final int		OP_NULL				= 10;
 	public static final int		OP_NOT_NULL			= 11;
 	public static final int		OP_LIKE				= 6;
-	public static final int		OP_BETWEEN			= 300;									// Not implemented.
+	public static final int		OP_BETWEEN			= 300;	// Not implemented.
 	public static final int		OP_IN				= 8;
 	public static final int		OP_NOT_IN			= 9;
-
-	public static final int		OP_ILIKE			= 7, OP_EMPTY = 12, OP_NOT_EMPTY = 13;
-	public static final int		OP_AND				= 100, OP_OR = 101, OP_NOT = 102;
+	public static final int		OP_AND				= 100;
+	public static final int		OP_OR				= 101;
+	public static final int		OP_NOT				= 102;
 
 	/**
 	 * The name of the property to filter on.
@@ -54,10 +54,8 @@ public class Filter implements Serializable {
 
 	/**
 	 * The type of comparison to do between the property and the value.<br/>
-	 * Comparison Operators:
-	 * <code>OP_EQUAL, OP_NOT_EQUAL, OP_LESS_THAN, OP_GREATER_THAN, OP_LESS_OR_EQUAL, OP_GREATER_OR_EQUAL, 
-	 * OP_NULL, OP_NOT_NULL, OP_LIKE, OP_IN, OP_NOT_IN
-	 * OP_ILIKE, OP_EMPTY, OP_NOT_EMPTY, OP_SOME, OP_ALL, OP_NONE, OP_AND, OP_OR, OP_NOT</code>
+	 * Operators: <code>OP_EQUAL, OP_NOT_EQUAL, OP_LESS_THAN, OP_GREATER_THAN, OP_LESS_OR_EQUAL, OP_GREATER_OR_EQUAL, 
+	 * OP_NULL, OP_NOT_NULL, OP_LIKE, OP_IN, OP_NOT_IN, OP_AND, OP_OR, OP_NOT</code>
 	 */
 	protected int				operator;
 
@@ -169,13 +167,6 @@ public class Filter implements Serializable {
 	}
 
 	/**
-	 * Create a new Filter using the ILIKE operator.
-	 */
-	public static Filter ilike(String property, String value) {
-		return new Filter(property, value, OP_ILIKE);
-	}
-
-	/**
 	 * Create a new Filter using the != operator.
 	 */
 	public static Filter notEqual(String property, Object value) {
@@ -194,20 +185,6 @@ public class Filter implements Serializable {
 	 */
 	public static Filter isNotNull(String property) {
 		return new Filter(property, true, OP_NOT_NULL);
-	}
-
-	/**
-	 * Create a new Filter using the IS EMPTY operator.
-	 */
-	public static Filter isEmpty(String property) {
-		return new Filter(property, true, OP_EMPTY);
-	}
-
-	/**
-	 * Create a new Filter using the IS NOT EMPTY operator.
-	 */
-	public static Filter isNotEmpty(String property) {
-		return new Filter(property, true, OP_NOT_EMPTY);
 	}
 
 	/**
@@ -235,13 +212,6 @@ public class Filter implements Serializable {
 		filter.property = "OR";
 		filter.operator = OP_OR;
 		return filter;
-	}
-
-	/**
-	 * Create a new Filter using the NOT operator.
-	 */
-	public static Filter not(Filter filter) {
-		return new Filter("NOT", filter, OP_NOT);
 	}
 
 	/**
@@ -431,16 +401,10 @@ public class Filter implements Serializable {
 			return property + " <= " + InternalUtil.paramDisplayString(value);
 		case Filter.OP_LIKE:
 			return property + " LIKE " + InternalUtil.paramDisplayString(value);
-		case Filter.OP_ILIKE:
-			return property + " ILIKE " + InternalUtil.paramDisplayString(value);
 		case Filter.OP_NULL:
 			return property + " IS NULL";
 		case Filter.OP_NOT_NULL:
 			return property + " IS NOT NULL";
-		case Filter.OP_EMPTY:
-			return property + " IS EMPTY";
-		case Filter.OP_NOT_EMPTY:
-			return property + " IS NOT EMPTY";
 		case Filter.OP_AND:
 		case Filter.OP_OR:
 			if (!(value instanceof List)) {
@@ -506,16 +470,10 @@ public class Filter implements Serializable {
 			return " <= ";
 		case Filter.OP_LIKE:
 			return " LIKE ";
-		case Filter.OP_ILIKE:
-			return " ILIKE ";
 		case Filter.OP_NULL:
 			return " IS NULL ";
 		case Filter.OP_NOT_NULL:
 			return " IS NOT NULL ";
-		case Filter.OP_EMPTY:
-			return " IS EMPTY ";
-		case Filter.OP_NOT_EMPTY:
-			return " IS NOT EMPTY ";
 		case Filter.OP_AND:
 		case Filter.OP_OR:
 			if (!(value instanceof List)) {
