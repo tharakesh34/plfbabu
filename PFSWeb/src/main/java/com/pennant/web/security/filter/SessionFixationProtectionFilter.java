@@ -43,14 +43,8 @@ public class SessionFixationProtectionFilter extends GenericFilterBean {
 		}
 
 		if (StringUtils.equals(activeRemoteHost, request.getRemoteHost())) {
-			if (logger.isDebugEnabled()) {
-				//logger.debug("Valid session: " + session.getId() + " " + request.getRemoteHost());
-			}
+			//
 		} else {
-			if (logger.isDebugEnabled()) {
-				//logger.debug("Invalid session: " + session.getId() + " " + request.getRemoteHost());
-			}
-
 			abortUser(request, response);
 		}
 

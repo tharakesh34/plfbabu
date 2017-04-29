@@ -103,10 +103,6 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	 */
 	@SuppressWarnings("deprecation")
 	public UserWorkspace() {
-		if (logger.isDebugEnabled()) {
-			logger.debug("create new Workspace [" + this + "]");
-		}
-
 		loggedInUser = AuthenticationDetails.getLogiedInUser();
 		grantedAuthorities = AuthenticationDetails.getGrantedAuthorities();
 		securityRoles = AuthenticationDetails.getSecurityRoles();

@@ -13,7 +13,7 @@ public class UserSessionInit implements SessionInit{
 	protected final Log logger = LogFactory.getLog(getClass());
 	
 	public UserSessionInit() {
-		
+		super();
 	}
 	
 	@Override
@@ -21,15 +21,7 @@ public class UserSessionInit implements SessionInit{
 		HttpSession httpSession = (HttpSession) session.getNativeSession();
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-		httpSession.setAttribute("SATTR_REMOTE_HOST", httpRequest.getRemoteHost());
-		
+		httpSession.setAttribute("SATTR_REMOTE_HOST", httpRequest.getRemoteHost());	
 		httpSession.setAttribute("SATTR_RANDOM_KEY",  RandomStringUtils.random(8, true, true));
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("New session: "+ (String.valueOf(httpSession.getId())));
-			logger.debug("Remote host: " + httpRequest.getRemoteHost());
-		}
-
 	}
-
 }

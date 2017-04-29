@@ -376,10 +376,6 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 				Executions.createComponents(zulFilePathName, tabpanel, null);
 				tab.setSelected(true);
 			}
-		
-			if (logger.isDebugEnabled()) {
-				logger.debug("--> calling zul-file: " + zulFilePathName);
-			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			MessageUtil.showErrorMessage(e);

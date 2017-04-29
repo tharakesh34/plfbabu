@@ -112,10 +112,6 @@ public class PolicyManager implements UserDetailsService, Serializable {
 		// their grantedAuthorities List.
 		final UserDetails userDetails = new UserImpl(user, grantedAuthorities,securityRole);
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Rights for '" + user.getUsrLogin() + "' (ID: " + user.getId() + ") evaluated. [" + this + "]");
-		}
-
 		// neu wegen clustering ?
 		this._userDetails = userDetails;
 		logger.debug("Leaving ");

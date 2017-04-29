@@ -68,11 +68,6 @@ public class GuiLoginLoggingPolicServiceImpl implements GuiLoginLoggingPolicServ
 	@Override
 	public long logAuthPass(String userName, long userId, String clientAddress, String sessionId) {
 		logger.debug("Entering");
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Login ok for: " + userName + " -> UserID: " + userId + " Host:" + clientAddress
-					+ " SessionId: " + sessionId);
-		}
 		 
 		Timestamp loginTime = new Timestamp(System.currentTimeMillis());
 		long loginLogID = this.loginLoggingService.saveLog(getLogingLog(userName, loginTime, clientAddress, getBrowserType(), 1,
