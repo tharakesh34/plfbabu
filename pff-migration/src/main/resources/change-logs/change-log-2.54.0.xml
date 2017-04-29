@@ -503,5 +503,20 @@
 			                            WHERE      ReceiptID = T1.ReceiptID)
 		</createView>
 	</changeSet>
+	
+		<changeSet author="Durgaprasad G" id="37">
+		<createView viewName="PRESENTMENTDETAILS_VIEW" replaceIfExists="true">
+			SELECT		T1.Id, T1.PresentmentId, T1.FinReference, T1.SchDate, T1.MandateId, T1.SchAmtDue, T1.schPriDue, T1.schPftDue, T1.schFeeDue, T1.schInsDue,
+			T1.schPenaltyDue, T1.advanceAmt, T1.excessID, T1.adviseAmt, T1.presentmentAmt, T1.ExcludeReason, T1.bounceID, T1.emiNo, T1.auxiliary1, T1.auxiliary2, T1.status,
+			T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+      T2.MANDATETYPE,T3.FINTYPE,T4.FINTYPEDESC, T5.CUSTSHRTNAME CUSTOMERNAME 
+FROM 		PRESENTMENTDETAILS    T1  INNER JOIN 
+			MANDATES  T2 ON T1.MANDATEID = T2.MANDATEID INNER JOIN 
+			FINANCEMAIN T3 ON T1.FINREFERENCE = T3.FINREFERENCE INNER JOIN 
+			RMTFINANCETYPES T4 ON T3.FINTYPE  = T4.FINTYPE INNER JOIN 
+			CUSTOMERS T5 ON T5.CUSTID  = T3.CUSTID
+						
+		</createView>
+	</changeSet>
 
 </databaseChangeLog>
