@@ -42,9 +42,11 @@ public class ReceiptPaymentService extends ServiceHelper {
 		PreparedStatement sqlStatement = null;
 		String finref = "";
 		try {
+			//Since the process is on SOD
+			Date businessDate = DateUtility.addDays(valuedDate, 1);
 			connection = DataSourceUtils.doGetConnection(getDataSource());
 			sqlStatement = connection.prepareStatement(INSTALLMENTDUE);
-			sqlStatement.setDate(1, DateUtility.getDBDate(valuedDate.toString()));
+			sqlStatement.setDate(1, DateUtility.getDBDate(businessDate.toString()));
 			sqlStatement.setLong(2, custId);
 			resultSet = sqlStatement.executeQuery();
 			while (resultSet.next()) {
@@ -70,7 +72,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 					receiptDetail.setPayAgainstID(resultSet.getLong("EXCESSID"));
 					receiptDetail.setAmount(advanceAmt);
 					receiptDetail.setValueDate(schDate);
-					receiptDetail.setReceivedDate(valuedDate);
+					receiptDetail.setReceivedDate(businessDate);
 					repaymentProcessUtil.recalReceipt(financeMain, scheduleDetails, profitDetail, receiptDetail,
 							repayHeirarchy);
 				}
@@ -83,7 +85,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 					receiptDetail.setPayAgainstID(resultSet.getLong("EXCESSID"));
 					receiptDetail.setAmount(presentmentAmt);
 					receiptDetail.setValueDate(schDate);
-					receiptDetail.setReceivedDate(valuedDate);
+					receiptDetail.setReceivedDate(businessDate);
 					repaymentProcessUtil.recalReceipt(financeMain, scheduleDetails, profitDetail, receiptDetail,
 							repayHeirarchy);
 				}

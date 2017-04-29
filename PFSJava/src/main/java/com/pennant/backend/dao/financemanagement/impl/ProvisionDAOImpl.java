@@ -395,7 +395,7 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 	public void updateProvisonAmounts(Provision provision) {
 		logger.debug("Entering");
 		StringBuilder	updateSql =new StringBuilder("Update FinProvisions");
-		updateSql.append(" Set ProvisionCalDate = :ProvisionCalDate,");
+		updateSql.append(" Set ProvisionCalDate = :ProvisionCalDate,ProvisionAmtCal=:ProvisionAmtCal,");
 		updateSql.append(" ProvisionedAmt = :ProvisionedAmt, Duedays = :Duedays, DpdBucketID = :DpdBucketID,");
 		updateSql.append(" NpaBucketID = :NpaBucketID, PftBal = :PftBal, PriBal = :PriBal, PrvovisionRate = :PrvovisionRate " );
 		updateSql.append(" Where FinReference =:FinReference " );
