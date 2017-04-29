@@ -80,11 +80,10 @@ import com.pennanttech.pff.core.App;
  * <br>
  * 1. Access the rights that the user have. <br>
  * 2. The office for that the user are logged in. <br>
- * 
  */
 public class UserWorkspace implements Serializable, DisposableBean {
 	private static final long serialVersionUID = -3936210543827830197L;
-	private final static Logger logger = Logger.getLogger(UserWorkspace.class);
+	private static final Logger logger = Logger.getLogger(UserWorkspace.class);
 
 	private UserImpl userDetails;
 	private transient UserService userService;
@@ -97,16 +96,7 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	private Collection<GrantedAuthority> grantedAuthorities;
 	private List<SecurityUserDivBranch> divisionBranches;
 	private List<SecurityRole> securityRoles;
-	private HashMap<String, Collection<SecurityRight>> rightsMap = new HashMap<String, Collection<SecurityRight>>();
-	/**
-	 * Get a logged-in users WorkSpace which holds all necessary vars. <br>
-	 * 
-	 * @return the users WorkSpace
-	 */
-	@Deprecated
-	public static UserWorkspace getInstance() {
-		return (UserWorkspace) SpringUtil.getBean("userWorkspace");
-	}
+	private HashMap<String, Collection<SecurityRight>> rightsMap = new HashMap<>();
 
 	/**
 	 * Default Constructor
@@ -130,20 +120,21 @@ public class UserWorkspace implements Serializable, DisposableBean {
 	}
 
 	/**
+	 * Get a logged-in users WorkSpace which holds all necessary vars. <br>
+	 * 
+	 * @return the users WorkSpace
+	 */
+	@Deprecated
+	public static UserWorkspace getInstance() {
+		return (UserWorkspace) SpringUtil.getBean("userWorkspace");
+	}
+
+	/**
 	 * Logout with the spring-security logout action-URL.<br>
 	 * Therefore we make a sendRedirect() to the logout uri we have configured in the spring-config.
 	 */
 	public void doLogout() {
-		// destroy();
-
-		/* ****** Kills the Http session ****** */
-		// HttpSession s = (HttpSession)
-		// Sessions.getCurrent().getNativeSession();
-		// s.invalidate();
-		/* ****** Kills the zk session ***** */
-		// Sessions.getCurrent().invalidate();
 		Executions.sendRedirect("/csrfLogout.zul");
-
 	}
 
 	/**
