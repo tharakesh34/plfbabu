@@ -880,4 +880,189 @@ Insert into REPORTFILTERFIELDS  values
 ((select reportid from reportconfiguration where menuitemcode='menu_Item_PaymentSchedule'),2,'FinReference','LOVSEARCH','Loan Reference','FinReference',null,'FinanceMain','getFinReference','getFinReference',1,0,0,0,2,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,sysdate);
 	</sql>
 	</changeSet>
+	<changeSet author="PrasadRaju" id="52">
+<sql>
+delete from rules where rulemodule='SUBHEAD';
+	</sql>
+	</changeSet>
+
+<changeSet author="PrasadRaju" id="53">
+		<insert tableName="Rules">
+			<column name="RULEID" valueComputed="(select max(RULEID) + 1 from Rules)" />
+			<column name="RULEMODULE">SUBHEAD</column>
+			<column name="RULEEVENT">SUBHEAD</column>
+<column name="RULECODE">GLCODE</column>
+<column name="RULECODEDESC">Account Creation</column>
+<column name="WAIVERDECIDER">Null</column>
+<column name="WAIVER">0</column>
+<column name="WAIVERPERC">Null</column>
+<column name="SQLRULE" type="nclob"><![CDATA["if(acType=='BANK'){Result=disb_partnerBank;return;}else{Result=ft_finType+acType;return;}"]]></column>
+<column name="ACTUALBLOCK" type="nclob"><![CDATA[(|if|FIELDLIST|acType| |==|STATICTEXT|BANK| |1|0|1|1|1|disb_partnerBank|disb_partnerBank|~)|~(|else|0|0|0|1|1|ft_finType + acType|ft_finType,acType|~)|]]></column>
+<column name="SEQORDER">0</column>
+<column name="RETURNTYPE">C</column>
+<column name="GROUPID">0</column>
+<column name="VERSION">2</column>
+<column name="LASTMNTBY">1000</column>
+<column name="LASTMNTON">28-APR-2017</column>
+<column name="RECORDSTATUS">Approved</column>
+<column name="ROLECODE">Null</column>
+<column name="NEXTROLECODE">Null</column>
+<column name="TASKID">Null</column>
+<column name="NEXTTASKID">Null</column>
+<column name="RECORDTYPE">Null</column>
+<column name="WORKFLOWID">0</column>
+<column name="ALLOWDEVIATION">0</column>
+<column name="DEVIATIONTYPE">Null</column>
+<column name="CALFEEMODIFY">0</column>
+<column name="FEETOFINANCE">Null</column>
+<column name="REVOLVING">1</column>
+<column name="FIXEDORVARIABLELIMIT">F</column>
+<column name="ACTIVE">1</column>
+<column name="FIELDS">ft_finType, ,acType,disb_partnerBank</column>
+<column name="FEETYPEID">NULL</column>
+		</insert>
+	</changeSet>
+	
+<changeSet id="54" author="Prasad">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA["if(acType=='BANK'){Result=disb_partnerBank;return;}else{Result=ft_finType+acType;return;}"]]></column>
+			<column name="ACTUALBLOCK" type="CLOB"><![CDATA[(|if|FIELDLIST|acType| |==|STATICTEXT|BANK| |1|0|1|1|1|disb_partnerBank|disb_partnerBank|~)|~(|else|0|0|0|1|1|ft_finType + acType|ft_finType,acType|~)|]]></column>
+			<where>RULEMODULE='SUBHEAD' and rulecode='GLCODE' and ACTIVE=1</where>
+		</update>
+	</changeSet>
+	
+<changeSet author="PrasadRaju" id="55">
+		<insert tableName="Rules">
+			<column name="RULEID" valueComputed="(select max(RULEID) + 1 from Rules)" />
+			<column name="RULEMODULE">SUBHEAD</column>
+			<column name="RULEEVENT">SUBHEAD</column>
+<column name="RULECODE">GLCODE2</column>
+<column name="RULECODEDESC">Account Creation</column>
+<column name="WAIVERDECIDER">Null</column>
+<column name="WAIVER">0</column>
+<column name="WAIVERPERC">Null</column>
+<column name="SQLRULE" type="nclob"><![CDATA["if (acType == 'BANK') { Result = DISBURSE ; return; } else { Result = ft_finType + acType ; return; }"]]></column>
+<column name="ACTUALBLOCK" type="nclob"><![CDATA[(|if|FIELDLIST|acType| |==|STATICTEXT|BANK| |1|0|1|1|1|DISBURSE|DISBURSE|~)|~(|else|0|0|0|1|1|ft_finType + acType|ft_finType,acType|~)|]]></column>
+<column name="SEQORDER">0</column>
+<column name="RETURNTYPE">C</column>
+<column name="GROUPID">0</column>
+<column name="VERSION">2</column>
+<column name="LASTMNTBY">1000</column>
+<column name="LASTMNTON">28-APR-2017</column>
+<column name="RECORDSTATUS">Approved</column>
+<column name="ROLECODE">Null</column>
+<column name="NEXTROLECODE">Null</column>
+<column name="TASKID">Null</column>
+<column name="NEXTTASKID">Null</column>
+<column name="RECORDTYPE">Null</column>
+<column name="WORKFLOWID">0</column>
+<column name="ALLOWDEVIATION">0</column>
+<column name="DEVIATIONTYPE">Null</column>
+<column name="CALFEEMODIFY">0</column>
+<column name="FEETOFINANCE">Null</column>
+<column name="REVOLVING">1</column>
+<column name="FIXEDORVARIABLELIMIT">F</column>
+<column name="ACTIVE">1</column>
+<column name="FIELDS">ft_finType,acType,DISBURSE</column>
+<column name="FEETYPEID">NULL</column>
+		</insert>
+	</changeSet>
+	
+<changeSet id="56" author="Prasad">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA["if (acType == 'BANK') { Result = DISBURSE ; return; } else { Result = ft_finType + acType ; return; }"]]></column>
+			<column name="ACTUALBLOCK" type="NCLOB"><![CDATA[(|if|FIELDLIST|acType| |==|STATICTEXT|BANK| |1|0|1|1|1|DISBURSE|DISBURSE|~)|~(|else|0|0|0|1|1|ft_finType + acType|ft_finType,acType|~)|]]></column>
+			<where>RULEMODULE='SUBHEAD' and rulecode='GLCODE2' and ACTIVE=1</where>
+		</update>
+	</changeSet>
+	
+	<changeSet author="PrasadRaju" id="57">
+		<insert tableName="Rules">
+			<column name="RULEID" valueComputed="(select max(RULEID) + 1 from Rules)" />
+			<column name="RULEMODULE">SUBHEAD</column>
+			<column name="RULEEVENT">SUBHEAD</column>
+<column name="RULECODE">GLCODE3</column>
+<column name="RULECODEDESC">Account Creation</column>
+<column name="WAIVERDECIDER">Null</column>
+<column name="WAIVER">0</column>
+<column name="WAIVERPERC">Null</column>
+<column name="SQLRULE" type="nclob"><![CDATA["if(acType=='BANK'){Result=fd_disbAmount;return;}else{Result=acType+ft_finType;return;}"]]></column>
+<column name="ACTUALBLOCK" type="nclob"><![CDATA[(|if|FIELDLIST|acType| |==|STATICTEXT|BANK| |1|0|1|1|1|fd_disbAmount| |~)|~(|else|0|0|0|1|1|acType + ft_finType|acType,ft_finType|~)|]]></column>
+<column name="SEQORDER">0</column>
+<column name="RETURNTYPE">C</column>
+<column name="GROUPID">0</column>
+<column name="VERSION">2</column>
+<column name="LASTMNTBY">1000</column>
+<column name="LASTMNTON">28-APR-2017</column>
+<column name="RECORDSTATUS">Approved</column>
+<column name="ROLECODE">Null</column>
+<column name="NEXTROLECODE">Null</column>
+<column name="TASKID">Null</column>
+<column name="NEXTTASKID">Null</column>
+<column name="RECORDTYPE">Null</column>
+<column name="WORKFLOWID">0</column>
+<column name="ALLOWDEVIATION">0</column>
+<column name="DEVIATIONTYPE">Null</column>
+<column name="CALFEEMODIFY">0</column>
+<column name="FEETOFINANCE">Null</column>
+<column name="REVOLVING">1</column>
+<column name="FIXEDORVARIABLELIMIT">F</column>
+<column name="ACTIVE">1</column>
+<column name="FIELDS">ft_finType, ,acType</column>
+<column name="FEETYPEID">NULL</column>
+		</insert>
+	</changeSet>
+	
+<changeSet id="58" author="Prasad">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA["if(acType=='BANK'){Result=fd_disbAmount;return;}else{Result=acType+ft_finType;return;}"]]></column>
+			<column name="ACTUALBLOCK" type="NCLOB"><![CDATA[(|if|FIELDLIST|acType| |==|STATICTEXT|BANK| |1|0|1|1|1|fd_disbAmount| |~)|~(|else|0|0|0|1|1|acType + ft_finType|acType,ft_finType|~)|]]></column>
+			<where>RULEMODULE='SUBHEAD' and rulecode='GLCODE3' and ACTIVE=1</where>
+		</update>
+	</changeSet>
+	
+<changeSet author="PrasadRaju" id="59">
+		<insert tableName="Rules">
+			<column name="RULEID" valueComputed="(select max(RULEID) + 1 from Rules)" />
+			<column name="RULEMODULE">SUBHEAD</column>
+			<column name="RULEEVENT">SUBHEAD</column>
+<column name="RULECODE">TEST</column>
+<column name="RULECODEDESC">test</column>
+<column name="WAIVERDECIDER">Null</column>
+<column name="WAIVER">0</column>
+<column name="WAIVERPERC">Null</column>
+<column name="SQLRULE" type="nclob"><![CDATA["if(custCOB!==custCtgCode){Result='123';return;}else{Result='54';return;}"]]></column>
+<column name="ACTUALBLOCK" type="nclob"><![CDATA[(|if|FIELDLIST|custCOB| |!==|FIELDLIST|custCtgCode| |1|0|1|1|0|123| |~)|~(|else|0|0|0|1|0|54| |~)|]]></column>
+<column name="SEQORDER">0</column>
+<column name="RETURNTYPE">C</column>
+<column name="GROUPID">0</column>
+<column name="VERSION">2</column>
+<column name="LASTMNTBY">1000</column>
+<column name="LASTMNTON">28-APR-2017</column>
+<column name="RECORDSTATUS">Approved</column>
+<column name="ROLECODE">Null</column>
+<column name="NEXTROLECODE">Null</column>
+<column name="TASKID">Null</column>
+<column name="NEXTTASKID">Null</column>
+<column name="RECORDTYPE">Null</column>
+<column name="WORKFLOWID">0</column>
+<column name="ALLOWDEVIATION">0</column>
+<column name="DEVIATIONTYPE">Null</column>
+<column name="CALFEEMODIFY">0</column>
+<column name="FEETOFINANCE">Null</column>
+<column name="REVOLVING">1</column>
+<column name="FIXEDORVARIABLELIMIT">F</column>
+<column name="ACTIVE">1</column>
+<column name="FIELDS">ft_finType, ,acType</column>
+<column name="FEETYPEID">NULL</column>
+		</insert>
+	</changeSet>
+	
+<changeSet id="60" author="Prasad">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB"><![CDATA["if(custCOB!==custCtgCode){Result='123';return;}else{Result='54';return;}"]]></column>
+			<column name="ACTUALBLOCK" type="NCLOB"><![CDATA[(|if|FIELDLIST|custCOB| |!==|FIELDLIST|custCtgCode| |1|0|1|1|0|123| |~)|~(|else|0|0|0|1|0|54| |~)|]]></column>
+			<where>RULEMODULE='SUBHEAD' and rulecode='TEST' and ACTIVE=1</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>
