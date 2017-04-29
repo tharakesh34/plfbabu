@@ -242,14 +242,6 @@ public class Search implements IMutableSearch, Serializable {
 	}
 
 	/**
-	 * Add a filter that uses the SOME operator.
-	 */
-	public Search addFilterSome(String property, Filter filter) {
-		SearchUtil.addFilterSome(this, property, filter);
-		return this;
-	}
-
-	/**
 	 * Add a filter that uses the ALL operator.
 	 */
 	public Search addFilterAll(String property, Filter filter) {

@@ -312,13 +312,6 @@ public class SearchUtil {
 		addFilter(search, Filter.or(filters));
 	}
 
-	/**
-	 * Add a filter that uses the SOME operator.
-	 */
-	public static void addFilterSome(IMutableSearch search, String property, Filter filter) {
-		addFilter(search, Filter.some(property, filter));
-	}
-
 	// Sorts
 	public static void addSort(IMutableSearch search, Sort sort) {
 		if (sort == null){
