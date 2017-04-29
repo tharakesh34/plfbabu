@@ -141,6 +141,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 	protected Row											row_remarks;	
 
 	private FinReceiptHeader								receiptHeader						= null;
+	private ReceiptRealizationListCtrl						receiptRealizationListCtrl;						
 	private ReceiptRealizationService						receiptRealizationService;						
 
 	/**
@@ -181,6 +182,8 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 				getReceiptHeader().setBefImage(befImage);
 
 			}
+			
+			this.receiptRealizationListCtrl = (ReceiptRealizationListCtrl) arguments.get("receiptRealizationListCtrl");
 
 			doLoadWorkFlow(receiptHeader.isWorkflow(), receiptHeader.getWorkflowId(), receiptHeader.getNextTaskId());
 
@@ -324,6 +327,14 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
 	}
+	
+	/**
+	 * Refresh the list page with the filters that are applied in list page.
+	 */
+	private void refreshList() {
+		this.receiptRealizationListCtrl.search();
+	}
+
 
 	/**
 	 * Method for Setting Fields based on Receipt Mode selected
@@ -435,6 +446,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 						aReceiptHeader.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);
 
+				refreshList();
 				closeDialog();
 			}
 
@@ -457,6 +469,13 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 
 		// Receipt Header Details
 		FinReceiptHeader header = getReceiptHeader();
+		
+		this.finType.setValue(header.getFinType());
+		this.finReference.setValue(header.getReference());
+		this.finCcy.setValue(header.getFinCcy());
+		this.finBranch.setValue(header.getFinBranch());;
+		this.custCIF.setValue(header.getCustCIF());
+		
 		fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), "");
 		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
 		fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModes(), "");
@@ -500,70 +519,6 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 		logger.debug("Leaving");
 	}
 
-	// WorkFlow Creations
-	private String getServiceTasks(String taskId, FinReceiptHeader receiptHeader, String finishedTasks) {
-		logger.debug("Entering");
-
-		String serviceTasks = getServiceOperations(taskId, receiptHeader);
-
-		if (!"".equals(finishedTasks)) {
-			String[] list = finishedTasks.split(";");
-
-			for (int i = 0; i < list.length; i++) {
-				serviceTasks = serviceTasks.replace(list[i] + ";", "");
-			}
-		}
-		logger.debug("Leaving");
-		return serviceTasks;
-	}
-
-	private void setNextTaskDetails(String taskId, FinReceiptHeader receiptHeader) {
-		logger.debug("Entering");
-
-		// Set the next task id
-		String action = userAction.getSelectedItem().getLabel();
-		String nextTaskId = StringUtils.trimToEmpty(receiptHeader.getNextTaskId());
-
-		if ("".equals(nextTaskId)) {
-			if ("Save".equals(action)) {
-				nextTaskId = taskId + ";";
-			}
-		} else {
-			if (!"Save".equals(action)) {
-				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
-			}
-		}
-
-		if ("".equals(nextTaskId)) {
-			nextTaskId = getNextTaskIds(taskId, receiptHeader);
-		}
-
-		// Set the role codes for the next tasks
-		String nextRoleCode = "";
-
-		if ("".equals(nextTaskId)) {
-			nextRoleCode = getFirstTaskOwner();
-		} else {
-			String[] nextTasks = nextTaskId.split(";");
-
-			if (nextTasks.length > 0) {
-				for (int i = 0; i < nextTasks.length; i++) {
-					if (nextRoleCode.length() > 1) {
-						nextRoleCode = nextRoleCode.concat(",");
-					}
-					nextRoleCode += getTaskOwner(nextTasks[i]);
-				}
-			}
-		}
-
-		receiptHeader.setTaskId(taskId);
-		receiptHeader.setNextTaskId(nextTaskId);
-		receiptHeader.setRoleCode(getRole());
-		receiptHeader.setNextRoleCode(nextRoleCode);
-
-		logger.debug("Leaving");
-	}
-
 	/**
 	 * Method for Processing Finance Detail Object for Database Operation
 	 * 
@@ -574,9 +529,9 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 	 */
 	private boolean doProcess(FinReceiptHeader aReceiptHeader, String tranType) throws InterruptedException {
 		logger.debug("Entering");
-
-		boolean processCompleted = true;
-		AuditHeader auditHeader = null;
+		boolean processCompleted = false;
+		AuditHeader auditHeader;
+		String nextRoleCode = "";
 
 		aReceiptHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
 		aReceiptHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -584,61 +539,68 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
+			String nextTaskId;
 			aReceiptHeader.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 
-			// Check for service tasks. If one exists perform the task(s)
-			String finishedTasks = "";
-			String serviceTasks = getServiceTasks(taskId, aReceiptHeader, finishedTasks);
+			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
+				nextTaskId = taskId + ";";
+			} else {
+				nextTaskId = StringUtils.trimToEmpty(aReceiptHeader.getNextTaskId());
 
-			if (isNotesMandatory(taskId, aReceiptHeader)) {
-				try {
+				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
+				if ("".equals(nextTaskId)) {
+					nextTaskId = getNextTaskIds(taskId, aReceiptHeader);
+				}
+
+				if (isNotesMandatory(taskId, aReceiptHeader)) {
 					if (!notesEntered) {
-						MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
 						return false;
 					}
-				} catch (InterruptedException e) {
-					logger.error("Exception: ", e);
+
+				}
+			}
+			if (!StringUtils.isBlank(nextTaskId)) {
+				String[] nextTasks = nextTaskId.split(";");
+
+				if (nextTasks != null && nextTasks.length > 0) {
+					for (int i = 0; i < nextTasks.length; i++) {
+
+						if (nextRoleCode.length() > 1) {
+							nextRoleCode = nextRoleCode.concat(",");
+						}
+						nextRoleCode = getTaskOwner(nextTasks[i]);
+					}
+				} else {
+					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
 
-			auditHeader = getAuditHeader(aReceiptHeader, PennantConstants.TRAN_WF);
-
-			while (!"".equals(serviceTasks)) {
-
-				String method = serviceTasks.split(";")[0];
-				FinReceiptHeader tReceiptHeader = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
-				setNextTaskDetails(taskId, tReceiptHeader);
-				auditHeader.getAuditDetail().setModelData(tReceiptHeader);
-				processCompleted = doSaveProcess(auditHeader, method);
-
-			}
-
-			FinReceiptHeader tReceiptHeader = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
-
-			// Check whether to proceed further or not
-			String nextTaskId = getNextTaskIds(taskId, tReceiptHeader);
-
-			if (processCompleted && nextTaskId.equals(taskId + ";")) {
-				processCompleted = false;
-			}
-
-			// Proceed further to save the details in WorkFlow
-			if (processCompleted) {
-
-				if (!"".equals(nextTaskId) || "Save".equals(userAction.getSelectedItem().getLabel())) {
-					setNextTaskDetails(taskId, tReceiptHeader);
-					auditHeader.getAuditDetail().setModelData(tReceiptHeader);
-					processCompleted = doSaveProcess(auditHeader, null);
-				}
-			}
-
-		} else {
+			aReceiptHeader.setTaskId(taskId);
+			aReceiptHeader.setNextTaskId(nextTaskId);
+			aReceiptHeader.setRoleCode(getRole());
+			aReceiptHeader.setNextRoleCode(nextRoleCode);
 
 			auditHeader = getAuditHeader(aReceiptHeader, tranType);
-			processCompleted = doSaveProcess(auditHeader, null);
+			String operationRefs = getServiceOperations(taskId, aReceiptHeader);
 
+			if ("".equals(operationRefs)) {
+				processCompleted = doSaveProcess(auditHeader, null);
+			} else {
+				String[] list = operationRefs.split(";");
+
+				for (int i = 0; i < list.length; i++) {
+					auditHeader = getAuditHeader(aReceiptHeader, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
+						break;
+					}
+				}
+			}
+		} else {
+			auditHeader = getAuditHeader(aReceiptHeader, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
 	}
@@ -664,18 +626,18 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 			while (retValue == PennantConstants.porcessOVERIDE) {
 
 				if (StringUtils.isBlank(method)) {
-					auditHeader = getRealizationProcessService().saveOrUpdate(auditHeader);
+					auditHeader = getReceiptRealizationService().saveOrUpdate(auditHeader);
 
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = getRealizationProcessService().doApprove(auditHeader);
+						auditHeader = getReceiptRealizationService().doApprove(auditHeader);
 
 						if (aReceiptHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
 
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getRealizationProcessService().doReject(auditHeader);
+						auditHeader = getReceiptRealizationService().doReject(auditHeader);
 						if (aReceiptHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
@@ -758,11 +720,11 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 		this.receiptHeader = receiptHeader;
 	}
 
-	public ReceiptRealizationService getRealizationProcessService() {
+	public ReceiptRealizationService getReceiptRealizationService() {
 		return receiptRealizationService;
 	}
 
-	public void setRealizationProcessService(ReceiptRealizationService receiptRealizationService) {
+	public void setReceiptRealizationService(ReceiptRealizationService receiptRealizationService) {
 		this.receiptRealizationService = receiptRealizationService;
 	}
 

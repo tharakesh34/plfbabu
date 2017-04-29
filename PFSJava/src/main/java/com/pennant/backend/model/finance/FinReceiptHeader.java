@@ -28,6 +28,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String excessAdjustTo;
 	private String finType;
 	private String finBranch;
+	private String finCcy;
 	private String custCIF;
 	private String custShrtName;
 	private String allocationType;
@@ -55,6 +56,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("excessAmounts");
 		excludeFields.add("allocations");
 		excludeFields.add("finType");
+		excludeFields.add("finCcy");
 		excludeFields.add("finBranch");
 		excludeFields.add("custCIF");
 		excludeFields.add("custShrtName");
@@ -255,6 +257,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setCustShrtName(String custShrtName) {
 		this.custShrtName = custShrtName;
+	}
+
+	public String getFinCcy() {
+		return finCcy;
+	}
+
+	public void setFinCcy(String finCcy) {
+		this.finCcy = finCcy;
 	}
 
 }

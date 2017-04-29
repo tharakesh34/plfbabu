@@ -96,6 +96,9 @@ public class FinReceiptHeaderDAOImpl extends BasisNextidDaoImpl<FinReceiptHeader
 		StringBuilder selectSql = new StringBuilder(" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose, ");
 		selectSql.append(" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod, ReceiptModeStatus, " );
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append( " ,FinType, FinCcy, FinBranch, CustCIF, CustShrtName ");
+		}
 		selectSql.append(" From FinReceiptHeader");
 		selectSql.append(StringUtils.trim(type));
 		selectSql.append(" Where Reference =:Reference ");
@@ -195,6 +198,9 @@ public class FinReceiptHeaderDAOImpl extends BasisNextidDaoImpl<FinReceiptHeader
 		StringBuilder selectSql = new StringBuilder(" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose, ");
 		selectSql.append(" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod, ReceiptModeStatus, " );
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append( " ,FinType, FinCcy, FinBranch, CustCIF, CustShrtName ");
+		}
 		selectSql.append(" From FinReceiptHeader");
 		selectSql.append(StringUtils.trim(type));
 		selectSql.append(" Where ReceiptID =:ReceiptID ");

@@ -32,6 +32,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.ReceiptRealizationService;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.search.Filter;
 import com.pennant.webui.financemanagement.receipts.model.ReceiptRealizationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -62,7 +63,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	protected Listheader listheader_ReceiptRealizationFinBranch;
 	protected Listheader listheader_ReceiptRealizationCusomer;
 	protected Listheader listheader_ReceiptRealizationCustName;
-	
+
 
 	protected Button btnNew;
 	protected Button btnSearch;
@@ -82,7 +83,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	protected Listbox sortOperator_receiptAllocationType;
 	protected Listbox sortOperator_receiptRealizationFinType;
 	protected Listbox sortOperator_receiptRealizationFinBranch;
-	
+
 	protected int   oldVar_sortOperator_custCIF; 
 	protected int   oldVar_sortOperator_finType;
 	protected int   oldVar_sortOperator_finBranch;
@@ -115,21 +116,23 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 		// Set the page level components.
 		setPageComponents(window_ReceiptRealizationList, borderLayout_ReceiptRealizationList, listBoxReceiptRealization, pagingReceiptRealizationList);
 		setItemRender(new ReceiptRealizationListModelItemRenderer());
-		registerButton(btnNew, "button_AcademicList_NewAcademic", true);
+		registerButton(btnNew, "button_AcademicList_NewAcademic", false);
 		registerButton(btnSearch);
 
 		registerField("receiptID");
 		registerField("reference", listheader_ReceiptRealizationReference, SortOrder.ASC, receiptReference,
 				sortOperator_receiptRealizationReference, Operators.STRING);
-		registerField("custCif", listheader_ReceiptRealizationCusomer, SortOrder.ASC, customer,
+		registerField("custCIF", listheader_ReceiptRealizationCusomer, SortOrder.NONE, customer,
 				sortOperator_receiptRealizationCustomer, Operators.STRING);
-		registerField("receiptpurpose", listheader_ReceiptRealizationPurpose, SortOrder.ASC, purpose,
+		registerField("custShrtName", listheader_ReceiptRealizationCustName, SortOrder.NONE, customer,
+				sortOperator_receiptRealizationCustomer, Operators.STRING);
+		registerField("receiptPurpose", listheader_ReceiptRealizationPurpose, SortOrder.NONE, purpose,
 				sortOperator_receiptRealizationPurpose, Operators.STRING);
 		registerField("receiptMode", listheader_ReceiptRealizationMode, SortOrder.NONE, receiptMode, sortOperator_receiptRealizationReceiptMode,
 				Operators.STRING);
-		registerField("allocationType", listheader_ReceiptRealizationAllocattionType, SortOrder.ASC, allocationType,
+		registerField("allocationType", listheader_ReceiptRealizationAllocattionType, SortOrder.NONE, allocationType,
 				sortOperator_receiptAllocationType, Operators.STRING);
-		registerField("finType", listheader_ReceiptRealizationFinType, SortOrder.ASC, finType,
+		registerField("finType", listheader_ReceiptRealizationFinType, SortOrder.NONE, finType,
 				sortOperator_receiptRealizationFinType, Operators.STRING);
 		registerField("finBranch", listheader_ReceiptRealizationFinBranch, SortOrder.NONE, finBranch, sortOperator_receiptRealizationFinBranch,
 				Operators.STRING);
@@ -137,6 +140,14 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 		// Render the page and display the data.
 		doRenderPage();
 		search();
+	}
+	
+	@Override
+	protected void doAddFilters() {
+		super.doAddFilters();
+		this.searchObject.addWhereClause(" (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_APPROVED+"' "
+				+ " OR ( ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_REALIZED+"' AND RecordType IS NOT NULL) ) "
+				+ " AND (ReceiptMode = '"+RepayConstants.RECEIPTMODE_CHEQUE+"' OR ReceiptMode = '"+RepayConstants.RECEIPTMODE_DD+"') ");
 	}
 
 	/**
@@ -156,8 +167,6 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
-		doReset();
-		search();
 		this.customer.setValue("");
 		this.sortOperator_receiptRealizationCustomer.setSelectedIndex(0);
 		this.finType.setValue("");
@@ -168,6 +177,8 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 		this.oldVar_sortOperator_custCIF=0;
 		this.oldVar_sortOperator_finType=0;
 		this.oldVar_sortOperator_finBranch=0;
+		doReset();
+		search();
 	}
 
 	/**
@@ -214,7 +225,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 
 		// Check whether the user has authority to change/view the record.
 		String whereCond = " AND ReceiptRealizationID='" + header.getReceiptID() + "' AND version=" + header.getVersion()
-				+ " ";
+		+ " ";
 
 		if (doCheckAuthority(header, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.
@@ -241,7 +252,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("receiptHeader", header);
 		arg.put("realizationProcessListCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/ReceiptRealizationDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -251,14 +262,14 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * When user clicks on  "btnSearchCustCIF" button
 	 * @param event
 	 */
 	public void onClick$btnSearchCustCIF(Event event) throws  SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering " + event.toString());
-		
+
 		if(this.oldVar_sortOperator_custCIF == Filter.OP_IN || this.oldVar_sortOperator_custCIF == Filter.OP_NOT_IN){
 			//Calling MultiSelection ListBox From DB
 			String selectedValues= (String) MultiSelectionSearchListBox.show(
@@ -266,7 +277,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 			if (selectedValues!= null) {
 				this.customer.setValue(selectedValues);
 			}
-			
+
 		}else{
 
 			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptRealizationList, "Customer");
@@ -281,7 +292,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 		}
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * when clicks on button "SearchFinType"
 	 * 
@@ -289,7 +300,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	 */
 	public void onClick$btnSearchFinType(Event event) {
 		logger.debug("Entering " + event.toString());
-		
+
 		if(this.oldVar_sortOperator_finType == Filter.OP_IN || this.oldVar_sortOperator_finType == Filter.OP_NOT_IN){
 			//Calling MultiSelection ListBox From DB
 			String selectedValues= (String) MultiSelectionSearchListBox.show(
@@ -297,7 +308,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 			if (selectedValues!= null) {
 				this.finType.setValue(selectedValues);
 			}
-			
+
 		}else{
 
 			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptRealizationList, "FinanceType");
@@ -312,7 +323,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 		}
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	/**
 	 * When user clicks on "btnSearchBranchCode" button
 	 * This method displays ExtendedSearchListBox with branch details
@@ -328,7 +339,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 			if (selectedValues!= null) {
 				this.finBranch.setValue(selectedValues);
 			}
-			
+
 		}else{
 			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptRealizationList,"Branch");
 			if (dataObject instanceof String){
@@ -342,38 +353,38 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 		}
 		logger.debug("Leaving"+event.toString());
 	}
-	
-		// On Change Events for Multi-Selection Listbox's for Search operators
 
-		public void onSelect$sortOperator_receiptRealizationCustomer(Event event) {
-			this.oldVar_sortOperator_custCIF = doChangeStringOperator(sortOperator_receiptRealizationCustomer, oldVar_sortOperator_custCIF, this.customer);
-		}
-		
-		public void onSelect$sortOperator_finType(Event event) {
-			this.oldVar_sortOperator_finType = doChangeStringOperator(sortOperator_receiptRealizationFinType, oldVar_sortOperator_finType, this.finType);
-		}
-		
-		public void onSelect$sortOperator_finBranch(Event event) {
-			this.oldVar_sortOperator_finBranch = doChangeStringOperator(sortOperator_receiptRealizationFinBranch, oldVar_sortOperator_finBranch, this.finBranch);
-		}
-		
-		private int doChangeStringOperator(Listbox listbox,int oldOperator,Textbox textbox){
-			
-			final Listitem item = listbox.getSelectedItem();
-			final int searchOpId = ((SearchOperators) item.getAttribute("data")).getSearchOperatorId();
+	// On Change Events for Multi-Selection Listbox's for Search operators
 
-			if(oldOperator == Filter.OP_IN || oldOperator == Filter.OP_NOT_IN){
-				if(!(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN)){
-					textbox.setValue("");
-				}
-			}else{
-				if(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN){
-					textbox.setValue("");
-				}
+	public void onSelect$sortOperator_receiptRealizationCustomer(Event event) {
+		this.oldVar_sortOperator_custCIF = doChangeStringOperator(sortOperator_receiptRealizationCustomer, oldVar_sortOperator_custCIF, this.customer);
+	}
+
+	public void onSelect$sortOperator_finType(Event event) {
+		this.oldVar_sortOperator_finType = doChangeStringOperator(sortOperator_receiptRealizationFinType, oldVar_sortOperator_finType, this.finType);
+	}
+
+	public void onSelect$sortOperator_finBranch(Event event) {
+		this.oldVar_sortOperator_finBranch = doChangeStringOperator(sortOperator_receiptRealizationFinBranch, oldVar_sortOperator_finBranch, this.finBranch);
+	}
+
+	private int doChangeStringOperator(Listbox listbox,int oldOperator,Textbox textbox){
+
+		final Listitem item = listbox.getSelectedItem();
+		final int searchOpId = ((SearchOperators) item.getAttribute("data")).getSearchOperatorId();
+
+		if(oldOperator == Filter.OP_IN || oldOperator == Filter.OP_NOT_IN){
+			if(!(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN)){
+				textbox.setValue("");
 			}
-			return searchOpId;
-			
+		}else{
+			if(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN){
+				textbox.setValue("");
+			}
 		}
+		return searchOpId;
+
+	}
 
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
@@ -394,7 +405,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

@@ -736,6 +736,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// Save Receipt Header
 		receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_APPROVED);
+		receiptHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		receiptHeader.setRecordType("");
+		receiptHeader.setRoleCode("");
+		receiptHeader.setNextRoleCode("");
+		receiptHeader.setTaskId("");
+		receiptHeader.setNextTaskId("");
+		receiptHeader.setWorkflowId(0);
 		long receiptID = getFinReceiptHeaderDAO().save(receiptHeader, TableType.MAIN_TAB);
 
 		// Save Receipt Detail List by setting Receipt Header ID

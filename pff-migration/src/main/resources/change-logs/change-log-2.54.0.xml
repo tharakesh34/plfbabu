@@ -385,6 +385,63 @@
 		FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID
 		</createView>
 	</changeSet>
+
+	<changeSet id="33" author="Siva">
+		<sql>
+					
+			DELETE FROM SECGROUPRIGHTS WHERE RIGHTID IN(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME LIKE '%ReceiptRealization%');
+			DELETE FROM SECRIGHTS WHERE RIGHTNAME LIKE '%ReceiptRealization%';
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SECROLES);
+			UPDATE SEQSECOPERATIONS SET SEQNO= (SELECT MAX(OPRID) FROM SECOPERATIONS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
+			UPDATE SEQSECUSEROPERATIONS SET SEQNO= (SELECT MAX(USROPRID) FROM SECUSEROPERATIONS);
+			
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_FinanceManagement_ReceiptRealization','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_ReceiptRealizationDialog_btnSave','ReceiptRealizationDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'REALIZATION_MAKER', 'Receipt Realization Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'REALIZATION_APPROVER', 'Receipt Realization Approver', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'REALIZATION_MAKER', 'Receipt Realization Maker','', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'REALIZATION_APPROVER', 'Receipt Realization Approver','', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+			
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='REALIZATION_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='REALIZATION_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='REALIZATION_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='REALIZATION_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			
+			INSERT INTO SECOPERATIONS SELECT (SELECT MAX(OPRID)+1 FROM SECOPERATIONS), 'RRM', 'Receipt Realization Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECOPERATIONS WHERE 0=0;
+			INSERT INTO SECOPERATIONS SELECT (SELECT MAX(OPRID)+1 FROM SECOPERATIONS), 'RRA', 'Receipt Realization Approver', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECOPERATIONS WHERE 0=0;
+			
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='RRM'), (Select  RoleID  From SecRoles Where RoleCd='REALIZATION_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='RRA'), (Select  RoleID  From SecRoles Where RoleCd='REALIZATION_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			
+			INSERT INTO SecUserOperations values((Select MAX(UsrOprID)+1 From SecUserOperations),(Select UsrId  From SecUsers Where UsrLogin='MAKER'), (Select  OprID  From SecOperations Where OprCode='RRM'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecUserOperations values((Select MAX(UsrOprID)+1 From SecUserOperations),(Select UsrId  From SecUsers Where UsrLogin='APPROVER'), (Select  OprID  From SecOperations Where OprCode='RRA'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='REALIZATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='REALIZATION_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='REALIZATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_ReceiptRealization'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='REALIZATION_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_ReceiptRealization'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='REALIZATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_ReceiptRealizationDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='REALIZATION_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_ReceiptRealizationDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SECROLES);
+			UPDATE SEQSECOPERATIONS SET SEQNO= (SELECT MAX(OPRID) FROM SECOPERATIONS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
+			UPDATE SEQSECUSEROPERATIONS SET SEQNO= (SELECT MAX(USROPRID) FROM SECUSEROPERATIONS);
+		</sql>
+	</changeSet>
+	
 	<changeSet id="34" author="Kesav">
 		<createView viewName="PRESENTMENTDETAILS_AVIEW" replaceIfExists="true">
 				SELECT		T1.Id, T1.PresentmentId, T1.FinReference, T1.SchDate, T1.MandateId, T1.SchAmtDue, T1.schPriDue, T1.schPftDue, T1.schFeeDue, T1.schInsDue,
@@ -398,4 +455,53 @@
 							CUSTOMERS T5 ON T5.CUSTID  = T3.CUSTID
 		</createView>
 	</changeSet>
+
+	<changeSet id="35" author="Siva">
+		<createView viewName="FINRECEIPTHEADER_VIEW" replaceIfExists="true">
+			 SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
+			 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
+			 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName
+						FROM         FinReceiptHeader_Temp T1 INNER JOIN
+			       FinanceMain T2 ON T1.Reference = T2.FinReference INNER JOIN
+			       Customers T3 ON T2.CustId = T3.CustId
+			UNION ALL
+			 SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
+			 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
+			 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName
+					FROM         FinReceiptHeader T1 INNER JOIN
+			       FinanceMain T2 ON T1.Reference = T2.FinReference INNER JOIN
+			       Customers T3 ON T2.CustId = T3.CustId
+					WHERE     NOT EXISTS
+			                          (SELECT     1
+			                            FROM          FinReceiptHeader_TEMP 
+			                            WHERE      ReceiptID = T1.ReceiptID)
+		</createView>
+	</changeSet>
+
+	<changeSet id="36" author="Siva">
+		<createView viewName="FINRECEIPTHEADER_VIEW" replaceIfExists="true">
+			 SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
+			 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
+			 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy
+						FROM         FinReceiptHeader_Temp T1 INNER JOIN
+			       FinanceMain T2 ON T1.Reference = T2.FinReference INNER JOIN
+			       Customers T3 ON T2.CustId = T3.CustId
+			UNION ALL
+			 SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
+			 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
+			 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy
+					FROM         FinReceiptHeader T1 INNER JOIN
+			       FinanceMain T2 ON T1.Reference = T2.FinReference INNER JOIN
+			       Customers T3 ON T2.CustId = T3.CustId
+					WHERE     NOT EXISTS
+			                          (SELECT     1
+			                            FROM          FinReceiptHeader_TEMP 
+			                            WHERE      ReceiptID = T1.ReceiptID)
+		</createView>
+	</changeSet>
+
 </databaseChangeLog>

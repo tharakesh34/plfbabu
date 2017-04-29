@@ -266,7 +266,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		if (receiptHeader.isWorkflow()) {
 			tempReceiptHeader = getFinReceiptHeaderDAO().getReceiptHeaderByID(receiptHeader.getReceiptID(), "_Temp");
 		}
-		FinReceiptHeader beFinReceiptHeader = getFinReceiptHeaderDAO().getReceiptHeaderByID(receiptHeader.getReceiptID(), "_Temp");
+		FinReceiptHeader beFinReceiptHeader = getFinReceiptHeaderDAO().getReceiptHeaderByID(receiptHeader.getReceiptID(), "");
 		FinReceiptHeader oldReceiptHeader = receiptHeader.getBefImage();
 
 		String[] errParm = new String[1];
