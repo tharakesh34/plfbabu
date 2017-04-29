@@ -1278,23 +1278,29 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		return this.namedParameterJdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
 	}
 
+	@Override
 	public FinanceSummary getFinanceProfitDetails(String finRef) {
-		logger.debug("Entering");
-		FinanceSummary summary = new FinanceSummary();
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder("Select * from FinanceProfitEnquiry_View");
-		selectSql.append("  where FinReference = '" + finRef + "'");
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(summary);
-		RowMapper<FinanceSummary> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceSummary.class);
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("select * from FinanceProfitEnquiry_View");
+		sql.append(" where FinReference = :FinReference");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("FinReference", finRef);
+
+		RowMapper<FinanceSummary> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceSummary.class);
+
+		FinanceSummary summary = new FinanceSummary();
 		try {
-			summary = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			summary = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			summary = new FinanceSummary();
+			logger.warn(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 		return summary;
 	}
 

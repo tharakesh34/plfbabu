@@ -77,9 +77,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 
 /**
  * DAO methods implementation for the <b>WIFFinanceScheduleDetail model</b> class.<br>
- * 
  */
-
 public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDetail> implements
 		FinanceScheduleDetailDAO {
 
@@ -101,7 +99,6 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 	 *            (String) ""/_Temp/_View
 	 * @return FinanceScheduleDetail
 	 */
-
 	@Override
 	public FinanceScheduleDetail getFinanceScheduleDetailById(final String id, final Date schdDate, String type,
 			boolean isWIF) {
