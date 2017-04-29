@@ -500,6 +500,8 @@
 			<menuItem id="menu_Item_ProvisionalTDSCertification" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_CustomerTemplates_NoLiabilitesCertificate" />
 			<menuItem id="menu_Item_TDSCertification" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_CustomerTemplates_NoLiabilitesCertificate" />
 			<menuItem id="menu_Item_AccountStmt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_CustomerTemplates_SOA" />
+			<menuItem id="menu_Item_NPAReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_CustomerTemplates_SOA"/>
+			<menuItem id="menu_Item_PaymentSchedule" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_CustomerTemplates_SOA"/>
 				
 			<!-- <menuItem id="menu_Item_AvailmentTicket" zulNavigation="/WEB-INF/pages/Reports/AvailmentTicketDialog.zul"  rightName="menuItem_CustomerTemplates_AvailmentTicket"/> -->	
 		</menu>

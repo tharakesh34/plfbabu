@@ -863,6 +863,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 					"button_JVPostingDialog_btnNewJVPostingEntry"));
 			this.btnValidate.setVisible(getUserWorkspace().isAllowed(
 					"button_JVPostingDialog_btnValidate"));
+			this.btnValidate.setVisible(false);
 		}
 		logger.debug("Leaving");
 	}
@@ -1268,12 +1269,12 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	public void doSave() throws InterruptedException {
 		logger.debug("Entering");
 
-		if(("Submit".equals(userAction.getSelectedItem().getLabel())||
+/*		if(("Submit".equals(userAction.getSelectedItem().getLabel())||
 				"Approve".equals(userAction.getSelectedItem().getLabel())) && !proceed){
 			MessageUtil.showErrorMessage(Labels.getLabel("VALIDATE_ACCOUNTS"));
 			return;
 		}
-		
+		*/
 		if (getJVPosting().isNewRecord() &&  getJVPostingService()
 				.getJVPostingByFileName(
 						this.batch.getValue()) != null) {
