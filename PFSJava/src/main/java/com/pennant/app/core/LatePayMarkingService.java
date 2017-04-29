@@ -227,6 +227,10 @@ public class LatePayMarkingService extends ServiceHelper {
 	 * @throws Exception
 	 */
 	public void processDPDBuketing(FinanceProfitDetail detail, Date date, FinanceMain financeMain) {
+		
+		if((detail.getTdSchdPri().add(detail.getTdSchdPft())).compareTo(BigDecimal.ZERO) <= 0){
+			return;
+		}
 
 		String finreference = detail.getFinReference();
 		BigDecimal tdSchdPri = detail.getTdSchdPri();

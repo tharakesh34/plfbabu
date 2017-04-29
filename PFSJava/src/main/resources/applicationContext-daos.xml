@@ -5630,7 +5630,7 @@
 	<!--============ Finance Excess Amounts Details ============== -->
 
 	<bean id="finExcessAmountDAO"
-		class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl">
+		class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 

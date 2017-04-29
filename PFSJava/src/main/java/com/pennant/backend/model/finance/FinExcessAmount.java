@@ -2,7 +2,9 @@ package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
 
-public class FinExcessAmount {
+import com.pennant.backend.model.Entity;
+
+public class FinExcessAmount implements Entity {
 
 	private long excessID = 0;
 	private String finReference;
@@ -20,6 +22,20 @@ public class FinExcessAmount {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
+	@Override
+	public boolean isNew() {
+		return false;
+	}
+
+	@Override
+	public long getId() {
+		return excessID;
+	}
+
+	@Override
+	public void setId(long id) {
+		this.excessID = id;
+	}
 	public long getExcessID() {
 		return excessID;
 	}

@@ -58,11 +58,13 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.Literal;
@@ -71,7 +73,7 @@ import com.pennanttech.pff.core.Literal;
  * DAO methods implementation for the <b>Finance Repayments</b> class.<br>
  * 
  */
-public class FinExcessAmountDAOImpl implements FinExcessAmountDAO {
+public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> implements FinExcessAmountDAO {
 	private static Logger	           logger	= Logger.getLogger(FinExcessAmountDAOImpl.class);
 
 	// Spring Named JDBC Template
@@ -109,6 +111,29 @@ public class FinExcessAmountDAOImpl implements FinExcessAmountDAO {
 		List<FinExcessAmount> excessList = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		logger.debug("Leaving");
 		return excessList;
+	}
+
+	/**
+	 * Method for Saving Excess Movements after Excess Utilization
+	 */
+	@Override
+	public void saveExcess(FinExcessAmount excess) {
+		logger.debug("Entering");
+		
+		if (excess.getId() == 0 || excess.getId() == Long.MIN_VALUE) {
+			excess.setId(getNextidviewDAO().getNextId("SeqFinExcessAmount"));
+			logger.debug("get NextID:" + excess.getId());
+		}
+		
+		StringBuilder insertSql = new StringBuilder("Insert Into FinExcessAmount");
+		insertSql.append(" (ExcessID, FinReference, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt)");
+		insertSql.append(" Values(:ExcessID, :FinReference, :AmountType, :Amount, :UtilisedAmt, :ReservedAmt, :BalanceAmt)");
+
+		logger.debug("insertSql: " + insertSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(excess);
+		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -165,6 +190,31 @@ public class FinExcessAmountDAOImpl implements FinExcessAmountDAO {
 			throw new DataAccessException(errorDetails.getError()) { };
 		}
 		logger.debug("Leaving");
+	}
+
+	
+	/**
+	 * Method for Update Excess Balance amount after amounts Approval
+	 */
+	@Override
+	public int updateExcessBalByRef(String reference, String amountType, BigDecimal amount) {
+		logger.debug("Entering");
+
+		int recordCount = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", reference);
+		source.addValue("AmountType", amountType);
+		source.addValue("PaidNow", amount);
+
+		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
+		updateSql.append(" Set Amount = Amount + :PaidNow, BalanceAmt = BalanceAmt + :PaidNow ");
+		updateSql.append(" Where FinReference =:FinReference AND AmountType=:AmountType ");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+
+		logger.debug("Leaving");
+		return recordCount;
 	}
 
 	/**

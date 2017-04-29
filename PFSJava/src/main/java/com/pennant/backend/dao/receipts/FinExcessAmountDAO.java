@@ -10,7 +10,7 @@ import com.pennant.backend.model.finance.FinExcessMovement;
 public interface FinExcessAmountDAO {
 
 	List<FinExcessAmount> getExcessAmountsByRef(String finReference);
-
+	void saveExcess(FinExcessAmount excess);
 	void updateUtilise(long payAgainstID, BigDecimal amount);
 	void saveExcessMovement(FinExcessMovement movement);
 	void updateExcessReserve(long payAgainstID, BigDecimal reserveAmt);
@@ -21,5 +21,6 @@ public interface FinExcessAmountDAO {
 	FinExcessAmount getExcessAmountsByRefAndType(String finReference, String amountType);
 	void updateExcessAmount(long excessID, String amountType, BigDecimal amount);
 	void updateExcessBal(long excessID, BigDecimal amount);
+	int updateExcessBalByRef(String reference, String amountType, BigDecimal amount);
 
 }

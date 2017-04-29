@@ -36,6 +36,7 @@ import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -425,12 +426,16 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				long repayID = getFinanceRepaymentsDAO().saveFinRepayHeader(rpyHeader, tableType.getSuffix());
 
 				List<RepayScheduleDetail> rpySchdList = rpyHeader.getRepayScheduleDetails();
-				for (int i = 0; i < rpySchdList.size(); i++) {
-					rpySchdList.get(i).setRepayID(repayID);
-					rpySchdList.get(i).setRepaySchID(i+1);
+				if (rpySchdList != null && rpySchdList.size() >0) {
+				
+					for (int i = 0; i < rpySchdList.size(); i++) {
+						rpySchdList.get(i).setRepayID(repayID);
+						rpySchdList.get(i).setRepaySchID(i+1);
+					}
+					// Save Repayment Schedule Details
+					getFinanceRepaymentsDAO().saveRpySchdList(rpySchdList, tableType.getSuffix());
 				}
-				// Save Repayment Schedule Details
-				getFinanceRepaymentsDAO().saveRpySchdList(rpySchdList, tableType.getSuffix());
+				
 			}
 		}
 		
@@ -668,7 +673,22 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						!StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())){
 					
 					// Update Excess amount (Adding amount and balance updation)
-					getFinExcessAmountDAO().updateExcessBal(receiptDetailList.get(i).getPayAgainstID(), repayHeader.getRepayAmount());
+					if(receiptDetailList.get(i).getPayAgainstID() != 0 && receiptDetailList.get(i).getPayAgainstID() != Long.MIN_VALUE){
+						getFinExcessAmountDAO().updateExcessBal(receiptDetailList.get(i).getPayAgainstID(), repayHeader.getRepayAmount());
+					}else {
+						int recordCount = getFinExcessAmountDAO().updateExcessBalByRef(finReference, repayHeader.getFinEvent(),repayHeader.getRepayAmount());
+						// If record Not found then record count should be zero. Need to create new Excess Record
+						if(recordCount <= 0){
+							FinExcessAmount excess = new FinExcessAmount();
+							excess.setFinReference(finReference);
+							excess.setAmountType(repayHeader.getFinEvent());
+							excess.setAmount(repayHeader.getRepayAmount());
+							excess.setBalanceAmt(repayHeader.getRepayAmount());
+							excess.setUtilisedAmt(BigDecimal.ZERO);
+							excess.setReservedAmt(BigDecimal.ZERO);
+							getFinExcessAmountDAO().saveExcess(excess);
+						}
+					}
 					
 					continue;
 				}
