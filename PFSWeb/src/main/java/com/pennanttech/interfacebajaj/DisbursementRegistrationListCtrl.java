@@ -92,7 +92,7 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.MultiLineMessageBox;
 import com.pennanttech.framework.web.components.SearchFilterControl;
-import com.pennanttech.pff.core.services.disbursement.DisbursementService;
+import com.pennanttech.pff.core.services.disbursement.DisbursementRequest;
 /**
  * ************************************************************<br>
  * This is the controller class for the
@@ -145,7 +145,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	private Map<Long, FinAdvancePayments> disbursementMap = new HashMap<Long, FinAdvancePayments>();
 	
 	@Autowired
-	private DisbursementService disbursementService;
+	private DisbursementRequest disbursementRequest;
 
 	/**
 	 * default constructor.<br>
@@ -515,7 +515,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}
 		try {
 			btnDownload.setDisabled(true);
-			disbursementService.sendDisbursementRequest(this.finType.getValue(), disbushmentList, getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			disbursementRequest.sendReqest(this.finType.getValue(), disbushmentList, getUserWorkspace().getLoggedInUser().getLoginUsrID());
 			Map<String,Object> args = new HashMap<String, Object>();
 			args.put("module", "DISBURSEMENT");
 			

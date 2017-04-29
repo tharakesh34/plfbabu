@@ -188,7 +188,7 @@ import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pff.core.services.disbursement.DisbursementService;
+import com.pennanttech.pff.core.services.disbursement.DisbursementRequest;
 import com.rits.cloning.Cloner;
 
 /**
@@ -243,7 +243,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private FinFeeDetailDAO					finFeeDetailDAO;
 
 	@Autowired
-	private DisbursementService disbursementService;
+	private DisbursementRequest disbursementRequest;
 	
 	public FinanceDetailServiceImpl() {
 		super();
@@ -3816,7 +3816,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
 		List<FinAdvancePayments> list = financeDetail.getAdvancePaymentsList();
 		try {
-			disbursementService.sendDisbursementRequest(finMain.getFinType(), list, finMain.getLastMntBy());
+			disbursementRequest.sendReqest(finMain.getFinType(), list, finMain.getLastMntBy());
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}

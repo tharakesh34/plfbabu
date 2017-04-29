@@ -13,9 +13,10 @@ import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dbengine.DataEngineDBProcess;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
-import com.pennanttech.pff.core.services.disbursement.DisbursementService;
+import com.pennanttech.pff.core.services.disbursement.DisbursementRequest;
+import com.pennanttech.pff.core.services.disbursement.DisbursementResponse;
 
-public class DisbursementServiceImpl extends BajajServices implements DisbursementService {
+public class DisbursementRequestImpl extends BajajServices implements DisbursementRequest, DisbursementResponse {
 	private final Logger logger = Logger.getLogger(getClass());
 
 	private String						finType;
@@ -25,7 +26,7 @@ public class DisbursementServiceImpl extends BajajServices implements Disburseme
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void sendDisbursementRequest(Object... params) throws Exception {
+	public void sendReqest(Object... params) throws Exception {
 		this.finType = (String) params[0];
 		this.disbusments = (List<FinAdvancePayments>) params[1];
 		this.userId = (long) params[2];
@@ -178,25 +179,9 @@ public class DisbursementServiceImpl extends BajajServices implements Disburseme
 			}
 		}
 	}
+	
 	@Override
-	public Object receiveDisbursementResponse(Object object) throws Exception {
-		@SuppressWarnings("unchecked")
-		Map<String, Object> disbursement = (Map<String, Object>)object;
-		
-		long paymentId = (Long)disbursement.get("PAYMENTID");
-		String status = (String)disbursement.get("STATUS");
-		
-		if("E".equals(status)) {
-			return disbursement;
-		}
-		
-		
-		// Reverse the accounting postings
-		
-		
-		//SELECT * FROM FINADVANCEPAYMENTS WHERE STATUS= 'R';
-		
-		return disbursement;
+	public void receiveResponse(Object... params) throws Exception {
+		// TODO Auto-generated method stub
 	}
-
 }
