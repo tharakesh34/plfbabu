@@ -981,17 +981,6 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 					this.dueFromDate.getValue(),PennantConstants.DBDateFormat), Filter.OP_EQUAL));
 		}
 
-		if (logger.isDebugEnabled()) {
-			final List<Filter> lf = this.searchObj.getFilters();
-			for (final Filter filter : lf) {
-				logger.debug(filter.getProperty() + " / "+ filter.getValue().toString());
-
-				if (Filter.OP_ILIKE == filter.getOperator()) {
-					logger.debug(filter.getOperator());
-				}
-			}
-		}
-
 		// Set the ListModel for the articles.
 		getPagedListWrapper().init(this.searchObj, this.listBoxProvision,this.pagingProvisionList);
 		logger.debug("Leaving");

@@ -466,27 +466,12 @@ public class FacilityReferenceDetailSearchCtrl extends GFCBaseCtrl<FacilityRefer
 		// Default Sort on the table
 		so.addSort("FinRefDetailId", false);
 
-		if (logger.isDebugEnabled()) {
-			final List<Filter> lf = so.getFilters();
-			for (final Filter filter : lf) {
-				logger.debug(filter.getProperty() + " / " + filter.getValue().toString());
-
-				if (Filter.OP_ILIKE == filter.getOperator()) {
-					logger.debug(filter.getOperator());
-				}
-			}
-		}
-
-		// store the searchObject for reReading	
-		//this.facilityReferenceDetailCtrl.setSearchObj(so);
-
 		final Listbox listBox = this.facilityReferenceDetailCtrl.listBoxFacilityReferenceDetail;
 		final Paging paging = this.facilityReferenceDetailCtrl.pagingFacilityReferenceDetailList;
 		
 
 		// set the model to the list box with the initial result set get by the DAO method.
-		((PagedListWrapper<FacilityReferenceDetail>) listBox.getModel()).init(so, listBox, paging);	
-		//this.facilityReferenceDetailCtrl.setSearchObj(so);
+		((PagedListWrapper<FacilityReferenceDetail>) listBox.getModel()).init(so, listBox, paging);
 
 		this.label_FacilityReferenceDetailSearchResult.setValue(Labels.getLabel("label_FacilityReferenceDetailSearchResult.value") + " "
 				+ String.valueOf(paging.getTotalSize()));

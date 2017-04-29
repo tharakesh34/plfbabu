@@ -42,7 +42,6 @@
 */
 package com.pennant.webui.rulefactory.overduecharge;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -74,7 +73,6 @@ import com.pennant.backend.service.rulefactory.OverdueChargeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.search.Filter;
 import com.pennant.webui.rulefactory.overduecharge.model.OverdueChargeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -476,16 +474,7 @@ public class OverdueChargeListCtrl extends GFCBaseListCtrl<OverdueCharge> {
 				&& !"".equals(StringUtils.trimToEmpty(String.valueOf(this.recordType.getSelectedItem().getValue())))) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_recordType.getSelectedItem(), this.recordType.getSelectedItem().getValue().toString(), "RecordType");
 		}
-		if (logger.isDebugEnabled()) {
-			final List<Filter> lf = this.searchObj.getFilters();
-			for (final Filter filter : lf) {
-				logger.debug(filter.getProperty() + " / " + filter.getValue().toString());
 
-				if (Filter.OP_ILIKE == filter.getOperator()) {
-					logger.debug(filter.getOperator());
-				}
-			}
-		}
 		// Set the ListModel for the articles.
 		getPagedListWrapper().init(this.searchObj, this.listBoxOverdueCharge, this.pagingOverdueChargeList);
 		logger.debug("Leaving");

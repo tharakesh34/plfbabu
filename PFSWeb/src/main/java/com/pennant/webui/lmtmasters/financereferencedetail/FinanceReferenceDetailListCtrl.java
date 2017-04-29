@@ -472,16 +472,6 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 			searchObj = getSearchFilter(searchObj, this.sortOperator_finEvent.getSelectedItem(), this.finEvent.getSelectedItem().getValue().toString(), "FinEvent");
 		}
 
-		if (logger.isDebugEnabled()) {
-			final List<Filter> lf = this.searchObj.getFilters();
-			for (final Filter filter : lf) {
-				logger.debug(filter.getProperty() + " / " + filter.getValue().toString());
-
-				if (Filter.OP_ILIKE == filter.getOperator()) {
-					logger.debug(filter.getOperator());
-				}
-			}
-		}
 		// Set the ListModel for the articles.
 		getPagedListWrapper().init(this.searchObj,this.listBoxFinanceReferenceDetail,this.pagingFinanceReferenceDetailList);
 		logger.debug("Leaving" );

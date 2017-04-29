@@ -420,17 +420,6 @@ public class OverdueChargeSearchCtrl extends GFCBaseCtrl<OverdueCharge>  {
 		// Defualt Sort on the table
 		so.addSort("ODCRuleCode", false);
 
-		if (logger.isDebugEnabled()) {
-			final List<Filter> lf = so.getFilters();
-			for (final Filter filter : lf) {
-				logger.debug(filter.getProperty() + " / " + filter.getValue().toString());
-
-				if (Filter.OP_ILIKE == filter.getOperator()) {
-					logger.debug(filter.getOperator());
-				}
-			}
-		}
-
 		// store the searchObject for reReading
 		this.overdueChargeCtrl.setSearchObj(so);
 

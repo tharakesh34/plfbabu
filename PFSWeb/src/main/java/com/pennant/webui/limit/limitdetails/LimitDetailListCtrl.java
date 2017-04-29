@@ -775,16 +775,6 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 			searchObj = getSearchFilter(searchObj, this.sortOperator_RecordType.getSelectedItem(), this.recordType.getSelectedItem().getValue().toString(), "RecordType");
 		}
 
-		if (logger.isDebugEnabled()) {
-			final List<Filter> lf = this.searchObj.getFilters();
-			for (final Filter filter : lf) {
-				logger.debug(filter.getProperty().toString() + " / " + filter.getValue().toString());
-				if (Filter.OP_ILIKE == filter.getOperator()) {
-					logger.debug(filter.getOperator());
-				}
-			}
-		}
-
 		// Set the ListModel for the articles.
 		getPagedListWrapper().init(this.searchObj, this.listBoxLimitDetails, this.pagingLimitDetailsList);
 

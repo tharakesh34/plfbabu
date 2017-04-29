@@ -350,17 +350,7 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 		if (StringUtils.isNotBlank(this.facilityTypeDesc.getValue())) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_facilityTypeDesc.getSelectedItem(), this.facilityTypeDesc.getValue(), "facilityDesc");
 		}
-		
-		if (logger.isDebugEnabled()) {
-			final List<Filter> lf = this.searchObj.getFilters();
-			for (final Filter filter : lf) {
-				logger.debug(filter.getProperty() + " / " + filter.getValue().toString());
 
-				if (Filter.OP_ILIKE == filter.getOperator()) {
-					logger.debug(filter.getOperator());
-				}
-			}
-		}
 		// Set the ListModel for the articles.
 		getPagedListWrapper().init(this.searchObj,this.listBoxFacilityReferenceDetail,this.pagingFacilityReferenceDetailList);
 		logger.debug("Leaving" );
