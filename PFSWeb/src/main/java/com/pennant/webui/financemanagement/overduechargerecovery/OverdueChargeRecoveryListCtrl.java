@@ -588,17 +588,6 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 				searchObj = getSearchFilter(searchObj, this.sortOperator_finODSts.getSelectedItem(), this.finODSts.getSelectedItem().getValue().toString(), "finODCRecoverySts");
 			}
 
-			if (logger.isDebugEnabled()) {
-				final List<Filter> lf = this.searchObj.getFilters();
-				for (final Filter filter : lf) {
-					logger.debug(filter.getProperty() + " / "+ filter.getValue().toString());
-
-					if (Filter.OP_ILIKE == filter.getOperator()) {
-						logger.debug(filter.getOperator());
-					}
-				}
-			}
-
 			// Set the ListModel for the articles.
 			getPagedListWrapper().init(this.searchObj, this.listBoxOverdueChargeRecovery,this.pagingOverdueChargeRecoveryList);
 		}else{

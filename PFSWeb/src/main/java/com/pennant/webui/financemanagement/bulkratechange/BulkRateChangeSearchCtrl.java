@@ -282,17 +282,6 @@ public class BulkRateChangeSearchCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 		//Where Clause
 		this.searchObj.addWhereClause(" FinType = '" + getBulkRateChangeHeader().getFinType() + "' AND " + "FromDate >= '" + getBulkRateChangeHeader().getFromDate() + "'");
 
-		if (logger.isDebugEnabled()) {
-			final List<Filter> lf = this.searchObj.getFilters();
-			for (final Filter filter : lf) {
-				logger.debug(filter.getProperty() + " / " + filter.getValue().toString());
-
-				if (Filter.OP_ILIKE == filter.getOperator()) {
-					logger.debug(filter.getOperator());
-				}
-			}
-		}
-
 		//Data Base List
 		List<BulkRateChangeDetails> filterFinList = getPagedListService().getBySearchObject(searchObj);
 		List<BulkRateChangeDetails> filterFinListCopy = new ArrayList<BulkRateChangeDetails>();

@@ -574,18 +574,6 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			searchObj = getSearchFilter(searchObj,this.sortOperator_recordType.getSelectedItem(),this.recordType.getSelectedItem().getValue().toString(),"RecordType");
 		}
 
-		if (logger.isDebugEnabled()) {
-			final List<Filter> lf = this.searchObj.getFilters();
-			for (final Filter filter : lf) {
-				logger.debug(filter.getProperty() + " / "
-						+ filter.getValue().toString());
-
-				if (Filter.OP_ILIKE == filter.getOperator()) {
-					logger.debug(filter.getOperator());
-				}
-			}
-		}
-
 		// Set the ListModel for the articles.
 		getPagedListWrapper().init(this.searchObj, this.listBoxWIFFinanceMain,this.pagingWIFFinanceMainList);
 

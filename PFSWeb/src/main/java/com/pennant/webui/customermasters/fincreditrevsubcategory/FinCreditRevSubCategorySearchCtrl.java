@@ -631,17 +631,6 @@ public class FinCreditRevSubCategorySearchCtrl extends GFCBaseCtrl<FinCreditRevS
 		// Defualt Sort on the table
 		so.addSort("SubCategoryCode", false);
 
-		if (logger.isDebugEnabled()) {
-			final List<Filter> lf = so.getFilters();
-			for (final Filter filter : lf) {
-				logger.debug(filter.getProperty() + " / " + filter.getValue().toString());
-
-				if (Filter.OP_ILIKE == filter.getOperator()) {
-					logger.debug(filter.getOperator());
-				}
-			}
-		}
-
 		// store the searchObject for reReading
 		this.finCreditRevSubCategoryCtrl.setSearchObj(so);
 

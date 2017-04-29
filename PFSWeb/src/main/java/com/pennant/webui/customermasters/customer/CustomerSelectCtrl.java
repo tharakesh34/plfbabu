@@ -543,16 +543,6 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 		// Default Sort on the table
 		searchObject.addSort("CustID", false);
 
-		if (logger.isDebugEnabled()) {
-			final List<Filter> lf = searchObject.getFilters();
-			for (final Filter filter : lf) {
-				logger.debug(filter.getProperty() + " / " + filter.getValue().toString());
-				if (Filter.OP_ILIKE == filter.getOperator()) {
-					logger.debug(filter.getOperator());
-				}
-			}
-		}
-
 		setSearchObj(searchObject);
 		paging(searchObject);
 		logger.debug("Leaving");

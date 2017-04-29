@@ -514,19 +514,6 @@ public class OverdueChargeRecoverySearchCtrl extends GFCBaseCtrl<OverdueChargeRe
 				}
 			}
 		}
-		// Defualt Sort on the table
-		//so.addSort("FinReference", false);
-
-		if (logger.isDebugEnabled()) {
-			final List<Filter> lf = so.getFilters();
-			for (final Filter filter : lf) {
-				logger.debug(filter.getProperty() + " / " + filter.getValue().toString());
-
-				if (Filter.OP_ILIKE == filter.getOperator()) {
-					logger.debug(filter.getOperator());
-				}
-			}
-		}
 
 		// store the searchObject for reReading
 		this.overdueChargeRecoveryCtrl.setSearchObj(so);
