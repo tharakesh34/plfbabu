@@ -2384,18 +2384,7 @@ CUST.CUSTCIF, MANDATE.MANDATETYPE, MANDATE.MANDATEID, MANDATE.INPUTDATE,(SELECT 
 			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
 	</changeSet>
 	
-	<changeSet id="126" author="Amit">
-		<addForeignKeyConstraint constraintName="FK_Mandates_City"
-			baseTableName="Mandates" baseColumnNames="Periodicity"
-			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
-	</changeSet>
-	
-	<changeSet id="127" author="Amit">
-		<addForeignKeyConstraint constraintName="FK_Mandates_Temp_City"
-			baseTableName="Mandates_Temp" baseColumnNames="Periodicity"
-			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
-	</changeSet>
-	
+		
 	<changeSet id="128" author="Amit">
 		<addForeignKeyConstraint constraintName="FK_RMTBranches_City"
 			baseTableName="RMTBranches" baseColumnNames="BranchCity"
@@ -2420,15 +2409,6 @@ CUST.CUSTCIF, MANDATE.MANDATETYPE, MANDATE.MANDATEID, MANDATE.INPUTDATE,(SELECT 
 			referencedTableName="RMTProvinceVsCity" referencedColumnNames="PCCity" />
 	</changeSet>
 	
-	<changeSet id="135" author="Amit">
-		<dropForeignKeyConstraint baseTableName="Mandates_Temp"
-			constraintName="FK_MANDATES_TEMP_CITY" />
-	</changeSet>
-	
-	<changeSet id="136" author="Amit">
-		<dropForeignKeyConstraint baseTableName="Mandates"
-			constraintName="FK_Mandates_City" />
-	</changeSet>
 	
 	<changeSet id="137" author="Manojkumar.P">
 		<createView viewName="DE_DISBURSE_FILE_CONTROL_VIEW" replaceIfExists="true">
