@@ -1,17 +1,13 @@
 /**
- *  Copyright 2009 The Revere Group
+ * Copyright 2011 - Pennant Technologies
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- *     http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 package com.pennant.search;
 
@@ -24,14 +20,8 @@ import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
 
 /**
- * <p>
  * A <code>Filter</code> is used by the <code>Search</code> class to specify a restriction on what results should be
- * returned in the search. For example, if a filter <code>Filter.equal("name","Paul")</code> were added to the search,
- * only objects with the property "name" equal to the string "Paul" would be returned.
- * <p>
- * Nested properties can also be specified, for example <code>Filter.greaterThan("employee.age",65)</code>.
- * 
- * @author dwolverton
+ * returned in the search.
  */
 public class Filter implements Serializable {
 	private static final long	serialVersionUID	= 1L;
