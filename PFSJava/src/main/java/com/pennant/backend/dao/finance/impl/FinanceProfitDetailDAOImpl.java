@@ -442,6 +442,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		insertSql.append(" PrvMthAcrSusp, FirstDisbDate, LatestDisbDate, FutureInst, RemainingTenor,");
 		insertSql.append(" TotalTenor,");
 		insertSql.append(" ExcessAmt, EmiInAdvance, PayableAdvise, ");
+		insertSql.append(" ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv,");
 		insertSql.append(" FutureRpyPri, FutureRpyPft, TotChargesPaid, ");
 		insertSql.append(" LinkedFinRef, ClosedlinkedFinRef, bounceAmt, bounceAmtDue, bounceAmtPaid, ");
 		insertSql.append(" upfrontFee, lastDisburseDate, receivableAdvise, excessAmtBal, emiInAdvanceBal ");
