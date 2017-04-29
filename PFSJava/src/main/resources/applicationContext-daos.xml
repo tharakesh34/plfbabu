@@ -9634,4 +9634,5 @@
 	<property name="dataSource" ref="pfsDatasource" />
 </bean>
    
+	<bean id="disbursementProcess" class="com.pennant.backend.service.payorderissue.impl.DisbursementProcessImpl"/>
 </beans>

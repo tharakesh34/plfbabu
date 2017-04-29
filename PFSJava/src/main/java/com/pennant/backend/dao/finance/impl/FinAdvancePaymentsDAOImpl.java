@@ -66,6 +66,7 @@ import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.Literal;
 
 /**
  * DAO methods implementation for the <b>FinAdvancePayments model</b> class.<br>
@@ -436,6 +437,21 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 		}
 		logger.debug("Leaving");
 	}
+	//update the Disbursement Status when DisbursementProcess Interface Calling 
+	@Override
+	public void updateDisbursmentStatus(FinAdvancePayments finAdvancePayments) {
+		logger.debug(Literal.ENTERING);
 
+		StringBuilder sql = new StringBuilder("Update FinAdvancePayments");
+		sql.append("  Set Status = :Status");
+		sql.append("  Where PaymentId = :PaymentId");
+
+		logger.debug(Literal.SQL + sql);
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
+		this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+
+		logger.debug(Literal.LEAVING);
+	}
 
 }

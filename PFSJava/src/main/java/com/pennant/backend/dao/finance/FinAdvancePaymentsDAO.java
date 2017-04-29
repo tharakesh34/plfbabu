@@ -71,4 +71,6 @@ public interface FinAdvancePaymentsDAO {
 	int getBranch(long bankBranchID, String type);
 	
 	void update(long paymentId, long linkedTranId);
+	
+	void updateDisbursmentStatus(FinAdvancePayments finAdvancePayments);
 }

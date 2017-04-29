@@ -1,11 +1,13 @@
 package com.pennanttech.bajaj.services;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -13,28 +15,27 @@ import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dbengine.DataEngineDBProcess;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.services.disbursement.DisbursementProcess;
 import com.pennanttech.pff.core.services.disbursement.DisbursementRequest;
 import com.pennanttech.pff.core.services.disbursement.DisbursementResponse;
 
 public class DisbursementRequestImpl extends BajajServices implements DisbursementRequest, DisbursementResponse {
-	private final Logger logger = Logger.getLogger(getClass());
+	private final Logger		logger	= Logger.getLogger(getClass());
 
-	private String						finType;
-	private List<FinAdvancePayments>	disbusments;
-	private long						userId;
-
+	@Autowired
+	private DisbursementProcess	disbursementProcess;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void sendReqest(Object... params) throws Exception {
-		this.finType = (String) params[0];
-		this.disbusments = (List<FinAdvancePayments>) params[1];
-		this.userId = (long) params[2];
+		String finType = (String) params[0];
+		List<FinAdvancePayments> disbusments = (List<FinAdvancePayments>) params[1];
+		long userId = (long) params[2];
 
-		DisbursementProcess process = new DisbursementProcess();
+		DisbursementProcessThread process = new DisbursementProcessThread(finType, userId, disbusments);
 		Thread thread = new Thread(process);
 		try {
-			DisbursementProcess.sleep(5000);
+			DisbursementProcessThread.sleep(5000);
 		} catch (InterruptedException e) {
 		}
 
@@ -42,7 +43,7 @@ public class DisbursementRequestImpl extends BajajServices implements Disburseme
 
 	}
 
-	private void processDisbursements() {
+	private void processDisbursements(String finType, long userId, List<FinAdvancePayments> disbusments) {
 		logger.debug(Literal.ENTERING);
 		Map<String, StringBuilder> paymentTypes = new HashMap<>();
 		String partnerbankCode = null;
@@ -66,45 +67,47 @@ public class DisbursementRequestImpl extends BajajServices implements Disburseme
 			if (configName == null) {
 				if ("NEFT".equals(disbursment.getPaymentType()) || "RTGS".equals(disbursment.getPaymentType())) {
 					configName = "DISB_OTHER_NEFT_RTGS_EXPORT";
-					process(paymentTypes, configName, partnerbankCode);
+					process(paymentTypes, configName, partnerbankCode, finType, userId);
 				} else if ("CHEQUE".equals(disbursment.getPaymentType()) || "DD".equals(disbursment.getPaymentType())) {
 					configName = "DISB_OTHER_CHEQUE_DD_EXPORT";
-					process(paymentTypes, configName, partnerbankCode);
+					process(paymentTypes, configName, partnerbankCode, finType, userId);
 
 				} else if ("IMPS".equals(disbursment.getPaymentType())) {
 					configName = "DISB_IMPS_EXPORT";
-					process(paymentTypes, configName, partnerbankCode);
+					process(paymentTypes, configName, partnerbankCode, finType, userId);
 				} else {
 					continue;
 				}
 			} else {
-				process(paymentTypes, configName, partnerbankCode);
+				process(paymentTypes, configName, partnerbankCode, finType, userId);
 			}
 		}
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void process(Map<String, StringBuilder> paymentTypes, String configName, String partnerbankCode) {
+	private void process(Map<String, StringBuilder> paymentTypes, String configName, String partnerbankCode,
+			String finType, long userId) {
 		if (paymentTypes.get("IMPS") != null && "DISB_IMPS_EXPORT".equals(configName)) {
-			processImpsDisbursements(configName, paymentTypes.get("IMPS"));
+			processImpsDisbursements(configName, paymentTypes.get("IMPS"), userId);
 			paymentTypes.remove("IMPS");
 		} else if (paymentTypes.get("NEFT") != null) {
-			processOthreDisbursements(configName, paymentTypes.get("NEFT"), "NEFT", partnerbankCode);
+			processOthreDisbursements(configName, paymentTypes.get("NEFT"), "NEFT", partnerbankCode, finType, userId);
 			paymentTypes.remove("NEFT");
 		} else if (paymentTypes.get("RTGS") != null) {
-			processOthreDisbursements(configName, paymentTypes.get("RTGS"), "RTGS", partnerbankCode);
+			processOthreDisbursements(configName, paymentTypes.get("RTGS"), "RTGS", partnerbankCode, finType, userId);
 			paymentTypes.remove("RTGS");
 		} else if (paymentTypes.get("DD") != null) {
-			processOthreDisbursements(configName, paymentTypes.get("DD"), "DD", partnerbankCode);
+			processOthreDisbursements(configName, paymentTypes.get("DD"), "DD", partnerbankCode, finType, userId);
 			paymentTypes.remove("DD");
 		} else if (paymentTypes.get("CHEQUE") != null) {
-			processOthreDisbursements(configName, paymentTypes.get("CHEQUE"), "CHEQUE", partnerbankCode);
+			processOthreDisbursements(configName, paymentTypes.get("CHEQUE"), "CHEQUE", partnerbankCode, finType,
+					userId);
 			paymentTypes.remove("CHEQUE");
 		}
 	}
 
 	private synchronized void processOthreDisbursements(String configName, StringBuilder paymentIds,
-			String paymentType, String partnerbankCode) {
+			String paymentType, String partnerbankCode, String finType, long userId) {
 		DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name());
 
 		Map<String, Object> filterMap = new HashMap<>();
@@ -129,7 +132,7 @@ public class DisbursementRequestImpl extends BajajServices implements Disburseme
 		}
 	}
 
-	private synchronized void processImpsDisbursements(String configName, StringBuilder paymentIds) {
+	private synchronized void processImpsDisbursements(String configName, StringBuilder paymentIds, long userId) {
 		DataEngineDBProcess proce = new DataEngineDBProcess(dataSource, userId, App.DATABASE.name());
 		try {
 			proce.setValueDate(getAppDate());
@@ -167,21 +170,55 @@ public class DisbursementRequestImpl extends BajajServices implements Disburseme
 		}
 		return null;
 	}
-	public class DisbursementProcess extends Thread {
-		private final Logger	logger	= Logger.getLogger(DisbursementProcess.class);
+
+	public class DisbursementProcessThread extends Thread {
+		private final Logger				logger	= Logger.getLogger(DisbursementProcessThread.class);
+
+		private String						finType;
+		private long						userId;
+		private List<FinAdvancePayments>	disbursements;
+
+		public DisbursementProcessThread(String finType, long userId, List<FinAdvancePayments> disbursements) {
+			this.finType = finType;
+			this.userId = userId;
+			this.disbursements = disbursements;
+		}
 
 		@Override
 		public void run() {
 			try {
-				processDisbursements();
+				processDisbursements(finType, userId, disbursements);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 	}
-	
+
 	@Override
 	public void receiveResponse(Object... params) throws Exception {
-		// TODO Auto-generated method stub
+		
+		
+		MapSqlParameterSource paramMap = null;
+		StringBuilder sql = null;
+		List<FinAdvancePayments> disbursements = null;
+		try {
+			sql = new StringBuilder("Select * FROM FINADVANCEPAYMENTS");
+			sql.append(" WHERE Status IN(:Status");
+
+			paramMap = new MapSqlParameterSource();
+			paramMap.addValue("Status", Arrays.asList(new String[] { "E", "R" }));
+
+			disbursements = namedJdbcTemplate.queryForList(sql.toString(), paramMap, FinAdvancePayments.class);
+
+			for (FinAdvancePayments disbursement : disbursements) {
+				disbursementProcess.process(disbursement);
+			}
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		} finally {
+			sql = null;
+			paramMap = null;
+		}
 	}
 }
