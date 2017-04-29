@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Date;
 
 import javax.sql.DataSource;
@@ -11,6 +12,7 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -19,6 +21,7 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.dbengine.DBProcessEngine;
 import com.pennanttech.dbengine.constants.DataEngineDBConstants.Status;
+import com.pennanttech.pff.core.Literal;
 
 public class PresentmentRequest extends DBProcessEngine {
 
@@ -27,12 +30,18 @@ public class PresentmentRequest extends DBProcessEngine {
 	private Connection destConnection = null;;
 	private Connection sourceConnection = null;
 	private DataEngineStatus executionStatus = null;
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public PresentmentRequest(DataSource dataSource, String appDBName, DataEngineStatus executionStatus) {
 		super(dataSource, appDBName, executionStatus);
+		setDataSource(dataSource);
 		this.executionStatus = executionStatus;
 	}
 
+	public void setDataSource(DataSource dataSource) {
+		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
+	
 	public void process(long userId, Configuration config, String ids) {
 		logger.debug("Entering");
 
@@ -82,6 +91,8 @@ public class PresentmentRequest extends DBProcessEngine {
 				executionStatus.setSuccessRecords(successCount);
 				executionStatus.setFailedRecords(failedCount);
 			}
+			
+			updatePresentmentHeader(ids,4); 
 
 			if (totalRecords > 0) {
 				if (failedCount > 0) {
@@ -165,7 +176,7 @@ public class PresentmentRequest extends DBProcessEngine {
 				ps.setString(11, StringUtils.substring(getValue(rs, "BRANCHCODE"), 0, 3));// BRANCHCODE code is 6 but in doc 3
 			}
 
-			ps.setString(14, getValue(rs, "PRESENTMENTID"));
+			ps.setString(14, getValue(rs, "ID"));
 			ps.setBigDecimal(15, getBigDecimal(rs, "PRESENTMENTAMT"));
 			ps.setDate(16, getDateValue(rs, "PRESENTMENTDATE"));
 			ps.setString(17, Status.N.name());
@@ -237,7 +248,7 @@ public class PresentmentRequest extends DBProcessEngine {
 			sql.append(" T6.BANKNAME, T1.PRESENTMENTID, T1.PRESENTMENTAMT,");
 			sql.append(" T0.PRESENTMENTDATE, T3.MANDATEREF, T4.IFSC, ");
 			sql.append(" T7.PARTNERBANKCODE, T7.UTILITYCODE, T3.STARTDATE, T3.EXPIRYDATE, T3.MANDATETYPE, ");
-			sql.append(" T2.FINTYPE, T2.CUSTID , T7.PARTNERBANKCODE, T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, ");
+			sql.append(" T2.FINTYPE, T2.CUSTID , T7.PARTNERBANKCODE, T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, T1.ID,");
 			sql.append(" T8.BRANCHSWIFTBRNCDE, T10.ENTITYCODE FROM PRESENTMENTHEADER T0 ");
 			sql.append(" INNER JOIN PRESENTMENTDETAILS T1 ON T0.ID = T1.PRESENTMENTID ");
 			sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE ");
@@ -258,6 +269,7 @@ public class PresentmentRequest extends DBProcessEngine {
 				sql.append("?");
 			}
 			sql.append(")");
+			sql.append(" AND T1.EXCLUDEREASON = 0 )");
 			statement = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 		} catch (SQLException e) {
 			logger.error("Exception: ", e);
@@ -290,5 +302,28 @@ public class PresentmentRequest extends DBProcessEngine {
 			sql = null;
 			source = null;
 		}
+	}
+	
+	public void updatePresentmentHeader(String ids, int manualEcclude) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = null;
+		MapSqlParameterSource source = null;
+
+		sql = new StringBuilder();
+		sql.append(" update PRESENTMENTHEADER Set STATUS = :STATUS Where ID IN (:ID) ");
+		logger.trace(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("STATUS", manualEcclude);
+		source.addValue("ID", Arrays.asList(ids));
+
+		try {
+			this.namedParameterJdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error("Exception :", e);
+			throw e;
+		}
+		logger.debug(Literal.LEAVING);
 	}
 }

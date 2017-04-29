@@ -192,28 +192,24 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	 */
 	public void onItemDoubleClicked(Event event) {
 		Listitem selectedItem = this.listBoxPresentmentDetail.getSelectedItem();
-		if (selectedItem == null) {
-			return;
-		}
 
-		// Get the selected entity.
-		final long  pcCountry = (long) selectedItem.getAttribute("Id");
+		final long id = (long) selectedItem.getAttribute("Id");
 		Map<String, Object> arg = getDefaultArguments();
-		List<PresentmentDetail> presentmentDetailList = this.presentmentDetailService.getPresentmentDetailsList(6, "_View");
-		
+		List<PresentmentDetail> presentmentDetailList = this.presentmentDetailService.getPresentmentDetailsList(id, "_AView");
+
 		arg.put("presentmentDetailList", presentmentDetailList);
 		arg.put("presentmentDetailListCtrl", this);
+		arg.put("PresentmentId", id);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentDetailDialog.zul", null, arg);
+			Executions.createComponents(
+					"/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentDetailDialog.zul", null, arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
-
 	}
-	
-	
+
 	/**
 	 * Item renderer for list items in the list box.
 	 * 
@@ -223,7 +219,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		private static final long serialVersionUID = 3736186724610414895L;
 
 		public PresentmentDetailListModelItemRenderer() {
-		
+
 		}
 
 		@Override

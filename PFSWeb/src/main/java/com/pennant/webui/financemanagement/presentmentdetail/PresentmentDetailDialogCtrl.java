@@ -90,9 +90,11 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 
 	private Map<Long, PresentmentDetail> includeMap = new HashMap<Long, PresentmentDetail>();
 	private Map<Long, PresentmentDetail> excludeMap = new HashMap<Long, PresentmentDetail>();
+	private Map<Long, PresentmentDetail> resultMap = new HashMap<Long, PresentmentDetail>();
 
 	private transient PresentmentDetailListCtrl presentmentDetailListCtrl;
 	private transient PresentmentDetailService presentmentDetailService;
+	private long presentmentId;
 
 	/**
 	 * default constructor.<br>
@@ -130,6 +132,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 			// Get the required arguments.
 			this.presentmentDetailList = (List<PresentmentDetail>) arguments.get("presentmentDetailList");
 			this.presentmentDetailListCtrl = (PresentmentDetailListCtrl) arguments.get("presentmentDetailListCtrl");
+			this.presentmentId = (long) arguments.get("PresentmentId");
 			doShowDialog(this.presentmentDetailList);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
@@ -148,9 +151,18 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
-		//doSave();
+		
+		List<Long> list = new ArrayList<Long>();
+		for (Long id : resultMap.keySet()) {
+			if (!includeMap.containsKey(id)) {
+				list.add(id);
+			}
+		}
+		this.presentmentDetailService.updatePresentmentDetails(list, presentmentId);
+		
+		closeDialog();
+		
 		logger.debug(Literal.LEAVING);
-
 	}
 
 	/**
@@ -193,7 +205,8 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 				excludeMap.put(presentmentDetail.getId(), presentmentDetail);
 			}
 		}
-
+		resultMap.putAll(includeMap);
+		
 		doFillList(new ArrayList<PresentmentDetail>(includeMap.values()), listBox_Include);
 		doFillList(new ArrayList<PresentmentDetail>(excludeMap.values()), listBox_Exclude);
 
@@ -239,7 +252,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 		}
 
 		doFillList(new ArrayList<PresentmentDetail>(includeMap.values()), listBox_Include);
-		doFillList(new ArrayList<PresentmentDetail>(includeMap.values()), listBox_Exclude);
+		doFillList(new ArrayList<PresentmentDetail>(excludeMap.values()), listBox_Exclude);
 
 		logger.debug("Leaving" + event.toString());
 	}
@@ -333,6 +346,18 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 
 	public void setExcludeMap(Map<Long, PresentmentDetail> excludeMap) {
 		this.excludeMap = excludeMap;
+	}
+
+	public PresentmentDetailListCtrl getPresentmentDetailListCtrl() {
+		return presentmentDetailListCtrl;
+	}
+
+	public void setPresentmentDetailListCtrl(PresentmentDetailListCtrl presentmentDetailListCtrl) {
+		this.presentmentDetailListCtrl = presentmentDetailListCtrl;
+	}
+
+	public PresentmentDetailService getPresentmentDetailService() {
+		return presentmentDetailService;
 	}
 
 }

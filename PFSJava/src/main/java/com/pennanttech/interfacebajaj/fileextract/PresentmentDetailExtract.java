@@ -68,10 +68,10 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 						break;
 					}
 					recordCount++;
-					if (record.length() != rcdLegth) {
+					/*if (record.length() != rcdLegth) {
 						int endLength = rcdLegth + 1;
 						throw new Exception("Record Length less than " + endLength + " at line Number " + recordCount);
-					}
+					}*/
 
 					map = new MapSqlParameterSource();
 					map.addValue("BranchCode", getFieldValue(record, 0, 3));

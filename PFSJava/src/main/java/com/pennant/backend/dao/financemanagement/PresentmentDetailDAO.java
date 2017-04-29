@@ -64,4 +64,8 @@ public interface PresentmentDetailDAO {
 	void updatePresentmentDetailId(long presentmentId, long extractId);
 
 	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, String type);
+
+	void updatePresentmentDetials(long presentmentId, List<Long> list, int mnualExclude);
+
+	void updatePresentmentHeader(long presentmentId, int pexcBatchCreated);
 }

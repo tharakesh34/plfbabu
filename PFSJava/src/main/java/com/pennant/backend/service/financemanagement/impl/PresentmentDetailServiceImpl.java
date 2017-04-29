@@ -282,4 +282,12 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 		return presentmentDetailDAO.getPresentmentDetailsList(presentmentId, type);
 	}
 
+	@Override
+	public void updatePresentmentDetails(List<Long> list, long presentmentId) {
+		if (list != null && !list.isEmpty()) {
+			this.presentmentDetailDAO.updatePresentmentDetials(presentmentId, list, RepayConstants.PEXC_MANUAL_EXCLUDE);
+			this.presentmentDetailDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_BATCH_CREATED);
+		}
+	}
+
 }

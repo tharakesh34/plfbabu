@@ -61,4 +61,6 @@ public interface PresentmentDetailService {
 	
 	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, String type);
 
+	void updatePresentmentDetails(List<Long> list, long presentmentId);
+
 }
