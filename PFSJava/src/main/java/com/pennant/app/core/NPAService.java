@@ -69,11 +69,11 @@ public class NPAService extends ServiceHelper {
 	private RuleExecutionUtil	ruleExecutionUtil;
 	private RuleDAO				ruleDAO;
 
-	public static final String	NPA					= "SELECT FP.FinReference,FP.FINBRANCH,FP.FINTYPE,FM.FinStatus,FP.FinCategory ,FP.CURODDAYS, "
+	public static final String	NPA					= "SELECT FP.FinReference,FP.FINBRANCH,FP.FINTYPE,FM.FinStatus,FP.FinCategory ,FP.MAXODDAYS, "
 															+ " FP.ODPRINCIPAL,FP.ODPROFIT,FP.FullPaidDate,FP.TOTALPFTBAL,FP.TOTALPRIBAL,FP.FinCcy,"
 															+ " FM.SCHEDULEREGENERATED,FM.DUEBucket "
 															+ " FROM FINPFTDETAILS FP INNER JOIN FInanceMain FM ON FP.FinReference=FM.FINREFERENCE"
-															+ " Where FP.CURODDAYS > 0 and FP.CustID = ?";
+															+ " Where FP.MAXODDAYS > 0 and FP.CustID = ?";
 
 	/**
 	 * Default constructor
@@ -108,7 +108,7 @@ public class NPAService extends ServiceHelper {
 				finreference = resultSet.getString("FinReference");
 				String finStatus = resultSet.getString("FinStatus");
 				String productCode = resultSet.getString("FinCategory");
-				int maxDueDays = resultSet.getInt("CURODDAYS");
+				int maxDueDays = resultSet.getInt("MAXODDAYS");
 				int dueBucket = resultSet.getInt("DueBucket");
 
 				List<NPABucketConfiguration> list = EODProperties.getNPABucketConfigurations(productCode);
@@ -191,7 +191,7 @@ public class NPAService extends ServiceHelper {
 		HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		dataMap.put("RestructureLoan", resultSet.getBoolean("SCHEDULEREGENERATED"));
 		dataMap.put("DueBucket", resultSet.getInt("DueBucket"));
-		dataMap.put("ODDays", resultSet.getInt("CURODDAYS"));
+		dataMap.put("ODDays", resultSet.getInt("MAXODDAYS"));
 
 		BigDecimal pecentage = (BigDecimal) ruleExecutionUtil
 				.executeRule(rule, dataMap, finCcy, RuleReturnType.DECIMAL);

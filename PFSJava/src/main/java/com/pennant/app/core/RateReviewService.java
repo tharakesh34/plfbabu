@@ -240,7 +240,7 @@ public class RateReviewService extends ServiceHelper {
 		//FIXME: PV 28APR17 Returning without saving because it is decided to save all records once
 		//Code for one time saving is not yet ready
 		// Update New Finance Schedule Details Data
-		//saveOrUpdate(finScheduleData, profitDetail);
+		saveOrUpdate(finScheduleData, profitDetail);
 		
 		//Saving Rate Review Details
 		FinanceRateReview rateReview = new FinanceRateReview();

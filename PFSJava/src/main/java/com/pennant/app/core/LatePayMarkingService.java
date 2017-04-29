@@ -68,9 +68,10 @@ public class LatePayMarkingService extends ServiceHelper {
 	public static final String	PDCALCULATION		= "SELECT FinReference, RpyDate, FinRpyFor, Branch, FinType, CustomerID, SchdPriBal, SchdPftBal "
 															+ " FROM FinRpyQueue WHERE CustomerID=? AND FINRPYFOR = ?";
 
-	public static final String	DPDBUCKETING		= "SELECT FP.FinReference,FP.CURODDAYS,FP.TDSCHDPFT,FP.TDSCHDPFTPAID,FP.TDSCHDPRI,FP.TDSCHDPRIPAID, "
+	public static final String	DPDBUCKETING		= "SELECT FP.FinReference,FP.CURODDAYS,FP.MAXODDAYS,FP.TDSCHDPFT,FP.TDSCHDPFTPAID,FP.TDSCHDPRI,FP.TDSCHDPRIPAID, "
 															+ " FP.ExcessAmt,FP.EmiInAdvance,FP.PayableAdvise,FM.FinStatus,FP.FinCategory "
-															+ " FROM FINPFTDETAILS FP INNER JOIN Financemain FM ON FP.FINREFERENCE = FM.FINREFERENCE WHERE FP.CURODDAYS > 0 and FP.CustID=?";
+															+ " FROM FINPFTDETAILS FP INNER JOIN Financemain FM ON FP.FINREFERENCE = FM.FINREFERENCE "
+															+ " WHERE (FP.CURODDAYS > 0 OR FM.DueBucket > 0) and FP.CustID = ?";
 
 	private FinODDetailsDAO		finODDetailsDAO;
 	private FinStatusDetailDAO	finStatusDetailDAO;
@@ -158,6 +159,7 @@ public class LatePayMarkingService extends ServiceHelper {
 				detail.setEmiInAdvance(getDecimal(resultSet, "EmiInAdvance"));
 				detail.setPayableAdvise(getDecimal(resultSet, "PayableAdvise"));
 				detail.setCurODDays(resultSet.getInt("CURODDAYS"));
+				detail.setMaxODDays(resultSet.getInt("MAXODDAYS"));
 				detail.setFinCategory(resultSet.getString("FinCategory"));
 				detail.setFinStatus(resultSet.getString("FinStatus"));
 				detail.setCustId(custId);
@@ -240,7 +242,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		BigDecimal excessAmt = detail.getExcessAmt();
 		BigDecimal emiInAdvance = detail.getEmiInAdvance();
 		BigDecimal payableAdvise = detail.getPayableAdvise();
-		int dueDays = detail.getCurODDays();
+		int dueDays = detail.getMaxODDays();
 		String productCode = detail.getFinCategory();
 		String finStatus = StringUtils.trimToEmpty(detail.getFinStatus());
 		long custId = detail.getCustId();

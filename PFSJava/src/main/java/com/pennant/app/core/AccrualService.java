@@ -105,7 +105,7 @@ public class AccrualService extends ServiceHelper {
 		finPftDetail.setFinWorstStatus(worstSts);
 
 		//FIXME: PV 28APR17 Update only once 
-		//getFinanceProfitDetailDAO().update(finPftDetail, false);
+		getFinanceProfitDetailDAO().update(finPftDetail, false);
 
 		//post accruals
 		postAccruals(finMain, finPftDetail, valueDate);
@@ -630,7 +630,7 @@ public class AccrualService extends ServiceHelper {
 		}
 
 		//FIXME: PV 28APR17 Update only once 
-		//getFinanceProfitDetailDAO().updateLBDAccruals(finPftDetail, isMonthEnd);
+		getFinanceProfitDetailDAO().updateLBDAccruals(finPftDetail, false);
 		logger.debug(" Leaving ");
 	}
 
