@@ -1008,10 +1008,22 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					this.row_fundingAcNo.setVisible(true);
 					this.row_ChequeAcNo.setVisible(true);
 					this.label_ReceiptDialog_favourNo.setValue(Labels.getLabel("label_ReceiptDialog_ChequeFavourNo.value"));
+					
+					if(isUserAction){
+						this.depositDate.setValue(DateUtility.getAppDate());
+						this.receivedDate.setValue(DateUtility.getAppDate());
+						this.valueDate.setValue(DateUtility.getAppDate());
+					}
+					
 				}else{
 					this.row_fundingAcNo.setVisible(false);
 					this.row_ChequeAcNo.setVisible(false);
 					this.label_ReceiptDialog_favourNo.setValue(Labels.getLabel("label_ReceiptDialog_DDFavourNo.value"));
+					
+					if(isUserAction){
+						this.depositDate.setValue(DateUtility.getAppDate());
+						this.valueDate.setValue(DateUtility.getAppDate());
+					}
 				}
 				
 			} else if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CASH)) {
@@ -1024,6 +1036,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				this.row_PaymentRef.setVisible(false);
 				this.row_fundingAcNo.setVisible(true);
 				this.row_remarks.setVisible(true);
+				
+				if(isUserAction){
+					this.receivedDate.setValue(DateUtility.getAppDate());
+				}
 				
 			} else {
 				this.row_favourNo.setVisible(false);
@@ -2413,10 +2429,16 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			
 			if(StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)){
 				readOnlyComponent(isReadOnly("ReceiptDialog_excessAdjustTo"), this.excessAdjustTo);
+				if(isUserAction){
+					fillComboBox(this.excessAdjustTo, RepayConstants.EXCESSADJUSTTO_EXCESS, PennantStaticListUtil.getExcessAdjustmentTypes(), "");
+				}
 			}else if(StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){
 				readOnlyComponent(isReadOnly("ReceiptDialog_effScheduleMethod"), this.effScheduleMethod);
 			}else if(StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
 				readOnlyComponent(isReadOnly("ReceiptDialog_excessAdjustTo"), this.excessAdjustTo);
+				if(isUserAction){
+					fillComboBox(this.excessAdjustTo, RepayConstants.EXCESSADJUSTTO_EXCESS, PennantStaticListUtil.getExcessAdjustmentTypes(), "");
+				}
 			}
 				
 		}else{
@@ -2654,7 +2676,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			if(!this.receivedDate.isDisabled()){
 				this.receivedDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ReceiptDialog_ReceivedDate.value"), true, 
-						getFinanceMain().getFinStartDate(), DateUtility.getAppDate(), false));
+						getFinanceMain().getFinStartDate(), DateUtility.getAppDate(), true));
 			}
 		}
 		
@@ -2671,7 +2693,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			
 			if(!this.valueDate.isDisabled()){
 				this.valueDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ReceiptDialog_ValueDate.value"), true, 
-						getFinanceMain().getFinStartDate(), DateUtility.getAppDate(), false));
+						getFinanceMain().getFinStartDate(), DateUtility.getAppDate(), true));
 			}
 			
 			if(!this.bankCode.isReadonly()){
@@ -2685,7 +2707,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			
 			if(!this.depositDate.isDisabled()){
 				this.depositDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ReceiptDialog_DepositDate.value"), true, 
-						getFinanceMain().getFinStartDate(), DateUtility.getAppDate(), false));
+						getFinanceMain().getFinStartDate(), DateUtility.getAppDate(), true));
 			}
 			
 			if(!this.depositNo.isReadonly()){

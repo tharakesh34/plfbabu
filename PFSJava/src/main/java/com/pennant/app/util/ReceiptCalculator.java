@@ -716,85 +716,96 @@ public class ReceiptCalculator implements Serializable {
 		}
 		
 		// Waived Details Updation on Schedules
-		for (FinReceiptDetail rd : receiptDetailList) {
-			for (FinRepayHeader rh : rd.getRepayHeaders()) {
-				for (RepayScheduleDetail rsd : rh.getRepayScheduleDetails()) {
-					
-					// Principal Amount
-					if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_PRI)){
-						BigDecimal waivedNow = rsd.getPrincipalSchdPayNow();
-						BigDecimal balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_PRI);
-						if(waivedNow.compareTo(balWaived) > 0){
-							waivedNow = balWaived;
+		int size = receiptDetailList.size();
+		for (int i = size - 1; i >= 0; i--) {
+			FinReceiptDetail rd = receiptDetailList.get(i);
+			
+			int rhSize = rd.getRepayHeaders().size();
+			for (int j = rhSize - 1; j >= 0; j--) {
+				
+				FinRepayHeader rh = rd.getRepayHeaders().get(j);
+				int rsSize = rh.getRepayScheduleDetails().size();
+				if(rsSize > 0){
+					for (int k = rsSize - 1; k >= 0; k--) {
+
+						RepayScheduleDetail rsd = rh.getRepayScheduleDetails().get(k);
+
+						// Principal Amount
+						if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_PRI)){
+							BigDecimal waivedNow = rsd.getPrincipalSchdPayNow();
+							BigDecimal balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_PRI);
+							if(waivedNow.compareTo(balWaived) > 0){
+								waivedNow = balWaived;
+							}
+							rsd.setPriSchdWaivedNow(waivedNow);
+							totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
+							waivedAllocationMap.put(RepayConstants.ALLOCATION_PRI, balWaived.subtract(waivedNow));
 						}
-						rsd.setPriSchdWaivedNow(waivedNow);
-						totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
-						waivedAllocationMap.put(RepayConstants.ALLOCATION_PRI, balWaived.subtract(waivedNow));
-					}
-					
-					// Profit Amount
-					if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_PFT)){
-						BigDecimal waivedNow = rsd.getProfitSchdPayNow();
-						BigDecimal balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_PFT);
-						if(waivedNow.compareTo(balWaived) > 0){
-							waivedNow = balWaived;
+
+						// Profit Amount
+						if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_PFT)){
+							BigDecimal waivedNow = rsd.getProfitSchdPayNow();
+							BigDecimal balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_PFT);
+							if(waivedNow.compareTo(balWaived) > 0){
+								waivedNow = balWaived;
+							}
+							rsd.setPftSchdWaivedNow(waivedNow);
+							totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
+							waivedAllocationMap.put(RepayConstants.ALLOCATION_PFT, balWaived.subtract(waivedNow));
 						}
-						rsd.setPftSchdWaivedNow(waivedNow);
-						totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
-						waivedAllocationMap.put(RepayConstants.ALLOCATION_PFT, balWaived.subtract(waivedNow));
-					}
-					
-					// Late Payment Profit Amount
-					if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_LPFT)){
-						BigDecimal waivedNow = rsd.getLatePftSchdPayNow();
-						BigDecimal balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_LPFT);
-						if(waivedNow.compareTo(balWaived) > 0){
-							waivedNow = balWaived;
+
+						// Late Payment Profit Amount
+						if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_LPFT)){
+							BigDecimal waivedNow = rsd.getLatePftSchdPayNow();
+							BigDecimal balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_LPFT);
+							if(waivedNow.compareTo(balWaived) > 0){
+								waivedNow = balWaived;
+							}
+							rsd.setLatePftSchdWaivedNow(waivedNow);
+							totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
+							waivedAllocationMap.put(RepayConstants.ALLOCATION_LPFT, balWaived.subtract(waivedNow));
 						}
-						rsd.setLatePftSchdWaivedNow(waivedNow);
-						totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
-						waivedAllocationMap.put(RepayConstants.ALLOCATION_LPFT, balWaived.subtract(waivedNow));
-					}
-					
-					// Penalty Amount
-					if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_ODC)){
-						BigDecimal waivedNow = rsd.getPenaltyPayNow();
-						BigDecimal balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_ODC);
-						if(waivedNow.compareTo(balWaived) > 0){
-							waivedNow = balWaived;
+
+						// Penalty Amount
+						if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_ODC)){
+							BigDecimal waivedNow = rsd.getPenaltyPayNow();
+							BigDecimal balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_ODC);
+							if(waivedNow.compareTo(balWaived) > 0){
+								waivedNow = balWaived;
+							}
+							rsd.setWaivedAmt(waivedNow);
+							totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
+							waivedAllocationMap.put(RepayConstants.ALLOCATION_ODC, balWaived.subtract(waivedNow));
 						}
-						rsd.setWaivedAmt(waivedNow);
-						totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
-						waivedAllocationMap.put(RepayConstants.ALLOCATION_ODC, balWaived.subtract(waivedNow));
-					}
-					
-					// Schedule Fee Amount
-					if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_FEE)){
-						BigDecimal waivedNow = rsd.getSchdFeePayNow();
-						BigDecimal balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_FEE);
-						if(waivedNow.compareTo(balWaived) > 0){
-							waivedNow = balWaived;
+
+						// Schedule Fee Amount
+						if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_FEE)){
+							BigDecimal waivedNow = rsd.getSchdFeePayNow();
+							BigDecimal balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_FEE);
+							if(waivedNow.compareTo(balWaived) > 0){
+								waivedNow = balWaived;
+							}
+							rsd.setSchdFeeWaivedNow(waivedNow);
+							totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
+							waivedAllocationMap.put(RepayConstants.ALLOCATION_FEE, balWaived.subtract(waivedNow));
 						}
-						rsd.setSchdFeeWaivedNow(waivedNow);
-						totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
-						waivedAllocationMap.put(RepayConstants.ALLOCATION_FEE, balWaived.subtract(waivedNow));
-					}
-					
-					// Insurance Amount
-					if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_INS)){
-						BigDecimal waivedNow = rsd.getSchdInsPayNow();
-						BigDecimal balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_INS);
-						if(waivedNow.compareTo(balWaived) > 0){
-							waivedNow = balWaived;
+
+						// Insurance Amount
+						if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_INS)){
+							BigDecimal waivedNow = rsd.getSchdInsPayNow();
+							BigDecimal balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_INS);
+							if(waivedNow.compareTo(balWaived) > 0){
+								waivedNow = balWaived;
+							}
+							rsd.setSchdInsWaivedNow(waivedNow);
+							totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
+							waivedAllocationMap.put(RepayConstants.ALLOCATION_INS, balWaived.subtract(waivedNow));
 						}
-						rsd.setSchdInsWaivedNow(waivedNow);
-						totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
-						waivedAllocationMap.put(RepayConstants.ALLOCATION_INS, balWaived.subtract(waivedNow));
-					}
-					
-					// If No Outstanding Waiver amount
-					if(totalWaivedAmt.compareTo(BigDecimal.ZERO) == 0){
-						break;
+
+						// If No Outstanding Waiver amount
+						if(totalWaivedAmt.compareTo(BigDecimal.ZERO) == 0){
+							break;
+						}
 					}
 				}
 				

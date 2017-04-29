@@ -407,7 +407,7 @@
 							</grid>
 						</tabpanel>
 						<tabpanel style="overflow:auto">
-							<groupbox>
+							<div>
 								<groupbox style="border:0px;">
 									<grid sclass="GridLayoutNoBorder"
 										fixedLayout="true" style="border:0px" width="100%">
@@ -498,12 +498,12 @@
 														id="receiptPurpose" width="180px" readonly="true" />
 												</hbox>
 												<label
-													value="${c:l('label_ReceiptDialog_ExcessAdjustTo.value')}" />
+													value="${c:l('label_ReceiptDialog_AllocationMethod.value')}" />
 												<hbox>
 													<space spacing="2px"
 														sclass="mandatory" />
 													<combobox
-														id="excessAdjustTo" width="180px" readonly="true" />
+														id="allocationMethod" width="180px" readonly="true" />
 												</hbox>
 											</row>
 											<row>
@@ -522,12 +522,12 @@
 											</row>
 											<row>
 												<label
-													value="${c:l('label_ReceiptDialog_AllocationMethod.value')}" />
+													value="${c:l('label_ReceiptDialog_ExcessAdjustTo.value')}" />
 												<hbox>
 													<space spacing="2px"
 														sclass="mandatory" />
 													<combobox
-														id="allocationMethod" width="180px" readonly="true" />
+														id="excessAdjustTo" width="180px" readonly="true" />
 												</hbox>
 												<label
 													value="${c:l('label_ReceiptDialog_EffecScheduleMethod.value')}" />
@@ -704,20 +704,20 @@
 											style="padding:0px;position:relative;">
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_AmountType.label')}"
-												sort="false" hflex="min" />
+												sort="false" width="40%" />
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_AvailAmount.label')}"
-												align="right" sort="false" hflex="min" />
+												align="right" sort="false" width="20%" />
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_AmountPaidNow.label')}"
-												align="right" sort="false" hflex="min" />
+												align="right" sort="false" width="20%" />
 											<listheader
 												label="${c:l('listheader_ReceiptDialog_BalanceAmount.label')}"
-												align="right" sort="false" hflex="min" />
+												align="right" sort="false" width="20%" />
 										</listhead>
 									</listbox>
 								</groupbox>
-							</groupbox>
+							</div>
 						</tabpanel>
 						<tabpanel style="overflow:auto">
 							<groupbox>
@@ -781,13 +781,12 @@
 										</row>
 									</rows>
 								</grid>
-								<groupbox style="align:top"
-									closable="false">
+								<groupbox closable="false">
 									<caption
 										label="${c:l('label_ReceiptDialog_PastduePayments')}" />
 									<listbox id="listBoxPastdues"
 										fixedLayout="true" sizedByContent="true" span="true"
-										emptyMessage="${c:l('listbox.emptyMessage')}" width="99.8%"
+										emptyMessage="${c:l('listbox.emptyMessage')}" width="99%"
 										height="100%" multiple="false">
 										<listhead sizable="false"
 											style="padding:0px;position:relative;">
@@ -806,8 +805,7 @@
 										</listhead>
 									</listbox>
 								</groupbox>
-								<groupbox style="align:top"
-									closable="false">
+								<groupbox closable="false">
 									<caption
 										label="${c:l('label_ReceiptDialog_ManualAdvise')}" />
 									<listbox id="listBoxManualAdvises"
@@ -899,7 +897,7 @@
 								</grid>
 								<listbox id="listBoxPayment"
 									fixedLayout="true" sizedByContent="true" span="true"
-									emptyMessage="${c:l('listbox.emptyMessage')}" width="99.8%"
+									emptyMessage="${c:l('listbox.emptyMessage')}" width="99%"
 									height="100%" multiple="false">
 									<listhead sizable="false"
 										style="padding:0px;position:relative;">

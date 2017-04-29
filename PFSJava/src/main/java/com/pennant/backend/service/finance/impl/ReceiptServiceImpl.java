@@ -426,7 +426,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				long repayID = getFinanceRepaymentsDAO().saveFinRepayHeader(rpyHeader, tableType.getSuffix());
 
 				List<RepayScheduleDetail> rpySchdList = rpyHeader.getRepayScheduleDetails();
-				if (rpySchdList != null && rpySchdList.size() >0) {
+				if (rpySchdList != null && !rpySchdList.isEmpty()) {
 				
 					for (int i = 0; i < rpySchdList.size(); i++) {
 						rpySchdList.get(i).setRepayID(repayID);
@@ -800,12 +800,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				long repayID = getFinanceRepaymentsDAO().saveFinRepayHeader(rpyHeader, TableType.MAIN_TAB.getSuffix());
 
 				List<RepayScheduleDetail> rpySchdList = rpyHeader.getRepayScheduleDetails();
-				for (int i = 0; i < rpySchdList.size(); i++) {
-					rpySchdList.get(i).setRepayID(repayID);
-					rpySchdList.get(i).setRepaySchID(i+1);
+				if (rpySchdList != null && !rpySchdList.isEmpty()) {
+					for (int i = 0; i < rpySchdList.size(); i++) {
+						rpySchdList.get(i).setRepayID(repayID);
+						rpySchdList.get(i).setRepaySchID(i+1);
+					}
+					// Save Repayment Schedule Details
+					getFinanceRepaymentsDAO().saveRpySchdList(rpySchdList, TableType.MAIN_TAB.getSuffix());
 				}
-				// Save Repayment Schedule Details
-				getFinanceRepaymentsDAO().saveRpySchdList(rpySchdList, TableType.MAIN_TAB.getSuffix());
 			}
 		}
 		
