@@ -140,39 +140,12 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 	public void onCreate$window_AccountMappingDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 		
-		// Set the page level components.
-		setPageComponents(window_AccountMappingDialog);
-
-		doSetFieldProperties();
-		this.listBoxAccountMap.setHeight(borderLayoutHeight-75+"px");
-		
 		try {
-			// Get the required arguments.
-			/*	this.accountMapping = (AccountMapping) arguments.get("accountMapping");
-			this.accountMappingListCtrl = (AccountMappingListCtrl) arguments.get("accountMappingListCtrl");
-
-			if (this.accountMapping == null) {
-				throw new Exception(Labels.getLabel("error.unhandled"));
-			}
-
-			// Store the before image.
-			AccountMapping accountMapping = new AccountMapping();
-			BeanUtils.copyProperties(this.accountMapping, accountMapping);
-			this.accountMapping.setBefImage(accountMapping);
+			// Set the page level components.
+			setPageComponents(window_AccountMappingDialog);
 			
-			// Render the page and display the data.
-			doLoadWorkFlow(this.accountMapping.isWorkflow(), this.accountMapping.getWorkflowId(),
-					this.accountMapping.getNextTaskId());
-
-			if (isWorkFlowEnabled() && !enqiryModule) {
-				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateAuthorities(this.pageRightName,getRole());
-			}else{
-				getUserWorkspace().allocateAuthorities(this.pageRightName,null);
-			}
-
-			doCheckRights();
-			doShowDialog(this.accountMapping);*/
+			doSetFieldProperties();
+			this.listBoxAccountMap.setHeight(borderLayoutHeight-75+"px");
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			closeDialog();
@@ -206,7 +179,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 	public void onFulfill$finType(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		listBoxAccountMap.getItems().clear();
+		this.listBoxAccountMap.getItems().clear();
 		Object dataObject = finType.getObject();
 
 		if (dataObject instanceof String) {
@@ -219,7 +192,8 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 
 			List<TransactionEntry> transactionEntries = null;
 			if (financeType != null) {
-				transactionEntries = this.accountMappingService.getTransactionEntriesByFintype(financeType.getFinType());
+				transactionEntries = this.accountMappingService
+						.getTransactionEntriesByFintype(financeType.getFinType());
 			}
 
 			if (transactionEntries != null) {
@@ -244,14 +218,13 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 				Textbox sapGlCode_Textbox = null;
 				ExtendedCombobox profitCenter = null;
 				ExtendedCombobox costCenter = null;
-				
+
 				int count = 0;
 				AccountMapping accountMapping = null;
 				String hostAccount = null;
-				
 
 				for (TransactionEntry transactionEntry : transactionEntries) {
-					if (StringUtils.equals("BANK", transactionEntry.getAccountType())) {	//FIXME Hard-Code should be remove
+					if (StringUtils.equals("BANK", transactionEntry.getAccountType())) { // FIXME Hard-Code should be remove
 						continue;
 					}
 					executeMap = new HashMap<String, Object>();
@@ -261,6 +234,10 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 					executeMap.put("ft_finType", financeType.getFinType());
 					String glCode = (String) ruleExecutionUtil.executeRule(rule.getSQLRule(), executeMap, null,
 							RuleReturnType.CALCSTRING);
+
+					if (StringUtils.isBlank(glCode)) {
+						continue;
+					}
 
 					accountMapping = this.accountMappingService.getAccountMapping(glCode);
 					String profitCenterDesc = null;
@@ -294,7 +271,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 					sapGlCode_Textbox.setId("sapGlCode_" + count);
 					sapGlCode_Textbox.setValue(hostAccount);
 					cell.setParent(item);
-					
+
 					cell = new Listcell();
 					profitCenter = new ExtendedCombobox();
 					profitCenter.setId("profitCenter_" + count);
@@ -302,16 +279,16 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 					profitCenter.setValueColumn("ProfitCenterCode");
 					profitCenter.setDescColumn("ProfitCenterDesc");
 					profitCenter.setDisplayStyle(2);
-					profitCenter.setValidateColumns(new String[] {"ProfitCenterCode", "ProfitCenterDesc" });
+					profitCenter.setValidateColumns(new String[] { "ProfitCenterCode", "ProfitCenterDesc" });
 					profitCenter.setMandatoryStyle(true);
-					if(!newRecord) {
+					if (!newRecord) {
 						profitCenter.setValue(profitCenterCode);
 						profitCenter.setDescription(profitCenterDesc);
 						profitCenter.setObject(new ProfitCenter(accountMapping.getProfitCenterID()));
 					}
 					profitCenter.setParent(cell);
 					cell.setParent(item);
-					
+
 					cell = new Listcell();
 					costCenter = new ExtendedCombobox();
 					costCenter.setModuleName("CostCenter");
@@ -320,9 +297,9 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 					costCenter.setValueColumn("CostCenterCode");
 					costCenter.setDescColumn("CostCenterDesc");
 					costCenter.setDisplayStyle(2);
-					costCenter.setValidateColumns(new String[] {"CostCenterCode" });
+					costCenter.setValidateColumns(new String[] { "CostCenterCode" });
 					costCenter.setMandatoryStyle(true);
-					if(!newRecord) {
+					if (!newRecord) {
 						costCenter.setValue(costCenterCode);
 						costCenter.setObject(new CostCenter(accountMapping.getCostCenterID()));
 						costCenter.setDescription(costCenterDesc);
@@ -340,21 +317,6 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 	}
 	
 	/**
-	 * Set Visible for components by checking if there's a right for it.
-	 */
-	/*private void doCheckRights() {
-		logger.debug(Literal.ENTERING);
-
-		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_AccountMappingDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_AccountMappingDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_AccountMappingDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_AccountMappingDialog_btnSave"));
-		this.btnCancel.setVisible(false);
-
-		logger.debug(Literal.LEAVING);
-	}*/
-
-	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
 	 * @param event
@@ -362,48 +324,61 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
-		//doSave();
-		
+		// doSave();
+
 		List<Listitem> items = listBoxAccountMap.getItems();
+		// Finance Type
+		this.finType.setErrorMessage("");
+		this.finType.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_FinType.value"),
+				null, true, true));
+		this.finType.getValidatedValue();
+
+		if (items == null || items.isEmpty()) {
+			Messagebox.show("GL Codes are not defined for this loan type..");
+			return;
+		}
+
 		int count = 0;
 		Textbox sapGlCode_Textbox = null;
 		ExtendedCombobox profitCenterId;
 		ExtendedCombobox costCenterId;
 		Label glCode_Label = null;
 		AccountMapping accountMapping = null;
-		//Finance Type
-		this.finType.setErrorMessage("");
-		this.finType.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_FinType.value"), null, true, true));
-		this.finType.getValidatedValue();
-		 
+
 		FinanceType financedType = (FinanceType) this.finType.getObject();
 		String finTypeValue = financedType.getFinType();
 		List<AccountMapping> accountMappingList = new ArrayList<>();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		for (Listitem listItem : items) {
 			accountMapping = new AccountMapping();
 			glCode_Label = (Label) listItem.getFellow("glCode_" + count);
 			sapGlCode_Textbox = (Textbox) listItem.getFellow("sapGlCode_" + count);
 			sapGlCode_Textbox.setErrorMessage("");
-			sapGlCode_Textbox.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_HostAccount.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			sapGlCode_Textbox.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_AccountMappingDialog_HostAccount.value"),
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 			profitCenterId = (ExtendedCombobox) listItem.getFellow("profitCenter_" + count);
 			costCenterId = (ExtendedCombobox) listItem.getFellow("costCenter_" + count);
-			profitCenterId.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_ProfitCenter.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
-			costCenterId.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_CostCenter.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
-			//GL Code
+			profitCenterId.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_AccountMappingDialog_ProfitCenter.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM, true));
+			costCenterId.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_AccountMappingDialog_CostCenter.value"), PennantRegularExpressions.REGEX_ALPHANUM,
+					true));
+			// GL Code
 			try {
 				accountMapping.setAccount(glCode_Label.getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			//SAP GL Code
+			// SAP GL Code
 			try {
 				accountMapping.setHostAccount(sapGlCode_Textbox.getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			try {
 				ProfitCenter profitCenterObj = (ProfitCenter) profitCenterId.getObject();
 				accountMapping.setProfitCenterID(profitCenterObj.getId());
@@ -411,7 +386,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			try {
 				CostCenter costCenterObj = (CostCenter) costCenterId.getObject();
 				accountMapping.setCostCenterID(costCenterObj.getId());
@@ -419,7 +394,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			sapGlCode_Textbox.setConstraint("");
 			profitCenterId.setConstraint("");
 			costCenterId.setConstraint("");
@@ -427,19 +402,28 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 			accountMappingList.add(accountMapping);
 			count++;
 		}
-		
-		if (wve.size()>0) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
-		accountMappingService.save(accountMappingList, finTypeValue);
-		
+
+		try {
+			accountMappingService.save(accountMappingList, finTypeValue);
+			Messagebox.show("Record Saved..");
+			this.listBoxAccountMap.getItems().clear();
+			this.finType.setConstraint("");
+			this.finType.setValue("");
+			this.finType.setDescription("");
+			this.finType.setObject(new FinanceType());
+		} catch (Exception e) {
+			logger.error("Exception : ", e);
+		}
+
 		logger.debug(Literal.LEAVING);
-		
 	}
 
 	/**
@@ -739,7 +723,6 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 					refreshList();
 					closeDialog();
 				}
-
 			} catch (DataAccessException e) {
 				logger.error("Exception", e);
 				showErrorMessage(this.window_AccountMappingDialog, e);
@@ -797,9 +780,9 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
+			
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
-
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -821,6 +804,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 	 */
 	public void doSave() {
 		logger.debug("Entering");
+		
 		final AccountMapping aAccountMapping = new AccountMapping();
 		BeanUtils.copyProperties(this.accountMapping, aAccountMapping);
 		boolean isNew = false;
@@ -861,6 +845,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 			logger.error(e);
 			MessageUtil.showError(e);
 		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -1057,5 +1042,4 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
-
 }
