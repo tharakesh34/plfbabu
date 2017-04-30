@@ -1993,4 +1993,56 @@ update reportconfiguration set reportjaspername='NPA_Reports' where menuitemcode
 			<column name ="REJECT_REASON" 				type="VARCHAR(100)"/>
 		</createTable>
 	</changeSet>
+	<changeSet id="106" author="murthy.y">
+		<dropTable tableName="DISBURSEMENT_REQUESTS"/>
+	</changeSet>
+	<changeSet id="107" author="murthy.y">
+		<createTable tableName="DISBURSEMENT_REQUESTS">
+			<column name="ID" type="NUMBER(19,0)">
+					<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="BATCH_ID" type="NUMBER(19,0)"/>
+			<column name="DISBURSEMENT_ID" type="NUMBER(19,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CUSTCIF" 						type="VARCHAR(20)"/>
+			<column name="FINREFERENCE" 				type="VARCHAR(20)"/>
+			<column name="DISBURSEMENT_AMOUNT" 			type="DECIMAL(18,0)"/>
+			<column name="DISBURSEMENT_TYPE" 			type="VARCHAR(8)"/>
+			<column name="DISBURSEMENT_DATE" 			type="DATETIME"/>
+			<column name="DRAWEE_LOCATION" 				type="VARCHAR(50)"/>
+			<column name="PRINT_LOCATION" 				type="VARCHAR(50)"/>
+			<column name="CUSTOMER_NAME" 				type="VARCHAR(200)"/>
+			<column name="CUSTOMER_EMAIL" 				type="VARCHAR(200)"/>
+			<column name ="BENFICIARY_BANK" 			type="VARCHAR(200)"/>
+			<column name ="BENFICIARY_BRANCH" 			type="VARCHAR(200)"/>
+			<column name ="BENFICIARY_BRANCH_STATE" 	type="VARCHAR(200)"/>
+			<column name ="BENFICIARY_BRANCH_CITY" 		type="VARCHAR(200)"/>
+			<column name ="MICR_CODE" 					type="VARCHAR(20)"/>
+			<column name ="IFSC_CODE" 					type="VARCHAR(20)"/>
+			<column name ="BENFICIARY_ACCOUNT" 			type="VARCHAR(50)"/>
+			<column name ="BENFICIARY_NAME" 			type="VARCHAR(200)"/>
+			<column name ="BENFICIRY_EMAIL" 			type="VARCHAR(200)"/>
+			<column name ="BENFICIRY_CITY" 				type="VARCHAR(200)"/>
+			<column name ="BENFICIARY_ADDRESS1" 		type="VARCHAR(100)"/>
+			<column name ="BENFICIARY_ADDRESS2" 		type="VARCHAR(100)"/>
+			<column name ="BENFICIARY_ADDRESS3" 		type="VARCHAR(100)"/>
+			<column name ="BENFICIARY_ADDRESS4" 		type="VARCHAR(100)"/>
+			<column name ="BENFICIARY_ADDRESS5" 		type="VARCHAR(100)"/>
+			<column name ="PAYMENT_DETAIL1" 			type="VARCHAR(100)"/>
+			<column name ="PAYMENT_DETAIL2" 			type="VARCHAR(100)"/>
+			<column name ="PAYMENT_DETAIL3" 			type="VARCHAR(100)"/>
+			<column name ="PAYMENT_DETAIL4" 			type="VARCHAR(100)"/>
+			<column name ="PAYMENT_DETAIL5" 			type="VARCHAR(100)"/>
+			<column name ="PAYMENT_DETAIL6" 			type="VARCHAR(100)"/>
+			<column name ="PAYMENT_DETAIL7" 			type="VARCHAR(100)"/>
+			<column name="RESP_BATCH_ID" 				type="NUMBER(19,0)"/>
+			<column name="TRANSACTIONREF" 				type="VARCHAR(50)"/>
+			<column name="CHEQUE_NUMBER" 				type="VARCHAR(50)"/>
+			<column name="PAYMENT_DATE" 				type="DATETIME"/>
+			<column name ="STATUS" 						type="VARCHAR(50)"/>
+			<column name ="REMARKS" 					type="VARCHAR(500)"/>
+			<column name ="REJECT_REASON" 				type="VARCHAR(100)"/>
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
