@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.service.impl;
 
+import java.io.Serializable;
+
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.dao.SecLoginlogDAO;
@@ -49,7 +51,8 @@ import com.pennant.backend.dao.UserDAO;
 import com.pennant.backend.model.SecLoginlog;
 import com.pennant.backend.service.LoginLoggingService;
 
-public class LoginLoggingServiceImpl implements LoginLoggingService {
+public class LoginLoggingServiceImpl implements Serializable, LoginLoggingService {
+	private static final long serialVersionUID = 3670557183587630706L;
 	private static final Logger logger = Logger.getLogger(LoginLoggingServiceImpl.class);
 
 	private SecLoginlogDAO secLoginlogDAO;
