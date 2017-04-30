@@ -982,7 +982,7 @@ public class ReceiptCalculator implements Serializable {
 			Date schdDate = curSchd.getSchDate();
 
 			// Skip if repayment date after Current Business date
-			if (schdDate.compareTo(curBussniessDate) >= 0 && 
+			if (schdDate.compareTo(curBussniessDate) > 0 && 
 					!StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 				break;
 			}

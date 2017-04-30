@@ -302,7 +302,7 @@
 									<label
 										id="label_ReceiptCancellationDialog_FundingAccount"
 										value="${c:l('label_ReceiptCancellationDialog_FundingAccount.value')}" />
-									<accountSelectionBox
+									<extendedcombobox
 										id="fundingAccount" width="180px" />
 									<label
 										id="label_ReceiptCancellationDialog_ReceivedDate"

@@ -241,7 +241,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				receiptData.setReceiptHeader(getFinReceiptHeaderDAO().getReceiptHeaderByRef(finReference, "_Temp"));
 				
 				// Fetch Receipt Detail List
-				List<FinReceiptDetail> receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptData.getReceiptHeader().getReceiptID(), "_Temp");
+				List<FinReceiptDetail> receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptData.getReceiptHeader().getReceiptID(), "_TView");
 				
 				// Fetch Repay Headers List
 				List<FinRepayHeader> rpyHeaderList = getFinanceRepaymentsDAO().getFinRepayHeadersByRef(finReference, "_Temp");

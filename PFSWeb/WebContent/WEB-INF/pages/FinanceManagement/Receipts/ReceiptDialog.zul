@@ -664,7 +664,7 @@
 												<label
 													id="label_ReceiptDialog_FundingAccount"
 													value="${c:l('label_ReceiptDialog_FundingAccount.value')}" />
-												<accountSelectionBox
+												<extendedcombobox
 													id="fundingAccount" width="180px" />
 												<label
 													id="label_ReceiptDialog_ReceivedDate"

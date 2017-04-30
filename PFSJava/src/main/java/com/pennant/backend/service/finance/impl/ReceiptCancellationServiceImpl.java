@@ -54,7 +54,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 		// Fetch Receipt Detail List
 		if(receiptHeader != null){
-			List<FinReceiptDetail> receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptID, "");
+			List<FinReceiptDetail> receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptID, "_AView");
 			receiptHeader.setReceiptDetails(receiptDetailList);
 		}
 
@@ -101,7 +101,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		// Receipt Header Details Save And Update
 		//=======================================
 		if (receiptHeader.isNew()) {
-			receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
+			receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_BOUNCE);
 			 getFinReceiptHeaderDAO().save(receiptHeader, tableType);
 		} else {
 			getFinReceiptHeaderDAO().update(receiptHeader, tableType);
@@ -200,7 +200,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE) ||
 					StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DD)){
 				getFinReceiptDetailDAO().updateReceiptStatus(receiptDetail.getReceiptID(), 
-						receiptDetail.getReceiptSeqID(), RepayConstants.PAYSTATUS_REALIZED);
+						receiptDetail.getReceiptSeqID(), RepayConstants.PAYSTATUS_BOUNCE);
 				break;
 			}
 		}

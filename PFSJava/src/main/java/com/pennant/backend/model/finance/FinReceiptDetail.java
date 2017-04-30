@@ -19,13 +19,15 @@ public class FinReceiptDetail implements Entity{
 	private String favourNumber;
 	private Date valueDate;
 	private String bankCode;
+	private String bankCodeDesc;
 	private String favourName;
 	private Date depositDate;
 	private String depositNo;
 	private String paymentRef;
 	private String transactionRef;
 	private String chequeAcNo;
-	private String fundingAc;
+	private long fundingAc = 0;
+	private String fundingAcDesc;
 	private Date receivedDate;
 	private String status;
 	private String remarks;
@@ -167,10 +169,10 @@ public class FinReceiptDetail implements Entity{
 		this.chequeAcNo = chequeAcNo;
 	}
 
-	public String getFundingAc() {
+	public long getFundingAc() {
 		return fundingAc;
 	}
-	public void setFundingAc(String fundingAc) {
+	public void setFundingAc(long fundingAc) {
 		this.fundingAc = fundingAc;
 	}
 
@@ -200,6 +202,22 @@ public class FinReceiptDetail implements Entity{
 	}
 	public void setRepayHeaders(List<FinRepayHeader> repayHeaders) {
 		this.repayHeaders = repayHeaders;
+	}
+
+	public String getBankCodeDesc() {
+		return bankCodeDesc;
+	}
+
+	public void setBankCodeDesc(String bankCodeDesc) {
+		this.bankCodeDesc = bankCodeDesc;
+	}
+
+	public String getFundingAcDesc() {
+		return fundingAcDesc;
+	}
+
+	public void setFundingAcDesc(String fundingAcDesc) {
+		this.fundingAcDesc = fundingAcDesc;
 	}
 
 }

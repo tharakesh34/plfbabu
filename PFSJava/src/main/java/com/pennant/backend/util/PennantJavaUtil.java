@@ -831,8 +831,8 @@ public class PennantJavaUtil {
 						"AccountSetid", "TransDesc" }, null, 300));
 		
 		ModuleUtil.register("FinTypeAccounting", new ModuleMapping("FinTypeAccounting", FinTypeAccounting.class, new String[] {
-			"FinTypeAccounting", "FinTypeAccounting_AView" }, masterWF , new String[] {"FinType","Event",
-			"lovDescEventAccountingName" }, null, 600));
+				"FinTypeAccounting", "FinTypeAccounting_AView" }, masterWF , new String[] {"FinType","Event",
+				"lovDescEventAccountingName" }, null, 600));
 		
 		ModuleUtil.register("FinTypeFees", new ModuleMapping("FinTypeFees", FinTypeFees.class, new String[] {
 			"FinTypeFees", "FinTypeFees_AView" }, null, new String[] {"FinType","FinEvent" }, null, 600));
@@ -934,8 +934,8 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("CommitmentWorkFlow", new ModuleMapping("FinanceWorkFlow", FinanceWorkFlow.class,
 				new String[] { "LMTFinanceWorkFlowDef", "LMTFinanceWorkFlowDef_AView" }, masterWF, new String[] {
-			"TypeCode", "CommitmentTypeDesc" }, new String[][] { { "ModuleName",
-				"0", "COMMITMENT" }, { "FinIsActive", "0", "1"} }, 300));
+						"TypeCode", "CommitmentTypeDesc" }, new String[][] { { "ModuleName",
+							"0", "COMMITMENT" }, { "FinIsActive", "0", "1"} }, 300));
 
 		ModuleUtil.register("PromotionWorkFlow", new ModuleMapping("PromotionWorkFlow", FinanceWorkFlow.class,
 				new String[] { "LMTFinanceWorkFlowDef", "LMTFinanceWorkFlowDef_PTView" }, masterWF, new String[] {
@@ -1031,7 +1031,7 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("Promotion", new ModuleMapping("Promotions", Promotion.class,
 				new String[] { "Promotions", "Promotions_AView" }, masterWF, new String[] {
-			"PromotionCode", "PromotionDesc" }, null, 300));
+						"PromotionCode", "PromotionDesc" }, null, 300));
 		
 		/************* Finance *************/
 
@@ -1040,14 +1040,14 @@ public class PennantJavaUtil {
 				"FinStartDate" }, null, 700));
 		
 		ModuleUtil.register("WhatIfFinance", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
-			"WIFFinanceMain", "WIFFinanceMain_SView" }, facilityWF, new String[] { "FinReference", "FinType",
-		"FinStartDate" }, null, 700));
+				"WIFFinanceMain", "WIFFinanceMain_SView" }, facilityWF, new String[] { "FinReference", "FinType",
+				"FinStartDate" }, null, 700));
 
 		ModuleUtil.register("FinanceMain", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
 				"FinanceMain", "FinanceMain_AView" }, null, new String[] { "FinReference", "FinType" }, null, 350));
 		
 		ModuleUtil.register("FinanceManagement", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
-			"FinanceMain" }, null, new String[] { "FinReference", "FinType" }, null, 350));
+				"FinanceMain" }, null, new String[] { "FinReference", "FinType" }, null, 350));
 		
 		ModuleUtil.register("FinanceMaintenance", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
 				"FinanceMain", "FinanceMaintenance_View" }, null, new String[] { "FinReference", "FinType" }, null,
@@ -1164,12 +1164,12 @@ public class PennantJavaUtil {
 				null, 300));
 
 		ModuleUtil.register("CancelDisbursement", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
-			"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
-			null, 300));
+				"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
+				null, 300));
 		
 		ModuleUtil.register("OverdraftSchedule", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
-			"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
-			null, 300));
+				"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
+				null, 300));
 		
 		ModuleUtil.register("RlsHoldDisbursement", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
 				"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
@@ -1180,16 +1180,16 @@ public class PennantJavaUtil {
 				null, 300));
 
 		ModuleUtil.register("PlannedEMI", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
-			"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
-			null, 300));
+				"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
+				null, 300));
 		
 		ModuleUtil.register("UnPlannedEMIH", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
-			"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
-			null, 300));
+				"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
+				null, 300));
 		
 		ModuleUtil.register("ReAging", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
-			"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
-			null, 300));
+				"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
+				null, 300));
 		
 		ModuleUtil.register("RmvDefferment", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
 				"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
@@ -1243,8 +1243,12 @@ public class PennantJavaUtil {
 				"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
 				null, 300));
 		
-		ModuleUtil.register("ReceiptRealization", new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] {
+		ModuleUtil.register("FinReceiptHeader", new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] {
 				"FinReceiptHeader" }, realizationWF, new String[] { "ReceiptID", "ReceiptPurpose" },
+				null, 300));
+		
+		ModuleUtil.register("ReceiptRealization", new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] {
+		"FinReceiptHeader" }, realizationWF, new String[] { "ReceiptID", "ReceiptPurpose" },
 				null, 300));
 		
 		ModuleUtil.register("ReceiptCancellation", new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] {
@@ -1312,8 +1316,8 @@ public class PennantJavaUtil {
 				null, 300));
 		
 		ModuleUtil.register("FinTypeVASProducts", new ModuleMapping("FinTypeVASProducts", FinTypeVASProducts.class, new String[] {
-			"FinTypeVASProducts", "FinTypeVASProducts_View" }, masterWF , new String[] {"FinType", "VasProduct" },
-			null, 300));
+				"FinTypeVASProducts", "FinTypeVASProducts_View" }, masterWF , new String[] {"FinType", "VasProduct" },
+				null, 300));
 
 		ModuleUtil.register("FinSuspHold", new ModuleMapping("FinSuspHold", FinSuspHold.class, new String[] {
 				"FinSuspHold", "FinSuspHold_View" }, masterWF, new String[] { "Product", "FinType", "FinReference",
@@ -1760,7 +1764,7 @@ public class PennantJavaUtil {
 				"Provision" }, "MSTGRP1", new String[] { "FinRefence", "provisionAmt" }, null, 300));
 		
 		ModuleUtil.register("Finance", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {
-			"FinanceMain", "FinanceMain" }, null, new String[] { "FinReference", "FinType" }, null, 350));
+				"FinanceMain", "FinanceMain" }, null, new String[] { "FinReference", "FinType" }, null, 350));
 
 		// LIMIT MODULE START
 		ModuleUtil.register("LimitFilterQuery", new ModuleMapping("LimitFilterQuery", LimitFilterQuery.class, new String[] { "LimitParams",
@@ -1885,14 +1889,14 @@ public class PennantJavaUtil {
 				"FileDownload", "FILE_DOWNLOAD_VIEW" }, null, new String[] { "NAME", "FileName" }, null, 700));
 		
 		ModuleUtil.register("DPDBucket", new ModuleMapping("DPDBucket", DPDBucket.class, new String[] {
-			"DPDBUCKETS", "DPDBUCKETS_AView" }, masterWF, new String[] { "BucketCode", "BucketDesc" }, null, 700));
+				"DPDBUCKETS", "DPDBUCKETS_AView" }, masterWF, new String[] { "BucketCode", "BucketDesc" }, null, 700));
  
 		ModuleUtil.register("NPABucket", new ModuleMapping("NPABucket", NPABucket.class,
 				new String[]{"NPABUCKETS", "NPABUCKETS_AView"},masterWF,
 				new String[] {"BucketCode","BucketDesc"} , null,300));
 		
 		ModuleUtil.register("ManualAdvise", new ModuleMapping("ManualAdvise", ManualAdvise.class, new String[] { "ManualAdvise",
-		"ManualAdvise_AView" }, masterWF, new String[] {"AdviseType","FinReference","FeeTypeID"},null, 600));
+				"ManualAdvise_AView" }, masterWF, new String[] {"AdviseType","FinReference","FeeTypeID"},null, 600));
 		
 		ModuleUtil.register("BounceReason", new ModuleMapping("BounceReason", BounceReason.class, new String[] {
 				"BounceReasons", "BounceReasons_AView" }, masterWF, new String[] { "BounceCode", "ReasonType",
@@ -1906,18 +1910,18 @@ public class PennantJavaUtil {
 				"CostCenters", "CostCenters_AView" }, masterWF, new String[] { "CostCenterCode", "CostCenterDesc" }, new String[][] { { "Active", "0", "1" } }, 400));
 		/*PresentmentDetail*/
 		ModuleUtil.register("PresentmentDetail", new ModuleMapping("PresentmentDetail", PresentmentDetail.class, new String[] { "PresentmentDetails",
-		"PresentmentDetails_AView" }, null, new String[] {"FinReference","SchDate","SchSeq","MandateID","ExcludeReason"},null, 600));
+				"PresentmentDetails_AView" }, null, new String[] {"FinReference","SchDate","SchSeq","MandateID","ExcludeReason"},null, 600));
 
 		/*PresentmentHeader*/
 		ModuleUtil.register("PresentmentHeader", new ModuleMapping("PresentmentHeader", PresentmentHeader.class, new String[] { "PresentmentHeader",
-		"PresentmentHeader_AView" }, null, new String[] {"MandateType","PartnerBankID","Status"},null, 600));
+				"PresentmentHeader_AView" }, null, new String[] {"MandateType","PartnerBankID","Status"},null, 600));
 		
 		ModuleUtil.register("AccountMapping", new ModuleMapping("AccountMapping", AccountMapping.class, new String[] { "AccountMapping",
-		"AccountMapping_AView" }, masterWF, new String[] {},null, 600));
+				"AccountMapping_AView" }, masterWF, new String[] {},null, 600));
 		
 		ModuleUtil.register("FinTypePartner", new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
 				new String[] { "FinTypePartnerBanks","FinTypePartnerBanks_AView" }, masterWF,
-				new String[] { "PartnerBankCode", "PartnerBankName" }, null, 300));
+				new String[] { "PartnerBankID","PartnerBankCode", "PartnerBankName" }, null, 300));
 	}
 
 	public static ModuleMapping getModuleMap(String code) {

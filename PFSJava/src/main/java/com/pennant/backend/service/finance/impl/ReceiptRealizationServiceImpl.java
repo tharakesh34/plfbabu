@@ -54,7 +54,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 
 		// Fetch Receipt Detail List
 		if(receiptHeader != null){
-			List<FinReceiptDetail> receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptID, "");
+			List<FinReceiptDetail> receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptID, "_AView");
 			receiptHeader.setReceiptDetails(receiptDetailList);
 		}
 

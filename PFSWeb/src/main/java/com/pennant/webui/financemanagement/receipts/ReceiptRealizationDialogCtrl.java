@@ -128,7 +128,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 	protected Uppercasebox									paymentRef;
 	protected Uppercasebox									transactionRef;
 	protected AccountSelectionBox							chequeAcNo;
-	protected AccountSelectionBox							fundingAccount;
+	protected ExtendedCombobox								fundingAccount;
 	protected Datebox										receivedDate;
 	protected Textbox										remarks;
 
@@ -257,11 +257,13 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 		this.custCIF.setMaxlength(LengthConstants.LEN_CIF);
 		this.receiptAmount.setProperties(true , formatter);
 
-		this.fundingAccount.setButtonVisible(false);
-		this.fundingAccount.setMandatory(true);
-		this.fundingAccount.setAcountDetails("", "", true);
-		this.fundingAccount.setTextBoxWidth(180);
-
+		this.fundingAccount.setModuleName("FinTypePartner");
+		this.fundingAccount.setMandatoryStyle(true);
+		this.fundingAccount.setValueColumn("PartnerBankID");
+		this.fundingAccount.setDescColumn("PartnerBankCode");
+		this.fundingAccount.setDisplayStyle(3);
+		this.fundingAccount.setValidateColumns(new String[] { "PartnerBankID" });
+		
 		this.chequeAcNo.setButtonVisible(false);
 		this.chequeAcNo.setMandatory(true);
 		this.chequeAcNo.setAcountDetails("", "", true);
@@ -502,13 +504,15 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 					this.favourNo.setValue(receiptDetail.getFavourNumber());
 					this.valueDate.setValue(receiptDetail.getValueDate());
 					this.bankCode.setValue(receiptDetail.getBankCode());
+					this.bankCode.setDescription(receiptDetail.getBankCodeDesc());
 					this.favourName.setValue(receiptDetail.getFavourName());
 					this.depositDate.setValue(receiptDetail.getDepositDate());
 					this.depositNo.setValue(receiptDetail.getDepositNo());
 					this.paymentRef.setValue(receiptDetail.getPaymentRef());
 					this.transactionRef.setValue(receiptDetail.getTransactionRef());
 					this.chequeAcNo.setValue(receiptDetail.getChequeAcNo());
-					this.fundingAccount.setValue(receiptDetail.getFundingAc());
+					this.fundingAccount.setValue(String.valueOf(receiptDetail.getFundingAc()));
+					this.fundingAccount.setDescription(receiptDetail.getFundingAcDesc());
 					this.receivedDate.setValue(receiptDetail.getReceivedDate());
 					this.remarks.setValue(receiptDetail.getRemarks());
 				}
