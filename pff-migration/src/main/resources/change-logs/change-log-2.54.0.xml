@@ -1245,4 +1245,19 @@ update reportconfiguration set reportjaspername='NPA_Reports' where menuitemcode
 		Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
 	</sql>
 </changeSet>
+<changeSet id="69" author="Prasad">
+		<dropColumn columnName="FutureRpyPri" tableName="FinPftDetails" />
+		<dropColumn columnName="FutureRpyPft" tableName="FinPftDetails" />
+		<dropColumn columnName="LastDisbDate" tableName="FinPftDetails" />
+</changeSet>
+<changeSet id="70" author="Prasad">
+		<dropColumn columnName="FutureRpyPri" tableName="FinPftDetails_Temp" />
+		<dropColumn columnName="FutureRpyPft" tableName="FinPftDetails_Temp" />
+		<dropColumn columnName="LastDisbDate" tableName="FinPftDetails_Temp" />
+</changeSet>
+<changeSet id="71" author="Prasad">
+		<dropColumn columnName="FutureRpyPri" tableName="FinPftDetails_SnapShot" />
+		<dropColumn columnName="FutureRpyPft" tableName="FinPftDetails_SnapShot" />
+		<dropColumn columnName="LastDisbDate" tableName="FinPftDetails_SnapShot" />
+</changeSet>
 </databaseChangeLog>
