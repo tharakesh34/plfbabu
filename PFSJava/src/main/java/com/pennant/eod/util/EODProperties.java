@@ -15,6 +15,7 @@ import com.pennant.backend.dao.applicationmaster.NPABucketConfigurationDAO;
 import com.pennant.backend.dao.applicationmaster.NPABucketDAO;
 import com.pennant.backend.dao.applicationmaster.TakafulProviderDAO;
 import com.pennant.backend.dao.masters.SystemInternalAccountDefinitionDAO;
+import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
@@ -25,8 +26,10 @@ import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.applicationmaster.NPABucket;
 import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
 import com.pennant.backend.model.applicationmaster.TakafulProvider;
+import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
+import com.pennant.backend.util.FinanceConstants;
 
 /**
  * This class stores the following application master details into static variables <br>
@@ -70,6 +73,8 @@ public class EODProperties {
 	private NPABucketConfigurationDAO							nPABucketConfigurationDAO;
 	private NPABucketDAO										nPABucketDAO;
 
+	private FinTypeAccountingDAO								finTypeAccountingDAO;
+
 	public EODProperties() {
 		super();
 	}
@@ -104,6 +109,8 @@ public class EODProperties {
 		npaBuckets = new HashMap<Long, String>();
 
 		for (FinanceType type : finTypeList) {
+			List<FinTypeAccounting> list = finTypeAccountingDAO.getFinTypeAccountingByFinType(type.getFinType(), FinanceConstants.MODULEID_FINTYPE);
+			type.setFinTypeAccountingList(list);
 			finananceTypesMap.put(type.getFinType().trim(), type);
 		}
 
@@ -362,5 +369,12 @@ public class EODProperties {
 		this.nPABucketDAO = nPABucketDAO;
 	}
 
+	public FinTypeAccountingDAO getFinTypeAccountingDAO() {
+		return finTypeAccountingDAO;
+	}
+
+	public void setFinTypeAccountingDAO(FinTypeAccountingDAO finTypeAccountingDAO) {
+		this.finTypeAccountingDAO = finTypeAccountingDAO;
+	}
 
 }

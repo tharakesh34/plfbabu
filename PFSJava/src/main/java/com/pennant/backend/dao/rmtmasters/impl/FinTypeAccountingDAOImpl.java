@@ -147,6 +147,25 @@ public class FinTypeAccountingDAOImpl extends BasisCodeDAO<FinTypeAccounting> im
 	}
 	
 	
+	@Override
+	public List<FinTypeAccounting> getFinTypeAccountingByFinType(String finType, int moduleId) {
+		logger.debug("Entering");
+		FinTypeAccounting finTypeAccounting = new FinTypeAccounting();
+		finTypeAccounting.setFinType(finType);
+		finTypeAccounting.setModuleId(moduleId);
+		StringBuilder selectSql = new StringBuilder("SELECT FinType, Event, AccountSetID ");
+		selectSql.append(" FROM FinTypeAccounting");
+		selectSql.append(" Where FinType = :FinType And ModuleId = :ModuleId");
+		
+		logger.debug("selectListSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
+		RowMapper<FinTypeAccounting> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeAccounting.class);
+		
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
+	
+	
 	/**
 	 * Fetch the Record Finance Types details by key field
 	 * 

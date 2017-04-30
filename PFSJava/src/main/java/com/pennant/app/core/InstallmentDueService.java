@@ -21,7 +21,6 @@ import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.eod.util.EODProperties;
 
 public class InstallmentDueService extends ServiceHelper {
@@ -34,7 +33,7 @@ public class InstallmentDueService extends ServiceHelper {
 															+ " FRQ INNER JOIN FINPFTDETAILS FPD ON FPD.FINREFERENCE = FRQ.FINREFERENCE WHERE FPD.CustID = ? AND FRQ.SchDate = ?";
 
 	private static final String	INSTALLMENTDUE_FEE	= "SELECT FED.FINREFERENCE,FESD.SCHDATE,FESD.SCHAMOUNT,FESD.OSAMOUNT,FESD.PAIDAMOUNT,FESD.WAIVERAMOUNT,FESD.WRITEOFFAMOUNT"
-															+ " FINFEESCHEDULEDETAIL FESD  inner join FINFEEDETAIL FED ON FESD.FEEID=FED.FEEID Inner join FEETYPES FT on FT.FEETYPEID= FED.FEETYPEID "
+															+ " FROM FINFEESCHEDULEDETAIL FESD  inner join FINFEEDETAIL FED ON FESD.FEEID=FED.FEEID Inner join FEETYPES FT on FT.FEETYPEID= FED.FEETYPEID "
 															+ " WHERE FED.FINREFERENCE = ? AND FESD.SCHDATE = ?";
 
 	private static final String	INSTALLMENTDUE_INS	= "SELECT FIN.REFERENCE, INSD.INSSCHDATE, FIN.INSURANCETYPE, INSD.AMOUNT, INSD.INSURANCEPAID FROM FINSCHFRQINSURANCE INSD "
@@ -160,8 +159,9 @@ public class InstallmentDueService extends ServiceHelper {
 		//Postings Process
 		FinanceType financeType = getFinanceType(amountCodes.getFinType());
 		financeType.getDeclaredFieldValues(executingMap);
-		List<ReturnDataSet> list = prepareAccounting(executingMap, financeType);
-		saveAccounting(list);
+		//FIXME Accounting Pending
+		//List<ReturnDataSet> list = prepareAccounting(executingMap, financeType);
+		//saveAccounting(list);
 		logger.debug(" Leaving ");
 	}
 

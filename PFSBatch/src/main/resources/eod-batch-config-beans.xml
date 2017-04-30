@@ -103,6 +103,7 @@
 		<property name="dPDBucketDAO" ref="dPDBucketDAO" />
 		<property name="nPABucketConfigurationDAO" ref="nPABucketConfigurationDAO" />
 		<property name="nPABucketDAO" ref="nPABucketDAO" />
+		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 	</bean>
 	<!-- Database backup on EOD -->
 	<bean id="backupDatabase" class="com.pennant.eod.util.BackupDatabase">

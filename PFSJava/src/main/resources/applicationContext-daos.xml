@@ -7026,6 +7026,7 @@
 		<property name="dPDBucketDAO" ref="dPDBucketDAO" />
 		<property name="nPABucketConfigurationDAO" ref="nPABucketConfigurationDAO" />
 		<property name="nPABucketDAO" ref="nPABucketDAO" />
+		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 	</bean>
 
 	<bean name="approvalStatusEnquiryService"
