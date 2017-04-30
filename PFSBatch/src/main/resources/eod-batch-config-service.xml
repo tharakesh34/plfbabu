@@ -133,6 +133,8 @@
 
 	<bean id="installmentDueService" class="com.pennant.app.core.InstallmentDueService" parent="serviceHelper">
 	</bean>
+	<bean id="loadFinanceData" class="com.pennant.app.core.LoadFinanceData" parent="serviceHelper">
+	</bean>
 	<bean id="receiptPaymentService" class="com.pennant.app.core.ReceiptPaymentService" parent="serviceHelper">
 		<property name="repaymentProcessUtil" ref="repayProcessUtil" />
 	</bean>
@@ -186,6 +188,7 @@
 		<property name="npaService" ref="npaService" />
 		<property name="autoDisbursementService" ref="autoDisbursementService" />
 		<property name="receiptPaymentService" ref="receiptPaymentService" />
+		<property name="loadFinanceData" ref="loadFinanceData" />
 	</bean>
 	<bean id="eodPaymentRequest" class="com.pennant.eod.EodPaymentRequest">
 		<property name="dataSource" ref="pfsDatasource" />

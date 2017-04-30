@@ -1,8 +1,6 @@
 package com.pennant.app.core;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +11,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennanttech.pff.core.TableType;
 
 public class DateRollOverService extends ServiceHelper {
 
@@ -22,6 +19,8 @@ public class DateRollOverService extends ServiceHelper {
 	public List<FinEODEvent> process(List<FinEODEvent> custEODEvents) throws Exception {
 
 		for (FinEODEvent finEODEvent : custEODEvents) {
+			finEODEvent.setEodValueDate(DateUtility.addDays(finEODEvent.getEodValueDate(), 1));
+
 			Date valueDate = finEODEvent.getEodValueDate();
 			FinanceMain finMain = finEODEvent.getFinanceMain();
 
@@ -335,34 +334,5 @@ public class DateRollOverService extends ServiceHelper {
 		return;
 	}
 
-	public List<FinEODEvent> prepareFinEODEvents(long custId, Date date) throws Exception {
-
-		List<FinanceMain> custFinMains = getFinanceMainDAO().getFinanceMainsByCustId(custId, true);
-		List<FinEODEvent> custEODEvents = new ArrayList<FinEODEvent>();
-
-		for (int i = 0; i < custFinMains.size(); i++) {
-			FinEODEvent finEODEvent = new FinEODEvent();
-			Map<Date, Integer> datesMap = new HashMap<Date, Integer>();
-
-			finEODEvent.setEodDate(date);
-			finEODEvent.setEodValueDate(DateUtility.addDays(finEODEvent.getEodDate(), 1));
-			finEODEvent.setFinanceMain(custFinMains.get(i));
-
-			List<FinanceScheduleDetail> finSchdDetails = getFinanceScheduleDetailDAO().getFinScheduleDetails(
-					finEODEvent.getFinanceMain().getFinReference(), TableType.MAIN_TAB.getSuffix(), false);
-
-			//Place schedule dates to Map
-			for (int j = 0; j < finSchdDetails.size(); j++) {
-				datesMap.put(finSchdDetails.get(j).getSchDate(), j);
-			}
-
-			finEODEvent.setDatesMap(datesMap);
-			finEODEvent.setFinanceScheduleDetails(finSchdDetails);
-
-			custEODEvents.add(finEODEvent);
-
-		}
-		return custEODEvents;
-	}
 
 }

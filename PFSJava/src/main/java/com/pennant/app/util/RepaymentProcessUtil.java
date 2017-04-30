@@ -15,14 +15,21 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueTotals;
+import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -31,13 +38,17 @@ import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.TableType;
 
 public class RepaymentProcessUtil {
 	private final static Logger		logger	= Logger.getLogger(RepaymentProcessUtil.class);
 
 	private RepaymentPostingsUtil	repayPostingUtil;
 	private FinODDetailsDAO			finODDetailsDAO;
-	private FinExcessAmountDAO				finExcessAmountDAO;
+	private FinExcessAmountDAO		finExcessAmountDAO;
+	private FinReceiptHeaderDAO		finReceiptHeaderDAO;
+	private FinReceiptDetailDAO		finReceiptDetailDAO;
+	private FinanceRepaymentsDAO	financeRepaymentsDAO;
 
 	public RepaymentProcessUtil() {
 		super();
@@ -223,7 +234,7 @@ public class RepaymentProcessUtil {
 			repayHeader.setFinReference(financeMain.getFinReference());
 			repayHeader.setValueDate(valueDate);
 			repayHeader.setRepayAmount(receiptDetail.getAmount().subtract(totalReceiptAmt));
-			repayHeader.setFinEvent(AccountEventConstants.ACCEVENT_REPAY);
+			repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_SCHDRPY);
 			repayHeader.setPriAmount(totPriPaidNow);
 			repayHeader.setPftAmount(totPftPaidNow);
 			repayHeader.setLatePftAmount(totLPftPaidNow);
@@ -244,7 +255,7 @@ public class RepaymentProcessUtil {
 			repayHeader.setFinReference(financeMain.getFinReference());
 			repayHeader.setValueDate(valueDate);
 			repayHeader.setRepayAmount(totalReceiptAmt);
-			repayHeader.setFinEvent("Excess");
+			repayHeader.setFinEvent(RepayConstants.EXCESSADJUSTTO_EXCESS);
 			repayHeader.setPriAmount(totalReceiptAmt);
 			repayHeader.setPftAmount(BigDecimal.ZERO);
 			repayHeader.setLatePftAmount(BigDecimal.ZERO);
@@ -268,15 +279,32 @@ public class RepaymentProcessUtil {
 			if (!StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent())
 					&& !StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent())
 					&& !StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())) {
-
 				// Update Excess amount (Adding amount and balance updation)
-				getFinExcessAmountDAO().updateExcessBal(receiptDetail.getPayAgainstID(), repayHeader.getRepayAmount());
+				if (receiptDetail.getPayAgainstID() != 0 && receiptDetail.getPayAgainstID() != Long.MIN_VALUE) {
+					getFinExcessAmountDAO().updateExcessBal(receiptDetail.getPayAgainstID(),
+							repayHeader.getRepayAmount());
+				} else {
+					int recordCount = getFinExcessAmountDAO().updateExcessBalByRef(financeMain.getFinReference(),
+							repayHeader.getFinEvent(), repayHeader.getRepayAmount());
+					// If record Not found then record count should be zero. Need to create new Excess Record
+					if (recordCount <= 0) {
+						FinExcessAmount excess = new FinExcessAmount();
+						excess.setFinReference(financeMain.getFinReference());
+						excess.setAmountType(repayHeader.getFinEvent());
+						excess.setAmount(repayHeader.getRepayAmount());
+						excess.setBalanceAmt(repayHeader.getRepayAmount());
+						excess.setUtilisedAmt(BigDecimal.ZERO);
+						excess.setReservedAmt(BigDecimal.ZERO);
+						getFinExcessAmountDAO().saveExcess(excess);
+					}
+				}
+
 				continue;
 			}
 
 			List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
-			List<Object> returnList = processRepaymentPostings(financeMain, scheduleDetails,
-					profitDetail, repaySchdList, repayHeader.getFinEvent());
+			List<Object> returnList = processRepaymentPostings(financeMain, scheduleDetails, profitDetail,
+					repaySchdList, AccountEventConstants.ACCEVENT_REPAY);
 
 			if (!(Boolean) returnList.get(0)) {
 				String errParm = (String) returnList.get(1);
@@ -300,6 +328,57 @@ public class RepaymentProcessUtil {
 		logger.debug("Leaving");
 	}
 
+	public void doSaveReceipts(FinReceiptHeader receiptHeader) {
+		long receiptID = getFinReceiptHeaderDAO().save(receiptHeader, TableType.MAIN_TAB);
+		receiptHeader.setReceiptID(receiptID);
+
+		// Save Receipt Detail List by setting Receipt Header ID
+		List<FinReceiptDetail> receiptDetails = receiptHeader.getReceiptDetails();
+		for (FinReceiptDetail receiptDetail : receiptDetails) {
+			receiptDetail.setReceiptID(receiptID);
+			receiptDetail.setStatus(RepayConstants.PAYSTATUS_APPROVED);
+			long receiptSeqID = getFinReceiptDetailDAO().save(receiptDetail, TableType.MAIN_TAB);
+
+			if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)
+					|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)) {
+
+				// Excess Amount make utilization
+				getFinExcessAmountDAO().updateUtilise(receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
+
+				// Delete Reserved Log against Excess and Receipt ID
+				getFinExcessAmountDAO().deleteExcessReserve(receiptID, receiptDetail.getPayAgainstID());
+
+				// Excess Movement Creation
+				FinExcessMovement movement = new FinExcessMovement();
+				movement.setExcessID(receiptDetail.getPayAgainstID());
+				movement.setReceiptID(receiptID);
+				movement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
+				movement.setTranType(AccountConstants.TRANTYPE_DEBIT);
+				movement.setAmount(receiptDetail.getAmount());
+				getFinExcessAmountDAO().saveExcessMovement(movement);
+
+			}
+
+			List<FinRepayHeader> rpyHeaderList = receiptDetail.getRepayHeaders();
+			for (FinRepayHeader rpyHeader : rpyHeaderList) {
+				rpyHeader.setReceiptSeqID(receiptSeqID);
+
+				//Save Repay Header details
+				long repayID = getFinanceRepaymentsDAO().saveFinRepayHeader(rpyHeader, TableType.MAIN_TAB.getSuffix());
+
+				List<RepayScheduleDetail> rpySchdList = rpyHeader.getRepayScheduleDetails();
+				if (rpySchdList != null && !rpySchdList.isEmpty()) {
+					for (int i = 0; i < rpySchdList.size(); i++) {
+						rpySchdList.get(i).setRepayID(repayID);
+						rpySchdList.get(i).setRepaySchID(i + 1);
+					}
+					// Save Repayment Schedule Details
+					getFinanceRepaymentsDAO().saveRpySchdList(rpySchdList, TableType.MAIN_TAB.getSuffix());
+				}
+			}
+		}
+	}
+
 	/**
 	 * Method for Repayment Details Posting Process
 	 * 
@@ -320,14 +399,15 @@ public class RepaymentProcessUtil {
 
 	/**
 	 * Method for Status updation on Finance
+	 * 
 	 * @param financeMain
 	 * @param valueDate
 	 * @param scheduleDetails
 	 * @param profitDetail
 	 * @return
 	 */
-	public FinanceMain updateStatus(FinanceMain financeMain, Date valueDate, List<FinanceScheduleDetail> scheduleDetails, 
-			FinanceProfitDetail profitDetail) {
+	public FinanceMain updateStatus(FinanceMain financeMain, Date valueDate,
+			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail profitDetail) {
 		return getRepayPostingUtil().updateStatus(financeMain, valueDate, scheduleDetails, profitDetail);
 	}
 
@@ -368,7 +448,8 @@ public class RepaymentProcessUtil {
 					finRepayQueue.setRefundAmount(repaySchdList.get(i).getRefundReq());
 					finRepayQueue.setPenaltyPayNow(repaySchdList.get(i).getPenaltyPayNow());
 					finRepayQueue.setWaivedAmount(repaySchdList.get(i).getWaivedAmt());
-					finRepayQueue.setPenaltyBal(repaySchdList.get(i).getPenaltyAmt().subtract(repaySchdList.get(i).getPenaltyPayNow()));
+					finRepayQueue.setPenaltyBal(repaySchdList.get(i).getPenaltyAmt()
+							.subtract(repaySchdList.get(i).getPenaltyPayNow()));
 					finRepayQueue.setChargeType(repaySchdList.get(i).getChargeType());
 
 					// Total Repayments Calculation for Principal, Profit 
@@ -382,7 +463,7 @@ public class RepaymentProcessUtil {
 					repayQueueTotals.setInsurance(repayQueueTotals.getInsurance().add(repaySchdList.get(i).getSchdInsPayNow()));
 					repayQueueTotals.setSuplRent(repayQueueTotals.getSuplRent().add(repaySchdList.get(i).getSchdSuplRentPayNow()));
 					repayQueueTotals.setIncrCost(repayQueueTotals.getIncrCost().add(repaySchdList.get(i).getSchdIncrCostPayNow()));
-					
+
 					// Waiver Amounts
 					repayQueueTotals.setPriWaived(repayQueueTotals.getPriWaived().add(finRepayQueue.getSchdPriWaivedNow()));
 					repayQueueTotals.setPftWaived(repayQueueTotals.getPftWaived().add(finRepayQueue.getSchdPftWaivedNow()));
@@ -402,6 +483,7 @@ public class RepaymentProcessUtil {
 
 			returnList = getRepayPostingUtil().postingProcess(financeMain, scheduleDetails, profitDetail,
 					repayQueueTotals, eventCode);
+			
 
 		} catch (PFFInterfaceException e) {
 			logger.error("Exception: ", e);
@@ -439,14 +521,14 @@ public class RepaymentProcessUtil {
 		finRepayQueue.setSchdPftBal(rsd.getProfitSchd().subtract(rsd.getProfitSchdPaid()));
 		finRepayQueue.setSchdPftPayNow(rsd.getProfitSchdPayNow());
 		finRepayQueue.setSchdPftWaivedNow(rsd.getPftSchdWaivedNow());
-		
+
 		// Profit Amount
 		finRepayQueue.setSchdPri(rsd.getPrincipalSchd());
 		finRepayQueue.setSchdPriBal(rsd.getPrincipalSchd().subtract(rsd.getPrincipalSchdPaid()));
 		finRepayQueue.setSchdPriPaid(rsd.getPrincipalSchdPaid());
 		finRepayQueue.setSchdPriPayNow(rsd.getPrincipalSchdPayNow());
 		finRepayQueue.setSchdPriWaivedNow(rsd.getPriSchdWaivedNow());
-		
+
 		// Late Pay Profit Amount
 		finRepayQueue.setLatePayPftPayNow(rsd.getLatePftSchdPayNow());
 		finRepayQueue.setLatePayPftWaivedNow(rsd.getLatePftSchdWaivedNow());
@@ -593,6 +675,7 @@ public class RepaymentProcessUtil {
 	public RepaymentPostingsUtil getRepayPostingUtil() {
 		return repayPostingUtil;
 	}
+
 	public void setRepayPostingUtil(RepaymentPostingsUtil repayPostingUtil) {
 		this.repayPostingUtil = repayPostingUtil;
 	}
@@ -600,6 +683,7 @@ public class RepaymentProcessUtil {
 	public FinODDetailsDAO getFinODDetailsDAO() {
 		return finODDetailsDAO;
 	}
+
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
@@ -607,8 +691,33 @@ public class RepaymentProcessUtil {
 	public FinExcessAmountDAO getFinExcessAmountDAO() {
 		return finExcessAmountDAO;
 	}
+
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	public FinReceiptHeaderDAO getFinReceiptHeaderDAO() {
+		return finReceiptHeaderDAO;
+	}
+
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
+
+	public FinReceiptDetailDAO getFinReceiptDetailDAO() {
+		return finReceiptDetailDAO;
+	}
+
+	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
+		this.finReceiptDetailDAO = finReceiptDetailDAO;
+	}
+
+	public FinanceRepaymentsDAO getFinanceRepaymentsDAO() {
+		return financeRepaymentsDAO;
+	}
+
+	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
+		this.financeRepaymentsDAO = financeRepaymentsDAO;
 	}
 
 }

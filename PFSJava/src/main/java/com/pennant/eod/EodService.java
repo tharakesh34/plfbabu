@@ -26,6 +26,7 @@ import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.core.LatePayInterestService;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.core.LatePayPenaltyService;
+import com.pennant.app.core.LoadFinanceData;
 import com.pennant.app.core.NPAService;
 import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.ReceiptPaymentService;
@@ -58,6 +59,10 @@ public class EodService {
 	private ReceiptPaymentService		receiptPaymentService;
 
 	private InstallmentDueService		installmentDueService;
+	private LoadFinanceData				loadFinanceData;
+
+
+
 
 	// Constants
 	private static final String			SQL		= "select * from CustomerQueuing where ThreadId=? And ( Progress is null or Status= ?)";
@@ -148,6 +153,8 @@ public class EodService {
 
 	private void doProcess(Connection connection, long custId, Date date) throws Exception {
 
+		List<FinEODEvent> custEODEvents = loadFinanceData.prepareFinEODEvents(custId, date);
+		
 		//prepare customer queue
 		repayQueueService.prepareRepayQueue(connection, custId, date);
 
@@ -158,7 +165,7 @@ public class EodService {
 		latePayMarkingService.processDPDBuketing(connection, custId, date);
 
 		//customer status update
-		latePayMarkingService.processCustomerStatus(custId, date,null,null);
+		latePayMarkingService.processCustomerStatus(custId, date, null, null);
 
 		//late pay penalty
 		latePayPenaltyService.processLatePayPenalty(connection, custId, date);
@@ -172,8 +179,6 @@ public class EodService {
 		//_____________________________________________________________________________________________________________
 		//Date roll over
 		//_____________________________________________________________________________________________________________
-
-		List<FinEODEvent> custEODEvents = dateRollOverService.prepareFinEODEvents(custId, date);
 
 		custEODEvents = dateRollOverService.process(custEODEvents);
 
@@ -265,5 +270,9 @@ public class EodService {
 
 	public void setReceiptPaymentService(ReceiptPaymentService receiptPaymentService) {
 		this.receiptPaymentService = receiptPaymentService;
+	}
+	
+	public void setLoadFinanceData(LoadFinanceData loadFinanceData) {
+		this.loadFinanceData = loadFinanceData;
 	}
 }

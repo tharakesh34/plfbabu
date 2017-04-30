@@ -6441,6 +6441,9 @@
 		<property name="repayPostingUtil" ref="repayPostingUtil" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
+		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 	</bean>
 
 	<!--============ Finance Repayment Details ============== -->

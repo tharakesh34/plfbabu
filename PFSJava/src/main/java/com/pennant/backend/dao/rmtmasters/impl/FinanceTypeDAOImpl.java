@@ -260,13 +260,13 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		StringBuilder selectSql = new StringBuilder("SELECT FinType, Product, FinAcType, FinCategory, FinDivision, " );
 		selectSql.append(" FinIsOpenNewFinAc, PftPayAcType,  FinSuspAcType, FinProvisionAcType , " );
 		selectSql.append(" AllowRIAInvestment, FinIsAlwPartialRpy, FinSuspTrigger, FinSuspRemarks,  " );
-		selectSql.append(" PastduePftCalMthd, PastduePftMargin " );
+		selectSql.append(" PastduePftCalMthd, PastduePftMargin,RpyHierarchy " );
 		selectSql.append(" FROM RMTFinanceTypes");
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
 
-		List<FinanceType> finTypes = this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper); 
+		List<FinanceType> finTypes = this.namedParameterJdbcTemplate.query(selectSql.toString(), typeRowMapper); 
 		logger.debug("Leaving");
 		return finTypes;
     }

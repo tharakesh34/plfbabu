@@ -13,7 +13,6 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
@@ -38,7 +37,6 @@ import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
-import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinInsurances;
@@ -763,53 +761,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		receiptHeader.setTaskId("");
 		receiptHeader.setNextTaskId("");
 		receiptHeader.setWorkflowId(0);
-		long receiptID = getFinReceiptHeaderDAO().save(receiptHeader, TableType.MAIN_TAB);
-
-		// Save Receipt Detail List by setting Receipt Header ID
-		List<FinReceiptDetail> receiptDetails = receiptHeader.getReceiptDetails();
-		for (FinReceiptDetail receiptDetail : receiptDetails) {
-			receiptDetail.setReceiptID(receiptID);
-			receiptDetail.setStatus(RepayConstants.PAYSTATUS_APPROVED);
-			long receiptSeqID = getFinReceiptDetailDAO().save(receiptDetail, TableType.MAIN_TAB);
-			
-			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) ||
-					StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
-								
-				// Excess Amount make utilization
-				getFinExcessAmountDAO().updateUtilise(receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
-				
-				// Delete Reserved Log against Excess and Receipt ID
-				getFinExcessAmountDAO().deleteExcessReserve(receiptID, receiptDetail.getPayAgainstID());
-
-				// Excess Movement Creation
-				FinExcessMovement movement = new FinExcessMovement();
-				movement.setExcessID(receiptDetail.getPayAgainstID());
-				movement.setReceiptID(receiptID);
-				movement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
-				movement.setTranType(AccountConstants.TRANTYPE_DEBIT);
-				movement.setAmount(receiptDetail.getAmount());
-				getFinExcessAmountDAO().saveExcessMovement(movement);
-				
-			}
-
-			List<FinRepayHeader> rpyHeaderList = receiptDetail.getRepayHeaders();
-			for (FinRepayHeader rpyHeader : rpyHeaderList) {
-				rpyHeader.setReceiptSeqID(receiptSeqID);
-
-				//Save Repay Header details
-				long repayID = getFinanceRepaymentsDAO().saveFinRepayHeader(rpyHeader, TableType.MAIN_TAB.getSuffix());
-
-				List<RepayScheduleDetail> rpySchdList = rpyHeader.getRepayScheduleDetails();
-				if (rpySchdList != null && !rpySchdList.isEmpty()) {
-					for (int i = 0; i < rpySchdList.size(); i++) {
-						rpySchdList.get(i).setRepayID(repayID);
-						rpySchdList.get(i).setRepaySchID(i+1);
-					}
-					// Save Repayment Schedule Details
-					getFinanceRepaymentsDAO().saveRpySchdList(rpySchdList, TableType.MAIN_TAB.getSuffix());
-				}
-			}
-		}
+		
+		//save recipet details
+		
+		repayProcessUtil.doSaveReceipts(receiptHeader);
+		long receiptID = receiptHeader.getReceiptID();
+		//////////////////////////save
 		
 		// Receipt Allocation Details
 		if(receiptHeader.getAllocations() != null && !receiptHeader.getAllocations().isEmpty()){

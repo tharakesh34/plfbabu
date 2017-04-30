@@ -112,6 +112,7 @@ public class RepayConstants {
 	public static final String	PAYTYPE_EXCESS			= "EXCESS";
 	public static final String	PAYTYPE_EMIINADV		= "EMIINADV";
 	public static final String	PAYTYPE_PAYABLE			= "PAYABLE";
+	public static final String	PAYTYPE_PRESENTMENT		= "PRESENT";
 	
 	// Presentment Exclude Reasons
 	public static final int PEXC_EMIINADVANCE = 1;
