@@ -532,7 +532,6 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			getTransactionEntryList().clear();
 			setTransactionEntryList(transactionEntryList);
 			this.pagingTransactionEntryList.setDetailed(true);
-			this.pagingTransactionEntryList.setDetailed(true);
 			getTransactionEntryPagedListWrapper().initList(transactionEntryList, 
 					this.listBoxTransactionEntry, this.pagingTransactionEntryList);
 			this.listBoxTransactionEntry.setItemRenderer(new TransactionEntryListModelItemRenderer());

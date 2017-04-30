@@ -56,6 +56,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	private long id = Long.MIN_VALUE;
 	private long presentmentId = Long.MIN_VALUE;
+	private String presentmentRef;
 	private String finReference;
 	private Date schDate;
 	private Date defSchdDate;
@@ -331,6 +332,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setMandateId(long mandateId) {
 		this.mandateId = mandateId;
+	}
+
+	public String getPresentmentRef() {
+		return presentmentRef;
+	}
+
+	public void setPresentmentRef(String presentmentRef) {
+		this.presentmentRef = presentmentRef;
 	}
 
 }

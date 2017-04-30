@@ -393,9 +393,7 @@ public class FileImport {
 
 	protected Date getDateValue(String record, int startPos, int endPos) {
 		if (!getFieldValue(record, startPos, endPos).isEmpty()) {
-			// String date = DateUtility.getFormattedDateAsString(getFieldValue(record, startPos, endPos), "ddMMyyyy",
-			// PennantConstants.dateFormat);
-			return /* DateUtility.parseDate(date) */null;
+			return DateUtility.getDate(getFieldValue(record, startPos, endPos), "yyyymmdd");
 		}
 		return null;
 	}

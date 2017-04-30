@@ -59,8 +59,8 @@ public interface PresentmentDetailService {
 
 	void updatePresentmentDetailHeader(long presentmentId, long extractId);
 	
-	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, String type);
+	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, String type);
 
-	void updatePresentmentDetails(List<Long> list, long presentmentId);
+	void updatePresentmentDetails(List<Long> list, long presentmentId, long partnerBankId);
 
 }

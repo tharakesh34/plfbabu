@@ -61,8 +61,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
-import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
@@ -97,7 +95,8 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	protected Button btnloanType;
 	protected Datebox fromdate;
 	protected Datebox toDate;
-	protected ExtendedCombobox branches;
+	protected Uppercasebox branches;
+	protected Button btnBranches;
 
 	private transient PresentmentDetailService presentmentDetailService;
 
@@ -144,12 +143,6 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
 		this.fromdate.setFormat(PennantConstants.dateFormat);
 		this.toDate.setFormat(PennantConstants.dateFormat);
-
-		this.branches.setMaxlength(LengthConstants.LEN_MASTER_CODE);
-		this.branches.setModuleName("Branch");
-		this.branches.setValueColumn("BranchCode");
-		this.branches.setDescColumn("BranchDesc");
-		this.branches.setValidateColumns(new String[] { "BranchCode" });
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -242,7 +235,6 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		this.fromdate.setValue(null);
 		this.toDate.setValue(null);
 		this.branches.setValue("");
-		this.branches.setDescription("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -271,6 +263,35 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 					}
 				}
 				this.loanType.setValue(tempflagcode);
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onClick$btnBranches(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_PresentmentExtractDetailList, "Branch",
+				this.branches.getValue(), null);
+		if (dataObject instanceof String) {
+			this.branches.setValue(dataObject.toString());
+		} else {
+			@SuppressWarnings("unchecked")
+			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+			if (details != null) {
+				String tempflagcode = "";
+				List<String> flagKeys = new ArrayList<>(details.keySet());
+				for (int i = 0; i < flagKeys.size(); i++) {
+					if (StringUtils.isEmpty(flagKeys.get(i))) {
+						continue;
+					}
+					if (i == 0) {
+						tempflagcode = flagKeys.get(i);
+					} else {
+						tempflagcode = tempflagcode + "," + flagKeys.get(i);
+					}
+				}
+				this.branches.setValue(tempflagcode);
 			}
 		}
 		logger.debug(Literal.LEAVING);

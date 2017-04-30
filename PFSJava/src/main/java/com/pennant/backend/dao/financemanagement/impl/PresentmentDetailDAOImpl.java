@@ -101,30 +101,36 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 	}
 
 	@Override
-	public String save(PresentmentDetail presentmentDetail, TableType tableType) {
+	public String save(PresentmentDetail detail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
-		if (presentmentDetail.getId() == Long.MIN_VALUE) {
-			presentmentDetail.setId(getNextidviewDAO().getNextId("SEQPRESENTMENTDETAILS"));
+		if (detail.getId() == Long.MIN_VALUE) {
+			detail.setId(getNextidviewDAO().getNextId("SEQPRESENTMENTDETAILS"));
 		}
+		if (detail.getPresentmentRef() != null) {
+			String reference = detail.getPresentmentRef();
+			String presentmentRef = StringUtils.leftPad(String.valueOf(detail.getId()), 29 - reference.length(), "0");
+			detail.setPresentmentRef(reference.concat(presentmentRef));
+		}
+	
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Insert into PresentmentDetails");
 		sql.append(tableType.getSuffix());
-		sql.append(" (Id, PresentmentId, FinReference, SchDate, MandateId, SchAmtDue, schPriDue, schPftDue, schFeeDue, schInsDue,");
+		sql.append(" (Id, PresentmentId, PresentmentRef, FinReference, SchDate, MandateId, SchAmtDue, schPriDue, schPftDue, schFeeDue, schInsDue,");
 		sql.append(" schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, ExcludeReason, bounceID, emiNo, auxiliary1, auxiliary2, status,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :Id, :PresentmentId, :FinReference, :SchDate, :MandateId, :SchAmtDue, :schPriDue, :schPftDue, :schFeeDue, :schInsDue,");
+		sql.append(" :Id, :PresentmentId, :PresentmentRef, :FinReference, :SchDate, :MandateId, :SchAmtDue, :schPriDue, :schPftDue, :schFeeDue, :schInsDue,");
 		sql.append(" :schPenaltyDue, :advanceAmt, :excessID, :adviseAmt, :presentmentAmt, :ExcludeReason, :bounceID, :emiNo, :auxiliary1, :auxiliary2, :status,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
 		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(presentmentDetail);
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(detail);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			this.namedParameterJdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -140,10 +146,11 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 		StringBuilder sql = null;
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
+		int index = 0;
 		try {
 			sql = new StringBuilder();
 			sql.append(" SELECT T1.FINREFERENCE, T1.SCHDATE, PROFITSCHD, PRINCIPALSCHD, SCHDPRIPAID, SCHDPFTPAID, DEFSCHDDATE, ");
-			sql.append(" FEESCHD, SCHDFEEPAID, INSSCHD, T2.MANDATEID, T1.DEFSCHDDATE, T2.MANDATEID, T4.MANDATETYPE, ");
+			sql.append(" FEESCHD, SCHDFEEPAID, INSSCHD, T2.MANDATEID, T1.DEFSCHDDATE, T4.MANDATETYPE, T2.FINTYPE LOANTYPE, T5.BRANCHCODE, ");
 			sql.append(" T1.INSTNUMBER EMINO, T2.FINBRANCH  FROM FINSCHEDULEDETAILS T1");
 			sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE  ");
 			sql.append(" INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE ");
@@ -152,17 +159,36 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 			sql.append(" WHERE (REPAYONSCHDATE = ?) AND ((SCHDATE >= ? AND SCHDATE <= ?) ");
 			sql.append(" OR (DEFSCHDDATE >= ? AND DEFSCHDDATE <= ?)) ");
 
-			if (StringUtils.trimToNull(detailHeader.getLoanType()) != null) {
-				sql.append(" AND (T2.FINTYPE IN (?))");
-			}
-			/*if (StringUtils.trimToNull(detailHeader.getMandateType()) != null) {
+			if (StringUtils.trimToNull(detailHeader.getMandateType()) != null) {
 				sql.append(" AND (T4.MANDATETYPE = ?) ");
 			}
+
+			if (StringUtils.trimToNull(detailHeader.getLoanType()) != null) {
+				sql.append(" AND (T2.FINTYPE IN ( ");
+				String[] loanTypes = detailHeader.getLoanType().split(",");
+				for (int i = 0; i < loanTypes.length; i++) {
+					if (i > 0) {
+						sql.append(",");
+					}
+					sql.append("?");
+				}
+				sql.append("))");
+			}
+
 			if (StringUtils.trimToNull(detailHeader.getFinBranch()) != null) {
-				sql.append(" AND (T2.FINBRANCH = ?) ");
-			}*/
-			sql.append(" AND  Not Exists( Select 1 from PresentmentDetails T6 where T1.FinReference = T6.FinReference"); 
-			sql.append(" AND T6.ExcludeReason = '0') ORDER BY T1.SCHDATE ");
+				sql.append(" AND (T2.FINBRANCH IN ( ");
+				String[] finBranches = detailHeader.getFinBranch().split(",");
+				for (int i = 0; i < finBranches.length; i++) {
+					if (i > 0) {
+						sql.append(",");
+					}
+					sql.append("?");
+				}
+				sql.append("))");
+			}
+
+			sql.append(" AND  Not Exists( Select 1 from PresentmentDetails T6 where T1.FinReference = T6.FinReference ");
+			sql.append(" AND T6.ExcludeReason = '0')  ORDER BY T1.SCHDATE ");
 
 			Connection conn = DataSourceUtils.doGetConnection(this.dataSource);
 			stmt = conn.prepareStatement(sql.toString());
@@ -171,19 +197,30 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 			stmt.setDate(3, getDate(detailHeader.getToDate()));
 			stmt.setDate(4, getDate(detailHeader.getFromDate()));
 			stmt.setDate(5, getDate(detailHeader.getToDate()));
+			index = 5;
+			if (StringUtils.trimToNull(detailHeader.getMandateType()) != null) {
+				index = index + 1;
+				stmt.setString(index, detailHeader.getMandateType());
+			}
 
 			if (StringUtils.trimToNull(detailHeader.getLoanType()) != null) {
-				stmt.setString(6, detailHeader.getLoanType().split(",").toString());
-			}
-/*
-			if (StringUtils.trimToNull(detailHeader.getMandateType()) != null) {
-				stmt.setString(7, detailHeader.getMandateType());
+				String[] loanTypes = detailHeader.getLoanType().split(",");
+				int i = 0;
+				for (i = 1; i <= loanTypes.length; i++) {
+					stmt.setString(i + index, loanTypes[i - 1]);
+				}
+				index = index + i - 1;
 			}
 
 			if (StringUtils.trimToNull(detailHeader.getFinBranch()) != null) {
-				stmt.setString(8, detailHeader.getFinBranch());
+				String[] finBranches = detailHeader.getFinBranch().split(",");
+				int i = 0;
+				for (i = 1; i <= finBranches.length; i++) {
+					stmt.setString(i + index, finBranches[i - 1]);
+				}
+				index = index + i - 1;
 			}
-*/
+
 			logger.trace(Literal.SQL + sql.toString());
 
 			rs = stmt.executeQuery();
@@ -191,9 +228,6 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 			logger.error("Exception: ", e);
 			throw e;
 		} finally {
-			/*
-			 * if (stmt != null) { stmt.close(); stmt = null; }
-			 */
 			sql = null;
 		}
 		logger.debug(Literal.LEAVING);
@@ -280,37 +314,45 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 	}
 
 	@Override
-	public List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, String type) {
-
+	public List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, String type) {
 		logger.debug(Literal.ENTERING);
 
-		PresentmentDetail presentmentDetail = new PresentmentDetail();
-		presentmentDetail.setPresentmentId(presentmentId);
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
 
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" Id, PresentmentId, FinReference, SchDate, MandateId, SchAmtDue, schPriDue, schPftDue, schFeeDue, schInsDue,");
+		sql = new StringBuilder();
+		sql.append(" SELECT Id, PresentmentId, FinReference, SchDate, MandateId, SchAmtDue, schPriDue, schPftDue, schFeeDue, schInsDue,");
 		sql.append(" schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, ExcludeReason, bounceID, emiNo, auxiliary1, auxiliary2, status,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
-
 		if (type.contains("View")) {
 			sql.append(", mandateType, finTypeDesc, customerName ");
 		}
-
 		sql.append(" From PresentmentDetails");
 		sql.append(type);
-		sql.append(" Where PresentmentId = :PresentmentId");
-
+		sql.append(" Where PresentmentId = :PresentmentId ");
+		if (isExclude) {
+			sql.append("AND ExcludeReason = :ExcludeReason ");
+		} else {
+			sql.append("AND ExcludeReason <> :ExcludeReason ");
+		}
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(presentmentDetail);
-		RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PresentmentDetail.class);
-
-		logger.debug(Literal.LEAVING);
-
-		return this.namedParameterJdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		source = new MapSqlParameterSource();
+		source.addValue("PresentmentId", presentmentId);
+		source.addValue("ExcludeReason", 0);
+		try {
+			RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PresentmentDetail.class);
+			return this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		} catch (Exception e) {
+			logger.error("Exception :", e);
+			throw e;
+		} finally {
+			source = null;
+			sql = null;
+			logger.debug(Literal.LEAVING);
+		}
 	}
 
 	@Override
@@ -321,7 +363,7 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 		MapSqlParameterSource source = null;
 
 		sql = new StringBuilder();
-		sql.append(" update PRESENTMENTDETAILS Set STATUS = :STATUS Where PRESENTMENTID = :PRESENTMENTID AND  ID in (:ID)");
+		sql.append(" UPDATE PRESENTMENTDETAILS Set STATUS = :STATUS Where PRESENTMENTID = :PRESENTMENTID AND  ID in (:ID)");
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
@@ -330,7 +372,7 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 		source.addValue("ID", list);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), source);
+			this.namedParameterJdbcTemplate.update(sql.toString(), source);
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;
@@ -339,18 +381,19 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 	}
 
 	@Override
-	public void updatePresentmentHeader(long presentmentId, int manualEcclude) {
+	public void updatePresentmentHeader(long presentmentId, int manualExclude,long partnerBankId) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = null;
 		MapSqlParameterSource source = null;
 
 		sql = new StringBuilder();
-		sql.append(" update PRESENTMENTHEADER Set STATUS = :STATUS Where ID = :ID");
+		sql.append(" UPDATE PRESENTMENTHEADER Set STATUS = :STATUS, PARTNERBANKID = :PARTNERBANKID Where ID = :ID");
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
-		source.addValue("STATUS", manualEcclude);
+		source.addValue("STATUS", manualExclude);
+		source.addValue("PARTNERBANKID", partnerBankId);
 		source.addValue("ID", presentmentId);
 
 		try {

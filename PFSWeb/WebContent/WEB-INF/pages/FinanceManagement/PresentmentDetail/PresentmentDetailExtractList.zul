@@ -86,8 +86,12 @@
 								</row>
 								
 								<row>
-									<label value="${c:l('label_PresentmentDetailList_FinBranches.value')}" />
-									<extendedcombobox id="branches" />
+									<label 	value="${c:l('label_PresentmentDetailList_FinBranches.value')}" />
+									<hbox>
+									<space spacing="2px" />
+									<uppercasebox id="branches" width="250px" />
+									<button id="btnBranches" image="/images/icons/LOVSearch.png" />
+									</hbox>
 								</row>
 							</rows>
 						</grid>

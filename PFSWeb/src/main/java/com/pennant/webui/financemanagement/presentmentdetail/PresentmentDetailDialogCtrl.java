@@ -47,15 +47,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
@@ -74,23 +79,23 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 	private static final long serialVersionUID = 1L;
 	private final static Logger logger = Logger.getLogger(PresentmentDetailDialogCtrl.class);
 
-	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
-	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
 	protected Window window_PresentmentDetailDialog;
 	private PresentmentDetail presentmentDetail;
 
 	protected Button btn_AddExlude;
 	protected Button btn_AddInclude;
 	protected Listbox listBox_Include;
-	protected Listbox listBox_Exclude;
+	protected Listbox listBox_ManualExclude;
+	protected Listbox listBox_AutoExclude;
+	protected ExtendedCombobox partnerBank;
 
-	private List<PresentmentDetail> presentmentDetailList = new ArrayList<>();
+	protected Tab includeTab;
+	protected Tab manualTab;
+	protected Tab excludeTab;
 
 	private Map<Long, PresentmentDetail> includeMap = new HashMap<Long, PresentmentDetail>();
 	private Map<Long, PresentmentDetail> excludeMap = new HashMap<Long, PresentmentDetail>();
-	private Map<Long, PresentmentDetail> resultMap = new HashMap<Long, PresentmentDetail>();
+	List<PresentmentDetail> includeList = new ArrayList<PresentmentDetail>();
 
 	private transient PresentmentDetailListCtrl presentmentDetailListCtrl;
 	private transient PresentmentDetailService presentmentDetailService;
@@ -121,7 +126,6 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 	 *            An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	public void onCreate$window_PresentmentDetailDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -130,10 +134,17 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 
 		try {
 			// Get the required arguments.
-			this.presentmentDetailList = (List<PresentmentDetail>) arguments.get("presentmentDetailList");
 			this.presentmentDetailListCtrl = (PresentmentDetailListCtrl) arguments.get("presentmentDetailListCtrl");
 			this.presentmentId = (long) arguments.get("PresentmentId");
-			doShowDialog(this.presentmentDetailList);
+			doShowDialog(this.presentmentId);
+
+			this.partnerBank.setMaxlength(LengthConstants.LEN_MASTER_CODE);
+			this.partnerBank.setModuleName("PartnerBank");
+			this.partnerBank.setValueColumn("PartnerBankId");
+			this.partnerBank.setDescColumn("PartnerBankCode");
+			this.partnerBank.setDescColumn("PartnerBankCode");
+			this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
+
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			closeDialog();
@@ -151,18 +162,37 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
-		
-		List<Long> list = new ArrayList<Long>();
-		for (Long id : resultMap.keySet()) {
-			if (!includeMap.containsKey(id)) {
-				list.add(id);
+
+		if (this.includeList != null && this.includeList.isEmpty()) {
+			if (this.includeList.size() <= 0) {
+				MessageUtil.showError(" No records are available in include list.");
+				return;
 			}
 		}
-		this.presentmentDetailService.updatePresentmentDetails(list, presentmentId);
-		
+		doSetValidations();
+		List<Long> list = new ArrayList<Long>(this.excludeMap.keySet());
+		this.presentmentDetailService.updatePresentmentDetails(list, presentmentId, Long.valueOf(this.partnerBank.getValue()));
+
+		refreshList();
 		closeDialog();
-		
+
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void doSetValidations() {
+		Clients.clearWrongValue(this.partnerBank);
+		this.partnerBank.setErrorMessage("");
+
+		if (StringUtils.trimToNull(this.partnerBank.getValue()) == null) {
+			throw new WrongValueException(this.partnerBank, " Partner Bank is mandatory.");
+		}
+	}
+
+	/**
+	 * Refresh the list page with the filters that are applied in list page.
+	 */
+	private void refreshList() {
+		presentmentDetailListCtrl.search();
 	}
 
 	/**
@@ -173,7 +203,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
-		doClose(this.btnSave.isVisible());
+		doClose(false);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -195,20 +225,16 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 	 * @param presentmentDetail
 	 * 
 	 */
-	public void doWriteBeanToComponents(List<PresentmentDetail> aPresentmentDetailsList) {
+	public void doWriteBeanToComponents(long presentmentId) {
 		logger.debug(Literal.ENTERING);
 
-		for (PresentmentDetail presentmentDetail : aPresentmentDetailsList) {
-			if (presentmentDetail.getExcludeReason() == 0) {
-				includeMap.put(presentmentDetail.getId(), presentmentDetail);
-			} else {
-				excludeMap.put(presentmentDetail.getId(), presentmentDetail);
-			}
+		this.includeList = this.presentmentDetailService.getPresentmentDetailsList(presentmentId, true, "_AView");
+		List<PresentmentDetail> excludeList = this.presentmentDetailService.getPresentmentDetailsList(presentmentId, false, "_AView");
+		for (PresentmentDetail presentmentDetail : includeList) {
+			this.includeMap.put(presentmentDetail.getId(), presentmentDetail);
 		}
-		resultMap.putAll(includeMap);
-		
-		doFillList(new ArrayList<PresentmentDetail>(includeMap.values()), listBox_Include);
-		doFillList(new ArrayList<PresentmentDetail>(excludeMap.values()), listBox_Exclude);
+		doFillList(includeList, listBox_Include, 1);
+		doFillList(excludeList, listBox_AutoExclude, 3);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -218,6 +244,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 
 		Clients.clearWrongValue(this.listBox_Include);
 		if (listBox_Include.getSelectedItems().isEmpty()) {
+			MessageUtil.showError(" Please select at least one record. ");
 			return;
 		}
 
@@ -229,30 +256,35 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 			}
 		}
 
-		doFillList(new ArrayList<PresentmentDetail>(includeMap.values()), listBox_Include);
-		doFillList(new ArrayList<PresentmentDetail>(excludeMap.values()), listBox_Exclude);
+		doFillList(new ArrayList<PresentmentDetail>(includeMap.values()), listBox_Include, 1);
+		doFillList(new ArrayList<PresentmentDetail>(excludeMap.values()), listBox_ManualExclude, 2);
 
+		this.excludeTab.setSelected(true);
+		this.manualTab.setSelected(true);
 		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onClick$btn_AddInclude(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 
-		Clients.clearWrongValue(this.listBox_Exclude);
-		if (listBox_Exclude.getSelectedItems().isEmpty()) {
+		Clients.clearWrongValue(this.listBox_ManualExclude);
+		if (listBox_ManualExclude.getSelectedItems().isEmpty()) {
+			MessageUtil.showError(" Please select at least one record. ");
 			return;
 		}
 
-		for (Listitem listitem : this.listBox_Exclude.getSelectedItems()) {
-			if (this.listBox_Exclude.getSelectedItems().contains(listitem)) {
+		for (Listitem listitem : this.listBox_ManualExclude.getSelectedItems()) {
+			if (this.listBox_ManualExclude.getSelectedItems().contains(listitem)) {
 				PresentmentDetail presentmentDetail = (PresentmentDetail) listitem.getAttribute("data");
 				this.includeMap.put(presentmentDetail.getId(), presentmentDetail);
 				this.excludeMap.remove(presentmentDetail.getId());
 			}
 		}
 
-		doFillList(new ArrayList<PresentmentDetail>(includeMap.values()), listBox_Include);
-		doFillList(new ArrayList<PresentmentDetail>(excludeMap.values()), listBox_Exclude);
+		doFillList(new ArrayList<PresentmentDetail>(includeMap.values()), listBox_Include, 1);
+		doFillList(new ArrayList<PresentmentDetail>(excludeMap.values()), listBox_ManualExclude, 2);
+
+		this.includeTab.setSelected(true);
 
 		logger.debug("Leaving" + event.toString());
 	}
@@ -260,16 +292,17 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param presentmentDetailList
+	 * @param presentmentId
 	 *            The entity that need to be render.
 	 */
-	public void doShowDialog(List<PresentmentDetail> presentmentDetailList) {
+	public void doShowDialog(long presentmentId) {
 		logger.debug(Literal.LEAVING);
 
-		this.listBox_Exclude.setHeight(this.borderLayoutHeight - 145 + "px");
-		this.listBox_Include.setHeight(this.borderLayoutHeight - 145 + "px");
+		this.listBox_Include.setHeight(getListBoxHeight(3));
+		this.listBox_ManualExclude.setHeight(getListBoxHeight(5));
+		this.listBox_AutoExclude.setHeight(getListBoxHeight(4));
 
-		doWriteBeanToComponents(presentmentDetailList);
+		doWriteBeanToComponents(presentmentId);
 
 		setDialog(DialogType.EMBEDDED);
 
@@ -286,7 +319,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void doFillList(List<PresentmentDetail> presentmentDetailList, Listbox listbox) {
+	public void doFillList(List<PresentmentDetail> presentmentDetailList, Listbox listbox, int typeOfList) {
 		logger.debug("Entering");
 
 		if (presentmentDetailList != null && !presentmentDetailList.isEmpty()) {
@@ -324,6 +357,8 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 
 				listbox.appendChild(item);
 			}
+		} else {
+			listbox.getItems().clear();
 		}
 		logger.debug("Leaving");
 	}

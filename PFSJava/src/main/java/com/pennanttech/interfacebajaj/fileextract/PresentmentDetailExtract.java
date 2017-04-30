@@ -68,26 +68,31 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 						break;
 					}
 					recordCount++;
-					/*if (record.length() != rcdLegth) {
-						int endLength = rcdLegth + 1;
-						throw new Exception("Record Length less than " + endLength + " at line Number " + recordCount);
-					}*/
+					/*
+					 * if (record.length() != rcdLegth) { int endLength = rcdLegth + 1; throw new
+					 * Exception("Record Length less than " + endLength + " at line Number " + recordCount); }
+					 */
 
 					map = new MapSqlParameterSource();
 					map.addValue("BranchCode", getFieldValue(record, 0, 3));
-					map.addValue("AgreementNo", getFieldValue(record, 4, 13));
+					map.addValue("AgreementNo", getFieldValue(record, 3, 14));
 					map.addValue("InstalmentNo", getFieldValue(record, 17, 3));
 					map.addValue("BFLReferenceNo", getFieldValue(record, 20, 3));
 					map.addValue("Batchid", getFieldValue(record, 23, 29));
-					map.addValue("AmountCleared", getFieldValue(record, 29, 14));
-					map.addValue("ClearingDate", getDateValue(record, 30, 8));
-					map.addValue("Status", getFieldValue(record, 38, 1));
-					map.addValue("ReasonCode", getFieldValue(record, 40, 3));
+					map.addValue("AmountCleared", getFieldValue(record, 52, 14));
+					map.addValue("ClearingDate", getDateValue(record, 66, 8));
+					map.addValue("Status", getFieldValue(record, 74, 1));
+					map.addValue("ReasonCode", getFieldValue(record, 75, 3));
 
 					key = map.getValue("Batchid").toString();
-
-					UpdatePresentMentdetails(map);
-					//Check with chaitanya for others....
+					String status = map.getValue("Status").toString();
+					if ("F".equals(status)) {
+						UpdatePresentMentdetails(key, 1);
+					} else if ("S".equals(status)) {
+						UpdatePresentMentdetails(key, 0);
+					} else {
+						UpdatePresentMentdetails(key, 1);
+					}
 					successCount++;
 					if (isLogStatus()) {
 						saveBatchLog(key, "S", "Success.");
@@ -124,16 +129,16 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 					remarks.append(", Sucess: ");
 					remarks.append(successCount + ".");
 				}
-				//updateBatchStatus("S", remarks.toString());
+				// updateBatchStatus("S", remarks.toString());
 
 				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(PennantConstants.FILESTATUS_FAILED);
 			} else {
 				remarks.append(" Uploaded File is empty please verify once");
-				//updateBatchStatus("F", remarks.toString());
+				// updateBatchStatus("F", remarks.toString());
 				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(PennantConstants.FILESTATUS_FAILED);
 			}
 		} catch (Exception e) {
-			//updateBatchStatus("F", e.getMessage());
+			// updateBatchStatus("F", e.getMessage());
 			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(PennantConstants.FILESTATUS_FAILED);
 
 		} finally {
@@ -150,20 +155,25 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		}
 	}
 
-	private void UpdatePresentMentdetails(MapSqlParameterSource map) {
-
+	private void UpdatePresentMentdetails(String key, int i) {
 		logger.debug("Entering");
 
 		StringBuffer query = new StringBuffer();
-		query.append("Update Presentmentdetails set Status = :Status Where Id = :Batchid ");
-
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		query.append("Update Presentmentdetails set Status = :Status Where PRESENTMENTREF = :PRESENTMENTREF ");
+		source.addValue("Status", i);
+		source.addValue("PRESENTMENTREF", key);
 		try {
-			this.jdbcTemplate.update(query.toString(), map);
+			this.jdbcTemplate.update(query.toString(), source);
 		} catch (Exception e) {
 			logger.error("Exception {}", e);
+		} finally {
+			source = null;
+			query = null;
 		}
 
 		logger.debug("Leaving");
 
 	}
+
 }

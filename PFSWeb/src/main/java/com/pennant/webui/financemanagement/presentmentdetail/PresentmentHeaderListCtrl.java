@@ -284,7 +284,7 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		}
 
 		if (presentmentList.isEmpty() || listBoxPresentmentHeader.getItems().size() <= 0) {
-			MessageUtil.showErrorMessage("Please Select Atleast One Record");
+			MessageUtil.showErrorMessage("Please select at least one record");
 			return;
 		}
 

@@ -45,6 +45,7 @@ package com.pennant.backend.service.financemanagement.impl;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -115,12 +116,11 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 		boolean isEmptyRecords = false;
 		Map<Date, Long> map = new HashMap<Date, Long>();
 		long presentmentId = 0;
-
 		try {
 			ResultSet rs = presentmentDetailDAO.getPresentmentDetails(header);
 			while (rs.next()) {
 				Date schDate = rs.getDate("SCHDATE");
-				if (schDate != null) {
+				 if (schDate != null) {
 					if (!map.containsKey(schDate)) {
 						presentmentId = savePresentmentHeaderDetails(header);
 						map.put(schDate, presentmentId);
@@ -164,7 +164,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 				pDetail.setNextTaskId("");
 				pDetail.setRecordType("");
 				pDetail.setWorkflowId(0);
-
+				pDetail.setPresentmentRef(getPresentmentRef(rs));
 				doCalculations(pDetail, header);
 				if (pDetail.getExcessID() != null) {
 					finExcessAmountDAO.updateExcessAmount(pDetail.getExcessID(), "R", pDetail.getAdvanceAmt());
@@ -182,7 +182,6 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 		logger.debug(Literal.LEAVING);
 		return " Extracted successfully.";
 	}
-
 	private long savePresentmentHeaderDetails(PresentmentHeader header) {
 
 		long id = presentmentDetailDAO.getSeqNumber("SeqPresentmentHeader");
@@ -278,16 +277,24 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 	}
 
 	@Override
-	public List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, String type) {
-		return presentmentDetailDAO.getPresentmentDetailsList(presentmentId, type);
+	public List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude,String type) {
+		return presentmentDetailDAO.getPresentmentDetailsList(presentmentId, isExclude, type);
 	}
 
 	@Override
-	public void updatePresentmentDetails(List<Long> list, long presentmentId) {
+	public void updatePresentmentDetails(List<Long> list, long presentmentId,long partnerBankId) {
 		if (list != null && !list.isEmpty()) {
 			this.presentmentDetailDAO.updatePresentmentDetials(presentmentId, list, RepayConstants.PEXC_MANUAL_EXCLUDE);
-			this.presentmentDetailDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_BATCH_CREATED);
 		}
+		this.presentmentDetailDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_BATCH_CREATED, partnerBankId);
 	}
 
+	private String getPresentmentRef(ResultSet rs) throws SQLException {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(rs.getString("BRANCHCODE"));
+		sb.append(rs.getString("LOANTYPE"));
+		sb.append(rs.getString("MANDATETYPE"));
+		return sb.toString();
+	}
 }

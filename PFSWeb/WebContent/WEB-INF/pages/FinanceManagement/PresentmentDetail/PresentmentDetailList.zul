@@ -12,11 +12,7 @@
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
 	
 					<!-- COMMON BUTTONS -->
-					<toolbar align="start" style="toolbar-center">
-						<button  id="button_PresentmentDetailList_CreateBatch" label="Create Batch"
-							autodisable="button_PresentmentDetailList_PresentmentDetailSearch,print,button_PresentmentDetailList_NewPresentmentDetail,btnRefresh,help,button_PresentmentDetailList_CreateBatch"
-							tooltiptext="${c:l('button_PresentmentDetailList_PresentmentDetailSearch.tooltiptext')}" sclass="z-toolbarbutton" />
-					</toolbar>
+					<toolbar align="start" style="toolbar-center"/>
 					
 					<!-- SEARCH AREA -->
 					<toolbar align="center" style="toolbar-center">

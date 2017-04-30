@@ -42,7 +42,7 @@ public class PresentmentRequest extends DBProcessEngine {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
-	public void process(long userId, Configuration config, String ids) {
+	public void process(long userId, Configuration config, String presentmentIds) {
 		logger.debug("Entering");
 
 		executionStatus.setStartTime(DateUtil.getSysDate());
@@ -66,8 +66,8 @@ public class PresentmentRequest extends DBProcessEngine {
 			sourceConnection = DataSourceUtils.doGetConnection(dataSource);
 			executionStatus.setRemarks("Fetching data from source table...");
 
-			statement = getStatement(ids);
-			resultSet = getResultSet(ids, statement);
+			statement = getStatement(presentmentIds);
+			resultSet = getResultSet(presentmentIds, statement);
 
 			if (resultSet != null) {
 				resultSet.last();
@@ -91,8 +91,9 @@ public class PresentmentRequest extends DBProcessEngine {
 				executionStatus.setSuccessRecords(successCount);
 				executionStatus.setFailedRecords(failedCount);
 			}
-			
-			updatePresentmentHeader(ids,4); 
+			if (totalRecords > 0) {
+				updatePresentmentHeader(presentmentIds, 4);
+			}
 
 			if (totalRecords > 0) {
 				if (failedCount > 0) {
@@ -156,7 +157,7 @@ public class PresentmentRequest extends DBProcessEngine {
 
 			ps = destConnection.prepareStatement(sb.toString());
 
-			ps.setString(1, String.valueOf(getNextId("SEQ_PDC_CONSL_EMI_DTL", false)));
+			ps.setString(1, String.valueOf(getLongValue(rs, "PRESENTMENTID")));
 			ps.setString(2, getValue(rs, "BRANCHSWIFTBRNCDE"));
 			ps.setString(3, getValue(rs, "FINREFERENCE"));
 			ps.setString(4, getValue(rs, "MICR"));
@@ -165,6 +166,7 @@ public class PresentmentRequest extends DBProcessEngine {
 			ps.setString(7, getValue(rs, "ACCNUMBER"));
 			ps.setString(8, getValue(rs, "CUSTSHRTNAME"));
 			ps.setString(9, getValue(rs, "ACCHOLDERNAME"));
+			
 			ps.setString(10, getValue(rs, "BANKNAME"));
 			ps.setString(11, getValue(rs, "BRANCHDESC"));
 			ps.setInt(12, getIntValue(rs, "EMINO"));
@@ -176,7 +178,7 @@ public class PresentmentRequest extends DBProcessEngine {
 				ps.setString(11, StringUtils.substring(getValue(rs, "BRANCHCODE"), 0, 3));// BRANCHCODE code is 6 but in doc 3
 			}
 
-			ps.setString(14, getValue(rs, "ID"));
+			ps.setString(14, getValue(rs, "PresentmentRef"));
 			ps.setBigDecimal(15, getBigDecimal(rs, "PRESENTMENTAMT"));
 			ps.setDate(16, getDateValue(rs, "PRESENTMENTDATE"));
 			ps.setString(17, Status.N.name());
@@ -200,7 +202,7 @@ public class PresentmentRequest extends DBProcessEngine {
 			ps.setInt(27, -1);
 			// TXN_TYPE_CODE
 			// SOURCE_CODE
-			ps.setInt(28, getIntValue(rs, "ENTITYCODE"));
+			ps.setInt(28, 1);//getIntValue(rs, "ENTITYCODE")
 			ps.setDate(29, com.pennanttech.pff.core.util.DateUtil.getSqlDate(com.pennanttech.pff.core.util.DateUtil.getSysDate()));
 			ps.setString(30, Status.N.name());
 
@@ -235,10 +237,10 @@ public class PresentmentRequest extends DBProcessEngine {
 		return rs;
 	}
 
-	private PreparedStatement getStatement(String paymentIds) throws Exception {
+	private PreparedStatement getStatement(String presentmentIds) throws Exception {
 		PreparedStatement statement = null;
 
-		String[] paymentId = paymentIds.split(",");
+		String[] presentmentId = presentmentIds.split(",");
 
 		StringBuilder sql = null;
 		try {
@@ -248,8 +250,8 @@ public class PresentmentRequest extends DBProcessEngine {
 			sql.append(" T6.BANKNAME, T1.PRESENTMENTID, T1.PRESENTMENTAMT,");
 			sql.append(" T0.PRESENTMENTDATE, T3.MANDATEREF, T4.IFSC, ");
 			sql.append(" T7.PARTNERBANKCODE, T7.UTILITYCODE, T3.STARTDATE, T3.EXPIRYDATE, T3.MANDATETYPE, ");
-			sql.append(" T2.FINTYPE, T2.CUSTID , T7.PARTNERBANKCODE, T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, T1.ID,");
-			sql.append(" T8.BRANCHSWIFTBRNCDE, T10.ENTITYCODE FROM PRESENTMENTHEADER T0 ");
+			sql.append(" T2.FINTYPE, T2.CUSTID , T7.PARTNERBANKCODE, T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, T1.ID, T1.PresentmentRef, ");
+			sql.append(" T8.BRANCHSWIFTBRNCDE, T9.FINDIVISION ENTITYCODE FROM PRESENTMENTHEADER T0 ");
 			sql.append(" INNER JOIN PRESENTMENTDETAILS T1 ON T0.ID = T1.PRESENTMENTID ");
 			sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE ");
 			sql.append(" INNER JOIN CuSTOMERS T5 ON T5.CUSTID = T2.CUSTID ");
@@ -259,17 +261,16 @@ public class PresentmentRequest extends DBProcessEngine {
 			sql.append(" INNER JOIN PARTNERBANKS T7 ON T7.PARTNERBANKID = T0.PARTNERBANKID ");
 			sql.append(" INNER JOIN RMTBRANCHES T8 ON T8.BRANCHCODE = T2.FINBRANCH ");
 			sql.append(" INNER JOIN RMTFINANCETYPES T9 ON T9.FINTYPE = T2.FINTYPE");
-			sql.append(" INNER JOIN SMTDIVISIONDETAIL T10 ON T10.DIVISIONCODE = T9.FINDIVISION");
 			sql.append(" WHERE T1.PRESENTMENTID IN (");
 
-			for (int i = 0; i < paymentId.length; i++) {
+			for (int i = 0; i < presentmentId.length; i++) {
 				if (i > 0) {
 					sql.append(",");
 				}
 				sql.append("?");
 			}
 			sql.append(")");
-			sql.append(" AND T1.EXCLUDEREASON = 0 )");
+			sql.append(" AND (T1.EXCLUDEREASON = 0)");
 			statement = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 		} catch (SQLException e) {
 			logger.error("Exception: ", e);

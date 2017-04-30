@@ -44,7 +44,6 @@
 package com.pennant.webui.financemanagement.presentmentdetail;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -53,7 +52,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -61,11 +59,8 @@ import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
-import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
-import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -87,15 +82,6 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	protected Listbox listBoxPresentmentDetail;
 
 	protected Button button_PresentmentDetailList_PresentmentDetailSearch;
-	protected Button button_PresentmentDetailList_CreateBatch;
-
-	protected Combobox mandateType;
-	protected ExtendedCombobox product;
-	protected ExtendedCombobox partnerBank;
-	protected Combobox exclusionStatus;
-	protected Combobox batchReference;
-
-	private transient PresentmentDetailService presentmentDetailService;
 
 	/**
 	 * default constructor.<br>
@@ -137,7 +123,6 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		registerField("Status");
 
 		registerButton(button_PresentmentDetailList_PresentmentDetailSearch);
-		registerButton(button_PresentmentDetailList_CreateBatch);
 		doRenderPage();
 		search();
 		logger.debug(Literal.LEAVING);
@@ -195,9 +180,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 
 		final long id = (long) selectedItem.getAttribute("Id");
 		Map<String, Object> arg = getDefaultArguments();
-		List<PresentmentDetail> presentmentDetailList = this.presentmentDetailService.getPresentmentDetailsList(id, "_AView");
 
-		arg.put("presentmentDetailList", presentmentDetailList);
 		arg.put("presentmentDetailListCtrl", this);
 		arg.put("PresentmentId", id);
 
@@ -242,10 +225,6 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 			item.setAttribute("Id", object.getId());
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onItemDoubleClicked");
 		}
-	}
-
-	public void setPresentmentDetailService(PresentmentDetailService presentmentDetailService) {
-		this.presentmentDetailService = presentmentDetailService;
 	}
 
 }
