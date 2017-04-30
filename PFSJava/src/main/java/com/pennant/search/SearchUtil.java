@@ -845,117 +845,12 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Visit each non-null item is a list. Each item may be replaced by the visitor. The modified list is returned. If
-	 * removeNulls is true, any null elements will be removed from the final list.
-	 * 
-	 * <p>
-	 * If there are any modifications to be made to the list a new list is made with the changes so that the original
-	 * list remains unchanged. If no changes are made, the original list is returned.
-	 */
-	public static <T> List<T> walkList(List<T> list, ItemVisitor<T> visitor, boolean removeNulls) {
-		if (list == null) {
-			return null;
-		}
-
-		ArrayList<T> copy = null;
-		int i = 0;
-		for (T item : list) {
-			T result = visitor.visit(item);
-			if (result != item || (removeNulls && result == null)) {
-				if (copy == null) {
-					copy = new ArrayList<T>(list.size());
-					copy.addAll(list);
-				}
-				copy.set(i, result);
-				item = result;
-			}
-			i++;
-		}
-		if (copy != null) {
-			if (removeNulls) {
-				for (int j = copy.size() - 1; j >= 0; j--) {
-					if (copy.get(j) == null) {
-						copy.remove(j);
-					}
-				}
-			}
-			return copy;
-		} else {
-			return list;
-		}
-	}
-
-	/**
 	 * Visitor for use with walkList()
 	 */
 	public static class ItemVisitor<T> {
 		public T visit(T item) {
 			return item;
 		}
-	}
-
-	/**
-	 * Walk through a list of filters and all the sub filters, visiting each filter in the tree. A FilterVisitor is used
-	 * to visit each filter. The FilterVisitor may replace the Filter that is is visiting. If it does, a new tree and
-	 * list of Filters will be created for every part of the tree that is affected, thus preserving the original tree.
-	 * 
-	 * @return if any changes have been made, the new list of Filters; if not, the original list.
-	 */
-	public static List<Filter> walkFilters(List<Filter> filters, FilterVisitor visitor, boolean removeNulls) {
-		return walkList(filters, new FilterListVisitor(visitor, removeNulls), removeNulls);
-	}
-
-	/**
-	 * Used in walkFilters
-	 */
-	private static final class FilterListVisitor extends ItemVisitor<Filter> {
-		private FilterVisitor	visitor;
-		private boolean			removeNulls;
-
-		public FilterListVisitor(FilterVisitor visitor, boolean removeNulls) {
-			super();
-			this.visitor = visitor;
-			this.removeNulls = removeNulls;
-		}
-
-		@Override
-		public Filter visit(Filter filter) {
-			return walkFilter(filter, visitor, removeNulls);
-		}
-	}
-
-	/**
-	 * Walk a filter and all its sub filters, visiting each filter in the tree. A FilterVisitor is used to visit each
-	 * filter. The FilterVisitor may replace the Filter that is is visiting. If it does, a new tree and will be created
-	 * for every part of the tree that is affected, thus preserving the original tree.
-	 * 
-	 * @return if any changes have been made, the new Filter; if not, the original Filter.
-	 */
-	@SuppressWarnings("unchecked")
-	public static Filter walkFilter(Filter filter, FilterVisitor visitor, boolean removeNulls) {
-		filter = visitor.visitBefore(filter);
-
-		if (filter != null) {
-			if (filter.isTakesSingleSubFilter()) {
-				if (filter.getValue() instanceof Filter) {
-					Filter result = walkFilter((Filter) filter.getValue(), visitor, removeNulls);
-					if (result != filter.getValue()) {
-						filter = new Filter(filter.getProperty(), result, filter.getOperator());
-					}
-				}
-			} else if (filter.isTakesListOfSubFilters()) {
-				if (filter.getValue() instanceof List) {
-					List<Filter> result = walkFilters((List<Filter>) filter.getValue(), visitor, removeNulls);
-					if (result != filter.getValue()) {
-						filter = new Filter(filter.getProperty(), result, filter.getOperator());
-					}
-				}
-			}
-		}
-
-		filter = visitor.visitAfter(filter);
-
-		return filter;
 	}
 
 	/**
@@ -970,5 +865,4 @@ public class SearchUtil {
 			return filter;
 		}
 	}
-
 }
