@@ -1734,4 +1734,10 @@ update reportconfiguration set reportjaspername='NPA_Reports' where menuitemcode
 			</sql>
 	</changeSet>
 	
+	
+	<changeSet id="88" author="Durgaprasad G">
+		<addColumn tableName="PresentmentDetails">
+			<column name="PresentmentRef" type="varchar(30)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
