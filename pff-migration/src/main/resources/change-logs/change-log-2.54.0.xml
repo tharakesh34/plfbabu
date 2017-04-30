@@ -1611,4 +1611,24 @@ update reportconfiguration set reportjaspername='NPA_Reports' where menuitemcode
 	Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups); 
 	</sql>
 	</changeSet>
+	<changeSet author="Prasad" id="80">
+		<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField from (
+    Select Finreference,Schdate, (case when Disbonschdate=1 then 'Amount Financed - Payable ('||Finreference||')' 
+		when BPIORHOLIDAY='B' then 'Broken Period Interest Receivable -Due('||Finreference||')' else 
+		'Due for Installment '||INSTNUMBER||' ('||Finreference||')' end) Particulars,case when Disbonschdate=1 then 0 else Repayamount end Debit,
+		case when Disbonschdate=1 then DisbAmount else 0 end Credit
+		from finscheduledetails  where (BPIORHOLIDAY!='H' or BPIORHOLIDAY is null)  union 
+		Select finreference,m.lastmnton,feetypedesc ||'- Due ('||Finreference||')' ,m.ADVISEAMOUNT Debit ,0 Credit from manualadvise m
+		inner join FEETYPES f on f.feetypeid = m.feetypeid union
+		Select REFERENCE,VALUEDATE,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '||PAYMENTTYPE ||' No.:'||CHEQUEACNO ||'('||REFERENCE||')'
+		when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('||REFERENCE||')' when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'||CHEQUEACNO ||'('||REFERENCE||')' end) Particulars,
+		Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,
+		Case when PAYMENTTYPE NOT in ('EXCESS') then Amount when PAYMENTTYPE in ('EXCESS') then Amount end credit
+		from FINRECEIPTHEADER T1 inner join 
+		FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID)T1 
+    inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+    inner join RMTCURRENCIES C on C.ccycode= T2.finccy
+		</createView>
+</changeSet>
 </databaseChangeLog>
