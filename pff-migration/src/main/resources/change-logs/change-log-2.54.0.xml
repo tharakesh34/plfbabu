@@ -1740,4 +1740,38 @@ update reportconfiguration set reportjaspername='NPA_Reports' where menuitemcode
 			<column name="PresentmentRef" type="varchar(30)" />
 		</addColumn>
 	</changeSet>
+	
+		<changeSet author="Kesav" id="83">
+		<sql>
+			Delete from RBFieldDetails where rbfldName ='Product' and RBModule = 'PROVSN' and RBEvent = 'PROVSN';
+			Delete from RBFieldDetails where rbfldName ='DueBucket' and RBModule = 'PROVSN' and RBEvent = 'PROVSN';
+			Delete from RBFieldDetails where rbfldName ='RestructureLoan' and RBModule = 'PROVSN' and RBEvent = 'PROVSN';
+			
+			INSERT INTO RBFieldDetails
+			VALUES ('PROVSN', 'PROVSN', 'Product', 'Product Code', 'nvarchar', 8, 0, 1, 'Product', 'static,global,dbvalue', 'Product');
+			
+			INSERT INTO RBFieldDetails
+			VALUES ('PROVSN', 'PROVSN', 'DueBucket', 'Loan bucket', 'int', 8, 0, 1, '  ', 'static,global', '  ');
+			
+			INSERT INTO RBFieldDetails
+			VALUES ('PROVSN', 'PROVSN', 'RestructureLoan', 'Restructure Loan', 'nchar', 1, 0, 1, '  ', 'static,global', '  ');
+		</sql>
+	</changeSet>
+	<changeSet id="89" author="chaitanya.ch">
+		<sql>
+			Delete from RMTTransactionEntry where AccountsetID In (select AccountSetID from RMTAccountingSet where EVENTCODE = 'DISBINS');
+			Delete from RMTAccountingset where EVENTCODE = 'DISBINS';
+			Insert into RMTAccountingSet Values (
+			(select max(AccountsetID) + 1 from RMTAccountingSet), 'DISBINS', 'NOENTRY', 'No Entries', '0', '1', 
+			0, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+		</sql>
+	</changeSet>
+	<changeSet id="90" author="chaitanya.ch">
+		<sql>
+			Delete from RBFieldDetails where RBModule ='SUBHEAD';
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('SUBHEAD','SUBHEAD','acType','Transaction Account type','nvarchar',8,'0','1','AccountTypes','static','TransactionEntry');
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('SUBHEAD','SUBHEAD','disb_partnerBank','PARTNERBANK','nvarchar',8,'0','1','PARTNERBANKS','static,global,dbvalue','PARTNERBANKS');
+			Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('SUBHEAD','SUBHEAD','ft_finType','Loan Type','nvarchar',8,'0','1','FinanceType','static,global,dbvalue','FinanceType');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
