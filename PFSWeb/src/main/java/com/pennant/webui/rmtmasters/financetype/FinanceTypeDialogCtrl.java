@@ -321,6 +321,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Combobox pftDueSchOn;
 	protected Checkbox alwPlannedEmiHoliday;
 	protected Label label_FinanceTypeDialog_PlanEmiHolidayMethod;
+	protected Label label_FinanceTypeDialog_FinDepreciationFrq;
 	protected Row row_planEmi;
 	protected Space space_planEmiMethod;
 	protected Hbox hbox_planEmiMethod;
@@ -753,6 +754,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finGrcDftIntFrq.setMandatoryStyle(true);
 		this.finDftIntFrq.setMandatoryStyle(true);
 		this.finRpyFrq.setMandatoryStyle(true);
+		
 		this.finDepreciationFrq.setMandatoryStyle(true);
 
 		this.finMaxAmount.setMandatory(false);
@@ -899,6 +901,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		label_FinanceTypeDialog_FinDepreciationReq.setVisible(ImplementationConstants.ALLOW_DEPRECIATION);
 		hbox_FinDepreciationReq.setVisible(ImplementationConstants.ALLOW_DEPRECIATION);
+		
+		finDepreciationFrq.setVisible(ImplementationConstants.ALLOW_DEPRECIATION);
+		label_FinanceTypeDialog_FinDepreciationFrq.setVisible(ImplementationConstants.ALLOW_DEPRECIATION);
 		
 		logger.debug("Leaving");
 		

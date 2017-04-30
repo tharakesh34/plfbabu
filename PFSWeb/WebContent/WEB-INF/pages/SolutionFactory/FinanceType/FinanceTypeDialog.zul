@@ -1126,11 +1126,6 @@
 											</row>
 											<row>
 												<label
-													id="label_FinanceTypeDialog_FinDepreciationFrq"
-													value="${c:l('label_FinanceTypeDialog_FinDepreciationFrq.value')}" />
-												<frequencybox
-													id="finDepreciationFrq" />
-												<label
 													id="label_FinanceTypeDialog_RepayHierarchy"
 													value="${c:l('label_FinanceTypeDialog_RepayHierarchy.value')}" />
 												<hbox>
@@ -1139,6 +1134,11 @@
 													<combobox
 														id="rpyHierarchy" width="275px" readonly="true" />
 												</hbox>
+												<label
+													id="label_FinanceTypeDialog_FinDepreciationFrq"
+													value="${c:l('label_FinanceTypeDialog_FinDepreciationFrq.value')}" />
+												<frequencybox
+													id="finDepreciationFrq" />
 
 											</row>
 											<row visible="true">
