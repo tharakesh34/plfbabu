@@ -1014,7 +1014,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 			referenceSearchObj.addFilter(new Filter("Reference", finReference, operatorid));
 		}
 
-		referenceSearchObj.addFilter(Filter.equal("CurrentOwner", getUserWorkspace().getLoggedInUser().getLoginUsrID()));
+		referenceSearchObj.addFilter(Filter.equalTo("CurrentOwner", getUserWorkspace().getLoggedInUser().getLoginUsrID()));
 		
 		// Get the result set
 		logger.debug("Leaving");

@@ -424,7 +424,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		JdbcSearchObject<FinanceType> finWorflowSearchObject = new JdbcSearchObject<FinanceType>(FinanceType.class);
 		finWorflowSearchObject.addTabelName("LMTFinanceWorkFlowDef");
-		finWorflowSearchObject.addFilter(Filter.equal("ModuleName","PROMOTION"));
+		finWorflowSearchObject.addFilter(Filter.equalTo("ModuleName","PROMOTION"));
 		finWorflowSearchObject.addField("FinType");
 		List<FinanceType> finTypeList = pagedListService.getBySearchObject(finWorflowSearchObject);
 		if(finTypeList == null || finTypeList.isEmpty()){
@@ -438,7 +438,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 		//Fetch Promotion Type Details
 		JdbcSearchObject<FinanceType> jdbcSearchObject = new JdbcSearchObject<FinanceType>(FinanceType.class);
 		jdbcSearchObject.addTabelName("RMTFinanceTypes_AView");
-		jdbcSearchObject.addFilter(Filter.equal("FinIsActive",1));
+		jdbcSearchObject.addFilter(Filter.equalTo("FinIsActive",1));
 		jdbcSearchObject.addFilter(Filter.notEqual("Product", ""));
 		jdbcSearchObject.addFilter(Filter.in("FinType", finTypes));
 		

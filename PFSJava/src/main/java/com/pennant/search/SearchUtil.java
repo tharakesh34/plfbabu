@@ -137,7 +137,7 @@ public class SearchUtil {
 	 * Add a filter that uses the == operator.
 	 */
 	public static void addFilterEqual(IMutableSearch search, String property, Object value) {
-		addFilter(search, Filter.equal(property, value));
+		addFilter(search, Filter.equalTo(property, value));
 	}
 
 	/**

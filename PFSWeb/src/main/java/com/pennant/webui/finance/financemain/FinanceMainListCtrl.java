@@ -1226,8 +1226,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		referenceSearchObj.addFilterEqual("Processed", 0);
 		referenceSearchObj.addFilterOr(
-				Filter.equal("CurrentOwner", getUserWorkspace().getLoggedInUser().getLoginUsrID()),
-				Filter.equal("CurrentOwner", 0));
+				Filter.equalTo("CurrentOwner", getUserWorkspace().getLoggedInUser().getLoginUsrID()),
+				Filter.equalTo("CurrentOwner", 0));
 		referenceSearchObj.addFilterIn("RoleCode", usrfinRolesList);
 
 		// Get the result set

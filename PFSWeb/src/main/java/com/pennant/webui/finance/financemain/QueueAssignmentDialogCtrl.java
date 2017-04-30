@@ -226,7 +226,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 		this.toUser.setDescColumn("LovDescFirstName");
 		Filter[] filter = new Filter[2];
 		filter[0] = Filter.notEqual("UsrID", getQueueAssignmentHeader().getFromUserId());
-		filter[1] = Filter.equal("RoleCd", getQueueAssignmentHeader().getUserRoleCode());
+		filter[1] = Filter.equalTo("RoleCd", getQueueAssignmentHeader().getUserRoleCode());
 		this.toUser.setFilters(filter);
 		this.toUser.setValidateColumns(new String[] { "UsrID" });
 
@@ -1093,7 +1093,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 				this.toUser.setDescColumn("LovDescFirstName");
 				Filter[] filter = new Filter[2];
 				filter[0] = Filter.notEqual("UsrID", getQueueAssignmentHeader().getFromUserId());
-				filter[1] = Filter.equal("RoleCd", getQueueAssignmentHeader().getUserRoleCode());
+				filter[1] = Filter.equalTo("RoleCd", getQueueAssignmentHeader().getUserRoleCode());
 				toUser.setFilters(filter);
 				toUser.setValidateColumns(new String[] { "UsrID" });
 				toUser.addForward("onFulfill", window_QueueAssignmentDialog, "onChangeToUser", queue);

@@ -85,9 +85,15 @@ public class Filter implements Serializable {
 	}
 
 	/**
-	 * Create a new Filter using the == operator.
+	 * Convenience method for generating a Filter for checking if a property is equal to the value.
+	 * 
+	 * @param property
+	 *            The column to check.
+	 * @param value
+	 *            The value to compare with.
+	 * @return The Filter for the property.
 	 */
-	public static Filter equal(String property, Object value) {
+	public static Filter equalTo(String property, Object value) {
 		return new Filter(property, value, OP_EQUAL);
 	}
 
