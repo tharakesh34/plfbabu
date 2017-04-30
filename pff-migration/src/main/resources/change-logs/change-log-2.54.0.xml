@@ -2057,4 +2057,10 @@ update reportconfiguration set reportjaspername='NPA_Reports' where menuitemcode
       		ORDER BY DS.ID DESC
 		</createView>
 	</changeSet>
+	
+	<changeSet id="109" author="DurgaPrasad G">
+		<addColumn tableName="PresentmentHeader">
+			<column name="SchDate" type="datetime" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
