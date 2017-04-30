@@ -1260,4 +1260,65 @@ update reportconfiguration set reportjaspername='NPA_Reports' where menuitemcode
 		<dropColumn columnName="FutureRpyPft" tableName="FinPftDetails_SnapShot" />
 		<dropColumn columnName="LastDisbDate" tableName="FinPftDetails_SnapShot" />
 </changeSet>
+<changeSet author="Prasad" id="72">
+		<createView viewName="RPT_SOA_LOAN_VIEW" replaceIfExists="true">
+		Select FM.FinReference,FM.finamount LoanAmount,
+		   FM.RepayBaseRate PLRRate,FM.repaymargin Variance,FM.EffectiveRateOfReturn IRR,FP.CURREDUCINGRATE ROI,
+		   FP.noinst Tenure,TotalPriPaid EMIReceivedPri ,TotalPftPaid EMIReceivedPft,
+		   0.00 PreferredCardLimit,PRVRPYSCHPRI PrevInstAmtPri,PRVRPYSCHPFT PrevInstAmtPft,
+		   FM.RepayRateBasis intRateType,FP.latestDisbDate LastDisbursalDate,
+		   FP.FirstRepayDate FirstDueDate,FP.MaturityDate EndInstallmentDate,
+		   '0.00/ 0' AdvInstAmt,FP.FinIsActive,FM.closingstatus,
+		   FP.Futureinst FutureInstNo,FP.totalpriSchd FuturePri1,FP.tdSchdPri FuturePri2,
+       FP.totalPftSchd FutureRpyPft1,FP.tdSchdPft FutureRpyPft2,
+		   FP.totchargespaid Charge_coll_cust,
+		   FP.UpFrontFee Upfront_int_cust,	0 Int_paid_Dealer_upfront,0 Pre_emi_Int_Paid,
+		   '' Repo_Status,'' Repo_Date,'' Sale_Date,'' Release_Date,FP.LATESTRPYDATE,
+       C.ccyMinorccyunits,ccyEditField
+	From FinanceMain FM inner join
+       FinPftDetails FP on FP.FinReference = FM.FinReference inner join
+       RMTCURRENCIES C on C.ccycode= FP.finccy		
+		</createView>
+</changeSet>
+<changeSet author="Prasad" id="73">
+		<createView viewName="RPT_SOA_FINSMRY_VIEW" replaceIfExists="true">
+		Select FinReference,comp,due,Receipt, C.ccyMinorccyunits,ccyEditField from (
+  Select FinReference,finccy,'Instalment Amount' comp,coalesce((TdSchdPft+TdSchdPri),0) due,coalesce((TdSchdPriPaid+TdSchdPftPaid),0) Receipt 
+  from FinPftDetails union all
+	Select FinReference,finccy,'Principal Component' comp,	coalesce(TdSchdPri,0) due,coalesce(TdSchdPriPaid,0) Receipt 
+  from FinPftDetails  union all
+	Select FinReference,finccy,'Interest Component' comp,coalesce(TdSchdPft,0) due,coalesce(TdSchdPftPaid,0)Receipt 
+  from FinPftDetails  union all
+	Select FinReference,finccy,'Late Payment Penalty' comp,coalesce(PenaltyDue,0) due,	coalesce(PenaltyPaid,0) Receipt 
+  from FinPftDetails union all
+	Select FinReference,finccy,'Bounce Charges' comp,coalesce(BounceAmt,0) due,coalesce(BounceAmtPaid,0) Receipt 
+  from FinPftDetails union all
+  Select Finreference,finccy,'Other Receivables' comp, coalesce(receivableAdviseBal,0) due,coalesce(receivableadvise,0) Receipt  
+  from FinPftDetails union all
+  Select Finreference,finccy,'Unadjusted Amount' comp,coalesce((excessAmtBal + emiInAdvanceBal),0) due,coalesce((excessAmt+ emiInAdvance),0) Receipt 
+  from FinPftDetails union all
+  Select Finreference,finccy,'Other Payables' comp, coalesce(payableAdviseBal,0) due,coalesce(payableAdvise,0) Receipt 
+  from FinPftDetails)T inner join RMTCURRENCIES C on C.ccycode= T.finccy		
+		</createView>
+</changeSet>
+<changeSet author="Prasad" id="74">
+		<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField from (
+    Select Finreference,Schdate, (case when Disbonschdate=1 then 'Amount Financed - Payable ('||Finreference||')' 
+		when BPIORHOLIDAY='B' then 'Broken Period Interest Receivable -Due('||Finreference||')' else 
+		'Due for Installment '||INSTNUMBER||' ('||Finreference||')' end) Particulars,case when Disbonschdate=1 then 0 else Repayamount end Debit,
+		case when Disbonschdate=1 then DisbAmount else 0 end Credit
+		from finscheduledetails  where (BPIORHOLIDAY!='H' or BPIORHOLIDAY is null)  union 
+		Select finreference,m.lastmnton,feetypedesc ||'- Due ('||Finreference||')' ,m.ADVISEAMOUNT Debit ,0 Credit from manualadvise m
+		inner join FEETYPES f on f.feetypeid = m.feetypeid union
+		Select REFERENCE,VALUEDATE,(Case when PAYMENTTYPE in ('DD','N') then 'Payment Recieved vide '||cast(PAYMENTTYPE as varchar(8))||' No.:'||cast(CHEQUEACNO as varchar(50))||'('||REFERENCE||')'
+		when PAYMENTTYPE in ('E') then 'Amount Adjusted ('||REFERENCE||')' end) Particulars,
+		Case when PAYMENTTYPE in ('DD','N') then 0  when PAYMENTTYPE in ('E') then Amount end debit,
+		Case when PAYMENTTYPE in ('DD','N') then Amount when PAYMENTTYPE in ('E') then Amount end credit
+		from FINRECEIPTHEADER T1 inner join 
+		FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID)T1 
+    inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+    inner join RMTCURRENCIES C on C.ccycode= T2.finccy		
+		</createView>
+</changeSet>
 </databaseChangeLog>
