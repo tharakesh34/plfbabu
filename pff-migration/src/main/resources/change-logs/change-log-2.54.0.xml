@@ -1808,4 +1808,25 @@ update reportconfiguration set reportjaspername='NPA_Reports' where menuitemcode
 		</sql>
 	</changeSet>
 	
+ 	<changeSet id="92" author="Siva">
+		<createView viewName="FinReceiptDetail_TView" replaceIfExists="true">
+			Select T1.ReceiptID , T1.ReceiptSeqID , T1.ReceiptType , T1.PaymentTo , T1.PaymentType , T1.PayAgainstID  , 
+			T1.Amount  , T1.FavourNumber , T1.ValueDate , T1.BankCode , T1.FavourName , T1.DepositDate , T1.DepositNo , T1.PaymentRef , 
+			 T1.TransactionRef , T1.ChequeAcNo , T1.FundingAc , T1.ReceivedDate , T1.Status , T1.Remarks  , T2.BankName BankCodeDesc,T3.PartnerBankCode FundingAcDesc 
+			 From FinReceiptDetail_Temp T1 LEFT JOIN 
+			   BMTBankDetail T2 ON T1.BankCode = T2.BankCode LEFT JOIN 
+			   PartnerBanks T3 ON T1.FundingAc  = T3.PartnerBankID
+		</createView>
+	</changeSet>
+	
+	 <changeSet id="93" author="Siva">
+		<createView viewName="FinReceiptDetail_AView" replaceIfExists="true">
+			Select T1.ReceiptID , T1.ReceiptSeqID , T1.ReceiptType , T1.PaymentTo , T1.PaymentType , T1.PayAgainstID  , 
+			T1.Amount  , T1.FavourNumber , T1.ValueDate , T1.BankCode , T1.FavourName , T1.DepositDate , T1.DepositNo , T1.PaymentRef , 
+			 T1.TransactionRef , T1.ChequeAcNo , T1.FundingAc , T1.ReceivedDate , T1.Status , T1.Remarks  , T2.BankName BankCodeDesc,T3.PartnerBankCode FundingAcDesc 
+			 From FinReceiptDetail T1 LEFT JOIN 
+			   BMTBankDetail T2 ON T1.BankCode = T2.BankCode LEFT JOIN 
+			   PartnerBanks T3 ON T1.FundingAc  = T3.PartnerBankID
+		</createView>
+	</changeSet>
 </databaseChangeLog>
