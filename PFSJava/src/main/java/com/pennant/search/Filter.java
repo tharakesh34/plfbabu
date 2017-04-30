@@ -40,7 +40,6 @@ public class Filter implements Serializable {
 	public static final int		OP_NOT_IN			= 9;
 	public static final int		OP_AND				= 100;
 	public static final int		OP_OR				= 101;
-	public static final int		OP_NOT				= 102;
 
 	/**
 	 * The name of the property to filter on.
@@ -227,18 +226,6 @@ public class Filter implements Serializable {
 		((List<Filter>) value).add(filter);
 	}
 
-	/**
-	 * Used with OP_OR and OP_AND filters. These filters take a collection of filters as their value. This method
-	 * removes a filter from that list.
-	 */
-	@SuppressWarnings("unchecked")
-	public void remove(Filter filter) {
-		if (!(value instanceof List)) {
-			return;
-		}
-		((List<Filter>) value).remove(filter);
-	}
-
 	public String getProperty() {
 		return property;
 	}
@@ -261,66 +248,6 @@ public class Filter implements Serializable {
 
 	public void setOperator(int operator) {
 		this.operator = operator;
-	}
-
-	/**
-	 * @return true if the operator should have a single value specified.
-	 * 
-	 *         <p>
-	 *         <code>EQUAL, NOT_EQUAL, LESS_THAN, LESS_OR_EQUAL, GREATER_THAN, GREATER_OR_EQUAL, LIKE, ILIKE</code>
-	 */
-	public boolean isTakesSingleValue() {
-		return operator <= 7;
-	}
-
-	/**
-	 * @return true if the operator should have a list of values specified.
-	 * 
-	 *         <p>
-	 *         <code>IN, NOT_IN</code>
-	 */
-	public boolean isTakesListOfValues() {
-		return operator == OP_IN || operator == OP_NOT_IN;
-	}
-
-	/**
-	 * @return true if the operator does not require a value to be specified.
-	 * 
-	 *         <p>
-	 *         <code>NULL, NOT_NULL, EMPTY, NOT_EMPTY</code>
-	 */
-	public boolean isTakesNoValue() {
-		return operator >= 10 && operator <= 13;
-	}
-
-	/**
-	 * @return true if the operator should have a single Filter specified for the value.
-	 * 
-	 *         <p>
-	 *         <code>NOT, ALL, SOME, NONE</code>
-	 */
-	public boolean isTakesSingleSubFilter() {
-		return operator == OP_NOT || operator >= 200;
-	}
-
-	/**
-	 * @return true if the operator should have a list of Filters specified for the value.
-	 * 
-	 *         <p>
-	 *         <code>AND, OR</code>
-	 */
-	public boolean isTakesListOfSubFilters() {
-		return operator == OP_AND || operator == OP_OR;
-	}
-
-	/**
-	 * @return true if the operator does not require a property to be specified.
-	 * 
-	 *         <p>
-	 *         <code>AND, OR, NOT</code>
-	 */
-	public boolean isTakesNoProperty() {
-		return operator >= 100 && operator <= 102;
 	}
 
 	/**
@@ -435,11 +362,6 @@ public class Filter implements Serializable {
 
 			sb.append(")");
 			return sb.toString();
-		case Filter.OP_NOT:
-			if (!(value instanceof Filter)) {
-				return "NOT: **INVALID VALUE - NOT A FILTER: (" + value + ") **";
-			}
-			return "not " + value.toString();
 		default:
 			return "**INVALID OPERATOR: (" + operator + ") - VALUE: " + InternalUtil.paramDisplayString(value) + " **";
 		}
@@ -504,11 +426,6 @@ public class Filter implements Serializable {
 
 			sb.append(")");
 			return sb.toString();
-		case Filter.OP_NOT:
-			if (!(value instanceof Filter)) {
-				return "NOT: **INVALID VALUE - NOT A FILTER: (" + value + ") **";
-			}
-			return " not ";
 		default:
 			return "**INVALID OPERATOR: (" + operator + ") - VALUE: " + InternalUtil.paramDisplayString(value) + " **";
 		}
