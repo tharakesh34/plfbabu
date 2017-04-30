@@ -1631,4 +1631,16 @@ update reportconfiguration set reportjaspername='NPA_Reports' where menuitemcode
     inner join RMTCURRENCIES C on C.ccycode= T2.finccy
 		</createView>
 </changeSet>
+
+	<changeSet author="Kesav" id="81">
+		<addColumn tableName="SMTDivisionDetail">
+			<column name="EntityID" type="bigint"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="82">
+		<addColumn tableName="SMTDivisionDetail_Temp">
+			<column name="EntityID" type="bigint"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
