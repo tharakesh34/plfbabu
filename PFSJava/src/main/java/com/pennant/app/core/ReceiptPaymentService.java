@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -50,6 +52,9 @@ public class ReceiptPaymentService extends ServiceHelper {
 			sqlStatement.setLong(2, custId);
 			resultSet = sqlStatement.executeQuery();
 			while (resultSet.next()) {
+				FinReceiptHeader header = new FinReceiptHeader();
+				List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
+
 				finref = resultSet.getString("FINREFERENCE");
 				Date schDate = resultSet.getDate("SchDate");
 				BigDecimal advanceAmt = getDecimal(resultSet, "ADVANCEAMT");
@@ -60,7 +65,6 @@ public class ReceiptPaymentService extends ServiceHelper {
 				FinanceProfitDetail profitDetail = eodEvent.getFinProfitDetail();
 
 				List<FinanceScheduleDetail> scheduleDetails = eodEvent.getFinanceScheduleDetails();
-
 				String repayHeirarchy = eodEvent.getFinType().getRpyHierarchy();
 
 				FinReceiptDetail receiptDetail = null;
@@ -73,8 +77,8 @@ public class ReceiptPaymentService extends ServiceHelper {
 					receiptDetail.setAmount(advanceAmt);
 					receiptDetail.setValueDate(schDate);
 					receiptDetail.setReceivedDate(businessDate);
-					repaymentProcessUtil.recalReceipt(financeMain, scheduleDetails, profitDetail, receiptDetail,
-							repayHeirarchy);
+					receiptDetails.add(receiptDetail);
+
 				}
 
 				if (presentmentAmt.compareTo(BigDecimal.ZERO) > 0) {
@@ -86,10 +90,12 @@ public class ReceiptPaymentService extends ServiceHelper {
 					receiptDetail.setAmount(presentmentAmt);
 					receiptDetail.setValueDate(schDate);
 					receiptDetail.setReceivedDate(businessDate);
-					repaymentProcessUtil.recalReceipt(financeMain, scheduleDetails, profitDetail, receiptDetail,
-							repayHeirarchy);
+					receiptDetails.add(receiptDetail);
 				}
 
+				header.setReceiptDetails(receiptDetails);
+				repaymentProcessUtil.recalReceipt(financeMain, scheduleDetails, profitDetail, header, repayHeirarchy);
+				repaymentProcessUtil.doSaveReceipts(header);
 			}
 		} catch (Exception e) {
 			logger.error("Exception :", e);

@@ -192,6 +192,7 @@ public class NPAService extends ServiceHelper {
 		dataMap.put("RestructureLoan", resultSet.getBoolean("SCHEDULEREGENERATED"));
 		dataMap.put("DueBucket", resultSet.getInt("DueBucket"));
 		dataMap.put("ODDays", resultSet.getInt("MAXODDAYS"));
+		dataMap.put("Product", resultSet.getString("FinCategory"));
 
 		BigDecimal pecentage = (BigDecimal) ruleExecutionUtil
 				.executeRule(rule, dataMap, finCcy, RuleReturnType.DECIMAL);
