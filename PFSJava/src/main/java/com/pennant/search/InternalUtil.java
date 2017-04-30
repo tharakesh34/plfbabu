@@ -15,135 +15,21 @@
  */
 package com.pennant.search;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-
-import org.apache.log4j.Logger;
 
 /**
  * Utilities for TRG Generic DAO Search
- * 
- * @author dwolverton
  */
 public class InternalUtil {
-	private final static Logger logger = Logger.getLogger(InternalUtil.class);
-	
-	/**
-	 * <p>
-	 * Return an instance of the given class type that has the given value. For
-	 * example, if type is <code>Long</code> and <code>Integer</code> type with
-	 * the value 13 is passed in, a new instance of <code>Long</code> will be
-	 * returned with the value 13.
-	 * 
-	 * <p>
-	 * If the value is already of the correct type, it is simply returned.
-	 * 
-	 * @throws ClassCastException
-	 *             if the value cannot be converted to the given type.
-	 */
-	public static Object convertIfNeeded(Object value, Class<?> type) throws ClassCastException {
-
-		// Since we're returning an object, we will never be able to return a primitive value.
-		// We will return the boxed type instead.
-		if (type.isPrimitive()) {
-			if (boolean.class.equals(type)) {
-				type = Boolean.class;
-			} else if (char.class.equals(type)) {
-				type = Character.class;
-			} else if (byte.class.equals(type)) {
-				type = Byte.class;
-			} else if (short.class.equals(type)) {
-				type = Short.class;
-			} else if (int.class.equals(type)) {
-				type = Integer.class;
-			} else if (long.class.equals(type)) {
-				type = Long.class;
-			} else if (float.class.equals(type)) {
-				type = Float.class;
-			} else if (double.class.equals(type)) {
-				type = Double.class;
-			}
-		}
-
-		if (value == null){
-			return null;
-		}
-		if (type.isInstance(value)){
-			return value;
-		}
-
-		if (String.class.equals(type)) {
-			return value.toString();
-		} else if (Number.class.isAssignableFrom(type)) {
-			// the desired type is a number
-			if (value instanceof Number) {
-				// the value is also a number of some kind. do a conversion
-				// to the correct number type.
-				Number num = (Number) value;
-
-				if (type.equals(Double.class)) {
-					return Double.valueOf(num.doubleValue());
-				} else if (type.equals(Float.class)) {
-					return Float.valueOf(num.floatValue());
-				} else if (type.equals(Long.class)) {
-					return Long.valueOf(num.longValue());
-				} else if (type.equals(Integer.class)) {
-					return Integer.valueOf(num.intValue());
-				} else if (type.equals(Short.class)) {
-					return Short.valueOf(num.shortValue());
-				} else {
-					try {
-						return type.getConstructor(String.class).newInstance(value.toString());
-					} catch (IllegalArgumentException e) {
-						logger.warn("Exception: ", e);
-					} catch (SecurityException e) {
-						logger.warn("Exception: ", e);
-					} catch (InstantiationException e) {
-						logger.warn("Exception: ", e);
-					} catch (IllegalAccessException e) {
-						logger.warn("Exception: ", e);
-					} catch (InvocationTargetException e) {
-						logger.warn("Exception: ", e);
-					} catch (NoSuchMethodException e) {
-						logger.warn("Exception: ", e);
-					}
-				}
-			} else if (value instanceof String) {
-				//the value is a String. attempt to parse the string
-				try {
-					if (type.equals(Double.class)) {
-						return Double.parseDouble((String) value);
-					} else if (type.equals(Float.class)) {
-						return Float.parseFloat((String) value);
-					} else if (type.equals(Long.class)) {
-						return Long.parseLong((String) value);
-					} else if (type.equals(Integer.class)) {
-						return Integer.parseInt((String) value);
-					} else if (type.equals(Short.class)) {
-						return Short.parseShort((String) value);
-					} else if (type.equals(Byte.class)) {
-						return Byte.parseByte((String) value);
-					}
-				} catch (NumberFormatException ex) {
-					//fall through to the error thrown below
-				}
-			}
-		} else if (Class.class.equals(type)) {
-			try {
-				return Class.forName(value.toString());
-			} catch (ClassNotFoundException e) {
-				logger.warn("Exception: ", e);
-				throw new ClassCastException("Unable to convert value " + value.toString() + " to type Class");
-			}
-		}
-
-		throw new ClassCastException("Unable to convert value of type " + value.getClass().getName() + " to type "
-				+ type.getName());
+	private InternalUtil() {
+		super();
 	}
+
 	/**
 	 * Convert Object into String Format
 	 * 
-	 * @param val (Object)
+	 * @param val
+	 *            (Object)
 	 * 
 	 * @return String
 	 */
