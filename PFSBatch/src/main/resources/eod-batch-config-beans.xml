@@ -452,9 +452,6 @@
 	<bean id="dPDBucketDAO" class="com.pennant.backend.dao.applicationmaster.impl.DPDBucketDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	<bean id="finExcessAmountDAO" class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
 	<bean id="nPABucketConfigurationDAO" class="com.pennant.backend.dao.applicationmaster.impl.NPABucketConfigurationDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
@@ -464,8 +461,7 @@
 	<bean id="repayProcessUtil" class="com.pennant.app.util.RepaymentProcessUtil"
 		scope="prototype">
 		<property name="repayPostingUtil" ref="repayPostingUtil" />
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
-		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
@@ -488,6 +484,28 @@
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
 	</bean>
+		<!--============ Finance Excess Amounts Details ============== -->
+
+	<bean id="finExcessAmountDAO"
+		class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl" parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<!--============ Finance Receipt Header Details ============== -->
+
+	<bean id="finReceiptHeaderDAO"
+		class="com.pennant.backend.dao.receipts.impl.FinReceiptHeaderDAOImpl" parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<!--============ Finance Receipt Detail Details ============== -->
+
+	<bean id="finReceiptDetailDAO"
+		class="com.pennant.backend.dao.receipts.impl.FinReceiptDetailDAOImpl" parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	
 	<!-- AIB -->
 	<bean id="calendarInterfaceService" class="com.pennant.Interface.service.impl.aib.CalendarInterfaceServiceImpl">
 		<property name="dateRollOverProcess" ref="dateRollOverProcess" />
