@@ -156,7 +156,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$button_ReceiptRealizationList_ReceiptRealizationSearchDialog(Event event) {
+	public void onClick$btnSearch(Event event) {
 		search();
 	}
 
@@ -251,7 +251,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("receiptHeader", header);
-		arg.put("realizationProcessListCtrl", this);
+		arg.put("receiptRealizationListCtrl", this);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/ReceiptRealizationDialog.zul", null, arg);

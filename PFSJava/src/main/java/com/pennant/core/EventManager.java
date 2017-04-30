@@ -112,7 +112,12 @@ public class EventManager implements ServletContextListener {
 		Map<String, Boolean> activeUsers = new HashMap<>();
 		List<OfflineUsersMessagesBackup> offlineMessages = new ArrayList<>();
 		if (Executions.getCurrent() != null) {
-			activeUsers = getActiveUsers();
+			try {
+				activeUsers = getActiveUsers();
+			} catch (Exception e) {
+				// No Current Session
+				return;
+			}
 		}
 
 		for (String recipient : recipients) {

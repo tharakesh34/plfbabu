@@ -1921,7 +1921,7 @@ public class PennantJavaUtil {
 		
 		ModuleUtil.register("FinTypePartner", new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
 				new String[] { "FinTypePartnerBanks","FinTypePartnerBanks_AView" }, masterWF,
-				new String[] { "PartnerBankID","PartnerBankCode", "PartnerBankName" }, null, 300));
+				new String[] { "PartnerBankID","PartnerBankCode", "PartnerBankName" }, null, 450));
 	}
 
 	public static ModuleMapping getModuleMap(String code) {

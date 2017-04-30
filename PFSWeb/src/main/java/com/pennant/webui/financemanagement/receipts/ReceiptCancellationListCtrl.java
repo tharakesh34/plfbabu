@@ -145,7 +145,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		this.searchObject.addWhereClause(" (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_APPROVED+"' OR ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_REALIZED+"'"
+		this.searchObject.addWhereClause(" (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_APPROVED+"' OR (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_REALIZED+"' AND RecordType IS NULL )"
 				+ " OR ( ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_BOUNCE+"' AND RecordType IS NOT NULL) ) ");
 	}
 
@@ -155,7 +155,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$button_ReceiptCancellationList_ReceiptCancellationSearchDialog(Event event) {
+	public void onClick$btnSearch(Event event) {
 		search();
 	}
 
@@ -250,7 +250,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("receiptHeader", header);
-		arg.put("realizationProcessListCtrl", this);
+		arg.put("receiptCancellationListCtrl", this);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationDialog.zul", null, arg);

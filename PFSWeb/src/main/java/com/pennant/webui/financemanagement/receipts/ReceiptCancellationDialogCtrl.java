@@ -261,7 +261,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		this.fundingAccount.setMandatoryStyle(true);
 		this.fundingAccount.setValueColumn("PartnerBankID");
 		this.fundingAccount.setDescColumn("PartnerBankCode");
-		this.fundingAccount.setDisplayStyle(3);
+		this.fundingAccount.setDisplayStyle(2);
 		this.fundingAccount.setValidateColumns(new String[] { "PartnerBankID" });
 
 		this.chequeAcNo.setButtonVisible(false);

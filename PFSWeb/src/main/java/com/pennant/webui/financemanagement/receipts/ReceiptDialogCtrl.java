@@ -466,7 +466,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				doWriteBeanToComponents();
 				if (StringUtils.isNotBlank(financeMain.getRecordType())) {
 					this.btnNotes.setVisible(true);
-					doReadonly();
+					doReadonly(false);
 				}
 
 				this.borderlayout_Receipt.setHeight(getBorderLayoutHeight());
@@ -631,7 +631,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	/**
 	 * Set the components for edit mode. <br>
 	 */
-	public void doReadonly() {
+	public void doReadonly(boolean isUserAction) {
 		logger.debug("Entering");
 		
 		// Receipt Details
@@ -643,18 +643,34 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		readOnlyComponent(true, this.effScheduleMethod);
 		
 		//Receipt Details
-		readOnlyComponent(true, this.favourNo);
-		readOnlyComponent(true, this.valueDate);
-		readOnlyComponent(true, this.bankCode);
-		readOnlyComponent(true, this.favourName);
-		readOnlyComponent(true, this.depositDate);
-		readOnlyComponent(true, this.depositNo);
-		readOnlyComponent(true, this.chequeAcNo);
-		readOnlyComponent(true, this.fundingAccount);
-		readOnlyComponent(true, this.paymentRef);
-		readOnlyComponent(true, this.transactionRef);
-		readOnlyComponent(true, this.receivedDate);
-		readOnlyComponent(true, this.remarks);
+		if(isUserAction){
+			readOnlyComponent(true, this.favourNo);
+			readOnlyComponent(true, this.valueDate);
+			readOnlyComponent(true, this.bankCode);
+			readOnlyComponent(true, this.favourName);
+			readOnlyComponent(true, this.depositDate);
+			readOnlyComponent(true, this.depositNo);
+			readOnlyComponent(true, this.chequeAcNo);
+			readOnlyComponent(true, this.fundingAccount);
+			readOnlyComponent(true, this.paymentRef);
+			readOnlyComponent(true, this.transactionRef);
+			readOnlyComponent(true, this.receivedDate);
+			readOnlyComponent(true, this.remarks);
+		}else{
+			//Receipt Details
+			readOnlyComponent(isReadOnly("ReceiptDialog_favourNo"), this.favourNo);
+			readOnlyComponent(isReadOnly("ReceiptDialog_valueDate"), this.valueDate);
+			readOnlyComponent(isReadOnly("ReceiptDialog_bankCode"), this.bankCode);
+			readOnlyComponent(isReadOnly("ReceiptDialog_favourName"), this.favourName);
+			readOnlyComponent(isReadOnly("ReceiptDialog_depositDate"), this.depositDate);
+			readOnlyComponent(isReadOnly("ReceiptDialog_depositNo"), this.depositNo);
+			readOnlyComponent(isReadOnly("ReceiptDialog_chequeAcNo"), this.chequeAcNo);
+			readOnlyComponent(isReadOnly("ReceiptDialog_paymentRef"), this.paymentRef);
+			readOnlyComponent(isReadOnly("ReceiptDialog_transactionRef"), this.transactionRef);
+			readOnlyComponent(isReadOnly("ReceiptDialog_fundingAccount"), this.fundingAccount);
+			readOnlyComponent(isReadOnly("ReceiptDialog_cashReceivedDate"), this.receivedDate);
+			readOnlyComponent(isReadOnly("ReceiptDialog_remarks"), this.remarks);
+		}
 
 		// Excess amount set to readonly
 		if(listBoxExcess.getFellowIfAny("ExcessAmount_E") != null){
@@ -884,7 +900,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		
 		// Do readonly to all components
-		doReadonly();
+		doReadonly(true);
 		
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1768,6 +1784,33 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				getFinanceCheckListReferenceDialogCtrl().doWriteBeanToComponents(getFinanceDetail().getCheckList(),
 						getFinanceDetail().getFinanceCheckList(), true);
 			}
+			
+			if(!recReject){
+				doClearMessage();
+				doSetValidation();
+				doWriteComponentsToBean();
+				
+				FinReceiptData data = getReceiptData();
+				List<FinReceiptDetail> receiptDetails = data.getReceiptHeader().getReceiptDetails();
+				
+				for (FinReceiptDetail receiptDetail : receiptDetails) {
+					if(!StringUtils.equals(RepayConstants.RECEIPTMODE_EXCESS, data.getReceiptHeader().getReceiptMode()) && 
+							StringUtils.equals(receiptDetail.getPaymentType(), data.getReceiptHeader().getReceiptMode())){
+						receiptDetail.setFavourNumber(this.favourNo.getValue());
+						receiptDetail.setValueDate(this.valueDate.getValue());
+						receiptDetail.setBankCode(this.bankCode.getValue());
+						receiptDetail.setFavourName(this.favourName.getValue());
+						receiptDetail.setDepositDate(this.depositDate.getValue());
+						receiptDetail.setDepositNo(this.depositNo.getValue());
+						receiptDetail.setPaymentRef(this.paymentRef.getValue());
+						receiptDetail.setTransactionRef(this.transactionRef.getValue());
+						receiptDetail.setChequeAcNo(this.chequeAcNo.getValue());
+						receiptDetail.setFundingAc(Long.valueOf(this.fundingAccount.getValue()));
+						receiptDetail.setReceivedDate(this.receivedDate.getValue());
+						receiptDetail.setRemarks(this.remarks.getValue());
+					}
+				}
+			}
 
 			if (recReject || isValidateData(false)) {
 				if (!isLimitExceeded) {
@@ -1785,7 +1828,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			logger.error("Exception: ", pfe);
 			MessageUtil.showErrorMessage(pfe.getErrorMessage());
 			return;
-		} catch (WrongValueException we) {
+		} catch (WrongValuesException we) {
 			throw we;
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
