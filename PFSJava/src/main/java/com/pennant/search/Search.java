@@ -431,10 +431,6 @@ public class Search implements IMutableSearch, Serializable {
 		return this;
 	}
 
-	public void clearPaging() {
-		SearchUtil.clearPaging(this);
-	}
-
 	/**
 	 * Create a copy of this search. All collections are copied into new collections, but them items in those
 	 * collections are not duplicated; they still point to the same objects.
