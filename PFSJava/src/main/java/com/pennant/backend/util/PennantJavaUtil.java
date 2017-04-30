@@ -357,6 +357,7 @@ public class PennantJavaUtil {
 	private static String scoreGrpWF = "SCORGRP";
 	private static String comInvenWF = "COMMODITY_INVENTORY";
 	private static String realizationWF   = "REALIZATION_PROCESS";
+	private static String receiptCancelWF   = "BOUNCE_PROCESS";
 
 	public static String getLabel(String label) {
 		if(StringUtils.isEmpty(StringUtils.trimToEmpty(label))){
@@ -1242,8 +1243,12 @@ public class PennantJavaUtil {
 				"FinanceMain", "FinanceMain_AView" }, finMaintainWF, new String[] { "FinReference", "NumberOfTerms" },
 				null, 300));
 		
-		ModuleUtil.register("FinReceiptHeader", new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] {
+		ModuleUtil.register("ReceiptRealization", new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] {
 				"FinReceiptHeader" }, realizationWF, new String[] { "ReceiptID", "ReceiptPurpose" },
+				null, 300));
+		
+		ModuleUtil.register("ReceiptCancellation", new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] {
+				"FinReceiptHeader" }, receiptCancelWF, new String[] { "ReceiptID", "ReceiptPurpose" },
 				null, 300));
 
 		ModuleUtil.register("EarlyPayment", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {

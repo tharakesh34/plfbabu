@@ -654,9 +654,27 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		List<FinReceiptDetail> receiptDetailList = receiptHeader.getReceiptDetails();
 		
 		profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
-		boolean isSchdRegenerated = false;
 		Map<Long, List<Object>> returnPostingsMap = new HashMap<>();
 		List<FinanceScheduleDetail> schdList = scheduleData.getFinanceScheduleDetails();
+		
+		//Create log entry for Action for Schedule Modification
+		FinLogEntryDetail entryDetail = null;
+		long logKey = 0;
+		if(receiptHeader.getAllocations() != null && !receiptHeader.getAllocations().isEmpty()){
+			entryDetail = new FinLogEntryDetail();
+			entryDetail.setFinReference(finReference);
+			entryDetail.setEventAction(receiptHeader.getReceiptPurpose());
+			entryDetail.setSchdlRecal(false);
+			entryDetail.setPostDate(DateUtility.getAppDate());
+			entryDetail.setReversalCompleted(false);
+			logKey = getFinLogEntryDetailDAO().save(entryDetail);
+
+			//Save Schedule Details For Future Modifications
+			FinScheduleData oldFinSchdData = getFinSchDataByFinRef(finReference, "");
+			oldFinSchdData.setFinanceMain(financeMain);
+			oldFinSchdData.setFinReference(finReference);
+			listSave(oldFinSchdData, "_Log", logKey);
+		}
 		
 		for (int i = 0; i < receiptDetailList.size(); i++) {
 			
@@ -691,6 +709,23 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					continue;
 				}
 				
+				//Create log entry for Action for Schedule Modification
+				if(i != 0 && j == 0){
+					entryDetail = new FinLogEntryDetail();
+					entryDetail.setFinReference(finReference);
+					entryDetail.setEventAction(receiptHeader.getReceiptPurpose());
+					entryDetail.setSchdlRecal(true);
+					entryDetail.setPostDate(DateUtility.getAppDate());
+					entryDetail.setReversalCompleted(false);
+					logKey = getFinLogEntryDetailDAO().save(entryDetail);
+
+					//Save Schedule Details For Future Modifications
+					scheduleData.setFinanceMain(financeMain);
+					scheduleData.setFinReference(finReference);
+					scheduleData.setFinanceScheduleDetails(schdList);
+					listSave(scheduleData, "_Log", logKey);
+				}
+				
 				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
 				List<Object> returnList = getRepayProcessUtil().processRepaymentPostings(financeMain, schdList,
 						profitDetail, repaySchdList, getEventCode(repayHeader.getFinEvent()));
@@ -711,34 +746,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					financeMain.setFinAccount(finAccount);
 				}
 				schdList = (List<FinanceScheduleDetail>) returnList.get(3);
-				
-				if(!isSchdRegenerated && (StringUtils.isNotEmpty(receiptHeader.getEffectSchdMethod()) &&
-						!StringUtils.equals(PennantConstants.List_Select, receiptHeader.getEffectSchdMethod()))){
-					isSchdRegenerated = true;
-				}
 			}
 		}
 
 		tranType = PennantConstants.TRAN_UPD;
 		financeMain.setRecordType("");
 
-		//Create log entry for Action for Schedule Modification
-		FinLogEntryDetail entryDetail = new FinLogEntryDetail();
-		entryDetail.setFinReference(finReference);
-		entryDetail.setEventAction(receiptHeader.getReceiptPurpose());
-		entryDetail.setSchdlRecal(isSchdRegenerated);
-		entryDetail.setPostDate(DateUtility.getAppDate());
-		entryDetail.setReversalCompleted(false);
-		long logKey = getFinLogEntryDetailDAO().save(entryDetail);
-
-		//Save Schedule Details For Future Modifications
-		if (isSchdRegenerated) {
-			FinScheduleData oldFinSchdData = getFinSchDataByFinRef(finReference, "");
-			oldFinSchdData.setFinanceMain(financeMain);
-			oldFinSchdData.setFinReference(finReference);
-			listSave(oldFinSchdData, "_Log", logKey);
-		}
-		
 		// Update Status Details and Profit Details
 		financeMain = getRepayProcessUtil().updateStatus(financeMain, DateUtility.getAppDate(), schdList, profitDetail);
 
