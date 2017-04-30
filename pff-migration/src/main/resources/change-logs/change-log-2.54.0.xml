@@ -1829,4 +1829,12 @@ update reportconfiguration set reportjaspername='NPA_Reports' where menuitemcode
 			   PartnerBanks T3 ON T1.FundingAc  = T3.PartnerBankID
 		</createView>
 	</changeSet>
+	
+	<changeSet author="Kesav" id="94">
+		<dropColumn tableName="SMTDivisionDetail" columnName="EntityID"/>
+		<dropColumn tableName="SMTDivisionDetail" columnName="ENTITYCODE"/>
+	</changeSet>
+	<changeSet author="Kesav" id="95">
+		<dropColumn tableName="SMTDivisionDetail_Temp" columnName="EntityID"/>
+	</changeSet>
 </databaseChangeLog>
