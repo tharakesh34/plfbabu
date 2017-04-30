@@ -189,13 +189,14 @@ public class EodService {
 		custEODEvents = accrualService.processAccrual(custEODEvents);
 
 		//Auto disbursements
-		autoDisbursementService.processDisbursementPostings(connection, custId, date);
-
-		//receipt postings
-		receiptPaymentService.processrReceipts(connection, custId, date, custEODEvents);
+		//autoDisbursementService.processDisbursementPostings(connection, custId, date);
 
 		//installment 
 		installmentDueService.processDueDatePostings(connection, custId, date);
+		
+		
+		//receipt postings
+		//receiptPaymentService.processrReceipts(connection, custId, date, custEODEvents);
 
 		//Date and holiday check
 		Date nextDate = DateUtility.addDays(date, 1);
