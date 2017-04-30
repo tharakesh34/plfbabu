@@ -32,9 +32,9 @@ public class Filter implements Serializable {
 	public static final int		OP_GREATER_THAN		= 3;
 	public static final int		OP_LESS_OR_EQUAL	= 4;
 	public static final int		OP_GREATER_OR_EQUAL	= 5;
+	public static final int		OP_LIKE				= 6;
 	public static final int		OP_NULL				= 10;
 	public static final int		OP_NOT_NULL			= 11;
-	public static final int		OP_LIKE				= 6;
 	public static final int		OP_BETWEEN			= 300;	// Not implemented.
 	public static final int		OP_IN				= 8;
 	public static final int		OP_NOT_IN			= 9;
@@ -50,16 +50,17 @@ public class Filter implements Serializable {
 	/**
 	 * The value to compare the property with. Should be of a compatible type with the property.
 	 */
-	protected Object			value;
+	private Object				value;
 
 	/**
 	 * The type of comparison to do between the property and the value.<br/>
-	 * Operators: <code>OP_EQUAL, OP_NOT_EQUAL, OP_LESS_THAN, OP_GREATER_THAN, OP_LESS_OR_EQUAL, OP_GREATER_OR_EQUAL, 
-	 * OP_NULL, OP_NOT_NULL, OP_LIKE, OP_IN, OP_NOT_IN, OP_AND, OP_OR, OP_NOT</code>
+	 * Operators:
+	 * <code>OP_EQUAL, OP_NOT_EQUAL, OP_LESS_THAN, OP_GREATER_THAN, OP_LESS_OR_EQUAL, OP_GREATER_OR_EQUAL, OP_LIKE,
+	 * OP_NULL, OP_NOT_NULL, OP_IN, OP_NOT_IN, OP_AND, OP_OR, OP_NOT</code>
 	 */
-	protected int				operator;
+	private int					operator;
 
-	public Filter() {
+	protected Filter() {
 		super();
 	}
 
