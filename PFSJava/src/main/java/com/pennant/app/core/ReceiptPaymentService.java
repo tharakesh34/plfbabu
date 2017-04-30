@@ -18,6 +18,8 @@ import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 
 public class ReceiptPaymentService extends ServiceHelper {
@@ -52,13 +54,26 @@ public class ReceiptPaymentService extends ServiceHelper {
 			sqlStatement.setLong(2, custId);
 			resultSet = sqlStatement.executeQuery();
 			while (resultSet.next()) {
-				FinReceiptHeader header = new FinReceiptHeader();
-				List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
 
 				finref = resultSet.getString("FINREFERENCE");
 				Date schDate = resultSet.getDate("SchDate");
 				BigDecimal advanceAmt = getDecimal(resultSet, "ADVANCEAMT");
 				BigDecimal presentmentAmt = getDecimal(resultSet, "PRESENTMENTAMT");
+
+				FinReceiptHeader header = new FinReceiptHeader();
+				header.setReference(finref);
+				header.setReceiptDate(valuedDate);
+				header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+				header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
+
+				header.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
+				header.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+				header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
+				header.setReceiptAmount(advanceAmt.add(presentmentAmt));
+				header.setEffectSchdMethod(PennantConstants.List_Select);
+				header.setReceiptModeStatus(RepayConstants.PAYSTATUS_APPROVED);
+
+				List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
 
 				FinEODEvent eodEvent = getFinEODEvent(custEODEvents, finref);
 				FinanceMain financeMain = eodEvent.getFinanceMain();
@@ -86,7 +101,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 					receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 					receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 					receiptDetail.setPaymentType(RepayConstants.PAYTYPE_PRESENTMENT);
-					receiptDetail.setPayAgainstID(0);
+					receiptDetail.setPayAgainstID(resultSet.getLong("EXCESSID"));
 					receiptDetail.setAmount(presentmentAmt);
 					receiptDetail.setValueDate(schDate);
 					receiptDetail.setReceivedDate(businessDate);
