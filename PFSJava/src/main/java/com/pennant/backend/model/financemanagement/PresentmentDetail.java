@@ -83,6 +83,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private String mandateType;
 	private String mandateStatus;
 	private Date mandateExpiryDate;
+	private String finCcy;
 
 	public String getMandateStatus() {
 		return mandateStatus;
@@ -340,6 +341,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setPresentmentRef(String presentmentRef) {
 		this.presentmentRef = presentmentRef;
+	}
+
+	public String getFinCcy() {
+		return finCcy;
+	}
+
+	public void setFinCcy(String finCcy) {
+		this.finCcy = finCcy;
 	}
 
 }

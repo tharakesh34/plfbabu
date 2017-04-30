@@ -122,7 +122,7 @@ public class RepayConstants {
 	public static final int PEXC_MANDATE_EXPIRY = 5;
 	public static final int PEXC_MANUAL_EXCLUDE = 6;
 
-	// Presentment Exclude Reasons
+	// Presentment Status Reasons
 	public static final int PEXC_EXTRACT = 1;
 	public static final int PEXC_BATCH_CREATED = 2;
 	public static final int PEXC_AWAITING_CONF = 3;

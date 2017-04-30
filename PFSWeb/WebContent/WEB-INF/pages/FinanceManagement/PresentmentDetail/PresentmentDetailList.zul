@@ -45,6 +45,8 @@
 					<listbox id="listBoxPresentmentDetail" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"  multiple="false" sizedByContent="true" span="true">
 						<listhead sizable="true">
 								<listheader id="listheader_BatchId" label="${c:l('listheader_BatchId.label')}" hflex="min" />
+								<listheader id="listheader_InstDate" label="${c:l('listheader_InstDate.label')}" hflex="min" />
+								<listheader id="listheader_MandateType" label="${c:l('listheader_MandateType.label')}" hflex="min" />
 								<listheader id="listheader_CreatedBy" label="${c:l('listheader_CreatedBy.label')}"  hflex="min" />
 								<listheader id="listheader_CreatedDate" label="${c:l('listheader_CreatedDate.label')}"  hflex="min" />
 								<listheader id="listheader_Status" label="${c:l('listheader_Status.label')}" hflex="min" />

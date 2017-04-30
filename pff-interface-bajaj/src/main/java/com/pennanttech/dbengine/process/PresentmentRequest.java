@@ -173,9 +173,9 @@ public class PresentmentRequest extends DBProcessEngine {
 
 			String mnadteType = getValue(rs, "MANDATETYPE");
 			if (StringUtils.equals(mnadteType, "ECS") || StringUtils.equals(mnadteType, "DDM")) {
-				ps.setString(13, "405");// getValue(rs, "PARTNERBANKCODE")
+				ps.setString(13, "405");
 			} else {
-				ps.setString(11, StringUtils.substring(getValue(rs, "BRANCHCODE"), 0, 3));// BRANCHCODE code is 6 but in doc 3
+				ps.setString(11, getValue(rs, "BRANCHSWIFTBRNCDE"));
 			}
 
 			ps.setString(14, getValue(rs, "PresentmentRef"));
@@ -190,7 +190,7 @@ public class PresentmentRequest extends DBProcessEngine {
 			ps.setDate(22, getDateValue(rs, "STARTDATE"));
 			ps.setDate(23, getDateValue(rs, "EXPIRYDATE"));
 
-			if (StringUtils.equals(mnadteType, "ECS")) {
+			if (StringUtils.equals(mnadteType, "ECS")) {//FIXME consants
 				ps.setString(24, "E");
 			} else if (StringUtils.equals(mnadteType, "DDM")) {
 				ps.setString(24, "D");
@@ -204,7 +204,7 @@ public class PresentmentRequest extends DBProcessEngine {
 			// SOURCE_CODE
 			ps.setInt(28, 1);//getIntValue(rs, "ENTITYCODE")
 			ps.setDate(29, com.pennanttech.pff.core.util.DateUtil.getSqlDate(com.pennanttech.pff.core.util.DateUtil.getSysDate()));
-			ps.setString(30, Status.N.name());
+			ps.setString(30, Status.N.name());//FIXME remove fileld
 
 			// execute query
 			ps.executeUpdate();

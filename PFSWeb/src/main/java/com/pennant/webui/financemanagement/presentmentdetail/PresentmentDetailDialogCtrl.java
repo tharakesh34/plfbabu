@@ -61,11 +61,13 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pff.core.Literal;
@@ -90,8 +92,8 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 	protected ExtendedCombobox partnerBank;
 
 	protected Tab includeTab;
-	protected Tab manualTab;
-	protected Tab excludeTab;
+	protected Tab manualExcludeTab;
+	protected Tab autoExcludeTab;
 
 	private Map<Long, PresentmentDetail> includeMap = new HashMap<Long, PresentmentDetail>();
 	private Map<Long, PresentmentDetail> excludeMap = new HashMap<Long, PresentmentDetail>();
@@ -136,14 +138,8 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 			// Get the required arguments.
 			this.presentmentDetailListCtrl = (PresentmentDetailListCtrl) arguments.get("presentmentDetailListCtrl");
 			this.presentmentId = (long) arguments.get("PresentmentId");
+			
 			doShowDialog(this.presentmentId);
-
-			this.partnerBank.setMaxlength(LengthConstants.LEN_MASTER_CODE);
-			this.partnerBank.setModuleName("PartnerBank");
-			this.partnerBank.setValueColumn("PartnerBankId");
-			this.partnerBank.setDescColumn("PartnerBankCode");
-			this.partnerBank.setDescColumn("PartnerBankCode");
-			this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
 
 		} catch (Exception e) {
 			logger.error("Exception:", e);
@@ -154,6 +150,24 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 		logger.debug(Literal.LEAVING);
 	}
 
+	
+	private void doSetFieldProperties(){
+		logger.debug(Literal.ENTERING);
+		this.partnerBank.setMaxlength(LengthConstants.LEN_MASTER_CODE);
+		this.partnerBank.setModuleName("PartnerBank");
+		this.partnerBank.setValueColumn("PartnerBankId");
+		this.partnerBank.setDescColumn("PartnerBankCode");
+		this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
+		this.partnerBank.setMandatoryStyle(true);
+		
+		this.listBox_Include.setHeight(getListBoxHeight(3));
+		this.listBox_ManualExclude.setHeight(getListBoxHeight(3));
+		this.listBox_AutoExclude.setHeight(getListBoxHeight(3));
+		
+		logger.debug(Literal.LEAVING);
+	}
+	
+	
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
@@ -233,8 +247,8 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 		for (PresentmentDetail presentmentDetail : includeList) {
 			this.includeMap.put(presentmentDetail.getId(), presentmentDetail);
 		}
-		doFillList(includeList, listBox_Include, 1);
-		doFillList(excludeList, listBox_AutoExclude, 3);
+		doFillList(includeList, listBox_Include);
+		doFillList(excludeList, listBox_AutoExclude);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -256,11 +270,11 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 			}
 		}
 
-		doFillList(new ArrayList<PresentmentDetail>(includeMap.values()), listBox_Include, 1);
-		doFillList(new ArrayList<PresentmentDetail>(excludeMap.values()), listBox_ManualExclude, 2);
+		doFillList(new ArrayList<PresentmentDetail>(includeMap.values()), listBox_Include);
+		doFillList(new ArrayList<PresentmentDetail>(excludeMap.values()), listBox_ManualExclude);
 
-		this.excludeTab.setSelected(true);
-		this.manualTab.setSelected(true);
+		this.autoExcludeTab.setSelected(true);
+		this.manualExcludeTab.setSelected(true);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -281,8 +295,8 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 			}
 		}
 
-		doFillList(new ArrayList<PresentmentDetail>(includeMap.values()), listBox_Include, 1);
-		doFillList(new ArrayList<PresentmentDetail>(excludeMap.values()), listBox_ManualExclude, 2);
+		doFillList(new ArrayList<PresentmentDetail>(includeMap.values()), listBox_Include);
+		doFillList(new ArrayList<PresentmentDetail>(excludeMap.values()), listBox_ManualExclude);
 
 		this.includeTab.setSelected(true);
 
@@ -298,9 +312,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 	public void doShowDialog(long presentmentId) {
 		logger.debug(Literal.LEAVING);
 
-		this.listBox_Include.setHeight(getListBoxHeight(3));
-		this.listBox_ManualExclude.setHeight(getListBoxHeight(5));
-		this.listBox_AutoExclude.setHeight(getListBoxHeight(4));
+		doSetFieldProperties();
 
 		doWriteBeanToComponents(presentmentId);
 
@@ -319,13 +331,15 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void doFillList(List<PresentmentDetail> presentmentDetailList, Listbox listbox, int typeOfList) {
+	public void doFillList(List<PresentmentDetail> presentmentDetailList, Listbox listbox) {
 		logger.debug("Entering");
 
 		if (presentmentDetailList != null && !presentmentDetailList.isEmpty()) {
 			listbox.getItems().clear();
 			Listcell lc;
+			int format = 0;
 			for (PresentmentDetail presentmentDetail : presentmentDetailList) {
+				format = CurrencyUtil.getFormat(presentmentDetail.getFinCcy());
 				Listitem item = new Listitem();
 				lc = new Listcell(presentmentDetail.getCustomerName());
 				lc.setParent(item);
@@ -339,8 +353,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 				lc = new Listcell(DateUtility.formatToLongDate(presentmentDetail.getSchDate()));
 				lc.setParent(item);
 
-				lc = new Listcell(PennantApplicationUtil.formatRate(
-						presentmentDetail.getPresentmentAmt().doubleValue(), 9));
+				lc = new Listcell(PennantAppUtil.amountFormate(presentmentDetail.getPresentmentAmt(), format));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 

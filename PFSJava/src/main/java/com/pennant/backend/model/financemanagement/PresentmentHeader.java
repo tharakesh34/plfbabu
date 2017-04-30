@@ -63,6 +63,7 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 	private String mandateType;
 	private String loanType;
 	private String finBranch;
+	private Date schDate;
 	private String searchField1;
 	private String searchField2;
 	private String searchField3;
@@ -206,6 +207,14 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 
 	public void setPresentmentDate(Date presentmentDate) {
 		this.presentmentDate = presentmentDate;
+	}
+
+	public Date getSchDate() {
+		return schDate;
+	}
+
+	public void setSchDate(Date schDate) {
+		this.schDate = schDate;
 	}
 
 }

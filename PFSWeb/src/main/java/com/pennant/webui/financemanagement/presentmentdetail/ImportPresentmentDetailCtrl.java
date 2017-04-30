@@ -62,7 +62,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		String status = PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.getStatus();
 		timer.start();
 		this.importPresentments.render();
-		if (PennantConstants.FILESTATUS_STARTING.equals(status) || PennantConstants.FILESTATUS_FAILED.equals(status)) {
+		if (PennantConstants.FILESTATUS_STARTING.equals(status) || PennantConstants.FILESTATUS_FAILED.equals(status) || PennantConstants.FILESTATUS_SUCCESS.equals(status)) {
 			this.btnSave.setDisabled(false);
 			this.timer.stop();
 			this.btnUpload.setDisabled(false);

@@ -672,4 +672,5 @@ public class PennantConstants {
 	public static final String FILESTATUS_EXECUTING = "EXECUTING";
 	public static final String FILESTATUS_COMPLETED = "COMPLETED";
 	public static final String FILESTATUS_FAILED = "FAILED";
+	public static final String FILESTATUS_SUCCESS= "SUCCESS";
 }

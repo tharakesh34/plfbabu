@@ -1699,7 +1699,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 					financeDetail.getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
 					executingMap.putAll(feeRuleDetailsMap);
+					finType.getDeclaredFieldValues(executingMap);
+					financeMain.getDeclaredFieldValues(executingMap);
 
+					
 					//Accounting Execution for Maintenance
 					returnSetEntries = getEngineExecution().getAccEngineExecResults("Y", executingMap, false);
 

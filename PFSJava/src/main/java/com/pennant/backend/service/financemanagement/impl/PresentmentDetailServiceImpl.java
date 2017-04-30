@@ -122,6 +122,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 				Date schDate = rs.getDate("SCHDATE");
 				 if (schDate != null) {
 					if (!map.containsKey(schDate)) {
+						header.setSchDate(schDate);
 						presentmentId = savePresentmentHeaderDetails(header);
 						map.put(schDate, presentmentId);
 					}
@@ -129,43 +130,45 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentDeta
 				isEmptyRecords = true;
 
 				PresentmentDetail pDetail = new PresentmentDetail();
-				pDetail.setFinReference(rs.getString("FINREFERENCE"));
-
 				pDetail.setPresentmentId(presentmentId);
+				pDetail.setPresentmentAmt(BigDecimal.ZERO);
+				pDetail.setStatus(0);
+				pDetail.setExcludeReason(0);
+				pDetail.setPresentmentRef(getPresentmentRef(rs));
+				pDetail.setBounceID(presentmentId);
 
+				//Schedule Setup 
+				pDetail.setFinReference(rs.getString("FINREFERENCE"));
 				pDetail.setSchDate(rs.getDate("SCHDATE"));
-				pDetail.setMandateId(rs.getLong("MANDATEID"));
+				pDetail.setEmiNo(rs.getInt("EMINO"));
+				pDetail.setDefSchdDate(rs.getDate("DEFSCHDDATE"));
 
 				BigDecimal schAmtDue = rs.getBigDecimal("PROFITSCHD").add(rs.getBigDecimal("PRINCIPALSCHD"))
 						.add(rs.getBigDecimal("FEESCHD")).subtract(rs.getBigDecimal("SCHDPRIPAID"))
 						.subtract(rs.getBigDecimal("SCHDPFTPAID")).subtract(rs.getBigDecimal("SCHDFEEPAID"));
 
 				pDetail.setSchAmtDue(schAmtDue);
-				pDetail.setAdvanceAmt(schAmtDue);
 				pDetail.setSchPriDue(rs.getBigDecimal("PRINCIPALSCHD").subtract(rs.getBigDecimal("SCHDPRIPAID")));
 				pDetail.setSchPftDue(rs.getBigDecimal("PROFITSCHD").subtract(rs.getBigDecimal("SCHDPFTPAID")));
 				pDetail.setSchFeeDue(rs.getBigDecimal("FEESCHD").subtract(rs.getBigDecimal("SCHDFEEPAID")));
-				pDetail.setEmiNo(rs.getInt("EMINO"));
 				pDetail.setSchInsDue(BigDecimal.ZERO);
 				pDetail.setSchPenaltyDue(BigDecimal.ZERO);
+				pDetail.setAdvanceAmt(schAmtDue);
 				pDetail.setAdviseAmt(BigDecimal.ZERO);
-				pDetail.setPresentmentAmt(BigDecimal.ZERO);
-
-				pDetail.setBounceID(presentmentId);
-				pDetail.setStatus(RepayConstants.PEXC_EXTRACT);
-				pDetail.setExcludeReason(0);
+				
+				//Mandate Details 
+				pDetail.setMandateId(rs.getLong("MANDATEID"));
+				pDetail.setMandateExpiryDate(rs.getDate("EXPIRYDATE"));
+				pDetail.setMandateStatus(rs.getString("STATUS"));
+				pDetail.setMandateType(rs.getString("MANDATETYPE"));
+				
 				pDetail.setVersion(0);
 				pDetail.setLastMntBy(header.getLastMntBy());
 				pDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				pDetail.setRecordStatus("");
-				pDetail.setRoleCode("");
-				pDetail.setNextRoleCode("");
-				pDetail.setTaskId("");
-				pDetail.setNextTaskId("");
-				pDetail.setRecordType("");
 				pDetail.setWorkflowId(0);
-				pDetail.setPresentmentRef(getPresentmentRef(rs));
+				
 				doCalculations(pDetail, header);
+
 				if (pDetail.getExcessID() != null) {
 					finExcessAmountDAO.updateExcessAmount(pDetail.getExcessID(), "R", pDetail.getAdvanceAmt());
 				}

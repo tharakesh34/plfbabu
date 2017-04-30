@@ -149,14 +149,15 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 		int index = 0;
 		try {
 			sql = new StringBuilder();
-			sql.append(" SELECT T1.FINREFERENCE, T1.SCHDATE, PROFITSCHD, PRINCIPALSCHD, SCHDPRIPAID, SCHDPFTPAID, DEFSCHDDATE, ");
-			sql.append(" FEESCHD, SCHDFEEPAID, INSSCHD, T2.MANDATEID, T1.DEFSCHDDATE, T4.MANDATETYPE, T2.FINTYPE LOANTYPE, T5.BRANCHCODE, ");
+			sql.append(" SELECT T1.FINREFERENCE, T1.SCHDATE, PROFITSCHD, PRINCIPALSCHD, SCHDPRIPAID, SCHDPFTPAID, DEFSCHDDATE,");
+			sql.append(" FEESCHD, SCHDFEEPAID, INSSCHD, T2.MANDATEID, T1.DEFSCHDDATE, T4.MANDATETYPE, T4.STATUS,");
+			sql.append(" T4.EXPIRYDATE, T2.FINTYPE LOANTYPE, T5.BRANCHCODE,  ");
 			sql.append(" T1.INSTNUMBER EMINO, T2.FINBRANCH  FROM FINSCHEDULEDETAILS T1");
-			sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE  ");
-			sql.append(" INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE ");
-			sql.append(" INNER JOIN MANDATES T4 ON T4.MANDATEID = T2.MANDATEID ");
-			sql.append(" INNER JOIN RMTBRANCHES T5 ON T5.BRANCHCODE = T2.FINBRANCH ");
-			sql.append(" WHERE (REPAYONSCHDATE = ?) AND ((SCHDATE >= ? AND SCHDATE <= ?) ");
+			sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE");
+			sql.append(" INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE");
+			sql.append(" INNER JOIN MANDATES T4 ON T4.MANDATEID = T2.MANDATEID");
+			sql.append(" INNER JOIN RMTBRANCHES T5 ON T5.BRANCHCODE = T2.FINBRANCH");
+			sql.append(" WHERE (REPAYONSCHDATE = ?) AND ((SCHDATE >= ? AND SCHDATE <= ?)");
 			sql.append(" OR (DEFSCHDDATE >= ? AND DEFSCHDDATE <= ?)) ");
 
 			if (StringUtils.trimToNull(detailHeader.getMandateType()) != null) {
@@ -245,11 +246,11 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 
 		StringBuilder sql = new StringBuilder(" Insert into PresentmentHeader");
 		sql.append(" (Id, Reference, PresentmentDate, PartnerBankId, FromDate, ToDate, ");
-		sql.append("  Status, MandateType, FinBranch, SearchField1, SearchField2, SearchField3, ");
+		sql.append("  Status, MandateType, FinBranch, SearchField1, SearchField2, SearchField3, SchDate,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :Id, :Reference, :PresentmentDate, :PartnerBankId, :FromDate, :ToDate, ");
-		sql.append(" :Status, :MandateType, :FinBranch, :SearchField1, :SearchField2, :SearchField3, ");
+		sql.append(" :Status, :MandateType, :FinBranch, :SearchField1, :SearchField2, :SearchField3, :SchDate,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
@@ -363,11 +364,11 @@ public class PresentmentDetailDAOImpl extends BasisNextidDaoImpl<PresentmentDeta
 		MapSqlParameterSource source = null;
 
 		sql = new StringBuilder();
-		sql.append(" UPDATE PRESENTMENTDETAILS Set STATUS = :STATUS Where PRESENTMENTID = :PRESENTMENTID AND  ID in (:ID)");
+		sql.append(" UPDATE PRESENTMENTDETAILS Set EXCLUDEREASON = :EXCLUDEREASON Where PRESENTMENTID = :PRESENTMENTID AND  ID in (:ID)");
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
-		source.addValue("STATUS", mnualExclude);
+		source.addValue("EXCLUDEREASON", mnualExclude);
 		source.addValue("PRESENTMENTID", presentmentId);
 		source.addValue("ID", list);
 

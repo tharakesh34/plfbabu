@@ -118,6 +118,8 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 
 		registerField("Id");
 		registerField("Reference");
+		registerField("SchDate");
+		registerField("MandateType");
 		registerField("LastMntBy");
 		registerField("LastMntOn");
 		registerField("Status");
@@ -210,6 +212,12 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 			Listcell lc;
 
 			lc = new Listcell(object.getReference());
+			lc.setParent(item);
+			
+			lc = new Listcell(DateUtility.formatToLongDate(object.getSchDate()));
+			lc.setParent(item);
+
+			lc = new Listcell(PennantStaticListUtil.getlabelDesc(object.getMandateType(), PennantStaticListUtil.getMandateTypeList()));
 			lc.setParent(item);
 
 			lc = new Listcell(getUserWorkspace().getUserDetails().getUsername());

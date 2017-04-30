@@ -89,10 +89,9 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 					if ("F".equals(status)) {
 						UpdatePresentMentdetails(key, 1);
 					} else if ("S".equals(status)) {
-						UpdatePresentMentdetails(key, 0);
-					} else {
-						UpdatePresentMentdetails(key, 1);
+						UpdatePresentMentdetails(key, 2);
 					}
+					
 					successCount++;
 					if (isLogStatus()) {
 						saveBatchLog(key, "S", "Success.");
@@ -123,15 +122,16 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 					remarks.append(successCount);
 					remarks.append(", Failure: ");
 					remarks.append(failedCount + ".");
+					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(PennantConstants.FILESTATUS_FAILED);
 				} else {
 					remarks.append("Completed successfully, total Records: ");
 					remarks.append(recordCount);
 					remarks.append(", Sucess: ");
 					remarks.append(successCount + ".");
+					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(PennantConstants.FILESTATUS_SUCCESS);
 				}
 				// updateBatchStatus("S", remarks.toString());
 
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(PennantConstants.FILESTATUS_FAILED);
 			} else {
 				remarks.append(" Uploaded File is empty please verify once");
 				// updateBatchStatus("F", remarks.toString());
@@ -155,13 +155,13 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		}
 	}
 
-	private void UpdatePresentMentdetails(String key, int i) {
+	private void UpdatePresentMentdetails(String key, int status) {
 		logger.debug("Entering");
 
 		StringBuffer query = new StringBuffer();
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		query.append("Update Presentmentdetails set Status = :Status Where PRESENTMENTREF = :PRESENTMENTREF ");
-		source.addValue("Status", i);
+		source.addValue("Status", status);
 		source.addValue("PRESENTMENTREF", key);
 		try {
 			this.jdbcTemplate.update(query.toString(), source);
