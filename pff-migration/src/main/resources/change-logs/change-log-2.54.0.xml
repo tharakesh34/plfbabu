@@ -1341,4 +1341,40 @@ update reportconfiguration set reportjaspername='NPA_Reports' where menuitemcode
     inner join RMTCURRENCIES C on C.ccycode= T2.finccy
 		</createView>
 </changeSet>
+
+	 <changeSet id="76" author="Siva">
+    	<sql>
+			DELETE FROM FinRepayScheduleDetail_Temp;
+			DELETE FROM FinRepayScheduleDetail;
+			DELETE FROM FinRepayHeader_Temp;
+			DELETE FROM FinRepayHeader;
+			DELETE FROM FinReceiptDetail_Temp;
+			DELETE FROM FinReceiptDetail;
+			DELETE FROM ReceiptAllocationDetail_Temp;
+			DELETE FROM ReceiptAllocationDetail;
+			DELETE FROM FinReceiptHeader_Temp;
+			DELETE FROM FinReceiptHeader;
+    	</sql>
+	</changeSet>
+
+	 <changeSet id="77" author="Siva">
+		<modifyDataType columnName="PaymentType" newDataType="varchar(8)"
+			tableName="FinReceiptDetail" />
+		<modifyDataType columnName="ChequeAcNo" newDataType="varchar(50)"
+			tableName="FinReceiptDetail" />
+		<modifyDataType columnName="FundingAc" newDataType="bigint"
+			tableName="FinReceiptDetail" />
+		<modifyDataType columnName="Remarks" newDataType="varchar(200)"
+			tableName="FinReceiptDetail" />
+	</changeSet>
+	 <changeSet id="78" author="Siva">
+		<modifyDataType columnName="PaymentType" newDataType="varchar(8)"
+			tableName="FinReceiptDetail_Temp" />
+		<modifyDataType columnName="ChequeAcNo" newDataType="varchar(50)"
+			tableName="FinReceiptDetail_Temp" />
+		<modifyDataType columnName="FundingAc" newDataType="bigint"
+			tableName="FinReceiptDetail_Temp" />
+		<modifyDataType columnName="Remarks" newDataType="varchar(200)"
+			tableName="FinReceiptDetail_Temp" />
+	</changeSet>
 </databaseChangeLog>
