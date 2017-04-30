@@ -198,6 +198,8 @@ public class AgreementDefinitionDialogCtrl extends
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"AgreementDefinitionDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 			if (arguments.containsKey("agreementDefinitionListCtrl")) {
 				setAgreementDefinitionListCtrl((AgreementDefinitionListCtrl) arguments
@@ -262,8 +264,6 @@ public class AgreementDefinitionDialogCtrl extends
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed(
 				"button_AgreementDefinitionDialog_btnNew"));

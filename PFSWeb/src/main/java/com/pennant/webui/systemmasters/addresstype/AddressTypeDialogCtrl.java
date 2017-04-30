@@ -158,6 +158,8 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"AddressTypeDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			
@@ -203,8 +205,6 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_AddressTypeDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_AddressTypeDialog_btnEdit"));

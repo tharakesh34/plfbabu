@@ -163,6 +163,8 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"CityDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// READ OVERHANDED parameters !
@@ -228,7 +230,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering ");
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
+	
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CityDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CityDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CityDialog_btnDelete"));

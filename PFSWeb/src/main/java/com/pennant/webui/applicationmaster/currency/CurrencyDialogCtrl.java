@@ -174,6 +174,8 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl<Currency> {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"CurrencyDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// READ OVERHANDED parameters !
@@ -261,7 +263,6 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl<Currency> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering ");
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CurrencyDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CurrencyDialog_btnEdit"));

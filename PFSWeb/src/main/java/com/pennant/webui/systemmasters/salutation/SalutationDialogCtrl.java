@@ -159,6 +159,8 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"SalutationDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// READ OVERHANDED parameters !
@@ -207,7 +209,6 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_SalutationDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SalutationDialog_btnEdit"));

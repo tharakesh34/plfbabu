@@ -162,8 +162,8 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 			if (arguments.containsKey("industryListCtrl")) {
 				setIndustryListCtrl((IndustryListCtrl) arguments
 						.get("industryListCtrl"));
-			} else {
-				setIndustryListCtrl(null);
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// set Field Properties
@@ -208,7 +208,6 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_IndustryDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_IndustryDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_IndustryDialog_btnDelete"));

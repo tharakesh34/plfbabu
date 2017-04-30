@@ -153,6 +153,8 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"BankDetailDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// READ OVERHANDED parameters !
@@ -209,7 +211,6 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_BankDetailDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_BankDetailDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_BankDetailDialog_btnDelete"));

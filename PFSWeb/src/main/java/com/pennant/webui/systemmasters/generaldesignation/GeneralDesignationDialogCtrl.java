@@ -152,6 +152,8 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"GeneralDesignationDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// READ OVERHANDED params !
@@ -201,7 +203,6 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		
 		this.btnNew.setVisible(getUserWorkspace().isAllowed(
 				"button_GeneralDesignationDialog_btnNew"));

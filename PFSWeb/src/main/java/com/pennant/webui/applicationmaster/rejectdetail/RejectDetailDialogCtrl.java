@@ -154,6 +154,8 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "RejectDetailDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// READ OVERHANDED parameters !
@@ -205,7 +207,6 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_RejectDetailDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_RejectDetailDialog_btnEdit"));

@@ -167,6 +167,8 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 			if (isWorkFlowEnabled() && !enqModule) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "BankBranchDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// READ OVERHANDED parameters !
@@ -236,8 +238,6 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		getUserWorkspace().allocateAuthorities("BankBranchDialog", getRole());
-		
 		if(!enqModule){
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_BankBranchDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_BankBranchDialog_btnEdit"));

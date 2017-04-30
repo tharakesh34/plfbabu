@@ -158,6 +158,8 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"EMailTypeDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// READ OVERHANDED parameters !
@@ -213,7 +215,6 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_EMailTypeDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_EMailTypeDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_EMailTypeDialog_btnDelete"));

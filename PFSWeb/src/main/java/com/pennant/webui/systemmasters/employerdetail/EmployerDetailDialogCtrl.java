@@ -595,7 +595,6 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering") ;
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
 		if(!enqModule){
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_EmployerDetailDialog_btnNew"));

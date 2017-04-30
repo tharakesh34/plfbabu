@@ -160,6 +160,8 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"CountryDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// READ OVERHANDED parameters !
@@ -226,7 +228,6 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CountryDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CountryDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CountryDialog_btnDelete"));

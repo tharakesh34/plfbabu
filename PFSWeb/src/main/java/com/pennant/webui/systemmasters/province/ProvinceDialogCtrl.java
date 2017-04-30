@@ -158,6 +158,8 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"ProvinceDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// READ OVERHANDED parameters !
@@ -213,7 +215,6 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_ProvinceDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_ProvinceDialog_btnEdit"));

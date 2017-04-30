@@ -401,7 +401,6 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering") ;
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		if(!enqModule){
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FlagsDialog_btnNew"));
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FlagsDialog_btnEdit"));

@@ -390,8 +390,10 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 			this.btnCancel.setVisible(true);
 		}
 
-		this.suspTrigger.setDisabled(false);//TODO:Right Name
-		//this.alwPromotion.setDisabled(isReadOnly("DivisionDetailDialog_AlwPromotion"));
+		//this.suspTrigger.setDisabled(false);//TODO:Right Name
+		this.alwPromotion.setDisabled(isReadOnly("DivisionDetailDialog_Active"));
+		this.suspTrigger.setDisabled(isReadOnly("DivisionDetailDialog_Active"));
+		this.divisionSuspRemarks.setReadonly(isReadOnly("DivisionDetailDialog_Active"));
 		this.alwPromotion.setDisabled(true);
 		
         this.active.setDisabled(isReadOnly("DivisionDetailDialog_Active"));
@@ -466,7 +468,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering") ;
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
+		
 		if(!enqModule){
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_DivisionDetailDialog_btnNew"));
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_DivisionDetailDialog_btnEdit"));

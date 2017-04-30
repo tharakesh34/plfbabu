@@ -160,6 +160,8 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"IncomeTypeDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// READ OVERHANDED parameters !
@@ -210,7 +212,6 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_IncomeTypeDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_IncomeTypeDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_IncomeTypeDialog_btnDelete"));

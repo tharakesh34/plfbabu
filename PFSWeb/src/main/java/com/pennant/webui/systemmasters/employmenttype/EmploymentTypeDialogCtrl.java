@@ -154,6 +154,8 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"EmploymentTypeDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// READ OVERHANDED parameters !
@@ -201,7 +203,6 @@ public class EmploymentTypeDialogCtrl extends GFCBaseCtrl<EmploymentType> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		this.btnNew.setVisible(getUserWorkspace().isAllowed(
 				"button_EmploymentTypeDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed(

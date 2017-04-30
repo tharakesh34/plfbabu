@@ -157,6 +157,8 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"TransactionCodeDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// READ OVERHANDED parameters !
@@ -210,8 +212,6 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering") ;
-		
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_TransactionCodeDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_TransactionCodeDialog_btnEdit"));

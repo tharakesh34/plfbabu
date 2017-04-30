@@ -125,7 +125,9 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"BlacklistCustomerDialog");
-			}
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
+			}	
 
 			// READ OVERHANDED parameters !
 			// we get the currencyListWindow controller. So we have access
@@ -199,7 +201,6 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering ");
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed(
 				"button_blacklistCustomerList_btnNew"));

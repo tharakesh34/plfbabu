@@ -154,6 +154,8 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 		if (isWorkFlowEnabled()){
 			this.userAction	= setListRecordStatus(this.userAction);
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerTypeDialog");
+		}else{
+			getUserWorkspace().allocateAuthorities(super.pageRightName);
 		}
 	
 		// READ OVERHANDED parameters !
@@ -202,8 +204,6 @@ public class CustomerTypeDialogCtrl extends GFCBaseCtrl<CustomerType> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CustomerTypeDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerTypeDialog_btnEdit"));

@@ -209,6 +209,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"BranchDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// READ OVERHANDED parameters !
@@ -322,7 +324,6 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_BranchDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_BranchDialog_btnEdit"));

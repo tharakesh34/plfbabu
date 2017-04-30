@@ -150,6 +150,8 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"DesignationDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// READ OVERHANDED parameters !
@@ -204,7 +206,6 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_DesignationDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_DesignationDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_DesignationDialog_btnDelete"));

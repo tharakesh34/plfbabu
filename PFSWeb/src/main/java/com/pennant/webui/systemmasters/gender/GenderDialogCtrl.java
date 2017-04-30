@@ -149,6 +149,8 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"GenderDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// READ OVERHANDED parameters !
@@ -196,8 +198,6 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_GenderDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_GenderDialog_btnEdit"));

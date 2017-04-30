@@ -155,6 +155,8 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"SectorDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// READ OVERHANDED parameters !
@@ -202,7 +204,6 @@ public class SectorDialogCtrl extends GFCBaseCtrl<Sector> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_SectorDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SectorDialog_btnEdit"));

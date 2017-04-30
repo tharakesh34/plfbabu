@@ -165,6 +165,8 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"BaseRateDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// READ OVERHANDED parameters !
@@ -234,7 +236,6 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed(
 				"button_BaseRateDialog_btnNew"));
