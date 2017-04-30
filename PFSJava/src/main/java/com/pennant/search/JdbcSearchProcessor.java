@@ -509,18 +509,12 @@ public class JdbcSearchProcessor implements Serializable {
 	 * @return The Oracle limit rows statement.
 	 */
 	private String getOracleLimitRowsSql(String sql, int offset, int pageSize) {
-		StringBuilder result = new StringBuilder();
+		StringBuilder result = new StringBuilder(sql);
 
-		if (offset > 0) {
-			result.append("select * from ( select row_.*, rownum rownum_ from ( ");
+		if (offset <= 0) {
+			result.append(" fetch first ").append(pageSize).append(" rows only");
 		} else {
-			result.append("select * from ( ");
-		}
-		result.append(sql);
-		if (offset > 0) {
-			result.append(" ) row_ ) where rownum_ <= " + (pageSize + offset) + " and rownum_ > " + offset);
-		} else {
-			result.append(" ) where rownum <= " + pageSize);
+			result.append(" offset ").append(offset).append(" rows fetch next ").append(pageSize).append(" rows only");
 		}
 
 		return result.toString();
