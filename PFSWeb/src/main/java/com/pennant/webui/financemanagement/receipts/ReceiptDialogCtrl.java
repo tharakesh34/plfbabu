@@ -369,6 +369,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private Map<String, BigDecimal> paidAllocationMap = new HashMap<>();
 	private String recordType = "";
 	private int version = 0;
+	private FinanceMain befImage;
 	
 	/**
 	 * default constructor.<br>
@@ -400,7 +401,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		try {
 			if (arguments.containsKey("repayData")) {
 				setReceiptData((FinReceiptData) arguments.get("repayData"));
-				FinanceMain befImage = new FinanceMain();
 				financeDetail = getReceiptData().getFinanceDetail();
 				financeType = financeDetail.getFinScheduleData().getFinanceType();
 				setFinanceDetail(financeDetail);
@@ -1824,6 +1824,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		aFinanceMain.setNextUserId(this.curNextUserId);
 		aFinanceMain.setRecordType(recordType);
 		aFinanceMain.setVersion(version);
+		aFinanceMain.setBefImage(befImage);
 		
 		// Receipt Header Details workflow fields
 		FinReceiptHeader receiptHeader = data.getReceiptHeader();

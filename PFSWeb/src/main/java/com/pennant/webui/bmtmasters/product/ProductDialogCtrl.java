@@ -194,6 +194,8 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"ProductDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// READ OVERHANDED parameters !
@@ -288,8 +290,6 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed(
 				"button_ProductDialog_btnNew"));

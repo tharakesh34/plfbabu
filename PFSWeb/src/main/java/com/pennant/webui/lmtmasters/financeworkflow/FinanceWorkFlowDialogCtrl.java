@@ -211,6 +211,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), dialogName);
+			}else{
+				getUserWorkspace().allocateAuthorities(dialogName);
 			}
 
 			// READ OVERHANDED parameters !
@@ -315,8 +317,6 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering") ;
-
-		getUserWorkspace().allocateAuthorities(dialogName);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnEdit"));

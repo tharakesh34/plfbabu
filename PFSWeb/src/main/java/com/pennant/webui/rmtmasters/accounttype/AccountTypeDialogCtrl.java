@@ -191,6 +191,8 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(),
 						"AccountTypeDialog");
+			}else{
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 
 			// READ OVERHANDED parameters !
@@ -278,7 +280,6 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed(
 				"button_AccountTypeDialog_btnNew"));

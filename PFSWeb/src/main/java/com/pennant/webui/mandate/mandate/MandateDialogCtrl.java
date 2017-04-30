@@ -397,7 +397,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
 		if (!enqModule) {
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_MandateDialog_btnNew"));
