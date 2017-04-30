@@ -1834,7 +1834,14 @@ update reportconfiguration set reportjaspername='NPA_Reports' where menuitemcode
 		<dropColumn tableName="SMTDivisionDetail" columnName="EntityID"/>
 		<dropColumn tableName="SMTDivisionDetail" columnName="ENTITYCODE"/>
 	</changeSet>
+	
 	<changeSet author="Kesav" id="95">
 		<dropColumn tableName="SMTDivisionDetail_Temp" columnName="EntityID"/>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="96">
+		<sql>
+			update Rules set SqlRule = 'if (reqFinAcType == ''BANK'') {	Result = DISBURSE ; return;  } else {	Result = reqFinType + reqFinAcType ; return; }' where rulecode ='GLCODE'; 
+		</sql>
 	</changeSet>
 </databaseChangeLog>
