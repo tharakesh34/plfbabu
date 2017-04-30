@@ -183,7 +183,7 @@
 		<menuItem id="menu_Item_Notifications" zulNavigation="/WEB-INF/pages/Mail/Notifications/NotificationsList.zul" rightName="menuItem_RulesFactory_Notifications"/>
 		<menuItem id="menu_Item_PoliceDedupParm" zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/PoliceDedupParmList.zul"  rightName="menuItem_RulesFactory_PoliceDedupParm"/>
 		<!-- <menuItem id="menu_Item_OverdueCharge" zulNavigation="/WEB-INF/pages/RulesFactory/OverdueCharge/OverdueChargeList.zul"  rightName="menuItem_RuleFactory_OverdueCharge"/> -->
-		<menuItem id="menu_Item_ProvisionRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/ProvisionList.zul"  />
+		<menuItem id="menu_Item_ProvisionRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/ProvisionList.zul"  rightName="menuItem_RulesFactory_ProvisionRules"/>
 		<menuItem id="menu_Item_RefundRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/RefundList.zul"   rightName="menuItem_RulesFactory_RefundRules"/>
 		<menuItem id="menu_Item_ScoringGroup" zulNavigation="/WEB-INF/pages/RulesFactory/ScoringGroup/ScoringGroupList.zul"  rightName="menuItem_RulesFactory_ScoringGroup"/>
 		<menuItem id="menu_Item_ScoringMetrics" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/ScoringRuleList.zul"   rightName="menuItem_RulesFactory_ScoringMetricRules"/>		
