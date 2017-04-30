@@ -262,7 +262,7 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	<!-- Finance Repayment -->
-	<bean id="financeRepaymentsDAO" class="com.pennant.backend.dao.Repayments.impl.FinanceRepaymentsDAOImpl" parent="basisCodeDAO">
+	<bean id="financeRepaymentsDAO" class="com.pennant.backend.dao.Repayments.impl.FinanceRepaymentsDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	<!-- Suspense Posting util -->
