@@ -30,7 +30,7 @@
 	<include file="change-logs/change-log-eod-audit.xml" />
 	<include file="change-logs/change-log-2.51.0-audit.xml" />
 	<include file="change-logs/change-log-2.52.0-audit.xml" />
-	<!-- <include file="change-logs/change-log-receipts-2.53.0-audit.xml" /> -->
+	<include file="change-logs/change-log-receipts-2.53.0-audit.xml" />
 	<include file="change-logs/change-log-2.53.0-audit.xml" />
 	<include file="change-logs/change-log-2.54.0-audit.xml" />
 </databaseChangeLog>
