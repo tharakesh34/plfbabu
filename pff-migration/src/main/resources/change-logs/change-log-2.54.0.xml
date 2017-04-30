@@ -1643,4 +1643,21 @@ update reportconfiguration set reportjaspername='NPA_Reports' where menuitemcode
 			<column name="EntityID" type="bigint"/>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet author="Kesav" id="83">
+		<sql>
+			Delete from RBFieldDetails where rbfldName ='Product' and RBModule = 'PROVSN' and RBEvent = 'PROVSN';
+			Delete from RBFieldDetails where rbfldName ='DueBucket' and RBModule = 'PROVSN' and RBEvent = 'PROVSN';
+			Delete from RBFieldDetails where rbfldName ='RestructureLoan' and RBModule = 'PROVSN' and RBEvent = 'PROVSN';
+			
+			INSERT INTO RBFieldDetails
+			VALUES ('PROVSN', 'PROVSN', 'Product', 'Product Code', 'nvarchar', 8, 0, 1, 'Product', 'static,global,dbvalue', 'Product');
+			
+			INSERT INTO RBFieldDetails
+			VALUES ('PROVSN', 'PROVSN', 'DueBucket', 'Loan bucket', 'int', 8, 0, 1, '  ', 'static,global', '  ');
+			
+			INSERT INTO RBFieldDetails
+			VALUES ('PROVSN', 'PROVSN', 'RestructureLoan', 'Restructure Loan', 'nchar', 1, 0, 1, '  ', 'static,global', '  ');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
