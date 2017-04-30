@@ -28,4 +28,10 @@
 		<column name="RejectReason" type="varchar(100)" />
 	</addColumn>
 </changeSet>
+
+	<changeSet author="Kesav" id="05">
+		<addColumn tableName="AdtSMTDivisionDetail">
+			<column name="EntityID" type="bigint"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
