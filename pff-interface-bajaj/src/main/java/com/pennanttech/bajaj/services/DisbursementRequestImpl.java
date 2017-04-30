@@ -42,9 +42,113 @@ public class DisbursementRequestImpl extends BajajServices implements Disburseme
 		thread.start();
 
 	}
-
-	private void processDisbursements(String finType, long userId, List<FinAdvancePayments> disbusments) {
+	
+	private int prepareRequest(String[] disbursments) throws Exception {
 		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource paramMap;
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" INSERT INTO DISBURSEMENT_REQUESTS SELECT");
+		sql.append(" ID,");
+		sql.append(" :BATCH_ID,");                      
+		sql.append(" DISBURSEMENT_ID,");               
+		sql.append(" CUSTCIF,");               
+		sql.append(" FINREFERENCE,");            
+		sql.append(" DISBURSEMENT_AMOUNT,");     
+		sql.append(" DISBURSEMENT_TYPE,");     
+		sql.append(" DISBURSEMENT_DATE,");       
+		sql.append(" DRAWEE_LOCATION,");        
+		sql.append(" PRINT_LOCATION,");          
+		sql.append(" CUSTOMER_NAME,");           
+		sql.append(" CUSTOMER_MOBILE,");          
+		sql.append(" CUSTOMER_EMAIL,");          
+		sql.append(" CUSTOMER_STATE,");          
+		sql.append(" CUSTOMER_CITY,");
+		sql.append(" CUSTOMER_ADDRESS1,");     
+		sql.append(" CUSTOMER_ADDRESS2,");     
+		sql.append(" CUSTOMER_ADDRESS3,");     
+		sql.append(" CUSTOMER_ADDRESS4,");     
+		sql.append(" CUSTOMER_ADDRESS5,");    
+		sql.append(" BENFICIARY_BANK,");         
+		sql.append(" BENFICIARY_BRANCH,");       
+		sql.append(" BENFICIARY_BRANCH_STATE,"); 
+		sql.append(" BENFICIARY_BRANCH_CITY,");  
+		sql.append(" MICR_CODE,");               
+		sql.append(" IFSC_CODE,");               
+		sql.append(" BENFICIARY_ACCOUNT,");               
+		sql.append(" BENFICIARY_NAME,");         
+		sql.append(" BENEFICIARY_MOBILE,");         
+		sql.append(" BENFICIRY_EMAIL,");        
+		sql.append(" BENFICIARY_STATE,");        
+		sql.append(" BENFICIARY_CITY,");         
+		sql.append(" BENFICIARY_ADDRESS1,");     
+		sql.append(" BENFICIARY_ADDRESS2,");     
+		sql.append(" BENFICIARY_ADDRESS3,");     
+		sql.append(" BENFICIARY_ADDRESS4,");     
+		sql.append(" BENFICIARY_ADDRESS5,");     
+		sql.append(" :PAYMENT_DETAIL1,");         
+		sql.append(" PAYMENT_DETAIL2,");         
+		sql.append(" PAYMENT_DETAIL3,");         
+		sql.append(" PAYMENT_DETAIL4,");        
+		sql.append(" PAYMENT_DETAIL5,");         
+		sql.append(" PAYMENT_DETAIL6,");         
+		sql.append(" PAYMENT_DETAIL7,"); 
+		sql.append(" :RESP_BATCH_ID,"); 
+		sql.append(" :TRANSACTIONREF,");
+		sql.append(" :CHEQUE_NUMBER,");
+		sql.append(" :DD_CHEQUE_CHARGE,");
+		sql.append(" :PAYMENT_DATE,");
+		sql.append(" STATUS,");                  
+		sql.append(" REMARKS,"); 
+		sql.append(" :REJECT_REASON");
+		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW ");
+		sql.append(" WHERE DISBURSEMENT_ID IN (:DISBURSEMENT_ID)");
+		
+		
+		paramMap = new MapSqlParameterSource();
+		paramMap.addValue("BATCH_ID", 0);
+		paramMap.addValue("PAYMENT_DETAIL1", getSMTParameter("DISB_FI_EMAIL", String.class));
+		paramMap.addValue("RESP_BATCH_ID", 0);
+		paramMap.addValue("TRANSACTIONREF", null);
+		paramMap.addValue("CHEQUE_NUMBER", null);
+		paramMap.addValue("DD_CHEQUE_CHARGE", null);
+		paramMap.addValue("PAYMENT_DATE", null);
+		paramMap.addValue("REJECT_REASON", null);
+		paramMap.addValue("DISBURSEMENT_ID", Arrays.asList(disbursments));
+		
+		try {
+			return namedJdbcTemplate.update(sql.toString(), paramMap);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		} finally {
+			paramMap = null;
+			sql = null;
+		}
+		
+		logger.debug(Literal.ENTERING);
+		
+		return 0;
+	}
+
+
+	private void processDisbursements(String finType, long userId, List<FinAdvancePayments> disbusments) throws Exception {
+		logger.debug(Literal.ENTERING);
+		
+		StringBuilder list = new StringBuilder();		
+		
+		for (FinAdvancePayments fa : disbusments) {
+			if (list.length() > 0) {
+				list.append(",");
+			}
+			list.append(fa.getPaymentId());
+		}
+
+		int count = prepareRequest(list.toString().split(","));
+		
+		if (count == 0) {
+			return;
+		}
+		
 		Map<String, StringBuilder> paymentTypes = new HashMap<>();
 		String partnerbankCode = null;
 		for (FinAdvancePayments disbursment : disbusments) {
@@ -82,6 +186,7 @@ public class DisbursementRequestImpl extends BajajServices implements Disburseme
 				process(paymentTypes, configName, partnerbankCode, finType, userId);
 			}
 		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -112,6 +217,7 @@ public class DisbursementRequestImpl extends BajajServices implements Disburseme
 
 		Map<String, Object> filterMap = new HashMap<>();
 		filterMap.put("PAYMENTID", paymentIds.toString());
+		filterMap.put("STATUS", "APPROVED");
 
 		Map<String, Object> parameterMap = new HashMap<>();
 		parameterMap.put("PRODUCT_CODE", StringUtils.trimToEmpty(finType));
@@ -163,7 +269,7 @@ public class DisbursementRequestImpl extends BajajServices implements Disburseme
 			return namedJdbcTemplate.queryForObject(sql.toString(), parameter, String.class);
 
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Mapping not available in DISBURSMENT_UPLOAD_MAPPING table for PartnerBankID "+disbursment.getPartnerBankID());
 		} finally {
 			sql = null;
 			parameter = null;
