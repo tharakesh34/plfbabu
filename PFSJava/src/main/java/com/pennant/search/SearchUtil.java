@@ -50,46 +50,44 @@ public class SearchUtil {
 	}
 
 	/**
-	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
-	 * <code>property</code> will also be used as the key for this value in the
-	 * map.
+	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the <code>property</code> will also be used as
+	 * the key for this value in the map.
 	 */
 	public static void addField(IMutableSearch search, String property) {
-		if (property == null){
+		if (property == null) {
 			return; // null properties do nothing, don't bother to add them.
 		}
 		addField(search, new Field(property));
 	}
 
 	/**
-	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
-	 * <code>property</code> will also be used as the key for this value in the
-	 * map.
+	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the <code>property</code> will also be used as
+	 * the key for this value in the map.
 	 */
 	public static void addField(IMutableSearch search, String property, int operator) {
-		if (property == null){
+		if (property == null) {
 			return; // null properties do nothing, don't bother to add them.
 		}
 		addField(search, new Field(property, operator));
 	}
 
 	/**
-	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
-	 * <code>key</code> will be used as the key for this value in the map.
+	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the <code>key</code> will be used as the key
+	 * for this value in the map.
 	 */
 	public static void addField(IMutableSearch search, String property, int operator, String key) {
-		if (property == null || key == null){
+		if (property == null || key == null) {
 			return; // null properties do nothing, don't bother to add them.
 		}
 		addField(search, new Field(property, operator, key));
 	}
 
 	/**
-	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the
-	 * <code>key</code> will be used as the key for this value in the map.
+	 * If this field is used with <code>resultMode == RESULT_MAP</code>, the <code>key</code> will be used as the key
+	 * for this value in the map.
 	 */
 	public static void addField(IMutableSearch search, String property, String key) {
-		if (property == null || key == null){
+		if (property == null || key == null) {
 			return; // null properties do nothing, don't bother to add them.
 		}
 		addField(search, new Field(property, key));
@@ -129,8 +127,7 @@ public class SearchUtil {
 	 * 
 	 * <p>
 	 * This takes a variable number of parameters. Any number of <code>Filter
-	 * </code>s can be
-	 * specified.
+	 * </code>s can be specified.
 	 */
 	public static void addFilterAnd(IMutableSearch search, Filter... filters) {
 		addFilter(search, Filter.and(filters));
@@ -168,8 +165,7 @@ public class SearchUtil {
 	 * Add a filter that uses the IN operator.
 	 * 
 	 * <p>
-	 * This takes a variable number of parameters. Any number of values can be
-	 * specified.
+	 * This takes a variable number of parameters. Any number of values can be specified.
 	 */
 	public static void addFilterIn(IMutableSearch search, String property, Object... value) {
 		addFilter(search, Filter.in(property, value));
@@ -214,8 +210,7 @@ public class SearchUtil {
 	 * Add a filter that uses the NOT IN operator.
 	 * 
 	 * <p>
-	 * This takes a variable number of parameters. Any number of values can be
-	 * specified.
+	 * This takes a variable number of parameters. Any number of values can be specified.
 	 */
 	public static void addFilterNotIn(IMutableSearch search, String property, Object... value) {
 		addFilter(search, Filter.notIn(property, value));
@@ -240,8 +235,7 @@ public class SearchUtil {
 	 * 
 	 * <p>
 	 * This takes a variable number of parameters. Any number of <code>Filter
-	 * </code>s can be
-	 * specified.
+	 * </code>s can be specified.
 	 */
 	public static void addFilterOr(IMutableSearch search, Filter... filters) {
 		addFilter(search, Filter.or(filters));
@@ -249,7 +243,7 @@ public class SearchUtil {
 
 	// Sorts
 	public static void addSort(IMutableSearch search, Sort sort) {
-		if (sort == null){
+		if (sort == null) {
 			return;
 		}
 
@@ -270,19 +264,17 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Add sort by property. Ascending if <code>desc == false</code>, descending
-	 * if <code>desc == true</code>.
+	 * Add sort by property. Ascending if <code>desc == false</code>, descending if <code>desc == true</code>.
 	 */
 	public static void addSort(IMutableSearch search, String property, boolean desc) {
 		addSort(search, property, desc, false);
 	}
 
 	/**
-	 * Add sort by property. Ascending if <code>desc == false</code>, descending
-	 * if <code>desc == true</code>.
+	 * Add sort by property. Ascending if <code>desc == false</code>, descending if <code>desc == true</code>.
 	 */
 	public static void addSort(IMutableSearch search, String property, boolean desc, boolean ignoreCase) {
-		if (property == null){
+		if (property == null) {
 			return; // null properties do nothing, don't bother to add them.
 		}
 		addSort(search, new Sort(property, desc, ignoreCase));
@@ -319,39 +311,39 @@ public class SearchUtil {
 	// ---------- Remove ----------
 
 	public static void removeFetch(IMutableSearch search, String property) {
-		if (search.getFetches() != null){
+		if (search.getFetches() != null) {
 			search.getFetches().remove(property);
 		}
 	}
 
 	public static void removeField(IMutableSearch search, Field field) {
-		if (search.getFields() != null){
+		if (search.getFields() != null) {
 			search.getFields().remove(field);
 		}
 	}
 
 	public static void removeField(IMutableSearch search, String property) {
-		if (search.getFields() == null){
+		if (search.getFields() == null) {
 			return;
 		}
 
 		Iterator<Field> itr = search.getFields().iterator();
 		while (itr.hasNext()) {
-			if (itr.next().getProperty().equals(property)){
+			if (itr.next().getProperty().equals(property)) {
 				itr.remove();
 			}
 		}
 	}
 
 	public static void removeField(IMutableSearch search, String property, String key) {
-		if (search.getFields() == null){
+		if (search.getFields() == null) {
 			return;
 		}
 
 		Iterator<Field> itr = search.getFields().iterator();
 		while (itr.hasNext()) {
 			Field field = itr.next();
-			if (field.getProperty().equals(property) && field.getKey().equals(key)){
+			if (field.getProperty().equals(property) && field.getKey().equals(key)) {
 				itr.remove();
 			}
 		}
@@ -359,7 +351,7 @@ public class SearchUtil {
 
 	public static void removeFilter(IMutableSearch search, Filter filter) {
 		List<Filter> filters = search.getFilters();
-		if (filters != null){
+		if (filters != null) {
 			filters.remove(filter);
 		}
 	}
@@ -368,30 +360,30 @@ public class SearchUtil {
 	 * Remove all filters on the given property.
 	 */
 	public static void removeFiltersOnProperty(IMutableSearch search, String property) {
-		if (property == null || search.getFilters() == null){
+		if (property == null || search.getFilters() == null) {
 			return;
 		}
 		Iterator<Filter> itr = search.getFilters().iterator();
 		while (itr.hasNext()) {
-			if (property.equals(itr.next().getProperty())){
+			if (property.equals(itr.next().getProperty())) {
 				itr.remove();
 			}
 		}
 	}
 
 	public static void removeSort(IMutableSearch search, Sort sort) {
-		if (search.getSorts() != null){
+		if (search.getSorts() != null) {
 			search.getSorts().remove(sort);
 		}
 	}
 
 	public static void removeSort(IMutableSearch search, String property) {
-		if (property == null || search.getSorts() == null){
+		if (property == null || search.getSorts() == null) {
 			return;
 		}
 		Iterator<Sort> itr = search.getSorts().iterator();
 		while (itr.hasNext()) {
-			if (property.equals(itr.next().getProperty())){
+			if (property.equals(itr.next().getProperty())) {
 				itr.remove();
 			}
 		}
@@ -410,19 +402,19 @@ public class SearchUtil {
 	}
 
 	public static void clearFetches(IMutableSearch search) {
-		if (search.getFetches() != null){
+		if (search.getFetches() != null) {
 			search.getFetches().clear();
 		}
 	}
 
 	public static void clearFields(IMutableSearch search) {
-		if (search.getFields() != null){
+		if (search.getFields() != null) {
 			search.getFields().clear();
 		}
 	}
 
 	public static void clearFilters(IMutableSearch search) {
-		if (search.getFilters() != null){
+		if (search.getFilters() != null) {
 			search.getFilters().clear();
 		}
 	}
@@ -434,15 +426,14 @@ public class SearchUtil {
 	}
 
 	public static void clearSorts(IMutableSearch search) {
-		if (search.getSorts() != null){
+		if (search.getSorts() != null) {
 			search.getSorts().clear();
 		}
 	}
 
 	// ---------- Merge ----------
 	/**
-	 * Modify the search by adding the given sorts before the current sorts in
-	 * the search.
+	 * Modify the search by adding the given sorts before the current sorts in the search.
 	 */
 	public static void mergeSortsBefore(IMutableSearch search, List<Sort> sorts) {
 		List<Sort> list = search.getSorts();
@@ -474,16 +465,14 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Modify the search by adding the given sorts before the current sorts in
-	 * the search.
+	 * Modify the search by adding the given sorts before the current sorts in the search.
 	 */
 	public static void mergeSortsBefore(IMutableSearch search, Sort... sorts) {
 		mergeSortsBefore(search, Arrays.asList(sorts));
 	}
 
 	/**
-	 * Modify the search by adding the given sorts after the current sorts in
-	 * the search.
+	 * Modify the search by adding the given sorts after the current sorts in the search.
 	 */
 	public static void mergeSortsAfter(IMutableSearch search, List<Sort> sorts) {
 		List<Sort> list = search.getSorts();
@@ -505,7 +494,7 @@ public class SearchUtil {
 							break;
 						}
 					}
-					if (!found){
+					if (!found) {
 						list.add(sort);
 					}
 				}
@@ -516,16 +505,14 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Modify the search by adding the given sorts after the current sorts in
-	 * the search.
+	 * Modify the search by adding the given sorts after the current sorts in the search.
 	 */
 	public static void mergeSortsAfter(IMutableSearch search, Sort... sorts) {
 		mergeSortsAfter(search, Arrays.asList(sorts));
 	}
 
 	/**
-	 * Modify the search by adding the given fetches to the current fetches in
-	 * the search.
+	 * Modify the search by adding the given fetches to the current fetches in the search.
 	 */
 	public static void mergeFetches(IMutableSearch search, List<String> fetches) {
 		List<String> list = search.getFetches();
@@ -542,8 +529,7 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Modify the search by adding the given fetches to the current fetches in
-	 * the search.
+	 * Modify the search by adding the given fetches to the current fetches in the search.
 	 */
 	public static void mergeFetches(IMutableSearch search, String... fetches) {
 		mergeFetches(search, Arrays.asList(fetches));
@@ -618,8 +604,7 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Modify the search by adding the given fields before the current fields in
-	 * the search.
+	 * Modify the search by adding the given fields before the current fields in the search.
 	 */
 	public static void mergeFieldsBefore(IMutableSearch search, List<Field> fields) {
 		List<Field> list = search.getFields();
@@ -632,16 +617,14 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Modify the search by adding the given fields before the current fields in
-	 * the search.
+	 * Modify the search by adding the given fields before the current fields in the search.
 	 */
 	public static void mergeFieldsBefore(IMutableSearch search, Field... fields) {
 		mergeFieldsBefore(search, Arrays.asList(fields));
 	}
 
 	/**
-	 * Modify the search by adding the given fields after the current fields in
-	 * the search.
+	 * Modify the search by adding the given fields after the current fields in the search.
 	 */
 	public static void mergeFieldsAfter(IMutableSearch search, List<Field> fields) {
 		List<Field> list = search.getFields();
@@ -654,8 +637,7 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Modify the search by adding the given fields after the current fields in
-	 * the search.
+	 * Modify the search by adding the given fields after the current fields in the search.
 	 */
 	public static void mergeFieldsAfter(IMutableSearch search, Field... fields) {
 		mergeFieldsAfter(search, Arrays.asList(fields));
@@ -664,28 +646,26 @@ public class SearchUtil {
 	// ---------- Other Methods ----------
 
 	/**
-	 * Calculate the first result to use given the <code>firstResult</code>,
-	 * <code>page</code> and <code>maxResults</code> values of the search
-	 * object.
+	 * Calculate the first result to use given the <code>firstResult</code>, <code>page</code> and
+	 * <code>maxResults</code> values of the search object.
 	 * 
 	 * <p>
 	 * The calculation is as follows:
 	 * <ul>
 	 * <li>If <code>firstResult</code> is defined (i.e. > 0), use it.
-	 * <li>Otherwise if <code>page</code> and <code>maxResults</code> are
-	 * defined (i.e. > 0), use <code>page * maxResults</code>.
+	 * <li>Otherwise if <code>page</code> and <code>maxResults</code> are defined (i.e. > 0), use
+	 * <code>page * maxResults</code>.
 	 * <li>Otherwise, just use 0.
 	 * </ul>
 	 */
 	public static int calcFirstResult(ISearch search) {
-		return (search.getFirstResult() > 0) ? search.getFirstResult() : (search.getPage() > 0 && search
-				.getMaxResults() > 0) ? search.getPage() * search.getMaxResults() : 0;
+		return (search.getFirstResult() > 0) ? search.getFirstResult()
+				: (search.getPage() > 0 && search.getMaxResults() > 0) ? search.getPage() * search.getMaxResults() : 0;
 	}
 
 	/**
-	 * Copy the contents of the source search object to the destination search
-	 * object, overriding any contents previously found in the destination. All
-	 * destination properties reference the same objects from the source
+	 * Copy the contents of the source search object to the destination search object, overriding any contents
+	 * previously found in the destination. All destination properties reference the same objects from the source
 	 * properties.
 	 */
 	public static IMutableSearch shallowCopy(ISearch source, IMutableSearch destination) {
@@ -705,9 +685,8 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Copy the contents of the source search object to the destination search
-	 * object, overriding any contents previously found in the destination. All
-	 * destination properties reference the same objects from the source
+	 * Copy the contents of the source search object to the destination search object, overriding any contents
+	 * previously found in the destination. All destination properties reference the same objects from the source
 	 * properties.
 	 */
 	public static IMutableSearch shallowCopy(ISearch source) {
@@ -715,9 +694,8 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Copy the contents of the source search object to the destination search
-	 * object, overriding any contents previously found in the destination. All
-	 * collections are copied into new collections, but the items in those
+	 * Copy the contents of the source search object to the destination search object, overriding any contents
+	 * previously found in the destination. All collections are copied into new collections, but the items in those
 	 * collections are not duplicated; they still point to the same objects.
 	 */
 	public static <T extends IMutableSearch> T copy(ISearch source, T destination) {
@@ -743,9 +721,8 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Copy the contents of the source search object into a new search object.
-	 * All collections are copied into new collections, but the items in those
-	 * collections are not duplicated; they still point to the same objects.
+	 * Copy the contents of the source search object into a new search object. All collections are copied into new
+	 * collections, but the items in those collections are not duplicated; they still point to the same objects.
 	 */
 	public static IMutableSearch copy(ISearch source) {
 		return copy(source, new Search());
@@ -755,33 +732,33 @@ public class SearchUtil {
 	 * Return true if the search objects have equivalent contents.
 	 */
 	public static boolean equals(ISearch search, Object obj) {
-		if (search.equals(obj)){
+		if (search.equals(obj)) {
 			return true;
 		}
-		if (!(obj instanceof ISearch)){
+		if (!(obj instanceof ISearch)) {
 			return false;
 		}
 		ISearch s = (ISearch) obj;
-		if (search.getSearchClass() == null ? s.getSearchClass() != null : !search.getSearchClass().equals(
-				s.getSearchClass())){
+		if (search.getSearchClass() == null ? s.getSearchClass() != null
+				: !search.getSearchClass().equals(s.getSearchClass())) {
 			return false;
 		}
 		if (search.isDisjunction() != s.isDisjunction() || search.getResultMode() != s.getResultMode()
 				|| search.getFirstResult() != s.getFirstResult() || search.getPage() != s.getPage()
-				|| search.getMaxResults() != s.getMaxResults()){
+				|| search.getMaxResults() != s.getMaxResults()) {
 			return false;
 		}
 
-		if (search.getFetches() == null ? s.getFetches() != null : !search.getFetches().equals(s.getFetches())){
+		if (search.getFetches() == null ? s.getFetches() != null : !search.getFetches().equals(s.getFetches())) {
 			return false;
 		}
-		if (search.getFields() == null ? s.getFields() != null : !search.getFields().equals(s.getFields())){
+		if (search.getFields() == null ? s.getFields() != null : !search.getFields().equals(s.getFields())) {
 			return false;
 		}
-		if (search.getFilters() == null ? s.getFilters() != null : !search.getFilters().equals(s.getFilters())){
+		if (search.getFilters() == null ? s.getFilters() != null : !search.getFilters().equals(s.getFilters())) {
 			return false;
 		}
-		if (search.getSorts() == null ? s.getSorts() != null : !search.getSorts().equals(s.getSorts())){
+		if (search.getSorts() == null ? s.getSorts() != null : !search.getSorts().equals(s.getSorts())) {
 			return false;
 		}
 
@@ -807,8 +784,7 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Return a human-readable string describing the contents of the given
-	 * search.
+	 * Return a human-readable string describing the contents of the given search.
 	 */
 	public static String toString(ISearch search) {
 		StringBuilder sb = new StringBuilder("Search(");
@@ -869,17 +845,15 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Visit each non-null item is a list. Each item may be replaced by the
-	 * visitor. The modified list is returned. If removeNulls is true, any null
-	 * elements will be removed from the final list.
+	 * Visit each non-null item is a list. Each item may be replaced by the visitor. The modified list is returned. If
+	 * removeNulls is true, any null elements will be removed from the final list.
 	 * 
 	 * <p>
-	 * If there are any modifications to be made to the list a new list is made
-	 * with the changes so that the original list remains unchanged. If no
-	 * changes are made, the original list is returned.
+	 * If there are any modifications to be made to the list a new list is made with the changes so that the original
+	 * list remains unchanged. If no changes are made, the original list is returned.
 	 */
 	public static <T> List<T> walkList(List<T> list, ItemVisitor<T> visitor, boolean removeNulls) {
-		if (list == null){
+		if (list == null) {
 			return null;
 		}
 
@@ -900,7 +874,7 @@ public class SearchUtil {
 		if (copy != null) {
 			if (removeNulls) {
 				for (int j = copy.size() - 1; j >= 0; j--) {
-					if (copy.get(j) == null){
+					if (copy.get(j) == null) {
 						copy.remove(j);
 					}
 				}
@@ -921,14 +895,11 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Walk through a list of filters and all the sub filters, visiting each
-	 * filter in the tree. A FilterVisitor is used to visit each filter. The
-	 * FilterVisitor may replace the Filter that is is visiting. If it does, a
-	 * new tree and list of Filters will be created for every part of the tree
-	 * that is affected, thus preserving the original tree.
+	 * Walk through a list of filters and all the sub filters, visiting each filter in the tree. A FilterVisitor is used
+	 * to visit each filter. The FilterVisitor may replace the Filter that is is visiting. If it does, a new tree and
+	 * list of Filters will be created for every part of the tree that is affected, thus preserving the original tree.
 	 * 
-	 * @return if any changes have been made, the new list of Filters; if not,
-	 *         the original list.
+	 * @return if any changes have been made, the new list of Filters; if not, the original list.
 	 */
 	public static List<Filter> walkFilters(List<Filter> filters, FilterVisitor visitor, boolean removeNulls) {
 		return walkList(filters, new FilterListVisitor(visitor, removeNulls), removeNulls);
@@ -938,8 +909,8 @@ public class SearchUtil {
 	 * Used in walkFilters
 	 */
 	private static final class FilterListVisitor extends ItemVisitor<Filter> {
-		private FilterVisitor visitor;
-		private boolean removeNulls;
+		private FilterVisitor	visitor;
+		private boolean			removeNulls;
 
 		public FilterListVisitor(FilterVisitor visitor, boolean removeNulls) {
 			super();
@@ -954,14 +925,11 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Walk a filter and all its sub filters, visiting each filter in the tree.
-	 * A FilterVisitor is used to visit each filter. The FilterVisitor may
-	 * replace the Filter that is is visiting. If it does, a new tree and will
-	 * be created for every part of the tree that is affected, thus preserving
-	 * the original tree.
+	 * Walk a filter and all its sub filters, visiting each filter in the tree. A FilterVisitor is used to visit each
+	 * filter. The FilterVisitor may replace the Filter that is is visiting. If it does, a new tree and will be created
+	 * for every part of the tree that is affected, thus preserving the original tree.
 	 * 
-	 * @return if any changes have been made, the new Filter; if not, the
-	 *         original Filter.
+	 * @return if any changes have been made, the new Filter; if not, the original Filter.
 	 */
 	@SuppressWarnings("unchecked")
 	public static Filter walkFilter(Filter filter, FilterVisitor visitor, boolean removeNulls) {
