@@ -21,8 +21,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
 
@@ -33,27 +31,6 @@ import com.pennanttech.pff.core.App.Database;
  */
 public class SearchUtil {
 	// ---------- Add ---------- //
-
-	public static void addFetch(IMutableSearch search, String property) {
-		if (property == null || StringUtils.isEmpty(property)){
-			return; // null properties do nothing, don't bother to add them.
-		}
-
-		List<String> fetches = search.getFetches();
-		if (fetches == null) {
-			fetches = new ArrayList<String>();
-			search.setFetches(fetches);
-		}
-		fetches.add(property);
-	}
-
-	public static void addFetches(IMutableSearch search, String... properties) {
-		if (properties != null) {
-			for (String property : properties) {
-				addFetch(search, property);
-			}
-		}
-	}
 
 	public static void addField(IMutableSearch search, Field field) {
 		List<Field> fields = search.getFields();

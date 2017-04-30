@@ -391,17 +391,6 @@ public class Search implements IMutableSearch, Serializable {
 		return this;
 	}
 
-	// Fetches
-	public Search addFetch(String property) {
-		SearchUtil.addFetch(this, property);
-		return this;
-	}
-
-	public Search addFetches(String... properties) {
-		SearchUtil.addFetches(this, properties);
-		return this;
-	}
-
 	public void removeFetch(String property) {
 		SearchUtil.removeFetch(this, property);
 	}
