@@ -130,7 +130,7 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 		super.moduleCode = "JVPosting";
 		super.pageRightName = "JVPostingList";
 		super.tableName = "JVPostings_AView";
-		super.queueTableName = "JVPostings_View";
+		super.queueTableName = "JVPostings_TView";
 		super.enquiryTableName = "JVPostings_TView";
 
 	}
