@@ -12,6 +12,7 @@ import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.disbursement.DisbursementResponse;
 
 public class AutoDisburseFileResponseService extends BajajService {
@@ -48,7 +49,7 @@ public class AutoDisburseFileResponseService extends BajajService {
 				processFile(1000, "DISB_HDFC_IMPORT", file, null);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		} finally {
 			BajajInterfaceConstants.autoDisbResFileJob = false;
 		}
