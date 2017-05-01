@@ -27,6 +27,7 @@ import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
@@ -69,6 +70,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	private RepaymentPostingsUtil			repaymentPostingsUtil;
 	private FinODDetailsDAO					finODDetailsDAO;
 	private PostingsDAO						postingsDAO;
+	private ManualAdviseDAO 				manualAdviseDAO;
 	private AuditHeaderDAO 					auditHeaderDAO;
 
 	public ReceiptCancellationServiceImpl() {
@@ -116,6 +118,11 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 				}
 			}
 			receiptHeader.setReceiptDetails(receiptDetailList);
+			
+			// Bounce reason Code
+			if(StringUtils.isNotEmpty(receiptHeader.getRecordType())){
+				receiptHeader.setManualAdvise(getManualAdviseDAO().getManualAdviseByReceiptId(receiptID,"_TView"));
+			}
 		}
 
 		logger.debug("Leaving");
@@ -170,11 +177,17 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		//=======================================
 		if (receiptHeader.isNew()) {
 			receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_BOUNCE);
-			 getFinReceiptHeaderDAO().save(receiptHeader, tableType);
+			getFinReceiptHeaderDAO().save(receiptHeader, tableType);
+
+			// Bounce reason Code
+			getManualAdviseDAO().save(receiptHeader.getManualAdvise(),tableType);
+
 		} else {
 			getFinReceiptHeaderDAO().update(receiptHeader, tableType);
+			// Bounce reason Code
+			getManualAdviseDAO().update(receiptHeader.getManualAdvise(),tableType);
 		}
-
+		
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), receiptHeader.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], receiptHeader
 				.getBefImage(), receiptHeader));
@@ -208,6 +221,9 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		}
 		FinReceiptHeader receiptHeader = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
 
+		// Bounce Reason Code
+		getManualAdviseDAO().delete(receiptHeader.getManualAdvise(),TableType.TEMP_TAB);
+		
 		// Delete Receipt Header
 		getFinReceiptHeaderDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
 
@@ -268,6 +284,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		receiptHeader.setNextTaskId("");
 		receiptHeader.setWorkflowId(0);
 		getFinReceiptHeaderDAO().update(receiptHeader, TableType.MAIN_TAB);
+		
+		getManualAdviseDAO().save(receiptHeader.getManualAdvise(), TableType.MAIN_TAB);
 		
 		// Update Receipt Details based on Receipt Mode 
 		for (int i = 0; i < receiptHeader.getReceiptDetails().size(); i++) {
@@ -805,6 +823,14 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
 		this.postingsDAO = postingsDAO;
+	}
+
+	public ManualAdviseDAO getManualAdviseDAO() {
+		return manualAdviseDAO;
+	}
+
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
 }

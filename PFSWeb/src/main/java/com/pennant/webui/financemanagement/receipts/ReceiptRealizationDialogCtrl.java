@@ -247,7 +247,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 	protected void doSetFieldProperties() {
 		logger.debug("Entering");
 		//Empty sent any required attributes
-		int formatter = CurrencyUtil.getFormat(this.finCcy.getValue());
+		int formatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
 
 		//Receipts Details
 		this.finType.setMaxlength(8);
@@ -467,8 +467,6 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 	private void doWriteBeanToComponents() throws InterruptedException {
 		logger.debug("Entering");
 
-		int finFormatter = CurrencyUtil.getFormat(this.finCcy.getValue());
-
 		// Receipt Header Details
 		FinReceiptHeader header = getReceiptHeader();
 		
@@ -477,6 +475,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 		this.finCcy.setValue(header.getFinCcy());
 		this.finBranch.setValue(header.getFinBranch());;
 		this.custCIF.setValue(header.getCustCIF());
+		int finFormatter = CurrencyUtil.getFormat(this.finCcy.getValue());
 		
 		fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), "");
 		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");

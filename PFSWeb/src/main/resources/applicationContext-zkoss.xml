@@ -2896,6 +2896,8 @@
 		class="com.pennant.webui.financemanagement.receipts.ReceiptCancellationDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="receiptCancellationService" ref="receiptCancellationService" />
+		<property name="ruleService" ref="ruleService" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
 
 	<!--============ Manual Write-off Details ============== -->

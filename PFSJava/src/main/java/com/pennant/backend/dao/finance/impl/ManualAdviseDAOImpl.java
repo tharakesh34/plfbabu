@@ -86,7 +86,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" adviseID, adviseType, finReference, feeTypeID, sequence, adviseAmount, ");
+		sql.append(" adviseID, adviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID, ReceiptID,");
 		sql.append(" paidAmount, waivedAmount, remarks, ");
 		if(type.contains("View")){
 			sql.append(" FeeTypeCode, FeeTypeDesc," );
@@ -115,6 +115,42 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		logger.debug(Literal.LEAVING);
 		return manualAdvise;
 	}		
+
+	@Override
+	public ManualAdvise getManualAdviseByReceiptId(long receiptID,String type) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" AdviseID, AdviseType, FinReference, FeeTypeID, Sequence, AdviseAmount, BounceID, ReceiptID, ");
+		sql.append(" PaidAmount, WaivedAmount, Remarks, ");
+		if(type.contains("View")){
+			sql.append(" FeeTypeCode, FeeTypeDesc, BounceCode, " );
+		}
+		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		sql.append(" From ManualAdvise");
+		sql.append(type);
+		sql.append(" Where ReceiptID = :ReceiptID");
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		ManualAdvise manualAdvise = new ManualAdvise();
+		manualAdvise.setReceiptID(receiptID);
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
+		RowMapper<ManualAdvise> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
+
+		try {
+			manualAdvise = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			manualAdvise = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return manualAdvise;
+	}		
 	
 	@Override
 	public String save(ManualAdvise manualAdvise,TableType tableType) {
@@ -123,11 +159,11 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		// Prepare the SQL.
 		StringBuilder sql =new StringBuilder(" insert into ManualAdvise");
 		sql.append(tableType.getSuffix());
-		sql.append("(adviseID, adviseType, finReference, feeTypeID, sequence, adviseAmount, ");
+		sql.append("(adviseID, adviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID, ReceiptID, ");
 		sql.append(" paidAmount, waivedAmount, remarks, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
 		sql.append(" values(");
-		sql.append(" :adviseID, :adviseType, :finReference, :feeTypeID, :sequence, :adviseAmount, ");
+		sql.append(" :adviseID, :adviseType, :finReference, :feeTypeID, :sequence, :adviseAmount, :BounceID, :ReceiptID,");
 		sql.append(" :paidAmount, :waivedAmount, :remarks, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -160,7 +196,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		sql.append(tableType.getSuffix());
 		sql.append("  set adviseType = :adviseType, finReference = :finReference, feeTypeID = :feeTypeID, ");
 		sql.append(" sequence = :sequence, adviseAmount = :adviseAmount, paidAmount = :paidAmount, ");
-		sql.append(" waivedAmount = :waivedAmount, remarks = :remarks, ");
+		sql.append(" waivedAmount = :waivedAmount, remarks = :remarks,BounceID=:BounceID, ReceiptID=:ReceiptID, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");

@@ -101,7 +101,7 @@ public class FinReceiptHeaderDAOImpl extends BasisNextidDaoImpl<FinReceiptHeader
 		}
 		selectSql.append(" From FinReceiptHeader");
 		selectSql.append(StringUtils.trim(type));
-		selectSql.append(" Where Reference =:Reference ");
+		selectSql.append(" Where Reference =:Reference AND ReceiptModeStatus IS NULL ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);

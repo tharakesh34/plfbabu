@@ -58,6 +58,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -84,23 +85,32 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
+import com.pennant.backend.service.rulefactory.RuleService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennant.component.Uppercasebox;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -133,6 +143,9 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	protected CurrencyBox									receiptAmount;
 	protected Combobox										allocationMethod;
 	protected Combobox										effScheduleMethod;
+	protected ExtendedCombobox								bounceCode;
+	protected CurrencyBox									bounceCharge;
+	protected Textbox										bounceRemarks;
 
 	protected Groupbox										gb_ReceiptDetails;
 	protected Caption										caption_receiptDetail;
@@ -188,6 +201,8 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	private FinReceiptHeader								receiptHeader						= null;
 	private ReceiptCancellationListCtrl						receiptCancellationListCtrl;						
 	private ReceiptCancellationService						receiptCancellationService;						
+	private RuleService										ruleService;						
+	private RuleExecutionUtil								ruleExecutionUtil;						
 
 	/**
 	 * default constructor.<br>
@@ -225,11 +240,15 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 				Cloner cloner = new Cloner();
 				befImage = cloner.deepClone(getReceiptHeader());
 				getReceiptHeader().setBefImage(befImage);
+				
+				if(getReceiptHeader().getManualAdvise() != null){
+					ManualAdvise adviseBefImage = cloner.deepClone(getReceiptHeader().getManualAdvise());
+					getReceiptHeader().getManualAdvise().setBefImage(adviseBefImage);
+				}
 
 			}
 			
 			this.receiptCancellationListCtrl = (ReceiptCancellationListCtrl) arguments.get("receiptCancellationListCtrl");
-
 			doLoadWorkFlow(receiptHeader.isWorkflow(), receiptHeader.getWorkflowId(), receiptHeader.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
@@ -285,6 +304,13 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_ReceiptCancellationDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ReceiptCancellationDialog_btnSave"));
 		this.btnCancel.setVisible(false);
+		
+		// Bounce Reason Fields
+		readOnlyComponent(isReadOnly("ReceiptCancellationDialog_bounceCode"), this.bounceCode);
+		//readOnlyComponent(isReadOnly("ReceiptCancellationDialog_bounceCharge"), this.bounceCharge);
+		readOnlyComponent(true, this.bounceCharge);
+		readOnlyComponent(isReadOnly("ReceiptCancellationDialog_bounceRemarks"), this.bounceRemarks);
+		
 		logger.debug("Leaving");
 	}
 
@@ -294,7 +320,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	protected void doSetFieldProperties() {
 		logger.debug("Entering");
 		//Empty sent any required attributes
-		int formatter = CurrencyUtil.getFormat(this.finCcy.getValue());
+		int formatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
 
 		//Receipts Details
 		this.finType.setMaxlength(8);
@@ -332,6 +358,16 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		this.bankCode.setDescColumn("BankName");
 		this.bankCode.setDisplayStyle(2);
 		this.bankCode.setValidateColumns(new String[] { "BankCode" });
+		
+		this.bounceCode.setModuleName("BounceReason");
+		this.bounceCode.setMandatoryStyle(true);
+		this.bounceCode.setValueColumn("BounceID");
+		this.bounceCode.setDescColumn("BounceCode");
+		this.bounceCode.setDisplayStyle(2);
+		this.bounceCode.setValidateColumns(new String[] { "BounceID" });
+		
+		this.bounceCharge.setProperties(false , formatter);
+		this.bounceRemarks.setMaxlength(100);
 
 		logger.debug("Leaving");
 	}
@@ -469,6 +505,61 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		//Duplicate Creation of Object
 		Cloner cloner = new Cloner();
 		FinReceiptHeader aReceiptHeader = cloner.deepClone(getReceiptHeader());
+		
+		boolean recReject = false;
+		if (this.userAction.getSelectedItem() != null
+				&& ("Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+						|| "Reject".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) || "Cancel"
+						.equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()))) {
+			recReject = true;
+		}
+		
+		// Bounce Details capturing
+		ManualAdvise bounce = aReceiptHeader.getManualAdvise();
+		if(bounce == null){
+			bounce = new ManualAdvise();
+		}
+
+		ArrayList<WrongValueException> wve = new ArrayList<>();
+		if(!recReject){
+			doSetValidation();
+		}
+		bounce.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+		bounce.setFinReference(aReceiptHeader.getReference());
+		bounce.setFeeTypeID(0);
+		bounce.setSequence(0);
+		try {
+			bounce.setAdviseAmount(PennantApplicationUtil.unFormateAmount(this.bounceCharge.getActualValue(), CurrencyUtil.getFormat(aReceiptHeader.getFinCcy())));
+		} catch (WrongValueException e) {
+			wve.add(e);
+		}
+		
+		bounce.setPaidAmount(BigDecimal.ZERO);
+		bounce.setWaivedAmount(BigDecimal.ZERO);
+		
+		try {
+			bounce.setRemarks(this.bounceRemarks.getValue());
+		} catch (WrongValueException e) {
+			wve.add(e);
+		}
+		bounce.setReceiptID(aReceiptHeader.getReceiptID());
+		try {
+			bounce.setBounceID(Long.valueOf(this.bounceCode.getValue()));
+		} catch (WrongValueException e) {
+			wve.add(e);
+		}
+		
+		doRemoveValidation();
+
+		if (!wve.isEmpty()) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+		
+		aReceiptHeader.setManualAdvise(bounce);
 
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
@@ -482,7 +573,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			aReceiptHeader.setVersion(aReceiptHeader.getVersion() + 1);
 			tranType = PennantConstants.TRAN_UPD;
 		}
-
+		
 		try {
 			if (doProcess(aReceiptHeader, tranType)) {
 
@@ -506,6 +597,59 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 
 		logger.debug("Leaving");
 	}
+	
+	public void onFulfill$bounceCode(Event event) {
+		logger.debug("Entering" + event.toString());
+
+		Object dataObject = bounceCode.getObject();
+
+		if (dataObject instanceof String) {
+			this.bounceCode.setValue(dataObject.toString());
+		} else {
+			BounceReason details = (BounceReason) dataObject;
+			if (details != null) {
+				Rule rule = getRuleService().getRuleById(details.getRuleID(), "");
+				BigDecimal bounceAmt = BigDecimal.ZERO;
+				if(rule != null){
+					bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(),
+							null, getReceiptHeader().getFinCcy(), RuleReturnType.DECIMAL);
+				}
+				this.bounceCharge.setValue(PennantApplicationUtil.formateAmount(bounceAmt, CurrencyUtil.getFormat(getReceiptHeader().getFinCcy())));
+			}
+		}
+	}
+	
+	/**
+	 * Sets the Validation by setting the accordingly constraints to the fields.
+	 */
+	private void doSetValidation() {
+		logger.debug("Entering");
+
+		if (!this.bounceCode.isReadonly()) {
+			this.bounceCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptCancellationDialog_BounceReason.value"), null,true, true));
+		}
+
+		if(!this.bounceRemarks.isReadonly()){
+			this.bounceRemarks.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptCancellationDialog_BounceRemarks.value"),
+					PennantRegularExpressions.REGEX_DESCRIPTION, false));
+		}
+
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Disables the Validation by setting empty constraints.
+	 */
+	private void doRemoveValidation() {
+		logger.debug("Entering");
+		this.bounceCode.setConstraint("");
+		this.bounceRemarks.setConstraint("");
+		
+		this.bounceCode.setErrorMessage("");
+		this.bounceRemarks.setErrorMessage("");
+		logger.debug("Leaving");
+	}
+
 
 	/**
 	 * Method for Writing Data into Fields from Bean
@@ -513,8 +657,6 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	 */
 	private void doWriteBeanToComponents() throws InterruptedException {
 		logger.debug("Entering");
-
-		int finFormatter = CurrencyUtil.getFormat(this.finCcy.getValue());
 
 		// Receipt Header Details
 		FinReceiptHeader header = getReceiptHeader();
@@ -524,6 +666,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		this.finCcy.setValue(header.getFinCcy());
 		this.finBranch.setValue(header.getFinBranch());;
 		this.custCIF.setValue(header.getCustCIF());
+		int finFormatter = CurrencyUtil.getFormat(this.finCcy.getValue());
 		
 		fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), "");
 		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
@@ -537,6 +680,13 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		fillComboBox(this.allocationMethod, allocateMthd, PennantStaticListUtil.getAllocationMethods(), "");
 		fillComboBox(this.effScheduleMethod, header.getEffectSchdMethod(), PennantStaticListUtil.getEarlyPayEffectOn(), ",NOEFCT,");
 		checkByReceiptMode(header.getReceiptMode(), false);
+		
+		ManualAdvise bounceReason = header.getManualAdvise();
+		if(bounceReason != null){
+			this.bounceCode.setValue(String.valueOf(bounceReason.getBounceID()), bounceReason.getBounceCode());
+			this.bounceCharge.setValue(PennantApplicationUtil.formateAmount(bounceReason.getAdviseAmount(), finFormatter));
+			this.bounceRemarks.setValue(bounceReason.getRemarks());
+		}
 		
 		// Repayment Schedule Basic Details
 		this.payment_finType.setValue(header.getFinType());
@@ -986,11 +1136,16 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		aReceiptHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
 		aReceiptHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aReceiptHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
+		
+		aReceiptHeader.getManualAdvise().setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aReceiptHeader.getManualAdvise().setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aReceiptHeader.getManualAdvise().setUserDetails(getUserWorkspace().getLoggedInUser());
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId;
 			aReceiptHeader.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+			aReceiptHeader.getManualAdvise().setRecordStatus(userAction.getSelectedItem().getValue().toString());
 
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
@@ -1030,6 +1185,11 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			aReceiptHeader.setNextTaskId(nextTaskId);
 			aReceiptHeader.setRoleCode(getRole());
 			aReceiptHeader.setNextRoleCode(nextRoleCode);
+			
+			aReceiptHeader.getManualAdvise().setTaskId(taskId);
+			aReceiptHeader.getManualAdvise().setNextTaskId(nextTaskId);
+			aReceiptHeader.getManualAdvise().setRoleCode(getRole());
+			aReceiptHeader.getManualAdvise().setNextRoleCode(nextRoleCode);
 
 			auditHeader = getAuditHeader(aReceiptHeader, tranType);
 			String operationRefs = getServiceOperations(taskId, aReceiptHeader);
@@ -1173,9 +1333,22 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	public ReceiptCancellationService getReceiptCancellationService() {
 		return receiptCancellationService;
 	}
-
 	public void setReceiptCancellationService(ReceiptCancellationService receiptCancellationService) {
 		this.receiptCancellationService = receiptCancellationService;
+	}
+
+	public RuleService getRuleService() {
+		return ruleService;
+	}
+	public void setRuleService(RuleService ruleService) {
+		this.ruleService = ruleService;
+	}
+
+	public RuleExecutionUtil getRuleExecutionUtil() {
+		return ruleExecutionUtil;
+	}
+	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
+		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 }

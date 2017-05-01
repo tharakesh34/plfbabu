@@ -74,4 +74,5 @@ public interface RuleService {
 	boolean validationCheck(String ruleEvent,String ruleCode);
 	List<Rule> getRuleDetailList(List<String> ruleCodeList, String ruleModule, String ruleEvent);
 	List<String> getAEAmountCodesList(String event);
+	Rule getRuleById(long ruleID, String type);
 }

@@ -475,6 +475,11 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	public List<String> getAEAmountCodesList(String event) {
 		return getRuleDAO().getAEAmountCodesList(event);
 	}
+
+	@Override
+	public Rule getRuleById(long ruleID, String type) {
+		return getRuleDAO().getRuleByID(ruleID, type);
+	}
 	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -501,4 +506,5 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	public void setLimitGroupService(LimitGroupService limitGroupService) {
 		this.limitGroupService = limitGroupService;
 	}
+
 }

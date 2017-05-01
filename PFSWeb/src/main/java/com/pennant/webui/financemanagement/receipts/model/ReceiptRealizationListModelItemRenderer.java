@@ -52,6 +52,8 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -70,11 +72,11 @@ public class ReceiptRealizationListModelItemRenderer implements ListitemRenderer
 		Listcell lc;
 		lc = new Listcell(header.getReference());
 		lc.setParent(item);
-		lc = new Listcell(header.getReceiptPurpose());
+		lc = new Listcell(PennantAppUtil.getlabelDesc(header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose()));
 		lc.setParent(item);
-		lc = new Listcell(header.getReceiptMode());
+		lc = new Listcell(PennantAppUtil.getlabelDesc(header.getReceiptMode(), PennantStaticListUtil.getReceiptModes()));
 		lc.setParent(item);
-		lc = new Listcell(header.getAllocationType());
+		lc = new Listcell(PennantAppUtil.getlabelDesc(header.getAllocationType(), PennantStaticListUtil.getAllocationMethods()));
 		lc.setParent(item);
 		lc = new Listcell(header.getFinType());
 		lc.setParent(item);

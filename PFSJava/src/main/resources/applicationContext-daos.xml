@@ -5729,6 +5729,7 @@
 		<property name="repaymentPostingsUtil" ref="repayPostingUtil" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 

@@ -201,6 +201,28 @@
 													id="effScheduleMethod" width="180px" readonly="true" />
 											</hbox>
 										</row>
+										<row id="row_BounceReason">
+											<label
+												id="label_ReceiptCancellationDialog_BounceReason"
+												value="${c:l('label_ReceiptCancellationDialog_BounceReason.value')}" />
+											<extendedcombobox
+												id="bounceCode" />
+											<label
+												id="label_ReceiptCancellationDialog_BounceCharge"
+												value="${c:l('label_ReceiptCancellationDialog_BounceCharge.value')}" />
+											<currencyBox
+												id="bounceCharge" />
+										</row>
+										<row id="row_BounceRemarks" >
+											<label
+												id="label_ReceiptCancellationDialog_BounceRemarks"
+												value="${c:l('label_ReceiptCancellationDialog_BounceRemarks.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="bounceRemarks"
+													width="180px" />
+											</hbox>
+										</row>
 									</rows>
 								</grid>
 							</groupbox>

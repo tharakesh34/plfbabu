@@ -45,6 +45,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>(1);
 	private List<FinExcessAmount> excessAmounts = new ArrayList<FinExcessAmount>(1);
 	private List<ReceiptAllocationDetail> allocations = new ArrayList<ReceiptAllocationDetail>(1);
+	private ManualAdvise manualAdvise; // Bounce Reason
 	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -55,13 +56,12 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("receiptDetails");
 		excludeFields.add("excessAmounts");
 		excludeFields.add("allocations");
+		excludeFields.add("manualAdvise");
 		excludeFields.add("finType");
 		excludeFields.add("finCcy");
 		excludeFields.add("finBranch");
 		excludeFields.add("custCIF");
 		excludeFields.add("custShrtName");
-
-		
 		return excludeFields;
 	}
 
@@ -187,7 +187,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	public boolean isNewRecord() {
 		return newRecord;
 	}
-
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
@@ -195,7 +194,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	public String getLovValue() {
 		return lovValue;
 	}
-
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
@@ -203,7 +201,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	public FinReceiptHeader getBefImage() {
 		return this.befImage;
 	}
-
 	public void setBefImage(FinReceiptHeader beforeImage) {
 		this.befImage = beforeImage;
 	}
@@ -211,7 +208,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
-
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -230,7 +226,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	public String getFinType() {
 		return finType;
 	}
-
 	public void setFinType(String finType) {
 		this.finType = finType;
 	}
@@ -238,7 +233,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	public String getFinBranch() {
 		return finBranch;
 	}
-
 	public void setFinBranch(String finBranch) {
 		this.finBranch = finBranch;
 	}
@@ -246,7 +240,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	public String getCustCIF() {
 		return custCIF;
 	}
-
 	public void setCustCIF(String custCIF) {
 		this.custCIF = custCIF;
 	}
@@ -254,7 +247,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	public String getCustShrtName() {
 		return custShrtName;
 	}
-
 	public void setCustShrtName(String custShrtName) {
 		this.custShrtName = custShrtName;
 	}
@@ -262,9 +254,15 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	public String getFinCcy() {
 		return finCcy;
 	}
-
 	public void setFinCcy(String finCcy) {
 		this.finCcy = finCcy;
+	}
+
+	public ManualAdvise getManualAdvise() {
+		return manualAdvise;
+	}
+	public void setManualAdvise(ManualAdvise manualAdvise) {
+		this.manualAdvise = manualAdvise;
 	}
 
 }

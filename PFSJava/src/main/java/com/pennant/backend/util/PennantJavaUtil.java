@@ -1898,9 +1898,8 @@ public class PennantJavaUtil {
 		ModuleUtil.register("ManualAdvise", new ModuleMapping("ManualAdvise", ManualAdvise.class, new String[] { "ManualAdvise",
 				"ManualAdvise_AView" }, masterWF, new String[] {"AdviseType","FinReference","FeeTypeID"},null, 600));
 		
-		ModuleUtil.register("BounceReason", new ModuleMapping("BounceReason", BounceReason.class, new String[] {
-				"BounceReasons", "BounceReasons_AView" }, masterWF, new String[] { "BounceCode", "ReasonType",
-				"Category", "ReturnID" }, new String[][] { { "Active", "0", "1" } }, 400));
+		ModuleUtil.register("BounceReason", new ModuleMapping("BounceReason", BounceReason.class, new String[] {"BounceReasons", "BounceReasons_AView" }, 
+				masterWF, new String[] { "BounceID","BounceCode" }, new String[][] { { "Active", "0", "1" } }, 400));
 
 		ModuleUtil.register("ProfitCenter", new ModuleMapping("ProfitCenter", ProfitCenter.class, new String[] {
 				"ProfitCenters", "ProfitCenters_AView" }, masterWF, new String[] { "ProfitCenterCode",

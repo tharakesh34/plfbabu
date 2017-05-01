@@ -106,12 +106,12 @@ private static final long serialVersionUID = 1L;
 	
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
-			excludeFields.add("adviseTypeName");
-			excludeFields.add("finReferenceName");
-			excludeFields.add("feeTypeDesc");
-			excludeFields.add("feeTypeCode");
-			excludeFields.add("bounceCode");
-	return excludeFields;
+		excludeFields.add("adviseTypeName");
+		excludeFields.add("finReferenceName");
+		excludeFields.add("feeTypeDesc");
+		excludeFields.add("feeTypeCode");
+		excludeFields.add("bounceCode");
+		return excludeFields;
 	}
 
 	public long getId() {
