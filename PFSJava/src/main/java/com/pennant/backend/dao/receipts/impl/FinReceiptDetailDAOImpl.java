@@ -165,5 +165,22 @@ public class FinReceiptDetailDAOImpl extends BasisNextidDaoImpl<FinReceiptDetail
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
 		logger.debug("Leaving");
 	}
+	
+	@Override
+	public int getReceiptHeaderByBank(String bankCode, String type) {
+		FinReceiptDetail finReceiptDetail = new FinReceiptDetail();
+		finReceiptDetail.setBankCode(bankCode);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From FinReceiptDetail");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where BankCode =:BankCode");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finReceiptDetail);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
 
 }

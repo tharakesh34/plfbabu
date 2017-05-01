@@ -377,6 +377,23 @@ public class BankBranchDAOImpl extends BasisNextidDaoImpl<BankBranch> implements
 		return bankBranch;
 	}
 	
+	@Override
+	public int getBankBrachByBank(String bankCode, String type) {
+		BankBranch bankBranch = getBankBranch();
+		bankBranch.setBankCode(bankCode);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From BankBranches");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where BankCode =:BankCode");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+	
 	private ErrorDetails  getError(String errorId, long bankBranchID, String userLanguage){
 		String[][] parms= new String[2][1];
 		parms[1][0] = String.valueOf(bankBranchID);

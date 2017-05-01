@@ -460,5 +460,22 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 
 		logger.debug(Literal.LEAVING);
 	}
+	
+	@Override
+	public int getBankCode(String bankCode, String type) {
+		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
+		finAdvancePayments.setBankCode(bankCode);;
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From FinAdvancePayments");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where BankCode =:BankCode");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
 
 }

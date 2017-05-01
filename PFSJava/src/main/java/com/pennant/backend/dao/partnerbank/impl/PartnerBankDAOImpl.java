@@ -442,5 +442,24 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
+	
+	@Override
+	public int getPartnerBankbyBank(String bankCode, String type) {
+		logger.debug("Entering");
 
+		PartnerBank partnerBank = new PartnerBank();
+		partnerBank.setBankCode(bankCode);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From PartnerBanks");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where BankCode =:BankCode");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(partnerBank);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+	
 }

@@ -49,6 +49,14 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
+import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
+import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
+import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
+import com.pennant.backend.dao.finance.FinCollateralsDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
+import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -72,6 +80,15 @@ public class BankDetailServiceImpl extends
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private BankDetailDAO bankDetailDAO;
+	private BankBranchDAO bankBranchDAO;
+	private CustomerBankInfoDAO customerBankInfoDAO;
+	private CustomerExtLiabilityDAO customerExtLiabilityDAO;
+	private FinAdvancePaymentsDAO	finAdvancePaymentsDAO;
+	private FinanceMainDAO	financeMainDAO;
+	private FinCollateralsDAO	finCollateralsDAO;
+	private FinReceiptDetailDAO	finReceiptDetailDAO;
+	private PartnerBankDAO		partnerBankDAO;
+	
 
 	public BankDetailServiceImpl() {
 		super();
@@ -371,11 +388,89 @@ public class BankDetailServiceImpl extends
 
 			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		
+		if (!bankDetail.isActive()) {
+			if (partnerBankDAO.getPartnerBankbyBank(code, "") != 0
+					|| financeMainDAO.getFinanceMainByBank(code, "") != 0
+					|| finAdvancePaymentsDAO.getBankCode(code, "") != 0
+					|| finCollateralsDAO.getFinCollateralsByBank(code, "") != 0
+					|| finReceiptDetailDAO.getReceiptHeaderByBank(code, "") != 0
+					|| bankBranchDAO.getBankBrachByBank(code, "") != 0
+					|| customerBankInfoDAO.getCustomerBankInfoByBank(code, "") != 0
+					|| customerExtLiabilityDAO.getCustomerExtLiabilityByBank(code, "") != 0) {
+				String[] parameters = new String[1];
+				parameters[0] = PennantJavaUtil.getLabel("label_BankCode") + ": " + code;
+
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41017", parameters, null));
+			}
+		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
+	}
+
+	public BankBranchDAO getBankBranchDAO() {
+		return bankBranchDAO;
+	}
+
+	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
+		this.bankBranchDAO = bankBranchDAO;
+	}
+
+	public CustomerBankInfoDAO getCustomerBankInfoDAO() {
+		return customerBankInfoDAO;
+	}
+
+	public void setCustomerBankInfoDAO(CustomerBankInfoDAO customerBankInfoDAO) {
+		this.customerBankInfoDAO = customerBankInfoDAO;
+	}
+
+	public CustomerExtLiabilityDAO getCustomerExtLiabilityDAO() {
+		return customerExtLiabilityDAO;
+	}
+
+	public void setCustomerExtLiabilityDAO(CustomerExtLiabilityDAO customerExtLiabilityDAO) {
+		this.customerExtLiabilityDAO = customerExtLiabilityDAO;
+	}
+
+	public FinAdvancePaymentsDAO getFinAdvancePaymentsDAO() {
+		return finAdvancePaymentsDAO;
+	}
+
+	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
+		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
+	}
+
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public FinCollateralsDAO getFinCollateralsDAO() {
+		return finCollateralsDAO;
+	}
+
+	public void setFinCollateralsDAO(FinCollateralsDAO finCollateralsDAO) {
+		this.finCollateralsDAO = finCollateralsDAO;
+	}
+
+	public FinReceiptDetailDAO getFinReceiptDetailDAO() {
+		return finReceiptDetailDAO;
+	}
+
+	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
+		this.finReceiptDetailDAO = finReceiptDetailDAO;
+	}
+
+	public PartnerBankDAO getPartnerBankDAO() {
+		return partnerBankDAO;
+	}
+
+	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
+		this.partnerBankDAO = partnerBankDAO;
 	}
 
 }

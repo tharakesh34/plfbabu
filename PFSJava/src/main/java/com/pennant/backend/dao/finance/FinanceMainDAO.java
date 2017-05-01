@@ -257,4 +257,6 @@ public interface FinanceMainDAO {
 			String statusReason);
 	
 	List<FinanceMain> getFinanceMainsByCustId(long custId, boolean isActive);
+
+	int getFinanceMainByBank(String bankCode, String type);
 }

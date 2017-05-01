@@ -40,4 +40,6 @@ public interface FinCollateralsDAO {
 	void delete(FinCollaterals finCollaterals, String type);
 
 	long save(FinCollaterals finCollaterals, String type);
+
+	int getFinCollateralsByBank(String bankCode, String type);
 }

@@ -469,5 +469,20 @@ public class CustomerBankInfoDAOImpl extends BasisNextidDaoImpl<CustomerBankInfo
 		return customerBankInfo;
 	}
 
-	
+	@Override
+	public int getCustomerBankInfoByBank(String bankCode, String type) {
+		CustomerBankInfo customerBankInfo = new CustomerBankInfo();
+		customerBankInfo.setBankName(bankCode);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From CustomerBankInfo");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where BankName =:BankName");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
 }

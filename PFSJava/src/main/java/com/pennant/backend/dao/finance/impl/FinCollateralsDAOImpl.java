@@ -303,4 +303,21 @@ public class FinCollateralsDAOImpl extends BasisNextidDaoImpl<FinCollaterals> im
 		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
+	
+	@Override
+	public int getFinCollateralsByBank(String bankCode, String type) {
+		FinCollaterals finCollaterals = new FinCollaterals();
+		finCollaterals.setBankName(bankCode);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From FinCollaterals");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where BankName =:BankName");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCollaterals);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
 }

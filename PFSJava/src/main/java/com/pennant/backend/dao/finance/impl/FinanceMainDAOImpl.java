@@ -2774,4 +2774,21 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
+	
+	@Override
+	public int getFinanceMainByBank(String bankCode, String type) {
+		FinanceMain financeMain = new FinanceMain();
+		financeMain.setBankName(bankCode);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From FinanceMain");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where BankName =:BankName");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
 }

@@ -62,4 +62,6 @@ public interface BankBranchDAO {
 	BankBranch getBankBrachByIFSC(String ifsc, String type);
 
 	BankBranch getBankBrachByCode(String bankCode, String branchCode, String type);
+
+	int getBankBrachByBank(String bankCode, String type);
 }

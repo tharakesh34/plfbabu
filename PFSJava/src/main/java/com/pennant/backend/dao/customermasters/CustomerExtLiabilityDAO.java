@@ -61,4 +61,5 @@ public interface CustomerExtLiabilityDAO {
 	 int getFinTypeCount(String finType);
 	 int getFinStatusCount(String finStatus);
 	 int getVersion(long custID,int liabilitySeq);
+	int getCustomerExtLiabilityByBank(String bankCode, String type);
 }

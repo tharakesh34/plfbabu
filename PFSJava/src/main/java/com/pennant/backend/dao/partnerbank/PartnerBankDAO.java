@@ -72,4 +72,6 @@ public interface PartnerBankDAO extends BasicCrudDao<PartnerBank> {
 	List<PartnerBranchModes> getPartnerBranchModesId(long id);
 	void deletePartnerBranch(PartnerBank partnerBank);
 	void saveBranchList(List<PartnerBranchModes> partnerBranchModesList, long partnerBankId);
+
+	int getPartnerBankbyBank(String bankCode, String type);
 }

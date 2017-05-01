@@ -438,4 +438,20 @@ public class CustomerExtLiabilityDAOImpl extends BasisCodeDAO<CustomerExtLiabili
 		logger.debug("Leaving");
 		return recordCount;
 	}
+	@Override
+	public int getCustomerExtLiabilityByBank(String bankCode, String type) {
+		CustomerExtLiability customerExtLiability = new CustomerExtLiability();
+		customerExtLiability.setBankName(bankCode);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From CustomerExtLiability");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where BankName =:BankName");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerExtLiability);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
 }

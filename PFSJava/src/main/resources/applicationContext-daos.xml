@@ -1612,6 +1612,14 @@
 	<bean name="bankDetailServiceTarget"
 		class="com.pennant.backend.service.applicationmaster.impl.BankDetailServiceImpl">
 		<property name="bankDetailDAO" ref="bankDetailDAO" />
+		<property name="bankBranchDAO" ref="bankBranchDAO" />
+		<property name="customerBankInfoDAO" ref="customerBankInfoDAO" />
+		<property name="customerExtLiabilityDAO" ref="customerExtLiabilityDAO" />
+		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="finCollateralsDAO" ref="finCollateralsDAO" />
+		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
+		<property name="partnerBankDAO" ref="partnerBankDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
