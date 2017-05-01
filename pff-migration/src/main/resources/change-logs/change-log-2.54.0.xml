@@ -2954,5 +2954,8 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
   from FinPftDetails)T inner join RMTCURRENCIES C on C.ccycode= T.finccy
 		</createView>
 	</changeSet>
+		 <changeSet id="152" author="Durgaprasad G">
+		<dropForeignKeyConstraint baseTableName="PRESENTMENTDETAILS" constraintName="FK_PRESENTMENTDETAILS_PID" />
+	</changeSet>
 	
 </databaseChangeLog>
