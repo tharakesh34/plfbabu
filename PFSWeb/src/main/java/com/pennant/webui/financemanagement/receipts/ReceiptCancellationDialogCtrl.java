@@ -45,7 +45,12 @@ package com.pennant.webui.financemanagement.receipts;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -54,6 +59,8 @@ import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Caption;
@@ -61,20 +68,30 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listheader;
+import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.AccountSelectionBox;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinRepayHeader;
+import com.pennant.backend.model.finance.RepayScheduleDetail;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -83,6 +100,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -139,7 +157,34 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	protected Row											row_ChequeAcNo;	
 	protected Row											row_fundingAcNo;	
 	protected Row											row_remarks;	
+	
+	// Payment Schedule Details
+	protected Textbox										payment_finType;
+	protected Textbox										payment_finReference;
+	protected Textbox										payment_finCcy;
+	protected Textbox										payment_CustCIF;
+	protected Textbox										payment_finBranch;
+	
+	// List Header Details on payent Details
+	protected Listheader									listheader_LatePft;
+	protected Listheader									listheader_Refund;
+	protected Listheader									listheader_Penalty;
+	protected Listheader									listheader_InsPayment;
+	protected Listheader									listheader_SchdFee;
+	protected Listheader									listheader_SuplRent;
+	protected Listheader									listheader_IncrCost;
+	
+	protected Listbox										listBoxPayment;
+	protected Listbox										listBoxPosting;
+	protected Tab											postingDetailsTab;
 
+	// Postings Details
+	protected Textbox										posting_finType;
+	protected Textbox										posting_finReference;
+	protected Textbox										posting_finCcy;
+	protected Textbox										posting_CustCIF;
+	protected Textbox										posting_finBranch;
+	
 	private FinReceiptHeader								receiptHeader						= null;
 	private ReceiptCancellationListCtrl						receiptCancellationListCtrl;						
 	private ReceiptCancellationService						receiptCancellationService;						
@@ -212,6 +257,8 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			//Reset Finance Repay Header Details
 			doWriteBeanToComponents();
 			this.borderlayout_Realization.setHeight(getBorderLayoutHeight());
+			this.listBoxPayment.setHeight(getListBoxHeight(6));
+			this.listBoxPosting.setHeight(getListBoxHeight(6));
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -490,6 +537,13 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		fillComboBox(this.allocationMethod, allocateMthd, PennantStaticListUtil.getAllocationMethods(), "");
 		fillComboBox(this.effScheduleMethod, header.getEffectSchdMethod(), PennantStaticListUtil.getEarlyPayEffectOn(), ",NOEFCT,");
 		checkByReceiptMode(header.getReceiptMode(), false);
+		
+		// Repayment Schedule Basic Details
+		this.payment_finType.setValue(header.getFinType());
+		this.payment_finReference.setValue(header.getReference());
+		this.payment_finCcy.setValue(header.getFinCcy());
+		this.payment_finBranch.setValue(header.getFinBranch());
+		this.payment_CustCIF.setValue(header.getCustCIF());
 
 		// Separating Receipt Amounts based on user entry, if exists
 		Map<String, BigDecimal> receiptAmountsMap = new HashMap<>();
@@ -515,6 +569,44 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 					this.fundingAccount.setDescription(receiptDetail.getFundingAcDesc());
 					this.receivedDate.setValue(receiptDetail.getReceivedDate());
 					this.remarks.setValue(receiptDetail.getRemarks());
+					
+					List<RepayScheduleDetail> rpySchdList = new ArrayList<>();
+					List<FinRepayHeader> repayHeaderList = receiptDetail.getRepayHeaders();
+					for (int j = 0; j < repayHeaderList.size(); j++) {
+						if(repayHeaderList.get(j).getRepayScheduleDetails() != null){
+							rpySchdList.addAll(repayHeaderList.get(j).getRepayScheduleDetails());
+						}
+					}
+
+					// Making Single Set of Repay Schedule Details and sent to Rendering
+					Cloner cloner = new Cloner();
+					List<RepayScheduleDetail> tempRpySchdList = cloner.deepClone(rpySchdList);
+					Map<Date, RepayScheduleDetail> rpySchdMap = new HashMap<>();
+					for (RepayScheduleDetail rpySchd : tempRpySchdList) {
+						
+						RepayScheduleDetail curRpySchd = null;
+						if(rpySchdMap.containsKey(rpySchd.getSchDate())){
+							curRpySchd = rpySchdMap.get(rpySchd.getSchDate());
+							curRpySchd.setPrincipalSchdPayNow(curRpySchd.getPrincipalSchdPayNow().add(rpySchd.getPrincipalSchdPayNow()));
+							curRpySchd.setProfitSchdPayNow(curRpySchd.getProfitSchdPayNow().add(rpySchd.getProfitSchdPayNow()));
+							curRpySchd.setLatePftSchdPayNow(curRpySchd.getLatePftSchdPayNow().add(rpySchd.getLatePftSchdPayNow()));
+							curRpySchd.setSchdFeePayNow(curRpySchd.getSchdFeePayNow().add(rpySchd.getSchdFeePayNow()));
+							curRpySchd.setSchdInsPayNow(curRpySchd.getSchdInsPayNow().add(rpySchd.getSchdInsPayNow()));
+							curRpySchd.setPenaltyPayNow(curRpySchd.getPenaltyPayNow().add(rpySchd.getPenaltyPayNow()));
+							rpySchdMap.remove(rpySchd.getSchDate());
+						}else{
+							curRpySchd = rpySchd;
+						}
+						
+						// Adding New Repay Schedule Object to Map after Summing data
+						rpySchdMap.put(rpySchd.getSchDate(), curRpySchd);
+					}
+					
+					doFillRepaySchedules(sortRpySchdDetails(new ArrayList<>(rpySchdMap.values())));
+					
+					// Posting Details
+					this.postingDetailsTab.addForward(Events.ON_SELECT, this.window_ReceiptCancellationDialog, "onSelectPostingsTab");
+					
 				}
 			}
 		}
@@ -522,6 +614,360 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		this.recordStatus.setValue(header.getRecordStatus());
 		logger.debug("Leaving");
 	}
+	
+	/**
+	 * Method for Selecting Posting Details tab
+	 * @param event
+	 */
+	public void onSelectPostingsTab(ForwardEvent event) {
+		logger.debug("Entering");
+		
+		this.postingDetailsTab.removeForward(Events.ON_SELECT, this.window_ReceiptCancellationDialog, "onSelectPostingsTab");
+		
+		FinReceiptHeader header = getReceiptHeader();
+		// Repayment Schedule Basic Details
+		this.posting_finType.setValue(header.getFinType());
+		this.posting_finReference.setValue(header.getReference());
+		this.posting_finCcy.setValue(header.getFinCcy());
+		this.posting_finBranch.setValue(header.getFinBranch());
+		this.posting_CustCIF.setValue(header.getCustCIF());
+		
+		List<Long> tranIdList = new ArrayList<>();
+		if(header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()){
+			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
+				FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
+				if(!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) && 
+						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) &&
+						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+					
+					List<FinRepayHeader> repayHeaderList = receiptDetail.getRepayHeaders();
+					for (int j = 0; j < repayHeaderList.size(); j++) {
+						tranIdList.add(repayHeaderList.get(j).getLinkedTranId());
+					}
+					break;
+				}
+			}
+		}
+		
+		if(!tranIdList.isEmpty()){
+			List<ReturnDataSet> postings = getReceiptCancellationService().getPostingsByTranIdList(tranIdList);
+			doFillPostings(postings);
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Sorting Repay Schedule Details
+	 * 
+	 * @param repayScheduleDetails
+	 * @return
+	 */
+	public List<RepayScheduleDetail> sortRpySchdDetails(List<RepayScheduleDetail> repayScheduleDetails) {
+
+		if (repayScheduleDetails != null && repayScheduleDetails.size() > 0) {
+			Collections.sort(repayScheduleDetails, new Comparator<RepayScheduleDetail>() {
+				@Override
+				public int compare(RepayScheduleDetail detail1, RepayScheduleDetail detail2) {
+					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+				}
+			});
+		}
+
+		return repayScheduleDetails;
+	}
+
+	/**
+	 * Generate the Customer Rating Details List in the CustomerDialogCtrl and set the list in the listBoxCustomerRating
+	 * listbox by using Pagination
+	 */
+	public void doFillRepaySchedules(List<RepayScheduleDetail> repaySchdList) {
+		logger.debug("Entering");
+
+		//setRepaySchdList(sortRpySchdDetails(repaySchdList));
+		this.listBoxPayment.getItems().clear();
+		BigDecimal totalRefund = BigDecimal.ZERO;
+		BigDecimal totalWaived = BigDecimal.ZERO;
+		BigDecimal totalPft = BigDecimal.ZERO;
+		BigDecimal totalLatePft = BigDecimal.ZERO;
+		BigDecimal totalPri = BigDecimal.ZERO;
+		BigDecimal totalCharge = BigDecimal.ZERO;
+
+		BigDecimal totInsPaid = BigDecimal.ZERO;
+		BigDecimal totSchdFeePaid = BigDecimal.ZERO;
+		BigDecimal totSchdSuplRentPaid = BigDecimal.ZERO;
+		BigDecimal totSchdIncrCostPaid = BigDecimal.ZERO;
+
+		Listcell lc;
+		Listitem item;
+
+		int finFormatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
+
+		if (repaySchdList != null) {
+			for (int i = 0; i < repaySchdList.size(); i++) {
+				RepayScheduleDetail repaySchd = repaySchdList.get(i);
+				item = new Listitem();
+
+				lc = new Listcell(DateUtility.formatToLongDate(repaySchd.getSchDate()));
+				lc.setStyle("font-weight:bold;color: #FF6600;");
+				lc.setParent(item);
+				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getProfitSchdBal(), finFormatter));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getPrincipalSchdBal(), finFormatter));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getProfitSchdPayNow(), finFormatter));
+				totalPft = totalPft.add(repaySchd.getProfitSchdPayNow());
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getLatePftSchdPayNow(), finFormatter));
+				totalLatePft = totalLatePft.add(repaySchd.getLatePftSchdPayNow());
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getPrincipalSchdPayNow(), finFormatter));
+				totalPri = totalPri.add(repaySchd.getPrincipalSchdPayNow());
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getPenaltyPayNow(), finFormatter));
+				totalCharge = totalCharge.add(repaySchd.getPenaltyPayNow());
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
+				if (repaySchd.getDaysLate() > 0) {
+					lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getMaxWaiver(), finFormatter));
+				} else {
+					lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getRefundMax(), finFormatter));
+				}
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
+				BigDecimal refundPft = BigDecimal.ZERO;
+				if (repaySchd.isAllowRefund() || repaySchd.isAllowWaiver()) {
+					if (repaySchd.isAllowRefund()) {
+						refundPft = repaySchd.getRefundReq();
+						totalRefund = totalRefund.add(refundPft);
+					} else if (repaySchd.isAllowWaiver()) {
+						refundPft = repaySchd.getWaivedAmt();
+						totalWaived = totalWaived.add(refundPft);
+					}
+				}
+
+				lc = new Listcell(PennantAppUtil.amountFormate(refundPft, finFormatter));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
+				//Fee Details
+				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getSchdInsPayNow(), finFormatter));
+				lc.setStyle("text-align:right;");
+				totInsPaid = totInsPaid.add(repaySchd.getSchdInsPayNow());
+				lc.setParent(item);
+				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getSchdFeePayNow(), finFormatter));
+				lc.setStyle("text-align:right;");
+				totSchdFeePaid = totSchdFeePaid.add(repaySchd.getSchdFeePayNow());
+				lc.setParent(item);
+				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getSchdSuplRentPayNow(), finFormatter));
+				lc.setStyle("text-align:right;");
+				totSchdSuplRentPaid = totSchdSuplRentPaid.add(repaySchd.getSchdSuplRentPayNow());
+				lc.setParent(item);
+				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getSchdIncrCostPayNow(), finFormatter));
+				lc.setStyle("text-align:right;");
+				totSchdIncrCostPaid = totSchdIncrCostPaid.add(repaySchd.getSchdIncrCostPayNow());
+				lc.setParent(item);
+
+				BigDecimal netPay = repaySchd.getProfitSchdPayNow().add(repaySchd.getPrincipalSchdPayNow())
+						.add(repaySchd.getSchdInsPayNow()).add(repaySchd.getSchdFeePayNow())
+						.add(repaySchd.getSchdSuplRentPayNow()).add(repaySchd.getSchdIncrCostPayNow())
+						.add(repaySchd.getPenaltyPayNow()).add(repaySchd.getLatePftSchdPayNow())
+						.subtract(refundPft);
+				lc = new Listcell(PennantAppUtil.amountFormate(netPay, finFormatter));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+				
+				BigDecimal netBalance = repaySchd.getProfitSchdBal().add(repaySchd.getPrincipalSchdBal())
+						.add(repaySchd.getSchdInsBal()).add(repaySchd.getSchdFeeBal())
+						.add(repaySchd.getSchdSuplRentBal()).add(repaySchd.getSchdIncrCostBal());
+						
+				lc = new Listcell(PennantAppUtil.amountFormate(netBalance.subtract(netPay.subtract(
+						repaySchd.getPenaltyPayNow()).subtract(repaySchd.getLatePftSchdPayNow())), finFormatter));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+				item.setAttribute("data", repaySchd);
+				this.listBoxPayment.appendChild(item);
+			}
+
+			//Summary Details
+			Map<String, BigDecimal> paymentMap = new HashMap<String, BigDecimal>();
+			paymentMap.put("totalRefund", totalRefund);
+			paymentMap.put("totalCharge", totalCharge);
+			paymentMap.put("totalPft", totalPft);
+			paymentMap.put("totalLatePft", totalLatePft);
+			paymentMap.put("totalPri", totalPri);
+
+			paymentMap.put("insPaid", totInsPaid);
+			paymentMap.put("schdFeePaid", totSchdFeePaid);
+			paymentMap.put("schdSuplRentPaid", totSchdSuplRentPaid);
+			paymentMap.put("schdIncrCostPaid", totSchdIncrCostPaid);
+
+			doFillSummaryDetails(paymentMap, finFormatter);
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Method for Filling Summary Details for Repay Schedule Terms
+	 * 
+	 * @param totalrefund
+	 * @param totalWaiver
+	 * @param totalPft
+	 * @param totalPri
+	 */
+	private void doFillSummaryDetails(Map<String, BigDecimal> paymentMap, int finFormatter) {
+
+		Listcell lc;
+		Listitem item;
+
+		//Summary Details
+		item = new Listitem();
+		lc = new Listcell(Labels.getLabel("listcell_summary.label"));
+		lc.setStyle("font-weight:bold;background-color: #C0EBDF;");
+		lc.setSpan(15);
+		lc.setParent(item);
+		this.listBoxPayment.appendChild(item);
+
+		BigDecimal totalSchAmount = BigDecimal.ZERO;
+
+		if (paymentMap.get("totalRefund").compareTo(BigDecimal.ZERO) > 0) {
+			this.listheader_Refund.setVisible(true);
+			totalSchAmount = totalSchAmount.subtract(paymentMap.get("totalRefund"));
+			fillListItem(Labels.getLabel("listcell_totalRefund.label"), paymentMap.get("totalRefund"), finFormatter);
+		}else{
+			this.listheader_Refund.setVisible(false);
+		}
+		if (paymentMap.get("totalCharge").compareTo(BigDecimal.ZERO) > 0) {
+			this.listheader_Penalty.setVisible(true);
+			totalSchAmount = totalSchAmount.add(paymentMap.get("totalCharge"));
+			fillListItem(Labels.getLabel("listcell_totalPenalty.label"), paymentMap.get("totalCharge"), finFormatter);
+		}else{
+			this.listheader_Penalty.setVisible(false);
+		}
+		if (paymentMap.get("totalPft").compareTo(BigDecimal.ZERO) > 0) {
+			totalSchAmount = totalSchAmount.add(paymentMap.get("totalPft"));
+			fillListItem(Labels.getLabel("listcell_totalPftPayNow.label"), paymentMap.get("totalPft"), finFormatter);
+		}
+		if (paymentMap.get("totalLatePft").compareTo(BigDecimal.ZERO) > 0) {
+			totalSchAmount = totalSchAmount.add(paymentMap.get("totalLatePft"));
+			this.listheader_LatePft.setVisible(true);
+			fillListItem(Labels.getLabel("listcell_totalLatePftPayNow.label"), paymentMap.get("totalLatePft"), finFormatter);
+		}else{
+			this.listheader_LatePft.setVisible(false);
+		}
+		if (paymentMap.get("totalPri").compareTo(BigDecimal.ZERO) > 0) {
+			totalSchAmount = totalSchAmount.add(paymentMap.get("totalPri"));
+			fillListItem(Labels.getLabel("listcell_totalPriPayNow.label"), paymentMap.get("totalPri"), finFormatter);
+		}
+
+		if (paymentMap.get("insPaid").compareTo(BigDecimal.ZERO) > 0) {
+			totalSchAmount = totalSchAmount.add(paymentMap.get("insPaid"));
+			this.listheader_InsPayment.setVisible(true);
+			fillListItem(Labels.getLabel("listcell_insFeePayNow.label"), paymentMap.get("insPaid"), finFormatter);
+		}else{
+			this.listheader_InsPayment.setVisible(false);
+		}
+		if (paymentMap.get("schdFeePaid").compareTo(BigDecimal.ZERO) > 0) {
+			totalSchAmount = totalSchAmount.add(paymentMap.get("schdFeePaid"));
+			this.listheader_SchdFee.setVisible(true);
+			fillListItem(Labels.getLabel("listcell_schdFeePayNow.label"), paymentMap.get("schdFeePaid"), finFormatter);
+		}else{
+			this.listheader_SchdFee.setVisible(false);
+		}
+		if (paymentMap.get("schdSuplRentPaid").compareTo(BigDecimal.ZERO) > 0) {
+			totalSchAmount = totalSchAmount.add(paymentMap.get("schdSuplRentPaid"));
+			this.listheader_SuplRent.setVisible(true);
+			fillListItem(Labels.getLabel("listcell_schdSuplRentPayNow.label"), paymentMap.get("schdSuplRentPaid"), finFormatter);
+		}else{
+			this.listheader_SuplRent.setVisible(false);
+		}
+		if (paymentMap.get("schdIncrCostPaid").compareTo(BigDecimal.ZERO) > 0) {
+			totalSchAmount = totalSchAmount.add(paymentMap.get("schdIncrCostPaid"));
+			this.listheader_IncrCost.setVisible(true);
+			fillListItem(Labels.getLabel("listcell_schdIncrCostPayNow.label"), paymentMap.get("schdIncrCostPaid"), finFormatter);
+		}else{
+			this.listheader_IncrCost.setVisible(false);
+		}
+
+		fillListItem(Labels.getLabel("listcell_totalSchAmount.label"), totalSchAmount, finFormatter);
+
+	}
+
+	/**
+	 * Method for Showing List Item
+	 * 
+	 * @param label
+	 * @param fieldValue
+	 */
+	private void fillListItem(String label, BigDecimal fieldValue, int finFormatter) {
+
+		Listcell lc;
+		Listitem item;
+
+		item = new Listitem();
+		lc = new Listcell();
+		lc.setParent(item);
+		lc = new Listcell(label);
+		lc.setStyle("font-weight:bold;");
+		lc.setSpan(2);
+		lc.setParent(item);
+		lc = new Listcell(PennantAppUtil.amountFormate(fieldValue, finFormatter));
+		lc.setStyle("text-align:right;color:#f36800;");
+		lc.setParent(item);
+		lc = new Listcell();
+		lc.setSpan(12);
+		lc.setParent(item);
+		this.listBoxPayment.appendChild(item);
+
+	}
+	
+	/**
+	 * Method for Showing Posting Details which are going to be reversed
+	 * @param linkedTranId
+	 */
+	private void doFillPostings(List<ReturnDataSet> postingList) {
+		logger.debug("Entering");
+		
+		if(postingList != null && !postingList.isEmpty()){
+			Listitem item;
+			for (ReturnDataSet returnDataSet : postingList) {
+				item = new Listitem();
+				Listcell lc = new Listcell();
+				if(returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT)){
+					lc = new Listcell(Labels.getLabel("common.Debit"));
+				}else if(returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_DEBIT)){
+					lc = new Listcell(Labels.getLabel("common.Credit"));
+				}
+				lc.setParent(item);
+				lc = new Listcell(returnDataSet.getTranDesc());
+				lc.setParent(item);
+				lc = new Listcell(returnDataSet.getRevTranCode());
+				lc.setParent(item);
+				lc = new Listcell(returnDataSet.getTranCode());
+				lc.setParent(item);
+				lc = new Listcell("");
+				lc.setParent(item);
+				lc = new Listcell(PennantApplicationUtil.formatAccountNumber(returnDataSet.getAccount()));
+				lc.setParent(item);
+				lc = new Listcell(returnDataSet.getAcCcy());
+				lc.setParent(item);
+				lc = new Listcell(PennantAppUtil.amountFormate(returnDataSet.getPostAmount(), CurrencyUtil.getFormat(returnDataSet.getAcCcy())));
+				lc.setStyle("font-weight:bold;text-align:right;");
+				lc.setParent(item);
+				lc = new Listcell("");
+				lc.setParent(item);
+				this.listBoxPosting.appendChild(item);
+			}
+		}
+		logger.debug("Leaving");
+	}
+	
 
 	/**
 	 * Method for Processing Finance Detail Object for Database Operation

@@ -775,11 +775,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		receiptHeader.setNextTaskId("");
 		receiptHeader.setWorkflowId(0);
 		
-		//save recipet details
-		
+		//save receipt details
 		repayProcessUtil.doSaveReceipts(receiptHeader);
 		long receiptID = receiptHeader.getReceiptID();
-		//////////////////////////save
 		
 		// Receipt Allocation Details
 		if(receiptHeader.getAllocations() != null && !receiptHeader.getAllocations().isEmpty()){

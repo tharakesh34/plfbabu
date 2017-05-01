@@ -140,6 +140,28 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
+	
+	@Override
+	public List<ReturnDataSet> getPostingsByTransIdList(List<Long> tranIdList) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("LinkedTranId", tranIdList);
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent, PostDate,ValueDate,TranCode, ");
+		selectSql.append(" TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting, PostAmount,AmountType,PostStatus,ErrorId, ");
+		selectSql.append(" ErrorMsg, AcCcy, TranOrderId, PostToSys,ExchangeRate,PostBranch ");
+		selectSql.append(" FROM Postings");
+		selectSql.append(" Where LinkedTranId  IN(:LinkedTranId) ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
+		List<ReturnDataSet> postings = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		logger.debug("Leaving");
+		return postings;
+	}
+
 
 	@Override
 	public long saveHeader(ReturnDataSet dataSet, String status, String type) {

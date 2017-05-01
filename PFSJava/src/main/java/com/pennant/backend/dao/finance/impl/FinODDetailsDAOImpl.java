@@ -751,6 +751,28 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		
 		logger.debug("Leaving");
 	}
+	
+	
+	@Override
+	public void updateReversals(String finReference,Date odSchDate, BigDecimal penaltyPaid, BigDecimal latePftPaid) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("FinODSchdDate", odSchDate);
+		source.addValue("PenaltyPaid", penaltyPaid);
+		source.addValue("LatePftPaid", latePftPaid);
+		
+		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
+		updateSql.append(" Set TotPenaltyPaid= TotPenaltyPaid - :PenaltyPaid , TotPenaltyBal= TotPenaltyBal + :PenaltyPaid, ");
+		updateSql.append(" LPIPaid = LPIPaid - :LatePftPaid, LPIBal = LPIBal + :LatePftPaid ");
+		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+		
+		logger.debug("Leaving");
+	}
 
 	@Override
 	public FinODDetails getTotals(String finReference) {

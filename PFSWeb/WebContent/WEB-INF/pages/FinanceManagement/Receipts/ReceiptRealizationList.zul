@@ -74,7 +74,7 @@
 										id="sortOperator_receiptRealizationReference" width="43px"
 										mold="select" rows="1" />
 									<uppercasebox id="receiptReference"
-										width="150px" maxlength="8" />
+										width="150px" maxlength="20" />
 									<label
 										id="label_ReceiptRealizationSearch_ReceiptRealizationCustomer"
 										value="${c:l('label_ReceiptRealizationSearch_ReceiptRealizationCustomer.value')}" />

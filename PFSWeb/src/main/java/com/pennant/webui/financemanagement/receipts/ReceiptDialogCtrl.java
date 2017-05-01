@@ -2787,7 +2787,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			
 			if(!this.depositNo.isReadonly()){
 				this.depositNo.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptDialog_depositNo.value"),
-						PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
+						PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 			}
 		}
 		
