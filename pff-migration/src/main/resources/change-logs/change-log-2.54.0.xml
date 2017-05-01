@@ -3205,4 +3205,10 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 			UPDATE SEQ_DATA_ENGINE_STATUS SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_STATUS);
 	  </sql>
 	</changeSet>
+	
+	<changeSet id="165" author="ManojKumar.P">
+		<sql>
+			DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE IN ('AUTO_DISB_RES_FILE_SCHEDULE_TIME', 'AUTO_DISB_RES_FILE_LOCATION');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
