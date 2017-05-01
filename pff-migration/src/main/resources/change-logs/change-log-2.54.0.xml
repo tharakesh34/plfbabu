@@ -2532,6 +2532,7 @@ FROM         FinanceMain_Temp T1 INNER JOIN
   			
 		</createView>
 	</changeSet>
+
 <changeSet id="120" author="madhubabu.p">
 		<sql>
 	    UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
@@ -2545,4 +2546,15 @@ FROM         FinanceMain_Temp T1 INNER JOIN
 		</sql>
 	</changeSet>	
 	
+<changeSet id="121" author="pruthvi">	
+<sql>
+update reportfilterfields set FieldDbName='FinType' where reportid =(select reportid from reportconfiguration where reportname ='Loan Type Investment') and fieldid='2';
+update reportfilterfields set FieldDbName='FinIsActive' where reportid =(select reportid from reportconfiguration where reportname ='Loan Type Investment') and fieldid='4';
+update reportfilterfields set multiselectsearch='0' where reportid =(select reportid from reportconfiguration where menuitemcode ='menu_Item_NoLiabilityCertificate') and fieldid='1';
+update reportfilterfields set multiselectsearch='0' where reportid =(select reportid from reportconfiguration where menuitemcode ='menu_Item_ReleaseLetter') and fieldid='1';
+update reportfilterfields set multiselectsearch='0' where reportid =(select reportid from reportconfiguration where menuitemcode ='menu_Item_InterestStatement') and fieldid='1';
+update reportfilterfields set multiselectsearch='0' where reportid =(select reportid from reportconfiguration where menuitemcode ='menu_Item_ProvisionalTDSCertification') and fieldid='1';
+update reportfilterfields set multiselectsearch='0' where reportid =(select reportid from reportconfiguration where menuitemcode ='menu_Item_TDSCertification') and fieldid='1';
+</sql>
+</changeSet>
 </databaseChangeLog>
