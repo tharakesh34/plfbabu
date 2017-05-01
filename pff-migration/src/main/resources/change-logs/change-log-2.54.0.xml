@@ -2788,4 +2788,11 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
     	<dropPrimaryKey constraintName="PK_FINEXCESSMOVEMENT"
                     tableName="FINEXCESSMOVEMENT"/>
 	</changeSet>
+	<changeSet id="141" author="pruthvi">
+	<sql>
+	update FinanceMain_Temp set duebucket=0 where duebucket is null;
+	update FinanceMain set duebucket=0 where duebucket is null
+	</sql>
+	</changeSet>
+	
 </databaseChangeLog>
