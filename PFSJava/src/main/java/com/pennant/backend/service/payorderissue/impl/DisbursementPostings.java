@@ -65,7 +65,6 @@ public class DisbursementPostings {
 
 			for (FinAdvancePayments finAdvancePayments : advPaymentsList) {
 
-				executingMap.put("ae_disbInstAmt", DateUtility.getSysDate());
 				executingMap.put("ValueDate", DateUtility.getSysDate());
 				executingMap.put("fm_finCcy", SysParamUtil.getAppCurrency());
 				executingMap.put("fm_finBranch", PennantConstants.IBD_Branch);
