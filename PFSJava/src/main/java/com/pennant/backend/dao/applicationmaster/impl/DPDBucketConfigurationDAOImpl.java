@@ -279,7 +279,7 @@ public class DPDBucketConfigurationDAOImpl extends BasisNextidDaoImpl<DPDBucketC
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
 		selectSql.append(" From DPDBUCKETSCONFIG");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BucketID =:BucketID");
+		selectSql.append(" Where productCode =:productCode AND dueDays =:dueDays ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dPDBucketConfiguration);
@@ -295,7 +295,7 @@ public class DPDBucketConfigurationDAOImpl extends BasisNextidDaoImpl<DPDBucketC
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
 		selectSql.append(" From DPDBUCKETSCONFIG");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where productCode =:productCode AND dueDays =:dueDays ");
+		selectSql.append(" Where BucketID =:BucketID ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dPDBucketConfiguration);
