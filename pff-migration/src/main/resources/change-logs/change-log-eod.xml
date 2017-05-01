@@ -267,6 +267,8 @@ insert into SMTparameters values('IGNORING_BUCKET','Ignore Bucket Percentage','D
 	
 	</changeSet>
 	
-	
+	<changeSet id="29" author="Satish">
+		<dropForeignKeyConstraint baseTableName="FinanceMain_TEMP" constraintName="FK_FINMAIN_BMTCUSTSTSCODES_T" />
+	</changeSet>
 
 </databaseChangeLog>
