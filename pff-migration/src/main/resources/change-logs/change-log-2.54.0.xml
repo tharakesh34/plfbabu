@@ -2661,4 +2661,36 @@ update reportfilterfields set multiselectsearch='0' where reportid =(select repo
 	 	Update MANUALADVISE_Temp set ReceiptID=0;
 	 </sql>
 	</changeSet>
+	<changeSet id="131" author="Surekha">
+		<addColumn tableName="PartnerBanks">
+			<column name="AccountNumber" type="varchar(15)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="132" author="Surekha">
+		<sql>
+			update PartnerBanks set AccountNumber='856325' where AccountNumber is NULL;
+		</sql>
+	</changeSet>
+	<changeSet id="133" author="Surekha">
+		<addNotNullConstraint tableName="PartnerBanks" columnName="AccountNumber"/>
+	</changeSet>
+	<changeSet id="134" author="Surekha">
+		<addColumn tableName="PartnerBanks_Temp">
+			<column name="AccountNumber" type="varchar(15)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="135" author="Surekha">
+		<sql>
+			update PartnerBanks_Temp set AccountNumber='856325' where AccountNumber is NULL;
+		</sql>
+	</changeSet>
+	<changeSet id="136" author="Surekha">
+		<addNotNullConstraint tableName="PartnerBanks_Temp" columnName="AccountNumber"/>
+	</changeSet>
+	<changeSet id="137" author="Surekha">
+		<dropColumn tableName="PartnerBanks" columnName="AccountNumber"/>
+	</changeSet>
+	<changeSet id="138" author="Surekha">
+		<dropColumn tableName="PartnerBanks_Temp" columnName="AccountNumber"/>
+	</changeSet>
 </databaseChangeLog>
