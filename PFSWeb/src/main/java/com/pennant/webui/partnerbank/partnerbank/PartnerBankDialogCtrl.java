@@ -146,10 +146,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 
 	private transient PartnerBankService	partnerBankService;
 	private transient BankDetailService		bankDetailService;
-	protected int							accNoLength;
+	//protected int							accNoLength;
 	
-	
-
 	/**
 	 * default constructor.<br>
 	 */
@@ -245,9 +243,9 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.utilityCode.setMaxlength(8);
 		this.accountNo.setMaxlength(50);
 		this.inFavourLength.setMaxlength(2);
-		if(StringUtils.isNotBlank(this.partnerBank.getBankCode())){
+		/*if(StringUtils.isNotBlank(this.partnerBank.getBankCode())){
 			accNoLength = getBankDetailService().getAccNoLengthByCode(this.partnerBank.getBankCode());
-		}
+		}*/
 		
 		this.acType.setModuleName("AccountType");
 		this.acType.setMandatoryStyle(true);
@@ -731,9 +729,11 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		
 		//Account No
 		if (!this.accountNo.isReadonly()) {
-			this.accountNo.setConstraint(new PTStringValidator(Labels
+			/*this.accountNo.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_PartnerBankDialog_AccountNo.value"), PennantRegularExpressions.REGEX_ACCOUNTNUMBER,
-					true,accNoLength,accNoLength));
+					true,accNoLength,accNoLength));*/
+			this.accountNo.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_PartnerBankDialog_AccountNo.value"), PennantRegularExpressions.REGEX_ACCOUNTNUMBER,true));
 		}
 		
 		//Disbursement
@@ -955,9 +955,9 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 				this.branchCity.setValue(details.getCity());
 				this.branchMICRCode.setValue(details.getMICR());
 				this.branchIFSCCode.setValue(details.getIFSC());
-				if(StringUtils.isNotBlank(details.getBankCode())){
+				/*if(StringUtils.isNotBlank(details.getBankCode())){
 					accNoLength = getBankDetailService().getAccNoLengthByCode(details.getBankCode());
-				}
+				}*/
 			}
 		}
 		logger.debug("Leaving");
