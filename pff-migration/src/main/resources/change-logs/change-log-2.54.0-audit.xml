@@ -38,4 +38,10 @@
 	<changeSet author="Kesav" id="06">
 		<dropColumn tableName="AdtSMTDivisionDetail" columnName="EntityID"/>
 	</changeSet>
+	
+	<changeSet id="07" author="Irfan">
+	<addColumn tableName="ADTMANUALADVISE">
+		<column name="BOUNCEID" type="bigint"/>
+	</addColumn>
+	</changeSet>
 </databaseChangeLog>

@@ -19,12 +19,6 @@ public class ReceiptAllocationDetail {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public long getReceiptID() {
-		return receiptID;
-	}
-	public void setReceiptID(long receiptID) {
-		this.receiptID = receiptID;
-	}
 
 	public int getAllocationID() {
 		return allocationID;
@@ -59,6 +53,14 @@ public class ReceiptAllocationDetail {
 	}
 	public void setWaivedAmount(BigDecimal waivedAmount) {
 		this.waivedAmount = waivedAmount;
+	}
+
+	public long getReceiptID() {
+		return receiptID;
+	}
+
+	public void setReceiptID(long receiptID) {
+		this.receiptID = receiptID;
 	}
 	
 }

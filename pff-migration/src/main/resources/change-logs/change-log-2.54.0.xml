@@ -2582,4 +2582,13 @@ update reportfilterfields set multiselectsearch='0' where reportid =(select repo
 			INSERT INTO SMTPARAMETERS VALUES ('AUTO_DISB_RES_FILE_SCHEDULE_TIME',      'Auto disbursement responce file schedule time.',    'String',  		1,  '0 0/5 * * * ?',   									'20', 	0, NULL, NULL, 'Auto disbursement responce file schedule time.',			1,1000,	CURRENT_TIMESTAMP,	'Approved'	,NULL,	NULL,	NULL,	NULL,	NULL,	0);
 		</sql>
 	</changeSet>
+	<changeSet id="124" author="Irfan">
+	<addColumn tableName="ManualAdvise">
+		<column name="BOUNCEID" type="bigint"/>
+	</addColumn>
+	
+	<addColumn tableName="ManualAdvise_Temp">
+		<column name="BOUNCEID" type="bigint"/>
+	</addColumn>
+	</changeSet>
 </databaseChangeLog>
