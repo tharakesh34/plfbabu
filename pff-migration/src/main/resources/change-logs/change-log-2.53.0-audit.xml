@@ -78,7 +78,7 @@
 	</changeSet>
 	
 	<changeSet id="11" author="Irfan">
-	<dropTable tableName="AdtFinReceiptHeader"/>
+	
 		<createTable tableName="AdtFinReceiptHeader">
 			<column name="AuditId" type="bigint" >
 			<constraints nullable="false"/>
