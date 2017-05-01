@@ -2798,10 +2798,14 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 	</changeSet>
 	
 
+
+<!-- <changeSet id="145" author="Durgaprasad G">
+
 		 <changeSet id="152" author="Durgaprasad G">
 		<dropForeignKeyConstraint baseTableName="PRESENTMENTDETAILS" constraintName="FK_PRESENTMENTDETAILS_PID" />
 	</changeSet>
 <changeSet id="145" author="Durgaprasad G">
+
 			<dropTable tableName="PRESENTMENTHEADER" />
 	</changeSet>		
 
@@ -2889,7 +2893,7 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />   
 		</createTable> 
-	</changeSet>
+	</changeSet> -->
 	<changeSet id="149" author="Srikanth">
 		<createView viewName="RPT_SOA_CUSTOMER_VIEW" replaceIfExists="true">
 		Select  T1.FinReference,T1.FinPurpose,T1.Finstartdate,t4.branchdesc FinBranch,productdesc FinType,'' Interest_Type,T1.LinkedFinRef Linked_Agreement_No,
@@ -2959,7 +2963,7 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 	</changeSet>
 	
 	
-		<changeSet id="153" author="Durgaprasad G">
+		<!-- <changeSet id="153" author="Durgaprasad G">
 		<dropTable tableName="PresentmentDetails" />
 	</changeSet>
 
@@ -3099,7 +3103,7 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable> 
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet author="Siva" id="157">
 		<dropNotNullConstraint tableName="ManualAdvise"
