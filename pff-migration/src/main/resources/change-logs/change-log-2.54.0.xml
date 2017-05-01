@@ -3251,4 +3251,65 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
     ,'Schdate',null,'---Select----',null,null,0,0,0,0,1,2,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp);
 		</sql>
 	</changeSet>
+	<changeSet id="168" author="Chaitanya.ch">
+		<createView viewName="FINADVANCEPAYMENTS_AVIEW" replaceIfExists="true">
+			  SELECT   T1.FinReference,T1.paymentid, T1.PaymentSeq, T1.PaymentDetail, T1.AmtToBeReleased, T1.LiabilityHoldName,
+         T1.BeneficiaryName, T1.BeneficiaryAccNo, T1.Description, T1.PaymentType, T1.LLReferenceNo,
+         T1.LLDate, T1.CustContribution, T1.SellerContribution, T1.Remarks,T1.DisbDate,T1.DisbSeq,
+         T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.BankCode,T1.PayableLoc,T1.PrintingLoc,
+		 T1.ValueDate,T1.BankBranchID,T1.PhoneCountryCode,T1.PhoneAreaCode,T1.PhoneNumber,T1.ClearingDate,T1.Status,T1.Active,
+		 T1.InputDate,T1.DisbCCy,T1.POIssued,
+		 T3.BankCode BranchBankCode,T31.BankName BranchBankName,T3.BranchCode,T3.BranchDesc,T3.IFSC,T3.City, 
+		 T4.BankName,T1.PartnerbankId,T5.partnerbankCode,T5.PartnerBankName,T1.LinkedTranId, T5.AccountNo PartnerBankAc  	     
+		 FROM  FinAdvancePayments T1 LEFT OUTER JOIN
+		 BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+		 BMTBankDetail T31 ON T31.BankCode=T3.BankCode LEFT OUTER JOIN		 
+		BMTBankDetail T4  ON T1.BankCode=T4.BankCode LEFT OUTER JOIN
+		 PARTNERBANKS T5 ON T5.PartnerBankId=T1.PartnerbankId
+		</createView>
+	</changeSet>
+	
+	<changeSet id="169" author="Chaitanya.ch">
+		<createView viewName="FINADVANCEPAYMENTS_VIEW" replaceIfExists="true">
+			SELECT   T1.FinReference,T1.paymentId, T1.PaymentSeq, T1.PaymentDetail, T1.AmtToBeReleased, T1.LiabilityHoldName,
+         T1.BeneficiaryName, T1.BeneficiaryAccNo, T1.Description, T1.PaymentType, T1.LLReferenceNo,
+         T1.LLDate, T1.CustContribution, T1.SellerContribution, T1.Remarks,T1.DisbDate,T1.DisbSeq,
+         T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.BankCode,T1.PayableLoc,T1.PrintingLoc,
+		 T1.ValueDate,T1.BankBranchID,T1.PhoneCountryCode,T1.PhoneAreaCode,T1.PhoneNumber,T1.ClearingDate,T1.Status,T1.Active,
+		 T1.InputDate,T1.DisbCCy,T1.POIssued,
+		 T3.BankCode BranchBankCode,T31.BankName BranchBankName,T3.BranchCode,T3.BranchDesc,T3.IFSC,T3.City, 
+		 T4.BankName,T1.PartnerbankId,T5.partnerbankCode,T5.PartnerBankName,T1.LinkedTranId ,T5.AcType, T5.AccountNo PartnerBankAc 
+		 FROM  FinAdvancePayments_Temp T1 LEFT OUTER JOIN
+		 BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+		 BMTBankDetail T31 ON T31.BankCode=T3.BankCode LEFT OUTER JOIN		 
+		 BMTBankDetail T4  ON T1.BankCode=T4.BankCode	LEFT OUTER JOIN
+		 PARTNERBANKS T5 ON T5.PartnerBankId=T1.PartnerbankId
+    
+UNION ALL
+SELECT   T1.FinReference,T1.paymentId, T1.PaymentSeq, T1.PaymentDetail, T1.AmtToBeReleased, T1.LiabilityHoldName,
+         T1.BeneficiaryName, T1.BeneficiaryAccNo, T1.Description, T1.PaymentType, T1.LLReferenceNo,
+         T1.LLDate, T1.CustContribution, T1.SellerContribution, T1.Remarks,T1.DisbDate,T1.DisbSeq,
+         T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+         T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T1.BankCode,T1.PayableLoc,T1.PrintingLoc,
+		 T1.ValueDate,T1.BankBranchID,T1.PhoneCountryCode,T1.PhoneAreaCode,T1.PhoneNumber,T1.ClearingDate,T1.Status,T1.Active,
+		 T1.InputDate,T1.DisbCCy,T1.POIssued,
+		 T3.BankCode BranchBankCode,T31.BankName BranchBankName,T3.BranchCode,T3.BranchDesc,T3.IFSC,T3.City, 
+		 T4.BankName,T1.PartnerbankId,T5.partnerbankCode,T5.PartnerBankName,T1.LinkedTranId,T5.AcType, T5.AccountNo PartnerBankAc   	 	
+		 FROM  FinAdvancePayments T1  LEFT OUTER JOIN
+		 BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+		 BMTBankDetail T31 ON T31.BankCode=T3.BankCode LEFT OUTER JOIN		 
+		 BMTBankDetail T4  ON T1.BankCode=T4.BankCode		LEFT OUTER JOIN
+         PARTNERBANKS T5 ON T5.PartnerBankId=T1.PartnerbankId	
+WHERE NOT EXISTS 
+                 (select 1 from  FINADVANCEPAYMENTS_TEMP where FINREFERENCE = T1.FINREFERENCE and PAYMENTSEQ = T1.PAYMENTSEQ)
+			
+		
+		
+		
+		</createView>
+	
+	
+	</changeSet>
 </databaseChangeLog>
