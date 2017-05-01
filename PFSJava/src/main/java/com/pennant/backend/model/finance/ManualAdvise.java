@@ -86,6 +86,9 @@ private static final long serialVersionUID = 1L;
 	private ManualAdvise befImage;
 	@XmlTransient
 	private  LoggedInUser userDetails;
+	private long bounceID;
+	private String bounceCode;
+	private long receiptID;
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -106,6 +109,7 @@ private static final long serialVersionUID = 1L;
 			excludeFields.add("finReferenceName");
 			excludeFields.add("feeTypeDesc");
 			excludeFields.add("feeTypeCode");
+			excludeFields.add("bounceCode");
 	return excludeFields;
 	}
 
@@ -243,6 +247,30 @@ private static final long serialVersionUID = 1L;
 	
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	public long getBounceID() {
+		return bounceID;
+	}
+
+	public void setBounceID(long bounceID) {
+		this.bounceID = bounceID;
+	}
+
+	public String getBounceCode() {
+		return bounceCode;
+	}
+
+	public void setBounceCode(String bounceCode) {
+		this.bounceCode = bounceCode;
+	}
+
+	public long getReceiptID() {
+		return receiptID;
+	}
+
+	public void setReceiptID(long receiptID) {
+		this.receiptID = receiptID;
 	}
 
 }
