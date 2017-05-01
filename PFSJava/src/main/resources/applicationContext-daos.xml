@@ -9666,4 +9666,11 @@
 </bean>
    
 	<bean id="disbursementProcess" class="com.pennant.backend.service.payorderissue.impl.DisbursementProcessImpl"/>
+	
+	<bean id="disbursementPostings"
+		class="com.pennant.backend.service.payorderissue.impl.DisbursementPostings">
+		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
+		<property name="engineExecution" ref="engineExecution" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil"/>
+	</bean>
 </beans>
