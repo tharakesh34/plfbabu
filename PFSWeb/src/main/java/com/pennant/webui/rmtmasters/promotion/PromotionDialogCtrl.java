@@ -997,6 +997,9 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		// fill the components with the data
 		doWriteBeanToComponents(promotion);
+		
+		this.btnDelete.setVisible(false);
+		
 		setDialog(DialogType.EMBEDDED);
 
 		logger.debug("Leaving");
