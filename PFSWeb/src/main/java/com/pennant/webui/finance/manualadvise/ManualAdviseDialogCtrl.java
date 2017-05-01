@@ -56,6 +56,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
@@ -120,6 +121,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	protected Hbox hbox_Sequence;
 	protected Hbox hbox_WaivedAmount;
 	protected Hbox hbox_PaidAmount;
+	protected Groupbox adviseMovements;
 
 	private transient ManualAdviseListCtrl manualAdviseListCtrl;
 	private transient ManualAdviseService manualAdviseService;
@@ -428,8 +430,14 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			this.feeTypeID.setValue(aManualAdvise.getFeeTypeCode(), aManualAdvise.getFeeTypeDesc());
 			this.feeTypeID.setObject(new FeeType(aManualAdvise.getFeeTypeID()));
 		}
-		List<ManualAdviseMovements> advisemovementList = manualAdviseService.getAdivseMovements(this.manualAdvise.getAdviseID());
-		doFillMovementDetails(advisemovementList);
+		if (enqiryModule) {
+			this.adviseMovements.setVisible(true);
+			List<ManualAdviseMovements> advisemovementList = manualAdviseService.getAdivseMovements(this.manualAdvise
+					.getAdviseID());
+			doFillMovementDetails(advisemovementList);
+		} else {
+			this.adviseMovements.setVisible(false);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}

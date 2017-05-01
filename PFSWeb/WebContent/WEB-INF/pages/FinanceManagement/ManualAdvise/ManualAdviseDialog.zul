@@ -138,7 +138,7 @@
 							</row>
 						</rows>
 					</grid>
-					<groupbox>
+					<groupbox id="adviseMovements">
 						<listbox id="listBoxAdviseMovements"
 							fixedLayout="true" span="true"
 							emptyMessage="${c:l('listbox.emptyMessage')}" multiple="true"
