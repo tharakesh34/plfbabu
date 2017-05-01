@@ -1258,8 +1258,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						break;
 					} else {
 						final BigDecimal earlypaidBal = detail.getEarlyPaidBal();
-						receiptData.getRepayMain().setEarlyPayAmount(
-								receiptData.getRepayMain().getEarlyPayAmount().add(earlypaidBal));
+						receiptData.getRepayMain().setEarlyPayAmount(detail.getPrincipalSchd().add(
+								receiptData.getRepayMain().getEarlyPayAmount()).add(earlypaidBal));
 					}
 				}
 				if (detail.getSchDate().compareTo(receiptData.getRepayMain().getEarlyPayOnSchDate()) >= 0) {
@@ -3905,10 +3905,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					FinanceScheduleDetail curSchd = scheduleList.get(i);
 					if (DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) > 0) {
 						closingBal = curSchd.getClosingBalance();
-						break;
+						continue;
 					}
 					if (DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) == 0 || closingBal == null) {
-						closingBal = curSchd.getClosingBalance();
+						closingBal = closingBal.subtract(curSchd.getSchdPriPaid().subtract(curSchd.getSchdPftPaid()));
 						break;
 					}
 				}
