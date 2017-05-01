@@ -3100,4 +3100,13 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 			<column name="WorkflowId" type="bigint" />
 		</createTable> 
 	</changeSet>
+
+	<changeSet author="Siva" id="157">
+		<dropNotNullConstraint tableName="ManualAdvise"
+			columnName="Remarks" columnDataType="varchar(100)" />
+	</changeSet>
+	<changeSet author="Siva" id="158">
+		<dropNotNullConstraint tableName="ManualAdvise_Temp"
+			columnName="Remarks" columnDataType="varchar(100)" />
+	</changeSet>
 </databaseChangeLog>
