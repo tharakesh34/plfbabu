@@ -290,7 +290,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		} else {
 
 			List<Object> list = disbursementPostings.processPostings(payOrderIssueHeader, tranType);
-			if (list == null || (!(Boolean) list.get(0))) {
+			if (list == null && (!(Boolean) list.get(0))) {
 				String errorMessage = StringUtils.trimToEmpty(list.get(1).toString());
 
 				auditHeader.setErrorDetails(new ErrorDetails("0000", errorMessage, null));

@@ -257,7 +257,7 @@
 											value="${c:l('label_JVPostingEntryDialog_Account.value')}" />
 										<hlayout id="hlayout_Account"
 											spacing="2px">
-											<accountSelectionBox
+											<extendedcombobox
 												id="account" />
 											<label
 												id="label_AccountCurrency" visible="false" />
@@ -282,7 +282,7 @@
 												value="${c:l('label_JVPostingEntryDialog_DebitAccount.value')}" />
 											<hlayout
 												id="hlayout_DebitAccount" spacing="2px">
-												<accountSelectionBox
+												<extendedcombobox
 													id="debitAccount" />
 												<label
 													id="label_DebitAccountCurrency" visible="false" />

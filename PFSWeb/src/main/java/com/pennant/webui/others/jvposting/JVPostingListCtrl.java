@@ -158,7 +158,6 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 		registerField("creditsCount", listheader_CreditsCount);
 		registerField("totDebitsByBatchCcy", listheader_TotDebitsByBatchCcy);
 		registerField("totCreditsByBatchCcy", listheader_TotCreditsByBatchCcy);
-		registerField("ValidationStatus", listheader_ValidationStatus);
 		registerField("BatchPostingStatus", listheader_PostingStatus);
 
 		// Render the page and display the data.

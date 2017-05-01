@@ -90,11 +90,9 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
-import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.expenses.LegalExpenses;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
@@ -424,7 +422,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		JVPostingEntry aJVPostingEntry = new JVPostingEntry();
 		aJVPostingEntry.setNewRecord(true);
 		aJVPostingEntry.setWorkflowId(0);
-		aJVPostingEntry.setBatchReference(Long.valueOf(this.batchReference.getValue()));
 		aJVPostingEntry.setFileName(getJVPosting().getFilename());
 		aJVPostingEntry.setTxnReference(this.listBoxJVPostingEntry.getItems().size()+1);
 		showDetailView(aJVPostingEntry, false, true);
@@ -617,7 +614,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				btnCancel.setVisible(false);
 			}
 		}
-		
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aJVPosting);
@@ -934,7 +930,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		LegalExpenses expenses;
 		this.batch.setValue(aJVPosting.getBatch());
 		if (aJVPosting.isNewRecord()) {
-			this.batchReference.setValue("0");
+			this.batchReference.setValue("");
 			this.baseCCy.setValue(aJVPosting.getCurrency());
 			this.postingBranch.setValue(getUserWorkspace().getLoggedInUser().getBranchCode());
 			getJVPosting().setPostingDate(DateUtility.getSysDate());
@@ -983,7 +979,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 
 		if(aJVPostingEntryList != null && aJVPostingEntryList.size() > 0){
 			this.postingBranch.setReadonly(true);
-			this.listBoxJVPostingEntry.setHeight((aJVPostingEntryList.size()*25)+200+"px");
 		}else {
 			this.postingBranch.setReadonly(false);
 		}
@@ -1011,8 +1006,9 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 
 		// Batch Reference
 		try {
-			aJVPosting.setBatchReference(Long.valueOf(this.batchReference
-					.getValue()));
+			if(!StringUtils.equals("", this.batchReference.getValue())){
+				aJVPosting.setBatchReference(Long.valueOf(this.batchReference.getValue()));				
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1709,9 +1705,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		}
 		acEntryList = getPostingsPreparationUtil().prepareAccountingEntryList(acEntryList, getJVPosting().getCurrency(),
 				CurrencyUtil.getCcyNumber(jVPosting.getCurrency()) ,CurrencyUtil.getFormat(getJVPosting().getCurrency()));
-		if(acEntryList != null && acEntryList.size() > 0){
-			this.listBoxJVPostingEntry.setHeight((acEntryList.size()*25)+200+"px");
-		}
 		renderAccountingEntries(acEntryList, CurrencyUtil.getFormat(getJVPosting().getCurrency()));
 	}
 

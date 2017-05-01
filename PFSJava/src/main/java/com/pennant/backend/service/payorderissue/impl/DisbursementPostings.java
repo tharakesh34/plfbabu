@@ -115,6 +115,7 @@ public class DisbursementPostings {
 
 			if (disbMap != null) {
 				for (Entry<Long, List<ReturnDataSet>> entry : disbMap.entrySet()) {
+					if(entry.getValue()!=null && !entry.getValue().isEmpty()){
 					returnList = postingsPreparationUtil.processPostings(entry.getValue());
 					if (returnList != null) {
 						if ((!(Boolean) returnList.get(0))) {
@@ -128,6 +129,7 @@ public class DisbursementPostings {
 						}
 					}
 				}
+			}
 
 			} else {
 				returnList.add(false);

@@ -1916,7 +1916,7 @@ public class PennantJavaUtil {
 				"PresentmentHeader_AView" }, null, new String[] {"MandateType","PartnerBankID","Status"},null, 600));
 		
 		ModuleUtil.register("AccountMapping", new ModuleMapping("AccountMapping", AccountMapping.class, new String[] { "AccountMapping",
-				"AccountMapping_AView" }, masterWF, new String[] {},null, 600));
+				"AccountMapping_AView" }, masterWF, new String[] {"Account","HostAccount"},null, 600));
 		
 		ModuleUtil.register("FinTypePartner", new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
 				new String[] { "FinTypePartnerBanks","FinTypePartnerBanks_AView" }, masterWF,
