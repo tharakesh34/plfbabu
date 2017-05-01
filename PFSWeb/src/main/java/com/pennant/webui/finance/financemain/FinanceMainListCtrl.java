@@ -1226,6 +1226,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			if (operatorId == 6) {
 				reference = "%" + reference + "%";
+				operatorSign = "like";
 			}
 
 			sql.append(" (Reference ").append(operatorSign).append(" '").append(reference.replace("'", "''"))
