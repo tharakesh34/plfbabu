@@ -2788,21 +2788,17 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
     	<dropPrimaryKey constraintName="PK_FINEXCESSMOVEMENT"
                     tableName="FINEXCESSMOVEMENT"/>
 	</changeSet>
- 	<changeSet id="141" author="pruthvi">
-	<sql>
+
+	<changeSet id="142" author="pruthvi">
+
+ 	<sql>
 	update FinanceMain_Temp set duebucket=0 where duebucket is null;
-	update FinanceMain set duebucket=0 where duebucket is null
+	update FinanceMain set duebucket=0 where duebucket is null;
 	</sql>
 	</changeSet>
+	
 
-
-	 <changeSet id="143" author="Durgaprasad G">
-		<dropForeignKeyConstraint baseTableName="PRESENTMENTDETAILS" constraintName="FK_PRESENTMENTDETAILS_PID" />
-	</changeSet>
-	
-	
-	
-	<changeSet id="145" author="Durgaprasad G">
+<changeSet id="145" author="Durgaprasad G">
 			<dropTable tableName="PRESENTMENTHEADER" />
 	</changeSet>		
 
@@ -2890,6 +2886,73 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />   
 		</createTable> 
+	</changeSet>
+	<changeSet id="149" author="Srikanth">
+		<createView viewName="RPT_SOA_CUSTOMER_VIEW" replaceIfExists="true">
+		Select  T1.FinReference,T1.FinPurpose,T1.Finstartdate,t4.branchdesc FinBranch,productdesc FinType,'' Interest_Type,T1.LinkedFinRef Linked_Agreement_No,
+		T1.ClosedLinkedFinRef Closed_Linked_Agree_No,T.CustShrtname,T.CustCIF,t.CustID,CustAddrHNbr,CustFlatNbr,CustAddrStreet,
+		CustPOBox,CustAddrCity,CustAddrProvince,CustAddrCountry,''PropertyDetails,''PropertyAddress,PhoneCountryCode,
+		PhoneAreaCode,T.PhoneNumber ,CustEMail,ActiveCnt,CloseCnt,Tot from (
+		Select CustShrtname,CustCIF,t1.CustID,CustAddrHNbr,CustFlatNbr,CustAddrStreet,
+		CustPOBox,CustAddrCity,CustAddrProvince,CustAddrCountry,PhoneCountryCode,
+		PhoneAreaCode,T3.PhoneNumber ,CustEMail,ActiveCnt,CloseCnt,ActiveCnt+coalesce(CloseCnt,0) Tot
+		from Customers T1 Left join
+		CustomerAddresses T2 ON t1.CustID =T2.CustID and t2.custAddrPriority=5 Left join
+		CustomerPhoneNumbers T3 ON t1.CustID =T3.PhoneCustID  and PHONETYPEPRIORITY=5 Left join
+		CustomerEMails T4 on T4.CustID =T1.CustID and CustEmailPriority=5 Left join
+		(Select CustID,COUNT(*)ActiveCnt from FinPftDetails
+		where (FinIsActive=1) group by CustID)T5 ON T1.CustID =T5.CustID  Left join
+		(Select CustID,COUNT(*)CloseCnt from FinPftDetails
+		where (FinIsActive!=1)group by CustID)T6 ON T1.CustID =T6.CustID)T Left join
+		finpftdetails T1 on T.CustID=T1.CustID inner join
+		RMTFinanceTypes T2 on T1.FinType =T2.FinType inner join
+	  BMTProduct T3 on T3.ProductCode =T2.FinCategory inner join
+	  RMTBRANCHES T4 on T4.branchcode = T1.FinBranch
+		</createView>
+		</changeSet>
+		
+		<changeSet id="150" author="Srikanth">
+		<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')APP_DATE from (
+    Select Finreference,Schdate, (case when Disbonschdate=1 then 'Amount Financed - Payable ('||Finreference||')' 
+		when BPIORHOLIDAY='B' then 'Broken Period Interest Receivable -Due('||Finreference||')' else 
+		'Due for Installment '||INSTNUMBER||' ('||Finreference||')' end) Particulars,case when Disbonschdate=1 then 0 else Repayamount end Debit,
+		case when Disbonschdate=1 then DisbAmount else 0 end Credit
+		from finscheduledetails  where (BPIORHOLIDAY!='H' or BPIORHOLIDAY is null) and schdate<![CDATA[<]]>(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  union 
+		Select finreference,m.lastmnton,feetypedesc ||'- Due ('||Finreference||')' ,m.ADVISEAMOUNT Debit ,0 Credit from manualadvise m
+		inner join FEETYPES f on f.feetypeid = m.feetypeid union
+		Select REFERENCE,VALUEDATE,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '||PAYMENTTYPE ||' No.:'||CHEQUEACNO ||'('||REFERENCE||')'
+		when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('||REFERENCE||')' when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'||CHEQUEACNO ||'('||REFERENCE||')' end) Particulars,
+		Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,
+		Case when PAYMENTTYPE NOT in ('EXCESS') then Amount when PAYMENTTYPE in ('EXCESS') then Amount end credit
+		from FINRECEIPTHEADER T1 inner join 
+		FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID)T1 
+    inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+    inner join RMTCURRENCIES C on C.ccycode= T2.finccy
+		</createView>
+		</changeSet>
+		
+<changeSet id="151" author="Srikanth">
+		<createView viewName="RPT_SOA_FINSMRY_VIEW" replaceIfExists="true">
+		Select FinReference,comp,due,Receipt, C.ccyMinorccyunits,ccyEditField,
+  (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')APP_DATE from (
+  Select FinReference,finccy,'Instalment Amount' comp,coalesce((TdSchdPft+TdSchdPri),0) due,coalesce((TdSchdPriPaid+TdSchdPftPaid),0) Receipt 
+  from FinPftDetails union all
+	Select FinReference,finccy,'Principal Component' comp,	coalesce(TdSchdPri,0) due,coalesce(TdSchdPriPaid,0) Receipt 
+  from FinPftDetails  union all
+	Select FinReference,finccy,'Interest Component' comp,coalesce(TdSchdPft,0) due,coalesce(TdSchdPftPaid,0)Receipt 
+  from FinPftDetails  union all
+	Select FinReference,finccy,'Late Payment Penalty' comp,coalesce(PenaltyDue,0) due,	coalesce(PenaltyPaid,0) Receipt 
+  from FinPftDetails union all
+	Select FinReference,finccy,'Bounce Charges' comp,coalesce(BounceAmt,0) due,coalesce(BounceAmtPaid,0) Receipt 
+  from FinPftDetails union all
+  Select Finreference,finccy,'Other Receivables' comp, coalesce(receivableAdviseBal,0) due,coalesce(receivableadvise,0) Receipt  
+  from FinPftDetails union all
+  Select Finreference,finccy,'Unadjusted Amount' comp,coalesce((excessAmtBal + emiInAdvanceBal),0) due,coalesce((excessAmt+ emiInAdvance),0) Receipt 
+  from FinPftDetails union all
+  Select Finreference,finccy,'Other Payables' comp, coalesce(payableAdviseBal,0) due,coalesce(payableAdvise,0) Receipt 
+  from FinPftDetails)T inner join RMTCURRENCIES C on C.ccycode= T.finccy
+		</createView>
 	</changeSet>
 	
 </databaseChangeLog>
