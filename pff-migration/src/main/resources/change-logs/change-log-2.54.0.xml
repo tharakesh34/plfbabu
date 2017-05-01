@@ -2641,4 +2641,24 @@ update reportfilterfields set multiselectsearch='0' where reportid =(select repo
 		
 		</createView>
 	</changeSet>
+	<changeSet id="129" author="Irfan">
+		<createView viewName="MANUALADVISE_TVIEW" replaceIfExists="true">
+		SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
+  				T1.AdviseAmount, T1.PaidAmount, T1.WaivedAmount, T1.Remarks,
+  					T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.FeeTypeDesc, T2.FeeTypeCode, T1.BounceID, T1.ReceiptID, T3.BOUNCECODE
+				FROM    	ManualAdvise_Temp  T1
+       			LEFT JOIN FEETYPES T2 ON T1.FeeTypeID = T2.FeeTypeID
+       			LEFT JOIN BOUNCEREASONS T3 ON T1.BounceID = T3.BOUNCEID
+	
+		</createView>
+	</changeSet>
+	<changeSet id="130" author="Irfan">
+	 <sql>
+	 	Update MANUALADVISE set BounceID=0;
+	 	Update MANUALADVISE set ReceiptID=0;
+	 	Update MANUALADVISE_Temp set BounceID=0;
+	 	Update MANUALADVISE_Temp set ReceiptID=0;
+	 </sql>
+	</changeSet>
 </databaseChangeLog>
