@@ -44,4 +44,9 @@
 		<column name="BOUNCEID" type="bigint"/>
 	</addColumn>
 	</changeSet>
+	<changeSet id="08" author="Irfan">
+		<addColumn tableName="ADTMANUALADVISE">
+		<column name="ReceiptID" type="bigint"/>
+	</addColumn>
+	</changeSet>
 </databaseChangeLog>
