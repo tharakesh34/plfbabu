@@ -10,7 +10,7 @@ import org.zkoss.util.media.Media;
 
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.pff.baja.InterfaceConstants;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.services.disbursement.DisbursementResponse;
 
@@ -26,27 +26,19 @@ public class AutoDisburseFileResponseService extends BajajService {
 
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 
-		if (InterfaceConstants.autoDisbResFileJob) {
+		if (BajajInterfaceConstants.autoDisbResFileJob) {
 			return;
 		}
 
-		String responseFileLocation = null;
-		try {
-			responseFileLocation = (String) getSMTParameter("AUTO_DISB_RES_FILE_LOCATION", String.class);
-		} catch (Exception e) {
-			throw new JobExecutionException(e.getMessage());
-		}
 
 		File directory = null;
-		if (responseFileLocation != null) {
-			directory = new File(responseFileLocation);
+		directory = new File(BajajInterfaceConstants.autoDisbFileLoaction);
 
-			if (!directory.exists()) {
-				throw new JobExecutionException("Auto disbursement response file location not available.");
-			}
+		if (!directory.exists()) {
+			throw new JobExecutionException("Auto disbursement response file location not available.");
 		}
 
-		InterfaceConstants.autoDisbResFileJob = true;
+		BajajInterfaceConstants.autoDisbResFileJob = true;
 		try {
 			for (File file : directory.listFiles()) {
 				if (!file.isFile()) {
@@ -58,7 +50,7 @@ public class AutoDisburseFileResponseService extends BajajService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			InterfaceConstants.autoDisbResFileJob = false;
+			BajajInterfaceConstants.autoDisbResFileJob = false;
 		}
 
 	}
@@ -67,9 +59,9 @@ public class AutoDisburseFileResponseService extends BajajService {
 		DataEngineStatus status = null;
 
 		if ("DISB_HDFC_IMPORT".equals(configName)) {
-			status = InterfaceConstants.autoDisbResFileStatus;
+			status = BajajInterfaceConstants.autoDisbResFileStatus;
 		} else {
-			status = InterfaceConstants.manualDisbResFileStatus;
+			status = BajajInterfaceConstants.manualDisbResFileStatus;
 		}
 		
 		String name = "";

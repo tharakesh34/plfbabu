@@ -2,7 +2,7 @@ package com.pennanttech.pff.baja;
 
 import com.pennanttech.dataengine.model.DataEngineStatus;
 
-public class InterfaceConstants {
+public class BajajInterfaceConstants {
 
 	/**
 	 * <p>
@@ -17,7 +17,7 @@ public class InterfaceConstants {
 	public static final String		DBDateFormat			= "yyyy-MM-dd";
 
 	public static boolean			autoDisbResFileJob;
-
 	public static DataEngineStatus	autoDisbResFileStatus	= new DataEngineStatus();
 	public static DataEngineStatus	manualDisbResFileStatus	= new DataEngineStatus();
+	public static String			autoDisbFileLoaction;
 }

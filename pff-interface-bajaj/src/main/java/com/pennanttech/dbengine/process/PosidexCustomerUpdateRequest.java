@@ -17,7 +17,7 @@ import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.dbengine.DBProcessEngine;
-import com.pennanttech.pff.baja.InterfaceConstants.Status;
+import com.pennanttech.pff.baja.BajajInterfaceConstants.Status;
 
 public class PosidexCustomerUpdateRequest extends DBProcessEngine {
 
