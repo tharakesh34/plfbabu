@@ -188,8 +188,6 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 			
 			super.pageRightName = dialogName;
 
-			/* set components visible dependent of the users rights */
-			doCheckRights();
 
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("financeWorkFlow")) {
@@ -207,6 +205,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 			doLoadWorkFlow(this.financeWorkFlow.isWorkflow(),
 					this.financeWorkFlow.getWorkflowId(),
 					this.financeWorkFlow.getNextTaskId());
+			/* set components visible dependent of the users rights */
+			doCheckRights();
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
@@ -317,7 +317,9 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering") ;
-
+		
+		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
+		
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_"+dialogName+"_btnDelete"));
