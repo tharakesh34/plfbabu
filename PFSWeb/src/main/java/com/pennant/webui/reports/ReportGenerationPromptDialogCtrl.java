@@ -57,6 +57,12 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
@@ -130,12 +136,6 @@ import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.core.util.ModuleUtil;
-
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.export.JRXlsExporter;
-import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
 /**
  * This is the controller class for the
@@ -246,7 +246,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					doFillcbSelectTemplate();//Fill Template Library
 					this.window_ReportPromptFilterCtrl.doModal();
 				}else{
-					doShowReport(null, null, null);
+					doShowReport(null, null, null, null);
 				}
 				logger.debug("Leaving" + event.toString());
 
@@ -1128,8 +1128,10 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 									throw new WrongValueException( fromDateBox,Labels.getLabel("label_Error_FromValueMustGretaerTo.vlaue"));
 								}
 							}
-							whereCondition =getWhereConditionFromDateTimeAndRangeTypes(whereCondition,aReportFilterFields,  fromDateBox,">=");
-							whereCondition= getWhereConditionFromDateTimeAndRangeTypes(whereCondition,aReportFilterFields,  toDateBox,"<=");
+							if(!excludeDates){
+								whereCondition =getWhereConditionFromDateTimeAndRangeTypes(whereCondition,aReportFilterFields,  fromDateBox,">=");
+								whereCondition= getWhereConditionFromDateTimeAndRangeTypes(whereCondition,aReportFilterFields,  toDateBox,"<=");
+							}
 						}
 					}
 					if(aReportFilterFields.isMandatory()){
@@ -1165,11 +1167,13 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					String fromValue =null;
 					String toValue =null;
 					if(fromDateBox instanceof Datebox ) {
-						Datebox fromDate =(Datebox)fromDateBox;
-						Datebox todate =(Datebox)toDateBox;
-						if(fromDate.getValue()!=null && todate.getValue()!=null){
-							fromValue=DateUtility.formatToShortDate(fromDate.getValue());
-							toValue=DateUtility.formatToShortDate(todate.getValue());
+						if(!excludeDates){
+							Datebox fromDate =(Datebox)fromDateBox;
+							Datebox todate =(Datebox)toDateBox;
+							if(fromDate.getValue()!=null && todate.getValue()!=null){
+								fromValue=DateUtility.formatToShortDate(fromDate.getValue());
+								toValue=DateUtility.formatToShortDate(todate.getValue());
+							}
 						}
 					}else if(fromDateBox instanceof Timebox){
 						Timebox fromDate =(Timebox)fromDateBox;
@@ -1515,7 +1519,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * This method  call the report control to generate the report 
 	 * @throws Exception
 	 */
-	public void doShowReport(String whereCond, String fromDate, String toDate) throws Exception {
+	public void doShowReport(String whereCond, String whereCond2, String fromDate, String toDate) throws Exception {
 		logger.debug("Entering" );
 
 		HashMap<String, Object> reportArgumentsMap = new HashMap<String, Object>(10);
@@ -1530,6 +1534,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 		if(whereCond != null){
 			reportArgumentsMap.put("whereCondition", whereCond);
+		}
+		if(whereCond2 != null){
+			reportArgumentsMap.put("whereCondition1", whereCond2);
 		}
 		if(fromDate != null){
 			reportArgumentsMap.put("fromDate", "'"+DateUtility.getDBDate(fromDate).toString()+"'");
@@ -2070,7 +2077,21 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		searchClick = true;
 		
 		// ++ create the searchObject and initialize sorting ++//
-		if(StringUtils.equals(reportMenuCode, "menu_Item_DelinquencyVariance")){
+		if(StringUtils.equals(reportMenuCode, "menu_Item_AccountStmt")){
+			String fromDate = null;
+			String toDate = null;
+			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false, false);
+			if(filters != null && filters.size() >= 2){
+				String[] fromDateArray = ((ReportSearchTemplate)filters.get(1)).getFieldValue().split("&");
+				fromDate = DateUtility.formatUtilDate(DateUtility.getDate(fromDateArray[0]), PennantConstants.DBDateFormat);
+				toDate =  DateUtility.formatUtilDate(DateUtility.getDate(fromDateArray[1]), PennantConstants.DBDateFormat);
+			}
+			
+			StringBuilder whereCond1 = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
+			StringBuilder whereCond2 = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
+			doShowReport("where".equals(whereCond1.toString().trim())? "":whereCond1.toString(), 
+					"where".equals(whereCond2.toString().trim())? "":whereCond2.toString(), fromDate, toDate);
+		}else if(StringUtils.equals(reportMenuCode, "menu_Item_DelinquencyVariance")){
 			String fromDate = null;
 			String toDate = null;
 			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false, false);
@@ -2080,8 +2101,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			}
 			
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
-			doShowReport("where".equals(whereCondition.toString().trim())? "":whereCondition.toString(), fromDate, toDate);
-		}if(StringUtils.equals(reportMenuCode, "menu_Item_LimitReports")){
+			doShowReport("where".equals(whereCondition.toString().trim())? "":whereCondition.toString(),null, fromDate, toDate);
+		}else if(StringUtils.equals(reportMenuCode, "menu_Item_LimitReports")){
 			String limitType = null;
 			//SimpleDateFormat format=new SimpleDateFormat()""
 			//Date currentDate= new Date(System.currentTimeMillis());
@@ -2098,10 +2119,10 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			}
 			
 			//StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
-			doShowReport("where".equals(whereCondition.toString().trim())? "":whereCondition.toString(), null, null);
+			doShowReport("where".equals(whereCondition.toString().trim())? "":whereCondition.toString(),null, null, null);
 		}else{
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
-			doShowReport("where".equals(whereCondition.toString().trim())? "":whereCondition.toString(), null, null);
+			doShowReport("where".equals(whereCondition.toString().trim())? "":whereCondition.toString(),null, null, null);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -2231,7 +2252,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				
 			}else{
 
-				Object dataObject = ExtendedSearchListBox.show(this.window_ReportPromptFilterCtrl,button.getId());
+				Object dataObject = ExtendedSearchListBox.show(this.window_ReportPromptFilterCtrl,button.getId(),"",getUsrFinAuthenticationQry(false));
 				if (dataObject instanceof String){
 					valuestextBox.setValue(dataObject.toString());
 					labelstextBox.setValue("");

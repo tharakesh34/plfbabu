@@ -1662,6 +1662,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			gb_ChequeDetails.setVisible(false);
 			gb_NeftDetails.setVisible(false);
 			this.partnerBankID.setReadonly(true);
+			this.partnerBankID.setValue("");
+			this.partnerBankID.setDescription("");
 			return;
 		} else if (str.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)
 				|| str.equals(DisbursementConstants.PAYMENT_TYPE_DD)) {
