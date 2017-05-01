@@ -2783,4 +2783,9 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
                             WHERE      (FinReference = T1.FinReference)))
 </createView>
 </changeSet>
+
+<changeSet id="141" author="Siva">
+    	<dropPrimaryKey constraintName="PK_FINEXCESSMOVEMENT"
+                    tableName="FINEXCESSMOVEMENT"/>
+	</changeSet>
 </databaseChangeLog>
