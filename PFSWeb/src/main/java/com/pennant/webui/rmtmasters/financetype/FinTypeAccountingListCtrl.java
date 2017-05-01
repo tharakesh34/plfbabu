@@ -102,6 +102,8 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 	private Object mainController;
 	protected int moduleId;
 	
+	private List<AccountEngineEvent> accEventStaticList = new ArrayList<AccountEngineEvent>();
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -197,6 +199,12 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 	private void doShowDialog() throws IllegalAccessException, IllegalArgumentException, NoSuchMethodException, SecurityException {
 		logger.debug("Entering");
 		
+		if (this.isOverdraft) {
+			accEventStaticList = PennantAppUtil.getOverdraftAccountingEvents();
+		} else {
+			accEventStaticList =  PennantAppUtil.getAccountingEvents();
+		}
+		
 		doFillFinTypeAccountingList(this.finTypeAccountingList);
 		
 		if (parent != null) {
@@ -211,7 +219,7 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 		}
 		
 		if(moduleId == FinanceConstants.MODULEID_PROMOTION) {
-			List<AccountEngineEvent> accEventStaticList = getAccountingEvents();
+			//List<AccountEngineEvent> accEventStaticList = getAccountingEvents();
 			
 			for (AccountEngineEvent accountEngineEvent : accEventStaticList) {
 				setAccountingMandStyle(accountEngineEvent.getAEEventCode(), false);
@@ -333,7 +341,6 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 	public void doFillFinTypeAccountingList(List<FinTypeAccounting> finTypeAccountingList) {
 		logger.debug("Entering");
 
-		List<AccountEngineEvent> accEventStaticList = getAccountingEvents();
 
 		for (AccountEngineEvent accountEngineEvent : accEventStaticList) {
 			FinTypeAccounting finTypeAcc = fetchExistingFinTypeAcc(finTypeAccountingList,
@@ -395,22 +402,14 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 		logger.debug("Leaving");
 	}
 	
-	private List<AccountEngineEvent> getAccountingEvents(){
-		if(this.isOverdraft){
-			return PennantAppUtil.getOverdraftAccountingEvents();
-		}else{
-			return PennantAppUtil.getAccountingEvents();
-		}
-	}
-	
-	private FinTypeAccounting fetchExistingFinTypeAcc(List<FinTypeAccounting> finTypeAccountingList,String eventCode){
-			for (FinTypeAccounting finTypeAcc : finTypeAccountingList) {
-				if(StringUtils.equals(finTypeAcc.getEvent(), eventCode)){
-					return finTypeAcc;
-				}
+	private FinTypeAccounting fetchExistingFinTypeAcc(List<FinTypeAccounting> finTypeAccountingList, String eventCode) {
+		for (FinTypeAccounting finTypeAcc : finTypeAccountingList) {
+			if (StringUtils.equals(finTypeAcc.getEvent(), eventCode)) {
+				return finTypeAcc;
 			}
-		
-			return null;
+		}
+
+		return null;
 	}
 	
 	private FinTypeAccounting getNewFinTypeAccounting(){
@@ -442,11 +441,10 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 		return finTypeAccNew;
 	}
 
-	public String getEventDesc(String value) {
-		List<AccountEngineEvent> list = getAccountingEvents();
-		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i).getAEEventCode().equalsIgnoreCase(value)) {
-				return list.get(i).getAEEventCodeDesc();
+	private String getEventDesc(String value) {
+		for (int i = 0; i < accEventStaticList.size(); i++) {
+			if (accEventStaticList.get(i).getAEEventCode().equalsIgnoreCase(value)) {
+				return accEventStaticList.get(i).getAEEventCodeDesc();
 			}
 		}
 		return "";

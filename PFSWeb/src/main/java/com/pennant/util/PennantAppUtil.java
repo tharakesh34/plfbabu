@@ -1923,15 +1923,32 @@ public class PennantAppUtil {
 		Filter[] filters = null;
 
 		if (ImplementationConstants.ALLOW_DEPRECIATION) {
-			filters = new Filter[1];
-			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+			if(ImplementationConstants.ALLOW_ADDDBSF) {
+				filters = new Filter[1];
+				filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+			} else {
+				List<String> list = new ArrayList<String>();
+				list.add(AccountEventConstants.ACCEVENT_ADDDBSF);
+				filters = new Filter[2];
+				filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+				filters[1] = new Filter("AEEventCode", list, Filter.OP_NOT_IN);
+			}
 		} else {
+			List<String> list = new ArrayList<String>();
+			list.add(AccountEventConstants.ACCEVENT_DPRCIATE);
+			
+			if(!ImplementationConstants.ALLOW_ADDDBSF) {
+				list.add(AccountEventConstants.ACCEVENT_ADDDBSF);
+			}
+			
 			filters = new Filter[2];
 			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
-			filters[1] = new Filter("AEEventCode", AccountEventConstants.ACCEVENT_DPRCIATE, Filter.OP_NOT_EQUAL);
+			filters[1] = new Filter("AEEventCode", list, Filter.OP_NOT_IN);
 		}
+		
 		searchObject.addFilters(filters);
 		searchObject.addTabelName("BMTAEevents");
+		searchObject.addSort("AEEventCode", false);
 		accountEngineEventsList = pagedListService.getBySearchObject(searchObject);
 
 		return accountEngineEventsList;
@@ -1940,27 +1957,34 @@ public class PennantAppUtil {
 	public static List<AccountEngineEvent> getOriginationAccountingEvents() {
 
 		List<AccountEngineEvent> accountEngineEventsList = new ArrayList<AccountEngineEvent>();
-		List<String> accountEngineEvents = new ArrayList<String>();
+		List<String> accEngineEventsList = new ArrayList<String>();
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 
 		JdbcSearchObject<AccountEngineEvent> searchObject = new JdbcSearchObject<AccountEngineEvent>(
 				AccountEngineEvent.class);
-		accountEngineEvents.add(AccountEventConstants.ACCEVENT_ADDDBSF);
-		accountEngineEvents.add(AccountEventConstants.ACCEVENT_ADDDBSN);
-		accountEngineEvents.add(AccountEventConstants.ACCEVENT_ADDDBSP);
+		accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSP);
+		accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSN);
+		
+		if (ImplementationConstants.ALLOW_ADDDBSF) {
+			accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSF);
+		}
 
 		Filter[] filters = new Filter[2];
 		filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
-		filters[1] = new Filter("AEEventCode", accountEngineEvents, Filter.OP_IN);
+		filters[1] = new Filter("AEEventCode", accEngineEventsList, Filter.OP_IN);
+		
 
 		searchObject.addFilters(filters);
 		searchObject.addTabelName("BMTAEevents");
+		searchObject.addSort("AEEventCode", false);
 		accountEngineEventsList = pagedListService.getBySearchObject(searchObject);
 		
-		for(AccountEngineEvent accountEngineEvent : accountEngineEventsList) {
-			if(StringUtils.equals(AccountEventConstants.ACCEVENT_ADDDBSF, accountEngineEvent.getId())) {
-				accountEngineEvent.setMandatory(AccountEventConstants.ACCEVENT_ADDDBSF_REQ);
-				break;
+		if (ImplementationConstants.ALLOW_ADDDBSF) {
+			for (AccountEngineEvent accountEngineEvent : accountEngineEventsList) {
+				if (StringUtils.equals(AccountEventConstants.ACCEVENT_ADDDBSF, accountEngineEvent.getId())
+						|| StringUtils.equals(AccountEventConstants.ACCEVENT_ADDDBSN, accountEngineEvent.getId())) {
+					accountEngineEvent.setMandatory(AccountEventConstants.ACCEVENT_ADDDBSF_REQ);
+				}
 			}
 		}
 
@@ -1981,6 +2005,7 @@ public class PennantAppUtil {
 
 		searchObject.addFilters(filters);
 		searchObject.addTabelName("BMTAEevents");
+		searchObject.addSort("AEEventCode", false);
 		accountEngineEventsList = pagedListService.getBySearchObject(searchObject);
 		
 		return accountEngineEventsList;
@@ -1994,12 +2019,21 @@ public class PennantAppUtil {
 		JdbcSearchObject<AccountEngineEvent> searchObject = new JdbcSearchObject<AccountEngineEvent>(
 				AccountEngineEvent.class);
 
-		Filter[] filters = new Filter[2];
-		filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
-		filters[1] = new Filter("ODApplicable", 1, Filter.OP_EQUAL);
+		Filter[] filters = null;
+		if (ImplementationConstants.ALLOW_ADDDBSF) {
+			filters = new Filter[2];
+			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+			filters[1] = new Filter("ODApplicable", 1, Filter.OP_EQUAL);
+		} else {
+			filters = new Filter[3];
+			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+			filters[1] = new Filter("ODApplicable", 1, Filter.OP_EQUAL);
+			filters[2] = new Filter("AEEventCode", AccountEventConstants.ACCEVENT_ADDDBSF, Filter.OP_NOT_EQUAL);
+		}
 
 		searchObject.addFilters(filters);
 		searchObject.addTabelName("BMTAEevents");
+		searchObject.addSort("AEEventCode", false);
 		accountEngineEventsList = pagedListService.getBySearchObject(searchObject);
 
 		return accountEngineEventsList;
