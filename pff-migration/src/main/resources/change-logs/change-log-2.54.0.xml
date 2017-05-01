@@ -123,11 +123,11 @@
 	 	</sql>
 	</changeSet>
 	
-<!-- 	<changeSet id="09" author="Amit">
+	<changeSet id="09" author="Amit">
 		<addForeignKeyConstraint constraintName="FK_EMYRDTL_RMTEmpTypes"
 			baseTableName="EmployerDetail" baseColumnNames="EMPINDUSTRY"
 			referencedTableName="RMTEmpTypes" referencedColumnNames="EMPTYPE" />
-	</changeSet> -->
+	</changeSet>
 	
 	<changeSet id="12" author="Amit">
 		<addForeignKeyConstraint constraintName="FK_EMYRDTL_TEMP_RMTEmpTypes"
