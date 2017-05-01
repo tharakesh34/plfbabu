@@ -350,13 +350,10 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		ManualAdviseMovements movements = new ManualAdviseMovements();
 		movements.setAdviseID(id);
 
-		StringBuilder selectSql = new StringBuilder("Select T1.MovementID , T1.AdviseID, T1.MovementDate, T1.MovementAmount, ");
-		selectSql.append(" T1.PaidAmount , T1.WaivedAmount, T1.Status, T1.PayAgainstID,T3.FeeTypeCode   From ManualAdviseMovements T1 ");
-		selectSql.append(" LEFT OUTER JOIN ");
-		selectSql.append(" FinReceiptHeader T2 ON T1.PayAgainstID = T2.ReceiptID");
-		selectSql.append(" LEFT OUTER JOIN ");
-		selectSql.append(" FeeTypes T3 ON T1.PayAgainstID = T3.FeeTypeID");
-		selectSql.append(" Where AdviseID = :AdviseID  ");
+		StringBuilder selectSql = new StringBuilder(" Select T1.MovementID ,T1.MovementDate, T1.MovementAmount, ");
+		selectSql.append(" T1.PaidAmount , T1.WaivedAmount, T1.Status, T2.ReceiptMode ");
+		selectSql.append(" From ManualAdviseMovements T1 LEFT OUTER JOIN FinReceiptHeader T2 ON T1.PayAgainstID = T2.ReceiptID ");
+		selectSql.append(" Where AdviseID = :AdviseID ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(movements);

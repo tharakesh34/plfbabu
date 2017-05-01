@@ -83,6 +83,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -449,22 +450,22 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				lc = new Listcell(DateUtility.formatDate(movement.getMovementDate(),DateFormat.LONG_DATE.getPattern()));
 				item.appendChild(lc);
 
-				lc = new Listcell(PennantApplicationUtil.formatRate(movement.getMovementAmount().doubleValue(),2));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(movement.getMovementAmount(),PennantConstants.defaultCCYDecPos));
 				lc.setStyle("text-align:right;");
 				item.appendChild(lc);
 				
-				lc = new Listcell(PennantApplicationUtil.formatRate(movement.getPaidAmount().doubleValue(),2));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(movement.getPaidAmount(),PennantConstants.defaultCCYDecPos));
 				lc.setStyle("text-align:right;");
 				item.appendChild(lc);
 				
-				lc = new Listcell(PennantApplicationUtil.formatRate(movement.getWaivedAmount().doubleValue(),2));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(movement.getWaivedAmount(),PennantConstants.defaultCCYDecPos));
 				lc.setStyle("text-align:right;");
 				item.appendChild(lc);
 				
 				lc = new Listcell(movement.getStatus());
 				item.appendChild(lc);
 				
-				lc = new Listcell(String.valueOf(movement.getPayAgainstID()));
+				lc = new Listcell(PennantAppUtil.getlabelDesc(movement.getReceiptMode(), PennantStaticListUtil.getReceiptModes()));
 				item.appendChild(lc);
 
 				this.listBoxAdviseMovements.appendChild(item);

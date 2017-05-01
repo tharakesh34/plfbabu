@@ -13,6 +13,7 @@ public class ManualAdviseMovements {
 	private BigDecimal paidAmount;
 	private BigDecimal waivedAmount;
 	private String status;
+	private String receiptMode;
 	
 	// Getters and Setters
 	
@@ -69,6 +70,12 @@ public class ManualAdviseMovements {
 	}
 	public void setPayAgainstID(long payAgainstID) {
 		this.payAgainstID = payAgainstID;
+	}
+	public String getReceiptMode() {
+		return receiptMode;
+	}
+	public void setReceiptMode(String receiptMode) {
+		this.receiptMode = receiptMode;
 	}
 
 }
