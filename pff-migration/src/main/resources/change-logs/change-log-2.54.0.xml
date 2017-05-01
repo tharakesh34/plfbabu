@@ -2575,4 +2575,11 @@ update reportfilterfields set multiselectsearch='0' where reportid =(select repo
 		
 		</createView>
 	</changeSet>
+	<changeSet id="123" author="murthy.y">
+		<sql>
+			DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE IN ('AUTO_DISB_RES_FILE_SCHEDULE_TIME', 'AUTO_DISB_RES_FILE_LOCATION');
+			INSERT INTO SMTPARAMETERS VALUES ('AUTO_DISB_RES_FILE_LOCATION',      'Auto disbursement responce file location.',       		'String',  		1,  'D:\opt\PFF\disbursement\response',   				'200', 	0, NULL, NULL, 'Auto disbursement responce file location.',			1,1000,	CURRENT_TIMESTAMP,	'Approved'	,NULL,	NULL,	NULL,	NULL,	NULL,	0);
+			INSERT INTO SMTPARAMETERS VALUES ('AUTO_DISB_RES_FILE_SCHEDULE_TIME',      'Auto disbursement responce file schedule time.',    'String',  		1,  '0 0/5 * * * ?',   									'20', 	0, NULL, NULL, 'Auto disbursement responce file schedule time.',			1,1000,	CURRENT_TIMESTAMP,	'Approved'	,NULL,	NULL,	NULL,	NULL,	NULL,	0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
