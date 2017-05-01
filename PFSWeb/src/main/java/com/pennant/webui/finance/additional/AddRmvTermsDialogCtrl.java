@@ -513,13 +513,23 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		dateCombobox.setSelectedItem(comboitem);
 		boolean termsExist = false;
 		Date curBussDate = DateUtility.getAppDate();
-		
 		Date grcEndDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
 
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 				
+				//In Remove Terms the Disbursement Dates Need to be shown
+				if(curSchd.isDisbOnSchDate() && !isAddTerms()){
+					dateCombobox.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					dateCombobox.appendChild(comboitem);
+					dateCombobox.setSelectedItem(comboitem);
+					continue;
+				}
+			
 				if (DateUtility.compare(curSchd.getSchDate(), grcEndDate) <= 0) {
 					continue;
 				}

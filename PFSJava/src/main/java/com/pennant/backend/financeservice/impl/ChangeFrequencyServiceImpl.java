@@ -131,8 +131,9 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			// Existing Disbursement Date should be less than Newly calculated Maturity Term
 			if(curDisbDate.compareTo(financeMain.getMaturityDate()) >= 0){
 				disbMaturityCrossed = true;
-				scheduleData.setErrorDetail(new ErrorDetails("30575", new String[]{
-						DateUtility.formatToLongDate(curDisbDate)}));
+				String[] valueParm = new String[1];
+				valueParm[0] = DateUtility.formatToLongDate(curDisbDate);
+				finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30575", "", valueParm), "EN"));
 				break;
 			}
 			
