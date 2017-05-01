@@ -135,7 +135,7 @@ public class PresentmentRequest extends DBProcessEngine {
 			} catch (Exception e) {
 				logger.info("Exception :", e);
 			}
-			releaseResorces(resultSet, sourceConnection, sourceConnection);
+			
 			resultSet = null;
 			executionStatus.setRemarks(remarks.toString());
 		}

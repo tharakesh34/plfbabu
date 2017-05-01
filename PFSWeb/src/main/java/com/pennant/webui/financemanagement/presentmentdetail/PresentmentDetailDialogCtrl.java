@@ -65,7 +65,6 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -177,15 +176,31 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentDetail> 
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
 
+		List<Long> excludeList = new ArrayList<Long>(this.excludeMap.keySet());
+		List<Long> afterIncludeList = new ArrayList<Long>(this.includeMap.keySet());
+		
 		if (this.includeList != null && this.includeList.isEmpty()) {
 			if (this.includeList.size() <= 0) {
 				MessageUtil.showError(" No records are available in include list.");
 				return;
 			}
 		}
+		
+		if (this.includeList != null && this.includeList.isEmpty()) {
+			if (this.includeList.size() <= 0) {
+				MessageUtil.showError(" No records are available in include list.");
+				return;
+			}
+		}
+		
+		if (afterIncludeList != null && afterIncludeList.isEmpty()) {
+			if (afterIncludeList.size() <= 0) {
+				MessageUtil.showError(" No records are available in include list. All records are moved to manual exlude.");
+				return;
+			}
+		}
 		doSetValidations();
-		List<Long> list = new ArrayList<Long>(this.excludeMap.keySet());
-		this.presentmentDetailService.updatePresentmentDetails(list, presentmentId, Long.valueOf(this.partnerBank.getValue()));
+		this.presentmentDetailService.updatePresentmentDetails(excludeList, presentmentId, Long.valueOf(this.partnerBank.getValue()));
 
 		refreshList();
 		closeDialog();
