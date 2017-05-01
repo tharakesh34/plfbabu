@@ -19,4 +19,5 @@ public class InterfaceConstants {
 	public static boolean			autoDisbResFileJob;
 
 	public static DataEngineStatus	autoDisbResFileStatus	= new DataEngineStatus();
+	public static DataEngineStatus	manualDisbResFileStatus	= new DataEngineStatus();
 }

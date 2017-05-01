@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.util.media.Media;
 
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
@@ -41,7 +42,7 @@ public class AutoDisburseFileResponseService extends BajajService {
 			directory = new File(responseFileLocation);
 
 			if (!directory.exists()) {
-				throw new JobExecutionException("Auto disbursement response file location not avilabe.");
+				throw new JobExecutionException("Auto disbursement response file location not available.");
 			}
 		}
 
@@ -52,7 +53,7 @@ public class AutoDisburseFileResponseService extends BajajService {
 					continue;
 				}
 
-				processFile(file);
+				processFile(1000, "DISB_HDFC_IMPORT", file, null);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -62,16 +63,33 @@ public class AutoDisburseFileResponseService extends BajajService {
 
 	}
 
-	private void processFile(File file) throws Exception {
-		DataEngineStatus status = InterfaceConstants.autoDisbResFileStatus;
+	public DataEngineStatus processFile(long userId, String configName, File file, Media media) throws Exception {
+		DataEngineStatus status = null;
+
+		if ("DISB_HDFC_IMPORT".equals(configName)) {
+			status = InterfaceConstants.autoDisbResFileStatus;
+		} else {
+			status = InterfaceConstants.manualDisbResFileStatus;
+		}
+		
+		String name = "";
+		
+		if(file != null) {
+			name = file.getName();
+		} else if (media!= null) {
+			name = media.getName();
+		}
+
 		status.reset();
+
 		DataEngineImport dataEngine;
-		logger.info("Start processing the file " + file.getName());
-		dataEngine = new DataEngineImport(dataSource, 1000, App.DATABASE.name(), status, null);
+		logger.info("Start processing the file " + name);
+		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), status, null);
 		dataEngine.setFile(file);
+		dataEngine.setMedia(media);
 		dataEngine.setValueDate(getAppDate());
 
-		dataEngine.importData("DISB_HDFC_IMPORT");
+		dataEngine.importData(configName);
 
 		do {
 
@@ -82,6 +100,8 @@ public class AutoDisburseFileResponseService extends BajajService {
 
 		} while ("S".equals(status.getStatus()) || "F".equals(status.getStatus()));
 
-		logger.info(file.getName() + " file processing completed");
+		logger.info(name + " file processing completed");
+
+		return status;
 	}
 }
