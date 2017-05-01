@@ -17,9 +17,8 @@ import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.disbursement.DisbursementProcess;
 import com.pennanttech.pff.core.services.disbursement.DisbursementRequest;
-import com.pennanttech.pff.core.services.disbursement.DisbursementResponse;
 
-public class DisbursementRequestImpl extends BajajServices implements DisbursementRequest, DisbursementResponse {
+public class DisbursementRequestImpl extends BajajServices implements DisbursementRequest {
 	private final Logger		logger	= Logger.getLogger(getClass());
 
 	@Autowired
@@ -297,34 +296,6 @@ public class DisbursementRequestImpl extends BajajServices implements Disburseme
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
-		}
-	}
-
-	@Override
-	public void receiveResponse(Object... params) throws Exception {
-		
-		
-		MapSqlParameterSource paramMap = null;
-		StringBuilder sql = null;
-		List<FinAdvancePayments> disbursements = null;
-		try {
-			sql = new StringBuilder("Select * FROM FINADVANCEPAYMENTS");
-			sql.append(" WHERE Status IN(:Status");
-
-			paramMap = new MapSqlParameterSource();
-			paramMap.addValue("Status", Arrays.asList(new String[] { "E", "R" }));
-
-			disbursements = namedJdbcTemplate.queryForList(sql.toString(), paramMap, FinAdvancePayments.class);
-
-			for (FinAdvancePayments disbursement : disbursements) {
-				disbursementProcess.process(disbursement);
-			}
-
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		} finally {
-			sql = null;
-			paramMap = null;
 		}
 	}
 }

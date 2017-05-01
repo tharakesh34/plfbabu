@@ -11,6 +11,11 @@
 		scope="prototype">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
+	
+	<bean id="disbursementResponse" class="com.pennanttech.bajaj.services.DisbursementResponseImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
 
 	<bean id="generalLedgerService" class="com.pennanttech.bajaj.services.SAPGLServiceImpl">
 		<property name="dataSource" ref="pfsDatasource" />

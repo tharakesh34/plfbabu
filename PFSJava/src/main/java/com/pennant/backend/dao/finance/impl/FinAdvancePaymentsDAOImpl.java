@@ -63,6 +63,7 @@ import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -442,9 +443,15 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 	public void updateDisbursmentStatus(FinAdvancePayments finAdvancePayments) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("Update FinAdvancePayments");
-		sql.append("  Set Status = :Status");
-		sql.append("  Where PaymentId = :PaymentId");
+		StringBuilder sql = new StringBuilder("Update FINADVANCEPAYMENTS");
+		sql.append("  Set STATUS = :STATUS, CLEARINGDATE = :CLEARINGDATE, TRANSACTIONREF = :TRANSACTIONREF");
+		if (StringUtils.equals("R", finAdvancePayments.getStatus())) {
+			sql.append("  ,REJECTREASON = :REJECTREASON");
+		}
+		if (StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE, finAdvancePayments.getPaymentType())) {
+			sql.append("  ,LLREFERENCENO = :LLREFERENCENO, LLDATE = :LLDATE");
+		}
+		sql.append("  Where PAYMENTID = :PAYMENTID");
 
 		logger.debug(Literal.SQL + sql);
 
