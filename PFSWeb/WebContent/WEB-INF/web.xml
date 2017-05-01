@@ -31,6 +31,10 @@
 	<listener>
 		<listener-class>com.pennant.web.listeners.LoadConfiguration</listener-class>
 	</listener>
+	<listener>
+   		<display-name>Application startup</display-name>
+    	<listener-class>com.pennanttech.pff.core.startup.ApplicationStartup</listener-class>
+ 	 </listener>
 	
 	<listener>
 		<display-name>Spring Context Loader</display-name>

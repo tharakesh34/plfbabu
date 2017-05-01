@@ -12,13 +12,17 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pff.core.Literal;
 
-public abstract class BajajServices {
-	private static final Logger				logger	= Logger.getLogger(BajajServices.class);
+public abstract class BajajService {
+	private static final Logger				logger	= Logger.getLogger(BajajService.class);
+	
 	
 	protected DataSource					dataSource;
 	protected JdbcTemplate					jdbcTemplate;
 	protected NamedParameterJdbcTemplate	namedJdbcTemplate;
 	
+	public BajajService() {
+		super();
+	}
 	
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
@@ -40,6 +44,9 @@ public abstract class BajajServices {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw new Exception("The parameter code " + sysParmCode + " not configured.");
+		} finally {
+			paramMap = null;
+			sql = null;
 		}
 	}
 

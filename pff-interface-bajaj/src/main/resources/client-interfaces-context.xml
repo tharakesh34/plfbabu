@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans 
 		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-		http://www.springframework.org/schema/util
-		http://www.springframework.org/schema/util/spring-util-3.0.xsd">
-
-	<bean id="disbursementRequest" class="com.pennanttech.bajaj.services.DisbursementRequestImpl"
-		scope="prototype">
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+        
+    <bean id="bajajService" class="com.pennanttech.bajaj.services.BajajService" abstract="true">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	
-	<bean id="disbursementResponse" class="com.pennanttech.bajaj.services.DisbursementResponseImpl">
-		<property name="dataSource" ref="pfsDatasource" />
+        
+	<bean id="disbursementRequest" class="com.pennanttech.bajaj.services.DisbursementRequestImpl" scope="prototype" parent="bajajService"/>
+	<bean id="disbursementResponse" class="com.pennanttech.bajaj.services.DisbursementResponseImpl" parent="bajajService"/>
+	<bean id="autoDisburseFileResponseService" class="com.pennanttech.bajaj.services.AutoDisburseFileResponseService" parent="bajajService"/>
+	<bean id="generalLedgerService" class="com.pennanttech.bajaj.services.SAPGLServiceImpl" parent="bajajService"/>
+	<bean id="bajaJobScheduler" class="com.pennanttech.pff.bajaj.schedule.job.BajaJobScheduler" init-method="startJob"  parent="bajajService"/>
+	<bean id="AutoDisbursementFileResponse" class="com.pennanttech.pff.bajaj.schedule.job.AutoDisburseFileResponseJob"  >
+		<property name="autoDisburseFileResponseService" ref="autoDisburseFileResponseService"/>
 	</bean>
-	
-
-	<bean id="generalLedgerService" class="com.pennanttech.bajaj.services.SAPGLServiceImpl">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-
 </beans>

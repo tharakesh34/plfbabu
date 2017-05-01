@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -15,14 +14,14 @@ import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dbengine.DataEngineDBProcess;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
-import com.pennanttech.pff.core.services.disbursement.DisbursementProcess;
 import com.pennanttech.pff.core.services.disbursement.DisbursementRequest;
 
-public class DisbursementRequestImpl extends BajajServices implements DisbursementRequest {
+public class DisbursementRequestImpl extends BajajService implements DisbursementRequest {
 	private final Logger		logger	= Logger.getLogger(getClass());
-
-	@Autowired
-	private DisbursementProcess	disbursementProcess;
+	
+	public DisbursementRequestImpl() {
+		super();
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

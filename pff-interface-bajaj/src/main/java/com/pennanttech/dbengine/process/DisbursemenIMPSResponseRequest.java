@@ -19,7 +19,7 @@ import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.dbengine.DBProcessEngine;
-import com.pennanttech.dbengine.constants.DataEngineDBConstants.Status;
+import com.pennanttech.pff.baja.InterfaceConstants.Status;
 
 public class DisbursemenIMPSResponseRequest  extends DBProcessEngine {
 

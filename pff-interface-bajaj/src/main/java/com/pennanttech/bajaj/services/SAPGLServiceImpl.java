@@ -22,7 +22,7 @@ import com.pennanttech.pff.core.services.generalledger.GeneralLedgerService;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
-public class SAPGLServiceImpl extends BajajServices implements GeneralLedgerService {
+public class SAPGLServiceImpl extends BajajService implements GeneralLedgerService {
 	private final Logger logger = Logger.getLogger(getClass());
 
 	private long						userId;

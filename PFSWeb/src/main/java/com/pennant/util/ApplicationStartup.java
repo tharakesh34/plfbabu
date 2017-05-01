@@ -15,6 +15,11 @@ import org.quartz.impl.StdSchedulerFactory;
 
 import com.pennant.app.util.SysParamUtil;
 
+/**
+ * 
+ *@Deprecated Please refer BajaJobScheduler class to configure new JOB.
+ */
+@Deprecated
 public class ApplicationStartup implements ServletContextListener {
 	private final static Logger logger = Logger.getLogger(ApplicationStartup.class);
 	
@@ -35,7 +40,7 @@ public class ApplicationStartup implements ServletContextListener {
 			schedular = sf.getScheduler();
 			//cornExpression is the String value which represents job shecdule frequency for e.g one job has to execute 
 			        //  for every 20 minutes of every hour every day  then cornExpression is  "0  * / 20 * / 1 * * ? *" 
-			 
+			// FIXME murthy responsibility to address this.
 			String cornExpression=SysParamUtil.getValueAsString("ADT_STATS_FREQUENCY_CORNEXP");
 			logger.debug("cornExpression:"+cornExpression);
 
