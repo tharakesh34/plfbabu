@@ -122,7 +122,15 @@
 		 UPDATE DATA_ENGINE_CONFIG SET FILEPREFIXNAME = '${PAYMENT_TYPE}', FILENAMEFORMAT = '${PARTNER_BANK_CODE}, ${ddMMYYH24MM}', FILEEXTENSION = '.CSV' WHERE NAME = 'DISB_OTHER_CHEQUE_DD_EXPORT';
 	 	</sql>
 	</changeSet>
-	
+	<changeSet id="09.1" author="Amit">
+		<sql>
+		Delete from EmployerDetail where EMPINDUSTRY not in ('01','A_1');
+		Insert into RMTEmpTypes (EMPTYPE,EMPTYPEDESC,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,EMPTYPEISACTIVE) 
+		values ('01','emp',1,1000,current_timestamp,'Approved',null,null,null,null,null,0,0);
+		Insert into RMTEmpTypes (EMPTYPE,EMPTYPEDESC,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,EMPTYPEISACTIVE) 
+		values ('A_1','emp',1,1000,current_timestamp,'Approved',null,null,null,null,null,0,0);
+		</sql>
+	</changeSet>
 	<changeSet id="09" author="Amit">
 		<addForeignKeyConstraint constraintName="FK_EMYRDTL_RMTEmpTypes"
 			baseTableName="EmployerDetail" baseColumnNames="EMPINDUSTRY"
