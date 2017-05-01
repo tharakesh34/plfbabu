@@ -107,7 +107,7 @@ public class RateReviewService extends ServiceHelper {
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
 		Map<Date, Integer> datesMap = finEODEvent.getDatesMap();
 
-		int i = datesMap.get(valueDate);
+		int i = getIndexFromMap(datesMap,valueDate);
 		int iNext = i + 1;
 
 		finEODEvent.setRateReview(false);

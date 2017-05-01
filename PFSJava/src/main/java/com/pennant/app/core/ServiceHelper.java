@@ -53,6 +53,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -337,6 +338,15 @@ abstract public class ServiceHelper implements Serializable {
 		}
 		return val;
 	}
+	
+	public int getIndexFromMap(Map<Date, Integer> datesMap, Date date) {
+		Date formatDate = formatDate(date);
+		if (datesMap.containsKey(formatDate)) {
+			return datesMap.get(formatDate);
+		}
+		return 0;
+	}
+
 
 	public FinContributorDetailDAO getFinContributorDetailDAO() {
 		return finContributorDetailDAO;

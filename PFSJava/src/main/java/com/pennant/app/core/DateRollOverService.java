@@ -96,7 +96,7 @@ public class DateRollOverService extends ServiceHelper {
 			return;
 		}
 
-		int i = datesMap.get(formatDate(finMain.getNextGrcCpzDate()));
+		int i = getIndexFromMap(datesMap,finMain.getNextGrcCpzDate());
 		FinanceScheduleDetail curSchd = null;
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
@@ -127,7 +127,7 @@ public class DateRollOverService extends ServiceHelper {
 			return;
 		}
 
-		int i = datesMap.get(formatDate(finMain.getNextGrcPftDate()));
+		int i = getIndexFromMap(datesMap,finMain.getNextGrcPftDate());
 		FinanceScheduleDetail curSchd = null;
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
@@ -170,7 +170,7 @@ public class DateRollOverService extends ServiceHelper {
 			}
 		}
 
-		int i = datesMap.get(formatDate(finMain.getNextGrcPftRvwDate()));
+		int i = getIndexFromMap(datesMap,finMain.getNextGrcPftRvwDate());
 		FinanceScheduleDetail curSchd = null;
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
@@ -206,7 +206,7 @@ public class DateRollOverService extends ServiceHelper {
 			return;
 		}
 
-		int i = datesMap.get(formatDate(finMain.getNextRepayCpzDate()));
+		int i = getIndexFromMap(datesMap,finMain.getNextRepayCpzDate());
 		FinanceScheduleDetail curSchd = null;
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
@@ -238,7 +238,7 @@ public class DateRollOverService extends ServiceHelper {
 			return;
 		}
 
-		int i = datesMap.get(formatDate(finMain.getNextRepayDate()));
+		int i = getIndexFromMap(datesMap,finMain.getNextRepayDate());
 		FinanceScheduleDetail curSchd = null;
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
@@ -271,7 +271,7 @@ public class DateRollOverService extends ServiceHelper {
 			return;
 		}
 
-		int i = datesMap.get(formatDate(finMain.getNextRepayPftDate()));
+		int i = getIndexFromMap(datesMap,finMain.getNextRepayPftDate());
 		FinanceScheduleDetail curSchd = null;
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
@@ -313,8 +313,8 @@ public class DateRollOverService extends ServiceHelper {
 				finEODEvent.setRateReview(true);
 			}
 		}
-
-		int i = datesMap.get(formatDate(finMain.getNextRepayRvwDate()));
+		
+		int i = getIndexFromMap(datesMap, finMain.getNextRepayRvwDate());
 		FinanceScheduleDetail curSchd = null;
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
@@ -333,6 +333,5 @@ public class DateRollOverService extends ServiceHelper {
 
 		return;
 	}
-
 
 }
