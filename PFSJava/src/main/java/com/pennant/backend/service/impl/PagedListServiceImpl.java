@@ -51,16 +51,15 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.search.SearchResult;
 
-public class PagedListServiceImpl implements PagedListService,Serializable {
+public class PagedListServiceImpl implements PagedListService, Serializable {
+	private static final long	serialVersionUID	= 317035964609683048L;
 
-    private static final long serialVersionUID = 317035964609683048L;
-    
-	private JdbcSearchSupport jdbcSearchSupport;
+	private JdbcSearchSupport	jdbcSearchSupport;
 
 	public PagedListServiceImpl() {
 		super();
 	}
-	
+
 	public JdbcSearchSupport getJdbcSearchSupport() {
 		return jdbcSearchSupport;
 	}
@@ -79,7 +78,11 @@ public class PagedListServiceImpl implements PagedListService,Serializable {
 	public <T> List<T> getBySearchObject(JdbcSearchObject<T> so) {
 		return getJdbcSearchSupport().search(so);
 	}
-	
+
+	/**
+	 * @deprecated Build your own query.
+	 */
+	@Deprecated
 	@Override
 	public <T> String getQueryBySearchObject(JdbcSearchObject<T> so) {
 		return getJdbcSearchSupport().getSearchQuery(so);
@@ -89,5 +92,5 @@ public class PagedListServiceImpl implements PagedListService,Serializable {
 	public <T> SearchResult<T> getSRBySearchObject(JdbcSearchObject<T> so) {
 		return getJdbcSearchSupport().searchAndCount(so);
 	}
-	
+
 }
