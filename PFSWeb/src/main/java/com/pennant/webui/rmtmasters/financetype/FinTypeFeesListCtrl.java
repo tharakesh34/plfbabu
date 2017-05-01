@@ -68,6 +68,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.util.PennantConstants;
@@ -254,6 +255,9 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 				String listGroupEvent = "";
 				Listgroup group;
 				Listcell lc;
+				List<ValueLabel> remFeeSchList = PennantStaticListUtil.getRemFeeSchdMethods();
+				List<ValueLabel> feeCalTypeList = PennantStaticListUtil.getRemFeeSchdMethods();
+				
 				for (FinTypeFees finTypeFee : finTypeFeesList) {
 					if(!finTypeFee.isOriginationFee()){
 						continue;
@@ -274,9 +278,9 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 					lc.setParent(item);
 					lc = new Listcell(finTypeFee.getFeeTypeCode());
 					lc.setParent(item);
-					lc = new Listcell(PennantStaticListUtil.getlabelDesc(finTypeFee.getCalculationType(), PennantStaticListUtil.getFeeCalculationTypes()));
+					lc = new Listcell(PennantStaticListUtil.getlabelDesc(finTypeFee.getCalculationType(), feeCalTypeList));
 					lc.setParent(item);
-					lc = new Listcell(PennantStaticListUtil.getlabelDesc(finTypeFee.getFeeScheduleMethod(), PennantStaticListUtil.getRemFeeSchdMethods()));
+					lc = new Listcell(PennantStaticListUtil.getlabelDesc(finTypeFee.getFeeScheduleMethod(), remFeeSchList));
 					lc.setParent(item);
 					lc = new Listcell(String.valueOf(finTypeFee.getMaxWaiverPerc()));
 					lc.setStyle("text-align:right;");

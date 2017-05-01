@@ -86,6 +86,7 @@ import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FeePaymentDetail;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -358,7 +359,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			doWriteBeanToComponents(financeDetail);
 			int divHeight = this.borderLayoutHeight - 80;
 			int semiBorderlayoutHeights = divHeight / 2;
-			this.listBoxFeeDetail.setHeight(semiBorderlayoutHeights - 85 +"px");
+			//this.listBoxFeeDetail.setHeight(semiBorderlayoutHeights - 85 +"px");
+			this.listBoxFeeDetail.setHeight(this.borderLayoutHeight - (listBoxFeeDetail.getItemCount() * 20) - 185 + "px");
 			this.listBoxPaymentDetails.setHeight(semiBorderlayoutHeights - 105 +"px");
 			this.listBoxInsuranceDetails.setHeight(semiBorderlayoutHeights - 105 +"px");
 			if(isWIF){
@@ -735,12 +737,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 				try {
 					if (feeSchdMthdbox != null) {
-						if (validate && finFeeDetail.getRemainingFee().compareTo(BigDecimal.ZERO) > 0) {
+						//if (validate && finFeeDetail.getRemainingFee().compareTo(BigDecimal.ZERO) > 0) {
 							if ("#".equals(getComboboxValue(feeSchdMthdbox))) {
 								throw new WrongValueException(feeSchdMthdbox, Labels.getLabel("STATIC_INVALID",
 										new String[] { Labels.getLabel("FeeDetail_FeeScheduleMethod") }));
 							}
-						}
+						//}
 						finFeeDetail.setFeeScheduleMethod(getComboboxValue(feeSchdMthdbox));
 					}
 				} catch (WrongValueException we) {
@@ -847,6 +849,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	
 	public void doFillFinFeeDetailList(List<FinFeeDetail> finFeeDetails) {
 		logger.debug("Entering");
+		
+		List<ValueLabel> remFeeSchList = PennantStaticListUtil.getRemFeeSchdMethods();
 		this.listBoxFeeDetail.getItems().clear();
 		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		int formatter =  CurrencyUtil.getFormat(finMain.getFinCcy());
@@ -948,26 +952,20 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				
 				// Remaining Fee schedule Method
 				lc = new Listcell();
-				Combobox feeSchdMethCombo = new Combobox();
-				String excludeFields = "";
-				
-				if(!(StringUtils.equals(detail.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK) || 
-						StringUtils.equals(detail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER))) {
-					excludeFields = "," + CalculationConstants.REMFEE_WAIVED_BY_BANK + "," + "," + CalculationConstants.REMFEE_PAID_BY_CUSTOMER + ",";
-				} else if ((detail.getMaxWaiverPerc().compareTo(BigDecimal.ZERO) == 0)
-						&& (!StringUtils.equals(detail.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK))) {
-					excludeFields = "," + CalculationConstants.REMFEE_WAIVED_BY_BANK + ",";
+				String excludeFields = "," + CalculationConstants.REMFEE_WAIVED_BY_BANK + "," + "," + CalculationConstants.REMFEE_PAID_BY_CUSTOMER + ",";
+				String feeScheduleMethod = detail.getFeeScheduleMethod();
+				if(StringUtils.equals(CalculationConstants.REMFEE_WAIVED_BY_BANK, feeScheduleMethod) || 
+						StringUtils.equals(CalculationConstants.REMFEE_PAID_BY_CUSTOMER, feeScheduleMethod)) {
+					feeScheduleMethod = "";
 				}
-				
-				fillComboBox(feeSchdMethCombo, detail.getFeeScheduleMethod(), PennantStaticListUtil.getRemFeeSchdMethods(), excludeFields);
+				Combobox feeSchdMethCombo = new Combobox();
+				fillComboBox(feeSchdMethCombo, feeScheduleMethod, remFeeSchList, excludeFields);
 				feeSchdMethCombo.setWidth("96%");
 				feeSchdMethCombo.setId(getComponentId(FEE_UNIQUEID_FEESCHEDULEMETHOD, detail));
-				boolean feeSchdMthdDisable = false;
+				boolean feeSchdMthdDisable = true;
 				if (detail.isAlwModifyFeeSchdMthd() && detail.getRemainingFee().compareTo(BigDecimal.ZERO) > 0) {
 					feeSchdMthdDisable = readOnly;
-				} else {
-					feeSchdMthdDisable = true;
-				}
+				} 
 				feeSchdMethCombo.setDisabled(feeSchdMthdDisable);
 				lc.appendChild(feeSchdMethCombo);
 				lc.setParent(item);
@@ -975,14 +973,14 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				if (StringUtils.equals(detail.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
 					remFeeBox.setValue(BigDecimal.ZERO);
 					paidBox.setValue(BigDecimal.ZERO);
-					paidBox.setDisabled(true);
-					waiverBox.setDisabled(true);
+					//paidBox.setDisabled(true);
+					//waiverBox.setDisabled(true);
 					waiverBox.setValue(actualBox.getValue());
 				} else if (StringUtils.equals(detail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
 					remFeeBox.setValue(BigDecimal.ZERO);
 					waiverBox.setValue(BigDecimal.ZERO);
-					waiverBox.setDisabled(true);
-					paidBox.setDisabled(true);
+					//waiverBox.setDisabled(true);
+					//paidBox.setDisabled(true);
 					paidBox.setValue(actualBox.getValue());
 				} 
 				
@@ -1059,33 +1057,37 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		feeSchdMthdBox.setErrorMessage("");
 		termsBox.setErrorMessage("");
 
-		String feeSchedule = getComboboxValue(feeSchdMthdBox);
+		//String feeSchedule = getComboboxValue(feeSchdMthdBox);
 		
 		remFeeBox.setValue(BigDecimal.valueOf(actualBox.doubleValue())
 				.subtract(BigDecimal.valueOf(waiverBox.doubleValue()))
 				.subtract(BigDecimal.valueOf(paidBox.doubleValue())));
-		if(!(StringUtils.equals(feeSchedule, CalculationConstants.REMFEE_WAIVED_BY_BANK) || 
-				StringUtils.equals(feeSchedule, CalculationConstants.REMFEE_PAID_BY_CUSTOMER))) {
-			if(detail.isAlwModifyFeeSchdMthd() && remFeeBox.getValue().compareTo(BigDecimal.ZERO) == 0){
-				feeSchdMthdBox.setDisabled(true);
-				feeSchdMthdBox.setSelectedIndex(0);
-			}
-		} else {
-			boolean readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance");
-			
-			if (quickDisb && readOnly) {
-				readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance_QDP");
-			}
+		// if(!(StringUtils.equals(feeSchedule, CalculationConstants.REMFEE_WAIVED_BY_BANK) ||
+		// StringUtils.equals(feeSchedule, CalculationConstants.REMFEE_PAID_BY_CUSTOMER))) {
+		// if(detail.isAlwModifyFeeSchdMthd() && remFeeBox.getValue().compareTo(BigDecimal.ZERO) == 0){
+		// feeSchdMthdBox.setDisabled(true);
+		// feeSchdMthdBox.setSelectedIndex(0);
+		// }else {
+		// feeSchdMthdBox.setDisabled(false);
+		// }
+		// } else {
+		boolean readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance");
 
-			boolean feeSchdMthdDisable = false;
-			if(detail.isAlwModifyFeeSchdMthd() && remFeeBox.getValue().compareTo(BigDecimal.ZERO) > 0){
-				feeSchdMthdDisable = readOnly;
-			}else{
-				feeSchdMthdDisable = true;
-			}
-
-			feeSchdMthdBox.setDisabled(feeSchdMthdDisable);
+		if (quickDisb && readOnly) {
+			readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance_QDP");
 		}
+
+		boolean feeSchdMthdDisable = false;
+		if (detail.isAlwModifyFeeSchdMthd() && remFeeBox.getValue().compareTo(BigDecimal.ZERO) == 0) {
+			feeSchdMthdDisable = readOnly;
+		} 
+		
+		// else {
+		// feeSchdMthdDisable = true;
+		// }
+
+		feeSchdMthdBox.setDisabled(feeSchdMthdDisable);
+		// }
 		
 		this.dataChanged = true;
 

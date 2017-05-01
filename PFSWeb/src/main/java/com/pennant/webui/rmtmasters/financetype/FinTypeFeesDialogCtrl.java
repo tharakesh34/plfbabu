@@ -1009,7 +1009,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		logger.debug("Leaving");
 	}
 
-	public void onSelect$feeScheduleMethod(Event event) {
+	public void onChange$feeScheduleMethod(Event event) {
 		logger.debug("Entering");
 		doSetFeeSchdMethodProp();
 		logger.debug("Leaving");
@@ -1096,21 +1096,17 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		if (StringUtils.equals(CalculationConstants.REMFEE_PAID_BY_CUSTOMER, feeScheduleMethodValue)) {
 			readOnlyComponent(true, this.maxWaiver);
 			this.maxWaiver.setValue(BigDecimal.ZERO);
-			this.alwModifyFee.setDisabled(true);
-			this.alwModifyFeeSchdMthd.setDisabled(true);
 			this.alwDeviation.setDisabled(true);
 			this.alwDeviation.setChecked(false);
-			this.alwModifyFee.setChecked(false);
-			this.alwModifyFeeSchdMthd.setChecked(false);
+			this.alwModifyFeeSchdMthd.setDisabled(true);
+			this.alwModifyFeeSchdMthd.setChecked(true);
 		} else if(StringUtils.equals(CalculationConstants.REMFEE_WAIVED_BY_BANK, feeScheduleMethodValue)) {
 			readOnlyComponent(true, this.maxWaiver);
 			this.maxWaiver.setValue(BigDecimal.valueOf(100));
-			this.alwModifyFee.setDisabled(true);
-			this.alwModifyFeeSchdMthd.setDisabled(true);
-			this.alwModifyFee.setChecked(false);
-			this.alwModifyFeeSchdMthd.setChecked(false);
 			this.alwDeviation.setDisabled(true);
 			this.alwDeviation.setChecked(false);
+			this.alwModifyFeeSchdMthd.setDisabled(true);
+			this.alwModifyFeeSchdMthd.setChecked(true);
 		} else {
 			readOnlyComponent(isReadOnly("FinTypeFeesDialog_maxWaiver"), this.maxWaiver);
 			this.maxWaiver.setValue(getFinTypeFees().getMaxWaiverPerc());

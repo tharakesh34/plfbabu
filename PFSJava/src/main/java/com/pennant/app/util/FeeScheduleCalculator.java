@@ -120,8 +120,9 @@ public class FeeScheduleCalculator {
 					}
 				} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)) {
 					Map<Date, FinanceScheduleDetail> paymentDates = new HashMap<Date, FinanceScheduleDetail>();
-					BigDecimal feeSchdAmt = finFeeDetail.getRemainingFee();
-
+					BigDecimal feeSchdAmt = BigDecimal.ZERO;
+					BigDecimal totFeeSchdAmt = BigDecimal.ZERO;
+						
 					for (int i = 1; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
 						FinanceScheduleDetail finScheduleDetailTemp = finScheduleData.getFinanceScheduleDetails().get(i);
 						if (!allowFeeToSchedule(finScheduleDetailTemp, finScheduleData)) {
@@ -131,9 +132,15 @@ public class FeeScheduleCalculator {
 					}
 
 					// Payment Dates should never be Zero in the below condition and hence not handling Div/Zero
-					feeSchdAmt = feeSchdAmt.divide(new BigDecimal(paymentDates.size()), 0, RoundingMode.HALF_DOWN);
-
+					feeSchdAmt = finFeeDetail.getRemainingFee().divide(new BigDecimal(paymentDates.size()), 0, RoundingMode.HALF_DOWN);
+					int count = 0 ;
 					for (FinanceScheduleDetail finScheduleDetail : paymentDates.values()) {
+						count++;
+						if(count == paymentDates.size()){
+							feeSchdAmt = finFeeDetail.getRemainingFee().subtract(totFeeSchdAmt);
+						}
+						
+						totFeeSchdAmt = totFeeSchdAmt.add(feeSchdAmt);
 						finFeeScheduleDetail = new FinFeeScheduleDetail();
 						finFeeScheduleDetail.setFeeID(finFeeDetail.getFeeID());
 						finFeeScheduleDetail.setSchDate(finScheduleDetail.getSchDate());
@@ -141,8 +148,7 @@ public class FeeScheduleCalculator {
 						finFeeScheduleDetailList.add(finFeeScheduleDetail);
 						
 						if (feeScheduleDatesSet.contains(finScheduleDetail.getSchDate())) {
-							finScheduleDetail.setFeeSchd(finScheduleDetail.getFeeSchd().add(
-									feeSchdAmt));
+							finScheduleDetail.setFeeSchd(finScheduleDetail.getFeeSchd().add(feeSchdAmt));
 						} else {
 							finScheduleDetail.setFeeSchd(feeSchdAmt);
 							feeScheduleDatesSet.add(finScheduleDetail.getSchDate());
@@ -154,9 +160,10 @@ public class FeeScheduleCalculator {
 					}
 
 					int count = 0;
-					BigDecimal feeSchdAmt = finFeeDetail.getRemainingFee();
-					feeSchdAmt = feeSchdAmt.divide(new BigDecimal(finFeeDetail.getTerms()), 0, RoundingMode.HALF_DOWN);
-
+					BigDecimal feeSchdAmt = BigDecimal.ZERO;
+					feeSchdAmt = finFeeDetail.getRemainingFee().divide(new BigDecimal(finFeeDetail.getTerms()), 0, RoundingMode.HALF_DOWN);
+					BigDecimal totFeeSchdAmt = BigDecimal.ZERO;
+					
 					for (FinanceScheduleDetail finScheduleDetail : finScheduleData.getFinanceScheduleDetails()) {
 						if (count == finFeeDetail.getTerms()) {
 							break;
@@ -164,10 +171,14 @@ public class FeeScheduleCalculator {
 						if (!allowFeeToSchedule(finScheduleDetail, finScheduleData)) {
 							continue;
 						}
+						if (count == finFeeDetail.getTerms() - 1) {
+							feeSchdAmt = finFeeDetail.getRemainingFee().subtract(totFeeSchdAmt);
+						}
 						finFeeScheduleDetail = new FinFeeScheduleDetail();
 						finFeeScheduleDetail.setFeeID(finFeeDetail.getFeeID());
 						finFeeScheduleDetail.setSchDate(finScheduleDetail.getSchDate());
 						finFeeScheduleDetail.setSchAmount(feeSchdAmt);
+						totFeeSchdAmt = totFeeSchdAmt.add(feeSchdAmt);
 						finFeeScheduleDetailList.add(finFeeScheduleDetail);
 
 						if (feeScheduleDatesSet.contains(finScheduleDetail.getSchDate())) {
@@ -192,7 +203,7 @@ public class FeeScheduleCalculator {
 	}
 
 	
-	private boolean allowFeeToSchedule(FinanceScheduleDetail curSchd,FinScheduleData finScheduleDataTemp){
+	private boolean allowFeeToSchedule(FinanceScheduleDetail finScheduleDetail,FinScheduleData finScheduleDataTemp){
 		/*if (finScheduleDetail.isDisbOnSchDate() || !finScheduleDetail.isRepayOnSchDate() || StringUtils.isNotEmpty(finScheduleDetail.getBpiOrHoliday()) || 
 				finScheduleDetail.getSchDate().compareTo(finScheduleDataTemp.getFinanceMain().getGrcPeriodEndDate()) <= 0 ||
 				finScheduleDetail.getSchDate().compareTo(finScheduleDataTemp.getFinanceMain().getCalMaturity()) > 0){
@@ -201,9 +212,9 @@ public class FeeScheduleCalculator {
 			return true;
 		}*/
 		
-		if (curSchd.isDisbOnSchDate() || (StringUtils.isNotEmpty(curSchd.getBpiOrHoliday()) && 
-				!StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLDEMI))
-				|| (!curSchd.isPftOnSchDate() && !curSchd.isRepayOnSchDate())) {
+		if (finScheduleDetail.isDisbOnSchDate() || (StringUtils.isNotEmpty(finScheduleDetail.getBpiOrHoliday()) && 
+				!StringUtils.equals(finScheduleDetail.getBpiOrHoliday(), FinanceConstants.FLAG_HOLDEMI))
+				|| (!finScheduleDetail.isPftOnSchDate() && !finScheduleDetail.isRepayOnSchDate())) {
 			return false;
 		}
 
