@@ -81,7 +81,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.QueueAssignment;
-import com.pennant.backend.model.TaskOwners;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -1199,48 +1198,50 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	/**
 	 * Method for Searching Finance Reference as user entered Reference exists in the Queue or not
 	 */
-	public JdbcSearchObject<FinanceMain> setFinReferences(JdbcSearchObject<FinanceMain> searchObject, String whereClause) {
+	public JdbcSearchObject<FinanceMain> setFinReferences(JdbcSearchObject<FinanceMain> searchObject,
+			String whereClause) {
 		logger.debug("Entering");
 
-		JdbcSearchObject<TaskOwners> referenceSearchObj = new JdbcSearchObject<TaskOwners>(TaskOwners.class);
-		referenceSearchObj.addTabelName("Task_Owners");
-		referenceSearchObj.addField("Reference");
+		String reference = StringUtils.trimToEmpty(finReference.getValue());
 
-		// Add filter if the user requested filtering on Finance Reference
-		String finReference = StringUtils.trimToEmpty(this.finReference.getValue());
+		// Prepare the additional where clause.
+		StringBuilder sql = new StringBuilder();
+		if (StringUtils.isNotEmpty(whereClause)) {
+			sql.append(whereClause);
+			sql.append(" and ");
+		}
+		sql.append("FinReference in (select Reference");
+		sql.append(" from Task_Owners");
+		sql.append(" where (");
+		if (StringUtils.isNotEmpty(reference)) {
+			int operatorId = 0;
+			String operatorSign = "=";
 
-		if (StringUtils.isNotEmpty(finReference)) {
-			int operatorid = 0;
-
-			if (this.sortOperator_finReference.getSelectedItem() != null) {
-				operatorid = ((SearchOperators) this.sortOperator_finReference.getSelectedItem().getAttribute("data"))
+			if (sortOperator_finReference.getSelectedItem() != null) {
+				operatorId = ((SearchOperators) sortOperator_finReference.getSelectedItem().getAttribute("data"))
 						.getSearchOperatorId();
+				operatorSign = ((SearchOperators) sortOperator_finReference.getSelectedItem().getAttribute("data"))
+						.getSearchOperatorSign();
 			}
 
-			if (operatorid == 6) {
-				finReference = "%" + finReference + "%";
+			if (operatorId == 6) {
+				reference = "%" + reference + "%";
 			}
 
-			referenceSearchObj.addFilter(new Filter("Reference", finReference, operatorid));
+			sql.append(" (Reference ").append(operatorSign).append(" '").append(reference.replace("'", "''"))
+					.append("') and");
 		}
-
-		referenceSearchObj.addFilterEqual("Processed", 0);
-		referenceSearchObj.addFilterOr(
-				Filter.equalTo("CurrentOwner", getUserWorkspace().getLoggedInUser().getLoginUsrID()),
-				Filter.equalTo("CurrentOwner", 0));
-		referenceSearchObj.addFilterIn("RoleCode", usrfinRolesList);
-
-		// Get the result set
-		String sql = "FinReference in ("
-				+ getPagedListWrapper().getPagedListService().getQueryBySearchObject(referenceSearchObj) + ")";
-
-		if (StringUtils.isEmpty(whereClause)) {
-			whereClause = "";
-		} else {
-			whereClause += " AND ";
+		sql.append(" (Processed = 0)");
+		sql.append(" and (CurrentOwner = ").append(getUserWorkspace().getLoggedInUser().getLoginUsrID())
+				.append(" or CurrentOwner = 0)");
+		if (!usrfinRolesList.isEmpty()) {
+			sql.append(" and (RoleCode in ('");
+			sql.append(StringUtils.join(usrfinRolesList, "','"));
+			sql.append("')");
 		}
+		sql.append(")))");
 
-		searchObject.addWhereClause(whereClause + sql);
+		searchObject.addWhereClause(sql.toString());
 
 		logger.debug("Leaving");
 		return searchObject;
