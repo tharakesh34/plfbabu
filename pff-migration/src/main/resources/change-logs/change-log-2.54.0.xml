@@ -3165,4 +3165,16 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 			UPDATE SEQ_DATA_ENGINE_STATUS SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_STATUS);
 		</sql>
 	</changeSet>
+	
+	<changeSet id="162" author="Durgaprasad G">
+		<addColumn tableName="PRESENTMENTDETAILS">
+			<column name="PresentmentRef" type="varchar(30)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="163" author="Durgaprasad G">
+		<addColumn tableName="PRESENTMENTDETAILS_TEMP">
+			<column name="PresentmentRef" type="varchar(30)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
