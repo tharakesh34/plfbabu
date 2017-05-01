@@ -75,8 +75,6 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -984,7 +982,11 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		logger.debug("Entering");
 		
 		this.batch.setValue(getjVPosting().getBatch());
-		this.batchReference.setValue(String.valueOf(getjVPosting().getBatchReference()));
+		if(getjVPosting().isNew()){
+			this.batchReference.setValue("");			
+		}else{
+			this.batchReference.setValue(String.valueOf(getjVPosting().getBatchReference()));
+		}
 		this.baseCCy.setValue(getjVPosting().getCurrency());
 		this.postingBranch.setValue(getjVPosting().getBranch());
 		this.postingBranch.setDescription(getjVPosting().getBranchDesc());
@@ -1171,7 +1173,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		if (!this.account.isReadonly()) {
 			this.account.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_JVPostingEntryDialog_Account.value"),
-					null, true));
+					PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
 		}
 		// Debit Account
 		if (!this.debitAccount.isReadonly()) {
@@ -1513,12 +1515,12 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 				if((jvPostingEntry.isExternalAccount()) && 
 						(jvPostingEntry.getTxnReference() == aJVPostingEntry.getTxnReference())){ // Both Current and Existing list entry is same
 
-					if(isNewRecord()){
+					/*if(isNewRecord()){
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetails(PennantConstants.KEY_FIELD,"41008",errParm,valueParm), 
 								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
-					}
+					}*/
 
 
 					if(tranType==PennantConstants.TRAN_DEL){

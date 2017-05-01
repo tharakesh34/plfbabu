@@ -272,18 +272,6 @@
 													label="${c:l('listheader_RecordType.label')}" sort="auto"
 													hflex="min" visible="false" />
 												<listheader
-													id="listheader_ModifiedFlag"
-													label="${c:l('listheader_ModifiedFlag.label')}" sort="auto"
-													hflex="min" />
-												<listheader
-													id="listheader_DeletedFlag"
-													label="${c:l('listheader_DeletedFlag.label')}" sort="auto"
-													hflex="min" />
-												<listheader
-													id="listheader_ValidationStatus"
-													label="${c:l('listheader_ValidationStatus.label')}"
-													sort="auto" hflex="min" />
-												<listheader
 													id="listheader_PostingStatus"
 													label="${c:l('listheader_PostingStatus.label')}"
 													sort="auto" hflex="min" />

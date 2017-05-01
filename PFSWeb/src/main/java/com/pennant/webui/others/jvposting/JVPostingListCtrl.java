@@ -150,9 +150,9 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 		setItemRender(new JVPostingListModelItemRenderer());
 
 		registerButton(button_JVPostingList_JVPostingSearch);
+		registerButton(button_JVPostingList_NewJVPosting, "button_JVPostingList_NewJVPosting", true);
 
-		registerField("batchReference", listheader_BatchReference, SortOrder.ASC, batchReference,
-				sortOperator_BatchReference, Operators.STRING);
+		registerField("batchReference", listheader_BatchReference, SortOrder.ASC, batchReference,sortOperator_BatchReference, Operators.NUMERIC);
 		registerField("batch", listheader_Batch, SortOrder.NONE, batch, sortOperator_Batch, Operators.STRING);
 		registerField("debitCount", listheader_DebitCount);
 		registerField("creditsCount", listheader_CreditsCount);

@@ -180,7 +180,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		}
 		selectSql.append(" From JVPostingEntry");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BatchReference =:BatchReference AND ExternalAccount=1");
+		selectSql.append(" Where BatchReference =:BatchReference AND ExternalAccount=1 order by TxnReference");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);

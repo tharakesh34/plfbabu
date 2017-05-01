@@ -90,9 +90,11 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.expenses.LegalExpenses;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
@@ -565,8 +567,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	
-	
 	public void onFulfill$expReference(Event event) throws InterruptedException {
 		logger.debug("Entering");
 		Object dataObject = this.expReference.getObject();
@@ -1798,14 +1798,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				lc = new Listcell(jvPostingEntry.getRecordStatus());
 				lc.setParent(item);
 				lc = new Listcell(jvPostingEntry.getRecordType());
-				lc.setParent(item);
-				lc = new Listcell(jvPostingEntry.getModifiedFlag());
-				lc.setParent(item);
-				lc = new Listcell(jvPostingEntry.getRecordType());
-				
-				lc.setParent(item);
-				lc = new Listcell(jvPostingEntry.getValidationStatus());
-				lc.setTooltiptext(jvPostingEntry.getValidationStatus());
 				lc.setParent(item);
 				lc = new Listcell(jvPostingEntry.getPostingStatus());
 				lc.setTooltiptext(jvPostingEntry.getPostingStatus());

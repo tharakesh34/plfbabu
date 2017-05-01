@@ -38,6 +38,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.Interface.service.PostingsInterfaceService;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.dao.NextidviewDAO;
@@ -392,6 +393,12 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			long linkedTranId = Long.MIN_VALUE;
 			try {
 				List<ReturnDataSet> list = getPostingsPreparationUtil().processEntryList(dbList, jVPosting);
+				//Post and save
+				/*getPostingsPreparationUtil().postingsExecProcess(list, jVPosting.getBranch(), DateUtility.getAppDate(),
+						"Y", false, false, linkedTranId, BigDecimal.ZERO, "", false);*/
+				
+				
+				
 				if (list != null && list.size() > 0) {
 					ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
 					for (int i = 0; i < list.size(); i++) {
