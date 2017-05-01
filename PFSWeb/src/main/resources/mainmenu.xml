@@ -162,6 +162,7 @@
 	<menu id="menu_Category_Disbursement"  rightName="menuCat_Disbursement" >
 		<menuItem id="menu_Item_DisbursementRegistration" zulNavigation="/WEB-INF/pages/InterfaceBajaj/DisbursementRegistrationList.zul" rightName="menuItem_DisbursementRegistration"/>
 		<menuItem id="menu_Item_DisbursementFileDownlaods" zulNavigation="/WEB-INF/pages/InterfaceBajaj/DisbursementFileDownloadList.zul" rightName="menuItem_DisbursementFileDownlaods"/>
+		<menuItem id="menu_Item_DisbursementDataEngine_Import" zulNavigation="/WEB-INF/pages/InterfaceBajaj/DisbursementDataImport.zul" rightName="menuItem_DataEngine_DataImport"/>
  	</menu>
  	
 	<!-- Rules   Factory -->

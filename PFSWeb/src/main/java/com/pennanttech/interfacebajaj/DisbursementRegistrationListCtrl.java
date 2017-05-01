@@ -552,7 +552,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		tab.setLabel(Labels.getLabel(tabName));
 		tab.setClosable(true);
 		tab.setParent(tabs);
-		tab.setLabel("File Control");
+		tab.setLabel("Disbursement File Control");
 
 		final Tabpanels tabpanels = (Tabpanels) tabs.getFellow("tabpanelsBoxIndexCenter");
 		final Tabpanel tabpanel = new Tabpanel();

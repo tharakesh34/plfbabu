@@ -4181,7 +4181,9 @@
 	</bean>
 	<bean id="fileDownloadListCtrl" class="com.pennanttech.interfacebajaj.FileDownloadListCtrl" parent="basisListCtrl" scope="prototype"/>
 	<bean id="disbursementfileDownloadListCtrl" class="com.pennanttech.interfacebajaj.DisbursementFileDownloadListCtrl" parent="basisListCtrl" scope="prototype"/>
-	
+	<bean id="disbursementDataImportCtrl" class="com.pennanttech.interfacebajaj.DisbursementDataImportCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="dataEngineConfig" ref="dataEngineConfig"/>
+	</bean>
 	
 	<!-- MandateStatusUpload -->
 	<bean id="mandateFileUploadListCtrl"

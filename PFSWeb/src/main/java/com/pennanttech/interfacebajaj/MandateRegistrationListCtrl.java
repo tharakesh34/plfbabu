@@ -716,7 +716,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		tab.setLabel(Labels.getLabel(tabName));
 		tab.setClosable(true);
 		tab.setParent(tabs);
-		tab.setLabel("File Control");
+		tab.setLabel("Mandate File Control");
 
 		final Tabpanels tabpanels = (Tabpanels) tabs.getFellow("tabpanelsBoxIndexCenter");
 		final Tabpanel tabpanel = new Tabpanel();
