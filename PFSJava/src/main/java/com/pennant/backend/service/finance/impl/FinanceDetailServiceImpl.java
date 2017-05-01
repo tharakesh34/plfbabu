@@ -672,6 +672,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 
+		financeDetail.setFinanceProfitDetail(getFinProfitDetailsById(financeMain.getFinReference()));
+		
 		financeDetail.getFinScheduleData().setFinServiceInstructions(
 				getFinServiceInstructionDAO().getFinServiceInstructions(finReference, "_Temp", procEdtEvent));
 
@@ -3804,7 +3806,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (!isWIF) {
 			getFinStageAccountingLogDAO()
 					.update(financeMain.getFinReference(), financeDetail.getModuleDefiner(), false);
-			processDisbursementRequets(financeDetail);		
+			if(StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)){
+				processDisbursementRequets(financeDetail);
+			}	
 		}
 
 		logger.debug("Leaving");

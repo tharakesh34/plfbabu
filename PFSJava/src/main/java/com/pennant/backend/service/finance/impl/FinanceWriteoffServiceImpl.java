@@ -19,6 +19,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
+import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -34,6 +35,7 @@ import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceWriteoffService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
@@ -50,6 +52,9 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	private FinanceWriteoffDAO			financeWriteoffDAO;
 	private ProvisionDAO				provisionDAO;
 	private FinanceReferenceDetailDAO	financeReferenceDetailDAO;
+	private FinFeeDetailService 			finFeeDetailService;
+	private FinTypeFeesDAO					finTypeFeesDAO;
+
 
 	public FinanceWriteoffServiceImpl() {
 		super();
@@ -86,6 +91,14 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 			scheduleData.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finReference,
 					FinanceConstants.FINSER_EVENT_WRITEOFF, false, ""));
+			
+			if (StringUtils.isNotBlank(scheduleData.getFinanceMain().getPromotionCode())) {
+				financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(scheduleData.getFinanceMain().getPromotionCode(),
+						FinanceConstants.FINSER_EVENT_WRITEOFF, "_AView", false, FinanceConstants.MODULEID_PROMOTION));
+			} else {
+				financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(scheduleData.getFinanceMain().getFinType(),
+						FinanceConstants.FINSER_EVENT_WRITEOFF, "_AView", false, FinanceConstants.MODULEID_FINTYPE));
+			}
 			scheduleData.setRepayDetails(getFinanceRepaymentsDAO().getFinRepayListByFinRef(finReference, false, ""));
 			scheduleData.setPenaltyDetails(getRecoveryDAO().getFinancePenaltysByFinRef(finReference, ""));
 
@@ -99,6 +112,10 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 						scheduleData.getFinanceMain().getCustID(), true, "_View"));
 			}
 
+			// Finance Fee Details
+			scheduleData.setFinFeeDetailList(getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView"));
+
+			
 			//Finance Agreement Details	
 			//=======================================
 			String finType = scheduleData.getFinanceType().getFinType();
@@ -906,6 +923,22 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
 		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
+	}
+
+	public FinFeeDetailService getFinFeeDetailService() {
+		return finFeeDetailService;
+	}
+
+	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
+		this.finFeeDetailService = finFeeDetailService;
+	}
+
+	public FinTypeFeesDAO getFinTypeFeesDAO() {
+		return finTypeFeesDAO;
+	}
+
+	public void setFinTypeFeesDAO(FinTypeFeesDAO finTypeFeesDAO) {
+		this.finTypeFeesDAO = finTypeFeesDAO;
 	}
 
 }

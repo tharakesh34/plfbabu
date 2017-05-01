@@ -11250,23 +11250,26 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		Date curBDay = DateUtility.getAppDate();
 		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		FinanceType finType = getFinanceDetail().getFinScheduleData().getFinanceType();
+		FinanceProfitDetail financeProfitDetail = getFinanceDetail().getFinanceProfitDetail();
 
 		if (onLoadProcess) {
 			doWriteComponentsToBean(getFinanceDetail().getFinScheduleData());
 		}
-
-		String finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
+		
 		if ("".equals(eventCode)) {
+			eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
 			if (finMain.getFinStartDate().after(DateUtility.getAppDate())) {
 				if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
-					finEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
+					eventCode = AccountEventConstants.ACCEVENT_ADDDBSF;
 				}
 			}
 		}
-
-		FinanceProfitDetail financeProfitDetail = new FinanceProfitDetail();
+		//For New Records Profit Details will be set inside the AEAmounts 
+		if(financeProfitDetail == null){
+			financeProfitDetail = new FinanceProfitDetail();
+		}	
 		amountCodes = AEAmounts.procAEAmounts(getFinanceDetail().getFinScheduleData().getFinanceMain(),
-				getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), financeProfitDetail, finEvent,
+				getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), financeProfitDetail, eventCode,
 				curBDay, curBDay);
 
 		amountCodes.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
@@ -11287,10 +11290,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		accountingSetEntries.addAll(getEngineExecution().getAccEngineExecResults("N", executingMap, false));
 		
 		//Disbursement Postings
-		prepareDisbursementPosting(accountingSetEntries);
-		//Disb Instruction Posting
-		prepareDisbInstructionPosting(accountingSetEntries);
-
+		if(eventCode.startsWith("ADDD")){
+			prepareDisbursementPosting(accountingSetEntries);
+			
+		}
+		if(eventCode.equals(AccountEventConstants.ACCEVENT_DISBINS)){
+			//Disb Instruction Posting
+			prepareDisbInstructionPosting(accountingSetEntries);
+		}	
 		getFinanceDetail().setReturnDataSetList(accountingSetEntries);
 
 		if (accountingDetailDialogCtrl != null) {
@@ -11303,7 +11310,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private void prepareDisbursementPosting(List<ReturnDataSet> accountingSetEntries) throws Exception {
 
 		String finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-		FinanceProfitDetail financeProfitDetail = new FinanceProfitDetail();
+		FinanceProfitDetail financeProfitDetail = getFinanceDetail().getFinanceProfitDetail();
+		//For New Records Profit Details will be set inside the AEAmounts 
+		if(financeProfitDetail == null){
+			financeProfitDetail = new FinanceProfitDetail();
+		}	
+		
 		Date curBDay = DateUtility.getAppDate();
 		List<FinanceDisbursement> disbList = getFinanceDetail().getFinScheduleData().getDisbursementDetails();
 		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -11347,8 +11359,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private void prepareDisbInstructionPosting(List<ReturnDataSet> accountingSetEntries) throws Exception {
 
 		String finEvent = AccountEventConstants.ACCEVENT_DISBINS;
-		FinanceProfitDetail financeProfitDetail = new FinanceProfitDetail();
-		Date curBDay = DateUtility.getAppDate();
+		FinanceProfitDetail financeProfitDetail = getFinanceDetail().getFinanceProfitDetail();
+		//For New Records Profit Details will be set inside the AEAmounts 
+		if(financeProfitDetail == null){
+			financeProfitDetail = new FinanceProfitDetail();
+		}			Date curBDay = DateUtility.getAppDate();
 		
 		List<FinAdvancePayments> advPayList = getFinanceDetail().getAdvancePaymentsList();
 		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();

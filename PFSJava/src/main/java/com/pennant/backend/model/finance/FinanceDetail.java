@@ -191,6 +191,7 @@ public class FinanceDetail implements java.io.Serializable {
 	
 	// Rollover Finance Details
 	private RolledoverFinanceHeader rolledoverFinanceHeader = null;
+	private FinanceProfitDetail financeProfitDetail = null;
 	
 	// Customer Details
 	@XmlElement(name="customer")
@@ -842,6 +843,14 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setForeClosureDetails(List<ForeClosure> foreClosureDetails) {
 		this.foreClosureDetails = foreClosureDetails;
+	}
+
+	public FinanceProfitDetail getFinanceProfitDetail() {
+		return financeProfitDetail;
+	}
+
+	public void setFinanceProfitDetail(FinanceProfitDetail financeProfitDetail) {
+		this.financeProfitDetail = financeProfitDetail;
 	}
 
 }

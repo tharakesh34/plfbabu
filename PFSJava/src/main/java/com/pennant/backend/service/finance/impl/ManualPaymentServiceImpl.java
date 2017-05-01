@@ -32,6 +32,7 @@ import com.pennant.backend.dao.finance.FinanceRepayPriorityDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
+import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
@@ -65,6 +66,7 @@ import com.pennant.backend.model.rulefactory.SubHeadRule;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.ddapayments.impl.DDARepresentmentService;
+import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.ManualPaymentService;
@@ -103,6 +105,9 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	private RepayCalculator					repayCalculator;
 	private RuleExecutionUtil				ruleExecutionUtil;
 	private LimitManagement					limitManagement;
+	
+	private FinTypeFeesDAO					finTypeFeesDAO;
+	private FinFeeDetailService 			finFeeDetailService;
 
 	public ManualPaymentServiceImpl() {
 		super();
@@ -147,6 +152,17 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			//Finance Type Details
 			FinanceType financeType = getFinanceTypeDAO().getFinanceTypeByID(financeMain.getFinType(), "_AView");
 			scheduleData.setFinanceType(financeType);
+			
+			if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
+				financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(financeMain.getPromotionCode(),
+						AccountEventConstants.ACCEVENT_EARLYSTL, "_AView", false, FinanceConstants.MODULEID_PROMOTION));
+			} else {
+				financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(financeMain.getFinType(),
+						AccountEventConstants.ACCEVENT_EARLYSTL, "_AView", false, FinanceConstants.MODULEID_FINTYPE));
+			}
+			
+			// Finance Fee Details
+			scheduleData.setFinFeeDetailList(getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView"));
 
 			//Finance Customer Details			
 			if (financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE) {
@@ -1896,5 +1912,21 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 	public void setLimitManagement(LimitManagement limitManagement) {
 		this.limitManagement = limitManagement;
+	}
+
+	public FinFeeDetailService getFinFeeDetailService() {
+		return finFeeDetailService;
+	}
+
+	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
+		this.finFeeDetailService = finFeeDetailService;
+	}
+
+	public FinTypeFeesDAO getFinTypeFeesDAO() {
+		return finTypeFeesDAO;
+	}
+
+	public void setFinTypeFeesDAO(FinTypeFeesDAO finTypeFeesDAO) {
+		this.finTypeFeesDAO = finTypeFeesDAO;
 	}
 }

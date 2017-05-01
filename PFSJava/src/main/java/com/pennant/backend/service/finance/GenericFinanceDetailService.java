@@ -1278,6 +1278,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 						financeDetail.getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
 						executingMap.putAll(feeRuleDetailsMap);
+						finType.getDeclaredFieldValues(executingMap);
+						financeMain.getDeclaredFieldValues(executingMap);
+
 
 						List<ReturnDataSet> returnSetEntries = getEngineExecution().getAccEngineExecResults("Y",
 								executingMap, false);
@@ -1582,7 +1585,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 							financeDetail.getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
 							executingMap.putAll(feeRuleDetailsMap);
-
+							finType.getDeclaredFieldValues(executingMap);
+							financeMain.getDeclaredFieldValues(executingMap);
+							
 							returnSetEntries = getEngineExecution().getAccEngineExecResults("Y", executingMap, false);
 
 							if (returnSetEntries != null && !returnSetEntries.isEmpty()) {
@@ -1975,11 +1980,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				if (!pastdueDefDateList.isEmpty()) {
 
 					//Fetching Overdue Penalty Recovery Details, If any Paid either Partially or Fully
-					BigDecimal totPenaltyPaid = getRecoveryDAO().getPaidPenaltiesbySchDates(
+				/*	BigDecimal totPenaltyPaid = getRecoveryDAO().getPaidPenaltiesbySchDates(
 							financeMain.getFinReference(), pastdueDefDateList);
-
+*/
 					// AmountCodes Preparation-- Overdue Paid Amount Reversal for 
-					amountCodes.setPenalty(totPenaltyPaid.negate());
+				//	amountCodes.setPenalty(totPenaltyPaid.negate());
 					amountCodes.setWaiver(BigDecimal.ZERO);
 					amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_LATEPAY);
 
