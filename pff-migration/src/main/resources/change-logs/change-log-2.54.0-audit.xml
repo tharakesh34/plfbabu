@@ -181,4 +181,13 @@
 			<column name="WorkflowId" type="bigint" />   
 		</createTable> 
 	</changeSet>
+	
+	<changeSet id="11" author="Durgaprasad G">
+		<addPrimaryKey columnNames="AuditId,AuditDate,AuditSeq,AuditImage" constraintName="PK_ADT_PREHEADER"
+			tableName="ADTPRESENTMENTHEADER" />
+	</changeSet>
+	<changeSet id="12" author="Durgaprasad G">
+		<addPrimaryKey columnNames="AuditId,AuditDate,AuditSeq,AuditImage" constraintName="PK_ADT_PREDETAILS"
+			tableName="ADTPRESENTMENTDETAILS" />
+	</changeSet>
 </databaseChangeLog>
