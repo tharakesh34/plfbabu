@@ -495,12 +495,12 @@
 		</menu> -->
 		
 		<menu id="menu_Category_CustomerTemplates" rightName="menuCat_CustomerTemplates">
-			<menuItem id="menu_Item_ReleaseLetter" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_CustomerTemplates_ReleaseLetter" />
+			<!-- <menuItem id="menu_Item_ReleaseLetter" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_CustomerTemplates_ReleaseLetter" />
 			<menuItem id="menu_Item_NoLiabilityCertificate" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_CustomerTemplates_NoLiabilitesCertificate" />
 			<menuItem id="menu_Item_InterestStatement" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_CustomerTemplates_NoLiabilitesCertificate" />
 			<menuItem id="menu_Item_ProvisionalTDSCertification" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_CustomerTemplates_NoLiabilitesCertificate" />
 			<menuItem id="menu_Item_TDSCertification" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_CustomerTemplates_NoLiabilitesCertificate" />
-			<menuItem id="menu_Item_AccountStmt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_CustomerTemplates_SOA" />
+			 --><menuItem id="menu_Item_AccountStmt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_CustomerTemplates_SOA" />
 			<menuItem id="menu_Item_NPAReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_CustomerTemplates_SOA"/>
 			<menuItem id="menu_Item_PaymentSchedule" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_CustomerTemplates_SOA"/>
 				
@@ -549,7 +549,7 @@
 			<menuItem id="menu_Item_ClientLendingStatusByMaturity" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_FinDeptReports_ClientLendingStatusByMaturity" />
 			<menuItem id="menu_Item_FutureRepaymentSchedule" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_FinDeptReports_FutureRepaymentSchedule" />
 			<!-- <menuItem id="menu_Item_CBUAccrual" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_FinDeptReports_CBUAccrual" /> -->
-			<menuItem id="menu_Item_PastDueSummary" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_FinDeptReports_PastDueSummary" />
+			<!-- <menuItem id="menu_Item_PastDueSummary" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_FinDeptReports_PastDueSummary" /> -->
 			<menuItem id="menu_Item_PastDue" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_FinDeptReports_PastDue" />
 		</menu>
 		<menu id="menu_Category_BackOfcDeptReports" rightName="menuCat_BackOfcDeptReports">
