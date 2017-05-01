@@ -96,8 +96,8 @@
 									<listbox
 										id="sortOperator_ReceiptCancellationPurpose" width="43px"
 										mold="select" rows="1" />
-									<textbox id="purpose" width="150px"
-										maxlength="50" />
+									<combobox id="purpose" width="180px"
+									maxlength="100" readonly="true" />
 
 									<label
 										id="label_ReceiptCancellationSearch_ReceiptCancellationReceiptMode"
@@ -105,8 +105,8 @@
 									<listbox
 										id="sortOperator_ReceiptCancellationReceiptMode" width="43px"
 										mold="select" rows="1" />
-									<textbox id="receiptMode"
-										width="150px" maxlength="50" />
+									<combobox id="receiptMode" width="180px"
+									maxlength="100" readonly="true" />
 								</row>
 								<row>
 									<label
@@ -115,8 +115,8 @@
 									<listbox
 										id="sortOperator_ReceiptCancellationAllocationType" width="43px"
 										mold="select" rows="1" />
-									<textbox id="allocationType"
-										width="150px" maxlength="50" />
+									<combobox id="allocationType" width="180px"
+									maxlength="100" readonly="true" />
 
 									<label
 										id="label_ReceiptCancellationSearch_ReceiptCancellationFinType"

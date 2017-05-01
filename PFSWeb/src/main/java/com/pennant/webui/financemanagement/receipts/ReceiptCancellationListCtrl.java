@@ -20,6 +20,7 @@ import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
@@ -32,6 +33,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.search.Filter;
 import com.pennant.webui.financemanagement.receipts.model.ReceiptCancellationListModelItemRenderer;
@@ -70,9 +72,9 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 
 	protected Textbox receiptReference;
 	protected Textbox customer;
-	protected Textbox purpose;
-	protected Textbox receiptMode;
-	protected Textbox allocationType;
+	protected Combobox purpose;
+	protected Combobox receiptMode;
+	protected Combobox allocationType;
 	protected Textbox finType;
 	protected Textbox finBranch;
 
@@ -126,10 +128,13 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 				sortOperator_ReceiptCancellationCustomer, Operators.STRING);
 		registerField("custShrtName", listheader_ReceiptCancellationCustName, SortOrder.NONE, customer,
 				sortOperator_ReceiptCancellationCustomer, Operators.STRING);
+		fillComboBox(this.purpose, "", PennantStaticListUtil.getReceiptPurpose(), "");
 		registerField("receiptPurpose", listheader_ReceiptCancellationPurpose, SortOrder.NONE, purpose,
 				sortOperator_ReceiptCancellationPurpose, Operators.STRING);
+		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModes(), "");
 		registerField("receiptMode", listheader_ReceiptCancellationMode, SortOrder.NONE, receiptMode, sortOperator_ReceiptCancellationReceiptMode,
 				Operators.STRING);
+		fillComboBox(this.allocationType, "", PennantStaticListUtil.getAllocationMethods(), "");
 		registerField("allocationType", listheader_ReceiptCancellationAllocattionType, SortOrder.NONE, allocationType,
 				sortOperator_ReceiptCancellationAllocationType, Operators.STRING);
 		registerField("finType", listheader_ReceiptCancellationFinType, SortOrder.NONE, finType,
