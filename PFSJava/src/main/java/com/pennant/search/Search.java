@@ -256,14 +256,6 @@ public class Search implements IMutableSearch, Serializable {
 	}
 
 	/**
-	 * Add ascending sort by property
-	 */
-	public Search addSortAsc(String property, boolean ignoreCase) {
-		SearchUtil.addSortAsc(this, property, ignoreCase);
-		return this;
-	}
-
-	/**
 	 * Add descending sort by property
 	 */
 	public Search addSortDesc(String property) {
@@ -272,26 +264,10 @@ public class Search implements IMutableSearch, Serializable {
 	}
 
 	/**
-	 * Add descending sort by property
-	 */
-	public Search addSortDesc(String property, boolean ignoreCase) {
-		SearchUtil.addSortDesc(this, property, ignoreCase);
-		return this;
-	}
-
-	/**
 	 * Add sort by property. Ascending if <code>desc == false</code>, descending if <code>desc == true</code>.
 	 */
 	public Search addSort(String property, boolean desc) {
 		SearchUtil.addSort(this, property, desc);
-		return this;
-	}
-
-	/**
-	 * Add sort by property. Ascending if <code>desc == false</code>, descending if <code>desc == true</code>.
-	 */
-	public Search addSort(String property, boolean desc, boolean ignoreCase) {
-		SearchUtil.addSort(this, property, desc, ignoreCase);
 		return this;
 	}
 

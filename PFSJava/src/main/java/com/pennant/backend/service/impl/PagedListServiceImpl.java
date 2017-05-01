@@ -64,15 +64,6 @@ public class PagedListServiceImpl implements PagedListService, Serializable {
 		return jdbcSearchSupport.search(so);
 	}
 
-	/**
-	 * @deprecated Build your own query.
-	 */
-	@Deprecated
-	@Override
-	public <T> String getQueryBySearchObject(JdbcSearchObject<T> so) {
-		return jdbcSearchSupport.getSearchQuery(so);
-	}
-
 	@Override
 	public <T> SearchResult<T> getSRBySearchObject(JdbcSearchObject<T> so) {
 		return jdbcSearchSupport.searchAndCount(so);

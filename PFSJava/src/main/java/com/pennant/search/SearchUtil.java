@@ -288,24 +288,10 @@ public class SearchUtil {
 	}
 
 	/**
-	 * Add ascending sort by property
-	 */
-	public static void addSortAsc(IMutableSearch search, String property, boolean ignoreCase) {
-		addSort(search, property, false, ignoreCase);
-	}
-
-	/**
 	 * Add descending sort by property
 	 */
 	public static void addSortDesc(IMutableSearch search, String property) {
 		addSort(search, property, true, false);
-	}
-
-	/**
-	 * Add descending sort by property
-	 */
-	public static void addSortDesc(IMutableSearch search, String property, boolean ignoreCase) {
-		addSort(search, property, true, ignoreCase);
 	}
 
 	// ---------- Remove ----------

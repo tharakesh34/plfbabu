@@ -40,8 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
 */
-
-
 package com.pennant.backend.service;
 
 import java.util.List;
@@ -49,10 +47,8 @@ import java.util.List;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.search.SearchResult;
 
-
 public interface PagedListService {
-
 	<T> List<T> getBySearchObject(JdbcSearchObject<T> so);
-	<T> String getQueryBySearchObject(JdbcSearchObject<T> so);
+
 	<T> SearchResult<T> getSRBySearchObject(JdbcSearchObject<T> so);
 }

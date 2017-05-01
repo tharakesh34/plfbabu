@@ -47,16 +47,8 @@ public class Sort implements Serializable {
 		return new Sort(property);
 	}
 
-	public static Sort asc(String property, boolean ignoreCase) {
-		return new Sort(property, ignoreCase);
-	}
-
 	public static Sort desc(String property) {
 		return new Sort(property, true);
-	}
-
-	public static Sort desc(String property, boolean ignoreCase) {
-		return new Sort(property, true, ignoreCase);
 	}
 
 	public String getProperty() {

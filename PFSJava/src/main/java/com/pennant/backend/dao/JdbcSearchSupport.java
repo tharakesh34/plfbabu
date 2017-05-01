@@ -50,7 +50,5 @@ import com.pennant.search.SearchResult;
 public interface JdbcSearchSupport {
 	<T> List<T> search(ISearch search);
 
-	String getSearchQuery(ISearch search);
-
 	<T> SearchResult<T> searchAndCount(ISearch search);
 }
