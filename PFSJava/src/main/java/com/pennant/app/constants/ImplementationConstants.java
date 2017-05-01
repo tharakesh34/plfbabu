@@ -60,7 +60,7 @@ public class ImplementationConstants {
 	public static final boolean	ALLOW_EXPENSE_TRACKING			= false;						// JV Postings
 	public static final boolean	ADD_FEEINFTV_ONCALC				= true;						// Fee Amount Added to Net Finance Amount in Display
 	public static final boolean	ALLOW_FIN_SALARY_PAYMENT		= true;						// Salaried Payment Recording
-	public static final boolean	ALLOW_SPECIALRATE				= true;					// Special Rate Allowed or Not in Referential Rate Component
+	public static final boolean	ALLOW_SPECIALRATE				= false;					// Special Rate Allowed or Not in Referential Rate Component
 	public static final boolean	ACCOUNTS_APPLICABLE				= false;					// Application Level Accounting Component Allowed or not
 	public static final boolean	ALLOW_MANUAL_SCHEDULE			= false;					// Manual Schedule Allowed or not
 	public static final boolean	ALLOW_INDICATIVE_RATE			= false;					// Allow Indicative Rate
