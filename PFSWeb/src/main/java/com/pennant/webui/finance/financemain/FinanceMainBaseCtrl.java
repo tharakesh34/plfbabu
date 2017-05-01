@@ -3171,7 +3171,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.space_DroplineDate.setSclass("");
 			}
 			this.pftServicingODLimit.setChecked(aFinanceMain.isPftServicingODLimit());
-			if (aFinanceMain.getNumberOfTerms() > 1) {
+			if (aFinanceMain.getNumberOfTerms() > 0) {
 				int odYearlTerms = aFinanceMain.getNumberOfTerms() / 12;
 				this.odYearlyTerms.setValue(odYearlTerms);
 				this.odMnthlyTerms.setValue(aFinanceMain.getNumberOfTerms() % 12);
@@ -3359,16 +3359,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		this.repayPftFrq.setDisabled(isReadOnly("FinanceMainDialog_repayPftFrq"));
-		if (StringUtils.isNotEmpty(aFinanceMain.getRepayPftFrq())
-				|| !aFinanceMain.getRepayPftFrq().equals(PennantConstants.List_Select)) {
+		if (aFinanceMain.getRepayPftFrq()!=null && (StringUtils.isNotEmpty(aFinanceMain.getRepayPftFrq())
+				|| !aFinanceMain.getRepayPftFrq().equals(PennantConstants.List_Select))) {
 			this.rpyPftFrqRow.setVisible(true);
 			this.repayPftFrq.setValue(aFinanceMain.getRepayPftFrq());
 		}
 
 		if (aFinanceMain.isAllowRepayRvw()) {
 			this.repayRvwFrq.setDisabled(isReadOnly("FinanceMainDialog_repayRvwFrq"));
-			if (StringUtils.isNotEmpty(aFinanceMain.getRepayRvwFrq())
-					|| !aFinanceMain.getRepayRvwFrq().equals(PennantConstants.List_Select)) {
+			if (aFinanceMain.getRepayRvwFrq()!=null &&  (StringUtils.isNotEmpty(aFinanceMain.getRepayRvwFrq())
+					|| !aFinanceMain.getRepayRvwFrq().equals(PennantConstants.List_Select))) {
 				this.rpyRvwFrqRow.setVisible(true);
 				this.repayRvwFrq.setVisible(true);
 				this.label_FinanceMainDialog_RepayRvwFrq.setVisible(true);
@@ -10547,7 +10547,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							throw new WrongValueException(this.odMnthlyTerms,Labels.getLabel("label_FrqValidation", new String[] {String.valueOf(6),"Months"}));
 						}else if(FrequencyCodeTypes.FRQ_YEARLY.equals(frqCode) && this.odYearlyTerms.intValue()< 1){
 							throw new WrongValueException(this.odYearlyTerms,Labels.getLabel("label_FrqValidation", new String[] {String.valueOf(1),"Year"}));
-						}else if(StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, moduleDefiner)){
+						}
+						
+						if (this.odMnthlyTerms.intValue() >= 0) {
+							tenor = (this.odYearlyTerms.intValue() * 12) + this.odMnthlyTerms.intValue();
+						}
+						
+						if(StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, moduleDefiner)){
 							//Validation in OverDraft Maintenance i.e..,Tenor should be greater than the current business date
 							int minNoofMonths;
 							if (!financeType.isDroplineOD()) {
@@ -10567,9 +10573,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 				
-				if (this.odMnthlyTerms.intValue() >= 0) {
-					tenor = (this.odYearlyTerms.intValue() * 12) + this.odMnthlyTerms.intValue();
-				}
+				
 				aFinanceMain.setNumberOfTerms(tenor);
 			} catch (WrongValueException we) {
 				wve.add(we);
