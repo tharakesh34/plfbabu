@@ -189,6 +189,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	
 	protected Listbox										listBoxPayment;
 	protected Listbox										listBoxPosting;
+	protected Tab											receiptDetailsTab;
 	protected Tab											postingDetailsTab;
 
 	// Postings Details
@@ -556,6 +557,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = wve.get(i);
 			}
+			this.receiptDetailsTab.setSelected(true);
 			throw new WrongValuesException(wvea);
 		}
 		

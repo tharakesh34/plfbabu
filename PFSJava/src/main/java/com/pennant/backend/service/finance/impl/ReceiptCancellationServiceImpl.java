@@ -298,6 +298,9 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			}
 		}
 
+		// Bounce Reason Code
+		getManualAdviseDAO().delete(receiptHeader.getManualAdvise(),TableType.TEMP_TAB);
+
 		// Delete Receipt Header
 		getFinReceiptHeaderDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
 
@@ -457,7 +460,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		if (!financeMain.isFinIsActive()) {
 
 			//Not Allowed for Inactive Finances
-			return "Finance Cannot be Processed for Reversal of Payment. Finance is in In-Active State.";
+			return "Loan Cannot be Processed for Reversal of Payment. Loan is in In-Active State.";
 		}
 		
 		boolean isRcdFound = false;
@@ -485,6 +488,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 					}
 
 					long logKey = 0;
+					String finEvent = "";
 					for (int j = rpyHeaders.size() - 1; j >= 0; j--) {
 
 						FinRepayHeader rpyHeader = rpyHeaders.get(j);
@@ -494,6 +498,9 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 						linkedTranId = rpyHeader.getLinkedTranId();
 						valueDate = rpyHeader.getValueDate();
+						if(j == rpyHeaders.size() - 1){
+							finEvent = rpyHeader.getFinEvent();
+						}
 						isRcdFound = true;
 
 						//Fetch Log Entry Details Greater than this Repayments Entry , which are having Schedule Recalculation
@@ -501,7 +508,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 						//============================================
 						List<FinLogEntryDetail> list = getFinLogEntryDetailDAO().getFinLogEntryDetailList(finReference, valueDate);
 						if (list != null && !list.isEmpty()) {
-							return "Finance was maintained after this Repayment done."; //TODO: error code
+							return "Loan was maintained after this Repayment done."; //TODO: error code
 						}
 
 						//Posting Reversal Case Program Calling in Equation
@@ -510,13 +517,6 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 						if (!(Boolean) returnList.get(0)) {
 							return returnList.get(1).toString();
 						}
-
-						// Update Log Entry Based on FinPostDate and Reference
-						//============================================
-						FinLogEntryDetail detail = getFinLogEntryDetailDAO().getFinLogEntryDetail(finReference, rpyHeader.getFinEvent(), valueDate);
-						logKey = detail.getLogKey();
-						detail.setReversalCompleted(true);
-						getFinLogEntryDetailDAO().updateLogEntryStatus(detail);
 
 						//Remove Repayments Terms based on Linked Transaction ID
 						//============================================
@@ -528,13 +528,17 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 						//Remove Repayment Schedule Details 
 						//getFinanceRepaymentsDAO().deleteFinRepaySchListByTranId(finReference, linkedTranId, "");
 						
-						if(j != rpyHeaders.size() - 1){
-							
-							//Delete Data from Log Entry Tables After Inserting into Main Tables
-							listDeletion(finReference, "_Log", false, logKey);
-						}
-						
 					}
+					
+					// Update Log Entry Based on FinPostDate and Reference
+					//============================================
+					FinLogEntryDetail detail = getFinLogEntryDetailDAO().getFinLogEntryDetail(finReference, finEvent, valueDate);
+					if(detail == null){
+						return "Log Entry Details are not correct. Please contact Adminstrator.";
+					}
+					logKey = detail.getLogKey();
+					detail.setReversalCompleted(true);
+					getFinLogEntryDetailDAO().updateLogEntryStatus(detail);
 					
 					//Overdue Recovery Details Reset Back to Original State , If any penalties Paid On this Repayments Process 
 					//============================================
@@ -570,11 +574,9 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 					}
 					
 					rpySchdList = sortRpySchdDetails(new ArrayList<>(rpySchdMap.values()));
-					BigDecimal penaltyPaid = BigDecimal.ZERO;
-					BigDecimal latePftPaid = BigDecimal.ZERO;
 					for (RepayScheduleDetail rpySchd : rpySchdList) {
-						penaltyPaid = penaltyPaid.add(rpySchd.getPenaltyPayNow());
-						latePftPaid = latePftPaid.add(rpySchd.getLatePftSchdPayNow());
+						BigDecimal penaltyPaid = rpySchd.getPenaltyPayNow();
+						BigDecimal latePftPaid = rpySchd.getLatePftSchdPayNow();
 						
 						// Update Penalty Balance
 						if(penaltyPaid.compareTo(BigDecimal.ZERO) > 0 || latePftPaid.compareTo(BigDecimal.ZERO) > 0){

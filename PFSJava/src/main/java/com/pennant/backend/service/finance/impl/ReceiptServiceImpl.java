@@ -3,6 +3,7 @@ package com.pennant.backend.service.finance.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -677,12 +678,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		//Create log entry for Action for Schedule Modification
 		FinLogEntryDetail entryDetail = null;
 		long logKey = 0;
+		Date postDate = getPostDate(DateUtility.getAppDate());
 		if(receiptHeader.getAllocations() != null && !receiptHeader.getAllocations().isEmpty()){
 			entryDetail = new FinLogEntryDetail();
 			entryDetail.setFinReference(finReference);
 			entryDetail.setEventAction(receiptHeader.getReceiptPurpose());
-			entryDetail.setSchdlRecal(false);
-			entryDetail.setPostDate(DateUtility.getAppDate());
+			entryDetail.setSchdlRecal(true);
+			entryDetail.setPostDate(postDate);
 			entryDetail.setReversalCompleted(false);
 			logKey = getFinLogEntryDetailDAO().save(entryDetail);
 
@@ -698,6 +700,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			// Repay Header list process individually based on List existence
 			List<FinRepayHeader> repayHeaderList = receiptDetailList.get(i).getRepayHeaders();
 			
+			if(i != 0){
+				postDate = getPostDate(DateUtility.getAppDate());
+			}
 			for (int j = 0; j < repayHeaderList.size(); j++) {
 				
 				FinRepayHeader repayHeader = repayHeaderList.get(j);
@@ -732,7 +737,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					entryDetail.setFinReference(finReference);
 					entryDetail.setEventAction(receiptHeader.getReceiptPurpose());
 					entryDetail.setSchdlRecal(true);
-					entryDetail.setPostDate(DateUtility.getAppDate());
+					entryDetail.setPostDate(postDate);
 					entryDetail.setReversalCompleted(false);
 					logKey = getFinLogEntryDetailDAO().save(entryDetail);
 
@@ -755,6 +760,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				//Update Linked Transaction ID
 				linkedTranId = (long) returnList.get(1);
 				returnPostingsMap.put(linkedTranId, returnList);
+				repayHeader.setValueDate(postDate);
 				repayHeader.setLinkedTranId(linkedTranId);
 				financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().add(repayHeader.getPriAmount()));
 				
@@ -996,6 +1002,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+	
+	private Date getPostDate(Date appDate){
+		Calendar cal = Calendar.getInstance();
+		Calendar appCal = Calendar.getInstance();
+		cal.setTime(DateUtility.getSysDate());
+		appCal.setTime(appDate);
+		cal.set(Calendar.YEAR, appCal.get(Calendar.YEAR));
+		cal.set(Calendar.MONTH, appCal.get(Calendar.MONTH));
+		cal.set(Calendar.DATE, appCal.get(Calendar.DATE));
+		return cal.getTime();
 	}
 	
 	/**
