@@ -22,16 +22,9 @@ public class Sort implements Serializable {
 
 	protected String			property;
 	protected boolean			desc				= false;
-	protected boolean			ignoreCase			= false;
 
 	public Sort() {
 		super();
-	}
-
-	public Sort(String property, boolean desc, boolean ignoreCase) {
-		this.property = property;
-		this.desc = desc;
-		this.ignoreCase = ignoreCase;
 	}
 
 	public Sort(String property, boolean desc) {
@@ -65,14 +58,6 @@ public class Sort implements Serializable {
 
 	public void setDesc(boolean desc) {
 		this.desc = desc;
-	}
-
-	public boolean isIgnoreCase() {
-		return ignoreCase;
-	}
-
-	public void setIgnoreCase(boolean ignoreCase) {
-		this.ignoreCase = ignoreCase;
 	}
 
 	/**
@@ -135,9 +120,7 @@ public class Sort implements Serializable {
 			sb.append("`");
 		}
 		sb.append(desc ? " desc" : " asc");
-		if (ignoreCase) {
-			sb.append(" (ignore case)");
-		}
+
 		return sb.toString();
 	}
 }

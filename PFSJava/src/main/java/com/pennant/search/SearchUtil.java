@@ -267,31 +267,24 @@ public class SearchUtil {
 	 * Add sort by property. Ascending if <code>desc == false</code>, descending if <code>desc == true</code>.
 	 */
 	public static void addSort(IMutableSearch search, String property, boolean desc) {
-		addSort(search, property, desc, false);
-	}
-
-	/**
-	 * Add sort by property. Ascending if <code>desc == false</code>, descending if <code>desc == true</code>.
-	 */
-	public static void addSort(IMutableSearch search, String property, boolean desc, boolean ignoreCase) {
 		if (property == null) {
 			return; // null properties do nothing, don't bother to add them.
 		}
-		addSort(search, new Sort(property, desc, ignoreCase));
+		addSort(search, new Sort(property, desc));
 	}
 
 	/**
 	 * Add ascending sort by property
 	 */
 	public static void addSortAsc(IMutableSearch search, String property) {
-		addSort(search, property, false, false);
+		addSort(search, property, false);
 	}
 
 	/**
 	 * Add descending sort by property
 	 */
 	public static void addSortDesc(IMutableSearch search, String property) {
-		addSort(search, property, true, false);
+		addSort(search, property, true);
 	}
 
 	// ---------- Remove ----------
