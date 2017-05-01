@@ -1179,7 +1179,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		if (!this.debitAccount.isReadonly()) {
 			this.debitAccount.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_JVPostingEntryDialog_DebitAccount.value"),
-					null, true));
+					PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
 		}
 		// Txn Code
 		/*if (!this.txnType.isDisabled()) {
