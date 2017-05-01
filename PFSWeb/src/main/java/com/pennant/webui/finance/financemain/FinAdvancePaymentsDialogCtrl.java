@@ -1648,10 +1648,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		String dType = this.paymentType.getSelectedItem().getValue().toString();
 		this.partnerBankID.setButtonDisabled(false);
 		this.partnerBankID.setReadonly(false);
-		Filter[] filters = new Filter[3];
+		Filter[] filters = new Filter[4];
 		filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
 		filters[1] = new Filter("Purpose","D", Filter.OP_EQUAL);
 		filters[2] = new Filter("PaymentMode",dType, Filter.OP_EQUAL);
+		filters[3] = new Filter("Active",1,Filter.OP_EQUAL);
 		this.partnerBankID.setFilters(filters);
 		checkPaymentType(dType);
 	}
@@ -1660,6 +1661,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		if (StringUtils.isEmpty(str) || StringUtils.equals(str, PennantConstants.List_Select)) {
 			gb_ChequeDetails.setVisible(false);
 			gb_NeftDetails.setVisible(false);
+			this.partnerBankID.setReadonly(true);
 			return;
 		} else if (str.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)
 				|| str.equals(DisbursementConstants.PAYMENT_TYPE_DD)) {

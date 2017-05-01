@@ -75,6 +75,20 @@
 									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
 									<listbox id="recordType" width="100px" mold="select" />
 								</row>
+								<row id="row_RadioGroup" visible="false">
+									<label/>
+									<cell colspan="5">
+										<radiogroup>
+											<radio id="fromApproved"
+												label="${c:l('common.fetch.fromapproved')}">
+											</radio>
+											<radio id="fromWorkFlow"
+												selected="true"
+												label="${c:l('common.fetch.fromWorkFlow')}">
+											</radio>
+										</radiogroup>
+									</cell>
+								</row>
 							</rows>
 						</grid>
 
