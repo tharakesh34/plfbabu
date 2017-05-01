@@ -44,6 +44,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	private List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>(1);
 	private List<FinExcessAmount> excessAmounts = new ArrayList<FinExcessAmount>(1);
+	private List<FinExcessAmountReserve> excessReserves = new ArrayList<FinExcessAmountReserve>(1);
 	private List<ReceiptAllocationDetail> allocations = new ArrayList<ReceiptAllocationDetail>(1);
 	private ManualAdvise manualAdvise; // Bounce Reason
 	
@@ -62,6 +63,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("finBranch");
 		excludeFields.add("custCIF");
 		excludeFields.add("custShrtName");
+		excludeFields.add("excessReserves");
+
 		return excludeFields;
 	}
 
@@ -256,6 +259,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	}
 	public void setFinCcy(String finCcy) {
 		this.finCcy = finCcy;
+	}
+
+	public List<FinExcessAmountReserve> getExcessReserves() {
+		return excessReserves;
+	}
+
+	public void setExcessReserves(List<FinExcessAmountReserve> excessReserves) {
+		this.excessReserves = excessReserves;
 	}
 
 	public ManualAdvise getManualAdvise() {

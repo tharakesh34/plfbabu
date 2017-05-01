@@ -124,6 +124,7 @@ import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.finance.EarlySettlementReportData;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -356,6 +357,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private FinReceiptData									receiptData							= null;
 	private FinReceiptHeader								receiptHeader						= null;
 	private List<FinExcessAmount>							excessList							= null;
+	private List<FinExcessAmountReserve>					excessReserveList					= null;
 	private FinanceDetail									financeDetail;
 	private FinanceType										financeType;
 	private RepayMain										repayMain							= null;
@@ -406,6 +408,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				setFinanceDetail(financeDetail);
 				receiptHeader = getReceiptData().getReceiptHeader();
 				setExcessList(receiptHeader.getExcessAmounts());
+				setExcessReserveList(receiptHeader.getExcessReserves());
 				recordType = financeDetail.getFinScheduleData().getFinanceMain().getRecordType();
 				version = financeDetail.getFinScheduleData().getFinanceMain().getVersion();
 
@@ -703,7 +706,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if(item.getId().contains("Allocate")){
 				CurrencyBox paidBox = (CurrencyBox) this.listBoxManualAdvises.getFellowIfAny(item.getId().replaceAll("Item", "Paid"));
 				paidBox.setReadonly(true);
-				CurrencyBox waivedBox = (CurrencyBox) this.listBoxManualAdvises.getFellowIfAny(item.getId().replaceAll("Item", "Waived"));
+				CurrencyBox waivedBox = (CurrencyBox) this.listBoxManualAdvises.getFellowIfAny(item.getId().replaceAll("Item", "AdvWaived"));
 				waivedBox.setReadonly(true);
 			}
 		}
@@ -1550,9 +1553,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			
 			String allocationType = allocateTypes.get(i);
 			long allocateTo = 0;
-			if(allocateTypes.get(i).contains("~")){
-				allocationType = allocateTypes.get(i).substring(0, allocateTypes.get(i).indexOf("~"));
-				allocateTo = Long.valueOf(allocateTypes.get(i).substring(allocateTypes.get(i).indexOf("~")+1));
+			if(allocateTypes.get(i).contains("_")){
+				allocationType = allocateTypes.get(i).substring(0, allocateTypes.get(i).indexOf("_"));
+				allocateTo = Long.valueOf(allocateTypes.get(i).substring(allocateTypes.get(i).indexOf("_")+1));
 			}
 			
 			allocationDetail.setAllocationID(i+1);
@@ -1566,7 +1569,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 				
 				if(this.listBoxManualAdvises.getFellowIfAny("AllocateAdvWaived_"+allocateTypes.get(i)) != null){
-					CurrencyBox waivedAllocate = (CurrencyBox) this.listBoxManualAdvises.getFellowIfAny("AllocateWaived_"+allocateTypes.get(i));
+					CurrencyBox waivedAllocate = (CurrencyBox) this.listBoxManualAdvises.getFellowIfAny("AllocateAdvWaived_"+allocateTypes.get(i));
 					allocationDetail.setWaivedAmount(PennantApplicationUtil.unFormateAmount(waivedAllocate.getActualValue(), finFormatter));
 				}
 			}else{
@@ -1739,7 +1742,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					CurrencyBox paidBox = (CurrencyBox) this.listBoxManualAdvises.getFellowIfAny(item.getId().replaceAll("Item", "Paid"));
 					paidBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 				}
-				CurrencyBox waivedBox = (CurrencyBox) this.listBoxManualAdvises.getFellowIfAny(item.getId().replaceAll("Item", "Waived"));
+				CurrencyBox waivedBox = (CurrencyBox) this.listBoxManualAdvises.getFellowIfAny(item.getId().replaceAll("Item", "AdvWaived"));
 				waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 			}
 		}
@@ -2155,8 +2158,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					paidAllocationMap.put(allocate.getAllocationType(), allocate.getPaidAmount());
 					waivedAllocationMap.put(allocate.getAllocationType(), allocate.getWaivedAmount());
 				}else{
-					paidAllocationMap.put(allocate.getAllocationType()+"~"+allocate.getAllocationTo(), allocate.getPaidAmount());
-					waivedAllocationMap.put(allocate.getAllocationType()+"~"+allocate.getAllocationTo(), allocate.getWaivedAmount());
+					paidAllocationMap.put(allocate.getAllocationType()+"_"+allocate.getAllocationTo(), allocate.getPaidAmount());
+					waivedAllocationMap.put(allocate.getAllocationType()+"_"+allocate.getAllocationTo(), allocate.getWaivedAmount());
 				}
 			}
 		}
@@ -2236,15 +2239,24 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		excessAmountTypes.add(RepayConstants.EXAMOUNTTYPE_EXCESS);
 		excessAmountTypes.add(RepayConstants.EXAMOUNTTYPE_EMIINADV);
 
-		Map<String, FinExcessAmount> excessMap = new HashMap<>();
+		Map<String, BigDecimal> excessMap = new HashMap<>();
 		List<FinExcessAmount> excessAmountList = getExcessList();
 		if(excessAmountList != null && !excessAmountList.isEmpty()){
 			for (int i = 0; i < excessAmountList.size(); i++) {
-				excessMap.put(excessAmountList.get(i).getAmountType(), excessAmountList.get(i));
+				BigDecimal balAmount = excessAmountList.get(i).getBalanceAmt();
+				if(getExcessReserveList() != null && !getExcessReserveList().isEmpty()){
+					for (FinExcessAmountReserve reserve : getExcessReserveList()) {
+						if(reserve.getExcessID() == excessAmountList.get(i).getExcessID()){
+							balAmount = balAmount.add(reserve.getReservedAmt());
+							break;
+						}
+					}
+				}
+				excessMap.put(excessAmountList.get(i).getAmountType(), balAmount);
 			}
 		}
 
-		FinExcessAmount excess = null;
+		BigDecimal excessBal = BigDecimal.ZERO;
 		Listitem item = null;
 		Listcell lc = null;
 		this.listBoxExcess.getItems().clear();
@@ -2252,9 +2264,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			String excessAmtType = excessAmountTypes.get(i);
 			if(excessMap.containsKey(excessAmtType)){
-				excess = excessMap.get(excessAmtType);
+				excessBal = excessMap.get(excessAmtType);
 			}else{
-				excess = new FinExcessAmount();
+				excessBal = BigDecimal.ZERO;
 			}
 			item = new Listitem();
 
@@ -2262,7 +2274,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			lc.setStyle("font-weight:bold;color: #191a1c;");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantApplicationUtil.amountFormate(excess.getAmount(), finFormatter));
+			lc = new Listcell(PennantApplicationUtil.amountFormate(excessBal, finFormatter));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
@@ -2287,12 +2299,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			lc.appendChild(excessAmount);
 			lc.setParent(item);
 
-			BigDecimal balanceAmount = excess.getAmount().subtract(paidAmount);
+			BigDecimal balanceAmount = excessBal.subtract(paidAmount);
 			Label balLabel = new Label(PennantApplicationUtil.amountFormate(balanceAmount, finFormatter));
 			balLabel.setId("ExcessBal_"+excessAmtType);
 
 			List<Object> list = new ArrayList<>();
-			list.add(excess.getAmount());
+			list.add(excessBal);
 			list.add(excessAmount);
 			list.add(balLabel);
 			excessAmount.addForward("onFulfill", this.window_ReceiptDialog, "onExcessAmountChange", list);
@@ -2350,8 +2362,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			for (int i = 0; i < allocateTypes.size(); i++) {
 
 				String allocationType = allocateTypes.get(i);
-				if(allocateTypes.get(i).contains("~")){
-					allocationType = allocateTypes.get(i).substring(0, allocateTypes.get(i).indexOf("~"));
+				if(allocateTypes.get(i).contains("_")){
+					allocationType = allocateTypes.get(i).substring(0, allocateTypes.get(i).indexOf("_"));
 				}
 				if(allocationMap.containsKey(allocationType)){
 					allocation = allocationMap.get(allocationType);
@@ -2363,7 +2375,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				item = new Listitem();
 				String label = Labels.getLabel("label_RecceiptDialog_AllocationType_"+allocationType);
-				if(allocateTypes.get(i).contains("~")){
+				if(allocateTypes.get(i).contains("_")){
 					if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_MANADV)){
 						label = getReceiptData().getAllocationDescMap().get(allocateTypes.get(i));
 					}else{
@@ -4536,6 +4548,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	public void setExcessList(List<FinExcessAmount> excessList) {
 		this.excessList = excessList;
+	}
+
+	public List<FinExcessAmountReserve> getExcessReserveList() {
+		return excessReserveList;
+	}
+
+	public void setExcessReserveList(List<FinExcessAmountReserve> excessReserveList) {
+		this.excessReserveList = excessReserveList;
 	}
 
 }

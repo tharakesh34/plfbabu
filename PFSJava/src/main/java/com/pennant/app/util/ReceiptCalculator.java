@@ -240,7 +240,7 @@ public class ReceiptCalculator implements Serializable {
 					paidAllocationMap.put(allocate.getAllocationType(), allocate.getPaidAmount().add(allocate.getWaivedAmount()));
 					waivedAllocationMap.put(allocate.getAllocationType(), allocate.getWaivedAmount());
 				}else{
-					paidAllocationMap.put(allocate.getAllocationType()+"~"+allocate.getAllocationTo(), allocate.getPaidAmount().add(allocate.getWaivedAmount()));
+					paidAllocationMap.put(allocate.getAllocationType()+"_"+allocate.getAllocationTo(), allocate.getPaidAmount().add(allocate.getWaivedAmount()));
 					
 					BigDecimal waivedAmount = BigDecimal.ZERO;
 					if(waivedAllocationMap.containsKey(allocate.getAllocationType())){
@@ -313,8 +313,8 @@ public class ReceiptCalculator implements Serializable {
 								ManualAdvise advise = adviseMap.get(adviseIdList.get(a));
 								if(advise != null){
 									
-									if(paidAllocationMap.containsKey(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID())){
-										BigDecimal advAllocateBal = paidAllocationMap.get(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID());
+									if(paidAllocationMap.containsKey(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID())){
+										BigDecimal advAllocateBal = paidAllocationMap.get(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID());
 										if(advAllocateBal.compareTo(BigDecimal.ZERO) > 0){
 											BigDecimal balAdvise = advise.getAdviseAmount().subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
 											if(balAdvise.compareTo(BigDecimal.ZERO) > 0){
@@ -326,7 +326,7 @@ public class ReceiptCalculator implements Serializable {
 
 												// Reset Total Receipt Amount
 												totalReceiptAmt = totalReceiptAmt.subtract(balAdvise);
-												paidAllocationMap.put(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID(), advAllocateBal.subtract(balAdvise));
+												paidAllocationMap.put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), advAllocateBal.subtract(balAdvise));
 											}
 										}
 									}
@@ -488,8 +488,8 @@ public class ReceiptCalculator implements Serializable {
 								for (int l = lastRenderSeq; l < feeSchdList.size(); l++) {
 									if(feeSchdList.get(l).getSchDate().compareTo(schdDate) == 0){
 										
-										if(paidAllocationMap.containsKey(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID())){
-											BigDecimal feeAllocateBal = paidAllocationMap.get(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID());
+										if(paidAllocationMap.containsKey(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID())){
+											BigDecimal feeAllocateBal = paidAllocationMap.get(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID());
 											if(feeAllocateBal.compareTo(BigDecimal.ZERO) > 0){
 												BigDecimal balFee = feeSchdList.get(l).getSchAmount().subtract(feeSchdList.get(l).getPaidAmount());
 												if(balFee.compareTo(BigDecimal.ZERO) > 0){
@@ -504,7 +504,7 @@ public class ReceiptCalculator implements Serializable {
 													totalReceiptAmt = totalReceiptAmt.subtract(balFee);
 													totFeePaidNow = totFeePaidNow.add(balFee);
 
-													paidAllocationMap.put(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID(), feeAllocateBal.subtract(balFee));
+													paidAllocationMap.put(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID(), feeAllocateBal.subtract(balFee));
 
 													// Update Schedule to avoid on Next loop Payment
 													feeSchdList.get(l).setPaidAmount(feeSchdList.get(l).getPaidAmount().add(balFee));
@@ -541,8 +541,8 @@ public class ReceiptCalculator implements Serializable {
 								for (int l = 0; l < insSchdList.size(); l++) {
 									if(insSchdList.get(l).getInsSchDate().compareTo(schdDate) == 0){
 
-										if(paidAllocationMap.containsKey(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId())){
-											BigDecimal insAllocateBal = paidAllocationMap.get(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId());
+										if(paidAllocationMap.containsKey(RepayConstants.ALLOCATION_INS+"_"+insSchd.getInsId())){
+											BigDecimal insAllocateBal = paidAllocationMap.get(RepayConstants.ALLOCATION_INS+"_"+insSchd.getInsId());
 											if(insAllocateBal.compareTo(BigDecimal.ZERO) > 0){
 												BigDecimal balIns = insSchdList.get(l).getAmount().subtract(insSchdList.get(l).getInsurancePaid());
 												if(balIns.compareTo(BigDecimal.ZERO) > 0){
@@ -557,7 +557,7 @@ public class ReceiptCalculator implements Serializable {
 													totalReceiptAmt = totalReceiptAmt.subtract(balIns);
 													totInsPaidNow = totInsPaidNow.add(balIns);
 
-													paidAllocationMap.put(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId(), insAllocateBal.subtract(balIns));
+													paidAllocationMap.put(RepayConstants.ALLOCATION_INS+"_"+insSchd.getInsId(), insAllocateBal.subtract(balIns));
 
 													// Update Schedule to avoid on Next loop Payment
 													insSchdList.get(l).setInsurancePaid(insSchdList.get(l).getInsurancePaid().add(balIns));
@@ -606,8 +606,8 @@ public class ReceiptCalculator implements Serializable {
 						ManualAdvise advise = adviseMap.get(adviseIdList.get(a));
 						if(advise != null){
 							
-							if(paidAllocationMap.containsKey(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID())){
-								BigDecimal insAllocateBal = paidAllocationMap.get(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID());
+							if(paidAllocationMap.containsKey(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID())){
+								BigDecimal insAllocateBal = paidAllocationMap.get(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID());
 								if(insAllocateBal.compareTo(BigDecimal.ZERO) > 0){
 									BigDecimal balAdvise = advise.getAdviseAmount().subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
 									if(balAdvise.compareTo(BigDecimal.ZERO) > 0){
@@ -619,7 +619,7 @@ public class ReceiptCalculator implements Serializable {
 
 										// Reset Total Receipt Amount
 										totalReceiptAmt = totalReceiptAmt.subtract(balAdvise);
-										paidAllocationMap.put(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID(), insAllocateBal.subtract(balAdvise));
+										paidAllocationMap.put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), insAllocateBal.subtract(balAdvise));
 									}
 								}
 							}
@@ -1115,11 +1115,11 @@ public class ReceiptCalculator implements Serializable {
 										}
 
 										BigDecimal totFeePayNow = BigDecimal.ZERO;
-										if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID())){
-											totFeePayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID());
-											allocatePaidMap.remove(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID());
+										if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID())){
+											totFeePayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID());
+											allocatePaidMap.remove(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID());
 										}
-										allocatePaidMap.put(RepayConstants.ALLOCATION_FEE+"~"+feeSchd.getFeeID(), totFeePayNow.add(balFee));
+										allocatePaidMap.put(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID(), totFeePayNow.add(balFee));
 									}
 									if(lastRenderSeq == 0){
 										lastRenderSeq = l;
@@ -1161,11 +1161,11 @@ public class ReceiptCalculator implements Serializable {
 										}
 
 										BigDecimal totInsPayNow = BigDecimal.ZERO;
-										if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId())){
-											totInsPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId());
-											allocatePaidMap.remove(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId());
+										if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_INS+"_"+insSchd.getInsId())){
+											totInsPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_INS+"_"+insSchd.getInsId());
+											allocatePaidMap.remove(RepayConstants.ALLOCATION_INS+"_"+insSchd.getInsId());
 										}
-										allocatePaidMap.put(RepayConstants.ALLOCATION_INS+"~"+insSchd.getInsId(), totInsPayNow.add(balIns));
+										allocatePaidMap.put(RepayConstants.ALLOCATION_INS+"_"+insSchd.getInsId(), totInsPayNow.add(balIns));
 									}
 									break;
 								}
@@ -1240,11 +1240,11 @@ public class ReceiptCalculator implements Serializable {
 							}
 
 							BigDecimal totAdvisePayNow = BigDecimal.ZERO;
-							if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID())){
-								totAdvisePayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID());
-								allocatePaidMap.remove(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID());
+							if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID())){
+								totAdvisePayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID());
+								allocatePaidMap.remove(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID());
 							}
-							allocatePaidMap.put(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID(), totAdvisePayNow.add(balAdvise));
+							allocatePaidMap.put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), totAdvisePayNow.add(balAdvise));
 						}
 					}
 				}
@@ -1453,8 +1453,8 @@ public class ReceiptCalculator implements Serializable {
 					
 					// Adding Fee Details to Map
 					if(pastFeeAmount.compareTo(BigDecimal.ZERO) > 0){
-						receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_FEE+"~"+feeDetail.getFeeID(), pastFeeAmount);
-						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_FEE+"~"+feeDetail.getFeeID(), feeDetail.getFeeTypeDesc());
+						receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_FEE+"_"+feeDetail.getFeeID(), pastFeeAmount);
+						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_FEE+"_"+feeDetail.getFeeID(), feeDetail.getFeeTypeDesc());
 					}
 				}
 			}
@@ -1485,8 +1485,8 @@ public class ReceiptCalculator implements Serializable {
 					
 					// Adding Fee Details to Map
 					if(pastInsAmount.compareTo(BigDecimal.ZERO) > 0){
-						receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_INS+"~"+finInsurance.getInsId(), pastInsAmount);
-						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_INS+"~"+finInsurance.getInsId(), 
+						receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_INS+"_"+finInsurance.getInsId(), pastInsAmount);
+						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_INS+"_"+finInsurance.getInsId(), 
 								finInsurance.getInsuranceTypeDesc()+"-"+finInsurance.getInsReference());
 					}
 				}
@@ -1501,8 +1501,8 @@ public class ReceiptCalculator implements Serializable {
 				BigDecimal adviseBal = advise.getAdviseAmount().subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
 				// Adding Advise Details to Map
 				if(adviseBal.compareTo(BigDecimal.ZERO) > 0){
-					receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID(), adviseBal);
-					receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_MANADV+"~"+advise.getAdviseID(), advise.getFeeTypeDesc());
+					receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), adviseBal);
+					receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), advise.getFeeTypeDesc());
 				}
 			}
 		}

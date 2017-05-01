@@ -137,8 +137,9 @@ public class RateUtil implements Serializable {
 
 			if (!error) {
 				if (StringUtils.isNotBlank(rateDetail.getSplRateCode())) {
-					rateDetail.setSplRefRate(getSplRateDAO().getSplRateByID(rateDetail.getSplRateCode(),
-							rateDetail.getValueDate()).getSRRate());
+					BigDecimal splRate = getSplRateDAO().getSplRateByID(rateDetail.getSplRateCode(),
+							rateDetail.getValueDate()).getSRRate();
+					rateDetail.setSplRefRate(splRate == null ? BigDecimal.ZERO: splRate);
 				} else {
 					rateDetail.setSplRefRate(BigDecimal.ZERO);
 				}

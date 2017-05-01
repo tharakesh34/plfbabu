@@ -548,12 +548,14 @@ public class RepaymentPostingsUtil implements Serializable {
 		// Check Penalty Paid Fully or not
 		if(fullyPaid){
 			FinODDetails overdue = getFinODDetailsDAO().getTotals(finReference);
-			BigDecimal balPenalty = overdue.getTotPenaltyAmt().subtract(overdue.getTotPenaltyPaid()).add(
-					overdue.getLPIAmt().subtract(overdue.getLPIPaid()));
-			
-			// Penalty Not fully Paid
-			if(balPenalty.compareTo(BigDecimal.ZERO) > 0){
-				fullyPaid = false;
+			if(overdue != null){
+				BigDecimal balPenalty = overdue.getTotPenaltyAmt().subtract(overdue.getTotPenaltyPaid()).add(
+						overdue.getLPIAmt().subtract(overdue.getLPIPaid()));
+
+				// Penalty Not fully Paid
+				if(balPenalty.compareTo(BigDecimal.ZERO) > 0){
+					fullyPaid = false;
+				}
 			}
 		}
 		
@@ -1021,7 +1023,9 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		//Reset Finance Schedule Details
 		scheduleDetails = new ArrayList<FinanceScheduleDetail>(scheduleMap.values());
-		scheduleDetails = sortSchdDetails(scheduleDetails);
+		if(scheduleDetails != null && !scheduleDetails.isEmpty()){
+			scheduleDetails = sortSchdDetails(scheduleDetails);
+		}
 
 		// Finance Main Details Update
 		financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().add(rpyPri));

@@ -291,6 +291,29 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 		logger.debug("Leaving");
 		return reserve;
 	}
+	
+	/**
+	 * Method for Fetch the Reserved Excess Amounts Log details
+	 */
+	@Override
+	public List<FinExcessAmountReserve> getExcessReserveList(long receiptID) {
+		logger.debug("Entering");
+
+		FinExcessAmountReserve reserve = new FinExcessAmountReserve();
+		reserve.setReceiptID(receiptID);
+
+		StringBuilder selectSql = new StringBuilder(" Select ReceiptID, ExcessID , ReservedAmt ");
+		selectSql.append(" From FinExcessAmountReserve ");
+		selectSql.append(" Where ReceiptID =:ReceiptID ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reserve);
+		RowMapper<FinExcessAmountReserve> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinExcessAmountReserve.class);
+
+		List<FinExcessAmountReserve> reserveList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.debug("Leaving");
+		return reserveList;
+	}
 
 	/**
 	 * Method for Save Reserved amount against Excess ID
@@ -356,7 +379,10 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 		source.addValue("ExcessID", payAgainstID);
 
 		StringBuilder updateSql = new StringBuilder("Delete From FinExcessAmountReserve ");
-		updateSql.append(" Where ReceiptID =:ReceiptID AND ExcessID =:ExcessID ");
+		updateSql.append(" Where ReceiptID =:ReceiptID ");
+		if(payAgainstID != 0){
+			updateSql.append(" AND ExcessID =:ExcessID ");
+		}
 
 		logger.debug("updateSql: " + updateSql.toString());
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);

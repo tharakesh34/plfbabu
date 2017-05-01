@@ -269,6 +269,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				// Fetch Excess Amount Details
 				receiptData.getReceiptHeader().setExcessAmounts(getFinExcessAmountDAO().getExcessAmountsByRef(finReference));
 				
+				// Fetch Excess Amount Details
+				receiptData.getReceiptHeader().setExcessReserves(getFinExcessAmountDAO().getExcessReserveList(receiptData.getReceiptHeader().getReceiptID()));
+				
 				// Receipt Allocation Details
 				receiptData.getReceiptHeader().setAllocations(getAllocationDetailDAO().getAllocationsByReceiptID(
 						receiptData.getReceiptHeader().getReceiptID(), "_Temp"));
@@ -531,6 +534,20 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// ScheduleDetails deletion
 		listDeletion(financeMain.getFinReference(), "_Temp");
 		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, false);
+		
+		// Delete Reserved Log against Excess and Receipt ID
+		getFinExcessAmountDAO().deleteExcessReserve(receiptData.getReceiptHeader().getReceiptID(), 0);
+
+		List<FinReceiptDetail> receiptDetails = receiptData.getReceiptHeader().getReceiptDetails();
+		for (FinReceiptDetail receiptDetail : receiptDetails) {
+			// Excess Amount Reserve
+			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) ||
+					StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
+
+				// Update Excess Amount in Reserve
+				getFinExcessAmountDAO().updateExcessReserve(receiptDetail.getPayAgainstID(), receiptDetail.getAmount().negate());
+			}
+		}
 		
 		// Delete and Save Repayment Schedule details by setting Repay Header ID
 		getFinanceRepaymentsDAO().deleteRpySchdList(financeMain.getFinReference(), TableType.TEMP_TAB.getSuffix());
