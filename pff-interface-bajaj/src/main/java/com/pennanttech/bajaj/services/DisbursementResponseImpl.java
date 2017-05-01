@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennanttech.pff.core.Literal;
@@ -16,7 +18,7 @@ public class DisbursementResponseImpl extends BajajService implements Disburseme
 
 	@Autowired
 	private DisbursementProcess	disbursementProcess;
-	
+
 	public DisbursementResponseImpl() {
 		super();
 	}
@@ -26,9 +28,12 @@ public class DisbursementResponseImpl extends BajajService implements Disburseme
 		MapSqlParameterSource paramMap = null;
 		StringBuilder sql = null;
 		List<FinAdvancePayments> disbursements = null;
+		RowMapper<FinAdvancePayments> rowMapper = null;
 		try {
 			sql = new StringBuilder();
-			sql.append(" SELECT FA.FINREFERENCE, FA.LINKEDTRANID, FA.LLDATE, FA.PAYMENTTYPE, DR.STATUS,");
+			sql.append(" SELECT FA.PAYMENTID,FA.FINREFERENCE, FA.LINKEDTRANID, DR.PAYMENT_DATE LLDATE, FA.PAYMENTTYPE, DR.STATUS,");
+			sql.append(" FA.BENEFICIARYACCNO, FA.BENEFICIARYNAME, FA.BANKBRANCHID, FA.BANKCODE,");
+			sql.append(" FA.PHONECOUNTRYCODE, FA.PHONENUMBER, FA.PHONEAREACODE,");
 			sql.append(" DR.CHEQUE_NUMBER LLREFERENCENO, DR.REJECT_REASON REJECTREASON,");
 			sql.append(" DR.PAYMENT_DATE CLEARINGDATE, DR.TRANSACTIONREF");
 			sql.append(" FROM DISBURSEMENT_REQUESTS DR");
@@ -37,10 +42,15 @@ public class DisbursementResponseImpl extends BajajService implements Disburseme
 			paramMap = new MapSqlParameterSource();
 			paramMap.addValue("RESP_BATCH_ID", params[0]);
 
-			disbursements = namedJdbcTemplate.queryForList(sql.toString(), paramMap, FinAdvancePayments.class);
+			rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinAdvancePayments.class);
+			disbursements = namedJdbcTemplate.query(sql.toString(), paramMap, rowMapper);
 
 			for (FinAdvancePayments disbursement : disbursements) {
-				disbursementProcess.process(disbursement);
+				try {
+					disbursementProcess.process(disbursement);
+				} catch (Exception e) {
+
+				}
 			}
 
 		} catch (Exception e) {
@@ -48,6 +58,7 @@ public class DisbursementResponseImpl extends BajajService implements Disburseme
 		} finally {
 			sql = null;
 			paramMap = null;
+			rowMapper = null;
 		}
 	}
 }

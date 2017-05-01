@@ -34,22 +34,26 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 	private FinAdvancePaymentsDAO		finAdvancePaymentsDAO;
 
 	@Override
-	public void process(FinAdvancePayments finAdvancePayments) throws Exception {
+	public void process(FinAdvancePayments disbursement) throws Exception {
 		logger.debug("Entering");
-
-		FinanceMain financeMain = financeMainDAO.getDisbursmentFinMainById(finAdvancePayments.getFinReference(),
-				TableType.MAIN_TAB);
-		if (StringUtils.equals("E", finAdvancePayments.getStatus())) {
-			addToCustomerBeneficiary(finAdvancePayments, financeMain.getCustID());
-			finAdvancePayments.setStatus(DisbursementConstants.STATUS_PAID);
+		FinanceMain financeMain = null;
+		List<ReturnDataSet> list = null;
+		financeMain = financeMainDAO.getDisbursmentFinMainById(disbursement.getFinReference(), TableType.MAIN_TAB);
+		
+		if (StringUtils.equals("E", disbursement.getStatus())) {
+			addToCustomerBeneficiary(disbursement, financeMain.getCustID());
+			disbursement.setStatus(DisbursementConstants.STATUS_PAID);
 		} else {
-			List<ReturnDataSet> list = engineExecution.cancelPostings(finAdvancePayments.getLinkedTranId());
+			list = engineExecution.cancelPostings(disbursement.getLinkedTranId());
 			postingsPreparationUtil.processPostings(list);
-			finAdvancePayments.setStatus(DisbursementConstants.STATUS_REJECTED);
+			disbursement.setStatus(DisbursementConstants.STATUS_REJECTED);
 		}
 
 		//update paid or rejected
-		finAdvancePaymentsDAO.updateDisbursmentStatus(finAdvancePayments);
+		finAdvancePaymentsDAO.updateDisbursmentStatus(disbursement);
+		
+		financeMain = null;
+		list = null;
 		logger.debug(Literal.LEAVING);
 
 	}

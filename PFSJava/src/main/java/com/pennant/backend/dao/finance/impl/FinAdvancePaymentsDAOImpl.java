@@ -53,6 +53,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -440,23 +441,33 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 	}
 	//update the Disbursement Status when DisbursementProcess Interface Calling 
 	@Override
-	public void updateDisbursmentStatus(FinAdvancePayments finAdvancePayments) {
+	public void updateDisbursmentStatus(FinAdvancePayments disbursement) {
 		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
-		StringBuilder sql = new StringBuilder("Update FINADVANCEPAYMENTS");
-		sql.append("  Set STATUS = :STATUS, CLEARINGDATE = :CLEARINGDATE, TRANSACTIONREF = :TRANSACTIONREF");
-		if (StringUtils.equals("R", finAdvancePayments.getStatus())) {
-			sql.append("  ,REJECTREASON = :REJECTREASON");
+		StringBuilder sql = new StringBuilder();
+		sql.append("Update FINADVANCEPAYMENTS");
+		sql.append(" Set STATUS = :STATUS, CLEARINGDATE = :CLEARINGDATE, TRANSACTIONREF = :TRANSACTIONREF");
+		sql.append(", REJECTREASON = :REJECTREASON");
+		
+		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(disbursement.getPaymentType())) {
+			sql.append(", LLREFERENCENO = :LLREFERENCENO, LLDATE = :LLDATE");
+			paramMap.addValue("LLREFERENCENO", disbursement.getLlReferenceNo());
+			paramMap.addValue("LLDATE", disbursement.getClearingDate());
 		}
-		if (StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE, finAdvancePayments.getPaymentType())) {
-			sql.append("  ,LLREFERENCENO = :LLREFERENCENO, LLDATE = :LLDATE");
-		}
+		
 		sql.append("  Where PAYMENTID = :PAYMENTID");
+		
+		paramMap.addValue("STATUS", disbursement.getStatus());
+		paramMap.addValue("CLEARINGDATE", disbursement.getClearingDate());
+		paramMap.addValue("TRANSACTIONREF", disbursement.getTransactionRef());
+		paramMap.addValue("REJECTREASON", disbursement.getRejectReason());
+		paramMap.addValue("PAYMENTID", disbursement.getPaymentId());
+		
 
 		logger.debug(Literal.SQL + sql);
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
-		this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+		this.namedParameterJdbcTemplate.update(sql.toString(), paramMap);
 
 		logger.debug(Literal.LEAVING);
 	}
