@@ -71,7 +71,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.TaskOwners;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -988,37 +987,42 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		getPagedListWrapper().init(this.searchObj,this.listBoxEnquiryResult,this.pagingEnquiryList);
 		logger.debug("Leaving");
 	}
-	
-	
-	public String setFinReferences() {
+
+	private String setFinReferences() {
 		logger.debug("Entering");
 
-		JdbcSearchObject<TaskOwners> referenceSearchObj = new JdbcSearchObject<TaskOwners>(TaskOwners.class);
-		referenceSearchObj.addTabelName("Task_Owners");
-		referenceSearchObj.addField("Reference");
+		String reference = StringUtils.trimToEmpty(finRef.getValue());
 
-		// Add filter if the user requested filtering on Finance Reference
-		String finReference = StringUtils.trimToEmpty(this.finRef.getValue());
+		// Prepare the additional where clause.
+		StringBuilder sql = new StringBuilder();
+		sql.append(" and FinReference in (select Reference");
+		sql.append(" from Task_Owners");
+		sql.append(" where (");
+		if (StringUtils.isNotEmpty(reference)) {
+			int operatorId = 0;
+			String operatorSign = "=";
 
-		if (StringUtils.isNotEmpty(finReference)) {
-			int operatorid = 0;
-
-			if (this.sortOperator_FinRef.getSelectedItem() != null) {
-				operatorid = ((SearchOperators) this.sortOperator_FinRef.getSelectedItem().getAttribute("data")).getSearchOperatorId();
+			if (sortOperator_FinRef.getSelectedItem() != null) {
+				operatorId = ((SearchOperators) sortOperator_FinRef.getSelectedItem().getAttribute("data"))
+						.getSearchOperatorId();
+				operatorSign = ((SearchOperators) sortOperator_FinRef.getSelectedItem().getAttribute("data"))
+						.getSearchOperatorSign();
 			}
 
-			if (operatorid == 6) {
-				finReference = "%" + finReference + "%";
+			if (operatorId == 6) {
+				reference = "%" + reference + "%";
+				operatorSign = "like";
 			}
 
-			referenceSearchObj.addFilter(new Filter("Reference", finReference, operatorid));
+			sql.append(" (Reference ").append(operatorSign).append(" '").append(reference.replace("'", "''"))
+					.append("') and");
 		}
+		sql.append(" (CurrentOwner = ").append(getUserWorkspace().getLoggedInUser().getLoginUsrID()).append(")");
+		sql.append("))");
 
-		referenceSearchObj.addFilter(Filter.equalTo("CurrentOwner", getUserWorkspace().getLoggedInUser().getLoginUsrID()));
-		
 		// Get the result set
 		logger.debug("Leaving");
-		return " AND FinReference in (" + getPagedListWrapper().getPagedListService().getQueryBySearchObject(referenceSearchObj)+  ")";
+		return sql.toString();
 	}
 
 	/**
