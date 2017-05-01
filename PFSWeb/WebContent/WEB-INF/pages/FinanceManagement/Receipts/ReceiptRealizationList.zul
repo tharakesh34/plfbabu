@@ -96,17 +96,16 @@
 									<listbox
 										id="sortOperator_receiptRealizationPurpose" width="43px"
 										mold="select" rows="1" />
-									<textbox id="purpose" width="150px"
-										maxlength="50" />
-
+									<combobox id="purpose" width="180px"
+									maxlength="100" readonly="true" />
 									<label
 										id="label_ReceiptRealizationSearch_ReceiptRealizationReceiptMode"
 										value="${c:l('label_ReceiptRealizationSearch_ReceiptRealizationReceiptMode.value')}" />
 									<listbox
 										id="sortOperator_receiptRealizationReceiptMode" width="43px"
 										mold="select" rows="1" />
-									<textbox id="receiptMode"
-										width="150px" maxlength="50" />
+									<combobox id="receiptMode" width="180px"
+									maxlength="100" readonly="true" />
 								</row>
 								<row>
 									<label
@@ -115,9 +114,8 @@
 									<listbox
 										id="sortOperator_receiptAllocationType" width="43px"
 										mold="select" rows="1" />
-									<textbox id="allocationType"
-										width="150px" maxlength="50" />
-
+									<combobox id="allocationType" width="180px"
+									maxlength="100" readonly="true" />
 									<label
 										id="label_ReceiptRealizationSearch_ReceiptRealizationFinType"
 										value="${c:l('label_ReceiptRealizationSearch_ReceiptRealizationFinType.value')}" />
