@@ -1217,6 +1217,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			int operatorId = 0;
 			String operatorSign = "=";
 
+			// TODO: Only allow equals to search on Finance Reference and remove the below two IF blocks.
 			if (sortOperator_finReference.getSelectedItem() != null) {
 				operatorId = ((SearchOperators) sortOperator_finReference.getSelectedItem().getAttribute("data"))
 						.getSearchOperatorId();
