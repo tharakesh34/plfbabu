@@ -138,7 +138,7 @@ public class TransactionCodeListCtrl extends GFCBaseListCtrl<TransactionCode> {
 				true);
 		registerButton(button_TransactionCodeList_TransactionCodeSearchDialog);
 
-		fillComboBox(this.tranType, "", PennantStaticListUtil.getTranType(), "");
+		fillComboBox(this.tranType, "", PennantStaticListUtil.getTranTypeBoth(), "");
 
 		registerField("tranCode", listheader_TranCode, SortOrder.ASC, tranCode, sortOperator_tranCode, Operators.STRING);
 		registerField("tranDesc", listheader_TranDesc, SortOrder.NONE, tranDesc, sortOperator_tranDesc,

@@ -636,7 +636,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aBankBranch.getBankBranchID();
+				+ 	Labels.getLabel("label_BankBranchDialog_BranchCode.value")+" : "+aBankBranch.getBranchCode();
 		final String title = Labels.getLabel("message.Deleting.Record");
 		MultiLineMessageBox.doSetTemplate();
 

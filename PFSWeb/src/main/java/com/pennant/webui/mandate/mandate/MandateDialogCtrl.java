@@ -899,8 +899,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 */
 	public void doWriteBeanToComponents(Mandate aMandate) {
 		logger.debug("Entering");
-		this.useExisting.setChecked(aMandate.isUseExisting());
 		if (fromLoan) {
+			this.useExisting.setChecked(aMandate.isUseExisting());
 			useExisting();
 		} else {
 			readOnlyComponent(true, this.mandateRef);

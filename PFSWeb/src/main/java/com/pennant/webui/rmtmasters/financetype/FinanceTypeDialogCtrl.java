@@ -886,7 +886,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		
 		//Accounting Details
 		this.profitCenter.setMaxlength(8);
-		this.profitCenter.setMandatoryStyle(true);
 		this.profitCenter.setModuleName("ProfitCenter");
 		this.profitCenter.setValueColumn("ProfitCenterCode");
 		this.profitCenter.setDescColumn("ProfitCenterDesc");

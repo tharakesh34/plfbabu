@@ -358,16 +358,20 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
-		int count = dPDBucketConfigurationDAO.getByProductCode(dPDBucketConfiguration.getProductCode(), dPDBucketConfiguration.getDueDays(), "");
+		int count = dPDBucketConfigurationDAO.getByProductCode(dPDBucketConfiguration.getProductCode(),
+				dPDBucketConfiguration.getDueDays(), "");
 
 		if (count != 0) {
-			String[] parameters = new String[2];
-			parameters[0] = PennantJavaUtil.getLabel("label_ProductCode") + ": " + dPDBucketConfiguration.getProductCode();
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41015", parameters, null), usrLanguage));
 
-			String[] parametersDueDays = new String[2];
-			parametersDueDays[0] = PennantJavaUtil.getLabel("label_DueDays") + ": " + dPDBucketConfiguration.getDueDays();
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41015", parametersDueDays, null), usrLanguage));
+			String[] errParm = new String[2];
+			String[] valueParm = new String[2];
+			valueParm[0] = dPDBucketConfiguration.getProductCode();
+			valueParm[1] = String.valueOf(dPDBucketConfiguration.getDueDays());
+			errParm[0] = PennantJavaUtil.getLabel("label_ProductCode") + ":" + valueParm[0];
+			errParm[1] = PennantJavaUtil.getLabel("label_DueDays") + ":" + valueParm[1];
+
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41015",
+					errParm, valueParm), usrLanguage));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

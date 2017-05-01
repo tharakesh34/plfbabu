@@ -508,8 +508,8 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			this.sharePerc.setValue(BigDecimal.ZERO);
 		}
 		if(this.director.isChecked()){
-			this.designation.setReadonly(false);
-			this.designation.setButtonDisabled(false);
+			this.designation.setReadonly(isReadOnly("DirectorDetailDialog_designation"));
+			this.designation.setButtonDisabled(isReadOnly("DirectorDetailDialog_designation"));
 			this.designation.setValue(aDirectorDetail.getDesignation());
 			this.designation.setDescription(aDirectorDetail.getLovDescDesignationName());
 		}else{
@@ -1747,8 +1747,8 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		logger.debug("Entering");
 		if (isDirector) {
 			this.designation.setMandatoryStyle(true);
-			this.designation.setButtonDisabled(false);
-			this.designation.setReadonly(false);
+			this.designation.setButtonDisabled(isReadOnly("DirectorDetailDialog_designation"));
+			this.designation.setReadonly(isReadOnly("DirectorDetailDialog_designation"));
 			this.designation.setValue(this.designation.getValue(), this.designation.getDescription());
 		} else {
 			this.designation.setMandatoryStyle(false);

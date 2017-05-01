@@ -368,11 +368,14 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 		if (StringUtils.trimToEmpty(dPDBucket.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
 			int count = dPDBucketConfigurationDAO.getDPDBucketConfigurationDAOById(dPDBucket.getBucketID(), "");//FIXME for FinanceMain
 			if (count != 0) {
-				String[] parameters = new String[2];
 
-				parameters[0] = PennantJavaUtil.getLabel("label_BucketCode") + ": " + dPDBucket.getBucketCode();
+				String[] errParm = new String[1];
+				String[] valueParm = new String[1];
+				valueParm[0] = dPDBucket.getBucketCode();
+				errParm[0] = PennantJavaUtil.getLabel("label_BucketCode") + ":" + valueParm[0];
 
-				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", parameters, null));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
+						"41006", errParm, valueParm), usrLanguage));
 			}
 		}
 
