@@ -2701,13 +2701,6 @@
 		<property name="disbursementPostings" ref="disbursementPostings" />
 	</bean>
 
-	<bean id="disbursementPostings"
-		class="com.pennant.backend.service.payorderissue.impl.DisbursementPostings" scope="prototype">
-		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
-		<property name="engineExecution" ref="engineExecution" />
-		<property name="postingsPreparationUtil" ref="postingsPreparationUtil"/>
-	</bean>
-
 	<!-- ====================================================== -->
 	<!-- Finance Management Details Configuration -->
 	<!-- ====================================================== -->
