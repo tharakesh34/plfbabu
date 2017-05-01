@@ -40,7 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
 */
-
 package com.pennant.backend.service.impl;
 
 import java.io.Serializable;
@@ -60,23 +59,9 @@ public class PagedListServiceImpl implements PagedListService, Serializable {
 		super();
 	}
 
-	public JdbcSearchSupport getJdbcSearchSupport() {
-		return jdbcSearchSupport;
-	}
-
-	public void setJdbcSearchSupport(JdbcSearchSupport jdbcSearchSupport) {
-		this.jdbcSearchSupport = jdbcSearchSupport;
-	}
-
-	@SuppressWarnings("unused")
-	private <T> void initSearchObject(JdbcSearchObject<T> so, int start, int pageSize) {
-		so.setFirstResult(start);
-		so.setMaxResults(pageSize);
-	}
-
 	@Override
 	public <T> List<T> getBySearchObject(JdbcSearchObject<T> so) {
-		return getJdbcSearchSupport().search(so);
+		return jdbcSearchSupport.search(so);
 	}
 
 	/**
@@ -85,12 +70,15 @@ public class PagedListServiceImpl implements PagedListService, Serializable {
 	@Deprecated
 	@Override
 	public <T> String getQueryBySearchObject(JdbcSearchObject<T> so) {
-		return getJdbcSearchSupport().getSearchQuery(so);
+		return jdbcSearchSupport.getSearchQuery(so);
 	}
 
 	@Override
 	public <T> SearchResult<T> getSRBySearchObject(JdbcSearchObject<T> so) {
-		return getJdbcSearchSupport().searchAndCount(so);
+		return jdbcSearchSupport.searchAndCount(so);
 	}
 
+	public void setJdbcSearchSupport(JdbcSearchSupport jdbcSearchSupport) {
+		this.jdbcSearchSupport = jdbcSearchSupport;
+	}
 }
