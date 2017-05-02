@@ -58,7 +58,7 @@ public class AutoDisburseFileResponseService extends BajajService {
 
 	public DataEngineStatus processFile(long userId, String configName, File file, Media media) throws Exception {
 		DataEngineStatus status = null;
-
+		
 		if ("DISB_HDFC_IMPORT".equals(configName)) {
 			status = BajajInterfaceConstants.autoDisbResFileStatus;
 		} else {
@@ -73,15 +73,14 @@ public class AutoDisburseFileResponseService extends BajajService {
 			name = media.getName();
 		}
 
-		status.reset();
-
+		status.reset();		
+		status.setRemarks("initiated disbursement response file [ "+name+" ] processing..");
+		
 		DataEngineImport dataEngine;
-		logger.info("Start processing the file " + name);
 		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), status, null);
 		dataEngine.setFile(file);
 		dataEngine.setMedia(media);
 		dataEngine.setValueDate(getAppDate());
-
 		dataEngine.importData(configName);
 
 		do {
