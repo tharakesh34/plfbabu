@@ -3465,5 +3465,38 @@ WHERE     NOT EXISTS (SELECT 1 FROM PRESENTMENTHEADER_TEMP WHERE ID = T1.ID)
 and fieldid=2;
 		</sql>
 	</changeSet> 
+	
+<changeSet id="180" author="Amit">
+	<sql>
+		UPDATE RMTProvinceVsCity SET CityIsActive=1 where CityIsActive=0;
+		UPDATE RMTProvinceVsCity_Temp SET CityIsActive=1 where CityIsActive=0;
+
+		UPDATE EmployerDetail SET EmpIsActive=1 where EmpIsActive=0;
+		UPDATE EmployerDetail_Temp SET EmpIsActive=1 where EmpIsActive=0;
+
+		UPDATE RMTEmpTypes SET EmpTypeIsActive=1 where EmpTypeIsActive=0;
+		UPDATE RMTEmpTypes_Temp SET EmpTypeIsActive=1 where EmpTypeIsActive=0;
+
+		UPDATE RMTGenDepartments SET GenDeptIsActive=1 where GenDeptIsActive=0;
+		UPDATE RMTGenDepartments_Temp SET GenDeptIsActive=1 where
+		GenDeptIsActive=0;
+
+		UPDATE RMTGenDesignations SET GenDesgIsActive=1 where GenDesgIsActive=0;
+		UPDATE RMTGenDesignations_Temp SET GenDesgIsActive=1 where
+		GenDesgIsActive=0;
+
+		UPDATE RMTCountryVsProvince SET CPIsActive=1 where CPIsActive=0;
+		UPDATE RMTCountryVsProvince_Temp SET CPIsActive=1 where CPIsActive=0;
+
+		UPDATE RMTBaseRates SET BRTypeIsActive=1 where BRTypeIsActive=0;
+		UPDATE RMTBaseRates_Temp SET BRTypeIsActive=1 where BRTypeIsActive=0;
+
+		UPDATE RMTBaseRateCodes SET BRTypeIsActive=1 where BRTypeIsActive=0;
+		UPDATE RMTBaseRateCodes_Temp SET BRTypeIsActive=1 where BRTypeIsActive=0;
+
+		UPDATE BlackListCustomer SET CustIsActive=1 where CustIsActive=0;
+		UPDATE BlackListCustomer_Temp SET CustIsActive=1 where CustIsActive=0;
+	</sql>
+</changeSet> 
  
 </databaseChangeLog>
