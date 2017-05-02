@@ -156,10 +156,11 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	private String finType;
 	private String custShrtName;
 	private long linkedTranId;
-	private String acType;
+	private String partnerBankAcType;
 	private String transactionRef;
 	private String rejectReason;
 	
+	private String partnerBankAc;
 	
 
 	public boolean isNew() {
@@ -184,9 +185,10 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("partnerBankName");
 		excludeFields.add("finType");
 		excludeFields.add("custShrtName");
-		excludeFields.add("acType");
+		excludeFields.add("partnerBankAcType");
 		excludeFields.add("transactionRef");
 		excludeFields.add("rejectReason");
+		excludeFields.add("partnerBankAc");
 		return excludeFields;
 	}
 
@@ -585,15 +587,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	public void setLinkedTranId(long linkedTranId) {
 		this.linkedTranId = linkedTranId;
 	}
-
-	public String getAcType() {
-		return acType;
-	}
-
-	public void setAcType(String acType) {
-		this.acType = acType;
-	}
-
+ 
 	public String getTransactionRef() {
 		return transactionRef;
 	}
@@ -608,6 +602,22 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 
 	public void setRejectReason(String rejectReason) {
 		this.rejectReason = rejectReason;
+	}
+
+	public String getPartnerBankAc() {
+		return partnerBankAc;
+	}
+
+	public void setPartnerBankAc(String partnerBankAc) {
+		this.partnerBankAc = partnerBankAc;
+	}
+
+	public String getPartnerBankAcType() {
+		return partnerBankAcType;
+	}
+
+	public void setPartnerBankAcType(String partnerBankAcType) {
+		this.partnerBankAcType = partnerBankAcType;
 	}
 
 

@@ -44,6 +44,7 @@ package com.pennant.app.util;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -226,10 +227,10 @@ public class AccountProcessUtil implements Serializable {
 			if("Y".equals(set.getInternalAc())){
 				SystemInternalAccountDefinition accountDefinition = null;
 				if(!intAcMap.containsKey(set.getAccountType())){
-					accountDefinition = getInternalAccountDefinitionDAO().getSystemInternalAccountDefinitionById(set.getAccountType(), "");
+				/*	accountDefinition = getInternalAccountDefinitionDAO().getSystemInternalAccountDefinitionById(set.getAccountType(), "");
 					if(accountDefinition != null) {
 						intAcMap.put(accountDefinition.getSIACode(), accountDefinition);
-					}
+					}*/
 				}else{
 					accountDefinition = intAcMap.get(set.getAccountType());
 				}
@@ -270,7 +271,7 @@ public class AccountProcessUtil implements Serializable {
 			acc.setHostAcNumber("");
 			acc.setVersion(1);
 			acc.setLastMntBy(1007);
-			acc.setLastMntOn(new java.sql.Timestamp(set.getPostDate().getTime()));
+			acc.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			acc.setRecordStatus("Approved");
 			acc.setRoleCode("");
 			acc.setNextRoleCode("");

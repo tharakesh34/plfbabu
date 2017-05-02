@@ -18,7 +18,8 @@ public class AEAmountCodes {
 	private boolean		newRecord			= false;
 	private String		moduleDefiner;
 	private String		disbAccountID;
-	private String      partnerBank;
+	private String      partnerBankAcType;
+	private String      partnerBankAc;
 
 	private BigDecimal	accrue				= BigDecimal.ZERO;
 	private BigDecimal	dAccrue				= BigDecimal.ZERO;
@@ -106,6 +107,7 @@ public class AEAmountCodes {
 	private BigDecimal	InsuranceAmt		= BigDecimal.ZERO;
 
 	private BigDecimal	addFeeToFinance		= BigDecimal.ZERO;
+	private BigDecimal	paidFee				= BigDecimal.ZERO;
 	private BigDecimal	bpi					= BigDecimal.ZERO;
 	private BigDecimal	cmtAmt				= BigDecimal.ZERO;
 	private BigDecimal	deductFeeDisb		= BigDecimal.ZERO;
@@ -124,7 +126,13 @@ public class AEAmountCodes {
 
 	public HashMap<String, Object> getDeclaredFieldValues() {
 		HashMap<String, Object> map = new HashMap<String, Object>();
+		getDeclaredFieldValues(map);
 
+		return map;
+	}
+	
+	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> map) {
+		
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				//"ft_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
@@ -134,7 +142,7 @@ public class AEAmountCodes {
 				// Nothing TO DO
 			}
 		}
-
+		
 		return map;
 	}
 
@@ -862,14 +870,6 @@ public class AEAmountCodes {
 		this.excessBal = excessBal;
 	}
 
-	public String getPartnerBank() {
-		return partnerBank;
-	}
-
-	public void setPartnerBank(String partnerBank) {
-		this.partnerBank = partnerBank;
-	}
-
 	public BigDecimal getDisbInstAmt() {
 		return disbInstAmt;
 	}
@@ -908,6 +908,30 @@ public class AEAmountCodes {
 
 	public void setInsWaived(BigDecimal insWaived) {
 		this.insWaived = insWaived;
+	}
+
+	public BigDecimal getPaidFee() {
+		return paidFee;
+	}
+
+	public void setPaidFee(BigDecimal paidFee) {
+		this.paidFee = paidFee;
+	}
+
+	public String getPartnerBankAcType() {
+		return partnerBankAcType;
+	}
+
+	public void setPartnerBankAcType(String partnerBankAcType) {
+		this.partnerBankAcType = partnerBankAcType;
+	}
+
+	public String getPartnerBankAc() {
+		return partnerBankAc;
+	}
+
+	public void setPartnerBankAc(String partnerBankAc) {
+		this.partnerBankAc = partnerBankAc;
 	}
 	
 }

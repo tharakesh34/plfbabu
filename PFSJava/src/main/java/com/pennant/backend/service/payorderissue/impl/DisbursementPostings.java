@@ -72,7 +72,7 @@ public class DisbursementPostings {
 				executingMap.put("ae_finEvent", AccountEventConstants.ACCEVENT_DISBINS);
 				executingMap.put("ft_finType", header.getFinanceMain().getFinType());
 				executingMap.put("ae_disbInstAmt", finAdvancePayments.getAmtToBeReleased());
-				executingMap.put("disb_partnerBank", finAdvancePayments.getAcType());
+				executingMap.put("disb_partnerBank", finAdvancePayments.getPartnerBankAcType());
 				executingMap.put("fm_custID", header.getFinanceMain().getCustID());
 				executingMap.put("ae_finEvent", AccountEventConstants.ACCEVENT_DISBINS);
 

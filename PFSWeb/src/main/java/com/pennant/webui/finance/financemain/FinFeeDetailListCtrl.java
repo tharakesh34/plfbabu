@@ -737,12 +737,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 				try {
 					if (feeSchdMthdbox != null) {
-						//if (validate && finFeeDetail.getRemainingFee().compareTo(BigDecimal.ZERO) > 0) {
+						if (validate && finFeeDetail.getRemainingFee().compareTo(BigDecimal.ZERO) > 0) {
 							if ("#".equals(getComboboxValue(feeSchdMthdbox))) {
 								throw new WrongValueException(feeSchdMthdbox, Labels.getLabel("STATIC_INVALID",
 										new String[] { Labels.getLabel("FeeDetail_FeeScheduleMethod") }));
 							}
-						//}
+						}
 						finFeeDetail.setFeeScheduleMethod(getComboboxValue(feeSchdMthdbox));
 					}
 				} catch (WrongValueException we) {

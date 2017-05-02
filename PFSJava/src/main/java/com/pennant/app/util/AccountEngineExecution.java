@@ -634,6 +634,15 @@ public class AccountEngineExecution implements Serializable {
 		List<String> subHeadRuleList = new ArrayList<String>();
 		
 		for (TransactionEntry transactionEntry : transactionEntries) {
+			String feeCodes = transactionEntry.getFeeCode();
+			if(feeCodes != null){
+				for (String feeCode : feeCodes.split(",")) {
+					if(!executingMap.containsKey(feeCode)){
+						executingMap.put(feeCode,BigDecimal.ZERO);
+					}
+				}
+			}
+			
 			if(transactionEntry.getAccountType() != null && !accountTypeList.contains(transactionEntry.getAccountType())) {
 				accountTypeList.add(transactionEntry.getAccountType());
 			}

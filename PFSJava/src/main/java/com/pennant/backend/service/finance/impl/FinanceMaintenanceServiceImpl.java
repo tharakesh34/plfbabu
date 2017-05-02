@@ -767,6 +767,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		}
 
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+		financeDetail.getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
+		financeMain.getDeclaredFieldValues(executingMap);
 
 		List<Object> returnList = getPostingsPreparationUtil().processPostingDetails(executingMap, false, "Y", curBDay,
 				false, Long.MIN_VALUE);

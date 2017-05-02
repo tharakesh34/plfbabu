@@ -81,9 +81,9 @@ public class PostingsInterfaceServiceImpl implements PostingsInterfaceService{
 			coreBankPostingDetails.add(accountPosting);
 		}
 		
-		//Connecting to CoreBanking Interface
+	/*	//Connecting to CoreBanking Interface
 		coreBankPostingDetails = getAccountPostingProcess().doPostings(coreBankPostingDetails,
-					postBranch,createNow);
+					postBranch,createNow);*/
 		
 		//Fill the Account data using Core Banking Object
 		List<ReturnDataSet> dataSetList = new ArrayList<ReturnDataSet>(coreBankPostingDetails.size());
@@ -118,7 +118,7 @@ public class PostingsInterfaceServiceImpl implements PostingsInterfaceService{
 			dataSet.setAccount(detail.getAccount());
 			dataSet.setPostAmount(detail.getPostAmount()); 	
 			dataSet.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(detail.getAcCcy(), SysParamUtil.getAppCurrency(), detail.getPostAmount()));
-			dataSet.setPostStatus(detail.getPostStatus()); 		
+			dataSet.setPostStatus("S"); 		
 			dataSet.setErrorId(detail.getErrorId()); 	
 			dataSet.setErrorMsg(detail.getErrorMsg()); 	
 			dataSetList.add(dataSet);

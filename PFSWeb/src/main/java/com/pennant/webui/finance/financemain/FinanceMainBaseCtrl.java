@@ -131,6 +131,7 @@ import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
+import com.pennant.app.core.AccrualService;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.AEAmounts;
@@ -775,7 +776,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	// not auto wired variables
 	private FinanceDetail									financeDetail			= null;
 	protected FinScheduleData								validFinScheduleData;
-	protected AEAmountCodes									amountCodes;
 	protected transient FinanceMainListCtrl					financeMainListCtrl		= null;
 	protected transient FinanceSelectCtrl					financeSelectCtrl		= null;
 	protected JdbcSearchObject<Customer>					custCIFSearchObject;
@@ -11251,10 +11251,42 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private void executeAccounting(boolean onLoadProcess) throws Exception {
 		logger.debug("Entering");
 
+		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
+		
+		HashMap<String, Object> executingMap = prepareAccountingData(onLoadProcess);
+
+		prepareFeeRulesMap(executingMap);
+		accountingSetEntries.addAll(getEngineExecution().getAccEngineExecResults("N", executingMap, false));
+
+		//Disb Instruction Posting
+		if(eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBS) || 
+		   eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSF) || 
+		   eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSN) || 
+		   eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSP) ){
+			prepareDisbInstructionPosting(accountingSetEntries);
+		}
+		
+		
+		getFinanceDetail().setReturnDataSetList(accountingSetEntries);
+
+		if (accountingDetailDialogCtrl != null) {
+			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
+		}
+
+		logger.debug("Leaving");
+	}
+
+	private HashMap<String, Object> prepareAccountingData(
+			boolean onLoadProcess) throws InterruptedException,
+			IllegalAccessException, InvocationTargetException {
+		
 		Date curBDay = DateUtility.getAppDate();
-		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		FinanceType finType = getFinanceDetail().getFinScheduleData().getFinanceType();
-		FinanceProfitDetail financeProfitDetail = getFinanceDetail().getFinanceProfitDetail();
+
+		FinScheduleData finScheduleData = getFinanceDetail().getFinScheduleData();
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		FinanceType finType = finScheduleData.getFinanceType();
+		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
+		FinanceProfitDetail profitDetail = getFinanceDetail().getFinanceProfitDetail();
 
 		if (onLoadProcess) {
 			doWriteComponentsToBean(getFinanceDetail().getFinScheduleData());
@@ -11268,99 +11300,50 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
+		
+		BigDecimal totalPftSchdOld = BigDecimal.ZERO;
+		BigDecimal totalPftCpzOld = BigDecimal.ZERO;
 		//For New Records Profit Details will be set inside the AEAmounts 
-		if(financeProfitDetail == null){
-			financeProfitDetail = new FinanceProfitDetail();
-		}	
-		amountCodes = AEAmounts.procAEAmounts(getFinanceDetail().getFinScheduleData().getFinanceMain(),
-				getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), financeProfitDetail, eventCode,
+		FinanceProfitDetail newProfitDetail = new FinanceProfitDetail();
+		if(profitDetail != null){
+			BeanUtils.copyProperties(profitDetail, newProfitDetail);
+			totalPftSchdOld = profitDetail.getTotalPftSchd();
+			totalPftCpzOld = profitDetail.getTotalPftCpz();
+		}
+		
+
+	/*	amountCodes = AEAmounts.procAEAmounts(getFinanceDetail().getFinScheduleData().getFinanceMain(),
+				getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), profitDetail, eventCode,
+				curBDay, curBDay);*/
+		
+		AccrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
+		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
+		BigDecimal totalPftCpzNew = newProfitDetail.getTotalPftCpz();
+		
+
+		AEAmountCodes amountCodes = AEAmounts.procCalAEAmounts(profitDetail, eventCode,
 				curBDay, curBDay);
+		
+		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
+		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
 
 		amountCodes.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
-		setAmountCodes(amountCodes);
+		amountCodes.setDisburse(finMain.getFinCurrAssetValue());
 
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 		if (finMain.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(finMain.getRecordType())) {
 			amountCodes.setNewRecord(true);
 		}
+		
 
 		finType.getDeclaredFieldValues(executingMap);
 		finMain.getDeclaredFieldValues(executingMap);
-		prepareFeeRulesMap(executingMap);
-
-		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
-
-		// Call Map Build Method
-		accountingSetEntries.addAll(getEngineExecution().getAccEngineExecResults("N", executingMap, false));
-		
-		//Disbursement Postings
-		if(eventCode.startsWith("ADDD")){
-			prepareDisbursementPosting(accountingSetEntries);
-			
-		}
-		if(eventCode.equals(AccountEventConstants.ACCEVENT_DISBINS)){
-			//Disb Instruction Posting
-			prepareDisbInstructionPosting(accountingSetEntries);
-		}	
-		getFinanceDetail().setReturnDataSetList(accountingSetEntries);
-
-		if (accountingDetailDialogCtrl != null) {
-			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
-		}
-
-		logger.debug("Leaving");
-	}
-
-	private void prepareDisbursementPosting(List<ReturnDataSet> accountingSetEntries) throws Exception {
-
-		String finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-		FinanceProfitDetail financeProfitDetail = getFinanceDetail().getFinanceProfitDetail();
-		//For New Records Profit Details will be set inside the AEAmounts 
-		if(financeProfitDetail == null){
-			financeProfitDetail = new FinanceProfitDetail();
-		}	
-		
-		Date curBDay = DateUtility.getAppDate();
-		List<FinanceDisbursement> disbList = getFinanceDetail().getFinScheduleData().getDisbursementDetails();
-		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		FinanceType finType = getFinanceDetail().getFinScheduleData().getFinanceType();
-
-		//loop through the disbursements.
-		if (disbList != null && !disbList.isEmpty()) {
-			for (int i = 0; i < disbList.size(); i++) {
-				FinanceDisbursement disbursement = disbList.get(i);
-				if ("".equals(eventCode)) {
-					if (disbursement.getDisbDate().after(DateUtility.getAppDate())) {
-						if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
-							finEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
-						}
-					}
-				}
-				amountCodes = AEAmounts.procAEAmounts(getFinanceDetail().getFinScheduleData().getFinanceMain(),
-						getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), financeProfitDetail,
-						finEvent, curBDay, curBDay);
-
-				amountCodes.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
-				setAmountCodes(amountCodes);
-				amountCodes.setDisburse(disbursement.getDisbAmount());
-				
-				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
-				if (disbursement.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(disbursement.getRecordType())) {
-					amountCodes.setNewRecord(true);
-				}
-				
-				finType.getDeclaredFieldValues(executingMap);
-				finMain.getDeclaredFieldValues(executingMap);
-
-				// Call Map Build Method
-				accountingSetEntries.addAll(getEngineExecution().getAccEngineExecResults("N", executingMap, false));
-
-			}
-		}
-
+		return executingMap;
 	}
 	
+	
 	private void prepareDisbInstructionPosting(List<ReturnDataSet> accountingSetEntries) throws Exception {
+		AEAmountCodes	amountCodes;
 
 		String finEvent = AccountEventConstants.ACCEVENT_DISBINS;
 		FinanceProfitDetail financeProfitDetail = getFinanceDetail().getFinanceProfitDetail();
@@ -11383,11 +11366,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						finEvent, curBDay, curBDay);
 
 				amountCodes.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
-				setAmountCodes(amountCodes);
 				amountCodes.setDisbInstAmt(advPayment.getAmtToBeReleased());
-
+				amountCodes.setPartnerBankAc(advPayment.getPartnerBankAc());
+				amountCodes.setPartnerBankAcType(advPayment.getPartnerBankAcType());
+				
+				
 				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
-				executingMap.put("disb_partnerBank", advPayment.getAcType());
 				if (advPayment.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(advPayment.getRecordType())) {
 					amountCodes.setNewRecord(true);
 				}
@@ -11443,13 +11427,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				} else {
 					executingMap.put(finFeeDetail.getFeeTypeCode() + "_AF", 0);
 				}
-
-				//FIXME Kesav
-				/*if (StringUtils.equals(feeRule.getFeeToFinance(), RuleConstants.DFT_FEE_DEDUCTFROMDISB)) {
-					executingMap.put(finFeeDetail.getFeeTypeCode() + "_AF", finFeeDetail.getRemainingFee());
-				} else {
-					executingMap.put(finFeeDetail.getFeeTypeCode() + "_AF", 0);
-				}*/
 				
 				if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
 					deductFeeDisb = deductFeeDisb.add(finFeeDetail.getRemainingFee());
@@ -11461,10 +11438,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				waivedFee = waivedFee.add(finFeeDetail.getWaivedAmount());
 			}
 			
-			executingMap.put("DeductFeeDisb", deductFeeDisb);
-			executingMap.put("AddFeeToFinance", addFeeToFinance);
-			executingMap.put("waivedFee", waivedFee);
-			executingMap.put("paidFee", paidFee);
+			//FIXME To be changed with the Accounting Changes 
+			executingMap.put("ae_deductFeeDisb", deductFeeDisb);
+			executingMap.put("ae_addFeeToFinance", addFeeToFinance);
+			executingMap.put("ae_waivedFee", waivedFee);
+			executingMap.put("ae_paidFee", paidFee);
 		}
 
 		logger.debug("Leaving");
@@ -15612,14 +15590,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
-	}
-
-	public AEAmountCodes getAmountCodes() {
-		return amountCodes;
-	}
-
-	public void setAmountCodes(AEAmountCodes amountCodes) {
-		this.amountCodes = amountCodes;
 	}
 
 	public boolean isAssetDataChanged() {
