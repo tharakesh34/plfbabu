@@ -3459,5 +3459,11 @@ WHERE     NOT EXISTS (SELECT 1 FROM PRESENTMENTHEADER_TEMP WHERE ID = T1.ID)
 			Delete from RMTTransactionEntry where AccountsetID In (select AccountSetID from RMTAccountingset where AccountsetCode = 'Default' and EventCode = 'ADDDBSF');
 		</sql>
 	</changeSet> 
+	<changeSet id="179" author="PrasadRaju">
+		<sql>
+			Update REPORTFILTERFIELDS set seqorder=2,Mandatory=1 where reportid in (Select reportid from REPORTCONFIGURATION where reportname='Statement Of Account')
+and fieldid=2;
+		</sql>
+	</changeSet> 
  
 </databaseChangeLog>
