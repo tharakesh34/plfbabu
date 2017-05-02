@@ -11321,7 +11321,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		BigDecimal totalPftCpzNew = newProfitDetail.getTotalPftCpz();
 		
 
-		AEAmountCodes amountCodes = AEAmounts.procCalAEAmounts(profitDetail, eventCode,
+		AEAmountCodes amountCodes = AEAmounts.procCalAEAmounts(newProfitDetail, eventCode,
 				curBDay, curBDay);
 		
 		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
