@@ -523,7 +523,7 @@
 			<menuItem id="menu_Item_ProvisionRPT" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_DelinquencyReports_ProvisionRPT"/>	
 			<menuItem id="menu_Item_PortfolioBehavior" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_DelinquencyReports_PortfolioBehavior" />
 			<menuItem id="menu_Item_DelinquencyVariance" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_DelinquencyReports_DelinquencyVariance" /> -->
-			<menuItem id="menu_Item_pastdueSummaryretail" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_pastdueSummaryretail" />
+			<!-- <menuItem id="menu_Item_pastdueSummaryretail" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_pastdueSummaryretail" /> -->
 			<menuItem id="menu_Item_DailyPastduesReportRetailbySchedule" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_DailyPastduesReportRetailbySchedule" />
 		</menu>
 		<menu id="menu_Category_FinReports" rightName="menuCat_FinReports">
