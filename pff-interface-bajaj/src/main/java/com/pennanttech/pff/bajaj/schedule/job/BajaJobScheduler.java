@@ -30,11 +30,11 @@ public class BajaJobScheduler extends AbstractJobScheduler {
 
 	private void autoDisbursementJob() throws ParseException {
 		JobSchedulerDetails jobDetails = null;
-		DataEngineConfig datEngine = null;
 
+		loadConfiguration("DISB_HDFC_IMPORT");
+		
 		if (conf == null) {
-			datEngine = new DataEngineConfig(dataSource);
-			conf = datEngine.getConfigurationByName("DISB_HDFC_IMPORT");
+			return;
 		}
 
 		String schduleTime = null;
@@ -55,7 +55,22 @@ public class BajaJobScheduler extends AbstractJobScheduler {
 					.withSchedule(CronScheduleBuilder.cronSchedule(schduleTime)).build());
 			JOB_SCHEDULER_MAP.put("AUTO_DISB_RES_FILE", jobDetails);
 		}
-		datEngine = null;
+	}
+
+	private void loadConfiguration(String configName) {
+		DataEngineConfig datEngine;
+
+		try {
+			if (conf == null) {
+				datEngine = new DataEngineConfig(dataSource);
+				conf = datEngine.getConfigurationByName(configName);
+			}
+		} catch (Exception e) {
+			logger.warn("Data engine configuration details not avilable for " + configName);
+		} finally {
+			datEngine = null;
+		}
+
 	}
 
 	public void setDataSource(DataSource dataSource) {
