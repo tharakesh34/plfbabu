@@ -3504,5 +3504,70 @@ and fieldid=2;
 		  delete from secgrouprights where rightid in(select rightid from secrights where rightname='button_JVPostingEntryDialog_btnSave') and grpid in (select grpid from secgroups where grpcode ='JVPOSTINGS_APPROVER');
 		</sql>
 	</changeSet>
- 
+
+<changeSet id="181" author="Amit">
+	<sql>
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE
+		SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM
+		SECGROUPRIGHTS);
+
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2,
+		'AccounTypeGroupDialog_GroupIsActive','AccountTypeGroupDialog',0,1000,CURRENT_TIMESTAMP,'
+		',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM
+		SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+		GRPCODE='AccountTypeGroup_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS
+		WHERE RIGHTNAME='AccounTypeGroupDialog_GroupIsActive'), 1,
+		0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE
+		SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM
+		SECGROUPRIGHTS);
+	</sql>
+</changeSet>
+
+	<changeSet id="182" author="Amit">
+		<addColumn tableName="AccountTypeGroup">
+			<column name="GroupIsActive" type="number(1,0)" defaultValue="1">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="183" author="Amit">
+		<addColumn tableName="AccountTypeGroup_Temp">
+			<column name="GroupIsActive" type="number(1,0)" defaultValue="1">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="184" author="Amit">
+		<createView replaceIfExists="true" viewName="ACCOUNTTYPEGROUP_AVIEW">
+ SELECT T1.GroupId, T1.GroupCode, T1.GroupDescription, T1.AcctTypeLevel, T1.ParentGroupId , T1.GroupIsActive , T2.GroupCode  ParentGroup, T2.GroupDescription ParentGroupDesc	
+			,T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM   AccountTypeGroup T1 Left Join
+					AccountTypeGroup T2 ON T1.ParentGroupId = T2.GroupId
+		</createView>
+	</changeSet>
+
+	<changeSet id="185" author="Amit">
+		<createView replaceIfExists="true" viewName="ACCOUNTTYPEGROUP_VIEW">
+       SELECT T1.GroupId, T1.GroupCode, T1.GroupDescription, T1.AcctTypeLevel, T1.ParentGroupId , T1.GroupIsActive , T2.GroupCode  ParentGroup, T2.GroupDescription ParentGroupDesc	
+			,T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM   AccountTypeGroup_Temp T1 Left Join
+					AccountTypeGroup T2 ON T1.ParentGroupId = T2.GroupId
+			           
+			UNION ALL
+			SELECT T1.GroupId, T1.GroupCode, T1.GroupDescription, T1.AcctTypeLevel, T1.ParentGroupId , T1.GroupIsActive , T2.GroupCode  ParentGroup, T2.GroupDescription ParentGroupDesc	
+			,T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    AccountTypeGroup T1 Left Join
+					AccountTypeGroup T2 ON T1.ParentGroupId = T2.GroupId
+						
+			WHERE    NOT EXISTS (SELECT 1 FROM AccountTypeGroup_Temp WHERE GroupId = T1.GroupId)
+		</createView>
+	</changeSet>
 </databaseChangeLog>
