@@ -695,7 +695,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		 * HashMap.
 		 */
 		if (usrfinRolesList == null || usrfinRolesList.isEmpty()) {
-			  MessageUtil.showError(Labels.getLabel("USER_FINROLES_NOTASSIGNED"));
 			return;
 		}
 		
