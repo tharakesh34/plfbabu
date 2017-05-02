@@ -535,8 +535,10 @@ public class PennantJavaUtil {
 				new String[] { "BMTAggrementDef", "BMTAggrementDef_AView" }, masterWF, new String[] { "AggId", "AggCode",
 						"AggName" }, null, 450));
 		ModuleUtil.register("AccountTypeGroup", new ModuleMapping("AccountTypeGroup", AccountTypeGroup.class,
-				new String[] { "AccountTypeGroup", "AccountTypeGroup_AView" }, masterWF, new String[] { "AcctTypeLevel", "GroupCode", "GroupDescription" }, null, 400));
-		
+				new String[] { "AccountTypeGroup", "AccountTypeGroup_AView" }, masterWF, new String[] {
+						"AcctTypeLevel", "GroupCode", "GroupDescription" }, new String[][] { { "GroupIsActive", "0",
+						"1" } }, 400));
+
 		ModuleUtil.register("Mandate", new ModuleMapping("Mandate", Mandate.class, new String[] { "Mandates",
 				"Mandates_AView" }, masterWF, new String[] { "MandateID","BankCode","BankName","BranchCode","BranchDesc","MICR","IFSC" }, null, 700));
 		

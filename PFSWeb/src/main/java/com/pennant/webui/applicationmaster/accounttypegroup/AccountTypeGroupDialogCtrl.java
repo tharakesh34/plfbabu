@@ -11,6 +11,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
@@ -51,7 +52,7 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 	private transient AccountTypeGroupListCtrl	accountTypeGroupListCtrl;													// overHanded per parameter
 
 	private transient boolean					validationOn;
-
+	protected Checkbox groupIsActive;		// autoWired
 	// ServiceDAOs / Domain Classes
 	private transient AccountTypeGroupService	accountTypeGroupService;
 
@@ -270,6 +271,7 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 		this.acctTypeLevel.setValue(aAccountTypeGroup.getAcctTypeLevel());
 		this.groupCode.setValue(aAccountTypeGroup.getGroupCode());
 		this.groupDescription.setValue(aAccountTypeGroup.getGroupDescription());
+		this.groupIsActive.setChecked(aAccountTypeGroup.isGroupIsActive());
 		if (aAccountTypeGroup.getParentGroupId() != Long.MIN_VALUE && aAccountTypeGroup.getParentGroupId() != 0) {
 			this.parentGroupId.setAttribute("ParentGroupId", aAccountTypeGroup.getParentGroupId());
 			this.parentGroupId.setValue(aAccountTypeGroup.getParentGroup(), aAccountTypeGroup.getParentGroupDesc());
@@ -278,6 +280,10 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 			this.parentGroupId.setMandatoryStyle(true);
 		}else{
 			this.parentGroupId.setSclass("");
+		}
+		if(aAccountTypeGroup.isNew() || (aAccountTypeGroup.getRecordType() != null ? aAccountTypeGroup.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
+			this.groupIsActive.setChecked(true);
+			this.groupIsActive.setDisabled(true);
 		}
 		this.recordStatus.setValue(aAccountTypeGroup.getRecordStatus());
 		logger.debug("Leaving ");
@@ -320,7 +326,11 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		try {
+			aAccountTypeGroup.setGroupIsActive(this.groupIsActive.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		doRemoveValidation();
 
 		if (wve.size() > 0) {
@@ -517,6 +527,7 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 		this.acctTypeLevel.setReadonly(isReadOnly("AccountTypeGroupDialog_AcctTypeLevel"));
 		this.groupDescription.setReadonly(isReadOnly("AccountTypeGroupDialog_GroupDescription"));
 		this.parentGroupId.setReadonly(isReadOnly("AccountTypeGroupDialog_ParentGroup"));
+		this.groupIsActive.setDisabled(isReadOnly("AccounTypeGroupDialog_GroupIsActive"));
 
 		if (isWorkFlowEnabled()) {
 
@@ -547,6 +558,7 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 		this.groupCode.setReadonly(true);
 		this.groupDescription.setReadonly(true);
 		this.parentGroupId.setReadonly(true);
+		this.groupIsActive.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -570,6 +582,7 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 		this.groupCode.setValue("");
 		this.groupDescription.setValue("");
 		this.parentGroupId.setValue("");
+		this.groupIsActive.setChecked(false);
 		logger.debug("Leaving ");
 	}
 

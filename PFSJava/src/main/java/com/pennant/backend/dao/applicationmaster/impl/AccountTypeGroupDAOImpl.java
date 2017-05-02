@@ -49,7 +49,7 @@ public class AccountTypeGroupDAOImpl extends BasisNextidDaoImpl<AccountTypeGroup
 		
 		accountTypeGroup.setId(id);
 		
-		StringBuilder selectSql = new StringBuilder("Select GroupId, GroupCode, GroupDescription, AcctTypeLevel,  ParentGroupId,  " );
+		StringBuilder selectSql = new StringBuilder("Select GroupId, GroupCode, GroupDescription, AcctTypeLevel,  ParentGroupId, GroupIsActive, " );
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if(type.contains("View")){
@@ -144,10 +144,10 @@ public class AccountTypeGroupDAOImpl extends BasisNextidDaoImpl<AccountTypeGroup
 		
 		StringBuilder insertSql =new StringBuilder("Insert Into AccountTypeGroup");
 		insertSql.append(tableType.getSuffix());
-		insertSql.append(" (GroupId, GroupCode, GroupDescription, AcctTypeLevel, ParentGroupId, ");
+		insertSql.append(" (GroupId, GroupCode, GroupDescription, AcctTypeLevel, ParentGroupId, GroupIsActive, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, " );
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:GroupId, :GroupCode, :GroupDescription, :AcctTypeLevel, :ParentGroupId, ");
+		insertSql.append(" Values(:GroupId, :GroupCode, :GroupDescription, :AcctTypeLevel, :ParentGroupId, :GroupIsActive, ");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, " );
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
@@ -183,7 +183,7 @@ public class AccountTypeGroupDAOImpl extends BasisNextidDaoImpl<AccountTypeGroup
 		int recordCount = 0;
 		StringBuilder	updateSql =new StringBuilder("Update AccountTypeGroup");
 		updateSql.append(tableType.getSuffix());
-		updateSql.append(" Set GroupId = :GroupId, GroupCode = :GroupCode, GroupDescription = :GroupDescription, AcctTypeLevel = :AcctTypeLevel, ParentGroupId = :ParentGroupId, " );
+		updateSql.append(" Set GroupId = :GroupId, GroupCode = :GroupCode, GroupDescription = :GroupDescription, AcctTypeLevel = :AcctTypeLevel, ParentGroupId = :ParentGroupId, GroupIsActive = :GroupIsActive, " );
 		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, " );
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, " );
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, " );

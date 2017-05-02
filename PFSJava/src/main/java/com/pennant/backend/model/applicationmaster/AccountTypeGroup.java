@@ -25,7 +25,8 @@ public class AccountTypeGroup extends AbstractWorkflowEntity implements Entity {
 	private AccountTypeGroup			befImage;
 	@XmlTransient
 	private LoggedInUser		userDetails;
-
+	private boolean groupIsActive;
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -145,6 +146,14 @@ public class AccountTypeGroup extends AbstractWorkflowEntity implements Entity {
 
 	public void setParentGroupDesc(String parentGroupDesc) {
 		this.parentGroupDesc = parentGroupDesc;
+	}
+
+	public boolean isGroupIsActive() {
+		return groupIsActive;
+	}
+
+	public void setGroupIsActive(boolean groupIsActive) {
+		this.groupIsActive = groupIsActive;
 	}	
 		
 }
