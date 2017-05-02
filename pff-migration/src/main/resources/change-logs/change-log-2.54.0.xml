@@ -2796,12 +2796,8 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 	update FinanceMain set duebucket=0 where duebucket is null;
 	</sql>
 	</changeSet>
-	
 
-
-<changeSet id="145" author="Durgaprasad G">
-
-		 <changeSet id="152" author="Durgaprasad G">
+	 <changeSet id="152" author="Durgaprasad G">
 		<dropForeignKeyConstraint baseTableName="PRESENTMENTDETAILS" constraintName="FK_PRESENTMENTDETAILS_PID" />
 	</changeSet>
 <changeSet id="145" author="Durgaprasad G">
@@ -3367,11 +3363,18 @@ SELECT   T1.FinReference,T1.paymentId, T1.PaymentSeq, T1.PaymentDetail, T1.AmtTo
 WHERE NOT EXISTS 
                  (select 1 from  FINADVANCEPAYMENTS_TEMP where FINREFERENCE = T1.FINREFERENCE and PAYMENTSEQ = T1.PAYMENTSEQ)
 			
-		
-		
-		
 		</createView>
-	
-	
 	</changeSet>
+	
+	<changeSet id="172" author="Chaitanya.ch">
+		<sql>
+		Delete from RBFieldDetails where RBModule = 'SUBHEAD';
+		Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('SUBHEAD','SUBHEAD','acType','Transaction Account type','nvarchar',8,'0','1','AccountTypes','static','TransactionEntry');
+		Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('SUBHEAD','SUBHEAD','ae_partnerBankAc','Partner Bank Account','nvarchar',15,'0','1','PARTNERBANKS','static,global,dbvalue','PARTNERBANKS');
+		Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('SUBHEAD','SUBHEAD','disb_partnerBank','PARTNERBANK','nvarchar',8,'0','1','PARTNERBANKS','static,global,dbvalue','PARTNERBANKS');
+		Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('SUBHEAD','SUBHEAD','ft_finType','Loan Type','nvarchar',8,'0','1','FinanceType','static,global,dbvalue','FinanceType');
+		</sql>
+	</changeSet> 
+	
+ 
 </databaseChangeLog>
