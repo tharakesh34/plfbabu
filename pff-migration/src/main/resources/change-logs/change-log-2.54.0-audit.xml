@@ -49,7 +49,9 @@
 		<column name="ReceiptID" type="bigint"/>
 	</addColumn>
 	</changeSet>
-	
+	<changeSet id="09.1" author="Prasad">
+		<dropTable tableName="ADTPRESENTMENTDETAILS"/>
+	</changeSet>
 	<changeSet id="09" author="Durgaprasad G">
 		<createTable tableName="ADTPRESENTMENTDETAILS">
 			<column name="AuditId" type="bigint" >
