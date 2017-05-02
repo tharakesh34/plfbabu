@@ -55,8 +55,8 @@ public class LoginLoggingServiceImpl implements Serializable, LoginLoggingServic
 	private static final long serialVersionUID = 3670557183587630706L;
 	private static final Logger logger = Logger.getLogger(LoginLoggingServiceImpl.class);
 
-	private SecLoginlogDAO secLoginlogDAO;
-	private UserDAO userDAO;
+	private transient SecLoginlogDAO secLoginlogDAO;
+	private transient UserDAO userDAO;
 
 	/**
 	 * default Constructor
