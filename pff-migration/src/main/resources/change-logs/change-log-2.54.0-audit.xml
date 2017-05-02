@@ -131,7 +131,9 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable> 
 	</changeSet>
-	
+	<changeSet id="10.1" author="Prasad">
+		<dropTable tableName="ADTPRESENTMENTHEADER"/>
+	</changeSet>
 	<changeSet id="10" author="Durgaprasad G">
 		<createTable tableName="ADTPRESENTMENTHEADER">
 			<column name="AuditId" type="bigint" >
