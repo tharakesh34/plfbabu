@@ -5876,7 +5876,7 @@ public class ScheduleCalculator {
 		//Load Base Rates History to the working bean structure
 		for (int i = 0; i < baseRateCodes.size(); i++) {
 			List<BaseRate> baseRatesHist = getBaseRateDAO().getBaseRateHistByType(baseRateCodes.get(i),
-					finMain.getFinCcy(), finMain.getEventFromDate());
+					finMain.getFinCcy(), finMain.getFinStartDate());
 
 			for (int j = 0; j < baseRatesHist.size(); j++) {
 				BaseRate baseRate = new BaseRate();
@@ -5896,7 +5896,7 @@ public class ScheduleCalculator {
 		//Load Special Rates History to the working bean structure
 		for (int i = 0; i < specialRateCodes.size(); i++) {
 			List<SplRate> splRatesHist = getSplRateDAO().getSplRateHistByType(specialRateCodes.get(i),
-					finMain.getEventFromDate());
+					finMain.getFinStartDate());
 
 			for (int j = 0; j < splRatesHist.size(); j++) {
 				SplRate splRate = new SplRate();
