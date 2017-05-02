@@ -173,7 +173,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private CustomerService customerService;
 	private AccountEngineExecution engineExecution;
 	private RuleExecutionUtil ruleExecutionUtil;
-	private FinScheduleData 		finScheduleData = null;
 	private FinanceMain 			financeMain = null;
 	private boolean	 dataChanged = false;
 	private String	 numberOfTermsLabel = "";
@@ -407,7 +406,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				doFillFinFeeDetailList(financeDetail.getFinScheduleData().getFinFeeDetailActualList());
 			}else{
 				finFeeDetailList = convertToFinanceFees(financeDetail.getFinTypeFeesList());
-				calculateFees(finFeeDetailList);
+				calculateFees(finFeeDetailList, financeDetail.getFinScheduleData());
 				doFillFinFeeDetailList(finFeeDetailList);
 			}
 		}else{
@@ -1425,7 +1424,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			doSetFeeChanges(finScheduleData);
 		}
 		
-		calculateFees(getFinFeeDetailList());
+		calculateFees(getFinFeeDetailList(), finScheduleData);
 		
 		if(StringUtils.isBlank(moduleDefiner)){
 			fetchFeeDetails(finScheduleData,true);
@@ -1564,7 +1563,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	}
 	
 	
-	private List<FinFeeDetail> calculateFees(List<FinFeeDetail> finFeeDetailsList){
+	private List<FinFeeDetail> calculateFees(List<FinFeeDetail> finFeeDetailsList, FinScheduleData finScheduleData){
 		
 		List<String> feeRuleCodes = new ArrayList<String>();
 		for (FinFeeDetail finFeeDetail : finFeeDetailsList) {
@@ -1845,8 +1844,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	}
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
-		setFinScheduleData(financeDetail.getFinScheduleData());
-		setFinanceMain(this.finScheduleData.getFinanceMain());
+		//setFinScheduleData(financeDetail.getFinScheduleData());
+		setFinanceMain(financeDetail.getFinScheduleData().getFinanceMain());
 	}
 
 	public FinBasicDetailsCtrl getFinBasicDetailsCtrl() {
@@ -1882,13 +1881,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	}
 	public void setCustomerService(CustomerService customerService) {
 		this.customerService = customerService;
-	}
-
-	public FinScheduleData getFinScheduleData() {
-		return finScheduleData;
-	}
-	public void setFinScheduleData(FinScheduleData finScheduleData) {
-		this.finScheduleData = finScheduleData;
 	}
 
 	public FinanceMain getFinanceMain() {
