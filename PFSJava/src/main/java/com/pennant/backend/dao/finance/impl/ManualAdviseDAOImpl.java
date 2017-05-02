@@ -322,19 +322,19 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 	}	
 	
 	@Override
-	public void saveMovement(ManualAdviseMovements movement) {
+	public void saveMovement(ManualAdviseMovements movement, String type) {
 		logger.debug(Literal.ENTERING);
 		
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into ManualAdviseMovements ");
-		sql.append(" ( MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount, Status)" );
-		sql.append(" VALUES(:MovementID, :AdviseID, :MovementDate, :MovementAmount, :PaidAmount, :WaivedAmount, :Status)");
+		StringBuilder sql =new StringBuilder(" insert into ManualAdviseMovements");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" ( MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount, Status, ReceiptID, ReceiptSeqID)" );
+		sql.append(" VALUES(:MovementID, :AdviseID, :MovementDate, :MovementAmount, :PaidAmount, :WaivedAmount, :Status, :ReceiptID, :ReceiptSeqID)");
 		
 		// Get the identity sequence number.
 		if (movement.getMovementID() <= 0) {
 			movement.setAdviseID(getNextidviewDAO().getNextId("SeqManualAdviseMovements"));
 		}
-
 		
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -342,6 +342,30 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		this.namedParameterJdbcTemplate.update(sql.toString(), paramSource);
 		logger.debug(Literal.LEAVING);
 	}	
+	
+	@Override
+	public List<ManualAdviseMovements> getAdviseMovementsByReceipt(long receiptID, String type) {
+		logger.debug("Entering");
+
+		ManualAdviseMovements movements = new ManualAdviseMovements();
+		movements.setReceiptID(receiptID);
+
+		StringBuilder selectSql = new StringBuilder(" Select MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, ");
+		selectSql.append(" WaivedAmount, Status, ReceiptID, ReceiptSeqID ");
+		selectSql.append(" From ManualAdviseMovements");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where ReceiptID = :ReceiptID ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(movements);
+		RowMapper<ManualAdviseMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ManualAdviseMovements.class);
+
+		List<ManualAdviseMovements> list = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
+		logger.debug("Leaving");
+		return list;
+	}		
 	
 	@Override
 	public List<ManualAdviseMovements> getAdviseMovements(long id) {
@@ -352,7 +376,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 
 		StringBuilder selectSql = new StringBuilder(" Select T1.MovementID ,T1.MovementDate, T1.MovementAmount, ");
 		selectSql.append(" T1.PaidAmount , T1.WaivedAmount, T1.Status, T2.ReceiptMode ");
-		selectSql.append(" From ManualAdviseMovements T1 LEFT OUTER JOIN FinReceiptHeader T2 ON T1.PayAgainstID = T2.ReceiptID ");
+		selectSql.append(" From ManualAdviseMovements T1 LEFT OUTER JOIN FinReceiptHeader T2 ON T1.ReceiptID = T2.ReceiptID ");
 		selectSql.append(" Where AdviseID = :AdviseID ");
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -364,6 +388,73 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 				typeRowMapper);
 		logger.debug("Leaving");
 		return list;
+	}
+
+	@Override
+	public void deleteMovementsByReceiptID(long receiptID, String type) {
+		logger.debug(Literal.ENTERING);
+		
+		ManualAdviseMovements movements = new ManualAdviseMovements();
+		movements.setReceiptID(receiptID);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("delete from ManualAdviseMovements");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" where ReceiptID = :ReceiptID ");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(movements);
+		namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public List<ManualAdviseMovements> getAdvMovementsByReceiptSeq(long receiptID, long receiptSeqID, String type) {
+		logger.debug("Entering");
+
+		ManualAdviseMovements movements = new ManualAdviseMovements();
+		movements.setReceiptID(receiptID);
+		movements.setReceiptSeqID(receiptSeqID);
+
+		StringBuilder selectSql = new StringBuilder(" Select MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, ");
+		selectSql.append(" WaivedAmount, Status, ReceiptID, ReceiptSeqID ");
+		selectSql.append(" From ManualAdviseMovements");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where ReceiptID = :ReceiptID AND ReceiptSeqID=:ReceiptSeqID ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(movements);
+		RowMapper<ManualAdviseMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ManualAdviseMovements.class);
+
+		List<ManualAdviseMovements> list = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
+		logger.debug("Leaving");
+		return list;
+	}
+
+	@Override
+	public void updateMovementStatus(long receiptID, long receiptSeqID, String status, String type) {
+		logger.debug(Literal.ENTERING);
+		
+		ManualAdviseMovements movements = new ManualAdviseMovements();
+		movements.setReceiptID(receiptID);
+		movements.setReceiptSeqID(receiptSeqID);
+		movements.setStatus(status);
+		
+		// Prepare the SQL.
+		StringBuilder	sql =new StringBuilder("update ManualAdviseMovements" );
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" set Status = :Status ");
+		sql.append(" Where ReceiptID = :ReceiptID AND ReceiptSeqID=:ReceiptSeqID ");
+	
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(movements);
+		namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		logger.debug(Literal.LEAVING);
 	}		
 	
 }	

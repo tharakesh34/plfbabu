@@ -66,9 +66,13 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	// Receipts
 	List<ManualAdvise> getManualAdviseByRef(String finReference, int adviseType, String type);
-	void saveMovement(ManualAdviseMovements movement);
+	void saveMovement(ManualAdviseMovements movement, String type);
 	void updateAdvPayment(long adviseID, BigDecimal paidAmount, BigDecimal waivedAmount, TableType tableType);
 	List<ManualAdviseMovements> getAdviseMovements(long id);
 	ManualAdvise getManualAdviseByReceiptId(long receiptID, String string);
+	List<ManualAdviseMovements> getAdviseMovementsByReceipt(long receiptID, String type);
+	void deleteMovementsByReceiptID(long receiptID, String type);
+	List<ManualAdviseMovements> getAdvMovementsByReceiptSeq(long receiptID, long receiptSeqID, String string);
+	void updateMovementStatus(long receiptID, long receiptSeqID, String string, String string2);
 	
 }

@@ -7,12 +7,15 @@ public class ManualAdviseMovements {
 	
 	private long movementID = Long.MIN_VALUE;
 	private long adviseID = Long.MIN_VALUE;
-	private long payAgainstID = Long.MIN_VALUE;
+	private long receiptID = Long.MIN_VALUE;
+	private long receiptSeqID = Long.MIN_VALUE;
 	private Date movementDate;
 	private BigDecimal movementAmount;
 	private BigDecimal paidAmount;
 	private BigDecimal waivedAmount;
 	private String status;
+	
+	// Enquiry Purpose
 	private String receiptMode;
 	
 	// Getters and Setters
@@ -65,12 +68,21 @@ public class ManualAdviseMovements {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public long getPayAgainstID() {
-		return payAgainstID;
+
+	public long getReceiptID() {
+		return receiptID;
 	}
-	public void setPayAgainstID(long payAgainstID) {
-		this.payAgainstID = payAgainstID;
+	public void setReceiptID(long receiptID) {
+		this.receiptID = receiptID;
 	}
+	
+	public long getReceiptSeqID() {
+		return receiptSeqID;
+	}
+	public void setReceiptSeqID(long receiptSeqID) {
+		this.receiptSeqID = receiptSeqID;
+	}
+	
 	public String getReceiptMode() {
 		return receiptMode;
 	}

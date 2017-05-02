@@ -48,6 +48,7 @@ import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.GenericService;
@@ -688,6 +689,19 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 					
 					updateFeeList = null;
 					updateInsList = null;
+					
+					// Manual Advise Movements Reversal
+					List<ManualAdviseMovements> advMovements = getManualAdviseDAO().getAdvMovementsByReceiptSeq(receiptDetail.getReceiptID(), 
+							receiptDetail.getReceiptSeqID(), "");
+					if(advMovements != null && !advMovements.isEmpty()){
+						for (ManualAdviseMovements movement : advMovements) {
+							getManualAdviseDAO().updateAdvPayment(movement.getAdviseID(), movement.getPaidAmount().negate(),
+									movement.getWaivedAmount().negate(), TableType.MAIN_TAB);
+						}
+						
+						// Update Movement Status
+						getManualAdviseDAO().updateMovementStatus(receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(), "C", "");
+					}
 					
 					//Deletion of Finance Schedule Related Details From Main Table
 					listDeletion(finReference, "", false, 0);

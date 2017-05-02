@@ -33,6 +33,7 @@ public class FinReceiptDetail implements Entity{
 	private String remarks;
 	
 	private List<FinRepayHeader> repayHeaders = new ArrayList<FinRepayHeader>(1);
+	private List<ManualAdviseMovements> advMovements = new ArrayList<ManualAdviseMovements>(1);
 	
 	public FinReceiptDetail() {
 		
@@ -218,6 +219,14 @@ public class FinReceiptDetail implements Entity{
 
 	public void setFundingAcDesc(String fundingAcDesc) {
 		this.fundingAcDesc = fundingAcDesc;
+	}
+
+	public List<ManualAdviseMovements> getAdvMovements() {
+		return advMovements;
+	}
+
+	public void setAdvMovements(List<ManualAdviseMovements> advMovements) {
+		this.advMovements = advMovements;
 	}
 
 }

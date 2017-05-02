@@ -71,6 +71,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
@@ -327,6 +328,15 @@ public class ReceiptCalculator implements Serializable {
 												// Reset Total Receipt Amount
 												totalReceiptAmt = totalReceiptAmt.subtract(balAdvise);
 												paidAllocationMap.put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), advAllocateBal.subtract(balAdvise));
+												
+												// Save Movements for Manual Advise
+												ManualAdviseMovements movement = new ManualAdviseMovements();
+												movement.setAdviseID(advise.getAdviseID());
+												movement.setMovementDate(DateUtility.getAppDate());
+												movement.setMovementAmount(balAdvise);
+												movement.setPaidAmount(balAdvise);
+												movement.setWaivedAmount(BigDecimal.ZERO);
+												receiptDetail.getAdvMovements().add(movement);
 											}
 										}
 									}
@@ -620,6 +630,15 @@ public class ReceiptCalculator implements Serializable {
 										// Reset Total Receipt Amount
 										totalReceiptAmt = totalReceiptAmt.subtract(balAdvise);
 										paidAllocationMap.put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), insAllocateBal.subtract(balAdvise));
+										
+										// Save Movements for Manual Advise
+										ManualAdviseMovements movement = new ManualAdviseMovements();
+										movement.setAdviseID(advise.getAdviseID());
+										movement.setMovementDate(DateUtility.getAppDate());
+										movement.setMovementAmount(balAdvise);
+										movement.setPaidAmount(balAdvise);
+										movement.setWaivedAmount(BigDecimal.ZERO);
+										receiptDetail.getAdvMovements().add(movement);
 									}
 								}
 							}
@@ -801,7 +820,7 @@ public class ReceiptCalculator implements Serializable {
 							totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
 							waivedAllocationMap.put(RepayConstants.ALLOCATION_INS, balWaived.subtract(waivedNow));
 						}
-
+						
 						// If No Outstanding Waiver amount
 						if(totalWaivedAmt.compareTo(BigDecimal.ZERO) == 0){
 							break;
@@ -812,6 +831,20 @@ public class ReceiptCalculator implements Serializable {
 				// If No Outstanding Waiver amount
 				if(totalWaivedAmt.compareTo(BigDecimal.ZERO) == 0){
 					break;
+				}
+			}
+			
+			// Schedule Fee Amount
+			if(waivedAllocationMap.containsKey(RepayConstants.ALLOCATION_MANADV)){
+				for (ManualAdviseMovements advMovement : rd.getAdvMovements()) {
+					BigDecimal waivedNow = advMovement.getPaidAmount();
+					BigDecimal balWaived = waivedAllocationMap.get(RepayConstants.ALLOCATION_MANADV);
+					if(waivedNow.compareTo(balWaived) > 0){
+						waivedNow = balWaived;
+					}
+					advMovement.setWaivedAmount(waivedNow);
+					totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
+					waivedAllocationMap.put(RepayConstants.ALLOCATION_MANADV, balWaived.subtract(waivedNow));
 				}
 			}
 			

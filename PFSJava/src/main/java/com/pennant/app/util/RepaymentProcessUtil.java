@@ -23,6 +23,7 @@ import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
@@ -40,6 +41,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
@@ -61,6 +63,7 @@ public class RepaymentProcessUtil {
 	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
 	private FinanceDisbursementDAO		financeDisbursementDAO;
 	private RepayInstructionDAO			repayInstructionDAO;
+	private ManualAdviseDAO				manualAdviseDAO;
 
 	public RepaymentProcessUtil() {
 		super();
@@ -417,17 +420,23 @@ public class RepaymentProcessUtil {
 				if (payAgainstID != 0) {
 					getFinExcessAmountDAO().updateUtilise(payAgainstID, receiptDetail.getAmount());
 					// Delete Reserved Log against Excess and Receipt ID
-					getFinExcessAmountDAO().deleteExcessReserve(receiptID, payAgainstID);
+					getFinExcessAmountDAO().deleteExcessReserve(receiptSeqID, payAgainstID);
 					// Excess Movement Creation
 					FinExcessMovement movement = new FinExcessMovement();
 					movement.setExcessID(payAgainstID);
-					movement.setReceiptID(receiptID);
+					movement.setReceiptID(receiptSeqID);
 					movement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
 					movement.setTranType(AccountConstants.TRANTYPE_DEBIT);
 					movement.setAmount(receiptDetail.getAmount());
 					getFinExcessAmountDAO().saveExcessMovement(movement);
 				}
-
+			}
+			
+			// Manual Advise Movements
+			for (ManualAdviseMovements movement : receiptDetail.getAdvMovements()) {
+				movement.setReceiptID(receiptID);
+				movement.setReceiptSeqID(receiptSeqID);
+				getManualAdviseDAO().saveMovement(movement, TableType.MAIN_TAB.getSuffix());
 			}
 
 			List<FinRepayHeader> rpyHeaderList = receiptDetail.getRepayHeaders();
@@ -937,6 +946,14 @@ public class RepaymentProcessUtil {
 
 	public void setRepayInstructionDAO(RepayInstructionDAO repayInstructionDAO) {
 		this.repayInstructionDAO = repayInstructionDAO;
+	}
+
+	public ManualAdviseDAO getManualAdviseDAO() {
+		return manualAdviseDAO;
+	}
+
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
 }

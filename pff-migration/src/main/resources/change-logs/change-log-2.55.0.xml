@@ -19,36 +19,58 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
-	
+
 	<changeSet id="01" author="Irfan">
-	<sql>
-		INSERT INTO ErrorDetails VALUES('60204','EN','E','Loan Cannot be Processed for Reversal of Payment. Loan is in In-Active State.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
-		INSERT INTO ErrorDetails VALUES('60205','EN','E','Not allowed to Reverse the transaction, because of insufficient balance on Excess','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
-		INSERT INTO ErrorDetails VALUES('60206','EN','E','Loan was maintained after this Repayment done.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
-		INSERT INTO ErrorDetails VALUES('60207','EN','E','Log Entry Details are not correct. Please contact Adminstrator.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
-		INSERT INTO ErrorDetails VALUES('60208','EN','E','No Receipt Found to Reverse the Transaction.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
-	</sql>
+		<sql>
+			INSERT INTO ErrorDetails VALUES('60204','EN','E','Loan Cannot be Processed
+			for Reversal of Payment. Loan is in In-Active
+			State.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			INSERT INTO ErrorDetails VALUES('60205','EN','E','Not allowed to
+			Reverse the transaction, because of insufficient balance on
+			Excess','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			INSERT INTO ErrorDetails VALUES('60206','EN','E','Loan was maintained
+			after this Repayment
+			done.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			INSERT INTO ErrorDetails VALUES('60207','EN','E','Log Entry Details
+			are not correct. Please contact
+			Adminstrator.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			INSERT INTO ErrorDetails VALUES('60208','EN','E','No Receipt Found to
+			Reverse the
+			Transaction.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
 	</changeSet>
 	<changeSet id="02" author="manojkumar.p">
 		<sql>
-			UPDATE DATA_ENGINE_TABLE SET RECORDLENGTH = 16 WHERE ID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT'));
-			UPDATE DATA_ENGINE_TABLE SET RECORDLENGTH = 16 WHERE ID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_OTHER_IMPORT'));
+			UPDATE DATA_ENGINE_TABLE SET RECORDLENGTH = 16 WHERE ID IN
+			(SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM
+			DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT'));
+			UPDATE
+			DATA_ENGINE_TABLE SET RECORDLENGTH = 16 WHERE ID IN (SELECT ID FROM
+			DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM
+			DATA_ENGINE_CONFIG WHERE NAME = 'DISB_OTHER_IMPORT'));
 		</sql>
 	</changeSet>
 	<changeSet id="03" author="manojkumar.p">
 		<sql>
-			UPDATE DATA_ENGINE_TABLE SET RECORDLENGTH = 16 WHERE ID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT'));
-			UPDATE DATA_ENGINE_TABLE SET RECORDLENGTH = 3 WHERE ID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_OTHER_IMPORT'));
+			UPDATE DATA_ENGINE_TABLE SET RECORDLENGTH = 16 WHERE ID IN
+			(SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM
+			DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT'));
+			UPDATE
+			DATA_ENGINE_TABLE SET RECORDLENGTH = 3 WHERE ID IN (SELECT ID FROM
+			DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM
+			DATA_ENGINE_CONFIG WHERE NAME = 'DISB_OTHER_IMPORT'));
 		</sql>
 	</changeSet>
 	<changeSet id="04" author="pruthvi">
 		<sql>
-	update reportfilterfields set multiselectsearch='0'
-    where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_PaymentSchedule') and fieldid='2';
-	</sql>
+			update reportfilterfields set multiselectsearch='0'
+			where reportid=(select reportid from reportconfiguration where
+			menuitemcode='menu_Item_PaymentSchedule') and fieldid='2';
+		</sql>
 	</changeSet>
+
 	<changeSet id="05" author="Madhubabu">
-	<createView replaceIfExists="true" viewName="PresentmentDownload_View">
+		<createView replaceIfExists="true" viewName="PresentmentDownload_View">
 			     select EntityCode, MandateType, BankID, SCHDATE, Sum(PresentmentAmt) PresentmentAmt, Count(*) count from (
 			select 1 EntityCode, MandateType, SUBSTR(MICR,4,3) BANKID, SCHDATE, PresentmentAmt 
 			from PresentmentDetails T1 
@@ -58,5 +80,52 @@
 			) t 
 			group BY EntityCode, MandateType, BankID ,SCHDATE
 		</createView>
-</changeSet>	
+	</changeSet>	
+	
+	<changeSet id="6" author="Siva">
+		<createTable tableName="ManualAdviseMovements_Temp">
+			<column name="MovementID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AdviseID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="MovementDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="MovementAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaidAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="char(1)" />
+			<column name="ReceiptID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceiptSeqID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="7" author="Siva">
+		<sql>
+			DELETE FROM ManualAdviseMovements;
+		</sql>
+	</changeSet>
+
+	<changeSet id="8" author="Siva">
+		<addColumn tableName="ManualAdviseMovements">
+			<column name="ReceiptID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceiptSeqID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

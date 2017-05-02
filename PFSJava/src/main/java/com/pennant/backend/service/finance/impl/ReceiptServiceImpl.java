@@ -236,16 +236,16 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if (StringUtils.isNotBlank(financeMain.getRecordType())) {
 
 				// Receipt Header Details
-				receiptData.setReceiptHeader(getFinReceiptHeaderDAO().getReceiptHeaderByRef(finReference, "_Temp"));
+				receiptData.setReceiptHeader(getFinReceiptHeaderDAO().getReceiptHeaderByRef(finReference, TableType.TEMP_TAB.getSuffix()));
 				
 				// Fetch Receipt Detail List
 				List<FinReceiptDetail> receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptData.getReceiptHeader().getReceiptID(), "_TView");
 				
 				// Fetch Repay Headers List
-				List<FinRepayHeader> rpyHeaderList = getFinanceRepaymentsDAO().getFinRepayHeadersByRef(finReference, "_Temp");
+				List<FinRepayHeader> rpyHeaderList = getFinanceRepaymentsDAO().getFinRepayHeadersByRef(finReference, TableType.TEMP_TAB.getSuffix());
 				
 				// Fetch List of Repay Schedules
-				List<RepayScheduleDetail> rpySchList = getFinanceRepaymentsDAO().getRpySchdList(finReference, "_Temp");
+				List<RepayScheduleDetail> rpySchList = getFinanceRepaymentsDAO().getRpySchdList(finReference, TableType.TEMP_TAB.getSuffix());
 				for (FinRepayHeader finRepayHeader : rpyHeaderList) {
 					for (RepayScheduleDetail repaySchd : rpySchList) {
 						if(finRepayHeader.getRepayID() == repaySchd.getRepayID()){
@@ -269,11 +269,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				
 				// Receipt Allocation Details
 				receiptData.getReceiptHeader().setAllocations(getAllocationDetailDAO().getAllocationsByReceiptID(
-						receiptData.getReceiptHeader().getReceiptID(), "_Temp"));
+						receiptData.getReceiptHeader().getReceiptID(), TableType.TEMP_TAB.getSuffix()));
 				
 				//Finance Document Details
 				financeDetail.setDocumentDetailsList(getDocumentDetailsDAO().getDocumentDetailsByRef(finReference,
-						FinanceConstants.MODULE_NAME,procEdtEvent, "_Temp"));
+						FinanceConstants.MODULE_NAME,procEdtEvent, TableType.TEMP_TAB.getSuffix()));
 
 			} else {
 
@@ -383,6 +383,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		
 		// Save Receipt Detail List by setting Receipt Header ID
 		List<FinReceiptDetail> receiptDetails = receiptHeader.getReceiptDetails();
+		
+		// Manual Advise Movements
+		getManualAdviseDAO().deleteMovementsByReceiptID(receiptID,TableType.TEMP_TAB.getSuffix());
+					
 		for (FinReceiptDetail receiptDetail : receiptDetails) {
 			receiptDetail.setReceiptID(receiptID);
 			long receiptSeqID = getFinReceiptDetailDAO().save(receiptDetail, tableType);
@@ -392,14 +396,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
 								
 				// Excess Amount make utilization
-				FinExcessAmountReserve exReserve = getFinExcessAmountDAO().getExcessReserve(receiptID, receiptDetail.getPayAgainstID());
+				FinExcessAmountReserve exReserve = getFinExcessAmountDAO().getExcessReserve(receiptSeqID, receiptDetail.getPayAgainstID());
 				if(exReserve == null){
 					
 					// Update Excess Amount in Reserve
 					getFinExcessAmountDAO().updateExcessReserve(receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
 					
 					// Save Excess Reserve Log Amount
-					getFinExcessAmountDAO().saveExcessReserveLog(receiptID, receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
+					getFinExcessAmountDAO().saveExcessReserveLog(receiptSeqID, receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
 					
 				}else{
 					if(receiptDetail.getAmount().compareTo(exReserve.getReservedAmt()) != 0){
@@ -409,9 +413,16 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						getFinExcessAmountDAO().updateExcessReserve(receiptDetail.getPayAgainstID(), diffInReserve);
 						
 						// Update Excess Reserve Log
-						getFinExcessAmountDAO().updateExcessReserveLog(receiptID, receiptDetail.getPayAgainstID(), diffInReserve);
+						getFinExcessAmountDAO().updateExcessReserveLog(receiptSeqID, receiptDetail.getPayAgainstID(), diffInReserve);
 					}
 				}
+			}
+			
+			// Manual Advise Movements
+			for (ManualAdviseMovements movement : receiptDetail.getAdvMovements()) {
+				movement.setReceiptID(receiptID);
+				movement.setReceiptSeqID(receiptSeqID);
+				getManualAdviseDAO().saveMovement(movement, TableType.TEMP_TAB.getSuffix());
 			}
 
 			List<FinRepayHeader> rpyHeaderList = receiptDetail.getRepayHeaders();
@@ -431,7 +442,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					// Save Repayment Schedule Details
 					getFinanceRepaymentsDAO().saveRpySchdList(rpySchdList, tableType.getSuffix());
 				}
-				
 			}
 		}
 		
@@ -499,7 +509,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	/**
 	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getFinReceiptHeaderDAO().delete with parameters financeMain,"_Temp" 3) Audit the record in to
+	 * workFlow table by using getFinReceiptHeaderDAO().delete with parameters financeMain,TableType.TEMP_TAB.getSuffix() 3) Audit the record in to
 	 * AuditHeader and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
@@ -527,7 +537,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		cancelStageAccounting(financeMain.getFinReference(), receiptData.getReceiptHeader().getReceiptPurpose());
 
 		// ScheduleDetails deletion
-		listDeletion(financeMain.getFinReference(), "_Temp");
+		listDeletion(financeMain.getFinReference(), TableType.TEMP_TAB.getSuffix());
 		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, false);
 		
 		// Delete and Save Repayment Schedule details by setting Repay Header ID
@@ -542,7 +552,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Receipt Allocation Details
 		getAllocationDetailDAO().deleteByReceiptID(receiptData.getReceiptHeader().getReceiptID(), TableType.TEMP_TAB);
 		
-		// Update Receipt Header
+		// Delete Manual Advise Movements
+		getManualAdviseDAO().deleteMovementsByReceiptID(receiptData.getReceiptHeader().getReceiptID(),TableType.TEMP_TAB.getSuffix());
+		
+		// Delete Receipt Header
 		getFinReceiptHeaderDAO().deleteByReceiptID(receiptData.getReceiptHeader().getReceiptID(), TableType.TEMP_TAB);
 		
 		// Receipt Header Audit Details Preparation
@@ -557,7 +570,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				docDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			}
 			List<AuditDetail> details = receiptData.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "_Temp", receiptData.getFinanceDetail().getFinScheduleData()
+			details = processingDocumentDetailsList(details, TableType.TEMP_TAB.getSuffix(), receiptData.getFinanceDetail().getFinScheduleData()
 					.getFinanceMain(), receiptData.getReceiptHeader().getReceiptPurpose());
 			auditHeader.setAuditDetails(details);
 		}
@@ -565,7 +578,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Checklist Details delete
 		//=======================================
 		auditHeader.getAuditDetails().addAll(
-				getCheckListDetailService().delete(receiptData.getFinanceDetail(), "_Temp", tranType));
+				getCheckListDetailService().delete(receiptData.getFinanceDetail(), TableType.TEMP_TAB.getSuffix(), tranType));
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
@@ -681,7 +694,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		
 		repayProcessUtil.doSaveReceipts(receiptHeader);
 		long receiptID = receiptHeader.getReceiptID();
-		//////////////////////////save
 		
 		// Receipt Allocation Details
 		if(receiptHeader.getAllocations() != null && !receiptHeader.getAllocations().isEmpty()){
@@ -781,16 +793,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 							allocation.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0){
 						getManualAdviseDAO().updateAdvPayment(allocation.getAllocationTo(),
 								allocation.getPaidAmount(), allocation.getWaivedAmount(), TableType.MAIN_TAB);
-						
-						// Save Movements for Manual Advise
-						ManualAdviseMovements movement = new ManualAdviseMovements();
-						movement.setAdviseID(allocation.getAllocationTo());
-						movement.setPayAgainstID(receiptID);
-						movement.setMovementDate(DateUtility.getAppDate());
-						movement.setMovementAmount(allocation.getPaidAmount().add(allocation.getWaivedAmount()));
-						movement.setPaidAmount(allocation.getPaidAmount());
-						movement.setWaivedAmount(allocation.getWaivedAmount());
-						getManualAdviseDAO().saveMovement(movement);
 					}
 				}
 			}
@@ -819,7 +821,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				details = processingDocumentDetailsList(details, "", rceiptData.getFinanceDetail().getFinScheduleData()
 						.getFinanceMain(), receiptHeader.getReceiptPurpose());
 				auditDetails.addAll(details);
-				listDocDeletion(rceiptData.getFinanceDetail(), "_Temp");
+				listDocDeletion(rceiptData.getFinanceDetail(), TableType.TEMP_TAB.getSuffix());
 			}
 			
 			// set Check list details Audit
@@ -833,14 +835,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			
 			// ScheduleDetails delete
 			//=======================================
-			listDeletion(finReference, "_Temp");
+			listDeletion(finReference, TableType.TEMP_TAB.getSuffix());
 			
 			// Fee charges deletion
 			List<AuditDetail> tempAuditDetailList = new ArrayList<AuditDetail>();
 			
 			// Checklist Details delete
 			//=======================================
-			tempAuditDetailList.addAll(getCheckListDetailService().delete(rceiptData.getFinanceDetail(), "_Temp", tranType));
+			tempAuditDetailList.addAll(getCheckListDetailService().delete(rceiptData.getFinanceDetail(), TableType.TEMP_TAB.getSuffix(), tranType));
 			
 			// Delete and Save Repayments Schedule details by setting Repay Header ID
 			getFinanceRepaymentsDAO().deleteRpySchdList(finReference, TableType.TEMP_TAB.getSuffix());
@@ -853,6 +855,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			
 			// Receipt Allocation Details
 			getAllocationDetailDAO().deleteByReceiptID(receiptID, TableType.TEMP_TAB);
+			
+			// Delete Manual Advise Movements
+			getManualAdviseDAO().deleteMovementsByReceiptID(receiptID, TableType.TEMP_TAB.getSuffix());
 			
 			// Delete Receipt Header
 			getFinReceiptHeaderDAO().deleteByReceiptID(receiptID, TableType.TEMP_TAB);
@@ -1047,7 +1052,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		FinanceMain tempFinanceMain = null;
 		if (financeMain.isWorkflow()) {
-			tempFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "_Temp", false);
+			tempFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getId(), TableType.TEMP_TAB.getSuffix(), false);
 		}
 		FinanceMain befFinanceMain = getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "", false);
 		FinanceMain oldFinanceMain = financeMain.getBefImage();
@@ -1133,7 +1138,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				&& "doApprove".equals(method) && StringUtils.isNotEmpty(financeMain.getFinCommitmentRef())) {
 
 			Commitment tempcommitment = getCommitmentDAO()
-					.getCommitmentById(financeMain.getFinCommitmentRef(), "_Temp");
+					.getCommitmentById(financeMain.getFinCommitmentRef(), TableType.TEMP_TAB.getSuffix());
 			if (tempcommitment != null && tempcommitment.isRevolving()) {
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
 						"30538", errParm, valueParm), usrLanguage));
@@ -1186,7 +1191,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						auditTranType, method));
 			}
 		} else {
-			String tableType = "_Temp";
+			String tableType = TableType.TEMP_TAB.getSuffix();
 			if (financeDetail.getFinScheduleData().getFinanceMain().getRecordType()
 					.equals(PennantConstants.RECORD_TYPE_DEL)) {
 				tableType = "";
