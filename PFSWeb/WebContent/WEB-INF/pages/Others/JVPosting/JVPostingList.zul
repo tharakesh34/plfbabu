@@ -72,7 +72,7 @@
 									<listbox
 										id="sortOperator_BatchReference" width="43px" mold="select"
 										rows="1" />
-									<longbox id="batchReference"
+									<textbox id="batchReference"
 										width="150px" maxlength="50" />
 									<label
 										id="label_JVPostingList_Batch"

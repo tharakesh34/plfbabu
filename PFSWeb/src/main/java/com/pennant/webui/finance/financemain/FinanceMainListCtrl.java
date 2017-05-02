@@ -694,6 +694,11 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		 * FinanceMain. For handed over these parameter only a Map is accepted. So we put the FinanceMain object in a
 		 * HashMap.
 		 */
+		if (usrfinRolesList == null || usrfinRolesList.isEmpty()) {
+			  MessageUtil.showError(Labels.getLabel("USER_FINROLES_NOTASSIGNED"));
+			return;
+		}
+		
 		Map<String, Object> map = getDefaultArguments();
 		map.put("financeMainListCtrl", this);
 		map.put("searchObject", this.searchObj);
@@ -891,6 +896,10 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		this.searchObj.clearFilters();
 		this.searchObj.clearSorts();
+		if (usrfinRolesList == null || usrfinRolesList.isEmpty()) {
+			this.listBoxFinanceMain.setEmptyMessage(Labels.getLabel("USER_FINROLES_EMPTY"));
+			return;
+		}
 
 		// FIXME: Below fields are not part of ZUL or visible FALSE
 		/*
@@ -909,34 +918,34 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			filters[1] = new Filter("FinPreApprovedRef", FinanceConstants.FINSER_EVENT_PREAPPROVAL, Filter.OP_NULL);
 			this.searchObj.addFilterOr(filters);
 		}
-		
+
 		this.searchObj.addFilter(new Filter("RcdMaintainSts", "", Filter.OP_EQUAL));
-		
+
 		StringBuilder whereClause = new StringBuilder();
-		
-			for (String role : usrfinRolesList) {
-				if (whereClause.length() > 0) {
-					whereClause.append(" OR ");
-				}
 
-				whereClause.append("(',' ");
-
-				whereClause.append(SysParamUtil.dbQueryConcat);
-				whereClause.append(" nextRoleCode ");
-				whereClause.append(SysParamUtil.dbQueryConcat);
-				whereClause.append(" ',' LIKE '%,");
-				whereClause.append(role);
-				whereClause.append(",%')");
+		for (String role : usrfinRolesList) {
+			if (whereClause.length() > 0) {
+				whereClause.append(" OR ");
 			}
 
-			whereClause.append(" ) AND ( ");
-			whereClause.append("(");
-			whereClause.append(getUsrFinAuthenticationQry(false));
-			whereClause.append(")");
+			whereClause.append("(',' ");
 
-			if (!"".equals(whereClause.toString())) {
-				this.searchObj.addWhereClause(whereClause.toString());
-			}
+			whereClause.append(SysParamUtil.dbQueryConcat);
+			whereClause.append(" nextRoleCode ");
+			whereClause.append(SysParamUtil.dbQueryConcat);
+			whereClause.append(" ',' LIKE '%,");
+			whereClause.append(role);
+			whereClause.append(",%')");
+		}
+
+		whereClause.append(" ) AND ( ");
+		whereClause.append("(");
+		whereClause.append(getUsrFinAuthenticationQry(false));
+		whereClause.append(")");
+
+		if (!"".equals(whereClause.toString())) {
+			this.searchObj.addWhereClause(whereClause.toString());
+		}
 
 		this.searchObj.addSortDesc("Priority");
 
@@ -1004,9 +1013,9 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// Here added filters for If InitiateDate value is null, when search
 		// with opreator(<>) value not papulated.
 		if (this.initiateDate.getValue() != null) {
-				searchObj = getSearchFilter(searchObj, this.sortOperator_InitiateDate.getSelectedItem(),
-						DateUtility.formatDate(this.initiateDate.getValue(), PennantConstants.DBDateTimeFormat),
-						"InitiateDate");
+			searchObj = getSearchFilter(searchObj, this.sortOperator_InitiateDate.getSelectedItem(),
+					DateUtility.formatDate(this.initiateDate.getValue(), PennantConstants.DBDateTimeFormat),
+					"InitiateDate");
 		}
 		// finPromotion
 		if (StringUtils.isNotBlank(this.finPromotion.getValue())) {

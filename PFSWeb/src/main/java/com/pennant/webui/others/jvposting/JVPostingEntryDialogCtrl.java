@@ -599,11 +599,15 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 				doEdit();
 			} else {
 				this.btnCtrl.setInitEdit();
-				doReadOnly(true);
+				if(PennantConstants.RCD_STATUS_SUBMITTED.equals(this.jVPosting.getRecordStatus())){
+					doReadOnly(true);
+				}else{					
+					doReadOnly(false);
+				}
 				btnCancel.setVisible(false);
 			}
 		}
-		
+		this.batchReference.setReadonly(true);
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aJVPostingEntry);
@@ -684,9 +688,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 
 		if (getJVPostingEntry().isNewRecord()) {
 			this.btnCancel.setVisible(false);
-		} else {
-			this.btnCancel.setVisible(true);
-		}
+		} 
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

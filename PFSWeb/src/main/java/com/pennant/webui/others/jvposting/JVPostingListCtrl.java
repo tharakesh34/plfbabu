@@ -53,7 +53,6 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
@@ -101,7 +100,7 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 
 	private transient JVPostingService jVPostingService;
 
-	protected Longbox batchReference;
+	protected Textbox batchReference;
 	protected Listbox sortOperator_BatchReference;
 
 	protected Textbox batch;
@@ -152,7 +151,7 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 		registerButton(button_JVPostingList_JVPostingSearch);
 		registerButton(button_JVPostingList_NewJVPosting, "button_JVPostingList_NewJVPosting", true);
 
-		registerField("batchReference", listheader_BatchReference, SortOrder.ASC, batchReference,sortOperator_BatchReference, Operators.NUMERIC);
+		registerField("batchReference", listheader_BatchReference, SortOrder.ASC, batchReference,sortOperator_BatchReference, Operators.STRING);
 		registerField("batch", listheader_Batch, SortOrder.NONE, batch, sortOperator_Batch, Operators.STRING);
 		registerField("debitCount", listheader_DebitCount);
 		registerField("creditsCount", listheader_CreditsCount);
