@@ -36,7 +36,7 @@ public class AutoDisburseFileResponseService extends BajajService {
 		directory = new File(BajajInterfaceConstants.autoDisbFileLoaction);
 
 		if (!directory.exists()) {
-			throw new JobExecutionException("Auto disbursement response file location not available.");
+			logger.warn("Auto disbursement response file location [ "+directory+" ] not available.");
 		}
 
 		BajajInterfaceConstants.autoDisbResFileJob = true;
