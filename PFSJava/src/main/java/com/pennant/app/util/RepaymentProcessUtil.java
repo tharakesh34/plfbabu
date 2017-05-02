@@ -3,12 +3,12 @@ package com.pennant.app.util;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -19,7 +19,11 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
+import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
@@ -27,13 +31,16 @@ import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueTotals;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
+import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -41,14 +48,19 @@ import com.pennant.exception.PFFInterfaceException;
 import com.pennanttech.pff.core.TableType;
 
 public class RepaymentProcessUtil {
-	private final static Logger		logger	= Logger.getLogger(RepaymentProcessUtil.class);
+	private final static Logger			logger	= Logger.getLogger(RepaymentProcessUtil.class);
 
-	private RepaymentPostingsUtil	repayPostingUtil;
-	private FinODDetailsDAO			finODDetailsDAO;
-	private FinExcessAmountDAO		finExcessAmountDAO;
-	private FinReceiptHeaderDAO		finReceiptHeaderDAO;
-	private FinReceiptDetailDAO		finReceiptDetailDAO;
-	private FinanceRepaymentsDAO	financeRepaymentsDAO;
+	private RepaymentPostingsUtil		repayPostingUtil;
+	private FinODDetailsDAO				finODDetailsDAO;
+	private FinExcessAmountDAO			finExcessAmountDAO;
+	private FinReceiptHeaderDAO			finReceiptHeaderDAO;
+	private FinReceiptDetailDAO			finReceiptDetailDAO;
+	private FinanceRepaymentsDAO		financeRepaymentsDAO;
+
+	private FinLogEntryDetailDAO		finLogEntryDetailDAO;
+	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
+	private FinanceDisbursementDAO		financeDisbursementDAO;
+	private RepayInstructionDAO			repayInstructionDAO;
 
 	public RepaymentProcessUtil() {
 		super();
@@ -57,6 +69,8 @@ public class RepaymentProcessUtil {
 	/**
 	 * Method for Calculation of Schedule payment based on Allocated Details from Receipts
 	 * 
+	 * @param scheduleData
+	 * 
 	 * @param receiptData
 	 * @param scheduleData
 	 * @return
@@ -64,32 +78,39 @@ public class RepaymentProcessUtil {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	@SuppressWarnings("unchecked")
-	public void recalReceipt(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail,FinReceiptHeader receiptHeader,String repayHierarchy)
+	public void calcualteAndPayReceipt(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
+			FinanceProfitDetail profitDetail, FinReceiptHeader receiptHeader, String repayHierarchy, Date valuedate)
 			throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
+		String finrefer = financeMain.getFinReference();
+		//Prepare schedule data for log
+		FinScheduleData scheduleData = new FinScheduleData();
+		scheduleData.setFinanceScheduleDetails(scheduleDetails);
+		scheduleData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finrefer, "",
+				false));
+		scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finrefer, "", false));
+		List<FinReceiptDetail> receiptDetails = receiptHeader.getReceiptDetails();
 
-		List<FinReceiptDetail> list = receiptHeader.getReceiptDetails();
+		// Fetch total overdue details
+		FinODDetails overdue = getFinODDetailsDAO().getFinODyFinRefSchDate(finrefer, valuedate);
 
-		for (FinReceiptDetail receiptDetail : list) {
+		for (FinReceiptDetail receiptDetail : receiptDetails) {
 
+			FinanceScheduleDetail curSchd = null;
+
+			for (FinanceScheduleDetail financeScheduleDetail : scheduleDetails) {
+				Date schdDate = financeScheduleDetail.getSchDate();
+				// Skip if Repayment date after Current Business date
+				if (schdDate.compareTo(valuedate) != 0) {
+					continue;
+				}
+				curSchd = financeScheduleDetail;
+			}
+			
 			// If no balance for repayment then return with out calculation
 			BigDecimal totalReceiptAmt = receiptDetail.getAmount();
 			if (totalReceiptAmt.compareTo(BigDecimal.ZERO) == 0) {
 				return;
-			}
-
-			// Fetch total overdue details
-			Map<Date, FinODDetails> overdueMap = new HashMap<Date, FinODDetails>();
-			List<FinODDetails> overdueList = getFinODDetailsDAO().getFinODBalByFinRef(financeMain.getFinReference());
-			if (overdueList != null && !overdueList.isEmpty()) {
-				for (int m = 0; m < overdueList.size(); m++) {
-					if (overdueMap.containsKey(overdueList.get(m).getFinODSchdDate())) {
-						overdueMap.remove(overdueList.get(m).getFinODSchdDate());
-					}
-					overdueMap.put(overdueList.get(m).getFinODSchdDate(), overdueList.get(m));
-				}
 			}
 
 			scheduleDetails = sortSchdDetails(scheduleDetails);
@@ -106,129 +127,112 @@ public class RepaymentProcessUtil {
 			Date valueDate = receiptDetail.getValueDate();
 
 			// Load Pending Schedules until balance available for payment
-			for (int s = 1; s < scheduleDetails.size(); s++) {
-				FinanceScheduleDetail curSchd = scheduleDetails.get(s);
-				Date schdDate = curSchd.getSchDate();
-				RepayScheduleDetail rsd = null;
+			RepayScheduleDetail rsd = null;
 
-				// Skip if Repayment date after Current Business date
-				if (schdDate.compareTo(valueDate) != 0) {
-					continue;
-				}
+			for (int j = 0; j < rpyOrder.length; j++) {
 
-				for (int j = 0; j < rpyOrder.length; j++) {
+				char repayTo = rpyOrder[j];
+				if (repayTo == RepayConstants.REPAY_PRINCIPAL) {
 
-					char repayTo = rpyOrder[j];
-					if (repayTo == RepayConstants.REPAY_PRINCIPAL) {
-
-						BigDecimal balPri = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
-						if (balPri.compareTo(BigDecimal.ZERO) > 0) {
-							if (balPri.compareTo(totalReceiptAmt) > 0) {
-								balPri = totalReceiptAmt;
-							}
-							rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPri, valueDate);
-							// Reset Total Receipt Amount
-							totalReceiptAmt = totalReceiptAmt.subtract(balPri);
-							totPriPaidNow = totPriPaidNow.add(balPri);
+					BigDecimal balPri = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
+					if (balPri.compareTo(BigDecimal.ZERO) > 0) {
+						if (balPri.compareTo(totalReceiptAmt) > 0) {
+							balPri = totalReceiptAmt;
 						}
-					} else if (repayTo == RepayConstants.REPAY_PROFIT) {
+						rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPri, valueDate);
+						// Reset Total Receipt Amount
+						totalReceiptAmt = totalReceiptAmt.subtract(balPri);
+						totPriPaidNow = totPriPaidNow.add(balPri);
+					}
+				} else if (repayTo == RepayConstants.REPAY_PROFIT) {
 
-						String profit = ImplementationConstants.REPAY_INTEREST_HIERARCHY;
-						char[] pftPayOrder = profit.toCharArray();
-						for (char pftPayTo : pftPayOrder) {
-							if (pftPayTo == RepayConstants.REPAY_PROFIT) {
+					String profit = ImplementationConstants.REPAY_INTEREST_HIERARCHY;
+					char[] pftPayOrder = profit.toCharArray();
+					for (char pftPayTo : pftPayOrder) {
+						if (pftPayTo == RepayConstants.REPAY_PROFIT) {
 
-								BigDecimal balPft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
-								if (balPft.compareTo(BigDecimal.ZERO) > 0) {
-									if (balPft.compareTo(totalReceiptAmt) > 0) {
-										balPft = totalReceiptAmt;
-									}
-									rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPft, valueDate);
-									// Reset Total Receipt Amount
-									totalReceiptAmt = totalReceiptAmt.subtract(balPft);
-									totPftPaidNow = totPftPaidNow.add(balPft);
+							BigDecimal balPft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
+							if (balPft.compareTo(BigDecimal.ZERO) > 0) {
+								if (balPft.compareTo(totalReceiptAmt) > 0) {
+									balPft = totalReceiptAmt;
 								}
-
-							} else if (pftPayTo == RepayConstants.REPAY_LATEPAY_PROFIT) {
-
-								FinODDetails overdue = overdueMap.get(schdDate);
-								if (overdue != null) {
-									BigDecimal balLatePft = overdue.getLPIBal();
-									if (balLatePft.compareTo(BigDecimal.ZERO) > 0) {
-										if (balLatePft.compareTo(totalReceiptAmt) > 0) {
-											balLatePft = totalReceiptAmt;
-										}
-										rsd = prepareRpyRecord(curSchd, rsd, repayTo, balLatePft, valueDate);
-
-										// Reset Total Receipt Amount
-										totalReceiptAmt = totalReceiptAmt.subtract(balLatePft);
-										totLPftPaidNow = totLPftPaidNow.add(balLatePft);
-									}
-								}
-							}
-						}
-
-					} else if (repayTo == RepayConstants.REPAY_PENALTY) {
-
-						FinODDetails overdue = overdueMap.get(schdDate);
-						if (overdue != null) {
-							BigDecimal balPenalty = overdue.getTotPenaltyBal();
-							if (balPenalty.compareTo(BigDecimal.ZERO) > 0) {
-								if (balPenalty.compareTo(totalReceiptAmt) > 0) {
-									balPenalty = totalReceiptAmt;
-								}
-								rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPenalty, valueDate);
-
+								rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPft, valueDate);
 								// Reset Total Receipt Amount
-								totalReceiptAmt = totalReceiptAmt.subtract(balPenalty);
-								totPenaltyPaidNow = totPenaltyPaidNow.add(balPenalty);
+								totalReceiptAmt = totalReceiptAmt.subtract(balPft);
+								totPftPaidNow = totPftPaidNow.add(balPft);
 							}
-						}
 
-					} else if (repayTo == RepayConstants.REPAY_OTHERS) {
+						} else if (pftPayTo == RepayConstants.REPAY_LATEPAY_PROFIT) {
 
-						// If Schedule has Unpaid Fee Amount
-						BigDecimal balFee = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
-						if (balFee.compareTo(BigDecimal.ZERO) > 0) {
-							if (balFee.compareTo(totalReceiptAmt) > 0) {
-								balFee = totalReceiptAmt;
+							if (overdue != null) {
+								BigDecimal balLatePft = overdue.getLPIBal();
+								if (balLatePft.compareTo(BigDecimal.ZERO) > 0) {
+									if (balLatePft.compareTo(totalReceiptAmt) > 0) {
+										balLatePft = totalReceiptAmt;
+									}
+									rsd = prepareRpyRecord(curSchd, rsd, repayTo, balLatePft, valueDate);
+
+									// Reset Total Receipt Amount
+									totalReceiptAmt = totalReceiptAmt.subtract(balLatePft);
+									totLPftPaidNow = totLPftPaidNow.add(balLatePft);
+								}
 							}
-							rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_FEE, balFee, valueDate);
-
-							// Reset Total Receipt Amount
-							totalReceiptAmt = totalReceiptAmt.subtract(balFee);
-							totFeePaidNow = totFeePaidNow.add(balFee);
-						}
-
-						// If Schedule has Unpaid Insurance Amount
-						BigDecimal balIns = curSchd.getInsSchd().subtract(curSchd.getSchdInsPaid());
-						if (balIns.compareTo(BigDecimal.ZERO) > 0) {
-							if (balIns.compareTo(totalReceiptAmt) > 0) {
-								balIns = totalReceiptAmt;
-							}
-							rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_INS, balIns, valueDate);
-
-							// Reset Total Receipt Amount
-							totalReceiptAmt = totalReceiptAmt.subtract(balIns);
-							totInsPaidNow = totInsPaidNow.add(balIns);
 						}
 					}
 
-					// No more Receipt amount left for next schedules
-					if (totalReceiptAmt.compareTo(BigDecimal.ZERO) == 0) {
-						break;
-					}
-				}
+				} else if (repayTo == RepayConstants.REPAY_PENALTY) {
+					if (overdue != null) {
+						BigDecimal balPenalty = overdue.getTotPenaltyBal();
+						if (balPenalty.compareTo(BigDecimal.ZERO) > 0) {
+							if (balPenalty.compareTo(totalReceiptAmt) > 0) {
+								balPenalty = totalReceiptAmt;
+							}
+							rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPenalty, valueDate);
 
-				// Add Repay Schedule detail List
-				if (rsd != null) {
-					pastdueRpySchdList.add(rsd);
+							// Reset Total Receipt Amount
+							totalReceiptAmt = totalReceiptAmt.subtract(balPenalty);
+							totPenaltyPaidNow = totPenaltyPaidNow.add(balPenalty);
+						}
+					}
+
+				} else if (repayTo == RepayConstants.REPAY_OTHERS) {
+
+					// If Schedule has Unpaid Fee Amount
+					BigDecimal balFee = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
+					if (balFee.compareTo(BigDecimal.ZERO) > 0) {
+						if (balFee.compareTo(totalReceiptAmt) > 0) {
+							balFee = totalReceiptAmt;
+						}
+						rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_FEE, balFee, valueDate);
+
+						// Reset Total Receipt Amount
+						totalReceiptAmt = totalReceiptAmt.subtract(balFee);
+						totFeePaidNow = totFeePaidNow.add(balFee);
+					}
+
+					// If Schedule has Unpaid Insurance Amount
+					BigDecimal balIns = curSchd.getInsSchd().subtract(curSchd.getSchdInsPaid());
+					if (balIns.compareTo(BigDecimal.ZERO) > 0) {
+						if (balIns.compareTo(totalReceiptAmt) > 0) {
+							balIns = totalReceiptAmt;
+						}
+						rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_INS, balIns, valueDate);
+
+						// Reset Total Receipt Amount
+						totalReceiptAmt = totalReceiptAmt.subtract(balIns);
+						totInsPaidNow = totInsPaidNow.add(balIns);
+					}
 				}
 
 				// No more Receipt amount left for next schedules
 				if (totalReceiptAmt.compareTo(BigDecimal.ZERO) == 0) {
 					break;
 				}
+			}
+
+			// Add Repay Schedule detail List
+			if (rsd != null) {
+				pastdueRpySchdList.add(rsd);
 			}
 
 			FinRepayHeader repayHeader = null;
@@ -275,25 +279,69 @@ public class RepaymentProcessUtil {
 
 			// Adding Repay Headers to Receipt Details
 			receiptDetail.setRepayHeaders(repayHeaderList);
-			long linkedTranId = 0;
+		}
+
+		scheduleDetails=doProcessReceipts(financeMain, scheduleDetails, profitDetail, receiptHeader, scheduleData, valuedate);
+		doSaveReceipts(receiptHeader);
+
+		logger.debug("Leaving");
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<FinanceScheduleDetail> doProcessReceipts(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
+			FinanceProfitDetail profitDetail, FinReceiptHeader receiptHeader, FinScheduleData logScheduleData,
+			Date valueDate) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+
+		long linkedTranId = 0;
+		String finReference = financeMain.getFinReference();
+		//Create log entry for Action for Schedule Modification
+		FinLogEntryDetail entryDetail = null;
+		long logKey = 0;
+		Date postDate = getPostDate(DateUtility.getAppDate());
+		if (receiptHeader.getAllocations() != null && !receiptHeader.getAllocations().isEmpty()) {
+			entryDetail = new FinLogEntryDetail();
+			entryDetail.setFinReference(finReference);
+			entryDetail.setEventAction(receiptHeader.getReceiptPurpose());
+			entryDetail.setSchdlRecal(false);
+			entryDetail.setPostDate(postDate);
+			entryDetail.setReversalCompleted(false);
+			logKey = getFinLogEntryDetailDAO().save(entryDetail);
+
+			//Save Schedule Details For Future Modifications
+			FinScheduleData oldFinSchdData = getFinSchDataByFinRef(finReference, "");
+			oldFinSchdData.setFinanceMain(financeMain);
+			oldFinSchdData.setFinReference(finReference);
+			listSave(oldFinSchdData, "_Log", logKey);
+		}
+		List<FinReceiptDetail> receiptDetailList = receiptHeader.getReceiptDetails();
+		for (int i = 0; i < receiptDetailList.size(); i++) {
+
+			// Repay Header list process individually based on List existence
+			List<FinRepayHeader> repayHeaderList = receiptDetailList.get(i).getRepayHeaders();
+			
+			if(i != 0){
+				postDate = getPostDate(DateUtility.getAppDate());
+			}
 
 			for (int j = 0; j < repayHeaderList.size(); j++) {
 
-				repayHeader = repayHeaderList.get(j);
+				FinRepayHeader repayHeader = repayHeaderList.get(j);
 				if (!StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent())
 						&& !StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent())
 						&& !StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())) {
+
 					// Update Excess amount (Adding amount and balance updation)
-					if (receiptDetail.getPayAgainstID() != 0 && receiptDetail.getPayAgainstID() != Long.MIN_VALUE) {
-						getFinExcessAmountDAO().updateExcessBal(receiptDetail.getPayAgainstID(),
+					if (receiptDetailList.get(i).getPayAgainstID() != 0
+							&& receiptDetailList.get(i).getPayAgainstID() != Long.MIN_VALUE) {
+						getFinExcessAmountDAO().updateExcessBal(receiptDetailList.get(i).getPayAgainstID(),
 								repayHeader.getRepayAmount());
 					} else {
-						int recordCount = getFinExcessAmountDAO().updateExcessBalByRef(financeMain.getFinReference(),
+						int recordCount = getFinExcessAmountDAO().updateExcessBalByRef(finReference,
 								repayHeader.getFinEvent(), repayHeader.getRepayAmount());
 						// If record Not found then record count should be zero. Need to create new Excess Record
 						if (recordCount <= 0) {
 							FinExcessAmount excess = new FinExcessAmount();
-							excess.setFinReference(financeMain.getFinReference());
+							excess.setFinReference(finReference);
 							excess.setAmountType(repayHeader.getFinEvent());
 							excess.setAmount(repayHeader.getRepayAmount());
 							excess.setBalanceAmt(repayHeader.getRepayAmount());
@@ -306,9 +354,26 @@ public class RepaymentProcessUtil {
 					continue;
 				}
 
+				//Create log entry for Action for Schedule Modification
+				if (i != 0 && j == 0) {
+					entryDetail = new FinLogEntryDetail();
+					entryDetail.setFinReference(finReference);
+					entryDetail.setEventAction(receiptHeader.getReceiptPurpose());
+					entryDetail.setSchdlRecal(true);
+					entryDetail.setPostDate(postDate);
+					entryDetail.setReversalCompleted(false);
+					logKey = getFinLogEntryDetailDAO().save(entryDetail);
+
+					//Save Schedule Details For Future Modifications
+					logScheduleData.setFinanceMain(financeMain);
+					logScheduleData.setFinReference(finReference);
+					logScheduleData.setFinanceScheduleDetails(scheduleDetails);
+					listSave(logScheduleData, "_Log", logKey);
+				}
+
 				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
 				List<Object> returnList = processRepaymentPostings(financeMain, scheduleDetails, profitDetail,
-						repaySchdList, AccountEventConstants.ACCEVENT_REPAY);
+						repaySchdList, getEventCode(repayHeader.getFinEvent()), valueDate);
 
 				if (!(Boolean) returnList.get(0)) {
 					String errParm = (String) returnList.get(1);
@@ -318,6 +383,8 @@ public class RepaymentProcessUtil {
 				//Update Linked Transaction ID
 				linkedTranId = (long) returnList.get(1);
 				repayHeader.setLinkedTranId(linkedTranId);
+				repayHeader.setValueDate(postDate);
+				financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().add(repayHeader.getPriAmount()));
 
 				String finAccount = (String) returnList.get(2);
 				if (finAccount != null) {
@@ -325,13 +392,9 @@ public class RepaymentProcessUtil {
 				}
 				scheduleDetails = (List<FinanceScheduleDetail>) returnList.get(3);
 			}
-			overdueList = null;
-			overdueMap = null;
 		}
+		return scheduleDetails;
 
-		doSaveReceipts(receiptHeader);
-
-		logger.debug("Leaving");
 	}
 
 	public void doSaveReceipts(FinReceiptHeader receiptHeader) {
@@ -348,20 +411,22 @@ public class RepaymentProcessUtil {
 			if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)
 					|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)) {
 
+				long payAgainstID = receiptDetail.getPayAgainstID();
+
 				// Excess Amount make utilization
-				getFinExcessAmountDAO().updateUtilise(receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
-
-				// Delete Reserved Log against Excess and Receipt ID
-				getFinExcessAmountDAO().deleteExcessReserve(receiptID, receiptDetail.getPayAgainstID());
-
-				// Excess Movement Creation
-				FinExcessMovement movement = new FinExcessMovement();
-				movement.setExcessID(receiptDetail.getPayAgainstID());
-				movement.setReceiptID(receiptID);
-				movement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
-				movement.setTranType(AccountConstants.TRANTYPE_DEBIT);
-				movement.setAmount(receiptDetail.getAmount());
-				getFinExcessAmountDAO().saveExcessMovement(movement);
+				if (payAgainstID != 0) {
+					getFinExcessAmountDAO().updateUtilise(payAgainstID, receiptDetail.getAmount());
+					// Delete Reserved Log against Excess and Receipt ID
+					getFinExcessAmountDAO().deleteExcessReserve(receiptID, payAgainstID);
+					// Excess Movement Creation
+					FinExcessMovement movement = new FinExcessMovement();
+					movement.setExcessID(payAgainstID);
+					movement.setReceiptID(receiptID);
+					movement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
+					movement.setTranType(AccountConstants.TRANTYPE_DEBIT);
+					movement.setAmount(receiptDetail.getAmount());
+					getFinExcessAmountDAO().saveExcessMovement(movement);
+				}
 
 			}
 
@@ -398,9 +463,9 @@ public class RepaymentProcessUtil {
 	 * @throws InvocationTargetException
 	 */
 	public List<Object> processRepaymentPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCode)
+			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCode, Date valuedate)
 			throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
-		return doRepayPostings(financeMain, scheduleDetails, profitDetail, repaySchdList, eventCode);
+		return doRepayPostings(financeMain, scheduleDetails, profitDetail, repaySchdList, eventCode, valuedate);
 	}
 
 	/**
@@ -430,7 +495,7 @@ public class RepaymentProcessUtil {
 	 * @throws InvocationTargetException
 	 */
 	private List<Object> doRepayPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCode)
+			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCode, Date valuedate)
 			throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -459,26 +524,41 @@ public class RepaymentProcessUtil {
 					finRepayQueue.setChargeType(repaySchdList.get(i).getChargeType());
 
 					// Total Repayments Calculation for Principal, Profit 
-					repayQueueTotals.setPrincipal(repayQueueTotals.getPrincipal().add(repaySchdList.get(i).getPrincipalSchdPayNow()));
-					repayQueueTotals.setProfit(repayQueueTotals.getProfit().add(repaySchdList.get(i).getProfitSchdPayNow()));
-					repayQueueTotals.setLateProfit(repayQueueTotals.getLateProfit().add(repaySchdList.get(i).getLatePftSchdPayNow()));
-					repayQueueTotals.setPenalty(repayQueueTotals.getPenalty().add(repaySchdList.get(i).getPenaltyPayNow()));
+					repayQueueTotals.setPrincipal(repayQueueTotals.getPrincipal().add(
+							repaySchdList.get(i).getPrincipalSchdPayNow()));
+					repayQueueTotals.setProfit(repayQueueTotals.getProfit().add(
+							repaySchdList.get(i).getProfitSchdPayNow()));
+					repayQueueTotals.setLateProfit(repayQueueTotals.getLateProfit().add(
+							repaySchdList.get(i).getLatePftSchdPayNow()));
+					repayQueueTotals.setPenalty(repayQueueTotals.getPenalty().add(
+							repaySchdList.get(i).getPenaltyPayNow()));
 
 					// Fee Details
 					repayQueueTotals.setFee(repayQueueTotals.getFee().add(repaySchdList.get(i).getSchdFeePayNow()));
-					repayQueueTotals.setInsurance(repayQueueTotals.getInsurance().add(repaySchdList.get(i).getSchdInsPayNow()));
-					repayQueueTotals.setSuplRent(repayQueueTotals.getSuplRent().add(repaySchdList.get(i).getSchdSuplRentPayNow()));
-					repayQueueTotals.setIncrCost(repayQueueTotals.getIncrCost().add(repaySchdList.get(i).getSchdIncrCostPayNow()));
+					repayQueueTotals.setInsurance(repayQueueTotals.getInsurance().add(
+							repaySchdList.get(i).getSchdInsPayNow()));
+					repayQueueTotals.setSuplRent(repayQueueTotals.getSuplRent().add(
+							repaySchdList.get(i).getSchdSuplRentPayNow()));
+					repayQueueTotals.setIncrCost(repayQueueTotals.getIncrCost().add(
+							repaySchdList.get(i).getSchdIncrCostPayNow()));
 
 					// Waiver Amounts
-					repayQueueTotals.setPriWaived(repayQueueTotals.getPriWaived().add(finRepayQueue.getSchdPriWaivedNow()));
-					repayQueueTotals.setPftWaived(repayQueueTotals.getPftWaived().add(finRepayQueue.getSchdPftWaivedNow()));
-					repayQueueTotals.setLatePftWaived(repayQueueTotals.getLatePftWaived().add(finRepayQueue.getLatePayPftWaivedNow()));
-					repayQueueTotals.setPenaltyWaived(repayQueueTotals.getPenaltyWaived().add(finRepayQueue.getWaivedAmount()));
-					repayQueueTotals.setFeeWaived(repayQueueTotals.getFeeWaived().add(finRepayQueue.getSchdFeeWaivedNow()));
-					repayQueueTotals.setInsWaived(repayQueueTotals.getInsWaived().add(finRepayQueue.getSchdInsWaivedNow()));
-					repayQueueTotals.setSuplRentWaived(repayQueueTotals.getSuplRentWaived().add(finRepayQueue.getSchdSuplRentWaivedNow()));
-					repayQueueTotals.setIncrCostWaived(repayQueueTotals.getIncrCostWaived().add(finRepayQueue.getSchdIncrCostWaivedNow()));
+					repayQueueTotals.setPriWaived(repayQueueTotals.getPriWaived().add(
+							finRepayQueue.getSchdPriWaivedNow()));
+					repayQueueTotals.setPftWaived(repayQueueTotals.getPftWaived().add(
+							finRepayQueue.getSchdPftWaivedNow()));
+					repayQueueTotals.setLatePftWaived(repayQueueTotals.getLatePftWaived().add(
+							finRepayQueue.getLatePayPftWaivedNow()));
+					repayQueueTotals.setPenaltyWaived(repayQueueTotals.getPenaltyWaived().add(
+							finRepayQueue.getWaivedAmount()));
+					repayQueueTotals.setFeeWaived(repayQueueTotals.getFeeWaived().add(
+							finRepayQueue.getSchdFeeWaivedNow()));
+					repayQueueTotals.setInsWaived(repayQueueTotals.getInsWaived().add(
+							finRepayQueue.getSchdInsWaivedNow()));
+					repayQueueTotals.setSuplRentWaived(repayQueueTotals.getSuplRentWaived().add(
+							finRepayQueue.getSchdSuplRentWaivedNow()));
+					repayQueueTotals.setIncrCostWaived(repayQueueTotals.getIncrCostWaived().add(
+							finRepayQueue.getSchdIncrCostWaivedNow()));
 
 					finRepayQueues.add(finRepayQueue);
 				}
@@ -488,8 +568,7 @@ public class RepaymentProcessUtil {
 			repayQueueTotals.setQueueList(finRepayQueues);
 
 			returnList = getRepayPostingUtil().postingProcess(financeMain, scheduleDetails, profitDetail,
-					repayQueueTotals, eventCode);
-			
+					repayQueueTotals, eventCode, valuedate);
 
 		} catch (PFFInterfaceException e) {
 			logger.error("Exception: ", e);
@@ -655,6 +734,108 @@ public class RepaymentProcessUtil {
 	}
 
 	/**
+	 * Method to get Schedule related data.
+	 * 
+	 * @param finReference
+	 *            (String)
+	 * @param isWIF
+	 *            (boolean)
+	 * **/
+	public FinScheduleData getFinSchDataByFinRef(String finReference, String type) {
+		logger.debug("Entering");
+		FinScheduleData finSchData = new FinScheduleData();
+		finSchData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type,
+				false));
+		finSchData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type,
+				false));
+		finSchData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
+		logger.debug("Leaving");
+		return finSchData;
+	}
+
+	public void listSave(FinScheduleData scheduleData, String tableType, long logKey) {
+		logger.debug("Entering ");
+		HashMap<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
+
+		// Finance Schedule Details
+		for (int i = 0; i < scheduleData.getFinanceScheduleDetails().size(); i++) {
+
+			FinanceScheduleDetail curSchd = scheduleData.getFinanceScheduleDetails().get(i);
+			curSchd.setLastMntBy(scheduleData.getFinanceMain().getLastMntBy());
+			curSchd.setFinReference(scheduleData.getFinReference());
+			int seqNo = 0;
+
+			if (mapDateSeq.containsKey(curSchd.getSchDate())) {
+				seqNo = mapDateSeq.get(curSchd.getSchDate());
+				mapDateSeq.remove(curSchd.getSchDate());
+			}
+			seqNo = seqNo + 1;
+			mapDateSeq.put(curSchd.getSchDate(), seqNo);
+			curSchd.setSchSeq(seqNo);
+			curSchd.setLogKey(logKey);
+		}
+
+		getFinanceScheduleDetailDAO().saveList(scheduleData.getFinanceScheduleDetails(), tableType, false);
+
+		if (logKey != 0) {
+			// Finance Disbursement Details
+			mapDateSeq = new HashMap<Date, Integer>();
+			Date curBDay = DateUtility.getAppDate();
+			for (int i = 0; i < scheduleData.getDisbursementDetails().size(); i++) {
+				scheduleData.getDisbursementDetails().get(i).setFinReference(scheduleData.getFinReference());
+				scheduleData.getDisbursementDetails().get(i).setDisbReqDate(curBDay);
+				scheduleData.getDisbursementDetails().get(i).setDisbIsActive(true);
+				scheduleData.getDisbursementDetails().get(i).setDisbDisbursed(true);
+				scheduleData.getDisbursementDetails().get(i).setLogKey(logKey);
+			}
+			getFinanceDisbursementDAO().saveList(scheduleData.getDisbursementDetails(), tableType, false);
+
+		}
+
+		//Finance Repay Instruction Details
+		if (scheduleData.getRepayInstructions() != null) {
+			for (int i = 0; i < scheduleData.getRepayInstructions().size(); i++) {
+				RepayInstruction curSchd = scheduleData.getRepayInstructions().get(i);
+
+				curSchd.setFinReference(scheduleData.getFinReference());
+				curSchd.setLogKey(logKey);
+			}
+			getRepayInstructionDAO().saveList(scheduleData.getRepayInstructions(), tableType, false);
+		}
+
+		logger.debug("Leaving ");
+	}
+
+	/**
+	 * Method for Fetching Accounting Event Code based on Finance Event Action
+	 * 
+	 * @param finEvent
+	 * @return
+	 */
+	private String getEventCode(String finEvent) {
+
+		if (StringUtils.equals(finEvent, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+			return AccountEventConstants.ACCEVENT_REPAY;
+		} else if (StringUtils.equals(finEvent, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			return AccountEventConstants.ACCEVENT_EARLYPAY;
+		} else if (StringUtils.equals(finEvent, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			return AccountEventConstants.ACCEVENT_EARLYSTL;
+		}
+		return null;
+	}
+	
+	private Date getPostDate(Date appDate){
+		Calendar cal = Calendar.getInstance();
+		Calendar appCal = Calendar.getInstance();
+		cal.setTime(DateUtility.getSysDate());
+		appCal.setTime(appDate);
+		cal.set(Calendar.YEAR, appCal.get(Calendar.YEAR));
+		cal.set(Calendar.MONTH, appCal.get(Calendar.MONTH));
+		cal.set(Calendar.DATE, appCal.get(Calendar.DATE));
+		return cal.getTime();
+	}
+
+	/**
 	 * Method for Sorting Schedule Details
 	 * 
 	 * @param financeScheduleDetail
@@ -724,6 +905,38 @@ public class RepaymentProcessUtil {
 
 	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
 		this.financeRepaymentsDAO = financeRepaymentsDAO;
+	}
+
+	public FinLogEntryDetailDAO getFinLogEntryDetailDAO() {
+		return finLogEntryDetailDAO;
+	}
+
+	public void setFinLogEntryDetailDAO(FinLogEntryDetailDAO finLogEntryDetailDAO) {
+		this.finLogEntryDetailDAO = finLogEntryDetailDAO;
+	}
+
+	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
+		return financeScheduleDetailDAO;
+	}
+
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	public FinanceDisbursementDAO getFinanceDisbursementDAO() {
+		return financeDisbursementDAO;
+	}
+
+	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
+		this.financeDisbursementDAO = financeDisbursementDAO;
+	}
+
+	public RepayInstructionDAO getRepayInstructionDAO() {
+		return repayInstructionDAO;
+	}
+
+	public void setRepayInstructionDAO(RepayInstructionDAO repayInstructionDAO) {
+		this.repayInstructionDAO = repayInstructionDAO;
 	}
 
 }

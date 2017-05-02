@@ -876,5 +876,31 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		logger.debug("Leaving");
 		return null;
 	}
+	
+	@Override
+	public FinODDetails getFinODyFinRefSchDate(String finReference, Date schdate) {
+		logger.debug("Entering");
+
+		FinODDetails finODDetails = new FinODDetails();
+		finODDetails.setFinReference(finReference);
+		finODDetails.setFinODSchdDate(schdate);
+
+		StringBuilder selectSql = new StringBuilder("Select FinODSchdDate, TotPenaltyBal, LPIBal ");
+		selectSql.append(" From FinODDetails");
+		selectSql.append(" Where FinReference =:FinReference and FinODSchdDate=:FinODSchdDate");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
+		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+
+		try {
+			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			finODDetails = null;
+		}
+		logger.debug("Leaving");
+		return null;
+	}
 
 }

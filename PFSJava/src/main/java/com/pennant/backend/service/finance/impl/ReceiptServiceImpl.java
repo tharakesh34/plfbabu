@@ -3,7 +3,6 @@ package com.pennant.backend.service.finance.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -36,12 +35,10 @@ import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinInsurances;
-import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -269,9 +266,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				
 				// Fetch Excess Amount Details
 				receiptData.getReceiptHeader().setExcessAmounts(getFinExcessAmountDAO().getExcessAmountsByRef(finReference));
-				
-				// Fetch Excess Amount Details
-				receiptData.getReceiptHeader().setExcessReserves(getFinExcessAmountDAO().getExcessReserveList(receiptData.getReceiptHeader().getReceiptID()));
 				
 				// Receipt Allocation Details
 				receiptData.getReceiptHeader().setAllocations(getAllocationDetailDAO().getAllocationsByReceiptID(
@@ -536,20 +530,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		listDeletion(financeMain.getFinReference(), "_Temp");
 		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, false);
 		
-		// Delete Reserved Log against Excess and Receipt ID
-		getFinExcessAmountDAO().deleteExcessReserve(receiptData.getReceiptHeader().getReceiptID(), 0);
-
-		List<FinReceiptDetail> receiptDetails = receiptData.getReceiptHeader().getReceiptDetails();
-		for (FinReceiptDetail receiptDetail : receiptDetails) {
-			// Excess Amount Reserve
-			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) ||
-					StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
-
-				// Update Excess Amount in Reserve
-				getFinExcessAmountDAO().updateExcessReserve(receiptDetail.getPayAgainstID(), receiptDetail.getAmount().negate());
-			}
-		}
-		
 		// Delete and Save Repayment Schedule details by setting Repay Header ID
 		getFinanceRepaymentsDAO().deleteRpySchdList(financeMain.getFinReference(), TableType.TEMP_TAB.getSuffix());
 		
@@ -619,7 +599,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException,
 			InvocationTargetException {
@@ -651,7 +630,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		//Repayments Postings Details Process Execution
-		long linkedTranId = 0;
 		FinanceProfitDetail profitDetail = null;
 
 		//Execute Accounting Details Process
@@ -669,108 +647,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		//Repayments Posting Process Execution
 		//=====================================
-		List<FinReceiptDetail> receiptDetailList = receiptHeader.getReceiptDetails();
-		
 		profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
-		Map<Long, List<Object>> returnPostingsMap = new HashMap<>();
 		List<FinanceScheduleDetail> schdList = scheduleData.getFinanceScheduleDetails();
-		
-		//Create log entry for Action for Schedule Modification
-		FinLogEntryDetail entryDetail = null;
-		long logKey = 0;
-		Date postDate = getPostDate(DateUtility.getAppDate());
-		if(receiptHeader.getAllocations() != null && !receiptHeader.getAllocations().isEmpty()){
-			entryDetail = new FinLogEntryDetail();
-			entryDetail.setFinReference(finReference);
-			entryDetail.setEventAction(receiptHeader.getReceiptPurpose());
-			entryDetail.setSchdlRecal(true);
-			entryDetail.setPostDate(postDate);
-			entryDetail.setReversalCompleted(false);
-			logKey = getFinLogEntryDetailDAO().save(entryDetail);
-
-			//Save Schedule Details For Future Modifications
-			FinScheduleData oldFinSchdData = getFinSchDataByFinRef(finReference, "");
-			oldFinSchdData.setFinanceMain(financeMain);
-			oldFinSchdData.setFinReference(finReference);
-			listSave(oldFinSchdData, "_Log", logKey);
-		}
-		
-		for (int i = 0; i < receiptDetailList.size(); i++) {
-			
-			// Repay Header list process individually based on List existence
-			List<FinRepayHeader> repayHeaderList = receiptDetailList.get(i).getRepayHeaders();
-			
-			if(i != 0){
-				postDate = getPostDate(DateUtility.getAppDate());
-			}
-			for (int j = 0; j < repayHeaderList.size(); j++) {
-				
-				FinRepayHeader repayHeader = repayHeaderList.get(j);
-				if(!StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent()) &&
-						!StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent()) &&
-						!StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())){
-					
-					// Update Excess amount (Adding amount and balance updation)
-					if(receiptDetailList.get(i).getPayAgainstID() != 0 && receiptDetailList.get(i).getPayAgainstID() != Long.MIN_VALUE){
-						getFinExcessAmountDAO().updateExcessBal(receiptDetailList.get(i).getPayAgainstID(), repayHeader.getRepayAmount());
-					}else {
-						int recordCount = getFinExcessAmountDAO().updateExcessBalByRef(finReference, repayHeader.getFinEvent(),repayHeader.getRepayAmount());
-						// If record Not found then record count should be zero. Need to create new Excess Record
-						if(recordCount <= 0){
-							FinExcessAmount excess = new FinExcessAmount();
-							excess.setFinReference(finReference);
-							excess.setAmountType(repayHeader.getFinEvent());
-							excess.setAmount(repayHeader.getRepayAmount());
-							excess.setBalanceAmt(repayHeader.getRepayAmount());
-							excess.setUtilisedAmt(BigDecimal.ZERO);
-							excess.setReservedAmt(BigDecimal.ZERO);
-							getFinExcessAmountDAO().saveExcess(excess);
-						}
-					}
-					
-					continue;
-				}
-				
-				//Create log entry for Action for Schedule Modification
-				if(i != 0 && j == 0){
-					entryDetail = new FinLogEntryDetail();
-					entryDetail.setFinReference(finReference);
-					entryDetail.setEventAction(receiptHeader.getReceiptPurpose());
-					entryDetail.setSchdlRecal(true);
-					entryDetail.setPostDate(postDate);
-					entryDetail.setReversalCompleted(false);
-					logKey = getFinLogEntryDetailDAO().save(entryDetail);
-
-					//Save Schedule Details For Future Modifications
-					scheduleData.setFinanceMain(financeMain);
-					scheduleData.setFinReference(finReference);
-					scheduleData.setFinanceScheduleDetails(schdList);
-					listSave(scheduleData, "_Log", logKey);
-				}
-				
-				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
-				List<Object> returnList = getRepayProcessUtil().processRepaymentPostings(financeMain, schdList,
-						profitDetail, repaySchdList, getEventCode(repayHeader.getFinEvent()));
-
-				if (!(Boolean) returnList.get(0)) {
-					String errParm = (String) returnList.get(1);
-					throw new PFFInterfaceException("9999", errParm);
-				}
-
-				//Update Linked Transaction ID
-				linkedTranId = (long) returnList.get(1);
-				returnPostingsMap.put(linkedTranId, returnList);
-				repayHeader.setValueDate(postDate);
-				repayHeader.setLinkedTranId(linkedTranId);
-				financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().add(repayHeader.getPriAmount()));
-				
-				String finAccount = (String) returnList.get(2);
-				if (finAccount != null) {
-					financeMain.setFinAccount(finAccount);
-				}
-				schdList = (List<FinanceScheduleDetail>) returnList.get(3);
-			}
-		}
+		schdList=getRepayProcessUtil().doProcessReceipts(financeMain, schdList, profitDetail, receiptHeader, scheduleData,DateUtility.getAppDate());
 
 		tranType = PennantConstants.TRAN_UPD;
 		financeMain.setRecordType("");
@@ -798,9 +677,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		receiptHeader.setNextTaskId("");
 		receiptHeader.setWorkflowId(0);
 		
-		//save receipt details
+		//save recipet details
+		
 		repayProcessUtil.doSaveReceipts(receiptHeader);
 		long receiptID = receiptHeader.getReceiptID();
+		//////////////////////////save
 		
 		// Receipt Allocation Details
 		if(receiptHeader.getAllocations() != null && !receiptHeader.getAllocations().isEmpty()){
@@ -1004,33 +885,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		return auditHeader;
 	}
 	
-	private Date getPostDate(Date appDate){
-		Calendar cal = Calendar.getInstance();
-		Calendar appCal = Calendar.getInstance();
-		cal.setTime(DateUtility.getSysDate());
-		appCal.setTime(appDate);
-		cal.set(Calendar.YEAR, appCal.get(Calendar.YEAR));
-		cal.set(Calendar.MONTH, appCal.get(Calendar.MONTH));
-		cal.set(Calendar.DATE, appCal.get(Calendar.DATE));
-		return cal.getTime();
-	}
-	
-	/**
-	 * Method for Fetching Accounting Event Code based on Finance Event Action
-	 * @param finEvent
-	 * @return
-	 */
-	private String getEventCode(String finEvent){
-		
-		if(StringUtils.equals(finEvent, FinanceConstants.FINSER_EVENT_SCHDRPY)){
-			return AccountEventConstants.ACCEVENT_REPAY;
-		}else if(StringUtils.equals(finEvent, FinanceConstants.FINSER_EVENT_EARLYRPY)){
-			return AccountEventConstants.ACCEVENT_EARLYPAY;
-		}else if(StringUtils.equals(finEvent, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
-			return AccountEventConstants.ACCEVENT_EARLYSTL;
-		}
-		return null;
-	}
 
 	/**
 	 * Method to get Schedule related data.

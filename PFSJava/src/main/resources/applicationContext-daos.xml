@@ -6490,11 +6490,15 @@
 	<bean id="repayProcessUtil" class="com.pennant.app.util.RepaymentProcessUtil"
 		scope="prototype">
 		<property name="repayPostingUtil" ref="repayPostingUtil" />
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />		
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
+		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
+		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
 	</bean>
 
 	<!--============ Finance Repayment Details ============== -->

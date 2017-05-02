@@ -109,8 +109,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 				}
 
 				header.setReceiptDetails(receiptDetails);
-				repaymentProcessUtil.recalReceipt(financeMain, scheduleDetails, profitDetail, header, repayHeirarchy);
-				repaymentProcessUtil.doSaveReceipts(header);
+				repaymentProcessUtil.calcualteAndPayReceipt(financeMain, scheduleDetails, profitDetail, header, repayHeirarchy,businessDate);
 			}
 		} catch (Exception e) {
 			logger.error("Exception :", e);

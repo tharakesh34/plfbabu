@@ -123,9 +123,9 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws PFFInterfaceException
 	 */
 	public List<Object> postingProcess(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail financeProfitDetail,
-			FinRepayQueueTotals queueTotals, String eventCode) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			FinRepayQueueTotals queueTotals, String eventCode,Date valuedate) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		
-		return postingProcessExecution(financeMain, scheduleDetails, financeProfitDetail, queueTotals, eventCode);
+		return postingProcessExecution(financeMain, scheduleDetails, financeProfitDetail, queueTotals, eventCode,valuedate);
 	}
 	
 	/**
@@ -141,13 +141,11 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws PFFInterfaceException
 	 */
 	private List<Object> postingProcessExecution(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail financeProfitDetail, FinRepayQueueTotals queueTotals, String eventCode) 
+			FinanceProfitDetail financeProfitDetail, FinRepayQueueTotals queueTotals, String eventCode,Date valuedate) 
 					throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		
 		List<Object> actReturnList = null;
-		Date dateValueDate = DateUtility.getValueDate();
-		Date valueDate = dateValueDate;
 		
 		// Repayments Queue list
 		List<FinRepayQueue> finRepayQueueList = queueTotals.getQueueList();
@@ -155,11 +153,14 @@ public class RepaymentPostingsUtil implements Serializable {
 		// Penalty Payments, if any Payment calculations done
 		long linkedTranId = Long.MIN_VALUE;
 		if(queueTotals.getPenalty().compareTo(BigDecimal.ZERO) > 0){
-			actReturnList = doOverduePostings(linkedTranId, finRepayQueueList, dateValueDate, financeMain);
-			if (actReturnList != null && !(Boolean)actReturnList.get(0)) {
-				return actReturnList;
-			}else{
-				linkedTranId = (long) actReturnList.get(1);
+			actReturnList = doOverduePostings(linkedTranId, finRepayQueueList, valuedate, financeMain);
+			
+			if (actReturnList!=null) {
+				if (!(Boolean)actReturnList.get(0)) {
+					return actReturnList;
+				}else{
+					linkedTranId = (long) actReturnList.get(1);
+				}
 			}
 		}
 		
@@ -168,7 +169,7 @@ public class RepaymentPostingsUtil implements Serializable {
 				queueTotals.getFee()).add(queueTotals.getInsurance()).add(queueTotals.getSuplRent()).add(queueTotals.getIncrCost());
 		
 		if (totalPayAmount.compareTo(BigDecimal.ZERO) > 0) {
-			actReturnList = doSchedulePostings(queueTotals, valueDate, dateValueDate, financeMain,
+			actReturnList = doSchedulePostings(queueTotals, valuedate, valuedate, financeMain,
 					scheduleDetails, financeProfitDetail, eventCode, linkedTranId);
 		} else {
 			if (actReturnList == null) {
