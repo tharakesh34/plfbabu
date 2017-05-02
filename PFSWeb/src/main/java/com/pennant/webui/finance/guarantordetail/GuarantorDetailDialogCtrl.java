@@ -102,6 +102,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTEmailValidator;
+import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -163,8 +164,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	protected Hlayout hlayout_MobileNo;
 	protected Space space_MobileNo;
 	protected Textbox mobileNo;
-	protected Textbox 		phoneCountryCode; 				
-	protected Textbox 		phoneAreaCode; 		
+	//protected Textbox 		phoneCountryCode; 				
+	//protected Textbox 		phoneAreaCode; 		
 	protected Row row4;
 	protected Label label_EmailId;
 	protected Hlayout hlayout_EmailId;
@@ -466,8 +467,6 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 				this.guarantorCIFName.setValue("");
 				this.guarantorIDNumber.setValue("");
 				this.mobileNo.setValue("");
-				this.phoneCountryCode.setValue("");
-				this.phoneAreaCode.setValue("");
 				this.emailId.setValue("");
 				this.guarantorProofName.setValue("");
 				this.gb_GurantorsPrimaryExposure.setVisible(false);
@@ -480,8 +479,6 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 					this.guarantorCIFName.setValue(customer.getCustShrtName());
 					this.guarantorIDNumber.setValue(customer.getCustCRCPR());
 					this.mobileNo.setValue(customer.getPhoneNumber());
-					this.phoneAreaCode.setValue(customer.getPhoneAreaCode());
-					this.phoneCountryCode.setValue(customer.getPhoneCountryCode());
 					this.emailId.setValue(customer.getEmailID());
 					dosetCustAddress(customer.getCustID());
 				}
@@ -704,8 +701,6 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.btnSearchGuarantorCIF.setVisible(true);
 			this.emailId.setValue("");
 			this.mobileNo.setValue("");
-			this.phoneAreaCode.setValue("");
-			this.phoneCountryCode.setValue("");
 			this.guarantorCIF.setValue("");
 			this.guarantorIDNumber.setValue("");
 			this.guarantorCIFName.setValue("");
@@ -764,9 +759,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.guranteePercentage.setFormat(PennantConstants.rateFormate2);
 		this.guranteePercentage.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.guranteePercentage.setScale(2);
-		this.phoneCountryCode.setMaxlength(3);
-		this.phoneAreaCode.setMaxlength(3);
-		this.mobileNo.setMaxlength(8);
+		this.mobileNo.setMaxlength(10);
 		this.emailId.setMaxlength(200);
 		this.remarks.setMaxlength(500);
 		this.guarantorProofName.setMaxlength(500);
@@ -831,10 +824,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.guarantorCIFName.setValue(aGuarantorDetail.getGuarantorCIFName());
 		this.guarantorIDNumber.setValue(aGuarantorDetail.getGuarantorIDNumber());
 		this.guranteePercentage.setValue(aGuarantorDetail.getGuranteePercentage());
-		String[]phone = PennantApplicationUtil.unFormatPhoneNumber(aGuarantorDetail.getMobileNo());
-		this.phoneCountryCode.setValue(phone[0]);
-		this.phoneAreaCode.setValue(phone[1]);
-		this.mobileNo.setValue(phone[2]);
+		this.mobileNo.setValue(aGuarantorDetail.getMobileNo());
 		this.emailId.setValue(aGuarantorDetail.getEmailId());
 		this.guarantorProofContent = aGuarantorDetail.getGuarantorProof();
 		this.guarantorProofName.setValue(aGuarantorDetail.getGuarantorProofName());
@@ -1327,8 +1317,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		}
 		// Mobile No
 		try {
-			aGuarantorDetail.setMobileNo(PennantApplicationUtil.formatPhoneNumber(this.phoneCountryCode.getValue(),
-					this.phoneAreaCode.getValue(),this.mobileNo.getValue()));
+			aGuarantorDetail.setMobileNo(this.mobileNo.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1496,14 +1485,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			/*if (!this.mobileNo.isReadonly()) {
 				this.mobileNo.setConstraint(new SimpleConstraint(PennantRegularExpressions.MOBILE_REGEX, Labels.getLabel("MAND_FIELD_PHONENUM", new String[] { Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value") })));
 			}*/
-			if(!this.phoneCountryCode.isReadonly()){
-				this.phoneCountryCode.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_GuarantorDetailDialog_phoneCountryCode.value"),true,1));
-			}
-			if(!this.phoneAreaCode.isReadonly()){
-				this.phoneAreaCode.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_GuarantorDetailDialog_phoneAreaCode.value"),true,2));
-			}
 			if (!this.mobileNo.isReadonly()) {
-				this.mobileNo.setConstraint(new PTPhoneNumberValidator(Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value"),true,3));
+				this.mobileNo.setConstraint(new PTMobileNumberValidator(Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value"),true));
 			}
 			// Email Id
 			if (!this.emailId.isReadonly()) {
@@ -1572,8 +1555,6 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.mobileNo.setConstraint("");
 		this.emailId.setConstraint("");
 		this.guarantorProofName.setConstraint("");
-		this.phoneCountryCode.setConstraint("");
-		this.phoneAreaCode.setConstraint("");
 		
 		this.addrHNbr.setConstraint("");
 		this.flatNbr.setConstraint("");
@@ -1626,8 +1607,6 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.guarantorIDNumber.setErrorMessage("");
 		this.guranteePercentage.setErrorMessage("");
 		this.mobileNo.setErrorMessage("");
-		this.phoneAreaCode.setErrorMessage("");
-		this.phoneCountryCode.setErrorMessage("");
 		this.emailId.setErrorMessage("");
 		this.guarantorProofName.setErrorMessage("");
 		this.remarks.setErrorMessage("");
@@ -1656,8 +1635,6 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.guarantorIDNumber.setReadonly(true);
 			this.guarantorCIFName.setReadonly(true);
 			this.mobileNo.setReadonly(true);
-			this.phoneAreaCode.setReadonly(true);
-			this.phoneCountryCode.setReadonly(true);
 			this.emailId.setReadonly(true);
 			this.btnUploadGuarantorProof.setVisible(false);
 			this.hlayout_GuarantorCIF.setVisible(true);
@@ -1702,8 +1679,6 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.guarantorIDNumber.setReadonly(isReadOnly("GuarantorDetailDialog_GuarantorIDNumber"));
 			this.guarantorCIFName.setReadonly(isReadOnly("GuarantorDetailDialog_GuarantorCIFName"));
 			this.mobileNo.setReadonly(isReadOnly("GuarantorDetailDialog_MobileNo"));
-			this.phoneAreaCode.setReadonly(isReadOnly("GuarantorDetailDialog_MobileNo"));
-			this.phoneCountryCode.setReadonly(isReadOnly("GuarantorDetailDialog_MobileNo"));
 			this.emailId.setReadonly(isReadOnly("GuarantorDetailDialog_EmailId"));
 			this.btnUploadGuarantorProof.setVisible(true);
 			this.hlayout_GuarantorCIF.setVisible(false);
@@ -1750,8 +1725,6 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.guarantorIDNumber.setReadonly(true);
 			this.guarantorIDType.setDisabled(true);
 			this.guarantorProofName.setReadonly(true);
-			this.phoneAreaCode.setReadonly(true);
-			this.phoneCountryCode.setReadonly(true);
 			this.mobileNo.setReadonly(true);
 			this.emailId.setReadonly(true);
 		} else {
@@ -1855,8 +1828,6 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.guranteePercentage.setValue("0");
 		this.mobileNo.setValue("");
 		this.emailId.setValue("");
-		this.phoneAreaCode.setValue("");
-		this.phoneCountryCode.setValue("");
 		this.guarantorProofName.setValue("");
 		this.addrHNbr.setValue("");
 		this.flatNbr.setValue("");
