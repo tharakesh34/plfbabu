@@ -201,4 +201,12 @@
 		<addPrimaryKey columnNames="AuditId,AuditDate,AuditSeq,AuditImage" constraintName="PK_ADT_PREDETAILS"
 			tableName="ADTPRESENTMENTDETAILS" />
 	</changeSet>
+	
+	<changeSet id="13" author="Amit">
+		<addColumn tableName="ADTACCOUNTTYPEGROUP">
+			<column name="GroupIsActive" type="number(1,0)" defaultValue="1" >
+			<constraints  nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet> 
 </databaseChangeLog>
