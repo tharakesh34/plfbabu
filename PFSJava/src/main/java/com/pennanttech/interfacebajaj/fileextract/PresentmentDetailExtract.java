@@ -86,11 +86,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 					key = map.getValue("Batchid").toString();
 					String status = map.getValue("Status").toString();
-					if ("F".equals(status)) {
-						UpdatePresentMentdetails(key, 1);
-					} else if ("S".equals(status)) {
-						UpdatePresentMentdetails(key, 2);
-					}
+					UpdatePresentMentdetails(key, status);
 					
 					successCount++;
 					if (isLogStatus()) {
@@ -155,7 +151,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		}
 	}
 
-	private void UpdatePresentMentdetails(String key, int status) {
+	private void UpdatePresentMentdetails(String key, String status) {
 		logger.debug("Entering");
 
 		StringBuffer query = new StringBuffer();

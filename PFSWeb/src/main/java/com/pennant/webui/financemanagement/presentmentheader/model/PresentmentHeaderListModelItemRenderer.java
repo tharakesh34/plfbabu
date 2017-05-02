@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  PresentmentHeaderService.java                                                   * 	  
+ * FileName    		:  PresentmentHeaderListModelItemRenderer.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -39,38 +39,66 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
-package com.pennant.backend.service.financemanagement;
+*/
+package com.pennant.webui.financemanagement.presentmentheader.model;
 
-import java.util.List;
+import java.io.Serializable;
 
-import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
+import org.zkoss.zul.ListitemRenderer;
+
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
+import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 
-public interface PresentmentHeaderService {
 
-	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+/**
+ * Item renderer for listitems in the listbox.
+ * 
+ */
+public class PresentmentHeaderListModelItemRenderer implements ListitemRenderer<PresentmentHeader>, Serializable {
 
-	PresentmentHeader getPresentmentHeader(long id);
+	private static final long serialVersionUID = 1L;
 
-	PresentmentHeader getApprovedPresentmentHeader(long id);
+	public PresentmentHeaderListModelItemRenderer() {
+		super();
+	}
 
-	AuditHeader delete(AuditHeader auditHeader);
+	
+	@Override
+	public void render(Listitem item, PresentmentHeader presentmentHeader, int count) throws Exception {
 
-	AuditHeader doApprove(AuditHeader auditHeader);
-
-	AuditHeader doReject(AuditHeader auditHeader);
-
-	long savePresentmentHeader(PresentmentHeader presentmentHeader);
-
-	String savePresentmentDetails(PresentmentHeader presentmentHeader) throws Exception;
-
-	void updatePresentmentDetails(long presentmentId, List<Long> detaildList) throws Exception;
-
-	void updatePresentmentDetailHeader(long presentmentId, long extractId);
-
-	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, String type);
-
-	void updatePresentmentDetails(List<Long> excludeList, List<Long> includeList, String userAction, long presentmentId, long partnerBankId) throws Exception;
+		Listcell lc;
+	  	lc = new Listcell(presentmentHeader.getReference());
+		lc.setParent(item);
+		
+	  	lc = new Listcell(DateUtility.formatToLongDate(presentmentHeader.getPresentmentDate()));
+	  	lc.setParent(item);
+	  	
+	  	lc = new Listcell(presentmentHeader.getPartnerBankIdName());
+		lc.setParent(item);
+		
+	  	lc = new Listcell(PennantStaticListUtil.getlabelDesc(String.valueOf(presentmentHeader.getStatus()),
+				PennantStaticListUtil.getPresentmentBatchStatusList()));
+	  	lc.setParent(item);
+	  	
+		lc = new Listcell(PennantStaticListUtil.getlabelDesc(presentmentHeader.getMandateType(), PennantStaticListUtil.getMandateTypeList()));
+	  	lc.setParent(item);
+	  	
+	  	lc = new Listcell(DateUtility.formatToLongDate(presentmentHeader.getSchdate()));
+	  	lc.setParent(item);
+	  	
+	  	lc = new Listcell(presentmentHeader.getRecordStatus());
+		lc.setParent(item);
+		
+		lc = new Listcell(PennantJavaUtil.getLabel(presentmentHeader.getRecordType()));
+		lc.setParent(item);
+		
+		item.setAttribute("id", presentmentHeader.getId());
+		
+		ComponentsCtrl.applyForward(item, "onDoubleClick=onPresentmentHeaderItemDoubleClicked");
+	}
 }

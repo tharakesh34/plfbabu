@@ -68,15 +68,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private BigDecimal schInsDue;
 	private BigDecimal schPenaltyDue;
 	private BigDecimal advanceAmt;
+	private BigDecimal tDSAmount;
 	private Long excessID;
 	private BigDecimal adviseAmt;
 	private int excludeReason;
 	private BigDecimal presentmentAmt;
 	private int emiNo;
 	private long bounceID;
-	private String auxiliary1;
-	private String auxiliary2;
-	private long status;
+	private String status;
 	private boolean newRecord = false;
 	private String customerName;
 	private String finTypeDesc;
@@ -247,27 +246,19 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.bounceID = bounceID;
 	}
 
-	public String getAuxiliary1() {
-		return auxiliary1;
+	public BigDecimal gettDSAmount() {
+		return tDSAmount;
 	}
 
-	public void setAuxiliary1(String auxiliary1) {
-		this.auxiliary1 = auxiliary1;
+	public void settDSAmount(BigDecimal tDSAmount) {
+		this.tDSAmount = tDSAmount;
 	}
 
-	public String getAuxiliary2() {
-		return auxiliary2;
-	}
-
-	public void setAuxiliary2(String auxiliary2) {
-		this.auxiliary2 = auxiliary2;
-	}
-
-	public long getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(long status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 

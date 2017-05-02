@@ -4617,23 +4617,19 @@
 	</bean>
 	
 		<!-- PresentmentDetail -->
-	<bean id="presentmentDetailListCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentDetailListCtrl"
-		parent="basisListCtrl" scope="prototype">
-	</bean>
-	
 	<bean id="presentmentDetailExtractListCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentDetailExtractListCtrl" parent="basisListCtrl" scope="prototype">
-		<property name="presentmentDetailService" ref="presentmentDetailService" />
+		<property name="presentmentHeaderService" ref="presentmentHeaderService" />
 	</bean>
-	
 		<!-- PresentmentHeader -->
-	<bean id="presentmentHeaderListCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentHeaderListCtrl"
-		parent="basisListCtrl" scope="prototype">
-		<property name="presentmentDetailService" ref="presentmentDetailService" />
+	<bean id="presentmentHeaderListCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentHeaderListCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="presentmentHeaderService" ref="presentmentHeaderService" />
+	</bean>
+	<bean id="presentmentHeaderDialogCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentHeaderDialogCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="presentmentHeaderService" ref="presentmentHeaderService" />
 	</bean>
 	
 		<!-- PresentmentImports -->
-	<bean id="importPresentmentDetailCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.ImportPresentmentDetailCtrl"
-		parent="basisListCtrl" scope="prototype">
+	<bean id="importPresentmentDetailCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.ImportPresentmentDetailCtrl" parent="basisListCtrl" scope="prototype">
 		<property name="presentmentExtractService" ref="presentmentExtractService" />
 	</bean>
 	
@@ -4653,10 +4649,5 @@
 		<property name="accountMappingService" ref="accountMappingService"/>
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
-	<bean id="presentmentDetailDialogCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentDetailDialogCtrl"
-		parent="basisListCtrl" scope="prototype">
-		<property name="presentmentDetailService" ref="presentmentDetailService" />
-	</bean>
-	
 
 </beans>

@@ -1913,14 +1913,15 @@ public class PennantJavaUtil {
 
 		/*PresentmentHeader*/
 		ModuleUtil.register("PresentmentHeader", new ModuleMapping("PresentmentHeader", PresentmentHeader.class, new String[] { "PresentmentHeader",
-				"PresentmentHeader_AView" }, null, new String[] {"MandateType","PartnerBankID","Status"},null, 600));
-		
+				"PresentmentHeader_AView" }, masterWF, new String[] {"Reference","PresentmentDate","PartnerBankId","FromDate","ToDate","Status","MandateType","LoanType","FinBranch","Schdate"},null, 600));
+	
 		ModuleUtil.register("AccountMapping", new ModuleMapping("AccountMapping", AccountMapping.class, new String[] { "AccountMapping",
 				"AccountMapping_AView" }, masterWF, new String[] {"Account","HostAccount"},null, 600));
 		
 		ModuleUtil.register("FinTypePartner", new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
 				new String[] { "FinTypePartnerBanks","FinTypePartnerBanks_AView" }, masterWF,
 				new String[] { "PartnerBankID","PartnerBankCode", "PartnerBankName" }, null, 450));
+
 	}
 
 	public static ModuleMapping getModuleMap(String code) {

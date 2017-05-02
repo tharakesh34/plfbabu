@@ -65,7 +65,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
-import com.pennant.backend.service.financemanagement.PresentmentDetailService;
+import com.pennant.backend.service.financemanagement.PresentmentHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
@@ -98,7 +98,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	protected Uppercasebox branches;
 	protected Button btnBranches;
 
-	private transient PresentmentDetailService presentmentDetailService;
+	private transient PresentmentHeaderService presentmentHeaderService;
 
 	/**
 	 * default constructor.<br>
@@ -214,7 +214,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 
 		logger.debug(Literal.LEAVING);
 
-		return presentmentDetailService.savePresentmentDetails(detailHeader);
+		return presentmentHeaderService.savePresentmentDetails(detailHeader);
 	}
 
 	/**
@@ -317,7 +317,8 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		doShowHelp(event);
 	}
 
-	public void setPresentmentDetailService(PresentmentDetailService presentmentDetailService) {
-		this.presentmentDetailService = presentmentDetailService;
+	public void setPresentmentHeaderService(PresentmentHeaderService presentmentHeaderService) {
+		this.presentmentHeaderService = presentmentHeaderService;
 	}
+	
 }

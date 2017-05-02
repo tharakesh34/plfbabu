@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  PresentmentDetailService.java                                                   * 	  
+ * FileName    		:  PresentmentHeaderDAO.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  22-04-2017    														*
+ * Creation Date    :  01-05-2017    														*
  *                                                                  						*
- * Modified Date    :  22-04-2017    														*
+ * Modified Date    :  01-05-2017    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 22-04-2017       PENNANT	                 0.1                                            * 
+ * 01-05-2017       PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -40,27 +40,38 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-package com.pennant.backend.service.financemanagement;
+package com.pennant.backend.dao.financemanagement;
 
+import java.sql.ResultSet;
 import java.util.List;
 
+import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
+import com.pennanttech.pff.core.TableType;
 
-public interface PresentmentDetailService {
+public interface PresentmentHeaderDAO extends BasicCrudDao<PresentmentHeader> {
+
+	PresentmentHeader getPresentmentHeader(long id, String type);
+	
+	boolean isDuplicateKey(long id, String reference, TableType tableType);
+
+	String save(PresentmentDetail presentmentDetail, TableType tableType);
+
+	long getSeqNumber(String tableName);
+
+	ResultSet getPresentmentDetails(PresentmentHeader detailHeader) throws Exception;
 
 	long savePresentmentHeader(PresentmentHeader presentmentHeader);
 
-	String savePresentmentDetails(PresentmentHeader presentmentHeader) throws Exception;
+	void updatePresentmentDetailId(long presentmentId, List<Long> detaildList) throws Exception;
 
-	void updatePresentmentDetails(long presentmentId, List<Long> detaildList) throws Exception;
+	void updatePresentmentDetailId(long presentmentId, long extractId);
 
-	void processDetails(List<Long> presentmentList) throws Exception;
-
-	void updatePresentmentDetailHeader(long presentmentId, long extractId);
-	
 	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, String type);
 
-	void updatePresentmentDetails(List<Long> list, long presentmentId, long partnerBankId);
+	void updatePresentmentDetials(long presentmentId, List<Long> list, int mnualExclude);
+
+	void updatePresentmentHeader(long presentmentId, int pexcBatchCreated, long partnerBankId);
 
 }

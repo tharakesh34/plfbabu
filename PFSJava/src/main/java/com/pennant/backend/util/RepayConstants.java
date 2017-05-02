@@ -130,6 +130,11 @@ public class RepayConstants {
 	public static final int PEXC_CLEARED = 5;
 	public static final int PEXC_BOUNCED = 6;
 	
+	// Presentment Detail Status Reasons
+	public static final String PEXC_IMPORT = "I";
+	public static final String PEXC_SUCCESS = "S";
+	public static final String PEXC_FAILURE = "F";
+	
 	// Receipt Payment Statuses
 	public static final String	PAYSTATUS_APPROVED		= "A";
 	public static final String	PAYSTATUS_REALIZED		= "R";

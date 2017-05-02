@@ -20,16 +20,16 @@
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  22-04-2017    														*
+ * Creation Date    :  01-05-2017    														*
  *                                                                  						*
- * Modified Date    :  22-04-2017    														*
+ * Modified Date    :  01-05-2017    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 22-04-2017       PENNANT	                 0.1                                            * 
+ * 01-05-2017       PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -42,51 +42,80 @@
  */
 package com.pennant.backend.model.financemanagement;
 
+import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import com.pennant.app.util.DateFormatterAdapter;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
+/**
+ * Model class for the <b>PresentmentHeader table</b>.<br>
+ * 
+ */
+@XmlType(propOrder = { "id", "reference", "presentmentDate", "partnerBankId", "fromDate", "toDate", "status",
+		"mandateType", "loanType", "finBranch", "schdate" })
+@XmlAccessorType(XmlAccessType.FIELD)
 public class PresentmentHeader extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
-	private long Id = Long.MIN_VALUE;
+	private long id = Long.MIN_VALUE;
 	private String reference;
+	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Date presentmentDate;
 	private long partnerBankId;
+	private String partnerBankIdName;
+	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Date fromDate;
+	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Date toDate;
 	private int status;
 	private String mandateType;
+	private String mandateTypeName;
 	private String loanType;
+	private String loanTypeName;
 	private String finBranch;
-	private Date schDate;
-	private String searchField1;
-	private String searchField2;
-	private String searchField3;
+	private String finBranchName;
+	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
+	private Date schdate;
+	@XmlTransient
 	private boolean newRecord = false;
-
+	@XmlTransient
+	private String lovValue;
 	@XmlTransient
 	private PresentmentHeader befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
 
-	@Override
 	public boolean isNew() {
-		return false;
+		return isNewRecord();
 	}
 
-	@Override
-	public long getId() {
-		return Id;
+	public PresentmentHeader() {
+		super();
 	}
 
-	@Override
-	public void setId(long id) {
-		Id = id;
+	public PresentmentHeader(long id) {
+		super();
+		this.setId(id);
+	}
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("partnerBankIdName");
+		excludeFields.add("mandateTypeName");
+		excludeFields.add("loanTypeName");
+		excludeFields.add("finBranchName");
+		return excludeFields;
 	}
 
 	public String getReference() {
@@ -97,12 +126,28 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 		this.reference = reference;
 	}
 
+	public Date getPresentmentDate() {
+		return presentmentDate;
+	}
+
+	public void setPresentmentDate(Date presentmentDate) {
+		this.presentmentDate = presentmentDate;
+	}
+
 	public long getPartnerBankId() {
 		return partnerBankId;
 	}
 
 	public void setPartnerBankId(long partnerBankId) {
 		this.partnerBankId = partnerBankId;
+	}
+
+	public String getPartnerBankIdName() {
+		return this.partnerBankIdName;
+	}
+
+	public void setPartnerBankIdName(String partnerBankIdName) {
+		this.partnerBankIdName = partnerBankIdName;
 	}
 
 	public Date getFromDate() {
@@ -137,60 +182,12 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 		this.mandateType = mandateType;
 	}
 
-	public String getFinBranch() {
-		return finBranch;
+	public String getMandateTypeName() {
+		return this.mandateTypeName;
 	}
 
-	public void setFinBranch(String finBranch) {
-		this.finBranch = finBranch;
-	}
-
-	public String getSearchField1() {
-		return searchField1;
-	}
-
-	public void setSearchField1(String searchField1) {
-		this.searchField1 = searchField1;
-	}
-
-	public String getSearchField2() {
-		return searchField2;
-	}
-
-	public void setSearchField2(String searchField2) {
-		this.searchField2 = searchField2;
-	}
-
-	public String getSearchField3() {
-		return searchField3;
-	}
-
-	public void setSearchField3(String searchField3) {
-		this.searchField3 = searchField3;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
-	public PresentmentHeader getBefImage() {
-		return befImage;
-	}
-
-	public void setBefImage(PresentmentHeader befImage) {
-		this.befImage = befImage;
-	}
-
-	public LoggedInUser getUserDetails() {
-		return userDetails;
-	}
-
-	public void setUserDetails(LoggedInUser userDetails) {
-		this.userDetails = userDetails;
+	public void setMandateTypeName(String mandateTypeName) {
+		this.mandateTypeName = mandateTypeName;
 	}
 
 	public String getLoanType() {
@@ -201,20 +198,82 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 		this.loanType = loanType;
 	}
 
-	public Date getPresentmentDate() {
-		return presentmentDate;
+	public String getLoanTypeName() {
+		return this.loanTypeName;
 	}
 
-	public void setPresentmentDate(Date presentmentDate) {
-		this.presentmentDate = presentmentDate;
+	public void setLoanTypeName(String loanTypeName) {
+		this.loanTypeName = loanTypeName;
 	}
 
-	public Date getSchDate() {
-		return schDate;
+	public String getFinBranch() {
+		return finBranch;
 	}
 
-	public void setSchDate(Date schDate) {
-		this.schDate = schDate;
+	public void setFinBranch(String finBranch) {
+		this.finBranch = finBranch;
+	}
+
+	public String getFinBranchName() {
+		return this.finBranchName;
+	}
+
+	public void setFinBranchName(String finBranchName) {
+		this.finBranchName = finBranchName;
+	}
+
+	public Date getSchdate() {
+		return schdate;
+	}
+
+	public void setSchdate(Date schdate) {
+		this.schdate = schdate;
+	}
+
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
+	}
+
+	public String getLovValue() {
+		return lovValue;
+	}
+
+	public void setLovValue(String lovValue) {
+		this.lovValue = lovValue;
+	}
+
+	public PresentmentHeader getBefImage() {
+		return this.befImage;
+	}
+
+	public void setBefImage(PresentmentHeader beforeImage) {
+		this.befImage = beforeImage;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
+	}
+
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	@Override
+	public long getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(long id) {
+		this.id = id;
 	}
 
 }
