@@ -43,6 +43,7 @@
 
 package com.pennant.backend.dao.rulefactory;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
@@ -55,5 +56,6 @@ public interface FinFeeScheduleDetailDAO {
 
 	List<FinFeeScheduleDetail> getFeeScheduleByFinID(List<Long> feeIDList, boolean isWIF, String tableType);
 	void updateFeeSchdPaids(List<FinFeeScheduleDetail> updateFeeList);
+	List<FinFeeScheduleDetail> getFeeScheduleBySchDate(String finReference, Date schDate);
 
 }

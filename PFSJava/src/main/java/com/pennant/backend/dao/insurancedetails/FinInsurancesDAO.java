@@ -1,5 +1,6 @@
 package com.pennant.backend.dao.insurancedetails;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinInsurances;
@@ -28,4 +29,8 @@ public interface FinInsurancesDAO {
 	List<FinSchFrqInsurance> getFinSchFrqInsuranceFinRef(String finReference, boolean isWIF, String tableType);
 	
 	List<FinInsurances> getInsurancesList(String insuranceType,String tableType);
+
+	void updateInsSchdPaids(List<FinSchFrqInsurance> updateInsList);
+
+	List<FinSchFrqInsurance> getInsScheduleBySchDate(String finReference, Date schDate);
 }

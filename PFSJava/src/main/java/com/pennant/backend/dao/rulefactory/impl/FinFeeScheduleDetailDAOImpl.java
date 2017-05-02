@@ -43,6 +43,7 @@
 
 package com.pennant.backend.dao.rulefactory.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -191,12 +192,32 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		
 		StringBuilder updateSql = new StringBuilder("Update FinFeeScheduleDetail");
 		updateSql.append(" Set PaidAmount = PaidAmount + :PaidAmount, OsAmount = OsAmount - :PaidAmount ");
-		updateSql.append(" Where FeeID =:FeeID");
+		updateSql.append(" Where FeeID =:FeeID AND SchDate=:SchDate ");
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(updateFeeList.toArray());
 		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
+	}
+
+	@Override
+	public List<FinFeeScheduleDetail> getFeeScheduleBySchDate(String finReference, Date schDate) {
+		logger.debug("Entering");
+		FinFeeScheduleDetail feeSchd = new FinFeeScheduleDetail();
+		feeSchd.setFinReference(finReference);
+		feeSchd.setSchDate(schDate);
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT FeeID, SchDate, PaidAmount " );
+		selectSql.append(" FROM FinFeeScheduleDetail_View ");
+		selectSql.append(" WHERE  FeeID = :FeeID ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeSchd);
+		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
+		List<FinFeeScheduleDetail> feeList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.debug("Leaving");
+		return feeList;
 	}
 	
 }

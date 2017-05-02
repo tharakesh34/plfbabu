@@ -5730,6 +5730,9 @@
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
+		<property name="finInsurancesDAO" ref="finInsurancesDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 

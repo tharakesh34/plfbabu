@@ -29,16 +29,22 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
+import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
+import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
+import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -71,6 +77,9 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	private FinODDetailsDAO					finODDetailsDAO;
 	private PostingsDAO						postingsDAO;
 	private ManualAdviseDAO 				manualAdviseDAO;
+	private FinExcessAmountDAO				finExcessAmountDAO;
+	private FinFeeScheduleDetailDAO			finFeeScheduleDetailDAO;
+	private FinInsurancesDAO				finInsurancesDAO;
 	private AuditHeaderDAO 					auditHeaderDAO;
 
 	public ReceiptCancellationServiceImpl() {
@@ -483,7 +492,17 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 						if(!StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_SCHDRPY) &&
 								!StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYRPY) &&
 								!StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
-							return "Not allowed to Reverse the transaction, because of amount credited to Excess/EMI in Advance.";
+
+							// Fetch Excess Amount Details
+							FinExcessAmount excess = getFinExcessAmountDAO().getExcessAmountsByRefAndType(finReference, 
+									receiptHeader.getExcessAdjustTo());
+
+							// Update Reserve Amount in FinExcessAmount
+							if(excess == null || excess.getBalanceAmt().compareTo(rpyHeader.getRepayAmount()) < 0){
+								return "Not allowed to Reverse the transaction, because of insufficient balance on Excess";
+							}
+							getFinExcessAmountDAO().updateExcessBal(excess.getExcessID(), rpyHeader.getRepayAmount().negate());
+
 						}
 					}
 
@@ -492,6 +511,14 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 					for (int j = rpyHeaders.size() - 1; j >= 0; j--) {
 
 						FinRepayHeader rpyHeader = rpyHeaders.get(j);
+						if(!StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_SCHDRPY) &&
+								!StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYRPY) &&
+								!StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+							
+							// Already updations done
+							continue;
+						}
+						
 						if (rpyHeader.getPriAmount().compareTo(BigDecimal.ZERO) > 0) {
 							totalPriAmount = totalPriAmount.add(rpyHeader.getPriAmount());
 						}
@@ -574,15 +601,89 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 					}
 					
 					rpySchdList = sortRpySchdDetails(new ArrayList<>(rpySchdMap.values()));
+					List<FinFeeScheduleDetail> updateFeeList = new ArrayList<>();
+					List<FinSchFrqInsurance> updateInsList = new ArrayList<>();
 					for (RepayScheduleDetail rpySchd : rpySchdList) {
-						BigDecimal penaltyPaid = rpySchd.getPenaltyPayNow();
-						BigDecimal latePftPaid = rpySchd.getLatePftSchdPayNow();
 						
 						// Update Penalty Balance
-						if(penaltyPaid.compareTo(BigDecimal.ZERO) > 0 || latePftPaid.compareTo(BigDecimal.ZERO) > 0){
-							getFinODDetailsDAO().updateReversals(finReference, rpySchd.getSchDate(), penaltyPaid, latePftPaid);
+						if(rpySchd.getPenaltyPayNow().compareTo(BigDecimal.ZERO) > 0 || rpySchd.getLatePftSchdPayNow().compareTo(BigDecimal.ZERO) > 0){
+							getFinODDetailsDAO().updateReversals(finReference, rpySchd.getSchDate(), rpySchd.getPenaltyPayNow(), rpySchd.getLatePftSchdPayNow());
+						}
+						
+						// Update Fee Balance
+						if(rpySchd.getSchdFeePayNow().compareTo(BigDecimal.ZERO) > 0){
+							List<FinFeeScheduleDetail> feeList = getFinFeeScheduleDetailDAO().getFeeScheduleBySchDate(finReference, rpySchd.getSchDate());
+							BigDecimal feebal = rpySchd.getSchdFeePayNow();
+							for (int j = feeList.size() - 1; j >= 0; j--) {
+								FinFeeScheduleDetail feeSchd = feeList.get(j);
+								BigDecimal paidReverse = BigDecimal.ZERO;
+								if(feebal.compareTo(BigDecimal.ZERO) == 0){
+									continue;
+								}
+								if(feeSchd.getPaidAmount().compareTo(BigDecimal.ZERO) == 0){
+									continue;
+								}
+								
+								if(feebal.compareTo(feeSchd.getPaidAmount()) > 0){
+									paidReverse = feeSchd.getPaidAmount();
+								}else{
+									paidReverse = feebal;
+								}
+								feebal = feebal.subtract(paidReverse);
+
+								// Create list of updated objects to save one time
+								FinFeeScheduleDetail updFeeSchd = new FinFeeScheduleDetail();
+								updFeeSchd.setFeeID(feeSchd.getFeeID());
+								updFeeSchd.setSchDate(feeSchd.getSchDate());
+								updFeeSchd.setPaidAmount(paidReverse.negate());
+								updateFeeList.add(updFeeSchd);
+							}
+						}
+						
+						// Update Insurance Balance
+						if(rpySchd.getSchdInsPayNow().compareTo(BigDecimal.ZERO) > 0){
+							List<FinSchFrqInsurance> insList = getFinInsurancesDAO().getInsScheduleBySchDate(finReference, rpySchd.getSchDate());
+							BigDecimal insBal = rpySchd.getSchdInsPayNow();
+							for (int j = insList.size() - 1; j >= 0; j--) {
+								FinSchFrqInsurance insSchd = insList.get(j);
+								BigDecimal paidReverse = BigDecimal.ZERO;
+
+								if(insBal.compareTo(BigDecimal.ZERO) == 0){
+									continue;
+								}
+								if(insSchd.getInsurancePaid().compareTo(BigDecimal.ZERO) == 0){
+									continue;
+								}
+
+								if(insBal.compareTo(insSchd.getInsurancePaid()) > 0){
+									paidReverse = insSchd.getInsurancePaid();
+								}else{
+									paidReverse = insBal;
+								}
+								insBal = insBal.subtract(paidReverse);
+
+								// Create list of updated objects to save one time
+								FinSchFrqInsurance updInsSchd = new FinSchFrqInsurance();
+								updInsSchd.setInsId(insSchd.getInsId());
+								updInsSchd.setInsSchDate(insSchd.getInsSchDate());
+								updInsSchd.setInsurancePaid(paidReverse.negate());
+								updateInsList.add(updInsSchd);
+							}
 						}
 					}
+					
+					// Fee Schedule Details Updation
+					if(!updateFeeList.isEmpty()){
+						getFinFeeScheduleDetailDAO().updateFeeSchdPaids(updateFeeList);
+					}
+					
+					// Insurance Schedule Details Updation
+					if(!updateInsList.isEmpty()){
+						getFinInsurancesDAO().updateInsSchdPaids(updateInsList);
+					}
+					
+					updateFeeList = null;
+					updateInsList = null;
 					
 					//Deletion of Finance Schedule Related Details From Main Table
 					listDeletion(finReference, "", false, 0);
@@ -833,6 +934,30 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	public FinExcessAmountDAO getFinExcessAmountDAO() {
+		return finExcessAmountDAO;
+	}
+
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	public FinFeeScheduleDetailDAO getFinFeeScheduleDetailDAO() {
+		return finFeeScheduleDetailDAO;
+	}
+
+	public void setFinFeeScheduleDetailDAO(FinFeeScheduleDetailDAO finFeeScheduleDetailDAO) {
+		this.finFeeScheduleDetailDAO = finFeeScheduleDetailDAO;
+	}
+
+	public FinInsurancesDAO getFinInsurancesDAO() {
+		return finInsurancesDAO;
+	}
+
+	public void setFinInsurancesDAO(FinInsurancesDAO finInsurancesDAO) {
+		this.finInsurancesDAO = finInsurancesDAO;
 	}
 
 }

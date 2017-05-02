@@ -687,20 +687,60 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if(receiptHeader.getAllocations() != null && !receiptHeader.getAllocations().isEmpty()){
 			
 			Map<Long , FinFeeDetail> feeDetailMap = null;
+			Map<Long , FinInsurances> insDetailMap = null;
 			List<FinFeeScheduleDetail> updateFeeList = new ArrayList<>();
+			List<FinSchFrqInsurance> updateInsList = new ArrayList<>();
 			for (int i = 0; i < receiptHeader.getAllocations().size(); i++) {
 				ReceiptAllocationDetail allocation = receiptHeader.getAllocations().get(i);
 				allocation.setReceiptID(receiptID);
 				allocation.setAllocationID(i+1);
 				
-				// Insurance Schedule Details updations for paid amounts TODO
+				// Insurance Schedule Details updations for paid amounts 
+				if(StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_INS)){
+					if(allocation.getPaidAmount().compareTo(BigDecimal.ZERO) > 0 || 
+							allocation.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0){
+						
+						// Fetch Fee Details based on Allocated ID
+						if(insDetailMap == null){
+							insDetailMap = new HashMap<>();
+							for (FinInsurances ins : scheduleData.getFinInsuranceList()) {
+								insDetailMap.put(ins.getInsId(), ins);
+							}
+						}
+						
+						//TODO: What to do with waiver amount, how to adjust to fee Schedule object
+						BigDecimal remBalPaidAmount = allocation.getPaidAmount();
+						if(insDetailMap.containsKey(allocation.getAllocationTo())){
+							FinInsurances ins = insDetailMap.get(allocation.getAllocationTo());
+							for (FinSchFrqInsurance insSchd : ins.getFinSchFrqInsurances()) {
+								
+								if(remBalPaidAmount.compareTo(BigDecimal.ZERO) == 0){
+									break;
+								}
+								BigDecimal insBal = insSchd.getAmount().subtract(insSchd.getInsurancePaid()).subtract(insSchd.getInsuranceWaived());
+								if(insBal.compareTo(remBalPaidAmount) > 0){
+									insBal = remBalPaidAmount;
+								}
+								
+								// Create list of updated objects to save one time
+								FinSchFrqInsurance updInsSchd = new FinSchFrqInsurance();
+								updInsSchd.setInsId(insSchd.getInsId());
+								updInsSchd.setInsSchDate(insSchd.getInsSchDate());
+								updInsSchd.setInsurancePaid(insBal);
+								updateInsList.add(updInsSchd);
+								
+								remBalPaidAmount = remBalPaidAmount.subtract(insBal);
+							}
+						}
+					}
+				}
 
 				// Fee Schedule Details updation
 				if(StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_FEE)){
 					if(allocation.getPaidAmount().compareTo(BigDecimal.ZERO) > 0 || 
 							allocation.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0){
-						// Fetch Fee Details based on Allocated ID
 						
+						// Fetch Fee Details based on Allocated ID
 						if(feeDetailMap == null){
 							feeDetailMap = new HashMap<>();
 							for (FinFeeDetail fee : scheduleData.getFinFeeDetailList()) {
@@ -726,6 +766,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 								FinFeeScheduleDetail updFeeSchd = new FinFeeScheduleDetail();
 								updFeeSchd.setFeeID(feeSchd.getFeeID());
 								updFeeSchd.setPaidAmount(feeBal);
+								updFeeSchd.setSchDate(feeSchd.getSchDate());
 								updateFeeList.add(updFeeSchd);
 								
 								remBalPaidAmount = remBalPaidAmount.subtract(feeBal);
@@ -758,6 +799,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if(!updateFeeList.isEmpty()){
 				getFinFeeScheduleDetailDAO().updateFeeSchdPaids(updateFeeList);
 			}
+			
+			// Insurance Schedule Details Updation
+			if(!updateInsList.isEmpty()){
+				getFinInsurancesDAO().updateInsSchdPaids(updateInsList);
+			}
+			
+			updateFeeList = null;
+			updateInsList = null;
 			
 			getAllocationDetailDAO().saveAllocations(receiptHeader.getAllocations() , TableType.MAIN_TAB);
 		}

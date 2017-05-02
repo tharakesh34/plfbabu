@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.dao.insurancedetails.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -399,10 +400,8 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 		RowMapper<FinSchFrqInsurance> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinSchFrqInsurance.class);
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-    
 		
 	}
-
 
 	@Override
 	public List<FinInsurances> getInsurancesList(String insuranceType, String tableType) {
@@ -430,7 +429,42 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-
 	}
+	
+	@Override
+	public void updateInsSchdPaids(List<FinSchFrqInsurance> updateInsList) {
+		logger.debug("Entering");
+		
+		StringBuilder updateSql = new StringBuilder("Update FinSchFrqInsurance");
+		updateSql.append(" Set InsurancePaid = InsurancePaid + :InsurancePaid ");
+		updateSql.append(" Where InsId =:InsId AND InsSchDate=:InsSchDate ");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(updateInsList.toArray());
+		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+	
+
+	@Override
+	public List<FinSchFrqInsurance> getInsScheduleBySchDate(String finReference, Date schDate) {
+		logger.debug("Entering");
+		FinSchFrqInsurance insSchd = new FinSchFrqInsurance();
+		insSchd.setReference(finReference);
+		insSchd.setInsSchDate(schDate);
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT InsId, InsSchDate, InsurancePaid " );
+		selectSql.append(" FROM FinSchFrqInsurance ");
+		selectSql.append(" WHERE  Reference = :Reference AND InsSchDate=:InsSchDate ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(insSchd);
+		RowMapper<FinSchFrqInsurance> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinSchFrqInsurance.class);
+		List<FinSchFrqInsurance> insList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.debug("Leaving");
+		return insList;
+	}
+	
 
 }

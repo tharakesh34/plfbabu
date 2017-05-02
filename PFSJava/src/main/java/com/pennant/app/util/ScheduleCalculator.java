@@ -548,6 +548,9 @@ public class ScheduleCalculator {
 			finScheduleData = calEffectiveRate(finScheduleData, CalculationConstants.SCH_SPECIFIER_TOTAL,
 					totalDesiredProfit, null, finMain.getMaturityDate(), false);
 		}
+		
+		// Insurance recalculation due to changes in Outstandings
+		finScheduleData = insuranceCalculation(finScheduleData);
 
 		setFinScheduleData(finScheduleData);
 		logger.debug("Leaving");
@@ -5168,6 +5171,7 @@ public class ScheduleCalculator {
 
 		String rpyFrqCode = String.valueOf(finScheduleData.getFinanceMain().getRepayFrq().charAt(0));
 		BigDecimal actualFinAmt = BigDecimal.ZERO;
+		Date eventFromDate = finScheduleData.getFinanceMain().getEventFromDate();
 
 		for (FinInsurances finInsurance : insuranceList) {
 
@@ -5249,6 +5253,10 @@ public class ScheduleCalculator {
 					finScheduleData.setErrorDetail(new ErrorDetails("SCH38",
 							"Insurance Schedule details mismatch with Payment Schedule.", new String[] { " " }));
 					break;
+				}
+				
+				if(curSchd.getSchDate().compareTo(eventFromDate) <= 0){
+					continue;
 				}
 
 				// Insurance Fee Amount Calculation

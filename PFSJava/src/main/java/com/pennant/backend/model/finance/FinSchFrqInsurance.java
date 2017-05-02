@@ -26,6 +26,7 @@ public class FinSchFrqInsurance extends AbstractWorkflowEntity {
 	private LoggedInUser		userDetails;
 	private BigDecimal			closingBalance;
 	private BigDecimal          insurancePaid= BigDecimal.ZERO;
+	private BigDecimal          insuranceWaived= BigDecimal.ZERO;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -163,6 +164,14 @@ public class FinSchFrqInsurance extends AbstractWorkflowEntity {
 
 	public void setInsurancePaid(BigDecimal insurancePaid) {
 		this.insurancePaid = insurancePaid;
+	}
+
+	public BigDecimal getInsuranceWaived() {
+		return insuranceWaived;
+	}
+
+	public void setInsuranceWaived(BigDecimal insuranceWaived) {
+		this.insuranceWaived = insuranceWaived;
 	}
 
 

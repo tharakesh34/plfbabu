@@ -389,8 +389,8 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 		logger.debug("Leaving");
 	}
 
-@SuppressWarnings("serial")
-@Override
+	@SuppressWarnings("serial")
+	@Override
 	public void updateExcessAmount(long excessID, String amountType, BigDecimal amount) {
 		logger.debug("Entering");
 
@@ -403,7 +403,7 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 		if ("R".equals(amountType)) {
 			updateSql.append(" Set ReservedAmt = ReservedAmt + :amount, BalanceAmt = BalanceAmt - :amount ");
 		} else if ("U".equals(amountType)) {
-			updateSql.append(" Set ReservedAmt = UtilisedAmt + :amount, BalanceAmt = BalanceAmt - :amount ");
+			updateSql.append(" Set UtilisedAmt = UtilisedAmt + :amount, BalanceAmt = BalanceAmt - :amount ");
 		}
 		updateSql.append(" Where ExcessID =:ExcessID");
 
