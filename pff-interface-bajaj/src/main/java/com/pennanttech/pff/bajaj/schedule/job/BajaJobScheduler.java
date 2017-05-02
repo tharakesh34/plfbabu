@@ -4,6 +4,7 @@ import java.text.ParseException;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.TriggerBuilder;
@@ -43,17 +44,17 @@ public class BajaJobScheduler extends AbstractJobScheduler {
 		} catch (Exception e) {
 			throw new ParseException(schduleTime, 0);
 		}
-
-		jobDetails = new JobSchedulerDetails();
-		jobDetails
-				.setJobDetail(JobBuilder.newJob(AutoDisburseFileResponseJob.class)
-						.withIdentity("AUTO_DISB_RES_FILE", "AUTO_DISB_RES_FILE").withDescription("AUTO_DISB_RES_FILE")
-						.build());
-		jobDetails.setTrigger(TriggerBuilder.newTrigger().withIdentity("AUTO_DISB_RES_FILE", "AUTO_DISB_RES_FILE")
-				.withDescription("Auto disbursement response file trigger.")
-				.withSchedule(CronScheduleBuilder.cronSchedule(schduleTime)).build());
-		JOB_SCHEDULER_MAP.put("AUTO_DISB_RES_FILE", jobDetails);
-
+		if (StringUtils.trimToNull(schduleTime) != null) {
+			//TODO DIscuss with murthy
+			jobDetails = new JobSchedulerDetails();
+			jobDetails.setJobDetail(JobBuilder.newJob(AutoDisburseFileResponseJob.class)
+					.withIdentity("AUTO_DISB_RES_FILE", "AUTO_DISB_RES_FILE").withDescription("AUTO_DISB_RES_FILE")
+					.build());
+			jobDetails.setTrigger(TriggerBuilder.newTrigger().withIdentity("AUTO_DISB_RES_FILE", "AUTO_DISB_RES_FILE")
+					.withDescription("Auto disbursement response file trigger.")
+					.withSchedule(CronScheduleBuilder.cronSchedule(schduleTime)).build());
+			JOB_SCHEDULER_MAP.put("AUTO_DISB_RES_FILE", jobDetails);
+		}
 		datEngine = null;
 	}
 
