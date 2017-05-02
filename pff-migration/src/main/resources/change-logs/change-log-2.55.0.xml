@@ -41,5 +41,11 @@
 			UPDATE DATA_ENGINE_TABLE SET RECORDLENGTH = 3 WHERE ID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_OTHER_IMPORT'));
 		</sql>
 	</changeSet>
+	<changeSet id="04" author="pruthvi">
+		<sql>
+	update reportfilterfields set multiselectsearch='0'
+    where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_PaymentSchedule') and fieldid='2';
+	</sql>
+	</changeSet>
 		
 </databaseChangeLog>
