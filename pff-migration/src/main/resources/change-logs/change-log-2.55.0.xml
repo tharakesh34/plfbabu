@@ -47,5 +47,16 @@
     where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_PaymentSchedule') and fieldid='2';
 	</sql>
 	</changeSet>
-		
+	<changeSet id="05" author="Madhubabu">
+	<createView replaceIfExists="true" viewName="PresentmentDownload_View">
+			     select EntityCode, MandateType, BankID, SCHDATE, Sum(PresentmentAmt) PresentmentAmt, Count(*) count from (
+			select 1 EntityCode, MandateType, SUBSTR(MICR,4,3) BANKID, SCHDATE, PresentmentAmt 
+			from PresentmentDetails T1 
+			Inner Join Mandates T2 on T1.MandateID = T2.MandateID 
+			Inner Join BankBranches T3 on T3.BankBranchID = T2.BankBranchID 
+			where ExcludeReason = 0
+			) t 
+			group BY EntityCode, MandateType, BankID ,SCHDATE
+		</createView>
+</changeSet>	
 </databaseChangeLog>
