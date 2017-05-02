@@ -343,7 +343,7 @@ public class LatePayMarkingService extends ServiceHelper {
 	private void createODDetails(FinRepayQueue finRepayQueue, Date valueDate, Date businessdate) {
 		logger.debug(" Entering ");
 
-		if (finRepayQueue.getSchdPftBal().compareTo(BigDecimal.ZERO) <= 0
+		if (finRepayQueue.getSchdPriBal().compareTo(BigDecimal.ZERO) <= 0
 				&& finRepayQueue.getSchdPftBal().compareTo(BigDecimal.ZERO) <= 0) {
 			return;
 		}
@@ -356,10 +356,10 @@ public class LatePayMarkingService extends ServiceHelper {
 		finODDetails.setFinType(finRepayQueue.getFinType());
 		finODDetails.setCustID(finRepayQueue.getCustomerID());
 		finODDetails.setFinODTillDate(valueDate);
-		finODDetails.setFinCurODAmt(finRepayQueue.getSchdPftBal().add(finRepayQueue.getSchdPftBal()));
+		finODDetails.setFinCurODAmt(finRepayQueue.getSchdPriBal().add(finRepayQueue.getSchdPftBal()));
 		finODDetails.setFinCurODPri(finRepayQueue.getSchdPriBal());
 		finODDetails.setFinCurODPft(finRepayQueue.getSchdPftBal());
-		finODDetails.setFinMaxODAmt(finODDetails.getFinCurODPri());
+		finODDetails.setFinMaxODAmt(finRepayQueue.getSchdPriBal().add(finRepayQueue.getSchdPftBal()));
 		finODDetails.setFinMaxODPri(finODDetails.getFinCurODPri());
 		finODDetails.setFinMaxODPri(finODDetails.getFinCurODPft());
 		finODDetails.setFinCurODDays(DateUtility.getDaysBetween(finODDetails.getFinODSchdDate(), businessdate));
@@ -383,7 +383,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		FinODDetails finODDetails = new FinODDetails();
 		finODDetails.setFinODSchdDate(finRepayQueue.getRpyDate());
 		finODDetails.setFinReference(finRepayQueue.getFinReference());
-		finODDetails.setFinCurODAmt(finRepayQueue.getSchdPftBal().add(finRepayQueue.getSchdPftBal()));
+		finODDetails.setFinCurODAmt(finRepayQueue.getSchdPriBal().add(finRepayQueue.getSchdPftBal()));
 		finODDetails.setFinCurODPri(finRepayQueue.getSchdPriBal());
 		finODDetails.setFinCurODPft(finRepayQueue.getSchdPftBal());
 		finODDetails.setFinODTillDate(valueDate);

@@ -222,9 +222,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		String finODFor = FinanceConstants.SCH_TYPE_SCHEDULE;
 		String finReference = odDetails.getFinReference();
 		Date finODSchdDate = odDetails.getFinODSchdDate();
-		BigDecimal finCurODPri = odDetails.getFinMaxODPri();
-		BigDecimal finCurODPft = odDetails.getFinMaxODPft();
-		BigDecimal total = finCurODPft.add(finCurODPri);
+
 
 		List<OverdueChargeRecovery> recoveries = new ArrayList<OverdueChargeRecovery>();
 		List<FinanceRepayments> list = financeRepaymentsDAO.getByFinRefAndSchdDate(finReference, finODSchdDate);
@@ -236,9 +234,9 @@ public class LatePayPenaltyService extends ServiceHelper {
 			recovery.setFinODSchdDate(finODSchdDate);
 			recovery.setFinODFor(finODFor);
 			recovery.setSeqNo(1);
-			recovery.setFinCurODPri(finCurODPri);
-			recovery.setFinCurODPft(finCurODPft);
-			recovery.setFinCurODAmt(total);
+			recovery.setFinCurODPri(odDetails.getFinCurODPri());
+			recovery.setFinCurODPft(odDetails.getFinCurODPft());
+			recovery.setFinCurODAmt(odDetails.getFinCurODPri().add(odDetails.getFinCurODPft()));
 			recovery.setPenaltyType(penaltyrate.getODChargeType());
 			recovery.setPenaltyCalOn(penaltyrate.getODChargeCalOn());
 			recovery.setPenaltyAmtPerc(penaltyrate.getODChargeAmtOrPerc());
@@ -253,6 +251,10 @@ public class LatePayPenaltyService extends ServiceHelper {
 			}
 		}
 
+		BigDecimal finCurODPri = odDetails.getFinMaxODPri();
+		BigDecimal finCurODPft = odDetails.getFinMaxODPft();
+		BigDecimal total = finCurODPft.add(finCurODPri);
+		
 		int seq = 0;
 		Map<Date, FinanceRepayments> map = new TreeMap<Date, FinanceRepayments>();
 		for (FinanceRepayments financeRepayments : list) {

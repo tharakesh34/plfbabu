@@ -160,9 +160,7 @@ public class LatePayInterestService extends ServiceHelper {
 		String finODFor = FinanceConstants.SCH_TYPE_LATEPAYPROFIT;
 		String finReference = odDetails.getFinReference();
 		Date finODSchdDate = odDetails.getFinODSchdDate();
-		BigDecimal finCurODPri = odDetails.getFinMaxODPri();
-		BigDecimal finCurODPft = odDetails.getFinMaxODPft();
-		BigDecimal total = finCurODPft.add(finCurODPri);
+
 
 		List<OverdueChargeRecovery> recoveries = new ArrayList<OverdueChargeRecovery>();
 		List<FinanceRepayments> list = financeRepaymentsDAO.getByFinRefAndSchdDate(finReference, finODSchdDate);
@@ -175,16 +173,16 @@ public class LatePayInterestService extends ServiceHelper {
 			recovery.setFinODSchdDate(finODSchdDate);
 			recovery.setFinODFor(finODFor);
 			recovery.setSeqNo(1);
-			recovery.setFinCurODPri(finCurODPri);
-			recovery.setFinCurODPft(finCurODPft);
-			recovery.setFinCurODAmt(total);
+			recovery.setFinCurODPri(odDetails.getFinCurODPri());
+			recovery.setFinCurODPft(odDetails.getFinCurODPft());
+			recovery.setFinCurODAmt(odDetails.getFinCurODPri().add(odDetails.getFinCurODPft()));
 			recovery.setPenaltyType(FinanceConstants.PENALTYTYPE_PERCONDUEDAYS);
 			recovery.setPenaltyCalOn(FinanceConstants.ODCALON_SPRI);
 			recovery.setPenaltyAmtPerc(rateToApply);
 			recovery.setRcdCanDel(true);
 			recovery.setMovementDate(finODSchdDate);
 			recovery.setODDays(DateUtility.getDaysBetween(businessDate, recovery.getMovementDate()));
-			recovery.setPenalty(CalculationUtil.calInterest(businessDate, recovery.getMovementDate(), finCurODPri,
+			recovery.setPenalty(CalculationUtil.calInterest(businessDate, recovery.getMovementDate(), recovery.getFinCurODPri(),
 					profitDaysBasis, rateToApply));
 			recovery.setPenaltyBal(getPenaltyBal(recovery));
 			if (recovery.getODDays() > 0) {
@@ -192,6 +190,10 @@ public class LatePayInterestService extends ServiceHelper {
 			}
 
 		} else {
+			
+			BigDecimal finCurODPri = odDetails.getFinMaxODPri();
+			BigDecimal finCurODPft = odDetails.getFinMaxODPft();
+			BigDecimal total = finCurODPft.add(finCurODPri);
 
 			int seq = 0;
 			Map<Date, FinanceRepayments> map = new TreeMap<Date, FinanceRepayments>();
