@@ -34,6 +34,7 @@ import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dbengine.DataEngineDBProcess;
 import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.Literal;
 
 public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 
@@ -83,7 +84,7 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 * @throws Exception
 	 */
 	public void onCreate$window_DataImportCtrl(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
 		setPageComponents(window);
@@ -108,7 +109,7 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 		}
 		fillComboBox(fileConfiguration, "", menuList, "");
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -118,7 +119,7 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 * @throws Exception
 	 */
 	public void onChange$fileConfiguration(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		try {
 			String fileConfig = this.fileConfiguration.getSelectedItem().getLabel();
@@ -142,7 +143,7 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 		} catch (Exception e) {
 			exceptionTrace(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -152,7 +153,7 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 * @throws Exception
 	 */
 	private void fileConfigurationSetup() throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String path = config.getUploadPath();
 		String uploadLoc = config.getUploadLocation();
@@ -178,7 +179,7 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 				fillComboBox(serverFileName, "", serverFiles, "");
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -198,7 +199,7 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 * @throws Exception
 	 */
 	public void onClick$btnImport(Event event) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		DataEngineStatus status = dataEngineConfig.getLatestExecution(config.getName());
 
@@ -216,7 +217,7 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 			return;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void exceptionTrace(Exception e) throws InterruptedException {

@@ -33,12 +33,13 @@ import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.ConfigUtil;
 import com.pennanttech.pff.baja.BajajInterfaceConstants;
+import com.pennanttech.pff.core.Literal;
 
 public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	private static final Logger logger = Logger.getLogger(DisbursementDataImportCtrl.class);
 	private static final long serialVersionUID = 1297405999029019920L;
 
-	protected Window window_DataImportCtrl;
+	protected Window window_DisbursementDataImportCtrl;
 	protected Button btnImport;
 	protected Button btnFileUpload;
 
@@ -82,8 +83,8 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 *            An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
-	public void onCreate$window_DataImportCtrl(Event event) throws Exception {
-		logger.debug("Entering");
+	public void onCreate$window_DisbursementDataImportCtrl(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
 		setPageComponents(window);
@@ -115,7 +116,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		
 		fillComboBox(fileConfiguration, "", menuList, "");
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -125,7 +126,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 * @throws Exception
 	 */
 	public void onChange$fileConfiguration(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		try {
 			String fileConfig = this.fileConfiguration.getSelectedItem().getValue();
@@ -147,7 +148,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		} catch (Exception e) {
 			exceptionTrace(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
