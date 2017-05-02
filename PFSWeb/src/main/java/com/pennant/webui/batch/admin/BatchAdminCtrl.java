@@ -246,13 +246,6 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		MultiLineMessageBox.doSetTemplate();
 		int conf = 0;
 
-		String loggedInUsers = getLoggedInUsers();
-		if (StringUtils.isNotEmpty(loggedInUsers)) {
-			loggedInUsers = "\n" + loggedInUsers;
-			Clients.showNotification(Labels.getLabel("label_current_logged_users", new String[] { loggedInUsers }),
-					"info", null, null, -1);
-			return;
-		}
 
 		String msg = "";
 		if ("Start".equals(this.btnStartJob.getLabel())) {
