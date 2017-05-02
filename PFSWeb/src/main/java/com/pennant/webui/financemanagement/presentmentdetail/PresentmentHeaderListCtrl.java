@@ -100,11 +100,11 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 
 	// Search Fields
 	protected Textbox reference; 
-	protected Datebox presentmentDate; 
 	protected ExtendedCombobox partnerBank; 
   	protected Combobox status; 
     protected Combobox mandateType; 
 	protected Datebox schdate; 
+	protected Datebox presentmentDate; 
 	
 	protected Listbox sortOperator_Reference;
 	protected Listbox sortOperator_PresentmentDate;

@@ -575,19 +575,26 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 	public void updatePresentmentDetails(List<Long> excludeList, List<Long> includeList, String userAction, long presentmentId, long partnerBankId) throws Exception {
 
 		if ("Save".equals(userAction)) {
-			this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, includeList, 0);
-			this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, excludeList, RepayConstants.PEXC_MANUAL_EXCLUDE);
+			if (includeList != null && !includeList.isEmpty()) {
+				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, includeList, 0);
+			}
+			if (excludeList != null && !excludeList.isEmpty()) {
+				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, excludeList, RepayConstants.PEXC_MANUAL_EXCLUDE);
+			}
 			this.presentmentHeaderDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_BATCH_CREATED, partnerBankId);
 		} else if ("Submit".equals(userAction)) {
-			this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, includeList, 0);
-			this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, excludeList, RepayConstants.PEXC_MANUAL_EXCLUDE);
+			if (includeList != null && !includeList.isEmpty()) {
+				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, includeList, 0);
+			} 
+			if (excludeList != null && !excludeList.isEmpty()) {
+				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, excludeList, RepayConstants.PEXC_MANUAL_EXCLUDE);
+			}
 			this.presentmentHeaderDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_AWAITING_CONF, partnerBankId);
 		} else if ("Approve".equals(userAction)) {
 			processDetails(presentmentId);
 		} else if ("Resubmit".equals(userAction)) {
 			this.presentmentHeaderDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_BATCH_CREATED, partnerBankId);
 		}
-		
 	}
 
 }

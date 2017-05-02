@@ -296,9 +296,10 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	public void doWriteBeanToComponents(PresentmentHeader aPresentmentHeader) {
 		logger.debug(Literal.ENTERING);
 
-		
-		this.partnerBank.setValue(String.valueOf(presentmentHeader.getPartnerBankId()));
-		this.partnerBank.setDescription(presentmentHeader.getPartnerBankIdName());
+		if(presentmentHeader.getPartnerBankId() != 0){
+			this.partnerBank.setValue(String.valueOf(presentmentHeader.getPartnerBankId()));
+			this.partnerBank.setDescription(presentmentHeader.getPartnerBankIdName());
+		}
 		
 		Map<Long, PresentmentDetail> totExcludeMap = new HashMap<Long, PresentmentDetail>();
 		this.includeList = this.presentmentHeaderService.getPresentmentDetailsList(aPresentmentHeader.getId(), true, "_AView");
