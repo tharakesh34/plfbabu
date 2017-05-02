@@ -3450,6 +3450,14 @@ WHERE     NOT EXISTS (SELECT 1 FROM PRESENTMENTHEADER_TEMP WHERE ID = T1.ID)
 			Insert INTO REPORTLIST (CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ) 
       			values ('AccountingSet','AccountingSet','listheader_EventCode.label,listheader_EventDesc.label,listheader_AccountSetCode.label,listheader_AccountSetCodeName.label,listheader_RecordStatus.label,listheader_RecordType.label','eventCode,lovDescEventCodeName,accountSetCode,accountSetCodeName,recordStatus,recordType','String,String,String,String,String,String',' ','ReportList06','Accounting Set','Rule Factory',2,1001,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
 		</sql>
+	</changeSet>
+	
+	<changeSet id="178" author="chaitanya.ch">
+		<sql>
+			Delete from RMTTransactionEntry where AccountsetID In (select AccountSetID from RMTAccountingset where AccountsetCode = 'Default' and EventCode = 'SCDCHG');
+			Delete from RMTTransactionEntry where AccountsetID In (select AccountSetID from RMTAccountingset where AccountsetCode = 'Default' and EventCode = 'ADDDBSP');
+			Delete from RMTTransactionEntry where AccountsetID In (select AccountSetID from RMTAccountingset where AccountsetCode = 'Default' and EventCode = 'ADDDBSF');
+		</sql>
 	</changeSet> 
  
 </databaseChangeLog>
