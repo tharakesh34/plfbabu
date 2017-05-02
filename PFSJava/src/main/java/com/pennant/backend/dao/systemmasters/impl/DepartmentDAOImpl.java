@@ -251,14 +251,6 @@ public class DepartmentDAOImpl extends BasisCodeDAO<Department> implements Depar
 	 * @param userLanguage (String)
 	 * @return ErrorDetails
 	 */
-	/*private ErrorDetails getError(String errorId, String deptCode, String userLanguage) {
-		String[][] parms = new String[2][2];
-		parms[1][0] = deptCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_DeptCode") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
-				userLanguage);
-	}
-*/
 	@Override
 	public boolean isDuplicateKey(String departmentCode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
