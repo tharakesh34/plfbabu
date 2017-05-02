@@ -3498,5 +3498,11 @@ and fieldid=2;
 		UPDATE BlackListCustomer_Temp SET CustIsActive=1 where CustIsActive=0;
 	</sql>
 </changeSet> 
+
+<changeSet author="Madhubabu" id="159">
+		<sql>
+		  delete from secgrouprights where rightid in(select rightid from secrights where rightname='button_JVPostingEntryDialog_btnSave') and grpid in (select grpid from secgroups where grpcode ='JVPOSTINGS_APPROVER');
+		</sql>
+	</changeSet>
  
 </databaseChangeLog>
