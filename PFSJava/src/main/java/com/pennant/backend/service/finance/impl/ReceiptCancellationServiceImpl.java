@@ -463,13 +463,14 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		logger.debug("Entering");
 		
 		String finReference = receiptHeader.getReference();
+		
 
 		//Valid Check for Finance Reversal On Active Finance Or not with ValueDate CheckUp
 		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainForBatch(finReference);
 		if (!financeMain.isFinIsActive()) {
-
+			ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60204", "", null), PennantConstants.default_Language);
 			//Not Allowed for Inactive Finances
-			return "Loan Cannot be Processed for Reversal of Payment. Loan is in In-Active State.";
+			return errorDetail.getErrorMessage();
 		}
 		
 		boolean isRcdFound = false;
@@ -499,7 +500,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 							// Update Reserve Amount in FinExcessAmount
 							if(excess == null || excess.getBalanceAmt().compareTo(rpyHeader.getRepayAmount()) < 0){
-								return "Not allowed to Reverse the transaction, because of insufficient balance on Excess";
+								ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60205", "", null), PennantConstants.default_Language);
+								return errorDetail.getErrorMessage();
 							}
 							getFinExcessAmountDAO().updateExcessBal(excess.getExcessID(), rpyHeader.getRepayAmount().negate());
 
@@ -535,7 +537,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 						//============================================
 						List<FinLogEntryDetail> list = getFinLogEntryDetailDAO().getFinLogEntryDetailList(finReference, valueDate);
 						if (list != null && !list.isEmpty()) {
-							return "Loan was maintained after this Repayment done."; //TODO: error code
+							ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60206", "", null), PennantConstants.default_Language);
+							return errorDetail.getErrorMessage();
 						}
 
 						//Posting Reversal Case Program Calling in Equation
@@ -561,7 +564,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 					//============================================
 					FinLogEntryDetail detail = getFinLogEntryDetailDAO().getFinLogEntryDetail(finReference, finEvent, valueDate);
 					if(detail == null){
-						return "Log Entry Details are not correct. Please contact Adminstrator.";
+						ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60207", "", null), PennantConstants.default_Language);
+						return errorDetail.getErrorMessage();
 					}
 					logKey = detail.getLogKey();
 					detail.setReversalCompleted(true);
@@ -715,7 +719,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		}
 		
 		if(!isRcdFound){
-			return "No Receipt Found to Reverse the Transaction.";
+			ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60208", "", null), PennantConstants.default_Language);
+			return errorDetail.getErrorMessage();
 		}
 
 		return null;
