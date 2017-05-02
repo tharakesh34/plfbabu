@@ -1127,8 +1127,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		valueParm[2] = String.valueOf(aTransactionEntry.getTransOrder());
 
 		errParm[0] = PennantJavaUtil.getLabel("label_FeeTranEvent") + ":" + valueParm[0] + " "
-				+ PennantJavaUtil.getLabel("label_FeeCode") + ":" + valueParm[1];
-		errParm[1] = PennantJavaUtil.getLabel("label_TierSlab") + ":" + valueParm[2];
+				+ PennantJavaUtil.getLabel("label_AccountingSetDialog_AccountSetCode.value") + ":" + valueParm[1];
+		errParm[1] = PennantJavaUtil.getLabel("label_TransactionEntryDialog_TransOrder.value") + ":" + valueParm[2];
 		//getAccountingSetDialogCtrl().getTransactionEntryList();
 		if (getAccountingSetDialogCtrl().getTransactionEntryList() != null
 				&& getAccountingSetDialogCtrl().getTransactionEntryList().size() > 0) {
@@ -1147,7 +1147,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 							&& StringUtils.equals(aTransactionEntry.getPostToSys(), AccountConstants.POSTTOSYS_CORE)) {
 
 						valueParm[2] = String.valueOf(aTransactionEntry.getTransOrder() + 1);
-						errParm[1] = PennantJavaUtil.getLabel("label_TierSlab") + ":" + valueParm[2];
+						errParm[1] = PennantJavaUtil.getLabel("label_TransactionEntryDialog_TransOrder.value") + ":" + valueParm[2];
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(
 								PennantConstants.KEY_FIELD, "30549", errParm, valueParm), getUserWorkspace()
 								.getUserLanguage()));
