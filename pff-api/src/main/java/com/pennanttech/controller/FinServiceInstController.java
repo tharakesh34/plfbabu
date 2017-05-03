@@ -83,6 +83,7 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.fees.FeeDetailService;
+import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.ManualPaymentService;
@@ -123,6 +124,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	private FinanceRepayPriorityDAO		financeRepayPriorityDAO;
 	private FeeDetailService 			feeDetailService;
 	private BankBranchService 			bankBranchService;
+	private FinAdvancePaymentsService	finAdvancePaymentsService;
 
 
 	/**
@@ -606,10 +608,11 @@ public class FinServiceInstController extends SummaryDetailService {
 
 				// process disbursement details
 				LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+				//financeDetail.getFinScheduleData().getFinanceMain().setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				List<FinAdvancePayments> advancePayments = financeDetail.getAdvancePaymentsList();
 				if (advancePayments != null) {
-					int paymentSeq = 1;
 					for (FinAdvancePayments advPayment : advancePayments) {
+						int paymentSeq = finAdvancePaymentsService.getCountByFinReference(financeMain.getFinReference());
 						advPayment.setFinReference(financeMain.getFinReference());
 						advPayment.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 						advPayment.setNewRecord(true);
@@ -617,9 +620,9 @@ public class FinServiceInstController extends SummaryDetailService {
 						advPayment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 						advPayment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 						advPayment.setUserDetails(financeMain.getUserDetails());
-						advPayment.setPaymentSeq(paymentSeq);
+						advPayment.setPaymentSeq(paymentSeq+1);
 						advPayment.setLLDate(null);
-						paymentSeq++;
+						
 
 						if (StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IMPS)
 								|| StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_NEFT)
@@ -1644,5 +1647,9 @@ public class FinServiceInstController extends SummaryDetailService {
 	
 	public void setBankBranchService(BankBranchService bankBranchService) {
 		this.bankBranchService = bankBranchService;
+	}
+
+	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
+		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 }

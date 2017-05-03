@@ -8718,6 +8718,7 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="collateralSetupService" ref="collateralSetupService" />
 		<property name="relationshipOfficerService" ref="relationshipOfficerService" />
+		<property name="scriptValidationService" ref="scriptValidationService" />
 	</bean>
 
 	<!-- Beneficiary -->

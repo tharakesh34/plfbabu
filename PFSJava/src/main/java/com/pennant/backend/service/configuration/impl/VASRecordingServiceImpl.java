@@ -80,6 +80,8 @@ import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ScriptError;
+import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -105,6 +107,7 @@ import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.impl.DocumentDetailValidation;
 import com.pennant.backend.service.collateral.impl.ExtendedFieldDetailsValidation;
+import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.configuration.VASRecordingService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -156,7 +159,9 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	private FinanceMainDAO 					financeMainDAO;
 	private CollateralSetupService 			collateralSetupService;
 	private RelationshipOfficerService		relationshipOfficerService;
+	private ScriptValidationService 		scriptValidationService;
 
+	
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
@@ -1921,6 +1926,24 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				}
 
 			}
+			Map<String, Object>	mapValues = new HashMap<String, Object>();
+			for (ExtendedField details : vasRecording.getExtendedDetails()) {
+				for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
+					mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+				}
+			}
+			
+			// do script pre validation and post validation
+			ScriptErrors errors = null;
+			if (vASConfiguration.isPostValidationReq()) {
+				errors = scriptValidationService.getPostValidationErrors(vASConfiguration.getPostValidation(), mapValues);
+			}
+			if (errors != null) {
+				List<ScriptError> errorsList = errors.getAll();
+				for (ScriptError error : errorsList) {
+					auditDetail.setErrorDetail(new ErrorDetails("","90909","",error.getValue(),null,null));
+				}
+			}
 		}
 		logger.debug("Leaving");
 		return auditDetail;
@@ -2101,6 +2124,12 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	}
 	public void setRelationshipOfficerService(RelationshipOfficerService relationshipOfficerService) {
 		this.relationshipOfficerService = relationshipOfficerService;
+	}
+	public ScriptValidationService getScriptValidationService() {
+		return scriptValidationService;
+	}
+	public void setScriptValidationService(ScriptValidationService scriptValidationService) {
+		this.scriptValidationService = scriptValidationService;
 	}
 	
 

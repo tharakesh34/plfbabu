@@ -2374,6 +2374,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 			// validate third party customers
 			List<CollateralThirdParty> thirdPartyCollateral = collateralSetup.getCollateralThirdPartyList();
+			if(thirdPartyCollateral !=null){
 			for (CollateralThirdParty thirdPartyCust : thirdPartyCollateral) {
 				int rcdCount = customerDetailsService.getCustomerCountByCIF(thirdPartyCust.getCustCIF());
 				if (rcdCount <= 0) {
@@ -2382,6 +2383,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					auditDetail
 							.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90904", "", valueParm), "EN"));
 				}
+			}
 			}
 
 			// validate collateral coOwner details

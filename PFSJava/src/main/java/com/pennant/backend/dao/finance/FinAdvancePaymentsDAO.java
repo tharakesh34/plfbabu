@@ -75,4 +75,6 @@ public interface FinAdvancePaymentsDAO {
 	void updateDisbursmentStatus(FinAdvancePayments finAdvancePayments);
 
 	int getBankCode(String bankCode, String type);
+
+	int getCountByFinReference(String finReference);
 }

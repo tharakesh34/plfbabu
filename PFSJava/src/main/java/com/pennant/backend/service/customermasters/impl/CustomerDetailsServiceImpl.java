@@ -1549,6 +1549,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		logger.debug("Entering");
 
 		// customer Employment details
+		
 		if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 			List<CustomerEmploymentDetail> custEmpDetails = customerDetails.getEmploymentDetailsList();
 			if (custEmpDetails != null) {
@@ -1598,7 +1599,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		// customer Address details
 		List<CustomerAddres> custAddress = customerDetails.getAddressList();
+		
 		if (custAddress != null) {
+			boolean isAddressPrority=false;
 			for (CustomerAddres adress : custAddress) {
 				auditDetail.setErrorDetail(validateMasterCode("BMTAddressTypes", "AddrTypeCode",
 						adress.getCustAddrType()));
@@ -1631,12 +1634,25 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90114", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
+				if(adress.getCustAddrPriority() ==1){
+					isAddressPrority = true;
+				}
+			}
+			if (!isAddressPrority) {
+				ErrorDetails errorDetail = new ErrorDetails();
+				String[] valueParm = new String[2];
+				valueParm[0] = "Address Details";
+				valueParm[1] = "Address";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
 			}
 		}
 
 		// customer Phone details
 		List<CustomerPhoneNumber> custPhones = customerDetails.getCustomerPhoneNumList();
 		if (custPhones != null) {
+			boolean isPhonePrority=false;
 			ErrorDetails errorDetail = new ErrorDetails();
 			for (CustomerPhoneNumber custPhoneDetail : custPhones) {
 				auditDetail.setErrorDetail(validateMasterCode("BMTPhoneTypes", "PhoneTypeCode",
@@ -1647,7 +1663,19 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90115", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
+				if(custPhoneDetail.getPhoneTypePriority() == 1){
+					isPhonePrority = true;
+				}
 			}
+			if (!isPhonePrority) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Phone Details";
+				valueParm[1] = "Phone";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+			
 		}
 
 		// customer Email details

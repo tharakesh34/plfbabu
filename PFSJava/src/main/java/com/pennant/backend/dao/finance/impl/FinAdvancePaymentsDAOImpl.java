@@ -488,5 +488,20 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
+	@Override
+	public int getCountByFinReference(String finReference) {
+		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
+		finAdvancePayments.setFinReference(finReference);
+
+		StringBuilder selectSql = new StringBuilder("select Max(paymentseq)");
+		selectSql.append(" From FinAdvancePayments");
+		selectSql.append(" Where FinReference = :FinReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
 
 }
