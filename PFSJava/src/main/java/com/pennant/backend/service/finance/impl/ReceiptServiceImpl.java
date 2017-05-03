@@ -389,7 +389,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					
 		for (FinReceiptDetail receiptDetail : receiptDetails) {
 			receiptDetail.setReceiptID(receiptID);
-			long receiptSeqID = getFinReceiptDetailDAO().save(receiptDetail, tableType);
+			long receiptSeqID = receiptDetail.getReceiptSeqID();
+			if(!receiptDetail.isDelRecord()){
+				receiptSeqID = getFinReceiptDetailDAO().save(receiptDetail, tableType);
+			}
 			
 			// Excess Amount Reserve
 			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) ||
@@ -546,6 +549,26 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Delete and Save FinRepayHeader Detail list by Reference
 		getFinanceRepaymentsDAO().deleteByRef(financeMain.getFinReference(), TableType.TEMP_TAB);
 		
+		for (FinReceiptDetail receiptDetail : receiptData.getReceiptHeader().getReceiptDetails()) {
+			long receiptSeqID = receiptDetail.getReceiptSeqID();
+
+			// Excess Amount Reserve
+			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) ||
+					StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
+								
+				// Excess Amount make utilization
+				FinExcessAmountReserve exReserve = getFinExcessAmountDAO().getExcessReserve(receiptSeqID, receiptDetail.getPayAgainstID());
+				if(exReserve != null){
+
+					// Update Reserve Amount in FinExcessAmount
+					getFinExcessAmountDAO().updateExcessReserve(receiptDetail.getPayAgainstID(), exReserve.getReservedAmt().negate());
+
+					// Delete Reserved Log against Excess and Receipt ID
+					getFinExcessAmountDAO().deleteExcessReserve(receiptSeqID, receiptDetail.getPayAgainstID());
+				}
+			}
+		}
+		
 		// Delete Save Receipt Detail List by Reference
 		getFinReceiptDetailDAO().deleteByReceiptID(receiptData.getReceiptHeader().getReceiptID(), TableType.TEMP_TAB);
 		
@@ -662,7 +685,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		//=====================================
 		profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
 		List<FinanceScheduleDetail> schdList = scheduleData.getFinanceScheduleDetails();
-		schdList=getRepayProcessUtil().doProcessReceipts(financeMain, schdList, profitDetail, receiptHeader, scheduleData,DateUtility.getAppDate());
+		schdList=getRepayProcessUtil().doProcessReceipts(financeMain, schdList, 
+				profitDetail, receiptHeader, scheduleData,DateUtility.getAppDate());
 
 		tranType = PennantConstants.TRAN_UPD;
 		financeMain.setRecordType("");

@@ -31,6 +31,7 @@ public class FinReceiptDetail implements Entity{
 	private Date receivedDate;
 	private String status;
 	private String remarks;
+	private boolean delRecord = false;
 	
 	private List<FinRepayHeader> repayHeaders = new ArrayList<FinRepayHeader>(1);
 	private List<ManualAdviseMovements> advMovements = new ArrayList<ManualAdviseMovements>(1);
@@ -227,6 +228,14 @@ public class FinReceiptDetail implements Entity{
 
 	public void setAdvMovements(List<ManualAdviseMovements> advMovements) {
 		this.advMovements = advMovements;
+	}
+
+	public boolean isDelRecord() {
+		return delRecord;
+	}
+
+	public void setDelRecord(boolean delRecord) {
+		this.delRecord = delRecord;
 	}
 
 }

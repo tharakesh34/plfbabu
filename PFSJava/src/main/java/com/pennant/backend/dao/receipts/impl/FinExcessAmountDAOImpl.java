@@ -266,16 +266,16 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 	 * Method for Fetch the Reserved Excess Amounts Log details
 	 */
 	@Override
-	public FinExcessAmountReserve getExcessReserve(long receiptID, long payAgainstID) {
+	public FinExcessAmountReserve getExcessReserve(long receiptSeqID, long payAgainstID) {
 		logger.debug("Entering");
 
 		FinExcessAmountReserve reserve = new FinExcessAmountReserve();
-		reserve.setReceiptID(receiptID);
+		reserve.setReceiptSeqID(receiptSeqID);
 		reserve.setExcessID(payAgainstID);
 
-		StringBuilder selectSql = new StringBuilder(" Select ReceiptID, ExcessID , ReservedAmt ");
+		StringBuilder selectSql = new StringBuilder(" Select ReceiptSeqID, ExcessID , ReservedAmt ");
 		selectSql.append(" From FinExcessAmountReserve ");
-		selectSql.append(" Where ReceiptID =:ReceiptID AND ExcessID=:ExcessID ");
+		selectSql.append(" Where ReceiptSeqID =:ReceiptSeqID AND ExcessID=:ExcessID ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reserve);
@@ -296,15 +296,15 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 	 * Method for Fetch the Reserved Excess Amounts Log details
 	 */
 	@Override
-	public List<FinExcessAmountReserve> getExcessReserveList(long receiptID) {
+	public List<FinExcessAmountReserve> getExcessReserveList(long receiptSeqID) {
 		logger.debug("Entering");
 
 		FinExcessAmountReserve reserve = new FinExcessAmountReserve();
-		reserve.setReceiptID(receiptID);
+		reserve.setReceiptSeqID(receiptSeqID);
 
-		StringBuilder selectSql = new StringBuilder(" Select ReceiptID, ExcessID , ReservedAmt ");
+		StringBuilder selectSql = new StringBuilder(" Select ReceiptSeqID, ExcessID , ReservedAmt ");
 		selectSql.append(" From FinExcessAmountReserve ");
-		selectSql.append(" Where ReceiptID =:ReceiptID ");
+		selectSql.append(" Where ReceiptSeqID =:ReceiptSeqID ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reserve);
@@ -319,17 +319,17 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 	 * Method for Save Reserved amount against Excess ID
 	 */
 	@Override
-	public void saveExcessReserveLog(long receiptID, long payAgainstID, BigDecimal reserveAmt) {
+	public void saveExcessReserveLog(long receiptSeqID, long payAgainstID, BigDecimal reserveAmt) {
 		logger.debug("Entering");
 		
 		FinExcessAmountReserve reserve = new FinExcessAmountReserve();
-		reserve.setReceiptID(receiptID);
+		reserve.setReceiptSeqID(receiptSeqID);
 		reserve.setExcessID(payAgainstID);
 		reserve.setReservedAmt(reserveAmt);
 		
 		StringBuilder insertSql = new StringBuilder("Insert Into FinExcessAmountReserve ");
-		insertSql.append(" (ExcessID, ReceiptID, ReservedAmt )");
-		insertSql.append(" Values(:ExcessID, :ReceiptID, :ReservedAmt)");
+		insertSql.append(" (ExcessID, ReceiptSeqID, ReservedAmt )");
+		insertSql.append(" Values(:ExcessID, :ReceiptSeqID, :ReservedAmt)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 

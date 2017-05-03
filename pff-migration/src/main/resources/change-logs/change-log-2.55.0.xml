@@ -156,4 +156,9 @@
 			);	
 		</sql>
 	</changeSet>
+	
+	<changeSet id="12" author="Siva">
+		<renameColumn columnDataType="bigint" newColumnName="ReceiptSeqID"
+			oldColumnName="ReceiptID" tableName="FinExcessAmountReserve" />
+	</changeSet>
 </databaseChangeLog>

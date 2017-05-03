@@ -262,6 +262,12 @@ public class ReceiptCalculator implements Serializable {
 		for (int i = 0; i < receiptDetailList.size(); i++) {
 			
 			FinReceiptDetail receiptDetail = receiptDetailList.get(i);
+			
+			// Internal temporary Record can't be processed for Calculation
+			if(receiptDetail.isDelRecord()){
+				continue;
+			}
+			
 			BigDecimal totalReceiptAmt = receiptDetail.getAmount();
 			repayHeaderList = new ArrayList<>();
 

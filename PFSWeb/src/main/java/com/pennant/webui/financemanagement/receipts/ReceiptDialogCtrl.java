@@ -1471,7 +1471,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		doSetValidation();
 		FinReceiptHeader receiptHeader = doWriteComponentsToBean();
 		receiptHeader.setReceiptAmount(getTotalReceiptAmount());
-		receiptHeader.getReceiptDetails().clear();
 		receiptHeader.getAllocations().clear();
 		
 		// Basic Receipt Mode Details
@@ -1487,12 +1486,15 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 		
-		FinReceiptDetail receiptDetail = null;
+		List<FinReceiptDetail> receiptDetailList = new ArrayList<>();
+		FinReceiptDetail receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.PAYTYPE_EMIINADV);
 		// EMI In Advance Receipt Mode
 		if(this.listBoxExcess.getFellowIfAny("ExcessAmount_"+RepayConstants.EXAMOUNTTYPE_EMIINADV) != null){
 			CurrencyBox emiAdvance = (CurrencyBox) this.listBoxExcess.getFellowIfAny("ExcessAmount_"+RepayConstants.EXAMOUNTTYPE_EMIINADV);
 			if(emiAdvance.getActualValue().compareTo(BigDecimal.ZERO) > 0){
-				receiptDetail = new FinReceiptDetail();
+				if(receiptDetail == null){
+					receiptDetail = new FinReceiptDetail();
+				}
 				receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 				receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 				receiptDetail.setPaymentType(RepayConstants.PAYTYPE_EMIINADV);
@@ -1500,15 +1502,28 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				receiptDetail.setAmount(PennantApplicationUtil.unFormateAmount(emiAdvance.getActualValue(), finFormatter));
 				receiptDetail.setValueDate(this.valueDate.getValue());
 				receiptDetail.setReceivedDate(this.valueDate.getValue());
-				receiptHeader.getReceiptDetails().add(receiptDetail);
+				receiptDetail.setDelRecord(false);// Internal Purpose
+				receiptDetail.getAdvMovements().clear();
+				receiptDetail.getRepayHeaders().clear();
+				receiptDetailList.add(receiptDetail);
+			}else{
+				if(receiptDetail != null){
+					receiptDetail.setDelRecord(true);
+					receiptDetail.getAdvMovements().clear();
+					receiptDetail.getRepayHeaders().clear();
+					receiptDetailList.add(receiptDetail);
+				}
 			}
 		}
 		
 		// Excess Amount Receipt Detail
+		receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.PAYTYPE_EXCESS);
 		if(this.listBoxExcess.getFellowIfAny("ExcessAmount_"+RepayConstants.EXAMOUNTTYPE_EXCESS) != null){
 			CurrencyBox excessAmount = (CurrencyBox) this.listBoxExcess.getFellowIfAny("ExcessAmount_"+RepayConstants.EXAMOUNTTYPE_EXCESS);
 			if(excessAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0){
-				receiptDetail = new FinReceiptDetail();
+				if(receiptDetail == null){
+					receiptDetail = new FinReceiptDetail();
+				}
 				receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 				receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 				receiptDetail.setPaymentType(RepayConstants.PAYTYPE_EXCESS);
@@ -1516,15 +1531,28 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				receiptDetail.setAmount(PennantApplicationUtil.unFormateAmount(excessAmount.getActualValue(), finFormatter));
 				receiptDetail.setValueDate(this.valueDate.getValue());
 				receiptDetail.setReceivedDate(this.valueDate.getValue());
-				receiptHeader.getReceiptDetails().add(receiptDetail);
+				receiptDetail.setDelRecord(false);// Internal Purpose
+				receiptDetail.getAdvMovements().clear();
+				receiptDetail.getRepayHeaders().clear();
+				receiptDetailList.add(receiptDetail);
+			}else{
+				if(receiptDetail != null){
+					receiptDetail.setDelRecord(true);
+					receiptDetail.getAdvMovements().clear();
+					receiptDetail.getRepayHeaders().clear();
+					receiptDetailList.add(receiptDetail);
+				}
 			}
 		}
 		
 		// Payable Advise Receipt Modes TODO 
 		
 		// Receipt Mode case
+		receiptDetail = getExistingReceiptDetail(receiptHeader, "");
 		if(!StringUtils.equals(RepayConstants.RECEIPTMODE_EXCESS, receiptHeader.getReceiptMode())){
-			receiptDetail = new FinReceiptDetail();
+			if(receiptDetail == null){
+				receiptDetail = new FinReceiptDetail();
+			}
 			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 			receiptDetail.setPaymentType(receiptHeader.getReceiptMode());
@@ -1542,8 +1570,20 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			receiptDetail.setFundingAc(Long.valueOf(this.fundingAccount.getValue()));
 			receiptDetail.setReceivedDate(this.receivedDate.getValue());
 			receiptDetail.setRemarks(this.remarks.getValue());
-			receiptHeader.getReceiptDetails().add(receiptDetail);
+			receiptDetail.setDelRecord(false);// Internal Purpose
+			receiptDetail.getAdvMovements().clear();
+			receiptDetail.getRepayHeaders().clear();
+			receiptDetailList.add(receiptDetail);
+		}else{
+			if(receiptDetail != null){
+				receiptDetail.setDelRecord(true);
+				receiptDetail.getAdvMovements().clear();
+				receiptDetail.getRepayHeaders().clear();
+				receiptDetailList.add(receiptDetail);
+			}
 		}
+		
+		receiptHeader.setReceiptDetails(receiptDetailList);
 		
 		// Prepare Allocation Details
 		List<String> allocateTypes = new ArrayList<>(getReceiptData().getAllocationMap().keySet());
@@ -1618,6 +1658,28 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		logger.debug("Leaving");
 		return receiptData;
+	}
+	
+	/**
+	 * Method for identifying the existing record
+	 * @param header
+	 * @param receiptType
+	 * @return
+	 */
+	private FinReceiptDetail getExistingReceiptDetail(FinReceiptHeader header, String receiptType){
+		FinReceiptDetail detail = null;
+		for (FinReceiptDetail receiptDetail : header.getReceiptDetails()) {
+			if(StringUtils.equals(receiptDetail.getPaymentType(), receiptType)){
+				detail = receiptDetail;
+				break;
+			}
+			if(StringUtils.isEmpty(receiptType) && !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) ||
+					!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
+				detail = receiptDetail;
+				break;
+			}
+		}
+		return detail;
 	}
 
 	private void setRepayDetailData(FinReceiptData receiptData) throws InterruptedException {
