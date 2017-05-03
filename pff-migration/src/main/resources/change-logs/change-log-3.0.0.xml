@@ -27,5 +27,21 @@
 			Insert into ReportList Values('WorkFlowDetails','WorkFlowDetails','listheader_workFlowType.label,listheader_workFlowSubType.label,listheader_workFlowDesc.label,listheader_RecordStatus.label,listheader_RecordType.label','workFlowType,workFlowSubType,workFlowDesc,recordStatus,recordType','String,String,String,String,String','','ReportList05','WorkFlow Details', 'Solution Factory',0, 1000,Current_TimeStamp,'Approved', null, null, null, null, null, 0,0);
 		</sql>
 	</changeSet>
+	<changeSet id="02" author="Surekha">
+		<sql>
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'JVPOSTINGS_VIEW', 'WF enquiry for JVPOSTINGS', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='JVPOSTINGS_VIEW'), (Select  RoleID  From SecRoles Where RoleCd='MSTGRP1_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='JVPOSTINGS_VIEW') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_others_JVPostingEnquiry'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			 
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
