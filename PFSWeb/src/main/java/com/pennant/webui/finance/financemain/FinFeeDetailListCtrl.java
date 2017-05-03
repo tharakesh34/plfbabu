@@ -594,8 +594,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		Combobox paymentMthdbox;
 		Intbox termsbox;
 
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		if (this.finFeeDetailList != null && !this.finFeeDetailList.isEmpty()) {
-			ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 			int formatter = CurrencyUtil.getFormat(aFinScheduleData.getFinanceMain().getFinCcy());
 			for (FinFeeDetail finFeeDetail : this.finFeeDetailList) {
 				if (!finFeeDetail.isRcdVisible()) {
@@ -791,8 +791,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				finFeeDetail.setRecordStatus(this.recordStatus.getValue());
 			}
 			
-			showErrorDetails(wve);
 		}
+		showErrorDetails(wve);
 
 		logger.debug("Leaving");
 

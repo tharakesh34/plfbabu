@@ -1839,13 +1839,13 @@ public class FinanceType extends AbstractWorkflowEntity {
 		setPromotionDesc(promotion.getPromotionDesc());
 		setFinIsDwPayRequired(promotion.isFinIsDwPayRequired());
 		setDownPayRule(promotion.getDownPayRule());
-		if(promotion.getActualInterestRate() != null){
+		if (promotion.getActualInterestRate() != null && promotion.getActualInterestRate().compareTo(BigDecimal.ZERO) != 0) {
 			setFinIntRate(promotion.getActualInterestRate());
-		}else if(promotion.getFinBaseRate() != null){
+		} else if (promotion.getFinBaseRate() != null) {
 			setFinBaseRate(promotion.getFinBaseRate());
 			setFinSplRate(promotion.getFinSplRate());
 			setFinMargin(promotion.getFinMargin());
-		}	
+		}
 		
 		setApplyRpyPricing(promotion.isApplyRpyPricing());
 		setRpyPricingMethod(promotion.getRpyPricingMethod());

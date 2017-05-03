@@ -311,7 +311,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			this.promotionCode.setWhereClause(whereClause);
 		}
 		
-		setPromotionFilters(filters);
+		setPromotionFilters();
 		
 		// WIF Reference
 		this.wIfFinaceRef.setModuleName("WhatIfFinance");
@@ -411,7 +411,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * Method for Checking Access for Allowed What-if References
 	 */
 	private void getWIFFinancenwithAccess() {
-
+		logger.debug("Entering ");
+		
 		Filter[] filters;
 		if (StringUtils.isNotBlank(this.productCategory)) {
 			filters = new Filter[3];
@@ -424,6 +425,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		} else {
 			filters[0] = new Filter("FinType", this.promotionCode.getValue(), Filter.OP_EQUAL);
 		}
+		
 		if (StringUtils.isNotBlank(this.productCategory)) {
 			Date appDate = DateUtility.getAppDate();
 			Date wifAvailableDate = DateUtility.addDays(appDate, -SysParamUtil.getValueAsInt("MAX_WIF_BACKDAYS"));
@@ -433,6 +435,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		}
 
 		this.wIfFinaceRef.setFilters(filters);
+		
+		logger.debug("Leaving ");
 	}
 
 	/**
@@ -447,6 +451,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		this.finType.clearErrorMessage();
 		Clients.clearWrongValue(finType);
 		Object dataObject = this.finType.getObject();
+		
 		if (dataObject instanceof String) {
 			this.finType.setValue(dataObject.toString());
 			this.finType.setDescription("");
@@ -462,17 +467,19 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				CheckScreenCode(details.getScreenCode());
 			}
 		}
+		
 		this.promotionCode.setValue("", "");
 		this.promotionCode.setObject("");
 		this.wIfFinaceRef.setValue("");
 		this.wIfFinaceRef.setObject("");
 
-		setPromotionFilters(this.promotionCode.getFilters());
+		setPromotionFilters();
 
 		this.wIfFinaceRef.setFilters(new Filter[0]);
 		if (StringUtils.isNotEmpty(this.finType.getValue().trim())) {
 			getWIFFinancenwithAccess();
 		}
+		
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -516,12 +523,14 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * Method for Checking Screen Code Object to avail Customer
 	 */
-	private void setPromotionFilters(Filter[] filters) {
+	private void setPromotionFilters() {
+		logger.debug("Entering ");
 		
+		Filter[] filters = null;
 		if(StringUtils.isEmpty(this.finType.getValue())){
-			filters = new Filter[3];
-		}else{
 			filters = new Filter[4];
+		}else{
+			filters = new Filter[5];
 		}
 		
 		Date appDate = DateUtility.getAppDate();
@@ -535,11 +544,14 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			filters[2] = new Filter("FinEvent", FinanceConstants.FINSER_EVENT_ORG, Filter.OP_EQUAL);
 		}
 		
+		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
+		
 		if(!StringUtils.isEmpty(this.finType.getValue())){
-			filters[3] = new Filter("LovDescProductName", StringUtils.trimToEmpty(this.finType.getValue()), Filter.OP_EQUAL);
+			filters[4] = new Filter("LovDescProductName", StringUtils.trimToEmpty(this.finType.getValue()), Filter.OP_EQUAL);
 		} 
 		this.promotionCode.setFilters(filters);
 		
+		logger.debug("Leaving");
 	}
 	
 	
@@ -547,7 +559,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * Method for Checking Screen Code Object to avail Customer
 	 */
 	private void CheckScreenCode(String screenCode) {
-
+		logger.debug("Entering ");
+		
 		if (StringUtils.isEmpty(screenCode) || "DDE".equals(screenCode)) {
 			this.row_selectCustomer.setVisible(true);
 			if (this.existingCust.isChecked()) {
@@ -565,6 +578,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			this.custCIF.setDisabled(true);
 			this.custCIF.setValue("");
 		}
+		
+		logger.debug("Leaving");
 	}
 
 	/**

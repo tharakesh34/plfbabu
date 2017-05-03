@@ -65,6 +65,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
@@ -218,15 +219,7 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 			logger.error("Exception: ", e);
 		}
 		
-		if(moduleId == FinanceConstants.MODULEID_PROMOTION) {
-			//List<AccountEngineEvent> accEventStaticList = getAccountingEvents();
-			
-			for (AccountEngineEvent accountEngineEvent : accEventStaticList) {
-				setAccountingMandStyle(accountEngineEvent.getAEEventCode(), false);
-			}
-		} else {
-			doSetAccountingMandatory();
-		}
+		doSetAccountingMandatory();
 		
 		logger.debug("leaving");
 	}
@@ -242,24 +235,27 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 			return;
 		}
 
-		if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ && !isOverdraft) {
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSF, true);
-		} else {
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSF, false);
-		}
-		
-		if (financeTypeDialogCtrl.getFinanceType().getLovDescAERule()
-				.containsKey(AccountEventConstants.ACCEVENT_ADDDBSF)) {
-			if (isOverdraft) {
+		if(ImplementationConstants.ALLOW_ADDDBSF) {
+			if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ && !isOverdraft) {
+				setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSF, true);
 				setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, true);
 			} else {
+				setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSF, false);
 				setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, false);
 			}
-		} else {
-			if (isOverdraft) {
-				setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, false);
+			
+			if (financeTypeDialogCtrl.getFinanceType().getLovDescAERule().containsKey(AccountEventConstants.ACCEVENT_ADDDBSF)) {
+				if (isOverdraft) {
+					setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, true);
+				} else {
+					setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, false);
+				}
 			} else {
-				setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, true);
+				if (isOverdraft) {
+					setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, false);
+				} else {
+					setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, true);
+				}
 			}
 		}
 		

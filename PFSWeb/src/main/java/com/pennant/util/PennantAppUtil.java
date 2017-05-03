@@ -1930,6 +1930,7 @@ public class PennantAppUtil {
 			} else {
 				List<String> list = new ArrayList<String>();
 				list.add(AccountEventConstants.ACCEVENT_ADDDBSF);
+				list.add(AccountEventConstants.ACCEVENT_ADDDBSN);
 				filters = new Filter[2];
 				filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
 				filters[1] = new Filter("AEEventCode", list, Filter.OP_NOT_IN);
@@ -1940,6 +1941,7 @@ public class PennantAppUtil {
 			
 			if(!ImplementationConstants.ALLOW_ADDDBSF) {
 				list.add(AccountEventConstants.ACCEVENT_ADDDBSF);
+				list.add(AccountEventConstants.ACCEVENT_ADDDBSN);
 			}
 			
 			filters = new Filter[2];
@@ -1964,10 +1966,10 @@ public class PennantAppUtil {
 		JdbcSearchObject<AccountEngineEvent> searchObject = new JdbcSearchObject<AccountEngineEvent>(
 				AccountEngineEvent.class);
 		accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSP);
-		accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSN);
 		
 		if (ImplementationConstants.ALLOW_ADDDBSF) {
 			accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSF);
+			accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSN);
 		}
 
 		Filter[] filters = new Filter[2];
@@ -2026,10 +2028,13 @@ public class PennantAppUtil {
 			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
 			filters[1] = new Filter("ODApplicable", 1, Filter.OP_EQUAL);
 		} else {
+			List<String> accEngineEventsList = new ArrayList<String>();
+			accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSF);
+			accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSN);
 			filters = new Filter[3];
 			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
 			filters[1] = new Filter("ODApplicable", 1, Filter.OP_EQUAL);
-			filters[2] = new Filter("AEEventCode", AccountEventConstants.ACCEVENT_ADDDBSF, Filter.OP_NOT_EQUAL);
+			filters[2] = new Filter("AEEventCode", accEngineEventsList, Filter.OP_NOT_EQUAL);
 		}
 
 		searchObject.addFilters(filters);
