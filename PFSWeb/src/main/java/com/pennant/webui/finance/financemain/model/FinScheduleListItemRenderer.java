@@ -1111,7 +1111,6 @@ public class FinScheduleListItemRenderer implements Serializable{
 	public void render(HashMap map, FinanceScheduleDetail prvSchDetail, boolean lastRecord,
 			boolean allowRvwRateEdit,boolean isRepayEnquiry ,
 			Map<Date, ArrayList<FeeRule>> feeRuleDetailsMap, boolean showRate, boolean displayStepInfo) {
-		logger.debug("Entering");
 		lastRec = lastRecord;
 
 		// READ OVERHANDED parameters !
@@ -2048,7 +2047,6 @@ public class FinScheduleListItemRenderer implements Serializable{
 			}
 		}
 
-		logger.debug("Leaving");
 	}
 
 
@@ -2075,7 +2073,6 @@ public class FinScheduleListItemRenderer implements Serializable{
 			BigDecimal incrCost,BigDecimal feeAmount,BigDecimal tdsAmount, BigDecimal schdlAdvPft, BigDecimal schdlPft, BigDecimal cpzAmount, 
 			BigDecimal totalAdvAmount, BigDecimal totalAmount, BigDecimal endBal,boolean isEditable, boolean isRate,  boolean showZeroEndBal, 
 			boolean isGrcBaseRate, boolean isRpyBaseRate, String bgColor, String lcColor, int fillType, Date progClaimDate, boolean isFee, boolean isDropLine) {
-		logger.debug("Entering");
 		listitem = new Listitem();
 		Listcell lc = null;
 		String strDate = "";
@@ -2523,7 +2520,6 @@ public class FinScheduleListItemRenderer implements Serializable{
 
 		// Append listitem to listbox
 		this.listBoxSchedule.appendChild(listitem);
-		logger.debug("Leaving");
 	}
 
 	public void doFillDPSchedule(Listbox listBoxSchedule, FinanceScheduleDetail scheduleDetail, int formatter){

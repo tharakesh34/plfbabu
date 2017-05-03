@@ -56,7 +56,6 @@ public class CurrencyBox extends Hbox {
 
 	public CurrencyBox() {
 		super();
-		logger.debug("Entering");
 		setConstantsBasedOnImplementation();
 		scale = 3;
 		space = new Space();
@@ -77,7 +76,6 @@ public class CurrencyBox extends Hbox {
 		decimalbox.setStyle("border:none; background-color:white ;font-weight:bold; text-align:left;");
 		decimalbox.setTabindex(-1);
 		this.appendChild(decimalbox);
-		logger.debug("Leaving");
 	}
 
 	public void onValueChange(Event event) throws Exception {

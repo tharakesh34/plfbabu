@@ -109,10 +109,8 @@ public class ExtendedCombobox extends Hbox {
 	}
 
 	public ExtendedCombobox(boolean allowSpace) {
-		logger.debug("Entering");
 		displayStyle = 4;
 		buildComponent(allowSpace);
-		logger.debug("Leaving");
 	}
 	
 	/**
@@ -121,13 +119,10 @@ public class ExtendedCombobox extends Hbox {
 	 * Defining the components and events
 	 */
 	public ExtendedCombobox() {
-		logger.debug("Entering");
 		buildComponent(true);
-		logger.debug("Leaving");
 	}
 
 	private void buildComponent(boolean allowSpace){
-		logger.debug("Entering");
 		//Space
 		space = new Space();
 		if(allowSpace){
@@ -174,7 +169,6 @@ public class ExtendedCombobox extends Hbox {
 		this.label.setStyle("margin-left:10px;display:inline-block;padding-top:6px;");
 		this.appendChild(label);
 
-		logger.debug("Leaving");
 	}
 
 	/**
