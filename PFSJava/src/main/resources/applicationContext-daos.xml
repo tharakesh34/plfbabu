@@ -5633,6 +5633,7 @@
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
 		<property name="allocationDetailDAO" ref="receiptAllocationDetailDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 
 		<!-- EOD -->
