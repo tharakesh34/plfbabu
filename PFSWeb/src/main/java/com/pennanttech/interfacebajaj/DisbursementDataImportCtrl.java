@@ -320,7 +320,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		@Override
 		public void run() {
 			try {
-				autoDisburseFileResponseService.processFile(userId, configName, file, media);
+				autoDisburseFileResponseService.processFile(userId, configName, file, media, false);
 			} catch (Exception e) {
 				logger.error("Exception:", e);
 			}

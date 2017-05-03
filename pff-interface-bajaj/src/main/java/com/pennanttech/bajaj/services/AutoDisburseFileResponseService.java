@@ -46,7 +46,7 @@ public class AutoDisburseFileResponseService extends BajajService {
 					continue;
 				}
 
-				processFile(1000, "DISB_HDFC_IMPORT", file, null);
+				processFile(1000, "DISB_HDFC_IMPORT", file, null, true);
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -56,31 +56,32 @@ public class AutoDisburseFileResponseService extends BajajService {
 
 	}
 
-	public DataEngineStatus processFile(long userId, String configName, File file, Media media) throws Exception {
+	public DataEngineStatus processFile(long userId, String configName, File file, Media media, boolean auto)
+			throws Exception {
 		DataEngineStatus status = null;
-		
+
 		if ("DISB_HDFC_IMPORT".equals(configName)) {
 			status = BajajInterfaceConstants.autoDisbResFileStatus;
 		} else {
 			status = BajajInterfaceConstants.manualDisbResFileStatus;
 		}
-		
-		if (BajajInterfaceConstants.autoDisbResFileJob && "DISB_HDFC_IMPORT".equals(configName)) {
-			throw new Exception("Auto disbursement file [ "+status.getFileName()+" ] is inprogress please wait..");
+
+		if (!auto && BajajInterfaceConstants.autoDisbResFileJob) {
+			throw new Exception("Auto disbursement file [ " + status.getFileName() + " ] is inprogress please wait..");
 		}
-		
+
 		String name = "";
-		
-		if(file != null) {
+
+		if (file != null) {
 			name = file.getName();
-		} else if (media!= null) {
+		} else if (media != null) {
 			name = media.getName();
 		}
 
 		status.reset();
 		status.setFileName(name);
-		status.setRemarks("initiated disbursement response file [ "+name+" ] processing..");
-		
+		status.setRemarks("initiated disbursement response file [ " + name + " ] processing..");
+
 		DataEngineImport dataEngine;
 		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), status, null);
 		dataEngine.setFile(file);

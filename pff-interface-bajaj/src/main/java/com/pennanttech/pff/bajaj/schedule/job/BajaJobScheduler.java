@@ -44,8 +44,8 @@ public class BajaJobScheduler extends AbstractJobScheduler {
 		} catch (Exception e) {
 			throw new ParseException(schduleTime, 0);
 		}
+		
 		if (StringUtils.trimToNull(schduleTime) != null) {
-			//TODO DIscuss with murthy
 			jobDetails = new JobSchedulerDetails();
 			jobDetails.setJobDetail(JobBuilder.newJob(AutoDisburseFileResponseJob.class)
 					.withIdentity("AUTO_DISB_RES_FILE", "AUTO_DISB_RES_FILE").withDescription("AUTO_DISB_RES_FILE")
