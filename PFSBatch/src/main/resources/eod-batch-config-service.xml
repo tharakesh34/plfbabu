@@ -58,16 +58,13 @@
 	<!-- Late Pay Marking -->
 	<bean id="latePayMarkingService" class="com.pennant.app.core.LatePayMarkingService" parent="serviceHelper">
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
-		<property name="finStatusDetailDAO" ref="finStatusDetailDAO" />
-		<property name="customerDAO" ref="customerDAO" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 	</bean>
 
 	<!-- Late Pay Interest -->
 	<bean id="latePayInterestService" class="com.pennant.app.core.LatePayInterestService" parent="serviceHelper">
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
-		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
 	</bean>
 
 	<!-- Late Pay Penalty -->
@@ -80,7 +77,6 @@
 
 	<!-- NPA Service -->
 	<bean id="npaService" class="com.pennant.app.core.NPAService" parent="serviceHelper">
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="provisionDAO" ref="provisionDAO" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="ruleDAO" ref="ruleDAO" />
