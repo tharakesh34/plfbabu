@@ -103,8 +103,12 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		sql.append(" id, reference, presentmentDate, partnerBankId, fromDate, toDate, ");
 		sql.append(" status, mandateType, loanType, finBranch, schdate, ");
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		if (StringUtils.containsIgnoreCase(type, "View")) {
+			sql.append(" ,PartnerBankIdName");
+		}
 		sql.append(" From PresentmentHeader");
 		sql.append(type);
+		
 		sql.append(" Where id = :id");
 		
 		// Execute the SQL, binding the arguments.
@@ -484,7 +488,7 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		if (type.contains("View")) {
-			sql.append(" ,finTypeDesc, customerName ");
+			sql.append(" ,mandateType ,finTypeDesc, customerName ");
 		}
 		sql.append(" From PresentmentDetails");
 		sql.append(type);
