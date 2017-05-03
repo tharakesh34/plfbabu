@@ -30,8 +30,9 @@ public class ReceiptPaymentService extends ServiceHelper {
 	private static final String		INSTALLMENTDUE		= "SELECT FM.CUSTID,FM.FINBRANCH,FM.FINTYPE,  PD.PRESENTMENTID, PD.FINREFERENCE, PD.SCHDATE, PD.MANDATEID,"
 																+ " PD.ADVANCEAMT,"
 																+ " PD.EXCESSID, PD.PRESENTMENTAMT, PD.EXCLUDEREASON, PD.BOUNCEID FROM PRESENTMENTDETAILS PD "
-																+ " INNER JOIN FINANCEMAIN FM ON PD.FINREFERENCE = FM.FINREFERENCE WHERE PD.SCHDATE=? AND FM.CUSTID=? "
-																+ " AND STATUS=1 ";
+																+ " INNER JOIN FINANCEMAIN FM ON PD.FINREFERENCE = FM.FINREFERENCE WHERE PD.SCHDATE=? AND FM.CUSTID=? ";
+//																+ " AND STATUS=1 ";
+	//FIXME to do finalise the query
 	private RepaymentProcessUtil	repaymentProcessUtil;
 
 	/**
@@ -67,11 +68,14 @@ public class ReceiptPaymentService extends ServiceHelper {
 				header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 
 				header.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
-				header.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+				header.setExcessAdjustTo(PennantConstants.List_Select);
 				header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 				header.setReceiptAmount(advanceAmt.add(presentmentAmt));
 				header.setEffectSchdMethod(PennantConstants.List_Select);
 				header.setReceiptModeStatus(RepayConstants.PAYSTATUS_APPROVED);
+				
+				//work flow details
+				header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 
 				List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
 
