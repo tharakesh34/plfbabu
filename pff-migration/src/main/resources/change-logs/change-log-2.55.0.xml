@@ -212,4 +212,11 @@
 			<column name="EcsReturn" type="varchar(20)" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="17" author="Durgaprasad G">
+		<addColumn tableName="PRESENTMENTHEADER">
+			<column name="DBStatusId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
