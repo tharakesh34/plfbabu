@@ -1,6 +1,7 @@
 package com.pennant.backend.service.finance.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -99,6 +100,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 				financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(scheduleData.getFinanceMain().getFinType(),
 						FinanceConstants.FINSER_EVENT_WRITEOFF, "_AView", false, FinanceConstants.MODULEID_FINTYPE));
 			}
+			financeDetail.setFinanceProfitDetail(getProfitDetailsDAO().getFinProfitDetailsById(finReference));
 			scheduleData.setRepayDetails(getFinanceRepaymentsDAO().getFinRepayListByFinRef(finReference, false, ""));
 			scheduleData.setPenaltyDetails(getRecoveryDAO().getFinancePenaltysByFinRef(finReference, ""));
 
@@ -526,25 +528,65 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		//Finance Write off Posting Process Execution
 		//=====================================
+		
+		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
+		
 		FinanceProfitDetail profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
 		profitDetail = AccrualService.calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(),
 				profitDetail, curBDay);
 
+		BigDecimal totalPftSchdOld = BigDecimal.ZERO;
+		BigDecimal totalPftCpzOld = BigDecimal.ZERO;
+		//For New Records Profit Details will be set inside the AEAmounts 
+		if(profitDetail == null){
+			profitDetail = new FinanceProfitDetail();
+		}else {
+			totalPftSchdOld = profitDetail.getTotalPftSchd();
+			totalPftCpzOld = profitDetail.getTotalPftCpz();
+		}
+		
 		AEAmountCodes amountCodes = AEAmounts.procCalAEAmounts(profitDetail, AccountEventConstants.ACCEVENT_WRITEOFF,
 				curBDay, financeMain.getMaturityDate());
 
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+		
+		BigDecimal totalPftSchdNew = profitDetail.getTotalPftSchd();
+		BigDecimal totalPftCpzNew = profitDetail.getTotalPftCpz();
+		
+		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
+		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
+		amountCodes.setModuleDefiner(FinanceConstants.FINSER_EVENT_WRITEOFF);
+		amountCodes.setDisburse(financeMain.getFinCurrAssetValue());
+		amountCodes.getDeclaredFieldValues(executingMap);
+		header.getFinanceDetail().getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
+		financeMain.getDeclaredFieldValues(executingMap);
+		
+		prepareFeeRulesMap(executingMap,header.getFinanceDetail());
+		long linkedTranId = 0;
+		linkedTranId = getAccountingResults(auditHeader, header.getFinanceDetail(), accountingSetEntries, curBDay, executingMap);
+		if (auditHeader.getErrorMessage() == null || auditHeader.getErrorMessage().size() == 0) {
 
-		List<Object> returnList = getPostingsPreparationUtil().processPostingDetails(executingMap, false, "Y", curBDay,
-				false, Long.MIN_VALUE);
+			// save Postings
+			if (accountingSetEntries != null && !accountingSetEntries.isEmpty()) {
+				getPostingsDAO().saveBatch(accountingSetEntries, "", false);
+			}
 
-		if (!(Boolean) returnList.get(0)) {
-			String errParm = (String) returnList.get(3);
-			throw new PFFInterfaceException("9999", errParm);
+			// Save/Update Finance Profit Details
+			boolean isNew = false;
+
+			if (StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+				isNew = true;
+			}
+
+			FinanceProfitDetail pftDetail = doSave_PftDetails(profitDetail, isNew);
+			
+			//Account Details Update
+			if (accountingSetEntries != null && !accountingSetEntries.isEmpty()) {
+				getAccountProcessUtil().procAccountUpdate(accountingSetEntries,pftDetail.getPftAccrued());
+			}
 		}
-
-		long linkedTranId = (Long) returnList.get(1);
-
+		
+		//Update the financemain
 		tranType = PennantConstants.TRAN_UPD;
 		financeMain.setRecordType("");
 		financeMain.setFinIsActive(false);

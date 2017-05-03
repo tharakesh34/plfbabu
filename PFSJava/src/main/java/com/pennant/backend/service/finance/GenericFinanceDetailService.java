@@ -1254,7 +1254,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		return list;
 	}
 
-	private long getAccountingResults(AuditHeader auditHeader,
+	protected long getAccountingResults(AuditHeader auditHeader,
 			FinanceDetail financeDetail, List<ReturnDataSet> accountingSetEntries,
 			Date curBDay, HashMap<String, Object> executingMap) throws PFFInterfaceException,
 			IllegalAccessException, InvocationTargetException {
@@ -1316,7 +1316,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		return linkedTranId;
 	}
 
-	private void prepareFeeRulesMap(HashMap<String, Object> executingMap, FinanceDetail financeDetail) {
+	protected void prepareFeeRulesMap(HashMap<String, Object> executingMap, FinanceDetail financeDetail) {
 		logger.debug("Entering");
 
 		List<FinFeeDetail> finFeeDetailList = financeDetail.getFinScheduleData().getFinFeeDetailList();
