@@ -301,7 +301,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 			if (arguments.containsKey("roleCode")) {
 				setRole((String) arguments.get("roleCode"));
-				getUserWorkspace().allocateRoleAuthorities(getRole(), "FinAdvancePaymentsDialog");
 			}
 
 			if (arguments.containsKey("payOrderIssueListCtrl")) {
@@ -335,7 +334,12 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 			if (isWorkFlowEnabled() && !isNewFinance()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(), "FinAdvancePaymentsDialog");
+			}
+
+			if(isWorkFlowEnabled()){
+				getUserWorkspace().allocateAuthorities("FinAdvancePaymentsDialog",getRole());
+			}else{
+				getUserWorkspace().allocateAuthorities("FinAdvancePaymentsDialog");
 			}
 
 			/* set components visible dependent of the users rights */
@@ -590,7 +594,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	private void doCheckRights() {
 		logger.debug("Entering");
 		if (!enqModule) {
-			getUserWorkspace().allocateAuthorities("FinAdvancePaymentsDialog", getRole());
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinAdvancePaymentsDialog_btnNew"));
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinAdvancePaymentsDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinAdvancePaymentsDialog_btnDelete"));
