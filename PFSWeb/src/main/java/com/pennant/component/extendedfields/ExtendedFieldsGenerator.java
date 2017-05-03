@@ -743,9 +743,9 @@ public class ExtendedFieldsGenerator {
 				accbox.setFormatter(getCcyFormat());
 				accbox.setTextBoxWidth(165);
 				accbox.setReadonly(isReadOnly);
-				accbox.setAccountDetails("", "J7", "1010200250001,1010200500001", isReadOnly);//TODO : Account Types need to define
+				accbox.setAccountDetails("", "J7", "1010200250001,1010200500001", true);//TODO : Account Types need to define
 				accbox.setMandatoryStyle(detail.isFieldMandatory());
-				accbox.setButtonVisible(!isReadOnly);
+				accbox.setButtonVisible(false);// !isReadOnly
 
 				//Data Setting
 				if(fieldValueMap.containsKey(detail.getFieldName()) && 

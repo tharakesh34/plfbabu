@@ -151,7 +151,7 @@
 									label="${c:l('listheader_TemplateCode.label')}" sort="auto"
 									hflex="min" />
 								<listheader
-									id="listheader_TemplateForSMS"
+									id="listheader_TemplateForSMS" visible="false"
 									label="${c:l('listheader_SmsTemplate.label')}" sort="auto"
 									hflex="min" />
 								<listheader

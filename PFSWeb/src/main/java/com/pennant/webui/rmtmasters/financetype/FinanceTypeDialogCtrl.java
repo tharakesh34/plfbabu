@@ -1380,7 +1380,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.pastduePftMargin.setValue(aFinanceType.getPastduePftMargin());
 		doDisablepastduePftMargin();
 		// Features Tab
-		this.remarks.setValue(aFinanceType.getRemarks());
+		this.remarks.setValue(StringUtils.trimToEmpty(aFinanceType.getRemarks()));
 		// ====================== Hidden Fields
 		this.finDftStmtFrq.setValue(aFinanceType.getFinDftStmtFrq());
 		this.finAlwRateChangeAnyDate.setChecked(aFinanceType.isFinAlwRateChangeAnyDate());
