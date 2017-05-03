@@ -112,8 +112,8 @@ public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> {
 	protected void doSetProperties() {
 		super.moduleCode = "WorkFlowDetails";
 		super.pageRightName = "WorkFlowList";
-		super.tableName = "";
-		super.queueTableName = "";
+		super.tableName = "WorkFlowDetails";
+		super.queueTableName = "WorkFlowDetails";
 	}
 
 	/**

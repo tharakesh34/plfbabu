@@ -1046,13 +1046,18 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		doSetSegmentCode(aCustomer.getCustTypeCode());
 		aCustomer.getCustCtgCode();
 		doSetCustTypeFilters(aCustomer.getLovDescCustCtgType());
-		if (StringUtils.isEmpty(this.custSegment.getValue())) {
+		if (StringUtils.isEmpty(this.custSegment.getValue()) || PennantConstants.MODULETYPE_ENQ.equals(this.moduleType)) {
 			this.custSubSegment.setReadonly(true);
 			this.custSubSegment.setButtonDisabled(true);
 			this.custSubSegment.setValue("");
 			this.custSubSegment.setDescription("");
 
-		} else {
+		} else  if (PennantConstants.MODULETYPE_ENQ.equals(this.moduleType)){
+			this.custSubSegment.setReadonly(true);
+			this.custSubSegment.setButtonDisabled(true);
+			this.custSubSegment.setValue(aCustomer.getCustSubSegment());
+			this.custSubSegment.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustSubSegmentName()));
+		}else{
 			this.custSubSegment.setReadonly(isReadOnly("CustomerDialog_custSubSegment"));
 			this.custSubSegment.setButtonDisabled(isReadOnly("CustomerDialog_custSubSegment"));
 			this.custSubSegment.setValue(aCustomer.getCustSubSegment());
@@ -1064,12 +1069,18 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.custSubSector.setButtonDisabled(true);
 			this.custSubSector.setValue("");
 			this.custSubSector.setDescription("");
+		} else if (PennantConstants.MODULETYPE_ENQ.equals(this.moduleType)) {
+			this.custSubSector.setReadonly(true);
+			this.custSubSector.setButtonDisabled(true);
+			this.custSubSector.setValue(aCustomer.getCustSubSector());
+			this.custSubSector.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustSubSectorName()));
 		} else {
 			this.custSubSector.setReadonly(isReadOnly("CustomerDialog_custIndustry"));
 			this.custSubSector.setButtonDisabled(isReadOnly("CustomerDialog_custIndustry"));
 			this.custSubSector.setValue(aCustomer.getCustSubSector());
 			this.custSubSector.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustSubSectorName()));
 		}
+		
 		if(this.custIsStaff.isChecked()){
 			this.custStaffID.setValue(aCustomer.getCustStaffID());
 			this.custStaffID.setReadonly(false);
@@ -2154,8 +2165,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			this.custGenderCode.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_CustomerDialog_CustGenderCode.value"), null, isMandValidate));
-			this.custMaritalSts.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_CustomerDialog_CustMaritalSts.value"), null, isMandValidate));
+			
+			if (!this.custMaritalSts.isReadonly()) {
+				this.custMaritalSts.setConstraint(new PTStringValidator(Labels
+						.getLabel("label_CustomerDialog_CustMaritalSts.value"), null, isMandValidate));
+			}
+			
 		}
 		if (!this.custRO1.isReadonly()) {
 			this.custRO1.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustRO1.value"),
@@ -3413,18 +3428,46 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		String code = custGenderCode.getSelectedItem().getValue();
 		custSalutationCode.setValue("");
+		custMaritalSts.setValue("");
 
 		if (PennantConstants.List_Select.equals(code)) {
+			custSalutationCode.setValue("");
+			custMaritalSts.setValue("");
 			custSalutationCode.setDisabled(true);
+			custMaritalSts.setDisabled(true);
 			return;
 		}
 
 		custSalutationCode.setDisabled(false);
+		custMaritalSts.setDisabled(false);
 		fillComboBox(custSalutationCode, "", PennantAppUtil.getSalutationCodes(code), "");
+		fillComboBox(custMaritalSts, "", PennantAppUtil.getMaritalStsTypes(code), "");
+
+		logger.debug(Literal.LEAVING);
+	}
+	
+	/**
+	 * Salutation codes will be populated based on the selected gender code.
+	 * 
+	 * @param event
+	 */
+	public void onSelect$custSalutationCode(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		String code = custGenderCode.getSelectedItem().getValue();
+		custMaritalSts.setValue("");
+
+		if (PennantConstants.List_Select.equals(code)) {
+			custMaritalSts.setValue("");
+			return;
+		}
+
+		fillComboBox(custMaritalSts, "", PennantAppUtil.getMaritalStsTypes(code), "");
 
 		logger.debug(Literal.LEAVING);
 	}
 
+	
 	/**
 	 * Based Customer Type Code selection Fill the Segment value
 	 */
@@ -5422,8 +5465,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 */
 	public void onOpen$custMaritalSts(Event event) {
 		logger.debug("Entering" + event.toString());
-		fillComboBox(this.custMaritalSts, getComboboxValue(this.custMaritalSts), PennantAppUtil.getMaritalStsTypes(),
-				"");
+		fillComboBox(this.custMaritalSts, getComboboxValue(this.custMaritalSts),
+				PennantAppUtil.getMaritalStsTypes(getComboboxValue(this.custGenderCode)), "");
 		logger.debug("Leaving" + event.toString());
 	}
 

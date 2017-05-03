@@ -501,7 +501,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aCustomerIncome);
-
+			doCheckEnquiry();
 			if(!custIsJointCust){
 				this.row_isJoint.setVisible(false);
 			}
@@ -521,6 +521,15 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 			MessageUtil.showErrorMessage(e.toString());
 		}
 		logger.debug("Leaving");
+	}
+
+	private void doCheckEnquiry() {
+		if (PennantConstants.MODULETYPE_ENQ.equals(this.moduleType)) {
+			this.btnDelete.setVisible(false);
+			this.btnSave.setVisible(false);
+			doReadOnly();
+		}
+
 	}
 
 	/**

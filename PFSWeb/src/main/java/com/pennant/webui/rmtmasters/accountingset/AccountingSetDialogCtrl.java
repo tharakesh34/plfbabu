@@ -576,7 +576,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		setValidationOn(true);
 		
 		if (!this.accountSetCode.isReadonly()){
-			this.accountSetCode.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountingSetDialog_AccountSetCode.value"),PennantRegularExpressions.REGEX_ALPHANUM, true));
+			this.accountSetCode.setConstraint(new PTStringValidator(Labels.getLabel("label_AccountingSetDialog_AccountSetCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 		
 		if (!this.accountSetCodeName.isReadonly()){

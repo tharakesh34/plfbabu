@@ -278,6 +278,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			this.btnSave.setVisible(false);
 			this.btnDelete.setVisible(false);
 			this.help.setVisible(false);
+			doReadOnly();
 		}
 	}
 

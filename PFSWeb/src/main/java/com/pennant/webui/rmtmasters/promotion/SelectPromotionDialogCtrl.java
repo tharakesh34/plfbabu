@@ -236,7 +236,7 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		
 		//Code
 		if (!this.promotionCode.isReadonly()){
-			this.promotionCode.setConstraint(new PTStringValidator(Labels.getLabel("label_PromotionDialog_PromotionCode.value"),PennantRegularExpressions.REGEX_ALPHANUM,true));
+			this.promotionCode.setConstraint(new PTStringValidator(Labels.getLabel("label_PromotionDialog_PromotionCode.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,true));
 		}
 		
 		//Finance Type

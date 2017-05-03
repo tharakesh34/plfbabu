@@ -941,7 +941,7 @@ public class PennantAppUtil {
 		return salutationCodes;
 	}
 	
-	public static ArrayList<ValueLabel> getMaritalStsTypes() {
+	public static ArrayList<ValueLabel> getMaritalStsTypes(String gender) {
 		ArrayList<ValueLabel> maritalStsTypes = new ArrayList<ValueLabel>();
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 
@@ -949,11 +949,12 @@ public class PennantAppUtil {
 		searchObject.addTabelName("BMTMaritalStatusCodes");
 		searchObject.addField("MaritalStsCode");
 		searchObject.addField("MaritalStsDesc");
+		searchObject.addFilter(new Filter("MaritalStsIsActive", 1, Filter.OP_EQUAL));
 		
-		Filter [] filters = new Filter[1];
-		filters[0] = new Filter("MaritalStsIsActive",1, Filter.OP_EQUAL);
-		searchObject.addFilters(filters);
-		
+		if (gender.equals("M")) {
+			searchObject.addFilter(new Filter("MARITALSTSCODE", "W", Filter.OP_NOT_EQUAL));
+		}
+
 		List<MaritalStatusCode> appList = pagedListService.getBySearchObject(searchObject);
 		for (int i = 0; i < appList.size(); i++) {
 			ValueLabel maritalSts = new ValueLabel(String.valueOf(appList.get(i).getMaritalStsCode()), appList.get(i).getMaritalStsDesc());
