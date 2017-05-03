@@ -206,4 +206,10 @@
               '','','','','',0);
 		</sql>
 	</changeSet> 
+	
+	<changeSet id="16" author="Durgaprasad G">
+		<addColumn tableName="PRESENTMENTDETAILS">
+			<column name="EcsReturn" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
