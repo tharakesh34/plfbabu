@@ -56,11 +56,13 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -216,6 +218,8 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 
 				Label glCode_Label = null;
 				Textbox sapGlCode_Textbox = null;
+				Space space =null;
+				Hbox hbox =null;
 				ExtendedCombobox profitCenter = null;
 				ExtendedCombobox costCenter = null;
 
@@ -264,12 +268,23 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 					glCode_Label.setId("glCode_" + count);
 					glCode_Label.setParent(cell);
 					cell.setParent(item);
-
+					
+					hbox = new Hbox();
 					cell = new Listcell();
+					hbox.setId("hbox_" + count);
+					hbox.setParent(cell);
+					
+					space = new Space();
+					space.setSpacing("2px");
+					space.setId("space_" + count);
+					space.setSclass(PennantConstants.mandateSclass);
+					space.setParent(hbox);
+
 					sapGlCode_Textbox = new Textbox();
 					sapGlCode_Textbox.setParent(cell);
 					sapGlCode_Textbox.setId("sapGlCode_" + count);
 					sapGlCode_Textbox.setValue(hostAccount);
+					sapGlCode_Textbox.setParent(hbox);
 					cell.setParent(item);
 
 					cell = new Listcell();
