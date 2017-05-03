@@ -2871,12 +2871,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			
 			if(!this.paymentRef.isReadonly()){
 				this.paymentRef.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptDialog_paymentReference.value"),
-						PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
+						PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 			}
 
 			if(!this.transactionRef.isReadonly()){
 				this.transactionRef.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptDialog_tranReference.value"),
-						PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
+						PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 			}
 		}
 		
