@@ -7,37 +7,37 @@ import java.util.List;
 
 import com.pennant.backend.model.Entity;
 
-public class FinReceiptDetail implements Entity{
+public class FinReceiptDetail implements Entity {
 
-	private long receiptID = 0;// Only setting from Receipt Header
-	private long receiptSeqID = 0;// Auto Generated
-	private String receiptType;
-	private String paymentTo;
-	private String paymentType;
-	private long payAgainstID = 0;
-	private BigDecimal amount = BigDecimal.ZERO;
-	private String favourNumber;
-	private Date valueDate;
-	private String bankCode;
-	private String bankCodeDesc;
-	private String favourName;
-	private Date depositDate;
-	private String depositNo;
-	private String paymentRef;
-	private String transactionRef;
-	private String chequeAcNo;
-	private long fundingAc = 0;
-	private String fundingAcDesc;
-	private Date receivedDate;
-	private String status;
-	private String remarks;
-	private boolean delRecord = false;
-	
-	private List<FinRepayHeader> repayHeaders = new ArrayList<FinRepayHeader>(1);
-	private List<ManualAdviseMovements> advMovements = new ArrayList<ManualAdviseMovements>(1);
-	
+	private long						receiptID		= 0;										// Only setting from Receipt Header
+	private long						receiptSeqID	= 0;										// Auto Generated
+	private String						receiptType;
+	private String						paymentTo;
+	private String						paymentType;
+	private long						payAgainstID	= 0;
+	private BigDecimal					amount			= BigDecimal.ZERO;
+	private String						favourNumber;
+	private Date						valueDate;
+	private String						bankCode;
+	private String						bankCodeDesc;
+	private String						favourName;
+	private Date						depositDate;
+	private String						depositNo;
+	private String						paymentRef;
+	private String						transactionRef;
+	private String						chequeAcNo;
+	private long						fundingAc		= 0;
+	private String						fundingAcDesc;
+	private Date						receivedDate;
+	private String						status;
+	private String						remarks;
+	private boolean						delRecord		= false;
+
+	private List<FinRepayHeader>		repayHeaders	= new ArrayList<FinRepayHeader>(1);
+	private List<ManualAdviseMovements>	advMovements	= new ArrayList<ManualAdviseMovements>(1);
+
 	public FinReceiptDetail() {
-		
+
 	}
 
 	// ******************************************************//
@@ -58,10 +58,11 @@ public class FinReceiptDetail implements Entity{
 	public void setId(long id) {
 		this.receiptSeqID = id;
 	}
-	
+
 	public long getReceiptID() {
 		return receiptID;
 	}
+
 	public void setReceiptID(long receiptID) {
 		this.receiptID = receiptID;
 	}
@@ -69,6 +70,7 @@ public class FinReceiptDetail implements Entity{
 	public long getReceiptSeqID() {
 		return receiptSeqID;
 	}
+
 	public void setReceiptSeqID(long receiptSeqID) {
 		this.receiptSeqID = receiptSeqID;
 	}
@@ -76,6 +78,7 @@ public class FinReceiptDetail implements Entity{
 	public String getReceiptType() {
 		return receiptType;
 	}
+
 	public void setReceiptType(String receiptType) {
 		this.receiptType = receiptType;
 	}
@@ -83,6 +86,7 @@ public class FinReceiptDetail implements Entity{
 	public String getPaymentTo() {
 		return paymentTo;
 	}
+
 	public void setPaymentTo(String paymentTo) {
 		this.paymentTo = paymentTo;
 	}
@@ -90,6 +94,7 @@ public class FinReceiptDetail implements Entity{
 	public String getPaymentType() {
 		return paymentType;
 	}
+
 	public void setPaymentType(String paymentType) {
 		this.paymentType = paymentType;
 	}
@@ -97,6 +102,7 @@ public class FinReceiptDetail implements Entity{
 	public long getPayAgainstID() {
 		return payAgainstID;
 	}
+
 	public void setPayAgainstID(long payAgainstID) {
 		this.payAgainstID = payAgainstID;
 	}
@@ -104,6 +110,7 @@ public class FinReceiptDetail implements Entity{
 	public BigDecimal getAmount() {
 		return amount;
 	}
+
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
@@ -111,6 +118,7 @@ public class FinReceiptDetail implements Entity{
 	public String getFavourNumber() {
 		return favourNumber;
 	}
+
 	public void setFavourNumber(String favourNumber) {
 		this.favourNumber = favourNumber;
 	}
@@ -118,6 +126,7 @@ public class FinReceiptDetail implements Entity{
 	public Date getValueDate() {
 		return valueDate;
 	}
+
 	public void setValueDate(Date valueDate) {
 		this.valueDate = valueDate;
 	}
@@ -125,6 +134,7 @@ public class FinReceiptDetail implements Entity{
 	public String getBankCode() {
 		return bankCode;
 	}
+
 	public void setBankCode(String bankCode) {
 		this.bankCode = bankCode;
 	}
@@ -132,6 +142,7 @@ public class FinReceiptDetail implements Entity{
 	public String getFavourName() {
 		return favourName;
 	}
+
 	public void setFavourName(String favourName) {
 		this.favourName = favourName;
 	}
@@ -139,6 +150,7 @@ public class FinReceiptDetail implements Entity{
 	public Date getDepositDate() {
 		return depositDate;
 	}
+
 	public void setDepositDate(Date depositDate) {
 		this.depositDate = depositDate;
 	}
@@ -146,6 +158,7 @@ public class FinReceiptDetail implements Entity{
 	public String getDepositNo() {
 		return depositNo;
 	}
+
 	public void setDepositNo(String depositNo) {
 		this.depositNo = depositNo;
 	}
@@ -153,6 +166,7 @@ public class FinReceiptDetail implements Entity{
 	public String getPaymentRef() {
 		return paymentRef;
 	}
+
 	public void setPaymentRef(String paymentRef) {
 		this.paymentRef = paymentRef;
 	}
@@ -160,6 +174,7 @@ public class FinReceiptDetail implements Entity{
 	public String getTransactionRef() {
 		return transactionRef;
 	}
+
 	public void setTransactionRef(String transactionRef) {
 		this.transactionRef = transactionRef;
 	}
@@ -167,6 +182,7 @@ public class FinReceiptDetail implements Entity{
 	public String getChequeAcNo() {
 		return chequeAcNo;
 	}
+
 	public void setChequeAcNo(String chequeAcNo) {
 		this.chequeAcNo = chequeAcNo;
 	}
@@ -174,6 +190,7 @@ public class FinReceiptDetail implements Entity{
 	public long getFundingAc() {
 		return fundingAc;
 	}
+
 	public void setFundingAc(long fundingAc) {
 		this.fundingAc = fundingAc;
 	}
@@ -181,6 +198,7 @@ public class FinReceiptDetail implements Entity{
 	public Date getReceivedDate() {
 		return receivedDate;
 	}
+
 	public void setReceivedDate(Date receivedDate) {
 		this.receivedDate = receivedDate;
 	}
@@ -188,6 +206,7 @@ public class FinReceiptDetail implements Entity{
 	public String getStatus() {
 		return status;
 	}
+
 	public void setStatus(String status) {
 		this.status = status;
 	}
@@ -195,6 +214,7 @@ public class FinReceiptDetail implements Entity{
 	public String getRemarks() {
 		return remarks;
 	}
+
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
@@ -202,6 +222,7 @@ public class FinReceiptDetail implements Entity{
 	public List<FinRepayHeader> getRepayHeaders() {
 		return repayHeaders;
 	}
+
 	public void setRepayHeaders(List<FinRepayHeader> repayHeaders) {
 		this.repayHeaders = repayHeaders;
 	}
