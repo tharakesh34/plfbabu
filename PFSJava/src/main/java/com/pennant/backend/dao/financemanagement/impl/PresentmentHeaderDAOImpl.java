@@ -264,7 +264,7 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 	}
 
 	@Override
-	public String save(PresentmentDetail detail, TableType tableType) {
+	public long save(PresentmentDetail detail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		if (detail.getId() == Long.MIN_VALUE) {
@@ -298,7 +298,7 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		}
 
 		logger.debug(Literal.LEAVING);
-		return null;
+		return detail.getId();
 	}
 
 	@Override
@@ -311,7 +311,7 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		int index = 0;
 		try {
 			sql = new StringBuilder();
-			sql.append(" SELECT T1.FINREFERENCE, T1.SCHDATE, PROFITSCHD, PRINCIPALSCHD, SCHDPRIPAID, SCHDPFTPAID, DEFSCHDDATE,");
+			sql.append(" SELECT T1.FINREFERENCE, T1.SCHDATE, T1.SCHSEQ, PROFITSCHD, PRINCIPALSCHD, SCHDPRIPAID, SCHDPFTPAID, DEFSCHDDATE,");
 			sql.append(" FEESCHD, SCHDFEEPAID, INSSCHD, T2.MANDATEID, T1.DEFSCHDDATE, T4.MANDATETYPE, T4.STATUS,");
 			sql.append(" T4.EXPIRYDATE, T2.FINTYPE LOANTYPE, T5.BRANCHCODE, T1.TDSAMOUNT, ");
 			sql.append(" T1.INSTNUMBER EMINO, T2.FINBRANCH  FROM FINSCHEDULEDETAILS T1");
@@ -351,7 +351,7 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 			}
 
 			sql.append(" AND  Not Exists( Select 1 from PresentmentDetails T6 where T1.FinReference = T6.FinReference ");
-			sql.append(" AND T6.ExcludeReason = '0')  ORDER BY T1.SCHDATE ");
+			sql.append(" AND T6.ExcludeReason = '0')  ORDER BY T1.DEFSCHDDATE ");
 
 			Connection conn = DataSourceUtils.doGetConnection(this.dataSource);
 			stmt = conn.prepareStatement(sql.toString());
@@ -563,6 +563,36 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+
+	@Override
+	public void updateFinScheduleDetails(long id, String finReference, Date schDate, int schSeq) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = null;
+		MapSqlParameterSource source = null;
+
+		sql = new StringBuilder();
+		sql.append(" UPDATE FINSCHEDULEDETAILS Set PresentmentId = :id Where FinReference = :FinReference AND ");
+		sql.append(" SchDate = :SchDate AND SchSeq = :SchSeq");
+		logger.trace(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("id", id);
+		source.addValue("FinReference", finReference);
+		source.addValue("SchDate", schDate);
+		source.addValue("SchSeq", schSeq);
+		try {
+			this.namedParameterJdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error("Exception :", e);
+			throw e;
+		} finally {
+			source = null;
+			sql = null;
 		}
 		logger.debug(Literal.LEAVING);
 	}

@@ -43,6 +43,7 @@
 package com.pennant.backend.dao.financemanagement;
 
 import java.sql.ResultSet;
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
@@ -56,7 +57,7 @@ public interface PresentmentHeaderDAO extends BasicCrudDao<PresentmentHeader> {
 	
 	boolean isDuplicateKey(long id, String reference, TableType tableType);
 
-	String save(PresentmentDetail presentmentDetail, TableType tableType);
+	long save(PresentmentDetail presentmentDetail, TableType tableType);
 
 	long getSeqNumber(String tableName);
 
@@ -73,5 +74,7 @@ public interface PresentmentHeaderDAO extends BasicCrudDao<PresentmentHeader> {
 	void updatePresentmentDetials(long presentmentId, List<Long> list, int mnualExclude);
 
 	void updatePresentmentHeader(long presentmentId, int pexcBatchCreated, long partnerBankId);
+
+	void updateFinScheduleDetails(long id, String finReference, Date schDate, int schSeq);
 
 }

@@ -86,8 +86,7 @@
 											</hbox>
 										</div>
 										<listbox id="listBox_Include"
-											emptyMessage="${c:l('listbox.emptyMessage')}"
-											tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+											emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
 											height="100%" sizedByContent="true" span="true"
 											multiple="true" checkmark="true" mold="paging"
 											autopaging="true">
@@ -140,8 +139,7 @@
 										</div>
 										<listbox
 											id="listBox_ManualExclude"
-											emptyMessage="${c:l('listbox.emptyMessage')}"
-											tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+											emptyMessage="${c:l('listbox.emptyMessage')}"  width="100%"
 											height="100%" sizedByContent="true" span="true"
 											multiple="true" checkmark="true" mold="paging"
 											autopaging="true">
@@ -192,8 +190,7 @@
 										</div>
 										<listbox
 											id="listBox_AutoExclude"
-											emptyMessage="${c:l('listbox.emptyMessage')}"
-											tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+											emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
 											height="100%" sizedByContent="true" span="true" mold="paging"
 											autopaging="true">
 											<listhead sizable="true">

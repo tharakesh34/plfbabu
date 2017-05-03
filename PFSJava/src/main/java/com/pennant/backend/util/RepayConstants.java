@@ -115,6 +115,7 @@ public class RepayConstants {
 	public static final String	PAYTYPE_PRESENTMENT		= "PRESENT";
 	
 	// Presentment Exclude Reasons
+	public static final int PEXC_EMIINCLUDE = 0;
 	public static final int PEXC_EMIINADVANCE = 1;
 	public static final int PEXC_EMIHOLD = 2;
 	public static final int PEXC_MANDATE_HOLD = 3;

@@ -69,11 +69,12 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private BigDecimal schPenaltyDue;
 	private BigDecimal advanceAmt;
 	private BigDecimal tDSAmount;
-	private Long excessID;
+	private long excessID;
 	private BigDecimal adviseAmt;
 	private int excludeReason;
 	private BigDecimal presentmentAmt;
 	private int emiNo;
+	private int schSeq;
 	private long bounceID;
 	private String status;
 	private boolean newRecord = false;
@@ -198,14 +199,6 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.advanceAmt = advanceAmt;
 	}
 
-	public Long getExcessID() {
-		return excessID;
-	}
-
-	public void setExcessID(Long excessID) {
-		this.excessID = excessID;
-	}
-
 	public BigDecimal getAdviseAmt() {
 		return adviseAmt;
 	}
@@ -238,6 +231,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.emiNo = emiNo;
 	}
 
+	public int getSchSeq() {
+		return schSeq;
+	}
+
+	public void setSchSeq(int schSeq) {
+		this.schSeq = schSeq;
+	}
+
 	public long getBounceID() {
 		return bounceID;
 	}
@@ -252,6 +253,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void settDSAmount(BigDecimal tDSAmount) {
 		this.tDSAmount = tDSAmount;
+	}
+
+	public long getExcessID() {
+		return excessID;
+	}
+
+	public void setExcessID(long excessID) {
+		this.excessID = excessID;
 	}
 
 	public String getStatus() {

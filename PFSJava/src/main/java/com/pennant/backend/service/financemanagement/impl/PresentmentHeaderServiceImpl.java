@@ -404,12 +404,12 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		try {
 			ResultSet rs = presentmentHeaderDAO.getPresentmentDetails(header);
 			while (rs.next()) {
-				Date schDate = rs.getDate("SCHDATE");
-				if (schDate != null) {
-					if (!map.containsKey(schDate)) {
-						header.setSchdate(schDate);
+				Date defSchDate = rs.getDate("DEFSCHDDATE");
+				if (defSchDate != null) {
+					if (!map.containsKey(defSchDate)) {
+						header.setSchdate(defSchDate);
 						presentmentId = savePresentmentHeaderDetails(header);
-						map.put(schDate, presentmentId);
+						map.put(defSchDate, presentmentId);
 					}
 				}
 				isEmptyRecords = true;
@@ -418,7 +418,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 				pDetail.setPresentmentId(presentmentId);
 				pDetail.setPresentmentAmt(BigDecimal.ZERO);
 				pDetail.setStatus(RepayConstants.PEXC_IMPORT);
-				pDetail.setExcludeReason(0);
+				pDetail.setExcludeReason(RepayConstants.PEXC_EMIINCLUDE);
 				pDetail.setPresentmentRef(getPresentmentRef(rs));
 				pDetail.setBounceID(presentmentId);
 
@@ -426,6 +426,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 				pDetail.setFinReference(rs.getString("FINREFERENCE"));
 				pDetail.setSchDate(rs.getDate("SCHDATE"));
 				pDetail.setEmiNo(rs.getInt("EMINO"));
+				pDetail.setSchSeq(rs.getInt("SCHSEQ"));
 				pDetail.setDefSchdDate(rs.getDate("DEFSCHDDATE"));
 
 				BigDecimal schAmtDue = rs.getBigDecimal("PROFITSCHD").add(rs.getBigDecimal("PRINCIPALSCHD"))
@@ -441,6 +442,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 				pDetail.setSchPenaltyDue(BigDecimal.ZERO);
 				pDetail.setAdvanceAmt(schAmtDue);
 				pDetail.setAdviseAmt(BigDecimal.ZERO);
+				pDetail.setExcessID(0);
 
 				// Mandate Details
 				pDetail.setMandateId(rs.getLong("MANDATEID"));
@@ -455,10 +457,16 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 
 				doCalculations(pDetail, header);
 
-				if (pDetail.getExcessID() != null) {
+				if (pDetail.getExcessID() != 0) {
 					finExcessAmountDAO.updateExcessAmount(pDetail.getExcessID(), "R", pDetail.getAdvanceAmt());
 				}
-				presentmentHeaderDAO.save(pDetail, TableType.MAIN_TAB);
+				//PresentmentDetail saving
+				long id = presentmentHeaderDAO.save(pDetail, TableType.MAIN_TAB);
+				
+				// FinScheduleDetails update
+				if (RepayConstants.PEXC_EMIINCLUDE == pDetail.getExcludeReason()) {
+					presentmentHeaderDAO.updateFinScheduleDetails(id, pDetail.getFinReference(), pDetail.getSchDate(), pDetail.getSchSeq());
+				}
 			}
 
 			if (!isEmptyRecords) {
