@@ -743,6 +743,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.bankBranchID.setValue(StringUtils.trimToEmpty(aFinAdvnancePayments.getiFSC()));
 		}
 		if (aFinAdvnancePayments.getPartnerBankID() != Long.MIN_VALUE && aFinAdvnancePayments.getPartnerBankID() != 0) {
+			this.partnerBankID.getButton().setDisabled(isReadOnly("FinAdvancePaymentsDialog_partnerBankID"));
 			this.partnerBankID.setAttribute("partnerBankId", aFinAdvnancePayments.getPartnerBankID());
 			this.partnerBankID.setValue(aFinAdvnancePayments.getPartnerbankCode(),aFinAdvnancePayments.getPartnerBankName());
 		}		
@@ -766,7 +767,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		//unused
 		this.custContribution.setValue(formate(aFinAdvnancePayments.getCustContribution()));
 		this.sellerContribution.setValue(formate(aFinAdvnancePayments.getSellerContribution()));
-
+		
 		this.description.setValue(aFinAdvnancePayments.getDescription());
 		checkPaymentType(aFinAdvnancePayments.getPaymentType());
 		this.recordStatus.setValue(aFinAdvnancePayments.getRecordStatus());
@@ -1654,6 +1655,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		filters[2] = new Filter("PaymentMode",dType, Filter.OP_EQUAL);
 		filters[3] = new Filter("Active",1,Filter.OP_EQUAL);
 		this.partnerBankID.setFilters(filters);
+		this.partnerBankID.setValue("");
+		this.partnerBankID.setDescription("");
+		
 		checkPaymentType(dType);
 	}
 
@@ -1667,6 +1671,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			return;
 		} else if (str.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)
 				|| str.equals(DisbursementConstants.PAYMENT_TYPE_DD)) {
+			doaddFilter(str);
 			caption_FinAdvancePaymentsDialog_ChequeDetails.setLabel(this.paymentType.getSelectedItem().getLabel());
 			gb_ChequeDetails.setVisible(true);
 			gb_NeftDetails.setVisible(false);
@@ -1687,6 +1692,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 			this.btnGetCustBeneficiary.setVisible(false);
 		} else {
+			doaddFilter(str);
 			caption_FinAdvancePaymentsDialog_NeftDetails.setLabel(this.paymentType.getSelectedItem().getLabel());
 			gb_NeftDetails.setVisible(true);
 			gb_ChequeDetails.setVisible(false);
@@ -1721,6 +1727,17 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 	}
 
+	public void doaddFilter(String payMode){
+		Filter[] filters = new Filter[4];
+		filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
+		filters[1] = new Filter("Purpose","D", Filter.OP_EQUAL);
+		filters[2] = new Filter("PaymentMode",payMode, Filter.OP_EQUAL);
+		filters[3] = new Filter("Active",1,Filter.OP_EQUAL);
+		this.partnerBankID.setFilters(filters);
+		
+	}
+	
+	
 	public void onClick$btnGetCustBeneficiary(Event event) {
 		logger.debug("Entering");
 		Filter filter[] = new Filter[1];
