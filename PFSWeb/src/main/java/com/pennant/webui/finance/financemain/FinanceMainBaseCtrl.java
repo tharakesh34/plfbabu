@@ -10548,33 +10548,30 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						}else if(FrequencyCodeTypes.FRQ_YEARLY.equals(frqCode) && this.odYearlyTerms.intValue()< 1){
 							throw new WrongValueException(this.odYearlyTerms,Labels.getLabel("label_FrqValidation", new String[] {String.valueOf(1),"Year"}));
 						}
-						
-						if (this.odMnthlyTerms.intValue() >= 0) {
-							tenor = (this.odYearlyTerms.intValue() * 12) + this.odMnthlyTerms.intValue();
+
+					}
+					tenor = (this.odYearlyTerms.intValue() * 12) + this.odMnthlyTerms.intValue();
+
+					if(StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, moduleDefiner)){
+						//Validation in OverDraft Maintenance i.e..,Tenor should be greater than the current business date
+						int minNoofMonths;
+						if (!financeType.isDroplineOD()) {
+							minNoofMonths = DateUtility.getMonthsBetween(this.finStartDate.getValue(),
+									DateUtility.getAppDate());
+						} else {
+							minNoofMonths = DateUtility.getMonthsBetween(this.firstDroplineDate.getValue(),
+									DateUtility.getAppDate());
 						}
-						
-						if(StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, moduleDefiner)){
-							//Validation in OverDraft Maintenance i.e..,Tenor should be greater than the current business date
-							int minNoofMonths;
-							if (!financeType.isDroplineOD()) {
-								minNoofMonths = DateUtility.getMonthsBetween(this.finStartDate.getValue(),
-										DateUtility.getAppDate());
-							} else {
-								minNoofMonths = DateUtility.getMonthsBetween(this.firstDroplineDate.getValue(),
-										DateUtility.getAppDate());
-							}
-							if (tenor < minNoofMonths) {
-								throw new WrongValueException(this.odMnthlyTerms, Labels.getLabel(
-										"NUMBER_MINVALUE",
-										new String[] { Labels.getLabel("label_FinanceMainDialog_ODTenor.value"),
-												String.valueOf(minNoofMonths) + " Months" }));
-							}
+						if (tenor < minNoofMonths) {
+							throw new WrongValueException(this.odMnthlyTerms, Labels.getLabel(
+									"NUMBER_MINVALUE",
+									new String[] { Labels.getLabel("label_FinanceMainDialog_ODTenor.value"),
+											String.valueOf(minNoofMonths) + " Months" }));
 						}
 					}
+
 				}
-				
-				
-				aFinanceMain.setNumberOfTerms(tenor);
+			 aFinanceMain.setNumberOfTerms(tenor);
 			} catch (WrongValueException we) {
 				wve.add(we);
 				procToCalMaturity = false;
