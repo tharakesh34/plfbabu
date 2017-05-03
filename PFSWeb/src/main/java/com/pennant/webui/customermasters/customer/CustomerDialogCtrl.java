@@ -1978,17 +1978,25 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		// below fields are always mandatory
 
 		if (!this.eidNumber.isReadonly()) {
-			if (isRetailCustomer) {
-				if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
+
+			if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
+				if (isRetailCustomer) {
 					this.eidNumber.setConstraint(new PTStringValidator(Labels
-							.getLabel("label_CoreCustomerDialog_EIDNumber.value"),
+							.getLabel("label_CustomerDialog_TradeLicenseNumber.value"),
 							PennantRegularExpressions.REGEX_EIDNUMBER, true));
-				}
+
+				} else {
+					this.eidNumber.setConstraint(new PTStringValidator(Labels
+							.getLabel("label_CustomerDialog_TradeLicenseNumber.value"),
+							PennantRegularExpressions.REGEX_TRADELICENSE, true));
+				   }
 			} else {
 				this.eidNumber.setConstraint(new PTStringValidator(Labels
 						.getLabel("label_CustomerDialog_TradeLicenseNumber.value"),
-						PennantRegularExpressions.REGEX_TRADELICENSE, true));
+						PennantRegularExpressions.REGEX_PANNUMBER, true));
+
 			}
+
 		}
 
 		// below fields are conditional mandatory
