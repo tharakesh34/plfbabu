@@ -19,6 +19,13 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
-
+	
+	<changeSet id="01" author="Surekha">
+		<sql>
+			 DELETE from ReportList where Code = 'WorkFlowDetails';
+ 
+			Insert into ReportList Values('WorkFlowDetails','WorkFlowDetails','listheader_workFlowType.label,listheader_workFlowSubType.label,listheader_workFlowDesc.label,listheader_RecordStatus.label,listheader_RecordType.label','workFlowType,workFlowSubType,workFlowDesc,recordStatus,recordType','String,String,String,String,String','','ReportList05','WorkFlow Details', 'Solution Factory',0, 1000,Current_TimeStamp,'Approved', null, null, null, null, null, 0,0);
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
