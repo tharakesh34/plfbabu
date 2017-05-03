@@ -30,7 +30,7 @@ public class AutoDisbursementService extends ServiceHelper {
 	private static final String		DISBURSEMENTPOSTING	= "SELECT FM.FINTYPE,FM.CUSTID,FM.FINBRANCH,FDD.FINREFERENCE,FDD.DISBSEQ, FDD.DISBDATE,FDD.DISBAMOUNT,FDD.FEECHARGEAMT"
 																+ " FROM FINDISBURSEMENTDETAILS FDD INNER JOIN FINANCEMAIN FM "
 																+ " ON FDD.FINREFERENCE = FM.FINREFERENCE "
-																+ " WHERE FDD.DISBDISBURSED = ? AND (FDD.DISBSTATUS IS NULL OR FDD.DISBSTATUS != ?) And FDD.DISBDATE = ? ";
+																+ " WHERE (FDD.DISBSTATUS IS NULL OR FDD.DISBSTATUS != ?) And FDD.DISBDATE = ? ";
 	private FinanceDisbursementDAO	financeDisbursementDAO;
 
 	/**
@@ -42,15 +42,16 @@ public class AutoDisbursementService extends ServiceHelper {
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
 		try {
+			//Since the process is on SOD
+			Date businessDate = DateUtility.addDays(valuedDate, 1);
 			connection = DataSourceUtils.doGetConnection(getDataSource());
 
 			sqlStatement = connection.prepareStatement(DISBURSEMENTPOSTING);
-			sqlStatement.setBoolean(1, false);
-			sqlStatement.setString(2, FinanceConstants.DISB_STATUS_CANCEL);
-			sqlStatement.setDate(3, DateUtility.getDBDate(valuedDate.toString()));
+			sqlStatement.setString(1, FinanceConstants.DISB_STATUS_CANCEL);
+			sqlStatement.setDate(2, DateUtility.getDBDate(businessDate.toString()));
 			resultSet = sqlStatement.executeQuery();
 			while (resultSet.next()) {
-				postInstallmentDues(resultSet, valuedDate);
+				postFutureDisbursement(resultSet, valuedDate);
 			}
 		} catch (Exception e) {
 			logger.error("Exception :", e);
@@ -69,7 +70,7 @@ public class AutoDisbursementService extends ServiceHelper {
 	 * @param resultSet
 	 * @throws Exception
 	 */
-	public void postInstallmentDues(ResultSet resultSet, Date valueDate) throws Exception {
+	public void postFutureDisbursement(ResultSet resultSet, Date valueDate) throws Exception {
 		logger.debug(" Entering ");
 		String finType = resultSet.getString("FinType");
 		boolean isAccountingReq = false;
@@ -110,12 +111,11 @@ public class AutoDisbursementService extends ServiceHelper {
 		//Postings Process
 		FinanceType financeType = getFinanceType(aeEvent.getFinType());
 		financeType.getDeclaredFieldValues(executingMap);
-		List<ReturnDataSet> list = prepareAccounting(executingMap, financeType);
-		long linkedTranId = saveAccounting(list);
-
-		disbursement.setDisbDisbursed(true);
-		disbursement.setLinkedTranId(linkedTranId);
-		financeDisbursementDAO.updateBatchDisb(disbursement, "");
+//		List<ReturnDataSet> list = prepareAccounting(executingMap, financeType);
+//		long linkedTranId = saveAccounting(list);
+//		disbursement.setDisbDisbursed(true);
+//		disbursement.setLinkedTranId(linkedTranId);
+//		financeDisbursementDAO.updateBatchDisb(disbursement, "");
 		logger.debug(" Leaving ");
 	}
 
