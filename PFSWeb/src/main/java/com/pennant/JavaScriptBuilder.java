@@ -1982,13 +1982,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 		if (StringUtils.equals(operatorLabel, Labels.getLabel("IN_LABEL"))
 				|| StringUtils.equals(operatorLabel, Labels.getLabel("NOTIN_LABEL"))) {
-			HashMap<String, Object> selectedValues = null;
-			
-			if(lovText != null && StringUtils.isNotBlank(lovText.getValue())) {
-				selectedValues = setSelectedValuesMap(lovText.getValue());
-			} else {
-				selectedValues = new HashMap<String, Object>();
-			} 
+			HashMap<String, Object> selectedValues = setSelectedValuesMap(lovText.getValue());
 			
 			Object dataObject = ExtendedMultipleSearchListBox.show(this, moduleCode, selectedValues);
 
