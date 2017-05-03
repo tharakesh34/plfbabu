@@ -108,6 +108,7 @@ public class RepaymentProcessUtil {
 					continue;
 				}
 				curSchd = financeScheduleDetail;
+				break;
 			}
 			
 			// If no balance for repayment then return with out calculation
@@ -260,7 +261,7 @@ public class RepaymentProcessUtil {
 			}
 
 			if (totalReceiptAmt.compareTo(BigDecimal.ZERO) > 0) {
-
+				receiptHeader.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 				// Prepare Repay Header Details
 				repayHeader = new FinRepayHeader();
 				repayHeader.setFinReference(financeMain.getFinReference());
@@ -453,6 +454,7 @@ public class RepaymentProcessUtil {
 					for (int i = 0; i < rpySchdList.size(); i++) {
 						rpySchdList.get(i).setRepayID(repayID);
 						rpySchdList.get(i).setRepaySchID(i + 1);
+						rpySchdList.get(i).setLinkedTranId(rpyHeader.getLinkedTranId());
 					}
 					// Save Repayment Schedule Details
 					getFinanceRepaymentsDAO().saveRpySchdList(rpySchdList, TableType.MAIN_TAB.getSuffix());
