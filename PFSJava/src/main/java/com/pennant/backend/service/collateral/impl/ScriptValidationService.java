@@ -1,4 +1,4 @@
-/*package com.pennant.webui.collateral.collateralstructure;
+package com.pennant.backend.service.collateral.impl;
 
 import java.util.Map;
 
@@ -17,13 +17,13 @@ public class ScriptValidationService {
 
 	private ScriptEngine scriptEngine;
 
-	*//**
+	/**
 	 * Method for setting Pre Validation Script default Values to Extended field Details
 	 * @param script
 	 * @param paramMap
 	 * @return
 	 * @throws ScriptException
-	 *//*
+	 */
 	public ScriptErrors setPreValidationDefaults(String script,Map<String, Object> paramMap) throws ScriptException{
 		logger.debug("Entering");
 
@@ -39,12 +39,12 @@ public class ScriptValidationService {
 		return errors;
 	}
 
-	*//**
+	/**
 	 * Method for Validating user Entered Field values using Post Script Details
 	 * @param script
 	 * @param fieldValueMap
 	 * @return
-	 *//*
+	 */
 	public ScriptErrors getPostValidationErrors(String script ,Map<String, Object> fieldValueMap) {
 		logger.debug("Entering");
 
@@ -72,4 +72,3 @@ public class ScriptValidationService {
 	}
 
 }
-*/

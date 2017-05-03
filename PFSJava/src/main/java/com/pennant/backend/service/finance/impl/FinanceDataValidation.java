@@ -79,24 +79,24 @@ import com.pennant.backend.util.PennantStaticListUtil;
 
 public class FinanceDataValidation {
 
-	private BaseRateDAO		baseRateDAO;
-	private SplRateDAO		splRateDAO;
-	private BranchDAO		branchDAO;
-	private FinanceTypeDAO	financeTypeDAO;
-	private CustomerDAO		customerDAO;
+	private BaseRateDAO					baseRateDAO;
+	private SplRateDAO					splRateDAO;
+	private BranchDAO					branchDAO;
+	private FinanceTypeDAO				financeTypeDAO;
+	private CustomerDAO					customerDAO;
 	private FinanceMainDAO				financeMainDAO;
-	private FinanceDetailService financeDetailService; 
-	private BankDetailService bankDetailService;
-	private BankBranchService bankBranchService;
-	private DocumentTypeService documentTypeService;
-	private CustomerDetailsService customerDetailsService;
-	private FlagDAO flagDAO;
-	private CollateralSetupService collateralSetupService;
-	private MandateService mandateService;
-	private StepPolicyService stepPolicyService;
-	private GeneralDepartmentService generalDepartmentService;
-	private RelationshipOfficerService relationshipOfficerService;
-	private FinTypePartnerBankService finTypePartnerBankService;
+	private FinanceDetailService		financeDetailService;
+	private BankDetailService			bankDetailService;
+	private BankBranchService			bankBranchService;
+	private DocumentTypeService			documentTypeService;
+	private CustomerDetailsService		customerDetailsService;
+	private FlagDAO						flagDAO;
+	private CollateralSetupService		collateralSetupService;
+	private MandateService				mandateService;
+	private StepPolicyService			stepPolicyService;
+	private GeneralDepartmentService	generalDepartmentService;
+	private RelationshipOfficerService	relationshipOfficerService;
+	private FinTypePartnerBankService	finTypePartnerBankService;
 
 	public FinanceDataValidation() {
 		super();
@@ -980,7 +980,7 @@ public class FinanceDataValidation {
 		return errorDetails;
 	}
 
-	private List<ErrorDetails> disbursementValidation(FinanceDetail financeDetail) {
+	public List<ErrorDetails> disbursementValidation(FinanceDetail financeDetail) {
 		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
 		// validate disbursement details
 		List<FinAdvancePayments> finAdvPayments = financeDetail.getAdvancePaymentsList();
@@ -1011,7 +1011,8 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90216", valueParm)));
 					}
 				}
-				int count=finTypePartnerBankService.getPartnerBankCount(financeDetail.getFinScheduleData().getFinanceMain().getFinType(),advPayment.getPaymentType(),advPayment.getPartnerBankID());
+				int count = finTypePartnerBankService.getPartnerBankCount(financeDetail.getFinScheduleData().getFinanceMain().getFinType(), 
+						advPayment.getPaymentType(), advPayment.getPartnerBankID());
 				if (count <= 0) {
 					String[] valueParm = new String[1];
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90263", valueParm)));

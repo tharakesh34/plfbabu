@@ -8795,6 +8795,7 @@
 		<property name="finFlagDetailsDAO" ref="finFlagDetailsDAO" />
 		<property name="documentTypeService" ref="documentTypeService" />
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
+		<property name="scriptValidationService" ref="scriptValidationService" />
 	</bean>
 
 	<!-- Collateral ThirdParty details -->
@@ -9715,5 +9716,11 @@
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil"/>
+	</bean>
+
+	<bean id="scriptValidationService"
+		class="com.pennant.backend.service.collateral.impl.ScriptValidationService"
+		scope="prototype">
+		<property name="scriptEngine" ref="scriptEngine" />
 	</bean>
 </beans>

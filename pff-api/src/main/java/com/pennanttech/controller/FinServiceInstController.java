@@ -2,6 +2,7 @@ package com.pennanttech.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,8 +47,10 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -78,10 +81,12 @@ import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.staticparms.ExtendedFieldRender;
+import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.ManualPaymentService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.exception.PFFInterfaceException;
@@ -117,6 +122,8 @@ public class FinServiceInstController extends SummaryDetailService {
 	private OverDueRecoveryPostingsUtil	recoveryPostingsUtil;
 	private FinanceRepayPriorityDAO		financeRepayPriorityDAO;
 	private FeeDetailService 			feeDetailService;
+	private BankBranchService 			bankBranchService;
+
 
 	/**
 	 * Method for process AddRateChange request and re-calculate schedule details
@@ -540,11 +547,8 @@ public class FinServiceInstController extends SummaryDetailService {
 	 * @param finServiceInst
 	 * @return
 	 */
-	public FinanceDetail doAddDisbursement(FinServiceInstruction finServiceInst) {
+	public FinanceDetail doAddDisbursement(FinServiceInstruction finServiceInst, FinanceDetail financeDetail) {
 		logger.debug("Enteing");
-
-		// fetch finance data
-		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, "");
 
 		if (financeDetail != null) {
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -600,6 +604,46 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 				}
 
+				// process disbursement details
+				LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+				List<FinAdvancePayments> advancePayments = financeDetail.getAdvancePaymentsList();
+				if (advancePayments != null) {
+					int paymentSeq = 1;
+					for (FinAdvancePayments advPayment : advancePayments) {
+						advPayment.setFinReference(financeMain.getFinReference());
+						advPayment.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+						advPayment.setNewRecord(true);
+						advPayment.setLastMntBy(userDetails.getLoginUsrID());
+						advPayment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						advPayment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+						advPayment.setUserDetails(financeMain.getUserDetails());
+						advPayment.setPaymentSeq(paymentSeq);
+						advPayment.setLLDate(null);
+						paymentSeq++;
+
+						if (StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IMPS)
+								|| StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_NEFT)
+								|| StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_RTGS)) {
+
+							BankBranch bankBranch = new BankBranch();
+							if (StringUtils.isNotBlank(advPayment.getiFSC())) {
+								bankBranch = bankBranchService.getBankBrachByIFSC(advPayment.getiFSC());
+							} else if (StringUtils.isNotBlank(advPayment.getBranchBankCode())
+									&& StringUtils.isNotBlank(advPayment.getBranchCode())) {
+								bankBranch = bankBranchService.getBankBrachByCode(advPayment.getBranchBankCode(),
+										advPayment.getBranchCode());
+							}
+
+							if (bankBranch != null) {
+								advPayment.setiFSC(bankBranch.getIFSC());
+								advPayment.setBranchBankCode(bankBranch.getBankCode());
+								advPayment.setBranchCode(bankBranch.getBranchCode());
+								advPayment.setBankBranchID(bankBranch.getBankBranchID());
+							}
+						}
+					}
+				}
+				
 				// Get the response
 				financeDetail = getResponse(financeDetail, finServiceInst);
 
@@ -1250,7 +1294,6 @@ public class FinServiceInstController extends SummaryDetailService {
 	private FinanceDetail prepareInstructionObject(FinanceDetail aFinanceDetail) {
 		logger.debug("Entering");
 
-		FinanceDetail financeDetail = new FinanceDetail();
 		FinScheduleData finScheduleData = aFinanceDetail.getFinScheduleData();
 		finScheduleData.getFinanceMain().setRecordType("");
 
@@ -1259,9 +1302,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		finScheduleData.setFinODPenaltyRate(null);
 		finScheduleData.setFinFeeDetailList(new ArrayList<FinFeeDetail>());
 		finScheduleData.setFeeRules(new ArrayList<FeeRule>());
-		financeDetail.setFinScheduleData(finScheduleData);
 
-		aFinanceDetail.setAdvancePaymentsList(null);
 		aFinanceDetail.setFinContributorHeader(null);
 		aFinanceDetail.setIndicativeTermDetail(null);
 		aFinanceDetail.setEtihadCreditBureauDetail(null);
@@ -1286,9 +1327,9 @@ public class FinServiceInstController extends SummaryDetailService {
 		aFinanceDetail.setCovenantTypeList(null);
 		aFinanceDetail.setMandate(null);
 		aFinanceDetail.setFinFlagsDetails(null);
-		aFinanceDetail.setCustomerDetails(null);
+		
 		logger.debug("Leaving");
-		return financeDetail;
+		return aFinanceDetail;
 	}
 
 	/**
@@ -1599,5 +1640,9 @@ public class FinServiceInstController extends SummaryDetailService {
 	
 	public void setFeeDetailService(FeeDetailService feeDetailService) {
 		this.feeDetailService = feeDetailService;
+	}
+	
+	public void setBankBranchService(BankBranchService bankBranchService) {
+		this.bankBranchService = bankBranchService;
 	}
 }

@@ -73,6 +73,8 @@ import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ScriptError;
+import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -141,6 +143,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	private DocumentDetailValidation		collateralDocumentValidation;
 	private CoOwnerDetailsValidation		coOwnerDetailsValidation;
 	private ExtendedFieldDetailsValidation	extendedFieldDetailsValidation;
+	private ScriptValidationService			scriptValidationService;
 
 	// API validation specific
 	public AuditHeaderDAO getAuditHeaderDAO() {
@@ -216,8 +219,13 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	public FinanceCheckListReferenceDAO getFinanceCheckListReferenceDAO() {
 		return financeCheckListReferenceDAO;
 	}
+	
 	public void setFinanceCheckListReferenceDAO(FinanceCheckListReferenceDAO financeCheckListReferenceDAO) {
 		this.financeCheckListReferenceDAO = financeCheckListReferenceDAO;
+	}
+	
+	public void setScriptValidationService(ScriptValidationService scriptValidationService) {
+		this.scriptValidationService = scriptValidationService;
 	}
 
 	public CityDAO getCityDAO() {
@@ -2358,7 +2366,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			Date currAppDate = DateUtility.getAppDate();
 			Date expiryDate = collateralSetup.getExpiryDate();
 			if (expiryDate.compareTo(currAppDate) <= 0) {
-				String[] valueParm = new String[1];
+				String[] valueParm = new String[2];
 				valueParm[0] = DateUtility.formatToShortDate(expiryDate);
 				valueParm[1] = DateUtility.formatToShortDate(currAppDate);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90903", "", valueParm), "EN"));
@@ -2452,6 +2460,25 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 							}
 						}
 					}
+				}
+			}
+			
+			Map<String, Object>	mapValues = new HashMap<String, Object>();
+			for (ExtendedField details : collateralSetup.getExtendedDetails()) {
+				for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
+					mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+				}
+			}
+			
+			// do script pre validation and post validation
+			ScriptErrors errors = null;
+			if (collateralStructure.isPostValidationReq()) {
+				errors = scriptValidationService.getPostValidationErrors(collateralStructure.getPostValidation(), mapValues);
+			}
+			if (errors != null) {
+				List<ScriptError> errorsList = errors.getAll();
+				for (ScriptError error : errorsList) {
+					auditDetail.setErrorDetail(new ErrorDetails("","90909","",error.getValue(),null,null));
 				}
 			}
 			

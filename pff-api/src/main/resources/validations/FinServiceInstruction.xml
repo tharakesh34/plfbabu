@@ -383,5 +383,8 @@
 		<field name="finODPenaltyRate">
 			<valid></valid>
 		</field>
+		<field name="disbursementDetails">
+			<valid></valid>
+		</field>
 	</bean>
 </constraint-mappings>

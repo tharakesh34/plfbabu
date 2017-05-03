@@ -4238,12 +4238,6 @@
 		class="com.pennant.webui.collateral.collateralstructure.ScriptValidationResultCtrl"
 		parent="basisCtrl" scope="prototype" />
 		
-	<bean id="scriptValidationService"
-		class="com.pennant.webui.collateral.collateralstructure.ScriptValidationService"
-		scope="prototype" >
-		<property name="scriptEngine" ref="scriptEngine" />
-	</bean>
-
 	<!-- VAS Configuration -->
 	<bean id="vASConfigurationListCtrl"
 		class="com.pennant.webui.configuration.vasconfiguration.VASConfigurationListCtrl"

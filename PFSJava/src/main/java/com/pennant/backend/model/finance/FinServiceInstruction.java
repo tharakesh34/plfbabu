@@ -93,7 +93,7 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 
 	@XmlElementWrapper(name="disbursements")
 	@XmlElement(name="disbursement")
-	private List<FinanceDisbursement> disbursementDetails;
+	private List<FinAdvancePayments> disbursementDetails;
 
 	@XmlElementWrapper(name="fees")
 	@XmlElement(name="fee")
@@ -302,11 +302,11 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 		this.repayFrq = repayFrq;
 	}
 	
-	public List<FinanceDisbursement> getDisbursementDetails() {
+	public List<FinAdvancePayments> getDisbursementDetails() {
 		return disbursementDetails;
 	}
 
-	public void setDisbursementDetails(List<FinanceDisbursement> disbursementDetails) {
+	public void setDisbursementDetails(List<FinAdvancePayments> disbursementDetails) {
 		this.disbursementDetails = disbursementDetails;
 	}
 	

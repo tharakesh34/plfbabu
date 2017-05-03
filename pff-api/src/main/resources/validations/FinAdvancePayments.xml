@@ -15,6 +15,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 			</constraint> 
 			<constraint annotation="org.hibernate.validator.constraints.Length">
@@ -22,6 +23,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 				<element name="max">12</element>
 			</constraint>
@@ -32,6 +34,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 			</constraint> 
 			<constraint annotation="org.hibernate.validator.constraints.Length">
@@ -39,6 +42,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 				<element name="max">8</element>
 			</constraint>
@@ -50,6 +54,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 			</constraint>
 		</field>
@@ -60,6 +65,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 				<element name="max">6</element>
 			</constraint>
@@ -70,6 +76,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 				<element name="value">1</element>
 			</constraint>
@@ -78,6 +85,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 				<element name="value">999999999999999999</element>
 			</constraint>
@@ -88,6 +96,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 				<element name="max">1000</element>
 			</constraint>
@@ -98,6 +107,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 				<element name="max">8</element>
 			</constraint>
@@ -108,6 +118,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 				<element name="max">100</element>
 			</constraint>
@@ -118,6 +129,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 				<element name="max">100</element>
 			</constraint>
@@ -128,6 +140,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 				<element name="max">8</element>
 			</constraint>
@@ -139,6 +152,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 				<element name="max">8</element>
 			</constraint>
@@ -150,6 +164,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 				<element name="max">8</element>
 			</constraint>
@@ -161,6 +176,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 				<element name="max">11</element>
 			</constraint>
@@ -172,6 +188,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 				<element name="max">50</element>
 			</constraint>
@@ -183,6 +200,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 				<element name="max">50</element>
 			</constraint>
@@ -193,6 +211,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 				<element name="max">5</element>
 			</constraint>
@@ -203,6 +222,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 				<element name="max">8</element>
 			</constraint>
@@ -213,6 +233,7 @@
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
 				<element name="max">12</element>
 			</constraint>

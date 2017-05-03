@@ -547,12 +547,18 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	@Override
 	public FinanceDetail addDisbursement(FinServiceInstruction finServiceInstruction) {
 		logger.debug("Entering");
-
-		// bean validations
-		validationUtility.validate(finServiceInstruction, AddDisbursementGroup.class);
-
+		
 		FinanceDetail financeDetail = null;
-
+		// bean validations
+		if (finServiceInstruction.getDisbursementDetails() == null) {
+			financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			String valueParm[] = new String[1];
+			valueParm[0] = "DisbursementDetails";
+			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return financeDetail;
+		}
+		validationUtility.validate(finServiceInstruction, AddDisbursementGroup.class);
 		// validate ReqType
 		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
 
@@ -600,8 +606,21 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			}
 		}
 
+		// validate disbursement Details
+		
+		financeDetail.setAdvancePaymentsList(finServiceInstruction.getDisbursementDetails());
+		List<ErrorDetails> errors = financeDataValidation.disbursementValidation(financeDetail);
+		if (!errors.isEmpty()) {
+			for (ErrorDetails errorDetails : errors) {
+				financeDetail = new FinanceDetail();
+				doEmptyResponseObject(financeDetail);
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
+						errorDetails.getError()));
+				return financeDetail;
+			}
+		}
 		// call change repay amount service
-		financeDetail = finServiceInstController.doAddDisbursement(finServiceInstruction);
+		financeDetail = finServiceInstController.doAddDisbursement(finServiceInstruction, financeDetail);
 
 		logger.debug("Leaving");
 		return financeDetail;
