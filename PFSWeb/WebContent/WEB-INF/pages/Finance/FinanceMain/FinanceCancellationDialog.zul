@@ -1174,6 +1174,19 @@
 															id="firstDroplineDate" width="120px" />
 													</hbox>
 												</row>
+												<row id="odRpyFrqRow"
+													visible="false">
+													<label
+														id="label_FinanceMainDialog_ODRepayFrq"
+														value="${c:l('label_FinanceMainDialog_ODRepayFrq.value')}" />
+													<frequencybox
+														id="odRepayFrq" />
+													<label
+														id="label_FinanceMainDialog_ODRepayRvwFrq"
+														value="${c:l('label_FinanceMainDialog_ODRepayRvwFrq.value')}" />
+													<frequencybox
+														id="odRepayRvwFrq" />
+												</row>
 												<row visible="false">
 													<label
 														id="label_FinanceMainDialog_ODTenor"

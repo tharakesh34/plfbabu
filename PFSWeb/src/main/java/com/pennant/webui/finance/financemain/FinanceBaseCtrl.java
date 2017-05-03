@@ -371,6 +371,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected CurrencyBox									supplementRent;																		// autoWired
 	protected CurrencyBox									increasedCost;																			// autoWired
 
+	protected FrequencyBox									odRepayFrq;
+	protected FrequencyBox									odRepayRvwFrq;
+	
 	//Finance Main Details Tab---> 4. Overdue Penalty Details
 	protected Groupbox										gb_OverDuePenalty;																		// autoWired
 	protected Checkbox										applyODPenalty;																		// autoWired
@@ -628,16 +631,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected String										curNextUserId;
 
 	protected Checkbox										pftServicingODLimit;
-	protected Datebox										odStartDate;
-	protected CurrencyBox									odFinAssetValue;
 	protected Row											row_DroplineFrq;
-	protected Row											row_ODTenor;
-	protected Row											row_ODStartDate;
-	protected Row											row_QuickDisb;
-	protected Space											space_DroplineDate;
 	protected FrequencyBox									droplineFrq;
-	protected FrequencyBox									odRepayFrq;
-	protected FrequencyBox									odRepayRvwFrq;
+
 	protected Datebox										firstDroplineDate;
 	protected Intbox										odYearlyTerms;
 	protected Intbox										odMnthlyTerms;
@@ -682,17 +678,12 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		this.finStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.finContractDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-		this.odStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.firstDroplineDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.odMaturityDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.finAmount.setMandatory(true);
 		this.finAmount.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		this.finAmount.setScale(finFormatter);
 		this.finAmount.setTextBoxWidth(200);
-		this.odFinAssetValue.setMandatory(true);
-		this.odFinAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
-		this.odFinAssetValue.setScale(finFormatter);
-		this.odFinAssetValue.setTextBoxWidth(200);
 		this.defferments.setMaxlength(3);
 		this.planDeferCount.setMaxlength(3);
 
@@ -6548,8 +6539,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_odYearlyTerms"), this.odMnthlyTerms);
 			this.odRepayFrq.setDisabled(isReadOnly("FinanceMainDialog_repayFrq"));
 			this.odRepayRvwFrq.setDisabled(isReadOnly("FinanceMainDialog_repayPftFrq"));
-			readOnlyComponent(isReadOnly("FinanceMainDialog_finStartDate"), this.odStartDate);
-			this.odFinAssetValue.setDisabled(isReadOnly("FinanceMainDialog_finAmount"));
 		} else {
 			this.droplineFrq.setDisabled(true);
 			this.firstDroplineDate.setReadonly(true);

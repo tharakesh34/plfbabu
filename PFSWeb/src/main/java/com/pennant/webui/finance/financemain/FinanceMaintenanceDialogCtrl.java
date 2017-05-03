@@ -78,6 +78,7 @@ import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -177,6 +178,13 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Map<String, Object>			flagTypeDataMap		= new HashMap<String, Object>();
 	protected ExtendedCombobox				mandateRef;
 
+	protected Datebox										odStartDate;
+	protected CurrencyBox									odFinAssetValue;
+	protected Row											row_ODTenor;
+	protected Row											row_ODStartDate;
+	protected Row											row_QuickDisb;
+	protected Space											space_DroplineDate;
+	
 	// old value variables for edit mode. that we can check if something
 	// on the values are edited since the last initialization.
 	protected transient BigDecimal			oldVar_downPaySupl;
@@ -322,6 +330,12 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.downPaySupl.setTextBoxWidth(200);
 		this.downPaySupl.setScale(format);
 
+		this.odStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.odFinAssetValue.setMandatory(true);
+		this.odFinAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(format));
+		this.odFinAssetValue.setScale(format);
+		this.odFinAssetValue.setTextBoxWidth(200);
+		
 		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
 			this.finWriteoffPayAccount.setAccountDetails(fintype.getFinType(), AccountConstants.FinanceAccount_REPY,
 					fintype.getFinCcy());
@@ -2060,6 +2074,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.downPaySupl.setReadonly(isReadOnly("FinanceMainDialog_downPaySupl"));
 			this.downPayAccount.setReadonly(isReadOnly("FinanceMainDialog_downPaymentAcc"));
 		}
+		
+		readOnlyComponent(isReadOnly("FinanceMainDialog_finStartDate"), this.odStartDate);
+		this.odFinAssetValue.setDisabled(isReadOnly("FinanceMainDialog_finAmount"));
+		
 		this.finWriteoffPayAmount.setReadonly(isReadOnly("FinanceMainDialog_WriteoffPayAmount"));
 		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
 			this.finWriteoffPayAmount.setMandatory(!isReadOnly("FinanceMainDialog_WriteoffPayAmount"));
