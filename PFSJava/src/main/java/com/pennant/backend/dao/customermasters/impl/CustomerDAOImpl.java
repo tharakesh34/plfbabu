@@ -1791,6 +1791,34 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		
 	}
 	
+	public Customer getCustomerEOD(final long id) {
+		logger.debug("Entering");
+		Customer customer = new Customer();
+		customer.setId(id);		
+		
+		StringBuilder selectSql = new StringBuilder("SELECT CustID, CustCIF, CustCoreBank, CustCtgCode, ");
+		selectSql.append(" CustTypeCode, CustDftBranch, CustPOB, CustCOB, CustGroupID,  ");
+		selectSql.append(" CustSts, CustStsChgDate, CustIsStaff, CustIndustry, CustSector, CustSubSector, ");
+		selectSql.append(" CustEmpSts, CustSegment, CustSubSegment, " );
+		selectSql.append(" CustParentCountry, CustResdCountry, CustRiskCountry, CustNationality, " );
+		selectSql.append(" SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger " );
+		
+		selectSql.append(" FROM  Customers");
+		selectSql.append(" Where CustID =:CustID");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
+		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		
+		try{
+			customer = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);	
+		}catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			customer = null;
+		}
+		logger.debug("Leaving");
+		return customer;
+	}
 	
 	
 	

@@ -276,8 +276,7 @@ public class ServiceUtil {
 		finRpy.setSchdRate(schd.getAdvCalRate());
 		finRpy.setFinStatus(financeMain.getFinStatus());
 
-		FinODDetails odDetails = getFinODDetailsForBatch(finRpy.getFinReference(), finRpy.getRpyDate(),
-				finRpy.getFinRpyFor());
+		FinODDetails odDetails = getFinODDetailsForBatch(finRpy.getFinReference(), finRpy.getRpyDate());
 		if (odDetails != null) {
 			finRpy.setPenaltyBal(odDetails.getTotPenaltyBal());
 			finRpy.setLatePayPftBal(odDetails.getLPIBal());
@@ -303,8 +302,7 @@ public class ServiceUtil {
 		paidAmount = paidAmount.add(scheduleDetail.getInsSchd().subtract(scheduleDetail.getSchdInsPaid()));
 		paidAmount = paidAmount.add(scheduleDetail.getSuplRent().subtract(scheduleDetail.getSuplRentPaid()));
 		paidAmount = paidAmount.add(scheduleDetail.getIncrCost().subtract(scheduleDetail.getIncrCostPaid()));
-		FinODDetails odDetails = getFinODDetailsForBatch(scheduleDetail.getFinReference(), scheduleDetail.getSchDate(),
-				"");
+		FinODDetails odDetails = getFinODDetailsForBatch(scheduleDetail.getFinReference(), scheduleDetail.getSchDate());
 
 		if (odDetails != null) {
 			paidAmount = paidAmount.add(odDetails.getTotPenaltyBal());
@@ -320,8 +318,8 @@ public class ServiceUtil {
 	 * @param finRpyFor
 	 * @return
 	 */
-	public FinODDetails getFinODDetailsForBatch(String finReferencem, Date rpyDate, String finRpyFor) {
-		return latePaymentService.getFinODDetailsForBatch(finReferencem, rpyDate, finRpyFor);
+	public FinODDetails getFinODDetailsForBatch(String finReferencem, Date rpyDate) {
+		return latePaymentService.getFinODDetailsForBatch(finReferencem, rpyDate);
 	}
 
 	public void setRepaymentService(RepaymentService repaymentService) {

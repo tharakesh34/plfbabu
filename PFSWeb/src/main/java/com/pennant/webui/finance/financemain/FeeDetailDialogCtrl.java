@@ -97,6 +97,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.applicationmaster.TakafulProviderService;
@@ -1547,12 +1548,13 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 			return finScheduleData;
 		}
 
-		AEAmountCodes amountCodes = AEAmounts.procAEAmounts(finScheduleData.getFinanceMain(), finScheduleData
+		AEEvent aeEvent = AEAmounts.procAEAmounts(finScheduleData.getFinanceMain(), finScheduleData
 				.getFinanceScheduleDetails(), new FinanceProfitDetail(), eventCode, finScheduleData.getFinanceMain()
 				.getFinStartDate(), finScheduleData.getFinanceMain().getFinStartDate());
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 		if (isWIF) {
-			amountCodes.setNewRecord(true);
+			aeEvent.setNewRecord(true);
 		}
 
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
@@ -1636,12 +1638,13 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 		finScheduleData.getFinanceMain().setCurDisbursementAmt(finScheduleData.getFinanceMain().getFinAmount());
 
 
-		AEAmountCodes amountCodes = AEAmounts.procAEAmounts(finScheduleData.getFinanceMain(), finScheduleData
+		AEEvent aeEvent = AEAmounts.procAEAmounts(finScheduleData.getFinanceMain(), finScheduleData
 				.getFinanceScheduleDetails(), new FinanceProfitDetail(), eventCode, finScheduleData.getFinanceMain()
 				.getFinStartDate(), finScheduleData.getFinanceMain().getFinStartDate());
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 		//Customer Data Setup
-		amountCodes.setModuleDefiner(getFinanceDetail().getModuleDefiner());
+		aeEvent.setModuleDefiner(getFinanceDetail().getModuleDefiner());
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
 		getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);

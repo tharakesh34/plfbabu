@@ -16,12 +16,12 @@ public class DateRollOverService extends ServiceHelper {
 
 	private static final long	serialVersionUID	= -3371115026576113554L;
 
-	public List<FinEODEvent> process(List<FinEODEvent> custEODEvents) throws Exception {
-
-		for (FinEODEvent finEODEvent : custEODEvents) {
-			finEODEvent.setEodValueDate(DateUtility.addDays(finEODEvent.getEodValueDate(), 1));
-
-			Date valueDate = finEODEvent.getEodValueDate();
+	public CustEODEvent process(CustEODEvent custEODEvent) throws Exception {
+		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
+		
+		for (FinEODEvent finEODEvent : finEODEvents) {
+			custEODEvent.setEodValueDate(DateUtility.addDays(custEODEvent.getEodValueDate(), 1));
+			Date valueDate = custEODEvent.getEodValueDate();
 			FinanceMain finMain = finEODEvent.getFinanceMain();
 
 			//Set Next Grace Capitalization Date
@@ -36,7 +36,7 @@ public class DateRollOverService extends ServiceHelper {
 
 			//Set Next Grace Profit Review Date
 			if (finMain.getNextGrcPftRvwDate() != null && finMain.getNextGrcPftRvwDate().compareTo(valueDate) == 0) {
-				setNextGrcPftRvwDate(finEODEvent);
+				setNextGrcPftRvwDate(finEODEvent, custEODEvent.getEodValueDate());
 			}
 
 			//Set Next Repay Capitalization Date
@@ -56,7 +56,7 @@ public class DateRollOverService extends ServiceHelper {
 
 			//Set Next Repayment Profit Review Date
 			if (finMain.getNextRepayRvwDate() != null && finMain.getNextRepayRvwDate().compareTo(valueDate) == 0) {
-				setNextRepayRvwDate(finEODEvent);
+				setNextRepayRvwDate(finEODEvent, custEODEvent.getEodValueDate());
 			}
 
 			//Set Next Depreciation Date
@@ -76,7 +76,7 @@ public class DateRollOverService extends ServiceHelper {
 			}
 		}
 
-		return custEODEvents;
+		return custEODEvent;
 
 	}
 
@@ -150,7 +150,7 @@ public class DateRollOverService extends ServiceHelper {
 	//--------------------------------------------------------------------------------------------------------------------------
 	//Next Grace Profit Review Date
 	//--------------------------------------------------------------------------------------------------------------------------
-	private void setNextGrcPftRvwDate(FinEODEvent finEODEvent) {
+	private void setNextGrcPftRvwDate(FinEODEvent finEODEvent, Date valueDate) {
 		FinanceMain finMain = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
 		Map<Date, Integer> datesMap = finEODEvent.getDatesMap();
@@ -164,8 +164,8 @@ public class DateRollOverService extends ServiceHelper {
 		}
 
 		if (!StringUtils.equals(finMain.getRvwRateApplFor(), CalculationConstants.RATEREVIEW_NORVW)) {
-			if (finMain.getFinStartDate().compareTo(finEODEvent.getEodValueDate()) != 0
-					&& finMain.getMaturityDate().compareTo(finEODEvent.getEodValueDate()) != 0) {
+			if (finMain.getFinStartDate().compareTo(valueDate) != 0
+					&& finMain.getMaturityDate().compareTo(valueDate) != 0) {
 				finEODEvent.setRateReview(true);
 			}
 		}
@@ -294,7 +294,7 @@ public class DateRollOverService extends ServiceHelper {
 	//--------------------------------------------------------------------------------------------------------------------------
 	//Next Repay Review Date
 	//--------------------------------------------------------------------------------------------------------------------------
-	private void setNextRepayRvwDate(FinEODEvent finEODEvent) {
+	private void setNextRepayRvwDate(FinEODEvent finEODEvent, Date valueDate) {
 		FinanceMain finMain = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
 		Map<Date, Integer> datesMap = finEODEvent.getDatesMap();
@@ -308,8 +308,8 @@ public class DateRollOverService extends ServiceHelper {
 		}
 
 		if (!StringUtils.equals(finMain.getRvwRateApplFor(), CalculationConstants.RATEREVIEW_NORVW)) {
-			if (finMain.getFinStartDate().compareTo(finEODEvent.getEodValueDate()) != 0
-					&& finMain.getMaturityDate().compareTo(finEODEvent.getEodValueDate()) != 0) {
+			if (finMain.getFinStartDate().compareTo(valueDate) != 0
+					&& finMain.getMaturityDate().compareTo(valueDate) != 0) {
 				finEODEvent.setRateReview(true);
 			}
 		}
@@ -333,5 +333,4 @@ public class DateRollOverService extends ServiceHelper {
 
 		return;
 	}
-
 }

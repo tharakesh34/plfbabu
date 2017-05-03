@@ -81,6 +81,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.rmtmasters.TransactionDetail;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.PagedListService;
@@ -126,7 +127,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 	private FinanceMain				financeMain					= null;
 	private Object					financeMainDialogCtrl		= null;
 
-	private AEAmountCodes			amountCodes;																			// over handed per parameters
+	private AEEvent					aeEvent;																				// over handed per parameters
 	protected boolean				stageAccountingsExecuted	= false;
 
 	private Label					label_PostAccountingDisbCrVal;															// autoWired
@@ -370,14 +371,14 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 			getFinanceMain().setCurDisbursementAmt(getFinanceMain().getFinAmount());
 		}
 
-		amountCodes = AEAmounts.procAEAmounts(getFinanceMain(), getFinScheduleData().getFinanceScheduleDetails(),
+		aeEvent = AEAmounts.procAEAmounts(getFinanceMain(), getFinScheduleData().getFinanceScheduleDetails(),
 				new FinanceProfitDetail(), AccountEventConstants.ACCEVENT_STAGE, getFinanceMain().getFinStartDate(),
 				getFinanceMain().getFinStartDate());
-		amountCodes.setModuleDefiner(getFinanceDetail().getModuleDefiner());
-		setAmountCodes(amountCodes);
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+		aeEvent.setModuleDefiner(getFinanceDetail().getModuleDefiner());
 
+		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
 		// Fee Rules Map Fetching from Fee Details Dialog Controller for Accounting process
 		Map<String, FeeRule> feeRuleDetailMap = null;
@@ -623,14 +624,6 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 		this.financeDetail = financeDetail;
 		setFinScheduleData(financeDetail.getFinScheduleData());
 		setFinanceMain(this.finScheduleData.getFinanceMain());
-	}
-
-	public AEAmountCodes getAmountCodes() {
-		return amountCodes;
-	}
-
-	public void setAmountCodes(AEAmountCodes amountCodes) {
-		this.amountCodes = amountCodes;
 	}
 
 	public void setEngineExecution(AccountEngineExecution engineExecution) {

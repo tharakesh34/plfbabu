@@ -35,9 +35,6 @@ package com.pennant.app.core;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.Date;
 import java.util.List;
 
@@ -47,36 +44,24 @@ import org.apache.log4j.Logger;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
-import com.pennant.backend.dao.finance.FinStatusDetailDAO;
-import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
+import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinODDetails;
-import com.pennant.backend.model.finance.FinStatusDetail;
+import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantConstants;
 
 public class LatePayMarkingService extends ServiceHelper {
 
 	private static final long	serialVersionUID	= 6161809223570900644L;
 	private static Logger		logger				= Logger.getLogger(LatePayMarkingService.class);
-
-	public static final String	PDCALCULATION		= "SELECT FinReference, RpyDate, FinRpyFor, Branch, FinType, CustomerID, SchdPriBal, SchdPftBal "
-															+ " FROM FinRpyQueue WHERE CustomerID=? AND FINRPYFOR = ?";
-
-	public static final String	DPDBUCKETING		= "SELECT FP.FinReference,FP.CURODDAYS,FP.MAXODDAYS,FP.TDSCHDPFT,FP.TDSCHDPFTPAID,FP.TDSCHDPRI,FP.TDSCHDPRIPAID, "
-															+ " FP.ExcessAmt,FP.EmiInAdvance,FP.PayableAdvise,FM.FinStatus,FP.FinCategory "
-															+ " FROM FINPFTDETAILS FP INNER JOIN Financemain FM ON FP.FINREFERENCE = FM.FINREFERENCE "
-															+ " WHERE (FP.CURODDAYS > 0 OR FM.DueBucket > 0) and FP.CustID = ?";
-
 	private FinODDetailsDAO		finODDetailsDAO;
-	private FinStatusDetailDAO	finStatusDetailDAO;
-	private CustomerDAO			customerDAO;
-	private FinanceMainDAO		financeMainDAO;
+	private FinODPenaltyRateDAO	finODPenaltyRateDAO;
 
 	/**
 	 * Default constructor
@@ -91,43 +76,143 @@ public class LatePayMarkingService extends ServiceHelper {
 	 * @param date
 	 * @throws Exception
 	 */
-	public void processLatePayMarking(Connection connection, long custId, Date date) throws Exception {
-		ResultSet resultSet = null;
-		PreparedStatement sqlStatement = null;
-		String finreference = "";
+	public CustEODEvent processLatePayMarking(CustEODEvent custEODEvent) throws Exception {
+		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
+		Date valueDate = custEODEvent.getEodValueDate();
 
-		try {
-			//payments
-			sqlStatement = connection.prepareStatement(PDCALCULATION);
-			sqlStatement.setLong(1, custId);
-			sqlStatement.setString(2, "S");
-			resultSet = sqlStatement.executeQuery();
+		for (FinEODEvent finEODEvent : finEODEvents) {
 
-			while (resultSet.next()) {
-				finreference = resultSet.getString("FinReference");
-				FinRepayQueue finRepayQueue = new FinRepayQueue();
-				finRepayQueue.setFinReference(finreference);
-				finRepayQueue.setRpyDate(resultSet.getDate("RpyDate"));
-				finRepayQueue.setFinRpyFor(resultSet.getString("FinRpyFor"));
-				finRepayQueue.setBranch(resultSet.getString("Branch"));
-				finRepayQueue.setFinType(resultSet.getString("FinType"));
-				finRepayQueue.setCustomerID(resultSet.getLong("CustomerID"));
-				finRepayQueue.setSchdPriBal(getDecimal(resultSet, "SchdPriBal"));
-				finRepayQueue.setSchdPftBal(getDecimal(resultSet, "SchdPftBal"));
-				latePayMarking(finRepayQueue, date);
+			finEODEvent = findLatePay(finEODEvent, valueDate);
+
+			if (finEODEvent.isOdFiance()) {
+				updateFinPftDetails(finEODEvent, valueDate);
+				finEODEvent.setUpdFinPft(true);
 			}
 
-		} catch (Exception e) {
-			logger.error("Exception: Finreference :" + finreference, e);
-			throw new Exception("Exception: Finreference : " + finreference, e);
-		} finally {
-			if (resultSet != null) {
-				resultSet.close();
+		}
+
+		return custEODEvent;
+	}
+
+	public FinEODEvent findLatePay(FinEODEvent finEODEvent, Date valueDate) throws Exception {
+
+		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
+
+		for (int i = 0; i < finSchdDetails.size(); i++) {
+			FinanceScheduleDetail curSchd = finSchdDetails.get(i);
+
+			//Include Today in Late payment Calculation or NOT?
+			if (curSchd.getSchDate().compareTo(valueDate) > 0) {
+				break;
 			}
-			if (sqlStatement != null) {
-				sqlStatement.close();
+
+			boolean isAmountDue = false;
+			//Paid Principal OR Paid Interest Less than scheduled amounts 
+			if (curSchd.getSchdPriPaid().compareTo(curSchd.getPrincipalSchd()) < 0
+					|| curSchd.getSchdPftPaid().compareTo(curSchd.getProfitSchd()) < 0) {
+				isAmountDue = true;
+			}
+
+			//Islamic Implementation
+			if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
+				//Paid Supplementary rent OR Paid Increase Cost less than scheduled amounts 
+				if (curSchd.getSuplRentPaid().compareTo(curSchd.getSuplRent()) < 0
+						|| curSchd.getIncrCostPaid().compareTo(curSchd.getIncrCost()) < 0) {
+					isAmountDue = true;
+				}
+			}
+
+			if (isAmountDue) {
+				finEODEvent = latePayMarking(finEODEvent, curSchd, valueDate);
+				finEODEvent.setOdFiance(true);
+			}
+
+		}
+
+		return finEODEvent;
+	}
+
+	private FinEODEvent latePayMarking(FinEODEvent finEODEvent, FinanceScheduleDetail curSchd, Date valueDate)
+			throws Exception {
+		logger.debug("Entering");
+
+		String finReference = finEODEvent.getFinanceMain().getFinReference();
+		List<FinODDetails> finODDetails = finEODEvent.getFinODDetails();
+
+		//Get details first time from DB and keep it for later updation
+		if (finODDetails == null || finODDetails.size() == 0) {
+			finODDetails = finODDetailsDAO.getFinODDetailsByFinReference(finReference);
+			if (finODDetails != null) {
+				finEODEvent.setFinODDetails(finODDetails);
 			}
 		}
+
+		finODDetails = finEODEvent.getFinODDetails();
+		FinODDetails finODDetail = new FinODDetails();
+
+		for (int i = 0; i < finODDetails.size(); i++) {
+			finODDetail = finODDetails.get(i);
+
+			//OD Schedule date before required schedule date
+			if (finODDetail.getFinODSchdDate().compareTo(curSchd.getSchDate()) < 0) {
+				continue;
+
+			}
+
+			//OD Schedule date same as required schedule date
+			if (finODDetail.getFinODSchdDate().compareTo(curSchd.getSchDate()) == 0) {
+				finODDetail.setRcdAction(PennantConstants.RECORD_UPDATE);
+				finEODEvent.getFinODDetails().set(i, finODDetail);
+				return finEODEvent;
+			}
+		}
+
+		finODDetail = createODDetails(curSchd, finEODEvent, valueDate);
+
+		logger.debug("Leaving");
+		return finEODEvent;
+	}
+
+	public void updateFinPftDetails(FinEODEvent finEODEvent, Date valueDate) throws Exception {
+
+		List<FinODDetails> finODDetails = finEODEvent.getFinODDetails();
+		FinanceProfitDetail pftDetail = finEODEvent.getFinProfitDetail();
+
+		pftDetail.setODPrincipal(BigDecimal.ZERO);
+		pftDetail.setODProfit(BigDecimal.ZERO);
+		pftDetail.setPenaltyPaid(BigDecimal.ZERO);
+		pftDetail.setPenaltyDue(BigDecimal.ZERO);
+		pftDetail.setPenaltyWaived(BigDecimal.ZERO);
+		pftDetail.setPrvODDate(valueDate);
+
+		for (int i = 0; i < finODDetails.size(); i++) {
+			FinODDetails fod = finODDetails.get(i);
+
+			if (fod.getFinCurODPri().compareTo(BigDecimal.ZERO) == 0
+					&& fod.getFinCurODPft().compareTo(BigDecimal.ZERO) == 0) {
+				continue;
+			}
+
+			pftDetail.setODPrincipal(pftDetail.getODPrincipal().add(fod.getFinCurODPri()));
+			pftDetail.setODProfit(pftDetail.getODProfit().add(fod.getFinCurODPft()));
+			pftDetail.setPenaltyPaid(pftDetail.getPenaltyPaid().add(fod.getTotPenaltyPaid()));
+			pftDetail.setPenaltyDue(pftDetail.getPenaltyDue().add(fod.getTotPenaltyBal()));
+			pftDetail.setPenaltyWaived(pftDetail.getPenaltyWaived().add(fod.getTotWaived()));
+			pftDetail.setPrvODDate(pftDetail.getFinStartDate());
+
+			if (pftDetail.getFirstODDate() == null
+					&& pftDetail.getFirstODDate().compareTo(pftDetail.getFinStartDate()) == 0) {
+				pftDetail.setFirstODDate(fod.getFinODSchdDate());
+			}
+
+			//There is chance OD dates might not be in ascending order so take the least date
+			if (pftDetail.getPrvODDate().compareTo(fod.getFinODSchdDate()) <= 0) {
+				pftDetail.setPrvODDate(fod.getFinODTillDate());
+			}
+		}
+
+		pftDetail.setCurODDays(DateUtility.getDaysBetween(valueDate, pftDetail.getPrvODDate()));
+
 	}
 
 	/**
@@ -136,261 +221,184 @@ public class LatePayMarkingService extends ServiceHelper {
 	 * @param date
 	 * @throws Exception
 	 */
-	public void processDPDBuketing(Connection connection, long custId, Date date) throws Exception {
-		ResultSet resultSet = null;
-		PreparedStatement sqlStatement = null;
-		String finreference = "";
+	public CustEODEvent processDPDBuketing(CustEODEvent custEODEvent) throws Exception {
+		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
+		Date valueDate = custEODEvent.getEodValueDate();
 
-		try {
-			//payments
-			sqlStatement = connection.prepareStatement(DPDBUCKETING);
-			sqlStatement.setLong(1, custId);
-			resultSet = sqlStatement.executeQuery();
+		for (FinEODEvent finEODEvent : finEODEvents) {
+			boolean isFinStsChanged = updateDPDBuketing(finEODEvent.getFinProfitDetail(), valueDate,
+					finEODEvent.getFinanceMain());
 
-			while (resultSet.next()) {
-				finreference = resultSet.getString("FinReference");
-				FinanceProfitDetail detail = new FinanceProfitDetail();
-				detail.setFinReference(resultSet.getString("FinReference"));
-				detail.setTdSchdPri(getDecimal(resultSet, "tdSchdPri"));
-				detail.setTdSchdPriPaid(getDecimal(resultSet, "tdSchdPriPaid"));
-				detail.setTdSchdPft(getDecimal(resultSet, "tdSchdPft"));
-				detail.setTdSchdPftPaid(getDecimal(resultSet, "tdSchdPftPaid"));
-				detail.setExcessAmt(getDecimal(resultSet, "excessAmt"));
-				detail.setEmiInAdvance(getDecimal(resultSet, "EmiInAdvance"));
-				detail.setPayableAdvise(getDecimal(resultSet, "PayableAdvise"));
-				detail.setCurODDays(resultSet.getInt("CURODDAYS"));
-				detail.setMaxODDays(resultSet.getInt("MAXODDAYS"));
-				detail.setFinCategory(resultSet.getString("FinCategory"));
-				detail.setFinStatus(resultSet.getString("FinStatus"));
-				detail.setCustId(custId);
-				processDPDBuketing(detail, date, null);
-			}
-
-		} catch (Exception e) {
-			logger.error("Exception: Finreference :" + finreference, e);
-			throw new Exception("Exception: Finreference : " + finreference, e);
-		} finally {
-			if (resultSet != null) {
-				resultSet.close();
-			}
-			if (sqlStatement != null) {
-				sqlStatement.close();
+			if (isFinStsChanged) {
+				finEODEvent.setUpdFinMain(true);
+				finEODEvent.setUpdFinPft(true);
+				finEODEvent.getFinProfitDetail().setFinStatus(finEODEvent.getFinanceMain().getFinStatus());
+				finEODEvent.getFinProfitDetail().setDueBucket(finEODEvent.getFinanceMain().getDueBucket());
 			}
 		}
+
+		return custEODEvent;
 	}
 
-	public void processCustomerStatus(long custID, Date valueDate, String curFinStatus, String curFinproduct) {
+	public CustEODEvent processCustomerStatus(CustEODEvent custEODEvent) {
 
-		Customer customer = customerDAO.getCustomerStatus(custID);
-		String currentStatus = StringUtils.trimToEmpty(customer.getCustSts());
-		List<FinanceMain> finList = financeMainDAO.getFinanceByCustId(custID);
+		Date valueDate = custEODEvent.getEodValueDate();
+		String newBucketCode = FinanceConstants.FINSTSRSN_SYSTEM;
+		int maxBuckets = 0;
 
-		String custStatus = "";
-		int maxDueDays = 0;
+		Customer customer = custEODEvent.getCustomer();
+		String currentBucketCode = StringUtils.trimToEmpty(customer.getCustSts());
 
-		//Need to consider the current loan status as well when proceesed along with loan.
-		if (StringUtils.isNotBlank(curFinStatus)) {
-			long bucketId = getBucketID(curFinStatus);
-			List<DPDBucketConfiguration> list = getBucketConfigurations(curFinproduct);
-			for (DPDBucketConfiguration configuration : list) {
-				if (configuration.getBucketID() == bucketId && configuration.getDueDays() > maxDueDays) {
-					maxDueDays = configuration.getDueDays();
-					custStatus = getBucket(configuration.getBucketID());
-					break;
-				}
+		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
+
+		for (int i = 0; i < finEODEvents.size(); i++) {
+			FinEODEvent finEODEvent = finEODEvents.get(i);
+			if (finEODEvent.getFinanceMain().getDueBucket() > maxBuckets) {
+				maxBuckets = finEODEvent.getFinanceMain().getDueBucket();
+				newBucketCode = finEODEvent.getFinanceMain().getFinStatus();
 			}
 		}
 
-		for (FinanceMain financeMain : finList) {
-			String finStatus = financeMain.getFinStatus();
-			String productCode = financeMain.getLovDescFinProduct();
-			if (StringUtils.isNotBlank(finStatus)) {
-				long bucketId = getBucketID(finStatus);
-				List<DPDBucketConfiguration> list = getBucketConfigurations(productCode);
-				for (DPDBucketConfiguration configuration : list) {
-					if (configuration.getBucketID() == bucketId && configuration.getDueDays() > maxDueDays) {
-						maxDueDays = configuration.getDueDays();
-						custStatus = getBucket(configuration.getBucketID());
-						break;
-					}
-				}
-			}
+		if (!StringUtils.equals(newBucketCode, currentBucketCode)) {
+			custEODEvent.setUpdCustomer(true);
+			custEODEvent.getCustomer().setCustSts(newBucketCode);
+			custEODEvent.getCustomer().setCustStsChgDate(valueDate);
+
+			//customerDAO.updateCustStatus(newBucketCode, valueDate, custEODEvent.getCustomer().getCustID());
+
 		}
-		if (!StringUtils.equals(currentStatus, custStatus)) {
-			customerDAO.updateCustStatus(custStatus, valueDate, custID);
-		}
+
+		return custEODEvent;
 
 	}
 
 	/**
 	 * @param connection
 	 * @param custId
-	 * @param date
+	 * @param valueDate
 	 * @throws Exception
 	 */
-	public void processDPDBuketing(FinanceProfitDetail detail, Date date, FinanceMain financeMain) {
-		
-		if((detail.getTdSchdPri().add(detail.getTdSchdPft())).compareTo(BigDecimal.ZERO) <= 0){
-			return;
-		}
+	public boolean updateDPDBuketing(FinanceProfitDetail pftDetail, Date valueDate, FinanceMain financeMain) {
 
-		String finreference = detail.getFinReference();
-		BigDecimal tdSchdPri = detail.getTdSchdPri();
-		BigDecimal tdSchdPriPaid = detail.getTdSchdPriPaid();
-		BigDecimal tdSchdPft = detail.getTdSchdPft();
-		BigDecimal tdSchdPftPaid = detail.getTdSchdPftPaid();
-		BigDecimal excessAmt = detail.getExcessAmt();
-		BigDecimal emiInAdvance = detail.getEmiInAdvance();
-		BigDecimal payableAdvise = detail.getPayableAdvise();
-		int dueDays = detail.getMaxODDays();
-		String productCode = detail.getFinCategory();
-		String finStatus = StringUtils.trimToEmpty(detail.getFinStatus());
-		long custId = detail.getCustId();
-
-		//Due bucket
-		int dueBucket = (new BigDecimal(dueDays).divide(new BigDecimal(30), 0, RoundingMode.UP)).intValue();
-
-		//due percentage calculation
-		BigDecimal numerator = tdSchdPri.add(tdSchdPft).subtract(tdSchdPriPaid).subtract(tdSchdPftPaid)
-				.subtract(excessAmt).subtract(emiInAdvance).subtract(payableAdvise);
-
-		BigDecimal duePercentgae = (numerator.divide(tdSchdPri.add(tdSchdPft), 0, RoundingMode.HALF_DOWN))
-				.multiply(new BigDecimal(100));
-
-		//get ignore bucket configuration from SMT parameter
+		int dueDays = pftDetail.getCurODDays();
+		int newDueBucket = 0;
+		int dueBucket = financeMain.getDueBucket();
 		BigDecimal minDuePerc = BigDecimal.ZERO;
-		Object object = SysParamUtil.getValue("IGNORING_BUCKET");
-		if (object != null) {
-			minDuePerc = (BigDecimal) object;
+
+		String newFinStatus = FinanceConstants.FINSTSRSN_SYSTEM;
+		String finStatus = StringUtils.trimToEmpty(financeMain.getFinStatus());
+		String productCode = pftDetail.getFinCategory();
+
+		BigDecimal duePercentgae = BigDecimal.ZERO;
+
+		//No current OD Days and No change in the Bucket Status and Number of Buckets
+		if (pftDetail.getCurODDays() == 0) {
+			if (StringUtils.equals(newFinStatus, finStatus) && dueBucket == newDueBucket) {
+				return false;
+			}
+		}
+
+		newDueBucket = (new BigDecimal(dueDays).divide(new BigDecimal(30), 0, RoundingMode.UP)).intValue();
+
+		//No current OD Buckets and No change in the Bucket Status and Number of Buckets
+		if (newDueBucket == 0) {
+			if (StringUtils.equals(newFinStatus, finStatus) && dueBucket == newDueBucket) {
+				return false;
+			}
+		} else {
+			BigDecimal netSchdAmount = pftDetail.getTdSchdPri().add(pftDetail.getTdSchdPft());
+			BigDecimal netDueAmount = netSchdAmount.subtract(pftDetail.getTdSchdPriPaid())
+					.subtract(pftDetail.getTdSchdPftPaid()).subtract(pftDetail.getEmiInAdvanceBal())
+					.subtract(pftDetail.getExcessAmtBal());
+
+			if (netSchdAmount.compareTo(BigDecimal.ZERO) > 0) {
+				duePercentgae = (netDueAmount.divide(netSchdAmount, 0, RoundingMode.HALF_DOWN))
+						.multiply(new BigDecimal(100));
+			}
+
+			//get ignore bucket configuration from SMT parameter
+			Object object = SysParamUtil.getValue("IGNORING_BUCKET");
+			if (object != null) {
+				minDuePerc = (BigDecimal) object;
+			}
+
+			if (duePercentgae.compareTo(minDuePerc) <= 0) {
+				newDueBucket = 0;
+			}
+
+			//No change in the Bucket Status and Number of Buckets
+			if (StringUtils.equals(newFinStatus, finStatus) && dueBucket == newDueBucket) {
+				return false;
+			}
+
 		}
 
 		long bucketID = 0;
-		String bucketCode = "";
-		if (duePercentgae.compareTo(minDuePerc) > 0) {
-			List<DPDBucketConfiguration> list = getBucketConfigurations(productCode);
-			sortBucketConfig(list);
-			for (DPDBucketConfiguration dpdBucketConfiguration : list) {
-				if (dpdBucketConfiguration.getDueDays() >= dueBucket) {
-					bucketID = dpdBucketConfiguration.getBucketID();
-					break;
-				}
+		List<DPDBucketConfiguration> list = getBucketConfigurations(productCode);
+		sortBucketConfig(list);
+		for (DPDBucketConfiguration dpdBucketConfiguration : list) {
+
+			if (dpdBucketConfiguration.getDueDays() > newDueBucket) {
+				break;
 			}
+
+			bucketID = dpdBucketConfiguration.getBucketID();
 		}
 
 		if (bucketID != 0) {
-			bucketCode = getBucket(bucketID);
+			newFinStatus = getBucket(bucketID);
 		}
 
-		boolean isStsChanged = false;
-		if (!StringUtils.equals(finStatus, bucketCode)) {
-			isStsChanged = true;
+		if (StringUtils.equals(newFinStatus, finStatus) && dueBucket == newDueBucket) {
+			return false;
 		}
 
-		if (isStsChanged) {
-			FinStatusDetail statusDetail = new FinStatusDetail();
-			statusDetail.setFinReference(finreference);
-			statusDetail.setValueDate(date);
-			statusDetail.setCustId(custId);
-			statusDetail.setFinStatus(bucketCode);
-			statusDetail.setODDays(dueDays);
-			finStatusDetailDAO.saveOrUpdateFinStatus(statusDetail);
-		}
-
-		if (financeMain == null) {
-			financeMainDAO.updateBucketStatus(finreference, bucketCode, dueBucket, FinanceConstants.FINSTSRSN_SYSTEM);
-		} else {
-			financeMain.setFinStatus(bucketCode);
-			financeMain.setDueBucket(dueBucket);
-		}
-
+		financeMain.setFinStatus(newFinStatus);
+		financeMain.setDueBucket(newDueBucket);
+		return true;
 	}
 
-	/**
-	 * Method for Preparation or Update of OverDue Details data
-	 * 
-	 * @param financeMain
-	 * @param finRepayQueue
-	 * @param dateValueDate
-	 * @return
-	 * @throws Exception
-	 */
-	private void latePayMarking(FinRepayQueue finRepayQueue, Date dateValueDate) throws Exception {
-		logger.debug("Entering");
-
-		boolean isODExist = finODDetailsDAO.isODExist(finRepayQueue.getFinReference(), finRepayQueue.getRpyDate());
-		Date businessDate = dateValueDate;
-		if (ImplementationConstants.CALCULATE_PD_DAYZERO) {
-			businessDate = DateUtility.addDays(dateValueDate, 1);
-		}
-
-		// Finance Overdue Details Save or Updation
-		if (isODExist) {
-			updateODDetails(finRepayQueue, dateValueDate, businessDate);
-		} else {
-			createODDetails(finRepayQueue, dateValueDate, businessDate);
-		}
-
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Method for Preparing OverDue Details
-	 * 
-	 * @param finRepayQueue
-	 * @param valueDate
-	 * @return
-	 */
-	private void createODDetails(FinRepayQueue finRepayQueue, Date valueDate, Date businessdate) {
+	private FinODDetails createODDetails(FinanceScheduleDetail curSchd, FinEODEvent finEODEvent, Date valueDate) {
 		logger.debug(" Entering ");
 
-		if (finRepayQueue.getSchdPriBal().compareTo(BigDecimal.ZERO) <= 0
-				&& finRepayQueue.getSchdPftBal().compareTo(BigDecimal.ZERO) <= 0) {
-			return;
+		FinODDetails finODDetail = new FinODDetails();
+		FinODPenaltyRate penaltyRate = finEODEvent.getPenaltyrate();
+		String finReference = finEODEvent.getFinanceMain().getFinReference();
+
+		if (penaltyRate == null) {
+			penaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finReference, "");
+			finEODEvent.setPenaltyrate(penaltyRate);
 		}
 
-		FinODDetails finODDetails = new FinODDetails();
-		finODDetails.setFinReference(finRepayQueue.getFinReference());
-		finODDetails.setFinODSchdDate(finRepayQueue.getRpyDate());
-		finODDetails.setFinODFor(finRepayQueue.getFinRpyFor());
-		finODDetails.setFinBranch(finRepayQueue.getBranch());
-		finODDetails.setFinType(finRepayQueue.getFinType());
-		finODDetails.setCustID(finRepayQueue.getCustomerID());
-		finODDetails.setFinODTillDate(valueDate);
-		finODDetails.setFinCurODAmt(finRepayQueue.getSchdPriBal().add(finRepayQueue.getSchdPftBal()));
-		finODDetails.setFinCurODPri(finRepayQueue.getSchdPriBal());
-		finODDetails.setFinCurODPft(finRepayQueue.getSchdPftBal());
-		finODDetails.setFinMaxODAmt(finRepayQueue.getSchdPriBal().add(finRepayQueue.getSchdPftBal()));
-		finODDetails.setFinMaxODPri(finODDetails.getFinCurODPri());
-		finODDetails.setFinMaxODPri(finODDetails.getFinCurODPft());
-		finODDetails.setFinCurODDays(DateUtility.getDaysBetween(finODDetails.getFinODSchdDate(), businessdate));
-		finODDetails.setFinLMdfDate(valueDate);
+		finODDetail.setFinReference(finReference);
+		finODDetail.setFinODSchdDate(curSchd.getSchDate());
+		finODDetail.setFinODFor(FinanceConstants.SCH_TYPE_SCHEDULE);
+		finODDetail.setFinBranch(finEODEvent.getFinanceMain().getFinBranch());
+		finODDetail.setFinType(finEODEvent.getFinanceMain().getFinType());
+		finODDetail.setCustID(finEODEvent.getFinanceMain().getCustID());
+		finODDetail.setFinODTillDate(valueDate);
+		finODDetail.setFinCurODAmt(curSchd.getRepayAmount().subtract(curSchd.getSchdPriPaid())
+				.subtract(curSchd.getSchdPftPaid()));
+		finODDetail.setFinCurODPri(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
+		finODDetail.setFinCurODPft(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
+		finODDetail.setFinMaxODAmt(finODDetail.getFinCurODPri());
+		finODDetail.setFinMaxODPri(finODDetail.getFinCurODPri());
+		finODDetail.setFinMaxODPri(finODDetail.getFinCurODPft());
+		finODDetail.setFinCurODDays(DateUtility.getDaysBetween(finODDetail.getFinODSchdDate(), valueDate));
+		finODDetail.setFinLMdfDate(valueDate);
+		finODDetail.setApplyODPenalty(penaltyRate.isApplyODPenalty());
+		finODDetail.setODIncGrcDays(penaltyRate.isODIncGrcDays());
+		finODDetail.setODChargeType(penaltyRate.getODChargeType());
+		finODDetail.setODGraceDays(penaltyRate.getODGraceDays());
+		finODDetail.setODChargeCalOn(penaltyRate.getODChargeCalOn());
+		finODDetail.setODChargeAmtOrPerc(penaltyRate.getODChargeAmtOrPerc());
+		finODDetail.setODAllowWaiver(penaltyRate.isODAllowWaiver());
+		finODDetail.setODMaxWaiverPerc(penaltyRate.getODMaxWaiverPerc());
 
-		if (finODDetails.getFinCurODDays() > 0) {
-			finODDetailsDAO.save(finODDetails);
-		}
-	}
+		finODDetail.setRcdAction(PennantConstants.RECORD_INSERT);
+		finEODEvent.getFinODDetails().add(finODDetail);
 
-	/**
-	 * Method for Preparing OverDue Details
-	 * 
-	 * @param details
-	 * @param finRepayQueue
-	 * @param valueDate
-	 * @param increment
-	 * @return
-	 */
-	private void updateODDetails(FinRepayQueue finRepayQueue, Date valueDate, Date businessdate) {
-		FinODDetails finODDetails = new FinODDetails();
-		finODDetails.setFinODSchdDate(finRepayQueue.getRpyDate());
-		finODDetails.setFinReference(finRepayQueue.getFinReference());
-		finODDetails.setFinCurODAmt(finRepayQueue.getSchdPriBal().add(finRepayQueue.getSchdPftBal()));
-		finODDetails.setFinCurODPri(finRepayQueue.getSchdPriBal());
-		finODDetails.setFinCurODPft(finRepayQueue.getSchdPftBal());
-		finODDetails.setFinODTillDate(valueDate);
-		finODDetails.setFinCurODDays(DateUtility.getDaysBetween(finRepayQueue.getRpyDate(), businessdate));
-		finODDetails.setFinLMdfDate(valueDate);
-		finODDetailsDAO.updateBatch(finODDetails);
-
+		return finODDetail;
 	}
 
 	// ******************************************************//
@@ -401,15 +409,8 @@ public class LatePayMarkingService extends ServiceHelper {
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
-	public void setCustomerDAO(CustomerDAO customerDAO) {
-		this.customerDAO = customerDAO;
+	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
+		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
 	}
 
-	public void setFinStatusDetailDAO(FinStatusDetailDAO finStatusDetailDAO) {
-		this.finStatusDetailDAO = finStatusDetailDAO;
-	}
-
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
 }

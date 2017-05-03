@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -20,8 +19,8 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.AutoDisbursementService;
+import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.DateRollOverService;
-import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.core.LatePayInterestService;
 import com.pennant.app.core.LatePayMarkingService;
@@ -34,6 +33,7 @@ import com.pennant.app.core.RepayQueueService;
 import com.pennant.app.util.BusinessCalendar;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerDatesDAO;
@@ -44,6 +44,7 @@ public class EodService {
 
 	private DataSource					dataSource;
 	private PlatformTransactionManager	transactionManager;
+	private CustomerDAO					customerDAO;
 	private CustomerDatesDAO			customerDatesDAO;
 	private CustomerQueuingService		customerQueuingService;
 
@@ -53,13 +54,13 @@ public class EodService {
 	private LatePayInterestService		latePayInterestService;
 	private NPAService					npaService;
 	private DateRollOverService			dateRollOverService;
+	private LoadFinanceData				loadFinanceData;
 	private RateReviewService			rateReviewService;
 	private AccrualService				accrualService;
 	private AutoDisbursementService		autoDisbursementService;
 	private ReceiptPaymentService		receiptPaymentService;
 
 	private InstallmentDueService		installmentDueService;
-	private LoadFinanceData				loadFinanceData;
 
 
 
@@ -153,40 +154,50 @@ public class EodService {
 
 	private void doProcess(Connection connection, long custId, Date date) throws Exception {
 
-		List<FinEODEvent> custEODEvents = loadFinanceData.prepareFinEODEvents(custId, date);
+		//_____________________________________________________________________________________________________________
+		//Fetch and Set EOD Event
+		//_____________________________________________________________________________________________________________
+
+		CustEODEvent custEODEvent = new CustEODEvent();
+		custEODEvent.setCustomer(getCustomerDAO().getCustomerEOD(custId));
+		custEODEvent.setEodDate(date);
+		custEODEvent.setEodValueDate(date);
+
 		
+		custEODEvent = loadFinanceData.prepareFinEODEvents(custEODEvent);
+
 		//prepare customer queue
+		//TODO: DELETE UNWANTED CALL AND SERVICE
 		repayQueueService.prepareRepayQueue(connection, custId, date);
 
 		//late pay marking
-		latePayMarkingService.processLatePayMarking(connection, custId, date);
+		custEODEvent = latePayMarkingService.processLatePayMarking(custEODEvent);
 
 		//DPD Bucketing
-		latePayMarkingService.processDPDBuketing(connection, custId, date);
+		custEODEvent = latePayMarkingService.processDPDBuketing(custEODEvent);
 
 		//customer status update
-		latePayMarkingService.processCustomerStatus(custId, date, null, null);
+		custEODEvent = latePayMarkingService.processCustomerStatus(custEODEvent);
 
 		//late pay penalty
-		latePayPenaltyService.processLatePayPenalty(connection, custId, date);
+		custEODEvent = latePayPenaltyService.processLatePayPenalty(custEODEvent);
 
 		//late pay interest
-		latePayInterestService.processLatePayInterest(connection, custId, date);
+		custEODEvent =  latePayInterestService.processLatePayInterest(custEODEvent);
 
 		//NPA Service
-		npaService.processNPABuckets(connection, custId, date);
+		custEODEvent = npaService.processNPABuckets(custEODEvent);
 
 		//_____________________________________________________________________________________________________________
 		//Date roll over
 		//_____________________________________________________________________________________________________________
-
-		custEODEvents = dateRollOverService.process(custEODEvents);
+		custEODEvent = dateRollOverService.process(custEODEvent);
 
 		//Rate review
-		custEODEvents = rateReviewService.processRateReview(custEODEvents);
+		custEODEvent = rateReviewService.processRateReview(custEODEvent);
 
 		//Accrual
-		custEODEvents = accrualService.processAccrual(custEODEvents);
+		custEODEvent = accrualService.processAccrual(custEODEvent);
 
 		//Auto disbursements
 		//autoDisbursementService.processDisbursementPostings(connection, custId, date);
@@ -272,8 +283,20 @@ public class EodService {
 	public void setReceiptPaymentService(ReceiptPaymentService receiptPaymentService) {
 		this.receiptPaymentService = receiptPaymentService;
 	}
-	
+
+	public LoadFinanceData getLoadFinanceData() {
+		return loadFinanceData;
+	}
+
 	public void setLoadFinanceData(LoadFinanceData loadFinanceData) {
 		this.loadFinanceData = loadFinanceData;
+	}
+
+	public CustomerDAO getCustomerDAO() {
+		return customerDAO;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
 	}
 }

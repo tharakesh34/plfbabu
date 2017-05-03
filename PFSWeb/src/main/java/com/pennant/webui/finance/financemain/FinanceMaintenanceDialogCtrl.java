@@ -113,6 +113,7 @@ import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
@@ -1265,13 +1266,13 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			int format = CurrencyUtil.getFormat(finMain.getFinCcy());
 
 			Date curBDay = DateUtility.getAppDate();
-			amountCodes = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
+			aeEvent = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
 					.getFinanceScheduleDetails(), new FinanceProfitDetail(), eventCode, curBDay, curBDay);
+			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+			
 			// AmountCodes Setting the FinwriteoffPayAmount
 			amountCodes.setWoPayAmt(PennantApplicationUtil.unFormateAmount(this.finWriteoffPayAmount.getActualValue(),
 					format));
-
-			setAmountCodes(amountCodes);
 
 			HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 

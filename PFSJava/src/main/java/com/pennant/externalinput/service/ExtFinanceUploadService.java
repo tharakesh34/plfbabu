@@ -60,6 +60,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -265,14 +266,15 @@ public class ExtFinanceUploadService {
 	private List<ReturnDataSet> processAccounting(FinScheduleData data) {
 		logger.debug(" Entering ");
 
-		
 		//FIXME: PV: 25 APR 17: DOUBT WHETHER IT WORKS OR NOT. REQUIRES CLEANUP WHEN IT IS USED
 		// Amount Code details calculation
-		AEAmountCodes amountCodes = AEAmounts.procAEAmounts(data.getFinanceMain(),
-				data.getFinanceScheduleDetails(), new FinanceProfitDetail(), AccountEventConstants.ACCEVENT_ADDDBSP,
-				data.getFinanceMain().getFinStartDate(), data.getFinanceMain().getFinStartDate());
+		AEEvent aeEvent = new AEEvent();
+		aeEvent = AEAmounts.procAEAmounts(data.getFinanceMain(), data.getFinanceScheduleDetails(),
+				new FinanceProfitDetail(), AccountEventConstants.ACCEVENT_ADDDBSP, data.getFinanceMain()
+						.getFinStartDate(), data.getFinanceMain().getFinStartDate());
 
-		amountCodes.setDisbAccountID(data.getFinanceMain().getDisbAccountId());
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		aeEvent.setDisbAccountID(data.getFinanceMain().getDisbAccountId());
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 		data.getFinanceType().getDeclaredFieldValues(executingMap);
 

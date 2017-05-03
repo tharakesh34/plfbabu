@@ -5,10 +5,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
+import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
+import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennanttech.pff.core.model.AbstractEntity;
 
@@ -18,17 +22,18 @@ public class FinEODEvent extends AbstractEntity {
 	 * 
 	 */
 	private static final long			serialVersionUID		= 1183720618731771888L;
-
-	private Date						eodDate;
-	private Date						eodValueDate;
-
 	private FinanceMain					financeMain				= new FinanceMain();
 	private FinanceType					finType					= new FinanceType();
 	private Map<Date, Integer>			datesMap;
 	private List<FinanceScheduleDetail>	financeScheduleDetails	= new ArrayList<FinanceScheduleDetail>(1);
 	private List<RepayInstruction>		RepayInstructions		= new ArrayList<RepayInstruction>(1);
 	private FinanceProfitDetail			finProfitDetail			= new FinanceProfitDetail();
+	private List<FinODDetails>			finODDetails			= new ArrayList<FinODDetails>(1);
+	private List<OverdueChargeRecovery>	odcRecoveries			= new ArrayList<OverdueChargeRecovery>(1);
+	private FinODPenaltyRate			penaltyrate;
+	private Provision					provision				= new Provision();
 	private boolean						rateReview				= false;
+	private boolean						odFiance				= false;
 	private Date						eventFromDate;
 	private Date						eventToDate;
 	private Date						recalFromDate;
@@ -40,22 +45,7 @@ public class FinEODEvent extends AbstractEntity {
 	private boolean						updFinSchedule			= false;
 	private boolean						updFinPft				= false;
 	private boolean						updRepayInstruct		= false;
-
-	public Date getEodDate() {
-		return eodDate;
-	}
-
-	public void setEodDate(Date eodDate) {
-		this.eodDate = eodDate;
-	}
-
-	public Date getEodValueDate() {
-		return eodValueDate;
-	}
-
-	public void setEodValueDate(Date eodValueDate) {
-		this.eodValueDate = eodValueDate;
-	}
+	private boolean						updProvision			= false;
 
 	public FinanceMain getFinanceMain() {
 		return financeMain;
@@ -63,6 +53,14 @@ public class FinEODEvent extends AbstractEntity {
 
 	public void setFinanceMain(FinanceMain financeMain) {
 		this.financeMain = financeMain;
+	}
+
+	public FinanceType getFinType() {
+		return finType;
+	}
+
+	public void setFinType(FinanceType finType) {
+		this.finType = finType;
 	}
 
 	public Map<Date, Integer> getDatesMap() {
@@ -81,12 +79,60 @@ public class FinEODEvent extends AbstractEntity {
 		this.financeScheduleDetails = financeScheduleDetails;
 	}
 
+	public List<RepayInstruction> getRepayInstructions() {
+		return RepayInstructions;
+	}
+
+	public void setRepayInstructions(List<RepayInstruction> repayInstructions) {
+		RepayInstructions = repayInstructions;
+	}
+
+	public FinanceProfitDetail getFinProfitDetail() {
+		return finProfitDetail;
+	}
+
+	public void setFinProfitDetail(FinanceProfitDetail finProfitDetail) {
+		this.finProfitDetail = finProfitDetail;
+	}
+
+	public List<FinODDetails> getFinODDetails() {
+		return finODDetails;
+	}
+
+	public void setFinODDetails(List<FinODDetails> finODDetails) {
+		this.finODDetails = finODDetails;
+	}
+
+	public List<OverdueChargeRecovery> getOdcRecoveries() {
+		return odcRecoveries;
+	}
+
+	public void setOdcRecoveries(List<OverdueChargeRecovery> odcRecoveries) {
+		this.odcRecoveries = odcRecoveries;
+	}
+	
+	public Provision getProvision() {
+		return provision;
+	}
+
+	public void setProvision(Provision provision) {
+		this.provision = provision;
+	}
+
 	public boolean isRateReview() {
 		return rateReview;
 	}
 
 	public void setRateReview(boolean rateReview) {
 		this.rateReview = rateReview;
+	}
+
+	public boolean isOdFiance() {
+		return odFiance;
+	}
+
+	public void setOdFiance(boolean odFiance) {
+		this.odFiance = odFiance;
 	}
 
 	public Date getEventFromDate() {
@@ -129,6 +175,14 @@ public class FinEODEvent extends AbstractEntity {
 		this.recalType = recalType;
 	}
 
+	public String getRecalSchdMethod() {
+		return recalSchdMethod;
+	}
+
+	public void setRecalSchdMethod(String recalSchdMethod) {
+		this.recalSchdMethod = recalSchdMethod;
+	}
+
 	public String getRateOnChgDate() {
 		return rateOnChgDate;
 	}
@@ -161,30 +215,6 @@ public class FinEODEvent extends AbstractEntity {
 		this.updFinPft = updFinPft;
 	}
 
-	public List<RepayInstruction> getRepayInstructions() {
-		return RepayInstructions;
-	}
-
-	public void setRepayInstructions(List<RepayInstruction> repayInstructions) {
-		RepayInstructions = repayInstructions;
-	}
-
-	public FinanceProfitDetail getFinProfitDetail() {
-		return finProfitDetail;
-	}
-
-	public void setFinProfitDetail(FinanceProfitDetail finProfitDetail) {
-		this.finProfitDetail = finProfitDetail;
-	}
-
-	public FinanceType getFinType() {
-		return finType;
-	}
-
-	public void setFinType(FinanceType finType) {
-		this.finType = finType;
-	}
-
 	public boolean isUpdRepayInstruct() {
 		return updRepayInstruct;
 	}
@@ -193,12 +223,20 @@ public class FinEODEvent extends AbstractEntity {
 		this.updRepayInstruct = updRepayInstruct;
 	}
 
-	public String getRecalSchdMethod() {
-		return recalSchdMethod;
+	public boolean isUpdProvision() {
+		return updProvision;
 	}
 
-	public void setRecalSchdMethod(String recalSchdMethod) {
-		this.recalSchdMethod = recalSchdMethod;
+	public void setUpdProvision(boolean updProvision) {
+		this.updProvision = updProvision;
+	}
+
+	public FinODPenaltyRate getPenaltyrate() {
+		return penaltyrate;
+	}
+
+	public void setPenaltyrate(FinODPenaltyRate penaltyrate) {
+		this.penaltyrate = penaltyrate;
 	}
 
 }

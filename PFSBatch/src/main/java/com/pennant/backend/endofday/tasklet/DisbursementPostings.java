@@ -71,6 +71,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.BatchUtil;
 
 public class DisbursementPostings implements Tasklet {
@@ -154,8 +155,9 @@ public class DisbursementPostings implements Tasklet {
 					finEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
 				}
 
-				AEAmountCodes amountCodes = AEAmounts.procAEAmounts(financeMain, scheduleDetailList, finPftDetail,
+				AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, scheduleDetailList, finPftDetail,
 						finEvent, dateValueDate, disbDate);
+				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 

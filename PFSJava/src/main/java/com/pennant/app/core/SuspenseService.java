@@ -63,6 +63,7 @@ import com.pennant.backend.model.finance.FinanceSuspDetails;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantConstants;
 
@@ -115,7 +116,7 @@ public class SuspenseService extends ServiceHelper {
 		logger.debug("Entering");
 
 		int curOdDays = getFinODDetailsDAO().getFinCurSchdODDays(financeMain.getFinReference(),
-				repayQueue.getRpyDate(), repayQueue.getFinRpyFor());
+				repayQueue.getRpyDate());
 
 		// Check Profit will Suspend or not based upon Current Overdue Days
 		boolean suspendProfit = getCustomerStatusCodeDAO().getFinanceSuspendStatus(curOdDays);
@@ -140,11 +141,12 @@ public class SuspenseService extends ServiceHelper {
 		BigDecimal suspAmount = getFinanceScheduleDetailDAO().getSuspenseAmount(financeMain.getFinReference(),
 				valueDate);
 
-		AEAmountCodes amountCodes = new AEAmountCodes();
+		AEEvent aeEvent = new AEEvent();
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		amountCodes.setSuspNow(suspAmount);
-		amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_NORM_PIS);
-		amountCodes.setValueDate(valueDate);
-		amountCodes.setSchdDate(valueDate);
+		aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_NORM_PIS);
+		aeEvent.setValueDate(valueDate);
+		aeEvent.setSchdDate(valueDate);
 
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
@@ -199,7 +201,8 @@ public class SuspenseService extends ServiceHelper {
 			return;
 		}
 
-		AEAmountCodes amountCodes = new AEAmountCodes();
+		AEEvent aeEvent = new AEEvent();
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		boolean isInSuspNow = true;
 		BigDecimal suspAmtToMove = BigDecimal.ZERO;
 		Date suspFromDate = null;
@@ -231,9 +234,9 @@ public class SuspenseService extends ServiceHelper {
 		}
 
 		amountCodes.setSuspRls(suspAmtToMove);
-		amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_PIS_NORM);
-		amountCodes.setValueDate(valueDate);
-		amountCodes.setSchdDate(suspFromDate);
+		aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_PIS_NORM);
+		aeEvent.setValueDate(valueDate);
+		aeEvent.setSchdDate(suspFromDate);
 
 		
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();

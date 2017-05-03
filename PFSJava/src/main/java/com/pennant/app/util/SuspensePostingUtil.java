@@ -63,6 +63,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceSuspDetails;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.exception.PFFInterfaceException;
 
@@ -100,7 +101,7 @@ public class SuspensePostingUtil implements Serializable {
 
 		boolean isDueSuspNow = false;
 		int curOdDays = getFinODDetailsDAO().getFinCurSchdODDays(financeMain.getFinReference(),
-				repayQueue.getRpyDate(), repayQueue.getFinRpyFor());
+				repayQueue.getRpyDate());
 
 		// Check Profit will Suspend or not based upon Current Overdue Days
 		boolean suspendProfit = getCustomerStatusCodeDAO().getFinanceSuspendStatus(curOdDays);
@@ -123,15 +124,16 @@ public class SuspensePostingUtil implements Serializable {
 		BigDecimal suspAmount = BigDecimal.ZERO;
 
 		//Finance Related Details Fetching
-		AEAmountCodes amountCodes = new AEAmountCodes();
+		AEEvent aeEvent = new AEEvent();
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		suspAmount = getFinanceScheduleDetailDAO().getSuspenseAmount(financeMain.getFinReference(), valueDate);
 		suspFromDate = DateUtility.addDays(repayQueue.getRpyDate(), curOdDays);
 
-		amountCodes.setFinReference(financeMain.getFinReference());
+		aeEvent.setFinReference(financeMain.getFinReference());
 		amountCodes.setSuspNow(suspAmount);
-		amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_NORM_PIS);
-		amountCodes.setValueDate(valueDate);
-		amountCodes.setSchdDate(suspFromDate);
+		aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_NORM_PIS);
+		aeEvent.setValueDate(valueDate);
+		aeEvent.setSchdDate(suspFromDate);
 
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
@@ -213,7 +215,8 @@ public class SuspensePostingUtil implements Serializable {
 			return;
 		}
 
-		AEAmountCodes amountCodes = new AEAmountCodes();
+		AEEvent aeEvent = new AEEvent();
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		boolean isInSuspNow = true;
 		BigDecimal suspAmtToMove = BigDecimal.ZERO;
 		Date suspFromDate = null;
@@ -244,11 +247,11 @@ public class SuspensePostingUtil implements Serializable {
 		}
 
 		//Creating DataSet using Finance Details
-		amountCodes.setFinReference(financeMain.getFinReference());
+		aeEvent.setFinReference(financeMain.getFinReference());
 		amountCodes.setSuspRls(suspAmtToMove);
-		amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_PIS_NORM);
-		amountCodes.setValueDate(valueDate);
-		amountCodes.setSchdDate(suspFromDate);
+		aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_PIS_NORM);
+		aeEvent.setValueDate(valueDate);
+		aeEvent.setSchdDate(suspFromDate);
 
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 

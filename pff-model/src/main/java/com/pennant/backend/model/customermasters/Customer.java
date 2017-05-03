@@ -154,7 +154,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private Date custVisaExpiry;
 	private String custSts;
 	private String lovDescCustStsName;
-	private Timestamp custStsChgDate;
+	private Date custStsChgDate;
 	private String custGroupSts;
 	private String lovDescCustGroupStsName;
 	private boolean custIsBlocked;
@@ -678,11 +678,11 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		this.lovDescCustStsName = lovDescCustStsName;
 	}
 
-	public Timestamp getCustStsChgDate() {
+	public Date getCustStsChgDate() {
 		return custStsChgDate;
 	}
 
-	public void setCustStsChgDate(Timestamp custStsChgDate) {
+	public void setCustStsChgDate(Date custStsChgDate) {
 		this.custStsChgDate = custStsChgDate;
 	}
 

@@ -70,6 +70,7 @@ import com.pennant.app.util.SuspensePostingUtil;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.exception.PFFInterfaceException;
 
 public class CapitalizationPostings implements Tasklet {
@@ -122,8 +123,9 @@ public class CapitalizationPostings implements Tasklet {
 			while (resultSet.next()) {
 
 				//Amount Codes preparation using FinProfitDetails
-				AEAmountCodes amountCodes = new AEAmountCodes();
-				amountCodes.setFinReference(resultSet.getString("FinReference"));
+				AEEvent aeEvent = new AEEvent();
+				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+				aeEvent.setFinReference(resultSet.getString("FinReference"));
 				amountCodes.setCpzCur(resultSet.getBigDecimal("CpzAmount"));
 				amountCodes.setCpzPrv(resultSet.getBigDecimal("PrvCpzAmt") == null ? BigDecimal.ZERO : resultSet
 						.getBigDecimal("PrvCpzAmt"));
@@ -133,15 +135,15 @@ public class CapitalizationPostings implements Tasklet {
 
 				// **** Accounting Set Execution for Amortization ******//
 
-				amountCodes.setFinReference(resultSet.getString("FinReference"));
-				amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_COMPOUND);
-				amountCodes.setBranch(resultSet.getString("FinBranch"));
-				amountCodes.setCcy(resultSet.getString("FinCcy"));
-				amountCodes.setPostDate(dateAppDate);
-				amountCodes.setValueDate(dateValueDate);
-				amountCodes.setSchdDate(resultSet.getDate("NextRepayDate"));
-				amountCodes.setFinType(resultSet.getString("FinType"));
-				amountCodes.setCustID(resultSet.getLong("CustID"));
+				aeEvent.setFinReference(resultSet.getString("FinReference"));
+				aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_COMPOUND);
+				aeEvent.setBranch(resultSet.getString("FinBranch"));
+				aeEvent.setCcy(resultSet.getString("FinCcy"));
+				aeEvent.setPostDate(dateAppDate);
+				aeEvent.setValueDate(dateValueDate);
+				aeEvent.setSchdDate(resultSet.getDate("NextRepayDate"));
+				aeEvent.setFinType(resultSet.getString("FinType"));
+				aeEvent.setCustID(resultSet.getLong("CustID"));
 
 				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 

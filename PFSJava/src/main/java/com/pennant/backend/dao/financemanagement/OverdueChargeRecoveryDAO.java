@@ -53,7 +53,7 @@ public interface OverdueChargeRecoveryDAO {
 	OverdueChargeRecovery getOverdueChargeRecovery();
 	OverdueChargeRecovery getNewOverdueChargeRecovery();
 	OverdueChargeRecovery getOverdueChargeRecoveryById(String id,Date finSchDate, String finOdFor, String type);
-	List<OverdueChargeRecovery> getOverdueChargeRecoveryByRef(final String finRef, String type);
+	List<OverdueChargeRecovery> getOverdueChargeRecoveryByRef(final String finRef, Date schdDate, String schdFor);
 	void update(OverdueChargeRecovery overdueChargeRecovery, String type);
 	void delete(OverdueChargeRecovery overdueChargeRecovery,String type);
 	String save(OverdueChargeRecovery overdueChargeRecovery,String type);

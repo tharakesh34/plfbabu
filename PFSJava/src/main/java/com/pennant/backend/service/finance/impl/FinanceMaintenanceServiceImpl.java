@@ -41,6 +41,7 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.collateral.impl.FlagDetailValidation;
 import com.pennant.backend.service.finance.FinanceMaintenanceService;
@@ -757,9 +758,9 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			accEventCode = AccountEventConstants.ACCEVENT_SEGMENT;
 		}
 
-		AEAmountCodes amountCodes = null;
-		amountCodes = AEAmounts.procAEAmounts(financeMain, financeDetail.getFinScheduleData()
+		AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, financeDetail.getFinScheduleData()
 				.getFinanceScheduleDetails(), profitDetail, accEventCode, curBDay, financeMain.getMaturityDate());
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 		//FinanceWriteoffPayment set the writeoffPayAmount,WriteoffPayAccount 
 		if (financeDetail.getFinwriteoffPayment() != null) {

@@ -163,4 +163,7 @@ public interface CustomerDAO {
 
 
 	Customer getCustomerStatus(long custId);
+	
+	Customer getCustomerEOD(long id);
+
 }

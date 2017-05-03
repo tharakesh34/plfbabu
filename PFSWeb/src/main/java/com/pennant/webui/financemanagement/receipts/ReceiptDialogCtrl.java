@@ -3150,9 +3150,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
 		Date dateValueDate = DateUtility.getValueDate();
 		
-		amountCodes = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
+		aeEvent = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
 				.getFinanceScheduleDetails(), profitDetail, eventCode, dateValueDate, dateValueDate);
-		setAmountCodes(amountCodes);
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		
 		List<ReturnDataSet> returnSetEntries = new ArrayList<>();
 		for (FinReceiptDetail receiptDetail : getReceiptHeader().getReceiptDetails()) {
@@ -3186,11 +3186,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 				
 				if(StringUtils.equals(repayHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_SCHDRPY)){
-					amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_REPAY);
+					aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_REPAY);
 				}else if(StringUtils.equals(repayHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYRPY)){
-					amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_EARLYPAY);
+					aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_EARLYPAY);
 				}else if(StringUtils.equals(repayHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
-					amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_EARLYSTL);
+					aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_EARLYSTL);
 				}
 				
 				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues(); 
@@ -4494,13 +4494,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	}
 	public void setEngineExecution(AccountEngineExecution engineExecution) {
 		this.engineExecution = engineExecution;
-	}
-
-	public AEAmountCodes getAmountCodes() {
-		return amountCodes;
-	}
-	public void setAmountCodes(AEAmountCodes amountCodes) {
-		this.amountCodes = amountCodes;
 	}
 
 	public CommitmentService getCommitmentService() {

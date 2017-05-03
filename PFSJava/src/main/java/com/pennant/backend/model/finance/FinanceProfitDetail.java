@@ -92,6 +92,7 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal			FirstRepayAmt		= BigDecimal.ZERO;
 	private BigDecimal			finalRepayAmt		= BigDecimal.ZERO;
 	private int					curODDays			= 0;
+	private int					dueBucket			= 0;
 
 	private Date				firstODDate;
 	private Date				prvODDate;
@@ -144,8 +145,8 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal			excessAmtResv		= BigDecimal.ZERO;
 	private BigDecimal			emiInAdvanceResv	= BigDecimal.ZERO;
 	private BigDecimal			payableAdviseResv	= BigDecimal.ZERO;
-	private String 				productCategory;
-	
+	private String				productCategory;
+
 	//Newly Added Fields for SOA 
 	private BigDecimal			futureRpyPri		= BigDecimal.ZERO;
 	private BigDecimal			futureRpyPft		= BigDecimal.ZERO;
@@ -158,9 +159,9 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal			upfrontFee			= BigDecimal.ZERO;
 	private BigDecimal			lastDisburseDate	= BigDecimal.ZERO;
 	private BigDecimal			receivableAdvise	= BigDecimal.ZERO;
- 	private BigDecimal			excessAmtBal		= BigDecimal.ZERO;
- 	private BigDecimal			emiInAdvanceBal		= BigDecimal.ZERO;
-	private BigDecimal			receivableAdviseBal = BigDecimal.ZERO;
+	private BigDecimal			excessAmtBal		= BigDecimal.ZERO;
+	private BigDecimal			emiInAdvanceBal		= BigDecimal.ZERO;
+	private BigDecimal			receivableAdviseBal	= BigDecimal.ZERO;
 	private BigDecimal			payableAdviseBal	= BigDecimal.ZERO;
 
 	public FinanceProfitDetail() {
@@ -1258,7 +1259,7 @@ public class FinanceProfitDetail implements Serializable {
 	public void setEmiInAdvanceBal(BigDecimal emiInAdvanceBal) {
 		this.emiInAdvanceBal = emiInAdvanceBal;
 	}
- 
+
 	public BigDecimal getReceivableAdviseBal() {
 		return receivableAdviseBal;
 	}
@@ -1281,6 +1282,14 @@ public class FinanceProfitDetail implements Serializable {
 
 	public void setReceivableAdvise(BigDecimal receivableAdvise) {
 		this.receivableAdvise = receivableAdvise;
+	}
+
+	public int getDueBucket() {
+		return dueBucket;
+	}
+
+	public void setDueBucket(int dueBucket) {
+		this.dueBucket = dueBucket;
 	}
 
 }

@@ -18,8 +18,6 @@ public class AEAmountCodes {
 	private boolean		newRecord			= false;
 	private String		moduleDefiner;
 	private String		disbAccountID;
-	private String      partnerBankAcType;
-	private String      partnerBankAc;
 
 	private BigDecimal	accrue				= BigDecimal.ZERO;
 	private BigDecimal	dAccrue				= BigDecimal.ZERO;
@@ -916,22 +914,6 @@ public class AEAmountCodes {
 
 	public void setPaidFee(BigDecimal paidFee) {
 		this.paidFee = paidFee;
-	}
-
-	public String getPartnerBankAcType() {
-		return partnerBankAcType;
-	}
-
-	public void setPartnerBankAcType(String partnerBankAcType) {
-		this.partnerBankAcType = partnerBankAcType;
-	}
-
-	public String getPartnerBankAc() {
-		return partnerBankAc;
-	}
-
-	public void setPartnerBankAc(String partnerBankAc) {
-		this.partnerBankAc = partnerBankAc;
 	}
 	
 }

@@ -67,19 +67,20 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
 
 public class RepaymentService extends ServiceHelper {
 
-	private static final long			serialVersionUID	= 4165353615228874397L;
-	private static Logger				logger				= Logger.getLogger(RepaymentService.class);
+	private static final long		serialVersionUID	= 4165353615228874397L;
+	private static Logger			logger				= Logger.getLogger(RepaymentService.class);
 
-	private FinRepayQueueDAO			finRepayQueueDAO;
-	private FinanceSuspHeadDAO			financeSuspHeadDAO;
-	private FinanceRepaymentsDAO		financeRepaymentsDAO;
-	private FinLogEntryDetailDAO		finLogEntryDetailDAO;
+	private FinRepayQueueDAO		finRepayQueueDAO;
+	private FinanceSuspHeadDAO		financeSuspHeadDAO;
+	private FinanceRepaymentsDAO	financeRepaymentsDAO;
+	private FinLogEntryDetailDAO	finLogEntryDetailDAO;
 
 	public RepaymentService() {
 		super();
@@ -91,12 +92,14 @@ public class RepaymentService extends ServiceHelper {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<ReturnDataSet> processRepayRequest(Date date, FinanceMain finMain, FinRepayQueue finRepay) throws Exception {
+	public List<ReturnDataSet> processRepayRequest(Date date, FinanceMain finMain, FinRepayQueue finRepay)
+			throws Exception {
 		logger.debug("Entering");
 
 		Date schdDate = finRepay.getRpyDate();
 		FinanceType financeType = getFinanceType(finRepay.getFinType());
-		List<FinanceScheduleDetail> scheduleDetails = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(finMain.getFinReference());
+		List<FinanceScheduleDetail> scheduleDetails = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(
+				finMain.getFinReference());
 
 		FinanceProfitDetail pftDetail = new FinanceProfitDetail();
 		pftDetail.setFinReference(finMain.getFinReference());
@@ -104,7 +107,10 @@ public class RepaymentService extends ServiceHelper {
 		pftDetail.setPftAmzSusp(finRepay.getPftAmzSusp());
 		pftDetail.setAmzTillLBD(finRepay.getAmzTillLBD());
 
-		AEAmountCodes amountCodes = AEAmounts.procAEAmounts(finMain, scheduleDetails, pftDetail, AccountEventConstants.ACCEVENT_REPAY, date, schdDate);
+		AEEvent aeEvent = AEAmounts.procAEAmounts(finMain, scheduleDetails, pftDetail,
+				AccountEventConstants.ACCEVENT_REPAY, date, schdDate);
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+
 		// Fee Details
 		amountCodes.setInsPay(finRepay.getSchdInsBal());
 		amountCodes.setSuplRentPay(finRepay.getSchdSuplRentBal());
@@ -116,7 +122,7 @@ public class RepaymentService extends ServiceHelper {
 		amountCodes.setRpPft(finRepay.getSchdPftBal());
 		amountCodes.setRpPri(finRepay.getSchdPriBal());
 		amountCodes.setRpTot(amountCodes.getRpPft().add(amountCodes.getRpPri()));
-		
+
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
 		List<ReturnDataSet> list = prepareAccounting(executingMap, financeType);
@@ -133,7 +139,8 @@ public class RepaymentService extends ServiceHelper {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<ReturnDataSet> processRepaymentsInEOD(Date date, FinanceMain finMain, FinRepayQueue finRepay, BigDecimal totalpaidAmount) throws Exception {
+	public List<ReturnDataSet> processRepaymentsInEOD(Date date, FinanceMain finMain, FinRepayQueue finRepay,
+			BigDecimal totalpaidAmount) throws Exception {
 		logger.debug(" Entering ");
 
 		List<ReturnDataSet> list = processRepayments(date, finMain, finRepay, totalpaidAmount);
@@ -147,7 +154,8 @@ public class RepaymentService extends ServiceHelper {
 	 * @param finRepay
 	 * @throws Exception
 	 */
-	public List<ReturnDataSet> processRepayments(Date date, FinanceMain finMain, FinRepayQueue finRepay, BigDecimal totalpaidAmount) throws Exception {
+	public List<ReturnDataSet> processRepayments(Date date, FinanceMain finMain, FinRepayQueue finRepay,
+			BigDecimal totalpaidAmount) throws Exception {
 		logger.debug("Entering");
 
 		if (totalpaidAmount.compareTo(BigDecimal.ZERO) == 0) {
@@ -156,7 +164,8 @@ public class RepaymentService extends ServiceHelper {
 
 		Date schdDate = finRepay.getRpyDate();
 		FinanceType financeType = getFinanceType(finRepay.getFinType());
-		List<FinanceScheduleDetail> scheduleDetails = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(finMain.getFinReference());
+		List<FinanceScheduleDetail> scheduleDetails = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(
+				finMain.getFinReference());
 
 		FinanceProfitDetail pftDetail = new FinanceProfitDetail();
 		pftDetail.setFinReference(finMain.getFinReference());
@@ -172,7 +181,10 @@ public class RepaymentService extends ServiceHelper {
 		}
 		setPaidAmounts(finRepay, totalpaidAmount, repaymethod);
 
-		AEAmountCodes amountCodes = AEAmounts.procAEAmounts(finMain, scheduleDetails, pftDetail, AccountEventConstants.ACCEVENT_REPAY, date, schdDate);
+		AEEvent aeEvent = AEAmounts.procAEAmounts(finMain, scheduleDetails, pftDetail,
+				AccountEventConstants.ACCEVENT_REPAY, date, schdDate);
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		
 		// Set Repay Amount Codes
 		amountCodes.setRpPft(finRepay.getSchdPftPayNow());
 		amountCodes.setRpPri(finRepay.getSchdPriPayNow());
@@ -184,9 +196,8 @@ public class RepaymentService extends ServiceHelper {
 		amountCodes.setSuplRentPay(finRepay.getSchdSuplRentPayNow());
 		amountCodes.setIncrCostPay(finRepay.getSchdIncrCostPayNow());
 		amountCodes.setRebate(finRepay.getRebate());
-		
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
+		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
 		List<ReturnDataSet> list = prepareAccounting(executingMap, financeType);
 		long linkedid = saveAccounting(list);
@@ -225,7 +236,8 @@ public class RepaymentService extends ServiceHelper {
 	}
 
 	private void updateProfitDetais(Date date, FinRepayQueue finRepay) {
-		FinanceProfitDetail financeProfitDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(finRepay.getFinReference());
+		FinanceProfitDetail financeProfitDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(
+				finRepay.getFinReference());
 		financeProfitDetail.setLatestRpyDate(date);
 		financeProfitDetail.setLatestRpyPri(finRepay.getSchdPftPayNow());
 		financeProfitDetail.setLatestRpyPft(finRepay.getSchdPriPayNow());
@@ -242,7 +254,7 @@ public class RepaymentService extends ServiceHelper {
 			return;
 		}
 		BigDecimal totalRunning = totalpaidAmount;
-	
+
 		// Repayments Amount calculation
 		BigDecimal schdIns = finRepay.getSchdInsBal();
 		BigDecimal schdSuplRent = finRepay.getSchdSuplRentBal();
@@ -344,7 +356,8 @@ public class RepaymentService extends ServiceHelper {
 		logger.debug("Entering");
 
 		// Finance Schedule Details Update
-		FinanceScheduleDetail schedule = getFinanceScheduleDetailDAO().getFinanceScheduleDetailById(finRepayQueue.getFinReference(), finRepayQueue.getRpyDate(), "", false);
+		FinanceScheduleDetail schedule = getFinanceScheduleDetailDAO().getFinanceScheduleDetailById(
+				finRepayQueue.getFinReference(), finRepayQueue.getRpyDate(), "", false);
 
 		schedule.setFinReference(finRepayQueue.getFinReference());
 		schedule.setSchDate(finRepayQueue.getRpyDate());
@@ -358,7 +371,7 @@ public class RepaymentService extends ServiceHelper {
 			schedule.setSchdPftPaid(schedule.getSchdPftPaid().add(finRepayQueue.getSchdPftPayNow()));
 			schedule.setSchdPriPaid(schedule.getSchdPriPaid().add(finRepayQueue.getSchdPriPayNow()));
 		}
-		
+
 		schedule.setSchPftPaid(amountEqual(schedule.getProfitSchd(), schedule.getSchdPftPaid()));
 		schedule.setSchPriPaid(amountEqual(schedule.getPrincipalSchd(), schedule.getSchdPriPaid()));
 
@@ -402,7 +415,8 @@ public class RepaymentService extends ServiceHelper {
 	 * @param repayAmtBal
 	 * @return
 	 */
-	private FinanceRepayments prepareRepayDetailsData(FinRepayQueue queue, Date valueDate, long linkedTranId, BigDecimal totalRpyAmt) {
+	private FinanceRepayments prepareRepayDetailsData(FinRepayQueue queue, Date valueDate, long linkedTranId,
+			BigDecimal totalRpyAmt) {
 		logger.debug("Entering");
 
 		FinanceRepayments repayment = new FinanceRepayments();
@@ -474,22 +488,17 @@ public class RepaymentService extends ServiceHelper {
 		return false;
 	}
 
-
-
 	public void setFinRepayQueueDAO(FinRepayQueueDAO finRepayQueueDAO) {
 		this.finRepayQueueDAO = finRepayQueueDAO;
 	}
-
 
 	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
 		this.financeRepaymentsDAO = financeRepaymentsDAO;
 	}
 
-
 	public void setFinLogEntryDetailDAO(FinLogEntryDetailDAO finLogEntryDetailDAO) {
 		this.finLogEntryDetailDAO = finLogEntryDetailDAO;
 	}
-
 
 	public void setFinanceSuspHeadDAO(FinanceSuspHeadDAO financeSuspHeadDAO) {
 		this.financeSuspHeadDAO = financeSuspHeadDAO;

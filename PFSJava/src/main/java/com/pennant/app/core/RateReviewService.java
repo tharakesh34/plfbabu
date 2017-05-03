@@ -65,6 +65,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.eod.util.EODProperties;
 import com.pennanttech.pff.core.TableType;
@@ -84,25 +85,25 @@ public class RateReviewService extends ServiceHelper {
 		super();
 	}
 
-	public List<FinEODEvent> processRateReview(List<FinEODEvent> custEODEvents) throws Exception {
+	public CustEODEvent processRateReview(CustEODEvent custEODEvent) throws Exception {
+		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
-		for (FinEODEvent finEODEvent : custEODEvents) {
+		for (FinEODEvent finEODEvent : finEODEvents) {
 			if (!finEODEvent.isRateReview()) {
 				continue;
 			}
 
-			processRateReview(finEODEvent);
+			processRateReview(finEODEvent, custEODEvent.getEodValueDate());
 
 			if (finEODEvent.isRateReview()) {
-				reviewRateUpdate(finEODEvent);
+				reviewRateUpdate(finEODEvent, custEODEvent.getEodValueDate());
 			}
 		}
 
-		return custEODEvents;
+		return custEODEvent;
 	}
 
-	private void processRateReview(FinEODEvent finEODEvent) throws Exception {
-		Date valueDate = finEODEvent.getEodValueDate();
+	private void processRateReview(FinEODEvent finEODEvent, Date valueDate) throws Exception {
 		FinanceMain finMain = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
 		Map<Date, Integer> datesMap = finEODEvent.getDatesMap();
@@ -183,10 +184,9 @@ public class RateReviewService extends ServiceHelper {
 
 	}
 
-	private void reviewRateUpdate(FinEODEvent finEODEvent) throws Exception {
+	private void reviewRateUpdate(FinEODEvent finEODEvent, Date valueDate) throws Exception {
 
 		String finRef = finEODEvent.getFinanceMain().getFinReference();
-		Date businessDate = finEODEvent.getEodValueDate();
 		FinScheduleData finScheduleData = getFinSchDataByFinRef(finEODEvent);
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
@@ -201,54 +201,56 @@ public class RateReviewService extends ServiceHelper {
 
 		// Finance Profit Details
 		FinanceProfitDetail profitDetail = finEODEvent.getFinProfitDetail();
-		if (profitDetail.getFinReference()==null) {
+		if (profitDetail.getFinReference() == null) {
 			profitDetail = getFinanceProfitDetailDAO().getFinProfitDetailsById(finMain.getFinReference());
 		}
-		
+
 		BigDecimal totalPftSchdOld = profitDetail.getTotalPftSchd();
 		BigDecimal totalPftCpzOld = profitDetail.getTotalPftCpz();
 
 		// Rate Changes applied for Finance Schedule Data
 		finScheduleData = ScheduleCalculator.refreshRates(finScheduleData);
-		
+
 		FinanceProfitDetail newProfitDetail = new FinanceProfitDetail();
-		newProfitDetail = AccrualService.calProfitDetails(finMain, finSchdDetails, profitDetail, businessDate);
+		newProfitDetail = AccrualService.calProfitDetails(finMain, finSchdDetails, profitDetail, valueDate);
 		// Amount Codes Details Preparation
-		AEAmountCodes amountCodes = AEAmounts.procCalAEAmounts(profitDetail, AccountEventConstants.ACCEVENT_RATCHG,
-				businessDate, businessDate);
-		
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(profitDetail, AccountEventConstants.ACCEVENT_RATCHG, valueDate,
+				valueDate);
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+
 		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
 		BigDecimal totalPftCpzNew = newProfitDetail.getTotalPftCpz();
-		
+
 		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
 		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
 
-		if (amountCodes.getPftChg().compareTo(BigDecimal.ZERO)==0) {
+		if (amountCodes.getPftChg().compareTo(BigDecimal.ZERO) == 0) {
 			return;
 		}
-		
-		finEODEvent.setUpdFinMain(true);;
+
+		finEODEvent.setUpdFinMain(true);
+		;
 		finEODEvent.setUpdFinSchedule(true);
 		finEODEvent.setUpdRepayInstruct(true);
 		finEODEvent.setFinanceScheduleDetails(finScheduleData.getFinanceScheduleDetails());
 		finEODEvent.setRepayInstructions(finScheduleData.getRepayInstructions());
-		
+
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 		List<ReturnDataSet> list = prepareAccounting(executingMap, finScheduleData.getFinanceType());
 		saveAccounting(list);
-		
+
 		//FIXME: PV 28APR17 Returning without saving because it is decided to save all records once
 		//Code for one time saving is not yet ready
 		// Update New Finance Schedule Details Data
 		saveOrUpdate(finScheduleData, profitDetail);
-		
+
 		//Saving Rate Review Details
 		FinanceRateReview rateReview = new FinanceRateReview();
 		rateReview.setFinReference(finRef);
 		rateReview.setRateType(finEODEvent.getRateOnChgDate());
 		rateReview.setCurrency(finMain.getFinCcy());
-		rateReview.setValueDate(businessDate);
-		rateReview.setEffectiveDate(businessDate);
+		rateReview.setValueDate(valueDate);
+		rateReview.setEffectiveDate(valueDate);
 		rateReview.setEventFromDate(finEODEvent.getEventFromDate());
 		rateReview.setEventToDate(finEODEvent.getEventToDate());
 		rateReview.setRecalFromdate(finMain.getRecalFromDate());

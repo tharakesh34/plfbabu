@@ -65,6 +65,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.exception.PFFInterfaceException;
 
@@ -109,8 +110,10 @@ public class ProvisionCalculationUtil implements Serializable {
 		List<FinanceScheduleDetail> schdDetails = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(
 				procProvision.getFinReference());
 
-		AEAmountCodes amountCodes = AEAmounts.procAEAmounts(financeMain, schdDetails, pftDetail,
+		AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, schdDetails, pftDetail,
 				AccountEventConstants.ACCEVENT_PROVSN, dateValueDate, procProvision.getProvisionCalDate());
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		
 		amountCodes.setProvDue(procProvision.getProvisionDue() == null ? BigDecimal.ZERO : procProvision
 				.getProvisionDue());
 		amountCodes.setProvAmt(procProvision.getProvisionedAmt() == null ? BigDecimal.ZERO : procProvision
@@ -206,9 +209,9 @@ public class ProvisionCalculationUtil implements Serializable {
 				amountCodes.setProvDue(movement.getProvisionDue() == null ? BigDecimal.ZERO : movement
 						.getProvisionDue());
 
-				amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_PROVSN);
-				amountCodes.setValueDate(dateValueDate);
-				amountCodes.setSchdDate(procProvision.getProvisionCalDate());
+				aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_PROVSN);
+				aeEvent.setValueDate(dateValueDate);
+				aeEvent.setSchdDate(procProvision.getProvisionCalDate());
 				Date dateAppDate = DateUtility.getAppDate();
 
 				executingMap = new HashMap<String, Object>();

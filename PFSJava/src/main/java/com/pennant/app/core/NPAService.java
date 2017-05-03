@@ -35,9 +35,6 @@ package com.pennant.app.core;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Comparator;
@@ -46,14 +43,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.util.RuleConstants;
@@ -63,17 +59,9 @@ import com.pennant.eod.util.EODProperties;
 public class NPAService extends ServiceHelper {
 
 	private static final long	serialVersionUID	= 6161809223570900644L;
-	private static Logger		logger				= Logger.getLogger(NPAService.class);
 	private ProvisionDAO		provisionDAO;
-	private FinODDetailsDAO		finODDetailsDAO;
 	private RuleExecutionUtil	ruleExecutionUtil;
 	private RuleDAO				ruleDAO;
-
-	public static final String	NPA					= "SELECT FP.FinReference,FP.FINBRANCH,FP.FINTYPE,FM.FinStatus,FP.FinCategory ,FP.MAXODDAYS, "
-															+ " FP.ODPRINCIPAL,FP.ODPROFIT,FP.FullPaidDate,FP.TOTALPFTBAL,FP.TOTALPRIBAL,FP.FinCcy,"
-															+ " FM.SCHEDULEREGENERATED,FM.DUEBucket "
-															+ " FROM FINPFTDETAILS FP INNER JOIN FInanceMain FM ON FP.FinReference=FM.FINREFERENCE"
-															+ " Where FP.MAXODDAYS > 0 and FP.CustID = ?";
 
 	/**
 	 * Default constructor
@@ -82,117 +70,115 @@ public class NPAService extends ServiceHelper {
 		super();
 	}
 
-	public void processNPABuckets(Connection connection, long custId, Date date) throws Exception {
-		ResultSet resultSet = null;
-		PreparedStatement sqlStatement = null;
-		String finreference = "";
-
-		try {
-			String prvRule = "";
-			Object object = SysParamUtil.getValue("PROVISION_RULE");
-			if (object != null) {
-				prvRule = (String) object;
-			}
-
-			Rule rule = ruleDAO.getRuleByID(prvRule, RuleConstants.MODULE_PROVSN, RuleConstants.EVENT_PROVSN, "");
-			if (rule == null) {
-				return;
-			}
-
-			//payments
-			sqlStatement = connection.prepareStatement(NPA);
-			sqlStatement.setLong(1, custId);
-			resultSet = sqlStatement.executeQuery();
-
-			while (resultSet.next()) {
-				finreference = resultSet.getString("FinReference");
-				String finStatus = resultSet.getString("FinStatus");
-				String productCode = resultSet.getString("FinCategory");
-				int maxDueDays = resultSet.getInt("MAXODDAYS");
-				int dueBucket = resultSet.getInt("DueBucket");
-
-				List<NPABucketConfiguration> list = EODProperties.getNPABucketConfigurations(productCode);
-				//No configuration for NPA found then do nothing
-				if (list == null || list.isEmpty()) {
-					continue;
-				}
-
-				long npaBucket = 0;
-				/*
-				 * if current bucket status is empty no need to calculate the provision buckets, but if he is already in
-				 * provision then provision should be update.
-				 */
-				if (StringUtils.isNotBlank(finStatus)) {
-					long bucketId = EODProperties.getBucketID(finStatus);
-					sortNPABucketConfig(list);
-					for (NPABucketConfiguration configuration : list) {
-						if (configuration.getBucketID() == bucketId && configuration.getDueDays() >= dueBucket) {
-							npaBucket = configuration.getBucketID();
-							break;
-						}
-					}
-				}
-
-				Provision provision = new Provision();
-				provision.setFinReference(finreference);
-				provision.setFinBranch(resultSet.getString("FINBRANCH"));
-				provision.setFinType(resultSet.getString("FINTYPE"));
-				provision.setCustID(custId);
-				provision.setProvisionCalDate(date);
-				provision.setPftBal(getDecimal(resultSet, "TOTALPFTBAL"));
-				provision.setPriBal(getDecimal(resultSet, "TOTALPRIBAL"));
-				provision.setPrincipalDue(getDecimal(resultSet, "ODPRINCIPAL"));
-				provision.setProfitDue(getDecimal(resultSet, "ODPROFIT"));
-				provision.setLastFullyPaidDate(resultSet.getDate("FullPaidDate"));
-				provision.setDueFromDate(finODDetailsDAO.getFinDueFromDate(finreference));
-				provision.setDuedays(maxDueDays);
-
-				BigDecimal provisionRate = getDuePercentage(resultSet, rule.getSQLRule());
-				BigDecimal provisonAmt = getProvisionAmt(provisionRate, provision);
-				provision.setPrvovisionRate(provisionRate);
-				provision.setProvisionAmtCal(provisonAmt);
-				//Should be set after the postings
-				provision.setProvisionedAmt(BigDecimal.ZERO);
-
-				if (StringUtils.isNotBlank(finStatus)) {
-					provision.setDpdBucketID(EODProperties.getBucketID(finStatus));
-				} else {
-					provision.setDpdBucketID(0);
-				}
-				provision.setNpaBucketID(npaBucket);
-
-				Provision prvProvison = provisionDAO.getCurNPABucket(finreference);
-				if (prvProvison != null) {
-					provisionDAO.updateProvisonAmounts(provision);
-				} else {
-					if (provision.getNpaBucketID() != 0
-							&& provision.getProvisionAmtCal().compareTo(BigDecimal.ZERO) != 0) {
-						provisionDAO.save(provision, "");
-					}
-				}
-			}
-
-		} catch (Exception e) {
-			logger.error("Exception: Finreference :" + finreference, e);
-			throw new Exception("Exception: Finreference : " + finreference, e);
-		} finally {
-			if (resultSet != null) {
-				resultSet.close();
-			}
-			if (sqlStatement != null) {
-				sqlStatement.close();
-			}
+	public CustEODEvent processNPABuckets(CustEODEvent custEODEvent) throws Exception {
+		String prvRule = "";
+		Object object = SysParamUtil.getValue("PROVISION_RULE");
+		if (object != null) {
+			return custEODEvent;
 		}
+
+		prvRule = (String) object;
+
+		Rule rule = ruleDAO.getRuleByID(prvRule, RuleConstants.MODULE_PROVSN, RuleConstants.EVENT_PROVSN, "");
+		if (rule == null) {
+			return custEODEvent;
+		}
+
+		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
+		Date valueDate = custEODEvent.getEodValueDate();
+
+		for (FinEODEvent finEODEvent : finEODEvents) {
+			finEODEvent = findProvision(finEODEvent, valueDate, rule);
+
+		}
+		return custEODEvent;
+
 	}
 
-	private BigDecimal getDuePercentage(ResultSet resultSet, String rule) throws SQLException {
+	private FinEODEvent findProvision(FinEODEvent finEODEvent, Date valueDate, Rule rule) throws SQLException {
 
-		String finCcy = resultSet.getString("FinCcy");
+		FinanceProfitDetail pftDetail = finEODEvent.getFinProfitDetail();
+		String finReference = pftDetail.getFinReference();
+		String productCode = pftDetail.getFinCategory();
+		String finStatus = pftDetail.getFinStatus();
+		int dueBucket = pftDetail.getDueBucket();
+
+		Provision provision = new Provision();
+
+		List<NPABucketConfiguration> list = EODProperties.getNPABucketConfigurations(productCode);
+
+		//No configuration for NPA found then do nothing
+		if (list == null || list.isEmpty()) {
+			return finEODEvent;
+		}
+
+		long npaBucket = 0;
+
+		/*
+		 * if current bucket status is empty no need to calculate the provision buckets, but if he is already in
+		 * provision then provision should be update.
+		 */
+
+		if (StringUtils.isNotBlank(finStatus)) {
+			long bucketId = EODProperties.getBucketID(finStatus);
+			sortNPABucketConfig(list);
+			for (NPABucketConfiguration configuration : list) {
+				if (configuration.getBucketID() == bucketId && configuration.getDueDays() >= dueBucket) {
+					npaBucket = configuration.getBucketID();
+					break;
+				}
+			}
+		}
+
+		provision.setFinReference(finReference);
+		provision.setFinBranch(pftDetail.getFinBranch());
+		provision.setFinType(pftDetail.getFinType());
+		provision.setCustID(pftDetail.getCustId());
+		provision.setProvisionCalDate(valueDate);
+		provision.setPftBal(pftDetail.getTotalPftBal());
+		provision.setPriBal(pftDetail.getTotalPriBal());
+		provision.setPrincipalDue(pftDetail.getODPrincipal());
+		provision.setProfitDue(pftDetail.getODProfit());
+		provision.setLastFullyPaidDate(pftDetail.getFullPaidDate());
+		provision.setDueFromDate(pftDetail.getPrvODDate());
+		provision.setDuedays(pftDetail.getCurODDays());
+
+		BigDecimal provisionRate = getDuePercentage(finEODEvent, rule.getSQLRule());
+		BigDecimal provisonAmt = getProvisionAmt(provisionRate, provision);
+		provision.setPrvovisionRate(provisionRate);
+		provision.setProvisionAmtCal(provisonAmt);
+		//Should be set after the postings
+		provision.setProvisionedAmt(BigDecimal.ZERO);
+
+		if (StringUtils.isNotBlank(finStatus)) {
+			provision.setDpdBucketID(EODProperties.getBucketID(finStatus));
+		} else {
+			provision.setDpdBucketID(0);
+		}
+		provision.setNpaBucketID(npaBucket);
+
+		Provision prvProvison = provisionDAO.getCurNPABucket(finReference);
+		if (prvProvison != null) {
+			provisionDAO.updateProvisonAmounts(provision);
+		} else {
+			if (provision.getNpaBucketID() != 0 && provision.getProvisionAmtCal().compareTo(BigDecimal.ZERO) != 0) {
+				provisionDAO.save(provision, "");
+			}
+		}
+		return finEODEvent;
+
+	}
+
+	private BigDecimal getDuePercentage(FinEODEvent finEODEvent, String rule) throws SQLException {
+
+		FinanceProfitDetail pftDetail = finEODEvent.getFinProfitDetail();
+
+		String finCcy = pftDetail.getFinCcy();
 		HashMap<String, Object> dataMap = new HashMap<String, Object>();
-		dataMap.put("RestructureLoan", resultSet.getBoolean("SCHEDULEREGENERATED"));
-		dataMap.put("DueBucket", resultSet.getInt("DueBucket"));
-		dataMap.put("ODDays", resultSet.getInt("MAXODDAYS"));
-		dataMap.put("Product", resultSet.getString("FinCategory"));
+		dataMap.put("RestructureLoan", finEODEvent.getFinanceMain().isScheduleRegenerated());
+		dataMap.put("DueBucket", pftDetail.getDueBucket());
+		dataMap.put("ODDays", pftDetail.getCurODDays());
+		dataMap.put("Product", pftDetail.getFinCategory());
 
 		BigDecimal pecentage = (BigDecimal) ruleExecutionUtil
 				.executeRule(rule, dataMap, finCcy, RuleReturnType.DECIMAL);
@@ -237,10 +223,6 @@ public class NPAService extends ServiceHelper {
 
 	public void setProvisionDAO(ProvisionDAO provisionDAO) {
 		this.provisionDAO = provisionDAO;
-	}
-
-	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
-		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {

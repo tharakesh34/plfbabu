@@ -54,6 +54,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.FinanceCancellationService;
@@ -1575,11 +1576,12 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 
 			Date curBDay = DateUtility.getAppDate();
-			amountCodes = AEAmounts.procAEAmounts(getFinanceDetail().getFinScheduleData().getFinanceMain(),
+			aeEvent = AEAmounts.procAEAmounts(getFinanceDetail().getFinScheduleData().getFinanceMain(),
 					getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), new FinanceProfitDetail(),
 					eventCode, curBDay, finMain.getFinStartDate());
+			
+			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
-			setAmountCodes(amountCodes);
 			HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
 			List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();

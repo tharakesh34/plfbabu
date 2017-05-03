@@ -100,6 +100,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -1432,11 +1433,10 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		Date dateValueDate = DateUtility.getValueDate();
 
 
-		amountCodes = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
+		aeEvent = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
 				.getFinanceScheduleDetails(), profitDetail, eventCode, dateValueDate, dateValueDate);
 
-		// Set Repay Amount Codes
-		setAmountCodes(amountCodes);
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 

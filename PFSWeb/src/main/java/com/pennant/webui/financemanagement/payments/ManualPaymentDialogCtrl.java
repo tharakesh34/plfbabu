@@ -2193,8 +2193,9 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		finMain.setRepayAccountId(PennantApplicationUtil.unFormatAccountNumber(repayAccount.getValue()));
 
 		Date curBDay = DateUtility.getAppDate();
-		amountCodes = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
+		aeEvent = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
 				.getFinanceScheduleDetails(), profitDetail, eventCode, curBDay, dateValueDate);
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 		//Set Repay Amount Codes
 		amountCodes.setRpTot(PennantApplicationUtil.unFormateAmount(
@@ -2207,7 +2208,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		amountCodes.setSchFeePay(PennantApplicationUtil.unFormateAmount(this.schdFeeAmount.getValue(), format));
 		amountCodes.setSuplRentPay(PennantApplicationUtil.unFormateAmount(this.suplRentAmount.getValue(), format));
 		amountCodes.setIncrCostPay(PennantApplicationUtil.unFormateAmount(this.incrCostAmount.getValue(), format));
-		setAmountCodes(amountCodes);
 
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
@@ -3656,14 +3656,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	public void setEngineExecution(AccountEngineExecution engineExecution) {
 		this.engineExecution = engineExecution;
-	}
-
-	public AEAmountCodes getAmountCodes() {
-		return amountCodes;
-	}
-
-	public void setAmountCodes(AEAmountCodes amountCodes) {
-		this.amountCodes = amountCodes;
 	}
 
 	public CommitmentService getCommitmentService() {

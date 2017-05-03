@@ -60,6 +60,7 @@ import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.exception.PFFInterfaceException;
@@ -75,7 +76,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	private AccountInterfaceService		accountInterfaceService;
 	private PostingsPreparationUtil		postingsPreparationUtil;
 
-	private AEAmountCodes				amountCodes			= null;
+	private AEEvent						aeEvent				= null;
 
 	/**
 	 * Default constructor
@@ -98,8 +99,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 */
 	public List<Object> recoveryPayment(FinanceMain financeMain, Date dateValueDate, Date schdDate, String finODFor,
 			Date movementDate, BigDecimal penalty, BigDecimal prvPenaltyPaid, BigDecimal waiverAmt, String chargeType,
-			long linkedTranId, boolean fullyPaidSchd)
-			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			long linkedTranId, boolean fullyPaidSchd) throws PFFInterfaceException, IllegalAccessException,
+			InvocationTargetException {
 
 		logger.debug("Entering");
 		boolean isPostingSuccess = true;
@@ -119,13 +120,14 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				// AmountCodes Preparation
 				// EOD Repayments should pass the value date as schedule for which
 				// Repayment is processing
-				amountCodes = new AEAmountCodes();
-				amountCodes.setFinReference(financeMain.getFinReference());
+				aeEvent = new AEEvent();
+				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+				aeEvent.setFinReference(financeMain.getFinReference());
 				amountCodes.setPenalty(penaltyPaidNow);
 				amountCodes.setWaiver(waiverAmt);
-				amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_LATEPAY);
-				amountCodes.setValueDate(dateValueDate);
-				amountCodes.setSchdDate(schdDate);
+				aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_LATEPAY);
+				aeEvent.setValueDate(dateValueDate);
+				aeEvent.setSchdDate(schdDate);
 
 				String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
 				boolean isEODProcess = false;
@@ -149,8 +151,10 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				if (isPostingSuccess) {
 
 					//Overdue Recovery Details Updation for Paid Amounts & Record Deletion Status
-					/*doUpdateRecoveryData(finReference, schdDate, finODFor, movementDate, chargeType, penaltyPaidNow,
-							waiverAmt, isPaidClear, fullyPaidSchd);*/
+					/*
+					 * doUpdateRecoveryData(finReference, schdDate, finODFor, movementDate, chargeType, penaltyPaidNow,
+					 * waiverAmt, isPaidClear, fullyPaidSchd);
+					 */
 
 					//Overdue Details Updation for Totals
 					FinODDetails detail = new FinODDetails();
@@ -229,7 +233,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		Date curBussDate = DateUtility.getValueDate();
 
 		FinODDetails odDetails = getFinODDetailsDAO().getFinODDetailsForBatch(finRepayQueue.getFinReference(),
-				finRepayQueue.getRpyDate(), finRepayQueue.getFinRpyFor());
+				finRepayQueue.getRpyDate());
 
 		//Finance Overdue Details Save or Updation
 		if (odDetails != null) {
@@ -568,7 +572,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			details.setCustID(queue.getCustomerID());
 
 			//Prepare Overdue Penalty rate Details & set to Finance Overdue Details
-			FinODPenaltyRate penaltyRate = getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(queue.getFinReference(),"");
+			FinODPenaltyRate penaltyRate = getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(queue.getFinReference(),
+					"");
 
 			if (penaltyRate != null) {
 				details.setApplyODPenalty(penaltyRate.isApplyODPenalty());
@@ -754,13 +759,14 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				// AmountCodes Preparation
 				// EOD Repayments should pass the value date as schedule for which
 				// Repayment is processing
-				amountCodes = new AEAmountCodes();
-				amountCodes.setFinReference(financeMain.getFinReference());
+				aeEvent = new AEEvent();
+				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+				aeEvent.setFinReference(financeMain.getFinReference());
 				amountCodes.setPenalty(penaltyPaidNow);
 				amountCodes.setWaiver(waiverAmt);
-				amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_LATEPAY);
-				amountCodes.setValueDate(dateValueDate);
-				amountCodes.setSchdDate(schdDate);
+				aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_LATEPAY);
+				aeEvent.setValueDate(dateValueDate);
+				aeEvent.setSchdDate(schdDate);
 
 				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 

@@ -102,6 +102,7 @@ import com.pennant.backend.model.finance.FinanceWriteoff;
 import com.pennant.backend.model.finance.FinanceWriteoffHeader;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.FinanceWriteoffService;
@@ -1904,11 +1905,9 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		finMain.setFinWriteoffAc(PennantApplicationUtil.unFormatAccountNumber(writtenoffAcc.getValue()));
 
-		amountCodes = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
+		aeEvent = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
 				.getFinanceScheduleDetails(), profitDetail, eventCode, dateValueDate, dateValueDate);
-
-		//Set Repay Amount Codes
-		setAmountCodes(amountCodes);
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 

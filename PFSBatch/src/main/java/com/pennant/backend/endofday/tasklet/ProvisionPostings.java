@@ -75,6 +75,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.BatchUtil;
 
 public class ProvisionPostings implements Tasklet {
@@ -150,8 +151,9 @@ public class ProvisionPostings implements Tasklet {
 					pftDetail.setAmzTillLBD(resultSet.getBigDecimal("AmzTillLBD"));
 
 					Date dueFromDate = resultSet.getDate("DueFromDate");
-					AEAmountCodes amountCodes = AEAmounts.procAEAmounts(financeMain, schdDetails, pftDetail,
+					AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, schdDetails, pftDetail,
 							AccountEventConstants.ACCEVENT_PROVSN, dateValueDate, dueFromDate);
+					AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 					amountCodes.setProvDue(movement.getProvisionDue());
 					amountCodes.setProvAmt(movement.getProvisionedAmt());
 

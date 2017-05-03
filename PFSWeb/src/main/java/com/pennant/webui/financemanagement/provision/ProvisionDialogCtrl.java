@@ -96,6 +96,7 @@ import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -1588,11 +1589,10 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
 		Date dateValueDate = DateUtility.getValueDate();
 
-		amountCodes = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
+		aeEvent = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
 				.getFinanceScheduleDetails(), profitDetail, eventCode, dateValueDate, dateValueDate);
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
-		// Set Repay Amount Codes
-		setAmountCodes(amountCodes);
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
 		List<ReturnDataSet> returnSetEntries = null;

@@ -59,6 +59,7 @@ import org.apache.log4j.Logger;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
+import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.backend.dao.FinRepayQueue.FinRepayQueueDAO;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
@@ -81,6 +82,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -281,83 +283,6 @@ public class RepaymentPostingsUtil implements Serializable {
 		return actReturnList;
 	}
 
-	/**
-	 * Method for Changing amounts from one state to another based on Current overdue days
-	 * @param pftDetail
-	 * @param valueDate
-	 * @param amountCodes
-	 * @param linkedTranId
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws PFFInterfaceException
-	 */
-	@SuppressWarnings("unused")
-	private void accrualPostings(FinanceProfitDetail pftDetail, Date valueDate, AEAmountCodes amountCodes, long linkedTranId) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException{
-		logger.debug("Entering");
-
-		// Previous Details
-		String execEventCode = null;
-		boolean proceedFurther = true;
-		if (pftDetail.getCurODDays() > 0) {
-
-			if (pftDetail.isPftInSusp()) {
-
-				// Check Manual Suspense
-				FinanceSuspHead suspHead = getFinanceSuspHeadDAO().getFinanceSuspHeadById(pftDetail.getFinReference(), "");
-				if (suspHead.isManualSusp()) {
-					execEventCode = null;
-					proceedFurther = false;
-				}
-
-				// Fetch Current Details
-				if (proceedFurther) {
-
-					// Get Current Over Due Details Days Count after Payment Process
-					int curMaxODDays = getFinODDetailsDAO().getFinODDays(pftDetail.getFinReference(), "");
-
-					// Status of Suspense from CustStatusCodes based on OD Days when OD Days > 0 
-					boolean curFinIsSusp = false;
-					if (curMaxODDays > 0) {
-						curFinIsSusp = getCustomerStatusCodeDAO().getFinanceSuspendStatus(curMaxODDays);
-					}
-
-					// If Finance Still in Suspense case, no need to do Any Accounting further.
-					if (!curFinIsSusp) {
-						if (curMaxODDays > 0) {
-							execEventCode = AccountEventConstants.ACCEVENT_PIS_PD;
-						} else {
-							execEventCode = AccountEventConstants.ACCEVENT_PIS_NORM;
-						}
-					}
-				}
-			} else {
-
-				// Get Current Over Due Details Days Count after Payment Process
-				int curMaxODDays = getFinODDetailsDAO().getFinODDays(pftDetail.getFinReference(), "");
-
-				if (curMaxODDays == 0) {
-					execEventCode = AccountEventConstants.ACCEVENT_PD_NORM;
-				}
-			}
-
-			// Do Accounting based on Accounting Event selected from above process check
-			if (StringUtils.isNotEmpty(execEventCode)) {
-				amountCodes.setFinEvent(execEventCode);
-				amountCodes.setValueDate(valueDate);
-				amountCodes.setSchdDate(valueDate);
-
-				// Set O/S balances for Principal & profits in Amount Codes Data
-				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
-
-				// Reset AEAmount Code Details Bean and send for Accounting Execution.
-				getPostingsPreparationUtil().processPostingDetails(executingMap, false, "Y", valueDate, true,
-						linkedTranId);
-			}
-		}
-
-		logger.debug("Leaving");
-	}
-
 	//*************************************************************************//
 	//**************************** Schedule Updations *************************//
 	//*************************************************************************//
@@ -472,7 +397,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		//Finance Profit Details Updation
 		pftDetail = AccrualService.calProfitDetails(financeMain, scheduleDetails, pftDetail,
 				dateValueDate);
-		latePayMarkingService.processDPDBuketing(pftDetail, dateValueDate,financeMain);
+		latePayMarkingService.updateDPDBuketing(pftDetail, dateValueDate,financeMain);
 		financeMain.setFinStsReason(FinanceConstants.FINSTSRSN_MANUAL);
 
 		// If Penalty fully paid && Schedule payment completed then make status as Inactive
@@ -491,7 +416,11 @@ public class RepaymentPostingsUtil implements Serializable {
 		pftDetail.setLatestRpyDate(dateValueDate);
 		getProfitDetailsDAO().update(pftDetail, true);
 		
-		latePayMarkingService.processCustomerStatus(financeMain.getCustID(), dateValueDate,financeMain.getFinStatus(),financeMain.getLovDescFinProduct());
+		//Get Customer Status
+		CustEODEvent custEODEvent = new CustEODEvent();
+		custEODEvent.setEodDate(dateValueDate);
+		custEODEvent.setEodValueDate(dateValueDate);
+		latePayMarkingService.processCustomerStatus(custEODEvent);
 		
 		logger.debug("Leaving");
 		return financeMain;
@@ -591,8 +520,9 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		// AmountCodes Preparation
 		// EOD Repayments should pass the value date as schedule for which Repayments are processing
-		AEAmountCodes amountCodes = AEAmounts.procAEAmounts(financeMain, scheduleDetails, financeProfitDetail,
+		AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, scheduleDetails, financeProfitDetail,
 				eventCode, dateValueDate, dateSchdDate);
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 		//Set Repay Amount Codes
 		amountCodes.setRpTot(queueTotals.getPrincipal().add(queueTotals.getProfit()).add(queueTotals.getLateProfit()));
@@ -911,11 +841,12 @@ public class RepaymentPostingsUtil implements Serializable {
 
 			// Do Accounting based on Accounting Event selected from above process check
 			if (StringUtils.isNotEmpty(execEventCode)) {
-
-				AEAmountCodes amountCodes = (AEAmountCodes) actReturnList.get(4);
-				amountCodes.setFinEvent(execEventCode);
-				amountCodes.setValueDate(valueDate);
-				amountCodes.setSchdDate(valueDate);
+				AEEvent aeEvent = new AEEvent();
+				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+				amountCodes = (AEAmountCodes) actReturnList.get(4);
+				aeEvent.setFinEvent(execEventCode);
+				aeEvent.setValueDate(valueDate);
+				aeEvent.setSchdDate(valueDate);
 
 				long linkedtranId = (long) actReturnList.get(1);
 

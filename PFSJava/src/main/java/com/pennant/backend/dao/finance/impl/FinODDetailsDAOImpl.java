@@ -96,54 +96,16 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 	/**
 	 * Method for get the FinODDetails Object by Key finReference
 	 */
-	@Override
-	public FinODDetails getFinODDetailsById(String finReference, Date schdDate, String overDueFor, String type) {
-		logger.debug("Entering");
-
-		FinODDetails finODDetails = new FinODDetails();
-		finODDetails.setFinReference(finReference);
-		finODDetails.setFinODSchdDate(schdDate);
-		finODDetails.setFinODFor(overDueFor);
-
-		StringBuilder selectSql = new StringBuilder("Select FinReference, FinODSchdDate, FinODFor, FinBranch,");
-		selectSql.append(" FinType, CustID, FinODTillDate, FinCurODAmt, FinCurODPri, FinCurODPft, FinMaxODAmt,");
-		selectSql.append(" FinMaxODPri, FinMaxODPft, GraceDays, IncGraceDays, FinCurODDays,");
-		selectSql.append(" TotPenaltyAmt, TotWaived, TotPenaltyPaid, TotPenaltyBal, FinLMdfDate");
-		if (type.contains("View")) {
-			selectSql.append(" , ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays, ODChargeCalOn , ");
-			selectSql.append(" ODChargeAmtOrPerc, ODAllowWaiver , ODMaxWaiverPerc ");
-		}
-		selectSql.append(" From FinODDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql
-				.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate AND FinODFor =:FinODFor ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
-		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
-
-		try {
-			finODDetails = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			finODDetails = null;
-		}
-		logger.debug("Leaving");
-		return finODDetails;
-	}
-
 	/**
 	 * Method for get the FinODDetails Object by Key finReference
 	 */
 	@Override
-	public FinODDetails getFinODDetailsForBatch(String finReference, Date schdDate, String overDueFor) {
+	public FinODDetails getFinODDetailsForBatch(String finReference, Date schdDate) {
 		logger.debug("Entering");
 
 		FinODDetails finODDetails = new FinODDetails();
 		finODDetails.setFinReference(finReference);
 		finODDetails.setFinODSchdDate(schdDate);
-		finODDetails.setFinODFor(overDueFor);
 
 		StringBuilder selectSql = new StringBuilder("Select * From FinODDetails_View ");
 		selectSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate ");
@@ -163,54 +125,16 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		return finODDetails;
 	}
 
-	/**
-	 * Method for get the FinODDetails Object by Key finReference
-	 */
-	@Override
-	public boolean isODExist(String finReference, Date schdDate) {
-		logger.debug("Entering");
-
-		FinODDetails finODDetails = new FinODDetails();
-		finODDetails.setFinReference(finReference);
-		finODDetails.setFinODSchdDate(schdDate);
-
-		StringBuilder selectSql = new StringBuilder("Select count(FinReference) From FinODDetails ");
-		selectSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
-
-		boolean isRecordFound = false;
-		try {
-			int count = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					Integer.class);
-
-			if (count > 0) {
-				isRecordFound = true;
-			}
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-		}
-
-		logger.debug("Leaving");
-		return isRecordFound;
-	}
-
 	@Override
 	public void update(FinODDetails finOdDetails) {
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
-		updateSql
-				.append(" Set FinBranch= :FinBranch, FinType= :FinType, CustID= :CustID, FinODTillDate= :FinODTillDate, ");
-		updateSql
-				.append(" FinCurODAmt= :FinCurODAmt, FinCurODPri= :FinCurODPri, FinCurODPft= :FinCurODPft, FinMaxODAmt= :FinMaxODAmt,");
-		updateSql
-				.append(" FinMaxODPri= :FinMaxODPri, FinMaxODPft= :FinMaxODPft, GraceDays= :GraceDays, IncGraceDays= :IncGraceDays, ");
+		updateSql.append(" Set  FinODTillDate= :FinODTillDate, FinCurODAmt= :FinCurODAmt, ");
+		updateSql.append(" FinCurODPri= :FinCurODPri, FinCurODPft= :FinCurODPft, ");
 		updateSql.append(" FinCurODDays= :FinCurODDays, TotPenaltyAmt= :TotPenaltyAmt, TotWaived= :TotWaived, ");
 		updateSql.append(" TotPenaltyPaid= :TotPenaltyPaid, TotPenaltyBal= :TotPenaltyBal, FinLMdfDate= :FinLMdfDate");
-		updateSql
-				.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate AND FinODFor =:FinODFor ");
+		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOdDetails);
@@ -226,7 +150,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
 		updateSql.append(" Set FinCurODAmt= :FinCurODAmt, FinCurODPri= :FinCurODPri, FinCurODPft= :FinCurODPft, ");
 		updateSql.append(" FinODTillDate= :FinODTillDate, FinCurODDays= :FinCurODDays, FinLMdfDate= :FinLMdfDate");
-		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate ");
+		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOdDetails);
@@ -241,10 +165,9 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 
 		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
 		updateSql.append(" Set TotPenaltyAmt= (:TotPenaltyAmt + TotPenaltyAmt), TotWaived= (:TotWaived + TotWaived), ");
-		updateSql
-				.append(" TotPenaltyPaid= (:TotPenaltyPaid + TotPenaltyPaid), TotPenaltyBal= (:TotPenaltyBal + TotPenaltyBal) ");
-		updateSql
-				.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate AND FinODFor =:FinODFor ");
+		updateSql.append(" TotPenaltyPaid= (:TotPenaltyPaid + TotPenaltyPaid),  ");
+		updateSql.append(" TotPenaltyBal= (:TotPenaltyBal + TotPenaltyBal) ");
+		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate ");
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOdDetails);
@@ -260,8 +183,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
 		updateSql.append(" Set TotPenaltyAmt= :TotPenaltyAmt, TotWaived= :TotWaived, ");
 		updateSql.append(" TotPenaltyPaid= :TotPenaltyPaid , TotPenaltyBal= :TotPenaltyBal ");
-		updateSql
-				.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate AND FinODFor =:FinODFor ");
+		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
@@ -280,41 +202,22 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		insertSql.append(" (FinReference, FinODSchdDate, FinODFor, FinBranch, FinType, CustID, FinODTillDate,");
 		insertSql.append(" FinCurODAmt, FinCurODPri, FinCurODPft, FinMaxODAmt, FinMaxODPri, FinMaxODPft,");
 		insertSql.append(" GraceDays, IncGraceDays, FinCurODDays, TotPenaltyAmt, TotWaived, TotPenaltyPaid,");
-		insertSql.append("  TotPenaltyBal, FinLMdfDate, LPIAmt, LPIPaid, LPIBal, LPIWaived)");
+		insertSql.append(" TotPenaltyBal, FinLMdfDate, LPIAmt, LPIPaid, LPIBal, LPIWaived, )");
+		insertSql.append(" ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays, ");
+		insertSql.append(" ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc ");
 		insertSql.append(" Values");
 		insertSql.append("(:FinReference, :FinODSchdDate, :FinODFor, :FinBranch, :FinType, :CustID, :FinODTillDate,");
 		insertSql.append(" :FinCurODAmt, :FinCurODPri, :FinCurODPft, :FinMaxODAmt, :FinMaxODPri, :FinMaxODPft,");
 		insertSql.append(" :GraceDays, :IncGraceDays, :FinCurODDays, :TotPenaltyAmt, :TotWaived, :TotPenaltyPaid,");
-		insertSql.append(" :TotPenaltyBal, :FinLMdfDate, :LPIAmt, :LPIPaid, :LPIBal, :LPIWaived)");
+		insertSql.append(" :TotPenaltyBal, :FinLMdfDate, :LPIAmt, :LPIPaid, :LPIBal, :LPIWaived, )");
+		insertSql.append(" :ApplyODPenalty, :ODIncGrcDays, :ODChargeType, :ODGraceDays, ");
+		insertSql.append(" :ODChargeCalOn, :ODChargeAmtOrPerc, :ODAllowWaiver, :ODMaxWaiverPerc ");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOdDetails);
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
-	}
-
-	/**
-	 * Method for getting Count of records in FinODDetails
-	 * 
-	 * @param finReference
-	 * @return
-	 */
-	public int getFinOverDueCntInPast(String finReference, boolean instCond) {
-		logger.debug("Entering");
-		StringBuilder selectQry = new StringBuilder(" Select count(FinODSchdDate)  ");
-		selectQry.append(" from FinODDetails");
-		selectQry.append(" where FinReference = '");
-		selectQry.append(finReference + "'");
-		if (instCond) {
-			selectQry.append(" AND FinCurODAmt <> 0 ");
-		}
-		logger.debug("selectSql: " + selectQry.toString());
-
-		int recordCount = this.namedParameterJdbcTemplate.getJdbcOperations().queryForObject(selectQry.toString(),
-				Integer.class);
-		logger.debug("Leaving");
-		return recordCount;
 	}
 
 	/**
@@ -359,7 +262,9 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		return 0;
 	}
 
+	//Use getFinSummary(finReference)
 	@Override
+	@Deprecated
 	public FinODDetails getFinODSummary(String finReference, int graceDays, boolean crbCheck, String type) {
 		//FIXME: 14APR17 remove ode related to CRB
 		logger.debug("Entering");
@@ -367,25 +272,24 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		finODDetails.setFinReference(finReference);
 		finODDetails.setFinCurODDays(graceDays);
 
-		StringBuilder selectSql = new StringBuilder(
-				"select FinReference, sum(TotPenaltyAmt) TotPenaltyAmt, sum(TotWaived) TotWaived");
-		selectSql
-				.append(" , sum(TotPenaltyPaid) TotPenaltyPaid, sum(TotPenaltyBal) TotPenaltyBal, SUM(FinCurODPri) FinCurODPri, SUM(FinCurODPft) FinCurODPft");
-		if (crbCheck) {
-			selectSql
-					.append("  ,SUM(CASE WHEN FinCurODDays > :FinCurODDays THEN FinCurODPri ELSE 0 END) CRBFinCurODPri, ");
-			selectSql
-					.append(" 	SUM(CASE WHEN FinCurODDays > :FinCurODDays THEN FinCurODPft ELSE 0 END) CRBFinCurODPft  ");
-		}
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("select FinReference, sum(TotPenaltyAmt) TotPenaltyAmt, sum(TotWaived) TotWaived, ");
+		selectSql.append(" sum(TotPenaltyPaid) TotPenaltyPaid, sum(TotPenaltyBal) TotPenaltyBal, SUM(FinCurODPri), ");
+		selectSql.append(" SUM(FinCurODPri) FinCurODPri, SUM(FinCurODPft) FinCurODPft ");
+
 		selectSql.append(" From FinODDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
+
 		if (App.DATABASE == Database.SQL_SERVER) {
 			selectSql.append(" WITH(NOLOCK) ");
 		}
+
 		selectSql.append(" Where FinReference =:FinReference GROUP BY FinReference ");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
 		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+
 		try {
 			finODDetails = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
@@ -406,15 +310,17 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 				"select FinReference, sum(TotPenaltyAmt) TotPenaltyAmt, sum(TotWaived) TotWaived,");
 		selectSql.append(" sum(TotPenaltyPaid) TotPenaltyPaid, sum(TotPenaltyBal) TotPenaltyBal, ");
 		selectSql.append(" SUM(FinCurODPri) FinCurODPri, SUM(FinCurODPft) FinCurODPft, ");
+
 		//First and last od Date 
-		selectSql
-				.append(" MIN(FinODSchdDate) FinODSchdDate ,MAX(FinODSchdDate) FinODTillDate, MAX(FinCurODDays) finCurODDays ");
-		selectSql.append(" From FinODDetails");
+		selectSql.append(" MIN(FinODSchdDate) FinODSchdDate ,MAX(FinODSchdDate) FinODTillDate, ");
+		selectSql.append(" MAX(FinCurODDays) finCurODDays From FinODDetails");
 
 		if (App.DATABASE == Database.SQL_SERVER) {
 			selectSql.append(" WITH(NOLOCK) ");
 		}
+
 		selectSql.append(" Where FinReference =:FinReference GROUP BY FinReference ");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
 		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
@@ -436,9 +342,11 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		finODDetails.setFinReference(finReference);
 		StringBuilder selectSql = new StringBuilder("select MIN(FinODSchdDate) FinODSchdDate  ");
 		selectSql.append(" From FinODDetails");
+
 		if (App.DATABASE == Database.SQL_SERVER) {
 			selectSql.append(" WITH(NOLOCK) ");
 		}
+
 		selectSql.append(" Where FinReference =:FinReference AND FinCurODAmt > 0 GROUP BY FinReference ");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
@@ -456,17 +364,15 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 	 * Method for Finance Current Schedule overdue Days
 	 */
 	@Override
-	public int getFinCurSchdODDays(String finReference, Date finODSchdDate, String finODFor) {
+	public int getFinCurSchdODDays(String finReference, Date finODSchdDate) {
 		logger.debug("Entering");
 
 		FinODDetails finODDetails = new FinODDetails();
 		finODDetails.setFinReference(finReference);
 		finODDetails.setFinODSchdDate(finODSchdDate);
-		finODDetails.setFinODFor(finODFor);
 
 		StringBuilder selectSql = new StringBuilder(" SELECT COALESCE( FinCurODDays,0) From FinODDetails");
-		selectSql
-				.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate AND FinODFor =:FinODFor ");
+		selectSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
@@ -510,37 +416,6 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 
 	}
 
-	/**
-	 * Method for get the sum of Finance OverDue Amount based On Repayments Account
-	 * 
-	 * @param lastMdfDate
-	 * @return
-	 */
-	@Override
-	public List<AccountHoldStatus> getFinODAmtByRepayAc(Date dateValuedate) {
-		logger.debug("Entering");
-
-		AccountHoldStatus holdStatus = new AccountHoldStatus();
-		holdStatus.setValueDate(dateValuedate);
-
-		StringBuilder selectSql = new StringBuilder(
-				" SELECT PD.RepayAccountId Account, SUM(FD.FinCurODAmt) CurODAmount ");
-		selectSql.append(" FROM FinODDetails FD INNER JOIN FinPftDetails PD ");
-		selectSql.append(" ON PD.FinReference = FD.FinReference INNER JOIN FinanceMain FM ");
-		selectSql
-				.append(" ON PD.FinReference = FM.FinReference INNER JOIN RMTFinanceTypes FT ON FM.FinType = FT.FinType ");
-		selectSql.append(" WHERE PD.RepayAccountId !='' AND PD.CustCIF = SUBSTRING(PD.RepayAccountId,5,6)  ");
-		selectSql
-				.append(" AND FinCurODAmt > 0 AND FinOdSchdDate <=:ValueDate AND (FM.FinRepayMethod = 'AUTO' OR (FM.FinRepayMethod = 'MANUAL' AND FT.FinDivision <> 'WBG')) GROUP BY PD.RepayAccountId ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(holdStatus);
-		RowMapper<AccountHoldStatus> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(AccountHoldStatus.class);
-		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
 	@Override
 	public void saveHoldAccountStatus(List<AccountHoldStatus> returnAcList) {
 		logger.debug("Entering");
@@ -561,7 +436,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 	 * Method for get the FinODDetails Object by Key finReference
 	 */
 	@Override
-	public List<FinODDetails> getFinODDetailsByFinReference(String finReference, String type) {
+	public List<FinODDetails> getFinODDetailsByFinReference(String finReference) {
 		logger.debug("Entering");
 
 		FinODDetails finODDetails = new FinODDetails();
@@ -570,27 +445,33 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		StringBuilder selectSql = new StringBuilder("Select FinReference, FinODSchdDate, FinODFor, FinBranch,");
 		selectSql.append(" FinType, CustID, FinODTillDate, FinCurODAmt, FinCurODPri, FinCurODPft, FinMaxODAmt,");
 		selectSql.append(" FinMaxODPri, FinMaxODPft, GraceDays, IncGraceDays, FinCurODDays,");
-		selectSql.append(" TotPenaltyAmt, TotWaived, TotPenaltyPaid, TotPenaltyBal, FinLMdfDate");
-		if (type.contains("View")) {
-			selectSql.append(" , ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays, ODChargeCalOn , ");
-			selectSql.append(" ODChargeAmtOrPerc, ODAllowWaiver , ODMaxWaiverPerc ");
-		}
+		selectSql.append(" TotPenaltyAmt, TotWaived, TotPenaltyPaid, TotPenaltyBal, ");
+		selectSql.append(" LPIAmt, LPIPaid, LPIBal, LPIWaived, ApplyODPenalty, ODIncGrcDays, ODChargeType, ");
+		selectSql.append(" ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc,  ");
+		selectSql.append(" FinLMdfDate ");
+
+		/*
+		 * if (type.contains("View")) {
+		 * selectSql.append(" , ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays, ODChargeCalOn , ");
+		 * selectSql.append(" ODChargeAmtOrPerc, ODAllowWaiver , ODMaxWaiverPerc "); }
+		 */
 		selectSql.append(" From FinODDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference ");
+		selectSql.append(" Where FinReference =:FinReference ORDER BY FinODSchdDate");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
 		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
 
+		List<FinODDetails> finODDetailsList = null;
+
 		try {
-			return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			finODDetailsList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
-			finODDetails = null;
 		}
 		logger.debug("Leaving");
-		return null;
+		return finODDetailsList;
 	}
 
 	@Override
@@ -731,9 +612,9 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
-	public void updateLatePftTotals(String finReference,Date odSchDate, BigDecimal paidNow, BigDecimal waivedNow) {
+	public void updateLatePftTotals(String finReference, Date odSchDate, BigDecimal paidNow, BigDecimal waivedNow) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -741,20 +622,20 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		source.addValue("FinODSchdDate", odSchDate);
 		source.addValue("PaidNow", paidNow);
 		source.addValue("WaivedNow", waivedNow);
-		
+
 		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
-		updateSql.append(" Set LPIPaid= LPIPaid + :PaidNow, LPIBal=LPIBal - :PaidNow - :WaivedNow, LPIWaived = LPIWaived + :WaivedNow ");
+		updateSql
+				.append(" Set LPIPaid= LPIPaid + :PaidNow, LPIBal=LPIBal - :PaidNow - :WaivedNow, LPIWaived = LPIWaived + :WaivedNow ");
 		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
-		
+
 		logger.debug("Leaving");
 	}
-	
-	
+
 	@Override
-	public void updateReversals(String finReference,Date odSchDate, BigDecimal penaltyPaid, BigDecimal latePftPaid) {
+	public void updateReversals(String finReference, Date odSchDate, BigDecimal penaltyPaid, BigDecimal latePftPaid) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -762,15 +643,16 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		source.addValue("FinODSchdDate", odSchDate);
 		source.addValue("PenaltyPaid", penaltyPaid);
 		source.addValue("LatePftPaid", latePftPaid);
-		
+
 		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
-		updateSql.append(" Set TotPenaltyPaid= TotPenaltyPaid - :PenaltyPaid , TotPenaltyBal= TotPenaltyBal + :PenaltyPaid, ");
+		updateSql
+				.append(" Set TotPenaltyPaid= TotPenaltyPaid - :PenaltyPaid , TotPenaltyBal= TotPenaltyBal + :PenaltyPaid, ");
 		updateSql.append(" LPIPaid = LPIPaid - :LatePftPaid, LPIBal = LPIBal + :LatePftPaid ");
 		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -876,7 +758,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		logger.debug("Leaving");
 		return null;
 	}
-	
+
 	@Override
 	public FinODDetails getFinODyFinRefSchDate(String finReference, Date schdate) {
 		logger.debug("Entering");

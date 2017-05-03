@@ -171,27 +171,35 @@ public class OverdueChargeRecoveryDAOImpl extends BasisCodeDAO<OverdueChargeReco
 	 * @return OverdueChargeRecovery
 	 */
 	@Override
-	public List<OverdueChargeRecovery> getOverdueChargeRecoveryByRef(final String finRef, String type) {
+	public List<OverdueChargeRecovery> getOverdueChargeRecoveryByRef(final String finRef, Date schdDate, String schdFor) {
 		logger.debug("Entering");
-		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
-		overdueChargeRecovery.setFinReference(finRef);
+		OverdueChargeRecovery odcRecovery = new OverdueChargeRecovery();
+		odcRecovery.setFinReference(finRef);
+		odcRecovery.setFinODSchdDate(schdDate);
+		odcRecovery.setFinODFor(schdFor);
+		
 
 		StringBuilder selectSql = new StringBuilder("Select FinReference, FinODSchdDate, FinODFor, MovementDate, SeqNo,");
 		selectSql.append(" ODDays, FinCurODAmt, FinCurODPri, FinCurODPft, PenaltyType, PenaltyCalOn,");
 		selectSql.append(" PenaltyAmtPerc, Penalty, MaxWaiver, WaivedAmt, PenaltyPaid, PenaltyBal, RcdCanDel");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(" ,FinCcy ");
-		}
+
 		selectSql.append(" From FinODCRecovery");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
+		selectSql.append(" Where FinReference =:FinReference AND FinODSchdDate = :FinODSchdDate AND FinODFor = :FinODFor ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(odcRecovery);
 		RowMapper<OverdueChargeRecovery> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
 
+		List<OverdueChargeRecovery> odcRecoveries = null;
+		
+		try {
+			odcRecoveries = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+		} catch (Exception e) {
+
+		}
+		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return odcRecoveries;
 	}
 
 	/**
@@ -846,7 +854,6 @@ public class OverdueChargeRecoveryDAOImpl extends BasisCodeDAO<OverdueChargeReco
 		}
 		logger.debug("Leaving");
 	}
-	
 	
 
 }

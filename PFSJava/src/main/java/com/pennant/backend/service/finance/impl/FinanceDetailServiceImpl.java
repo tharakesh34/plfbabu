@@ -6238,7 +6238,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			finSchData.setFinanceSummary(summary);
 			summary.setFinCurODDays(getFinODDetailsDAO().getFinODDays(finReference, ""));
 
-			FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(finReference, 0, false, "");
+			FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(finReference);
 			if (finODDetails != null) {
 				summary.setFinODTotPenaltyAmt(finODDetails.getTotPenaltyAmt());
 				summary.setFinODTotWaived(finODDetails.getTotWaived());

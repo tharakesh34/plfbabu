@@ -74,6 +74,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.financemanagement.SuspenseService;
@@ -284,10 +285,10 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 		if (!financeSuspHead.isWorkflow()) {
 			profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
 
-			AEAmountCodes amountCodes = null;
-			amountCodes = AEAmounts.procAEAmounts(financeMain, financeSuspHead.getFinanceDetail().getFinScheduleData()
+			AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, financeSuspHead.getFinanceDetail().getFinScheduleData()
 					.getFinanceScheduleDetails(), profitDetail, AccountEventConstants.ACCEVENT_WRITEOFF, curBDay,
 					financeMain.getMaturityDate());
+			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 			HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 

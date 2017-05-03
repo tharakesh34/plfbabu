@@ -1,6 +1,5 @@
 package com.pennant.app.core;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,29 +13,29 @@ import com.pennanttech.pff.core.TableType;
 
 public class LoadFinanceData extends ServiceHelper {
 
-	private static final long	serialVersionUID	= 1175297734080531664L;
+	private static final long	serialVersionUID	= -281578785120363314L;
 
-	public List<FinEODEvent> prepareFinEODEvents(long custId, Date date) throws Exception {
-		List<FinanceMain> custFinMains = getFinanceMainDAO().getFinanceMainsByCustId(custId, true);
-		List<FinEODEvent> custEODEvents = new ArrayList<FinEODEvent>();
+	public CustEODEvent prepareFinEODEvents(CustEODEvent custEODEvent) throws Exception {
+
+		long custID = custEODEvent.getCustomer().getCustID();
+		List<FinanceMain> custFinMains = getFinanceMainDAO().getFinanceMainsByCustId(custID, true);
 
 		for (int i = 0; i < custFinMains.size(); i++) {
 			FinEODEvent finEODEvent = new FinEODEvent();
 			Map<Date, Integer> datesMap = new HashMap<Date, Integer>();
 
-			finEODEvent.setEodDate(date);
-			finEODEvent.setEodValueDate(date);
-
 			//FINANCE MAIN
 			finEODEvent.setFinanceMain(custFinMains.get(i));
+			String finType = finEODEvent.getFinanceMain().getFinType();
+			String finReference = finEODEvent.getFinanceMain().getFinReference();
 
 			//FINANCE TYPE
-			FinanceType fintype = EODProperties.getFinanceType(finEODEvent.getFinanceMain().getFinType());
-			finEODEvent.setFinType(fintype);
+			FinanceType financeType = EODProperties.getFinanceType(finType);
+			finEODEvent.setFinType(financeType);
 
 			//FINSCHDULE DETAILS
 			List<FinanceScheduleDetail> finSchdDetails = getFinanceScheduleDetailDAO().getFinScheduleDetails(
-					finEODEvent.getFinanceMain().getFinReference(), TableType.MAIN_TAB.getSuffix(), false);
+					finReference, TableType.MAIN_TAB.getSuffix(), false);
 
 			//Place schedule dates to Map
 			for (int j = 0; j < finSchdDetails.size(); j++) {
@@ -47,13 +46,12 @@ public class LoadFinanceData extends ServiceHelper {
 			finEODEvent.setFinanceScheduleDetails(finSchdDetails);
 
 			//FINPROFIT DETAILS
-			finEODEvent.setFinProfitDetail(getFinanceProfitDetailDAO().getFinProfitDetailsById(
-					finEODEvent.getFinanceMain().getFinReference()));
+			finEODEvent.setFinProfitDetail(getFinanceProfitDetailDAO().getFinProfitDetailsById(finReference));
 
-			custEODEvents.add(finEODEvent);
+			custEODEvent.getFinEODEvents().add(finEODEvent);
 
 		}
-		return custEODEvents;
+		return custEODEvent;
 	}
 
 }

@@ -47,7 +47,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -58,6 +57,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.BatchUtil;
 
@@ -163,29 +163,30 @@ public class StatusMovementService extends ServiceHelper {
 
 	private void processPostings(ResultSet resultSet, String event, Date valueDate) throws Exception {
 		// Amount Codes preparation using FinProfitDetails
-		AEAmountCodes amountCodes = getAEAmountCodes(resultSet, event,  valueDate);
-		FinanceType financeType = getFinanceType(amountCodes.getFinType());
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+		AEEvent aeEvent = getAEAmountCodes(resultSet, event, valueDate);
+		FinanceType financeType = getFinanceType(aeEvent.getFinType());
+		aeEvent.setExecutingMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());
 
-		List<ReturnDataSet> list = prepareAccounting(executingMap, financeType);
+		List<ReturnDataSet> list = prepareAccounting(aeEvent.getExecutingMap(), financeType);
 		saveAccounting(list);
 	}
 
-	private AEAmountCodes getAEAmountCodes(ResultSet resultSet, String event, Date valueDate) throws SQLException {
-		AEAmountCodes amountCodes = new AEAmountCodes();
-		amountCodes.setFinReference(resultSet.getString("FinReference"));
-		amountCodes.setFinType(resultSet.getString("FinType").trim());
+	private AEEvent getAEAmountCodes(ResultSet resultSet, String event, Date valueDate) throws SQLException {
+		AEEvent aeEvent = new AEEvent();
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		aeEvent.setFinReference(resultSet.getString("FinReference"));
+		aeEvent.setFinType(resultSet.getString("FinType").trim());
+		aeEvent.setPromotion(resultSet.getString("Promotion").trim());
+		aeEvent.setFinEvent(event);
+		aeEvent.setBranch(resultSet.getString("FinBranch"));
+		aeEvent.setCcy(resultSet.getString("FinCcy"));
+		aeEvent.setPostDate(DateUtility.getSysDate());
+		aeEvent.setPostDate(valueDate);
+		aeEvent.setSchdDate(resultSet.getDate("NextRpySchDate"));
+		aeEvent.setCustID(resultSet.getLong("CustID"));
+		aeEvent.setCustCIF(resultSet.getString("CustCIF"));
 
-		amountCodes.setFinEvent(event);
-		amountCodes.setBranch(resultSet.getString("FinBranch"));
-		amountCodes.setCcy(resultSet.getString("FinCcy"));
-		amountCodes.setPostDate(DateUtility.getSysDate());
-		amountCodes.setSchdDate(resultSet.getDate("NextRpySchDate"));
-		amountCodes.setCustID(resultSet.getLong("CustID"));
-		
-
-		//FIXME: PV: 14APR17 change as per new finpftdetails
-		amountCodes.setDAccrue(resultSet.getBigDecimal(""));
+		amountCodes.setdAccrue(resultSet.getBigDecimal("dAccrue"));
 		amountCodes.setPft(resultSet.getBigDecimal("TotalPftSchd").add(resultSet.getBigDecimal("TotalPftCpz")));
 		amountCodes.setPftAB(resultSet.getBigDecimal("TotalPftBal"));
 		amountCodes.setPftAP(resultSet.getBigDecimal("TotalPftPaid"));
@@ -193,13 +194,10 @@ public class StatusMovementService extends ServiceHelper {
 		amountCodes.setPftSB(resultSet.getBigDecimal("TdSchdPftBal"));
 		amountCodes.setPftSP(resultSet.getBigDecimal("TdSchdPftPaid"));
 		amountCodes.setAccrueTsfd(resultSet.getBigDecimal("pftAccrued").subtract(
-				resultSet.getBigDecimal("PftAccrueSusp")));// Distributed
-		amountCodes.setValueDate(valueDate);
-		amountCodes.setSchdDate(valueDate);
-		return amountCodes;
+				resultSet.getBigDecimal("PftAccrueSusp")));
+		return aeEvent;
 	}
 
-	
 	@SuppressWarnings("unused")
 	private String getPSIToNormal() {
 		StringBuilder sqlQuery = new StringBuilder();

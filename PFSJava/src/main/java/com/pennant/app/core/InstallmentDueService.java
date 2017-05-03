@@ -21,6 +21,8 @@ import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.eod.util.EODProperties;
 
 public class InstallmentDueService extends ServiceHelper {
@@ -105,14 +107,15 @@ public class InstallmentDueService extends ServiceHelper {
 		String finRef = resultSet.getString("FinReference");
 
 		//Amount Codes preparation using FinProfitDetails
-		AEAmountCodes amountCodes = new AEAmountCodes();
-		amountCodes.setFinReference(finRef);
-		amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_INSTDATE);
-		amountCodes.setValueDate(valueDate);
-		amountCodes.setSchdDate(valueDate);
-		amountCodes.setPostDate(DateUtility.getAppDate());
-		amountCodes.setFinType(resultSet.getString("FinType"));
-		amountCodes.setBranch(resultSet.getString("FinBranch"));
+		AEEvent aeEvent = new AEEvent();
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		aeEvent.setFinReference(finRef);
+		aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_INSTDATE);
+		aeEvent.setValueDate(valueDate);
+		aeEvent.setSchdDate(valueDate);
+		aeEvent.setPostDate(DateUtility.getAppDate());
+		aeEvent.setFinType(resultSet.getString("FinType"));
+		aeEvent.setBranch(resultSet.getString("FinBranch"));
 
 		//TODO: decide required or not
 		amountCodes.setdAccrue(BigDecimal.ZERO);
@@ -157,7 +160,7 @@ public class InstallmentDueService extends ServiceHelper {
 		//DataSet Object preparation for AccountingSet Execution
 
 		//Postings Process
-		FinanceType financeType = getFinanceType(amountCodes.getFinType());
+		FinanceType financeType = getFinanceType(aeEvent.getFinType());
 		financeType.getDeclaredFieldValues(executingMap);
 		//FIXME Accounting Pending
 		//List<ReturnDataSet> list = prepareAccounting(executingMap, financeType);

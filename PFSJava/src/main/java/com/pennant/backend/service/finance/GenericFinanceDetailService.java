@@ -109,6 +109,7 @@ import com.pennant.backend.model.finance.salary.FinSalariedPayment;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.GenericService;
@@ -1180,8 +1181,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				curBDay, curBDay);*/
 		
 		profitDetail = AccrualService.calProfitDetails(finMain, finSchdDetails, profitDetail, curBDay);
-		AEAmountCodes amountCodes = AEAmounts.procCalAEAmounts(profitDetail, eventCode,
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(profitDetail, eventCode,
 				curBDay, curBDay);
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		
 		BigDecimal totalPftSchdNew = profitDetail.getTotalPftSchd();
 		BigDecimal totalPftCpzNew = profitDetail.getTotalPftCpz();
@@ -1208,7 +1210,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @throws Exception
 	 */
 	private List<ReturnDataSet> prepareDisbInstructionPosting(AuditHeader auditHeader, FinanceDetail financeDetail) throws Exception {
-		AEAmountCodes	amountCodes;
+		AEEvent aeEvent = new AEEvent();
+		AEAmountCodes	amountCodes = aeEvent.getAeAmountCodes();
+		
 		String finEvent = AccountEventConstants.ACCEVENT_DISBINS;
 		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
 
@@ -1229,14 +1233,15 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			
 			for (int i = 0; i < advPayList.size(); i++) {
 				FinAdvancePayments advPayment = advPayList.get(i);
-				amountCodes = AEAmounts.procAEAmounts(financeDetail.getFinScheduleData().getFinanceMain(),
+				aeEvent = AEAmounts.procAEAmounts(financeDetail.getFinScheduleData().getFinanceMain(),
 						financeDetail.getFinScheduleData().getFinanceScheduleDetails(), financeProfitDetail,
 						finEvent, curBDay, curBDay);
 
+				amountCodes = aeEvent.getAeAmountCodes();
 				amountCodes.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
 				amountCodes.setDisbInstAmt(advPayment.getAmtToBeReleased());
-				amountCodes.setPartnerBankAc(advPayment.getPartnerBankAc());
-				amountCodes.setPartnerBankAcType(advPayment.getPartnerBankAcType());
+				aeEvent.setPartnerBankAc(advPayment.getPartnerBankAc());
+				aeEvent.setPartnerBankAcType(advPayment.getPartnerBankAcType());
 				
 				
 				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
@@ -1579,12 +1584,15 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
 		long linkedTranId = Long.MIN_VALUE;
-		AEAmountCodes amountCodes = null;
+		AEEvent aeEvent = new AEEvent();
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		Date curBDay = DateUtility.getAppDate();
 
-		amountCodes = AEAmounts.procAEAmounts(financeMain, financeDetail.getFinScheduleData()
+		aeEvent = AEAmounts.procAEAmounts(financeMain, financeDetail.getFinScheduleData()
 				.getFinanceScheduleDetails(), new FinanceProfitDetail(), AccountEventConstants.ACCEVENT_STAGE,
 				financeMain.getFinStartDate(), financeMain.getFinStartDate());
+		
+		amountCodes = aeEvent.getAeAmountCodes();
 		amountCodes.setModuleDefiner(financeDetail.getModuleDefiner());
 		
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();

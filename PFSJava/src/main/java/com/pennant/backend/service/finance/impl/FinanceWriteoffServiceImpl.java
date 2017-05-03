@@ -35,6 +35,7 @@ import com.pennant.backend.model.finance.FinanceWriteoffHeader;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceWriteoffService;
@@ -264,10 +265,10 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		if (!financeMain.isWorkflow()) {
 			profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
 
-			AEAmountCodes amountCodes = null;
-			amountCodes = AEAmounts.procAEAmounts(financeMain, scheduleData.getFinanceScheduleDetails(), profitDetail,
+			AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, scheduleData.getFinanceScheduleDetails(), profitDetail,
 					AccountEventConstants.ACCEVENT_WRITEOFF, curBDay, financeMain.getMaturityDate());
 
+			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 			HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
 			;
@@ -535,6 +536,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		profitDetail = AccrualService.calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(),
 				profitDetail, curBDay);
 
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(profitDetail, AccountEventConstants.ACCEVENT_WRITEOFF, curBDay, financeMain.getMaturityDate());
+		
 		BigDecimal totalPftSchdOld = BigDecimal.ZERO;
 		BigDecimal totalPftCpzOld = BigDecimal.ZERO;
 		//For New Records Profit Details will be set inside the AEAmounts 
@@ -545,9 +548,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			totalPftCpzOld = profitDetail.getTotalPftCpz();
 		}
 		
-		AEAmountCodes amountCodes = AEAmounts.procCalAEAmounts(profitDetail, AccountEventConstants.ACCEVENT_WRITEOFF,
-				curBDay, financeMain.getMaturityDate());
-
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 		
 		BigDecimal totalPftSchdNew = profitDetail.getTotalPftSchd();

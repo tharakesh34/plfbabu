@@ -61,6 +61,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.FinanceConstants;
 
@@ -90,8 +91,7 @@ public class LatePaymentService extends ServiceHelper {
 		logger.debug(" Entering ");
 
 		Date schdDate = finRepay.getRpyDate();
-		FinODDetails finODDetails = getFinODDetailsForBatch(finRepay.getFinReference(), schdDate,
-				finRepay.getFinRpyFor());
+		FinODDetails finODDetails = getFinODDetailsForBatch(finRepay.getFinReference(), schdDate);
 
 		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
 		if (finODDetails != null) {
@@ -100,13 +100,14 @@ public class LatePaymentService extends ServiceHelper {
 			BigDecimal waiverAmt = finODDetails.getTotWaived();
 
 			if (penalty.compareTo(BigDecimal.ZERO) > 0) {
-				AEAmountCodes amountCodes = new AEAmountCodes();
-				amountCodes.setFinReference(finMain.getFinReference());
+				AEEvent aeEvent = new AEEvent();
+				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+				aeEvent.setFinReference(finMain.getFinReference());
 				amountCodes.setPenalty(penalty);
 				amountCodes.setWaiver(waiverAmt);
-				amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_LATEPAY);
-				amountCodes.setValueDate(DateUtility.getValueDate());
-				amountCodes.setSchdDate(schdDate);
+				aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_LATEPAY);
+				aeEvent.setValueDate(DateUtility.getValueDate());
+				aeEvent.setSchdDate(schdDate);
 
 				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
@@ -135,7 +136,7 @@ public class LatePaymentService extends ServiceHelper {
 		logger.debug("Entering");
 
 		FinODDetails finODDetails = getFinODDetailsForBatch(finRepayQueue.getFinReference(),
-				finRepayQueue.getRpyDate(), finRepayQueue.getFinRpyFor());
+				finRepayQueue.getRpyDate());
 
 		// Finance Overdue Details Save or Updation
 		if (finODDetails == null) {
@@ -173,7 +174,7 @@ public class LatePaymentService extends ServiceHelper {
 		logger.debug("Entering");
 
 		FinODDetails finODDetails = getFinODDetailsForBatch(finRepayQueue.getFinReference(),
-				finRepayQueue.getRpyDate(), finRepayQueue.getFinRpyFor());
+				finRepayQueue.getRpyDate());
 
 		// Finance Overdue Details Save or Updation
 		if (finODDetails != null) {
@@ -193,8 +194,8 @@ public class LatePaymentService extends ServiceHelper {
 	 * @param finRpyFor
 	 * @return
 	 */
-	public FinODDetails getFinODDetailsForBatch(String finReferencem, Date rpyDate, String finRpyFor) {
-		return finODDetailsDAO.getFinODDetailsForBatch(finReferencem, rpyDate, finRpyFor);
+	public FinODDetails getFinODDetailsForBatch(String finReferencem, Date rpyDate) {
+		return finODDetailsDAO.getFinODDetailsForBatch(finReferencem, rpyDate);
 	}
 
 	/**
@@ -212,7 +213,7 @@ public class LatePaymentService extends ServiceHelper {
 			BigDecimal latePayProfit = BigDecimal.ZERO;
 
 			FinODDetails odDetails = getFinODDetailsForBatch(finRepayQueue.getFinReference(),
-					finRepayQueue.getRpyDate(), finRepayQueue.getFinRpyFor());
+					finRepayQueue.getRpyDate());
 			if (odDetails != null) {
 				latePayProfit = odDetails.getLPIBal();
 			}
@@ -246,13 +247,14 @@ public class LatePaymentService extends ServiceHelper {
 			/*
 			 * AmountCodes Preparation
 			 */
-			AEAmountCodes amountCodes = new AEAmountCodes();
-			amountCodes.setFinReference(odDetails.getFinReference());
+			AEEvent aeEvent = new AEEvent();
+			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+			aeEvent.setFinReference(odDetails.getFinReference());
 			amountCodes.setPenalty(penalty);
 			amountCodes.setWaiver(odDetails.getTotWaived());
-			amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_LATEPAY);
-			amountCodes.setValueDate(DateUtility.getValueDate());
-			amountCodes.setSchdDate(schdDate);
+			aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_LATEPAY);
+			aeEvent.setValueDate(DateUtility.getValueDate());
+			aeEvent.setSchdDate(schdDate);
 
 			HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 

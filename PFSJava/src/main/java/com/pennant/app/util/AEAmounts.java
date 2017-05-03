@@ -44,6 +44,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 
 public class AEAmounts implements Serializable {
 	private static final long	serialVersionUID	= 4594615740716296558L;
@@ -57,22 +58,28 @@ public class AEAmounts implements Serializable {
 	// Processing Schedule Details to fill AmountCode Details DATA
 	// -------------------------------------------------------------------------------------------------
 
-	public static AEAmountCodes procAEAmounts(FinanceMain financeMain, List<FinanceScheduleDetail> schdDetails,
+	public static AEEvent procAEAmounts(FinanceMain financeMain, List<FinanceScheduleDetail> schdDetails,
 			FinanceProfitDetail pftDetail, String eventCode, Date valueDate, Date schdDate) {
 		AccrualService.calProfitDetails(financeMain, schdDetails, pftDetail, valueDate);
 		return procCalAEAmounts(pftDetail, eventCode, valueDate, schdDate);
 	}
 
-	public static AEAmountCodes procCalAEAmounts(FinanceProfitDetail pftDetail, String finEvent, Date valueDate,
+	public static AEEvent procCalAEAmounts(FinanceProfitDetail pftDetail, String finEvent, Date valueDate,
 			Date dateSchdDate) {
 		logger.debug("Entering");
 
+		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = new AEAmountCodes();
-		amountCodes.setFinReference(pftDetail.getFinReference());
-		amountCodes.setFinEvent(finEvent);
-		amountCodes.setPostDate(DateUtility.getAppDate());
-		amountCodes.setValueDate(valueDate);
-		amountCodes.setSchdDate(dateSchdDate);
+		
+		aeEvent.setFinReference(pftDetail.getFinReference());
+		aeEvent.setFinEvent(finEvent);
+		aeEvent.setPostDate(DateUtility.getAppDate());
+		aeEvent.setValueDate(valueDate);
+		aeEvent.setSchdDate(dateSchdDate);
+		aeEvent.setBranch(pftDetail.getFinBranch());
+		aeEvent.setCcy(pftDetail.getFinCcy());
+		aeEvent.setFinType(pftDetail.getFinType());
+		aeEvent.setCustID(pftDetail.getCustId());
 
 		// profit
 		amountCodes.setPft(pftDetail.getTotalPftSchd());
@@ -122,13 +129,11 @@ public class AEAmounts implements Serializable {
 		amountCodes.setEmiInAdvance(pftDetail.getEmiInAdvance());
 		amountCodes.setExcessAmt(pftDetail.getExcessAmt());
 		amountCodes.setPayableAdvise(pftDetail.getPayableAdvise());
-		amountCodes.setBranch(pftDetail.getFinBranch());
-		amountCodes.setCcy(pftDetail.getFinCcy());
-		amountCodes.setFinType(pftDetail.getFinType());
-		amountCodes.setCustID(pftDetail.getCustId());
+		
+		aeEvent.setAeAmountCodes(amountCodes);
 
 		logger.debug("Leaving");
-		return amountCodes;
+		return aeEvent;
 
 	}
 

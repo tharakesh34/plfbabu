@@ -58,6 +58,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -75,17 +76,19 @@ public class AccrualService extends ServiceHelper {
 	public static final String			accrual				= "SELECT F.FinReference FROM FinanceMain F"
 																	+ " WHERE F.FinIsActive = 1 AND F.FinStartDate <=? And F.CustID=? ";
 
-	public List<FinEODEvent> processAccrual(List<FinEODEvent> custEODEvents) throws Exception {
-
-		for (FinEODEvent finEODEvent : custEODEvents) {
-			finEODEvent = calculateAccruals(finEODEvent);
+	public CustEODEvent processAccrual(CustEODEvent custEODEvent) throws Exception {
+		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
+		Date valueDate = custEODEvent.getEodValueDate();
+		
+		for (FinEODEvent finEODEvent : finEODEvents) {
+			finEODEvent = calculateAccruals(finEODEvent, valueDate);
 		}
 
-		return custEODEvents;
+		return custEODEvent;
 
 	}
 
-	public FinEODEvent calculateAccruals(FinEODEvent finEODEvent) throws Exception {
+	public FinEODEvent calculateAccruals(FinEODEvent finEODEvent, Date valueDate) throws Exception {
 		logger.debug(" Entering ");
 
 		FinanceMain finMain = finEODEvent.getFinanceMain();
@@ -98,7 +101,6 @@ public class AccrualService extends ServiceHelper {
 		}
 
 		String finReference = finEODEvent.getFinanceMain().getFinReference();
-		Date valueDate = finEODEvent.getEodValueDate();
 
 		FinanceProfitDetail finPftDetail = calProfitDetails(finMain, scheduleDetailList, profitDetail, valueDate);
 		String worstSts = getCustomerStatusCodeDAO().getFinanceStatus(finReference, false);
@@ -603,7 +605,8 @@ public class AccrualService extends ServiceHelper {
 			eventCode = AccountEventConstants.ACCEVENT_AMZSUSP;
 		}
 
-		AEAmountCodes amountCodes = AEAmounts.procCalAEAmounts(finPftDetail, eventCode, valueDate, valueDate);
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finPftDetail, eventCode, valueDate, valueDate);
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 		financeMain.getDeclaredFieldValues(executingMap);

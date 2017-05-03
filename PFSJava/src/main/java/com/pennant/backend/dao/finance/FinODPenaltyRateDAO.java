@@ -1,5 +1,7 @@
 package com.pennant.backend.dao.finance;
 
+import java.util.List;
+
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 
 public interface FinODPenaltyRateDAO {

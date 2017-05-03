@@ -673,4 +673,9 @@ public class PennantConstants {
 	public static final String FILESTATUS_COMPLETED = "COMPLETED";
 	public static final String FILESTATUS_FAILED = "FAILED";
 	public static final String FILESTATUS_SUCCESS= "SUCCESS";
+	
+	public static final String RECORD_INSERT= "I";
+	public static final String RECORD_UPDATE= "U";
+	public static final String RECORD_DELETE= "D";
+	public static final String RECORD_NOACTION = "";
 }

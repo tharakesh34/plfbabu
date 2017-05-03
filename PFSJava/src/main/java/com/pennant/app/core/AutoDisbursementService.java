@@ -18,6 +18,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.eod.util.EODProperties;
@@ -94,19 +95,20 @@ public class AutoDisbursementService extends ServiceHelper {
 		disbursement.setDisbDate(resultSet.getDate("DISBDATE"));
 		disbursement.setDisbSeq(resultSet.getInt("DISBSEQ"));
 
-		AEAmountCodes amountCodes = new AEAmountCodes();
-		amountCodes.setFinReference(finRef);
-		amountCodes.setFinEvent(AccountEventConstants.ACCEVENT_ADDDBSN);
-		amountCodes.setValueDate(valueDate);
-		amountCodes.setSchdDate(resultSet.getDate("DISBDATE"));
-		amountCodes.setPostDate(DateUtility.getAppDate());
-		amountCodes.setFinType(resultSet.getString("FinType"));
-		amountCodes.setBranch(resultSet.getString("FinBranch"));
+		AEEvent aeEvent = new AEEvent();
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		aeEvent.setFinReference(finRef);
+		aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_ADDDBSN);
+		aeEvent.setValueDate(valueDate);
+		aeEvent.setSchdDate(resultSet.getDate("DISBDATE"));
+		aeEvent.setPostDate(DateUtility.getAppDate());
+		aeEvent.setFinType(resultSet.getString("FinType"));
+		aeEvent.setBranch(resultSet.getString("FinBranch"));
 		amountCodes.setDisburse(getDecimal(resultSet, "DISBAMOUNT").add(getDecimal(resultSet, "FEECHARGEAMT")));
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
 		//Postings Process
-		FinanceType financeType = getFinanceType(amountCodes.getFinType());
+		FinanceType financeType = getFinanceType(aeEvent.getFinType());
 		financeType.getDeclaredFieldValues(executingMap);
 		List<ReturnDataSet> list = prepareAccounting(executingMap, financeType);
 		long linkedTranId = saveAccounting(list);

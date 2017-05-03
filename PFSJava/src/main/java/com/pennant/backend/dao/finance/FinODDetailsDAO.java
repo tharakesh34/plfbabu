@@ -56,22 +56,16 @@ import com.pennant.backend.model.finance.FinODDetails;
  */
 public interface FinODDetailsDAO {
 
-	FinODDetails getFinODDetailsById(String finReference, Date schdDate, String overDueFor, String type);
 	void update(FinODDetails finOdDetails);
 	void save(FinODDetails finOdDetails);
-	int getFinOverDueCntInPast(String finReference, boolean instCond);
 	int getPendingOverDuePayment(String finReference);
 	void updateTotals(FinODDetails detail);
 	void resetTotals(FinODDetails detail);
 	int getFinODDays(String finReference, String type);
 	FinODDetails getFinODSummary(String finReference, int graceDays, boolean crbCheck, String type);
-	int getFinCurSchdODDays(String finReference, Date finODSchdDate, String finODFor);
 	Long checkCustPastDue(long custID);
 	void updateBatch(FinODDetails finOdDetails);
-	FinODDetails getFinODDetailsForBatch(String finReference, Date schdDate, String overDueFor);
-	List<AccountHoldStatus> getFinODAmtByRepayAc(Date dateValuedate);
 	void saveHoldAccountStatus(List<AccountHoldStatus> returnAcList);
-	List<FinODDetails> getFinODDetailsByFinReference(String finReference, String type);
 	void saveODDeferHistory(String finReference, List<Date> pastdueDefDateList);
 	void deleteODDeferHistory(String finReference, List<Date> pastdueDefDateList);
 	int getMaxODDaysOnDeferSchd(String finReference, List<Date> pastdueDefDateList);
@@ -82,7 +76,6 @@ public interface FinODDetailsDAO {
 	FinODDetails getFinODSummary(String finReference);
 	BigDecimal getTotalPenaltyBal(String finReference);
 	BigDecimal getTotalODPftBal(String finReference);
-	boolean isODExist(String finReference, Date schdDate);
 
 	//Receipts
 	List<FinODDetails> getFinODBalByFinRef(String finReference);
@@ -90,4 +83,7 @@ public interface FinODDetailsDAO {
 	void updateLatePftTotals(String finReference, Date odSchDate, BigDecimal paidNow, BigDecimal waivedNow);
 	FinODDetails getFinODyFinRefSchDate(String finReference, Date schdate);
 	void updateReversals(String finReference, Date odSchDate, BigDecimal penaltyPaid, BigDecimal latePftPaid);
+	List<FinODDetails> getFinODDetailsByFinReference(String finReference);
+	FinODDetails getFinODDetailsForBatch(String finReference, Date schdDate);
+	int getFinCurSchdODDays(String finReference, Date finODSchdDate);
 }

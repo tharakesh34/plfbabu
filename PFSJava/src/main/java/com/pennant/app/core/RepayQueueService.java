@@ -61,6 +61,7 @@ public class RepayQueueService extends ServiceHelper{
 	 * @param date
 	 * @throws Exception
 	 */
+	@Deprecated
 	public void prepareRepayQueue(Connection connection, long custId, Date date) throws Exception {
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;

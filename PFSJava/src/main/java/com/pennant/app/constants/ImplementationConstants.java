@@ -11,8 +11,8 @@ public class ImplementationConstants {
 
 	public static final boolean	ALLOW_FINACTYPES				= false;
 	public static final boolean	ALLOW_CAPITALIZE				= true;
-	public static final boolean	SIA_REQUIRED					= true;						// System Internal Account Required or not
-	public static final boolean	LIMIT_INTERNAL					= true;						// Limit Module Exists or not
+	public static final boolean	SIA_REQUIRED					= true;		// System Internal Account Required or not
+	public static final boolean	LIMIT_INTERNAL					= true;		// Limit Module Exists or not
 	public static final boolean	ONLINE_IRL_CHECK				= false;
 
 	// Customer Modules
@@ -27,9 +27,9 @@ public class ImplementationConstants {
 
 	//AHB Implementation for Core Customer creation which includes reserve CIF and  Create CIF
 	public static final boolean	VALIDATE_CORE_CUST_UPDATE		= false;
-	public static final boolean	ALLOW_COVENANT_TYPES			= true;						// Covenants Allowed or not
-	public static final boolean	COLLATERAL_INTERNAL				= true;						// Which Collateral We are using Internal or Third Party Collaterals
-	public static final boolean	ALLOW_VAS						= false;					// VAS required or not
+	public static final boolean	ALLOW_COVENANT_TYPES			= true;		// Covenants Allowed or not
+	public static final boolean	COLLATERAL_INTERNAL				= true;		// Which Collateral We are using Internal or Third Party Collaterals
+	public static final boolean	ALLOW_VAS						= false;		// VAS required or not
 	// F = Administration/Insurance/Other Fees
 	// C = Past due Penalty
 	// I = Profit
@@ -39,7 +39,8 @@ public class ImplementationConstants {
 	// I = Profit
 	public static final String	REPAY_INTEREST_HIERARCHY		= "LI";
 	//Calculate PastDue on Day zero
-	public static final boolean CALCULATE_PD_DAYZERO			= false;
+	public static final boolean	LP_MARK_FIRSTDAY				= false;
+
 	//Re payment methods
 	public static final boolean	AUTO_ALLOWED					= false;
 	public static final boolean	DDA_ALLOWED						= false;
@@ -85,25 +86,25 @@ public class ImplementationConstants {
 	public static final String	CLIENT_AHB						= "AHB";
 	public static final String	CLIENT_BFL						= "BFL";
 	public static final String	CLIENT_NAME						= CLIENT_BFL;
-	
+
 	// Address Type Details
-	public static final boolean	ALLOW_ADDRESSTYPE_PRIORITY      = false;
-	
+	public static final boolean	ALLOW_ADDRESSTYPE_PRIORITY		= false;
+
 	//Email Type Details
-	public static final boolean	ALLOW_EMIALTYPE_PRIORITY     	= false;
-	
+	public static final boolean	ALLOW_EMIALTYPE_PRIORITY		= false;
+
 	//Phone Type Details
-	public static final boolean	ALLOW_PHONETYPE_PRIORITY     	= false;
-	public static final boolean	ALLOW_DEPRECIATION    			= false; 					//DEPRECIATION   Required or Not 
-	
+	public static final boolean	ALLOW_PHONETYPE_PRIORITY		= false;
+	public static final boolean	ALLOW_DEPRECIATION				= false;		//DEPRECIATION   Required or Not 
+
 	public static final String	NBFC							= "NBFC";
 	public static final String	BANK							= "BANK";
-	public static final String	CLIENTTYPE						=  NBFC;
-	
+	public static final String	CLIENTTYPE						= NBFC;
+
 	// Partial Payment only with Principal Amount Adjustment
-	public static final boolean	EARLYPAY_ADJ_PRI				=  true;
-	
-	public static final boolean	ALLOW_INSURANCE					= false;					// Insurance Required or Not 
-	public static final boolean	ALLOW_RIA						= false;					// RIA Required or Not 
+	public static final boolean	EARLYPAY_ADJ_PRI				= true;
+
+	public static final boolean	ALLOW_INSURANCE					= false;		// Insurance Required or Not 
+	public static final boolean	ALLOW_RIA						= false;		// RIA Required or Not 
 	public static final boolean	ALLOW_ADDDBSF					= false;					// Add Disbursement future date Required or Not 
 }
