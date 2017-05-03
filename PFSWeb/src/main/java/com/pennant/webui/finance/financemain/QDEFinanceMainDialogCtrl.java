@@ -527,7 +527,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		fillComboBox(this.custGenderCode, aCustomer.getCustGenderCode(), PennantAppUtil.getGenderCodes(), "");
 		fillComboBox(this.custSalutationCode, aCustomer.getCustSalutationCode(),
 				PennantAppUtil.getSalutationCodes(aCustomer.getCustGenderCode()), "");
-		fillComboBox(this.custMaritalSts, aCustomer.getCustMaritalSts(), PennantAppUtil.getMaritalStsTypes(), "");
+		String code = custGenderCode.getSelectedItem().getValue();
+		fillComboBox(this.custMaritalSts, aCustomer.getCustMaritalSts(), PennantAppUtil.getMaritalStsTypes(code), "");
 
 		List<CustomerPhoneNumber> list = customerDetails.getCustomerPhoneNumList();
 
