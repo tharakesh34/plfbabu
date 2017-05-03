@@ -457,6 +457,10 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		}
 
 		doWriteBeanToComponents(finTypePartnerBank);
+		
+		if(!finTypePartnerBank.isNewRecord()) {
+			this.btnSave.setVisible(false);
+		}
 		this.window_FinTypePartnerBankDialog.doModal();
 
 		logger.debug(Literal.LEAVING);
