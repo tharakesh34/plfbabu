@@ -41,6 +41,10 @@ public class AutoDisburseFileResponseService extends BajajService {
 
 		BajajInterfaceConstants.autoDisbResFileJob = true;
 		try {
+			if (directory.listFiles() == null) {
+				return;
+			}
+			
 			for (File file : directory.listFiles()) {
 				if (!file.isFile()) {
 					continue;
