@@ -42,7 +42,6 @@
 */
 package com.pennant.webui.lmtmasters.facilityreferencedetail;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -71,7 +70,6 @@ import com.pennant.backend.service.lmtmasters.FacilityReferenceDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.search.Filter;
 import com.pennant.webui.lmtmasters.financereferencedetail.model.FacilityReferenceDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
