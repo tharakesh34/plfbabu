@@ -92,6 +92,8 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		//Finance Schedule Details
 		scheduleData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
 
+		financeDetail.setFinanceProfitDetail(getProfitDetailsDAO().getFinProfitDetailsById(finReference));
+		
 		//Finance Accounting Fee Charge Details
 		scheduleData.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finReference,procEdtEvent, false, "_TView"));
 
