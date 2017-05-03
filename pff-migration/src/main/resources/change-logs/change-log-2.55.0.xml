@@ -190,4 +190,11 @@
 			DELETE FROM FinReceiptHeader;
     	</sql>
 	</changeSet>
+	
+	<changeSet id="14" author="Durgaprasad.g">
+		<addColumn tableName="FINSCHEDULEDETAILS">
+			<column name="PRESENTMENTID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
