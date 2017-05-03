@@ -220,4 +220,39 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		return feeList;
 	}
 	
+	@Override
+	public List<FinFeeScheduleDetail> getFeeSchedules(String finReference, Date schDate) {
+		logger.debug("Entering");
+		FinFeeScheduleDetail feeSchd = new FinFeeScheduleDetail();
+		feeSchd.setFinReference(finReference);
+		feeSchd.setSchDate(schDate);
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT FFSD.FeeID, FFSD.SchDate,FFSD.SchAmount,FFSD.PaidAmount,FFSD.WaiverAmount,FFSD.OsAmount,FFSD.WriteoffAmount " );
+		selectSql.append(" FROM FinFeeScheduleDetail FFSD INNER JOIN FINFEEDETAIL FFD ON FFSD.FEEID = FFD.FEEID ");
+		selectSql.append(" WHERE FFD.FinReference=:FinReference AND FFSD.SchDate=:SchDate ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeSchd);
+		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
+		List<FinFeeScheduleDetail> feeList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.debug("Leaving");
+		return feeList;
+	}
+	
+		@Override
+	public void updateFeePaids(List<FinFeeScheduleDetail> updateFeeList) {
+		logger.debug("Entering");
+		
+		StringBuilder updateSql = new StringBuilder("Update FinFeeScheduleDetail ");
+		updateSql.append(" Set PaidAmount = :PaidAmount, OsAmount = :OsAmount ");
+		updateSql.append(" Where FeeID =:FeeID AND SchDate=:SchDate ");
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(updateFeeList.toArray());
+		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+	
+	
 }

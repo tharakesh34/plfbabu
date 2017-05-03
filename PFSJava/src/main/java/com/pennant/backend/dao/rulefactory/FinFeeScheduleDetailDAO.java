@@ -57,5 +57,7 @@ public interface FinFeeScheduleDetailDAO {
 	List<FinFeeScheduleDetail> getFeeScheduleByFinID(List<Long> feeIDList, boolean isWIF, String tableType);
 	void updateFeeSchdPaids(List<FinFeeScheduleDetail> updateFeeList);
 	List<FinFeeScheduleDetail> getFeeScheduleBySchDate(String finReference, Date schDate);
+	void updateFeePaids(List<FinFeeScheduleDetail> updateFeeList);
+	List<FinFeeScheduleDetail> getFeeSchedules(String finReference, Date schDate);
 
 }

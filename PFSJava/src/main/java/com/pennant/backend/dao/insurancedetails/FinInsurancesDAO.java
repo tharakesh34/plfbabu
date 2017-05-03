@@ -33,4 +33,6 @@ public interface FinInsurancesDAO {
 	void updateInsSchdPaids(List<FinSchFrqInsurance> updateInsList);
 
 	List<FinSchFrqInsurance> getInsScheduleBySchDate(String finReference, Date schDate);
+
+	void updateInsPaids(List<FinSchFrqInsurance> updateInsList);
 }

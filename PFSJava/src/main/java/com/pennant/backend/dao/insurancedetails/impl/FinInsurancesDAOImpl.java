@@ -466,5 +466,21 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 		return insList;
 	}
 	
+	@Override
+	public void updateInsPaids(List<FinSchFrqInsurance> updateInsList) {
+		logger.debug("Entering");
+		
+		StringBuilder updateSql = new StringBuilder("Update FinSchFrqInsurance");
+		updateSql.append(" Set InsurancePaid = :InsurancePaid ");
+		updateSql.append(" Where InsId =:InsId AND InsSchDate=:InsSchDate ");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(updateInsList.toArray());
+		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+	
+	
+	
 
 }
