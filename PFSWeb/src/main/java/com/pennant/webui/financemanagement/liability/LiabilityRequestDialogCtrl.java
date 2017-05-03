@@ -1130,16 +1130,17 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 			doEdit();
 		}
 
-		if (financeType.isFinDepreciationReq()) {
-			this.depreciationFrq.setVisible(true);
-			getLabel_FinanceMainDialog_DepriFrq().setVisible(true);
-			this.depreciationFrq.setValue(aFinanceMain.getDepreciationFrq());
-		} else {
+		if (!financeType.isFinDepreciationReq()) {
+			this.depreciationFrq.setDisabled(true);
 			getLabel_FinanceMainDialog_DepriFrq().setVisible(false);
 			this.depreciationFrq.setMandatoryStyle(false);
-			this.depreciationFrq.setDisabled(true);
+		} else {
+			readOnlyComponent(isReadOnly("FinanceMainDialog_depreciationFrq"), this.depreciationFrq);
+			getLabel_FinanceMainDialog_DepriFrq().setVisible(true);
+			this.depreciationFrq.setVisible(true);
+			this.depreciationFrq.setValue(aFinanceMain.getDepreciationFrq());
 		}
-
+		
 		this.finIsActive.setChecked(aFinanceMain.isFinIsActive());
 		this.lovDescFinTypeName.setValue(aFinanceMain.getFinType() + "-" + aFinanceMain.getLovDescFinTypeName());
 		this.finCcy.setValue(aFinanceMain.getFinCcy(), CurrencyUtil.getCcyDesc(aFinanceMain.getFinCcy()));
