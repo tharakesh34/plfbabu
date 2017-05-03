@@ -197,4 +197,13 @@
 		</addColumn>
 	</changeSet>
 	
+	
+				  
+	<changeSet id="15" author="Durgaprasad g">
+		<sql>
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'PRESENTMENT_RESPONSE_UPLOAD_FILEPATH';
+              INSERT INTO SMTPARAMETERS  VALUES ('PRESENTMENT_RESPONSE_UPLOAD_FILEPATH', 'Presentment response file upload path.', 'String', '1', 'D:\Data-Engine\PFF\Bajaj','200', 0, NULL, NULL, 'Presentment response file upload path.', 1, 1000,CURRENT_TIMESTAMP, 'Approved',
+              '','','','','',0);
+		</sql>
+	</changeSet> 
 </databaseChangeLog>
