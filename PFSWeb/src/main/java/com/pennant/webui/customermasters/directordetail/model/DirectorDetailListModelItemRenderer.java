@@ -92,7 +92,7 @@ public class DirectorDetailListModelItemRenderer implements ListitemRenderer<Dir
             if(StringUtils.isNotBlank(directorDetail.getShortName())){
             	name = directorDetail.getShortName();
             }else if(StringUtils.isNotBlank(directorDetail.getFirstName()) || StringUtils.isNotBlank(directorDetail.getLastName())){
-            	 name = directorDetail.getFirstName() + "  " + (directorDetail.getLastName()==null ? " ":directorDetail.getLastName());
+            	 name =(directorDetail.getFirstName()==null ? " ":directorDetail.getFirstName()) + "  " + (directorDetail.getLastName()==null ? " ":directorDetail.getLastName());
             }
             if (StringUtils.trimToEmpty(directorDetail.getCustAddrCountry()).equals(StringUtils.trimToEmpty(directorDetail.getLovDescCustAddrCountryName()))) {
 				String desc = PennantAppUtil.getlabelDesc(directorDetail.getCustAddrCountry(), countryList);
