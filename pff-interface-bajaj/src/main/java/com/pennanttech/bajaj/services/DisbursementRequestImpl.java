@@ -38,7 +38,6 @@ public class DisbursementRequestImpl extends BajajService implements Disbursemen
 		}
 
 		thread.start();
-
 	}
 	
 	private int prepareRequest(String[] disbursments) throws Exception {
@@ -47,17 +46,17 @@ public class DisbursementRequestImpl extends BajajService implements Disbursemen
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" INSERT INTO DISBURSEMENT_REQUESTS SELECT");
-		sql.append(" ID,");
+		sql.append(" SEQ_DISBURSEMENT_REQUESTS.NEXTVAL,");
 		sql.append(" :BATCH_ID,");                      
-		sql.append(" DISBURSEMENT_ID,");               
+		sql.append(" PAYMENTID,");               
 		sql.append(" CUSTCIF,");               
 		sql.append(" FINREFERENCE,");            
-		sql.append(" DISBURSEMENT_AMOUNT,");     
+		sql.append(" AMTTOBERELEASED,");     
 		sql.append(" DISBURSEMENT_TYPE,");     
-		sql.append(" DISBURSEMENT_DATE,");       
-		sql.append(" DRAWEE_LOCATION,");        
-		sql.append(" PRINT_LOCATION,");          
-		sql.append(" CUSTOMER_NAME,");           
+		sql.append(" DISBDATE,");       
+		sql.append(" PAYABLELOC,");        
+		sql.append(" PRINTINGLOC,");          
+		sql.append(" CUSTSHRTNAME,");           
 		sql.append(" CUSTOMER_MOBILE,");          
 		sql.append(" CUSTOMER_EMAIL,");          
 		sql.append(" CUSTOMER_STATE,");          
@@ -67,14 +66,14 @@ public class DisbursementRequestImpl extends BajajService implements Disbursemen
 		sql.append(" CUSTOMER_ADDRESS3,");     
 		sql.append(" CUSTOMER_ADDRESS4,");     
 		sql.append(" CUSTOMER_ADDRESS5,");    
-		sql.append(" BENFICIARY_BANK,");         
-		sql.append(" BENFICIARY_BRANCH,");       
+		sql.append(" BANKNAME,");         
+		sql.append(" BRANCHDESC,");       
 		sql.append(" BENFICIARY_BRANCH_STATE,"); 
 		sql.append(" BENFICIARY_BRANCH_CITY,");  
 		sql.append(" MICR_CODE,");               
 		sql.append(" IFSC_CODE,");               
-		sql.append(" BENFICIARY_ACCOUNT,");               
-		sql.append(" BENFICIARY_NAME,");         
+		sql.append(" BENEFICIARYACCNO,");               
+		sql.append(" BENEFICIARYNAME,");         
 		sql.append(" BENEFICIARY_MOBILE,");         
 		sql.append(" BENFICIRY_EMAIL,");        
 		sql.append(" BENFICIARY_STATE,");        
@@ -100,7 +99,7 @@ public class DisbursementRequestImpl extends BajajService implements Disbursemen
 		sql.append(" REMARKS,"); 
 		sql.append(" :REJECT_REASON");
 		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW ");
-		sql.append(" WHERE DISBURSEMENT_ID IN (:DISBURSEMENT_ID)");
+		sql.append(" WHERE PAYMENTID IN (:PAYMENTID)");
 		
 		
 		paramMap = new MapSqlParameterSource();
@@ -112,7 +111,7 @@ public class DisbursementRequestImpl extends BajajService implements Disbursemen
 		paramMap.addValue("DD_CHEQUE_CHARGE", null);
 		paramMap.addValue("PAYMENT_DATE", null);
 		paramMap.addValue("REJECT_REASON", null);
-		paramMap.addValue("DISBURSEMENT_ID", Arrays.asList(disbursments));
+		paramMap.addValue("PAYMENTID", Arrays.asList(disbursments));
 		
 		try {
 			return namedJdbcTemplate.update(sql.toString(), paramMap);

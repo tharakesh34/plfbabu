@@ -49,7 +49,7 @@ public class DisbursementResponseImpl extends BajajService implements Disburseme
 				try {
 					disbursementProcess.process(disbursement);
 				} catch (Exception e) {
-
+					logger.error(Literal.EXCEPTION, e);
 				}
 			}
 

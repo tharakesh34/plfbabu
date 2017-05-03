@@ -46,7 +46,7 @@
 									<extendedcombobox id="partnerBank"/>
 								</row>
 								
-								<row>
+								<row visible="false">
 									<label  value="${c:l('label_Disbursement_FromDate.value')}" />
 									<listbox id="sortOperator_FromDate" width="43px" mold="select" rows="1" />
 									<hbox>

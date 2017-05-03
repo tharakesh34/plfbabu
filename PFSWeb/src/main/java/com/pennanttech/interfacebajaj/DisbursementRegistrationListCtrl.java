@@ -159,8 +159,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected void doSetProperties() {
 		super.moduleCode = "DisbursementRegistration";
 		super.pageRightName = "DisbursementRegistration";
-		super.tableName = "INT_DISBURSEMENT_EXPORT_VIEW";
-		super.queueTableName = "INT_DISBURSEMENT_EXPORT_VIEW";
+		super.tableName = "INT_DISBURSEMENT_REQUEST_VIEW";
+		super.queueTableName = "INT_DISBURSEMENT_REQUEST_VIEW";
 	}
 
 	/**
@@ -178,12 +178,9 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		// Register buttons and fields.
 		registerButton(button_Search);
 		registerField("paymentId");
-		registerField("LLDATE");
 		registerField("PartnerBankId");
 		registerField("BranchDesc");
 
-		registerField("FromDate", fromDate, SortOrder.NONE, sortOperator_FromDate, Operators.DATE);
-		registerField("ToDate", toDate, SortOrder.NONE, sortOperator_ToDate, Operators.DATE);
 
 		registerField("PartnerBankCode", partnerBank, SortOrder.NONE, sortOperator_PartnerBank, Operators.STRING);
 		registerField("PaymentType", listheader_Disbursement_DisbTypes, SortOrder.NONE, disbTypes,
@@ -230,7 +227,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.finType.setValidateColumns(new String[] { "FinType" });
 		this.finType.setMandatoryStyle(true);
 
-		fillComboBox(this.disbTypes, "", PennantStaticListUtil.getPaymentTypes(true), "");
+		fillComboBox(this.disbTypes, "", PennantStaticListUtil.getPaymentTypes(false), "");
 
 		this.partnerBank.setModuleName("PartnerBank");
 		this.partnerBank.setDisplayStyle(2);
@@ -352,7 +349,6 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		searchObject.addField("paymentid");
 		searchObject.addField("PaymentType");
 		searchObject.addField("PartnerBankId");
-		searchObject.addField("LlDate");
 		searchObject.addField("FinType");
 		searchObject.addField("BranchCode");
 		searchObject.addField("BranchDesc");

@@ -232,4 +232,196 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="20" author="manojkumar.p">
+		<dropTable tableName="DISBURSEMENT_REQUESTS"/>
+	</changeSet>
+	<changeSet id="21" author="manojkumar.p">
+		<createTable tableName="DISBURSEMENT_REQUESTS">
+			<column name="ID" type="NUMBER(19,0)" defaultValue="SEQ_DISBURSEMENT_REQUESTS.NEXTVAL">
+					<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="BATCH_ID" type="NUMBER(19,0)"/>
+			<column name="DISBURSEMENT_ID" type="NUMBER(19,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FINREFERENCE" 				type="VARCHAR(20)"/>
+			<column name="DISBURSEMENT_AMOUNT" 			type="DECIMAL(18,0)"/>
+			<column name="DISBURSEMENT_DATE" 			type="DATETIME"/>
+			<column name="DRAWEE_LOCATION" 				type="VARCHAR(50)"/>
+			<column name="PRINT_LOCATION" 				type="VARCHAR(50)"/>
+			<column name="CUSTOMER_NAME" 				type="VARCHAR(200)"/>
+			<column name="CUSTOMER_EMAIL" 				type="VARCHAR(200)"/>
+			<column name ="BENFICIARY_BANK" 			type="VARCHAR(200)"/>
+			<column name ="BENFICIARY_BRANCH" 			type="VARCHAR(200)"/>
+			<column name ="BENFICIARY_BRANCH_STATE" 	type="VARCHAR(200)"/>
+			<column name ="BENFICIARY_BRANCH_CITY" 		type="VARCHAR(200)"/>
+			<column name ="MICR_CODE" 					type="VARCHAR(20)"/>
+			<column name ="IFSC_CODE" 					type="VARCHAR(20)"/>
+			<column name ="BENFICIARY_NAME" 			type="VARCHAR(200)"/>
+			<column name ="BENFICIRY_EMAIL" 			type="VARCHAR(200)"/>
+			<column name ="BENFICIRY_CITY" 				type="VARCHAR(200)"/>
+			<column name ="BENFICIARY_ADDRESS1" 		type="VARCHAR(100)"/>
+			<column name ="BENFICIARY_ADDRESS2" 		type="VARCHAR(100)"/>
+			<column name ="BENFICIARY_ADDRESS3" 		type="VARCHAR(100)"/>
+			<column name ="BENFICIARY_ADDRESS4" 		type="VARCHAR(100)"/>
+			<column name ="BENFICIARY_ADDRESS5" 		type="VARCHAR(100)"/>
+			<column name ="PAYMENT_DETAIL1" 			type="VARCHAR(100)"/>
+			<column name ="PAYMENT_DETAIL2" 			type="VARCHAR(100)"/>
+			<column name ="PAYMENT_DETAIL3" 			type="VARCHAR(100)"/>
+			<column name ="PAYMENT_DETAIL4" 			type="VARCHAR(100)"/>
+			<column name ="PAYMENT_DETAIL5" 			type="VARCHAR(100)"/>
+			<column name ="PAYMENT_DETAIL6" 			type="VARCHAR(100)"/>
+			<column name ="PAYMENT_DETAIL7" 			type="VARCHAR(100)"/>
+			<column name="RESP_BATCH_ID" 				type="NUMBER(19,0)"/>
+			<column name="TRANSACTIONREF" 				type="VARCHAR(50)"/>
+			<column name="CHEQUE_NUMBER" 				type="VARCHAR(50)"/>
+			<column name="PAYMENT_DATE" 				type="DATETIME"/>
+			<column name ="STATUS" 						type="VARCHAR(50)"/>
+			<column name ="REMARKS" 					type="VARCHAR(500)"/>
+			<column name ="REJECT_REASON" 				type="VARCHAR(100)"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="22" author="manojkumar.p">
+		<dropTable tableName="DISBURSEMENT_REQUESTS"/>
+	</changeSet>
+	
+	<changeSet id="23" author="manojkumar.p">
+		<createTable tableName="DISBURSEMENT_REQUESTS">
+			<column name="ID" type="NUMBER(19,0)" defaultValue="SEQ_DISBURSEMENT_REQUESTS.NEXTVAL">
+					<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="BATCH_ID" type="NUMBER(19,0)"/>
+			<column name="DISBURSEMENT_ID" type="NUMBER(19,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CUSTCIF" 						type="VARCHAR(20)"/>
+			<column name="FINREFERENCE" 				type="VARCHAR(20)"/>
+			<column name="DISBURSEMENT_AMOUNT" 			type="VARCHAR(200)"/>
+			<column name="DISBURSEMENT_TYPE" 			type="VARCHAR(8)"/>
+			<column name="DISBURSEMENT_DATE" 			type="DATETIME"/>
+			<column name="DRAWEE_LOCATION" 				type="VARCHAR(50)"/>
+			<column name="PRINT_LOCATION" 				type="VARCHAR(50)"/>
+			<column name="CUSTOMER_NAME" 				type="VARCHAR(200)"/>
+			<column name="CUSTOMER_MOBILE" 				type="VARCHAR(100)"/>
+			<column name="CUSTOMER_EMAIL" 				type="VARCHAR(200)"/>
+			<column name="CUSTOMER_STATE" 				type="VARCHAR(200)"/>
+			<column name="CUSTOMER_CITY" 				type="VARCHAR(200)"/>
+			<column name="CUSTOMER_ADDRESS1" 			type="VARCHAR(100)"/>
+			<column name="CUSTOMER_ADDRESS2" 			type="VARCHAR(100)"/>
+			<column name="CUSTOMER_ADDRESS3" 			type="VARCHAR(100)"/>
+			<column name="CUSTOMER_ADDRESS4" 			type="VARCHAR(100)"/>
+			<column name="CUSTOMER_ADDRESS5" 			type="VARCHAR(100)"/>
+			<column name="BENFICIARY_BANK" 				type="VARCHAR(200)"/>
+			<column name="BENFICIARY_BRANCH" 			type="VARCHAR(200)"/>
+			<column name="BENFICIARY_BRANCH_STATE" 		type="VARCHAR(200)"/>
+			<column name="BENFICIARY_BRANCH_CITY" 		type="VARCHAR(200)"/>
+			<column name="MICR_CODE" 					type="VARCHAR(20)"/>
+			<column name="IFSC_CODE" 					type="VARCHAR(20)"/>
+			<column name="BENFICIARY_ACCOUNT" 			type="VARCHAR(50)"/>
+			<column name="BENFICIARY_NAME" 				type="VARCHAR(200)"/>
+			<column name="BENFICIARY_MOBILE" 			type="VARCHAR(100)"/>
+			<column name="BENFICIRY_EMAIL" 				type="VARCHAR(200)"/>
+			<column name="BENFICIRY_STATE" 				type="VARCHAR(200)"/>
+			<column name="BENFICIRY_CITY" 				type="VARCHAR(200)"/>
+			<column name="BENFICIARY_ADDRESS1" 			type="VARCHAR(100)"/>
+			<column name="BENFICIARY_ADDRESS2" 			type="VARCHAR(100)"/>
+			<column name="BENFICIARY_ADDRESS3" 			type="VARCHAR(100)"/>
+			<column name="BENFICIARY_ADDRESS4" 			type="VARCHAR(100)"/>
+			<column name="BENFICIARY_ADDRESS5" 			type="VARCHAR(100)"/>
+			<column name="PAYMENT_DETAIL1" 				type="VARCHAR(100)"/>
+			<column name="PAYMENT_DETAIL2" 				type="VARCHAR(100)"/>
+			<column name="PAYMENT_DETAIL3" 				type="VARCHAR(100)"/>
+			<column name="PAYMENT_DETAIL4" 				type="VARCHAR(100)"/>
+			<column name="PAYMENT_DETAIL5" 				type="VARCHAR(100)"/>
+			<column name="PAYMENT_DETAIL6" 				type="VARCHAR(100)"/>
+			<column name="PAYMENT_DETAIL7" 				type="VARCHAR(100)"/>
+			<column name="RESP_BATCH_ID" 				type="NUMBER(19,0)"/>
+			<column name="TRANSACTIONREF" 				type="VARCHAR(50)"/>
+			<column name="CHEQUE_NUMBER" 				type="VARCHAR(50)"/>
+			<column name="DD_CHEQUE_CHARGE" 			type="VARCHAR(200)"/>
+			<column name="PAYMENT_DATE" 				type="DATETIME"/>
+			<column name="STATUS" 						type="VARCHAR(50)"/>
+			<column name="REMARKS" 						type="VARCHAR(500)"/>
+			<column name="REJECT_REASON" 				type="VARCHAR(100)"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="24" author="manojkumar.p">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+				SELECT   
+		      FA. PAYMENTID,
+		      FA.FINREFERENCE,
+		      CASE WHEN FA.PAYMENTTYPE = 'NEFT' THEN 'N' WHEN FA.PAYMENTTYPE = 'RTGS' THEN 'R' WHEN FA.PAYMENTTYPE = 'DD' THEN 'D' WHEN FA.PAYMENTTYPE = 'CHEQUE' THEN 'C' ELSE  FA.PAYMENTTYPE END  DISBURSEMENT_TYPE,
+		      FA.AMTTOBERELEASED/CCY.CCYMINORCCYUNITS  AMTTOBERELEASED,
+		      FA.DISBDATE,
+		      FA.PAYABLELOC,
+		      FA.PRINTINGLOC,
+		      CU.CUSTCIF,            
+		      CU.CUSTSHRTNAME,     
+		      CM.PHONECOUNTRYCODE||CM.PHONEAREACODE||CM.PHONENUMBER AS CUSTOMER_MOBILE,
+		      CE.CUSTEMAIL       CUSTOMER_EMAIL,
+		      CS.CPPROVINCENAME  CUSTOMER_STATE,
+		      CC.PCCITYNAME      CUSTOMER_CITY,
+		      ''                 CUSTOMER_ADDRESS1,
+		      ''                 CUSTOMER_ADDRESS2,
+		      ''                 CUSTOMER_ADDRESS3,
+		      ''                 CUSTOMER_ADDRESS4,
+		      ''                 CUSTOMER_ADDRESS5,
+		      BD.BANKNAME,
+          BB.BRANCHCODE,
+		      BB.BRANCHDESC,
+		      BBRS.CPPROVINCENAME  BENFICIARY_BRANCH_STATE,
+		      BBRC.PCCITYNAME      BENFICIARY_BRANCH_CITY,
+		      BB.MICR             MICR_CODE,
+		      BB.IFSC             IFSC_CODE,
+		      FA.BENEFICIARYACCNO,
+		      FA.BENEFICIARYNAME,
+		      FA.PHONECOUNTRYCODE||FA.PHONEAREACODE||FA.PHONENUMBER AS BENEFICIARY_MOBILE,
+		      BCE.CUSTEMAIL        BENFICIRY_EMAIL,
+		      BRS.CPPROVINCENAME  BENFICIARY_STATE,
+		      BRC.PCCITYNAME      BENFICIARY_CITY,
+		      ''                  BENFICIARY_ADDRESS1,
+		      ''                  BENFICIARY_ADDRESS2,
+		      ''                  BENFICIARY_ADDRESS3,
+		      ''                  BENFICIARY_ADDRESS4,
+		      ''                  BENFICIARY_ADDRESS5,
+		      ''				          PAYMENT_DETAIL1,
+		      ''                  PAYMENT_DETAIL2,
+		      ''                  PAYMENT_DETAIL3,
+		      ''                  PAYMENT_DETAIL4,
+		      ''                  PAYMENT_DETAIL5,
+		      ''                  PAYMENT_DETAIL6,
+		      ''                  PAYMENT_DETAIL7,     
+		      FA.STATUS           STATUS,
+		      FA.DESCRIPTION      REMARKS,
+          FA.PAYMENTTYPE      PAYMENTTYPE,
+          FM.FINTYPE,
+          PB.PARTNERBANKID,
+          PB.PARTNERBANKCODE,
+          FA.INPUTDATE
+		      FROM FINADVANCEPAYMENTS FA
+		      INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = FA.FINREFERENCE
+		      INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID
+		      INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = FA.DISBCCY
+          INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = FA.PARTNERBANKID
+		      LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 3
+		      LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID AND CA.CUSTADDRPRIORITY = 5
+		      LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+		      LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE
+		      LEFT JOIN CUSTOMERPHONENUMBERS CM ON CM.PHONECUSTID = CU.CUSTID AND CM.PHONETYPECODE = 'MOBILE1' AND CM.PHONETYPEPRIORITY = 5  
+		      LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = FA.BANKBRANCHID
+		      LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+		      LEFT JOIN RMTPROVINCEVSCITY BBRC ON BBRC.PCCITY = BB.CITY
+			    LEFT JOIN RMTCOUNTRYVSPROVINCE BBRS ON BBRS.CPPROVINCE = BBRC.PCPROVINCE
+		      LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = FA.BANKBRANCHID AND BR.ACCNUMBER = FA.BENEFICIARYACCNO
+		      LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+		      LEFT JOIN CUSTOMEREMAILS BCE ON BCE.CUSTID = CU.CUSTID AND BCE.CUSTEMAILPRIORITY = 3
+		      LEFT JOIN CUSTOMERADDRESSES BRCA ON BRCA.CUSTID = BR.CUSTID AND BRCA.CUSTADDRPRIORITY = 5
+		      LEFT JOIN RMTPROVINCEVSCITY BRC ON BRC.PCCITY = BRCA.CUSTADDRCITY
+		      LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+		      WHERE STATUS='APPROVED' AND PAYMENTID NOT IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS)
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>

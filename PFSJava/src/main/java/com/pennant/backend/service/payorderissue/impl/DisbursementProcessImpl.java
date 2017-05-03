@@ -39,21 +39,30 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 		FinanceMain financeMain = null;
 		List<ReturnDataSet> list = null;
 		financeMain = financeMainDAO.getDisbursmentFinMainById(disbursement.getFinReference(), TableType.MAIN_TAB);
-		
-		if (StringUtils.equals("E", disbursement.getStatus())) {
-			addToCustomerBeneficiary(disbursement, financeMain.getCustID());
-			disbursement.setStatus(DisbursementConstants.STATUS_PAID);
-		} else {
-			list = engineExecution.cancelPostings(disbursement.getLinkedTranId());
-			postingsPreparationUtil.processPostings(list);
-			disbursement.setStatus(DisbursementConstants.STATUS_REJECTED);
+		String paymentType = disbursement.getPaymentType();
+		try {
+			if (StringUtils.equals("E", disbursement.getStatus())) {
+				disbursement.setStatus(DisbursementConstants.STATUS_PAID);
+			} else {
+				list = engineExecution.cancelPostings(disbursement.getLinkedTranId());
+				postingsPreparationUtil.processPostings(list);
+				disbursement.setStatus(DisbursementConstants.STATUS_REJECTED);
+			}
+			
+			if (DisbursementConstants.PAYMENT_TYPE_IMPS.equals(paymentType)
+					|| DisbursementConstants.PAYMENT_TYPE_NEFT.equals(paymentType)
+					|| DisbursementConstants.PAYMENT_TYPE_RTGS.equals(paymentType)) {
+				addToCustomerBeneficiary(disbursement, financeMain.getCustID());
+			}
+			
+			//update paid or rejected
+			finAdvancePaymentsDAO.updateDisbursmentStatus(disbursement);
+			
+		} catch(Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
 
-		//update paid or rejected
-		finAdvancePaymentsDAO.updateDisbursmentStatus(disbursement);
 		
-		financeMain = null;
-		list = null;
 		logger.debug(Literal.LEAVING);
 
 	}
