@@ -25,18 +25,22 @@ import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
+import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
+import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueTotals;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
+import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
+import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -64,7 +68,10 @@ public class RepaymentProcessUtil {
 	private FinanceDisbursementDAO		financeDisbursementDAO;
 	private RepayInstructionDAO			repayInstructionDAO;
 	private ManualAdviseDAO				manualAdviseDAO;
-
+	private FinFeeScheduleDetailDAO		finFeeScheduleDetailDAO;
+	private FinInsurancesDAO				finInsurancesDAO;
+	
+	
 	public RepaymentProcessUtil() {
 		super();
 	}
@@ -110,7 +117,7 @@ public class RepaymentProcessUtil {
 				curSchd = financeScheduleDetail;
 				break;
 			}
-			
+
 			// If no balance for repayment then return with out calculation
 			BigDecimal totalReceiptAmt = receiptDetail.getAmount();
 			if (totalReceiptAmt.compareTo(BigDecimal.ZERO) == 0) {
@@ -285,16 +292,18 @@ public class RepaymentProcessUtil {
 			receiptDetail.setRepayHeaders(repayHeaderList);
 		}
 
-		scheduleDetails=doProcessReceipts(financeMain, scheduleDetails, profitDetail, receiptHeader, scheduleData, valuedate);
+		scheduleDetails = doProcessReceipts(financeMain, scheduleDetails, profitDetail, receiptHeader, scheduleData,
+				valuedate);
 		doSaveReceipts(receiptHeader);
 
 		logger.debug("Leaving");
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<FinanceScheduleDetail> doProcessReceipts(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail, FinReceiptHeader receiptHeader, FinScheduleData logScheduleData,
-			Date valueDate) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	public List<FinanceScheduleDetail> doProcessReceipts(FinanceMain financeMain,
+			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail profitDetail,
+			FinReceiptHeader receiptHeader, FinScheduleData logScheduleData, Date valueDate)
+			throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 
 		long linkedTranId = 0;
 		String finReference = financeMain.getFinReference();
@@ -322,8 +331,8 @@ public class RepaymentProcessUtil {
 
 			// Repay Header list process individually based on List existence
 			List<FinRepayHeader> repayHeaderList = receiptDetailList.get(i).getRepayHeaders();
-			
-			if(i != 0){
+
+			if (i != 0) {
 				postDate = getPostDate(DateUtility.getAppDate());
 			}
 
@@ -420,10 +429,10 @@ public class RepaymentProcessUtil {
 				// Excess Amount make utilization
 				if (payAgainstID != 0) {
 					getFinExcessAmountDAO().updateUtilise(payAgainstID, receiptDetail.getAmount());
-					
+
 					// Delete Reserved Log against Excess and Receipt ID
 					getFinExcessAmountDAO().deleteExcessReserve(receiptSeqID, payAgainstID);
-					
+
 					// Excess Movement Creation
 					FinExcessMovement movement = new FinExcessMovement();
 					movement.setExcessID(payAgainstID);
@@ -434,7 +443,7 @@ public class RepaymentProcessUtil {
 					getFinExcessAmountDAO().saveExcessMovement(movement);
 				}
 			}
-			
+
 			// Manual Advise Movements
 			for (ManualAdviseMovements movement : receiptDetail.getAdvMovements()) {
 				movement.setReceiptID(receiptID);
@@ -452,15 +461,86 @@ public class RepaymentProcessUtil {
 				List<RepayScheduleDetail> rpySchdList = rpyHeader.getRepayScheduleDetails();
 				if (rpySchdList != null && !rpySchdList.isEmpty()) {
 					for (int i = 0; i < rpySchdList.size(); i++) {
-						rpySchdList.get(i).setRepayID(repayID);
-						rpySchdList.get(i).setRepaySchID(i + 1);
-						rpySchdList.get(i).setLinkedTranId(rpyHeader.getLinkedTranId());
+
+						RepayScheduleDetail rpySchd = rpySchdList.get(i);
+						rpySchd.setRepayID(repayID);
+						rpySchd.setRepaySchID(i + 1);
+						rpySchd.setLinkedTranId(rpyHeader.getLinkedTranId());
+						//update fee schedule details
+						updateFeeDetails(rpySchd);
+						//update insurance schedule details
+						updateInsuranceDetails(rpySchd);
 					}
+
 					// Save Repayment Schedule Details
 					getFinanceRepaymentsDAO().saveRpySchdList(rpySchdList, TableType.MAIN_TAB.getSuffix());
 				}
 			}
 		}
+	}
+
+	private void updateInsuranceDetails(RepayScheduleDetail rpySchd) {
+		BigDecimal remBalPaidAmount = rpySchd.getSchdInsPayNow();
+
+		if (remBalPaidAmount.compareTo(BigDecimal.ZERO) == 0) {
+			return;
+		}
+
+		List<FinSchFrqInsurance> updateInsList = new ArrayList<>();
+		List<FinSchFrqInsurance> list = finInsurancesDAO.getInsScheduleBySchDate(rpySchd.getFinReference(),
+				rpySchd.getSchDate());
+
+		for (FinSchFrqInsurance insSchd : list) {
+
+			if (remBalPaidAmount.compareTo(BigDecimal.ZERO) == 0) {
+				break;
+			}
+			BigDecimal insBal = insSchd.getAmount().subtract(insSchd.getInsurancePaid())
+					.subtract(insSchd.getInsuranceWaived());
+			if (insBal.compareTo(remBalPaidAmount) > 0) {
+				insBal = remBalPaidAmount;
+			}
+			insSchd.setInsurancePaid(insSchd.getInsurancePaid().add(insBal));
+			updateInsList.add(insSchd);
+			remBalPaidAmount = remBalPaidAmount.subtract(insBal);
+
+		}
+
+		if (!updateInsList.isEmpty()) {
+			finInsurancesDAO.updateInsPaids(updateInsList);
+		}
+
+	}
+
+	private void updateFeeDetails(RepayScheduleDetail rpySchd) {
+		BigDecimal remBalPaidAmount = rpySchd.getSchdFeePayNow();
+
+		if (remBalPaidAmount.compareTo(BigDecimal.ZERO) == 0) {
+			return;
+		}
+		List<FinFeeScheduleDetail> list = finFeeScheduleDetailDAO.getFeeSchedules(rpySchd.getFinReference(),
+				rpySchd.getSchDate());
+		List<FinFeeScheduleDetail> updateFeeList = new ArrayList<>();
+		for (FinFeeScheduleDetail feeSchd : list) {
+
+			if (remBalPaidAmount.compareTo(BigDecimal.ZERO) == 0) {
+				break;
+			}
+			BigDecimal feeBal = feeSchd.getSchAmount().subtract(
+					feeSchd.getPaidAmount().subtract(feeSchd.getWaiverAmount()));
+			if (feeBal.compareTo(remBalPaidAmount) > 0) {
+				feeBal = remBalPaidAmount;
+			}
+			feeSchd.setPaidAmount(feeSchd.getPaidAmount().add(feeBal));
+			feeSchd.setOsAmount(feeSchd.getSchAmount().subtract(feeSchd.getPaidAmount()));
+			updateFeeList.add(feeSchd);
+			remBalPaidAmount = remBalPaidAmount.subtract(feeBal);
+
+		}
+		if (!updateFeeList.isEmpty()) {
+			finFeeScheduleDetailDAO.updateFeePaids(updateFeeList);
+		}
+
 	}
 
 	/**
@@ -836,8 +916,8 @@ public class RepaymentProcessUtil {
 		}
 		return null;
 	}
-	
-	private Date getPostDate(Date appDate){
+
+	private Date getPostDate(Date appDate) {
 		Calendar cal = Calendar.getInstance();
 		Calendar appCal = Calendar.getInstance();
 		cal.setTime(DateUtility.getSysDate());
@@ -958,6 +1038,14 @@ public class RepaymentProcessUtil {
 
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	public void setFinInsurancesDAO(FinInsurancesDAO finInsurancesDAO) {
+		this.finInsurancesDAO = finInsurancesDAO;
+	}
+
+	public void setFinFeeScheduleDetailDAO(FinFeeScheduleDetailDAO finFeeScheduleDetailDAO) {
+		this.finFeeScheduleDetailDAO = finFeeScheduleDetailDAO;
 	}
 
 }
