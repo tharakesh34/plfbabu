@@ -219,4 +219,17 @@
 		</addColumn>
 	</changeSet>
 	
+	
+	<changeSet id="18" author="Durgaprasad G">
+		<addColumn tableName="PRESENTMENTDETAILS_TEMP">
+			<column name="EcsReturn" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="19" author="Durgaprasad G">
+		<addColumn tableName="PRESENTMENTHEADER_TEMP">
+			<column name="DBStatusId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
