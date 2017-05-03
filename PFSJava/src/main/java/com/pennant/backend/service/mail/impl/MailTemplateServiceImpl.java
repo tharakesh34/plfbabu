@@ -375,7 +375,12 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 				}
 			}
 		}
-
+		
+		if (getMailTemplateDAO().getMailTemplateByCode(mailTemplate.getTemplateCode(),mailTemplate.getId(), "") != 0) {
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014",
+					errParm, valueParm), usrLanguage));
+		}
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if("doApprove".equals(StringUtils.trimToEmpty(method)) || !mailTemplate.isWorkflow()){

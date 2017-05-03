@@ -279,4 +279,23 @@ public class MailTemplateDAOImpl extends BasisNextidDaoImpl<MailTemplate> implem
 		logger.debug("Leaving");
 		return mailTemplateList;
 	}
+	
+	@Override
+	public int getMailTemplateByCode(String templateCode, long id, String type) {
+		MailTemplate mailTemplate = new MailTemplate();
+		mailTemplate.setTemplateCode(templateCode);
+		mailTemplate.setId(id);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From Templates");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where TemplateCode =:TemplateCode AND TemplateId !=:TemplateId");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mailTemplate);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+
 }

@@ -53,4 +53,5 @@ public interface MailTemplateDAO {
 	void delete(MailTemplate mailTemplate,String type);
 	long save(MailTemplate mailTemplate,String type);
 	List<MailTemplate> getMailTemplates();
+	int getMailTemplateByCode(String templateCode, long id, String type);
 }
