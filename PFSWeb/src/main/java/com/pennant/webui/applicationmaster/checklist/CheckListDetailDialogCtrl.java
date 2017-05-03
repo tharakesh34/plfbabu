@@ -143,8 +143,6 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 		setPageComponents(window_CheckListDetailDialog);
 
 		try {
-			/* set components visible dependent of the users rights */
-			doCheckRights();
 
 			if (arguments.containsKey("checkListDetail")) {
 				this.checkListDetail = (CheckListDetail) arguments
@@ -168,22 +166,19 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 				this.checkListDialogCtrl = (CheckListDialogCtrl) arguments
 						.get("checkListDialogCtrl");
 				setCheckListDialogCtrl(this.checkListDialogCtrl);
-
 				this.checkListDetail.setWorkflowId(0);
-				if (arguments.containsKey("roleCode")) {
-					getUserWorkspace().allocateRoleAuthorities(
-							(String) arguments.get("roleCode"),
-							"CheckListDetailDialog");
-				}
 			}
+			
+			if (arguments.containsKey("roleCode")) {
+				setRole((String) arguments.get("roleCode"));
+			}
+
 			doLoadWorkFlow(this.checkListDetail.isWorkflow(),
 					this.checkListDetail.getWorkflowId(),
 					this.checkListDetail.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateRoleAuthorities(getRole(),
-						"CheckListDetailDialog");
 			}
 			if (arguments.containsKey("isEditable")) {
 				isEditable = (boolean) arguments.get("isEditable");
@@ -199,6 +194,16 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 			// delete checkListDetail here.
 
 			// set Field Properties
+
+			if(isWorkFlowEnabled()){
+				getUserWorkspace().allocateAuthorities("CheckListDetailDialog",getRole());
+			}else{
+				getUserWorkspace().allocateAuthorities("CheckListDetailDialog");
+			}
+			
+			/* set components visible dependent of the users rights */
+			doCheckRights();
+
 			doSetFieldProperties();
 			doShowDialog(getCheckListDetail());
 		} catch (Exception e) {
@@ -242,8 +247,6 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering") ;
-
-		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CheckListDetailDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CheckListDetailDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CheckListDetailDialog_btnDelete"));
