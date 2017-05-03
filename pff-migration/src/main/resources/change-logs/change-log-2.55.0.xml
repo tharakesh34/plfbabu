@@ -161,4 +161,29 @@
 		<renameColumn columnDataType="bigint" newColumnName="ReceiptSeqID"
 			oldColumnName="ReceiptID" tableName="FinExcessAmountReserve" />
 	</changeSet>
+	
+	<changeSet id="13" author="Siva">
+    	<sql>
+    	
+    		DELETE FROM finrepayinstruction_temp WHERE finreference IN (select FinReference from FinanceMain_Temp WHERE RcdMaintainSts = 'Receipt');
+			DELETE FROM findisbursementdetails_temp WHERE finreference IN (select FinReference from FinanceMain_Temp WHERE RcdMaintainSts = 'Receipt');
+			DELETE FROM finscheduledetails_temp WHERE finreference IN (select FinReference from FinanceMain_Temp WHERE RcdMaintainSts = 'Receipt');
+			DELETE from FinanceMain_Temp WHERE RcdMaintainSts = 'Receipt';
+
+	    	DELETE from FinExcessAmountReserve;
+			UPDATE FinExcessAmount SET ReservedAmt = 0, UtilisedAmt = 0, BalanceAmt = Amount;
+			DELETE FROM ManualAdviseMovements;
+			DELETE FROM ManualAdviseMovements_Temp;
+			DELETE FROM FinRepayScheduleDetail_Temp;
+			DELETE FROM FinRepayScheduleDetail;
+			DELETE FROM FinRepayHeader_Temp;
+			DELETE FROM FinRepayHeader;
+			DELETE FROM FinReceiptDetail_Temp;
+			DELETE FROM FinReceiptDetail;
+			DELETE FROM ReceiptAllocationDetail_Temp;
+			DELETE FROM ReceiptAllocationDetail;
+			DELETE FROM FinReceiptHeader_Temp;
+			DELETE FROM FinReceiptHeader;
+    	</sql>
+	</changeSet>
 </databaseChangeLog>
