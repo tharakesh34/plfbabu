@@ -471,6 +471,9 @@
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
+		<property name="finInsurancesDAO" ref="finInsurancesDAO" />
 		
 	</bean>
 	<bean id="repayPostingUtil" class="com.pennant.app.util.RepaymentPostingsUtil" scope="prototype">
@@ -511,6 +514,23 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	
+	
+	<bean id="finFeeScheduleDetailDAO"
+		class="com.pennant.backend.dao.rulefactory.impl.FinFeeScheduleDetailDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	<bean id="finInsurancesDAO"
+		class="com.pennant.backend.dao.insurancedetails.impl.FinInsurancesDAOImpl"
+		parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	   <!-- ManualAdvise -->
+	<bean id="manualAdviseDAO" class="com.pennant.backend.dao.finance.impl.ManualAdviseDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
 	
 	<!-- AIB -->
 	<bean id="calendarInterfaceService" class="com.pennant.Interface.service.impl.aib.CalendarInterfaceServiceImpl">
