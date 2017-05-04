@@ -108,21 +108,6 @@
 		</property>
 	</bean>
 
-	<!-- Auto Hunting Job -->
-	<bean id="autoHuntingJobSchedular" class="org.springframework.scheduling.quartz.JobDetailBean"
-		p:jobClass="com.pennant.app.job.process.AutoHuntingProcess" p:name="AUTHUNTING">
-		<property name="jobDataAsMap">
-			<map>
-				<entry key="extTablesDAO" value-ref="extTablesDAO"/>
-				<entry key="financeScheduleDetailDAO" value-ref="financeScheduleDetailDAO"/>
-				<entry key="financeMainDAO" value-ref="financeMainDAO"/>
-				<entry key="serviceUtil" value-ref="serviceUtil"/>
-				<entry key="ddaRepresentmentService" value-ref="ddaRepresentmentService"/>
-				<entry key="postingsInterfaceService" value-ref="postingsInterfaceService"/>
-			</map>
-		</property>
-	</bean>
-
 	<!-- ******************************************************************************* -->
 	<!-- ********************* Trigger Definitions & Declarations ********************** -->
 	<!-- ******************************************************************************* -->

@@ -3530,9 +3530,6 @@
 		parent="basisCtrl" scope="prototype">
 	</bean>
 	
-	<bean id="customerEODCtrl" class="com.pennant.webui.batch.admin.CustomerEODCtrl"
-		parent="basisCtrl" scope="prototype">
-	</bean>
 
 	<!-- ====================================================== -->
 	<!-- Dashboard Details Configuration -->
