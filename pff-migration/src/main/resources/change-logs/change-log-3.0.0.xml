@@ -43,5 +43,18 @@
 			
 		</sql>
 	</changeSet>
-	
+	<changeSet id="03" author="Surekha">
+		<createView viewName="RELATIONSHIPOFFICERS_VIEW" replaceIfExists="true">
+			SELECT T1.ROfficerCode , T1.ROfficerDesc ,T1.ROfficerDeptCode ,T2.GenDeptDesc lovDescROfficerDeptCodeName  , T1.ROfficerIsActive ,
+	           T1.Version , T1.LastMntBy , T1.LastMntOn ,T1.RecordStatus , T1.RoleCode ,T1.NextRoleCode , T1.TaskId ,T1.NextTaskId , T1.RecordType , T1.WorkflowId 
+     		FROM RelationshipOfficers_Temp T1 LEFT JOIN 
+     			RMTGenDepartments T2 ON T1.ROfficerDeptCode = T2.GenDepartment
+			UNION ALL 
+			SELECT T1.ROfficerCode , T1.ROfficerDesc ,T1.ROfficerDeptCode ,T2.GenDeptDesc lovDescROfficerDeptCodeName  , T1.ROfficerIsActive ,
+	           T1.Version , T1.LastMntBy , T1.LastMntOn ,T1.RecordStatus , T1.RoleCode ,T1.NextRoleCode , T1.TaskId ,T1.NextTaskId , T1.RecordType , T1.WorkflowId 
+     		FROM RelationshipOfficers T1 LEFT JOIN 
+     			RMTGenDepartments T2 ON T1.ROfficerDeptCode = T2.GenDepartment
+     		WHERE NOT EXISTS ( SELECT 1 FROM RelationshipOfficers_Temp WHERE ROfficerCode = T1.ROfficerCode )
+		</createView>
+	</changeSet>
 </databaseChangeLog>
