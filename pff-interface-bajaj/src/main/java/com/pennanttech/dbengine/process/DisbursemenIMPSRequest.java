@@ -21,6 +21,7 @@ import com.pennanttech.dbengine.DBProcessEngine;
 import com.pennanttech.pff.baja.BajajInterfaceConstants.Status;
 import com.pennanttech.pff.core.Literal;
 
+@Deprecated
 public class DisbursemenIMPSRequest extends DBProcessEngine {
 
 	private static final Logger logger = Logger.getLogger(DisbursemenIMPSRequest.class);

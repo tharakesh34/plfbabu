@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennanttech.dataengine.DataEngineExport;
-import com.pennanttech.dbengine.DataEngineDBProcess;
+import com.pennanttech.dbengine.process.IMPSDisbursementRequest;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.disbursement.DisbursementRequest;
@@ -236,14 +236,15 @@ public class DisbursementRequestImpl extends BajajService implements Disbursemen
 	}
 
 	private synchronized void processImpsDisbursements(String configName, StringBuilder paymentIds, long userId) {
-		DataEngineDBProcess proce = new DataEngineDBProcess(dataSource, userId, App.DATABASE.name());
+		IMPSDisbursementRequest impsRequest = new IMPSDisbursementRequest(dataSource, App.DATABASE.name());
+
+		impsRequest.setPaymentIds(paymentIds.toString());
+		impsRequest.process(userId, configName);
+		
 		try {
-			proce.setValueDate(getAppDate());
-			proce.processData(configName, paymentIds.toString());
+			impsRequest.process(userId, configName);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-		} finally {
-			proce = null;
 		}
 
 	}

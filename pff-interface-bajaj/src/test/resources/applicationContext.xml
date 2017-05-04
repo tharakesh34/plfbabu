@@ -16,10 +16,5 @@
 	
 	<bean id="SAPGLService" class="com.pennanttech.bajaj.services.SAPGLServiceImpl">
 		<property name="dataSource" ref="dataSource"/>
-	</bean>
-	
-	<bean id="autoDisbursementFileResponse" class="com.pennanttech.pff.bajaj.schedule.job.AutoDisbursementFileResponse">
-		<property name="dataSource" ref="dataSource"/>
-	</bean>
-	
+	</bean>	
 </beans>
