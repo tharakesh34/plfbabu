@@ -2449,7 +2449,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					getFinScheduleData().getFinanceMain().getPlanEMIHLockPeriod());
 			if(StringUtils.equals(financeMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC) && 
 					DateUtility.compare(data.getSchDate(), planEMIHStart) > 0 && 
-					data.getInstNumber() != 1){
+					data.getInstNumber() != 1 && count == 1){
 				alwEMIHoliday = true;
 			}
 

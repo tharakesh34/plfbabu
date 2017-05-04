@@ -4902,7 +4902,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		//OverduePenalty GroupBox Validations
 		if (this.gb_OverDuePenalty.isVisible()) {
-
+			
 			if (!this.oDChargeAmtOrPerc.isDisabled()
 					&& StringUtils.isNotEmpty(this.space_oDChargeAmtOrPerc.getSclass())) {
 
@@ -4915,7 +4915,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						|| FinanceConstants.PENALTYTYPE_PERCONDUEDAYS.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_PERCONDUEMTH.equals(getComboboxValue(this.oDChargeType))) {
 					this.oDChargeAmtOrPerc.setConstraint(new PTDecimalValidator(Labels
-							.getLabel("label_FinanceMainDialog_ODChargeAmtOrPerc.value"), 2, true, false, 1, 100));
+							.getLabel("label_FinanceMainDialog_ODChargeAmtOrPerc.value"), 2, true, false,100));
 				}
 			}
 
@@ -14644,7 +14644,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	protected void onCheckODPenalty(boolean checkAction) {
 		logger.debug("Entering");
-
+		
+		int format = CurrencyUtil.getFormat(getFinanceMain().getFinCcy());
+		FinODPenaltyRate penaltyRate = getFinanceDetail().getFinScheduleData().getFinODPenaltyRate();
 		this.space_oDChargeCalOn.setSclass(PennantConstants.mandateSclass);
 		this.space_oDChargeAmtOrPerc.setSclass(PennantConstants.mandateSclass);
 		this.space_oDMaxWaiverPerc.setSclass(PennantConstants.mandateSclass);
@@ -14661,6 +14663,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (checkAction) {
 				readOnlyComponent(true, this.oDChargeAmtOrPerc);
 				readOnlyComponent(true, this.oDMaxWaiverPerc);
+				readOnlyComponent(true, this.oDChargeCalOn);
+				readOnlyComponent(true, this.oDIncGrcDays);
+				this.space_oDChargeCalOn.setSclass("");
+				checkAction = false;
 			} else {
 				onChangeODChargeType(false);
 				onCheckODWaiver(false);
@@ -14686,6 +14692,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.oDChargeAmtOrPerc.setValue(BigDecimal.ZERO);
 			this.oDAllowWaiver.setChecked(false);
 			this.oDMaxWaiverPerc.setValue(BigDecimal.ZERO);
+		}else{
+			this.oDIncGrcDays.setChecked(penaltyRate.isODIncGrcDays());
+			fillComboBox(this.oDChargeType, penaltyRate.getODChargeType(),
+					PennantStaticListUtil.getODCChargeType(), "");
+			fillComboBox(this.oDChargeCalOn, penaltyRate.getODChargeCalOn(),
+					PennantStaticListUtil.getODCCalculatedOn(), "");
+			this.oDGraceDays.setValue(penaltyRate.getODGraceDays());
+			this.oDChargeAmtOrPerc.setValue(PennantAppUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(),
+					format));
+			this.oDAllowWaiver.setChecked(penaltyRate.isODAllowWaiver());
+			this.oDMaxWaiverPerc.setValue(penaltyRate.getODMaxWaiverPerc());
 		}
 
 		if (!this.applyODPenalty.isChecked()) {
