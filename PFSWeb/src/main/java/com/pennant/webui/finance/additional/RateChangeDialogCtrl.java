@@ -870,11 +870,6 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 							}));
 				}
 				
-				//if schdpftBal greater than zero throw validation
-				if(this.cbRecalToDate.getSelectedItem().getAttribute("pftBal") != null){
-					throw new WrongValueException(this.cbRecalToDate, Labels.getLabel("Label_finSchdTillDate"));
-				}
-				
 				finMain.setRecalToDate((Date)this.cbRecalToDate.getSelectedItem().getValue());
 				finServiceInstruction.setRecalToDate(finMain.getRecalFromDate());
 			} catch (WrongValueException we) {
@@ -1216,13 +1211,6 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					} else if(!includeFromDate && DateUtility.compare(curSchd.getSchDate(),fillAfter) > 0) {
 						dateCombobox.appendChild(comboitem);
 					}
-				}
-				//In Recalculation type if Till Date is selected and for the Same date if the profit Balance is greater than zero then will set the pft bal attribute
-				if(this.cbReCalType.getSelectedIndex()>=0 &&
-						StringUtils.equals(this.cbReCalType.getSelectedItem().getValue().toString(), CalculationConstants.RPYCHG_TILLDATE)
-						&& curSchd.getProfitBalance().compareTo(BigDecimal.ZERO) > 0 && includeFromDate){
-					//comboitem.setStyle("color:Red;");
-					comboitem.setAttribute("pftBal", curSchd.getProfitBalance());
 				}
 			}
 		}

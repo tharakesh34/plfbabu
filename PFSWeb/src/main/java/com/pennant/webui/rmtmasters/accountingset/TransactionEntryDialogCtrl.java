@@ -1577,19 +1577,19 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 				if (j == 0) {
 					newRuleCode = newRuleCode + "_C";
-					newRuleCodeDesc = newRuleCodeDesc + " (Calculated Amount)";
+					newRuleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_FeeCalc");
 				} else if (j == 1) {
 					newRuleCode = newRuleCode + "_W";
-					newRuleCodeDesc = newRuleCodeDesc + " (Waiver Amount)";
+					newRuleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_FeeWaiver");
 				} else if (j == 2) {
 					newRuleCode = newRuleCode + "_P";
-					newRuleCodeDesc = newRuleCodeDesc + " (Customer Paid)";
+					newRuleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_FeePaid");
 				} else if (j == 3) {
 					newRuleCode = newRuleCode + "_AF";
-					newRuleCodeDesc = newRuleCodeDesc + " (Added to Finance)";
+					newRuleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_FeeAF");
 				} else if (j == 4) {
 					newRuleCode = newRuleCode + "_SCH";
-					newRuleCodeDesc = newRuleCodeDesc + " (Scheduled to Finance)";
+					newRuleCodeDesc = newRuleCodeDesc + Labels.getLabel("label_TransactionEntryDialog_FeeSF");
 				}
 
 				item = new Listitem();

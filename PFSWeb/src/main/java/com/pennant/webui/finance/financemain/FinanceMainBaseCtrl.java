@@ -7424,13 +7424,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			this.row_BpiTreatment.setVisible(true);
 		} else {
+			this.alwBpiTreatment.setDisabled(isReadOnly("FinanceMainDialog_DftBpiTreatment"));
 			this.dftBpiTreatment.setDisabled(true);
 			this.space_DftBpiTreatment.setSclass("");
 			this.dftBpiTreatment.setConstraint("");
 			this.dftBpiTreatment.setErrorMessage("");
 			fillComboBox(this.dftBpiTreatment, FinanceConstants.BPI_NO, PennantStaticListUtil.getDftBpiTreatment(), "");
 			if (!isAction) {
-				this.row_BpiTreatment.setVisible(false);
+				if(!getFinanceDetail().getFinScheduleData().getFinanceType().isAlwBPI()){
+					this.row_BpiTreatment.setVisible(false);
+				}else{
+					if(!isReadOnly("FinanceMainDialog_DftBpiTreatment")){
+						this.row_BpiTreatment.setVisible(true);
+					}
+				}
 			}
 		}
 
