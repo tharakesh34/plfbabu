@@ -3256,7 +3256,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.repayRate.setSpecialDescription("");
 			this.repayRate.setSpecialReadonly(true);
 			readOnlyComponent(isReadOnly("FinanceMainDialog_profitRate"), this.repayProfitRate);
-			this.repayProfitRate.setValue(aFinanceMain.getRepayProfitRate());
 
 			if (aFinanceMain.getRepayProfitRate().compareTo(BigDecimal.ZERO) > 0) {
 				this.repayRate.setEffRateValue(BigDecimal.ZERO);
@@ -3267,6 +3266,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finMaxRate.setValue(BigDecimal.ZERO);
 		}
 
+		// Repay Profit Rate
+		this.repayProfitRate.setValue(aFinanceMain.getRepayProfitRate());
+		
 		// Effective Rate Setting
 		if (StringUtils.isNotBlank(this.repayRate.getBaseValue())) {
 			calculateRate(this.repayRate.getBaseValue(), this.finCcy.getValue(), this.repayRate.getSpecialComp(),
