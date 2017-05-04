@@ -624,6 +624,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	public void onChange$mandateType(Event event) {
 		String str = this.mandateType.getSelectedItem().getValue().toString();
+		onChangeMandateType(str);
+
+	}
+
+	private void onChangeMandateType(String str) {
 		this.bankBranchID.setValue("");
 		this.bankBranchID.setDescription("");
 		this.bank.setValue("");
@@ -648,7 +653,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		default:
 			break;
 		}
-
 	}
 
 	// ****************************************************************+
@@ -938,6 +942,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		fillComboBox(this.status, aMandate.getStatus(), statusTypeList, excludeList);
 		this.reason.setValue(aMandate.getReason());
 		doWriteData(aMandate);
+		onChangeMandateType(StringUtils.trimToEmpty(aMandate.getMandateType()));
 
 		this.approvalID.setValue(aMandate.getApprovalID());
 		this.recordStatus.setValue(aMandate.getRecordStatus());
