@@ -3073,20 +3073,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				getOverdraftScheduleDetailDAO().deleteByFinReference(financeMain.getFinReference(), "", isWIF);
 			}
 
-			//Vas Recording Details
-			if (financeDetail.getVasRecordingList() != null && !financeDetail.getVasRecordingList().isEmpty()) {
-				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasRecordings");
-				details = processingVasRecordngList(auditDetails, financeDetail, "");
-				auditDetails.addAll(details);
-			}
-
-			//Vas Recording Extended Field Details
-			if (financeDetail.getVasRecordingList() != null && !financeDetail.getVasRecordingList().isEmpty()) {
-				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasExtendedDetails");
-				details = processingExtendedFieldDetailList(details, null, VASConsatnts.MODULE_NAME, "");
-				auditDetails.addAll(details);
-			}
-
 			//Finance Flag Details
 			if (financeDetail.getFinFlagsDetails() != null && !financeDetail.getFinFlagsDetails().isEmpty()) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinFlagsDetail");
@@ -3284,6 +3270,20 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							getFinPlanEmiHolidayDAO().savePlanEMIHDates(holidayList, "");
 						}
 					}
+				}
+				
+				//Vas Recording Details
+				if (financeDetail.getVasRecordingList() != null && !financeDetail.getVasRecordingList().isEmpty()) {
+					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasRecordings");
+					details = processingVasRecordngList(auditDetails, financeDetail, "");
+					auditDetails.addAll(details);
+				}
+
+				//Vas Recording Extended Field Details
+				if (financeDetail.getVasRecordingList() != null && !financeDetail.getVasRecordingList().isEmpty()) {
+					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasExtendedDetails");
+					details = processingExtendedFieldDetailList(details, null, VASConsatnts.MODULE_NAME, "");
+					auditDetails.addAll(details);
 				}
 
 			} else {
