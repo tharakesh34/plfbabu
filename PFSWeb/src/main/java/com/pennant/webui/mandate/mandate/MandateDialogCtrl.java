@@ -624,17 +624,17 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	public void onChange$mandateType(Event event) {
 		String str = this.mandateType.getSelectedItem().getValue().toString();
-		onChangeMandateType(str);
-
-	}
-
-	private void onChangeMandateType(String str) {
 		this.bankBranchID.setValue("");
 		this.bankBranchID.setDescription("");
 		this.bank.setValue("");
 		this.micr.setValue("");
 		this.ifsc.setValue("");
 		this.city.setValue("");
+		onChangeMandateType(str);
+
+	}
+
+	private void onChangeMandateType(String str) {
 		Filter filter[] = new Filter[1];
 		switch (str) {
 		case MandateConstants.TYPE_ECS:
