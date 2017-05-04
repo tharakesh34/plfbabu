@@ -636,9 +636,6 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				comboitem.setAttribute("toSpecifier",curSchd.getSpecifier());
 				if (getFinanceScheduleDetail() != null &&  curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate()) >= 0) {
 					dateCombobox.appendChild(comboitem);
-					if(curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate())==0) {
-						dateCombobox.setSelectedItem(comboitem);
-					}
 				} else if(curSchd.getSchDate().compareTo(fillAfter) > 0) {
 					dateCombobox.appendChild(comboitem);
 					//in overdraft the next review to date need to be selected the date which is after the from date
@@ -1218,7 +1215,6 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						}
 					} else if(!includeFromDate && DateUtility.compare(curSchd.getSchDate(),fillAfter) > 0) {
 						dateCombobox.appendChild(comboitem);
-						dateCombobox.setSelectedItem(comboitem);
 					}
 				}
 				//In Recalculation type if Till Date is selected and for the Same date if the profit Balance is greater than zero then will set the pft bal attribute
