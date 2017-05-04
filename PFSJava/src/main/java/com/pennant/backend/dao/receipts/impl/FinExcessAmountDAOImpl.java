@@ -348,13 +348,13 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 
 		int recordCount = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ReceiptID", receiptID);
+		source.addValue("ReceiptSeqID", receiptID);
 		source.addValue("ExcessID", payAgainstID);
 		source.addValue("PaidNow", diffInReserve);
 
 		StringBuilder updateSql = new StringBuilder("Update FinExcessAmountReserve ");
 		updateSql.append(" Set ReservedAmt = ReservedAmt + :PaidNow ");
-		updateSql.append(" Where ReceiptID =:ReceiptID AND ExcessID =:ExcessID ");
+		updateSql.append(" Where ReceiptSeqID =:ReceiptSeqID AND ExcessID =:ExcessID ");
 
 		logger.debug("updateSql: " + updateSql.toString());
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
@@ -375,11 +375,11 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ReceiptID", receiptID);
+		source.addValue("ReceiptSeqID", receiptID);
 		source.addValue("ExcessID", payAgainstID);
 
 		StringBuilder updateSql = new StringBuilder("Delete From FinExcessAmountReserve ");
-		updateSql.append(" Where ReceiptID =:ReceiptID ");
+		updateSql.append(" Where ReceiptSeqID =:ReceiptSeqID ");
 		if(payAgainstID != 0){
 			updateSql.append(" AND ExcessID =:ExcessID ");
 		}
