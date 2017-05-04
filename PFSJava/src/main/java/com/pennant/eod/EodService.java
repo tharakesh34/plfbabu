@@ -29,7 +29,6 @@ import com.pennant.app.core.LoadFinanceData;
 import com.pennant.app.core.NPAService;
 import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.ReceiptPaymentService;
-import com.pennant.app.core.RepayQueueService;
 import com.pennant.app.util.BusinessCalendar;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -48,7 +47,6 @@ public class EodService {
 	private CustomerDatesDAO			customerDatesDAO;
 	private CustomerQueuingService		customerQueuingService;
 
-	private RepayQueueService			repayQueueService;
 	private LatePayMarkingService		latePayMarkingService;
 	private LatePayPenaltyService		latePayPenaltyService;
 	private LatePayInterestService		latePayInterestService;
@@ -166,9 +164,6 @@ public class EodService {
 		
 		custEODEvent = loadFinanceData.prepareFinEODEvents(custEODEvent);
 
-		//prepare customer queue
-		//TODO: DELETE UNWANTED CALL AND SERVICE
-		repayQueueService.prepareRepayQueue(connection, custId, date);
 
 		//late pay marking
 		custEODEvent = latePayMarkingService.processLatePayMarking(custEODEvent);
@@ -242,10 +237,6 @@ public class EodService {
 
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
-	}
-
-	public void setRepayQueueService(RepayQueueService repayQueueService) {
-		this.repayQueueService = repayQueueService;
 	}
 
 	public void setCustomerDatesDAO(CustomerDatesDAO customerDatesDAO) {
