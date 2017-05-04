@@ -2034,7 +2034,7 @@ public class PennantAppUtil {
 			filters = new Filter[3];
 			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
 			filters[1] = new Filter("ODApplicable", 1, Filter.OP_EQUAL);
-			filters[2] = new Filter("AEEventCode", accEngineEventsList, Filter.OP_NOT_EQUAL);
+			filters[2] = new Filter("AEEventCode", accEngineEventsList, Filter.OP_NOT_IN);
 		}
 
 		searchObject.addFilters(filters);
