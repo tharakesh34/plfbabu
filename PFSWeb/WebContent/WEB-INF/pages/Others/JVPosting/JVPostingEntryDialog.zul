@@ -172,15 +172,6 @@
 											<textbox id="batchPurpose"
 												maxlength="200" multiline="true" rows="2" width="300px" />
 										</hlayout>
-										<label id="label_Upload"
-											value="${c:l('label_Upload.value')}" />
-										<hlayout id="hlayout_Upload"
-											spacing="2px">
-											<space id="space_Upload"
-												spacing="2px" />
-											<textbox id="manualEntry"
-												disabled="true" width="150px" />
-										</hlayout>
 									</row>
 								</rows>
 							</grid>
@@ -289,7 +280,7 @@
 											</hlayout>
 										</row>
 
-											<row id="row8">
+											<row id="row8" visible="false">
 												<label
 													id="label_ExTxnAmount_Ac"
 													value="${c:l('label_JVPostingEntryDialog_ExTxnAmount.value')}" />

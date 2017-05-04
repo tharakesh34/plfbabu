@@ -449,7 +449,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		// map.put("jVPosting", aJVPosting);
 		if (this.moduleType != null
 				&& this.moduleType.getValue().equalsIgnoreCase(
-						PennantConstants.MODULETYPE_ENQ)) {
+						PennantConstants.MODULETYPE_ENQ) || enqModule) {
 			map.put("enqModule", true);
 		} else if (this.moduleType != null
 				&& this.moduleType.getValue().equalsIgnoreCase(
@@ -510,7 +510,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		logger.debug(event.toString());
 		// get the selected JVPosting object
 		final Listitem item = this.listBoxJVPostingEntry.getSelectedItem();
-
+		
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final JVPostingEntry aJVPostingEntry = (JVPostingEntry) item
@@ -612,6 +612,9 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				this.btnCtrl.setInitEdit();
 				doReadOnly(true);
 				btnCancel.setVisible(false);
+			}
+			if(enqModule){
+				doReadOnly(true);
 			}
 		}
 		try {
@@ -828,7 +831,23 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		readOnlyComponent(true, this.creditsCount);
 		readOnlyComponent(isReadOnly("JVPostingDialog_BatchPurpose"), this.batchPurpose);
 		//readOnlyComponent(isReadOnly("JVPostingDialog_btnUpload"), this.btn_Upload);
-
+		
+		if(enqModule){
+			readOnlyComponent(true, this.expReference);
+			readOnlyComponent(true, this.batch);
+			readOnlyComponent(true, this.batchReference);
+			readOnlyComponent(true, this.baseCCy);
+			readOnlyComponent(true, this.postingBranch);
+			readOnlyComponent(true, this.exchangeRateType);
+			readOnlyComponent(true, this.totCreditsByBatchCcy);
+			readOnlyComponent(true, this.totDebitsByBatchCcy);
+			readOnlyComponent(true, this.debitCount);
+			readOnlyComponent(true, this.creditsCount);
+			readOnlyComponent(true, this.batchPurpose);
+			this.btnNewJVPostingEntry.setVisible(false);
+			this.btnValidate.setVisible(false);
+			this.btnNotes.setVisible(false);
+		}
 		logger.debug("Leaving");
 	}
 

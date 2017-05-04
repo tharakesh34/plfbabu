@@ -44,6 +44,7 @@ package com.pennant.webui.others.jvposting;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -111,6 +112,8 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 
 	protected Textbox totCreditsByBatchCcy;
 	protected Listbox sortOperator_TotCreditsByBatchCcy;
+	
+	protected Textbox moduleType;
 
 
 	private transient boolean approvedList = false;
@@ -291,7 +294,10 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 		 * We can call our Dialog zul-file with parameters. So we can call them with a object of the selected item. For
 		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
 		 */
-
+		if (this.moduleType != null && StringUtils.equals(PennantConstants.MODULETYPE_ENQ, moduleType.getValue())) {
+			moduleCode = PennantConstants.MODULETYPE_ENQ;
+		}
+		 
 		Map<String, Object> arg = getDefaultArguments();
 		if (this.moduleCode != null && this.moduleCode.equalsIgnoreCase(PennantConstants.MODULETYPE_ENQ)) {
 			arg.put("enqModule", true);

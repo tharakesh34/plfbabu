@@ -165,11 +165,6 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 	protected Space space_BatchPurpose;
 	protected Textbox batchPurpose;
 
-	protected Label label_Upload;
-	protected Hlayout hlayout_Upload;
-	protected Space space_Upload;
-	protected Textbox manualEntry;
-
 	protected Row row5;
 	protected Label label_Account;
 	protected Hlayout hlayout_Account;
@@ -601,11 +596,19 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 				this.btnCtrl.setInitEdit();
 				if(PennantConstants.RCD_STATUS_SUBMITTED.equals(this.jVPosting.getRecordStatus())){
 					doReadOnly(true);
-				}else{					
+				}else{
 					doReadOnly(false);
 				}
 				btnCancel.setVisible(false);
 			}
+		}
+		if(enqModule){
+			this.btnSave.setVisible(false);
+			this.btnNew.setVisible(false);
+			this.btnEdit.setVisible(false);
+			this.btnDelete.setVisible(false);
+			this.btnNotes.setVisible(false);
+			doReadOnly(true);
 		}
 		this.batchReference.setReadonly(true);
 		try {
@@ -689,7 +692,18 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		if (getJVPostingEntry().isNewRecord()) {
 			this.btnCancel.setVisible(false);
 		} 
-
+		
+		readOnlyComponent(true, this.batch);
+		readOnlyComponent(true, this.batchReference);
+		readOnlyComponent(true, this.baseCCy);
+		readOnlyComponent(true, this.postingBranch);
+		readOnlyComponent(true, this.totCreditsByBatchCcy);
+		readOnlyComponent(true, this.totDebitsByBatchCcy);
+		readOnlyComponent(true, this.debitCount);
+		readOnlyComponent(true, this.creditsCount);
+		readOnlyComponent(true, this.batchPurpose);
+		readOnlyComponent(true, this.postingDate);
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -702,7 +716,9 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
 		} else {
-			this.btnCtrl.setBtnStatus_Edit();
+			if (!enqModule) {
+				this.btnCtrl.setBtnStatus_Edit();
+			}
 			//btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
@@ -736,6 +752,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		readOnlyComponent(true, this.batchPurpose);
 
 		// Batch Account, Amount Detials
+		readOnlyComponent(true, this.postingDate);
 		setComponentAccessType("JVPostingEntryDialog_Account",
 				tempReadOnly, this.account, null,
 				this.label_Account, this.hlayout_Account, null);
@@ -774,9 +791,9 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 				this.txnReference, null, this.label_TxnReference,
 				this.hlayout_TxnReference, null);
 
-		setComponentAccessType("JVPostingEntryDialog_PostingDate",
+		/*setComponentAccessType("JVPostingEntryDialog_PostingDate",
 				true, this.postingDate, this.space_PostingDate,
-				this.label_PostingDate, this.hlayout_PostingDate, null);
+				this.label_PostingDate, this.hlayout_PostingDate, null);*/
 
 		setComponentAccessType("JVPostingEntryDialog_ValueDate", true,
 				this.valueDate, this.space_ValueDate, this.label_ValueDate,
@@ -966,7 +983,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		this.narrLine1.setValue(aJVPostingEntry.getNarrLine1());
 		this.narrLine2.setValue(aJVPostingEntry.getNarrLine2());
 		this.narrLine3.setValue(getjVPosting().getBatchPurpose());
-		this.narrLine4.setValue(String.valueOf(aJVPostingEntry.getTxnReference()));
+		this.narrLine4.setValue(aJVPostingEntry.getNarrLine4());
 		
 		CurrencyUtil.getFormat(getJVPostingEntry().getTxnCCy());
 		
@@ -1016,7 +1033,6 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		this.debitCount.setValue(getjVPosting().getDebitCount());
 		this.creditsCount.setValue(getjVPosting().getCreditsCount());
 		this.batchPurpose.setValue(getjVPosting().getBatchPurpose());
-		this.manualEntry.setValue(getJVPostingEntry().getFileName());
 		
 		logger.debug("Entering");
 	}
