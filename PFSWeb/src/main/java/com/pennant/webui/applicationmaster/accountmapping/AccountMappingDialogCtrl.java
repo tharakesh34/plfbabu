@@ -428,7 +428,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 
 		try {
 			accountMappingService.save(accountMappingList, finTypeValue);
-			Messagebox.show("Record Saved..");
+			MessageUtil.showMessage("Records Saved..");
 			this.listBoxAccountMap.getItems().clear();
 			this.finType.setConstraint("");
 			this.finType.setValue("");
