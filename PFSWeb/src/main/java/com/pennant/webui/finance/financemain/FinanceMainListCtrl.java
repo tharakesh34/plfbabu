@@ -896,7 +896,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.searchObj.clearFilters();
 		this.searchObj.clearSorts();
 		if (usrfinRolesList == null || usrfinRolesList.isEmpty()) {
-			this.listBoxFinanceMain.setEmptyMessage(Labels.getLabel("USER_FINROLES_EMPTY"));
 			return;
 		}
 
