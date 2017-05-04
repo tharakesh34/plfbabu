@@ -768,6 +768,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		int formatter = CurrencyUtil.getFormat(aFinanceMain.getFinCcy());
 		Customer customer = null;
 		customer = customerService.getCustomerById(aFinanceMain.getCustID());
+		setcustomerData(getFinScheduleData().getFinanceMain(),customer);
 		finFlagsDetailList = finFlagDetailsDAO.getFinFlagsByFinRef(aFinanceMain.getFinReference(),FinanceConstants.MODULE_NAME,"");
 		
 		if (aFinanceMain != null) {
@@ -1300,6 +1301,13 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 	
+	private void setcustomerData(FinanceMain financeMain,Customer customer) {
+		financeMain.setLovDescCustCIF(customer.getCustCIF());
+		financeMain.setLovDescCustFName(customer.getCustFName());
+		financeMain.setLovDescCustLName(customer.getCustLName());
+		financeMain.setLovDescCustShrtName(customer.getCustShrtName());
+	}
+
 	public void setNetFinanceAmount(boolean isDataRender) {
 		logger.debug("Entering");
 
