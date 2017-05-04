@@ -6,12 +6,12 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 
-import com.pennanttech.dataengine.DataEngine;
+import com.pennanttech.dataengine.FileDataDataEngine;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 
-public class DataEngineDBProcess extends DataEngine {
+public class DataEngineDBProcess extends FileDataDataEngine {
 	private static final Logger logger = Logger.getLogger(DataEngineDBProcess.class);
 	
 	public DataEngineDBProcess(DataSource dataSource, long userId, String database) {
