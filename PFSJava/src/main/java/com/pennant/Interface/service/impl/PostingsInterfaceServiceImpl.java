@@ -37,8 +37,9 @@ public class PostingsInterfaceServiceImpl implements PostingsInterfaceService{
 	 * @return
 	 * @throws AccountNotFoundException
 	 */
+	@Override
 	public List<ReturnDataSet> doFillPostingDetails(List<ReturnDataSet> setDetails,String postBranch,
-			long linkTransId, String createNow) throws PFFInterfaceException  {
+			long linkTransId, boolean isCreateNow) throws PFFInterfaceException  {
 		logger.debug("Entering");
 		int seqNo=0;	
 		ReturnDataSet dataSet = null;
@@ -136,7 +137,7 @@ public class PostingsInterfaceServiceImpl implements PostingsInterfaceService{
 	 */
 	@Override
 	public List<ReturnDataSet> doAccrualPosting(List<ReturnDataSet> setDetails, Date valueDate, String postBranch, 
-			long linkTransId, String createNow, String isDummy) throws PFFInterfaceException  {
+			long linkTransId, boolean isCreateNow, String isDummy) throws PFFInterfaceException  {
 		logger.debug("Entering");
 
 		ReturnDataSet dataSet = null;
@@ -231,5 +232,7 @@ public class PostingsInterfaceServiceImpl implements PostingsInterfaceService{
 	public void setAccountPostingProcess(AccountPostingProcess accountPostingProcess) {
     	this.accountPostingProcess = accountPostingProcess;
     }
+
+
 
 }

@@ -1268,7 +1268,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		
 		executingMap.put("PostDate", curBDay);
 		// Call Map Build Method
-		List<ReturnDataSet> returnSetEntries = getEngineExecution().getAccEngineExecResults("Y", executingMap, false);
+		List<ReturnDataSet> returnSetEntries = getEngineExecution().getAccEngineExecResults(true, executingMap);
 		
 		if (returnSetEntries != null && !returnSetEntries.isEmpty()) {
 			
@@ -1314,7 +1314,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				}
 				auditHeader.setErrorList(errorDetails);
 				returnSetEntries = getPostingsInterfaceService().doFillPostingDetails(returnSetEntries,
-						finMain.getFinBranch(), linkedTranId, "Y");
+						finMain.getFinBranch(), linkedTranId, true);
 				accountingSetEntries.addAll(returnSetEntries);
 			}
 		}
@@ -1628,7 +1628,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		try {
 			financeDetail.getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
 			executingMap.putAll(feeRuleDetailsMap);
-			newStageAcEntries = getEngineExecution().getStageExecResults("N", financeMain.getRoleCode(), executingMap);
+			newStageAcEntries = getEngineExecution().getStageExecResults(false, financeMain.getRoleCode(), executingMap);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
@@ -1647,7 +1647,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		try {
-			list.addAll(getEngineExecution().getStageExecResults("Y", financeMain.getRoleCode(), executingMap));
+			list.addAll(getEngineExecution().getStageExecResults(true, financeMain.getRoleCode(), executingMap));
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
@@ -1689,7 +1689,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		if (!ImplementationConstants.INDIAN_IMPLEMENTATION) {
 			list = getPostingsInterfaceService().doFillPostingDetails(list, financeMain.getFinBranch(), linkedTranId,
-					"Y");
+					true);
 		}
 
 		/*

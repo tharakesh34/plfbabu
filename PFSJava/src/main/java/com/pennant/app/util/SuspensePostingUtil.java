@@ -145,7 +145,7 @@ public class SuspensePostingUtil implements Serializable {
 
 		//Postings Preparation
 		Date dateAppDate = DateUtility.getAppDate();
-		List<Object> result = getPostingsPreparationUtil().processPostingDetails(executingMap, isEODProcess, "Y",
+		List<Object> result = getPostingsPreparationUtil().processPostingDetails(executingMap, isEODProcess, true,
 				dateAppDate, false, Long.MIN_VALUE);
 		isPostingSuccess = (Boolean) result.get(0);
 		long linkedTranId = (Long) result.get(1);
@@ -257,7 +257,7 @@ public class SuspensePostingUtil implements Serializable {
 
 		//Postings Preparation
 		Date dateAppDate = DateUtility.getAppDate();
-		long linkedTranId = (Long) getPostingsPreparationUtil().processPostingDetails(executingMap, isEODProcess, "Y",
+		long linkedTranId = (Long) getPostingsPreparationUtil().processPostingDetails(executingMap, isEODProcess, true,
 				dateAppDate, false, Long.MIN_VALUE).get(1);
 
 		//Finance Suspend Head

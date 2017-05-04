@@ -218,7 +218,7 @@ public class ProvisionCalculationUtil implements Serializable {
 				;
 				executingMap = amountCodes.getDeclaredFieldValues();
 
-				returnList = getPostingsPreparationUtil().processPostingDetails(executingMap, false, "Y", dateAppDate,
+				returnList = getPostingsPreparationUtil().processPostingDetails(executingMap, false, true, dateAppDate,
 						false, Long.MIN_VALUE);
 
 				isPostingsSuccess = (Boolean) returnList.get(0);

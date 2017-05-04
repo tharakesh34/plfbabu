@@ -162,7 +162,7 @@ public class DisbursementPostings implements Tasklet {
 				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
 				//Postings Process
-				List<Object> odObjDetails = getPostingsPreparationUtil().processPostingDetails(executingMap, true, "Y",
+				List<Object> odObjDetails = getPostingsPreparationUtil().processPostingDetails(executingMap, true, true,
 						dateAppDate, false, Long.MIN_VALUE);
 
 				if (odObjDetails != null && !odObjDetails.isEmpty()) {

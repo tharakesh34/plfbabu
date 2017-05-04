@@ -547,7 +547,7 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		Date dateAppDate = DateUtility.getAppDate();
 		List<Object> resultList = getPostingsPreparationUtil().processPostingDetailsWithFee(executingMap, isEODProcess,
-				"Y", dateAppDate, true, linkedTranId, null);
+				true, dateAppDate, true, linkedTranId, null);
 
 		logger.debug("Leaving");
 		return resultList;
@@ -854,7 +854,7 @@ public class RepaymentPostingsUtil implements Serializable {
 				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
 				// Reset AEAmount Code Details Bean and send for Accounting Execution.
-				getPostingsPreparationUtil().processPostingDetailsWithFee(executingMap, false, "Y", valueDate, true,
+				getPostingsPreparationUtil().processPostingDetailsWithFee(executingMap, false, true, valueDate, true,
 						linkedtranId, feeRuleDetailMap);
 
 			}

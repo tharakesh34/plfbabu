@@ -127,13 +127,12 @@ public class AccountEngineExecution implements Serializable {
 	 * Method for Execution of Accounting Sets depend on Event 
 	 * @param createNow
 	 * @param executingMap
-	 * @param isAccrualCal
 	 * @return
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 * @throws PFFInterfaceException 
 	 */
-	public List<ReturnDataSet> getAccEngineExecResults(String createNow, HashMap<String, Object> executingMap, boolean isAccrualCal)
+	public List<ReturnDataSet> getAccEngineExecResults(boolean isCreateNow, HashMap<String, Object> executingMap)
 			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -158,7 +157,7 @@ public class AccountEngineExecution implements Serializable {
 			transactionEntries = EODProperties.getTransactionEntryList(accountingSetId);
 		}
 
-		List<ReturnDataSet> returnList = getPrepareAccountingSetResults(new HashMap<String, Object>(), transactionEntries, createNow, false, executingMap);
+		List<ReturnDataSet> returnList = getPrepareAccountingSetResults(new HashMap<String, Object>(), transactionEntries, isCreateNow, false, executingMap);
 		
 		//Method for Checking for Reverse Calculations Based upon Negative Amounts
 		for (ReturnDataSet returnDataSet : returnList) {
@@ -200,19 +199,19 @@ public class AccountEngineExecution implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	public List<ReturnDataSet> getStageExecResults(String createNow, String roleCode, HashMap<String, Object> executingMap) 
+	public List<ReturnDataSet> getStageExecResults(boolean isCreateNow, String roleCode, HashMap<String, Object> executingMap) 
 					throws PFFInterfaceException, IllegalAccessException, InvocationTargetException{
 		logger.debug("Entering");
 
 		// Fill Amount Code Detail Object with FinanceMain Object
 		doFillExecutingMap(executingMap);
-		setAmountCodes(executingMap, false, false);
+		setAmountCodes(executingMap, false);
 
 		List<TransactionEntry> transactionEntries = getTransactionEntryDAO().getListTransactionEntryByRefType(
 				(String) executingMap.get("ft_finType"), (String) executingMap.get("moduleDefiner"),
 				FinanceConstants.PROCEDT_STAGEACC, roleCode, "_AEView", true);
 
-		List<ReturnDataSet> returnList = getPrepareAccountingSetResults(new HashMap<String, Object>(), transactionEntries, createNow, false, executingMap);
+		List<ReturnDataSet> returnList = getPrepareAccountingSetResults(new HashMap<String, Object>(), transactionEntries, isCreateNow, false, executingMap);
 
 		logger.debug("Leaving");
 
@@ -236,7 +235,7 @@ public class AccountEngineExecution implements Serializable {
 		
 		//Prepare AmountCode Details
 		
-		prepareAmountCodes(isWIF, false, executingMap);
+		prepareAmountCodes(isWIF, executingMap);
 		
 		//Execute entries depend on Finance Event
 		long accountingSetId;
@@ -321,7 +320,7 @@ public class AccountEngineExecution implements Serializable {
 		logger.debug("Entering");
 		
 		//Prepare AmountCode Details
-		prepareAmountCodes(isWIF, false, executingMap);
+		prepareAmountCodes(isWIF, executingMap);
 		
 		//Execute entries depend on Finance Event
 		long accountingSetId;
@@ -400,7 +399,7 @@ public class AccountEngineExecution implements Serializable {
 			InvocationTargetException, PFFInterfaceException {
 
 		doFillExecutingMap(executingMap);
-		setAmountCodes(executingMap, false, false);	
+		setAmountCodes(executingMap, false);	
 		BigDecimal provCalAmount = BigDecimal.ZERO;
 
 		String rule = getRuleDAO().getAmountRule("PROV", RuleConstants.MODULE_PROVSN, RuleConstants.EVENT_PROVSN);
@@ -420,7 +419,7 @@ public class AccountEngineExecution implements Serializable {
 	 * @throws PFFInterfaceException 
 	 */
 	public List<ReturnDataSet> getCommitmentExecResults(AECommitment aeCommitment, Commitment commitment, String acSetEvent, 
-			String createNow, HashMap<String, Object> executingMap) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException{
+			boolean isCreateNow, HashMap<String, Object> executingMap) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException{
 		
 		logger.debug("Entering");
 		
@@ -459,7 +458,7 @@ public class AccountEngineExecution implements Serializable {
 		
 		List<ReturnDataSet> returnDataSets = null;
 		if(transactionEntries != null && transactionEntries.size() > 0){
-			returnDataSets =  getPrepareAccountingSetResults(aeCommitmentMap, transactionEntries, createNow,true, executingMap);
+			returnDataSets =  getPrepareAccountingSetResults(aeCommitmentMap, transactionEntries, isCreateNow,true, executingMap);
 		}
 		
 		logger.debug("Leaving");
@@ -473,7 +472,7 @@ public class AccountEngineExecution implements Serializable {
 	 * @throws IllegalAccessException 
 	 * @throws PFFInterfaceException 
 	 */
-	public List<ReturnDataSet> getVasExecResults(String acSetEvent, String createNow, HashMap<String, Object> executingMap) 
+	public List<ReturnDataSet> getVasExecResults(String acSetEvent, boolean isCreateNow, HashMap<String, Object> executingMap) 
 			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException{
 		
 		logger.debug("Entering");
@@ -517,7 +516,7 @@ public class AccountEngineExecution implements Serializable {
 		List<ReturnDataSet> returnDataSets = null;
 		HashMap<String, Object> aeCommitmentMap = new HashMap<String, Object>();
 		if(transactionEntries != null && transactionEntries.size() > 0){
-			returnDataSets =  getPrepareAccountingSetResults(aeCommitmentMap, transactionEntries, createNow,true, executingMap);
+			returnDataSets =  getPrepareAccountingSetResults(aeCommitmentMap, transactionEntries, isCreateNow,true, executingMap);
 		}
 		
 		//Method for Checking for Reverse Calculations Based upon Negative Amounts
@@ -545,7 +544,7 @@ public class AccountEngineExecution implements Serializable {
 		return returnDataSets;
 	}
 	
-	public List<ReturnDataSet> processAccountingByEvent(HashMap<String, Object> executingMap,String createNow) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	public List<ReturnDataSet> processAccountingByEvent(HashMap<String, Object> executingMap,boolean isCreateNow) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
 	
 		String acSetEvent = (String) executingMap.get("ae_finEvent");
@@ -562,7 +561,7 @@ public class AccountEngineExecution implements Serializable {
 		List<ReturnDataSet> returnDataSets = null;
 
 		if(transactionEntries != null && transactionEntries.size() > 0){
-			returnDataSets =  getPrepareAccountingSetResults(new HashMap<String, Object>(), transactionEntries, createNow,true, executingMap);
+			returnDataSets =  getPrepareAccountingSetResults(new HashMap<String, Object>(), transactionEntries, isCreateNow,true, executingMap);
 		}
 		
 		
@@ -575,20 +574,19 @@ public class AccountEngineExecution implements Serializable {
 	/**
 	 * Method for Preparing List of FeeRule Objects 
 	 * @param isWIF
-	 * @param isAccrualCal
 	 * @param premiumDetail
 	 * @param executingMap
 	 * @return
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	private HashMap<String, Object> prepareAmountCodes(boolean isWIF, boolean isAccrualCal, HashMap<String, Object> executingMap) 
+	private HashMap<String, Object> prepareAmountCodes(boolean isWIF, HashMap<String, Object> executingMap) 
 			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		// Fill Amount Code Detail Object with FinanceMain Object
 		doFillExecutingMap(executingMap);
-		setAmountCodes(executingMap, isWIF, isAccrualCal);
+		setAmountCodes(executingMap, isWIF);
 
 		logger.debug("Leaving");
 
@@ -609,7 +607,7 @@ public class AccountEngineExecution implements Serializable {
 	 * @throws IllegalAccessException 
 	 */
 	private List<ReturnDataSet> getPrepareAccountingSetResults(HashMap<String, Object> aeCommitmentMap, List<TransactionEntry> transactionEntries,
-			String createNow,boolean isCommitment, HashMap<String, Object> executingMap) 
+			boolean isCreateNow,boolean isCommitment, HashMap<String, Object> executingMap) 
 					throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		logger.trace("FIN REFERENCE: " + (String)executingMap.get("fm_finReference"));
@@ -686,7 +684,7 @@ public class AccountEngineExecution implements Serializable {
 		//Set Account number generation
 		for (TransactionEntry transactionEntry : transactionEntries) {
 			
-			if("N".equals(createNow)){
+			if(!isCreateNow){
 				IAccounts account = getAccountNumber(transactionEntry,isCommitment,false, accountsMap, 
 						accountCcyMap, sysIntAccMap, ruleResultMap, executingMap);
 				if(account != null){
@@ -764,7 +762,7 @@ public class AccountEngineExecution implements Serializable {
 			String ref = finReference + "/" + finEvent + "/" + transactionEntry.getTransOrder();
 			returnDataSet.setPostingId(ref);
 			returnDataSet.setFinPurpose(finPurpose);
-			if("N".equals(createNow)){
+			if(!isCreateNow){
 				returnDataSet.setAccountType(transactionEntry.getAccount());
 			}
 
@@ -795,7 +793,7 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSet.setErrorMsg(acc.getErrorMsg());
 
 			//Regarding to Posting Data
-			if(!"N".equals(createNow)){
+			if(isCreateNow){
 				returnDataSet.setAccountType(acc.getAcType());
 				
 				String finType = "";
@@ -838,7 +836,7 @@ public class AccountEngineExecution implements Serializable {
 			
 			BigDecimal postAmount = null;
 			List<ReturnDataSet> newEntries = null;
-			if("N".equals(createNow)){
+			if(!isCreateNow){
 				if(!StringUtils.equals(finCcy, acc.getAcCcy())){
 					postAmount = returnDataSet.getPostAmount();
 					returnDataSet.setPostAmount(CalculationUtil.getConvertedAmount(finCcy, acc.getAcCcy(), postAmount));
@@ -1058,7 +1056,7 @@ public class AccountEngineExecution implements Serializable {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	private IAccounts getAccountNumber(TransactionEntry transactionEntry, boolean isCommitment,boolean createNow,
+	private IAccounts getAccountNumber(TransactionEntry transactionEntry, boolean isCommitment,boolean isCreateNow,
 			Map<String, Object> accountsMap, Map<String, String> accountCcyMap, Map<String, String> sysIntAccMap,
 			Map<String, String> ruleResultMap, HashMap<String, Object> executingMap) throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
@@ -1082,7 +1080,7 @@ public class AccountEngineExecution implements Serializable {
 			newAccount.setFlagCreateIfNF(false);
 			newAccount.setAccountId((String)executingMap.get("fm_disbAccountId"));
 			
-			if(!createNow){
+			if(!isCreateNow){
 				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+transactionEntry.getTransOrder());
 			}else{
 				accountsMap.put(tranOrder,transactionEntry.getAccount());
@@ -1126,7 +1124,7 @@ public class AccountEngineExecution implements Serializable {
 				}
 			}
 			
-			if(!createNow){
+			if(!isCreateNow){
 				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+transactionEntry.getTransOrder());
 			}else{
 				accountsMap.put(tranOrder,transactionEntry.getAccount());
@@ -1149,7 +1147,7 @@ public class AccountEngineExecution implements Serializable {
 			newAccount.setFlagCreateIfNF(false);
 			newAccount.setAccountId(((String)executingMap.get("fm_downPayAccount")));
 			
-			if(!createNow){
+			if(!isCreateNow){
 				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+transactionEntry.getTransOrder());
 			}else{
 				accountsMap.put(tranOrder,transactionEntry.getAccount());
@@ -1171,7 +1169,7 @@ public class AccountEngineExecution implements Serializable {
 			newAccount.setFlagCreateIfNF(false);
 			newAccount.setAccountId((String)executingMap.get("fm_finCancelAct"));
 
-			if(!createNow){
+			if(!isCreateNow){
 				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+transactionEntry.getTransOrder());
 			}else{
 				accountsMap.put(tranOrder,transactionEntry.getAccount());
@@ -1193,7 +1191,7 @@ public class AccountEngineExecution implements Serializable {
 			newAccount.setFlagCreateIfNF(false);
 			newAccount.setAccountId((String)executingMap.get("fm_finWriteoffAc"));
 
-			if(!createNow){
+			if(!isCreateNow){
 				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+transactionEntry.getTransOrder());
 			}else{
 				accountsMap.put(tranOrder,transactionEntry.getAccount());
@@ -1215,7 +1213,7 @@ public class AccountEngineExecution implements Serializable {
 			newAccount.setFlagCreateIfNF(false);
 			newAccount.setAccountId((String)executingMap.get("fm_feeAccountId"));
 
-			if(!createNow){
+			if(!isCreateNow){
 				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+transactionEntry.getTransOrder());
 			}else{
 				accountsMap.put(tranOrder,transactionEntry.getAccount());
@@ -1239,7 +1237,7 @@ public class AccountEngineExecution implements Serializable {
 			newAccount.setFlagCreateIfNF(false);
 			newAccount.setAccountId(dataSet.getFinWriteoffPayAc());
 
-			if(!createNow){
+			if(!isCreateNow){
 				accountsMap.put(tranOrder, transactionEntry.getAccount()+"-"+transactionEntry.getTransOrder());
 			}else{
 				accountsMap.put(tranOrder,transactionEntry.getAccount());
@@ -1263,7 +1261,7 @@ public class AccountEngineExecution implements Serializable {
 			newAccount.setAccountId(generateAccount(transactionEntry.getAccountType(), false, transactionEntry.getAccountSubHeadRule(), 
 					transactionEntry.getDebitcredit(), sysIntAccMap, ruleResultMap, executingMap));
 			
-			if(!createNow){
+			if(!isCreateNow){
 				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+transactionEntry.getTransOrder());
 			}else{
 				accountsMap.put(tranOrder,transactionEntry.getAccount()+transactionEntry.getAccountType());
@@ -1286,7 +1284,7 @@ public class AccountEngineExecution implements Serializable {
 				}
 			}
 
-			if(!createNow){
+			if(!isCreateNow){
 				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+transactionEntry.getTransOrder());
 			}else{
 				accountsMap.put(tranOrder,transactionEntry.getAccount());
@@ -1301,7 +1299,7 @@ public class AccountEngineExecution implements Serializable {
 
 			newAccount.setAcType((String)executingMap.get("ft_pftPayAcType"));
 
-			if (!createNow) {
+			if (!isCreateNow) {
 				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+transactionEntry.getTransOrder());
 			} else {
 				accountsMap.put(tranOrder, transactionEntry.getAccount());
@@ -1316,7 +1314,7 @@ public class AccountEngineExecution implements Serializable {
 
 			newAccount.setAcType((String)executingMap.get("ft_finSuspAcType"));
 
-			if (!createNow) {
+			if (!isCreateNow) {
 				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+transactionEntry.getTransOrder());
 			} else {
 				accountsMap.put(tranOrder, transactionEntry.getAccount());
@@ -1331,7 +1329,7 @@ public class AccountEngineExecution implements Serializable {
 
 			newAccount.setAcType((String)executingMap.get("ft_finProvisionAcType"));
 
-			if (!createNow) {
+			if (!isCreateNow) {
 				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+transactionEntry.getTransOrder());
 			} else {
 				accountsMap.put(tranOrder, transactionEntry.getAccount());
@@ -1347,7 +1345,7 @@ public class AccountEngineExecution implements Serializable {
 			newAccount.setAcType(transactionEntry.getAccountType());
 			newAccount.setFlagCreateNew(transactionEntry.isOpenNewFinAc());
 
-			if(!createNow){
+			if(!isCreateNow){
 				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+transactionEntry.getTransOrder());
 			}else{
 				accountsMap.put(tranOrder,transactionEntry.getAccount()+transactionEntry.getAccountType());
@@ -1374,7 +1372,7 @@ public class AccountEngineExecution implements Serializable {
 				newAccount.setAccountId(StringUtils.trimToEmpty(dataSet.getCmtAccount()));
 			}
 
-			if(!createNow){
+			if(!isCreateNow){
 				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+transactionEntry.getTransOrder());
 			}else{
 				accountsMap.put(tranOrder,transactionEntry.getAccount()+transactionEntry.getAccountType());
@@ -1400,7 +1398,7 @@ public class AccountEngineExecution implements Serializable {
 				newAccount.setAccountId(generateAccount(transactionEntry.getAccountType(), true, transactionEntry.getAccountSubHeadRule(), 
 					transactionEntry.getDebitcredit(), sysIntAccMap, ruleResultMap, executingMap));
 			}
-			if(!createNow){
+			if(!isCreateNow){
 				accountsMap.put(tranOrder, transactionEntry.getAccount() +"-"+transactionEntry.getTransOrder());
 			}else{
 				accountsMap.put(tranOrder,transactionEntry.getAccount()+transactionEntry.getAccountType());
@@ -1523,7 +1521,7 @@ public class AccountEngineExecution implements Serializable {
 	 * @param amountCode
 	 * @return
 	 */
-	private void setAmountCodes(HashMap<String, Object> executingMap, boolean isWIF, boolean isAccrualCal){
+	private void setAmountCodes(HashMap<String, Object> executingMap, boolean isWIF){
 		logger.debug("Entering");
 
 		boolean finOverDueInPast = false;
@@ -1535,7 +1533,7 @@ public class AccountEngineExecution implements Serializable {
 		BigDecimal actualTotalSchdProfit = BigDecimal.ZERO;
 		BigDecimal actualTotalCpzProfit = BigDecimal.ZERO;
 
-		if(!isAccrualCal && !(boolean)executingMap.get("ae_newRecord") && !isWIF){
+		if(!(boolean)executingMap.get("ae_newRecord") && !isWIF){
 			List<BigDecimal> list= getFinanceMainDAO().getActualPftBal((String)executingMap.get("fm_finReference"),"");
 			actualTotalSchdProfit = list.get(0);
 			actualTotalCpzProfit = list.get(1);

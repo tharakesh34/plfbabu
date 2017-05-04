@@ -273,7 +273,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 			;
 
-			List<Object> returnList = getPostingsPreparationUtil().processPostingDetails(executingMap, false, "Y",
+			List<Object> returnList = getPostingsPreparationUtil().processPostingDetails(executingMap, false, true,
 					curBDay, false, Long.MIN_VALUE);
 
 			if (!(Boolean) returnList.get(0)) {

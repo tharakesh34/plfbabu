@@ -1921,7 +1921,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		executingMap.putAll(feeRuleMap);
 		getFinanceDetail().getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
 
-		returnSetEntries = getEngineExecution().getAccEngineExecResults("N", executingMap, false);
+		returnSetEntries = getEngineExecution().getAccEngineExecResults(false, executingMap);
 
 		if (getAccountingDetailDialogCtrl() != null) {
 			getAccountingDetailDialogCtrl().doFillAccounting(returnSetEntries);

@@ -93,7 +93,7 @@ public class DisbursementPostings {
 				} else {
 					//Prepare posting for  new added 
 					List<ReturnDataSet> datasetList = new ArrayList<>();
-					datasetList = engineExecution.getAccEngineExecResults("N", executingMap, false);
+					datasetList = engineExecution.getAccEngineExecResults(false, executingMap);
 					disbMap.put(finAdvancePayments.getPaymentId(), datasetList);
 
 				}

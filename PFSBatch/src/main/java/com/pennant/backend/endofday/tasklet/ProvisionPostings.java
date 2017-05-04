@@ -161,7 +161,7 @@ public class ProvisionPostings implements Tasklet {
 
 					//Provision Posting Process
 					List<Object> odObjDetails = getPostingsPreparationUtil().processPostingDetails(executingMap, true,
-							"Y", dateAppDate, false, Long.MIN_VALUE);
+							true, dateAppDate, false, Long.MIN_VALUE);
 
 					if (odObjDetails != null && !odObjDetails.isEmpty()) {
 						if ((Boolean) odObjDetails.get(0)) {

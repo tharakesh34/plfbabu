@@ -3196,7 +3196,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues(); 
 				getFinanceType().getDeclaredFieldValues(executingMap);
 				finMain.getDeclaredFieldValues(executingMap);
-				returnSetEntries.addAll(getEngineExecution().getAccEngineExecResults("N", executingMap, false));
+				returnSetEntries.addAll(getEngineExecution().getAccEngineExecResults(false, executingMap));
 			}
 		}
 
@@ -3216,7 +3216,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							amountCodes.getRpPri()));
 
 					List<ReturnDataSet> cmtEntries = getEngineExecution().getCommitmentExecResults(aeCommitment, commitment,
-							AccountEventConstants.ACCEVENT_CMTRPY, "N", null);
+							AccountEventConstants.ACCEVENT_CMTRPY, false, null);
 					getAccountingDetailDialogCtrl().doFillCmtAccounting(cmtEntries, format);
 					getAccountingDetailDialogCtrl().getFinanceDetail().getReturnDataSetList().addAll(cmtEntries); 
 				} 

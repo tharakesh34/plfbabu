@@ -121,7 +121,7 @@ abstract public class ServiceHelper implements Serializable {
 			//String product = "";
 
 			financeType.getDeclaredFieldValues(executingMap);
-			list = getEngineExecution().getAccEngineExecResults("Y", executingMap, false);
+			list = getEngineExecution().getAccEngineExecResults(true, executingMap);
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;
@@ -133,7 +133,7 @@ abstract public class ServiceHelper implements Serializable {
 
 	public List<ReturnDataSet> processAccountingByEvent(HashMap<String, Object> executingMap) throws Exception {
 		try {
-			return getEngineExecution().processAccountingByEvent(executingMap, "Y");
+			return getEngineExecution().processAccountingByEvent(executingMap, true);
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;

@@ -16,8 +16,9 @@ public interface PostingsInterfaceService {
 	 * @throws AccountNotFoundException
 	 */
 	List<ReturnDataSet> doFillPostingDetails(List<ReturnDataSet> setDetails,String finBranch,
-			long linkTransId, String createNow) throws PFFInterfaceException;
+			long linkTransId, boolean isCreateNow) throws PFFInterfaceException;
 
 	List<ReturnDataSet> doAccrualPosting(List<ReturnDataSet> list, Date valueDate,
-            String postBranch, long linkedTranId, String createNow, String isDummy) throws PFFInterfaceException; 
+            String postBranch, long linkedTranId, boolean isCreateNow, String isDummy) throws PFFInterfaceException;
+
 }

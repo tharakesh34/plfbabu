@@ -148,7 +148,7 @@ public class CapitalizationPostings implements Tasklet {
 				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
 				//Postings Process
-				getPostingsPreparationUtil().processPostingDetails(executingMap, true, "Y", dateAppDate, false,
+				getPostingsPreparationUtil().processPostingDetails(executingMap, true, true, dateAppDate, false,
 						Long.MIN_VALUE);
 
 				//Update Finance Profit Details

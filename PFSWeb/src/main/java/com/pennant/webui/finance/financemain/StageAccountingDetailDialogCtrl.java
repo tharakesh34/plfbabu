@@ -394,7 +394,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 		getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
 
 		List<ReturnDataSet> accountingSetEntries = getEngineExecution()
-				.getStageExecResults("N", roleCode, executingMap);
+				.getStageExecResults(false, roleCode, executingMap);
 
 		getFinanceDetail().setStageAccountingList(accountingSetEntries);
 		dofillStageAccountingSetbox(accountingSetEntries);

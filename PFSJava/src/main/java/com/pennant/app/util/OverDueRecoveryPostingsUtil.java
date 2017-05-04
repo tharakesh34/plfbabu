@@ -141,7 +141,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				financeMain.getDeclaredFieldValues(executingMap);
 				Date dateAppDate = DateUtility.getAppDate();
 				List<Object> resultList = getPostingsPreparationUtil().processPostingDetails(executingMap,
-						isEODProcess, "Y", dateAppDate, false, linkedTranId);
+						isEODProcess, true, dateAppDate, false, linkedTranId);
 
 				isPostingSuccess = (Boolean) resultList.get(0);
 				linkedTranId = (Long) resultList.get(1);
@@ -779,7 +779,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				// Accounting Set Execution to get Posting Details List
 				Date dateAppDate = DateUtility.getAppDate();
 				List<Object> resultList = getPostingsPreparationUtil().processPostingDetails(executingMap,
-						isEODProcess, "Y", dateAppDate, false, linkedTranId);
+						isEODProcess, true, dateAppDate, false, linkedTranId);
 
 				isPostingSuccess = (Boolean) resultList.get(0);
 				linkedTranId = (Long) resultList.get(1);

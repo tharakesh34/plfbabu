@@ -1451,7 +1451,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		getFinanceDetail().getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
 
 		if (!getFinanceDetail().getFinScheduleData().getFinanceType().isAllowRIAInvestment()) {
-			returnSetEntries = getEngineExecution().getAccEngineExecResults("N", executingMap, false);
+			returnSetEntries = getEngineExecution().getAccEngineExecResults(false, executingMap);
 		} else {
 			//FIXME : DataSet Removal to be worked on if it requires in future
 		}

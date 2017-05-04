@@ -280,7 +280,7 @@ public class ExtFinanceUploadService {
 
 		// Building Account Entry Details
 		try {
-			return getEngineExecution().getAccEngineExecResults("N", executingMap, false);
+			return getEngineExecution().getAccEngineExecResults(false, executingMap);
 		} catch (Exception e) {
 			logger.debug(e);
 		}

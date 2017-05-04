@@ -1290,7 +1290,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			executingMap.putAll(map);
 			getFinanceDetail().getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
 
-			returnSetEntries = getEngineExecution().getAccEngineExecResults("N", executingMap, false);
+			returnSetEntries = getEngineExecution().getAccEngineExecResults(false, executingMap);
 			accountingSetEntries.addAll(returnSetEntries);
 			getFinanceDetail().setReturnDataSetList(accountingSetEntries);
 			if (getAccountingDetailDialogCtrl() != null) {

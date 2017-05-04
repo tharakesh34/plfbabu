@@ -1598,7 +1598,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			getFinanceDetail().getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
 			executingMap.putAll(map);
 
-			returnSetEntries = getEngineExecution().getAccEngineExecResults("N", executingMap, false);
+			returnSetEntries = getEngineExecution().getAccEngineExecResults(false, executingMap);
 			accountingSetEntries.addAll(returnSetEntries);
 			getFinanceDetail().setReturnDataSetList(accountingSetEntries);
 			if (getAccountingDetailDialogCtrl() != null) {

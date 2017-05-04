@@ -128,7 +128,7 @@ public class AutoHuntingProcess extends QuartzJobBean implements StatefulJob, Se
 
 		List<ReturnDataSet> list = getServiceUtil().processAutoHunting(date,scheduleDetail, amoutPaid);
 		if (!list.isEmpty()) {
-			getPostingsInterfaceService().doFillPostingDetails(list, list.get(0).getFinBranch(), Long.MIN_VALUE, "Y");
+			getPostingsInterfaceService().doFillPostingDetails(list, list.get(0).getFinBranch(), Long.MIN_VALUE, true);
 		}
 		// send the past due cleared details to DDS
 		getDdaRepresentmentService().doDDARepresentment(scheduleDetail.getSchDate(), scheduleDetail.getFinReference());

@@ -2221,7 +2221,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		executingMap.putAll(feeRuleMap);
 		getFinanceType().getDeclaredFieldValues(executingMap);
 
-		returnSetEntries = getEngineExecution().getAccEngineExecResults("N", executingMap, false);
+		returnSetEntries = getEngineExecution().getAccEngineExecResults(false, executingMap);
 
 		if (getAccountingDetailDialogCtrl() != null) {
 			getAccountingDetailDialogCtrl().doFillAccounting(returnSetEntries);

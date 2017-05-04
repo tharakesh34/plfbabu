@@ -11263,7 +11263,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		HashMap<String, Object> executingMap = prepareAccountingData(onLoadProcess);
 
 		prepareFeeRulesMap(executingMap);
-		accountingSetEntries.addAll(getEngineExecution().getAccEngineExecResults("N", executingMap, false));
+		accountingSetEntries.addAll(getEngineExecution().getAccEngineExecResults(false, executingMap));
 
 		//Disb Instruction Posting
 		if (eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBS)
@@ -11384,7 +11384,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				finMain.getDeclaredFieldValues(executingMap);
 
 				// Call Map Build Method
-				accountingSetEntries.addAll(getEngineExecution().getAccEngineExecResults("N", executingMap, false));
+				accountingSetEntries.addAll(getEngineExecution().getAccEngineExecResults(false, executingMap));
 
 			}
 		}

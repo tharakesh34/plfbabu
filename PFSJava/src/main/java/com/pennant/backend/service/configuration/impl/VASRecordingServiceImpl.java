@@ -1456,7 +1456,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			if(vASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
 				HashMap<String, Object> executingMap = new HashMap<String, Object>();
 				vASRecording.getDeclaredFieldValues(executingMap);
-				list = getEngineExecution().getVasExecResults(AccountEventConstants.ACCEVENT_VAS_FEE, "N", executingMap);
+				list = getEngineExecution().getVasExecResults(AccountEventConstants.ACCEVENT_VAS_FEE, false, executingMap);
 			}else if(StringUtils.equals("C", vASRecording.getVasStatus())){
 				list = getPostingsDAO().getPostingsByPostref(vASRecording.getVasReference(), AccountEventConstants.ACCEVENT_VAS_FEE);
 				for(ReturnDataSet returnDataSet:list){
@@ -1524,7 +1524,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			}
 
 			//Core Banking Posting Process call
-			list = getPostingsInterfaceService().doFillPostingDetails(list, finBranch, linkedTranId, "Y");
+			list = getPostingsInterfaceService().doFillPostingDetails(list, finBranch, linkedTranId, true);
 
 			if (list != null && list.size() > 0) {
 				ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();

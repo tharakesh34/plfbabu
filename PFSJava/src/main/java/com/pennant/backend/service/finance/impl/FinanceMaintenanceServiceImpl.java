@@ -771,7 +771,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		financeDetail.getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
 		financeMain.getDeclaredFieldValues(executingMap);
 
-		List<Object> returnList = getPostingsPreparationUtil().processPostingDetails(executingMap, false, "Y", curBDay,
+		List<Object> returnList = getPostingsPreparationUtil().processPostingDetails(executingMap, false, true, curBDay,
 				false, Long.MIN_VALUE);
 
 		if (!(Boolean) returnList.get(0)) {

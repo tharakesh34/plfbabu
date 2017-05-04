@@ -108,7 +108,7 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 */
 	public List<Object> processPostingDetails(HashMap<String, Object> executingMap, boolean isEODProcess,
-			String isCreateNewAccount, Date dateAppDate, boolean allowCmtPostings, long linkedTranId)
+			boolean isCreateNewAccount, Date dateAppDate, boolean allowCmtPostings, long linkedTranId)
 			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 
 		return processPostings(executingMap, isEODProcess, isCreateNewAccount, dateAppDate, allowCmtPostings,
@@ -132,7 +132,7 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 */
 	public List<Object> processPostingDetailsWithFee(HashMap<String, Object> executingMap, boolean isEODProcess,
-			String isCreateNewAccount, Date dateAppDate, boolean allowCmtPostings, long linkedTranId,
+			boolean isCreateNewAccount, Date dateAppDate, boolean allowCmtPostings, long linkedTranId,
 			Map<String, FeeRule> feeChargeMap) throws PFFInterfaceException, IllegalAccessException,
 			InvocationTargetException {
 
@@ -154,7 +154,7 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 *             List<Object>
 	 */
-	public List<Object> processCmtPostingDetails(Commitment commitment, String isCreateNow, Date dateAppDate,
+	public List<Object> processCmtPostingDetails(Commitment commitment, boolean isCreateNow, Date dateAppDate,
 			String acSetEvent) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 
 		return procCmtPostingDetails(commitment, isCreateNow, dateAppDate, acSetEvent);
@@ -166,16 +166,16 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @param list
 	 * @param postBranch
 	 * @param dateAppDate
-	 * @param createNow
+	 * @param isCreateNow
 	 * @param isEODProcess
 	 * @param object
 	 * @return List<Object>
 	 * @throws PFFInterfaceException
 	 */
-	public List<Object> postingAccruals(List<ReturnDataSet> list, String postBranch, Date valueDate, String createNow,
+	public List<Object> postingAccruals(List<ReturnDataSet> list, String postBranch, Date valueDate, boolean isCreateNow,
 			boolean isEODProcess, String isDummy, long linkedTranId) throws Exception {
 
-		return procAccrualPostings(list, postBranch, valueDate, createNow, isEODProcess, isDummy, linkedTranId);
+		return procAccrualPostings(list, postBranch, valueDate, isCreateNow, isEODProcess, isDummy, linkedTranId);
 	}
 
 	/**
@@ -196,7 +196,7 @@ public class PostingsPreparationUtil implements Serializable {
 	public List<Object> processDepreciatePostings(HashMap<String, Object> executingMap, Date dateAppDate,
 			long linkedTranId) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 
-		return processPostings(executingMap, true, "Y", dateAppDate, false, linkedTranId, null, true);
+		return processPostings(executingMap, true, true, dateAppDate, false, linkedTranId, null, true);
 	}
 
 	/**
@@ -236,7 +236,7 @@ public class PostingsPreparationUtil implements Serializable {
 	}
 
 	public List<ReturnDataSet> prepareAccountingDataSet(PayOrderIssueHeader inventory, String acSetEvent,
-			String createNow) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+			boolean isCreateNow) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		HashMap<String, Object> executingMap = new HashMap<String, Object>();
 
 		executingMap.put("PostDate", DateUtility.getSysDate());
@@ -251,7 +251,7 @@ public class PostingsPreparationUtil implements Serializable {
 		executingMap.put("UNSOLDFEE", BigDecimal.ZERO);
 		executingMap.put("finEvent", acSetEvent);
 
-		return getEngineExecution().processAccountingByEvent(executingMap, createNow);
+		return getEngineExecution().processAccountingByEvent(executingMap, isCreateNow);
 	}
 
 	// ******************************************************//
@@ -268,7 +268,7 @@ public class PostingsPreparationUtil implements Serializable {
 		long linkedTranId = getPostingsDAO().getLinkedTransId();
 
 		returnDataSetList = getPostingsInterfaceService().doFillPostingDetails(returnDataSetList,
-				returnDataSetList.get(0).getFinBranch(), linkedTranId, PennantConstants.NO);
+				returnDataSetList.get(0).getFinBranch(), linkedTranId, false);
 
 		for (int k = 0; k < returnDataSetList.size(); k++) {
 			ReturnDataSet set = returnDataSetList.get(k);
@@ -294,7 +294,7 @@ public class PostingsPreparationUtil implements Serializable {
 	}
 
 	private List<Object> processPostings(HashMap<String, Object> executingMap, boolean isEODProcess,
-			String isCreateNewAccount, Date dateAppDate, boolean allowCmtPostings, long linkedTranId,
+			boolean isCreateNewAccount, Date dateAppDate, boolean allowCmtPostings, long linkedTranId,
 			Map<String, FeeRule> feeChargeMap, boolean isDepreciation) throws PFFInterfaceException,
 			IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
@@ -318,7 +318,7 @@ public class PostingsPreparationUtil implements Serializable {
 		}
 		financeType.getDeclaredFieldValues(executingMap);
 
-		list = getEngineExecution().getAccEngineExecResults("Y", executingMap, false);
+		list = getEngineExecution().getAccEngineExecResults(true, executingMap);
 
 		// Finance Commitment Reference Posting Details
 		Commitment commitment = null;
@@ -348,7 +348,7 @@ public class PostingsPreparationUtil implements Serializable {
 						commitment.getCmtCcy(), ((BigDecimal) executingMap.get("ae_rpPri"))));
 
 				List<ReturnDataSet> cmtList = getEngineExecution().getCommitmentExecResults(aeCommitment, commitment,
-						AccountEventConstants.ACCEVENT_CMTRPY, "Y", executingMap);
+						AccountEventConstants.ACCEVENT_CMTRPY, true, executingMap);
 				list.addAll(cmtList);
 
 				if (cmtList != null && cmtList.size() > 0) {
@@ -389,7 +389,7 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 *             List<Object>
 	 */
-	private List<Object> procCmtPostingDetails(Commitment commitment, String isCreateNow, Date dateAppDate,
+	private List<Object> procCmtPostingDetails(Commitment commitment, boolean isCreateNow, Date dateAppDate,
 			String acSetEvent) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -480,7 +480,7 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @param list
 	 * @param branch
 	 * @param dateAppDate
-	 * @param createNow
+	 * @param isCreateNow
 	 * @param isEODProcess
 	 * @param isProvPostings
 	 * @param object
@@ -488,7 +488,7 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws PFFInterfaceException
 	 */
 	private List<Object> postingsExecProcess(List<ReturnDataSet> list, String branch, Date dateAppDate,
-			String createNow, boolean isEODProcess, boolean isCmtPostings, long linkedTranId, BigDecimal totalRpyAmt,
+			boolean isCreateNow, boolean isEODProcess, boolean isCmtPostings, long linkedTranId, BigDecimal totalRpyAmt,
 			String finAcType, boolean isDepreciation) throws PFFInterfaceException {
 		logger.debug("Entering");
 
@@ -535,10 +535,10 @@ public class PostingsPreparationUtil implements Serializable {
 			}
 
 			if (!isDepreciation) {
-				list = getPostingsInterfaceService().doFillPostingDetails(list, branch, linkedTranId, createNow);
+				list = getPostingsInterfaceService().doFillPostingDetails(list, branch, linkedTranId, isCreateNow);
 			} else {
 				list = getPostingsInterfaceService().doAccrualPosting(list, dateAppDate, branch, linkedTranId,
-						createNow, "N");
+						isCreateNow, "N");
 			}
 		}
 
@@ -610,14 +610,14 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @param list
 	 * @param postBranch
 	 * @param dateAppDate
-	 * @param createNow
+	 * @param isCreateNow
 	 * @param isEODProcess
 	 * @param object
 	 * @return List<Object>
 	 * @throws PFFInterfaceException
 	 */
 	private List<Object> procAccrualPostings(List<ReturnDataSet> list, String postBranch, Date valueDate,
-			String createNow, boolean isEODProcess, String isDummy, long linkedTranId) throws Exception {
+			boolean isCreateNow, boolean isEODProcess, String isDummy, long linkedTranId) throws Exception {
 		logger.debug("Entering");
 
 		//Method for Checking for Reverse Calculations Based upon Negative Amounts
@@ -655,7 +655,7 @@ public class PostingsPreparationUtil implements Serializable {
 				linkedTranId = list.get(0).getLinkedTranId();
 			}
 
-			list = getPostingsInterfaceService().doAccrualPosting(list, valueDate, postBranch, linkedTranId, createNow,
+			list = getPostingsInterfaceService().doAccrualPosting(list, valueDate, postBranch, linkedTranId, isCreateNow,
 					isDummy);
 
 			for (int k = 0; k < list.size(); k++) {
@@ -954,7 +954,7 @@ public class PostingsPreparationUtil implements Serializable {
 			list.add(returnDataSet);
 		}
 		list = getPostingsInterfaceService().doFillPostingDetails(list, jVPosting.getBranch(), linkedTranId,
-				PennantConstants.NO);
+				false);
 		logger.debug("Leaving");
 		return list;
 	}

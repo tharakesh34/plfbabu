@@ -883,10 +883,10 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				Commitment tempCommitment = new Commitment();
 				BeanUtils.copyProperties(commitment, tempCommitment);
 				tempCommitment.setCmtAmount(diffAmount);
-				returnResultList = getPostingsPreparationUtil().processCmtPostingDetails(tempCommitment, "Y", dateAppDate, event);
+				returnResultList = getPostingsPreparationUtil().processCmtPostingDetails(tempCommitment, true, dateAppDate, event);
 				getLimitManagement().processCommitmentLimit(tempCommitment, false, LimitConstants.BLOCK);
 			} else {
-				returnResultList = getPostingsPreparationUtil().processCmtPostingDetails(commitment, "Y", dateAppDate, event);
+				returnResultList = getPostingsPreparationUtil().processCmtPostingDetails(commitment, true, dateAppDate, event);
 				getLimitManagement().processCommitmentLimit(commitment, false, LimitConstants.BLOCK);
 			}
 
