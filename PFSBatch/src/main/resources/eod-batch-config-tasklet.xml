@@ -8,7 +8,6 @@
 
 	<bean id="beforeEODTaskLet" class="com.pennant.backend.endofday.tasklet.BeforeEOD">
 		<property name="eodProperties" ref="eodProperties" />
-		<property name="repayQueueService" ref="repayQueueService" />
 		<property name="dateService" ref="dateService" />
 	</bean>
 
@@ -44,7 +43,6 @@
 		<property name="dateService" ref="dateService" />
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 		<property name="eodProperties" ref="eodProperties" />
-		<property name="repayQueueService" ref="repayQueueService" />
 	</bean>
 
 	<bean id="snapShotPreparationTaskLet" class="com.pennant.backend.endofday.tasklet.SnapShotPreparation">

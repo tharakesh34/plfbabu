@@ -57,7 +57,6 @@ import org.springframework.batch.core.job.flow.JobExecutionDecider;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.core.DateService;
-import com.pennant.app.core.RepayQueueService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -73,7 +72,6 @@ public class CompleteEOD implements JobExecutionDecider {
 
 	private CustomerQueuingDAO	customerQueuingDAO;
 	private EODProperties		eodProperties;
-	private RepayQueueService	repayQueueService;
 
 	public CompleteEOD() {
 
@@ -95,7 +93,6 @@ public class CompleteEOD implements JobExecutionDecider {
 		boolean processed = dateService.doUpdateAftereod(true);
 		if (processed) {
 			//clear the data which is loaded in before  end of day
-			repayQueueService.clearFinanceRepayPriority();
 			eodProperties.destroy();
 			logger.debug("COMPLETE: Complete EOD On :" + valueDate);
 			return FlowExecutionStatus.COMPLETED;
@@ -143,8 +140,5 @@ public class CompleteEOD implements JobExecutionDecider {
 		this.eodProperties = eodProperties;
 	}
 
-	public void setRepayQueueService(RepayQueueService repayQueueService) {
-		this.repayQueueService = repayQueueService;
-	}
 
 }

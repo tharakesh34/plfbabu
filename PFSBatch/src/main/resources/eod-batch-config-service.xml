@@ -6,14 +6,6 @@
 	<bean id="CurrencyUtil" class="com.pennant.app.util.CurrencyUtil" init-method="init" lazy-init="false">
 		<property name="currencyDAO" ref="currencyDAO" />
 	</bean>
-	<!-- Service Utility -->
-	<bean id="serviceUtil" class="com.pennant.app.core.ServiceUtil">
-		<property name="repaymentService" ref="repaymentService" />
-		<property name="latePaymentService" ref="latePaymentService" />
-		<property name="suspenseService" ref="coreSuspenseService" />
-		<property name="statusService" ref="statusService" />
-		<property name="paymentRecoveryService" ref="paymentRecoveryService" />
-	</bean>
 	<!-- payment Helper -->
 	<bean id="serviceHelper" class="com.pennant.app.core.ServiceHelper" abstract="true">
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
@@ -40,19 +32,6 @@
 	</bean>
 	<bean id="paymentRecoveryDetailDAO" class="com.pennant.eod.dao.impl.PaymentRecoveryDetailDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-	<!-- Repayments -->
-	<bean id="repaymentService" class="com.pennant.app.core.RepaymentService" parent="serviceHelper">
-		<property name="finRepayQueueDAO" ref="finRepayQueueDAO" />
-		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
-		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
-		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
-	</bean>
-	<!-- Over Due TO be removed after the work new classes completed -->
-	<bean id="latePaymentService" class="com.pennant.app.core.LatePaymentService" parent="serviceHelper">
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
-		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
-		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
 	</bean>
 
 	<!-- Late Pay Marking -->
@@ -120,12 +99,6 @@
 	<!-- Date rollover -->
 	<bean id="dateRollOverService" class="com.pennant.app.core.DateRollOverService" parent="serviceHelper">
 	</bean>
-	<!-- Repay queue service Service -->
-	<bean id="repayQueueService" class="com.pennant.app.core.RepayQueueService">
-		<property name="latePaymentService" ref="latePaymentService" />
-		<property name="finRepayQueueDAO" ref="finRepayQueueDAO" />
-		<property name="financeRepayPriorityDAO" ref="financeRepayPriorityDAO" />
-	</bean>
 
 	<bean id="installmentDueService" class="com.pennant.app.core.InstallmentDueService" parent="serviceHelper">
 	</bean>
@@ -155,15 +128,6 @@
 	<bean id="eodDetailDAO" class="com.pennant.eod.dao.impl.EodDetailDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	<bean name="eodTrigger" class="com.pennant.app.job.process.EodTrigger">
-		<property name="eod" ref="eod" />
-		<property name="eodDetailDAO" ref="eodDetailDAO" />
-	</bean>
-	<bean name="eod" class="com.pennant.eod.Eod">
-		<property name="preEodService" ref="preEodService" />
-		<property name="postEodService" ref="postEodService" />
-		<property name="customerQueuingService" ref="customerQueuingService" />
-	</bean>
 	<bean name="eodThread" class="com.pennant.eod.EodThread" scope="prototype">
 		<property name="eodService" ref="eodService" />
 	</bean>
@@ -173,7 +137,6 @@
 		<property name="accrualService" ref="accrualService" />
 		<property name="rateReviewService" ref="rateReviewService" />
 		<property name="customerQueuingService" ref="customerQueuingService" />
-		<property name="repayQueueService" ref="repayQueueService" />
 		<property name="transactionManager" ref="pfsTransactionManager" />
 		<property name="customerDatesDAO" ref="customerDatesDAO" />
 		<property name="dateRollOverService" ref="dateRollOverService" />
@@ -185,28 +148,7 @@
 		<property name="autoDisbursementService" ref="autoDisbursementService" />
 		<property name="receiptPaymentService" ref="receiptPaymentService" />
 		<property name="loadFinanceData" ref="loadFinanceData" />
-	</bean>
-	<bean id="eodPaymentRequest" class="com.pennant.eod.EodPaymentRequest">
-		<property name="dataSource" ref="pfsDatasource" />
-		<property name="serviceUtil" ref="serviceUtil" />
-		<property name="paymentRecoveryService" ref="paymentRecoveryService" />
-		<property name="repayQueueService" ref="repayQueueService" />
-	</bean>
-	<bean id="preEodService" class="com.pennant.eod.PreEodService">
-		<property name="customerQueuingService" ref="customerQueuingService" />
-		<property name="dateService" ref="dateService" />
-		<property name="repayQueueService" ref="repayQueueService" />
-		<property name="customerDatesDAO" ref="customerDatesDAO" />
-		<property name="eodProperties" ref="eodProperties" />
-		<property name="transactionManager" ref="pfsTransactionManager" />
-	</bean>
-	<bean id="postEodService" class="com.pennant.eod.PostEodService">
-		<property name="dateService" ref="dateService" />
-		<property name="repayQueueService" ref="repayQueueService" />
-		<property name="snapshotService" ref="snapshotService" />
-		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
-		<property name="eodProperties" ref="eodProperties" />
-		<property name="transactionManager" ref="pfsTransactionManager" />
+		<property name="customerDAO" ref="customerDAO" />
 	</bean>
 	<bean id="archivalService" class="com.pennant.eod.ArchivalService" parent="serviceHelper">
 	</bean>

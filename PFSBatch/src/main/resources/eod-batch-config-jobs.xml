@@ -17,27 +17,12 @@
 	<!-- ********************* Job Definitions & Declarations ************************** -->
 	<!-- ******************************************************************************* -->
 
-	<!-- Customer Queuing Job -->
-	<bean id="eODJobSchedular" class="org.springframework.scheduling.quartz.JobDetailBean"
-		p:jobClass="com.pennant.app.job.process.EodTrigger" p:name="EOD">
-		<property name="jobDataAsMap">
-			<map>
-				<entry key="Eod" value-ref="eod"/>
-			</map>
-		</property>
-	</bean>
 	
 	<!-- ******************************************************************************* -->
 	<!-- ********************* Trigger Definitions & Declarations ********************** -->
 	<!-- ******************************************************************************* -->
 
-	<bean id="eODTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
-		p:jobDetail-ref="eODJobSchedular" p:startDelay="10000"
-		p:cronExpression="0/5 * * * * ?"  />
 	
-<!-- 	<bean id="eODTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
-		p:jobDetail-ref="eODJobSchedular" p:startDelay="10000"
-		p:cronExpression="0 50 16 1/1 * ? *"  /> -->
 
 	<!-- ******************************************************************************* -->
 	<!-- ********************* Scheduler Factory Bean Definition ********************** -->
@@ -47,7 +32,6 @@
 		p:waitForJobsToCompleteOnShutdown="false" p:autoStartup="true">
 		<property name="triggers">
 			<list>
-			<!--  	<ref bean="eODTrigger" /> -->
 			</list>
 		</property>
 

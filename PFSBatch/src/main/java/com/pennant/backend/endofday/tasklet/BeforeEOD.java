@@ -51,7 +51,6 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.app.core.DateService;
-import com.pennant.app.core.RepayQueueService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.eod.util.EODProperties;
 
@@ -63,7 +62,6 @@ public class BeforeEOD implements Tasklet {
 	}
 
 	private EODProperties		eodProperties;
-	private RepayQueueService	repayQueueService;
 	private DateService			dateService;
 
 	@Override
@@ -72,7 +70,6 @@ public class BeforeEOD implements Tasklet {
 		logger.debug("START: Before EOD On : " + valueDate);
 
 		eodProperties.init();
-		repayQueueService.loadFinanceRepayPriority();
 		dateService.doUpdatebeforeEod(true);
 		logger.debug("COMPLETE: Before EOD On :" + valueDate);
 		return RepeatStatus.FINISHED;
@@ -83,9 +80,6 @@ public class BeforeEOD implements Tasklet {
 		this.eodProperties = eodProperties;
 	}
 
-	public void setRepayQueueService(RepayQueueService repayQueueService) {
-		this.repayQueueService = repayQueueService;
-	}
 
 	public void setDateService(DateService dateService) {
 		this.dateService = dateService;

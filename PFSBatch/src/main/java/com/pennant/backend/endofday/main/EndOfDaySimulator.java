@@ -45,8 +45,6 @@ package com.pennant.backend.endofday.main;
 import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.pennant.app.job.process.EodTrigger;
-
 public class EndOfDaySimulator {
 	private final static Logger logger = Logger.getLogger(EndOfDaySimulator.class);
 	
@@ -57,8 +55,8 @@ public class EndOfDaySimulator {
 			@SuppressWarnings({ "resource" })
 			ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[]{"launch-context.xml","eod-batch-config-db.xml","eod-batch-config-beans.xml",
 					"eod-batch-config-service.xml","log4j.xml"});
-			 EodTrigger eodTrigger =(EodTrigger) context.getBean("eodTrigger");
-			 eodTrigger.run();
+/*			 EodTrigger eodTrigger =(EodTrigger) context.getBean("eodTrigger");
+			 eodTrigger.run();*/
 			
 //			Eod eod = (Eod) context.getBean("eod");
 //			// Post EOD service
