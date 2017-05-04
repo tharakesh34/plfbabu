@@ -82,6 +82,14 @@ public class IMPSDisbursementRequest extends DatabaseDataEngine {
 		map.addValue("BCAGENTID", null);
 		map.addValue("SENDERID", null);
 		map.addValue("RECEIVERNAME", rs.getString("BENFICIARY_NAME"));
+		
+		
+		String mobileNo = rs.getString("BENFICIARY_MOBILE");
+		
+		if(mobileNo == null) {
+			
+		}
+		
 		map.addValue("RECEIVERMOBILENO", rs.getString("BENFICIARY_MOBILE"));
 		map.addValue("RECEIVEREMAILID", rs.getString("CUSTOMER_EMAIL"));
 		map.addValue("IFSCODE", rs.getString("IFSC_CODE"));

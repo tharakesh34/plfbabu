@@ -103,11 +103,11 @@ public class DisbursemenIMPSResponseRequest  extends DBProcessEngine {
 					remarks.append(", Sucess: ");
 					remarks.append(successCount + ".");
 				}
-				updateBatchStatus(ExecutionStatus.S.name(), remarks.toString(), processedCount, successCount, failedCount, totalRecords);
+				updateBatchStatus(ExecutionStatus.S.name(), remarks.toString());
 			}
 		} catch (Exception e) {
 			logger.error("Exception :", e);
-			updateBatchStatus(ExecutionStatus.F.name(), e.getMessage(), processedCount, successCount, failedCount, totalRecords);
+			updateBatchStatus(ExecutionStatus.F.name(), e.getMessage());
 			remarks.append(e.getMessage());
 			executionStatus.setStatus(ExecutionStatus.F.name());
 		} finally {
