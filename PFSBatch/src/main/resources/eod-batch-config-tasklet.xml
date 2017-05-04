@@ -130,11 +130,6 @@
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 	</bean>
-	<!-- Provision Calculations TBD -->
-	<bean id="provisionCalculationTasklet"  class="com.pennant.backend.endofday.tasklet.ProvisionCalculation">
-		<property name="provisionCalculationUtil" ref="provisionCalculationUtil" />
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
 	<!-- Provisions Postings TBD -->
 	<bean id="provisionPostingsTasklet"  class="com.pennant.backend.endofday.tasklet.ProvisionPostings">
 		<property name="financeMainDAO" ref="financeMainDAO" />
