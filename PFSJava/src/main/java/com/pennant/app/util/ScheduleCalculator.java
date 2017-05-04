@@ -773,7 +773,6 @@ public class ScheduleCalculator {
 		logger.debug("Entering");
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
-
 		finScheduleData = validateEMIHoliday(finScheduleData);
 
 		if (finScheduleData.getErrorDetails() != null && finScheduleData.getErrorDetails().size() > 0) {
@@ -794,71 +793,71 @@ public class ScheduleCalculator {
 
 		Date datePlanEMIHLock = DateUtility.addMonths(finMain.getFinStartDate(), finMain.getPlanEMIHLockPeriod());
 		Date dateAfterYear = DateUtility.addMonths(finMain.getFinStartDate(), 12);
+		Collections.sort(finScheduleData.getPlanEMIHDates());
 
-		int sdIndex = -1;
+		for (int j = 0; j < sdSize - 1; j++) {
+			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(j);
+			Date schdDate = curSchd.getSchDate();
 
-		for (int i = 0; i < hdSize; i++) {
-			Date hdDate = finScheduleData.getPlanEMIHDates().get(i);
-
-			//Reset marked holidays per year
-			if (hdDate.compareTo(dateAfterYear) >= 0) {
-				markedEMIHMaxPerYear = 0;
-				dateAfterYear = DateUtility.addMonths(hdDate, 12);
-			}
-
-			if (hdDate.compareTo(datePlanEMIHLock) <= 0) {
+			// First payment date also cannot be allowed in planned EMI holiday declaration
+			if (curSchd.getInstNumber() == 1) {
 				continue;
 			}
 
-			sdIndex = sdIndex + 1;
-
-			for (int j = sdIndex; j < sdSize - 1; j++) {
-				FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(j);
-				Date schdDate = curSchd.getSchDate();
-
-				// First payment date also cannot be allowed in planned EMI holiday declaration
-				if (curSchd.getInstNumber() == 1) {
-					continue;
-				}
-
-				//Find schedule date is requested holiday or not
-				if (planEMIHMaxPerYear == 0 || markedEMIHMaxPerYear < planEMIHMaxPerYear) {
-					if (hdDate.compareTo(schdDate) == 0) {
-						if ((curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate())) {
-
-							//Before Event From Date don't do any changes(Used same for servicing Plan EMI/Rescheduling)
-							if (schdDate.compareTo(finMain.getEventFromDate()) > 0) {
-								curSchd.setCpzOnSchDate(planEMICpz);
-								curSchd.setBpiOrHoliday(FinanceConstants.FLAG_HOLIDAY);
-							}
-
-							if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)) {
-								markedEMIHMaxPerYear = markedEMIHMaxPerYear + 1;
-								markedEMIHMax = markedEMIHMax + 1;
-							}
-						}
-						sdIndex = j;
-						break;
-					} else {
-
-						//Before Event From Date don't do any changes(Used same for servicing Plan EMI/Rescheduling)
-						if (schdDate.compareTo(finMain.getEventFromDate()) > 0) {
-							curSchd.setCpzOnSchDate(FrequencyUtil.isFrqDate(finMain.getRepayCpzFrq(),
-									curSchd.getSchDate()));
-							curSchd.setBpiOrHoliday("");
-						} else {
-							if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)) {
-								markedEMIHMaxPerYear = markedEMIHMaxPerYear + 1;
-								markedEMIHMax = markedEMIHMax + 1;
-							}
-						}
-					}
-				}
-
+			//Reset marked holidays per year
+			if (schdDate.compareTo(dateAfterYear) >= 0) {
+				markedEMIHMaxPerYear = 0;
+				dateAfterYear = DateUtility.addMonths(schdDate, 12);
 			}
 
-			if (planEMIHMax != 0 && markedEMIHMax >= planEMIHMax) {
-				break;
+			if (schdDate.compareTo(datePlanEMIHLock) <= 0) {
+				continue;
+			}
+
+			boolean isPlanEmiHFound = false;
+			if(hdSize != markedEMIHMax){
+				for (int i = 0; i < hdSize; i++) {
+					Date hdDate = finScheduleData.getPlanEMIHDates().get(i);
+
+					//Find schedule date is requested holiday or not
+					if (planEMIHMaxPerYear == 0 || markedEMIHMaxPerYear < planEMIHMaxPerYear) {
+						if (hdDate.compareTo(schdDate) == 0) {
+							if ((curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate())) {
+
+								//Before Event From Date don't do any changes(Used same for servicing Plan EMI/Rescheduling)
+								if (schdDate.compareTo(finMain.getEventFromDate()) > 0) {
+									curSchd.setCpzOnSchDate(planEMICpz);
+									curSchd.setBpiOrHoliday(FinanceConstants.FLAG_HOLIDAY);
+								}
+
+								if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)) {
+									markedEMIHMaxPerYear = markedEMIHMaxPerYear + 1;
+									markedEMIHMax = markedEMIHMax + 1;
+								}
+							}
+							isPlanEmiHFound = true;
+							break;
+						}
+					}
+
+					if (planEMIHMax != 0 && markedEMIHMax >= planEMIHMax) {
+						break;
+					}
+				}
+			}
+
+			//Before Event From Date don't do any changes(Used same for servicing Plan EMI/Rescheduling)
+			if(!isPlanEmiHFound){
+				if (schdDate.compareTo(finMain.getEventFromDate()) > 0) {
+					curSchd.setCpzOnSchDate(FrequencyUtil.isFrqDate(finMain.getRepayCpzFrq(),
+							curSchd.getSchDate()));
+					curSchd.setBpiOrHoliday("");
+				} else {
+					if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)) {
+						markedEMIHMaxPerYear = markedEMIHMaxPerYear + 1;
+						markedEMIHMax = markedEMIHMax + 1;
+					}
+				}
 			}
 		}
 
