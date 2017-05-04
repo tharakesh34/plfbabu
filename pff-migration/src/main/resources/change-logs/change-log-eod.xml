@@ -263,8 +263,6 @@ insert into SMTparameters values('IGNORING_BUCKET','Ignore Bucket Percentage','D
 	
 	</sql>
 	
-	
-	
 	</changeSet>
 	
 	<changeSet id="29" author="Satish">
@@ -273,5 +271,48 @@ insert into SMTparameters values('IGNORING_BUCKET','Ignore Bucket Percentage','D
 	<changeSet id="30" author="Satish">
 		<dropForeignKeyConstraint baseTableName="FinanceMain_PA" constraintName="FK_FinMain_BMTCustStSCodes_PA" />
 	</changeSet>
+	
+	<changeSet id="34" author="Satish">
+		<addColumn tableName="FINODDetails">
+			<column name="oDIncGrcDays" type="boolean">
+			<constraints  nullable="false" />
+			</column>
+			<column name="oDChargeType" type="char(1)" />
+			<column name="oDGraceDays" type="int" />
+			<column name="oDChargeCalOn" type="varchar(8)" />
+			<column name="oDChargeAmtOrPerc" type="Decimal(18,0)" />
+			<column name="oDAllowWaiver" type="boolean" />
+			<column name="oDMaxWaiverPerc" type="Decimal(5,2)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="35" author="Satish">
+		<addColumn tableName="FINODDetails_PD">
+			<column name="oDIncGrcDays" type="boolean">
+			<constraints  nullable="false" />
+			</column>
+			<column name="oDChargeType" type="char(1)" />
+			<column name="oDGraceDays" type="int" />
+			<column name="oDChargeCalOn" type="varchar(8)" />
+			<column name="oDChargeAmtOrPerc" type="Decimal(18,0)" />
+			<column name="oDAllowWaiver" type="boolean" />
+			<column name="oDMaxWaiverPerc" type="Decimal(5,2)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="36" author="Satish">
+		<addColumn tableName="FINODDetails_SnapShot">
+			<column name="oDIncGrcDays" type="boolean">
+			<constraints  nullable="false" />
+			</column>
+			<column name="oDChargeType" type="char(1)" />
+			<column name="oDGraceDays" type="int" />
+			<column name="oDChargeCalOn" type="varchar(8)" />
+			<column name="oDChargeAmtOrPerc" type="Decimal(18,0)" />
+			<column name="oDAllowWaiver" type="boolean" />
+			<column name="oDMaxWaiverPerc" type="Decimal(5,2)" />
+		</addColumn>
+	</changeSet>
+	
 
 </databaseChangeLog>
