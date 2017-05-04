@@ -137,7 +137,7 @@
 							<listhead sizable="true">
 								<listheader id="listheader_MandateType" label="${c:l('listheader_MandateType.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_CustCIF" label="${c:l('listheader_CustCIF.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_BankName" label="${c:l('listheader_BankName.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_BankName" label="${c:l('listheader_Mandate_BankName.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_AccNumber" label="${c:l('listheader_AccNumber.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_AccType" label="${c:l('listheader_AccType.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_Amount" label="${c:l('listheader_Amount.label')}" sort="auto" hflex="min" />
