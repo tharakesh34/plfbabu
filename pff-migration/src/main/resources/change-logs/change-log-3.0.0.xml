@@ -137,4 +137,36 @@ SELECT  T1.PCCountry, T2.CountryDesc LovDescPCCountryName, T1.PCProvince, T3.CPP
 
 		</createView>
 	</changeSet>
+	<changeSet id="09" author="Jayant">
+		<addColumn tableName="Postings">
+			<column name="APPDATE" type="datetime" />
+			<column name="APPVALUEDATE" type="datetime" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="10" author="Jayant">
+		<sql>
+			update Postings set APPDATE= POSTDATE;
+			update Postings set	APPVALUEDATE= POSTDATE;
+		</sql>
+	</changeSet>
+	<changeSet id="10.1" author="Jayant">
+		<sql>
+			update Postings set APPDATE = (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters 
+			where SYSPARMCODE='APP_DATE') where APPDATE is null;
+			update Postings set APPVALUEDATE = (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters 
+			where SYSPARMCODE='APP_VALUEDATE') where APPVALUEDATE is null;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="11" author="Jayant">
+		<addNotNullConstraint tableName="Postings" columnName="APPDATE" columnDataType="datetime" />
+		<addNotNullConstraint tableName="Postings" columnName="APPVALUEDATE" columnDataType="datetime" />
+	</changeSet>
+	<changeSet id="12" author="Jayant">
+	    <sql>
+	    Delete from smtparameters where SYSPARMCODE='SET_POSTDATE_TO';
+Insert into smtparameters (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+values ('SET_POSTDATE_TO','Postings Date','String',0,'APP_DATE',0,0,'MOD_DATEPICKER',null,'Post date should be either APP Date or Value Date',3,1000,Current_Timestamp,'Approved',null,null,null,null,null,0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
