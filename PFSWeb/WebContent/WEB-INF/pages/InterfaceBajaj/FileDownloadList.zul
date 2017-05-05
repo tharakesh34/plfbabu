@@ -32,7 +32,6 @@
 						<listhead sizable="true">
 							<listheader  id="listheader_FirstHeader" label="${c:l('listheader_PartnerBankName.label')}"  hflex="min" />
 							<listheader label="${c:l('listheader_FileName.label')}" hflex="min" />
-							<listheader label="${c:l('listheader_FileLocation.label')}" hflex="min" />
 							<listheader label="${c:l('listheader_Status.label')}" hflex="min" />
 							<listheader label="${c:l('listheader_Downlaod.label')}"  hflex="min" />
 						</listhead>

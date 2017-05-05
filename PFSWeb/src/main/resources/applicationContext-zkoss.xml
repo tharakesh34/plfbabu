@@ -4193,6 +4193,7 @@
 	<bean id="disbursementDataImportCtrl" class="com.pennanttech.interfacebajaj.DisbursementDataImportCtrl" parent="basisListCtrl" scope="prototype">
 		<property name="dataEngineConfig" ref="dataEngineConfig"/>
 	</bean>
+	 <bean id="glFileDownloadListCtrl" class="com.pennanttech.interfacebajaj.GlFileDownloadListctrl" parent="basisListCtrl" scope="prototype"/>
 	
 	<!-- MandateStatusUpload -->
 	<bean id="mandateFileUploadListCtrl"

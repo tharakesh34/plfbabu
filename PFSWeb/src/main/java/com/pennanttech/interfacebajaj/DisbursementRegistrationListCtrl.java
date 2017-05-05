@@ -82,9 +82,11 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -163,6 +165,25 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		super.queueTableName = "INT_DISBURSEMENT_REQUEST_VIEW";
 	}
 
+	@Override
+	protected void doAddFilters() {
+		super.doAddFilters();
+
+		if (fromDate.getValue() != null) {
+			String fromDate = PennantAppUtil.formateDate(this.fromDate.getValue(), PennantConstants.DBDateFormat);
+			Filter[] filters = new Filter[1];
+			filters[0] = new Filter("INPUTDATE", fromDate, Filter.OP_GREATER_OR_EQUAL);
+			this.searchObject.addFilters(filters);
+		}
+		if (toDate.getValue() != null) {
+			String toDate = PennantAppUtil.formateDate(this.toDate.getValue(), PennantConstants.DBDateFormat);
+			Filter[] filters = new Filter[1];
+			filters[0] = new Filter("INPUTDATE", toDate, Filter.OP_LESS_OR_EQUAL);
+			this.searchObject.addFilters(filters);
+
+		}
+	}
+
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
@@ -178,20 +199,19 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		// Register buttons and fields.
 		registerButton(button_Search);
 		registerField("paymentId");
-		registerField("PartnerBankId");
-		registerField("BranchDesc");
+		registerField("partnerBankID");
+		registerField("branchDesc");
 
-
-		registerField("PartnerBankCode", partnerBank, SortOrder.NONE, sortOperator_PartnerBank, Operators.STRING);
-		registerField("PaymentType", listheader_Disbursement_DisbTypes, SortOrder.NONE, disbTypes,
+		registerField("partnerbankCode", partnerBank, SortOrder.NONE, sortOperator_PartnerBank, Operators.STRING);
+		registerField("paymentType", listheader_Disbursement_DisbTypes, SortOrder.NONE, disbTypes,
 				sortOperator_DisbType, Operators.STRING);
-		registerField("FinReference", listheader_Disbursement_FinRef, SortOrder.NONE);
-		registerField("FINTYPE", listheader_Disbursement_FinType, SortOrder.NONE, finType, sortOperator_FinType,
+		registerField("finReference", listheader_Disbursement_FinRef, SortOrder.NONE);
+		registerField("finType", listheader_Disbursement_FinType, SortOrder.NONE, finType, sortOperator_FinType,
 				Operators.STRING);
-		registerField("CUSTSHRTNAME", listheader_Disbursement_Custname, SortOrder.NONE);
-		registerField("BENEFICIARYNAME", listheader_Disbursement_BenName, SortOrder.NONE);
-		registerField("BENEFICIARYACCNO", listheader_Disbursement_BenAcctno, SortOrder.NONE);
-		registerField("BranchCode", listheader_Disbursement_Branch, SortOrder.NONE, branch, sortOperator_Branch,
+		registerField("custShrtName", listheader_Disbursement_Custname, SortOrder.NONE);
+		registerField("beneficiaryName", listheader_Disbursement_BenName, SortOrder.NONE);
+		registerField("beneficiaryAccNo", listheader_Disbursement_BenAcctno, SortOrder.NONE);
+		registerField("branchCode", listheader_Disbursement_Branch, SortOrder.NONE, branch, sortOperator_Branch,
 				Operators.STRING);
 
 		// Render the page and display the data.
@@ -393,11 +413,13 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.disbursementMap.clear();
 		this.listHeader_CheckBox_Comp.setChecked(false);
 		doSetValidations();
+		// searchObject.clear();
 		search();
 
 		if (listBoxDisbursementRegistration.getItems().size() > 0) {
 			listHeader_CheckBox_Comp.setDisabled(false);
 		} else {
+			listBoxDisbursementRegistration.setEmptyMessage(Labels.getLabel("listEmptyMessage.title"));
 			listHeader_CheckBox_Comp.setDisabled(true);
 		}
 	}
@@ -458,6 +480,9 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
+		searchObject.clearFilters();
+		this.fromDate.setValue(null);
+		this.toDate.setValue(null);
 		this.disbursementMap.clear();
 		this.listHeader_CheckBox_Comp.setChecked(false);
 		this.listBoxDisbursementRegistration.getItems().clear();
@@ -512,13 +537,15 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}
 		try {
 			btnDownload.setDisabled(true);
-			disbursementRequest.sendReqest(this.finType.getValue(), disbushmentList, getUserWorkspace()
-					.getLoggedInUser().getLoginUsrID());
+			DisbursementProcess process = new DisbursementProcess(getUserWorkspace().getLoggedInUser().getLoginUsrID(), this.finType.getValue(), disbushmentList);
+			Thread thread = new Thread(process);
+			DisbursementProcess.sleep(2000);
+			thread.start();
 			Map<String, Object> args = new HashMap<String, Object>();
 			args.put("module", "DISBURSEMENT");
 
 			MessageUtil.showMessage("File download process initiated.");
-			createNewPage("/WEB-INF/pages/InterfaceBajaj/DisbursementFileDownloadList.zul", "menu_Item_FileDownlaods",
+			createNewPage("/WEB-INF/pages/InterfaceBajaj/DisbursementFileDownloadList.zul", "menu_Item_DisbursementFileDownlaods",
 					args);
 
 		} finally {
@@ -559,5 +586,27 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		Executions.createComponents(uri, tabpanel, args);
 		tab.setSelected(true);
 	}
+
+	 public class DisbursementProcess extends Thread {
+
+			String						finType;
+			List<FinAdvancePayments>	disbushmentList;
+			long						userId;
+
+			public DisbursementProcess(long userId, String finType, List<FinAdvancePayments> disbushmentList) {
+				this.userId = userId;
+				this.userId = userId;
+				this.disbushmentList = disbushmentList;
+			}
+
+			@Override
+			public void run() {
+				try {
+					disbursementRequest.sendReqest(finType, disbushmentList, userId);
+				} catch (Exception e) {
+
+				}
+			}
+		}
 
 }

@@ -254,8 +254,6 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 			lc = new Listcell(fileDownlaod.getFileName());
 			lc.setParent(item);
 
-			lc = new Listcell(fileDownlaod.getFileLocation());
-			lc.setParent(item);
 
 			lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());
 			lc.setParent(item);

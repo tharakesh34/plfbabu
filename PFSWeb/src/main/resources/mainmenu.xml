@@ -164,6 +164,10 @@
 		<menuItem id="menu_Item_DisbursementFileDownlaods" zulNavigation="/WEB-INF/pages/InterfaceBajaj/DisbursementFileDownloadList.zul" rightName="menuItem_DisbursementFileDownlaods"/>
 		<menuItem id="menu_Item_DisbursementDataEngine_Import" zulNavigation="/WEB-INF/pages/InterfaceBajaj/DisbursementDataImport.zul" rightName="menuItem_DataEngine_DataImport"/>
  	</menu>
+ 	<menu id="menu_Category_SAPGL"  rightName="menuCat_SAPGL" >
+		<menuItem id="menu_Item_SAPGLFileDownloads" zulNavigation="/WEB-INF/pages/InterfaceBajaj/GLFileDownloadList.zul" rightName="menu_Item_SAPGLFileDownloads"/>
+ 	</menu>
+ 	
  	
 	<!-- Rules   Factory -->
 	<menu id="menu_Category_RulesFactory"   rightName="menuCat_RulesFactory" >

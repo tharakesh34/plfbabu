@@ -53,7 +53,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
@@ -63,7 +62,6 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
-import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -77,16 +75,17 @@ import com.pennanttech.pff.core.Literal;
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
-public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod>  {
-	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(DisbursementFileDownloadListCtrl.class);
+public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implements Serializable {
 
-	private Window window_DisbursementFileDownloadList;
-	private Borderlayout borderLayout_DisbursementFileDownloadList;
-	private Paging pagingFileDownloadList;
-	private Listbox listBoxFileDownload;
+	private static final long serialVersionUID = 1L;
+	private final static Logger logger = Logger.getLogger(GlFileDownloadListctrl.class);
+
+	protected Window window_GlFileDownloadList;
+	protected Borderlayout borderLayout_GlFileDownloadList;
+	protected Paging pagingFileDownloadList;
+	protected Listbox listBoxFileDownload;
 	protected Button btnRefresh;
-	protected Timer timer;
+
 	private Button downlaod;
 
 	String module = null;
@@ -94,7 +93,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 	/**
 	 * default constructor.<br>
 	 */
-	public DisbursementFileDownloadListCtrl() {
+	public GlFileDownloadListctrl() {
 		super();
 	}
 
@@ -105,8 +104,8 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 
 		this.module = getArgument("module");
 
-		super.tableName = "DE_DISBURSE_FILE_CONTROL_VIEW";
-		super.queueTableName = "DE_DISBURSE_FILE_CONTROL_VIEW";
+		super.tableName = "DE_FILE_CONTROL_VIEW";
+		super.queueTableName = "DE_FILE_CONTROL_VIEW";
 
 	}
 
@@ -114,25 +113,21 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
-	public void onCreate$window_DisbursementFileDownloadList(Event event) throws Exception {
+	public void onCreate$window_GlFileDownloadList(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
-		setPageComponents(window_DisbursementFileDownloadList, borderLayout_DisbursementFileDownloadList,
+		setPageComponents(window_GlFileDownloadList, borderLayout_GlFileDownloadList,
 				listBoxFileDownload, pagingFileDownloadList);
 		setItemRender(new FileDownloadListModelItemRenderer());
 
-		registerField("ID");
-		registerField("PartnerBankCode");
-		registerField("FileLocation");
-		registerField("FileName");
-		registerField("Status");
 		registerField("Name");
-
-
+		registerField("FileName");
+		registerField("FileLocation");
+		registerField("Status");
+		
 		doRenderPage();
 		search();
-	  
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -141,16 +136,9 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 		super.doAddFilters();
 		List<String> list = new ArrayList<>();
 
-		searchObject.removeField("PARTNERBANKNAME");
-		searchObject.removeField("ALWFILEDOWNLOAD");
-
-		this.searchObject.addField("PARTNERBANKNAME");
-		this.searchObject.addField("ALWFILEDOWNLOAD");
-
-		list.add("DISB_HDFC_EXPORT");
-		list.add("DISB_IMPS_EXPORT");
-		list.add("DISB_OTHER_CHEQUE_DD_EXPORT");
-		list.add("DISB_OTHER_NEFT_RTGS_EXPORT");
+		list.add("GL_TRAIL_BALANCE_EXPORT");
+		list.add("GL_TRANSACTION_EXPORT");
+		list.add("GL_TRANSACTION_SUMMARY_EXPORT");
 
 		this.searchObject.addFilterIn("NAME", list);
 	}
@@ -208,13 +196,24 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 		public void render(Listitem item, FileDownlaod fileDownlaod, int count) throws Exception {
 			Listcell lc;
 
-
 			lc = new Listcell(fileDownlaod.getName());
 			lc.setParent(item);
 
 			lc = new Listcell(fileDownlaod.getFileName());
 			lc.setParent(item);
 
+			lc = new Listcell(fileDownlaod.getFileLocation());
+			lc.setParent(item);
+
+			lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());
+			lc.setParent(item);
+
+			if (fileDownlaod.getFileLocation() != null) {
+				lc = new Listcell(fileDownlaod.getFileLocation() + "/" + fileDownlaod.getFileName());
+			} else {
+				lc = new Listcell(fileDownlaod.getFileName());
+			}
+			lc.setParent(item);
 
 			lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());
 			lc.setParent(item);
@@ -242,13 +241,9 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 			}
 
 			downlaod.setTooltiptext("Disbursement request download.");
-			lc.setParent(item);
-		}
-	}
-	
-	public void onTimer$timer(Event event) {
-		Events.postEvent("onCreate", this.window_DisbursementFileDownloadList, event);
-		  searchObject.clearFields();
 
+			lc.setParent(item);
+
+		}
 	}
 }

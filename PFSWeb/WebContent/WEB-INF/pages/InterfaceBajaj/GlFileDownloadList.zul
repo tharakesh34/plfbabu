@@ -7,10 +7,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 <window>
-	<window id="window_DisbursementFileDownloadList" apply="${disbursementfileDownloadListCtrl}" border="none" width="100%">
-		<timer id="timer" delay="50000" repeats="true" />
-		<div sclass="z-toolbar" style="padding:0px">
-			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+	<window id="window_GlFileDownloadList" apply="${glFileDownloadListCtrl}" border="none" width="100%">
+		<div sclass="z-toolbar" style="padding:0px" height="28px">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
 
 				<!-- COMMON BUTTONS -->
 				<label value="" />
@@ -24,14 +23,13 @@
 			</hbox>
 		</div>
 
-		<borderlayout id="borderLayout_DisbursementFileDownloadList">
+		<borderlayout id="borderLayout_GlFileDownloadList">
 			<north border="none" />
 			<center border="none">
 				<div>
 					<listbox id="listBoxFileDownload" emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
 						height="100%" multiple="false" sizedByContent="true" span="true">
 						<listhead sizable="true">
-						
 							<listheader label="${c:l('listheader_DisbursementFileDownloadName.label')}"  hflex="min" />
 							<listheader label="${c:l('listheader_FileName.label')}" hflex="min" />
 							<listheader label="${c:l('listheader_Status.label')}" hflex="min" />

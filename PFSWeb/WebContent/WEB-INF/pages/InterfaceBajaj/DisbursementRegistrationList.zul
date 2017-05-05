@@ -46,15 +46,15 @@
 									<extendedcombobox id="partnerBank"/>
 								</row>
 								
-								<row visible="false">
+								<row>
 									<label  value="${c:l('label_Disbursement_FromDate.value')}" />
-									<listbox id="sortOperator_FromDate" width="43px" mold="select" rows="1" />
+									<listbox id="sortOperator_FromDate" width="43px" mold="select" visible="false" rows="1" />
 									<hbox>
 									<space spacing = "2px"></space>
 									<datebox id="fromDate" width="171px" />
 									</hbox>
 									<label value="${c:l('label_Disbursement_ToDate.value')}" />
-									<listbox id="sortOperator_ToDate" width="43px" mold="select" rows="1"/>
+									<listbox id="sortOperator_ToDate" width="43px" mold="select" visible="false"  rows="1"/>
 								<hbox>
 									<space spacing = "2px"></space>
 									<datebox id="toDate" width="171px"/>
