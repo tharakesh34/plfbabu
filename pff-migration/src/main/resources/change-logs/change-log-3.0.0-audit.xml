@@ -8,11 +8,5 @@
 	<property name="call.maindb" value="PLF.." dbms="mssql" />
 	<property name="call.maindb" value="PLF." dbms="oracle" />
 
-	<!-- <changeSet id="01" author="Amit">
-		<addColumn tableName="AdtRMTPROVINCEVSCITY">
-			<column name="CITYISACTIVE" type="boolean" defaultValue="1">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-	</changeSet> -->
+	
 </databaseChangeLog>

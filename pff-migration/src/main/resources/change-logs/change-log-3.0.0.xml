@@ -106,22 +106,6 @@
 		</sql>
 	</changeSet>
 
-	<!-- <changeSet id="05" author="Amit">
-		<addColumn tableName="RMTPROVINCEVSCITY">
-			<column name="CITYISACTIVE" type="boolean" defaultValue="1">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="06" author="Amit">
-		<addColumn tableName="RMTPROVINCEVSCITY_Temp">
-			<column name="CITYISACTIVE" type="boolean" defaultValue="1">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-	</changeSet> -->
-
 	<changeSet id="07" author="Amit">
 		<createView replaceIfExists="true" viewName="RMTPROVINCEVSCITY_AVIEW">
 SELECT  T1.PCCountry, T2.CountryDesc LovDescPCCountryName, T1.PCProvince, T3.CPProvinceName LovDescPCProvinceName, T1.PCCity, T1.PCCityName,T1.PCCityClassification, T1.Version, 
