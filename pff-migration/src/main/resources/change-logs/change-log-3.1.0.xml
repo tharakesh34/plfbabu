@@ -167,4 +167,19 @@ WHERE     NOT EXISTS
 			UPDATE SeqSecOperationRoles SET SeqNo = (SELECT MAX(OprRoleID) FROM SecOperationRoles);
 		</sql>
 	</changeSet>
+	<changeSet id="10" author="Manojkumar.P">
+	<sql>
+		DELETE FROM SECGROUPRIGHTS WHERE RIGHTID IN(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME LIKE '%menu_Category_SAPGL%');
+		DELETE from SECRIGHTS where rightName = 'menu_Category_SAPGL';
+		
+		UPDATE SeqSecRights SET SeqNo = (SELECT MAX(RightID) FROM SecRights);
+		UPDATE SeqSecGroupRights SET SeqNo = (SELECT MAX(GrpRightID) FROM SecGroupRights);
+		
+		INSERT INTO SECRIGHTS VALUES((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS) , 0, 'menuCat_SAPGL','FileDBInterface',1,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+		INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID) +1  FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE ='SAPGL_FILE_CONTROL'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME ='menuCat_SAPGL'), 1,0,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+		
+		UPDATE SeqSecRights SET SeqNo = (SELECT MAX(RightID) FROM SecRights);
+		UPDATE SeqSecGroupRights SET SeqNo = (SELECT MAX(GrpRightID) FROM SecGroupRights);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
