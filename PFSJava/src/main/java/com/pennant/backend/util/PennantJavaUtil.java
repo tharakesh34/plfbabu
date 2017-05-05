@@ -1250,7 +1250,11 @@ public class PennantJavaUtil {
 				null, 300));
 		
 		ModuleUtil.register("ReceiptRealization", new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] {
-		"FinReceiptHeader" }, realizationWF, new String[] { "ReceiptID", "ReceiptPurpose" },
+				"FinReceiptHeader" }, realizationWF, new String[] { "ReceiptID", "ReceiptPurpose" },
+				null, 300));
+		
+		ModuleUtil.register("ReceiptBounce", new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] {
+				"FinReceiptHeader" }, receiptCancelWF, new String[] { "ReceiptID", "ReceiptPurpose" },
 				null, 300));
 		
 		ModuleUtil.register("ReceiptCancellation", new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] {

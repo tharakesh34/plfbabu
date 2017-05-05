@@ -13,6 +13,7 @@ package com.pennant.webui.financemanagement.receipts;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -66,7 +67,6 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	protected Listheader listheader_ReceiptCancellationCusomer;
 	protected Listheader listheader_ReceiptCancellationCustName;
 
-
 	protected Button btnNew;
 	protected Button btnSearch;
 
@@ -91,6 +91,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	protected int   oldVar_sortOperator_finBranch;
 
 	private transient ReceiptCancellationService receiptCancellationService;
+	private String module;
 
 	/**
 	 * The default constructor.
@@ -101,8 +102,17 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 
 	@Override
 	protected void doSetProperties() {
-		super.moduleCode = "ReceiptCancellation";
-		super.pageRightName = "ReceiptCancellationList";
+		
+		this.module = getArgument("module");
+		
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
+			super.moduleCode = "ReceiptBounce";
+			super.pageRightName = "ReceiptBounceList";
+		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
+			super.moduleCode = "ReceiptCancellation";
+			super.pageRightName = "ReceiptCancellationList";
+		}
+	
 		super.tableName = "FinReceiptHeader_AView";
 		super.queueTableName = "FinReceiptHeader_View";
 		super.enquiryTableName = "FinReceiptHeader_View";
@@ -118,7 +128,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		// Set the page level components.
 		setPageComponents(window_ReceiptCancellationList, borderLayout_ReceiptCancellationList, listBoxReceiptCancellation, pagingReceiptCancellationList);
 		setItemRender(new ReceiptCancellationListModelItemRenderer());
-		registerButton(btnNew, "button_AcademicList_NewAcademic", false);
+		registerButton(btnNew, "button_ReceiptCancellationList_NewReceiptCancellation", false);
 		registerButton(btnSearch);
 
 		registerField("receiptID");
@@ -150,8 +160,14 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		this.searchObject.addWhereClause(" (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_APPROVED+"' OR (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_REALIZED+"' AND RecordType IS NULL )"
-				+ " OR ( ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_BOUNCE+"' AND RecordType IS NOT NULL) ) ");
+		
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
+			this.searchObject.addWhereClause(" (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_APPROVED+"' OR (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_REALIZED+"' AND RecordType IS NULL )"
+					+ " OR ( ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_BOUNCE+"' AND RecordType IS NOT NULL) ) ");
+		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
+			this.searchObject.addWhereClause(" (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_APPROVED+"'"
+					+ " OR ( ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_CANCEL+"' AND RecordType IS NOT NULL) ) ");
+		}
 	}
 
 	/**
@@ -255,6 +271,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("receiptHeader", header);
+		arg.put("module", this.module);
 		arg.put("receiptCancellationListCtrl", this);
 
 		try {

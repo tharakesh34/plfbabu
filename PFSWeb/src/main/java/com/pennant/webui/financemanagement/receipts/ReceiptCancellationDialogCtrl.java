@@ -162,6 +162,9 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	protected ExtendedCombobox								fundingAccount;
 	protected Datebox										receivedDate;
 	protected Textbox										remarks;
+	
+	protected Row											row_BounceReason;	
+	protected Row											row_BounceRemarks;	
 
 	protected Row											row_favourNo;	
 	protected Row											row_BankCode;	
@@ -204,6 +207,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	private ReceiptCancellationService						receiptCancellationService;						
 	private RuleService										ruleService;						
 	private RuleExecutionUtil								ruleExecutionUtil;						
+	private String module;
 
 	/**
 	 * default constructor.<br>
@@ -214,7 +218,11 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 
 	@Override
 	protected void doSetProperties() {
-		super.pageRightName = "ReceiptCancellationDialog";
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
+			super.pageRightName = "ReceiptBounceDialog";
+		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
+			super.pageRightName = "ReceiptCancellationDialog";
+		}
 	}
 
 	// Component Events
@@ -246,9 +254,9 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 					ManualAdvise adviseBefImage = cloner.deepClone(getReceiptHeader().getManualAdvise());
 					getReceiptHeader().getManualAdvise().setBefImage(adviseBefImage);
 				}
-
 			}
 			
+			this.module = (String) arguments.get("module");
 			this.receiptCancellationListCtrl = (ReceiptCancellationListCtrl) arguments.get("receiptCancellationListCtrl");
 			doLoadWorkFlow(receiptHeader.isWorkflow(), receiptHeader.getWorkflowId(), receiptHeader.getNextTaskId());
 
@@ -300,17 +308,17 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 
-		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_ReceiptCancellationDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_ReceiptCancellationDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_ReceiptCancellationDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ReceiptCancellationDialog_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_"+this.pageRightName+"_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_"+this.pageRightName+"_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_"+this.pageRightName+"_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_"+this.pageRightName+"_btnSave"));
 		this.btnCancel.setVisible(false);
 		
 		// Bounce Reason Fields
-		readOnlyComponent(isReadOnly("ReceiptCancellationDialog_bounceCode"), this.bounceCode);
-		//readOnlyComponent(isReadOnly("ReceiptCancellationDialog_bounceCharge"), this.bounceCharge);
+		readOnlyComponent(isReadOnly(this.pageRightName+"_bounceCode"), this.bounceCode);
+		//readOnlyComponent(isReadOnly("+this.pageRightName+"_bounceCharge"), this.bounceCharge);
 		readOnlyComponent(true, this.bounceCharge);
-		readOnlyComponent(isReadOnly("ReceiptCancellationDialog_bounceRemarks"), this.bounceRemarks);
+		readOnlyComponent(isReadOnly(this.pageRightName+"_bounceRemarks"), this.bounceRemarks);
 		
 		logger.debug("Leaving");
 	}
@@ -320,6 +328,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	 */
 	protected void doSetFieldProperties() {
 		logger.debug("Entering");
+		
 		//Empty sent any required attributes
 		int formatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
 
@@ -440,8 +449,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 
 			this.gb_ReceiptDetails.setVisible(true);
 			this.caption_receiptDetail.setLabel(this.receiptMode.getSelectedItem().getLabel());
-			this.receiptAmount.setMandatory(true);
-			readOnlyComponent(isReadOnly("ReceiptCancellationDialog_receiptAmount"), this.receiptAmount);
+			this.receiptAmount.setMandatory(false);
 
 			if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)
 					|| StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_DD)) {

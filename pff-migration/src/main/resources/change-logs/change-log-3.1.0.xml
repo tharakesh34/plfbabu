@@ -131,6 +131,13 @@ WHERE     NOT EXISTS
 		UPDATE bmtamountcodes SET amountcodedesc = REPLACE(amountcodedesc, 'Finance', 'Loan');
 		</sql>
 	</changeSet>
+
+	<changeSet id="9" author="Siva">
+		<sql>
+		Update secrights set RightName = REPLACE(RightName, 'ReceiptCancellationDialog', 'ReceiptBounceDialog') where page ='ReceiptCancellationDialog';
+		Update secrights set  page ='ReceiptBounceDialog' where page ='ReceiptCancellationDialog';
+		</sql>
+	</changeSet>
 	
 	<changeSet id="09" author="ManojKumar.P">
 		<sql>

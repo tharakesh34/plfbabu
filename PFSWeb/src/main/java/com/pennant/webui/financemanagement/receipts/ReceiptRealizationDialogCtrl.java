@@ -356,8 +356,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 
 			this.gb_ReceiptDetails.setVisible(true);
 			this.caption_receiptDetail.setLabel(this.receiptMode.getSelectedItem().getLabel());
-			this.receiptAmount.setMandatory(true);
-			readOnlyComponent(isReadOnly("ReceiptRealizationDialog_receiptAmount"), this.receiptAmount);
+			this.receiptAmount.setMandatory(false);
 
 			if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)
 					|| StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_DD)) {

@@ -140,5 +140,11 @@ public class RepayConstants {
 	public static final String	PAYSTATUS_APPROVED		= "A";
 	public static final String	PAYSTATUS_REALIZED		= "R";
 	public static final String	PAYSTATUS_BOUNCE		= "B";
+	public static final String	PAYSTATUS_CANCEL		= "C";
+
+	// Receipt Payment Statuses
+	public static final String	MODULETYPE_BOUNCE		= "B";
+	public static final String	MODULETYPE_CANCEL		= "C";
+
 
 }
