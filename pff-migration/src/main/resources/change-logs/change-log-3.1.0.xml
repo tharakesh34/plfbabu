@@ -225,4 +225,75 @@ FROM    	Mandates T1 INNER JOIN
 		INSERT INTO ErrorDetails VALUES('90272','EN','E','Number of {0} terms should between configured min terms:{1} and max terms:{2} from loanType.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 	</changeSet>
+	<changeSet id="13" author="Irfan">
+		<addColumn tableName="ManualAdvise">
+		<column name="ValueDate" type="datetime">
+		</column>
+		<column name="PostDate" type="datetime">
+		</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="14" author="Irfan">
+		<addColumn tableName="ManualAdvise_Temp">
+		<column name="ValueDate" type="datetime">
+		</column>
+		<column name="PostDate" type="datetime">
+		</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="15" author="Irfan">
+	<createView viewName="MANUALADVISE_VIEW" replaceIfExists="true">
+		 SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
+             T1.AdviseAmount, T1.PaidAmount, T1.WaivedAmount, T1.Remarks, T1.ValueDate, T1.PostDate,
+              T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.FeeTypeDesc, T2.FeeTypeCode, T1.BounceID, T1.ReceiptID
+				FROM    	ManualAdvise_Temp  T1 
+        INNER JOIN FEETYPES T2 ON T1.FeeTypeID = T2.FeeTypeID
+				UNION ALL
+				
+				SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
+                   T1.AdviseAmount, T1.PaidAmount, T1.WaivedAmount, T1.Remarks, T1.ValueDate, T1.PostDate,
+                    T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.FeeTypeDesc, T2.FeeTypeCode, T1.BounceID, T1.ReceiptID
+				FROM    	ManualAdvise  T1 
+        INNER JOIN FEETYPES T2 ON T1.FeeTypeID = T2.FeeTypeID
+				WHERE     NOT EXISTS (SELECT 1 FROM ManualAdvise_TEMP WHERE AdviseID = T1.AdviseID)
+	
+	</createView>
+	</changeSet>
+	<changeSet id="16" author="Irfan">
+		<createView viewName="MANUALADVISE_TVIEW" replaceIfExists="true">
+		SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence, 
+  				T1.AdviseAmount, T1.PaidAmount, T1.WaivedAmount, T1.Remarks, T1.ValueDate, T1.PostDate,
+  					T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.FeeTypeDesc, T2.FeeTypeCode, T1.BounceID, T1.ReceiptID, T3.BOUNCECODE
+				FROM    	ManualAdvise_Temp  T1
+       			LEFT JOIN FEETYPES T2 ON T1.FeeTypeID = T2.FeeTypeID
+       			LEFT JOIN BOUNCEREASONS T3 ON T1.BounceID = T3.BOUNCEID
+		</createView>
+	</changeSet>
+	<changeSet id="17" author="Irfan">
+		<createView viewName="MANUALADVISE_AVIEW" replaceIfExists="true">
+		SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
+  				T1.AdviseAmount, T1.PaidAmount, T1.WaivedAmount, T1.Remarks, T1.ValueDate, T1.PostDate,
+  					T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+                      T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.FeeTypeDesc, T2.FeeTypeCode, T1.BounceID, T1.ReceiptID
+				FROM    	ManualAdvise  T1
+       			INNER JOIN FEETYPES T2 ON T1.FeeTypeID = T2.FeeTypeID
+		
+		</createView>
+	
+	</changeSet>
+	<changeSet id="18" author="Irfan">
+	<sql>
+	Update MANUALADVISE set ValueDate='05-MAY-17'; 
+	Update MANUALADVISE set PostDate='05-MAY-17';
+	Update MANUALADVISE_TEMP set ValueDate='05-MAY-17';  
+	Update MANUALADVISE_TEMP set PostDate='05-MAY-17';
+	</sql>
+	<addNotNullConstraint tableName="MANUALADVISE" columnName="ValueDate"/>
+	<addNotNullConstraint tableName="MANUALADVISE" columnName="PostDate"/>
+	<addNotNullConstraint tableName="MANUALADVISE_TEMP" columnName="ValueDate"/>
+	<addNotNullConstraint tableName="MANUALADVISE_TEMP" columnName="PostDate"/>
+	</changeSet>
 </databaseChangeLog>
