@@ -478,7 +478,7 @@ public class JdbcSearchProcessor implements Serializable {
 
 	//TODO:
 
-	private String getDB2LimitRowsSql(String sql, int startRow, int endRow) {
+	private String getDB2LimitRowsSql(String sql, int offset, int pageSize) {
 		int startOfSelect = sql.toLowerCase().indexOf("select");
 		StringBuilder pagingSelect = new StringBuilder(sql.length() + 100).append(sql.substring(0, startOfSelect)) // add the comment
 				.append("select * from ( select ") // nest the main query in an outer select
@@ -492,7 +492,7 @@ public class JdbcSearchProcessor implements Serializable {
 			pagingSelect.append("Results.* From(" + sql.substring(startOfSelect) + ") as Results"); // add the main query
 		}
 		pagingSelect.append(" ) as temp_ where rownumber_ "); // add the restriction to the outer select
-		pagingSelect.append(" between " + (startRow + 1) + " and " + (startRow + endRow));
+		pagingSelect.append(" between " + (offset + 1) + " and " + (offset + pageSize));
 
 		return pagingSelect.toString();
 	}
@@ -511,8 +511,8 @@ public class JdbcSearchProcessor implements Serializable {
 		return sql.toLowerCase().indexOf("select distinct") >= 0;
 	}
 
-	private String getMySqlLimitRowsSql(String sql, int startRow, int endRow) {
+	private String getMySqlLimitRowsSql(String sql, int offset, int pageSize) {
 		return new StringBuffer(sql.length() + 20).append(sql)
-				.append(startRow > 0 ? " limit " + startRow + " , " + endRow : " limit " + endRow).toString();
+				.append(offset > 0 ? " limit " + offset + " , " + pageSize : " limit " + pageSize).toString();
 	}
 }
