@@ -15,5 +15,5 @@ public interface ReceiptCancellationService {
 	AuditHeader doApprove(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 	AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException;
 	List<ReturnDataSet> getPostingsByTranIdList(List<Long> tranIdList);
-
+	String presentmentReceiptCancellation(long receiptId) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 }
