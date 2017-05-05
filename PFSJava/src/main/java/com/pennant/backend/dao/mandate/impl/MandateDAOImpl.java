@@ -139,7 +139,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		selectSql.append(" LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,");
 		selectSql.append(" WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,");
+			selectSql.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,PcCityName,");
 			selectSql.append("useExisting");
 		}
 		selectSql.append(" From Mandates");
@@ -186,7 +186,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		selectSql.append(" LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,");
 		selectSql.append(" WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,");
+			selectSql.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,PcCityName,");
 			selectSql.append("useExisting");
 		}
 		selectSql.append(" From Mandates");
@@ -224,7 +224,7 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		selectSql.append(" LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,");
 		selectSql.append(" WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,");
+			selectSql.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,PcCityName,");
 			selectSql.append("useExisting");
 		}
 		selectSql.append(" From Mandates");

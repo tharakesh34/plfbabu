@@ -155,6 +155,7 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	private WSReturnStatus returnStatus;
 	@XmlElement
 	private BigDecimal totEMIAmount;
+	private String pccityName;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -189,6 +190,7 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("sourceId");
 		excludeFields.add("returnStatus");
 		excludeFields.add("totEMIAmount");
+		excludeFields.add("pccityName");
 		return excludeFields;
 	}
 
@@ -557,6 +559,14 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 
 	public void setTotEMIAmount(BigDecimal totEMIAmount) {
 		this.totEMIAmount = totEMIAmount;
+	}
+
+	public String getPccityName() {
+		return pccityName;
+	}
+
+	public void setPccityName(String pccityName) {
+		this.pccityName = pccityName;
 	}
 
 }

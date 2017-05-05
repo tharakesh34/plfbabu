@@ -64,6 +64,7 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.North;
 import org.zkoss.zul.Row;
@@ -128,6 +129,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected ExtendedCombobox						bankBranchID;
 	protected Textbox								bank;
 	protected Textbox								city;
+	protected Label								    cityName;
 	protected Textbox								micr;
 	protected Textbox								ifsc;
 	protected Textbox								accNumber;
@@ -981,6 +983,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					StringUtils.trimToEmpty(aMandate.getBranchDesc()));
 		}
 		this.city.setValue(StringUtils.trimToEmpty(aMandate.getCity()));
+		this.cityName.setValue(StringUtils.trimToEmpty(aMandate.getPccityName()));
 		this.bank.setValue(StringUtils.trimToEmpty(aMandate.getBankName()));
 		this.micr.setValue(aMandate.getMICR());
 		this.ifsc.setValue(aMandate.getIFSC());
@@ -1360,6 +1363,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.city.setValue("");
 			this.micr.setValue("");
 			this.ifsc.setValue("");
+			this.cityName.setValue("");
 		} else {
 			BankBranch details = (BankBranch) dataObject;
 			if (details != null) {
@@ -1368,6 +1372,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				this.micr.setValue(details.getMICR());
 				this.ifsc.setValue(details.getIFSC());
 				this.city.setValue(details.getCity());
+				this.cityName.setValue(details.getPCCityName());
 				if(StringUtils.isNotBlank(details.getBankCode())){
 					accNoLength = getBankDetailService().getAccNoLengthByCode(details.getBankCode());
 				}

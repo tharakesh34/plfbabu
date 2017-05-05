@@ -76,7 +76,7 @@
 									<combobox id="mandateType" width="171px" />
 									<label id="label_MandateList_CustCIF" value="${c:l('label_MandateList_CustCIF.value')}" />
 									<listbox id="sortOperator_CustCIF" width="43px" mold="select" rows="1" />
-									<textbox id="custCIF" width="171px" />
+									<textbox id="custShrtName" width="171px" />
 								</row>
 								<row>
 									<label id="label_MandateList_BankName" value="${c:l('label_MandateList_BankName.value')}" />
@@ -136,7 +136,7 @@
 							span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
 							<listhead sizable="true">
 								<listheader id="listheader_MandateType" label="${c:l('listheader_MandateType.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_CustCIF" label="${c:l('listheader_CustCIF.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_CustCIF" label="${c:l('listheader_Mandate_CustName.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_BankName" label="${c:l('listheader_Mandate_BankName.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_AccNumber" label="${c:l('listheader_AccNumber.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_AccType" label="${c:l('listheader_AccType.label')}" sort="auto" hflex="min" />

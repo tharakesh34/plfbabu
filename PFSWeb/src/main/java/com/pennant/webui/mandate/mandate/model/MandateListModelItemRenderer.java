@@ -87,7 +87,7 @@ public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, 
 				PennantStaticListUtil.getMandateTypeList()));*/
 		lc = new Listcell(mandate.getMandateType());
 		lc.setParent(item);
-		lc = new Listcell(mandate.getCustCIF());
+		lc = new Listcell(mandate.getCustShrtName());
 		lc.setParent(item);
 		lc = new Listcell(mandate.getBankName());
 		lc.setParent(item);

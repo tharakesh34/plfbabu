@@ -70,6 +70,7 @@
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="city" maxlength="50" width="200px" readonly="true" />
+										<label id="cityName"/>
 									</hbox>
 								</row>
 								<row visible="true">

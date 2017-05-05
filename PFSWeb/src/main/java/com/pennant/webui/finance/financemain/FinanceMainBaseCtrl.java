@@ -9962,10 +9962,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue()));
 				if (this.finRepaymentAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0
 						&& this.finRepaymentAmount.getActualValue().compareTo(downpay) >= 0) {
-					throw new WrongValueException(this.finRepaymentAmount, Labels.getLabel(
-							"FIELD_IS_LESSER",
-							new String[] { Labels.getLabel("label_FinanceMainDialog_FinRepaymentAmount.value"),
-									Labels.getLabel("label_FinanceMainDialog_FinAmount.value") }));
+					if (financeType.isFinIsDwPayRequired()) {
+						throw new WrongValueException(this.finRepaymentAmount, Labels.getLabel("REPAY_AMOUNT_DOWNPAY",
+								new String[] { Labels.getLabel("label_FinanceMainDialog_FinRepaymentAmount.value"),
+										Labels.getLabel("label_FinanceMainDialog_FinAmount.value") }));
+					} else {
+						throw new WrongValueException(this.finRepaymentAmount, Labels.getLabel("REPAY_AMOUNT",
+								new String[] { Labels.getLabel("label_FinanceMainDialog_FinRepaymentAmount.value"),
+										Labels.getLabel("label_FinanceMainDialog_FinAmount.value") }));
+					}
 				}
 			}
 			aFinanceMain.setFinRepaymentAmount(PennantAppUtil.unFormateAmount(

@@ -12,9 +12,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.AccountEngineExecution;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
@@ -65,16 +63,15 @@ public class DisbursementPostings {
 
 			for (FinAdvancePayments finAdvancePayments : advPaymentsList) {
 
-				executingMap.put("ValueDate", DateUtility.getSysDate());
-				executingMap.put("fm_finCcy", SysParamUtil.getAppCurrency());
-				executingMap.put("fm_finBranch", PennantConstants.IBD_Branch);
+				executingMap.put("ValueDate", finAdvancePayments.getLlDate());
+				executingMap.put("fm_finCcy", header.getFinanceMain().getFinCcy());
+				executingMap.put("fm_finBranch", header.getFinanceMain().getFinBranch());
 				executingMap.put("fm_finReference", finRef);
 				executingMap.put("ae_finEvent", AccountEventConstants.ACCEVENT_DISBINS);
 				executingMap.put("ft_finType", header.getFinanceMain().getFinType());
 				executingMap.put("ae_disbInstAmt", finAdvancePayments.getAmtToBeReleased());
 				executingMap.put("disb_partnerBank", finAdvancePayments.getPartnerBankAcType());
 				executingMap.put("fm_custID", header.getFinanceMain().getCustID());
-				executingMap.put("ae_finEvent", AccountEventConstants.ACCEVENT_DISBINS);
 
 				FinAdvancePayments finApprovedPay = isApproved(approvedList, finAdvancePayments.getPaymentId());
 

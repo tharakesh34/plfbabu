@@ -106,7 +106,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 
 	protected Longbox					mandateID;
 	protected Combobox					mandateType;
-	protected Textbox					custCIF;
+	protected Textbox					custShrtName;
 	protected Textbox					bankName;
 	protected Combobox					status;
 	protected Textbox					accNumber;
@@ -175,7 +175,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 
 		registerField("mandateID", mandateID, SortOrder.ASC, sortOperator_MandateID, Operators.NUMERIC);
 		registerField("mandateType", listheader_MandateType, SortOrder.NONE, mandateType, sortOperator_MandateType, Operators.STRING);
-		registerField("custCIF", listheader_CustCIF, SortOrder.NONE, custCIF, sortOperator_CustCIF, Operators.STRING);
+		registerField("custShrtName", listheader_CustCIF, SortOrder.NONE, custShrtName, sortOperator_CustCIF, Operators.STRING);
 		registerField("accNumber", listheader_AccNumber, SortOrder.NONE, accNumber, sortOperator_AccNumber, Operators.STRING);
 		registerField("accType", listheader_AccType, SortOrder.NONE, accType, sortOperator_AccType, Operators.STRING);
 		registerField("expiryDate", listheader_ExpiryDate, SortOrder.NONE, expiryDate, sortOperator_ExpiryDate, Operators.DATE);
