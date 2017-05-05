@@ -70,7 +70,6 @@ private static final long serialVersionUID = 1L;
 	private int adviseType;
 	private String adviseTypeName;
 	private String finReference;
-	private String finReferenceName;
 	private long feeTypeID;
 	private String feeTypeDesc;
 	private String feeTypeCode;
@@ -150,13 +149,6 @@ private static final long serialVersionUID = 1L;
 	}
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
-	}
-	public String getFinReferenceName() {
-		return this.finReferenceName;
-	}
-
-	public void setFinReferenceName (String finReferenceName) {
-		this.finReferenceName = finReferenceName;
 	}
 	
 	public long getFeeTypeID() {

@@ -296,19 +296,6 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		receiptHeader.setWorkflowId(0);
 		getFinReceiptHeaderDAO().update(receiptHeader, TableType.MAIN_TAB);
 		
-		getManualAdviseDAO().save(receiptHeader.getManualAdvise(), TableType.MAIN_TAB);
-		
-		// Update Receipt Details based on Receipt Mode 
-		for (int i = 0; i < receiptHeader.getReceiptDetails().size(); i++) {
-			FinReceiptDetail receiptDetail = receiptHeader.getReceiptDetails().get(i);
-			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE) ||
-					StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DD)){
-				getFinReceiptDetailDAO().updateReceiptStatus(receiptDetail.getReceiptID(), 
-						receiptDetail.getReceiptSeqID(), RepayConstants.PAYSTATUS_BOUNCE);
-				break;
-			}
-		}
-
 		// Bounce Reason Code
 		getManualAdviseDAO().delete(receiptHeader.getManualAdvise(),TableType.TEMP_TAB);
 
@@ -749,6 +736,22 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		if(!isRcdFound){
 			ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60208", "", null), PennantConstants.default_Language);
 			return errorDetail.getErrorMessage();
+		}else{
+
+			getManualAdviseDAO().save(receiptHeader.getManualAdvise(), TableType.MAIN_TAB);
+			
+			// Update Receipt Details based on Receipt Mode 
+			for (int i = 0; i < receiptHeader.getReceiptDetails().size(); i++) {
+				FinReceiptDetail receiptDetail = receiptHeader.getReceiptDetails().get(i);
+				if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE) ||
+						StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DD)){
+					getFinReceiptDetailDAO().updateReceiptStatus(receiptDetail.getReceiptID(), 
+							receiptDetail.getReceiptSeqID(), RepayConstants.PAYSTATUS_BOUNCE);
+					break;
+				}
+			}
+
+
 		}
 
 		return null;

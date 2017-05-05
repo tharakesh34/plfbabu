@@ -1103,7 +1103,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		getDocumentDetailsDAO().deleteList(new ArrayList<DocumentDetails>(financeDetail.getDocumentDetailsList()),
 				tableType);
 	}
-
+	
+	/**
+	 * Get Customer Document 
+	 * @param documentDetails
+	 * @param financeMain
+	 * @return
+	 */
 	private CustomerDocument getCustomerDocument(DocumentDetails documentDetails, FinanceMain financeMain) {
 		CustomerDocument customerDocument = getCustomerDocumentDAO().getCustomerDocumentById(financeMain.getCustID(),
 				documentDetails.getDocCategory(), "");
@@ -1143,7 +1149,189 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	}
 
 	
+	/**
+	 * Method for Execute posting Details on Core Banking Side
+	 * 
+	 * @param auditHeader
+	 * @param curBDay
+	 * @return
+	 * @throws InterruptedException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
+	 * @throws AccountNotFoundException
+	 */
+	public AuditHeader executeAccountingProcess(AuditHeader auditHeader, Date curBDay) {
+		logger.debug("Entering");
+
+		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
+
+		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		BeanUtils.copyProperties((FinanceDetail) auditHeader.getAuditDetail().getModelData(), financeDetail);
+
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
+		String eventCode = financeDetail.getAccountingEventCode();
+		
+		FinanceProfitDetail pftDetail = new FinanceProfitDetail();
+		HashMap<String, Object> executingMap = new HashMap<>();
+		try {
+			pftDetail = prepareAccountingData(financeDetail, executingMap);
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		prepareFeeRulesMap(executingMap,financeDetail);
+		try {
+			getAccountingResults(auditHeader, financeDetail, accountingSetEntries, curBDay, executingMap);
+			
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (PFFInterfaceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		//Disb Instruction Posting
+		if(eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBS) || 
+				eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSF) || 
+				eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSN) || 
+				eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSP)){
+			try {
+				accountingSetEntries.addAll(prepareDisbInstructionPosting(auditHeader, financeDetail));
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		if (auditHeader.getErrorMessage() == null || auditHeader.getErrorMessage().size() == 0) {
+
+			// save Postings
+			if (accountingSetEntries != null && !accountingSetEntries.isEmpty()) {
+				getPostingsDAO().saveBatch(accountingSetEntries, "", false);
+			}
+
+			// Save/Update Finance Profit Details
+			boolean isNew = false;
+
+			if (StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+				isNew = true;
+			}
+
+			FinanceProfitDetail profitDetail = doSave_PftDetails(pftDetail, isNew);
+			
+			//Account Details Update
+			if (accountingSetEntries != null && !accountingSetEntries.isEmpty()) {
+				getAccountProcessUtil().procAccountUpdate(accountingSetEntries, profitDetail.getPftAccrued());
+			}
+		}
+
+		logger.debug("Leaving");
+		return auditHeader;
+	}
+
+	/**
+	 * Method for Processing Suspense Preparation after Finance Maintenance
+	 * 
+	 * @param financeMain
+	 * @param processType
+	 * @param dateValueDate
+	 * @param alwRIA
+	 * @param curFinsts
+	 * @param maxODDays
+	 * @throws AccountNotFoundException
+	 */
+	protected void suspenseCheckProcess(FinanceMain financeMain, String processType, Date dateValueDate,
+			String curFinsts, int maxODDays) throws PFFInterfaceException {
+
+		boolean chkSuspProcess = false;
+
+		//Checking Conditions for Suspense Calculations
+		if (processType.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT)) {
+
+			//Get Current Maximum Overdue Days after Deletion Past Due Terms
+			int curMaxODDays = getFinODDetailsDAO().getMaxODDaysOnDeferSchd(financeMain.getFinReference(), null);
+			if (curMaxODDays < maxODDays) {
+				chkSuspProcess = true;
+			}
+
+		} else {
+			chkSuspProcess = true;
+		}
+
+		if (chkSuspProcess) {
+
+			// Deletion of Suspense Details Depends on Releases
+			getFinanceSuspHeadDAO().updateSuspFlag(financeMain.getFinReference());
+
+			//Get Maximum Days Overdue Details Object with Overdue Amount
+			FinODDetails odDetail = getFinODDetailsDAO().getMaxDaysFinODDetails(financeMain.getFinReference());
+
+			// Recreation of Suspense Details , if Finance is in Suspense with Current Max Overdue Days
+			if (odDetail != null) {
+				FinRepayQueue repayQueue = new FinRepayQueue();
+				repayQueue.setFinReference(financeMain.getFinReference());
+				repayQueue.setCustomerID(financeMain.getCustID());
+				repayQueue.setBranch(financeMain.getFinBranch());
+				repayQueue.setFinType(financeMain.getFinType());
+				repayQueue.setRpyDate(odDetail.getFinODSchdDate());
+				repayQueue.setFinRpyFor(odDetail.getFinODFor());
+
+				try {
+					getSuspensePostingUtil().suspensePreparation(financeMain, repayQueue, dateValueDate, true);
+				} catch (IllegalAccessException e) {
+					logger.error("Exception: ", e);
+				} catch (InvocationTargetException e) {
+					logger.error("Exception: ", e);
+				}
+			}
+		}
+
+		// Customer Status Change Date & Status Update after Suspense Details updations
+		String custSts = getCustomerDAO().getCustWorstStsbyCurFinSts(financeMain.getCustID(),
+				financeMain.getFinReference(), curFinsts);
+		List<Long> custIdList = new ArrayList<Long>(1);
+		custIdList.add(financeMain.getCustID());
+		List<FinStatusDetail> suspDateSts = getFinanceSuspHeadDAO().getCustSuspDate(custIdList);
+
+		Date suspFromdate = null;
+		if (suspDateSts != null && !suspDateSts.isEmpty()) {
+			suspFromdate = suspDateSts.get(0).getValueDate();
+		}
+
+		FinStatusDetail statusDetail = new FinStatusDetail();
+		List<FinStatusDetail> custStatuses = new ArrayList<FinStatusDetail>(1);
+		statusDetail.setCustId(financeMain.getCustID());
+		statusDetail.setFinStatus(custSts);
+		statusDetail.setValueDate(suspFromdate);
+		custStatuses.add(statusDetail);
+
+		getFinStatusDetailDAO().updateCustStatuses(custStatuses);
+
+	}
+
 	
+	/**
+	 * Preparing Accounting Data 
+	 * @param financeDetail
+	 * @param executingMap
+	 * @return
+	 * @throws InterruptedException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
 	private FinanceProfitDetail prepareAccountingData(
 			FinanceDetail financeDetail, HashMap<String, Object> executingMap) throws InterruptedException,
 			IllegalAccessException, InvocationTargetException {
@@ -1381,182 +1569,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		logger.debug("Leaving");
 	}
-
- 
-	
-	/**
-	 * Method for Execute posting Details on Core Banking Side
-	 * 
-	 * @param auditHeader
-	 * @param curBDay
-	 * @return
-	 * @throws InterruptedException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 * @throws AccountNotFoundException
-	 */
-	public AuditHeader executeAccountingProcess(AuditHeader auditHeader, Date curBDay) {
-		logger.debug("Entering");
-
-		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
-
-		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		BeanUtils.copyProperties((FinanceDetail) auditHeader.getAuditDetail().getModelData(), financeDetail);
-
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-
-		String eventCode = financeDetail.getAccountingEventCode();
-		
-		FinanceProfitDetail pftDetail = new FinanceProfitDetail();
-		HashMap<String, Object> executingMap = new HashMap<>();
-		try {
-			pftDetail = prepareAccountingData(financeDetail, executingMap);
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		prepareFeeRulesMap(executingMap,financeDetail);
-		try {
-			getAccountingResults(auditHeader, financeDetail, accountingSetEntries, curBDay, executingMap);
-			
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (PFFInterfaceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		//Disb Instruction Posting
-		if(eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBS) || 
-				eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSF) || 
-				eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSN) || 
-				eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSP)){
-			try {
-				accountingSetEntries.addAll(prepareDisbInstructionPosting(auditHeader, financeDetail));
-				
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		if (auditHeader.getErrorMessage() == null || auditHeader.getErrorMessage().size() == 0) {
-
-			// save Postings
-			if (accountingSetEntries != null && !accountingSetEntries.isEmpty()) {
-				getPostingsDAO().saveBatch(accountingSetEntries, "", false);
-			}
-
-			// Save/Update Finance Profit Details
-			boolean isNew = false;
-
-			if (StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
-				isNew = true;
-			}
-
-			FinanceProfitDetail profitDetail = doSave_PftDetails(pftDetail, isNew);
-			
-			//Account Details Update
-			if (accountingSetEntries != null && !accountingSetEntries.isEmpty()) {
-				getAccountProcessUtil().procAccountUpdate(accountingSetEntries, profitDetail.getPftAccrued());
-			}
-		}
-
-		logger.debug("Leaving");
-		return auditHeader;
-	}
-
-	/**
-	 * Method for Processing Suspense Preparation after Finance Maintenance
-	 * 
-	 * @param financeMain
-	 * @param processType
-	 * @param dateValueDate
-	 * @param alwRIA
-	 * @param curFinsts
-	 * @param maxODDays
-	 * @throws AccountNotFoundException
-	 */
-	protected void suspenseCheckProcess(FinanceMain financeMain, String processType, Date dateValueDate,
-			String curFinsts, int maxODDays) throws PFFInterfaceException {
-
-		boolean chkSuspProcess = false;
-
-		//Checking Conditions for Suspense Calculations
-		if (processType.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT)) {
-
-			//Get Current Maximum Overdue Days after Deletion Past Due Terms
-			int curMaxODDays = getFinODDetailsDAO().getMaxODDaysOnDeferSchd(financeMain.getFinReference(), null);
-			if (curMaxODDays < maxODDays) {
-				chkSuspProcess = true;
-			}
-
-		} else {
-			chkSuspProcess = true;
-		}
-
-		if (chkSuspProcess) {
-
-			// Deletion of Suspense Details Depends on Releases
-			getFinanceSuspHeadDAO().updateSuspFlag(financeMain.getFinReference());
-
-			//Get Maximum Days Overdue Details Object with Overdue Amount
-			FinODDetails odDetail = getFinODDetailsDAO().getMaxDaysFinODDetails(financeMain.getFinReference());
-
-			// Recreation of Suspense Details , if Finance is in Suspense with Current Max Overdue Days
-			if (odDetail != null) {
-				FinRepayQueue repayQueue = new FinRepayQueue();
-				repayQueue.setFinReference(financeMain.getFinReference());
-				repayQueue.setCustomerID(financeMain.getCustID());
-				repayQueue.setBranch(financeMain.getFinBranch());
-				repayQueue.setFinType(financeMain.getFinType());
-				repayQueue.setRpyDate(odDetail.getFinODSchdDate());
-				repayQueue.setFinRpyFor(odDetail.getFinODFor());
-
-				try {
-					getSuspensePostingUtil().suspensePreparation(financeMain, repayQueue, dateValueDate, true);
-				} catch (IllegalAccessException e) {
-					logger.error("Exception: ", e);
-				} catch (InvocationTargetException e) {
-					logger.error("Exception: ", e);
-				}
-			}
-		}
-
-		// Customer Status Change Date & Status Update after Suspense Details updations
-		String custSts = getCustomerDAO().getCustWorstStsbyCurFinSts(financeMain.getCustID(),
-				financeMain.getFinReference(), curFinsts);
-		List<Long> custIdList = new ArrayList<Long>(1);
-		custIdList.add(financeMain.getCustID());
-		List<FinStatusDetail> suspDateSts = getFinanceSuspHeadDAO().getCustSuspDate(custIdList);
-
-		Date suspFromdate = null;
-		if (suspDateSts != null && !suspDateSts.isEmpty()) {
-			suspFromdate = suspDateSts.get(0).getValueDate();
-		}
-
-		FinStatusDetail statusDetail = new FinStatusDetail();
-		List<FinStatusDetail> custStatuses = new ArrayList<FinStatusDetail>(1);
-		statusDetail.setCustId(financeMain.getCustID());
-		statusDetail.setFinStatus(custSts);
-		statusDetail.setValueDate(suspFromdate);
-		custStatuses.add(statusDetail);
-
-		getFinStatusDetailDAO().updateCustStatuses(custStatuses);
-
-	}
-
 	/**
 	 * Method for Processing each stage Accounting Entry details for particular Finance
 	 * 

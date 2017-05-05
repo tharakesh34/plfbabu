@@ -434,7 +434,6 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			this.postDate.setValue(DateUtility.getAppDate());
 			
 		} else {
-			this.finReference.setDescription(aManualAdvise.getFinReferenceName());
 			this.feeTypeID.setValue(aManualAdvise.getFeeTypeCode(), aManualAdvise.getFeeTypeDesc());
 			this.feeTypeID.setObject(new FeeType(aManualAdvise.getFeeTypeID()));
 			this.postDate.setButtonVisible(isReadOnly("ManualAdviseDialog_Sequence"));
