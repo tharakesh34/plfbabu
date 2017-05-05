@@ -75,6 +75,7 @@ import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueTotals;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinStatusDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -420,6 +421,8 @@ public class RepaymentPostingsUtil implements Serializable {
 		CustEODEvent custEODEvent = new CustEODEvent();
 		custEODEvent.setEodDate(dateValueDate);
 		custEODEvent.setEodValueDate(dateValueDate);
+		Customer customer = customerDAO.getCustomerStatus(financeMain.getCustID());
+		custEODEvent.setCustomer(customer);
 		latePayMarkingService.processCustomerStatus(custEODEvent);
 		
 		logger.debug("Leaving");

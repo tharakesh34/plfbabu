@@ -86,8 +86,8 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" adviseID, adviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID, ReceiptID,");
-		sql.append(" paidAmount, waivedAmount, remarks, ");
+		sql.append(" adviseID, adviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID, ReceiptID, ");
+		sql.append(" paidAmount, waivedAmount, remarks, ValueDate, PostDate,");
 		if(type.contains("View")){
 			sql.append(" FeeTypeCode, FeeTypeDesc," );
 		}
@@ -123,7 +123,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" AdviseID, AdviseType, FinReference, FeeTypeID, Sequence, AdviseAmount, BounceID, ReceiptID, ");
-		sql.append(" PaidAmount, WaivedAmount, Remarks, ");
+		sql.append(" PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate,");
 		if(type.contains("View")){
 			sql.append(" FeeTypeCode, FeeTypeDesc, BounceCode, " );
 		}
@@ -160,11 +160,11 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		StringBuilder sql =new StringBuilder(" insert into ManualAdvise");
 		sql.append(tableType.getSuffix());
 		sql.append("(adviseID, adviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID, ReceiptID, ");
-		sql.append(" paidAmount, waivedAmount, remarks, ");
+		sql.append(" paidAmount, waivedAmount, remarks, ValueDate, PostDate, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
 		sql.append(" values(");
 		sql.append(" :adviseID, :adviseType, :finReference, :feeTypeID, :sequence, :adviseAmount, :BounceID, :ReceiptID,");
-		sql.append(" :paidAmount, :waivedAmount, :remarks, ");
+		sql.append(" :paidAmount, :waivedAmount, :remarks, :ValueDate, :PostDate, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		// Get the identity sequence number.
@@ -196,7 +196,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		sql.append(tableType.getSuffix());
 		sql.append("  set adviseType = :adviseType, finReference = :finReference, feeTypeID = :feeTypeID, ");
 		sql.append(" sequence = :sequence, adviseAmount = :adviseAmount, paidAmount = :paidAmount, ");
-		sql.append(" waivedAmount = :waivedAmount, remarks = :remarks,BounceID=:BounceID, ReceiptID=:ReceiptID, ");
+		sql.append(" waivedAmount = :waivedAmount, remarks = :remarks,BounceID=:BounceID, ReceiptID=:ReceiptID, ValueDate=:ValueDate, PostDate=:PostDate, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");

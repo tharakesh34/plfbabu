@@ -44,6 +44,7 @@ package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -78,6 +79,8 @@ private static final long serialVersionUID = 1L;
 	private BigDecimal paidAmount;
 	private BigDecimal waivedAmount;
 	private String remarks;
+	private Date   valueDate;
+	private Date   postDate;
 	@XmlTransient
 	private boolean newRecord=false;
 	@XmlTransient
@@ -272,6 +275,22 @@ private static final long serialVersionUID = 1L;
 
 	public void setReceiptID(long receiptID) {
 		this.receiptID = receiptID;
+	}
+
+	public Date getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
+	}
+
+	public Date getPostDate() {
+		return postDate;
+	}
+
+	public void setPostDate(Date postDate) {
+		this.postDate = postDate;
 	}
 
 }

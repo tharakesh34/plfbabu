@@ -56,6 +56,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
@@ -80,11 +81,11 @@ import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -117,6 +118,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	protected Textbox remarks;
 	private ManualAdvise manualAdvise;
 	protected Listbox listBoxAdviseMovements;
+	protected Datebox valueDate;
+	protected Datebox postDate;
 
 	protected Hbox hbox_Sequence;
 	protected Hbox hbox_WaivedAmount;
@@ -237,6 +240,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.hbox_PaidAmount.setVisible(false);
 		this.hbox_WaivedAmount.setVisible(false);
 		this.hbox_Sequence.setVisible(false);
+		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.postDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		if (enqiryModule) {
 			this.groupboxWf.setVisible(false);
@@ -425,10 +430,16 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		if (aManualAdvise.isNewRecord()) {
 			this.finReference.setDescription("");
 			this.feeTypeID.setDescription("");
+			this.valueDate.setValue(DateUtility.getAppDate());
+			this.postDate.setValue(DateUtility.getAppDate());
+			
 		} else {
 			this.finReference.setDescription(aManualAdvise.getFinReferenceName());
 			this.feeTypeID.setValue(aManualAdvise.getFeeTypeCode(), aManualAdvise.getFeeTypeDesc());
 			this.feeTypeID.setObject(new FeeType(aManualAdvise.getFeeTypeID()));
+			this.postDate.setButtonVisible(isReadOnly("ManualAdviseDialog_Sequence"));
+			this.valueDate.setValue(aManualAdvise.getValueDate());
+			this.postDate.setValue(aManualAdvise.getPostDate());
 		}
 		if (enqiryModule) {
 			this.adviseMovements.setVisible(true);
@@ -566,6 +577,18 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		try {
+			aManualAdvise.setValueDate(this.valueDate.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			aManualAdvise.setPostDate(this.postDate.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
@@ -645,6 +668,11 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 					new PTDecimalValidator(Labels.getLabel("label_ManualAdviseDialog_AdviseAmount.value"),
 							PennantConstants.defaultCCYDecPos, true, false, 0));
 		}
+		if (!this.valueDate.isDisabled() ) {
+			this.valueDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ManualAdviseDialog_ValueDate.value"),
+					true, null, null, true));
+		}
+		
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -663,6 +691,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.paidAmount.setConstraint("");
 		this.waivedAmount.setConstraint("");
 		this.remarks.setConstraint("");
+		this.valueDate.setConstraint("");
+		
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -703,7 +733,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	@Override
 	protected void doClearMessage() {
 		logger.debug(Literal.LEAVING);
-
+		this.valueDate.setErrorMessage("");
+		this.postDate.setErrorMessage("");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -777,6 +808,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_PaidAmount"), this.paidAmount);
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_WaivedAmount"), this.waivedAmount);
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_Sequence"), this.sequence);
+			readOnlyComponent(isReadOnly("ManualAdviseDialog_ValueDate"), this.valueDate);
 		} else {
 			this.btnCancel.setVisible(true);
 			readOnlyComponent(true, this.finReference);
@@ -787,7 +819,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			readOnlyComponent(true, this.adviseType);
 			readOnlyComponent(true, this.sequence);
 		}
-
+		readOnlyComponent(true, this.postDate);
 		readOnlyComponent(isReadOnly("ManualAdviseDialog_Remarks"), this.remarks);
 		readOnlyComponent(isReadOnly("ManualAdviseDialog_AdviseAmount"), this.adviseAmount);
 
@@ -821,6 +853,9 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		readOnlyComponent(true, this.paidAmount);
 		readOnlyComponent(true, this.waivedAmount);
 		readOnlyComponent(true, this.remarks);
+		readOnlyComponent(true, this.valueDate);
+		readOnlyComponent(true, this.postDate);
+		
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

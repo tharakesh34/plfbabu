@@ -105,6 +105,20 @@
 										maxlength="100" width="320px" />
 								</hbox>
 							</row>
+							<row>
+							<label id="label_ManualAdviseDialog_ValueDate"
+								value="${c:l('label_ManualAdviseDialog_ValueDate.value')}" />
+							<hbox id="hbox_ManualAdviseDialog_ValueDate">
+								<space spacing="2px" sclass="mandatory" />
+								<datebox id="valueDate" width="100px" />
+							</hbox>
+							<label id="label_ManualAdviseDialog_PostDate"
+								value="${c:l('label_ManualAdviseDialog_PostDate.value')}" />
+							<hbox id="hbox_ManualAdviseDialog_PostDate">
+								<space spacing="2px" sclass="mandatory" />
+								<datebox id="postDate" width="100px" />
+							</hbox>
+							</row>
 							<row id="row2">
 								<hbox id="hbox_PaidAmount">
 									<label id="label_PaidAmount"
@@ -136,6 +150,7 @@
 								</hbox>
 
 							</row>
+							
 						</rows>
 					</grid>
 					<groupbox id="adviseMovements">
