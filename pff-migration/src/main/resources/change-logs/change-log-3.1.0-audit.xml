@@ -30,4 +30,10 @@
 	<addNotNullConstraint tableName="AdtManualAdvise" columnName="ValueDate"/>
 	<addNotNullConstraint tableName="AdtManualAdvise" columnName="PostDate"/>
 	</changeSet>
+	<changeSet id="05" author="Irfan">
+	<sql>
+	Update AdtManualAdvise set ValueDate=CURRENT_TIMESTAMP; 
+	Update AdtManualAdvise set PostDate=CURRENT_TIMESTAMP;
+	</sql>
+	</changeSet>
 </databaseChangeLog>
