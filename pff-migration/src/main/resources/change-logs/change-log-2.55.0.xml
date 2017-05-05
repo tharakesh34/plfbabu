@@ -472,5 +472,11 @@
 			<column name="FAILEDRECORDS" type="int"/>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="27" author="Durgaprasad g">
+		<addColumn tableName="PRESENTMENTDETAILS">
+			<column name="RECEIPTID" type="bigint"/>
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
