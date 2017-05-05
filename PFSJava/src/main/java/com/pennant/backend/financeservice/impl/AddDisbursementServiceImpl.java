@@ -15,6 +15,7 @@ import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -23,13 +24,15 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.FinanceConstants;
 
 public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruction> implements AddDisbursementService {
 	private static Logger logger = Logger.getLogger(AddDisbursementServiceImpl.class);
 
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	
+	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
+	private FinanceDataValidation		financeDataValidation;
+
 	/**
 	 * Method for perform add disbursement action
 	 * 
@@ -69,7 +72,6 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		logger.debug("Entering");
 
 		AuditDetail auditDetail = new AuditDetail();
-		String lang = "EN";
 
 		// validate Instruction details
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -80,18 +82,25 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		Date fromDate = finServiceInstruction.getFromDate();
 		BigDecimal disbAmount = finServiceInstruction.getAmount();
 
+		if(!finScheduleData.getFinanceType().isAlwMultiPartyDisb()) {
+			String[] valueParm = new String[2];
+			valueParm[0] = financeMain.getFinReference();
+			valueParm[1] = financeMain.getFinType();
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90276", valueParm)));
+			return auditDetail;
+		}
 		// It shouldn't be past date when compare to appdate
 		if (fromDate.compareTo(DateUtility.getAppDate()) < 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", valueParm)));
 		}
 
 		// validate from date
 		if (finServiceInstruction.getFromDate().compareTo(financeMain.getMaturityDate()) > 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = String.valueOf(finServiceInstruction.getFromDate());
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91101", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91101", valueParm)));
 		}
 
 		// validate disb amount
@@ -99,7 +108,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			String[] valueParm = new String[2];
 			valueParm[0] = "Disbursement amount";
 			valueParm[1] = String.valueOf(BigDecimal.ZERO);
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91121", "", valueParm), lang));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91121", valueParm)));
 		}
 		
 		boolean isOverdraft = false;
@@ -139,7 +148,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				String[] valueParm = new String[2];
 				valueParm[0] = String.valueOf(disbAmount);
 				valueParm[1] = String.valueOf(availableLimit);
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91119", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91119", valueParm)));
 			} else {
 				// Checking Total Disbursed amount validate against New disbursement
 				BigDecimal totDisbAmount = BigDecimal.ZERO;
@@ -152,7 +161,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 					valueParm[0] = String.valueOf(totDisbAmount);
 					valueParm[1] = String.valueOf(financeMain.getFinAssetValue());
 					auditDetail
-					.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91120", "", valueParm), lang));
+					.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91120", valueParm)));
 				}
 			}
 		}
@@ -166,7 +175,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 					&& !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finServiceInstruction.getRecalType();
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91104", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91104", valueParm)));
 			}
 		}
 		// validate reCalFromDate
@@ -176,19 +185,19 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			if (finServiceInstruction.getRecalFromDate() == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finServiceInstruction.getRecalType();
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91105", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91105", valueParm)));
 				return auditDetail;
 			}
 			if (finServiceInstruction.getRecalFromDate().compareTo(financeMain.getMaturityDate()) > 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = DateUtility.formatToShortDate(finServiceInstruction.getRecalFromDate());
 				valueParm[1] = DateUtility.formatToShortDate(financeMain.getMaturityDate());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91114", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91114", valueParm)));
 			} else if (finServiceInstruction.getRecalFromDate().compareTo(finServiceInstruction.getFromDate()) <= 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "RecalFromDate";
 				valueParm[1] = "from date";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91121", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91121", valueParm)));
 				return auditDetail;
 			}
 		}
@@ -198,7 +207,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			if (finServiceInstruction.getRecalToDate() == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finServiceInstruction.getRecalType();
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91108", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91108", valueParm)));
 				return auditDetail;
 			}
 
@@ -206,7 +215,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				String[] valueParm = new String[2];
 				valueParm[0] = DateUtility.formatToShortDate(finServiceInstruction.getRecalToDate());
 				valueParm[1] = DateUtility.formatToShortDate(finServiceInstruction.getRecalFromDate());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91109", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91109", valueParm)));
 			}
 		}
 
@@ -216,14 +225,14 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			if (finServiceInstruction.getTerms() <= 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "terms";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
 			}
 		} else {
 			if (finServiceInstruction.getTerms() > 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = CalculationConstants.RPYCHG_ADDTERM;
 				valueParm[1] = CalculationConstants.RPYCHG_ADDRECAL;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91118", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91118", valueParm)));
 			}
 		}
 
@@ -252,15 +261,45 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 					|| StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLDATE))) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "RecalFromDate:"+DateUtility.formatToShortDate(finServiceInstruction.getRecalFromDate());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", valueParm)));
 			}
 			if(!isValidRecalToDate && (StringUtils.equals(finServiceInstruction.getRecalType(), 
 					CalculationConstants.RPYCHG_TILLDATE))) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "RecalToDate:"+DateUtility.formatToShortDate(finServiceInstruction.getRecalToDate());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", "", valueParm), lang));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", valueParm)));
 			}
 		}
+		// validate disbursement amount
+		if (finScheduleData.getFinanceType().isAlwMaxDisbCheckReq()) {
+			BigDecimal finAssetValue = financeMain.getFinAssetValue();
+			BigDecimal finCurAssetValue = financeMain.getFinCurrAssetValue();
+			if (disbAmount.compareTo(finAssetValue.subtract(finCurAssetValue)) > 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Disbursement amount:" + disbAmount;
+				valueParm[0] = "Remaining finAssetValue:" + finAssetValue.subtract(finCurAssetValue);
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30551", valueParm)));
+			}
+		}
+		
+		BigDecimal totalDisbAmtFromInst = BigDecimal.ZERO;
+		for(FinAdvancePayments finAdvancePayment: financeDetail.getAdvancePaymentsList()) {
+			totalDisbAmtFromInst = totalDisbAmtFromInst.add(finAdvancePayment.getAmtToBeReleased());
+		}
+		
+		if(totalDisbAmtFromInst.compareTo(disbAmount) != 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Disbursement amount:" + disbAmount;
+			valueParm[0] = "Total disbursement amount from instructions:"+ totalDisbAmtFromInst;
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90277", valueParm)));
+			return auditDetail;
+		}
+		// validate disbursement instructions
+		List<ErrorDetails> errors = financeDataValidation.disbursementValidation(financeDetail);
+		for (ErrorDetails errorDetails : errors) {
+			auditDetail.setErrorDetail(errorDetails);
+		}
+				
 		logger.debug("Leaving");
 		return auditDetail;
 	}
@@ -281,7 +320,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				&& curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid())))) {
 			String[] valueParm = new String[1];
 			valueParm[0] = label;
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90261", "", valueParm)));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90261", valueParm)));
 			return auditDetail;
 		}
 		return null;
@@ -289,5 +328,9 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+	
+	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
+		this.financeDataValidation = financeDataValidation;
 	}
 }

@@ -577,6 +577,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		}
 
 		// validate service instruction data
+		financeDetail.setAdvancePaymentsList(finServiceInstruction.getDisbursementDetails());
 		AuditDetail auditDetail = addDisbursementService.doValidations(financeDetail, finServiceInstruction);
 		if (auditDetail.getErrorDetails() != null) {
 			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
@@ -587,19 +588,6 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 				return financeDetail;
 			}
 		}
-
-		// validate disbursement Details
-		financeDetail.setAdvancePaymentsList(finServiceInstruction.getDisbursementDetails());
-/*		List<ErrorDetails> errors = financeDataValidation.disbursementValidation(financeDetail);
-		if (!errors.isEmpty()) {
-			for (ErrorDetails errorDetails : errors) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
-						errorDetails.getError()));
-				return financeDetail;
-			}
-		}*/
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_ADDDBSN;
 		List<ErrorDetails> errorList = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN,

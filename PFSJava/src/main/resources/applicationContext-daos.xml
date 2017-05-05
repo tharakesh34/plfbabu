@@ -8520,6 +8520,7 @@
 	<bean name="addDisbursementServiceTarget"
 		class="com.pennant.backend.financeservice.impl.AddDisbursementServiceImpl">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="financeDataValidation" ref="financeDataValidation" />
 	</bean>
 
 	<bean id="reScheduleService"
