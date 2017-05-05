@@ -12,4 +12,22 @@
 		<dropNotNullConstraint tableName="ADTMANUALADVISE"
 			columnName="Remarks" columnDataType="varchar(100)" />
 	</changeSet>
+	<changeSet id="02" author="Irfan">
+		<addColumn tableName="AdtManualAdvise">
+		<column name="ValueDate" type="datetime">
+		</column>
+		<column name="PostDate" type="datetime">
+		</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="03" author="Irfan">
+	<sql>
+		Update AdtManualAdvise set ValueDate='05-MAY-17'; 
+		Update AdtManualAdvise set PostDate='05-MAY-17';
+	</sql>
+	</changeSet>
+	<changeSet id="04" author="Irfan">
+	<addNotNullConstraint tableName="AdtManualAdvise" columnName="ValueDate"/>
+	<addNotNullConstraint tableName="AdtManualAdvise" columnName="PostDate"/>
+	</changeSet>
 </databaseChangeLog>
