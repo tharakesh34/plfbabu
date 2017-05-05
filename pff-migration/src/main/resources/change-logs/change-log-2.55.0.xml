@@ -424,4 +424,43 @@
 		</createView>
 	</changeSet>
 	
+	
+	
+<changeSet id="25" author="Durgaprasad g">
+	<createTable tableName="PDC_CONSL_EMI_DTL_TEMP">
+	   <column name="PR_KEY" type="varchar(120)" />
+	   <column name="BR_CODE" type="varchar(3)" />
+	   <column name="AGREEMENTNO" type="varchar(20)" />
+	   <column name="MICR_CODE" type="varchar(9)" />
+	   <column name="ACC_TYPE" type="int" />
+	   <column name="LEDGER_FOLIO" type="varchar(3)" />
+	   <column name="FINWARE_ACNO" type="varchar(16)" />
+	   <column name="DEST_ACC_HOLDER" type="varchar(100)" />
+	   <column name="PDC_BY_NAME" type="varchar(100)" />
+	   <column name="BANK_NAME" type="varchar(60)" />
+	   <column name="BANK_ADDRESS" type="varchar(60)" />
+	   <column name="EMI_NO" type="int" />
+	   <column name="BFL_REF" type="varchar(3)" />
+	   <column name="BATCHID" type="varchar(29)" />
+	   <column name="CHEQUEAMOUNT" type="decimal(16,2)" />
+	   <column name="PRESENTATIONDATE" type="datetime" />
+	   <column name="RESUB_FLAG" type="varchar(1)" />
+	   <column name="UMRN_NO" type="varchar(20)" />
+	   <column name="IFSC_CODE" type="varchar(20)" />
+	   <column name="SPONSER_BANK_CODE" type="varchar(20)" />
+	   <column name="UTILITY_CODE" type="varchar(20)" />
+	   <column name="MANDATE_START_DT" type="datetime" />
+	   <column name="MANDATE_END_DT" type="datetime" />
+	   <column name="INSTRUMENT_MODE" type="varchar(1)" />
+	   <column name="PRODUCT_CODE" type="varchar(8)" />
+	   <column name="LESSEEID" type="NUMBER(10)" />
+	   <column name="PICKUP_BATCHID" type="NUMBER(16)" />
+	   <column name="TXN_TYPE_CODE" type="NUMBER(4)" />
+	   <column name="SOURCE_CODE" type="NUMBER(4)" />
+	   <column name="ENTITY_CODE" type="NUMBER(8)" />
+	   <column name="POSTING_DATETIME" type="datetime" />
+	   <column name="STATUS" type="varchar(20)" />
+	</createTable>
+</changeSet>
+
 </databaseChangeLog>
