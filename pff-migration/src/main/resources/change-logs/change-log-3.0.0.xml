@@ -19,32 +19,53 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
-	
+
 	<changeSet id="01" author="Surekha">
 		<sql>
-			 DELETE from ReportList where Code = 'WorkFlowDetails';
- 
-			Insert into ReportList Values('WorkFlowDetails','WorkFlowDetails','listheader_workFlowType.label,listheader_workFlowSubType.label,listheader_workFlowDesc.label,listheader_RecordStatus.label,listheader_RecordType.label','workFlowType,workFlowSubType,workFlowDesc,recordStatus,recordType','String,String,String,String,String','','ReportList05','WorkFlow Details', 'Solution Factory',0, 1000,Current_TimeStamp,'Approved', null, null, null, null, null, 0,0);
+			DELETE from ReportList where Code = 'WorkFlowDetails';
+
+			Insert into ReportList
+			Values('WorkFlowDetails','WorkFlowDetails','listheader_workFlowType.label,listheader_workFlowSubType.label,listheader_workFlowDesc.label,listheader_RecordStatus.label,listheader_RecordType.label','workFlowType,workFlowSubType,workFlowDesc,recordStatus,recordType','String,String,String,String,String','','ReportList05','WorkFlow
+			Details', 'Solution Factory',0, 1000,Current_TimeStamp,'Approved',
+			null, null, null, null, null, 0,0);
 		</sql>
 	</changeSet>
 	<changeSet id="02" author="Surekha">
 		<sql>
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM
+			SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT
+			MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM
+			SECROLEGROUPS);
+
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS),
+			'JVPOSTINGS_VIEW', 'WF enquiry for JVPOSTINGS',
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS
+			WHERE 0=0;
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1
+			From SecRoleGroups),(Select GrpId From SecGroups Where
+			GrpCode='JVPOSTINGS_VIEW'), (Select RoleID From SecRoles Where
+			RoleCd='MSTGRP1_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ','
+			',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1
+			FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='JVPOSTINGS_VIEW') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='menuItem_others_JVPostingEnquiry'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
 			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
-			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
-			
-			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'JVPOSTINGS_VIEW', 'WF enquiry for JVPOSTINGS', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
-			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='JVPOSTINGS_VIEW'), (Select  RoleID  From SecRoles Where RoleCd='MSTGRP1_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='JVPOSTINGS_VIEW') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_others_JVPostingEnquiry'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			 
-			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
-			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
-			
+			UPDATE
+			SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM
+			SECGROUPRIGHTS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM
+			SECROLEGROUPS);
+
 		</sql>
 	</changeSet>
 	<changeSet id="03" author="Surekha">
-		<createView viewName="RELATIONSHIPOFFICERS_VIEW" replaceIfExists="true">
+		<createView viewName="RELATIONSHIPOFFICERS_VIEW"
+			replaceIfExists="true">
 			SELECT T1.ROfficerCode , T1.ROfficerDesc ,T1.ROfficerDeptCode ,T2.GenDeptDesc lovDescROfficerDeptCodeName  , T1.ROfficerIsActive ,
 	           T1.Version , T1.LastMntBy , T1.LastMntOn ,T1.RecordStatus , T1.RoleCode ,T1.NextRoleCode , T1.TaskId ,T1.NextTaskId , T1.RecordType , T1.WorkflowId 
      		FROM RelationshipOfficers_Temp T1 LEFT JOIN 
@@ -55,6 +76,81 @@
      		FROM RelationshipOfficers T1 LEFT JOIN 
      			RMTGenDepartments T2 ON T1.ROfficerDeptCode = T2.GenDepartment
      		WHERE NOT EXISTS ( SELECT 1 FROM RelationshipOfficers_Temp WHERE ROfficerCode = T1.ROfficerCode )
+		</createView>
+	</changeSet>
+
+	<changeSet id="04" author="Amit">
+		<sql>
+		    
+		    delete FROM SECGROUPRIGHTS where rightid in (SELECT rightid FROM SECRIGHTS
+			WHERE RIGHTNAME='CityDialog_CityIsActive');
+			delete from SECRIGHTS where rightname= 'CityDialog_CityIsActive';
+		
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM
+			SECGROUPRIGHTS);
+
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,
+			'CityDialog_CityIsActive','CityDialog',0,1000,CURRENT_TIMESTAMP,' ','
+			',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM
+			SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='CITY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='CityDialog_CityIsActive'), 1, 0,1000,CURRENT_TIMESTAMP,'
+			',' ',' ',' ',' ',' ',0);
+
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM
+			SECGROUPRIGHTS);
+		</sql>
+	</changeSet>
+
+	<changeSet id="05" author="Amit">
+		<addColumn tableName="RMTPROVINCEVSCITY">
+			<column name="CITYISACTIVE" type="boolean" defaultValue="1">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="06" author="Amit">
+		<addColumn tableName="RMTPROVINCEVSCITY_Temp">
+			<column name="CITYISACTIVE" type="boolean" defaultValue="1">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="07" author="Amit">
+		<createView replaceIfExists="true" viewName="RMTPROVINCEVSCITY_AVIEW">
+SELECT  T1.PCCountry, T2.CountryDesc LovDescPCCountryName, T1.PCProvince, T3.CPProvinceName LovDescPCProvinceName, T1.PCCity, T1.PCCityName,T1.PCCityClassification, T1.Version, 
+                      T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.BankRefNo, T1.CityIsActive
+				FROM         RMTProvinceVsCity  T1 INNER JOIN
+			                      BMTCountries  T2 ON T1.PCCountry = T2.CountryCode INNER JOIN
+			                      RMTCountryVsProvince  T3 ON T1.PCCountry = T3.CPCountry AND T1.PCProvince = T3.CPProvince
+		</createView>
+	</changeSet>
+
+
+	<changeSet id="08" author="Amit">
+		<createView replaceIfExists="true" viewName="RMTPROVINCEVSCITY_VIEW">
+ SELECT  T1.PCCountry, T2.CountryDesc LovDescPCCountryName, T1.PCProvince, T3.CPProvinceName LovDescPCProvinceName, T1.PCCity, T1.PCCityName,T1.PCCityClassification, T1.Version, 
+                      T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.BankRefNo, T1.CityIsActive
+				FROM         RMTProvinceVsCity_Temp  T1 INNER JOIN
+			                      BMTCountries  T2 ON T1.PCCountry = T2.CountryCode INNER JOIN
+			                      RMTCountryVsProvince  T3 ON T1.PCCountry = T3.CPCountry AND T1.PCProvince = T3.CPProvince
+				UNION ALL
+				SELECT     T1.PCCountry, T2.CountryDesc LovDescPCCountryName, T1.PCProvince, T3.CPProvinceName LovDescPCProvinceName, T1.PCCity, T1.PCCityName,T1.PCCityClassification, T1.Version, 
+				                      T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.BankRefNo, T1.CityIsActive
+				FROM         RMTProvinceVsCity  T1 INNER JOIN
+				                      BMTCountries  T2 ON T1.PCCountry = T2.CountryCode INNER JOIN
+				                      RMTCountryVsProvince  T3 ON T1.PCCountry = T3.CPCountry AND T1.PCProvince = T3.CPProvince
+				WHERE     NOT EXISTS
+				                          (SELECT     1
+	                            FROM          RMTProvinceVsCity_TEMP
+	                            WHERE      PCCountry = T1.PCCountry AND PCProvince = T1.PCProvince AND PCCity = T1.PCCity)
+
 		</createView>
 	</changeSet>
 </databaseChangeLog>

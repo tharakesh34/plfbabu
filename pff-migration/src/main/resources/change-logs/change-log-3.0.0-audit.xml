@@ -3,10 +3,16 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
-<property name="call.concatenate" value="+" dbms="mssql" />
-<property name="call.concatenate" value="||" dbms="oracle" />
-<property name="call.maindb" value="PLF.." dbms="mssql"/>
-<property name="call.maindb" value="PLF." dbms="oracle"/>
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.maindb" value="PLF.." dbms="mssql" />
+	<property name="call.maindb" value="PLF." dbms="oracle" />
 
-
+	<changeSet id="01" author="Amit">
+		<addColumn tableName="AdtRMTPROVINCEVSCITY">
+			<column name="CITYISACTIVE" type="boolean" defaultValue="1">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
