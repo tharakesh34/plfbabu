@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
 	<property name="add.schema" value=" " dbms="oracle" />
@@ -50,24 +52,39 @@
 			update FinPftDetails set payableAdvise=0 where payableAdvise is null;
 			update FinPftDetails set payableAdvise=0 where payableAdvise is null;
 			update finpftdetails_temp set excessAmt=0 where excessAmt is null;
-			update finpftdetails_temp set emiInAdvance=0 where emiInAdvance is null;
-			update finpftdetails_temp set payableAdvise=0 where payableAdvise is null;
+			update finpftdetails_temp set emiInAdvance=0 where emiInAdvance is
+			null;
+			update finpftdetails_temp set payableAdvise=0 where
+			payableAdvise is null;
 			update
-			finpftdetails_snapshot set excessAmt=0 where excessAmt is null;
-			update finpftdetails_snapshot set emiInAdvance=0 where emiInAdvance is null;
-			update finpftdetails_snapshot set payableAdvise=0 where payableAdvise is null;
+			finpftdetails_snapshot set excessAmt=0
+			where excessAmt is null;
+			update finpftdetails_snapshot set
+			emiInAdvance=0 where emiInAdvance is null;
+			update
+			finpftdetails_snapshot set payableAdvise=0 where payableAdvise is
+			null;
 		</sql>
 	</changeSet>
 	<changeSet id="5" author="Prasad">
-		<addNotNullConstraint tableName="FinPftDetails" columnName="ExcessAmt" columnDataType="decimal(18,0)" />
-		<addNotNullConstraint tableName="FinPftDetails" columnName="EmiInAdvance" columnDataType="decimal(18,0)" />
-		<addNotNullConstraint tableName="FinPftDetails" columnName="PayableAdvise" columnDataType="decimal(18,0)" />
-		<addNotNullConstraint tableName="finpftdetails_temp" columnName="ExcessAmt" columnDataType="decimal(18,0)" />
-		<addNotNullConstraint tableName="finpftdetails_temp" columnName="EmiInAdvance" columnDataType="decimal(18,0)" />
-		<addNotNullConstraint tableName="finpftdetails_temp" columnName="PayableAdvise" columnDataType="decimal(18,0)" />
-		<addNotNullConstraint tableName="finpftdetails_snapshot" columnName="ExcessAmt" columnDataType="decimal(18,0)" />
-		<addNotNullConstraint tableName="finpftdetails_snapshot" columnName="EmiInAdvance" columnDataType="decimal(18,0)" />
-		<addNotNullConstraint tableName="finpftdetails_snapshot" columnName="PayableAdvise" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="FinPftDetails"
+			columnName="ExcessAmt" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="FinPftDetails"
+			columnName="EmiInAdvance" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="FinPftDetails"
+			columnName="PayableAdvise" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_temp"
+			columnName="ExcessAmt" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_temp"
+			columnName="EmiInAdvance" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_temp"
+			columnName="PayableAdvise" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_snapshot"
+			columnName="ExcessAmt" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_snapshot"
+			columnName="EmiInAdvance" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_snapshot"
+			columnName="PayableAdvise" columnDataType="decimal(18,0)" />
 	</changeSet>
 
 
@@ -95,28 +112,48 @@
 
 	<changeSet id="9" author="Prasad">
 		<sql>
-			update FinPftDetails set resvexcessAmt=0 where resvexcessAmt is null;
-			update FinPftDetails set resvemiInAdvance=0 where resvemiInAdvance is null;
-			update FinPftDetails set resvpayableAdvise=0 where resvpayableAdvise is null;
-			update finpftdetails_temp set resvexcessAmt=0 where resvexcessAmt is null;
-			update finpftdetails_temp set resvemiInAdvance=0 where resvemiInAdvance is null;
-			update finpftdetails_temp set resvpayableAdvise=0 where resvpayableAdvise is null;
-			update finpftdetails_snapshot set
+			update FinPftDetails set resvexcessAmt=0 where resvexcessAmt is
+			null;
+			update FinPftDetails set resvemiInAdvance=0 where
+			resvemiInAdvance is null;
+			update FinPftDetails set resvpayableAdvise=0
+			where resvpayableAdvise is null;
+			update finpftdetails_temp set
 			resvexcessAmt=0 where resvexcessAmt is null;
-			update finpftdetails_snapshot set resvemiInAdvance=0 where resvemiInAdvance is null;
-			update finpftdetails_snapshot set resvpayableAdvise=0 where resvpayableAdvise is null;
+			update finpftdetails_temp
+			set resvemiInAdvance=0 where resvemiInAdvance is null;
+			update
+			finpftdetails_temp set resvpayableAdvise=0 where resvpayableAdvise is
+			null;
+			update finpftdetails_snapshot set
+			resvexcessAmt=0 where
+			resvexcessAmt is null;
+			update finpftdetails_snapshot set
+			resvemiInAdvance=0 where resvemiInAdvance is null;
+			update
+			finpftdetails_snapshot set resvpayableAdvise=0 where
+			resvpayableAdvise is null;
 		</sql>
 	</changeSet>
 	<changeSet id="10" author="Prasad">
-		<addNotNullConstraint tableName="FinPftDetails" columnName="ResvexcessAmt" columnDataType="decimal(18,0)" />
-		<addNotNullConstraint tableName="FinPftDetails" columnName="ResvemiInAdvance" columnDataType="decimal(18,0)" />
-		<addNotNullConstraint tableName="FinPftDetails" columnName="ResvpayableAdvise" columnDataType="decimal(18,0)" />
-		<addNotNullConstraint tableName="finpftdetails_temp" columnName="ResvexcessAmt" columnDataType="decimal(18,0)" />
-		<addNotNullConstraint tableName="finpftdetails_temp" columnName="ResvemiInAdvance" columnDataType="decimal(18,0)" />
-		<addNotNullConstraint tableName="finpftdetails_temp" columnName="ResvpayableAdvise" columnDataType="decimal(18,0)" />
-		<addNotNullConstraint tableName="finpftdetails_snapshot" columnName="ResvexcessAmt" columnDataType="decimal(18,0)" />
-		<addNotNullConstraint tableName="finpftdetails_snapshot" columnName="ResvemiInAdvance" columnDataType="decimal(18,0)" />
-		<addNotNullConstraint tableName="finpftdetails_snapshot" columnName="ResvpayableAdvise" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="FinPftDetails"
+			columnName="ResvexcessAmt" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="FinPftDetails"
+			columnName="ResvemiInAdvance" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="FinPftDetails"
+			columnName="ResvpayableAdvise" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_temp"
+			columnName="ResvexcessAmt" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_temp"
+			columnName="ResvemiInAdvance" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_temp"
+			columnName="ResvpayableAdvise" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_snapshot"
+			columnName="ResvexcessAmt" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_snapshot"
+			columnName="ResvemiInAdvance" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="finpftdetails_snapshot"
+			columnName="ResvpayableAdvise" columnDataType="decimal(18,0)" />
 	</changeSet>
 	<changeSet id="11" author="satish">
 		<addColumn tableName="FINSTATUSDETAIL">
@@ -157,57 +194,99 @@
 	<changeSet id="18" author="satish">
 		<sql>
 
-			UPDATE RMTFINANCETYPES_TEMP set pastduePftCalMthd='N' where pastduePftCalMthd='NOTAPP';
-			UPDATE RMTFINANCETYPES_TEMP set pastduePftCalMthd='S' where pastduePftCalMthd='SRATE';
-			UPDATE RMTFINANCETYPES_TEMP set pastduePftCalMthd='M' where pastduePftCalMthd='SRATEMRG';
-			UPDATE RMTFINANCETYPES_TEMP set PastduePftMargin=0 where PastduePftMargin is null;
+			UPDATE RMTFINANCETYPES_TEMP set pastduePftCalMthd='N' where
+			pastduePftCalMthd='NOTAPP';
+			UPDATE RMTFINANCETYPES_TEMP set
+			pastduePftCalMthd='S' where pastduePftCalMthd='SRATE';
+			UPDATE
+			RMTFINANCETYPES_TEMP set pastduePftCalMthd='M' where
+			pastduePftCalMthd='SRATEMRG';
+			UPDATE RMTFINANCETYPES_TEMP set
+			PastduePftMargin=0 where PastduePftMargin is null;
 
-			UPDATE RMTFINANCETYPES set pastduePftCalMthd='N' where pastduePftCalMthd='NOTAPP';
-			UPDATE RMTFINANCETYPES set pastduePftCalMthd='S' where
+			UPDATE
+			RMTFINANCETYPES set pastduePftCalMthd='N' where
+			pastduePftCalMthd='NOTAPP';
+			UPDATE RMTFINANCETYPES set
+			pastduePftCalMthd='S' where
 			pastduePftCalMthd='SRATE';
-			UPDATE RMTFINANCETYPES set pastduePftCalMthd='M' where pastduePftCalMthd='SRATEMRG';
+			UPDATE
+			RMTFINANCETYPES set pastduePftCalMthd='M' where
+			pastduePftCalMthd='SRATEMRG';
 
-			UPDATE RMTFINANCETYPES set PastduePftMargin=0 where PastduePftMargin is null;
-			UPDATE FinanceMain set PastduePftMargin=0 where PastduePftMargin is null;
-			UPDATE FinanceMain_Temp set PastduePftMargin=0 where PastduePftMargin is null;
-
-			UPDATE FinanceMain set pastduePftCalMthd=(select pastduePftCalMthd from RMTFINANCETYPES where RMTFINANCETYPES.FinType=FinanceMain.Fintype);
+			UPDATE RMTFINANCETYPES set
+			PastduePftMargin=0 where PastduePftMargin is null;
 			UPDATE FinanceMain
-			set PastduePftMargin=(select PastduePftMargin from RMTFINANCETYPES where RMTFINANCETYPES.FinType=FinanceMain.Fintype);
+			set PastduePftMargin=0 where PastduePftMargin is null;
+			UPDATE
+			FinanceMain_Temp set PastduePftMargin=0 where PastduePftMargin is
+			null;
 
-			UPDATE FinanceMain_Temp set pastduePftCalMthd=(select pastduePftCalMthd from RMTFINANCETYPES where RMTFINANCETYPES.FinType=FinanceMain_Temp.Fintype);
-			UPDATE FinanceMain_Temp set PastduePftMargin=(select PastduePftMargin from RMTFINANCETYPES where RMTFINANCETYPES.FinType=FinanceMain_Temp.Fintype);
+			UPDATE FinanceMain set pastduePftCalMthd=(select
+			pastduePftCalMthd from RMTFINANCETYPES where
+			RMTFINANCETYPES.FinType=FinanceMain.Fintype);
+			UPDATE FinanceMain
+			set
+			PastduePftMargin=(select PastduePftMargin from RMTFINANCETYPES where
+			RMTFINANCETYPES.FinType=FinanceMain.Fintype);
 
-			UPDATE FinPftDetails set PftOnPDMethod=(select pastduePftCalMthd from FinanceMain
-			where FinanceMain.Finreference=FinPftDetails.Finreference);
-			UPDATE FinPftDetails set PftOnPDMrg=(select PastduePftMargin from FinanceMain where FinanceMain.Finreference=FinPftDetails.Finreference);
+			UPDATE FinanceMain_Temp
+			set pastduePftCalMthd=(select pastduePftCalMthd from RMTFINANCETYPES
+			where RMTFINANCETYPES.FinType=FinanceMain_Temp.Fintype);
+			UPDATE
+			FinanceMain_Temp set PastduePftMargin=(select PastduePftMargin from
+			RMTFINANCETYPES where
+			RMTFINANCETYPES.FinType=FinanceMain_Temp.Fintype);
 
-			UPDATE FinPftDetails set CalPftOnPD=0 where PftOnPDMethod='N';
-			UPDATE FinPftDetails set CalPftOnPD=1 where PftOnPDMethod != 'N';
+			UPDATE
+			FinPftDetails set PftOnPDMethod=(select pastduePftCalMthd from
+			FinanceMain
+			where
+			FinanceMain.Finreference=FinPftDetails.Finreference);
+			UPDATE
+			FinPftDetails set PftOnPDMrg=(select PastduePftMargin from
+			FinanceMain where
+			FinanceMain.Finreference=FinPftDetails.Finreference);
+
+			UPDATE
+			FinPftDetails set CalPftOnPD=0 where PftOnPDMethod='N';
+			UPDATE
+			FinPftDetails set CalPftOnPD=1 where PftOnPDMethod != 'N';
 		</sql>
 	</changeSet>
 
 	<changeSet id="19" author="satish">
-		<renameColumn tableName="FinPftDetails" oldColumnName="ResvexcessAmt" newColumnName="excessAmtResv" />
-		<renameColumn tableName="FinPftDetails" oldColumnName="ResvemiInAdvance" newColumnName="emiInAdvanceResv" />
-		<renameColumn tableName="FinPftDetails" oldColumnName="ResvpayableAdvise" newColumnName="payableAdviseResv" />
+		<renameColumn tableName="FinPftDetails" oldColumnName="ResvexcessAmt"
+			newColumnName="excessAmtResv" />
+		<renameColumn tableName="FinPftDetails" oldColumnName="ResvemiInAdvance"
+			newColumnName="emiInAdvanceResv" />
+		<renameColumn tableName="FinPftDetails" oldColumnName="ResvpayableAdvise"
+			newColumnName="payableAdviseResv" />
 	</changeSet>
 	<changeSet id="20" author="satish">
-		<renameColumn tableName="Finpftdetails_temp" oldColumnName="ResvexcessAmt" newColumnName="excessAmtResv" />
-		<renameColumn tableName="Finpftdetails_temp" oldColumnName="ResvemiInAdvance" newColumnName="emiInAdvanceResv" />
-		<renameColumn tableName="Finpftdetails_temp" oldColumnName="ResvpayableAdvise" newColumnName="payableAdviseResv" />
+		<renameColumn tableName="Finpftdetails_temp"
+			oldColumnName="ResvexcessAmt" newColumnName="excessAmtResv" />
+		<renameColumn tableName="Finpftdetails_temp"
+			oldColumnName="ResvemiInAdvance" newColumnName="emiInAdvanceResv" />
+		<renameColumn tableName="Finpftdetails_temp"
+			oldColumnName="ResvpayableAdvise" newColumnName="payableAdviseResv" />
 	</changeSet>
 	<changeSet id="21" author="satish">
-		<renameColumn tableName="finpftdetails_snapshot" oldColumnName="ResvexcessAmt" newColumnName="excessAmtResv" />
-		<renameColumn tableName="finpftdetails_snapshot" oldColumnName="ResvemiInAdvance" newColumnName="emiInAdvanceResv" />
-		<renameColumn tableName="finpftdetails_snapshot" oldColumnName="ResvpayableAdvise" newColumnName="payableAdviseResv" />
+		<renameColumn tableName="finpftdetails_snapshot"
+			oldColumnName="ResvexcessAmt" newColumnName="excessAmtResv" />
+		<renameColumn tableName="finpftdetails_snapshot"
+			oldColumnName="ResvemiInAdvance" newColumnName="emiInAdvanceResv" />
+		<renameColumn tableName="finpftdetails_snapshot"
+			oldColumnName="ResvpayableAdvise" newColumnName="payableAdviseResv" />
 	</changeSet>
 
 	<changeSet id="22" author="Satish">
-		<dropForeignKeyConstraint baseTableName="FinanceMain" constraintName="FK_FINMAIN_BMTCUSTSTATUSCODES" />
+		<dropForeignKeyConstraint baseTableName="FinanceMain"
+			constraintName="FK_FINMAIN_BMTCUSTSTATUSCODES" />
 	</changeSet>
 	<changeSet id="23" author="Satish">
-		<dropForeignKeyConstraint baseTableName="Customers" constraintName="FK_CUSTS_BMTCUSTSTATUSCODES" />
+		<dropForeignKeyConstraint baseTableName="Customers"
+			constraintName="FK_CUSTS_BMTCUSTSTATUSCODES" />
 	</changeSet>
 	<changeSet id="24" author="satish">
 		<addColumn tableName="FINPROVISIONS">
@@ -232,79 +311,98 @@
 	<changeSet id="26" author="satish">
 		<sql>
 			update FINPROVISIONS set Duedays=0;
-			update FINPROVISIONS set DpdBucketID=0;
+			update FINPROVISIONS set
+			DpdBucketID=0;
 			update FINPROVISIONS set NpaBucketID=0;
-			update FINPROVISIONS set PftBal=0;
+			update
+			FINPROVISIONS set PftBal=0;
 			update FINPROVISIONS set PriBal=0;
-			update FINPROVISIONS set PrvovisionRate=0;
+			update
+			FINPROVISIONS set PrvovisionRate=0;
 
-			update FINPROVISIONS_TEMP set Duedays=0;
+			update FINPROVISIONS_TEMP set
+			Duedays=0;
 			update FINPROVISIONS_TEMP set DpdBucketID=0;
-			update FINPROVISIONS_TEMP set NpaBucketID=0;
-			update FINPROVISIONS_TEMP set PftBal=0;
+			update
+			FINPROVISIONS_TEMP set NpaBucketID=0;
+			update FINPROVISIONS_TEMP set
+			PftBal=0;
 			update FINPROVISIONS_TEMP set PriBal=0;
-			update FINPROVISIONS_TEMP set PrvovisionRate=0;
+			update
+			FINPROVISIONS_TEMP set PrvovisionRate=0;
 		</sql>
 	</changeSet>
 	<changeSet id="27" author="satish">
 		<sql>
 			update Financemain set DueBucket=0;
-			update FinanceMain_Temp set DueBucket=0;
+			update FinanceMain_Temp set
+			DueBucket=0;
 			update FinanceMain_PA set DueBucket=0;
-			update WIFFinanceMain set DueBucket=0;
-			update REJECTFINANCEMAIN set DueBucket=0;
+			update
+			WIFFinanceMain set DueBucket=0;
+			update REJECTFINANCEMAIN set
+			DueBucket=0;
 		</sql>
 	</changeSet>
 	<changeSet id="28" author="satish">
-	<sql>
-insert into SMTparameters values('PROVISION_RULE','Provision rule','String',1,'PRVRULE',8,0,null,null,'Provision Rule',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
-insert into SMTparameters values('PROVISION_ON_TOTAL','Provision Calculate on Total','int ',1,0,1,0,null,null,'Provision Rule',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
-insert into SMTparameters values('IGNORING_BUCKET','Ignore Bucket Percentage','Double',1,0,6,0,null,null,'Provision Rule',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
-	
-	</sql>
-	
+		<sql>
+			insert into SMTparameters values('PROVISION_RULE','Provision
+			rule','String',1,'PRVRULE',8,0,null,null,'Provision
+			Rule',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+			insert
+			into SMTparameters values('PROVISION_ON_TOTAL','Provision Calculate
+			on Total','int ',1,0,1,0,null,null,'Provision
+			Rule',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+			insert
+			into SMTparameters values('IGNORING_BUCKET','Ignore Bucket
+			Percentage','Double',1,0,6,0,null,null,'Provision
+			Rule',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+
+		</sql>
+
 	</changeSet>
-	
+
 	<changeSet id="29" author="Satish">
-		<dropForeignKeyConstraint baseTableName="FinanceMain_TEMP" constraintName="FK_FINMAIN_BMTCUSTSTSCODES_T" />
+		<dropForeignKeyConstraint baseTableName="FinanceMain_TEMP"
+			constraintName="FK_FINMAIN_BMTCUSTSTSCODES_T" />
 	</changeSet>
 	<changeSet id="30" author="Satish">
-		<dropForeignKeyConstraint baseTableName="FinanceMain_PA" constraintName="FK_FinMain_BMTCustStSCodes_PA" />
+		<dropForeignKeyConstraint baseTableName="FinanceMain_PA"
+			constraintName="FK_FinMain_BMTCustStSCodes_PA" />
 	</changeSet>
-	
-	<changeSet id="34" author="Satish">
+
+	<changeSet id="31" author="Jayant">
 		<addColumn tableName="FINODDetails">
 			<column name="oDIncGrcDays" type="boolean">
-			<constraints  nullable="false" />
 			</column>
-			<column name="oDChargeType" type="char(1)" />
-			<column name="oDGraceDays" type="int" />
-			<column name="oDChargeCalOn" type="varchar(8)" />
-			<column name="oDChargeAmtOrPerc" type="Decimal(18,0)" />
-			<column name="oDAllowWaiver" type="boolean" />
-			<column name="oDMaxWaiverPerc" type="Decimal(5,2)" />
 		</addColumn>
-	</changeSet>
-	
-	<changeSet id="35" author="Satish">
 		<addColumn tableName="FINODDetails_PD">
 			<column name="oDIncGrcDays" type="boolean">
-			<constraints  nullable="false" />
 			</column>
-			<column name="oDChargeType" type="char(1)" />
-			<column name="oDGraceDays" type="int" />
-			<column name="oDChargeCalOn" type="varchar(8)" />
-			<column name="oDChargeAmtOrPerc" type="Decimal(18,0)" />
-			<column name="oDAllowWaiver" type="boolean" />
-			<column name="oDMaxWaiverPerc" type="Decimal(5,2)" />
 		</addColumn>
-	</changeSet>
-	
-	<changeSet id="36" author="Satish">
 		<addColumn tableName="FINODDetails_SnapShot">
 			<column name="oDIncGrcDays" type="boolean">
-			<constraints  nullable="false" />
 			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="32" author="Jayant">
+		<sql>
+			update FINODDetails set oDIncGrcDays=1;
+			update FINODDetails_PD set
+			oDIncGrcDays=1;
+			update FINODDetails_SnapShot set oDIncGrcDays=1;
+		</sql>
+	</changeSet>
+	<changeSet id="33" author="Jayant">
+		<addNotNullConstraint tableName="FINODDetails"
+			columnName="oDIncGrcDays" columnDataType="boolean" />
+		<addNotNullConstraint tableName="FINODDetails_PD"
+			columnName="oDIncGrcDays" columnDataType="boolean" />
+		<addNotNullConstraint tableName="FINODDetails_SnapShot"
+			columnName="oDIncGrcDays" columnDataType="boolean" />
+	</changeSet>
+	<changeSet id="34" author="Satish">
+		<addColumn tableName="FINODDetails">
 			<column name="oDChargeType" type="char(1)" />
 			<column name="oDGraceDays" type="int" />
 			<column name="oDChargeCalOn" type="varchar(8)" />
@@ -313,6 +411,28 @@ insert into SMTparameters values('IGNORING_BUCKET','Ignore Bucket Percentage','D
 			<column name="oDMaxWaiverPerc" type="Decimal(5,2)" />
 		</addColumn>
 	</changeSet>
-	
+
+	<changeSet id="35" author="Satish">
+		<addColumn tableName="FINODDetails_PD">
+			<column name="oDChargeType" type="char(1)" />
+			<column name="oDGraceDays" type="int" />
+			<column name="oDChargeCalOn" type="varchar(8)" />
+			<column name="oDChargeAmtOrPerc" type="Decimal(18,0)" />
+			<column name="oDAllowWaiver" type="boolean" />
+			<column name="oDMaxWaiverPerc" type="Decimal(5,2)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="36" author="Satish">
+		<addColumn tableName="FINODDetails_SnapShot">
+			<column name="oDChargeType" type="char(1)" />
+			<column name="oDGraceDays" type="int" />
+			<column name="oDChargeCalOn" type="varchar(8)" />
+			<column name="oDChargeAmtOrPerc" type="Decimal(18,0)" />
+			<column name="oDAllowWaiver" type="boolean" />
+			<column name="oDMaxWaiverPerc" type="Decimal(5,2)" />
+		</addColumn>
+	</changeSet>
+
 
 </databaseChangeLog>
