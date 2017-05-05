@@ -21,6 +21,9 @@
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="dPDBucketConfigurationDAO" ref="dPDBucketConfigurationDAO" />
 		<property name="dPDBucketDAO" ref="dPDBucketDAO" />
+		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 	</bean>
 	<bean id="paymentRecoveryService" class="com.pennant.eod.PaymentRecoveryService">
 		<property name="paymentRecoveryHeaderDAO" ref="paymentRecoveryHeaderDAO" />
@@ -76,15 +79,6 @@
 	</bean>
 	<!-- Finance Status movements -->
 	<bean id="statusMovementService" class="com.pennant.app.core.StatusMovementService" parent="serviceHelper">
-	</bean>
-	<!-- Status -->
-	<bean id="statusService" class="com.pennant.app.core.StatusService">
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
-		<property name="finStatusDetailDAO" ref="finStatusDetailDAO" />
-		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
-		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 	</bean>
 	<!-- Rate review -->
 	<bean id="rateReviewService" class="com.pennant.app.core.RateReviewService" parent="serviceHelper">
