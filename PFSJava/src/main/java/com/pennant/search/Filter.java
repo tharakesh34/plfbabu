@@ -35,11 +35,11 @@ public class Filter implements Serializable {
 	public static final int		OP_LIKE				= 6;
 	public static final int		OP_NULL				= 10;
 	public static final int		OP_NOT_NULL			= 11;
-	public static final int		OP_BETWEEN			= 300;	// Not implemented.
 	public static final int		OP_IN				= 8;
 	public static final int		OP_NOT_IN			= 9;
 	public static final int		OP_AND				= 100;
 	public static final int		OP_OR				= 101;
+	public static final int		OP_BETWEEN			= 300;	// Not implemented.
 
 	/**
 	 * The name of the property to filter on.
@@ -55,7 +55,7 @@ public class Filter implements Serializable {
 	 * The type of comparison to do between the property and the value.<br/>
 	 * Operators:
 	 * <code>OP_EQUAL, OP_NOT_EQUAL, OP_LESS_THAN, OP_GREATER_THAN, OP_LESS_OR_EQUAL, OP_GREATER_OR_EQUAL, OP_LIKE,
-	 * OP_NULL, OP_NOT_NULL, OP_IN, OP_NOT_IN, OP_AND, OP_OR, OP_NOT</code>
+	 * OP_IN, OP_NOT_IN, OP_NULL, OP_NOT_NULL, OP_AND, OP_OR, OP_NOT</code>
 	 */
 	private int					operator;
 
@@ -254,186 +254,5 @@ public class Filter implements Serializable {
 
 	public void setOperator(int operator) {
 		this.operator = operator;
-	}
-
-	/**
-	 * Get the hashCode
-	 * 
-	 * @return int
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + operator;
-		result = prime * result + ((property == null) ? 0 : property.hashCode());
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
-		return result;
-	}
-
-	/**
-	 * Check object is equal or not with Other object
-	 * 
-	 * @return boolean
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		Filter other = (Filter) obj;
-		if (operator != other.operator) {
-			return false;
-		}
-		if (property == null) {
-			if (other.property != null) {
-				return false;
-			}
-		} else if (!property.equals(other.property)) {
-			return false;
-		}
-		if (value == null) {
-			if (other.value != null) {
-				return false;
-			}
-		} else if (!value.equals(other.value)) {
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Get the String return type Value
-	 * 
-	 * @return String
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public String toString() {
-		switch (operator) {
-		case Filter.OP_IN:
-			return property + " in (" + InternalUtil.paramDisplayString(value) + ")";
-		case Filter.OP_NOT_IN:
-			return property + " not in (" + InternalUtil.paramDisplayString(value) + ")";
-		case Filter.OP_EQUAL:
-			return property + " = " + InternalUtil.paramDisplayString(value);
-		case Filter.OP_NOT_EQUAL:
-			return property + " != " + InternalUtil.paramDisplayString(value);
-		case Filter.OP_GREATER_THAN:
-			return property + " > " + InternalUtil.paramDisplayString(value);
-		case Filter.OP_LESS_THAN:
-			return property + " < " + InternalUtil.paramDisplayString(value);
-		case Filter.OP_GREATER_OR_EQUAL:
-			return property + " >= " + InternalUtil.paramDisplayString(value);
-		case Filter.OP_LESS_OR_EQUAL:
-			return property + " <= " + InternalUtil.paramDisplayString(value);
-		case Filter.OP_LIKE:
-			return property + " LIKE " + InternalUtil.paramDisplayString(value);
-		case Filter.OP_NULL:
-			return property + " IS NULL";
-		case Filter.OP_NOT_NULL:
-			return property + " IS NOT NULL";
-		case Filter.OP_AND:
-		case Filter.OP_OR:
-			if (!(value instanceof List)) {
-				return (operator == Filter.OP_AND ? "AND: " : "OR: ") + "**INVALID VALUE - NOT A LIST: (" + value
-						+ ") **";
-			}
-
-			String op = operator == Filter.OP_AND ? " and " : " or ";
-
-			StringBuilder sb = new StringBuilder("(");
-			boolean first = true;
-			for (Object o : (List<Object>) value) {
-				if (first) {
-					first = false;
-				} else {
-					sb.append(op);
-				}
-				if (o instanceof Filter) {
-					sb.append(o.toString());
-				} else {
-					sb.append("**INVALID VALUE - NOT A FILTER: (" + o + ") **");
-				}
-			}
-			if (first) {
-				return (operator == Filter.OP_AND ? "AND: " : "OR: ") + "**EMPTY LIST**";
-			}
-
-			sb.append(")");
-			return sb.toString();
-		default:
-			return "**INVALID OPERATOR: (" + operator + ") - VALUE: " + InternalUtil.paramDisplayString(value) + " **";
-		}
-	}
-
-	/**
-	 * Get the Sql operator by constants
-	 * 
-	 * @return String
-	 */
-	@SuppressWarnings("unchecked")
-	public String getSqlOperator() {
-		switch (operator) {
-		case Filter.OP_IN:
-			return " in ";
-		case Filter.OP_NOT_IN:
-			return " not in ";
-		case Filter.OP_EQUAL:
-			return " = ";
-		case Filter.OP_NOT_EQUAL:
-			return " != ";
-		case Filter.OP_GREATER_THAN:
-			return " > ";
-		case Filter.OP_LESS_THAN:
-			return " < ";
-		case Filter.OP_GREATER_OR_EQUAL:
-			return " >= ";
-		case Filter.OP_LESS_OR_EQUAL:
-			return " <= ";
-		case Filter.OP_LIKE:
-			return " LIKE ";
-		case Filter.OP_NULL:
-			return " IS NULL ";
-		case Filter.OP_NOT_NULL:
-			return " IS NOT NULL ";
-		case Filter.OP_AND:
-		case Filter.OP_OR:
-			if (!(value instanceof List)) {
-				return (operator == Filter.OP_AND ? " AND " : " OR ") + "**INVALID VALUE - NOT A LIST: (" + value
-						+ ") **";
-			}
-
-			String op = operator == Filter.OP_AND ? " and " : " or ";
-
-			StringBuilder sb = new StringBuilder("(");
-			boolean first = true;
-			for (Object o : (List<Object>) value) {
-				if (first) {
-					first = false;
-				} else {
-					sb.append(op);
-				}
-				if (o instanceof Filter) {
-					sb.append(o.toString());
-				} else {
-					sb.append("**INVALID VALUE - NOT A FILTER: (" + o + ") **");
-				}
-			}
-			if (first) {
-				return (operator == Filter.OP_AND ? " AND " : " OR ") + "**EMPTY LIST**";
-			}
-
-			sb.append(")");
-			return sb.toString();
-		default:
-			return "**INVALID OPERATOR: (" + operator + ") - VALUE: " + InternalUtil.paramDisplayString(value) + " **";
-		}
 	}
 }
