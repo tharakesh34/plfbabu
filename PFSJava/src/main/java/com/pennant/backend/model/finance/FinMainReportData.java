@@ -150,6 +150,7 @@ public class FinMainReportData implements Serializable{
 	private String applyDownPay = "False";
 	private String applyDifferment = "False";
 	private String applyRepayAccntId = "False";
+	private String custShrtName;
 	
 	public FinMainReportData() {
 		
@@ -861,8 +862,14 @@ public class FinMainReportData implements Serializable{
 	public void setUnPaidInstlementPft(String unPaidInstlementPft) {
     	this.unPaidInstlementPft = unPaidInstlementPft;
     }
-	
-	
+	public String getCustShrtName() {
+		return custShrtName;
+	}
+
+	public void setCustShrtName(String custShrtName) {
+		this.custShrtName = custShrtName;
+	}
+
 	//Method for Preparing Finance Main Object for Report purpose
 	public FinMainReportData getFinMainReportData(FinScheduleData finSchData, FinanceSummary finSummary){
 		FinMainReportData reportData = new FinMainReportData();
@@ -890,6 +897,7 @@ public class FinMainReportData implements Serializable{
 		reportData.setProfitDaysBasis(financeMain.getProfitDaysBasis());
 		//###Release PFFV1.0.6 - Changed the customer short name to Full Name
 		reportData.setCustCIF(financeMain.getLovDescCustCIF()+"-"+financeMain.getLovDescCustFName());
+		reportData.setCustShrtName(financeMain.getLovDescCustShrtName());
 		reportData.setFinBranch(financeMain.getFinBranch() + "-" + financeMain.getLovDescFinBranchName());
 		reportData.setFinStartDate(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
 		reportData.setFinContractDate(DateUtility.formatToLongDate(financeMain.getFinContractDate()));
