@@ -70,6 +70,6 @@ public class JdbcSearchSupportImpl implements JdbcSearchSupport, Serializable {
 
 	@Override
 	public <T> SearchResult<T> searchAndCount(ISearch search) {
-		return jdbcSearchProcessor.searchAndCount(search);
+		return jdbcSearchProcessor.getResults(search, true);
 	}
 }

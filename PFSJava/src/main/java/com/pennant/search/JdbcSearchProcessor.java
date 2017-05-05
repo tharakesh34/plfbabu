@@ -106,6 +106,36 @@ public class JdbcSearchProcessor implements Serializable {
 	}
 
 	/**
+	 * Get the results for the specified <code>ISearch</code> along with the number of records if requested.
+	 * 
+	 * @param search
+	 *            The search object that contains the parameters.
+	 * @return The {@link SearchResult} object.
+	 * @throws IllegalArgumentException
+	 *             - If the given search object is <code>null</code>.
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> SearchResult<T> getResults(ISearch search, boolean includeCount) {
+		if (search == null) {
+			throw new IllegalArgumentException();
+		}
+
+		SearchResult<T> result = new SearchResult<>();
+
+		result.setResult((List<T>) getResults(search));
+
+		if (includeCount) {
+			if (search.getMaxResults() > 0) {
+				result.setTotalCount(getCount(search));
+			} else {
+				result.setTotalCount(result.getResult().size() + SearchUtil.calcFirstResult(search));
+			}
+		}
+
+		return result;
+	}
+
+	/**
 	 * Get the number of records for the specified <code>ISearch</code>.
 	 * 
 	 * @param search
@@ -484,28 +514,5 @@ public class JdbcSearchProcessor implements Serializable {
 	private String getMySqlLimitRowsSql(String sql, int startRow, int endRow) {
 		return new StringBuffer(sql.length() + 20).append(sql)
 				.append(startRow > 0 ? " limit " + startRow + " , " + endRow : " limit " + endRow).toString();
-	}
-
-	/**
-	 * 
-	 * @param search
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> SearchResult<T> searchAndCount(ISearch search) {
-		if (search == null) {
-			throw new IllegalArgumentException();
-		}
-
-		SearchResult<T> result = new SearchResult<>();
-		result.setResult((List<T>) getResults(search));
-
-		if (search.getMaxResults() > 0) {
-			result.setTotalCount(getCount(search));
-		} else {
-			result.setTotalCount(result.getResult().size() + SearchUtil.calcFirstResult(search));
-		}
-
-		return result;
 	}
 }
