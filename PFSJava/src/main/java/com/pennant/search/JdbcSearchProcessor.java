@@ -1,39 +1,34 @@
 /**
- * Copyright 2011 - Pennant Technologies
+ * Copyright 2009 The Revere Group
  * 
- * This file is part of Pennant Java Application Framework and related Products. All
- * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
- * Technologies.
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
- * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
- * violation of copyright law.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 package com.pennant.search;
 
 import java.io.Serializable;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.healthmarketscience.sqlbuilder.BinaryCondition;
-import com.healthmarketscience.sqlbuilder.ComboCondition;
-import com.healthmarketscience.sqlbuilder.ComboCondition.Op;
-import com.healthmarketscience.sqlbuilder.Condition;
 import com.healthmarketscience.sqlbuilder.CustomCondition;
 import com.healthmarketscience.sqlbuilder.CustomSql;
 import com.healthmarketscience.sqlbuilder.OrderObject;
 import com.healthmarketscience.sqlbuilder.SelectQuery;
-import com.healthmarketscience.sqlbuilder.UnaryCondition;
-import com.healthmarketscience.sqlbuilder.custom.NamedParamObject;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
 import com.pennanttech.pff.core.Literal;
@@ -46,68 +41,31 @@ public class JdbcSearchProcessor implements Serializable {
 	private static final long						serialVersionUID	= 4460401213988371185L;
 	private static final Logger						logger				= Logger.getLogger(JdbcSearchProcessor.class);
 
+	private static final String						SELECT				= "select";
+	private static final String						FROM				= "from";
+	private static final String						DISTINCT			= "distinct";
 	private transient NamedParameterJdbcTemplate	jdbcTemplate;
 
-	private enum Clause {
-		SELECT("SELECT "), DISTINCT(" DISTINCT"), FROM(" FROM"), GROUP_BY(" GROUP BY"), ORDER_BY(" ORDER BY");
-
-		private String key;
-
-		private Clause(String key) {
-			this.key = key;
-		}
-	}
-
 	/**
-	 * Creates a new <code>JdbcSearchProcessor</code> for the given {@link DataSource}.
+	 * Create a new <code>JdbcSearchProcessor</code> for the given {@link DataSource}.
 	 * 
 	 * @param dataSource
-	 *            The JDBC data source to access.
+	 *            The JDBC DataSource to access.
 	 */
 	public JdbcSearchProcessor(DataSource dataSource) {
 		jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
-	 * Get the results for the specified <code>ISearch</code> along with the number of records if requested.
+	 * Get the results for the specified <code>ISearch</code> object.
 	 * 
 	 * @param search
 	 *            The search object that contains the parameters.
-	 * @return The {@link SearchResult} object.
+	 * @return The results mapped to a List (one entry for each row).
 	 * @throws IllegalArgumentException
 	 *             - If the given search object is <code>null</code>.
 	 */
-	@SuppressWarnings("unchecked")
-	public <T> SearchResult<T> getResults(ISearch search, boolean includeCount) {
-		if (search == null) {
-			throw new IllegalArgumentException();
-		}
-
-		SearchResult<T> result = new SearchResult<>();
-
-		result.setResult((List<T>) getResults(search));
-
-		if (includeCount) {
-			if (search.getMaxResults() > 0) {
-				result.setTotalCount(getCount(search));
-			} else {
-				result.setTotalCount(result.getResult().size() + SearchUtil.calcFirstResult(search));
-			}
-		}
-
-		return result;
-	}
-
-	/**
-	 * Get the results for the specified <code>ISearch</code>.
-	 * 
-	 * @param search
-	 *            The search object that contains the parameters.
-	 * @return The results mapped to a <code>List</code> (one entry for each row).
-	 * @throws IllegalArgumentException
-	 *             - If the given search object is <code>null</code>.
-	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public <T> List<T> getResults(ISearch search) {
 		if (search == null) {
 			throw new IllegalArgumentException();
@@ -117,7 +75,7 @@ public class JdbcSearchProcessor implements Serializable {
 		SelectQuery query = new SelectQuery();
 		addSelectList(query, search);
 		addTableSource(query, search);
-		MapSqlParameterSource paramSource = addWhereClause(query, search);
+		addWhereClause(query, search);
 		addOrderByExpression(query, search);
 		query.validate();
 
@@ -127,22 +85,36 @@ public class JdbcSearchProcessor implements Serializable {
 
 		// Execute the SQL, binding the arguments.
 		if (search.getSearchClass() != null) {
-			RowMapper<?> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(search.getSearchClass());
+			RowMapper rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(search.getSearchClass());
 
-			return (List<T>) jdbcTemplate.query(sql, paramSource, rowMapper);
+			return jdbcTemplate.query(sql, rowMapper);
 		} else {
-			return (List<T>) jdbcTemplate.queryForList(sql, paramSource);
+			Map<String, Object> paramMap = new HashMap<>();
+
+			return (List<T>) jdbcTemplate.queryForList(sql, paramMap);
 		}
 	}
 
+	public String getQuery(ISearch search) {
+		if (search == null) {
+			throw new IllegalArgumentException();
+		}
+
+		// Prepare the query.
+		SelectQuery query = new SelectQuery();
+		addSelectList(query, search);
+		addTableSource(query, search);
+		addWhereClause(query, search);
+		query.validate();
+
+		return query.toString();
+	}
+
 	/**
-	 * Get the number of records for the specified <code>ISearch</code>.
+	 * Returns the total number of results that would be returned using the given <code>ISearch</code> if there were no
+	 * paging or maxResult limits.
 	 * 
-	 * @param search
-	 *            The search object that contains the parameters.
-	 * @return The number of records.
-	 * @throws IllegalArgumentException
-	 *             - If the given search object is <code>null</code>.
+	 * @see ISearch
 	 */
 	public int getCount(ISearch search) {
 		if (search == null) {
@@ -153,12 +125,222 @@ public class JdbcSearchProcessor implements Serializable {
 		SelectQuery query = new SelectQuery();
 		addSelectList(query, "count(*)");
 		addTableSource(query, search);
-		MapSqlParameterSource paramSource = addWhereClause(query, search);
+		addWhereClause(query, search);
 		query.validate();
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + query.toString());
-		return jdbcTemplate.queryForObject(query.toString(), paramSource, Integer.class);
+		Map<String, Object> namedParameters = new HashMap<>();
+
+		return jdbcTemplate.queryForObject(query.toString(), namedParameters, Integer.class);
+	}
+
+	/**
+	 * Returns a <code>SearchResult</code> object that includes the list of results like <code>search()</code> and the
+	 * total length like <code>searchLength</code>. Uses the specified searchClass, ignoring the searchClass specified
+	 * on the search itself.
+	 * 
+	 * @see ISearch
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public SearchResult searchAndCount(ISearch search) {
+		if (search == null) {
+			return null;
+		}
+
+		SearchResult result = new SearchResult();
+		result.setResult(getResults(search));
+
+		if (search.getMaxResults() > 0) {
+			result.setTotalCount(getCount(search));
+		} else {
+			result.setTotalCount(result.getResult().size() + SearchUtil.calcFirstResult(search));
+		}
+
+		return result;
+	}
+
+	private String getLimitRowsSql(SelectQuery query, ISearch search) {
+		int offset = search.getFirstResult();
+		int pageSize = search.getMaxResults();
+
+		// If limits rows not required, no additional processing required.
+		if (offset <= 0 && pageSize <= 0) {
+			return query.toString();
+		}
+
+		switch (App.DATABASE) {
+		case ORACLE:
+			return getOracleLimitRowsSql(query.toString(), offset, pageSize);
+		case SQL_SERVER:
+			return getMSSQLLimitString(query.toString(), offset, pageSize);
+		case DB2:
+			return getDB2LimitString(query.toString(), offset, pageSize);
+		case MYSQL:
+			return getMYSQLLimitString(query.toString(), offset, pageSize);
+		default:
+			return query.toString();
+		}
+	}
+
+	private String getMYSQLLimitString(String sql, int startRow, int endRow) {
+		return new StringBuffer(sql.length() + 20).append(sql)
+				.append(startRow > 0 ? " limit " + startRow + " , " + endRow : " limit " + endRow).toString();
+	}
+
+	/**
+	 * Add a LIMIT clause to the given SQL SELECT (HHH-2655: ROW_NUMBER for Paging)
+	 * 
+	 * The LIMIT SQL will look like:
+	 * 
+	 * <pre>
+	 * WITH query AS (
+	 *   SELECT ROW_NUMBER() OVER (ORDER BY orderby) as __hibernate_row_nr__, 
+	 *   original_query_without_orderby
+	 * )
+	 * SELECT * FROM query WHERE __hibernate_row_nr__ BEETWIN offset AND offset + last
+	 * </pre>
+	 * 
+	 * 
+	 * @param querySqlString
+	 *            The SQL statement to base the limit query off of.
+	 * @param offset
+	 *            Offset of the first row to be returned by the query (zero-based)
+	 * @param limit
+	 *            Maximum number of rows to be returned by the query
+	 * 
+	 * @return A new SQL statement with the LIMIT clause applied.
+	 */
+	private String getMSSQLLimitString(String querySqlString, int startRow, int endRow) {
+		StringBuilder sb = new StringBuilder(querySqlString.trim().toLowerCase());
+
+		int orderByIndex = sb.indexOf("order by");
+		CharSequence orderby = orderByIndex > 0 ? sb.subSequence(orderByIndex, sb.length())
+				: "ORDER BY CURRENT_TIMESTAMP";
+
+		if (startRow != 0) {
+			endRow = startRow + endRow;
+			startRow = startRow + 1;
+		}
+
+		// Delete the order by clause at the end of the query
+		if (orderByIndex > 0) {
+			sb.delete(orderByIndex, orderByIndex + orderby.length());
+		}
+
+		// HHH-5715 bug fix
+		replaceDistinctWithGroupBy(sb);
+
+		insertRowNumberFunction(sb, orderby);
+
+		// Wrap the query within a with statement:
+		sb.insert(0, "WITH query AS (").append(") SELECT * FROM query ");
+		sb.append("WHERE row_nr BETWEEN " + startRow + " AND " + endRow);
+
+		return sb.toString();
+	}
+
+	/**
+	 * Utility method that checks if the given sql query is a select distinct one and if so replaces the distinct select
+	 * with an equivalent simple select with a group by clause. See
+	 * {@link SQLServer2005DialectTestCase#testReplaceDistinctWithGroupBy()}
+	 * 
+	 * @param sql
+	 *            an sql query
+	 */
+	private void replaceDistinctWithGroupBy(StringBuilder sql) {
+		int distinctIndex = sql.indexOf(DISTINCT);
+		if (distinctIndex > 0) {
+			sql.delete(distinctIndex, distinctIndex + DISTINCT.length() + 1);
+			sql.append(" group by").append(getSelectFieldsWithoutAliases(sql));
+		}
+	}
+
+	/**
+	 * This utility method searches the given sql query for the fields of the select statement and returns them without
+	 * the aliases. See {@link SQLServer2005DialectTestCase#testGetSelectFieldsWithoutAliases()}
+	 * 
+	 * @param an
+	 *            sql query
+	 * @return the fields of the select statement without their alias
+	 */
+	private CharSequence getSelectFieldsWithoutAliases(StringBuilder sql) {
+		String select = sql.substring(sql.indexOf(SELECT) + SELECT.length(), sql.indexOf(FROM));
+
+		// Strip the as clauses
+		return stripAliases(select);
+	}
+
+	/**
+	 * Utility method that strips the aliases. See {@link SQLServer2005DialectTestCase#testStripAliases()}
+	 * 
+	 * @param a
+	 *            string to replace the as statements
+	 * @return a string without the as statements
+	 */
+	private String stripAliases(String str) {
+		return str.replaceAll("\\sas[^,]+(,?)", "$1");
+	}
+
+	/**
+	 * Right after the select statement of a given query we must place the row_number function
+	 * 
+	 * @param sql
+	 *            the initial sql query without the order by clause
+	 * @param orderby
+	 *            the order by clause of the query
+	 */
+	private void insertRowNumberFunction(StringBuilder sql, CharSequence orderby) {
+		// Find the end of the select statement
+		int selectEndIndex = sql.indexOf(SELECT) + SELECT.length();
+
+		// Insert after the select statement the row_number() function:
+		sql.insert(selectEndIndex, " ROW_NUMBER() OVER (" + orderby + ") row_nr,");
+	}
+
+	private String getDB2LimitString(String sql, int startRow, int endRow) {
+		int startOfSelect = sql.toLowerCase().indexOf("select");
+		StringBuffer pagingSelect = new StringBuffer(sql.length() + 100).append(sql.substring(0, startOfSelect)) // add the comment
+				.append("select * from ( select ") // nest the main query in an
+				// outer select
+				.append(getRowNumber(sql)); // add the rownnumber bit into the
+		// outer query select list
+
+		if (startRow != 0) {
+			endRow = startRow + endRow;
+		}
+
+		if (hasDistinct(sql)) {
+			pagingSelect.append(" row_.* from ( ") // add another (inner) nested
+					// select
+					.append(sql.substring(startOfSelect)) // add the main query
+					.append(" ) as row_"); // close off the inner nested select
+		} else {
+			pagingSelect.append("Results.* From(" + sql.substring(startOfSelect) + ") as Results"); // add the
+			// main
+			// query
+		}
+		pagingSelect.append(" ) as temp_ where rownumber_ "); // add the
+																// restriction
+																// to the outer
+																// select
+		pagingSelect.append(" between " + (startRow + 1) + " and " + endRow);
+
+		return pagingSelect.toString();
+	}
+
+	private static String getRowNumber(String sql) {
+		StringBuilder rownumber = new StringBuilder(50).append("rownumber() over(");
+		int orderByIndex = sql.toLowerCase().indexOf("order by");
+		if (orderByIndex > 0 && !hasDistinct(sql)) {
+			rownumber.append(sql.substring(orderByIndex));
+		}
+		rownumber.append(") as rownumber_,");
+		return rownumber.toString();
+	}
+
+	private static boolean hasDistinct(String sql) {
+		return sql.toLowerCase().indexOf("select distinct") >= 0;
 	}
 
 	/**
@@ -216,142 +398,88 @@ public class JdbcSearchProcessor implements Serializable {
 	}
 
 	/**
-	 * Adds the search conditions of the WHERE clause to the SELECT query. The conditions will be prepared with named
-	 * parameters and stores the values for those named parameters in <code>MapSqlParameterSource</code> and return the
-	 * same.
+	 * Adds the search conditions of the WHERE clause to the SELECT query.
 	 * 
 	 * @param query
 	 *            The select query to which the WHERE clause search conditions to be added.
 	 * @param search
 	 *            The search object that contains the WHERE clause search conditions.
-	 * @return The container of arguments to bind to the query.
 	 */
-	private MapSqlParameterSource addWhereClause(SelectQuery query, ISearch search) {
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-
+	private void addWhereClause(SelectQuery query, ISearch search) {
 		// Add search conditions specified in filters.
 		for (Filter filter : search.getFilters()) {
-			if ("AND".equals(filter.getProperty())) {
-				query.addCondition(getLogicalCondition(Op.AND, filter, paramSource));
-			} else if ("OR".equals(filter.getProperty())) {
-				query.addCondition(getLogicalCondition(Op.OR, filter, paramSource));
+			if ("OR".equals(filter.getProperty())) {
+				query.addCondition(new CustomCondition(getOrCondition(filter)));
+			} else if (filter.getOperator() == Filter.OP_IN || filter.getOperator() == Filter.OP_NOT_IN) {
+				query.addCondition(new CustomCondition(getInCondition(filter)));
 			} else {
-				query.addCondition(getComparisonCondition(filter, paramSource));
+				query.addCondition(new CustomCondition(filter.toString()));
 			}
 		}
 
-		// Add custom search condition, if any.
+		// Add custom search condition.
 		if (search.getWhereClause() != null) {
 			query.addCondition(new CustomCondition(search.getWhereClause()));
 		}
-
-		return paramSource;
 	}
 
 	/**
-	 * Returns the logical condition as specified in the filter.
-	 *
-	 * @param operator
-	 *            The logical operator (<code>AND | OR</code>).
+	 * Returns the OR condition as specified in the filter.
+	 * 
 	 * @param filter
-	 *            The filter that contain the parameters of the condition.
-	 * @param paramSource
-	 *            The container of arguments to bind to the query.
-	 * @return The logical condition (<code>AND | OR</code>). <code>null</code> if invalid parameters specified for the
-	 *         condition.
+	 *            The filter that contain the parameters of OR condition.
+	 * @return The OR condition.
 	 */
-	private ComboCondition getLogicalCondition(Op operator, Filter filter, MapSqlParameterSource paramSource) {
+	private String getOrCondition(Filter filter) {
 		if (!(filter.getValue() instanceof List<?>)) {
-			return null;
+			return "";
 		}
 
 		List<?> list = (List<?>) filter.getValue();
+		StringBuilder expression = new StringBuilder();
 
-		ComboCondition condition = new ComboCondition(operator);
 		for (Object object : list) {
 			if (object instanceof Filter) {
-				condition.addCondition(getComparisonCondition((Filter) object, paramSource));
+				Filter condition = (Filter) object;
+
+				if (expression.length() > 0) {
+					expression.append(" or ");
+				}
+
+				if (condition.getOperator() == Filter.OP_IN || condition.getOperator() == Filter.OP_NOT_IN) {
+					expression.append(getInCondition(condition));
+				} else {
+					expression.append(condition.toString());
+				}
 			}
 		}
 
-		if (condition.isEmpty()) {
-			return null;
-		}
-
-		return condition;
+		return expression.toString();
 	}
 
 	/**
-	 * Gets a comparison condition. The valid comparison operators are:<br/>
-	 * <code>=, <>, <, >, <=, >=, LIKE, IS NULL, IS NOT NULL, IN, and NOT IN</code>.
+	 * Returns the IN condition as specified in the filter.
 	 * 
 	 * @param filter
-	 *            The filter object that contains the parameters of the condition.
-	 * @param paramSource
-	 *            The container of arguments to bind to the query.
-	 * @return The comparison condition. <code>null</code> if invalid operator specified.
+	 *            The filter that contain the parameters of IN condition.
+	 * @return The IN condition.
 	 */
-	private Condition getComparisonCondition(Filter filter, MapSqlParameterSource paramSource) {
-		// Set the unique parameter name.
-		String paramName = StringUtils.upperCase(filter.getProperty());
-		int i = 0;
-
-		while (paramSource.hasValue(paramName)) {
-			paramName = StringUtils.upperCase(filter.getProperty()).concat(String.valueOf(++i));
+	private String getInCondition(Filter filter) {
+		if (filter.getValue() == null) {
+			return "";
 		}
 
-		// Add the parameter to the source along with parameterized condition.
-		CustomSql column = new CustomSql(filter.getProperty());
-		NamedParamObject namedParam = new NamedParamObject(paramName);
-		Object value = filter.getValue();
-		List<?> values; // Applicable for IN and NOT IN conditions.
+		String expression;
 
-		switch (filter.getOperator()) {
-		case Filter.OP_EQUAL:
-			paramSource.addValue(paramName, value);
-
-			return BinaryCondition.equalTo(column, namedParam);
-		case Filter.OP_NOT_EQUAL:
-			paramSource.addValue(paramName, value);
-
-			return BinaryCondition.notEqualTo(column, namedParam);
-		case Filter.OP_LESS_THAN:
-			paramSource.addValue(paramName, value);
-
-			return BinaryCondition.lessThan(column, namedParam, false);
-		case Filter.OP_GREATER_THAN:
-			paramSource.addValue(paramName, value);
-
-			return BinaryCondition.greaterThan(column, namedParam, false);
-		case Filter.OP_LESS_OR_EQUAL:
-			paramSource.addValue(paramName, value);
-
-			return BinaryCondition.lessThan(column, namedParam, true);
-		case Filter.OP_GREATER_OR_EQUAL:
-			paramSource.addValue(paramName, value);
-
-			return BinaryCondition.greaterThan(column, namedParam, true);
-		case Filter.OP_LIKE:
-			paramSource.addValue(paramName, value);
-
-			return BinaryCondition.like(column, namedParam);
-		case Filter.OP_NULL:
-			return UnaryCondition.isNull(column);
-		case Filter.OP_NOT_NULL:
-			return UnaryCondition.isNotNull(column);
-		case Filter.OP_IN:
-			values = value instanceof List<?> ? (List<?>) value : Arrays.asList((Object[]) value);
-			paramSource.addValue(paramName, values);
-
-			return new CustomCondition(column + " in (" + namedParam + ")");
-		case Filter.OP_NOT_IN:
-			values = value instanceof List<?> ? (List<?>) value : Arrays.asList((Object[]) value);
-			paramSource.addValue(paramName, values);
-
-			return new CustomCondition(column + " not in (" + namedParam + ")");
-		default:
-			return null;
+		if (filter.getValue() instanceof String[]) {
+			expression = StringUtils.join((String[]) filter.getValue(), "','");
+		} else if (filter.getValue() instanceof List<?>) {
+			expression = StringUtils.join((List<?>) filter.getValue(), "','");
+		} else {
+			expression = StringUtils.join((Object[]) filter.getValue(), "','");
 		}
+
+		return filter.getProperty().concat(filter.getSqlOperator()).concat("('").concat(expression).concat("')");
 	}
 
 	/**
@@ -370,41 +498,7 @@ public class JdbcSearchProcessor implements Serializable {
 	}
 
 	/**
-	 * Gets the SELECT query that limits the number of records that will be returned based on the specified offset and
-	 * number of records. If limits rows not specified returns the actual SELECT query.
-	 * 
-	 * @param query
-	 *            The select query to fetch an ordered result set.
-	 * @param search
-	 *            The search object that contains the parameters of offset and number of records.
-	 * @return The SELECT query that limits the number of records.
-	 */
-	private String getLimitRowsSql(SelectQuery query, ISearch search) {
-		int offset = search.getFirstResult();
-		int pageSize = search.getMaxResults();
-
-		// If limits rows not required, no additional processing required.
-		if (offset <= 0 && pageSize <= 0) {
-			return query.toString();
-		}
-
-		switch (App.DATABASE) {
-		case ORACLE:
-			return getOracleLimitRowsSql(query.toString(), offset, pageSize);
-		case SQL_SERVER:
-			return getSqlServerLimitRowsSql(query.toString(), offset, pageSize);
-		case DB2:
-			return getDB2LimitRowsSql(query.toString(), offset, pageSize);
-		case MYSQL:
-			return getMySqlLimitRowsSql(query.toString(), offset, pageSize);
-		default:
-			return query.toString();
-		}
-	}
-
-	/**
-	 * Gets the <code>Oracle</code> limit rows statement. e.g., <br/>
-	 * <code><i>SELECT * FROM EMPLOYEE ORDER BY ID ASC</i> OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY;</code>
+	 * Gets the Oracle limit rows statement.
 	 * 
 	 * @param sql
 	 *            The statement to fetch an ordered result set.
@@ -412,7 +506,7 @@ public class JdbcSearchProcessor implements Serializable {
 	 *            The number of rows to offset.
 	 * @param pageSize
 	 *            The number of rows to fetch.
-	 * @return The <code>Oracle</code> limit rows statement.
+	 * @return The Oracle limit rows statement.
 	 */
 	private String getOracleLimitRowsSql(String sql, int offset, int pageSize) {
 		StringBuilder result = new StringBuilder(sql);
@@ -424,95 +518,5 @@ public class JdbcSearchProcessor implements Serializable {
 		}
 
 		return result.toString();
-	}
-
-	/**
-	 * Gets the <code>Microsoft SQL Server</code> limit rows statement. e.g., <br/>
-	 * <code>with query as ( </br>
-	 * &nbsp; <i>SELECT </i>row_number() over ( <i>ORDER BY ID ASC</i> ) row_nr,<i>* FROM EMPLOYEE</i></br>
-	 * ) select * from query where row_nr between 21 and 30</code>
-	 * 
-	 * @param sql
-	 *            The statement to fetch an ordered result set.
-	 * @param offset
-	 *            The number of rows to offset.
-	 * @param pageSize
-	 *            The number of rows to fetch.
-	 * @return The <code>Microsoft SQL Server</code> limit rows statement.
-	 */
-	private String getSqlServerLimitRowsSql(String sql, int offset, int pageSize) {
-		StringBuilder result = new StringBuilder(sql);
-
-		// Extract the order by clause and remove from the actual SQL.
-		String orderByClause;
-		int index = result.indexOf(Clause.ORDER_BY.key);
-
-		if (index > 0) {
-			orderByClause = result.substring(index);
-			result.delete(index, index + orderByClause.length());
-		} else {
-			orderByClause = " order by current_timestamp";
-		}
-
-		// Replace distinct with group by clause.
-		index = result.toString().toUpperCase().indexOf(Clause.DISTINCT.key);
-
-		if (index > 0) {
-			result.delete(index, index + Clause.DISTINCT.key.length());
-
-			String groupByClause = Clause.GROUP_BY.key + " "
-					+ result.substring(Clause.SELECT.key.length(), result.indexOf(Clause.FROM.key));
-			groupByClause = groupByClause.replaceAll("\\sas[^,]+(,?)", "$1");
-
-			result.append(groupByClause);
-		}
-
-		// Insert ROW_NUMBER() and wrap the query within WITH statement.
-		result.insert(Clause.SELECT.key.length(), "row_number() over (".concat(orderByClause).concat(" ) row_nr,"));
-
-		result.insert(0, "with query as ( ").append(" ) select * from query ");
-		result.append("where row_nr between ").append(offset + 1).append(" and ").append(offset + pageSize);
-
-		return result.toString();
-	}
-
-	//TODO:
-
-	private String getDB2LimitRowsSql(String sql, int offset, int pageSize) {
-		int startOfSelect = sql.toLowerCase().indexOf("select");
-		StringBuilder pagingSelect = new StringBuilder(sql.length() + 100).append(sql.substring(0, startOfSelect)) // add the comment
-				.append("select * from ( select ") // nest the main query in an outer select
-				.append(getRowNumber(sql)); // add the rownnumber bit into the outer query select list
-
-		if (hasDistinct(sql)) {
-			pagingSelect.append(" row_.* from ( ") // add another (inner) nested select
-					.append(sql.substring(startOfSelect)) // add the main query
-					.append(" ) as row_"); // close off the inner nested select
-		} else {
-			pagingSelect.append("Results.* From(" + sql.substring(startOfSelect) + ") as Results"); // add the main query
-		}
-		pagingSelect.append(" ) as temp_ where rownumber_ "); // add the restriction to the outer select
-		pagingSelect.append(" between " + (offset + 1) + " and " + (offset + pageSize));
-
-		return pagingSelect.toString();
-	}
-
-	private static String getRowNumber(String sql) {
-		StringBuilder rownumber = new StringBuilder(50).append("rownumber() over(");
-		int orderByIndex = sql.toLowerCase().indexOf("order by");
-		if (orderByIndex > 0 && !hasDistinct(sql)) {
-			rownumber.append(sql.substring(orderByIndex));
-		}
-		rownumber.append(") as rownumber_,");
-		return rownumber.toString();
-	}
-
-	private static boolean hasDistinct(String sql) {
-		return sql.toLowerCase().indexOf("select distinct") >= 0;
-	}
-
-	private String getMySqlLimitRowsSql(String sql, int offset, int pageSize) {
-		return new StringBuffer(sql.length() + 20).append(sql)
-				.append(offset > 0 ? " limit " + offset + " , " + pageSize : " limit " + pageSize).toString();
 	}
 }
