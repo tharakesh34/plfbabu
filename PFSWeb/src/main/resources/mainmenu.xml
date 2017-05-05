@@ -436,6 +436,7 @@
 		<!-- <menuItem id="menu_Item_DeviationTracker" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DeviationTrackerList.zul"  rightName="menuItem_Enquiry_DeviationEnquiry"/>
 		<menuItem id="menu_Item_VASEnquiry" zulNavigation="/WEB-INF/pages/VASRecording/VASRecordingList.zul?module=E" rightName="menuItem_Enquiry_VASRecording" /> -->
 		<menuItem id="menu_Item_ManualAdviseEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/ManualAdviseEnquiryList.zul?enqiryModule=Y" rightName="menuItem_finance_ManualAdviseEnquiry"	/>
+		<menuItem id="menu_Item_ReceiptRealizationEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptRealizationEnquiryList.zul" 	/>
 	</menu>
 
 	<menu id="menu_Category_CustomerEnquiry"  rightName="menuCat_CustomerEnquiry">
