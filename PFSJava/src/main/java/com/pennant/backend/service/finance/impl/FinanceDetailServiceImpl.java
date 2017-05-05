@@ -472,7 +472,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// VAS Recording Details
 		if (ImplementationConstants.ALLOW_VAS) {
-			financeDetail.setVasRecordingList(getVasRecordings(finReference, "_TView"));
+			financeDetail.getFinScheduleData().setVasRecordingList(getVasRecordings(finReference, "_TView"));
 		}
 
 		// Collateral Details
@@ -2154,14 +2154,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			//Vas Recording Details
-			if (financeDetail.getVasRecordingList() != null && !financeDetail.getVasRecordingList().isEmpty()) {
+			if (financeDetail.getFinScheduleData().getVasRecordingList() != null && !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasRecordings");
 				details = processingVasRecordngList(details, financeDetail, tableType.getSuffix());
 				auditDetails.addAll(details);
 			}
 
 			//Vas Recording Extended Field Details
-			if (financeDetail.getVasRecordingList() != null && !financeDetail.getVasRecordingList().isEmpty()) {
+			if (financeDetail.getFinScheduleData().getVasRecordingList() != null && !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasExtendedDetails");
 				details = processingExtendedFieldDetailList(details, finReference, VASConsatnts.MODULE_NAME,
 						tableType.getSuffix());
@@ -3270,17 +3270,18 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							getFinPlanEmiHolidayDAO().savePlanEMIHDates(holidayList, "");
 						}
 					}
-				}
-				
+				}		
 				//Vas Recording Details
-				if (financeDetail.getVasRecordingList() != null && !financeDetail.getVasRecordingList().isEmpty()) {
+				if (financeDetail.getFinScheduleData().getVasRecordingList() != null
+						&& !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasRecordings");
-					details = processingVasRecordngList(auditDetails, financeDetail, "");
+					details = processingVasRecordngList(details, financeDetail, "");
 					auditDetails.addAll(details);
 				}
 
 				//Vas Recording Extended Field Details
-				if (financeDetail.getVasRecordingList() != null && !financeDetail.getVasRecordingList().isEmpty()) {
+				if (financeDetail.getFinScheduleData().getVasRecordingList() != null
+						&& !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasExtendedDetails");
 					details = processingExtendedFieldDetailList(details, null, VASConsatnts.MODULE_NAME, "");
 					auditDetails.addAll(details);
@@ -3665,7 +3666,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 
 				// Vas Recording Details details
-				if (financeDetail.getVasRecordingList() != null && !financeDetail.getVasRecordingList().isEmpty()) {
+				if (financeDetail.getFinScheduleData().getVasRecordingList() != null && !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasRecordings");
 					getVasRecordingDAO().deleteByPrimaryLinkRef(financeMain.getFinReference(), "_Temp");
 					auditDetailList.addAll(details);
@@ -4304,7 +4305,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 
 				// Vas Recording Details details
-				if (financeDetail.getVasRecordingList() != null && !financeDetail.getVasRecordingList().isEmpty()) {
+				if (financeDetail.getFinScheduleData().getVasRecordingList() != null && !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasRecordings");
 					getVasRecordingDAO().deleteByPrimaryLinkRef(financeMain.getFinReference(), "_Temp");
 					auditDetails.addAll(details);
@@ -4736,7 +4737,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// Vas Recording Details details
-			if (financeDetail.getVasRecordingList() != null && !financeDetail.getVasRecordingList().isEmpty()) {
+			if (financeDetail.getFinScheduleData().getVasRecordingList() != null && !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasRecordings");
 				getVasRecordingDAO().deleteByPrimaryLinkRef(financeMain.getFinReference(), "_Temp");
 				auditDetails.addAll(details);
@@ -4888,7 +4889,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					setInsuranceDetailsAuditData(financeDetail, auditTranType, method));
 			auditDetails.addAll(financeDetail.getAuditDetailMap().get("FinInsuranceDetails"));
 		}
+		// Finance vas recording
+		if (financeDetail.getFinScheduleData().getVasRecordingList() != null
+				&& !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
+			financeDetail.getAuditDetailMap().put("VasRecordings", setVasAuditData(financeDetail, auditTranType, method));
+			auditDetails.addAll(financeDetail.getAuditDetailMap().get("VasRecordings"));
 
+			financeDetail.getAuditDetailMap().put("VasExtendedDetails", setVasExtendedAuditData(financeDetail, auditTranType, method));
+			auditDetails.addAll(financeDetail.getAuditDetailMap().get("VasExtendedDetails"));
+		}
+		
 		if (!isWIF && !financeDetail.isExtSource()) {
 
 			String rcdType = financeMain.getRecordType();
@@ -5031,7 +5041,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			//Vas Recording Details
-			if (financeDetail.getVasRecordingList() != null && !financeDetail.getVasRecordingList().isEmpty()) {
+			if (financeDetail.getFinScheduleData().getVasRecordingList() != null && !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasRecordings");
 				if (details != null && !details.isEmpty()) {
 					details = getVasRecordingValidation().vaildateDetails(details, method, usrLanguage);
@@ -5390,15 +5400,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
-		//FinAssetTypes Details
-		if (financeDetail.getVasRecordingList() != null && !financeDetail.getVasRecordingList().isEmpty()) {
-			auditDetailMap.put("VasRecordings", setVasAuditData(financeDetail, auditTranType, method));
-			auditDetails.addAll(auditDetailMap.get("VasRecordings"));
-
-			auditDetailMap.put("VasExtendedDetails", setVasExtendedAuditData(financeDetail, auditTranType, method));
-			auditDetails.addAll(auditDetailMap.get("VasExtendedDetails"));
-		}
-
 		financeDetail.setAuditDetailMap(auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 		auditHeader.setAuditDetails(auditDetails);
@@ -5497,8 +5498,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		String[] fields = PennantJavaUtil.getFieldDetails(vasRecording, vasRecording.getExcludeFields());
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
-		for (int i = 0; i < financeDetail.getVasRecordingList().size(); i++) {
-			VASRecording recording = financeDetail.getVasRecordingList().get(i);
+		for (int i = 0; i < financeDetail.getFinScheduleData().getVasRecordingList().size(); i++) {
+			VASRecording recording = financeDetail.getFinScheduleData().getVasRecordingList().get(i);
 
 			if (StringUtils.isEmpty(StringUtils.trimToEmpty(recording.getRecordType()))) {
 				continue;
@@ -5558,9 +5559,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		for (int i = 0; i < financeDetail.getVasRecordingList().size(); i++) {
+		for (int i = 0; i < financeDetail.getFinScheduleData().getVasRecordingList().size(); i++) {
 
-			VASRecording recording = financeDetail.getVasRecordingList().get(i);
+			VASRecording recording = financeDetail.getFinScheduleData().getVasRecordingList().get(i);
 			ExtendedFieldRender extendedFieldRender = recording.getExtendedFieldRender();
 			extendedFieldRender.setTypeCode(recording.getProductCode());
 			extendedFieldRender.setTypeCodeDesc(recording.getProductDesc());

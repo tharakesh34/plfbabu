@@ -4232,6 +4232,8 @@
 		<property name="generalDepartmentService" ref="generalDepartmentService" />
 		<property name="relationshipOfficerService" ref="relationshipOfficerService" />
 		<property name="finTypePartnerBankService" ref="finTypePartnerBankService" />
+		<property name="scriptValidationService" ref="scriptValidationService" />
+		<property name="vASConfigurationService" ref="vASConfigurationService" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->

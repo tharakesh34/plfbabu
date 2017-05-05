@@ -677,7 +677,8 @@ public class FinServiceInstController extends SummaryDetailService {
 						return response;
 					}
 				}
-
+				financeDetail.setFinScheduleData(finScheduleData);
+				
 				// process disbursement details
 				LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 				//financeDetail.getFinScheduleData().getFinanceMain().setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -1490,7 +1491,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		aFinanceDetail.setCollateralAssignmentList(new ArrayList<CollateralAssignment>(1));
 		aFinanceDetail.setFinAssetTypesList(new ArrayList<FinAssetTypes>(1));
 		aFinanceDetail.setExtendedFieldRenderList(new ArrayList<ExtendedFieldRender>(1));
-		aFinanceDetail.setVasRecordingList(new ArrayList<VASRecording>(1));
+		finScheduleData.setVasRecordingList(new ArrayList<VASRecording>(1));
 		aFinanceDetail.setCovenantTypeList(null);
 		aFinanceDetail.setMandate(null);
 		aFinanceDetail.setFinFlagsDetails(null);

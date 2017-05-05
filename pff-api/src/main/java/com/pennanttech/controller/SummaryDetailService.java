@@ -1,8 +1,10 @@
 package com.pennanttech.controller;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -11,15 +13,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinPlanEmiHoliday;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
+import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.util.APIConstants;
 
 public class SummaryDetailService {
@@ -127,6 +137,83 @@ public class SummaryDetailService {
 		}
 		logger.debug("Leaving");
 		return summary;
+	}
+	
+	public void doProcessPlanEMIHDays(FinScheduleData finScheduleData) {
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		List<Date> planEMIHDates = new ArrayList<Date>();
+		List<Integer> planEMIHmonths = new ArrayList<Integer>();
+		// Plan EMI Holidays Resetting after Rescheduling
+		boolean isValidSchDate = false;
+		boolean alwEMIHoliday = true;
+		Date lockPeriodDate = null;
+		if (finScheduleData.getApiPlanEMIHDates() != null) {
+			if (StringUtils.equals(finScheduleData.getFinanceMain().getPlanEMIHMethod(),
+					FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+				for (FinPlanEmiHoliday detail : finScheduleData.getApiPlanEMIHmonths()) {
+					planEMIHmonths.add(detail.getPlanEMIHMonth());
+				}
+			} else {
+				for (FinPlanEmiHoliday detail : finScheduleData.getApiPlanEMIHDates()) {
+					planEMIHDates.add(detail.getPlanEMIHDate());
+					List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
+					for (FinanceScheduleDetail schDetail : schedules) {
+						Date planEMIHStart = DateUtility.addMonths(financeMain.getGrcPeriodEndDate(),
+								financeMain.getPlanEMIHLockPeriod());
+
+						if (DateUtility.compare(detail.getPlanEMIHDate(), schDetail.getSchDate()) == 0) {
+							if (!(DateUtility.compare(schDetail.getSchDate(), planEMIHStart) > 0)) {
+								alwEMIHoliday = false;
+								lockPeriodDate = detail.getPlanEMIHDate();
+								break;
+							}
+							isValidSchDate = true;
+							if (schDetail.getInstNumber() == 1
+									|| DateUtility.compare(financeMain.getMaturityDate(), schDetail.getSchDate()) == 0
+									|| DateUtility.compare(financeMain.getFinStartDate(), schDetail.getSchDate()) == 0
+									|| DateUtility.compare(financeMain.getGrcPeriodEndDate(), schDetail.getSchDate()) >= 0) {
+								String[] valueParm = new String[1];
+								valueParm[0] = "holidayDate";
+								finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111",
+										valueParm)));
+								return;
+							}
+						}
+					}
+				}
+			}
+		}
+		if (!isValidSchDate && StringUtils.equals(finScheduleData.getFinanceMain().getPlanEMIHMethod(),
+						FinanceConstants.PLANEMIHMETHOD_ADHOC) && financeMain.isPlanEMIHAlw()) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "holidayDate";
+			finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", valueParm)));
+			return;
+		}
+		if (!alwEMIHoliday && StringUtils.equals(finScheduleData.getFinanceMain().getPlanEMIHMethod(),
+						FinanceConstants.PLANEMIHMETHOD_ADHOC) && financeMain.isPlanEMIHAlw()) {
+			String[] valueParm = new String[1];
+			valueParm[0] = DateUtility.formatDate(lockPeriodDate, PennantConstants.XMLDateFormat);
+			finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", valueParm)));
+			return;
+		}
+
+		finScheduleData.setPlanEMIHDates(planEMIHDates);
+		finScheduleData.setPlanEMIHmonths(planEMIHmonths);
+		if (finScheduleData.getFinanceMain().isPlanEMIHAlw()) {
+			finScheduleData.getFinanceMain().setEventFromDate(financeMain.getFinStartDate());
+			finScheduleData.getFinanceMain().setEventToDate(finScheduleData.getFinanceMain().getMaturityDate());
+			finScheduleData.getFinanceMain().setRecalFromDate(financeMain.getNextRepayPftDate());
+			finScheduleData.getFinanceMain().setRecalToDate(finScheduleData.getFinanceMain().getMaturityDate());
+			finScheduleData.getFinanceMain().setRecalSchdMethod(finScheduleData.getFinanceMain().getScheduleMethod());
+
+			if (StringUtils.equals(finScheduleData.getFinanceMain().getPlanEMIHMethod(),
+					FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+				finScheduleData = ScheduleCalculator.getFrqEMIHoliday(finScheduleData);
+			} else {
+				finScheduleData = ScheduleCalculator.getAdhocEMIHoliday(finScheduleData);
+			}
+		}
 	}
 
 	public FinanceDisbursementDAO getFinanceDisbursementDAO() {

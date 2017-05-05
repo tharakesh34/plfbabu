@@ -2435,7 +2435,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			final HashMap<String, Object> map = getDefaultArguments();
 			map.put("financemainBaseCtrl", this);
-			map.put("vasRecordingList", getFinanceDetail().getVasRecordingList());
+			map.put("vasRecordingList", getFinanceDetail().getFinScheduleData().getVasRecordingList());
 			map.put("finType", getFinanceDetail().getFinScheduleData().getFinanceMain().getFinType());
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinVasRecordingDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_VAS), map);
@@ -5796,7 +5796,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Vas Recording Details capturing
 		if (finVasRecordingDialogCtrl != null) {
-			aFinanceDetail.setVasRecordingList(finVasRecordingDialogCtrl.getVasRecordings());
+			aFinanceDetail.getFinScheduleData().setVasRecordingList(finVasRecordingDialogCtrl.getVasRecordings());
 		}
 
 		if (StringUtils.isBlank(this.custCIF.getValue())) {

@@ -67,6 +67,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.applicationmaster.SplRate;
+import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
@@ -77,7 +78,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 
 @XmlType(propOrder = { "finReference", "financeMain", "repayInstructions", "rateInstruction", "finFeeDetailList",
 		"insuranceList", "stepPolicyDetails", "financeScheduleDetails", "finODPenaltyRate", "apiPlanEMIHmonths",
-		"apiPlanEMIHDates","finODDetails","financeSummary","returnStatus" })
+		"apiPlanEMIHDates","finODDetails","financeSummary","vasRecordingList","returnStatus" })
 @XmlRootElement(name = "financeSchedule")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinScheduleData {
@@ -142,6 +143,10 @@ public class FinScheduleData {
 	private List<FinPlanEmiHoliday> apiPlanEMIHDates = new ArrayList<FinPlanEmiHoliday>(); 
 	@XmlElement(name="planEMIHmonths")
 	private List<FinPlanEmiHoliday> apiPlanEMIHmonths = new ArrayList<FinPlanEmiHoliday>(); 
+	// Vas Recording Details
+	@XmlElementWrapper(name="vas")
+	@XmlElement(name="vasRecording")
+	private List<VASRecording> vasRecordingList = new ArrayList<VASRecording>(1);
 
 	@XmlElement
 	private WSReturnStatus returnStatus;
@@ -649,6 +654,14 @@ public class FinScheduleData {
 
 	public void setApiplanEMIHmonths(List<FinPlanEmiHoliday> apiPlanEMIHmonths) {
 		this.apiPlanEMIHmonths = apiPlanEMIHmonths;
+	}
+
+	public List<VASRecording> getVasRecordingList() {
+		return vasRecordingList;
+	}
+
+	public void setVasRecordingList(List<VASRecording> vasRecordingList) {
+		this.vasRecordingList = vasRecordingList;
 	}
 
 

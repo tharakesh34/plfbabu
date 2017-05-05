@@ -6,7 +6,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,6 +18,7 @@ import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FeeScheduleCalculator;
 import com.pennant.app.util.ReferenceGenerator;
+import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
@@ -33,11 +33,11 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
-import com.pennant.backend.model.finance.FinPlanEmiHoliday;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -54,6 +54,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.VASConsatnts;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.service.APIErrorHandlerService;
@@ -150,64 +151,15 @@ public class FinanceDetailController extends SummaryDetailService {
 				afinanceDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
 
 				finScheduleData.setFinReference(financeMain.getFinReference());
-				 List<Date> planEMIHDates = new ArrayList<Date>(); 
-				 List<Integer> planEMIHmonths = new ArrayList<Integer>();
-				// Plan EMI Holidays Resetting after Rescheduling
-				 boolean isValidSchDate = false;
-				if (finScheduleData.getApiPlanEMIHDates() != null) {
-					if (StringUtils.equals(finScheduleData.getFinanceMain().getPlanEMIHMethod(),
-							FinanceConstants.PLANEMIHMETHOD_FRQ)) {
-						for (FinPlanEmiHoliday detail : finScheduleData.getApiPlanEMIHmonths()) {
-							planEMIHmonths.add(detail.getPlanEMIHMonth());
-						}
-					} else {
-						for (FinPlanEmiHoliday detail : finScheduleData.getApiPlanEMIHDates()) {
-							
-							planEMIHDates.add(detail.getPlanEMIHDate());
-							List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
-							for (FinanceScheduleDetail schDetail : schedules) {
-								if (DateUtility.compare(detail.getPlanEMIHDate(), schDetail.getSchDate()) == 0) {
-									isValidSchDate = true;
-									if (schDetail.getInstNumber() == 1
-											|| DateUtility.compare(financeMain.getMaturityDate(),schDetail.getSchDate()) == 0
-											|| DateUtility.compare(financeMain.getFinStartDate(),schDetail.getSchDate()) == 0
-											|| DateUtility.compare(financeMain.getGrcPeriodEndDate(),schDetail.getSchDate()) >=0) {
-										FinScheduleData response = new FinScheduleData();
-										doEmptyResponseObject(response);
-										String[] valueParm = new String[1];
-										valueParm[0] = "holidayDate";
-										response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91111",
-												valueParm));
-										return response;
-									}
-								}
-							}
-						}
-					}
-				}
-				if (!isValidSchDate && StringUtils.equals(finScheduleData.getFinanceMain().getPlanEMIHMethod(),
-						FinanceConstants.PLANEMIHMETHOD_ADHOC) && financeMain.isPlanEMIHAlw()) {
-					FinScheduleData response = new FinScheduleData();
-					doEmptyResponseObject(response);
-					String[] valueParm = new String[1];
-					valueParm[0] = "holidayDate";
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91111", valueParm));
-					return response;
-				}
-				finScheduleData.setPlanEMIHDates(planEMIHDates);
-				finScheduleData.setPlanEMIHmonths(planEMIHmonths);
-				if (finScheduleData.getFinanceMain().isPlanEMIHAlw()) {
-					finScheduleData.getFinanceMain().setEventFromDate(financeMain.getFinStartDate());
-					finScheduleData.getFinanceMain().setEventToDate(finScheduleData.getFinanceMain().getMaturityDate());
-					finScheduleData.getFinanceMain().setRecalFromDate(financeMain.getNextRepayPftDate());
-					finScheduleData.getFinanceMain().setRecalToDate(finScheduleData.getFinanceMain().getMaturityDate());
-					finScheduleData.getFinanceMain().setRecalSchdMethod(finScheduleData.getFinanceMain().getScheduleMethod());
-
-					if (StringUtils.equals(finScheduleData.getFinanceMain().getPlanEMIHMethod(),
-							FinanceConstants.PLANEMIHMETHOD_FRQ)) {
-						finScheduleData = ScheduleCalculator.getFrqEMIHoliday(finScheduleData);
-					} else {
-						finScheduleData = ScheduleCalculator.getAdhocEMIHoliday(finScheduleData);
+				doProcessPlanEMIHDays(finScheduleData);
+				
+				if (finScheduleData.getErrorDetails() != null) {
+					for (ErrorDetails errorDetail : finScheduleData.getErrorDetails()) {
+						FinScheduleData response = new FinScheduleData();
+						doEmptyResponseObject(response);
+						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+								errorDetail.getError()));
+						return response;
 					}
 				}
 				afinanceDetail.setFinScheduleData(finScheduleData);
@@ -269,9 +221,17 @@ public class FinanceDetailController extends SummaryDetailService {
 		return null;
 	}
 
+	
 	private void doSetRequiredData(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 		
+		for(VASRecording vasRecording:finScheduleData.getVasRecordingList()){
+			vasRecording.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			vasRecording.setNewRecord(true);
+			vasRecording.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			vasRecording.setVasReference(ReferenceUtil.generateVASRef());
+			vasRecording.setPostingAgainst(VASConsatnts.VASAGAINST_FINANCE);
+		}
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		
 		// user details

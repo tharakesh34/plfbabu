@@ -60,7 +60,6 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
-import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
@@ -169,10 +168,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private List<CollateralAssignment> collateralAssignmentList = new ArrayList<CollateralAssignment>(1);
 	private List<FinAssetTypes> finAssetTypesList = new ArrayList<FinAssetTypes>(1);
 	private List<ExtendedFieldRender> extendedFieldRenderList = new ArrayList<ExtendedFieldRender>(1);
-	
-	// Vas Recording Details
-	private List<VASRecording> vasRecordingList = new ArrayList<VASRecording>(1);
-	
+
 	// Dedupe Check List Details 
 	private List<FinBlacklistCustomer> finBlacklistCustomer = null;
 	private List<FinanceDedup> finDedupDetails = null; 
@@ -814,14 +810,6 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setExtendedFieldRenderList(List<ExtendedFieldRender> extendedFieldRenderList) {
 		this.extendedFieldRenderList = extendedFieldRenderList;
 	}
-
-	public List<VASRecording> getVasRecordingList() {
-		return vasRecordingList;
-	}
-	public void setVasRecordingList(List<VASRecording> vasRecordingList) {
-		this.vasRecordingList = vasRecordingList;
-	}
-	
 	public List<FinFeeDetail> getFinFeeDetails() {
 		return finFeeDetails;
 	}

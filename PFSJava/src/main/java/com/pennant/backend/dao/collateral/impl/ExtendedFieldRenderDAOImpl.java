@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -206,7 +207,12 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 		}
 		insertSql.append(" (" + columnames + ") values (" + columnValues + ")");
 		logger.debug("insertSql: " + insertSql.toString());
-		this.jdbcTemplate.update(insertSql.toString(), mappedValues);
+		try {
+			this.jdbcTemplate.update(insertSql.toString(), mappedValues);
+		} catch(DataIntegrityViolationException e) {
+			logger.error("Exception", e);
+			throw e;
+		}
 		logger.debug("Leaving");
 
 	}

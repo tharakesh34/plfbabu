@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.BadSqlGrammarException;
 
 import com.pennant.app.util.APIHeader;
@@ -106,15 +107,14 @@ public class CollateralController {
 	public CollateralSetup createCollateral(CollateralSetup collateralSetup) {
 		logger.debug("Entering");
 
-		doSetRequiredValues(collateralSetup, PROCESS_TYPE_SAVE);
-		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-
-
-		AuditHeader auditHeader = getAuditHeader(collateralSetup, "");
-		auditHeader.setApiHeader(reqHeaderDetails);
-
 		CollateralSetup response = null;
 		try {
+			doSetRequiredValues(collateralSetup, PROCESS_TYPE_SAVE);
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
+
+			AuditHeader auditHeader = getAuditHeader(collateralSetup, "");
+			auditHeader.setApiHeader(reqHeaderDetails);
+
 			// call collateral create method
 			auditHeader = collateralSetupService.doApprove(auditHeader);
 			if (auditHeader.getErrorMessage() != null) {
@@ -135,6 +135,14 @@ public class CollateralController {
 			} else {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			}
+		}  catch (NumberFormatException nfe) {
+			logger.error(nfe);
+			response = new CollateralSetup();
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90275"));
+		} catch (DataIntegrityViolationException e) {
+			logger.error(e);
+			response = new CollateralSetup();
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90275"));
 		} catch (Exception e) {
 			logger.error(e);
 			response = new CollateralSetup();
@@ -156,13 +164,13 @@ public class CollateralController {
 	public WSReturnStatus updateCollateral(CollateralSetup collateralSetup) {
 		logger.debug("Entering");
 
-		doSetRequiredValues(collateralSetup, PROCESS_TYPE_UPDATE);
-
-		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-		AuditHeader auditHeader = getAuditHeader(collateralSetup, "");
-		auditHeader.setApiHeader(reqHeaderDetails);
-
 		try {
+			doSetRequiredValues(collateralSetup, PROCESS_TYPE_UPDATE);
+
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
+			AuditHeader auditHeader = getAuditHeader(collateralSetup, "");
+			auditHeader.setApiHeader(reqHeaderDetails);
+
 			// call collateral create method
 			auditHeader = collateralSetupService.doApprove(auditHeader);
 
@@ -171,6 +179,12 @@ public class CollateralController {
 					return APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(), errorDetail.getError());
 				}
 			}
+		} catch (NumberFormatException nfe) {
+			logger.error(nfe);
+			return APIErrorHandlerService.getFailedStatus("90275");
+		} catch (DataIntegrityViolationException e) {
+			logger.error(e);
+			return APIErrorHandlerService.getFailedStatus("90275");
 		} catch (Exception e) {
 			logger.error(e);
 			return APIErrorHandlerService.getFailedStatus();
@@ -410,21 +424,24 @@ public class CollateralController {
 					for(ExtendedFieldData extFieldData: extendedField.getExtendedFieldDataList()) {
 						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
 
-						// Setting Number of units
-						if(!noUnitCmplted && mapValues.containsKey("NOOFUNITS")){
-							noOfUnits = Integer.parseInt(mapValues.get("NOOFUNITS").toString());
-							totalUnits = totalUnits + noOfUnits;
-							noUnitCmplted = true;
-						}
+						try {
+							// Setting Number of units
+							if (!noUnitCmplted && mapValues.containsKey("NOOFUNITS")) {
+								noOfUnits = Integer.parseInt(mapValues.get("NOOFUNITS").toString());
+								totalUnits = totalUnits + noOfUnits;
+								noUnitCmplted = true;
+							}
 
-						// Setting Total Value
-						if(!unitPriceCmplted && mapValues.containsKey("UNITPRICE")){
-							curValue = new BigDecimal(mapValues.get("UNITPRICE").toString());
-							totalValue = totalValue.add(curValue.multiply(new BigDecimal(noOfUnits)));
-							unitPriceCmplted= true;
+							// Setting Total Value
+							if (!unitPriceCmplted && mapValues.containsKey("UNITPRICE")) {
+								curValue = new BigDecimal(mapValues.get("UNITPRICE").toString());
+								totalValue = totalValue.add(curValue.multiply(new BigDecimal(noOfUnits)));
+								unitPriceCmplted = true;
+							}
+						} catch(NumberFormatException nfe) {
+							logger.error("Exception", nfe);
+							throw nfe;
 						}
-
-						//Total Number of Units
 					}
 					exdFieldRender.setMapValues(mapValues);
 					extendedFieldRenderList.add(exdFieldRender);

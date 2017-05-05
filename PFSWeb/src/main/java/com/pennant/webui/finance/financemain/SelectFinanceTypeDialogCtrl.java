@@ -974,7 +974,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					vasRecording.setRecordType(PennantConstants.RCD_ADD);
 					vasRecordingList.add(vasRecording);
 				}
-				financeDetail.setVasRecordingList(vasRecordingList);
+				financeDetail.getFinScheduleData().setVasRecordingList(vasRecordingList);
 			}
 		}
 
