@@ -296,4 +296,9 @@ FROM    	Mandates T1 INNER JOIN
 	<addNotNullConstraint tableName="MANUALADVISE_TEMP" columnName="ValueDate"/>
 	<addNotNullConstraint tableName="MANUALADVISE_TEMP" columnName="PostDate"/>
 	</changeSet>
+	<changeSet id="19" author="Siva">
+		<sql>
+			Update secrights SET rightname = 'menuItem_FinanceManagement_ReceiptBounce' where rightname = 'menuItem_FinanceManagement_ReceiptCancellation';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
