@@ -449,6 +449,7 @@ public class FinanceDetailController extends SummaryDetailService {
 		response.setPlanEMIHmonths(null);
 		response.setApiPlanEMIHDates(null);
 		response.setApiplanEMIHmonths(null);
+		response.setFinODDetails(null);
 	}
 	
 	/**

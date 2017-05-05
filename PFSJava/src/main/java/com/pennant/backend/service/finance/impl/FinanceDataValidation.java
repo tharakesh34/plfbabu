@@ -73,7 +73,6 @@ import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.service.systemmasters.GeneralDepartmentService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 
@@ -1304,7 +1303,7 @@ public class FinanceDataValidation {
 		//Allow Manual Schedule
 		if (finMain.isManualSchedule()) {
 			errorDetails = manualScheduleValidation(vldGroup, finScheduleData);
-			if (errorDetails != null) {
+			if (!errorDetails.isEmpty()) {
 				return errorDetails;
 			}
 		}
@@ -1312,19 +1311,19 @@ public class FinanceDataValidation {
 		//Planned Deferments
 		if (finMain.getPlanDeferCount() > 0) {
 			errorDetails = planDefermentValidation(vldGroup, finScheduleData);
-			if (errorDetails != null) {
+			if (!errorDetails.isEmpty()) {
 				return errorDetails;
 			}
 		}
 		//planned EMI
 		errorDetails = planEMIHolidayValidation(vldGroup, finScheduleData);
-		if (errorDetails != null) {
+		if (!errorDetails.isEmpty()) {
 			return errorDetails;
 		}
 
 		//Step Loan?
 		errorDetails = stepLoanValidation(vldGroup, finScheduleData);
-		if (errorDetails != null) {
+		if (!errorDetails.isEmpty()) {
 			return errorDetails;
 		}
 
@@ -1361,7 +1360,7 @@ public class FinanceDataValidation {
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90184", null)));
 			return errorDetails;
 		}
-
+		
 		//Validate Profit Details
 		errorDetails = gracePftFrqValidation(finScheduleData);
 		if (!errorDetails.isEmpty()) {
@@ -1429,6 +1428,18 @@ public class FinanceDataValidation {
 			return errorDetails;
 		}
 
+		// validate min and max terms with loanType config.
+		if(financeType.getFinMinTerm() > 0 && financeType.getFinMaxTerm() > 0) {
+			if(finMain.getNumberOfTerms() < financeType.getFinMinTerm() || finMain.getNumberOfTerms() > financeType.getFinMaxTerm()) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "Repay";
+				valueParm[1] = String.valueOf(financeType.getFinMinTerm());
+				valueParm[2] = String.valueOf(financeType.getFinMaxTerm());
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90272", valueParm)));
+				return errorDetails;
+			}
+		}
+		
 		//Repay Rate Validations
 		errorDetails = repayRateValidation(finScheduleData);
 
@@ -1443,7 +1454,7 @@ public class FinanceDataValidation {
 
 		//Validate Repayment Details
 		errorDetails = repayFrqValidation(finScheduleData);
-		if (errorDetails != null) {
+		if (!errorDetails.isEmpty()) {
 			return errorDetails;
 		}
 
@@ -1787,6 +1798,13 @@ public class FinanceDataValidation {
 		FinanceType financeType = finScheduleData.getFinanceType();
 		BigDecimal zeroValue = BigDecimal.ZERO;
 
+		// validate MinRate and MaxRate fields
+		if(finMain.getGrcMinRate().compareTo(finMain.getGrcMaxRate()) > 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Grace Max Rate:"+finMain.getGrcMaxRate();
+			valueParm[1] = "Grace Min Rate:"+finMain.getGrcMinRate();
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91125", valueParm)));
+		}
 		//Rate Type/Rate Basis
 		if (!StringUtils.equals(finMain.getGrcRateBasis(), CalculationConstants.RATE_BASIS_F)
 				&& !StringUtils.equals(finMain.getGrcRateBasis(), CalculationConstants.RATE_BASIS_R)) {
@@ -1896,12 +1914,14 @@ public class FinanceDataValidation {
 			netRate = finMain.getGrcPftRate();
 		}
 
-		//Check Against Minimum Rate 
-		if (netRate.compareTo(finMain.getGrcMinRate()) < 0) {
-			String[] valueParm = new String[2];
-			valueParm[0] = round4(netRate).toString();
-			valueParm[1] = round4(finMain.getGrcMinRate()).toString();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90172", valueParm)));
+		//Check Against Minimum Rate
+		if (finMain.getGrcMinRate().compareTo(zeroValue) != 0) {
+			if (netRate.compareTo(finMain.getGrcMinRate()) < 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = round4(netRate).toString();
+				valueParm[1] = round4(finMain.getGrcMinRate()).toString();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90172", valueParm)));
+			}
 		}
 
 		//Check Against Maximum Rate 
@@ -1909,7 +1929,7 @@ public class FinanceDataValidation {
 			if (netRate.compareTo(finMain.getGrcMaxRate()) > 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = round4(netRate).toString();
-				valueParm[1] = round4(finMain.getGrcMinRate()).toString();
+				valueParm[1] = round4(finMain.getGrcMaxRate()).toString();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90173", valueParm)));
 			}
 		}
@@ -1935,7 +1955,17 @@ public class FinanceDataValidation {
 			valueParm[0] = "Grace";
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90156", valueParm)));
 		}
-
+		
+		// Validate with Allowed frequency days.
+		boolean isValid = validateAlwFrqDays(finMain.getGrcPftFrq(), finScheduleData.getFinanceType().getFrequencyDays());
+		if(!isValid) {
+			String[] valueParm = new String[3];
+			valueParm[0] = "Grace";
+			valueParm[1] = finMain.getGrcPftFrq();
+			valueParm[2] = finScheduleData.getFinanceType().getFrequencyDays();
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90271", valueParm)));
+		}
+		
 		//First Interest Frequency Date Vs Start Date
 		if (finMain.getNextGrcPftDate().compareTo(finMain.getFinStartDate()) <= 0) {
 			String[] valueParm = new String[2];
@@ -2012,6 +2042,16 @@ public class FinanceDataValidation {
 			valueParm[0] = "Grace";
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90157", valueParm)));
 		}
+		
+		// Validate with Allowed frequency days.
+		boolean isValid = validateAlwFrqDays(finMain.getGrcPftRvwFrq(), finScheduleData.getFinanceType().getFrequencyDays());
+		if(!isValid) {
+			String[] valueParm = new String[3];
+			valueParm[0] = "Grace";
+			valueParm[1] = finMain.getGrcPftRvwFrq();
+			valueParm[2] = finScheduleData.getFinanceType().getFrequencyDays();
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90271", valueParm)));
+		}
 
 		//First Interest Review Frequency Date Vs Start Date
 		if (finMain.getNextGrcPftRvwDate().compareTo(finMain.getFinStartDate()) <= 0) {
@@ -2061,7 +2101,17 @@ public class FinanceDataValidation {
 			valueParm[0] = "Grace";
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90158", valueParm)));
 		}
-
+		
+		// Validate with Allowed frequency days.
+		boolean isValid = validateAlwFrqDays(finMain.getGrcCpzFrq(), finScheduleData.getFinanceType().getFrequencyDays());
+		if(!isValid) {
+			String[] valueParm = new String[3];
+			valueParm[0] = "Grace";
+			valueParm[1] = finMain.getGrcCpzFrq();
+			valueParm[2] = finScheduleData.getFinanceType().getFrequencyDays();
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90271", valueParm)));
+		}
+	
 		//First Interest Capitalization Frequency Date Vs Start Date
 		if (finMain.getNextGrcCpzDate().compareTo(finMain.getFinStartDate()) <= 0) {
 			String[] valueParm = new String[2];
@@ -2377,6 +2427,7 @@ public class FinanceDataValidation {
 	private List<ErrorDetails> repayFrqValidation(FinScheduleData finScheduleData) {
 		List<ErrorDetails> errorDetails = finScheduleData.getErrorDetails();
 		FinanceMain finMain = finScheduleData.getFinanceMain();
+		FinanceType financeType = finScheduleData.getFinanceType();
 
 		//Validate Repayment Frequency
 		ErrorDetails tempError = FrequencyUtil.validateFrequency(finMain.getRepayFrq());
@@ -2385,6 +2436,15 @@ public class FinanceDataValidation {
 			valueParm[0] = "Repay";
 			valueParm[1] = finMain.getRepayFrq();
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90159", valueParm)));
+		}
+		
+		boolean isValid = validateAlwFrqDays(finMain.getRepayFrq(), finScheduleData.getFinanceType().getFrequencyDays());
+		if(!isValid) {
+			String[] valueParm = new String[3];
+			valueParm[0] = "Repay";
+			valueParm[1] = finMain.getRepayFrq();
+			valueParm[2] = financeType.getFrequencyDays();
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90271", valueParm)));
 		}
 
 		//First Repayment Date Vs Start Date
@@ -2453,6 +2513,16 @@ public class FinanceDataValidation {
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90156", valueParm)));
 		}
 
+		// Validate with Allowed frequency days.
+		boolean isValid = validateAlwFrqDays(finMain.getRepayPftFrq(), finScheduleData.getFinanceType().getFrequencyDays());
+		if(!isValid) {
+			String[] valueParm = new String[3];
+			valueParm[0] = "Repay";
+			valueParm[1] = finMain.getRepayPftFrq();
+			valueParm[2] = finScheduleData.getFinanceType().getFrequencyDays();
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90271", valueParm)));
+		}
+		
 		//First Repayment Frequency Date Vs Start Date/Grace End Date
 		if (finMain.getNextRepayPftDate().compareTo(finMain.getCalGrcEndDate()) <= 0) {
 			String[] valueParm = new String[2];
@@ -2501,7 +2571,16 @@ public class FinanceDataValidation {
 			valueParm[0] = "Repay";
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90157", valueParm)));
 		}
-
+		
+		// Validate with Allowed frequency days.
+		boolean isValid = validateAlwFrqDays(finMain.getRepayRvwFrq(), finScheduleData.getFinanceType().getFrequencyDays());
+		if(!isValid) {
+			String[] valueParm = new String[3];
+			valueParm[0] = "Repay";
+			valueParm[1] = finMain.getRepayRvwFrq();
+			valueParm[2] = finScheduleData.getFinanceType().getFrequencyDays();
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90271", valueParm)));
+		}
 		//First Repayment Profit Review Date Vs Start Date/Grace End Date
 		if (finMain.getNextRepayRvwDate().compareTo(finMain.getCalGrcEndDate()) <= 0) {
 			String[] valueParm = new String[2];
@@ -2552,6 +2631,16 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90158", valueParm)));
 			}
 
+			// Validate with Allowed frequency days.
+			boolean isValid = validateAlwFrqDays(finMain.getRepayCpzFrq(), finScheduleData.getFinanceType().getFrequencyDays());
+			if(!isValid) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "Repay";
+				valueParm[1] = finMain.getRepayCpzFrq();
+				valueParm[2] = finScheduleData.getFinanceType().getFrequencyDays();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90271", valueParm)));
+			}
+			
 			//First Interest Capitalization Frequency Date Vs Start Date/GE Date
 			if (finMain.getNextRepayCpzDate().compareTo(finMain.getCalGrcEndDate()) <= 0) {
 				String[] valueParm = new String[2];
@@ -2729,6 +2818,14 @@ public class FinanceDataValidation {
 					valueParm[0] = "ScheduleTerms";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90221", valueParm)));
 				}
+				
+				if (StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS, finFeeDetail.getFeeScheduleMethod())
+						&& finFeeDetail.getTerms() > finSchdData.getFinanceMain().getNumberOfTerms()) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Schedule Terms";
+					valueParm[1] = "Number of terms:"+finSchdData.getFinanceMain().getNumberOfTerms();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30551", valueParm)));
+				}
 			}
 
 			isOrigination = true;
@@ -2816,7 +2913,6 @@ public class FinanceDataValidation {
 								// validate waiver amount
 								BigDecimal maxWaiverPer = finTypeFee.getMaxWaiverPerc();
 								finWaiverAmount = (finTypeFee.getAmount().multiply(maxWaiverPer)).divide(new BigDecimal(100));
-								finWaiverAmount = PennantApplicationUtil.unFormateAmount(finWaiverAmount, formatter);
 								if (feeDetail.getWaivedAmount().compareTo(finWaiverAmount) > 0) {
 									String[] valueParm = new String[3];
 									valueParm[0] = "Waiver amount";
@@ -2986,6 +3082,27 @@ public class FinanceDataValidation {
 		return feeValidations(vldSrvLoan, finSchdData, true, eventCode);
 	}
 
+	/**
+	 * 
+	 * @param frquency
+	 * @param allowedFrqDays
+	 * @return
+	 */
+	private boolean validateAlwFrqDays(String frquency, String allowedFrqDays) {
+		if(StringUtils.isNotBlank(allowedFrqDays)) {
+			String[] alwFrqDay = allowedFrqDays.split(PennantConstants.DELIMITER_COMMA);
+			boolean isValid = false;
+			for(String frqDay: alwFrqDay) {
+				if(StringUtils.contains(frquency.substring(3, 5), frqDay)) {
+					isValid = true;
+					break;
+				}
+			}
+			return isValid;
+		}
+		return true;
+	}
+	
 	/*
 	 * _______________________________________________________________________________________________________________
 	 * ROUNDING

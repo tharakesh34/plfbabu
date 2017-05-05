@@ -141,6 +141,7 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 		response.setFinanceScheduleDetails(null);
 		response.setPlanEMIHDates(null);
 		response.setPlanEMIHmonths(null);
+		response.setFinODDetails(null);
 	}
 
 	@Autowired
