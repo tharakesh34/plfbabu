@@ -817,7 +817,7 @@ public class PennantJavaUtil {
 				CustomerBalanceSheet.class, new String[] { "CustomerBalanceSheet", "CustomerBalanceSheet_AView" },
 				masterWF , new String[] { "CustId", "TotalAssets" }, null, 300));
 		ModuleUtil.register("Beneficiary",new ModuleMapping("Beneficiary",Beneficiary.class,new String[] {"Beneficiary", "Beneficiary_AView"},masterWF, new String[] {"BeneficiaryId","CustID"} ,null,300));
-		ModuleUtil.register("BeneficiaryEnquiry",new ModuleMapping("Beneficiary",Beneficiary.class,new String[] {"Beneficiary", "Beneficiary_AView"},masterWF, new String[] {"CustID","BankName","BranchDesc","City","AccNumber","AccHolderName"} ,null,500));
+		ModuleUtil.register("BeneficiaryEnquiry",new ModuleMapping("Beneficiary",Beneficiary.class,new String[] {"Beneficiary", "Beneficiary_AView"},masterWF, new String[] {"CustCIF","BankName","BranchDesc","City","AccNumber","AccHolderName"} ,null,500));
 		 
 
 

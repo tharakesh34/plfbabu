@@ -649,6 +649,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.printingLoc.setWidth("150px");
 
 		this.bankCode.setModuleName("BankDetail");
+		this.bankCode.setModuleName("BankDetail");
 		this.bankCode.setMandatoryStyle(true);
 		this.bankCode.setValueColumn("BankCode");
 		this.bankCode.setDescColumn("BankName");
@@ -1479,22 +1480,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			String validateAcNumber = StringUtils.trimToEmpty(advancePayments.getBeneficiaryAccNo());
 			if (StringUtils.isEmpty(validateAcNumber)) {
 				return errors;
-			}
-
-			for (FinAdvancePayments finAdvancePayments : list) {
-				if (advancePayments.getPaymentSeq() != finAdvancePayments.getPaymentSeq()
-						&& advancePayments.getDisbSeq() == finAdvancePayments.getDisbSeq()) {
-					String accNumber = StringUtils.trimToEmpty(finAdvancePayments.getBeneficiaryAccNo());
-
-					if (StringUtils.equals(validateAcNumber, accNumber)) {
-						ErrorDetails error = new ErrorDetails("41001", new String[] {
-								Labels.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryAccNo.value") + " : ",
-								advancePayments.getBeneficiaryAccNo() });
-						errors.add(error);
-						break;
-
-					}
-				}
 			}
 		}
 		return errors;
