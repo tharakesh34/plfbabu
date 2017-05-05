@@ -80,7 +80,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	protected ProcessExecution		beforeEOD;
 	protected ProcessExecution		prepareCustomerQueue;
 
-	protected ProcessExecution		threadAllocation;
+	protected ProcessExecution		masterStep;
 	protected ProcessExecution		microEOD;
 	protected ProcessExecution		microEODMonitor;
 
@@ -92,7 +92,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	public enum PFSBatchProcessess {
 		beforeEOD,
 		prepareCustomerQueue,
-		threadAllocation,
+		masterStep,
 		microEOD,
 		microEODMonitor,
 		snapShotPreparation
@@ -422,12 +422,12 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 					setRunningProcess(this.prepareCustomerQueue);
 				}
 				break;
-			case threadAllocation:
-				this.threadAllocation.setProcess(status);
-				this.threadAllocation.render();
-				setRunningProcess(this.threadAllocation);
+			case masterStep:
+				this.masterStep.setProcess(status);
+				this.masterStep.render();
+				setRunningProcess(this.masterStep);
 				if ("EXECUTING".equals(status.getStatus())) {
-					setRunningProcess(this.threadAllocation);
+					setRunningProcess(this.masterStep);
 				}
 				break;
 			case microEOD:
@@ -479,8 +479,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		if (prepareCustomerQueue.getChildren() != null) {
 			prepareCustomerQueue.getChildren().clear();
 		}
-		if (threadAllocation.getChildren() != null) {
-			threadAllocation.getChildren().clear();
+		if (masterStep.getChildren() != null) {
+			masterStep.getChildren().clear();
 		}
 		if (microEOD.getChildren() != null) {
 			microEOD.getChildren().clear();

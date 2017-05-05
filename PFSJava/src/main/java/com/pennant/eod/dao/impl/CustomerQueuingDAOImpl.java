@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -35,7 +34,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		customerQueuing.setEodDate(date);
 
 		StringBuilder insertSql = new StringBuilder("INSERT INTO CustomerQueuing (CustID,EodDate)");
-		insertSql.append(" SELECT  distinct CustID,:EodDate FROM FinanceMain where FinIsActive = 1");
+		insertSql.append(" SELECT  DISTINCT CustID,:EodDate FROM FinanceMain where FinIsActive = 1");
 
 		logger.debug("updateSql: " + insertSql.toString());
 
@@ -46,34 +45,13 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 	}
 
 	@Override
-	public long getCountByProgress(Date date, String progress) {
+	public long getCountByProgress(Date date) {
 
 		CustomerQueuing customerQueuing = new CustomerQueuing();
-		customerQueuing.setProgress(progress);
 		customerQueuing.setEodDate(date);
-		StringBuilder selectSql = new StringBuilder("SELECT Count(*) from CustomerQueuing where EodDate=:EodDate");
-		if (!StringUtils.isEmpty(progress)) {
-			selectSql.append(" and (Progress = :Progress or Progress is null)");
-		}
-
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(CustID) from CustomerQueuing where EodDate=:EodDate");
+		selectSql.append(" AND Progress IS NULL");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
-		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
-	}
-
-	@Override
-	public long getCountByStatus(Date date, String status) {
-		logger.debug("Entering");
-
-		CustomerQueuing customerQueuing = new CustomerQueuing();
-		customerQueuing.setStatus(status);
-		customerQueuing.setEodDate(date);
-		StringBuilder selectSql = new StringBuilder("SELECT Count(*) from CustomerQueuing where EodDate=:EodDate");
-		selectSql.append(" and (Status = :Status OR Status is null )");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
-
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
 	}
 
@@ -101,8 +79,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		source.addValue("RowCount", noOfRows);
 		source.addValue("ThreadId", threadId);
 		source.addValue("EodDate", date);
-		//		StringBuilder selectSql = new StringBuilder("UPDATE Top(:RowCount) CustomerQueuing set ThreadId=:ThreadId Where ThreadId IS NULL and EodDate=:EodDate");
-
+		
 		StringBuilder selectSql = new StringBuilder("WITH CustomerQueue AS ");
 		selectSql.append("(SELECT EodDate,ThreadId, row_number() over(order by custId) RN FROM CustomerQueuing");
 		selectSql.append(" WHERE ThreadId IS NULL and EodDate = :EodDate )");
@@ -143,41 +120,12 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 	}
 
 	@Override
-	public void updateFailedThread(Date date) {
-		logger.debug("Entering");
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Status", EodConstants.STATUS_FAILED);
-		source.addValue("EodDate", date);
-
-		StringBuilder selectSql = new StringBuilder("UPDATE CustomerQueuing set StartTime = NULL,");
-		selectSql.append(" EndTime = NULL, Progress = NULL , ");
-		selectSql.append(" ErrorLog = NULL, Status = NULL");
-		selectSql.append(" Where Status = :Status and EodDate = :EodDate");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		try {
-			this.namedParameterJdbcTemplate.update(selectSql.toString(), source);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error("Exception: ", dae);
-		}
-		logger.debug("Leaving");
-
-	}
-
-	@Override
-	public void update(CustomerQueuing customerQueuing, boolean start) {
+	public void updateProgress(CustomerQueuing customerQueuing) {
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing");
-		updateSql.append(" Set ErrorLog = :ErrorLog, Status = :Status,");
-		if (start) {
-			updateSql.append(" StartTime =:StartTime,");
-		} else {
-			updateSql.append(" EndTime = :EndTime,");
-		}
-		updateSql.append(" Progress = :Progress Where CustID =:CustID and EodDate=:EodDate");
+		updateSql.append(" Set Progress = :Progress");
+		updateSql.append("  Where CustID =:CustID and EodDate=:EodDate");
 
 		logger.debug("updateSql: " + updateSql.toString());
 

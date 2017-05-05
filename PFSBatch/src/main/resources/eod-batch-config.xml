@@ -20,31 +20,20 @@
 		</step>
 		<step id="prepareCustomerQueue">
 			<tasklet ref="prepareCustomerQueueTaskLet" />
-			<next on="*" to="threadAllocation" />
+			<next on="*" to="masterStep" />
 			<fail on="FAILED" />
 		</step>
-		<step id="threadAllocation">
-			<tasklet ref="threadAllocationTaskLet" />
-			<next on="*" to="microEOD" />
-			<fail on="FAILED" />
-		</step>
-		<step id="microEOD">
-			<tasklet allow-start-if-complete="true" ref="microEODTaskLet"  >
-			<transaction-attributes propagation="NEVER"/>	
-			</tasklet>
-			<next on="*" to="microEODMonitor" />
-			<fail on="FAILED" />
-		</step>
-		<step id="microEODMonitor">
-			<tasklet allow-start-if-complete="true" ref="microEODMonitorTaskLet" />
-			<next on="*" to="microEODDecision" />
-			<fail on="FAILED" />
-		</step>
-		<decision id="microEODDecision" decider="microEODDecider">
-			<next on="UNKNOWN" to="microEOD" />
+
+		<step id="masterStep">
+			<partition step="microEOD" partitioner="partitioningMaster">
+				<handler task-executor="taskExecutor" />
+			</partition>
 			<next on="*" to="snapShotPreparation" />
 			<fail on="FAILED" />
-		</decision>
+		</step>
+
+		<!-- <step id="threadAllocation"> <tasklet ref="threadAllocationTaskLet" /> <next on="*" to="microEOD" /> <fail on="FAILED" /> </step> <step id="microEOD"> <tasklet allow-start-if-complete="true" ref="microEODTaskLet" > <transaction-attributes propagation="NEVER"/> </tasklet> <next on="*" to="microEODMonitor" /> <fail on="FAILED" /> </step> <step id="microEODMonitor"> <tasklet allow-start-if-complete="true" ref="microEODMonitorTaskLet" /> <next on="*" to="microEODDecision" /> <fail on="FAILED" 
+			/> </step> <decision id="microEODDecision" decider="microEODDecider"> <next on="UNKNOWN" to="microEOD" /> <next on="*" to="snapShotPreparation" /> <fail on="FAILED" /> </decision> -->
 		<step id="snapShotPreparation">
 			<tasklet ref="snapShotPreparationTaskLet" />
 			<next on="*" to="completeEOD" />
@@ -65,4 +54,16 @@
 		<!-- Limit Decision For loop -->
 		<!-- -->
 	</job>
+	<step id="microEOD" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet ref="microEODTaskLet">
+			<!-- <transaction-attributes propagation="NEVER" /> -->
+		</tasklet>
+	</step>
+
+	<bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor" />
+	<bean id="partitioningMaster" class="com.pennant.backend.endofday.tasklet.PartitioningMaster">
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+	</bean>
+
+
 </beans>

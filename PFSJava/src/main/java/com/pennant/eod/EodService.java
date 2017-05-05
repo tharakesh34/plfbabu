@@ -9,12 +9,8 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.core.AccrualService;
@@ -33,19 +29,20 @@ import com.pennant.app.util.BusinessCalendar;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerDatesDAO;
+import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class EodService {
 
 	private static Logger				logger	= Logger.getLogger(EodService.class);
 
 	private DataSource					dataSource;
-	private PlatformTransactionManager	transactionManager;
 	private CustomerDAO					customerDAO;
 	private CustomerDatesDAO			customerDatesDAO;
-	private CustomerQueuingService		customerQueuingService;
+	private CustomerQueuingDAO			customerQueuingDAO;
 
 	private LatePayMarkingService		latePayMarkingService;
 	private LatePayPenaltyService		latePayPenaltyService;
@@ -60,11 +57,8 @@ public class EodService {
 
 	private InstallmentDueService		installmentDueService;
 
-
-
-
 	// Constants
-	private static final String			SQL		= "select * from CustomerQueuing where ThreadId=? And ( Progress is null or Status= ?)";
+	private static final String			SQL		= "SELECT * FROM CustomerQueuing WHERE ThreadId=? AND Progress IS NULL ";
 
 	public EodService() {
 		super();
@@ -72,9 +66,12 @@ public class EodService {
 
 	/**
 	 * @param threadId
+	 * @throws Exception
 	 * @throws SQLException
 	 */
-	public void startProcess(Date date, String threadId) {
+	public void startProcess(Date date, String threadId) throws Exception {
+
+		System.out.println("process Statred by the Thread :" + threadId + " with data" + date.toString());
 		Connection connection = null;
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
@@ -83,67 +80,19 @@ public class EodService {
 			connection = DataSourceUtils.doGetConnection(dataSource);
 			sqlStatement = connection.prepareStatement(SQL);
 			sqlStatement.setString(1, threadId);
-			sqlStatement.setString(2, EodConstants.STATUS_FAILED);
 			resultSet = sqlStatement.executeQuery();
 			while (resultSet.next()) {
-				try {
-					custId = resultSet.getLong("CustId");
-					//Update start
-					customerQueuingService.updateStart(date, custId);
-					//process
-					processCustomerFinances(date, custId);
-					//Update Status
-					customerQueuingService.updateEnd(date, custId);
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-					String errorMsg = "";
-					StringBuilder builder = new StringBuilder(StringUtils.trimToEmpty(e.getMessage()));
-					StackTraceElement[] stackTrace = e.getStackTrace();
-					for (int i = 0; i < stackTrace.length; i++) {
-						builder.append(stackTrace[i]);
-					}
-					errorMsg = builder.toString();
-					if (errorMsg.length() > 2000) {
-						errorMsg = errorMsg.substring(0, 2000);
-					}
-
-					customerQueuingService.updateSucessFail(date, custId, errorMsg);
-				}
+				custId = resultSet.getLong("CustId");
+				//process
+				doProcess(connection, custId, date);
+				//Update Status
+				updateEnd(date, custId);
 			}
 
 			resultSet.close();
 			sqlStatement.close();
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-		} finally {
-			DataSourceUtils.releaseConnection(connection, dataSource);
-		}
-	}
-
-	/**
-	 * Customer based core process and transaction is applied for the process
-	 * 
-	 * @param date2
-	 * 
-	 * @param custId
-	 * @param connection
-	 * @throws Exception
-	 */
-	public void processCustomerFinances(Date date, long custId) throws Exception {
-		logger.debug(" Entering ");
-		//transaction create for customer based
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-		txDef.setReadOnly(true);
-		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRED);
-		TransactionStatus txStatus = transactionManager.getTransaction(txDef);
-		Connection connection = null;
-		try {
-			connection = DataSourceUtils.getConnection(dataSource);
-			doProcess(connection, custId, date);
-			transactionManager.commit(txStatus);
-		} catch (Exception e) {
-			transactionManager.rollback(txStatus);
-			logger.error("Exception :", e);
 			throw e;
 		} finally {
 			DataSourceUtils.releaseConnection(connection, dataSource);
@@ -161,9 +110,7 @@ public class EodService {
 		custEODEvent.setEodDate(date);
 		custEODEvent.setEodValueDate(date);
 
-		
 		custEODEvent = loadFinanceData.prepareFinEODEvents(custEODEvent);
-
 
 		//late pay marking
 		custEODEvent = latePayMarkingService.processLatePayMarking(custEODEvent);
@@ -178,7 +125,7 @@ public class EodService {
 		custEODEvent = latePayPenaltyService.processLatePayPenalty(custEODEvent);
 
 		//late pay interest
-		custEODEvent =  latePayInterestService.processLatePayInterest(custEODEvent);
+		custEODEvent = latePayInterestService.processLatePayInterest(custEODEvent);
 
 		//NPA Service
 		custEODEvent = npaService.processNPABuckets(custEODEvent);
@@ -199,8 +146,7 @@ public class EodService {
 
 		//installment 
 		//installmentDueService.processDueDatePostings(connection, custId, date);
-		
-		
+
 		//receipt postings
 		//receiptPaymentService.processrReceipts(connection, custId, date, custEODEvents);
 
@@ -216,17 +162,26 @@ public class EodService {
 		} else {
 			doProcess(connection, custId, nextDate);
 		}
-		
+
 		//update customer EOD
 		loadFinanceData.updateFinEODEvents(custEODEvent);
+
+	}
+
+	public void updateEnd(Date date, long custId) {
+		logger.debug("Entering");
+
+		CustomerQueuing customerQueuing = new CustomerQueuing();
+		customerQueuing.setCustID(custId);
+		customerQueuing.setEodDate(date);
+		customerQueuing.setProgress(EodConstants.PROGRESS_COMPLETED);
+		customerQueuingDAO.updateProgress(customerQueuing);
+
+		logger.debug("Leaving");
 	}
 
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
-	}
-
-	public void setCustomerQueuingService(CustomerQueuingService customerQueuingService) {
-		this.customerQueuingService = customerQueuingService;
 	}
 
 	public void setAccrualService(AccrualService accrualService) {
@@ -235,10 +190,6 @@ public class EodService {
 
 	public void setRateReviewService(RateReviewService rateReviewService) {
 		this.rateReviewService = rateReviewService;
-	}
-
-	public void setTransactionManager(PlatformTransactionManager transactionManager) {
-		this.transactionManager = transactionManager;
 	}
 
 	public void setCustomerDatesDAO(CustomerDatesDAO customerDatesDAO) {
@@ -291,5 +242,9 @@ public class EodService {
 
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
+	}
+
+	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
+		this.customerQueuingDAO = customerQueuingDAO;
 	}
 }

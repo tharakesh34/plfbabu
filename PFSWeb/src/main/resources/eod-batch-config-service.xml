@@ -112,25 +112,18 @@
 		<property name="collateralMarkProcess" ref="collateralMarkProcess" />
 	</bean>
 	<!-- No EOd -->
-	<bean id="customerQueuingService" class="com.pennant.eod.CustomerQueuingService">
-		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
-	</bean>
 	<bean id="customerQueuingDAO" class="com.pennant.eod.dao.impl.CustomerQueuingDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	<bean id="eodDetailDAO" class="com.pennant.eod.dao.impl.EodDetailDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	<bean name="eodThread" class="com.pennant.eod.EodThread" scope="prototype">
-		<property name="eodService" ref="eodService" />
-	</bean>
 	<!-- No end of day Service -->
 	<bean id="eodService" class="com.pennant.eod.EodService">
 		<property name="dataSource" ref="pfsDatasource" />
 		<property name="accrualService" ref="accrualService" />
 		<property name="rateReviewService" ref="rateReviewService" />
-		<property name="customerQueuingService" ref="customerQueuingService" />
-		<property name="transactionManager" ref="pfsTransactionManager" />
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 		<property name="customerDatesDAO" ref="customerDatesDAO" />
 		<property name="dateRollOverService" ref="dateRollOverService" />
 		<property name="installmentDueService" ref="installmentDueService" />

@@ -18,24 +18,15 @@
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 	</bean>
 
-	<!-- prepareCustomerQueue -->
-
-	<bean id="threadAllocationTaskLet" class="com.pennant.backend.endofday.tasklet.ThreadAllocation">
-		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
-	</bean>
-
 	<!-- MicroEOD -->
 	<bean id="microEODTaskLet" class="com.pennant.backend.endofday.tasklet.MicroEOD">
-		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+		<property name="eodService" ref="eodService" />
 	</bean>
 
 	<bean id="microEODMonitorTaskLet" class="com.pennant.backend.endofday.tasklet.MicroEODMonitor">
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 	</bean>
 
-	<bean id="microEODDecider" class="com.pennant.backend.endofday.limitdecider.MicroEODDecider">
-		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
-	</bean>
 
 	<!-- Loop Limit Decider -->
 	<bean id="completeEODDecider" class="com.pennant.backend.endofday.limitdecider.CompleteEOD">

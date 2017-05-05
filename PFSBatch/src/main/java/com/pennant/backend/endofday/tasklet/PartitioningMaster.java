@@ -43,37 +43,38 @@
 package com.pennant.backend.endofday.tasklet;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.springframework.batch.core.StepContribution;
-import org.springframework.batch.core.scope.context.ChunkContext;
-import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
-import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 
-public class ThreadAllocation implements Tasklet {
+public class PartitioningMaster implements Partitioner {
 
-	private Logger				logger	= Logger.getLogger(ThreadAllocation.class);
+	private Logger				logger	= Logger.getLogger(Partitioner.class);
 
 	private CustomerQueuingDAO	customerQueuingDAO;
 
-	public ThreadAllocation() {
-
-	}
-
 	@Override
-	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
+	public Map<String, ExecutionContext> partition(int gridSize) {
 		Date valueDate = DateUtility.getValueDate();
 		logger.debug("START: Thread Allocation On : " + valueDate);
 
 		boolean recordslessThanThread = false;
+		//configured thread count
 		int threadCount = SysParamUtil.getValueAsInt("EOD_THREAD_COUNT");
-		long custIdCount = customerQueuingDAO.getCountByProgress(valueDate, null);
+
+		//count by progress
+		long custIdCount = customerQueuingDAO.getCountByProgress(valueDate);
+
+		Map<String, ExecutionContext> partitionData = new HashMap<String, ExecutionContext>();
+
 		if (custIdCount != 0) {
 
 			long noOfRows = custIdCount / threadCount;
@@ -85,10 +86,13 @@ public class ThreadAllocation implements Tasklet {
 			for (int i = 1; i <= threadCount; i++) {
 
 				if (i == threadCount) {
-					customerQueuingDAO.updateThreadID(valueDate, "Thread" + i);
+					customerQueuingDAO.updateThreadID(valueDate, EodConstants.THREAD + i);
 				} else {
-					customerQueuingDAO.updateThreadIDByRowNumber(valueDate, noOfRows, "Thread" + i);
+					customerQueuingDAO.updateThreadIDByRowNumber(valueDate, noOfRows, EodConstants.THREAD + i);
 				}
+				ExecutionContext execution = new ExecutionContext();
+				execution.put(EodConstants.THREAD, EodConstants.THREAD + i);
+				partitionData.put(EodConstants.THREAD + i, execution);
 
 				if (recordslessThanThread && i == custIdCount) {
 					break;
@@ -96,16 +100,8 @@ public class ThreadAllocation implements Tasklet {
 			}
 		}
 
-		ExecutionContext executionContext = context.getStepContext().getStepExecution().getJobExecution()
-				.getExecutionContext();
-		executionContext.put(EodConstants.MICRO_EOD, EodConstants.STATUS_STARTED);
-
 		logger.debug("COMPLETE: Thread Allocation On :" + valueDate);
-		return RepeatStatus.FINISHED;
-	}
-
-	public CustomerQueuingDAO getCustomerQueuingDAO() {
-		return customerQueuingDAO;
+		return partitionData;
 	}
 
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {

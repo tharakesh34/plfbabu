@@ -15,4 +15,5 @@ public interface EodConstants {
 	String	FIN_CLOSESTS		= "M";
 	String	COLLT_MARKSTS		= "MARK";
 	String	COLLT_DEMARKSTS		= "DEMARK";
+	String	THREAD				= "PFSEOD";
 }

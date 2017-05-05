@@ -44,31 +44,21 @@ package com.pennant.backend.endofday.tasklet;
 
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.eod.EodThread;
+import com.pennant.eod.EodService;
 import com.pennant.eod.constants.EodConstants;
-import com.pennant.eod.dao.CustomerQueuingDAO;
 
-public class MicroEOD implements Tasklet, ApplicationContextAware {
+public class MicroEOD implements Tasklet {
 
-	private Logger					logger	= Logger.getLogger(MicroEOD.class);
+	private Logger		logger	= Logger.getLogger(MicroEOD.class);
 
-	private ApplicationContext		applicationContext;
-	private CustomerQueuingDAO		customerQueuingDAO;
-	private ThreadPoolTaskExecutor	threadPoolTaskExecutor;
+	private EodService	eodService;
 
 	public MicroEOD() {
 
@@ -78,51 +68,20 @@ public class MicroEOD implements Tasklet, ApplicationContextAware {
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		Date valueDate = DateUtility.getValueDate();
 		logger.debug("START: Micro EOD On : " + valueDate);
+		String thread = (String) context.getStepContext().getStepExecutionContext().get(EodConstants.THREAD);
 
-		int threadCount = SysParamUtil.getValueAsInt("EOD_THREAD_COUNT");
+		getEodService().startProcess(DateUtility.getValueDate(), thread);
 
-		ExecutionContext executionContext = context.getStepContext().getStepExecution().getJobExecution()
-				.getExecutionContext();
-
-		String stata = (String) executionContext.get(EodConstants.MICRO_EOD);
-		if (StringUtils.equals(stata, EodConstants.STATUS_FAILED)) {
-			executionContext.put(EodConstants.MICRO_EOD, null);
-			threadPoolTaskExecutor.destroy();
-			throw new RuntimeException();
-		} else if (!StringUtils.equals(stata, EodConstants.STATUS_STARTED)) {
-			customerQueuingDAO.updateFailedThread(valueDate);
-		}
-
-		if (threadPoolTaskExecutor == null) {
-			createThreadPool(threadCount);
-		}
-
-		for (int i = 1; i <= threadCount; i++) {
-			EodThread eodThread = (EodThread) applicationContext.getBean("eodThread");
-			eodThread.setThreadId("Thread" + i);
-			eodThread.setEodDate(valueDate);
-			threadPoolTaskExecutor.execute(eodThread);
-		}
 		logger.debug("COMPLETE: Micro EOD On :" + valueDate);
 		return RepeatStatus.FINISHED;
 	}
 
-	private void createThreadPool(int threadCount) {
-		threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-		threadPoolTaskExecutor.setMaxPoolSize(threadCount + 1);
-		threadPoolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
-		threadPoolTaskExecutor.initialize();
-		threadPoolTaskExecutor.setThreadGroupName("PFFEOD");
-		threadPoolTaskExecutor.setThreadNamePrefix("PFFEOD-");
+	public EodService getEodService() {
+		return eodService;
 	}
 
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
-	}
-
-	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
-		this.customerQueuingDAO = customerQueuingDAO;
+	public void setEodService(EodService eodService) {
+		this.eodService = eodService;
 	}
 
 }
