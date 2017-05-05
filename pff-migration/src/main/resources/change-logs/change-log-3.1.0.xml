@@ -124,4 +124,11 @@ WHERE     NOT EXISTS
 				
 		</createView>
 	</changeSet>
+	<changeSet id="08" author="Irfan">
+		<sql>
+		UPDATE SECROLES SET RecordStatus = 'Approved';
+		Update workflowDetails Set workflowActive = 0 WHERE WorkflowType = 'LCMUR_FIN_PROCESS';
+		UPDATE bmtamountcodes SET amountcodedesc = REPLACE(amountcodedesc, 'Finance', 'Loan');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
