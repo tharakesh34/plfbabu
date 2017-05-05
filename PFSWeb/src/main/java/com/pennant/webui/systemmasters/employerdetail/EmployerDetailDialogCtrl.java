@@ -542,7 +542,6 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 				tempReadOnly=true;	
 		}
 		
-		this.empIsActive.setDisabled(true);
 		setComponentAccessType("EmployerDetailDialog_EmpIndustry", tempReadOnly, this.empIndustry, this.space_EmpIndustry, this.label_EmpIndustry, this.hlayout_EmpIndustry,null);
 		setComponentAccessType("EmployerDetailDialog_EmpName", tempReadOnly, this.empName, this.space_EmpName, this.label_EmpName, this.hlayout_EmpName,null);
 		setRowInvisible(this.row0, this.hlayout_EmpIndustry,this.hlayout_EmpName);
@@ -601,6 +600,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_EmployerDetailDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_EmployerDetailDialog_btnDelete"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_EmployerDetailDialog_btnSave"));	
+			this.empIsActive.setDisabled(isReadOnly("EmployerDetailDialog_empIsActive"));
 		}
 
 		logger.debug("Leaving") ;
