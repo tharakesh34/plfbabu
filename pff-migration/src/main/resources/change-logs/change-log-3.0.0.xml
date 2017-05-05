@@ -106,7 +106,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="05" author="Amit">
+	<!-- <changeSet id="05" author="Amit">
 		<addColumn tableName="RMTPROVINCEVSCITY">
 			<column name="CITYISACTIVE" type="boolean" defaultValue="1">
 				<constraints nullable="false" />
@@ -120,7 +120,7 @@
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="07" author="Amit">
 		<createView replaceIfExists="true" viewName="RMTPROVINCEVSCITY_AVIEW">
