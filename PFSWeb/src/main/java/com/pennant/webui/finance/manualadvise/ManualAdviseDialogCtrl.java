@@ -645,10 +645,6 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 					new PTDecimalValidator(Labels.getLabel("label_ManualAdviseDialog_AdviseAmount.value"),
 							PennantConstants.defaultCCYDecPos, true, false, 0));
 		}
-		if (!this.remarks.isReadonly()) {
-			this.remarks.setConstraint(new PTStringValidator(Labels.getLabel("label_ManualAdviseDialog_Remarks.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
-		}
 
 		logger.debug(Literal.LEAVING);
 	}

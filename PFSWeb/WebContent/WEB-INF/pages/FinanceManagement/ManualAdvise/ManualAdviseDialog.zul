@@ -100,7 +100,7 @@
 									value="${c:l('label_ManualAdviseDialog_Remarks.value')}" />
 								<hbox>
 									<space spacing="2px"
-										sclass="mandatory" />
+										/>
 									<textbox id="remarks"
 										maxlength="100" width="320px" />
 								</hbox>
