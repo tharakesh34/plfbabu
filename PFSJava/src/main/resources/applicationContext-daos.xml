@@ -9732,7 +9732,7 @@
 
 	<bean id="AccountingSetCache" class="com.pennant.cache.util.AccountingSetCache">
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO"/>
-		<property name="transactionEntryDAOImpl" ref="transactionEntryDAOImpl" />
+		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 	
