@@ -9403,6 +9403,9 @@
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="dPDBucketConfigurationDAO" ref="dPDBucketConfigurationDAO" />
 		<property name="dPDBucketDAO" ref="dPDBucketDAO" />
+		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 	</bean>
 	<!-- Accrual -->
 	<bean id="accrualService" class="com.pennant.app.core.AccrualService" parent="serviceHelper">

@@ -198,7 +198,7 @@ public class EodService {
 		//autoDisbursementService.processDisbursementPostings(connection, custId, date);
 
 		//installment 
-		installmentDueService.processDueDatePostings(connection, custId, date);
+		//installmentDueService.processDueDatePostings(connection, custId, date);
 		
 		
 		//receipt postings
@@ -216,7 +216,9 @@ public class EodService {
 		} else {
 			doProcess(connection, custId, nextDate);
 		}
-
+		
+		//update customer EOD
+		loadFinanceData.updateFinEODEvents(custEODEvent);
 	}
 
 	public void setDataSource(DataSource dataSource) {

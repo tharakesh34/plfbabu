@@ -94,7 +94,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		return custEODEvent;
 	}
 
-	public FinEODEvent findLatePay(FinEODEvent finEODEvent, Date valueDate) throws Exception {
+	private FinEODEvent findLatePay(FinEODEvent finEODEvent, Date valueDate) throws Exception {
 
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
 
@@ -156,11 +156,16 @@ public class LatePayMarkingService extends ServiceHelper {
 			//OD Schedule date before required schedule date
 			if (finODDetail.getFinODSchdDate().compareTo(curSchd.getSchDate()) < 0) {
 				continue;
-
 			}
 
 			//OD Schedule date same as required schedule date
 			if (finODDetail.getFinODSchdDate().compareTo(curSchd.getSchDate()) == 0) {
+				finODDetail.setFinODTillDate(valueDate);
+				finODDetail.setFinCurODPri(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
+				finODDetail.setFinCurODPft(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
+				finODDetail.setFinCurODAmt(finODDetail.getFinCurODPft().add(finODDetail.getFinCurODPri()));
+				finODDetail.setFinCurODDays(DateUtility.getDaysBetween(finODDetail.getFinODSchdDate(), valueDate));
+				finODDetail.setFinLMdfDate(valueDate);
 				finODDetail.setRcdAction(PennantConstants.RECORD_UPDATE);
 				finEODEvent.getFinODDetails().set(i, finODDetail);
 				return finEODEvent;
@@ -173,7 +178,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		return finEODEvent;
 	}
 
-	public void updateFinPftDetails(FinEODEvent finEODEvent, Date valueDate) throws Exception {
+	private void updateFinPftDetails(FinEODEvent finEODEvent, Date valueDate) throws Exception {
 
 		List<FinODDetails> finODDetails = finEODEvent.getFinODDetails();
 		FinanceProfitDetail pftDetail = finEODEvent.getFinProfitDetail();
@@ -201,13 +206,13 @@ public class LatePayMarkingService extends ServiceHelper {
 			pftDetail.setPrvODDate(pftDetail.getFinStartDate());
 
 			if (pftDetail.getFirstODDate() == null
-					&& pftDetail.getFirstODDate().compareTo(pftDetail.getFinStartDate()) == 0) {
+					|| pftDetail.getFirstODDate().compareTo(pftDetail.getFinStartDate()) == 0) {
 				pftDetail.setFirstODDate(fod.getFinODSchdDate());
 			}
 
 			//There is chance OD dates might not be in ascending order so take the least date
 			if (pftDetail.getPrvODDate().compareTo(fod.getFinODSchdDate()) <= 0) {
-				pftDetail.setPrvODDate(fod.getFinODTillDate());
+				pftDetail.setPrvODDate(fod.getFinODSchdDate());
 			}
 		}
 
@@ -377,13 +382,14 @@ public class LatePayMarkingService extends ServiceHelper {
 		finODDetail.setFinType(finEODEvent.getFinanceMain().getFinType());
 		finODDetail.setCustID(finEODEvent.getFinanceMain().getCustID());
 		finODDetail.setFinODTillDate(valueDate);
-		finODDetail.setFinCurODAmt(curSchd.getRepayAmount().subtract(curSchd.getSchdPriPaid())
-				.subtract(curSchd.getSchdPftPaid()));
+		
 		finODDetail.setFinCurODPri(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
 		finODDetail.setFinCurODPft(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
-		finODDetail.setFinMaxODAmt(finODDetail.getFinCurODPri());
+		finODDetail.setFinCurODAmt(finODDetail.getFinCurODPft().add(finODDetail.getFinCurODPri()));
 		finODDetail.setFinMaxODPri(finODDetail.getFinCurODPri());
-		finODDetail.setFinMaxODPri(finODDetail.getFinCurODPft());
+		finODDetail.setFinMaxODPft(finODDetail.getFinCurODPft());
+		finODDetail.setFinMaxODAmt(finODDetail.getFinMaxODPft().add(finODDetail.getFinMaxODPri()));
+
 		finODDetail.setFinCurODDays(DateUtility.getDaysBetween(finODDetail.getFinODSchdDate(), valueDate));
 		finODDetail.setFinLMdfDate(valueDate);
 		finODDetail.setApplyODPenalty(penaltyRate.isApplyODPenalty());
@@ -394,7 +400,6 @@ public class LatePayMarkingService extends ServiceHelper {
 		finODDetail.setODChargeAmtOrPerc(penaltyRate.getODChargeAmtOrPerc());
 		finODDetail.setODAllowWaiver(penaltyRate.isODAllowWaiver());
 		finODDetail.setODMaxWaiverPerc(penaltyRate.getODMaxWaiverPerc());
-
 		finODDetail.setRcdAction(PennantConstants.RECORD_INSERT);
 		finEODEvent.getFinODDetails().add(finODDetail);
 

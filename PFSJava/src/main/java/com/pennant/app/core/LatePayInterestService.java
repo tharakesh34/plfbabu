@@ -79,7 +79,7 @@ public class LatePayInterestService extends ServiceHelper {
 
 			//No need to apply OD penalty 
 			String lpiMethod = finEODEvent.getFinanceMain().getPastduePftCalMthd();
-			if (!StringUtils.equals(lpiMethod, CalculationConstants.PDPFTCAL_NOTAPP)) {
+			if (StringUtils.equals(lpiMethod, CalculationConstants.PDPFTCAL_NOTAPP)) {
 				continue;
 			}
 
@@ -141,13 +141,14 @@ public class LatePayInterestService extends ServiceHelper {
 
 		//Prepare schedule from OD Date to value date
 		for (int i = idx; i < finSchdDetails.size(); i++) {
+			odcr = new OverdueChargeRecovery();
 			FinanceScheduleDetail curSchd = finSchdDetails.get(i);
 
 			if (curSchd.getSchDate().compareTo(valueDate) > 0) {
 				break;
 			}
 
-			if (!curSchd.isPftOnSchDate() && curSchd.isRepayOnSchDate()) {
+			if (!curSchd.isPftOnSchDate() && !curSchd.isRepayOnSchDate()) {
 				continue;
 			}
 
@@ -159,7 +160,7 @@ public class LatePayInterestService extends ServiceHelper {
 			odcr.setFinReference(finReference);
 			odcr.setFinODSchdDate(odDate);
 			odcr.setFinODFor(FinanceConstants.SCH_TYPE_LATEPAYPROFIT);
-			odcr.setMovementDate(curSchd.getSchDate());
+			odcr.setMovementDate(odDate);
 			odcr.setPenaltyAmtPerc(curSchd.getCalculatedRate().add(lpiMargin));
 			schdODCRecoveries.add(odcr);
 		}
@@ -189,6 +190,7 @@ public class LatePayInterestService extends ServiceHelper {
 		}
 
 		if (isAddTodayRcd) {
+			odcr = new OverdueChargeRecovery();
 			odcr.setFinReference(finReference);
 			odcr.setFinODSchdDate(odDate);
 			odcr.setFinODFor(FinanceConstants.SCH_TYPE_LATEPAYPROFIT);
@@ -210,7 +212,7 @@ public class LatePayInterestService extends ServiceHelper {
 			odcrCur.setFinCurODAmt(odcrCur.getFinCurODPri().add(odcrCur.getFinCurODPft()));
 
 			//Calculate the Penalty
-			BigDecimal balanceForCal = odcr.getFinCurODPri();
+			BigDecimal balanceForCal = odcrCur.getFinCurODPri();
 
 			//As same field is used to store both amount and percentage the value is stored in minor units without decimals
 			Date dateCur = odcrCur.getMovementDate();
@@ -219,7 +221,7 @@ public class LatePayInterestService extends ServiceHelper {
 			BigDecimal penaltyRate = odcrCur.getPenaltyAmtPerc().divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
 			BigDecimal penalty = CalculationUtil.calInterest(dateCur, dateNext, balanceForCal, idb, penaltyRate);
 
-			odcr.setPenalty(penalty);
+			odcrCur.setPenalty(penalty);
 			fod.setLPIAmt(fod.getLPIAmt().add(penalty));
 		}
 
@@ -280,14 +282,6 @@ public class LatePayInterestService extends ServiceHelper {
 	}
 	
 	
-
-	/**
-	 * @param odDetails
-	 */
-	private void updateLPIenaltInODDetails(FinODDetails odDetails) {
-		finODDetailsDAO.updatePenaltyTotals(odDetails);
-
-	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

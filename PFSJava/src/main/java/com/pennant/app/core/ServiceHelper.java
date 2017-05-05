@@ -65,10 +65,13 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.applicationmaster.DPDBucketConfigurationDAO;
 import com.pennant.backend.dao.applicationmaster.DPDBucketDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinContributorDetailDAO;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.finance.SecondaryAccountDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
@@ -104,6 +107,10 @@ abstract public class ServiceHelper implements Serializable {
 
 	private DPDBucketConfigurationDAO	dPDBucketConfigurationDAO;
 	private DPDBucketDAO				dPDBucketDAO;
+
+	private RepayInstructionDAO			repayInstructionDAO;
+	private CustomerDAO					customerDAO;
+	private FinODDetailsDAO				finODDetailsDAO;
 
 	/**
 	 * @param dataSet
@@ -338,7 +345,7 @@ abstract public class ServiceHelper implements Serializable {
 		}
 		return val;
 	}
-	
+
 	public int getIndexFromMap(Map<Date, Integer> datesMap, Date date) {
 		Date formatDate = formatDate(date);
 		if (datesMap.containsKey(formatDate)) {
@@ -346,7 +353,6 @@ abstract public class ServiceHelper implements Serializable {
 		}
 		return 0;
 	}
-
 
 	public FinContributorDetailDAO getFinContributorDetailDAO() {
 		return finContributorDetailDAO;
@@ -443,6 +449,31 @@ abstract public class ServiceHelper implements Serializable {
 
 	public void setdPDBucketDAO(DPDBucketDAO dPDBucketDAO) {
 		this.dPDBucketDAO = dPDBucketDAO;
+	}
+
+	public RepayInstructionDAO getRepayInstructionDAO() {
+		return repayInstructionDAO;
+	}
+
+	public void setRepayInstructionDAO(RepayInstructionDAO repayInstructionDAO) {
+		this.repayInstructionDAO = repayInstructionDAO;
+	}
+
+	public CustomerDAO getCustomerDAO() {
+		return customerDAO;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
+	public FinODDetailsDAO getFinODDetailsDAO() {
+		return finODDetailsDAO;
+	}
+
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
+		AccrualService.finODDetailsDAO = finODDetailsDAO;
 	}
 
 }

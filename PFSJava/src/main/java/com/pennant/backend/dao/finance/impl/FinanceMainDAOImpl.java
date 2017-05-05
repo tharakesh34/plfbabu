@@ -2791,4 +2791,23 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
+	
+	@Override
+	public void updateFinanceInEOD(FinanceMain financeMain) {
+		logger.debug("Entering");
+		StringBuilder updateSql = new StringBuilder("Update FinanceMain");
+		updateSql.append(" Set FinStatus = :FinStatus, DueBucket = :DueBucket ");
+		updateSql.append(" ,NextGrcCpzDate = :NextGrcCpzDate, NextGrcPftDate = :NextGrcPftDate ");
+		updateSql.append(" ,NextGrcPftRvwDate = :NextGrcPftRvwDate, LastRepayCpzDate = :LastRepayCpzDate ");
+		updateSql.append(" ,NextRepayCpzDate = :NextRepayCpzDate, LastRepayDate = :LastRepayDate ");
+		updateSql.append(" ,NextRepayDate = :NextRepayDate, LastRepayPftDate = :LastRepayPftDate ");
+		updateSql.append(" ,NextRepayPftDate = :NextRepayPftDate, LastRepayRvwDate = :LastRepayRvwDate ");
+		updateSql.append(" ,NextRepayRvwDate = :NextRepayRvwDate, NextDepDate = :NextDepDate ");
+		//FIXME add rate review related fileds 
+		updateSql.append(" Where FinReference =:FinReference");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		 this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+	}
 }

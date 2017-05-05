@@ -121,7 +121,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 				fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid())
 						.subtract(fod.getTotWaived()));
 
-				updateLPPenaltInODDetails(fod);
+//				updateLPPenaltInODDetails(fod);
 				continue;
 			}
 
@@ -132,7 +132,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 				fod.setTotPenaltyAmt(penalty);
 				fod.setTotPenaltyBal(penalty.subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
 
-				updateLPPenaltInODDetails(fod);
+//				updateLPPenaltInODDetails(fod);
 				continue;
 			}
 
@@ -156,7 +156,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 				fod.setTotPenaltyAmt(penalty);
 				fod.setTotPenaltyBal(penalty.subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
 
-				updateLPPenaltInODDetails(fod);
+//				updateLPPenaltInODDetails(fod);
 				continue;
 			}
 
@@ -164,12 +164,12 @@ public class LatePayPenaltyService extends ServiceHelper {
 			if (FinanceConstants.PENALTYTYPE_PERCONDUEMTH.equals(fod.getODChargeType())) {
 				finEODEvent = prepareMonthlyData(finEODEvent, fod, valueDate);
 
-				updateLPPenaltInODDetails(fod);
+//				updateLPPenaltInODDetails(fod);
 				continue;
 			}
 			//On Due Days
 			finEODEvent = prepareDueDateData(finEODEvent, fod, valueDate);
-			updateLPPenaltInODDetails(fod);
+//			updateLPPenaltInODDetails(fod);
 
 		}
 
@@ -229,6 +229,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		}
 
 		if (isAddTodayRcd) {
+			odcr = new OverdueChargeRecovery();
 			odcr.setFinReference(finReference);
 			odcr.setFinODSchdDate(odDate);
 			odcr.setFinODFor(FinanceConstants.SCH_TYPE_SCHEDULE);
@@ -252,11 +253,11 @@ public class LatePayPenaltyService extends ServiceHelper {
 			//Calculate the Penalty
 			BigDecimal balanceForCal = BigDecimal.ZERO;
 			if (StringUtils.equals(fod.getODChargeCalOn(), FinanceConstants.ODCALON_SPFT)) {
-				balanceForCal = odcr.getFinCurODPft();
+				balanceForCal = odcrCur.getFinCurODPft();
 			} else if (StringUtils.equals(fod.getODChargeCalOn(), FinanceConstants.ODCALON_SPRI)) {
-				balanceForCal = odcr.getFinCurODPri();
+				balanceForCal = odcrCur.getFinCurODPri();
 			} else {
-				balanceForCal = odcr.getFinCurODAmt();
+				balanceForCal = odcrCur.getFinCurODAmt();
 			}
 
 			//As same field is used to store both amount and percentage the value is stored in minor units without decimals
@@ -435,14 +436,6 @@ public class LatePayPenaltyService extends ServiceHelper {
 		schdODCRecoveries.add(odcr);
 
 		return schdODCRecoveries;
-
-	}
-
-	/**
-	 * @param odDetails
-	 */
-	private void updateLPPenaltInODDetails(FinODDetails odDetails) {
-		finODDetailsDAO.updatePenaltyTotals(odDetails);
 
 	}
 

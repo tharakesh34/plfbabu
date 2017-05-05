@@ -5,9 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.util.EODProperties;
 import com.pennanttech.pff.core.TableType;
 
@@ -52,6 +58,67 @@ public class LoadFinanceData extends ServiceHelper {
 
 		}
 		return custEODEvent;
+	}
+
+	public void updateFinEODEvents(CustEODEvent custEODEvent) throws Exception {
+		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
+
+		for (FinEODEvent finEODEvent : finEODEvents) {
+
+			//update finance main
+			if (finEODEvent.isUpdFinMain()) {
+				getFinanceMainDAO().updateFinanceInEOD(finEODEvent.getFinanceMain());
+			}
+
+			//update profit details
+			if (finEODEvent.isUpdFinPft()) {
+				getFinanceProfitDetailDAO().update(finEODEvent.getFinProfitDetail(), false);
+			}
+
+			//update schedule details 
+			if (finEODEvent.isUpdFinSchedule()) {
+				getFinanceScheduleDetailDAO().updateList(finEODEvent.getFinanceScheduleDetails(), "");
+			}
+
+			//Update overdue details
+			List<FinODDetails> odDetails = finEODEvent.getFinODDetails();
+			if (odDetails != null && !odDetails.isEmpty()) {
+				for (FinODDetails finODDetails : odDetails) {
+					if (StringUtils.equals(finODDetails.getRcdAction(), PennantConstants.RECORD_INSERT)) {
+						getFinODDetailsDAO().save(finODDetails);
+
+					} else if (StringUtils.equals(finODDetails.getRcdAction(), PennantConstants.RECORD_UPDATE)) {
+						getFinODDetailsDAO().update(finODDetails);
+					}
+				}
+			}
+			
+			//update repay instruction
+			if (finEODEvent.isUpdRepayInstruct()) {
+
+				getRepayInstructionDAO().deleteByFinReference(finEODEvent.getFinanceMain().getFinReference(), "",
+						false, 0);
+				//Add repay instructions
+				List<RepayInstruction> lisRepayIns = finEODEvent.getRepayInstructions();
+				for (RepayInstruction repayInstruction : lisRepayIns) {
+					repayInstruction.setFinReference(finEODEvent.getFinanceMain().getFinReference());
+				}
+				getRepayInstructionDAO().saveList(lisRepayIns, "", false);
+			}
+
+			//update provision details
+			if (finEODEvent.isUpdProvision()) {
+
+			}
+
+		}
+
+		if (custEODEvent.isUpdCustomer()) {
+			Customer customer = custEODEvent.getCustomer();
+			getCustomerDAO().updateCustStatus(customer.getCustSts(), customer.getCustStsChgDate(),
+					custEODEvent.getCustomer().getCustID());
+		}
+
 	}
 
 }

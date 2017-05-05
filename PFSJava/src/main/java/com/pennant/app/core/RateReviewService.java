@@ -229,7 +229,6 @@ public class RateReviewService extends ServiceHelper {
 		}
 
 		finEODEvent.setUpdFinMain(true);
-		;
 		finEODEvent.setUpdFinSchedule(true);
 		finEODEvent.setUpdRepayInstruct(true);
 		finEODEvent.setFinanceScheduleDetails(finScheduleData.getFinanceScheduleDetails());

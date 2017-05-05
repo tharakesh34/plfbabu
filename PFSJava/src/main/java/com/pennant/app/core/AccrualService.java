@@ -67,7 +67,7 @@ public class AccrualService extends ServiceHelper {
 
 	private static Logger				logger				= Logger.getLogger(AccrualService.class);
 
-	private static FinODDetailsDAO		finODDetailsDAO;
+	public static FinODDetailsDAO		finODDetailsDAO;
 	private static FinExcessAmountDAO	finExcessAmountDAO;
 	public static FinanceTypeDAO		financeTypeDAO;
 	private static FinanceSuspHeadDAO	suspHeadDAO;
@@ -105,9 +105,6 @@ public class AccrualService extends ServiceHelper {
 		FinanceProfitDetail finPftDetail = calProfitDetails(finMain, scheduleDetailList, profitDetail, valueDate);
 		String worstSts = getCustomerStatusCodeDAO().getFinanceStatus(finReference, false);
 		finPftDetail.setFinWorstStatus(worstSts);
-
-		//FIXME: PV 28APR17 Update only once 
-		getFinanceProfitDetailDAO().update(finPftDetail, false);
 
 		//post accruals
 		postAccruals(finMain, finPftDetail, valueDate);
@@ -564,7 +561,7 @@ public class AccrualService extends ServiceHelper {
 
 		// OD Details
 		if (!StringUtils.equals(finMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
-			FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(pftDetail.getFinReference());
+			FinODDetails finODDetails = finODDetailsDAO.getFinODSummary(pftDetail.getFinReference());
 			if (finODDetails != null) {
 				pftDetail.setODPrincipal(finODDetails.getFinCurODPri());
 				pftDetail.setODProfit(finODDetails.getFinCurODPft());
@@ -631,8 +628,7 @@ public class AccrualService extends ServiceHelper {
 			finPftDetail.setPrvMthAmzPD(finPftDetail.getPftAmzPD());
 			finPftDetail.setPrvMthAmzSusp(finPftDetail.getPftAmzSusp());
 		}
-
-		//FIXME: PV 28APR17 Update only once 
+		// these fields should be update after the accrual posting only so these will not be considered in normal update.
 		getFinanceProfitDetailDAO().updateLBDAccruals(finPftDetail, false);
 		logger.debug(" Leaving ");
 	}
@@ -641,13 +637,6 @@ public class AccrualService extends ServiceHelper {
 		return DateUtility.getDaysBetween(date1, date2);
 	}
 
-	public static FinODDetailsDAO getFinODDetailsDAO() {
-		return finODDetailsDAO;
-	}
-
-	public static void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
-		AccrualService.finODDetailsDAO = finODDetailsDAO;
-	}
 
 	public static void setSuspHeadDAO(FinanceSuspHeadDAO suspHeadDAO) {
 		AccrualService.suspHeadDAO = suspHeadDAO;

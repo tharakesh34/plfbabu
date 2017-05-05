@@ -259,4 +259,6 @@ public interface FinanceMainDAO {
 	List<FinanceMain> getFinanceMainsByCustId(long custId, boolean isActive);
 
 	int getFinanceMainByBank(String bankCode, String type);
+
+	void updateFinanceInEOD(FinanceMain financeMain);
 }
