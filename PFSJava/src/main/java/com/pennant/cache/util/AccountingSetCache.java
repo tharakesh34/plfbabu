@@ -89,7 +89,7 @@ public class AccountingSetCache {
 		 * @param ruleEvent
 		 * @return Rule
 		 */
-		public static Rule getTransactionEntry(String ruleCode,String ruleModule,String ruleEvent){
+		public static Rule getRule(String ruleCode,String ruleModule,String ruleEvent){
 			return getRuleDAO().getRuleByID(ruleCode, ruleModule, ruleEvent, "");
 		}		
 		
