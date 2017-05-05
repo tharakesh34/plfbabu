@@ -330,30 +330,35 @@
 			<column name="oDMaxWaiverPerc" type="Decimal(5,2)" />
 		</addColumn>
 	</changeSet>
+	
 
-	<changeSet id="37" author="Satish">
+	<changeSet id="37" author="Jayant">
 		<addColumn tableName="FINODDetails">
 			<column name="ApplyODPenalty" type="boolean">
-				<constraints nullable="false" />
 			</column>
 		</addColumn>
-	</changeSet>
-
-	<changeSet id="38" author="Satish">
 		<addColumn tableName="FINODDetails_PD">
 			<column name="ApplyODPenalty" type="boolean">
-				<constraints nullable="false" />
 			</column>
 		</addColumn>
-	</changeSet>
-
-	<changeSet id="39" author="Satish">
 		<addColumn tableName="FINODDetails_SnapShot">
 			<column name="ApplyODPenalty" type="boolean">
-				<constraints nullable="false" />
 			</column>
 		</addColumn>
 	</changeSet>
+	<changeSet id="38" author="Jayant">
+		<sql>
+			update FINODDetails set ApplyODPenalty=1;
+			update FINODDetails_PD set	ApplyODPenalty=1;
+			update FINODDetails_SnapShot set ApplyODPenalty=1;
+		</sql>
+	</changeSet>
+	<changeSet id="39" author="Jayant">
+		<addNotNullConstraint tableName="FINODDetails" columnName="ApplyODPenalty" columnDataType="boolean" />
+		<addNotNullConstraint tableName="FINODDetails_PD" columnName="ApplyODPenalty" columnDataType="boolean" />
+		<addNotNullConstraint tableName="FINODDetails_SnapShot" columnName="ApplyODPenalty" columnDataType="boolean" />
+	</changeSet>
+	
 
 
 </databaseChangeLog>
