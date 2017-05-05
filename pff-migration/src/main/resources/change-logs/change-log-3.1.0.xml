@@ -356,7 +356,12 @@ FROM    	Mandates T1 INNER JOIN
 	INSERT INTO ErrorDetails VALUES('90270','EN','E','{0} must contain at least one {1} with Very High priority i.e 1.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	INSERT INTO ErrorDetails VALUES('90274','EN','E','planEMIHLockPeriod enabled,so Plan EMI Holiday are not allowed for this holidayDate{0}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	INSERT INTO ErrorDetails VALUES('90275','EN','E','DataType mismatch, Invalid data for extendedDetails.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
-	
+	</sql>
+	</changeSet>
+	<changeSet id="24" author="DDP">
+	<sql>
+	INSERT INTO ErrorDetails VALUES('90276','EN','E','Multi disbursement is not allowed for this loan:{0} with loanType:(1).','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	INSERT INTO ErrorDetails VALUES('90277','EN','E','{0} should be equal to {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 	</changeSet>
 </databaseChangeLog>
