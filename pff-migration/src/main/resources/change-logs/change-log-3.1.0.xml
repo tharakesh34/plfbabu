@@ -219,5 +219,10 @@ FROM    	Mandates T1 INNER JOIN
 			WHERE     NOT EXISTS (SELECT 1 FROM Mandates_TEMP WHERE MandateID = T1.MandateID)
 		</createView>
 	</changeSet>
-	
+	<changeSet id="12" author="Durga Prasad D">
+	<sql>
+		INSERT INTO ErrorDetails VALUES('90271','EN','E','Invalid {0} payment frequency day {1}, Allowed frequency days are: {2}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		INSERT INTO ErrorDetails VALUES('90272','EN','E','Number of {0} terms should between configured min terms:{1} and max terms:{2} from loanType.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
