@@ -223,6 +223,9 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			doReadOnly();
 			// fill the components with the data
 			doWriteBeanToComponents(aFinScheduleData);
+			if(getComboboxValue(holdEMIFromDate).equals(PennantConstants.List_Select)){
+				this.window_HoldEMIDialog.onClose();
+			}
 			setDialog(DialogType.MODAL);
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
@@ -243,6 +246,16 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering");
 		
 		fillSchFromDates(this.holdEMIFromDate, aFinSchData.getFinanceScheduleDetails());
+		
+		if(getComboboxValue(holdEMIFromDate).equals(PennantConstants.List_Select)){
+			try {
+				MessageUtil.showErrorMessage(Labels.getLabel("Label_holdEmi_NoSchedule"));
+				return;
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		if(StringUtils.isNotEmpty(aFinSchData.getFinanceType().getFrequencyDays())){
 			this.row_hldEmiFrqToDate.setVisible(true);
@@ -273,34 +286,37 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 /*
  * Method to check whether the Frequency Days are less than the holdemi days, if yes then display those fields in the combobox.
  */
-	private void getholdEMIFrqToDate(){
+	private void getholdEMIFrqToDate() {
 		logger.debug("Entering");
 
 		holdEMIFrqToDate.getItems().clear();
 
-		Date hldEMIMaxAlwdDays = DateUtility.addDays( (Date)this.holdEMIFromDate.getSelectedItem().getValue(),SysParamUtil.getValueAsInt("HOLDEMI_MAXDAYS"));
-		if(getFinScheduleData().getFinanceType().getFrequencyDays()!=null){
+		Date hldEMIMaxAlwdDays = DateUtility.addDays((Date) this.holdEMIFromDate.getSelectedItem().getValue(),
+				SysParamUtil.getValueAsInt("HOLDEMI_MAXDAYS"));
+		if (getFinScheduleData().getFinanceType().getFrequencyDays() != null) {
 			String[] frqAlwdDays = getFinScheduleData().getFinanceType().getFrequencyDays().split(",");
-			int hldEMIMaxAlwdMnth  = DateUtility.getMonth(hldEMIMaxAlwdDays);
-			int hldEMIMaxAlwdYear  = DateUtility.getYear(hldEMIMaxAlwdDays);
+			int hldEMIMaxAlwdMnth = DateUtility.getMonth(hldEMIMaxAlwdDays);
+			int hldEMIMaxAlwdYear = DateUtility.getYear(hldEMIMaxAlwdDays);
 			Date date = null;
 			List<Date> frqAlwdDate = new ArrayList<Date>();
 
 			for (int i = 0; i < frqAlwdDays.length; i++) {
 
-				int frqDay  = Integer.parseInt(frqAlwdDays[i]);
-				int emiFromDay = DateUtility.getDay((Date)this.holdEMIFromDate.getSelectedItem().getValue());
+				int frqDay = Integer.parseInt(frqAlwdDays[i]);
+				int emiFromDay = DateUtility.getDay((Date) this.holdEMIFromDate.getSelectedItem().getValue());
 
-				if(frqDay>emiFromDay){
-					int emiFromMnth = DateUtility.getMonth((Date)this.holdEMIFromDate.getSelectedItem().getValue());
-					date= DateUtility.getDate(hldEMIMaxAlwdYear, emiFromMnth-1, frqDay);
-					if(DateUtility.getMonth(date)<=emiFromMnth && DateUtility.compare(date, hldEMIMaxAlwdDays)<=0 &&
-							DateUtility.compare(date,  (Date)this.holdEMIFromDate.getSelectedItem().getValue())>0 ){
+				if (frqDay > emiFromDay) {
+					int emiFromMnth = DateUtility.getMonth((Date) this.holdEMIFromDate.getSelectedItem().getValue());
+					date = DateUtility.getDate(hldEMIMaxAlwdYear, emiFromMnth - 1, frqDay);
+					if (DateUtility.getMonth(date) <= emiFromMnth && DateUtility.compare(date, hldEMIMaxAlwdDays) <= 0
+							&& DateUtility.compare(date,
+									(Date) this.holdEMIFromDate.getSelectedItem().getValue()) > 0) {
 						frqAlwdDate.add(date);
 					}
-				}else{
-					date = DateUtility.getDate(hldEMIMaxAlwdYear, hldEMIMaxAlwdMnth-1, frqDay);
-					if(DateUtility.compare(date, hldEMIMaxAlwdDays)<=0 && DateUtility.compare(date,  (Date)this.holdEMIFromDate.getSelectedItem().getValue())>0){
+				} else {
+					date = DateUtility.getDate(hldEMIMaxAlwdYear, hldEMIMaxAlwdMnth - 1, frqDay);
+					if (DateUtility.compare(date, hldEMIMaxAlwdDays) <= 0 && DateUtility.compare(date,
+							(Date) this.holdEMIFromDate.getSelectedItem().getValue()) > 0) {
 						frqAlwdDate.add(date);
 					}
 				}
@@ -308,9 +324,8 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 			Collections.sort(frqAlwdDate);
 			fillSchFrqToDates(holdEMIFrqToDate, frqAlwdDate);
-
 		}
-		if(holdEMIFrqToDate.getItemCount()<=0){
+		if (holdEMIFrqToDate.getItemCount() <= 0) {
 			this.row_hldEmiFrqToDate.setVisible(false);
 			this.row_hldEmiToDate.setVisible(true);
 		}
@@ -436,6 +451,9 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 				
+				if(curSchd.getPresentmentId() > 0){
+					continue;
+				}
 				if(!curSchd.isRepayOnSchDate() && 
 						curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0){
 					continue;

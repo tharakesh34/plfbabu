@@ -148,7 +148,8 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private BigDecimal writeoffSchFee = BigDecimal.ZERO;
 	private BigDecimal rebate = BigDecimal.ZERO;
 	private String 	   finCcy;
-
+	
+	private long presentmentId ;
 	private boolean newRecord = false;
 	private String lovValue;
 	private FinanceScheduleDetail befImage;
@@ -838,6 +839,14 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	}
 	public void setWriteoffIns(BigDecimal writeoffIns) {
 		this.writeoffIns = writeoffIns;
+	}
+
+	public long getPresentmentId() {
+		return presentmentId;
+	}
+
+	public void setPresentmentId(long presentmentId) {
+		this.presentmentId = presentmentId;
 	}
 
 }

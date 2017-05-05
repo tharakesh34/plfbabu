@@ -305,7 +305,10 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					}
 					continue;
 				}
-				
+				//Change Frequency is not allowed for the schedule which has the presenment
+				if(curSchd.getPresentmentId() > 0){
+					continue;
+				}
 				//Not Review Date
 				if (!curSchd.isRepayOnSchDate() && !getFinScheduleData().getFinanceMain().isFinRepayPftOnFrq()) {
 					continue;

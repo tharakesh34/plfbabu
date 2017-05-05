@@ -581,7 +581,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		selectSql
 				.append(" SuplRent , IncrCost , SuplRentPaid , IncrCostPaid , TDSAmount,PftDaysBasis, ");
 		if (!isWIF) {
-			selectSql.append(" RefundOrWaiver, EarlyPaid , EarlyPaidBal ,WriteoffPrincipal, WriteoffProfit,");
+			selectSql.append(" RefundOrWaiver, EarlyPaid , EarlyPaidBal ,WriteoffPrincipal, WriteoffProfit,PresentmentId,");
 			selectSql
 					.append(" WriteoffIns , WriteoffIncrCost,WriteoffSuplRent,WriteoffSchFee, ");
 		}
