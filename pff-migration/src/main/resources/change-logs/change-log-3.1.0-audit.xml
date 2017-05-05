@@ -8,5 +8,8 @@
 <property name="call.maindb" value="PLF.." dbms="mssql"/>
 <property name="call.maindb" value="PLF." dbms="oracle"/>
 
-
+<changeSet author="Irfan" id="01">
+		<dropNotNullConstraint tableName="ADTMANUALADVISE"
+			columnName="Remarks" columnDataType="varchar(100)" />
+	</changeSet>
 </databaseChangeLog>
