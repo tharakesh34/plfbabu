@@ -350,4 +350,13 @@ FROM    	Mandates T1 INNER JOIN
 	Update MANUALADVISE_TEMP set PostDate=CURRENT_TIMESTAMP;
 	</sql>
 	</changeSet>
+	<changeSet id="23" author="Srikanth">
+	<sql>
+	INSERT INTO ErrorDetails VALUES('90273','EN','E','Duplicate {0} are not allowed.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	INSERT INTO ErrorDetails VALUES('90270','EN','E','{0} must contain at least one {1} with Very High priority i.e 1.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	INSERT INTO ErrorDetails VALUES('90274','EN','E','planEMIHLockPeriod enabled,so Plan EMI Holiday are not allowed for this holidayDate{0}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	INSERT INTO ErrorDetails VALUES('90275','EN','E','DataType mismatch, Invalid data for extendedDetails.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	
+	</sql>
+	</changeSet>
 </databaseChangeLog>
