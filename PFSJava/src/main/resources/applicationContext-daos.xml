@@ -9729,4 +9729,12 @@
 		scope="prototype">
 		<property name="scriptEngine" ref="scriptEngine" />
 	</bean>
+
+	<bean id="AccountingSetCache" class="com.pennant.cache.util.AccountingSetCache">
+		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO"/>
+		<property name="transactionEntryDAOImpl" ref="transactionEntryDAOImpl" />
+		<property name="ruleDAO" ref="ruleDAO" />
+	</bean>
+	
+
 </beans>
