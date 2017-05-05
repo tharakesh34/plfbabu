@@ -2258,8 +2258,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				if (customer == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = collateralSetup.getDepositorCif();
-					auditDetail
-							.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90101", "", valueParm), "EN"));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90101", "", valueParm)));
 				} else {
 					collateralSetup.setDepositorId(customer.getCustID());
 				}
@@ -2273,8 +2272,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				if (recordCount <= 0) {
 					String[] valueParm = new String[1];
 					valueParm[0] = collateralSetup.getCollateralRef();
-					auditDetail
-							.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90906", "", valueParm), "EN"));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90906", "", valueParm)));
 				}
 			}
 
@@ -2291,8 +2289,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					String[] valueParm = new String[2];
 					valueParm[0] = collateralSetup.getDepositorCif();
 					valueParm[1] = collateralRef;
-					auditDetail
-							.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90907", "", valueParm), "EN"));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90907", "", valueParm)));
 				}
 			}
 		}
@@ -2304,8 +2301,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				if (recordCount <= 0) {
 					String[] valueParm = new String[1];
 					valueParm[0] = collateralSetup.getCollateralRef();
-					auditDetail
-							.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90906", "", valueParm), "EN"));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90906", "", valueParm)));
 				}
 			}
 		}
@@ -2328,7 +2324,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			if (collateralStructure == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = collateralType;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90901", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90901", "", valueParm)));
 				return auditDetail;
 			}
 
@@ -2337,8 +2333,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				if (StringUtils.isBlank(collateralSetup.getCollateralLoc())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "collateralLoc";
-					auditDetail
-							.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90902", "", valueParm), "EN"));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90902", "", valueParm)));
 				}
 			}
 
@@ -2347,8 +2342,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				if (StringUtils.isBlank(collateralSetup.getValuator())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "valuator";
-					auditDetail
-							.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90902", "", valueParm), "EN"));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90902", "", valueParm)));
 				}
 			}
 
@@ -2358,7 +2352,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				if(currency == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = collateralSetup.getCollateralCcy();
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90501", "", valueParm), "EN"));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90501", "", valueParm)));
 				}
 			}
 			
@@ -2369,7 +2363,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				String[] valueParm = new String[2];
 				valueParm[0] = DateUtility.formatToShortDate(expiryDate);
 				valueParm[1] = DateUtility.formatToShortDate(currAppDate);
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90903", "", valueParm), "EN"));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90903", "", valueParm)));
 			}
 
 			// validate third party customers
@@ -2380,8 +2374,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				if (rcdCount <= 0) {
 					String[] valueParm = new String[1];
 					valueParm[0] = thirdPartyCust.getCustCIF();
-					auditDetail
-							.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90904", "", valueParm), "EN"));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90904", "", valueParm)));
 				}
 			}
 			}
@@ -2396,8 +2389,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					if (rcdCount <= 0) {
 						String[] valueParm = new String[1];
 						valueParm[0] = coOwnerDetail.getCoOwnerCIF();
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90905", "", valueParm),
-								"EN"));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90905", "", valueParm)));
 					}
 				}
 
@@ -2408,8 +2400,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					String[] valueParm = new String[2];
 					valueParm[0] = coOwnerDetail.getAddrProvince();
 					valueParm[1] = coOwnerDetail.getAddrCountry();
-					auditDetail
-							.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN"));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm)));
 				}
 			}
 			
@@ -2429,7 +2420,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 						if (extendedDetailsCount != details.getExtendedFieldDataList().size()) {
 							String[] valueParm = new String[1];
 							valueParm[0] = "collateral structure";
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm), "EN"));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm)));
 							return auditDetail;
 						}
 					}
@@ -2437,13 +2428,13 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 						if (StringUtils.isBlank(extendedFieldData.getFieldName())) {
 							String[] valueParm = new String[1];
 							valueParm[0] = "fieldName";
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN"));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
 							return auditDetail;
 						}
 						if (StringUtils.isBlank(extendedFieldData.getFieldValue())) {
 							String[] valueParm = new String[1];
 							valueParm[0] = "fieldValue";
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN"));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
 							return auditDetail;
 						}
 						boolean isFeild = false;
@@ -2457,7 +2448,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 							if (!isFeild) {
 								String[] valueParm = new String[1];
 								valueParm[0] = "collateral structure";
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm), "EN"));
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm)));
 								return auditDetail;
 							}
 						}
@@ -2494,7 +2485,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					if(docType == null) {
 						String[] valueParm = new String[1];
 						valueParm[0] = detail.getDocCategory();
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90401", "", valueParm), "EN"));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90401", "", valueParm)));
 					}
 				}
 			}

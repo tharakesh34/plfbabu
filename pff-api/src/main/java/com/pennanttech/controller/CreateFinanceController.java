@@ -744,7 +744,13 @@ public class CreateFinanceController extends SummaryDetailService {
 				finInquiryDetail.setOutstandingPri(outstandingPri);
 				finInquiryDetail.setOutstandingPft(outstandingPft);
 				finInquiryDetail.setFutureInst(futureInst);
-				finInquiryDetail.setFinStatus(financeMain.getClosingStatus());
+				
+				// set Finance closing status
+				if (StringUtils.isBlank(financeMain.getClosingStatus())) {
+					finInquiryDetail.setFinStatus(APIConstants.CLOSE_STATUS_ACTIVE);
+				} else {
+					finInquiryDetail.setFinStatus(financeMain.getClosingStatus());
+				}
 
 				// fetch co-applicant details
 				List<JointAccountDetail> jountAccountDetailList = jointAccountDetailService.getJoinAccountDetail(
