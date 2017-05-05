@@ -58,6 +58,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -450,6 +451,19 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 		return auditDetail;
 	}
+	
+	@Override
+	public String presentmentReceiptCancellation(long receiptId) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+		logger.debug(Literal.ENTERING);
+
+		FinReceiptHeader receiptHeader = getFinReceiptHeaderById(receiptId, "");
+		String errorMsg = procReceiptCancellation(receiptHeader);
+
+		logger.debug(Literal.LEAVING);
+		return errorMsg;
+	}
+	
+	
 	
 	/**
 	 * Method for Processing Repayments Cancellation Based on Log Entry Details
