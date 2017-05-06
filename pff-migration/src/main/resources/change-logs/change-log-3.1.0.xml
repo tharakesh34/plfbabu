@@ -596,4 +596,24 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
 		</createView>
 	</changeSet>
+	<changeSet id="43" author="Prasad">
+		<createView viewName="RPT_SOA_LOAN_VIEW" replaceIfExists="true">
+		<![CDATA[Select FM.FinReference,FP.TotalPriSchd LoanAmount,
+		   FM.RepayBaseRate PLRRate,FM.repaymargin Variance,FM.EffectiveRateOfReturn IRR,FP.CURREDUCINGRATE ROI,
+		   FP.noinst Tenure,TotalPriPaid EMIReceivedPri ,TotalPftPaid EMIReceivedPft,
+		   0.00 PreferredCardLimit,PRVRPYSCHPRI PrevInstAmtPri,PRVRPYSCHPFT PrevInstAmtPft,
+		   FM.RepayRateBasis intRateType,FP.latestDisbDate LastDisbursalDate,
+		   FP.FirstRepayDate FirstDueDate,FP.MaturityDate EndInstallmentDate,
+		   '0.00/ 0' AdvInstAmt,FP.FinIsActive,FM.closingstatus,
+		   FP.Futureinst FutureInstNo,FP.totalpriSchd FuturePri1,FP.tdSchdPri FuturePri2,
+       FP.totalPftSchd FutureRpyPft1,FP.tdSchdPft FutureRpyPft2,
+		   FP.totchargespaid Charge_coll_cust,
+		   FP.UpFrontFee Upfront_int_cust,	0 Int_paid_Dealer_upfront,0 Pre_emi_Int_Paid,
+		   '' Repo_Status,'' Repo_Date,'' Sale_Date,'' Release_Date,FP.LATESTRPYDATE,
+       C.ccyMinorccyunits,ccyEditField
+	From FinanceMain FM inner join
+       FinPftDetails FP on FP.FinReference = FM.FinReference inner join
+       RMTCURRENCIES C on C.ccycode= FP.finccy]]>
+		</createView>
+	</changeSet>
 </databaseChangeLog>
