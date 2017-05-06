@@ -457,4 +457,38 @@ FROM    	Mandates T1 INNER JOIN
 			referencedTableName="SMTDIVISIONDETAIL" referencedColumnNames="DIVISIONCODE"
 			baseTableName="RMTFINANCETYPES" baseColumnNames="findivision" />
 	</changeSet>
+	<changeSet id="33" author="pruthvi">
+		<dropColumn columnName="ACPRVDAYBAL" tableName="ACCOUNTS" />
+		<dropColumn columnName="ACTODAYDR" tableName="ACCOUNTS" />
+		<dropColumn columnName="ACTODAYCR" tableName="ACCOUNTS" />
+		<dropColumn columnName="ACTODAYNET" tableName="ACCOUNTS" />
+	</changeSet>
+	
+	
+	<changeSet author="pruthvi" id="34">
+		<renameColumn columnDataType="decimal(18,0)" newColumnName="SHADOWBAL"
+			oldColumnName="ACACCRUALBAL" tableName="ACCOUNTS" />
+				<renameColumn columnDataType="decimal(18,0)" newColumnName="ACBALANCE"
+			oldColumnName="ACTODAYBAL" tableName="ACCOUNTS" />
+	</changeSet>
+	
+	<changeSet id="35" author="pruthvi">
+		<createTable tableName="AccountsHistory">
+			<column name="ACCOUNTID" type="VARCHAR(50)">
+			<constraints nullable="false" />
+			</column>
+			<column name="POSTDATE" type="DATETIME">
+			<constraints nullable="false" />
+			</column>
+			<column name="TODAYDEBITS" type="DECIMAL(18,0)"/>
+			<column name="TODAYCREDITS"  type="DECIMAL(18,0)"/>
+			<column name="TODAYNET" 	type="DECIMAL(18,0)"/>
+			<column name="SHADOWBAL" type="DECIMAL(18,0)"/>
+			<column name="ACBALANCE" type="DECIMAL(18,0)"/>
+		</createTable>
+	</changeSet>
+		<changeSet id="36" author="pruthvi">
+		<addPrimaryKey columnNames="ACCOUNTID, POSTDATE" constraintName="pk_AccountsHistory"
+			tableName="AccountsHistory" />
+	</changeSet>
 </databaseChangeLog>
