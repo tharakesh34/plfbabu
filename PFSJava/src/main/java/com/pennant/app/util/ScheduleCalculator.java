@@ -723,9 +723,12 @@ public class ScheduleCalculator {
 
 						//Before Event From Date don't do any changes(Used same for servicing Plan EMI/Rescheduling)
 						if (schdDate.compareTo(finMain.getEventFromDate()) > 0) {
-							curSchd.setCpzOnSchDate(FrequencyUtil.isFrqDate(finMain.getRepayCpzFrq(),
-									curSchd.getSchDate()));
-							curSchd.setBpiOrHoliday("");
+							if(StringUtils.isEmpty(curSchd.getBpiOrHoliday()) || 
+									StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)){
+								curSchd.setCpzOnSchDate(FrequencyUtil.isFrqDate(finMain.getRepayCpzFrq(),
+										curSchd.getSchDate()));
+								curSchd.setBpiOrHoliday("");
+							}
 						} else {
 							if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)) {
 								markedEMIHMaxPerYear = markedEMIHMaxPerYear + 1;
@@ -738,8 +741,11 @@ public class ScheduleCalculator {
 
 				//Before Event From Date don't do any changes(Used same for servicing Plan EMI/Rescheduling)
 				if (schdDate.compareTo(finMain.getEventFromDate()) > 0) {
-					curSchd.setCpzOnSchDate(FrequencyUtil.isFrqDate(finMain.getRepayCpzFrq(), curSchd.getSchDate()));
-					curSchd.setBpiOrHoliday("");
+					if(StringUtils.isEmpty(curSchd.getBpiOrHoliday()) || 
+							StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)){
+						curSchd.setCpzOnSchDate(FrequencyUtil.isFrqDate(finMain.getRepayCpzFrq(), curSchd.getSchDate()));
+						curSchd.setBpiOrHoliday("");
+					}
 				} else {
 					if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)) {
 						markedEMIHMaxPerYear = markedEMIHMaxPerYear + 1;
@@ -849,9 +855,12 @@ public class ScheduleCalculator {
 			//Before Event From Date don't do any changes(Used same for servicing Plan EMI/Rescheduling)
 			if(!isPlanEmiHFound){
 				if (schdDate.compareTo(finMain.getEventFromDate()) > 0) {
-					curSchd.setCpzOnSchDate(FrequencyUtil.isFrqDate(finMain.getRepayCpzFrq(),
-							curSchd.getSchDate()));
-					curSchd.setBpiOrHoliday("");
+					if(StringUtils.isEmpty(curSchd.getBpiOrHoliday()) || 
+							StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)){
+						curSchd.setCpzOnSchDate(FrequencyUtil.isFrqDate(finMain.getRepayCpzFrq(),
+								curSchd.getSchDate()));
+						curSchd.setBpiOrHoliday("");
+					}
 				} else {
 					if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)) {
 						markedEMIHMaxPerYear = markedEMIHMaxPerYear + 1;
