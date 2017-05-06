@@ -493,4 +493,14 @@
 		</createTable>
 	</changeSet>
 
+
+<changeSet id="29" author="Durgaprasad g">
+		<addColumn tableName="PRESENTMENTHEADER_TEMP">
+			<column name="IMPORTSTATUSID" type="bigint"/>
+			<column name="TOTALRECORDS" type="int"/>
+			<column name="PROCESSEDRECORDS" type="int"/>
+			<column name="SUCCESSRECORDS" type="int"/>
+			<column name="FAILEDRECORDS" type="int"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
