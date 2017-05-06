@@ -50,9 +50,10 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
@@ -69,8 +70,10 @@ import com.pennant.backend.service.financemanagement.PresentmentHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pff.core.Literal;
 
@@ -157,9 +160,12 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		logger.debug(Literal.ENTERING);
 
 		String errorMsg = null;
-		doSetValidations();
+		PresentmentHeader detailHeader = new PresentmentHeader();
+		
+		doSetValidation();
+		doWriteComponentsToBean(detailHeader);
 		try {
-			errorMsg = extractDetails();
+			errorMsg = extractDetails(detailHeader);
 			MessageUtil.showError(errorMsg);
 			return;
 		} catch (Exception e) {
@@ -169,44 +175,92 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doSetValidations() {
+	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 
-		Clients.clearWrongValue(this.fromdate);
-		Clients.clearWrongValue(this.toDate);
-		this.fromdate.setErrorMessage("");
-		this.toDate.setErrorMessage("");
+		this.mandateType.setConstraint(new PTListValidator(Labels.getLabel("label_PresentmentDetailList_MandateType.value"),PennantStaticListUtil.getMandateTypeList(), true));
+		this.fromdate.setConstraint(new PTDateValidator(Labels.getLabel("label_PresentmentDetailList_Fromdate.value"), true));
+		this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_PresentmentDetailList_ToDate.value"), true));
 
-		if (this.fromdate.getValue() == null) {
-			throw new WrongValueException(this.fromdate, "From Date should be mandatory. ");
-		}
-
-		if (this.toDate.getValue() == null) {
-			throw new WrongValueException(this.toDate, "To Date should be mandatory. ");
-		}
-
-		if (this.toDate != null && DateUtility.compare(this.toDate.getValue(), this.fromdate.getValue()) < 0) {
-			throw new WrongValueException(this.toDate, "To Date should be greater than From Date");
-		}
-
-		int diffentDays = SysParamUtil.getValueAsInt("PRESENTMENT_DAYS_DEF");
-		if (DateUtility.getDaysBetween(this.fromdate.getValue(), this.toDate.getValue()) > diffentDays) {
-			throw new WrongValueException(this.toDate,
-					" From Date and To Date difference should be less than are equal to " + diffentDays);
-		}
 		logger.debug(Literal.LEAVING);
 	}
 
-	private String extractDetails() throws Exception {
-		logger.debug(Literal.ENTERING);
+	
+	/**
+	 * Writes the components values to the bean.<br>
+	 * 
+	 * @param aAcademic
+	 */
+	public void doWriteComponentsToBean(PresentmentHeader detailHeader) {
+		logger.debug("Entering");
 
-		PresentmentHeader detailHeader = new PresentmentHeader();
+		ArrayList<WrongValueException> wve = new ArrayList<>();
 
-		detailHeader.setFromDate(this.fromdate.getValue());
-		detailHeader.setToDate(this.toDate.getValue());
-		if (!"#".equals(this.mandateType.getSelectedItem().getValue().toString())) {
-			detailHeader.setMandateType(this.mandateType.getSelectedItem().getValue().toString());
+		
+		try {
+			detailHeader.setFromDate(this.fromdate.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
 		}
+		try {
+			detailHeader.setToDate(this.toDate.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			detailHeader.setMandateType(this.mandateType.getSelectedItem().getValue().toString());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			if (this.toDate != null && DateUtility.compare(this.toDate.getValue(), this.fromdate.getValue()) < 0) {
+				throw new WrongValueException(this.toDate, "To Date should be greater than From Date");
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			int diffentDays = SysParamUtil.getValueAsInt("PRESENTMENT_DAYS_DEF");
+			if (DateUtility.getDaysBetween(this.fromdate.getValue(), this.toDate.getValue()) > diffentDays) {
+				throw new WrongValueException(this.toDate,
+						" From Date and To Date difference should be less than are equal to " + diffentDays);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		doRemoveValidation();
+
+		if (!wve.isEmpty()) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Disables the Validation by setting empty constraints.
+	 */
+	private void doRemoveValidation() {
+		logger.debug("Entering");
+
+		this.fromdate.setConstraint("");
+		this.toDate.setConstraint("");
+		this.mandateType.setConstraint("");
+
+		logger.debug("Leaving");
+	}
+	
+	private String extractDetails(PresentmentHeader detailHeader) throws Exception {
+		logger.debug(Literal.ENTERING);
+		
 		detailHeader.setLoanType(this.loanType.getValue());
 		detailHeader.setFinBranch(this.branches.getValue());
 		detailHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());

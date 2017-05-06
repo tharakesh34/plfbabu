@@ -42,16 +42,52 @@
 							sclass="GridLayoutNoBorder" fixedLayout="true"
 							style=" border-style: none; padding-left:5px; padding-right:5px;">
 							<columns>
-								<column width="250px" />
-								<column width="250px" />
-							</columns>
+									<column width="160px" />
+									<column />
+									<column width="160px" />
+									<column />
+									<column width="160px" />
+									<column />
+								</columns>
 							<rows>
 								<row>
 									<label value="${c:l('label_PresentmentDetailList_Bank.value')}" />
 									<extendedcombobox id="partnerBank" />
+									
+									<label value="${c:l('label_PresentmentDetailList_PresentmentReference.value')}" />
+									<label id="label_PresentmentReference"  style="font-weight:bold;padding-right:12px;"/>
+									
+									<label value="${c:l('label_PresentmentDetailList_PresentmentStatus.value')}" />
+									<label id="label_PresentmentStatus" style="font-weight:bold;padding-right:12px;"/>
 								</row>
 							</rows>
 						</grid>
+						<space height="10px"></space>
+						<grid id="dBStatusGrid" visible="false"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style=" border-style: none; padding-left:5px; padding-right:5px;">
+							<columns>
+									<column width="160px" />
+									<column />
+									<column width="160px" />
+									<column />
+									<column width="160px" />
+									<column />
+							</columns>
+							<rows>
+								<row>
+									<label value="Total Presentments" />
+									<label id="label_TotalPresentments" style="font-weight:bold;padding-right:12px;"/>
+
+									<label value="Success Presentments" />
+									<label id="label_SuccessPresentments" style="font-weight:bold;padding-right:12px;"/>
+									
+									<label value="Failed Presentments" />
+									<label id="label_FailedPresentments" style="font-weight:bold;padding-right:12px;"/>
+								</row>
+							</rows>
+						</grid>
+
 						<tabbox width="100%">
 							<tabs id="tabsIndexCenter">
 								<tab
@@ -109,10 +145,6 @@
 												<listheader
 													label="${c:l('listheader_PresentmentDetail_MandateType.label')}"
 													hflex="min" />
-												<listheader
-													id="listheader_PresentmentDetail_Include_ExcludeStatus"
-													label="${c:l('listheader_PresentmentDetail_ExcludeStatus.label')}"
-													hflex="min" align="center" />
 											</listhead>
 										</listbox>
 									</groupbox>

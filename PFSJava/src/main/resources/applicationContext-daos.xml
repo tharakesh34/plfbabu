@@ -5702,6 +5702,9 @@
 		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
 		<property name="finInsurancesDAO" ref="finInsurancesDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="bounceReasonDAO" ref="bounceReasonDAO" />
+		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
 
 	<!--============ Overdue Charge Recovery Details ============== -->
@@ -9561,6 +9564,7 @@
        <property name="presentmentHeaderDAO" ref="presentmentHeaderDAO" />
        <property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 	   <property name="dataSource" ref="pfsDatasource" />
+	   <property name="receiptCancellationService" ref="receiptCancellationService" />
    </bean>
   
    
@@ -9590,6 +9594,7 @@
    
   <bean id="presentmentExtractService" class="com.pennanttech.interfacebajaj.fileextract.PresentmentExtractService">
 	<property name="dataSource" ref="pfsDatasource" />
+	<property name="presentmentHeaderService" ref="presentmentHeaderService"/>			
 </bean>
    
 	<bean id="disbursementProcess" class="com.pennant.backend.service.payorderissue.impl.DisbursementProcessImpl"/>

@@ -59,7 +59,7 @@
 									<label
 										value="${c:l('label_PresentmentDetailList_MandateType.value')}" />
 									<hbox>
-										<space spacing="2px" />
+										<space spacing="2px" sclass="mandatory"  />
 										<combobox id="mandateType" 	width="250px" />
 									</hbox>
 

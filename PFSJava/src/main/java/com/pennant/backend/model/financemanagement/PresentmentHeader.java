@@ -85,6 +85,13 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 	private String loanTypeName;
 	private String finBranch;
 	private String finBranchName;
+	private long dBStatusId;
+	private long importStatusId;
+	private int totalRecords;
+	private int processedRecords;
+	private int successRecords;
+	private int failedRecords;
+
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Date schdate;
 	@XmlTransient
@@ -274,6 +281,54 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 	@Override
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public long getdBStatusId() {
+		return dBStatusId;
+	}
+
+	public void setdBStatusId(long dBStatusId) {
+		this.dBStatusId = dBStatusId;
+	}
+
+	public long getImportStatusId() {
+		return importStatusId;
+	}
+
+	public void setImportStatusId(long importStatusId) {
+		this.importStatusId = importStatusId;
+	}
+
+	public int getTotalRecords() {
+		return totalRecords;
+	}
+
+	public void setTotalRecords(int totalRecords) {
+		this.totalRecords = totalRecords;
+	}
+
+	public int getProcessedRecords() {
+		return processedRecords;
+	}
+
+	public void setProcessedRecords(int processedRecords) {
+		this.processedRecords = processedRecords;
+	}
+
+	public int getSuccessRecords() {
+		return successRecords;
+	}
+
+	public void setSuccessRecords(int successRecords) {
+		this.successRecords = successRecords;
+	}
+
+	public int getFailedRecords() {
+		return failedRecords;
+	}
+
+	public void setFailedRecords(int failedRecords) {
+		this.failedRecords = failedRecords;
 	}
 
 }

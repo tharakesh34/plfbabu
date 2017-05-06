@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.Date;
 
 import javax.sql.DataSource;
@@ -15,13 +14,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.util.Assert;
 import org.zkoss.io.Files;
 import org.zkoss.util.media.Media;
@@ -29,7 +22,6 @@ import org.zkoss.util.resource.Labels;
 
 import com.northconcepts.datapipeline.core.Record;
 import com.pennant.app.util.DateUtility;
-import com.pennanttech.dataengine.model.BatchStatus;
 
 public class FileImport {
 	private final static Logger logger = LoggerFactory.getLogger(FileImport.class);
@@ -51,9 +43,6 @@ public class FileImport {
 	protected NamedParameterJdbcTemplate jdbcTemplate;
 
 	protected String batchReference;
-	public BatchStatus batchStatus = new BatchStatus();
-
-	protected Object endLineLength = 78;// SysParamUtil.getValue("PRESENTMENT_RESPONSEFILE_LINE_LENGTH");
 
 	public FileImport(DataSource datsSource) {
 		setDataSource(datsSource);
@@ -65,7 +54,6 @@ public class FileImport {
 		if (isClientLoaction) {
 			writeToFile();
 		}
-
 		validateFileData();
 	}
 
@@ -101,84 +89,6 @@ public class FileImport {
 		logger.debug("Leaving");
 	}
 
-	public boolean isFileExists(String batchType, String fileName) {
-		logger.debug("Entering");
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		source.addValue("ProcName", batchType);
-		source.addValue("BatchFileName", fileName);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(" select count(*) from BatchStatus where ProcName =:ProcName and BatchFileName =:BatchFileName");
-
-		logger.debug("selectSql: " + sql.toString());
-		try {
-			if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
-				return true;
-			} else {
-				return false;
-			}
-
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception {}", e);
-		}
-		logger.debug("Leaving");
-		return true;
-	}
-
-	private void saveBatchLog(BatchStatus batchStatus) {
-		SqlParameterSource beanParameters = null;
-		StringBuffer query = new StringBuffer();
-
-		query.append(" INSERT INTO BATCHLOG");
-		query.append(" (BatchId, KeyId, Status, Reason)");
-		query.append(" VALUES(:BatchId, :KeyId, :BatchStatus, :Reason)");
-		try {
-			beanParameters = new BeanPropertySqlParameterSource(batchStatus);
-			this.jdbcTemplate.update(query.toString(), beanParameters);
-
-		} catch (Exception e) {
-			logger.error("Exception {}", e);
-		} finally {
-			beanParameters = null;
-			query = null;
-		}
-	}
-
-	private void updateBatchStatus(BatchStatus batchStatus) {
-		logger.debug("Entering");
-
-		StringBuffer query = new StringBuffer();
-		query.append(" UPDATE BatchStatus SET BatchStatus = :BatchStatus, EndTm = :EndTm, Remarks = :Remarks ");
-		query.append(" WHERE BatchId = :BatchId");
-
-		try {
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(batchStatus);
-			this.jdbcTemplate.update(query.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.error("Exception {}", e);
-		}
-		logger.debug("Leaving");
-
-	}
-
-	private void saveBatchStatus(BatchStatus batchStatus) {
-		logger.debug("Entering");
-		StringBuffer query = new StringBuffer();
-		query.append(" INSERT INTO BatchStatus");
-		query.append(" (ProcName, BatchStatus, UserId, StartTm, EndTm, Remarks, BatchFileName, BatchReference)");
-		query.append(" VALUES( :ProcName, :BatchStatus, :UserId, :StartTm, :EndTm, :Remarks, :BatchFileName, :BatchReference)");
-		try {
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(batchStatus);
-			final KeyHolder keyHolder = new GeneratedKeyHolder();
-			this.jdbcTemplate.update(query.toString(), beanParameters, keyHolder);
-
-			batchStatus.setBatchId(keyHolder.getKey().longValue());
-		} catch (Exception e) {
-			logger.error("Exception {}", e);
-		}
-		logger.debug("Leaving");
-	}
 
 	protected void backUpFile() throws IOException {
 		File backup = new File(file.getParent() + "/BackUp");
@@ -217,11 +127,6 @@ public class FileImport {
 			throw new Exception(Labels.getLabel("invalid_file"));
 		}
 
-		/*
-		 * if (isFileExists(batchType, file.getName())) { throw new Exception("The file " + file.getName() +
-		 * " has already processed."); }
-		 */
-
 		File oldFile = new File(getDirectory().getPath() + "/BackUp/" + file.getName());
 		if (oldFile != null && oldFile.exists()) {
 			throw new Exception(Labels.getLabel("duplicate_file"));
@@ -244,30 +149,6 @@ public class FileImport {
 		if (backup != null && !backup.exists()) {
 			backup.mkdir();
 		}
-	}
-
-	public void logBatchStatus(BatchStatus batchStatus) {
-		saveBatchStatus(batchStatus);
-	}
-
-	public void saveBatchLog(String keyId, String status, String reason) {
-		BatchStatus exception = new BatchStatus();
-		exception.setBatchId(batchStatus.getBatchId());
-		exception.setKeyId(keyId);
-		exception.setBatchStatus(status);
-
-		if (reason != null) {
-			reason = reason.length() > 2000 ? reason.substring(0, 1995) : reason;
-			exception.setReason(reason);
-		}
-		saveBatchLog(exception);
-	}
-
-	public void updateBatchStatus(String status, String remarks) {
-		batchStatus.setBatchStatus(status);
-		batchStatus.setEndTm(new Timestamp(System.currentTimeMillis()));
-		batchStatus.setRemarks(remarks);
-		updateBatchStatus(batchStatus);
 	}
 
 	protected String getStringValue(Record record, int index) {

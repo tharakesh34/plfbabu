@@ -15,11 +15,14 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.RepaymentPostingsUtil;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
+import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
@@ -35,7 +38,9 @@ import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
+import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -48,15 +53,19 @@ import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -83,7 +92,11 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	private FinFeeScheduleDetailDAO			finFeeScheduleDetailDAO;
 	private FinInsurancesDAO				finInsurancesDAO;
 	private AuditHeaderDAO 					auditHeaderDAO;
-
+	private BounceReasonDAO 			    bounceReasonDAO;
+	private RuleDAO 			     		ruleDAO;
+	private RuleExecutionUtil 			    ruleExecutionUtil;
+	
+	
 	public ReceiptCancellationServiceImpl() {
 		super();
 	}
@@ -447,19 +460,63 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		return auditDetail;
 	}
 	
+	/**
+	 * Method for Canceling the Presentment
+	 * 
+	 * @param receiptId
+	 * @param returnCode
+	 * @return errorMsg
+	 */
 	@Override
-	public String presentmentReceiptCancellation(long receiptId) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public String presentmentCancellation(long receiptId, String returnCode) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug(Literal.ENTERING);
 
 		FinReceiptHeader receiptHeader = getFinReceiptHeaderById(receiptId, "");
+		ManualAdvise manualAdvise = getManualAdvise(receiptHeader, returnCode);
+		receiptHeader.setManualAdvise(manualAdvise);
 		String errorMsg = procReceiptCancellation(receiptHeader);
 
 		logger.debug(Literal.LEAVING);
 		return errorMsg;
 	}
 	
-	
-	
+	/**
+	 * Method for preparing the ManualAdvise bean object
+	 * 
+	 * @param receiptHeader
+	 * @param returnCode
+	 * @return ManualAdvise
+	 */
+	private ManualAdvise getManualAdvise(FinReceiptHeader receiptHeader, String returnCode) {
+		logger.debug(Literal.ENTERING);
+
+		BounceReason bounceReason = getBounceReasonDAO().getBounceReasonByReturnCode(returnCode, "");
+		BigDecimal bounceCharge = BigDecimal.ZERO;
+		if (bounceReason != null) {
+			Rule rule = getRuleDAO().getRuleByID(bounceReason.getRuleID(), "");
+			BigDecimal bounceAmt = BigDecimal.ZERO;
+			if (rule != null) {
+				bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), null, receiptHeader.getFinCcy(), RuleReturnType.DECIMAL);
+			}
+			bounceCharge = PennantApplicationUtil.formateAmount(bounceAmt, CurrencyUtil.getFormat(receiptHeader.getFinCcy()));
+		}
+		ManualAdvise manualAdvise = new ManualAdvise();
+		manualAdvise.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+		manualAdvise.setFinReference(receiptHeader.getReference());
+		manualAdvise.setFeeTypeID(0);
+		manualAdvise.setSequence(0);
+		manualAdvise.setAdviseAmount(PennantApplicationUtil.unFormateAmount(bounceCharge, CurrencyUtil.getFormat(receiptHeader.getFinCcy())));
+		manualAdvise.setPaidAmount(BigDecimal.ZERO);
+		manualAdvise.setWaivedAmount(BigDecimal.ZERO);
+		manualAdvise.setRemarks("");
+		manualAdvise.setReceiptID(receiptHeader.getReceiptID());
+		manualAdvise.setBounceID(bounceReason.getBounceID());
+
+		logger.debug(Literal.LEAVING);
+
+		return manualAdvise;
+	}
+
 	/**
 	 * Method for Processing Repayments Cancellation Based on Log Entry Details
 	 * @param receiptHeader
@@ -988,6 +1045,30 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	}
 	public void setFinInsurancesDAO(FinInsurancesDAO finInsurancesDAO) {
 		this.finInsurancesDAO = finInsurancesDAO;
+	}
+
+	public BounceReasonDAO getBounceReasonDAO() {
+		return bounceReasonDAO;
+	}
+
+	public void setBounceReasonDAO(BounceReasonDAO bounceReasonDAO) {
+		this.bounceReasonDAO = bounceReasonDAO;
+	}
+
+	public RuleDAO getRuleDAO() {
+		return ruleDAO;
+	}
+
+	public void setRuleDAO(RuleDAO ruleDAO) {
+		this.ruleDAO = ruleDAO;
+	}
+
+	public RuleExecutionUtil getRuleExecutionUtil() {
+		return ruleExecutionUtil;
+	}
+
+	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
+		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 }

@@ -1,327 +1,207 @@
 package com.pennanttech.dbengine.process;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Date;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import com.pennanttech.dataengine.constants.ExecutionStatus;
-import com.pennanttech.dataengine.model.Configuration;
-import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.dataengine.util.DateUtil;
-import com.pennanttech.dbengine.DBProcessEngine;
 import com.pennanttech.pff.baja.BajajInterfaceConstants.Status;
 import com.pennanttech.pff.core.Literal;
 
-public class PresentmentRequest extends DBProcessEngine {
+public class PresentmentRequest extends DatabaseDataEngine {
 
 	private static final Logger logger = Logger.getLogger(PresentmentRequest.class);
 
-	private Connection destConnection = null;;
-	private Connection sourceConnection = null;
-	private DataEngineStatus executionStatus = null;
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private long presentmentId;
 
-	public PresentmentRequest(DataSource dataSource, String appDBName, DataEngineStatus executionStatus) {
-		super(dataSource, appDBName, executionStatus);
-		setDataSource(dataSource);
-		this.executionStatus = executionStatus;
+	public PresentmentRequest(DataSource dataSource, String database) {
+		super(dataSource, database);
 	}
 
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-	
-	public void process(long userId, Configuration config, String presentmentIds) {
+	@Override
+	public void processData() {
 		logger.debug("Entering");
 
-		executionStatus.setStartTime(DateUtil.getSysDate());
-		executionStatus.setName(config.getName());
-		executionStatus.setUserId(userId);
-		executionStatus.setReference(config.getName());
-		executionStatus.setStatus(ExecutionStatus.I.name());
-		executionStatus.setRemarks("Loading configuration..");
+		executionStatus.setRemarks("Loading data..");
 
-		PreparedStatement statement = null;
-		ResultSet resultSet = null;
-		StringBuilder remarks = new StringBuilder();
-		long fileId;
-		try {
-			executionStatus.setFileName(getFileName(config.getName()));
-			saveBatchStatus();
-			fileId = executionStatus.getId();
+		MapSqlParameterSource parmMap;
+		StringBuilder sql = getSqlQuery();
 
-			executionStatus.setRemarks("Loading destination database connection...");
-			destConnection = getConnection(config);
-			sourceConnection = DataSourceUtils.doGetConnection(dataSource);
-			executionStatus.setRemarks("Fetching data from source table...");
+		parmMap = new MapSqlParameterSource();
+		parmMap.addValue("PRESENTMENTID", presentmentId);
+		parmMap.addValue("EXCLUDEREASON", "0");
 
-			statement = getStatement(presentmentIds);
-			resultSet = getResultSet(presentmentIds, statement);
+		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
+			MapSqlParameterSource map = null;
 
-			if (resultSet != null) {
-				resultSet.last();
-				totalRecords = resultSet.getRow();
-				resultSet.beforeFirst();
-				executionStatus.setTotalRecords(totalRecords);
-			}
-			while (resultSet.next()) {
-				executionStatus.setRemarks("Saving data to destination table...");
+			@Override
+			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
+				logger.debug("Entering");
+				boolean isBatchFail = false;
 				try {
-					processedCount++;
-					saveData(resultSet);
-					successCount++;
-					saveBatchLog(processedCount, fileId, processedCount, "DBImport", "S", "Success.", null);
+					clearTables();
+					
+					while (rs.next()) {
+						executionStatus.setRemarks("processing the record " + ++totalRecords);
+						processedCount++;
+						try {
+							map = mapData(rs);
+							insertData(map, "PDC_CONSL_EMI_DTL_TEMP", destinationJdbcTemplate);
+							successCount++;
+						} catch (Exception e) {
+							logger.error("Exception :", e);
+							failedCount++;
+							saveBatchLog(rs.getString("PRESENTMENTID"), "F", e.getMessage());
+							throw e;
+						} finally {
+							map = null;
+						}
+					}
 				} catch (Exception e) {
-					failedCount++;
 					logger.error("Exception :", e);
-					saveBatchLog(processedCount, fileId, processedCount, "DBImport", "F", e.getMessage(), null);
+					isBatchFail = true;
+				} finally {
+					if (isBatchFail) {
+						clearTables();
+					} else {
+						copyDataFromTempToMainTables();
+						updatePresentmentHeader(presentmentId, 4, executionStatus.getId(), processedCount);
+					}
 				}
-				executionStatus.setProcessedRecords(processedCount);
-				executionStatus.setSuccessRecords(successCount);
-				executionStatus.setFailedRecords(failedCount);
-			}
-			if (totalRecords > 0) {
-				updatePresentmentHeader(presentmentIds, 4);
+				return totalRecords;
 			}
 
-			if (totalRecords > 0) {
-				if (failedCount > 0) {
-					remarks.append("Completed with exceptions, Total records:  ");
-					remarks.append(totalRecords);
-					remarks.append(", Processed: ");
-					remarks.append(processedCount);
-					remarks.append(", Sucess: ");
-					remarks.append(successCount);
-					remarks.append(", Failure: ");
-					remarks.append(failedCount + ".");
-				} else {
-					remarks.append("Processed successfully , Total records: ");
-					remarks.append(totalRecords);
-					remarks.append(", Processed: ");
-					remarks.append(processedCount);
-					remarks.append(", Sucess: ");
-					remarks.append(successCount + ".");
-				}
-				updateBatchStatus(ExecutionStatus.S.name(), remarks.toString());
-			} else {
-				remarks.append("No records found for the selected configuration.");
-				updateBatchStatus(ExecutionStatus.F.name(), remarks.toString());
-			}
-		} catch (Exception e) {
-			logger.error("Exception :", e);
-			updateBatchStatus(ExecutionStatus.F.name(), e.getMessage());
-			remarks.append(e.getMessage());
-			executionStatus.setStatus(ExecutionStatus.F.name());
-		} finally {
-
-			try {
-				if (resultSet != null) {
-					resultSet.close();
-				}
-			} catch (Exception e) {
-				logger.info("Exception :", e);
-			}
-			
-			resultSet = null;
-			executionStatus.setRemarks(remarks.toString());
-		}
+		});
 		logger.debug("Leaving");
 	}
 
-	private void saveData(ResultSet rs) throws Exception {
-		logger.debug("Entering");
-
-		PreparedStatement ps = null;
-		try {
-			StringBuilder sb = new StringBuilder();
-			sb.append(" INSERT INTO PDC_CONSL_EMI_DTL (");
-			sb.append("	PR_KEY, BR_CODE, AGREEMENTNO, MICR_CODE, ACC_TYPE, LEDGER_FOLIO, FINWARE_ACNO, DEST_ACC_HOLDER, PDC_BY_NAME,");
-			sb.append(" BANK_NAME, BANK_ADDRESS, EMI_NO, BFL_REF, BATCHID, CHEQUEAMOUNT, PRESENTATIONDATE, RESUB_FLAG, UMRN_NO,");
-			sb.append(" IFSC_CODE, SPONSER_BANK_CODE, UTILITY_CODE, MANDATE_START_DT, MANDATE_END_DT, INSTRUMENT_MODE, PRODUCT_CODE,");
-			sb.append(" LESSEEID, PICKUP_BATCHID, ENTITY_CODE, POSTING_DATETIME, STATUS)");
-			sb.append(" VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-
-			ps = destConnection.prepareStatement(sb.toString());
-
-			ps.setString(1, String.valueOf(getLongValue(rs, "PRESENTMENTID")));
-			ps.setString(2, getValue(rs, "BRANCHSWIFTBRNCDE"));
-			ps.setString(3, getValue(rs, "FINREFERENCE"));
-			ps.setString(4, getValue(rs, "MICR"));
-			ps.setInt(5, getIntValue(rs, "ACCTYPE"));
-			ps.setString(6, "000");// Always 000
-			ps.setString(7, getValue(rs, "ACCNUMBER"));
-			ps.setString(8, getValue(rs, "CUSTSHRTNAME"));
-			ps.setString(9, getValue(rs, "ACCHOLDERNAME"));
-			
-			ps.setString(10, getValue(rs, "BANKNAME"));
-			ps.setString(11, getValue(rs, "BRANCHDESC"));
-			ps.setInt(12, getIntValue(rs, "EMINO"));
-
-			String mnadteType = getValue(rs, "MANDATETYPE");
-			if (StringUtils.equals(mnadteType, "ECS") || StringUtils.equals(mnadteType, "DDM")) {
-				ps.setString(13, "405");
-			} else {
-				ps.setString(11, getValue(rs, "BRANCHSWIFTBRNCDE"));
-			}
-
-			ps.setString(14, getValue(rs, "PresentmentRef"));
-			ps.setBigDecimal(15, getBigDecimal(rs, "PRESENTMENTAMT"));
-			ps.setDate(16, getDateValue(rs, "PRESENTMENTDATE"));
-			ps.setString(17, Status.N.name());
-			ps.setString(18, getValue(rs, "MANDATEREF"));
-
-			ps.setString(19, getValue(rs, "IFSC"));
-			ps.setString(20, getValue(rs, "PARTNERBANKCODE"));
-			ps.setString(21, getValue(rs, "UTILITYCODE"));
-			ps.setDate(22, getDateValue(rs, "STARTDATE"));
-			ps.setDate(23, getDateValue(rs, "EXPIRYDATE"));
-
-			if (StringUtils.equals(mnadteType, "ECS")) {//FIXME consants
-				ps.setString(24, "E");
-			} else if (StringUtils.equals(mnadteType, "DDM")) {
-				ps.setString(24, "D");
-			} else if (StringUtils.equals(mnadteType, "NACH")) {
-				ps.setString(24, "Z");
-			}
-			ps.setString(25, getValue(rs, "FINTYPE"));
-			ps.setInt(26, getIntValue(rs, "CUSTID"));
-			ps.setInt(27, -1);
-			// TXN_TYPE_CODE
-			// SOURCE_CODE
-			ps.setInt(28, 1);//getIntValue(rs, "ENTITYCODE")
-			ps.setDate(29, com.pennanttech.pff.core.util.DateUtil.getSqlDate(com.pennanttech.pff.core.util.DateUtil.getSysDate()));
-			ps.setString(30, Status.N.name());//FIXME remove fileld
-
-			// execute query
-			ps.executeUpdate();
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			throw e;
-		} finally {
-			if (ps != null) {
-				ps.close();
-				ps = null;
-			}
-		}
-
-		logger.debug("Leaving");
+	private StringBuilder getSqlQuery() {
+		StringBuilder sql = new StringBuilder();
+		sql = new StringBuilder();
+		sql.append(" SELECT  T2.FINBRANCH, T1.FINREFERENCE, T4.MICR, T3.ACCTYPE, ");
+		sql.append(" T3.ACCNUMBER, T5.CUSTSHRTNAME, T3.ACCHOLDERNAME, T6.BANKNAME, ");
+		sql.append(" T6.BANKNAME, T1.PRESENTMENTID, T1.PRESENTMENTAMT,");
+		sql.append(" T0.PRESENTMENTDATE, T3.MANDATEREF, T4.IFSC, ");
+		sql.append(" T7.PARTNERBANKCODE, T7.UTILITYCODE, T3.STARTDATE, T3.EXPIRYDATE, T3.MANDATETYPE, ");
+		sql.append(" T2.FINTYPE, T2.CUSTID , T7.PARTNERBANKCODE, T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, T1.ID, T1.PresentmentRef, ");
+		sql.append(" T8.BRANCHSWIFTBRNCDE, T9.FINDIVISION ENTITYCODE FROM PRESENTMENTHEADER T0 ");
+		sql.append(" INNER JOIN PRESENTMENTDETAILS T1 ON T0.ID = T1.PRESENTMENTID ");
+		sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE ");
+		sql.append(" INNER JOIN CuSTOMERS T5 ON T5.CUSTID = T2.CUSTID ");
+		sql.append(" INNER JOIN MANDATES T3 ON T2.MANDATEID = T3.MANDATEID ");
+		sql.append(" INNER JOIN BANKBRANCHES T4 ON T3.BANKBRANCHID = T4.BANKBRANCHID ");
+		sql.append(" INNER JOIN BMTBANKDETAIL T6 ON T4.BANKCODE = T6.BANKCODE ");
+		sql.append(" INNER JOIN PARTNERBANKS T7 ON T7.PARTNERBANKID = T0.PARTNERBANKID ");
+		sql.append(" INNER JOIN RMTBRANCHES T8 ON T8.BRANCHCODE = T2.FINBRANCH ");
+		sql.append(" INNER JOIN RMTFINANCETYPES T9 ON T9.FINTYPE = T2.FINTYPE");
+		sql.append(" WHERE T1.PRESENTMENTID = :PRESENTMENTID AND T1.EXCLUDEREASON = :EXCLUDEREASON ");
+		return sql;
 	}
 
-	private ResultSet getResultSet(String paymentIds, PreparedStatement statement) throws Exception {
-		String[] paymentId = paymentIds.split(",");
+	@Override
+	protected MapSqlParameterSource mapData(ResultSet rs) throws SQLException {
+		MapSqlParameterSource map = new MapSqlParameterSource();
 
-		ResultSet rs = null;
-		try {
-			for (int i = 1; i <= paymentId.length; i++) {
-				statement.setLong(i, Long.parseLong(paymentId[i - 1]));
-			}
-			rs = statement.executeQuery();
+		map.addValue("PR_KEY", String.valueOf(rs.getLong("PRESENTMENTID")));
+		map.addValue("BR_CODE", rs.getString("BRANCHSWIFTBRNCDE"));
+		map.addValue("AGREEMENTNO", rs.getString("FINREFERENCE"));
+		map.addValue("MICR_CODE", rs.getString("MICR"));
+		map.addValue("ACC_TYPE", rs.getString("ACCTYPE"));
+		map.addValue("LEDGER_FOLIO", "000");
+		map.addValue("FINWARE_ACNO", rs.getString("ACCNUMBER"));
+		map.addValue("DEST_ACC_HOLDER", rs.getString("CUSTSHRTNAME"));
+		map.addValue("PDC_BY_NAME", rs.getString("ACCHOLDERNAME"));
+		map.addValue("BANK_NAME", rs.getString("BANKNAME"));
+		map.addValue("BANK_ADDRESS", rs.getString("BRANCHDESC"));
+		map.addValue("EMI_NO", rs.getString("EMINO"));
+		String mnadteType = rs.getString("MANDATETYPE");
 
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
+		if (StringUtils.equals(mnadteType, "ECS") || StringUtils.equals(mnadteType, "DDM")) {
+			map.addValue("BFL_REF", "405");
+		} else {
+			map.addValue("BFL_REF", rs.getString("BRANCHSWIFTBRNCDE"));
 		}
-		return rs;
+		map.addValue("BATCHID", rs.getString("PresentmentRef"));
+		map.addValue("CHEQUEAMOUNT", rs.getString("PRESENTMENTAMT"));
+		map.addValue("PRESENTATIONDATE", rs.getDate("PRESENTMENTDATE"));
+		map.addValue("RESUB_FLAG", Status.N.name());
+		map.addValue("UMRN_NO", rs.getString("MANDATEREF"));
+
+		map.addValue("IFSC_CODE", rs.getString("IFSC"));
+		map.addValue("SPONSER_BANK_CODE", rs.getString("PARTNERBANKCODE"));
+		map.addValue("UTILITY_CODE", rs.getString("UTILITYCODE"));
+		map.addValue("MANDATE_START_DT", rs.getDate("STARTDATE"));
+		map.addValue("MANDATE_END_DT", rs.getDate("EXPIRYDATE"));
+
+		if (StringUtils.equals(mnadteType, "ECS")) {
+			map.addValue("INSTRUMENT_MODE", "E");
+		} else if (StringUtils.equals(mnadteType, "DDM")) {
+			map.addValue("INSTRUMENT_MODE", "D");
+		} else if (StringUtils.equals(mnadteType, "NACH")) {
+			map.addValue("INSTRUMENT_MODE", "Z");
+		}
+		map.addValue("PRODUCT_CODE", rs.getString("FINTYPE"));
+		map.addValue("LESSEEID", rs.getInt("CUSTID"));
+		map.addValue("PICKUP_BATCHID", -1);
+		map.addValue("ENTITY_CODE", 1);
+		map.addValue("POSTING_DATETIME", DateUtil.getSysDate());
+		map.addValue("STATUS", Status.N.name());
+
+		return map;
 	}
 
-	private PreparedStatement getStatement(String presentmentIds) throws Exception {
-		PreparedStatement statement = null;
-
-		String[] presentmentId = presentmentIds.split(",");
-
-		StringBuilder sql = null;
-		try {
-			sql = new StringBuilder();
-			sql.append(" SELECT  T2.FINBRANCH, T1.FINREFERENCE, T4.MICR, T3.ACCTYPE, ");
-			sql.append(" T3.ACCNUMBER, T5.CUSTSHRTNAME, T3.ACCHOLDERNAME, T6.BANKNAME, ");
-			sql.append(" T6.BANKNAME, T1.PRESENTMENTID, T1.PRESENTMENTAMT,");
-			sql.append(" T0.PRESENTMENTDATE, T3.MANDATEREF, T4.IFSC, ");
-			sql.append(" T7.PARTNERBANKCODE, T7.UTILITYCODE, T3.STARTDATE, T3.EXPIRYDATE, T3.MANDATETYPE, ");
-			sql.append(" T2.FINTYPE, T2.CUSTID , T7.PARTNERBANKCODE, T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, T1.ID, T1.PresentmentRef, ");
-			sql.append(" T8.BRANCHSWIFTBRNCDE, T9.FINDIVISION ENTITYCODE FROM PRESENTMENTHEADER T0 ");
-			sql.append(" INNER JOIN PRESENTMENTDETAILS T1 ON T0.ID = T1.PRESENTMENTID ");
-			sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE ");
-			sql.append(" INNER JOIN CuSTOMERS T5 ON T5.CUSTID = T2.CUSTID ");
-			sql.append(" INNER JOIN MANDATES T3 ON T2.MANDATEID = T3.MANDATEID ");
-			sql.append(" INNER JOIN BANKBRANCHES T4 ON T3.BANKBRANCHID = T4.BANKBRANCHID ");
-			sql.append(" INNER JOIN BMTBANKDETAIL T6 ON T4.BANKCODE = T6.BANKCODE ");
-			sql.append(" INNER JOIN PARTNERBANKS T7 ON T7.PARTNERBANKID = T0.PARTNERBANKID ");
-			sql.append(" INNER JOIN RMTBRANCHES T8 ON T8.BRANCHCODE = T2.FINBRANCH ");
-			sql.append(" INNER JOIN RMTFINANCETYPES T9 ON T9.FINTYPE = T2.FINTYPE");
-			sql.append(" WHERE T1.PRESENTMENTID IN (");
-
-			for (int i = 0; i < presentmentId.length; i++) {
-				if (i > 0) {
-					sql.append(",");
-				}
-				sql.append("?");
-			}
-			sql.append(")");
-			sql.append(" AND (T1.EXCLUDEREASON = 0)");
-			statement = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-		} catch (SQLException e) {
-			logger.error("Exception: ", e);
-		}
-		return statement;
-	}
-
-	private void saveBatchLog(int seqNo, long fileId, long ref, String category, String status, String remarks,
-			Date valueDate) throws Exception {
-
-		MapSqlParameterSource source = null;
-		StringBuilder sql = null;
-		try {
-			source = new MapSqlParameterSource();
-			source.addValue("ID", getNextId("SEQ_DATA_ENGINE_PROCESS_LOG", true));
-			source.addValue("SEQNO", Long.valueOf(seqNo));
-			source.addValue("FILEID", fileId);
-			source.addValue("REFID1", ref);
-			source.addValue("CATEGORY", category);
-			source.addValue("STATUS", status);
-			source.addValue("REMARKS", remarks.length() > 1000 ? remarks.substring(0, 998) : remarks);
-			source.addValue("VALUEDATE", DateUtil.getSysDate());
-
-			sql = new StringBuilder();
-			sql.append(" INSERT INTO DATA_ENGINE_PROCESS_LOG (ID, SEQNO, FILEID, REFID1, CATEGORY, STATUS, REMARKS, VALUEDATE)");
-			sql.append(" Values (:ID, :SEQNO, :FILEID, :REFID1, :CATEGORY, :STATUS, :REMARKS, :VALUEDATE)");
-
-			saveBatchLog(source, sql.toString());
-		} finally {
-			sql = null;
-			source = null;
-		}
-	}
-	
-	public void updatePresentmentHeader(String ids, int manualEcclude) {
+	private void updatePresentmentHeader(long presentmentId, int manualEcclude, long dBStatusId, int totalRecords) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = null;
 		MapSqlParameterSource source = null;
 
 		sql = new StringBuilder();
-		sql.append(" update PRESENTMENTHEADER Set STATUS = :STATUS Where ID IN (:ID) ");
+		sql.append(" UPDATE PRESENTMENTHEADER Set STATUS = :STATUS, DBSTATUSID = :DBSTATUSID, TOTALRECORDS = :TOTALRECORDS  Where ID = :ID ");
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
 		source.addValue("STATUS", manualEcclude);
-		source.addValue("ID", Arrays.asList(ids));
+		source.addValue("DBSTATUSID", dBStatusId);
+		source.addValue("ID", presentmentId);
+		source.addValue("TOTALRECORDS", totalRecords);
 
 		try {
-			this.namedParameterJdbcTemplate.update(sql.toString(), source);
+			this.jdbcTemplate.update(sql.toString(), source);
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
+	private void clearTables() {
+		logger.debug(Literal.ENTERING);
+
+		destinationJdbcTemplate.update("TRUNCATE TABLE PDC_CONSL_EMI_DTL_TEMP", new MapSqlParameterSource());
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void copyDataFromTempToMainTables() {
+		logger.debug(Literal.ENTERING);
+
+		destinationJdbcTemplate.update("INSERT INTO PDC_CONSL_EMI_DTL SELECT * FROM PDC_CONSL_EMI_DTL_TEMP", new MapSqlParameterSource());
+
+		logger.debug(Literal.LEAVING);
+	}
+	
+	
+	public void setPresentmentId(long presentmentId) {
+		this.presentmentId = presentmentId;
+	}
+
 }

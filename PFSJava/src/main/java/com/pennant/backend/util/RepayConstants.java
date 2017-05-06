@@ -135,6 +135,7 @@ public class RepayConstants {
 	public static final String PEXC_IMPORT = "I";
 	public static final String PEXC_SUCCESS = "S";
 	public static final String PEXC_FAILURE = "F";
+	public static final String PEXC_ERROR = "E";
 	
 	// Receipt Payment Statuses
 	public static final String	PAYSTATUS_APPROVED		= "A";

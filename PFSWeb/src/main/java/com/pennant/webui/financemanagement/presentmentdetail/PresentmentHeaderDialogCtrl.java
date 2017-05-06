@@ -56,6 +56,8 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -98,6 +100,15 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	protected Listbox listBox_ManualExclude;
 	protected Listbox listBox_AutoExclude;
 	protected ExtendedCombobox partnerBank;
+	
+	protected Label label_PresentmentReference;
+	protected Label label_PresentmentStatus;
+	
+	// db Status fields
+	protected Grid dBStatusGrid;
+	protected Label label_TotalPresentments;
+	protected Label label_SuccessPresentments;
+	protected Label label_FailedPresentments;
 
 	protected Tab includeTab;
 	protected Tab manualExcludeTab;
@@ -301,6 +312,10 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			this.partnerBank.setDescription(presentmentHeader.getPartnerBankIdName());
 		}
 		
+		this.label_PresentmentReference.setValue(presentmentHeader.getReference());
+		this.label_PresentmentStatus.setValue(PennantStaticListUtil.getlabelDesc(String.valueOf(presentmentHeader.getStatus()),
+				PennantStaticListUtil.getPresentmentBatchStatusList()));
+		
 		Map<Long, PresentmentDetail> totExcludeMap = new HashMap<Long, PresentmentDetail>();
 		this.includeList = this.presentmentHeaderService.getPresentmentDetailsList(aPresentmentHeader.getId(), true, "_AView");
 		List<PresentmentDetail> excludeList = this.presentmentHeaderService.getPresentmentDetailsList(aPresentmentHeader.getId(), false, "_AView");
@@ -318,9 +333,21 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 				}
 			}
 		}
-		doFillList(this.includeList, listBox_Include);
-		doFillList(new ArrayList<PresentmentDetail>(totExcludeMap.values()), listBox_AutoExclude);
-		doFillList(new ArrayList<PresentmentDetail>(this.excludeMap.values()), listBox_ManualExclude);
+		doFillList(this.includeList, listBox_Include, false);
+		doFillList(new ArrayList<PresentmentDetail>(totExcludeMap.values()), listBox_AutoExclude, true);
+		doFillList(new ArrayList<PresentmentDetail>(this.excludeMap.values()), listBox_ManualExclude, true);
+		
+		if ("E".equals(moduleType)) {
+			if (RepayConstants.PEXC_SEND_PRESENTMENT == aPresentmentHeader.getStatus()) {
+				this.dBStatusGrid.setVisible(true);
+				this.label_TotalPresentments.setValue(String.valueOf(aPresentmentHeader.getTotalRecords()));
+				this.label_SuccessPresentments.setValue(String.valueOf(aPresentmentHeader.getSuccessRecords()));
+				this.label_FailedPresentments.setValue(String.valueOf(aPresentmentHeader.getFailedRecords()));
+
+			} else {
+				this.dBStatusGrid.setVisible(false);
+			}
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -342,11 +369,9 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			}
 		}
 
-		doFillList(new ArrayList<PresentmentDetail>(includeMap.values()), listBox_Include);
-		doFillList(new ArrayList<PresentmentDetail>(excludeMap.values()), listBox_ManualExclude);
+		doFillList(new ArrayList<PresentmentDetail>(includeMap.values()), listBox_Include, false);
+		doFillList(new ArrayList<PresentmentDetail>(excludeMap.values()), listBox_ManualExclude, true);
 
-		this.autoExcludeTab.setSelected(true);
-		this.manualExcludeTab.setSelected(true);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -367,10 +392,8 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			}
 		}
 
-		doFillList(new ArrayList<PresentmentDetail>(includeMap.values()), listBox_Include);
-		doFillList(new ArrayList<PresentmentDetail>(excludeMap.values()), listBox_ManualExclude);
-
-		this.includeTab.setSelected(true);
+		doFillList(new ArrayList<PresentmentDetail>(includeMap.values()), listBox_Include, false);
+		doFillList(new ArrayList<PresentmentDetail>(excludeMap.values()), listBox_ManualExclude, true);
 
 		logger.debug("Leaving" + event.toString());
 	}
@@ -450,6 +473,7 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		if ("N".equalsIgnoreCase(moduleType)) {
 			this.userAction.appendItem("Save", "Saved");
 			this.userAction.appendItem("Submit", "Submit");
+			this.userAction.appendItem("Cancel", "Cancel");
 			this.userAction.setSelectedIndex(0);
 		} else if ("A".equalsIgnoreCase(moduleType)) {
 			this.userAction.appendItem("Approve", "Approved");
@@ -494,26 +518,30 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 
 		List<Long> excludeList = new ArrayList<Long>(this.excludeMap.keySet());
 		List<Long> afterIncludeList = new ArrayList<Long>(this.includeMap.keySet());
-
-		if (this.includeList != null && this.includeList.isEmpty()) {
-			if (this.includeList.size() <= 0) {
-				MessageUtil.showError(" No records are available in include list.");
-				return;
-			}
-		}
-
-		if (afterIncludeList != null && afterIncludeList.isEmpty()) {
-			if (afterIncludeList.size() <= 0) {
-				MessageUtil.showError(" No records are available in include list. All records are moved to manual exlude.");
-				return;
-			}
-		}
 		
-		doWriteComponentsToBean(aPresentmentHeader);
+		long partnerBankId = 0;
+		String userAction = this.userAction.getSelectedItem().getLabel();
+
+		if (!"Cancel".equals(userAction)) {
+			if (this.includeList != null && this.includeList.isEmpty()) {
+				if (this.includeList.size() <= 0) {
+					MessageUtil.showError(" No records are available in include list.");
+					return;
+				}
+			}
+
+			if (afterIncludeList != null && afterIncludeList.isEmpty()) {
+				if (afterIncludeList.size() <= 0) {
+					MessageUtil.showError(" No records are available in include list. All records are moved to manual exlude.");
+					return;
+				}
+			}
+			doWriteComponentsToBean(aPresentmentHeader);
+			partnerBankId = Long.valueOf(this.partnerBank.getValue());
+		}
 		
 		try {
-			String userAction = this.userAction.getSelectedItem().getLabel();
-			this.presentmentHeaderService.updatePresentmentDetails(excludeList, afterIncludeList, userAction, aPresentmentHeader.getId(), Long.valueOf(this.partnerBank.getValue()));
+			this.presentmentHeaderService.updatePresentmentDetails(excludeList, afterIncludeList, userAction, aPresentmentHeader.getId(), partnerBankId);
 		} catch (Exception e) {
 			MessageUtil.showError(e.getMessage());
 		}
@@ -531,7 +559,7 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		this.presentmentHeaderService = presentmentHeaderService;
 	}
 
-	public void doFillList(List<PresentmentDetail> presentmentDetailList, Listbox listbox) {
+	public void doFillList(List<PresentmentDetail> presentmentDetailList, Listbox listbox, boolean isExclude) {
 		logger.debug("Entering");
 
 		if (presentmentDetailList != null && !presentmentDetailList.isEmpty()) {
@@ -560,11 +588,12 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 				lc = new Listcell(PennantStaticListUtil.getlabelDesc(presentmentDetail.getMandateType(),
 						PennantStaticListUtil.getMandateTypeList()));
 				lc.setParent(item);
-
-				lc = new Listcell(PennantStaticListUtil.getlabelDesc(
-						String.valueOf(presentmentDetail.getExcludeReason()),
-						PennantStaticListUtil.getPresentmentExclusionList()));
-				lc.setParent(item);
+				if (isExclude) {
+					lc = new Listcell(PennantStaticListUtil.getlabelDesc(
+							String.valueOf(presentmentDetail.getExcludeReason()),
+							PennantStaticListUtil.getPresentmentExclusionList()));
+					lc.setParent(item);
+				}
 
 				item.setAttribute("data", presentmentDetail);
 

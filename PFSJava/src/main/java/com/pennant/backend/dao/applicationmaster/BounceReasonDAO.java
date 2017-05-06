@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
@@ -47,8 +47,7 @@ import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennanttech.pff.core.TableType;
 
 public interface BounceReasonDAO extends BasicCrudDao<BounceReason> {
-	
-	
+
 	/**
 	 * Fetch the Record Academic Details details by key field
 	 * 
@@ -58,7 +57,8 @@ public interface BounceReasonDAO extends BasicCrudDao<BounceReason> {
 	 *            The type of the table.
 	 * @return BounceReason
 	 */
-	BounceReason getBounceReason(long bounceID,String type);
+	BounceReason getBounceReason(long bounceID, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -70,6 +70,8 @@ public interface BounceReasonDAO extends BasicCrudDao<BounceReason> {
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(long bounceID, String bounceCode, TableType tableType);	
-	
+	boolean isDuplicateKey(long bounceID, String bounceCode, TableType tableType);
+
+	BounceReason getBounceReasonByReturnCode(String returnCode, String type);
+
 }

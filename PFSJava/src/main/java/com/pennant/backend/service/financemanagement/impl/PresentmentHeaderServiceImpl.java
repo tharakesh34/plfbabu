@@ -69,12 +69,13 @@ import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.financemanagement.PresentmentHeaderService;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
-import com.pennanttech.dbengine.DataEngineDBProcess;
+import com.pennanttech.dbengine.process.PresentmentRequest;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -89,6 +90,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 	private PresentmentHeaderDAO presentmentHeaderDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private DataSource dataSource;
+	private ReceiptCancellationService receiptCancellationService;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -159,6 +161,10 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 
 	public DataSource getDataSource() {
 		return dataSource;
+	}
+
+	public void setReceiptCancellationService(ReceiptCancellationService receiptCancellationService) {
+		this.receiptCancellationService = receiptCancellationService;
 	}
 
 	/**
@@ -443,6 +449,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 				pDetail.setAdvanceAmt(schAmtDue);
 				pDetail.setAdviseAmt(BigDecimal.ZERO);
 				pDetail.setExcessID(0);
+				pDetail.setReceiptID(0);
 
 				// Mandate Details
 				pDetail.setMandateId(rs.getLong("MANDATEID"));
@@ -483,11 +490,17 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 	private long savePresentmentHeaderDetails(PresentmentHeader header) {
 
 		long id = presentmentHeaderDAO.getSeqNumber("SeqPresentmentHeader");
-		String reference = StringUtils.leftPad(String.valueOf(id), 10, "0");
+		String reference = StringUtils.leftPad(String.valueOf(id), 15, "0");
 		header.setId(id);
 		header.setStatus(RepayConstants.PEXC_EXTRACT);
 		header.setPresentmentDate(DateUtility.getSysDate());
-		header.setReference("PRE".concat(reference));
+		header.setReference(header.getMandateType().concat(reference));
+		header.setdBStatusId(0);
+		header.setImportStatusId(0);
+		header.setTotalRecords(0);
+		header.setProcessedRecords(0);
+		header.setSuccessRecords(0);
+		header.setFailedRecords(0);
 		presentmentHeaderDAO.savePresentmentHeader(header);
 		return id;
 
@@ -544,6 +557,8 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 
 		if (emiInAdvanceAmt.compareTo(presentmentDetail.getSchAmtDue()) >= 0) {
 			presentmentDetail.setExcludeReason(RepayConstants.PEXC_EMIINADVANCE);
+			presentmentDetail.setPresentmentAmt(BigDecimal.ZERO);
+			presentmentDetail.setAdvanceAmt(presentmentDetail.getSchAmtDue());
 		} else {
 			presentmentDetail.setPresentmentAmt(presentmentDetail.getSchAmtDue().subtract(emiInAdvanceAmt));
 			presentmentDetail.setAdvanceAmt(emiInAdvanceAmt);
@@ -553,16 +568,18 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 	}
 
 
-	public void processDetails(Long presentmentList) throws Exception {
+	public void processDetails(long presentmentId) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		DataEngineDBProcess proce = new DataEngineDBProcess(dataSource, 1000, App.DATABASE.name());
 		try {
-			proce.processData("PRESENTMENT_REQUEST", presentmentList.toString());
+			PresentmentRequest presentmentRequest = new PresentmentRequest(dataSource, App.DATABASE.name());
+			presentmentRequest.setPresentmentId(presentmentId);
+			presentmentRequest.process(1000, "PRESENTMENT_REQUEST");
 		} catch (Exception e) {
-			logger.error("Exception :", e);
+			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -593,7 +610,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		} else if ("Submit".equals(userAction)) {
 			if (includeList != null && !includeList.isEmpty()) {
 				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, includeList, 0);
-			} 
+			}
 			if (excludeList != null && !excludeList.isEmpty()) {
 				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, excludeList, RepayConstants.PEXC_MANUAL_EXCLUDE);
 			}
@@ -602,7 +619,25 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 			processDetails(presentmentId);
 		} else if ("Resubmit".equals(userAction)) {
 			this.presentmentHeaderDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_BATCH_CREATED, partnerBankId);
+		} else if ("Cancel".equals(userAction)) {
+			this.presentmentHeaderDAO.deletePresentmentDetails(presentmentId);
+			this.presentmentHeaderDAO.deletePresentmentHeader(presentmentId);
 		}
 	}
 
+
+	@Override
+	public String presentmentCancellation(String presentmentRef, String returnCode) {
+		logger.debug(Literal.ENTERING);
+		String	errorMsg = null;
+		try {
+			PresentmentDetail presentmentDetail = this.presentmentHeaderDAO.getPresentmentDetail(presentmentRef);
+			errorMsg = this.receiptCancellationService.presentmentCancellation(presentmentDetail.getReceiptID(), returnCode);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return errorMsg;
+	}
+	
 }

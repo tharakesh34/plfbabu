@@ -44,6 +44,7 @@ package com.pennant.backend.model.financemanagement;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -84,7 +85,26 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private String mandateStatus;
 	private Date mandateExpiryDate;
 	private String finCcy;
+	private String ecsReturn;
+	private long receiptID;
 
+	
+
+	public HashMap<String, Object> getDeclaredFieldValues() {
+		
+		HashMap<String, Object> presentmentMap = new HashMap<String, Object>();
+		
+		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
+			try {
+				// "pr_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
+				presentmentMap.put("pr_" + this.getClass().getDeclaredFields()[i].getName(), this.getClass().getDeclaredFields()[i].get(this));
+			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+				// Nothing TO DO
+			}
+		}
+		return presentmentMap;
+	}
+	
 	public String getMandateStatus() {
 		return mandateStatus;
 	}
@@ -349,6 +369,22 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setFinCcy(String finCcy) {
 		this.finCcy = finCcy;
+	}
+
+	public String getEcsReturn() {
+		return ecsReturn;
+	}
+
+	public void setEcsReturn(String ecsReturn) {
+		this.ecsReturn = ecsReturn;
+	}
+
+	public long getReceiptID() {
+		return receiptID;
+	}
+
+	public void setReceiptID(long receiptID) {
+		this.receiptID = receiptID;
 	}
 
 }

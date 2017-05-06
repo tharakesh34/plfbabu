@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.financemanagement.impl;
 
 import java.sql.Connection;
@@ -79,38 +79,38 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>PresentmentHeader</code> with set of CRUD operations.
  */
 public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHeader> implements PresentmentHeaderDAO {
-	private static Logger				logger	= Logger.getLogger(PresentmentHeaderDAOImpl.class);
+	private static Logger logger = Logger.getLogger(PresentmentHeaderDAOImpl.class);
 
-	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
+	private NamedParameterJdbcTemplate jdbcTemplate;
 	private DataSource dataSource;
-	
+
 	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 		this.dataSource = dataSource;
 	}
-
 
 	public PresentmentHeaderDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public PresentmentHeader getPresentmentHeader(long id,String type) {
+	public PresentmentHeader getPresentmentHeader(long id, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" id, reference, presentmentDate, partnerBankId, fromDate, toDate, ");
-		sql.append(" status, mandateType, loanType, finBranch, schdate, ");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT  id, reference, presentmentDate, partnerBankId, fromDate, toDate, ");
+		sql.append(" status, mandateType, loanType, finBranch, schdate, dBStatusId, ");
+		sql.append(" importStatusId, totalRecords, processedRecords, successRecords, failedRecords, ");
+		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.containsIgnoreCase(type, "View")) {
 			sql.append(" ,PartnerBankIdName");
 		}
 		sql.append(" From PresentmentHeader");
 		sql.append(type);
-		
+
 		sql.append(" Where id = :id");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -118,10 +118,10 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		presentmentHeader.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(presentmentHeader);
-		RowMapper<PresentmentHeader> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PresentmentHeader.class);
+		RowMapper<PresentmentHeader> rowMapper = ParameterizedBeanPropertyRowMapper .newInstance(PresentmentHeader.class);
 
 		try {
-			presentmentHeader = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			presentmentHeader = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			presentmentHeader = null;
@@ -129,10 +129,10 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 
 		logger.debug(Literal.LEAVING);
 		return presentmentHeader;
-	}		
-	
+	}
+
 	@Override
-	public boolean isDuplicateKey(long id,String reference, TableType tableType) {
+	public boolean isDuplicateKey(long id, String reference, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
@@ -156,8 +156,8 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("id", id);
 		paramSource.addValue("reference", reference);
-		
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -167,42 +167,42 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
-	public String save(PresentmentHeader presentmentHeader,TableType tableType) {
+	public String save(PresentmentHeader presentmentHeader, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into PresentmentHeader");
+		StringBuilder sql = new StringBuilder(" Insert into PresentmentHeader");
 		sql.append(tableType.getSuffix());
 		sql.append("(id, reference, presentmentDate, partnerBankId, fromDate, toDate, ");
 		sql.append(" status, mandateType, loanType, finBranch, schdate, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :id, :reference, :presentmentDate, :partnerBankId, :fromDate, :toDate, ");
 		sql.append(" :status, :mandateType, :loanType, :finBranch, :schdate, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(presentmentHeader);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(presentmentHeader.getId());
-	}	
+	}
 
 	@Override
-	public void update(PresentmentHeader presentmentHeader,TableType tableType) {
+	public void update(PresentmentHeader presentmentHeader, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update PresentmentHeader" );
+		StringBuilder sql = new StringBuilder("update PresentmentHeader");
 		sql.append(tableType.getSuffix());
 		sql.append("  set reference = :reference, presentmentDate = :presentmentDate, partnerBankId = :partnerBankId, ");
 		sql.append(" fromDate = :fromDate, toDate = :toDate, status = :status, ");
@@ -213,18 +213,18 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where id = :id ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(presentmentHeader);
-		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -244,7 +244,7 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		int recordCount = 0;
 
 		try {
-			recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -257,7 +257,6 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		logger.debug(Literal.LEAVING);
 	}
 
-	
 	@Override
 	public long getSeqNumber(String tableName) {
 		return getNextidviewDAO().getNextId(tableName);
@@ -275,24 +274,24 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 			String presentmentRef = StringUtils.leftPad(String.valueOf(detail.getId()), 29 - reference.length(), "0");
 			detail.setPresentmentRef(reference.concat(presentmentRef));
 		}
-	
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Insert into PresentmentDetails");
 		sql.append(tableType.getSuffix());
 		sql.append(" (Id, PresentmentId, PresentmentRef, FinReference, SchDate, MandateId, SchAmtDue, schPriDue, schPftDue, schFeeDue, schInsDue,");
-		sql.append(" schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, ExcludeReason, bounceID, emiNo, tDSAmount, status,");
+		sql.append(" schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, ExcludeReason, bounceID, emiNo, tDSAmount, status, receiptID,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :Id, :PresentmentId, :PresentmentRef, :FinReference, :SchDate, :MandateId, :SchAmtDue, :schPriDue, :schPftDue, :schFeeDue, :schInsDue,");
-		sql.append(" :schPenaltyDue, :advanceAmt, :excessID, :adviseAmt, :presentmentAmt, :ExcludeReason, :bounceID, :emiNo, :tDSAmount, :status,");
+		sql.append(" :schPenaltyDue, :advanceAmt, :excessID, :adviseAmt, :presentmentAmt, :ExcludeReason, :bounceID, :emiNo, :tDSAmount, :status, :receiptID,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
 		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(detail);
 		try {
-			this.namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			this.jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -351,7 +350,7 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 			}
 
 			sql.append(" AND  Not Exists( Select 1 from PresentmentDetails T6 where T1.FinReference = T6.FinReference ");
-			sql.append(" AND T6.ExcludeReason = '0')  ORDER BY T1.DEFSCHDDATE ");
+			sql.append(" AND T6.ExcludeReason = '0' AND T6.ExcludeReason <> '6')  ORDER BY T1.DEFSCHDDATE ");
 
 			Connection conn = DataSourceUtils.doGetConnection(this.dataSource);
 			stmt = conn.prepareStatement(sql.toString());
@@ -407,18 +406,18 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder(" Insert into PresentmentHeader");
-		sql.append(" (Id, Reference, PresentmentDate, PartnerBankId, FromDate, ToDate, ");
-		sql.append("  Status, MandateType, FinBranch, Schdate, LoanType,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" (Id, Reference, PresentmentDate, PartnerBankId, FromDate, ToDate,");
+		sql.append("  Status, MandateType, FinBranch, Schdate, LoanType, ImportStatusId, TotalRecords, ProcessedRecords, SuccessRecords, FailedRecords,");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, dBStatusId)");
 		sql.append(" values(");
 		sql.append(" :Id, :Reference, :PresentmentDate, :PartnerBankId, :FromDate, :ToDate, ");
-		sql.append(" :Status, :MandateType, :FinBranch, :Schdate, :LoanType,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" :Status, :MandateType, :FinBranch, :Schdate, :LoanType, :ImportStatusId, :TotalRecords, :ProcessedRecords, :SuccessRecords, :FailedRecords,");
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :dBStatusId)");
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(presentmentHeader);
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -442,7 +441,7 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		source.addValue("DetaildList", detaildList);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), source);
+			jdbcTemplate.update(sql.toString(), source);
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;
@@ -467,7 +466,7 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		source.addValue("EXTRACTID", presentmentId);
 
 		try {
-			namedParameterJdbcTemplate.update(sql.toString(), source);
+			jdbcTemplate.update(sql.toString(), source);
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;
@@ -505,8 +504,9 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		source.addValue("PresentmentId", presentmentId);
 		source.addValue("ExcludeReason", 0);
 		try {
-			RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PresentmentDetail.class);
-			return this.namedParameterJdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(PresentmentDetail.class);
+			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;
@@ -534,7 +534,7 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		source.addValue("ID", list);
 
 		try {
-			this.namedParameterJdbcTemplate.update(sql.toString(), source);
+			this.jdbcTemplate.update(sql.toString(), source);
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;
@@ -543,7 +543,7 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 	}
 
 	@Override
-	public void updatePresentmentHeader(long presentmentId, int manualExclude,long partnerBankId) {
+	public void updatePresentmentHeader(long presentmentId, int manualExclude, long partnerBankId) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = null;
@@ -559,14 +559,13 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		source.addValue("ID", presentmentId);
 
 		try {
-			this.namedParameterJdbcTemplate.update(sql.toString(), source);
+			this.jdbcTemplate.update(sql.toString(), source);
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;
 		}
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	@Override
 	public void updateFinScheduleDetails(long id, String finReference, Date schDate, int schSeq) {
@@ -586,7 +585,7 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		source.addValue("SchDate", schDate);
 		source.addValue("SchSeq", schSeq);
 		try {
-			this.namedParameterJdbcTemplate.update(sql.toString(), source);
+			this.jdbcTemplate.update(sql.toString(), source);
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;
@@ -596,6 +595,128 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
-}	
+
+	@Override
+	public void deletePresentmentDetails(long presentmentId) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+
+		// Prepare the SQL.
+		sql = new StringBuilder();
+		sql.append(" delete from PRESENTMENTDETAILS");
+		sql.append(" where PresentmentId = :PresentmentId");
+
+		source = new MapSqlParameterSource();
+		source.addValue("PresentmentId", presentmentId);
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		int recordCount = 0;
+
+		try {
+			recordCount = jdbcTemplate.update(sql.toString(), source);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		} finally {
+			source = null;
+			sql = null;
+		}
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void deletePresentmentHeader(long id) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+
+		// Prepare the SQL.
+		sql = new StringBuilder();
+		sql.append(" Delete from PRESENTMENTHEADER");
+		sql.append(" where ID = :ID");
+
+		source = new MapSqlParameterSource();
+		source.addValue("ID", id);
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		int recordCount = 0;
+
+		try {
+			recordCount = jdbcTemplate.update(sql.toString(), source);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		} finally {
+			source = null;
+			sql = null;
+		}
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public PresentmentDetail getPresentmentDetail(String presentmentRef) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select id, presentmentId, finReference, schDate, mandateId, schAmtDue, schPriDue, schPftDue, schFeeDue, schInsDue, ");
+		sql.append(" schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, Emino, status, presentmentRef, ecsReturn, receiptID,");
+		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		sql.append(" From PRESENTMENTDETAILS WHERE PresentmentRef = :PresentmentRef");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PresentmentRef", presentmentRef);
+		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper .newInstance(PresentmentDetail.class);
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
+	public void updateReceptId(long id, long receiptID) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = null;
+		MapSqlParameterSource source = null;
+
+		sql = new StringBuilder();
+		sql.append(" Update PRESENTMENTDETAILS set RECEIPTID = :RECEIPTID Where ID = :ID ");
+		logger.trace(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("id", id);
+		source.addValue("RECEIPTID", receiptID);
+		try {
+			this.jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error("Exception :", e);
+			throw e;
+		} finally {
+			source = null;
+			sql = null;
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+}

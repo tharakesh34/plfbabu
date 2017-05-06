@@ -240,6 +240,41 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 
 		logger.debug(Literal.LEAVING);
 	}
+	
+	@Override
+	public BounceReason getBounceReasonByReturnCode(String returnCode, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = null;
+		MapSqlParameterSource source = null;
+
+		sql = new StringBuilder();
+		sql.append(" SELECT bounceID, bounceCode, reasonType, category, reason, action, ");
+		sql.append(" ruleID, returnCode, active, ");
+		if (type.contains("View")) {
+			sql.append(" ruleCode, ruleCodeDesc,");
+		}
+		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
+		sql.append(" NextTaskId, RecordType, WorkflowId From BounceReasons");
+		sql.append(type);
+		sql.append(" Where ReturnCode = :ReturnCode");
+		logger.trace(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("ReturnCode", returnCode);
+
+		RowMapper<BounceReason> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BounceReason.class);
+		try {
+			return namedParameterJdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		} finally {
+			source = null;
+			sql = null;
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}	
 
 	/**
 	 * Sets a new <code>JDBC Template</code> for the given data source.
