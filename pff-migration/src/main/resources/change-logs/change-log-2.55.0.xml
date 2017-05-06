@@ -503,7 +503,13 @@
 			<column name="FAILEDRECORDS" type="int"/>
 		</addColumn>
 	</changeSet>
-	
+	<changeSet id="30.1" author="Prasad">
+		<sql>
+		Delete from BounceReasons where returncode in (
+		Select returncode from BounceReasons
+		group by returncode having count(*)>1)
+		</sql>
+	</changeSet>
 	<changeSet id="30" author="Durgaprasad g">
 		<createIndex indexName="IDX_BR_RC" tableName="BounceReasons"
 			unique="true">
