@@ -444,6 +444,12 @@ FROM    	Mandates T1 INNER JOIN
 			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
 			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
 			RMTProvincevsCity T5 ON T3.city=T5.PCCity
-			</createView>
+		</createView>
+	</changeSet>
+			<changeSet id="31" author="Srikanth">
+			<sql>
+			Update MANDATES set AcCType ='11' where AcCType not in ('10','11');
+			Update ERRORDETAILS set ErrorMessage='Multi disbursement is not allowed for this loan:{0} with loanType:{1}.' where ErrorCode='90276';
+			</sql>
 			</changeSet>
 </databaseChangeLog>
