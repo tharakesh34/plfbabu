@@ -503,4 +503,20 @@
 			<column name="FAILEDRECORDS" type="int"/>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="30" author="Durgaprasad g">
+		<createIndex indexName="IDX_BR_RC" tableName="BounceReasons"
+			unique="true">
+			<column name="ReturnCode" type="VARCHAR2(8)" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="31" author="Durgaprasad g">
+		<createIndex indexName="IDX_PD_PR" tableName="PRESENTMENTDETAILS"
+			unique="true">
+			<column name="PRESENTMENTREF" type="VARCHAR2(30) " />
+		</createIndex>
+	</changeSet>
+	
+	
 </databaseChangeLog>
