@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -31,6 +32,7 @@ public class FinEODEvent extends AbstractEntity {
 	private List<FinODDetails>			finODDetails			= new ArrayList<FinODDetails>(1);
 	private List<OverdueChargeRecovery>	odcRecoveries			= new ArrayList<OverdueChargeRecovery>(1);
 	private FinODPenaltyRate			penaltyrate;
+	private List<FinanceDisbursement>	financeDisbursements	= new ArrayList<FinanceDisbursement>(1);
 	private Provision					provision				= new Provision();
 	private boolean						rateReview				= false;
 	private boolean						odFiance				= false;
@@ -110,7 +112,7 @@ public class FinEODEvent extends AbstractEntity {
 	public void setOdcRecoveries(List<OverdueChargeRecovery> odcRecoveries) {
 		this.odcRecoveries = odcRecoveries;
 	}
-	
+
 	public Provision getProvision() {
 		return provision;
 	}
@@ -237,6 +239,14 @@ public class FinEODEvent extends AbstractEntity {
 
 	public void setPenaltyrate(FinODPenaltyRate penaltyrate) {
 		this.penaltyrate = penaltyrate;
+	}
+
+	public List<FinanceDisbursement> getFinanceDisbursements() {
+		return financeDisbursements;
+	}
+
+	public void setFinanceDisbursements(List<FinanceDisbursement> financeDisbursements) {
+		this.financeDisbursements = financeDisbursements;
 	}
 
 }

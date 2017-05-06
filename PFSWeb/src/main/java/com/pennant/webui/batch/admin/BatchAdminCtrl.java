@@ -393,17 +393,22 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	 *            (status)
 	 */
 	private void renderPanels(String stepName) {
-		PFSBatchProcessess processName;
+		PFSBatchProcessess processName = null;
 
 		try {
-			processName = PFSBatchProcessess.valueOf(stepName);
+			if (stepName.contains(PFSBatchProcessess.microEOD.name())) {
+				//TODO MICRO EOD Monitor
+			}else{
+				processName = PFSBatchProcessess.valueOf(stepName);
+			}
+			
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			return;
 		}
 
 		ExecutionStatus status = processMap.get(stepName);
-		if (status != null) {
+		if (status != null && processName!=null) {
 
 			switch (processName) {
 			case beforeEOD:

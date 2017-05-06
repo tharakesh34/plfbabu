@@ -100,8 +100,8 @@
 		<beans:property name="userService" ref="userService" />
 	</beans:bean>
 
-	<beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
-	<!-- <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.password.NoOpPasswordEncoder"/> -->
+	<!-- <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/> -->
+	<beans:bean id="passwordEncoder" class="org.springframework.security.crypto.password.NoOpPasswordEncoder"/>
 	
 	<beans:bean id="authenticationDetails" class="com.pennant.policy.model.AuthenticationDetails" >
 		<beans:property name="userService" ref="userService" />

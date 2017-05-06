@@ -68,6 +68,7 @@ import com.pennant.backend.dao.applicationmaster.DPDBucketDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinContributorDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
@@ -111,6 +112,7 @@ abstract public class ServiceHelper implements Serializable {
 	private RepayInstructionDAO			repayInstructionDAO;
 	private CustomerDAO					customerDAO;
 	private FinODDetailsDAO				finODDetailsDAO;
+	private FinanceDisbursementDAO		financeDisbursementDAO;
 
 	/**
 	 * @param dataSet
@@ -474,6 +476,14 @@ abstract public class ServiceHelper implements Serializable {
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
 		AccrualService.finODDetailsDAO = finODDetailsDAO;
+	}
+
+	public FinanceDisbursementDAO getFinanceDisbursementDAO() {
+		return financeDisbursementDAO;
+	}
+
+	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
+		this.financeDisbursementDAO = financeDisbursementDAO;
 	}
 
 }

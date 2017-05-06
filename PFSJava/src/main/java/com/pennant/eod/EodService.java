@@ -37,28 +37,28 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class EodService {
 
-	private static Logger				logger	= Logger.getLogger(EodService.class);
+	private static Logger			logger	= Logger.getLogger(EodService.class);
 
-	private DataSource					dataSource;
-	private CustomerDAO					customerDAO;
-	private CustomerDatesDAO			customerDatesDAO;
-	private CustomerQueuingDAO			customerQueuingDAO;
+	private DataSource				dataSource;
+	private CustomerDAO				customerDAO;
+	private CustomerDatesDAO		customerDatesDAO;
+	private CustomerQueuingDAO		customerQueuingDAO;
 
-	private LatePayMarkingService		latePayMarkingService;
-	private LatePayPenaltyService		latePayPenaltyService;
-	private LatePayInterestService		latePayInterestService;
-	private NPAService					npaService;
-	private DateRollOverService			dateRollOverService;
-	private LoadFinanceData				loadFinanceData;
-	private RateReviewService			rateReviewService;
-	private AccrualService				accrualService;
-	private AutoDisbursementService		autoDisbursementService;
-	private ReceiptPaymentService		receiptPaymentService;
+	private LatePayMarkingService	latePayMarkingService;
+	private LatePayPenaltyService	latePayPenaltyService;
+	private LatePayInterestService	latePayInterestService;
+	private NPAService				npaService;
+	private DateRollOverService		dateRollOverService;
+	private LoadFinanceData			loadFinanceData;
+	private RateReviewService		rateReviewService;
+	private AccrualService			accrualService;
+	private AutoDisbursementService	autoDisbursementService;
+	private ReceiptPaymentService	receiptPaymentService;
 
-	private InstallmentDueService		installmentDueService;
+	private InstallmentDueService	installmentDueService;
 
 	// Constants
-	private static final String			SQL		= "SELECT * FROM CustomerQueuing WHERE ThreadId=? AND Progress IS NULL ";
+	private static final String		SQL		= "SELECT * FROM CustomerQueuing WHERE ThreadId=? AND Progress IS NULL ";
 
 	public EodService() {
 		super();
@@ -141,14 +141,14 @@ public class EodService {
 		//Accrual
 		custEODEvent = accrualService.processAccrual(custEODEvent);
 
-		//Auto disbursements
-		//autoDisbursementService.processDisbursementPostings(connection, custId, date);
-
 		//installment 
-		//installmentDueService.processDueDatePostings(connection, custId, date);
+		installmentDueService.processDueDatePostings(connection,custEODEvent);
+		
+		//Auto disbursements
+		autoDisbursementService.processDisbursementPostings(custEODEvent);
 
 		//receipt postings
-		//receiptPaymentService.processrReceipts(connection, custId, date, custEODEvents);
+		receiptPaymentService.processrReceipts(connection, custId, date, custEODEvent);
 
 		//Date and holiday check
 		Date nextDate = DateUtility.addDays(date, 1);

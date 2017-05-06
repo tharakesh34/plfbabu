@@ -57,4 +57,5 @@ public interface FinanceDisbursementDAO {
 	void saveList(List<FinanceDisbursement> financeDisbursement, String type,boolean isWIF);
 	void updateLinkedTranId(String finReference, long linkedTranId, String type);
 	void updateBatchDisb(FinanceDisbursement disbursement, String type);
+	List<FinanceDisbursement> getFinanceDisbursementDetails(String finrefernce, String disbStatus);
 }

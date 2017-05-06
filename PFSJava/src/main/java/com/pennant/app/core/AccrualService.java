@@ -65,21 +65,18 @@ import com.pennant.backend.util.RepayConstants;
 
 public class AccrualService extends ServiceHelper {
 
+	private static final long			serialVersionUID	= 6161809223570900644L;
 	private static Logger				logger				= Logger.getLogger(AccrualService.class);
 
 	public static FinODDetailsDAO		finODDetailsDAO;
 	private static FinExcessAmountDAO	finExcessAmountDAO;
 	public static FinanceTypeDAO		financeTypeDAO;
 	private static FinanceSuspHeadDAO	suspHeadDAO;
-	private static final long			serialVersionUID	= 6161809223570900644L;
-
-	public static final String			accrual				= "SELECT F.FinReference FROM FinanceMain F"
-																	+ " WHERE F.FinIsActive = 1 AND F.FinStartDate <=? And F.CustID=? ";
 
 	public CustEODEvent processAccrual(CustEODEvent custEODEvent) throws Exception {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		Date valueDate = custEODEvent.getEodValueDate();
-		
+
 		for (FinEODEvent finEODEvent : finEODEvents) {
 			finEODEvent = calculateAccruals(finEODEvent, valueDate);
 		}
@@ -636,7 +633,6 @@ public class AccrualService extends ServiceHelper {
 	private static int getNoDays(Date date1, Date date2) {
 		return DateUtility.getDaysBetween(date1, date2);
 	}
-
 
 	public static void setSuspHeadDAO(FinanceSuspHeadDAO suspHeadDAO) {
 		AccrualService.suspHeadDAO = suspHeadDAO;

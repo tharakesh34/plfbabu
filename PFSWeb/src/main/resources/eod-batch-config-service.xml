@@ -24,6 +24,7 @@
 		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 	</bean>
 	<bean id="paymentRecoveryService" class="com.pennant.eod.PaymentRecoveryService">
 		<property name="paymentRecoveryHeaderDAO" ref="paymentRecoveryHeaderDAO" />

@@ -13,6 +13,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.util.EODProperties;
 import com.pennanttech.pff.core.TableType;
@@ -50,6 +51,7 @@ public class LoadFinanceData extends ServiceHelper {
 
 			finEODEvent.setDatesMap(datesMap);
 			finEODEvent.setFinanceScheduleDetails(finSchdDetails);
+			finEODEvent.setFinanceDisbursements(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, FinanceConstants.DISB_STATUS_CANCEL));
 
 			//FINPROFIT DETAILS
 			finEODEvent.setFinProfitDetail(getFinanceProfitDetailDAO().getFinProfitDetailsById(finReference));
@@ -67,6 +69,7 @@ public class LoadFinanceData extends ServiceHelper {
 
 			//update finance main
 			if (finEODEvent.isUpdFinMain()) {
+				finEODEvent.getFinanceMain().setVersion(finEODEvent.getFinanceMain().getVersion()+1);
 				getFinanceMainDAO().updateFinanceInEOD(finEODEvent.getFinanceMain());
 			}
 

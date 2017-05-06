@@ -68,7 +68,6 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.eod.util.EODProperties;
-import com.pennanttech.pff.core.TableType;
 
 public class RateReviewService extends ServiceHelper {
 
@@ -238,10 +237,6 @@ public class RateReviewService extends ServiceHelper {
 		List<ReturnDataSet> list = prepareAccounting(executingMap, finScheduleData.getFinanceType());
 		saveAccounting(list);
 
-		//FIXME: PV 28APR17 Returning without saving because it is decided to save all records once
-		//Code for one time saving is not yet ready
-		// Update New Finance Schedule Details Data
-		saveOrUpdate(finScheduleData, profitDetail);
 
 		//Saving Rate Review Details
 		FinanceRateReview rateReview = new FinanceRateReview();
@@ -281,32 +276,6 @@ public class RateReviewService extends ServiceHelper {
 		return finSchData;
 	}
 
-	/**
-	 * Method to save Finance Related sublist
-	 * 
-	 * @param schdueleData
-	 */
-	public void saveOrUpdate(FinScheduleData schdueleData, FinanceProfitDetail profitDetail) {
-		logger.debug("Entering ");
-		FinanceMain finMain = schdueleData.getFinanceMain();
-		// FinanceMain updation
-		finMain.setVersion(finMain.getVersion() + 1);
-		getFinanceMainDAO().update(finMain, TableType.MAIN_TAB, false);
-		// Finance Schedule Details
-		getFinanceScheduleDetailDAO().updateList(schdueleData.getFinanceScheduleDetails(), "");
-		// Finance Repay Instruction Details
-		repayInstructionDAO.deleteByFinReference(finMain.getFinReference(), "", false, 0);
-		//Add repay instructions
-		List<RepayInstruction> lisRepayIns = schdueleData.getRepayInstructions();
-		for (RepayInstruction repayInstruction : lisRepayIns) {
-			repayInstruction.setFinReference(finMain.getFinReference());
-		}
-		repayInstructionDAO.saveList(lisRepayIns, "", false);
-		// UPDATE Finance Profit Details
-		//getFinanceProfitDetailDAO().update(profitDetail, false);
-
-		logger.debug("Leaving ");
-	}
 
 	private FinEODEvent findRecalFromDate(FinEODEvent finEODEvent, int iNext) {
 

@@ -536,4 +536,25 @@ public class FinanceDisbursementDAOImpl extends BasisCodeDAO<FinanceDisbursement
 	}
 
 	
+	@Override
+	public List<FinanceDisbursement> getFinanceDisbursementDetails(String finrefernce,String disbStatus) {
+		logger.debug("Entering");
+		
+		FinanceDisbursement disbursement = new FinanceDisbursement();
+		disbursement.setFinReference(finrefernce);
+		disbursement.setDisbStatus(disbStatus);
+		
+		StringBuilder selectSql = new StringBuilder("Select FinReference, DisbDate, DisbSeq,FeeChargeAmt,InsuranceAmt, ");
+		selectSql.append("  DisbAmount, DisbReqDate ");
+		selectSql.append(" From FinDisbursementDetails");	
+		selectSql.append(" Where FinReference =:FinReference AND (DisbStatus IS NULL OR DisbStatus != :DisbStatus)");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(disbursement);
+		RowMapper<FinanceDisbursement> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceDisbursement.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+	}
+	
+	
 }

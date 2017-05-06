@@ -41,7 +41,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 	 * @param date
 	 * @throws Exception
 	 */
-	public void processrReceipts(Connection connection, long custId, Date valuedDate, List<FinEODEvent> custEODEvents)
+	public void processrReceipts(Connection connection, long custId, Date valuedDate, CustEODEvent custEODEvent)
 			throws Exception {
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
@@ -79,7 +79,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 
 				List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
 
-				FinEODEvent eodEvent = getFinEODEvent(custEODEvents, finref);
+				FinEODEvent eodEvent = getFinEODEvent(custEODEvent, finref);
 				FinanceMain financeMain = eodEvent.getFinanceMain();
 				FinanceProfitDetail profitDetail = eodEvent.getFinProfitDetail();
 
@@ -128,8 +128,8 @@ public class ReceiptPaymentService extends ServiceHelper {
 		}
 	}
 
-	private FinEODEvent getFinEODEvent(List<FinEODEvent> custEODEvents, String finref) {
-
+	private FinEODEvent getFinEODEvent(CustEODEvent custEODEvent, String finref) {
+		List<FinEODEvent> custEODEvents=custEODEvent.getFinEODEvents();
 		for (FinEODEvent finEODEvent : custEODEvents) {
 			if (finEODEvent.getFinanceMain().getFinReference().equals(finref)) {
 				return finEODEvent;

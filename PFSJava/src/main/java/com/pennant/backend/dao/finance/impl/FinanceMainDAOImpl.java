@@ -2803,7 +2803,11 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		updateSql.append(" ,NextRepayDate = :NextRepayDate, LastRepayPftDate = :LastRepayPftDate ");
 		updateSql.append(" ,NextRepayPftDate = :NextRepayPftDate, LastRepayRvwDate = :LastRepayRvwDate ");
 		updateSql.append(" ,NextRepayRvwDate = :NextRepayRvwDate, NextDepDate = :NextDepDate ");
-		//FIXME add rate review related fileds 
+		//profit related fields for rate review
+		updateSql.append(" ,TotalGracePft = :TotalGracePft, TotalGraceCpz = :TotalGraceCpz ");
+		updateSql.append(" ,TotalGrossGrcPft = :TotalGrossGrcPft, TotalProfit = :TotalProfit ");
+		updateSql.append(" ,TotalCpz = :TotalCpz, TotalGrossPft = :TotalGrossPft ");
+		updateSql.append(" ,TotalRepayAmt = :TotalRepayAmt, FinRepaymentAmount = :FinRepaymentAmount ");
 		updateSql.append(" Where FinReference =:FinReference");
 
 		logger.debug("updateSql: " + updateSql.toString());

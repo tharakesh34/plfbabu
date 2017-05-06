@@ -14,25 +14,20 @@ import org.apache.log4j.Logger;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.eod.util.EODProperties;
 
 public class InstallmentDueService extends ServiceHelper {
 	private static final long	serialVersionUID	= 1442146139821584760L;
 	private Logger				logger				= Logger.getLogger(InstallmentDueService.class);
-
-	private static final String	INSTALLMENTDUE		= "SELECT FRQ.FinReference, FRQ.SchDate, FPD.FinType, FPD.FinBranch, FRQ.PROFITSCHD,"
-															+ " FRQ.SCHDPFTPAID, FRQ.PRINCIPALSCHD, FRQ.SCHDPRIPAID,FPD.TDSchdPft, TDSchdPftPaid, TDSchdPri, TDSchdPriPaid"
-															+ " FROM FINSCHEDULEDETAILS "
-															+ " FRQ INNER JOIN FINPFTDETAILS FPD ON FPD.FINREFERENCE = FRQ.FINREFERENCE WHERE FPD.CustID = ? AND FRQ.SchDate = ?";
 
 	private static final String	INSTALLMENTDUE_FEE	= "SELECT FT.FEETYPECODE,FED.FINREFERENCE,FESD.SCHDATE,FESD.SCHAMOUNT,FESD.OSAMOUNT,FESD.PAIDAMOUNT,FESD.WAIVERAMOUNT,FESD.WRITEOFFAMOUNT"
 															+ " FROM FINFEESCHEDULEDETAIL FESD  inner join FINFEEDETAIL FED ON FESD.FEEID=FED.FEEID Inner join FEETYPES FT on FT.FEETYPEID= FED.FEETYPEID "
@@ -42,42 +37,34 @@ public class InstallmentDueService extends ServiceHelper {
 															+ " INNER JOIN FININSURANCES FIN ON INSD.INSID=FIN.INSID "
 															+ " WHERE FIN.REFERENCE = ? AND INSD.INSSCHDATE=?";
 
-	private static final String	INSTALLMENTDUE_ISM	= "SELECT FRQ.FinReference, FRQ.SchDate, FPD.FinType, FPD.FinBranch, FRQ.PROFITSCHD,"
-															+ " FRQ.SCHDPFTPAID, FRQ.PRINCIPALSCHD, FRQ.SCHDPRIPAID,FPD.TDSchdPft, TDSchdPftPaid, TDSchdPri, TDSchdPriPaid,FRQ.SUPLRENT,"
-															+ " FRQ.SUPLRENTPAID, FRQ.INCRCOST, FRQ.INCRCOSTPAID FROM FINSCHEDULEDETAILS "
-															+ "FRQ INNER JOIN FINPFTDETAILS FPD ON FPD.FINREFERENCE = FRQ.FINREFERENCE WHERE FPD.CustID = ? AND FRQ.SchDate = ?";
-
 	/**
 	 * @param custId
 	 * @param date
 	 * @throws Exception
 	 */
-	public void processDueDatePostings(Connection connection, long custId, Date valuedDate) throws Exception {
-		ResultSet resultSet = null;
-		PreparedStatement sqlStatement = null;
-		try {
-			connection = DataSourceUtils.doGetConnection(getDataSource());
-			if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
-				sqlStatement = connection.prepareStatement(INSTALLMENTDUE_ISM);
-			} else {
-				sqlStatement = connection.prepareStatement(INSTALLMENTDUE);
+	public void processDueDatePostings(Connection connection, CustEODEvent custEODEvent) throws Exception {
+
+		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
+		Date valueDate = custEODEvent.getEodValueDate();
+
+		for (FinEODEvent finEODEvent : finEODEvents) {
+
+			List<FinanceScheduleDetail> scheduledetails = finEODEvent.getFinanceScheduleDetails();
+			for (FinanceScheduleDetail finSchd : scheduledetails) {
+				if (finSchd.getSchDate().compareTo(valueDate) < 0) {
+					continue;
+				}
+
+				if (finSchd.getSchDate().compareTo(valueDate) > 0) {
+					break;
+				}
+
+				if (finSchd.getSchDate().compareTo(valueDate) == 0) {
+					postInstallmentDues(connection, finEODEvent, finSchd, valueDate);
+				}
+
 			}
-			sqlStatement.setLong(1, custId);
-			sqlStatement.setDate(2, DateUtility.getDBDate(valuedDate.toString()));
-			resultSet = sqlStatement.executeQuery();
-			while (resultSet.next()) {
-				postInstallmentDues(connection, resultSet, valuedDate);
-			}
-		} catch (Exception e) {
-			logger.error("Exception :", e);
-			throw e;
-		} finally {
-			if (resultSet != null) {
-				resultSet.close();
-			}
-			if (sqlStatement != null) {
-				sqlStatement.close();
-			}
+
 		}
 	}
 
@@ -85,9 +72,10 @@ public class InstallmentDueService extends ServiceHelper {
 	 * @param resultSet
 	 * @throws Exception
 	 */
-	public void postInstallmentDues(Connection connection, ResultSet resultSet, Date valueDate) throws Exception {
+	public void postInstallmentDues(Connection connection, FinEODEvent finEODEvent, FinanceScheduleDetail finSchd,
+			Date valueDate) throws Exception {
 		logger.debug(" Entering ");
-		String finType = resultSet.getString("FinType");
+		String finType = finEODEvent.getFinType().getFinType();
 		boolean isAccountingReq = false;
 		List<FinTypeAccounting> acountingSets = EODProperties.getFinanceType(finType).getFinTypeAccountingList();
 
@@ -104,35 +92,40 @@ public class InstallmentDueService extends ServiceHelper {
 			return;
 		}
 
-		String finRef = resultSet.getString("FinReference");
+		FinanceProfitDetail profiDetails = finEODEvent.getFinProfitDetail();
+
+		String finRef = finSchd.getFinReference();
 
 		//Amount Codes preparation using FinProfitDetails
 		AEEvent aeEvent = new AEEvent();
+		if (aeEvent.getAeAmountCodes()==null) {
+			aeEvent.setAeAmountCodes(new AEAmountCodes());
+		}
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		aeEvent.setFinReference(finRef);
 		aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_INSTDATE);
 		aeEvent.setValueDate(valueDate);
-		aeEvent.setSchdDate(valueDate);
+		aeEvent.setSchdDate(finSchd.getSchDate());
 		aeEvent.setPostDate(DateUtility.getAppDate());
-		aeEvent.setFinType(resultSet.getString("FinType"));
-		aeEvent.setBranch(resultSet.getString("FinBranch"));
+		aeEvent.setFinType(finType);
+		aeEvent.setBranch(profiDetails.getFinBranch());
 
 		//TODO: decide required or not
 		amountCodes.setdAccrue(BigDecimal.ZERO);
 
-		amountCodes.setInstpft(resultSet.getBigDecimal("PROFITSCHD"));
-		amountCodes.setInstpri(resultSet.getBigDecimal("PRINCIPALSCHD"));
+		amountCodes.setInstpft(finSchd.getProfitSchd());
+		amountCodes.setInstpri(finSchd.getPrincipalSchd());
 		amountCodes.setInsttot(amountCodes.getInstpft().add(amountCodes.getInstpri()));
 
-		amountCodes.setPftS(resultSet.getBigDecimal("TDSchdPft"));
-		amountCodes.setPftSP(resultSet.getBigDecimal("TDSchdPftPaid"));
+		amountCodes.setPftS(profiDetails.getTdSchdPft());
+		amountCodes.setPftSP(profiDetails.getTdSchdPftPaid());
 		amountCodes.setPftSB(amountCodes.getPftS().subtract(amountCodes.getPftSP()));
 		if (amountCodes.getPftSB().compareTo(BigDecimal.ZERO) < 0) {
 			amountCodes.setPftSB(BigDecimal.ZERO);
 		}
 
-		amountCodes.setPriS(resultSet.getBigDecimal("TDSchdPri"));
-		amountCodes.setPriSP(resultSet.getBigDecimal("TDSchdPriPaid"));
+		amountCodes.setPriS(profiDetails.getTdSchdPri());
+		amountCodes.setPriSP(profiDetails.getTdSchdPriPaid());
 		amountCodes.setPriSB(amountCodes.getPriS().subtract(amountCodes.getPriSP()));
 		if (amountCodes.getPriSB().compareTo(BigDecimal.ZERO) < 0) {
 			amountCodes.setPriSB(BigDecimal.ZERO);
