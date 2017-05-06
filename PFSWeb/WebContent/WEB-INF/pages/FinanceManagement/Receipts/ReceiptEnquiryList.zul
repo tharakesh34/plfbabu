@@ -8,8 +8,8 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window>
-		<window id="window_ReceiptRealizationEnqList"
-			apply="${receiptRealizationEnqListCtrl}" border="none" width="100%">
+		<window id="window_ReceiptEnquiryList"
+			apply="${receiptEnquiryListCtrl}" border="none" width="100%">
 			<div sclass="z-toolbar" style="padding:0px">
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
 					width="100%" widths="35%,30%,35%">
@@ -27,7 +27,7 @@
 						<button id="print" label="${c:l('label_Print')}"
 							visible="false"
 							autodisable="btnSearch,print,btnNew, btnRefresh, help"
-							tooltiptext="${c:l('button_ReceiptRealizationList_PrintList.tooltiptext')}"
+							tooltiptext="${c:l('button_ReceiptList_PrintList.tooltiptext')}"
 							sclass="z-toolbarbutton" />
 					</toolbar>
 
@@ -51,7 +51,7 @@
 					</toolbar>
 				</hbox>
 			</div>
-			<borderlayout id="borderLayout_ReceiptRealizationList">
+			<borderlayout id="borderLayout_ReceiptEnquiryList">
 				<north border="none" />
 				<center border="none">
 					<div>
@@ -68,86 +68,86 @@
 							<rows>
 								<row>
 									<label
-										id="label_ReceiptRealizationSearch_ReceiptRealizationReference"
-										value="${c:l('label_ReceiptRealizationSearch_ReceiptRealizationReference.value')}" />
+										id="label_ReceiptSearch_ReceiptReference"
+										value="${c:l('label_ReceiptSearch_ReceiptReference.value')}" />
 									<listbox
-										id="sortOperator_receiptRealizationReference" width="43px"
+										id="sortOperator_ReceiptReference" width="43px"
 										mold="select" rows="1" />
 									<uppercasebox id="receiptReference"
 										width="150px" maxlength="20" />
 									<label
-										id="label_ReceiptRealizationSearch_ReceiptRealizationCustomer"
-										value="${c:l('label_ReceiptRealizationSearch_ReceiptRealizationCustomer.value')}" />
+										id="label_ReceiptSearch_ReceiptCustomer"
+										value="${c:l('label_ReceiptSearch_ReceiptCustomer.value')}" />
 									<listbox
-										id="sortOperator_receiptRealizationCustomer" width="43px"
+										id="sortOperator_ReceiptCustomer" width="43px"
 										mold="select" rows="1" />
 									<hbox>
 										<uppercasebox id="customer"
 											width="150px" />
 										<button id="btnSearchCustCIF"
-											tooltiptext="${c:l('label_ReceiptRealizationSearch_btnSearchCustCIF.tooltiptext')}"
+											tooltiptext="${c:l('label_ReceiptSearch_btnSearchCustCIF.tooltiptext')}"
 											image="/images/icons/LOVSearch.png" />
 									</hbox>
 								</row>
 								<row>
 									<label
-										id="label_ReceiptRealizationSearch_ReceiptRealizationPurpose"
-										value="${c:l('label_ReceiptRealizationSearch_ReceiptRealizationPurpose.value')}" />
+										id="label_ReceiptSearch_ReceiptPurpose"
+										value="${c:l('label_ReceiptSearch_ReceiptPurpose.value')}" />
 									<listbox
-										id="sortOperator_receiptRealizationPurpose" width="43px"
+										id="sortOperator_ReceiptPurpose" width="43px"
 										mold="select" rows="1" />
 									<combobox id="purpose" width="180px"
 									maxlength="100" readonly="true" />
 									<label
-										id="label_ReceiptRealizationSearch_ReceiptRealizationReceiptMode"
-										value="${c:l('label_ReceiptRealizationSearch_ReceiptRealizationReceiptMode.value')}" />
+										id="label_ReceiptSearch_ReceiptReceiptMode"
+										value="${c:l('label_ReceiptSearch_ReceiptReceiptMode.value')}" />
 									<listbox
-										id="sortOperator_receiptRealizationReceiptMode" width="43px"
+										id="sortOperator_ReceiptReceiptMode" width="43px"
 										mold="select" rows="1" />
 									<combobox id="receiptMode" width="180px"
 									maxlength="100" readonly="true" />
 								</row>
 								<row>
 									<label
-										id="label_ReceiptRealizationSearch_ReceiptAllocationType"
-										value="${c:l('label_ReceiptRealizationSearch_ReceiptAllocationType.value')}" />
+										id="label_ReceiptSearch_ReceiptAllocationType"
+										value="${c:l('label_ReceiptSearch_ReceiptAllocationType.value')}" />
 									<listbox
-										id="sortOperator_receiptAllocationType" width="43px"
+										id="sortOperator_ReceiptAllocationType" width="43px"
 										mold="select" rows="1" />
 									<combobox id="allocationType" width="180px"
 									maxlength="100" readonly="true" />
 									<label
-										id="label_ReceiptRealizationSearch_ReceiptRealizationFinType"
-										value="${c:l('label_ReceiptRealizationSearch_ReceiptRealizationFinType.value')}" />
+										id="label_ReceiptSearch_ReceiptFinType"
+										value="${c:l('label_ReceiptSearch_ReceiptFinType.value')}" />
 									<listbox
-										id="sortOperator_receiptRealizationFinType" width="43px"
+										id="sortOperator_ReceiptFinType" width="43px"
 										mold="select" rows="1" />
 									<hbox>
 										<uppercasebox id="finType"
 											width="150px" />
 										<button id="btnSearchFinType"
-											tooltiptext="${c:l('label_ReceiptRealizationSearch_btnSearchFinType.tooltiptext')}"
+											tooltiptext="${c:l('label_ReceiptSearch_btnSearchFinType.tooltiptext')}"
 											image="/images/icons/LOVSearch.png" />
 									</hbox>
 								</row>
 								<row>
 									<label
-										id="label_ReceiptRealizationSearch_ReceiptRealizationFinBranch"
-										value="${c:l('label_ReceiptRealizationSearch_ReceiptRealizationFinBranch.value')}" />
+										id="label_ReceiptSearch_ReceiptFinBranch"
+										value="${c:l('label_ReceiptSearch_ReceiptFinBranch.value')}" />
 									<listbox
-										id="sortOperator_receiptRealizationFinBranch" width="43px"
+										id="sortOperator_ReceiptFinBranch" width="43px"
 										mold="select" rows="1" />
 									<hbox>
 										<uppercasebox id="finBranch"
 											width="150px" />
 										<button id="btnSearchBranch"
-											tooltiptext="${c:l('label_ReceiptRealizationSearch_btnSearchBranch.tooltiptext')}"
+											tooltiptext="${c:l('label_ReceiptSearch_btnSearchBranch.tooltiptext')}"
 											image="/images/icons/LOVSearch.png" />
 									</hbox>
 								</row>
-								<row>
+								<row visible="false">
 									<label
-										id="label_ReceiptRealizationSearch_RecordStatus"
+										id="label_ReceiptSearch_RecordStatus"
 										value="${c:l('label.RecordStatus')}" />
 									<listbox
 										id="sortOperator_RecordStatus" width="43px" mold="select"
@@ -155,7 +155,7 @@
 									<textbox id="recordStatus"
 										width="100px" maxlength="50" />
 									<label
-										id="label_ReceiptRealizationSearch_RecordType"
+										id="label_ReceiptSearch_RecordType"
 										value="${c:l('label.RecordType')}" />
 									<listbox
 										id="sortOperator_RecordType" width="43px" mold="select"
@@ -163,7 +163,7 @@
 									<listbox id="recordType"
 										width="100px" mold="select" />
 								</row>
-								<row id="workFlowFrom">
+								<row id="workFlowFrom" visible="false">
 									<label
 										value="${c:l('common.fetch.selectfrom')}" />
 									<cell colspan="5">
@@ -180,43 +180,43 @@
 								</row>
 							</rows>
 						</grid>
-						<listbox id="listBoxReceiptRealization"
+						<listbox id="listBoxReceipt"
 							emptyMessage="${c:l('listbox.emptyMessage')}"
 							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
 							height="100%" multiple="false" sizedByContent="true"
 							span="true">
 							<listhead sizable="true">
 								<listheader
-									id="listheader_ReceiptRealizationReference"
-									label="${c:l('listheader_ReceiptRealizationReference.label')}"
+									id="listheader_ReceiptReference"
+									label="${c:l('listheader_ReceiptReference.label')}"
 									sort="auto" hflex="min" />
 								<listheader
-									id="listheader_ReceiptRealizationPurpose"
-									label="${c:l('listheader_ReceiptRealizationPurpose.label')}"
+									id="listheader_ReceiptPurpose"
+									label="${c:l('listheader_ReceiptPurpose.label')}"
 									sort="auto" hflex="min" />
 								<listheader
-									id="listheader_ReceiptRealizationMode"
-									label="${c:l('listheader_ReceiptRealizationMode.label')}"
+									id="listheader_ReceiptMode"
+									label="${c:l('listheader_ReceiptMode.label')}"
 									sort="auto" hflex="min" />
 								<listheader
-									id="listheader_ReceiptRealizationAllocattionType"
-									label="${c:l('listheader_ReceiptRealizationAllocattionType.label')}"
+									id="listheader_ReceiptAllocattionType"
+									label="${c:l('listheader_ReceiptAllocattionType.label')}"
 									sort="auto" hflex="min" />
 								<listheader
-									id="listheader_ReceiptRealizationFinType"
-									label="${c:l('listheader_ReceiptRealizationFinType.label')}"
+									id="listheader_ReceiptFinType"
+									label="${c:l('listheader_ReceiptFinType.label')}"
 									sort="auto" hflex="min" />
 								<listheader
-									id="listheader_ReceiptRealizationFinBranch"
-									label="${c:l('listheader_ReceiptRealizationFinBranch.label')}"
+									id="listheader_ReceiptFinBranch"
+									label="${c:l('listheader_ReceiptFinBranch.label')}"
 									sort="auto" hflex="min" />
 								<listheader
-									id="listheader_ReceiptRealizationCusomer"
-									label="${c:l('listheader_ReceiptRealizationCusomer.label')}"
+									id="listheader_ReceiptCusomer"
+									label="${c:l('listheader_ReceiptCusomer.label')}"
 									sort="auto" hflex="min" />
 								<listheader
-									id="listheader_ReceiptRealizationCustName" visible="false"
-									label="${c:l('listheader_ReceiptRealizationCustName.label')}"
+									id="listheader_ReceiptCustName" visible="false"
+									label="${c:l('listheader_ReceiptCustName.label')}"
 									sort="auto" hflex="min" />
 								<listheader id="listheader_RecordStatus"
 									label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
@@ -227,7 +227,7 @@
 					</div>
 				</center>
 				<south border="none">
-					<paging id="pagingReceiptRealizationList" />
+					<paging id="pagingReceiptList" />
 				</south>
 			</borderlayout>
 		</window>

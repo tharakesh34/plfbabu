@@ -190,6 +190,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	protected Listheader									listheader_SuplRent;
 	protected Listheader									listheader_IncrCost;
 	
+	protected Listbox										listBoxReceipts;
 	protected Listbox										listBoxPayment;
 	protected Listbox										listBoxPosting;
 	protected Tab											receiptDetailsTab;
@@ -257,6 +258,12 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			}
 			
 			this.module = (String) arguments.get("module");
+			if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
+				super.pageRightName = "ReceiptBounceDialog";
+			}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
+				super.pageRightName = "ReceiptCancellationDialog";
+			}
+			
 			this.receiptCancellationListCtrl = (ReceiptCancellationListCtrl) arguments.get("receiptCancellationListCtrl");
 			doLoadWorkFlow(receiptHeader.isWorkflow(), receiptHeader.getWorkflowId(), receiptHeader.getNextTaskId());
 
@@ -515,61 +522,66 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		Cloner cloner = new Cloner();
 		FinReceiptHeader aReceiptHeader = cloner.deepClone(getReceiptHeader());
 		
-		boolean recReject = false;
-		if (this.userAction.getSelectedItem() != null
-				&& ("Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-						|| "Reject".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) || "Cancel"
-						.equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()))) {
-			recReject = true;
-		}
-		
-		// Bounce Details capturing
-		ManualAdvise bounce = aReceiptHeader.getManualAdvise();
-		if(bounce == null){
-			bounce = new ManualAdvise();
-		}
-
-		ArrayList<WrongValueException> wve = new ArrayList<>();
-		if(!recReject){
-			doSetValidation();
-		}
-		bounce.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
-		bounce.setFinReference(aReceiptHeader.getReference());
-		bounce.setFeeTypeID(0);
-		bounce.setSequence(0);
-		try {
-			bounce.setAdviseAmount(PennantApplicationUtil.unFormateAmount(this.bounceCharge.getActualValue(), CurrencyUtil.getFormat(aReceiptHeader.getFinCcy())));
-		} catch (WrongValueException e) {
-			wve.add(e);
-		}
-		
-		bounce.setPaidAmount(BigDecimal.ZERO);
-		bounce.setWaivedAmount(BigDecimal.ZERO);
-		
-		try {
-			bounce.setRemarks(this.bounceRemarks.getValue());
-		} catch (WrongValueException e) {
-			wve.add(e);
-		}
-		bounce.setReceiptID(aReceiptHeader.getReceiptID());
-		try {
-			bounce.setBounceID(Long.valueOf(this.bounceCode.getValue()));
-		} catch (WrongValueException e) {
-			wve.add(e);
-		}
-		
-		doRemoveValidation();
-
-		if (!wve.isEmpty()) {
-			WrongValueException[] wvea = new WrongValueException[wve.size()];
-			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = wve.get(i);
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
+			aReceiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_BOUNCE);
+			boolean recReject = false;
+			if (this.userAction.getSelectedItem() != null
+					&& ("Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							|| "Reject".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) || "Cancel"
+							.equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()))) {
+				recReject = true;
 			}
-			this.receiptDetailsTab.setSelected(true);
-			throw new WrongValuesException(wvea);
+
+			// Bounce Details capturing
+			ManualAdvise bounce = aReceiptHeader.getManualAdvise();
+			if(bounce == null){
+				bounce = new ManualAdvise();
+			}
+
+			ArrayList<WrongValueException> wve = new ArrayList<>();
+			if(!recReject){
+				doSetValidation();
+			}
+			bounce.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+			bounce.setFinReference(aReceiptHeader.getReference());
+			bounce.setFeeTypeID(0);
+			bounce.setSequence(0);
+			try {
+				bounce.setAdviseAmount(PennantApplicationUtil.unFormateAmount(this.bounceCharge.getActualValue(), CurrencyUtil.getFormat(aReceiptHeader.getFinCcy())));
+			} catch (WrongValueException e) {
+				wve.add(e);
+			}
+
+			bounce.setPaidAmount(BigDecimal.ZERO);
+			bounce.setWaivedAmount(BigDecimal.ZERO);
+
+			try {
+				bounce.setRemarks(this.bounceRemarks.getValue());
+			} catch (WrongValueException e) {
+				wve.add(e);
+			}
+			bounce.setReceiptID(aReceiptHeader.getReceiptID());
+			try {
+				bounce.setBounceID(Long.valueOf(this.bounceCode.getValue()));
+			} catch (WrongValueException e) {
+				wve.add(e);
+			}
+
+			doRemoveValidation();
+
+			if (!wve.isEmpty()) {
+				WrongValueException[] wvea = new WrongValueException[wve.size()];
+				for (int i = 0; i < wve.size(); i++) {
+					wvea[i] = wve.get(i);
+				}
+				this.receiptDetailsTab.setSelected(true);
+				throw new WrongValuesException(wvea);
+			}
+
+			aReceiptHeader.setManualAdvise(bounce);
+		}else{
+			aReceiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_CANCEL);
 		}
-		
-		aReceiptHeader.setManualAdvise(bounce);
 
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
@@ -681,13 +693,9 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), "");
 		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
 		fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModes(), "");
-		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
+		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(header.getReceiptAmount(), finFormatter));
 
-		String allocateMthd = header.getAllocationType();
-		if(StringUtils.isEmpty(allocateMthd)){
-			allocateMthd = RepayConstants.ALLOCATIONTYPE_AUTO;
-		}
-		fillComboBox(this.allocationMethod, allocateMthd, PennantStaticListUtil.getAllocationMethods(), "");
+		fillComboBox(this.allocationMethod, header.getAllocationType(), PennantStaticListUtil.getAllocationMethods(), "");
 		fillComboBox(this.effScheduleMethod, header.getEffectSchdMethod(), PennantStaticListUtil.getEarlyPayEffectOn(), ",NOEFCT,");
 		checkByReceiptMode(header.getReceiptMode(), false);
 		
@@ -698,23 +706,35 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			this.bounceRemarks.setValue(bounceReason.getRemarks());
 		}
 		
-		// Repayment Schedule Basic Details
+		// Repayments Schedule Basic Details
 		this.payment_finType.setValue(header.getFinType());
 		this.payment_finReference.setValue(header.getReference());
 		this.payment_finCcy.setValue(header.getFinCcy());
 		this.payment_finBranch.setValue(header.getFinBranch());
 		this.payment_CustCIF.setValue(header.getCustCIF());
+		
+		boolean isBounceProcess = false;
+		this.listBoxReceipts.getItems().clear();
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
+			isBounceProcess = true;
+		}else{
+			this.row_BounceReason.setVisible(false);
+			this.row_BounceRemarks.setVisible(false);
+		}
 
 		// Separating Receipt Amounts based on user entry, if exists
-		Map<String, BigDecimal> receiptAmountsMap = new HashMap<>();
+		List<RepayScheduleDetail> rpySchdList = new ArrayList<>();
 		if(header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()){
 			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
+				
 				FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
-				receiptAmountsMap.put(receiptDetail.getPaymentType(), receiptDetail.getAmount());
+				doFillReceipts(receiptDetail, finFormatter);
+				boolean isReceiptModeDetail = false;
+				
 				if(!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) && 
 						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) &&
 						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
-					this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(receiptDetail.getAmount(), finFormatter));
+
 					this.favourNo.setValue(receiptDetail.getFavourNumber());
 					this.valueDate.setValue(receiptDetail.getValueDate());
 					this.bankCode.setValue(receiptDetail.getBankCode());
@@ -730,48 +750,100 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 					this.receivedDate.setValue(receiptDetail.getReceivedDate());
 					this.remarks.setValue(receiptDetail.getRemarks());
 					
-					List<RepayScheduleDetail> rpySchdList = new ArrayList<>();
-					List<FinRepayHeader> repayHeaderList = receiptDetail.getRepayHeaders();
-					for (int j = 0; j < repayHeaderList.size(); j++) {
-						if(repayHeaderList.get(j).getRepayScheduleDetails() != null){
-							rpySchdList.addAll(repayHeaderList.get(j).getRepayScheduleDetails());
-						}
-					}
+					isReceiptModeDetail = true;
+				}
+				
+				// If Bounce Process and not a Receipt Mode Record then Continue process
+				if(isBounceProcess && !isReceiptModeDetail){
+					continue;
+				}
 
-					// Making Single Set of Repay Schedule Details and sent to Rendering
-					Cloner cloner = new Cloner();
-					List<RepayScheduleDetail> tempRpySchdList = cloner.deepClone(rpySchdList);
-					Map<Date, RepayScheduleDetail> rpySchdMap = new HashMap<>();
-					for (RepayScheduleDetail rpySchd : tempRpySchdList) {
-						
-						RepayScheduleDetail curRpySchd = null;
-						if(rpySchdMap.containsKey(rpySchd.getSchDate())){
-							curRpySchd = rpySchdMap.get(rpySchd.getSchDate());
-							curRpySchd.setPrincipalSchdPayNow(curRpySchd.getPrincipalSchdPayNow().add(rpySchd.getPrincipalSchdPayNow()));
-							curRpySchd.setProfitSchdPayNow(curRpySchd.getProfitSchdPayNow().add(rpySchd.getProfitSchdPayNow()));
-							curRpySchd.setLatePftSchdPayNow(curRpySchd.getLatePftSchdPayNow().add(rpySchd.getLatePftSchdPayNow()));
-							curRpySchd.setSchdFeePayNow(curRpySchd.getSchdFeePayNow().add(rpySchd.getSchdFeePayNow()));
-							curRpySchd.setSchdInsPayNow(curRpySchd.getSchdInsPayNow().add(rpySchd.getSchdInsPayNow()));
-							curRpySchd.setPenaltyPayNow(curRpySchd.getPenaltyPayNow().add(rpySchd.getPenaltyPayNow()));
-							rpySchdMap.remove(rpySchd.getSchDate());
-						}else{
-							curRpySchd = rpySchd;
-						}
-						
-						// Adding New Repay Schedule Object to Map after Summing data
-						rpySchdMap.put(rpySchd.getSchDate(), curRpySchd);
+				// Getting All Repayments Schedule Details for Display of Payments
+				List<FinRepayHeader> repayHeaderList = receiptDetail.getRepayHeaders();
+				for (int j = 0; j < repayHeaderList.size(); j++) {
+					if(repayHeaderList.get(j).getRepayScheduleDetails() != null){
+						rpySchdList.addAll(repayHeaderList.get(j).getRepayScheduleDetails());
 					}
-					
-					doFillRepaySchedules(sortRpySchdDetails(new ArrayList<>(rpySchdMap.values())));
-					
-					// Posting Details
-					this.postingDetailsTab.addForward(Events.ON_SELECT, this.window_ReceiptCancellationDialog, "onSelectPostingsTab");
-					
 				}
 			}
+
+			// Making Single Set of Repay Schedule Details and sent to Rendering
+			if(!rpySchdList.isEmpty()){
+				
+				Cloner cloner = new Cloner();
+				List<RepayScheduleDetail> tempRpySchdList = cloner.deepClone(rpySchdList);
+				Map<Date, RepayScheduleDetail> rpySchdMap = new HashMap<>();
+				
+				for (RepayScheduleDetail rpySchd : tempRpySchdList) {
+
+					RepayScheduleDetail curRpySchd = null;
+					if(rpySchdMap.containsKey(rpySchd.getSchDate())){
+						curRpySchd = rpySchdMap.get(rpySchd.getSchDate());
+						curRpySchd.setPrincipalSchdPayNow(curRpySchd.getPrincipalSchdPayNow().add(rpySchd.getPrincipalSchdPayNow()));
+						curRpySchd.setProfitSchdPayNow(curRpySchd.getProfitSchdPayNow().add(rpySchd.getProfitSchdPayNow()));
+						curRpySchd.setLatePftSchdPayNow(curRpySchd.getLatePftSchdPayNow().add(rpySchd.getLatePftSchdPayNow()));
+						curRpySchd.setSchdFeePayNow(curRpySchd.getSchdFeePayNow().add(rpySchd.getSchdFeePayNow()));
+						curRpySchd.setSchdInsPayNow(curRpySchd.getSchdInsPayNow().add(rpySchd.getSchdInsPayNow()));
+						curRpySchd.setPenaltyPayNow(curRpySchd.getPenaltyPayNow().add(rpySchd.getPenaltyPayNow()));
+						rpySchdMap.remove(rpySchd.getSchDate());
+					}else{
+						curRpySchd = rpySchd;
+					}
+
+					// Adding New Repay Schedule Object to Map after Summing data
+					rpySchdMap.put(rpySchd.getSchDate(), curRpySchd);
+				}
+
+				doFillRepaySchedules(sortRpySchdDetails(new ArrayList<>(rpySchdMap.values())));
+			}
+
+			// Posting Details
+			this.postingDetailsTab.addForward(Events.ON_SELECT, this.window_ReceiptCancellationDialog, "onSelectPostingsTab");
 		}
 
 		this.recordStatus.setValue(header.getRecordStatus());
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for Rendering Receipt Amount Details
+	 */
+	private void doFillReceipts(FinReceiptDetail receiptDetail, int finFormatter){
+		logger.debug("Entering");
+
+		Listitem item = new Listitem();
+		Listcell lc = null;
+		String label = "";
+		if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) || 
+				StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) ||
+				StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+
+			label = Labels.getLabel("label_RecceiptDialog_ExcessType_"+receiptDetail.getPaymentType());
+
+		}else{
+			label = PennantAppUtil.getlabelDesc(receiptDetail.getPaymentType(), PennantStaticListUtil.getReceiptModes());
+		}
+
+		lc = new Listcell(label);
+		lc.setStyle("font-weight:bold;color: #191a1c;");
+		lc.setParent(item);
+
+		lc = new Listcell(PennantApplicationUtil.amountFormate(receiptDetail.getAmount(), finFormatter));
+		lc.setStyle("text-align:right;");
+		lc.setParent(item);
+
+		lc = new Listcell(Labels.getLabel("label_ReceiptCancellationDialog_Status_"+receiptDetail.getStatus()));
+		if(StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_APPROVED)){
+			lc.setStyle("font-weight:bold;color: #0252d3;");
+		}else if(StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_REALIZED)){
+			lc.setStyle("font-weight:bold;color: #00a83d;");
+		}else if(StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_BOUNCE)){
+			lc.setStyle("font-weight:bold;color: #f44b42;");
+		}else if(StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_CANCEL)){
+			lc.setStyle("font-weight:bold;color: #f48341;");
+		}
+		lc.setParent(item);
+		this.listBoxReceipts.appendChild(item);
 		logger.debug("Leaving");
 	}
 	
@@ -785,30 +857,47 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		this.postingDetailsTab.removeForward(Events.ON_SELECT, this.window_ReceiptCancellationDialog, "onSelectPostingsTab");
 		
 		FinReceiptHeader header = getReceiptHeader();
-		// Repayment Schedule Basic Details
+		// Repayments Schedule Basic Details
 		this.posting_finType.setValue(header.getFinType());
 		this.posting_finReference.setValue(header.getReference());
 		this.posting_finCcy.setValue(header.getFinCcy());
 		this.posting_finBranch.setValue(header.getFinBranch());
 		this.posting_CustCIF.setValue(header.getCustCIF());
 		
+		boolean isBounceProcess = false;
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
+			isBounceProcess = true;
+		}
+		
+		// Identifying Transaction List
 		List<Long> tranIdList = new ArrayList<>();
 		if(header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()){
 			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
+				
 				FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
+				boolean isReceiptModeDetail = false;
+				
 				if(!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) && 
 						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) &&
 						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
 					
-					List<FinRepayHeader> repayHeaderList = receiptDetail.getRepayHeaders();
-					for (int j = 0; j < repayHeaderList.size(); j++) {
-						tranIdList.add(repayHeaderList.get(j).getLinkedTranId());
-					}
-					break;
+					isReceiptModeDetail = true;
+				}
+				
+				// If Bounce Process and not a Receipt Mode Record then Continue process
+				if(isBounceProcess && !isReceiptModeDetail){
+					continue;
+				}
+				
+				// List out all Transaction Id's
+				List<FinRepayHeader> repayHeaderList = receiptDetail.getRepayHeaders();
+				for (int j = 0; j < repayHeaderList.size(); j++) {
+					tranIdList.add(repayHeaderList.get(j).getLinkedTranId());
 				}
 			}
 		}
 		
+		// Posting Details Rendering
 		if(!tranIdList.isEmpty()){
 			List<ReturnDataSet> postings = getReceiptCancellationService().getPostingsByTranIdList(tranIdList);
 			doFillPostings(postings);

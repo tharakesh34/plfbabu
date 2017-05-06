@@ -21,9 +21,8 @@ import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.service.finance.ReceiptRealizationService;
+import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.search.Filter;
 import com.pennant.webui.financemanagement.receipts.model.ReceiptRealizationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -37,24 +36,23 @@ import com.pennanttech.framework.core.constants.SortOrder;
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/ReceiptRealization/ReceiptRealizationEnqListCtrl.zul file.
  */
-public class ReceiptRealizationEnqListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
+public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	private static final long serialVersionUID = 5327118548986437717L;
-	private static final Logger logger = Logger.getLogger(ReceiptRealizationEnqListCtrl.class);
+	private static final Logger logger = Logger.getLogger(ReceiptEnquiryListCtrl.class);
 
-	protected Window window_ReceiptRealizationEnqList;
-	protected Borderlayout borderLayout_ReceiptRealizationList;
-	protected Listbox listBoxReceiptRealization;
-	protected Paging pagingReceiptRealizationList;
+	protected Window window_ReceiptEnquiryList;
+	protected Borderlayout borderLayout_ReceiptEnquiryList;
+	protected Listbox listBoxReceipt;
+	protected Paging pagingReceiptList;
 
-	protected Listheader listheader_ReceiptRealizationReference;
-	protected Listheader listheader_ReceiptRealizationPurpose;
-	protected Listheader listheader_ReceiptRealizationMode;
-	protected Listheader listheader_ReceiptRealizationAllocattionType;
-	protected Listheader listheader_ReceiptRealizationFinType;
-	protected Listheader listheader_ReceiptRealizationFinBranch;
-	protected Listheader listheader_ReceiptRealizationCusomer;
-	protected Listheader listheader_ReceiptRealizationCustName;
-
+	protected Listheader listheader_ReceiptReference;
+	protected Listheader listheader_ReceiptPurpose;
+	protected Listheader listheader_ReceiptMode;
+	protected Listheader listheader_ReceiptAllocattionType;
+	protected Listheader listheader_ReceiptFinType;
+	protected Listheader listheader_ReceiptFinBranch;
+	protected Listheader listheader_ReceiptCusomer;
+	protected Listheader listheader_ReceiptCustName;
 
 	protected Button btnNew;
 	protected Button btnSearch;
@@ -67,32 +65,31 @@ public class ReceiptRealizationEnqListCtrl extends GFCBaseListCtrl<FinReceiptHea
 	protected Textbox finType;
 	protected Textbox finBranch;
 
-	protected Listbox sortOperator_receiptRealizationReference;
-	protected Listbox sortOperator_receiptRealizationCustomer;
-	protected Listbox sortOperator_receiptRealizationPurpose;
-	protected Listbox sortOperator_receiptRealizationReceiptMode;
-	protected Listbox sortOperator_receiptAllocationType;
-	protected Listbox sortOperator_receiptRealizationFinType;
-	protected Listbox sortOperator_receiptRealizationFinBranch;
+	protected Listbox sortOperator_ReceiptReference;
+	protected Listbox sortOperator_ReceiptCustomer;
+	protected Listbox sortOperator_ReceiptPurpose;
+	protected Listbox sortOperator_ReceiptReceiptMode;
+	protected Listbox sortOperator_ReceiptAllocationType;
+	protected Listbox sortOperator_ReceiptFinType;
+	protected Listbox sortOperator_ReceiptFinBranch;
 
 	protected int   oldVar_sortOperator_custCIF; 
 	protected int   oldVar_sortOperator_finType;
 	protected int   oldVar_sortOperator_finBranch;
 
-	private transient ReceiptRealizationService receiptRealizationService;
+	private transient ReceiptService receiptService;
 
 	/**
 	 * The default constructor.
 	 */
-	public ReceiptRealizationEnqListCtrl() {
+	public ReceiptEnquiryListCtrl() {
 		super();
 	}
 
 	@Override
 	protected void doSetProperties() {
-		super.moduleCode = "ReceiptRealization";
-		super.pageRightName = "ReceiptRealizationList";
-		super.tableName = "FinReceiptHeader_AView";
+		super.moduleCode = "FinReceiptHeader";
+		super.tableName = "FinReceiptHeader_View";
 		super.queueTableName = "FinReceiptHeader_View";
 		super.enquiryTableName = "FinReceiptHeader_View";
 	}
@@ -103,45 +100,42 @@ public class ReceiptRealizationEnqListCtrl extends GFCBaseListCtrl<FinReceiptHea
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onCreate$window_ReceiptRealizationEnqList(Event event) {
+	public void onCreate$window_ReceiptEnquiryList(Event event) {
 		// Set the page level components.
-		setPageComponents(window_ReceiptRealizationEnqList, borderLayout_ReceiptRealizationList, listBoxReceiptRealization, pagingReceiptRealizationList);
+		setPageComponents(window_ReceiptEnquiryList, borderLayout_ReceiptEnquiryList, listBoxReceipt, pagingReceiptList);
 		setItemRender(new ReceiptRealizationListModelItemRenderer());
-		registerButton(btnNew, "button_AcademicList_NewAcademic", false);
 		registerButton(btnSearch);
 
 		registerField("receiptID");
-		registerField("reference", listheader_ReceiptRealizationReference, SortOrder.ASC, receiptReference,
-				sortOperator_receiptRealizationReference, Operators.STRING);
-		registerField("custCIF", listheader_ReceiptRealizationCusomer, SortOrder.NONE, customer,
-				sortOperator_receiptRealizationCustomer, Operators.STRING);
-		registerField("custShrtName", listheader_ReceiptRealizationCustName, SortOrder.NONE, customer,
-				sortOperator_receiptRealizationCustomer, Operators.STRING);
+		registerField("reference", listheader_ReceiptReference, SortOrder.ASC, receiptReference,
+				sortOperator_ReceiptReference, Operators.STRING);
+		registerField("custCIF", listheader_ReceiptCusomer, SortOrder.NONE, customer,
+				sortOperator_ReceiptCustomer, Operators.STRING);
+		registerField("custShrtName", listheader_ReceiptCustName, SortOrder.NONE, customer,
+				sortOperator_ReceiptCustomer, Operators.STRING);
 		fillComboBox(this.purpose, "", PennantStaticListUtil.getReceiptPurpose(), "");
-		registerField("receiptPurpose", listheader_ReceiptRealizationPurpose, SortOrder.NONE, purpose,
-				sortOperator_receiptRealizationPurpose, Operators.STRING);
+		registerField("receiptPurpose", listheader_ReceiptPurpose, SortOrder.NONE, purpose,
+				sortOperator_ReceiptPurpose, Operators.STRING);
 		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModes(), "");
-		registerField("receiptMode", listheader_ReceiptRealizationMode, SortOrder.NONE, receiptMode, sortOperator_receiptRealizationReceiptMode,
+		registerField("receiptMode", listheader_ReceiptMode, SortOrder.NONE, receiptMode, sortOperator_ReceiptReceiptMode,
 				Operators.STRING);
 		fillComboBox(this.allocationType, "", PennantStaticListUtil.getAllocationMethods(), "");
-		registerField("allocationType", listheader_ReceiptRealizationAllocattionType, SortOrder.NONE, allocationType,
-				sortOperator_receiptAllocationType, Operators.STRING);
-		registerField("finType", listheader_ReceiptRealizationFinType, SortOrder.NONE, finType,
-				sortOperator_receiptRealizationFinType, Operators.STRING);
-		registerField("finBranch", listheader_ReceiptRealizationFinBranch, SortOrder.NONE, finBranch, sortOperator_receiptRealizationFinBranch,
+		registerField("allocationType", listheader_ReceiptAllocattionType, SortOrder.NONE, allocationType,
+				sortOperator_ReceiptAllocationType, Operators.STRING);
+		registerField("finType", listheader_ReceiptFinType, SortOrder.NONE, finType,
+				sortOperator_ReceiptFinType, Operators.STRING);
+		registerField("finBranch", listheader_ReceiptFinBranch, SortOrder.NONE, finBranch, sortOperator_ReceiptFinBranch,
 				Operators.STRING);
 
 		// Render the page and display the data.
 		doRenderPage();
+		if(enqiryModule){
+			this.workFlowFrom.setVisible(false);
+			this.listheader_RecordStatus.setVisible(false);
+			this.listheader_RecordType.setVisible(false);
+			
+		}
 		search();
-	}
-	
-	@Override
-	protected void doAddFilters() {
-		super.doAddFilters();
-		this.searchObject.addWhereClause(" (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_APPROVED+"' "
-				+ " OR ( ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_REALIZED+"' AND RecordType IS NOT NULL) ) "
-				+ " AND (ReceiptMode = '"+RepayConstants.RECEIPTMODE_CHEQUE+"' OR ReceiptMode = '"+RepayConstants.RECEIPTMODE_DD+"') ");
 	}
 
 	/**
@@ -162,37 +156,17 @@ public class ReceiptRealizationEnqListCtrl extends GFCBaseListCtrl<FinReceiptHea
 	 */
 	public void onClick$btnRefresh(Event event) {
 		this.customer.setValue("");
-		this.sortOperator_receiptRealizationCustomer.setSelectedIndex(0);
+		this.sortOperator_ReceiptCustomer.setSelectedIndex(0);
 		this.finType.setValue("");
-		this.sortOperator_receiptRealizationFinType.setSelectedIndex(0);
+		this.sortOperator_ReceiptFinType.setSelectedIndex(0);
 		this.finBranch.setValue("");
-		this.sortOperator_receiptRealizationFinBranch.setSelectedIndex(0);
-		this.listBoxReceiptRealization.getItems().clear();
+		this.sortOperator_ReceiptFinBranch.setSelectedIndex(0);
+		this.listBoxReceipt.getItems().clear();
 		this.oldVar_sortOperator_custCIF=0;
 		this.oldVar_sortOperator_finType=0;
 		this.oldVar_sortOperator_finBranch=0;
 		doReset();
 		search();
-	}
-
-	/**
-	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
-	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 */
-	public void onClick$button_ReceiptRealizationList_NewReceiptRealization(Event event) {
-		logger.debug("Entering");
-
-		// Create a new entity.
-		FinReceiptHeader receiptHeader = new FinReceiptHeader();
-		receiptHeader.setNewRecord(true);
-		receiptHeader.setWorkflowId(getWorkFlowId());
-
-		// Display the dialog page.
-		doShowDialogPage(receiptHeader);
-
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -206,11 +180,11 @@ public class ReceiptRealizationEnqListCtrl extends GFCBaseListCtrl<FinReceiptHea
 		logger.debug("Entering");
 
 		// Get the selected record.
-		Listitem selectedItem = this.listBoxReceiptRealization.getSelectedItem();
+		Listitem selectedItem = this.listBoxReceipt.getSelectedItem();
 
 		// Get the selected entity.
 		long receiptID = (long) selectedItem.getAttribute("id");
-		FinReceiptHeader header = receiptRealizationService.getFinReceiptHeaderById(receiptID, "_View");
+		FinReceiptHeader header = receiptService.getFinReceiptHeaderById(receiptID, "_View");
 
 		if (header == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -218,8 +192,7 @@ public class ReceiptRealizationEnqListCtrl extends GFCBaseListCtrl<FinReceiptHea
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND ReceiptID='" + header.getReceiptID() + "' AND version=" + header.getVersion()
-		+ " ";
+		String whereCond = " AND ReceiptID='" + header.getReceiptID() + "' AND version=" + header.getVersion() + " ";
 
 		if (doCheckAuthority(header, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.
@@ -245,10 +218,9 @@ public class ReceiptRealizationEnqListCtrl extends GFCBaseListCtrl<FinReceiptHea
 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("receiptHeader", header);
-		arg.put("receiptRealizationListCtrl", this);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/ReceiptRealizationDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/ReceiptEnquiryDialog.zul", null, arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);
@@ -267,14 +239,14 @@ public class ReceiptRealizationEnqListCtrl extends GFCBaseListCtrl<FinReceiptHea
 		if(this.oldVar_sortOperator_custCIF == Filter.OP_IN || this.oldVar_sortOperator_custCIF == Filter.OP_NOT_IN){
 			//Calling MultiSelection ListBox From DB
 			String selectedValues= (String) MultiSelectionSearchListBox.show(
-					this.window_ReceiptRealizationEnqList, "Customer", this.customer.getValue(), new Filter[]{});
+					this.window_ReceiptEnquiryList, "Customer", this.customer.getValue(), new Filter[]{});
 			if (selectedValues!= null) {
 				this.customer.setValue(selectedValues);
 			}
 
 		}else{
 
-			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptRealizationEnqList, "Customer");
+			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptEnquiryList, "Customer");
 			if (dataObject instanceof String) {
 				this.customer.setValue("");
 			} else {
@@ -298,14 +270,14 @@ public class ReceiptRealizationEnqListCtrl extends GFCBaseListCtrl<FinReceiptHea
 		if(this.oldVar_sortOperator_finType == Filter.OP_IN || this.oldVar_sortOperator_finType == Filter.OP_NOT_IN){
 			//Calling MultiSelection ListBox From DB
 			String selectedValues= (String) MultiSelectionSearchListBox.show(
-					this.window_ReceiptRealizationEnqList, "FinanceType", this.finType.getValue(), new Filter[]{});
+					this.window_ReceiptEnquiryList, "FinanceType", this.finType.getValue(), new Filter[]{});
 			if (selectedValues!= null) {
 				this.finType.setValue(selectedValues);
 			}
 
 		}else{
 
-			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptRealizationEnqList, "FinanceType");
+			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptEnquiryList, "FinanceType");
 			if (dataObject instanceof String) {
 				this.finType.setValue("");
 			} else {
@@ -329,13 +301,13 @@ public class ReceiptRealizationEnqListCtrl extends GFCBaseListCtrl<FinReceiptHea
 		if(this.oldVar_sortOperator_finBranch == Filter.OP_IN || this.oldVar_sortOperator_finBranch == Filter.OP_NOT_IN){
 			//Calling MultiSelection ListBox From DB
 			String selectedValues= (String) MultiSelectionSearchListBox.show(
-					this.window_ReceiptRealizationEnqList, "Branch", this.finBranch.getValue(), new Filter[]{});
+					this.window_ReceiptEnquiryList, "Branch", this.finBranch.getValue(), new Filter[]{});
 			if (selectedValues!= null) {
 				this.finBranch.setValue(selectedValues);
 			}
 
 		}else{
-			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptRealizationEnqList,"Branch");
+			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptEnquiryList,"Branch");
 			if (dataObject instanceof String){
 				this.finBranch.setValue("");
 			}else{
@@ -350,16 +322,16 @@ public class ReceiptRealizationEnqListCtrl extends GFCBaseListCtrl<FinReceiptHea
 
 	// On Change Events for Multi-Selection Listbox's for Search operators
 
-	public void onSelect$sortOperator_receiptRealizationCustomer(Event event) {
-		this.oldVar_sortOperator_custCIF = doChangeStringOperator(sortOperator_receiptRealizationCustomer, oldVar_sortOperator_custCIF, this.customer);
+	public void onSelect$sortOperator_ReceiptCustomer(Event event) {
+		this.oldVar_sortOperator_custCIF = doChangeStringOperator(sortOperator_ReceiptCustomer, oldVar_sortOperator_custCIF, this.customer);
 	}
 
 	public void onSelect$sortOperator_finType(Event event) {
-		this.oldVar_sortOperator_finType = doChangeStringOperator(sortOperator_receiptRealizationFinType, oldVar_sortOperator_finType, this.finType);
+		this.oldVar_sortOperator_finType = doChangeStringOperator(sortOperator_ReceiptFinType, oldVar_sortOperator_finType, this.finType);
 	}
 
 	public void onSelect$sortOperator_finBranch(Event event) {
-		this.oldVar_sortOperator_finBranch = doChangeStringOperator(sortOperator_receiptRealizationFinBranch, oldVar_sortOperator_finBranch, this.finBranch);
+		this.oldVar_sortOperator_finBranch = doChangeStringOperator(sortOperator_ReceiptFinBranch, oldVar_sortOperator_finBranch, this.finBranch);
 	}
 
 	private int doChangeStringOperator(Listbox listbox,int oldOperator,Textbox textbox){
@@ -418,7 +390,7 @@ public class ReceiptRealizationEnqListCtrl extends GFCBaseListCtrl<FinReceiptHea
 		search();
 	}
 
-	public void setReceiptRealizationService(ReceiptRealizationService receiptRealizationService) {
-		this.receiptRealizationService = receiptRealizationService;
+	public void setReceiptService(ReceiptService receiptService) {
+		this.receiptService = receiptService;
 	}
 }

@@ -91,6 +91,31 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 
 	/**
+	 * Method for Fetching Receipt Details , record is waiting for Realization
+	 * 
+	 * @param finReference
+	 * @return
+	 */
+	@Override
+	public FinReceiptHeader getFinReceiptHeaderById(long receiptID, String type) {
+		logger.debug("Entering");
+
+		// Receipt Header Details
+		FinReceiptHeader receiptHeader = null;
+		receiptHeader = getFinReceiptHeaderDAO().getReceiptHeaderByID(receiptID, "_View");
+
+		// Fetch Receipt Detail List
+		if(receiptHeader != null){
+			List<FinReceiptDetail> receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptID, "_AView");
+			receiptHeader.setReceiptDetails(receiptDetailList);
+		}
+
+		logger.debug("Leaving");
+		return receiptHeader;
+	}
+
+
+	/**
 	 * Method for Fetching FInance Details & Repay Schedule Details
 	 * 
 	 * @param finReference

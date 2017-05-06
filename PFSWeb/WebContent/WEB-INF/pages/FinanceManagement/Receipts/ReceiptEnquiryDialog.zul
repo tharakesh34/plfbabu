@@ -14,9 +14,9 @@
 		font-size: 11px; font-weight: bold; }
 	</style>
 
-	<window id="window_ReceiptRealizationEnqDialog" border="normal"
+	<window id="window_ReceiptEnquiryDialog" border="normal"
 		width="100%" height="100%" sizable="false"
-		apply="${receiptRealizationEnqDialogCtrl}">
+		apply="${receiptEnquiryDialogCtrl}">
 
 		<div sclass="z-toolbar" style="padding:0">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
@@ -52,7 +52,7 @@
 				<!-- SEARCH AREA -->
 				<toolbar align="center" sclass="toolbar-center">
 					<label
-						value="${c:l('window_ReceiptRealizationDialog.title')}"
+						value="${c:l('window_ReceiptDialog.title')}"
 						sclass="label-heading" />
 				</toolbar>
 
@@ -71,7 +71,7 @@
 			</hbox>
 		</div>
 
-		<borderlayout id="borderlayout_Realization">
+		<borderlayout id="borderlayout_Receipt">
 			<center border="none">
 				<groupbox>
 					<groupbox style="border:0px;">
@@ -86,14 +86,14 @@
 							<rows>
 								<row>
 									<label
-										value="${c:l('label_ReceiptRealizationDialog_FinType.value')}" />
+										value="${c:l('label_ReceiptDialog_FinType.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="finType"
 											readonly="true" width="180px" />
 									</hbox>
 									<label
-										value="${c:l('label_ReceiptRealizationDialog_FinReference.value')}" />
+										value="${c:l('label_ReceiptDialog_FinReference.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="finReference"
@@ -102,14 +102,14 @@
 								</row>
 								<row>
 									<label
-										value="${c:l('label_ReceiptRealizationDialog_FinCcy.value')}" />
+										value="${c:l('label_ReceiptDialog_FinCcy.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="finCcy"
 											readonly="true" width="180px" />
 									</hbox>
 									<label
-										value="${c:l('label_ReceiptRealizationDialog_FinBranch.value')}" />
+										value="${c:l('label_ReceiptDialog_FinBranch.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="finBranch"
@@ -118,7 +118,7 @@
 								</row>
 								<row>
 									<label
-										value="${c:l('label_ReceiptRealizationDialog_CustID.value')}" />
+										value="${c:l('label_ReceiptDialog_CustID.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="custCIF"
@@ -130,7 +130,7 @@
 					</groupbox>
 					<groupbox>
 						<caption
-							label="${c:l('label_ReceiptRealizationDialog_ReceiptDetail')}" />
+							label="${c:l('label_ReceiptDialog_ReceiptDetail')}" />
 						<grid fixedLayout="true"
 							sclass="GridLayoutNoBorder" style="border:0px;">
 							<columns>
@@ -142,7 +142,7 @@
 							<rows>
 								<row>
 									<label
-										value="${c:l('label_ReceiptRealizationDialog_ReceiptPurpose.value')}" />
+										value="${c:l('label_ReceiptDialog_ReceiptPurpose.value')}" />
 									<hbox>
 										<space spacing="2px"
 											sclass="mandatory" />
@@ -150,7 +150,7 @@
 											width="180px" readonly="true" />
 									</hbox>
 									<label
-										value="${c:l('label_ReceiptRealizationDialog_ExcessAdjustTo.value')}" />
+										value="${c:l('label_ReceiptDialog_ExcessAdjustTo.value')}" />
 									<hbox>
 										<space spacing="2px"
 											sclass="mandatory" />
@@ -160,7 +160,7 @@
 								</row>
 								<row>
 									<label
-										value="${c:l('label_ReceiptRealizationDialog_ReceiptMode.value')}" />
+										value="${c:l('label_ReceiptDialog_ReceiptMode.value')}" />
 									<hbox>
 										<space spacing="2px"
 											sclass="mandatory" />
@@ -168,12 +168,12 @@
 											width="180px" readonly="true" />
 									</hbox>
 									<label
-										value="${c:l('label_ReceiptRealizationDialog_ReceiptAmount.value')}" />
+										value="${c:l('label_ReceiptDialog_TotalReceiptAmount.value')}" />
 									<currencyBox id="receiptAmount" />
 								</row>
 								<row>
 									<label
-										value="${c:l('label_ReceiptRealizationDialog_AllocationMethod.value')}" />
+										value="${c:l('label_ReceiptDialog_AllocationMethod.value')}" />
 									<hbox>
 										<space spacing="2px"
 											sclass="mandatory" />
@@ -181,7 +181,7 @@
 											width="180px" readonly="true" />
 									</hbox>
 									<label
-										value="${c:l('label_ReceiptRealizationDialog_EffecScheduleMethod.value')}" />
+										value="${c:l('label_ReceiptDialog_EffecScheduleMethod.value')}" />
 									<hbox>
 										<space spacing="2px"
 											sclass="mandatory" />
@@ -191,6 +191,27 @@
 								</row>
 							</rows>
 						</grid>
+					</groupbox>
+					<groupbox>
+						<caption
+							label="${c:l('label_ReceiptDialog_Receipts')}" />
+						<listbox id="listBoxReceipts" fixedLayout="true"
+							sizedByContent="true" span="true"
+							emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
+							height="100%" multiple="false">
+							<listhead sizable="false"
+								style="padding:0px;position:relative;">
+								<listheader
+									label="${c:l('listheader_ReceiptDialog_AmountType.label')}"
+									sort="false" width="40%" />
+								<listheader
+									label="${c:l('listheader_ReceiptDialog_PaidAmount.label')}"
+									align="right" sort="false" width="20%" />
+								<listheader
+									label="${c:l('listheader_ReceiptDialog_Status.label')}"
+									sort="false" width="20%" />
+							</listhead>
+						</listbox>
 					</groupbox>
 					<groupbox id="gb_ReceiptDetails" visible="false">
 						<caption id="caption_receiptDetail" />
@@ -206,20 +227,20 @@
 								<row id="row_favourNo"
 									visible="false">
 									<label
-										id="label_ReceiptRealizationDialog_favourNo"
-										value="${c:l('label_ReceiptRealizationDialog_favourNo.value')}" />
+										id="label_ReceiptDialog_favourNo"
+										value="${c:l('label_ReceiptDialog_favourNo.value')}" />
 									<hbox
-										id="hbox_ReceiptRealizationDialog_favourNo">
+										id="hbox_ReceiptDialog_favourNo">
 										<space spacing="2px"
 											sclass="mandatory" />
 										<uppercasebox id="favourNo"
 											width="180px" />
 									</hbox>
 									<label
-										id="label_ReceiptRealizationDialog_ValueDate"
-										value="${c:l('label_ReceiptRealizationDialog_ValueDate.value')}" />
+										id="label_ReceiptDialog_ValueDate"
+										value="${c:l('label_ReceiptDialog_ValueDate.value')}" />
 									<hbox
-										id="hbox_ReceiptRealizationDialog_ValueDate">
+										id="hbox_ReceiptDialog_ValueDate">
 										<space spacing="2px"
 											sclass="mandatory" />
 										<datebox id="valueDate"
@@ -229,14 +250,14 @@
 								<row id="row_BankCode"
 									visible="false">
 									<label
-										id="label_ReceiptRealizationDialog_BankCode"
-										value="${c:l('label_ReceiptRealizationDialog_BankCode.value')}" />
+										id="label_ReceiptDialog_BankCode"
+										value="${c:l('label_ReceiptDialog_BankCode.value')}" />
 									<extendedcombobox id="bankCode" />
 									<label
-										id="label_ReceiptRealizationDialog_favourName"
-										value="${c:l('label_ReceiptRealizationDialog_favourName.value')}" />
+										id="label_ReceiptDialog_favourName"
+										value="${c:l('label_ReceiptDialog_favourName.value')}" />
 									<hbox
-										id="hbox_ReceiptRealizationDialog_favourName">
+										id="hbox_ReceiptDialog_favourName">
 										<space spacing="2px"
 											sclass="mandatory" />
 										<textbox id="favourName"
@@ -246,20 +267,20 @@
 								<row id="row_DepositDate"
 									visible="false">
 									<label
-										id="label_ReceiptRealizationDialog_DepositDate"
-										value="${c:l('label_ReceiptRealizationDialog_DepositDate.value')}" />
+										id="label_ReceiptDialog_DepositDate"
+										value="${c:l('label_ReceiptDialog_DepositDate.value')}" />
 									<hbox
-										id="hbox_ReceiptRealizationDialog_DepositDate">
+										id="hbox_ReceiptDialog_DepositDate">
 										<space spacing="2px"
 											sclass="mandatory" />
 										<datebox id="depositDate"
 											width="100px" />
 									</hbox>
 									<label
-										id="label_ReceiptRealizationDialog_depositNo"
-										value="${c:l('label_ReceiptRealizationDialog_depositNo.value')}" />
+										id="label_ReceiptDialog_depositNo"
+										value="${c:l('label_ReceiptDialog_depositNo.value')}" />
 									<hbox
-										id="hbox_ReceiptRealizationDialog_depositNo">
+										id="hbox_ReceiptDialog_depositNo">
 										<space spacing="2px"
 											sclass="mandatory" />
 										<uppercasebox id="depositNo"
@@ -269,20 +290,20 @@
 								<row id="row_PaymentRef"
 									visible="false">
 									<label
-										id="label_ReceiptRealizationDialog_paymentReference"
-										value="${c:l('label_ReceiptRealizationDialog_paymentReference.value')}" />
+										id="label_ReceiptDialog_paymentReference"
+										value="${c:l('label_ReceiptDialog_paymentReference.value')}" />
 									<hbox
-										id="hbox_ReceiptRealizationDialog_paymentReference">
+										id="hbox_ReceiptDialog_paymentReference">
 										<space spacing="2px"
 											sclass="mandatory" />
 										<uppercasebox id="paymentRef"
 											width="180px" />
 									</hbox>
 									<label
-										id="label_ReceiptRealizationDialog_tranReference"
-										value="${c:l('label_ReceiptRealizationDialog_tranReference.value')}" />
+										id="label_ReceiptDialog_tranReference"
+										value="${c:l('label_ReceiptDialog_tranReference.value')}" />
 									<hbox
-										id="hbox_ReceiptRealizationDialog_tranReference">
+										id="hbox_ReceiptDialog_tranReference">
 										<space spacing="2px"
 											sclass="mandatory" />
 										<uppercasebox
@@ -292,23 +313,23 @@
 								<row id="row_ChequeAcNo"
 									visible="false">
 									<label
-										id="label_ReceiptRealizationDialog_ChequeAccountNo"
-										value="${c:l('label_ReceiptRealizationDialog_ChequeAccountNo.value')}" />
+										id="label_ReceiptDialog_ChequeAccountNo"
+										value="${c:l('label_ReceiptDialog_ChequeAccountNo.value')}" />
 									<accountSelectionBox id="chequeAcNo"
 										width="180px" />
 								</row>
 								<row id="row_fundingAcNo"
 									visible="false">
 									<label
-										id="label_ReceiptRealizationDialog_FundingAccount"
-										value="${c:l('label_ReceiptRealizationDialog_FundingAccount.value')}" />
+										id="label_ReceiptDialog_FundingAccount"
+										value="${c:l('label_ReceiptDialog_FundingAccount.value')}" />
 									<extendedcombobox
 										id="fundingAccount" width="180px" />
 									<label
-										id="label_ReceiptRealizationDialog_ReceivedDate"
-										value="${c:l('label_ReceiptRealizationDialog_ReceivedDate.value')}" />
+										id="label_ReceiptDialog_ReceivedDate"
+										value="${c:l('label_ReceiptDialog_ReceivedDate.value')}" />
 									<hbox
-										id="hbox_ReceiptRealizationDialog_ReceivedDate">
+										id="hbox_ReceiptDialog_ReceivedDate">
 										<space spacing="2px"
 											sclass="mandatory" />
 										<datebox id="receivedDate"
@@ -317,10 +338,10 @@
 								</row>
 								<row id="row_remarks" visible="false">
 									<label
-										id="label_ReceiptRealizationDialog_Remarks"
-										value="${c:l('label_ReceiptRealizationDialog_Remarks.value')}" />
+										id="label_ReceiptDialog_Remarks"
+										value="${c:l('label_ReceiptDialog_Remarks.value')}" />
 									<hbox
-										id="hbox_ReceiptRealizationDialog_Remarks">
+										id="hbox_ReceiptDialog_Remarks">
 										<space spacing="2px" />
 										<textbox id="remarks"
 											width="180px" />
@@ -337,7 +358,7 @@
 					<hbox width="95%">
 						<radiogroup id="userAction" name="action" />
 						<label
-							id="label_ReceiptRealizationDialog_RecordStatus"
+							id="label_ReceiptDialog_RecordStatus"
 							value="${c:l('label_South_RecordStatus.value')}"
 							sclass="label-status" />
 						<label id="recordStatus" />

@@ -113,7 +113,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 			super.pageRightName = "ReceiptCancellationList";
 		}
 	
-		super.tableName = "FinReceiptHeader_AView";
+		super.tableName = "FinReceiptHeader_View";
 		super.queueTableName = "FinReceiptHeader_View";
 		super.enquiryTableName = "FinReceiptHeader_View";
 	}

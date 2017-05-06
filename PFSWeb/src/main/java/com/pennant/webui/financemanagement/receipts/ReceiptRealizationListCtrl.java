@@ -103,7 +103,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	protected void doSetProperties() {
 		super.moduleCode = "ReceiptRealization";
 		super.pageRightName = "ReceiptRealizationList";
-		super.tableName = "FinReceiptHeader_AView";
+		super.tableName = "FinReceiptHeader_View";
 		super.queueTableName = "FinReceiptHeader_View";
 		super.enquiryTableName = "FinReceiptHeader_View";
 	}

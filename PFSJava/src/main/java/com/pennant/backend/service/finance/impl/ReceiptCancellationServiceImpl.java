@@ -187,16 +187,20 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		// Receipt Header Details Save And Update
 		//=======================================
 		if (receiptHeader.isNew()) {
-			receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_BOUNCE);
 			getFinReceiptHeaderDAO().save(receiptHeader, tableType);
 
 			// Bounce reason Code
-			getManualAdviseDAO().save(receiptHeader.getManualAdvise(),tableType);
+			if(receiptHeader.getManualAdvise() != null){
+				getManualAdviseDAO().save(receiptHeader.getManualAdvise(),tableType);
+			}
 
 		} else {
 			getFinReceiptHeaderDAO().update(receiptHeader, tableType);
+			
 			// Bounce reason Code
-			getManualAdviseDAO().update(receiptHeader.getManualAdvise(),tableType);
+			if(receiptHeader.getManualAdvise() != null){
+				getManualAdviseDAO().update(receiptHeader.getManualAdvise(),tableType);
+			}
 		}
 		
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), receiptHeader.getExcludeFields());
@@ -233,7 +237,9 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		FinReceiptHeader receiptHeader = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
 
 		// Bounce Reason Code
-		getManualAdviseDAO().delete(receiptHeader.getManualAdvise(),TableType.TEMP_TAB);
+		if(receiptHeader.getManualAdvise() != null){
+			getManualAdviseDAO().delete(receiptHeader.getManualAdvise(),TableType.TEMP_TAB);
+		}
 		
 		// Delete Receipt Header
 		getFinReceiptHeaderDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
@@ -297,7 +303,9 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		getFinReceiptHeaderDAO().update(receiptHeader, TableType.MAIN_TAB);
 		
 		// Bounce Reason Code
-		getManualAdviseDAO().delete(receiptHeader.getManualAdvise(),TableType.TEMP_TAB);
+		if(receiptHeader.getManualAdvise() != null){
+			getManualAdviseDAO().delete(receiptHeader.getManualAdvise(),TableType.TEMP_TAB);
+		}
 
 		// Delete Receipt Header
 		getFinReceiptHeaderDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
@@ -464,10 +472,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		
-		String finReference = receiptHeader.getReference();
-		
-
 		//Valid Check for Finance Reversal On Active Finance Or not with ValueDate CheckUp
+		String finReference = receiptHeader.getReference();
 		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainForBatch(finReference);
 		if (!financeMain.isFinIsActive()) {
 			ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60204", "", null), PennantConstants.default_Language);
@@ -476,260 +482,260 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		}
 		
 		boolean isRcdFound = false;
+		boolean isBounceProcess = false;
+		if (StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)) {
+			isBounceProcess = true;
+		}
+		
+		List<RepayScheduleDetail> rpySchdList = new ArrayList<>();
+		long logKey = 0;
+		List<Long> logKeyList = new ArrayList<>();
+		BigDecimal totalPriAmount = BigDecimal.ZERO;
 		if(receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()){
 			for (int i = 0; i < receiptHeader.getReceiptDetails().size(); i++) {
+
 				FinReceiptDetail receiptDetail = receiptHeader.getReceiptDetails().get(i);
-				if(!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) && 
-						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) &&
-						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
 
-					List<FinRepayHeader> rpyHeaders = receiptDetail.getRepayHeaders();
-					
-					// Finance Repayments Amount Updation if Principal Amount Exists
-					long linkedTranId = 0;
-					BigDecimal totalPriAmount = BigDecimal.ZERO;
-					Date valueDate = null;
-					for (int j = 0; j < rpyHeaders.size(); j++) {
-						
-						FinRepayHeader rpyHeader = rpyHeaders.get(j);
-						if(!StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_SCHDRPY) &&
-								!StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYRPY) &&
-								!StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+				if(isBounceProcess && (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) || 
+						StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) ||
+						StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE))){
+					continue;
+				}
 
-							// Fetch Excess Amount Details
-							FinExcessAmount excess = getFinExcessAmountDAO().getExcessAmountsByRefAndType(finReference, 
-									receiptHeader.getExcessAdjustTo());
+				// Finance Repayments Amount Updation if Principal Amount Exists
+				Date valueDate = null;
+				long linkedTranId = 0;
+				String finEvent = "";
+				List<FinRepayHeader> rpyHeaders = receiptDetail.getRepayHeaders();
+				for (int j = rpyHeaders.size() - 1; j >= 0; j--) {
 
-							// Update Reserve Amount in FinExcessAmount
-							if(excess == null || excess.getBalanceAmt().compareTo(rpyHeader.getRepayAmount()) < 0){
-								ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60205", "", null), PennantConstants.default_Language);
-								return errorDetail.getErrorMessage();
-							}
-							getFinExcessAmountDAO().updateExcessBal(excess.getExcessID(), rpyHeader.getRepayAmount().negate());
+					FinRepayHeader rpyHeader = rpyHeaders.get(j);
+					if(!StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_SCHDRPY) &&
+							!StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYRPY) &&
+							!StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
 
-						}
-					}
+						// Fetch Excess Amount Details
+						FinExcessAmount excess = getFinExcessAmountDAO().getExcessAmountsByRefAndType(finReference, 
+								receiptHeader.getExcessAdjustTo());
 
-					long logKey = 0;
-					String finEvent = "";
-					for (int j = rpyHeaders.size() - 1; j >= 0; j--) {
-
-						FinRepayHeader rpyHeader = rpyHeaders.get(j);
-						if(!StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_SCHDRPY) &&
-								!StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYRPY) &&
-								!StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
-							
-							// Already updations done
-							continue;
-						}
-						
-						if (rpyHeader.getPriAmount().compareTo(BigDecimal.ZERO) > 0) {
-							totalPriAmount = totalPriAmount.add(rpyHeader.getPriAmount());
-						}
-
-						linkedTranId = rpyHeader.getLinkedTranId();
-						valueDate = rpyHeader.getValueDate();
-						if(j == rpyHeaders.size() - 1){
-							finEvent = rpyHeader.getFinEvent();
-						}
-						isRcdFound = true;
-
-						//Fetch Log Entry Details Greater than this Repayments Entry , which are having Schedule Recalculation
-						//If Any Exist Case after this Repayments with Schedule Recalculation then Stop Process
-						//============================================
-						List<FinLogEntryDetail> list = getFinLogEntryDetailDAO().getFinLogEntryDetailList(finReference, valueDate);
-						if (list != null && !list.isEmpty()) {
-							ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60206", "", null), PennantConstants.default_Language);
+						// Update Reserve Amount in FinExcessAmount
+						if(excess == null || excess.getBalanceAmt().compareTo(rpyHeader.getRepayAmount()) < 0){
+							ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60205", "", null), PennantConstants.default_Language);
 							return errorDetail.getErrorMessage();
 						}
-
-						//Posting Reversal Case Program Calling in Equation
-						//============================================
-						List<Object> returnList = getPostingsPreparationUtil().processFinCanclPostings(finReference, String.valueOf(linkedTranId));
-						if (!(Boolean) returnList.get(0)) {
-							return returnList.get(1).toString();
-						}
-
-						//Remove Repayments Terms based on Linked Transaction ID
-						//============================================
-						getFinanceRepaymentsDAO().deleteRpyDetailbyLinkedTranId(linkedTranId, finReference);
-
-						//Remove FinRepay Header Details
-						//getFinanceRepaymentsDAO().deleteFinRepayHeaderByTranId(finReference, linkedTranId, "");
-
-						//Remove Repayment Schedule Details 
-						//getFinanceRepaymentsDAO().deleteFinRepaySchListByTranId(finReference, linkedTranId, "");
+						getFinExcessAmountDAO().updateExcessBal(excess.getExcessID(), rpyHeader.getRepayAmount().negate());
 						
+						continue;
 					}
-					
-					// Update Log Entry Based on FinPostDate and Reference
+
+					if (rpyHeader.getPriAmount().compareTo(BigDecimal.ZERO) > 0) {
+						totalPriAmount = totalPriAmount.add(rpyHeader.getPriAmount());
+					}
+
+					linkedTranId = rpyHeader.getLinkedTranId();
+					valueDate = rpyHeader.getValueDate();
+					finEvent = rpyHeader.getFinEvent();
+					isRcdFound = true;
+
+					//Fetch Log Entry Details Greater than this Repayments Entry , which are having Schedule Recalculation
+					//If Any Exist Case after this Repayments with Schedule Recalculation then Stop Process
 					//============================================
-					FinLogEntryDetail detail = getFinLogEntryDetailDAO().getFinLogEntryDetail(finReference, finEvent, valueDate);
-					if(detail == null){
-						ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60207", "", null), PennantConstants.default_Language);
+					List<FinLogEntryDetail> list = getFinLogEntryDetailDAO().getFinLogEntryDetailList(finReference, valueDate);
+					if (list != null && !list.isEmpty()) {
+						ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60206", "", null), PennantConstants.default_Language);
 						return errorDetail.getErrorMessage();
 					}
-					logKey = detail.getLogKey();
-					detail.setReversalCompleted(true);
-					getFinLogEntryDetailDAO().updateLogEntryStatus(detail);
-					
-					//Overdue Recovery Details Reset Back to Original State , If any penalties Paid On this Repayments Process 
+
+					//Posting Reversal Case Program Calling in Equation
 					//============================================
-					List<RepayScheduleDetail> rpySchdList = new ArrayList<>();
-					for (int j = 0; j < rpyHeaders.size(); j++) {
-						if(rpyHeaders.get(j).getRepayScheduleDetails() != null){
-							rpySchdList.addAll(rpyHeaders.get(j).getRepayScheduleDetails());
-						}
+					List<Object> returnList = getPostingsPreparationUtil().processFinCanclPostings(finReference, String.valueOf(linkedTranId));
+					if (!(Boolean) returnList.get(0)) {
+						return returnList.get(1).toString();
 					}
 
-					// Making Single Set of Repay Schedule Details and sent to Rendering
-					Cloner cloner = new Cloner();
-					List<RepayScheduleDetail> tempRpySchdList = cloner.deepClone(rpySchdList);
-					Map<Date, RepayScheduleDetail> rpySchdMap = new HashMap<>();
-					for (RepayScheduleDetail rpySchd : tempRpySchdList) {
-						
-						RepayScheduleDetail curRpySchd = null;
-						if(rpySchdMap.containsKey(rpySchd.getSchDate())){
-							curRpySchd = rpySchdMap.get(rpySchd.getSchDate());
-							curRpySchd.setPrincipalSchdPayNow(curRpySchd.getPrincipalSchdPayNow().add(rpySchd.getPrincipalSchdPayNow()));
-							curRpySchd.setProfitSchdPayNow(curRpySchd.getProfitSchdPayNow().add(rpySchd.getProfitSchdPayNow()));
-							curRpySchd.setLatePftSchdPayNow(curRpySchd.getLatePftSchdPayNow().add(rpySchd.getLatePftSchdPayNow()));
-							curRpySchd.setSchdFeePayNow(curRpySchd.getSchdFeePayNow().add(rpySchd.getSchdFeePayNow()));
-							curRpySchd.setSchdInsPayNow(curRpySchd.getSchdInsPayNow().add(rpySchd.getSchdInsPayNow()));
-							curRpySchd.setPenaltyPayNow(curRpySchd.getPenaltyPayNow().add(rpySchd.getPenaltyPayNow()));
-							rpySchdMap.remove(rpySchd.getSchDate());
+					//Remove Repayments Terms based on Linked Transaction ID
+					//============================================
+					getFinanceRepaymentsDAO().deleteRpyDetailbyLinkedTranId(linkedTranId, finReference);
+
+					//Remove FinRepay Header Details
+					//getFinanceRepaymentsDAO().deleteFinRepayHeaderByTranId(finReference, linkedTranId, "");
+
+					//Remove Repayment Schedule Details 
+					//getFinanceRepaymentsDAO().deleteFinRepaySchListByTranId(finReference, linkedTranId, "");
+					
+					// Gathering All repayments Schedule List
+					if(rpyHeader.getRepayScheduleDetails() != null && 
+							!rpyHeader.getRepayScheduleDetails().isEmpty()){
+						rpySchdList.addAll(rpyHeader.getRepayScheduleDetails());
+					}
+
+				}
+
+				// Update Log Entry Based on FinPostDate and Reference
+				//============================================
+				FinLogEntryDetail detail = getFinLogEntryDetailDAO().getFinLogEntryDetail(finReference, finEvent, valueDate);
+				if(detail == null){
+					ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60207", "", null), PennantConstants.default_Language);
+					return errorDetail.getErrorMessage();
+				}
+				logKey = detail.getLogKey();
+				logKeyList.add(logKey);
+				detail.setReversalCompleted(true);
+				getFinLogEntryDetailDAO().updateLogEntryStatus(detail);
+
+				// Manual Advise Movements Reversal
+				List<ManualAdviseMovements> advMovements = getManualAdviseDAO().getAdvMovementsByReceiptSeq(receiptDetail.getReceiptID(), 
+						receiptDetail.getReceiptSeqID(), "");
+				if(advMovements != null && !advMovements.isEmpty()){
+					for (ManualAdviseMovements movement : advMovements) {
+						getManualAdviseDAO().updateAdvPayment(movement.getAdviseID(), movement.getPaidAmount().negate(),
+								movement.getWaivedAmount().negate(), TableType.MAIN_TAB);
+					}
+
+					// Update Movement Status
+					getManualAdviseDAO().updateMovementStatus(receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(), receiptHeader.getReceiptModeStatus(), "");
+				}
+
+			}
+
+			// Making Single Set of Repay Schedule Details and sent to Rendering
+			Map<Date, RepayScheduleDetail> rpySchdMap = new HashMap<>();
+			for (RepayScheduleDetail rpySchd : rpySchdList) {
+
+				RepayScheduleDetail curRpySchd = null;
+				if(rpySchdMap.containsKey(rpySchd.getSchDate())){
+					curRpySchd = rpySchdMap.get(rpySchd.getSchDate());
+					curRpySchd.setPrincipalSchdPayNow(curRpySchd.getPrincipalSchdPayNow().add(rpySchd.getPrincipalSchdPayNow()));
+					curRpySchd.setProfitSchdPayNow(curRpySchd.getProfitSchdPayNow().add(rpySchd.getProfitSchdPayNow()));
+					curRpySchd.setLatePftSchdPayNow(curRpySchd.getLatePftSchdPayNow().add(rpySchd.getLatePftSchdPayNow()));
+					curRpySchd.setSchdFeePayNow(curRpySchd.getSchdFeePayNow().add(rpySchd.getSchdFeePayNow()));
+					curRpySchd.setSchdInsPayNow(curRpySchd.getSchdInsPayNow().add(rpySchd.getSchdInsPayNow()));
+					curRpySchd.setPenaltyPayNow(curRpySchd.getPenaltyPayNow().add(rpySchd.getPenaltyPayNow()));
+					rpySchdMap.remove(rpySchd.getSchDate());
+				}else{
+					curRpySchd = rpySchd;
+				}
+
+				// Adding New Repay Schedule Object to Map after Summing data
+				rpySchdMap.put(rpySchd.getSchDate(), curRpySchd);
+			}
+
+			rpySchdList = sortRpySchdDetails(new ArrayList<>(rpySchdMap.values()));
+			List<FinFeeScheduleDetail> updateFeeList = new ArrayList<>();
+			List<FinSchFrqInsurance> updateInsList = new ArrayList<>();
+			for (RepayScheduleDetail rpySchd : rpySchdList) {
+
+				//Overdue Recovery Details Reset Back to Original State , If any penalties Paid On this Repayments Process 
+				//============================================
+				if(rpySchd.getPenaltyPayNow().compareTo(BigDecimal.ZERO) > 0 || rpySchd.getLatePftSchdPayNow().compareTo(BigDecimal.ZERO) > 0){
+					getFinODDetailsDAO().updateReversals(finReference, rpySchd.getSchDate(), rpySchd.getPenaltyPayNow(), rpySchd.getLatePftSchdPayNow());
+				}
+
+				// Update Fee Balance
+				//============================================
+				if(rpySchd.getSchdFeePayNow().compareTo(BigDecimal.ZERO) > 0){
+					List<FinFeeScheduleDetail> feeList = getFinFeeScheduleDetailDAO().getFeeScheduleBySchDate(finReference, rpySchd.getSchDate());
+					BigDecimal feebal = rpySchd.getSchdFeePayNow();
+					for (int j = feeList.size() - 1; j >= 0; j--) {
+						FinFeeScheduleDetail feeSchd = feeList.get(j);
+						BigDecimal paidReverse = BigDecimal.ZERO;
+						if(feebal.compareTo(BigDecimal.ZERO) == 0){
+							continue;
+						}
+						if(feeSchd.getPaidAmount().compareTo(BigDecimal.ZERO) == 0){
+							continue;
+						}
+
+						if(feebal.compareTo(feeSchd.getPaidAmount()) > 0){
+							paidReverse = feeSchd.getPaidAmount();
 						}else{
-							curRpySchd = rpySchd;
+							paidReverse = feebal;
 						}
-						
-						// Adding New Repay Schedule Object to Map after Summing data
-						rpySchdMap.put(rpySchd.getSchDate(), curRpySchd);
-					}
-					
-					rpySchdList = sortRpySchdDetails(new ArrayList<>(rpySchdMap.values()));
-					List<FinFeeScheduleDetail> updateFeeList = new ArrayList<>();
-					List<FinSchFrqInsurance> updateInsList = new ArrayList<>();
-					for (RepayScheduleDetail rpySchd : rpySchdList) {
-						
-						// Update Penalty Balance
-						if(rpySchd.getPenaltyPayNow().compareTo(BigDecimal.ZERO) > 0 || rpySchd.getLatePftSchdPayNow().compareTo(BigDecimal.ZERO) > 0){
-							getFinODDetailsDAO().updateReversals(finReference, rpySchd.getSchDate(), rpySchd.getPenaltyPayNow(), rpySchd.getLatePftSchdPayNow());
-						}
-						
-						// Update Fee Balance
-						if(rpySchd.getSchdFeePayNow().compareTo(BigDecimal.ZERO) > 0){
-							List<FinFeeScheduleDetail> feeList = getFinFeeScheduleDetailDAO().getFeeScheduleBySchDate(finReference, rpySchd.getSchDate());
-							BigDecimal feebal = rpySchd.getSchdFeePayNow();
-							for (int j = feeList.size() - 1; j >= 0; j--) {
-								FinFeeScheduleDetail feeSchd = feeList.get(j);
-								BigDecimal paidReverse = BigDecimal.ZERO;
-								if(feebal.compareTo(BigDecimal.ZERO) == 0){
-									continue;
-								}
-								if(feeSchd.getPaidAmount().compareTo(BigDecimal.ZERO) == 0){
-									continue;
-								}
-								
-								if(feebal.compareTo(feeSchd.getPaidAmount()) > 0){
-									paidReverse = feeSchd.getPaidAmount();
-								}else{
-									paidReverse = feebal;
-								}
-								feebal = feebal.subtract(paidReverse);
+						feebal = feebal.subtract(paidReverse);
 
-								// Create list of updated objects to save one time
-								FinFeeScheduleDetail updFeeSchd = new FinFeeScheduleDetail();
-								updFeeSchd.setFeeID(feeSchd.getFeeID());
-								updFeeSchd.setSchDate(feeSchd.getSchDate());
-								updFeeSchd.setPaidAmount(paidReverse.negate());
-								updateFeeList.add(updFeeSchd);
-							}
-						}
-						
-						// Update Insurance Balance
-						if(rpySchd.getSchdInsPayNow().compareTo(BigDecimal.ZERO) > 0){
-							List<FinSchFrqInsurance> insList = getFinInsurancesDAO().getInsScheduleBySchDate(finReference, rpySchd.getSchDate());
-							BigDecimal insBal = rpySchd.getSchdInsPayNow();
-							for (int j = insList.size() - 1; j >= 0; j--) {
-								FinSchFrqInsurance insSchd = insList.get(j);
-								BigDecimal paidReverse = BigDecimal.ZERO;
-
-								if(insBal.compareTo(BigDecimal.ZERO) == 0){
-									continue;
-								}
-								if(insSchd.getInsurancePaid().compareTo(BigDecimal.ZERO) == 0){
-									continue;
-								}
-
-								if(insBal.compareTo(insSchd.getInsurancePaid()) > 0){
-									paidReverse = insSchd.getInsurancePaid();
-								}else{
-									paidReverse = insBal;
-								}
-								insBal = insBal.subtract(paidReverse);
-
-								// Create list of updated objects to save one time
-								FinSchFrqInsurance updInsSchd = new FinSchFrqInsurance();
-								updInsSchd.setInsId(insSchd.getInsId());
-								updInsSchd.setInsSchDate(insSchd.getInsSchDate());
-								updInsSchd.setInsurancePaid(paidReverse.negate());
-								updateInsList.add(updInsSchd);
-							}
-						}
-					}
-					
-					// Fee Schedule Details Updation
-					if(!updateFeeList.isEmpty()){
-						getFinFeeScheduleDetailDAO().updateFeeSchdPaids(updateFeeList);
-					}
-					
-					// Insurance Schedule Details Updation
-					if(!updateInsList.isEmpty()){
-						getFinInsurancesDAO().updateInsSchdPaids(updateInsList);
-					}
-					
-					updateFeeList = null;
-					updateInsList = null;
-					
-					// Manual Advise Movements Reversal
-					List<ManualAdviseMovements> advMovements = getManualAdviseDAO().getAdvMovementsByReceiptSeq(receiptDetail.getReceiptID(), 
-							receiptDetail.getReceiptSeqID(), "");
-					if(advMovements != null && !advMovements.isEmpty()){
-						for (ManualAdviseMovements movement : advMovements) {
-							getManualAdviseDAO().updateAdvPayment(movement.getAdviseID(), movement.getPaidAmount().negate(),
-									movement.getWaivedAmount().negate(), TableType.MAIN_TAB);
-						}
-						
-						// Update Movement Status
-						getManualAdviseDAO().updateMovementStatus(receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(), "C", "");
-					}
-					
-					//Deletion of Finance Schedule Related Details From Main Table
-					listDeletion(finReference, "", false, 0);
-
-					//Fetching Last Log Entry Finance Details
-					FinanceProfitDetail pftDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(finReference);
-					FinScheduleData scheduleData = getFinSchDataByFinRef(finReference, logKey, "_Log");
-					scheduleData.setFinanceMain(financeMain);
-
-					//Re-Insert Log Entry Data before Repayments Process Recalculations
-					listSave(scheduleData, "", 0);
-					
-					//Delete Data from Log Entry Tables After Inserting into Main Tables
-					listDeletion(finReference, "_Log", false, logKey);
-
-					//Check Current Finance Max Status For updation
-					//============================================
-					getRepaymentPostingsUtil().updateStatus(financeMain, DateUtility.getAppDate(), scheduleData.getFinanceScheduleDetails(), pftDetail);
-					if (totalPriAmount.compareTo(BigDecimal.ZERO) > 0) {
-
-						// Finance Main Details Update
-						financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().subtract(totalPriAmount));
-						getFinanceMainDAO().updateRepaymentAmount(finReference, financeMain.getFinCurrAssetValue().add(
-								financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt()), financeMain.getFinRepaymentAmount(), 
-								financeMain.getFinStatus(), FinanceConstants.FINSTSRSN_MANUAL,true, false);
+						// Create list of updated objects to save one time
+						FinFeeScheduleDetail updFeeSchd = new FinFeeScheduleDetail();
+						updFeeSchd.setFeeID(feeSchd.getFeeID());
+						updFeeSchd.setSchDate(feeSchd.getSchDate());
+						updFeeSchd.setPaidAmount(paidReverse.negate());
+						updateFeeList.add(updFeeSchd);
 					}
 				}
+
+				// Update Insurance Balance
+				//============================================
+				if(rpySchd.getSchdInsPayNow().compareTo(BigDecimal.ZERO) > 0){
+					List<FinSchFrqInsurance> insList = getFinInsurancesDAO().getInsScheduleBySchDate(finReference, rpySchd.getSchDate());
+					BigDecimal insBal = rpySchd.getSchdInsPayNow();
+					for (int j = insList.size() - 1; j >= 0; j--) {
+						FinSchFrqInsurance insSchd = insList.get(j);
+						BigDecimal paidReverse = BigDecimal.ZERO;
+
+						if(insBal.compareTo(BigDecimal.ZERO) == 0){
+							continue;
+						}
+						if(insSchd.getInsurancePaid().compareTo(BigDecimal.ZERO) == 0){
+							continue;
+						}
+
+						if(insBal.compareTo(insSchd.getInsurancePaid()) > 0){
+							paidReverse = insSchd.getInsurancePaid();
+						}else{
+							paidReverse = insBal;
+						}
+						insBal = insBal.subtract(paidReverse);
+
+						// Create list of updated objects to save one time
+						FinSchFrqInsurance updInsSchd = new FinSchFrqInsurance();
+						updInsSchd.setInsId(insSchd.getInsId());
+						updInsSchd.setInsSchDate(insSchd.getInsSchDate());
+						updInsSchd.setInsurancePaid(paidReverse.negate());
+						updateInsList.add(updInsSchd);
+					}
+				}
+			}
+
+			// Fee Schedule Details Updation
+			if(!updateFeeList.isEmpty()){
+				getFinFeeScheduleDetailDAO().updateFeeSchdPaids(updateFeeList);
+			}
+
+			// Insurance Schedule Details Updation
+			if(!updateInsList.isEmpty()){
+				getFinInsurancesDAO().updateInsSchdPaids(updateInsList);
+			}
+
+			rpySchdList = null;
+			rpySchdMap = null;
+			updateFeeList = null;
+			updateInsList = null;
+
+			//Deletion of Finance Schedule Related Details From Main Table
+			listDeletion(finReference, "", false, 0);
+
+			//Fetching Last Log Entry Finance Details
+			FinanceProfitDetail pftDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(finReference);
+			FinScheduleData scheduleData = getFinSchDataByFinRef(finReference, logKey, "_Log");
+			scheduleData.setFinanceMain(financeMain);
+
+			//Re-Insert Log Entry Data before Repayments Process Recalculations
+			listSave(scheduleData, "", 0);
+
+			//Delete Data from Log Entry Tables After Inserting into Main Tables
+			for (int i = 0; i < logKeyList.size(); i++) {
+				listDeletion(finReference, "_Log", false, logKeyList.get(i));
+			}
+
+			//Check Current Finance Max Status For updation
+			//============================================
+			getRepaymentPostingsUtil().updateStatus(financeMain, DateUtility.getAppDate(), scheduleData.getFinanceScheduleDetails(), pftDetail);
+			if (totalPriAmount.compareTo(BigDecimal.ZERO) > 0) {
+
+				// Finance Main Details Update
+				financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().subtract(totalPriAmount));
+				getFinanceMainDAO().updateRepaymentAmount(finReference, financeMain.getFinCurrAssetValue().add(
+						financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt()), financeMain.getFinRepaymentAmount(), 
+						financeMain.getFinStatus(), FinanceConstants.FINSTSRSN_MANUAL,true, false);
 			}
 		}
 		
@@ -738,44 +744,43 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			return errorDetail.getErrorMessage();
 		}else{
 
-			getManualAdviseDAO().save(receiptHeader.getManualAdvise(), TableType.MAIN_TAB);
+			if(receiptHeader.getManualAdvise() != null){
+				getManualAdviseDAO().save(receiptHeader.getManualAdvise(), TableType.MAIN_TAB);
+			}
 			
 			// Update Receipt Details based on Receipt Mode 
 			for (int i = 0; i < receiptHeader.getReceiptDetails().size(); i++) {
 				FinReceiptDetail receiptDetail = receiptHeader.getReceiptDetails().get(i);
-				if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE) ||
-						StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DD)){
+				if(!isBounceProcess || (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE) ||
+						StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DD))){
 					getFinReceiptDetailDAO().updateReceiptStatus(receiptDetail.getReceiptID(), 
-							receiptDetail.getReceiptSeqID(), RepayConstants.PAYSTATUS_BOUNCE);
+							receiptDetail.getReceiptSeqID(), receiptHeader.getReceiptModeStatus());
 					break;
 				}
 			}
-
-
 		}
 
 		return null;
-
 	}
 
 	/**
 	 * Sorting Repay Schedule Details
 	 * 
-	 * @param repayScheduleDetails
+	 * @param rpySchdList
 	 * @return
 	 */
-	public List<RepayScheduleDetail> sortRpySchdDetails(List<RepayScheduleDetail> repayScheduleDetails) {
+	public List<RepayScheduleDetail> sortRpySchdDetails(List<RepayScheduleDetail> rpySchdList) {
 
-		if (repayScheduleDetails != null && repayScheduleDetails.size() > 0) {
-			Collections.sort(repayScheduleDetails, new Comparator<RepayScheduleDetail>() {
+		if (rpySchdList != null && rpySchdList.size() > 0) {
+			Collections.sort(rpySchdList, new Comparator<RepayScheduleDetail>() {
 				@Override
-				public int compare(RepayScheduleDetail detail1, RepayScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+				public int compare(RepayScheduleDetail rpySchd1, RepayScheduleDetail rpySchd2) {
+					return DateUtility.compare(rpySchd1.getSchDate(), rpySchd2.getSchDate());
 				}
 			});
 		}
 
-		return repayScheduleDetails;
+		return rpySchdList;
 	}
 
 	/**
@@ -788,14 +793,10 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 * **/
 	private FinScheduleData getFinSchDataByFinRef(String finReference, long logKey, String type) {
 		logger.debug("Entering");
-
 		FinScheduleData finSchData = new FinScheduleData();
-		finSchData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type,
-				false, logKey));
-		finSchData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type,
-				false, logKey));
-		finSchData.setRepayInstructions(getRepayInstructionDAO()
-				.getRepayInstructions(finReference, type, false, logKey));
+		finSchData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false, logKey));
+		finSchData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false, logKey));
+		finSchData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false, logKey));
 		logger.debug("Leaving");
 		return finSchData;
 	}
@@ -809,11 +810,9 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 */
 	private void listDeletion(String finReference, String tableType, boolean isWIF, long logKey) {
 		logger.debug("Entering");
-
 		getFinanceScheduleDetailDAO().deleteByFinReference(finReference, tableType, isWIF, logKey);
 		getFinanceDisbursementDAO().deleteByFinReference(finReference, tableType, isWIF, logKey);
 		getRepayInstructionDAO().deleteByFinReference(finReference, tableType, isWIF, logKey);
-
 		logger.debug("Leaving");
 	}
 
@@ -959,7 +958,6 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	public PostingsDAO getPostingsDAO() {
 		return postingsDAO;
 	}
-
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
 		this.postingsDAO = postingsDAO;
 	}
@@ -967,7 +965,6 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	public ManualAdviseDAO getManualAdviseDAO() {
 		return manualAdviseDAO;
 	}
-
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
@@ -975,7 +972,6 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	public FinExcessAmountDAO getFinExcessAmountDAO() {
 		return finExcessAmountDAO;
 	}
-
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
@@ -983,7 +979,6 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	public FinFeeScheduleDetailDAO getFinFeeScheduleDetailDAO() {
 		return finFeeScheduleDetailDAO;
 	}
-
 	public void setFinFeeScheduleDetailDAO(FinFeeScheduleDetailDAO finFeeScheduleDetailDAO) {
 		this.finFeeScheduleDetailDAO = finFeeScheduleDetailDAO;
 	}
@@ -991,7 +986,6 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	public FinInsurancesDAO getFinInsurancesDAO() {
 		return finInsurancesDAO;
 	}
-
 	public void setFinInsurancesDAO(FinInsurancesDAO finInsurancesDAO) {
 		this.finInsurancesDAO = finInsurancesDAO;
 	}

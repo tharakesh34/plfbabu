@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinReceiptData;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.exception.PFFInterfaceException;
@@ -17,5 +18,6 @@ public interface ReceiptService {
 	
 	FinanceDetail getAccountingDetail(FinanceDetail financeDetail, String eventCodeRef);
 	FinanceProfitDetail getPftDetailForEarlyStlReport(String finReference);
+	FinReceiptHeader getFinReceiptHeaderById(long receiptID, String type);
 
 }

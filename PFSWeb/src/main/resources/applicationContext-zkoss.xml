@@ -2883,17 +2883,15 @@
 		<property name="receiptRealizationService" ref="receiptRealizationService" />
 	</bean>
 	
-	<bean id="receiptRealizationEnqListCtrl"
-		class="com.pennant.webui.financemanagement.receipts.ReceiptRealizationEnqListCtrl"
+	<bean id="receiptEnquiryListCtrl"
+		class="com.pennant.webui.financemanagement.receipts.ReceiptEnquiryListCtrl"
 		parent="basisListCtrl" scope="prototype">
-		<property name="receiptRealizationService" ref="receiptRealizationService" />
+		<property name="receiptService" ref="receiptService" />
 	</bean>
 	
-	<bean id="receiptRealizationEnqDialogCtrl"
-		class="com.pennant.webui.financemanagement.receipts.ReceiptRealizationEnqDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="receiptRealizationService" ref="receiptRealizationService" />
-	</bean>
+	<bean id="receiptEnquiryDialogCtrl"
+		class="com.pennant.webui.financemanagement.receipts.ReceiptEnquiryDialogCtrl"
+		parent="basisCtrl" scope="prototype" />
 	
 	<!--============ Receipt Cancellation Process Details ============== -->
 	<!-- (Schedule Repayment /Partial Settlement / Early Settlement ) -->

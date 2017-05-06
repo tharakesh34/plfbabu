@@ -213,18 +213,39 @@
 											<currencyBox
 												id="bounceCharge" />
 										</row>
-										<row id="row_BounceRemarks" >
+										<row id="row_BounceRemarks">
 											<label
 												id="label_ReceiptCancellationDialog_BounceRemarks"
 												value="${c:l('label_ReceiptCancellationDialog_BounceRemarks.value')}" />
 											<hbox>
 												<space spacing="2px" />
-												<textbox id="bounceRemarks"
-													width="180px" />
+												<textbox
+													id="bounceRemarks" width="180px" />
 											</hbox>
 										</row>
 									</rows>
 								</grid>
+							</groupbox>
+							<groupbox>
+								<caption
+									label="${c:l('label_ReceiptCancellationDialog_Receipts')}" />
+								<listbox id="listBoxReceipts"
+									fixedLayout="true" sizedByContent="true" span="true"
+									emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
+									height="100%" multiple="false">
+									<listhead sizable="false"
+										style="padding:0px;position:relative;">
+										<listheader
+											label="${c:l('listheader_ReceiptCancellationDialog_AmountType.label')}"
+											sort="false" width="40%" />
+										<listheader
+											label="${c:l('listheader_ReceiptCancellationDialog_PaidAmount.label')}"
+											align="right" sort="false" width="20%" />
+										<listheader
+											label="${c:l('listheader_ReceiptCancellationDialog_Status.label')}"
+											sort="false" width="20%" />
+									</listhead>
+								</listbox>
 							</groupbox>
 							<groupbox id="gb_ReceiptDetails"
 								visible="false">

@@ -45,8 +45,6 @@ package com.pennant.webui.financemanagement.receipts;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -490,11 +488,9 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 		checkByReceiptMode(header.getReceiptMode(), false);
 
 		// Separating Receipt Amounts based on user entry, if exists
-		Map<String, BigDecimal> receiptAmountsMap = new HashMap<>();
 		if(header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()){
 			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
 				FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
-				receiptAmountsMap.put(receiptDetail.getPaymentType(), receiptDetail.getAmount());
 				if(!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) && 
 						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) &&
 						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){

@@ -1,24 +1,20 @@
 package com.pennant.webui.financemanagement.receipts;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Caption;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -28,19 +24,14 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.backend.model.ErrorDetails;
-import com.pennant.backend.model.audit.AuditDetail;
-import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
-import com.pennant.backend.service.finance.ReceiptRealizationService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.component.Uppercasebox;
-import com.pennant.exception.PFFInterfaceException;
-import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -49,16 +40,16 @@ import com.rits.cloning.Cloner;
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/ReceiptRealizationEnqDialog.zul
  */
-public class ReceiptRealizationEnqDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
+public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 	private static final long								serialVersionUID					= 966281186831332116L;
-	private final static Logger								logger								= Logger.getLogger(ReceiptRealizationEnqDialogCtrl.class);
+	private final static Logger								logger								= Logger.getLogger(ReceiptEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window										window_ReceiptRealizationEnqDialog;
-	protected Borderlayout									borderlayout_Realization;
+	protected Window										window_ReceiptEnquiryDialog;
+	protected Borderlayout									borderlayout_Receipt;
 
 	//Receipt Details
 	protected Textbox										finType;
@@ -76,7 +67,7 @@ public class ReceiptRealizationEnqDialogCtrl  extends GFCBaseCtrl<FinReceiptHead
 
 	protected Groupbox										gb_ReceiptDetails;
 	protected Caption										caption_receiptDetail;
-	protected Label											label_ReceiptRealizationDialog_favourNo;
+	protected Label											label_ReceiptDialog_favourNo;
 	protected Uppercasebox									favourNo;
 	protected Datebox										valueDate;
 	protected ExtendedCombobox								bankCode;
@@ -97,21 +88,20 @@ public class ReceiptRealizationEnqDialogCtrl  extends GFCBaseCtrl<FinReceiptHead
 	protected Row											row_ChequeAcNo;	
 	protected Row											row_fundingAcNo;	
 	protected Row											row_remarks;	
+	protected Listbox										listBoxReceipts;
 
 	private FinReceiptHeader								receiptHeader						= null;
-	private ReceiptRealizationListCtrl						receiptRealizationListCtrl;						
-	private ReceiptRealizationService						receiptRealizationService;						
 
 	/**
 	 * default constructor.<br>
 	 */
-	public ReceiptRealizationEnqDialogCtrl() {
+	public ReceiptEnquiryDialogCtrl() {
 		super();
 	}
 
 	@Override
 	protected void doSetProperties() {
-		super.pageRightName = "ReceiptRealizationDialog";
+		
 	}
 
 	// Component Events
@@ -123,11 +113,11 @@ public class ReceiptRealizationEnqDialogCtrl  extends GFCBaseCtrl<FinReceiptHead
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onCreate$window_ReceiptRealizationDialog(Event event) throws Exception {
+	public void onCreate$window_ReceiptEnquiryDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
 		// Set the page level components.
-		setPageComponents(window_ReceiptRealizationEnqDialog);
+		setPageComponents(window_ReceiptEnquiryDialog);
 
 		try {
 			if (arguments.containsKey("receiptHeader")) {
@@ -141,8 +131,6 @@ public class ReceiptRealizationEnqDialogCtrl  extends GFCBaseCtrl<FinReceiptHead
 
 			}
 			
-			this.receiptRealizationListCtrl = (ReceiptRealizationListCtrl) arguments.get("receiptRealizationListCtrl");
-
 			doLoadWorkFlow(receiptHeader.isWorkflow(), receiptHeader.getWorkflowId(), receiptHeader.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
@@ -156,47 +144,21 @@ public class ReceiptRealizationEnqDialogCtrl  extends GFCBaseCtrl<FinReceiptHead
 				this.south.setHeight("0px");
 			}
 
-			/* set components visible dependent of the users rights */
-			doCheckRights();
-
 			// set Field Properties
 			doSetFieldProperties();
-
 			doReadonly();
-			if (StringUtils.isNotBlank(receiptHeader.getRecordType())) {
-				this.btnNotes.setVisible(true);
-			}
 
 			//Reset Finance Repay Header Details
 			doWriteBeanToComponents();
-			this.borderlayout_Realization.setHeight(getBorderLayoutHeight());
+			this.borderlayout_Receipt.setHeight(getBorderLayoutHeight());
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			MessageUtil.showErrorMessage(e);
-			this.window_ReceiptRealizationEnqDialog.onClose();
+			this.window_ReceiptEnquiryDialog.onClose();
 		}
 
 		logger.debug("Leaving" + event.toString());
-	}
-
-	/**
-	 * User rights check. <br>
-	 * Only components are set visible=true if the logged-in <br>
-	 * user have the right for it. <br>
-	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
-	 */
-	private void doCheckRights() {
-		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
-
-		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_ReceiptRealizationDialog_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_ReceiptRealizationDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_ReceiptRealizationDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ReceiptRealizationDialog_btnSave"));
-		this.btnCancel.setVisible(false);
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -243,6 +205,12 @@ public class ReceiptRealizationEnqDialogCtrl  extends GFCBaseCtrl<FinReceiptHead
 		this.bankCode.setDescColumn("BankName");
 		this.bankCode.setDisplayStyle(2);
 		this.bankCode.setValidateColumns(new String[] { "BankCode" });
+		if (enqiryModule) {
+			this.groupboxWf.setVisible(false);
+			this.btnCtrl.setWFBtnStatus_Edit(false);
+		} else {
+			setStatusDetails();
+		}
 
 		logger.debug("Leaving");
 	}
@@ -285,16 +253,8 @@ public class ReceiptRealizationEnqDialogCtrl  extends GFCBaseCtrl<FinReceiptHead
 	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
-		doClose(this.btnSave.isVisible());
+		doClose(false);
 	}
-	
-	/**
-	 * Refresh the list page with the filters that are applied in list page.
-	 */
-	private void refreshList() {
-		this.receiptRealizationListCtrl.search();
-	}
-
 
 	/**
 	 * Method for Setting Fields based on Receipt Mode selected
@@ -314,8 +274,6 @@ public class ReceiptRealizationEnqDialogCtrl  extends GFCBaseCtrl<FinReceiptHead
 
 			this.gb_ReceiptDetails.setVisible(true);
 			this.caption_receiptDetail.setLabel(this.receiptMode.getSelectedItem().getLabel());
-			this.receiptAmount.setMandatory(true);
-			readOnlyComponent(isReadOnly("ReceiptRealizationDialog_receiptAmount"), this.receiptAmount);
 
 			if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)
 					|| StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_DD)) {
@@ -330,11 +288,11 @@ public class ReceiptRealizationEnqDialogCtrl  extends GFCBaseCtrl<FinReceiptHead
 				if(StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)){
 					this.row_fundingAcNo.setVisible(true);
 					this.row_ChequeAcNo.setVisible(true);
-					this.label_ReceiptRealizationDialog_favourNo.setValue(Labels.getLabel("label_ReceiptRealizationDialog_ChequeFavourNo.value"));
+					this.label_ReceiptDialog_favourNo.setValue(Labels.getLabel("label_ReceiptDialog_ChequeFavourNo.value"));
 				}else{
 					this.row_fundingAcNo.setVisible(false);
 					this.row_ChequeAcNo.setVisible(false);
-					this.label_ReceiptRealizationDialog_favourNo.setValue(Labels.getLabel("label_ReceiptRealizationDialog_DDFavourNo.value"));
+					this.label_ReceiptDialog_favourNo.setValue(Labels.getLabel("label_ReceiptDialog_DDFavourNo.value"));
 				}
 
 			} else if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CASH)) {
@@ -363,62 +321,6 @@ public class ReceiptRealizationEnqDialogCtrl  extends GFCBaseCtrl<FinReceiptHead
 	}
 
 	/**
-	 * Method for event of Changing Repayment Amount
-	 * 
-	 * @param event
-	 * @throws Exception
-	 */
-	public void onClick$btnSave(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
-		doSave();
-		logger.debug("Leaving" + event.toString());
-	}
-
-	public void doSave() throws WrongValueException, InterruptedException {
-		logger.debug("Entering");
-
-		//Duplicate Creation of Object
-		Cloner cloner = new Cloner();
-		FinReceiptHeader aReceiptHeader = cloner.deepClone(getReceiptHeader());
-
-		String tranType = "";
-		if (isWorkFlowEnabled()) {
-			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aReceiptHeader.getRecordType())) {
-				aReceiptHeader.setVersion(aReceiptHeader.getVersion() + 1);
-				aReceiptHeader.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				aReceiptHeader.setNewRecord(true);
-			}
-		} else {
-			aReceiptHeader.setVersion(aReceiptHeader.getVersion() + 1);
-			tranType = PennantConstants.TRAN_UPD;
-		}
-
-		try {
-			if (doProcess(aReceiptHeader, tranType)) {
-
-				//Customer Notification for Role Identification
-				if (StringUtils.isBlank(aReceiptHeader.getNextTaskId())) {
-					aReceiptHeader.setNextRoleCode("");
-				}
-				String msg = PennantApplicationUtil.getSavingStatus(aReceiptHeader.getRoleCode(),
-						aReceiptHeader.getNextRoleCode(), aReceiptHeader.getReference(), " Finance ",
-						aReceiptHeader.getRecordStatus());
-				Clients.showNotification(msg, "info", null, null, -1);
-
-				refreshList();
-				closeDialog();
-			}
-
-		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			showErrorMessage(this.window_ReceiptRealizationEnqDialog, e);
-		}
-
-		logger.debug("Leaving");
-	}
-
-	/**
 	 * Method for Writing Data into Fields from Bean
 	 * @throws InterruptedException
 	 */
@@ -438,26 +340,21 @@ public class ReceiptRealizationEnqDialogCtrl  extends GFCBaseCtrl<FinReceiptHead
 		fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), "");
 		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
 		fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModes(), "");
-		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
-
-		String allocateMthd = header.getAllocationType();
-		if(StringUtils.isEmpty(allocateMthd)){
-			allocateMthd = RepayConstants.ALLOCATIONTYPE_AUTO;
-		}
-		fillComboBox(this.allocationMethod, allocateMthd, PennantStaticListUtil.getAllocationMethods(), "");
+		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(header.getReceiptAmount(), finFormatter));
+		fillComboBox(this.allocationMethod, header.getAllocationType(), PennantStaticListUtil.getAllocationMethods(), "");
 		fillComboBox(this.effScheduleMethod, header.getEffectSchdMethod(), PennantStaticListUtil.getEarlyPayEffectOn(), ",NOEFCT,");
 		checkByReceiptMode(header.getReceiptMode(), false);
 
 		// Separating Receipt Amounts based on user entry, if exists
-		Map<String, BigDecimal> receiptAmountsMap = new HashMap<>();
 		if(header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()){
 			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
+				
 				FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
-				receiptAmountsMap.put(receiptDetail.getPaymentType(), receiptDetail.getAmount());
+				doFillReceipts(receiptDetail, finFormatter);
+				
 				if(!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) && 
 						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) &&
 						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
-					this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(receiptDetail.getAmount(), finFormatter));
 					this.favourNo.setValue(receiptDetail.getFavourNumber());
 					this.valueDate.setValue(receiptDetail.getValueDate());
 					this.bankCode.setValue(receiptDetail.getBankCode());
@@ -481,195 +378,47 @@ public class ReceiptRealizationEnqDialogCtrl  extends GFCBaseCtrl<FinReceiptHead
 	}
 
 	/**
-	 * Method for Processing Finance Detail Object for Database Operation
-	 * 
-	 * @param afinanceMain
-	 * @param tranType
-	 * @return
-	 * @throws InterruptedException
+	 * Method for Rendering Receipt Amount Details
 	 */
-	private boolean doProcess(FinReceiptHeader aReceiptHeader, String tranType) throws InterruptedException {
-		logger.debug("Entering");
-		boolean processCompleted = false;
-		AuditHeader auditHeader;
-		String nextRoleCode = "";
-
-		aReceiptHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
-		aReceiptHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		aReceiptHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
-
-		if (isWorkFlowEnabled()) {
-			String taskId = getTaskId(getRole());
-			String nextTaskId;
-			aReceiptHeader.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-
-			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
-				nextTaskId = taskId + ";";
-			} else {
-				nextTaskId = StringUtils.trimToEmpty(aReceiptHeader.getNextTaskId());
-
-				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
-				if ("".equals(nextTaskId)) {
-					nextTaskId = getNextTaskIds(taskId, aReceiptHeader);
-				}
-
-				if (isNotesMandatory(taskId, aReceiptHeader)) {
-					if (!notesEntered) {
-						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
-						return false;
-					}
-
-				}
-			}
-			if (!StringUtils.isBlank(nextTaskId)) {
-				String[] nextTasks = nextTaskId.split(";");
-
-				if (nextTasks != null && nextTasks.length > 0) {
-					for (int i = 0; i < nextTasks.length; i++) {
-
-						if (nextRoleCode.length() > 1) {
-							nextRoleCode = nextRoleCode.concat(",");
-						}
-						nextRoleCode = getTaskOwner(nextTasks[i]);
-					}
-				} else {
-					nextRoleCode = getTaskOwner(nextTaskId);
-				}
-			}
-
-			aReceiptHeader.setTaskId(taskId);
-			aReceiptHeader.setNextTaskId(nextTaskId);
-			aReceiptHeader.setRoleCode(getRole());
-			aReceiptHeader.setNextRoleCode(nextRoleCode);
-
-			auditHeader = getAuditHeader(aReceiptHeader, tranType);
-			String operationRefs = getServiceOperations(taskId, aReceiptHeader);
-
-			if ("".equals(operationRefs)) {
-				processCompleted = doSaveProcess(auditHeader, null);
-			} else {
-				String[] list = operationRefs.split(";");
-
-				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aReceiptHeader, PennantConstants.TRAN_WF);
-					processCompleted = doSaveProcess(auditHeader, list[i]);
-					if (!processCompleted) {
-						break;
-					}
-				}
-			}
-		} else {
-			auditHeader = getAuditHeader(aReceiptHeader, tranType);
-			processCompleted = doSaveProcess(auditHeader, null);
-		}
-		logger.debug("Leaving");
-		return processCompleted;
-	}
-
-	/**
-	 * 
-	 * @param auditHeader
-	 * @param method
-	 * @return
-	 * @throws InterruptedException
-	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterruptedException {
+	private void doFillReceipts(FinReceiptDetail receiptDetail, int finFormatter){
 		logger.debug("Entering");
 
-		boolean processCompleted = false;
-		int retValue = PennantConstants.porcessOVERIDE;
-		boolean deleteNotes = false;
+		Listitem item = new Listitem();
+		Listcell lc = null;
+		String label = "";
+		if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) || 
+				StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) ||
+				StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
 
-		FinReceiptHeader aReceiptHeader = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
+			label = Labels.getLabel("label_RecceiptDialog_ExcessType_"+receiptDetail.getPaymentType());
 
-		try {
-
-			while (retValue == PennantConstants.porcessOVERIDE) {
-
-				if (StringUtils.isBlank(method)) {
-					auditHeader = getReceiptRealizationService().saveOrUpdate(auditHeader);
-
-				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = getReceiptRealizationService().doApprove(auditHeader);
-
-						if (aReceiptHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-							deleteNotes = true;
-						}
-
-					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getReceiptRealizationService().doReject(auditHeader);
-						if (aReceiptHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-							deleteNotes = true;
-						}
-
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_ReceiptRealizationEnqDialog, auditHeader);
-						return processCompleted;
-					}
-				}
-
-				auditHeader = ErrorControl.showErrorDetails(this.window_ReceiptRealizationEnqDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						//deleteNotes(getNotes(), true);
-					}
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
-				}
-			}
-			setOverideMap(auditHeader.getOverideMap());
-
-		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
-		} catch (PFFInterfaceException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getErrorMessage());
-		} catch (IllegalAccessException e) {
-			logger.error("Exception: ", e);
-		} catch (InvocationTargetException e) {
-			logger.error("Exception: ", e);
+		}else{
+			label = PennantAppUtil.getlabelDesc(receiptDetail.getPaymentType(), PennantStaticListUtil.getReceiptModes());
 		}
 
-		logger.debug("return Value:" + processCompleted);
+		lc = new Listcell(label);
+		lc.setStyle("font-weight:bold;color: #191a1c;");
+		lc.setParent(item);
+
+		lc = new Listcell(PennantApplicationUtil.amountFormate(receiptDetail.getAmount(), finFormatter));
+		lc.setStyle("text-align:right;");
+		lc.setParent(item);
+
+		lc = new Listcell(Labels.getLabel("label_ReceiptCancellationDialog_Status_"+receiptDetail.getStatus()));
+		if(StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_APPROVED)){
+			lc.setStyle("font-weight:bold;color: #0252d3;");
+		}else if(StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_REALIZED)){
+			lc.setStyle("font-weight:bold;color: #00a83d;");
+		}else if(StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_BOUNCE)){
+			lc.setStyle("font-weight:bold;color: #f44b42;");
+		}else if(StringUtils.equals(receiptDetail.getStatus(), RepayConstants.PAYSTATUS_CANCEL)){
+			lc.setStyle("font-weight:bold;color: #f48341;");
+		}
+		lc.setParent(item);
+		this.listBoxReceipts.appendChild(item);
 		logger.debug("Leaving");
-		return processCompleted;
 	}
-
-	/**
-	 * Get Audit Header Details
-	 */
-	private AuditHeader getAuditHeader(FinReceiptHeader receiptHeader, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, receiptHeader);
-		return new AuditHeader(String.valueOf(receiptHeader.getReceiptID()), null, null, null, auditDetail, receiptHeader.getUserDetails(), getOverideMap());
-	}
-
-	/**
-	 * when user clicks on button "Notes"
-	 * 
-	 * @param event
-	 * @throws Exception
-	 */
-	public void onClick$btnNotes(Event event) throws Exception {
-		doShowNotes(getReceiptHeader());
-	}
-
-	@Override
-	protected String getReference() {
-		return String.valueOf(getReceiptHeader().getReceiptID());
-	}
-
+	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -681,11 +430,4 @@ public class ReceiptRealizationEnqDialogCtrl  extends GFCBaseCtrl<FinReceiptHead
 		this.receiptHeader = receiptHeader;
 	}
 
-	public ReceiptRealizationService getReceiptRealizationService() {
-		return receiptRealizationService;
-	}
-
-	public void setReceiptRealizationService(ReceiptRealizationService receiptRealizationService) {
-		this.receiptRealizationService = receiptRealizationService;
-	}
 }
