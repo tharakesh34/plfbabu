@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -22,7 +21,6 @@ public class AutoDisbursementService extends ServiceHelper {
 	private static final long		serialVersionUID	= 1442146139821584760L;
 	private Logger					logger				= Logger.getLogger(AutoDisbursementService.class);
 
-	private FinanceDisbursementDAO	financeDisbursementDAO;
 
 	/**
 	 * @param custId
@@ -101,14 +99,6 @@ public class AutoDisbursementService extends ServiceHelper {
 		curDisbursment.setLinkedTranId(linkedTranId);
 		getFinanceDisbursementDAO().updateBatchDisb(curDisbursment, "");
 		logger.debug(" Leaving ");
-	}
-
-	public FinanceDisbursementDAO getFinanceDisbursementDAO() {
-		return financeDisbursementDAO;
-	}
-
-	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
-		this.financeDisbursementDAO = financeDisbursementDAO;
 	}
 
 }

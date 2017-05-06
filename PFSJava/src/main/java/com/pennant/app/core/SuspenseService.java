@@ -54,7 +54,6 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.financemanagement.FinSuspHoldDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
@@ -72,7 +71,6 @@ public class SuspenseService extends ServiceHelper {
 	private static Logger			logger				= Logger.getLogger(SuspenseService.class);
 
 	private FinanceSuspHeadDAO		financeSuspHeadDAO;
-	private FinODDetailsDAO			finODDetailsDAO;
 	private FinSuspHoldDAO			finSuspHoldDAO;
 	private PostingsPreparationUtil	postingsPreparationUtil;
 
@@ -337,14 +335,6 @@ public class SuspenseService extends ServiceHelper {
 
 	public void setFinanceSuspHeadDAO(FinanceSuspHeadDAO financeSuspHeadDAO) {
 		this.financeSuspHeadDAO = financeSuspHeadDAO;
-	}
-
-	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
-		this.finODDetailsDAO = finODDetailsDAO;
-	}
-
-	public FinODDetailsDAO getFinODDetailsDAO() {
-		return finODDetailsDAO;
 	}
 
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {

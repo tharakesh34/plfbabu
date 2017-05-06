@@ -44,7 +44,6 @@ import org.apache.log4j.Logger;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.customermasters.Customer;
@@ -60,7 +59,6 @@ public class LatePayMarkingService extends ServiceHelper {
 
 	private static final long	serialVersionUID	= 6161809223570900644L;
 	private static Logger		logger				= Logger.getLogger(LatePayMarkingService.class);
-	private FinODDetailsDAO		finODDetailsDAO;
 	private FinODPenaltyRateDAO	finODPenaltyRateDAO;
 
 	/**
@@ -141,7 +139,7 @@ public class LatePayMarkingService extends ServiceHelper {
 
 		//Get details first time from DB and keep it for later updation
 		if (finODDetails == null || finODDetails.size() == 0) {
-			finODDetails = finODDetailsDAO.getFinODDetailsByFinReference(finReference);
+			finODDetails = getFinODDetailsDAO().getFinODDetailsByFinReference(finReference);
 			if (finODDetails != null) {
 				finEODEvent.setFinODDetails(finODDetails);
 			}
@@ -406,10 +404,6 @@ public class LatePayMarkingService extends ServiceHelper {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-
-	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
-		this.finODDetailsDAO = finODDetailsDAO;
-	}
 
 	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
 		this.finODPenaltyRateDAO = finODPenaltyRateDAO;

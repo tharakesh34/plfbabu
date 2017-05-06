@@ -56,7 +56,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.FinanceRateReviewDAO;
-import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -72,10 +71,8 @@ import com.pennant.eod.util.EODProperties;
 public class RateReviewService extends ServiceHelper {
 
 	private static final long		serialVersionUID	= -4939080414435712845L;
-
 	private Logger					logger				= Logger.getLogger(RateReviewService.class);
 
-	private RepayInstructionDAO		repayInstructionDAO;
 	private FinanceRateReviewDAO	financeRateReviewDAO;
 	private AccrualService 			accrualService;
 
@@ -270,7 +267,7 @@ public class RateReviewService extends ServiceHelper {
 		FinanceType fintype = EODProperties.getFinanceType(finEodEvent.getFinanceMain().getFinType());
 		finSchData.setFinanceType(fintype);
 		finEodEvent.setFinType(fintype);
-		List<RepayInstruction> repayInstructions = repayInstructionDAO.getRepayInstrEOD(finSchData.getFinReference());
+		List<RepayInstruction> repayInstructions = getRepayInstructionDAO().getRepayInstrEOD(finSchData.getFinReference());
 		finSchData.setRepayInstructions(repayInstructions);
 		finEodEvent.setRepayInstructions(repayInstructions);
 		logger.debug("Leaving");
@@ -311,10 +308,6 @@ public class RateReviewService extends ServiceHelper {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-
-	public void setRepayInstructionDAO(RepayInstructionDAO repayInstructionDAO) {
-		this.repayInstructionDAO = repayInstructionDAO;
-	}
 
 	public void setFinanceRateReviewDAO(FinanceRateReviewDAO financeRateReviewDAO) {
 		this.financeRateReviewDAO = financeRateReviewDAO;

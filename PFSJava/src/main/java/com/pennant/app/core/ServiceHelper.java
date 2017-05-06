@@ -62,6 +62,7 @@ import org.apache.log4j.Logger;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.applicationmaster.DPDBucketConfigurationDAO;
 import com.pennant.backend.dao.applicationmaster.DPDBucketDAO;
@@ -77,11 +78,9 @@ import com.pennant.backend.dao.finance.SecondaryAccountDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
-import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.SecondaryAccount;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEEvent;
@@ -95,25 +94,27 @@ abstract public class ServiceHelper implements Serializable {
 	private static Logger				logger				= Logger.getLogger(ServiceHelper.class);
 
 	private DataSource					dataSource;
+	//customer
+	private CustomerDAO					customerDAO;
+	private CustomerStatusCodeDAO		customerStatusCodeDAO;
+	//Loan
 	private FinanceTypeDAO				financeTypeDAO;
 	private FinanceMainDAO				financeMainDAO;
 	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
-	private SecondaryAccountDAO			secondaryAccountDAO;
-	private PostingsDAO					postingsDAO;
+	private RepayInstructionDAO			repayInstructionDAO;
+	private FinanceDisbursementDAO		financeDisbursementDAO;
+	private FinanceRepaymentsDAO		financeRepaymentsDAO;
 	private FinanceProfitDetailDAO		financeProfitDetailDAO;
-	private CustomerStatusCodeDAO		customerStatusCodeDAO;
-
+	//accounting
 	private FinContributorDetailDAO		finContributorDetailDAO;
 	private AccountEngineExecution		engineExecution;
 	private FinTypeAccountingDAO		finTypeAccountingDAO;
-
-	private DPDBucketConfigurationDAO	dPDBucketConfigurationDAO;
-	private DPDBucketDAO				dPDBucketDAO;
-
-	private RepayInstructionDAO			repayInstructionDAO;
-	private CustomerDAO					customerDAO;
+	private PostingsDAO					postingsDAO;
+	private SecondaryAccountDAO			secondaryAccountDAO;
+	//over due
 	private FinODDetailsDAO				finODDetailsDAO;
-	private FinanceDisbursementDAO		financeDisbursementDAO;
+	private DPDBucketDAO				dPDBucketDAO;
+	private DPDBucketConfigurationDAO	dPDBucketConfigurationDAO;
 
 	/**
 	 * @param dataSet
@@ -126,7 +127,7 @@ abstract public class ServiceHelper implements Serializable {
 			throws Exception {
 		logger.debug(" Entering ");
 		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-		
+
 		try {
 			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
 			list = aeEvent.getReturnDataSet();
@@ -140,7 +141,7 @@ abstract public class ServiceHelper implements Serializable {
 	}
 
 	public List<ReturnDataSet> processAccountingByEvent(AEEvent aeEvent) throws Exception {
-		
+
 		HashMap<String, Object> dataMap = aeEvent.getDataMap();
 		try {
 			return getEngineExecution().processAccountingByEvent(aeEvent, dataMap);
@@ -187,25 +188,7 @@ abstract public class ServiceHelper implements Serializable {
 		}
 		return 0;
 	}
-
-	/**
-	 * @param list
-	 * @param listSecondary
-	 * @param finRepay
-	 * @return
-	 */
-	public final List<ReturnDataSet> setOtherDetails(List<ReturnDataSet> list, List<SecondaryAccount> listSecondary,
-			FinRepayQueue finRepay) {
-
-		for (ReturnDataSet returnDataSet : list) {
-			returnDataSet.setSecondaryAccounts(getSecordayAccounts(listSecondary));
-			returnDataSet.setFinRpyFor(finRepay.getFinRpyFor());
-			returnDataSet.setValueDate(finRepay.getRpyDate());
-
-		}
-		return list;
-	}
-
+	
 	/**
 	 * @param fintype
 	 * @return
@@ -320,25 +303,6 @@ abstract public class ServiceHelper implements Serializable {
 			});
 		}
 
-	}
-
-	/**
-	 * @param scheduleDetail
-	 * @return
-	 */
-	public final static BigDecimal getPaymentDueBySchedule(FinanceScheduleDetail scheduleDetail) {
-		BigDecimal paidAmount = BigDecimal.ZERO;
-		if (scheduleDetail == null) {
-			return paidAmount;
-		}
-		paidAmount = paidAmount.add(scheduleDetail.getProfitSchd().add(scheduleDetail.getPrincipalSchd()));
-		paidAmount = paidAmount.subtract(scheduleDetail.getSchdPftPaid().add(scheduleDetail.getSchdPriPaid()));
-		paidAmount = paidAmount.add(scheduleDetail.getFeeSchd().subtract(scheduleDetail.getSchdFeePaid()));
-		paidAmount = paidAmount.add(scheduleDetail.getInsSchd().subtract(scheduleDetail.getSchdInsPaid()));
-		paidAmount = paidAmount.add(scheduleDetail.getSuplRent().subtract(scheduleDetail.getSuplRentPaid()));
-		paidAmount = paidAmount.add(scheduleDetail.getIncrCost().subtract(scheduleDetail.getIncrCostPaid()));
-
-		return paidAmount;
 	}
 
 	public BigDecimal getDecimal(ResultSet resultSet, String name) throws SQLException {
@@ -483,6 +447,14 @@ abstract public class ServiceHelper implements Serializable {
 
 	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
 		this.financeDisbursementDAO = financeDisbursementDAO;
+	}
+
+	public FinanceRepaymentsDAO getFinanceRepaymentsDAO() {
+		return financeRepaymentsDAO;
+	}
+
+	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
+		this.financeRepaymentsDAO = financeRepaymentsDAO;
 	}
 
 }

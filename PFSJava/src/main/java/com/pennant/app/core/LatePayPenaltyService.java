@@ -44,8 +44,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.util.CalculationUtil;
-import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
-import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -56,8 +54,6 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 	private static final long		serialVersionUID	= 6161809223570900644L;
 	private static Logger			logger				= Logger.getLogger(LatePayPenaltyService.class);
-	private FinODDetailsDAO			finODDetailsDAO;
-	private FinanceRepaymentsDAO	financeRepaymentsDAO;
 
 	/**
 	 * Default constructor
@@ -204,7 +200,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			schdPft = finSchdDetails.get(idx).getProfitSchd();
 		}
 
-		List<FinanceRepayments> repayments = financeRepaymentsDAO.getByFinRefAndSchdDate(finReference, odDate);
+		List<FinanceRepayments> repayments = getFinanceRepaymentsDAO().getByFinRefAndSchdDate(finReference, odDate);
 
 		BigDecimal paidPri = BigDecimal.ZERO;
 		BigDecimal paidPft = BigDecimal.ZERO;
@@ -322,7 +318,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		}
 
 		//Fetch Repayments for the OD Date
-		List<FinanceRepayments> repayments = financeRepaymentsDAO.getByFinRefAndSchdDate(finReference, odDate);
+		List<FinanceRepayments> repayments = getFinanceRepaymentsDAO().getByFinRefAndSchdDate(finReference, odDate);
 		fod.setTotPenaltyAmt(BigDecimal.ZERO);
 
 		//Load OD balances on every movement date
@@ -443,12 +439,5 @@ public class LatePayPenaltyService extends ServiceHelper {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
-		this.finODDetailsDAO = finODDetailsDAO;
-	}
-
-	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
-		this.financeRepaymentsDAO = financeRepaymentsDAO;
-	}
 
 }

@@ -8,23 +8,29 @@
 	</bean>
 	<!-- payment Helper -->
 	<bean id="serviceHelper" class="com.pennant.app.core.ServiceHelper" abstract="true">
+		<property name="dataSource" ref="pfsDatasource" />
+
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
+
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="secondaryAccountDAO" ref="secondaryAccountDAO" />
-		<property name="postingsDAO" ref="postingsDAO" />
+		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
+		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
-		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
+
+
 		<property name="finContributorDetailDAO" ref="finContributorDetailDAO" />
 		<property name="engineExecution" ref="engineExecution" />
-		<property name="dataSource" ref="pfsDatasource" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
+		<property name="postingsDAO" ref="postingsDAO" />
+		<property name="secondaryAccountDAO" ref="secondaryAccountDAO" />
+
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="dPDBucketConfigurationDAO" ref="dPDBucketConfigurationDAO" />
 		<property name="dPDBucketDAO" ref="dPDBucketDAO" />
-		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
-		<property name="customerDAO" ref="customerDAO" />
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
-		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 	</bean>
 	<bean id="paymentRecoveryService" class="com.pennant.eod.PaymentRecoveryService">
 		<property name="paymentRecoveryHeaderDAO" ref="paymentRecoveryHeaderDAO" />
@@ -40,20 +46,15 @@
 
 	<!-- Late Pay Marking -->
 	<bean id="latePayMarkingService" class="com.pennant.app.core.LatePayMarkingService" parent="serviceHelper">
-			<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 	</bean>
 
 	<!-- Late Pay Interest -->
 	<bean id="latePayInterestService" class="com.pennant.app.core.LatePayInterestService" parent="serviceHelper">
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
-		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 	</bean>
 
 	<!-- Late Pay Penalty -->
 	<bean id="latePayPenaltyService" class="com.pennant.app.core.LatePayPenaltyService" parent="serviceHelper">
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
-		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 	</bean>
 
 	<!-- NPA Service -->
@@ -81,13 +82,12 @@
 	</bean>
 	<!-- Rate review -->
 	<bean id="rateReviewService" class="com.pennant.app.core.RateReviewService" parent="serviceHelper">
-		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
 		<property name="financeRateReviewDAO" ref="financeRateReviewDAO" />
 	</bean>
 	<!-- Date Service -->
 	<bean id="dateService" class="com.pennant.app.core.DateService">
 	</bean>
-	<!-- Date rollover -->
+	<!-- Date roll over -->
 	<bean id="dateRollOverService" class="com.pennant.app.core.DateRollOverService" parent="serviceHelper">
 	</bean>
 
@@ -95,12 +95,11 @@
 	</bean>
 	<bean id="loadFinanceData" class="com.pennant.app.core.LoadFinanceData" parent="serviceHelper">
 	</bean>
-	
+
 	<bean id="receiptPaymentService" class="com.pennant.app.core.ReceiptPaymentService" parent="serviceHelper">
 		<property name="repaymentProcessUtil" ref="repayProcessUtil" />
 	</bean>
 	<bean id="autoDisbursementService" class="com.pennant.app.core.AutoDisbursementService" parent="serviceHelper">
-		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 	</bean>
 
 

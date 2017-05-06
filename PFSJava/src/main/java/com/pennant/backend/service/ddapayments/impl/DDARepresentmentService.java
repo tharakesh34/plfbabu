@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.pennant.app.core.ServiceHelper;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.ddapayments.DDARepresentmentDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -110,7 +109,7 @@ public class DDARepresentmentService {
 	 */
 	private void processRepresentment(FinanceScheduleDetail scheduleDetail, FinanceMain financeMain) {
 		// calculate total repayAmount
-		BigDecimal dueAmount = ServiceHelper.getPaymentDueBySchedule(scheduleDetail);
+		BigDecimal dueAmount = getPaymentDueBySchedule(scheduleDetail);
 
 		if(dueAmount.compareTo(BigDecimal.ZERO) == 0) {
 			DDAPayments ddaPay = new DDAPayments();
@@ -123,6 +122,25 @@ public class DDARepresentmentService {
 			// process DDA Representment data
 			representment(ddaPay);
 		}
+	}
+	
+	/**
+	 * @param scheduleDetail
+	 * @return
+	 */
+	public final  BigDecimal getPaymentDueBySchedule(FinanceScheduleDetail scheduleDetail) {
+		BigDecimal paidAmount = BigDecimal.ZERO;
+		if (scheduleDetail == null) {
+			return paidAmount;
+		}
+		paidAmount = paidAmount.add(scheduleDetail.getProfitSchd().add(scheduleDetail.getPrincipalSchd()));
+		paidAmount = paidAmount.subtract(scheduleDetail.getSchdPftPaid().add(scheduleDetail.getSchdPriPaid()));
+		paidAmount = paidAmount.add(scheduleDetail.getFeeSchd().subtract(scheduleDetail.getSchdFeePaid()));
+		paidAmount = paidAmount.add(scheduleDetail.getInsSchd().subtract(scheduleDetail.getSchdInsPaid()));
+		paidAmount = paidAmount.add(scheduleDetail.getSuplRent().subtract(scheduleDetail.getSuplRentPaid()));
+		paidAmount = paidAmount.add(scheduleDetail.getIncrCost().subtract(scheduleDetail.getIncrCostPaid()));
+
+		return paidAmount;
 	}
 
 	/**
