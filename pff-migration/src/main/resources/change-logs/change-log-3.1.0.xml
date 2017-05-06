@@ -549,7 +549,7 @@ WHERE     NOT EXISTS
                             WHERE      AccountId = T1.AccountId)
                             				</createView>
 	</changeSet>
-				<changeSet id="41" author="Srikanth">
+	<changeSet id="41" author="Srikanth">
 		<createView viewName="GL_TRAIL_BALANCE_REPORT_VIEW" replaceIfExists="true">
 	 SELECT AT.ACTYPEGRPID, A.ACCOUNTID HOSTACCOUNT, AT.ACTYPEDESC DESCRIPTION, COALESCE(T.CLOSINGBAL, 0) OPENINGBAL, COALESCE(CLOSINGBALTYPE, ' ') OPENINGBALTYPE, COALESCE(DEBITAMOUNT,0) DEBITAMOUNT, COALESCE(CREDITAMOUNT, 0) CREDITAMOUNT, 
 COALESCE(A.ACBALANCE,0) CLOSINGBAL, CASE WHEN A.ACBALANCE > 0 THEN 'CR' ELSE 'DR' END CLOSINGBALTYPE
@@ -561,6 +561,39 @@ LEFT JOIN (SELECT BSCHL, HKONT, SUM(WRBTR) DEBITAMOUNT FROM SAPGL_TRAN_DETAIL_RE
 LEFT JOIN (SELECT BSCHL, HKONT, SUM(WRBTR) CREDITAMOUNT FROM SAPGL_TRAN_DETAIL_REPORT_STAGE GROUP BY BSCHL, HKONT) CREDIT ON CREDIT.HKONT=AM.HOSTACCOUNT AND CREDIT.BSCHL = 50 
 LEFT JOIN (SELECT ACTYPEGRPID, HOSTACCOUNT, CLOSINGBAL, CLOSINGBALTYPE FROM SAPGL_TRAIL_BALANCE_REPORT BR
 INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)-1 from SAPGL_TRAIL_BALANCE_HEADER)) BH ON BH.ID = BR.HEADERID) T ON T.ACTYPEGRPID = AT.ACTYPEGRPID AND T.HOSTACCOUNT = A.ACCOUNTID
-	                            				</createView>
+</createView>
+	</changeSet>
+	<changeSet id="42" author="Prasad">
+		<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		<![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
+		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE 
+		 from ( 
+			Select Finreference,Schdate, (case when Disbonschdate=1 then 'Amount Financed - Payable ('||Finreference||')' 
+									     when BPIORHOLIDAY='B' then 'Broken Period Interest Receivable -Due('||Finreference||')' else 
+											  'Due for Installment '||INSTNUMBER||' ('||Finreference||')' end) Particulars,
+			 case when Disbonschdate=1 then 0 else Repayamount end Debit,
+			 case when Disbonschdate=1 then DisbAmount else 0 end Credit
+	   from finscheduledetails  
+	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY is null) and 
+			 schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  			 
+	union 	
+		Select finreference,m.lastmnton,feetypedesc ||'- Due ('||Finreference||')' ,m.ADVISEAMOUNT Debit ,0 Credit 
+		from manualadvise m
+		inner join FEETYPES f on f.feetypeid = m.feetypeid 		
+	union	
+		Select REFERENCE,VALUEDATE,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '||PAYMENTTYPE ||' No.:'||CHEQUEACNO ||'('||REFERENCE||')'
+										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('||REFERENCE||')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'||CHEQUEACNO ||'('||REFERENCE||')' end) Particulars,
+			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit
+		from FINRECEIPTHEADER T1 inner join 
+			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID			 
+	union 	
+		Select finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' || FINODTILLDATE Particulars, 
+		TotPenaltyAmt Debit, 0 credit
+		From FinODDetails where TOtPenaltyAmt > 0 
+	)T1 
+	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
+		</createView>
 	</changeSet>
 </databaseChangeLog>
