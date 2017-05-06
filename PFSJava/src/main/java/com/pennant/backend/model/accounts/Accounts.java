@@ -65,12 +65,8 @@ public class Accounts extends AbstractWorkflowEntity {
 	private String acPurpose;
 	private boolean internalAc;
 	private boolean custSysAc;
-	private BigDecimal acPrvDayBal = BigDecimal.ZERO;
-	private BigDecimal acTodayDr = BigDecimal.ZERO;
-	private BigDecimal acTodayCr = BigDecimal.ZERO;
-	private BigDecimal acTodayNet = BigDecimal.ZERO;
-	private BigDecimal acAccrualBal = BigDecimal.ZERO;
-	private BigDecimal acTodayBal = BigDecimal.ZERO;
+	private BigDecimal shadowBal = BigDecimal.ZERO;
+	private BigDecimal acBalance = BigDecimal.ZERO;
 	private Date acOpenDate;
 	private Date acCloseDate;
 	private Date acLastCustTrnDate;
@@ -176,54 +172,6 @@ public class Accounts extends AbstractWorkflowEntity {
 
 	public void setCustSysAc(boolean custSysAc) {
 		this.custSysAc = custSysAc;
-	}
-
-	public BigDecimal getAcPrvDayBal() {
-		return acPrvDayBal;
-	}
-
-	public void setAcPrvDayBal(BigDecimal acPrvDayBal) {
-		this.acPrvDayBal = acPrvDayBal;
-	}
-
-	public BigDecimal getAcTodayDr() {
-		return acTodayDr;
-	}
-
-	public void setAcTodayDr(BigDecimal acTodayDr) {
-		this.acTodayDr = acTodayDr;
-	}
-
-	public BigDecimal getAcTodayCr() {
-		return acTodayCr;
-	}
-
-	public void setAcTodayCr(BigDecimal acTodayCr) {
-		this.acTodayCr = acTodayCr;
-	}
-
-	public BigDecimal getAcTodayNet() {
-		return acTodayNet;
-	}
-
-	public void setAcTodayNet(BigDecimal acTodayNet) {
-		this.acTodayNet = acTodayNet;
-	}
-
-	public BigDecimal getAcAccrualBal() {
-		return acAccrualBal;
-	}
-
-	public void setAcAccrualBal(BigDecimal acAccrualBal) {
-		this.acAccrualBal = acAccrualBal;
-	}
-
-	public BigDecimal getAcTodayBal() {
-		return acTodayBal;
-	}
-
-	public void setAcTodayBal(BigDecimal acTodayBal) {
-		this.acTodayBal = acTodayBal;
 	}
 
 	public boolean isAcActive() {
@@ -384,5 +332,21 @@ public class Accounts extends AbstractWorkflowEntity {
 
 	public void setLovDescBranchCodeName(String lovDescBranchCodeName) {
 		this.lovDescBranchCodeName = lovDescBranchCodeName;
+	}
+
+	public BigDecimal getShadowBal() {
+		return shadowBal;
+	}
+
+	public void setShadowBal(BigDecimal shadowBal) {
+		this.shadowBal = shadowBal;
+	}
+
+	public BigDecimal getAcBalance() {
+		return acBalance;
+	}
+
+	public void setAcBalance(BigDecimal acBalance) {
+		this.acBalance = acBalance;
 	}
 }

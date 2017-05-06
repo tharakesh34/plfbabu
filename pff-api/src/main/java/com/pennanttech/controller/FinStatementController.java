@@ -66,7 +66,7 @@ public class FinStatementController extends SummaryDetailService {
 				}
 
 				if (StringUtils.equals(APIConstants.STMT_ACCOUNT, serviceName)) {
-					List<ReturnDataSet> postingsList = postingsDAO.getPostingsByFintref(finReference);
+					List<ReturnDataSet> postingsList = postingsDAO.getPostingsByFinRef(finReference);
 					financeDetail.setReturnDataSetList(postingsList);
 				}
 				if (StringUtils.equals(APIConstants.STMT_INST_CERT, serviceName)) {
@@ -118,7 +118,7 @@ public class FinStatementController extends SummaryDetailService {
 				}
 
 				if (StringUtils.equals(APIConstants.STMT_ACCOUNT, serviceName)) {
-					List<ReturnDataSet> postingsList = postingsDAO.getPostingsByFintref(finReference);
+					List<ReturnDataSet> postingsList = postingsDAO.getPostingsByFinRef(finReference);
 					financeDetail.setReturnDataSetList(postingsList);
 				}
 				if (StringUtils.equals(APIConstants.STMT_INST_CERT, serviceName)) {

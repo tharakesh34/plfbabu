@@ -13,7 +13,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -515,8 +514,6 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		//Finance Write off Posting Process Execution
 		//=====================================
 
-		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
-
 		FinanceProfitDetail profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
 		profitDetail = getAccrualService().calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(),
 				profitDetail, curBDay);
@@ -550,32 +547,12 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		prepareFeeRulesMap(amountCodes, dataMap, header.getFinanceDetail());
 
-		long linkedTranId = 0;
-		aeEvent.setDataMap(dataMap);
-		linkedTranId = getAccountingResults(auditHeader, header.getFinanceDetail(), accountingSetEntries, curBDay,
-				aeEvent);
+ 		aeEvent.setDataMap(dataMap);
+		
+		getPostingsPreparationUtil().postAccounting(aeEvent, dataMap);
+	//	linkedTranId = getAccountingResults(auditHeader, header.getFinanceDetail(), accountingSetEntries, curBDay,
+	//			aeEvent);
 
-		if (auditHeader.getErrorMessage() == null || auditHeader.getErrorMessage().size() == 0) {
-
-			// save Postings
-			if (accountingSetEntries != null && !accountingSetEntries.isEmpty()) {
-				getPostingsDAO().saveBatch(accountingSetEntries);
-			}
-
-			// Save/Update Finance Profit Details
-			boolean isNew = false;
-
-			if (StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
-				isNew = true;
-			}
-
-			FinanceProfitDetail pftDetail = doSave_PftDetails(profitDetail, isNew);
-
-			//Account Details Update
-			if (accountingSetEntries != null && !accountingSetEntries.isEmpty()) {
-				getAccountProcessUtil().procAccountUpdate(accountingSetEntries, pftDetail.getPftAccrued());
-			}
-		}
 
 		//Update the financemain
 		tranType = PennantConstants.TRAN_UPD;
@@ -586,7 +563,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		//Save Finance WriteOff Details
 		FinanceWriteoff financeWriteoff = header.getFinanceWriteoff();
-		financeWriteoff.setLinkedTranId(linkedTranId);
+		financeWriteoff.setLinkedTranId(aeEvent.getLinkedTranId());
 		getFinanceWriteoffDAO().save(financeWriteoff, "");
 
 		/*

@@ -117,6 +117,10 @@ public class AccountConstants {
 	public static final String	PARTNERSBANK_DISB				= "D";
 	public static final String	PARTNERSBANK_PAYMENT			= "P";
 	public static final String	PARTNERSBANK_RECEIPTS			= "R";
-
+	
+	public static final String	POSTINGS_SUCCESS				= "S";
+	public static final String	POSTINGS_FAILURE				= "F";
+	public static final String	POSTINGS_REVERSE				= "R";
+	public static final String	POSTINGS_CANCEL					= "C";
 
 }

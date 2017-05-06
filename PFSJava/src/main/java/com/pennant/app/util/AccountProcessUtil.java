@@ -97,32 +97,21 @@ public class AccountProcessUtil implements Serializable {
 			ReturnDataSet set = dataSets.get(i);
 			boolean isRcdSave = false;
 
-			String acType = StringUtils.trimToEmpty(set.getAccountType());
-
-			if (!(StringUtils.equals(acType, AccountConstants.TRANACC_DISB)
-					|| StringUtils.equals(acType, AccountConstants.TRANACC_REPAY)
-					|| StringUtils.equals(acType, AccountConstants.TRANACC_INVSTR)
-					|| StringUtils.equals(acType, AccountConstants.TRANACC_DOWNPAY)
-					|| StringUtils.equals(acType, AccountConstants.TRANACC_CANFIN)
-					|| StringUtils.equals(acType, AccountConstants.TRANACC_WRITEOFF) || StringUtils.equals(acType,
-					AccountConstants.TRANACC_WRITEOFFPAY))) {
-
-				//Check Account Details Already exist or not
-				if (saveAccMap.containsKey(set.getAccount())) {
-					account = saveAccMap.get(set.getAccount());
+			//Check Account Details Already exist or not
+			if (saveAccMap.containsKey(set.getAccount())) {
+				account = saveAccMap.get(set.getAccount());
+				isRcdSave = true;
+			} else if (updateAccMap.containsKey(set.getAccount())) {
+				account = updateAccMap.get(set.getAccount());
+			} else {
+				account = getAccountsDAO().getAccountsById(set.getAccount(), "");
+				if (account == null) {
 					isRcdSave = true;
-				} else if (updateAccMap.containsKey(set.getAccount())) {
-					account = updateAccMap.get(set.getAccount());
-				} else {
-					account = getAccountsDAO().getAccountsById(set.getAccount(), "");
-					if (account == null) {
-						isRcdSave = true;
-					}
 				}
-
-				//if Non of the Account is found create new A/c else update
-				updateAccountDetails(account, set, accrualBal, isRcdSave);
 			}
+
+			//if Non of the Account is found create new A/c else update
+			updateAccountDetails(account, set, accrualBal, isRcdSave);
 		}
 
 		//DB Insertion or updation of Account details
@@ -242,7 +231,6 @@ public class AccountProcessUtil implements Serializable {
 
 			acc.setInternalAc("Y".equals(set.getInternalAc()) ? true : false);
 			acc.setCustSysAc("N".equals(set.getInternalAc()) ? true : false);
-			acc.setAcPrvDayBal(BigDecimal.ZERO);
 			acc.setAcOpenDate(set.getPostDate());
 			acc.setAcCloseDate(null);
 			acc.setAcActive(true);
@@ -271,21 +259,16 @@ public class AccountProcessUtil implements Serializable {
 			if (set.getDrOrCr().equals(AccountConstants.TRANTYPE_DEBIT)) {
 				accrualBal = BigDecimal.ZERO.subtract(accrualBal);
 			}
-			acc.setAcAccrualBal(acc.getAcAccrualBal().add(accrualBal));
+			acc.setShadowBal(acc.getShadowBal().add(accrualBal));
 		} else {
 
 			// Debit or Credit Balances
 			if (set.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT)) {
-				acc.setAcTodayCr(acc.getAcTodayCr().add(set.getPostAmount()));
-				acc.setAcTodayBal(acc.getAcTodayBal().add(set.getPostAmount()));
+				acc.setAcBalance(acc.getAcBalance().add(set.getPostAmount()));
 			} else if (set.getDrOrCr().equals(AccountConstants.TRANTYPE_DEBIT)) {
-				acc.setAcTodayDr(acc.getAcTodayDr().add(set.getPostAmount()));
-				acc.setAcTodayBal(acc.getAcTodayBal().subtract(set.getPostAmount()));
+				acc.setAcBalance(acc.getAcBalance().subtract(set.getPostAmount()));
 			}
-
-			//Net Balance
-			acc.setAcTodayNet(acc.getAcTodayCr().subtract(acc.getAcTodayDr()));
-		}
+ 		}
 
 		// Account Details Updation/ Save
 		if (isRcdSave) {

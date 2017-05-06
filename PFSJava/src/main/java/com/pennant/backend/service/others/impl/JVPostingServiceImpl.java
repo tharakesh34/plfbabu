@@ -36,6 +36,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.Interface.service.AccountInterfaceService;
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -410,7 +411,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 							postingSuccess = true;
 						} else {
 							linkedTranId = set.getLinkedTranId();
-							set.setPostStatus("S");
+							set.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
 						}
 					}
 					// save to postings table.

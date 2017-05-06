@@ -48,6 +48,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
@@ -68,6 +69,14 @@ import com.pennant.coreinterface.model.FinanceCancellation;
 import com.pennant.coreinterface.process.FinanceCancellationProcess;
 import com.pennant.exception.PFFInterfaceException;
 
+/**
+ * @author chaitanya.ch
+ *
+ */
+/**
+ * @author chaitanya.ch
+ *
+ */
 public class PostingsPreparationUtil implements Serializable {
 	private static final long			serialVersionUID	= 1715547921928620037L;
 	private Logger						logger				= Logger.getLogger(PostingsPreparationUtil.class);
@@ -640,6 +649,134 @@ public class PostingsPreparationUtil implements Serializable {
 		return list;
 	}
 
+	
+	/**
+	 * Method to Prepare the accounting entries and save the postings to the Postings and accounts table
+	 * @param aeEvent
+	 * @param dataMap
+	 * @return
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws PFFInterfaceException
+	 */
+	public AEEvent postAccounting(AEEvent aeEvent, HashMap<String, Object> dataMap) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+		logger.debug("Entering");
+
+		getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+
+		List<ReturnDataSet> returnDatasetList = aeEvent.getReturnDataSet();
+		if (!aeEvent.isPostingSucess()) {
+			return aeEvent;
+		}
+
+		if (returnDatasetList == null || returnDatasetList.isEmpty()) {
+			return aeEvent;
+		}
+		
+		//FIXME CH to be changed to avoid the loop for setting the linked TranID 
+		long linkedTranId = getPostingsDAO().getLinkedTransId();
+		
+		for (ReturnDataSet returnDataSet : returnDatasetList) {
+			returnDataSet.setLinkedTranId(linkedTranId);
+		}
+		
+		getPostingsDAO().saveBatch(returnDatasetList);
+
+		getAccountProcessUtil().procAccountUpdate(returnDatasetList, aeEvent.getAeAmountCodes().getAccrue());
+
+		logger.debug("Leaving");
+		return aeEvent;
+
+}
+	
+
+	/**
+	 * @param finReference
+	 * @return
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws PFFInterfaceException
+	 */
+	public List<ReturnDataSet> postReveralsByFinreference(String finReference) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+		logger.debug("Entering");
+		
+		List<ReturnDataSet> returnDataSets =  getReveralsByFinreference(finReference);
+		
+		getPostingsDAO().updateStatusByFinRef(finReference, AccountConstants.POSTINGS_REVERSE);
+ 
+		getPostingsDAO().saveBatch(returnDataSets);
+
+		getAccountProcessUtil().procAccountUpdate(returnDataSets, BigDecimal.ZERO);
+
+		logger.debug("Leaving");
+		return returnDataSets;
+}
+
+	/**
+	 * 
+	 * @param linkedTranId
+	 * @return
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws PFFInterfaceException
+	 */
+	public List<ReturnDataSet> postReveralsByLinkedTranID(long linkedTranId) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+		logger.debug("Entering");
+
+		List<ReturnDataSet> returnDataSets =  getReveralsByLinkedTranID(linkedTranId);
+		
+		getPostingsDAO().updateStatusByLinkedTranId(linkedTranId, AccountConstants.POSTINGS_REVERSE);
+ 
+		getPostingsDAO().saveBatch(returnDataSets);
+
+		getAccountProcessUtil().procAccountUpdate(returnDataSets, BigDecimal.ZERO);
+
+		logger.debug("Leaving");
+		return returnDataSets;
+    }
+	
+	
+	/**
+	 * 
+	 * @param linkedTranId
+	 * @return
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws PFFInterfaceException
+	 */
+	public List<ReturnDataSet> getReveralsByLinkedTranID(long linkedTranId) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+		logger.debug("Entering");
+
+		List<ReturnDataSet> returnDataSets =  getPostingsDAO().getPostingsByLinkTransId(linkedTranId);
+		
+		getEngineExecution().getReversePostings(returnDataSets);
+		
+		logger.debug("Leaving");
+		return returnDataSets;
+    }
+	
+	
+	
+	/**
+	 * @param finReference
+	 * @return
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws PFFInterfaceException
+	 */
+	public List<ReturnDataSet> getReveralsByFinreference(String finReference) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+		logger.debug("Entering");
+
+		List<ReturnDataSet> returnDataSets =  getPostingsDAO().getPostingsByFinRef(finReference);
+		
+		getEngineExecution().getReversePostings(returnDataSets);
+		
+		logger.debug("Leaving");
+		return returnDataSets;
+    }
+	
+	
+	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

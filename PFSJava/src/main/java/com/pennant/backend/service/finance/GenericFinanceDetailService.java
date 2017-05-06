@@ -1302,7 +1302,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_DISBINS);
 		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-		Date curBDay = DateUtility.getAppDate();
 		
 		aeEvent.getAcSetIDList().clear();
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -1324,13 +1323,15 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				amountCodes.setDisbInstAmt(advPayment.getAmtToBeReleased());
 				amountCodes.setPartnerBankAc(advPayment.getPartnerBankAc());
 				amountCodes.setPartnerBankAcType(advPayment.getPartnerBankAcType());
-				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+				//aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 
 				if (advPayment.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(advPayment.getRecordType())) {
 					aeEvent.setNewRecord(true);
 				}
+				
+				postingsPreparationUtil.postAccounting(aeEvent, amountCodes.getDeclaredFieldValues());
 
-				advPayment.setLinkedTranId(getAccountingResults(auditHeader, financeDetail, list, curBDay, aeEvent));
+				advPayment.setLinkedTranId(aeEvent.getLinkedTranId());
 			}
 		}
 
@@ -1371,7 +1372,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 								.getErrorMsg() + " " + PennantApplicationUtil.formatAccountNumber(set.getAccount()),
 								new String[] {}, new String[] {}));
 					} else {
-						set.setPostStatus("S");
+						set.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
 					}
 
 					if (!isFetchFinAc
@@ -1503,7 +1504,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		aeEvent.setDataMap(dataMap);
 
 		try {
-			getAccountingResults(auditHeader, financeDetail, accountingSetEntries, curBDay, aeEvent);
+			//getAccountingResults(auditHeader, financeDetail, accountingSetEntries, curBDay, aeEvent);
+			getPostingsPreparationUtil().postAccounting(aeEvent, dataMap);
 
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();

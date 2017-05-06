@@ -58,6 +58,7 @@ import javax.sql.DataSource;
 
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
@@ -111,8 +112,10 @@ abstract public class ServiceHelper implements Serializable {
 	private FinODDetailsDAO				finODDetailsDAO;
 	private DPDBucketDAO				dPDBucketDAO;
 	private DPDBucketConfigurationDAO	dPDBucketConfigurationDAO;
+	private PostingsPreparationUtil postingsPreparationUtil;
 
 	/**
+	 * Post Accounting
 	 * @param dataSet
 	 * @param amountCodes
 	 * @param financeType
@@ -121,7 +124,7 @@ abstract public class ServiceHelper implements Serializable {
 	 */
 	public final AEEvent postAccounting(AEEvent aeEvent, HashMap<String, Object> dataMap)
 			throws Exception {
-		return getEngineExecution().postAccounting(aeEvent, dataMap);
+		return getPostingsPreparationUtil().postAccounting(aeEvent, dataMap);
 	}
 
 
@@ -428,6 +431,16 @@ abstract public class ServiceHelper implements Serializable {
 
 	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
 		this.financeRepaymentsDAO = financeRepaymentsDAO;
+	}
+
+
+	public PostingsPreparationUtil getPostingsPreparationUtil() {
+		return postingsPreparationUtil;
+	}
+
+
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 
 }

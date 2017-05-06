@@ -2898,6 +2898,7 @@
 		parent="financeBaseCtrl" scope="prototype">
 		<property name="financeCancellationService" ref="financeCancellationService" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 	</bean>
 
 	<!--============ Finance Maintenance Details ============== -->

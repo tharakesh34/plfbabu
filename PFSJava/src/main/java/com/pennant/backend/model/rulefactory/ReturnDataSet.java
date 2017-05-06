@@ -77,6 +77,7 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	
 	private String secondaryAccounts;//multiple accounts with ";" separated
 	private String finRpyFor;
+	private String userBranch;
 	
 	
 	public ReturnDataSet() {
@@ -455,6 +456,14 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 
 	public void setAppValueDate(Date appValueDate) {
 		this.appValueDate = appValueDate;
+	}
+
+	public String getUserBranch() {
+		return userBranch;
+	}
+
+	public void setUserBranch(String userBranch) {
+		this.userBranch = userBranch;
 	}
 
 	

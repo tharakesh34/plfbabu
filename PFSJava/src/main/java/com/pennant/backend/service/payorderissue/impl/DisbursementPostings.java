@@ -76,6 +76,7 @@ public class DisbursementPostings {
 				amountCodes.setPartnerBankAc(finAdvancePayments.getPartnerBankAc());
 				amountCodes.setPartnerBankAcType(finAdvancePayments.getPartnerBankAcType());
 				aeEvent.setCustID(poIssueHeader.getFinanceMain().getCustID());
+				aeEvent.setValueDate(finAdvancePayments.getLlDate());
 
 				FinAdvancePayments finApprovedPay = isApproved(approvedList, finAdvancePayments.getPaymentId());
 
@@ -88,7 +89,7 @@ public class DisbursementPostings {
 				if (StringUtils.equals(PennantConstants.RCD_DEL, finAdvancePayments.getRecordType())) {
 					//Reverse postings cancel case.
 					long linkedTranId = finApprovedPay.getLinkedTranId();
-					List<ReturnDataSet> datasetList = engineExecution.cancelPostings(linkedTranId);
+					List<ReturnDataSet> datasetList = postingsPreparationUtil.postReveralsByLinkedTranID(linkedTranId);
 					disbMap.put(finAdvancePayments.getPaymentId(), datasetList);
 
 				} else {

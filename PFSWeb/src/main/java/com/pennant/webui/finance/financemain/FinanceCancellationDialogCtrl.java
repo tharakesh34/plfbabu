@@ -6,7 +6,6 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,9 +39,8 @@ import com.pennant.CurrencyBox;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -52,10 +50,7 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
@@ -97,6 +92,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 	private FinanceCancellationService		financeCancellationService;
 	private FinanceReferenceDetailService	financeReferenceDetailService;
+	private PostingsPreparationUtil			postingsPreparationUtil;
+
 	protected Listbox						listBoxCancelFinancePosting;
 
 	protected Label							label_FinanceMainDialog_FinAssetValue;
@@ -1574,34 +1571,11 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			}
 
 			FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+ 
 
-			Date curBDay = DateUtility.getAppDate();
-			aeEvent = AEAmounts.procAEAmounts(getFinanceDetail().getFinScheduleData().getFinanceMain(),
-					getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), new FinanceProfitDetail(),
-					eventCode, curBDay, finMain.getFinStartDate());
-			
-			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+			List<ReturnDataSet> accountingSetEntries = postingsPreparationUtil.getReveralsByFinreference(finMain.getFinReference());
 
-			HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
-
-			List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
-
-			// Loop Repetition for Multiple Disbursement
-
-			List<ReturnDataSet> returnSetEntries = null;
-			Map<String, FeeRule> map = null;
-
-			if (getFeeDetailDialogCtrl() != null) {
-				map = getFeeDetailDialogCtrl().getFeeRuleDetailsMap();
-			}
-
-			getFinanceDetail().getFinScheduleData().getFinanceType().getDeclaredFieldValues(dataMap);
-			dataMap.putAll(map);
-			aeEvent.setDataMap(dataMap);
-			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
-
-			returnSetEntries = aeEvent.getReturnDataSet();
-			accountingSetEntries.addAll(returnSetEntries);
+		 
 			getFinanceDetail().setReturnDataSetList(accountingSetEntries);
 			if (getAccountingDetailDialogCtrl() != null) {
 				getAccountingDetailDialogCtrl().doFillAccounting(accountingSetEntries);
@@ -1637,6 +1611,15 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 	public FinFeeDetailListCtrl getFinFeeDetailListCtrl() {
 		return super.getFinFeeDetailListCtrl();
+	}
+
+	public PostingsPreparationUtil getPostingsPreparationUtil() {
+		return postingsPreparationUtil;
+	}
+
+	public void setPostingsPreparationUtil(
+			PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 
 }

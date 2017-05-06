@@ -1539,7 +1539,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 						errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
 								set.getErrorMsg() + " " + PennantApplicationUtil.formatAccountNumber(set.getAccount()), new String[] {}, new String[] {}));
 					} else {
-						set.setPostStatus("S");
+						set.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
 					}
 				}
 				auditHeader.setErrorList(errorDetails);

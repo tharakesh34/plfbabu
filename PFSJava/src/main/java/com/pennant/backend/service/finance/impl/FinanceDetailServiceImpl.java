@@ -1311,10 +1311,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		scheduleData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference, type));
 
 		//Fetch Finance Premium Details
-		String productCode = scheduleData.getFinanceType().getFinCategory();
+	/*	String productCode = scheduleData.getFinanceType().getFinCategory();
 		if (productCode.equals(FinanceConstants.PRODUCT_SUKUK)) {
 			//FIXME : DataSet Removal to be worked on if it requires in future
-		}
+		}*/
 
 		//Fetch Secondary account Details
 		if (ImplementationConstants.ACCOUNTS_APPLICABLE) {

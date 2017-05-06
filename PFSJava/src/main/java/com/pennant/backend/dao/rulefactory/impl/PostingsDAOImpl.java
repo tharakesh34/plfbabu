@@ -93,7 +93,7 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT ValueDate,PostDate, AppDate, AppValueDate, TranCode, TranDesc, RevTranCode, DrOrCr, Account, PostAmount, ");
-		selectSql.append(" FinEvent, LovDescEventCodeName, AcCcy, PostBranch ");
+		selectSql.append(" FinEvent, LovDescEventCodeName, AcCcy, PostBranch, UserBranch ");
 		selectSql.append(" FROM Postings_View");
 		selectSql.append(" Where FinReference =:FinReference AND FinEvent IN ("+finEvent+")");
 		if(!showZeroBal){
@@ -130,7 +130,7 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent,");
 		selectSql.append(" PostDate,ValueDate,TranCode,TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting,");
 		selectSql.append(" PostAmount,AmountType,PostStatus,ErrorId,ErrorMsg, AcCcy, TranOrderId,");
-		selectSql.append(" PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate ");
+		selectSql.append(" PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
 		selectSql.append(" FROM Postings");
 		selectSql.append(" Where LinkedTranId =:LinkedTranId");
 		
@@ -151,7 +151,7 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent, PostDate,ValueDate,TranCode, ");
 		selectSql.append(" TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting, PostAmount,AmountType,PostStatus,ErrorId, ");
-		selectSql.append(" ErrorMsg, AcCcy, TranOrderId, PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate ");
+		selectSql.append(" ErrorMsg, AcCcy, TranOrderId, PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
 		selectSql.append(" FROM Postings");
 		selectSql.append(" Where LinkedTranId  IN(:LinkedTranId) ");
 		
@@ -193,17 +193,53 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		insertSql.append(" (LinkedTranId, Postref, PostingId, finReference, FinEvent,");
 		insertSql.append(" PostDate, ValueDate, TranCode, TranDesc, RevTranCode, DrOrCr, Account,ShadowPosting,");
 		insertSql.append(" PostAmountLcCcy, TransOrder, DerivedTranOrder,PostToSys,ExchangeRate, ");
-		insertSql.append(" PostAmount,AmountType, PostStatus, ErrorId, ErrorMsg, AcCcy, TranOrderId,PostBranch, AppDate, AppValueDate)");
+		insertSql.append(" PostAmount,AmountType, PostStatus, ErrorId, ErrorMsg, AcCcy, TranOrderId,PostBranch, AppDate, AppValueDate, UserBranch)");
 		insertSql.append(" Values(:LinkedTranId, :Postref, :PostingId, :finReference, :FinEvent,");
 		insertSql.append(" :PostDate, :ValueDate, :TranCode, :TranDesc, :RevTranCode, :DrOrCr, :Account, :ShadowPosting,");
 		insertSql.append(" :PostAmountLcCcy, :TransOrder, :DerivedTranOrder,:PostToSys,:ExchangeRate,");
-		insertSql.append(" :PostAmount, :AmountType, :PostStatus, :ErrorId, :ErrorMsg, :AcCcy, :TranOrderId,:PostBranch, :AppDate, :AppValueDate)");
+		insertSql.append(" :PostAmount, :AmountType, :PostStatus, :ErrorId, :ErrorMsg, :AcCcy, :TranOrderId,:PostBranch, :AppDate, :AppValueDate, :UserBranch)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(dataSetList.toArray());
 		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
+	
+	//FIXME CH to be changed to Batch Update
+		@Override
+	public void updateStatusByLinkedTranId(long linkedTranId, String postStatus) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("linkedTranId", linkedTranId);
+		paramSource.addValue("postStatus", postStatus);
+		
+		StringBuilder insertSql = new StringBuilder();
+		insertSql.append("Update Postings ");
+		insertSql.append(" PostStatus = :PostStatus where linkedTranId = :linkedTranId");
+		
+		logger.debug("insertSql: " + insertSql.toString());
+		this.namedParameterJdbcTemplate.update(insertSql.toString(), paramSource);
+		logger.debug("Leaving");
+	}
+
+		//FIXME CH to be changed to Batch Update
+		@Override
+		public void updateStatusByFinRef(String finReference, String postStatus) {
+			logger.debug("Entering");
+			
+			MapSqlParameterSource paramSource = new MapSqlParameterSource();
+			paramSource.addValue("finReference", finReference);
+			paramSource.addValue("postStatus", postStatus);
+			
+			StringBuilder insertSql = new StringBuilder();
+			insertSql.append("Update Postings Set");
+			insertSql.append(" PostStatus = :postStatus where finReference = :finReference");
+			
+			logger.debug("insertSql: " + insertSql.toString());
+			this.namedParameterJdbcTemplate.update(insertSql.toString(), paramSource);
+			logger.debug("Leaving");
+		}
 
 	/**
 	 * Generate Linked Transaction ID
@@ -364,14 +400,14 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		selectSql.append(" Select * From ( SELECT T1.LinkedTranId,T1.Postref,T1.PostingId,T1.finReference,T1.FinEvent,");
 		selectSql.append(" T1.PostDate,T1.ValueDate,T1.TranCode,T1.TranDesc,T1.RevTranCode,T1.DrOrCr,T1.Account, T1.ShadowPosting,");
 		selectSql.append(" T1.PostAmount,T1.AmountType,T1.PostStatus,T1.ErrorId,T1.ErrorMsg, T1.AcCcy, T1.TranOrderId,");
-		selectSql.append(" T1.PostToSys,T1.ExchangeRate  ");
+		selectSql.append(" T1.PostToSys,T1.ExchangeRate, UserBranch  ");
 		selectSql.append(" FROM Postings T1 INNER JOIN  FinanceMain_Temp T2 on T1.FinReference = T2.FinReference");
 		selectSql.append(" Where T2.FinBranch = :FinBranch");
 		selectSql.append(" UNION ALL ");
 		selectSql.append(" SELECT T1.LinkedTranId,T1.Postref,T1.PostingId,T1.finReference,T1.FinEvent,");
 		selectSql.append(" T1.PostDate,T1.ValueDate,T1.TranCode,T1.TranDesc,T1.RevTranCode,T1.DrOrCr,T1.Account, T1.ShadowPosting,");
 		selectSql.append(" T1.PostAmount,T1.AmountType,T1.PostStatus,T1.ErrorId,T1.ErrorMsg, T1.AcCcy, T1.TranOrderId,");
-		selectSql.append(" T1.PostToSys,T1.ExchangeRate  ");
+		selectSql.append(" T1.PostToSys,T1.ExchangeRate, UserBranch  ");
 		selectSql.append(" FROM Postings T1 INNER JOIN FinanceMain T2 on T1.FinReference = T2.FinReference ");
 		selectSql.append(" Where NOT EXISTS (SELECT 1 FROM FinanceMain_Temp WHERE FinReference = T2.FinReference) and ");
 		selectSql.append(" T2.FinBranch = :FinBranch)T1 order by T1.Account,T1.finReference,T1.TranCode ");
@@ -398,7 +434,7 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent,");
 		selectSql.append(" PostDate,ValueDate,TranCode,TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting,");
 		selectSql.append(" PostAmount,AmountType,PostStatus,ErrorId,ErrorMsg, AcCcy, TranOrderId,");
-		selectSql.append(" PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate ");
+		selectSql.append(" PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
 		selectSql.append(" FROM Postings");
 		selectSql.append(" Where FinReference =:FinReference And finEvent=:finEvent ");
 
@@ -439,7 +475,7 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 	 */
 
 	@Override
-	public List<ReturnDataSet> getPostingsByFintref(String finReference) {
+	public List<ReturnDataSet> getPostingsByFinRef(String finReference) {
 		logger.debug("Entering");
 
 		ReturnDataSet dataSet = new ReturnDataSet();
@@ -449,7 +485,7 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent,");
 		selectSql.append(" PostDate,ValueDate,TranCode,TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting,");
 		selectSql.append(" PostAmount,AmountType,PostStatus,ErrorId,ErrorMsg, AcCcy, TranOrderId,");
-		selectSql.append(" PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate ");
+		selectSql.append(" PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
 		selectSql.append(" FROM Postings");
 		selectSql.append(" Where FinReference =:FinReference");
 

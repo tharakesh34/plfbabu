@@ -21,6 +21,7 @@ import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
@@ -415,7 +416,15 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		}else{
 			
 			//Event Based Accounting on Final Stage
-			auditHeader = executeAccountingProcess(auditHeader, curBDay);
+			try {
+				getPostingsPreparationUtil().postReveralsByFinreference(finReference);
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 				return auditHeader;
 			}

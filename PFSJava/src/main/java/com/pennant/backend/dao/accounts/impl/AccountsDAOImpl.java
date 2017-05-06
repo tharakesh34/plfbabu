@@ -128,8 +128,8 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		accounts.setAccountId(id);
 		
 		StringBuilder selectSql = new StringBuilder("Select AccountId, AcCcy, AcType, AcBranch, AcCustId, AcFullName, ");
-		selectSql.append("AcShortName, AcPurpose, InternalAc, CustSysAc, AcPrvDayBal, AcTodayDr, AcTodayCr, AcTodayNet,");
-		selectSql.append("AcAccrualBal, AcTodayBal, AcOpenDate,AcCloseDate, AcLastCustTrnDate, AcLastSysTrnDate, AcActive, AcBlocked,"); 
+		selectSql.append("AcShortName, AcPurpose, InternalAc, CustSysAc,");
+		selectSql.append("ShadowBal, AcBalance, AcOpenDate,AcCloseDate, AcLastCustTrnDate, AcLastSysTrnDate, AcActive, AcBlocked,"); 
 		selectSql.append(" AcClosed, HostAcNumber");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
@@ -250,14 +250,14 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		StringBuilder insertSql =new StringBuilder("Insert Into Accounts");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (AccountId, AcCcy, AcType, AcBranch, AcCustId, AcFullName, AcShortName");
-		insertSql.append(", AcPurpose, InternalAc, CustSysAc, AcPrvDayBal, AcTodayDr, AcTodayCr, AcTodayNet");
-		insertSql.append(", AcAccrualBal, AcTodayBal, AcOpenDate,AcCloseDate, AcLastCustTrnDate, AcLastSysTrnDate, AcActive" );
+		insertSql.append(", AcPurpose, InternalAc, CustSysAc");
+		insertSql.append(", ShadowBal, AcBalance, AcOpenDate,AcCloseDate, AcLastCustTrnDate, AcLastSysTrnDate, AcActive" );
 		insertSql.append(", AcBlocked, AcClosed, HostAcNumber");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode" );
 		insertSql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:AccountId, :AcCcy, :AcType, :AcBranch, :AcCustId, :AcFullName" );
-		insertSql.append(", :AcShortName, :AcPurpose, :InternalAc, :CustSysAc, :AcPrvDayBal, :AcTodayDr, :AcTodayCr");
-		insertSql.append(", :AcTodayNet, :AcAccrualBal, :AcTodayBal, :AcOpenDate,:AcCloseDate, :AcLastCustTrnDate, :AcLastSysTrnDate");
+		insertSql.append(", :AcShortName, :AcPurpose, :InternalAc, :CustSysAc");
+		insertSql.append(", :ShadowBal, :AcBalance, :AcOpenDate,:AcCloseDate, :AcLastCustTrnDate, :AcLastSysTrnDate");
 		insertSql.append(", :AcActive, :AcBlocked, :AcClosed, :HostAcNumber");
 		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId");
 		insertSql.append(", :NextTaskId, :RecordType, :WorkflowId)");
@@ -290,14 +290,14 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		StringBuilder insertSql =new StringBuilder("Insert Into Accounts");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (AccountId, AcCcy, AcType, AcBranch, AcCustId, AcFullName, AcShortName");
-		insertSql.append(", AcPurpose, InternalAc, CustSysAc, AcPrvDayBal, AcTodayDr, AcTodayCr, AcTodayNet");
-		insertSql.append(", AcAccrualBal, AcTodayBal, AcOpenDate,AcCloseDate, AcLastCustTrnDate, AcLastSysTrnDate, AcActive" );
+		insertSql.append(", AcPurpose, InternalAc, CustSysAc");
+		insertSql.append(", ShadowBal, AcBalance, AcOpenDate,AcCloseDate, AcLastCustTrnDate, AcLastSysTrnDate, AcActive" );
 		insertSql.append(", AcBlocked, AcClosed, HostAcNumber");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode" );
 		insertSql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:AccountId, :AcCcy, :AcType, :AcBranch, :AcCustId, :AcFullName" );
-		insertSql.append(", :AcShortName, :AcPurpose, :InternalAc, :CustSysAc, :AcPrvDayBal, :AcTodayDr, :AcTodayCr");
-		insertSql.append(", :AcTodayNet, :AcAccrualBal, :AcTodayBal, :AcOpenDate,:AcCloseDate, :AcLastCustTrnDate, :AcLastSysTrnDate");
+		insertSql.append(", :AcShortName, :AcPurpose, :InternalAc, :CustSysAc");
+		insertSql.append(", :ShadowBal, :AcBalance, :AcOpenDate,:AcCloseDate, :AcLastCustTrnDate, :AcLastSysTrnDate");
 		insertSql.append(", :AcActive, :AcBlocked, :AcClosed, :HostAcNumber");
 		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId");
 		insertSql.append(", :NextTaskId, :RecordType, :WorkflowId)");
@@ -333,9 +333,8 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		updateSql.append(" Set AcCcy = :AcCcy, AcType = :AcType" ); 
 		updateSql.append(", AcBranch = :AcBranch, AcCustId = :AcCustId, AcFullName = :AcFullName" ); 
 		updateSql.append(", AcShortName = :AcShortName, AcPurpose = :AcPurpose, InternalAc = :InternalAc" ); 
-		updateSql.append(", CustSysAc = :CustSysAc, AcPrvDayBal = :AcPrvDayBal, AcTodayDr = :AcTodayDr" ); 
-	    updateSql.append(", AcTodayCr = :AcTodayCr, AcTodayNet = :AcTodayNet, AcAccrualBal = :AcAccrualBal" ); 
-		updateSql.append(", AcTodayBal = :AcTodayBal, AcOpenDate = :AcOpenDate,AcCloseDate=:AcCloseDate, AcLastCustTrnDate = :AcLastCustTrnDate" ); 
+		updateSql.append(", CustSysAc = :CustSysAc, ShadowBal = :ShadowBal,  AcBalance = :AcBalance" ); 
+		updateSql.append(", AcOpenDate = :AcOpenDate,AcCloseDate=:AcCloseDate, AcLastCustTrnDate = :AcLastCustTrnDate" ); 
 		updateSql.append(", AcLastSysTrnDate = :AcLastSysTrnDate, AcActive = :AcActive, AcBlocked = :AcBlocked" ); 
 		updateSql.append(", AcClosed = :AcClosed, HostAcNumber = :HostAcNumber, Version = :Version , LastMntBy = :LastMntBy");
 		updateSql.append(", LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode" ); 
@@ -381,9 +380,8 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		updateSql.append(" Set AcCcy = :AcCcy, AcType = :AcType" ); 
 		updateSql.append(", AcBranch = :AcBranch, AcCustId = :AcCustId, AcFullName = :AcFullName" ); 
 		updateSql.append(", AcShortName = :AcShortName, AcPurpose = :AcPurpose, InternalAc = :InternalAc" ); 
-		updateSql.append(", CustSysAc = :CustSysAc, AcPrvDayBal = :AcPrvDayBal, AcTodayDr = :AcTodayDr" ); 
-	    updateSql.append(", AcTodayCr = :AcTodayCr, AcTodayNet = :AcTodayNet, AcAccrualBal = :AcAccrualBal" ); 
-		updateSql.append(", AcTodayBal = :AcTodayBal, AcOpenDate = :AcOpenDate,AcCloseDate=:AcCloseDate, AcLastCustTrnDate = :AcLastCustTrnDate" ); 
+		updateSql.append(", CustSysAc = :CustSysAc, ShadowBal = :ShadowBal,  AcBalance = :AcBalance" ); 
+		updateSql.append(", AcOpenDate = :AcOpenDate,AcCloseDate=:AcCloseDate, AcLastCustTrnDate = :AcLastCustTrnDate" ); 
 		updateSql.append(", AcLastSysTrnDate = :AcLastSysTrnDate, AcActive = :AcActive, AcBlocked = :AcBlocked" ); 
 		updateSql.append(", AcClosed = :AcClosed, HostAcNumber = :HostAcNumber, Version = :Version , LastMntBy = :LastMntBy");
 		updateSql.append(", LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode" ); 
@@ -405,10 +403,10 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		logger.debug("Entering");
 		
 		Accounts accounts = new Accounts();
-		accounts.setAcAccrualBal(BigDecimal.ZERO);
+		accounts.setShadowBal(BigDecimal.ZERO);
 		
 		StringBuilder	updateSql =new StringBuilder("Update Accounts");
-		updateSql.append(" Set AcAccrualBal = :AcAccrualBal ");
+		updateSql.append(" Set ShadowBal = :ShadowBal ");
 		
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accounts);

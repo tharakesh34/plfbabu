@@ -126,37 +126,40 @@ public class AccountEngineExecution implements Serializable {
 			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
-		List<ReturnDataSet> returnList = getPrepareAccountingSetResults(aeEvent, dataMap);
-
-		//Method for Checking for Reverse Calculations Based upon Negative Amounts
-		for (ReturnDataSet returnDataSet : returnList) {
-
-			//returnDataSet.setLinkedTranId(linkedTranId);
-
-			if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
-
-				String tranCode = returnDataSet.getTranCode();
-				String revTranCode = returnDataSet.getRevTranCode();
-				String debitOrCredit = returnDataSet.getDrOrCr();
-
-				returnDataSet.setTranCode(revTranCode);
-				returnDataSet.setRevTranCode(tranCode);
-
-				returnDataSet.setPostAmount(returnDataSet.getPostAmount().negate());
-
-				if (debitOrCredit.equals(AccountConstants.TRANTYPE_CREDIT)) {
-					returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
-				} else {
-					returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
-				}
-			}
-		}
+		List<ReturnDataSet> returnList = prepareAccountingSetResults(aeEvent, dataMap);
 
 		aeEvent.setReturnDataSet(returnList);
 		logger.debug("Leaving");
 
 		return aeEvent;
 	}
+	
+	/**
+	 * 
+	 * @param returnDataSet
+	 */
+	public void getReversePostings(List<ReturnDataSet> returnDataSetList){
+		logger.debug("Entering");
+		String tranCode = "";
+		//Method for Checking for Reverse Calculations Based upon Negative Amounts
+		for (ReturnDataSet returnDataSet : returnDataSetList) {
+			
+			returnDataSet.setPostAmount(returnDataSet.getPostAmount());
+			tranCode = returnDataSet.getTranCode();
+			returnDataSet.setTranCode(returnDataSet.getRevTranCode());
+			returnDataSet.setRevTranCode(tranCode);
+			//FIXME CH to be discussed with PV
+			returnDataSet.setPostDate(DateUtility.getAppDate());
+			if (returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT)) {
+				returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
+			} else {
+				returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
+			}
+		}
+		logger.debug("Leaving");
+	}
+	
+	
 
 	/**
 	 * Method for Execution Of Fee & Charges Rules
@@ -380,7 +383,7 @@ public class AccountEngineExecution implements Serializable {
 		List<ReturnDataSet> returnDataSets = null;
 
 		if (transactionEntries != null && transactionEntries.size() > 0) {
-			returnDataSets = getPrepareAccountingSetResults(aeEvent, dataMap);
+			returnDataSets = prepareAccountingSetResults(aeEvent, dataMap);
 		}
 
 		//Method for Checking for Reverse Calculations Based upon Negative Amounts
@@ -426,7 +429,7 @@ public class AccountEngineExecution implements Serializable {
 		List<ReturnDataSet> returnDataSets = null;
 
 		if (transactionEntries != null && transactionEntries.size() > 0) {
-			returnDataSets = getPrepareAccountingSetResults(aeEvent, dataMap);
+			returnDataSets = prepareAccountingSetResults(aeEvent, dataMap);
 		}
 
 		logger.debug("Leaving");
@@ -471,7 +474,7 @@ public class AccountEngineExecution implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	private List<ReturnDataSet> getPrepareAccountingSetResults(AEEvent aeEvent, HashMap<String, Object> dataMap)
+	private List<ReturnDataSet> prepareAccountingSetResults(AEEvent aeEvent, HashMap<String, Object> dataMap)
 			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		logger.trace("FIN REFERENCE: " + aeEvent.getFinReference());
@@ -482,12 +485,13 @@ public class AccountEngineExecution implements Serializable {
 		for (int i = 0; i < acSetIDList.size(); i++) {
 			transactionEntries.addAll(AccountingSetCache.getTransactionEntry(acSetIDList.get(i)));
 		}
-
+		
+		//FIXME CH To be discussed if this is required here
 		// Dates Setting
 		aeEvent.setPostDate(DateUtility.getPostDate());
 		aeEvent.setAppDate(DateUtility.getAppDate());
 		aeEvent.setAppValueDate(DateUtility.getAppValueDate());
-
+		
 		//FIXME: PV 04MAY17: Why it is required here?
 		Map<String, Object> accountsMap = new HashMap<String, Object>(transactionEntries.size());
 		List<IAccounts> accountsList = new ArrayList<IAccounts>(transactionEntries.size());
@@ -568,8 +572,9 @@ public class AccountEngineExecution implements Serializable {
 
 			returnDataSet.setPostref(aeEvent.getBranch() + "-" + transactionEntry.getAccountType() + "-"
 					+ aeEvent.getCcy());
-			returnDataSet.setPostStatus("S");
+			returnDataSet.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
 			returnDataSet.setAmountType(transactionEntry.getChargeType());
+			returnDataSet.setUserBranch(aeEvent.getBranch());
 
 			//Set Account Number
 			IAccounts acc = (IAccounts) accountsMap.get(String.valueOf(transactionEntry.getTransOrder()));
@@ -579,7 +584,7 @@ public class AccountEngineExecution implements Serializable {
 
 			returnDataSet.setTranOrderId(acc.getTransOrder());
 			returnDataSet.setAccount(acc.getAccountId());
-			returnDataSet.setPostStatus(acc.getFlagPostStatus());
+		//	returnDataSet.setPostStatus(acc.getFlagPostStatus());
 			returnDataSet.setErrorId(acc.getErrorCode());
 			returnDataSet.setErrorMsg(acc.getErrorMsg());
 
@@ -853,55 +858,7 @@ public class AccountEngineExecution implements Serializable {
 		logger.debug("Leaving");
 	}
 
-	public List<ReturnDataSet> cancelPostings(long linkedTranid) {
-		logger.debug("Entering");
-		List<ReturnDataSet> returnSetEntries = getPostingsDAO().getPostingsByLinkTransId(linkedTranid);
-
-		for (ReturnDataSet returnDataSet : returnSetEntries) {
-
-			returnDataSet.setLinkedTranId(linkedTranid);
-
-			if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) > 0) {
-
-				String tranCode = returnDataSet.getTranCode();
-				String revTranCode = returnDataSet.getRevTranCode();
-				String debitOrCredit = returnDataSet.getDrOrCr();
-
-				returnDataSet.setTranCode(revTranCode);
-				returnDataSet.setRevTranCode(tranCode);
-
-				if (debitOrCredit.equals(AccountConstants.TRANTYPE_CREDIT)) {
-					returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
-				} else {
-					returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
-				}
-			}
-		}
-
-		return returnSetEntries;
-	}
-
-	public AEEvent postAccounting(AEEvent aeEvent, HashMap<String, Object> dataMap) throws IllegalAccessException,
-			InvocationTargetException, PFFInterfaceException {
-	
-		getAccEngineExecResults(aeEvent, dataMap);
-		
-		List<ReturnDataSet> returnDataset = aeEvent.getReturnDataSet();
-		if (!aeEvent.isPostingSucess()) {
-			return aeEvent;
-		}
-
-		if (returnDataset == null || returnDataset.isEmpty()) {
-			return aeEvent;
-		}
-
-		getPostingsDAO().saveBatch(returnDataset);
-
-		getAccountProcessUtil().procAccountUpdate(returnDataset, aeEvent.getAeAmountCodes().getAccrue());
-
-		return aeEvent;
-
-	}
+ 
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
