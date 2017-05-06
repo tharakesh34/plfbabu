@@ -4753,6 +4753,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (!this.nextRepayDate.isReadonly() && StringUtils.isNotEmpty(this.repayFrq.getValue())
 				&& FrequencyUtil.validateFrequency(this.repayFrq.getValue()) == null) {
 
+			this.nextRepayDate.setConstraint(new PTDateValidator(Labels
+					.getLabel("label_FinanceMainDialog_NextRepayDate.value"), false,gracePeriodEndDate.getValue(),null,false));
 			this.nextRepayDate_two.setConstraint(new PTDateValidator(Labels
 					.getLabel("label_FinanceMainDialog_NextRepayDate.value"), true));
 		}
@@ -4761,6 +4763,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				&& StringUtils.isNotEmpty(this.rolloverFrq.getValue())
 				&& FrequencyUtil.validateFrequency(this.rolloverFrq.getValue()) == null) {
 
+			this.nextRollOverDate.setConstraint(new PTDateValidator(Labels
+					.getLabel("label_FinanceMainDialog_NextRolloverDate.value"), false,gracePeriodEndDate.getValue(),null,false));
 			this.nextRollOverDate_two.setConstraint(new PTDateValidator(Labels
 					.getLabel("label_FinanceMainDialog_NextRolloverDate.value"), false));
 		}
@@ -4769,6 +4773,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				&& StringUtils.isNotEmpty(this.repayPftFrq.getValue())
 				&& FrequencyUtil.validateFrequency(this.repayPftFrq.getValue()) == null) {
 
+			this.nextRepayPftDate.setConstraint(new PTDateValidator(Labels
+					.getLabel("label_FinanceMainDialog_NextRepayPftDate.value"), false,gracePeriodEndDate.getValue(),null,false));
 			this.nextRepayPftDate_two.setConstraint(new PTDateValidator(Labels
 					.getLabel("label_FinanceMainDialog_NextRepayPftDate.value"), true));
 		}
@@ -4776,6 +4782,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (!this.nextRepayRvwDate.isReadonly() && StringUtils.isNotEmpty(this.repayRvwFrq.getValue())
 				&& FrequencyUtil.validateFrequency(this.repayRvwFrq.getValue()) == null) {
 
+			this.nextRepayRvwDate.setConstraint(new PTDateValidator(Labels
+					.getLabel("label_FinanceMainDialog_NextRepayRvwDate.value"), false,gracePeriodEndDate.getValue(),null,false));
 			this.nextRepayRvwDate_two.setConstraint(new PTDateValidator(Labels
 					.getLabel("label_FinanceMainDialog_NextRepayRvwDate.value"), true));
 		}
@@ -4783,6 +4791,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (!this.nextRepayCpzDate.isReadonly() && StringUtils.isNotEmpty(this.repayCpzFrq.getValue())
 				&& FrequencyUtil.validateFrequency(this.repayCpzFrq.getValue()) == null) {
 
+			this.nextRepayCpzDate.setConstraint(new PTDateValidator(Labels
+					.getLabel("label_FinanceMainDialog_NextRepayCpzDate.value"), false,gracePeriodEndDate.getValue(),null,false));
 			this.nextRepayCpzDate_two.setConstraint(new PTDateValidator(Labels
 					.getLabel("label_FinanceMainDialog_NextRepayCpzDate.value"), true));
 		}
@@ -9270,8 +9280,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
-		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		int formatter = CurrencyUtil.getFormat(finMain.getFinCcy());
+		FinanceMain aFinanceMain = aFinanceSchData.getFinanceMain();
+		int formatter = CurrencyUtil.getFormat(aFinanceMain.getFinCcy());
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		doClearMessage();
 		if (feeDetailDialogCtrl != null) {
@@ -9280,7 +9290,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		boolean isOverDraft = false;
 
-		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, finMain.getProductCategory())) {
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory())) {
 			isOverDraft = true;
 		}
 
@@ -9288,7 +9298,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		doSetLOVValidation();
 
 		//FinanceMain Detail Tab ---> 1. Basic Details
-		FinanceMain aFinanceMain = aFinanceSchData.getFinanceMain();
 		aFinanceMain.setSwiftBranchCode(getFinanceDetail().getCustomerDetails().getCustomer().getCustSwiftBrnCode());
 		Date financeDate = null;
 
@@ -10267,7 +10276,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			//validate maturity date
-			if (this.maturityDate_two.getValue() != null) {
+			if (this.maturityDate_two.getValue() != null && !this.maturityDate.isReadonly()) {
 				if (this.maturityDate_two.getValue().compareTo(this.finStartDate.getValue()) <= 0) {
 					throw new WrongValueException(this.maturityDate,
 							Labels.getLabel("DATE_ALLOWED_AFTER", new String[] { Labels.getLabel("label_MaturityDate"),
@@ -10390,7 +10399,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				setDownpaymentRulePercentage(false);
 
 				BigDecimal reqDwnPay = PennantAppUtil.getPercentageValue(this.finAmount.getActualValue(),
-						finMain.getMinDownPayPerc());
+						aFinanceMain.getMinDownPayPerc());
 
 				BigDecimal downPayment = this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue());
 
@@ -10963,11 +10972,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			//Finance Overdue Details set to Penalty Rate Object
 			aFinanceSchData.setFinODPenaltyRate(penaltyRate);
 
-			aFinanceMain.setAllowGrcPftRvw(finMain.isAllowGrcPftRvw());
-			aFinanceMain.setAllowGrcCpz(finMain.isAllowGrcCpz());
-			aFinanceMain.setAllowRepayRvw(finMain.isAllowRepayRvw());
-			aFinanceMain.setAllowRepayCpz(finMain.isAllowRepayCpz());
-
 			if (this.allowGrace.isChecked()) {
 				aFinanceMain.setGrcRateBasis(this.grcRateBasis.getSelectedItem().getValue().toString());
 
@@ -11017,7 +11021,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			}
 
-			aFinanceMain.setCpzAtGraceEnd(finMain.isCpzAtGraceEnd());
 			aFinanceMain.setEqualRepay(financeType.isEqualRepayment());
 			aFinanceMain.setIncreaseTerms(false);
 			aFinanceMain.setRecordStatus(this.recordStatus.getValue());
