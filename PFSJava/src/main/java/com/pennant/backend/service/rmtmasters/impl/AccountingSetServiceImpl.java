@@ -67,6 +67,7 @@ import com.pennant.backend.service.rmtmasters.AccountingSetService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.cache.util.AccountingSetCache;
 
 /**
  * Service implementation for methods that depends on <b>AccountingSet</b>.<br>
@@ -706,6 +707,9 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 				transactionEntry.setRecordType(rcdType);
 				transactionEntry.setRecordStatus(recordStatus);
 			}
+			if (StringUtils.isEmpty(type) && (updateRecord || deleteRecord)) {
+				AccountingSetCache.clearTransactionEntryCache(transactionEntry.getAccountSetid());
+			}
 			auditDetails.get(i).setModelData(transactionEntry);
 		}
 
@@ -734,6 +738,12 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 			}
 			
 			getTransactionEntryDAO().deleteByAccountingSetId(accountingSet.getAccountSetid(), tableType);
+			
+			if (StringUtils.isEmpty(tableType)) {
+				AccountingSetCache.clearTransactionEntryCache(accountingSet.getAccountSetid());
+			}
+
+			
 		}
 		
 		return auditList;

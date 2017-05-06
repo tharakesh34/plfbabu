@@ -65,6 +65,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.rulefactory.OverdueChargeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.cache.util.AccountingSetCache;
 
 /**
  * Service implementation for methods that depends on <b>OverdueCharge</b>.<br>
@@ -281,7 +282,8 @@ public class OverdueChargeServiceImpl extends GenericService<OverdueCharge> impl
 							entries.get(i).setAccountType(overdueCharge.getODCCharityAccount());
 							entries.get(i).setAccountSubHeadRule(overdueCharge.getoDCCharitySubHead());
 						}
-                    }
+						AccountingSetCache.clearTransactionEntryCache(entries.get(i).getAccountSetid());
+					}
 					getTransactionEntryDAO().updateTransactionEntryList(entries);
 				}
 			}
