@@ -452,4 +452,9 @@ FROM    	Mandates T1 INNER JOIN
 			Update ERRORDETAILS set ErrorMessage='Multi disbursement is not allowed for this loan:{0} with loanType:{1}.' where ErrorCode='90276';
 			</sql>
 			</changeSet>
+			<changeSet id="32" author="pruthvi">
+		<addForeignKeyConstraint constraintName="FK_RMTFINTYPES_SMTDIVISIONDTL"
+			referencedTableName="SMTDIVISIONDETAIL" referencedColumnNames="DIVISIONCODE"
+			baseTableName="RMTFINANCETYPES" baseColumnNames="findivision" />
+	</changeSet>
 </databaseChangeLog>
