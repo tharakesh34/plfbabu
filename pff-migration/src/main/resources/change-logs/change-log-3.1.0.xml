@@ -491,4 +491,76 @@ FROM    	Mandates T1 INNER JOIN
 		<addPrimaryKey columnNames="ACCOUNTID, POSTDATE" constraintName="pk_AccountsHistory"
 			tableName="AccountsHistory" />
 	</changeSet>
+	
+	<changeSet id="37" author="pruthvi">
+		<dropColumn columnName="ACPRVDAYBAL" tableName="ACCOUNTS_TEMP" />
+		<dropColumn columnName="ACTODAYDR" tableName="ACCOUNTS_TEMP" />
+		<dropColumn columnName="ACTODAYCR" tableName="ACCOUNTS_TEMP" />
+		<dropColumn columnName="ACTODAYNET" tableName="ACCOUNTS_TEMP" />
+	</changeSet>
+	
+	
+	<changeSet author="pruthvi" id="38">
+		<renameColumn columnDataType="decimal(18,0)" newColumnName="SHADOWBAL"
+			oldColumnName="ACACCRUALBAL" tableName="ACCOUNTS_TEMP" />
+				<renameColumn columnDataType="decimal(18,0)" newColumnName="ACBALANCE"
+			oldColumnName="ACTODAYBAL" tableName="ACCOUNTS_TEMP" />
+	</changeSet>
+		<changeSet id="39" author="Srikanth">
+		<createView viewName="ACCOUNTS_AVIEW" replaceIfExists="true">
+		SELECT     T1.AccountId, T1.AcCcy, T1.AcType, T1.AcBranch, T1.AcCustId, T1.AcFullName, T1.AcShortName, T1.AcPurpose, T1.InternalAc, T1.CustSysAc, 
+                      T1.SHADOWBAL, T1.ACBALANCE, T1.AcOpenDate, T1.AcCloseDate, 
+                      T1.AcLastCustTrnDate, T1.AcLastSysTrnDate, T1.AcActive, T1.AcBlocked, T1.AcClosed, T1.HostAcNumber, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                      Customers.CustCIF lovDescCustCIF,  RMTBranches.BranchDesc lovDescBranchCodeName, 
+                       RMTAccountTypes.AcTypeDesc lovDescAccTypeDesc
+FROM          Accounts T1 LEFT OUTER JOIN
+                       Customers ON T1.AcCustId =  Customers.CustID AND T1.AcCustId =  Customers.CustID INNER JOIN
+                       RMTBranches ON T1.AcBranch =  RMTBranches.BranchCode AND T1.AcBranch =  RMTBranches.BranchCode INNER JOIN
+                       RMTAccountTypes ON T1.AcType =  RMTAccountTypes.AcType AND T1.AcType =  RMTAccountTypes.AcType
+				</createView>
+	</changeSet>
+			<changeSet id="40" author="Srikanth">
+		<createView viewName="ACCOUNTS_VIEW" replaceIfExists="true">
+	SELECT     T1.AccountId, T1.AcCcy, T1.AcType, T1.AcBranch, T1.AcCustId, T1.AcFullName, T1.AcShortName, T1.AcPurpose, T1.InternalAc, T1.CustSysAc, 
+                      T1.SHADOWBAL, T1.ACBALANCE, T1.AcOpenDate, T1.AcCloseDate, 
+                      T1.AcLastCustTrnDate, T1.AcLastSysTrnDate, T1.AcActive, T1.AcBlocked, T1.AcClosed, T1.HostAcNumber, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                      Customers.CustCIF lovDescCustCIF,  RMTBranches.BranchDesc lovDescBranchCodeName, 
+                       RMTAccountTypes.AcTypeDesc lovDescAccTypeDesc
+FROM          Accounts T1 LEFT OUTER JOIN
+                       Customers ON T1.AcCustId =  Customers.CustID AND T1.AcCustId =  Customers.CustID INNER JOIN
+                       RMTBranches ON T1.AcBranch =  RMTBranches.BranchCode AND T1.AcBranch =  RMTBranches.BranchCode INNER JOIN
+                       RMTAccountTypes ON T1.AcType =  RMTAccountTypes.AcType AND T1.AcType =  RMTAccountTypes.AcType
+UNION ALL
+SELECT     T1.AccountId, T1.AcCcy, T1.AcType, T1.AcBranch, T1.AcCustId, T1.AcFullName, T1.AcShortName, T1.AcPurpose, T1.InternalAc, T1.CustSysAc, 
+                      T1.SHADOWBAL, T1.ACBALANCE, T1.AcOpenDate, T1.AcCloseDate, 
+                      T1.AcLastCustTrnDate, T1.AcLastSysTrnDate, T1.AcActive, T1.AcBlocked, T1.AcClosed, T1.HostAcNumber, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                      Customers.CustCIF lovDescCustCIF,  RMTBranches.BranchDesc lovDescBranchCodeName, 
+                       RMTAccountTypes.AcTypeDesc lovDescAccTypeDesc
+FROM          Accounts T1 LEFT OUTER JOIN
+                       Customers ON T1.AcCustId =  Customers.CustID AND T1.AcCustId =  Customers.CustID INNER JOIN
+                       RMTBranches ON T1.AcBranch =  RMTBranches.BranchCode AND T1.AcBranch =  RMTBranches.BranchCode INNER JOIN
+                       RMTAccountTypes ON T1.AcType =  RMTAccountTypes.AcType AND T1.AcType =  RMTAccountTypes.AcType
+WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          Accounts_TEMP
+                            WHERE      AccountId = T1.AccountId)
+                            				</createView>
+	</changeSet>
+				<changeSet id="41" author="Srikanth">
+		<createView viewName="GL_TRAIL_BALANCE_REPORT_VIEW" replaceIfExists="true">
+	 SELECT AT.ACTYPEGRPID, A.ACCOUNTID HOSTACCOUNT, AT.ACTYPEDESC DESCRIPTION, COALESCE(T.CLOSINGBAL, 0) OPENINGBAL, COALESCE(CLOSINGBALTYPE, ' ') OPENINGBALTYPE, COALESCE(DEBITAMOUNT,0) DEBITAMOUNT, COALESCE(CREDITAMOUNT, 0) CREDITAMOUNT, 
+COALESCE(A.ACBALANCE,0) CLOSINGBAL, CASE WHEN A.ACBALANCE > 0 THEN 'CR' ELSE 'DR' END CLOSINGBALTYPE
+FROM (SELECT DISTINCT HKONT FROM SAPGL_TRAN_DETAIL_REPORT_STAGE) GL
+INNER JOIN ACCOUNTMAPPING AM ON AM.HOSTACCOUNT = GL.HKONT
+INNER JOIN ACCOUNTS A ON A.ACCOUNTID = AM.ACCOUNT
+INNER JOIN RMTACCOUNTTYPES AT ON AT.ACTYPE = A.ACTYPE
+LEFT JOIN (SELECT BSCHL, HKONT, SUM(WRBTR) DEBITAMOUNT FROM SAPGL_TRAN_DETAIL_REPORT_STAGE GROUP BY BSCHL, HKONT) DEBIT ON DEBIT.HKONT=AM.HOSTACCOUNT AND DEBIT.BSCHL = 40
+LEFT JOIN (SELECT BSCHL, HKONT, SUM(WRBTR) CREDITAMOUNT FROM SAPGL_TRAN_DETAIL_REPORT_STAGE GROUP BY BSCHL, HKONT) CREDIT ON CREDIT.HKONT=AM.HOSTACCOUNT AND CREDIT.BSCHL = 50 
+LEFT JOIN (SELECT ACTYPEGRPID, HOSTACCOUNT, CLOSINGBAL, CLOSINGBALTYPE FROM SAPGL_TRAIL_BALANCE_REPORT BR
+INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)-1 from SAPGL_TRAIL_BALANCE_HEADER)) BH ON BH.ID = BR.HEADERID) T ON T.ACTYPEGRPID = AT.ACTYPEGRPID AND T.HOSTACCOUNT = A.ACCOUNTID
+	                            				</createView>
+	</changeSet>
 </databaseChangeLog>
