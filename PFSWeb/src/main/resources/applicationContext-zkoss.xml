@@ -1844,6 +1844,7 @@
 		<property name="notificationsService" ref="notificationsService" />
 		<property name="dedupValidation" ref="dedupValidation" />
 		<property name="reScheduleService" ref="reScheduleService" />
+		<property name="accrualService" ref="accrualService" />
 	</bean>
 
 	<bean id="murabahaFinanceMainDialogCtrl"

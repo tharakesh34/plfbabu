@@ -1230,7 +1230,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			Date valuedate = finServiceInst.getFromDate();
 
 			FinanceProfitDetail tempPftDetail = new FinanceProfitDetail();
-			AccrualService.calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(), tempPftDetail, valuedate);
+			getAccrualService().calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(), tempPftDetail, valuedate);
 
 			List<RepayScheduleDetail> repaySchdList = repayData.getRepayScheduleDetails();
 			BigDecimal totPriPayNow = BigDecimal.ZERO;

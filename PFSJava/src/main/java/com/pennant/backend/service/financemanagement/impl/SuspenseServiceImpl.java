@@ -501,7 +501,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(),
 				financeSuspHead.getFinanceDetail().getModuleDefiner(), false, "_Temp");
 
-		finPftDetail = AccrualService.calProfitDetails(financeMain, scheduleDetailList, finPftDetail, curBussDate);
+		finPftDetail = getAccrualService().calProfitDetails(financeMain, scheduleDetailList, finPftDetail, curBussDate);
 
 		String worstSts = getCustomerStatusCodeDAO().getFinanceStatus(finReference, false);
 		finPftDetail.setFinWorstStatus(worstSts);

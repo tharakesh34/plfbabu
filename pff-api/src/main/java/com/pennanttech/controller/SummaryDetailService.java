@@ -38,6 +38,7 @@ public class SummaryDetailService {
 	private FinanceDisbursementDAO	financeDisbursementDAO;
 	protected FinODDetailsDAO			finODDetailsDAO;
 	private FinanceProfitDetailDAO	financeProfitDetailDAO;
+	private AccrualService 			accrualService;
 
 	public FinanceSummary getFinanceSummary(FinanceDetail financeDetail) {
 		logger.debug("Entering");
@@ -56,7 +57,7 @@ public class SummaryDetailService {
 			// fetch summary details from FinPftDetails
 			FinanceProfitDetail finPftDetail = financeProfitDetailDAO.getFinProfitDetailsForSummary(finReference);
 			if (finPftDetail == null) {
-				finPftDetail = AccrualService.calProfitDetails(financeMain, financeDetail.getFinScheduleData()
+				finPftDetail =accrualService.calProfitDetails(financeMain, financeDetail.getFinScheduleData()
 						.getFinanceScheduleDetails(), new FinanceProfitDetail(), DateUtility.getAppDate());
 			}
 			if(finPftDetail != null) {
@@ -233,6 +234,14 @@ public class SummaryDetailService {
 	@Autowired
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
+	}
+
+	public AccrualService getAccrualService() {
+		return accrualService;
+	}
+
+	public void setAccrualService(AccrualService accrualService) {
+		this.accrualService = accrualService;
 	}
 
 }

@@ -387,7 +387,6 @@ abstract public class ServiceHelper implements Serializable {
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
-		AccrualService.financeTypeDAO = financeTypeDAO;
 	}
 
 	public FinanceMainDAO getFinanceMainDAO() {
@@ -476,7 +475,6 @@ abstract public class ServiceHelper implements Serializable {
 
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
-		AccrualService.finODDetailsDAO = finODDetailsDAO;
 	}
 
 	public FinanceDisbursementDAO getFinanceDisbursementDAO() {

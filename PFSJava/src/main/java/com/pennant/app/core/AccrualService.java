@@ -47,10 +47,8 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
-import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -68,10 +66,8 @@ public class AccrualService extends ServiceHelper {
 	private static final long			serialVersionUID	= 6161809223570900644L;
 	private static Logger				logger				= Logger.getLogger(AccrualService.class);
 
-	public static FinODDetailsDAO		finODDetailsDAO;
-	private static FinExcessAmountDAO	finExcessAmountDAO;
-	public static FinanceTypeDAO		financeTypeDAO;
-	private static FinanceSuspHeadDAO	suspHeadDAO;
+	private  FinExcessAmountDAO	finExcessAmountDAO;
+	private  FinanceSuspHeadDAO	suspHeadDAO;
 
 	public CustEODEvent processAccrual(CustEODEvent custEODEvent) throws Exception {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
@@ -113,7 +109,7 @@ public class AccrualService extends ServiceHelper {
 		return finEODEvent;
 	}
 
-	public static FinanceProfitDetail calProfitDetails(FinanceMain finMain, List<FinanceScheduleDetail> schdDetails,
+	public  FinanceProfitDetail calProfitDetails(FinanceMain finMain, List<FinanceScheduleDetail> schdDetails,
 			FinanceProfitDetail pftDetail, Date valueDate) {
 		logger.debug("Entering");
 
@@ -145,7 +141,7 @@ public class AccrualService extends ServiceHelper {
 
 	}
 
-	private static void resetCalculatedTotals(FinanceMain finMain, FinanceProfitDetail pftDetail) {
+	private  void resetCalculatedTotals(FinanceMain finMain, FinanceProfitDetail pftDetail) {
 
 		if (StringUtils.equals(finMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			pftDetail.setFinReference(finMain.getFinReference());
@@ -163,7 +159,7 @@ public class AccrualService extends ServiceHelper {
 			pftDetail.setDownPayment(finMain.getDownPayment());
 			pftDetail.setFinCommitmentRef(finMain.getFinCommitmentRef());
 			pftDetail.setFinWorstStatus(finMain.getFinStatus());
-			FinanceType finType = financeTypeDAO.getProductDetails(finMain.getFinType());
+			FinanceType finType = getFinanceTypeDAO().getProductDetails(finMain.getFinType());
 			pftDetail.setFinCategory(finType.getFinCategory());
 			pftDetail.setProductCategory(finType.getProductCategory());
 		}
@@ -289,7 +285,7 @@ public class AccrualService extends ServiceHelper {
 
 	}
 
-	private static void calAccruals(FinanceMain finMain, List<FinanceScheduleDetail> schdDetails,
+	private  void calAccruals(FinanceMain finMain, List<FinanceScheduleDetail> schdDetails,
 			FinanceProfitDetail pftDetail, Date valueDate, Date dateSusp) {
 		String finState = CalculationConstants.FIN_STATE_NORMAL;
 		FinanceScheduleDetail curSchd = null;
@@ -521,7 +517,7 @@ public class AccrualService extends ServiceHelper {
 		logger.debug("Leaving");
 	}
 
-	private static void calculateTotals(FinanceMain finMain, FinanceProfitDetail pftDetail, Date dateSusp,
+	private  void calculateTotals(FinanceMain finMain, FinanceProfitDetail pftDetail, Date dateSusp,
 			Date valueDate) {
 		logger.debug("Entering");
 
@@ -558,7 +554,7 @@ public class AccrualService extends ServiceHelper {
 
 		// OD Details
 		if (!StringUtils.equals(finMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
-			FinODDetails finODDetails = finODDetailsDAO.getFinODSummary(pftDetail.getFinReference());
+			FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(pftDetail.getFinReference());
 			if (finODDetails != null) {
 				pftDetail.setODPrincipal(finODDetails.getFinCurODPri());
 				pftDetail.setODProfit(finODDetails.getFinCurODPft());
@@ -629,15 +625,15 @@ public class AccrualService extends ServiceHelper {
 		logger.debug(" Leaving ");
 	}
 
-	private static int getNoDays(Date date1, Date date2) {
+	private  int getNoDays(Date date1, Date date2) {
 		return DateUtility.getDaysBetween(date1, date2);
 	}
 
-	public static void setSuspHeadDAO(FinanceSuspHeadDAO suspHeadDAO) {
-		AccrualService.suspHeadDAO = suspHeadDAO;
+	public  void setSuspHeadDAO(FinanceSuspHeadDAO suspHeadDAO) {
+		this.suspHeadDAO = suspHeadDAO;
 	}
 
-	public static void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
-		AccrualService.finExcessAmountDAO = finExcessAmountDAO;
+	public  void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 }

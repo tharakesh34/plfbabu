@@ -735,6 +735,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private FinanceMainExtService							financeMainExtService;
 	private CollateralMarkProcess							collateralMarkProcess;
 	private ReScheduleService								reScheduleService;
+	private AccrualService 									accrualService;
 	private List<ExtendedFieldRender>						extendedFieldRenderList	= new ArrayList<ExtendedFieldRender>();
 
 	//Bean Setters  by application Context
@@ -11360,7 +11361,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		AccrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
+		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
 		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
 		BigDecimal totalPftCpzNew = newProfitDetail.getTotalPftCpz();
 
@@ -16177,6 +16178,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setReScheduleService(ReScheduleService reScheduleService) {
 		this.reScheduleService = reScheduleService;
+	}
+
+	public AccrualService getAccrualService() {
+		return accrualService;
+	}
+
+	public void setAccrualService(AccrualService accrualService) {
+		this.accrualService = accrualService;
 	}
 
 }

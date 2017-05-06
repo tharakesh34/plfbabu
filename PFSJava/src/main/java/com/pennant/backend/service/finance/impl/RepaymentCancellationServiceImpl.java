@@ -77,7 +77,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 	private FinStatusDetailDAO 				finStatusDetailDAO;
 	private CommitmentDAO 					commitmentDAO;
 	private CommitmentMovementDAO 			commitmentMovementDAO;
-	
+	private AccrualService 					accrualService;
 	// EOD Process Checking
 	private CustomerQueuingDAO customerQueuingDAO;
 	
@@ -639,7 +639,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			List<FinanceScheduleDetail> finSchedeuleDetails = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(
 					finReference);
 			FinanceProfitDetail profitDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(finReference);
-			profitDetail = AccrualService.calProfitDetails(financeMain, finSchedeuleDetails, profitDetail, curAppDate);
+			profitDetail = accrualService.calProfitDetails(financeMain, finSchedeuleDetails, profitDetail, curAppDate);
 			String worstSts = getCustomerStatusCodeDAO().getFinanceStatus(profitDetail.getFinReference(), false);
 			profitDetail.setFinWorstStatus(worstSts);
 
@@ -971,6 +971,11 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
+	}
+
+
+	public void setAccrualService(AccrualService accrualService) {
+		this.accrualService = accrualService;
 	}
 
 }

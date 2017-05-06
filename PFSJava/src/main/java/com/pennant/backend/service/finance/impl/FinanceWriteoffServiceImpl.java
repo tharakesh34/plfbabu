@@ -518,7 +518,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
 
 		FinanceProfitDetail profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
-		profitDetail = AccrualService.calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(),
+		profitDetail = getAccrualService().calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(),
 				profitDetail, curBDay);
 
 		AEEvent aeEvent = AEAmounts.procCalAEAmounts(profitDetail, AccountEventConstants.ACCEVENT_WRITEOFF, curBDay,

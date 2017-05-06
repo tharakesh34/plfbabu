@@ -179,6 +179,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private OverDueRecoveryPostingsUtil		recoveryPostingsUtil;
 	private FinanceDeviationsService		deviationDetailsService;
 	private FinMandateService				finMandateService;
+	private AccrualService 					accrualService;
 
 	// Service Classes
 	private EligibilityDetailService		eligibilityDetailService;
@@ -1273,7 +1274,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		AccrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
+		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
 		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
 		BigDecimal totalPftCpzNew = newProfitDetail.getTotalPftCpz();
 
@@ -2790,6 +2791,15 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
+	}
+
+	public AccrualService getAccrualService() {
+		return accrualService;
+	}
+
+	
+	public void setAccrualService(AccrualService accrualService) {
+		this.accrualService = accrualService;
 	}
 
 }

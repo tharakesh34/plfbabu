@@ -77,6 +77,7 @@ public class RateReviewService extends ServiceHelper {
 
 	private RepayInstructionDAO		repayInstructionDAO;
 	private FinanceRateReviewDAO	financeRateReviewDAO;
+	private AccrualService 			accrualService;
 
 	//fetch rates changed yesterday or effective date is today
 
@@ -211,7 +212,7 @@ public class RateReviewService extends ServiceHelper {
 		finScheduleData = ScheduleCalculator.refreshRates(finScheduleData);
 
 		FinanceProfitDetail newProfitDetail = new FinanceProfitDetail();
-		newProfitDetail = AccrualService.calProfitDetails(finMain, finSchdDetails, profitDetail, valueDate);
+		newProfitDetail = accrualService.calProfitDetails(finMain, finSchdDetails, profitDetail, valueDate);
 		// Amount Codes Details Preparation
 		AEEvent aeEvent = AEAmounts.procCalAEAmounts(profitDetail, AccountEventConstants.ACCEVENT_RATCHG, valueDate,
 				valueDate);
@@ -317,6 +318,10 @@ public class RateReviewService extends ServiceHelper {
 
 	public void setFinanceRateReviewDAO(FinanceRateReviewDAO financeRateReviewDAO) {
 		this.financeRateReviewDAO = financeRateReviewDAO;
+	}
+
+	public void setAccrualService(AccrualService accrualService) {
+		this.accrualService = accrualService;
 	}
 
 }

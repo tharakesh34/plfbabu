@@ -99,6 +99,7 @@
 	<bean id="finServiceInstController" class="com.pennanttech.controller.FinServiceInstController"
 		autowire="byName" scope="prototype">
 		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="accrualService" ref="accrualService" />
 	</bean>
 
 	<!-- FinanceType/LoanType controller -->

@@ -4167,6 +4167,7 @@
 		<property name="repayPostingUtil" ref="repayPostingUtil" />
 		<property name="agreementFieldsDetailService" ref="agreementFieldsDetailService" />
 		<property name="finMandateService" ref="finMandateService" />
+		<property name="accrualService" ref="accrualService" />
 
 		<!-- Limits -->
 		<property name="limitManagement" ref="limitManagement" />
@@ -4449,6 +4450,7 @@
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="finTypeFeesDAO" ref="finTypeFeesDAO" />
+		<property name="accrualService" ref="accrualService" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
@@ -5868,6 +5870,7 @@
 		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="accrualService" ref="accrualService" />
 	</bean>
 
 	<!--============ Finance Cancellation Details ============== -->
@@ -6123,6 +6126,7 @@
 		<property name="commitmentDAO" ref="commitmentDAO" />
 		<property name="commitmentMovementDAO" ref="commitmentMovementDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="accrualService" ref="accrualService" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
@@ -6400,6 +6404,7 @@
 	<!--============ AEAmounts Util ============== -->
 
 	<bean name="AEAmounts" class="com.pennant.app.util.AEAmounts">
+	<property name="accrualService" ref="accrualService" />
 	</bean>
 
 	<!--============ Account process Util ============== -->
@@ -6449,6 +6454,7 @@
 		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
+		<property name="accrualService" ref="accrualService" />
 	</bean>
 
 	<!--============ Finance Repayment Process Util ============== -->
@@ -9291,9 +9297,7 @@
 	<!-- Accrual -->
 	<bean id="accrualService" class="com.pennant.app.core.AccrualService" parent="serviceHelper">
 		<property name="suspHeadDAO" ref="financeSuspHeadDAO" />
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
-		<property name="financeTypeDAO" ref="financeTypeDAO" />
 	</bean>
 	<!-- Late Pay Marking -->
 	<bean id="latePayMarkingService" class="com.pennant.app.core.LatePayMarkingService" parent="serviceHelper">

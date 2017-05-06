@@ -110,6 +110,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	private OverdueChargeRecoveryDAO	recoveryDAO;
 	private FinODDetailsDAO				finODDetailsDAO;
 	private LatePayMarkingService		latePayMarkingService;
+	private AccrualService 				accrualService;
 
 	public RepaymentPostingsUtil() {
 		super();
@@ -407,7 +408,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		logger.debug("Entering");
 
 		//Finance Profit Details Updation
-		pftDetail = AccrualService.calProfitDetails(financeMain, scheduleDetails, pftDetail, dateValueDate);
+		pftDetail = accrualService.calProfitDetails(financeMain, scheduleDetails, pftDetail, dateValueDate);
 		latePayMarkingService.updateDPDBuketing(pftDetail, dateValueDate, financeMain);
 		financeMain.setFinStsReason(FinanceConstants.FINSTSRSN_MANUAL);
 
@@ -1026,7 +1027,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		}
 
 		//Finance Profit Details Updation
-		financeProfitDetail = AccrualService.calProfitDetails(financeMain, scheduleDetails, financeProfitDetail,
+		financeProfitDetail = accrualService.calProfitDetails(financeMain, scheduleDetails, financeProfitDetail,
 				dateValueDate);
 		financeProfitDetail.setFinStatus(financeMain.getFinStatus());
 		financeProfitDetail.setFinStsReason(financeMain.getFinStsReason());
@@ -1200,6 +1201,10 @@ public class RepaymentPostingsUtil implements Serializable {
 
 	public void setLatePayMarkingService(LatePayMarkingService latePayMarkingService) {
 		this.latePayMarkingService = latePayMarkingService;
+	}
+
+	public void setAccrualService(AccrualService accrualService) {
+		this.accrualService = accrualService;
 	}
 
 }

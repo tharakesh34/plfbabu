@@ -102,7 +102,6 @@
 	<!-- Capitalization Postings -->
 	<bean id="capitalizationPostingsTasklet"  class="com.pennant.backend.endofday.tasklet.CapitalizationPostings">
 		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
-		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="suspensePostingUtil" ref="suspensePostingUtil" />
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>

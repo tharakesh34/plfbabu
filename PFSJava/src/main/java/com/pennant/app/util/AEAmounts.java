@@ -49,6 +49,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 public class AEAmounts implements Serializable {
 	private static final long	serialVersionUID	= 4594615740716296558L;
 	private static Logger		logger				= Logger.getLogger(AEAmounts.class);
+	private static AccrualService accrualService;
 
 	public AEAmounts() {
 		super();
@@ -60,7 +61,7 @@ public class AEAmounts implements Serializable {
 
 	public static AEEvent procAEAmounts(FinanceMain financeMain, List<FinanceScheduleDetail> schdDetails,
 			FinanceProfitDetail pftDetail, String eventCode, Date valueDate, Date schdDate) {
-		pftDetail = AccrualService.calProfitDetails(financeMain, schdDetails, pftDetail, valueDate);
+		pftDetail = accrualService.calProfitDetails(financeMain, schdDetails, pftDetail, valueDate);
 		return procCalAEAmounts(pftDetail, eventCode, valueDate, schdDate);
 	}
 
@@ -142,6 +143,14 @@ public class AEAmounts implements Serializable {
 
 	private static int getNoDays(Date date1, Date date2) {
 		return DateUtility.getDaysBetween(date1, date2);
+	}
+
+	public AccrualService getAccrualService() {
+		return accrualService;
+	}
+
+	public void setAccrualService(AccrualService accrualService) {
+		this.accrualService = accrualService;
 	}
 
 	// ******************************************************//

@@ -60,6 +60,7 @@
 	</bean>
 	<!--============ AEAmounts Util ============== -->
 	<bean name="AEAmounts" class="com.pennant.app.util.AEAmounts">
+			<property name="accrualService" ref="accrualService" />
 	</bean>
 	<!-- Repay Instructions -->
 	<bean id="repayInstructionDAO" class="com.pennant.backend.dao.finance.impl.RepayInstructionDAOImpl" parent="basisCodeDAO">
@@ -482,6 +483,7 @@
 		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
+		<property name="accrualService" ref="accrualService" />
 	</bean>
 		<!--============ Finance Excess Amounts Details ============== -->
 

@@ -7061,7 +7061,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		//=======================================
 		Date curBDay = DateUtility.getAppDate();
 
-		FinanceProfitDetail pftDetail = AccrualService.calProfitDetails(financeMain, financeDetail.getFinScheduleData()
+		FinanceProfitDetail pftDetail = 	getAccrualService().calProfitDetails(financeMain, financeDetail.getFinScheduleData()
 				.getFinanceScheduleDetails(), null, curBDay);
 
 		// Save/Update Finance Profit Details

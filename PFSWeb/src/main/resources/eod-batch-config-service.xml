@@ -74,9 +74,7 @@
 	<!-- Accrual -->
 	<bean id="accrualService" class="com.pennant.app.core.AccrualService" parent="serviceHelper">
 		<property name="suspHeadDAO" ref="financeSuspHeadDAO" />
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
-		<property name="financeTypeDAO" ref="financeTypeDAO" />
 	</bean>
 	<!-- Finance Status movements -->
 	<bean id="statusMovementService" class="com.pennant.app.core.StatusMovementService" parent="serviceHelper">
