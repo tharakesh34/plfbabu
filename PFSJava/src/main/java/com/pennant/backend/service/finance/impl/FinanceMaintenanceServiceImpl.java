@@ -816,9 +816,11 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		FinODPenaltyRate oldPenaltyRate = getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(
 				financeMain.getFinReference(), "");
-		getFinODPenaltyRateDAO().saveLog(oldPenaltyRate, "_Log");
-		getFinODPenaltyRateDAO().delete(financeMain.getFinReference(), "");
-		getFinODPenaltyRateDAO().save(penaltyRate, "");
+		if(oldPenaltyRate!=null){
+			getFinODPenaltyRateDAO().saveLog(oldPenaltyRate, "_Log");
+			getFinODPenaltyRateDAO().delete(financeMain.getFinReference(), "");
+			getFinODPenaltyRateDAO().save(penaltyRate, "");
+		}
 
 		// Save Document Details
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
