@@ -46,7 +46,6 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -63,7 +62,6 @@ import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantConstants;
 
 public class SuspenseService extends ServiceHelper {
@@ -147,8 +145,8 @@ public class SuspenseService extends ServiceHelper {
 		aeEvent.setSchdDate(valueDate);
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
-		List<ReturnDataSet> list = prepareAccounting(aeEvent, dataMap);
-		long linkedTranId = saveAccounting(list);
+		postAccounting(aeEvent, dataMap);
+		long linkedTranId = aeEvent.getLinkedTranId();
 
 		if (suspHead != null) {
 			// Update Finance Suspend Head
@@ -239,8 +237,8 @@ public class SuspenseService extends ServiceHelper {
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		// Postings Preparation
-		List<ReturnDataSet> list = prepareAccounting(aeEvent, dataMap);
-		long linkedTranId = saveAccounting(list);
+		postAccounting(aeEvent, dataMap);
+		long linkedTranId = aeEvent.getLinkedTranId();
 
 		// Finance Suspend Head
 		suspHead.setFinIsInSusp(isInSuspNow);

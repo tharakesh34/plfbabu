@@ -65,7 +65,6 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.eod.util.EODProperties;
 
 public class RateReviewService extends ServiceHelper {
@@ -232,10 +231,7 @@ public class RateReviewService extends ServiceHelper {
 		finEODEvent.setRepayInstructions(finScheduleData.getRepayInstructions());
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
-		List<ReturnDataSet> list = prepareAccounting(aeEvent, dataMap);
-		saveAccounting(list);
-
-
+		postAccounting(aeEvent, dataMap);
 		//Saving Rate Review Details
 		FinanceRateReview rateReview = new FinanceRateReview();
 		rateReview.setFinReference(finRef);

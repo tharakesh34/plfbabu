@@ -46,7 +46,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -56,8 +55,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
-
-import org.apache.log4j.Logger;
 
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.DateUtility;
@@ -91,7 +88,6 @@ import com.pennant.eod.util.EODProperties;
 abstract public class ServiceHelper implements Serializable {
 
 	private static final long			serialVersionUID	= 4165353615228874397L;
-	private static Logger				logger				= Logger.getLogger(ServiceHelper.class);
 
 	private DataSource					dataSource;
 	//customer
@@ -123,33 +119,11 @@ abstract public class ServiceHelper implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public final List<ReturnDataSet> prepareAccounting(AEEvent aeEvent, HashMap<String, Object> dataMap)
+	public final AEEvent postAccounting(AEEvent aeEvent, HashMap<String, Object> dataMap)
 			throws Exception {
-		logger.debug(" Entering ");
-		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-
-		try {
-			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
-			list = aeEvent.getReturnDataSet();
-		} catch (Exception e) {
-			logger.error("Exception :", e);
-			throw e;
-		}
-
-		logger.debug(" Leaving ");
-		return list;
+		return getEngineExecution().postAccounting(aeEvent, dataMap);
 	}
 
-	public List<ReturnDataSet> processAccountingByEvent(AEEvent aeEvent) throws Exception {
-
-		HashMap<String, Object> dataMap = aeEvent.getDataMap();
-		try {
-			return getEngineExecution().processAccountingByEvent(aeEvent, dataMap);
-		} catch (Exception e) {
-			logger.error("Exception :", e);
-			throw e;
-		}
-	}
 
 	public Date formatDate(Date date) {
 		if (date != null) {

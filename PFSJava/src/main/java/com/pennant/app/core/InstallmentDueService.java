@@ -23,7 +23,6 @@ import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.eod.util.EODProperties;
 
 public class InstallmentDueService extends ServiceHelper {
@@ -156,8 +155,7 @@ public class InstallmentDueService extends ServiceHelper {
 		financeType.getDeclaredFieldValues(executingMap);
 		
 		//Postings Process
-		List<ReturnDataSet> list = prepareAccounting(aeEvent, executingMap);
-		saveAccounting(list);
+		 postAccounting(aeEvent, executingMap);
 		logger.debug(" Leaving ");
 	}
 

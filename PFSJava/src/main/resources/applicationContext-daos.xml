@@ -6378,6 +6378,7 @@
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
+		<property name="accountProcessUtil" ref="accountProcessUtil" />
 	</bean>
 
 	<!--============ Rule Execution Util ============== -->

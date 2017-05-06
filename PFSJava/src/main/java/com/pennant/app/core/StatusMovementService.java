@@ -48,7 +48,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -58,7 +57,6 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.BatchUtil;
 
 public class StatusMovementService extends ServiceHelper {
@@ -166,8 +164,7 @@ public class StatusMovementService extends ServiceHelper {
 		AEEvent aeEvent = getAEAmountCodes(resultSet, event, valueDate);
 		HashMap<String, Object> dataMap = aeEvent.getAeAmountCodes().getDeclaredFieldValues(); 
 
-		List<ReturnDataSet> list = prepareAccounting(aeEvent, dataMap);
-		saveAccounting(list);
+		postAccounting(aeEvent, dataMap);
 	}
 
 	private AEEvent getAEAmountCodes(ResultSet resultSet, String event, Date valueDate) throws SQLException {

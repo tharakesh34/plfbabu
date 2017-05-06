@@ -127,6 +127,7 @@
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
+		<property name="accountProcessUtil" ref="accountProcessUtil" />
 	</bean>
 	<bean name="ruleExecutionUtil" class="com.pennant.app.util.RuleExecutionUtil">
 		<property name="scriptEngine" ref="scriptEngine" />

@@ -105,6 +105,7 @@ public class AccountEngineExecution implements Serializable {
 	private FinTypeAccountingDAO		finTypeAccountingDAO;
 	private CollateralSetupDAO			collateralSetupDAO;
 	private PostingsDAO					postingsDAO;
+	private AccountProcessUtil			accountProcessUtil;
 
 	//Default Constructor
 	public AccountEngineExecution() {
@@ -124,7 +125,7 @@ public class AccountEngineExecution implements Serializable {
 	public AEEvent getAccEngineExecResults(AEEvent aeEvent, HashMap<String, Object> dataMap)
 			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
-		
+
 		List<ReturnDataSet> returnList = getPrepareAccountingSetResults(aeEvent, dataMap);
 
 		//Method for Checking for Reverse Calculations Based upon Negative Amounts
@@ -481,7 +482,7 @@ public class AccountEngineExecution implements Serializable {
 		for (int i = 0; i < acSetIDList.size(); i++) {
 			transactionEntries.addAll(AccountingSetCache.getTransactionEntry(acSetIDList.get(i)));
 		}
-		
+
 		// Dates Setting
 		aeEvent.setPostDate(DateUtility.getPostDate());
 		aeEvent.setAppDate(DateUtility.getAppDate());
@@ -635,7 +636,7 @@ public class AccountEngineExecution implements Serializable {
 					returnDataSet.setAcCcy(acCcy);
 				}
 			}
-			
+
 			// Dates Setting
 			returnDataSet.setPostDate(aeEvent.getPostDate());
 			returnDataSet.setAppDate(aeEvent.getAppDate());
@@ -762,9 +763,10 @@ public class AccountEngineExecution implements Serializable {
 		newAccount.setAcType(txnEntry.getAccountType());
 		newAccount.setInternalAc(true);
 
-		Rule rule = AccountingSetCache.getRule(txnEntry.getAccountSubHeadRule(), RuleConstants.MODULE_SUBHEAD,RuleConstants.MODULE_SUBHEAD);
+		Rule rule = AccountingSetCache.getRule(txnEntry.getAccountSubHeadRule(), RuleConstants.MODULE_SUBHEAD,
+				RuleConstants.MODULE_SUBHEAD);
 		dataMap.put("acType", txnEntry.getAccountType());
-		if(rule != null){
+		if (rule != null) {
 			newAccount.setAccountId((String) getRuleExecutionUtil().executeRule(rule.getSQLRule(), dataMap,
 					aeEvent.getCcy(), RuleReturnType.STRING));
 		}
@@ -878,21 +880,26 @@ public class AccountEngineExecution implements Serializable {
 
 		return returnSetEntries;
 	}
-	
-	public AEEvent postAccounting(AEEvent aeEvent , HashMap<String, Object>	dataMap) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException{
-		 getAccEngineExecResults(aeEvent, dataMap);
-		 List<ReturnDataSet> returnDataset = aeEvent.getReturnDataSet();
-		 if (!aeEvent.isPostingSucess()) {
+
+	public AEEvent postAccounting(AEEvent aeEvent, HashMap<String, Object> dataMap) throws IllegalAccessException,
+			InvocationTargetException, PFFInterfaceException {
+		getAccEngineExecResults(aeEvent, dataMap);
+		List<ReturnDataSet> returnDataset = aeEvent.getReturnDataSet();
+		if (!aeEvent.isPostingSucess()) {
 			return aeEvent;
 		}
-		 
-		 getPostingsDAO().saveBatch(returnDataset);
-		 
-		 return aeEvent;
-		
+
+		if (returnDataset == null || returnDataset.isEmpty()) {
+			return aeEvent;
+		}
+
+		getPostingsDAO().saveBatch(returnDataset);
+
+		getAccountProcessUtil().procAccountUpdate(returnDataset, aeEvent.getAeAmountCodes().getAccrue());
+
+		return aeEvent;
+
 	}
-	
-	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1015,6 +1022,14 @@ public class AccountEngineExecution implements Serializable {
 
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
 		this.postingsDAO = postingsDAO;
+	}
+
+	public AccountProcessUtil getAccountProcessUtil() {
+		return accountProcessUtil;
+	}
+
+	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
+		this.accountProcessUtil = accountProcessUtil;
 	}
 
 }

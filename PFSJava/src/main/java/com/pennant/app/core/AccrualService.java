@@ -57,7 +57,6 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 
@@ -601,8 +600,7 @@ public class AccrualService extends ServiceHelper {
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		financeMain.getDeclaredFieldValues(dataMap);
 		//Postings Process
-		List<ReturnDataSet> list = prepareAccounting(aeEvent, dataMap);
-		saveAccounting(list);
+		postAccounting(aeEvent, dataMap);
 		//posting done update the accrual balance
 		finPftDetail.setAmzTillLBD(finPftDetail.getPftAmz());
 		finPftDetail.setAmzTillLBDNormal(finPftDetail.getPftAmzNormal());

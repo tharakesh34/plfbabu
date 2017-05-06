@@ -14,7 +14,6 @@ import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.eod.util.EODProperties;
 
 public class AutoDisbursementService extends ServiceHelper {
@@ -93,10 +92,9 @@ public class AutoDisbursementService extends ServiceHelper {
 		//Postings Process
 		FinanceType financeType = getFinanceType(aeEvent.getFinType());
 		financeType.getDeclaredFieldValues(executingMap);
-		List<ReturnDataSet> list = prepareAccounting(aeEvent,executingMap);
-		long linkedTranId = saveAccounting(list);
+		postAccounting(aeEvent,executingMap);
 		curDisbursment.setDisbDisbursed(true);
-		curDisbursment.setLinkedTranId(linkedTranId);
+		curDisbursment.setLinkedTranId(aeEvent.getLinkedTranId());
 		getFinanceDisbursementDAO().updateBatchDisb(curDisbursment, "");
 		logger.debug(" Leaving ");
 	}
