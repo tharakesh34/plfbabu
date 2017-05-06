@@ -622,10 +622,6 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 			<column name="APPDATE" type="datetime" />
 			<column name="APPVALUEDATE" type="datetime" />
 		</addColumn>
-		<addColumn tableName="POSTINGS_SAPGL">
-			<column name="APPDATE" type="datetime" />
-			<column name="APPVALUEDATE" type="datetime" />
-		</addColumn>
 	</changeSet>
 	<changeSet id="45" author="Prasad">
 		<sql>
@@ -652,9 +648,6 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 			<column name="USERBRANCH" type="varchar(12)" />
 		</addColumn>
 		<addColumn tableName="Postings_temp">
-			<column name="USERBRANCH" type="varchar(12)" />
-		</addColumn>
-		<addColumn tableName="POSTINGS_SAPGL">
 			<column name="USERBRANCH" type="varchar(12)" />
 		</addColumn>
 	</changeSet>
