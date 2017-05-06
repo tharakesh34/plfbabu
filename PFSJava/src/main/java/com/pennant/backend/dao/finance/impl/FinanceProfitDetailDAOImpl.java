@@ -139,7 +139,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		FinanceProfitDetail finProfitDetails = new FinanceProfitDetail();
 		finProfitDetails.setFinReference(finReference);
 
-		StringBuilder selectSql = new StringBuilder("Select FinReference, FinStartDate, MaturityDate, FinCategory,ProductCategory,  ");
+		StringBuilder selectSql = new StringBuilder("Select FinReference, FinType, FinStartDate, MaturityDate, FinCategory,ProductCategory,  ");
 		selectSql.append(" FinStatus , FinStsReason ");
 		selectSql.append(" From FinPftDetails");
 		selectSql.append(" Where FinReference =:FinReference");

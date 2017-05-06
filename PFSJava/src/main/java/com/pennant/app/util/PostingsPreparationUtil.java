@@ -380,7 +380,7 @@ public class PostingsPreparationUtil implements Serializable {
 		if (!list.isEmpty()) {
 			if (aeEvent.isPostingSucess()) {
 				getPostingsDAO().saveBatch(list);
-				getAccountProcessUtil().updateAccountInfo(list);
+				//getAccountProcessUtil().updateAccountInfo(list);
 			}
 		}
 

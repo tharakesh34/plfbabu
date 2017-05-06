@@ -157,12 +157,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				//Overdue Details Updation for Paid Penalty
 				if (isPostingSuccess) {
 
-					//Overdue Recovery Details Updation for Paid Amounts & Record Deletion Status
-					/*
-					 * doUpdateRecoveryData(finReference, schdDate, finODFor, movementDate, chargeType, penaltyPaidNow,
-					 * waiverAmt, isPaidClear, fullyPaidSchd);
-					 */
-
 					//Overdue Details Updation for Totals
 					FinODDetails detail = new FinODDetails();
 					detail.setFinReference(finReference);
@@ -186,40 +180,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 		logger.debug("Leaving");
 		return returnList;
-	}
-
-	/**
-	 * Method for Overdue Recovery Penalty Detail Updation
-	 * 
-	 * @param set
-	 * @param isPaidClear
-	 * @param penaltyPaid
-	 * @param waiverPaid
-	 * @param dbUpdate
-	 * @return
-	 */
-	private OverdueChargeRecovery doUpdateRecoveryData(String finReference, Date schdDate, String finODFor,
-			Date movementDate, String chargeType, BigDecimal penaltyPaid, BigDecimal waiverPaid, boolean isPaidClear,
-			boolean fullyPaidSchd) {
-		logger.debug("Entering");
-
-		OverdueChargeRecovery recovery = new OverdueChargeRecovery();
-		recovery.setFinReference(finReference);
-		recovery.setFinODSchdDate(schdDate);
-		recovery.setFinODFor(finODFor);
-		recovery.setMovementDate(movementDate);
-		recovery.setPenaltyPaid(penaltyPaid);
-		recovery.setPenaltyBal(penaltyPaid);
-		recovery.setWaivedAmt(waiverPaid);
-		if (FinanceConstants.PENALTYTYPE_PERCONDUEDAYS.equals(chargeType)) {
-			recovery.setRcdCanDel(false);
-		} else {
-			recovery.setRcdCanDel(!isPaidClear);
-		}
-		getRecoveryDAO().updatePenaltyPaid(recovery, fullyPaidSchd, "");
-
-		logger.debug("Leaving");
-		return recovery;
 	}
 
 	/**

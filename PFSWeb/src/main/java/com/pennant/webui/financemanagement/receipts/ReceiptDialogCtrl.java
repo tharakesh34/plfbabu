@@ -141,6 +141,7 @@ import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.accounts.AccountsService;
@@ -1673,7 +1674,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				detail = receiptDetail;
 				break;
 			}
-			if(StringUtils.isEmpty(receiptType) && !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) ||
+			if(StringUtils.isEmpty(receiptType) && !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) &&
 					!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
 				detail = receiptDetail;
 				break;
@@ -1857,6 +1858,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				
 				FinReceiptData data = getReceiptData();
 				List<FinReceiptDetail> receiptDetails = data.getReceiptHeader().getReceiptDetails();
+				data.getReceiptHeader().setReceiptAmount(getTotalReceiptAmount());
 				
 				for (FinReceiptDetail receiptDetail : receiptDetails) {
 					if(!StringUtils.equals(RepayConstants.RECEIPTMODE_EXCESS, data.getReceiptHeader().getReceiptMode()) && 
@@ -3130,10 +3132,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	public FinanceDetail onExecuteStageAccDetail() throws InterruptedException, IllegalAccessException,
-	InvocationTargetException {
-		getFinanceDetail().setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
+	public FinanceDetail onExecuteStageAccDetail() throws InterruptedException, IllegalAccessException, InvocationTargetException {
+		getFinanceDetail().setModuleDefiner(FinanceConstants.FINSER_EVENT_RECEIPT);
 		return getFinanceDetail();
 	}
 
@@ -3150,11 +3150,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
 		Date dateValueDate = DateUtility.getAppValueDate();
 		
-		aeEvent = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
+		AEEvent aeEvent = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
 				.getFinanceScheduleDetails(), profitDetail, eventCode, dateValueDate, dateValueDate);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		
 		List<ReturnDataSet> returnSetEntries = new ArrayList<>();
+		BigDecimal totRpyPri = BigDecimal.ZERO;
 		for (FinReceiptDetail receiptDetail : getReceiptHeader().getReceiptDetails()) {
 			
 			for (FinRepayHeader repayHeader : receiptDetail.getRepayHeaders()) {
@@ -3173,6 +3174,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					amountCodes.setRpTot(amountCodes.getRpPri().add(rsd.getPrincipalSchdPayNow()).add(rsd.getProfitSchdPayNow()).add(rsd.getLatePftSchdPayNow()));
 					amountCodes.setRpPft(amountCodes.getRpPft().add(rsd.getProfitSchdPayNow()).add(rsd.getLatePftSchdPayNow()));
 					amountCodes.setRpPri(amountCodes.getRpPri().add(rsd.getPrincipalSchdPayNow()));
+					totRpyPri = totRpyPri.add(rsd.getPrincipalSchdPayNow());
 
 					// Fee Details
 					amountCodes.setSchFeePay(amountCodes.getSchFeePay().add(rsd.getSchdFeePayNow()));
@@ -3185,20 +3187,55 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					amountCodes.setInsWaived(amountCodes.getInsWaived().add(rsd.getSchdInsWaivedNow()));
 				}
 				
-				if(StringUtils.equals(repayHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_SCHDRPY)){
-					aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
-				}else if(StringUtils.equals(repayHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYRPY)){
-					aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_EARLYPAY);
-				}else if(StringUtils.equals(repayHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
-					aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_EARLYSTL);
+				amountCodes.setExcessAmt(BigDecimal.ZERO);
+				amountCodes.setEmiInAdvance(BigDecimal.ZERO);
+				amountCodes.setPayableAdvise(BigDecimal.ZERO);
+				if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)){
+					amountCodes.setExcessAmt(repayHeader.getRepayAmount());
+					amountCodes.setRpTot(BigDecimal.ZERO);
+				}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
+					amountCodes.setEmiInAdvance(repayHeader.getRepayAmount());
+					amountCodes.setRpTot(BigDecimal.ZERO);
+				}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+					amountCodes.setPayableAdvise(repayHeader.getRepayAmount());
+					amountCodes.setRpTot(BigDecimal.ZERO);
 				}
 				
+				// Accounting Event Code Setting
+				aeEvent.getAcSetIDList().clear();
+				if(StringUtils.equals(repayHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_SCHDRPY)){
+					eventCode = AccountEventConstants.ACCEVENT_REPAY;
+				}else if(StringUtils.equals(repayHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYRPY)){
+					eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
+				}else if(StringUtils.equals(repayHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+					eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+				}
+				
+				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
+					aeEvent.getAcSetIDList().add(AccountingSetCache.getAccountSetID(finMain.getPromotionCode(), eventCode, FinanceConstants.MODULEID_PROMOTION));
+				} else {
+					aeEvent.getAcSetIDList().add(AccountingSetCache.getAccountSetID(finMain.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE));
+				}
+				
+				aeEvent.setAccountingEvent(eventCode);
 				HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
 				aeEvent.setDataMap(dataMap);
-				
 				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
-				List<ReturnDataSet> returnDataSet = aeEvent.getReturnDataSet();
-				returnSetEntries.addAll(returnDataSet);
+				returnSetEntries.addAll(aeEvent.getReturnDataSet());
+				
+				// Reset Payment Details
+				amountCodes.setRpTot(BigDecimal.ZERO);
+				amountCodes.setRpPft(BigDecimal.ZERO);
+				amountCodes.setRpPri(BigDecimal.ZERO);
+				amountCodes.setSchFeePay(BigDecimal.ZERO);
+				amountCodes.setInsPay(BigDecimal.ZERO);
+				amountCodes.setPriWaived(BigDecimal.ZERO);
+				amountCodes.setPftWaived(BigDecimal.ZERO);
+				amountCodes.setFeeWaived(BigDecimal.ZERO);
+				amountCodes.setInsWaived(BigDecimal.ZERO);
+				amountCodes.setExcessAmt(BigDecimal.ZERO);
+				amountCodes.setEmiInAdvance(BigDecimal.ZERO);
+				amountCodes.setPayableAdvise(BigDecimal.ZERO);
 			}
 		}
 
@@ -3206,7 +3243,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			getAccountingDetailDialogCtrl().doFillAccounting(returnSetEntries);
 			getAccountingDetailDialogCtrl().getFinanceDetail().setReturnDataSetList(returnSetEntries);
 
-			if(!StringUtils.trimToEmpty(finMain.getFinCommitmentRef()).equals("")){
+			if(StringUtils.isNotEmpty(finMain.getFinCommitmentRef())){
 				Commitment commitment = getCommitmentService().getApprovedCommitmentById(finMain.getFinCommitmentRef());
 				int format = CurrencyUtil.getFormat(commitment.getCmtCcy());
 
@@ -3215,20 +3252,15 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					amountCodes.setCmtAmt(BigDecimal.ZERO);
 					amountCodes.setChgAmt(BigDecimal.ZERO);
 					amountCodes.setDisburse(BigDecimal.ZERO);
-					amountCodes.setRpPri(CalculationUtil.getConvertedAmount(finMain.getFinCcy(), commitment.getCmtCcy(),
-							amountCodes.getRpPri()));
+					amountCodes.setRpPri(CalculationUtil.getConvertedAmount(finMain.getFinCcy(), commitment.getCmtCcy(), totRpyPri));
 					
-
 					HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 					aeEvent.setDataMap(dataMap);
-					
 					aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
 
-					List<ReturnDataSet> cmtEntries = aeEvent.getReturnDataSet();
-					
 					//FIXME: PV: 04MAY17 why separate method is required for commitment dialog show
-					getAccountingDetailDialogCtrl().doFillCmtAccounting(cmtEntries, format);
-					getAccountingDetailDialogCtrl().getFinanceDetail().getReturnDataSetList().addAll(cmtEntries); 
+					getAccountingDetailDialogCtrl().doFillCmtAccounting(aeEvent.getReturnDataSet(), format);
+					getAccountingDetailDialogCtrl().getFinanceDetail().getReturnDataSetList().addAll(aeEvent.getReturnDataSet()); 
 				} 
 			}
 		}
@@ -3273,16 +3305,24 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		if (!onLoadProcess) {
 
-			//Get Finance Type Details, Transaction Entry By event & Commitment Repay Entries If have any
+			//Get Finance Type Transaction Entry By event
 			
 			Long accountSetId = Long.MIN_VALUE;
+			FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+			String finType = finMain.getFinType();;
+			int moduleID = FinanceConstants.MODULEID_FINTYPE;
+			if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
+				finType = finMain.getPromotionCode();
+				moduleID = FinanceConstants.MODULEID_PROMOTION;
+			}
+			
 			String purpose = getComboboxValue(receiptPurpose);
 			if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
-				accountSetId = AccountingSetCache.getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_EARLYSTL, FinanceConstants.MODULEID_FINTYPE);
+				accountSetId = AccountingSetCache.getAccountSetID(finType, AccountEventConstants.ACCEVENT_EARLYSTL, moduleID);
 			} else if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
-				accountSetId = AccountingSetCache.getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_EARLYSTL, FinanceConstants.MODULEID_FINTYPE);
+				accountSetId = AccountingSetCache.getAccountSetID(finType, AccountEventConstants.ACCEVENT_EARLYPAY, moduleID);
 			} else {
-				accountSetId = AccountingSetCache.getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_EARLYSTL, FinanceConstants.MODULEID_FINTYPE);
+				accountSetId = AccountingSetCache.getAccountSetID(finType, AccountEventConstants.ACCEVENT_REPAY, moduleID);
 			}
 
 			//Accounting Detail Tab

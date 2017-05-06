@@ -386,7 +386,7 @@ public class RepaymentProcessUtil {
 
 				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
 				List<Object> returnList = processRepaymentPostings(financeMain, scheduleDetails, profitDetail,
-						repaySchdList, getEventCode(repayHeader.getFinEvent()), valueDate);
+						repaySchdList, getEventCode(repayHeader.getFinEvent()), valueDate, receiptDetailList.get(i).getPaymentType());
 
 				if (!(Boolean) returnList.get(0)) {
 					String errParm = (String) returnList.get(1);
@@ -398,12 +398,7 @@ public class RepaymentProcessUtil {
 				repayHeader.setLinkedTranId(linkedTranId);
 				repayHeader.setValueDate(postDate);
 				financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().add(repayHeader.getPriAmount()));
-
-				String finAccount = (String) returnList.get(2);
-				if (finAccount != null) {
-					financeMain.setFinAccount(finAccount);
-				}
-				scheduleDetails = (List<FinanceScheduleDetail>) returnList.get(3);
+				scheduleDetails = (List<FinanceScheduleDetail>) returnList.get(2);
 			}
 		}
 		return scheduleDetails;
@@ -556,9 +551,9 @@ public class RepaymentProcessUtil {
 	 * @throws InvocationTargetException
 	 */
 	public List<Object> processRepaymentPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCode, Date valuedate)
+			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCode, Date valuedate, String payType)
 			throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
-		return doRepayPostings(financeMain, scheduleDetails, profitDetail, repaySchdList, eventCode, valuedate);
+		return doRepayPostings(financeMain, scheduleDetails, profitDetail, repaySchdList, eventCode, valuedate, payType);
 	}
 
 	/**
@@ -588,7 +583,7 @@ public class RepaymentProcessUtil {
 	 * @throws InvocationTargetException
 	 */
 	private List<Object> doRepayPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCode, Date valuedate)
+			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCode, Date valuedate, String payType)
 			throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -659,6 +654,7 @@ public class RepaymentProcessUtil {
 
 			//Repayments Process For Schedule Repay List	
 			repayQueueTotals.setQueueList(finRepayQueues);
+			repayQueueTotals.setPayType(payType);
 
 			returnList = getRepayPostingUtil().postingProcess(financeMain, scheduleDetails, profitDetail,
 					repayQueueTotals, eventCode, valuedate);

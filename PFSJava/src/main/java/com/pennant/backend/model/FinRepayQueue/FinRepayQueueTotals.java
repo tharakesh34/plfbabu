@@ -23,6 +23,8 @@ public class FinRepayQueueTotals {
 	private BigDecimal	suplRentWaived	= BigDecimal.ZERO;
 	private BigDecimal	incrCostWaived	= BigDecimal.ZERO;
 	
+	private String payType;
+	
 	private List<FinRepayQueue> queueList = null;
 	
 	public FinRepayQueueTotals() {
@@ -150,6 +152,14 @@ public class FinRepayQueueTotals {
 	}
 	public void setQueueList(List<FinRepayQueue> queueList) {
 		this.queueList = queueList;
+	}
+
+	public String getPayType() {
+		return payType;
+	}
+
+	public void setPayType(String payType) {
+		this.payType = payType;
 	}
 
 }

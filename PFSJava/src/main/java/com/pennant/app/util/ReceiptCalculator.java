@@ -479,7 +479,7 @@ public class ReceiptCalculator implements Serializable {
 					}else if(repayTo == RepayConstants.REPAY_OTHERS){
 
 						// If Schedule has Unpaid Fee Amount
-						if(curSchd.getSchdFeeOS().compareTo(BigDecimal.ZERO) > 0){
+						if(curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid()).compareTo(BigDecimal.ZERO) > 0){
 
 							// Fee Detail Collection
 							for (int k = 0; k < scheduleData.getFinFeeDetailList().size(); k++) {

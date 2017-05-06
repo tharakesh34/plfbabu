@@ -27,7 +27,7 @@ public class AEEvent {
 	private boolean					alwCmtPostings		= false;
 	private boolean					isEOD				= false;
 
-	private boolean					postingSucess		= false;
+	private boolean					postingSucess		= true;
 	private String					errorMessage;
 	private long					linkedTranId;
 

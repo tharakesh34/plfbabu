@@ -89,6 +89,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.cache.util.AccountingSetCache;
 import com.pennant.exception.PFFInterfaceException;
 
 public class RepaymentPostingsUtil implements Serializable {
@@ -265,27 +266,22 @@ public class RepaymentPostingsUtil implements Serializable {
 		List<Object> actReturnList = new ArrayList<Object>();
 
 		//Method for Postings Process
-		List<Object> resultList = postingEntryProcess(valueDate, dateValueDate, valueDate, false, financeMain,
+		AEEvent aeEvent = postingEntryProcess(valueDate, dateValueDate, valueDate, false, financeMain,
 				scheduleDetails, financeProfitDetail, queueTotals, linkedTranId, eventCode);
 
-		boolean isPostingSuccess = (Boolean) resultList.get(0);
-		linkedTranId = (Long) resultList.get(1);
-
-		if (!isPostingSuccess) {
-			actReturnList.add(resultList.get(0));
-			actReturnList.add(resultList.get(3));
+		if (!aeEvent.isPostingSucess()) {
+			actReturnList.add(aeEvent.isPostingSucess());
+			actReturnList.add("9999"); //FIXME
 
 			logger.debug("Leaving");
-			resultList = null;
 			return actReturnList;
 		}
 
 		// Schedule updations
 		scheduleDetails = scheduleUpdate(financeMain, scheduleDetails, queueTotals, linkedTranId);
 
-		actReturnList.add(isPostingSuccess);
-		actReturnList.add(linkedTranId);
-		actReturnList.add(resultList.get(4)); // Finance Account if Exists
+		actReturnList.add(aeEvent.isPostingSucess());
+		actReturnList.add(aeEvent.getLinkedTranId());
 		actReturnList.add(scheduleDetails); // Schedule Details
 
 		logger.debug("Leaving");
@@ -526,7 +522,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private List<Object> postingEntryProcess(Date valueDate, Date dateValueDate, Date dateSchdDate,
+	private AEEvent postingEntryProcess(Date valueDate, Date dateValueDate, Date dateSchdDate,
 			boolean isEODProcess, FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
 			FinanceProfitDetail financeProfitDetail, FinRepayQueueTotals queueTotals, long linkedTranId,
 			String eventCode) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
@@ -554,19 +550,35 @@ public class RepaymentPostingsUtil implements Serializable {
 		amountCodes.setPftWaived(queueTotals.getPftWaived());
 		amountCodes.setFeeWaived(queueTotals.getFeeWaived());
 		amountCodes.setInsWaived(queueTotals.getInsWaived());
+		
+		amountCodes.setExcessAmt(BigDecimal.ZERO);
+		amountCodes.setEmiInAdvance(BigDecimal.ZERO);
+		amountCodes.setPayableAdvise(BigDecimal.ZERO);
+		if(StringUtils.equals(queueTotals.getPayType(), RepayConstants.PAYTYPE_EXCESS)){
+			amountCodes.setExcessAmt(amountCodes.getRpTot());
+			amountCodes.setRpTot(BigDecimal.ZERO);
+		}else if(StringUtils.equals(queueTotals.getPayType(), RepayConstants.PAYTYPE_EMIINADV)){
+			amountCodes.setEmiInAdvance(amountCodes.getRpTot());
+			amountCodes.setRpTot(BigDecimal.ZERO);
+		}else if(StringUtils.equals(queueTotals.getPayType(), RepayConstants.PAYTYPE_PAYABLE)){
+			amountCodes.setPayableAdvise(amountCodes.getRpTot());
+			amountCodes.setRpTot(BigDecimal.ZERO);
+		}
+		
+		if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
+			aeEvent.getAcSetIDList().add(AccountingSetCache.getAccountSetID(financeMain.getPromotionCode(), eventCode, FinanceConstants.MODULEID_PROMOTION));
+		} else {
+			aeEvent.getAcSetIDList().add(AccountingSetCache.getAccountSetID(financeMain.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE));
+		}
 
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 		financeMain.getDeclaredFieldValues(executingMap);
 
-		//FIXME: PV: Deprecated method so not fixed properly
-
-		Date dateAppDate = DateUtility.getAppDate();
-		/*
-		 * List<Object> resultList = getPostingsPreparationUtil().processPostingDetailsWithFee(executingMap,
-		 * isEODProcess, true, dateAppDate, true, linkedTranId, null);
-		 */
+		// Accounting Entry Execution
+		aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent , executingMap);
+		
 		logger.debug("Leaving");
-		return null;
+		return aeEvent;
 	}
 
 	/**

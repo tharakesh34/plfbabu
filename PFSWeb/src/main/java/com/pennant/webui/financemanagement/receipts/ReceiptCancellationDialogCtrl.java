@@ -818,7 +818,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 				StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) ||
 				StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
 
-			label = Labels.getLabel("label_RecceiptDialog_ExcessType_"+receiptDetail.getPaymentType());
+			label = Labels.getLabel("label_ReceiptCancellationDialog_ExcessType_"+receiptDetail.getPaymentType());
 
 		}else{
 			label = PennantAppUtil.getlabelDesc(receiptDetail.getPaymentType(), PennantStaticListUtil.getReceiptModes());
