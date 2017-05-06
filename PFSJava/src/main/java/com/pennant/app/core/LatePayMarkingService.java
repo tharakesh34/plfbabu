@@ -268,9 +268,6 @@ public class LatePayMarkingService extends ServiceHelper {
 			custEODEvent.setUpdCustomer(true);
 			custEODEvent.getCustomer().setCustSts(newBucketCode);
 			custEODEvent.getCustomer().setCustStsChgDate(valueDate);
-
-			//customerDAO.updateCustStatus(newBucketCode, valueDate, custEODEvent.getCustomer().getCustID());
-
 		}
 
 		return custEODEvent;

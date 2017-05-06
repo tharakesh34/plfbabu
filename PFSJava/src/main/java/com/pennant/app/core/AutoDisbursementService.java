@@ -15,6 +15,7 @@ import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.eod.util.EODProperties;
 
 public class AutoDisbursementService extends ServiceHelper {
@@ -77,6 +78,9 @@ public class AutoDisbursementService extends ServiceHelper {
 		String finRef = curDisbursment.getFinReference();
 
 		AEEvent aeEvent = new AEEvent();
+		if (aeEvent.getAeAmountCodes() == null) {
+			aeEvent.setAeAmountCodes(new AEAmountCodes());
+		}
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		aeEvent.setFinReference(finRef);
 		aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_ADDDBSN);
@@ -91,11 +95,11 @@ public class AutoDisbursementService extends ServiceHelper {
 		//Postings Process
 		FinanceType financeType = getFinanceType(aeEvent.getFinType());
 		financeType.getDeclaredFieldValues(executingMap);
-		//		List<ReturnDataSet> list = prepareAccounting(executingMap, financeType);
-		//		long linkedTranId = saveAccounting(list);
-		//		disbursement.setDisbDisbursed(true);
-		//		disbursement.setLinkedTranId(linkedTranId);
-		//		financeDisbursementDAO.updateBatchDisb(disbursement, "");
+		List<ReturnDataSet> list = prepareAccounting(aeEvent,executingMap);
+		long linkedTranId = saveAccounting(list);
+		curDisbursment.setDisbDisbursed(true);
+		curDisbursment.setLinkedTranId(linkedTranId);
+		getFinanceDisbursementDAO().updateBatchDisb(curDisbursment, "");
 		logger.debug(" Leaving ");
 	}
 

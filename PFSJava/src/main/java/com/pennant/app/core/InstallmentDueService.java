@@ -23,6 +23,7 @@ import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.eod.util.EODProperties;
 
 public class InstallmentDueService extends ServiceHelper {
@@ -98,7 +99,7 @@ public class InstallmentDueService extends ServiceHelper {
 
 		//Amount Codes preparation using FinProfitDetails
 		AEEvent aeEvent = new AEEvent();
-		if (aeEvent.getAeAmountCodes()==null) {
+		if (aeEvent.getAeAmountCodes() == null) {
 			aeEvent.setAeAmountCodes(new AEAmountCodes());
 		}
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -151,13 +152,12 @@ public class InstallmentDueService extends ServiceHelper {
 		}
 
 		//DataSet Object preparation for AccountingSet Execution
-
-		//Postings Process
 		FinanceType financeType = getFinanceType(aeEvent.getFinType());
 		financeType.getDeclaredFieldValues(executingMap);
-		//FIXME Accounting Pending
-		//List<ReturnDataSet> list = prepareAccounting(executingMap, financeType);
-		//saveAccounting(list);
+		
+		//Postings Process
+		List<ReturnDataSet> list = prepareAccounting(aeEvent, executingMap);
+		saveAccounting(list);
 		logger.debug(" Leaving ");
 	}
 
