@@ -616,4 +616,58 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
        RMTCURRENCIES C on C.ccycode= FP.finccy]]>
 		</createView>
 	</changeSet>
+	
+	<changeSet id="44" author="Prasad">
+		<addColumn tableName="Postings_temp">
+			<column name="APPDATE" type="datetime" />
+			<column name="APPVALUEDATE" type="datetime" />
+		</addColumn>
+		<addColumn tableName="POSTINGS_SAPGL">
+			<column name="APPDATE" type="datetime" />
+			<column name="APPVALUEDATE" type="datetime" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="45" author="Prasad">
+		<sql>
+			update Postings_temp set APPDATE= POSTDATE;
+			update Postings_temp set APPVALUEDATE= POSTDATE;
+		</sql>
+	</changeSet>
+	<changeSet id="46" author="Prasad">
+		<sql>
+			update Postings_temp set APPDATE = (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters 
+			where SYSPARMCODE='APP_DATE') where APPDATE is null;
+			update Postings_temp set APPVALUEDATE = (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters 
+			where SYSPARMCODE='APP_VALUEDATE') where APPVALUEDATE is null;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="47" author="Prasad">
+		<addNotNullConstraint tableName="Postings_temp" columnName="APPDATE" columnDataType="datetime" />
+		<addNotNullConstraint tableName="Postings_temp" columnName="APPVALUEDATE" columnDataType="datetime" />
+	</changeSet>
+	
+	<changeSet id="48" author="Prasad">
+		<addColumn tableName="Postings">
+			<column name="USERBRANCH" type="varchar(12)" />
+		</addColumn>
+		<addColumn tableName="Postings_temp">
+			<column name="USERBRANCH" type="varchar(12)" />
+		</addColumn>
+		<addColumn tableName="POSTINGS_SAPGL">
+			<column name="USERBRANCH" type="varchar(12)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="49" author="Prasad">
+		<sql>
+			update Postings set USERBRANCH= (Select Branchcode from rmtBranches where rownum=1);
+			update Postings_temp set USERBRANCH= (Select Branchcode from rmtBranches where rownum=1);
+		</sql>
+	</changeSet>
+	<changeSet id="50" author="Prasad">
+		<addNotNullConstraint tableName="Postings" columnName="USERBRANCH" columnDataType="varchar(12)" />
+		<addNotNullConstraint tableName="Postings_temp" columnName="USERBRANCH" columnDataType="varchar(12)" />
+	</changeSet>
+	
+	
 </databaseChangeLog>
