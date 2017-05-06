@@ -10,7 +10,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
-import com.pennant.backend.dao.rmtmasters.impl.TransactionEntryDAOImpl;
+import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -18,7 +18,7 @@ import com.pennant.backend.model.rulefactory.Rule;
 public class AccountingSetCache {
 
 	private static FinTypeAccountingDAO finTypeAccountingDAO;
-	private static TransactionEntryDAOImpl transactionEntryDAOImpl;
+	private static TransactionEntryDAO transactionEntryDAO;
 	private static RuleDAO ruleDAO;
 	private final static Logger logger = Logger
 			.getLogger(AccountingSetCache.class);
@@ -59,7 +59,7 @@ public class AccountingSetCache {
 
 	private static List<TransactionEntry> getTransactionEntryForBatch(
 			long accountSetid) {
-		return getTransactionEntryDAOImpl().getListTranEntryForBatch(
+		return getTransactionEntryDAO().getListTranEntryForBatch(
 				accountSetid, "");
 	}
 
@@ -109,7 +109,7 @@ public class AccountingSetCache {
 			transactionEntries = transactionEntryCache.get(accountSetid);
 		} catch (ExecutionException e) {
 			logger.warn("Unable to load data from Transaction Entry cache: ", e);
-			transactionEntries = getTransactionEntryDAOImpl()
+			transactionEntries = getTransactionEntryDAO()
 					.getListTranEntryForBatch(accountSetid, "");
 		}
 		return transactionEntries;
@@ -183,13 +183,13 @@ public class AccountingSetCache {
 		AccountingSetCache.finTypeAccountingDAO = finTypeAccountingDAO;
 	}
 
-	public static TransactionEntryDAOImpl getTransactionEntryDAOImpl() {
-		return transactionEntryDAOImpl;
+	public static TransactionEntryDAO getTransactionEntryDAO() {
+		return transactionEntryDAO;
 	}
 
-	public static void setTransactionEntryDAOImpl(
-			TransactionEntryDAOImpl transactionEntryDAOImpl) {
-		AccountingSetCache.transactionEntryDAOImpl = transactionEntryDAOImpl;
+	public static void setTransactionEntryDAO(
+			TransactionEntryDAO transactionEntryDAO) {
+		AccountingSetCache.transactionEntryDAO = transactionEntryDAO;
 	}
 
 	public static RuleDAO getRuleDAO() {
