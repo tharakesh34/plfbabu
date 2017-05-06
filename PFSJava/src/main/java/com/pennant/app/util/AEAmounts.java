@@ -73,7 +73,7 @@ public class AEAmounts implements Serializable {
 		AEAmountCodes amountCodes = new AEAmountCodes();
 		
 		aeEvent.setFinReference(pftDetail.getFinReference());
-		aeEvent.setFinEvent(finEvent);
+		aeEvent.setAccountingEvent(finEvent);
 		aeEvent.setPostDate(DateUtility.getAppDate());
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(dateSchdDate);

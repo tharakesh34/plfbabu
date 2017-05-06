@@ -39,7 +39,7 @@ public class AEEvent {
 	private String					promotion;
 	private String					branch;
 	private String					ccy;
-	private String					finEvent;
+	private String					accountingEvent;
 	private String					disbAccountID;
 
 	//VAS
@@ -190,12 +190,12 @@ public class AEEvent {
 		this.ccy = ccy;
 	}
 
-	public String getFinEvent() {
-		return finEvent;
+	public String getAccountingEvent() {
+		return accountingEvent;
 	}
 
-	public void setFinEvent(String finEvent) {
-		this.finEvent = finEvent;
+	public void setAccountingEvent(String accountingEvent) {
+		this.accountingEvent = accountingEvent;
 	}
 
 	public Date getPostDate() {

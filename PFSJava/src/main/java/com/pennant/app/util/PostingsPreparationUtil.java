@@ -215,7 +215,7 @@ public class PostingsPreparationUtil implements Serializable {
 				amountCodes.setDisburse(BigDecimal.ZERO);
 				amountCodes.setRpPri(CalculationUtil.getConvertedAmount(aeEvent.getCcy(), commitment.getCmtCcy(),
 						amountCodes.getRpPri()));
-				aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_CMTRPY);
+				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_CMTRPY);
 				dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 				aeEvent.setDataMap(dataMap);
 				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
@@ -266,7 +266,7 @@ public class PostingsPreparationUtil implements Serializable {
 		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
 
 		AEEvent aeEvent = new AEEvent();
-		aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_NEWCMT);
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_NEWCMT);
 
 		//FIXME: PV dates to be set properly
 		aeEvent.setAppDate(dateAppDate);

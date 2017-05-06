@@ -80,7 +80,7 @@ public class AutoDisbursementService extends ServiceHelper {
 		}
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		aeEvent.setFinReference(finRef);
-		aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_ADDDBSN);
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_ADDDBSN);
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(curDisbursment.getDisbDate());
 		aeEvent.setPostDate(DateUtility.getAppDate());

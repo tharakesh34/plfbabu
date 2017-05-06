@@ -103,7 +103,7 @@ public class InstallmentDueService extends ServiceHelper {
 		}
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		aeEvent.setFinReference(finRef);
-		aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_INSTDATE);
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSTDATE);
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(finSchd.getSchDate());
 		aeEvent.setPostDate(DateUtility.getAppDate());

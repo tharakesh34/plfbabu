@@ -133,7 +133,7 @@ public class SuspensePostingUtil implements Serializable {
 
 		aeEvent.setFinReference(financeMain.getFinReference());
 		amountCodes.setSuspNow(suspAmount);
-		aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_NORM_PIS);
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_NORM_PIS);
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(suspFromDate);
 
@@ -263,7 +263,7 @@ public class SuspensePostingUtil implements Serializable {
 		//Creating DataSet using Finance Details
 		aeEvent.setFinReference(financeMain.getFinReference());
 		amountCodes.setSuspRls(suspAmtToMove);
-		aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_PIS_NORM);
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PIS_NORM);
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(suspFromDate);
 

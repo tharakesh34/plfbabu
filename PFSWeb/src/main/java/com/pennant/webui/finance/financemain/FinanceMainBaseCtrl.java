@@ -11381,7 +11381,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private void prepareDisbInstructionPosting(List<ReturnDataSet> accountingSetEntries, AEEvent aeEvent) throws Exception {
 		
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_DISBINS);
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_DISBINS);
 		List<FinAdvancePayments> advPayList = getFinanceDetail().getAdvancePaymentsList();
 		
 		aeEvent.getAcSetIDList().clear();

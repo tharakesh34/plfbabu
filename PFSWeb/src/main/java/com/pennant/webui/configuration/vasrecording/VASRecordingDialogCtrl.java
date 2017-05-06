@@ -2335,7 +2335,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}else{
 			getVASRecording().setFee(PennantAppUtil.unFormateAmount(this.fee.getActualValue(), getCcyFormat()));
 			AEEvent aeEvent = new AEEvent();
-			aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
 			
 			HashMap<String, Object> dataMap = new HashMap<String, Object>();
 			getVASRecording().getDeclaredFieldValues(dataMap);

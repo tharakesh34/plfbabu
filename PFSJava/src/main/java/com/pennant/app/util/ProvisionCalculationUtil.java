@@ -212,7 +212,7 @@ public class ProvisionCalculationUtil implements Serializable {
 				amountCodes.setProvDue(movement.getProvisionDue() == null ? BigDecimal.ZERO : movement
 						.getProvisionDue());
 
-				aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_PROVSN);
+				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PROVSN);
 				aeEvent.setValueDate(dateValueDate);
 				aeEvent.setSchdDate(procProvision.getProvisionCalDate());
 				Date dateAppDate = DateUtility.getAppDate();

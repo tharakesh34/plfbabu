@@ -1300,7 +1300,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			throws Exception {
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_DISBINS);
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_DISBINS);
 		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
 		Date curBDay = DateUtility.getAppDate();
 		

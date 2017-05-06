@@ -70,7 +70,7 @@ public class DisbursementPostings {
 				aeEvent.setCcy(finAdvancePayments.getDisbCCy());
 				aeEvent.setBranch(poIssueHeader.getFinanceMain().getFinBranch());
 				aeEvent.setFinReference(finRef);
-				aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_DISBINS);
+				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_DISBINS);
 				aeEvent.setFinType(poIssueHeader.getFinanceMain().getFinType());
 				amountCodes.setDisbInstAmt(finAdvancePayments.getAmtToBeReleased());
 				amountCodes.setPartnerBankAc(finAdvancePayments.getPartnerBankAc());

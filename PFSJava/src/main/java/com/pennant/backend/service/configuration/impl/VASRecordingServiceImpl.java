@@ -1454,7 +1454,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			
 			if(vASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
 				AEEvent aeEvent = new AEEvent();
-				aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
 				HashMap<String, Object> dataMap = new HashMap<String, Object>();
 				vASRecording.getDeclaredFieldValues(dataMap);
 				list = getEngineExecution().getVasExecResults(aeEvent, dataMap);

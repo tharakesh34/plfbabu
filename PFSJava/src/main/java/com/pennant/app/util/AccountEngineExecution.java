@@ -549,7 +549,7 @@ public class AccountEngineExecution implements Serializable {
 			//Set Object Data of ReturnDataSet(s)
 			returnDataSet.setFinReference(aeEvent.getFinReference());
 			returnDataSet.setFinBranch(aeEvent.getBranch());
-			returnDataSet.setFinEvent(aeEvent.getFinEvent());
+			returnDataSet.setFinEvent(aeEvent.getAccountingEvent());
 			returnDataSet.setLovDescEventCodeName(transactionEntry.getLovDescEventCodeDesc());
 			returnDataSet.setAccSetCodeName(transactionEntry.getLovDescAccSetCodeName());
 			returnDataSet.setAccSetId(transactionEntry.getAccountSetid());
@@ -561,7 +561,7 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSet.setPostToSys(transactionEntry.getPostToSys());
 			returnDataSet.setDerivedTranOrder(transactionEntry.getDerivedTranOrder());
 			returnDataSet.setTransOrder(transactionEntry.getTransOrder());
-			String ref = aeEvent.getFinReference() + "/" + aeEvent.getFinEvent() + "/"
+			String ref = aeEvent.getFinReference() + "/" + aeEvent.getAccountingEvent() + "/"
 					+ transactionEntry.getTransOrder();
 			returnDataSet.setPostingId(ref);
 			returnDataSet.setAccountType(transactionEntry.getAccount());
@@ -594,7 +594,7 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSet.setInternalAc(acc.getInternalAc());
 
 			//Amount Rule Execution for Amount Calculation
-			BigDecimal postAmt = executeAmountRule(aeEvent.getFinEvent(), transactionEntry, aeEvent.getCcy(), dataMap);
+			BigDecimal postAmt = executeAmountRule(aeEvent.getAccountingEvent(), transactionEntry, aeEvent.getCcy(), dataMap);
 			if (postAmt.compareTo(BigDecimal.ZERO) >= 0) {
 				returnDataSet.setPostAmount(postAmt);
 				returnDataSet.setTranCode(transactionEntry.getTranscationCode());
@@ -883,7 +883,9 @@ public class AccountEngineExecution implements Serializable {
 
 	public AEEvent postAccounting(AEEvent aeEvent, HashMap<String, Object> dataMap) throws IllegalAccessException,
 			InvocationTargetException, PFFInterfaceException {
+	
 		getAccEngineExecResults(aeEvent, dataMap);
+		
 		List<ReturnDataSet> returnDataset = aeEvent.getReturnDataSet();
 		if (!aeEvent.isPostingSucess()) {
 			return aeEvent;

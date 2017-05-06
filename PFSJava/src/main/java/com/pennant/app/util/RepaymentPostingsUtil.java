@@ -860,7 +860,7 @@ public class RepaymentPostingsUtil implements Serializable {
 				AEEvent aeEvent = new AEEvent();
 				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 				amountCodes = (AEAmountCodes) actReturnList.get(4);
-				aeEvent.setFinEvent(execEventCode);
+				aeEvent.setAccountingEvent(execEventCode);
 				aeEvent.setValueDate(valueDate);
 				aeEvent.setSchdDate(valueDate);
 

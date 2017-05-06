@@ -140,7 +140,7 @@ public class SuspenseService extends ServiceHelper {
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		amountCodes.setSuspNow(suspAmount);
-		aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_NORM_PIS);
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_NORM_PIS);
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(valueDate);
 
@@ -229,7 +229,7 @@ public class SuspenseService extends ServiceHelper {
 		}
 
 		amountCodes.setSuspRls(suspAmtToMove);
-		aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_PIS_NORM);
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PIS_NORM);
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(suspFromDate);
 

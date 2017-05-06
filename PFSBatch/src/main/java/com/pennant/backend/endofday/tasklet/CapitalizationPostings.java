@@ -131,7 +131,7 @@ public class CapitalizationPostings implements Tasklet {
 				// **** Accounting Set Execution for Amortization ******//
 
 				aeEvent.setFinReference(resultSet.getString("FinReference"));
-				aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_COMPOUND);
+				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_COMPOUND);
 				aeEvent.setBranch(resultSet.getString("FinBranch"));
 				aeEvent.setCcy(resultSet.getString("FinCcy"));
 				aeEvent.setPostDate(dateAppDate);

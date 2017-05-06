@@ -173,7 +173,7 @@ public class StatusMovementService extends ServiceHelper {
 		aeEvent.setFinReference(resultSet.getString("FinReference"));
 		aeEvent.setFinType(resultSet.getString("FinType").trim());
 		aeEvent.setPromotion(resultSet.getString("Promotion").trim());
-		aeEvent.setFinEvent(event);
+		aeEvent.setAccountingEvent(event);
 		aeEvent.setBranch(resultSet.getString("FinBranch"));
 		aeEvent.setCcy(resultSet.getString("FinCcy"));
 		aeEvent.setPostDate(DateUtility.getSysDate());

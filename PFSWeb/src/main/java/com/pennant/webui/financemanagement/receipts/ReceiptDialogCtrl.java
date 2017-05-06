@@ -3186,11 +3186,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 				
 				if(StringUtils.equals(repayHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_SCHDRPY)){
-					aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_REPAY);
+					aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
 				}else if(StringUtils.equals(repayHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYRPY)){
-					aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_EARLYPAY);
+					aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_EARLYPAY);
 				}else if(StringUtils.equals(repayHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
-					aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_EARLYSTL);
+					aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_EARLYSTL);
 				}
 				
 				HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
@@ -3211,7 +3211,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				int format = CurrencyUtil.getFormat(commitment.getCmtCcy());
 
 				if(commitment != null && commitment.isRevolving()){
-					aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_CMTRPY);
+					aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_CMTRPY);
 					amountCodes.setCmtAmt(BigDecimal.ZERO);
 					amountCodes.setChgAmt(BigDecimal.ZERO);
 					amountCodes.setDisburse(BigDecimal.ZERO);

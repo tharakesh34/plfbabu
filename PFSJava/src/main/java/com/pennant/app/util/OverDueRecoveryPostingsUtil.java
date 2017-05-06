@@ -125,7 +125,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				aeEvent.setFinReference(financeMain.getFinReference());
 				amountCodes.setPenalty(penaltyPaidNow);
 				amountCodes.setWaiver(waiverAmt);
-				aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_LATEPAY);
+				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
 				aeEvent.setValueDate(dateValueDate);
 				aeEvent.setSchdDate(schdDate);
 				aeEvent.setEOD(false);
@@ -771,7 +771,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				aeEvent.setFinReference(financeMain.getFinReference());
 				amountCodes.setPenalty(penaltyPaidNow);
 				amountCodes.setWaiver(waiverAmt);
-				aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_LATEPAY);
+				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
 				aeEvent.setValueDate(dateValueDate);
 				aeEvent.setSchdDate(schdDate);
 
