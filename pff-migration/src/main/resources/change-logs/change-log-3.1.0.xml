@@ -409,5 +409,11 @@ FROM    	Mandates T1 INNER JOIN
 			<column name="REJECT_REASON" 		type="VARCHAR(100)"/>
 		</createTable>
 	</changeSet>
-
+	<changeSet id="28" author="Jayant">
+	    <sql>
+	        delete from RBFIELDDETAILS where RBFLDNAME = 'ae_partnerBankAcType' and RBMODULE='SUBHEAD' and RBEVENT='SUBHEAD';
+	        UPDATE RBFIELDDETAILS SET RBFLDNAME = 'ae_finType' WHERE RBFLDNAME ='ft_finType' AND RBModule = 'SUBHEAD';
+			UPDATE RBFIELDDETAILS SET RBFLDNAME = 'ae_partnerBankAcType', RBFLDDESC = 'Partner Bank Account Type' WHERE RBFLDNAME ='disb_partnerBank' AND RBModule = 'SUBHEAD';
+	    </sql>
+	</changeSet>
 </databaseChangeLog>
