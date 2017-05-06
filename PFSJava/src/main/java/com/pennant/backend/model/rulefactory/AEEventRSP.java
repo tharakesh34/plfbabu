@@ -2,11 +2,7 @@ package com.pennant.backend.model.rulefactory;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import com.pennant.backend.model.rmtmasters.TransactionEntry;
 
 public class AEEventRSP {
 	private long				custID;

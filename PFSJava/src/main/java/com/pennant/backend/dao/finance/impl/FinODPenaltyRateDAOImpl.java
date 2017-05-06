@@ -1,7 +1,5 @@
 package com.pennant.backend.dao.finance.impl;
 
-import java.util.List;
-
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
