@@ -1587,13 +1587,13 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 
 		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
-		Date dateValueDate = DateUtility.getValueDate();
+		Date dateValueDate = DateUtility.getAppValueDate();
 
 		aeEvent = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
 				.getFinanceScheduleDetails(), profitDetail, eventCode, dateValueDate, dateValueDate);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		List<ReturnDataSet> returnSetEntries = null;
 
@@ -1601,10 +1601,11 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		if (getFeeDetailDialogCtrl() != null) {
 			feeRuleMap = getFeeDetailDialogCtrl().getFeeRuleDetailsMap();
 		}
-		executingMap.putAll(feeRuleMap);
-		getFinanceDetail().getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
+		dataMap.putAll(feeRuleMap);
+		aeEvent.setDataMap(dataMap);
+		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
 
-		returnSetEntries = getEngineExecution().getAccEngineExecResults(false, executingMap);
+		returnSetEntries = aeEvent.getReturnDataSet();
 
 		if (getAccountingDetailDialogCtrl() != null) {
 			getAccountingDetailDialogCtrl().doFillAccounting(returnSetEntries);

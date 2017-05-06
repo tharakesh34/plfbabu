@@ -66,7 +66,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	private FlagDetailValidation		flagDetailValidation;
 	private FinFlagDetailsDAO			finFlagDetailsDAO;
 	private MandateDAO					mandateDAO;
- 
+
 	public FinanceMaintenanceServiceImpl() {
 		super();
 	}
@@ -128,34 +128,6 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		if (!accSetIdList.isEmpty()) {
 			financeDetail.setFeeCharges(getTransactionEntryDAO().getListFeeChargeRules(accSetIdList, eventCode,
 					"_AView", 0));
-		}
-
-		//Finance Accounting Posting Details 
-		//=======================================
-
-		Long accSetId = Long.MIN_VALUE;
-		String event = "";
-		if (StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
-			event = AccountEventConstants.ACCEVENT_WRITEBK;
-		} else if (StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_BASICMAINTAIN)) {
-			event = AccountEventConstants.ACCEVENT_AMENDMENT;
-		} else if (StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN)) {
-			event = AccountEventConstants.ACCEVENT_SEGMENT;
-		}
-
-		String promotionCode = scheduleData.getFinanceMain().getPromotionCode();
-
-		if (StringUtils.isNotBlank(promotionCode)) {
-			accSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, event,
-					FinanceConstants.MODULEID_PROMOTION);
-		} else {
-			accSetId = getFinTypeAccountingDAO().getAccountSetID(scheduleData.getFinanceType().getFinType(), event,
-					FinanceConstants.MODULEID_FINTYPE);
-		}
-
-		if (accSetId != Long.MIN_VALUE) {
-			financeDetail.setTransactionEntries(getTransactionEntryDAO().getListTransactionEntryById(accSetId,
-					"_AEView", true));
 		}
 
 		//Finance Flag Details
@@ -767,19 +739,22 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			amountCodes.setWoPayAmt(financeDetail.getFinwriteoffPayment().getWriteoffPayAmount());
 		}
 
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
-		financeDetail.getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
-		financeMain.getDeclaredFieldValues(executingMap);
+		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		aeEvent.setDataMap(dataMap);
 
-		List<Object> returnList = getPostingsPreparationUtil().processPostingDetails(executingMap, false, true, curBDay,
-				false, Long.MIN_VALUE);
+		try {
+			aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
+		} catch (AccountNotFoundException e) {
+			e.printStackTrace();
+		}
 
-		if (!(Boolean) returnList.get(0)) {
-			String errParm = (String) returnList.get(3);
+
+		if (!aeEvent.isPostingSucess()) {
+			String errParm = aeEvent.getErrorMessage();
 			throw new PFFInterfaceException("9999", errParm);
 		}
 
-		long linkedTranId = (Long) returnList.get(1);
+		long linkedTranId = aeEvent.getLinkedTranId();
 		financeMain.setRcdMaintainSts("");
 		financeMain.setRoleCode("");
 		financeMain.setNextRoleCode("");

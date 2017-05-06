@@ -141,7 +141,6 @@ import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.AECommitment;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.accounts.AccountsService;
@@ -161,6 +160,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.cache.util.AccountingSetCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.exception.PFFInterfaceException;
@@ -3148,7 +3148,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
-		Date dateValueDate = DateUtility.getValueDate();
+		Date dateValueDate = DateUtility.getAppValueDate();
 		
 		aeEvent = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
 				.getFinanceScheduleDetails(), profitDetail, eventCode, dateValueDate, dateValueDate);
@@ -3193,10 +3193,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_EARLYSTL);
 				}
 				
-				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues(); 
-				getFinanceType().getDeclaredFieldValues(executingMap);
-				finMain.getDeclaredFieldValues(executingMap);
-				returnSetEntries.addAll(getEngineExecution().getAccEngineExecResults(false, executingMap));
+				HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
+				aeEvent.setDataMap(dataMap);
+				
+				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+				List<ReturnDataSet> returnDataSet = aeEvent.getReturnDataSet();
+				returnSetEntries.addAll(returnDataSet);
 			}
 		}
 
@@ -3208,15 +3210,23 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				Commitment commitment = getCommitmentService().getApprovedCommitmentById(finMain.getFinCommitmentRef());
 				int format = CurrencyUtil.getFormat(commitment.getCmtCcy());
 
-				if(commitment != null && commitment.isRevolving()){ 
-					AECommitment aeCommitment = new AECommitment();
-					aeCommitment.setCMTAMT(BigDecimal.ZERO); aeCommitment.setCHGAMT(BigDecimal.ZERO);
-					aeCommitment.setDISBURSE(BigDecimal.ZERO);
-					aeCommitment.setRPPRI(CalculationUtil.getConvertedAmount(finMain.getFinCcy(), commitment.getCmtCcy(),
+				if(commitment != null && commitment.isRevolving()){
+					aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_CMTRPY);
+					amountCodes.setCmtAmt(BigDecimal.ZERO);
+					amountCodes.setChgAmt(BigDecimal.ZERO);
+					amountCodes.setDisburse(BigDecimal.ZERO);
+					amountCodes.setRpPri(CalculationUtil.getConvertedAmount(finMain.getFinCcy(), commitment.getCmtCcy(),
 							amountCodes.getRpPri()));
+					
 
-					List<ReturnDataSet> cmtEntries = getEngineExecution().getCommitmentExecResults(aeCommitment, commitment,
-							AccountEventConstants.ACCEVENT_CMTRPY, false, null);
+					HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+					aeEvent.setDataMap(dataMap);
+					
+					aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+
+					List<ReturnDataSet> cmtEntries = aeEvent.getReturnDataSet();
+					
+					//FIXME: PV: 04MAY17 why separate method is required for commitment dialog show
 					getAccountingDetailDialogCtrl().doFillCmtAccounting(cmtEntries, format);
 					getAccountingDetailDialogCtrl().getFinanceDetail().getReturnDataSetList().addAll(cmtEntries); 
 				} 
@@ -3264,13 +3274,23 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (!onLoadProcess) {
 
 			//Get Finance Type Details, Transaction Entry By event & Commitment Repay Entries If have any
-			financeDetail = getReceiptService().getAccountingDetail(financeDetail, eventCode);
+			
+			Long accountSetId = Long.MIN_VALUE;
+			String purpose = getComboboxValue(receiptPurpose);
+			if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+				accountSetId = AccountingSetCache.getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_EARLYSTL, FinanceConstants.MODULEID_FINTYPE);
+			} else if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+				accountSetId = AccountingSetCache.getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_EARLYSTL, FinanceConstants.MODULEID_FINTYPE);
+			} else {
+				accountSetId = AccountingSetCache.getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_EARLYSTL, FinanceConstants.MODULEID_FINTYPE);
+			}
 
 			//Accounting Detail Tab
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("financeMainDialogCtrl", this);
 			map.put("financeDetail", financeDetail);
 			map.put("finHeaderList", getFinBasicDetails());
+			map.put("acSetID", accountSetId);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AccountingDetailDialog.zul", tabpanel, map);
 
 			Tab tab = null;

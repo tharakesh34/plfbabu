@@ -21,7 +21,7 @@ public class SnapShotPreparation implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-		Date valueDate = DateUtility.getValueDate();
+		Date valueDate = DateUtility.getAppValueDate();
 		logger.debug("START: Snap Shot Preparation On : " + valueDate);
 
 		//getSnapshotService().doSnapshotPreparation(valueDate);

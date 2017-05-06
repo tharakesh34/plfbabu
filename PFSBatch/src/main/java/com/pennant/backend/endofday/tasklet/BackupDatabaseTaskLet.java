@@ -27,7 +27,7 @@ public class BackupDatabaseTaskLet implements Tasklet{
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		//Date Parameter List
-		dateValueDate = DateUtility.getValueDate();
+		dateValueDate = DateUtility.getAppValueDate();
 
     	logger.debug("START: Data Base Backup for Value Date: "+ dateValueDate);
 		try {

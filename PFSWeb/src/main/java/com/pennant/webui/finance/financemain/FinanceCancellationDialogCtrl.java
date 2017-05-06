@@ -1582,7 +1582,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
-			HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+			HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 			List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
 
@@ -1595,10 +1595,12 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 				map = getFeeDetailDialogCtrl().getFeeRuleDetailsMap();
 			}
 
-			getFinanceDetail().getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
-			executingMap.putAll(map);
+			getFinanceDetail().getFinScheduleData().getFinanceType().getDeclaredFieldValues(dataMap);
+			dataMap.putAll(map);
+			aeEvent.setDataMap(dataMap);
+			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
 
-			returnSetEntries = getEngineExecution().getAccEngineExecResults(false, executingMap);
+			returnSetEntries = aeEvent.getReturnDataSet();
 			accountingSetEntries.addAll(returnSetEntries);
 			getFinanceDetail().setReturnDataSetList(accountingSetEntries);
 			if (getAccountingDetailDialogCtrl() != null) {

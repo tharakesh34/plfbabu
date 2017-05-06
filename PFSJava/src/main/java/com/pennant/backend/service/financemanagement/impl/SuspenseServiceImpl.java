@@ -290,13 +290,18 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 					financeMain.getMaturityDate());
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
-			HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+			HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+			aeEvent.setDataMap(dataMap);
 
-			List<Object> returnList = getPostingsPreparationUtil().processPostingDetails(executingMap, false, true,
-					curBDay, false, Long.MIN_VALUE);
+			try {
+				aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
+			} catch (AccountNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-			if (!(Boolean) returnList.get(0)) {
-				String errParm = (String) returnList.get(3);
+			if (!aeEvent.isPostingSucess()) {
+				String errParm = aeEvent.getErrorMessage();
 				throw new PFFInterfaceException("9999", errParm);
 			}
 

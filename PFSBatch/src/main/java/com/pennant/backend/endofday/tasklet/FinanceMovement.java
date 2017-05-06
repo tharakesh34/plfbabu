@@ -74,7 +74,7 @@ public class FinanceMovement extends ServiceHelper implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date valueDate = DateUtility.getValueDate();
+		Date valueDate = DateUtility.getAppValueDate();
 
 		logger.debug("START: Amortization Caluclation for Value Date: " + valueDate);
 

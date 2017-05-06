@@ -84,6 +84,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.SecondaryAccount;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.util.EODProperties;
@@ -121,16 +122,14 @@ abstract public class ServiceHelper implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public final List<ReturnDataSet> prepareAccounting(HashMap<String, Object> executingMap, FinanceType financeType)
+	public final List<ReturnDataSet> prepareAccounting(AEEvent aeEvent, HashMap<String, Object> dataMap)
 			throws Exception {
 		logger.debug(" Entering ");
 		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-
+		
 		try {
-			//String product = "";
-
-			financeType.getDeclaredFieldValues(executingMap);
-			list = getEngineExecution().getAccEngineExecResults(true, executingMap);
+			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+			list = aeEvent.getReturnDataSet();
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;
@@ -140,9 +139,11 @@ abstract public class ServiceHelper implements Serializable {
 		return list;
 	}
 
-	public List<ReturnDataSet> processAccountingByEvent(HashMap<String, Object> executingMap) throws Exception {
+	public List<ReturnDataSet> processAccountingByEvent(AEEvent aeEvent) throws Exception {
+		
+		HashMap<String, Object> dataMap = aeEvent.getDataMap();
 		try {
-			return getEngineExecution().processAccountingByEvent(executingMap, true);
+			return getEngineExecution().processAccountingByEvent(aeEvent, dataMap);
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;

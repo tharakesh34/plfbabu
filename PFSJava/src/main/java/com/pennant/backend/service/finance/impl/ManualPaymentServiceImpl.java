@@ -266,30 +266,6 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	public FinanceDetail getAccountingDetail(FinanceDetail financeDetail, String eventCodeRef) {
 		logger.debug("Entering");
 
-		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
-
-		Long accountSetId = Long.MIN_VALUE;
-		String event = "";
-		if (AccountEventConstants.ACCEVENT_EARLYSTL.equals(eventCodeRef)) {
-			event = AccountEventConstants.ACCEVENT_EARLYSTL;
-		} else if (AccountEventConstants.ACCEVENT_EARLYPAY.equals(eventCodeRef)) {
-			event = AccountEventConstants.ACCEVENT_EARLYPAY;
-		} else {
-			event = AccountEventConstants.ACCEVENT_REPAY;
-		}
-
-		String promotionCode = financeDetail.getFinScheduleData().getFinanceMain().getPromotionCode();
-		if (StringUtils.isNotBlank(promotionCode)) {
-			accountSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, event,
-					FinanceConstants.MODULEID_PROMOTION);
-		} else {
-			accountSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), event,
-					FinanceConstants.MODULEID_FINTYPE);
-		}
-
-		financeDetail.setTransactionEntries(getTransactionEntryDAO().getListTransactionEntryById(accountSetId,
-				"_AEView", true));
-
 		String commitmentRef = financeDetail.getFinScheduleData().getFinanceMain().getFinCommitmentRef();
 
 		if (StringUtils.isEmpty(commitmentRef)) {

@@ -60,7 +60,7 @@ public class AEAmounts implements Serializable {
 
 	public static AEEvent procAEAmounts(FinanceMain financeMain, List<FinanceScheduleDetail> schdDetails,
 			FinanceProfitDetail pftDetail, String eventCode, Date valueDate, Date schdDate) {
-		AccrualService.calProfitDetails(financeMain, schdDetails, pftDetail, valueDate);
+		pftDetail = AccrualService.calProfitDetails(financeMain, schdDetails, pftDetail, valueDate);
 		return procCalAEAmounts(pftDetail, eventCode, valueDate, schdDate);
 	}
 
@@ -80,6 +80,9 @@ public class AEAmounts implements Serializable {
 		aeEvent.setCcy(pftDetail.getFinCcy());
 		aeEvent.setFinType(pftDetail.getFinType());
 		aeEvent.setCustID(pftDetail.getCustId());
+		
+		// Finance Fields
+		amountCodes.setFinType(aeEvent.getFinType());
 
 		// profit
 		amountCodes.setPft(pftDetail.getTotalPftSchd());

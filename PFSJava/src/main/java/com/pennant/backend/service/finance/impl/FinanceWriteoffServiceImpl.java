@@ -54,9 +54,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	private FinanceWriteoffDAO			financeWriteoffDAO;
 	private ProvisionDAO				provisionDAO;
 	private FinanceReferenceDetailDAO	financeReferenceDetailDAO;
-	private FinFeeDetailService 			finFeeDetailService;
-	private FinTypeFeesDAO					finTypeFeesDAO;
-
+	private FinFeeDetailService			finFeeDetailService;
+	private FinTypeFeesDAO				finTypeFeesDAO;
 
 	public FinanceWriteoffServiceImpl() {
 		super();
@@ -93,15 +92,17 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 			scheduleData.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finReference,
 					FinanceConstants.FINSER_EVENT_WRITEOFF, false, ""));
-			
+
 			if (StringUtils.isNotBlank(scheduleData.getFinanceMain().getPromotionCode())) {
-				financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(scheduleData.getFinanceMain().getPromotionCode(),
-						FinanceConstants.FINSER_EVENT_WRITEOFF, "_AView", false, FinanceConstants.MODULEID_PROMOTION));
+				financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(
+						scheduleData.getFinanceMain().getPromotionCode(), FinanceConstants.FINSER_EVENT_WRITEOFF,
+						"_AView", false, FinanceConstants.MODULEID_PROMOTION));
 			} else {
-				financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(scheduleData.getFinanceMain().getFinType(),
-						FinanceConstants.FINSER_EVENT_WRITEOFF, "_AView", false, FinanceConstants.MODULEID_FINTYPE));
+				financeDetail.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(
+						scheduleData.getFinanceMain().getFinType(), FinanceConstants.FINSER_EVENT_WRITEOFF, "_AView",
+						false, FinanceConstants.MODULEID_FINTYPE));
 			}
-			financeDetail.setFinanceProfitDetail(getProfitDetailsDAO().getFinProfitDetailsById(finReference));
+
 			scheduleData.setRepayDetails(getFinanceRepaymentsDAO().getFinRepayListByFinRef(finReference, false, ""));
 			scheduleData.setPenaltyDetails(getRecoveryDAO().getFinancePenaltysByFinRef(finReference, ""));
 
@@ -116,9 +117,9 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			}
 
 			// Finance Fee Details
-			scheduleData.setFinFeeDetailList(getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView"));
+			scheduleData.setFinFeeDetailList(getFinFeeDetailService()
+					.getFinFeeDetailById(finReference, false, "_TView"));
 
-			
 			//Finance Agreement Details	
 			//=======================================
 			String finType = scheduleData.getFinanceType().getFinType();
@@ -137,24 +138,6 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			if (!accSetIdList.isEmpty()) {
 				financeDetail.setFeeCharges(getTransactionEntryDAO().getListFeeChargeRules(accSetIdList,
 						AccountEventConstants.ACCEVENT_WRITEOFF, "_AView", 0));
-			}
-			//Finance Accounting Posting Details 
-			//=======================================
-			Long accSetId;
-
-			String promotionCode = scheduleData.getFinanceMain().getPromotionCode();
-
-			if (StringUtils.isNotBlank(promotionCode)) {
-				accSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode,
-						AccountEventConstants.ACCEVENT_WRITEOFF, FinanceConstants.MODULEID_PROMOTION);
-			} else {
-				accSetId = getFinTypeAccountingDAO().getAccountSetID(scheduleData.getFinanceType().getFinType(),
-						AccountEventConstants.ACCEVENT_WRITEOFF, FinanceConstants.MODULEID_FINTYPE);
-			}
-
-			if (accSetId != Long.MIN_VALUE) {
-				financeDetail.setTransactionEntries(getTransactionEntryDAO().getListTransactionEntryById(accSetId,
-						"_AEView", true));
 			}
 
 			//Finance Stage Accounting Posting Details 
@@ -265,23 +248,25 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		if (!financeMain.isWorkflow()) {
 			profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
 
-			AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, scheduleData.getFinanceScheduleDetails(), profitDetail,
-					AccountEventConstants.ACCEVENT_WRITEOFF, curBDay, financeMain.getMaturityDate());
+			AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, scheduleData.getFinanceScheduleDetails(),
+					profitDetail, AccountEventConstants.ACCEVENT_WRITEOFF, curBDay, financeMain.getMaturityDate());
 
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-			HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+			HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+			aeEvent.setDataMap(dataMap);
+			try {
+				aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
+			} catch (AccountNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-			;
-
-			List<Object> returnList = getPostingsPreparationUtil().processPostingDetails(executingMap, false, true,
-					curBDay, false, Long.MIN_VALUE);
-
-			if (!(Boolean) returnList.get(0)) {
-				String errParm = (String) returnList.get(3);
+			if (!aeEvent.isPostingSucess()) {
+				String errParm = aeEvent.getErrorMessage();
 				throw new PFFInterfaceException("9999", errParm);
 			}
 
-			linkedTranId = (Long) returnList.get(1);
+			linkedTranId = aeEvent.getLinkedTranId();
 		}
 
 		//Linked Transaction Id Updation
@@ -529,42 +514,47 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		//Finance Write off Posting Process Execution
 		//=====================================
-		
+
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
-		
+
 		FinanceProfitDetail profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
 		profitDetail = AccrualService.calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(),
 				profitDetail, curBDay);
 
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(profitDetail, AccountEventConstants.ACCEVENT_WRITEOFF, curBDay, financeMain.getMaturityDate());
-		
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(profitDetail, AccountEventConstants.ACCEVENT_WRITEOFF, curBDay,
+				financeMain.getMaturityDate());
+
 		BigDecimal totalPftSchdOld = BigDecimal.ZERO;
 		BigDecimal totalPftCpzOld = BigDecimal.ZERO;
 		//For New Records Profit Details will be set inside the AEAmounts 
-		if(profitDetail == null){
+		if (profitDetail == null) {
 			profitDetail = new FinanceProfitDetail();
-		}else {
+		} else {
 			totalPftSchdOld = profitDetail.getTotalPftSchd();
 			totalPftCpzOld = profitDetail.getTotalPftCpz();
 		}
-		
+
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
-		
+		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+
 		BigDecimal totalPftSchdNew = profitDetail.getTotalPftSchd();
 		BigDecimal totalPftCpzNew = profitDetail.getTotalPftCpz();
-		
+
 		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
 		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
-		amountCodes.setModuleDefiner(FinanceConstants.FINSER_EVENT_WRITEOFF);
+		aeEvent.setModuleDefiner(FinanceConstants.FINSER_EVENT_WRITEOFF);
 		amountCodes.setDisburse(financeMain.getFinCurrAssetValue());
-		amountCodes.getDeclaredFieldValues(executingMap);
-		header.getFinanceDetail().getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
-		financeMain.getDeclaredFieldValues(executingMap);
-		
-		prepareFeeRulesMap(executingMap,header.getFinanceDetail());
+		amountCodes.getDeclaredFieldValues(dataMap);
+		header.getFinanceDetail().getFinScheduleData().getFinanceType().getDeclaredFieldValues(dataMap);
+		financeMain.getDeclaredFieldValues(dataMap);
+
+		prepareFeeRulesMap(amountCodes, dataMap, header.getFinanceDetail());
+
 		long linkedTranId = 0;
-		linkedTranId = getAccountingResults(auditHeader, header.getFinanceDetail(), accountingSetEntries, curBDay, executingMap);
+		aeEvent.setDataMap(dataMap);
+		linkedTranId = getAccountingResults(auditHeader, header.getFinanceDetail(), accountingSetEntries, curBDay,
+				aeEvent);
+
 		if (auditHeader.getErrorMessage() == null || auditHeader.getErrorMessage().size() == 0) {
 
 			// save Postings
@@ -580,13 +570,13 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			}
 
 			FinanceProfitDetail pftDetail = doSave_PftDetails(profitDetail, isNew);
-			
+
 			//Account Details Update
 			if (accountingSetEntries != null && !accountingSetEntries.isEmpty()) {
-				getAccountProcessUtil().procAccountUpdate(accountingSetEntries,pftDetail.getPftAccrued());
+				getAccountProcessUtil().procAccountUpdate(accountingSetEntries, pftDetail.getPftAccrued());
 			}
 		}
-		
+
 		//Update the financemain
 		tranType = PennantConstants.TRAN_UPD;
 		financeMain.setRecordType("");

@@ -95,6 +95,7 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.staticparms.ExtendedField;
@@ -154,7 +155,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	private VasRecordingValidation			vasRecordingValidation;
 	private AccountEngineExecution 			engineExecution;
 	private PostingsDAO 					postingsDAO;
-	private PostingsInterfaceService 		postingsInterfaceService;
 	private AccountProcessUtil 				accountProcessUtil;
 	private FinanceMainDAO 					financeMainDAO;
 	private CollateralSetupService 			collateralSetupService;
@@ -1454,9 +1454,11 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		try {
 			
 			if(vASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-				HashMap<String, Object> executingMap = new HashMap<String, Object>();
-				vASRecording.getDeclaredFieldValues(executingMap);
-				list = getEngineExecution().getVasExecResults(AccountEventConstants.ACCEVENT_VAS_FEE, false, executingMap);
+				AEEvent aeEvent = new AEEvent();
+				aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+				HashMap<String, Object> dataMap = new HashMap<String, Object>();
+				vASRecording.getDeclaredFieldValues(dataMap);
+				list = getEngineExecution().getVasExecResults(aeEvent, dataMap);
 			}else if(StringUtils.equals("C", vASRecording.getVasStatus())){
 				list = getPostingsDAO().getPostingsByPostref(vASRecording.getVasReference(), AccountEventConstants.ACCEVENT_VAS_FEE);
 				for(ReturnDataSet returnDataSet:list){
@@ -1524,7 +1526,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			}
 
 			//Core Banking Posting Process call
-			list = getPostingsInterfaceService().doFillPostingDetails(list, finBranch, linkedTranId, true);
+			//FIXME: 050517 Needs to fill return dataset
 
 			if (list != null && list.size() > 0) {
 				ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
@@ -2103,12 +2105,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	}
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
 		this.postingsDAO = postingsDAO;
-	}
-	public PostingsInterfaceService getPostingsInterfaceService() {
-		return postingsInterfaceService;
-	}
-	public void setPostingsInterfaceService(PostingsInterfaceService postingsInterfaceService) {
-		this.postingsInterfaceService = postingsInterfaceService;
 	}
 	public AccountProcessUtil getAccountProcessUtil() {
 		return accountProcessUtil;

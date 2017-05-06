@@ -1,24 +1,12 @@
 package com.pennant.backend.model.rulefactory;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.HashMap;
 
 public class AEAmountCodes {
-
-	private String		finReference;
-	private String		finType;
-	private String		finEvent;
-	private Date		postDate;
-	private Date		valueDate;
-	private Date		schdDate;
-	private String		branch;
-	private String		ccy;
-	private long		custID;
-	private boolean		newRecord			= false;
-	private String		moduleDefiner;
-	private String		disbAccountID;
-
+	
+	private String 		finType;
+	
 	private BigDecimal	accrue				= BigDecimal.ZERO;
 	private BigDecimal	dAccrue				= BigDecimal.ZERO;
 	private BigDecimal	accrueBal			= BigDecimal.ZERO;
@@ -107,16 +95,25 @@ public class AEAmountCodes {
 	private BigDecimal	addFeeToFinance		= BigDecimal.ZERO;
 	private BigDecimal	paidFee				= BigDecimal.ZERO;
 	private BigDecimal	bpi					= BigDecimal.ZERO;
-	private BigDecimal	cmtAmt				= BigDecimal.ZERO;
 	private BigDecimal	deductFeeDisb		= BigDecimal.ZERO;
 	private BigDecimal	deductInsDisb		= BigDecimal.ZERO;
-	private BigDecimal	disbInstAmt		    = BigDecimal.ZERO;
-	
-	private BigDecimal	priWaived		= BigDecimal.ZERO;
-	private BigDecimal	pftWaived		= BigDecimal.ZERO;
-	private BigDecimal	feeWaived		= BigDecimal.ZERO;
-	private BigDecimal	insWaived		= BigDecimal.ZERO;
-	
+	private BigDecimal	disbInstAmt			= BigDecimal.ZERO;
+
+	private BigDecimal	priWaived			= BigDecimal.ZERO;
+	private BigDecimal	pftWaived			= BigDecimal.ZERO;
+	private BigDecimal	feeWaived			= BigDecimal.ZERO;
+	private BigDecimal	insWaived			= BigDecimal.ZERO;
+
+	//For Disbursement Instructions used in SUBHEAD
+	private String		partnerBankAcType;
+	private String		partnerBankAc;
+
+	//Commitment
+	private BigDecimal	cmtAmt				= BigDecimal.ZERO;
+	private BigDecimal	chgAmt				= BigDecimal.ZERO;
+	private BigDecimal	cmtAvl				= BigDecimal.ZERO;
+	private BigDecimal	cmtUAmt				= BigDecimal.ZERO;
+	private BigDecimal	cmtUOth				= BigDecimal.ZERO;
 
 	public AEAmountCodes() {
 
@@ -128,19 +125,19 @@ public class AEAmountCodes {
 
 		return map;
 	}
-	
+
 	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> map) {
-		
+
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
-				//"ft_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
+				//"ae_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
 				map.put("ae_" + this.getClass().getDeclaredFields()[i].getName(),
 						this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				// Nothing TO DO
 			}
 		}
-		
+
 		return map;
 	}
 
@@ -148,20 +145,28 @@ public class AEAmountCodes {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public String getFinReference() {
-		return finReference;
-	}
-
-	public void setFinReference(String finReference) {
-		this.finReference = finReference;
-	}
-
 	public BigDecimal getAccrue() {
 		return accrue;
 	}
 
 	public void setAccrue(BigDecimal accrue) {
 		this.accrue = accrue;
+	}
+
+	public BigDecimal getdAccrue() {
+		return dAccrue;
+	}
+
+	public void setdAccrue(BigDecimal dAccrue) {
+		this.dAccrue = dAccrue;
+	}
+
+	public BigDecimal getAccrueBal() {
+		return accrueBal;
+	}
+
+	public void setAccrueBal(BigDecimal accrueBal) {
+		this.accrueBal = accrueBal;
 	}
 
 	public BigDecimal getAccrueS() {
@@ -172,12 +177,12 @@ public class AEAmountCodes {
 		this.accrueS = accrueS;
 	}
 
-	public BigDecimal getDAccrue() {
-		return dAccrue;
+	public BigDecimal getdAccrueS() {
+		return dAccrueS;
 	}
 
-	public void setDAccrue(BigDecimal dAccrue) {
-		this.dAccrue = dAccrue;
+	public void setdAccrueS(BigDecimal dAccrueS) {
+		this.dAccrueS = dAccrueS;
 	}
 
 	public BigDecimal getAmz() {
@@ -188,6 +193,54 @@ public class AEAmountCodes {
 		this.amz = amz;
 	}
 
+	public BigDecimal getdAmz() {
+		return dAmz;
+	}
+
+	public void setdAmz(BigDecimal dAmz) {
+		this.dAmz = dAmz;
+	}
+
+	public BigDecimal getAmzBal() {
+		return amzBal;
+	}
+
+	public void setAmzBal(BigDecimal amzBal) {
+		this.amzBal = amzBal;
+	}
+
+	public BigDecimal getAmzNRM() {
+		return amzNRM;
+	}
+
+	public void setAmzNRM(BigDecimal amzNRM) {
+		this.amzNRM = amzNRM;
+	}
+
+	public BigDecimal getdAmzNRM() {
+		return dAmzNRM;
+	}
+
+	public void setdAmzNRM(BigDecimal dAmzNRM) {
+		this.dAmzNRM = dAmzNRM;
+	}
+
+	public BigDecimal getAmzPD() {
+		return amzPD;
+	}
+
+	public void setAmzPD(BigDecimal amzPD) {
+		this.amzPD = amzPD;
+	}
+
+	public BigDecimal getdAmzPD() {
+		return dAmzPD;
+	}
+
+	public void setdAmzPD(BigDecimal dAmzPD) {
+		this.dAmzPD = dAmzPD;
+	}
+
 	public BigDecimal getAmzS() {
 		return amzS;
 	}
@@ -196,12 +249,12 @@ public class AEAmountCodes {
 		this.amzS = amzS;
 	}
 
-	public BigDecimal getdAmz() {
-		return dAmz;
+	public BigDecimal getdAmzS() {
+		return dAmzS;
 	}
 
-	public void setdAmz(BigDecimal dAmz) {
-		this.dAmz = dAmz;
+	public void setdAmzS(BigDecimal dAmzS) {
+		this.dAmzS = dAmzS;
 	}
 
 	public BigDecimal getDisburse() {
@@ -244,20 +297,52 @@ public class AEAmountCodes {
 		this.pftAP = pftAP;
 	}
 
-	public BigDecimal getPftChg() {
-		return pftChg;
-	}
-
-	public void setPftChg(BigDecimal pftChg) {
-		this.pftChg = pftChg;
-	}
-
 	public BigDecimal getCpzChg() {
 		return cpzChg;
 	}
 
 	public void setCpzChg(BigDecimal cpzChg) {
 		this.cpzChg = cpzChg;
+	}
+
+	public BigDecimal getCpzTot() {
+		return cpzTot;
+	}
+
+	public void setCpzTot(BigDecimal cpzTot) {
+		this.cpzTot = cpzTot;
+	}
+
+	public BigDecimal getCpzPrv() {
+		return cpzPrv;
+	}
+
+	public void setCpzPrv(BigDecimal cpzPrv) {
+		this.cpzPrv = cpzPrv;
+	}
+
+	public BigDecimal getCpzCur() {
+		return cpzCur;
+	}
+
+	public void setCpzCur(BigDecimal cpzCur) {
+		this.cpzCur = cpzCur;
+	}
+
+	public BigDecimal getCpzNxt() {
+		return cpzNxt;
+	}
+
+	public void setCpzNxt(BigDecimal cpzNxt) {
+		this.cpzNxt = cpzNxt;
+	}
+
+	public BigDecimal getPftChg() {
+		return pftChg;
+	}
+
+	public void setPftChg(BigDecimal pftChg) {
+		this.pftChg = pftChg;
 	}
 
 	public BigDecimal getPftS() {
@@ -396,44 +481,52 @@ public class AEAmountCodes {
 		this.rebate = rebate;
 	}
 
-	public BigDecimal getCpzTot() {
-		return cpzTot;
+	public BigDecimal getInsRefund() {
+		return insRefund;
 	}
 
-	public void setCpzTot(BigDecimal cpzTot) {
-		this.cpzTot = cpzTot;
+	public void setInsRefund(BigDecimal insRefund) {
+		this.insRefund = insRefund;
 	}
 
-	public BigDecimal getCpzPrv() {
-		return cpzPrv;
+	public BigDecimal getInsPay() {
+		return InsPay;
 	}
 
-	public void setCpzPrv(BigDecimal cpzPrv) {
-		this.cpzPrv = cpzPrv;
+	public void setInsPay(BigDecimal insPay) {
+		InsPay = insPay;
 	}
 
-	public BigDecimal getCpzCur() {
-		return cpzCur;
+	public BigDecimal getSchFeePay() {
+		return schFeePay;
 	}
 
-	public void setCpzCur(BigDecimal cpzCur) {
-		this.cpzCur = cpzCur;
+	public void setSchFeePay(BigDecimal schFeePay) {
+		this.schFeePay = schFeePay;
 	}
 
-	public BigDecimal getCpzNxt() {
-		return cpzNxt;
+	public BigDecimal getSuplRentPay() {
+		return suplRentPay;
 	}
 
-	public void setCpzNxt(BigDecimal cpzNxt) {
-		this.cpzNxt = cpzNxt;
+	public void setSuplRentPay(BigDecimal suplRentPay) {
+		this.suplRentPay = suplRentPay;
 	}
 
-	public BigDecimal getProvAmt() {
-		return provAmt;
+	public BigDecimal getIncrCostPay() {
+		return incrCostPay;
 	}
 
-	public void setProvAmt(BigDecimal provAmt) {
-		this.provAmt = provAmt;
+	public void setIncrCostPay(BigDecimal incrCostPay) {
+		this.incrCostPay = incrCostPay;
+	}
+
+	public BigDecimal getWoPayAmt() {
+		return woPayAmt;
+	}
+
+	public void setWoPayAmt(BigDecimal woPayAmt) {
+		this.woPayAmt = woPayAmt;
 	}
 
 	public int getODDays() {
@@ -458,6 +551,22 @@ public class AEAmountCodes {
 
 	public void setODInst(int oDInst) {
 		ODInst = oDInst;
+	}
+
+	public int getPaidInst() {
+		return paidInst;
+	}
+
+	public void setPaidInst(int paidInst) {
+		this.paidInst = paidInst;
+	}
+
+	public BigDecimal getProvAmt() {
+		return provAmt;
+	}
+
+	public void setProvAmt(BigDecimal provAmt) {
+		this.provAmt = provAmt;
 	}
 
 	public BigDecimal getProvDue() {
@@ -500,14 +609,6 @@ public class AEAmountCodes {
 		this.waiver = waiver;
 	}
 
-	public BigDecimal getdAccrue() {
-		return dAccrue;
-	}
-
-	public void setdAccrue(BigDecimal dAccrue) {
-		this.dAccrue = dAccrue;
-	}
-
 	public BigDecimal getPenaltyPaid() {
 		return penaltyPaid;
 	}
@@ -532,28 +633,12 @@ public class AEAmountCodes {
 		this.penaltyWaived = penaltyWaived;
 	}
 
-	public void setAccrueTsfd(BigDecimal accrueTsfd) {
-		this.accrueTsfd = accrueTsfd;
-	}
-
 	public BigDecimal getAccrueTsfd() {
 		return accrueTsfd;
 	}
 
-	public BigDecimal getInsRefund() {
-		return insRefund;
-	}
-
-	public void setInsRefund(BigDecimal insRefund) {
-		this.insRefund = insRefund;
-	}
-
-	public BigDecimal getTotalWriteoff() {
-		return totalWriteoff;
-	}
-
-	public void setTotalWriteoff(BigDecimal totalWriteoff) {
-		this.totalWriteoff = totalWriteoff;
+	public void setAccrueTsfd(BigDecimal accrueTsfd) {
+		this.accrueTsfd = accrueTsfd;
 	}
 
 	public BigDecimal getPrvAccrueTsfd() {
@@ -564,100 +649,12 @@ public class AEAmountCodes {
 		this.prvAccrueTsfd = prvAccrueTsfd;
 	}
 
-	public int getPaidInst() {
-		return paidInst;
+	public BigDecimal getTotalWriteoff() {
+		return totalWriteoff;
 	}
 
-	public void setPaidInst(int paidInst) {
-		this.paidInst = paidInst;
-	}
-
-	public BigDecimal getInsPay() {
-		return InsPay;
-	}
-
-	public void setInsPay(BigDecimal InsPay) {
-		this.InsPay = InsPay;
-	}
-
-	public BigDecimal getSchFeePay() {
-		return schFeePay;
-	}
-
-	public void setSchFeePay(BigDecimal schFeePay) {
-		this.schFeePay = schFeePay;
-	}
-
-	public BigDecimal getSuplRentPay() {
-		return suplRentPay;
-	}
-
-	public void setSuplRentPay(BigDecimal suplRentPay) {
-		this.suplRentPay = suplRentPay;
-	}
-
-	public BigDecimal getIncrCostPay() {
-		return incrCostPay;
-	}
-
-	public void setIncrCostPay(BigDecimal incrCostPay) {
-		this.incrCostPay = incrCostPay;
-	}
-
-	public BigDecimal getWoPayAmt() {
-		return woPayAmt;
-	}
-
-	public void setWoPayAmt(BigDecimal woPayAmt) {
-		this.woPayAmt = woPayAmt;
-	}
-
-	public BigDecimal getdAccrueS() {
-		return dAccrueS;
-	}
-
-	public void setdAccrueS(BigDecimal dAccrueS) {
-		this.dAccrueS = dAccrueS;
-	}
-
-	public BigDecimal getAmzNRM() {
-		return amzNRM;
-	}
-
-	public void setAmzNRM(BigDecimal amzNRM) {
-		this.amzNRM = amzNRM;
-	}
-
-	public BigDecimal getdAmzNRM() {
-		return dAmzNRM;
-	}
-
-	public void setdAmzNRM(BigDecimal dAmzNRM) {
-		this.dAmzNRM = dAmzNRM;
-	}
-
-	public BigDecimal getAmzPD() {
-		return amzPD;
-	}
-
-	public void setAmzPD(BigDecimal amzPD) {
-		this.amzPD = amzPD;
-	}
-
-	public BigDecimal getdAmzPD() {
-		return dAmzPD;
-	}
-
-	public void setdAmzPD(BigDecimal dAmzPD) {
-		this.dAmzPD = dAmzPD;
-	}
-
-	public BigDecimal getdAmzS() {
-		return dAmzS;
-	}
-
-	public void setdAmzS(BigDecimal dAmzS) {
-		this.dAmzS = dAmzS;
+	public void setTotalWriteoff(BigDecimal totalWriteoff) {
+		this.totalWriteoff = totalWriteoff;
 	}
 
 	public BigDecimal getExcessAmt() {
@@ -684,52 +681,12 @@ public class AEAmountCodes {
 		this.payableAdvise = payableAdvise;
 	}
 
-	public String getFinEvent() {
-		return finEvent;
+	public BigDecimal getExcessBal() {
+		return excessBal;
 	}
 
-	public void setFinEvent(String finEvent) {
-		this.finEvent = finEvent;
-	}
-
-	public Date getPostDate() {
-		return postDate;
-	}
-
-	public void setPostDate(Date postDate) {
-		this.postDate = postDate;
-	}
-
-	public Date getValueDate() {
-		return valueDate;
-	}
-
-	public void setValueDate(Date valueDate) {
-		this.valueDate = valueDate;
-	}
-
-	public Date getSchdDate() {
-		return schdDate;
-	}
-
-	public void setSchdDate(Date schdDate) {
-		this.schdDate = schdDate;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
-	public String getModuleDefiner() {
-		return moduleDefiner;
-	}
-
-	public void setModuleDefiner(String moduleDefiner) {
-		this.moduleDefiner = moduleDefiner;
+	public void setExcessBal(BigDecimal excessBal) {
+		this.excessBal = excessBal;
 	}
 
 	public BigDecimal getDownpayB() {
@@ -748,14 +705,6 @@ public class AEAmountCodes {
 		this.downpayS = downpayS;
 	}
 
-	public String getDisbAccountID() {
-		return disbAccountID;
-	}
-
-	public void setDisbAccountID(String disbAccountID) {
-		this.disbAccountID = disbAccountID;
-	}
-
 	public BigDecimal getFeeChargeAmt() {
 		return FeeChargeAmt;
 	}
@@ -772,38 +721,6 @@ public class AEAmountCodes {
 		InsuranceAmt = insuranceAmt;
 	}
 
-	public String getBranch() {
-		return branch;
-	}
-
-	public void setBranch(String branch) {
-		this.branch = branch;
-	}
-
-	public String getCcy() {
-		return ccy;
-	}
-
-	public void setCcy(String ccy) {
-		this.ccy = ccy;
-	}
-
-	public String getFinType() {
-		return finType;
-	}
-
-	public void setFinType(String finType) {
-		this.finType = finType;
-	}
-
-	public long getCustID() {
-		return custID;
-	}
-
-	public void setCustID(long custID) {
-		this.custID = custID;
-	}
-
 	public BigDecimal getAddFeeToFinance() {
 		return addFeeToFinance;
 	}
@@ -812,20 +729,20 @@ public class AEAmountCodes {
 		this.addFeeToFinance = addFeeToFinance;
 	}
 
+	public BigDecimal getPaidFee() {
+		return paidFee;
+	}
+
+	public void setPaidFee(BigDecimal paidFee) {
+		this.paidFee = paidFee;
+	}
+
 	public BigDecimal getBpi() {
 		return bpi;
 	}
 
 	public void setBpi(BigDecimal bpi) {
 		this.bpi = bpi;
-	}
-
-	public BigDecimal getCmtAmt() {
-		return cmtAmt;
-	}
-
-	public void setCmtAmt(BigDecimal cmtAmt) {
-		this.cmtAmt = cmtAmt;
 	}
 
 	public BigDecimal getDeductFeeDisb() {
@@ -844,30 +761,6 @@ public class AEAmountCodes {
 		this.deductInsDisb = deductInsDisb;
 	}
 
-	public BigDecimal getAmzBal() {
-		return amzBal;
-	}
-
-	public void setAmzBal(BigDecimal amzBal) {
-		this.amzBal = amzBal;
-	}
-
-	public BigDecimal getAccrueBal() {
-		return accrueBal;
-	}
-
-	public void setAccrueBal(BigDecimal accrueBal) {
-		this.accrueBal = accrueBal;
-	}
-
-	public BigDecimal getExcessBal() {
-		return excessBal;
-	}
-
-	public void setExcessBal(BigDecimal excessBal) {
-		this.excessBal = excessBal;
-	}
-
 	public BigDecimal getDisbInstAmt() {
 		return disbInstAmt;
 	}
@@ -875,8 +768,8 @@ public class AEAmountCodes {
 	public void setDisbInstAmt(BigDecimal disbInstAmt) {
 		this.disbInstAmt = disbInstAmt;
 	}
-	
-		public BigDecimal getPriWaived() {
+
+	public BigDecimal getPriWaived() {
 		return priWaived;
 	}
 
@@ -908,12 +801,68 @@ public class AEAmountCodes {
 		this.insWaived = insWaived;
 	}
 
-	public BigDecimal getPaidFee() {
-		return paidFee;
+	public BigDecimal getCmtAmt() {
+		return cmtAmt;
 	}
 
-	public void setPaidFee(BigDecimal paidFee) {
-		this.paidFee = paidFee;
+	public void setCmtAmt(BigDecimal cmtAmt) {
+		this.cmtAmt = cmtAmt;
 	}
-	
+
+	public BigDecimal getCmtAvl() {
+		return cmtAvl;
+	}
+
+	public void setCmtAvl(BigDecimal cmtAvl) {
+		this.cmtAvl = cmtAvl;
+	}
+
+	public BigDecimal getCmtUAmt() {
+		return cmtUAmt;
+	}
+
+	public void setCmtUAmt(BigDecimal cmtUAmt) {
+		this.cmtUAmt = cmtUAmt;
+	}
+
+	public BigDecimal getCmtUOth() {
+		return cmtUOth;
+	}
+
+	public void setCmtUOth(BigDecimal cmtUOth) {
+		this.cmtUOth = cmtUOth;
+	}
+
+	public String getPartnerBankAcType() {
+		return partnerBankAcType;
+	}
+
+	public void setPartnerBankAcType(String partnerBankAcType) {
+		this.partnerBankAcType = partnerBankAcType;
+	}
+
+	public String getPartnerBankAc() {
+		return partnerBankAc;
+	}
+
+	public void setPartnerBankAc(String partnerBankAc) {
+		this.partnerBankAc = partnerBankAc;
+	}
+
+	public BigDecimal getChgAmt() {
+		return chgAmt;
+	}
+
+	public void setChgAmt(BigDecimal chgAmt) {
+		this.chgAmt = chgAmt;
+	}
+
+	public String getFinType() {
+		return finType;
+	}
+
+	public void setFinType(String finType) {
+		this.finType = finType;
+	}
+
 }

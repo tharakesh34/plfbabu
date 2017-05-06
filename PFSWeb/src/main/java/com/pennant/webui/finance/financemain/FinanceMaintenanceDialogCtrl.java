@@ -179,13 +179,13 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Map<String, Object>			flagTypeDataMap		= new HashMap<String, Object>();
 	protected ExtendedCombobox				mandateRef;
 
-	protected Datebox										odStartDate;
-	protected CurrencyBox									odFinAssetValue;
-	protected Row											row_ODTenor;
-	protected Row											row_ODStartDate;
-	protected Row											row_QuickDisb;
-	protected Space											space_DroplineDate;
-	
+	protected Datebox						odStartDate;
+	protected CurrencyBox					odFinAssetValue;
+	protected Row							row_ODTenor;
+	protected Row							row_ODStartDate;
+	protected Row							row_QuickDisb;
+	protected Space							space_DroplineDate;
+
 	// old value variables for edit mode. that we can check if something
 	// on the values are edited since the last initialization.
 	protected transient BigDecimal			oldVar_downPaySupl;
@@ -197,12 +197,12 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private DDAProcessService				ddaProcessService;
 	private FinanceReferenceDetailService	financeReferenceDetailService;
 	private CollateralMarkProcess			collateralMarkProcess;
-	
-	protected Label 						label_FinanceMainDialog_FinAssetValue;
-	protected Label 						label_FinanceMainDialog_ODFinAssetValue;
-	protected Label 						label_FinanceMainDialog_FinCurrentAssetValue;
 
-	protected Label 						label_FinanceMainDialog_FinDivision;
+	protected Label							label_FinanceMainDialog_FinAssetValue;
+	protected Label							label_FinanceMainDialog_ODFinAssetValue;
+	protected Label							label_FinanceMainDialog_FinCurrentAssetValue;
+
+	protected Label							label_FinanceMainDialog_FinDivision;
 	protected CurrencyBox					finCurrentAssetValue;
 	protected Row							row_FinAssetValue;
 	protected CurrencyBox					finAssetValue;
@@ -215,7 +215,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private Label							label_FinanceMainDialog_FinType;
 	private Label							label_FinanceMainDialog_FinReference;
 	private Label							label_FinanceMainDialog_FinBranch;
- 
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -336,7 +336,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.odFinAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(format));
 		this.odFinAssetValue.setScale(format);
 		this.odFinAssetValue.setTextBoxWidth(200);
-		
+
 		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
 			this.finWriteoffPayAccount.setAccountDetails(fintype.getFinType(), AccountConstants.FinanceAccount_REPY,
 					fintype.getFinCcy());
@@ -390,57 +390,56 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	}
 
 	private void setFinAssetFieldVisibility(FinanceType financeType) {
-		
-		FinanceMain  finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		
+
+		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+
 		boolean isOverdraft = false;
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, finMain.getProductCategory())) {
 			isOverdraft = true;
 		}
 
 		if (isOverdraft) {
-				if (StringUtils.isNotEmpty(finMain.getDroplineFrq())) {
-					this.droplineFrq.setValue(finMain.getDroplineFrq());
-					this.firstDroplineDate.setValue(finMain.getFirstDroplineDate());
-					this.row_DroplineFrq.setVisible(true);
-				} else {
-					this.droplineFrq.setValue(finMain.getRepayFrq());
-					this.row_DroplineFrq.setVisible(false);
-				}
-				this.row_ODTenor.setVisible(true);
-				this.row_ODStartDate.setVisible(true);
-				this.row_pftServicingODLimit.setVisible(true);
-				this.noOfTermsRow.setVisible(false);
-				this.row_RpyAdvPftRate.setVisible(false);
-				this.gb_gracePeriodDetails.setVisible(false);
-				this.row_manualSteps.setVisible(false);
-				this.row_stepFinance.setVisible(false);
-				this.row_FinAmount.setVisible(false);
-				this.row_FinStartDate.setVisible(false);
-				this.row_QuickDisb.setVisible(false);
-				this.defermentsRow.setVisible(false);
-				this.row_MaturityDate.setVisible(false);
-				this.repayRateBasisRow.setVisible(false);
-				this.row_RpyAdvBaseRate.setVisible(false);
-				this.row_FinRepRates.setVisible(false);
-				this.scheduleMethodRow.setVisible(false);
-				this.rpyPftFrqRow.setVisible(false);
-				this.rpyRvwFrqRow.setVisible(false);
-				this.rpyCpzFrqRow.setVisible(false);
-				this.row_supplementRent.setVisible(false);
-				this.rpyFrqRow.setVisible(false);
-				this.odRpyFrqRow.setVisible(true);
-				this.row_salesDept.setVisible(false);
-				this.row_accountsOfficer.setVisible(true);
-				
-				this.label_FinanceMainDialog_FinType.setValue(Labels
-						.getLabel("label_FinanceMainDialog_ODFinType.value"));
-				this.label_FinanceMainDialog_FinReference.setValue(Labels
-						.getLabel("label_FinanceMainDialog_ODFinReference.value"));
-				this.label_FinanceMainDialog_FinBranch.setValue(Labels
-						.getLabel("label_FinanceMainDialog_ODFinBranch.value"));
+			if (StringUtils.isNotEmpty(finMain.getDroplineFrq())) {
+				this.droplineFrq.setValue(finMain.getDroplineFrq());
+				this.firstDroplineDate.setValue(finMain.getFirstDroplineDate());
+				this.row_DroplineFrq.setVisible(true);
+			} else {
+				this.droplineFrq.setValue(finMain.getRepayFrq());
+				this.row_DroplineFrq.setVisible(false);
+			}
+			this.row_ODTenor.setVisible(true);
+			this.row_ODStartDate.setVisible(true);
+			this.row_pftServicingODLimit.setVisible(true);
+			this.noOfTermsRow.setVisible(false);
+			this.row_RpyAdvPftRate.setVisible(false);
+			this.gb_gracePeriodDetails.setVisible(false);
+			this.row_manualSteps.setVisible(false);
+			this.row_stepFinance.setVisible(false);
+			this.row_FinAmount.setVisible(false);
+			this.row_FinStartDate.setVisible(false);
+			this.row_QuickDisb.setVisible(false);
+			this.defermentsRow.setVisible(false);
+			this.row_MaturityDate.setVisible(false);
+			this.repayRateBasisRow.setVisible(false);
+			this.row_RpyAdvBaseRate.setVisible(false);
+			this.row_FinRepRates.setVisible(false);
+			this.scheduleMethodRow.setVisible(false);
+			this.rpyPftFrqRow.setVisible(false);
+			this.rpyRvwFrqRow.setVisible(false);
+			this.rpyCpzFrqRow.setVisible(false);
+			this.row_supplementRent.setVisible(false);
+			this.rpyFrqRow.setVisible(false);
+			this.odRpyFrqRow.setVisible(true);
+			this.row_salesDept.setVisible(false);
+			this.row_accountsOfficer.setVisible(true);
+
+			this.label_FinanceMainDialog_FinType.setValue(Labels.getLabel("label_FinanceMainDialog_ODFinType.value"));
+			this.label_FinanceMainDialog_FinReference.setValue(Labels
+					.getLabel("label_FinanceMainDialog_ODFinReference.value"));
+			this.label_FinanceMainDialog_FinBranch.setValue(Labels
+					.getLabel("label_FinanceMainDialog_ODFinBranch.value"));
 		}
-		
+
 		if (financeType.isAlwMaxDisbCheckReq()) {
 
 			if (isOverdraft) {
@@ -635,7 +634,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		super.doWriteBeanToComponents(aFinanceDetail, onLoadProcess);
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		int format = CurrencyUtil.getFormat(aFinanceMain.getFinCcy());
-		
+
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory())) {
 			this.pftServicingODLimit.setChecked(aFinanceMain.isPftServicingODLimit());
 			if (aFinanceMain.getNumberOfTerms() > 1) {
@@ -994,14 +993,14 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		if(!isOverDraft){
+		if (!isOverDraft) {
 			try {
 				aFinanceMain.setFinAssetValue(PennantAppUtil.unFormateAmount(this.finAssetValue.getActualValue(),
 						format));
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
- 
+
 		}
 		aFinanceMain.setManualSchedule(this.manualSchedule.isChecked());
 		// FinanceMain Details Tab Validation Error Throwing
@@ -1094,8 +1093,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 
 			FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
-			if (financeType.getFinMinTerm() == 1 && financeType.getFinMaxTerm() == 1 && 
-					(!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,afinanceDetail.getFinScheduleData().getFinanceMain().getProductCategory()))) {
+			if (financeType.getFinMinTerm() == 1
+					&& financeType.getFinMaxTerm() == 1
+					&& (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, afinanceDetail.getFinScheduleData()
+							.getFinanceMain().getProductCategory()))) {
 				if (!financeType.isFinRepayPftOnFrq()) {
 					this.rpyPftFrqRow.setVisible(false);
 					this.hbox_finRepayPftOnFrq.setVisible(false);
@@ -1262,6 +1263,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if (onLoadProcess) {
 				doWriteComponentsToBean(getFinanceDetail());
 			}
+
 			FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 			int format = CurrencyUtil.getFormat(finMain.getFinCcy());
 
@@ -1269,12 +1271,13 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			aeEvent = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
 					.getFinanceScheduleDetails(), new FinanceProfitDetail(), eventCode, curBDay, curBDay);
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-			
+
 			// AmountCodes Setting the FinwriteoffPayAmount
 			amountCodes.setWoPayAmt(PennantApplicationUtil.unFormateAmount(this.finWriteoffPayAmount.getActualValue(),
 					format));
 
-			HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+			HashMap<String, Object> dataMap = aeEvent.getDataMap();
+			dataMap = amountCodes.getDeclaredFieldValues();
 
 			List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
 
@@ -1287,71 +1290,19 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				map = getFeeDetailDialogCtrl().getFeeRuleDetailsMap();
 			}
 
-			executingMap.putAll(map);
-			getFinanceDetail().getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
+			dataMap.putAll(map);
+			aeEvent.setDataMap(dataMap);
+			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
 
-			returnSetEntries = getEngineExecution().getAccEngineExecResults(false, executingMap);
+			returnSetEntries = aeEvent.getReturnDataSet();
 			accountingSetEntries.addAll(returnSetEntries);
 			getFinanceDetail().setReturnDataSetList(accountingSetEntries);
 			if (getAccountingDetailDialogCtrl() != null) {
 				getAccountingDetailDialogCtrl().doFillAccounting(accountingSetEntries);
 			}
 
-			/*
-			 * List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
-			 * 
-			 * // Loop Repetition for Multiple Disbursement
-			 * if(getFinanceDetail().getFinScheduleData().getDisbursementDetails() != null &&
-			 * getFinanceDetail().getFinScheduleData().getDisbursementDetails().size() > 0){
-			 * 
-			 * for (FinanceDisbursement disbursement : getFinanceDetail().getFinScheduleData().getDisbursementDetails())
-			 * {
-			 * 
-			 * if(disbursement.getDisbAmount().compareTo(BigDecimal.ZERO) > 0){
-			 * 
-			 * if(eventCode.equals("")){ if (disbursement.getDisbDate().after(DateUtility.getAppDate())) {
-			 * if(AccountEventConstants.ACCEVENT_ADDDBSF_REQ){
-			 * dataSet.setFinEvent(AccountEventConstants.ACCEVENT_ADDDBSF); }else{
-			 * dataSet.setFinEvent(AccountEventConstants.ACCEVENT_ADDDBSP); } } else {
-			 * dataSet.setFinEvent(AccountEventConstants.ACCEVENT_ADDDBSP); } }
-			 * 
-			 * if(StringUtils.trimToEmpty(disbursement.getDisbAccountId()).equals("")){
-			 * dataSet.setDisburseAccount(dataSet.getDisburseAccount()); }else{
-			 * dataSet.setDisburseAccount(disbursement.getDisbAccountId()); }
-			 * dataSet.setDisburseAmount(disbursement.getDisbAmount());
-			 * 
-			 * List<ReturnDataSet> returnSetEntries = null; Map<String, FeeRule> map = null;
-			 * 
-			 * if (getFeeDetailDialogCtrl() != null) { map=getFeeDetailDialogCtrl().getFeeRuleDetailsMap(); }
-			 * 
-			 * if(!isRIAExist){ returnSetEntries = getEngineExecution().getAccEngineExecResults(dataSet,
-			 * getAmountCodes(), "N", map, false, getFinanceDetail().getFinScheduleData().getFinanceType()); }else{
-			 * 
-			 * List<AEAmountCodesRIA> riaDetailList = getEngineExecutionRIA().prepareRIADetails(
-			 * getContributorDetailsDialogCtrl() == null? null: getContributorDetailsDialogCtrl().getContributorsList(),
-			 * dataSet.getFinReference()); returnSetEntries = getEngineExecutionRIA().getAccEngineExecResults(dataSet,
-			 * getAmountCodes(), "N", riaDetailList,map); } accountingSetEntries.addAll(returnSetEntries); } } }
-			 * getFinanceDetail().setReturnDataSetList(accountingSetEntries); if(getAccountingDetailDialogCtrl() !=
-			 * null){ getAccountingDetailDialogCtrl().doFillAccounting(accountingSetEntries); } }
-			 * 
-			 * if(getAccountingDetailDialogCtrl() != null){ if("".equals(moduleDefiner) &&
-			 * !StringUtils.trimToEmpty(this.commitmentRef.getValue()).equals("")){
-			 * 
-			 * Commitment commitment = getCommitmentService().getApprovedCommitmentById(this.commitmentRef.getValue());
-			 * FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-			 * 
-			 * AECommitment aeCommitment = new AECommitment(); aeCommitment.setCMTAMT(commitment.getCmtAmount());
-			 * aeCommitment.setCHGAMT(commitment.getCmtCharges());
-			 * aeCommitment.setDISBURSE(CalculationUtil.getConvertedAmount(finMain.getFinCcy(), commitment.getCmtCcy(),
-			 * finMain.getFinAmount().subtract(finMain.getDownPayment() == null ? BigDecimal.ZERO :
-			 * finMain.getDownPayment()))); aeCommitment.setRPPRI(BigDecimal.ZERO);
-			 * 
-			 * getFinanceDetail().setCmtDataSetList(getEngineExecution().getCommitmentExecResults(aeCommitment,
-			 * commitment, AccountEventConstants.ACCEVENT_CMTDISB, "N", null));
-			 * getAccountingDetailDialogCtrl().doFillCmtAccounting(getFinanceDetail().getCmtDataSetList(),
-			 * commitment.getCcyEditField()); }
-			 */
 		}
+
 		logger.debug("Leaving");
 	}
 
@@ -1607,7 +1558,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		if (isOverdraft) {
-			this.odFinAssetValue.setConstraint(new PTDecimalValidator(Labels.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"), format, true, false));
+			this.odFinAssetValue.setConstraint(new PTDecimalValidator(Labels
+					.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"), format, true, false));
 			this.finAssetValue.setConstraint(new PTDecimalValidator(Labels
 					.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"), format, true, false));
 		}
@@ -1660,28 +1612,32 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		// FinanceMain Details Tab ---> 3. Repayment Period Details
 
-		if ( this.rpyFrqRow.isVisible() && !this.nextRepayDate.isReadonly() && StringUtils.isNotEmpty(this.repayFrq.getValue())
+		if (this.rpyFrqRow.isVisible() && !this.nextRepayDate.isReadonly()
+				&& StringUtils.isNotEmpty(this.repayFrq.getValue())
 				&& FrequencyUtil.validateFrequency(this.repayFrq.getValue()) == null) {
 
 			this.nextRepayDate_two.setConstraint(new PTDateValidator(Labels
 					.getLabel("label_FinanceMainDialog_NextRepayDate.value"), true));
 		}
 
-		if (this.rpyPftFrqRow.isVisible() &&!this.nextRepayPftDate.isReadonly() && StringUtils.isNotEmpty(this.repayPftFrq.getValue())
+		if (this.rpyPftFrqRow.isVisible() && !this.nextRepayPftDate.isReadonly()
+				&& StringUtils.isNotEmpty(this.repayPftFrq.getValue())
 				&& FrequencyUtil.validateFrequency(this.repayPftFrq.getValue()) == null) {
 
 			this.nextRepayPftDate_two.setConstraint(new PTDateValidator(Labels
 					.getLabel("label_FinanceMainDialog_NextRepayPftDate.value"), true));
 		}
 
-		if (this.rpyRvwFrqRow.isVisible() && !this.nextRepayRvwDate.isReadonly() && StringUtils.isNotEmpty(this.repayRvwFrq.getValue())
+		if (this.rpyRvwFrqRow.isVisible() && !this.nextRepayRvwDate.isReadonly()
+				&& StringUtils.isNotEmpty(this.repayRvwFrq.getValue())
 				&& FrequencyUtil.validateFrequency(this.repayRvwFrq.getValue()) == null) {
 
 			this.nextRepayRvwDate_two.setConstraint(new PTDateValidator(Labels
 					.getLabel("label_FinanceMainDialog_NextRepayRvwDate.value"), true));
 		}
 
-		if (this.rpyCpzFrqRow.isVisible() && !this.nextRepayCpzDate.isReadonly() && StringUtils.isNotEmpty(this.repayCpzFrq.getValue())
+		if (this.rpyCpzFrqRow.isVisible() && !this.nextRepayCpzDate.isReadonly()
+				&& StringUtils.isNotEmpty(this.repayCpzFrq.getValue())
 				&& FrequencyUtil.validateFrequency(this.repayCpzFrq.getValue()) == null) {
 
 			this.nextRepayCpzDate_two.setConstraint(new PTDateValidator(Labels
@@ -2075,10 +2031,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.downPaySupl.setReadonly(isReadOnly("FinanceMainDialog_downPaySupl"));
 			this.downPayAccount.setReadonly(isReadOnly("FinanceMainDialog_downPaymentAcc"));
 		}
-		
+
 		readOnlyComponent(isReadOnly("FinanceMainDialog_finStartDate"), this.odStartDate);
 		this.odFinAssetValue.setDisabled(isReadOnly("FinanceMainDialog_finAmount"));
-		
+
 		this.finWriteoffPayAmount.setReadonly(isReadOnly("FinanceMainDialog_WriteoffPayAmount"));
 		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
 			this.finWriteoffPayAmount.setMandatory(!isReadOnly("FinanceMainDialog_WriteoffPayAmount"));

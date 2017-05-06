@@ -33,7 +33,7 @@ public class PostBenchmarkInfo implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg, ChunkContext context) throws Exception {
-		Date valueDate = DateUtility.getValueDate();
+		Date valueDate = DateUtility.getAppValueDate();
 
 		logger.debug("START: Finance Data Feed for Value Date: " + valueDate);
 

@@ -23,7 +23,7 @@ public class AuditDataPurging implements Tasklet{
 	
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date dateValueDate = DateUtility.getValueDate();
+		Date dateValueDate = DateUtility.getAppValueDate();
 		
 		logger.debug("START: Audit Data Purging for Value Date: "+ dateValueDate);
 		try {

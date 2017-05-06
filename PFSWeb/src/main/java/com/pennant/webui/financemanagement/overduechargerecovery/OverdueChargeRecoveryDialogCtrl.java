@@ -177,7 +177,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 	private static ArrayList<ValueLabel>				finOdForList		= PennantStaticListUtil.getODCChargeFor();
 	private static ArrayList<ValueLabel>				finODCTypeList		= PennantStaticListUtil.getODCChargeType();
 	private transient OverDueRecoveryPostingsUtil		recoveryPostingsUtil;
-	Date												dateValueDate		= DateUtility.getValueDate();
+	Date												dateValueDate		= DateUtility.getAppValueDate();
 	private boolean										isInquiry			= false;
 	private transient BigDecimal						paidAmount			= new BigDecimal(0);
 
@@ -1352,7 +1352,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 
 			FinanceMain financeMain = getRecoveryPostingsUtil().getFinanceMainDAO().getFinanceMainById(
 					getOverdueChargeRecovery().getFinReference(), "", false);
-			Date dateValueDate = DateUtility.getValueDate();
+			Date dateValueDate = DateUtility.getAppValueDate();
 			Date SchdDate = getOverdueChargeRecovery().getFinODSchdDate();
 			String finODFor = getOverdueChargeRecovery().getFinODFor();
 			Date movementDate = getOverdueChargeRecovery().getMovementDate();

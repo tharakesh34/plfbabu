@@ -128,24 +128,31 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_LATEPAY);
 				aeEvent.setValueDate(dateValueDate);
 				aeEvent.setSchdDate(schdDate);
+				aeEvent.setEOD(false);
 
 				String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
-				boolean isEODProcess = false;
+
 				if (!phase.equals(PennantConstants.APP_PHASE_DAY)) {
-					isEODProcess = true;
+					aeEvent.setEOD(true);;
 				}
 
-				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+				HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+				aeEvent.setDataMap(dataMap);
 
-				// Accounting Set Execution to get Posting Details List
-				financeMain.getDeclaredFieldValues(executingMap);
 				Date dateAppDate = DateUtility.getAppDate();
-				List<Object> resultList = getPostingsPreparationUtil().processPostingDetails(executingMap,
-						isEODProcess, true, dateAppDate, false, linkedTranId);
+				aeEvent.setPostDate(dateAppDate);
+				aeEvent.setValueDate(dateValueDate);
+				try {
+					aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
+				} catch (AccountNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
-				isPostingSuccess = (Boolean) resultList.get(0);
-				linkedTranId = (Long) resultList.get(1);
-				errorCode = (String) resultList.get(3);
+
+				isPostingSuccess = aeEvent.isPostingSucess();
+				linkedTranId = aeEvent.getLinkedTranId();
+				errorCode = aeEvent.getErrorMessage();
 
 				//Overdue Details Updation for Paid Penalty
 				if (isPostingSuccess) {
@@ -230,7 +237,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
-		Date curBussDate = DateUtility.getValueDate();
+		Date curBussDate = DateUtility.getAppValueDate();
 
 		FinODDetails odDetails = getFinODDetailsDAO().getFinODDetailsForBatch(finRepayQueue.getFinReference(),
 				finRepayQueue.getRpyDate());
@@ -508,7 +515,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 				recovery.setRcdCanDel(true);
 
-				Date curBussDate = DateUtility.getValueDate();
+				Date curBussDate = DateUtility.getAppValueDate();
 				if (!isEnqPurpose && odDetails.getFinODSchdDate().compareTo(curBussDate) <= 0) {
 					//Recovery Record Saving : Check to Add the Record/Not with "ZERO" penalty balance Amount while Recovery calculation
 					if (isRecordSave) {
@@ -776,14 +783,20 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 					isEODProcess = true;
 				}
 
-				// Accounting Set Execution to get Posting Details List
 				Date dateAppDate = DateUtility.getAppDate();
-				List<Object> resultList = getPostingsPreparationUtil().processPostingDetails(executingMap,
-						isEODProcess, true, dateAppDate, false, linkedTranId);
+				aeEvent.setPostDate(dateAppDate);
+				aeEvent.setValueDate(dateValueDate);
+				try {
+					aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
+				} catch (AccountNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
-				isPostingSuccess = (Boolean) resultList.get(0);
-				linkedTranId = (Long) resultList.get(1);
-				errorCode = (String) resultList.get(3);
+
+				isPostingSuccess = aeEvent.isPostingSucess();
+				linkedTranId = aeEvent.getLinkedTranId();
+				errorCode = aeEvent.getErrorMessage();
 
 				//Overdue Details Updation for Paid Penalty
 				if (isPostingSuccess) {

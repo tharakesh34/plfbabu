@@ -2519,39 +2519,6 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
-	<!--============ System Internal Account Definition ============== -->
-
-	<bean id="systemInternalAccountDefinitionDAO"
-		class="com.pennant.backend.dao.masters.impl.SystemInternalAccountDefinitionDAOImpl"
-		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-
-	<bean id="systemInternalAccountDefinitionService"
-		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="systemInternalAccountDefinitionServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean name="systemInternalAccountDefinitionServiceTarget"
-		class="com.pennant.backend.service.masters.impl.SystemInternalAccountDefinitionServiceImpl">
-		<property name="systemInternalAccountDefinitionDAO" ref="systemInternalAccountDefinitionDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-	</bean>
-
 	<!-- ====================================================== -->
 	<!-- Customer Master Details Configuration -->
 	<!-- ====================================================== -->
@@ -4112,7 +4079,6 @@
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
-		<property name="postingsInterfaceService" ref="postingsInterfaceService" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
 		<property name="custLimitIntefaceService" ref="custLimitIntefaceService" />
@@ -4473,7 +4439,6 @@
 		<property name="checkListDetailService" ref="finCheckListDetailService" />
 		<property name="agreementDetailService" ref="finAgreementDetailService" />
 		<property name="postingsDAO" ref="postingsDAO" />
-		<property name="postingsInterfaceService" ref="postingsInterfaceService" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
@@ -5951,7 +5916,6 @@
 		<property name="collateralMarkProcess" ref="collateralMarkProcess" />
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
-		<property name="postingsInterfaceService" ref="postingsInterfaceService" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
 		<property name="extTablesDAO" ref="extTablesDAO" />
@@ -6000,7 +5964,6 @@
 		<property name="guarantorDetailService" ref="finGuarantorDetailService" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
-		<property name="postingsInterfaceService" ref="postingsInterfaceService" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
@@ -6060,7 +6023,6 @@
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
 		<property name="checkListDetailService" ref="finCheckListDetailService" />
 		<property name="postingsDAO" ref="postingsDAO" />
-		<property name="postingsInterfaceService" ref="postingsInterfaceService" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
@@ -6197,7 +6159,6 @@
 		<property name="jVPostingEntryDAO" ref="jVPostingEntryDAO" />
 		<property name="nextidviewDAO" ref="nextidviewDAO" />
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
-		<property name="postingsInterfaceService" ref="postingsInterfaceService" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="legalExpensesDAO" ref="legalExpensesDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
@@ -6399,7 +6360,6 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
-		<property name="internalAccountDefinitionDAO" ref="systemInternalAccountDefinitionDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
@@ -6425,7 +6385,6 @@
 		scope="prototype">
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
-		<property name="postingsInterfaceService" ref="postingsInterfaceService" />
 		<property name="commitmentDAO" ref="commitmentDAO" />
 		<property name="commitmentMovementDAO" ref="commitmentMovementDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
@@ -6446,7 +6405,6 @@
 		scope="prototype">
 		<property name="accountsDAO" ref="accountsDAO" />
 		<property name="accountTypeDAO" ref="accountTypeDAO" />
-		<property name="internalAccountDefinitionDAO" ref="systemInternalAccountDefinitionDAO" />
 	</bean>
 
 	<!--============ Account Number Util ============== -->
@@ -6456,7 +6414,6 @@
 		<aop:scoped-proxy />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
-		<property name="internalAccountDefinitionDAO" ref="systemInternalAccountDefinitionDAO" />
 	</bean>
 
 	<!--============ Suspense Posting Util ============== -->
@@ -6645,12 +6602,6 @@
 		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
 		<property name="coreInterfaceDAO" ref="coreInterfaceDAO" />
 		<property name="designationDAO" ref="designationDAO" />
-	</bean>
-
-
-	<bean id="postingsInterfaceService"
-		class="com.pennant.Interface.service.impl.PostingsInterfaceServiceImpl">
-		<property name="accountPostingProcess" ref="accountPostingProcess" />
 	</bean>
 
 	<bean id="custLimitIntefaceService"
@@ -6875,7 +6826,6 @@
 		<property name="checkListDetailService" ref="finCheckListDetailService" />
 		<property name="agreementDetailService" ref="finAgreementDetailService" />
 		<property name="engineExecution" ref="engineExecution" />
-		<property name="postingsInterfaceService" ref="postingsInterfaceService" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
@@ -7055,7 +7005,6 @@
 	<bean id="eodProperties" class="com.pennant.eod.util.EODProperties">
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="currencyDAO" ref="currencyDAO" />
-		<property name="definitionDAO" ref="systemInternalAccountDefinitionDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
 		<property name="takafulProviderDAO" ref="takafulProviderDAO" />
@@ -7950,80 +7899,6 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
-	<!-- Cheque Purpose -->
-
-	<bean id="chequePurposeDAO"
-		class="com.pennant.backend.dao.applicationmaster.impl.ChequePurposeDAOImpl"
-		parent="basisCodeDAO">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-	<bean id="chequePurposeService"
-		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="chequePurposeServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean name="chequePurposeServiceTarget"
-		class="com.pennant.backend.service.applicationmaster.impl.ChequePurposeServiceImpl">
-		<property name="chequePurposeDAO" ref="chequePurposeDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="managerChequeDAO" ref="managerChequeDAO" />
-	</bean>
-
-	<!-- Manager Cheques -->
-
-	<bean id="managerChequeDAO"
-		class="com.pennant.backend.dao.financemanagement.impl.ManagerChequeDAOImpl"
-		parent="basisNextidDao">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-	<bean id="managerChequeService"
-		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="pfsTransactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="managerChequeServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean name="managerChequeServiceTarget"
-		class="com.pennant.backend.service.financemanagement.impl.ManagerChequeServiceImpl">
-		<property name="managerChequeDAO" ref="managerChequeDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
-		<property name="managerChequeInterfaceService" ref="managerChequeInterfaceService" />
-		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
-	</bean>
-
-	<bean id="managerChequeInterfaceService"
-		class="com.pennant.Interface.service.impl.ManagerChequeInterfaceServiceEquationImpl">
-		<property name="managerChequeProcess" ref="managerChequeProcess" />
-	</bean>
-
 	<!-- System Notification -->
 
 	<bean id="sysNotificationDAO"
@@ -8705,7 +8580,6 @@
 		<property name="checkListDetailService" ref="finCheckListDetailService" />
 		<property name="vASConfigurationService" ref="vASConfigurationService" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="postingsInterfaceService" ref="postingsInterfaceService" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
 

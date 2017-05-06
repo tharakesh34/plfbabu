@@ -71,7 +71,6 @@ import com.pennant.backend.model.finance.InvestmentFinHeader;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.TreasuaryFinanceService;
@@ -1161,7 +1160,6 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 		List<DocumentDetails> documentDetailsList = financeDetail.getDocumentDetailsList();
 		List<FinanceCheckListReference> financeCheckList = financeDetail.getFinanceCheckList();
 		List<FinanceReferenceDetail> aggrementList = financeDetail.getAggrementList();
-		List<TransactionEntry> transactionEntries = financeDetail.getTransactionEntries();
 		List<FeeRule> feeRules = scheduleData.getFeeRules();
 		
 		
@@ -1192,10 +1190,6 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 				setFeeCharges(financeDetail, "_View");
 			}
 		case ACCOUNTING:
-			if(transactionEntries == null || transactionEntries.isEmpty()) {
-				transactionEntries = getAccountingDetails(financeDetail);
-				financeDetail.setTransactionEntries(transactionEntries);
-			}
 			break;
 		default :
 			if(documentDetailsList == null || documentDetailsList.isEmpty()) {
@@ -1210,53 +1204,9 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 			if(feeRules == null || feeRules.isEmpty()) {
 				setFeeCharges(financeDetail, "_View");
 			}
-			
-			if(transactionEntries == null || transactionEntries.isEmpty()) {
-				transactionEntries = getAccountingDetails(financeDetail);
-				financeDetail.setTransactionEntries(transactionEntries);
-			}
 		}
 		logger.debug("Leaving ");
 	}
-
-	private List<TransactionEntry> getAccountingDetails(FinanceDetail financeDetail) {
-		logger.debug("Entering ");
-		List<TransactionEntry> transactionEntries = financeDetail.getTransactionEntries();
-		
-		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
-		FinanceMain financeMain = scheduleData.getFinanceMain();
-
-		String eventCode = "";
-		if (StringUtils.isBlank(eventCode)) {
-			Date curBussDate = DateUtility.getAppDate();
-
-			if (financeMain.getFinStartDate() != null && financeMain.getFinStartDate().after(curBussDate)) {
-				if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
-					eventCode = AccountEventConstants.ACCEVENT_ADDDBSF;
-				} else {
-					eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
-				}
-			} else {
-				eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
-			}
-		}
-		Long accountSetId;
-		String promotionCode = financeMain.getPromotionCode();
-
-		if (StringUtils.isNotBlank(promotionCode)) {
-			accountSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, eventCode,
-					FinanceConstants.MODULEID_PROMOTION);
-		} else {
-			accountSetId = getFinTypeAccountingDAO().getAccountSetID(scheduleData.getFinanceType().getFinType(),
-					eventCode, FinanceConstants.MODULEID_FINTYPE);
-		}
-		
-		transactionEntries = getTransactionEntryDAO().getListTransactionEntryById(accountSetId, "_AEView", true);
-		
-		logger.debug("Leaving "); 
-		return transactionEntries;
-	}
-	
 	
 	
 	/**

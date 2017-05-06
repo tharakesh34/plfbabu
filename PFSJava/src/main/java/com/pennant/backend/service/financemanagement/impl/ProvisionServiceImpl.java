@@ -177,7 +177,7 @@ public class ProvisionServiceImpl extends  GenericFinanceDetailService implement
 		if(!provision.isWorkflow()){
 
 			//Check Finance is RIA Finance Type or Not
-			Date dateValueDate = DateUtility.getValueDate();
+			Date dateValueDate = DateUtility.getAppValueDate();
 			getProvisionCalculationUtil().processProvCalculations(provision, dateValueDate, false, true, false);
 		}else{
 
@@ -305,7 +305,7 @@ public class ProvisionServiceImpl extends  GenericFinanceDetailService implement
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
 		//Provision Postings Process
-		Date dateValueDate = DateUtility.getValueDate();
+		Date dateValueDate = DateUtility.getAppValueDate();
 		getProvisionCalculationUtil().processProvCalculations(provision, dateValueDate, false, true, false);
 		
 		//Fee Charge Details

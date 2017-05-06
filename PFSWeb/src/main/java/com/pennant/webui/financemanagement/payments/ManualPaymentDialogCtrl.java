@@ -2188,7 +2188,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		int format = CurrencyUtil.getFormat(finMain.getFinCcy());
 		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
-		Date dateValueDate = DateUtility.getValueDate();
+		Date dateValueDate = DateUtility.getAppValueDate();
 
 		finMain.setRepayAccountId(PennantApplicationUtil.unFormatAccountNumber(repayAccount.getValue()));
 
@@ -2209,7 +2209,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		amountCodes.setSuplRentPay(PennantApplicationUtil.unFormateAmount(this.suplRentAmount.getValue(), format));
 		amountCodes.setIncrCostPay(PennantApplicationUtil.unFormateAmount(this.incrCostAmount.getValue(), format));
 
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+		HashMap<String, Object> dataMap = aeEvent.getDataMap();
 
 		List<ReturnDataSet> returnSetEntries = null;
 
@@ -2218,10 +2218,12 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			feeRuleMap = getFeeDetailDialogCtrl().getFeeRuleDetailsMap();
 		}
 
-		executingMap.putAll(feeRuleMap);
-		getFinanceType().getDeclaredFieldValues(executingMap);
+		dataMap.putAll(feeRuleMap);
+		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
+		aeEvent.setDataMap(dataMap);
+		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
 
-		returnSetEntries = getEngineExecution().getAccEngineExecResults(false, executingMap);
+		returnSetEntries = aeEvent.getReturnDataSet();
 
 		if (getAccountingDetailDialogCtrl() != null) {
 			getAccountingDetailDialogCtrl().doFillAccounting(returnSetEntries);

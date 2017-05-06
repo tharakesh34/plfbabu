@@ -37,7 +37,7 @@ public class MonthEndDownloadProcess implements Tasklet {
 	
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		dateValueDate = DateUtility.getValueDate();
+		dateValueDate = DateUtility.getAppValueDate();
 
 		logger.debug("START: Month End Download Details for Value Date: "+ DateUtility.addDays(dateValueDate,-1));		
 
@@ -89,11 +89,8 @@ public class MonthEndDownloadProcess implements Tasklet {
 				subHeadRule.setReqFinType(financeType.getFinType());
 				subHeadRule.setReqFinDivision(financeType.getFinDivision());
 
-				String basicAccNumber = getAccountNumberUtil().getBasicAccountNumber(transactionEntries.get(0),subHeadRule,financeType.getFinCcy());
-
 				financeProfitDetail = new FinanceProfitDetail();
 				financeProfitDetail.setFinType(financeType.getFinType());
-				financeProfitDetail.setIncomeAccount(basicAccNumber);
 
 				finPftDetailList.add(financeProfitDetail);
 			}

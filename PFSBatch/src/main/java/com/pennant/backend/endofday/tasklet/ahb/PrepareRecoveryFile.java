@@ -87,7 +87,7 @@ public class PrepareRecoveryFile implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 
-		logger.debug("START: Request File Preparation  for Value Date: " + DateUtility.getValueDate());
+		logger.debug("START: Request File Preparation  for Value Date: " + DateUtility.getAppValueDate());
 
 		// READ REPAYMENTS DUE TODAY
 		Connection connection = null;
@@ -162,7 +162,7 @@ public class PrepareRecoveryFile implements Tasklet {
 			}
 		}
 
-		logger.debug("START: Request File Preparation for Value Date: " + DateUtility.getValueDate());
+		logger.debug("START: Request File Preparation for Value Date: " + DateUtility.getAppValueDate());
 		return RepeatStatus.FINISHED;
 
 	}

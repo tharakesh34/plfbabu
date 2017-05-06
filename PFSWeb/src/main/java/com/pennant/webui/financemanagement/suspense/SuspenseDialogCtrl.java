@@ -1430,7 +1430,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 
 		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
-		Date dateValueDate = DateUtility.getValueDate();
+		Date dateValueDate = DateUtility.getAppValueDate();
 
 
 		aeEvent = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData()
@@ -1438,7 +1438,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		List<ReturnDataSet> returnSetEntries = null;
 
@@ -1447,11 +1447,14 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 			feeRuleMap = getFeeDetailDialogCtrl().getFeeRuleDetailsMap();
 		}
 
-		executingMap.putAll(feeRuleMap);
-		getFinanceDetail().getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
+		dataMap.putAll(feeRuleMap);
+		aeEvent.setDataMap(dataMap);
 
 		if (!getFinanceDetail().getFinScheduleData().getFinanceType().isAllowRIAInvestment()) {
-			returnSetEntries = getEngineExecution().getAccEngineExecResults(false, executingMap);
+			aeEvent.setDataMap(dataMap);
+			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+
+			returnSetEntries = aeEvent.getReturnDataSet();
 		} else {
 			//FIXME : DataSet Removal to be worked on if it requires in future
 		}

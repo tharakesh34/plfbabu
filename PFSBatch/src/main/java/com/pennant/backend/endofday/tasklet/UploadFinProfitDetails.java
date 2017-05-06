@@ -27,7 +27,7 @@ public class UploadFinProfitDetails implements Tasklet {
 	
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {	
-		dateValueDate = DateUtility.getValueDate();
+		dateValueDate = DateUtility.getAppValueDate();
 
 		logger.debug("START: Upload Profit Details for Value Date: "+ dateValueDate);		
 

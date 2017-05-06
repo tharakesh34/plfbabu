@@ -44,7 +44,7 @@ public class PostNextPaymentDetails extends ServiceHelper implements Tasklet {
 
 			connection = DataSourceUtils.doGetConnection(getDataSource());
 			sqlStatement = connection.prepareStatement(getCountQuery());
-			sqlStatement.setDate(1, DateUtility.getDBDate(DateUtility.getValueDate().toString()));
+			sqlStatement.setDate(1, DateUtility.getDBDate(DateUtility.getAppValueDate().toString()));
 			resultSet = sqlStatement.executeQuery();
 			int count=0;
 			if (resultSet.next()) {
@@ -55,7 +55,7 @@ public class PostNextPaymentDetails extends ServiceHelper implements Tasklet {
 			sqlStatement.close();
 
 			sqlStatement = connection.prepareStatement(prepareSelectQuery());
-			sqlStatement.setDate(1, DateUtility.getDBDate(DateUtility.getValueDate().toString()));
+			sqlStatement.setDate(1, DateUtility.getDBDate(DateUtility.getAppValueDate().toString()));
 			resultSet = sqlStatement.executeQuery();
 
 			File file = BatchFileUtil.getBatchFile(BatchFileUtil.getSlaryPostingFileName());

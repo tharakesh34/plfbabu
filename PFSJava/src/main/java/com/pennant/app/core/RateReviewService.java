@@ -233,8 +233,8 @@ public class RateReviewService extends ServiceHelper {
 		finEODEvent.setFinanceScheduleDetails(finScheduleData.getFinanceScheduleDetails());
 		finEODEvent.setRepayInstructions(finScheduleData.getRepayInstructions());
 
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
-		List<ReturnDataSet> list = prepareAccounting(executingMap, finScheduleData.getFinanceType());
+		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		List<ReturnDataSet> list = prepareAccounting(aeEvent, dataMap);
 		saveAccounting(list);
 
 

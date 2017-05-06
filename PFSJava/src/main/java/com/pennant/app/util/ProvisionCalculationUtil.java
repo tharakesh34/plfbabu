@@ -49,6 +49,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.security.auth.login.AccountNotFoundException;
+
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
@@ -119,7 +121,8 @@ public class ProvisionCalculationUtil implements Serializable {
 		amountCodes.setProvAmt(procProvision.getProvisionedAmt() == null ? BigDecimal.ZERO : procProvision
 				.getProvisionedAmt());
 
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		aeEvent.setDataMap(dataMap);
 
 		if (isFromCore) {
 			provCalculated = procProvision.getProvisionAmtCal();
@@ -127,7 +130,7 @@ public class ProvisionCalculationUtil implements Serializable {
 			if (isScrnLvlProc && procProvision.isUseNFProv()) {
 				provCalculated = procProvision.getNonFormulaProv();
 			} else {
-				provCalculated = getEngineExecution().getProvisionExecResults(executingMap);
+				provCalculated = getEngineExecution().getProvisionExecResults(dataMap);
 			}
 		}
 		//Search For Provision Record in case of OverDue
@@ -213,15 +216,21 @@ public class ProvisionCalculationUtil implements Serializable {
 				aeEvent.setValueDate(dateValueDate);
 				aeEvent.setSchdDate(procProvision.getProvisionCalDate());
 				Date dateAppDate = DateUtility.getAppDate();
+				aeEvent.setAppDate(dateAppDate);
+				
 
-				executingMap = new HashMap<String, Object>();
-				;
-				executingMap = amountCodes.getDeclaredFieldValues();
+				dataMap = new HashMap<String, Object>();
+				dataMap = amountCodes.getDeclaredFieldValues();
+				aeEvent.setDataMap(dataMap);
 
-				returnList = getPostingsPreparationUtil().processPostingDetails(executingMap, false, true, dateAppDate,
-						false, Long.MIN_VALUE);
+				try {
+					aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
+				} catch (AccountNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
-				isPostingsSuccess = (Boolean) returnList.get(0);
+				isPostingsSuccess = aeEvent.isPostingSucess();
 
 				if (!isPostingsSuccess) {
 					errorDetails = new ErrorDetails("", PennantConstants.ERR_9999, "E",
@@ -230,7 +239,7 @@ public class ProvisionCalculationUtil implements Serializable {
 					movement.setProvisionedAmt(movement.getProvisionedAmt().add(movement.getProvisionDue()));
 					movement.setProvisionDue(BigDecimal.ZERO);
 					movement.setProvisionPostSts("C");
-					movement.setLinkedTranId((Long) returnList.get(1));
+					movement.setLinkedTranId(aeEvent.getLinkedTranId());
 					movement.setUserDetails(procProvision.getUserDetails());
 
 					//Update Provision Movement Details

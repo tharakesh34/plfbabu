@@ -30,7 +30,7 @@ public class RemoveMaintenanceProcess implements Tasklet {
 	
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		dateValueDate = DateUtility.getValueDate();
+		dateValueDate = DateUtility.getAppValueDate();
 
 		logger.debug("START: Finance Maintenance Details Removal for Value Date: "+ dateValueDate);		
 

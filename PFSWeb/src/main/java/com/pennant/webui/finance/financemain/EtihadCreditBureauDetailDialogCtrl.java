@@ -473,7 +473,7 @@ public class EtihadCreditBureauDetailDialogCtrl extends GFCBaseCtrl<EtihadCredit
 	 */
 	public void doWriteBeanToComponents(EtihadCreditBureauDetail aEtihadCreditBureauDetail) {
 		logger.debug("Entering");
-		Date dateValueDate = DateUtility.getValueDate();
+		Date dateValueDate = DateUtility.getAppValueDate();
 		this.finReference.setValue(aEtihadCreditBureauDetail.getFinReference());
 		this.bureauScore.setValue(aEtihadCreditBureauDetail.getBureauScore());
 		this.worstCurrPayDelay.setValue(aEtihadCreditBureauDetail.getWorstCurrPayDelay());

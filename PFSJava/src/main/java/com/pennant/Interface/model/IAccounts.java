@@ -13,9 +13,9 @@ public class IAccounts implements java.io.Serializable {
 	private String acFullName;
 	private String acShortName;
 	private String acPurpose;
-	private boolean internalAc;
-	private boolean flagCreateNew;
-	private boolean flagCreateIfNF;
+	private boolean internalAc = true;
+	private boolean flagCreateNew = true;
+	private boolean flagCreateIfNF = true;
 	private String flagPostStatus;
 	private String transOrder;
 	private String errorCode;

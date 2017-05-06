@@ -66,11 +66,11 @@ public class MicroEOD implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date valueDate = DateUtility.getValueDate();
+		Date valueDate = DateUtility.getAppValueDate();
 		logger.debug("START: Micro EOD On : " + valueDate);
 		String thread = (String) context.getStepContext().getStepExecutionContext().get(EodConstants.THREAD);
 
-		getEodService().startProcess(DateUtility.getValueDate(), thread);
+		getEodService().startProcess(DateUtility.getAppValueDate(), thread);
 
 		logger.debug("COMPLETE: Micro EOD On :" + valueDate);
 		return RepeatStatus.FINISHED;

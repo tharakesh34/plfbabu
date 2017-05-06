@@ -63,7 +63,7 @@ public class PartitioningMaster implements Partitioner {
 
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
-		Date valueDate = DateUtility.getValueDate();
+		Date valueDate = DateUtility.getAppValueDate();
 		logger.debug("START: Thread Allocation On : " + valueDate);
 
 		boolean recordslessThanThread = false;

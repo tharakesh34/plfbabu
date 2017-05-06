@@ -274,13 +274,13 @@ public class ExtFinanceUploadService {
 						.getFinStartDate(), data.getFinanceMain().getFinStartDate());
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		aeEvent.setDisbAccountID(data.getFinanceMain().getDisbAccountId());
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
-		data.getFinanceType().getDeclaredFieldValues(executingMap);
+		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		aeEvent.setDataMap(dataMap);
 
 		// Building Account Entry Details
 		try {
-			return getEngineExecution().getAccEngineExecResults(false, executingMap);
+			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+			return aeEvent.getReturnDataSet();
 		} catch (Exception e) {
 			logger.debug(e);
 		}

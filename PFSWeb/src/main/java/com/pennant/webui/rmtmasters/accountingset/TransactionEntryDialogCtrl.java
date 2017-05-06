@@ -95,7 +95,6 @@ import com.pennant.backend.model.applicationmaster.TransactionCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.feetype.FeeType;
-import com.pennant.backend.model.masters.SystemInternalAccountDefinition;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.AmountCode;
@@ -778,8 +777,9 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			}
 
 			if (!this.account.isDisabled()) {
-				this.account.setConstraint(new StaticListValidator(PennantStaticListUtil.getTransactionalAccount(ImplementationConstants.ALLOW_RIA),
-						Labels.getLabel("label_TransactionEntryDialog_Account.value")));
+				this.account.setConstraint(new StaticListValidator(PennantStaticListUtil
+						.getTransactionalAccount(ImplementationConstants.ALLOW_RIA), Labels
+						.getLabel("label_TransactionEntryDialog_Account.value")));
 			}
 		}
 
@@ -1147,7 +1147,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 							&& StringUtils.equals(aTransactionEntry.getPostToSys(), AccountConstants.POSTTOSYS_CORE)) {
 
 						valueParm[2] = String.valueOf(aTransactionEntry.getTransOrder() + 1);
-						errParm[1] = PennantJavaUtil.getLabel("label_TransactionEntryDialog_TransOrder.value") + ":" + valueParm[2];
+						errParm[1] = PennantJavaUtil.getLabel("label_TransactionEntryDialog_TransOrder.value") + ":"
+								+ valueParm[2];
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(
 								PennantConstants.KEY_FIELD, "30549", errParm, valueParm), getUserWorkspace()
 								.getUserLanguage()));
@@ -1367,35 +1368,18 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		logger.debug("Entering" + event.toString());
 
 		String accountSource = "";
-		boolean siaRequired = ImplementationConstants.SIA_REQUIRED;
-
-		if (siaRequired) {
-			accountSource = "SystemInternalAccountDefinition";
-		} else {
-			accountSource = "AccountType";
-		}
+		accountSource = "AccountType";
 
 		Object dataObject = ExtendedSearchListBox.show(this.window_TransactionEntryDialog, accountSource);
 		if (dataObject instanceof String) {
 			this.accountType.setValue(dataObject.toString());
 			this.lovDescAccountTypeName.setValue("");
 		} else {
-			if (siaRequired) {
+			AccountType details = (AccountType) dataObject;
+			if (details != null) {
+				this.accountType.setValue(details.getAcType());
+				this.lovDescAccountTypeName.setValue(details.getAcType() + "-" + details.getAcTypeDesc());
 
-				SystemInternalAccountDefinition details = (SystemInternalAccountDefinition) dataObject;
-				if (details != null) {
-					this.accountType.setValue(details.getSIACode());
-					this.lovDescAccountTypeName.setValue(details.getSIACode() + "-" + details.getSIAShortName());
-
-				}
-
-			} else {
-				AccountType details = (AccountType) dataObject;
-				if (details != null) {
-					this.accountType.setValue(details.getAcType());
-					this.lovDescAccountTypeName.setValue(details.getAcType() + "-" + details.getAcTypeDesc());
-
-				}
 			}
 		}
 		logger.debug("Leaving" + event.toString());

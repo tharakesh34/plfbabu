@@ -47,6 +47,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -55,7 +56,6 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -164,10 +164,9 @@ public class StatusMovementService extends ServiceHelper {
 	private void processPostings(ResultSet resultSet, String event, Date valueDate) throws Exception {
 		// Amount Codes preparation using FinProfitDetails
 		AEEvent aeEvent = getAEAmountCodes(resultSet, event, valueDate);
-		FinanceType financeType = getFinanceType(aeEvent.getFinType());
-		aeEvent.setExecutingMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());
+		HashMap<String, Object> dataMap = aeEvent.getAeAmountCodes().getDeclaredFieldValues(); 
 
-		List<ReturnDataSet> list = prepareAccounting(aeEvent.getExecutingMap(), financeType);
+		List<ReturnDataSet> list = prepareAccounting(aeEvent, dataMap);
 		saveAccounting(list);
 	}
 

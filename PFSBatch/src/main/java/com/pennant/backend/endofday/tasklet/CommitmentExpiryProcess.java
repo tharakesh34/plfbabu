@@ -30,7 +30,7 @@ public class CommitmentExpiryProcess implements Tasklet {
 	
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {	
-		dateValueDate = DateUtility.getValueDate();
+		dateValueDate = DateUtility.getAppValueDate();
 
 		logger.debug("START: Commitment Expiry Details for Value Date: "+ DateUtility.addDays(dateValueDate,-1));		
 

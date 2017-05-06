@@ -31,7 +31,7 @@ public class ODDetailDownload implements Tasklet {
 	
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {	
-		dateValueDate = DateUtility.getValueDate();
+		dateValueDate = DateUtility.getAppValueDate();
 		dateAppDate = DateUtility.getAppDate();
 
 		logger.debug("START: Overdue Details for Report as Value Date: "+  DateUtility.addDays(dateValueDate,-1));		

@@ -148,9 +148,8 @@ public class SuspenseService extends ServiceHelper {
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(valueDate);
 
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
-
-		List<ReturnDataSet> list = prepareAccounting(executingMap, fintype);
+		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		List<ReturnDataSet> list = prepareAccounting(aeEvent, dataMap);
 		long linkedTranId = saveAccounting(list);
 
 		if (suspHead != null) {
@@ -239,11 +238,10 @@ public class SuspenseService extends ServiceHelper {
 		aeEvent.setSchdDate(suspFromDate);
 
 		
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
-		FinanceType fintype = getFinanceType(finRepayQueue.getFinType());
 		// Postings Preparation
-		List<ReturnDataSet> list = prepareAccounting(executingMap, fintype);
+		List<ReturnDataSet> list = prepareAccounting(aeEvent, dataMap);
 		long linkedTranId = saveAccounting(list);
 
 		// Finance Suspend Head

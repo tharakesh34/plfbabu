@@ -155,6 +155,7 @@ import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.Promotion;
+import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -183,6 +184,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennant.cache.util.AccountingSetCache;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennant.exception.PFFInterfaceException;
@@ -672,8 +674,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 
-		financeDetail.setFinanceProfitDetail(getFinProfitDetailsById(financeMain.getFinReference()));
-		
 		financeDetail.getFinScheduleData().setFinServiceInstructions(
 				getFinServiceInstructionDAO().getFinServiceInstructions(finReference, "_Temp", procEdtEvent));
 
@@ -687,10 +687,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 			financeDetail.setRolledoverFinanceHeader(header);
 		}
-
-		//Finance Accounting Fee Charge Details
-		scheduleData.setFeeRules(getFinFeeChargesDAO()
-				.getFeeChargesByFinRef(finReference, procEdtEvent, false, "_View"));
 
 		// Plan EMI Holiday Details
 		if (financeMain.isPlanEMIHAlw()) {
@@ -1562,10 +1558,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			//Finance Stage Accounting Posting Details 
 			//=======================================
-			financeDetail.setStageTransactionEntries(getTransactionEntryDAO().getListTransactionEntryByRefType(
-					financeType.getFinType(),
-					StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent,
-					FinanceConstants.PROCEDT_STAGEACC, nextRoleCode, "_AEView", true));
+			List<TransactionEntry> stageEntries = new ArrayList<>();
+			for (int i = 0; i < accSetIdList.size(); i++) {
+				stageEntries.addAll(AccountingSetCache.getTransactionEntry(accSetIdList.get(i)));
+			}
+			financeDetail.setStageTransactionEntries(stageEntries);
 		}
 
 		// Accounting Set Details
@@ -1588,57 +1585,18 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
-		Long accSetId;
-		// TODO: Better to Remove from Here and add it in Tab Selection
-		if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
-			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeMain.getPromotionCode(), eventCode,
-					FinanceConstants.MODULEID_PROMOTION);
-		} else {
-			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeMain.getFinType(), eventCode,
-					FinanceConstants.MODULEID_FINTYPE);
-		}
-		if (accSetId != Long.MIN_VALUE) {
+		//Finance Commitment Accounting Posting Details
+		//=======================================
+		if (PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())) {
+			if (financeType.isFinCommitmentReq() && StringUtils.isNotBlank(financeMain.getFinCommitmentRef())) {
 
-			//Finance Accounting Posting Details
-			//=======================================
-			if (isCustExist) {
+				long accountingSetId = getAccountingSetDAO().getAccountingSetId(
+						AccountEventConstants.ACCEVENT_CMTDISB, AccountEventConstants.ACCEVENT_CMTDISB);//TODO : ACCOUNTINGSET
 
-				financeDetail.setTransactionEntries(getTransactionEntryDAO().getListTransactionEntryById(accSetId,
-						"_AEView", true));
-
-				//Finance Commitment Accounting Posting Details
-				//=======================================
-				if (PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())) {
-					if (financeType.isFinCommitmentReq() && StringUtils.isNotBlank(financeMain.getFinCommitmentRef())) {
-
-						long accountingSetId = getAccountingSetDAO().getAccountingSetId(
-								AccountEventConstants.ACCEVENT_CMTDISB, AccountEventConstants.ACCEVENT_CMTDISB);
-
-						if (accountingSetId != 0) {
-							financeDetail.setCmtFinanceEntries(getTransactionEntryDAO().getListTransactionEntryById(
-									accountingSetId, "_AEView", true));
-						}
-					}
+				if (accountingSetId != 0) {
+					financeDetail.setCmtFinanceEntries(AccountingSetCache.getTransactionEntry(accountingSetId));
 				}
 			}
-		}
-
-		//Finance Fee Charge Details
-		//=======================================
-
-		//Fetch Stage Accounting AccountingSetId List 
-		if (!StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_PREAPPROVAL) && accSetId != Long.MIN_VALUE) {
-			accSetIdList.add(accSetId);
-		}
-
-		if (!accSetIdList.isEmpty()) {
-			financeDetail
-					.setFeeCharges(getTransactionEntryDAO()
-							.getListFeeChargeRules(
-									accSetIdList,
-									eventCode.startsWith(AccountEventConstants.ACCEVENT_ADDDBS)
-											|| eventCode.equals(AccountEventConstants.ACCEVENT_DEFAULT) ? AccountEventConstants.ACCEVENT_ADDDBS
-											: eventCode, "_AView", 0));
 		}
 
 		//TODO: Need to Modify Based on Product Level for Finance Origination Extended fields
@@ -6987,34 +6945,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Entering");
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-
-		String eventCode = "";
-		Date curBussDate = DateUtility.getAppDate();
-		if (financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate().after(curBussDate)) {
-			if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
-				eventCode = AccountEventConstants.ACCEVENT_ADDDBSF;
-			} else {
-				eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
-			}
-		} else {
-			eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
-		}
-
-		Long accSetId;
-
-		if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
-			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeMain.getPromotionCode(), eventCode,
-					FinanceConstants.MODULEID_PROMOTION);
-		} else {
-			accSetId = getFinTypeAccountingDAO().getAccountSetID(financeMain.getFinType(), eventCode,
-					FinanceConstants.MODULEID_FINTYPE);
-		}
-
-		//Finance Accounting Posting Details
-		if (accSetId != Long.MIN_VALUE) {
-			financeDetail.setTransactionEntries(getTransactionEntryDAO().getListTransactionEntryById(accSetId,
-					"_AEView", true));
-		}
 
 		//Finance Commitment Accounting Posting Details
 		if (PennantConstants.RECORD_TYPE_NEW

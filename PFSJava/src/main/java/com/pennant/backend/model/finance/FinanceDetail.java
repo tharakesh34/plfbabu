@@ -135,7 +135,6 @@ public class FinanceDetail implements java.io.Serializable {
 	private List<Rule> feeCharges = new ArrayList<Rule>(1);	
 	private List<FinTypeFees> finTypeFeesList = new ArrayList<FinTypeFees>();
 	
-	private List<TransactionEntry> transactionEntries = new ArrayList<TransactionEntry>(1);
 	@XmlElementWrapper(name= "transactions")
 	@XmlElement(name="transaction")
 	private List<ReturnDataSet> returnDataSetList = new ArrayList<ReturnDataSet>(1);
@@ -187,7 +186,6 @@ public class FinanceDetail implements java.io.Serializable {
 	
 	// Rollover Finance Details
 	private RolledoverFinanceHeader rolledoverFinanceHeader = null;
-	private FinanceProfitDetail financeProfitDetail = null;
 	
 	// Customer Details
 	@XmlElement(name="customer")
@@ -449,13 +447,6 @@ public class FinanceDetail implements java.io.Serializable {
 	}
 	public void setExtendedFieldHeader(ExtendedFieldHeader extendedFieldHeader) {
 		this.extendedFieldHeader = extendedFieldHeader;
-	}
-
-	public List<TransactionEntry> getTransactionEntries() {
-		return transactionEntries;
-	}
-	public void setTransactionEntries(List<TransactionEntry> transactionEntries) {
-		this.transactionEntries = transactionEntries;
 	}
 
 	public void setStageTransactionEntries(List<TransactionEntry> stageTransactionEntries) {
@@ -833,12 +824,5 @@ public class FinanceDetail implements java.io.Serializable {
 		this.foreClosureDetails = foreClosureDetails;
 	}
 
-	public FinanceProfitDetail getFinanceProfitDetail() {
-		return financeProfitDetail;
-	}
-
-	public void setFinanceProfitDetail(FinanceProfitDetail financeProfitDetail) {
-		this.financeProfitDetail = financeProfitDetail;
-	}
 
 }

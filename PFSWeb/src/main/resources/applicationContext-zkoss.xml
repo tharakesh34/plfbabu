@@ -1050,20 +1050,6 @@
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 	</bean>
 
-	<!--============ System Internal Accounts Defination ============== -->
-
-	<bean id="systemInternalAccountDefinitionListCtrl"
-		class="com.pennant.webui.masters.systeminternalaccountdefinition.SystemInternalAccountDefinitionListCtrl"
-		parent="basisListCtrl" scope="prototype">
-		<property name="systemInternalAccountDefinitionService" ref="systemInternalAccountDefinitionService" />
-	</bean>
-
-	<bean id="systemInternalAccountDefinitionDialogCtrl"
-		class="com.pennant.webui.masters.systeminternalaccountdefinition.SystemInternalAccountDefinitionDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="systemInternalAccountDefinitionService" ref="systemInternalAccountDefinitionService" />
-	</bean>
-
 	<!-- ====================================================== -->
 	<!-- Customer Master Details Configuration -->
 	<!-- ====================================================== -->
@@ -1506,27 +1492,6 @@
 		class="com.pennant.webui.mail.notifications.NotificationsDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="notificationsService" ref="notificationsService" />
-	</bean>
-
-	<!--============ Overdue Charge Detail ============== -->
-
-	<bean id="overdueChargeListCtrl"
-		class="com.pennant.webui.rulefactory.overduecharge.OverdueChargeListCtrl"
-		parent="basisListCtrl" scope="prototype">
-		<property name="overdueChargeService" ref="overdueChargeService" />
-	</bean>
-
-	<bean id="overdueChargeDialogCtrl"
-		class="com.pennant.webui.rulefactory.overduecharge.OverdueChargeDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="pagedListService" ref="pagedListService" />
-		<property name="overdueChargeService" ref="overdueChargeService" />
-	</bean>
-
-	<bean id="overdueChargeSearchCtrl"
-		class="com.pennant.webui.rulefactory.overduecharge.OverdueChargeSearchCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="overdueChargeService" ref="overdueChargeService" />
 	</bean>
 
 	<!--============ Scoring Group Detail ============== -->
@@ -4048,47 +4013,6 @@
 		<property name="pagedListService" ref="pagedListService" />
 		<property name="errorDetailService" ref="errorDetailService" />
 	</bean>
-
-	<!-- Cheque Purpose -->
-
-	<bean id="chequePurposeListCtrl"
-		class="com.pennant.webui.applicationmaster.chequepurpose.ChequePurposeListCtrl"
-		parent="basisListCtrl" scope="prototype">
-		<property name="chequePurposeService" ref="chequePurposeService" />
-	</bean>
-	<bean id="chequePurposeDialogCtrl"
-		class="com.pennant.webui.applicationmaster.chequepurpose.ChequePurposeDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="pagedListService" ref="pagedListService" />
-		<property name="chequePurposeService" ref="chequePurposeService" />
-	</bean>
-
-	<!-- Manager Cheques -->
-
-	<bean id="managerChequeListCtrl"
-		class="com.pennant.webui.financemanagement.managercheque.ManagerChequeListCtrl"
-		parent="basisListCtrl" scope="prototype">
-		<property name="managerChequeService" ref="managerChequeService" />
-	</bean>
-	<bean id="managerChequeDialogCtrl"
-		class="com.pennant.webui.financemanagement.managercheque.ManagerChequeDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="pagedListService" ref="pagedListService" />
-		<property name="managerChequeService" ref="managerChequeService" />
-		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="customerService" ref="customerService" />
-		<!-- <property name="pffCustomerPreparation" ref="pffCustomerPreparation" 
-			/> -->
-		<property name="financeDetailService" ref="financeDetailService" />
-	</bean>
-
-	<bean id="selectManagerChequeDialogCtrl"
-		class="com.pennant.webui.financemanagement.managercheque.SelectManagerChequeDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-	</bean>
-	<bean id="documentDialogCtrl"
-		class="com.pennant.webui.financemanagement.managercheque.DocumentDialogCtrl"
-		parent="basisCtrl" scope="prototype" />
 
 	<!-- System Notification -->
 

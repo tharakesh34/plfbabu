@@ -36,7 +36,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.Interface.service.AccountInterfaceService;
-import com.pennant.Interface.service.PostingsInterfaceService;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -73,7 +72,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	private JVPostingEntryDAO jVPostingEntryDAO;
 	private NextidviewDAO nextidviewDAO;
 	private AccountInterfaceService accountInterfaceService;
-	private PostingsInterfaceService postingsInterfaceService;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private LegalExpensesDAO legalExpensesDAO;
 	private PostingsDAO postingsDAO;
@@ -1139,14 +1137,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
 		this.accountInterfaceService = accountInterfaceService;
-	}
-
-	public PostingsInterfaceService getPostingsInterfaceService() {
-		return postingsInterfaceService;
-	}
-
-	public void setPostingsInterfaceService(PostingsInterfaceService postingsInterfaceService) {
-		this.postingsInterfaceService = postingsInterfaceService;
 	}
 
 	public PostingsPreparationUtil getPostingsPreparationUtil() {

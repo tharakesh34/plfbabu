@@ -378,7 +378,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 		
 		aeEvent.setModuleDefiner(getFinanceDetail().getModuleDefiner());
 
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		// Fee Rules Map Fetching from Fee Details Dialog Controller for Accounting process
 		Map<String, FeeRule> feeRuleDetailMap = null;
@@ -390,11 +390,11 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 			feeRuleDetailMap = null;
 		}
 
-		executingMap.putAll(feeRuleDetailMap);
-		getFinScheduleData().getFinanceType().getDeclaredFieldValues(executingMap);
+		dataMap.putAll(feeRuleDetailMap);
+		aeEvent.setDataMap(dataMap);
+		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
 
-		List<ReturnDataSet> accountingSetEntries = getEngineExecution()
-				.getStageExecResults(false, roleCode, executingMap);
+		List<ReturnDataSet> accountingSetEntries = aeEvent.getReturnDataSet();
 
 		getFinanceDetail().setStageAccountingList(accountingSetEntries);
 		dofillStageAccountingSetbox(accountingSetEntries);

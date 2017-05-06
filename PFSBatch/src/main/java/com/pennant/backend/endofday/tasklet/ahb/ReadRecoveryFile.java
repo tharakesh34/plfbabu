@@ -80,7 +80,7 @@ public class ReadRecoveryFile implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date date = DateUtility.getValueDate();
+		Date date = DateUtility.getAppValueDate();
 		logger.debug("START: Request File Reading for Value Date: " + date);
 
 		boolean fileRecieved = false;

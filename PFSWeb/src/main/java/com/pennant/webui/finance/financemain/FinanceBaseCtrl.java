@@ -1716,14 +1716,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 
 		boolean createTab = false;
-		if ((getFinanceDetail().getTransactionEntries() != null && getFinanceDetail().getTransactionEntries().size() > 0)
-				|| (getFinanceDetail().getReturnDataSetList() != null && getFinanceDetail().getReturnDataSetList()
-						.size() > 0)) {
-
-			if (tabsIndexCenter.getFellowIfAny("accountingTab") == null) {
-				createTab = true;
-			}
-		} else if (onLoadProcess && !isReadOnly("FinanceMainDialog_custID")) {
+		if (tabsIndexCenter.getFellowIfAny("accountingTab") == null) {
 			createTab = true;
 		}
 
@@ -1750,10 +1743,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		if (!onLoadProcess
-				&& ((getFinanceDetail().getTransactionEntries() != null && getFinanceDetail().getTransactionEntries()
-						.size() > 0) || (getFinanceDetail().getReturnDataSetList() != null && getFinanceDetail()
-						.getReturnDataSetList().size() > 0))) {
+		if (!onLoadProcess) {
 
 			//Accounting Detail Tab
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AccountingDetailDialog.zul", tabpanel,

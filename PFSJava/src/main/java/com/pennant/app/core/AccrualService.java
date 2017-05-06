@@ -602,11 +602,10 @@ public class AccrualService extends ServiceHelper {
 		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finPftDetail, eventCode, valueDate, valueDate);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
-		financeMain.getDeclaredFieldValues(executingMap);
+		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		financeMain.getDeclaredFieldValues(dataMap);
 		//Postings Process
-		FinanceType financeType = getFinanceType(finPftDetail.getFinType());
-		List<ReturnDataSet> list = prepareAccounting(executingMap, financeType);
+		List<ReturnDataSet> list = prepareAccounting(aeEvent, dataMap);
 		saveAccounting(list);
 		//posting done update the accrual balance
 		finPftDetail.setAmzTillLBD(finPftDetail.getPftAmz());

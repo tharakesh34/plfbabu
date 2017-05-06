@@ -78,7 +78,7 @@ public class FutureInstallmentHolds implements Tasklet {
 	
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		dateValueDate = DateUtility.getValueDate();
+		dateValueDate = DateUtility.getAppValueDate();
 		dateNextBusinessDate = SysParamUtil.getValueAsDate("APP_NEXT_BUS_DATE");
 		
 		logger.debug("START: Future installments Account Holds for Value Date: "+ DateUtility.addDays(dateValueDate,-1));

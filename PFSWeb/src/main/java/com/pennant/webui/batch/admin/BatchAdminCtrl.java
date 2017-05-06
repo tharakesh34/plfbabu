@@ -176,7 +176,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	private void setDates() {
-		lable_Value_Date.setValue(DateUtility.getValueDate(DateFormat.LONG_DATE));
+		lable_Value_Date.setValue(DateUtility.getAppValueDate(DateFormat.LONG_DATE));
 		lable_NextBusiness_Date.setValue(DateUtility.formatToLongDate(SysParamUtil
 				.getValueAsDate(PennantConstants.APP_DATE_NEXT)));
 		lable_LastBusiness_Date.setValue(DateUtility.formatToLongDate(SysParamUtil

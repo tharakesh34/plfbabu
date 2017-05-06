@@ -53,6 +53,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.security.auth.login.AccountNotFoundException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -112,7 +114,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	public RepaymentPostingsUtil() {
 		super();
 	}
-	
+
 	/**
 	 * Method for Posting Repayments and Update Repayments Process
 	 * 
@@ -125,12 +127,14 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws PFFInterfaceException
 	 */
-	public List<Object> postingProcess(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail financeProfitDetail,
-			FinRepayQueueTotals queueTotals, String eventCode,Date valuedate) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
-		
-		return postingProcessExecution(financeMain, scheduleDetails, financeProfitDetail, queueTotals, eventCode,valuedate);
+	public List<Object> postingProcess(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
+			FinanceProfitDetail financeProfitDetail, FinRepayQueueTotals queueTotals, String eventCode, Date valuedate)
+			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+
+		return postingProcessExecution(financeMain, scheduleDetails, financeProfitDetail, queueTotals, eventCode,
+				valuedate);
 	}
-	
+
 	/**
 	 * Method for Posting Repayments and Update Repayments related Tables in Manual Payment Process
 	 * 
@@ -144,53 +148,55 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws PFFInterfaceException
 	 */
 	private List<Object> postingProcessExecution(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail financeProfitDetail, FinRepayQueueTotals queueTotals, String eventCode,Date valuedate) 
-					throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			FinanceProfitDetail financeProfitDetail, FinRepayQueueTotals queueTotals, String eventCode, Date valuedate)
+			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
-		
+
 		List<Object> actReturnList = null;
-		
+
 		// Repayments Queue list
 		List<FinRepayQueue> finRepayQueueList = queueTotals.getQueueList();
-		
+
 		// Penalty Payments, if any Payment calculations done
 		long linkedTranId = Long.MIN_VALUE;
-		if(queueTotals.getPenalty().compareTo(BigDecimal.ZERO) > 0){
+		if (queueTotals.getPenalty().compareTo(BigDecimal.ZERO) > 0) {
 			actReturnList = doOverduePostings(linkedTranId, finRepayQueueList, valuedate, financeMain);
-			
-			if (actReturnList!=null) {
-				if (!(Boolean)actReturnList.get(0)) {
+
+			if (actReturnList != null) {
+				if (!(Boolean) actReturnList.get(0)) {
 					return actReturnList;
-				}else{
+				} else {
 					linkedTranId = (long) actReturnList.get(1);
 				}
 			}
 		}
-		
+
 		// Total Schedule Payments
-		BigDecimal totalPayAmount = queueTotals.getPrincipal().add(queueTotals.getProfit()).add(queueTotals.getLateProfit()).add(
-				queueTotals.getFee()).add(queueTotals.getInsurance()).add(queueTotals.getSuplRent()).add(queueTotals.getIncrCost());
-		
+		BigDecimal totalPayAmount = queueTotals.getPrincipal().add(queueTotals.getProfit())
+				.add(queueTotals.getLateProfit()).add(queueTotals.getFee()).add(queueTotals.getInsurance())
+				.add(queueTotals.getSuplRent()).add(queueTotals.getIncrCost());
+
 		if (totalPayAmount.compareTo(BigDecimal.ZERO) > 0) {
-			actReturnList = doSchedulePostings(queueTotals, valuedate, valuedate, financeMain,
-					scheduleDetails, financeProfitDetail, eventCode, linkedTranId);
+			actReturnList = doSchedulePostings(queueTotals, valuedate, valuedate, financeMain, scheduleDetails,
+					financeProfitDetail, eventCode, linkedTranId);
 		} else {
 			if (actReturnList == null) {
 				actReturnList = new ArrayList<Object>();
 			}
 			actReturnList.clear();
-			actReturnList.add(true);			// Postings Success
-			actReturnList.add(Long.MIN_VALUE);	// Linked Transaction ID
-			actReturnList.add(null);			// Finance Account
+			actReturnList.add(true); // Postings Success
+			actReturnList.add(Long.MIN_VALUE); // Linked Transaction ID
+			actReturnList.add(null); // Finance Account
 			actReturnList.add(scheduleDetails); // Schedule Details
 		}
-		
+
 		logger.debug("Leaving");
 		return actReturnList;
 	}
-	
+
 	/**
 	 * Method for processing Penalty Details for Postings
+	 * 
 	 * @param linkedTranId
 	 * @param finRepayQueueList
 	 * @param dateValueDate
@@ -202,15 +208,15 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 */
 	private List<Object> doOverduePostings(long linkedTranId, List<FinRepayQueue> finRepayQueueList,
-			Date dateValueDate, FinanceMain financeMain) throws PFFInterfaceException,
-			IllegalAccessException, InvocationTargetException {
+			Date dateValueDate, FinanceMain financeMain) throws PFFInterfaceException, IllegalAccessException,
+			InvocationTargetException {
 		logger.debug("Entering");
 		List<Object> returnList = null;
 		for (FinRepayQueue repayQueue : finRepayQueueList) {
-			
+
 			if (repayQueue.getRpyDate().compareTo(dateValueDate) < 0
-					&& (repayQueue.getPenaltyPayNow().compareTo(BigDecimal.ZERO) > 0 || 
-							repayQueue.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0)) {
+					&& (repayQueue.getPenaltyPayNow().compareTo(BigDecimal.ZERO) > 0 || repayQueue.getWaivedAmount()
+							.compareTo(BigDecimal.ZERO) > 0)) {
 
 				//Check Repayment Amount is Fully Paid or not
 				boolean fullyPaidSchd = false;
@@ -225,7 +231,7 @@ public class RepaymentPostingsUtil implements Serializable {
 
 				if (!(Boolean) returnList.get(0)) {
 					return returnList;
-				}else{
+				} else {
 					linkedTranId = (long) returnList.get(1);
 				}
 			}
@@ -236,6 +242,7 @@ public class RepaymentPostingsUtil implements Serializable {
 
 	/**
 	 * Method for Processing Schedule details for Postings Execution
+	 * 
 	 * @param queueTotals
 	 * @param valueDate
 	 * @param dateValueDate
@@ -248,12 +255,12 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private List<Object> doSchedulePostings(FinRepayQueueTotals queueTotals, Date valueDate,
-			Date dateValueDate, FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail financeProfitDetail, String eventCode, long linkedTranId)
-			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	private List<Object> doSchedulePostings(FinRepayQueueTotals queueTotals, Date valueDate, Date dateValueDate,
+			FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
+			FinanceProfitDetail financeProfitDetail, String eventCode, long linkedTranId) throws PFFInterfaceException,
+			IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
-		
+
 		List<Object> actReturnList = new ArrayList<Object>();
 
 		//Method for Postings Process
@@ -271,14 +278,14 @@ public class RepaymentPostingsUtil implements Serializable {
 			resultList = null;
 			return actReturnList;
 		}
-		
+
 		// Schedule updations
 		scheduleDetails = scheduleUpdate(financeMain, scheduleDetails, queueTotals, linkedTranId);
 
 		actReturnList.add(isPostingSuccess);
 		actReturnList.add(linkedTranId);
-		actReturnList.add(resultList.get(4)); 	// Finance Account if Exists
-		actReturnList.add(scheduleDetails); 	// Schedule Details
+		actReturnList.add(resultList.get(4)); // Finance Account if Exists
+		actReturnList.add(scheduleDetails); // Schedule Details
 
 		logger.debug("Leaving");
 		return actReturnList;
@@ -287,7 +294,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	//*************************************************************************//
 	//**************************** Schedule Updations *************************//
 	//*************************************************************************//
-	
+
 	/**
 	 * Method for Process Updations After Repayments Process will Success
 	 * 
@@ -302,22 +309,23 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws PFFInterfaceException
 	 */
-	private List<FinanceScheduleDetail> scheduleUpdate(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails, FinRepayQueueTotals queueTotals, 
-			long linkedTranId) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	private List<FinanceScheduleDetail> scheduleUpdate(FinanceMain financeMain,
+			List<FinanceScheduleDetail> scheduleDetails, FinRepayQueueTotals queueTotals, long linkedTranId)
+			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
-		Date dateValueDate = DateUtility.getValueDate();
-		
+		Date dateValueDate = DateUtility.getAppValueDate();
+
 		// Total Payment Amount
-		BigDecimal rpyTotal = queueTotals.getPrincipal().add(queueTotals.getProfit()).add(
-				queueTotals.getFee()).add(queueTotals.getInsurance()).add(queueTotals.getSuplRent()).add(queueTotals.getIncrCost());
-		
+		BigDecimal rpyTotal = queueTotals.getPrincipal().add(queueTotals.getProfit()).add(queueTotals.getFee())
+				.add(queueTotals.getInsurance()).add(queueTotals.getSuplRent()).add(queueTotals.getIncrCost());
+
 		// If Postings Process only for Excess Accounts
-		if(rpyTotal.compareTo(BigDecimal.ZERO) == 0){
+		if (rpyTotal.compareTo(BigDecimal.ZERO) == 0) {
 			logger.debug("Leaving");
 			return scheduleDetails;
 		}
-		
+
 		List<FinRepayQueue> finRepayQueueList = queueTotals.getQueueList();
 
 		Map<Date, FinanceScheduleDetail> scheduleMap = new HashMap<Date, FinanceScheduleDetail>();
@@ -332,11 +340,12 @@ public class RepaymentPostingsUtil implements Serializable {
 				scheduleDetail = scheduleMap.get(DateUtility.getSqlDate(repayQueue.getRpyDate()));
 			}
 
-			scheduleDetail = paymentUpdate(financeMain, scheduleDetail, repayQueue, dateValueDate, linkedTranId, rpyTotal);
+			scheduleDetail = paymentUpdate(financeMain, scheduleDetail, repayQueue, dateValueDate, linkedTranId,
+					rpyTotal);
 			scheduleMap.remove(scheduleDetail.getSchDate());
 			scheduleMap.put(scheduleDetail.getSchDate(), scheduleDetail);
 		}
-		
+
 		//Reset Finance Schedule Details
 		scheduleDetails = new ArrayList<FinanceScheduleDetail>(scheduleMap.values());
 		scheduleDetails = sortSchdDetails(scheduleDetails);
@@ -344,9 +353,10 @@ public class RepaymentPostingsUtil implements Serializable {
 		logger.debug("Leaving");
 		return scheduleDetails;
 	}
-	
+
 	/**
 	 * Method for Sorting Schedule Details
+	 * 
 	 * @param financeScheduleDetail
 	 * @return
 	 */
@@ -363,7 +373,7 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		return financeScheduleDetail;
 	}
-	
+
 	/**
 	 * Method for Posting Repayments and Update Repayments Process
 	 * 
@@ -378,34 +388,34 @@ public class RepaymentPostingsUtil implements Serializable {
 	 */
 	public FinanceMain updateStatus(FinanceMain financeMain, Date dateValueDate,
 			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail pftDetail) {
-		
+
 		return updateRepayStatus(financeMain, dateValueDate, scheduleDetails, pftDetail);
 	}
-	
+
 	/**
 	 * Method for updating Status details and Profit details updation
+	 * 
 	 * @param financeMain
 	 * @param dateValueDate
 	 * @param scheduleDetails
 	 * @param pftDetail
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	private FinanceMain updateRepayStatus(FinanceMain financeMain, Date dateValueDate,  
-			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail pftDetail){
+	private FinanceMain updateRepayStatus(FinanceMain financeMain, Date dateValueDate,
+			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail pftDetail) {
 		logger.debug("Entering");
-		
+
 		//Finance Profit Details Updation
-		pftDetail = AccrualService.calProfitDetails(financeMain, scheduleDetails, pftDetail,
-				dateValueDate);
-		latePayMarkingService.updateDPDBuketing(pftDetail, dateValueDate,financeMain);
+		pftDetail = AccrualService.calProfitDetails(financeMain, scheduleDetails, pftDetail, dateValueDate);
+		latePayMarkingService.updateDPDBuketing(pftDetail, dateValueDate, financeMain);
 		financeMain.setFinStsReason(FinanceConstants.FINSTSRSN_MANUAL);
 
 		// If Penalty fully paid && Schedule payment completed then make status as Inactive
 		if (isSchdFullyPaid(financeMain.getFinReference(), scheduleDetails)) {
 			financeMain.setFinIsActive(false);
 			financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
-		}else{
+		} else {
 			financeMain.setFinIsActive(true);
 			financeMain.setClosingStatus(null);
 		}
@@ -416,7 +426,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		pftDetail.setClosingStatus(financeMain.getClosingStatus());
 		pftDetail.setLatestRpyDate(dateValueDate);
 		getProfitDetailsDAO().update(pftDetail, true);
-		
+
 		//Get Customer Status
 		CustEODEvent custEODEvent = new CustEODEvent();
 		custEODEvent.setEodDate(dateValueDate);
@@ -424,18 +434,19 @@ public class RepaymentPostingsUtil implements Serializable {
 		Customer customer = customerDAO.getCustomerStatus(financeMain.getCustID());
 		custEODEvent.setCustomer(customer);
 		latePayMarkingService.processCustomerStatus(custEODEvent);
-		
+
 		logger.debug("Leaving");
 		return financeMain;
 	}
-	
+
 	/**
 	 * Method for Checking Schedule is Fully Paid or not
+	 * 
 	 * @param finReference
 	 * @param scheduleDetails
 	 * @return
 	 */
-	private boolean isSchdFullyPaid(String finReference, List<FinanceScheduleDetail> scheduleDetails){
+	private boolean isSchdFullyPaid(String finReference, List<FinanceScheduleDetail> scheduleDetails) {
 		//Check Total Finance profit Amount
 		boolean fullyPaid = true;
 		for (int i = 1; i < scheduleDetails.size(); i++) {
@@ -477,24 +488,24 @@ public class RepaymentPostingsUtil implements Serializable {
 				break;
 			}
 		}
-		
+
 		// Check Penalty Paid Fully or not
-		if(fullyPaid){
+		if (fullyPaid) {
 			FinODDetails overdue = getFinODDetailsDAO().getTotals(finReference);
-			if(overdue != null){
-				BigDecimal balPenalty = overdue.getTotPenaltyAmt().subtract(overdue.getTotPenaltyPaid()).add(
-						overdue.getLPIAmt().subtract(overdue.getLPIPaid()));
+			if (overdue != null) {
+				BigDecimal balPenalty = overdue.getTotPenaltyAmt().subtract(overdue.getTotPenaltyPaid())
+						.add(overdue.getLPIAmt().subtract(overdue.getLPIPaid()));
 
 				// Penalty Not fully Paid
-				if(balPenalty.compareTo(BigDecimal.ZERO) > 0){
+				if (balPenalty.compareTo(BigDecimal.ZERO) > 0) {
 					fullyPaid = false;
 				}
 			}
 		}
-		
+
 		return fullyPaid;
 	}
-	
+
 	/**
 	 * Method for Posting Process execution in Single Entry Event for Total Repayment Amount
 	 * 
@@ -517,14 +528,13 @@ public class RepaymentPostingsUtil implements Serializable {
 	private List<Object> postingEntryProcess(Date valueDate, Date dateValueDate, Date dateSchdDate,
 			boolean isEODProcess, FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
 			FinanceProfitDetail financeProfitDetail, FinRepayQueueTotals queueTotals, long linkedTranId,
-			String eventCode) throws PFFInterfaceException,
-			IllegalAccessException, InvocationTargetException {
+			String eventCode) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		// AmountCodes Preparation
 		// EOD Repayments should pass the value date as schedule for which Repayments are processing
-		AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, scheduleDetails, financeProfitDetail,
-				eventCode, dateValueDate, dateSchdDate);
+		AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, scheduleDetails, financeProfitDetail, eventCode,
+				dateValueDate, dateSchdDate);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 		//Set Repay Amount Codes
@@ -537,23 +547,25 @@ public class RepaymentPostingsUtil implements Serializable {
 		amountCodes.setInsPay(queueTotals.getInsurance());
 		amountCodes.setSuplRentPay(queueTotals.getSuplRent());
 		amountCodes.setIncrCostPay(queueTotals.getIncrCost());
-		
+
 		// Waived Amounts
 		amountCodes.setPriWaived(queueTotals.getPriWaived());
 		amountCodes.setPftWaived(queueTotals.getPftWaived());
 		amountCodes.setFeeWaived(queueTotals.getFeeWaived());
 		amountCodes.setInsWaived(queueTotals.getInsWaived());
-		
 
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 		financeMain.getDeclaredFieldValues(executingMap);
 
-		Date dateAppDate = DateUtility.getAppDate();
-		List<Object> resultList = getPostingsPreparationUtil().processPostingDetailsWithFee(executingMap, isEODProcess,
-				true, dateAppDate, true, linkedTranId, null);
+		//FIXME: PV: Deprecated method so not fixed properly
 
+		Date dateAppDate = DateUtility.getAppDate();
+		/*
+		 * List<Object> resultList = getPostingsPreparationUtil().processPostingDetailsWithFee(executingMap,
+		 * isEODProcess, true, dateAppDate, true, linkedTranId, null);
+		 */
 		logger.debug("Leaving");
-		return resultList;
+		return null;
 	}
 
 	/**
@@ -572,17 +584,17 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws PFFInterfaceException
 	 */
-	public FinanceScheduleDetail paymentUpdate(FinanceMain financeMain,FinanceScheduleDetail scheduleDetail,
-			FinRepayQueue finRepayQueue, Date dateValueDate, long linkedTranId, BigDecimal totalRpyAmt) 
-					throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public FinanceScheduleDetail paymentUpdate(FinanceMain financeMain, FinanceScheduleDetail scheduleDetail,
+			FinRepayQueue finRepayQueue, Date dateValueDate, long linkedTranId, BigDecimal totalRpyAmt)
+			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 
 		logger.debug("Entering");
 
 		//Schedule Updation depends on Finance Repay Queue Details
 		scheduleDetail = updateScheduleDetailsData(scheduleDetail, finRepayQueue);
-		
+
 		// Late Profit Updation
-		if(finRepayQueue.getLatePayPftPayNow().compareTo(BigDecimal.ZERO) > 0){
+		if (finRepayQueue.getLatePayPftPayNow().compareTo(BigDecimal.ZERO) > 0) {
 			getFinODDetailsDAO().updateLatePftTotals(finRepayQueue.getFinReference(), finRepayQueue.getRpyDate(),
 					finRepayQueue.getLatePayPftPayNow(), finRepayQueue.getLatePayPftWaivedNow());
 		}
@@ -594,7 +606,6 @@ public class RepaymentPostingsUtil implements Serializable {
 		logger.debug("Leaving");
 		return scheduleDetail;
 	}
-
 
 	/**
 	 * Method for Upadte Data for Finance schedule Details Object
@@ -619,14 +630,14 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		schedule.setSchdPftPaid(schedule.getSchdPftPaid().add(finRepayQueue.getSchdPftPayNow()));
 		schedule.setSchdPriPaid(schedule.getSchdPriPaid().add(finRepayQueue.getSchdPriPayNow()));
-		
+
 		// Finance Schedule Profit Balance Check
 		if ((schedule.getProfitSchd().subtract(schedule.getSchdPftPaid())).compareTo(BigDecimal.ZERO) == 0) {
 			schedule.setSchPftPaid(true);
 		} else {
 			schedule.setSchPftPaid(false);
 		}
-		
+
 		// Finance Schedule Principal Balance Check
 		if ((schedule.getPrincipalSchd().subtract(schedule.getSchdPriPaid())).compareTo(BigDecimal.ZERO) == 0) {
 			schedule.setSchPriPaid(true);
@@ -681,7 +692,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		logger.debug("Leaving");
 		return repayment;
 	}
-	
+
 	/**
 	 * Method for Posting Repayments and Update Repayments related Tables in Manual Payment Process
 	 * 
@@ -722,8 +733,9 @@ public class RepaymentPostingsUtil implements Serializable {
 	@Deprecated
 	public List<Object> UpdateScreenPaymentsProcess(FinanceMain financeMain,
 			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail financeProfitDetail,
-			List<FinRepayQueue> finRepayQueueList, long linkedTranId, boolean isPartialRepay, 
-			AEAmountCodes aeAmountCodes) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			List<FinRepayQueue> finRepayQueueList, long linkedTranId, boolean isPartialRepay,
+			AEAmountCodes aeAmountCodes) throws PFFInterfaceException, IllegalAccessException,
+			InvocationTargetException {
 
 		return screenPaymentsUpdation(financeMain, scheduleDetails, financeProfitDetail, finRepayQueueList,
 				linkedTranId, isPartialRepay, aeAmountCodes);
@@ -750,7 +762,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		logger.debug("Entering");
 		List<Object> actReturnList = null;
 
-		Date dateValueDate = DateUtility.getValueDate();
+		Date dateValueDate = DateUtility.getAppValueDate();
 		Date valueDate = dateValueDate;
 
 		// Based on repayments method then do charges postings first then profit or principal
@@ -766,8 +778,8 @@ public class RepaymentPostingsUtil implements Serializable {
 		// Schedule Principal and Profit payments
 		BigDecimal totRpyAmt = totalsMap.get("totRpyTot");
 		if (totRpyAmt.compareTo(BigDecimal.ZERO) > 0) {
-			actReturnList = doSchedulePostings(null, valueDate, dateValueDate, financeMain,
-					scheduleDetails, financeProfitDetail, eventCode, Long.MIN_VALUE);
+			actReturnList = doSchedulePostings(null, valueDate, dateValueDate, financeMain, scheduleDetails,
+					financeProfitDetail, eventCode, Long.MIN_VALUE);
 		} else {
 			if (actReturnList == null) {
 				actReturnList = new ArrayList<Object>();
@@ -854,11 +866,16 @@ public class RepaymentPostingsUtil implements Serializable {
 				long linkedtranId = (long) actReturnList.get(1);
 
 				// Set O/S balances for Principal & profits in Amount Codes Data--TODO
-				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+				HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+				aeEvent.setDataMap(dataMap);
 
 				// Reset AEAmount Code Details Bean and send for Accounting Execution.
-				getPostingsPreparationUtil().processPostingDetailsWithFee(executingMap, false, true, valueDate, true,
-						linkedtranId, feeRuleDetailMap);
+				try {
+					getPostingsPreparationUtil().processPostingDetails(aeEvent);
+				} catch (AccountNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
 			}
 		}
@@ -884,12 +901,12 @@ public class RepaymentPostingsUtil implements Serializable {
 	@Deprecated
 	private List<Object> screenPaymentsUpdation(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
 			FinanceProfitDetail financeProfitDetail, List<FinRepayQueue> finRepayQueueList, long linkedTranId,
-			boolean isPartialRepay, AEAmountCodes aeAmountCodes) throws PFFInterfaceException,
-			IllegalAccessException, InvocationTargetException {
+			boolean isPartialRepay, AEAmountCodes aeAmountCodes) throws PFFInterfaceException, IllegalAccessException,
+			InvocationTargetException {
 		logger.debug("Entering");
 
 		List<Object> actReturnList = new ArrayList<Object>();
-		Date dateValueDate = DateUtility.getValueDate();
+		Date dateValueDate = DateUtility.getAppValueDate();
 
 		Map<String, FinanceScheduleDetail> scheduleMap = new HashMap<String, FinanceScheduleDetail>();
 		for (FinanceScheduleDetail detail : scheduleDetails) {
@@ -911,28 +928,30 @@ public class RepaymentPostingsUtil implements Serializable {
 		for (FinRepayQueue repayQueue : finRepayQueueList) {
 
 			if (rpyTotal.compareTo(BigDecimal.ZERO) > 0) {/*
-
-				FinanceScheduleDetail scheduleDetail = null;
-				if (scheduleMap.containsKey(DateUtility.formatDate(repayQueue.getRpyDate(),
-						PennantConstants.DBDateFormat))) {
-					scheduleDetail = scheduleMap.get(DateUtility.formatDate(repayQueue.getRpyDate(),
-							PennantConstants.DBDateFormat));
-				}
-
-				List<Object> resultList = paymentProcessExecution(scheduleDetail, repayQueue,
-						dateValueDate, linkedTranId, rpyTotal);
-
-				if (!(Boolean) resultList.get(0)) {
-					actReturnList.add(resultList.get(0));
-					actReturnList.add(resultList.get(2));
-
-					logger.debug("Leaving");
-					return actReturnList;
-				}
-
-				scheduleMap.remove(scheduleDetail.getSchDate().toString());
-				scheduleMap.put(scheduleDetail.getSchDate().toString(), (FinanceScheduleDetail) resultList.get(3));
-			*/}
+														 * 
+														 * FinanceScheduleDetail scheduleDetail = null; if
+														 * (scheduleMap.containsKey
+														 * (DateUtility.formatDate(repayQueue.getRpyDate(),
+														 * PennantConstants.DBDateFormat))) { scheduleDetail =
+														 * scheduleMap
+														 * .get(DateUtility.formatDate(repayQueue.getRpyDate(),
+														 * PennantConstants.DBDateFormat)); }
+														 * 
+														 * List<Object> resultList =
+														 * paymentProcessExecution(scheduleDetail, repayQueue,
+														 * dateValueDate, linkedTranId, rpyTotal);
+														 * 
+														 * if (!(Boolean) resultList.get(0)) {
+														 * actReturnList.add(resultList.get(0));
+														 * actReturnList.add(resultList.get(2));
+														 * 
+														 * logger.debug("Leaving"); return actReturnList; }
+														 * 
+														 * scheduleMap.remove(scheduleDetail.getSchDate().toString());
+														 * scheduleMap.put(scheduleDetail.getSchDate().toString(),
+														 * (FinanceScheduleDetail) resultList.get(3));
+														 */
+			}
 
 			if (!isPenaltyAvail && (repayQueue.getPenaltyBal().compareTo(BigDecimal.ZERO) > 0)) {
 				isPenaltyAvail = true;
@@ -958,7 +977,7 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		//Reset Finance Schedule Details
 		scheduleDetails = new ArrayList<FinanceScheduleDetail>(scheduleMap.values());
-		if(scheduleDetails != null && !scheduleDetails.isEmpty()){
+		if (scheduleDetails != null && !scheduleDetails.isEmpty()) {
 			scheduleDetails = sortSchdDetails(scheduleDetails);
 		}
 
@@ -1066,6 +1085,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	public void setFinRepayQueueDAO(FinRepayQueueDAO finRepayQueueDAO) {
 		this.finRepayQueueDAO = finRepayQueueDAO;
 	}
+
 	public FinRepayQueueDAO getFinRepayQueueDAO() {
 		return finRepayQueueDAO;
 	}
@@ -1073,6 +1093,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	public FinanceRepaymentsDAO getFinanceRepaymentsDAO() {
 		return financeRepaymentsDAO;
 	}
+
 	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
 		this.financeRepaymentsDAO = financeRepaymentsDAO;
 	}
@@ -1080,6 +1101,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
+
 	public FinanceMainDAO getFinanceMainDAO() {
 		return financeMainDAO;
 	}
@@ -1087,6 +1109,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
+
 	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
 		return financeScheduleDetailDAO;
 	}
@@ -1094,6 +1117,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	public CustomerStatusCodeDAO getCustomerStatusCodeDAO() {
 		return customerStatusCodeDAO;
 	}
+
 	public void setCustomerStatusCodeDAO(CustomerStatusCodeDAO customerStatusCodeDAO) {
 		this.customerStatusCodeDAO = customerStatusCodeDAO;
 	}
@@ -1101,6 +1125,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	public void setFinStatusDetailDAO(FinStatusDetailDAO finStatusDetailDAO) {
 		this.finStatusDetailDAO = finStatusDetailDAO;
 	}
+
 	public FinStatusDetailDAO getFinStatusDetailDAO() {
 		return finStatusDetailDAO;
 	}
@@ -1108,6 +1133,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	public OverDueRecoveryPostingsUtil getRecoveryPostingsUtil() {
 		return recoveryPostingsUtil;
 	}
+
 	public void setRecoveryPostingsUtil(OverDueRecoveryPostingsUtil recoveryPostingsUtil) {
 		this.recoveryPostingsUtil = recoveryPostingsUtil;
 	}
@@ -1115,6 +1141,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	public void setSuspensePostingUtil(SuspensePostingUtil suspensePostingUtil) {
 		this.suspensePostingUtil = suspensePostingUtil;
 	}
+
 	public SuspensePostingUtil getSuspensePostingUtil() {
 		return suspensePostingUtil;
 	}
@@ -1122,6 +1149,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
+
 	public PostingsPreparationUtil getPostingsPreparationUtil() {
 		return postingsPreparationUtil;
 	}
@@ -1129,6 +1157,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	public FinanceProfitDetailDAO getProfitDetailsDAO() {
 		return profitDetailsDAO;
 	}
+
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
 		this.profitDetailsDAO = profitDetailsDAO;
 	}
@@ -1136,6 +1165,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	public CustomerDAO getCustomerDAO() {
 		return customerDAO;
 	}
+
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
 	}

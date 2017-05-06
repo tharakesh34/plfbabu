@@ -16,6 +16,7 @@ import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 //import com.pennant.backend.model.rulefactory.DataSet;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
@@ -47,31 +48,34 @@ public class DisbursementPostings {
 
 	}
 
-	private Map<Long, List<ReturnDataSet>> prepareDisbPosting(PayOrderIssueHeader header)
+	private Map<Long, List<ReturnDataSet>> prepareDisbPosting(PayOrderIssueHeader poIssueHeader)
 			throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
 
-		String finRef = header.getFinReference();
-		HashMap<String, Object> executingMap = new HashMap<String, Object>();
+		String finRef = poIssueHeader.getFinReference();
 
 		Map<Long, List<ReturnDataSet>> disbMap = new HashMap<>();
 
-		List<FinAdvancePayments> advPaymentsList = header.getFinAdvancePaymentsList();
+		List<FinAdvancePayments> advPaymentsList = poIssueHeader.getFinAdvancePaymentsList();
 		List<FinAdvancePayments> approvedList = finAdvancePaymentsService.getFinAdvancePaymentsById(finRef, "");
 
 		if (advPaymentsList != null && !advPaymentsList.isEmpty()) {
 
 			for (FinAdvancePayments finAdvancePayments : advPaymentsList) {
+				AEEvent aeEvent = new AEEvent();
+				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+				HashMap<String, Object> dataMap = aeEvent.getDataMap();
 
-				executingMap.put("ValueDate", finAdvancePayments.getLlDate());
-				executingMap.put("fm_finCcy", header.getFinanceMain().getFinCcy());
-				executingMap.put("fm_finBranch", header.getFinanceMain().getFinBranch());
-				executingMap.put("fm_finReference", finRef);
-				executingMap.put("ae_finEvent", AccountEventConstants.ACCEVENT_DISBINS);
-				executingMap.put("ft_finType", header.getFinanceMain().getFinType());
-				executingMap.put("ae_disbInstAmt", finAdvancePayments.getAmtToBeReleased());
-				executingMap.put("disb_partnerBank", finAdvancePayments.getPartnerBankAcType());
-				executingMap.put("fm_custID", header.getFinanceMain().getCustID());
+				aeEvent.setValueDate(finAdvancePayments.getLlDate());
+				aeEvent.setCcy(finAdvancePayments.getDisbCCy());
+				aeEvent.setBranch(poIssueHeader.getFinanceMain().getFinBranch());
+				aeEvent.setFinReference(finRef);
+				aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_DISBINS);
+				aeEvent.setFinType(poIssueHeader.getFinanceMain().getFinType());
+				amountCodes.setDisbInstAmt(finAdvancePayments.getAmtToBeReleased());
+				amountCodes.setPartnerBankAc(finAdvancePayments.getPartnerBankAc());
+				amountCodes.setPartnerBankAcType(finAdvancePayments.getPartnerBankAcType());
+				aeEvent.setCustID(poIssueHeader.getFinanceMain().getCustID());
 
 				FinAdvancePayments finApprovedPay = isApproved(approvedList, finAdvancePayments.getPaymentId());
 
@@ -84,13 +88,18 @@ public class DisbursementPostings {
 				if (StringUtils.equals(PennantConstants.RCD_DEL, finAdvancePayments.getRecordType())) {
 					//Reverse postings cancel case.
 					long linkedTranId = finApprovedPay.getLinkedTranId();
-					List<ReturnDataSet> datasetList=engineExecution.cancelPostings(linkedTranId);
+					List<ReturnDataSet> datasetList = engineExecution.cancelPostings(linkedTranId);
 					disbMap.put(finAdvancePayments.getPaymentId(), datasetList);
 
 				} else {
 					//Prepare posting for  new added 
 					List<ReturnDataSet> datasetList = new ArrayList<>();
-					datasetList = engineExecution.getAccEngineExecResults(false, executingMap);
+
+					dataMap = amountCodes.getDeclaredFieldValues();
+					aeEvent.setDataMap(dataMap);
+					aeEvent = engineExecution.getAccEngineExecResults(aeEvent, dataMap);
+
+					datasetList = aeEvent.getReturnDataSet();
 					disbMap.put(finAdvancePayments.getPaymentId(), datasetList);
 
 				}
@@ -108,25 +117,29 @@ public class DisbursementPostings {
 		List<Object> returnList = new ArrayList<Object>();
 		try {
 			String errorMessage;
-			Map<Long, List<ReturnDataSet>> disbMap  = prepareDisbPosting(issueHeader);
+			Map<Long, List<ReturnDataSet>> disbMap = prepareDisbPosting(issueHeader);
 
 			if (disbMap != null) {
 				for (Entry<Long, List<ReturnDataSet>> entry : disbMap.entrySet()) {
-					if(entry.getValue()!=null && !entry.getValue().isEmpty()){
-					returnList = postingsPreparationUtil.processPostings(entry.getValue());
-					if (returnList != null) {
-						if ((!(Boolean) returnList.get(0))) {
-							errorMessage = StringUtils.trimToEmpty(returnList.get(1).toString());
-							returnList.add(false);
-							returnList.add(errorMessage);
-						} else {
-							finAdvancePaymentsService.Update(entry.getKey(), Long.valueOf(returnList
-									.get(2).toString()));
-							
+					if (entry.getValue() != null && !entry.getValue().isEmpty()) {
+						AEEvent aeEvent = new AEEvent();
+						aeEvent.setReturnDataSet(entry.getValue());
+						aeEvent = postingsPreparationUtil.processPostings(aeEvent);
+						returnList.add(aeEvent.getReturnDataSet());
+
+						if (returnList != null) {
+							if ((!(Boolean) returnList.get(0))) {
+								errorMessage = StringUtils.trimToEmpty(returnList.get(1).toString());
+								returnList.add(false);
+								returnList.add(errorMessage);
+							} else {
+								finAdvancePaymentsService.Update(entry.getKey(),
+										Long.valueOf(returnList.get(2).toString()));
+
+							}
 						}
 					}
 				}
-			}
 
 			} else {
 				returnList.add(false);

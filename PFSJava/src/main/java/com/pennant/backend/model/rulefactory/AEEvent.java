@@ -4,45 +4,47 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import com.pennant.backend.model.rmtmasters.TransactionEntry;
 
 public class AEEvent {
 
 	private AEAmountCodes			aeAmountCodes;
-	private HashMap<String, Object>	executingMap;
-	private List<TransactionEntry>	transactionEntries	= new ArrayList<TransactionEntry>(1);
-	private Map<String, FeeRule>	feeChargeMap;
+	private String					moduleDefiner;
+	private HashMap<String, Object>	dataMap				= new HashMap<>();
+
+	private List<Long>				acSetIDList			= new ArrayList<>(1);
 	private List<ReturnDataSet>		returnDataSet		= new ArrayList<ReturnDataSet>(1);
 
-	private String					finReference;
-	private String					finType;
-	private String					promotion;
-	private String					finEvent;
 	private Date					postDate;
 	private Date					valueDate;
+	private Date					appDate;
+	private Date					appValueDate;
 	private Date					schdDate;
-	private String					branch;
-	private String					ccy;
-	private long					custID;
-	private String					custCIF;
+
 	private boolean					newRecord			= false;
-	private String					moduleDefiner;
-	private String					disbAccountID;
-	private String					partnerBank;
-	private long					acSetID;
 	private boolean					createNow			= false;
 	private boolean					wif					= false;
-	private String					cmtReference;
 	private boolean					commitment			= false;
 	private boolean					alwCmtPostings		= false;
-	private boolean					postingSucess		= false;
 	private boolean					isEOD				= false;
+
+	private boolean					postingSucess		= false;
 	private String					errorMessage;
 	private long					linkedTranId;
-	private String					partnerBankAcType;
-	private String					partnerBankAc;
+
+	private long					custID;
+	private String					custCIF;
+	private String					finReference;
+	private String					cmtReference;
+	private String					finType;
+	private String					promotion;
+	private String					branch;
+	private String					ccy;
+	private String					finEvent;
+	private String					disbAccountID;
+
+	//VAS
+	private String					vasPostAgainst;
+	private String					collateralRef;
 
 	public AEEvent() {
 
@@ -60,36 +62,84 @@ public class AEEvent {
 		this.aeAmountCodes = aeAmountCodes;
 	}
 
-	public HashMap<String, Object> getExecutingMap() {
-		return executingMap;
+	public String getModuleDefiner() {
+		return moduleDefiner;
 	}
 
-	public void setExecutingMap(HashMap<String, Object> executingMap) {
-		this.executingMap = executingMap;
+	public void setModuleDefiner(String moduleDefiner) {
+		this.moduleDefiner = moduleDefiner;
 	}
 
-	public List<TransactionEntry> getTransactionEntries() {
-		return transactionEntries;
+	public HashMap<String, Object> getDataMap() {
+		return dataMap;
 	}
 
-	public void setTransactionEntries(List<TransactionEntry> transactionEntries) {
-		this.transactionEntries = transactionEntries;
+	public void setDataMap(HashMap<String, Object> dataMap) {
+		this.dataMap = dataMap;
 	}
 
-	public Map<String, FeeRule> getFeeChargeMap() {
-		return feeChargeMap;
+	public boolean isNewRecord() {
+		return newRecord;
 	}
 
-	public void setFeeChargeMap(Map<String, FeeRule> feeChargeMap) {
-		this.feeChargeMap = feeChargeMap;
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
 	}
 
-	public List<ReturnDataSet> getReturnDataSet() {
-		return returnDataSet;
+	public boolean isCreateNow() {
+		return createNow;
 	}
 
-	public void setReturnDataSet(List<ReturnDataSet> returnDataSet) {
-		this.returnDataSet = returnDataSet;
+	public void setCreateNow(boolean createNow) {
+		this.createNow = createNow;
+	}
+
+	public boolean isWif() {
+		return wif;
+	}
+
+	public void setWif(boolean wif) {
+		this.wif = wif;
+	}
+
+	public boolean isCommitment() {
+		return commitment;
+	}
+
+	public void setCommitment(boolean commitment) {
+		this.commitment = commitment;
+	}
+
+	public boolean isAlwCmtPostings() {
+		return alwCmtPostings;
+	}
+
+	public void setAlwCmtPostings(boolean alwCmtPostings) {
+		this.alwCmtPostings = alwCmtPostings;
+	}
+
+	public boolean isEOD() {
+		return isEOD;
+	}
+
+	public void setEOD(boolean isEOD) {
+		this.isEOD = isEOD;
+	}
+
+	public long getCustID() {
+		return custID;
+	}
+
+	public void setCustID(long custID) {
+		this.custID = custID;
+	}
+
+	public String getCustCIF() {
+		return custCIF;
+	}
+
+	public void setCustCIF(String custCIF) {
+		this.custCIF = custCIF;
 	}
 
 	public String getFinReference() {
@@ -98,6 +148,14 @@ public class AEEvent {
 
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
+	}
+
+	public String getCmtReference() {
+		return cmtReference;
+	}
+
+	public void setCmtReference(String cmtReference) {
+		this.cmtReference = cmtReference;
 	}
 
 	public String getFinType() {
@@ -114,6 +172,22 @@ public class AEEvent {
 
 	public void setPromotion(String promotion) {
 		this.promotion = promotion;
+	}
+
+	public String getBranch() {
+		return branch;
+	}
+
+	public void setBranch(String branch) {
+		this.branch = branch;
+	}
+
+	public String getCcy() {
+		return ccy;
+	}
+
+	public void setCcy(String ccy) {
+		this.ccy = ccy;
 	}
 
 	public String getFinEvent() {
@@ -148,54 +222,6 @@ public class AEEvent {
 		this.schdDate = schdDate;
 	}
 
-	public String getBranch() {
-		return branch;
-	}
-
-	public void setBranch(String branch) {
-		this.branch = branch;
-	}
-
-	public String getCcy() {
-		return ccy;
-	}
-
-	public void setCcy(String ccy) {
-		this.ccy = ccy;
-	}
-
-	public long getCustID() {
-		return custID;
-	}
-
-	public void setCustID(long custID) {
-		this.custID = custID;
-	}
-
-	public String getCustCIF() {
-		return custCIF;
-	}
-
-	public void setCustCIF(String custCIF) {
-		this.custCIF = custCIF;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
-	public String getModuleDefiner() {
-		return moduleDefiner;
-	}
-
-	public void setModuleDefiner(String moduleDefiner) {
-		this.moduleDefiner = moduleDefiner;
-	}
-
 	public String getDisbAccountID() {
 		return disbAccountID;
 	}
@@ -204,60 +230,44 @@ public class AEEvent {
 		this.disbAccountID = disbAccountID;
 	}
 
-	public String getPartnerBank() {
-		return partnerBank;
+	public String getVasPostAgainst() {
+		return vasPostAgainst;
 	}
 
-	public void setPartnerBank(String partnerBank) {
-		this.partnerBank = partnerBank;
+	public void setVasPostAgainst(String vasPostAgainst) {
+		this.vasPostAgainst = vasPostAgainst;
 	}
 
-	public long getAcSetID() {
-		return acSetID;
+	public String getCollateralRef() {
+		return collateralRef;
 	}
 
-	public void setAcSetID(long acSetID) {
-		this.acSetID = acSetID;
+	public void setCollateralRef(String collateralRef) {
+		this.collateralRef = collateralRef;
 	}
 
-	public boolean isCreateNow() {
-		return createNow;
+	public Date getAppDate() {
+		return appDate;
 	}
 
-	public void setCreateNow(boolean createNow) {
-		this.createNow = createNow;
+	public void setAppDate(Date appDate) {
+		this.appDate = appDate;
 	}
 
-	public boolean isWif() {
-		return wif;
+	public Date getAppValueDate() {
+		return appValueDate;
 	}
 
-	public void setWif(boolean wif) {
-		this.wif = wif;
+	public void setAppValueDate(Date appValueDate) {
+		this.appValueDate = appValueDate;
 	}
 
-	public String getCmtReference() {
-		return cmtReference;
+	public List<ReturnDataSet> getReturnDataSet() {
+		return returnDataSet;
 	}
 
-	public void setCmtReference(String cmtReference) {
-		this.cmtReference = cmtReference;
-	}
-
-	public boolean isCommitment() {
-		return commitment;
-	}
-
-	public void setCommitment(boolean commitment) {
-		this.commitment = commitment;
-	}
-
-	public boolean isAlwCmtPostings() {
-		return alwCmtPostings;
-	}
-
-	public void setAlwCmtPostings(boolean alwCmtPostings) {
-		this.alwCmtPostings = alwCmtPostings;
+	public void setReturnDataSet(List<ReturnDataSet> returnDataSet) {
+		this.returnDataSet = returnDataSet;
 	}
 
 	public boolean isPostingSucess() {
@@ -268,22 +278,6 @@ public class AEEvent {
 		this.postingSucess = postingSucess;
 	}
 
-	public long getLinkedTranId() {
-		return linkedTranId;
-	}
-
-	public void setLinkedTranId(long linkedTranId) {
-		this.linkedTranId = linkedTranId;
-	}
-
-	public boolean isEOD() {
-		return isEOD;
-	}
-
-	public void setEOD(boolean isEOD) {
-		this.isEOD = isEOD;
-	}
-
 	public String getErrorMessage() {
 		return errorMessage;
 	}
@@ -292,20 +286,20 @@ public class AEEvent {
 		this.errorMessage = errorMessage;
 	}
 
-	public String getPartnerBankAcType() {
-		return partnerBankAcType;
+	public long getLinkedTranId() {
+		return linkedTranId;
 	}
 
-	public void setPartnerBankAcType(String partnerBankAcType) {
-		this.partnerBankAcType = partnerBankAcType;
+	public void setLinkedTranId(long linkedTranId) {
+		this.linkedTranId = linkedTranId;
 	}
 
-	public String getPartnerBankAc() {
-		return partnerBankAc;
+	public List<Long> getAcSetIDList() {
+		return acSetIDList;
 	}
 
-	public void setPartnerBankAc(String partnerBankAc) {
-		this.partnerBankAc = partnerBankAc;
+	public void setAcSetIDList(List<Long> acSetIDList) {
+		this.acSetIDList = acSetIDList;
 	}
 
 }

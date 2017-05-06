@@ -39,8 +39,8 @@ public class BatchUtil {
 		}
 
 		EXECUTING.setExecutionName(stepExecution.getStepName());
-		EXECUTING.setValueDate(DateUtility.getValueDate());
-		stepExecution.getExecutionContext().put("VDATE", DateUtility.getValueDate());
+		EXECUTING.setValueDate(DateUtility.getAppValueDate());
+		stepExecution.getExecutionContext().put("VDATE", DateUtility.getAppValueDate());
 		
 		if(!"INFO".equals(key) && !"WAIT".equals(key)) {
 			if(value != null) {

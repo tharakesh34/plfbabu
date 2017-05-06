@@ -92,7 +92,7 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		dataSet.setFinEvent(finEvent);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT ValueDate,PostDate, TranCode, TranDesc, RevTranCode, DrOrCr, Account, PostAmount, ");
+		selectSql.append(" SELECT ValueDate,PostDate, AppDate, AppValueDate, TranCode, TranDesc, RevTranCode, DrOrCr, Account, PostAmount, ");
 		selectSql.append(" FinEvent, LovDescEventCodeName, AcCcy, PostBranch ");
 		selectSql.append(" FROM Postings_View");
 		selectSql.append(" Where FinReference =:FinReference AND FinEvent IN ("+finEvent+")");
@@ -130,7 +130,7 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent,");
 		selectSql.append(" PostDate,ValueDate,TranCode,TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting,");
 		selectSql.append(" PostAmount,AmountType,PostStatus,ErrorId,ErrorMsg, AcCcy, TranOrderId,");
-		selectSql.append(" PostToSys,ExchangeRate,PostBranch ");
+		selectSql.append(" PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate ");
 		selectSql.append(" FROM Postings");
 		selectSql.append(" Where LinkedTranId =:LinkedTranId");
 		
@@ -151,7 +151,7 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent, PostDate,ValueDate,TranCode, ");
 		selectSql.append(" TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting, PostAmount,AmountType,PostStatus,ErrorId, ");
-		selectSql.append(" ErrorMsg, AcCcy, TranOrderId, PostToSys,ExchangeRate,PostBranch ");
+		selectSql.append(" ErrorMsg, AcCcy, TranOrderId, PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate ");
 		selectSql.append(" FROM Postings");
 		selectSql.append(" Where LinkedTranId  IN(:LinkedTranId) ");
 		
@@ -215,11 +215,11 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		insertSql.append(" (LinkedTranId, Postref, PostingId, finReference, FinEvent,");
 		insertSql.append(" PostDate, ValueDate, TranCode, TranDesc, RevTranCode, DrOrCr, Account,ShadowPosting,");
 		insertSql.append(" PostAmountLcCcy, TransOrder, DerivedTranOrder,PostToSys,ExchangeRate, ");
-		insertSql.append(" PostAmount,AmountType, PostStatus, ErrorId, ErrorMsg, AcCcy, TranOrderId,PostBranch)");
+		insertSql.append(" PostAmount,AmountType, PostStatus, ErrorId, ErrorMsg, AcCcy, TranOrderId,PostBranch, AppDate, AppValueDate)");
 		insertSql.append(" Values(:LinkedTranId, :Postref, :PostingId, :finReference, :FinEvent,");
 		insertSql.append(" :PostDate, :ValueDate, :TranCode, :TranDesc, :RevTranCode, :DrOrCr, :Account, :ShadowPosting,");
 		insertSql.append(" :PostAmountLcCcy, :TransOrder, :DerivedTranOrder,:PostToSys,:ExchangeRate,");
-		insertSql.append(" :PostAmount, :AmountType, :PostStatus, :ErrorId, :ErrorMsg, :AcCcy, :TranOrderId,:PostBranch)");
+		insertSql.append(" :PostAmount, :AmountType, :PostStatus, :ErrorId, :ErrorMsg, :AcCcy, :TranOrderId,:PostBranch, :AppDate, :AppValueDate)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(dataSetList.toArray());
@@ -420,7 +420,7 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent,");
 		selectSql.append(" PostDate,ValueDate,TranCode,TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting,");
 		selectSql.append(" PostAmount,AmountType,PostStatus,ErrorId,ErrorMsg, AcCcy, TranOrderId,");
-		selectSql.append(" PostToSys,ExchangeRate,PostBranch ");
+		selectSql.append(" PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate ");
 		selectSql.append(" FROM Postings");
 		selectSql.append(" Where FinReference =:FinReference And finEvent=:finEvent ");
 
@@ -471,7 +471,7 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent,");
 		selectSql.append(" PostDate,ValueDate,TranCode,TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting,");
 		selectSql.append(" PostAmount,AmountType,PostStatus,ErrorId,ErrorMsg, AcCcy, TranOrderId,");
-		selectSql.append(" PostToSys,ExchangeRate,PostBranch ");
+		selectSql.append(" PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate ");
 		selectSql.append(" FROM Postings");
 		selectSql.append(" Where FinReference =:FinReference");
 

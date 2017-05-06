@@ -73,7 +73,7 @@ public class CalendarUpdation implements Tasklet {
 		boolean coreBankCalReq = false;
 		
 		// Date Parameter List
-		Date valueDate = DateUtility.getValueDate();
+		Date valueDate = DateUtility.getAppValueDate();
 		logger.debug("START: CalendarUpdation for Value Date: " + valueDate);
 		try {
 			// Accounts Accrual Balance reset to Zero

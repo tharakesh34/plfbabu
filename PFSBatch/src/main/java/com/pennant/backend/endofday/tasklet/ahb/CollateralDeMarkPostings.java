@@ -35,7 +35,7 @@ public class CollateralDeMarkPostings implements Tasklet {
 	public RepeatStatus execute(StepContribution arg, ChunkContext context) throws Exception {
 		int processed = 0;
 
-		Date valueDate = DateUtility.getValueDate();
+		Date valueDate = DateUtility.getAppValueDate();
 
 		logger.debug("START: Collateral Demarking Postings for Value Date: " + valueDate);
 

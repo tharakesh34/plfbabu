@@ -51,6 +51,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.security.auth.login.AccountNotFoundException;
+
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
@@ -100,8 +102,8 @@ public class SuspensePostingUtil implements Serializable {
 		boolean isPostingSuccess = true;
 
 		boolean isDueSuspNow = false;
-		int curOdDays = getFinODDetailsDAO().getFinCurSchdODDays(financeMain.getFinReference(),
-				repayQueue.getRpyDate());
+		int curOdDays = getFinODDetailsDAO()
+				.getFinCurSchdODDays(financeMain.getFinReference(), repayQueue.getRpyDate());
 
 		// Check Profit will Suspend or not based upon Current Overdue Days
 		boolean suspendProfit = getCustomerStatusCodeDAO().getFinanceSuspendStatus(curOdDays);
@@ -135,26 +137,38 @@ public class SuspensePostingUtil implements Serializable {
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(suspFromDate);
 
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		aeEvent.setDataMap(dataMap);
 
-		boolean isEODProcess = false;
+		aeEvent.setEOD(false);
+		;
 		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
 		if (!phase.equals(PennantConstants.APP_PHASE_DAY)) {
-			isEODProcess = true;
+			aeEvent.setEOD(true);
 		}
 
 		//Postings Preparation
 		Date dateAppDate = DateUtility.getAppDate();
-		List<Object> result = getPostingsPreparationUtil().processPostingDetails(executingMap, isEODProcess, true,
-				dateAppDate, false, Long.MIN_VALUE);
-		isPostingSuccess = (Boolean) result.get(0);
-		long linkedTranId = (Long) result.get(1);
+		aeEvent.setAppDate(dateAppDate);
+		aeEvent.setAppValueDate(dateAppDate);
+		aeEvent.setValueDate(valueDate);
+		aeEvent.setPostDate(dateAppDate);
+
+		try {
+			aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
+		} catch (AccountNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		isPostingSuccess = aeEvent.isPostingSucess();
+		long linkedTranId = aeEvent.getLinkedTranId();
 
 		//Check Status for Postings
 		if (!isPostingSuccess) {
 			returnList.add(isPostingSuccess);
 			returnList.add(isDueSuspNow);
-			returnList.add(result.get(3));
+			returnList.add(aeEvent.getErrorMessage());
 			return returnList;
 		}
 
@@ -253,12 +267,24 @@ public class SuspensePostingUtil implements Serializable {
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(suspFromDate);
 
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		aeEvent.setDataMap(dataMap);
 
 		//Postings Preparation
 		Date dateAppDate = DateUtility.getAppDate();
-		long linkedTranId = (Long) getPostingsPreparationUtil().processPostingDetails(executingMap, isEODProcess, true,
-				dateAppDate, false, Long.MIN_VALUE).get(1);
+		aeEvent.setAppDate(dateAppDate);
+		aeEvent.setAppValueDate(dateAppDate);
+		aeEvent.setValueDate(valueDate);
+		aeEvent.setPostDate(dateAppDate);
+
+		try {
+			aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
+		} catch (AccountNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		long linkedTranId = aeEvent.getLinkedTranId();
 
 		//Finance Suspend Head
 		suspHead.setFinIsInSusp(isInSuspNow);

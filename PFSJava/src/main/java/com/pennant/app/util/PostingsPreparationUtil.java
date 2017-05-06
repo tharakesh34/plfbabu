@@ -41,7 +41,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -49,7 +48,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.Interface.service.PostingsInterfaceService;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
@@ -62,15 +60,12 @@ import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.commitment.CommitmentMovement;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
-import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
-import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.model.rulefactory.AECommitment;
-import com.pennant.backend.model.rulefactory.FeeRule;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.model.FinanceCancellation;
 import com.pennant.coreinterface.process.FinanceCancellationProcess;
-import com.pennant.eod.util.EODProperties;
 import com.pennant.exception.PFFInterfaceException;
 
 public class PostingsPreparationUtil implements Serializable {
@@ -81,7 +76,6 @@ public class PostingsPreparationUtil implements Serializable {
 	private FinContributorDetailDAO		finContributorDetailDAO;
 	private PostingsDAO					postingsDAO;
 	private AccountProcessUtil			accountProcessUtil;
-	private PostingsInterfaceService	postingsInterfaceService;
 	private CommitmentDAO				commitmentDAO;
 	private CommitmentMovementDAO		commitmentMovementDAO;
 	private FinanceCancellationProcess	financeCancellationProcess;
@@ -107,37 +101,10 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	public List<Object> processPostingDetails(HashMap<String, Object> executingMap, boolean isEODProcess,
-			boolean isCreateNewAccount, Date dateAppDate, boolean allowCmtPostings, long linkedTranId)
+	public AEEvent processPostingDetails(AEEvent aeEvent, HashMap<String, Object> dataMap)
 			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 
-		return processPostings(executingMap, isEODProcess, isCreateNewAccount, dateAppDate, allowCmtPostings,
-				linkedTranId, null, false);
-	}
-
-	/**
-	 * Method for Processing Postings Details with including Fees
-	 * 
-	 * @param dataSet
-	 * @param amountCodes
-	 * @param isEODProcess
-	 * @param isCreateNewAccount
-	 * @param dateAppDate
-	 * @param allowCmtPostings
-	 * @param linkedTranId
-	 * @param feeChargeMap
-	 * @return
-	 * @throws PFFInterfaceException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 */
-	public List<Object> processPostingDetailsWithFee(HashMap<String, Object> executingMap, boolean isEODProcess,
-			boolean isCreateNewAccount, Date dateAppDate, boolean allowCmtPostings, long linkedTranId,
-			Map<String, FeeRule> feeChargeMap) throws PFFInterfaceException, IllegalAccessException,
-			InvocationTargetException {
-
-		return processPostings(executingMap, isEODProcess, isCreateNewAccount, dateAppDate, allowCmtPostings,
-				linkedTranId, feeChargeMap, false);
+		return processPostings(aeEvent, dataMap);
 	}
 
 	/**
@@ -154,10 +121,10 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 *             List<Object>
 	 */
-	public List<Object> processCmtPostingDetails(Commitment commitment, boolean isCreateNow, Date dateAppDate,
-			String acSetEvent) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public AEEvent processCmtPostingDetails(Commitment commitment, Date dateAppDate, String acSetEvent)
+			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 
-		return procCmtPostingDetails(commitment, isCreateNow, dateAppDate, acSetEvent);
+		return procCmtPostingDetails(commitment, dateAppDate, acSetEvent);
 	}
 
 	/**
@@ -172,31 +139,10 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @return List<Object>
 	 * @throws PFFInterfaceException
 	 */
-	public List<Object> postingAccruals(List<ReturnDataSet> list, String postBranch, Date valueDate, boolean isCreateNow,
-			boolean isEODProcess, String isDummy, long linkedTranId) throws Exception {
+	public List<Object> postingAccruals(List<ReturnDataSet> list, String postBranch, Date valueDate,
+			boolean isCreateNow, boolean isEODProcess, String isDummy, long linkedTranId) throws Exception {
 
 		return procAccrualPostings(list, postBranch, valueDate, isCreateNow, isEODProcess, isDummy, linkedTranId);
-	}
-
-	/**
-	 * Method for Process Depreciation Posting Details
-	 * 
-	 * @param dataSet
-	 * @param amountCodes
-	 * @param isEODProcess
-	 * @param isCreateNewAccount
-	 * @param dateAppDate
-	 * @param movement
-	 * @param isProvPostings
-	 * @return
-	 * @throws PFFInterfaceException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 */
-	public List<Object> processDepreciatePostings(HashMap<String, Object> executingMap, Date dateAppDate,
-			long linkedTranId) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
-
-		return processPostings(executingMap, true, true, dateAppDate, false, linkedTranId, null, true);
 	}
 
 	/**
@@ -230,125 +176,68 @@ public class PostingsPreparationUtil implements Serializable {
 		return procJVPostingEntryList(jvPostingEntryList, jVPosting);
 	}
 
-	public List<Object> processPostings(List<ReturnDataSet> returnDataSetList) throws AccountNotFoundException,
-			IllegalAccessException, InvocationTargetException, PFFInterfaceException {
-		return processPostingDetails(returnDataSetList);
-	}
-
-	public List<ReturnDataSet> prepareAccountingDataSet(PayOrderIssueHeader inventory, String acSetEvent,
-			boolean isCreateNow) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
-		HashMap<String, Object> executingMap = new HashMap<String, Object>();
-
-		executingMap.put("PostDate", DateUtility.getSysDate());
-		executingMap.put("ValueDate", DateUtility.getSysDate());
-		executingMap.put("fm_finCcy", SysParamUtil.getAppCurrency());
-		executingMap.put("fm_finBranch", PennantConstants.IBD_Branch);
-		executingMap.put("BrokerAccount", null);
-		executingMap.put("PURAMOUNT", BigDecimal.ZERO);
-		executingMap.put("QUANTITY", BigDecimal.ZERO);
-		executingMap.put("UNITPRICE", BigDecimal.ZERO);
-		executingMap.put("SETTLEAMT", BigDecimal.ZERO);
-		executingMap.put("UNSOLDFEE", BigDecimal.ZERO);
-		executingMap.put("finEvent", acSetEvent);
-
-		return getEngineExecution().processAccountingByEvent(executingMap, isCreateNow);
+	public AEEvent processPostings(AEEvent aeEvent) throws AccountNotFoundException, IllegalAccessException,
+			InvocationTargetException, PFFInterfaceException {
+		return processPostingDetails(aeEvent);
 	}
 
 	// ******************************************************//
 	// ****************** Process Methods *******************//
 	// ******************************************************//
 
-	private List<Object> processPostingDetails(List<ReturnDataSet> returnDataSetList) throws AccountNotFoundException,
-			PFFInterfaceException {
-		List<Object> returnList = new ArrayList<Object>();
+	public AEEvent processPostingDetails(AEEvent aeEvent) throws AccountNotFoundException, PFFInterfaceException {
 		// Preparation for Commitment Postings
-		Date dateAppDate = DateUtility.getAppDate();
-		boolean isPostingSuccess = true;
-		String errorMsg = null;
 		long linkedTranId = getPostingsDAO().getLinkedTransId();
+		aeEvent.setLinkedTranId(linkedTranId);
 
-		returnDataSetList = getPostingsInterfaceService().doFillPostingDetails(returnDataSetList,
-				returnDataSetList.get(0).getFinBranch(), linkedTranId, false);
+		List<ReturnDataSet> returnDataSet = aeEvent.getReturnDataSet();
+		//FIXME: PV: Prepare Return Data Set
 
-		for (int k = 0; k < returnDataSetList.size(); k++) {
-			ReturnDataSet set = returnDataSetList.get(k);
-			set.setLinkedTranId(linkedTranId);
-			set.setPostDate(dateAppDate);
-			String errorId = StringUtils.trimToEmpty(set.getErrorId());
-			if (!("0000".equals(errorId) || "".equals(errorId))) {
-				set.setPostStatus("F");//TODO throw an exception to stop job/ User Action
-				isPostingSuccess = false;
-				errorMsg = set.getErrorMsg();
-			} else {
-				set.setPostStatus("S");
-			}
-		}
-		if (isPostingSuccess) {
-			getPostingsDAO().saveBatch(returnDataSetList, "", false);
-		}
-		returnList.add(isPostingSuccess);
-		returnList.add(errorMsg);
-		returnList.add(linkedTranId);
+		getPostingsDAO().saveBatch(returnDataSet, "", false);
 
-		return returnList;
+		return aeEvent;
 	}
 
-	private List<Object> processPostings(HashMap<String, Object> executingMap, boolean isEODProcess,
-			boolean isCreateNewAccount, Date dateAppDate, boolean allowCmtPostings, long linkedTranId,
-			Map<String, FeeRule> feeChargeMap, boolean isDepreciation) throws PFFInterfaceException,
+	private AEEvent processPostings(AEEvent aeEvent, HashMap<String, Object> dataMap) throws PFFInterfaceException,
 			IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-		String finAcType = null;
+		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+		list = aeEvent.getReturnDataSet();
 
-		// Accounting Set Execution to get Posting Details List
-
-		FinanceType financeType = null;
-		if (isEODProcess) {
-			financeType = EODProperties.getFinanceType(StringUtils.trim((String) executingMap.get("fm_finType")));
-		} else {
-			financeType = getFinanceTypeDAO().getFinanceTypeByFinType((String) executingMap.get("fm_finType"));
-		}
-
-		finAcType = financeType.getFinAcType();
-
-		if(feeChargeMap != null){
-			executingMap.putAll(feeChargeMap);
-		}
-		financeType.getDeclaredFieldValues(executingMap);
-
-		list = getEngineExecution().getAccEngineExecResults(true, executingMap);
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 		// Finance Commitment Reference Posting Details
 		Commitment commitment = null;
 		boolean cmtEventExecuted = false;
-		if (allowCmtPostings && StringUtils.isNotBlank((String) executingMap.get("fm_finCommitmentRef"))
-				&& ((BigDecimal) executingMap.get("ae_rpPri")).compareTo(BigDecimal.ZERO) > 0) {
-			commitment = getCommitmentDAO().getCommitmentById((String) executingMap.get("fm_finCommitmentRef"), "");
+		if (aeEvent.isAlwCmtPostings() && StringUtils.isNotBlank(aeEvent.getCmtReference())
+				&& (amountCodes.getRpPri().compareTo(BigDecimal.ZERO) > 0)) {
+			commitment = getCommitmentDAO().getCommitmentById(aeEvent.getCmtReference(), "");
 
 			if (commitment != null && commitment.isRevolving()) {
 
 				//Remove Commitment Details & Movement Details from Workflow which are in maintenance
-				if (isEODProcess) {
-					Commitment tempcommitment = getCommitmentDAO().getCommitmentByRef(
-							(String) executingMap.get("fm_finCommitmentRef"), "_Temp");
+				if (aeEvent.isEOD()) {
+					Commitment tempcommitment = getCommitmentDAO().getCommitmentByRef(aeEvent.getCmtReference(),
+							"_Temp");
 					if (tempcommitment != null) {
-						getCommitmentMovementDAO().deleteByRef((String) executingMap.get("fm_finCommitmentRef"),
-								"_Temp");
-						getCommitmentDAO().deleteByRef((String) executingMap.get("fm_finCommitmentRef"), "_Temp");
+						getCommitmentMovementDAO().deleteByRef(aeEvent.getCmtReference(), "_Temp");
+						getCommitmentDAO().deleteByRef(aeEvent.getCmtReference(), "_Temp");
 					}
 				}
 
-				AECommitment aeCommitment = new AECommitment();
-				aeCommitment.setCMTAMT(BigDecimal.ZERO);
-				aeCommitment.setCHGAMT(BigDecimal.ZERO);
-				aeCommitment.setDISBURSE(BigDecimal.ZERO);
-				aeCommitment.setRPPRI(CalculationUtil.getConvertedAmount((String) executingMap.get("fm_finCcy"),
-						commitment.getCmtCcy(), ((BigDecimal) executingMap.get("ae_rpPri"))));
+				amountCodes.setCmtAmt(BigDecimal.ZERO);
+				amountCodes.setChgAmt(BigDecimal.ZERO);
+				amountCodes.setDisburse(BigDecimal.ZERO);
+				amountCodes.setRpPri(CalculationUtil.getConvertedAmount(aeEvent.getCcy(), commitment.getCmtCcy(),
+						amountCodes.getRpPri()));
+				aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_CMTRPY);
+				dataMap = amountCodes.getDeclaredFieldValues(dataMap);
+				aeEvent.setDataMap(dataMap);
+				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
 
-				List<ReturnDataSet> cmtList = getEngineExecution().getCommitmentExecResults(aeCommitment, commitment,
-						AccountEventConstants.ACCEVENT_CMTRPY, true, executingMap);
+				List<ReturnDataSet> cmtList = aeEvent.getReturnDataSet();
 				list.addAll(cmtList);
 
 				if (cmtList != null && cmtList.size() > 0) {
@@ -357,22 +246,20 @@ public class PostingsPreparationUtil implements Serializable {
 			}
 		}
 
-		List<Object> returnList = postingsExecProcess(list, (String) executingMap.get("fm_finBranch"), dateAppDate,
-				isCreateNewAccount, isEODProcess, false, linkedTranId, ((BigDecimal) executingMap.get("ae_rpTot")),
-				finAcType, isDepreciation);
+		aeEvent = postingsExecProcess(aeEvent);
 
-		if (cmtEventExecuted && (Boolean) returnList.get(0)
-				&& ((BigDecimal) executingMap.get("ae_rpPri")).compareTo(BigDecimal.ZERO) > 0) {
-			getCommitmentDAO().updateCommitmentAmounts(commitment.getCmtReference(),
-					((BigDecimal) executingMap.get("ae_rpPri")).negate(), commitment.getCmtExpDate());
-			CommitmentMovement cmtMovement = prepareCommitMovement(commitment, (Long) returnList.get(1), executingMap);
-			if (cmtMovement != null) {
-				getCommitmentMovementDAO().save(cmtMovement, "");
-			}
-		}
+		//FIXME: PV 05MAY17 Update Commitment Movement
 
+		/*
+		 * if (cmtEventExecuted && (Boolean) returnList.get(0) && ((BigDecimal)
+		 * executingMap.get("ae_rpPri")).compareTo(BigDecimal.ZERO) > 0) {
+		 * getCommitmentDAO().updateCommitmentAmounts(commitment.getCmtReference(), ((BigDecimal)
+		 * executingMap.get("ae_rpPri")).negate(), commitment.getCmtExpDate()); CommitmentMovement cmtMovement =
+		 * prepareCommitMovement(commitment, (Long) returnList.get(1), executingMap); if (cmtMovement != null) {
+		 * getCommitmentMovementDAO().save(cmtMovement, ""); } }
+		 */
 		logger.debug("Leaving");
-		return returnList;
+		return aeEvent;
 	}
 
 	/**
@@ -389,38 +276,44 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 *             List<Object>
 	 */
-	private List<Object> procCmtPostingDetails(Commitment commitment, boolean isCreateNow, Date dateAppDate,
-			String acSetEvent) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	private AEEvent procCmtPostingDetails(Commitment commitment, Date dateAppDate, String acSetEvent)
+			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
 
-		AECommitment aeCommitment = new AECommitment();
-		aeCommitment.setCMTAMT(commitment.getCmtAmount());
-		aeCommitment.setCHGAMT(commitment.getCmtCharges());
-		aeCommitment.setDISBURSE(BigDecimal.ZERO);
-		aeCommitment.setRPPRI(BigDecimal.ZERO);
+		AEEvent aeEvent = new AEEvent();
+		aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_NEWCMT);
+
+		//FIXME: PV dates to be set properly
+		aeEvent.setAppDate(dateAppDate);
+		aeEvent.setValueDate(dateAppDate);
+		aeEvent.setAppValueDate(dateAppDate);
+		aeEvent.setPostDate(dateAppDate);
+
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		amountCodes.setCmtAmt(commitment.getCmtAmount());
+		amountCodes.setChgAmt(commitment.getCmtCharges());
+		amountCodes.setDisburse(BigDecimal.ZERO);
+		amountCodes.setRpPri(BigDecimal.ZERO);
+
+		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+		HashMap<String, Object> dataMap = aeEvent.getDataMap();
+		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
 
 		// Accounting Set Execution to get Posting Details List
-		list = getEngineExecution().getCommitmentExecResults(aeCommitment, commitment, acSetEvent, isCreateNow, null);
+		list = aeEvent.getReturnDataSet();
 
-		List<Object> returnList = new ArrayList<Object>();
 		if (list != null && list.size() > 0) {
-
-			boolean iscmtPostings = false;
+			aeEvent.setCommitment(false);
 			if (acSetEvent.equals(AccountEventConstants.ACCEVENT_NEWCMT) && commitment.isOpenAccount()) {
-				iscmtPostings = true;
+				aeEvent.setCommitment(true);
 			}
-			returnList = postingsExecProcess(list, commitment.getCmtBranch(), dateAppDate, isCreateNow, false,
-					iscmtPostings, Long.MIN_VALUE, null, null, false);
-		} else {
-			returnList.add(false);
-			returnList.add(0);
-			returnList.add("");
-			returnList.add("0000 - Empty Accounting Set Details");
+			aeEvent = postingsExecProcess(aeEvent);
 		}
+
 		logger.debug("Leaving");
-		return returnList;
+		return aeEvent;
 
 	}
 
@@ -474,40 +367,16 @@ public class PostingsPreparationUtil implements Serializable {
 
 	}
 
-	/**
-	 * Method for Execution of Posting in Core Banking Side Depends on Creation Flag
-	 * 
-	 * @param list
-	 * @param branch
-	 * @param dateAppDate
-	 * @param isCreateNow
-	 * @param isEODProcess
-	 * @param isProvPostings
-	 * @param object
-	 * @return List<Object>
-	 * @throws PFFInterfaceException
-	 */
-	private List<Object> postingsExecProcess(List<ReturnDataSet> list, String branch, Date dateAppDate,
-			boolean isCreateNow, boolean isEODProcess, boolean isCmtPostings, long linkedTranId, BigDecimal totalRpyAmt,
-			String finAcType, boolean isDepreciation) throws PFFInterfaceException {
+	private AEEvent postingsExecProcess(AEEvent aeEvent) throws PFFInterfaceException {
 		logger.debug("Entering");
 
-		//Commitment Posting Details
-		String commitmentAcc = "";
-		String finAccount = null;
-		String acType = SysParamUtil.getValueAsString("COMMITMENT_AC_TYPE");
+		List<ReturnDataSet> list = aeEvent.getReturnDataSet();
 
 		//Method for Checking for Reverse Calculations Based upon Negative Amounts
 		for (ReturnDataSet returnDataSet : list) {
-
-			returnDataSet.setLinkedTranId(linkedTranId);
-
-			if (isCmtPostings && acType.equals(returnDataSet.getAccountType())) {
-				commitmentAcc = returnDataSet.getAccount();
-			}
+			returnDataSet.setLinkedTranId(aeEvent.getLinkedTranId());
 
 			if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
-
 				String tranCode = returnDataSet.getTranCode();
 				String revTranCode = returnDataSet.getRevTranCode();
 				String debitOrCredit = returnDataSet.getDrOrCr();
@@ -526,82 +395,14 @@ public class PostingsPreparationUtil implements Serializable {
 		}
 
 		if (!list.isEmpty()) {
-			// Method for validating Postings with interface program and
-			// return results
-			if (list.get(0).getLinkedTranId() == Long.MIN_VALUE) {
-				linkedTranId = getPostingsDAO().getLinkedTransId();
-			} else {
-				linkedTranId = list.get(0).getLinkedTranId();
-			}
-
-			if (!isDepreciation) {
-				list = getPostingsInterfaceService().doFillPostingDetails(list, branch, linkedTranId, isCreateNow);
-			} else {
-				list = getPostingsInterfaceService().doAccrualPosting(list, dateAppDate, branch, linkedTranId,
-						isCreateNow, "N");
-			}
-		}
-
-		boolean isPostingSuccess = true;
-		String errorMessage = null;
-		boolean isFetchFinAc = false;
-
-		if (!list.isEmpty()) {
-			for (int k = 0; k < list.size(); k++) {
-				ReturnDataSet set = list.get(k);
-				set.setLinkedTranId(linkedTranId);
-				set.setPostDate(dateAppDate);
-				String errorId = StringUtils.trimToEmpty(set.getErrorId());
-				if (!("0000".equals(errorId) || StringUtils.isEmpty(errorId))) {
-					set.setPostStatus("F");
-					isPostingSuccess = false;
-					if (errorMessage == null) {
-						errorMessage = errorId + " - " + set.getErrorMsg();
-					}
-				} else {
-					set.setPostStatus("S");
-
-					//Commitment Account Updation Purpose
-					if (isCmtPostings && acType.equals(set.getAccountType())) {
-						commitmentAcc = set.getAccount();
-					}
-				}
-
-				if (!isFetchFinAc && StringUtils.trimToEmpty(finAcType).equals(set.getAccountType())) {
-					isFetchFinAc = true;
-					finAccount = set.getAccount();
-				}
-			}
-
-			// save Postings
-			if (isEODProcess) {
-
-				if (isPostingSuccess) {
-					getPostingsDAO().saveHeader(list.get(0), "S", "");
-				} else {
-					getPostingsDAO().saveHeader(list.get(0), "F", "");
-				}
-				getPostingsDAO().saveEODBatch(list, "", "N");
-
-			} else if (isPostingSuccess) {
+			if (aeEvent.isPostingSucess()) {
 				getPostingsDAO().saveBatch(list, "", false);
-			}
-
-			if (isPostingSuccess) {
-				//Account Details Updation
 				getAccountProcessUtil().updateAccountInfo(list);
 			}
 		}
 
-		List<Object> returnList = new ArrayList<Object>(5);
-		returnList.add(isPostingSuccess);
-		returnList.add(linkedTranId);
-		returnList.add(commitmentAcc);
-		returnList.add(errorMessage);
-		returnList.add(finAccount);
-
 		logger.debug("Leaving");
-		return returnList;
+		return aeEvent;
 	}
 
 	/**
@@ -655,8 +456,7 @@ public class PostingsPreparationUtil implements Serializable {
 				linkedTranId = list.get(0).getLinkedTranId();
 			}
 
-			list = getPostingsInterfaceService().doAccrualPosting(list, valueDate, postBranch, linkedTranId, isCreateNow,
-					isDummy);
+			//FIXME: PV: 05MAY17 needs to fill return data set
 
 			for (int k = 0; k < list.size(); k++) {
 				ReturnDataSet set = list.get(k);
@@ -953,8 +753,8 @@ public class PostingsPreparationUtil implements Serializable {
 			}
 			list.add(returnDataSet);
 		}
-		list = getPostingsInterfaceService().doFillPostingDetails(list, jVPosting.getBranch(), linkedTranId,
-				false);
+		
+		//FIXME: PV: 05MAY17 needs to fill return dataset
 		logger.debug("Leaving");
 		return list;
 	}
@@ -977,14 +777,6 @@ public class PostingsPreparationUtil implements Serializable {
 
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
 		this.postingsDAO = postingsDAO;
-	}
-
-	public PostingsInterfaceService getPostingsInterfaceService() {
-		return postingsInterfaceService;
-	}
-
-	public void setPostingsInterfaceService(PostingsInterfaceService postingsInterfaceService) {
-		this.postingsInterfaceService = postingsInterfaceService;
 	}
 
 	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {

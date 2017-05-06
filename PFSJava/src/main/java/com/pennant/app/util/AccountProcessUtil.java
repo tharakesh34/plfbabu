@@ -55,42 +55,39 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.backend.dao.accounts.AccountsDAO;
-import com.pennant.backend.dao.masters.SystemInternalAccountDefinitionDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.model.accounts.Accounts;
-import com.pennant.backend.model.masters.SystemInternalAccountDefinition;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 
 public class AccountProcessUtil implements Serializable {
 
-    private static final long serialVersionUID = -1200799666995440280L;
-	private Logger logger = Logger.getLogger(AccountProcessUtil.class);
+	private static final long					serialVersionUID	= -1200799666995440280L;
+	private Logger								logger				= Logger.getLogger(AccountProcessUtil.class);
 
-	private AccountsDAO accountsDAO;
-	private AccountTypeDAO accountTypeDAO;
-	private SystemInternalAccountDefinitionDAO internalAccountDefinitionDAO;
+	private AccountsDAO							accountsDAO;
+	private AccountTypeDAO						accountTypeDAO;
 
-	private Accounts account;
-	private Map<String, SystemInternalAccountDefinition> intAcMap ;
-	private Map<String, AccountType> accountTypesMap ;
-	private Map<String, Accounts> saveAccMap ;
-	private Map<String, Accounts> updateAccMap ;
-	
+	private Accounts							account;
+	private Map<String, AccountType>			accountTypesMap;
+	private Map<String, Accounts>				saveAccMap;
+	private Map<String, Accounts>				updateAccMap;
+
 	public AccountProcessUtil() {
-	    super();
-    }
+		super();
+	}
 
 	/**
 	 * Method for Account Details Updation after Postings
+	 * 
 	 * @param financeMain
-	 * @param accrualBal(Profit Details)
+	 * @param accrualBal
+	 *            (Profit Details)
 	 * @param dataSets
 	 */
-	public void procAccountUpdate(List<ReturnDataSet> dataSets , BigDecimal accrualBal){
+	public void procAccountUpdate(List<ReturnDataSet> dataSets, BigDecimal accrualBal) {
 		logger.debug("Entering");
 
-		intAcMap = new HashMap<String, SystemInternalAccountDefinition>(1);
 		accountTypesMap = new HashMap<String, AccountType>(1);
 		saveAccMap = new HashMap<String, Accounts>(1);
 		updateAccMap = new HashMap<String, Accounts>(1);
@@ -99,60 +96,59 @@ public class AccountProcessUtil implements Serializable {
 
 			ReturnDataSet set = dataSets.get(i);
 			boolean isRcdSave = false;
-			
+
 			String acType = StringUtils.trimToEmpty(set.getAccountType());
 
-			if(!(StringUtils.equals(acType,AccountConstants.TRANACC_DISB) 
-					|| StringUtils.equals(acType,AccountConstants.TRANACC_REPAY)
-					|| StringUtils.equals(acType,AccountConstants.TRANACC_INVSTR)
-					|| StringUtils.equals(acType,AccountConstants.TRANACC_DOWNPAY)
-					|| StringUtils.equals(acType,AccountConstants.TRANACC_CANFIN)
-					|| StringUtils.equals(acType,AccountConstants.TRANACC_WRITEOFF)
-					|| StringUtils.equals(acType, AccountConstants.TRANACC_WRITEOFFPAY))){
+			if (!(StringUtils.equals(acType, AccountConstants.TRANACC_DISB)
+					|| StringUtils.equals(acType, AccountConstants.TRANACC_REPAY)
+					|| StringUtils.equals(acType, AccountConstants.TRANACC_INVSTR)
+					|| StringUtils.equals(acType, AccountConstants.TRANACC_DOWNPAY)
+					|| StringUtils.equals(acType, AccountConstants.TRANACC_CANFIN)
+					|| StringUtils.equals(acType, AccountConstants.TRANACC_WRITEOFF) || StringUtils.equals(acType,
+					AccountConstants.TRANACC_WRITEOFFPAY))) {
 
 				//Check Account Details Already exist or not
-				if(saveAccMap.containsKey(set.getAccount())){
+				if (saveAccMap.containsKey(set.getAccount())) {
 					account = saveAccMap.get(set.getAccount());
 					isRcdSave = true;
-				}else if(updateAccMap.containsKey(set.getAccount())){
+				} else if (updateAccMap.containsKey(set.getAccount())) {
 					account = updateAccMap.get(set.getAccount());
-				}else{
+				} else {
 					account = getAccountsDAO().getAccountsById(set.getAccount(), "");
-					if(account == null){
+					if (account == null) {
 						isRcdSave = true;
 					}
 				}
-				
+
 				//if Non of the Account is found create new A/c else update
-				updateAccountDetails(account, set, accrualBal, isRcdSave);	
+				updateAccountDetails(account, set, accrualBal, isRcdSave);
 			}
 		}
-		
+
 		//DB Insertion or updation of Account details
-		if(saveAccMap.size() > 0){
-			getAccountsDAO().saveList(new ArrayList<Accounts>(saveAccMap.values()),"");
+		if (saveAccMap.size() > 0) {
+			getAccountsDAO().saveList(new ArrayList<Accounts>(saveAccMap.values()), "");
 		}
-		if(updateAccMap.size() > 0){
-			getAccountsDAO().updateList(new ArrayList<Accounts>(updateAccMap.values()),"");
+		if (updateAccMap.size() > 0) {
+			getAccountsDAO().updateList(new ArrayList<Accounts>(updateAccMap.values()), "");
 		}
-		
-		intAcMap = null;
+
 		accountTypesMap = null;
 		saveAccMap = null;
 		updateAccMap = null;
-		
+
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * Method for Updation Of Account balances for every Postings
+	 * 
 	 * @param list
 	 * @param isPostingsSucces
 	 */
-	public void updateAccountInfo(List<ReturnDataSet> list){
+	public void updateAccountInfo(List<ReturnDataSet> list) {
 		logger.debug("Entering");
-		
-		intAcMap = new HashMap<String, SystemInternalAccountDefinition>(1);
+
 		accountTypesMap = new HashMap<String, AccountType>(1);
 		saveAccMap = new HashMap<String, Accounts>(1);
 		updateAccMap = new HashMap<String, Accounts>(1);
@@ -161,103 +157,87 @@ public class AccountProcessUtil implements Serializable {
 		for (int i = 0; i < list.size(); i++) {
 			ReturnDataSet set = list.get(i);
 			boolean isRcdSave = false;
-			
+
 			String acType = StringUtils.trimToEmpty(set.getAccountType());
-			
-			if(!(StringUtils.equals(acType,AccountConstants.TRANACC_DISB) 
-					|| StringUtils.equals(acType,AccountConstants.TRANACC_REPAY)
-					|| StringUtils.equals(acType,AccountConstants.TRANACC_INVSTR)
-					|| StringUtils.equals(acType,AccountConstants.TRANACC_DOWNPAY)
-					|| StringUtils.equals(acType,AccountConstants.TRANACC_CANFIN)
-					|| StringUtils.equals(acType,AccountConstants.TRANACC_WRITEOFF)
-					|| StringUtils.equals(acType,AccountConstants.TRANACC_WRITEOFFPAY))){
+
+			if (!(StringUtils.equals(acType, AccountConstants.TRANACC_DISB)
+					|| StringUtils.equals(acType, AccountConstants.TRANACC_REPAY)
+					|| StringUtils.equals(acType, AccountConstants.TRANACC_INVSTR)
+					|| StringUtils.equals(acType, AccountConstants.TRANACC_DOWNPAY)
+					|| StringUtils.equals(acType, AccountConstants.TRANACC_CANFIN)
+					|| StringUtils.equals(acType, AccountConstants.TRANACC_WRITEOFF) || StringUtils.equals(acType,
+					AccountConstants.TRANACC_WRITEOFFPAY))) {
 
 				//Check Account Details Already exist or not
-				if(saveAccMap.containsKey(set.getAccount())){
+				if (saveAccMap.containsKey(set.getAccount())) {
 					account = saveAccMap.get(set.getAccount());
 					isRcdSave = true;
-				}else if(updateAccMap.containsKey(set.getAccount())){
+				} else if (updateAccMap.containsKey(set.getAccount())) {
 					account = updateAccMap.get(set.getAccount());
-				}else{
+				} else {
 					account = getAccountsDAO().getAccountsById(set.getAccount(), "");
-					if(account == null){
+					if (account == null) {
 						isRcdSave = true;
 					}
 				}
-				
+
 				//if Non of the Account is found create new A/c else update
-				if(StringUtils.isNotBlank(set.getAccount())){
-					updateAccountDetails(account, set, set.getPostAmount(), isRcdSave);	
+				if (StringUtils.isNotBlank(set.getAccount())) {
+					updateAccountDetails(account, set, set.getPostAmount(), isRcdSave);
 				}
 
 			}
 		}
-		
+
 		//DB Insertion or updation of Account details
-		if(saveAccMap.size() > 0){
-			getAccountsDAO().saveList(new ArrayList<Accounts>(saveAccMap.values()),"");
+		if (saveAccMap.size() > 0) {
+			getAccountsDAO().saveList(new ArrayList<Accounts>(saveAccMap.values()), "");
 		}
-		if(updateAccMap.size() > 0){
-			getAccountsDAO().updateList(new ArrayList<Accounts>(updateAccMap.values()),"");
+		if (updateAccMap.size() > 0) {
+			getAccountsDAO().updateList(new ArrayList<Accounts>(updateAccMap.values()), "");
 		}
-		
-		intAcMap = null;
+
 		accountTypesMap = null;
 		saveAccMap = null;
 		updateAccMap = null;
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Account Details updation
+	 * 
 	 * @param account
 	 */
-	private void updateAccountDetails(Accounts acc, ReturnDataSet set, BigDecimal accrualBal, boolean isRcdSave){
+	private void updateAccountDetails(Accounts acc, ReturnDataSet set, BigDecimal accrualBal, boolean isRcdSave) {
 		logger.debug("Entering");
-		
-		if(acc == null){
-			acc =  new Accounts();
+
+		if (acc == null) {
+			acc = new Accounts();
 
 			acc.setAccountId(set.getAccount());
 			acc.setAcCcy(set.getAcCcy());
 			acc.setAcBranch(set.getFinBranch());
 
 			String accType = set.getAccountType();
-			if("Y".equals(set.getInternalAc())){
-				SystemInternalAccountDefinition accountDefinition = null;
-				if(!intAcMap.containsKey(set.getAccountType())){
-				/*	accountDefinition = getInternalAccountDefinitionDAO().getSystemInternalAccountDefinitionById(set.getAccountType(), "");
-					if(accountDefinition != null) {
-						intAcMap.put(accountDefinition.getSIACode(), accountDefinition);
-					}*/
-				}else{
-					accountDefinition = intAcMap.get(set.getAccountType());
-				}
-				if(accountDefinition != null){
-					accType = accountDefinition.getSIAAcType();
-				}
-				acc.setAcCustId(0);
-			}else{
-				acc.setAcCustId(set.getCustId());
-			}
-
+			acc.setAcCustId(0);
 			acc.setAcType(accType);
 
 			AccountType accountType = null;
-			if(!accountTypesMap.containsKey(accType)){
+			if (!accountTypesMap.containsKey(accType)) {
 				accountType = getAccountTypeDAO().getAccountTypeById(accType, "");
-				if(accountType != null){
+				if (accountType != null) {
 					accountTypesMap.put(accountType.getAcType(), accountType);
 				}
-			}else{
+			} else {
 				accountType = accountTypesMap.get(accType);
 			}
 
-			if(accountType != null){
+			if (accountType != null) {
 				acc.setAcPurpose(accountType.getAcPurpose());
 				acc.setAcFullName(accountType.getAcTypeDesc());
-				acc.setAcShortName(accountType.getAcTypeDesc().length() > 20 ? accountType.getAcTypeDesc().substring(0, 18) : accountType.getAcTypeDesc());
+				acc.setAcShortName(accountType.getAcTypeDesc().length() > 20 ? accountType.getAcTypeDesc().substring(0,
+						18) : accountType.getAcTypeDesc());
 			}
 
 			acc.setInternalAc("Y".equals(set.getInternalAc()) ? true : false);
@@ -279,26 +259,26 @@ public class AccountProcessUtil implements Serializable {
 			acc.setNextTaskId("");
 			acc.setRecordType("");
 			acc.setWorkflowId(0);
-		}else{
-			acc.setVersion(acc.getVersion()+1);
+		} else {
+			acc.setVersion(acc.getVersion() + 1);
 		}
 
 		acc.setAcLastCustTrnDate(set.getPostDate());
 		acc.setAcLastSysTrnDate(set.getPostDate());
 
 		//Accrual Balance 
-		if(set.isShadowPosting()){
-			if(set.getDrOrCr().equals(AccountConstants.TRANTYPE_DEBIT)){
+		if (set.isShadowPosting()) {
+			if (set.getDrOrCr().equals(AccountConstants.TRANTYPE_DEBIT)) {
 				accrualBal = BigDecimal.ZERO.subtract(accrualBal);
 			}
 			acc.setAcAccrualBal(acc.getAcAccrualBal().add(accrualBal));
-		}else {
-			
+		} else {
+
 			// Debit or Credit Balances
-			if(set.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT)){
+			if (set.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT)) {
 				acc.setAcTodayCr(acc.getAcTodayCr().add(set.getPostAmount()));
 				acc.setAcTodayBal(acc.getAcTodayBal().add(set.getPostAmount()));
-			}else if(set.getDrOrCr().equals(AccountConstants.TRANTYPE_DEBIT)){
+			} else if (set.getDrOrCr().equals(AccountConstants.TRANTYPE_DEBIT)) {
 				acc.setAcTodayDr(acc.getAcTodayDr().add(set.getPostAmount()));
 				acc.setAcTodayBal(acc.getAcTodayBal().subtract(set.getPostAmount()));
 			}
@@ -308,9 +288,9 @@ public class AccountProcessUtil implements Serializable {
 		}
 
 		// Account Details Updation/ Save
-		if(isRcdSave){
+		if (isRcdSave) {
 			saveAccMap.put(set.getAccount(), acc);
-		}else{
+		} else {
 			updateAccMap.put(set.getAccount(), acc);
 		}
 		logger.debug("Leaving");
@@ -323,21 +303,15 @@ public class AccountProcessUtil implements Serializable {
 	public void setAccountsDAO(AccountsDAO accountsDAO) {
 		this.accountsDAO = accountsDAO;
 	}
+
 	public AccountsDAO getAccountsDAO() {
 		return accountsDAO;
-	}
-
-	public void setInternalAccountDefinitionDAO(
-			SystemInternalAccountDefinitionDAO internalAccountDefinitionDAO) {
-		this.internalAccountDefinitionDAO = internalAccountDefinitionDAO;
-	}
-	public SystemInternalAccountDefinitionDAO getInternalAccountDefinitionDAO() {
-		return internalAccountDefinitionDAO;
 	}
 
 	public void setAccountTypeDAO(AccountTypeDAO accountTypeDAO) {
 		this.accountTypeDAO = accountTypeDAO;
 	}
+
 	public AccountTypeDAO getAccountTypeDAO() {
 		return accountTypeDAO;
 	}

@@ -90,7 +90,6 @@ public class ProvisionPostings implements Tasklet {
 	private DataSource					dataSource;
 
 	private Date						dateValueDate	= null;
-	private Date						dateAppDate		= null;
 
 	int									postings		= 0;
 	int									processed		= 0;
@@ -101,8 +100,7 @@ public class ProvisionPostings implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		dateValueDate = DateUtility.getValueDate();
-		dateAppDate = DateUtility.getAppDate();
+		dateValueDate = DateUtility.getAppValueDate();
 
 		logger.debug("START: Provision Postings for Value Date: " + dateValueDate);
 
@@ -157,28 +155,25 @@ public class ProvisionPostings implements Tasklet {
 					amountCodes.setProvDue(movement.getProvisionDue());
 					amountCodes.setProvAmt(movement.getProvisionedAmt());
 
-					HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+					HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+					aeEvent.setDataMap(dataMap);
+					
+					aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
 
-					//Provision Posting Process
-					List<Object> odObjDetails = getPostingsPreparationUtil().processPostingDetails(executingMap, true,
-							true, dateAppDate, false, Long.MIN_VALUE);
 
-					if (odObjDetails != null && !odObjDetails.isEmpty()) {
-						if ((Boolean) odObjDetails.get(0)) {
-
+					if (aeEvent.isPostingSucess()) {
 							movement.setProvisionedAmt(movement.getProvisionedAmt().add(movement.getProvisionDue()));
 							movement.setProvisionDue(BigDecimal.ZERO);
 							movement.setProvisionPostSts("C");
-							movement.setLinkedTranId((Long) odObjDetails.get(1));
+							movement.setLinkedTranId(aeEvent.getLinkedTranId());
 
 							//Update Provision Movement Details
 							getProvisionDAO().updateProvAmt(movement, "");
 							getProvisionMovementDAO().update(movement, "");
 
 							postings++;
-						}
 					}
-					odObjDetails = null;
+					
 					pftDetail = null;
 
 					processed = resultSet.getRow();

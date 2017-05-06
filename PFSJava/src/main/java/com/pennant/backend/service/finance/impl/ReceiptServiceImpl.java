@@ -1168,49 +1168,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		return auditHeader;
 	}
 
-	/**
-	 * Method for Fetching Accounting Entries
-	 * 
-	 * @param financeDetail
-	 * @return
-	 */
-	@Override
-	public FinanceDetail getAccountingDetail(FinanceDetail financeDetail, String eventCodeRef) {
-		logger.debug("Entering");
-
-		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
-
-		Long accountSetId = Long.MIN_VALUE;
-		if (AccountEventConstants.ACCEVENT_EARLYSTL.equals(eventCodeRef)) {
-			accountSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_EARLYSTL, FinanceConstants.MODULEID_FINTYPE);
-		} else if (AccountEventConstants.ACCEVENT_EARLYPAY.equals(eventCodeRef)) {
-			accountSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_EARLYPAY, FinanceConstants.MODULEID_FINTYPE);
-		} else {
-			accountSetId = getFinTypeAccountingDAO().getAccountSetID(financeType.getFinType(), AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_FINTYPE);
-		}
-
-		financeDetail.setTransactionEntries(getTransactionEntryDAO().getListTransactionEntryById(
-				accountSetId, "_AEView", true));
-
-		String commitmentRef = financeDetail.getFinScheduleData().getFinanceMain().getFinCommitmentRef();
-
-		if (StringUtils.isEmpty(commitmentRef)) {
-
-			Commitment commitment = getCommitmentDAO().getCommitmentById(commitmentRef, "");
-			if (commitment != null && commitment.isRevolving()) {
-				long accountingSetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_CMTRPY,
-						AccountEventConstants.ACCEVENT_CMTRPY);
-				if (accountingSetId != 0) {
-					financeDetail.setCmtFinanceEntries(getTransactionEntryDAO().getListTransactionEntryById(
-							accountingSetId, "_AEView", true));
-				}
-			}
-		}
-
-		logger.debug("Leaving");
-		return financeDetail;
-	}
-
 	@Override
 	public FinanceProfitDetail getPftDetailForEarlyStlReport(String finReference) {
 		return getProfitDetailsDAO().getPftDetailForEarlyStlReport(finReference);

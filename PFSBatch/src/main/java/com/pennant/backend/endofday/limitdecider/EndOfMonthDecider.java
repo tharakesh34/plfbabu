@@ -62,7 +62,7 @@ public class EndOfMonthDecider implements JobExecutionDecider {
 	public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
 		logger.debug("Entering");
 		try {
-			Date dateValueDate = DateUtility.getValueDate();
+			Date dateValueDate = DateUtility.getAppValueDate();
 			Date monthEndDate = DateUtility.getMonthEndDate(dateValueDate);
 			if (dateValueDate.compareTo(monthEndDate) == 0) {
 				return new FlowExecutionStatus("EndOfMonth");

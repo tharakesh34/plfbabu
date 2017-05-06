@@ -89,6 +89,7 @@ import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.reports.AvailCommitment;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.collateral.impl.CollateralAssignmentValidation;
@@ -876,6 +877,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 		try {
 			//Preparation for Commitment Postings
+			AEEvent aeEvent = new AEEvent();
 			Date dateAppDate = DateUtility.getAppDate();
 			if (AccountEventConstants.ACCEVENT_MNTCMT.equals(event)) {
 				Commitment prvCommitment = getCommitmentDAO().getCommitmentById(commitment.getId(), "");
@@ -883,10 +885,10 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				Commitment tempCommitment = new Commitment();
 				BeanUtils.copyProperties(commitment, tempCommitment);
 				tempCommitment.setCmtAmount(diffAmount);
-				returnResultList = getPostingsPreparationUtil().processCmtPostingDetails(tempCommitment, true, dateAppDate, event);
+				aeEvent = getPostingsPreparationUtil().processCmtPostingDetails(tempCommitment, dateAppDate, event);
 				getLimitManagement().processCommitmentLimit(tempCommitment, false, LimitConstants.BLOCK);
 			} else {
-				returnResultList = getPostingsPreparationUtil().processCmtPostingDetails(commitment, true, dateAppDate, event);
+				aeEvent = getPostingsPreparationUtil().processCmtPostingDetails(commitment, dateAppDate, event);
 				getLimitManagement().processCommitmentLimit(commitment, false, LimitConstants.BLOCK);
 			}
 

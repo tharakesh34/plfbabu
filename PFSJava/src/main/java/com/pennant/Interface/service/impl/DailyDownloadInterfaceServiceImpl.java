@@ -60,7 +60,7 @@ public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterface
 	
 	private EquationMasterMissedDetail masterMissedDetail;
 	
-	private Date dateValueDate = DateUtility.getValueDate();
+	private Date dateValueDate = DateUtility.getAppValueDate();
 	
 	public DailyDownloadInterfaceServiceImpl(){
 		super();

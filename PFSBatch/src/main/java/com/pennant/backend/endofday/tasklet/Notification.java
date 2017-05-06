@@ -24,7 +24,7 @@ public class Notification implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg, ChunkContext context) throws Exception {
-		Date dateValueDate = DateUtility.getValueDate();
+		Date dateValueDate = DateUtility.getAppValueDate();
 
 		logger.debug("START: Notification for Value Date: " + dateValueDate);
 

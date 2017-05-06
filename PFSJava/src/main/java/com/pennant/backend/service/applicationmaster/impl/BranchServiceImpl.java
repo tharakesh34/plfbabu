@@ -248,7 +248,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		}
 		if(finalPostings != null && !finalPostings.isEmpty()){
 			Date dateAppDate = DateUtility.getAppDate();
-			Date dateValueDate = DateUtility.getValueDate();
+			Date dateValueDate = DateUtility.getAppValueDate();
 			for (ReturnDataSet retDataSet : finalPostings) {
 				seqNo = seqNo+1;
 				if (retDataSet.getLinkedTranId() == Long.MIN_VALUE) {

@@ -282,6 +282,7 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 		}
 		
 		setAccountingMandStyle(AccountEventConstants.ACCEVENT_CANCELFIN, true);
+		setAccountingMandStyle(AccountEventConstants.ACCEVENT_DISBINS, true);
 		
 		if (financeTypeDialogCtrl.finDepreciationReq.isChecked() && !isOverdraft) {
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_DPRCIATE, true);

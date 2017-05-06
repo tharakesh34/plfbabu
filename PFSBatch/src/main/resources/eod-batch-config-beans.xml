@@ -97,7 +97,6 @@
 	<bean id="eodProperties" class="com.pennant.eod.util.EODProperties">
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="currencyDAO" ref="currencyDAO" />
-		<property name="definitionDAO" ref="systemInternalAccountDefinitionDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
 		<property name="takafulProviderDAO" ref="takafulProviderDAO" />
@@ -116,7 +115,6 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
-		<property name="internalAccountDefinitionDAO" ref="systemInternalAccountDefinitionDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
@@ -145,7 +143,6 @@
 	<bean name="postingsPreparationUtil" class="com.pennant.app.util.PostingsPreparationUtil">
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
-		<property name="postingsInterfaceService" ref="postingsInterfaceService" />
 		<property name="commitmentDAO" ref="commitmentDAO" />
 		<property name="commitmentMovementDAO" ref="commitmentMovementDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
@@ -181,9 +178,6 @@
 	<bean id="designationDAO" class="com.pennant.backend.dao.systemmasters.impl.DesignationDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	<bean id="postingsInterfaceService" class="com.pennant.Interface.service.impl.PostingsInterfaceServiceImpl">
-		<property name="accountPostingProcess" ref="accountPostingProcess" />
-	</bean>
 	<bean id="hostConnection" class="com.pennant.equation.util.HostConnection">
 		<property name="serverName" value="${pffEquation.ServerName}" />
 		<property name="unitName" value="${pffEquation.UnitName}" />
@@ -201,14 +195,9 @@
 	<bean name="accountProcessUtil" class="com.pennant.app.util.AccountProcessUtil">
 		<property name="accountsDAO" ref="accountsDAO" />
 		<property name="accountTypeDAO" ref="accountTypeDAO" />
-		<property name="internalAccountDefinitionDAO" ref="systemInternalAccountDefinitionDAO" />
 	</bean>
 	<!-- Transaction Entry -->
 	<bean id="transactionEntryDAO" class="com.pennant.backend.dao.rmtmasters.impl.TransactionEntryDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-	<!-- System Internal Account Definition -->
-	<bean id="systemInternalAccountDefinitionDAO" class="com.pennant.backend.dao.masters.impl.SystemInternalAccountDefinitionDAOImpl" parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	<!-- Rule -->
@@ -323,7 +312,6 @@
 	<bean name="accountNumberUtil" class="com.pennant.app.util.AccountNumberUtil">
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
-		<property name="internalAccountDefinitionDAO" ref="systemInternalAccountDefinitionDAO" />
 	</bean>
 	<bean id="secondaryAccountDAO" class="com.pennant.backend.dao.finance.impl.SecondaryAccountDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />

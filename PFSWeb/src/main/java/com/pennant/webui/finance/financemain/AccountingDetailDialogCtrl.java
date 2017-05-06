@@ -82,6 +82,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.cache.util.AccountingSetCache;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl;
@@ -135,6 +136,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	private transient boolean 	accountingsExecuted;
 	private boolean isNotFinanceProcess = false;
 	private String moduleName;
+	private long acSetID;
 	private VASRecording vasRecording;
 	
 	private FinBasicDetailsCtrl  finBasicDetailsCtrl;
@@ -181,6 +183,10 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 
 		if (arguments.containsKey("financeMainDialogCtrl")) {
 			setFinanceMainDialogCtrl((Object) arguments.get("financeMainDialogCtrl"));
+		}
+		
+		if (arguments.containsKey("acSetID")) {
+			acSetID = (long) arguments.get("acSetID");
 		}
 		
 		if (arguments.containsKey("isNotFinanceProcess")) {
@@ -270,8 +276,8 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 				}
 
 				//Finance Accounting Posting Details & Commitment Disbursement Posting Details
-
-				if (getFinanceDetail().getTransactionEntries() != null && !getFinanceDetail().getTransactionEntries().isEmpty()) {				
+				List<TransactionEntry> transactionEntries = AccountingSetCache.getTransactionEntry(acSetID);
+				if (transactionEntries != null && !transactionEntries.isEmpty()) {				
 					boolean executed = false;
 					if (!main.isNew() && 
 							(getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() > 0 
@@ -292,7 +298,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 					}
 
 					if(!executed){
-						doFillAccounting(getFinanceDetail().getTransactionEntries());
+						doFillAccounting(transactionEntries);
 						doFillCmtAccounting(getFinanceDetail().getCmtFinanceEntries(), 0);
 					}
 				}

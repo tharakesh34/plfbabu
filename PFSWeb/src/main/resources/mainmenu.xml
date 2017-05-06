@@ -120,7 +120,6 @@
 		<menuItem id="menu_Item_OpenInternalAcount" zulNavigation="/WEB-INF/pages/Account/Accounts/NewInternalAccountsList.zul"  rightName="menuItem_Account_OpenInternalAccount"/>
 		<menuItem id="menu_Item_MaintainCustomerAcount" zulNavigation="/WEB-INF/pages/Account/Accounts/MaintainCustomerAccountsList.zul"  rightName="menuItem_Account_MaintainCustomerAccount"/>	
 		<menuItem id="menu_Item_MaintainInternalAcount" zulNavigation="/WEB-INF/pages/Account/Accounts/MaintainInternalAccountsList.zul"  rightName="menuItem_Account_MaintainInternalAccount"/>
-		<menuItem id="menu_Item_SystemInternalAccountDefinition" zulNavigation="/WEB-INF/pages/Account/SystemInternalAccountDefinition/SystemInternalAccountDefinitionList.zul"	 rightName="menuItem_Account_SystemInternalAccountDefinition"/>
 	</menu>
  -->	
 	<!-- CustomerMasters Menu Tree -->

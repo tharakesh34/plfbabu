@@ -250,7 +250,6 @@ import com.pennant.backend.model.lmtmasters.ProcessEditorDetail;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatus;
-import com.pennant.backend.model.masters.SystemInternalAccountDefinition;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.model.partnerbank.PartnerBank;
@@ -715,12 +714,6 @@ public class PennantJavaUtil {
 		ModuleUtil.register("Accounts",
 				new ModuleMapping("Accounts", Accounts.class, new String[] { "Accounts", "Accounts_AView" }, masterWF,
 						new String[] { "AccountId", "AcShortName", "AcType", "AcCcy" }, null, 550));
-
-		ModuleUtil
-				.register("SystemInternalAccountDefinition", new ModuleMapping("SystemInternalAccountDefinition",
-						SystemInternalAccountDefinition.class, new String[] { "SystemInternalAccountDef",
-								"SystemInternalAccountDef_AView" }, masterWF, new String[] { "SIACode", "SIAName" },
-						null, 300));
 
 		/************* Customer Masters *************/
 

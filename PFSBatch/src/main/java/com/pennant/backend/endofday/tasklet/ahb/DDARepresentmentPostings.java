@@ -40,7 +40,7 @@ public class DDARepresentmentPostings implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg, ChunkContext context) throws Exception {
-		dateValueDate= DateUtility.getValueDate();
+		dateValueDate= DateUtility.getAppValueDate();
 
 		logger.debug("START: DDA Representment Postings for Value Date: "+ dateValueDate);
 

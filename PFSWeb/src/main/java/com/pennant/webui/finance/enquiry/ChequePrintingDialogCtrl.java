@@ -349,7 +349,7 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	private ChequeDetails prepareReportObject(FinScheduleData finScheduleData) {
 		ChequeDetails chequeDetails = new ChequeDetails();
 		chequeDetails.setFinBranchName(Labels.getLabel("label_ClientName"));//finScheduleData.getFinanceMain().getLovDescFinBranchName()
-		chequeDetails.setAppDate(DateUtility.getValueDate(DateFormat.LONG_DATE));
+		chequeDetails.setAppDate(DateUtility.getAppValueDate(DateFormat.LONG_DATE));
 		chequeDetails.setCustName(finScheduleData.getFinanceMain().getLovDescCustFName() + " "
 				+ StringUtils.trimToEmpty(finScheduleData.getFinanceMain().getLovDescCustLName()));
 		chequeDetails.setDisbAccountId(finScheduleData.getFinanceMain().getRepayAccountId());

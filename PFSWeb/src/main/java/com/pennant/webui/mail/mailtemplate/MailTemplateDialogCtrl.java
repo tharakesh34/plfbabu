@@ -1448,8 +1448,8 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 
 			Map<String, Object> model = new HashMap<String, Object>();
 			FinanceMain fm = new FinanceMain();
-			fm.setMaturityDate(DateUtility.getValueDate());
-			fm.setFinStartDate(DateUtility.getValueDate());
+			fm.setMaturityDate(DateUtility.getAppValueDate());
+			fm.setFinStartDate(DateUtility.getAppValueDate());
 			model.put("vo", fm);
 
 			FreeMarkerTemplateUtils.processTemplateIntoString(template, model);

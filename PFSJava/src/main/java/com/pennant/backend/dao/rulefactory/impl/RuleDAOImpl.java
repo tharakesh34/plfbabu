@@ -65,7 +65,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.ErrorDetails;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.rulefactory.BMTRBFldCriterias;
 import com.pennant.backend.model.rulefactory.BMTRBFldDetails;
 import com.pennant.backend.model.rulefactory.NFScoreRuleDetail;
@@ -73,6 +72,7 @@ import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.rulefactory.RuleModule;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.RuleConstants;
 
 /**
  * DAO methods implementation for the <b>Rule model</b> class.<br>
@@ -211,7 +211,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 	 * @return Rule
 	 */
 	@Override
-	public List<Rule> getSubHeadRuleList(List<String> subHeadRuleList, String module, String event) {
+	public List<Rule> getSubHeadRuleList(List<String> subHeadRuleList) {
 		logger.debug("Entering");
 		
 		List<Rule> sqlRule = null;
@@ -222,8 +222,8 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("RuleCode", subHeadRuleList);
-		source.addValue("RuleModule", module);
-		source.addValue("RuleEvent", event);
+		source.addValue("RuleModule", RuleConstants.MODULE_SUBHEAD);
+		source.addValue("RuleEvent", RuleConstants.MODULE_SUBHEAD);
 		
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT RuleCode, SQLRule From Rules ");
@@ -240,24 +240,6 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		logger.debug("Leaving");
 		return sqlRule;
 	}
-	
-	/**
-	 * Method for Fetching SubHead Rule Queries
-	 */
-	@Override
-    public List<ValueLabel> getSubHeadAmountRule() {
-		logger.debug("Entering");
-		
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT RuleCode Label, SQLRule Value From Rules Where RuleModule = 'SUBHEAD'");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ValueLabel> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ValueLabel.class);
-		
-		List<ValueLabel> valueLables = this.namedParameterJdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper); 
-		logger.debug("Leaving");
-		return valueLables;
-    }
 	
 	/**
 	 * Get Rule by key field

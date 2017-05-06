@@ -14,12 +14,10 @@ import com.pennant.backend.dao.applicationmaster.DPDBucketDAO;
 import com.pennant.backend.dao.applicationmaster.NPABucketConfigurationDAO;
 import com.pennant.backend.dao.applicationmaster.NPABucketDAO;
 import com.pennant.backend.dao.applicationmaster.TakafulProviderDAO;
-import com.pennant.backend.dao.masters.SystemInternalAccountDefinitionDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
@@ -62,7 +60,6 @@ public class EODProperties {
 
 	private FinanceTypeDAO										financeTypeDAO;
 	private CurrencyDAO											currencyDAO;
-	private SystemInternalAccountDefinitionDAO					definitionDAO;
 	private RuleDAO												ruleDAO;
 	private TransactionEntryDAO									transactionEntryDAO;
 	private TakafulProviderDAO									takafulProviderDAO;
@@ -85,9 +82,7 @@ public class EODProperties {
 	 */
 	public void init() {
 		List<FinanceType> finTypeList = getFinanceTypeDAO().getFinTypeDetailForBatch();
-		List<ValueLabel> ruleList = getRuleDAO().getSubHeadAmountRule();
 		List<Currency> ccyCodeList = getCurrencyDAO().getCurrencyList();
-		List<ValueLabel> siaNumList = getDefinitionDAO().getEntrySIANumDetails();
 		List<Long> accountSetIdList = getTransactionEntryDAO().getAccountSetIds();
 		List<TakafulProvider> listProviders = getTakafulProviderDAO().getTakafulProviders();
 		List<DPDBucketConfiguration> bucketConfigurationList = dPDBucketConfigurationDAO.getDPDBucketConfigurations();
@@ -98,10 +93,7 @@ public class EODProperties {
 		List<NPABucket> npaBucketList = nPABucketDAO.getNPABuckets();
 
 		finananceTypesMap = new HashMap<String, FinanceType>(finTypeList.size());
-		rulesMap = new HashMap<String, String>(ruleList.size());
 		currencyMap = new HashMap<String, Currency>(ccyCodeList.size());
-		internalAccMap = new HashMap<String, String>(siaNumList.size());
-		takafulProviders = new HashMap<String, TakafulProvider>(siaNumList.size());
 		transactionEntriesMap = new HashMap<Long, List<TransactionEntry>>(accountSetIdList.size());
 		dpdBucketConfigurations = new HashMap<String, List<DPDBucketConfiguration>>();
 		dPDBuckets = new HashMap<Long, String>();
@@ -114,16 +106,8 @@ public class EODProperties {
 			finananceTypesMap.put(type.getFinType().trim(), type);
 		}
 
-		for (ValueLabel type : ruleList) {
-			rulesMap.put(type.getLabel().trim(), type.getValue());
-		}
-
 		for (Currency currency : ccyCodeList) {
 			currencyMap.put(currency.getCcyCode(), currency);
-		}
-
-		for (ValueLabel valueLabel : siaNumList) {
-			internalAccMap.put(valueLabel.getLabel(), valueLabel.getValue());
 		}
 
 		for (Long accountSetId : accountSetIdList) {
@@ -166,9 +150,7 @@ public class EODProperties {
 		}
 
 		finTypeList = null;
-		ruleList = null;
 		ccyCodeList = null;
-		siaNumList = null;
 		accountSetIdList = null;
 		listProviders = null;
 		bucketConfigurationList = null;
@@ -319,14 +301,6 @@ public class EODProperties {
 
 	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
 		this.currencyDAO = currencyDAO;
-	}
-
-	public SystemInternalAccountDefinitionDAO getDefinitionDAO() {
-		return definitionDAO;
-	}
-
-	public void setDefinitionDAO(SystemInternalAccountDefinitionDAO definitionDAO) {
-		this.definitionDAO = definitionDAO;
 	}
 
 	public RuleDAO getRuleDAO() {

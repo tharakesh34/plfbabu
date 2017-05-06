@@ -106,8 +106,12 @@ public final class DateUtility extends DateUtil {
 	 * 
 	 * @return A {@link java.util.Date} that represents the value date.
 	 */
-	public static java.util.Date getValueDate() {
-		return SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_VALUE);
+	public static java.util.Date getAppValueDate() {
+		return SysParamUtil.getValueAsDate(SysParamUtil.Param.APP_VALUEDATE.getCode());
+	}
+
+	public static String getAppValueDate(DateFormat dateFormat) {
+		return format(SysParamUtil.getValueAsDate(SysParamUtil.Param.APP_VALUEDATE.getCode()), dateFormat);
 	}
 
 	/**
@@ -120,17 +124,6 @@ public final class DateUtility extends DateUtil {
 	}
 
 	/**
-	 * Returns the string representation with the specified date format pattern of the value date.
-	 * 
-	 * @param dateFormat
-	 *            The format describing the date and time pattern.
-	 * @return The formatted date string of the value date.
-	 */
-	public static String getValueDate(DateFormat dateFormat) {
-		return format(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_VALUE), dateFormat);
-	}
-
-	/**
 	 * Returns the string representation with the specified pattern of the value date.
 	 * 
 	 * @param pattern
@@ -138,7 +131,7 @@ public final class DateUtility extends DateUtil {
 	 * @return The formatted date string of the value date.
 	 */
 	public static String getValueDate(String pattern) {
-		return format(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_VALUE), pattern);
+		return format(SysParamUtil.getValueAsDate(SysParamUtil.Param.APP_VALUEDATE.getCode()), pattern);
 	}
 
 	public static String formatDate(java.util.Date date, String pattern) {
@@ -731,4 +724,18 @@ public final class DateUtility extends DateUtil {
 		
 		return  new SimpleDateFormat(format).format(cal.getTime());
 	}
+
+	public static java.util.Date getPostDate() {
+		String setPostingDateTo = SysParamUtil.getValueAsString(PennantConstants.SET_POSTDATE_TO);
+		java.util.Date postingDate = getAppDate();
+		
+		if (!StringUtils.equals(setPostingDateTo, SysParamUtil.Param.APP_DATE.getCode())) {
+			postingDate = getAppDate();
+		} else {
+			postingDate = getAppValueDate();
+		}
+		
+		return postingDate;
+	}
+
 }

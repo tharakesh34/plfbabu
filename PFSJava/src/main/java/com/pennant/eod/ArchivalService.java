@@ -212,7 +212,7 @@ public class ArchivalService extends ServiceHelper {
 			rootElement.appendChild(docType);
 
 			Element bookingDate = doc.createElement("Financebookingdate");
-			bookingDate.appendChild(doc.createTextNode(DateUtility.getValueDate(DateFormat.LONG_DATE)));
+			bookingDate.appendChild(doc.createTextNode(DateUtility.getAppValueDate(DateFormat.LONG_DATE)));
 			rootElement.appendChild(bookingDate);
 
 			Element clasification = doc.createElement("CustomerClassification");

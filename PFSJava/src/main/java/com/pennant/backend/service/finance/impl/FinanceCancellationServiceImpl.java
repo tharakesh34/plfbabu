@@ -92,8 +92,6 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		//Finance Schedule Details
 		scheduleData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
 
-		financeDetail.setFinanceProfitDetail(getProfitDetailsDAO().getFinProfitDetailsById(finReference));
-		
 		//Finance Accounting Fee Charge Details
 		scheduleData.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finReference,procEdtEvent, false, "_TView"));
 
@@ -111,41 +109,11 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		//=======================================
 		getCheckListDetailService().setFinanceCheckListDetails(financeDetail, finType,procEdtEvent, userRole);
 
-		//Finance Fee Charge Details
-		//=======================================
-		List<Long> accSetIdList = new ArrayList<Long>();
-		Long accSetId;
-		
-		String promotionCode = scheduleData.getFinanceMain().getPromotionCode();
-
-		if (StringUtils.isNotBlank(promotionCode)) {
-			accSetId = getFinTypeAccountingDAO().getAccountSetID(promotionCode, AccountEventConstants.ACCEVENT_CANCELFIN,
-					FinanceConstants.MODULEID_PROMOTION);
-		} else {
-			accSetId = getFinTypeAccountingDAO().getAccountSetID(scheduleData.getFinanceType().getFinType(),
-					AccountEventConstants.ACCEVENT_CANCELFIN, FinanceConstants.MODULEID_FINTYPE);
-		}
-		
-		accSetIdList.addAll(getFinanceReferenceDetailDAO().getRefIdListByFinType(finType,procEdtEvent, null, "_ACView"));
-		if (accSetId != Long.MIN_VALUE) {
-			accSetIdList.add(accSetId);
-		}
-		if(!accSetIdList.isEmpty()){
-			financeDetail.setFeeCharges(getTransactionEntryDAO().getListFeeChargeRules(accSetIdList, AccountEventConstants.ACCEVENT_CANCELFIN, "_AView",0));
-		}
-
 		//Finance Stage Accounting Posting Details 
 		//=======================================
 		financeDetail.setStageTransactionEntries(getTransactionEntryDAO().getListTransactionEntryByRefType(
 				finType, procEdtEvent, FinanceConstants.PROCEDT_STAGEACC, userRole, "_AEView", true));
 		
-		//Finance Accounting Posting Details 
-		//=======================================
-		if(accSetId != Long.MIN_VALUE){
-			financeDetail.setTransactionEntries(getTransactionEntryDAO().getListTransactionEntryById(
-					accSetId, "_AEView", true));
-		}
-
 		//Finance Guaranteer Details			
 		financeDetail.setGurantorsDetailList(getGuarantorDetailService().getGuarantorDetail(finReference, "_View"));
 

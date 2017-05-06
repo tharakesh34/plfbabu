@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.endofday.tasklet;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -50,7 +49,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -65,20 +63,17 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SuspensePostingUtil;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.exception.PFFInterfaceException;
 
 public class CapitalizationPostings implements Tasklet {
 
 	private Logger					logger			= Logger.getLogger(CapitalizationPostings.class);
 
 	private FinanceProfitDetailDAO	financeProfitDetailDAO;
-	private PostingsPreparationUtil	postingsPreparationUtil;
 	private SuspensePostingUtil		suspensePostingUtil;
 
 	private DataSource				dataSource;
@@ -96,7 +91,7 @@ public class CapitalizationPostings implements Tasklet {
 	@SuppressWarnings("serial")
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		dateValueDate = DateUtility.getValueDate();
+		dateValueDate = DateUtility.getAppValueDate();
 		dateAppDate = DateUtility.getAppDate();
 
 		logger.debug("START: Capitalization Postings for Value Date: " + dateValueDate);
@@ -145,11 +140,10 @@ public class CapitalizationPostings implements Tasklet {
 				aeEvent.setFinType(resultSet.getString("FinType"));
 				aeEvent.setCustID(resultSet.getLong("CustID"));
 
-				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
 				//Postings Process
-				getPostingsPreparationUtil().processPostingDetails(executingMap, true, true, dateAppDate, false,
-						Long.MIN_VALUE);
+				//FIXME: 050517 Needs to fill return dataset
+				//getPostingsPreparationUtil().processPostingDetails(aeEvent);
 
 				//Update Finance Profit Details
 				pftDetail = new FinanceProfitDetail();
@@ -168,20 +162,9 @@ public class CapitalizationPostings implements Tasklet {
 				pftDetailsList = null;
 			}
 
-		} catch (PFFInterfaceException e) {
-			logger.error("Exception: ", e);
-			throw e;
 		} catch (SQLException e) {
 			logger.error("Exception: ", e);
 			throw new SQLException(e.getMessage()) {
-			};
-		} catch (IllegalAccessException e) {
-			logger.error("Exception: ", e);
-			throw new IllegalAccessException(e.getMessage()) {
-			};
-		} catch (InvocationTargetException e) {
-			logger.error("Exception: ", e);
-			throw new InvocationTargetException(e, e.getMessage()) {
 			};
 		} finally {
 			pftDetail = null;
@@ -233,14 +216,6 @@ public class CapitalizationPostings implements Tasklet {
 
 	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
 		this.financeProfitDetailDAO = financeProfitDetailDAO;
-	}
-
-	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
-		this.postingsPreparationUtil = postingsPreparationUtil;
-	}
-
-	public PostingsPreparationUtil getPostingsPreparationUtil() {
-		return postingsPreparationUtil;
 	}
 
 	public SuspensePostingUtil getSuspensePostingUtil() {

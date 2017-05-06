@@ -260,7 +260,7 @@ public class CoreProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 	public void onClick$button_ProvisionsList_ProvisionProcess(Event event) throws InterruptedException {
 
 		logger.debug("Entering" + event.toString());
-		Date dateValueDate = DateUtility.getValueDate();
+		Date dateValueDate = DateUtility.getAppValueDate();
 
 		int count = this.listBoxProvisions.getSelectedCount();
 		int successCount = 0;

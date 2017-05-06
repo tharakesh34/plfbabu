@@ -507,7 +507,7 @@ public class CommitmentDAOImpl extends BasisCodeDAO<Commitment> implements Commi
 		logger.debug("Entering");
 
 		boolean cmtExpired = false;
-		Date dateValueDate = DateUtility.getValueDate();
+		Date dateValueDate = DateUtility.getAppValueDate();
 		if(cmtExpDate.compareTo(dateValueDate) < 0){
 			cmtExpired = true;
 		}

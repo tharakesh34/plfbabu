@@ -388,7 +388,6 @@ public class PennantAppUtil {
 		excludeModules.add("ChangeGestation");
 		excludeModules.add("ChangeFrequency");
 		excludeModules.add("PoliceCaseCustomers");
-		excludeModules.add("SystemInternalAccountDefinition");
 		excludeModules.add("StepPolicyDetail");
 		excludeModules.add("RejectFinanceMain");
 		excludeModules.add("ReinstateFinance");

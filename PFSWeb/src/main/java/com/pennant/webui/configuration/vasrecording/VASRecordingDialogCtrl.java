@@ -111,6 +111,7 @@ import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.model.staticparms.ExtendedFieldRender;
@@ -2333,9 +2334,12 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			accountingSetEntries.addAll(getVASRecording().getReturnDataSetList());
 		}else{
 			getVASRecording().setFee(PennantAppUtil.unFormateAmount(this.fee.getActualValue(), getCcyFormat()));
-			HashMap<String, Object> executingMap = new HashMap<String, Object>();
-			getVASRecording().getDeclaredFieldValues(executingMap);
-			List<ReturnDataSet> returnSetEntries = getEngineExecution().getVasExecResults(AccountEventConstants.ACCEVENT_VAS_FEE, false, executingMap);
+			AEEvent aeEvent = new AEEvent();
+			aeEvent.setFinEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+			
+			HashMap<String, Object> dataMap = new HashMap<String, Object>();
+			getVASRecording().getDeclaredFieldValues(dataMap);
+			List<ReturnDataSet> returnSetEntries = getEngineExecution().getVasExecResults(aeEvent, dataMap);
 			getVASRecording().setReturnDataSetList(returnSetEntries);
 			accountingSetEntries.addAll(returnSetEntries);
 		}

@@ -29,6 +29,8 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	private Date postDate;
 	@XmlElement
 	private Date valueDate;
+	private Date appDate;
+	private Date appValueDate;
 	@XmlElement
 	private String tranCode;
 	private int transOrder;
@@ -437,6 +439,22 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	}
 	public void setAccSetId(long accSetId) {
 		this.accSetId = accSetId;
+	}
+
+	public Date getAppDate() {
+		return appDate;
+	}
+
+	public void setAppDate(Date appDate) {
+		this.appDate = appDate;
+	}
+
+	public Date getAppValueDate() {
+		return appValueDate;
+	}
+
+	public void setAppValueDate(Date appValueDate) {
+		this.appValueDate = appValueDate;
 	}
 
 	

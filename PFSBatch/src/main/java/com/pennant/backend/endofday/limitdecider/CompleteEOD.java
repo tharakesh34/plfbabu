@@ -78,7 +78,7 @@ public class CompleteEOD implements JobExecutionDecider {
 	}
 
 	public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
-		Date valueDate = DateUtility.getValueDate();
+		Date valueDate = DateUtility.getAppValueDate();
 		Date nextBusinessDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT);
 
 		logger.debug("START: Complete EOD On : " + valueDate);

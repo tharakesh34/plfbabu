@@ -19,10 +19,10 @@ public class DateService {
 	 */
 	public void doUpdateValueDate() {
 		logger.debug(" Entering ");
-		Date dateValueDate = DateUtility.getValueDate();
+		Date dateValueDate = DateUtility.getAppValueDate();
 
 		//Value Date Updation 
-		SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_VALUE, DateUtility.addDays(dateValueDate, 1)
+		SysParamUtil.updateParamDetails(SysParamUtil.Param.APP_VALUEDATE.getCode(), DateUtility.addDays(dateValueDate, 1)
 				.toString());
 
 		//PURGING_PROCESS Value Updation Based On Month End
@@ -41,12 +41,12 @@ public class DateService {
 	public void doUpdatebeforeEod(boolean updatePhase) {
 		logger.debug(" Entering ");
 		// Value Date updation with Application Date
-		SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_VALUE, DateUtility.getAppDate().toString());
+		SysParamUtil.updateParamDetails(SysParamUtil.Param.APP_VALUEDATE.getCode(), DateUtility.getAppDate().toString());
 
 		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
 		//Reset Next Business Date after updating Calendar with Core System
 		Calendar calendar = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT,
-				DateUtility.getValueDate());
+				DateUtility.getAppValueDate());
 		String nextBussDate = DateUtility.formatUtilDate(calendar.getTime(), PennantConstants.DBDateFormat);
 
 		//set System Parameter Value
@@ -68,7 +68,7 @@ public class DateService {
 	public boolean doUpdateAftereod(boolean updatePhase) {
 		logger.debug(" Entering ");
 
-		Date valueDate = DateUtility.getValueDate();
+		Date valueDate = DateUtility.getAppValueDate();
 		Date nextBusinessDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT);
 
 		// If NBD is holiday then loop continues, else end process.

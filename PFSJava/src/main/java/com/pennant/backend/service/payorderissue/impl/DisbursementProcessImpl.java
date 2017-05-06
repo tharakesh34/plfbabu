@@ -14,6 +14,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennanttech.pff.core.Literal;
@@ -44,8 +45,11 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 			if (StringUtils.equals("E", disbursement.getStatus())) {
 				disbursement.setStatus(DisbursementConstants.STATUS_PAID);
 			} else {
+				AEEvent aeEvent = new AEEvent();
+				aeEvent.setLinkedTranId(disbursement.getLinkedTranId());
 				list = engineExecution.cancelPostings(disbursement.getLinkedTranId());
-				postingsPreparationUtil.processPostings(list);
+				aeEvent.setReturnDataSet(list);
+				aeEvent = postingsPreparationUtil.processPostings(aeEvent);
 				disbursement.setStatus(DisbursementConstants.STATUS_REJECTED);
 			}
 			
