@@ -279,14 +279,14 @@ public class FinScheduleData {
 		this.financeMain.setManualSchedule(financeType.isManualSchedule());
 		//Grace period details
 
-		if(financeType.isFInIsAlwGrace()){
-
-			//Default Grace Period Group box UnVisible by setting Allow grace period to FALSE
-			if(financeType.getFinCategory().equals(FinanceConstants.PRODUCT_ISTISNA)){
-				this.financeMain.setAllowGrcPeriod(financeType.isFInIsAlwGrace());
-			}else{
-				this.financeMain.setAllowGrcPeriod(false);
-			}
+		//Default Grace Period Group box UnVisible by setting Allow grace period to FALSE
+		if(financeType.getFinCategory().equals(FinanceConstants.PRODUCT_ISTISNA)){
+			this.financeMain.setAllowGrcPeriod(financeType.isFInIsAlwGrace());
+		}else{
+			this.financeMain.setAllowGrcPeriod(false);
+		}
+		
+		if(this.financeMain.isAllowGrcPeriod()){
 
 			this.financeMain.setGraceBaseRate(financeType.getFinGrcBaseRate());
 			this.financeMain.setGraceSpecialRate(financeType.getFinGrcSplRate());

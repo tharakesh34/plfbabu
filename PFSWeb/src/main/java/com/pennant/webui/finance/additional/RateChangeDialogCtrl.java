@@ -368,6 +368,11 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 			}
 		}
+		//TillDate is being Excluded if there is no ratereview in Grace and Payment
+		if(!aFinanceMain.isAllowGrcPftRvw() && !aFinanceMain.isAllowRepayRvw()){
+			excludeFileds.append("TILLDATE,");
+			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(), PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
+		}
 		
 		if(!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,aFinanceMain.getProductCategory())){
 			//Check if schedule header is null or not and set the recal type fields.
@@ -470,17 +475,6 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 
-				//Not Review Date
-				if (!curSchd.isRvwOnSchDate() ) {
-					if(getFinScheduleData().getFinanceMain().isAllowGrcPeriod() && 
-							curSchd.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) == 0
-							&& curSchd.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) != 0){
-						//Proceed Further
-					}else{
-						continue;
-					}
-				}
-
 				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
 				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					this.cbRateChangeFromDate.getItems().clear();
@@ -492,10 +486,22 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					includedPrvSchTerm = false;
 					continue;
 				}
+				
 				//in Overdraft the Review from Date should be Greater than the appdate 
 				if(isOverdraft && DateUtility.compare(curSchd.getSchDate(),DateUtility.getAppDate())<0){
 					includedPrvSchTerm = true;
 					continue;
+				}
+				
+				//Not Review Date
+				if (!curSchd.isRvwOnSchDate() ) {
+					if(getFinScheduleData().getFinanceMain().isAllowGrcPeriod() && 
+							curSchd.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) == 0
+							&& curSchd.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) != 0){
+						//Proceed Further
+					}else{
+						continue;
+					}
 				}
 				
 				//Schedule Date Passed last review date
@@ -588,12 +594,6 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 
-				//Not Review Date
-				if (!curSchd.isRvwOnSchDate()) {
-					if (curSchd.getSchDate().compareTo(maturityDate)!=0) {
-						continue;	
-					}
-				}
 				//in Overdraft the Review from Date should be Greater than the appdate 
 				if(isOverdraft && DateUtility.compare(curSchd.getSchDate(),DateUtility.getAppDate())<0){
 					continue;
@@ -607,7 +607,14 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					continue;
 				}
-
+				
+				//Not Review Date
+				if (!curSchd.isRvwOnSchDate()) {
+					if (curSchd.getSchDate().compareTo(maturityDate)!=0|| this.cbRateChangeFromDate.getSelectedIndex()<=0) {
+						continue;	
+					}
+				}
+				
 				//Schedule Date Passed last review date
 				if (curSchd.getSchDate().before(getFinScheduleData().getFinanceMain().getLastRepayRvwDate())) {
 					continue;
@@ -622,7 +629,14 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if (curSchd.getSchDate().before(getFinScheduleData().getFinanceMain().getLastRepayCpzDate())) {
 					continue;
 				}
-
+				// if Recal Type is TillDate then the Maturity dateis not been allowed 
+				if (this.cbReCalType.getSelectedIndex() > 0 && StringUtils.equals(getComboboxValue(this.cbReCalType),
+						CalculationConstants.RPYCHG_TILLDATE)) {
+					if (i == financeScheduleDetails.size() - 1) {
+						continue;
+					}
+				}
+				
 				//Profit repayment on frequency is TRUE
 				if (getFinScheduleData().getFinanceMain().isFinRepayPftOnFrq()) {
 					if (curSchd.getSchDate().before(getFinScheduleData().getFinanceMain().getLastRepayPftDate())) {
@@ -634,6 +648,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate())+" "+curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());
 				comboitem.setAttribute("toSpecifier",curSchd.getSpecifier());
+				
 				if (getFinanceScheduleDetail() != null &&  curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate()) >= 0) {
 					dateCombobox.appendChild(comboitem);
 				} else if(curSchd.getSchDate().compareTo(fillAfter) > 0) {
@@ -1123,6 +1138,14 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.tillDateRow.setVisible(true);
 			this.fromDateRow.setVisible(true);
 			
+			// RateChangeTodate is not allowed to select the maturity Date when recal type is Tilldate
+			if (this.cbRateChangeToDate.getSelectedIndex() > 0
+					&& DateUtility.compare((Date) this.cbRateChangeToDate.getSelectedItem().getValue(),
+							getFinScheduleData().getFinanceMain().getMaturityDate()) == 0) {
+				throw new WrongValueException(this.cbRateChangeToDate,
+						Labels.getLabel("label_RateChange_MaturityDate"));
+
+			}
 			if(this.cbRateChangeFromDate.getSelectedIndex() > 0 ){
 				fillSchToDates(this.cbRecalFromDate, getFinScheduleData().getFinanceScheduleDetails(),
 						(Date) this.cbRateChangeFromDate.getSelectedItem().getValue(), false);
@@ -1180,8 +1203,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Leaving" + event.toString());
 	}
 	
-	public void fillSchToDates(Combobox dateCombobox,
-			List<FinanceScheduleDetail> financeScheduleDetails, Date fillAfter, boolean includeFromDate) {
+	public void fillSchToDates(Combobox dateCombobox, List<FinanceScheduleDetail> financeScheduleDetails,
+			Date fillAfter, boolean includeFromDate) {
 		logger.debug("Entering");
 		dateCombobox.getItems().clear();
 		Comboitem comboitem = new Comboitem();
@@ -1191,24 +1214,33 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		dateCombobox.setSelectedItem(comboitem);
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
-				
+
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-				if ((curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))  
-						&& ((curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) >= 0 && curSchd.isRepayOnSchDate() && !curSchd.isSchPftPaid()) ||
-								(curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) >= 0 && curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid()))) {
-					
+
+				if (i != financeScheduleDetails.size() - 1) {
+					continue;
+				}
+				
+				if ((curSchd.isRepayOnSchDate()
+						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))
+						&& ((curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) >= 0
+								&& curSchd.isRepayOnSchDate() && !curSchd.isSchPftPaid())
+								|| (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) >= 0
+										&& curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid()))) {
+
 					comboitem = new Comboitem();
-					comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate())+" "+curSchd.getSpecifier());
-					comboitem.setAttribute("toSpecifier",curSchd.getSpecifier());
+					comboitem.setLabel(
+							DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+					comboitem.setAttribute("toSpecifier", curSchd.getSpecifier());
 					comboitem.setValue(curSchd.getSchDate());
-					if(includeFromDate && DateUtility.compare(curSchd.getSchDate(),fillAfter) >= 0) {
-						if(i != financeScheduleDetails.size()-1){
-							dateCombobox.appendChild(comboitem);
-							if(getFinanceScheduleDetail() != null && curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate())==0) {
-								dateCombobox.setSelectedItem(comboitem);
-							}
+
+					if (includeFromDate && DateUtility.compare(curSchd.getSchDate(), fillAfter) >= 0) {
+						dateCombobox.appendChild(comboitem);
+						if (getFinanceScheduleDetail() != null
+								&& curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate()) == 0) {
+							dateCombobox.setSelectedItem(comboitem);
 						}
-					} else if(!includeFromDate && DateUtility.compare(curSchd.getSchDate(),fillAfter) > 0) {
+					} else if (!includeFromDate && DateUtility.compare(curSchd.getSchDate(), fillAfter) > 0) {
 						dateCombobox.appendChild(comboitem);
 					}
 				}
@@ -1289,11 +1321,18 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.rate.setBaseValue("");
 		this.rate.setSpecialValue("");
 		this.rate.setEffRateValue(BigDecimal.ZERO);
+		StringBuilder excludeFileds=new StringBuilder();
+		
+		if(!getFinScheduleData().getFinanceMain().isAllowGrcPftRvw() && !getFinScheduleData().getFinanceMain().isAllowRepayRvw()){
+			excludeFileds.append(",TILLDATE");
+		}
 		
 		if(getFinScheduleData().getFinanceMain().getNumberOfTerms() == 1){
-			fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), ",TILLMDT,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+			excludeFileds.append(",TILLMDT,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+			fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
 		}else{
-			fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), ",ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+			excludeFileds.append(",ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+			fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(),  excludeFileds.toString());
 		}
 		if (isValidComboValue(this.cbRateChangeFromDate,Labels.getLabel("label_RateChangeDialog_FromDate.value"))) {
 			this.cbRateChangeToDate.getItems().clear();
@@ -1319,9 +1358,11 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						getFinScheduleData().getFinanceMain().getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_NOPAY)){
 					
 					if(getFinScheduleData().getFinanceMain().getNumberOfTerms() == 1){
-						fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), ",TILLMDT,CURPRD,TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+						excludeFileds.append(",TILLMDT,CURPRD,TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+						fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(),  excludeFileds.toString());
 					}else{
-						fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), ",CURPRD,TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+						excludeFileds.append(",CURPRD,TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+						fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(),  excludeFileds.toString());
 					}
 				}
 				
