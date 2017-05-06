@@ -127,23 +127,6 @@ public class PostingsPreparationUtil implements Serializable {
 		return procCmtPostingDetails(commitment, dateAppDate, acSetEvent);
 	}
 
-	/**
-	 * Method for Execution of Posting in Core Banking Side Depends on Creation Flag
-	 * 
-	 * @param list
-	 * @param postBranch
-	 * @param dateAppDate
-	 * @param isCreateNow
-	 * @param isEODProcess
-	 * @param object
-	 * @return List<Object>
-	 * @throws PFFInterfaceException
-	 */
-	public List<Object> postingAccruals(List<ReturnDataSet> list, String postBranch, Date valueDate,
-			boolean isCreateNow, boolean isEODProcess, String isDummy, long linkedTranId) throws Exception {
-
-		return procAccrualPostings(list, postBranch, valueDate, isCreateNow, isEODProcess, isDummy, linkedTranId);
-	}
 
 	/**
 	 * Method To Process Finance Disbursement Cancellation posting IN PostingsPreparationUtil.java
@@ -193,7 +176,7 @@ public class PostingsPreparationUtil implements Serializable {
 		List<ReturnDataSet> returnDataSet = aeEvent.getReturnDataSet();
 		//FIXME: PV: Prepare Return Data Set
 
-		getPostingsDAO().saveBatch(returnDataSet, "", false);
+		getPostingsDAO().saveBatch(returnDataSet);
 
 		return aeEvent;
 	}
@@ -396,115 +379,13 @@ public class PostingsPreparationUtil implements Serializable {
 
 		if (!list.isEmpty()) {
 			if (aeEvent.isPostingSucess()) {
-				getPostingsDAO().saveBatch(list, "", false);
+				getPostingsDAO().saveBatch(list);
 				getAccountProcessUtil().updateAccountInfo(list);
 			}
 		}
 
 		logger.debug("Leaving");
 		return aeEvent;
-	}
-
-	/**
-	 * Method for Execution of Posting in Core Banking Side Depends on Creation Flag
-	 * 
-	 * @param list
-	 * @param postBranch
-	 * @param dateAppDate
-	 * @param isCreateNow
-	 * @param isEODProcess
-	 * @param object
-	 * @return List<Object>
-	 * @throws PFFInterfaceException
-	 */
-	private List<Object> procAccrualPostings(List<ReturnDataSet> list, String postBranch, Date valueDate,
-			boolean isCreateNow, boolean isEODProcess, String isDummy, long linkedTranId) throws Exception {
-		logger.debug("Entering");
-
-		//Method for Checking for Reverse Calculations Based upon Negative Amounts
-		for (ReturnDataSet returnDataSet : list) {
-
-			returnDataSet.setLinkedTranId(linkedTranId);
-
-			if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
-
-				String tranCode = returnDataSet.getTranCode();
-				String revTranCode = returnDataSet.getRevTranCode();
-				String debitOrCredit = returnDataSet.getDrOrCr();
-
-				returnDataSet.setTranCode(revTranCode);
-				returnDataSet.setRevTranCode(tranCode);
-
-				returnDataSet.setPostAmount(returnDataSet.getPostAmount().negate());
-
-				if (debitOrCredit.equals(AccountConstants.TRANTYPE_CREDIT)) {
-					returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
-				} else {
-					returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
-				}
-			}
-		}
-
-		boolean isPostingSuccess = true;
-
-		if (!list.isEmpty()) {
-			// Method for validating Postings with interface program and
-			// return results
-			if (list.get(0).getLinkedTranId() == Long.MIN_VALUE) {
-				linkedTranId = getPostingsDAO().getLinkedTransId();
-			} else {
-				linkedTranId = list.get(0).getLinkedTranId();
-			}
-
-			//FIXME: PV: 05MAY17 needs to fill return data set
-
-			for (int k = 0; k < list.size(); k++) {
-				ReturnDataSet set = list.get(k);
-				set.setLinkedTranId(linkedTranId);
-				set.setPostDate(valueDate);
-				String errorId = StringUtils.trimToEmpty(set.getErrorId());
-				if (!("0000".equals(errorId) || StringUtils.isEmpty(errorId))) {
-					set.setPostStatus("F");
-					isPostingSuccess = false;
-				} else {
-					set.setPostStatus("S");
-				}
-			}
-
-			// save Postings
-			if (isEODProcess) {
-
-				if (isPostingSuccess) {
-					if ("N".equals(isDummy)) {
-						getPostingsDAO().saveHeader(list.get(0), "S", "");
-					}
-				} else {
-					if ("N".equals(isDummy)) {
-						getPostingsDAO().saveHeader(list.get(0), "F", "");
-					}
-				}
-				if ("Y".equals(isDummy)) {
-					getPostingsDAO().saveEODBatch(list, "_Temp", isDummy);
-				} else {
-					getPostingsDAO().saveEODBatch(list, "", isDummy);
-				}
-
-			} else if (isPostingSuccess) {
-				getPostingsDAO().saveBatch(list, "", false);
-			}
-
-			if ("N".equals(isDummy) && isPostingSuccess) {
-				//Account Details Updation
-				getAccountProcessUtil().updateAccountInfo(list);
-			}
-		}
-
-		List<Object> returnList = new ArrayList<Object>(2);
-		returnList.add(isPostingSuccess);
-		returnList.add(linkedTranId);
-
-		logger.debug("Leaving");
-		return returnList;
 	}
 
 	/**

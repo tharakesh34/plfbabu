@@ -182,36 +182,14 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		return dataSet.getLinkedTranId();
 	}
 	
-	/**
-	 * Method for saving List of Postings in EndOfDay Process
-	 * @param dataSetList
-	 * @param type
-	 * @param isEODPostings
-	 */
-	@Override
-	public void saveEODBatch(List<ReturnDataSet> dataSetList, String type, String isDummy){
-		logger.debug("Entering");
-	
-		if("N".equals(isDummy)) {
-			saveBatch(dataSetList, type, true);
-		}
-		
-		saveBatch(dataSetList, type, false);
-		logger.debug("Leaving");
-	}
 	
 	@Override
-	public void saveBatch(List<ReturnDataSet> dataSetList, String type, boolean isEODPostings) {
+	public void saveBatch(List<ReturnDataSet> dataSetList) {
 		logger.debug("Entering");
 		
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append("Insert Into ");
-		if(isEODPostings){
-			insertSql.append(" EODPostingsDetail");
-		}else{
-			insertSql.append(" Postings");
-		}
-		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(" Postings");
 		insertSql.append(" (LinkedTranId, Postref, PostingId, finReference, FinEvent,");
 		insertSql.append(" PostDate, ValueDate, TranCode, TranDesc, RevTranCode, DrOrCr, Account,ShadowPosting,");
 		insertSql.append(" PostAmountLcCcy, TransOrder, DerivedTranOrder,PostToSys,ExchangeRate, ");

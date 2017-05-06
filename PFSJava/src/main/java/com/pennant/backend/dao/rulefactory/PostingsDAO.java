@@ -52,20 +52,34 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 
 public interface PostingsDAO {
 
-	long saveHeader(ReturnDataSet rule, String status,String type);
-	void saveBatch(List<ReturnDataSet> dataSetList, String type,boolean isEODPostings);
+	long saveHeader(ReturnDataSet rule, String status, String type);
+
+	void saveBatch(List<ReturnDataSet> dataSetList);
+
 	long getLinkedTransId();
+
 	List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranId);
-	void saveEODBatch(List<ReturnDataSet> dataSetList, String type, String isDummy);
+
 	public void saveChargesBatch(List<FeeRule> chargeList, boolean isWIF, String tableType);
-	List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,String postingGroupBy);
+
+	List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,
+			String postingGroupBy);
+
 	FinanceSummary getTotalFeeCharges(FinanceSummary summary);
+
 	void updateBatch(List<ReturnDataSet> dataSetList, String type);
+
 	void deleteAll(String type);
+
 	BigDecimal getPostAmtByTranIdandEvent(String finReference, String finEvent, long linkedTranId);
+
 	List<Long> getLinkTranIdByRef(String finReference);
+
 	List<ReturnDataSet> getPostingsbyFinanceBranch(String branchCode);
+
 	List<ReturnDataSet> getPostingsByPostref(String finReference, String finEvent);
+
 	List<ReturnDataSet> getPostingsByFintref(String finReference);
+
 	List<ReturnDataSet> getPostingsByTransIdList(List<Long> tranIdList);
 }

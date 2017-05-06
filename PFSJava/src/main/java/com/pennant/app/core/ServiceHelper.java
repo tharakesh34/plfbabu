@@ -183,7 +183,6 @@ abstract public class ServiceHelper implements Serializable {
 		}
 		if (!list.isEmpty()) {
 			getPostingsDAO().saveHeader(list.get(0), list.get(0).getPostStatus(), "");
-			getPostingsDAO().saveEODBatch(list, "", "N");
 			return linkedTranId;
 		}
 		return 0;

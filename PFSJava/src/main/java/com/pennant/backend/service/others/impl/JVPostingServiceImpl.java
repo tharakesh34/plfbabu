@@ -417,7 +417,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 					for (ReturnDataSet set : list) {
 						set.setFinReference(String.valueOf(jVPosting.getBatchReference()));
 					}
-					getPostingsDAO().saveBatch(list, "", false);
+					getPostingsDAO().saveBatch(list);
 					auditHeader.setErrorList(errorDetails);
 				}
 			} catch (PFFInterfaceException e) {

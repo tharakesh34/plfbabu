@@ -171,7 +171,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 					executePostings.addAll(newPostings);
 				}
 				if(!executePostings.isEmpty()){
-					getPostingsDAO().saveBatch(executePostings, "", false);
+					getPostingsDAO().saveBatch(executePostings);
 				}
 			}
 
@@ -411,7 +411,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 					executePostings.addAll(newPostings);
 				}
 				if(!executePostings.isEmpty()){
-					getPostingsDAO().saveBatch(executePostings, "", false);
+					getPostingsDAO().saveBatch(executePostings);
 				}
 			}
 

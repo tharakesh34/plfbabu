@@ -1550,7 +1550,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 			// save Postings
 			if (list != null && !list.isEmpty()) {
-				getPostingsDAO().saveBatch(list, "", false);
+				getPostingsDAO().saveBatch(list);
 			}
 		}
 

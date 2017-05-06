@@ -878,6 +878,21 @@ public class AccountEngineExecution implements Serializable {
 
 		return returnSetEntries;
 	}
+	
+	public AEEvent postAccounting(AEEvent aeEvent , HashMap<String, Object>	dataMap) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException{
+		 getAccEngineExecResults(aeEvent, dataMap);
+		 List<ReturnDataSet> returnDataset = aeEvent.getReturnDataSet();
+		 if (!aeEvent.isPostingSucess()) {
+			return aeEvent;
+		}
+		 
+		 getPostingsDAO().saveBatch(returnDataset);
+		 
+		 return aeEvent;
+		
+	}
+	
+	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

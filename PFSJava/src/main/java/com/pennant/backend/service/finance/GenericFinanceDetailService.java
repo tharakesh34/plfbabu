@@ -1530,7 +1530,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 			// save Postings
 			if (accountingSetEntries != null && !accountingSetEntries.isEmpty()) {
-				getPostingsDAO().saveBatch(accountingSetEntries, "", false);
+				getPostingsDAO().saveBatch(accountingSetEntries);
 			}
 
 			// Save/Update Finance Profit Details
@@ -1703,7 +1703,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			}
 			auditHeader.setErrorList(errorDetails);
 			// save Postings
-			getPostingsDAO().saveBatch(list, "", false);
+			getPostingsDAO().saveBatch(list);
 		}
 
 		// Stage Accounting Entry Details Saving
