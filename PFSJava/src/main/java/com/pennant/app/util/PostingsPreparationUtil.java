@@ -668,6 +668,7 @@ public class PostingsPreparationUtil implements Serializable {
 		logger.debug("Leaving");
 		return aeEvent;
 	}
+	
 	public AEEvent postAccountingEOD(AEEvent aeEvent, HashMap<String, Object> dataMap) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
 
