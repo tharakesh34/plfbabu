@@ -138,17 +138,17 @@ public class EodService {
 		//Rate review
 		custEODEvent = rateReviewService.processRateReview(custEODEvent);
 
-		//Accrual
-		custEODEvent = accrualService.processAccrual(custEODEvent);
-
 		//installment 
 		installmentDueService.processDueDatePostings(custEODEvent);
 		
-		//Auto disbursements
-		autoDisbursementService.processDisbursementPostings(custEODEvent);
-
 		//receipt postings
 		receiptPaymentService.processrReceipts(custEODEvent);
+
+		//Accrual
+		custEODEvent = accrualService.processAccrual(custEODEvent);
+
+		//Auto disbursements
+		autoDisbursementService.processDisbursementPostings(custEODEvent);
 
 		//Date and holiday check
 		Date nextDate = DateUtility.addDays(date, 1);
