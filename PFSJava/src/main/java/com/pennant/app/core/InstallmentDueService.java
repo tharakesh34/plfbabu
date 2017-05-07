@@ -142,7 +142,7 @@ public class InstallmentDueService extends ServiceHelper {
 		financeType.getDeclaredFieldValues(executingMap);
 
 		//Postings Process
-		postAccounting(aeEvent, executingMap);
+		postAccountingEOD(aeEvent, executingMap);
 		logger.debug(" Leaving ");
 	}
 

@@ -231,7 +231,7 @@ public class RateReviewService extends ServiceHelper {
 		finEODEvent.setRepayInstructions(finScheduleData.getRepayInstructions());
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
-		postAccounting(aeEvent, dataMap);
+		postAccountingEOD(aeEvent, dataMap);
 		//Saving Rate Review Details
 		FinanceRateReview rateReview = new FinanceRateReview();
 		rateReview.setFinReference(finRef);

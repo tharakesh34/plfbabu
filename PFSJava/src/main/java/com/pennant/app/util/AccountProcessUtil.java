@@ -72,7 +72,7 @@ public class AccountProcessUtil implements Serializable {
 		super();
 	}
 
-	public void procAccountUpdate(List<ReturnDataSet> dataSets, BigDecimal accrualBal) {
+	public void procAccountUpdate(List<ReturnDataSet> dataSets) {
 
 		Map<String, Accounts> accountMap = new HashMap<String, Accounts>(1);
 		Map<String, AccountsHistory> accountHistMap = new HashMap<String, AccountsHistory>(1);

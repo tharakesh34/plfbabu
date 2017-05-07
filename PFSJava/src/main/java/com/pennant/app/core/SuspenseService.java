@@ -145,7 +145,7 @@ public class SuspenseService extends ServiceHelper {
 		aeEvent.setSchdDate(valueDate);
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
-		postAccounting(aeEvent, dataMap);
+		postAccountingEOD(aeEvent, dataMap);
 		long linkedTranId = aeEvent.getLinkedTranId();
 
 		if (suspHead != null) {
@@ -237,7 +237,7 @@ public class SuspenseService extends ServiceHelper {
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		// Postings Preparation
-		postAccounting(aeEvent, dataMap);
+		postAccountingEOD(aeEvent, dataMap);
 		long linkedTranId = aeEvent.getLinkedTranId();
 
 		// Finance Suspend Head

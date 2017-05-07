@@ -92,7 +92,7 @@ public class AutoDisbursementService extends ServiceHelper {
 		//Postings Process
 		FinanceType financeType = getFinanceType(aeEvent.getFinType());
 		financeType.getDeclaredFieldValues(executingMap);
-		postAccounting(aeEvent,executingMap);
+		postAccountingEOD(aeEvent,executingMap);
 		curDisbursment.setDisbDisbursed(true);
 		curDisbursment.setLinkedTranId(aeEvent.getLinkedTranId());
 		getFinanceDisbursementDAO().updateBatchDisb(curDisbursment, "");

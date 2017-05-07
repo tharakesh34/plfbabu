@@ -92,22 +92,7 @@ public class PostingsPreparationUtil implements Serializable {
 	public PostingsPreparationUtil() {
 		super();
 	}
-
-	/**
-	 * Method for Process Posting Details
-	 * 
-	 * @param dataSet
-	 * @param amountCodes
-	 * @param isEODProcess
-	 * @param isCreateNewAccount
-	 * @param dateAppDate
-	 * @param movement
-	 * @param isProvPostings
-	 * @return
-	 * @throws PFFInterfaceException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 */
+	
 	public AEEvent processPostingDetails(AEEvent aeEvent, HashMap<String, Object> dataMap)
 			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 
@@ -678,12 +663,37 @@ public class PostingsPreparationUtil implements Serializable {
 
 		getPostingsDAO().saveBatch(returnDatasetList);
 
-		getAccountProcessUtil().procAccountUpdate(returnDatasetList, aeEvent.getAeAmountCodes().getAccrue());
+		getAccountProcessUtil().procAccountUpdate(returnDatasetList);
 
 		logger.debug("Leaving");
 		return aeEvent;
 	}
+	public AEEvent postAccountingEOD(AEEvent aeEvent, HashMap<String, Object> dataMap) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+		logger.debug("Entering");
 
+		if (aeEvent.getLinkedTranId() <= 0) {
+			aeEvent.setLinkedTranId(getPostingsDAO().getLinkedTransId());
+		}
+		
+		getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+
+		List<ReturnDataSet> returnDatasetList = aeEvent.getReturnDataSet();
+		if (!aeEvent.isPostingSucess()) {
+			return aeEvent;
+		}
+
+		if (returnDatasetList == null || returnDatasetList.isEmpty()) {
+			return aeEvent;
+		}
+		
+		getPostingsDAO().saveBatch(returnDatasetList);
+
+		logger.debug("Leaving");
+		return aeEvent;
+
+}
+
+	
 	/**
 	 * @param finReference
 	 * @return
@@ -700,7 +710,7 @@ public class PostingsPreparationUtil implements Serializable {
 
 		getPostingsDAO().saveBatch(returnDataSets);
 
-		getAccountProcessUtil().procAccountUpdate(returnDataSets, BigDecimal.ZERO);
+		getAccountProcessUtil().procAccountUpdate(returnDataSets);
 
 		logger.debug("Leaving");
 		return returnDataSets;
@@ -723,7 +733,7 @@ public class PostingsPreparationUtil implements Serializable {
 
 		getPostingsDAO().saveBatch(returnDataSets);
 
-		getAccountProcessUtil().procAccountUpdate(returnDataSets, BigDecimal.ZERO);
+		getAccountProcessUtil().procAccountUpdate(returnDataSets);
 
 		logger.debug("Leaving");
 		return returnDataSets;

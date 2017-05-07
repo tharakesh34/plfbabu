@@ -164,7 +164,7 @@ public class StatusMovementService extends ServiceHelper {
 		AEEvent aeEvent = getAEAmountCodes(resultSet, event, valueDate);
 		HashMap<String, Object> dataMap = aeEvent.getAeAmountCodes().getDeclaredFieldValues(); 
 
-		postAccounting(aeEvent, dataMap);
+		postAccountingEOD(aeEvent, dataMap);
 	}
 
 	private AEEvent getAEAmountCodes(ResultSet resultSet, String event, Date valueDate) throws SQLException {

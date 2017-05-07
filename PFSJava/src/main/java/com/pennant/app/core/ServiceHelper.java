@@ -123,7 +123,7 @@ abstract public class ServiceHelper implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public final AEEvent postAccounting(AEEvent aeEvent, HashMap<String, Object> dataMap) throws Exception {
+	public final AEEvent postAccountingEOD(AEEvent aeEvent, HashMap<String, Object> dataMap) throws Exception {
 		return getPostingsPreparationUtil().postAccounting(aeEvent, dataMap);
 	}
 

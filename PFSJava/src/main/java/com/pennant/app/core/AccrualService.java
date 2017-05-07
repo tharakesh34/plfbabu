@@ -600,7 +600,7 @@ public class AccrualService extends ServiceHelper {
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		financeMain.getDeclaredFieldValues(dataMap);
 		//Postings Process
-		postAccounting(aeEvent, dataMap);
+		postAccountingEOD(aeEvent, dataMap);
 		//posting done update the accrual balance
 		finPftDetail.setAmzTillLBD(finPftDetail.getPftAmz());
 		finPftDetail.setAmzTillLBDNormal(finPftDetail.getPftAmzNormal());

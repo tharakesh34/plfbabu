@@ -1546,7 +1546,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 			//Account Details Update
 			if (accountingSetEntries != null && !accountingSetEntries.isEmpty()) {
-				getAccountProcessUtil().procAccountUpdate(accountingSetEntries, profitDetail.getPftAccrued());
+				getAccountProcessUtil().procAccountUpdate(accountingSetEntries);
 			}
 		}
 
