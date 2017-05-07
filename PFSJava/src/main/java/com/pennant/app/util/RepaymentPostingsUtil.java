@@ -278,7 +278,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		}
 
 		// Schedule updations
-		scheduleDetails = scheduleUpdate(financeMain, scheduleDetails, rpyQueueHeader, linkedTranId);
+		scheduleDetails = scheduleUpdate(financeMain, scheduleDetails, rpyQueueHeader, aeEvent.getLinkedTranId());
 
 		actReturnList.add(aeEvent.isPostingSucess());
 		actReturnList.add(aeEvent.getLinkedTranId());
@@ -307,15 +307,15 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws PFFInterfaceException
 	 */
 	private List<FinanceScheduleDetail> scheduleUpdate(FinanceMain financeMain,
-			List<FinanceScheduleDetail> scheduleDetails, FinRepayQueueHeader queueTotals, long linkedTranId)
+			List<FinanceScheduleDetail> scheduleDetails, FinRepayQueueHeader rpyQueueHeader, long linkedTranId)
 			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		Date dateValueDate = DateUtility.getAppValueDate();
 
 		// Total Payment Amount
-		BigDecimal rpyTotal = queueTotals.getPrincipal().add(queueTotals.getProfit()).add(queueTotals.getFee())
-				.add(queueTotals.getInsurance()).add(queueTotals.getSuplRent()).add(queueTotals.getIncrCost());
+		BigDecimal rpyTotal = rpyQueueHeader.getPrincipal().add(rpyQueueHeader.getProfit()).add(rpyQueueHeader.getFee())
+				.add(rpyQueueHeader.getInsurance()).add(rpyQueueHeader.getSuplRent()).add(rpyQueueHeader.getIncrCost());
 
 		// If Postings Process only for Excess Accounts
 		if (rpyTotal.compareTo(BigDecimal.ZERO) == 0) {
@@ -323,7 +323,7 @@ public class RepaymentPostingsUtil implements Serializable {
 			return scheduleDetails;
 		}
 
-		List<FinRepayQueue> finRepayQueueList = queueTotals.getQueueList();
+		List<FinRepayQueue> finRepayQueueList = rpyQueueHeader.getQueueList();
 
 		Map<Date, FinanceScheduleDetail> scheduleMap = new HashMap<Date, FinanceScheduleDetail>();
 		for (FinanceScheduleDetail detail : scheduleDetails) {
@@ -534,6 +534,7 @@ public class RepaymentPostingsUtil implements Serializable {
 				dateValueDate, dateSchdDate);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		aeEvent.setPostingUserBranch(rpyQueueHeader.getPostBranch());
+		aeEvent.setLinkedTranId(linkedTranId);
 
 		//Set Repay Amount Codes
 		amountCodes.setRpTot(rpyQueueHeader.getPrincipal().add(rpyQueueHeader.getProfit()).add(rpyQueueHeader.getLateProfit()));
