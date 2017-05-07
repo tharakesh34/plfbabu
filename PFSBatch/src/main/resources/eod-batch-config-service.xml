@@ -23,7 +23,7 @@
 		
 		
 		<property name="finContributorDetailDAO" ref="finContributorDetailDAO" />
-		<property name="engineExecution" ref="engineExecution" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="secondaryAccountDAO" ref="secondaryAccountDAO" />

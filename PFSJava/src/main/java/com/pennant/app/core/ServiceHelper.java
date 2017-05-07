@@ -56,7 +56,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -104,7 +103,6 @@ abstract public class ServiceHelper implements Serializable {
 	private FinanceProfitDetailDAO		financeProfitDetailDAO;
 	//accounting
 	private FinContributorDetailDAO		finContributorDetailDAO;
-	private AccountEngineExecution		engineExecution;
 	private FinTypeAccountingDAO		finTypeAccountingDAO;
 	private PostingsDAO					postingsDAO;
 	private SecondaryAccountDAO			secondaryAccountDAO;
@@ -112,21 +110,20 @@ abstract public class ServiceHelper implements Serializable {
 	private FinODDetailsDAO				finODDetailsDAO;
 	private DPDBucketDAO				dPDBucketDAO;
 	private DPDBucketConfigurationDAO	dPDBucketConfigurationDAO;
-	private PostingsPreparationUtil postingsPreparationUtil;
+	private PostingsPreparationUtil		postingsPreparationUtil;
 
 	/**
 	 * Post Accounting
+	 * 
 	 * @param dataSet
 	 * @param amountCodes
 	 * @param financeType
 	 * @return
 	 * @throws Exception
 	 */
-	public final AEEvent postAccounting(AEEvent aeEvent, HashMap<String, Object> dataMap)
-			throws Exception {
+	public final AEEvent postAccounting(AEEvent aeEvent, HashMap<String, Object> dataMap) throws Exception {
 		return getPostingsPreparationUtil().postAccounting(aeEvent, dataMap);
 	}
-
 
 	public Date formatDate(Date date) {
 		if (date != null) {
@@ -164,7 +161,7 @@ abstract public class ServiceHelper implements Serializable {
 		}
 		return 0;
 	}
-	
+
 	/**
 	 * @param fintype
 	 * @return
@@ -305,14 +302,6 @@ abstract public class ServiceHelper implements Serializable {
 		this.finContributorDetailDAO = finContributorDetailDAO;
 	}
 
-	public AccountEngineExecution getEngineExecution() {
-		return engineExecution;
-	}
-
-	public void setEngineExecution(AccountEngineExecution engineExecution) {
-		this.engineExecution = engineExecution;
-	}
-
 	public PostingsDAO getPostingsDAO() {
 		return postingsDAO;
 	}
@@ -433,11 +422,9 @@ abstract public class ServiceHelper implements Serializable {
 		this.financeRepaymentsDAO = financeRepaymentsDAO;
 	}
 
-
 	public PostingsPreparationUtil getPostingsPreparationUtil() {
 		return postingsPreparationUtil;
 	}
-
 
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;

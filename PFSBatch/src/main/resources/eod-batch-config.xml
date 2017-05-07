@@ -55,9 +55,7 @@
 		<!-- -->
 	</job>
 	<step id="microEOD" xmlns="http://www.springframework.org/schema/batch">
-		<tasklet ref="microEODTaskLet">
-			<!-- <transaction-attributes propagation="NEVER" /> -->
-		</tasklet>
+		<tasklet ref="microEODTaskLet"/>
 	</step>
 
 	<bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor" />
