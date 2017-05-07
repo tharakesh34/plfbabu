@@ -162,9 +162,12 @@ public class StatusMovementService extends ServiceHelper {
 	private void processPostings(ResultSet resultSet, String event, Date valueDate) throws Exception {
 		// Amount Codes preparation using FinProfitDetails
 		AEEvent aeEvent = getAEAmountCodes(resultSet, event, valueDate);
-		HashMap<String, Object> dataMap = aeEvent.getAeAmountCodes().getDeclaredFieldValues(); 
+		HashMap<String, Object> dataMap = aeEvent.getAeAmountCodes().getDeclaredFieldValues();
 
+		//FIXME: PV 07MAY17 to be addressed when status movement postings are required
+		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent, dataMap);
+		//finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 	}
 
 	private AEEvent getAEAmountCodes(ResultSet resultSet, String event, Date valueDate) throws SQLException {

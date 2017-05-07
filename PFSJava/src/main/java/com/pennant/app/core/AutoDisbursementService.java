@@ -11,7 +11,6 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
-import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.eod.util.EODProperties;
@@ -87,12 +86,12 @@ public class AutoDisbursementService extends ServiceHelper {
 		aeEvent.setFinType(finType);
 		aeEvent.setBranch(finEODEvent.getFinanceMain().getFinBranch());
 		amountCodes.setDisburse(curDisbursment.getDisbAmount().add(curDisbursment.getFeeChargeAmt()));
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
-		//Postings Process
-		FinanceType financeType = getFinanceType(aeEvent.getFinType());
-		financeType.getDeclaredFieldValues(executingMap);
-		postAccountingEOD(aeEvent,executingMap);
+		//Postings Process and save all postings related to finance for one time accounts update
+		postAccountingEOD(aeEvent, dataMap);
+		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
+		
 		curDisbursment.setDisbDisbursed(true);
 		curDisbursment.setLinkedTranId(aeEvent.getLinkedTranId());
 		getFinanceDisbursementDAO().updateBatchDisb(curDisbursment, "");

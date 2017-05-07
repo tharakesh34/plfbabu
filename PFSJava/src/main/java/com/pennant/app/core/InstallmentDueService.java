@@ -15,7 +15,6 @@ import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
-import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.eod.util.EODProperties;
@@ -117,14 +116,14 @@ public class InstallmentDueService extends ServiceHelper {
 		if (amountCodes.getPriSB().compareTo(BigDecimal.ZERO) < 0) {
 			amountCodes.setPriSB(BigDecimal.ZERO);
 		}
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		List<FinFeeScheduleDetail> feelist = finEODEvent.getFinFeeScheduleDetails();
 		if (feelist != null && !feelist.isEmpty()) {
 			for (FinFeeScheduleDetail feeSchd : feelist) {
-				executingMap.put(feeSchd.getFeeTypeCode() + "_SCH", feeSchd.getSchAmount());
-				executingMap.put(feeSchd.getFeeTypeCode() + "_P", feeSchd.getPaidAmount());
-				executingMap.put(feeSchd.getFeeTypeCode() + "_W", feeSchd.getWaiverAmount());
+				dataMap.put(feeSchd.getFeeTypeCode() + "_SCH", feeSchd.getSchAmount());
+				dataMap.put(feeSchd.getFeeTypeCode() + "_P", feeSchd.getPaidAmount());
+				dataMap.put(feeSchd.getFeeTypeCode() + "_W", feeSchd.getWaiverAmount());
 			}
 		}
 
@@ -132,17 +131,15 @@ public class InstallmentDueService extends ServiceHelper {
 
 		if (finInsList != null && !finInsList.isEmpty()) {
 			for (FinSchFrqInsurance insschd : finInsList) {
-				executingMap.put(insschd.getInsuranceType() + "_SCH", insschd.getAmount());
-				executingMap.put(insschd.getInsuranceType() + "_P", insschd.getInsurancePaid());
+				dataMap.put(insschd.getInsuranceType() + "_SCH", insschd.getAmount());
+				dataMap.put(insschd.getInsuranceType() + "_P", insschd.getInsurancePaid());
 			}
 		}
 
-		//DataSet Object preparation for AccountingSet Execution
-		FinanceType financeType = getFinanceType(aeEvent.getFinType());
-		financeType.getDeclaredFieldValues(executingMap);
 
-		//Postings Process
-		postAccountingEOD(aeEvent, executingMap);
+		//Postings Process and save all postings related to finance for one time accounts update
+		postAccountingEOD(aeEvent, dataMap);
+		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 		logger.debug(" Leaving ");
 	}
 

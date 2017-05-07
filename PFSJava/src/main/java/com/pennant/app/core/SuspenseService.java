@@ -111,8 +111,8 @@ public class SuspenseService extends ServiceHelper {
 			boolean isPastDeferment) throws Exception {
 		logger.debug("Entering");
 
-		int curOdDays = getFinODDetailsDAO().getFinCurSchdODDays(financeMain.getFinReference(),
-				repayQueue.getRpyDate());
+		int curOdDays = getFinODDetailsDAO()
+				.getFinCurSchdODDays(financeMain.getFinReference(), repayQueue.getRpyDate());
 
 		// Check Profit will Suspend or not based upon Current Overdue Days
 		boolean suspendProfit = getCustomerStatusCodeDAO().getFinanceSuspendStatus(curOdDays);
@@ -145,7 +145,11 @@ public class SuspenseService extends ServiceHelper {
 		aeEvent.setSchdDate(valueDate);
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+
+		//FIXME: PV 07MAY17: To be addressed when suspense related changes released.
+		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent, dataMap);
+		//finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 		long linkedTranId = aeEvent.getLinkedTranId();
 
 		if (suspHead != null) {
@@ -233,11 +237,13 @@ public class SuspenseService extends ServiceHelper {
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(suspFromDate);
 
-		
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
-		// Postings Preparation
+		//FIXME: PV: 07MAY17 to be addressed when suspense related changes released
+		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent, dataMap);
+		//finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
+		
 		long linkedTranId = aeEvent.getLinkedTranId();
 
 		// Finance Suspend Head

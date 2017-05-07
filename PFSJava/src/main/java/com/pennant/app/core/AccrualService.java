@@ -94,14 +94,13 @@ public class AccrualService extends ServiceHelper {
 
 		String finReference = finEODEvent.getFinanceMain().getFinReference();
 
-		FinanceProfitDetail finPftDetail = calProfitDetails(finMain, scheduleDetailList, profitDetail, valueDate);
+		profitDetail = calProfitDetails(finMain, scheduleDetailList, profitDetail, valueDate);
 		String worstSts = getCustomerStatusCodeDAO().getFinanceStatus(finReference, false);
-		finPftDetail.setFinWorstStatus(worstSts);
+		profitDetail.setFinWorstStatus(worstSts);
 
 		//post accruals
-		postAccruals(finMain, finPftDetail, valueDate);
+		postAccruals(finEODEvent, valueDate);
 
-		finEODEvent.setFinProfitDetail(finPftDetail);
 		finEODEvent.setUpdFinPft(true);
 
 		logger.debug(" Leaving ");
@@ -584,11 +583,12 @@ public class AccrualService extends ServiceHelper {
 	 * @param resultSet
 	 * @throws Exception
 	 */
-	public void postAccruals(FinanceMain financeMain, FinanceProfitDetail finPftDetail, Date valueDate)
+	public void postAccruals(FinEODEvent finEODEvent, Date valueDate)
 			throws Exception {
 		logger.debug(" Entering ");
 
 		String eventCode = AccountEventConstants.ACCEVENT_AMZ;
+		FinanceProfitDetail finPftDetail = finEODEvent.getFinProfitDetail();
 
 		if (finPftDetail.isPftInSusp()) {
 			eventCode = AccountEventConstants.ACCEVENT_AMZSUSP;
@@ -598,9 +598,11 @@ public class AccrualService extends ServiceHelper {
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
-		financeMain.getDeclaredFieldValues(dataMap);
-		//Postings Process
+
+		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent, dataMap);
+		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
+		
 		//posting done update the accrual balance
 		finPftDetail.setAmzTillLBD(finPftDetail.getPftAmz());
 		finPftDetail.setAmzTillLBDNormal(finPftDetail.getPftAmzNormal());

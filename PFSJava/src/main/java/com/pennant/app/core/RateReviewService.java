@@ -73,7 +73,7 @@ public class RateReviewService extends ServiceHelper {
 	private Logger					logger				= Logger.getLogger(RateReviewService.class);
 
 	private FinanceRateReviewDAO	financeRateReviewDAO;
-	private AccrualService 			accrualService;
+	private AccrualService			accrualService;
 
 	//fetch rates changed yesterday or effective date is today
 
@@ -104,7 +104,7 @@ public class RateReviewService extends ServiceHelper {
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
 		Map<Date, Integer> datesMap = finEODEvent.getDatesMap();
 
-		int i = getIndexFromMap(datesMap,valueDate);
+		int i = getIndexFromMap(datesMap, valueDate);
 		int iNext = i + 1;
 
 		finEODEvent.setRateReview(false);
@@ -231,7 +231,11 @@ public class RateReviewService extends ServiceHelper {
 		finEODEvent.setRepayInstructions(finScheduleData.getRepayInstructions());
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+
+		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent, dataMap);
+		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
+
 		//Saving Rate Review Details
 		FinanceRateReview rateReview = new FinanceRateReview();
 		rateReview.setFinReference(finRef);
@@ -263,13 +267,13 @@ public class RateReviewService extends ServiceHelper {
 		FinanceType fintype = EODProperties.getFinanceType(finEodEvent.getFinanceMain().getFinType());
 		finSchData.setFinanceType(fintype);
 		finEodEvent.setFinType(fintype);
-		List<RepayInstruction> repayInstructions = getRepayInstructionDAO().getRepayInstrEOD(finSchData.getFinReference());
+		List<RepayInstruction> repayInstructions = getRepayInstructionDAO().getRepayInstrEOD(
+				finSchData.getFinReference());
 		finSchData.setRepayInstructions(repayInstructions);
 		finEodEvent.setRepayInstructions(repayInstructions);
 		logger.debug("Leaving");
 		return finSchData;
 	}
-
 
 	private FinEODEvent findRecalFromDate(FinEODEvent finEODEvent, int iNext) {
 

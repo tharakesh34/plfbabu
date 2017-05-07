@@ -124,7 +124,7 @@ abstract public class ServiceHelper implements Serializable {
 	 * @throws Exception
 	 */
 	public final AEEvent postAccountingEOD(AEEvent aeEvent, HashMap<String, Object> dataMap) throws Exception {
-		return getPostingsPreparationUtil().postAccounting(aeEvent, dataMap);
+		return getPostingsPreparationUtil().postAccountingEOD(aeEvent, dataMap);
 	}
 
 	public Date formatDate(Date date) {
