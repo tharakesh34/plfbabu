@@ -498,8 +498,6 @@ public class AccountEngineExecution implements Serializable {
 		Map<String, String> accountCcyMap = new HashMap<String, String>(transactionEntries.size());
 
 		// Prepare list of account types from tranaactionEntries object
-		List<String> accountTypeList = new ArrayList<String>();
-
 		for (TransactionEntry transactionEntry : transactionEntries) {
 
 			//Place fee (codes) used in Transaction Entries to executing map
@@ -510,12 +508,6 @@ public class AccountEngineExecution implements Serializable {
 						dataMap.put(feeCode, BigDecimal.ZERO);
 					}
 				}
-			}
-
-			//Add unique Account Type to AccountsTypeList array
-			if (transactionEntry.getAccountType() != null
-					&& !accountTypeList.contains(transactionEntry.getAccountType())) {
-				accountTypeList.add(transactionEntry.getAccountType());
 			}
 		}
 
@@ -550,6 +542,7 @@ public class AccountEngineExecution implements Serializable {
 
 			returnDataSet = new ReturnDataSet();
 			//Set Object Data of ReturnDataSet(s)
+			returnDataSet.setLinkedTranId(aeEvent.getLinkedTranId());
 			returnDataSet.setFinReference(aeEvent.getFinReference());
 			returnDataSet.setFinBranch(aeEvent.getBranch());
 			returnDataSet.setFinEvent(aeEvent.getAccountingEvent());
@@ -805,20 +798,8 @@ public class AccountEngineExecution implements Serializable {
 		}
 
 		String amountRule = transactionEntry.getAmountRule();
-
-		Object result = null;
-
-		if (event.contains("CMT")) {
-			result = getRuleExecutionUtil().executeRule(amountRule, dataMap, finCcy, RuleReturnType.DECIMAL);
-		} else if (event.contains("VAS")) {
-			result = getRuleExecutionUtil().executeRule(amountRule, dataMap, finCcy, RuleReturnType.DECIMAL);
-		} else {
-			result = getRuleExecutionUtil().executeRule(amountRule, dataMap, finCcy, RuleReturnType.DECIMAL);
-		}
-		amount = (BigDecimal) result;
-
+		amount = (BigDecimal)getRuleExecutionUtil().executeRule(amountRule, dataMap, finCcy, RuleReturnType.DECIMAL);
 		logger.debug("Leaving");
-
 		return amount;
 	}
 

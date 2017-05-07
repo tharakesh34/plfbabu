@@ -660,6 +660,10 @@ public class PostingsPreparationUtil implements Serializable {
 	public AEEvent postAccounting(AEEvent aeEvent, HashMap<String, Object> dataMap) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
 
+		if (aeEvent.getLinkedTranId() <= 0) {
+			aeEvent.setLinkedTranId(getPostingsDAO().getLinkedTransId());
+		}
+		
 		getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
 
 		List<ReturnDataSet> returnDatasetList = aeEvent.getReturnDataSet();
@@ -669,13 +673,6 @@ public class PostingsPreparationUtil implements Serializable {
 
 		if (returnDatasetList == null || returnDatasetList.isEmpty()) {
 			return aeEvent;
-		}
-		
-		//FIXME CH to be changed to avoid the loop for setting the linked TranID 
-		long linkedTranId = getPostingsDAO().getLinkedTransId();
-		
-		for (ReturnDataSet returnDataSet : returnDatasetList) {
-			returnDataSet.setLinkedTranId(linkedTranId);
 		}
 		
 		getPostingsDAO().saveBatch(returnDatasetList);
@@ -718,10 +715,10 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws PFFInterfaceException
 	 */
-	public List<ReturnDataSet> postReveralsByLinkedTranID(long linkedTranId) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	public List<ReturnDataSet> postReversalsByLinkedTranID(long linkedTranId) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
 
-		List<ReturnDataSet> returnDataSets =  getReveralsByLinkedTranID(linkedTranId);
+		List<ReturnDataSet> returnDataSets =  getReversalsByLinkedTranID(linkedTranId);
 		
 		getPostingsDAO().updateStatusByLinkedTranId(linkedTranId, AccountConstants.POSTINGS_REVERSE);
  
@@ -742,7 +739,7 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws PFFInterfaceException
 	 */
-	public List<ReturnDataSet> getReveralsByLinkedTranID(long linkedTranId) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	public List<ReturnDataSet> getReversalsByLinkedTranID(long linkedTranId) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> returnDataSets =  getPostingsDAO().getPostingsByLinkTransId(linkedTranId);

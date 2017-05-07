@@ -47,7 +47,7 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 			} else {
 				AEEvent aeEvent = new AEEvent();
 				aeEvent.setLinkedTranId(disbursement.getLinkedTranId());
-				list = postingsPreparationUtil.postReveralsByLinkedTranID(disbursement.getLinkedTranId());
+				list = postingsPreparationUtil.postReversalsByLinkedTranID(disbursement.getLinkedTranId());
 				aeEvent.setReturnDataSet(list);
 				aeEvent = postingsPreparationUtil.processPostings(aeEvent);
 				disbursement.setStatus(DisbursementConstants.STATUS_REJECTED);

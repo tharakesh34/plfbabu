@@ -89,7 +89,7 @@ public class DisbursementPostings {
 				if (StringUtils.equals(PennantConstants.RCD_DEL, finAdvancePayments.getRecordType())) {
 					//Reverse postings cancel case.
 					long linkedTranId = finApprovedPay.getLinkedTranId();
-					List<ReturnDataSet> datasetList = postingsPreparationUtil.postReveralsByLinkedTranID(linkedTranId);
+					List<ReturnDataSet> datasetList = postingsPreparationUtil.postReversalsByLinkedTranID(linkedTranId);
 					disbMap.put(finAdvancePayments.getPaymentId(), datasetList);
 
 				} else {
