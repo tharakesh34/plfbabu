@@ -1299,9 +1299,9 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		postings.setValueDate(this.valueDate.getValue());
 
 		postings.setAmountType("D");
-		postings.setFlagCreateIfNF("N");
-		postings.setFlagCreateNew("N");
-		postings.setInternalAc("N");
+		postings.setFlagCreateIfNF(false);
+		postings.setFlagCreateNew(false);
+		postings.setInternalAc(false);
 		postings.setShadowPosting(false);
 		postings.setPostStatus("");
 		postings.setErrorId("");

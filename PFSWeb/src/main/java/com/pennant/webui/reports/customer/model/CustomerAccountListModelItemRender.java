@@ -12,15 +12,14 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
-public class CustomerAccountListModelItemRender implements ListitemRenderer<Accounts>,
-		Serializable {
+public class CustomerAccountListModelItemRender implements ListitemRenderer<Accounts>, Serializable {
 
-	private static final long serialVersionUID = -6954091801433341494L;
+	private static final long	serialVersionUID	= -6954091801433341494L;
 
 	public CustomerAccountListModelItemRender() {
-		
+
 	}
-	
+
 	@Override
 	public void render(Listitem item, Accounts accounts, int count) throws Exception {
 
@@ -52,13 +51,10 @@ public class CustomerAccountListModelItemRender implements ListitemRenderer<Acco
 		lc.setStyle("text-align:center");
 		lc.appendChild(cbIsCustSysAc);
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(
-				accounts.getAcPrvDayBal().subtract(accounts.getAcTodayDr()).add(accounts.getAcTodayCr()), 
-				accounts.getLovDescFinFormatter()));
+		lc = new Listcell(PennantAppUtil.amountFormate(accounts.getAcBalance(), accounts.getLovDescFinFormatter()));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(
-				accounts.getAcAccrualBal(), accounts.getLovDescFinFormatter()));
+		lc = new Listcell(PennantAppUtil.amountFormate(accounts.getShadowBal(), accounts.getLovDescFinFormatter()));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 	}

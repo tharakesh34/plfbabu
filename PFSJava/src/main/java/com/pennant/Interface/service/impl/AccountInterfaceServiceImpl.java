@@ -76,9 +76,9 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService{
 			iAccount.setAcType(detail.getAcType()); 		
 			iAccount.setTransOrder(detail.getTransOrder());
 			iAccount.setAcBranch(detail.getAcBranch()); 		
-			iAccount.setFlagCreateNew("Y".equals(detail.getCreateNew())?true:false); 		
-			iAccount.setFlagCreateIfNF("Y".equals(detail.getCreateIfNF())?true:false); 	
-			iAccount.setInternalAc("Y".equals(StringUtils.trimToEmpty(detail.getInternalAc()))?true:false); 	
+			iAccount.setFlagCreateNew(detail.getCreateNew()); 		
+			iAccount.setFlagCreateIfNF(detail.getCreateIfNF()); 	
+			iAccount.setInternalAc(detail.getInternalAc()); 	
 			iAccount.setFlagPostStatus(detail.getOpenStatus()); 		
 			iAccount.setErrorCode(detail.getErrorCode()); 	
 			iAccount.setErrorMsg(detail.getErrorMessage()); 	

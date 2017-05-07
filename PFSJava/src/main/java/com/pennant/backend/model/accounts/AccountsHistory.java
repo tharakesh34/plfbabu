@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  AccountsDAO.java                                                   * 	  
+ * FileName    		:  Accounts.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -39,23 +39,110 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
-package com.pennant.backend.dao.accounts;
-import java.util.List;
+ */
+package com.pennant.backend.model.accounts;
 
-import com.pennant.backend.model.accounts.Accounts;
+import java.math.BigDecimal;
+import java.util.Date;
 
-public interface AccountsDAO {
+import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
-	Accounts getAccounts();
-	Accounts getNewAccounts();
-	Accounts getAccountsById(String id, String type);
-	void update(Accounts acounts, String type);
-	void delete(Accounts acounts, String type);
-	String save(Accounts acounts, String type);
-	List<Accounts> getAccountsByAcPurpose(String acPurpose, String type);
-	void updateAccrualBalance();
-	void saveList(List<Accounts> accountList, String type);
-	void updateList(List<Accounts> accountList, String type);
-	boolean saveOrUpdate(Accounts account, String type);
+/**
+ * Model class for the <b>Accounts table</b>.<br>
+ * 
+ */
+public class AccountsHistory extends AbstractWorkflowEntity {
+	private static final long serialVersionUID = -1673137129792916291L;
+
+	private String accountId;
+	private Date postDate;
+	private BigDecimal todayDebits = BigDecimal.ZERO;
+	private BigDecimal todayCredits = BigDecimal.ZERO;
+	private BigDecimal todayNet = BigDecimal.ZERO;
+	private BigDecimal shadowBal = BigDecimal.ZERO;
+	private BigDecimal acBalance = BigDecimal.ZERO;
+	private boolean newRecord = false;
+
+
+	public AccountsHistory() {
+		super();
+	}
+
+	public boolean isNew() {
+		return isNewRecord();
+	}
+
+	public AccountsHistory(String accountId) {
+		super();
+		this.accountId = accountId;
+	}
+
+	public String getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(String accountId) {
+		this.accountId = accountId;
+	}
+
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
+	}
+
+	public Date getPostDate() {
+		return postDate;
+	}
+
+	public void setPostDate(Date postDate) {
+		this.postDate = postDate;
+	}
+
+	public BigDecimal getTodayDebits() {
+		return todayDebits;
+	}
+
+	public void setTodayDebits(BigDecimal todayDebits) {
+		this.todayDebits = todayDebits;
+	}
+
+	public BigDecimal getTodayCredits() {
+		return todayCredits;
+	}
+
+	public void setTodayCredits(BigDecimal todayCredits) {
+		this.todayCredits = todayCredits;
+	}
+
+	public BigDecimal getTodayNet() {
+		return todayNet;
+	}
+
+	public void setTodayNet(BigDecimal todayNet) {
+		this.todayNet = todayNet;
+	}
+
+	public BigDecimal getShadowBal() {
+		return shadowBal;
+	}
+
+	public void setShadowBal(BigDecimal shadowBal) {
+		this.shadowBal = shadowBal;
+	}
+
+	public BigDecimal getAcBalance() {
+		return acBalance;
+	}
+
+	public void setAcBalance(BigDecimal acBalance) {
+		this.acBalance = acBalance;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	
 }

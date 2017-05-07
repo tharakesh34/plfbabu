@@ -482,7 +482,7 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 		for (CoreBankAccountDetail item : list) {
 			reqRefSeq = reqRefSeq + 1;
 
-			if (StringUtils.equals("Y", item.getInternalAc())) {
+			if (item.getInternalAc()) {
 				item.setAcSPCode(item.getAcType());
 				item.setAcType("");
 			}

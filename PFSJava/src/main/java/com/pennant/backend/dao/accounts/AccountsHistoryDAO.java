@@ -43,19 +43,19 @@
 package com.pennant.backend.dao.accounts;
 import java.util.List;
 
-import com.pennant.backend.model.accounts.Accounts;
+import com.pennant.backend.model.accounts.AccountsHistory;
 
-public interface AccountsDAO {
+public interface AccountsHistoryDAO {
+	AccountsHistory getAccountsHistoryById(String id);
 
-	Accounts getAccounts();
-	Accounts getNewAccounts();
-	Accounts getAccountsById(String id, String type);
-	void update(Accounts acounts, String type);
-	void delete(Accounts acounts, String type);
-	String save(Accounts acounts, String type);
-	List<Accounts> getAccountsByAcPurpose(String acPurpose, String type);
-	void updateAccrualBalance();
-	void saveList(List<Accounts> accountList, String type);
-	void updateList(List<Accounts> accountList, String type);
-	boolean saveOrUpdate(Accounts account, String type);
+	boolean save(AccountsHistory accountsHist);
+
+	boolean saveList(List<AccountsHistory> accountHistList);
+
+	boolean update(AccountsHistory accountsHist);
+
+	boolean updateList(List<AccountsHistory> accountHistList);
+
+	boolean saveOrUpdate(AccountsHistory accountsHist);
+
 }

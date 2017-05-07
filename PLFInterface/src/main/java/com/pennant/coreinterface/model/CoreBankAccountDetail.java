@@ -20,9 +20,9 @@ public class CoreBankAccountDetail implements Serializable {
 	private String acFullName;
 	private String acShrtName;
 	private String tranAc;
-	private String internalAc;
-	private String createNew;
-	private String createIfNF;
+	private boolean internalAc;
+	private boolean createNew;
+	private boolean createIfNF;
 	private String amountSign;
 	private String transOrder;
 
@@ -119,27 +119,27 @@ public class CoreBankAccountDetail implements Serializable {
 		this.tranAc = tranAc;
 	}
 
-	public String getInternalAc() {
+	public boolean getInternalAc() {
 		return internalAc;
 	}
 
-	public void setInternalAc(String internalAc) {
+	public void setInternalAc(boolean internalAc) {
 		this.internalAc = internalAc;
 	}
 
-	public String getCreateNew() {
+	public boolean getCreateNew() {
 		return createNew;
 	}
 
-	public void setCreateNew(String createNew) {
+	public void setCreateNew(boolean createNew) {
 		this.createNew = createNew;
 	}
 
-	public String getCreateIfNF() {
+	public boolean getCreateIfNF() {
 		return createIfNF;
 	}
 
-	public void setCreateIfNF(String createIfNF) {
+	public void setCreateIfNF(boolean createIfNF) {
 		this.createIfNF = createIfNF;
 	}
 

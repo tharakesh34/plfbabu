@@ -466,13 +466,15 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		}else if(!this.internalAc.isChecked() && !this.custSysAc.isChecked()){
 			label_accTypeDesc.setValue(Labels.getLabel("label_CustAc"));	
 		}
-		this.acPrvDayBal.setValue(PennantAppUtil.formateAmount(aAccounts.getAcPrvDayBal(),0));
+		
+		//FIXME: PV: 07MAY17: To be fixed when screen used
+/*		this.acPrvDayBal.setValue(PennantAppUtil.formateAmount(aAccounts.getAcPrvDayBal(),0));
 		this.acTodayDr.setValue(PennantAppUtil.formateAmount(aAccounts.getAcTodayDr(),0));
 		this.acTodayCr.setValue(PennantAppUtil.formateAmount(aAccounts.getAcTodayCr(),0));
 		this.acTodayNet.setValue(PennantAppUtil.formateAmount(aAccounts.getAcTodayNet(),0));
 		this.acAccrualBal.setValue(PennantAppUtil.formateAmount(aAccounts.getAcAccrualBal(),0));
 		this.acTodayBal.setValue(PennantAppUtil.formateAmount(aAccounts.getAcTodayBal(),0));
-		this.acOpenDate.setValue(aAccounts.getAcOpenDate());
+*/		this.acOpenDate.setValue(aAccounts.getAcOpenDate());
 		this.acLastCustTrnDate.setValue(aAccounts.getAcLastCustTrnDate());
 		this.acLastSysTrnDate.setValue(aAccounts.getAcLastSysTrnDate());
 		this.acActive.setChecked(aAccounts.isAcActive());
@@ -574,14 +576,16 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
-		try {
+		
+		//FIXME: PV: 07MAY17: To be fixed when screen used
+/*		try {
 			if(this.acPrvDayBal.getValue()!=null){
 				aAccounts.setAcPrvDayBal(PennantAppUtil.unFormateAmount(this.acPrvDayBal.getValue(), 0));
 			}
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
-		try {
+*/		try {
 			if(this.acOpenDate.getValue()!=null){
 				aAccounts.setAcOpenDate(new Timestamp(this.acOpenDate.getValue().getTime()));
 			}	

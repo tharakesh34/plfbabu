@@ -75,7 +75,7 @@ public class Accounts extends AbstractWorkflowEntity {
 	private boolean acBlocked;
 	private boolean acClosed;
 
-	private String hostAcNumber;
+	private String hostAcNumber="";
 	private boolean newRecord = false;
 	private String lovValue;
 	private Accounts befImage;

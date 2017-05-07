@@ -63,7 +63,6 @@ import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.model.FinanceCancellation;
 import com.pennant.coreinterface.process.FinanceCancellationProcess;
 import com.pennant.exception.PFFInterfaceException;
@@ -628,15 +627,15 @@ public class PostingsPreparationUtil implements Serializable {
 			returnDataSet.setRevTranCode(jvPostingEntry.getRevTxnCode());
 			returnDataSet.setDrOrCr(jvPostingEntry.getTxnEntry());
 			returnDataSet.setShadowPosting(false);
-			returnDataSet.setFlagCreateIfNF(PennantConstants.YES);
-			returnDataSet.setFlagCreateNew(PennantConstants.NO);
+			returnDataSet.setFlagCreateIfNF(true);
+			returnDataSet.setFlagCreateNew(false);
 			returnDataSet.setFinBranch(jVPosting.getBranch());
 
 			if (jvPostingEntry.isExternalAccount()) {
-				returnDataSet.setInternalAc(PennantConstants.NO);
+				returnDataSet.setInternalAc(false);
 				returnDataSet.setCustCIF(jVPosting.getBranch());
 			} else {
-				returnDataSet.setInternalAc(PennantConstants.YES);
+				returnDataSet.setInternalAc(true);
 				returnDataSet.setCustCIF("");
 				returnDataSet.setAccountType("SP101");
 			}

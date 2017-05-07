@@ -50,6 +50,7 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -419,6 +420,59 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		parms[1][0] = accountId;
 		parms[0][0] = PennantJavaUtil.getLabel("label_AccountId")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
+	}
+
+	@Override
+	public boolean saveOrUpdate(Accounts account, String type) {
+
+		int recordCount = 0;
+
+		//PREPARE BOTH UPDATE. and Insert Statements and make available for exception handling
+		StringBuilder	updateSql =new StringBuilder("Update Accounts");
+		updateSql.append(StringUtils.trimToEmpty(type)); 
+		updateSql.append(" ShadowBal = (ShadowBal + :ShadowBal), " ); 
+		updateSql.append(" AcBalance = (AcBalance + :AcBalance) " ); 
+		updateSql.append(" Where AccountId =:AccountId");
+
+		StringBuilder insertSql =new StringBuilder("Insert Into Accounts");
+		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(" (AccountId, AcCcy, AcType, AcBranch, AcCustId, AcFullName, AcShortName");
+		insertSql.append(", AcPurpose, InternalAc, CustSysAc");
+		insertSql.append(", ShadowBal, AcBalance, AcOpenDate,AcCloseDate, AcLastCustTrnDate, AcLastSysTrnDate, AcActive" );
+		insertSql.append(", AcBlocked, AcClosed, HostAcNumber");
+		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode" );
+		insertSql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:AccountId, :AcCcy, :AcType, :AcBranch, :AcCustId, :AcFullName" );
+		insertSql.append(", :AcShortName, :AcPurpose, :InternalAc, :CustSysAc");
+		insertSql.append(", :ShadowBal, :AcBalance, :AcOpenDate,:AcCloseDate, :AcLastCustTrnDate, :AcLastSysTrnDate");
+		insertSql.append(", :AcActive, :AcBlocked, :AcClosed, :HostAcNumber");
+		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId");
+		insertSql.append(", :NextTaskId, :RecordType, :WorkflowId)");
+
+
+		//TRY UPDATE.
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(account);
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		if (recordCount > 0) {
+			return true;
+		}
+
+		//UPDATE FAILS TRY INSERT
+		try {
+			this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+			return true;
+		} catch (DuplicateKeyException e) {
+			//Due to huge transactions hit record j=has been created between update and insert statements. SO update now
+			recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+
+			if (recordCount > 0) {
+				return true;
+			}
+
+		}
+		
+		return false;
 	}
 
 }

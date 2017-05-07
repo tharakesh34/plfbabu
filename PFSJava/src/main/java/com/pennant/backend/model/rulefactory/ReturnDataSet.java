@@ -68,9 +68,9 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	private String finType;
 	private String CustCIF;
 	private String finBranch;
-	private String flagCreateNew;
-	private String flagCreateIfNF;
-	private String internalAc;
+	private boolean flagCreateNew;
+	private boolean flagCreateIfNF;
+	private boolean internalAc;
 	private int formatter = 0;
 	private String finPurpose;
 	private String postingGroupBy;
@@ -287,27 +287,27 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 		this.finBranch = finBranch;
 	}
 
-	public String getFlagCreateNew() {
+	public boolean isFlagCreateNew() {
 		return flagCreateNew;
 	}
 
-	public void setFlagCreateNew(String flagCreateNew) {
+	public void setFlagCreateNew(boolean flagCreateNew) {
 		this.flagCreateNew = flagCreateNew;
 	}
 
-	public String getFlagCreateIfNF() {
+	public boolean isFlagCreateIfNF() {
 		return flagCreateIfNF;
 	}
 
-	public void setFlagCreateIfNF(String flagCreateIfNF) {
+	public void setFlagCreateIfNF(boolean flagCreateIfNF) {
 		this.flagCreateIfNF = flagCreateIfNF;
 	}
 
-	public String getInternalAc() {
+	public boolean isInternalAc() {
 		return internalAc;
 	}
 
-	public void setInternalAc(String internalAc) {
+	public void setInternalAc(boolean internalAc) {
 		this.internalAc = internalAc;
 	}
 

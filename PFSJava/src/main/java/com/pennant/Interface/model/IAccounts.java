@@ -101,24 +101,24 @@ public class IAccounts implements java.io.Serializable {
 		this.acPurpose = acPurpose;
 	}
 
-	public String getInternalAc() {
-		return internalAc?"Y":"N";
+	public boolean getInternalAc() {
+		return internalAc;
 	}
 
 	public void setInternalAc(boolean internalAc) {
 		this.internalAc = internalAc;
 	}
 
-	public String getFlagCreateNew() {
-		return flagCreateNew?"Y":"N";
+	public boolean getFlagCreateNew() {
+		return flagCreateNew;
 	}
 
 	public void setFlagCreateNew(boolean flagCreateNew) {
 		this.flagCreateNew = flagCreateNew;
 	}
 
-	public String getFlagCreateIfNF() {
-		return flagCreateIfNF?"Y":"N";
+	public boolean getFlagCreateIfNF() {
+		return flagCreateIfNF;
 	}
 
 	public void setFlagCreateIfNF(boolean flagCreateIfNF) {
