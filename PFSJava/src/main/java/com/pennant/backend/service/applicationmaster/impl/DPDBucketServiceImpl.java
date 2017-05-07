@@ -58,6 +58,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.DPDBucketService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.cache.util.FinanceConfigCache;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -141,6 +142,9 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 			auditHeader.setAuditReference(String.valueOf(dPDBucket.getBucketID()));
 		}else{
 			getDPDBucketDAO().update(dPDBucket,tableType);
+			if (TableType.MAIN_TAB.equals(tableType)) {
+				FinanceConfigCache.clearDPDBucketCache(dPDBucket.getBucketID());
+			}
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -173,7 +177,7 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 		
 		DPDBucket dPDBucket = (DPDBucket) auditHeader.getAuditDetail().getModelData();
 		getDPDBucketDAO().delete(dPDBucket,TableType.MAIN_TAB);
-		
+		FinanceConfigCache.clearDPDBucketCache(dPDBucket.getBucketID());
 		getAuditHeaderDAO().addAudit(auditHeader);
 		
 		logger.info(Literal.LEAVING);
@@ -251,6 +255,7 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 		if (dPDBucket.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getDPDBucketDAO().delete(dPDBucket, TableType.MAIN_TAB);
+			FinanceConfigCache.clearDPDBucketCache(dPDBucket.getBucketID());
 		} else {
 			dPDBucket.setRoleCode("");
 			dPDBucket.setNextRoleCode("");
@@ -267,6 +272,7 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 				tranType = PennantConstants.TRAN_UPD;
 				dPDBucket.setRecordType("");
 				getDPDBucketDAO().update(dPDBucket, TableType.MAIN_TAB);
+				FinanceConfigCache.clearDPDBucketCache(dPDBucket.getBucketID());
 			}
 		}
 

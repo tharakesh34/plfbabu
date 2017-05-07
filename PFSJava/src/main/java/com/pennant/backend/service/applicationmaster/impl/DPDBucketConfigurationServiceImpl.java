@@ -56,6 +56,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.DPDBucketConfigurationService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.cache.util.FinanceConfigCache;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -140,6 +141,9 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 			auditHeader.setAuditReference(String.valueOf(dPDBucketConfiguration.getConfigID()));
 		} else {
 			getDPDBucketConfigurationDAO().update(dPDBucketConfiguration, tableType);
+			if (TableType.MAIN_TAB.equals(tableType)) {
+				FinanceConfigCache.clearDPDBucketConfigurationCache(dPDBucketConfiguration.getConfigID());
+			}
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -171,7 +175,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 		DPDBucketConfiguration dPDBucketConfiguration = (DPDBucketConfiguration) auditHeader.getAuditDetail()
 				.getModelData();
 		getDPDBucketConfigurationDAO().delete(dPDBucketConfiguration, TableType.MAIN_TAB);
-
+		FinanceConfigCache.clearDPDBucketConfigurationCache(dPDBucketConfiguration.getConfigID());
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
@@ -244,6 +248,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 		if (dPDBucketConfiguration.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getDPDBucketConfigurationDAO().delete(dPDBucketConfiguration, TableType.MAIN_TAB);
+			FinanceConfigCache.clearDPDBucketConfigurationCache(dPDBucketConfiguration.getConfigID());
 		} else {
 			dPDBucketConfiguration.setRoleCode("");
 			dPDBucketConfiguration.setNextRoleCode("");
@@ -259,6 +264,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 				tranType = PennantConstants.TRAN_UPD;
 				dPDBucketConfiguration.setRecordType("");
 				getDPDBucketConfigurationDAO().update(dPDBucketConfiguration, TableType.MAIN_TAB);
+				FinanceConfigCache.clearDPDBucketConfigurationCache(dPDBucketConfiguration.getConfigID());
 			}
 		}
 
