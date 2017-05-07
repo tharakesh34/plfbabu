@@ -2518,6 +2518,10 @@
 		<property name="accountsDAO" ref="accountsDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
+	
+	<bean id="accountsHistoryDAO" class="com.pennant.backend.dao.accounts.impl.AccountsHistoryDAOImpl" parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
 
 	<!-- ====================================================== -->
 	<!-- Customer Master Details Configuration -->
@@ -6414,6 +6418,7 @@
 		scope="prototype">
 		<property name="accountsDAO" ref="accountsDAO" />
 		<property name="accountTypeDAO" ref="accountTypeDAO" />
+		<property name="accountsHistoryDAO" ref="accountsHistoryDAO" />
 	</bean>
 
 	<!--============ Account Number Util ============== -->

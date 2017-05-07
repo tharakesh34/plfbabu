@@ -44,6 +44,8 @@ package com.pennant.backend.dao.accounts.impl;
 
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.apache.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -66,6 +68,16 @@ public class AccountsHistoryDAOImpl extends BasisCodeDAO<AccountsHistory> implem
 
 	public AccountsHistoryDAOImpl() {
 		super();
+	}
+	
+	
+	/**
+	 * To Set  dataSource
+	 * @param dataSource
+	 */
+	
+	public void setDataSource(DataSource dataSource) {
+		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	@Override

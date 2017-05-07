@@ -190,6 +190,9 @@
 	<bean id="accountsDAO" class="com.pennant.backend.dao.accounts.impl.AccountsDAOImpl" parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
+	<bean id="accountsHistoryDAO" class="com.pennant.backend.dao.accounts.impl.AccountsHistoryDAOImpl" parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
 	<bean id="accountTypeDAO" class="com.pennant.backend.dao.rmtmasters.impl.AccountTypeDAOImpl" parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
@@ -197,6 +200,7 @@
 	<bean name="accountProcessUtil" class="com.pennant.app.util.AccountProcessUtil">
 		<property name="accountsDAO" ref="accountsDAO" />
 		<property name="accountTypeDAO" ref="accountTypeDAO" />
+		<property name="accountsHistoryDAO" ref="accountsHistoryDAO" />
 	</bean>
 	<!-- Transaction Entry -->
 	<bean id="transactionEntryDAO" class="com.pennant.backend.dao.rmtmasters.impl.TransactionEntryDAOImpl">

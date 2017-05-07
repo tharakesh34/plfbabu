@@ -50,7 +50,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -83,7 +82,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.SecondaryAccount;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.util.EODProperties;
 
@@ -138,33 +136,6 @@ abstract public class ServiceHelper implements Serializable {
 
 	}
 
-	/**
-	 * @param list
-	 * @return
-	 */
-	public final long saveAccounting(List<ReturnDataSet> list) {
-		long linkedTranId = Long.MIN_VALUE;
-		if (list == null) {
-			return 0;
-		}
-		// Amount with zero balance should not posted
-		Iterator<ReturnDataSet> it = list.iterator();
-		while (it.hasNext()) {
-			if (linkedTranId == Long.MIN_VALUE) {
-				linkedTranId = getPostingsDAO().getLinkedTransId();
-			}
-			ReturnDataSet returnDataSet = it.next();
-			returnDataSet.setLinkedTranId(linkedTranId);
-			if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) == 0) {
-				it.remove();
-			}
-		}
-		if (!list.isEmpty()) {
-			getPostingsDAO().saveHeader(list.get(0), list.get(0).getPostStatus(), "");
-			return linkedTranId;
-		}
-		return 0;
-	}
 
 	/**
 	 * @param fintype
