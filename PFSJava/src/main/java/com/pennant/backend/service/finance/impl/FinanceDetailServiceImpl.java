@@ -183,7 +183,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.VASConsatnts;
-import com.pennant.cache.util.AccountingSetCache;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennant.exception.PFFInterfaceException;
@@ -1559,7 +1559,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			//=======================================
 			List<TransactionEntry> stageEntries = new ArrayList<>();
 			for (int i = 0; i < accSetIdList.size(); i++) {
-				stageEntries.addAll(AccountingSetCache.getTransactionEntry(accSetIdList.get(i)));
+				stageEntries.addAll(AccountingConfigCache.getTransactionEntry(accSetIdList.get(i)));
 			}
 			financeDetail.setStageTransactionEntries(stageEntries);
 		}
@@ -1593,7 +1593,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						AccountEventConstants.ACCEVENT_CMTDISB, AccountEventConstants.ACCEVENT_CMTDISB);//TODO : ACCOUNTINGSET
 
 				if (accountingSetId != 0) {
-					financeDetail.setCmtFinanceEntries(AccountingSetCache.getTransactionEntry(accountingSetId));
+					financeDetail.setCmtFinanceEntries(AccountingConfigCache.getTransactionEntry(accountingSetId));
 				}
 			}
 		}

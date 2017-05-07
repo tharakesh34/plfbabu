@@ -9629,11 +9629,10 @@
 		<property name="scriptEngine" ref="scriptEngine" />
 	</bean>
 
-	<bean id="AccountingSetCache" class="com.pennant.cache.util.AccountingSetCache">
+	<bean id="accountingConfigCache" class="com.pennant.cache.util.AccountingConfigCache">
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO"/>
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="accountTypeDAO" ref="accountTypeDAO"/>
 	</bean>
-	
-
 </beans>

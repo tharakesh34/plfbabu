@@ -60,7 +60,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.rmtmasters.FinTypeAccountingService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.cache.util.AccountingSetCache;
+import com.pennant.cache.util.AccountingConfigCache;
 
 /**
  * Service implementation for methods that depends on <b>FinTypeAccounting</b>.<br>
@@ -112,7 +112,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 		} else {
 			getFinTypeAccountingDAO().update(finTypeAccounting, tableType);
 			if (StringUtils.isEmpty(tableType)) {
-				AccountingSetCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
+				AccountingConfigCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
 			}
 		}
 
@@ -188,7 +188,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 		if (PennantConstants.RECORD_TYPE_DEL.equals(finTypeAccounting.getRecordType())) {
 			tranType = PennantConstants.TRAN_DEL;
 			getFinTypeAccountingDAO().delete(finTypeAccounting, "");
-			AccountingSetCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
+			AccountingConfigCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
 		} else {
 			finTypeAccounting.setRoleCode("");
 			finTypeAccounting.setNextRoleCode("");
@@ -204,7 +204,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 				tranType = PennantConstants.TRAN_UPD;
 				finTypeAccounting.setRecordType("");
 				getFinTypeAccountingDAO().update(finTypeAccounting, "");
-				AccountingSetCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
+				AccountingConfigCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
 			}
 		}
 
@@ -488,7 +488,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 				finTypeAccounting.setRecordStatus(recordStatus);
 			}
 			if (StringUtils.isEmpty(type) && (updateRecord || deleteRecord )) {
-				AccountingSetCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
+				AccountingConfigCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
 			}
 
 			auditDetails.get(i).setModelData(finTypeAccounting);
@@ -513,7 +513,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finTypeAccounting.getBefImage(), finTypeAccounting));
 				}
 				if (StringUtils.isEmpty(tableType)) {
-					AccountingSetCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
+					AccountingConfigCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
 				}
 			}
 			getFinTypeAccountingDAO().deleteByFinType(finType, moduleId, tableType);

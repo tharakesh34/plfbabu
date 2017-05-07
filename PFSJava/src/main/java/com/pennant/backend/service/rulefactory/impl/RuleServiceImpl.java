@@ -66,7 +66,7 @@ import com.pennant.backend.service.limit.LimitGroupService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.cache.util.AccountingSetCache;
+import com.pennant.cache.util.AccountingConfigCache;
 
 /**
  * Service implementation for methods that depends on <b>Rule</b>.<br>
@@ -119,7 +119,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 		} else {
 			getRuleDAO().update(rule,tableType);
 			if (StringUtils.isEmpty(tableType)) {
-				AccountingSetCache.clearRuleCache(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent());
+				AccountingConfigCache.clearRuleCache(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent());
 			}
 		}
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -257,7 +257,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 		if (rule.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getRuleDAO().delete(rule, "");
-			AccountingSetCache.clearRuleCache(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent());
+			AccountingConfigCache.clearRuleCache(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent());
 		} else {
 			rule.setRoleCode("");
 			rule.setNextRoleCode("");
@@ -273,7 +273,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 				tranType = PennantConstants.TRAN_UPD;
 				rule.setRecordType("");
 				getRuleDAO().update(rule, "");
-				AccountingSetCache.clearRuleCache(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent());
+				AccountingConfigCache.clearRuleCache(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent());
 
 			}
 		}

@@ -81,7 +81,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
-import com.pennant.cache.util.AccountingSetCache;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.exception.PFFInterfaceException;
 import com.rits.cloning.Cloner;
 
@@ -377,7 +377,7 @@ public class AccountEngineExecution implements Serializable {
 		List<Long> acSetIDList = aeEvent.getAcSetIDList();
 		List<TransactionEntry> transactionEntries = new ArrayList<>();
 		for (int i = 0; i < acSetIDList.size(); i++) {
-			transactionEntries.addAll(AccountingSetCache.getTransactionEntry(acSetIDList.get(i)));
+			transactionEntries.addAll(AccountingConfigCache.getTransactionEntry(acSetIDList.get(i)));
 		}
 		List<ReturnDataSet> returnDataSets = null;
 
@@ -482,7 +482,7 @@ public class AccountEngineExecution implements Serializable {
 		List<ReturnDataSet> returnDataSets = new ArrayList<ReturnDataSet>();
 		List<TransactionEntry> transactionEntries = new ArrayList<>();
 		for (int i = 0; i < acSetIDList.size(); i++) {
-			transactionEntries.addAll(AccountingSetCache.getTransactionEntry(acSetIDList.get(i)));
+			transactionEntries.addAll(AccountingConfigCache.getTransactionEntry(acSetIDList.get(i)));
 		}
 		
 		//FIXME CH To be discussed if this is required here
@@ -766,7 +766,7 @@ public class AccountEngineExecution implements Serializable {
 		newAccount.setAcType(txnEntry.getAccountType());
 		newAccount.setInternalAc(true);
 
-		Rule rule = AccountingSetCache.getRule(txnEntry.getAccountSubHeadRule(), RuleConstants.MODULE_SUBHEAD,
+		Rule rule = AccountingConfigCache.getRule(txnEntry.getAccountSubHeadRule(), RuleConstants.MODULE_SUBHEAD,
 				RuleConstants.MODULE_SUBHEAD);
 		dataMap.put("acType", txnEntry.getAccountType());
 		if (rule != null) {

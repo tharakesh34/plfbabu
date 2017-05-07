@@ -82,7 +82,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.cache.util.AccountingSetCache;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl;
@@ -276,7 +276,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 				}
 
 				//Finance Accounting Posting Details & Commitment Disbursement Posting Details
-				List<TransactionEntry> transactionEntries = AccountingSetCache.getTransactionEntry(acSetID);
+				List<TransactionEntry> transactionEntries = AccountingConfigCache.getTransactionEntry(acSetID);
 				if (transactionEntries != null && !transactionEntries.isEmpty()) {				
 					boolean executed = false;
 					if (!main.isNew() && 

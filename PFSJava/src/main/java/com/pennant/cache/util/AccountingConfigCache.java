@@ -9,19 +9,36 @@ import org.apache.log4j.Logger;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
+import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.Rule;
 
-public class AccountingSetCache {
+/**
+ * @author pasvarma
+ *
+ */
+public class AccountingConfigCache {
 
+	private static AccountTypeDAO accountTypeDAO;
+	
 	private static FinTypeAccountingDAO finTypeAccountingDAO;
 	private static TransactionEntryDAO transactionEntryDAO;
 	private static RuleDAO ruleDAO;
 	private final static Logger logger = Logger
-			.getLogger(AccountingSetCache.class);
+			.getLogger(AccountingConfigCache.class);
+
+	private static LoadingCache<String, AccountType> accountTypeCache = CacheBuilder
+			.newBuilder().expireAfterAccess(12, TimeUnit.HOURS)
+			.build(new CacheLoader<String, AccountType>() {
+				@Override
+				public AccountType load(String acType) throws Exception {
+					return getAccountTypeById(acType);
+				}
+			});
 
 	private static LoadingCache<String, Long> finTypeAccountCache = CacheBuilder
 			.newBuilder().expireAfterAccess(12, TimeUnit.HOURS)
@@ -51,6 +68,10 @@ public class AccountingSetCache {
 				}
 			});
 
+	private static AccountType getAccountTypeById(String acType) {
+		return getAccountTypeDAO().getAccountTypeById(acType, "");
+	}
+
 	private static long getAccountSetID(String accountSetKey) {
 		String[] parmList = accountSetKey.split("@");
 		return getFinTypeAccountingDAO().getAccountSetID(parmList[0],
@@ -69,6 +90,44 @@ public class AccountingSetCache {
 				"");
 	}
 
+	/**
+	 * @param String acType
+	 * @return AccountType
+	 */
+	public static AccountType getAccountType(String acType) {
+		AccountType accountType;
+
+		try {
+			accountType = accountTypeCache.get(acType);
+		} catch (ExecutionException e) {
+			logger.warn("Unable to load data from  Finance Type Accounting cache: ",e);
+			accountType = getAccountTypeById(acType);
+		}
+		return accountType;
+	}
+
+
+	/**
+	 * It Clear Account Type Accounting data from cache .
+	 * 
+	 * @param acType
+	 * 
+	 */
+
+	public static void clearAccountTypeCache(String acType) {
+		try {
+			finTypeAccountCache.invalidate(acType);
+		} catch (Exception ex) {
+			logger.warn("Error clearing data from Account type cache: ",ex);
+		}
+	}
+	
+	/**
+	 * @param finType
+	 * @param event
+	 * @param moduleId
+	 * @return Long Account setID
+	 */
 	public static long getAccountSetID(String finType, String event,
 			int moduleId) {
 		long accountSetID = Long.MIN_VALUE;
@@ -76,7 +135,7 @@ public class AccountingSetCache {
 		try {
 			accountSetID = finTypeAccountCache.get(accountSetKey);
 		} catch (ExecutionException e) {
-			logger.warn("Unable to load data from  Finance Type Accounting cache: ",e);
+			logger.warn("Unable to load data from  Account Type cache: ",e);
 			accountSetID = getAccountSetID(accountSetKey);
 		}
 		return accountSetID;
@@ -95,7 +154,7 @@ public class AccountingSetCache {
 		try {
 			finTypeAccountCache.invalidate(accountSetKey);
 		} catch (Exception ex) {
-			logger.warn("Error clearing data from Finance Type Accounting cache: ",ex);
+			logger.warn("Error clearing data from Accounting Set cache: ",ex);
 		}
 	}
 
@@ -142,7 +201,7 @@ public class AccountingSetCache {
 		try {
 			rule = ruleCache.get(ruleKey);
 		} catch (ExecutionException e) {
-			logger.warn("Unable to load data from Rule  cache: ", e);
+			logger.warn("Unable to load data from Rule cache: ", e);
 			rule = getRuleDAO()
 					.getRuleByID(ruleCode, ruleModule, ruleEvent, "");
 		}
@@ -167,6 +226,14 @@ public class AccountingSetCache {
 		
 	}
 
+	public static AccountTypeDAO getAccountTypeDAO() {
+		return accountTypeDAO;
+	}
+
+	public static void setAccountTypeDAO(AccountTypeDAO accountTypeDAO) {
+		AccountingConfigCache.accountTypeDAO = accountTypeDAO;
+	}
+
 	/**
 	 * @return the finTypeAccountingDAO
 	 */
@@ -180,7 +247,7 @@ public class AccountingSetCache {
 	 */
 	public void setFinTypeAccountingDAO(
 			FinTypeAccountingDAO finTypeAccountingDAO) {
-		AccountingSetCache.finTypeAccountingDAO = finTypeAccountingDAO;
+		AccountingConfigCache.finTypeAccountingDAO = finTypeAccountingDAO;
 	}
 
 	public static TransactionEntryDAO getTransactionEntryDAO() {
@@ -189,7 +256,7 @@ public class AccountingSetCache {
 
 	public static void setTransactionEntryDAO(
 			TransactionEntryDAO transactionEntryDAO) {
-		AccountingSetCache.transactionEntryDAO = transactionEntryDAO;
+		AccountingConfigCache.transactionEntryDAO = transactionEntryDAO;
 	}
 
 	public static RuleDAO getRuleDAO() {
@@ -197,7 +264,7 @@ public class AccountingSetCache {
 	}
 
 	public static void setRuleDAO(RuleDAO ruleDAO) {
-		AccountingSetCache.ruleDAO = ruleDAO;
+		AccountingConfigCache.ruleDAO = ruleDAO;
 	}
 
 }

@@ -62,6 +62,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.rmtmasters.AccountTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.cache.util.AccountingConfigCache;
 
 /**
  * Service implementation for methods that depends on <b>AccountType</b>.<br>
@@ -132,6 +133,9 @@ public class AccountTypeServiceImpl extends GenericService<AccountType> implemen
 			auditHeader.setAuditReference(accountType.getAcType());
 		}else{
 			getAccountTypeDAO().update(accountType,tableType);
+			if (StringUtils.isEmpty(tableType)) {
+				AccountingConfigCache.clearAccountTypeCache(accountType.getAcType());
+			}
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -164,7 +168,7 @@ public class AccountTypeServiceImpl extends GenericService<AccountType> implemen
 
 		AccountType accountType = (AccountType) auditHeader.getAuditDetail().getModelData();
 		getAccountTypeDAO().delete(accountType,"");
-
+		AccountingConfigCache.clearAccountTypeCache(accountType.getAcType());
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -234,7 +238,7 @@ public class AccountTypeServiceImpl extends GenericService<AccountType> implemen
 			tranType=PennantConstants.TRAN_DEL;
 
 			getAccountTypeDAO().delete(accountType,"");
-
+			AccountingConfigCache.clearAccountTypeCache(accountType.getAcType());
 		} else {
 			accountType.setRoleCode("");
 			accountType.setNextRoleCode("");
@@ -250,6 +254,7 @@ public class AccountTypeServiceImpl extends GenericService<AccountType> implemen
 				tranType=PennantConstants.TRAN_UPD;
 				accountType.setRecordType("");
 				getAccountTypeDAO().update(accountType,"");
+				AccountingConfigCache.clearAccountTypeCache(accountType.getAcType());
 			}
 		}
 

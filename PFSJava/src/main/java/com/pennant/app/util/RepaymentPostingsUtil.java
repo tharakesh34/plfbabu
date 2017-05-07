@@ -89,7 +89,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.cache.util.AccountingSetCache;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.exception.PFFInterfaceException;
 
 public class RepaymentPostingsUtil implements Serializable {
@@ -566,9 +566,9 @@ public class RepaymentPostingsUtil implements Serializable {
 		}
 		
 		if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
-			aeEvent.getAcSetIDList().add(AccountingSetCache.getAccountSetID(financeMain.getPromotionCode(), eventCode, FinanceConstants.MODULEID_PROMOTION));
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getPromotionCode(), eventCode, FinanceConstants.MODULEID_PROMOTION));
 		} else {
-			aeEvent.getAcSetIDList().add(AccountingSetCache.getAccountSetID(financeMain.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE));
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE));
 		}
 
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
