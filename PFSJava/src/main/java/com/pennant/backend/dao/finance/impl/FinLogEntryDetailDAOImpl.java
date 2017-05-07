@@ -58,14 +58,12 @@ public class FinLogEntryDetailDAOImpl extends BasisNextidDaoImpl<FinLogEntryDeta
 		FinLogEntryDetail finLogEntryDetail = new FinLogEntryDetail();
 		finLogEntryDetail.setFinReference(finReference);
 		finLogEntryDetail.setPostDate(postDate);
-		finLogEntryDetail.setEventAction(FinanceConstants.FINSER_EVENT_EARLYRPY);
-		
 		
 		StringBuilder selectSql = new StringBuilder(" Select T1.FinReference, T1.LogKey, T1.EventAction, T1.SchdlRecal, T1.PostDate, T1.ReversalCompleted ");
 		selectSql.append(" From FinLogEntryDetail T1 ");
 		selectSql.append(" Where T1.FinReference =:FinReference AND T1.PostDate >=:PostDate AND T1.ReversalCompleted = 0 " );
-		selectSql.append(" AND T1.EventAction != :EventAction AND LogKey > COALESCE((select MAX(T2.LogKey) FROM FinLogEntryDetail T2 ");
-		selectSql.append(" WHERE T1.FinReference = T2.FinReference AND T2.ReversalCompleted = 0  AND T2.EventAction=:EventAction ), 0)");
+		selectSql.append(" AND LogKey > COALESCE((select MAX(T2.LogKey) FROM FinLogEntryDetail T2 ");
+		selectSql.append(" WHERE T1.FinReference = T2.FinReference AND T2.ReversalCompleted = 0  ), 0)");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finLogEntryDetail);

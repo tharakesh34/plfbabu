@@ -554,6 +554,8 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 
 			bounce.setPaidAmount(BigDecimal.ZERO);
 			bounce.setWaivedAmount(BigDecimal.ZERO);
+			bounce.setValueDate(DateUtility.getAppDate());
+			bounce.setPostDate(DateUtility.getPostDate());
 
 			try {
 				bounce.setRemarks(this.bounceRemarks.getValue());
@@ -779,6 +781,15 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 					RepayScheduleDetail curRpySchd = null;
 					if(rpySchdMap.containsKey(rpySchd.getSchDate())){
 						curRpySchd = rpySchdMap.get(rpySchd.getSchDate());
+						
+						if(curRpySchd.getPrincipalSchdBal().compareTo(rpySchd.getPrincipalSchdBal()) < 0){
+							curRpySchd.setPrincipalSchdBal(rpySchd.getPrincipalSchdBal());
+						}
+						
+						if(curRpySchd.getProfitSchdBal().compareTo(rpySchd.getProfitSchdBal()) < 0){
+							curRpySchd.setProfitSchdBal(rpySchd.getProfitSchdBal());
+						}
+						
 						curRpySchd.setPrincipalSchdPayNow(curRpySchd.getPrincipalSchdPayNow().add(rpySchd.getPrincipalSchdPayNow()));
 						curRpySchd.setProfitSchdPayNow(curRpySchd.getProfitSchdPayNow().add(rpySchd.getProfitSchdPayNow()));
 						curRpySchd.setLatePftSchdPayNow(curRpySchd.getLatePftSchdPayNow().add(rpySchd.getLatePftSchdPayNow()));
@@ -1236,15 +1247,20 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		aReceiptHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aReceiptHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 		
-		aReceiptHeader.getManualAdvise().setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
-		aReceiptHeader.getManualAdvise().setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		aReceiptHeader.getManualAdvise().setUserDetails(getUserWorkspace().getLoggedInUser());
+		if(aReceiptHeader.getManualAdvise() != null){
+			aReceiptHeader.getManualAdvise().setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+			aReceiptHeader.getManualAdvise().setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			aReceiptHeader.getManualAdvise().setUserDetails(getUserWorkspace().getLoggedInUser());
+		}
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId;
 			aReceiptHeader.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-			aReceiptHeader.getManualAdvise().setRecordStatus(userAction.getSelectedItem().getValue().toString());
+			
+			if(aReceiptHeader.getManualAdvise() != null){
+				aReceiptHeader.getManualAdvise().setRecordStatus(userAction.getSelectedItem().getValue().toString());
+			}
 
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
@@ -1285,10 +1301,12 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			aReceiptHeader.setRoleCode(getRole());
 			aReceiptHeader.setNextRoleCode(nextRoleCode);
 			
-			aReceiptHeader.getManualAdvise().setTaskId(taskId);
-			aReceiptHeader.getManualAdvise().setNextTaskId(nextTaskId);
-			aReceiptHeader.getManualAdvise().setRoleCode(getRole());
-			aReceiptHeader.getManualAdvise().setNextRoleCode(nextRoleCode);
+			if(aReceiptHeader.getManualAdvise() != null){
+				aReceiptHeader.getManualAdvise().setTaskId(taskId);
+				aReceiptHeader.getManualAdvise().setNextTaskId(nextTaskId);
+				aReceiptHeader.getManualAdvise().setRoleCode(getRole());
+				aReceiptHeader.getManualAdvise().setNextRoleCode(nextRoleCode);
+			}
 
 			auditHeader = getAuditHeader(aReceiptHeader, tranType);
 			String operationRefs = getServiceOperations(taskId, aReceiptHeader);

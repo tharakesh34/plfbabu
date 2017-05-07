@@ -1560,10 +1560,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @param auditHeader
 	 * @param list
 	 * @return
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 * @throws AccountNotFoundException
 	 */
 	protected AuditHeader executeStageAccounting(AuditHeader auditHeader, List<ReturnDataSet> list)
-			throws PFFInterfaceException {
+			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		FinanceDetail financeDetail = null;
@@ -1738,10 +1740,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * Create a Movement of Stage Accounting after successful postings on next step </br>
 	 * 
 	 * @return
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 * @throws AccountNotFoundException
 	 */
 	protected boolean prvStageAccountingCheck(List<ReturnDataSet> curStageAccEntries, String finReference,
-			String finEvent, String roleCode) throws PFFInterfaceException {
+			String finEvent, String roleCode) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		// Check Previously Executed Stage Accounting Entries
@@ -1810,12 +1814,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		//Reverse previously executed stage accounting entries in Core Banking System
 		if (reExecuteStgAc) {
-
-			List<Object> returnList = getPostingsPreparationUtil().processFinCanclPostings(finReference,
-					String.valueOf(linkedTranId));
-			if (!(Boolean) returnList.get(0)) {
-				throw new PFFInterfaceException("9999", returnList.get(1).toString());
-			}
+			getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranId);
 		}
 
 		//Delete Entry log after Finance Stage Accounting Reversal on particular Stage/Role
@@ -1834,21 +1833,15 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * 
 	 * @param finReference
 	 * @throws PFFInterfaceException
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	protected void cancelStageAccounting(String finReference, String finEvent) throws PFFInterfaceException {
+	protected void cancelStageAccounting(String finReference, String finEvent) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 
 		List<Long> excdTranIdList = getFinStageAccountingLogDAO().getLinkedTranIdList(finReference, finEvent);
 		if (excdTranIdList != null && !excdTranIdList.isEmpty()) {
 			for (Long linkedTranId : excdTranIdList) {
-				List<Object> returnList = getPostingsPreparationUtil().processFinCanclPostings(finReference,
-						String.valueOf(linkedTranId));
-				if (!(Boolean) returnList.get(0)) {
-					logger.debug("Reverse Transaction failed for Transaction ID : " + linkedTranId);
-					//Since Error Message can be null;
-					String ermsg = returnList.get(1) != null ? returnList.get(1).toString()
-							: "Reverse Transaction failed for Transaction ID : " + linkedTranId;
-					throw new PFFInterfaceException("9999", ermsg);
-				}
+				getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranId);
 				logger.debug("Reverse Transaction Success for Transaction ID : " + linkedTranId);
 			}
 		}

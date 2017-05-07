@@ -167,7 +167,7 @@ public class PostingsPreparationUtil implements Serializable {
 	}
 
 	public AEEvent processPostings(AEEvent aeEvent) throws AccountNotFoundException, IllegalAccessException,
-			InvocationTargetException, PFFInterfaceException {
+	InvocationTargetException, PFFInterfaceException {
 		return processPostingDetails(aeEvent);
 	}
 
@@ -189,7 +189,7 @@ public class PostingsPreparationUtil implements Serializable {
 	}
 
 	private AEEvent processPostings(AEEvent aeEvent, HashMap<String, Object> dataMap) throws PFFInterfaceException,
-			IllegalAccessException, InvocationTargetException {
+	IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
@@ -365,6 +365,7 @@ public class PostingsPreparationUtil implements Serializable {
 		//Method for Checking for Reverse Calculations Based upon Negative Amounts
 		for (ReturnDataSet returnDataSet : list) {
 			returnDataSet.setLinkedTranId(aeEvent.getLinkedTranId());
+			returnDataSet.setUserBranch(aeEvent.getPostingUserBranch());
 
 			if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
 				String tranCode = returnDataSet.getTranCode();
@@ -641,13 +642,13 @@ public class PostingsPreparationUtil implements Serializable {
 			}
 			list.add(returnDataSet);
 		}
-		
+
 		//FIXME: PV: 05MAY17 needs to fill return dataset
 		logger.debug("Leaving");
 		return list;
 	}
 
-	
+
 	/**
 	 * Method to Prepare the accounting entries and save the postings to the Postings and accounts table
 	 * @param aeEvent
@@ -663,7 +664,7 @@ public class PostingsPreparationUtil implements Serializable {
 		if (aeEvent.getLinkedTranId() <= 0) {
 			aeEvent.setLinkedTranId(getPostingsDAO().getLinkedTransId());
 		}
-		
+
 		getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
 
 		List<ReturnDataSet> returnDatasetList = aeEvent.getReturnDataSet();
@@ -674,16 +675,14 @@ public class PostingsPreparationUtil implements Serializable {
 		if (returnDatasetList == null || returnDatasetList.isEmpty()) {
 			return aeEvent;
 		}
-		
+
 		getPostingsDAO().saveBatch(returnDatasetList);
 
 		getAccountProcessUtil().procAccountUpdate(returnDatasetList, aeEvent.getAeAmountCodes().getAccrue());
 
 		logger.debug("Leaving");
 		return aeEvent;
-
-}
-	
+	}
 
 	/**
 	 * @param finReference
@@ -694,18 +693,18 @@ public class PostingsPreparationUtil implements Serializable {
 	 */
 	public List<ReturnDataSet> postReveralsByFinreference(String finReference) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
-		
+
 		List<ReturnDataSet> returnDataSets =  getReveralsByFinreference(finReference);
-		
+
 		getPostingsDAO().updateStatusByFinRef(finReference, AccountConstants.POSTINGS_REVERSE);
- 
+
 		getPostingsDAO().saveBatch(returnDataSets);
 
 		getAccountProcessUtil().procAccountUpdate(returnDataSets, BigDecimal.ZERO);
 
 		logger.debug("Leaving");
 		return returnDataSets;
-}
+	}
 
 	/**
 	 * 
@@ -719,18 +718,18 @@ public class PostingsPreparationUtil implements Serializable {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> returnDataSets =  getReversalsByLinkedTranID(linkedTranId);
-		
+
 		getPostingsDAO().updateStatusByLinkedTranId(linkedTranId, AccountConstants.POSTINGS_REVERSE);
- 
+
 		getPostingsDAO().saveBatch(returnDataSets);
 
 		getAccountProcessUtil().procAccountUpdate(returnDataSets, BigDecimal.ZERO);
 
 		logger.debug("Leaving");
 		return returnDataSets;
-    }
-	
-	
+	}
+
+
 	/**
 	 * 
 	 * @param linkedTranId
@@ -743,15 +742,15 @@ public class PostingsPreparationUtil implements Serializable {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> returnDataSets =  getPostingsDAO().getPostingsByLinkTransId(linkedTranId);
-		
+
 		getEngineExecution().getReversePostings(returnDataSets);
-		
+
 		logger.debug("Leaving");
 		return returnDataSets;
-    }
-	
-	
-	
+	}
+
+
+
 	/**
 	 * @param finReference
 	 * @return
@@ -763,15 +762,15 @@ public class PostingsPreparationUtil implements Serializable {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> returnDataSets =  getPostingsDAO().getPostingsByFinRef(finReference);
-		
+
 		getEngineExecution().getReversePostings(returnDataSets);
-		
+
 		logger.debug("Leaving");
 		return returnDataSets;
-    }
-	
-	
-	
+	}
+
+
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

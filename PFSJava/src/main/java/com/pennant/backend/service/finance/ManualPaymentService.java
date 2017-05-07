@@ -18,7 +18,7 @@ public interface ManualPaymentService {
 	FinanceProfitDetail getFinProfitDetailsById(String finReference);
 	RepayData getRepayDataById(String finReference, String eventCode,String procEdtEvent, String userRole);
 	AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
-	AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException;
+	AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 	AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 	FinanceDetail getAccountingDetail(FinanceDetail financeDetail, String eventCodeRef);
 	FinanceProfitDetail getPftDetailForEarlyStlReport(String finReference);

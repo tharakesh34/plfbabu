@@ -1,5 +1,7 @@
 package com.pennant.backend.service.finance;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.jaxen.JaxenException;
 
 import com.pennant.backend.model.audit.AuditHeader;
@@ -11,10 +13,11 @@ public interface FinanceCancellationService {
 
 	FinanceDetail getFinanceDetailById(String finReference, String type, String userRole, String procEdtEvent);
 
-	AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws PFFInterfaceException;
+	AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 
-	AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException;
+	AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 
-	AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException, JaxenException;
+	AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException, JaxenException, IllegalAccessException, InvocationTargetException;
 
 }
+

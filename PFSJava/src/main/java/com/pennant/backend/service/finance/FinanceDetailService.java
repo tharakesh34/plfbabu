@@ -84,7 +84,7 @@ public interface FinanceDetailService {
 	
 	FinanceDetail getFinanceDetail(boolean isWIF);
 	FinanceDetail getNewFinanceDetail(boolean isWIF);
-	AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean isWIF) throws PFFInterfaceException;
+	AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean isWIF) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 	FinanceDetail getOriginationFinance(String financeReference,String nextRoleCode,String procEdtEvent,String userrole);
 	FinanceDetail getServicingFinance(String financeReference, String eventCode, String procEdtEvent,String userrole);
 	FinanceDetail getWIFFinance(String financeReference, boolean reqCustDetail, String procEdtEvent);
@@ -92,7 +92,7 @@ public interface FinanceDetailService {
 	FinanceDetail getApprovedFinanceDetailById(String financeReference,boolean isWIF);
 	AuditHeader delete(AuditHeader auditHeader,boolean isWIF);
 	AuditHeader doApprove(AuditHeader auditHeader,boolean isWIF) throws PFFInterfaceException, JaxenException;
-	AuditHeader doReject(AuditHeader auditHeader,boolean isWIF) throws PFFInterfaceException, JaxenException;
+	AuditHeader doReject(AuditHeader auditHeader,boolean isWIF) throws PFFInterfaceException, JaxenException, IllegalAccessException, InvocationTargetException;
 	FinanceDetail getFinanceReferenceDetails(FinanceDetail financeDetail, String userRole,String screenCode, String eventCode, String procEdtEvent, boolean extFieldsReq);
 	boolean isFinReferenceExits(String financeReference, String tableType, boolean isWIF);
 	FinScheduleData getFinSchDataByFinRef(String financeReference, String type, long logKey);
@@ -116,10 +116,10 @@ public interface FinanceDetailService {
 	List<BulkProcessDetails> getIjaraBulkRateFinList(Date fromDate, Date toDate);
 
 	boolean bulkRateChangeFinances(List<BulkProcessDetails> bulkRateChangeFinances, 
-	String recalType, BigDecimal rateChange) throws PFFInterfaceException;
+	String recalType, BigDecimal rateChange) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 	List<BulkDefermentChange> getBulkDefermentFinList(Date fromDate, Date toDate);
 	boolean bulkDefermentChanges(List<BulkDefermentChange> defermentChangeFinances, String recalType, boolean excludeDeferment, 
-	String addTermAfter, Date calFromDate, Date calToDate) throws PFFInterfaceException;
+	String addTermAfter, Date calFromDate, Date calToDate) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 	
 	FinanceMain fetchConvertedAmounts(FinanceMain financeMain, boolean calAllAmounts);
 	FinanceProfitDetail getFinProfitDetailsById(String finReference);

@@ -43,6 +43,8 @@
 
 package com.pennant.backend.service.finance.liability.service;
 
+import java.lang.reflect.InvocationTargetException;
+
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennant.exception.PFFInterfaceException;
@@ -51,11 +53,11 @@ public interface LiabilityRequestService {
 	
 	LiabilityRequest getLiabilityRequest();
 	LiabilityRequest getNewLiabilityRequest();
-	AuditHeader saveOrUpdate(AuditHeader auditHeader) throws PFFInterfaceException;
+	AuditHeader saveOrUpdate(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 	LiabilityRequest getLiabilityRequestById(String id, String finEvent);
 	LiabilityRequest getApprovedLiabilityRequestById(String id, String finEvent);
 	AuditHeader delete(AuditHeader auditHeader);
-	AuditHeader doApprove(AuditHeader auditHeader) throws PFFInterfaceException;
-	AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException;
+	AuditHeader doApprove(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
+	AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 	String getProceedingWorkflow(String finType, String finEvent);
 }

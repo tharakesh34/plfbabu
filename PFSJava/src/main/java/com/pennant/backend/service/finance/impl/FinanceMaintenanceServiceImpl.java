@@ -205,7 +205,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws PFFInterfaceException {
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate");
@@ -555,9 +555,11 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws PFFInterfaceException
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException {
+	public AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();

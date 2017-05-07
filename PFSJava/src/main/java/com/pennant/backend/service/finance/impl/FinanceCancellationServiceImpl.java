@@ -157,7 +157,7 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 	 * @throws IllegalAccessException 
 	 */
     @Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws PFFInterfaceException {
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate");
@@ -200,21 +200,9 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		//Repayments Postings Details Process Execution
 		if(!financeMain.isWorkflow()){
 			if(FinanceConstants.ACCOUNTING_TOTALREVERSAL){
-
 				//Cancel All Transactions for Finance Disbursement including Commitment Postings, Stage Accounting on Reversal
-				List<Object> returnList = null;
-				List<Long> linkedTranId = getPostingsDAO().getLinkTranIdByRef(finReference);
-				if(linkedTranId != null){
-					for (Long tranId : linkedTranId) {
-						returnList = getPostingsPreparationUtil().processFinCanclPostings("", String.valueOf(tranId));
-						logger.debug("Reverse Transaction Success for Transaction ID : "+tranId);
-						if(!(Boolean) returnList.get(0)){
-							logger.debug("Reverse Transaction failed for Transaction ID : "+tranId);
-							throw new PFFInterfaceException("9999",returnList.get(1).toString());
-						}
-					}
-				}
-				returnList = null;
+				getPostingsPreparationUtil().postReveralsByFinreference(finReference);
+				logger.debug("Reverse Transaction Success for Reference : "+finReference);
 			}else{
 				//Event Based Accounting on Final Stage
 				Date curBDay = DateUtility.getAppDate();
@@ -276,9 +264,11 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws PFFInterfaceException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException {
+	public AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -349,7 +339,7 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 	 * @throws IllegalAccessException 
 	 */
     @Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException, JaxenException {
+	public AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException, JaxenException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		String tranType = "";
@@ -385,19 +375,13 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 		//=====================================
 		if(FinanceConstants.ACCOUNTING_TOTALREVERSAL){
 			//Cancel All Transactions for Finance Disbursement including Commitment Postings, Stage Accounting on Reversal
-			List<Object> returnList = null;
-			List<Long> linkedTranId = getPostingsDAO().getLinkTranIdByRef(finReference);
-			if(linkedTranId != null){
-				for (Long tranId : linkedTranId) {
-					returnList = getPostingsPreparationUtil().processFinCanclPostings("", String.valueOf(tranId));
-					logger.debug("Reverse Transaction Success for Transaction ID : "+tranId);
-					if(!(Boolean) returnList.get(0)){
-						logger.debug("Reverse Transaction failed for Transaction ID : "+tranId);
-						throw new PFFInterfaceException("9999",returnList.get(1).toString());
-					}
+			List<Long> tranIdlIst = getPostingsDAO().getLinkTranIdByRef(finReference);
+			if(tranIdlIst != null){
+				for (Long linkedTranID : tranIdlIst) {
+					getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranID);
+					logger.debug("Reverse Transaction Success for Transaction ID : "+linkedTranID);
 				}
 			}
-			returnList = null;
 
 			// Finance Commitment Reference Posting Details
 			Commitment commitment = null;

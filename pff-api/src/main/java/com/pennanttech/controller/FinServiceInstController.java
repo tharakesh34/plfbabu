@@ -1129,10 +1129,11 @@ public class FinServiceInstController extends SummaryDetailService {
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 * @throws PFFInterfaceException
+	 * @throws AccountNotFoundException 
 	 */
 	@SuppressWarnings("unchecked")
 	public FinanceDetail doProcessPayments(FinanceDetail aFinanceDetail, FinServiceInstruction finServiceInst)
-			throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+			throws IllegalAccessException, InvocationTargetException, PFFInterfaceException, AccountNotFoundException {
 		logger.debug("Entering");
 
 		if (finServiceInst.getFromDate() == null) {
@@ -1565,7 +1566,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	public List<Object> processRepaymentPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
 			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, BigDecimal insRefund,
 			String eventCodeRef, List<FeeRule> feeRuleList, String finDivision)
-			throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
+			throws IllegalAccessException, PFFInterfaceException, InvocationTargetException, AccountNotFoundException {
 		logger.debug("Entering");
 
 		List<Object> returnList = new ArrayList<Object>();

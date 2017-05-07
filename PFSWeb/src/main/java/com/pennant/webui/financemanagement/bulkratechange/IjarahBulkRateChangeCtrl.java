@@ -42,6 +42,7 @@
  */
 package com.pennant.webui.financemanagement.bulkratechange;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -293,8 +294,10 @@ public class IjarahBulkRateChangeCtrl extends GFCBaseListCtrl<BulkProcessDetails
 	 * @throws InterruptedException
 	 * @throws AccountNotFoundException 
 	 * @throws WrongValueException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	public void onClick$btnProceed(Event event) throws InterruptedException, WrongValueException, PFFInterfaceException {
+	public void onClick$btnProceed(Event event) throws InterruptedException, WrongValueException, PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering" +event.toString());
 		throwValidation();		
 		

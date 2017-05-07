@@ -1121,9 +1121,11 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	 * @return
 	 * @throws InterruptedException
 	 * @throws JaxenException
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
 	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws InterruptedException,
-			JaxenException {
+			JaxenException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -1222,8 +1224,10 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	 * @return
 	 * @throws InterruptedException
 	 * @throws JaxenException
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterruptedException, JaxenException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterruptedException, JaxenException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

@@ -52,19 +52,7 @@ import com.pennanttech.pff.core.TableType;
 
 public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	
-	
-	/**
-	 * Fetch the Record Academic Details details by key field
-	 * 
-	 * @param adviseID
-	 *            adviseID of the ManualAdvise.
-	 * @param tableType
-	 *            The type of the table.
-	 * @return ManualAdvise
-	 */
 	ManualAdvise getManualAdviseById(long adviseID,String type);
-
-	// Receipts
 	List<ManualAdvise> getManualAdviseByRef(String finReference, int adviseType, String type);
 	void saveMovement(ManualAdviseMovements movement, String type);
 	void updateAdvPayment(long adviseID, BigDecimal paidAmount, BigDecimal waivedAmount, TableType tableType);

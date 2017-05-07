@@ -99,7 +99,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 */
 	public List<Object> recoveryPayment(FinanceMain financeMain, Date dateValueDate, Date schdDate, String finODFor,
 			Date movementDate, BigDecimal penalty, BigDecimal prvPenaltyPaid, BigDecimal waiverAmt, String chargeType,
-			long linkedTranId, boolean fullyPaidSchd) throws PFFInterfaceException, IllegalAccessException,
+			long linkedTranId, boolean fullyPaidSchd, String postBranch) throws PFFInterfaceException, IllegalAccessException,
 			InvocationTargetException {
 
 		logger.debug("Entering");
@@ -123,6 +123,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				aeEvent = new AEEvent();
 				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 				aeEvent.setFinReference(financeMain.getFinReference());
+				aeEvent.setPostingUserBranch(postBranch);
 				amountCodes.setPenalty(penaltyPaidNow);
 				amountCodes.setWaiver(waiverAmt);
 				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
@@ -142,13 +143,9 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				Date dateAppDate = DateUtility.getAppDate();
 				aeEvent.setPostDate(dateAppDate);
 				aeEvent.setValueDate(dateValueDate);
-				try {
-					aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
-				} catch (AccountNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
+				
+				// Posting details calling
+				aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent, dataMap);
 
 				isPostingSuccess = aeEvent.isPostingSucess();
 				linkedTranId = aeEvent.getLinkedTranId();

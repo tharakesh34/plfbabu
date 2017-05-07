@@ -41,6 +41,7 @@ public class AEEvent {
 	private String					ccy;
 	private String					accountingEvent;
 	private String					disbAccountID;
+	private String					postingUserBranch;
 
 	//VAS
 	private String					vasPostAgainst;
@@ -300,6 +301,14 @@ public class AEEvent {
 
 	public void setAcSetIDList(List<Long> acSetIDList) {
 		this.acSetIDList = acSetIDList;
+	}
+
+	public String getPostingUserBranch() {
+		return postingUserBranch;
+	}
+
+	public void setPostingUserBranch(String postingUserBranch) {
+		this.postingUserBranch = postingUserBranch;
 	}
 
 }

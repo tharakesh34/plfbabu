@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.service.finance.liability.service.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -150,9 +151,11 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 	 * @param AuditHeader (auditHeader)    
 	 * @return auditHeader
 	 * @throws PFFInterfaceException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader auditHeader) throws PFFInterfaceException {
+	public AuditHeader saveOrUpdate(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		return saveOrUpdate(auditHeader, false);
 	}
 
@@ -170,8 +173,10 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 	 * @param boolean onlineRequest
 	 * @return auditHeader
 	 * @throws PFFInterfaceException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	private AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean online) throws PFFInterfaceException {
+	private AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean online) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");	
 		auditHeader = businessValidation(auditHeader,"saveOrUpdate",online);
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -306,9 +311,11 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 	 * @param AuditHeader (auditHeader)    
 	 * @return auditHeader
 	 * @throws PFFInterfaceException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
 
-		public AuditHeader doApprove(AuditHeader auditHeader) throws PFFInterfaceException {
+		public AuditHeader doApprove(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		String tranType="";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -440,9 +447,11 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 	 * @param AuditHeader (auditHeader)    
 	 * @return auditHeader
 	 * @throws PFFInterfaceException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
 
-	public AuditHeader  doReject(AuditHeader auditHeader) throws PFFInterfaceException {
+	public AuditHeader  doReject(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		auditHeader = businessValidation(auditHeader,"doApprove",false);
 		if (!auditHeader.isNextProcess()) {

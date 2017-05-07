@@ -548,10 +548,11 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		long logKey = 0;
 		List<Long> logKeyList = new ArrayList<>();
 		BigDecimal totalPriAmount = BigDecimal.ZERO;
-		if(receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()){
-			for (int i = 0; i < receiptHeader.getReceiptDetails().size(); i++) {
+		List<FinReceiptDetail> receiptDetails = sortReceiptDetails(receiptHeader.getReceiptDetails());
+		if(receiptDetails != null && !receiptDetails.isEmpty()){
+			for (int i = 0; i < receiptDetails.size(); i++) {
 
-				FinReceiptDetail receiptDetail = receiptHeader.getReceiptDetails().get(i);
+				FinReceiptDetail receiptDetail = receiptDetails.get(i);
 
 				if(isBounceProcess && (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) || 
 						StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) ||
@@ -605,10 +606,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 					//Posting Reversal Case Program Calling in Equation
 					//============================================
-					List<Object> returnList = getPostingsPreparationUtil().processFinCanclPostings(finReference, String.valueOf(linkedTranId));
-					if (!(Boolean) returnList.get(0)) {
-						return returnList.get(1).toString();
-					}
+					getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranId);
 
 					//Remove Repayments Terms based on Linked Transaction ID
 					//============================================
@@ -839,6 +837,30 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 		return rpySchdList;
 	}
+	
+	
+	/**
+	 * Method for Sorting Receipt Details From Receipts
+	 * @param receipts
+	 * @return
+	 */
+	private List<FinReceiptDetail> sortReceiptDetails(List<FinReceiptDetail> receipts){
+
+		if (receipts != null && receipts.size() > 0) {
+			Collections.sort(receipts, new Comparator<FinReceiptDetail>() {
+				@Override
+				public int compare(FinReceiptDetail detail1, FinReceiptDetail detail2) {
+					if(detail1.getPayOrder() == detail2.getPayOrder()){
+						return 0;
+					} else {
+						return 1;
+					}
+				}
+			});
+		}
+		return receipts;
+	}
+
 
 	/**
 	 * Method to get Schedule related data.

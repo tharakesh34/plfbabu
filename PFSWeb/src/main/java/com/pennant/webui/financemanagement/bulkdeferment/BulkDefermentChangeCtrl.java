@@ -42,6 +42,7 @@
  */
 package com.pennant.webui.financemanagement.bulkdeferment;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -302,8 +303,10 @@ public class BulkDefermentChangeCtrl extends GFCBaseListCtrl<BulkDefermentChange
 	 * @throws InterruptedException
 	 * @throws AccountNotFoundException 
 	 * @throws WrongValueException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	public void onClick$btnProceed(Event event) throws InterruptedException, WrongValueException, PFFInterfaceException {
+	public void onClick$btnProceed(Event event) throws InterruptedException, WrongValueException, PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering" +event.toString());
 		throwValidation();		
 

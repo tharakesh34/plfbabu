@@ -15,6 +15,7 @@ public class FinReceiptDetail implements Entity {
 	private String						paymentTo;
 	private String						paymentType;
 	private long						payAgainstID	= 0;
+	private int							payOrder		= 0;
 	private BigDecimal					amount			= BigDecimal.ZERO;
 	private String						favourNumber;
 	private Date						valueDate;
@@ -257,6 +258,14 @@ public class FinReceiptDetail implements Entity {
 
 	public void setDelRecord(boolean delRecord) {
 		this.delRecord = delRecord;
+	}
+
+	public int getPayOrder() {
+		return payOrder;
+	}
+
+	public void setPayOrder(int payOrder) {
+		this.payOrder = payOrder;
 	}
 
 }

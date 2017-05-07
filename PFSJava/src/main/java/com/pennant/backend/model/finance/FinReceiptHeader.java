@@ -41,6 +41,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private FinReceiptHeader befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
+	private String postBranch;
 
 	private List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>(1);
 	private List<FinExcessAmount> excessAmounts = new ArrayList<FinExcessAmount>(1);
@@ -64,6 +65,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("custCIF");
 		excludeFields.add("custShrtName");
 		excludeFields.add("excessReserves");
+		excludeFields.add("postBranch");
 
 		return excludeFields;
 	}
@@ -274,6 +276,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	}
 	public void setManualAdvise(ManualAdvise manualAdvise) {
 		this.manualAdvise = manualAdvise;
+	}
+
+	public String getPostBranch() {
+		return postBranch;
+	}
+
+	public void setPostBranch(String postBranch) {
+		this.postBranch = postBranch;
 	}
 
 }

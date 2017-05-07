@@ -909,8 +909,10 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param event
 	 * @throws InterruptedException
 	 * @throws JaxenException
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	public void onClick$btnDelete(Event event) throws InterruptedException, JaxenException {
+	public void onClick$btnDelete(Event event) throws InterruptedException, JaxenException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering " + event.toString());
 		doDelete();
 		logger.debug("Leaving " + event.toString());
@@ -4162,8 +4164,10 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @throws InterruptedException
 	 * @throws JaxenException
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	private void doDelete() throws InterruptedException, JaxenException {
+	private void doDelete() throws InterruptedException, JaxenException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		FinanceDetail afinanceDetail = new FinanceDetail();
@@ -4749,8 +4753,10 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param tranType
 	 * @return
 	 * @throws JaxenException
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws JaxenException {
+	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws JaxenException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -4849,8 +4855,10 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param method
 	 * @return
 	 * @throws JaxenException
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws JaxenException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws JaxenException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

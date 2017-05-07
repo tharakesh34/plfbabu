@@ -11,9 +11,9 @@ public interface FinanceMaintenanceService {
 
 	FinanceDetail getFinanceDetailById(String finReference, String type, String userRole, String procEdtEvent, String eventCode);
 
-	AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws PFFInterfaceException;
+	AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 
-	AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException;
+	AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 
 	AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 

@@ -1488,6 +1488,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		
 		List<FinReceiptDetail> receiptDetailList = new ArrayList<>();
+		int payOrder = 1;
 		FinReceiptDetail receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.PAYTYPE_EMIINADV);
 		// EMI In Advance Receipt Mode
 		if(this.listBoxExcess.getFellowIfAny("ExcessAmount_"+RepayConstants.EXAMOUNTTYPE_EMIINADV) != null){
@@ -1504,6 +1505,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				receiptDetail.setValueDate(this.valueDate.getValue());
 				receiptDetail.setReceivedDate(this.valueDate.getValue());
 				receiptDetail.setDelRecord(false);// Internal Purpose
+				receiptDetail.setPayOrder(payOrder);
+				payOrder = payOrder + 1;
 				receiptDetail.getAdvMovements().clear();
 				receiptDetail.getRepayHeaders().clear();
 				receiptDetailList.add(receiptDetail);
@@ -1533,6 +1536,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				receiptDetail.setValueDate(this.valueDate.getValue());
 				receiptDetail.setReceivedDate(this.valueDate.getValue());
 				receiptDetail.setDelRecord(false);// Internal Purpose
+				receiptDetail.setPayOrder(payOrder);
+				payOrder = payOrder + 1;
 				receiptDetail.getAdvMovements().clear();
 				receiptDetail.getRepayHeaders().clear();
 				receiptDetailList.add(receiptDetail);
@@ -1572,6 +1577,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			receiptDetail.setReceivedDate(this.receivedDate.getValue());
 			receiptDetail.setRemarks(this.remarks.getValue());
 			receiptDetail.setDelRecord(false);// Internal Purpose
+			receiptDetail.setPayOrder(payOrder);
+			payOrder = payOrder + 1;
 			receiptDetail.getAdvMovements().clear();
 			receiptDetail.getRepayHeaders().clear();
 			receiptDetailList.add(receiptDetail);
@@ -1707,6 +1714,15 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			RepayScheduleDetail curRpySchd = null;
 			if(rpySchdMap.containsKey(rpySchd.getSchDate())){
 				curRpySchd = rpySchdMap.get(rpySchd.getSchDate());
+				
+				if(curRpySchd.getPrincipalSchdBal().compareTo(rpySchd.getPrincipalSchdBal()) < 0){
+					curRpySchd.setPrincipalSchdBal(rpySchd.getPrincipalSchdBal());
+				}
+				
+				if(curRpySchd.getProfitSchdBal().compareTo(rpySchd.getProfitSchdBal()) < 0){
+					curRpySchd.setProfitSchdBal(rpySchd.getProfitSchdBal());
+				}
+				
 				curRpySchd.setPrincipalSchdPayNow(curRpySchd.getPrincipalSchdPayNow().add(rpySchd.getPrincipalSchdPayNow()));
 				curRpySchd.setProfitSchdPayNow(curRpySchd.getProfitSchdPayNow().add(rpySchd.getProfitSchdPayNow()));
 				curRpySchd.setLatePftSchdPayNow(curRpySchd.getLatePftSchdPayNow().add(rpySchd.getLatePftSchdPayNow()));
@@ -2257,7 +2273,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		getFinanceDetail().setModuleDefiner(FinanceConstants.FINSER_EVENT_RECEIPT);
 
 		//Customer Details   
-		appendCustomerDetailTab();
+		//appendCustomerDetailTab();
 
 		//Fee Details Tab Addition
 		appendFeeDetailTab();

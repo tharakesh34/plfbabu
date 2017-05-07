@@ -60,7 +60,7 @@ public interface ProvisionService {
 	Provision getApprovedProvisionById(String id);
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
-	AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException;
+	AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 	FinanceProfitDetail getProfitDetailById(String finReference);
 	List<Provision> getProcessedProvisions();
 }

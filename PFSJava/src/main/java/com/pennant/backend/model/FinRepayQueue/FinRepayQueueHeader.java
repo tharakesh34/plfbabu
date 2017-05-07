@@ -3,7 +3,7 @@ package com.pennant.backend.model.FinRepayQueue;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class FinRepayQueueTotals {
+public class FinRepayQueueHeader {
 
 	private BigDecimal	principal	= BigDecimal.ZERO;
 	private BigDecimal	profit		= BigDecimal.ZERO;
@@ -24,10 +24,11 @@ public class FinRepayQueueTotals {
 	private BigDecimal	incrCostWaived	= BigDecimal.ZERO;
 	
 	private String payType;
+	private String postBranch;
 	
 	private List<FinRepayQueue> queueList = null;
 	
-	public FinRepayQueueTotals() {
+	public FinRepayQueueHeader() {
 
 	}
 
@@ -160,6 +161,14 @@ public class FinRepayQueueTotals {
 
 	public void setPayType(String payType) {
 		this.payType = payType;
+	}
+
+	public String getPostBranch() {
+		return postBranch;
+	}
+
+	public void setPostBranch(String postBranch) {
+		this.postBranch = postBranch;
 	}
 
 }

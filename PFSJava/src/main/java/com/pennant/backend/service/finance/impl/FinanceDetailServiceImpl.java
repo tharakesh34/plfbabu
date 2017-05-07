@@ -1658,10 +1658,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 * @throws AccountNotFoundException
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader, boolean isWIF) throws PFFInterfaceException {
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader, boolean isWIF) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate", isWIF);
@@ -4403,11 +4405,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws JaxenException
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 * @throws AccountNotFoundException
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader, boolean isWIF) throws PFFInterfaceException, JaxenException {
+	public AuditHeader doReject(AuditHeader auditHeader, boolean isWIF) throws PFFInterfaceException, JaxenException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -5653,11 +5657,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * @param toDate
 	 * @param recalType
 	 * @param rateChange
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 * @throws AccountNotFoundException
 	 */
 	@Override
 	public boolean bulkRateChangeFinances(List<BulkProcessDetails> bulkRateChangeFinances, String recalType,
-			BigDecimal rateChange) throws PFFInterfaceException {
+			BigDecimal rateChange) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		//Bulk Rate Changes applied for fetched list
@@ -5702,13 +5708,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	/**
 	 * Method for Processing Bulk Finance for Deferment Process
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 * 
 	 * @throws AccountNotFoundException
 	 */
 	@Override
 	public boolean bulkDefermentChanges(List<BulkDefermentChange> defermentChangeFinances, String recalType,
 			boolean excludeDeferment, String addTermAfter, Date calFromDate, Date calToDate)
-			throws PFFInterfaceException {
+			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		//Bulk Deferment Changes applied for fetched list

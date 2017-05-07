@@ -3,6 +3,8 @@ package com.pennant.backend.service.finance.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -235,10 +237,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 
 			//Finance Customer Details			
-			if (financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE) {
+			/*if (financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE) {
 				financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(
 						financeMain.getCustID(), true, "_View"));
-			}
+			}*/
 
 			//Finance Agreement Details	
 			//=======================================
@@ -279,13 +281,19 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				}
 				
 				// Repay Headers setting to Receipt Details
+				List<FinExcessAmountReserve> reserveList = new ArrayList<>();
 				for (FinReceiptDetail receiptDetail : receiptDetailList) {
 					for (FinRepayHeader finRepayHeader : rpyHeaderList) {
 						if(finRepayHeader.getReceiptSeqID() == receiptDetail.getReceiptSeqID()){
 							receiptDetail.getRepayHeaders().add(finRepayHeader);
 						}
 					}
+					
+					// Excess Reserve Amounts
+					reserveList.addAll(getFinExcessAmountDAO().getExcessReserveList(receiptDetail.getReceiptSeqID()));
 				}
+				receiptData.getReceiptHeader().setExcessReserves(reserveList);
+				
 				receiptData.getReceiptHeader().setReceiptDetails(receiptDetailList);
 				
 				// Fetch Excess Amount Details
@@ -406,7 +414,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		
 		// Save Receipt Detail List by setting Receipt Header ID
-		List<FinReceiptDetail> receiptDetails = receiptHeader.getReceiptDetails();
+		List<FinReceiptDetail> receiptDetails = sortReceiptDetails(receiptHeader.getReceiptDetails());
 		
 		// Manual Advise Movements
 		getManualAdviseDAO().deleteMovementsByReceiptID(receiptID,TableType.TEMP_TAB.getSuffix());
@@ -543,9 +551,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws PFFInterfaceException
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException {
+	public AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "doReject");
@@ -675,6 +685,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		FinReceiptData rceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinReceiptHeader receiptHeader = rceiptData.getReceiptHeader();
+		receiptHeader.setPostBranch(auditHeader.getAuditBranchCode());
 
 		//Finance Stage Accounting Process
 		//=======================================
@@ -1172,6 +1183,27 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		return getProfitDetailsDAO().getPftDetailForEarlyStlReport(finReference);
 	}
 
+	/**
+	 * Method for Sorting Receipt Details From Receipts
+	 * @param receipts
+	 * @return
+	 */
+	private List<FinReceiptDetail> sortReceiptDetails(List<FinReceiptDetail> receipts){
+
+		if (receipts != null && receipts.size() > 0) {
+			Collections.sort(receipts, new Comparator<FinReceiptDetail>() {
+				@Override
+				public int compare(FinReceiptDetail detail1, FinReceiptDetail detail2) {
+					if(detail1.getPayOrder() == detail2.getPayOrder()){
+						return 0;
+					} else {
+						return 1;
+					}
+				}
+			});
+		}
+		return receipts;
+	}
 	
 	// ******************************************************//
 	// ****************** getter / setter *******************//

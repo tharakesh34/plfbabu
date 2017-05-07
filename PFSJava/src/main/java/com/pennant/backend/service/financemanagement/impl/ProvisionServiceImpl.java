@@ -367,9 +367,11 @@ public class ProvisionServiceImpl extends  GenericFinanceDetailService implement
 	 * @param AuditHeader (auditHeader)    
 	 * @return auditHeader
 	 * @throws PFFInterfaceException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
 
-	public AuditHeader  doReject(AuditHeader auditHeader) throws PFFInterfaceException {
+	public AuditHeader  doReject(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		auditHeader = businessValidation(auditHeader,"doReject");
 		if (!auditHeader.isNextProcess()) {

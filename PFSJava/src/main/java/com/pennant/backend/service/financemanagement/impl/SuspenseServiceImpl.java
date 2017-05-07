@@ -541,9 +541,11 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws PFFInterfaceException
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException {
+	public AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "doReject");

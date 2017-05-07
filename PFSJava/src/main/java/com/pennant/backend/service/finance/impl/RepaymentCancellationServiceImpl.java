@@ -494,12 +494,8 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			//============================================
 			long linkedTranId = 0;
 			if (!isMigratedRepayment) {
-				List<Object> returnList = getPostingsPreparationUtil().processFinCanclPostings(finReference,
-						String.valueOf(repayment.getLinkedTranId()));
-				if (!(Boolean) returnList.get(0)) {
-					return returnList.get(1).toString();
-				}
 				linkedTranId = repayment.getLinkedTranId();
+				getPostingsPreparationUtil().getReversalsByLinkedTranID(linkedTranId);
 			}
 
 			//Overdue Recovery Details Reset Back to Original State , If any penalties Paid On this Repayments Process

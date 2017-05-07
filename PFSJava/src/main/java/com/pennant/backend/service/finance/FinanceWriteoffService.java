@@ -12,7 +12,7 @@ public interface FinanceWriteoffService {
 
 	FinanceWriteoffHeader getFinanceWriteoffDetailById(String finReference, String type, String userRole, String procEdtEvent);
 	AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
-	AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException;
+	AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 	AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 	List<FinanceScheduleDetail> getFinScheduleDetails(String finReference);
 }
