@@ -9637,4 +9637,13 @@
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="accountTypeDAO" ref="accountTypeDAO"/>
 	</bean>
+	<bean id="financeConfigCache" class="com.pennant.cache.util.FinanceConfigCache">
+		<property name="financeTypeDAO" ref="financeTypeDAO"/>
+		<property name="dPDBucketDAO" ref="dPDBucketDAO" />
+		<property name="dPDBucketConfigurationDAO" ref="dPDBucketConfigurationDAO" />
+		<property name="nPABucketDAO" ref="nPABucketDAO"/>
+		<property name="nPABucketConfigurationDAO" ref="nPABucketConfigurationDAO"/>
+	</bean>
+
+
 </beans>

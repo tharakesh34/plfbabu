@@ -85,6 +85,7 @@ import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.cache.util.FinanceConfigCache;
 
 /**
  * Service implementation for methods that depends on <b>FinanceType</b>.<br>
@@ -176,6 +177,9 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			auditHeader.setAuditReference(financeType.getId());
 		} else {
 			getFinanceTypeDAO().update(financeType, tableType);
+			if (StringUtils.isEmpty(tableType)) {
+				FinanceConfigCache.clearFinanceTypeCache(financeType.getFinType());
+			}
 		}
 
 		//Customer Accounts
@@ -253,7 +257,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		
 		FinanceType financeType = (FinanceType) auditHeader.getAuditDetail().getModelData();
 		getFinanceTypeDAO().delete(financeType, "");
-
+		FinanceConfigCache.clearFinanceTypeCache(financeType.getFinType());
 		auditHeader.setAuditDetails(processChildsAudit(deleteChilds(financeType, "", auditHeader.getAuditTranType())));
 		getAuditHeaderDAO().addAudit(auditHeader);
 		
@@ -389,6 +393,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			//List
 			auditDetails.addAll(deleteChilds(financeType, "",tranType));
 			getFinanceTypeDAO().delete(financeType, "");
+			FinanceConfigCache.clearFinanceTypeCache(financeType.getFinType());
 		} else {
 			financeType.setRoleCode("");
 			financeType.setNextRoleCode("");
@@ -433,6 +438,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				tranType = PennantConstants.TRAN_UPD;
 				financeType.setRecordType("");
 				getFinanceTypeDAO().update(financeType, "");
+				FinanceConfigCache.clearFinanceTypeCache(financeType.getFinType());
 			}
 			if (financeType.getFinTypeAccounts() != null && financeType.getFinTypeAccounts().size() > 0) {
 				List<AuditDetail> details = financeType.getAuditDetailMap().get( "FinTypeCustAccount");
