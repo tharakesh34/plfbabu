@@ -15,24 +15,26 @@ package com.pennanttech.pff.core;
  * The class that defines the constants that are used to specify the environment of the system.
  */
 public final class App {
-	private App() {
-		super();
-	}
-
 	/**
 	 * Enumerates the supported databases.
 	 */
 	public enum Database {
 		SQL_SERVER, ORACLE, DB2, MYSQL
 	}
-	public static final long ID = 1;
-	public static final String CODE = "PFF";
-	public static final String NAME = "pennApps Lending Factory";
-	public static final Database DATABASE = Database.ORACLE;
-	
+
 	public enum AuthenticationType {
 		DAO, LDAP, SSO
 	}
 
-	public static AuthenticationType AUTH_TYPE = AuthenticationType.SSO;
+	public static final long			ID			= 1;
+	public static final String			CODE		= "PFF";
+	public static final String			NAME		= "pennApps Lending Factory";
+
+	public static final Database		DATABASE	= Database.ORACLE;
+
+	public static AuthenticationType	AUTH_TYPE	= AuthenticationType.SSO;
+
+	private App() {
+		super();
+	}
 }
