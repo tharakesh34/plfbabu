@@ -6204,7 +6204,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			summary = getFinanceScheduleDetailDAO().getFinanceSummaryDetails(summary);
-			summary = getPostingsDAO().getTotalFeeCharges(summary);
+			summary = getFinFeeDetailDAO().getTotalFeeCharges(summary);
 			finSchData.setFinanceSummary(summary);
 			summary.setFinCurODDays(getFinODDetailsDAO().getFinODDays(finReference, ""));
 

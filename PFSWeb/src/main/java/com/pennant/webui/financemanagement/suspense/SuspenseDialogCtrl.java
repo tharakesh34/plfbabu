@@ -1452,7 +1452,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 
 		if (!getFinanceDetail().getFinScheduleData().getFinanceType().isAllowRIAInvestment()) {
 			aeEvent.setDataMap(dataMap);
-			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 
 			returnSetEntries = aeEvent.getReturnDataSet();
 		} else {

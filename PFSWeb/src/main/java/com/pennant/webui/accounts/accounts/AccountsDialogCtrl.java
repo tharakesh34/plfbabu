@@ -466,6 +466,8 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		}else if(!this.internalAc.isChecked() && !this.custSysAc.isChecked()){
 			label_accTypeDesc.setValue(Labels.getLabel("label_CustAc"));	
 		}
+		this.acAccrualBal.setValue(PennantAppUtil.formateAmount(aAccounts.getShadowBal(),0));
+		this.acTodayBal.setValue(PennantAppUtil.formateAmount(aAccounts.getAcBalance(),0));
 		
 		//FIXME: PV: 07MAY17: To be fixed when screen used
 /*		this.acPrvDayBal.setValue(PennantAppUtil.formateAmount(aAccounts.getAcPrvDayBal(),0));
@@ -576,7 +578,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
-		
+ 		
 		//FIXME: PV: 07MAY17: To be fixed when screen used
 /*		try {
 			if(this.acPrvDayBal.getValue()!=null){

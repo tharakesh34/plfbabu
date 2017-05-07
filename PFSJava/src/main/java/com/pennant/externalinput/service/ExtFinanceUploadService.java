@@ -279,7 +279,7 @@ public class ExtFinanceUploadService {
 
 		// Building Account Entry Details
 		try {
-			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 			return aeEvent.getReturnDataSet();
 		} catch (Exception e) {
 			logger.debug(e);

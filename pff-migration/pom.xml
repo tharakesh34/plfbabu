@@ -307,6 +307,26 @@
 			</properties>
 		</profile>
 
+		<profile>
+			<id>it</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.1.145:1521:orcl</pfs.liquibase.url>
+				<pfs.liquibase.username>pffbfsit</pfs.liquibase.username>
+				<pfs.liquibase.password>pff123</pfs.liquibase.password>
+			</properties>
+		</profile>
+		<profile>
+			<id>itaudit</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master-audit.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.1.145:1521:orcl</pfs.liquibase.url>
+				<pfs.liquibase.username>pffbfsitaudit</pfs.liquibase.username>
+				<pfs.liquibase.password>pff123</pfs.liquibase.password>
+			</properties>
+		</profile>
 	</profiles>
 
 	<build>

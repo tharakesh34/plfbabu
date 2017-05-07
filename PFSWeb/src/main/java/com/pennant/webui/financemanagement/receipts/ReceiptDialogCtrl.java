@@ -3236,7 +3236,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				aeEvent.setAccountingEvent(eventCode);
 				HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
 				aeEvent.setDataMap(dataMap);
-				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 				returnSetEntries.addAll(aeEvent.getReturnDataSet());
 				
 				// Reset Payment Details
@@ -3272,7 +3272,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					
 					HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 					aeEvent.setDataMap(dataMap);
-					aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+					aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 
 					//FIXME: PV: 04MAY17 why separate method is required for commitment dialog show
 					getAccountingDetailDialogCtrl().doFillCmtAccounting(aeEvent.getReturnDataSet(), format);

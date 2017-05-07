@@ -1922,7 +1922,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		dataMap.putAll(feeRuleMap);
 		aeEvent.setDataMap(dataMap);
-		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 
 		returnSetEntries = aeEvent.getReturnDataSet();
 

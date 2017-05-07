@@ -11301,7 +11301,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		aeEvent.getAeAmountCodes().getDeclaredFieldValues(dataMap);
 		aeEvent.setDataMap(dataMap);
 		
-		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 		accountingSetEntries.addAll(aeEvent.getReturnDataSet());
 
 		//Disb Instruction Posting
@@ -11411,7 +11411,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				
 				// Call Map Build Method
-				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 				List<ReturnDataSet> returnDataSet = aeEvent.getReturnDataSet();
 				accountingSetEntries.addAll(returnDataSet);
 			}

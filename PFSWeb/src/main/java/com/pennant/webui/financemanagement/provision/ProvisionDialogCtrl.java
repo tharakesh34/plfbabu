@@ -1603,7 +1603,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		}
 		dataMap.putAll(feeRuleMap);
 		aeEvent.setDataMap(dataMap);
-		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 
 		returnSetEntries = aeEvent.getReturnDataSet();
 

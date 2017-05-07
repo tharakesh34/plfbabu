@@ -2221,7 +2221,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		dataMap.putAll(feeRuleMap);
 		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 		aeEvent.setDataMap(dataMap);
-		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 
 		returnSetEntries = aeEvent.getReturnDataSet();
 

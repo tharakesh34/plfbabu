@@ -46,8 +46,6 @@ package com.pennant.backend.dao.rulefactory;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.pennant.backend.model.finance.FinanceSummary;
-import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 
 public interface PostingsDAO {
@@ -62,12 +60,8 @@ public interface PostingsDAO {
 
 	List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranId);
 
-	public void saveChargesBatch(List<FeeRule> chargeList, boolean isWIF, String tableType);
-
 	List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,
 			String postingGroupBy);
-
-	FinanceSummary getTotalFeeCharges(FinanceSummary summary);
 
 	void updateBatch(List<ReturnDataSet> dataSetList, String type);
 

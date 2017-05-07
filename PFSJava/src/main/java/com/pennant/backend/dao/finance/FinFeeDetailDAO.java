@@ -44,6 +44,7 @@ package com.pennant.backend.dao.finance;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinanceSummary;
 
 
 public interface FinFeeDetailDAO {
@@ -58,4 +59,5 @@ public interface FinFeeDetailDAO {
 	List<FinFeeDetail> getFinFeeDetailByFinRef(String id,boolean isWIF, String type);
 	void deleteByFinRef(String finReference,boolean isWIF, String tableType);
 	int getFeeSeq(FinFeeDetail finFeeDetail,boolean isWIF,String type);
+    FinanceSummary getTotalFeeCharges(FinanceSummary finSummary);
 }

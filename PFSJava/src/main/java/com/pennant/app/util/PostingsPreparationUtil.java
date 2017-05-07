@@ -178,7 +178,7 @@ public class PostingsPreparationUtil implements Serializable {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 		list = aeEvent.getReturnDataSet();
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -210,7 +210,7 @@ public class PostingsPreparationUtil implements Serializable {
 				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_CMTRPY);
 				dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 				aeEvent.setDataMap(dataMap);
-				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 
 				List<ReturnDataSet> cmtList = aeEvent.getReturnDataSet();
 				list.addAll(cmtList);
@@ -274,7 +274,7 @@ public class PostingsPreparationUtil implements Serializable {
 
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		HashMap<String, Object> dataMap = aeEvent.getDataMap();
-		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 
 		// Accounting Set Execution to get Posting Details List
 		list = aeEvent.getReturnDataSet();
@@ -650,7 +650,7 @@ public class PostingsPreparationUtil implements Serializable {
 			aeEvent.setLinkedTranId(getPostingsDAO().getLinkedTransId());
 		}
 
-		getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+		getEngineExecution().getAccEngineExecResults(aeEvent);
 
 		List<ReturnDataSet> returnDatasetList = aeEvent.getReturnDataSet();
 		if (!aeEvent.isPostingSucess()) {
@@ -675,7 +675,7 @@ public class PostingsPreparationUtil implements Serializable {
 			aeEvent.setLinkedTranId(getPostingsDAO().getLinkedTransId());
 		}
 		
-		getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+		getEngineExecution().getAccEngineExecResults(aeEvent);
 
 		List<ReturnDataSet> returnDatasetList = aeEvent.getReturnDataSet();
 		if (!aeEvent.isPostingSucess()) {

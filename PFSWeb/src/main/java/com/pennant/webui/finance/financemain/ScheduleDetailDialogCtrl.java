@@ -680,7 +680,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void doFillScheduleList(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
 		
-		aFinSchData = FeeScheduleCalculator.getFeeScheduleDetails(aFinSchData);
+	//	aFinSchData = FeeScheduleCalculator.getFeeScheduleDetails(aFinSchData);
 
 		doSetPropVisiblity(aFinSchData);
 

@@ -1292,7 +1292,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			dataMap.putAll(map);
 			aeEvent.setDataMap(dataMap);
-			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 
 			returnSetEntries = aeEvent.getReturnDataSet();
 			accountingSetEntries.addAll(returnSetEntries);

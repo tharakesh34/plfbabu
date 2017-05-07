@@ -1344,7 +1344,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		long linkedTranId = 0;
 
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
-		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, aeEvent.getDataMap());
+		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 
 		// Call Map Build Method
 		List<ReturnDataSet> returnSetEntries = aeEvent.getReturnDataSet();
@@ -1620,7 +1620,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			financeDetail.getFinScheduleData().getFinanceType().getDeclaredFieldValues(dataMap);
 			dataMap.putAll(feeRuleDetailsMap);
 			aeEvent.setDataMap(dataMap);
-			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 
 			newStageAcEntries = aeEvent.getReturnDataSet();
 		} catch (Exception e) {
@@ -1643,7 +1643,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		try {
 
 			aeEvent.setDataMap(dataMap);
-			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 			list.addAll(aeEvent.getReturnDataSet());
 		} catch (Exception e) {
 			logger.error("Exception: ", e);

@@ -98,7 +98,7 @@ public class DisbursementPostings {
 
 					dataMap = amountCodes.getDeclaredFieldValues();
 					aeEvent.setDataMap(dataMap);
-					aeEvent = engineExecution.getAccEngineExecResults(aeEvent, dataMap);
+					aeEvent = engineExecution.getAccEngineExecResults(aeEvent);
 
 					datasetList = aeEvent.getReturnDataSet();
 					disbMap.put(finAdvancePayments.getPaymentId(), datasetList);

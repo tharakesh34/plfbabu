@@ -121,11 +121,11 @@ public class AccountEngineExecution implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws PFFInterfaceException
 	 */
-	public AEEvent getAccEngineExecResults(AEEvent aeEvent, HashMap<String, Object> dataMap)
+	public AEEvent getAccEngineExecResults(AEEvent aeEvent)
 			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
-		List<ReturnDataSet> returnList = prepareAccountingSetResults(aeEvent, dataMap);
+		List<ReturnDataSet> returnList = prepareAccountingSetResults(aeEvent);
 
 		aeEvent.setReturnDataSet(returnList);
 		logger.debug("Leaving");
@@ -380,9 +380,10 @@ public class AccountEngineExecution implements Serializable {
 			transactionEntries.addAll(AccountingConfigCache.getTransactionEntry(acSetIDList.get(i)));
 		}
 		List<ReturnDataSet> returnDataSets = null;
+		aeEvent.setDataMap(dataMap);
 
 		if (transactionEntries != null && transactionEntries.size() > 0) {
-			returnDataSets = prepareAccountingSetResults(aeEvent, dataMap);
+			returnDataSets = prepareAccountingSetResults(aeEvent);
 		}
 
 		//Method for Checking for Reverse Calculations Based upon Negative Amounts
@@ -426,9 +427,9 @@ public class AccountEngineExecution implements Serializable {
 		}
 
 		List<ReturnDataSet> returnDataSets = null;
-
+		aeEvent.setDataMap(dataMap);
 		if (transactionEntries != null && transactionEntries.size() > 0) {
-			returnDataSets = prepareAccountingSetResults(aeEvent, dataMap);
+			returnDataSets = prepareAccountingSetResults(aeEvent);
 		}
 
 		logger.debug("Leaving");
@@ -473,11 +474,12 @@ public class AccountEngineExecution implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	private List<ReturnDataSet> prepareAccountingSetResults(AEEvent aeEvent, HashMap<String, Object> dataMap)
+	private List<ReturnDataSet> prepareAccountingSetResults(AEEvent aeEvent)
 			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		logger.trace("FIN REFERENCE: " + aeEvent.getFinReference());
-
+		
+		HashMap<String, Object> dataMap = aeEvent.getDataMap();
 		List<Long> acSetIDList = aeEvent.getAcSetIDList();
 		List<ReturnDataSet> returnDataSets = new ArrayList<ReturnDataSet>();
 		List<TransactionEntry> transactionEntries = new ArrayList<>();

@@ -51,10 +51,13 @@ public class CustomerAccountListModelItemRender implements ListitemRenderer<Acco
 		lc.setStyle("text-align:center");
 		lc.appendChild(cbIsCustSysAc);
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(accounts.getAcBalance(), accounts.getLovDescFinFormatter()));
+		lc = new Listcell(PennantAppUtil.amountFormate(accounts.getAcBalance(), 
+				accounts.getLovDescFinFormatter()));
+ 
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(accounts.getShadowBal(), accounts.getLovDescFinFormatter()));
+		lc = new Listcell(PennantAppUtil.amountFormate(
+				accounts.getShadowBal(), accounts.getLovDescFinFormatter()));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 	}

@@ -392,7 +392,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 
 		dataMap.putAll(feeRuleDetailMap);
 		aeEvent.setDataMap(dataMap);
-		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent, dataMap);
+		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 
 		List<ReturnDataSet> accountingSetEntries = aeEvent.getReturnDataSet();
 

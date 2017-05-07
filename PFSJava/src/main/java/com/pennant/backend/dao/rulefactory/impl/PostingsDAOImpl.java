@@ -259,36 +259,6 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 	}
 
 	@Override
-    public FinanceSummary getTotalFeeCharges(FinanceSummary finSummary) {
-		logger.debug("Entering");
-		
-		FinanceSummary summary = new FinanceSummary();
-		summary.setFinReference(finSummary.getFinReference());
-		
-		StringBuilder selectSql = new StringBuilder(" select TotalFees,TotalCharges from " );
-		selectSql.append(" (select SUM(PostAmount) TotalFees, Finreference from Postings  " );
-		selectSql.append(" where FinReference=:FinReference  AND AmountType='F' and DrOrCr='C' Group by Finreference) A  " );
-		selectSql.append(" inner join (select SUM(PostAmount) TotalCharges, Finreference from Postings " );
-		selectSql.append(" where Finreference=:FinReference  AND AmountType='C' and DrOrCr='C' Group by Finreference) B " );
-		selectSql.append(" on A.Finreference = B.Finreference " );
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSummary);
-		RowMapper<FinanceSummary> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceSummary.class);
-
-		try {
-			summary = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-			finSummary.setTotalCharges(summary.getTotalCharges());
-			finSummary.setTotalFees(summary.getTotalFees());
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			summary = null;
-		}
-		logger.debug("Leaving");
-		return finSummary;
-    }
-	
-	@Override
 	public void updateBatch(List<ReturnDataSet> dataSetList, String type) {
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder();
@@ -446,30 +416,7 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 	}
 
 	
-	/**
-	 * Method for saving Fee charge Details list
-	 */
-	
-	@Override
-	public void saveChargesBatch(List<FeeRule> chargeList, boolean isWIF, String tableType) {
-		logger.debug("Entering");
-		
-		StringBuilder insertSql = new StringBuilder();
-		if(isWIF){
-			insertSql.append(" INSERT INTO WIFFinFeeCharges");
-		}else{
-			insertSql.append(" INSERT INTO FinFeeCharges");
-		}
-		insertSql.append(StringUtils.trimToEmpty(tableType));
-		insertSql.append(" (FinReference , SchDate , FeeCode , SeqNo, FeeCodeDesc , FeeOrder ,AddFeeCharges, AllowWaiver, WaiverPerc, FeeAmount, WaiverAmount, PaidAmount) ");
-		insertSql.append(" VALUES (:FinReference , :SchDate , :FeeCode , :SeqNo, :FeeCodeDesc , :FeeOrder ,:AddFeeCharges, :AllowWaiver, :WaiverPerc, :FeeAmount, :WaiverAmount, :PaidAmount) ");
-
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(chargeList.toArray());
-		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		
-	}
+	 
 	/*
 	 * Method to get the Posting Details By FinRefernce
 	 */

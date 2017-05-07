@@ -2649,6 +2649,7 @@ public class ScheduleCalculator {
 		List<FinanceScheduleDetail> finScheduleDetails = finScheduleData.getFinanceScheduleDetails();
 
 		boolean isFirstAdjSet = false;
+		FeeScheduleCalculator.getFeeScheduleDetails(finScheduleData);
 
 		int sdSize = finScheduleData.getFinanceScheduleDetails().size();
 		finMain.setTotalGraceCpz(BigDecimal.ZERO);

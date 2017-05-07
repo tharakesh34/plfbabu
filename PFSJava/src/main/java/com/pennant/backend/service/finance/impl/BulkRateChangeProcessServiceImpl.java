@@ -682,10 +682,10 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 			
 			listDeletion(financeDetail.getFinScheduleData(), tableType, isWIF);
 			listSave(financeDetail.getFinScheduleData(), tableType, isWIF, 0);
-			saveFeeChargeList(financeDetail.getFinScheduleData(), isWIF,tableType);
+	//		saveFeeChargeList(financeDetail.getFinScheduleData(), isWIF,tableType);
 		} else {
 			listSave(financeDetail.getFinScheduleData(), tableType, isWIF, 0);
-			saveFeeChargeList(financeDetail.getFinScheduleData(), isWIF,tableType);
+		//	saveFeeChargeList(financeDetail.getFinScheduleData(), isWIF,tableType);
 		}
 
 		// Save asset details
@@ -1078,27 +1078,6 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 
 		logger.debug("Leaving");
 		return auditDetail;
-	}
-
-	/**
-	 * Method for saving List of Fee Charge details
-	 * 
-	 * @param finDetail
-	 * @param tableType
-	 */
-	public void saveFeeChargeList(FinScheduleData finScheduleData, boolean isWIF, String tableType) {
-		logger.debug("Entering");
-
-		if (finScheduleData.getFeeRules() != null && finScheduleData.getFeeRules().size() > 0) {
-			//Finance Fee Charge Details
-			for (int i = 0; i < finScheduleData.getFeeRules().size(); i++) {
-				finScheduleData.getFeeRules().get(i)
-				.setFinReference(finScheduleData.getFinReference());
-			}
-			getPostingsDAO().saveChargesBatch(finScheduleData.getFeeRules(),isWIF, tableType);
-		}
-
-		logger.debug("Leaving");
 	}
 
 	/**
