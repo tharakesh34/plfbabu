@@ -18,6 +18,7 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 
 public class FinEODEvent implements Serializable {
 
@@ -34,6 +35,7 @@ public class FinEODEvent implements Serializable {
 	private List<FinanceDisbursement>	financeDisbursements	= new ArrayList<FinanceDisbursement>(1);
 	private List<FinFeeScheduleDetail>	finFeeScheduleDetails	= new ArrayList<FinFeeScheduleDetail>(1);
 	private List<FinSchFrqInsurance>	finSchFrqInsurances		= new ArrayList<FinSchFrqInsurance>(1);
+	private List<ReturnDataSet>			returnDataSet			= new ArrayList<ReturnDataSet>(1);
 	private Provision					provision				= new Provision();
 	private boolean						rateReview				= false;
 	private boolean						odFiance				= false;
@@ -264,6 +266,14 @@ public class FinEODEvent implements Serializable {
 
 	public void setFinSchFrqInsurances(List<FinSchFrqInsurance> finSchFrqInsurances) {
 		this.finSchFrqInsurances = finSchFrqInsurances;
+	}
+
+	public List<ReturnDataSet> getReturnDataSet() {
+		return returnDataSet;
+	}
+
+	public void setReturnDataSet(List<ReturnDataSet> returnDataSet) {
+		this.returnDataSet = returnDataSet;
 	}
 
 }
