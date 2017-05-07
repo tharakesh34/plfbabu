@@ -56,6 +56,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.NPABucketConfigurationService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.cache.util.FinanceConfigCache;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -140,6 +141,9 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 			auditHeader.setAuditReference(String.valueOf(nPABucketConfiguration.getConfigID()));
 		} else {
 			getNPABucketConfigurationDAO().update(nPABucketConfiguration, tableType);
+			if (TableType.MAIN_TAB.equals(tableType)) {
+				FinanceConfigCache.clearNPABucketConfigurationCache(nPABucketConfiguration.getConfigID());
+			}
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -171,7 +175,7 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 		NPABucketConfiguration nPABucketConfiguration = (NPABucketConfiguration) auditHeader.getAuditDetail()
 				.getModelData();
 		getNPABucketConfigurationDAO().delete(nPABucketConfiguration, TableType.MAIN_TAB);
-
+		FinanceConfigCache.clearNPABucketConfigurationCache(nPABucketConfiguration.getConfigID());
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
@@ -244,6 +248,7 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 		if (nPABucketConfiguration.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getNPABucketConfigurationDAO().delete(nPABucketConfiguration, TableType.MAIN_TAB);
+			FinanceConfigCache.clearNPABucketConfigurationCache(nPABucketConfiguration.getConfigID());
 		} else {
 			nPABucketConfiguration.setRoleCode("");
 			nPABucketConfiguration.setNextRoleCode("");
@@ -259,6 +264,7 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 				tranType = PennantConstants.TRAN_UPD;
 				nPABucketConfiguration.setRecordType("");
 				getNPABucketConfigurationDAO().update(nPABucketConfiguration, TableType.MAIN_TAB);
+				FinanceConfigCache.clearNPABucketConfigurationCache(nPABucketConfiguration.getConfigID());
 			}
 		}
 
