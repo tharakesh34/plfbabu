@@ -1,5 +1,6 @@
 package com.pennant.app.core;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.util.EODProperties;
@@ -88,6 +90,7 @@ public class LoadFinanceData extends ServiceHelper {
 
 	public void updateFinEODEvents(CustEODEvent custEODEvent) throws Exception {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
+		List<ReturnDataSet> returnDataSets=new ArrayList<ReturnDataSet>(1);
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 
@@ -138,8 +141,14 @@ public class LoadFinanceData extends ServiceHelper {
 			}
 			//clear data
 			finEODEvent.getRepayInstructions().clear();
+			
+			returnDataSets.addAll(finEODEvent.getReturnDataSet());
+			finEODEvent.getReturnDataSet().clear();
 
 		}
+		
+		getAccountProcessUtil().procAccountUpdate(returnDataSets);
+		returnDataSets.clear();
 
 		if (custEODEvent.isUpdCustomer()) {
 			Customer customer = custEODEvent.getCustomer();

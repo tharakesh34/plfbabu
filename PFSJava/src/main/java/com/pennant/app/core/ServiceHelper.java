@@ -55,6 +55,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -110,6 +111,7 @@ abstract public class ServiceHelper implements Serializable {
 	private FinTypeAccountingDAO		finTypeAccountingDAO;
 	private PostingsDAO					postingsDAO;
 	private SecondaryAccountDAO			secondaryAccountDAO;
+	private AccountProcessUtil			accountProcessUtil;
 	//over due
 	private FinODDetailsDAO				finODDetailsDAO;
 	private DPDBucketDAO				dPDBucketDAO;
@@ -137,7 +139,6 @@ abstract public class ServiceHelper implements Serializable {
 		return null;
 
 	}
-
 
 	/**
 	 * @param fintype
@@ -429,6 +430,14 @@ abstract public class ServiceHelper implements Serializable {
 
 	public void setPresentmentHeaderDAO(PresentmentHeaderDAO presentmentHeaderDAO) {
 		this.presentmentHeaderDAO = presentmentHeaderDAO;
+	}
+
+	public AccountProcessUtil getAccountProcessUtil() {
+		return accountProcessUtil;
+	}
+
+	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
+		this.accountProcessUtil = accountProcessUtil;
 	}
 
 }

@@ -29,6 +29,7 @@
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="secondaryAccountDAO" ref="secondaryAccountDAO" />
+		<property name="accountProcessUtil" ref="accountProcessUtil" />
 
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="dPDBucketConfigurationDAO" ref="dPDBucketConfigurationDAO" />
