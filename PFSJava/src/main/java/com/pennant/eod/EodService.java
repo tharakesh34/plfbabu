@@ -138,22 +138,26 @@ public class EodService {
 		//Rate review
 		custEODEvent = rateReviewService.processRateReview(custEODEvent);
 
-		//installment 
-		installmentDueService.processDueDatePostings(custEODEvent);
-		
-		//receipt postings
-		receiptPaymentService.processrReceipts(custEODEvent);
-
 		//Accrual
 		custEODEvent = accrualService.processAccrual(custEODEvent);
 
 		//Auto disbursements
 		autoDisbursementService.processDisbursementPostings(custEODEvent);
 
+		//installment 
+		installmentDueService.processDueDatePostings(custEODEvent);
+
+		//update customer EOD
+		loadFinanceData.updateFinEODEvents(custEODEvent);
+
+		//receipt postings
+		receiptPaymentService.processrReceipts(custEODEvent);
+
 		//Date and holiday check
 		Date nextDate = DateUtility.addDays(date, 1);
 		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
 		Calendar nextBusDate = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT, date);
+
 		if (DateUtility.matches(nextDate, nextBusDate.getTime())) {
 			//update customer business Dates
 			Date tempNextBussDate = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT,
@@ -163,8 +167,6 @@ public class EodService {
 			doProcess(connection, custId, nextDate);
 		}
 
-		//update customer EOD
-		loadFinanceData.updateFinEODEvents(custEODEvent);
 
 	}
 
