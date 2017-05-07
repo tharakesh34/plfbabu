@@ -69,6 +69,7 @@ import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 import com.pennanttech.pff.core.Literal;
@@ -685,6 +686,38 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper .newInstance(PresentmentDetail.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+	
+	@Override
+	public List<PresentmentDetail> getPresentmenToPost(long custId, Date schData) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT FM.CUSTID,FM.FINBRANCH, FM.FINTYPE,PD.ID, PD.PRESENTMENTID, PD.FINREFERENCE, PD.SCHDATE, PD.MANDATEID, ");
+		sql.append(" PD.ADVANCEAMT, PD.EXCESSID, PD.PRESENTMENTAMT, PD.EXCLUDEREASON, PD.BOUNCEID FROM PRESENTMENTDETAILS PD");
+		sql.append(" INNER JOIN FINANCEMAIN FM ON PD.FINREFERENCE = FM.FINREFERENCE  ");
+		sql.append(" WHERE FM.CUSTID =:CustId AND PD.SCHDATE = :SchDate  ");
+		sql.append(" AND PD.STATUS = :STATUS  ");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("CustId", custId);
+		source.addValue("SchDate", schData);
+		source.addValue("STATUS", RepayConstants.PEXC_EXTRACT);
+		
+		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(PresentmentDetail.class);
+		try {
+			return jdbcTemplate.query(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		}

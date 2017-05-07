@@ -148,7 +148,7 @@ public class EodService {
 		autoDisbursementService.processDisbursementPostings(custEODEvent);
 
 		//receipt postings
-		receiptPaymentService.processrReceipts(connection, custId, date, custEODEvent);
+		receiptPaymentService.processrReceipts(custEODEvent);
 
 		//Date and holiday check
 		Date nextDate = DateUtility.addDays(date, 1);

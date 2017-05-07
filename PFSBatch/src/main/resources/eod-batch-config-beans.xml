@@ -529,6 +529,11 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	
+	<bean id="presentmentHeaderDAO" class="com.pennant.backend.dao.financemanagement.impl.PresentmentHeaderDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+	
 	<!-- AIB -->
 	<bean id="calendarInterfaceService" class="com.pennant.Interface.service.impl.aib.CalendarInterfaceServiceImpl">
 		<property name="dateRollOverProcess" ref="dateRollOverProcess" />

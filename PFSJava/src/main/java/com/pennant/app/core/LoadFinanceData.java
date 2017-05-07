@@ -13,6 +13,7 @@ import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
+import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -26,7 +27,12 @@ public class LoadFinanceData extends ServiceHelper {
 	public CustEODEvent prepareFinEODEvents(CustEODEvent custEODEvent) throws Exception {
 
 		long custID = custEODEvent.getCustomer().getCustID();
+
+		//For SOD Operations
+		Date businesdate = DateUtility.addDays(custEODEvent.getEodValueDate(), 1);
+
 		List<FinanceMain> custFinMains = getFinanceMainDAO().getFinanceMainsByCustId(custID, true);
+		List<PresentmentDetail> presentments = getPresentmentHeaderDAO().getPresentmenToPost(custID, businesdate);
 
 		for (int i = 0; i < custFinMains.size(); i++) {
 			FinEODEvent finEODEvent = new FinEODEvent();
@@ -52,19 +58,31 @@ public class LoadFinanceData extends ServiceHelper {
 
 			finEODEvent.setDatesMap(datesMap);
 			finEODEvent.setFinanceScheduleDetails(finSchdDetails);
-			finEODEvent.setFinanceDisbursements(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, FinanceConstants.DISB_STATUS_CANCEL));
+			finEODEvent.setFinanceDisbursements(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference,
+					FinanceConstants.DISB_STATUS_CANCEL));
 
-			//since fee, insurance and installment due posting are posted in start of day and the value date 
-			Date businesdate=DateUtility.addDays(custEODEvent.getEodValueDate(), 1);
-			finEODEvent.setFinFeeScheduleDetails(getFinFeeScheduleDetailDAO().getFeeSchdTPost(finReference, businesdate));
+			//fin fee schedule
+			finEODEvent.setFinFeeScheduleDetails(getFinFeeScheduleDetailDAO()
+					.getFeeSchdTPost(finReference, businesdate));
+			// fin insurance schedule
 			finEODEvent.setFinSchFrqInsurances(getFinInsurancesDAO().getInsSchdToPost(finReference, businesdate));
 
 			//FINPROFIT DETAILS
 			finEODEvent.setFinProfitDetail(getFinanceProfitDetailDAO().getFinProfitDetailsById(finReference));
 
+			PresentmentDetail presentment = getPresentmentDetailbyRef(finReference, presentments);
+			if (presentment != null) {
+				finEODEvent.getPresentmentDetails().add(presentment);
+			}
+
 			custEODEvent.getFinEODEvents().add(finEODEvent);
 
 		}
+
+		//clear temporary data
+		presentments.clear();
+		custFinMains.clear();
+
 		return custEODEvent;
 	}
 
@@ -75,7 +93,7 @@ public class LoadFinanceData extends ServiceHelper {
 
 			//update finance main
 			if (finEODEvent.isUpdFinMain()) {
-				finEODEvent.getFinanceMain().setVersion(finEODEvent.getFinanceMain().getVersion()+1);
+				finEODEvent.getFinanceMain().setVersion(finEODEvent.getFinanceMain().getVersion() + 1);
 				getFinanceMainDAO().updateFinanceInEOD(finEODEvent.getFinanceMain());
 			}
 
@@ -88,6 +106,8 @@ public class LoadFinanceData extends ServiceHelper {
 			if (finEODEvent.isUpdFinSchedule()) {
 				getFinanceScheduleDetailDAO().updateList(finEODEvent.getFinanceScheduleDetails(), "");
 			}
+			//clear data
+			finEODEvent.getFinanceScheduleDetails().clear();
 
 			//Update overdue details
 			List<FinODDetails> odDetails = finEODEvent.getFinODDetails();
@@ -101,7 +121,9 @@ public class LoadFinanceData extends ServiceHelper {
 					}
 				}
 			}
-			
+			//clear data
+			odDetails.clear();
+
 			//update repay instruction
 			if (finEODEvent.isUpdRepayInstruct()) {
 
@@ -114,11 +136,8 @@ public class LoadFinanceData extends ServiceHelper {
 				}
 				getRepayInstructionDAO().saveList(lisRepayIns, "", false);
 			}
-
-			//update provision details
-			if (finEODEvent.isUpdProvision()) {
-
-			}
+			//clear data
+			finEODEvent.getRepayInstructions().clear();
 
 		}
 
@@ -128,6 +147,19 @@ public class LoadFinanceData extends ServiceHelper {
 					custEODEvent.getCustomer().getCustID());
 		}
 
+		//clear data after the process
+		custEODEvent.getFinEODEvents().clear();
+		custEODEvent=null;
+
+	}
+
+	private PresentmentDetail getPresentmentDetailbyRef(String finrefere, List<PresentmentDetail> presentments) {
+		for (PresentmentDetail presentmentDetail : presentments) {
+			if (StringUtils.equals(presentmentDetail.getFinReference(), finrefere)) {
+				return presentmentDetail;
+			}
+		}
+		return null;
 	}
 
 }

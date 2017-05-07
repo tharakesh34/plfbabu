@@ -16,7 +16,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
-import com.pennant.backend.model.financemanagement.Provision;
+import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 
@@ -35,8 +35,8 @@ public class FinEODEvent implements Serializable {
 	private List<FinanceDisbursement>	financeDisbursements	= new ArrayList<FinanceDisbursement>(1);
 	private List<FinFeeScheduleDetail>	finFeeScheduleDetails	= new ArrayList<FinFeeScheduleDetail>(1);
 	private List<FinSchFrqInsurance>	finSchFrqInsurances		= new ArrayList<FinSchFrqInsurance>(1);
+	private List<PresentmentDetail>		presentmentDetails		= new ArrayList<PresentmentDetail>(1);
 	private List<ReturnDataSet>			returnDataSet			= new ArrayList<ReturnDataSet>(1);
-	private Provision					provision				= new Provision();
 	private boolean						rateReview				= false;
 	private boolean						odFiance				= false;
 	private Date						eventFromDate;
@@ -50,7 +50,6 @@ public class FinEODEvent implements Serializable {
 	private boolean						updFinSchedule			= false;
 	private boolean						updFinPft				= false;
 	private boolean						updRepayInstruct		= false;
-	private boolean						updProvision			= false;
 
 	public FinanceMain getFinanceMain() {
 		return financeMain;
@@ -114,14 +113,6 @@ public class FinEODEvent implements Serializable {
 
 	public void setOdcRecoveries(List<OverdueChargeRecovery> odcRecoveries) {
 		this.odcRecoveries = odcRecoveries;
-	}
-
-	public Provision getProvision() {
-		return provision;
-	}
-
-	public void setProvision(Provision provision) {
-		this.provision = provision;
 	}
 
 	public boolean isRateReview() {
@@ -228,14 +219,6 @@ public class FinEODEvent implements Serializable {
 		this.updRepayInstruct = updRepayInstruct;
 	}
 
-	public boolean isUpdProvision() {
-		return updProvision;
-	}
-
-	public void setUpdProvision(boolean updProvision) {
-		this.updProvision = updProvision;
-	}
-
 	public FinODPenaltyRate getPenaltyrate() {
 		return penaltyrate;
 	}
@@ -266,6 +249,14 @@ public class FinEODEvent implements Serializable {
 
 	public void setFinSchFrqInsurances(List<FinSchFrqInsurance> finSchFrqInsurances) {
 		this.finSchFrqInsurances = finSchFrqInsurances;
+	}
+
+	public List<PresentmentDetail> getPresentmentDetails() {
+		return presentmentDetails;
+	}
+
+	public void setPresentmentDetails(List<PresentmentDetail> presentmentDetails) {
+		this.presentmentDetails = presentmentDetails;
 	}
 
 	public List<ReturnDataSet> getReturnDataSet() {

@@ -1,38 +1,24 @@
 package com.pennant.app.core;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 
 public class ReceiptPaymentService extends ServiceHelper {
 	private static final long		serialVersionUID	= 1442146139821584760L;
-	private Logger					logger				= Logger.getLogger(ReceiptPaymentService.class);
 
-	//PD.SCHAMTDUE, PD.SCHPRIDUE, PD.SCHPFTDUE, PD.SCHFEEDUE, PD.SCHINSDUE, PD.SCHPENALTYDUE,PD.ADVISEAMT,PD.DETAILID, 
-	private static final String		INSTALLMENTDUE		= "SELECT FM.CUSTID,FM.FINBRANCH,FM.FINTYPE,  PD.PRESENTMENTID, PD.FINREFERENCE, PD.SCHDATE, PD.MANDATEID,"
-																+ " PD.ADVANCEAMT,"
-																+ " PD.EXCESSID, PD.PRESENTMENTAMT, PD.EXCLUDEREASON, PD.BOUNCEID FROM PRESENTMENTDETAILS PD "
-																+ " INNER JOIN FINANCEMAIN FM ON PD.FINREFERENCE = FM.FINREFERENCE WHERE PD.SCHDATE=? AND FM.CUSTID=? ";
-//																+ " AND STATUS=1 ";
-	//FIXME to do finalise the query
 	private RepaymentProcessUtil	repaymentProcessUtil;
 
 	/**
@@ -41,29 +27,22 @@ public class ReceiptPaymentService extends ServiceHelper {
 	 * @param date
 	 * @throws Exception
 	 */
-	public void processrReceipts(Connection connection, long custId, Date valuedDate, CustEODEvent custEODEvent)
-			throws Exception {
-		ResultSet resultSet = null;
-		PreparedStatement sqlStatement = null;
-		String finref = "";
-		try {
-			//Since the process is on SOD
-			Date businessDate = DateUtility.addDays(valuedDate, 1);
-			connection = DataSourceUtils.doGetConnection(getDataSource());
-			sqlStatement = connection.prepareStatement(INSTALLMENTDUE);
-			sqlStatement.setDate(1, DateUtility.getDBDate(businessDate.toString()));
-			sqlStatement.setLong(2, custId);
-			resultSet = sqlStatement.executeQuery();
-			while (resultSet.next()) {
+	public void processrReceipts(CustEODEvent custEODEvent) throws Exception {
+		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
+		Date businessDate = custEODEvent.getEodValueDate();
+		for (FinEODEvent finEODEvent : finEODEvents) {
+			List<PresentmentDetail> presentmentList = finEODEvent.getPresentmentDetails();
 
-				finref = resultSet.getString("FINREFERENCE");
-				Date schDate = resultSet.getDate("SchDate");
-				BigDecimal advanceAmt = getDecimal(resultSet, "ADVANCEAMT");
-				BigDecimal presentmentAmt = getDecimal(resultSet, "PRESENTMENTAMT");
+			for (PresentmentDetail presentmentDetail : presentmentList) {
+
+				String finref = presentmentDetail.getFinReference();
+				Date schDate = presentmentDetail.getSchDate();
+				BigDecimal advanceAmt = presentmentDetail.getAdvanceAmt();
+				BigDecimal presentmentAmt = presentmentDetail.getPresentmentAmt();
 
 				FinReceiptHeader header = new FinReceiptHeader();
 				header.setReference(finref);
-				header.setReceiptDate(valuedDate);
+				header.setReceiptDate(schDate);
 				header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 				header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 
@@ -73,7 +52,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 				header.setReceiptAmount(advanceAmt.add(presentmentAmt));
 				header.setEffectSchdMethod(PennantConstants.List_Select);
 				header.setReceiptModeStatus(RepayConstants.PAYSTATUS_APPROVED);
-				
+
 				//work flow details
 				header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 
@@ -92,7 +71,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 					receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 					receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 					receiptDetail.setPaymentType(RepayConstants.PAYTYPE_EMIINADV);
-					receiptDetail.setPayAgainstID(resultSet.getLong("EXCESSID"));
+					receiptDetail.setPayAgainstID(presentmentDetail.getExcessID());
 					receiptDetail.setAmount(advanceAmt);
 					receiptDetail.setValueDate(schDate);
 					receiptDetail.setReceivedDate(businessDate);
@@ -105,7 +84,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 					receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 					receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 					receiptDetail.setPaymentType(RepayConstants.PAYTYPE_PRESENTMENT);
-					receiptDetail.setPayAgainstID(resultSet.getLong("EXCESSID"));
+					receiptDetail.setPayAgainstID(presentmentDetail.getExcessID());
 					receiptDetail.setAmount(presentmentAmt);
 					receiptDetail.setValueDate(schDate);
 					receiptDetail.setReceivedDate(businessDate);
@@ -113,23 +92,17 @@ public class ReceiptPaymentService extends ServiceHelper {
 				}
 
 				header.setReceiptDetails(receiptDetails);
-				repaymentProcessUtil.calcualteAndPayReceipt(financeMain, scheduleDetails, profitDetail, header, repayHeirarchy,businessDate);
+				repaymentProcessUtil.calcualteAndPayReceipt(financeMain, scheduleDetails, profitDetail, header,
+						repayHeirarchy, businessDate);
+
 			}
-		} catch (Exception e) {
-			logger.error("Exception :", e);
-			throw e;
-		} finally {
-			if (resultSet != null) {
-				resultSet.close();
-			}
-			if (sqlStatement != null) {
-				sqlStatement.close();
-			}
+
 		}
+
 	}
 
 	private FinEODEvent getFinEODEvent(CustEODEvent custEODEvent, String finref) {
-		List<FinEODEvent> custEODEvents=custEODEvent.getFinEODEvents();
+		List<FinEODEvent> custEODEvents = custEODEvent.getFinEODEvents();
 		for (FinEODEvent finEODEvent : custEODEvents) {
 			if (finEODEvent.getFinanceMain().getFinReference().equals(finref)) {
 				return finEODEvent;
