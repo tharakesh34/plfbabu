@@ -60,6 +60,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.BatchUtil;
@@ -70,7 +71,6 @@ import com.pennant.eod.BatchFileUtil;
 import com.pennant.eod.beans.PaymentRecoveryDetail;
 import com.pennant.eod.beans.PaymentRecoveryHeader;
 import com.pennant.eod.dao.PaymentRecoveryHeaderDAO;
-import com.pennant.eod.util.EODProperties;
 
 public class PrepareRecoveryFile implements Tasklet {
 
@@ -206,7 +206,8 @@ public class PrepareRecoveryFile implements Tasklet {
 		addField(builder, resultSet.getString("CustomerReference"));
 		addField(builder, resultSet.getString("DebitCurrency"));
 		addField(builder, resultSet.getString("CreditCurrency"));
-		int code = EODProperties.getCcyEditField(resultSet.getString("DebitCurrency"));
+		
+		int code = CurrencyUtil.getFormat(resultSet.getString("DebitCurrency"));
 		String amount = PennantApplicationUtil.formateAmount(resultSet.getBigDecimal("PaymentAmount"), code).toString();
 		addField(builder, amount);
 		addField(builder, resultSet.getString("TransactionPurpose"));

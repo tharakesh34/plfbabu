@@ -47,7 +47,6 @@ public class EODProperties {
 
 	private static Map<String, FinanceType>						finananceTypesMap;
 	private static Map<String, String>							rulesMap;
-	private static Map<String, Currency>						currencyMap;
 	private static Map<String, String>							internalAccMap;
 	private static Map<String, TakafulProvider>					takafulProviders;
 	private static Map<Long, List<TransactionEntry>>			transactionEntriesMap;
@@ -93,7 +92,6 @@ public class EODProperties {
 		List<NPABucket> npaBucketList = nPABucketDAO.getNPABuckets();
 
 		finananceTypesMap = new HashMap<String, FinanceType>(finTypeList.size());
-		currencyMap = new HashMap<String, Currency>(ccyCodeList.size());
 		transactionEntriesMap = new HashMap<Long, List<TransactionEntry>>(accountSetIdList.size());
 		dpdBucketConfigurations = new HashMap<String, List<DPDBucketConfiguration>>();
 		dPDBuckets = new HashMap<Long, String>();
@@ -106,9 +104,6 @@ public class EODProperties {
 			finananceTypesMap.put(type.getFinType().trim(), type);
 		}
 
-		for (Currency currency : ccyCodeList) {
-			currencyMap.put(currency.getCcyCode(), currency);
-		}
 
 		for (Long accountSetId : accountSetIdList) {
 			transactionEntriesMap
@@ -179,27 +174,6 @@ public class EODProperties {
 		return rulesMap.get(ruleCode);
 	}
 
-	/**
-	 * Method for Fetching Currency Number by Currency Code
-	 * 
-	 * @param ccyCode
-	 * @return
-	 */
-	public static String getCcyNumber(String ccyCode) {
-		return currencyMap.get(ccyCode).getCcyNumber();
-
-	}
-
-	/**
-	 * Method for Fetching Currency format by Currency Code
-	 * 
-	 * @param ccyCode
-	 * @return
-	 */
-	public static int getCcyEditField(String ccyCode) {
-		return currencyMap.get(ccyCode).getCcyEditField();
-
-	}
 
 	/**
 	 * Method for Fetching SIA Number Number by SIA Code
@@ -273,7 +247,6 @@ public class EODProperties {
 	public void destroy() {
 		finananceTypesMap = null;
 		rulesMap = null;
-		currencyMap = null;
 		internalAccMap = null;
 		transactionEntriesMap = null;
 		takafulProviders = null;

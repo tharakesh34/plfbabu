@@ -142,7 +142,7 @@ public class EodService {
 		custEODEvent = accrualService.processAccrual(custEODEvent);
 
 		//installment 
-		installmentDueService.processDueDatePostings(connection,custEODEvent);
+		installmentDueService.processDueDatePostings(custEODEvent);
 		
 		//Auto disbursements
 		autoDisbursementService.processDisbursementPostings(custEODEvent);

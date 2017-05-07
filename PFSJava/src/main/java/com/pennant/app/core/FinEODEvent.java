@@ -1,12 +1,15 @@
 package com.pennant.app.core;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
+import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -15,13 +18,9 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennanttech.pff.core.model.AbstractEntity;
 
-public class FinEODEvent extends AbstractEntity {
+public class FinEODEvent implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long			serialVersionUID		= 1183720618731771888L;
 	private FinanceMain					financeMain				= new FinanceMain();
 	private FinanceType					finType					= new FinanceType();
@@ -33,6 +32,8 @@ public class FinEODEvent extends AbstractEntity {
 	private List<OverdueChargeRecovery>	odcRecoveries			= new ArrayList<OverdueChargeRecovery>(1);
 	private FinODPenaltyRate			penaltyrate;
 	private List<FinanceDisbursement>	financeDisbursements	= new ArrayList<FinanceDisbursement>(1);
+	private List<FinFeeScheduleDetail>	finFeeScheduleDetails	= new ArrayList<FinFeeScheduleDetail>(1);
+	private List<FinSchFrqInsurance>	finSchFrqInsurances		= new ArrayList<FinSchFrqInsurance>(1);
 	private Provision					provision				= new Provision();
 	private boolean						rateReview				= false;
 	private boolean						odFiance				= false;
@@ -247,6 +248,22 @@ public class FinEODEvent extends AbstractEntity {
 
 	public void setFinanceDisbursements(List<FinanceDisbursement> financeDisbursements) {
 		this.financeDisbursements = financeDisbursements;
+	}
+
+	public List<FinFeeScheduleDetail> getFinFeeScheduleDetails() {
+		return finFeeScheduleDetails;
+	}
+
+	public void setFinFeeScheduleDetails(List<FinFeeScheduleDetail> finFeeScheduleDetails) {
+		this.finFeeScheduleDetails = finFeeScheduleDetails;
+	}
+
+	public List<FinSchFrqInsurance> getFinSchFrqInsurances() {
+		return finSchFrqInsurances;
+	}
+
+	public void setFinSchFrqInsurances(List<FinSchFrqInsurance> finSchFrqInsurances) {
+		this.finSchFrqInsurances = finSchFrqInsurances;
 	}
 
 }

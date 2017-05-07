@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.rulefactory;
 
@@ -51,13 +51,21 @@ import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 public interface FinFeeScheduleDetailDAO {
 
 	void saveFeeScheduleBatch(List<FinFeeScheduleDetail> feeScheduleList, boolean isWIF, String tableType);
+
 	void deleteFeeScheduleBatch(long feeId, boolean isWIF, String tableType);
+
 	List<FinFeeScheduleDetail> getFeeScheduleByFeeID(long feeID, boolean isWIF, String tableType);
 
 	List<FinFeeScheduleDetail> getFeeScheduleByFinID(List<Long> feeIDList, boolean isWIF, String tableType);
+
 	void updateFeeSchdPaids(List<FinFeeScheduleDetail> updateFeeList);
+
 	List<FinFeeScheduleDetail> getFeeScheduleBySchDate(String finReference, Date schDate);
+
 	void updateFeePaids(List<FinFeeScheduleDetail> updateFeeList);
+
 	List<FinFeeScheduleDetail> getFeeSchedules(String finReference, Date schDate);
+
+	List<FinFeeScheduleDetail> getFeeSchdTPost(String finReference, Date schDate);
 
 }

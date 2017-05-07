@@ -59,6 +59,7 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.backend.util.BatchUtil;
@@ -67,7 +68,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.BatchFileUtil;
 import com.pennant.eod.beans.PaymentRecoveryDetail;
 import com.pennant.eod.dao.PaymentRecoveryDetailDAO;
-import com.pennant.eod.util.EODProperties;
 import com.pennant.exception.PFFInterfaceException;
 
 public class ReadRecoveryFile implements Tasklet {
@@ -194,7 +194,7 @@ public class ReadRecoveryFile implements Tasklet {
 		recoveryDetail.setFinancePurpose(details[14]);
 		recoveryDetail.setSysTranRef(details[15]);
 
-		int code = EODProperties.getCcyEditField(recoveryDetail.getDebitCurrency());
+		int code =  CurrencyUtil.getFormat(recoveryDetail.getDebitCurrency());
 		String debitamount = StringUtils.trimToEmpty(details[16]);
 		String secordayDebitamount = StringUtils.trimToEmpty(details[17]);
 

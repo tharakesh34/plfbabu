@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -52,6 +53,11 @@ public class LoadFinanceData extends ServiceHelper {
 			finEODEvent.setDatesMap(datesMap);
 			finEODEvent.setFinanceScheduleDetails(finSchdDetails);
 			finEODEvent.setFinanceDisbursements(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, FinanceConstants.DISB_STATUS_CANCEL));
+
+			//since fee, insurance and installment due posting are posted in start of day and the value date 
+			Date businesdate=DateUtility.addDays(custEODEvent.getEodValueDate(), 1);
+			finEODEvent.setFinFeeScheduleDetails(getFinFeeScheduleDetailDAO().getFeeSchdTPost(finReference, businesdate));
+			finEODEvent.setFinSchFrqInsurances(getFinInsurancesDAO().getInsSchdToPost(finReference, businesdate));
 
 			//FINPROFIT DETAILS
 			finEODEvent.setFinProfitDetail(getFinanceProfitDetailDAO().getFinProfitDetailsById(finReference));

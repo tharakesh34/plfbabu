@@ -467,6 +467,27 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 	}
 	
 	@Override
+	public List<FinSchFrqInsurance> getInsSchdToPost(String finReference, Date schDate) {
+		logger.debug("Entering");
+		FinSchFrqInsurance insSchd = new FinSchFrqInsurance();
+		insSchd.setReference(finReference);
+		insSchd.setInsSchDate(schDate);
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT FIN.REFERENCE, INSD.INSSCHDATE, FIN.INSURANCETYPE, " );
+		selectSql.append(" INSD.AMOUNT, INSD.INSURANCEPAID  FROM FINSCHFRQINSURANCE INSD");
+		selectSql.append(" INNER JOIN FININSURANCES FIN ON INSD.INSID=FIN.INSID");
+		selectSql.append(" WHERE FIN.REFERENCE = :Reference AND INSD.INSSCHDATE=:InsSchDate ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(insSchd);
+		RowMapper<FinSchFrqInsurance> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinSchFrqInsurance.class);
+		List<FinSchFrqInsurance> insList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.debug("Leaving");
+		return insList;
+	}
+	
+	@Override
 	public void updateInsPaids(List<FinSchFrqInsurance> updateInsList) {
 		logger.debug("Entering");
 		

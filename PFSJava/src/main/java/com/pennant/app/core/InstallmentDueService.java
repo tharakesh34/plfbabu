@@ -1,17 +1,12 @@
 package com.pennant.app.core;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.DateUtility;
@@ -29,20 +24,12 @@ public class InstallmentDueService extends ServiceHelper {
 	private static final long	serialVersionUID	= 1442146139821584760L;
 	private Logger				logger				= Logger.getLogger(InstallmentDueService.class);
 
-	private static final String	INSTALLMENTDUE_FEE	= "SELECT FT.FEETYPECODE,FED.FINREFERENCE,FESD.SCHDATE,FESD.SCHAMOUNT,FESD.OSAMOUNT,FESD.PAIDAMOUNT,FESD.WAIVERAMOUNT,FESD.WRITEOFFAMOUNT"
-															+ " FROM FINFEESCHEDULEDETAIL FESD  inner join FINFEEDETAIL FED ON FESD.FEEID=FED.FEEID Inner join FEETYPES FT on FT.FEETYPEID= FED.FEETYPEID "
-															+ " WHERE FED.FINREFERENCE = ? AND FESD.SCHDATE = ?";
-
-	private static final String	INSTALLMENTDUE_INS	= "SELECT FIN.REFERENCE, INSD.INSSCHDATE, FIN.INSURANCETYPE, INSD.AMOUNT, INSD.INSURANCEPAID FROM FINSCHFRQINSURANCE INSD "
-															+ " INNER JOIN FININSURANCES FIN ON INSD.INSID=FIN.INSID "
-															+ " WHERE FIN.REFERENCE = ? AND INSD.INSSCHDATE=?";
-
 	/**
 	 * @param custId
 	 * @param date
 	 * @throws Exception
 	 */
-	public void processDueDatePostings(Connection connection, CustEODEvent custEODEvent) throws Exception {
+	public void processDueDatePostings(CustEODEvent custEODEvent) throws Exception {
 
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		Date valueDate = custEODEvent.getEodValueDate();
@@ -60,7 +47,7 @@ public class InstallmentDueService extends ServiceHelper {
 				}
 
 				if (finSchd.getSchDate().compareTo(valueDate) == 0) {
-					postInstallmentDues(connection, finEODEvent, finSchd, valueDate);
+					postInstallmentDues(finEODEvent, finSchd, valueDate);
 				}
 
 			}
@@ -72,8 +59,8 @@ public class InstallmentDueService extends ServiceHelper {
 	 * @param resultSet
 	 * @throws Exception
 	 */
-	public void postInstallmentDues(Connection connection, FinEODEvent finEODEvent, FinanceScheduleDetail finSchd,
-			Date valueDate) throws Exception {
+	public void postInstallmentDues(FinEODEvent finEODEvent, FinanceScheduleDetail finSchd, Date valueDate)
+			throws Exception {
 		logger.debug(" Entering ");
 		String finType = finEODEvent.getFinType().getFinType();
 		boolean isAccountingReq = false;
@@ -132,7 +119,7 @@ public class InstallmentDueService extends ServiceHelper {
 		}
 		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
 
-		List<FinFeeScheduleDetail> feelist = getFinFeeSchedule(connection, finRef, valueDate);
+		List<FinFeeScheduleDetail> feelist = finEODEvent.getFinFeeScheduleDetails();
 		if (feelist != null && !feelist.isEmpty()) {
 			for (FinFeeScheduleDetail feeSchd : feelist) {
 				executingMap.put(feeSchd.getFeeTypeCode() + "_SCH", feeSchd.getSchAmount());
@@ -141,7 +128,7 @@ public class InstallmentDueService extends ServiceHelper {
 			}
 		}
 
-		List<FinSchFrqInsurance> finInsList = getFinInsurances(connection, finRef, valueDate);
+		List<FinSchFrqInsurance> finInsList = finEODEvent.getFinSchFrqInsurances();
 
 		if (finInsList != null && !finInsList.isEmpty()) {
 			for (FinSchFrqInsurance insschd : finInsList) {
@@ -153,89 +140,10 @@ public class InstallmentDueService extends ServiceHelper {
 		//DataSet Object preparation for AccountingSet Execution
 		FinanceType financeType = getFinanceType(aeEvent.getFinType());
 		financeType.getDeclaredFieldValues(executingMap);
-		
+
 		//Postings Process
-		 postAccounting(aeEvent, executingMap);
+		postAccounting(aeEvent, executingMap);
 		logger.debug(" Leaving ");
-	}
-
-	private List<FinFeeScheduleDetail> getFinFeeSchedule(Connection connection, String finRef, Date valueDate)
-			throws Exception {
-
-		List<FinFeeScheduleDetail> feeList = new ArrayList<FinFeeScheduleDetail>();
-		ResultSet resultSet = null;
-		PreparedStatement sqlStatement = null;
-		try {
-			connection = DataSourceUtils.doGetConnection(getDataSource());
-			sqlStatement = connection.prepareStatement(INSTALLMENTDUE_FEE);
-			sqlStatement.setString(1, finRef);
-			sqlStatement.setDate(2, DateUtility.getDBDate(valueDate.toString()));
-			resultSet = sqlStatement.executeQuery();
-			while (resultSet.next()) {
-				FinFeeScheduleDetail feeSchdDetails = new FinFeeScheduleDetail();
-				feeSchdDetails.setFinReference(finRef);
-				feeSchdDetails.setSchDate(resultSet.getDate("SCHDATE"));
-				feeSchdDetails.setSchAmount(getDecimal(resultSet, "SCHAMOUNT"));
-				feeSchdDetails.setPaidAmount(getDecimal(resultSet, "PAIDAMOUNT"));
-				feeSchdDetails.setWaiverAmount(getDecimal(resultSet, "WAIVERAMOUNT"));
-				feeSchdDetails.setOsAmount(getDecimal(resultSet, "OSAMOUNT"));
-				feeSchdDetails.setWriteoffAmount(getDecimal(resultSet, "WRITEOFFAMOUNT"));
-				feeSchdDetails.setFeeTypeCode(resultSet.getString("FEETYPECODE"));
-				feeList.add(feeSchdDetails);
-			}
-
-		} catch (Exception e) {
-			logger.error("Exception :", e);
-			throw e;
-		} finally {
-			if (resultSet != null) {
-				resultSet.close();
-			}
-			if (sqlStatement != null) {
-				sqlStatement.close();
-			}
-		}
-
-		return feeList;
-
-	}
-
-	private List<FinSchFrqInsurance> getFinInsurances(Connection connection, String finRef, Date valueDate)
-			throws Exception {
-
-		List<FinSchFrqInsurance> finInsuranceList = new ArrayList<FinSchFrqInsurance>();
-		ResultSet resultSet = null;
-		PreparedStatement sqlStatement = null;
-		try {
-			connection = DataSourceUtils.doGetConnection(getDataSource());
-			sqlStatement = connection.prepareStatement(INSTALLMENTDUE_INS);
-			sqlStatement.setString(1, finRef);
-			sqlStatement.setDate(2, DateUtility.getDBDate(valueDate.toString()));
-			resultSet = sqlStatement.executeQuery();
-			while (resultSet.next()) {
-				FinSchFrqInsurance feeSchdDetails = new FinSchFrqInsurance();
-				feeSchdDetails.setReference(finRef);
-				feeSchdDetails.setInsSchDate(resultSet.getDate("INSSCHDATE"));
-				feeSchdDetails.setAmount(getDecimal(resultSet, "AMOUNT"));
-				feeSchdDetails.setInsurancePaid(getDecimal(resultSet, "INSURANCEPAID"));
-				feeSchdDetails.setInsuranceType(resultSet.getString("INSURANCETYPE"));
-				finInsuranceList.add(feeSchdDetails);
-			}
-
-		} catch (Exception e) {
-			logger.error("Exception :", e);
-			throw e;
-		} finally {
-			if (resultSet != null) {
-				resultSet.close();
-			}
-			if (sqlStatement != null) {
-				sqlStatement.close();
-			}
-		}
-
-		return finInsuranceList;
-
 	}
 
 }

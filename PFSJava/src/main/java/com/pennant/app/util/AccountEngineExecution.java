@@ -82,7 +82,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.cache.util.AccountingSetCache;
-import com.pennant.eod.util.EODProperties;
 import com.pennant.exception.PFFInterfaceException;
 import com.rits.cloning.Cloner;
 
@@ -674,10 +673,9 @@ public class AccountEngineExecution implements Serializable {
 		String finCcyNum = "";
 		String acCcyNum = "";
 		int formatter = 0;
-
 		if (phase.equals(PennantConstants.APP_PHASE_EOD)) {
-			finCcyNum = EODProperties.getCcyNumber(finCcy);
-			acCcyNum = EODProperties.getCcyNumber(acCcy);
+			finCcyNum = CurrencyUtil.getCcyNumber(finCcy);
+			acCcyNum = CurrencyUtil.getCcyNumber(acCcy);
 		} else {
 			finCcyNum = getCurrencyDAO().getCurrencyById(finCcy);
 

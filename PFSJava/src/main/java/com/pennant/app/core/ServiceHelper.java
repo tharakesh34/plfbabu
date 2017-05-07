@@ -72,8 +72,10 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.finance.SecondaryAccountDAO;
+import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
+import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
@@ -101,6 +103,8 @@ abstract public class ServiceHelper implements Serializable {
 	private FinanceDisbursementDAO		financeDisbursementDAO;
 	private FinanceRepaymentsDAO		financeRepaymentsDAO;
 	private FinanceProfitDetailDAO		financeProfitDetailDAO;
+	private FinFeeScheduleDetailDAO		finFeeScheduleDetailDAO;
+	private FinInsurancesDAO			finInsurancesDAO;
 	//accounting
 	private FinContributorDetailDAO		finContributorDetailDAO;
 	private FinTypeAccountingDAO		finTypeAccountingDAO;
@@ -428,6 +432,22 @@ abstract public class ServiceHelper implements Serializable {
 
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	public FinFeeScheduleDetailDAO getFinFeeScheduleDetailDAO() {
+		return finFeeScheduleDetailDAO;
+	}
+
+	public void setFinFeeScheduleDetailDAO(FinFeeScheduleDetailDAO finFeeScheduleDetailDAO) {
+		this.finFeeScheduleDetailDAO = finFeeScheduleDetailDAO;
+	}
+
+	public FinInsurancesDAO getFinInsurancesDAO() {
+		return finInsurancesDAO;
+	}
+
+	public void setFinInsurancesDAO(FinInsurancesDAO finInsurancesDAO) {
+		this.finInsurancesDAO = finInsurancesDAO;
 	}
 
 }

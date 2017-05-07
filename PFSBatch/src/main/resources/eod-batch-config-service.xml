@@ -9,10 +9,10 @@
 	<!-- payment Helper -->
 	<bean id="serviceHelper" class="com.pennant.app.core.ServiceHelper" abstract="true">
 		<property name="dataSource" ref="pfsDatasource" />
-		
+
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
-		
+
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
@@ -20,14 +20,15 @@
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
-		
-		
+		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
+		<property name="finInsurancesDAO" ref="finInsurancesDAO" />
+
 		<property name="finContributorDetailDAO" ref="finContributorDetailDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="secondaryAccountDAO" ref="secondaryAccountDAO" />
-		
+
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="dPDBucketConfigurationDAO" ref="dPDBucketConfigurationDAO" />
 		<property name="dPDBucketDAO" ref="dPDBucketDAO" />

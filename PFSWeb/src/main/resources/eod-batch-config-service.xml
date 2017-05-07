@@ -20,7 +20,8 @@
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
-
+		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
+		<property name="finInsurancesDAO" ref="finInsurancesDAO" />
 
 		<property name="finContributorDetailDAO" ref="finContributorDetailDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
