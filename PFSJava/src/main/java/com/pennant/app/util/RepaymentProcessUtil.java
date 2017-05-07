@@ -336,6 +336,7 @@ public class RepaymentProcessUtil {
 				postDate = getPostDate(DateUtility.getAppDate());
 			}
 
+			boolean rpyProcessed = false;
 			for (int j = 0; j < repayHeaderList.size(); j++) {
 
 				FinRepayHeader repayHeader = repayHeaderList.get(j);
@@ -368,7 +369,7 @@ public class RepaymentProcessUtil {
 				}
 
 				//Create log entry for Action for Schedule Modification
-				if (i != 0 && j == 0) {
+				if (i != 0 && !rpyProcessed) {
 					entryDetail = new FinLogEntryDetail();
 					entryDetail.setFinReference(finReference);
 					entryDetail.setEventAction(receiptHeader.getReceiptPurpose());
@@ -384,6 +385,7 @@ public class RepaymentProcessUtil {
 					listSave(logScheduleData, "_Log", logKey);
 				}
 
+				rpyProcessed = true;
 				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
 				List<Object> returnList = doRepayPostings(financeMain, scheduleDetails, profitDetail,
 						repaySchdList, getEventCode(repayHeader.getFinEvent()), valueDate, 
@@ -401,6 +403,9 @@ public class RepaymentProcessUtil {
 				financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().add(repayHeader.getPriAmount()));
 				scheduleDetails = (List<FinanceScheduleDetail>) returnList.get(2);
 			}
+			
+			// Setting/Maintaining Log key for Last log of Schedule Details
+			receiptDetailList.get(i).setLogKey(logKey);
 		}
 		return scheduleDetails;
 

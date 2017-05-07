@@ -1,6 +1,5 @@
 package com.pennant.backend.dao.finance.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -15,7 +14,6 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
-import com.pennant.backend.util.FinanceConstants;
 
 public class FinLogEntryDetailDAOImpl extends BasisNextidDaoImpl<FinLogEntryDetail> implements FinLogEntryDetailDAO {
 
@@ -52,18 +50,16 @@ public class FinLogEntryDetailDAOImpl extends BasisNextidDaoImpl<FinLogEntryDeta
 	}
 		
 	@Override
-	public List<FinLogEntryDetail> getFinLogEntryDetailList(String finReference, Date postDate) {
+	public List<FinLogEntryDetail> getFinLogEntryDetailList(String finReference, long logKey) {
 		logger.debug("Entering");
 		
 		FinLogEntryDetail finLogEntryDetail = new FinLogEntryDetail();
 		finLogEntryDetail.setFinReference(finReference);
-		finLogEntryDetail.setPostDate(postDate);
+		finLogEntryDetail.setLogKey(logKey);
 		
 		StringBuilder selectSql = new StringBuilder(" Select T1.FinReference, T1.LogKey, T1.EventAction, T1.SchdlRecal, T1.PostDate, T1.ReversalCompleted ");
 		selectSql.append(" From FinLogEntryDetail T1 ");
-		selectSql.append(" Where T1.FinReference =:FinReference AND T1.PostDate >=:PostDate AND T1.ReversalCompleted = 0 " );
-		selectSql.append(" AND LogKey > COALESCE((select MAX(T2.LogKey) FROM FinLogEntryDetail T2 ");
-		selectSql.append(" WHERE T1.FinReference = T2.FinReference AND T2.ReversalCompleted = 0  ), 0)");
+		selectSql.append(" Where T1.FinReference =:FinReference AND T1.LogKey >:LogKey AND T1.ReversalCompleted = 0 " );
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finLogEntryDetail);
@@ -73,18 +69,14 @@ public class FinLogEntryDetailDAOImpl extends BasisNextidDaoImpl<FinLogEntryDeta
 	}
 	
 	@Override
-	public FinLogEntryDetail getFinLogEntryDetail(String finReference, String event, Date postDate) {
+	public FinLogEntryDetail getFinLogEntryDetail(long logKey) {
 		logger.debug("Entering");
 		
 		FinLogEntryDetail finLogEntryDetail = new FinLogEntryDetail();
-		finLogEntryDetail.setFinReference(finReference);
-		finLogEntryDetail.setEventAction(event);
-		finLogEntryDetail.setPostDate(postDate);
+		finLogEntryDetail.setLogKey(logKey);
 		
 		StringBuilder selectSql = new StringBuilder(" Select T1.FinReference, T1.LogKey, T1.EventAction, T1.SchdlRecal, T1.PostDate, T1.ReversalCompleted " );
-		selectSql.append(" From FinLogEntryDetail T1 Where T1.FinReference =:FinReference AND T1.EventAction=:EventAction " );
-		selectSql.append(" AND T1.PostDate =:PostDate AND T1.ReversalCompleted = 0 AND " );
-		selectSql.append(" LogKey = COALESCE((select MAX(T2.LogKey) FROM FinLogEntryDetail T2 WHERE T1.FinReference = T2.FinReference AND T2.ReversalCompleted = 0 ), 0) ");
+		selectSql.append(" From FinLogEntryDetail T1 Where T1.LogKey =:LogKey AND T1.ReversalCompleted = 0 " );
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finLogEntryDetail);

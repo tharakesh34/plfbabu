@@ -1194,11 +1194,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			Collections.sort(receipts, new Comparator<FinReceiptDetail>() {
 				@Override
 				public int compare(FinReceiptDetail detail1, FinReceiptDetail detail2) {
-					if(detail1.getPayOrder() == detail2.getPayOrder()){
-						return 0;
-					} else {
+					if (detail1.getPayOrder() > detail2.getPayOrder()) {
 						return 1;
-					}
+					} else if(detail1.getPayOrder() < detail2.getPayOrder()) {
+						return -1;
+					} 
+					return 0;
 				}
 			});
 		}

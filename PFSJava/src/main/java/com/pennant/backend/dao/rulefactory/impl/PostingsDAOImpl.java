@@ -211,12 +211,12 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		logger.debug("Entering");
 		
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("linkedTranId", linkedTranId);
-		paramSource.addValue("postStatus", postStatus);
+		paramSource.addValue("LinkedTranId", linkedTranId);
+		paramSource.addValue("PostStatus", postStatus);
 		
 		StringBuilder insertSql = new StringBuilder();
-		insertSql.append("Update Postings ");
-		insertSql.append(" PostStatus = :PostStatus where linkedTranId = :linkedTranId");
+		insertSql.append(" Update Postings SET ");
+		insertSql.append(" PostStatus = :PostStatus where LinkedTranId = :LinkedTranId");
 		
 		logger.debug("insertSql: " + insertSql.toString());
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), paramSource);
@@ -230,11 +230,11 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 			
 			MapSqlParameterSource paramSource = new MapSqlParameterSource();
 			paramSource.addValue("finReference", finReference);
-			paramSource.addValue("postStatus", postStatus);
+			paramSource.addValue("PostStatus", postStatus);
 			
 			StringBuilder insertSql = new StringBuilder();
-			insertSql.append("Update Postings Set");
-			insertSql.append(" PostStatus = :postStatus where finReference = :finReference");
+			insertSql.append(" Update Postings Set ");
+			insertSql.append(" PostStatus = :PostStatus where finReference = :finReference");
 			
 			logger.debug("insertSql: " + insertSql.toString());
 			this.namedParameterJdbcTemplate.update(insertSql.toString(), paramSource);

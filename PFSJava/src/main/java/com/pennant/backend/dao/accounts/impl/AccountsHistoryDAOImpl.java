@@ -88,7 +88,7 @@ public class AccountsHistoryDAOImpl extends BasisCodeDAO<AccountsHistory> implem
 
 		StringBuilder insertSql = new StringBuilder("Insert Into AccountsHistory");
 		insertSql.append(" (AccountId, PostDate, TodayDebits, TodayCredits, ");
-		insertSql.append(" TodayNet, ShadowBal, AcBalance ");
+		insertSql.append(" TodayNet, ShadowBal, AcBalance) ");
 		insertSql.append(" Values(:AccountId, :PostDate, :TodayDebits, :TodayCredits, ");
 		insertSql.append(" :TodayNet, :ShadowBal, :AcBalance)");
 

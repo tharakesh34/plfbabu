@@ -32,6 +32,7 @@ public class FinReceiptDetail implements Entity {
 	private Date						receivedDate;
 	private String						status;
 	private String						remarks;
+	private long						logKey			= 0;
 	private boolean						delRecord		= false;
 
 	private List<FinRepayHeader>		repayHeaders	= new ArrayList<FinRepayHeader>(1);
@@ -266,6 +267,14 @@ public class FinReceiptDetail implements Entity {
 
 	public void setPayOrder(int payOrder) {
 		this.payOrder = payOrder;
+	}
+
+	public long getLogKey() {
+		return logKey;
+	}
+
+	public void setLogKey(long logKey) {
+		this.logKey = logKey;
 	}
 
 }

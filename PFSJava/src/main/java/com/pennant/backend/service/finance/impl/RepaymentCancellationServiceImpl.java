@@ -448,7 +448,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			//If Any Exist Case after this Repayments with Schedule Recalculation then Stop Process
 			//============================================
 			List<FinLogEntryDetail> list = getFinLogEntryDetailDAO().getFinLogEntryDetailList(finReference,
-					rpyValueDate);
+					0);
 			if (list != null && !list.isEmpty()) {
 				return "Finance is Maintained after this Repayment done.";
 			}
@@ -473,8 +473,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			//Is Schedule Regenerated >>> Adjust Finance Details From Log Tables to Main Tables and remove data from Log Tables
 			//Otherwise Only Schedule Change with Repayments Amount
 			//============================================
-			FinLogEntryDetail detail = getFinLogEntryDetailDAO().getFinLogEntryDetail(finReference, finEventCode,
-					rpyValueDate);
+			FinLogEntryDetail detail = getFinLogEntryDetailDAO().getFinLogEntryDetail(0);
 			boolean isMigratedRepayment = false;
 			if (detail == null) {
 				logger.debug("Log Entry Details Missing. Cancellation process for Manual Reversal Payment Process");

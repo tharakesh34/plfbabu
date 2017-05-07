@@ -99,7 +99,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		finProfitDetails.setFinReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder(
-				"Select FinReference, CustId, FinBranch, FinType, LastMdfDate, FinIsActive, ");
+				"Select FinReference, CustId, FinBranch, FinType, FinCcy, LastMdfDate, FinIsActive, ");
 		selectSql.append(" TotalPftSchd, TotalPftCpz, TotalPftPaid, TotalPftBal, TotalPftPaidInAdv,");
 		selectSql.append(" TotalPriPaid, TotalPriBal, TdSchdPft, TdPftCpz, TdSchdPftPaid,");
 		selectSql.append(" TdSchdPftBal, PftAccrued, PftAccrueSusp, PftAmz, PftAmzSusp,");
@@ -140,7 +140,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		finProfitDetails.setFinReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder("Select FinReference, FinType, FinStartDate, MaturityDate, FinCategory,ProductCategory,  ");
-		selectSql.append(" FinStatus , FinStsReason ");
+		selectSql.append(" FinStatus , FinStsReason, FinCcy ");
 		selectSql.append(" From FinPftDetails");
 		selectSql.append(" Where FinReference =:FinReference");
 

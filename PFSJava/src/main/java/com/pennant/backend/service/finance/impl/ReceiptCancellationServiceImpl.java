@@ -546,11 +546,10 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		
 		List<RepayScheduleDetail> rpySchdList = new ArrayList<>();
 		long logKey = 0;
-		List<Long> logKeyList = new ArrayList<>();
 		BigDecimal totalPriAmount = BigDecimal.ZERO;
 		List<FinReceiptDetail> receiptDetails = sortReceiptDetails(receiptHeader.getReceiptDetails());
 		if(receiptDetails != null && !receiptDetails.isEmpty()){
-			for (int i = 0; i < receiptDetails.size(); i++) {
+			for (int i = receiptDetails.size() - 1; i >= 0; i--) {
 
 				FinReceiptDetail receiptDetail = receiptDetails.get(i);
 
@@ -559,11 +558,18 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 						StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE))){
 					continue;
 				}
+				
+				//Fetch Log Entry Details Greater than this Repayments Entry , which are having Schedule Recalculation
+				//If Any Exist Case after this Repayments with Schedule Recalculation then Stop Process
+				//============================================
+				List<FinLogEntryDetail> list = getFinLogEntryDetailDAO().getFinLogEntryDetailList(finReference, receiptDetail.getLogKey());
+				if (list != null && !list.isEmpty()) {
+					ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60206", "", null), PennantConstants.default_Language);
+					return errorDetail.getErrorMessage();
+				}
 
 				// Finance Repayments Amount Updation if Principal Amount Exists
-				Date valueDate = null;
 				long linkedTranId = 0;
-				String finEvent = "";
 				List<FinRepayHeader> rpyHeaders = receiptDetail.getRepayHeaders();
 				for (int j = rpyHeaders.size() - 1; j >= 0; j--) {
 
@@ -591,18 +597,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 					}
 
 					linkedTranId = rpyHeader.getLinkedTranId();
-					valueDate = rpyHeader.getValueDate();
-					finEvent = rpyHeader.getFinEvent();
 					isRcdFound = true;
-
-					//Fetch Log Entry Details Greater than this Repayments Entry , which are having Schedule Recalculation
-					//If Any Exist Case after this Repayments with Schedule Recalculation then Stop Process
-					//============================================
-					List<FinLogEntryDetail> list = getFinLogEntryDetailDAO().getFinLogEntryDetailList(finReference, valueDate);
-					if (list != null && !list.isEmpty()) {
-						ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60206", "", null), PennantConstants.default_Language);
-						return errorDetail.getErrorMessage();
-					}
 
 					//Posting Reversal Case Program Calling in Equation
 					//============================================
@@ -628,13 +623,12 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 				// Update Log Entry Based on FinPostDate and Reference
 				//============================================
-				FinLogEntryDetail detail = getFinLogEntryDetailDAO().getFinLogEntryDetail(finReference, finEvent, valueDate);
+				FinLogEntryDetail detail = getFinLogEntryDetailDAO().getFinLogEntryDetail(receiptDetail.getLogKey());
 				if(detail == null){
 					ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60207", "", null), PennantConstants.default_Language);
 					return errorDetail.getErrorMessage();
 				}
 				logKey = detail.getLogKey();
-				logKeyList.add(logKey);
 				detail.setReversalCompleted(true);
 				getFinLogEntryDetailDAO().updateLogEntryStatus(detail);
 
@@ -777,8 +771,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			listSave(scheduleData, "", 0);
 
 			//Delete Data from Log Entry Tables After Inserting into Main Tables
-			for (int i = 0; i < logKeyList.size(); i++) {
-				listDeletion(finReference, "_Log", false, logKeyList.get(i));
+			for (int i = 0; i < receiptDetails.size(); i++) {
+				listDeletion(finReference, "_Log", false, receiptDetails.get(i).getLogKey());
 			}
 
 			//Check Current Finance Max Status For updation
@@ -810,7 +804,6 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 						StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DD))){
 					getFinReceiptDetailDAO().updateReceiptStatus(receiptDetail.getReceiptID(), 
 							receiptDetail.getReceiptSeqID(), receiptHeader.getReceiptModeStatus());
-					break;
 				}
 			}
 		}
@@ -850,11 +843,12 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			Collections.sort(receipts, new Comparator<FinReceiptDetail>() {
 				@Override
 				public int compare(FinReceiptDetail detail1, FinReceiptDetail detail2) {
-					if(detail1.getPayOrder() == detail2.getPayOrder()){
-						return 0;
-					} else {
+					if (detail1.getPayOrder() > detail2.getPayOrder()) {
 						return 1;
-					}
+					} else if(detail1.getPayOrder() < detail2.getPayOrder()) {
+						return -1;
+					} 
+					return 0;
 				}
 			});
 		}
