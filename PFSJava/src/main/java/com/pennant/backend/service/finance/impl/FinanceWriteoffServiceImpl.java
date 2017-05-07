@@ -551,7 +551,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
  		aeEvent.setDataMap(dataMap);
 		
-		getPostingsPreparationUtil().postAccounting(aeEvent, dataMap);
+		getPostingsPreparationUtil().postAccounting(aeEvent);
 	//	linkedTranId = getAccountingResults(auditHeader, header.getFinanceDetail(), accountingSetEntries, curBDay,
 	//			aeEvent);
 

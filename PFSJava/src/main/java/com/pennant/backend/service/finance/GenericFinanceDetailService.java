@@ -1329,7 +1329,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					aeEvent.setNewRecord(true);
 				}
 				
-				postingsPreparationUtil.postAccounting(aeEvent, amountCodes.getDeclaredFieldValues());
+				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+				postingsPreparationUtil.postAccounting(aeEvent);
 
 				advPayment.setLinkedTranId(aeEvent.getLinkedTranId());
 			}
@@ -1396,7 +1397,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		return linkedTranId;
 	}
 
-	protected HashMap<String, Object> prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> executingMap, FinanceDetail financeDetail) {
+	protected HashMap<String, Object> prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap, FinanceDetail financeDetail) {
 		logger.debug("Entering");
 
 		List<FinFeeDetail> finFeeDetailList = financeDetail.getFinScheduleData().getFinFeeDetailList();
@@ -1419,22 +1420,22 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				feeRule.setFeeToFinance(finFeeDetail.getFeeScheduleMethod());
 				feeRule.setFeeMethod(finFeeDetail.getFeeScheduleMethod());
 
-				executingMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmount());
-				executingMap.put(finFeeDetail.getFeeTypeCode() + "_W", finFeeDetail.getWaivedAmount());
-				executingMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmount());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_W", finFeeDetail.getWaivedAmount());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
 
 				if (feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
 						|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
 						|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
-					executingMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", finFeeDetail.getRemainingFee());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", finFeeDetail.getRemainingFee());
 				} else {
-					executingMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", BigDecimal.ZERO);
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_SCH", BigDecimal.ZERO);
 				}
 
 				if (StringUtils.equals(feeRule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)) {
-					executingMap.put(finFeeDetail.getFeeTypeCode() + "_AF", finFeeDetail.getRemainingFee());
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_AF", finFeeDetail.getRemainingFee());
 				} else {
-					executingMap.put(finFeeDetail.getFeeTypeCode() + "_AF", BigDecimal.ZERO);
+					dataMap.put(finFeeDetail.getFeeTypeCode() + "_AF", BigDecimal.ZERO);
 				}
 
 				if (finFeeDetail.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
@@ -1455,7 +1456,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		logger.debug("Leaving");
-		return executingMap;
+		return dataMap;
 	}
 
 	/**
@@ -1505,7 +1506,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		try {
 			//getAccountingResults(auditHeader, financeDetail, accountingSetEntries, curBDay, aeEvent);
-			getPostingsPreparationUtil().postAccounting(aeEvent, dataMap);
+			getPostingsPreparationUtil().postAccounting(aeEvent);
 
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();

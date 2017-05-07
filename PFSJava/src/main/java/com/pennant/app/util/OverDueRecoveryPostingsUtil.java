@@ -145,7 +145,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				aeEvent.setValueDate(dateValueDate);
 				
 				// Posting details calling
-				aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent, dataMap);
+				aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 
 				isPostingSuccess = aeEvent.isPostingSucess();
 				linkedTranId = aeEvent.getLinkedTranId();
@@ -731,8 +731,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
 				aeEvent.setValueDate(dateValueDate);
 				aeEvent.setSchdDate(schdDate);
-
-				HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
+				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 
 				String phase = SysParamUtil.getValueAsString("PHASE");
 				boolean isEODProcess = false;

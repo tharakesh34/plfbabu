@@ -572,11 +572,10 @@ public class RepaymentPostingsUtil implements Serializable {
 			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE));
 		}
 
-		HashMap<String, Object> executingMap = amountCodes.getDeclaredFieldValues();
-		financeMain.getDeclaredFieldValues(executingMap);
+		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 
 		// Accounting Entry Execution
-		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent , executingMap);
+		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 		
 		logger.debug("Leaving");
 		return aeEvent;

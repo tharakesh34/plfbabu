@@ -302,18 +302,18 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @return
 	 */
 	private CommitmentMovement prepareCommitMovement(Commitment commitment, long linkedtranId,
-			HashMap<String, Object> executingMap) {
+			HashMap<String, Object> dataMap) {
 		logger.debug("Entering");
 		CommitmentMovement movement = new CommitmentMovement();
 
-		BigDecimal postAmount = ((BigDecimal) executingMap.get("ae_rpPri"));
+		BigDecimal postAmount = ((BigDecimal) dataMap.get("ae_rpPri"));
 
 		Date curBussDate = DateUtility.getAppDate();
 
 		movement.setCmtReference(commitment.getCmtReference());
-		movement.setFinReference((String) executingMap.get("fm_finReference"));
-		movement.setFinBranch((String) executingMap.get("fm_finBranch"));
-		movement.setFinType((String) executingMap.get("fm_finType"));
+		movement.setFinReference((String) dataMap.get("fm_finReference"));
+		movement.setFinBranch((String) dataMap.get("fm_finBranch"));
+		movement.setFinType((String) dataMap.get("fm_finType"));
 		movement.setMovementDate(curBussDate);
 		movement.setMovementOrder(getCommitmentMovementDAO().getMaxMovementOrderByRef(commitment.getCmtReference()) + 1);
 		movement.setMovementType("RA");
@@ -643,7 +643,7 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws PFFInterfaceException
 	 */
-	public AEEvent postAccounting(AEEvent aeEvent, HashMap<String, Object> dataMap) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	public AEEvent postAccounting(AEEvent aeEvent) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
 
 		if (aeEvent.getLinkedTranId() <= 0) {
