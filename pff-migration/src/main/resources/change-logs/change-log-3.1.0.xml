@@ -669,7 +669,41 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 			<column name="PayOrder" type="int" />
 		</addColumn>
 	</changeSet>
-	<changeSet id="52" author="Prasad">
+	<changeSet id="52" author="Siva">
+		<sql>
+			Update FINRECEIPTDETAIL m set m.payorder = (Select row_number() over(partition by Receiptid order by Receiptid,ReceiptSeqid)
+                                        from  FINRECEIPTDETAIL t where m.Receiptid = t.Receiptid and m.ReceiptSeqid = t.ReceiptSeqid)
+                                        where exists (select 1 from FINRECEIPTDETAIL t where m.Receiptid = t.Receiptid and m.ReceiptSeqid = t.ReceiptSeqid); 
+		</sql>
+	</changeSet>
+	<changeSet id="53" author="Siva">
+		<createView viewName="FINRECEIPTDETAIL_AVIEW" replaceIfExists="true">
+			  Select T1.ReceiptID , T1.ReceiptSeqID , T1.ReceiptType , T1.PaymentTo , T1.PaymentType , T1.PayAgainstID  , 
+			T1.Amount  , T1.FavourNumber , T1.ValueDate , T1.BankCode , T1.FavourName , T1.DepositDate , T1.DepositNo , T1.PaymentRef , 
+			 T1.TransactionRef , T1.ChequeAcNo , T1.FundingAc , T1.ReceivedDate , T1.Status , T1.Remarks  , T2.BankName BankCodeDesc,T3.PartnerBankCode FundingAcDesc, T1.PayOrder 
+			 From FinReceiptDetail T1 LEFT JOIN 
+			   BMTBankDetail T2 ON T1.BankCode = T2.BankCode LEFT JOIN 
+			   PartnerBanks T3 ON T1.FundingAc  = T3.PartnerBankID
+		</createView>
+	</changeSet>
+	<changeSet id="54" author="Siva">
+		<createView viewName="FINRECEIPTDETAIL_TVIEW" replaceIfExists="true">
+	  Select T1.ReceiptID , T1.ReceiptSeqID , T1.ReceiptType , T1.PaymentTo , T1.PaymentType , T1.PayAgainstID  , 
+			T1.Amount  , T1.FavourNumber , T1.ValueDate , T1.BankCode , T1.FavourName , T1.DepositDate , T1.DepositNo , T1.PaymentRef , 
+			 T1.TransactionRef , T1.ChequeAcNo , T1.FundingAc , T1.ReceivedDate , T1.Status , T1.Remarks  , T2.BankName BankCodeDesc,T3.PartnerBankCode FundingAcDesc , T1.PayOrder
+			 From FinReceiptDetail_Temp T1 LEFT JOIN 
+			   BMTBankDetail T2 ON T1.BankCode = T2.BankCode LEFT JOIN 
+			   PartnerBanks T3 ON T1.FundingAc  = T3.PartnerBankID
+		</createView>
+	</changeSet>
+		<changeSet id="55" author="Siva">
+		<sql>
+			Update FINRECEIPTDETAIL_Temp m set m.payorder = (Select row_number() over(partition by Receiptid order by Receiptid,ReceiptSeqid)
+                                        from  FINRECEIPTDETAIL_Temp t where m.Receiptid = t.Receiptid and m.ReceiptSeqid = t.ReceiptSeqid)
+                                        where exists (select 1 from FINRECEIPTDETAIL_Temp t where m.Receiptid = t.Receiptid and m.ReceiptSeqid = t.ReceiptSeqid); 
+		</sql>
+	</changeSet>
+	<changeSet id="56" author="Prasad">
 		<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
 		<![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
 		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE 
