@@ -52,8 +52,8 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  * 
  */
 public class AccountsHistory extends AbstractWorkflowEntity {
-	private static final long serialVersionUID = -1673137129792916291L;
 
+	private static final long	serialVersionUID	= 1750261249341373068L;
 	private String accountId;
 	private Date postDate;
 	private BigDecimal todayDebits = BigDecimal.ZERO;

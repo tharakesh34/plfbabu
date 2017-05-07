@@ -41,21 +41,8 @@
  ********************************************************************************************
 */
 package com.pennant.backend.dao.accounts;
-import java.util.List;
-
 import com.pennant.backend.model.accounts.AccountsHistory;
 
 public interface AccountsHistoryDAO {
-	AccountsHistory getAccountsHistoryById(String id);
-
-	boolean save(AccountsHistory accountsHist);
-
-	boolean saveList(List<AccountsHistory> accountHistList);
-
-	boolean update(AccountsHistory accountsHist);
-
-	boolean updateList(List<AccountsHistory> accountHistList);
-
 	boolean saveOrUpdate(AccountsHistory accountsHist);
-
 }
