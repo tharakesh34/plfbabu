@@ -661,6 +661,13 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 		<addNotNullConstraint tableName="Postings" columnName="USERBRANCH" columnDataType="varchar(12)" />
 		<addNotNullConstraint tableName="Postings_temp" columnName="USERBRANCH" columnDataType="varchar(12)" />
 	</changeSet>
-	
+	<changeSet id="51" author="Siva">
+		<addColumn tableName="FinReceiptDetail">
+			<column name="PayOrder" type="int" />
+		</addColumn>
+		<addColumn tableName="FinReceiptDetail_Temp">
+			<column name="PayOrder" type="int" />
+		</addColumn>
+	</changeSet>
 	
 </databaseChangeLog>
