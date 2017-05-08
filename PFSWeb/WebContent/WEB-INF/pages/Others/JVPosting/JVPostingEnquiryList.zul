@@ -172,21 +172,13 @@
 								<listheader id="listheader_RecordType"
 									label="${c:l('listheader_RecordType.label')}" sort="auto"
 									hflex="min" />
-								<listheader
-									id="listheader_ValidationStatus"
-									label="${c:l('listheader_ValidationStatus.label')}" sort="auto"
-									hflex="min" />
-								<listheader
-									id="listheader_PostingStatus"
-									label="${c:l('listheader_PostingStatus.label')}" sort="auto"
-									hflex="min" />
 							</listhead>
 						</listbox>
 					</div>
 				</center>
 
 				<south border="none">
-					<paging id="pagingJVPostingList"   />
+					<paging id="pagingJVPostingList"/>
 				</south>
 
 			</borderlayout>

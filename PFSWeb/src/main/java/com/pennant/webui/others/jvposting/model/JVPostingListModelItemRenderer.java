@@ -83,8 +83,6 @@ public class JVPostingListModelItemRenderer implements ListitemRenderer<JVPostin
 	  	lc.setParent(item);
 	  	lc = new Listcell(PennantApplicationUtil.amountFormate(jVPosting.getTotCreditsByBatchCcy(),CurrencyUtil.getFormat(jVPosting.getCurrency())));
 	  	lc.setParent(item);
-	  	lc = new Listcell(jVPosting.getBatchPostingStatus());
-	  	lc.setParent(item);
 	  	lc = new Listcell(jVPosting.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(jVPosting.getRecordType()));

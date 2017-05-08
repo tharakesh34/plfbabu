@@ -18,6 +18,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerGroup;
 import com.pennant.backend.model.limit.LimitHeader;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -97,9 +98,9 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 		logger.debug("Entering");
 
 		// Group
+		this.group.getTextbox().setReadonly(false);
 		this.group.setModuleName("CustomerGroup");
 		this.group.setValueColumn("CustGrpID");
-		this.group.setDisplayStyle(3);
 		this.group.setValidateColumns(new String[] { "CustGrpID", "CustGrpCode", "CustGrpDesc" });
 
 		List<String> existingGroups = PennantAppUtil.getLimitHeaderCustomer(false,false);
@@ -109,9 +110,9 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 			this.group.setFilters(filters);
 		}
 		// Customer
+		this.customer.getTextbox().setReadonly(false);
 		this.customer.setModuleName("Customer");
 		this.customer.setValueColumn("CustCIF");
-		this.customer.setDisplayStyle(3);
 		this.customer.setValidateColumns(new String[] { "CustCIF", "CustShrtName", "CustCtgCode", "CustFName", "CustLName" });
 		List<String> existingcustomers = PennantAppUtil.getLimitHeaderCustomer(true,false);
 		Filter[] filters2 = new Filter[1];
@@ -141,7 +142,7 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 				getLimitHeader().setCustCoreBank(details.getCustCoreBank());
 				getLimitHeader().setCustSalutationCode(details.getCustSalutationCode());
 				getLimitHeader().setCustShrtName(details.getCustShrtName());
-				getLimitHeader().setCustFullName(details.getCustShrtName());
+				getLimitHeader().setCustFullName(PennantApplicationUtil.getFullName(details.getCustFName(), details.getCustMName(), details.getCustShrtName()));
 				getLimitHeader().setCustDftBranch(details.getCustDftBranch());
 				getLimitHeader().setResponsibleBranchName(details.getLovDescCustDftBranchName());
 				getLimitHeader().setCustomerGroup(0);

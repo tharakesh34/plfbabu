@@ -4630,8 +4630,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				Listcell lc;
 				lc = new Listcell(StringUtils.trimToEmpty(customerPhoneNumber.getPhoneTypeCode()));
 				lc.setParent(item);
-				lc = new Listcell(PennantApplicationUtil.formatPhoneNumber(customerPhoneNumber.getPhoneCountryCode(),
-						customerPhoneNumber.getPhoneAreaCode(), customerPhoneNumber.getPhoneNumber()));
+				lc = new Listcell(customerPhoneNumber.getPhoneNumber());
 				lc.setParent(item);
 				lc = new Listcell(customerPhoneNumber.getRecordStatus());
 				lc.setParent(item);

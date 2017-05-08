@@ -87,9 +87,9 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 	protected Listheader listheader_FinApprovalStsInquiryList_CustShrtName;
 	protected Listheader listheader_FinApprovalStsInquiryList_FinReference;
 	protected Listheader listheader_FinApprovalStsInquiryList_FinType;
-	protected Listheader listheader_FinApprovalStsInquiryList_CustDocTitle;
-	protected Listheader listheader_FinApprovalStsInquiryList_MobileNO;
-	protected Listheader listheader_FinApprovalStsInquiryList_EmailID;
+	protected Listheader listheader_FinApprovalStsInquiryList_FinAmount;
+	protected Listheader listheader_FinApprovalStsInquiryList_FinStartDate;
+	protected Listheader listheader_FinApprovalStsInquiryList_lastMntByUser;
 	protected Listheader listheader_FinApprovalStsInquiryList_CurrentRole;
 	protected Listheader listheader_FinApprovalStsInquiryList_PreviousRole;
 
@@ -217,11 +217,11 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 				sortOperator_CurrentRole, Operators.STRING);
 		registerField("PrvRoleDesc", listheader_FinApprovalStsInquiryList_PreviousRole, SortOrder.NONE, previousRole,
 				sortOperator_PreviousRole, Operators.STRING);
-		registerField("FinAmount");
+		registerField("FinAmount",listheader_FinApprovalStsInquiryList_FinAmount);
 		registerField("DownPayment");
 		registerField("FeeChargeAmt");
-		registerField("FinStartDate");
-		registerField("lastMntByUser");
+		registerField("FinStartDate",listheader_FinApprovalStsInquiryList_FinStartDate);
+		registerField("lastMntByUser",listheader_FinApprovalStsInquiryList_lastMntByUser);
 		registerField("CUSTID");
 		registerField("RoleCode");
 		registerField("NextRoleCode");
@@ -437,7 +437,7 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 		if (facility) {
 			this.label_FinApprovalStsInquiryList_FinReference.setValue(Labels
 					.getLabel("label_FacilityApprovalStsInquiryList_CAFReference.value"));
-			this.listheader_FinApprovalStsInquiryList_CustDocTitle.setVisible(false);
+			this.listheader_FinApprovalStsInquiryList_FinAmount.setVisible(false);
 			this.listheader_FinApprovalStsInquiryList_FinReference.setLabel(Labels
 					.getLabel("label_FacilityApprovalStsInquiryList_CAFReference.value"));
 			this.listheader_FinApprovalStsInquiryList_FinType.setLabel(Labels

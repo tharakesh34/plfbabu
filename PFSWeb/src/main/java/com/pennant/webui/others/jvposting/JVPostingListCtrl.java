@@ -93,8 +93,6 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 	protected Listheader listheader_CreditsCount;
 	protected Listheader listheader_TotDebitsByBatchCcy;
 	protected Listheader listheader_TotCreditsByBatchCcy;
-	protected Listheader listheader_ValidationStatus;
-	protected Listheader listheader_PostingStatus;
 
 	protected Button button_JVPostingList_NewJVPosting;
 	protected Button button_JVPostingList_JVPostingSearch;
@@ -133,7 +131,7 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 		super.pageRightName = "JVPostingList";
 		super.tableName = "JVPostings_AView";
 		super.queueTableName = "JVPostings_TView";
-		super.enquiryTableName = "JVPostings_TView";
+		super.enquiryTableName = "JVPostings_View";
 
 	}
 
@@ -160,7 +158,6 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 		registerField("creditsCount", listheader_CreditsCount);
 		registerField("totDebitsByBatchCcy", listheader_TotDebitsByBatchCcy);
 		registerField("totCreditsByBatchCcy", listheader_TotCreditsByBatchCcy);
-		registerField("BatchPostingStatus", listheader_PostingStatus);
 
 		// Render the page and display the data.
 		doRenderPage();

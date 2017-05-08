@@ -138,8 +138,6 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 				sortOperator_ReceiptCancellationReference, Operators.STRING);
 		registerField("custCIF", listheader_ReceiptCancellationCusomer, SortOrder.NONE, customer,
 				sortOperator_ReceiptCancellationCustomer, Operators.STRING);
-		registerField("custShrtName", listheader_ReceiptCancellationCustName, SortOrder.NONE, customer,
-				sortOperator_ReceiptCancellationCustomer, Operators.STRING);
 		fillComboBox(this.purpose, "", PennantStaticListUtil.getReceiptPurpose(), "");
 		registerField("receiptPurpose", listheader_ReceiptCancellationPurpose, SortOrder.NONE, purpose,
 				sortOperator_ReceiptCancellationPurpose, Operators.STRING);

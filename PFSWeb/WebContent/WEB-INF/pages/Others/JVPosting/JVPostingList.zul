@@ -149,10 +149,6 @@
 									id="listheader_TotCreditsByBatchCcy"
 									label="${c:l('listheader_TotCreditsByBatchCcy.label')}"
 									sort="auto" hflex="min" align="right" />
-								<listheader
-									id="listheader_PostingStatus"
-									label="${c:l('listheader_PostingStatus.label')}" sort="auto"
-									hflex="min" />
 								<listheader id="listheader_RecordStatus"
 									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
 									hflex="min" />

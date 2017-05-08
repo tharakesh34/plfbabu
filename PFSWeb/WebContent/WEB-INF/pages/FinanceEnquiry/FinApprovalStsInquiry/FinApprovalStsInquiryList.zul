@@ -209,15 +209,15 @@
 									label="${c:l('listheader_FinType.label')}" sort="auto"
 									hflex="min" />
 								<listheader
-									id="listheader_FinApprovalStsInquiryList_CustDocTitle"
+									id="listheader_FinApprovalStsInquiryList_FinAmount"
 									label="${c:l('listheader_FinAmount.label')}" sort="none"
 									hflex="min" />
 								<listheader
-									id="listheader_FinApprovalStsInquiryList_MobileNO"
+									id="listheader_FinApprovalStsInquiryList_FinStartDate"
 									label="${c:l('listheader_FinStartDate.label')}" sort="none"
 									hflex="min" />
 								<listheader
-									id="listheader_FinApprovalStsInquiryList_EmailID"
+									id="listheader_FinApprovalStsInquiryList_lastMntByUser"
 									label="${c:l('listheader_LastMntByUser.label')}" sort="none"
 									hflex="min" />
 								<listheader
