@@ -28,6 +28,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -41,7 +42,6 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
-import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 
@@ -378,7 +378,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	private int doChangeStringOperator(Listbox listbox,int oldOperator,Textbox textbox){
 
 		final Listitem item = listbox.getSelectedItem();
-		final int searchOpId = ((SearchOperators) item.getAttribute("data")).getSearchOperatorId();
+		final int searchOpId = Integer.parseInt(((ValueLabel) item.getAttribute("data")).getValue());
 
 		if(oldOperator == Filter.OP_IN || oldOperator == Filter.OP_NOT_IN){
 			if(!(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN)){
