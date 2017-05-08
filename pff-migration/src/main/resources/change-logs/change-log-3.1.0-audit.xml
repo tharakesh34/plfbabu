@@ -79,4 +79,9 @@
 	WHERE     (TH.AuditTranType != 'W') AND (TH.AuditModule = 'Accounts')
 					</createView>
 	</changeSet>
+	<changeSet id="9" author="Siva">
+		<addColumn tableName="AdtFinReceiptHeader">
+			<column name="RealizationDate" type="datetime" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

@@ -35,6 +35,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal receiptAmount = BigDecimal.ZERO;
 	private String effectSchdMethod;
 	private String receiptModeStatus;
+	private Date realizationDate;
 	
 	private boolean newRecord;
 	private String lovValue;
@@ -284,6 +285,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setPostBranch(String postBranch) {
 		this.postBranch = postBranch;
+	}
+
+	public Date getRealizationDate() {
+		return realizationDate;
+	}
+
+	public void setRealizationDate(Date realizationDate) {
+		this.realizationDate = realizationDate;
 	}
 
 }

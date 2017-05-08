@@ -785,6 +785,10 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 	 		update FinReceiptDetail_Temp set LogKey = 0;
 		</sql>
 	</changeSet>
+	 <changeSet id="61" author="Manojkumar.P">
+		<modifyDataType tableName="MANDATE_REQUESTS" columnName="OPENFLAG"
+			newDataType="VARCHAR(20)"/>
+	</changeSet>
 		<changeSet id="62" author="Madhubabu">
 	<createView viewName="BankBranches_view" replaceIfExists="true">
 	    SELECT T1.BankBranchID, T1.BankCode, T1.BranchCode, T1.BranchDesc, T1.City,T3.PcCityName, T1.MICR, T1.IFSC,T2.BankName,T1.ECS,T1.DDA,T1.NACH,T1.DD,T1.AddOfBranch,T1.Cheque,T1.Active
@@ -804,11 +808,38 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 				WHERE     NOT EXISTS (SELECT 1 FROM BankBranches_TEMP WHERE BankBranchID = T1.BankBranchID)
 		</createView>
 </changeSet>
-
-     <changeSet id="61" author="Manojkumar.P">
-		<modifyDataType tableName="MANDATE_REQUESTS" columnName="OPENFLAG"
-			newDataType="VARCHAR(20)"/>
+	<changeSet id="63" author="Siva">
+		<addColumn tableName="FinReceiptHeader">
+			<column name="RealizationDate" type="datetime" />
+		</addColumn>
+		<addColumn tableName="FinReceiptHeader_Temp">
+			<column name="RealizationDate" type="datetime" />
+		</addColumn>
 	</changeSet>
+	<changeSet id="64" author="Siva">
+		<createView viewName="FINRECEIPTHEADER_VIEW" replaceIfExists="true">
+		     SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
+				 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
+				 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T1.RealizationDate
+							FROM         FinReceiptHeader_Temp T1 INNER JOIN
+				       FinanceMain T2 ON T1.Reference = T2.FinReference INNER JOIN
+				       Customers T3 ON T2.CustId = T3.CustId
+				UNION ALL
+				 SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
+				 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
+				 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T1.RealizationDate
+						FROM         FinReceiptHeader T1 INNER JOIN
+				       FinanceMain T2 ON T1.Reference = T2.FinReference INNER JOIN
+				       Customers T3 ON T2.CustId = T3.CustId
+						WHERE     NOT EXISTS
+				                          (SELECT     1
+				                            FROM          FinReceiptHeader_TEMP 
+				                            WHERE      ReceiptID = T1.ReceiptID)
+		</createView>
+	</changeSet>
+	
 	<changeSet id="65" author="Prasad">
 		<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
 		<![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
@@ -857,5 +888,17 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
 			RMTProvincevsCity T5 ON T3.city=T5.PCCity
 		</createView>
+	</changeSet>
+	<changeSet id="67" author="Siva">
+		<sql>
+		    UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ReceiptRealizationDialog_realizationDate','ReceiptRealizationDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='REALIZATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ReceiptRealizationDialog_realizationDate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		</sql>
 	</changeSet>
 </databaseChangeLog>

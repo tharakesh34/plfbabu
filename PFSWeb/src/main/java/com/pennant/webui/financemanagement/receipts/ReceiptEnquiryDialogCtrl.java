@@ -64,6 +64,8 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 	protected CurrencyBox									receiptAmount;
 	protected Combobox										allocationMethod;
 	protected Combobox										effScheduleMethod;
+	protected Datebox										realizationDate;
+	protected Row											row_RealizationDate;
 
 	protected Groupbox										gb_ReceiptDetails;
 	protected Caption										caption_receiptDetail;
@@ -176,6 +178,7 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 		this.finBranch.setMaxlength(LengthConstants.LEN_BRANCH);
 		this.custCIF.setMaxlength(LengthConstants.LEN_CIF);
 		this.receiptAmount.setProperties(true , formatter);
+		this.realizationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		this.fundingAccount.setModuleName("FinTypePartner");
 		this.fundingAccount.setMandatoryStyle(true);
@@ -228,6 +231,7 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 		readOnlyComponent(true, this.receiptAmount);
 		readOnlyComponent(true, this.allocationMethod);
 		readOnlyComponent(true, this.effScheduleMethod);
+		readOnlyComponent(true, this.realizationDate);
 
 		//Receipt Details
 		readOnlyComponent(true, this.favourNo);
@@ -343,7 +347,12 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(header.getReceiptAmount(), finFormatter));
 		fillComboBox(this.allocationMethod, header.getAllocationType(), PennantStaticListUtil.getAllocationMethods(), "");
 		fillComboBox(this.effScheduleMethod, header.getEffectSchdMethod(), PennantStaticListUtil.getEarlyPayEffectOn(), ",NOEFCT,");
+		this.realizationDate.setValue(header.getRealizationDate());
 		checkByReceiptMode(header.getReceiptMode(), false);
+		
+		if(StringUtils.equals(header.getReceiptModeStatus(), RepayConstants.PAYSTATUS_REALIZED)){
+			this.row_RealizationDate.setVisible(true);
+		}
 
 		// Separating Receipt Amounts based on user entry, if exists
 		if(header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()){

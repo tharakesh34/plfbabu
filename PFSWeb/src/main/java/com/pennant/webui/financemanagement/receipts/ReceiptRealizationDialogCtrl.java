@@ -68,6 +68,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -81,6 +82,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -113,6 +115,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 	protected CurrencyBox									receiptAmount;
 	protected Combobox										allocationMethod;
 	protected Combobox										effScheduleMethod;
+	protected Datebox										realizationDate;
 
 	protected Groupbox										gb_ReceiptDetails;
 	protected Caption										caption_receiptDetail;
@@ -254,6 +257,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 		this.finBranch.setMaxlength(LengthConstants.LEN_BRANCH);
 		this.custCIF.setMaxlength(LengthConstants.LEN_CIF);
 		this.receiptAmount.setProperties(true , formatter);
+		this.realizationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		this.fundingAccount.setModuleName("FinTypePartner");
 		this.fundingAccount.setMandatoryStyle(true);
@@ -300,6 +304,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 		readOnlyComponent(true, this.receiptAmount);
 		readOnlyComponent(true, this.allocationMethod);
 		readOnlyComponent(true, this.effScheduleMethod);
+		readOnlyComponent(isReadOnly("ReceiptRealizationDialog_realizationDate"), this.realizationDate);
 
 		//Receipt Details
 		readOnlyComponent(true, this.favourNo);
@@ -419,6 +424,19 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 		//Duplicate Creation of Object
 		Cloner cloner = new Cloner();
 		FinReceiptHeader aReceiptHeader = cloner.deepClone(getReceiptHeader());
+		
+		if(!this.realizationDate.isDisabled()){
+			this.realizationDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ReceiptRealizationDialog_RealizationDate.value"), 
+					true, true,	DateUtility.getAppDate(), true));
+		}
+		
+		try {
+			aReceiptHeader.setRealizationDate(this.realizationDate.getValue());
+		} catch (WrongValueException we) {
+			this.realizationDate.setConstraint("");
+			this.realizationDate.setErrorMessage("");
+			throw we;
+		}
 
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
@@ -478,6 +496,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
 		fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModes(), "");
 		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
+		this.realizationDate.setValue(header.getRealizationDate());
 
 		String allocateMthd = header.getAllocationType();
 		if(StringUtils.isEmpty(allocateMthd)){

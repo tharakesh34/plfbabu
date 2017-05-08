@@ -189,6 +189,19 @@
 											width="180px" readonly="true" />
 									</hbox>
 								</row>
+								<row id="row_RealizationDate"
+									visible="false">
+									<label
+										id="label_ReceiptDialog_RealizationDate"
+										value="${c:l('label_ReceiptDialog_RealizationDate.value')}" />
+									<hbox
+										id="hbox_ReceiptDialog_RealizationDate">
+										<space spacing="2px"
+											sclass="mandatory" />
+										<datebox id="realizationDate"
+											width="100px" />
+									</hbox>
+								</row>
 							</rows>
 						</grid>
 					</groupbox>
