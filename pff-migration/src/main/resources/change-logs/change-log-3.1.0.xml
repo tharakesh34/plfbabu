@@ -1535,6 +1535,57 @@ FROM          Postings T1 INNER JOIN
 		</sql>
 	</changeSet>
 	
+	<changeSet id="115" author="kesava">
+	<sql>
+	Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuItem_Reports_RateReviewDue');
+Delete from SecRights where RightName = 'menuItem_Reports_RateReviewDue';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuItem_Reports_RateReviewDue', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_ADMIN'), (Select RightID from SecRights where RightName = 'menuItem_Reports_RateReviewDue'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuItem_DelinquencyReports_DelinquentByProduct');
+Delete from SecRights where RightName = 'menuItem_DelinquencyReports_DelinquentByProduct';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuItem_DelinquencyReports_DelinquentByProduct', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_ADMIN'), (Select RightID from SecRights where RightName = 'menuItem_DelinquencyReports_DelinquentByProduct'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuItem_DelinquencyReports_PortfolioBehavior');
+Delete from SecRights where RightName = 'menuItem_DelinquencyReports_PortfolioBehavior';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuItem_DelinquencyReports_PortfolioBehavior', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_ADMIN'), (Select RightID from SecRights where RightName = 'menuItem_DelinquencyReports_PortfolioBehavior'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuCat_Reports');
+Delete from SecRights where RightName = 'menuCat_Reports';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuCat_Reports', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_ADMIN'), (Select RightID from SecRights where RightName = 'menuCat_Reports'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+</sql>
+	</changeSet>
+			<changeSet id="116" author="kesava">
+	<sql>
+	Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+
+Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuCat_DelinquencyReports');
+Delete from SecRights where RightName = 'menuCat_DelinquencyReports';
+Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuCat_DelinquencyReports', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_ADMIN'), (Select RightID from SecRights where RightName = 'menuCat_DelinquencyReports'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+	</sql>
+	</changeSet>
 	
 	
 </databaseChangeLog>
