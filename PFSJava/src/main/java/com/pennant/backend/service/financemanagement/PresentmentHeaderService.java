@@ -74,5 +74,5 @@ public interface PresentmentHeaderService {
 
 	void updatePresentmentDetails(List<Long> excludeList, List<Long> includeList, String userAction, long presentmentId, long partnerBankId) throws Exception;
 
-	String presentmentCancellation(String presentmentRef, String bounceCode);
+	PresentmentDetail presentmentCancellation(String presentmentRef, String bounceCode) throws Exception;
 }

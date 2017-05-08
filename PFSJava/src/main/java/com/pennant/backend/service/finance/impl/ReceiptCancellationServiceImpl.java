@@ -56,6 +56,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
+import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.GenericService;
@@ -468,16 +469,18 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 * @return errorMsg
 	 */
 	@Override
-	public String presentmentCancellation(long receiptId, String returnCode) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public PresentmentDetail presentmentCancellation(PresentmentDetail presentmentDetail, String returnCode) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		FinReceiptHeader receiptHeader = getFinReceiptHeaderById(receiptId, "");
-		ManualAdvise manualAdvise = getManualAdvise(receiptHeader, returnCode);
+		FinReceiptHeader receiptHeader = getFinReceiptHeaderById(presentmentDetail.getReceiptID(), "");
+		ManualAdvise manualAdvise = getManualAdvise(receiptHeader, returnCode, presentmentDetail.getMandateType());
 		receiptHeader.setManualAdvise(manualAdvise);
 		String errorMsg = procReceiptCancellation(receiptHeader);
-
+		presentmentDetail.setErrMsg(errorMsg);
+		presentmentDetail.setBounceID(manualAdvise.getBounceID());
+		
 		logger.debug(Literal.LEAVING);
-		return errorMsg;
+		return presentmentDetail;
 	}
 	
 	/**
@@ -485,18 +488,29 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 * 
 	 * @param receiptHeader
 	 * @param returnCode
+	 * @param madateType 
 	 * @return ManualAdvise
 	 */
-	private ManualAdvise getManualAdvise(FinReceiptHeader receiptHeader, String returnCode) {
+	private ManualAdvise getManualAdvise(FinReceiptHeader receiptHeader, String returnCode, String madateType) {
 		logger.debug(Literal.ENTERING);
 
+		FinReceiptDetail finReceiptDetail = null;
+		
+		if (receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()) {
+			for (FinReceiptDetail item : receiptHeader.getReceiptDetails()) {
+				if (item.getPaymentType().equals(madateType)) {
+					finReceiptDetail = item;
+					break;
+				}
+			}
+		}
 		BounceReason bounceReason = getBounceReasonDAO().getBounceReasonByReturnCode(returnCode, "");
 		BigDecimal bounceCharge = BigDecimal.ZERO;
 		if (bounceReason != null) {
 			Rule rule = getRuleDAO().getRuleByID(bounceReason.getRuleID(), "");
 			BigDecimal bounceAmt = BigDecimal.ZERO;
 			if (rule != null) {
-				bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), null, receiptHeader.getFinCcy(), RuleReturnType.DECIMAL);
+				bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), finReceiptDetail.getDeclaredFieldValues(), receiptHeader.getFinCcy(), RuleReturnType.DECIMAL);
 			}
 			bounceCharge = PennantApplicationUtil.formateAmount(bounceAmt, CurrencyUtil.getFormat(receiptHeader.getFinCcy()));
 		}

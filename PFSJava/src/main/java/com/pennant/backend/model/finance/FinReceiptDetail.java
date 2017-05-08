@@ -3,6 +3,7 @@ package com.pennant.backend.model.finance;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import com.pennant.backend.model.Entity;
@@ -40,6 +41,20 @@ public class FinReceiptDetail implements Entity {
 	private List<FinRepayHeader>		repayHeaders	= new ArrayList<FinRepayHeader>(1);
 	private List<ManualAdviseMovements>	advMovements	= new ArrayList<ManualAdviseMovements>(1);
 
+	
+	public HashMap<String, Object> getDeclaredFieldValues() {
+		HashMap<String, Object> receiptDetailMap = new HashMap<String, Object>();
+		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
+			try {
+				// "rd_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
+				receiptDetailMap.put("rd_" + this.getClass().getDeclaredFields()[i].getName(), this.getClass().getDeclaredFields()[i].get(this));
+			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+				// Nothing TO DO
+			}
+		}
+		return receiptDetailMap;
+	}
+	
 	public FinReceiptDetail() {
 
 	}

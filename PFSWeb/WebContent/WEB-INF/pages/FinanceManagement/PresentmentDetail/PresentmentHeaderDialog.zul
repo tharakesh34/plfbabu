@@ -6,7 +6,7 @@
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-	
+<window>
 	<window id="window_PresentmentHeaderDialog" border="normal"
 			apply="${presentmentHeaderDialogCtrl}" width="100%" height="100%" sizable="false">
 
@@ -266,5 +266,6 @@
 			</groupbox>
 		</south>
 	</borderlayout>
+</window>
 </window>
 </zk> 

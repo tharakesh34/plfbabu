@@ -74,11 +74,11 @@ public class PresentmentRequest extends DatabaseDataEngine {
 					} else {
 						copyDataFromTempToMainTables();
 						updatePresentmentHeader(presentmentId, 4, executionStatus.getId(), processedCount);
+						updatePresentmentDetails(presentmentId, "A");
 					}
 				}
 				return totalRecords;
 			}
-
 		});
 		logger.debug("Leaving");
 	}
@@ -173,6 +173,29 @@ public class PresentmentRequest extends DatabaseDataEngine {
 		source.addValue("DBSTATUSID", dBStatusId);
 		source.addValue("ID", presentmentId);
 		source.addValue("TOTALRECORDS", totalRecords);
+
+		try {
+			this.jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error("Exception :", e);
+			throw e;
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
+	private void updatePresentmentDetails(long presentmentId, String status) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = null;
+		MapSqlParameterSource source = null;
+
+		sql = new StringBuilder();
+		sql.append(" UPDATE PRESENTMENTDETAILS Set STATUS = :STATUS Where PRESENTMENTID = :PRESENTMENTID ");
+		logger.trace(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("PRESENTMENTID", presentmentId);
+		source.addValue("STATUS", status);
 
 		try {
 			this.jdbcTemplate.update(sql.toString(), source);

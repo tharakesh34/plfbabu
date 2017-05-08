@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.service.financemanagement.PresentmentHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -193,16 +194,24 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 							updatePresentMentdetails(presentmentRef, status);
 							updatePresentHeader(presentmentRef, status);
 						} else {
-							String errorCode = presentmentCancellation(presentmentRef, reasonCode);
-							if (StringUtils.trimToNull(errorCode) == null) {
-								updatePresentMentdetails(presentmentRef, status);//FIXME update the bounce id
-								updatePresentHeader(presentmentRef, status);
-							} else {
+							try {
+								PresentmentDetail presentmentDetail = presentmentCancellation(presentmentRef, reasonCode);
+								if (StringUtils.trimToNull(presentmentDetail.getErrMsg()) == null) {
+									updatePresentMentdetails(presentmentRef, status, presentmentDetail.getBounceID());
+									updatePresentHeader(presentmentRef, status);
+									successCount++;
+								} else {
+									updatePresentMentdetails(presentmentRef, RepayConstants.PEXC_ERROR);
+									updatePresentHeader(presentmentRef, RepayConstants.PEXC_ERROR);
+									failedCount++;
+								}
+							} catch (Exception e) {
+								logger.error(Literal.EXCEPTION, e);
 								updatePresentMentdetails(presentmentRef, RepayConstants.PEXC_ERROR);
 								updatePresentHeader(presentmentRef, RepayConstants.PEXC_ERROR);
+								failedCount++;
 							}
 						}
-						successCount++;
 					} catch (Exception e) {
 						failedCount++;
 					} 
@@ -216,13 +225,10 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	}
 
 	// Presentment cancellation process
-	private String presentmentCancellation(String presentmentRef, String reasonCode) {
-		logger.debug(Literal.ENTERING);
+	private PresentmentDetail presentmentCancellation(String presentmentRef, String reasonCode) throws Exception{
 
-		String errorMsg = this.presentmentHeaderService.presentmentCancellation(presentmentRef, reasonCode);
-		logger.debug(Literal.LEAVING);
+		return this.presentmentHeaderService.presentmentCancellation(presentmentRef, reasonCode);
 
-		return errorMsg;
 	}
 
 	// Truncating the data from staging tables
@@ -267,6 +273,31 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			sql = null;
 		}
 
+		logger.debug(Literal.LEAVING);
+	}
+	
+	// Update the presentment status and bounceid
+	private void updatePresentMentdetails(String presentmentRef, String status, long bounceId) {
+		logger.debug(Literal.ENTERING);
+		
+		StringBuffer sql = new StringBuffer();
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		
+		sql.append("Update Presentmentdetails set Status = :Status , BounceID = :BounceID Where PresentmentRef = :PresentmentRef ");
+		
+		source.addValue("Status", status);
+		source.addValue("PresentmentRef", presentmentRef);
+		source.addValue("BounceID", bounceId);
+		try {
+			this.jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error("Exception {}", e);
+			throw e;
+		} finally {
+			source = null;
+			sql = null;
+		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 	

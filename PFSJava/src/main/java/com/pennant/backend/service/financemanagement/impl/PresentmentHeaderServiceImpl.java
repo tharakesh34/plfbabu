@@ -627,17 +627,18 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 
 
 	@Override
-	public String presentmentCancellation(String presentmentRef, String returnCode) {
+	public PresentmentDetail presentmentCancellation(String presentmentRef, String returnCode) throws Exception {
 		logger.debug(Literal.ENTERING);
-		String	errorMsg = null;
+		PresentmentDetail presentmentDetail = null;
 		try {
-			PresentmentDetail presentmentDetail = this.presentmentHeaderDAO.getPresentmentDetail(presentmentRef);
-			errorMsg = this.receiptCancellationService.presentmentCancellation(presentmentDetail.getReceiptID(), returnCode);
+			presentmentDetail = this.presentmentHeaderDAO.getPresentmentDetail(presentmentRef);
+			presentmentDetail = this.receiptCancellationService.presentmentCancellation(presentmentDetail, returnCode);
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
+			throw e;
 		}
 		logger.debug(Literal.LEAVING);
-		return errorMsg;
+		return presentmentDetail;
 	}
 	
 }

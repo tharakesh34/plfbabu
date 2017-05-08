@@ -44,7 +44,6 @@ package com.pennant.backend.model.financemanagement;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -87,24 +86,8 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private String finCcy;
 	private String ecsReturn;
 	private long receiptID;
+	private String errMsg;
 
-	
-
-	public HashMap<String, Object> getDeclaredFieldValues() {
-		
-		HashMap<String, Object> presentmentMap = new HashMap<String, Object>();
-		
-		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
-			try {
-				// "pr_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
-				presentmentMap.put("pr_" + this.getClass().getDeclaredFields()[i].getName(), this.getClass().getDeclaredFields()[i].get(this));
-			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-				// Nothing TO DO
-			}
-		}
-		return presentmentMap;
-	}
-	
 	public String getMandateStatus() {
 		return mandateStatus;
 	}
@@ -385,6 +368,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setReceiptID(long receiptID) {
 		this.receiptID = receiptID;
+	}
+
+	public String getErrMsg() {
+		return errMsg;
+	}
+
+	public void setErrMsg(String errMsg) {
+		this.errMsg = errMsg;
 	}
 
 }

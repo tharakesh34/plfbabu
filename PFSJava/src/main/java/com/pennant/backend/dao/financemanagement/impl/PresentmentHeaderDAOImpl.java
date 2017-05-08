@@ -674,9 +674,9 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select id, presentmentId, finReference, schDate, mandateId, schAmtDue, schPriDue, schPftDue, schFeeDue, schInsDue, ");
-		sql.append(" schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, Emino, status, presentmentRef, ecsReturn, receiptID,");
+		sql.append(" schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, Emino, status, presentmentRef, ecsReturn, receiptID, mandateType,");
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
-		sql.append(" From PRESENTMENTDETAILS WHERE PresentmentRef = :PresentmentRef");
+		sql.append(" From PRESENTMENTDETAILS_VIEW WHERE PresentmentRef = :PresentmentRef");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
