@@ -20,21 +20,29 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 
-
-
-
 	<changeSet id="01" author="SreeRavali">
 		<addColumn tableName="FINSCHEDULEDETAILS_Temp">
 			<column name="PRESENTMENTID" type="bigint" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="02" author="SreeRavali" dbms="mssql">
+		<sql>
+		    ALTER TABLE FINSCHEDULEDETAILS_Temp ADD DEFAULT 0 FOR PRESENTMENTID;
+		</sql>
+	</changeSet>
 
-	<changeSet id="02" author="SreeRavali">
+	<changeSet id="02" author="SreeRavali" dbms="oracle">
 		<addDefaultValue columnDataType="bigint" columnName="PRESENTMENTID"
 			defaultValueNumeric="0" tableName="FINSCHEDULEDETAILS_Temp" />
 	</changeSet>
 
-	<changeSet id="03" author="SreeRavali">
+	<changeSet id="03" author="SreeRavali" dbms= "mssql">
+		<sql>
+		    ALTER TABLE FINSCHEDULEDETAILS ADD DEFAULT 0 FOR PRESENTMENTID;
+		</sql>
+	</changeSet>
+	<changeSet id="03" author="SreeRavali" dbms= "oracle">
 		<addDefaultValue columnDataType="bigint" columnName="PRESENTMENTID"
 			defaultValueNumeric="0" tableName="FINSCHEDULEDETAILS" />
 	</changeSet>
@@ -575,7 +583,40 @@ LEFT JOIN (SELECT ACTYPEGRPID, HOSTACCOUNT, CLOSINGBAL, CLOSINGBALTYPE FROM SAPG
 INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)-1 from SAPGL_TRAIL_BALANCE_HEADER)) BH ON BH.ID = BR.HEADERID) T ON T.ACTYPEGRPID = AT.ACTYPEGRPID AND T.HOSTACCOUNT = A.ACCOUNTID
 </createView>
 	</changeSet>
-	<changeSet id="42" author="Prasad">
+	<changeSet id="42" author="Prasad" dbms="mssql">
+		<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		<![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
+		 (Select GETDATE()  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE 
+		 from ( 
+			Select Finreference,Schdate, (case when Disbonschdate=1 then 'Amount Financed - Payable ('+Finreference+')' 
+									     when BPIORHOLIDAY='B' then 'Broken Period Interest Receivable -Due('+Finreference+')' else 
+											  'Due for Installment '+INSTNUMBER+' ('+Finreference+')' end) Particulars,
+			 case when Disbonschdate=1 then 0 else Repayamount end Debit,
+			 case when Disbonschdate=1 then DisbAmount else 0 end Credit
+	   from finscheduledetails  
+	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY is null) and 
+			 schdate<=(Select GETDATE()  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  			 
+	union 	
+		Select finreference,m.lastmnton,feetypedesc +'- Due ('+Finreference+')' ,m.ADVISEAMOUNT Debit ,0 Credit 
+		from manualadvise m
+		inner join FEETYPES f on f.feetypeid = m.feetypeid 		
+	union	
+		Select REFERENCE,VALUEDATE,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '+PAYMENTTYPE +' No.:'+CHEQUEACNO +'('+REFERENCE+')'
+										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('+REFERENCE+')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'+CHEQUEACNO +'('+REFERENCE+')' end) Particulars,
+			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit
+		from FINRECEIPTHEADER T1 inner join 
+			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID			 
+	union 	
+		Select finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' + FINODTILLDATE Particulars, 
+		TotPenaltyAmt Debit, 0 credit
+		From FinODDetails where TOtPenaltyAmt > 0 
+	)T1 
+	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
+		</createView>
+	</changeSet>
+	<changeSet id="42" author="Prasad" dbms="oracle">
 		<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
 		<![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
 		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE 
@@ -641,7 +682,15 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 			update Postings_temp set APPVALUEDATE= POSTDATE;
 		</sql>
 	</changeSet>
-	<changeSet id="46" author="Prasad">
+	<changeSet id="46" author="Prasad" dbms="mssql">
+		<sql>
+			update Postings_temp set APPDATE = (Select GETDATE()  sysparmvalue from smtparameters 
+			where SYSPARMCODE='APP_DATE') where APPDATE is null;
+			update Postings_temp set APPVALUEDATE = (Select GETDATE()  sysparmvalue from smtparameters 
+			where SYSPARMCODE='APP_VALUEDATE') where APPVALUEDATE is null;
+		</sql>
+	</changeSet>
+	<changeSet id="46" author="Prasad" dbms="oracle">
 		<sql>
 			update Postings_temp set APPDATE = (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters 
 			where SYSPARMCODE='APP_DATE') where APPDATE is null;
@@ -663,7 +712,13 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 			<column name="USERBRANCH" type="varchar(12)" />
 		</addColumn>
 	</changeSet>
-	<changeSet id="49" author="Prasad">
+		<changeSet id="49" author="Prasad" dbms="mssql">
+		<sql>
+			update Postings set USERBRANCH= (Select TOP 1 Branchcode from rmtBranches);
+			update Postings_temp set USERBRANCH= (Select TOP 1 Branchcode from rmtBranches);
+		</sql>
+	</changeSet>
+	<changeSet id="49" author="Prasad" dbms="oracle">
 		<sql>
 			update Postings set USERBRANCH= (Select Branchcode from rmtBranches where rownum=1);
 			update Postings_temp set USERBRANCH= (Select Branchcode from rmtBranches where rownum=1);
@@ -681,7 +736,14 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 			<column name="PayOrder" type="int" />
 		</addColumn>
 	</changeSet>
-	<changeSet id="52" author="Siva">
+	<changeSet id="52" author="Siva" dbms="mssql">
+		<sql>
+			Update FINRECEIPTDETAIL set FINRECEIPTDETAIL.payorder = (Select row_number() over(partition by Receiptid order by Receiptid,ReceiptSeqid)
+                                        from  FINRECEIPTDETAIL t where FINRECEIPTDETAIL.Receiptid = t.Receiptid and FINRECEIPTDETAIL.ReceiptSeqid = t.ReceiptSeqid)
+                                        where exists (select 1 from FINRECEIPTDETAIL t where FINRECEIPTDETAIL.Receiptid = t.Receiptid and FINRECEIPTDETAIL.ReceiptSeqid = t.ReceiptSeqid); 
+		</sql>
+	</changeSet>
+	<changeSet id="52" author="Siva" dbms="oracle">
 		<sql>
 			Update FINRECEIPTDETAIL m set m.payorder = (Select row_number() over(partition by Receiptid order by Receiptid,ReceiptSeqid)
                                         from  FINRECEIPTDETAIL t where m.Receiptid = t.Receiptid and m.ReceiptSeqid = t.ReceiptSeqid)
@@ -708,14 +770,54 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 			   PartnerBanks T3 ON T1.FundingAc  = T3.PartnerBankID
 		</createView>
 	</changeSet>
-		<changeSet id="55" author="Siva">
+	<changeSet id="55" author="Siva" dbms="mssql">
+		<sql>
+			Update FINRECEIPTDETAIL_Temp set FINRECEIPTDETAIL_Temp.payorder = (Select row_number() over(partition by Receiptid order by Receiptid,ReceiptSeqid)
+                                        from  FINRECEIPTDETAIL_Temp t where FINRECEIPTDETAIL_Temp.Receiptid = t.Receiptid and FINRECEIPTDETAIL_Temp.ReceiptSeqid = t.ReceiptSeqid)
+                                        where exists (select 1 from FINRECEIPTDETAIL_Temp t where FINRECEIPTDETAIL_Temp.Receiptid = t.Receiptid and FINRECEIPTDETAIL_Temp.ReceiptSeqid = t.ReceiptSeqid); 
+		</sql>
+	</changeSet>
+		<changeSet id="55" author="Siva" dbms="oracle">
 		<sql>
 			Update FINRECEIPTDETAIL_Temp m set m.payorder = (Select row_number() over(partition by Receiptid order by Receiptid,ReceiptSeqid)
                                         from  FINRECEIPTDETAIL_Temp t where m.Receiptid = t.Receiptid and m.ReceiptSeqid = t.ReceiptSeqid)
                                         where exists (select 1 from FINRECEIPTDETAIL_Temp t where m.Receiptid = t.Receiptid and m.ReceiptSeqid = t.ReceiptSeqid); 
 		</sql>
 	</changeSet>
-	<changeSet id="56" author="Prasad">
+	<changeSet id="56" author="Prasad" dbms="mssql">
+		<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		<![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
+		 (Select GETDATE()  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE 
+		 from ( 
+			Select Finreference,Schdate, (case when Disbonschdate=1 then 'Amount Financed - Payable ('+Finreference+')' 
+									     when BPIORHOLIDAY='B' then 'Broken Period Interest Receivable -Due('+Finreference+')' else 
+											  'Due for Installment '+INSTNUMBER+' ('+Finreference+')' end) Particulars,
+			 case when Disbonschdate=1 then 0 else Repayamount end Debit,
+			 case when Disbonschdate=1 then DisbAmount else 0 end Credit
+	   from finscheduledetails  
+	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY is null) and 
+			 schdate<=(Select GETDATE()  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  			 
+	union 	
+		Select finreference,m.lastmnton,feetypedesc +'- Due ('+Finreference+')' ,m.ADVISEAMOUNT Debit ,0 Credit 
+		from manualadvise m
+		inner join FEETYPES f on f.feetypeid = m.feetypeid 		
+	union	
+		Select REFERENCE,Receiveddate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '+PAYMENTTYPE +' No.:'+CHEQUEACNO +'('+REFERENCE+')'
+										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('+REFERENCE+')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'+CHEQUEACNO +'('+REFERENCE+')' end) Particulars,
+			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit
+		from FINRECEIPTHEADER T1 inner join 
+			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID			 
+	union 	
+		Select finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' + FINODTILLDATE Particulars, 
+		TotPenaltyAmt Debit, 0 credit
+		From FinODDetails where TOtPenaltyAmt > 0 
+	)T1 
+	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
+		</createView>
+	</changeSet>
+	<changeSet id="56" author="Prasad" dbms="oracle">
 		<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
 		<![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
 		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE 
@@ -785,10 +887,6 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 	 		update FinReceiptDetail_Temp set LogKey = 0;
 		</sql>
 	</changeSet>
-	 <changeSet id="61" author="Manojkumar.P">
-		<modifyDataType tableName="MANDATE_REQUESTS" columnName="OPENFLAG"
-			newDataType="VARCHAR(20)"/>
-	</changeSet>
 		<changeSet id="62" author="Madhubabu">
 	<createView viewName="BankBranches_view" replaceIfExists="true">
 	    SELECT T1.BankBranchID, T1.BankCode, T1.BranchCode, T1.BranchDesc, T1.City,T3.PcCityName, T1.MICR, T1.IFSC,T2.BankName,T1.ECS,T1.DDA,T1.NACH,T1.DD,T1.AddOfBranch,T1.Cheque,T1.Active
@@ -808,38 +906,11 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 				WHERE     NOT EXISTS (SELECT 1 FROM BankBranches_TEMP WHERE BankBranchID = T1.BankBranchID)
 		</createView>
 </changeSet>
-	<changeSet id="63" author="Siva">
-		<addColumn tableName="FinReceiptHeader">
-			<column name="RealizationDate" type="datetime" />
-		</addColumn>
-		<addColumn tableName="FinReceiptHeader_Temp">
-			<column name="RealizationDate" type="datetime" />
-		</addColumn>
+
+     <changeSet id="61" author="Manojkumar.P">
+		<modifyDataType tableName="MANDATE_REQUESTS" columnName="OPENFLAG"
+			newDataType="VARCHAR(20)"/>
 	</changeSet>
-	<changeSet id="64" author="Siva">
-		<createView viewName="FINRECEIPTHEADER_VIEW" replaceIfExists="true">
-		     SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
-				 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
-				 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
-				 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T1.RealizationDate
-							FROM         FinReceiptHeader_Temp T1 INNER JOIN
-				       FinanceMain T2 ON T1.Reference = T2.FinReference INNER JOIN
-				       Customers T3 ON T2.CustId = T3.CustId
-				UNION ALL
-				 SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
-				 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
-				 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
-				 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T1.RealizationDate
-						FROM         FinReceiptHeader T1 INNER JOIN
-				       FinanceMain T2 ON T1.Reference = T2.FinReference INNER JOIN
-				       Customers T3 ON T2.CustId = T3.CustId
-						WHERE     NOT EXISTS
-				                          (SELECT     1
-				                            FROM          FinReceiptHeader_TEMP 
-				                            WHERE      ReceiptID = T1.ReceiptID)
-		</createView>
-	</changeSet>
-	
 	<changeSet id="65" author="Prasad">
 		<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
 		<![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
@@ -889,106 +960,4 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 			RMTProvincevsCity T5 ON T3.city=T5.PCCity
 		</createView>
 	</changeSet>
-	<changeSet id="67" author="Siva">
-		<sql>
-		    UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
-			
-			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ReceiptRealizationDialog_realizationDate','ReceiptRealizationDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='REALIZATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ReceiptRealizationDialog_realizationDate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			
-			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
-		</sql>
-	</changeSet>
-
-	<changeSet id="69" author="Durgaprasad g">
-		<addColumn tableName="PRESENTMENTDETAILS_TEMP">
-			<column name="RECEIPTID" type="bigint"/>
-		</addColumn>
-	</changeSet>
-	
-<changeSet id="68" author="Durgaprasad g">
-		<createView viewName="PRESENTMENTDETAILS_AVIEW" replaceIfExists="true">
-  SELECT		T1.ID, T1.PRESENTMENTID, T1.PRESENTMENTREF, T1.FINREFERENCE, T1.SCHDATE, T1.MANDATEID, T1.SCHAMTDUE, T1.SCHPRIDUE, T1.SCHPFTDUE, T1.SCHFEEDUE, T1.SCHINSDUE,
-							T1.schPenaltyDue, T1.advanceAmt, T1.excessID, T1.adviseAmt, T1.presentmentAmt, T1.ExcludeReason, T1. TDSAMOUNT, T1.bounceID, T1.emiNo, T1.status,
-							T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
-      						T2.MANDATETYPE,T3.FINTYPE,T4.FINTYPEDESC, T5.CUSTSHRTNAME CUSTOMERNAME  ,T1.ReceiptID 
-				FROM 		PRESENTMENTDETAILS    T1  INNER JOIN 
-							MANDATES  T2 ON T1.MANDATEID = T2.MANDATEID INNER JOIN 
-							FINANCEMAIN T3 ON T1.FINREFERENCE = T3.FINREFERENCE INNER JOIN 
-							RMTFINANCETYPES T4 ON T3.FINTYPE  = T4.FINTYPE INNER JOIN 
-							CUSTOMERS T5 ON T5.CUSTID  = T3.CUSTID
-							
-	</createView>
-</changeSet>							
-
-<changeSet id="70" author="Durgaprasad g">
-		<createView viewName="PRESENTMENTDETAILS_VIEW" replaceIfExists="true">
-			SELECT		T1.ID, T1.PRESENTMENTID, T1.PRESENTMENTREF, T1.FINREFERENCE, T1.SCHDATE, T1.MANDATEID, T1.SCHAMTDUE, T1.SCHPRIDUE, T1.SCHPFTDUE, T1.SCHFEEDUE, T1.SCHINSDUE,
-										T1.schPenaltyDue, T1.advanceAmt, T1.excessID, T1.adviseAmt, T1.presentmentAmt, T1.ExcludeReason, T1. TDSAMOUNT, T1.bounceID, T1.emiNo, T1.status,
-										T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
-										T2.MANDATETYPE,T3.FINTYPE,T4.FINTYPEDESC, T5.CUSTSHRTNAME CUSTOMERNAME, T1.ReceiptID 
-							FROM 		PRESENTMENTDETAILS_TEMP  T1  INNER JOIN 
-										MANDATES  T2 ON T1.MANDATEID = T2.MANDATEID INNER JOIN 
-										FINANCEMAIN T3 ON T1.FINREFERENCE = T3.FINREFERENCE INNER JOIN 
-										RMTFINANCETYPES T4 ON T3.FINTYPE  = T4.FINTYPE INNER JOIN 
-										CUSTOMERS T5 ON T5.CUSTID  = T3.CUSTID
-			UNION ALL
-
-			SELECT		T1.ID, T1.PRESENTMENTID, T1.PRESENTMENTREF, T1.FINREFERENCE, T1.SCHDATE, T1.MANDATEID, T1.SCHAMTDUE, T1.SCHPRIDUE, T1.SCHPFTDUE, T1.SCHFEEDUE, T1.SCHINSDUE,
-										T1.schPenaltyDue, T1.advanceAmt, T1.excessID, T1.adviseAmt, T1.presentmentAmt, T1.ExcludeReason, T1. TDSAMOUNT, T1.bounceID, T1.emiNo, T1.status,
-										T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
-										T2.MANDATETYPE,T3.FINTYPE,T4.FINTYPEDESC, T5.CUSTSHRTNAME CUSTOMERNAME , T1.ReceiptID 
-							FROM 		PRESENTMENTDETAILS    T1  INNER JOIN 
-										MANDATES  T2 ON T1.MANDATEID = T2.MANDATEID INNER JOIN 
-										FINANCEMAIN T3 ON T1.FINREFERENCE = T3.FINREFERENCE INNER JOIN 
-										RMTFINANCETYPES T4 ON T3.FINTYPE  = T4.FINTYPE INNER JOIN 
-										CUSTOMERS T5 ON T5.CUSTID  = T3.CUSTID
-			WHERE     NOT EXISTS (SELECT 1 FROM PRESENTMENTDETAILS_TEMP WHERE ID = T1.ID)
-	</createView>
-</changeSet>	
-
-
-<changeSet id="71" author="Durgaprasad g">
-		<createView viewName="PRESENTMENTDETAILS_AVIEW" replaceIfExists="true">
-  SELECT		T1.ID, T1.PRESENTMENTID, T1.PRESENTMENTREF, T1.FINREFERENCE, T1.SCHDATE, T1.MANDATEID, T1.SCHAMTDUE, T1.SCHPRIDUE, T1.SCHPFTDUE, T1.SCHFEEDUE, T1.SCHINSDUE,
-							T1.schPenaltyDue, T1.advanceAmt, T1.excessID, T1.adviseAmt, T1.presentmentAmt, T1.ExcludeReason, T1. TDSAMOUNT, T1.bounceID, T1.emiNo, T1.status,
-							T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
-      						T2.MANDATETYPE,T3.FINTYPE,T4.FINTYPEDESC, T5.CUSTSHRTNAME CUSTOMERNAME  ,T1.ReceiptID,T1.ECSRETURN 
-				FROM 		PRESENTMENTDETAILS    T1  INNER JOIN 
-							MANDATES  T2 ON T1.MANDATEID = T2.MANDATEID INNER JOIN 
-							FINANCEMAIN T3 ON T1.FINREFERENCE = T3.FINREFERENCE INNER JOIN 
-							RMTFINANCETYPES T4 ON T3.FINTYPE  = T4.FINTYPE INNER JOIN 
-							CUSTOMERS T5 ON T5.CUSTID  = T3.CUSTID
-							
-	</createView>
-</changeSet>							
-
-<changeSet id="72" author="Durgaprasad g">
-		<createView viewName="PRESENTMENTDETAILS_VIEW" replaceIfExists="true">
-			SELECT		T1.ID, T1.PRESENTMENTID, T1.PRESENTMENTREF, T1.FINREFERENCE, T1.SCHDATE, T1.MANDATEID, T1.SCHAMTDUE, T1.SCHPRIDUE, T1.SCHPFTDUE, T1.SCHFEEDUE, T1.SCHINSDUE,
-										T1.schPenaltyDue, T1.advanceAmt, T1.excessID, T1.adviseAmt, T1.presentmentAmt, T1.ExcludeReason, T1. TDSAMOUNT, T1.bounceID, T1.emiNo, T1.status,
-										T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
-										T2.MANDATETYPE,T3.FINTYPE,T4.FINTYPEDESC, T5.CUSTSHRTNAME CUSTOMERNAME, T1.ReceiptID ,T1.ECSRETURN
-							FROM 		PRESENTMENTDETAILS_TEMP  T1  INNER JOIN 
-										MANDATES  T2 ON T1.MANDATEID = T2.MANDATEID INNER JOIN 
-										FINANCEMAIN T3 ON T1.FINREFERENCE = T3.FINREFERENCE INNER JOIN 
-										RMTFINANCETYPES T4 ON T3.FINTYPE  = T4.FINTYPE INNER JOIN 
-										CUSTOMERS T5 ON T5.CUSTID  = T3.CUSTID
-			UNION ALL
-
-			SELECT		T1.ID, T1.PRESENTMENTID, T1.PRESENTMENTREF, T1.FINREFERENCE, T1.SCHDATE, T1.MANDATEID, T1.SCHAMTDUE, T1.SCHPRIDUE, T1.SCHPFTDUE, T1.SCHFEEDUE, T1.SCHINSDUE,
-										T1.schPenaltyDue, T1.advanceAmt, T1.excessID, T1.adviseAmt, T1.presentmentAmt, T1.ExcludeReason, T1. TDSAMOUNT, T1.bounceID, T1.emiNo, T1.status,
-										T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
-										T2.MANDATETYPE,T3.FINTYPE,T4.FINTYPEDESC, T5.CUSTSHRTNAME CUSTOMERNAME , T1.ReceiptID ,T1.ECSRETURN
-							FROM 		PRESENTMENTDETAILS    T1  INNER JOIN 
-										MANDATES  T2 ON T1.MANDATEID = T2.MANDATEID INNER JOIN 
-										FINANCEMAIN T3 ON T1.FINREFERENCE = T3.FINREFERENCE INNER JOIN 
-										RMTFINANCETYPES T4 ON T3.FINTYPE  = T4.FINTYPE INNER JOIN 
-										CUSTOMERS T5 ON T5.CUSTID  = T3.CUSTID
-			WHERE     NOT EXISTS (SELECT 1 FROM PRESENTMENTDETAILS_TEMP WHERE ID = T1.ID)
-	</createView>
-</changeSet>	
-
 </databaseChangeLog>
