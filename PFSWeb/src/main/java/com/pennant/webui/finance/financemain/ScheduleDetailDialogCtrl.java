@@ -85,7 +85,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.FeeScheduleCalculator;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.app.util.ScheduleCalculator;
@@ -1375,21 +1374,10 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 		//Schedule Fee Column Visibility Check
 		boolean isSchdFee = false;
-		List<FeeRule> feeList = aFinSchData.getFeeRules();
-		for (int i = 0; i < feeList.size(); i++) {
-			FeeRule feeRule = feeList.get(i);
-			if(!StringUtils.equals(feeRule.getFeeMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE) &&
-					!StringUtils.equals(feeRule.getFeeMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
-				isSchdFee = true;
-				break;
-			}
-		}
-		List<FinFeeDetail> finFeeList = aFinSchData.getFinFeeDetailList();
-		for (int i = 0; i < finFeeList.size(); i++) {
-			FinFeeDetail finFeeDetail = finFeeList.get(i);
-			if(StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT) ||
-					StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR) ||
-					StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)){
+		List<FinanceScheduleDetail> schdList = aFinSchData.getFinanceScheduleDetails();
+		for (int i = 0; i < schdList.size(); i++) {
+			FinanceScheduleDetail curSchd = schdList.get(i);
+			if(curSchd.getFeeSchd().compareTo(BigDecimal.ZERO) > 0){
 				isSchdFee = true;
 				break;
 			}
