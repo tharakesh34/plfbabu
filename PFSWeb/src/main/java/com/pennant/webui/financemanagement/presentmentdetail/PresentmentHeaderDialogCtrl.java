@@ -581,6 +581,10 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 				lc = new Listcell(DateUtility.formatToLongDate(presentmentDetail.getSchDate()));
 				lc.setParent(item);
 
+				lc = new Listcell(PennantAppUtil.amountFormate(presentmentDetail.getAdvanceAmt(), format));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+				
 				lc = new Listcell(PennantAppUtil.amountFormate(presentmentDetail.getPresentmentAmt(), format));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);

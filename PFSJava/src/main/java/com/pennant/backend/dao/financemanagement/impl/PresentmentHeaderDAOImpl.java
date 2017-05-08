@@ -351,7 +351,7 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 			}
 
 			sql.append(" AND  Not Exists( Select 1 from PresentmentDetails T6 where T1.FinReference = T6.FinReference ");
-			sql.append(" AND T6.ExcludeReason = '0' AND T6.ExcludeReason <> '6')  ORDER BY T1.DEFSCHDDATE ");
+			sql.append(" AND T6.ExcludeReason = '0' AND T6.ExcludeReason <> '6' AND T6.SCHDATE = T1.SCHDATE)  ORDER BY T1.DEFSCHDDATE ");
 
 			Connection conn = DataSourceUtils.doGetConnection(this.dataSource);
 			stmt = conn.prepareStatement(sql.toString());
@@ -614,21 +614,16 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		int recordCount = 0;
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), source);
+			jdbcTemplate.update(sql.toString(), source);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		} finally {
 			source = null;
 			sql = null;
 		}
-
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -649,10 +644,9 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		int recordCount = 0;
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), source);
+		    jdbcTemplate.update(sql.toString(), source);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		} finally {
@@ -660,10 +654,6 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 			sql = null;
 		}
 
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
 		logger.debug(Literal.LEAVING);
 	}
 

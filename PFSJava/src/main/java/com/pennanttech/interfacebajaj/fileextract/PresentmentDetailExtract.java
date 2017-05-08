@@ -196,18 +196,26 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 						} else {
 							try {
 								PresentmentDetail presentmentDetail = presentmentCancellation(presentmentRef, reasonCode);
-								if (StringUtils.trimToNull(presentmentDetail.getErrMsg()) == null) {
+								if (StringUtils.trimToNull(presentmentDetail.getErrorDesc()) == null) {
 									updatePresentMentdetails(presentmentRef, status, presentmentDetail.getBounceID());
 									updatePresentHeader(presentmentRef, status);
 									successCount++;
 								} else {
-									updatePresentMentdetails(presentmentRef, RepayConstants.PEXC_ERROR);
+									String errorDesc = presentmentDetail.getErrorDesc();
+									errorDesc = (errorDesc.length() >= 1000) ? errorDesc.substring(0, 988) : errorDesc;
+									String errorCode = "PR0001";
+									updatePresentMentdetails(presentmentRef, RepayConstants.PEXC_ERROR, errorCode, errorDesc);
 									updatePresentHeader(presentmentRef, RepayConstants.PEXC_ERROR);
 									failedCount++;
 								}
 							} catch (Exception e) {
 								logger.error(Literal.EXCEPTION, e);
-								updatePresentMentdetails(presentmentRef, RepayConstants.PEXC_ERROR);
+								String errorDesc = e.getMessage();
+								if (StringUtils.trimToNull(errorDesc) != null) {
+									errorDesc = (e.getMessage().length() >= 1000) ? e.getMessage().substring(0, 988) : e.getMessage();
+								}
+								String errorCode = "PR0002";
+								updatePresentMentdetails(presentmentRef, RepayConstants.PEXC_ERROR, errorCode, errorDesc);
 								updatePresentHeader(presentmentRef, RepayConstants.PEXC_ERROR);
 								failedCount++;
 							}
@@ -226,9 +234,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 	// Presentment cancellation process
 	private PresentmentDetail presentmentCancellation(String presentmentRef, String reasonCode) throws Exception{
-
 		return this.presentmentHeaderService.presentmentCancellation(presentmentRef, reasonCode);
-
 	}
 
 	// Truncating the data from staging tables
@@ -263,6 +269,32 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 		source.addValue("Status", status);
 		source.addValue("PresentmentRef", presentmentRef);
+		try {
+			this.jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error("Exception {}", e);
+			throw e;
+		} finally {
+			source = null;
+			sql = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+	
+	// Update the presentment status
+	private void updatePresentMentdetails(String presentmentRef, String status, String errorCode, String errorDesc) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuffer sql = new StringBuffer();
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		sql.append("Update Presentmentdetails set Status = :Status, ErrorCode = :ErrorCode, ErrorDesc = :ErrorDesc Where PresentmentRef = :PresentmentRef ");
+
+		source.addValue("Status", status);
+		source.addValue("PresentmentRef", presentmentRef);
+		source.addValue("ErrorCode", errorCode);
+		source.addValue("ErrorDesc", errorDesc);
 		try {
 			this.jdbcTemplate.update(sql.toString(), source);
 		} catch (Exception e) {

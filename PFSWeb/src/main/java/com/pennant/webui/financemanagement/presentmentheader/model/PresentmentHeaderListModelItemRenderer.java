@@ -75,8 +75,8 @@ public class PresentmentHeaderListModelItemRenderer implements ListitemRenderer<
 	  	lc = new Listcell(presentmentHeader.getReference());
 		lc.setParent(item);
 		
-	  	lc = new Listcell(DateUtility.formatToLongDate(presentmentHeader.getPresentmentDate()));
-	  	lc.setParent(item);
+		lc = new Listcell(DateUtility.formatToLongDate(presentmentHeader.getSchdate()));
+		lc.setParent(item);
 	  	
 	  	lc = new Listcell(presentmentHeader.getPartnerBankIdName());
 		lc.setParent(item);
@@ -88,7 +88,7 @@ public class PresentmentHeaderListModelItemRenderer implements ListitemRenderer<
 		lc = new Listcell(PennantStaticListUtil.getlabelDesc(presentmentHeader.getMandateType(), PennantStaticListUtil.getMandateTypeList()));
 	  	lc.setParent(item);
 	  	
-	  	lc = new Listcell(DateUtility.formatToLongDate(presentmentHeader.getSchdate()));
+	  	lc = new Listcell(DateUtility.formatToLongDate(presentmentHeader.getPresentmentDate()));
 	  	lc.setParent(item);
 	  	
 	  	lc = new Listcell(presentmentHeader.getRecordStatus());

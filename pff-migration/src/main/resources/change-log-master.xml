@@ -47,6 +47,6 @@
 	<include file="change-logs/change-log-2.54.0.xml" />
 	<include file="change-logs/change-log-2.55.0.xml" />
 	<include file="change-logs/change-log-3.0.0.xml" />
-	<include file="change-logs/change-log-3.1.0.xml" />
+	<!-- <include file="change-logs/change-log-3.1.0.xml" /> -->
 	<include file="change-logs/change-log-3.2.0.xml" />
 </databaseChangeLog>

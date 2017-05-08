@@ -90,12 +90,11 @@
 							multiple="false" sizedByContent="true" span="true">
 						<listhead sizable="true">
 							<listheader id="listheader_Reference" label="${c:l('listheader_Reference.label')}" sort="auto"  hflex="min"  />
-							<listheader id="listheader_PresentmentDate" label="${c:l('listheader_PresentmentDate.label')}" sort="auto"  hflex="min"  />
+							<listheader id="listheader_Schdate" label="${c:l('listheader_Schdate.label')}" sort="auto"  hflex="min"  />
 							<listheader id="listheader_PartnerBankId" label="${c:l('listheader_PartnerBankId.label')}" sort="auto"  hflex="min"  />
 							<listheader id="listheader_Status" label="${c:l('listheader_Status.label')}" sort="auto"   hflex="min"  />
 							<listheader id="listheader_MandateType" label="${c:l('listheader_MandateType.label')}" sort="auto"   hflex="min"  />
-							
-							<listheader id="listheader_Schdate" label="${c:l('listheader_Schdate.label')}" sort="auto"  hflex="min"  />
+							<listheader id="listheader_PresentmentDate" label="${c:l('listheader_PresentmentDate.label')}" sort="auto"  hflex="min"  />
 							<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min"  visible="false"/>
 							<listheader id="listheader_RecordType"  label="${c:l('label.RecordType')}" sort="auto" hflex="min"  visible="false"/>
 						</listhead>		

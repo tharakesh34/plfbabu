@@ -140,6 +140,9 @@
 													label="${c:l('listheader_PresentmentDetail_EmiDate.label')}"
 													hflex="min" />
 												<listheader
+													label="${c:l('listheader_PresentmentDetail_AdvanceAmount.label')}"
+													hflex="min" />
+												<listheader
 													label="${c:l('listheader_PresentmentDetail_Amount.label')}"
 													hflex="min" />
 												<listheader
@@ -187,6 +190,9 @@
 													hflex="min" />
 												<listheader
 													label="${c:l('listheader_PresentmentDetail_EmiDate.label')}"
+													hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_AdvanceAmount.label')}"
 													hflex="min" />
 												<listheader
 													label="${c:l('listheader_PresentmentDetail_Amount.label')}"
@@ -237,6 +243,9 @@
 													hflex="min" />
 												<listheader
 													label="${c:l('listheader_PresentmentDetail_EmiDate.label')}"
+													hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_AdvanceAmount.label')}"
 													hflex="min" />
 												<listheader
 													label="${c:l('listheader_PresentmentDetail_Amount.label')}"

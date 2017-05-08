@@ -437,7 +437,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 				BigDecimal schAmtDue = rs.getBigDecimal("PROFITSCHD").add(rs.getBigDecimal("PRINCIPALSCHD"))
 						.add(rs.getBigDecimal("FEESCHD")).subtract(rs.getBigDecimal("SCHDPRIPAID"))
 						.subtract(rs.getBigDecimal("SCHDPFTPAID")).subtract(rs.getBigDecimal("SCHDFEEPAID")).subtract(rs.getBigDecimal("TDSAMOUNT"));
-				if (BigDecimal.ZERO.compareTo(schAmtDue) == 0) {
+				if (BigDecimal.ZERO.compareTo(schAmtDue) >= 0) {
 					continue;
 				}
 
@@ -542,7 +542,8 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		}
 
 		// Mandate Expired
-		if (DateUtility.compare(presentmentDetail.getDefSchdDate(), presentmentDetail.getMandateExpiryDate()) > 0) {
+		if (presentmentDetail.getMandateExpiryDate() != null && 
+				DateUtility.compare(presentmentDetail.getDefSchdDate(), presentmentDetail.getMandateExpiryDate()) > 0) {
 			presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_EXPIRY);
 			return;
 		}
@@ -634,6 +635,9 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		PresentmentDetail presentmentDetail = null;
 		try {
 			presentmentDetail = this.presentmentHeaderDAO.getPresentmentDetail(presentmentRef);
+			if (presentmentDetail == null) {
+				throw new Exception(" Presentment details are not available for the presentment reference :" + presentmentRef);
+			}
 			presentmentDetail = this.receiptCancellationService.presentmentCancellation(presentmentDetail, returnCode);
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);

@@ -88,10 +88,11 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private String finCcy;
 	private String ecsReturn;
 	private long receiptID;
-	
-	private String	accountNo;
-	private String	acType;
-	private String errMsg;
+
+	private String accountNo;
+	private String acType;
+	private String errorCode;
+	private String errorDesc;
 
 	public String getMandateStatus() {
 		return mandateStatus;
@@ -101,16 +102,13 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.mandateStatus = mandateStatus;
 	}
 
-
-
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("accountNo");
 		excludeFields.add("acType");
 		return excludeFields;
 	}
-	
-	
+
 	@XmlTransient
 	private PresentmentDetail befImage;
 	@XmlTransient
@@ -401,12 +399,20 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.acType = acType;
 	}
 
-	public String getErrMsg() {
-		return errMsg;
+	public String getErrorCode() {
+		return errorCode;
 	}
 
-	public void setErrMsg(String errMsg) {
-		this.errMsg = errMsg;
+	public void setErrorCode(String errorCode) {
+		this.errorCode = errorCode;
+	}
+
+	public String getErrorDesc() {
+		return errorDesc;
+	}
+
+	public void setErrorDesc(String errorDesc) {
+		this.errorDesc = errorDesc;
 	}
 
 }
