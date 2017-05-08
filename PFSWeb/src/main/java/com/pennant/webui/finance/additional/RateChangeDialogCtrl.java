@@ -1217,7 +1217,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 
-				if (i != financeScheduleDetails.size() - 1) {
+				if (i == financeScheduleDetails.size() - 1) {
 					continue;
 				}
 				
