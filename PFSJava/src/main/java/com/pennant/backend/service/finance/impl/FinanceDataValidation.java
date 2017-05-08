@@ -882,7 +882,7 @@ public class FinanceDataValidation {
 		if (finFlagDetails != null) {
 			for (FinFlagsDetail flag : finFlagDetails) {
 				Flag flagDetail = flagDAO.getFlagById(flag.getFlagCode(), "");
-				if (flagDetail == null) {
+				if (flagDetail == null || !flagDetail.isActive()) {
 					String[] valueParm = new String[1];
 					valueParm[0] = flag.getFlagCode();
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91001", valueParm)));
