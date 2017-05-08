@@ -104,7 +104,7 @@
 													<space
 														id="space_PromotionDesc" spacing="2px" sclass="mandatory" />
 													<textbox
-														id="promotionDesc" maxlength="50" width="450px" />
+														id="promotionDesc" maxlength="50" width="350px" />
 												</hlayout>
 											</row>
 											<row id="row1">
