@@ -773,4 +773,23 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 	 		update FinReceiptDetail_Temp set LogKey = 0;
 		</sql>
 	</changeSet>
+		<changeSet id="62" author="Madhubabu">
+	<createView viewName="BankBranches_view" replaceIfExists="true">
+	    SELECT T1.BankBranchID, T1.BankCode, T1.BranchCode, T1.BranchDesc, T1.City,T3.PcCityName, T1.MICR, T1.IFSC,T2.BankName,T1.ECS,T1.DDA,T1.NACH,T1.DD,T1.AddOfBranch,T1.Cheque,T1.Active
+						, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.AccNoLength
+				FROM    	BankBranches_Temp T1 INNER JOIN
+			            BMTBankDetail T2  ON T1.BankCode=T2.BankCode  LEFT JOIN
+                   RMTProvinceVsCity T3 ON T3.PcCity=T1.City
+                  
+			               
+				UNION ALL
+			
+		SELECT		T1.BankBranchID, T1.BankCode, T1.BranchCode, T1.BranchDesc, T1.City,T3.PcCityName, T1.MICR, T1.IFSC,T2.BankName, T1.ECS,t1.DDA,T1.NACH,T1.DD,T1.AddOfBranch,T1.Cheque,T1.Active
+						, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.AccNoLength
+				FROM    	BankBranches T1 INNER JOIN
+			            BMTBankDetail T2  ON T1.BankCode=T2.BankCode LEFT JOIN
+                  RMTProvinceVsCity T3 ON T3.PcCity=T1.City
+				WHERE     NOT EXISTS (SELECT 1 FROM BankBranches_TEMP WHERE BankBranchID = T1.BankBranchID)
+		</createView>
+</changeSet>
 </databaseChangeLog>
