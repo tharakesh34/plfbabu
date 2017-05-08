@@ -1789,6 +1789,13 @@ Insert into BMTAEEVENTS (AEEVENTCODE,AEEVENTCODEDESC,VERSION,LASTMNTBY,LASTMNTON
 Insert into BMTAEEVENTS (AEEVENTCODE,AEEVENTCODEDESC,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,ACTIVE,MANDATORY,ODAPPLICABLE) values ('DISBINS','Disbursement Instructions',1,1007,current_timestamp,'Approved',null,null,null,null,null,0,1,1,0);
 </sql>	
 	</changeSet>
-	
+	<changeSet id="123" author="Prasad">
+	<sql>
+	Delete from FinTypeAccounting;
+	insert into FinTypeAccounting 
+select FinType, EventCode, AccountSetID, 0, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0, 1 
+from RMTAccountingSet, RMTFinanceTypes where AccountsetCode = 'DEFAULT' ;
+	</sql>	
+	</changeSet>
 	
 </databaseChangeLog>
