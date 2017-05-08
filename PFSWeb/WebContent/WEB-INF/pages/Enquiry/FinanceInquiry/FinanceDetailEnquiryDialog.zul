@@ -315,14 +315,13 @@
 														style="text-align:right" />
 												</hbox>
 												<label
-													id="label_FinanceMainDialog_FinCurAssetValue"
+													id="label_FinanceMainDialog_FinCurrentAssetValue"
 													value="${c:l('label_FinanceMainDialog_FinCurAssetValue.value')}" />
 												<hbox>
 													<space
 														spacing="2px" />
-													<decimalbox
-														id="finCurAssetValue" width="198px" maxlength="25"
-														style="text-align:right" />
+													<currencyBox
+														id="finCurrentAssetValue" />
 												</hbox>
 											</row>
 											<row visible="true">

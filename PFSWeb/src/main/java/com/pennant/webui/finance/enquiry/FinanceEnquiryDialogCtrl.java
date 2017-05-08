@@ -193,7 +193,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Textbox					collateralRef;
 	protected FrequencyBox				depreciationFrq;
 	protected Decimalbox				finAssetValue;
-	protected Decimalbox				finCurAssetValue;
+	//protected Decimalbox				finCurAssetValue;
 	protected Combobox					finRepayMethod;
 
 	protected Label						label_profitSuspense;
@@ -586,8 +586,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.frqDefferments.setMaxlength(3);
 			this.finAssetValue.setMaxlength(18);
 			this.finAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-			this.finCurAssetValue.setMaxlength(18);
-			this.finCurAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+			
 			// Summaries
 			this.totalDisb.setMaxlength(18);
 			this.totalDisb.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
@@ -809,7 +808,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.gracePeriodEndDate_two.setValue(this.finStartDate.getValue());
 			}
 			this.finAssetValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue(),formatter));
-			this.finCurAssetValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinCurrAssetValue(),formatter));
 			this.profitSuspense.setChecked(getFinScheduleData().isFinPftSuspended());
 			this.finSuspDate.setValue(getFinScheduleData().getFinSuspDate());
 			this.collateralRef.setValue(aFinanceMain.getFinCommitmentRef());
@@ -1622,7 +1620,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.utilisedFrqDef.setReadonly(true);
 		this.frqDefferments.setReadonly(true);
 		this.finAssetValue.setReadonly(true);
-		this.finCurAssetValue.setReadonly(true);
 		// Summaries
 		this.totalDisb.setReadonly(true);
 		this.totalDownPayment.setReadonly(true);
