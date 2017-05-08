@@ -79,4 +79,5 @@ public interface FinanceTypeService {
 	FinanceType getOrgFinanceTypeById(String finType);
 	
 	boolean getFinTypeExist(String finType, String type);
+	FinanceType getApprovedFinanceType(String finType);
 }

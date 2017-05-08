@@ -198,17 +198,13 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 	}
 
 	/**
-	 * getApprovedNPABUCKETSById fetch the details by using NPABUCKETSDAO's
-	 * getNPABUCKETSById method . with parameter id and type as blank. it fetches
-	 * the approved records from the NPABUCKETS.
+	 *  It fetches Approved NPABucket from NPABUCKETS
 	 * 
-	 * @param bucketID
-	 *            bucketID of the NPABucket.
-	 *            (String)
+	 * @param long bucketID
 	 * @return NPABUCKETS
 	 */
 	public NPABucket getApprovedNPABucket(long bucketID) {
-		return getNPABucketDAO().getNPABucket(bucketID,"_AView");
+		return FinanceConfigCache.getNPABucket(bucketID);
 	}	
 		
 	/**

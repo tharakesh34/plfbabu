@@ -267,8 +267,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * getFinanceTypeById fetch the details by using FinanceTypeDAO's
-	 * getFinanceTypeById method.
+	 * It fetches the records from RMTFinanceType_View and other details
+	 * 
 	 * 
 	 * @param id
 	 *            (String)
@@ -300,7 +300,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		
 		return financeType;
 	}
-	
+
 	/**
 	 * Method for Fetching List of Allowed VAS Products by Finance Type
 	 * @return
@@ -311,9 +311,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * getApprovedFinanceTypeById fetch the details by using FinanceTypeDAO's
-	 * getFinanceTypeById method . with parameter id and type as blank. it
-	 * fetches the approved records from the RMTFinanceTypes.
+	 * It fetches the approved records from RMTFinanceTypesa and other details
 	 * 
 	 * @param id
 	 *            (String)
@@ -352,6 +350,16 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	@Override
 	public FinanceType getOrgFinanceTypeById(String finType) {
 		return getFinanceTypeDAO().getOrgFinanceTypeByID(finType, "_ORGView");
+	}
+
+	/**
+	 * It fetches the approved records from RMTFinanceTypes
+	 * @param String finType
+	 * @return FinanceType
+	 */
+	@Override
+	public FinanceType getApprovedFinanceType(String finType) {
+		return FinanceConfigCache.getFinanceType(finType);
 	}
 
 	/**

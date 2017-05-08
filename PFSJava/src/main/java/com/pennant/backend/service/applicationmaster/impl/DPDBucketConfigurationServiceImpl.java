@@ -195,15 +195,13 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 	}
 
 	/**
-	 * getApprovedDPDBUCKETSCONFIGById fetch the details by using DPDBUCKETSCONFIGDAO's getDPDBUCKETSCONFIGById method .
-	 * with parameter id and type as blank. it fetches the approved records from the DPDBUCKETSCONFIG.
+	 * It fetches Approved DPDBucketConfiguration from DPDBUCKETSCONFIG
 	 * 
-	 * @param configID
-	 *            configID of the DPDBucketConfiguration. (String)
+	 * @param long configID
 	 * @return DPDBUCKETSCONFIG
 	 */
 	public DPDBucketConfiguration getApprovedDPDBucketConfiguration(long configID) {
-		return getDPDBucketConfigurationDAO().getDPDBucketConfiguration(configID, "_AView");
+		return FinanceConfigCache.getDPDBucketConfiguration(configID);
 	}
 
 	/**

@@ -195,15 +195,13 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 	}
 
 	/**
-	 * getApprovedNPABUCKETSCONFIGById fetch the details by using NPABUCKETSCONFIGDAO's getNPABUCKETSCONFIGById method .
-	 * with parameter id and type as blank. it fetches the approved records from the NPABUCKETSCONFIG.
+	 * It fetches Approved NPABucketConfiguration from NPABUCKETSCONFIG
 	 * 
-	 * @param configID
-	 *            configID of the NPABucketConfiguration. (String)
+	 * @param long configID
 	 * @return NPABUCKETSCONFIG
 	 */
 	public NPABucketConfiguration getApprovedNPABucketConfiguration(long configID) {
-		return getNPABucketConfigurationDAO().getNPABucketConfiguration(configID, "_AView");
+		return FinanceConfigCache.getNPABucketConfiguration(configID);
 	}
 
 	/**

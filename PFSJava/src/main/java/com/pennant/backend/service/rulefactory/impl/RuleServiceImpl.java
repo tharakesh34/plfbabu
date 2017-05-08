@@ -188,6 +188,19 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	public Rule getApprovedRuleById(String id,String module,String event) {
 		return getRuleDAO().getRuleByID(id,module,event, "_AView");
 	}
+
+	
+	/**
+	 * Fetch Approved Rule.
+	 * @param String ruleCode
+	 * @param String ruleModule
+	 * @param String ruleEvent
+	 * @return Rule 
+	 */
+	@Override
+	public Rule getApprovedRule(String ruleCode,String ruleModule,String ruleEvent) {
+		return AccountingConfigCache.getRule(ruleCode, ruleModule, ruleEvent);
+	}
 	
 	/**
 	 * This method return the columns list of the table

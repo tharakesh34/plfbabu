@@ -62,4 +62,5 @@ public interface AccountTypeService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	List<ValueLabel> getAccountTypeDesc(List<String> acTypeList);
+	AccountType getApprovedAccountType(String acType);
 }

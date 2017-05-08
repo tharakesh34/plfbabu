@@ -198,17 +198,13 @@ public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements D
 	}
 
 	/**
-	 * getApprovedDPDBUCKETSById fetch the details by using DPDBUCKETSDAO's
-	 * getDPDBUCKETSById method . with parameter id and type as blank. it fetches
-	 * the approved records from the DPDBUCKETS.
+	 * It fetches Approved DPDBucket from DPDBUCKETS
 	 * 
-	 * @param bucketID
-	 *            bucketID of the DPDBucket.
-	 *            (String)
+	 * @param long bucketID
 	 * @return DPDBUCKETS
 	 */
 	public DPDBucket getApprovedDPDBucket(long bucketID) {
-		return getDPDBucketDAO().getDPDBucket(bucketID,"_AView");
+		return FinanceConfigCache.getDPDBucket(bucketID);
 	}	
 		
 	/**

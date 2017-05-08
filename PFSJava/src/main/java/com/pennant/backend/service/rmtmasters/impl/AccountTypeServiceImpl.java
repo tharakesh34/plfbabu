@@ -198,8 +198,21 @@ public class AccountTypeServiceImpl extends GenericService<AccountType> implemen
 	 *            (String)
 	 * @return AccountType
 	 */
+	@Override
 	public AccountType getApprovedAccountTypeById(String id) {
 		return getAccountTypeDAO().getAccountTypeById(id,"_AView");
+	}
+
+	/**
+	 * getApprovedAccountTypeById fetch the detail.
+	 * It fetches the approved records from RMTAccountTypes.
+	 * 
+	 * @param String acType
+	 * @return AccountType
+	 */
+	@Override
+	public AccountType getApprovedAccountType(String acType) {
+		return AccountingConfigCache.getAccountType(acType);
 	}
 
 	/**
