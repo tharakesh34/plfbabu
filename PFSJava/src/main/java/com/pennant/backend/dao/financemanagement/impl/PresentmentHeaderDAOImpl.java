@@ -701,7 +701,11 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT FM.CUSTID,FM.FINBRANCH, FM.FINTYPE,PD.ID, PD.PRESENTMENTID, PD.FINREFERENCE, PD.SCHDATE, PD.MANDATEID, ");
-		sql.append(" PD.ADVANCEAMT, PD.EXCESSID, PD.PRESENTMENTAMT, PD.EXCLUDEREASON, PD.BOUNCEID FROM PRESENTMENTDETAILS PD");
+		sql.append(" PD.ADVANCEAMT, PD.EXCESSID, PD.PRESENTMENTAMT, PD.EXCLUDEREASON, PD.BOUNCEID , ");
+		sql.append(" PB.ACCOUNTNO, PB.ACTYPE ");
+		sql.append(" FROM PRESENTMENTDETAILS PD ");
+		sql.append(" INNER JOIN PRESENTMENTHEADER PH ON PH.ID = PD.PRESENTMENTID ");
+		sql.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PH.PARTNERBANKID ");
 		sql.append(" INNER JOIN FINANCEMAIN FM ON PD.FINREFERENCE = FM.FINREFERENCE  ");
 		sql.append(" WHERE FM.CUSTID =:CustId AND PD.SCHDATE = :SchDate  ");
 		sql.append(" AND PD.STATUS = :STATUS  ");
@@ -712,7 +716,7 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustId", custId);
 		source.addValue("SchDate", schData);
-		source.addValue("STATUS", RepayConstants.PEXC_EXTRACT);
+		source.addValue("STATUS", RepayConstants.PEXC_APPROV);
 		
 		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(PresentmentDetail.class);

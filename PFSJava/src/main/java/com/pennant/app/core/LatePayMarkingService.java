@@ -201,7 +201,6 @@ public class LatePayMarkingService extends ServiceHelper {
 			pftDetail.setPenaltyPaid(pftDetail.getPenaltyPaid().add(fod.getTotPenaltyPaid()));
 			pftDetail.setPenaltyDue(pftDetail.getPenaltyDue().add(fod.getTotPenaltyBal()));
 			pftDetail.setPenaltyWaived(pftDetail.getPenaltyWaived().add(fod.getTotWaived()));
-			pftDetail.setPrvODDate(pftDetail.getFinStartDate());
 
 			if (pftDetail.getFirstODDate() == null
 					|| pftDetail.getFirstODDate().compareTo(pftDetail.getFinStartDate()) == 0) {
@@ -209,7 +208,7 @@ public class LatePayMarkingService extends ServiceHelper {
 			}
 
 			//There is chance OD dates might not be in ascending order so take the least date
-			if (pftDetail.getPrvODDate().compareTo(fod.getFinODSchdDate()) <= 0) {
+			if (fod.getFinODSchdDate().compareTo(pftDetail.getPrvODDate()) <= 0) {
 				pftDetail.setPrvODDate(fod.getFinODSchdDate());
 			}
 		}

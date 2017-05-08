@@ -44,6 +44,8 @@ package com.pennant.backend.model.financemanagement;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -86,6 +88,9 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private String finCcy;
 	private String ecsReturn;
 	private long receiptID;
+	
+	private String	accountNo;
+	private String	acType;
 	private String errMsg;
 
 	public String getMandateStatus() {
@@ -96,6 +101,16 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.mandateStatus = mandateStatus;
 	}
 
+
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("accountNo");
+		excludeFields.add("acType");
+		return excludeFields;
+	}
+	
+	
 	@XmlTransient
 	private PresentmentDetail befImage;
 	@XmlTransient
@@ -368,6 +383,22 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setReceiptID(long receiptID) {
 		this.receiptID = receiptID;
+	}
+
+	public String getAccountNo() {
+		return accountNo;
+	}
+
+	public void setAccountNo(String accountNo) {
+		this.accountNo = accountNo;
+	}
+
+	public String getAcType() {
+		return acType;
+	}
+
+	public void setAcType(String acType) {
+		this.acType = acType;
 	}
 
 	public String getErrMsg() {

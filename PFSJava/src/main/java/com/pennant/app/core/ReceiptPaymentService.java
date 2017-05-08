@@ -52,6 +52,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 				header.setReceiptAmount(advanceAmt.add(presentmentAmt));
 				header.setEffectSchdMethod(PennantConstants.List_Select);
 				header.setReceiptModeStatus(RepayConstants.PAYSTATUS_APPROVED);
+				header.setPostBranch("0");//FIXME
 
 				//work flow details
 				header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -74,6 +75,8 @@ public class ReceiptPaymentService extends ServiceHelper {
 					receiptDetail.setAmount(advanceAmt);
 					receiptDetail.setValueDate(schDate);
 					receiptDetail.setReceivedDate(businessDate);
+					receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());
+					receiptDetail.setPartnerBankAcType(presentmentDetail.getAcType());
 					receiptDetails.add(receiptDetail);
 
 				}
@@ -87,12 +90,15 @@ public class ReceiptPaymentService extends ServiceHelper {
 					receiptDetail.setAmount(presentmentAmt);
 					receiptDetail.setValueDate(schDate);
 					receiptDetail.setReceivedDate(businessDate);
+					receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());
+					receiptDetail.setPartnerBankAcType(presentmentDetail.getAcType());
 					receiptDetails.add(receiptDetail);
 				}
 
 				header.setReceiptDetails(receiptDetails);
 				repaymentProcessUtil.calcualteAndPayReceipt(financeMain, scheduleDetails, profitDetail, header,
 						repayHeirarchy, businessDate);
+				getPresentmentHeaderDAO().updateReceptId(presentmentDetail.getId(), header.getReceiptID());
 
 			}
 

@@ -115,8 +115,9 @@ public class LoadFinanceData extends ServiceHelper {
 			if (odDetails != null && !odDetails.isEmpty()) {
 				for (FinODDetails finODDetails : odDetails) {
 					if (StringUtils.equals(finODDetails.getRcdAction(), PennantConstants.RECORD_INSERT)) {
-						getFinODDetailsDAO().save(finODDetails);
-
+						if (finODDetails.getFinCurODDays()!=0) {
+							getFinODDetailsDAO().save(finODDetails);
+						}
 					} else if (StringUtils.equals(finODDetails.getRcdAction(), PennantConstants.RECORD_UPDATE)) {
 						getFinODDetailsDAO().update(finODDetails);
 					}
