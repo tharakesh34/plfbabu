@@ -1524,6 +1524,11 @@ FROM          Postings T1 INNER JOIN
 		
 		</sql>
 	</changeSet>
+	<changeSet id="114.1" author="chaitanya.ch">
+		<sql>
+		Delete from BMTAmountCodes where amountcode = 'ae_pftChg';
+		</sql>
+		</changeSet>
 		<changeSet id="114" author="chaitanya.ch">
 		<sql>
 				
