@@ -1467,7 +1467,7 @@ left join CustomerEMails T3 on T3.custid=T1.custid
 			   PartnerBanks T3 ON T1.FundingAc  = T3.PartnerBankID
 		</createView>
 	</changeSet>
-	<changeSet id="106" author="kesava" >
+	<!-- <changeSet id="106" author="kesava" >
 		<sql>
 	Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
 Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
@@ -1499,6 +1499,16 @@ Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
 Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
 Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
 Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+	</sql>
+	</changeSet> -->
+	<changeSet id="107" author="prasad" dbms="oracle">
+	<sql>
+	alter table postings modify userbranch null;
+	</sql>
+	</changeSet>
+	<changeSet id="107" author="prasad" dbms="mssql">
+	<sql>
+	alter table postings alter column userbranch null;
 	</sql>
 	</changeSet>
 </databaseChangeLog>
