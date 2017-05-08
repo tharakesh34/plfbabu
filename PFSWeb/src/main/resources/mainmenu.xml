@@ -423,7 +423,7 @@
         <menuItem id="menu_Item_RecommendationsInquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/RecommendationInquiryList.zul"  rightName="menuItem_Enquiry_Recommendations"/>
         <menuItem id="menu_Item_CovenantsInquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/CovenantInquiryList.zul"  rightName="menuItem_Enquiry_Covenants"/>
 <!--         <menuItem id="menu_Item_FinanceProfitEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/ProfitEnquiryList.zul"   rightName="menuItem_Enquiry_FinProfitEnquiry" />
- -->       <menuItem id="menu_Item_JVPostingEnquiry" zulNavigation="/WEB-INF/pages/Others/JVPosting/JVPostingEnquiryList.zul" rightName="menuItem_others_JVPostingEnquiry"/> 
+ -->       <menuItem id="menu_Item_JVPostingEnquiry" zulNavigation="/WEB-INF/pages/Others/JVPosting/JVPostingEnquiryList.zul?enqiryModule=Y" rightName="menuItem_others_JVPostingEnquiry"/> 
         <menuItem id="menu_Item_CustomerEnquiry" zulNavigation="/WEB-INF/pages/Reports/CustomerEnquiryList.zul"  rightName="menuItem_Enquiry_CustomerEnquiry"/>
 		<!-- <menuItem id="menu_Item_CustomerAccount" zulNavigation="/WEB-INF/pages/Reports/CustomerAccountList.zul"  rightName="menuItem_Enquiry_CustomerAccountEnquiry"/> -->
         <!-- <menuItem id="menu_Item_FinanceEligibilityCheck" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/EligibilityCheck.zul"  rightName="menuItem_Enquiry_FinEligibility" /> -->
