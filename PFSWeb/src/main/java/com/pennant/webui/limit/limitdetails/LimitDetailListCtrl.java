@@ -419,7 +419,7 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}else{
-			aLimitHeader.setCustFullName(PennantApplicationUtil.getFullName(aLimitHeader.getCustFName(), aLimitHeader.getCustMName(), aLimitHeader.getCustFullName()));
+			aLimitHeader.setCustFullName(PennantApplicationUtil.getFullName(aLimitHeader.getCustFName(), aLimitHeader.getCustMName(), aLimitHeader.getCustShrtName()));
 		}
 
 		// Check whether the user has authority to change/view the record.
