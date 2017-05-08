@@ -133,7 +133,7 @@ public class BankBranchDAOImpl extends BasisNextidDaoImpl<BankBranch> implements
 		StringBuilder selectSql = new StringBuilder("Select BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append(",BankName");
+			selectSql.append(",BankName,PcCityName");
 		}
 		selectSql.append(" From BankBranches");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -356,7 +356,7 @@ public class BankBranchDAOImpl extends BasisNextidDaoImpl<BankBranch> implements
 		selectSql.append("BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
 		
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",BankName");
+			selectSql.append(",BankName,PcCityName");
 		}
 		selectSql.append(" From BankBranches");
 		selectSql.append(StringUtils.trimToEmpty(type));
