@@ -1524,6 +1524,17 @@ FROM          Postings T1 INNER JOIN
 		
 		</sql>
 	</changeSet>
+		<changeSet id="113" author="chaitanya.ch">
+		<sql>
+				
+        Insert into BMTAmountCodes 
+            values( 'DEFRPY', 0, 'ae_pftChg', 'Capitalization Changed now', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0  )  ;
+
+			
+		
+		</sql>
+	</changeSet>
+	
 	
 	
 </databaseChangeLog>
