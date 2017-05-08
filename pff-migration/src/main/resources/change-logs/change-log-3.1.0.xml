@@ -792,4 +792,9 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 				WHERE     NOT EXISTS (SELECT 1 FROM BankBranches_TEMP WHERE BankBranchID = T1.BankBranchID)
 		</createView>
 </changeSet>
+
+     <changeSet id="61" author="Manojkumar.P">
+		<modifyDataType tableName="MANDATE_REQUESTS" columnName="OPENFLAG"
+			newDataType="VARCHAR(20)"/>
+	</changeSet>
 </databaseChangeLog>
