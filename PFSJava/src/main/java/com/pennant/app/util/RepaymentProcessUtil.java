@@ -304,14 +304,31 @@ public class RepaymentProcessUtil {
 			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail profitDetail,
 			FinReceiptHeader receiptHeader, FinScheduleData logScheduleData, Date valueDate)
 			throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
-
+		logger.debug("Entering");
+		
+		List<FinReceiptDetail> receiptDetailList = sortReceiptDetails(receiptHeader.getReceiptDetails());
+		
+		// Find out Is there any schedule payment done or not, If exists Log will be captured
+		boolean isSchdLogReq = false;
+		for (int i = 0; i < receiptDetailList.size(); i++) {
+			List<FinRepayHeader> repayHeaderList = receiptDetailList.get(i).getRepayHeaders();
+			for (int j = 0; j < repayHeaderList.size(); j++) {
+				FinRepayHeader repayHeader = repayHeaderList.get(j);
+				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent())
+						|| StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent())
+						|| StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())) {
+					isSchdLogReq = true;
+				}
+			}
+		}
+		
 		long linkedTranId = 0;
 		String finReference = financeMain.getFinReference();
 		//Create log entry for Action for Schedule Modification
 		FinLogEntryDetail entryDetail = null;
 		long logKey = 0;
 		Date postDate = getPostDate(DateUtility.getAppDate());
-		if (receiptHeader.getAllocations() != null && !receiptHeader.getAllocations().isEmpty()) {
+		if (isSchdLogReq && receiptHeader.getAllocations() != null && !receiptHeader.getAllocations().isEmpty()) {
 			entryDetail = new FinLogEntryDetail();
 			entryDetail.setFinReference(finReference);
 			entryDetail.setEventAction(receiptHeader.getReceiptPurpose());
@@ -326,7 +343,7 @@ public class RepaymentProcessUtil {
 			oldFinSchdData.setFinReference(finReference);
 			listSave(oldFinSchdData, "_Log", logKey);
 		}
-		List<FinReceiptDetail> receiptDetailList = sortReceiptDetails(receiptHeader.getReceiptDetails());
+		
 		for (int i = 0; i < receiptDetailList.size(); i++) {
 
 			// Repay Header list process individually based on List existence
@@ -407,6 +424,7 @@ public class RepaymentProcessUtil {
 			// Setting/Maintaining Log key for Last log of Schedule Details
 			receiptDetailList.get(i).setLogKey(logKey);
 		}
+		logger.debug("Leaving");
 		return scheduleDetails;
 
 	}
