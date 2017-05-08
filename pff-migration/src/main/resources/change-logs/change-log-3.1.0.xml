@@ -830,4 +830,20 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
 		</createView>
 	</changeSet>
+	
+	<changeSet id="66" author="Manojkumar.P">
+		<createView viewName="MANDATES_AVIEW" replaceIfExists="true">
+			SELECT	T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate, T1.InputDate FromDate, T1.InputDate ToDate,T1.Active,1 useExisting,T1.OrgReference,T5.PcCityName
+			FROM    	Mandates T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+		</createView>
+	</changeSet>
 </databaseChangeLog>
