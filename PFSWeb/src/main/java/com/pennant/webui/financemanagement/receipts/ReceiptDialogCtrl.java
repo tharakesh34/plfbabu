@@ -1072,6 +1072,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					}
 				}
 				
+				if(isUserAction){
+					this.favourName.setValue(Labels.getLabel("label_ClientName"));
+				}
+				
 			} else if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CASH)) {
 				
 				this.row_favourNo.setVisible(false);
