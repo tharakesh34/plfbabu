@@ -159,7 +159,7 @@ public class ScheduleCalculator {
 	public static FinScheduleData reAging(FinScheduleData finScheduleData) {
 		return new ScheduleCalculator(PROC_REAGEH, finScheduleData).getFinScheduleData();
 	}
-	
+
 	public static FinScheduleData changeProfit(FinScheduleData finScheduleData, BigDecimal desiredPftAmount) {
 		return new ScheduleCalculator(PROC_CHANGEPROFIT, finScheduleData, desiredPftAmount).getFinScheduleData();
 	}
@@ -216,7 +216,7 @@ public class ScheduleCalculator {
 	}
 
 	public static FinScheduleData buildODSchedule(FinScheduleData finScheduleData) {
-		return new ScheduleCalculator(finScheduleData , PROC_BUILDOVERDRAFTSCHD).getFinScheduleData();
+		return new ScheduleCalculator(finScheduleData, PROC_BUILDOVERDRAFTSCHD).getFinScheduleData();
 	}
 
 	// Constructors
@@ -228,15 +228,15 @@ public class ScheduleCalculator {
 		if (StringUtils.equals(method, PROC_CHANGEGRACEEND)) {
 			setFinScheduleData(procChangeGraceEnd(finScheduleData));
 		}
-		
+
 		if (StringUtils.equals(method, PROC_REAGEH)) {
 			setFinScheduleData(procReAgeH(finScheduleData));
 		}
-		
+
 		if (StringUtils.equals(method, PROC_POSTPONE)) {
 			setFinScheduleData(procPostpone(finScheduleData));
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -413,7 +413,6 @@ public class ScheduleCalculator {
 		if (StringUtils.equals(method, PROC_CHANGEREPAY)) {
 			setFinScheduleData(procChangeRepay(finScheduleData, amount, schdMethod));
 		}
-		
 
 		if (StringUtils.equals(method, PROC_UNPLANEMIH)) {
 			setFinScheduleData(procUnPlanEMIH(finScheduleData, amount, schdMethod));
@@ -480,8 +479,8 @@ public class ScheduleCalculator {
 		finMain.setEventToDate(earlyPayOnSchdl);
 		finMain.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
 		finMain.setRecalSchdMethod(finMain.getScheduleMethod());
-		if(ImplementationConstants.EARLYPAY_ADJ_PRI){
-			if(earlyPayOnNextSchdl != null){
+		if (ImplementationConstants.EARLYPAY_ADJ_PRI) {
+			if (earlyPayOnNextSchdl != null) {
 				finMain.setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI);
 			}else{
 				finMain.setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI_PFT);
@@ -550,7 +549,7 @@ public class ScheduleCalculator {
 			finScheduleData = calEffectiveRate(finScheduleData, CalculationConstants.SCH_SPECIFIER_TOTAL,
 					totalDesiredProfit, null, finMain.getMaturityDate(), false);
 		}
-		
+
 		// Insurance recalculation due to changes in Outstandings
 		finScheduleData = insuranceCalculation(finScheduleData);
 
@@ -725,8 +724,8 @@ public class ScheduleCalculator {
 
 						//Before Event From Date don't do any changes(Used same for servicing Plan EMI/Rescheduling)
 						if (schdDate.compareTo(finMain.getEventFromDate()) > 0) {
-							if(StringUtils.isEmpty(curSchd.getBpiOrHoliday()) || 
-									StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)){
+							if (StringUtils.isEmpty(curSchd.getBpiOrHoliday())
+									|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)) {
 								curSchd.setCpzOnSchDate(FrequencyUtil.isFrqDate(finMain.getRepayCpzFrq(),
 										curSchd.getSchDate()));
 								curSchd.setBpiOrHoliday("");
@@ -743,8 +742,8 @@ public class ScheduleCalculator {
 
 				//Before Event From Date don't do any changes(Used same for servicing Plan EMI/Rescheduling)
 				if (schdDate.compareTo(finMain.getEventFromDate()) > 0) {
-					if(StringUtils.isEmpty(curSchd.getBpiOrHoliday()) || 
-							StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)){
+					if (StringUtils.isEmpty(curSchd.getBpiOrHoliday())
+							|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)) {
 						curSchd.setCpzOnSchDate(FrequencyUtil.isFrqDate(finMain.getRepayCpzFrq(), curSchd.getSchDate()));
 						curSchd.setBpiOrHoliday("");
 					}
@@ -823,7 +822,7 @@ public class ScheduleCalculator {
 			}
 
 			boolean isPlanEmiHFound = false;
-			if(hdSize != markedEMIHMax){
+			if (hdSize != markedEMIHMax) {
 				for (int i = 0; i < hdSize; i++) {
 					Date hdDate = finScheduleData.getPlanEMIHDates().get(i);
 
@@ -855,12 +854,11 @@ public class ScheduleCalculator {
 			}
 
 			//Before Event From Date don't do any changes(Used same for servicing Plan EMI/Rescheduling)
-			if(!isPlanEmiHFound){
+			if (!isPlanEmiHFound) {
 				if (schdDate.compareTo(finMain.getEventFromDate()) > 0) {
-					if(StringUtils.isEmpty(curSchd.getBpiOrHoliday()) || 
-							StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)){
-						curSchd.setCpzOnSchDate(FrequencyUtil.isFrqDate(finMain.getRepayCpzFrq(),
-								curSchd.getSchDate()));
+					if (StringUtils.isEmpty(curSchd.getBpiOrHoliday())
+							|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)) {
+						curSchd.setCpzOnSchDate(FrequencyUtil.isFrqDate(finMain.getRepayCpzFrq(), curSchd.getSchDate()));
 						curSchd.setBpiOrHoliday("");
 					}
 				} else {
@@ -1162,6 +1160,22 @@ public class ScheduleCalculator {
 			}
 		}
 
+		//FIXME: When Recal From Date and Recal To Date are different periods. Delete this line once proved working
+		//Same code is kept in add disbursement also (Whereever recal is possible in two periods..)
+		if (finMain.getRecalFromDate().compareTo(finMain.getGrcPeriodEndDate()) <= 0
+				&& finMain.getRecalToDate().compareTo(finMain.getGrcPeriodEndDate()) > 0) {
+
+			for (int i = 0; i < finSchdDetails.size(); i++) {
+				if (finSchdDetails.get(i).getSchDate().compareTo(finMain.getGrcPeriodEndDate()) <= 0) {
+					continue;
+				}
+
+				finMain.setRecalFromDate(finSchdDetails.get(i).getSchDate());
+				break;
+
+			}
+		}
+
 		// Setting Rates between Fromdate and Todate
 		BigDecimal recalculateRate = BigDecimal.ZERO;
 
@@ -1439,11 +1453,11 @@ public class ScheduleCalculator {
 			if (schdDate.compareTo(evtToDate) > 0) {
 				break;
 			}
-			
+
 			adjTerms = adjTerms + 1;
 
-			if (StringUtils.isEmpty(curSchd.getBpiOrHoliday()) || 
-					StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLDEMI)) {
+			if (StringUtils.isEmpty(curSchd.getBpiOrHoliday())
+					|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLDEMI)) {
 				curSchd.setBpiOrHoliday(FinanceConstants.FLAG_POSTPONE);
 			}
 
@@ -1488,11 +1502,11 @@ public class ScheduleCalculator {
 			if (schdDate.compareTo(evtToDate) > 0) {
 				break;
 			}
-			
+
 			adjTerms = adjTerms + 1;
 
-			if (StringUtils.isEmpty(curSchd.getBpiOrHoliday()) || 
-					StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLDEMI)) {
+			if (StringUtils.isEmpty(curSchd.getBpiOrHoliday())
+					|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLDEMI)) {
 				curSchd.setBpiOrHoliday(FinanceConstants.FLAG_REAGE);
 			}
 
@@ -1586,8 +1600,8 @@ public class ScheduleCalculator {
 				break;
 			}
 
-			if (StringUtils.isEmpty(curSchd.getBpiOrHoliday()) || 
-					StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLDEMI)) {
+			if (StringUtils.isEmpty(curSchd.getBpiOrHoliday())
+					|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLDEMI)) {
 				curSchd.setBpiOrHoliday(FinanceConstants.FLAG_UNPLANNED);
 			}
 		}
@@ -1758,6 +1772,23 @@ public class ScheduleCalculator {
 			logger.debug("Leaving");
 			return finScheduleData;
 		} else {
+
+			//FIXME: When Recal From Date and Recal To Date are different periods. Delete this line once proved working
+			//Same code is kept in add disbursement also (Whereever recal is possible in two periods..)
+			if (finMain.getRecalFromDate().compareTo(finMain.getGrcPeriodEndDate()) <= 0
+					&& finMain.getRecalToDate().compareTo(finMain.getGrcPeriodEndDate()) > 0) {
+
+				for (int i = 0; i < finSchdDetails.size(); i++) {
+					if (finSchdDetails.get(i).getSchDate().compareTo(finMain.getGrcPeriodEndDate()) <= 0) {
+						continue;
+					}
+
+					finMain.setRecalFromDate(finSchdDetails.get(i).getSchDate());
+					break;
+
+				}
+			}
+
 			finScheduleData = setRecalAttributes(finScheduleData, PROC_ADDDISBURSEMENT, newDisbAmount, BigDecimal.ZERO);
 		}
 
@@ -2681,7 +2712,7 @@ public class ScheduleCalculator {
 			if (i == 0) {
 				curSchd.setSchdMethod(finScheduleDetails.get(i + 1).getSchdMethod());
 			}
-			
+
 			if (StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {
 				finMain.setBpiAmount(curSchd.getProfitSchd());
 			}
@@ -2745,7 +2776,7 @@ public class ScheduleCalculator {
 	private void calculateXIRRAndIRR(FinScheduleData finSchdData, FinanceMain finMain) {
 		logger.debug("Entering");
 
-		BigDecimal calculated_IRR = BigDecimal.ZERO; 
+		BigDecimal calculated_IRR = BigDecimal.ZERO;
 		BigDecimal calculated_XIRR = BigDecimal.ZERO;
 		if (finMain.getTotalProfit().compareTo(BigDecimal.ZERO) > 0) {
 
@@ -2754,19 +2785,19 @@ public class ScheduleCalculator {
 
 			for (FinanceScheduleDetail finScheduleDetail : finSchdData.getFinanceScheduleDetails()) {
 
-				if (finScheduleDetail.isDisbOnSchDate() ) {
+				if (finScheduleDetail.isDisbOnSchDate()) {
 					schAmountList.add(finScheduleDetail.getDisbAmount().multiply(new BigDecimal(-1)));
 					repayDateList.add(finScheduleDetail.getSchDate());
-				} 
-				
-				if(finScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0){
+				}
+
+				if (finScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
 					schAmountList.add(finScheduleDetail.getRepayAmount());
 					repayDateList.add(finScheduleDetail.getSchDate());
 				}
- 			}
+			}
 
 			calculated_XIRR = RateCalculation.calculateXIRR(schAmountList, repayDateList);
-						
+
 			calculated_IRR = RateCalculation.calculateIRR(schAmountList);
 			int termsPerYear = CalculationUtil.getTermsPerYear(finMain.getRepayPftFrq());
 			calculated_IRR = calculated_IRR.multiply(new BigDecimal(termsPerYear));
@@ -2865,6 +2896,17 @@ public class ScheduleCalculator {
 				continue;
 			}
 
+			//--------------------------------------------------------------------
+			//FIXME: PV: Just for confirmation it is working.
+			if (curSchd.getSchDate().compareTo(finMain.getEventFromDate()) < 0) {
+				continue;
+			}
+
+			if (curSchd.getSchDate().compareTo(finMain.getEventToDate()) > 0) {
+				break;
+			}
+			//--------------------------------------------------------------------
+
 			if (curSchd.getSchDate().compareTo(finMain.getGrcPeriodEndDate()) >= 0) {
 				break;
 			}
@@ -2920,6 +2962,17 @@ public class ScheduleCalculator {
 			if (curSchd.getSchDate().before(dateAllowedChange)) {
 				continue;
 			}
+
+			//--------------------------------------------------------------------
+			//FIXME: PV: Just for confirmation it is working.
+			if (curSchd.getSchDate().compareTo(finMain.getEventFromDate()) < 0) {
+				continue;
+			}
+
+			if (curSchd.getSchDate().compareTo(finMain.getEventToDate()) > 0) {
+				break;
+			}
+			//--------------------------------------------------------------------
 
 			// Fetch current rates from DB
 			if (StringUtils.isNotEmpty(curSchd.getBaseRate())) {
@@ -4025,7 +4078,7 @@ public class ScheduleCalculator {
 		}
 		return repayInstructions;
 	}
-	
+
 	/*
 	 * ________________________________________________________________________________________________________________
 	 * Method : sort Base Rates History
@@ -4063,16 +4116,16 @@ public class ScheduleCalculator {
 
 		return splRates;
 	}
-	
+
 	/*
 	 * ________________________________________________________________________________________________________________
-	 * Method : sortOverdraftSchedules  Description: Sort Overdraft Schedule Details
+	 * Method : sortOverdraftSchedules Description: Sort Overdraft Schedule Details
 	 * ________________________________________________________________________________________________________________
 	 */
 	private List<OverdraftScheduleDetail> sortOverdraftSchedules(List<OverdraftScheduleDetail> overdraftSchedules) {
 
 		if (overdraftSchedules != null && overdraftSchedules.size() > 0) {
-			
+
 			Collections.sort(overdraftSchedules, new Comparator<OverdraftScheduleDetail>() {
 				@Override
 				public int compare(OverdraftScheduleDetail odSchd1, OverdraftScheduleDetail odSchd2) {
@@ -5265,8 +5318,8 @@ public class ScheduleCalculator {
 							"Insurance Schedule details mismatch with Payment Schedule.", new String[] { " " }));
 					break;
 				}
-				
-				if(curSchd.getSchDate().compareTo(eventFromDate) <= 0){
+
+				if (curSchd.getSchDate().compareTo(eventFromDate) <= 0) {
 					continue;
 				}
 
@@ -5569,7 +5622,7 @@ public class ScheduleCalculator {
 				break;
 			}
 		}
-		
+
 		// If it is first time(cases applicable for OD) , then there are no Repay Instructions
 		if (StringUtils.isBlank(schdMethod)) {
 			schdMethod = finMain.getScheduleMethod();
@@ -5626,13 +5679,13 @@ public class ScheduleCalculator {
 	/**
 	 * Method to Calculate the Overdraft Schedule Details
 	 */
-	private FinScheduleData buildOverdraftSchd(FinScheduleData orgFinScheduleData){
+	private FinScheduleData buildOverdraftSchd(FinScheduleData orgFinScheduleData) {
 		logger.debug("Entering");
 
 		Cloner cloner = new Cloner();
 		FinScheduleData finScheduleData = cloner.deepClone(orgFinScheduleData);
 		FinanceMain finMain = finScheduleData.getFinanceMain();
-		
+
 		// Overdraft Maintenance Changes for calculation
 		BigDecimal prvDropLineAmount = BigDecimal.ZERO;
 		BigDecimal incrLimit = BigDecimal.ZERO;
@@ -5642,60 +5695,60 @@ public class ScheduleCalculator {
 		List<OverdraftScheduleDetail> oldOverdraftList = new ArrayList<>();
 		BigDecimal totalOSLimit = BigDecimal.ZERO;
 		OverdraftScheduleDetail prvODSchd = null;
-		
-		if(finMain.getEventFromDate().compareTo(finMain.getFinStartDate()) == 0){
+
+		if (finMain.getEventFromDate().compareTo(finMain.getFinStartDate()) == 0) {
 			totalOSLimit = finMain.getFinAssetValue();
 			inclStartDate = true;
-			if(StringUtils.isNotEmpty(finMain.getDroplineFrq())){
-				if(finMain.getFirstDroplineDate() != null){
+			if (StringUtils.isNotEmpty(finMain.getDroplineFrq())) {
+				if (finMain.getFirstDroplineDate() != null) {
 					startCalFrom = finMain.getFirstDroplineDate();
-				}else{
+				} else {
 					startCalFrom = FrequencyUtil.getNextDate(finMain.getDroplineFrq(), 1, startCalFrom, "A", false)
 							.getNextFrequencyDate();
 				}
 			}
-			
+
 			// Adding Start date Overdraft Schedule
 			OverdraftScheduleDetail curODSchd = new OverdraftScheduleDetail();
 			curODSchd.setODLimit(finMain.getFinAssetValue());
 			curODSchd.setDroplineDate(finMain.getFinStartDate());
-			if(StringUtils.isEmpty(finMain.getRepayBaseRate())){
+			if (StringUtils.isEmpty(finMain.getRepayBaseRate())) {
 				curODSchd.setActualRate(finMain.getRepayProfitRate());
-			}else{
+			} else {
 				curODSchd.setBaseRate(finMain.getRepayBaseRate());
 				curODSchd.setSplRate(finMain.getRepaySpecialRate());
 				curODSchd.setMargin(finMain.getRepayMargin());
 			}
-			
-			if(StringUtils.isEmpty(curODSchd.getBaseRate())){
+
+			if (StringUtils.isEmpty(curODSchd.getBaseRate())) {
 				curODSchd.setDroplineRate(finMain.getRepayProfitRate());
-			}else{
-				RateDetail rateDetail = RateUtil.rates(finMain.getRepayBaseRate(), finMain.getFinCcy(), finMain.getRepaySpecialRate(), 
-						finMain.getRepayMargin(), curODSchd.getDroplineDate(), finMain.getRpyMinRate(), finMain.getRpyMaxRate());
+			} else {
+				RateDetail rateDetail = RateUtil.rates(finMain.getRepayBaseRate(), finMain.getFinCcy(),
+						finMain.getRepaySpecialRate(), finMain.getRepayMargin(), curODSchd.getDroplineDate(),
+						finMain.getRpyMinRate(), finMain.getRpyMaxRate());
 				if (rateDetail.getErrorDetails() == null) {
 					curODSchd.setDroplineRate(rateDetail.getNetRefRateLoan());
 				}
 			}
 			prvODSchd = curODSchd;
 			oldOverdraftList.add(curODSchd);
-			
-		}else{
+
+		} else {
 			boolean limitIncrDateFound = false;
 			startCalFrom = finMain.getEventFromDate();
 			for (OverdraftScheduleDetail curODSchd : finScheduleData.getOverdraftScheduleDetails()) {
 				if (DateUtility.compare(curODSchd.getDroplineDate(), finMain.getEventFromDate()) > 0) {
-					if(StringUtils.isNotEmpty(finMain.getDroplineFrq())){
-						startCalFrom = FrequencyUtil
-								.getNextDate(finMain.getDroplineFrq(), 1, prvODSchd.getDroplineDate(), "A", false)
-								.getNextFrequencyDate();
-						if(DateUtility.compare(startCalFrom, finMain.getMaturityDate()) >= 0){
+					if (StringUtils.isNotEmpty(finMain.getDroplineFrq())) {
+						startCalFrom = FrequencyUtil.getNextDate(finMain.getDroplineFrq(), 1,
+								prvODSchd.getDroplineDate(), "A", false).getNextFrequencyDate();
+						if (DateUtility.compare(startCalFrom, finMain.getMaturityDate()) >= 0) {
 							startCalFrom = finMain.getMaturityDate();
 						}
 						inclStartDate = true;
 					}
 					break;
-				} 
-				
+				}
+
 				// Calculate sum of all Limit drop lines before Current Application date
 				prvODSchd = curODSchd;
 				prvDropLineAmount = prvDropLineAmount.add(curODSchd.getLimitDrop());
@@ -5709,14 +5762,14 @@ public class ScheduleCalculator {
 				totalOSLimit = curODSchd.getODLimit();
 				oldOverdraftList.add(curODSchd);
 			}
-			
-			if(DateUtility.compare(startCalFrom, finMain.getFirstDroplineDate()) < 0){
+
+			if (DateUtility.compare(startCalFrom, finMain.getFirstDroplineDate()) < 0) {
 				startCalFrom = finMain.getFirstDroplineDate();
 				inclStartDate = true;
 			}
-			
+
 			// Adding New Overdraft Schedule, if not Found in the existing list
-			if(!limitIncrDateFound && incrLimit.compareTo(BigDecimal.ZERO) > 0){
+			if (!limitIncrDateFound && incrLimit.compareTo(BigDecimal.ZERO) > 0) {
 				OverdraftScheduleDetail newOdSchd = new OverdraftScheduleDetail();
 				newOdSchd.setActualRate(prvODSchd.getActualRate());
 				newOdSchd.setBaseRate(prvODSchd.getBaseRate());
@@ -5732,9 +5785,9 @@ public class ScheduleCalculator {
 				prvODSchd = newOdSchd;
 			}
 		}
-		
+
 		// if Overdraft Dropline Not Exists
-		if(StringUtils.isEmpty(finMain.getDroplineFrq())){
+		if (StringUtils.isEmpty(finMain.getDroplineFrq())) {
 
 			// Creating Expiry Schedule
 			OverdraftScheduleDetail curODSchd = new OverdraftScheduleDetail();
@@ -5754,13 +5807,14 @@ public class ScheduleCalculator {
 			logger.debug("Leaving");
 			return finScheduleData;
 		}
-		
+
 		// Building Schedule terms with Dates
-		FrequencyDetails frequencyDetails =	FrequencyUtil.getTerms(finMain.getDroplineFrq(), startCalFrom, finMain.getMaturityDate(), inclStartDate, inclEndDate);
+		FrequencyDetails frequencyDetails = FrequencyUtil.getTerms(finMain.getDroplineFrq(), startCalFrom,
+				finMain.getMaturityDate(), inclStartDate, inclEndDate);
 
 		// Validate Frequency Schedule Details
 		if (frequencyDetails.getErrorDetails() != null) {
-			logger.warn("Schedule Error: on condition --->  Validate frequency:"+finMain.getDroplineFrq());
+			logger.warn("Schedule Error: on condition --->  Validate frequency:" + finMain.getDroplineFrq());
 			orgFinScheduleData.setErrorDetail(frequencyDetails.getErrorDetails());
 			return orgFinScheduleData;
 		}
@@ -5774,36 +5828,39 @@ public class ScheduleCalculator {
 			odSchdDateList.add(calendar.getTime());
 		}
 		Collections.sort(odSchdDateList);
-		
+
 		// calculating Limit Drop amount based on Terms (Constant Drop line)
-		BigDecimal limitDrop = totalOSLimit.divide(new BigDecimal(frequencyDetails.getTerms()), 0, RoundingMode.HALF_DOWN);
+		BigDecimal limitDrop = totalOSLimit.divide(new BigDecimal(frequencyDetails.getTerms()), 0,
+				RoundingMode.HALF_DOWN);
 
 		// Setting Overdraft Schedule details
 		for (int i = 0; i < odSchdDateList.size(); i++) {
 
 			OverdraftScheduleDetail curODSchd = new OverdraftScheduleDetail();
-			curODSchd.setDroplineDate(DateUtility.getDBDate(DateUtility.formatDate(odSchdDateList.get(i), PennantConstants.DBDateFormat)));
+			curODSchd.setDroplineDate(DateUtility.getDBDate(DateUtility.formatDate(odSchdDateList.get(i),
+					PennantConstants.DBDateFormat)));
 			curODSchd.setActualRate(prvODSchd.getActualRate());
 			curODSchd.setBaseRate(prvODSchd.getBaseRate());
 			curODSchd.setSplRate(prvODSchd.getSplRate());
 			curODSchd.setMargin(prvODSchd.getMargin());
 
 			// Dropline Rate
-			if(StringUtils.isEmpty(curODSchd.getBaseRate())){
+			if (StringUtils.isEmpty(curODSchd.getBaseRate())) {
 				curODSchd.setDroplineRate(prvODSchd.getActualRate());
-			}else{
-				RateDetail rateDetail = RateUtil.rates(finMain.getRepayBaseRate(), finMain.getFinCcy(), finMain.getRepaySpecialRate(), 
-						finMain.getRepayMargin(), curODSchd.getDroplineDate(), finMain.getRpyMinRate(), finMain.getRpyMaxRate());
+			} else {
+				RateDetail rateDetail = RateUtil.rates(finMain.getRepayBaseRate(), finMain.getFinCcy(),
+						finMain.getRepaySpecialRate(), finMain.getRepayMargin(), curODSchd.getDroplineDate(),
+						finMain.getRpyMinRate(), finMain.getRpyMaxRate());
 				if (rateDetail.getErrorDetails() == null) {
 					curODSchd.setDroplineRate(rateDetail.getNetRefRateLoan());
 				}
 			}
-			
+
 			// If Last Overdraft schedule or Limit Expiry
-			if(i == (odSchdDateList.size() - 1)){
+			if (i == (odSchdDateList.size() - 1)) {
 				curODSchd.setLimitDrop(prvODSchd.getODLimit());
 				curODSchd.setODLimit(BigDecimal.ZERO);
-			}else{
+			} else {
 				curODSchd.setODLimit(prvODSchd.getODLimit().subtract(limitDrop));
 				curODSchd.setLimitDrop(limitDrop);
 			}
@@ -5811,7 +5868,7 @@ public class ScheduleCalculator {
 			oldOverdraftList.add(curODSchd);
 			prvODSchd = curODSchd;
 		}
-		
+
 		finScheduleData.setOverdraftScheduleDetails(sortOverdraftSchedules(oldOverdraftList));
 
 		logger.debug("Leaving");
@@ -5895,7 +5952,7 @@ public class ScheduleCalculator {
 				finScheduleData.getBaseRates().add(baseRate);
 			}
 		}
-		
+
 		finScheduleData.setBaseRates(sortBaseRateHistrates(finScheduleData.getBaseRates()));
 
 		//If no special rates are used then return received data with base rates history
@@ -5917,7 +5974,7 @@ public class ScheduleCalculator {
 		}
 
 		finScheduleData.setSplRates(sortSplRateHistrates(finScheduleData.getSplRates()));
-		
+
 		logger.debug("Leaving");
 		return finScheduleData;
 
@@ -5939,7 +5996,7 @@ public class ScheduleCalculator {
 		return baseRateDAO;
 	}
 
-	public  void setBaseRateDAO(BaseRateDAO baseRateDAO) {
+	public void setBaseRateDAO(BaseRateDAO baseRateDAO) {
 		ScheduleCalculator.baseRateDAO = baseRateDAO;
 	}
 
@@ -5947,9 +6004,8 @@ public class ScheduleCalculator {
 		return splRateDAO;
 	}
 
-	public  void setSplRateDAO(SplRateDAO splRateDAO) {
+	public void setSplRateDAO(SplRateDAO splRateDAO) {
 		ScheduleCalculator.splRateDAO = splRateDAO;
 	}
-
 
 }
