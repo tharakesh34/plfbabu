@@ -84,4 +84,14 @@
 	</createView>
 </changeSet>	
 	
+	
+	<changeSet id="06" author="Durgaprasad g">
+		<modifyDataType tableName="PRESENTMENTDETAILS" columnName="ErrorDesc"
+			newDataType="varchar(1000)" />
+	</changeSet>
+	
+	<changeSet id="07" author="Durgaprasad g">
+		<modifyDataType tableName="PRESENTMENTDETAILS_TEMP" columnName="ErrorDesc"
+			newDataType="varchar(1000)" />
+	</changeSet>
 </databaseChangeLog>
