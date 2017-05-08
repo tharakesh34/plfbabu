@@ -70,12 +70,12 @@
 				</groups>
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>phoneNumber should have maximum 8 characters</message>
+				<message>phoneNumber should have maximum 10 characters</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
-				<element name="max">8</element>
+				<element name="max">10</element>
 			</constraint>
 		</field>
 

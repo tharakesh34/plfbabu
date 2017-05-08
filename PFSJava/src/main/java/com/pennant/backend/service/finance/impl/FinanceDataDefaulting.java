@@ -86,7 +86,7 @@ public class FinanceDataDefaulting {
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 
 		//Validate Finance Type (Mandatory for Defaulting)
-		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(finMain.getFinType(), "");
+		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(finMain.getFinType(), "_AView");
 		if (financeType == null) {
 			Promotion promotion = promotionService.getApprovedPromotionById(finMain.getFinType(),
 					FinanceConstants.MODULEID_PROMOTION, true);
@@ -95,8 +95,8 @@ public class FinanceDataDefaulting {
 				valueParm[0] = finMain.getFinType();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90202", valueParm)));
 			} else {
-				financeType = financeTypeDAO.getFinanceTypeByID(promotion.getFinType(), "");
-				if(financeType != null) {
+				financeType = financeTypeDAO.getFinanceTypeByID(promotion.getFinType(), "_AView");
+				if (financeType != null) {
 					financeType.setFinTypeFeesList(promotion.getFinTypeFeesList());
 					financeType.setFInTypeFromPromotiion(promotion);
 					financeType.setFinTypeInsurances(promotion.getFinTypeInsurancesList());
@@ -108,11 +108,11 @@ public class FinanceDataDefaulting {
 
 				}
 			}
-		} 
-		if(financeType != null) {
+		}
+		if (financeType != null) {
 			//Validate Finance Currency
 			finScheduleData.setFinanceType(financeType);
-			
+
 			if (StringUtils.isNotBlank(finMain.getFinCcy())) {
 				Currency currency = CurrencyUtil.getCurrencyObject(finMain.getFinCcy());
 				if (currency == null) {
@@ -189,7 +189,8 @@ public class FinanceDataDefaulting {
 			}
 
 			//Validate Grace Interest Days basis
-			if (StringUtils.isNotBlank(finMain.getGrcProfitDaysBasis()) && !isValidateIDB(finMain.getGrcProfitDaysBasis())) {
+			if (StringUtils.isNotBlank(finMain.getGrcProfitDaysBasis())
+					&& !isValidateIDB(finMain.getGrcProfitDaysBasis())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finMain.getGrcProfitDaysBasis();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90209", valueParm)));
@@ -350,7 +351,7 @@ public class FinanceDataDefaulting {
 		}
 
 		// set errorDetails to schedule object
-		if(errorDetails.size() > 0) {
+		if (errorDetails.size() > 0) {
 			finScheduleData.setErrorDetails(errorDetails);
 		}
 	}

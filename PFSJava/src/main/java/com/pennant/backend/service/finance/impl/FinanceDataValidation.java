@@ -1,6 +1,7 @@
 package com.pennant.backend.service.finance.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -23,6 +24,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.RateUtil;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
@@ -47,6 +49,8 @@ import com.pennant.backend.model.collateral.CollateralThirdParty;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
+import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -80,6 +84,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
+import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.service.rmtmasters.PromotionService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
@@ -88,6 +93,8 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.RuleReturnType;
 
 public class FinanceDataValidation {
 
@@ -111,13 +118,24 @@ public class FinanceDataValidation {
 	private FinTypePartnerBankService	finTypePartnerBankService;
 	private VASConfigurationService		vASConfigurationService;
 	private ScriptValidationService 	scriptValidationService;
+	private RuleExecutionUtil 			ruleExecutionUtil;
+	private RuleService 				ruleService;
 	private PromotionService			promotionService;
 
+	private FinanceDetail 				financeDetail;
 
 	public FinanceDataValidation() {
 		super();
 	}
 
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
+	}
+
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
+	}
+	
 	/**
 	 * Method for Validating Finance Schedule Prepared Data against application masters.
 	 * 
@@ -563,6 +581,7 @@ public class FinanceDataValidation {
 		// Validate customer
 		if (isCreateLoan || StringUtils.isNotBlank(finMain.getLovDescCustCIF())) {
 			customer = customerDAO.getCustomerByCIF(finMain.getLovDescCustCIF(), "");
+			getFinanceDetail().getCustomerDetails().setCustomer(customer);
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finMain.getLovDescCustCIF();
@@ -573,7 +592,7 @@ public class FinanceDataValidation {
 		}
 
 		//Validate Finance Type
-		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(finMain.getFinType(), "");
+		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(finMain.getFinType(), "_AView");
 		if (financeType == null) {
 			Promotion promotion = promotionService.getApprovedPromotionById(finMain.getFinType(),
 					FinanceConstants.MODULEID_PROMOTION, true);
@@ -582,7 +601,7 @@ public class FinanceDataValidation {
 			valueParm[0] = finMain.getFinType();
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90202", valueParm)));
 			} else {
-				financeType = financeTypeDAO.getFinanceTypeByID(promotion.getFinType(), "");
+				financeType = financeTypeDAO.getFinanceTypeByID(promotion.getFinType(), "_AView");
 				if (financeType != null) {
 					financeType.setFinTypeFeesList(promotion.getFinTypeFeesList());
 					financeType.setFInTypeFromPromotiion(promotion);
@@ -1435,7 +1454,7 @@ public class FinanceDataValidation {
 		}
 
 		//Validate Finance Type
-		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(finMain.getFinType(), "");
+		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(finMain.getFinType(), "_AView");
 		if (financeType == null) {
 			Promotion promotion = promotionService.getApprovedPromotionById(finMain.getFinType(),
 					FinanceConstants.MODULEID_PROMOTION, true);
@@ -1444,7 +1463,7 @@ public class FinanceDataValidation {
 				valueParm[0] = finMain.getFinType();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90202", valueParm)));
 			} else {
-				financeType = financeTypeDAO.getFinanceTypeByID(promotion.getFinType(), "");
+				financeType = financeTypeDAO.getFinanceTypeByID(promotion.getFinType(), "_AView");
 				if (financeType != null) {
 					financeType.setFinTypeFeesList(promotion.getFinTypeFeesList());
 					financeType.setFInTypeFromPromotiion(promotion);
@@ -1571,30 +1590,34 @@ public class FinanceDataValidation {
 
 		finMain.setDownPayment(finMain.getDownPayBank().add(finMain.getDownPaySupl()));
 
-		// DownPayBank
-		if (finMain.getDownPayBank().compareTo(zeroAmount) != 0 || finMain.getDownPaySupl().compareTo(zeroAmount) != 0) {
-			if (!financeType.isFinIsDwPayRequired()) {
-				String[] valueParm = new String[3];
-				valueParm[0] = "Down pay bank";
-				valueParm[1] = "Supplier";
-				valueParm[2] = finMain.getFinType();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90203", valueParm)));
-			} else {
-				//Downpayment to Bank
-				if (finMain.getDownPayBank().compareTo(BigDecimal.ZERO) < 0) {
-					String[] valueParm = new String[1];
-					valueParm[0] = String.valueOf(finMain.getDownPayBank().doubleValue());
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90130", valueParm)));
+		// validate downpay Bank and supplier
+		if(financeType.isFinIsDwPayRequired()) {
+			if(getFinanceDetail() != null) {
+				setDownpaymentRulePercentage(financeType, finMain);
+				BigDecimal reqDwnPay = getPercentageValue(finMain.getFinAmount(), finMain.getMinDownPayPerc());
+				BigDecimal downPayment = finMain.getDownPayBank().add(finMain.getDownPaySupl());
+
+				if (downPayment.compareTo(finMain.getFinAmount()) >= 0 ) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "Sum of Bank & Supplier Down payments";
+					valueParm[1] = String.valueOf(reqDwnPay);
+					valueParm[2] = String.valueOf(finMain.getFinAmount());
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30567", valueParm)));
 				}
 
-				//Downpayment to Supplier
-				if (finMain.getDownPaySupl().compareTo(BigDecimal.ZERO) < 0) {
-					String[] valueParm = new String[1];
-					valueParm[0] = String.valueOf(finMain.getDownPaySupl().doubleValue());
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90131", valueParm)));
+				if (downPayment.compareTo(reqDwnPay) < 0 ) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Sum of Bank & Supplier Down payments";
+					valueParm[1] = String.valueOf(reqDwnPay);
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30569", valueParm)));
 				}
-
 			}
+		} else if(finMain.getDownPayBank().compareTo(zeroAmount) != 0 || finMain.getDownPaySupl().compareTo(zeroAmount) != 0) {
+			String[] valueParm = new String[3];
+			valueParm[0] = "Down pay bank";
+			valueParm[1] = "Supplier";
+			valueParm[2] = finMain.getFinType();
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90203", valueParm)));
 		}
 
 		//RETURN IF ANY ERROR AFTER VERY BASIC VALIDATION
@@ -1637,6 +1660,43 @@ public class FinanceDataValidation {
 	 * VALIDATE FINANCE GRACE DETAILS
 	 * ================================================================================================================
 	 */
+
+	private BigDecimal getPercentageValue(BigDecimal finAmount, BigDecimal minDownPayPerc) {
+		BigDecimal returnAmount = BigDecimal.ZERO;
+
+		if (finAmount != null) {
+			returnAmount = (finAmount.multiply(unFormateAmount(minDownPayPerc,2).divide(
+					new BigDecimal(100)))).divide(new BigDecimal(100),RoundingMode.HALF_DOWN);
+		}
+		return returnAmount;
+	}
+	
+	public static BigDecimal unFormateAmount(BigDecimal amount, int dec) {
+		if (amount == null) {
+			return BigDecimal.ZERO;
+		}
+		BigInteger bigInteger = amount.multiply(BigDecimal.valueOf(Math.pow(10, dec))).toBigInteger();
+		return new BigDecimal(bigInteger);
+	}
+
+	private void setDownpaymentRulePercentage(FinanceType finType, FinanceMain finMain) {
+		if (finType.getDownPayRule() != 0 && finType.getDownPayRule() != Long.MIN_VALUE 
+				&& StringUtils.isNotEmpty(finType.getDownPayRuleDesc())) {
+
+			CustomerEligibilityCheck customerEligibilityCheck = prepareCustElgDetail(false).getCustomerEligibilityCheck();
+			String sqlRule = ruleService.getAmountRule(finType.getDownPayRuleDesc(), RuleConstants.MODULE_DOWNPAYRULE,
+					RuleConstants.EVENT_DOWNPAYRULE);
+			BigDecimal downpayPercentage = BigDecimal.ZERO;
+			if (StringUtils.isNotEmpty(sqlRule)) {
+				HashMap<String, Object> fieldsAndValues = customerEligibilityCheck.getDeclaredFieldValues();
+				downpayPercentage = (BigDecimal) ruleExecutionUtil.executeRule(sqlRule, fieldsAndValues, finMain.getFinCcy(), 
+						RuleReturnType.DECIMAL);
+			}
+			finMain.setMinDownPayPerc(downpayPercentage);
+		} else {
+			finMain.setMinDownPayPerc(BigDecimal.ZERO);
+		}
+	}
 
 	private List<ErrorDetails> graceValidation(String vldGroup, FinScheduleData finScheduleData, boolean isAPICall) {
 		List<ErrorDetails> errorDetails = finScheduleData.getErrorDetails();
@@ -3442,6 +3502,169 @@ public class FinanceDataValidation {
 		return value.setScale(4, RoundingMode.HALF_DOWN);
 	}
 
+	/**
+	 * Method for Preparation of Eligibility Data
+	 * 
+	 * @param detail
+	 * @return
+	 */
+	public FinanceDetail prepareCustElgDetail(Boolean isLoadProcess) {
+		FinanceDetail detail = getFinanceDetail();
+		if(detail != null) {
+			//Stop Resetting data multiple times on Load Processing on Record or Double click the record
+			if (isLoadProcess && getFinanceDetail().getCustomerEligibilityCheck() != null) {
+				return detail;
+			}
+
+			FinanceMain financeMain = detail.getFinScheduleData().getFinanceMain();
+			Customer customer = detail.getCustomerDetails().getCustomer();
+			//Current Finance Monthly Installment Calculation
+			BigDecimal totalRepayAmount = financeMain.getTotalRepayAmt();
+			BigDecimal curFinRepayAmt = BigDecimal.ZERO;
+			int installmentMnts = DateUtility.getMonthsBetween(financeMain.getFinStartDate(),
+					financeMain.getMaturityDate(), false);
+			if (installmentMnts > 0) {
+				curFinRepayAmt = totalRepayAmount.divide(new BigDecimal(installmentMnts), 0, RoundingMode.HALF_DOWN);
+			}
+			int months = DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate());
+
+			//Customer Data Fetching
+			if (customer == null) {
+				if (StringUtils.isNotBlank(financeMain.getLovDescCustCIF())) {
+					customer = customerDAO.getCustomerByCIF(financeMain.getLovDescCustCIF(), "");
+				}
+				customer = customerDAO.getCustomerByID(customer.getCustID(), "_AView");
+				detail.getCustomerDetails().setCustomer(customer);
+			}
+
+			//Get Customer Employee Designation
+			String custEmpDesg = "";
+			String custEmpSector = "";
+			String custEmpAlocType = "";
+			String custOtherIncome = "";
+			BigDecimal custOtherIncomeAmt = BigDecimal.ZERO;
+			String custNationality = "";
+			String custEmpSts = "";
+			String custSector = "";
+			String custCtgCode = "";
+			String custEmpType = "";
+			BigDecimal custYearOfExp = BigDecimal.ZERO;
+			if (detail.getCustomerDetails() != null) {
+				if (detail.getCustomerDetails().getCustEmployeeDetail() != null) {
+					custEmpDesg = StringUtils.trimToEmpty(detail.getCustomerDetails().getCustEmployeeDetail().getEmpDesg());
+					custEmpSector = StringUtils.trimToEmpty(detail.getCustomerDetails().getCustEmployeeDetail()
+							.getEmpSector());
+					custEmpAlocType = StringUtils.trimToEmpty(detail.getCustomerDetails().getCustEmployeeDetail()
+							.getEmpAlocType());
+					custOtherIncome = StringUtils.trimToEmpty(detail.getCustomerDetails().getCustEmployeeDetail()
+							.getOtherIncome());
+					custOtherIncomeAmt = detail.getCustomerDetails().getCustEmployeeDetail().getAdditionalIncome();
+					int custMonthsofExp = DateUtility.getMonthsBetween(detail.getCustomerDetails().getCustEmployeeDetail()
+							.getEmpFrom(), DateUtility.getAppDate());
+					custYearOfExp = BigDecimal.valueOf(custMonthsofExp).divide(BigDecimal.valueOf(12), 2,
+							RoundingMode.CEILING);
+				}
+				if (ImplementationConstants.ALLOW_MULTIPLE_EMPLOYMENTS
+						&& detail.getCustomerDetails().getEmploymentDetailsList() != null
+						&& !detail.getCustomerDetails().getEmploymentDetailsList().isEmpty()) {
+					Date custEmpFromDate = null;
+					Date custEmpToDate = null;
+					boolean isCurrentEmp = false;
+					for (CustomerEmploymentDetail custEmpDetail : detail.getCustomerDetails().getEmploymentDetailsList()) {
+						if (custEmpDetail.isCurrentEmployer()) {
+							isCurrentEmp = true;
+							custEmpDesg = custEmpDetail.getCustEmpDesg();
+							custEmpFromDate = custEmpDetail.getCustEmpFrom();
+							custEmpType = custEmpDetail.getCustEmpType();
+						} else {
+							if (custEmpFromDate == null) {
+								custEmpFromDate = custEmpDetail.getCustEmpFrom();
+							} else {
+								if (custEmpDetail.getCustEmpFrom() != null
+										&& custEmpDetail.getCustEmpFrom().compareTo(custEmpFromDate) < 0) {
+									custEmpFromDate = custEmpDetail.getCustEmpFrom();
+								}
+							}
+							if (!isCurrentEmp) {
+								if (custEmpToDate == null) {
+									custEmpToDate = custEmpDetail.getCustEmpTo();
+									custEmpDesg = custEmpDetail.getCustEmpDesg();
+								} else {
+									if (custEmpDetail.getCustEmpTo() != null
+											&& custEmpDetail.getCustEmpTo().compareTo(custEmpToDate) > 0) {
+										custEmpToDate = custEmpDetail.getCustEmpTo();
+										custEmpDesg = custEmpDetail.getCustEmpDesg();
+									}
+								}
+							}
+						}
+						if (custEmpFromDate != null) {
+							int custMonthsofExp = DateUtility.getMonthsBetween(custEmpFromDate, DateUtility.getAppDate());
+							custYearOfExp = BigDecimal.valueOf(custMonthsofExp).divide(BigDecimal.valueOf(12), 2,
+									RoundingMode.CEILING);
+						}
+					}
+				}
+				custNationality = StringUtils.trimToEmpty(detail.getCustomerDetails().getCustomer().getCustNationality());
+				custEmpSts = StringUtils.trimToEmpty(detail.getCustomerDetails().getCustomer().getCustEmpSts());
+				custSector = StringUtils.trimToEmpty(detail.getCustomerDetails().getCustomer().getCustSector());
+				custCtgCode = StringUtils.trimToEmpty(detail.getCustomerDetails().getCustomer().getCustCtgCode());
+			}
+
+			// Set Customer Data to check the eligibility
+			detail.setCustomerEligibilityCheck(getFinanceDetailService().getCustEligibilityDetail(customer,
+					detail.getFinScheduleData().getFinanceType().getFinCategory(), financeMain.getFinReference(),
+					financeMain.getFinCcy(), curFinRepayAmt, months, null, detail.getJountAccountDetailList()));
+
+			detail.getCustomerEligibilityCheck().setReqFinAmount(financeMain.getFinAmount());
+			detail.getCustomerEligibilityCheck().setDisbursedAmount(
+					financeMain.getFinAmount().subtract(financeMain.getDownPayment()));
+			detail.getCustomerEligibilityCheck().setReqFinType(financeMain.getFinType());
+			detail.getCustomerEligibilityCheck().setFinProfitRate(financeMain.getEffectiveRateOfReturn());
+			detail.getCustomerEligibilityCheck().setDownpayBank(financeMain.getDownPayBank());
+			detail.getCustomerEligibilityCheck().setDownpaySupl(financeMain.getDownPaySupl());
+			detail.getCustomerEligibilityCheck().setStepFinance(financeMain.isStepFinance());
+			detail.getCustomerEligibilityCheck().setFinRepayMethod(financeMain.getFinRepayMethod());
+			detail.getCustomerEligibilityCheck().setAlwDPSP(
+					detail.getFinScheduleData().getFinanceType().isAllowDownpayPgm());
+			detail.getCustomerEligibilityCheck().setAlwPlannedDefer(financeMain.getPlanDeferCount() > 0 ? true : false);
+			detail.getCustomerEligibilityCheck().setInstallmentAmount(financeMain.getFirstRepay());
+			detail.getCustomerEligibilityCheck().setSalariedCustomer(customer.isSalariedCustomer());
+			detail.getCustomerEligibilityCheck().setCustTotalIncome(customer.getCustTotalIncome());
+			detail.getCustomerEligibilityCheck().setCustOtherIncome(custOtherIncome);
+			detail.getCustomerEligibilityCheck().setCustOtherIncomeAmt(custOtherIncomeAmt);
+			detail.getCustomerEligibilityCheck().setCustEmpDesg(custEmpDesg);
+			detail.getCustomerEligibilityCheck().setCustEmpType(custEmpType);
+			detail.getCustomerEligibilityCheck().setCustEmpSector(custEmpSector);
+			detail.getCustomerEligibilityCheck().setCustEmpAloc(custEmpAlocType);
+			detail.getCustomerEligibilityCheck().setCustNationality(custNationality);
+			detail.getCustomerEligibilityCheck().setCustEmpSts(custEmpSts);
+			detail.getCustomerEligibilityCheck().setCustYearOfExp(custYearOfExp);
+			detail.getCustomerEligibilityCheck().setCustSector(custSector);
+			detail.getCustomerEligibilityCheck().setCustCtgCode(custCtgCode);
+			detail.getCustomerEligibilityCheck().setGraceTenure(
+					DateUtility.getYearsBetween(financeMain.getFinStartDate(), financeMain.getGrcPeriodEndDate()));
+
+			detail.getCustomerEligibilityCheck().setReqFinCcy(financeMain.getFinCcy());
+			detail.getCustomerEligibilityCheck().setNoOfTerms(financeMain.getNumberOfTerms());
+
+			if (detail.getCustomerDetails().getCustEmployeeDetail() != null) {
+				detail.getCustomerEligibilityCheck().setCustMonthlyIncome(
+						detail.getCustomerDetails().getCustEmployeeDetail().getMonthlyIncome());
+				detail.getCustomerEligibilityCheck().setCustEmpName(
+						String.valueOf(detail.getCustomerDetails().getCustEmployeeDetail().getEmpName()));
+
+			}
+
+			detail.getCustomerEligibilityCheck().setReqFinPurpose(financeMain.getFinPurpose());
+			financeMain.setCustDSR(detail.getCustomerEligibilityCheck().getDSCR());
+			detail.getCustomerEligibilityCheck().setAgreeName(financeMain.getAgreeName());
+			detail.getFinScheduleData().setFinanceMain(financeMain);
+			setFinanceDetail(detail);
+		}
+		return getFinanceDetail();
+	}
+	
 	/*
 	 * ################################################################################################################
 	 * DEFAULT SETTER GETTER METHODS
@@ -3529,6 +3752,15 @@ public class FinanceDataValidation {
 	public void setScriptValidationService(ScriptValidationService scriptValidationService) {
 		this.scriptValidationService = scriptValidationService;
 	}
+	
+	public void setRuleService(RuleService ruleService) {
+		this.ruleService = ruleService;
+	}
+	
+	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
+		this.ruleExecutionUtil = ruleExecutionUtil;
+	}
+
 	public void setPromotionService(PromotionService promotionService) {
 		this.promotionService = promotionService;
 	}

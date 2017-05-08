@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.service.finance.impl.FinanceDataDefaulting;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.PennantConstants;
@@ -54,6 +56,14 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 			}
 
 			// validate finance data
+			if(!StringUtils.isBlank(finScheduleData.getFinanceMain().getLovDescCustCIF())) {
+				FinanceDetail financeDetail = new FinanceDetail();
+				financeDetail.setFinScheduleData(finScheduleData);
+				CustomerDetails customerDetails = new CustomerDetails();
+				customerDetails.setCustomer(null);
+				financeDetail.setCustomerDetails(customerDetails);
+				financeDataValidation.setFinanceDetail(financeDetail);
+			}
 			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_SCHD, finScheduleData, true);
 
 			if(!finScheduleData.getErrorDetails().isEmpty()) {
@@ -72,6 +82,8 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return response;
+		} finally {
+			financeDataValidation.setFinanceDetail(null);
 		}
 
 		logger.debug("Leaving");

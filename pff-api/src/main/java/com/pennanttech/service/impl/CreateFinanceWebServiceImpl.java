@@ -55,49 +55,59 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	public FinanceDetail createFinance(FinanceDetail financeDetail) {
 		logger.debug("Entering");
 
-		// do Basic mandatory validations using hibernate validator
-		validationUtility.validate(financeDetail, CreateFinanceGroup.class);
+		try {
+			// do Basic mandatory validations using hibernate validator
+			validationUtility.validate(financeDetail, CreateFinanceGroup.class);
 
-		// validate and Data defaulting
-		financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData());
+			// validate and Data defaulting
+			financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData());
 
-		if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
-			return getErrorMessage(financeDetail.getFinScheduleData());
-		}
+			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
+				return getErrorMessage(financeDetail.getFinScheduleData());
+			}
 
-		// validate finance data
-		financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData(),
-				true);
+			// validate finance data
+			financeDataValidation.setFinanceDetail(financeDetail);
+			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData(),
+					true);
 
-		if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
-			return getErrorMessage(financeDetail.getFinScheduleData());
-		}
+			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
+				return getErrorMessage(financeDetail.getFinScheduleData());
+			}
 
-		//validate FinanceDetail Validations
-		financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
+			//validate FinanceDetail Validations
+			financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
 
-		if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
-			return getErrorMessage(financeDetail.getFinScheduleData());
-		}
+			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
+				return getErrorMessage(financeDetail.getFinScheduleData());
+			}
 
-		// call doCreateFinance method after successful validations
-		FinanceDetail financeDetailRes = null;
-		financeDetailRes = createFinanceController.doCreateFinance(financeDetail, false);
+			// call doCreateFinance method after successful validations
+			FinanceDetail financeDetailRes = null;
+			financeDetailRes = createFinanceController.doCreateFinance(financeDetail, false);
 
-		if (financeDetailRes != null) {
-			if (financeDetailRes.getFinScheduleData() != null) {
-				for (ErrorDetails errorDetails : financeDetailRes.getFinScheduleData().getErrorDetails()) {
-					FinanceDetail response = new FinanceDetail();
-					doEmptyResponseObject(response);
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
-							errorDetails.getError()));
-					return response;
+			if (financeDetailRes != null) {
+				if (financeDetailRes.getFinScheduleData() != null) {
+					for (ErrorDetails errorDetails : financeDetailRes.getFinScheduleData().getErrorDetails()) {
+						FinanceDetail response = new FinanceDetail();
+						doEmptyResponseObject(response);
+						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
+								errorDetails.getError()));
+						return response;
+					}
 				}
 			}
+			logger.debug("Leaving");
+			return financeDetailRes;
+		} catch(Exception e) {
+			logger.error("Exception", e);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
+		} finally {
+			financeDataValidation.setFinanceDetail(null);
 		}
-
-		logger.debug("Leaving");
-		return financeDetailRes;
 	}
 
 	/**
