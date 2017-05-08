@@ -219,7 +219,7 @@ public class FinAdvancePaymentsCtrl {
 				Date groupDate = groupFinDisbursement.getDisbDate();
 
 				//condition to not allow under servicing record to be displayed in disbursement queue.
-				if (groupDisbAmount.compareTo(BigDecimal.ZERO) == 0 || groupDate == null) {
+				if (groupDate == null) {
 					continue;
 				}
 
