@@ -1524,7 +1524,7 @@ FROM          Postings T1 INNER JOIN
 		
 		</sql>
 	</changeSet>
-		<changeSet id="113" author="chaitanya.ch">
+		<changeSet id="114" author="chaitanya.ch">
 		<sql>
 				
         Insert into BMTAmountCodes 
