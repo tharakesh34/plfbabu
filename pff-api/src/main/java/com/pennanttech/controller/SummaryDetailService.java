@@ -181,6 +181,19 @@ public class SummaryDetailService {
 							}
 						}
 					}
+					int dateCount = 0;
+					for (Date date : planEMIHDates) {
+						if (DateUtility.getYear(detail.getPlanEMIHDate()) == DateUtility.getYear(date)) {
+							dateCount++;
+						}
+					}
+					if (dateCount > finScheduleData.getFinanceMain().getPlanEMIHMaxPerYear()) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "Planned EMI Holidays";
+						valueParm[1] = String.valueOf(finScheduleData.getFinanceMain().getPlanEMIHMaxPerYear())+ " per Year";
+						finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30570", valueParm)));
+						return;
+					}
 				}
 			}
 		}

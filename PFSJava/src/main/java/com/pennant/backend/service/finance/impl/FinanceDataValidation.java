@@ -1990,18 +1990,10 @@ public class FinanceDataValidation {
 				return errorDetails;
 			}
 			if (finMain.getPlanEMIHMaxPerYear() <= 0) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "planEMIHMaxPerYear";
-				valueParm[1] = "1";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30507", valueParm)));
-				return errorDetails;
+				finMain.setPlanEMIHMaxPerYear(financeType.getPlanEMIHMaxPerYear());
 			}
 			if (finMain.getPlanEMIHMax() <= 0) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "planEMIHMax";
-				valueParm[1] = "1";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30507", valueParm)));
-				return errorDetails;
+				finMain.setPlanEMIHMax(financeType.getPlanEMIHMax());
 			}
 			// planEMIHMethod
 			if (!StringUtils.equals(finMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)
@@ -2053,10 +2045,10 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
 					return errorDetails;
 				} else {
-					if (finScheduleData.getApiPlanEMIHmonths().size() > finMain.getPlanEMIHMax()) {
+					if (finScheduleData.getApiPlanEMIHmonths().size() > finMain.getPlanEMIHMaxPerYear()) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "PlanEMIHmonths";
-						valueParm[1] = "PlanEMIHMax";
+						valueParm[1] = "PlanEMIHMaxPerYear";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90220", valueParm)));
 						return errorDetails;
 					}
