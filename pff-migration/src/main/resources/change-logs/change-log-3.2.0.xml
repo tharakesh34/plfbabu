@@ -26,4 +26,62 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="02" author="Durgaprasad G">
+		<addColumn tableName="PRESENTMENTDETAILS">
+			<column name="ErrorCode" type="varchar(10)" />
+			<column name="ErrorDesc" type="varchar(250)" />
+		</addColumn>
+	</changeSet>
+	
+		<changeSet id="03" author="Durgaprasad G">
+		<addColumn tableName="PRESENTMENTDETAILS_TEMP">
+			<column name="ErrorCode" type="varchar(10)" />
+			<column name="ErrorDesc" type="varchar(250)" />
+		</addColumn>
+	</changeSet>
+	
+	
+<changeSet id="04" author="Durgaprasad g">
+		<createView viewName="PRESENTMENTDETAILS_AVIEW" replaceIfExists="true">
+  SELECT		T1.ID, T1.PRESENTMENTID, T1.PRESENTMENTREF, T1.FINREFERENCE, T1.SCHDATE, T1.MANDATEID, T1.SCHAMTDUE, T1.SCHPRIDUE, T1.SCHPFTDUE, T1.SCHFEEDUE, T1.SCHINSDUE,
+							T1.schPenaltyDue, T1.advanceAmt, T1.excessID, T1.adviseAmt, T1.presentmentAmt, T1.ExcludeReason, T1. TDSAMOUNT, T1.bounceID, T1.emiNo, T1.status,
+							T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.MANDATETYPE,T3.FINTYPE,T4.FINTYPEDESC,
+      						T5.CUSTSHRTNAME CUSTOMERNAME  ,T1.ReceiptID, T1.ECSRETURN, T1.ErrorCode, T1.ErrorDesc 
+				FROM 		PRESENTMENTDETAILS    T1  INNER JOIN 
+							MANDATES  T2 ON T1.MANDATEID = T2.MANDATEID INNER JOIN 
+							FINANCEMAIN T3 ON T1.FINREFERENCE = T3.FINREFERENCE INNER JOIN 
+							RMTFINANCETYPES T4 ON T3.FINTYPE  = T4.FINTYPE INNER JOIN 
+							CUSTOMERS T5 ON T5.CUSTID  = T3.CUSTID
+							
+	</createView>
+</changeSet>							
+
+<changeSet id="05" author="Durgaprasad g">
+		<createView viewName="PRESENTMENTDETAILS_VIEW" replaceIfExists="true">
+			SELECT		T1.ID, T1.PRESENTMENTID, T1.PRESENTMENTREF, T1.FINREFERENCE, T1.SCHDATE, T1.MANDATEID, T1.SCHAMTDUE, T1.SCHPRIDUE, T1.SCHPFTDUE, T1.SCHFEEDUE, T1.SCHINSDUE,
+										T1.schPenaltyDue, T1.advanceAmt, T1.excessID, T1.adviseAmt, T1.presentmentAmt, T1.ExcludeReason, T1. TDSAMOUNT, T1.bounceID, T1.emiNo, T1.status,
+										T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+										T2.MANDATETYPE,T3.FINTYPE,T4.FINTYPEDESC, T5.CUSTSHRTNAME CUSTOMERNAME, T1.ReceiptID ,T1.ECSRETURN,
+										T1.ErrorCode, T1.ErrorDesc 
+							FROM 		PRESENTMENTDETAILS_TEMP  T1  INNER JOIN 
+										MANDATES  T2 ON T1.MANDATEID = T2.MANDATEID INNER JOIN 
+										FINANCEMAIN T3 ON T1.FINREFERENCE = T3.FINREFERENCE INNER JOIN 
+										RMTFINANCETYPES T4 ON T3.FINTYPE  = T4.FINTYPE INNER JOIN 
+										CUSTOMERS T5 ON T5.CUSTID  = T3.CUSTID
+			UNION ALL
+
+			SELECT		T1.ID, T1.PRESENTMENTID, T1.PRESENTMENTREF, T1.FINREFERENCE, T1.SCHDATE, T1.MANDATEID, T1.SCHAMTDUE, T1.SCHPRIDUE, T1.SCHPFTDUE, T1.SCHFEEDUE, T1.SCHINSDUE,
+										T1.schPenaltyDue, T1.advanceAmt, T1.excessID, T1.adviseAmt, T1.presentmentAmt, T1.ExcludeReason, T1. TDSAMOUNT, T1.bounceID, T1.emiNo, T1.status,
+										T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+										T2.MANDATETYPE,T3.FINTYPE,T4.FINTYPEDESC, T5.CUSTSHRTNAME CUSTOMERNAME , T1.ReceiptID ,T1.ECSRETURN,
+										T1.ErrorCode, T1.ErrorDesc 
+							FROM 		PRESENTMENTDETAILS    T1  INNER JOIN 
+										MANDATES  T2 ON T1.MANDATEID = T2.MANDATEID INNER JOIN 
+										FINANCEMAIN T3 ON T1.FINREFERENCE = T3.FINREFERENCE INNER JOIN 
+										RMTFINANCETYPES T4 ON T3.FINTYPE  = T4.FINTYPE INNER JOIN 
+										CUSTOMERS T5 ON T5.CUSTID  = T3.CUSTID
+			WHERE     NOT EXISTS (SELECT 1 FROM PRESENTMENTDETAILS_TEMP WHERE ID = T1.ID)
+	</createView>
+</changeSet>	
+	
 </databaseChangeLog>
