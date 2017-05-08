@@ -1387,7 +1387,7 @@ public class ReceiptCalculator implements Serializable {
 					curSchd.getFeeSchd() == null ? BigDecimal.ZERO : curSchd.getFeeSchd()));
 
 			// Overdue Principal and Profit
-			if (DateUtility.compare(schdDate, curBussniessDate) < 0) {
+			if (DateUtility.compare(schdDate, curBussniessDate) <= 0) {
 				cpzTillNow = cpzTillNow.add(curSchd.getCpzAmount());
 				repayMain.setOverduePrincipal(repayMain.getOverduePrincipal().add(
 						curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid())));
@@ -1482,7 +1482,7 @@ public class ReceiptCalculator implements Serializable {
 					for (int j = 0; j < feeSchdList.size(); j++) {
 						
 						FinFeeScheduleDetail feeSchd = feeSchdList.get(j);
-						if (DateUtility.compare(feeSchd.getSchDate(), curBussniessDate) < 0 || 
+						if (DateUtility.compare(feeSchd.getSchDate(), curBussniessDate) <= 0 || 
 								StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 							pastFeeAmount = pastFeeAmount.add(feeSchd.getSchAmount().subtract(feeSchd.getPaidAmount()));
 						}else{
@@ -1514,7 +1514,7 @@ public class ReceiptCalculator implements Serializable {
 					for (int j = 0; j < insSchdList.size(); j++) {
 						
 						FinSchFrqInsurance insSchd = insSchdList.get(j);
-						if (DateUtility.compare(insSchd.getInsSchDate(), curBussniessDate) < 0 ||
+						if (DateUtility.compare(insSchd.getInsSchDate(), curBussniessDate) <= 0 ||
 								StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 							pastInsAmount = pastInsAmount.add(insSchd.getAmount().subtract(insSchd.getInsurancePaid()));
 						}else{

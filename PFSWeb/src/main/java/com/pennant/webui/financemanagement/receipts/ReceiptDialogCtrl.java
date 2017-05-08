@@ -2611,9 +2611,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			
 		}else{
 			readOnlyComponent(true, this.excessAdjustTo);
-			this.excessAdjustTo.setSelectedIndex(0);
 			readOnlyComponent(true, this.effScheduleMethod);
-			this.effScheduleMethod.setSelectedIndex(0);
+			if(isUserAction){
+				this.excessAdjustTo.setSelectedIndex(0);
+				this.effScheduleMethod.setSelectedIndex(0);
+			}
 		}
 		
 		logger.debug("Leaving");
@@ -4023,6 +4025,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if(remBal.compareTo(BigDecimal.ZERO) < 0){
 			MessageUtil.showErrorMessage(Labels.getLabel("label_ReceiptDialog_Valid_InsufficientAmount"));
 			return false;
+		}
+		
+		if(!isCalProcess){
+			return true;
 		}
 		
 		// No excess amount validation on partial Settlement

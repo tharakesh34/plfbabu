@@ -483,6 +483,8 @@ public class ScheduleCalculator {
 		if(ImplementationConstants.EARLYPAY_ADJ_PRI){
 			if(earlyPayOnNextSchdl != null){
 				finMain.setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI);
+			}else{
+				finMain.setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI_PFT);
 			}
 		}
 
