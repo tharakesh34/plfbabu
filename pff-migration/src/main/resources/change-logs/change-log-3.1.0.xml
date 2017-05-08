@@ -284,7 +284,19 @@ FROM    	Mandates T1 INNER JOIN
 		</createView>
 	
 	</changeSet>
-	<changeSet id="18" author="Irfan">
+	<changeSet id="18" author="Irfan" dbms="mssql">
+	<sql>
+	Update MANUALADVISE set ValueDate='05-MAY-17'; 
+	Update MANUALADVISE set PostDate='05-MAY-17';
+	Update MANUALADVISE_TEMP set ValueDate='05-MAY-17';  
+	Update MANUALADVISE_TEMP set PostDate='05-MAY-17';
+	</sql>
+	<addNotNullConstraint tableName="MANUALADVISE" columnName="ValueDate" columnDataType="datetime"/>
+	<addNotNullConstraint tableName="MANUALADVISE" columnName="PostDate" columnDataType="datetime"/>
+	<addNotNullConstraint tableName="MANUALADVISE_TEMP" columnName="ValueDate" columnDataType="datetime"/>
+	<addNotNullConstraint tableName="MANUALADVISE_TEMP" columnName="PostDate" columnDataType="datetime"/>
+	</changeSet>
+	<changeSet id="18" author="Irfan" dbms="oracle">
 	<sql>
 	Update MANUALADVISE set ValueDate='05-MAY-17'; 
 	Update MANUALADVISE set PostDate='05-MAY-17';

@@ -252,7 +252,7 @@
 			update Financemain       set DueBucket=0;
 			update FinanceMain_Temp  set DueBucket=0;
 			update FinanceMain_PA    set DueBucket=0;
-			updateWIFFinanceMain     set DueBucket=0;
+			update WIFFinanceMain     set DueBucket=0;
 			update REJECTFINANCEMAIN set DueBucket=0;
 		</sql>
 	</changeSet>
