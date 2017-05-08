@@ -955,6 +955,7 @@ public class ScheduleCalculator {
 			}
 
 			finMain.setRecalFromDate(curSchd.getSchDate());
+			finMain.setEventFromDate(finMain.getGrcPeriodEndDate());
 			finMain.setRecalSchdMethod(curSchd.getSchdMethod());
 			finMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 			break;
@@ -5905,7 +5906,7 @@ public class ScheduleCalculator {
 			Collections.sort(baseRateCodes);
 			boolean isBaseRateFound = false;
 			for (int j = 0; j < baseRateCodes.size(); j++) {
-				if (StringUtils.equals(baseRateCodes.get(0), curSchd.getBaseRate())) {
+				if (StringUtils.equals(baseRateCodes.get(j), curSchd.getBaseRate())) {
 					isBaseRateFound = true;
 					break;
 				}
@@ -5923,7 +5924,7 @@ public class ScheduleCalculator {
 			Collections.sort(specialRateCodes);
 			boolean isSpecialRateFound = false;
 			for (int j = 0; j < specialRateCodes.size(); j++) {
-				if (StringUtils.equals(specialRateCodes.get(0), curSchd.getSplRate())) {
+				if (StringUtils.equals(specialRateCodes.get(j), curSchd.getSplRate())) {
 					isSpecialRateFound = true;
 					break;
 				}
