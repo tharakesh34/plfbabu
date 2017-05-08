@@ -896,10 +896,7 @@ public class FinMainReportData implements Serializable{
 		reportData.setFinCcy(financeMain.getFinCcy());
 		reportData.setProfitDaysBasis(financeMain.getProfitDaysBasis());
 		//###Release PFFV1.0.6 - Changed the customer short name to Full Name
-		reportData.setCustCIF(financeMain.getLovDescCustCIF()
-				+ "-"
-				+ PennantApplicationUtil.getFullName(financeMain.getLovDescCustFName(),
-						financeMain.getLovDescCustLName(), financeMain.getLovDescCustShrtName()));
+		reportData.setCustCIF(financeMain.getLovDescCustCIF());
 		reportData.setCustShrtName(financeMain.getLovDescCustShrtName());
 		reportData.setFinBranch(financeMain.getFinBranch() + "-" + financeMain.getLovDescFinBranchName());
 		reportData.setFinStartDate(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
