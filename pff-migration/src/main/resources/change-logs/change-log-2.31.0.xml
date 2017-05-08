@@ -2642,6 +2642,16 @@ FROM          Postings T1 INNER JOIN
 		
 		</sql>
 	</changeSet>
+	<changeSet id="79" author="chaitanya.ch">
+		<sql>
+				
+      Delete from BMTAmountCodes where AllowedEvent = 'DEFRPY';
+      Insert into BMTAmountCodes 
+      values( 'DEFRPY', 0, 'ae_cpzChg', 'Capitalization Changed now', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0  )  ;
+			
+		
+		</sql>
+	</changeSet>
 	
 			
 </databaseChangeLog>
