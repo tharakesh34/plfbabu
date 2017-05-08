@@ -149,7 +149,15 @@ SELECT  T1.PCCountry, T2.CountryDesc LovDescPCCountryName, T1.PCProvince, T3.CPP
 			update Postings set	APPVALUEDATE= POSTDATE;
 		</sql>
 	</changeSet>
-	<changeSet id="10.1" author="Jayant">
+	<changeSet id="10.1" author="Jayant" dbms="mssql">
+		<sql>
+			update Postings set APPDATE = (Select GETDATE()  sysparmvalue from smtparameters 
+			where SYSPARMCODE='APP_DATE') where APPDATE is null;
+			update Postings set APPVALUEDATE = (Select GETDATE()  sysparmvalue from smtparameters 
+			where SYSPARMCODE='APP_VALUEDATE') where APPVALUEDATE is null;
+		</sql>
+	</changeSet>
+	<changeSet id="10.1" author="Jayant" dbms="oracle">
 		<sql>
 			update Postings set APPDATE = (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters 
 			where SYSPARMCODE='APP_DATE') where APPDATE is null;

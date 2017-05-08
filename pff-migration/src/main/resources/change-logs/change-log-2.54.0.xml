@@ -3318,7 +3318,31 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
 		</createView>
 		</changeSet>
 		
-<changeSet id="151" author="Srikanth">
+		
+		
+<changeSet id="151" author="Srikanth" dbms="mssql">
+		<createView viewName="RPT_SOA_FINSMRY_VIEW" replaceIfExists="true">
+		Select FinReference,comp,due,Receipt, C.ccyMinorccyunits,ccyEditField,
+  (Select GETDATE()  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')APP_DATE from (
+  Select FinReference,finccy,'Instalment Amount' comp,coalesce((TdSchdPft+TdSchdPri),0) due,coalesce((TdSchdPriPaid+TdSchdPftPaid),0) Receipt 
+  from FinPftDetails union all
+	Select FinReference,finccy,'Principal Component' comp,	coalesce(TdSchdPri,0) due,coalesce(TdSchdPriPaid,0) Receipt 
+  from FinPftDetails  union all
+	Select FinReference,finccy,'Interest Component' comp,coalesce(TdSchdPft,0) due,coalesce(TdSchdPftPaid,0)Receipt 
+  from FinPftDetails  union all
+	Select FinReference,finccy,'Late Payment Penalty' comp,coalesce(PenaltyDue,0) due,	coalesce(PenaltyPaid,0) Receipt 
+  from FinPftDetails union all
+	Select FinReference,finccy,'Bounce Charges' comp,coalesce(BounceAmt,0) due,coalesce(BounceAmtPaid,0) Receipt 
+  from FinPftDetails union all
+  Select Finreference,finccy,'Other Receivables' comp, coalesce(receivableAdviseBal,0) due,coalesce(receivableadvise,0) Receipt  
+  from FinPftDetails union all
+  Select Finreference,finccy,'Unadjusted Amount' comp,coalesce((excessAmtBal + emiInAdvanceBal),0) due,coalesce((excessAmt+ emiInAdvance),0) Receipt 
+  from FinPftDetails union all
+  Select Finreference,finccy,'Other Payables' comp, coalesce(payableAdviseBal,0) due,coalesce(payableAdvise,0) Receipt 
+  from FinPftDetails)T inner join RMTCURRENCIES C on C.ccycode= T.finccy
+		</createView>
+	</changeSet>
+	<changeSet id="151" author="Srikanth" dbms="oracle">
 		<createView viewName="RPT_SOA_FINSMRY_VIEW" replaceIfExists="true">
 		Select FinReference,comp,due,Receipt, C.ccyMinorccyunits,ccyEditField,
   (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')APP_DATE from (
@@ -3340,7 +3364,6 @@ FROM          WIFFinanceMain T1 LEFT OUTER JOIN
   from FinPftDetails)T inner join RMTCURRENCIES C on C.ccycode= T.finccy
 		</createView>
 	</changeSet>
-	
 	
 		<changeSet id="153" author="Durgaprasad G">
 		<dropTable tableName="PresentmentDetails" />
