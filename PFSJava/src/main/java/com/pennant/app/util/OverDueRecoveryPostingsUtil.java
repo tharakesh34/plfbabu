@@ -121,6 +121,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				// EOD Repayments should pass the value date as schedule for which
 				// Repayment is processing
 				aeEvent = new AEEvent();
+				aeEvent.setAeAmountCodes(new AEAmountCodes());
 				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 				aeEvent.setFinReference(financeMain.getFinReference());
 				aeEvent.setPostingUserBranch(postBranch);
