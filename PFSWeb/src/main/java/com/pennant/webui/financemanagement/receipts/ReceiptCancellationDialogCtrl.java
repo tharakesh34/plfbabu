@@ -632,11 +632,23 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		} else {
 			BounceReason details = (BounceReason) dataObject;
 			if (details != null) {
+				HashMap<String, Object> executeMap = new HashMap<String, Object>();
+				if(this.receiptHeader != null) {
+					if(this.receiptHeader.getReceiptDetails() != null && !this.receiptHeader.getReceiptDetails().isEmpty()) {
+						for(FinReceiptDetail finReceiptDetail : this.receiptHeader.getReceiptDetails()) {
+							if(StringUtils.equals(this.receiptHeader.getReceiptMode(), finReceiptDetail.getPaymentType())) {
+								executeMap = finReceiptDetail.getDeclaredFieldValues();
+								break;
+							}
+						}
+						
+					}
+				}
 				Rule rule = getRuleService().getRuleById(details.getRuleID(), "");
 				BigDecimal bounceAmt = BigDecimal.ZERO;
 				if(rule != null){
 					bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(),
-							null, getReceiptHeader().getFinCcy(), RuleReturnType.DECIMAL);
+							executeMap, getReceiptHeader().getFinCcy(), RuleReturnType.DECIMAL);
 				}
 				this.bounceCharge.setValue(PennantApplicationUtil.formateAmount(bounceAmt, CurrencyUtil.getFormat(getReceiptHeader().getFinCcy())));
 			}
