@@ -669,7 +669,7 @@ public class PostingsPreparationUtil implements Serializable {
 		return aeEvent;
 	}
 	
-	public AEEvent postAccountingEOD(AEEvent aeEvent, HashMap<String, Object> dataMap) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	public AEEvent postAccountingEOD(AEEvent aeEvent) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
 
 		if (aeEvent.getLinkedTranId() <= 0) {

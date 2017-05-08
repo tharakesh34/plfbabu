@@ -44,7 +44,6 @@ package com.pennant.app.core;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -230,12 +229,6 @@ public class RateReviewService extends ServiceHelper {
 		finEODEvent.setFinanceScheduleDetails(finScheduleData.getFinanceScheduleDetails());
 		finEODEvent.setRepayInstructions(finScheduleData.getRepayInstructions());
 
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
-
-		//Postings Process and save all postings related to finance for one time accounts update
-		postAccountingEOD(aeEvent, dataMap);
-		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
-
 		//Saving Rate Review Details
 		FinanceRateReview rateReview = new FinanceRateReview();
 		rateReview.setFinReference(finRef);
@@ -248,7 +241,18 @@ public class RateReviewService extends ServiceHelper {
 		rateReview.setRecalFromdate(finMain.getRecalFromDate());
 		rateReview.setRecalToDate(finMain.getRecalToDate());
 		financeRateReviewDAO.save(rateReview);
-
+		aeEvent.setFinType(finMain.getFinType());
+		long accountingID = getAccountingID(finMain.getFinType(), AccountEventConstants.ACCEVENT_RATCHG);
+		if (accountingID == Long.MIN_VALUE) {
+			return;
+		} else {
+			aeEvent.getAcSetIDList().add(accountingID);
+		}
+		
+		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+		//Postings Process and save all postings related to finance for one time accounts update
+		postAccountingEOD(aeEvent);
+		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 	}
 
 	/**

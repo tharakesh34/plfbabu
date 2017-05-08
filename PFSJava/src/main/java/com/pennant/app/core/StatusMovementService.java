@@ -47,7 +47,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -162,11 +161,10 @@ public class StatusMovementService extends ServiceHelper {
 	private void processPostings(ResultSet resultSet, String event, Date valueDate) throws Exception {
 		// Amount Codes preparation using FinProfitDetails
 		AEEvent aeEvent = getAEAmountCodes(resultSet, event, valueDate);
-		HashMap<String, Object> dataMap = aeEvent.getAeAmountCodes().getDeclaredFieldValues();
 
 		//FIXME: PV 07MAY17 to be addressed when status movement postings are required
 		//Postings Process and save all postings related to finance for one time accounts update
-		postAccountingEOD(aeEvent, dataMap);
+		postAccountingEOD(aeEvent);
 		//finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 	}
 

@@ -1,24 +1,19 @@
 package com.pennant.app.core;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.AEAmounts;
 import com.pennant.backend.model.finance.FinanceDisbursement;
-import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.eod.util.EODProperties;
 
 public class AutoDisbursementService extends ServiceHelper {
-	private static final long		serialVersionUID	= 1442146139821584760L;
-	private Logger					logger				= Logger.getLogger(AutoDisbursementService.class);
-
+	private static final long	serialVersionUID	= 1442146139821584760L;
+	private Logger				logger				= Logger.getLogger(AutoDisbursementService.class);
 
 	/**
 	 * @param custId
@@ -55,43 +50,21 @@ public class AutoDisbursementService extends ServiceHelper {
 			throws Exception {
 		logger.debug(" Entering ");
 		String finType = finEODEvent.getFinType().getFinType();
-		boolean isAccountingReq = false;
-		List<FinTypeAccounting> acountingSets = EODProperties.getFinanceType(finType).getFinTypeAccountingList();
-
-		for (int i = 0; i < acountingSets.size(); i++) {
-			if (!StringUtils.equals(AccountEventConstants.ACCEVENT_ADDDBSN, acountingSets.get(i).getEvent())) {
-				continue;
-			}
-
-			isAccountingReq = true;
-			break;
-		}
-
-		if (!isAccountingReq) {
+		long accountingID = getAccountingID(finType, AccountEventConstants.ACCEVENT_ADDDBSN);
+		if (accountingID == Long.MIN_VALUE) {
 			return;
 		}
 
-		String finRef = curDisbursment.getFinReference();
-
-		AEEvent aeEvent = new AEEvent();
-		if (aeEvent.getAeAmountCodes() == null) {
-			aeEvent.setAeAmountCodes(new AEAmountCodes());
-		}
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finEODEvent.getFinProfitDetail(),
+				AccountEventConstants.ACCEVENT_ADDDBSN, valueDate, valueDate);
+		aeEvent.getAcSetIDList().add(accountingID);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		aeEvent.setFinReference(finRef);
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_ADDDBSN);
-		aeEvent.setValueDate(valueDate);
-		aeEvent.setSchdDate(curDisbursment.getDisbDate());
-		aeEvent.setPostDate(DateUtility.getAppDate());
-		aeEvent.setFinType(finType);
-		aeEvent.setBranch(finEODEvent.getFinanceMain().getFinBranch());
 		amountCodes.setDisburse(curDisbursment.getDisbAmount().add(curDisbursment.getFeeChargeAmt()));
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
-
+		aeEvent.setDataMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());
 		//Postings Process and save all postings related to finance for one time accounts update
-		postAccountingEOD(aeEvent, dataMap);
+		postAccountingEOD(aeEvent);
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
-		
+
 		curDisbursment.setDisbDisbursed(true);
 		curDisbursment.setLinkedTranId(aeEvent.getLinkedTranId());
 		getFinanceDisbursementDAO().updateBatchDisb(curDisbursment, "");

@@ -49,11 +49,12 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
@@ -82,6 +83,7 @@ import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.SecondaryAccount;
+import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
@@ -127,8 +129,21 @@ abstract public class ServiceHelper implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public final AEEvent postAccountingEOD(AEEvent aeEvent, HashMap<String, Object> dataMap) throws Exception {
-		return getPostingsPreparationUtil().postAccountingEOD(aeEvent, dataMap);
+	public final AEEvent postAccountingEOD(AEEvent aeEvent) throws Exception {
+		aeEvent.setPostingUserBranch("EOD");//FIXME
+		return getPostingsPreparationUtil().postAccountingEOD(aeEvent);
+	}
+
+	public long getAccountingID(String finType, String accountingEvent) {
+		List<FinTypeAccounting> acountingSets = EODProperties.getFinanceType(finType).getFinTypeAccountingList();
+
+		for (int i = 0; i < acountingSets.size(); i++) {
+			if (!StringUtils.equals(accountingEvent, acountingSets.get(i).getEvent())) {
+				continue;
+			}
+			return acountingSets.get(i).getAccountSetID();
+		}
+		return Long.MIN_VALUE;
 	}
 
 	public Date formatDate(Date date) {

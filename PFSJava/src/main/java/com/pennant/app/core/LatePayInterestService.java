@@ -214,7 +214,7 @@ public class LatePayInterestService extends ServiceHelper {
 			Date dateCur = odcrCur.getMovementDate();
 			Date dateNext = odcrNext.getMovementDate();
 
-			BigDecimal penaltyRate = odcrCur.getPenaltyAmtPerc().divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
+			BigDecimal penaltyRate = odcrCur.getPenaltyAmtPerc();
 			BigDecimal penalty = CalculationUtil.calInterest(dateCur, dateNext, balanceForCal, idb, penaltyRate);
 
 			odcrCur.setPenalty(penalty);

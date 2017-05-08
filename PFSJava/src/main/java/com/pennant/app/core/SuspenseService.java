@@ -144,11 +144,9 @@ public class SuspenseService extends ServiceHelper {
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(valueDate);
 
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
-
 		//FIXME: PV 07MAY17: To be addressed when suspense related changes released.
 		//Postings Process and save all postings related to finance for one time accounts update
-		postAccountingEOD(aeEvent, dataMap);
+		postAccountingEOD(aeEvent);
 		//finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 		long linkedTranId = aeEvent.getLinkedTranId();
 
@@ -241,7 +239,7 @@ public class SuspenseService extends ServiceHelper {
 
 		//FIXME: PV: 07MAY17 to be addressed when suspense related changes released
 		//Postings Process and save all postings related to finance for one time accounts update
-		postAccountingEOD(aeEvent, dataMap);
+		postAccountingEOD(aeEvent);
 		//finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 		
 		long linkedTranId = aeEvent.getLinkedTranId();

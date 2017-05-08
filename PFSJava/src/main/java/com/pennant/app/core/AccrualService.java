@@ -36,7 +36,6 @@ package com.pennant.app.core;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -55,18 +54,17 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 
 public class AccrualService extends ServiceHelper {
 
-	private static final long			serialVersionUID	= 6161809223570900644L;
-	private static Logger				logger				= Logger.getLogger(AccrualService.class);
+	private static final long	serialVersionUID	= 6161809223570900644L;
+	private static Logger		logger				= Logger.getLogger(AccrualService.class);
 
-	private  FinExcessAmountDAO	finExcessAmountDAO;
-	private  FinanceSuspHeadDAO	suspHeadDAO;
+	private FinExcessAmountDAO	finExcessAmountDAO;
+	private FinanceSuspHeadDAO	suspHeadDAO;
 
 	public CustEODEvent processAccrual(CustEODEvent custEODEvent) throws Exception {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
@@ -107,7 +105,7 @@ public class AccrualService extends ServiceHelper {
 		return finEODEvent;
 	}
 
-	public  FinanceProfitDetail calProfitDetails(FinanceMain finMain, List<FinanceScheduleDetail> schdDetails,
+	public FinanceProfitDetail calProfitDetails(FinanceMain finMain, List<FinanceScheduleDetail> schdDetails,
 			FinanceProfitDetail pftDetail, Date valueDate) {
 		logger.debug("Entering");
 
@@ -139,7 +137,7 @@ public class AccrualService extends ServiceHelper {
 
 	}
 
-	private  void resetCalculatedTotals(FinanceMain finMain, FinanceProfitDetail pftDetail) {
+	private void resetCalculatedTotals(FinanceMain finMain, FinanceProfitDetail pftDetail) {
 
 		if (StringUtils.equals(finMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			pftDetail.setFinReference(finMain.getFinReference());
@@ -283,7 +281,7 @@ public class AccrualService extends ServiceHelper {
 
 	}
 
-	private  void calAccruals(FinanceMain finMain, List<FinanceScheduleDetail> schdDetails,
+	private void calAccruals(FinanceMain finMain, List<FinanceScheduleDetail> schdDetails,
 			FinanceProfitDetail pftDetail, Date valueDate, Date dateSusp) {
 		String finState = CalculationConstants.FIN_STATE_NORMAL;
 		FinanceScheduleDetail curSchd = null;
@@ -515,8 +513,7 @@ public class AccrualService extends ServiceHelper {
 		logger.debug("Leaving");
 	}
 
-	private  void calculateTotals(FinanceMain finMain, FinanceProfitDetail pftDetail, Date dateSusp,
-			Date valueDate) {
+	private void calculateTotals(FinanceMain finMain, FinanceProfitDetail pftDetail, Date dateSusp, Date valueDate) {
 		logger.debug("Entering");
 
 		pftDetail.setTotalPftBal(pftDetail.getTotalPftSchd().subtract(pftDetail.getTotalPftPaid()));
@@ -583,8 +580,7 @@ public class AccrualService extends ServiceHelper {
 	 * @param resultSet
 	 * @throws Exception
 	 */
-	public void postAccruals(FinEODEvent finEODEvent, Date valueDate)
-			throws Exception {
+	public void postAccruals(FinEODEvent finEODEvent, Date valueDate) throws Exception {
 		logger.debug(" Entering ");
 
 		String eventCode = AccountEventConstants.ACCEVENT_AMZ;
@@ -593,16 +589,21 @@ public class AccrualService extends ServiceHelper {
 		if (finPftDetail.isPftInSusp()) {
 			eventCode = AccountEventConstants.ACCEVENT_AMZSUSP;
 		}
-
+		
+		long accountingID = getAccountingID(finPftDetail.getFinType(), eventCode);
+		if (accountingID == Long.MIN_VALUE) {
+			return;
+		} 
+		
+	
 		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finPftDetail, eventCode, valueDate, valueDate);
-		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		aeEvent.setDataMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());
+		aeEvent.getAcSetIDList().add(accountingID);
 
 		//Postings Process and save all postings related to finance for one time accounts update
-		postAccountingEOD(aeEvent, dataMap);
+		postAccountingEOD(aeEvent);
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
-		
+
 		//posting done update the accrual balance
 		finPftDetail.setAmzTillLBD(finPftDetail.getPftAmz());
 		finPftDetail.setAmzTillLBDNormal(finPftDetail.getPftAmzNormal());
@@ -625,15 +626,15 @@ public class AccrualService extends ServiceHelper {
 		logger.debug(" Leaving ");
 	}
 
-	private  int getNoDays(Date date1, Date date2) {
+	private int getNoDays(Date date1, Date date2) {
 		return DateUtility.getDaysBetween(date1, date2);
 	}
 
-	public  void setSuspHeadDAO(FinanceSuspHeadDAO suspHeadDAO) {
+	public void setSuspHeadDAO(FinanceSuspHeadDAO suspHeadDAO) {
 		this.suspHeadDAO = suspHeadDAO;
 	}
 
-	public  void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 }

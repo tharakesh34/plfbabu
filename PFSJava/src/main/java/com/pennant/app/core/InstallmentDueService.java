@@ -5,19 +5,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.AEAmounts;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.eod.util.EODProperties;
 
 public class InstallmentDueService extends ServiceHelper {
 	private static final long	serialVersionUID	= 1442146139821584760L;
@@ -62,43 +59,17 @@ public class InstallmentDueService extends ServiceHelper {
 			throws Exception {
 		logger.debug(" Entering ");
 		String finType = finEODEvent.getFinType().getFinType();
-		boolean isAccountingReq = false;
-		List<FinTypeAccounting> acountingSets = EODProperties.getFinanceType(finType).getFinTypeAccountingList();
-
-		for (int i = 0; i < acountingSets.size(); i++) {
-			if (!StringUtils.equals(AccountEventConstants.ACCEVENT_INSTDATE, acountingSets.get(i).getEvent())) {
-				continue;
-			}
-
-			isAccountingReq = true;
-			break;
-		}
-
-		if (!isAccountingReq) {
+		
+		long accountingID = getAccountingID(finType, AccountEventConstants.ACCEVENT_INSTDATE);
+		if (accountingID == Long.MIN_VALUE) {
 			return;
 		}
-
+		
 		FinanceProfitDetail profiDetails = finEODEvent.getFinProfitDetail();
-
-		String finRef = finSchd.getFinReference();
-
-		//Amount Codes preparation using FinProfitDetails
-		AEEvent aeEvent = new AEEvent();
-		if (aeEvent.getAeAmountCodes() == null) {
-			aeEvent.setAeAmountCodes(new AEAmountCodes());
-		}
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(profiDetails, AccountEventConstants.ACCEVENT_INSTDATE, valueDate, finSchd.getSchDate());
+		aeEvent.getAcSetIDList().add(accountingID);
+		
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		aeEvent.setFinReference(finRef);
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSTDATE);
-		aeEvent.setValueDate(valueDate);
-		aeEvent.setSchdDate(finSchd.getSchDate());
-		aeEvent.setPostDate(DateUtility.getAppDate());
-		aeEvent.setFinType(finType);
-		aeEvent.setBranch(profiDetails.getFinBranch());
-
-		//TODO: decide required or not
-		amountCodes.setdAccrue(BigDecimal.ZERO);
-
 		amountCodes.setInstpft(finSchd.getProfitSchd());
 		amountCodes.setInstpri(finSchd.getPrincipalSchd());
 		amountCodes.setInsttot(amountCodes.getInstpft().add(amountCodes.getInstpri()));
@@ -135,10 +106,9 @@ public class InstallmentDueService extends ServiceHelper {
 				dataMap.put(insschd.getInsuranceType() + "_P", insschd.getInsurancePaid());
 			}
 		}
-
-
+		aeEvent.setDataMap(dataMap);
 		//Postings Process and save all postings related to finance for one time accounts update
-		postAccountingEOD(aeEvent, dataMap);
+		postAccountingEOD(aeEvent);
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 		logger.debug(" Leaving ");
 	}

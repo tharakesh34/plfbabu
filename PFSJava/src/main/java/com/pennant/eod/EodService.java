@@ -153,7 +153,7 @@ public class EodService {
 		loadFinanceData.updateFinEODEvents(custEODEvent);
 
 		//receipt postings
-		receiptPaymentService.processrReceipts(custEODEvent);
+//		receiptPaymentService.processrReceipts(custEODEvent);
 
 		//Date and holiday check
 		Date nextDate = DateUtility.addDays(date, 1);

@@ -52,7 +52,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 				header.setReceiptAmount(advanceAmt.add(presentmentAmt));
 				header.setEffectSchdMethod(PennantConstants.List_Select);
 				header.setReceiptModeStatus(RepayConstants.PAYSTATUS_APPROVED);
-				header.setPostBranch("0");//FIXME
+				header.setPostBranch("EOD");//FIXME
 
 				//work flow details
 				header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
