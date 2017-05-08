@@ -485,12 +485,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		
 		BounceReason bounceReason = getBounceReasonDAO().getBounceReasonByReturnCode(returnCode, "");
 
-		String[] errParm = new String[1];
-		errParm[0] = "returnCode" + ":" + returnCode;
 		if (bounceReason == null) {
-			ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "PROO3", errParm));
-			presentmentDetail.setErrorDesc(errorDetail.getErrorMessage());
-			presentmentDetail.setErrorDesc(errorDetail.getErrorCode());
+			presentmentDetail.setErrorDesc("Bounce Reason not available for the return code :" + returnCode);
 			return presentmentDetail;
 		}
 
