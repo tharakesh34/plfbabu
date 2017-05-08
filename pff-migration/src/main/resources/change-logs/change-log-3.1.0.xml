@@ -797,4 +797,37 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 		<modifyDataType tableName="MANDATE_REQUESTS" columnName="OPENFLAG"
 			newDataType="VARCHAR(20)"/>
 	</changeSet>
+	<changeSet id="65" author="Prasad">
+		<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		<![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
+		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE 
+		 from ( 
+			Select Finreference,Schdate, (case when Disbonschdate=1 then 'Amount Financed - Payable ('||Finreference||')' 
+									     when BPIORHOLIDAY='B' then 'Broken Period Interest Receivable -Due('||Finreference||')' else 
+											  'Due for Installment '||INSTNUMBER||' ('||Finreference||')' end) Particulars,
+			 case when Disbonschdate=1 then 0 else Repayamount end Debit,
+			 case when Disbonschdate=1 then DisbAmount else 0 end Credit
+	   from finscheduledetails  
+	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY is null) and 
+			 schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  			 
+	union 	
+		Select finreference,m.valuedate,feetypedesc ||'- Due ('||Finreference||')' ,m.ADVISEAMOUNT Debit ,0 Credit 
+		from manualadvise m
+		inner join FEETYPES f on f.feetypeid = m.feetypeid 		
+	union	
+		Select REFERENCE,Receiveddate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '||PAYMENTTYPE ||' No.:'||CHEQUEACNO ||'('||REFERENCE||')'
+										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('||REFERENCE||')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'||CHEQUEACNO ||'('||REFERENCE||')' end) Particulars,
+			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit
+		from FINRECEIPTHEADER T1 inner join 
+			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID			 
+	union 	
+		Select finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' || FINODTILLDATE Particulars, 
+		TotPenaltyAmt Debit, 0 credit
+		From FinODDetails where TOtPenaltyAmt > 0 
+	)T1 
+	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
+		</createView>
+	</changeSet>
 </databaseChangeLog>
