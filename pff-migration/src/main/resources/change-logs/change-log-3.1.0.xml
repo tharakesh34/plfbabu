@@ -1511,4 +1511,10 @@ Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroup
 	alter table postings alter column userbranch null;
 	</sql>
 	</changeSet>
+	<changeSet id="108" author="Madhubabu">
+		<addColumn tableName="RejectFinScheduledetails">
+			<column name="PresentmentId" type="number(19,0)" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
