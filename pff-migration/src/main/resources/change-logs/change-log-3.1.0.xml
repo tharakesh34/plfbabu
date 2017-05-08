@@ -1423,4 +1423,25 @@ left join CustomerPhoneNumbers T4 on T4.phonecustid=T1.custid and T4.phonetypeco
 left join CustomerEMails T3 on T3.custid=T1.custid
 			</createView>
 	</changeSet>
+	<changeSet id="100" author="prasad">
+	<sql>
+	Update CUSTOMERPHONENUMBERS set Phonenumber=${call.substr}(PhoneCountrycode||PhoneAreacode||Phonenumber,1,10),PhoneCountrycode=null,PhoneAreacode=null;
+	</sql>
+	</changeSet>
+	<changeSet id="101" author="prasad" dbms="oracle">
+	<sql>
+	alter table postings_temp modify userbranch null;
+	</sql>
+	</changeSet>
+	<changeSet id="102" author="prasad" dbms="mssql">
+	<sql>
+	alter table postings_temp alter column userbranch null;
+	</sql>
+	</changeSet>
+	<changeSet id="103" author="prasad" >
+	<sql>
+	Update SECROLES set Roledesc='LOAN ORIGINATION MAKER' where rolecD='LOAN_ORG_MAKER';
+   Update SECROLES set Roledesc='LOAN ORIGINATION APPROVER' where rolecD='LOAN_ORG_APPROVER';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
