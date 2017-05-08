@@ -1778,9 +1778,9 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				lc.setParent(item);
 				lc = new Listcell(details.getCustPassportNo());
 				lc.setParent(item);
-				lc = new Listcell(details.getCustCtgCode());
-				lc.setParent(item);
 				lc = new Listcell(details.getCustNationality());
+				lc.setParent(item);
+				lc = new Listcell(details.getCustCtgCode());
 				lc.setParent(item);
 				lc = new Listcell(details.getRecordStatus());
 				lc.setParent(item);
