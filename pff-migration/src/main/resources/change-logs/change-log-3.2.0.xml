@@ -94,4 +94,13 @@
 		<modifyDataType tableName="PRESENTMENTDETAILS_TEMP" columnName="ErrorDesc"
 			newDataType="varchar(1000)" />
 	</changeSet>
+	
+	
+<changeSet id="08" author="Durgaprasad g">
+<sql>
+	DELETE  from RBFIELDDETAILS Where RBMODULE = 'BOUNCE' ANd RBFLDNAME = 'rd_paymentType';
+	INSERT INTO RBFIELDDETAILS VALUES ('BOUNCE','BOUNCE','rd_paymentType','Mandate Types','nvarchar',8,'0','1','FINRECEIPTDETAIL','static,global,dbvalue','');
+</sql>
+</changeSet>
+
 </databaseChangeLog>
