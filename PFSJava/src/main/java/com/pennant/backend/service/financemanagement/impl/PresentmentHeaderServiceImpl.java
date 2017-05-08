@@ -426,7 +426,6 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 				pDetail.setStatus(RepayConstants.PEXC_IMPORT);
 				pDetail.setExcludeReason(RepayConstants.PEXC_EMIINCLUDE);
 				pDetail.setPresentmentRef(getPresentmentRef(rs));
-				pDetail.setBounceID(presentmentId);
 
 				// Schedule Setup
 				pDetail.setFinReference(rs.getString("FINREFERENCE"));
@@ -438,6 +437,9 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 				BigDecimal schAmtDue = rs.getBigDecimal("PROFITSCHD").add(rs.getBigDecimal("PRINCIPALSCHD"))
 						.add(rs.getBigDecimal("FEESCHD")).subtract(rs.getBigDecimal("SCHDPRIPAID"))
 						.subtract(rs.getBigDecimal("SCHDPFTPAID")).subtract(rs.getBigDecimal("SCHDFEEPAID")).subtract(rs.getBigDecimal("TDSAMOUNT"));
+				if (BigDecimal.ZERO.compareTo(schAmtDue) == 0) {
+					continue;
+				}
 
 				pDetail.setSchAmtDue(schAmtDue);
 				pDetail.setSchPriDue(rs.getBigDecimal("PRINCIPALSCHD").subtract(rs.getBigDecimal("SCHDPRIPAID")));
