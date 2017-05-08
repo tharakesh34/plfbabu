@@ -1223,19 +1223,20 @@ public class FinanceDataValidation {
 
 	public List<ErrorDetails> disbursementValidation(FinanceDetail financeDetail) {
 		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		
 		// validate disbursement details
 		List<FinAdvancePayments> finAdvPayments = financeDetail.getAdvancePaymentsList();
+		BigDecimal totalDisbAmtFromInst = BigDecimal.ZERO;
 		if (finAdvPayments != null) {
 			for (FinAdvancePayments advPayment : finAdvPayments) {
-				//partnerbankid
-				if(advPayment.getPartnerBankID() <= 0){
+				// partnerbankid
+				if (advPayment.getPartnerBankID() <= 0) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "PartnerBankID";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
 					return errorDetails;
 				}
-			
-				
+
 				// validate disbType
 				if (StringUtils.isNotBlank(advPayment.getPaymentType())) {
 					List<ValueLabel> paymentTypes = PennantStaticListUtil.getPaymentTypes(false);
@@ -1252,8 +1253,9 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90216", valueParm)));
 					}
 				}
-				int count = finTypePartnerBankService.getPartnerBankCount(financeDetail.getFinScheduleData().getFinanceMain().getFinType(), 
-						advPayment.getPaymentType(), advPayment.getPartnerBankID());
+				int count = finTypePartnerBankService.getPartnerBankCount(
+						financeDetail.getFinScheduleData().getFinanceMain().getFinType(), advPayment.getPaymentType(),
+						advPayment.getPartnerBankID());
 				if (count <= 0) {
 					String[] valueParm = new String[1];
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90263", valueParm)));
@@ -1309,8 +1311,8 @@ public class FinanceDataValidation {
 
 					// Ifsc, bank or branch codes
 					if (StringUtils.isBlank(advPayment.getiFSC())
-							&& (StringUtils.isBlank(advPayment.getBranchBankCode()) || StringUtils.isBlank(advPayment
-									.getBranchCode()))) {
+							&& (StringUtils.isBlank(advPayment.getBranchBankCode())
+									|| StringUtils.isBlank(advPayment.getBranchCode()))) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "Ifsc";
 						valueParm[1] = "Bank/Branch code";
@@ -1354,9 +1356,12 @@ public class FinanceDataValidation {
 
 					// phone country code
 					/*
-					 * if (StringUtils.equals(advPayment.getPaymentType(), RepayConstants.PAYMENT_TYPE_IMPS) &&
-					 * StringUtils.isBlank(advPayment.getPhoneCountryCode())) { String[] valueParm = new String[2];
-					 * valueParm[0] = "phoneCountryCode"; valueParm[1] = advPayment.getPaymentType(); return
+					 * if (StringUtils.equals(advPayment.getPaymentType(),
+					 * RepayConstants.PAYMENT_TYPE_IMPS) &&
+					 * StringUtils.isBlank(advPayment.getPhoneCountryCode())) {
+					 * String[] valueParm = new String[2]; valueParm[0] =
+					 * "phoneCountryCode"; valueParm[1] =
+					 * advPayment.getPaymentType(); return
 					 * getErrorDetails("90217", valueParm); }
 					 */
 
@@ -1374,6 +1379,17 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90214", valueParm)));
 					}
 				}
+				
+				// validate total disb amounts
+				totalDisbAmtFromInst = totalDisbAmtFromInst.add(advPayment.getAmtToBeReleased());
+			}
+			
+			if(totalDisbAmtFromInst.compareTo(financeDetail.getFinScheduleData().getFinanceMain().getFinAmount()) != 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Disbursement amount:" + financeDetail.getFinScheduleData().getFinanceMain().getFinAmount();
+				valueParm[1] = "Total disbursement amount from instructions:"+ totalDisbAmtFromInst;
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90277", valueParm)));
+				return errorDetails;
 			}
 		}
 		return errorDetails;
@@ -1499,10 +1515,17 @@ public class FinanceDataValidation {
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90127", valueParm)));
 		}
 
-		//finAssetValue
+		// 
+		if(financeType.isAlwMaxDisbCheckReq() && finMain.getFinAssetValue().compareTo(zeroAmount) <= 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "finAssetValue";
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+		}
+		
+		// finAssetValue
 		if (finMain.getFinAssetValue().compareTo(zeroAmount) > 0) {
 			if (finMain.getFinAmount().compareTo(finMain.getFinAssetValue()) > 0) {
-				String[] valueParm = new String[4];
+				String[] valueParm = new String[2];
 				valueParm[0] = "finAmount";
 				valueParm[1] = "finAssetValue";
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90220", valueParm)));
@@ -1718,7 +1741,9 @@ public class FinanceDataValidation {
 		errorDetails = repayAdvRateValidation(finScheduleData);
 
 		//Validate BPI
+		if (finMain.isAlwBPI()) {
 		errorDetails = bpiValidation(finScheduleData);
+		}
 
 		return errorDetails;
 	}
@@ -2869,7 +2894,7 @@ public class FinanceDataValidation {
 		if (finMain.getNextRepayRvwDate().compareTo(finMain.getCalMaturity()) > 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = DateUtility.formatToShortDate(finMain.getNextRepayRvwDate());
-			valueParm[1] = DateUtility.formatToShortDate(finMain.getMaturityDate());
+			valueParm[1] = DateUtility.formatToShortDate(finMain.getCalMaturity());
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90198", valueParm)));
 		}
 

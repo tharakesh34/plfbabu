@@ -292,6 +292,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		financeMain.setNumberOfTerms(financeMain.getCalTerms());
 		financeMain.setGrcPeriodEndDate(financeMain.getCalGrcEndDate());
 		financeMain.setGraceTerms(financeMain.getCalGrcTerms());
+		financeMain.setFinCurrAssetValue(financeMain.getFinAmount());
 		
 		// set Head branch
 		if (StringUtils.isBlank(financeMain.getFinBranch())) {

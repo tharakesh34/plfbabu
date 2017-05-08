@@ -231,7 +231,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		StringBuilder selectSql = new StringBuilder("SELECT FinType, Product, FinAcType, FinCategory, FinDivision, " );
 		selectSql.append(" FinIsOpenNewFinAc, PftPayAcType,  FinSuspAcType, FinProvisionAcType , " );
 		selectSql.append(" AllowRIAInvestment, FinIsAlwPartialRpy, FinSuspTrigger, FinSuspRemarks,  " );
-		selectSql.append(" PastduePftCalMthd, PastduePftMargin " );
+		selectSql.append(" PastduePftCalMthd, PastduePftMargin,alwMultiPartyDisb, alwMaxDisbCheckReq " );
 		selectSql.append(" FROM RMTFinanceTypes");
 		selectSql.append(" Where FinType = :FinType");
 

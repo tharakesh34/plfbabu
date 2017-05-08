@@ -277,7 +277,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			if (disbAmount.compareTo(finAssetValue.subtract(finCurAssetValue)) > 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Disbursement amount:" + disbAmount;
-				valueParm[0] = "Remaining finAssetValue:" + finAssetValue.subtract(finCurAssetValue);
+				valueParm[1] = "Remaining finAssetValue:" + finAssetValue.subtract(finCurAssetValue);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30551", valueParm)));
 			}
 		}
@@ -290,7 +290,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		if(totalDisbAmtFromInst.compareTo(disbAmount) != 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Disbursement amount:" + disbAmount;
-			valueParm[0] = "Total disbursement amount from instructions:"+ totalDisbAmtFromInst;
+			valueParm[1] = "Total disbursement amount from instructions:"+ totalDisbAmtFromInst;
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90277", valueParm)));
 			return auditDetail;
 		}
