@@ -1163,6 +1163,12 @@ public class ScheduleCalculator {
 
 		//FIXME: When Recal From Date and Recal To Date are different periods. Delete this line once proved working
 		//Same code is kept in add disbursement also (Whereever recal is possible in two periods..)
+		
+		if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_ADJMDT)) {
+			finMain.setRecalFromDate(finMain.getMaturityDate());
+			finMain.setRecalToDate(finMain.getMaturityDate());
+		}
+		
 		if (finMain.getRecalFromDate().compareTo(finMain.getGrcPeriodEndDate()) <= 0
 				&& finMain.getRecalToDate().compareTo(finMain.getGrcPeriodEndDate()) > 0) {
 
@@ -1776,6 +1782,11 @@ public class ScheduleCalculator {
 
 			//FIXME: When Recal From Date and Recal To Date are different periods. Delete this line once proved working
 			//Same code is kept in add disbursement also (Whereever recal is possible in two periods..)
+			if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_ADJMDT)) {
+				finMain.setRecalFromDate(finMain.getMaturityDate());
+				finMain.setRecalToDate(finMain.getMaturityDate());
+			}
+
 			if (finMain.getRecalFromDate().compareTo(finMain.getGrcPeriodEndDate()) <= 0
 					&& finMain.getRecalToDate().compareTo(finMain.getGrcPeriodEndDate()) > 0) {
 
