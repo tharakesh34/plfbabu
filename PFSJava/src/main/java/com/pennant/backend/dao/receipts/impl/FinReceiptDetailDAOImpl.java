@@ -93,7 +93,7 @@ public class FinReceiptDetailDAOImpl extends BasisNextidDaoImpl<FinReceiptDetail
 		selectSql.append(" Amount  , FavourNumber , ValueDate , BankCode , FavourName , DepositDate , DepositNo , PaymentRef , ");
 		selectSql.append(" TransactionRef , ChequeAcNo , FundingAc , ReceivedDate , Status , Remarks, PayOrder, LogKey ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append( " ,BankCodeDesc, FundingAcDesc ");
+			selectSql.append( " ,BankCodeDesc, FundingAcDesc, PartnerBankAc, PartnerBankAcType ");
 		}
 		selectSql.append(" From FinReceiptDetail");
 		selectSql.append(StringUtils.trim(type));

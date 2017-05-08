@@ -25,6 +25,8 @@ public class FinRepayQueueHeader {
 	
 	private String payType;
 	private String postBranch;
+	private String partnerBankAc;
+	private String partnerBankAcType;
 	
 	private List<FinRepayQueue> queueList = null;
 	
@@ -169,6 +171,22 @@ public class FinRepayQueueHeader {
 
 	public void setPostBranch(String postBranch) {
 		this.postBranch = postBranch;
+	}
+
+	public String getPartnerBankAc() {
+		return partnerBankAc;
+	}
+
+	public void setPartnerBankAc(String partnerBankAc) {
+		this.partnerBankAc = partnerBankAc;
+	}
+
+	public String getPartnerBankAcType() {
+		return partnerBankAcType;
+	}
+
+	public void setPartnerBankAcType(String partnerBankAcType) {
+		this.partnerBankAcType = partnerBankAcType;
 	}
 
 }

@@ -34,6 +34,8 @@ public class FinReceiptDetail implements Entity {
 	private String						remarks;
 	private long						logKey			= 0;
 	private boolean						delRecord		= false;
+	private String						partnerBankAc;
+	private String						partnerBankAcType;
 
 	private List<FinRepayHeader>		repayHeaders	= new ArrayList<FinRepayHeader>(1);
 	private List<ManualAdviseMovements>	advMovements	= new ArrayList<ManualAdviseMovements>(1);
@@ -275,6 +277,22 @@ public class FinReceiptDetail implements Entity {
 
 	public void setLogKey(long logKey) {
 		this.logKey = logKey;
+	}
+
+	public String getPartnerBankAc() {
+		return partnerBankAc;
+	}
+
+	public void setPartnerBankAc(String partnerBankAc) {
+		this.partnerBankAc = partnerBankAc;
+	}
+
+	public String getPartnerBankAcType() {
+		return partnerBankAcType;
+	}
+
+	public void setPartnerBankAcType(String partnerBankAcType) {
+		this.partnerBankAcType = partnerBankAcType;
 	}
 
 }

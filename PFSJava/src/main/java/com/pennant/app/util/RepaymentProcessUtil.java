@@ -299,6 +299,10 @@ public class RepaymentProcessUtil {
 		logger.debug("Leaving");
 	}
 
+	/**
+	 * Method for Processing Payment details as per receipt details
+	 * @param receiptHeader
+	 */
 	@SuppressWarnings("unchecked")
 	public List<FinanceScheduleDetail> doProcessReceipts(FinanceMain financeMain,
 			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail profitDetail,
@@ -406,7 +410,7 @@ public class RepaymentProcessUtil {
 				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
 				List<Object> returnList = doRepayPostings(financeMain, scheduleDetails, profitDetail,
 						repaySchdList, getEventCode(repayHeader.getFinEvent()), valueDate, 
-						receiptDetailList.get(i).getPaymentType(), receiptHeader.getPostBranch());
+						receiptDetailList.get(i), receiptHeader.getPostBranch());
 
 				if (!(Boolean) returnList.get(0)) {
 					String errParm = (String) returnList.get(1);
@@ -429,6 +433,10 @@ public class RepaymentProcessUtil {
 
 	}
 
+	/**
+	 * Method for Saving the Receipt records 
+	 * @param receiptHeader
+	 */
 	public void doSaveReceipts(FinReceiptHeader receiptHeader) {
 		long receiptID = getFinReceiptHeaderDAO().save(receiptHeader, TableType.MAIN_TAB);
 		receiptHeader.setReceiptID(receiptID);
@@ -613,7 +621,7 @@ public class RepaymentProcessUtil {
 	 */
 	private List<Object> doRepayPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
 			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCode, 
-			Date valuedate, String payType, String postBranch) throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
+			Date valuedate, FinReceiptDetail receiptDetail, String postBranch) throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
 		logger.debug("Entering");
 
 		List<Object> returnList = new ArrayList<Object>();
@@ -683,8 +691,10 @@ public class RepaymentProcessUtil {
 
 			//Repayments Process For Schedule Repay List	
 			rpyQueueHeader.setQueueList(finRepayQueues);
-			rpyQueueHeader.setPayType(payType);
+			rpyQueueHeader.setPayType(receiptDetail.getPaymentType());
 			rpyQueueHeader.setPostBranch(postBranch);
+			rpyQueueHeader.setPartnerBankAc(receiptDetail.getPartnerBankAc());
+			rpyQueueHeader.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 
 			returnList = getRepayPostingUtil().postingProcess(financeMain, scheduleDetails, profitDetail,
 					rpyQueueHeader, eventCode, valuedate);

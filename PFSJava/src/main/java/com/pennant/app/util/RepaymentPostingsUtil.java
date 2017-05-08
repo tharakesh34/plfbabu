@@ -534,6 +534,8 @@ public class RepaymentPostingsUtil implements Serializable {
 				dateValueDate, dateSchdDate);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		aeEvent.setPostingUserBranch(rpyQueueHeader.getPostBranch());
+		amountCodes.setPartnerBankAc(rpyQueueHeader.getPartnerBankAc());
+		amountCodes.setPartnerBankAcType(rpyQueueHeader.getPartnerBankAcType());
 		aeEvent.setLinkedTranId(linkedTranId);
 
 		//Set Repay Amount Codes

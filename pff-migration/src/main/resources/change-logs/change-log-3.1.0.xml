@@ -1444,4 +1444,27 @@ left join CustomerEMails T3 on T3.custid=T1.custid
    Update SECROLES set Roledesc='LOAN ORIGINATION APPROVER' where rolecD='LOAN_ORG_APPROVER';
 		</sql>
 	</changeSet>
+	
+	<changeSet id="104" author="Siva">
+		<createView viewName="FINRECEIPTDETAIL_AVIEW" replaceIfExists="true">
+			  Select T1.ReceiptID , T1.ReceiptSeqID , T1.ReceiptType , T1.PaymentTo , T1.PaymentType , T1.PayAgainstID  , 
+			T1.Amount  , T1.FavourNumber , T1.ValueDate , T1.BankCode , T1.FavourName , T1.DepositDate , T1.DepositNo , T1.PaymentRef , 
+			 T1.TransactionRef , T1.ChequeAcNo , T1.FundingAc , T1.ReceivedDate , T1.Status , T1.Remarks  , T2.BankName BankCodeDesc,
+			 T3.PartnerBankCode FundingAcDesc, T1.PayOrder , T1.LogKey, T3.AccountNo PartnerBankAc, T3.AcType PartnerBankAcType
+			 From FinReceiptDetail T1 LEFT JOIN 
+			   BMTBankDetail T2 ON T1.BankCode = T2.BankCode LEFT JOIN 
+			   PartnerBanks T3 ON T1.FundingAc  = T3.PartnerBankID
+		</createView>
+	</changeSet>
+	<changeSet id="105" author="Siva">
+		<createView viewName="FINRECEIPTDETAIL_TVIEW" replaceIfExists="true">
+	  Select T1.ReceiptID , T1.ReceiptSeqID , T1.ReceiptType , T1.PaymentTo , T1.PaymentType , T1.PayAgainstID  , 
+			T1.Amount  , T1.FavourNumber , T1.ValueDate , T1.BankCode , T1.FavourName , T1.DepositDate , T1.DepositNo , T1.PaymentRef , 
+			 T1.TransactionRef , T1.ChequeAcNo , T1.FundingAc , T1.ReceivedDate , T1.Status , T1.Remarks  , T2.BankName BankCodeDesc,
+			 T3.PartnerBankCode FundingAcDesc , T1.PayOrder, T1.LogKey, T3.AccountNo PartnerBankAc, T3.AcType PartnerBankAcType
+			 From FinReceiptDetail_Temp T1 LEFT JOIN 
+			   BMTBankDetail T2 ON T1.BankCode = T2.BankCode LEFT JOIN 
+			   PartnerBanks T3 ON T1.FundingAc  = T3.PartnerBankID
+		</createView>
+	</changeSet>
 </databaseChangeLog>
