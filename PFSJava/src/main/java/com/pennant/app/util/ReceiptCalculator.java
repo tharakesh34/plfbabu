@@ -276,6 +276,7 @@ public class ReceiptCalculator implements Serializable {
 				continue;
 			}
 
+			boolean isSchdPaid = false;
 			List<RepayScheduleDetail> pastdueRpySchdList = new ArrayList<>();
 			List<RepayScheduleDetail> partialRpySchdList = new ArrayList<>();
 			String repayHierarchy = scheduleData.getFinanceType().getRpyHierarchy();
@@ -384,6 +385,7 @@ public class ReceiptCalculator implements Serializable {
 
 									// Update Schedule to avoid on Next loop Payment
 									curSchd.setSchdPriPaid(curSchd.getSchdPriPaid().add(balPri));
+									isSchdPaid = true;
 								}
 							}
 						}
@@ -413,6 +415,7 @@ public class ReceiptCalculator implements Serializable {
 
 											// Update Schedule to avoid on Next loop Payment
 											curSchd.setSchdPftPaid(curSchd.getSchdPftPaid().add(balPft));
+											isSchdPaid = true;
 										}
 									}
 								}
@@ -440,6 +443,7 @@ public class ReceiptCalculator implements Serializable {
 
 												// Update Schedule to avoid on Next loop Payment
 												overdue.setLPIBal(overdue.getLPIBal().subtract(balLatePft));
+												isSchdPaid = true;
 											}
 										}
 									}
@@ -471,6 +475,7 @@ public class ReceiptCalculator implements Serializable {
 
 										// Update Schedule to avoid on Next loop Payment
 										overdue.setTotPenaltyBal(overdue.getTotPenaltyBal().subtract(balPenalty));
+										isSchdPaid = true;
 									}
 								}
 							}
@@ -524,6 +529,7 @@ public class ReceiptCalculator implements Serializable {
 
 													// Update Schedule to avoid on Next loop Payment
 													feeSchdList.get(l).setPaidAmount(feeSchdList.get(l).getPaidAmount().add(balFee));
+													isSchdPaid = true;
 												}
 											}
 										}
@@ -577,6 +583,7 @@ public class ReceiptCalculator implements Serializable {
 
 													// Update Schedule to avoid on Next loop Payment
 													insSchdList.get(l).setInsurancePaid(insSchdList.get(l).getInsurancePaid().add(balIns));
+													isSchdPaid = true;
 												}
 											}
 										}
@@ -655,7 +662,7 @@ public class ReceiptCalculator implements Serializable {
 			
 			FinRepayHeader repayHeader = null;
 			if(receiptDetail.getAmount().compareTo(totalReceiptAmt) > 0 && 
-					receiptDetail.getAmount().compareTo(partialSettleAmount) > 0){
+					receiptDetail.getAmount().compareTo(partialSettleAmount) > 0 && isSchdPaid){
 				// Prepare Repay Header Details
 				repayHeader = new FinRepayHeader();
 				repayHeader.setFinReference(receiptData.getFinReference());
