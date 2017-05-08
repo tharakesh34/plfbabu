@@ -1517,4 +1517,47 @@ Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroup
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="109" author="chaitanya.ch">
+		<createView viewName="POSTINGS_VIEW" replaceIfExists="true">
+			SELECT     T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent, T1.PostDate, T1.ValueDate, T1.TranCode, T1.RevTranCode, T1.DrOrCr, 
+                      T1.Account, T1.PostAmount, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T2.AEEventCodeDesc LovDescEventCodeName, 
+                      T1.ShadowPosting, T1.TranDesc, T1.AmountType, T1.AcCcy, T1.PostBranch
+FROM          Postings T1 INNER JOIN
+                       BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode
+		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="110" author="chaitanya.ch">
+		<sql>
+			
+			Insert into RMTAccountTypes Values( 'EMIRE', 'EMI Receivables' , 'L',null, '1','0',null,'1','1',1000,CURRENT_TIMESTAMP, 'Approved', null, null,
+			null, null, null, 0, 'A', 0, 0, (Select max(AccountTypeID) + 1 from RMTAccounttypes), 1, 2, 2 );
+			
+		
+		</sql>
+	</changeSet>
+	 
+	<changeSet id="111" author="chaitanya.ch">
+		<sql>
+				Delete from RMTAccountTypes where AcType = 'INTINC';
+		
+			Insert into RMTAccountTypes Values( 'INTINC', 'Interest Income' , 'L',null, '1','0',null,'1','1',1000,CURRENT_TIMESTAMP, 'Approved', null, null,
+			null, null, null, 0, 'A', 0, 0, (Select max(AccountTypeID) + 1 from RMTAccounttypes), 1, 2, 2 );
+			
+		
+		</sql>
+	</changeSet>
+	<changeSet id="112" author="chaitanya.ch">
+		<sql>
+				
+      Delete from BMTAmountCodes where AllowedEvent = 'DEFRPY';
+      Insert into BMTAmountCodes 
+      values( 'DEFRPY', 0, 'ae_cpzChg', 'Capitalization Changed now', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0  )  ;
+			
+		
+		</sql>
+	</changeSet>
+	
+	
 </databaseChangeLog>
