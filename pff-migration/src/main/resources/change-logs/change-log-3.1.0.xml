@@ -1587,5 +1587,21 @@ Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroup
 	</sql>
 	</changeSet>
 	
+	<changeSet id="117" author="chaitanya.ch">
+	<sql>
+	
+		      
+            Delete from BMTAmountCodes where AllowedEvent = 'EMIDAY';
+
+      Insert into BMTAmountCodes 
+      values( 'EMIDAY', 0, 'ae_cpzChg', 'Capitalization Changed now', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0  )  ;
+        
+
+ Insert into BMTAmountCodes 
+            values( 'EMIDAY', 0, 'ae_pftChg', 'Interest Changed now', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0  )  ;
+	
+	</sql>
+	
+	</changeSet>
 	
 </databaseChangeLog>
