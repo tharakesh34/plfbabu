@@ -103,8 +103,8 @@ public class FinanceTypeListModelItemRenderer implements ListitemRenderer<Financ
 			lc = new Listcell(StringUtils.equals(financeType.getFinDaysCalType(), PennantConstants.List_Select) ? ""
 					: financeType.getFinDaysCalType());
 			lc.setParent(item);
-			lc = new Listcell(financeType.getFinAcType());
-			lc.setParent(item);
+			/*lc = new Listcell(financeType.getFinAcType());
+			lc.setParent(item);*/
 			lc = new Listcell(PennantAppUtil.getlabelDesc(financeType.getFinSchdMthd(), PennantStaticListUtil.getScheduleMethods()));
 			lc.setParent(item);
 			

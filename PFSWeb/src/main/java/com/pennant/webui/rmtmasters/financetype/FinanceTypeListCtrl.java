@@ -222,7 +222,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 		registerField("finCcy", listheader_FinCcy, SortOrder.NONE, finCcy, sortOperator_finCcy, Operators.STRING);
 		registerField("finDaysCalType", listheader_FinBasicType, SortOrder.NONE, finDaysCalType,
 				sortOperator_finDaysCalType, Operators.STRING);
-		registerField("finAcType", listheader_FinAcType, SortOrder.NONE);
+		/*registerField("finAcType", listheader_FinAcType, SortOrder.NONE);*/
 		registerField("finSchdMthd", listheader_SchdMthd, SortOrder.NONE, finSchdMthd, sortOperator_finSchdMthd, Operators.STRING);
 		if(!isOverdraft){
 			registerField("fInIsAlwGrace", listheader_AlwGrace, SortOrder.NONE, finIsAlwGrace, sortOperator_finIsAlwGrace, Operators.BOOLEAN);
