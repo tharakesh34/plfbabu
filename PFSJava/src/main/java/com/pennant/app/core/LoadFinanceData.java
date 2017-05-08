@@ -109,8 +109,6 @@ public class LoadFinanceData extends ServiceHelper {
 			if (finEODEvent.isUpdFinSchedule()) {
 				getFinanceScheduleDetailDAO().updateList(finEODEvent.getFinanceScheduleDetails(), "");
 			}
-			//clear data
-			finEODEvent.getFinanceScheduleDetails().clear();
 
 			//Update overdue details
 			List<FinODDetails> odDetails = finEODEvent.getFinODDetails();
@@ -124,8 +122,6 @@ public class LoadFinanceData extends ServiceHelper {
 					}
 				}
 			}
-			//clear data
-			odDetails.clear();
 
 			//update repay instruction
 			if (finEODEvent.isUpdRepayInstruct()) {
@@ -139,16 +135,11 @@ public class LoadFinanceData extends ServiceHelper {
 				}
 				getRepayInstructionDAO().saveList(lisRepayIns, "", false);
 			}
-			//clear data
-			finEODEvent.getRepayInstructions().clear();
 			
 			returnDataSets.addAll(finEODEvent.getReturnDataSet());
-			finEODEvent.getReturnDataSet().clear();
-
 		}
 		
 		getAccountProcessUtil().procAccountUpdate(returnDataSets);
-		returnDataSets.clear();
 
 		if (custEODEvent.isUpdCustomer()) {
 			Customer customer = custEODEvent.getCustomer();
@@ -156,10 +147,7 @@ public class LoadFinanceData extends ServiceHelper {
 					custEODEvent.getCustomer().getCustID());
 		}
 
-		//clear data after the process
-		custEODEvent.getFinEODEvents().clear();
-		custEODEvent=null;
-
+		returnDataSets.clear();
 	}
 
 	private PresentmentDetail getPresentmentDetailbyRef(String finrefere, List<PresentmentDetail> presentments) {

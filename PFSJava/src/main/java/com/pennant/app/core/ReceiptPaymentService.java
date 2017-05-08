@@ -58,12 +58,11 @@ public class ReceiptPaymentService extends ServiceHelper {
 
 				List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
 
-				FinEODEvent eodEvent = getFinEODEvent(custEODEvent, finref);
-				FinanceMain financeMain = eodEvent.getFinanceMain();
-				FinanceProfitDetail profitDetail = eodEvent.getFinProfitDetail();
+				FinanceMain financeMain = finEODEvent.getFinanceMain();
+				FinanceProfitDetail profitDetail = finEODEvent.getFinProfitDetail();
 
-				List<FinanceScheduleDetail> scheduleDetails = eodEvent.getFinanceScheduleDetails();
-				String repayHeirarchy = eodEvent.getFinType().getRpyHierarchy();
+				List<FinanceScheduleDetail> scheduleDetails = finEODEvent.getFinanceScheduleDetails();
+				String repayHeirarchy = finEODEvent.getFinType().getRpyHierarchy();
 
 				FinReceiptDetail receiptDetail = null;
 				if (advanceAmt.compareTo(BigDecimal.ZERO) > 0) {
@@ -99,17 +98,6 @@ public class ReceiptPaymentService extends ServiceHelper {
 
 		}
 
-	}
-
-	private FinEODEvent getFinEODEvent(CustEODEvent custEODEvent, String finref) {
-		List<FinEODEvent> custEODEvents = custEODEvent.getFinEODEvents();
-		for (FinEODEvent finEODEvent : custEODEvents) {
-			if (finEODEvent.getFinanceMain().getFinReference().equals(finref)) {
-				return finEODEvent;
-			}
-
-		}
-		return null;
 	}
 
 	public void setRepaymentProcessUtil(RepaymentProcessUtil repaymentProcessUtil) {

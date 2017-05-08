@@ -129,10 +129,12 @@ public class EodService {
 
 		//NPA Service
 		custEODEvent = npaService.processNPABuckets(custEODEvent);
-
-		//_____________________________________________________________________________________________________________
-		//Date roll over
-		//_____________________________________________________________________________________________________________
+		
+		/*******************************
+		 **************** SOD **********
+		 *******************************/  
+		
+		//date rollover
 		custEODEvent = dateRollOverService.process(custEODEvent);
 
 		//Rate review
@@ -157,16 +159,14 @@ public class EodService {
 		Date nextDate = DateUtility.addDays(date, 1);
 		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
 		Calendar nextBusDate = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT, date);
+		//update customer business Dates
+		Date tempNextBussDate = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT,
+				nextBusDate.getTime()).getTime();
+		customerDatesDAO.updateCustomerDates(custId, nextDate, nextDate, tempNextBussDate);
 
-		if (DateUtility.matches(nextDate, nextBusDate.getTime())) {
-			//update customer business Dates
-			Date tempNextBussDate = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT,
-					nextBusDate.getTime()).getTime();
-			customerDatesDAO.updateCustomerDates(custId, nextDate, nextDate, tempNextBussDate);
-		} else {
-			doProcess(connection, custId, nextDate);
-		}
-
+		//clear data after the process
+		custEODEvent.getFinEODEvents().clear();
+		custEODEvent = null;
 
 	}
 
