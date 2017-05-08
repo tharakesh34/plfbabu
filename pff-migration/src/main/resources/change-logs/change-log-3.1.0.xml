@@ -1495,12 +1495,9 @@ FROM          Postings T1 INNER JOIN
 	</changeSet>
 	
 	<changeSet id="110" author="chaitanya.ch">
-		<sql>
-			
+		<sql>	
 			Insert into RMTAccountTypes Values( 'EMIRE', 'EMI Receivables' , 'L',null, '1','0',null,'1','1',1000,CURRENT_TIMESTAMP, 'Approved', null, null,
-			null, null, null, 0, 'A', 0, 0, (Select max(AccountTypeID) + 1 from RMTAccounttypes), 1, 2, 2 );
-			
-		
+			null, null, null, 0, 'A', 0, '0', 1, 2, 2 );
 		</sql>
 	</changeSet>
 	 
@@ -1509,7 +1506,7 @@ FROM          Postings T1 INNER JOIN
 				Delete from RMTAccountTypes where AcType = 'INTINC';
 		
 			Insert into RMTAccountTypes Values( 'INTINC', 'Interest Income' , 'L',null, '1','0',null,'1','1',1000,CURRENT_TIMESTAMP, 'Approved', null, null,
-			null, null, null, 0, 'A', 0, 0, (Select max(AccountTypeID) + 1 from RMTAccounttypes), 1, 2, 2 );
+			null, null, null, 0, 'A', 0,'0', 1, 2, 2 );
 			
 		
 		</sql>
