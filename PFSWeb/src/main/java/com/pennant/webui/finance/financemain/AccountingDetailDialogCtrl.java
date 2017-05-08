@@ -471,9 +471,9 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 					}
 				}
 			}
-			this.getLabel_AccountingDisbCrVal().setValue(PennantApplicationUtil.amountFormate(getDisbCrSum(), formatter));
-			this.getLabel_AccountingDisbDrVal().setValue(PennantAppUtil.amountFormate(getDisbDrSum(), formatter));
 		}
+		this.getLabel_AccountingDisbCrVal().setValue(PennantApplicationUtil.amountFormate(getDisbCrSum(), formatter));
+		this.getLabel_AccountingDisbDrVal().setValue(PennantAppUtil.amountFormate(getDisbDrSum(), formatter));
 		logger.debug("Leaving");
 	}
 	

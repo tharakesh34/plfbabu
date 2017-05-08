@@ -999,7 +999,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if(isUserAction){
 			this.receiptAmount.setValue(BigDecimal.ZERO);
 			this.favourNo.setValue("");
-			this.valueDate.setValue(null);
+			this.valueDate.setValue(DateUtility.getAppDate());
 			this.bankCode.setValue("");
 			this.bankCode.setDescription("");
 			this.bankCode.setObject(null);
@@ -1012,7 +1012,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.fundingAccount.setValue("");
 			this.fundingAccount.setDescription("");
 			this.fundingAccount.setObject(null);
-			this.receivedDate.setValue(null);
+			this.receivedDate.setValue(DateUtility.getAppDate());
 			this.remarks.setValue("");
 		}
 		
@@ -1786,7 +1786,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		
 		doEdit();
-		checkByReceiptPurpose(getComboboxValue(this.receiptPurpose));
+		String rcptPurpose = getComboboxValue(this.receiptPurpose);
+		checkByReceiptPurpose(rcptPurpose);
 		checkByReceiptMode(getComboboxValue(this.receiptMode), false);
 		
 		// Excess amount set to readonly
@@ -1804,15 +1805,21 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// Pastdue Allocations
 		String allocateMthd = getComboboxValue(this.allocationMethod);
 		List<Listitem> pastdueItems = this.listBoxPastdues.getItems();
+		boolean isAllocateAllowed = false;
 		for (int i = 0; i < pastdueItems.size(); i++) {
 			Listitem item = pastdueItems.get(i);
+			isAllocateAllowed = true;
 			if(item.getId().contains("Allocate")){
 				if(StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_MANUAL)){
 					CurrencyBox paidBox = (CurrencyBox) this.listBoxPastdues.getFellowIfAny(item.getId().replaceAll("Item", "Paid"));
 					paidBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 				}
 				CurrencyBox waivedBox = (CurrencyBox) this.listBoxPastdues.getFellowIfAny(item.getId().replaceAll("Item", "Waived"));
-				waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
+				if(StringUtils.equals(rcptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+					waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
+				}else{
+					waivedBox.setReadonly(true);
+				}
 			}
 		}
 
@@ -1820,14 +1827,25 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		List<Listitem> advises = this.listBoxManualAdvises.getItems();
 		for (int i = 0; i < advises.size(); i++) {
 			Listitem item = advises.get(i);
+			isAllocateAllowed = true;
 			if(item.getId().contains("Allocate")){
 				if(StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_MANUAL)){
 					CurrencyBox paidBox = (CurrencyBox) this.listBoxManualAdvises.getFellowIfAny(item.getId().replaceAll("Item", "Paid"));
 					paidBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 				}
 				CurrencyBox waivedBox = (CurrencyBox) this.listBoxManualAdvises.getFellowIfAny(item.getId().replaceAll("Item", "AdvWaived"));
-				waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
+				if(StringUtils.equals(rcptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+					waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
+				}else{
+					waivedBox.setReadonly(true);
+				}
 			}
+		}
+		
+		// Checking Allocation method read only case
+		if(!isAllocateAllowed){
+			readOnlyComponent(true, this.allocationMethod);
+			this.allocationMethod.setSelectedIndex(0);
 		}
 
 		if(this.excessAdjustTo.getSelectedIndex() > 0){
@@ -1964,6 +1982,21 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		receiptHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 		receiptHeader.setRecordStatus(aFinanceMain.getRecordStatus());
 		receiptHeader.setWorkflowId(aFinanceMain.getWorkflowId());
+		
+		// Check Accounting Verification Required or not
+		boolean isAccVerificationReq = false;
+		for (int i = 0; i < receiptHeader.getReceiptDetails().size(); i++) {
+			FinReceiptDetail receiptDetail = receiptHeader.getReceiptDetails().get(i);
+			for (int j = 0; j < receiptDetail.getRepayHeaders().size(); j++) {
+				
+				FinRepayHeader repayHeader = receiptDetail.getRepayHeaders().get(j);
+				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent())
+						|| StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent())
+						|| StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())) {
+					isAccVerificationReq = true;
+				}
+			}
+		}
 
 		//Duplicate Creation of Object
 		Cloner cloner = new Cloner();
@@ -2011,7 +2044,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			aReceiptData.getFinanceDetail().setStageAccountingList(null);
 		}
 
-		if (!recSave && getAccountingDetailDialogCtrl() != null) {
+		if (!recSave && getAccountingDetailDialogCtrl() != null && isAccVerificationReq) {
 			// check if accounting rules executed or not
 			if (!getAccountingDetailDialogCtrl().isAccountingsExecuted()) {
 				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Accountings"));
@@ -2277,7 +2310,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		getFinanceDetail().setModuleDefiner(FinanceConstants.FINSER_EVENT_RECEIPT);
 
 		//Customer Details   
-		//appendCustomerDetailTab();
+		appendCustomerDetailTab();
 
 		//Fee Details Tab Addition
 		appendFeeDetailTab();
@@ -3209,6 +3242,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					amountCodes.setInsWaived(amountCodes.getInsWaived().add(rsd.getSchdInsWaivedNow()));
 				}
 				
+				amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
+				amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 				amountCodes.setExcessAmt(BigDecimal.ZERO);
 				amountCodes.setEmiInAdvance(BigDecimal.ZERO);
 				amountCodes.setPayableAdvise(BigDecimal.ZERO);

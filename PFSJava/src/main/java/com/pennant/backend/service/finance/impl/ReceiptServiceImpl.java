@@ -237,10 +237,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 
 			//Finance Customer Details			
-			/*if (financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE) {
+			if (financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE) {
 				financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(
 						financeMain.getCustID(), true, "_View"));
-			}*/
+			}
 
 			//Finance Agreement Details	
 			//=======================================
