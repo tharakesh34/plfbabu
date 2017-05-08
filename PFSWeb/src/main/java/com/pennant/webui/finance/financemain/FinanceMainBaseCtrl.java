@@ -7810,6 +7810,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			SecurityUserDivBranch branch = (SecurityUserDivBranch) this.finBranch.getObject();
 			if (branch != null) {
+				this.finBranch.setValue(branch.getUserBranch(),branch.getUserBranchDesc());
 				getFinanceDetail().getCustomerDetails().getCustomer()
 						.setCustSwiftBrnCode(branch.getBranchSwiftBrnCde());
 			}
