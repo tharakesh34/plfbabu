@@ -20,29 +20,21 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 
+
+
+
 	<changeSet id="01" author="SreeRavali">
 		<addColumn tableName="FINSCHEDULEDETAILS_Temp">
 			<column name="PRESENTMENTID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="02" author="SreeRavali" dbms="mssql">
-		<sql>
-		    ALTER TABLE FINSCHEDULEDETAILS_Temp ADD DEFAULT 0 FOR PRESENTMENTID;
-		</sql>
-	</changeSet>
 
-	<changeSet id="02" author="SreeRavali" dbms="oracle">
+	<changeSet id="02" author="SreeRavali">
 		<addDefaultValue columnDataType="bigint" columnName="PRESENTMENTID"
 			defaultValueNumeric="0" tableName="FINSCHEDULEDETAILS_Temp" />
 	</changeSet>
 
-	<changeSet id="03" author="SreeRavali" dbms= "mssql">
-		<sql>
-		    ALTER TABLE FINSCHEDULEDETAILS ADD DEFAULT 0 FOR PRESENTMENTID;
-		</sql>
-	</changeSet>
-	<changeSet id="03" author="SreeRavali" dbms= "oracle">
+	<changeSet id="03" author="SreeRavali">
 		<addDefaultValue columnDataType="bigint" columnName="PRESENTMENTID"
 			defaultValueNumeric="0" tableName="FINSCHEDULEDETAILS" />
 	</changeSet>
@@ -583,40 +575,7 @@ LEFT JOIN (SELECT ACTYPEGRPID, HOSTACCOUNT, CLOSINGBAL, CLOSINGBALTYPE FROM SAPG
 INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)-1 from SAPGL_TRAIL_BALANCE_HEADER)) BH ON BH.ID = BR.HEADERID) T ON T.ACTYPEGRPID = AT.ACTYPEGRPID AND T.HOSTACCOUNT = A.ACCOUNTID
 </createView>
 	</changeSet>
-	<changeSet id="42" author="Prasad" dbms="mssql">
-		<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
-		<![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
-		 (Select GETDATE()  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE 
-		 from ( 
-			Select Finreference,Schdate, (case when Disbonschdate=1 then 'Amount Financed - Payable ('+Finreference+')' 
-									     when BPIORHOLIDAY='B' then 'Broken Period Interest Receivable -Due('+Finreference+')' else 
-											  'Due for Installment '+INSTNUMBER+' ('+Finreference+')' end) Particulars,
-			 case when Disbonschdate=1 then 0 else Repayamount end Debit,
-			 case when Disbonschdate=1 then DisbAmount else 0 end Credit
-	   from finscheduledetails  
-	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY is null) and 
-			 schdate<=(Select GETDATE()  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  			 
-	union 	
-		Select finreference,m.lastmnton,feetypedesc +'- Due ('+Finreference+')' ,m.ADVISEAMOUNT Debit ,0 Credit 
-		from manualadvise m
-		inner join FEETYPES f on f.feetypeid = m.feetypeid 		
-	union	
-		Select REFERENCE,VALUEDATE,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '+PAYMENTTYPE +' No.:'+CHEQUEACNO +'('+REFERENCE+')'
-										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('+REFERENCE+')' 
-										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'+CHEQUEACNO +'('+REFERENCE+')' end) Particulars,
-			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit
-		from FINRECEIPTHEADER T1 inner join 
-			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID			 
-	union 	
-		Select finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' + FINODTILLDATE Particulars, 
-		TotPenaltyAmt Debit, 0 credit
-		From FinODDetails where TOtPenaltyAmt > 0 
-	)T1 
-	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
-	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
-		</createView>
-	</changeSet>
-	<changeSet id="42" author="Prasad" dbms="oracle">
+	<changeSet id="42" author="Prasad">
 		<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
 		<![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
 		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE 
@@ -682,15 +641,7 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 			update Postings_temp set APPVALUEDATE= POSTDATE;
 		</sql>
 	</changeSet>
-	<changeSet id="46" author="Prasad" dbms="mssql">
-		<sql>
-			update Postings_temp set APPDATE = (Select GETDATE()  sysparmvalue from smtparameters 
-			where SYSPARMCODE='APP_DATE') where APPDATE is null;
-			update Postings_temp set APPVALUEDATE = (Select GETDATE()  sysparmvalue from smtparameters 
-			where SYSPARMCODE='APP_VALUEDATE') where APPVALUEDATE is null;
-		</sql>
-	</changeSet>
-	<changeSet id="46" author="Prasad" dbms="oracle">
+	<changeSet id="46" author="Prasad">
 		<sql>
 			update Postings_temp set APPDATE = (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters 
 			where SYSPARMCODE='APP_DATE') where APPDATE is null;
@@ -712,13 +663,7 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 			<column name="USERBRANCH" type="varchar(12)" />
 		</addColumn>
 	</changeSet>
-		<changeSet id="49" author="Prasad" dbms="mssql">
-		<sql>
-			update Postings set USERBRANCH= (Select TOP 1 Branchcode from rmtBranches);
-			update Postings_temp set USERBRANCH= (Select TOP 1 Branchcode from rmtBranches);
-		</sql>
-	</changeSet>
-	<changeSet id="49" author="Prasad" dbms="oracle">
+	<changeSet id="49" author="Prasad">
 		<sql>
 			update Postings set USERBRANCH= (Select Branchcode from rmtBranches where rownum=1);
 			update Postings_temp set USERBRANCH= (Select Branchcode from rmtBranches where rownum=1);
@@ -736,14 +681,7 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 			<column name="PayOrder" type="int" />
 		</addColumn>
 	</changeSet>
-	<changeSet id="52" author="Siva" dbms="mssql">
-		<sql>
-			Update FINRECEIPTDETAIL set FINRECEIPTDETAIL.payorder = (Select row_number() over(partition by Receiptid order by Receiptid,ReceiptSeqid)
-                                        from  FINRECEIPTDETAIL t where FINRECEIPTDETAIL.Receiptid = t.Receiptid and FINRECEIPTDETAIL.ReceiptSeqid = t.ReceiptSeqid)
-                                        where exists (select 1 from FINRECEIPTDETAIL t where FINRECEIPTDETAIL.Receiptid = t.Receiptid and FINRECEIPTDETAIL.ReceiptSeqid = t.ReceiptSeqid); 
-		</sql>
-	</changeSet>
-	<changeSet id="52" author="Siva" dbms="oracle">
+	<changeSet id="52" author="Siva">
 		<sql>
 			Update FINRECEIPTDETAIL m set m.payorder = (Select row_number() over(partition by Receiptid order by Receiptid,ReceiptSeqid)
                                         from  FINRECEIPTDETAIL t where m.Receiptid = t.Receiptid and m.ReceiptSeqid = t.ReceiptSeqid)
@@ -770,54 +708,14 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 			   PartnerBanks T3 ON T1.FundingAc  = T3.PartnerBankID
 		</createView>
 	</changeSet>
-	<changeSet id="55" author="Siva" dbms="mssql">
-		<sql>
-			Update FINRECEIPTDETAIL_Temp set FINRECEIPTDETAIL_Temp.payorder = (Select row_number() over(partition by Receiptid order by Receiptid,ReceiptSeqid)
-                                        from  FINRECEIPTDETAIL_Temp t where FINRECEIPTDETAIL_Temp.Receiptid = t.Receiptid and FINRECEIPTDETAIL_Temp.ReceiptSeqid = t.ReceiptSeqid)
-                                        where exists (select 1 from FINRECEIPTDETAIL_Temp t where FINRECEIPTDETAIL_Temp.Receiptid = t.Receiptid and FINRECEIPTDETAIL_Temp.ReceiptSeqid = t.ReceiptSeqid); 
-		</sql>
-	</changeSet>
-		<changeSet id="55" author="Siva" dbms="oracle">
+		<changeSet id="55" author="Siva">
 		<sql>
 			Update FINRECEIPTDETAIL_Temp m set m.payorder = (Select row_number() over(partition by Receiptid order by Receiptid,ReceiptSeqid)
                                         from  FINRECEIPTDETAIL_Temp t where m.Receiptid = t.Receiptid and m.ReceiptSeqid = t.ReceiptSeqid)
                                         where exists (select 1 from FINRECEIPTDETAIL_Temp t where m.Receiptid = t.Receiptid and m.ReceiptSeqid = t.ReceiptSeqid); 
 		</sql>
 	</changeSet>
-	<changeSet id="56" author="Prasad" dbms="mssql">
-		<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
-		<![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
-		 (Select GETDATE()  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE 
-		 from ( 
-			Select Finreference,Schdate, (case when Disbonschdate=1 then 'Amount Financed - Payable ('+Finreference+')' 
-									     when BPIORHOLIDAY='B' then 'Broken Period Interest Receivable -Due('+Finreference+')' else 
-											  'Due for Installment '+INSTNUMBER+' ('+Finreference+')' end) Particulars,
-			 case when Disbonschdate=1 then 0 else Repayamount end Debit,
-			 case when Disbonschdate=1 then DisbAmount else 0 end Credit
-	   from finscheduledetails  
-	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY is null) and 
-			 schdate<=(Select GETDATE()  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  			 
-	union 	
-		Select finreference,m.lastmnton,feetypedesc +'- Due ('+Finreference+')' ,m.ADVISEAMOUNT Debit ,0 Credit 
-		from manualadvise m
-		inner join FEETYPES f on f.feetypeid = m.feetypeid 		
-	union	
-		Select REFERENCE,Receiveddate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '+PAYMENTTYPE +' No.:'+CHEQUEACNO +'('+REFERENCE+')'
-										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('+REFERENCE+')' 
-										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'+CHEQUEACNO +'('+REFERENCE+')' end) Particulars,
-			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit
-		from FINRECEIPTHEADER T1 inner join 
-			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID			 
-	union 	
-		Select finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' + FINODTILLDATE Particulars, 
-		TotPenaltyAmt Debit, 0 credit
-		From FinODDetails where TOtPenaltyAmt > 0 
-	)T1 
-	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
-	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
-		</createView>
-	</changeSet>
-	<changeSet id="56" author="Prasad" dbms="oracle">
+	<changeSet id="56" author="Prasad">
 		<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
 		<![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
 		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE 
@@ -887,6 +785,10 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 	 		update FinReceiptDetail_Temp set LogKey = 0;
 		</sql>
 	</changeSet>
+	 <changeSet id="61" author="Manojkumar.P">
+		<modifyDataType tableName="MANDATE_REQUESTS" columnName="OPENFLAG"
+			newDataType="VARCHAR(20)"/>
+	</changeSet>
 		<changeSet id="62" author="Madhubabu">
 	<createView viewName="BankBranches_view" replaceIfExists="true">
 	    SELECT T1.BankBranchID, T1.BankCode, T1.BranchCode, T1.BranchDesc, T1.City,T3.PcCityName, T1.MICR, T1.IFSC,T2.BankName,T1.ECS,T1.DDA,T1.NACH,T1.DD,T1.AddOfBranch,T1.Cheque,T1.Active
@@ -906,11 +808,38 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 				WHERE     NOT EXISTS (SELECT 1 FROM BankBranches_TEMP WHERE BankBranchID = T1.BankBranchID)
 		</createView>
 </changeSet>
-
-     <changeSet id="61" author="Manojkumar.P">
-		<modifyDataType tableName="MANDATE_REQUESTS" columnName="OPENFLAG"
-			newDataType="VARCHAR(20)"/>
+	<changeSet id="63" author="Siva">
+		<addColumn tableName="FinReceiptHeader">
+			<column name="RealizationDate" type="datetime" />
+		</addColumn>
+		<addColumn tableName="FinReceiptHeader_Temp">
+			<column name="RealizationDate" type="datetime" />
+		</addColumn>
 	</changeSet>
+	<changeSet id="64" author="Siva">
+		<createView viewName="FINRECEIPTHEADER_VIEW" replaceIfExists="true">
+		     SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
+				 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
+				 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T1.RealizationDate
+							FROM         FinReceiptHeader_Temp T1 INNER JOIN
+				       FinanceMain T2 ON T1.Reference = T2.FinReference INNER JOIN
+				       Customers T3 ON T2.CustId = T3.CustId
+				UNION ALL
+				 SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
+				 T1.ReceiptMode, T1.ExcessAdjustTo,T1.AllocationType,T1.ReceiptAmount,T1.EffectSchdMethod, 
+				 T1.ReceiptModeStatus, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				 T2.FinType,  T2.FinBranch, T3.CustCIF , 	T3.CustShrtName, T2.FinCcy, T1.RealizationDate
+						FROM         FinReceiptHeader T1 INNER JOIN
+				       FinanceMain T2 ON T1.Reference = T2.FinReference INNER JOIN
+				       Customers T3 ON T2.CustId = T3.CustId
+						WHERE     NOT EXISTS
+				                          (SELECT     1
+				                            FROM          FinReceiptHeader_TEMP 
+				                            WHERE      ReceiptID = T1.ReceiptID)
+		</createView>
+	</changeSet>
+	
 	<changeSet id="65" author="Prasad">
 		<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
 		<![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
@@ -959,5 +888,539 @@ INNER JOIN (SELECT ID from SAPGL_TRAIL_BALANCE_HEADER where ID = (select MAX(ID)
 			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
 			RMTProvincevsCity T5 ON T3.city=T5.PCCity
 		</createView>
+	</changeSet>
+	<changeSet id="67" author="Siva">
+		<sql>
+		    UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ReceiptRealizationDialog_realizationDate','ReceiptRealizationDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='REALIZATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ReceiptRealizationDialog_realizationDate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		</sql>
+	</changeSet>
+
+	<changeSet id="69" author="Durgaprasad g">
+		<addColumn tableName="PRESENTMENTDETAILS_TEMP">
+			<column name="RECEIPTID" type="bigint"/>
+		</addColumn>
+	</changeSet>
+	
+<changeSet id="68" author="Durgaprasad g">
+		<createView viewName="PRESENTMENTDETAILS_AVIEW" replaceIfExists="true">
+  SELECT		T1.ID, T1.PRESENTMENTID, T1.PRESENTMENTREF, T1.FINREFERENCE, T1.SCHDATE, T1.MANDATEID, T1.SCHAMTDUE, T1.SCHPRIDUE, T1.SCHPFTDUE, T1.SCHFEEDUE, T1.SCHINSDUE,
+							T1.schPenaltyDue, T1.advanceAmt, T1.excessID, T1.adviseAmt, T1.presentmentAmt, T1.ExcludeReason, T1. TDSAMOUNT, T1.bounceID, T1.emiNo, T1.status,
+							T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+      						T2.MANDATETYPE,T3.FINTYPE,T4.FINTYPEDESC, T5.CUSTSHRTNAME CUSTOMERNAME  ,T1.ReceiptID 
+				FROM 		PRESENTMENTDETAILS    T1  INNER JOIN 
+							MANDATES  T2 ON T1.MANDATEID = T2.MANDATEID INNER JOIN 
+							FINANCEMAIN T3 ON T1.FINREFERENCE = T3.FINREFERENCE INNER JOIN 
+							RMTFINANCETYPES T4 ON T3.FINTYPE  = T4.FINTYPE INNER JOIN 
+							CUSTOMERS T5 ON T5.CUSTID  = T3.CUSTID
+							
+	</createView>
+</changeSet>							
+
+<changeSet id="70" author="Durgaprasad g">
+		<createView viewName="PRESENTMENTDETAILS_VIEW" replaceIfExists="true">
+			SELECT		T1.ID, T1.PRESENTMENTID, T1.PRESENTMENTREF, T1.FINREFERENCE, T1.SCHDATE, T1.MANDATEID, T1.SCHAMTDUE, T1.SCHPRIDUE, T1.SCHPFTDUE, T1.SCHFEEDUE, T1.SCHINSDUE,
+										T1.schPenaltyDue, T1.advanceAmt, T1.excessID, T1.adviseAmt, T1.presentmentAmt, T1.ExcludeReason, T1. TDSAMOUNT, T1.bounceID, T1.emiNo, T1.status,
+										T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+										T2.MANDATETYPE,T3.FINTYPE,T4.FINTYPEDESC, T5.CUSTSHRTNAME CUSTOMERNAME, T1.ReceiptID 
+							FROM 		PRESENTMENTDETAILS_TEMP  T1  INNER JOIN 
+										MANDATES  T2 ON T1.MANDATEID = T2.MANDATEID INNER JOIN 
+										FINANCEMAIN T3 ON T1.FINREFERENCE = T3.FINREFERENCE INNER JOIN 
+										RMTFINANCETYPES T4 ON T3.FINTYPE  = T4.FINTYPE INNER JOIN 
+										CUSTOMERS T5 ON T5.CUSTID  = T3.CUSTID
+			UNION ALL
+
+			SELECT		T1.ID, T1.PRESENTMENTID, T1.PRESENTMENTREF, T1.FINREFERENCE, T1.SCHDATE, T1.MANDATEID, T1.SCHAMTDUE, T1.SCHPRIDUE, T1.SCHPFTDUE, T1.SCHFEEDUE, T1.SCHINSDUE,
+										T1.schPenaltyDue, T1.advanceAmt, T1.excessID, T1.adviseAmt, T1.presentmentAmt, T1.ExcludeReason, T1. TDSAMOUNT, T1.bounceID, T1.emiNo, T1.status,
+										T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+										T2.MANDATETYPE,T3.FINTYPE,T4.FINTYPEDESC, T5.CUSTSHRTNAME CUSTOMERNAME , T1.ReceiptID 
+							FROM 		PRESENTMENTDETAILS    T1  INNER JOIN 
+										MANDATES  T2 ON T1.MANDATEID = T2.MANDATEID INNER JOIN 
+										FINANCEMAIN T3 ON T1.FINREFERENCE = T3.FINREFERENCE INNER JOIN 
+										RMTFINANCETYPES T4 ON T3.FINTYPE  = T4.FINTYPE INNER JOIN 
+										CUSTOMERS T5 ON T5.CUSTID  = T3.CUSTID
+			WHERE     NOT EXISTS (SELECT 1 FROM PRESENTMENTDETAILS_TEMP WHERE ID = T1.ID)
+	</createView>
+</changeSet>	
+
+
+<changeSet id="71" author="Durgaprasad g">
+		<createView viewName="PRESENTMENTDETAILS_AVIEW" replaceIfExists="true">
+  SELECT		T1.ID, T1.PRESENTMENTID, T1.PRESENTMENTREF, T1.FINREFERENCE, T1.SCHDATE, T1.MANDATEID, T1.SCHAMTDUE, T1.SCHPRIDUE, T1.SCHPFTDUE, T1.SCHFEEDUE, T1.SCHINSDUE,
+							T1.schPenaltyDue, T1.advanceAmt, T1.excessID, T1.adviseAmt, T1.presentmentAmt, T1.ExcludeReason, T1. TDSAMOUNT, T1.bounceID, T1.emiNo, T1.status,
+							T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+      						T2.MANDATETYPE,T3.FINTYPE,T4.FINTYPEDESC, T5.CUSTSHRTNAME CUSTOMERNAME  ,T1.ReceiptID,T1.ECSRETURN 
+				FROM 		PRESENTMENTDETAILS    T1  INNER JOIN 
+							MANDATES  T2 ON T1.MANDATEID = T2.MANDATEID INNER JOIN 
+							FINANCEMAIN T3 ON T1.FINREFERENCE = T3.FINREFERENCE INNER JOIN 
+							RMTFINANCETYPES T4 ON T3.FINTYPE  = T4.FINTYPE INNER JOIN 
+							CUSTOMERS T5 ON T5.CUSTID  = T3.CUSTID
+							
+	</createView>
+</changeSet>							
+
+<changeSet id="72" author="Durgaprasad g">
+		<createView viewName="PRESENTMENTDETAILS_VIEW" replaceIfExists="true">
+			SELECT		T1.ID, T1.PRESENTMENTID, T1.PRESENTMENTREF, T1.FINREFERENCE, T1.SCHDATE, T1.MANDATEID, T1.SCHAMTDUE, T1.SCHPRIDUE, T1.SCHPFTDUE, T1.SCHFEEDUE, T1.SCHINSDUE,
+										T1.schPenaltyDue, T1.advanceAmt, T1.excessID, T1.adviseAmt, T1.presentmentAmt, T1.ExcludeReason, T1. TDSAMOUNT, T1.bounceID, T1.emiNo, T1.status,
+										T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+										T2.MANDATETYPE,T3.FINTYPE,T4.FINTYPEDESC, T5.CUSTSHRTNAME CUSTOMERNAME, T1.ReceiptID ,T1.ECSRETURN
+							FROM 		PRESENTMENTDETAILS_TEMP  T1  INNER JOIN 
+										MANDATES  T2 ON T1.MANDATEID = T2.MANDATEID INNER JOIN 
+										FINANCEMAIN T3 ON T1.FINREFERENCE = T3.FINREFERENCE INNER JOIN 
+										RMTFINANCETYPES T4 ON T3.FINTYPE  = T4.FINTYPE INNER JOIN 
+										CUSTOMERS T5 ON T5.CUSTID  = T3.CUSTID
+			UNION ALL
+
+			SELECT		T1.ID, T1.PRESENTMENTID, T1.PRESENTMENTREF, T1.FINREFERENCE, T1.SCHDATE, T1.MANDATEID, T1.SCHAMTDUE, T1.SCHPRIDUE, T1.SCHPFTDUE, T1.SCHFEEDUE, T1.SCHINSDUE,
+										T1.schPenaltyDue, T1.advanceAmt, T1.excessID, T1.adviseAmt, T1.presentmentAmt, T1.ExcludeReason, T1. TDSAMOUNT, T1.bounceID, T1.emiNo, T1.status,
+										T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+										T2.MANDATETYPE,T3.FINTYPE,T4.FINTYPEDESC, T5.CUSTSHRTNAME CUSTOMERNAME , T1.ReceiptID ,T1.ECSRETURN
+							FROM 		PRESENTMENTDETAILS    T1  INNER JOIN 
+										MANDATES  T2 ON T1.MANDATEID = T2.MANDATEID INNER JOIN 
+										FINANCEMAIN T3 ON T1.FINREFERENCE = T3.FINREFERENCE INNER JOIN 
+										RMTFINANCETYPES T4 ON T3.FINTYPE  = T4.FINTYPE INNER JOIN 
+										CUSTOMERS T5 ON T5.CUSTID  = T3.CUSTID
+			WHERE     NOT EXISTS (SELECT 1 FROM PRESENTMENTDETAILS_TEMP WHERE ID = T1.ID)
+	</createView>
+</changeSet>	
+
+		<changeSet id="73" author="Pruthvi">
+		<createView viewName="dm_application_details_view" replaceIfExists="true">
+		select t2.ApplicationNO APPLID,'' CRM_DEALID,'' CRSCOREDATE,'' CIBILSCORE,'' APPSCORE,'' BEHSCORE,'' DEVIATION_TYPE,'' DEVIATION_FLAG,
+'' DEVIATION_CODE,'' DEVIATION_NAME,'' REQ_TENURE,cast('' as numeric(18,4)) REQ_LOAN_AMT,cast('' as numeric(18,4)) LOAN_LIMIT,cast(T1.FinAmount as numeric(18,4)) APPROVE_LOAN_AMT,t1.FinPurpose LOAN_PURPOSE,
+t1.FinType LOAN_TYPE,'' CANCELLATIONDATE,'' CANCEL_REASON,'' FREQUENCY,'' LOAN_APPROVAL_DATE,t1.FinStartDate AGREEMENTDATE,cast(T2.EffectiveRateOfReturn as numeric(10,7)) INTRATE,cast('' as numeric(10,7)) FLAT_RATE,
+cast('' as numeric(10,7)) IRR,cast('' as numeric(10,7)) GROSS_LTV,cast('' as numeric(10,7)) NET_LTV,cast('' as numeric(18,4)) COF,cast('' as numeric(10,7)) DEBT_BURDEN_RATIO,cast('' as numeric(10,7)) FOIR_DB,'' SCHEMEID,'' SCHEMEDESC,'' SCHEMEGROUPID,
+'' SCHEME_GROUPG_DESC,'' PRODUCT_CATEGORY,'' PROD_TYPE,'' PROMOTIONID,'' PROGRAMID,'' SURROGATE_FLAG,'' SOURCING_CHANNEL_TYPE,
+'' SOURCING_CHANNEL_NAME,'' REFERAL_GROUP,'' REFERAL_NAME,BranchCountry COUNTRYID,countrydesc COUNTRY,'' REGIONID,'' REGION,'' STATEID,BranchProvince STATE,
+'' CITYID,BranchCity CITY,t1.finbranch BRANCHID,BranchDesc BRANCHDESC,'' BROKER_NAME,'' DME_NAME,'' ASM_NAME,'' RSM_NAME,'' CRDT_MGR_NAME,'' ROID_NAME,
+'' TLID_NAME,'' BMID_NAME,'' COID_NAME,'' SUPPLIERID,cast('' as numeric(10,7)) DLR_PARTICIPATION_RATE,'' LOCAL_OUTSTATION_FLG,'' CUSTOMERID,
+(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,'' PROCESSED_FLAG,'' PROCESS_DATE,'' PRODUCT,'' SEGMENTS,'' CRM_STATUS,'' LOGINDATE,'' APPR_REJ_DATE,
+'' CANCEL_DATE,'' FILE_STATUS,'' FILE_HOLD_REASON,'' QDPDONE,'' ISHOLD,'' BRANCH_INW_DATE,'' BRANCH_HOLD_DATE,'' CPU_INW_DATE,
+'' CPU_HOLD_DATE,'' SYSTEM_HOLD,'' PSL_FLAG,'' DOC_WAVE_FLAG,'' CUSTOMER_SWIPE,'' CUSTOMER_ACCEPTANCE,'' KYC_DOC_TYPE,
+'' KYC_DOC_ID,cast('' as numeric(5,2)) BUSINESS_IRR,'' INSPECTORNAME,'' REGNUMBER,'' BUSINESS_YEAR,'' DEALID,cast('' as numeric(10,7)) PRETAXIRR,'' ODM_FLAG,'' DI_DATE,
+'' LAA_QDP_FLAG,'' PREFERRED_CARD_ACCEPTANCE,
+cast(null as numeric(16,2)) ORIG_AMTFIN,'' ELC_FLAG,cast('' as numeric(14,2)) ELC_LIMIT,'' QDP_DONE_DATE,'' LAA_DECENTRALIZED_FLAG,'' FCU_FLAG,
+'' MKTGID,'' DM_MPID,'' SWIPE_CARD_CODE,'' SOURCE_CARD_CODE,'' DII_USER_ID,'' QDP_CHEQUE_ISSUE,'' INTEREST_TYPE,
+'' DII_DONE_DATE,'' FINISH_DATE,'' BATCH_ID 
+from finpftdetails T1
+Inner join FinanceMain T2 on T1.finreference=T2.finreference
+inner join RMTBranches T3 on T3.branchcode=t1.finbranch
+Left join BMTCountries T4 on T4.countrycode=t3.branchcountry
+			</createView>
+	</changeSet>
+		<changeSet id="74" author="Pruthvi">
+		<createView viewName="DM_COAPPLICANT_DTLS_view" replaceIfExists="true">
+	select custid CUSTOMERID,'' APPLICANT_TYPE,'' PAN_NO,CustRelation CUST_RELATION,custtypectg CUST_TYPE,'' AGE,CustDOB DOB,CustFName FNAME,CustMName MNAME,CustLName LNAME,
+GenderCode GENDER,CustMaritalSts MARITAL_STATUS,NoOfDependents NO_OF_DEPENDENT,'' YRS_CURRENTJOB,'' PREVIOUS_JOB_YEAR,'' QUALIFICATION,'' EMPLOYER_DESC,
+'' COMPANY_TYPE,'' INDUSTRYID,'' BUSINESS_NATURE,'' OCCUPATION_CODE,'' GUARDIAN,'' PROCESS_FLAG,'' PROCESS_DATE,
+'' EMP_TYPE,(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,
+cast(null as numeric(16,2)) INCOME,'' APPLID,'' BATCH_ID 
+from customers T1
+Left join bmtgenders t2 on t2.gendercode=t1.custgendercode
+left join RMTCustTypes T3 on T3.custtypecode=t1.custtypecode	
+			</createView>
+	</changeSet>
+		<changeSet id="75" author="Pruthvi">
+		<createView viewName="DM_OPENECS_DETAILS_view" replaceIfExists="true">
+		select custid CUSTOMERID,'' ECS_ID,T2.Bankcode BANK_ID,bankname BANK_NAME,bankbranchid BANKBRANCHID,'' BANKID,'' BANK_BRANCH_NAME,city CITY,'' ACCTYPE,
+'' ACCNO,'' MAXLIMIT,'' BALLIMIT,'' UTIL_LIMIT,'' VALID_LIMIT,'' REPAY_MODE,micr MICRCODE,'' ACTIVE_FLAG,'' CITYID,'' SEGMENTS,
+(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,'' PROCESS_DATE,'' BATCH_ID 
+from finpftdetails T1
+Left join BankBranches T2 on T2.Branchcode=t1.finbranch 
+left join BMTBankDetail T3 on T3.Bankcode=t2.bankcode
+			</createView>
+	</changeSet>
+		<changeSet id="76" author="Pruthvi">
+		<createView viewName="DM_SUBQ_DISB_DETAILS_view" replaceIfExists="true">
+		select T1.FinStartDate AGREEMENTDATE,'' APPLID,T2.applicationno AGREEMENTNO,T3.DisbAccountID DISBURSEMENTNO,DisbDate DISBURSEMENTDATE,'' PARENT_AGREEMENTNO,
+cast(T1.FinAmount as numeric(16,2)) AMTFIN,
+cast(null as numeric(16,2)) NET_AMTFIN,
+cast(T3.DisbAmount as numeric(16,2)) DISBURSEDAMT,
+DisbisActive DISB_STATUS,T1.FirstRepayDate FIRST_DUE_DATE,'' GROSS_TENURE,'' NET_TENURE,t1.MaturityDate MATURITYDATE,t1.MaturityDate EXPIRYDATE,'' NO_OF_ADV_INSTL,
+cast(null as numeric(16,2)) ADV_EMI_AMT,
+cast(RepayAmount as numeric(16,2)) EMI,'' REPAYMENT_MODE,T1.FinType PRODUCTFLAG,'' PROMOTIONID,
+cast(null as numeric(16,2)) ICICI_LOMBARD,
+cast(null as numeric(16,2)) BAGIC,
+cast(null as numeric(16,2)) BALIC_CHARGES,(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,'' PROCESSED_FLAG,'' PROCESS_DATE,'' SEGMENTS,
+cast(null as numeric(16,2)) FEE,
+cast(null as numeric(16,2)) DEALER_SUBV,
+cast(null as numeric(16,2)) MANU_SUBV_DED,
+cast(null as numeric(16,2)) MANU_SUBV_NDED,
+cast(null as numeric(16,2)) PREEMI,'' EXISTING_LANNO,'' MORTGAGE_FEE,'' COMMITMENT_FEE,'' PROCESSING_FEE,'' PRE_EMI_RECEIVABLE,
+'' INSURANCE,'' PAYMENTMODE,'' FREQ,'' CHEQUENUM,'' BATCH_ID
+from  finpftdetails T1
+Inner join Financemain T2 on T1.finreference=T2.finreference
+Inner join FinDisbursementDetails T3 on T3.finreference=t1.finreference
+Inner join finscheduledetails T4 on t4.finreference=t1.finreference	
+			</createView>
+	</changeSet>
+		<changeSet id="77" author="Pruthvi">
+		<createView viewName="DM_IVR_GATEWAY_FLEXI_view" replaceIfExists="true">
+		select T2.applicationno AGREEMENTNO,
+cast(null as numeric(20,2)) DROP_LINE_LIMIT,
+cast(null as numeric(20,2)) AMOUNT_DRAWN_LIMIT,
+cast(null as numeric(20,2)) UTLIZED_BALANCE_LIMIT,
+cast(null as numeric(20,2)) PRINCIPLE_AMOUNT_PAID,
+cast(null as numeric(20,2)) BALANCE_PRINCIPAL_OUTSTANDING,T1.FinStartDate PROCESS_DATE,(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,
+cast(null as numeric(16,2)) BATCH_ID 
+from finpftdetails T1
+Inner join Financemain T2 on T1.finreference=T2.finreference
+			</createView>
+	</changeSet>
+		<changeSet id="78" author="Pruthvi">
+		<createView viewName="dm_bounce_details_view" replaceIfExists="true">
+		select
+cast(T2.Applicationno as numeric(8,0)) APPLID,
+cast(null as numeric(32,0)) CHEQUEID,t1.finreference AGREEMENTNO,'' BOUNCE_DATE,'' BOUNCE_REASON,
+cast(null as numeric(16,2)) BOUNCE_AMT,(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,'N' PROCESSED_FLAG,'' PROCESS_DATE,'' SEGMENTS,
+cast(null as numeric(16,2)) BUSINESS_YEAR,'' CHEQUEDATE
+from finpftdetails T1
+inner join FinanceMain T2 on t1.finreference=t2.finreference
+			</createView>
+	</changeSet>
+		<changeSet id="79" author="Pruthvi">
+		<createView viewName="DM_WRITEOFF_DETAILS_view" replaceIfExists="true">
+		select
+cast(T2.applicationno as numeric(8,0)) APPLID,t1.finreference AGREEMENTNO,'' CHARGEOFF_DT,'' CHARGEOFF_FLG,'' CHARGEOFF_REASON,
+cast(null as numeric(18,4)) SETTLEMENT_LOSS,
+cast(null as numeric(18,4)) GROSS_WRITEOFF_AMT,
+0 NET_WRITEOFF_AMT,(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,'N' PROCESSED_FLAG,sysdate PROCESS_DATE,'' SEGMENTS,
+cast(null as numeric(18,4)) RECEIPT_ON_CHARGEOFF,
+cast(null as numeric(16,2)) BUSINESS_YEAR
+from Finpftdetails T1
+inner join financemain t2 on t1.finreference=t2.finreference
+			</createView>
+	</changeSet>
+		<changeSet id="80" author="Pruthvi">
+		<createView viewName="dm_resch_details_daily_view" replaceIfExists="true">
+	select
+cast(T2.applicationno as numeric(16,2)) APPLID,t1.finreference AGREEMENTNO,T3.Disbstatus DISB_STATUS,
+cast(T1.NOInst as numeric(3,0)) GROSS_TENURE,
+cast(null as numeric(3,0)) NET_TENURE,t1.MaturityDate MATURITYDATE,t1.MaturityDate EXPIRYDATE,
+cast(FirstRepayAmt as numeric(16,2)) EMI,AlwdrpyMethods REPAYMENT_MODE,T1.fintype PRODUCTFLAG,(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,'N' PROCESSED_FLAG,sysdate PROCESS_DATE,
+'' SEGMENTS,'' FREQ,'' LOAN_STATUS,t1.MaturityDate CLOSUREDATE,t1.RepayAccountId CUST_ACCT_NO,T7.bankname BANKNAME,micr MICRCODE,'' CUST_BANK_BRANCH,
+city CUST_BANK_CITY,
+cast(null as numeric(16,2)) BUSINESS_YEAR,
+cast(null as numeric(8,0)) PDCID,'' PCFLAG,'' TIE_UP,
+cast(null as numeric(10,2)) MARGIN,
+cast(null as numeric(10,2)) SPECIALMARGIN,
+cast(null as numeric(3,0)) FIXEDTENOR,'' CEEFFECTIVEDATE,
+cast(T2.EffectiveRateOfReturn as numeric(10,7)) EFF_RATE,
+cast(null as numeric(10,7)) PLRRATE,'' TIE_UP_WITH,'' DATE_OF_CLOSURE,'' PDCMS_SEQ_GENERATED_DATE,
+'' INSTRUMENT_DATA_ENTRY_DATE,'' PAYMENT_AUTHORIZATION_DATE
+from finpftdetails T1
+inner join Financemain T2 on t1.finreference=t2.finreference
+inner join FinDisbursementDetails T3 on t3.finreference=t1.finreference
+Inner join rmtfinancetypes T4 on T4.FinType=T1.FinType
+left join bankbranches T6 on T6.Branchcode=t1.finbranch 
+left join BMTBankDetail T7 on T7.Bankcode=t6.bankcode	
+			</createView>
+	</changeSet>
+		<changeSet id="81" author="Pruthvi">
+		<createView viewName="DM_PRESENTATION_DETAILS_view" replaceIfExists="true">
+		select t1.finreference AGREEMENTNO,
+  cast(FirstRepayAmt as numeric(20,2)) EMI,AlwdrpyMethods REPAY_TYPE,'' DEPOSITED_DATE,'' CREDIT_STATUS,'' RETURN_CODE,'' RETURN_REASON,'' REMARKS,
+  '' SEGMENTS,sysdate PROCESSDATE,(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,
+  cast(null as numeric(10,2)) EMI_NO,'' CUSTOMER_BANK_NAME,
+  cast(null as numeric(5,2)) BOM_BOUNCE_BUCKET,micr MICR_CODE,'' STATUS_UPDT_DATE,'' CUST_BANK_AC_NO,'' CUSTOMER_BANK_BRANCH,
+  '' CHEQUESNO,'' CHEQUEDATE,'' FEMI_FLAG,'' HOLD_IGNORE_CODE,'' HOLD_IGNORE_REASON,'' DEST_ACC_HOLDER,
+  cast(null as numeric(8,2)) PDCID,
+  cast(null as numeric(8,2)) BBRANCHID
+  from Finpftdetails t1
+  inner join financemain t2 on t1.finreference=t2.finreference
+  Inner join rmtfinancetypes T3 on T3.FinType=T1.FinType
+  left join bankbranches T6 on T6.Branchcode=t1.finbranch 
+  LEFT JOIN BMTBANKDetail T5 on t5.bankcode=t6.bankcode
+			</createView>
+	</changeSet>
+		<changeSet id="82" author="Pruthvi">
+		<createView viewName="DM_LEA_DOC_DTLE_view" replaceIfExists="true">
+	select 
+t1.finreference  AGREEMENTID,'' APPLICABLE,
+cast(null as numeric(8,0)) APPLID,'' APPROVED_BY,'' AUTHDATE,'' AUTHID,'' AWB_NO,'' BRANCHSTATUS,
+cast(null as numeric(8,0)) CONSTITUTION,'' COURIER_NAME,'N' CRITICAL,'' CUSTOMER_TYPE,
+t1.custid  CUSTOMERID,'' DATE_BRANCH_STATUS,'' DATELASTUPDT,'' DOC_CLASSFN,'' DOC_RETRIEVAL_STATUS,
+cast(null as numeric(8,0)) DOCID,'' DOCTYPE,'' FILE_BARCODE,'' MAKERDATE,'' MAKERID,'' MC_STATUS,'' NEW_FLAG,'' ORIGINALS,
+'' PACKET_TRACKER_NO,'' PROPERTY_ADDRESS,'' PROPERTY_CODE,'' REASON,'' RECEIVED,'' RECEIVEDDATE,'' REJECTION_REASONS,
+'' RELEASED_DATE,'' RELEASED_REMARKS,'' REMARKS,'' STAGE,'' TARGETDATE,'' TITLE_DOCUMENT,
+cast(null as numeric(8,0)) TXNDOCID,'' VALIDTILLDATE,'' VAP_LOAN_FLAG,(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,'N' PROCESSFLAG,sysdate PROCESSDATE,'' SEGMENT,
+'' REVISED_TARGET_DATE
+from Finpftdetails t1
+inner join financemain t2 on t1.finreference=t2.finreference	
+			</createView>
+	</changeSet>
+		<changeSet id="83" author="Pruthvi">
+		<createView viewName="DM_PREPAYMENT_DETAILS_view" replaceIfExists="true">
+		select 
+cast(t2.applicationno as numeric(8,0)) APPLID,t1.finreference AGREEMENTNO,
+cast(null as numeric(16,0)) PREPAYMENTID,
+cast(null as numeric(5,2)) PREPAYMENT_RATE,'' PREPAYMENT_TYPE,
+cast(null as numeric(16,2)) PREPAYMENT_PENALTY_DUE,
+cast(null as numeric(16,2)) PREPAYMENT_PENALTY_PAID,'' PREPAYMENT_AMT,(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,'N' PROCESSED_FLAG,sysdate PROCESS_DATE,
+'' SEGMENTS,'' PREPAYMENT_DATE,
+cast(null as numeric(8,0)) BUSINESS_YEAR
+from Finpftdetails t1
+  inner join financemain t2 on t1.finreference=t2.finreference
+			</createView>
+	</changeSet>
+		<changeSet id="84" author="Pruthvi">
+		<createView viewName="DM_TOPUP_DETAILS_view" replaceIfExists="true">
+		select t1.finreference AGREEMENTNO,
+cast(T2.ApplicationNo as numeric(8,0)) APPLID,T1.fintype PRODUCTFLAG,
+cast(null as numeric(8,0)) TOP_UP_AMT,
+cast(null as numeric(8,0)) X_LAN_POS,
+cast(null as numeric(16,2))  DISBURSALAMOUNT,
+cast(t1.finamount as numeric(16,2)) AMTFIN,sysdate PROCESSEDDATE,(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE
+from Finpftdetails t1
+inner join financemain t2 on t1.finreference=t2.finreference
+			</createView>
+	</changeSet>
+		<changeSet id="85" author="Pruthvi">
+		<createView viewName="FORECLOSURECHARGES_view" replaceIfExists="true">
+select 
+cast(T2.applicationNo as numeric(8,0)) AGREEMENTID,cast(null as numeric(16,2)) BAL_PRINCIPAL,cast(null as numeric(16,2)) RESEDUL_VALUE,cast(null as numeric(16,2)) INSTALLMENTS,
+cast(null as numeric(16,2)) ADVICES,cast(null as numeric(16,2)) PENALTY,cast(0 as numeric(16,2)) INTREST_ON_TERMINATION,cast(null as numeric(16,2)) FLOATINTREST_ON_TERMINATION,
+cast(null as numeric(16,2)) OVER_DUES,cast(null as numeric(16,2)) CURRENT_OVERDUES,cast(null as numeric(16,2)) CURRENT_WAVEOFFAMT,cast(null as numeric(16,2)) OVER_DISTANCE_CHARGES,
+cast(null as numeric(16,2)) INTREST_ON_TERMINATION_PER_DAY,cast(null as numeric(16,2)) INTREST_ACCRUALS,cast(null as numeric(16,2)) EXCESS_AMOUNT,cast(null as numeric(16,2)) EXCESS_REFUND,
+cast(null as numeric(16,2)) ADVICE,cast(null as numeric(16,2)) REBATE,cast(null as numeric(16,2)) ADVINSTL,cast(null as numeric(16,2)) EXCESSPRINPMNT,cast(null as numeric(16,2)) SDAMT,
+cast(null as numeric(16,2)) SDINT,cast(null as numeric(16,2)) EXCESS_INTREST_RATE,cast(null as numeric(16,2)) VAT_ON_FORECLOSURE,cast(null as numeric(16,2)) UNDER_DISTANCE_CHARGES,
+cast(null as numeric(16,2)) NET_PAYBALE,cast(null as numeric(16,2)) WAIVEOFFAMOUNT,'' ACTIVITY,'' AUTHORIZEDON,cast(null as numeric(16,2)) COMMITMENT_FEE,cast(null as numeric(16,2)) ORIGINATION_FEE,
+cast(null as numeric(16,2)) PRE_EMI,'' BUSINESS_DATE,cast(null as numeric(32,0)) CHEQUEID,'' STATUS,cast(null as numeric(16,2)) INTEREST_WAIVE_OFF,cast(null as numeric(16,2)) BALANCE_PRIN_WAIVE_OFF,
+cast(null as numeric(16,2)) INSTALLMET_INT_WAIVE_OFF,cast(null as numeric(16,2)) WOFF_CURRMONTH_INT,cast(null as numeric(16,2)) WOFF_OVERDUE_CHARGE,cast(null as numeric(16,2)) WOFF_CHQBOUNCE_CHARGES,
+cast(null as numeric(16,2)) WOFF_OTHERS,cast(null as numeric(16,2)) INSTALLMENT_PRIN_WAIVE_OFF,cast(null as numeric(16,2)) WOFF_PARKING_CHARGES,cast(null as numeric(16,2)) TOT_OTHER_REPO_CHARGES,
+cast(null as numeric(16,2)) WOFF_OTHER_REPO_CHARGES,cast(null as numeric(16,2)) TOT_REPOSESSION_CHARGES,cast(null as numeric(16,2)) WOFF_REPOSESSION_CHARGES,cast(null as numeric(16,2)) TOT_PARKING_CHARGES
+from Finpftdetails t1
+inner join financemain t2 on t1.finreference=t2.finreference		
+			</createView>
+	</changeSet>
+		<changeSet id="86" author="Pruthvi">
+		<createView viewName="DM_HTS_UNADJUSTED_AMT_view" replaceIfExists="true">
+	select 
+cast(applicationno as numeric(8,0)) APPLID,
+cast(null as numeric(18,2)) UNADJUSTED_AMOUNT,(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE
+from financemain	
+			</createView>
+	</changeSet>
+		<changeSet id="87" author="Pruthvi">
+		<createView viewName="DM_NOC_ELIGIBLE_LOANS_view" replaceIfExists="true">
+	select T2.ApplicationNo AGREEMENTNO,T2.ApplicationNo LOANACCTNUM,t1.fintype PRODUCTFLAG,CustEmail EMAIL,
+(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,sysdate PROCESS_DATE,'N' PROCESSED_FLAG 
+from Finpftdetails t1
+inner join financemain t2 on t1.finreference=t2.finreference
+left join CustomerEMails T3 on T3.custid=T1.custid	
+			</createView>
+	</changeSet>
+		<changeSet id="88" author="Pruthvi">
+		<createView viewName="DM_SEND_SOA_EMAIL_view" replaceIfExists="true">
+	select T2.applicationNo AGREEMENTNO,
+cast(t1.custid as numeric(8,0)) CUSTOMERID,CustEmail EMAILID,
+t1.finreference AGREEMENTID,
+cast(null as numeric(10,0)) PROCESSID,sysdate GENERATION_DATE,'' PROCESSED,t1.fintype PRODUCTFLAG,
+cast(null as numeric(5,0)) GROUPID,
+cast(null as numeric(5,0)) TOTAL_LAN,
+cast(null as numeric(5,0)) TOTAL_CLOSED_LAN,
+cast(null as numeric(5,0)) TOTAL_ACTIVE_LAN,'' SWIPE_FLAG,'' EMI_CARD_NO,T5.DisbDate DISBURSEMENT_DATE,
+cast(null as numeric(8,0)) SUPPLIERID,'' SUPPLIERDESC,
+cast(T1.FinAmount as numeric(16,2)) AMT_FIN,
+cast(FirstRepayAmt as numeric(16,2)) EMI,NextRepayDate NEXT_EMI_DUE_DATE,
+cast(null as numeric(16,2)) CHEQUE_BOUNCE_CHARGE
+from Finpftdetails t1
+inner join financemain t2 on t1.finreference=t2.finreference
+inner join findisbursementdetails T5 on T5.finreference=T1.finreference
+Inner join customers T3 on T3.custid=T1.custid
+left join CustomerEMails T4 on T4.custid=T3.custid	
+			</createView>
+	</changeSet>
+		<changeSet id="89" author="Pruthvi">
+		<createView viewName="DM_LOAN_VOUCHER_DETAILS_view" replaceIfExists="true">
+	select '' MODULEID,'' STAGEID,'' LEA_VOUCHERID,'' FA_VOUCHERID,'' VOUCHERTYPE,'' VOUCHERDATE,'' VALUEDATE,
+cast(null as numeric(8,0)) BRANCHID,'' BRANCH_CODE,'' BRANCHDESC,'' BUSINESS_AREA,'' PROFIT_CENTRE,'' PRODUCT_FLAG,
+cast(null as numeric(8,0)) SCHEMEID,'' SCHEMEDESC,'' ASSIGNMENT,
+t1.finreference AGREEMENTID,t2.applicationno AGREEMENTNO,T1.FinstartDate AGREEMENTDATE,t3.disbdate DISBURSALDATE,
+t1.finstatus LOAN_STATUS,'' NPA_STAGEID,
+'' FINNONE_GLID,'' GROUPGLDESC,'' SAPGL_CODE,'' COST_CENTRE,
+cast(T4.PostAmount as numeric(19,5)) DRAMT,
+cast(T5.POstAmount as numeric(19,5)) CRAMT,'' DRCR_FLAG,
+cast(null as numeric(16,2)) DRCR_AMT,'' NARRATION,
+cast(null as numeric(16,0)) CHEQUEID,(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,sysdate PROCESSDATE,'' SEGMENT,'N' PROCESSED_FLAG
+from Finpftdetails t1
+inner join financemain t2 on t1.finreference=t2.finreference
+inner join findisbursementdetails T3 on T3.finreference=T1.finreference
+left join Postings T4 on t4.finreference=t1.finreference and T4.drorcr='D'
+left join Postings T5 on t5.finreference=t1.finreference and T4.drorcr='D'	
+			</createView>
+	</changeSet>
+		<changeSet id="90" author="Pruthvi">
+		<createView viewName="DM_LOANWISE_CHARGE_DTLS_view" replaceIfExists="true">
+		select 
+T1.FinReference AGREEMENTID,
+cast(null as numeric(16,0)) TXNADVICEID,
+cast(null as numeric(8,0)) CHARGEID,
+cast(null as numeric(8,0)) CHARGECODEID,'' CHARGEDESC,
+cast(null as numeric(19,5)) CHARGEAMT,'' STATUS,
+cast(null as numeric(16,2)) AMTINPROCESS,
+cast(null as numeric(19,5)) TXNADJUSTEDAMT,
+cast(null as numeric(19,5)) ADVICEAMT,'' ADVICEDATE,(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,sysdate PROCESSDATE,
+'N' PROCESSED_FLAG,'' SEGMENT,cast(null as numeric(10,0)) BATCH_ID
+from Finpftdetails t1
+inner join financemain t2 on t1.finreference=t2.finreference
+			</createView>
+	</changeSet>
+		<changeSet id="91" author="Pruthvi">
+		<createView viewName="DM_LOANWISE_REPAYSCHEDULE_view" replaceIfExists="true">
+	select T2.ApplicationNO AGREEMENTNO,
+T1.FinReference AGREEMENTID,
+cast(null as numeric(16,0)) PROPINSTLID,'' EMI_NO,FirstRepayDate DUEDATE,
+cast(null as numeric(16,2)) OPENING_PRINCIPAL,
+cast(null as numeric(16,2)) INSTALMENT_AMT,
+cast(null as numeric(16,2)) PRINCIPAL_AMT,
+cast(null as numeric(16,2)) INTEREST_AMT,
+cast(null as numeric(16,2)) CLOSING_PRINCIPAL,'' INSTAL_TYPE,
+cast(null as numeric(25,2)) TOTAL_AMOUNT_DUE,
+cast(null as numeric(25,2)) DROPLINE_LIMIT,
+cast(null as numeric(25,2)) ACT_AVAILABLE_LIMIT,
+cast(null as numeric(25,2)) ACT_UTILISATION_LIMIT,'' EMI_HOLIDAY,(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE
+from Finpftdetails t1
+inner join financemain t2 on t1.finreference=t2.finreference	
+			</createView>
+	</changeSet>
+		<changeSet id="92" author="Pruthvi">
+		<createView viewName="RPT_PortfolioBehaviorSmry_View" replaceIfExists="true">
+		Select T1.*,T.PortfolioExposureBHD,T.PortfolioExposureUSD,T.TotalCustomers,T2.NoofRecords,FinDivOrder,DivisionCodeDesc from (		
+		Select  FinDivision,T1.FinType,(CASE WHEN FinDivision='BFSD' THEN 1 WHEN FinDivision='CL' THEN 2 END)FinDivOrder,
+				SUM(UDF_ConvertCurrency(T1.TotalPriBal+T1.TotalPftBal,T1.FinCCY,'INR'))PortfolioExposureBHD, 
+				SUM(UDF_ConvertCurrency((T1.TotalPriBal+T1.TotalPftBal),T1.FinCCY,'USD'))PortfolioExposureUSD,Count(DISTINCT FinAccount)TotalCustomers
+		From    Finpftdetails T1  INNER JOIN RMTFinanceTypes T2  ON T1.FinType=T2.FinType Group By T1.FinType,FinDivision)T 		
+		Inner Join RPT_PortfolioBehavior T1 on T.FinType=T1.FinType and T.FinDivision=T1.FinDivision Inner Join
+		SMTDivisionDetail ON DivisionCode=T.FinDivision   INNER JOIN
+		(Select FinDivision,FinType,COUNT(*) NoofRecords from RPT_PortfolioBehavior  Group By FinType,FinDivision)T2 ON T.FinType=T2.FinType and T.FinDivision=T2.FinDivision
+			</createView>
+	</changeSet>
+		<changeSet id="93" author="Pruthvi">
+		<createView viewName="RPT_DelinquentByPdtSmry_View" replaceIfExists="true">
+	Select T1.*,T.PortfolioExposureBHD,T.PortfolioExposureUSD,T.TotalCustomers,FinDivOrder,DivisionCodeDesc,T2.NoofRecords from (		
+		Select  FinDivision,T1.FinType,(CASE WHEN FinDivision='BFSD' THEN 1 WHEN FinDivision='CL' THEN 2 END)FinDivOrder,
+					SUM(UDF_ConvertCurrency(T1.TotalPriBal+T1.TotalPftBal,T1.FinCCY,'INR'))PortfolioExposureBHD, 
+					 SUM(UDF_ConvertCurrency((T1.TotalPriBal+T1.TotalPftBal),T1.FinCCY,'USD'))PortfolioExposureUSD,Count(DISTINCT CustCif)TotalCustomers
+			From    Finpftdetails T1  INNER JOIN RMTFinanceTypes T2  ON T1.FinType=T2.FinType Group By T1.FinType,FinDivision)T Inner Join
+		RPT_DelinquentByProducts T1 on T.FinType=T1.FinType and T.FinDivision=T1.FinDivision Inner Join
+		SMTDivisionDetail ON DivisionCode=T.FinDivision  INNER JOIN
+		(Select FinDivision,FinType,COUNT(*) NoofRecords from RPT_DelinquentByProducts  Group By FinType,FinDivision)T2 ON T.FinType=T2.FinType and T.FinDivision=T2.FinDivision 	
+			</createView>
+	</changeSet>
+	
+	
+	<changeSet id="94" author="Pruthvi">
+		<createView viewName="dm_disb_details_daily_view" replaceIfExists="true">
+		select T1.FinStartDate AGREEMENTDATE,'' APPLID,T1.FinReference AGREEMENTNO,T3.DisbAccountId DISBURSEMENTNO,DisbDate DISBURSEMENTDATE,'' PARENT_AGREEMENTNO,
+cast(T1.FinAmount as numeric(16,2)) AMTFIN,
+cast(null as numeric(16,2)) NET_AMTFIN,
+cast(FinCurrAssetValue as numeric(16,2)) DISBURSEDAMT,'' DISB_STATUS,
+FirstRepayDate FIRST_DUE_DATE,NOInst GROSS_TENURE,NOPaidInst NET_TENURE,T1.MaturityDate MATURITYDATE,PRVRPYSCHDATE EXPIRYDATE,'' NO_OF_ADV_INSTL,
+cast(null as numeric(16,2)) ADV_EMI_AMT,
+cast(FirstRepayAmt as numeric(16,2)) EMI,AlwdrpyMethods REPAYMENT_MODE,T1.FinType PRODUCTFLAG,'' PROMOTIONID,
+cast(null as numeric(16,2)) ICICI_LOMBARD,
+cast(null as numeric(16,2)) BAGIC,
+cast(null as numeric(16,2)) BALIC_CHARGES,
+(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,'N' PROCESSED_FLAG,SYSDATE PROCESS_DATE,'' SEGMENTS,
+cast(null as numeric(16,2)) FEE,
+cast(null as numeric(16,2)) DEALER_SUBV,
+cast(null as numeric(16,2)) MANU_SUBV_DED,
+cast(null as numeric(16,2)) MANU_SUBV_NDED,
+cast(null as numeric(16,2)) PREEMI,'' EXISTING_LANNO,'' MORTGAGE_FEE,'' COMMITMENT_FEE,'' PROCESSING_FEE,'' PRE_EMI_RECEIVABLE,'' INSURANCE,T2.FinRepayMethod PAYMENTMODE,
+case when T1.RepayFrq like 'M%' then 'Monthly'
+     when T1.RepayFrq like 'Q%' then  'Quarterly'
+     when T1.RepayFrq like 'Y%' then  'Yearly' else T1.RepayFrq end FREQ,'' CHEQUENUM,'' CUST_ACCT_NO,T5.BankName BANKNAME,t6.micr MICRCODE,'' BUSINESS_YEAR,
+cast(null as numeric(16,2)) EMI_CHARGE,
+cast(null as numeric(16,2)) PDC_CHARGE,cast(t2.EffectiveRateOfReturn as numeric(16,5)) IRR_PER,cast('' as numeric(16,5)) FEE_WL,
+cast(null as numeric(16,2)) ELC_CHARGE,
+cast(null as numeric(16,2)) CREDIT_VIDYA_FEES,'' BATCH_ID 
+
+
+from FinPftDetails T1 
+inner join FinanceMain T2 on T1.FinReference=T2.FinReference
+Inner join FinDisbursementDetails T3 on T3.FinReference=T1.FinReference
+Inner join rmtfinancetypes T4 on T4.FinType=T1.FinType
+left join bankbranches T6 on T6.Branchcode=t1.finbranch 
+LEFT JOIN BMTBANKDetail T5 on t5.bankcode=t6.bankcode
+			</createView>
+	</changeSet>
+		<changeSet id="95" author="Pruthvi">
+		<createView viewName="dm_loan_details_daily_view" replaceIfExists="true">
+		select '' APPLID,t1.finreference AGREEMENTNO,t3.custid CUSTOMERID,cast('' as numeric(18,4)) CUSTOMER_YIELD,t2.finstatus STATUS,'' NPA_STAGE,'' LMS_BUCKET,'' COLL_BUCKET,
+'' INSURANCE_APPLIED_FLG,(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,'N' PROCESSED_FLAG,SYSDATE PROCESS_DATE,'' SEGMENTS,t2.maturitydate CLOSUREDATE,
+cast (null as numeric(16,2)) TOPUP_AMT,'' BUSINESS_YEAR,'' PDCID,'' PCFLAG,'' OD_FLAG,cast('' as numeric(10,2)) MARGIN,cast('' as numeric(10,2)) SPECIALMARGIN,'' FIXEDTENOR,
+'' CEEFFECTIVEDATE,cast(T2.EffectiveRateOfReturn as numeric(10,7)) EFF_RATE,cast(T2.RepayBaseRate as numeric(10,7)) PLRRATE,'' PARTY_CODE,
+coalesce(custfname,'')||coalesce(custMname,'')||coalesce(custlname,'') PARTY_NAME,'' ZONE,'' COLLECTION_CENTRE,'' VIRTUAL_ACCOUNT_NUMBER,
+'' INSTALLMENT_TYPE,'' COMPANYTYPE,
+cast (T1.totalpftschd as numeric(16,2)) FIANANCE_CHARGES,T2.ApplicationNo FILENO,'' NO_OF_PDCS,
+cast (t2.Insuranceamt as numeric(16,2)) LIFEINSURANCE,
+cast (t2.FinAssetValue as numeric(16,2)) SHORTRECEIVED,'' IN_FAVOUR_OFF,'' MKTGID,
+cast (null as numeric(16,2)) PRE_EMI_INT_500071,'' LOAN_PURPOSE_DTL,'' LOAN_PURPOSE_DESC,
+cast (null as numeric(16,2)) LOGIN_FEES,'' VC_REFERRAL_CD,'' VC_REFERRAL_NAME,
+cast (null as numeric(16,2)) PROC_FEES2,'' INSTRUMENT_TYPE,'' LAN_BARCODE,'' INTSTART_DATE_REGULAR,cast('' as numeric(19,5)) BPI_RECEIVABLE,
+cast('' as numeric(19,5)) BPI_PAYABLE,'' OPEN_FACILITY_FLAG,'' BATCH_ID 
+from finpftdetails T1
+Inner join financemain T2 on t1.finreference=t2.finreference
+Inner join customers T3 on T3.Custid=t1.custid
+			</createView>
+	</changeSet>
+		<changeSet id="96" author="Pruthvi">
+		<createView viewName="dm_insurance_details_view" replaceIfExists="true">
+		select '' APPLID,t1.finreference AGREEMENTNO,'' ASSETID,'' INSURANCE_TYPE,cast(t2.insuranceamt as numeric(18,4)) INSUR_PREMIUM,'' INSURANCE_RENEWAL_DATE,(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,
+'N' PROCESSED_FLAG,sysdate PROCESS_DATE,'' SEGMENTS,'' BUSINESS_YEAR,'' POLICY_TENURE,'' SUM_ASSURED,'' NOMINEE_NAME,'' GOOD_HEALTH,
+'' CRITICAL_ILLNESS_FLAG,'' RELATIONSHIP,'' NOMINEE_ADDRESS,'' NOMINEE_RELATION,'' NOMINEE_DOB,'' NOMINEE_AGE,
+'' NOMINEE_CONTACTNO,'' NOMINEE_NAME2,'' NOMINEE_ADDRESS2,'' NOMINEE_RELATION2,'' NOMINEE_DOB2,'' NOMINEE_AGE2,
+'' NOMINEE_CONTACTNO2,'' DFGH,'' BATCH_ID 
+from finpftdetails t1
+inner join financemain T2 on t1.finreference=t2.finreference
+			</createView>
+	</changeSet>
+		<changeSet id="97" author="Pruthvi">
+		<createView viewName="DM_PROPERTY_DTL_view" replaceIfExists="true">
+		select '' PROPERTYID,'' CITY,'' ADDRESS1,'' ADDRESS2,'' ADDRESS3,'' CITY1,'' STATE,Fintype PRODUCTFLAG,
+(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,
+'' PROPERTY_TYPE,'' PROPERTY_DESC,
+cast (null as numeric(16,2)) PROPERTY_VALUE,'' ZIPCODE,'' PROCESSFLAG,'' PROCESS_DATE,'' BATCH_ID 
+from finpftdetails
+			</createView>
+	</changeSet>
+		<changeSet id="98" author="Pruthvi">
+		<createView viewName="DM_APPLICANT_DETAILS_view" replaceIfExists="true">
+		select t1.custid CUSTOMERID,'' CUST_TYPE,'' PANNO,CustAddrHnbr ADDRESS1,CustFlatNbr ADDRESS2,CustAddrStreet ADDRESS3,CustPOBox ADDRESS4,CustAddrCity CITY,CustAddrProvince STATE,CustAddrCountry COUNTRY,
+CustAddrZip ZIPCODE,CustAddrType ADDRESSTYPE,CustEmail EMAIL,'' PHONE1,'' PHONE2,T4.Phonecountrycode||T4.phoneareacode||T4.phonenumber MOBILE,T5.Phonecountrycode||T5.phoneareacode||T5.phonenumber FAX,'' EXISTING_CUST_FLAG,'' INDIV_CORP_FLAG,
+'' AGE,CustDOB DOB,custfname FNAME,custmname MNAME,custlname LNAME,genderdesc GENDER,CustMaritalSts MARITAL_STATUS,NoOfDependents NO_OF_DEPENDENT,'' YEARS_CURRENT_JOB,'' YEARS_PREV_JOB,
+'' QUALIFICATION,TypeofResidence RESIDENCETYPE,'' YEARS_CURR_RESI,'' EMPLOYER_DESC,'' COMPANY_TYPE,'' INDUSTRYID,'' NATURE_OF_BUSINESS,
+'' EMPLOYMENT_TYPE,'' EMPDESG,'' OCCUPATION,cast('' as numeric(18,4)) ANNUAL_INCOME,'' GUARDIAN,(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,'' PROCESSED_FLAG,'' PROCESS_DATE,
+'' SEGMENTS,'' CUSTOMERNAME,'' CONTACT_PERSON_NAME,'' CONSTITUTION,'' CUST_BANK_NAME,'' CUST_BANK_BRANCH,cast('' as numeric(10,2)) EMI_CARD_LIMIT,
+'' EMI_CARD_ACCEPT_FLAG,'' EMI_CARD_SWIPE_FLAG,'' EMI_CARD_ELIG,'' EMI_CARD_NO,'' BANK_ECS_MANDATE,'' OPEN_ECS_AVLB,
+'' OPEN_ECS_DATE,'' BUSINESS_YEAR,'' TITLE,'' COMP_NAME,'' YEARS_CURR_JOB,'' GRADE,'' FAMILY_CODE,'' MINOR,'' GUARDIAN_NEW,
+'' UCIN_NO,'' PREFERRED_ELIGIBILITY,'' PREFERRED_CARD_ACCEPTANCE,cast('' as numeric(10,2)) PREFERRED_CARD_LIMIT,'' CUST_BRANCHID,'' BATCH_ID 
+from customers T1 
+left join CustomerAddresses t2 on t1.custid=t2.custid 
+left join CustomerEMails T3 on T3.custid=T1.custid
+left join CustomerPhoneNumbers T4 on T4.phonecustid=T1.custid and T4.phonetypecode like 'MOBILE%'
+left join CustomerPhoneNumbers T5 on T5.phonecustid=T1.custid and T5.phonetypecode like 'FAX%'
+left join BMTGenders T6 on t6.gendercode=t1.custgendercode
+			</createView>
+	</changeSet>
+		<changeSet id="99" author="Pruthvi">
+		<createView viewName="dm_address_details_view" replaceIfExists="true">
+		select '' ADDRESSID,t1.custid CUSTOMERID,'' STATEID,'' REGIONID,'' CITY,T3.Phonecountrycode STDISD,'' MAILINGADDRESS,CustAddrHnbr ADDRESS1,CustAddrStreet ADDRESS2,CustAddrCity ADDRESS3,
+CustAddrZip ZIPCODE,CustAddrCountry COUNTRY,CustAddrType ADDRESSTYPE,'' APPLICANT_TYPE,'' PHONE1,'' PHONE2,T4.Phonecountrycode||T4.phoneareacode||T4.phonenumber MOBILE,custemail EMAIL,(select SysParmValue  from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE') BUSINESSDATE,'' PROCESSFLAG,
+'' PROCESS_DATE,CustAddrProvince AREA,'' LANDMARK,'' BUSINESS_YEAR,'' BATCH_ID 
+from customers T1
+Inner join CustomerAddresses t2 on t1.custid=t2.custid 
+Inner join customerphonenumbers T3 on t3.phonecustid=T1.custid
+left join CustomerPhoneNumbers T4 on T4.phonecustid=T1.custid and T4.phonetypecode like 'MOBILE%'
+left join CustomerEMails T3 on T3.custid=T1.custid
+			</createView>
 	</changeSet>
 </databaseChangeLog>
