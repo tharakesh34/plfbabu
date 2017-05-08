@@ -1386,6 +1386,56 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			//Finance Repayments Instruction Details
 			scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, isWIF));
+			
+ 			// Fee Details
+			scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinFeeDetailByFinRef(finReference, false, "_View"));
+
+			// Finance Fee Schedule Details
+			if (scheduleData.getFinFeeDetailList() != null && !scheduleData.getFinFeeDetailList().isEmpty()) {
+
+				List<Long> feeIDList = new ArrayList<>();
+				for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++) {
+					FinFeeDetail feeDetail = scheduleData.getFinFeeDetailList().get(i);
+
+					if (StringUtils.equals(feeDetail.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
+							|| StringUtils.equals(feeDetail.getFeeScheduleMethod(),
+									CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)
+							|| StringUtils.equals(feeDetail.getFeeScheduleMethod(),
+									CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)) {
+						feeIDList.add(feeDetail.getFeeID());
+					}
+				}
+
+				if (!feeIDList.isEmpty()) {
+					List<FinFeeScheduleDetail> feeScheduleList = getFinFeeScheduleDetailDAO().getFeeScheduleByFinID(
+							feeIDList, false, "");
+
+					if (feeScheduleList != null && !feeScheduleList.isEmpty()) {
+
+						HashMap<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();
+						for (int i = 0; i < feeScheduleList.size(); i++) {
+							FinFeeScheduleDetail schdFee = feeScheduleList.get(i);
+
+							List<FinFeeScheduleDetail> schList = new ArrayList<>();
+							if (schFeeMap.containsKey(schdFee.getFeeID())) {
+								schList = schFeeMap.get(schdFee.getFeeID());
+								schFeeMap.remove(schdFee.getFeeID());
+							}
+							schList.add(schdFee);
+							schFeeMap.put(schdFee.getFeeID(), schList);
+
+						}
+
+						for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++) {
+							FinFeeDetail feeDetail = scheduleData.getFinFeeDetailList().get(i);
+							if (schFeeMap.containsKey(feeDetail.getFeeID())) {
+								feeDetail.setFinFeeScheduleDetailList(schFeeMap.get(feeDetail.getFeeID()));
+							}
+						}
+					}
+				}
+			}
 
 			//Finance Overdue Penalty Rate Details
 			String productCode = scheduleData.getFinanceType().getFinCategory();
