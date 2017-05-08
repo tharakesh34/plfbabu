@@ -86,6 +86,7 @@
 	<!-- Rate review -->
 	<bean id="rateReviewService" class="com.pennant.app.core.RateReviewService" parent="serviceHelper">
 		<property name="financeRateReviewDAO" ref="financeRateReviewDAO" />
+		<property name="accrualService" ref="accrualService" />
 	</bean>
 	<!-- Date Service -->
 	<bean id="dateService" class="com.pennant.app.core.DateService">
