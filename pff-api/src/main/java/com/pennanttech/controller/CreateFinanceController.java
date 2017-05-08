@@ -24,7 +24,6 @@ import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
-import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -50,7 +49,6 @@ import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.mandate.Mandate;
-import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
@@ -82,7 +80,6 @@ public class CreateFinanceController extends SummaryDetailService {
 	private StepPolicyHeaderDAO stepPolicyHeaderDAO;
 	private BankBranchService bankBranchService;
 	private FinanceMainDAO financeMainDAO;
-	private FinanceTypeDAO financeTypeDAO;
 	private FeeDetailService feeDetailService;
 	private FinFeeDetailService finFeeDetailService;
 	private CollateralSetupService collateralSetupService;
@@ -104,7 +101,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			// financeMain details
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
-
+			financeMain.setFinType(finScheduleData.getFinanceType().getFinType());
 			if (StringUtils.isBlank(financeMain.getFinReference())) {
 				finReference = String.valueOf(String.valueOf(ReferenceGenerator.generateNewFinRef(false, financeMain)));
 			} else {
@@ -126,11 +123,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeMain.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			financeMain.setFinSourceID(PennantConstants.FINSOURCE_ID_API);
 
-			// Fetch Finance Type object
-			FinanceType financeType = financeTypeDAO.getFinanceTypeByID(financeMain.getFinType(), "");
-
-			// setting objects
-			finScheduleData.setFinanceType(financeType);
+	
 			finScheduleData.setFinanceMain(financeMain);
 
 			// set required mandatory values into finance details object
@@ -829,10 +822,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		this.financeDetailService = financeDetailService;
 	}
 
-	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
-		this.financeTypeDAO = financeTypeDAO;
-	}
-	
+
 	public void setStepPolicyDetailDAO(StepPolicyDetailDAO stepPolicyDetailDAO) {
 		this.stepPolicyDetailDAO = stepPolicyDetailDAO;
 	}

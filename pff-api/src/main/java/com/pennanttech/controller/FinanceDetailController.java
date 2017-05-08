@@ -44,7 +44,6 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
-import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -92,6 +91,7 @@ public class FinanceDetailController extends SummaryDetailService {
 
 			// financeMain details
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
+			financeMain.setFinType(finScheduleData.getFinanceType().getFinType());
 
 			financeMain.setFinReference(String.valueOf(ReferenceGenerator.generateNewFinRef(true, financeMain)));
 			financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -99,13 +99,6 @@ public class FinanceDetailController extends SummaryDetailService {
 			financeMain.setNewRecord(true);
 			financeMain.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			financeMain.setFinSourceID(PennantConstants.FINSOURCE_ID_API);
-
-			// Fetch Finance Type object
-			FinanceType financeType = getFinanceTypeDAO().getFinanceTypeByID(financeMain.getFinType(), "");
-
-			// setting financeType object
-			finScheduleData.setFinanceType(financeType);
-
 			// prepare required data
 			doSetRequiredData(finScheduleData);
 			

@@ -4205,6 +4205,7 @@
 		<property name="finTypePartnerBankService" ref="finTypePartnerBankService" />
 		<property name="scriptValidationService" ref="scriptValidationService" />
 		<property name="vASConfigurationService" ref="vASConfigurationService" />
+		<property name="promotionService" ref="promotionService" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->
@@ -4213,6 +4214,7 @@
 		<property name="branchDAO" ref="branchDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="customerDAO" ref="customerDAO" />
+		<property name="promotionService" ref="promotionService" />
 	</bean>
 
 	<!-- Eligibility Details -->

@@ -29,15 +29,19 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rmtmasters.Promotion;
+import com.pennant.backend.service.rmtmasters.PromotionService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 
 public class FinanceDataDefaulting {
 
-	private CustomerDAO		customerDAO;
-	private FinanceTypeDAO	financeTypeDAO;
-	private BranchDAO		branchDAO;
+	private CustomerDAO			customerDAO;
+	private FinanceTypeDAO		financeTypeDAO;
+	private BranchDAO			branchDAO;
+	private PromotionService	promotionService;
+
 
 	public FinanceDataDefaulting() {
 		super();
@@ -83,6 +87,28 @@ public class FinanceDataDefaulting {
 
 		//Validate Finance Type (Mandatory for Defaulting)
 		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(finMain.getFinType(), "");
+		if (financeType == null) {
+			Promotion promotion = promotionService.getApprovedPromotionById(finMain.getFinType(),
+					FinanceConstants.MODULEID_PROMOTION, true);
+			if (promotion == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finMain.getFinType();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90202", valueParm)));
+			} else {
+				financeType = financeTypeDAO.getFinanceTypeByID(promotion.getFinType(), "");
+				if(financeType != null) {
+					financeType.setFinTypeFeesList(promotion.getFinTypeFeesList());
+					financeType.setFInTypeFromPromotiion(promotion);
+					financeType.setFinTypeInsurances(promotion.getFinTypeInsurancesList());
+					financeType.setFinTypeAccountingList(promotion.getFinTypeAccountingList());
+				} else {
+					String[] valueParm = new String[1];
+					valueParm[0] = promotion.getFinType();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90202", valueParm)));
+
+				}
+			}
+		} 
 		if(financeType != null) {
 			//Validate Finance Currency
 			finScheduleData.setFinanceType(financeType);
@@ -994,5 +1020,12 @@ public class FinanceDataDefaulting {
 
 	public void setBranchDAO(BranchDAO branchDAO) {
 		this.branchDAO = branchDAO;
+	}
+	public PromotionService getPromotionService() {
+		return promotionService;
+	}
+
+	public void setPromotionService(PromotionService promotionService) {
+		this.promotionService = promotionService;
 	}
 }

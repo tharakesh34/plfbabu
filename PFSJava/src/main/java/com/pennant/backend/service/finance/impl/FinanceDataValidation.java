@@ -63,6 +63,7 @@ import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.model.staticparms.ExtendedField;
@@ -79,6 +80,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
+import com.pennant.backend.service.rmtmasters.PromotionService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.service.systemmasters.GeneralDepartmentService;
@@ -109,8 +111,8 @@ public class FinanceDataValidation {
 	private FinTypePartnerBankService	finTypePartnerBankService;
 	private VASConfigurationService		vASConfigurationService;
 	private ScriptValidationService 	scriptValidationService;
+	private PromotionService			promotionService;
 
-	
 
 	public FinanceDataValidation() {
 		super();
@@ -573,10 +575,27 @@ public class FinanceDataValidation {
 		//Validate Finance Type
 		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(finMain.getFinType(), "");
 		if (financeType == null) {
+			Promotion promotion = promotionService.getApprovedPromotionById(finMain.getFinType(),
+					FinanceConstants.MODULEID_PROMOTION, true);
+			if(promotion == null){
 			String[] valueParm = new String[1];
 			valueParm[0] = finMain.getFinType();
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90202", valueParm)));
-		} else {
+			} else {
+				financeType = financeTypeDAO.getFinanceTypeByID(promotion.getFinType(), "");
+				if (financeType != null) {
+					financeType.setFinTypeFeesList(promotion.getFinTypeFeesList());
+					financeType.setFInTypeFromPromotiion(promotion);
+					financeType.setFinTypeInsurances(promotion.getFinTypeInsurancesList());
+					financeType.setFinTypeAccountingList(promotion.getFinTypeAccountingList());
+				} else {
+					String[] valueParm = new String[1];
+					valueParm[0] = promotion.getFinType();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90202", valueParm)));
+				}
+			}
+		} 
+		if (financeType != null) {
 			finScheduleData.setFinanceType(financeType);
 			if (finMain.getFinContractDate() == null) {
 				finMain.setFinContractDate(financeType.getStartDate());
@@ -1254,7 +1273,7 @@ public class FinanceDataValidation {
 					}
 				}
 				int count = finTypePartnerBankService.getPartnerBankCount(
-						financeDetail.getFinScheduleData().getFinanceMain().getFinType(), advPayment.getPaymentType(),
+						financeDetail.getFinScheduleData().getFinanceType().getFinType(), advPayment.getPaymentType(),
 						advPayment.getPartnerBankID());
 				if (count <= 0) {
 					String[] valueParm = new String[1];
@@ -1418,10 +1437,28 @@ public class FinanceDataValidation {
 		//Validate Finance Type
 		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(finMain.getFinType(), "");
 		if (financeType == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = finMain.getFinType();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90202", valueParm)));
-		} else {
+			Promotion promotion = promotionService.getApprovedPromotionById(finMain.getFinType(),
+					FinanceConstants.MODULEID_PROMOTION, true);
+			if (promotion == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finMain.getFinType();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90202", valueParm)));
+			} else {
+				financeType = financeTypeDAO.getFinanceTypeByID(promotion.getFinType(), "");
+				if (financeType != null) {
+					financeType.setFinTypeFeesList(promotion.getFinTypeFeesList());
+					financeType.setFInTypeFromPromotiion(promotion);
+					financeType.setFinTypeInsurances(promotion.getFinTypeInsurancesList());
+					financeType.setFinTypeAccountingList(promotion.getFinTypeAccountingList());
+				} else {
+					String[] valueParm = new String[1];
+					valueParm[0] = promotion.getFinType();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90202", valueParm)));
+				}
+			}
+
+		} 
+		if (financeType != null) {
 			finScheduleData.setFinanceType(financeType);
 		}
 
@@ -3499,5 +3536,8 @@ public class FinanceDataValidation {
 
 	public void setScriptValidationService(ScriptValidationService scriptValidationService) {
 		this.scriptValidationService = scriptValidationService;
+	}
+	public void setPromotionService(PromotionService promotionService) {
+		this.promotionService = promotionService;
 	}
 }
