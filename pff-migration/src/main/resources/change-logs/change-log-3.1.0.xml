@@ -1517,21 +1517,17 @@ FROM          Postings T1 INNER JOIN
 	<changeSet id="112" author="chaitanya.ch">
 		<sql>
 				
-      Delete from BMTAmountCodes where AllowedEvent = 'DEFRPY';
+      Delete from BMTAmountCodes where AllowedEvent = 'DEFRPY' and amountcode='ae_cpzChg';
       Insert into BMTAmountCodes 
       values( 'DEFRPY', 0, 'ae_cpzChg', 'Capitalization Changed now', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0  )  ;
 			
 		
 		</sql>
 	</changeSet>
-	<changeSet id="114.1" author="chaitanya.ch">
+	
+		<changeSet id="115" author="chaitanya.ch">
 		<sql>
-		Delete from BMTAmountCodes where amountcode = 'ae_pftChg' and allowedevent='DEFRPY';
-		</sql>
-		</changeSet>
-		<changeSet id="114" author="chaitanya.ch">
-		<sql>
-				
+				Delete from BMTAmountCodes where amountcode = 'ae_pftChg' and allowedevent='DEFRPY';
         Insert into BMTAmountCodes 
             values( 'DEFRPY', 0, 'ae_pftChg', 'Capitalization Changed now', 1, 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0  )  ;
 
@@ -1540,7 +1536,7 @@ FROM          Postings T1 INNER JOIN
 		</sql>
 	</changeSet>
 	
-	<changeSet id="115" author="kesava">
+	<changeSet id="116" author="kesava">
 	<sql>
 	Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
 Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
@@ -1573,7 +1569,7 @@ Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRi
 Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
 </sql>
 	</changeSet>
-			<changeSet id="116" author="kesava">
+			<changeSet id="117" author="kesava">
 	<sql>
 	Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
 Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
@@ -1592,7 +1588,7 @@ Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroup
 	</sql>
 	</changeSet>
 	
-	<changeSet id="117" author="chaitanya.ch">
+	<changeSet id="118" author="chaitanya.ch">
 	<sql>
 	
 		      
@@ -1609,7 +1605,7 @@ Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroup
 	
 	</changeSet>
 	
-	<changeSet id="118" author="chaitanya.ch">
+	<changeSet id="119" author="chaitanya.ch">
 	<sql>
 	 		      
             Delete from BMTAmountCodes where AllowedEvent = 'REAGING';
