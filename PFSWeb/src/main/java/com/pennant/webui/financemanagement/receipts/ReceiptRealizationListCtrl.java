@@ -122,6 +122,8 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 		registerButton(btnSearch);
 
 		registerField("receiptID");
+		registerField("receiptAmount");
+		registerField("finCcy");
 		registerField("reference", listheader_ReceiptRealizationReference, SortOrder.ASC, receiptReference,
 				sortOperator_receiptRealizationReference, Operators.STRING);
 		registerField("custCIF", listheader_ReceiptRealizationCusomer, SortOrder.NONE, customer,

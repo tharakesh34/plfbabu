@@ -199,6 +199,10 @@
 									label="${c:l('listheader_ReceiptMode.label')}"
 									sort="auto" hflex="min" />
 								<listheader
+									id="listheader_ReceiptAmount" align="right"
+									label="${c:l('listheader_ReceiptAmount.label')}"
+									sort="auto" hflex="min" />
+								<listheader
 									id="listheader_ReceiptAllocattionType"
 									label="${c:l('listheader_ReceiptAllocattionType.label')}"
 									sort="auto" hflex="min" />

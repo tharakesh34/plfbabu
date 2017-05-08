@@ -132,6 +132,8 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		registerButton(btnSearch);
 
 		registerField("receiptID");
+		registerField("receiptAmount");
+		registerField("finCcy");
 		registerField("reference", listheader_ReceiptCancellationReference, SortOrder.ASC, receiptReference,
 				sortOperator_ReceiptCancellationReference, Operators.STRING);
 		registerField("custCIF", listheader_ReceiptCancellationCusomer, SortOrder.NONE, customer,

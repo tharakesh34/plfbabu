@@ -50,7 +50,9 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
@@ -75,6 +77,9 @@ public class ReceiptCancellationListModelItemRenderer implements ListitemRendere
 		lc = new Listcell(PennantAppUtil.getlabelDesc(header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose()));
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.getlabelDesc(header.getReceiptMode(), PennantStaticListUtil.getReceiptModes()));
+		lc.setParent(item);
+		lc = new Listcell(PennantApplicationUtil.amountFormate(header.getReceiptAmount(), CurrencyUtil.getFormat(header.getFinCcy())));
+		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc = new Listcell(PennantAppUtil.getlabelDesc(header.getAllocationType(), PennantStaticListUtil.getAllocationMethods()));
 		lc.setParent(item);

@@ -106,6 +106,8 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		setItemRender(new ReceiptRealizationListModelItemRenderer());
 		registerButton(btnSearch);
 
+		registerField("receiptAmount");
+		registerField("finCcy");
 		registerField("receiptID");
 		registerField("reference", listheader_ReceiptReference, SortOrder.ASC, receiptReference,
 				sortOperator_ReceiptReference, Operators.STRING);

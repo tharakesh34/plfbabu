@@ -201,6 +201,10 @@
 									label="${c:l('listheader_ReceiptCancellationMode.label')}"
 									sort="auto" hflex="min" />
 								<listheader
+									id="listheader_ReceiptCancellationAmount" align="right"
+									label="${c:l('listheader_ReceiptCancellationAmount.label')}"
+									sort="auto" hflex="min" />
+								<listheader
 									id="listheader_ReceiptCancellationAllocattionType"
 									label="${c:l('listheader_ReceiptCancellationAllocattionType.label')}"
 									sort="auto" hflex="min" />
