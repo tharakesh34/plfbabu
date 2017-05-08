@@ -30,7 +30,6 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.RepayData;
 import com.pennant.backend.model.limit.LimitDetails;
 import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.model.limit.LimitReferenceMapping;
@@ -238,12 +237,12 @@ public class LimitManagement {
 						return errors;
 					}
 				}
-				
+
 				for (LimitDetails details : limitDetails) {
 					details.setVersion(details.getVersion() + 1);
-					if (blockAmount.compareTo(BigDecimal.ZERO)!=0 && blockAmount.compareTo(limitAmount)<0) {
+					if (blockAmount.compareTo(BigDecimal.ZERO) != 0 && blockAmount.compareTo(limitAmount) < 0) {
 						details.setReservedLimit(details.getReservedLimit().subtract(blockAmount));
-					}else{
+					} else {
 						details.setReservedLimit(details.getReservedLimit().subtract(limitAmount));
 					}
 					details.setReservedLimit(details.getReservedLimit().subtract(limitAmount));
@@ -298,7 +297,7 @@ public class LimitManagement {
 					&& isApprovedAndCancelled(disbursement, approvedDisbursments)) {
 				continue;
 			}
-			
+
 			if (!StringUtils.equals(disbursement.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)) {
 				if (isApprovedDisbursments(disbursement, approvedDisbursments)) {
 					continue;
@@ -660,21 +659,14 @@ public class LimitManagement {
 	 * @param tranType
 	 * @return
 	 */
-	public void processLoanRepay(RepayData repayData, boolean overide) {
+	public void processLoanRepay(FinanceMain finMain, Customer customer, BigDecimal transAmount, String prodCategory) {
 		logger.debug(" Entering ");
 
-
-		FinanceDetail findetails = repayData.getFinanceDetail();
-		FinanceMain finMain = findetails.getFinScheduleData().getFinanceMain();
 		String finCcy = finMain.getFinCcy();
-		Customer customer = findetails.getCustomerDetails().getCustomer();
 		long custId = customer.getCustID();
 		long groupId = customer.getCustGroupID();
 		LimitHeader custHeader = null;
 		LimitHeader groupHeader = null;
-
-		String prodCategory = StringUtils.trimToEmpty(findetails.getFinScheduleData().getFinanceType()
-				.getProductCategory());
 
 		String tansType = LimitConstants.PRINPAY;
 		if (prodCategory.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
@@ -689,8 +681,6 @@ public class LimitManagement {
 			groupHeader = limitHeaderDAO.getLimitHeaderByCustomerGroupCode(groupId, "");
 		}
 
-		BigDecimal transAmount = repayData.getFinRepayHeader().getPriAmount();
-
 		//Customer limit process
 		if (custHeader != null) {
 			// check already mapping available or not 
@@ -702,7 +692,7 @@ public class LimitManagement {
 				List<LimitDetails> custLimitDetails = getCustomerLimitDetails(mapping);
 				processRepay(mapping, limitAmount, custLimitDetails, tansType);
 				//log transaction
-				logFinanceTransasction(finMain, custHeader, 0, tansType, overide, transAmount, limitAmount);
+				logFinanceTransasction(finMain, custHeader, 0, tansType, false, transAmount, limitAmount);
 			}
 		}
 
@@ -717,7 +707,7 @@ public class LimitManagement {
 				List<LimitDetails> custLimitDetails = getCustomerLimitDetails(mapping);
 				processRepay(mapping, limitAmount, custLimitDetails, tansType);
 				//log transaction
-				logFinanceTransasction(finMain, groupHeader, 0, tansType, overide, transAmount, limitAmount);
+				logFinanceTransasction(finMain, groupHeader, 0, tansType, false, transAmount, limitAmount);
 			}
 		}
 
@@ -1070,7 +1060,6 @@ public class LimitManagement {
 		logger.debug(" Entering ");
 		return errorDetails;
 	}
-
 
 	/**
 	 * @param refCode

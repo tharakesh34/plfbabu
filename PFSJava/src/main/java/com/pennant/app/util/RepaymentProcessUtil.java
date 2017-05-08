@@ -32,6 +32,7 @@ import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
@@ -48,6 +49,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
+import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.exception.PFFInterfaceException;
@@ -69,9 +71,9 @@ public class RepaymentProcessUtil {
 	private RepayInstructionDAO			repayInstructionDAO;
 	private ManualAdviseDAO				manualAdviseDAO;
 	private FinFeeScheduleDetailDAO		finFeeScheduleDetailDAO;
-	private FinInsurancesDAO				finInsurancesDAO;
-	
-	
+	private FinInsurancesDAO			finInsurancesDAO;
+	private LimitManagement				limitManagement;
+
 	public RepaymentProcessUtil() {
 		super();
 	}
@@ -88,9 +90,10 @@ public class RepaymentProcessUtil {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	public void calcualteAndPayReceipt(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail, FinReceiptHeader receiptHeader, String repayHierarchy, Date valuedate)
-			throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	public void calcualteAndPayReceipt(FinanceMain financeMain, Customer customer,
+			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail profitDetail,
+			FinReceiptHeader receiptHeader, String repayHierarchy, Date valuedate) throws IllegalAccessException,
+			InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
 		String finrefer = financeMain.getFinReference();
 		//Prepare schedule data for log
@@ -103,6 +106,7 @@ public class RepaymentProcessUtil {
 
 		// Fetch total overdue details
 		FinODDetails overdue = getFinODDetailsDAO().getFinODyFinRefSchDate(finrefer, valuedate);
+		BigDecimal priPaynow = BigDecimal.ZERO;
 
 		for (FinReceiptDetail receiptDetail : receiptDetails) {
 
@@ -150,6 +154,7 @@ public class RepaymentProcessUtil {
 						if (balPri.compareTo(totalReceiptAmt) > 0) {
 							balPri = totalReceiptAmt;
 						}
+						priPaynow = priPaynow.add(balPri);
 						rsd = prepareRpyRecord(curSchd, rsd, repayTo, balPri, valueDate);
 						// Reset Total Receipt Amount
 						totalReceiptAmt = totalReceiptAmt.subtract(balPri);
@@ -295,12 +300,13 @@ public class RepaymentProcessUtil {
 		scheduleDetails = doProcessReceipts(financeMain, scheduleDetails, profitDetail, receiptHeader, scheduleData,
 				valuedate);
 		doSaveReceipts(receiptHeader);
-
+		limitManagement.processLoanRepay(financeMain, customer, priPaynow, profitDetail.getFinCategory());
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * Method for Processing Payment details as per receipt details
+	 * 
 	 * @param receiptHeader
 	 */
 	@SuppressWarnings("unchecked")
@@ -309,9 +315,9 @@ public class RepaymentProcessUtil {
 			FinReceiptHeader receiptHeader, FinScheduleData logScheduleData, Date valueDate)
 			throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
-		
+
 		List<FinReceiptDetail> receiptDetailList = sortReceiptDetails(receiptHeader.getReceiptDetails());
-		
+
 		// Find out Is there any schedule payment done or not, If exists Log will be captured
 		boolean isSchdLogReq = false;
 		for (int i = 0; i < receiptDetailList.size(); i++) {
@@ -325,7 +331,7 @@ public class RepaymentProcessUtil {
 				}
 			}
 		}
-		
+
 		long linkedTranId = 0;
 		String finReference = financeMain.getFinReference();
 		//Create log entry for Action for Schedule Modification
@@ -347,7 +353,7 @@ public class RepaymentProcessUtil {
 			oldFinSchdData.setFinReference(finReference);
 			listSave(oldFinSchdData, "_Log", logKey);
 		}
-		
+
 		for (int i = 0; i < receiptDetailList.size(); i++) {
 
 			// Repay Header list process individually based on List existence
@@ -408,9 +414,9 @@ public class RepaymentProcessUtil {
 
 				rpyProcessed = true;
 				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
-				List<Object> returnList = doRepayPostings(financeMain, scheduleDetails, profitDetail,
-						repaySchdList, getEventCode(repayHeader.getFinEvent()), valueDate, 
-						receiptDetailList.get(i), receiptHeader.getPostBranch());
+				List<Object> returnList = doRepayPostings(financeMain, scheduleDetails, profitDetail, repaySchdList,
+						getEventCode(repayHeader.getFinEvent()), valueDate, receiptDetailList.get(i),
+						receiptHeader.getPostBranch());
 
 				if (!(Boolean) returnList.get(0)) {
 					String errParm = (String) returnList.get(1);
@@ -424,7 +430,7 @@ public class RepaymentProcessUtil {
 				financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().add(repayHeader.getPriAmount()));
 				scheduleDetails = (List<FinanceScheduleDetail>) returnList.get(2);
 			}
-			
+
 			// Setting/Maintaining Log key for Last log of Schedule Details
 			receiptDetailList.get(i).setLogKey(logKey);
 		}
@@ -434,7 +440,8 @@ public class RepaymentProcessUtil {
 	}
 
 	/**
-	 * Method for Saving the Receipt records 
+	 * Method for Saving the Receipt records
+	 * 
 	 * @param receiptHeader
 	 */
 	public void doSaveReceipts(FinReceiptHeader receiptHeader) {
@@ -505,13 +512,14 @@ public class RepaymentProcessUtil {
 			}
 		}
 	}
-	
+
 	/**
 	 * Method for Sorting Receipt Details From Receipts
+	 * 
 	 * @param receipts
 	 * @return
 	 */
-	private List<FinReceiptDetail> sortReceiptDetails(List<FinReceiptDetail> receipts){
+	private List<FinReceiptDetail> sortReceiptDetails(List<FinReceiptDetail> receipts) {
 
 		if (receipts != null && !receipts.isEmpty()) {
 			Collections.sort(receipts, new Comparator<FinReceiptDetail>() {
@@ -519,9 +527,9 @@ public class RepaymentProcessUtil {
 				public int compare(FinReceiptDetail detail1, FinReceiptDetail detail2) {
 					if (detail1.getPayOrder() > detail2.getPayOrder()) {
 						return 1;
-					} else if(detail1.getPayOrder() < detail2.getPayOrder()) {
+					} else if (detail1.getPayOrder() < detail2.getPayOrder()) {
 						return -1;
-					} 
+					}
 					return 0;
 				}
 			});
@@ -620,8 +628,9 @@ public class RepaymentProcessUtil {
 	 * @throws InvocationTargetException
 	 */
 	private List<Object> doRepayPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCode, 
-			Date valuedate, FinReceiptDetail receiptDetail, String postBranch) throws IllegalAccessException, PFFInterfaceException, InvocationTargetException {
+			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCode,
+			Date valuedate, FinReceiptDetail receiptDetail, String postBranch) throws IllegalAccessException,
+			PFFInterfaceException, InvocationTargetException {
 		logger.debug("Entering");
 
 		List<Object> returnList = new ArrayList<Object>();
@@ -651,12 +660,11 @@ public class RepaymentProcessUtil {
 					// Total Repayments Calculation for Principal, Profit 
 					rpyQueueHeader.setPrincipal(rpyQueueHeader.getPrincipal().add(
 							repaySchdList.get(i).getPrincipalSchdPayNow()));
-					rpyQueueHeader.setProfit(rpyQueueHeader.getProfit().add(
-							repaySchdList.get(i).getProfitSchdPayNow()));
+					rpyQueueHeader
+							.setProfit(rpyQueueHeader.getProfit().add(repaySchdList.get(i).getProfitSchdPayNow()));
 					rpyQueueHeader.setLateProfit(rpyQueueHeader.getLateProfit().add(
 							repaySchdList.get(i).getLatePftSchdPayNow()));
-					rpyQueueHeader.setPenalty(rpyQueueHeader.getPenalty().add(
-							repaySchdList.get(i).getPenaltyPayNow()));
+					rpyQueueHeader.setPenalty(rpyQueueHeader.getPenalty().add(repaySchdList.get(i).getPenaltyPayNow()));
 
 					// Fee Details
 					rpyQueueHeader.setFee(rpyQueueHeader.getFee().add(repaySchdList.get(i).getSchdFeePayNow()));
@@ -668,18 +676,14 @@ public class RepaymentProcessUtil {
 							repaySchdList.get(i).getSchdIncrCostPayNow()));
 
 					// Waiver Amounts
-					rpyQueueHeader.setPriWaived(rpyQueueHeader.getPriWaived().add(
-							finRepayQueue.getSchdPriWaivedNow()));
-					rpyQueueHeader.setPftWaived(rpyQueueHeader.getPftWaived().add(
-							finRepayQueue.getSchdPftWaivedNow()));
+					rpyQueueHeader.setPriWaived(rpyQueueHeader.getPriWaived().add(finRepayQueue.getSchdPriWaivedNow()));
+					rpyQueueHeader.setPftWaived(rpyQueueHeader.getPftWaived().add(finRepayQueue.getSchdPftWaivedNow()));
 					rpyQueueHeader.setLatePftWaived(rpyQueueHeader.getLatePftWaived().add(
 							finRepayQueue.getLatePayPftWaivedNow()));
 					rpyQueueHeader.setPenaltyWaived(rpyQueueHeader.getPenaltyWaived().add(
 							finRepayQueue.getWaivedAmount()));
-					rpyQueueHeader.setFeeWaived(rpyQueueHeader.getFeeWaived().add(
-							finRepayQueue.getSchdFeeWaivedNow()));
-					rpyQueueHeader.setInsWaived(rpyQueueHeader.getInsWaived().add(
-							finRepayQueue.getSchdInsWaivedNow()));
+					rpyQueueHeader.setFeeWaived(rpyQueueHeader.getFeeWaived().add(finRepayQueue.getSchdFeeWaivedNow()));
+					rpyQueueHeader.setInsWaived(rpyQueueHeader.getInsWaived().add(finRepayQueue.getSchdInsWaivedNow()));
 					rpyQueueHeader.setSuplRentWaived(rpyQueueHeader.getSuplRentWaived().add(
 							finRepayQueue.getSchdSuplRentWaivedNow()));
 					rpyQueueHeader.setIncrCostWaived(rpyQueueHeader.getIncrCostWaived().add(
@@ -1082,6 +1086,10 @@ public class RepaymentProcessUtil {
 
 	public void setFinFeeScheduleDetailDAO(FinFeeScheduleDetailDAO finFeeScheduleDetailDAO) {
 		this.finFeeScheduleDetailDAO = finFeeScheduleDetailDAO;
+	}
+
+	public void setLimitManagement(LimitManagement limitManagement) {
+		this.limitManagement = limitManagement;
 	}
 
 }

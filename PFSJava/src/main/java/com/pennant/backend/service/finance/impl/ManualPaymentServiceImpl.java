@@ -868,7 +868,10 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		//=======================================
 
 		if (ImplementationConstants.LIMIT_INTERNAL) {
-			getLimitManagement().processLoanRepay(repayData, false);
+			FinanceDetail finDetails = repayData.getFinanceDetail();
+			getLimitManagement().processLoanRepay(financeMain, finDetails.getCustomerDetails().getCustomer(),
+					repayData.getFinRepayHeader().getPriAmount(),
+					StringUtils.trimToEmpty(finDetails.getFinScheduleData().getFinanceType().getProductCategory()));
 		} else {
 			getLimitCheckDetails().doProcessLimits(financeMain, FinanceConstants.AMENDEMENT);
 		}

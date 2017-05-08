@@ -9,8 +9,7 @@
 	<!-- ====================================================== -->
 	<import resource="applicationContext-mq-interface.xml" />
 	<import resource="applicationContext-core-interface.xml" />
-	
-	
+
 	<!-- Error Details -->
 	<bean id="errorDetailsDAO" class="com.pennant.backend.dao.impl.ErrorDetailsDAOImpl">
 		<property name="dataSource" ref="pfsDatasource" />
@@ -60,7 +59,7 @@
 	</bean>
 	<!--============ AEAmounts Util ============== -->
 	<bean name="AEAmounts" class="com.pennant.app.util.AEAmounts">
-			<property name="accrualService" ref="accrualService" />
+		<property name="accrualService" ref="accrualService" />
 	</bean>
 	<!-- Repay Instructions -->
 	<bean id="repayInstructionDAO" class="com.pennant.backend.dao.finance.impl.RepayInstructionDAOImpl" parent="basisCodeDAO">
@@ -455,10 +454,9 @@
 	<bean id="nPABucketDAO" class="com.pennant.backend.dao.applicationmaster.impl.NPABucketDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	<bean id="repayProcessUtil" class="com.pennant.app.util.RepaymentProcessUtil"
-		scope="prototype">
+	<bean id="repayProcessUtil" class="com.pennant.app.util.RepaymentProcessUtil" scope="prototype">
 		<property name="repayPostingUtil" ref="repayPostingUtil" />
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />		
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
@@ -470,7 +468,8 @@
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
 		<property name="finInsurancesDAO" ref="finInsurancesDAO" />
-		
+		<property name="limitManagement" ref="limitManagement" />
+
 	</bean>
 	<bean id="repayPostingUtil" class="com.pennant.app.util.RepaymentPostingsUtil" scope="prototype">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
@@ -490,50 +489,68 @@
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
 		<property name="accrualService" ref="accrualService" />
 	</bean>
-		<!--============ Finance Excess Amounts Details ============== -->
+	<!--============ Finance Excess Amounts Details ============== -->
 
-	<bean id="finExcessAmountDAO"
-		class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl" parent="basisNextidDao">
+	<bean id="finExcessAmountDAO" class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
 	<!--============ Finance Receipt Header Details ============== -->
 
-	<bean id="finReceiptHeaderDAO"
-		class="com.pennant.backend.dao.receipts.impl.FinReceiptHeaderDAOImpl" parent="basisNextidDao">
+	<bean id="finReceiptHeaderDAO" class="com.pennant.backend.dao.receipts.impl.FinReceiptHeaderDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
 	<!--============ Finance Receipt Detail Details ============== -->
 
-	<bean id="finReceiptDetailDAO"
-		class="com.pennant.backend.dao.receipts.impl.FinReceiptDetailDAOImpl" parent="basisNextidDao">
+	<bean id="finReceiptDetailDAO" class="com.pennant.backend.dao.receipts.impl.FinReceiptDetailDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	
-	
-	<bean id="finFeeScheduleDetailDAO"
-		class="com.pennant.backend.dao.rulefactory.impl.FinFeeScheduleDetailDAOImpl"
-		parent="basisCodeDAO">
+
+	<bean id="finFeeScheduleDetailDAO" class="com.pennant.backend.dao.rulefactory.impl.FinFeeScheduleDetailDAOImpl" parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	
-	<bean id="finInsurancesDAO"
-		class="com.pennant.backend.dao.insurancedetails.impl.FinInsurancesDAOImpl"
-		parent="basisNextidDao">
+
+	<bean id="finInsurancesDAO" class="com.pennant.backend.dao.insurancedetails.impl.FinInsurancesDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	
-	   <!-- ManualAdvise -->
-	<bean id="manualAdviseDAO" class="com.pennant.backend.dao.finance.impl.ManualAdviseDAOImpl"  parent="basisNextidDao">
+
+	<!-- ManualAdvise -->
+	<bean id="manualAdviseDAO" class="com.pennant.backend.dao.finance.impl.ManualAdviseDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	
-	<bean id="presentmentHeaderDAO" class="com.pennant.backend.dao.financemanagement.impl.PresentmentHeaderDAOImpl"  parent="basisNextidDao">
+
+	<bean id="presentmentHeaderDAO" class="com.pennant.backend.dao.financemanagement.impl.PresentmentHeaderDAOImpl" parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	
-	
+
+	<bean name="limitManagement" class="com.pennant.backend.service.limitservice.impl.LimitManagement">
+		<property name="limitDetailDAO" ref="limitDetailDAO" />
+		<property name="limitHeaderDAO" ref="limitHeaderDAO" />
+		<property name="limitReferenceMappingDAO" ref="limitReferenceMappingDAO" />
+		<property name="limitTransactionDetailDAO" ref="limitTransactionDetailDAO" />
+		<property name="limitGroupLinesDAO" ref="limitGroupLinesDAO" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="commitmentDAO" ref="commitmentDAO" />
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+	</bean>
+	<bean id="limitDetailDAO" class="com.pennant.backend.dao.limit.impl.LimitDetailDAOImpl" parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="limitHeaderDAO" class="com.pennant.backend.dao.limit.impl.LimitHeaderDAOImpl" parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="limitReferenceMappingDAO" class="com.pennant.backend.dao.limit.impl.LimitReferenceMappingDAOImpl" parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="limitTransactionDetailDAO" class="com.pennant.backend.dao.limit.impl.LimitTransactionDetailsDAOImpl" parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="limitGroupLinesDAO" class="com.pennant.backend.dao.limit.impl.LimitGroupLinesDAOImpl" parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
 	<!-- AIB -->
 	<bean id="calendarInterfaceService" class="com.pennant.Interface.service.impl.aib.CalendarInterfaceServiceImpl">
 		<property name="dateRollOverProcess" ref="dateRollOverProcess" />
