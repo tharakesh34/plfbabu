@@ -187,6 +187,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				return response;
 			}
 		}
+		
 		// validate and Data defaulting
 		financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData());
 
@@ -194,6 +195,13 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			return getErrorMessage(financeDetail.getFinScheduleData());
 		}
 		//validate FinanceDetail Validations
+		// validate finance data
+		if (!StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
+			CustomerDetails customerDetails = new CustomerDetails();
+			customerDetails.setCustomer(null);
+			financeDetail.setCustomerDetails(customerDetails);
+			financeDataValidation.setFinanceDetail(financeDetail);
+		}
 		financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
 
 		if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
