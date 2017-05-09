@@ -155,4 +155,8 @@ Update wiffinancemain_temp set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS 
 Update wifFinanceMain set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS NULL;
 </sql>
 </changeSet>
+
+     <changeSet id="12" author="ManojKumar.P">
+		<dropTable tableName="DISBURSMENT_UPLOAD_MAPPING"/>
+	</changeSet> 
 </databaseChangeLog>
