@@ -126,12 +126,14 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		dataSet.setLinkedTranId(linkedTranId);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent,");
-		selectSql.append(" PostDate,ValueDate,TranCode,TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting,");
-		selectSql.append(" PostAmount,AmountType,PostStatus,ErrorId,ErrorMsg, AcCcy, TranOrderId,");
-		selectSql.append(" PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
-		selectSql.append(" FROM Postings");
+		selectSql.append(" SELECT T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent,");
+		selectSql.append(" T1.PostDate, T1.ValueDate, T1.TranCode, T1.TranDesc, T1.RevTranCode, T1.DrOrCr, T1.Account,  T1.ShadowPosting,");
+		selectSql.append(" T1.PostAmount, T1.AmountType, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T1.AcCcy, T1.TranOrderId,");
+		selectSql.append(" T1.PostToSys, T1.ExchangeRate, T1.PostBranch, T1.AppDate, T1.AppValueDate, T1.UserBranch, T2.AcType AccountType ");
+		selectSql.append(" FROM Postings T1");
+		selectSql.append(" Left join Accounts T2 on Accountid = Account ");
 		selectSql.append(" Where LinkedTranId =:LinkedTranId");
+		selectSql.append(" Order By T1.LinkedTranId, T1.TranOrderId ");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataSet);
@@ -429,12 +431,14 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		dataSet.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent,");
-		selectSql.append(" PostDate,ValueDate,TranCode,TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting,");
-		selectSql.append(" PostAmount,AmountType,PostStatus,ErrorId,ErrorMsg, AcCcy, TranOrderId,");
-		selectSql.append(" PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
-		selectSql.append(" FROM Postings");
+		selectSql.append(" SELECT T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent,");
+		selectSql.append(" T1.PostDate, T1.ValueDate, T1.TranCode, T1.TranDesc, T1.RevTranCode, T1.DrOrCr, T1.Account,  T1.ShadowPosting,");
+		selectSql.append(" T1.PostAmount, T1.AmountType, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T1.AcCcy, T1.TranOrderId,");
+		selectSql.append(" T1.PostToSys, T1.ExchangeRate, T1.PostBranch, T1.AppDate, T1.AppValueDate, T1.UserBranch, T2.AcType AccountType ");
+		selectSql.append(" FROM Postings T1");
+		selectSql.append(" Left join Accounts T2 on Accountid = Account ");
 		selectSql.append(" Where FinReference =:FinReference and PostStatus = :PostStatus");
+		selectSql.append(" Order By T1.LinkedTranId, T1.TranOrderId ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataSet);
