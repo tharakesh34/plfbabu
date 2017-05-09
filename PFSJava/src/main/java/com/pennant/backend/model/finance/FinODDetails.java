@@ -103,7 +103,7 @@ public class FinODDetails implements java.io.Serializable {
 	private boolean oDIncGrcDays;
 	@XmlElement(name="chargeType")
 	private String oDChargeType;
-	private int oDGraceDays;
+	private int oDGraceDays=0;
 	private String oDChargeCalOn;
 	private BigDecimal oDChargeAmtOrPerc = BigDecimal.ZERO;
 	private boolean oDAllowWaiver;

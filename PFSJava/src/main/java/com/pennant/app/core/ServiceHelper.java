@@ -278,6 +278,12 @@ abstract public class ServiceHelper implements Serializable {
 		}
 		return val;
 	}
+	public BigDecimal getDecimal(BigDecimal bigDecimal) {
+		if (bigDecimal == null) {
+			bigDecimal = BigDecimal.ZERO;
+		}
+		return bigDecimal;
+	}
 
 	public int getIndexFromMap(Map<Date, Integer> datesMap, Date date) {
 		Date formatDate = formatDate(date);

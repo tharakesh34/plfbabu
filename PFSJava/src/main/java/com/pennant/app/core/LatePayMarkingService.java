@@ -391,7 +391,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		finODDetail.setODChargeType(penaltyRate.getODChargeType());
 		finODDetail.setODGraceDays(penaltyRate.getODGraceDays());
 		finODDetail.setODChargeCalOn(penaltyRate.getODChargeCalOn());
-		finODDetail.setODChargeAmtOrPerc(penaltyRate.getODChargeAmtOrPerc());
+		finODDetail.setODChargeAmtOrPerc(getDecimal(penaltyRate.getODChargeAmtOrPerc()));
 		finODDetail.setODAllowWaiver(penaltyRate.isODAllowWaiver());
 		finODDetail.setODMaxWaiverPerc(penaltyRate.getODMaxWaiverPerc());
 		finODDetail.setRcdAction(PennantConstants.RECORD_INSERT);
