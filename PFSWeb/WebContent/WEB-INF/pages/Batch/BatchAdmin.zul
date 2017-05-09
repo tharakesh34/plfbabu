@@ -72,7 +72,7 @@
 								<rows>
 									<row>
 										<hbox widths="25%,25%,25%,25%" pack="stretch" width="100%">
-											<exePannel id="beforeEOD" border="normal" title="${c:l('label_beforeEOD')}" imgSrc="/images/icons/send.gif" />
+											<exePannel id="beforeEOD" border="normal" title="${c:l('label_beforeEOD')}" imgSrc="/images/icons/send.gif"  visible="false"/>
 											<exePannel id="prepareCustomerQueue" border="normal" title="${c:l('label_prepareCustomerQueue')}" imgSrc="/images/icons/send.gif" />
 											<hbox></hbox>
 											<hbox></hbox>
