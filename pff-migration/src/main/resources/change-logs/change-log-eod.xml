@@ -358,6 +358,14 @@
 		<addNotNullConstraint tableName="FINODDetails_PD" columnName="ApplyODPenalty" columnDataType="boolean" />
 		<addNotNullConstraint tableName="FINODDetails_SnapShot" columnName="ApplyODPenalty" columnDataType="boolean" />
 	</changeSet>
+	<changeSet id="40" author="satish">
+	<sql>
+	Delete from FinODDetails;
+	Delete from FinODCRecovery;
+	update financemain set finisactive = 0 where finreference not in (select FINREFERENCE from finpftdetails);
+	</sql>
+	
+	</changeSet>
 	
 
 
