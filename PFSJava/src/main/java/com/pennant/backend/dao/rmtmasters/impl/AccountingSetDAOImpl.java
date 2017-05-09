@@ -332,7 +332,6 @@ public class AccountingSetDAOImpl extends BasisNextidDaoImpl<AccountingSet> impl
 			accountingSet = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),
 			        beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
 			accountingSet = null;
 		}
 		logger.debug("Leaving");
