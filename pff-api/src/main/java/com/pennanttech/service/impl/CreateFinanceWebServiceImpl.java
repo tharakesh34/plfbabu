@@ -11,6 +11,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -67,9 +68,13 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			}
 
 			// validate finance data
-			financeDataValidation.setFinanceDetail(financeDetail);
-			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData(),
-					true);
+			if(!StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
+				CustomerDetails customerDetails = new CustomerDetails();
+				customerDetails.setCustomer(null);
+				financeDetail.setCustomerDetails(customerDetails);
+				financeDataValidation.setFinanceDetail(financeDetail);
+			}
+			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData(), true);
 
 			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 				return getErrorMessage(financeDetail.getFinScheduleData());

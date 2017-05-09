@@ -185,6 +185,7 @@ public class FinanceTypeController {
 			FinanceTypeResponse financeTypeResponse = new FinanceTypeResponse();
 			financeTypeResponse.setFinType(detail.getFinType());
 			financeTypeResponse.setFinTypeDesc(detail.getFinTypeDesc());
+			financeTypeResponse.setFinTypePartnerBankList(null);
 			financeTypeResponseList.add(financeTypeResponse);
 		}
 		response.setFinanceTypeList(financeTypeResponseList);

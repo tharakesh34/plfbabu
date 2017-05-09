@@ -625,11 +625,11 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		logger.debug("Entering");
 		
 		FinanceType financeType = new FinanceType();
-		financeType.setProduct(productCode);
+		financeType.setFinCategory(productCode);
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT FinType, FinTypeDesc");
 		selectSql.append(" From RMTFinanceTypes ");
-		selectSql.append(" Where Product =:Product");
+		selectSql.append(" Where FinCategory =:FinCategory");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
