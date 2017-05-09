@@ -87,4 +87,6 @@ public interface PresentmentHeaderDAO extends BasicCrudDao<PresentmentHeader> {
 
 	List<PresentmentDetail> getPresentmenToPost(long custId, Date schData);
 
+	List<PresentmentDetail> getPresentmentDetail(long presentmentId);
+
 }

@@ -350,8 +350,8 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 				sql.append("))");
 			}
 
-			sql.append(" AND  Not Exists( Select 1 from PresentmentDetails T6 where T1.FinReference = T6.FinReference ");
-			sql.append(" AND T6.ExcludeReason = '0' AND T6.ExcludeReason <> '6' AND T6.SCHDATE = T1.SCHDATE)  ORDER BY T1.DEFSCHDDATE ");
+			sql.append(" AND  Not Exists( Select 1 from PresentmentDetails T6 where T1.FinReference = T6.FinReference AND T6.SCHDATE = T1.SCHDATE ");
+			sql.append(" AND T6.ExcludeReason = '0' AND T6.ExcludeReason <> '6'  AND T6.STATUS <> 'A')  ORDER BY T1.DEFSCHDDATE ");
 
 			Connection conn = DataSourceUtils.doGetConnection(this.dataSource);
 			stmt = conn.prepareStatement(sql.toString());
@@ -676,6 +676,36 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper .newInstance(PresentmentDetail.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+	
+	@Override
+	public List<PresentmentDetail> getPresentmentDetail(long presentmentId) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = null;
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select id, presentmentId, finReference, schDate, mandateId, schAmtDue, schPriDue, schPftDue, schFeeDue, schInsDue, ");
+		sql.append(" schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, Emino, status, presentmentRef, ecsReturn, receiptID,");
+		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		sql.append(" From PRESENTMENTDETAILS WHERE PresentmentId = :PresentmentId");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("PresentmentId", presentmentId);
+
+		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PresentmentDetail.class);
+		try {
+			return this.jdbcTemplate.query(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		}

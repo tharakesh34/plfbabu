@@ -478,6 +478,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		logger.debug(Literal.ENTERING);
 
 		FinReceiptHeader receiptHeader = getFinReceiptHeaderById(presentmentDetail.getReceiptID(), "");
+		
 		if(receiptHeader == null){
 			presentmentDetail.setErrorDesc("FinReceiptHeader not available for the receipt id :" + presentmentDetail.getReceiptID());
 			return presentmentDetail;
@@ -490,7 +491,24 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			return presentmentDetail;
 		}
 
-		ManualAdvise manualAdvise = getManualAdvise(receiptHeader, presentmentDetail.getMandateType(), bounceReason);
+		
+		FinReceiptDetail finReceiptDetail = null;
+
+		if (receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()) {
+			for (FinReceiptDetail item : receiptHeader.getReceiptDetails()) {
+				if (item.getPaymentType().equals(presentmentDetail.getMandateType())) {
+					finReceiptDetail = item;
+					break;
+				}
+			}
+		}
+		
+		if(finReceiptDetail == null){
+			presentmentDetail.setErrorDesc("FinReceiptDetail not available for the MandateType :" +  presentmentDetail.getMandateType());
+			return presentmentDetail;
+		}
+		
+		ManualAdvise manualAdvise = getManualAdvise(receiptHeader,  bounceReason, finReceiptDetail);
 		
 		if(manualAdvise == null){
 			presentmentDetail.setErrorDesc("ManualAdvise not available for the MandateType :" +  presentmentDetail.getMandateType());
@@ -498,6 +516,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		}
 		
 		receiptHeader.setManualAdvise(manualAdvise);
+		receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_BOUNCE);
 		String errorMsg = procReceiptCancellation(receiptHeader);
 		presentmentDetail.setErrorDesc(errorMsg);
 		presentmentDetail.setBounceID(manualAdvise.getBounceID());
@@ -514,22 +533,10 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 * @param bounceReason
 	 * @return ManualAdvise
 	 */
-	private ManualAdvise getManualAdvise(FinReceiptHeader receiptHeader, String mandateType, BounceReason bounceReason) {
+	private ManualAdvise getManualAdvise(FinReceiptHeader receiptHeader, BounceReason bounceReason, FinReceiptDetail finReceiptDetail) {
 		logger.debug(Literal.ENTERING);
 
-		FinReceiptDetail finReceiptDetail = null;
-
-		if (receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()) {
-			for (FinReceiptDetail item : receiptHeader.getReceiptDetails()) {
-				if (item.getPaymentType().equals(mandateType)) {
-					finReceiptDetail = item;
-					break;
-				}
-			}
-		}
-
 		BigDecimal bounceCharge = BigDecimal.ZERO;
-
 		Rule rule = getRuleDAO().getRuleByID(bounceReason.getRuleID(), "");
 		BigDecimal bounceAmt = BigDecimal.ZERO;
 		if (rule != null) {
@@ -551,7 +558,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		manualAdvise.setRemarks("");
 		manualAdvise.setReceiptID(receiptHeader.getReceiptID());
 		manualAdvise.setBounceID(bounceReason.getBounceID());
-
+		manualAdvise.setValueDate(DateUtility.getAppDate());
+		manualAdvise.setPostDate(DateUtility.getPostDate());
 		logger.debug(Literal.LEAVING);
 
 		return manualAdvise;

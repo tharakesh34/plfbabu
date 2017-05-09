@@ -23,5 +23,6 @@ public interface FinExcessAmountDAO {
 	void updateExcessBal(long excessID, BigDecimal amount);
 	int updateExcessBalByRef(String reference, String amountType, BigDecimal amount);
 	List<FinExcessAmountReserve> getExcessReserveList(long receiptID);
+	void updateExcessAmount(long excessID, BigDecimal advanceAmount);
 
 }

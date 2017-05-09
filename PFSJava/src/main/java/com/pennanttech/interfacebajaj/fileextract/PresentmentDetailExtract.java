@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -87,6 +88,14 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 				// Validate Mandatory fields
 				validateFields(map);
+				
+				String presentmentRef = map.getValue("Batchid").toString();
+				String status = isPresentmentReferenceExists(presentmentRef);
+				/*if (status == null) {
+					throw new Exception(" Presentment details are not available for the presentment reference :" + presentmentRef + " At line number " + recordCount);
+				} else if (RepayConstants.PEXC_SUCCESS.equals(status) || RepayConstants.PEXC_FAILURE.equals(status) || RepayConstants.PEXC_ERROR.equals(status)) {
+					throw new Exception(" The presentment with the presentment reference :" + presentmentRef + " already processed  " + recordCount);
+				}*/
 
 				// Inserting the data into staging table
 				insertData(map);
@@ -141,6 +150,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
 
 	// Validating the mandatory fields
 	private void validateFields(MapSqlParameterSource map) throws Exception {
@@ -226,7 +236,6 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 				}
 				return failedCount;
 			}
- 
 		});
 
 		logger.debug(Literal.LEAVING);
@@ -382,6 +391,30 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		source.addValue("PRESENTMENTREF", presentmentRef);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
+		} catch (Exception e) {
+			logger.error("Exception {}", e);
+			throw e;
+		} finally {
+			source = null;
+			sql = null;
+			logger.debug(Literal.LEAVING);
+		}
+	}
+	
+	// Getting the status of the presentment
+	private String isPresentmentReferenceExists(String presentmentRef) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuffer sql = new StringBuffer();
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		sql.append(" SELECT STATUS FROM PRESENTMENTDETAILS  WHERE PRESENTMENTREF = :PRESENTMENTREF ");
+		source.addValue("PRESENTMENTREF", presentmentRef);
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception {}", e);
+			return null;
 		} catch (Exception e) {
 			logger.error("Exception {}", e);
 			throw e;

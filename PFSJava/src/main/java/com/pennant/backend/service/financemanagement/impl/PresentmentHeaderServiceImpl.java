@@ -410,18 +410,9 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		try {
 			ResultSet rs = presentmentHeaderDAO.getPresentmentDetails(header);
 			while (rs.next()) {
-				Date defSchDate = rs.getDate("DEFSCHDDATE");
-				if (defSchDate != null) {
-					if (!map.containsKey(defSchDate)) {
-						header.setSchdate(defSchDate);
-						presentmentId = savePresentmentHeaderDetails(header);
-						map.put(defSchDate, presentmentId);
-					}
-				}
-				isEmptyRecords = true;
+				
 
 				PresentmentDetail pDetail = new PresentmentDetail();
-				pDetail.setPresentmentId(presentmentId);
 				pDetail.setPresentmentAmt(BigDecimal.ZERO);
 				pDetail.setStatus(RepayConstants.PEXC_IMPORT);
 				pDetail.setExcludeReason(RepayConstants.PEXC_EMIINCLUDE);
@@ -469,7 +460,19 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 				if (pDetail.getExcessID() != 0) {
 					finExcessAmountDAO.updateExcessAmount(pDetail.getExcessID(), "R", pDetail.getAdvanceAmt());
 				}
+				
+				Date defSchDate = rs.getDate("DEFSCHDDATE");
+				if (defSchDate != null) {
+					if (!map.containsKey(defSchDate)) {
+						header.setSchdate(defSchDate);
+						presentmentId = savePresentmentHeaderDetails(header);
+						map.put(defSchDate, presentmentId);
+					}
+				}
+				isEmptyRecords = true;
+				
 				//PresentmentDetail saving
+				pDetail.setPresentmentId(presentmentId);
 				long id = presentmentHeaderDAO.save(pDetail, TableType.MAIN_TAB);
 				
 				// FinScheduleDetails update
@@ -623,6 +626,14 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		} else if ("Resubmit".equals(userAction)) {
 			this.presentmentHeaderDAO.updatePresentmentHeader(presentmentId, RepayConstants.PEXC_BATCH_CREATED, partnerBankId);
 		} else if ("Cancel".equals(userAction)) {
+			List<PresentmentDetail> list = this.presentmentHeaderDAO.getPresentmentDetail(presentmentId);
+			if (list != null && !list.isEmpty()) {
+				for (PresentmentDetail item : list) {
+					if (item.getExcessID() != 0) {
+						finExcessAmountDAO.updateExcessAmount(item.getExcessID(), item.getAdvanceAmt());
+					}
+				}
+			}
 			this.presentmentHeaderDAO.deletePresentmentDetails(presentmentId);
 			this.presentmentHeaderDAO.deletePresentmentHeader(presentmentId);
 		}

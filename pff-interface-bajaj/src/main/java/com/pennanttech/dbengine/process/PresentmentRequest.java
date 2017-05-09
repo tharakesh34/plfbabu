@@ -190,12 +190,13 @@ public class PresentmentRequest extends DatabaseDataEngine {
 		MapSqlParameterSource source = null;
 
 		sql = new StringBuilder();
-		sql.append(" UPDATE PRESENTMENTDETAILS Set STATUS = :STATUS Where PRESENTMENTID = :PRESENTMENTID ");
+		sql.append(" UPDATE PRESENTMENTDETAILS Set STATUS = :STATUS Where PRESENTMENTID = :PRESENTMENTID AND EXCLUDEREASON = :EXCLUDEREASON ");
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
 		source.addValue("PRESENTMENTID", presentmentId);
 		source.addValue("STATUS", status);
+		source.addValue("EXCLUDEREASON", 0);
 
 		try {
 			this.jdbcTemplate.update(sql.toString(), source);

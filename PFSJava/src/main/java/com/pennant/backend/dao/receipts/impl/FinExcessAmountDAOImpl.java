@@ -406,7 +406,7 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 			updateSql.append(" Set UtilisedAmt = UtilisedAmt + :amount, BalanceAmt = BalanceAmt - :amount ");
 		}
 		updateSql.append(" Where ExcessID =:ExcessID");
-
+	
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finExcessAmount);
@@ -418,6 +418,33 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 					PennantConstants.default_Language);
 			throw new DataAccessException(errorDetails.getError()) {
 			};
+		}
+	}
+	
+	@Override
+	public void updateExcessAmount(long excessID, BigDecimal advanceAmount) {
+		logger.debug("Entering");
+
+		StringBuilder sql = null;
+		MapSqlParameterSource source = null;
+
+		sql = new StringBuilder();
+		sql.append(" Update FinExcessAmount Set ReservedAmt = ReservedAmt - :AdvanceAmount,");
+		sql.append(" BalanceAmt = BalanceAmt + :AdvanceAmount");
+		sql.append(" Where ExcessID = :ExcessID");
+		logger.debug("updateSql: " + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("AdvanceAmount", advanceAmount);
+		source.addValue("ExcessID", excessID);
+		try {
+			this.namedParameterJdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error("Exception :", e);
+			throw e;
+		} finally {
+			source = null;
+			sql = null;
 		}
 	}
 		@Override
