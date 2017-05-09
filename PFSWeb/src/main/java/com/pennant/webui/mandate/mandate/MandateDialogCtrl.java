@@ -620,6 +620,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.maxLimit.setValue(BigDecimal.ZERO);
 		this.periodicity.setValue("");
 		this.phoneNumber.setValue("");
+		this.openMandate.setChecked(false);
+		this.space_Expirydate.setSclass("mandatory");
 		//Frequency
 		this.approvalID.setValue("");
 	}
