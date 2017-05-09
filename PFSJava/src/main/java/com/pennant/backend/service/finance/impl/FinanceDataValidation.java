@@ -1916,7 +1916,7 @@ public class FinanceDataValidation {
 				String[] valueParm = new String[2];
 				valueParm[0] = finMain.getStepPolicy();
 				valueParm[1] = "loan with allow manualSteps";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90204", null)));
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90204", valueParm)));
 				return errorDetails;
 			}
 			//ScheduleMethod
