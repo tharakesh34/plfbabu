@@ -2046,5 +2046,7 @@ from RMTAccountingSet, RMTFinanceTypes where AccountsetCode = 'DEFAULT' ;
 		null, null, null, 0, 'A', 0,'0', 1, 2, 2 );
 	</sql>
 	</changeSet>
-	
+	<changeSet author="Siva" id="135">
+		<dropColumn tableName="MANUALADVISEMOVEMENTS" columnName="PAYAGAINSTID" />
+	</changeSet>
 </databaseChangeLog>
