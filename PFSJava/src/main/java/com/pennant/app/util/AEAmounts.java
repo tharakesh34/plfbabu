@@ -109,9 +109,11 @@ public class AEAmounts implements Serializable {
 
 		//Accural
 		amountCodes.setAccrue(pftDetail.getPftAccrued());
+		amountCodes.setdAccrue(amountCodes.getAccrue().subtract(pftDetail.getAcrTillLBD()));
 		amountCodes.setAccrueS(pftDetail.getPftAccrueSusp());
 		amountCodes.setAmz(pftDetail.getPftAmz());
 		amountCodes.setAmzS(pftDetail.getPftAmzSusp());
+		amountCodes.setdAmz(amountCodes.getAmz().subtract(pftDetail.getAmzTillLBD()));
 		//OD Details
 		amountCodes.setODDays(pftDetail.getCurODDays());
 		amountCodes.setODInst(pftDetail.getNOODInst());
