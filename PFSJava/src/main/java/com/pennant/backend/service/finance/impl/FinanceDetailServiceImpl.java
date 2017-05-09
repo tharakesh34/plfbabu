@@ -3129,7 +3129,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				tranType = PennantConstants.TRAN_ADD;
 				financeMain.setRecordType("");
-				financeMain.setLinkedFinRef(financeMain.getFinReference() + "_DP");
+				if (financeDetail.getFinScheduleData().getFinanceType() != null
+						&& financeDetail.getFinScheduleData().getFinanceType().isAllowDownpayPgm()
+						&& StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
+					financeMain.setLinkedFinRef(financeMain.getFinReference() + "_DP");
+				}
 				getFinanceMainDAO().save(financeMain, TableType.MAIN_TAB, isWIF);
 
 				// Setting BPI Paid amount to Schedule details
@@ -3980,7 +3984,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				tranType = PennantConstants.TRAN_ADD;
 				financeMain.setRecordType("");
-				financeMain.setLinkedFinRef(financeMain.getFinReference() + "_DP");
+				if (financeDetail.getFinScheduleData().getFinanceType() != null
+						&& financeDetail.getFinScheduleData().getFinanceType().isAllowDownpayPgm()
+						&& StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
+					financeMain.setLinkedFinRef(financeMain.getFinReference() + "_DP");
+				}
 				getFinanceMainDAO().save(financeMain, TableType.PRE_APPR_TAB, isWIF);
 
 				//Schedule Details
