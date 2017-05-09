@@ -366,7 +366,11 @@
 	</sql>
 	
 	</changeSet>
-	
+<changeSet id="41" author="satish">
+<sql>
+	update financemain set GrcPeriodEndDate = FinstartDate where GrcPeriodEndDate IS NULL;
+</sql>
 
+</changeSet>
 
 </databaseChangeLog>
