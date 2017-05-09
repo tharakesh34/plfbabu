@@ -500,7 +500,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		}  else if ("LTPPENQ".equals(this.enquiryType)) {
 
-			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_CovenantEnquiry.value"));
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_LatepayProfitRecovery"));
 			map.put("finReference", this.finReference);
 			map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeEnquiry.getFinCcy()));
 			path = "/WEB-INF/pages/Enquiry/LatepayProfitEnquiry/LatepayProfitRecoveryList.zul";
