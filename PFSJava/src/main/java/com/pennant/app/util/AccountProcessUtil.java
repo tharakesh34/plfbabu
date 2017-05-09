@@ -88,7 +88,7 @@ public class AccountProcessUtil implements Serializable {
 			} else {
 				accountType = accountTypeMap.get(acTypeKey);
 			}
-
+			prepareAccounts(accountMap, posting, accountType);
 			PrepareAccountsHist(accountHistMap, posting);
 		}
 

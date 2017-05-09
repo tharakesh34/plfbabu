@@ -1275,6 +1275,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
+		amountCodes.setBpi(finMain.getBpiAmount());
+		
 		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
 		BigDecimal totalPftCpzNew = newProfitDetail.getTotalPftCpz();
 
@@ -1328,10 +1330,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				if (advPayment.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(advPayment.getRecordType())) {
 					aeEvent.setNewRecord(true);
 				}
-				
 				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+				aeEvent.setLinkedTranId(0);
 				postingsPreparationUtil.postAccounting(aeEvent);
-
 				advPayment.setLinkedTranId(aeEvent.getLinkedTranId());
 			}
 		}
@@ -1481,7 +1482,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		String eventCode = financeDetail.getAccountingEventCode();
 		FinanceProfitDetail pftDetail = new FinanceProfitDetail();
 		AEEvent aeEvent = new AEEvent();
-		
 		if(StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())){
 			pftDetail = new FinanceProfitDetail();
 		}else{
@@ -1490,6 +1490,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		try {
 			aeEvent = prepareAccountingData(financeDetail, aeEvent, pftDetail);
+			aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {

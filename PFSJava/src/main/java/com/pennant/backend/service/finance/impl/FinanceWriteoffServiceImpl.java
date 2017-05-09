@@ -11,6 +11,7 @@ import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.AEAmounts;
@@ -42,6 +43,7 @@ import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
@@ -515,7 +517,10 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		//Finance Write off Posting Process Execution
 		//=====================================
-
+		
+		executeAccountingProcess(aAuditHeader);
+		
+/*
 		FinanceProfitDetail profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
 		profitDetail = getAccrualService().calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(),
 				profitDetail, curBDay);
@@ -554,7 +559,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		getPostingsPreparationUtil().postAccounting(aeEvent);
 	//	linkedTranId = getAccountingResults(auditHeader, header.getFinanceDetail(), accountingSetEntries, curBDay,
 	//			aeEvent);
-
+*/		
 
 		//Update the financemain
 		tranType = PennantConstants.TRAN_UPD;
@@ -565,7 +570,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		//Save Finance WriteOff Details
 		FinanceWriteoff financeWriteoff = header.getFinanceWriteoff();
-		financeWriteoff.setLinkedTranId(aeEvent.getLinkedTranId());
+	//	financeWriteoff.setLinkedTranId(aeEvent.getLinkedTranId());
 		getFinanceWriteoffDAO().save(financeWriteoff, "");
 
 		/*
@@ -611,7 +616,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		}
 
 		//Update Profit Details 
-		getProfitDetailsDAO().update(profitDetail, false);
+	//	getProfitDetailsDAO().update(profitDetail, false);
 
 		// Schedule Details delete
 		//=======================================
@@ -659,7 +664,154 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		logger.debug("Leaving");
 		return auditHeader;
 	}
+		
+	
+	/**
+	 * Method for Execute posting Details on Core Banking Side
+	 * 
+	 * @param auditHeader
+	 * @param curBDay
+	 * @return
+	 * @throws InterruptedException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws AccountNotFoundException
+	 */
+	public AuditHeader executeAccountingProcess(AuditHeader auditHeader) {
+		logger.debug("Entering");
 
+		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
+
+		FinanceWriteoffHeader financeWriteoffHeader = (FinanceWriteoffHeader) auditHeader.getAuditDetail().getModelData();
+		FinanceWriteoff financeWriteoff = financeWriteoffHeader.getFinanceWriteoff();
+		FinanceDetail financeDetail = financeWriteoffHeader.getFinanceDetail();
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		AEEvent aeEvent = new AEEvent();
+		FinanceProfitDetail pftDetail = new FinanceProfitDetail();
+		pftDetail = getProfitDetailsDAO().getFinProfitDetailsById(financeMain.getFinReference());
+
+		try {
+			aeEvent = prepareAccountingData(financeDetail, aeEvent, pftDetail);
+			aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		HashMap<String, Object>	dataMap = aeEvent.getDataMap();
+		dataMap = prepareFeeRulesMap(amountCodes, dataMap, financeDetail);
+		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
+		financeWriteoff.getDeclaredFieldValues(dataMap);
+		aeEvent.setDataMap(dataMap);
+
+		try {
+			//getAccountingResults(auditHeader, financeDetail, accountingSetEntries, curBDay, aeEvent);
+			getPostingsPreparationUtil().postAccounting(aeEvent);
+			financeWriteoff.setLinkedTranId(aeEvent.getLinkedTranId());
+
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (PFFInterfaceException e) {
+			e.printStackTrace();
+		}
+ 
+		if (auditHeader.getErrorMessage() == null || auditHeader.getErrorMessage().size() == 0) {
+
+			// save Postings
+			if (accountingSetEntries != null && !accountingSetEntries.isEmpty()) {
+				getPostingsDAO().saveBatch(accountingSetEntries);
+			}
+
+			// Save/Update Finance Profit Details
+			boolean isNew = false;
+
+			if (StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+				isNew = true;
+			}
+
+			doSave_PftDetails(pftDetail, isNew);
+
+			//Account Details Update
+			if (accountingSetEntries != null && !accountingSetEntries.isEmpty()) {
+				getAccountProcessUtil().procAccountUpdate(accountingSetEntries);
+			}
+		}
+
+		logger.debug("Leaving");
+		return auditHeader;
+	}
+	
+	
+	/**
+	 * Preparing Accounting Data 
+	 * @param financeDetail
+	 * @param executingMap
+	 * @return
+	 * @throws InterruptedException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
+	private AEEvent prepareAccountingData(
+			FinanceDetail financeDetail, AEEvent aeEvent, FinanceProfitDetail profitDetail) throws InterruptedException,
+			IllegalAccessException, InvocationTargetException {
+
+		Date curBDay = DateUtility.getAppDate();
+		String eventCode = financeDetail.getAccountingEventCode();
+
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
+
+		if ("".equals(eventCode)) {
+			eventCode = AccountEventConstants.ACCEVENT_ADDDBSP;
+			if (finMain.getFinStartDate().after(DateUtility.getAppDate())) {
+				if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
+					eventCode = AccountEventConstants.ACCEVENT_ADDDBSF;
+				}
+			}
+		}
+		
+		BigDecimal totalPftSchdOld = BigDecimal.ZERO;
+		BigDecimal totalPftCpzOld = BigDecimal.ZERO;
+		FinanceProfitDetail newProfitDetail = new FinanceProfitDetail();
+		if (profitDetail != null) {//FIXME
+			BeanUtils.copyProperties(profitDetail, newProfitDetail);
+			totalPftSchdOld = profitDetail.getTotalPftSchd();
+			totalPftCpzOld = profitDetail.getTotalPftCpz();
+		}
+		
+		aeEvent = AEAmounts.procAEAmounts(finMain, finSchdDetails, profitDetail, eventCode, curBDay, curBDay);
+		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), eventCode, FinanceConstants.MODULEID_PROMOTION));
+		} else {
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE));
+		}
+
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		getAccrualService().calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
+		amountCodes.setBpi(finMain.getBpiAmount());
+		
+		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
+		BigDecimal totalPftCpzNew = newProfitDetail.getTotalPftCpz();
+
+		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
+		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
+
+		aeEvent.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
+		amountCodes.setDisburse(finMain.getFinCurrAssetValue());
+
+		if (finMain.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(finMain.getRecordType())) {
+			aeEvent.setNewRecord(true);
+		}
+		return aeEvent;
+	}
+	
 	public void listSave(FinScheduleData scheduleData, String tableType, long logKey) {
 		logger.debug("Entering ");
 		HashMap<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();

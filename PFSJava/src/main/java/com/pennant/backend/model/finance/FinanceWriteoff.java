@@ -3,6 +3,7 @@ package com.pennant.backend.model.finance;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 
 public class FinanceWriteoff implements Serializable {
 	
@@ -252,6 +253,26 @@ public class FinanceWriteoff implements Serializable {
 		this.unpaidSchFee = unpaidSchFee;
 	}
 
-	
+	public HashMap<String, Object> getDeclaredFieldValues() {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		getDeclaredFieldValues(map);
+
+		return map;
+	}
+
+	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> map) {
+
+		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
+			try {
+				//"ae_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
+				map.put("fw_" + this.getClass().getDeclaredFields()[i].getName(),
+						this.getClass().getDeclaredFields()[i].get(this));
+			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+				// Nothing TO DO
+			}
+		}
+
+		return map;
+	}
 	
 }

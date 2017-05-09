@@ -2883,6 +2883,7 @@
 		<property name="financeWriteoffService" ref="financeWriteoffService" />
 		<property name="mailUtil" ref="mailUtil" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
+		<property name="accrualService" ref="accrualService" />
 	</bean>
 
 	<!--============ Manual Takaful Premium Exclude Details ============== -->

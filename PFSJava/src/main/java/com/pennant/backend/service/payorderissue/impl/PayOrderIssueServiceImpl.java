@@ -275,28 +275,17 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		calcluatePOHeaderDetails(payOrderIssueHeader);
 		
 
+		boolean posted= disbursementPostings.processPostings(payOrderIssueHeader, auditHeader.getAuditBranchCode());
+		if (!posted) {
+			auditHeader.setErrorDetails(new ErrorDetails("0000", "Postigs Failed", null));
+			return auditHeader;
+		}
+
+		
 		if (payOrderIssueHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-
-			List<Object> list = disbursementPostings.processPostings(payOrderIssueHeader, tranType);
-			if (list == null || (!(Boolean) list.get(0))) {
-				String errorMessage = StringUtils.trimToEmpty(list.get(1).toString());
-
-				auditHeader.setErrorDetails(new ErrorDetails("0000", errorMessage, null));
-				return auditHeader;
-			}
-
 			getPayOrderIssueHeaderDAO().delete(payOrderIssueHeader, "");
 		} else {
-
-			List<Object> list = disbursementPostings.processPostings(payOrderIssueHeader, tranType);
-			if (list == null && (!(Boolean) list.get(0))) {
-				String errorMessage = StringUtils.trimToEmpty(list.get(1).toString());
-
-				auditHeader.setErrorDetails(new ErrorDetails("0000", errorMessage, null));
-				return auditHeader;
-			}
-
 			payOrderIssueHeader.setRoleCode("");
 			payOrderIssueHeader.setNextRoleCode("");
 			payOrderIssueHeader.setTaskId("");

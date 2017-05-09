@@ -61,11 +61,10 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.backend.dao.NextidviewDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
-import com.pennant.backend.model.finance.FinanceSummary;
-import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantConstants;
 
@@ -427,6 +426,7 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 
 		ReturnDataSet dataSet = new ReturnDataSet();
 		dataSet.setFinReference(finReference);
+		dataSet.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent,");
@@ -434,7 +434,7 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		selectSql.append(" PostAmount,AmountType,PostStatus,ErrorId,ErrorMsg, AcCcy, TranOrderId,");
 		selectSql.append(" PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
 		selectSql.append(" FROM Postings");
-		selectSql.append(" Where FinReference =:FinReference");
+		selectSql.append(" Where FinReference =:FinReference and PostStatus = :PostStatus");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataSet);

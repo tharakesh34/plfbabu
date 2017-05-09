@@ -428,7 +428,7 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		int recordCount = 0;
 
 		//PREPARE BOTH UPDATE. and Insert Statements and make available for exception handling
-		StringBuilder	updateSql =new StringBuilder("Update Accounts");
+		StringBuilder	updateSql =new StringBuilder("Update Accounts Set ");
 		updateSql.append(StringUtils.trimToEmpty(type)); 
 		updateSql.append(" ShadowBal = (ShadowBal + :ShadowBal), " ); 
 		updateSql.append(" AcBalance = (AcBalance + :AcBalance) " ); 

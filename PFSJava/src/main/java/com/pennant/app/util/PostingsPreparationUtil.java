@@ -165,10 +165,12 @@ public class PostingsPreparationUtil implements Serializable {
 		long linkedTranId = getPostingsDAO().getLinkedTransId();
 		aeEvent.setLinkedTranId(linkedTranId);
 
-		List<ReturnDataSet> returnDataSet = aeEvent.getReturnDataSet();
+		List<ReturnDataSet> returnDatasetList = aeEvent.getReturnDataSet();
 		//FIXME: PV: Prepare Return Data Set
 
-		getPostingsDAO().saveBatch(returnDataSet);
+		getPostingsDAO().saveBatch(returnDatasetList);
+		getAccountProcessUtil().procAccountUpdate(returnDatasetList);
+
 
 		return aeEvent;
 	}
@@ -669,6 +671,29 @@ public class PostingsPreparationUtil implements Serializable {
 		return aeEvent;
 	}
 	
+	/**
+	 * Method to Prepare the accounting entries and save the postings to the Postings and accounts table
+	 * @param aeEvent
+	 * @param dataMap
+	 * @return
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws PFFInterfaceException
+	 */
+	public AEEvent getAccounting(AEEvent aeEvent, HashMap<String, Object> dataMap) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+		logger.debug("Entering");
+		
+		if (aeEvent.getLinkedTranId() <= 0) {
+			aeEvent.setLinkedTranId(getPostingsDAO().getLinkedTransId());
+		}
+		
+		getEngineExecution().getAccEngineExecResults(aeEvent);
+		
+		logger.debug("Leaving");
+		return aeEvent;
+	}
+ 
+ 
 	public AEEvent postAccountingEOD(AEEvent aeEvent) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
 

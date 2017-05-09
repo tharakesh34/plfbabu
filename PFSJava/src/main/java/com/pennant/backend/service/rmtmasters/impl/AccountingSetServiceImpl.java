@@ -320,6 +320,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 				auditDetails.addAll(details);
 			}
 		}
+			AccountingConfigCache.clearTransactionEntryCache(accountingSet.getAccountSetid());
 
 		getAccountingSetDAO().delete(accountingSet, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
@@ -707,9 +708,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 				transactionEntry.setRecordType(rcdType);
 				transactionEntry.setRecordStatus(recordStatus);
 			}
-			if (StringUtils.isEmpty(type) && (updateRecord || deleteRecord)) {
-				AccountingConfigCache.clearTransactionEntryCache(transactionEntry.getAccountSetid());
-			}
+		
 			auditDetails.get(i).setModelData(transactionEntry);
 		}
 
