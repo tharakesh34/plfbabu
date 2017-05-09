@@ -1913,7 +1913,19 @@ public class FinanceDataValidation {
 			}
 
 			if (StringUtils.isNotBlank(finMain.getStepPolicy())) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90237", null)));
+				String[] valueParm = new String[2];
+				valueParm[0] = finMain.getStepPolicy();
+				valueParm[1] = "loan with allow manualSteps";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90204", null)));
+				return errorDetails;
+			}
+			//ScheduleMethod
+			if(!(StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL) || StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT))){
+				String[] valueParm = new String[1];
+				valueParm[0] = finMain.getScheduleMethod();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30552", valueParm)));
+				return errorDetails;
+				
 			}
 
 			//Step Type
@@ -1951,6 +1963,13 @@ public class FinanceDataValidation {
 					String[] valueParm = new String[1];
 					valueParm[0] = finMain.getStepPolicy();
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90252", valueParm)));
+				}
+				if(!StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT)){
+					String[] valueParm = new String[1];
+					valueParm[0] = finMain.getScheduleMethod();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30552", valueParm)));
+					return errorDetails;
+					
 				}
 			}
 		}

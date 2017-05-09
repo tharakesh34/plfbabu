@@ -57,47 +57,49 @@ public class SummaryDetailService {
 			// fetch summary details from FinPftDetails
 			FinanceProfitDetail finPftDetail = financeProfitDetailDAO.getFinProfitDetailsForSummary(finReference);
 			if (finPftDetail == null) {
+				finPftDetail = new FinanceProfitDetail();
+				finPftDetail.setFinStartDate(financeMain.getFinStartDate());
 				finPftDetail = accrualService.calProfitDetails(financeMain, financeDetail.getFinScheduleData()
-						.getFinanceScheduleDetails(), new FinanceProfitDetail(), DateUtility.getAppDate());
+						.getFinanceScheduleDetails(), finPftDetail, DateUtility.getAppDate());
+			} 
+			summary.setTotalCpz(finPftDetail.getTotalPftCpz());
+			summary.setTotalProfit(finPftDetail.getTotalPftSchd());
+			summary.setTotalRepayAmt(finPftDetail.getTotalpriSchd().add(finPftDetail.getTotalPftSchd()));
+			summary.setNumberOfTerms(finPftDetail.getNOInst());
+			summary.setLoanTenor(DateUtility.getMonthsBetween(finPftDetail.getFinStartDate(), finPftDetail.getMaturityDate()));
+			summary.setMaturityDate(finPftDetail.getMaturityDate());
+			summary.setFirstEmiAmount(finPftDetail.getFirstRepayAmt());
+			summary.setNextSchDate(finPftDetail.getNSchdDate());
+			summary.setNextRepayAmount(finPftDetail.getNSchdPri().add(finPftDetail.getNSchdPft()));
+
+			// Total future Installments
+			int futureInst = finPftDetail.getNOInst() - (finPftDetail.getNOPaidInst() + finPftDetail.getNOODInst());
+			summary.setFutureInst(futureInst);
+			summary.setFutureTenor(DateUtility.getMonthsBetween(finPftDetail.getNSchdDate(),
+					finPftDetail.getMaturityDate()));
+			summary.setFirstInstDate(finPftDetail.getFirstRepayDate());
+			summary.setSchdPriPaid(finPftDetail.getTotalPriPaid());
+			summary.setSchdPftPaid(finPftDetail.getTotalPftPaid());
+			summary.setPaidTotal(finPftDetail.getTotalPriPaid().add(finPftDetail.getTotalPftPaid()));
+			summary.setFinLastRepayDate(finPftDetail.getPrvRpySchDate());
+			summary.setOutStandPrincipal(finPftDetail.getTotalPriBal());
+			summary.setOutStandProfit(finPftDetail.getTotalPftBal());
+			summary.setTotalOutStanding(finPftDetail.getTotalPriBal().add(finPftDetail.getTotalPftBal()));
+
+			// overdue details
+			summary.setOverDuePrincipal(finPftDetail.getODPrincipal());
+			summary.setOverDueProfit(finPftDetail.getODProfit());
+			summary.setTotalOverDue(finPftDetail.getODPrincipal().add(finPftDetail.getODProfit()));
+			summary.setOverDueInstlments(finPftDetail.getNOODInst());
+			summary.setAdvPaymentAmount(finPftDetail.getTotalPftPaidInAdv().add(finPftDetail.getTotalPriPaidInAdv()));
+
+			// set Finance closing status
+			if (StringUtils.isBlank(finPftDetail.getClosingStatus())) {
+				summary.setFinStatus(APIConstants.CLOSE_STATUS_ACTIVE);
 			} else {
-				summary.setTotalCpz(finPftDetail.getTotalPftCpz());
-				summary.setTotalProfit(finPftDetail.getTotalPftSchd());
-				summary.setTotalRepayAmt(finPftDetail.getTotalpriSchd().add(finPftDetail.getTotalPftSchd()));
-				summary.setNumberOfTerms(finPftDetail.getNOInst());
-				summary.setLoanTenor(DateUtility.getMonthsBetween(finPftDetail.getFinStartDate(), finPftDetail.getMaturityDate()));
-				summary.setMaturityDate(finPftDetail.getMaturityDate());
-				summary.setFirstEmiAmount(finPftDetail.getFirstRepayAmt());
-				summary.setNextSchDate(finPftDetail.getNSchdDate());
-				summary.setNextRepayAmount(finPftDetail.getNSchdPri().add(finPftDetail.getNSchdPft()));
-
-				// Total future Installments
-				int futureInst = finPftDetail.getNOInst() - (finPftDetail.getNOPaidInst() + finPftDetail.getNOODInst());
-				summary.setFutureInst(futureInst);
-				summary.setFutureTenor(DateUtility.getMonthsBetween(finPftDetail.getNSchdDate(),
-						finPftDetail.getMaturityDate()));
-				summary.setFirstInstDate(finPftDetail.getFirstRepayDate());
-				summary.setSchdPriPaid(finPftDetail.getTotalPriPaid());
-				summary.setSchdPftPaid(finPftDetail.getTotalPftPaid());
-				summary.setPaidTotal(finPftDetail.getTotalPriPaid().add(finPftDetail.getTotalPftPaid()));
-				summary.setFinLastRepayDate(finPftDetail.getPrvRpySchDate());
-				summary.setOutStandPrincipal(finPftDetail.getTotalPriBal());
-				summary.setOutStandProfit(finPftDetail.getTotalPftBal());
-				summary.setTotalOutStanding(finPftDetail.getTotalPriBal().add(finPftDetail.getTotalPftBal()));
-
-				// overdue details
-				summary.setOverDuePrincipal(finPftDetail.getODPrincipal());
-				summary.setOverDueProfit(finPftDetail.getODProfit());
-				summary.setTotalOverDue(finPftDetail.getODPrincipal().add(finPftDetail.getODProfit()));
-				summary.setOverDueInstlments(finPftDetail.getNOODInst());
-				summary.setAdvPaymentAmount(finPftDetail.getTotalPftPaidInAdv().add(finPftDetail.getTotalPriPaidInAdv()));
-
-				// set Finance closing status
-				if (StringUtils.isBlank(finPftDetail.getClosingStatus())) {
-					summary.setFinStatus(APIConstants.CLOSE_STATUS_ACTIVE);
-				} else {
-					summary.setFinStatus(finPftDetail.getClosingStatus());
-				}
+				summary.setFinStatus(finPftDetail.getClosingStatus());
 			}
+
 
 			// setting first and last disbursement dates
 			List<FinanceDisbursement> disbList = getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, "", false);
