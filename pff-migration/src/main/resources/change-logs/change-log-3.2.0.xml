@@ -115,5 +115,33 @@
       		ORDER BY DS.ID DESC
 	</createView>	
 	</changeSet>
-
+   <changeSet id="10" author="Madhubabu">
+		<createView viewName="ACCOUNTS_VIEW" replaceIfExists="true">
+		SELECT     T1.AccountId, T1.AcCcy, T1.AcType, T1.AcBranch, T1.AcCustId, T1.AcFullName, T1.AcShortName, T1.AcPurpose, T1.InternalAc, T1.CustSysAc, 
+                      T1.SHADOWBAL, T1.ACBALANCE, T1.AcOpenDate, T1.AcCloseDate, 
+                      T1.AcLastCustTrnDate, T1.AcLastSysTrnDate, T1.AcActive, T1.AcBlocked, T1.AcClosed, T1.HostAcNumber, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                      Customers.CustCIF lovDescCustCIF,  RMTBranches.BranchDesc lovDescBranchCodeName, 
+                       RMTAccountTypes.AcTypeDesc lovDescAccTypeDesc
+FROM          Accounts_Temp T1 LEFT OUTER JOIN
+                       Customers ON T1.AcCustId =  Customers.CustID AND T1.AcCustId =  Customers.CustID INNER JOIN
+                       RMTBranches ON T1.AcBranch =  RMTBranches.BranchCode AND T1.AcBranch =  RMTBranches.BranchCode INNER JOIN
+                       RMTAccountTypes ON T1.AcType =  RMTAccountTypes.AcType AND T1.AcType =  RMTAccountTypes.AcType
+UNION ALL
+SELECT     T1.AccountId, T1.AcCcy, T1.AcType, T1.AcBranch, T1.AcCustId, T1.AcFullName, T1.AcShortName, T1.AcPurpose, T1.InternalAc, T1.CustSysAc, 
+                      T1.SHADOWBAL, T1.ACBALANCE, T1.AcOpenDate, T1.AcCloseDate, 
+                      T1.AcLastCustTrnDate, T1.AcLastSysTrnDate, T1.AcActive, T1.AcBlocked, T1.AcClosed, T1.HostAcNumber, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                      Customers.CustCIF lovDescCustCIF,  RMTBranches.BranchDesc lovDescBranchCodeName, 
+                       RMTAccountTypes.AcTypeDesc lovDescAccTypeDesc
+FROM          Accounts T1 LEFT OUTER JOIN
+                       Customers ON T1.AcCustId =  Customers.CustID AND T1.AcCustId =  Customers.CustID INNER JOIN
+                       RMTBranches ON T1.AcBranch =  RMTBranches.BranchCode AND T1.AcBranch =  RMTBranches.BranchCode INNER JOIN
+                       RMTAccountTypes ON T1.AcType =  RMTAccountTypes.AcType AND T1.AcType =  RMTAccountTypes.AcType
+WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          Accounts_TEMP
+                            WHERE      AccountId = T1.AccountId)
+	</createView>	
+	</changeSet>
 </databaseChangeLog>
