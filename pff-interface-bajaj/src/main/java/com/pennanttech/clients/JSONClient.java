@@ -12,12 +12,18 @@ import org.codehaus.jackson.map.ObjectMapper;
 public class JSONClient {
 	private final static Logger	logger	= Logger.getLogger(JSONClient.class);
 	
-	public Object postProcess(String url, String service,Object requestData, Class<?> responseClass) throws Exception {
-		Object object = null;
+	public Object postProcess(String url, String service,Object requestData, Class<?> responseClass) throws Exception {		
 		WebClient client = getClient(url, service);
 		Response response = client.post(convertData(requestData));
-		object  =  getResponse(response.readEntity(String.class), responseClass);
-		return object;
+		Object  objResponse=null;
+		
+		if (response instanceof org.apache.cxf.jaxrs.impl.ResponseImpl) {
+			objResponse = ((org.apache.cxf.jaxrs.impl.ResponseImpl) response).readEntity(responseClass);
+		} else {
+			objResponse = response.readEntity(responseClass);
+		}
+		
+		return objResponse;
 	}
 
 	private String convertData(Object requestData) throws Exception {
@@ -35,20 +41,6 @@ public class JSONClient {
 		}
 //System.out.println("Request  : " + jsonStr);	
 		return jsonStr;
-	}
-
-	private Object getResponse(String strResponse, Class<?> responseClass) throws Exception{
-		ObjectMapper mapper = new ObjectMapper();
-	    Object  response=null;
-		logger.debug("Response received from host:" + strResponse);
-//System.out.println("Response : " + strResponse);;		
-		try {
-			response= mapper.readValue(strResponse,responseClass);
-		} catch (Exception e) {
-			logger.error("Error converting response to ResObject : " + e.getMessage(), e);
-			throw e;
-		}
-		return response;
 	}
 	
 	
