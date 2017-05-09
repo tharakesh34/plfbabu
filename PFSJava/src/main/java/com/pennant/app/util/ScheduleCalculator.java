@@ -48,7 +48,6 @@ import org.apache.log4j.Logger;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.model.FrequencyDetails;
 import com.pennant.app.model.RateDetail;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
@@ -479,14 +478,6 @@ public class ScheduleCalculator {
 		finMain.setEventFromDate(earlyPayOnSchdl);
 		finMain.setEventToDate(earlyPayOnSchdl);
 		finMain.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
-		finMain.setRecalSchdMethod(finMain.getScheduleMethod());
-		if (ImplementationConstants.EARLYPAY_ADJ_PRI) {
-			if (earlyPayOnNextSchdl != null) {
-				finMain.setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI);
-			}else{
-				finMain.setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI_PFT);
-			}
-		}
 
 		if (StringUtils.equals(CalculationConstants.EARLYPAY_ADJMUR, method)
 				|| StringUtils.equals(CalculationConstants.EARLYPAY_ADMPFI, method)) {
