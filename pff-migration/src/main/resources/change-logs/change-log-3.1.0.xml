@@ -1820,4 +1820,19 @@ from RMTAccountingSet, RMTFinanceTypes where AccountsetCode = 'DEFAULT' ;
 		</sql>
 	
 	</changeSet>
+	<changeSet id="126" author="Irfan">
+	<sql>
+		DELETE FROM SECGROUPRIGHTS WHERE RIGHTID IN(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME LIKE '%menuItem_Enquiry_ReceiptEnquiry%');
+		DELETE from SECRIGHTS where rightName = 'menuItem_Enquiry_ReceiptEnquiry';
+		
+		UPDATE SeqSecRights SET SeqNo = (SELECT MAX(RightID) FROM SecRights);
+		UPDATE SeqSecGroupRights SET SeqNo = (SELECT MAX(GrpRightID) FROM SecGroupRights);
+		
+		INSERT INTO SECRIGHTS VALUES((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS) , 0, 'menuItem_Enquiry_ReceiptEnquiry','MENU',1,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+		INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID) +1  FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE ='CL_LOAN_ENQUIRY'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME ='menuItem_Enquiry_ReceiptEnquiry'), 1,0,1000,CURRENT_TIMESTAMP,'','','','','','',0);
+		
+		UPDATE SeqSecRights SET SeqNo = (SELECT MAX(RightID) FROM SecRights);
+		UPDATE SeqSecGroupRights SET SeqNo = (SELECT MAX(GrpRightID) FROM SecGroupRights);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
