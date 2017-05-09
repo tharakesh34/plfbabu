@@ -261,6 +261,9 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String lovDescProductCodeDesc;
 	private String lovDescPromoFinTypeDesc;
 	private String productCategory;
+	
+	// only used for API
+	private boolean promotionType = false;
 
 	private List<FinTypeAccount> finTypeAccounts=new ArrayList<FinTypeAccount>();
 	private List<FinTypeInsurances> finTypeInsurances=new ArrayList<FinTypeInsurances>();
@@ -304,6 +307,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 		excludeFields.add("promotionDesc");
 		excludeFields.add("profitcenterCode");
 		excludeFields.add("profitCenterDesc");
+		excludeFields.add("promotionType");
 		return excludeFields;
 	}
 
@@ -1897,5 +1901,13 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setProfitCenterID(long profitCenterID) {
 		this.profitCenterID = profitCenterID;
+	}
+
+	public boolean isPromotionType() {
+		return promotionType;
+	}
+
+	public void setPromotionType(boolean promotionType) {
+		this.promotionType = promotionType;
 	}
 }

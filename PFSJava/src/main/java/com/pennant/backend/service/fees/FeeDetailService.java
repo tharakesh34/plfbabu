@@ -333,65 +333,43 @@ public class FeeDetailService {
 	 */
 	private void doSetFeeChanges(FinanceDetail financeDetail, boolean isOriginationFee) {
 		logger.debug("Entering");
-		
-		String feeEvent = "";
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		
-		if (finScheduleData.getFinanceMain().getFinStartDate().after(DateUtility.getAppDate())) {
-			if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ) {
-				feeEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
-			} else {
-				feeEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
-			}
-		} else {
-			feeEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
+		for(FinFeeDetail finFeeDetail:getFinFeeDetailList()){
+			finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
+			finFeeDetail.setFinReference(finScheduleData.getFinanceMain().getFinReference());
+			finFeeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		}
-		
-		if(!isOriginationFee) {
-			feeEvent = financeDetail.getFinScheduleData().getFeeEvent();
-		}
-		if (!StringUtils.equals(finScheduleData.getFeeEvent(), feeEvent)) {
-			List<FinTypeFees> finTypeFeesList = financeDetailService.getFinTypeFees(
-					finScheduleData.getFinanceMain().getFinType(), feeEvent, isOriginationFee, FinanceConstants.MODULEID_FINTYPE);
+		Map<String, FinFeeDetail> feeDetailMap = new HashMap<String, FinFeeDetail>();
 
-			financeDetail.setFinTypeFeesList(finTypeFeesList);
-			for(FinFeeDetail finFeeDetail:getFinFeeDetailList()){
-				finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
-				finFeeDetail.setFinReference(finScheduleData.getFinanceMain().getFinReference());
-				finFeeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			}
-			Map<String, FinFeeDetail> feeDetailMap = new HashMap<String, FinFeeDetail>();
-
-			for (FinFeeDetail finFeeDetail : getFinFeeDetailUpdateList()) {
-				if (!finFeeDetail.isNewRecord()) {
-					if (!finFeeDetail.isRcdVisible()
-							&& StringUtils.equals(finFeeDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
-						finFeeDetail.setRcdVisible(true);
-						finFeeDetail.setDataModified(true);
-						finFeeDetail.setNewRecord(false);
-						finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
-						feeDetailMap.put(getUniqueID(finFeeDetail), finFeeDetail);
-					} else {
-						finFeeDetail.setVersion(finFeeDetail.getVersion() + 1);
-						finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-						finFeeDetail.setRcdVisible(false);
-						finFeeDetail.setDataModified(true);
-						feeDetailMap.put(getUniqueID(finFeeDetail), finFeeDetail);
-					}
-				}
-			}
-			
-			List<FinFeeDetail> finFeeDetailListNew = convertToFinanceFees(finTypeFeesList,	finScheduleData.getFinanceMain().getFinReference());
-			for (FinFeeDetail finFeeDetail : finFeeDetailListNew) {
-				if (!feeDetailMap.containsKey(getUniqueID(finFeeDetail))) {
+		for (FinFeeDetail finFeeDetail : getFinFeeDetailUpdateList()) {
+			if (!finFeeDetail.isNewRecord()) {
+				if (!finFeeDetail.isRcdVisible()
+						&& StringUtils.equals(finFeeDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+					finFeeDetail.setRcdVisible(true);
+					finFeeDetail.setDataModified(true);
+					finFeeDetail.setNewRecord(false);
+					finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
+					feeDetailMap.put(getUniqueID(finFeeDetail), finFeeDetail);
+				} else {
+					finFeeDetail.setVersion(finFeeDetail.getVersion() + 1);
+					finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+					finFeeDetail.setRcdVisible(false);
+					finFeeDetail.setDataModified(true);
 					feeDetailMap.put(getUniqueID(finFeeDetail), finFeeDetail);
 				}
 			}
-			
-			setFinFeeDetailList(new ArrayList<FinFeeDetail>(feeDetailMap.values()));
 		}
-		finScheduleData.setFeeEvent(feeEvent);
+
+/*		List<FinFeeDetail> finFeeDetailListNew = convertToFinanceFees(financeDetail.getFinTypeFeesList(),
+				finScheduleData.getFinanceMain().getFinReference());*/
+		for (FinFeeDetail finFeeDetail : getFinFeeDetailUpdateList()) {
+			if (!feeDetailMap.containsKey(getUniqueID(finFeeDetail))) {
+				feeDetailMap.put(getUniqueID(finFeeDetail), finFeeDetail);
+			}
+		}
+
+		setFinFeeDetailList(new ArrayList<FinFeeDetail>(feeDetailMap.values()));
 		logger.debug("Leaving");
 	}
 
@@ -511,8 +489,13 @@ public class FeeDetailService {
 			}
 		}
 		financeDetail.getFinScheduleData().setFeeEvent(finEvent);
-		financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), finEvent,
-				isOriginationFee, FinanceConstants.MODULEID_FINTYPE));
+		if(!financeDetail.getFinScheduleData().getFinanceType().isPromotionType()) {
+			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), finEvent,
+					isOriginationFee, FinanceConstants.MODULEID_FINTYPE));
+		} else {
+			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeDetail.getFinScheduleData().getFinanceType().getPromotionCode(), finEvent,
+					isOriginationFee, FinanceConstants.MODULEID_PROMOTION));
+		}
 		executeFeeCharges(financeDetail, isOriginationFee);
 	}
 	

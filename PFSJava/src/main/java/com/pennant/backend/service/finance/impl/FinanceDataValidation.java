@@ -67,7 +67,6 @@ import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.model.staticparms.ExtendedField;
@@ -85,7 +84,6 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.service.rulefactory.RuleService;
-import com.pennant.backend.service.rmtmasters.PromotionService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.service.systemmasters.GeneralDepartmentService;
@@ -120,7 +118,6 @@ public class FinanceDataValidation {
 	private ScriptValidationService 	scriptValidationService;
 	private RuleExecutionUtil 			ruleExecutionUtil;
 	private RuleService 				ruleService;
-	private PromotionService			promotionService;
 
 	private FinanceDetail 				financeDetail;
 
@@ -215,7 +212,6 @@ public class FinanceDataValidation {
 			}
 		}
 
-		//TODO: Below code and respective declarations should be moved to a specific portion
 		//Net Loan Amount
 		BigDecimal netLoanAmount = finMain.getFinAmount().subtract(finMain.getDownPayment());
 		if (netLoanAmount.compareTo(financeType.getFinMinAmount()) < 0) {
@@ -591,29 +587,8 @@ public class FinanceDataValidation {
 			}
 		}
 
-		//Validate Finance Type
+		// Validate Finance Type
 		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(finMain.getFinType(), "_AView");
-		if (financeType == null) {
-			Promotion promotion = promotionService.getApprovedPromotionById(finMain.getFinType(),
-					FinanceConstants.MODULEID_PROMOTION, true);
-			if(promotion == null){
-			String[] valueParm = new String[1];
-			valueParm[0] = finMain.getFinType();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90202", valueParm)));
-			} else {
-				financeType = financeTypeDAO.getFinanceTypeByID(promotion.getFinType(), "_AView");
-				if (financeType != null) {
-					financeType.setFinTypeFeesList(promotion.getFinTypeFeesList());
-					financeType.setFInTypeFromPromotiion(promotion);
-					financeType.setFinTypeInsurances(promotion.getFinTypeInsurancesList());
-					financeType.setFinTypeAccountingList(promotion.getFinTypeAccountingList());
-				} else {
-					String[] valueParm = new String[1];
-					valueParm[0] = promotion.getFinType();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90202", valueParm)));
-				}
-			}
-		} 
 		if (financeType != null) {
 			finScheduleData.setFinanceType(financeType);
 			if (finMain.getFinContractDate() == null) {
@@ -633,19 +608,7 @@ public class FinanceDataValidation {
 				 * else { //TODO }
 				 */
 			}
-			/*
-			 * if (financeType.isFinCommitmentReq()) { if (StringUtils.isBlank(finMain.getFinCommitmentRef())) {
-			 * String[] valueParm = new String[1]; valueParm[0] = "finCommitmentRef";
-			 * errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm))); } else { Commitment
-			 * commitment = commitmentService.getApprovedCommitmentById(finMain.getFinCommitmentRef()); if (commitment
-			 * == null) { String[] valueParm = new String[2]; valueParm[0] = "finCommitmentRef"; valueParm[1] =
-			 * finMain.getFinCommitmentRef(); errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90224",
-			 * valueParm))); } else { if (customer.getCustID() != commitment.getCustID()) { String[] valueParm = new
-			 * String[2]; valueParm[0] = String.valueOf(commitment.getCustID()); valueParm[1] = "finCommitmentRef";
-			 * errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90250", valueParm))); } }
-			 * 
-			 * } }
-			 */
+
 			if (StringUtils.equals(finMain.getFinRepayMethod(), FinanceConstants.REPAYMTH_AUTO)) {
 				if (StringUtils.isBlank(finMain.getRepayAccountId())) {
 					String[] valueParm = new String[1];
@@ -733,7 +696,6 @@ public class FinanceDataValidation {
 		}
 
 		//Validate Repayment Method
-		//TODO: To be confirmed from where it should be taken? PennantStaticListUtil.getRepayMethods() OR MandateConstants or FinanceConstants??
 		if (isCreateLoan) {
 			String repayMethod = finMain.getFinRepayMethod();
 
@@ -1453,34 +1415,6 @@ public class FinanceDataValidation {
 			}
 		}
 
-		//Validate Finance Type
-		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(finMain.getFinType(), "_AView");
-		if (financeType == null) {
-			Promotion promotion = promotionService.getApprovedPromotionById(finMain.getFinType(),
-					FinanceConstants.MODULEID_PROMOTION, true);
-			if (promotion == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = finMain.getFinType();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90202", valueParm)));
-			} else {
-				financeType = financeTypeDAO.getFinanceTypeByID(promotion.getFinType(), "_AView");
-				if (financeType != null) {
-					financeType.setFinTypeFeesList(promotion.getFinTypeFeesList());
-					financeType.setFInTypeFromPromotiion(promotion);
-					financeType.setFinTypeInsurances(promotion.getFinTypeInsurancesList());
-					financeType.setFinTypeAccountingList(promotion.getFinTypeAccountingList());
-				} else {
-					String[] valueParm = new String[1];
-					valueParm[0] = promotion.getFinType();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90202", valueParm)));
-				}
-			}
-
-		} 
-		if (financeType != null) {
-			finScheduleData.setFinanceType(financeType);
-		}
-
 		//Validate Finance Currency
 		Currency currency = CurrencyUtil.getCurrencyObject(finMain.getFinCcy());
 		if (currency == null) {
@@ -1975,6 +1909,7 @@ public class FinanceDataValidation {
 				String[] valueParm = new String[1];
 				valueParm[0] = finMain.getFinType();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90145", valueParm)));
+				return errorDetails;
 			}
 
 			if (StringUtils.isNotBlank(finMain.getStepPolicy())) {
@@ -3239,8 +3174,14 @@ public class FinanceDataValidation {
 			}
 		}
 
-		List<FinTypeFees> finTypeFeeDetail = getFinanceDetailService().getFinTypeFees(finSchdData.getFinanceMain().getFinType(), 
-				finEvent, isOrigination, FinanceConstants.MODULEID_FINTYPE);
+		List<FinTypeFees> finTypeFeeDetail = null;
+		if(!finSchdData.getFinanceType().isPromotionType()) {
+			finTypeFeeDetail = getFinanceDetailService().getFinTypeFees(finSchdData.getFinanceType().getFinType(), 
+					finEvent, isOrigination, FinanceConstants.MODULEID_FINTYPE);
+		} else {
+			finTypeFeeDetail = getFinanceDetailService().getFinTypeFees(finSchdData.getFinanceType().getPromotionCode(), 
+					finEvent, isOrigination, FinanceConstants.MODULEID_PROMOTION);
+		}
 		if (finTypeFeeDetail != null) {
 			if (finTypeFeeDetail.size() == finSchdData.getFinFeeDetailList().size()) {
 				for (FinFeeDetail feeDetail : finSchdData.getFinFeeDetailList()) {
@@ -3759,9 +3700,5 @@ public class FinanceDataValidation {
 	
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
-	}
-
-	public void setPromotionService(PromotionService promotionService) {
-		this.promotionService = promotionService;
 	}
 }

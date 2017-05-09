@@ -97,6 +97,7 @@ public class FinanceDataDefaulting {
 			} else {
 				financeType = financeTypeDAO.getFinanceTypeByID(promotion.getFinType(), "_AView");
 				if (financeType != null) {
+					financeType.setPromotionType(true);
 					financeType.setFinTypeFeesList(promotion.getFinTypeFeesList());
 					financeType.setFInTypeFromPromotiion(promotion);
 					financeType.setFinTypeInsurances(promotion.getFinTypeInsurancesList());
@@ -140,7 +141,6 @@ public class FinanceDataDefaulting {
 			}
 
 			//Validate Repayment Method
-			//TODO: To be confirmed from where it should be taken? PennantStaticListUtil.getRepayMethods() OR MandateConstants or FinanceConstants??
 			String repayMethod = finMain.getFinRepayMethod();
 
 			if (StringUtils.isBlank(repayMethod) && StringUtils.equals(PennantConstants.VLD_CRT_LOAN, vldGroup)) {
@@ -417,7 +417,6 @@ public class FinanceDataDefaulting {
 			finMain.setFinIsAlwMD(false);
 		}
 
-		//TODO: Check why it was mentioned that it is always empty for Bajaj
 		//Repayment Method
 		if (StringUtils.isBlank(finMain.getFinRepayMethod())) {
 			finMain.setFinRepayMethod(financeType.getFinRepayMethod());

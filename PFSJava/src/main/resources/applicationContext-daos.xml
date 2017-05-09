@@ -4207,7 +4207,6 @@
 		<property name="vASConfigurationService" ref="vASConfigurationService" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="ruleService" ref="ruleService" />
-		<property name="promotionService" ref="promotionService" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->
