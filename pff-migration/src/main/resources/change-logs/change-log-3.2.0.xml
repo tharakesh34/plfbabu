@@ -144,4 +144,15 @@ WHERE     NOT EXISTS
                             WHERE      AccountId = T1.AccountId)
 	</createView>	
 	</changeSet>
+	
+	<changeSet id="11" author="Madhubabu">
+<sql>
+Update wifFinanceMain set FinCurrAssetValue = (select SUM(DisbAmount) from wifFinDisbursementDetails D  WHERE wifFinanceMain.FinReference = D.FinReference);
+Update wifFinanceMain set FinCurrAssetValue = FinCurrAssetValue-DownPayment;
+Update wiffinancemain_temp set FinCurrAssetValue = (select SUM(DisbAmount) from wifFinDisbursementDetails_temp D  WHERE wifFinanceMain_Temp.FinReference = D.FinReference);
+Update wiffinancemain_temp set FinCurrAssetValue = FinCurrAssetValue-DownPayment;
+Update wiffinancemain_temp set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS NULL;
+Update wifFinanceMain set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS NULL;
+</sql>
+</changeSet>
 </databaseChangeLog>
