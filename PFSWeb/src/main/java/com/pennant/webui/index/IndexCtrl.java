@@ -39,12 +39,13 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.index;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.zkoss.zk.ui.Executions;
@@ -72,22 +73,23 @@ import com.pennanttech.pff.core.App;
  * This is the controller class for the /WEB-INF/pages/index.zul file.
  */
 public class IndexCtrl<T> extends GFCBaseCtrl<T> {
-	private static final long	serialVersionUID			= -3407055074703929527L;
-	private static final Logger	logger						= Logger.getLogger(IndexCtrl.class);
+	private static final long serialVersionUID = -3407055074703929527L;
+	private static final Logger logger = Logger.getLogger(IndexCtrl.class);
 
-	private static final int	CONTENT_AREA_HEIGHT_OFFSET	= 92;
+	private static final int CONTENT_AREA_HEIGHT_OFFSET = 92;
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
-	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the zul-file are getting autowired by our
+	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Menubar			mainMenuBar;													// autowired
-	protected Label				label_AppName;													// autowired
-	protected Image				imgsmallLogo;
-	protected Intbox			currentDesktopHeight;											// autowired
-	protected Intbox			currentDesktopWidth;											// autowired
-
-	private boolean				homePageDisplayed			= false;
+	protected Menubar mainMenuBar; // autowired
+	protected Label label_AppName; // autowired
+	protected Image imgsmallLogo;
+	protected Intbox currentDesktopHeight; // autowired
+	protected Intbox currentDesktopWidth; // autowired
+	private LoggedInUser user = null;
+	private boolean homePageDisplayed = false;
 
 	public IndexCtrl() {
 		super();
@@ -118,11 +120,14 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 			this.imgsmallLogo.setSrc("/images/Pennant/pff_logo.png");
 		}
 
-		LoggedInUser user = getUserWorkspace().getLoggedInUser();
+		user = getUserWorkspace().getLoggedInUser();
+
 		logger.info("User Name: " + user.getUserName());
 
-		if (PennantConstants.YES.equals(SysParamUtil.getValueAsString("LAST_LOGIN_INFO"))) {
-			EventQueues.lookup("lastLoginEventQueue", EventQueues.DESKTOP, true)
+		if (PennantConstants.YES.equals(SysParamUtil
+				.getValueAsString("LAST_LOGIN_INFO"))) {
+			EventQueues
+					.lookup("lastLoginEventQueue", EventQueues.DESKTOP, true)
 					.publish(new Event("onChangeLastLogin", null, ""));
 		}
 
@@ -139,10 +144,15 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 	 */
 	public void onClientInfo(ClientInfoEvent event) throws Exception {
 		logger.debug("Entering");
-		currentDesktopHeight.setValue(event.getDesktopHeight() - CONTENT_AREA_HEIGHT_OFFSET);
+		currentDesktopHeight.setValue(event.getDesktopHeight()
+				- CONTENT_AREA_HEIGHT_OFFSET);
 		currentDesktopWidth.setValue(event.getDesktopWidth());
-
-		createMainTreeMenu();
+		if (StringUtils.trimToNull(user.getUserName()) != null) {
+			createMainTreeMenu();
+		} else {
+			logger.warn("UN-Authorized user");
+			Executions.sendRedirect("/loginDialog.zul");
+		}
 		logger.debug("Leaving");
 	}
 
@@ -159,7 +169,8 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 	private void createMainTreeMenu() {
 
 		// get an instance of the borderlayout defined in the index.zul-file
-		final Borderlayout bl = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
+		final Borderlayout bl = (Borderlayout) Path
+				.getComponent("/outerIndexWindow/borderlayoutMain");
 
 		// get an instance of the searched west layout area
 		final West west = bl.getWest();
@@ -176,7 +187,8 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 
 		// create the components from the mainmenu.zul-file and put
 		// it in the west layout area
-		Executions.createComponents("/WEB-INF/pages/mainTreeMenu.zul", west, map);
+		Executions.createComponents("/WEB-INF/pages/mainTreeMenu.zul", west,
+				map);
 	}
 
 	/**
@@ -186,7 +198,8 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 	 */
 	public void showWelcomePage() throws InterruptedException {
 		// get an instance of the borderlayout defined in the zul-file
-		final Borderlayout bl = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
+		final Borderlayout bl = (Borderlayout) Path
+				.getComponent("/outerIndexWindow/borderlayoutMain");
 		// get an instance of the searched CENTER layout area
 		final Center center = bl.getCenter();
 		// clear the center child comps
