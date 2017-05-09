@@ -56,6 +56,7 @@ import com.pennant.backend.dao.applicationmaster.SplRateDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.applicationmaster.SplRate;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -2788,35 +2789,56 @@ public class ScheduleCalculator {
 	private void calculateXIRRAndIRR(FinScheduleData finSchdData, FinanceMain finMain) {
 		logger.debug("Entering");
 
-		BigDecimal calculated_IRR = BigDecimal.ZERO;
-		BigDecimal calculated_XIRR = BigDecimal.ZERO;
+		//BigDecimal cal_IRR = BigDecimal.ZERO;
+		BigDecimal cal_XIRR = BigDecimal.ZERO;
+		BigDecimal cal_XIRR_WithFee = BigDecimal.ZERO;
 		if (finMain.getTotalProfit().compareTo(BigDecimal.ZERO) > 0) {
 
 			List<BigDecimal> schAmountList = new ArrayList<BigDecimal>(1);
 			List<Date> repayDateList = new ArrayList<Date>(1);
-
+			List<BigDecimal> schAmountListWithFee = new ArrayList<BigDecimal>(1);
+			List<FinFeeDetail> finFeeDList = finSchdData.getFinFeeDetailList();
+			
+			BigDecimal feeAmount = BigDecimal.ZERO;
+			for (FinFeeDetail finFeeDetail : finFeeDList) {
+				if(!StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT, finFeeDetail.getFeeScheduleMethod()) 
+						&& !StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR, finFeeDetail.getFeeScheduleMethod())
+						&& !StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS, finFeeDetail.getFeeScheduleMethod())){
+					feeAmount = feeAmount.add(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount()));
+				}
+			}
+			
+			//FIXME CH Servicing Fees should be handled
 			for (FinanceScheduleDetail finScheduleDetail : finSchdData.getFinanceScheduleDetails()) {
 
 				if (finScheduleDetail.isDisbOnSchDate()) {
-					schAmountList.add(finScheduleDetail.getDisbAmount().multiply(new BigDecimal(-1)));
+					schAmountList.add(finScheduleDetail.getDisbAmount().subtract(finScheduleDetail.getDownPaymentAmount()).multiply(new BigDecimal(-1)));
 					repayDateList.add(finScheduleDetail.getSchDate());
+					
+					if(DateUtility.compare(finScheduleDetail.getSchDate(), finMain.getFinStartDate())==0){
+						schAmountListWithFee.add(finScheduleDetail.getDisbAmount().add(feeAmount).subtract(finScheduleDetail.getDownPaymentAmount()).multiply(new BigDecimal(-1)));
+					}else{
+						schAmountListWithFee.add(finScheduleDetail.getDisbAmount().subtract(finScheduleDetail.getDownPaymentAmount()).multiply(new BigDecimal(-1)));
+					}
 				}
 
 				if (finScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
 					schAmountList.add(finScheduleDetail.getRepayAmount());
+					schAmountListWithFee.add(finScheduleDetail.getRepayAmount().add(finScheduleDetail.getFeeSchd()));
 					repayDateList.add(finScheduleDetail.getSchDate());
 				}
 			}
+			/*cal_IRR = RateCalculation.calculateIRR(schAmountList);
+			 int termsPerYear = CalculationUtil.getTermsPerYear(finMain.getRepayPftFrq());
+			  calculated_IRR = calculated_IRR.multiply(new BigDecimal(termsPerYear));
+			 */			
 
-			calculated_XIRR = RateCalculation.calculateXIRR(schAmountList, repayDateList);
-
-			calculated_IRR = RateCalculation.calculateIRR(schAmountList);
-			int termsPerYear = CalculationUtil.getTermsPerYear(finMain.getRepayPftFrq());
-			calculated_IRR = calculated_IRR.multiply(new BigDecimal(termsPerYear));
+			cal_XIRR = RateCalculation.calculateXIRR(schAmountList, repayDateList);
+			cal_XIRR_WithFee = RateCalculation.calculateXIRR(schAmountListWithFee, repayDateList);
 		}
 
-		finMain.setAnualizedPercRate(calculated_XIRR);
-		finMain.setEffectiveRateOfReturn(calculated_IRR);
+		finMain.setAnualizedPercRate(cal_XIRR);
+		finMain.setEffectiveRateOfReturn(cal_XIRR_WithFee);
 		logger.debug("Leaving");
 	}
 
