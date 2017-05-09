@@ -492,6 +492,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.searchObj.addField("scheduleMethod");
 		this.searchObj.addField("finStartDate");
 		this.searchObj.addField("finAmount");
+		this.searchObj.addField("FinCurrAssetValue");
 		this.searchObj.addField("recordStatus");
 		this.searchObj.addField("recordType");
 		this.searchObj.clearFilters();
@@ -525,7 +526,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 		//FinReference
 		if (StringUtils.isNotBlank(this.finReference.getValue())) {
-			searchObj = getSearchFilter(searchObj,this.sortOperator_finReference.getSelectedItem(),this.finReference.getValue(), "FinReference");
+			searchObj = getSearchFilter(searchObj,this.sortOperator_finReference.getSelectedItem(),this.finReference.getValue().trim(), "FinReference");
 		}
 		if (StringUtils.isNotEmpty(this.finType.getValue())) {
 			// get the search operator

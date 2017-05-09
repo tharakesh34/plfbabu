@@ -7180,7 +7180,19 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Method for Reset Schedule Details after Schedule Calculation
 	 */
 	public void resetScheduleTerms(FinScheduleData scheduleData) {
+		BigDecimal utilizedAmt = BigDecimal.ZERO;
+		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		getFinanceDetail().setFinScheduleData(scheduleData);
+
+		for (FinanceDisbursement curDisb : getFinanceDetail().getFinScheduleData().getDisbursementDetails()) {
+			if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
+				continue;
+			}
+			utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount());
+		}
+		utilizedAmt = utilizedAmt.subtract(PennantAppUtil.unFormateAmount(
+				this.downPayBank.getActualValue().subtract(this.downPaySupl.getActualValue()), formatter));
+		getFinanceDetail().getFinScheduleData().getFinanceMain().setFinCurrAssetValue(utilizedAmt);
 	}
 
 	// ******************************************************//
