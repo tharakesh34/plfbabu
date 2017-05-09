@@ -1798,4 +1798,26 @@ from RMTAccountingSet, RMTFinanceTypes where AccountsetCode = 'DEFAULT' ;
 	</sql>	
 	</changeSet>
 	
+	<changeSet id="124" author="Chaitanya.ch">
+		<sql>
+		Delete from RMTAccountTypes where AcType = 'BADEX';
+		
+			Insert into RMTAccountTypes Values( 'BADEX', 'Bad Debts Written Off' , 'L',null, '1','0',null,'1','1',1000,CURRENT_TIMESTAMP, 'Approved', null, null,
+			null, null, null, 0, 'A', 0,'0', 1, 2, 2 );
+		
+		
+		</sql>
+	
+	</changeSet>
+	<changeSet id="125" author="Chaitanya.ch">
+		<sql>
+		Delete from RMTAccountTypes where AcType = 'INTWOFF';
+		
+			Insert into RMTAccountTypes Values( 'INTWOFF', 'Bad Debts Written Off' , 'L',null, '1','0',null,'1','1',1000,CURRENT_TIMESTAMP, 'Approved', null, null,
+			null, null, null, 0, 'A', 0,'0', 1, 2, 2 );
+		
+		
+		</sql>
+	
+	</changeSet>
 </databaseChangeLog>
