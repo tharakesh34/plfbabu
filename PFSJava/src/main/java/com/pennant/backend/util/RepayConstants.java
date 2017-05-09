@@ -96,7 +96,7 @@ public class RepayConstants {
 	
 	// Receipt Types
 	public static final String	RECEIPTTYPE_RECIPT		= "R";
-	public static final String	RECEIPTTYPE_PAYMENT		= "P";
+	public static final String	RECEIPTTYPE_PRESENTMENT	= "P";
 	
 	// Receipt Types
 	public static final String	RECEIPTTO_FINANCE		= "F";
