@@ -417,6 +417,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			listHeader_CheckBox_Comp.setDisabled(false);
 		} else {
 			listHeader_CheckBox_Comp.setDisabled(true);
+			listBoxMandateRegistration.setEmptyMessage(Labels.getLabel("listEmptyMessage.title"));
+
 		}
 	}
 
