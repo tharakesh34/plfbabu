@@ -43,6 +43,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	@XmlTransient
 	private LoggedInUser userDetails;
 	private String postBranch;
+	private boolean logSchInPresentment;
 
 	private List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>(1);
 	private List<FinExcessAmount> excessAmounts = new ArrayList<FinExcessAmount>(1);
@@ -67,6 +68,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("custShrtName");
 		excludeFields.add("excessReserves");
 		excludeFields.add("postBranch");
+		excludeFields.add("logSchInPresentment");
 
 		return excludeFields;
 	}
@@ -294,5 +296,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	public void setRealizationDate(Date realizationDate) {
 		this.realizationDate = realizationDate;
 	}
+
+	public boolean isLogSchInPresentment() {
+		return logSchInPresentment;
+	}
+
+	public void setLogSchInPresentment(boolean logSchInPresentment) {
+		this.logSchInPresentment = logSchInPresentment;
+	}
+
 
 }

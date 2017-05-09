@@ -338,7 +338,7 @@ public class RepaymentProcessUtil {
 		FinLogEntryDetail entryDetail = null;
 		long logKey = 0;
 		Date postDate = getPostDate(DateUtility.getAppDate());
-		if (isSchdLogReq && receiptHeader.getAllocations() != null && !receiptHeader.getAllocations().isEmpty()) {
+		if (isSchdLogReq && ((receiptHeader.getAllocations() != null && !receiptHeader.getAllocations().isEmpty()) || receiptHeader.isLogSchInPresentment())) {
 			entryDetail = new FinLogEntryDetail();
 			entryDetail.setFinReference(finReference);
 			entryDetail.setEventAction(receiptHeader.getReceiptPurpose());
