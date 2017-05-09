@@ -129,6 +129,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	 */
 	protected Window										window_ReceiptCancellationDialog;
 	protected Borderlayout									borderlayout_Realization;
+	protected Label 										windowTitle;
 
 	//Receipt Details
 	protected Textbox										finType;
@@ -260,8 +261,10 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			this.module = (String) arguments.get("module");
 			if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
 				super.pageRightName = "ReceiptBounceDialog";
+				this.windowTitle.setValue(Labels.getLabel("window_ReceiptBounceDialog.title"));
 			}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
 				super.pageRightName = "ReceiptCancellationDialog";
+				this.windowTitle.setValue(Labels.getLabel("window_ReceiptCancellationDialog.title"));
 			}
 			
 			this.receiptCancellationListCtrl = (ReceiptCancellationListCtrl) arguments.get("receiptCancellationListCtrl");

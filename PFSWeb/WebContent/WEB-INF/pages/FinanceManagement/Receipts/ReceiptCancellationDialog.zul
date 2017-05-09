@@ -51,7 +51,7 @@
 
 				<!-- SEARCH AREA -->
 				<toolbar align="center" sclass="toolbar-center">
-					<label
+					<label id="windowTitle"
 						value="${c:l('window_ReceiptCancellationDialog.title')}"
 						sclass="label-heading" />
 				</toolbar>
