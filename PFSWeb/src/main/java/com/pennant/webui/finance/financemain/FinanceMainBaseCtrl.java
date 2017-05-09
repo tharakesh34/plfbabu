@@ -7477,13 +7477,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private void onCheckPlannedEmiholiday(String planEmiHMType, boolean isAction) {
 		logger.debug("Entering");
-
+		FinanceType financeType = new FinanceType();
+		financeType= getFinanceDetail().getFinScheduleData().getFinanceType();
 		if (this.alwPlannedEmiHoliday.isChecked()) {
 			this.row_PlannedEMIH.setVisible(true);
 			this.label_FinanceMainDialog_PlanEmiHolidayMethod.setVisible(true);
 			this.hbox_planEmiMethod.setVisible(true);
 			this.row_MaxPlanEmi.setVisible(true);
 			this.row_PlanEmiHLockPeriod.setVisible(true);
+			this.planEmiHLockPeriod.setValue(financeType.getPlanEMIHLockPeriod());
+			this.cpzAtPlanEmi.setChecked(financeType.isPlanEMICpz());
+			this.maxPlanEmiPerAnnum.setValue(financeType.getPlanEMIHMaxPerYear());
+			this.maxPlanEmi.setValue(financeType.getPlanEMIHMax());
+			
 			if (planEmiHMType == null) {
 				setComboboxSelectedItem(this.planEmiMethod, FinanceConstants.PLANEMIHMETHOD_FRQ);
 			} else {
