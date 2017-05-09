@@ -51,7 +51,7 @@ public class PromotionTypeWebServiceImpl implements PromotionTypeRestService,Pro
 					FinanceConstants.MODULEID_PROMOTION, false);
 
 			FinanceTypeResponse response = new FinanceTypeResponse();
-			if (promotion != null) {
+			if (promotion != null && promotion.isActive()) {
 				finTypeReq.setFinType(promotion.getFinType());
 				response = financeTypeController.getFinanceTypeDetails(finTypeReq, true);
 				response.setPromotionDesc(promotion.getPromotionDesc());
