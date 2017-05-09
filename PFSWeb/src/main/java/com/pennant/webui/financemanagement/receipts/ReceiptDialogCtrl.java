@@ -1275,11 +1275,26 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));
 			finScheduleData.setFinanceType(getFinanceType());
+			
+			// Finding Next Repay Schedule on date
+			Date nextRepaySchDate = receiptData.getRepayMain().getEarlyPayNextSchDate();
+			if(nextRepaySchDate == null){
+				for (FinanceScheduleDetail curSchd : finScheduleData.getFinanceScheduleDetails()) {
+					if(DateUtility.compare(curSchd.getSchDate(), receiptData.getRepayMain().getEarlyPayOnSchDate()) <= 0){
+						finScheduleData.getFinanceMain().setRecalSchdMethod(curSchd.getSchdMethod());
+					}else{
+						nextRepaySchDate = curSchd.getSchDate();
+						break;
+					}
+				}
+			}else{
+				finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI);
+			}
+			
 
 			//Calculation of Schedule Changes for Early Payment to change Schedule Effects Depends On Method
 			finScheduleData = ScheduleCalculator.recalEarlyPaySchedule(finScheduleData, receiptData.getRepayMain()
-					.getEarlyPayOnSchDate(), receiptData.getRepayMain().getEarlyPayNextSchDate(), receiptData
-					.getRepayMain().getEarlyPayAmount(), method);
+					.getEarlyPayOnSchDate(), nextRepaySchDate, receiptData.getRepayMain().getEarlyPayAmount(), method);
 
 			// Validation against Future Disbursements, if Closing balance is becoming zero before future disbursement date
 			List<FinanceDisbursement> disbList = finScheduleData.getDisbursementDetails();
