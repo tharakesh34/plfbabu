@@ -492,6 +492,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.searchObj.addField("scheduleMethod");
 		this.searchObj.addField("finStartDate");
 		this.searchObj.addField("finAmount");
+		this.searchObj.addField("FinCurrAssetValue");
 		this.searchObj.addField("recordStatus");
 		this.searchObj.addField("recordType");
 		this.searchObj.clearFilters();
