@@ -126,105 +126,115 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		// do Basic mandatory validations using hibernate validator
 		validationUtility.validate(financeDetail, CreateFinancewithWIFGroup.class);
 
-		// call WIF finance related validations
-		WSReturnStatus returnStatus = doValidations(financeDetail);
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			FinanceDetail response = new FinanceDetail();
-			doEmptyResponseObject(response);
-			response.setReturnStatus(returnStatus);
-			return response;
-		}
-
-		FinanceDetail financeDetailRes = null;
-		String finReference = financeDetail.getFinReference();
-		String procEdtEvent = FinanceConstants.FINSER_EVENT_ORG;
-
-		FinanceDetail wifFinanceDetail = null;
-		int countInWIF = financeMainDAO.getFinanceCountById(finReference, "", true);
-		if (countInWIF > 0) {
-			// fetch WIF finance details
-			wifFinanceDetail = financeDetailService.getWIFFinance(finReference, true, procEdtEvent);
-			if (wifFinanceDetail != null) {
-				String custCIF = financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF();
-				String finRepayMethod = financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod();
-				Date finContractDate = financeDetail.getFinScheduleData().getFinanceMain().getFinContractDate();
-				String finPurpose = financeDetail.getFinScheduleData().getFinanceMain().getFinPurpose();
-				String finLimitRef = financeDetail.getFinScheduleData().getFinanceMain().getFinLimitRef();
-				String finCommitmentRef = financeDetail.getFinScheduleData().getFinanceMain().getFinCommitmentRef();
-				String repayAccountId = financeDetail.getFinScheduleData().getFinanceMain().getRepayAccountId();
-				String depreciationFrq = financeDetail.getFinScheduleData().getFinanceMain().getDepreciationFrq();
-				String dsaCode = financeDetail.getFinScheduleData().getFinanceMain().getDsaCode();
-				String salesDepartment = financeDetail.getFinScheduleData().getFinanceMain().getSalesDepartment();
-				String dmaCode = financeDetail.getFinScheduleData().getFinanceMain().getDmaCode();
-				String accountsOfficer = financeDetail.getFinScheduleData().getFinanceMain().getAccountsOfficer();
-				String referralId = financeDetail.getFinScheduleData().getFinanceMain().getReferralId();
-				boolean quickDisb = financeDetail.getFinScheduleData().getFinanceMain().isQuickDisb();
-				wifFinanceDetail.getFinScheduleData().getFinanceMain().setLovDescCustCIF(custCIF);
-				wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinRepayMethod(finRepayMethod);
-				wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinContractDate(finContractDate);
-				wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinPurpose(finPurpose);
-				wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinLimitRef(finLimitRef);
-				wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinCommitmentRef(finCommitmentRef);
-				wifFinanceDetail.getFinScheduleData().getFinanceMain().setRepayAccountId(repayAccountId);
-				wifFinanceDetail.getFinScheduleData().getFinanceMain().setDepreciationFrq(depreciationFrq);
-				wifFinanceDetail.getFinScheduleData().getFinanceMain().setDsaCode(dsaCode);
-				wifFinanceDetail.getFinScheduleData().getFinanceMain().setSalesDepartment(salesDepartment);
-				wifFinanceDetail.getFinScheduleData().getFinanceMain().setDmaCode(dmaCode);
-				wifFinanceDetail.getFinScheduleData().getFinanceMain().setAccountsOfficer(accountsOfficer);
-				wifFinanceDetail.getFinScheduleData().getFinanceMain().setReferralId(referralId);
-				wifFinanceDetail.getFinScheduleData().getFinanceMain().setQuickDisb(quickDisb);
-				financeDetail.setFinScheduleData(wifFinanceDetail.getFinScheduleData());
-			}
-
-			// check origination with same WIF Reference
-			int countInOrg = financeMainDAO.getFinanceCountById(finReference, "", false);
-			if (countInOrg > 0) {
-				String[] valueParm = new String[1];
-				valueParm[0] = finReference;
+		try {
+			// call WIF finance related validations
+			WSReturnStatus returnStatus = doValidations(financeDetail);
+			if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 				FinanceDetail response = new FinanceDetail();
 				doEmptyResponseObject(response);
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91122"));
+				response.setReturnStatus(returnStatus);
 				return response;
 			}
-		}
-		
-		// validate and Data defaulting
-		financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData());
 
-		if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
-			return getErrorMessage(financeDetail.getFinScheduleData());
-		}
-		//validate FinanceDetail Validations
-		// validate finance data
-		if (!StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
-			CustomerDetails customerDetails = new CustomerDetails();
-			customerDetails.setCustomer(null);
-			financeDetail.setCustomerDetails(customerDetails);
-			financeDataValidation.setFinanceDetail(financeDetail);
-		}
-		financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
+			FinanceDetail financeDetailRes = null;
+			String finReference = financeDetail.getFinReference();
+			String procEdtEvent = FinanceConstants.FINSER_EVENT_ORG;
 
-		if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
-			return getErrorMessage(financeDetail.getFinScheduleData());
-		}
+			FinanceDetail wifFinanceDetail = null;
+			int countInWIF = financeMainDAO.getFinanceCountById(finReference, "", true);
+			if (countInWIF > 0) {
+				// fetch WIF finance details
+				wifFinanceDetail = financeDetailService.getWIFFinance(finReference, true, procEdtEvent);
+				if (wifFinanceDetail != null) {
+					String custCIF = financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF();
+					String finRepayMethod = financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod();
+					Date finContractDate = financeDetail.getFinScheduleData().getFinanceMain().getFinContractDate();
+					String finPurpose = financeDetail.getFinScheduleData().getFinanceMain().getFinPurpose();
+					String finLimitRef = financeDetail.getFinScheduleData().getFinanceMain().getFinLimitRef();
+					String finCommitmentRef = financeDetail.getFinScheduleData().getFinanceMain().getFinCommitmentRef();
+					String repayAccountId = financeDetail.getFinScheduleData().getFinanceMain().getRepayAccountId();
+					String depreciationFrq = financeDetail.getFinScheduleData().getFinanceMain().getDepreciationFrq();
+					String dsaCode = financeDetail.getFinScheduleData().getFinanceMain().getDsaCode();
+					String salesDepartment = financeDetail.getFinScheduleData().getFinanceMain().getSalesDepartment();
+					String dmaCode = financeDetail.getFinScheduleData().getFinanceMain().getDmaCode();
+					String accountsOfficer = financeDetail.getFinScheduleData().getFinanceMain().getAccountsOfficer();
+					String referralId = financeDetail.getFinScheduleData().getFinanceMain().getReferralId();
+					boolean quickDisb = financeDetail.getFinScheduleData().getFinanceMain().isQuickDisb();
+					wifFinanceDetail.getFinScheduleData().getFinanceMain().setLovDescCustCIF(custCIF);
+					wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinRepayMethod(finRepayMethod);
+					wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinContractDate(finContractDate);
+					wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinPurpose(finPurpose);
+					wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinLimitRef(finLimitRef);
+					wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinCommitmentRef(finCommitmentRef);
+					wifFinanceDetail.getFinScheduleData().getFinanceMain().setRepayAccountId(repayAccountId);
+					wifFinanceDetail.getFinScheduleData().getFinanceMain().setDepreciationFrq(depreciationFrq);
+					wifFinanceDetail.getFinScheduleData().getFinanceMain().setDsaCode(dsaCode);
+					wifFinanceDetail.getFinScheduleData().getFinanceMain().setSalesDepartment(salesDepartment);
+					wifFinanceDetail.getFinScheduleData().getFinanceMain().setDmaCode(dmaCode);
+					wifFinanceDetail.getFinScheduleData().getFinanceMain().setAccountsOfficer(accountsOfficer);
+					wifFinanceDetail.getFinScheduleData().getFinanceMain().setReferralId(referralId);
+					wifFinanceDetail.getFinScheduleData().getFinanceMain().setQuickDisb(quickDisb);
+					financeDetail.setFinScheduleData(wifFinanceDetail.getFinScheduleData());
+				}
 
-		// call doCreate method to create finance with WIF Reference
-		financeDetailRes = createFinanceController.doCreateFinance(financeDetail, true);
-
-		if (financeDetailRes != null) {
-			if (financeDetailRes.getFinScheduleData() != null) {
-				for (ErrorDetails errorDetails : financeDetailRes.getFinScheduleData().getErrorDetails()) {
+				// check origination with same WIF Reference
+				int countInOrg = financeMainDAO.getFinanceCountById(finReference, "", false);
+				if (countInOrg > 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = finReference;
 					FinanceDetail response = new FinanceDetail();
 					doEmptyResponseObject(response);
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
-							errorDetails.getError()));
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91122"));
 					return response;
 				}
 			}
-		}
 
-		logger.debug("Leaving");
-		return financeDetailRes;
+			// validate and Data defaulting
+			financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData());
+
+			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
+				return getErrorMessage(financeDetail.getFinScheduleData());
+			}
+			//validate FinanceDetail Validations
+			// validate finance data
+			if (!StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
+				CustomerDetails customerDetails = new CustomerDetails();
+				customerDetails.setCustomer(null);
+				financeDetail.setCustomerDetails(customerDetails);
+				financeDataValidation.setFinanceDetail(financeDetail);
+			}
+			financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
+
+			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
+				return getErrorMessage(financeDetail.getFinScheduleData());
+			}
+
+			// call doCreate method to create finance with WIF Reference
+			financeDetailRes = createFinanceController.doCreateFinance(financeDetail, true);
+
+			if (financeDetailRes != null) {
+				if (financeDetailRes.getFinScheduleData() != null) {
+					for (ErrorDetails errorDetails : financeDetailRes.getFinScheduleData().getErrorDetails()) {
+						FinanceDetail response = new FinanceDetail();
+						doEmptyResponseObject(response);
+						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetails.getErrorCode(),
+								errorDetails.getError()));
+						return response;
+					}
+				}
+			}
+
+			logger.debug("Leaving");
+			return financeDetailRes;
+		} catch(Exception e) {
+			logger.error("Exception", e);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
+		} finally {
+			financeDataValidation.setFinanceDetail(null);
+		}
 	}
 
 	/**
