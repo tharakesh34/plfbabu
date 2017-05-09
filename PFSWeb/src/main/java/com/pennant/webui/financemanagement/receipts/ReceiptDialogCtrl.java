@@ -1853,6 +1853,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}else{
 			readOnlyComponent(true, this.excessAdjustTo);
 		}
+		
+		Events.sendEvent("onFulfill", this.receiptAmount, null);
 		logger.debug("Leaving" + event.toString());
 	}
 

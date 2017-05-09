@@ -2394,6 +2394,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				finFlagsDetail.setNextRoleCode("");
 				finFlagsDetail.setTaskId("");
 				finFlagsDetail.setNextTaskId("");
+				finFlagsDetail.setWorkflowId(0);
 			}
 
 			if (finFlagsDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {

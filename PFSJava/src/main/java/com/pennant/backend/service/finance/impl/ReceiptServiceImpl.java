@@ -289,6 +289,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						}
 					}
 					
+					// Manual Advise Movements
+					receiptDetail.setAdvMovements(getManualAdviseDAO().getAdvMovementsByReceiptSeq(receiptDetail.getReceiptID(),receiptDetail.getReceiptSeqID(), TableType.TEMP_TAB.getSuffix()));
+					
 					// Excess Reserve Amounts
 					reserveList.addAll(getFinExcessAmountDAO().getExcessReserveList(receiptDetail.getReceiptSeqID()));
 				}
@@ -718,7 +721,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		//Repayments Posting Process Execution
 		//=====================================
-		profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
+		profitDetail = getProfitDetailsDAO().getFinProfitDetailsById(finReference);
 		List<FinanceScheduleDetail> schdList = scheduleData.getFinanceScheduleDetails();
 		schdList=getRepayProcessUtil().doProcessReceipts(financeMain, schdList, 
 				profitDetail, receiptHeader, scheduleData,DateUtility.getAppDate());

@@ -291,6 +291,7 @@ public class ReceiptCalculator implements Serializable {
 			
 			boolean isPartialPayNow = false; 
 			BigDecimal partialSettleAmount = BigDecimal.ZERO;
+			BigDecimal advAmountPaid = BigDecimal.ZERO;
 
 			// Load Pending Schedules until balance available for payment
 			for (int s = 1; s < tempScheduleDetails.size(); s++) {
@@ -334,6 +335,7 @@ public class ReceiptCalculator implements Serializable {
 
 												// Reset Total Receipt Amount
 												totalReceiptAmt = totalReceiptAmt.subtract(balAdvise);
+												advAmountPaid = advAmountPaid.add(balAdvise);
 												paidAllocationMap.put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), advAllocateBal.subtract(balAdvise));
 												
 												// Save Movements for Manual Advise
@@ -642,6 +644,7 @@ public class ReceiptCalculator implements Serializable {
 
 										// Reset Total Receipt Amount
 										totalReceiptAmt = totalReceiptAmt.subtract(balAdvise);
+										advAmountPaid = advAmountPaid.add(balAdvise);
 										paidAllocationMap.put(RepayConstants.ALLOCATION_MANADV+"_"+advise.getAdviseID(), insAllocateBal.subtract(balAdvise));
 										
 										// Save Movements for Manual Advise
@@ -661,8 +664,9 @@ public class ReceiptCalculator implements Serializable {
 			}
 			
 			FinRepayHeader repayHeader = null;
+			BigDecimal balAmount = receiptDetail.getAmount().subtract(totalReceiptAmt).subtract(partialSettleAmount);
 			if(receiptDetail.getAmount().compareTo(totalReceiptAmt) > 0 && 
-					receiptDetail.getAmount().compareTo(partialSettleAmount) > 0 && isSchdPaid){
+					receiptDetail.getAmount().compareTo(partialSettleAmount) > 0 && isSchdPaid && balAmount.compareTo(advAmountPaid) != 0){
 				// Prepare Repay Header Details
 				repayHeader = new FinRepayHeader();
 				repayHeader.setFinReference(receiptData.getFinReference());

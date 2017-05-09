@@ -912,6 +912,18 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		//=======================================
 		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner(),
 				false, "_Temp");
+		
+		// Finance Flag Details
+		if (financeDetail.getFinFlagsDetails() != null && !financeDetail.getFinFlagsDetails().isEmpty()) {
+			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinFlagsDetail");
+			for (int i = 0; i < details.size(); i++) {
+				FinFlagsDetail finFlagsDetail = (FinFlagsDetail) details.get(i).getModelData();
+				finFlagsDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+			}
+			getFinFlagDetailsDAO().deleteList(financeMain.getFinReference(), FinanceConstants.MODULE_NAME, "_Temp");
+			auditDetailList.addAll(details);
+
+		}
 
 		//FinanceMain Details Clearing before 
 		//=======================================
@@ -1605,6 +1617,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				finFlagsDetail.setNextRoleCode("");
 				finFlagsDetail.setTaskId("");
 				finFlagsDetail.setNextTaskId("");
+				finFlagsDetail.setWorkflowId(0);
 			}
 
 			if (finFlagsDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {

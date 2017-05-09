@@ -1552,7 +1552,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		//Show Accounting Tab Details Based upon Role Condition using Work flow
-		if ("Accounting".equals(getTaskTabs(getTaskId(getRole())))) {
+		if ("Accounting".equals(getTaskTabs(getTaskId(getRole()))) && !StringUtils.equals(FinanceConstants.FINSER_EVENT_HOLDEMI, moduleDefiner)) {
 			//Accounting Details Tab Addition
 			appendAccountingDetailTab(onLoad);
 		}
@@ -5579,11 +5579,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Finance Flags
-		fetchFlagDetals();
-		if (getFinFlagsDetailList() != null && !getFinFlagsDetailList().isEmpty()) {
-			aFinanceDetail.setFinFlagsDetails(getFinFlagsDetailList());
-		} else {
-			aFinanceDetail.setFinFlagsDetails(null);
+		if (StringUtils.isEmpty(moduleDefiner)) {
+			fetchFlagDetals();
+			if (getFinFlagsDetailList() != null && !getFinFlagsDetailList().isEmpty()) {
+				aFinanceDetail.setFinFlagsDetails(getFinFlagsDetailList());
+			} else {
+				aFinanceDetail.setFinFlagsDetails(null);
+			}
 		}
 
 		//Deviation calculations

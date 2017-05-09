@@ -333,7 +333,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		
 		// Get the identity sequence number.
 		if (movement.getMovementID() <= 0) {
-			movement.setAdviseID(getNextidviewDAO().getNextId("SeqManualAdviseMovements"));
+			movement.setMovementID(getNextidviewDAO().getNextId("SeqManualAdviseMovements"));
 		}
 		
 		// Execute the SQL, binding the arguments.

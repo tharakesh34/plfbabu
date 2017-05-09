@@ -43,6 +43,7 @@
 package com.pennant.app.util;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -79,6 +80,9 @@ public class AccountProcessUtil implements Serializable {
 
 		for (int i = 0; i < dataSets.size(); i++) {
 			ReturnDataSet posting = dataSets.get(i);
+			if(posting.getPostAmount().compareTo(BigDecimal.ZERO) <= 0 ){
+				continue;
+			}
 			String acTypeKey = posting.getAccountType();
 			AccountType accountType = new AccountType();
 
