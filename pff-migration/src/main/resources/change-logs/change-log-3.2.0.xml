@@ -160,7 +160,7 @@ Update wifFinanceMain set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS NULL;
 		<dropTable tableName="DISBURSMENT_UPLOAD_MAPPING"/>
 	</changeSet> 
 	
-	<changeSet id="13" author="ManojKumar.P">
+	<changeSet id="13" author="ManojKumar.P" >
 	<createView viewName="DE_DISBURSE_FILE_CONTROL_VIEW" replaceIfExists="true">
 		 SELECT DISTINCT(DS.ID), DC.NAME, DC.UPLOADPATH FILELOCATION, DS.FILENAME, DS.ENDTIME, DS.STATUS, 
 			PB.ALWFILEDOWNLOAD,  PB.PARTNERBANKID, PB.PARTNERBANKCODE, PB.PARTNERBANKNAME, FA.PAYMENTTYPE
@@ -190,5 +190,153 @@ Update wifFinanceMain set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS NULL;
 	<sql>
 		update ReportList set FieldLabels='listheader_FinType.label,listheader_FinTypeDesc.label,listheader_FinCcy.label,listheader_FinDaysCalType.label,listheader_FinSchdMthd.label,listheader_FInIsAlwGrace.label,listheader_FinDivision.label,listheader_RecordStatus.label,listheader_RecordType.label' , FieldValues='finType,finTypeDesc,finCcy,finDaysCalType,finSchdMthd,fInIsAlwGrace,finDivision,recordStatus,recordType' , FieldType='String,String,String,String,String,boolean,String,String,String' , reportFileName='ReportList09' where Code='FinanceType';
 	</sql>
+		</changeSet>
+	
+	<changeSet id="18" author="Jayant">    
+	    <createIndex tableName="DOCUMENTDETAILS" indexName="ix_DD_DocModule">
+	        <column name="DocModule" type="nvarchar(50)"/>
+	    </createIndex>
+	    <createIndex tableName="DOCUMENTDETAILS" indexName="ix_DD_FinEvent">
+	        <column name="FinEvent" type="nvarchar(50)"/>
+	    </createIndex>
+	    <createIndex tableName="DOCUMENTDETAILS_Temp" indexName="ix_DD_ReferenceId_T">
+	        <column name="ReferenceId" type="nvarchar(50)"/>
+	    </createIndex>
+	     <createIndex tableName="DOCUMENTDETAILS_Temp" indexName="ix_DD_DocModule_T">
+	        <column name="DocModule" type="nvarchar(50)"/>
+	    </createIndex>
+	     <createIndex tableName="DOCUMENTDETAILS_Temp" indexName="ix_DD_FinEvent_T">
+	        <column name="FinEvent" type="nvarchar(50)"/>
+	    </createIndex>
 	</changeSet>
+	<changeSet id="19" author="Jayant">
+	    <dropIndex tableName="CUSTOMERDOCUMENTS" indexName="IX_CD_CUST_TIT_CAT_ID"/>
+	   
+	    <createIndex tableName="CUSTOMERDOCUMENTS" indexName="IX_CD_CUST_TIT_CAT_ID">
+	        <column name="CUSTDOCTITLE" type="nvarchar(50)"/>
+	        <column name="CUSTDOCCATEGORY" type="nvarchar(50)"/>
+	        <column name="CUSTID" type="bigint"/>
+	    </createIndex>
+	     <dropIndex tableName="CUSTOMERDOCUMENTS_TEMP" indexName="IX_CD_CUST_TIT_CAT_ID"/>
+	     <createIndex tableName="CUSTOMERDOCUMENTS_TEMP" indexName="IX_CD_CUST_TIT_CAT_ID">
+	           <column name="CUSTDOCTITLE" type="nvarchar(50)"/>
+	        <column name="CUSTDOCCATEGORY" type="nvarchar(50)"/>
+	        <column name="CUSTID" type="bigint"/>
+	    </createIndex>
+	</changeSet>
+	<changeSet id="20" author="Jayant">
+	    <createIndex tableName="rmtfinancetypes" indexName="ix_fin_type_division">
+	        <column name="FinDivision" type="nvarchar(50)"/>
+	    </createIndex>
+	</changeSet>
+	<changeSet id="21" author="Jayant">
+		<createIndex tableName="FinanceMain" indexName="ix_fin_main_active_branch">
+	        <column name="FinIsActive" type="boolean"/>
+	         <column name="FinBranch" type="varchar(50)"/>
+	    </createIndex>
+	    <createIndex tableName="FinanceMain" indexName="IX_FM_Cust_ID">
+	        <column name="CustID" type="bigint"/>
+	    </createIndex>
+	</changeSet>
+	<changeSet id="22" author="Jayant">
+	    <dropIndex tableName="SECLOGINLOG" indexName="IX_SECLOG_SESSIONID"/>
+	</changeSet>
+	<changeSet id="23" author="Jayant">
+	     <dropIndex tableName="SECUSEROPERATIONS" indexName="IX_UO_UID_OID"/>
+	     <addUniqueConstraint tableName="secuseroperations" columnNames="usrid, oprid" constraintName="uk_user_oper"/>
+	    <createIndex tableName="secuseroperations" indexName="ix_user_oper_user_id">
+	        <column name="usrid" type="bigint"/>
+	    </createIndex>
+		 <createIndex tableName="secuseroperations" indexName="ix_user_oper_oper_id">
+	        <column name="oprid" type="bigint"/>
+	    </createIndex>
+	</changeSet>
+	<changeSet id="24" author="Jayant">
+	     <addUniqueConstraint tableName="secoperations" columnNames="oprcode" constraintName="uk_oper_code"/>
+	</changeSet>
+	<changeSet id="25" author="Jayant">
+	     <dropIndex tableName="SECOPERATIONROLES" indexName="IX_OR_OID_RID"/>
+	     <addUniqueConstraint tableName="secoperationroles" columnNames="oprid, roleid" constraintName="uk_oper_role"/>
+	       <createIndex tableName="secoperationroles" indexName="ix_oper_role_oper_id">
+	        <column name="oprid" type="bigint"/>
+	    </createIndex>
+		 <createIndex tableName="secoperationroles" indexName="ix_oper_role_role_id">
+	        <column name="roleid" type="bigint"/>
+	    </createIndex>
+	</changeSet>
+	<changeSet id="26" author="Jayant">
+	   
+	    
+	      <addUniqueConstraint tableName="secroles" columnNames="rolecd, roleapp" constraintName="uk_role_code_app"/>
+	</changeSet>
+	<changeSet id="27" author="Jayant">
+	       <createIndex tableName="SecRoleGroups" indexName="IX_SRG_RID">
+	        <column name="RoleID" type="bigint"/>
+	    </createIndex>
+		 <createIndex tableName="secrolegroups" indexName="ix_role_group_group_id">
+	        <column name="grpid" type="bigint"/>
+	    </createIndex>
+	</changeSet>
+	<changeSet id="28" author="Jayant">
+	    
+	    <dropIndex tableName="SecGroupRights" indexName="IX_SGR_GID"/>
+	       <createIndex tableName="SecGroupRights" indexName="IX_SGR_GID">
+	        <column name="GrpID" type="bigint"/>
+	    </createIndex>
+	      <dropIndex tableName="SecGroupRights" indexName="ix_group_right_right_id"/>
+		 <createIndex tableName="secgrouprights" indexName="ix_group_right_right_id">
+	        <column name="rightid" type="bigint"/>
+	    </createIndex>
+	    <addUniqueConstraint tableName="secgrouprights" columnNames="grpid,rightid" constraintName="uk_group_right"/>
+	</changeSet>
+	<changeSet id="29" author="Jayant">
+	       <createIndex tableName="secrights" indexName="ix_rights_page_right_type">
+	        <column name="PAGE" type="varchar(50)"/>
+	        <column name="RIGHTTYPE" type="int"/>
+	    </createIndex>
+	</changeSet>
+	<changeSet id="30" author="Jayant">
+	    <sql>
+	        DELETE  from SECURITYUSERDIVBRANCH where rowid not in ( SELECT MIN(rowid) FROM SECURITYUSERDIVBRANCH GROUP BY USRID,USERDIVISION,USERBRANCH );
+	    	alter table SECURITYUSERDIVBRANCH add constraint PK_SECUSRDIVBRANCH primary key (USRID,USERDIVISION,USERBRANCH);
+	    </sql>
+	</changeSet>
+	<changeSet id="31" author="Jayant">
+	    <createIndex tableName="OFFLINEUSRMESSAGESBACKUP" indexName="IX_OLUMB_TOUSRID">
+	        <column name="TOUSRID" type="varchar(50)"/>
+	    </createIndex>
+	</changeSet>
+	<changeSet id="32" author="Jayant">
+	    <sql>
+	        alter table TATNotificationCodes add constraint PK_TATNotificationCodes primary key (TatNotificationId);
+	    </sql>
+	</changeSet>
+	<changeSet id="33" author="Jayant">
+	    <createIndex tableName="Notes" indexName="ix_Note_Modulename">
+	        <column name="MODULENAME" type="varchar(50)"/>
+	    </createIndex>
+	    <createIndex tableName="Notes" indexName="ix_Note_Reference">
+	        <column name="Reference" type="varchar(50)"/>
+	    </createIndex>
+	 	<createIndex tableName="Notes" indexName="ix_Note_RemarkType">
+	        <column name="RemarkType" type="char(1)"/>
+	    </createIndex>
+	    <createIndex tableName="Notes" indexName="ix_Note_InputBy">
+	        <column name="InputBy" type="bigint"/>
+	    </createIndex>
+	</changeSet>
+			<changeSet id="34" author="Jayant">
+	    
+	    	
+	    <createIndex tableName="CUSTOMERS" indexName="IX_CUST_CRCPR_ID">
+	        <column name="CUSTCRCPR" type="nvarchar(20)" />
+	        <column name="CUSTID" type="bigint"/>
+	    </createIndex>
+	   
+	    <createIndex tableName="CUSTOMERS_TEMP" indexName="IX_CUST_T_CRCPR_ID">
+	        <column name="CUSTCRCPR" type="nvarchar(20)" />
+	        <column name="CUSTID" type="bigint"/>
+	    </createIndex>
+	</changeSet>
+
 </databaseChangeLog>
