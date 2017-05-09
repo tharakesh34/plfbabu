@@ -109,6 +109,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTEmailValidator;
+import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -167,8 +168,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	protected Tab secUserDetailsTab; // autoWired
 	protected Tab secUserDivBranchsTab; // autoWired
 	protected Rows divBranch_Rows; // autoWired
-	protected Textbox phoneCountryCode; // autoWired
-	protected Textbox phoneAreaCode; // autoWired
 	/* not auto wired variables */
 	private SecurityUser securityUser; // overHanded per parameters
 	private transient SecurityUserListCtrl securityUserListCtrl; // overHanded per parameters
@@ -276,9 +275,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrFName.setMaxlength(50);
 		this.usrMName.setMaxlength(50);
 		this.usrLName.setMaxlength(50);
-		this.usrMobile.setMaxlength(8);
-		this.phoneCountryCode.setMaxlength(3);
-		this.phoneAreaCode.setMaxlength(3);
+		this.usrMobile.setMaxlength(10);
 		this.usrEmail.setMaxlength(50);
 
 		this.usrLanguage.setMaxlength(4);
@@ -444,10 +441,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrFName.setValue(aSecurityUser.getUsrFName());
 		this.usrMName.setValue(aSecurityUser.getUsrMName());
 		this.usrLName.setValue(aSecurityUser.getUsrLName());
-		String[] mobile = PennantApplicationUtil.unFormatPhoneNumber(aSecurityUser.getUsrMobile());
-		this.phoneCountryCode.setValue(mobile[0]);
-		this.phoneAreaCode.setValue(mobile[1]);
-		this.usrMobile.setValue(mobile[2]);
+		this.usrMobile.setValue(aSecurityUser.getUsrMobile());
 		this.usrEmail.setValue(aSecurityUser.getUsrEmail());
 		this.usrEnabled.setChecked(aSecurityUser.isUsrEnabled());
 		this.usrCanSignonFrom.setValue(aSecurityUser.getUsrCanSignonFrom());
@@ -559,8 +553,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			wve.add(we);
 		}
 		try {
-			aSecurityUser.setUsrMobile(PennantApplicationUtil.formatPhoneNumber(this.phoneCountryCode.getValue(),
-					this.phoneAreaCode.getValue(), this.usrMobile.getValue()));
+			aSecurityUser.setUsrMobile(this.usrMobile.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -826,22 +819,12 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 					.getLabel("label_SecurityUserDialog_UsrLName.value"), PennantRegularExpressions.REGEX_NAME, true));
 		}
 		if (!this.usrMobile.isReadonly()) {
-			if (StringUtils.isNotEmpty(this.usrMobile.getValue())
-					|| StringUtils.isNotEmpty(this.phoneCountryCode.getValue())
-					|| StringUtils.isNotEmpty(this.phoneAreaCode.getValue())) {
-				this.phoneCountryCode.setConstraint(new PTPhoneNumberValidator(Labels
-						.getLabel("label_SecurityUserDialog_mobileCountryCode.value"), true, 1));
-				this.phoneAreaCode.setConstraint(new PTPhoneNumberValidator(Labels
-						.getLabel("label_SecurityUserDialog_mobileAreaCode.value"), true, 2));
-				this.usrMobile.setConstraint(new PTPhoneNumberValidator(Labels
-						.getLabel("label_SecurityUserSearch_UsrMobile.value"), true, 3));
+			if (StringUtils.isNotEmpty(this.usrMobile.getValue())) {
+				this.usrMobile.setConstraint(new PTMobileNumberValidator(Labels
+						.getLabel("label_SecurityUserSearch_UsrMobile.value"), true));
 			} else {
-				this.phoneCountryCode.setConstraint(new PTPhoneNumberValidator(Labels
-						.getLabel("label_SecurityUserDialog_mobileCountryCode.value"), false, 1));
-				this.phoneAreaCode.setConstraint(new PTPhoneNumberValidator(Labels
-						.getLabel("label_SecurityUserDialog_mobileAreaCode.value"), false, 2));
-				this.usrMobile.setConstraint(new PTPhoneNumberValidator(Labels
-						.getLabel("label_SecurityUserSearch_UsrMobile.value"), false, 3));
+				this.usrMobile.setConstraint(new PTMobileNumberValidator(Labels
+						.getLabel("label_SecurityUserSearch_UsrMobile.value"), false));
 			}
 
 		}
@@ -876,8 +859,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrCanSignonTo.setConstraint("");
 		this.usrLanguage.setConstraint("");
 		this.usrDftAppId.setConstraint("");
-		this.phoneCountryCode.setConstraint("");
-		this.phoneAreaCode.setConstraint("");
 		logger.debug("Leaving ");
 	}
 
@@ -932,8 +913,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrLanguage.setErrorMessage("");
 		this.usrDftAppId.setErrorMessage("");
 		this.usrDesg.setErrorMessage("");
-		this.phoneCountryCode.setErrorMessage("");
-		this.phoneAreaCode.setErrorMessage("");
 		logger.debug("Leaving ");
 
 	}
@@ -1037,8 +1016,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrMName.setReadonly(isReadOnly("SecurityUserDialog_usrMName"));
 		this.usrLName.setReadonly(isReadOnly("SecurityUserDialog_usrLName"));
 		this.usrMobile.setReadonly(isReadOnly("SecurityUserDialog_usrMobile"));
-		this.phoneAreaCode.setReadonly(isReadOnly("SecurityUserDialog_usrMobile"));
-		this.phoneCountryCode.setReadonly(isReadOnly("SecurityUserDialog_usrMobile"));
 		this.usrEmail.setReadonly(isReadOnly("SecurityUserDialog_usrEmail"));
 		this.usrAcExp.setDisabled(isReadOnly("SecurityUserDialog_usrAcExp"));
 		this.usrAcLocked.setDisabled(isReadOnly("SecurityUserDialog_usrAcLocked"));
@@ -1103,8 +1080,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrDeptCode.setReadonly(true);
 		this.usrIsMultiBranch.setDisabled(true);
 		this.usrDesg.setReadonly(true);
-		this.phoneAreaCode.setReadonly(true);
-		this.phoneCountryCode.setReadonly(true);
 		this.UsrAcExpDt.setDisabled(true);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1148,8 +1123,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrIsMultiBranch.setChecked(false);
 		this.usrDesg.setValue("");
 		this.usrDesg.setDescription("");
-		this.phoneCountryCode.setValue("");
-		this.phoneAreaCode.setValue("");
 		logger.debug("Leaving ");
 	}
 

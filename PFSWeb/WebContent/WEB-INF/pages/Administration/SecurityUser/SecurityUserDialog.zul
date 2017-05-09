@@ -194,15 +194,7 @@
 															spacing="2px"/>
 														<hbox>
 															<textbox
-																id="phoneCountryCode"  width="40px"/>
-															<label
-																value="-" style="display:inline-block;padding-top:4px;" />
-															<textbox
-																id="phoneAreaCode" width="40px"/>
-															<label
-																value="-" style="display:inline-block;padding-top:4px;" />
-															<textbox
-																id="usrMobile" width="80px"/>
+																id="usrMobile" width="180px"/>
 														</hbox>
 													</hbox>
 
