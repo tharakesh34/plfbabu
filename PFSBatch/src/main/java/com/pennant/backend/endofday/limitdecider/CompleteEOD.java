@@ -42,9 +42,6 @@
  */
 package com.pennant.backend.endofday.limitdecider;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.Date;
 
 import javax.sql.DataSource;
@@ -54,12 +51,9 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.job.flow.FlowExecutionStatus;
 import org.springframework.batch.core.job.flow.JobExecutionDecider;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.core.DateService;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennant.eod.util.EODProperties;
 
@@ -67,6 +61,7 @@ public class CompleteEOD implements JobExecutionDecider {
 
 	private Logger				logger	= Logger.getLogger(CompleteEOD.class);
 
+	@SuppressWarnings("unused")
 	private DataSource			dataSource;
 	private DateService			dateService;
 
@@ -79,13 +74,10 @@ public class CompleteEOD implements JobExecutionDecider {
 
 	public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
 		Date valueDate = DateUtility.getAppValueDate();
-		Date nextBusinessDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT);
 
 		logger.debug("START: Complete EOD On : " + valueDate);
 
 		stepExecution.getExecutionContext().put(stepExecution.getId().toString(), valueDate);
-
-		updateAccounts(valueDate, nextBusinessDate);
 		// Log the Customer queuing data and threads status
 		customerQueuingDAO.logCustomerQueuing();
 		//Update value dates check Holiday 
@@ -101,28 +93,6 @@ public class CompleteEOD implements JobExecutionDecider {
 		}
 	}
 
-	private void updateAccounts(Date valueDate, Date nextBusinessDate) {
-		Connection connection = null;
-		PreparedStatement sqlStatement = null;
-
-		try {
-
-			StringBuilder query = new StringBuilder(" UPDATE Accounts SET  AcPrvDayBal = (AcPrvDayBal+AcTodayBal) , ");
-			query.append(" AcTodayDr = 0, AcTodayCr =0, AcTodayNet =0,AcTodayBal= 0 ");
-			if (valueDate.compareTo(nextBusinessDate) < 0) {
-				query.append(" ,AcAccrualBal = 0");
-			}
-
-			//Update Today Account Balances to ZeroValue
-			connection = DataSourceUtils.doGetConnection(dataSource);
-			sqlStatement = connection.prepareStatement(query.toString());
-			sqlStatement.executeUpdate();
-			sqlStatement.close();
-
-		} catch (SQLException e) {
-			logger.error("Exception: ", e);
-		}
-	}
 
 	public void setDateService(DateService dateService) {
 		this.dateService = dateService;

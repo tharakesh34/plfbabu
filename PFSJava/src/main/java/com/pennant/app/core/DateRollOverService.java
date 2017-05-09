@@ -18,9 +18,9 @@ public class DateRollOverService extends ServiceHelper {
 
 	public CustEODEvent process(CustEODEvent custEODEvent) throws Exception {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
+		custEODEvent.setEodValueDate(DateUtility.addDays(custEODEvent.getEodValueDate(), 1));
 		
 		for (FinEODEvent finEODEvent : finEODEvents) {
-			custEODEvent.setEodValueDate(DateUtility.addDays(custEODEvent.getEodValueDate(), 1));
 			Date valueDate = custEODEvent.getEodValueDate();
 			FinanceMain finMain = finEODEvent.getFinanceMain();
 

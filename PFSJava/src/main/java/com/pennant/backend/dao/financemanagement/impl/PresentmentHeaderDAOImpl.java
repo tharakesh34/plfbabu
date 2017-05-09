@@ -732,7 +732,7 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
-		source.addValue("id", id);
+		source.addValue("ID", id);
 		source.addValue("RECEIPTID", receiptID);
 		try {
 			this.jdbcTemplate.update(sql.toString(), source);
