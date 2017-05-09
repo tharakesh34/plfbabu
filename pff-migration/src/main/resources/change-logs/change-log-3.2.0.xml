@@ -181,4 +181,9 @@ Update wifFinanceMain set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS NULL;
 		ORDER BY DS.ID DESC
 	</createView>	
 	</changeSet>
+	<changeSet id="15" author="Surekha">
+	<sql>
+		update ReportList set FieldLabels='listheader_FinType.label,listheader_FinTypeDesc.label,listheader_FinCcy.label,listheader_FinDaysCalType.label,listheader_FinSchdMthd.label,listheader_FInIsAlwGrace.label,listheader_FinDivision.label,listheader_RecordStatus.label,listheader_RecordType.label,listheader_LovDescProductCodeDesc.label' , FieldValues='finType,finTypeDesc,finCcy,finDaysCalType,finSchdMthd,fInIsAlwGrace,finDivision,recordStatus,recordType,lovDescProductCodeDesc' , FieldType='String,String,String,String,String,boolean,String,String,String,String' , reportFileName='ReportList10' where Code='FinanceType';
+	</sql>
+	</changeSet>
 </databaseChangeLog>
