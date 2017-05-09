@@ -1,5 +1,6 @@
 package com.pennanttech.bajaj.services;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -17,8 +18,12 @@ import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.disbursement.DisbursementRequest;
 
 public class DisbursementRequestImpl extends BajajService implements DisbursementRequest {
-	private final Logger		logger	= Logger.getLogger(getClass());
-	
+	private final Logger	logger	= Logger.getLogger(getClass());
+
+	public enum DisbursementTypes {
+		IMPS, RTGS, NEFT, DD, CHEQUE, I;
+	}
+
 	public DisbursementRequestImpl() {
 		super();
 	}
@@ -35,105 +40,19 @@ public class DisbursementRequestImpl extends BajajService implements Disbursemen
 		try {
 			DisbursementProcessThread.sleep(5000);
 		} catch (InterruptedException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		thread.start();
 	}
-	
-	private int prepareRequest(String[] disbursments) throws Exception {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource paramMap;
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" INSERT INTO DISBURSEMENT_REQUESTS SELECT");
-		sql.append(" SEQ_DISBURSEMENT_REQUESTS.NEXTVAL,");
-		sql.append(" :BATCH_ID,");                      
-		sql.append(" PAYMENTID,");               
-		sql.append(" CUSTCIF,");               
-		sql.append(" FINREFERENCE,");            
-		sql.append(" AMTTOBERELEASED,");     
-		sql.append(" DISBURSEMENT_TYPE,");     
-		sql.append(" DISBDATE,");       
-		sql.append(" PAYABLELOC,");        
-		sql.append(" PRINTINGLOC,");          
-		sql.append(" CUSTSHRTNAME,");           
-		sql.append(" CUSTOMER_MOBILE,");          
-		sql.append(" CUSTOMER_EMAIL,");          
-		sql.append(" CUSTOMER_STATE,");          
-		sql.append(" CUSTOMER_CITY,");
-		sql.append(" CUSTOMER_ADDRESS1,");     
-		sql.append(" CUSTOMER_ADDRESS2,");     
-		sql.append(" CUSTOMER_ADDRESS3,");     
-		sql.append(" CUSTOMER_ADDRESS4,");     
-		sql.append(" CUSTOMER_ADDRESS5,");    
-		sql.append(" BANKNAME,");         
-		sql.append(" BRANCHDESC,");       
-		sql.append(" BENFICIARY_BRANCH_STATE,"); 
-		sql.append(" BENFICIARY_BRANCH_CITY,");  
-		sql.append(" MICR_CODE,");               
-		sql.append(" IFSC_CODE,");               
-		sql.append(" BENEFICIARYACCNO,");               
-		sql.append(" BENEFICIARYNAME,");         
-		sql.append(" BENEFICIARY_MOBILE,");         
-		sql.append(" BENFICIRY_EMAIL,");        
-		sql.append(" BENFICIARY_STATE,");        
-		sql.append(" BENFICIARY_CITY,");         
-		sql.append(" BENFICIARY_ADDRESS1,");     
-		sql.append(" BENFICIARY_ADDRESS2,");     
-		sql.append(" BENFICIARY_ADDRESS3,");     
-		sql.append(" BENFICIARY_ADDRESS4,");     
-		sql.append(" BENFICIARY_ADDRESS5,");     
-		sql.append(" :PAYMENT_DETAIL1,");         
-		sql.append(" PAYMENT_DETAIL2,");         
-		sql.append(" PAYMENT_DETAIL3,");         
-		sql.append(" PAYMENT_DETAIL4,");        
-		sql.append(" PAYMENT_DETAIL5,");         
-		sql.append(" PAYMENT_DETAIL6,");         
-		sql.append(" PAYMENT_DETAIL7,"); 
-		sql.append(" :RESP_BATCH_ID,"); 
-		sql.append(" :TRANSACTIONREF,");
-		sql.append(" :CHEQUE_NUMBER,");
-		sql.append(" :DD_CHEQUE_CHARGE,");
-		sql.append(" :PAYMENT_DATE,");
-		sql.append(" STATUS,");                  
-		sql.append(" REMARKS,"); 
-		sql.append(" :REJECT_REASON");
-		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW ");
-		sql.append(" WHERE PAYMENTID IN (:PAYMENTID)");
-		
-		
-		paramMap = new MapSqlParameterSource();
-		paramMap.addValue("BATCH_ID", 0);
-		paramMap.addValue("PAYMENT_DETAIL1", getSMTParameter("DISB_FI_EMAIL", String.class));
-		paramMap.addValue("RESP_BATCH_ID", 0);
-		paramMap.addValue("TRANSACTIONREF", null);
-		paramMap.addValue("CHEQUE_NUMBER", null);
-		paramMap.addValue("DD_CHEQUE_CHARGE", null);
-		paramMap.addValue("PAYMENT_DATE", null);
-		paramMap.addValue("REJECT_REASON", null);
-		paramMap.addValue("PAYMENTID", Arrays.asList(disbursments));
-		
-		try {
-			return namedJdbcTemplate.update(sql.toString(), paramMap);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		} finally {
-			paramMap = null;
-			sql = null;
-		}
-		
+	private void processDisbursements(String finType, long userId, List<FinAdvancePayments> disbursements)
+			throws Exception {
 		logger.debug(Literal.ENTERING);
-		
-		return 0;
-	}
 
+		StringBuilder list = new StringBuilder();
 
-	private void processDisbursements(String finType, long userId, List<FinAdvancePayments> disbusments) throws Exception {
-		logger.debug(Literal.ENTERING);
-		
-		StringBuilder list = new StringBuilder();		
-		
-		for (FinAdvancePayments fa : disbusments) {
+		for (FinAdvancePayments fa : disbursements) {
 			if (list.length() > 0) {
 				list.append(",");
 			}
@@ -141,79 +60,154 @@ public class DisbursementRequestImpl extends BajajService implements Disbursemen
 		}
 
 		int count = prepareRequest(list.toString().split(","));
-		
+
 		if (count == 0) {
 			return;
 		}
-		
-		Map<String, StringBuilder> paymentTypes = new HashMap<>();
-		String partnerbankCode = null;
+
+		generateRequest(finType, userId, disbursements);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void generateRequest(String finType, long userId, List<FinAdvancePayments> disbusments) {
+		List<FinAdvancePayments> hdfc_IMPS = new ArrayList<>();
+		List<FinAdvancePayments> other_IMPS = new ArrayList<>();
+
+		List<FinAdvancePayments> hdfc_RTGS = new ArrayList<>();
+		List<FinAdvancePayments> other_RTGS = new ArrayList<>();
+
+		List<FinAdvancePayments> hdfc_NEFT = new ArrayList<>();
+		List<FinAdvancePayments> other_NEFT = new ArrayList<>();
+
+		List<FinAdvancePayments> hdfc_DD = new ArrayList<>();
+		List<FinAdvancePayments> other_DD = new ArrayList<>();
+
+		List<FinAdvancePayments> hdfc_CHEQUE = new ArrayList<>();
+		List<FinAdvancePayments> other_CHEQUE = new ArrayList<>();
+
+		List<FinAdvancePayments> hdfc_Other = new ArrayList<>();
+		List<FinAdvancePayments> other_Other = new ArrayList<>();
+
 		for (FinAdvancePayments disbursment : disbusments) {
-			String paymentType = StringUtils.trimToEmpty(disbursment.getPaymentType());
-			partnerbankCode = disbursment.getPartnerbankCode();
-			if (!paymentTypes.containsKey(paymentType)) {
-				paymentTypes.put(paymentType, new StringBuilder());
+			DisbursementTypes type = DisbursementTypes.valueOf(disbursment.getPaymentType());
+
+			switch (type) {
+			case IMPS:
+				if ("HDFC".equalsIgnoreCase(disbursment.getPartnerbankCode())) {
+					hdfc_IMPS.add(disbursment);
+				} else {
+					other_IMPS.add(disbursment);
+				}
+				break;
+			case NEFT:
+				if ("HDFC".equalsIgnoreCase(disbursment.getPartnerbankCode())) {
+					hdfc_NEFT.add(disbursment);
+				} else {
+					other_NEFT.add(disbursment);
+				}
+				break;
+			case RTGS:
+				if ("HDFC".equalsIgnoreCase(disbursment.getPartnerbankCode())) {
+					hdfc_RTGS.add(disbursment);
+				} else {
+					other_RTGS.add(disbursment);
+				}
+				break;
+			case DD:
+				if ("HDFC".equalsIgnoreCase(disbursment.getPartnerbankCode())) {
+					hdfc_DD.add(disbursment);
+				} else {
+					other_DD.add(disbursment);
+				}
+				break;
+			case CHEQUE:
+				if ("HDFC".equalsIgnoreCase(disbursment.getPartnerbankCode())) {
+					hdfc_CHEQUE.add(disbursment);
+				} else {
+					other_CHEQUE.add(disbursment);
+				}
+				break;
+			default:
+				if ("HDFC".equalsIgnoreCase(disbursment.getPartnerbankCode())) {
+					hdfc_Other.add(disbursment);
+				} else {
+					other_Other.add(disbursment);
+				}
+				break;
+			}
+		}
+
+		if (!hdfc_IMPS.isEmpty()) {
+			sendIMPSRequest("DISB_IMPS_EXPORT", getPaymentIds(hdfc_IMPS), userId);
+		}
+
+		if (!other_IMPS.isEmpty()) {
+			sendIMPSRequest("DISB_IMPS_EXPORT", getPaymentIds(other_IMPS), userId);
+		}
+
+		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, hdfc_NEFT);
+		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, hdfc_RTGS);
+		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.CHEQUE.name(), finType, userId, hdfc_CHEQUE);
+		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.DD.name(), finType, userId, hdfc_DD);
+		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.I.name(), finType, userId, hdfc_Other);
+
+		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, other_NEFT);
+		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, other_RTGS);
+		generateFile("DISB_OTHER_CHEQUE_DD_EXPORT", DisbursementTypes.DD.name(), finType, userId, other_DD);
+		generateFile("DISB_OTHER_CHEQUE_DD_EXPORT", DisbursementTypes.CHEQUE.name(), finType, userId, other_CHEQUE);
+		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.I.name(), finType, userId, other_Other);
+
+	}
+
+	private void generateFile(String configName, String paymentType, String finType, long userId,
+			List<FinAdvancePayments> disbusments) {
+		Map<String, List<FinAdvancePayments>> map = null;
+		if (!disbusments.isEmpty()) {
+			map = getOtherBankMap(disbusments);
+
+			List<String> parnerBanks = new ArrayList<String>(map.keySet());
+
+			for (String bank : parnerBanks) {
+				generateFile(configName, getPaymentIds(map.get(bank)), paymentType, bank, finType, userId);
+			}
+		}
+	}
+
+	private Map<String, List<FinAdvancePayments>> getOtherBankMap(List<FinAdvancePayments> disbursemens) {
+		Map<String, List<FinAdvancePayments>> map = new HashMap<>();
+
+		for (FinAdvancePayments disbursement : disbursemens) {
+			if (map.get(disbursement.getPartnerbankCode()) == null) {
+				map.put(disbursement.getPartnerbankCode(), new ArrayList<FinAdvancePayments>());
 			}
 
-			StringBuilder builder = paymentTypes.get(paymentType);
+			map.get(disbursement.getPartnerbankCode()).add(disbursement);
+		}
+		return map;
+	}
+
+	private String getPaymentIds(List<FinAdvancePayments> finAdvancePayments) {
+		StringBuilder builder = new StringBuilder();
+
+		for (FinAdvancePayments disbursement : finAdvancePayments) {
 
 			if (builder.length() > 0) {
 				builder.append(",");
 			}
-			builder.append(String.valueOf(disbursment.getPaymentId()));
+			builder.append(disbursement.getPaymentId());
+
 		}
 
-		for (FinAdvancePayments disbursment : disbusments) {
-			String configName = getConfigName(disbursment);
-			if (configName == null) {
-				if ("NEFT".equals(disbursment.getPaymentType()) || "RTGS".equals(disbursment.getPaymentType())) {
-					configName = "DISB_OTHER_NEFT_RTGS_EXPORT";
-					process(paymentTypes, configName, partnerbankCode, finType, userId);
-				} else if ("CHEQUE".equals(disbursment.getPaymentType()) || "DD".equals(disbursment.getPaymentType())) {
-					configName = "DISB_OTHER_CHEQUE_DD_EXPORT";
-					process(paymentTypes, configName, partnerbankCode, finType, userId);
-
-				} else if ("IMPS".equals(disbursment.getPaymentType())) {
-					configName = "DISB_IMPS_EXPORT";
-					process(paymentTypes, configName, partnerbankCode, finType, userId);
-				} else {
-					continue;
-				}
-			} else {
-				process(paymentTypes, configName, partnerbankCode, finType, userId);
-			}
-		}
-		
-		logger.debug(Literal.LEAVING);
+		return builder.toString();
 	}
 
-	private void process(Map<String, StringBuilder> paymentTypes, String configName, String partnerbankCode,
+	private void generateFile(String configName, String paymentIds, String paymentType, String partnerbankCode,
 			String finType, long userId) {
-		if (paymentTypes.get("IMPS") != null && "DISB_IMPS_EXPORT".equals(configName)) {
-			processImpsDisbursements(configName, paymentTypes.get("IMPS"), userId);
-			paymentTypes.remove("IMPS");
-		} else if (paymentTypes.get("NEFT") != null) {
-			processOthreDisbursements(configName, paymentTypes.get("NEFT"), "NEFT", partnerbankCode, finType, userId);
-			paymentTypes.remove("NEFT");
-		} else if (paymentTypes.get("RTGS") != null) {
-			processOthreDisbursements(configName, paymentTypes.get("RTGS"), "RTGS", partnerbankCode, finType, userId);
-			paymentTypes.remove("RTGS");
-		} else if (paymentTypes.get("DD") != null) {
-			processOthreDisbursements(configName, paymentTypes.get("DD"), "DD", partnerbankCode, finType, userId);
-			paymentTypes.remove("DD");
-		} else if (paymentTypes.get("CHEQUE") != null) {
-			processOthreDisbursements(configName, paymentTypes.get("CHEQUE"), "CHEQUE", partnerbankCode, finType,
-					userId);
-			paymentTypes.remove("CHEQUE");
-		}
-	}
-
-	private synchronized void processOthreDisbursements(String configName, StringBuilder paymentIds,
-			String paymentType, String partnerbankCode, String finType, long userId) {
 		DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name());
 
 		Map<String, Object> filterMap = new HashMap<>();
-		filterMap.put("PAYMENTID", paymentIds.toString());
+		filterMap.put("PAYMENTID", paymentIds);
 		filterMap.put("STATUS", "APPROVED");
 
 		Map<String, Object> parameterMap = new HashMap<>();
@@ -235,12 +229,12 @@ public class DisbursementRequestImpl extends BajajService implements Disbursemen
 		}
 	}
 
-	private synchronized void processImpsDisbursements(String configName, StringBuilder paymentIds, long userId) {
+	private void sendIMPSRequest(String configName, String paymentIds, long userId) {
 		IMPSDisbursementRequest impsRequest = new IMPSDisbursementRequest(dataSource, App.DATABASE.name());
 
-		impsRequest.setPaymentIds(paymentIds.toString());
+		impsRequest.setPaymentIds(paymentIds);
 		impsRequest.process(userId, configName);
-		
+
 		try {
 			impsRequest.process(userId, configName);
 		} catch (Exception e) {
@@ -249,30 +243,90 @@ public class DisbursementRequestImpl extends BajajService implements Disbursemen
 
 	}
 
-	private String getConfigName(FinAdvancePayments disbursment) {
-		MapSqlParameterSource parameter = null;
-		StringBuilder sql = null;
+	private int prepareRequest(String[] disbursments) throws Exception {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource paramMap;
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" INSERT INTO DISBURSEMENT_REQUESTS SELECT");
+		sql.append(" SEQ_DISBURSEMENT_REQUESTS.NEXTVAL,");
+		sql.append(" :BATCH_ID,");
+		sql.append(" PAYMENTID,");
+		sql.append(" CUSTCIF,");
+		sql.append(" FINREFERENCE,");
+		sql.append(" AMTTOBERELEASED,");
+		sql.append(" DISBURSEMENT_TYPE,");
+		sql.append(" DISBDATE,");
+		sql.append(" PAYABLELOC,");
+		sql.append(" PRINTINGLOC,");
+		sql.append(" CUSTSHRTNAME,");
+		sql.append(" CUSTOMER_MOBILE,");
+		sql.append(" CUSTOMER_EMAIL,");
+		sql.append(" CUSTOMER_STATE,");
+		sql.append(" CUSTOMER_CITY,");
+		sql.append(" CUSTOMER_ADDRESS1,");
+		sql.append(" CUSTOMER_ADDRESS2,");
+		sql.append(" CUSTOMER_ADDRESS3,");
+		sql.append(" CUSTOMER_ADDRESS4,");
+		sql.append(" CUSTOMER_ADDRESS5,");
+		sql.append(" BANKNAME,");
+		sql.append(" BRANCHDESC,");
+		sql.append(" BENFICIARY_BRANCH_STATE,");
+		sql.append(" BENFICIARY_BRANCH_CITY,");
+		sql.append(" MICR_CODE,");
+		sql.append(" IFSC_CODE,");
+		sql.append(" BENEFICIARYACCNO,");
+		sql.append(" BENEFICIARYNAME,");
+		sql.append(" BENEFICIARY_MOBILE,");
+		sql.append(" BENFICIRY_EMAIL,");
+		sql.append(" BENFICIARY_STATE,");
+		sql.append(" BENFICIARY_CITY,");
+		sql.append(" BENFICIARY_ADDRESS1,");
+		sql.append(" BENFICIARY_ADDRESS2,");
+		sql.append(" BENFICIARY_ADDRESS3,");
+		sql.append(" BENFICIARY_ADDRESS4,");
+		sql.append(" BENFICIARY_ADDRESS5,");
+		sql.append(" :PAYMENT_DETAIL1,");
+		sql.append(" PAYMENT_DETAIL2,");
+		sql.append(" PAYMENT_DETAIL3,");
+		sql.append(" PAYMENT_DETAIL4,");
+		sql.append(" PAYMENT_DETAIL5,");
+		sql.append(" PAYMENT_DETAIL6,");
+		sql.append(" PAYMENT_DETAIL7,");
+		sql.append(" :RESP_BATCH_ID,");
+		sql.append(" :TRANSACTIONREF,");
+		sql.append(" :CHEQUE_NUMBER,");
+		sql.append(" :DD_CHEQUE_CHARGE,");
+		sql.append(" :PAYMENT_DATE,");
+		sql.append(" STATUS,");
+		sql.append(" REMARKS,");
+		sql.append(" :REJECT_REASON");
+		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW ");
+		sql.append(" WHERE PAYMENTID IN (:PAYMENTID)");
+
+		paramMap = new MapSqlParameterSource();
+		paramMap.addValue("BATCH_ID", 0);
+		paramMap.addValue("PAYMENT_DETAIL1", getSMTParameter("DISB_FI_EMAIL", String.class));
+		paramMap.addValue("RESP_BATCH_ID", 0);
+		paramMap.addValue("TRANSACTIONREF", null);
+		paramMap.addValue("CHEQUE_NUMBER", null);
+		paramMap.addValue("DD_CHEQUE_CHARGE", null);
+		paramMap.addValue("PAYMENT_DATE", null);
+		paramMap.addValue("REJECT_REASON", null);
+		paramMap.addValue("PAYMENTID", Arrays.asList(disbursments));
 
 		try {
-			sql = new StringBuilder();
-			sql.append(" SELECT ConfigName ");
-			sql.append(" FROM DISBURSMENT_UPLOAD_MAPPING DM");
-			sql.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKCODE = DM.BANKCODE");
-			sql.append(" WHERE PB.PARTNERBANKID = :PARTNERBANKID AND DM.PAYMENTTYPE = :PAYMENTTYPE");
-
-			parameter = new MapSqlParameterSource();
-			parameter.addValue("PARTNERBANKID", disbursment.getPartnerBankID());
-			parameter.addValue("PAYMENTTYPE", disbursment.getPaymentType());
-
-			return namedJdbcTemplate.queryForObject(sql.toString(), parameter, String.class);
-
+			return namedJdbcTemplate.update(sql.toString(), paramMap);
 		} catch (Exception e) {
-			logger.warn("Mapping not available in DISBURSMENT_UPLOAD_MAPPING table for PartnerBankID "+disbursment.getPartnerBankID());
+			logger.error(Literal.EXCEPTION, e);
 		} finally {
+			paramMap = null;
 			sql = null;
-			parameter = null;
 		}
-		return null;
+
+		logger.debug(Literal.ENTERING);
+
+		return 0;
 	}
 
 	public class DisbursementProcessThread extends Thread {
