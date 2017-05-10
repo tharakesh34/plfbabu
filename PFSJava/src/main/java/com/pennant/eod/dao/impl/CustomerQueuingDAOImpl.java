@@ -14,10 +14,17 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.App.Database;
 
 public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
-	private static Logger				logger	= Logger.getLogger(CustomerQueuingDAOImpl.class);
+	private static Logger				logger			= Logger.getLogger(CustomerQueuingDAOImpl.class);
+
+	private static final String			TH_UPDATE_SQL	= "UPDATE Top(:RowCount) CustomerQueuing set ThreadId=:ThreadId "
+																+ "Where ThreadId IS NULL AND EodDate = :EodDate";
+	private static final String			TH_UPDATE_ORCL	= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
+																+ "Where ROWNUM <=:RowCount AND ThreadId IS NULL AND EodDate = :EodDate";
 
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
@@ -79,17 +86,16 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		source.addValue("RowCount", noOfRows);
 		source.addValue("ThreadId", threadId);
 		source.addValue("EodDate", date);
-		
-		StringBuilder selectSql = new StringBuilder("WITH CustomerQueue AS ");
-		selectSql.append("(SELECT EodDate,ThreadId, row_number() over(order by custId) RN FROM CustomerQueuing");
-		selectSql.append(" WHERE ThreadId IS NULL and EodDate = :EodDate )");
-		selectSql.append(" UPDATE CustomerQueue  SET ThreadId = :ThreadId ");
-		selectSql.append(" WHERE ThreadId IS NULL and RN <= :RowCount and EodDate = :EodDate");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
 		try {
-			this.namedParameterJdbcTemplate.update(selectSql.toString(), source);
+			if (App.DATABASE == Database.SQL_SERVER) {
+				logger.debug("selectSql: " + TH_UPDATE_SQL);
+				this.namedParameterJdbcTemplate.update(TH_UPDATE_SQL, source);
+
+			} else if (App.DATABASE == Database.ORACLE) {
+				logger.debug("selectSql: " + TH_UPDATE_ORCL);
+				this.namedParameterJdbcTemplate.update(TH_UPDATE_ORCL, source);
+			}
+
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error("Exception: ", dae);
 		}
@@ -177,5 +183,6 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
+
 
 }
