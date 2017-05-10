@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.service.payorderissue.impl;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +64,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.service.GenericService;
@@ -72,7 +72,6 @@ import com.pennant.backend.service.payorderissue.PayOrderIssueService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -221,10 +220,19 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 		issueHeader.setFinAdvancePaymentsList(finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(
 				issueHeader.getFinReference(), "_View"));
-		issueHeader.setFinanceDisbursements(financeDisbursementDAO.getFinanceDisbursementDetails(
-				issueHeader.getFinReference(), "", false));
-		issueHeader.setApprovedFinanceDisbursements(financeDisbursementDAO.getFinanceDisbursementDetails(
-				issueHeader.getFinReference(), "_Temp", false));
+		
+		List<FinanceDisbursement> teemList = financeDisbursementDAO.getFinanceDisbursementDetails(
+				issueHeader.getFinReference(), TableType.TEMP_TAB.getSuffix(), false);
+		List<FinanceDisbursement> mainList = financeDisbursementDAO.getFinanceDisbursementDetails(
+				issueHeader.getFinReference(), TableType.MAIN_TAB.getSuffix(), false);
+		
+		if (issueHeader.isLoanApproved()) {
+			issueHeader.setFinanceDisbursements(mainList);
+		}else{
+			issueHeader.setFinanceDisbursements(teemList);
+		}
+
+		issueHeader.setApprovedFinanceDisbursements(mainList);
 		logger.debug("Leaving");
 		return issueHeader;
 	}
