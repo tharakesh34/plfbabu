@@ -175,7 +175,9 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private int	fddLockPeriod;
 	private int	maxUnplannedEmi;
 	private int	maxReAgeHolidays;
+	
 	private String	calRoundingMode;
+	private String	roundingTarget;
 
 	// Advised profit Rates
 	private String grcAdvBaseRate;
@@ -1909,5 +1911,13 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setPromotionType(boolean promotionType) {
 		this.promotionType = promotionType;
+	}
+
+	public String getRoundingTarget() {
+		return roundingTarget;
+	}
+
+	public void setRoundingTarget(String roundingTarget) {
+		this.roundingTarget = roundingTarget;
 	}
 }

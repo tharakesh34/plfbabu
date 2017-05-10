@@ -327,7 +327,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private Date nextRolloverDate;
 	
+	//PV: 10MAY17: remove from exlcuded fields
 	private String	calRoundingMode;
+	private String	roundingTarget;
+
 	private boolean	alwMultiDisb;
 
 	// ===========================================
@@ -712,6 +715,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("swiftBranchCode");
 		excludeFields.add("receiptMode");
 		
+
+		excludeFields.add("roundingTarget");
 		return excludeFields;
 	}
 
@@ -3444,6 +3449,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setDueBucket(int dueBucket) {
 		this.dueBucket = dueBucket;
+	}
+
+	public String getRoundingTarget() {
+		return roundingTarget;
+	}
+
+	public void setRoundingTarget(String roundingTarget) {
+		this.roundingTarget = roundingTarget;
 	}
 
 	
