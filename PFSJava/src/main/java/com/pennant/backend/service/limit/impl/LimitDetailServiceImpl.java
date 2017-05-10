@@ -93,7 +93,6 @@ import com.pennant.backend.service.customermasters.CustomerGroupService;
 import com.pennant.backend.service.limit.LimitDetailService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.LimitConstants;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 
@@ -1279,19 +1278,17 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90101", "", valueParm), "EN"));
 			} else {
 				if(!limitHeader.isNew()){
-				int count = getLimitHeaderDAO().getLimitHeaderAndCustCountById(limitHeader.getHeaderId(), customer.getCustID());
-				if(count <= 0){
-					String[] valueParm = new String[1];
-					valueParm[0] = "Cif :"+custCIF + " And LimitId: " +limitHeader.getHeaderId();
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90266", "", valueParm), "EN"));
+					int count = getLimitHeaderDAO().getLimitHeaderAndCustCountById(limitHeader.getHeaderId(), customer.getCustID());
+					if(count <= 0){
+						String[] valueParm = new String[1];
+						valueParm[0] = "Cif :"+custCIF + " And LimitId: " +limitHeader.getHeaderId();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90266", "", valueParm), "EN"));
+					}
 				}
-				}
-				
+
 				if(limitHeader.isNew()) {
 					LimitHeader headerDetail = getLimitHeaderDAO().getLimitHeaderByCustomerId(customer.getCustID(), "_AView");
 					if(headerDetail != null) {
-						headerDetail.setCustFullName(PennantApplicationUtil.getFullName(headerDetail.getCustFName(), headerDetail.getCustMName(), headerDetail.getCustFullName()));
-
 						String[] valueParm = new String[1];
 						valueParm[0] = custCIF;
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90806", "", valueParm), "EN"));
@@ -1308,10 +1305,10 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				String[] valueParm = new String[1];
 				valueParm[0] = custGrpCode;
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90107", "", valueParm), "EN"));
+				return auditDetail;
 			} else {
 				if(limitHeader.isNew()) {
 					LimitHeader headerDetail = getLimitHeaderDAO().getLimitHeaderByCustomerGroupCode(customerGroup.getCustGrpID(), "_AView");
-					headerDetail.setCustFullName(PennantApplicationUtil.getFullName(headerDetail.getCustFName(), headerDetail.getCustMName(), headerDetail.getCustFullName()));
 					if(headerDetail != null) {
 						String[] valueParm = new String[1];
 						valueParm[0] = custGrpCode;
@@ -1390,13 +1387,13 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				}
 			}
 		}
-		
+
 		// validate groups and line amounts
 		List<ErrorDetails> errorDetails = validateLimitSetup(limitHeader);
 		for(ErrorDetails error:errorDetails) {
 			auditDetail.setErrorDetail(error);
 		}
-		
+
 		logger.debug("Leaving");
 		return auditDetail;
 	}

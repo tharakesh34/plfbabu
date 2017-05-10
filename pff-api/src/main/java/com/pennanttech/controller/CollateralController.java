@@ -396,6 +396,7 @@ public class CollateralController {
 				collateralStructure = collateralStructureService.getApprovedCollateralStructureByType(setup.getCollateralType());
 			}
 		}
+		collateralSetup.setCollateralStructure(collateralStructure);
 		
 		// process Extended field details
 		int totalUnits = 0;

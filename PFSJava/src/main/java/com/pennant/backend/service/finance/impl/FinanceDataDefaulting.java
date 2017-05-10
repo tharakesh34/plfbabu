@@ -86,7 +86,7 @@ public class FinanceDataDefaulting {
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 
 		//Validate Finance Type (Mandatory for Defaulting)
-		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(finMain.getFinType(), "_AView");
+		FinanceType financeType = financeTypeDAO.getOrgFinanceTypeByID(finMain.getFinType(), "_ORGView");
 		if (financeType == null) {
 			Promotion promotion = promotionService.getApprovedPromotionById(finMain.getFinType(),
 					FinanceConstants.MODULEID_PROMOTION, true);
@@ -95,7 +95,7 @@ public class FinanceDataDefaulting {
 				valueParm[0] = finMain.getFinType();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90202", valueParm)));
 			} else {
-				financeType = financeTypeDAO.getFinanceTypeByID(promotion.getFinType(), "_AView");
+				financeType = financeTypeDAO.getOrgFinanceTypeByID(promotion.getFinType(), "_ORGView");
 				if (financeType != null) {
 					financeType.setPromotionType(true);
 					financeType.setFinTypeFeesList(promotion.getFinTypeFeesList());

@@ -22,7 +22,7 @@ public class CoOwnerDetail extends AbstractWorkflowEntity implements Entity {
 
 	private long				customerId;
 	
-	@XmlElement
+	@XmlElement(name = "coOwnerID")
 	private int					coOwnerId;
 	private String				collateralRef;
 	
