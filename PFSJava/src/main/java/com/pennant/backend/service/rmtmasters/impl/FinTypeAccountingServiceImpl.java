@@ -111,9 +111,10 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 			auditHeader.setAuditReference(String.valueOf(finTypeAccounting.getFinType()));
 		} else {
 			getFinTypeAccountingDAO().update(finTypeAccounting, tableType);
-			if (StringUtils.isEmpty(tableType)) {
-				AccountingConfigCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
-			}
+		}
+
+		if (StringUtils.isEmpty(tableType)) {
+			AccountingConfigCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -188,7 +189,6 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 		if (PennantConstants.RECORD_TYPE_DEL.equals(finTypeAccounting.getRecordType())) {
 			tranType = PennantConstants.TRAN_DEL;
 			getFinTypeAccountingDAO().delete(finTypeAccounting, "");
-			AccountingConfigCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
 		} else {
 			finTypeAccounting.setRoleCode("");
 			finTypeAccounting.setNextRoleCode("");
@@ -204,10 +204,9 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 				tranType = PennantConstants.TRAN_UPD;
 				finTypeAccounting.setRecordType("");
 				getFinTypeAccountingDAO().update(finTypeAccounting, "");
-				AccountingConfigCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
 			}
 		}
-
+		AccountingConfigCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
 		getFinTypeAccountingDAO().delete(finTypeAccounting, "_TEMP");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -487,7 +486,7 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 				finTypeAccounting.setRecordType(rcdType);
 				finTypeAccounting.setRecordStatus(recordStatus);
 			}
-			if (StringUtils.isEmpty(type) && (updateRecord || deleteRecord )) {
+			if (StringUtils.isEmpty(type)) {
 				AccountingConfigCache.clearAccountSetCache(finTypeAccounting.getFinType(), finTypeAccounting.getEvent(), finTypeAccounting.getModuleId());
 			}
 
