@@ -612,7 +612,7 @@ public class CalculationUtil implements Serializable {
 		CalculationUtil.currencyDAO = currencyDAO;
 	}
 
-	private BigDecimal roundAmount(BigDecimal amount, String roundingMode, int roundingTarget) {
+	public static BigDecimal roundAmount(BigDecimal amount, String roundingMode, int roundingTarget) {
 		amount = amount.add(BigDecimal.valueOf(roundingTarget / 2)).divide(amount);
 
 		if (StringUtils.equals(roundingMode, RoundingMode.HALF_DOWN.name())) {

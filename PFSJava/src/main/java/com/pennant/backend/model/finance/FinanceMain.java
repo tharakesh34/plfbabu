@@ -329,7 +329,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	
 	//PV: 10MAY17: remove from exlcuded fields
 	private String	calRoundingMode;
-	private String	roundingTarget;
+	private int	roundingTarget;
 
 	private boolean	alwMultiDisb;
 
@@ -3451,13 +3451,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.dueBucket = dueBucket;
 	}
 
-	public String getRoundingTarget() {
+	public int getRoundingTarget() {
 		return roundingTarget;
 	}
 
-	public void setRoundingTarget(String roundingTarget) {
+	public void setRoundingTarget(int roundingTarget) {
 		this.roundingTarget = roundingTarget;
 	}
-
 	
 }
