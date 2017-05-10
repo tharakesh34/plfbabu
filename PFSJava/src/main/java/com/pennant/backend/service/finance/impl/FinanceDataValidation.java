@@ -1899,7 +1899,7 @@ public class FinanceDataValidation {
 			return errorDetails;
 		}
 		
-		// ScheduleMethod
+/*		// ScheduleMethod
 		if (StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Calculated Interest on Frequency";
@@ -1913,7 +1913,7 @@ public class FinanceDataValidation {
 			valueParm[0] = "Equal Installments (Principal and Interest)";
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30555", valueParm)));
 			return errorDetails;
-		}
+		}*/
 		
 		//Planned EMI Holidays also requested?
 		/*
@@ -1972,13 +1972,6 @@ public class FinanceDataValidation {
 					String[] valueParm = new String[1];
 					valueParm[0] = finMain.getStepPolicy();
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90252", valueParm)));
-				}
-				if(!StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT)){
-					String[] valueParm = new String[1];
-					valueParm[0] = finMain.getScheduleMethod();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30552", valueParm)));
-					return errorDetails;
-					
 				}
 			}
 		}
