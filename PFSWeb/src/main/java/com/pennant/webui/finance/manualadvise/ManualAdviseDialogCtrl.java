@@ -60,6 +60,7 @@ import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -125,6 +126,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	protected Hbox hbox_WaivedAmount;
 	protected Hbox hbox_PaidAmount;
 	protected Groupbox adviseMovements;
+	protected Label	   label_FeeTypeID;
 
 	private transient ManualAdviseListCtrl manualAdviseListCtrl;
 	private transient ManualAdviseService manualAdviseService;
@@ -434,9 +436,14 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			this.postDate.setValue(DateUtility.getAppDate());
 			
 		} else {
-			this.feeTypeID.setValue(aManualAdvise.getFeeTypeCode(), aManualAdvise.getFeeTypeDesc());
-			this.feeTypeID.setObject(new FeeType(aManualAdvise.getFeeTypeID()));
-			this.postDate.setButtonVisible(isReadOnly("ManualAdviseDialog_Sequence"));
+			if (aManualAdvise.getFeeTypeCode() != null) {
+				this.feeTypeID.setValue(aManualAdvise.getFeeTypeCode(), aManualAdvise.getFeeTypeDesc());
+				this.feeTypeID.setObject(new FeeType(aManualAdvise.getFeeTypeID()));
+			} else {
+				this.label_FeeTypeID.setValue("Bounce ID");
+				this.feeTypeID.setAttribute("BounceID", aManualAdvise.getBounceID());
+				this.feeTypeID.setValue(String.valueOf(aManualAdvise.getBounceID()), "");
+			}
 			this.valueDate.setValue(aManualAdvise.getValueDate());
 			this.postDate.setValue(aManualAdvise.getPostDate());
 		}
@@ -817,10 +824,18 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			readOnlyComponent(true, this.waivedAmount);
 			readOnlyComponent(true, this.adviseType);
 			readOnlyComponent(true, this.sequence);
+			readOnlyComponent(true, this.postDate);
 		}
 		readOnlyComponent(true, this.postDate);
-		readOnlyComponent(isReadOnly("ManualAdviseDialog_Remarks"), this.remarks);
-		readOnlyComponent(isReadOnly("ManualAdviseDialog_AdviseAmount"), this.adviseAmount);
+		if (!enqiryModule) {
+			readOnlyComponent(isReadOnly("ManualAdviseDialog_Remarks"), this.remarks);
+			readOnlyComponent(isReadOnly("ManualAdviseDialog_AdviseAmount"), this.adviseAmount);
+			readOnlyComponent(isReadOnly("ManualAdviseDialog_ValueDate"), this.valueDate);
+		} else {
+			readOnlyComponent(true, this.adviseAmount);
+			readOnlyComponent(true, this.remarks);
+			readOnlyComponent(true, this.valueDate);
+		}
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

@@ -88,9 +88,9 @@ private static final long serialVersionUID = 1L;
 	private ManualAdvise befImage;
 	@XmlTransient
 	private  LoggedInUser userDetails;
-	private long bounceID = Long.MIN_VALUE;
+	private long bounceID = 0;
 	private String bounceCode;
-	private long receiptID = Long.MIN_VALUE;
+	private long receiptID = 0;
 	
 	
 	public boolean isNew() {

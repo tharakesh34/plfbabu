@@ -64,6 +64,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.search.Filter;
 import com.pennant.webui.finance.manualadvise.model.ManualAdviseListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -119,6 +120,14 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		super.tableName = "ManualAdvise";
 		super.queueTableName = "ManualAdvise_TView";
 		super.enquiryTableName = "ManualAdvise_AView";
+	}
+	
+	@Override
+	protected  void doAddFilters() {
+		super.doAddFilters();
+		if(!enqiryModule){
+		this.searchObject.addFilter(new Filter("BounceID", 0, Filter.OP_EQUAL));
+		}
 	}
 
 	/**
