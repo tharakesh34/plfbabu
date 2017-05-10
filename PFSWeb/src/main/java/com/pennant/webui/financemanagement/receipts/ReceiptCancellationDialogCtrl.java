@@ -183,6 +183,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	protected Textbox										payment_finBranch;
 	
 	// List Header Details on payent Details
+	protected Listheader									listheader_Tds;
 	protected Listheader									listheader_LatePft;
 	protected Listheader									listheader_Refund;
 	protected Listheader									listheader_Penalty;
@@ -1135,6 +1136,12 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		if (paymentMap.get("totalPft").compareTo(BigDecimal.ZERO) > 0) {
 			totalSchAmount = totalSchAmount.add(paymentMap.get("totalPft"));
 			fillListItem(Labels.getLabel("listcell_totalPftPayNow.label"), paymentMap.get("totalPft"), finFormatter);
+		}
+		if (paymentMap.get("totalTds").compareTo(BigDecimal.ZERO) > 0) {
+			fillListItem(Labels.getLabel("listcell_totalTdsPayNow.label"), paymentMap.get("totalTds"), finFormatter);
+			this.listheader_Tds.setVisible(true);
+		}else{
+			this.listheader_Tds.setVisible(false);
 		}
 		if (paymentMap.get("totalLatePft").compareTo(BigDecimal.ZERO) > 0) {
 			totalSchAmount = totalSchAmount.add(paymentMap.get("totalLatePft"));

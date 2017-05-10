@@ -288,6 +288,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Decimalbox									payment_paidByCustomer;
 
 	// List Header Details on payent Details
+	protected Listheader									listheader_Tds;
 	protected Listheader									listheader_LatePft;
 	protected Listheader									listheader_Refund;
 	protected Listheader									listheader_Penalty;
@@ -3903,6 +3904,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (paymentMap.get("totalPft").compareTo(BigDecimal.ZERO) > 0) {
 			totalSchAmount = totalSchAmount.add(paymentMap.get("totalPft"));
 			fillListItem(Labels.getLabel("listcell_totalPftPayNow.label"), paymentMap.get("totalPft"));
+		}
+		if (paymentMap.get("totalTds").compareTo(BigDecimal.ZERO) > 0) {
+			fillListItem(Labels.getLabel("listcell_totalTdsPayNow.label"), paymentMap.get("totalTds"));
+			this.listheader_Tds.setVisible(true);
+		}else{
+			this.listheader_Tds.setVisible(false);
 		}
 		if (paymentMap.get("totalLatePft").compareTo(BigDecimal.ZERO) > 0) {
 			totalSchAmount = totalSchAmount.add(paymentMap.get("totalLatePft"));
