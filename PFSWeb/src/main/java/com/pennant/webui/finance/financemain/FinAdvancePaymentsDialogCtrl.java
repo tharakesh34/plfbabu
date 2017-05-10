@@ -336,11 +336,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.userAction = setListRecordStatus(this.userAction);
 			}
 
-			if(isWorkFlowEnabled()){
-				getUserWorkspace().allocateAuthorities("FinAdvancePaymentsDialog",getRole());
-			}else{
-				getUserWorkspace().allocateAuthorities("FinAdvancePaymentsDialog");
-			}
+			getUserWorkspace().allocateAuthorities("FinAdvancePaymentsDialog",getRole());
 
 			/* set components visible dependent of the users rights */
 			doCheckRights();

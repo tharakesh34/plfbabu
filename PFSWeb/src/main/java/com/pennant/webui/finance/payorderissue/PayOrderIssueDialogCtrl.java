@@ -187,11 +187,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		setPageComponents(window_PayOrderIssueDialog);
 
 		try {
-			if (!enqiryModule) {
-				/* set components visible dependent of the users rights */
-				doCheckRights();
-			}
-
+			
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("payOrderIssueHeader")) {
 				this.payOrderIssueHeader = (PayOrderIssueHeader) arguments.get("payOrderIssueHeader");
@@ -207,6 +203,11 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 			doLoadWorkFlow(this.payOrderIssueHeader.isWorkflow(), this.payOrderIssueHeader.getWorkflowId(),
 					this.payOrderIssueHeader.getNextTaskId());
+			
+			if (!enqiryModule) {
+				/* set components visible dependent of the users rights */
+				doCheckRights();
+			}
 
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
