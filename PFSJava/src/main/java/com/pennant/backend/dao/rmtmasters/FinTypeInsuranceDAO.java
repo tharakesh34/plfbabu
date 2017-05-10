@@ -63,4 +63,5 @@ public interface FinTypeInsuranceDAO {
 	void deleteByFinType(String finType, int moduleId, String type);
 	List<String> getFinTypeInsurances(String id, int moduleId);
 	List<FinTypeInsurances> getFinTypeInsurances(final String id, int moduleId, String type);
+	int getFinTypeInsuranceByRuleCode(String ruleCode, String type);
 }

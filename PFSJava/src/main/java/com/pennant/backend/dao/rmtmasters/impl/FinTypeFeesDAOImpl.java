@@ -477,6 +477,22 @@ public class FinTypeFeesDAOImpl extends BasisCodeDAO<FinTypeFees> implements Fin
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
 	}
 	
+	@Override
+	public int getFinTypeFeesByRuleCode(String ruleCode, String type) {
+		logger.debug("Entering");
+		FinTypeFees finTypeFees = new FinTypeFees();
+		finTypeFees.setRuleCode(ruleCode);
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From FinTypeFees");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where RuleCode =:RuleCode");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeFees);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
 	
 	private ErrorDetails  getError(String errorId, String finType,boolean isOriginationFee,String feeTypeCode,
 			String event, String userLanguage){

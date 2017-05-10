@@ -804,5 +804,22 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 		
 		return ruleList;
 	}
+	
+	@Override
+	public int getTransactionEntryByRuleCode(String ruleCode, String type) {
+		logger.debug("Entering");
+		TransactionEntry transactionEntry = new TransactionEntry();
+		transactionEntry.setAccountSubHeadRule(ruleCode);
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From RMTTransactionEntry");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where AccountSubHeadRule =:AccountSubHeadRule");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionEntry);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
 
 }

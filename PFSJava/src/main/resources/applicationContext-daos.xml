@@ -3471,6 +3471,9 @@
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="limitGroupService" ref="limitGroupService" />
+		<property name="finTypeFeesDAO" ref="finTypeFeesDAO" />
+		<property name="finTypeInsuranceDAO" ref="finTypeInsuranceDAO" />
+		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
 	</bean>
 
 	<!--============ Mail Template Details ============== -->

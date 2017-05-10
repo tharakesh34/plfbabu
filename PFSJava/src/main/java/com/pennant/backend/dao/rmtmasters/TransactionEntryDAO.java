@@ -72,5 +72,6 @@ public interface TransactionEntryDAO {
 	 Map<String,String> getAccountingFeeCodes(List<Long> accountSetId);
 	List<TransactionEntry> getTransactionEntriesbyFinType(String fintype, String type);
 	List<Rule> getSubheadRules(List<String> subHeadRules, String string);
+	int getTransactionEntryByRuleCode(String ruleCode, String type);
 
 }

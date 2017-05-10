@@ -67,5 +67,6 @@ public interface FinTypeFeesDAO {
 	void deleteByFinType(String finType, String type, int moduleId); 
 	void refresh(FinTypeFees entity);
 	List<FinTypeFees> getFinTypeFeesList(String finEvent,List<String> finTypes, int moduleId);
+	int getFinTypeFeesByRuleCode(String ruleCode, String type);
 
 }

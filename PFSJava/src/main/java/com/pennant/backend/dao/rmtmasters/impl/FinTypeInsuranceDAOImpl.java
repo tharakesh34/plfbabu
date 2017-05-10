@@ -414,5 +414,23 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
+	
+	@Override
+	public int getFinTypeInsuranceByRuleCode(String ruleCode, String type) {
+		logger.debug("Entering");
+		FinTypeInsurances finTypeInsurance = new FinTypeInsurances();
+		finTypeInsurance.setAmountRule(ruleCode);
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From FinTypeFees");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where AmountRule =:AmountRule");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeInsurance);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+	
 
 }

@@ -52,6 +52,9 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
+import com.pennant.backend.dao.rmtmasters.FinTypeInsuranceDAO;
+import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -66,6 +69,7 @@ import com.pennant.backend.service.limit.LimitGroupService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 
 /**
@@ -78,7 +82,9 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	private AuditHeaderDAO auditHeaderDAO;
 	private RuleDAO ruleDAO;
 	private LimitGroupService limitGroupService;
-
+	private FinTypeFeesDAO finTypeFeesDAO;
+	private FinTypeInsuranceDAO finTypeInsuranceDAO;
+	private TransactionEntryDAO transactionEntryDAO;
 	public RuleServiceImpl() {
 		super();
 	}
@@ -188,6 +194,8 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	public Rule getApprovedRuleById(String id,String module,String event) {
 		return getRuleDAO().getRuleByID(id,module,event, "_AView");
 	}
+	
+	
 
 	
 	/**
@@ -447,7 +455,25 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 				}
 			}
 		}
-
+		
+		if (StringUtils.trimToEmpty(rule.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
+			int count=0;
+			switch (rule.getRuleModule()){
+			case RuleConstants.MODULE_FEES:
+				count = finTypeFeesDAO.getFinTypeFeesByRuleCode(rule.getRuleCode(),"_View");
+				break;
+			case RuleConstants.MODULE_INSRULE:
+				count = finTypeInsuranceDAO.getFinTypeInsuranceByRuleCode(rule.getRuleCode(),"_View");
+				break;
+			case RuleConstants.MODULE_SUBHEAD:
+				count = transactionEntryDAO.getTransactionEntryByRuleCode(rule.getRuleCode(),"_View");
+				break;
+			}
+			if (count != 0) {
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
+			}
+		}
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !rule.isWorkflow()) {
 			auditDetail.setBefImage(befRule);
@@ -525,6 +551,30 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 
 	public void setLimitGroupService(LimitGroupService limitGroupService) {
 		this.limitGroupService = limitGroupService;
+	}
+	
+	public FinTypeFeesDAO getFinTypeFeesDAO() {
+		return finTypeFeesDAO;
+	}
+
+	public void setFinTypeFeesDAO(FinTypeFeesDAO finTypeFeesDAO) {
+		this.finTypeFeesDAO = finTypeFeesDAO;
+	}
+
+	public FinTypeInsuranceDAO getFinTypeInsuranceDAO() {
+		return finTypeInsuranceDAO;
+	}
+
+	public void setFinTypeInsuranceDAO(FinTypeInsuranceDAO finTypeInsuranceDAO) {
+		this.finTypeInsuranceDAO = finTypeInsuranceDAO;
+	}
+
+	public TransactionEntryDAO getTransactionEntryDAO() {
+		return transactionEntryDAO;
+	}
+
+	public void setTransactionEntryDAO(TransactionEntryDAO transactionEntryDAO) {
+		this.transactionEntryDAO = transactionEntryDAO;
 	}
 
 }
