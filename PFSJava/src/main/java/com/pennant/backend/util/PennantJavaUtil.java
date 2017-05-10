@@ -1770,7 +1770,7 @@ public class PennantJavaUtil {
 				"LimitParams_AView" }, "MSTGRP1", new String[] { "QueryCode", "QueryDesc" }, new String[][] { { "Active", "0", "1" } }, 300));
 
 		ModuleUtil.register("LimitHeader", new ModuleMapping("LimitHeader", LimitHeader.class, new String[] {
-				"LimitHeader", "LimitHeader_AView" }, "LIMITS_PROCESS", new String[] { "HeaderId",
+				"LimitHeader", "LimitHeader_AView" }, "BAJAJ_LIMIT_PROCESS", new String[] { "HeaderId",
 				"ResponsibleBranch" }, new String[][] { { "Active", "0", "1" } }, 300));
 
 		/*ModuleUtil.register("LimitLine", new ModuleMapping("Rule", Rule.class, new String[] { "Rules", "Rules_AView" },
