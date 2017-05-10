@@ -530,4 +530,9 @@ Update wifFinanceMain set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS NULL;
 		UPDATE  WIFFINSCHEDULEDETAILS_TEMP SET TDSPaid = 0;
 	</sql>
 	</changeSet>
+	<changeSet id="51" author="Kesav">
+	<sql>
+		UPDATE BMTAEevents SET MANDATORY = 1 WHERE AEEVENTCODE = 'ADDDBSN';
+	</sql>
+	</changeSet>
 </databaseChangeLog>
