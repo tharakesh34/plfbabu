@@ -15,6 +15,11 @@ public class CustLoanDetail {
 	public void setApplicationNo(String applicationNo) {
 		this.applicationNo = applicationNo;
 	}
+	@Override
+	public String toString() {
+		return "CustLoanDetail [segment=" + segment + ", applicationNo="
+				+ applicationNo + "]";
+	}
 	
 	
 }

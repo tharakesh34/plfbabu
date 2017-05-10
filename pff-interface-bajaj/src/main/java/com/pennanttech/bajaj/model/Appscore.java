@@ -25,4 +25,11 @@ public class Appscore {
 	public void setAppscoreDP(int appscoreDP) {
 		this.appscoreDP = appscoreDP;
 	}
+	@Override
+	public String toString() {
+		return "Appscore [appscore=" + appscore + ", appscoreDP=" + appscoreDP
+				+ "]";
+	}
+	
+	
 }

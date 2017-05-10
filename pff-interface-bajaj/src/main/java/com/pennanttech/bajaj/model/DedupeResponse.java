@@ -61,4 +61,14 @@ public class DedupeResponse {
 	public void setDemographicDetails(List<DemographicDetail> demographicDetails) {
 		this.demographicDetails = demographicDetails;
 	}
+
+	@Override
+	public String toString() {
+		return "DedupeResponse [responseCode=" + responseCode
+				+ ", customerStatusResponse=" + customerStatusResponse
+				+ ", appscore=" + appscore + ", errorDescription="
+				+ errorDescription + ", demographicDetails="
+				+ demographicDetails + "]";
+	}
+	
 }

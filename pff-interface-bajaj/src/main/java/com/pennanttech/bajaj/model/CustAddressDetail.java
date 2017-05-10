@@ -37,6 +37,12 @@ public class CustAddressDetail {
 	public void setLandmark(String landmark) {
 		this.landmark = landmark;
 	}
+	@Override
+	public String toString() {
+		return "CustAddressDetail [addressType=" + addressType + ", address="
+				+ address + ", city=" + city + ", pin=" + pin + ", landmark="
+				+ landmark + "]";
+	}
 
 	
 }

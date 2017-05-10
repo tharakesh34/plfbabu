@@ -62,6 +62,14 @@ public class CustDGDetail {
 	public void setVoiterId(String voiterId) {
 		this.voiterId = voiterId;
 	}
+	@Override
+	public String toString() {
+		return "CustDGDetail [customerId=" + customerId + ", customerType="
+				+ customerType + ", customerName=" + customerName
+				+ ", FatherorHusbandName=" + FatherorHusbandName
+				+ ", dateOfBirth=" + dateOfBirth + ", panNumber=" + panNumber
+				+ ", voiterId=" + voiterId + "]";
+	}
 
 	
 }

@@ -214,4 +214,18 @@ public class DedupCustomerDetail implements java.io.Serializable {
 		this.accountNumber = accountNumber;
 	}
 
+	@Override
+	public String toString() {
+		return "DedupCustomerDetail [custID=" + custID + ", newRecord="
+				+ newRecord + ", custCIF=" + custCIF + ", sourceId=" + sourceId
+				+ ", finReference=" + finReference + ", finType=" + finType
+				+ ", applicationNo=" + applicationNo + ", accountNumber="
+				+ accountNumber + ", customer=" + customer
+				+ ", customerDocumentsList=" + customerDocumentsList
+				+ ", addressList=" + addressList + ", customerPhoneNumList="
+				+ customerPhoneNumList + ", customerEMailList="
+				+ customerEMailList + ", returnStatus=" + returnStatus + "]";
+	}
+
+	
 }

@@ -62,5 +62,12 @@ public class ReportDetail {
 	public void setFiller7(String filler7) {
 		this.filler7 = filler7;
 	}
+	@Override
+	public String toString() {
+		return "ReportDetail [filler1=" + filler1 + ", filler2=" + filler2
+				+ ", filler3=" + filler3 + ", filler4=" + filler4
+				+ ", filler5=" + filler5 + ", filler6=" + filler6
+				+ ", filler7=" + filler7 + "]";
+	}
 
 }

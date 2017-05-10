@@ -31,6 +31,12 @@ public String getTimeProcessed() {
 public void setTimeProcessed(String timeProcessed) {
 	this.timeProcessed = timeProcessed;
 }
+@Override
+public String toString() {
+	return "ErrorDescription [errorCode=" + errorCode + ", errorDescription="
+			+ errorDescription + ", dateProcessed=" + dateProcessed
+			+ ", timeProcessed=" + timeProcessed + "]";
+}
 
 
 }

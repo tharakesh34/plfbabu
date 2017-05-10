@@ -50,6 +50,7 @@ public class CustomerDedupService {
 		try {
 			logger.debug("ServiceURL : " + serviceURL);
 			 response = (DedupeResponse) client.postProcess(serviceURL, "DedupeService", prepareRequest(dedupCustomerDetail), DedupeResponse.class);
+			 logger.info("Response : " + response.toString());
 			 customerResponse = prepareResponse(response);
 			
 		} catch (Exception exception) {
@@ -123,7 +124,6 @@ public class CustomerDedupService {
 				for (CustomerPhoneNumber phoneNumber : listPhoneNumbers) {
 					
 					if("MOBILE".equalsIgnoreCase(phoneNumber.getPhoneTypeCode()) && !mobileSelected){
-						request.setOfficeMobile(phoneNumber.getPhoneAreaCode() + phoneNumber.getPhoneNumber());
 						request.setMobile(phoneNumber.getPhoneNumber());
 						mobileSelected=true;
 					}
@@ -173,9 +173,8 @@ public class CustomerDedupService {
 			
 			for (CustomerPhoneNumber phoneNumber : listPhoneNumbers) {
 				
-				if("MOBILE".equalsIgnoreCase(phoneNumber.getPhoneTypeCode()) && !mobileSelected){
-					request.setOfficeMobile(phoneNumber.getPhoneAreaCode() + phoneNumber.getPhoneNumber());
-					request.setMobile(phoneNumber.getPhoneAreaCode() + phoneNumber.getPhoneNumber());
+				if("MOBILE".equalsIgnoreCase(phoneNumber.getPhoneTypeCode()) && !mobileSelected){					
+					request.setMobile(phoneNumber.getPhoneNumber());
 					mobileSelected=true;
 				}
 				
@@ -269,6 +268,7 @@ public class CustomerDedupService {
 		}
 		
 		customerResponse.setDedupCustomerDetails(details);
+		logger.info(" Dedupe Response : " + customerResponse.toString());
 		return customerResponse;
 	}
 	

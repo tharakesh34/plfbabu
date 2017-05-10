@@ -33,5 +33,12 @@ public class DedupCustomerResponse {
 			List<DedupCustomerDetail> dedupCustomerDetails) {
 		this.dedupCustomerDetails = dedupCustomerDetails;
 	}
+	@Override
+	public String toString() {
+		return "DedupCustomerResponse [response=" + response + ", errorCode="
+				+ errorCode + ", errorDesc=" + errorDesc
+				+ ", dedupCustomerDetails=" + dedupCustomerDetails + "]";
+	}
+
 	
 }

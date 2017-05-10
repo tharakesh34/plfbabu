@@ -116,6 +116,20 @@ public class CustomerStatusResponse {
 	public void setRblLanMatches(String rblLanMatches) {
 		this.rblLanMatches = rblLanMatches;
 	}
+	@Override
+	public String toString() {
+		return "CustomerStatusResponse [dealId=" + dealId + ", areaStatus="
+				+ areaStatus + ", customerStatus=" + customerStatus
+				+ ", customerID=" + customerID + ", applicationID="
+				+ applicationID + ", dedupeLANMatches=" + dedupeLANMatches
+				+ ", applicationNumberDisburse=" + applicationNumberDisburse
+				+ ", elcFlag=" + elcFlag + ", elcLimit=" + elcLimit
+				+ ", rejectLANMatches=" + rejectLANMatches
+				+ ", fraudLANMatches=" + fraudLANMatches + ", cobrandLimit="
+				+ cobrandLimit + ", cobrandAvailLimit=" + cobrandAvailLimit
+				+ ", cobrandCount=" + cobrandCount + ", wipLANMatches="
+				+ wipLANMatches + ", rblLanMatches=" + rblLanMatches + "]";
+	}
 
 	
 }

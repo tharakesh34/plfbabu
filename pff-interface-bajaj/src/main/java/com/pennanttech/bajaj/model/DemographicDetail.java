@@ -259,6 +259,30 @@ public class DemographicDetail {
 	public void setReportDetails(ReportDetail reportDetails) {
 		this.reportDetails = reportDetails;
 	}
+	@Override
+	public String toString() {
+		return "DemographicDetail [rejectionMatchid=" + rejectionMatchid
+				+ ", rejectionPercentage=" + rejectionPercentage
+				+ ", rejectReasion=" + rejectReasion + ", fraudmatchId="
+				+ fraudmatchId + ", fraudPercentage=" + fraudPercentage
+				+ ", dedupeSource=" + dedupeSource + ", sourceOrTarget="
+				+ sourceOrTarget + ", applicationNo=" + applicationNo
+				+ ", lead=" + lead + ", leadApplicants=" + leadApplicants
+				+ ", terrMatchedId=" + terrMatchedId + ", customerStatus="
+				+ customerStatus + ", customerLan=" + customerLan
+				+ ", loanProduct=" + loanProduct + ", loanStatus=" + loanStatus
+				+ ", firstDueDate=" + firstDueDate + ", currentBucket="
+				+ currentBucket + ", loanBalanceAmount=" + loanBalanceAmount
+				+ ", EMIAmount=" + EMIAmount + ", repayBankAccount="
+				+ repayBankAccount + ", loanDPDString=" + loanDPDString
+				+ ", tenure=" + tenure + ", disbursementDate="
+				+ disbursementDate + ", loanAmount=" + loanAmount
+				+ ", custDGDetails=" + custDGDetails + ", custAddressDetails="
+				+ custAddressDetails + ", custEmailDetails=" + custEmailDetails
+				+ ", custContactDetails=" + custContactDetails
+				+ ", custLoanDetails=" + custLoanDetails + ", reportDetails="
+				+ reportDetails + "]";
+	}
 	
 	
 }
