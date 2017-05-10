@@ -136,13 +136,6 @@ public class CalculationConstants {
 	public static final String	COMPARE_REPAY						= "R";
 	public static final String	COMPARE_CLOSEBAL					= "C";
 
-	
-	// Rounding Modes
-	public static final String	ROUNDINGMODE_HALFDOWN				= "HALF_DOWN";
-	public static final String	ROUNDINGMODE_HALFUP					= "HALF_UP";
-	public static final String	ROUNDINGMODE_CEILING				= "CEILING";
-	public static final String	ROUNDINGMODE_FLOOR					= "FLOOR";
-	
 	//Rate Review
 	public static final String	RATEREVIEW_RVWUPR					= "RVWUPR";
 	public static final String	RATEREVIEW_RVWALL					= "RVWALL";

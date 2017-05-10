@@ -1,5 +1,6 @@
 package com.pennant.backend.util;
 
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.backend.model.RoundingTarget;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 
@@ -188,6 +190,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> purposeList;
 	private static ArrayList<ValueLabel> presentmentExclusionList;
 	private static ArrayList<ValueLabel> presentmentBatchStatusList;
+	private static ArrayList<RoundingTarget> roundingTargetList;
 
 	
 
@@ -2474,20 +2477,6 @@ public class PennantStaticListUtil {
 		return planEmiHolidayMethods;
 	}
 	
-	/**
-	 * Method for Fetching Types of Rounding modes for Interest Calculation balance amount
-	 * @return
-	 */
-	public static ArrayList<ValueLabel> getRoundingModes() {
-		if(roundingModes == null){
-			roundingModes = new ArrayList<ValueLabel>(4);
-			roundingModes.add(new ValueLabel(CalculationConstants.ROUNDINGMODE_HALFDOWN,Labels.getLabel("label_ROUNDINGMODE_HALFDOWN")));
-			roundingModes.add(new ValueLabel(CalculationConstants.ROUNDINGMODE_HALFUP,Labels.getLabel("label_ROUNDINGMODE_HALFUP")));
-			roundingModes.add(new ValueLabel(CalculationConstants.ROUNDINGMODE_CEILING,Labels.getLabel("label_ROUNDINGMODE_CEILING")));
-			roundingModes.add(new ValueLabel(CalculationConstants.ROUNDINGMODE_FLOOR,Labels.getLabel("label_ROUNDINGMODE_FLOOR")));
-		}
-		return roundingModes;
-	}
 	
 	public static ArrayList<ValueLabel> getFeeCalculationTypes() {
 		if(feeCalculationTypes == null){
@@ -2642,6 +2631,37 @@ public class PennantStaticListUtil {
 			presentmentBatchStatusList.add(new ValueLabel("5", Labels.getLabel("label_Represent_Bounced")));
 		}
 		return presentmentBatchStatusList;
+	}
+
+	/**
+	 * Method for Fetching Types of Rounding modes for Interest Calculation balance amount
+	 * @return
+	 */
+	public static ArrayList<ValueLabel> getRoundingModes() {
+		if(roundingModes == null){
+			roundingModes = new ArrayList<ValueLabel>(7);
+			roundingModes.add(new ValueLabel(RoundingMode.UP.name(),RoundingMode.UP.name()));
+			roundingModes.add(new ValueLabel(RoundingMode.DOWN.name(),RoundingMode.DOWN.name()));
+			roundingModes.add(new ValueLabel(RoundingMode.CEILING.name(),RoundingMode.CEILING.name()));
+			roundingModes.add(new ValueLabel(RoundingMode.FLOOR.name(),RoundingMode.FLOOR.name()));
+			roundingModes.add(new ValueLabel(RoundingMode.HALF_UP.name(),RoundingMode.HALF_UP.name()));
+			roundingModes.add(new ValueLabel(RoundingMode.HALF_DOWN.name(),RoundingMode.HALF_DOWN.name()));
+			roundingModes.add(new ValueLabel(RoundingMode.HALF_EVEN.name(),RoundingMode.HALF_EVEN.name()));
+		}
+		return roundingModes;
+	}
+	
+	public static ArrayList<RoundingTarget> getroundingTargetList() {
+		if (roundingTargetList == null) {
+			roundingTargetList = new ArrayList<RoundingTarget>(6);
+			roundingTargetList.add(new RoundingTarget(0, 1, Labels.getLabel("label_Rounding_0")));
+			roundingTargetList.add(new RoundingTarget(5, 2, Labels.getLabel("label_Rounding_5")));
+			roundingTargetList.add(new RoundingTarget(10, 3, Labels.getLabel("label_Rounding_10")));
+			roundingTargetList.add(new RoundingTarget(25, 4, Labels.getLabel("label_Rounding_25")));
+			roundingTargetList.add(new RoundingTarget(50, 5, Labels.getLabel("label_Rounding_50")));
+			roundingTargetList.add(new RoundingTarget(100, 6, Labels.getLabel("label_Rounding_100")));
+		}
+		return roundingTargetList;
 	}
 }
 
