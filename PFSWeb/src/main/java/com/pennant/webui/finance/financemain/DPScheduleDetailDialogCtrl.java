@@ -235,6 +235,10 @@ public class DPScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetai
 			this.listBoxSchedule.getItems().clear();
 
 			FinScheduleData scheduleData = null;
+			
+			finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
+			finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
+			
 			scheduleData = ScheduleCalculator.getDownPaySchd(finScheduleData);
 			doFillScheduleList(scheduleData);
 

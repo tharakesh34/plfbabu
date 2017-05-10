@@ -2651,7 +2651,7 @@ public class PennantStaticListUtil {
 		return roundingModes;
 	}
 	
-	public static ArrayList<RoundingTarget> getroundingTargetList() {
+	public static ArrayList<RoundingTarget> getRoundingTargetList() {
 		if (roundingTargetList == null) {
 			roundingTargetList = new ArrayList<RoundingTarget>(6);
 			roundingTargetList.add(new RoundingTarget(0, 1, Labels.getLabel("label_Rounding_0")));

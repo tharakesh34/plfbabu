@@ -9,4 +9,15 @@
 <property name="call.maindb" value="PLF." dbms="oracle"/>
 
 
+<changeSet id="1" author="Siva">
+	<renameColumn columnDataType="varchar(10)" newColumnName="RoundingMode"
+		oldColumnName="CalRoundingMode" tableName="AdtRMTFinanceTypes" />
+</changeSet>
+
+<changeSet id="2" author="Siva">
+	<addColumn tableName="AdtRMTFinanceTypes">
+		<column name="RoundingTarget" type="int"/>
+	</addColumn>
+</changeSet>
+
 </databaseChangeLog>

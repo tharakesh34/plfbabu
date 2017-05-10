@@ -420,6 +420,9 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			financeMain.setSchPftDue(schPftDue);
 			financeMain.setSchPriDue(schPriDue);
 		}
+		
+		scheduleData.getFinanceMain().setCalRoundingMode(scheduleData.getFinanceType().getRoundingMode());
+		scheduleData.getFinanceMain().setRoundingTarget(scheduleData.getFinanceType().getRoundingTarget());
 
 		//TODO: PV 19JAN17 schdMethod to be added
 		scheduleData = ScheduleCalculator.reCalSchd(scheduleData, financeMain.getScheduleMethod());

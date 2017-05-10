@@ -1904,6 +1904,11 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 			}
 
 			BigDecimal newProfitRate = financeMain.getEffectiveRateOfReturn().add(bulkRateChangeHeader.getRateChange());
+			
+			financeDetail.getFinScheduleData().getFinanceMain()
+					.setCalRoundingMode(financeDetail.getFinScheduleData().getFinanceType().getRoundingMode());
+			financeDetail.getFinScheduleData().getFinanceMain()
+					.setRoundingTarget(financeDetail.getFinScheduleData().getFinanceType().getRoundingTarget());
 
 			//Schedule Re-Calculation based on Applied parameters
 			financeDetail.setFinScheduleData(ScheduleCalculator.changeRate(financeDetail.getFinScheduleData(), "", "", BigDecimal.ZERO,

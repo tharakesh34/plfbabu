@@ -150,6 +150,10 @@ public class CreateFinanceController extends SummaryDetailService {
 				finScheduleData.getFinanceMain().setCalculateRepay(true);
 				finScheduleData = ScheduleGenerator.getNewSchd(finScheduleData);
 				if (finScheduleData.getFinanceScheduleDetails().size() != 0) {
+					
+					finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
+					finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
+					
 					finScheduleData = ScheduleCalculator.getCalSchd(finScheduleData, BigDecimal.ZERO);
 					finScheduleData.setSchduleGenerated(true);
 					

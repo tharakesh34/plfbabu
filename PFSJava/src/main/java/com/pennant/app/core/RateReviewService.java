@@ -201,6 +201,9 @@ public class RateReviewService extends ServiceHelper {
 
 		BigDecimal totalPftSchdOld = profitDetail.getTotalPftSchd();
 		BigDecimal totalPftCpzOld = profitDetail.getTotalPftCpz();
+		
+		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
+		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
 
 		// Rate Changes applied for Finance Schedule Data
 		finScheduleData = ScheduleCalculator.refreshRates(finScheduleData);

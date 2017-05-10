@@ -221,6 +221,9 @@ public class SummaryDetailService {
 			finScheduleData.getFinanceMain().setRecalFromDate(financeMain.getNextRepayPftDate());
 			finScheduleData.getFinanceMain().setRecalToDate(finScheduleData.getFinanceMain().getMaturityDate());
 			finScheduleData.getFinanceMain().setRecalSchdMethod(finScheduleData.getFinanceMain().getScheduleMethod());
+			
+			finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
+			finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
 
 			if (StringUtils.equals(finScheduleData.getFinanceMain().getPlanEMIHMethod(),
 					FinanceConstants.PLANEMIHMETHOD_FRQ)) {

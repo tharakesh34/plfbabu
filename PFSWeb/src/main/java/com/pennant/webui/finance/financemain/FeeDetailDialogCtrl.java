@@ -1298,6 +1298,10 @@ public class FeeDetailDialogCtrl extends GFCBaseCtrl<FeeRule> {
 					getFinScheduleData().getFinanceMain().setEventFromDate(disbDate);
 					getFinScheduleData().getFinanceMain().setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 					getFinScheduleData().getFinanceMain().setRecalToDate(null);
+					
+					getFinScheduleData().getFinanceMain().setCalRoundingMode(getFinScheduleData().getFinanceType().getRoundingMode());
+					getFinScheduleData().getFinanceMain().setRoundingTarget(getFinScheduleData().getFinanceType().getRoundingTarget());
+					
 					setFinScheduleData(ScheduleCalculator.addDisbursement(getFinanceDetail().getFinScheduleData(),
 							BigDecimal.ZERO, modifiedFeevalue.negate(), false));
 

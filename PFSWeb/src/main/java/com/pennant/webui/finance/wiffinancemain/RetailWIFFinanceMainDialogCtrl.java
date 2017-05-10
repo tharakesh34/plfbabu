@@ -5931,6 +5931,11 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			getFinanceDetail().getFinScheduleData().getFinanceMain().setScheduleMaintained(false);
 			getFinanceDetail().getFinScheduleData().getFinanceMain().setMigratedFinance(false);
 			getFinanceDetail().getFinScheduleData().getFinanceMain().setScheduleRegenerated(false);
+			
+			getFinanceDetail().getFinScheduleData().getFinanceMain()
+					.setCalRoundingMode(getFinanceDetail().getFinScheduleData().getFinanceType().getRoundingMode());
+			getFinanceDetail().getFinScheduleData().getFinanceMain()
+					.setRoundingTarget(getFinanceDetail().getFinScheduleData().getFinanceType().getRoundingTarget());
 
 			//Build Finance Schedule Details List
 			if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() != 0) {

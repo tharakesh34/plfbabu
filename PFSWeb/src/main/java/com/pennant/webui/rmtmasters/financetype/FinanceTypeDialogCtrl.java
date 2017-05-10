@@ -110,6 +110,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.RoundingTarget;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -339,7 +340,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Checkbox cpzAtReAge;
 	protected Intbox fddLockPeriod;
 	protected Space space_roundingMode;
+	protected Space space_roundingTarget;
 	protected Combobox roundingMode;
+	protected Combobox roundingTarget;
 	protected Textbox frequencyDays;
 
 	// Advised Profit Rates
@@ -1340,7 +1343,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		this.fddLockPeriod.setValue(fddDays);
 		this.allowedRpyMethods.setValue(StringUtils.trimToEmpty(aFinanceType.getAlwdRpyMethods()));
-		fillComboBox(this.roundingMode, aFinanceType.getCalRoundingMode(), PennantStaticListUtil.getRoundingModes(), "");
+		fillComboBox(this.roundingMode, aFinanceType.getRoundingMode(), PennantStaticListUtil.getRoundingModes(), "");
+		fillRoundingTarget(this.roundingTarget, aFinanceType.getRoundingTarget(), PennantStaticListUtil.getRoundingTargetList());
 
 		// Overdue Penalty Details
 		this.applyODPenalty.setChecked(aFinanceType.isApplyODPenalty());
@@ -1437,6 +1441,36 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		logger.debug("Leaving doWriteBeanToComponents()");
 	}
+	
+
+	/**
+	 * Method to fill the combo box with given list of values
+	 * 
+	 * @param combobox
+	 * @param roundTarget
+	 * @param targetList
+	 */
+	private void fillRoundingTarget(Combobox combobox, int roundTarget, List<RoundingTarget> targetList) {
+		logger.debug("Entering");
+		combobox.getChildren().clear();
+		Comboitem comboitem = new Comboitem();
+		comboitem.setValue(PennantConstants.List_Select);
+		comboitem.setLabel(Labels.getLabel("Combo.Select"));
+		combobox.appendChild(comboitem);
+		combobox.setSelectedItem(comboitem);
+		combobox.setReadonly(true);
+		for (RoundingTarget target : targetList) {
+			comboitem = new Comboitem();
+			comboitem.setValue(target.getMinorUnit());
+			comboitem.setLabel(target.getDescription());
+			combobox.appendChild(comboitem);
+			if (roundTarget == target.getMinorUnit()) {
+				combobox.setSelectedItem(comboitem);
+			}
+		}
+		logger.debug("Leaving");
+	}
+
 
 	private void setRateLabels(FinanceType aFinanceType) {
 		// To Set Default Values in new mode
@@ -2789,11 +2823,21 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 		try {
-			if (this.row_RoundingMode.isVisible() && !isOverdraft) {
-				// if(isValidComboValue(this.roundingMode,
-				// Labels.getLabel("label_FinanceTypeDialog_RoundingMode.value"))){
-				aFinanceType.setCalRoundingMode(getComboboxValue(this.roundingMode));
-				// }
+			if (this.row_RoundingMode.isVisible()) {
+				if(isValidComboValue(this.roundingMode,
+						Labels.getLabel("label_FinanceTypeDialog_RoundingMode.value"))){
+					aFinanceType.setRoundingMode(getComboboxValue(this.roundingMode));
+				}
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			if (this.row_RoundingMode.isVisible()) {
+				if(isValidComboValue(this.roundingTarget,
+						Labels.getLabel("label_FinanceTypeDialog_RoundingTarget.value"))){
+					aFinanceType.setRoundingTarget(Integer.valueOf(getComboboxValue(this.roundingTarget)));
+				}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -3457,6 +3501,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.maxUnplannedEmi.setConstraint("");
 		this.maxReAgeHolidays.setConstraint("");
 		this.roundingMode.setConstraint("");
+		this.roundingTarget.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -3768,6 +3813,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.fddLockPeriod.setReadonly(isTrue);
 		this.manualSchedule.setDisabled(isTrue);
 		this.roundingMode.setDisabled(isTrue);
+		this.roundingTarget.setDisabled(isTrue);
 		this.alwMaxDisbCheckReq.setDisabled(isTrue);
 		this.quickDisb.setDisabled(isTrue);
 
@@ -3932,6 +3978,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.space_rpyHierarchy.setSclass("");
 			this.space_planEmiMethod.setSclass("");
 			this.space_roundingMode.setSclass("");
+			this.space_roundingTarget.setSclass("");
 			this.space_startDate.setSclass("");
 			this.space_endDate.setSclass("");
 			this.space_finAssetType.setSclass("");
@@ -5917,6 +5964,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.fddLockPeriod.setErrorMessage("");
 		this.allowedRpyMethods.setErrorMessage("");
 		this.roundingMode.setErrorMessage("");
+		this.roundingTarget.setErrorMessage("");
 
 		// OverDue Details
 		this.oDChargeCalOn.setErrorMessage("");

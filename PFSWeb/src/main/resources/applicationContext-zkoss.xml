@@ -2850,6 +2850,8 @@
 		<property name="receiptRealizationService" ref="receiptRealizationService" />
 	</bean>
 	
+	<!--============ Receipt Inquiry Details ============== -->
+	
 	<bean id="receiptEnquiryListCtrl"
 		class="com.pennant.webui.financemanagement.receipts.ReceiptEnquiryListCtrl"
 		parent="basisListCtrl" scope="prototype">
@@ -2859,6 +2861,14 @@
 	<bean id="receiptEnquiryDialogCtrl"
 		class="com.pennant.webui.financemanagement.receipts.ReceiptEnquiryDialogCtrl"
 		parent="basisCtrl" scope="prototype" />
+	
+	<!--============ Fee Receipt Details ============== -->
+	
+	<bean id="feeReceiptListCtrl"
+		class="com.pennant.webui.financemanagement.receipts.FeeReceiptListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="receiptService" ref="receiptService" />
+	</bean>
 	
 	<!--============ Receipt Cancellation Process Details ============== -->
 	<!-- (Schedule Repayment /Partial Settlement / Early Settlement ) -->

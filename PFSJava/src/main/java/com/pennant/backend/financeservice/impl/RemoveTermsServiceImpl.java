@@ -28,11 +28,15 @@ public class RemoveTermsServiceImpl  extends GenericService<FinServiceInstructio
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceMainDAO financeMainDAO;
 	
-	public FinScheduleData getRmvTermsDetails(FinScheduleData finscheduleData) {
+	public FinScheduleData getRmvTermsDetails(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 
 		FinScheduleData finSchdData = null;
-		finSchdData = ScheduleCalculator.deleteTerm(finscheduleData);
+		
+		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
+		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
+		
+		finSchdData = ScheduleCalculator.deleteTerm(finScheduleData);
 
 		logger.debug("Leaving");
 

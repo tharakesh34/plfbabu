@@ -33,6 +33,10 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 		logger.debug("Entering");
 
 		FinScheduleData finSchdData = null;
+		
+		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
+		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
+		
 		finSchdData = ScheduleCalculator.changeProfit(finScheduleData, amount);
 
 		logger.debug("Leaving");

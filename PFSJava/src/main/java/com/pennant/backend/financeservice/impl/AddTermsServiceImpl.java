@@ -16,6 +16,9 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 	public FinScheduleData getAddTermsDetails(FinScheduleData finscheduleData,FinServiceInstruction finServiceInstruction) {
 		logger.debug("Entering");
 
+		finscheduleData.getFinanceMain().setCalRoundingMode(finscheduleData.getFinanceType().getRoundingMode());
+		finscheduleData.getFinanceMain().setRoundingTarget(finscheduleData.getFinanceType().getRoundingTarget());
+		
 		finscheduleData = ScheduleCalculator.addTerm(finscheduleData,finServiceInstruction.getTerms());
 
 		logger.debug("Leaving");

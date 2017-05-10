@@ -176,7 +176,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private int	maxUnplannedEmi;
 	private int	maxReAgeHolidays;
 	
-	private String	calRoundingMode;
+	private String	roundingMode;
 	private int	roundingTarget;
 
 	// Advised profit Rates
@@ -1765,11 +1765,11 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.maxReAgeHolidays = maxReAgeHolidays;
 	}
 
-	public String getCalRoundingMode() {
-		return calRoundingMode;
+	public String getRoundingMode() {
+		return roundingMode;
 	}
-	public void setCalRoundingMode(String calRoundingMode) {
-		this.calRoundingMode = calRoundingMode;
+	public void setRoundingMode(String roundingMode) {
+		this.roundingMode = roundingMode;
 	}
 
 	public String getFrequencyDays() {

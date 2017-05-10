@@ -30,70 +30,79 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 	
 	/**
 	 * Method for Processing Postponement for the selected period by adding new terms
-	 * @param finscheduleData
+	 * @param finScheduleData
 	 * @return FinScheduleData
 	 */
 	@Override
-	public FinScheduleData doPostponement(FinScheduleData finscheduleData, FinServiceInstruction serviceInstruction, String scheduleMethod) {
+	public FinScheduleData doPostponement(FinScheduleData finScheduleData, FinServiceInstruction serviceInstruction, String scheduleMethod) {
 		logger.debug("Entering");
 		
-		finscheduleData.getFinanceMain().setRecalType(serviceInstruction.getRecalType());
-		finscheduleData.getFinanceMain().setRecalFromDate(serviceInstruction.getRecalFromDate());
-		finscheduleData.getFinanceMain().setRecalToDate(serviceInstruction.getRecalToDate());
-		finscheduleData.getFinanceMain().setRecalSchdMethod(scheduleMethod);
-		finscheduleData.getFinanceMain().setPftIntact(serviceInstruction.isPftIntact());
+		finScheduleData.getFinanceMain().setRecalType(serviceInstruction.getRecalType());
+		finScheduleData.getFinanceMain().setRecalFromDate(serviceInstruction.getRecalFromDate());
+		finScheduleData.getFinanceMain().setRecalToDate(serviceInstruction.getRecalToDate());
+		finScheduleData.getFinanceMain().setRecalSchdMethod(scheduleMethod);
+		finScheduleData.getFinanceMain().setPftIntact(serviceInstruction.isPftIntact());
 		
-		finscheduleData = ScheduleCalculator.postpone(finscheduleData);
+		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
+		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
+		
+		finScheduleData = ScheduleCalculator.postpone(finScheduleData);
 		logger.debug("Leaving");
-		return finscheduleData;
+		return finScheduleData;
 	}
 	
 	/**
 	 * Method for Processing Unplanned EMI holidays for the selected period
-	 * @param finscheduleData
+	 * @param finScheduleData
 	 * @return FinScheduleData
 	 */
 	@Override
-	public FinScheduleData doUnPlannedEMIH(FinScheduleData finscheduleData) {
+	public FinScheduleData doUnPlannedEMIH(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 		
-		String scheduleMethod = finscheduleData.getFinanceMain().getScheduleMethod();
+		String scheduleMethod = finScheduleData.getFinanceMain().getScheduleMethod();
 		
-		if(finscheduleData.getFinServiceInstructions() != null) {
-			for(FinServiceInstruction serviceInst: finscheduleData.getFinServiceInstructions()) {
-				finscheduleData.getFinanceMain().setRecalType(serviceInst.getRecalType());
-				finscheduleData.getFinanceMain().setRecalFromDate(serviceInst.getRecalFromDate());
-				finscheduleData.getFinanceMain().setRecalToDate(serviceInst.getRecalToDate());
-				finscheduleData.getFinanceMain().setAdjTerms(serviceInst.getTerms());
-				finscheduleData.getFinanceMain().setRecalSchdMethod(scheduleMethod);
-				finscheduleData.getFinanceMain().setPftIntact(serviceInst.isPftIntact());
+		if(finScheduleData.getFinServiceInstructions() != null) {
+			for(FinServiceInstruction serviceInst: finScheduleData.getFinServiceInstructions()) {
+				finScheduleData.getFinanceMain().setRecalType(serviceInst.getRecalType());
+				finScheduleData.getFinanceMain().setRecalFromDate(serviceInst.getRecalFromDate());
+				finScheduleData.getFinanceMain().setRecalToDate(serviceInst.getRecalToDate());
+				finScheduleData.getFinanceMain().setAdjTerms(serviceInst.getTerms());
+				finScheduleData.getFinanceMain().setRecalSchdMethod(scheduleMethod);
+				finScheduleData.getFinanceMain().setPftIntact(serviceInst.isPftIntact());
 			}
 		}
 		
+		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
+		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
+		
 		// call schedule calculator
-		finscheduleData = ScheduleCalculator.unPlannedEMIH(finscheduleData, BigDecimal.ZERO, scheduleMethod);
+		finScheduleData = ScheduleCalculator.unPlannedEMIH(finScheduleData, BigDecimal.ZERO, scheduleMethod);
 		logger.debug("Leaving");
-		return finscheduleData;
+		return finScheduleData;
 	}
 	
 	/**
 	 * Method for Processing Re-Aging for the selected period by adding new terms
-	 * @param finscheduleData
+	 * @param finScheduleData
 	 * @return FinScheduleData
 	 */
 	@Override
-	public FinScheduleData doReAging(FinScheduleData finscheduleData, FinServiceInstruction serviceInstruction, String scheduleMethod) {
+	public FinScheduleData doReAging(FinScheduleData finScheduleData, FinServiceInstruction serviceInstruction, String scheduleMethod) {
 		logger.debug("Entering");
 		
-		finscheduleData.getFinanceMain().setRecalType(serviceInstruction.getRecalType());
-		finscheduleData.getFinanceMain().setRecalFromDate(serviceInstruction.getRecalFromDate());
-		finscheduleData.getFinanceMain().setRecalToDate(serviceInstruction.getRecalToDate());
-		finscheduleData.getFinanceMain().setRecalSchdMethod(scheduleMethod);
-		finscheduleData.getFinanceMain().setPftIntact(serviceInstruction.isPftIntact());
+		finScheduleData.getFinanceMain().setRecalType(serviceInstruction.getRecalType());
+		finScheduleData.getFinanceMain().setRecalFromDate(serviceInstruction.getRecalFromDate());
+		finScheduleData.getFinanceMain().setRecalToDate(serviceInstruction.getRecalToDate());
+		finScheduleData.getFinanceMain().setRecalSchdMethod(scheduleMethod);
+		finScheduleData.getFinanceMain().setPftIntact(serviceInstruction.isPftIntact());
 		
-		finscheduleData = ScheduleCalculator.reAging(finscheduleData);
+		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
+		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
+		
+		finScheduleData = ScheduleCalculator.reAging(finScheduleData);
 		logger.debug("Leaving");
-		return finscheduleData;
+		return finScheduleData;
 	}
 
 	/**

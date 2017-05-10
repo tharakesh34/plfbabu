@@ -14,6 +14,10 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 
 	public FinScheduleData getCancelDisbDetails(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
+		
+		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
+		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
+		
 		FinScheduleData finSchData = ScheduleCalculator.reCalSchd(finScheduleData,"");
 		logger.debug("Leaving");
 		return finSchData;

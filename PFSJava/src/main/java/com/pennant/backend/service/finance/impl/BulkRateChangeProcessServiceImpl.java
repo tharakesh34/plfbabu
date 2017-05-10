@@ -601,6 +601,9 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		}
 
 		BigDecimal newProfitRate = financeMain.getEffectiveRateOfReturn().add(bulkRateChangeHeader.getRateChange());
+		
+		financeDetail.getFinScheduleData().getFinanceMain().setCalRoundingMode(financeDetail.getFinScheduleData().getFinanceType().getRoundingMode());
+		financeDetail.getFinScheduleData().getFinanceMain().setRoundingTarget(financeDetail.getFinScheduleData().getFinanceType().getRoundingTarget());
 
 		//Schedule Re-calculation based on Applied parameters
 		financeDetail.setFinScheduleData(ScheduleCalculator.changeRate(financeDetail.getFinScheduleData(), financeMain.getRepayBaseRate(), "", BigDecimal.ZERO,

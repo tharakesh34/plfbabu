@@ -624,7 +624,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		logger.debug("Entering");
 		combobox.getChildren().clear();
 		Comboitem comboitem = new Comboitem();
-		comboitem.setValue("#");
+		comboitem.setValue(PennantConstants.List_Select);
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		combobox.appendChild(comboitem);
 		combobox.setSelectedItem(comboitem);
@@ -654,7 +654,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		logger.debug("Entering fillComboBox()");
 		combobox.getChildren().clear();
 		Comboitem comboitem = new Comboitem();
-		comboitem.setValue("#");
+		comboitem.setValue(PennantConstants.List_Select);
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		combobox.appendChild(comboitem);
 		combobox.setSelectedItem(comboitem);

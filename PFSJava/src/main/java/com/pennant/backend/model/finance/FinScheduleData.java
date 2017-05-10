@@ -389,7 +389,8 @@ public class FinScheduleData {
 		this.financeMain.setPlanEMIHMaxPerYear(financeType.getPlanEMIHMaxPerYear());
 		this.financeMain.setPlanEMIHMax(financeType.getPlanEMIHMax());
 		this.financeMain.setPlanEMICpz(financeType.isPlanEMICpz());
-		this.financeMain.setCalRoundingMode(financeType.getCalRoundingMode());
+		this.financeMain.setCalRoundingMode(financeType.getRoundingMode());
+		this.financeMain.setRoundingTarget(financeType.getRoundingTarget());
 		this.financeMain.setAlwMultiDisb(financeType.isFinIsAlwMD());
 		this.financeMain.setUnPlanEMIHLockPeriod(financeType.getUnPlanEMIHLockPeriod());
 		this.financeMain.setMaxUnplannedEmi(financeType.getMaxUnplannedEmi());
