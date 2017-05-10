@@ -1100,7 +1100,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 				List<ReturnDataSet> returnDataSetList = getPostings(issueHeader);
 				doFillAccounting(returnDataSetList);
 			} else {
-				List<ReturnDataSet> datasetList = getDisbursementPostings().getDisbPosting(issueHeader);
+				List<ReturnDataSet> datasetList = getDisbursementPostings().getDisbPosting(issueHeader.getFinAdvancePaymentsList(), financeMain);
 				doFillAccounting(datasetList);
 			}
 

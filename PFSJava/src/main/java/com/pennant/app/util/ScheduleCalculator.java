@@ -240,7 +240,7 @@ public class ScheduleCalculator {
 		logger.debug("Leaving");
 	}
 
-	private ScheduleCalculator(String method, FinScheduleData finScheduleData, BigDecimal desiredPftAmount) {
+ 	private ScheduleCalculator(String method, FinScheduleData finScheduleData, BigDecimal desiredPftAmount) {
 		logger.debug("Entering");
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
@@ -2783,6 +2783,7 @@ public class ScheduleCalculator {
 		//BigDecimal cal_IRR = BigDecimal.ZERO;
 		BigDecimal cal_XIRR = BigDecimal.ZERO;
 		BigDecimal cal_XIRR_WithFee = BigDecimal.ZERO;
+		BigDecimal calcAmount = BigDecimal.ZERO;
 		if (finMain.getTotalProfit().compareTo(BigDecimal.ZERO) > 0) {
 
 			List<BigDecimal> schAmountList = new ArrayList<BigDecimal>(1);
@@ -2803,14 +2804,17 @@ public class ScheduleCalculator {
 			for (FinanceScheduleDetail finScheduleDetail : finSchdData.getFinanceScheduleDetails()) {
 
 				if (finScheduleDetail.isDisbOnSchDate()) {
-					schAmountList.add(finScheduleDetail.getDisbAmount().subtract(finScheduleDetail.getDownPaymentAmount()).multiply(new BigDecimal(-1)));
-					repayDateList.add(finScheduleDetail.getSchDate());
+ 					repayDateList.add(finScheduleDetail.getSchDate());
+					
+					calcAmount = finScheduleDetail.getDisbAmount().subtract(finScheduleDetail.getDownPaymentAmount());
+					calcAmount = calcAmount.multiply(new BigDecimal(-1));
+					schAmountList.add(calcAmount);
 					
 					if(DateUtility.compare(finScheduleDetail.getSchDate(), finMain.getFinStartDate())==0){
-						schAmountListWithFee.add(finScheduleDetail.getDisbAmount().add(feeAmount).subtract(finScheduleDetail.getDownPaymentAmount()).multiply(new BigDecimal(-1)));
-					}else{
-						schAmountListWithFee.add(finScheduleDetail.getDisbAmount().subtract(finScheduleDetail.getDownPaymentAmount()).multiply(new BigDecimal(-1)));
-					}
+						calcAmount = calcAmount.add(feeAmount);
+					} 
+					
+					schAmountListWithFee.add(calcAmount);
 				}
 
 				if (finScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
@@ -2828,8 +2832,8 @@ public class ScheduleCalculator {
 			cal_XIRR_WithFee = RateCalculation.calculateXIRR(schAmountListWithFee, repayDateList);
 		}
 
-		finMain.setAnualizedPercRate(cal_XIRR);
-		finMain.setEffectiveRateOfReturn(cal_XIRR_WithFee);
+		finMain.setAnualizedPercRate(cal_XIRR.setScale(9));
+		finMain.setEffectiveRateOfReturn(cal_XIRR_WithFee.setScale(9));
 		logger.debug("Leaving");
 	}
 

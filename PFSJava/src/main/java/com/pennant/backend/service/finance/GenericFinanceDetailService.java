@@ -117,6 +117,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.contractor.ContractorAssetDetailService;
 import com.pennant.backend.service.finance.impl.FinInsuranceValidation;
 import com.pennant.backend.service.mandate.FinMandateService;
+import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
@@ -208,6 +209,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private FinInsuranceValidation			finInsuranceValidation;
 	private FinAssetTypesValidation			finAssetTypesValidation;
 	private FinAssetTypeDAO					finAssetTypeDAO;
+	private DisbursementPostings			disbursementPostings;
 
 	// EOD Process Checking
 	private CustomerQueuingDAO				customerQueuingDAO;
@@ -1291,54 +1293,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 		return aeEvent;
 	}
-
-	/**
-	 * 
-	 * @param accountingSetEntries
-	 * @param financeDetail
-	 * @throws Exception
-	 */
-	private List<ReturnDataSet> prepareDisbInstructionPosting(AuditHeader auditHeader, FinanceDetail financeDetail, AEEvent aeEvent)
-			throws Exception {
-
-		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_DISBINS);
-		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-		
-		aeEvent.getAcSetIDList().clear();
-		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
-		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), AccountEventConstants.ACCEVENT_DISBINS, FinanceConstants.MODULEID_PROMOTION));
-		} else {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), AccountEventConstants.ACCEVENT_DISBINS, FinanceConstants.MODULEID_FINTYPE));
-		}
-
-		List<FinAdvancePayments> advPayList = financeDetail.getAdvancePaymentsList();
-
-		//loop through the disbursements.
-		if (advPayList != null && !advPayList.isEmpty()) {
-
-			for (int i = 0; i < advPayList.size(); i++) {
-				FinAdvancePayments advPayment = advPayList.get(i);
-
-				aeEvent.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
-				amountCodes.setDisbInstAmt(advPayment.getAmtToBeReleased());
-				amountCodes.setPartnerBankAc(advPayment.getPartnerBankAc());
-				amountCodes.setPartnerBankAcType(advPayment.getPartnerBankAcType());
-				//aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
-
-				if (advPayment.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(advPayment.getRecordType())) {
-					aeEvent.setNewRecord(true);
-				}
-				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
-				aeEvent.setLinkedTranId(0);
-				postingsPreparationUtil.postAccounting(aeEvent);
-				advPayment.setLinkedTranId(aeEvent.getLinkedTranId());
-			}
-		}
-
-		return list;
-	}
+ 
 
 	protected long getAccountingResults(AuditHeader auditHeader, FinanceDetail financeDetail,
 			List<ReturnDataSet> accountingSetEntries, Date curBDay, AEEvent aeEvent)
@@ -1523,35 +1478,31 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSN)
 				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSP)) {
 			try {
-				accountingSetEntries.addAll(prepareDisbInstructionPosting(auditHeader, financeDetail, aeEvent));
+				Map<Long, Long> finAdvanceMap = disbursementPostings.prepareDisbPostingApproval(financeDetail.getAdvancePaymentsList(), 
+						financeDetail.getFinScheduleData().getFinanceMain(), auditHeader.getAuditBranchCode());
+				 
+				List<FinAdvancePayments> advPayList = financeDetail.getAdvancePaymentsList();
 
+				//loop through the disbursements.
+				if (advPayList != null && !advPayList.isEmpty()) {
+
+					for (int i = 0; i < advPayList.size(); i++) {
+						FinAdvancePayments advPayment = advPayList.get(i);
+						if(finAdvanceMap.containsKey(advPayment.getPaymentId())){
+							advPayment.setLinkedTranId(finAdvanceMap.get(advPayment.getPaymentId()));
+						}
+					}
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-
-		if (auditHeader.getErrorMessage() == null || auditHeader.getErrorMessage().size() == 0) {
-
-			// save Postings
-			if (accountingSetEntries != null && !accountingSetEntries.isEmpty()) {
-				getPostingsDAO().saveBatch(accountingSetEntries);
-			}
-
-			// Save/Update Finance Profit Details
-			boolean isNew = false;
-
-			if (StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
-				isNew = true;
-			}
-
-			FinanceProfitDetail profitDetail = doSave_PftDetails(pftDetail, isNew);
-
-			//Account Details Update
-			if (accountingSetEntries != null && !accountingSetEntries.isEmpty()) {
-				getAccountProcessUtil().procAccountUpdate(accountingSetEntries);
-			}
+		boolean isNew = false;
+		if (StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+			isNew = true;
 		}
 
+		doSave_PftDetails(pftDetail, isNew);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -2797,6 +2748,14 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	
 	public void setAccrualService(AccrualService accrualService) {
 		this.accrualService = accrualService;
+	}
+
+	public DisbursementPostings getDisbursementPostings() {
+		return disbursementPostings;
+	}
+
+	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
+		this.disbursementPostings = disbursementPostings;
 	}
 
 }

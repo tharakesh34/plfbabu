@@ -4172,7 +4172,8 @@
 		<property name="agreementFieldsDetailService" ref="agreementFieldsDetailService" />
 		<property name="finMandateService" ref="finMandateService" />
 		<property name="accrualService" ref="accrualService" />
-
+		<property name="disbursementPostings" ref="disbursementPostings" />
+		
 		<!-- Limits -->
 		<property name="limitManagement" ref="limitManagement" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />

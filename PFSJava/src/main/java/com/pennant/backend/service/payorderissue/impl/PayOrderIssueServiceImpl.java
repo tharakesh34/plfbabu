@@ -42,9 +42,11 @@
  */
 package com.pennant.backend.service.payorderissue.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -70,6 +72,7 @@ import com.pennant.backend.service.payorderissue.PayOrderIssueService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.exception.PFFInterfaceException;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -148,7 +151,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			getPayOrderIssueHeaderDAO().update(payOrderIssueHeader, tableType);
 		}
 
-		List<AuditDetail> details = processFinAdvancepayments(payOrderIssueHeader, tableType);
+		List<AuditDetail> details = processFinAdvancepayments(payOrderIssueHeader, tableType,null);
 		auditDetails.addAll(details);
 
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,
@@ -274,8 +277,18 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 				.copyProperties((PayOrderIssueHeader) auditHeader.getAuditDetail().getModelData(), payOrderIssueHeader);
 		calcluatePOHeaderDetails(payOrderIssueHeader);
 		
-
-		boolean posted= disbursementPostings.processPostings(payOrderIssueHeader, auditHeader.getAuditBranchCode());
+		boolean posted=true;
+		Map<Long, Long> data =null;
+		try {
+			 data = disbursementPostings.prepareDisbPostingApproval(payOrderIssueHeader.getFinAdvancePaymentsList(), payOrderIssueHeader.getFinanceMain(), auditHeader.getAuditBranchCode());
+			for (Long linkedID : data.values()) {
+				if (linkedID==Long.MIN_VALUE) {
+					posted=false;
+				}
+			}
+		} catch (Exception e) {
+			posted=false;
+		}
 		if (!posted) {
 			auditHeader.setErrorDetails(new ErrorDetails("0000", "Postigs Failed", null));
 			return auditHeader;
@@ -305,7 +318,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		}
 
 		//Retrieving List of Audit Details For PayOrderIssueHeader Asset related modules
-		List<AuditDetail> details = processFinAdvancepayments(payOrderIssueHeader, "");
+		List<AuditDetail> details = processFinAdvancepayments(payOrderIssueHeader, "",data);
 		auditDetails.addAll(details);
 
 		finAdvancePaymentsDAO.deleteByFinRef(payOrderIssueHeader.getFinReference(), "_Temp");
@@ -513,7 +526,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	 * @param type
 	 * @return
 	 */
-	private List<AuditDetail> processFinAdvancepayments(PayOrderIssueHeader payOrderIssueHeader, String type) {
+	private List<AuditDetail> processFinAdvancepayments(PayOrderIssueHeader payOrderIssueHeader, String type,Map<Long, Long> data) {
 		logger.debug(" Entering ");
 
 		List<FinAdvancePayments> list = payOrderIssueHeader.getFinAdvancePaymentsList();
@@ -563,10 +576,15 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 			if (save) {
 				count = count + 1;
-				finAdvancePaymentsDAO.save(finAdvpay, type);
+				
 				if (StringUtils.isEmpty(type)) {
 					auditTransType = PennantConstants.TRAN_ADD;
+					if (data!=null && data.containsKey(finAdvpay.getPaymentId())) {
+						finAdvpay.setLinkedTranId(data.get(finAdvpay.getPaymentId()));
+					}
 				}
+				finAdvancePaymentsDAO.save(finAdvpay, type);
+				
 			} else {
 				if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					finAdvancePaymentsDAO.delete(finAdvpay, type);

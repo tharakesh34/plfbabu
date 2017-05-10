@@ -60,6 +60,7 @@ public class RateCalculation {
 
 		BigDecimal xirr = new BigDecimal(0.1);	// guess
 		BigDecimal xirr_One = BigDecimal.ZERO;
+		BigDecimal xirr_Res = BigDecimal.ZERO;
 		double err = 1E+100;
 
 		while (err > tol) {
@@ -85,8 +86,15 @@ public class RateCalculation {
 			err = Math.abs(xirr_One.subtract(xirr).doubleValue());
 			xirr = xirr_One;
 		}
-
-		return xirr.multiply(new BigDecimal(100)); // Percentage
+		xirr_Res = xirr.multiply(new BigDecimal(100));
+		
+		if(xirr_Res == null){
+			xirr_Res = BigDecimal.ZERO;
+		}else if(xirr_Res.compareTo(new BigDecimal(9999))>0){
+			xirr_Res = new BigDecimal(9999);
+		}
+		xirr_Res = xirr_Res.setScale(9,RoundingMode.HALF_DOWN);
+		return xirr_Res; // Percentage
 	}
 
 	/**

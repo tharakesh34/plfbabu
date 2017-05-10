@@ -219,6 +219,7 @@ import com.pennant.backend.service.finance.FinanceMainExtService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.service.notifications.NotificationsService;
+import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.util.AssetConstants;
@@ -754,6 +755,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private DedupParmService								dedupParmService;
 	private NotificationsService							notificationsService;
 	private DedupValidation									dedupValidation;
+	private DisbursementPostings 							disbursementPostings;
 
 	protected BigDecimal									availCommitAmount		= BigDecimal.ZERO;
 	protected Commitment									commitment;
@@ -11312,13 +11314,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		
 		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 		accountingSetEntries.addAll(aeEvent.getReturnDataSet());
-
+		
 		//Disb Instruction Posting
 		if (eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBS)
 				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSF)
 				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSN)
 				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSP)) {
-			prepareDisbInstructionPosting(accountingSetEntries, aeEvent);
+			
+			accountingSetEntries.addAll(disbursementPostings.getDisbPosting(getFinanceDetail().getAdvancePaymentsList(), getFinanceDetail().getFinScheduleData().getFinanceMain()));
+			
+		//	prepareDisbInstructionPosting(accountingSetEntries, aeEvent);
 		}
 
 		getFinanceDetail().setReturnDataSetList(accountingSetEntries);
@@ -11364,7 +11369,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		AEEvent aeEvent = AEAmounts.procAEAmounts(finMain, finSchdDetails, profitDetail, eventCode, curBDay, curBDay);
 		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), eventCode, FinanceConstants.MODULEID_PROMOTION));
+		//	aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), eventCode, FinanceConstants.MODULEID_PROMOTION));
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE));
 		} else {
 			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE));
 		}
@@ -11386,47 +11392,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		return aeEvent;
-	}
-
-	private void prepareDisbInstructionPosting(List<ReturnDataSet> accountingSetEntries, AEEvent aeEvent) throws Exception {
-		
-		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_DISBINS);
-		List<FinAdvancePayments> advPayList = getFinanceDetail().getAdvancePaymentsList();
-		
-		aeEvent.getAcSetIDList().clear();
-		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), AccountEventConstants.ACCEVENT_DISBINS, FinanceConstants.MODULEID_PROMOTION));
-		} else {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), AccountEventConstants.ACCEVENT_DISBINS, FinanceConstants.MODULEID_FINTYPE));
-		}
-
-		//loop through the disbursements.
-		if (advPayList != null && !advPayList.isEmpty()) {
-
-			for (int i = 0; i < advPayList.size(); i++) {
-				FinAdvancePayments advPayment = advPayList.get(i);
-
-				aeEvent.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
-				amountCodes.setDisbInstAmt(advPayment.getAmtToBeReleased());
-				amountCodes.setPartnerBankAc(advPayment.getPartnerBankAc());
-				amountCodes.setPartnerBankAcType(advPayment.getPartnerBankAcType());
-
-				HashMap<String, Object> dataMap = aeEvent.getDataMap();
-				dataMap = amountCodes.getDeclaredFieldValues();
-				aeEvent.setDataMap(dataMap);
-				if (advPayment.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(advPayment.getRecordType())) {
-					aeEvent.setNewRecord(true);
-				}
-				
-				// Call Map Build Method
-				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
-				List<ReturnDataSet> returnDataSet = aeEvent.getReturnDataSet();
-				accountingSetEntries.addAll(returnDataSet);
-			}
-		}
-
 	}
 
 	private void prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap) {
@@ -16196,6 +16161,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setAccrualService(AccrualService accrualService) {
 		this.accrualService = accrualService;
+	}
+
+	public DisbursementPostings getDisbursementPostings() {
+		return disbursementPostings;
+	}
+
+	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
+		this.disbursementPostings = disbursementPostings;
 	}
 
 }
