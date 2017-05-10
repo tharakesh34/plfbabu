@@ -11,6 +11,9 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.core.AccrualService;
@@ -37,28 +40,30 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class EodService {
 
-	private static Logger			logger	= Logger.getLogger(EodService.class);
+	private static Logger				logger	= Logger.getLogger(EodService.class);
 
-	private DataSource				dataSource;
-	private CustomerDAO				customerDAO;
-	private CustomerDatesDAO		customerDatesDAO;
-	private CustomerQueuingDAO		customerQueuingDAO;
+	private DataSource					dataSource;
+	private CustomerDAO					customerDAO;
+	private CustomerDatesDAO			customerDatesDAO;
+	private CustomerQueuingDAO			customerQueuingDAO;
 
-	private LatePayMarkingService	latePayMarkingService;
-	private LatePayPenaltyService	latePayPenaltyService;
-	private LatePayInterestService	latePayInterestService;
-	private NPAService				npaService;
-	private DateRollOverService		dateRollOverService;
-	private LoadFinanceData			loadFinanceData;
-	private RateReviewService		rateReviewService;
-	private AccrualService			accrualService;
-	private AutoDisbursementService	autoDisbursementService;
-	private ReceiptPaymentService	receiptPaymentService;
+	private LatePayMarkingService		latePayMarkingService;
+	private LatePayPenaltyService		latePayPenaltyService;
+	private LatePayInterestService		latePayInterestService;
+	private NPAService					npaService;
+	private DateRollOverService			dateRollOverService;
+	private LoadFinanceData				loadFinanceData;
+	private RateReviewService			rateReviewService;
+	private AccrualService				accrualService;
+	private AutoDisbursementService		autoDisbursementService;
+	private ReceiptPaymentService		receiptPaymentService;
 
-	private InstallmentDueService	installmentDueService;
+	private InstallmentDueService		installmentDueService;
+
+	private PlatformTransactionManager	transactionManager;
 
 	// Constants
-	private static final String		SQL		= "SELECT * FROM CustomerQueuing WHERE ThreadId=? AND Progress IS NULL ";
+	private static final String			SQL		= "SELECT * FROM CustomerQueuing WHERE ThreadId=? AND Progress IS NULL ";
 
 	public EodService() {
 		super();
@@ -71,27 +76,41 @@ public class EodService {
 	 */
 	public void startProcess(Date date, String threadId) throws Exception {
 
-		System.out.println("process Statred by the Thread :" + threadId + " with data" + date.toString());
+		logger.info("process Statred by the Thread :" + threadId + " with date" + date.toString());
 		Connection connection = null;
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
 		long custId = 0;
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+		txDef.setReadOnly(true);
+		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRED);
+		TransactionStatus txStatus = null;
+
 		try {
 			connection = DataSourceUtils.doGetConnection(dataSource);
 			sqlStatement = connection.prepareStatement(SQL);
 			sqlStatement.setString(1, threadId);
 			resultSet = sqlStatement.executeQuery();
 			while (resultSet.next()) {
+				//BEGIN TRANSACTION
+				txStatus = transactionManager.getTransaction(txDef);
+				
 				custId = resultSet.getLong("CustId");
+				
 				//process
 				doProcess(connection, custId, date);
+				
 				//Update Status
 				updateEnd(date, custId);
+				
+				//COMMIT THE TRANSACTION
+				transactionManager.commit(txStatus);
 			}
 
 			resultSet.close();
 			sqlStatement.close();
 		} catch (Exception e) {
+			transactionManager.rollback(txStatus);
 			logger.error("Exception: ", e);
 			throw e;
 		} finally {
@@ -101,10 +120,7 @@ public class EodService {
 
 	private void doProcess(Connection connection, long custId, Date date) throws Exception {
 
-		//_____________________________________________________________________________________________________________
-		//Fetch and Set EOD Event
-		//_____________________________________________________________________________________________________________
-
+		/**************** Fetch and Set EOD Event ***********/
 		CustEODEvent custEODEvent = new CustEODEvent();
 		custEODEvent.setCustomer(getCustomerDAO().getCustomerEOD(custId));
 		custEODEvent.setEodDate(date);
@@ -129,11 +145,9 @@ public class EodService {
 
 		//NPA Service
 		custEODEvent = npaService.processNPABuckets(custEODEvent);
-		
-		/*******************************
-		 **************** SOD **********
-		 *******************************/  
-		
+
+		/**************** SOD ***********/
+
 		//date rollover
 		custEODEvent = dateRollOverService.process(custEODEvent);
 
@@ -249,4 +263,9 @@ public class EodService {
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
 	}
+
+	public void setTransactionManager(PlatformTransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
+	}
+
 }
