@@ -78,6 +78,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private int emiNo;
 	private int schSeq;
 	private long bounceID;
+	private long manualAdviseId;
 	private String status;
 	private boolean newRecord = false;
 	private String customerName;
@@ -413,6 +414,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setErrorDesc(String errorDesc) {
 		this.errorDesc = errorDesc;
+	}
+
+	public long getManualAdviseId() {
+		return manualAdviseId;
+	}
+
+	public void setManualAdviseId(long manualAdviseId) {
+		this.manualAdviseId = manualAdviseId;
 	}
 
 }

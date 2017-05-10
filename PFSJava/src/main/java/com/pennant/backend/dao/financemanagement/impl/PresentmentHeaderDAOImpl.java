@@ -319,7 +319,7 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 			sql.append(" INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE");
 			sql.append(" INNER JOIN MANDATES T4 ON T4.MANDATEID = T2.MANDATEID");
 			sql.append(" INNER JOIN RMTBRANCHES T5 ON T5.BRANCHCODE = T2.FINBRANCH");
-			sql.append(" WHERE (REPAYONSCHDATE = ?) AND ((SCHDATE >= ? AND SCHDATE <= ?)");
+			sql.append(" WHERE (T2.FINISACTIVE = ?) AND (REPAYONSCHDATE = ?) AND ((SCHDATE >= ? AND SCHDATE <= ?)");
 			sql.append(" OR (DEFSCHDDATE >= ? AND DEFSCHDDATE <= ?)) ");
 
 			if (StringUtils.trimToNull(detailHeader.getMandateType()) != null) {
@@ -356,11 +356,12 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 			Connection conn = DataSourceUtils.doGetConnection(this.dataSource);
 			stmt = conn.prepareStatement(sql.toString());
 			stmt.setString(1, "1");
-			stmt.setDate(2, getDate(detailHeader.getFromDate()));
-			stmt.setDate(3, getDate(detailHeader.getToDate()));
-			stmt.setDate(4, getDate(detailHeader.getFromDate()));
-			stmt.setDate(5, getDate(detailHeader.getToDate()));
-			index = 5;
+			stmt.setString(2, "1");
+			stmt.setDate(3, getDate(detailHeader.getFromDate()));
+			stmt.setDate(4, getDate(detailHeader.getToDate()));
+			stmt.setDate(5, getDate(detailHeader.getFromDate()));
+			stmt.setDate(6, getDate(detailHeader.getToDate()));
+			index = 6;
 			if (StringUtils.trimToNull(detailHeader.getMandateType()) != null) {
 				index = index + 1;
 				stmt.setString(index, detailHeader.getMandateType());

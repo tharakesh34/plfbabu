@@ -91,11 +91,11 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 				
 				String presentmentRef = map.getValue("Batchid").toString();
 				String status = isPresentmentReferenceExists(presentmentRef);
-				/*if (status == null) {
+				if (status == null) {
 					throw new Exception(" Presentment details are not available for the presentment reference :" + presentmentRef + " At line number " + recordCount);
 				} else if (RepayConstants.PEXC_SUCCESS.equals(status) || RepayConstants.PEXC_FAILURE.equals(status) || RepayConstants.PEXC_ERROR.equals(status)) {
 					throw new Exception(" The presentment with the presentment reference :" + presentmentRef + " already processed  " + recordCount);
-				}*/
+				}
 
 				// Inserting the data into staging table
 				insertData(map);
@@ -202,20 +202,20 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 						if (RepayConstants.PEXC_SUCCESS.equals(status)) {
 							updatePresentMentdetails(presentmentRef, status);
-							updatePresentHeader(presentmentRef, status);
+							updatePresentmentHeader(presentmentRef, status);
 						} else {
 							try {
 								PresentmentDetail presentmentDetail = presentmentCancellation(presentmentRef, reasonCode);
 								if (StringUtils.trimToNull(presentmentDetail.getErrorDesc()) == null) {
-									updatePresentMentdetails(presentmentRef, status, presentmentDetail.getBounceID());
-									updatePresentHeader(presentmentRef, status);
+									updatePresentmentDetails(presentmentRef, status, presentmentDetail.getBounceID(),  presentmentDetail.getManualAdviseId());
+									updatePresentmentHeader(presentmentRef, status);
 									successCount++;
 								} else {
 									String errorDesc = presentmentDetail.getErrorDesc();
 									errorDesc = (errorDesc.length() >= 1000) ? errorDesc.substring(0, 988) : errorDesc;
 									String errorCode = "PR0001";
 									updatePresentMentdetails(presentmentRef, RepayConstants.PEXC_ERROR, errorCode, errorDesc);
-									updatePresentHeader(presentmentRef, RepayConstants.PEXC_ERROR);
+									updatePresentmentHeader(presentmentRef, RepayConstants.PEXC_ERROR);
 									failedCount++;
 								}
 							} catch (Exception e) {
@@ -226,7 +226,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 								}
 								String errorCode = "PR0002";
 								updatePresentMentdetails(presentmentRef, RepayConstants.PEXC_ERROR, errorCode, errorDesc);
-								updatePresentHeader(presentmentRef, RepayConstants.PEXC_ERROR);
+								updatePresentmentHeader(presentmentRef, RepayConstants.PEXC_ERROR);
 								failedCount++;
 							}
 						}
@@ -242,7 +242,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	}
 
 	// Presentment cancellation process
-	private PresentmentDetail presentmentCancellation(String presentmentRef, String reasonCode) throws Exception{
+	private PresentmentDetail presentmentCancellation(String presentmentRef, String reasonCode) throws Exception {
 		return this.presentmentHeaderService.presentmentCancellation(presentmentRef, reasonCode);
 	}
 
@@ -318,17 +318,18 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	}
 	
 	// Update the presentment status and bounceid
-	private void updatePresentMentdetails(String presentmentRef, String status, long bounceId) {
+	private void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId) {
 		logger.debug(Literal.ENTERING);
 		
 		StringBuffer sql = new StringBuffer();
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		
-		sql.append("Update Presentmentdetails set Status = :Status , BounceID = :BounceID Where PresentmentRef = :PresentmentRef ");
+		sql.append("Update Presentmentdetails set Status = :Status, BounceID = :BounceID, ManualAdviseId = :ManualAdviseId  Where PresentmentRef = :PresentmentRef ");
 		
 		source.addValue("Status", status);
 		source.addValue("PresentmentRef", presentmentRef);
 		source.addValue("BounceID", bounceId);
+		source.addValue("ManualAdviseId", manualAdviseId);
 		try {
 			this.jdbcTemplate.update(sql.toString(), source);
 		} catch (Exception e) {
@@ -344,7 +345,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	
 	
 	// Update the PresentHeader Success and failure records
-	private void updatePresentHeader(String presentmentRef, String status) {
+	private void updatePresentmentHeader(String presentmentRef, String status) {
 		logger.debug(Literal.ENTERING);
 
 		long presentmentId = getPresentmentId(presentmentRef);

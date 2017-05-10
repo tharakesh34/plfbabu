@@ -519,7 +519,9 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_BOUNCE);
 		String errorMsg = procReceiptCancellation(receiptHeader);
 		presentmentDetail.setErrorDesc(errorMsg);
+		manualAdvise = receiptHeader.getManualAdvise();
 		presentmentDetail.setBounceID(manualAdvise.getBounceID());
+		presentmentDetail.setManualAdviseId(manualAdvise.getAdviseID());
 
 		logger.debug(Literal.LEAVING);
 		return presentmentDetail;
@@ -559,7 +561,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		manualAdvise.setReceiptID(receiptHeader.getReceiptID());
 		manualAdvise.setBounceID(bounceReason.getBounceID());
 		manualAdvise.setValueDate(DateUtility.getAppDate());
-		manualAdvise.setPostDate(DateUtility.getPostDate());
+		manualAdvise.setPostDate(DateUtility.getAppDate());
 		logger.debug(Literal.LEAVING);
 
 		return manualAdvise;
@@ -863,7 +865,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		} else {
 
 			if (receiptHeader.getManualAdvise() != null) {
-				getManualAdviseDAO().save(receiptHeader.getManualAdvise(), TableType.MAIN_TAB);
+				String adviseId = getManualAdviseDAO().save(receiptHeader.getManualAdvise(), TableType.MAIN_TAB);
+				receiptHeader.getManualAdvise().setAdviseID(Long.parseLong(adviseId));
 			}
 
 			// Update Receipt Details based on Receipt Mode
