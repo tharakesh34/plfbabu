@@ -2646,6 +2646,17 @@ public class ScheduleCalculator {
 		for (int i = indexStart; i < sdSize; i++) {
 			curSchd = finSchdDetails.get(i);
 			Date curSchdDate = curSchd.getSchDate();
+			
+			// Added for setting Schedule method in case of Different frequencies for PFT,CPZ & RVW
+			if(curSchdDate.compareTo(fromDate) < 0){
+				if(StringUtils.isEmpty(curSchd.getSchdMethod())){
+					if(finMain.isAllowGrcPeriod() && curSchdDate.compareTo(finMain.getGrcPeriodEndDate()) <= 0){
+						curSchd.setSchdMethod(finMain.getGrcSchdMthd());
+					}else{
+						curSchd.setSchdMethod(finMain.getScheduleMethod());
+					}
+				}
+			}
 
 			if (curSchdDate.compareTo(fromDate) >= 0
 					&& (curSchdDate.before(toDate) || (finMain.getNextRolloverDate() != null && curSchd.getSchDate()

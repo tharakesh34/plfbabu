@@ -8760,13 +8760,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (!this.nextGrcCpzDate.isReadonly() && this.nextGrcCpzDate_two.getValue() != null) {
 
 					if (this.nextGrcCpzDate_two.getValue().before(this.nextGrcPftDate_two.getValue())) {
-
-						/*
-						 * errorList.add(new ErrorDetails("nextGrcCpzDate_two","30526", new String[] {
-						 * PennantAppUtil.formateDate(this.nextGrcCpzDate_two.getValue(), ""),
-						 * PennantAppUtil.formateDate(this.nextGrcPftDate_two.getValue(), "") }, new String[] {}));
-						 */
-						//(validation not required:Instruction given by pradeep)
+						errorList.add(new ErrorDetails("nextGrcCpzDate_two","30526", new String[] {
+								PennantAppUtil.formateDate(this.nextGrcCpzDate_two.getValue(), ""),
+								PennantAppUtil.formateDate(this.nextGrcPftDate_two.getValue(), "") }, new String[] {}));
 					}
 
 					if (this.nextGrcCpzDate_two.getValue().after(this.gracePeriodEndDate_two.getValue())) {
@@ -9126,17 +9122,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 		return false;
 	}
-
-	/**
-	 * Method for retrieving Notes Details
-	 */
-	/*
-	 * protected Notes getNotes() { logger.debug("Entering "); Notes notes = new Notes();
-	 * notes.setModuleName(PennantConstants.NOTES_MODULE_FINANCEMAIN);
-	 * notes.setReference(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference());
-	 * notes.setVersion(getFinanceDetail().getFinScheduleData().getFinanceMain().getVersion());
-	 * notes.setRoleCode(getRole()); logger.debug("Leaving "); return notes; }
-	 */
 
 	@Override
 	public String getReference() {
@@ -9893,6 +9878,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (this.grcPftRvwFrqRow.isVisible() && this.gracePftRvwFrq.isValidComboValue()) {
 					aFinanceMain.setGrcPftRvwFrq(this.gracePftRvwFrq.getValue() == null ? "" : this.gracePftRvwFrq
 							.getValue());
+					aFinanceMain.setAllowGrcPftRvw(true);
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -9914,11 +9900,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			try {
-				if (this.nextGrcCpzDate.getValue() == null) {
-					if (this.graceCpzFrq.isValidComboValue()) {
-						aFinanceMain.setGrcCpzFrq(this.graceCpzFrq.getValue() == null ? "" : this.graceCpzFrq
-								.getValue());
-					}
+				if (this.grcCpzFrqRow.isVisible() && this.graceCpzFrq.isValidComboValue()) {
+					aFinanceMain.setGrcCpzFrq(this.graceCpzFrq.getValue() == null ? "" : this.graceCpzFrq
+							.getValue());
+					aFinanceMain.setAllowGrcCpz(true);
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
