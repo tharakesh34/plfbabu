@@ -64,7 +64,6 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.eod.util.EODProperties;
 
 public class RateReviewService extends ServiceHelper {
 
@@ -268,7 +267,7 @@ public class RateReviewService extends ServiceHelper {
 		finSchData.setFinReference(finEodEvent.getFinanceMain().getFinReference());
 		finSchData.setFinanceMain(finEodEvent.getFinanceMain());
 		finSchData.setFinanceScheduleDetails(finEodEvent.getFinanceScheduleDetails());
-		FinanceType fintype = EODProperties.getFinanceType(finEodEvent.getFinanceMain().getFinType());
+		FinanceType fintype = getFinanceType(finEodEvent.getFinanceMain().getFinType());
 		finSchData.setFinanceType(fintype);
 		finEodEvent.setFinType(fintype);
 		List<RepayInstruction> repayInstructions = getRepayInstructionDAO().getRepayInstrEOD(

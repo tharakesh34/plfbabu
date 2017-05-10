@@ -59,7 +59,6 @@ import org.apache.commons.lang.StringUtils;
 import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.applicationmaster.DPDBucketConfigurationDAO;
@@ -81,13 +80,13 @@ import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
-import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
 import com.pennant.backend.model.finance.SecondaryAccount;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.eod.util.EODProperties;
+import com.pennant.cache.util.FinanceConfigCache;
 
 abstract public class ServiceHelper implements Serializable {
 
@@ -135,7 +134,7 @@ abstract public class ServiceHelper implements Serializable {
 	}
 
 	public long getAccountingID(String finType, String accountingEvent) {
-		List<FinTypeAccounting> acountingSets = EODProperties.getFinanceType(finType).getFinTypeAccountingList();
+		List<FinTypeAccounting> acountingSets = FinanceConfigCache.getFinanceType(finType).getFinTypeAccountingList();
 
 		for (int i = 0; i < acountingSets.size(); i++) {
 			if (!StringUtils.equals(accountingEvent, acountingSets.get(i).getEvent())) {
@@ -146,27 +145,97 @@ abstract public class ServiceHelper implements Serializable {
 		return Long.MIN_VALUE;
 	}
 
+	/**
+	 * @param fintype
+	 * @return
+	 */
+	public final FinanceType getFinanceType(String fintype) {
+		return FinanceConfigCache.getFinanceType(fintype);
+
+	}
+	
+	public String getBucket(long bucketID) {
+		DPDBucket dpdBucket = FinanceConfigCache.getDPDBucket(bucketID);
+		if (dpdBucket != null) {
+			return dpdBucket.getBucketCode();
+		}
+		return "";
+	}
+
+	public Long getBucketID(String finStatus) {
+		DPDBucket dpdBucket = FinanceConfigCache.getDPDBucketCode(finStatus);
+		if (dpdBucket != null) {
+			return dpdBucket.getBucketID();
+		}
+		return Long.valueOf(0);
+	}
+
+
+
+	public List<DPDBucketConfiguration> getBucketConfigurations(String productCode) {
+		return FinanceConfigCache.getDPDBucketConfiguration(productCode);
+	}
+
+	public List<NPABucketConfiguration> getNPABucketConfigurations(String productCode){
+		return FinanceConfigCache.getNPABucketConfiguration(productCode);
+	}
+	
+
+	public void sortBucketConfig(List<DPDBucketConfiguration> list) {
+
+		if (list != null && !list.isEmpty()) {
+			Collections.sort(list, new Comparator<DPDBucketConfiguration>() {
+				@Override
+				public int compare(DPDBucketConfiguration detail1, DPDBucketConfiguration detail2) {
+					return detail1.getDueDays() - detail2.getDueDays();
+				}
+			});
+		}
+
+	}
+
+	
+	public void sortNPABucketConfig(List<NPABucketConfiguration> list) {
+
+		if (list != null && !list.isEmpty()) {
+			Collections.sort(list, new Comparator<NPABucketConfiguration>() {
+				@Override
+				public int compare(NPABucketConfiguration detail1, NPABucketConfiguration detail2) {
+					return detail1.getDueDays() - detail2.getDueDays();
+				}
+			});
+		}
+
+	}
+	public BigDecimal getDecimal(ResultSet resultSet, String name) throws SQLException {
+		BigDecimal val = resultSet.getBigDecimal(name);
+		if (val == null) {
+			val = BigDecimal.ZERO;
+		}
+		return val;
+	}
+	
+	public BigDecimal getDecimal(BigDecimal bigDecimal) {
+		if (bigDecimal == null) {
+			bigDecimal = BigDecimal.ZERO;
+		}
+		return bigDecimal;
+	}
+
+	public int getIndexFromMap(Map<Date, Integer> datesMap, Date date) {
+		Date formatDate = formatDate(date);
+		if (datesMap.containsKey(formatDate)) {
+			return datesMap.get(formatDate);
+		}
+		return 0;
+	}
+	
 	public Date formatDate(Date date) {
 		if (date != null) {
 			return DateUtility.getDate(DateUtility.formateDate(date, PennantConstants.DBDateFormat),
 					PennantConstants.DBDateFormat);
 		}
 		return null;
-
-	}
-
-	/**
-	 * @param fintype
-	 * @return
-	 */
-	public final FinanceType getFinanceType(String fintype) {
-
-		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
-		if (phase.equals(PennantConstants.APP_PHASE_DAY)) {
-			return getFinanceTypeDAO().getFinanceTypeByFinType(fintype);
-		} else {
-			return EODProperties.getFinanceType(fintype);
-		}
 
 	}
 
@@ -178,13 +247,6 @@ abstract public class ServiceHelper implements Serializable {
 		return getSecordayAccounts(getSecondaryAccounts(finReference));
 	}
 
-	/**
-	 * @param finReference
-	 * @return
-	 */
-	public final FinanceMain getFinanceMain(String finReference) {
-		return getFinanceMainDAO().getFinanceMainForBatch(finReference);
-	}
 
 	/**
 	 * @param finReference
@@ -194,10 +256,7 @@ abstract public class ServiceHelper implements Serializable {
 		return getSecondaryAccountDAO().getSecondaryAccountsByFinRef(finReference, "");
 	}
 
-	/**
-	 * @param listSecondary
-	 * @return
-	 */
+
 	/**
 	 * @param listSecondary
 	 * @return
@@ -219,80 +278,8 @@ abstract public class ServiceHelper implements Serializable {
 		return secordayAccounts.toString();
 
 	}
-
-	public List<DPDBucketConfiguration> getBucketConfigurations(String productCode) {
-		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
-		if (phase.equals(PennantConstants.APP_PHASE_DAY)) {
-			return dPDBucketConfigurationDAO.getDPDBucketConfigurations(productCode);
-		} else {
-			return EODProperties.getBucketConfigurations(productCode);
-		}
-	}
-
-	public String getBucket(long bucketID) {
-		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
-		if (phase.equals(PennantConstants.APP_PHASE_DAY)) {
-			DPDBucket dpdBucket = dPDBucketDAO.getDPDBucket(bucketID, "");
-			if (dpdBucket != null) {
-				return dpdBucket.getBucketCode();
-			}
-		} else {
-			return EODProperties.getBucket(bucketID);
-		}
-
-		return "";
-	}
-
-	public Long getBucketID(String finStatus) {
-		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
-		if (phase.equals(PennantConstants.APP_PHASE_DAY)) {
-			DPDBucket dpdBucket = dPDBucketDAO.getDPDBucket(finStatus, "");
-			if (dpdBucket != null) {
-				return dpdBucket.getBucketID();
-			}
-
-		} else {
-			return EODProperties.getBucketID(finStatus);
-
-		}
-		return Long.valueOf(0);
-	}
-
-	public void sortBucketConfig(List<DPDBucketConfiguration> list) {
-
-		if (list != null && !list.isEmpty()) {
-			Collections.sort(list, new Comparator<DPDBucketConfiguration>() {
-				@Override
-				public int compare(DPDBucketConfiguration detail1, DPDBucketConfiguration detail2) {
-					return detail1.getDueDays() - detail2.getDueDays();
-				}
-			});
-		}
-
-	}
-
-	public BigDecimal getDecimal(ResultSet resultSet, String name) throws SQLException {
-		BigDecimal val = resultSet.getBigDecimal(name);
-		if (val == null) {
-			val = BigDecimal.ZERO;
-		}
-		return val;
-	}
-	public BigDecimal getDecimal(BigDecimal bigDecimal) {
-		if (bigDecimal == null) {
-			bigDecimal = BigDecimal.ZERO;
-		}
-		return bigDecimal;
-	}
-
-	public int getIndexFromMap(Map<Date, Integer> datesMap, Date date) {
-		Date formatDate = formatDate(date);
-		if (datesMap.containsKey(formatDate)) {
-			return datesMap.get(formatDate);
-		}
-		return 0;
-	}
-
+	
+	
 	public FinContributorDetailDAO getFinContributorDetailDAO() {
 		return finContributorDetailDAO;
 	}

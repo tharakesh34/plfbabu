@@ -19,7 +19,6 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.eod.util.EODProperties;
 import com.pennanttech.pff.core.TableType;
 
 public class LoadFinanceData extends ServiceHelper {
@@ -46,7 +45,7 @@ public class LoadFinanceData extends ServiceHelper {
 			String finReference = finEODEvent.getFinanceMain().getFinReference();
 
 			//FINANCE TYPE
-			FinanceType financeType = EODProperties.getFinanceType(finType);
+			FinanceType financeType = getFinanceType(finType);
 			finEODEvent.setFinType(financeType);
 
 			//FINSCHDULE DETAILS

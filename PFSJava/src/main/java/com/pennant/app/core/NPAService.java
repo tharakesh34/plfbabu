@@ -36,8 +36,6 @@ package com.pennant.app.core;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +52,6 @@ import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
-import com.pennant.eod.util.EODProperties;
 
 public class NPAService extends ServiceHelper {
 
@@ -105,7 +102,7 @@ public class NPAService extends ServiceHelper {
 
 		Provision provision = new Provision();
 
-		List<NPABucketConfiguration> list = EODProperties.getNPABucketConfigurations(productCode);
+		List<NPABucketConfiguration> list = getNPABucketConfigurations(productCode);
 
 		//No configuration for NPA found then do nothing
 		if (list == null || list.isEmpty()) {
@@ -120,7 +117,7 @@ public class NPAService extends ServiceHelper {
 		 */
 
 		if (StringUtils.isNotBlank(finStatus)) {
-			long bucketId = EODProperties.getBucketID(finStatus);
+			long bucketId = getBucketID(finStatus);
 			sortNPABucketConfig(list);
 			for (NPABucketConfiguration configuration : list) {
 				if (configuration.getBucketID() == bucketId && configuration.getDueDays() >= dueBucket) {
@@ -151,7 +148,7 @@ public class NPAService extends ServiceHelper {
 		provision.setProvisionedAmt(BigDecimal.ZERO);
 
 		if (StringUtils.isNotBlank(finStatus)) {
-			provision.setDpdBucketID(EODProperties.getBucketID(finStatus));
+			provision.setDpdBucketID(getBucketID(finStatus));
 		} else {
 			provision.setDpdBucketID(0);
 		}
@@ -206,19 +203,6 @@ public class NPAService extends ServiceHelper {
 
 		}
 		return provisonAmt;
-	}
-
-	private void sortNPABucketConfig(List<NPABucketConfiguration> list) {
-
-		if (list != null && !list.isEmpty()) {
-			Collections.sort(list, new Comparator<NPABucketConfiguration>() {
-				@Override
-				public int compare(NPABucketConfiguration detail1, NPABucketConfiguration detail2) {
-					return detail1.getDueDays() - detail2.getDueDays();
-				}
-			});
-		}
-
 	}
 
 	public void setProvisionDAO(ProvisionDAO provisionDAO) {
