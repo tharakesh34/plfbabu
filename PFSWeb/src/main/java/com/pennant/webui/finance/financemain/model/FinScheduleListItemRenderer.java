@@ -2573,7 +2573,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 		setFinScheduleData(aFinScheduleData);
 		FinanceScheduleDetail prvSchDetail = null; 
 		ArrayList<FinanceScheduleReportData> reportList = new ArrayList<FinanceScheduleReportData>();
-		
+		 boolean isODLimitExpiry = false;
 		boolean lastRec=false;
 		FinanceScheduleReportData data;
 		
@@ -2634,6 +2634,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 								DateUtility.compare(odSchedule.getDroplineDate(), aScheduleDetail.getSchDate())==0 &&
 								DateUtility.compare(odSchedule.getDroplineDate(),prvSchDetail.getSchDate()) > 0 && StringUtils.isEmpty(label)){
 							label = Labels.getLabel("label_LimitExpiry");
+							isODLimitExpiry = true;
 							odRcdExistsOnDate = true;
 							odCount = getFinScheduleData().getOverdraftScheduleDetails().size() - 1;
 							// If Limit Drops not exists in Schedule
@@ -2671,9 +2672,19 @@ public class FinScheduleListItemRenderer implements Serializable{
 							}else{
 								availLimit = odSchedule.getODLimit().subtract(aScheduleDetail.getClosingBalance());
 							}
+							if(odCount+1 == getFinScheduleData().getOverdraftScheduleDetails().size()-1 && odCount-2 >0){
+								if(aScheduleDetail.isDisbOnSchDate()){
+									availLimit = odSchedule.getODLimit().subtract(prvSchDetail.getClosingBalance().add(prvSchDetail.getDisbAmount()));
+								}
+								else{
+									availLimit = odSchedule.getODLimit().subtract(prvSchDetail.getClosingBalance());
+								}
+							}
+							
 							if(odCount == getFinScheduleData().getOverdraftScheduleDetails().size()-1){
 								data.setLimitDrop(formatAmt(getFinScheduleData().getOverdraftScheduleDetails().get(odCount-1).getODLimit(),false,false));
 								odAvailAmt = BigDecimal.ZERO;
+								availLimit = BigDecimal.ZERO;
 							}else if(data.getLabel().equals(Labels.getLabel("label_LimitIncrease"))){
 								odAvailAmt = odSchedule.getODLimit().add(limitIncreaseAmt);
 								availLimit = availLimit.add(limitIncreaseAmt);
@@ -2736,16 +2747,25 @@ public class FinScheduleListItemRenderer implements Serializable{
 						}
 					}
 					// If loop repeated when schedule date is more than existing dropline date
-					prvODDate = getFinScheduleData().getOverdraftScheduleDetails().get(odCount).getDroplineDate();
-					if(odCount == getFinScheduleData().getOverdraftScheduleDetails().size()-1){
+					if (odCount > 0) {
+						prvODDate = getFinScheduleData().getOverdraftScheduleDetails().get(odCount - 1)
+								.getDroplineDate();
+					}
+					if (isODLimitExpiry) {
 						isLoopRepeat = false;
+						isODLimitExpiry = false;
 						break;
-					}else{
-						if (DateUtility.compare(getFinScheduleData().getOverdraftScheduleDetails().get(odCount+1).getDroplineDate(),  aScheduleDetail.getSchDate())>0){
-							isLoopRepeat = false;
+					} else {
+						for (OverdraftScheduleDetail odSchedule : getFinScheduleData().getOverdraftScheduleDetails()) {
+							// If loop repeated when schedule date is more than existing dropline date
+							if (prvODDate != null
+									&& DateUtility.compare(odSchedule.getDroplineDate(), prvODDate) <= 0) {
+								continue;
+							}
+							if (DateUtility.compare(odSchedule.getDroplineDate(), aScheduleDetail.getSchDate()) > 0) {
+								isLoopRepeat = false;
+							}
 							break;
-						}else{
-							continue;
 						}
 					}
 				}
@@ -2864,7 +2884,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 						data.setAvailLimit(formatAmt(availLimit,false,false));
 
 						if (count == 1) {
-							if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
+							if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0|| aScheduleDetail.isRvwOnSchDate()) {
 								data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 							}else {
 								data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
@@ -2976,7 +2996,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					data.setAvailLimit(formatAmt(availLimit,false,false));
 
 					if (count == 1) {
-						if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
+						if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0|| aScheduleDetail.isRvwOnSchDate()) {
 							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 						}else {
 							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
@@ -3041,7 +3061,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 					data.setAvailLimit(formatAmt(availLimit,false,false));
 
 					if (count == 1) {
-						if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
+						if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0 || aScheduleDetail.isRvwOnSchDate()) {
 							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 						}else {
 							data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
@@ -3273,7 +3293,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 								BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
 								data.setAvailLimit(formatAmt(availLimit,false,false));
 
-								if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
+								if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0 || aScheduleDetail.isRvwOnSchDate()) {
 									data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 								}else {
 									data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
@@ -3319,7 +3339,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 							BigDecimal availLimit = odAvailAmt.subtract(aScheduleDetail.getClosingBalance());
 							data.setAvailLimit(formatAmt(availLimit,false,false));
 
-							if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
+							if(aScheduleDetail.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0 || aScheduleDetail.isRvwOnSchDate()) {
 								data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate())+"[R]");
 							}else {
 								data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
