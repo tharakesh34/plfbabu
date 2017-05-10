@@ -260,8 +260,7 @@ Update wifFinanceMain set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS NULL;
 	    </createIndex>
 	</changeSet>
 	<changeSet id="19" author="Jayant">
-	    <dropIndex tableName="CUSTOMERDOCUMENTS" indexName="IX_CD_CUST_TIT_CAT_ID"/>
-	   
+	    <!-- <dropIndex tableName="CUSTOMERDOCUMENTS" indexName="IX_CD_CUST_TIT_CAT_ID"/> -->
 	    <createIndex tableName="CUSTOMERDOCUMENTS" indexName="IX_CD_CUST_TIT_CAT_ID">
 	        <column name="CUSTDOCTITLE" type="nvarchar(50)"/>
 	        <column name="CUSTDOCCATEGORY" type="nvarchar(50)"/>
@@ -315,8 +314,6 @@ Update wifFinanceMain set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS NULL;
 	    </createIndex>
 	</changeSet>
 	<changeSet id="26" author="Jayant">
-	   
-	    
 	      <addUniqueConstraint tableName="secroles" columnNames="rolecd, roleapp" constraintName="uk_role_code_app"/>
 	</changeSet>
 	<changeSet id="27" author="Jayant">
@@ -328,15 +325,15 @@ Update wifFinanceMain set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS NULL;
 	    </createIndex>
 	</changeSet>
 	<changeSet id="28" author="Jayant">
-	    
 	    <dropIndex tableName="SecGroupRights" indexName="IX_SGR_GID"/>
-	       <createIndex tableName="SecGroupRights" indexName="IX_SGR_GID">
+	    <createIndex tableName="SecGroupRights" indexName="IX_SGR_GID">
 	        <column name="GrpID" type="bigint"/>
 	    </createIndex>
-	      <dropIndex tableName="SecGroupRights" indexName="ix_group_right_right_id"/>
+	    <dropIndex tableName="SecGroupRights" indexName="IX_group_right_right_id"/>
 		 <createIndex tableName="secgrouprights" indexName="ix_group_right_right_id">
 	        <column name="rightid" type="bigint"/>
 	    </createIndex>
+	    <dropUniqueConstraint tableName="SecGroupRights" constraintName="IDXSECGROUPRIGHTS_GRPANDRIGHT" />
 	    <addUniqueConstraint tableName="secgrouprights" columnNames="grpid,rightid" constraintName="uk_group_right"/>
 	</changeSet>
 	<changeSet id="29" author="Jayant">
@@ -375,7 +372,7 @@ Update wifFinanceMain set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS NULL;
 	        <column name="InputBy" type="bigint"/>
 	    </createIndex>
 	</changeSet>
-			<changeSet id="34" author="Jayant">
+	<changeSet id="34" author="Jayant">
 	    
 	    	
 	    <createIndex tableName="CUSTOMERS" indexName="IX_CUST_CRCPR_ID">
@@ -389,7 +386,7 @@ Update wifFinanceMain set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS NULL;
 	    </createIndex>
 	</changeSet>
 
-	<changeSet id="35" author="Siva">
+<changeSet id="35" author="Siva">
 		<addColumn tableName="FinRepayDetails">
 			<column name="FinSchdTdsPaid" type="decimal(18,0)" />
 		</addColumn>
