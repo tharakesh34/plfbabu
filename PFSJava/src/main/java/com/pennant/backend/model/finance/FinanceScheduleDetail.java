@@ -140,6 +140,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 
 	@XmlElement
 	private BigDecimal tDSAmount = BigDecimal.ZERO;
+	private BigDecimal tDSPaid = BigDecimal.ZERO;
 	private String pftDaysBasis;
 	private BigDecimal writeoffIns = BigDecimal.ZERO;
 	private BigDecimal writeoffCrIns = BigDecimal.ZERO;
@@ -847,6 +848,14 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 
 	public void setPresentmentId(long presentmentId) {
 		this.presentmentId = presentmentId;
+	}
+
+	public BigDecimal getTDSPaid() {
+		return tDSPaid;
+	}
+
+	public void setTDSPaid(BigDecimal tDSPaid) {
+		this.tDSPaid = tDSPaid;
 	}
 
 }

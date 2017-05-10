@@ -807,6 +807,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 						
 						curRpySchd.setPrincipalSchdPayNow(curRpySchd.getPrincipalSchdPayNow().add(rpySchd.getPrincipalSchdPayNow()));
 						curRpySchd.setProfitSchdPayNow(curRpySchd.getProfitSchdPayNow().add(rpySchd.getProfitSchdPayNow()));
+						curRpySchd.setTdsSchdPayNow(curRpySchd.getTdsSchdPayNow().add(rpySchd.getTdsSchdPayNow()));
 						curRpySchd.setLatePftSchdPayNow(curRpySchd.getLatePftSchdPayNow().add(rpySchd.getLatePftSchdPayNow()));
 						curRpySchd.setSchdFeePayNow(curRpySchd.getSchdFeePayNow().add(rpySchd.getSchdFeePayNow()));
 						curRpySchd.setSchdInsPayNow(curRpySchd.getSchdInsPayNow().add(rpySchd.getSchdInsPayNow()));
@@ -963,6 +964,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		BigDecimal totalRefund = BigDecimal.ZERO;
 		BigDecimal totalWaived = BigDecimal.ZERO;
 		BigDecimal totalPft = BigDecimal.ZERO;
+		BigDecimal totalTds = BigDecimal.ZERO;
 		BigDecimal totalLatePft = BigDecimal.ZERO;
 		BigDecimal totalPri = BigDecimal.ZERO;
 		BigDecimal totalCharge = BigDecimal.ZERO;
@@ -993,6 +995,10 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 				lc.setParent(item);
 				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getProfitSchdPayNow(), finFormatter));
 				totalPft = totalPft.add(repaySchd.getProfitSchdPayNow());
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getTdsSchdPayNow(), finFormatter));
+				totalTds = totalTds.add(repaySchd.getTdsSchdPayNow());
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getLatePftSchdPayNow(), finFormatter));
@@ -1075,6 +1081,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			paymentMap.put("totalRefund", totalRefund);
 			paymentMap.put("totalCharge", totalCharge);
 			paymentMap.put("totalPft", totalPft);
+			paymentMap.put("totalTds", totalTds);
 			paymentMap.put("totalLatePft", totalLatePft);
 			paymentMap.put("totalPri", totalPri);
 

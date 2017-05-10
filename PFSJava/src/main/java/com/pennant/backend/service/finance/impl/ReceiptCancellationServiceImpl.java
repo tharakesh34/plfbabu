@@ -714,6 +714,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 					curRpySchd.setPrincipalSchdPayNow(curRpySchd.getPrincipalSchdPayNow().add(
 							rpySchd.getPrincipalSchdPayNow()));
 					curRpySchd.setProfitSchdPayNow(curRpySchd.getProfitSchdPayNow().add(rpySchd.getProfitSchdPayNow()));
+					curRpySchd.setTdsSchdPayNow(curRpySchd.getTdsSchdPayNow().add(rpySchd.getTdsSchdPayNow()));
 					curRpySchd.setLatePftSchdPayNow(curRpySchd.getLatePftSchdPayNow().add(
 							rpySchd.getLatePftSchdPayNow()));
 					curRpySchd.setSchdFeePayNow(curRpySchd.getSchdFeePayNow().add(rpySchd.getSchdFeePayNow()));

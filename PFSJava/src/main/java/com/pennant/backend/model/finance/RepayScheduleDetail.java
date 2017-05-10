@@ -40,6 +40,7 @@ public class RepayScheduleDetail {
 	private BigDecimal profitSchdPaid = BigDecimal.ZERO;
 	private BigDecimal profitSchdBal = BigDecimal.ZERO;
 	private BigDecimal profitSchdPayNow = BigDecimal.ZERO;
+	private BigDecimal tdsSchdPayNow = BigDecimal.ZERO;
 	private BigDecimal pftSchdWaivedNow = BigDecimal.ZERO;
 	
 	// Profit Amount
@@ -537,6 +538,14 @@ public class RepayScheduleDetail {
 	}
 	public void setSchdIncrCostWaivedNow(BigDecimal schdIncrCostWaivedNow) {
 		this.schdIncrCostWaivedNow = schdIncrCostWaivedNow;
+	}
+
+	public BigDecimal getTdsSchdPayNow() {
+		return tdsSchdPayNow;
+	}
+
+	public void setTdsSchdPayNow(BigDecimal tdsSchdPayNow) {
+		this.tdsSchdPayNow = tdsSchdPayNow;
 	}
 	
 }

@@ -23,6 +23,7 @@ public class FinRepayQueue {
 	private boolean		schdIsPriPaid;
 
 	private BigDecimal	schdPftPayNow			= BigDecimal.ZERO;
+	private BigDecimal	schdTdsPayNow			= BigDecimal.ZERO;
 	private BigDecimal	schdPriPayNow			= BigDecimal.ZERO;
 	private BigDecimal	schdPftWaivedNow		= BigDecimal.ZERO;
 	private BigDecimal	schdPriWaivedNow		= BigDecimal.ZERO;
@@ -545,6 +546,14 @@ public class FinRepayQueue {
 	}
 	public void setSchdIncrCostWaivedNow(BigDecimal schdIncrCostWaivedNow) {
 		this.schdIncrCostWaivedNow = schdIncrCostWaivedNow;
+	}
+
+	public BigDecimal getSchdTdsPayNow() {
+		return schdTdsPayNow;
+	}
+
+	public void setSchdTdsPayNow(BigDecimal schdTdsPayNow) {
+		this.schdTdsPayNow = schdTdsPayNow;
 	}
 	
 

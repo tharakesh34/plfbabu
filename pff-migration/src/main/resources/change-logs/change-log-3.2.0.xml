@@ -339,4 +339,195 @@ Update wifFinanceMain set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS NULL;
 	    </createIndex>
 	</changeSet>
 
+	<changeSet id="35" author="Siva">
+		<addColumn tableName="FinRepayDetails">
+			<column name="FinSchdTdsPaid" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="36" author="Siva">
+		<addColumn tableName="FINREPAYSCHEDULEDETAIL">
+			<column name="TdsSchdPayNow" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="37" author="Siva">
+		<addColumn tableName="FINREPAYSCHEDULEDETAIL_TEMP">
+			<column name="TdsSchdPayNow" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="38" author="Siva">
+		<addColumn tableName="FINSCHEDULEDETAILS">
+			<column name="TDSPaid" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="39" author="Siva">
+		<addColumn tableName="FINSCHEDULEDETAILS_TEMP">
+			<column name="TDSPaid" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="40" author="Siva">
+		<addColumn tableName="FINSCHEDULEDETAILS_PA">
+			<column name="TDSPaid" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="41" author="Siva">
+		<addColumn tableName="FINSCHEDULEDETAILS_LOG">
+			<column name="TDSPaid" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="42" author="Siva">
+		<addColumn tableName="REJECTFINSCHEDULEDETAILS">
+			<column name="TDSPaid" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="43" author="Siva">
+		<addColumn tableName="WIFFINSCHEDULEDETAILS">
+			<column name="TDSPaid" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="44" author="Siva">
+		<addColumn tableName="WIFFINSCHEDULEDETAILS_TEMP">
+			<column name="TDSPaid" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	
+	
+	<changeSet id="45" author="Siva">
+			<createView viewName="FINSCHEDULEDETAILS_AVIEW" replaceIfExists="true">
+	  SELECT     T1.FinReference, T1.SchSeq, T1.SchDate, T1.PftOnSchDate, T1.RepayOnSchDate, T1.CpzOnSchDate, T1.RvwOnSchDate, T1.DisbOnSchDate, 
+	                     T1.DownpaymentOnSchDate, T1.BalanceForPftCal, T1.BaseRate, T1.SplRate, T1.ActRate, T1.NoOfDays, T1.DayFactor, T1.ProfitCalc, T1.ProfitSchd, 
+	                      T1.PrincipalSchd, T1.RepayAmount, T1.ProfitBalance, T1.DisbAmount, T1.CpzAmount, T1.DownPaymentAmount,  
+	                      T1.ClosingBalance, T1.ProfitFraction, T1.PrvRepayAmount, T1.SchdPftPaid, T1.SchPftPaid, T1.SchdPriPaid, T1.SchPriPaid, 
+	                      T1.Specifier, T1.DefSchdDate, T1.SchdMethod, T1.MrgRate, 
+	                      T1.CalOnIndRate,T1.FeeChargeAmt, T1.CalculatedRate, T1.EarlyPaidBal, T1.EarlyPaid, T1.RefundOrWaiver, T1.WriteoffPrincipal, 
+	                      T1.WriteoffProfit, T1.OrgPft, T1.OrgPri, T1.OrgEndBal, T1.OrgPlanPft, T1.FeeSchd, T1.SchdFeePaid, T1.SchdFeeOS, T1.InsSchd, T1. SchdInsPaid, 
+	                       T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
+	                       T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount, T1.TDSPaid,
+	                       T1.PftDaysBasis,T1.WriteoffIns,T1.WriteoffIncrCost,T1.WriteoffSuplRent,T1.WriteoffSchFee,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate,T1.PresentmentId
+	
+	FROM         FinScheduleDetails  T1							
+		</createView>
+	</changeSet>		
+	
+	<changeSet id="46" author="Siva">
+			<createView viewName="FINSCHEDULEDETAILS_TVIEW" replaceIfExists="true">
+	  SELECT     T1.FinReference, T1.SchSeq, T1.SchDate, T1.PftOnSchDate, T1.RepayOnSchDate, T1.CpzOnSchDate, T1.RvwOnSchDate, T1.DisbOnSchDate, 
+	                     T1.DownpaymentOnSchDate, T1.BalanceForPftCal, T1.BaseRate, T1.SplRate, T1.ActRate, T1.NoOfDays, T1.DayFactor, T1.ProfitCalc, T1.ProfitSchd, 
+	                      T1.PrincipalSchd, T1.RepayAmount, T1.ProfitBalance, T1.DisbAmount, T1.CpzAmount, T1.DownPaymentAmount,  
+	                      T1.ClosingBalance, T1.ProfitFraction, T1.PrvRepayAmount, T1.SchdPftPaid, T1.SchPftPaid, T1.SchdPriPaid, T1.SchPriPaid, 
+	                      T1.Specifier, T1.DefSchdDate, T1.SchdMethod, T1.MrgRate, 
+	                      T1.CalOnIndRate,T1.FeeChargeAmt, T1.CalculatedRate, T1.EarlyPaidBal, T1.EarlyPaid, T1.RefundOrWaiver, T1.WriteoffPrincipal, 
+	                      T1.WriteoffProfit, T1.OrgPft, T1.OrgPri, T1.OrgEndBal, T1.OrgPlanPft, T1.FeeSchd, T1.SchdFeePaid, T1.SchdFeeOS, T1.InsSchd, T1. SchdInsPaid, 
+	                       T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
+	                       T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount, T1.TDSPaid,
+	                       T1.PftDaysBasis,T1.WriteoffIns,T1.WriteoffIncrCost,T1.WriteoffSuplRent,T1.WriteoffSchFee,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate,T1.PresentmentId
+	
+					FROM         FinScheduleDetails_Temp  T1							
+		</createView>
+	</changeSet>		
+	
+	<changeSet id="47" author="Siva">
+			<createView viewName="FINSCHEDULEDETAILS_VIEW" replaceIfExists="true">
+	  SELECT     T1.FinReference, T1.SchSeq, T1.SchDate, T1.PftOnSchDate, T1.RepayOnSchDate, T1.CpzOnSchDate, T1.RvwOnSchDate, T1.DisbOnSchDate, 
+	                     T1.DownpaymentOnSchDate, T1.BalanceForPftCal, T1.BaseRate, T1.SplRate, T1.ActRate, T1.NoOfDays, T1.DayFactor, T1.ProfitCalc, T1.ProfitSchd, 
+	                      T1.PrincipalSchd, T1.RepayAmount, T1.ProfitBalance, T1.DisbAmount, T1.CpzAmount, T1.DownPaymentAmount,  
+	                      T1.ClosingBalance, T1.ProfitFraction, T1.PrvRepayAmount, T1.SchdPftPaid, T1.SchPftPaid, T1.SchdPriPaid, T1.SchPriPaid, 
+	                      T1.Specifier, T1.DefSchdDate, T1.SchdMethod, T1.MrgRate, 
+	                      T1.CalOnIndRate,T1.FeeChargeAmt, T1.CalculatedRate, T1.EarlyPaidBal, T1.EarlyPaid, T1.RefundOrWaiver, T1.WriteoffPrincipal, 
+	                      T1.WriteoffProfit, T1.OrgPft, T1.OrgPri, T1.OrgEndBal, T1.OrgPlanPft, T1.FeeSchd, T1.SchdFeePaid, T1.SchdFeeOS, T1.InsSchd, T1. SchdInsPaid, 
+	                       T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
+	                       T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount, T1.TDSPaid,
+	                       T1.PftDaysBasis,T1.WriteoffIns,T1.WriteoffIncrCost,T1.WriteoffSuplRent,T1.WriteoffSchFee,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate,T1.PresentmentId
+	
+	FROM         FinScheduleDetails_Temp  T1
+	UNION ALL
+	SELECT     T1.FinReference, T1.SchSeq, T1.SchDate, T1.PftOnSchDate, T1.RepayOnSchDate, T1.CpzOnSchDate, T1.RvwOnSchDate, T1.DisbOnSchDate, 
+	                     T1.DownpaymentOnSchDate, T1.BalanceForPftCal, T1.BaseRate, T1.SplRate, T1.ActRate, T1.NoOfDays, T1.DayFactor, T1.ProfitCalc, T1.ProfitSchd, 
+	                      T1.PrincipalSchd, T1.RepayAmount, T1.ProfitBalance, T1.DisbAmount, T1.CpzAmount, T1.DownPaymentAmount,  
+	                      T1.ClosingBalance, T1.ProfitFraction, T1.PrvRepayAmount, T1.SchdPftPaid, T1.SchPftPaid, T1.SchdPriPaid, T1.SchPriPaid, 
+	                      T1.Specifier, T1.DefSchdDate, T1.SchdMethod, T1.MrgRate, 
+	                      T1.CalOnIndRate,T1.FeeChargeAmt, T1.CalculatedRate, T1.EarlyPaidBal, T1.EarlyPaid, T1.RefundOrWaiver, T1.WriteoffPrincipal, 
+	                      T1.WriteoffProfit, T1.OrgPft, T1.OrgPri, T1.OrgEndBal, T1.OrgPlanPft, T1.FeeSchd, T1.SchdFeePaid, T1.SchdFeeOS, T1.InsSchd, T1. SchdInsPaid, 
+	                       T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
+	                       T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount, T1.TDSPaid,
+	                       T1.PftDaysBasis,T1.WriteoffIns,T1.WriteoffIncrCost,T1.WriteoffSuplRent,T1.WriteoffSchFee,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate,T1.PresentmentId
+	
+	FROM         FinScheduleDetails  T1
+	WHERE     NOT EXISTS
+	                          (SELECT     1
+	                            FROM          FinScheduleDetails_Temp
+	                            WHERE      FinReference = T1.FinReference)						
+		</createView>
+	</changeSet>		
+	
+	<changeSet id="48" author="Siva">
+			<createView viewName="WIFFINSCHEDULEDETAILS_TVIEW" replaceIfExists="true">
+	  SELECT     T1.FinReference, T1.SchSeq, T1.SchDate, T1.PftOnSchDate, T1.RepayOnSchDate, T1.CpzOnSchDate, T1.RvwOnSchDate, T1.DisbOnSchDate, 
+	                     T1.DownpaymentOnSchDate, T1.BalanceForPftCal, T1.BaseRate, T1.SplRate, T1.ActRate, T1.NoOfDays, T1.DayFactor, T1.ProfitCalc, T1.ProfitSchd, 
+	                      T1.PrincipalSchd, T1.RepayAmount, T1.ProfitBalance, T1.DisbAmount, T1.CpzAmount, T1.DownPaymentAmount,  
+	                      T1.ClosingBalance, T1.ProfitFraction, T1.PrvRepayAmount, T1.SchdPftPaid, T1.SchPftPaid, T1.SchdPriPaid, T1.SchPriPaid, 
+	                      T1.Specifier, T1.DefSchdDate, T1.SchdMethod, T1.MrgRate,  
+	                      T1.CalOnIndRate,T1.FeeChargeAmt, T1.CalculatedRate, T1.OrgPft, T1.OrgPri, T1.OrgEndBal, T1.OrgPlanPft, T1.FeeSchd, T1.SchdFeePaid, T1.SchdFeeOS, T1.InsSchd, T1. SchdInsPaid, 
+	                       T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
+	                       T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount, T1.TDSPaid,
+	                       T1.PftDaysBasis,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate
+		FROM         WIFFinScheduleDetails_Temp T1					
+		</createView>
+	</changeSet>		
+	
+	<changeSet id="49" author="Siva">
+			<createView viewName="WIFFINSCHEDULEDETAILS_VIEW" replaceIfExists="true">
+	  SELECT     T1.FinReference, T1.SchSeq, T1.SchDate, T1.PftOnSchDate, T1.RepayOnSchDate, T1.CpzOnSchDate, T1.RvwOnSchDate, T1.DisbOnSchDate, 
+	                     T1.DownpaymentOnSchDate, T1.BalanceForPftCal, T1.BaseRate, T1.SplRate, T1.ActRate, T1.NoOfDays, T1.DayFactor, T1.ProfitCalc, T1.ProfitSchd, 
+	                      T1.PrincipalSchd, T1.RepayAmount, T1.ProfitBalance, T1.DisbAmount, T1.CpzAmount, T1.DownPaymentAmount,  
+	                      T1.ClosingBalance, T1.ProfitFraction, T1.PrvRepayAmount, T1.SchdPftPaid, T1.SchPftPaid, T1.SchdPriPaid, T1.SchPriPaid, 
+	                      T1.Specifier, T1.DefSchdDate, T1.SchdMethod, T1.MrgRate, 
+	                      T1.CalOnIndRate,T1.FeeChargeAmt, T1.CalculatedRate, T1.OrgPft, T1.OrgPri, T1.OrgEndBal, T1.OrgPlanPft, T1.FeeSchd, T1.SchdFeePaid, T1.SchdFeeOS, T1.InsSchd, T1. SchdInsPaid, 
+	                       T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
+	                       T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount, T1.TDSPaid,
+	                       T1.PftDaysBasis,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate
+	
+		FROM         WIFFinScheduleDetails_Temp T1
+		UNION ALL
+				SELECT     T1.FinReference, T1.SchSeq, T1.SchDate, T1.PftOnSchDate, T1.RepayOnSchDate, T1.CpzOnSchDate, T1.RvwOnSchDate, T1.DisbOnSchDate, 
+	                     T1.DownpaymentOnSchDate, T1.BalanceForPftCal, T1.BaseRate, T1.SplRate, T1.ActRate, T1.NoOfDays, T1.DayFactor, T1.ProfitCalc, T1.ProfitSchd, 
+	                      T1.PrincipalSchd, T1.RepayAmount, T1.ProfitBalance, T1.DisbAmount, T1.CpzAmount, T1.DownPaymentAmount,  
+	                      T1.ClosingBalance, T1.ProfitFraction, T1.PrvRepayAmount, T1.SchdPftPaid, T1.SchPftPaid, T1.SchdPriPaid, T1.SchPriPaid, 
+	                      T1.Specifier, T1.DefSchdDate, T1.SchdMethod, T1.MrgRate, 
+	                      T1.CalOnIndRate,T1.FeeChargeAmt, T1.CalculatedRate, T1.OrgPft, T1.OrgPri, T1.OrgEndBal, T1.OrgPlanPft, T1.FeeSchd, T1.SchdFeePaid, T1.SchdFeeOS, T1.InsSchd, T1. SchdInsPaid, 
+	                       T1.AdvPftRate , T1.AdvProfit ,  T1.AdvRepayAmount , T1.AdvBaseRate , T1.AdvMargin , T1.AdvCalRate, T1.SuplRent ,  T1.IncrCost ,  T1.SuplRentPaid ,  T1.IncrCostPaid ,
+	                       T1.RolloverOnSchDate,  T1.RolloverAmount,  T1.RolloverAmountPaid, T1.TDSAmount, T1.TDSPaid,
+	                       T1.PftDaysBasis,T1.InsuranceAmt, T1.InstNumber, T1.BpiOrHoliday, T1.FrqDate
+	
+		FROM         WIFFinScheduleDetails T1
+		WHERE     NOT EXISTS
+	                          (SELECT     1
+	                            FROM          WIFFinScheduleDetails_Temp
+	                            WHERE      FinReference = T1.FinReference)				
+		</createView>
+	</changeSet>		
+	
+	
+	<changeSet id="50" author="Siva">
+	<sql>
+		UPDATE  FinRepayDetails SET FinSchdTdsPaid = 0;
+		UPDATE  FINREPAYSCHEDULEDETAIL SET TdsSchdPayNow = 0;
+		UPDATE  FINREPAYSCHEDULEDETAIL_TEMP SET TdsSchdPayNow = 0;
+		UPDATE  FINSCHEDULEDETAILS SET TDSPaid = 0;
+		UPDATE  FINSCHEDULEDETAILS_TEMP SET TDSPaid = 0;
+		UPDATE  FINSCHEDULEDETAILS_PA SET TDSPaid = 0;
+		UPDATE  FINSCHEDULEDETAILS_LOG SET TDSPaid = 0;
+		UPDATE  REJECTFINSCHEDULEDETAILS SET TDSPaid = 0;
+		UPDATE  WIFFINSCHEDULEDETAILS SET TDSPaid = 0;
+		UPDATE  WIFFINSCHEDULEDETAILS_TEMP SET TDSPaid = 0;
+	</sql>
+	</changeSet>
 </databaseChangeLog>

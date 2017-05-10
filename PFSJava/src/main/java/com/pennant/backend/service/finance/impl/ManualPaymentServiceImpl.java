@@ -973,6 +973,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			//Check Finance is RIA Finance Type or Not
 			BigDecimal totRpyPri = BigDecimal.ZERO;
 			BigDecimal totRpyPft = BigDecimal.ZERO;
+			BigDecimal totRpyTds = BigDecimal.ZERO;
 			BigDecimal totRefund = BigDecimal.ZERO;
 			BigDecimal totSchdFee = BigDecimal.ZERO;
 			BigDecimal totSchdIns = BigDecimal.ZERO;
@@ -1002,6 +1003,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				//Total Repayments Calculation for Principal, Profit & Refunds
 				totRpyPri = totRpyPri.add(repaySchdList.get(i).getPrincipalSchdPayNow());
 				totRpyPft = totRpyPft.add(repaySchdList.get(i).getProfitSchdPayNow());
+				totRpyTds = totRpyTds.add(repaySchdList.get(i).getTdsSchdPayNow());
 				totRefund = totRefund.add(repaySchdList.get(i).getRefundReq());
 
 				//Fee Details
@@ -1017,6 +1019,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			totalsMap.put("totRpyTot", totRpyPri.add(totRpyPft));
 			totalsMap.put("totRpyPri", totRpyPri);
 			totalsMap.put("totRpyPft", totRpyPft);
+			totalsMap.put("totRpyTds", totRpyTds);
 			totalsMap.put("totRefund", totRefund);
 			//Schedule Early Settlement Insurance Refund
 			totalsMap.put("INSREFUND", insRefund);
@@ -1076,6 +1079,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		finRepayQueue.setSchdPriBal(rsd.getPrincipalSchd().subtract(rsd.getPrincipalSchdPaid()));
 		finRepayQueue.setSchdPriPayNow(rsd.getPrincipalSchdPayNow());
 		finRepayQueue.setSchdPftPayNow(rsd.getProfitSchdPayNow());
+		finRepayQueue.setSchdTdsPayNow(rsd.getTdsSchdPayNow());
 		finRepayQueue.setSchdPriPaid(rsd.getPrincipalSchdPaid());
 		finRepayQueue.setSchdPftPaid(rsd.getProfitSchdPaid());
 

@@ -44,6 +44,7 @@ package com.pennant.app.util;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -201,7 +202,7 @@ public class ReceiptCalculator implements Serializable {
 
 		// Rendering 
 		if(receiptDetailList == null || receiptDetailList.isEmpty()){
-			return null;//TODO: Add Error to display
+			return null;
 		}
 		
 		// Fetch total Advise details
@@ -403,20 +404,46 @@ public class ReceiptCalculator implements Serializable {
 									if(pftAllocateBal.compareTo(BigDecimal.ZERO) > 0){
 										BigDecimal balPft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
 										if(balPft.compareTo(BigDecimal.ZERO) > 0){
-											if(totalReceiptAmt.compareTo(pftAllocateBal) >= 0 && pftAllocateBal.compareTo(balPft) < 0){
-												balPft = pftAllocateBal;
-											}else if(totalReceiptAmt.compareTo(pftAllocateBal) < 0 && balPft.compareTo(totalReceiptAmt) > 0){
-												balPft = totalReceiptAmt;
+											
+											//TDS Calculation, if Applicable
+											BigDecimal tdsMultiplier = BigDecimal.ONE;
+											if(financeMain.isTDSApplicable()){
+
+												BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue("PERCENTAGE_TDS").toString());
+												if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
+													tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
+												}
 											}
-											rsd = prepareRpyRecord(curSchd, rsd, pftPayTo, balPft);
+											
+											BigDecimal actPftAdjust = balPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+											BigDecimal tdsAdjust = BigDecimal.ZERO;
+											if(totalReceiptAmt.compareTo(pftAllocateBal) >= 0 && pftAllocateBal.compareTo(actPftAdjust) < 0){
+												actPftAdjust = pftAllocateBal;
+												tdsAdjust = balPft.subtract(actPftAdjust);
+											}else if(totalReceiptAmt.compareTo(pftAllocateBal) < 0 && actPftAdjust.compareTo(totalReceiptAmt) > 0){
+												actPftAdjust = totalReceiptAmt;
+												tdsAdjust = (actPftAdjust.multiply(tdsMultiplier)).subtract(actPftAdjust);
+											}
+											rsd = prepareRpyRecord(curSchd, rsd, pftPayTo, actPftAdjust.add(tdsAdjust));
+											
+											// TDS Payments
+											if(tdsAdjust.compareTo(BigDecimal.ZERO) > 0){
+												rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_TDS, tdsAdjust);
+												
+												if(paidAllocationMap.containsKey(RepayConstants.ALLOCATION_TDS)){
+													BigDecimal totTDSPayNow = paidAllocationMap.get(RepayConstants.ALLOCATION_TDS);
+													paidAllocationMap.remove(RepayConstants.ALLOCATION_TDS);
+													paidAllocationMap.put(RepayConstants.ALLOCATION_TDS, totTDSPayNow.subtract(tdsAdjust));
+												}
+											}
 
 											// Reset Total Receipt Amount
-											totalReceiptAmt = totalReceiptAmt.subtract(balPft);
-											totPftPaidNow = totPftPaidNow.add(balPft);
-											paidAllocationMap.put(RepayConstants.ALLOCATION_PFT, pftAllocateBal.subtract(balPft));
+											totalReceiptAmt = totalReceiptAmt.subtract(actPftAdjust);
+											totPftPaidNow = totPftPaidNow.add(actPftAdjust.add(tdsAdjust));
+											paidAllocationMap.put(RepayConstants.ALLOCATION_PFT, pftAllocateBal.subtract(actPftAdjust));
 
 											// Update Schedule to avoid on Next loop Payment
-											curSchd.setSchdPftPaid(curSchd.getSchdPftPaid().add(balPft));
+											curSchd.setSchdPftPaid(curSchd.getSchdPftPaid().add(actPftAdjust.add(tdsAdjust)));
 											isSchdPaid = true;
 										}
 									}
@@ -951,6 +978,11 @@ public class ReceiptCalculator implements Serializable {
 			rsd.setProfitSchdPayNow(balPayNow);
 		}
 		
+		// TDS Payment 
+		if(rpyTo == RepayConstants.REPAY_TDS){
+			rsd.setTdsSchdPayNow(balPayNow);
+		}
+		
 		// Late Payment Profit Payment 
 		if(rpyTo == RepayConstants.REPAY_LATEPAY_PROFIT){
 			rsd.setLatePftSchdPayNow(balPayNow);
@@ -959,7 +991,6 @@ public class ReceiptCalculator implements Serializable {
 		// Fee Detail Payment 
 		if(rpyTo == RepayConstants.REPAY_FEE){
 			rsd.setSchdFeePayNow(balPayNow);
-			
 		}
 		
 		// Insurance Detail Payment 
@@ -1066,19 +1097,43 @@ public class ReceiptCalculator implements Serializable {
 							
 							BigDecimal balPft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
 							if(balPft.compareTo(BigDecimal.ZERO) > 0){
-								if(totalReceiptAmt.compareTo(balPft) > 0){
-									totalReceiptAmt = totalReceiptAmt.subtract(balPft);
+
+								//TDS Calculation, if Applicable
+								BigDecimal tdsMultiplier = BigDecimal.ONE;
+								if(financeMain.isTDSApplicable()){
+
+									BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue("PERCENTAGE_TDS").toString());
+									if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
+										tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
+									}
+								}
+
+								BigDecimal actPftAdjust = balPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+								BigDecimal tdsAdjust = BigDecimal.ZERO;
+								if(totalReceiptAmt.compareTo(actPftAdjust) > 0){
+									totalReceiptAmt = totalReceiptAmt.subtract(actPftAdjust);
+									tdsAdjust = balPft.subtract(actPftAdjust);
 								}else{
-									balPft = totalReceiptAmt;
+									actPftAdjust = totalReceiptAmt;
+									tdsAdjust = (actPftAdjust.multiply(tdsMultiplier)).subtract(actPftAdjust);
 									totalReceiptAmt = BigDecimal.ZERO;
 								}
 
+								// Profit Amount Payments
 								BigDecimal totPftPayNow = BigDecimal.ZERO;
 								if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_PFT)){
 									totPftPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_PFT);
 									allocatePaidMap.remove(RepayConstants.ALLOCATION_PFT);
 								}
-								allocatePaidMap.put(RepayConstants.ALLOCATION_PFT, totPftPayNow.add(balPft));
+								allocatePaidMap.put(RepayConstants.ALLOCATION_PFT, totPftPayNow.add(actPftAdjust));
+								
+								// TDS Payments
+								BigDecimal totTDSPayNow = BigDecimal.ZERO;
+								if(allocatePaidMap.containsKey(RepayConstants.ALLOCATION_TDS)){
+									totTDSPayNow = allocatePaidMap.get(RepayConstants.ALLOCATION_TDS);
+									allocatePaidMap.remove(RepayConstants.ALLOCATION_TDS);
+								}
+								allocatePaidMap.put(RepayConstants.ALLOCATION_TDS, totTDSPayNow.add(tdsAdjust));
 							}
 							
 						}else if(pftPayTo == RepayConstants.REPAY_LATEPAY_PROFIT){
@@ -1460,7 +1515,19 @@ public class ReceiptCalculator implements Serializable {
 			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_PFT, repayMain.getProfitBalance());
 		}else{
 			if(repayMain.getOverdueProfit().compareTo(BigDecimal.ZERO) > 0){
-				receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_PFT, repayMain.getOverdueProfit());
+				
+				BigDecimal tdsMultiplier = BigDecimal.ONE;
+				if(finScheduleData.getFinanceMain().isTDSApplicable()){
+
+					BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue("PERCENTAGE_TDS").toString());
+					if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
+						tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
+					}
+				}
+				BigDecimal actPftAdjust = repayMain.getOverdueProfit().divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+				
+				receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_PFT, actPftAdjust);
+				receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_TDS, repayMain.getOverdueProfit().subtract(actPftAdjust));
 			}
 		}
 		

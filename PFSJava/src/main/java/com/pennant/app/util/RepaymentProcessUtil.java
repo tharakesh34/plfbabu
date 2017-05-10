@@ -662,6 +662,7 @@ public class RepaymentProcessUtil {
 							repaySchdList.get(i).getPrincipalSchdPayNow()));
 					rpyQueueHeader
 							.setProfit(rpyQueueHeader.getProfit().add(repaySchdList.get(i).getProfitSchdPayNow()));
+					rpyQueueHeader.setTds(rpyQueueHeader.getTds().add(repaySchdList.get(i).getTdsSchdPayNow()));
 					rpyQueueHeader.setLateProfit(rpyQueueHeader.getLateProfit().add(
 							repaySchdList.get(i).getLatePftSchdPayNow()));
 					rpyQueueHeader.setPenalty(rpyQueueHeader.getPenalty().add(repaySchdList.get(i).getPenaltyPayNow()));

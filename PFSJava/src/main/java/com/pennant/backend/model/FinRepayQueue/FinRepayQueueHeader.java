@@ -7,6 +7,7 @@ public class FinRepayQueueHeader {
 
 	private BigDecimal	principal	= BigDecimal.ZERO;
 	private BigDecimal	profit		= BigDecimal.ZERO;
+	private BigDecimal	tds			= BigDecimal.ZERO;
 	private BigDecimal	lateProfit	= BigDecimal.ZERO;
 	private BigDecimal	penalty		= BigDecimal.ZERO;
 	private BigDecimal	fee			= BigDecimal.ZERO;
@@ -187,6 +188,14 @@ public class FinRepayQueueHeader {
 
 	public void setPartnerBankAcType(String partnerBankAcType) {
 		this.partnerBankAcType = partnerBankAcType;
+	}
+
+	public BigDecimal getTds() {
+		return tds;
+	}
+
+	public void setTds(BigDecimal tds) {
+		this.tds = tds;
 	}
 
 }

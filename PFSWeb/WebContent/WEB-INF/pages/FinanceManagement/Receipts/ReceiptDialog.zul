@@ -913,6 +913,9 @@
 										<listheader
 											label="${c:l('listheader_PftPayNow.label')}" sort="false"
 											hflex="min" />
+										<listheader id="listheader_Tds" visible="false"
+											label="${c:l('listheader_TdsPayNow.label')}" sort="false"
+											hflex="min" />
 										<listheader id="listheader_LatePft" visible="false"
 											label="${c:l('listheader_LatePftPayNow.label')}" sort="false"
 											hflex="min" />

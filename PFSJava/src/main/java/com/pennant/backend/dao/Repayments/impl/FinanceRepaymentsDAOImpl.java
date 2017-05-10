@@ -141,12 +141,12 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (FinReference, FinSchdDate, FinRpyFor, FinPaySeq,LinkedTranId,");
 		insertSql.append(" FinRpyAmount, FinPostDate , FinValueDate, FinBranch,");
-		insertSql.append(" FinType, FinCustID, FinSchdPriPaid, FinSchdPftPaid,");
+		insertSql.append(" FinType, FinCustID, FinSchdPriPaid, FinSchdPftPaid, FinSchdTdsPaid,");
 		insertSql.append(" SchdFeePaid , SchdInsPaid , SchdSuplRentPaid , SchdIncrCostPaid,");
 		insertSql.append(" FinTotSchdPaid, FinFee, FinWaiver, FinRefund) Values(");
 		insertSql.append(" :FinReference, :FinSchdDate, :FinRpyFor, :FinPaySeq,:LinkedTranId,");
 		insertSql.append(" :FinRpyAmount, :FinPostDate, :FinValueDate, :FinBranch,");
-		insertSql.append(" :FinType, :FinCustID, :FinSchdPriPaid, :FinSchdPftPaid,");
+		insertSql.append(" :FinType, :FinCustID, :FinSchdPriPaid, :FinSchdPftPaid,:FinSchdTdsPaid,");
 		insertSql.append(" :SchdFeePaid , :SchdInsPaid ,  :SchdSuplRentPaid , :SchdIncrCostPaid,");
 		insertSql.append(" :FinTotSchdPaid,:FinFee, :FinWaiver, :FinRefund)");
 
@@ -169,7 +169,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		
 		StringBuilder selectSql = new StringBuilder(" Select T1.FinReference, T1.FinPostDate, T1.FinRpyFor, T1.FinPaySeq,");
 		selectSql.append(" T1.FinRpyAmount, T1.FinSchdDate, T1.FinValueDate, T1.FinBranch,");
-	    selectSql.append(" T1.FinType, T1.FinCustID, T1.FinSchdPriPaid, T1.FinSchdPftPaid,");
+	    selectSql.append(" T1.FinType, T1.FinCustID, T1.FinSchdPriPaid, T1.FinSchdPftPaid, T1.FinSchdTdsPaid,");
 		selectSql.append(" T1.FinTotSchdPaid, T1.FinFee, T1.FinWaiver, T1.FinRefund, T1.SchdFeePaid , T1.SchdInsPaid , ");
 		selectSql.append(" T1.SchdSuplRentPaid , SchdIncrCostPaid");
 		if(isRpyCancelProc){
@@ -194,7 +194,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		if(repaymentList == null || repaymentList.isEmpty()){
 			selectSql = new StringBuilder(" Select T1.FinReference, T1.FinPostDate, T1.FinRpyFor, T1.FinPaySeq,");
 			selectSql.append(" T1.FinRpyAmount, T1.FinSchdDate, T1.FinValueDate, T1.FinBranch,");
-		    selectSql.append(" T1.FinType, T1.FinCustID, T1.FinSchdPriPaid, T1.FinSchdPftPaid,");
+		    selectSql.append(" T1.FinType, T1.FinCustID, T1.FinSchdPriPaid, T1.FinSchdPftPaid, T1.FinSchdTdsPaid, ");
 			selectSql.append(" T1.FinTotSchdPaid, T1.FinFee, T1.FinWaiver, T1.FinRefund, ");
 			selectSql.append(" T1.SchdFeePaid , T1.SchdInsPaid , T1.SchdSuplRentPaid , T1.SchdIncrCostPaid");
 			if(isRpyCancelProc){
@@ -228,8 +228,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		financeRepayments.setFinReference(finReference);
 		
 		StringBuilder selectSql = new StringBuilder(" Select T1.FinReference, T1.FinPostDate,");
-		selectSql.append(" T1.FinValueDate,T1.FinSchdPriPaid, T1.FinSchdPftPaid, ");
-		selectSql.append(" T1.FinTotSchdPaid ");
+		selectSql.append(" T1.FinValueDate,T1.FinSchdPriPaid, T1.FinSchdPftPaid, T1.FinSchdTdsPaid, T1.FinTotSchdPaid ");
 		selectSql.append(" From FinRepayDetails");
 		selectSql.append(" T1 where T1.FinReference=:FinReference and T1.FinSchdDate=:FinSchdDate ");
 
@@ -436,7 +435,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		
 		StringBuilder selectSql = new StringBuilder(" Select RepayID, RepaySchID, FinReference , SchDate , SchdFor , ProfitSchdBal , PrincipalSchdBal , " );
 		selectSql.append(" ProfitSchd , ProfitSchdPaid , PrincipalSchd , PrincipalSchdPaid , " );
-		selectSql.append(" ProfitSchdPayNow , PrincipalSchdPayNow , PenaltyAmt , DaysLate , MaxWaiver , AllowRefund , AllowWaiver , " );
+		selectSql.append(" ProfitSchdPayNow , TdsSchdPayNow, PrincipalSchdPayNow , PenaltyAmt , DaysLate , MaxWaiver , AllowRefund , AllowWaiver , " );
 		selectSql.append(" RefundReq , WaivedAmt , RepayBalance, PenaltyPayNow, SchdFee, SchdFeePaid, SchdFeeBal, SchdFeePayNow, ");
 		selectSql.append(" SchdIns, SchdInsPaid, SchdInsBal, SchdInsPayNow,LatePftSchd, LatePftSchdPaid, LatePftSchdBal, LatePftSchdPayNow, ");
 		selectSql.append(" SchdSuplRent, SchdSuplRentPaid, SchdSuplRentBal,SchdSuplRentPayNow, SchdIncrCost, ");
@@ -461,7 +460,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		StringBuilder insertSql = new StringBuilder("Insert Into FinRepayScheduleDetail");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (RepayID, RepaySchID, FinReference , SchDate , SchdFor , LinkedTranId, ProfitSchdBal , PrincipalSchdBal , " );
-		insertSql.append(" ProfitSchdPayNow , PrincipalSchdPayNow , PenaltyAmt , DaysLate , MaxWaiver , AllowRefund , AllowWaiver , " );
+		insertSql.append(" ProfitSchdPayNow , TdsSchdPayNow, PrincipalSchdPayNow , PenaltyAmt , DaysLate , MaxWaiver , AllowRefund , AllowWaiver , " );
 		insertSql.append(" ProfitSchd , ProfitSchdPaid , PrincipalSchd , PrincipalSchdPaid , " );
 		insertSql.append(" RefundReq , WaivedAmt , RepayBalance, PenaltyPayNow, SchdFee, SchdFeePaid, SchdFeeBal, SchdFeePayNow,");
 		insertSql.append(" SchdIns, SchdInsPaid, SchdInsBal, SchdInsPayNow,  LatePftSchd, LatePftSchdPaid, LatePftSchdBal, LatePftSchdPayNow,  ");
@@ -469,7 +468,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		insertSql.append(" SchdIncrCostPaid, SchdIncrCostBal, SchdIncrCostPayNow, PftSchdWaivedNow , LatePftSchdWaivedNow, ");
 		insertSql.append(" PriSchdWaivedNow, SchdFeeWaivedNow, SchdInsWaivedNow, SchdSuplRentWaivedNow, SchdIncrCostWaivedNow) ");
 		insertSql.append(" Values(:RepayID,:RepaySchID, :FinReference , :SchDate , :SchdFor , :LinkedTranId , :ProfitSchdBal , :PrincipalSchdBal , " );
-		insertSql.append(" :ProfitSchdPayNow , :PrincipalSchdPayNow , :PenaltyAmt , :DaysLate , :MaxWaiver , :AllowRefund , :AllowWaiver , " );
+		insertSql.append(" :ProfitSchdPayNow , :TdsSchdPayNow, :PrincipalSchdPayNow , :PenaltyAmt , :DaysLate , :MaxWaiver , :AllowRefund , :AllowWaiver , " );
 		insertSql.append(" :ProfitSchd , :ProfitSchdPaid , :PrincipalSchd , :PrincipalSchdPaid  , " );
 		insertSql.append(" :RefundReq , :WaivedAmt , :RepayBalance, :PenaltyPayNow , :SchdFee, :SchdFeePaid, :SchdFeeBal, :SchdFeePayNow,");
 		insertSql.append(" :SchdIns, :SchdInsPaid, :SchdInsBal, :SchdInsPayNow, :LatePftSchd, :LatePftSchdPaid, :LatePftSchdBal, :LatePftSchdPayNow, ");

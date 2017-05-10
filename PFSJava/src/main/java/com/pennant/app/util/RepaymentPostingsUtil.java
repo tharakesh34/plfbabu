@@ -645,6 +645,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		schedule.setIncrCostPaid(schedule.getIncrCostPaid().add(finRepayQueue.getSchdIncrCostPayNow()));
 
 		schedule.setSchdPftPaid(schedule.getSchdPftPaid().add(finRepayQueue.getSchdPftPayNow()));
+		schedule.setTDSPaid(schedule.getTDSPaid().add(finRepayQueue.getSchdTdsPayNow()));
 		schedule.setSchdPriPaid(schedule.getSchdPriPaid().add(finRepayQueue.getSchdPriPayNow()));
 
 		// Finance Schedule Profit Balance Check
@@ -693,6 +694,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		repayment.setFinType(queue.getFinType());
 		repayment.setFinCustID(queue.getCustomerID());
 		repayment.setFinSchdPftPaid(queue.getSchdPftPayNow());
+		repayment.setFinSchdTdsPaid(queue.getSchdTdsPayNow());
 		repayment.setFinSchdPriPaid(queue.getSchdPriPayNow());
 		repayment.setFinTotSchdPaid(queue.getSchdPftPayNow().add(queue.getSchdPriPayNow()));
 		repayment.setFinFee(BigDecimal.ZERO);

@@ -110,6 +110,7 @@ import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -1744,6 +1745,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				
 				curRpySchd.setPrincipalSchdPayNow(curRpySchd.getPrincipalSchdPayNow().add(rpySchd.getPrincipalSchdPayNow()));
 				curRpySchd.setProfitSchdPayNow(curRpySchd.getProfitSchdPayNow().add(rpySchd.getProfitSchdPayNow()));
+				curRpySchd.setTdsSchdPayNow(curRpySchd.getTdsSchdPayNow().add(rpySchd.getTdsSchdPayNow()));
 				curRpySchd.setLatePftSchdPayNow(curRpySchd.getLatePftSchdPayNow().add(rpySchd.getLatePftSchdPayNow()));
 				curRpySchd.setSchdFeePayNow(curRpySchd.getSchdFeePayNow().add(rpySchd.getSchdFeePayNow()));
 				curRpySchd.setSchdInsPayNow(curRpySchd.getSchdInsPayNow().add(rpySchd.getSchdInsPayNow()));
@@ -2561,7 +2563,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}else{
 					allocationPaid.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 				}
-
+				
 				lc.appendChild(allocationPaid);
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
@@ -2612,6 +2614,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				// Set ID to Item
 				item.setId("AllocateItem_"+allocateTypes.get(i));
+				
+				// Not editable for TDS Amount
+				if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_TDS)){
+					allocationPaid.setReadonly(true);
+					allocationWaived.setReadonly(true);
+				}
 
 				if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_MANADV)){
 					this.listBoxManualAdvises.appendChild(item);
@@ -2775,6 +2783,32 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if(paidAllocateAmt.compareTo(pastdueAmt) > 0){
 			paidAllocateAmt = pastdueAmt;
 			allocatePaid.setValue(PennantApplicationUtil.formateAmount(paidAllocateAmt, finFormatter));
+		}
+		
+		BigDecimal tdsCalculated = BigDecimal.ZERO;
+		if(getFinanceDetail().getFinScheduleData().getFinanceMain().isTDSApplicable()){
+			
+			BigDecimal tdsMultiplier = BigDecimal.ONE;
+			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue("PERCENTAGE_TDS").toString());
+			if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
+				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
+			}
+			
+			if(StringUtils.equals(allocatePaid.getId(), "AllocatePaid_"+RepayConstants.ALLOCATION_PFT)){
+				if(this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+RepayConstants.ALLOCATION_TDS) != null){
+					CurrencyBox allocateTDSPaid = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+RepayConstants.ALLOCATION_TDS);
+					BigDecimal actPftAdjust = paidAllocateAmt.multiply(tdsMultiplier);
+					tdsCalculated = actPftAdjust.subtract(paidAllocateAmt);
+					allocateTDSPaid.setValue(PennantApplicationUtil.amountFormate(tdsCalculated, finFormatter));
+					
+					if(paidAllocationMap != null){ 
+						if(paidAllocationMap.containsKey(allocateTDSPaid.getId())){
+							paidAllocationMap.remove(allocateTDSPaid.getId());
+						}
+						paidAllocationMap.put(allocateTDSPaid.getId(), tdsCalculated);
+					}
+				}
+			}
 		}
 		
 		// Setting to Map for future usage on Rendering
@@ -3246,6 +3280,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					amountCodes.setRpTot(amountCodes.getRpPri().add(rsd.getPrincipalSchdPayNow()).add(rsd.getProfitSchdPayNow()).add(rsd.getLatePftSchdPayNow()));
 					amountCodes.setRpPft(amountCodes.getRpPft().add(rsd.getProfitSchdPayNow()).add(rsd.getLatePftSchdPayNow()));
 					amountCodes.setRpPri(amountCodes.getRpPri().add(rsd.getPrincipalSchdPayNow()));
+					amountCodes.setRpTds(amountCodes.getRpTds().add(rsd.getTdsSchdPayNow()));
 					totRpyPri = totRpyPri.add(rsd.getPrincipalSchdPayNow());
 
 					// Fee Details
@@ -3693,6 +3728,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		BigDecimal totalRefund = BigDecimal.ZERO;
 		BigDecimal totalWaived = BigDecimal.ZERO;
 		BigDecimal totalPft = BigDecimal.ZERO;
+		BigDecimal totalTds = BigDecimal.ZERO;
 		BigDecimal totalLatePft = BigDecimal.ZERO;
 		BigDecimal totalPri = BigDecimal.ZERO;
 		BigDecimal totalCharge = BigDecimal.ZERO;
@@ -3723,6 +3759,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				lc.setParent(item);
 				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getProfitSchdPayNow(), finFormatter));
 				totalPft = totalPft.add(repaySchd.getProfitSchdPayNow());
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getTdsSchdPayNow(), finFormatter));
+				totalTds = totalTds.add(repaySchd.getTdsSchdPayNow());
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getLatePftSchdPayNow(), finFormatter));
@@ -3809,6 +3849,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			paymentMap.put("totalRefund", totalRefund);
 			paymentMap.put("totalCharge", totalCharge);
 			paymentMap.put("totalPft", totalPft);
+			paymentMap.put("totalTds", totalTds);
 			paymentMap.put("totalLatePft", totalLatePft);
 			paymentMap.put("totalPri", totalPri);
 

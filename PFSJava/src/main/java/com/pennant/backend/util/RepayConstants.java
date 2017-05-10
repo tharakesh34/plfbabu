@@ -53,6 +53,7 @@ public class RepayConstants {
 
 	// Repayment Type Constants
 	public static final char	REPAY_PROFIT			= 'I';
+	public static final char	REPAY_TDS				= 'T';
 	public static final char	REPAY_PRINCIPAL			= 'P';
 	public static final char	REPAY_PENALTY			= 'C';
 	public static final char	REPAY_OTHERS			= 'F';
@@ -88,6 +89,7 @@ public class RepayConstants {
 	// Allocation Types
 	public static final String	ALLOCATION_PRI			= "PRI";
 	public static final String	ALLOCATION_PFT			= "PFT";
+	public static final String	ALLOCATION_TDS			= "TDS";
 	public static final String	ALLOCATION_LPFT			= "LPFT";
 	public static final String	ALLOCATION_ODC			= "ODC";
 	public static final String	ALLOCATION_FEE			= "FEE";

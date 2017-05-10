@@ -22,6 +22,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	private long finCustID;
 	private BigDecimal finSchdPriPaid = BigDecimal.ZERO;
 	private BigDecimal finSchdPftPaid = BigDecimal.ZERO;
+	private BigDecimal finSchdTdsPaid = BigDecimal.ZERO;
 	private BigDecimal finTotSchdPaid = BigDecimal.ZERO;
 	private BigDecimal finFee = BigDecimal.ZERO;
 	private BigDecimal finWaiver = BigDecimal.ZERO;
@@ -268,6 +269,14 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	}
 	public void setSchdIncrCostPaid(BigDecimal schdIncrCostPaid) {
 		this.schdIncrCostPaid = schdIncrCostPaid;
+	}
+
+	public BigDecimal getFinSchdTdsPaid() {
+		return finSchdTdsPaid;
+	}
+
+	public void setFinSchdTdsPaid(BigDecimal finSchdTdsPaid) {
+		this.finSchdTdsPaid = finSchdTdsPaid;
 	}
 	
 }

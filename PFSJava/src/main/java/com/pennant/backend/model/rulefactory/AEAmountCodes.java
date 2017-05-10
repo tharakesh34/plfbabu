@@ -49,6 +49,7 @@ public class AEAmountCodes {
 	private BigDecimal	priSB				= BigDecimal.ZERO;
 	private BigDecimal	priSP				= BigDecimal.ZERO;
 	private BigDecimal	rpPft				= BigDecimal.ZERO;
+	private BigDecimal	rpTds				= BigDecimal.ZERO;
 	private BigDecimal	rpPri				= BigDecimal.ZERO;
 	private BigDecimal	rpTot				= BigDecimal.ZERO;
 	private BigDecimal	instpft				= BigDecimal.ZERO;
@@ -863,6 +864,14 @@ public class AEAmountCodes {
 
 	public void setFinType(String finType) {
 		this.finType = finType;
+	}
+
+	public BigDecimal getRpTds() {
+		return rpTds;
+	}
+
+	public void setRpTds(BigDecimal rpTds) {
+		this.rpTds = rpTds;
 	}
 
 }
