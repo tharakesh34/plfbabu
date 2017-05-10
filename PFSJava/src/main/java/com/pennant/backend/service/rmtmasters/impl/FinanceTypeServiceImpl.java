@@ -177,11 +177,12 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			auditHeader.setAuditReference(financeType.getId());
 		} else {
 			getFinanceTypeDAO().update(financeType, tableType);
-			if (StringUtils.isEmpty(tableType)) {
-				FinanceConfigCache.clearFinanceTypeCache(financeType.getFinType());
-			}
 		}
-
+		
+		if (StringUtils.isEmpty(tableType)) {
+			FinanceConfigCache.clearFinanceTypeCache(financeType.getFinType());
+		}
+		
 		//Customer Accounts
 		if (financeType.getFinTypeAccounts() != null  && financeType.getFinTypeAccounts().size() > 0) {
 			List<AuditDetail> details = financeType.getAuditDetailMap().get("FinTypeCustAccount");
@@ -401,7 +402,6 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			//List
 			auditDetails.addAll(deleteChilds(financeType, "",tranType));
 			getFinanceTypeDAO().delete(financeType, "");
-			FinanceConfigCache.clearFinanceTypeCache(financeType.getFinType());
 		} else {
 			financeType.setRoleCode("");
 			financeType.setNextRoleCode("");
@@ -446,8 +446,9 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				tranType = PennantConstants.TRAN_UPD;
 				financeType.setRecordType("");
 				getFinanceTypeDAO().update(financeType, "");
-				FinanceConfigCache.clearFinanceTypeCache(financeType.getFinType());
 			}
+			FinanceConfigCache.clearFinanceTypeCache(financeType.getFinType());
+			
 			if (financeType.getFinTypeAccounts() != null && financeType.getFinTypeAccounts().size() > 0) {
 				List<AuditDetail> details = financeType.getAuditDetailMap().get( "FinTypeCustAccount");
 				details = processFinTypeCustAccountDetails(financeType,details, "");

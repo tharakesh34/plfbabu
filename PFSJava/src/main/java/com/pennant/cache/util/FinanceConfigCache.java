@@ -1,5 +1,6 @@
 package com.pennant.cache.util;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -61,18 +62,31 @@ public class FinanceConfigCache {
 		return getdPDBucketDAO().getDPDBucket(bucketID, TableType.MAIN_TAB.getSuffix());
 	}
 	
-	
-	private static LoadingCache<Long, DPDBucketConfiguration> dPDBucketConfigurationCache = CacheBuilder
+	private static LoadingCache<String, DPDBucket> dPDBucketCodeCache = CacheBuilder
 			.newBuilder().expireAfterAccess(12, TimeUnit.HOURS)
-			.build(new CacheLoader<Long, DPDBucketConfiguration>() {
+			.build(new CacheLoader<String, DPDBucket>() {
 				@Override
-				public DPDBucketConfiguration load(Long configID) throws Exception {
-					return getDPDBucketConfigurationById(configID);
+				public DPDBucket load(String bucketCode) throws Exception {
+					return getDPDBucketByCode(bucketCode);
+				}
+			});
+	
+	protected static DPDBucket getDPDBucketByCode(String bucketCode) {
+		return getdPDBucketDAO().getDPDBucket(bucketCode, TableType.MAIN_TAB.getSuffix());
+	}
+	
+	
+	private static LoadingCache<String, List<DPDBucketConfiguration>> dPDBucketConfigurationCache = CacheBuilder
+			.newBuilder().expireAfterAccess(12, TimeUnit.HOURS)
+			.build(new CacheLoader<String, List<DPDBucketConfiguration>>() {
+				@Override
+				public List<DPDBucketConfiguration> load(String productCode) throws Exception {
+					return getDPDBucketConfigurationById(productCode);
 				}
 			});
 
-	protected static DPDBucketConfiguration getDPDBucketConfigurationById(long configID ) {
-		return getdPDBucketConfigurationDAO().getDPDBucketConfiguration(configID, TableType.MAIN_TAB.getSuffix());
+	protected static List<DPDBucketConfiguration> getDPDBucketConfigurationById(String productCode ) {
+		return getdPDBucketConfigurationDAO().getDPDBucketConfigurations(productCode);
 	}
 
 	private static LoadingCache<Long, NPABucket> nPABucketCache = CacheBuilder
@@ -88,17 +102,17 @@ public class FinanceConfigCache {
 		return getnPABucketDAO().getNPABucket(bucketID, TableType.MAIN_TAB.getSuffix());
 	}
 
-	private static LoadingCache<Long, NPABucketConfiguration> nPABucketConfigurationCache = CacheBuilder
+	private static LoadingCache<String, List<NPABucketConfiguration>> nPABucketConfigurationCache = CacheBuilder
 			.newBuilder().expireAfterAccess(12, TimeUnit.HOURS)
-			.build(new CacheLoader<Long, NPABucketConfiguration>() {
+			.build(new CacheLoader<String, List<NPABucketConfiguration>>() {
 				@Override
-				public NPABucketConfiguration load(Long configID) throws Exception {
-					return getNPABucketConfigurationById(configID);
+				public List<NPABucketConfiguration> load(String productCode) throws Exception {
+					return getNPABucketConfigurationByCode(productCode);
 				}
 			});
 
-	protected static NPABucketConfiguration getNPABucketConfigurationById(long configID ) {
-		return getnPABucketConfigurationDAO().getNPABucketConfiguration(configID, TableType.MAIN_TAB.getSuffix());
+	protected static List<NPABucketConfiguration> getNPABucketConfigurationByCode(String productCode) {
+		return getnPABucketConfigurationDAO().getNPABucketConfigByProducts(productCode);
 	}
 
 	/**
@@ -158,6 +172,36 @@ public class FinanceConfigCache {
 			logger.warn("Error clearing data from DPDBucket cache: ",ex);
 		}
 	}
+	
+	/**
+	 * It Fetches DPDBucket Data from Cache
+	 * @param long bucketID
+	 * @return DPDBucket
+	 */
+	public static DPDBucket getDPDBucketCode(String bucketCode){
+		DPDBucket dpdBucket=null;
+		
+		try {
+			dpdBucket =  dPDBucketCodeCache.get(bucketCode);
+		} catch (ExecutionException e) {
+			logger.warn("Unable to load data from DPDBucket cache: ", e);
+			dpdBucket =  getDPDBucketByCode(bucketCode);
+		}
+		
+		return dpdBucket;
+	}
+	
+	/**
+	 * It Clear DPDBucket data from cache .
+	 * @param long bucketID
+	 */
+	public static void clearDPDBucketCodeCache(String bucketCode) {
+		try {
+			dPDBucketCodeCache.invalidate(bucketCode);
+		} catch (Exception ex) {
+			logger.warn("Error clearing data from DPDBucket cache: ",ex);
+		}
+	}
 
 
 	/**
@@ -165,26 +209,24 @@ public class FinanceConfigCache {
 	 * @param long configID
 	 * @return DPDBucketConfiguration
 	 */
-	public static DPDBucketConfiguration getDPDBucketConfiguration(long configID){
-		DPDBucketConfiguration dpdBucketConfiguration=null;
+	public static List<DPDBucketConfiguration> getDPDBucketConfiguration(String productCode){
 		
 		try {
-			dpdBucketConfiguration =  dPDBucketConfigurationCache.get(configID);
+			return  dPDBucketConfigurationCache.get(productCode);
 		} catch (ExecutionException e) {
 			logger.warn("Unable to load data from DPDBucket Configuration cache: ", e);
-			dpdBucketConfiguration =  getDPDBucketConfigurationById(configID);
+			return  getDPDBucketConfigurationById(productCode);
 		}
 
-		return dpdBucketConfiguration;
 	}
 	
 	/**
 	 * It Clear DPDBucket Configuration data from cache.
 	 * @param long configID
 	 */
-	public static void clearDPDBucketConfigurationCache(long configID) {
+	public static void clearDPDBucketConfigurationCache(String productCode) {
 		try {
-			dPDBucketConfigurationCache.invalidate(configID);
+			dPDBucketConfigurationCache.invalidate(productCode);
 		} catch (Exception ex) {
 			logger.warn("Error clearing data from DPDBucket Configuration cache: ",ex);
 		}
@@ -227,26 +269,23 @@ public class FinanceConfigCache {
 	 * @param long configID
 	 * @return DPDBucketConfiguration
 	 */
-	public static NPABucketConfiguration getNPABucketConfiguration(long configID){
-		NPABucketConfiguration npaBucketConfiguration=null;
-		
+	public static List<NPABucketConfiguration> getNPABucketConfiguration(String productCode) {
 		try {
-			npaBucketConfiguration =  nPABucketConfigurationCache.get(configID);
+			return nPABucketConfigurationCache.get(productCode);
 		} catch (ExecutionException e) {
 			logger.warn("Unable to load data from NPABucket Configuration cache: ", e);
-			npaBucketConfiguration =  getNPABucketConfigurationById(configID);
+			return getNPABucketConfigurationByCode(productCode);
 		}
 
-		return npaBucketConfiguration;
 	}
 
 	/**
 	 * It Clear NPABucket Configuration data from cache.
 	 * @param configID
 	 */
-	public static void clearNPABucketConfigurationCache(long configID) {
+	public static void clearNPABucketConfigurationCache(String productCode) {
 		try {
-			nPABucketConfigurationCache.invalidate(configID);
+			nPABucketConfigurationCache.invalidate(productCode);
 		} catch (Exception ex) {
 			logger.warn("Error clearing data from NPABucket Configuration cache: ",ex);
 		}

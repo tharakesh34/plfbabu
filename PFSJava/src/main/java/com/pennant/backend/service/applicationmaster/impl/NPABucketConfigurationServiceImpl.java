@@ -138,14 +138,14 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 			nPABucketConfiguration.setId(Long.parseLong(getNPABucketConfigurationDAO().save(nPABucketConfiguration,
 					tableType)));
 			auditHeader.getAuditDetail().setModelData(nPABucketConfiguration);
-			auditHeader.setAuditReference(String.valueOf(nPABucketConfiguration.getConfigID()));
+			auditHeader.setAuditReference(String.valueOf(nPABucketConfiguration.getProductCode()));
 		} else {
 			getNPABucketConfigurationDAO().update(nPABucketConfiguration, tableType);
-			if (TableType.MAIN_TAB.equals(tableType)) {
-				FinanceConfigCache.clearNPABucketConfigurationCache(nPABucketConfiguration.getConfigID());
-			}
 		}
-
+		
+		if (TableType.MAIN_TAB.equals(tableType)) {
+			FinanceConfigCache.clearNPABucketConfigurationCache(nPABucketConfiguration.getProductCode());
+		}
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -175,7 +175,7 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 		NPABucketConfiguration nPABucketConfiguration = (NPABucketConfiguration) auditHeader.getAuditDetail()
 				.getModelData();
 		getNPABucketConfigurationDAO().delete(nPABucketConfiguration, TableType.MAIN_TAB);
-		FinanceConfigCache.clearNPABucketConfigurationCache(nPABucketConfiguration.getConfigID());
+		FinanceConfigCache.clearNPABucketConfigurationCache(nPABucketConfiguration.getProductCode());
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
@@ -195,13 +195,15 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 	}
 
 	/**
-	 * It fetches Approved NPABucketConfiguration from NPABUCKETSCONFIG
+	 * getApprovedNPABUCKETSCONFIGById fetch the details by using NPABUCKETSCONFIGDAO's getNPABUCKETSCONFIGById method .
+	 * with parameter id and type as blank. it fetches the approved records from the NPABUCKETSCONFIG.
 	 * 
-	 * @param long configID
+	 * @param configID
+	 *            configID of the NPABucketConfiguration. (String)
 	 * @return NPABUCKETSCONFIG
 	 */
 	public NPABucketConfiguration getApprovedNPABucketConfiguration(long configID) {
-		return FinanceConfigCache.getNPABucketConfiguration(configID);
+		return getNPABucketConfigurationDAO().getNPABucketConfiguration(configID, "_AView");
 	}
 
 	/**
@@ -246,7 +248,7 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 		if (nPABucketConfiguration.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getNPABucketConfigurationDAO().delete(nPABucketConfiguration, TableType.MAIN_TAB);
-			FinanceConfigCache.clearNPABucketConfigurationCache(nPABucketConfiguration.getConfigID());
+	
 		} else {
 			nPABucketConfiguration.setRoleCode("");
 			nPABucketConfiguration.setNextRoleCode("");
@@ -262,10 +264,11 @@ public class NPABucketConfigurationServiceImpl extends GenericService<NPABucketC
 				tranType = PennantConstants.TRAN_UPD;
 				nPABucketConfiguration.setRecordType("");
 				getNPABucketConfigurationDAO().update(nPABucketConfiguration, TableType.MAIN_TAB);
-				FinanceConfigCache.clearNPABucketConfigurationCache(nPABucketConfiguration.getConfigID());
 			}
 		}
-
+		
+		FinanceConfigCache.clearNPABucketConfigurationCache(nPABucketConfiguration.getProductCode());
+		
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 

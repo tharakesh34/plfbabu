@@ -142,11 +142,11 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 			auditHeader.setAuditReference(String.valueOf(nPABucket.getBucketID()));
 		}else{
 			getNPABucketDAO().update(nPABucket,tableType);
-			if (TableType.MAIN_TAB.equals(tableType)) {
-				FinanceConfigCache.clearNPABucketCache(nPABucket.getBucketID());
-			}
 		}
-
+		
+		if (TableType.MAIN_TAB.equals(tableType)) {
+			FinanceConfigCache.clearNPABucketCache(nPABucket.getBucketID());
+		}
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -251,7 +251,6 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 		if (nPABucket.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getNPABucketDAO().delete(nPABucket, TableType.MAIN_TAB);
-			FinanceConfigCache.clearNPABucketCache(nPABucket.getBucketID());
 		} else {
 			nPABucket.setRoleCode("");
 			nPABucket.setNextRoleCode("");
@@ -268,9 +267,10 @@ public class NPABucketServiceImpl extends GenericService<NPABucket> implements N
 				tranType = PennantConstants.TRAN_UPD;
 				nPABucket.setRecordType("");
 				getNPABucketDAO().update(nPABucket, TableType.MAIN_TAB);
-				FinanceConfigCache.clearNPABucketCache(nPABucket.getBucketID());
 			}
 		}
+		
+		FinanceConfigCache.clearNPABucketCache(nPABucket.getBucketID());
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);

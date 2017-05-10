@@ -141,11 +141,12 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 			auditHeader.setAuditReference(String.valueOf(dPDBucketConfiguration.getConfigID()));
 		} else {
 			getDPDBucketConfigurationDAO().update(dPDBucketConfiguration, tableType);
-			if (TableType.MAIN_TAB.equals(tableType)) {
-				FinanceConfigCache.clearDPDBucketConfigurationCache(dPDBucketConfiguration.getConfigID());
-			}
 		}
-
+		
+		if (TableType.MAIN_TAB.equals(tableType)) {
+			FinanceConfigCache.clearDPDBucketConfigurationCache(dPDBucketConfiguration.getProductCode());
+		}
+		
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -175,7 +176,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 		DPDBucketConfiguration dPDBucketConfiguration = (DPDBucketConfiguration) auditHeader.getAuditDetail()
 				.getModelData();
 		getDPDBucketConfigurationDAO().delete(dPDBucketConfiguration, TableType.MAIN_TAB);
-		FinanceConfigCache.clearDPDBucketConfigurationCache(dPDBucketConfiguration.getConfigID());
+		FinanceConfigCache.clearDPDBucketConfigurationCache(dPDBucketConfiguration.getProductCode());
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
@@ -195,13 +196,15 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 	}
 
 	/**
-	 * It fetches Approved DPDBucketConfiguration from DPDBUCKETSCONFIG
+	 * getApprovedDPDBUCKETSCONFIGById fetch the details by using DPDBUCKETSCONFIGDAO's getDPDBUCKETSCONFIGById method .
+	 * with parameter id and type as blank. it fetches the approved records from the DPDBUCKETSCONFIG.
 	 * 
-	 * @param long configID
+	 * @param configID
+	 *            configID of the DPDBucketConfiguration. (String)
 	 * @return DPDBUCKETSCONFIG
 	 */
 	public DPDBucketConfiguration getApprovedDPDBucketConfiguration(long configID) {
-		return FinanceConfigCache.getDPDBucketConfiguration(configID);
+		return getDPDBucketConfigurationDAO().getDPDBucketConfiguration(configID, "_AView");
 	}
 
 	/**
@@ -246,7 +249,7 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 		if (dPDBucketConfiguration.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getDPDBucketConfigurationDAO().delete(dPDBucketConfiguration, TableType.MAIN_TAB);
-			FinanceConfigCache.clearDPDBucketConfigurationCache(dPDBucketConfiguration.getConfigID());
+		
 		} else {
 			dPDBucketConfiguration.setRoleCode("");
 			dPDBucketConfiguration.setNextRoleCode("");
@@ -262,10 +265,10 @@ public class DPDBucketConfigurationServiceImpl extends GenericService<DPDBucketC
 				tranType = PennantConstants.TRAN_UPD;
 				dPDBucketConfiguration.setRecordType("");
 				getDPDBucketConfigurationDAO().update(dPDBucketConfiguration, TableType.MAIN_TAB);
-				FinanceConfigCache.clearDPDBucketConfigurationCache(dPDBucketConfiguration.getConfigID());
 			}
 		}
-
+		
+		FinanceConfigCache.clearDPDBucketConfigurationCache(dPDBucketConfiguration.getProductCode());
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 

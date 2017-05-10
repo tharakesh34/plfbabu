@@ -251,9 +251,9 @@ public class NPABucketConfigurationDAOImpl extends BasisNextidDaoImpl<NPABucketC
 	public void setDataSource(DataSource dataSource) {
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
-	
+
 	@Override
-	public int getByProductCode(String producCode,int dueDys, String type) {
+	public int getByProductCode(String producCode, int dueDys, String type) {
 		NPABucketConfiguration nPABucketConfiguration = new NPABucketConfiguration();
 		nPABucketConfiguration.setProductCode(producCode);
 		nPABucketConfiguration.setDueDays(dueDys);
@@ -269,7 +269,7 @@ public class NPABucketConfigurationDAOImpl extends BasisNextidDaoImpl<NPABucketC
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
-	
+
 	@Override
 	public int getNPABucketConfigurationById(long bucketID, String type) {
 		NPABucketConfiguration nPABucketConfiguration = new NPABucketConfiguration();
@@ -308,6 +308,27 @@ public class NPABucketConfigurationDAOImpl extends BasisNextidDaoImpl<NPABucketC
 		return list;
 	}
 
+	@Override
+	public List<NPABucketConfiguration> getNPABucketConfigByProducts(String productCode) {
+		logger.debug(Literal.ENTERING);
 
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ProductCode", productCode);
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" configID, productCode, bucketID, dueDays, suspendProfit ");
+		sql.append(" From NPABUCKETSCONFIG Where ProductCode = :ProductCode");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		RowMapper<NPABucketConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(NPABucketConfiguration.class);
+
+		List<NPABucketConfiguration> list = namedParameterJdbcTemplate.query(sql.toString(), source, rowMapper);
+
+		logger.debug(Literal.LEAVING);
+		return list;
+	}
 
 }
