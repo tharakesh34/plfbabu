@@ -136,6 +136,7 @@
 		<property name="receiptPaymentService" ref="receiptPaymentService" />
 		<property name="loadFinanceData" ref="loadFinanceData" />
 		<property name="customerDAO" ref="customerDAO" />
+		<property name="transactionManager" ref="pfsTransactionManager" />
 	</bean>
 	<bean id="archivalService" class="com.pennant.eod.ArchivalService" parent="serviceHelper">
 	</bean>

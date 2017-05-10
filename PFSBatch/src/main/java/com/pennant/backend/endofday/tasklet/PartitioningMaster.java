@@ -65,6 +65,7 @@ public class PartitioningMaster implements Partitioner {
 	public Map<String, ExecutionContext> partition(int gridSize) {
 		Date valueDate = DateUtility.getAppValueDate();
 		logger.debug("START: Thread Allocation On : " + valueDate);
+		Map<String, ExecutionContext> partitionData = new HashMap<String, ExecutionContext>();
 
 		boolean recordslessThanThread = false;
 		//configured thread count
@@ -73,11 +74,9 @@ public class PartitioningMaster implements Partitioner {
 		//count by progress
 		long custIdCount = customerQueuingDAO.getCountByProgress(valueDate);
 
-		Map<String, ExecutionContext> partitionData = new HashMap<String, ExecutionContext>();
-
 		if (custIdCount != 0) {
 
-			long noOfRows = custIdCount / threadCount;
+			long noOfRows = Math.round((new Double(custIdCount) / new Double(threadCount)));
 			if (custIdCount < threadCount) {
 				recordslessThanThread = true;
 				noOfRows = 1;
@@ -85,14 +84,9 @@ public class PartitioningMaster implements Partitioner {
 
 			for (int i = 1; i <= threadCount; i++) {
 
-				if (i == threadCount) {
-					customerQueuingDAO.updateThreadID(valueDate, EodConstants.THREAD + i);
-				} else {
-					customerQueuingDAO.updateThreadIDByRowNumber(valueDate, noOfRows, EodConstants.THREAD + i);
-				}
-				ExecutionContext execution = new ExecutionContext();
-				execution.put(EodConstants.THREAD, EodConstants.THREAD + i);
-				partitionData.put(EodConstants.THREAD + i, execution);
+				customerQueuingDAO.updateThreadIDByRowNumber(valueDate, noOfRows, EodConstants.THREAD + i);
+
+				addExecution(i, partitionData);
 
 				if (recordslessThanThread && i == custIdCount) {
 					break;
@@ -106,6 +100,12 @@ public class PartitioningMaster implements Partitioner {
 
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
+	}
+
+	private void addExecution(int theadCount, Map<String, ExecutionContext> partitionData) {
+		ExecutionContext execution = new ExecutionContext();
+		execution.put(EodConstants.THREAD, EodConstants.THREAD + theadCount);
+		partitionData.put(EodConstants.THREAD + theadCount, execution);
 	}
 
 }
