@@ -152,21 +152,26 @@ public class PostingsPreparationUtil implements Serializable {
 	}
  
 
+	public AEEvent processPostings(AEEvent aeEvent) throws AccountNotFoundException, IllegalAccessException,
+	InvocationTargetException, PFFInterfaceException {
+		return processPostingDetails(aeEvent);
+	}
+
 	// ******************************************************//
 	// ****************** Process Methods *******************//
 	// ******************************************************//
- 
 
 	public AEEvent processPostingDetails(AEEvent aeEvent) throws AccountNotFoundException, PFFInterfaceException {
 		// Preparation for Commitment Postings
 		long linkedTranId = getPostingsDAO().getLinkedTransId();
 		aeEvent.setLinkedTranId(linkedTranId);
 
-		List<ReturnDataSet> returnDataSet = aeEvent.getReturnDataSet();
+		List<ReturnDataSet> returnDatasetList = aeEvent.getReturnDataSet();
 		//FIXME: PV: Prepare Return Data Set
 
-		getPostingsDAO().saveBatch(returnDataSet);
-		getAccountProcessUtil().procAccountUpdate(returnDataSet);
+		getPostingsDAO().saveBatch(returnDatasetList);
+		getAccountProcessUtil().procAccountUpdate(returnDatasetList);
+
 
 		return aeEvent;
 	}
