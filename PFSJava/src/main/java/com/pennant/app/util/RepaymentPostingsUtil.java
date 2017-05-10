@@ -542,6 +542,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		amountCodes.setRpTot(rpyQueueHeader.getPrincipal().add(rpyQueueHeader.getProfit()).add(rpyQueueHeader.getLateProfit()));
 		amountCodes.setRpPft(rpyQueueHeader.getProfit().add(rpyQueueHeader.getLateProfit()));
 		amountCodes.setRpPri(rpyQueueHeader.getPrincipal());
+		amountCodes.setRpTds(rpyQueueHeader.getTds());
 
 		// Fee Details
 		amountCodes.setSchFeePay(rpyQueueHeader.getFee());
