@@ -2843,9 +2843,10 @@ public class ScheduleCalculator {
 			 * BigDecimal(termsPerYear));
 			 */
 
-			cal_XIRR = RateCalculation.calculateXIRR(schAmountList, repayDateList);
+			//FIXME: PV: 10MAY17: Should remove comments.
+/*			cal_XIRR = RateCalculation.calculateXIRR(schAmountList, repayDateList);
 			cal_XIRR_WithFee = RateCalculation.calculateXIRR(schAmountListWithFee, repayDateList);
-		}
+*/		}
 
 		finMain.setAnualizedPercRate(cal_XIRR.setScale(9));
 		finMain.setEffectiveRateOfReturn(cal_XIRR_WithFee.setScale(9));
@@ -3466,6 +3467,7 @@ public class ScheduleCalculator {
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(iCur);
 		FinanceScheduleDetail prvSchd = finScheduleData.getFinanceScheduleDetails().get(iPrv);
+		BigDecimal schdInterest = BigDecimal.ZERO;
 
 		//FIX: PV: To address Postponements, Reage, Unplanned Holidays, Holidays without additional instructions
 		if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)
@@ -3493,6 +3495,18 @@ public class ScheduleCalculator {
 					&& (StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_DISBURSMENT)
 							|| StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_SCHEDULE) || StringUtils
 								.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_SCHD_FIRSTEMI))) {
+				schdInterest = curSchd.getProfitCalc();
+				
+				if (curSchd.getSchDate().compareTo(finMain.getGrcPeriodEndDate()) <=0) {
+					if (!finMain.isAllowGrcCpz()) {
+						schdInterest = CalculationUtil.roundAmount(schdInterest, finMain.getCalRoundingMode(),finMain.getRoundingTarget());
+					}
+				} else {
+					if (!finMain.isAllowRepayCpz()) {
+						schdInterest = CalculationUtil.roundAmount(schdInterest, finMain.getCalRoundingMode(),finMain.getRoundingTarget());
+					}
+				}
+				
 				curSchd.setProfitSchd(curSchd.getProfitCalc());
 			} else {
 				curSchd.setProfitSchd(BigDecimal.ZERO);
@@ -3523,7 +3537,19 @@ public class ScheduleCalculator {
 			// IF Scheduled Profit cannot change (Effective Rate Calculation)
 			// Then leave actual scheduled else calculate
 			if (!finMain.isProtectSchdPft()) {
-				curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd));
+				schdInterest = calProfitToSchd(curSchd, prvSchd);
+				
+				if (curSchd.getSchDate().compareTo(finMain.getGrcPeriodEndDate()) <=0) {
+					if (!finMain.isAllowGrcCpz()) {
+						schdInterest = CalculationUtil.roundAmount(schdInterest, finMain.getCalRoundingMode(),finMain.getRoundingTarget());
+					}
+				} else {
+					if (!finMain.isAllowRepayCpz()) {
+						schdInterest = CalculationUtil.roundAmount(schdInterest, finMain.getCalRoundingMode(),finMain.getRoundingTarget());
+					}
+				}
+
+				curSchd.setProfitSchd(schdInterest);
 			}
 			curSchd.setPrincipalSchd(BigDecimal.ZERO);
 			curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
@@ -3534,7 +3560,19 @@ public class ScheduleCalculator {
 			// IF Scheduled Profit cannot change (Effective Rate Calculation)
 			// Then leave actual scheduled else calculate
 			if (!finMain.isProtectSchdPft()) {
-				curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd));
+				schdInterest = calProfitToSchd(curSchd, prvSchd);
+
+				if (curSchd.getSchDate().compareTo(finMain.getGrcPeriodEndDate()) <=0) {
+					if (!finMain.isAllowGrcCpz()) {
+						schdInterest = CalculationUtil.roundAmount(schdInterest, finMain.getCalRoundingMode(),finMain.getRoundingTarget());
+					}
+				} else {
+					if (!finMain.isAllowRepayCpz()) {
+						schdInterest = CalculationUtil.roundAmount(schdInterest, finMain.getCalRoundingMode(),finMain.getRoundingTarget());
+					}
+				}
+
+				curSchd.setProfitSchd(schdInterest);
 			}
 
 			curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
@@ -3548,7 +3586,19 @@ public class ScheduleCalculator {
 					&& (finMain.getBpiTreatment().equals(FinanceConstants.BPI_DISBURSMENT)
 							|| finMain.getBpiTreatment().equals(FinanceConstants.BPI_SCHEDULE) || finMain
 							.getBpiTreatment().equals(FinanceConstants.BPI_SCHD_FIRSTEMI))) {
-				curSchd.setProfitSchd(curSchd.getProfitCalc());
+				schdInterest = curSchd.getProfitCalc();
+
+				if (curSchd.getSchDate().compareTo(finMain.getGrcPeriodEndDate()) <=0) {
+					if (!finMain.isAllowGrcCpz()) {
+						schdInterest = CalculationUtil.roundAmount(schdInterest, finMain.getCalRoundingMode(),finMain.getRoundingTarget());
+					}
+				} else {
+					if (!finMain.isAllowRepayCpz()) {
+						schdInterest = CalculationUtil.roundAmount(schdInterest, finMain.getCalRoundingMode(),finMain.getRoundingTarget());
+					}
+				}
+
+				curSchd.setProfitSchd(schdInterest);
 			} else {
 				curSchd.setProfitSchd(BigDecimal.ZERO);
 
