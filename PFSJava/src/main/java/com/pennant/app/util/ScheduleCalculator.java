@@ -240,7 +240,7 @@ public class ScheduleCalculator {
 		logger.debug("Leaving");
 	}
 
- 	private ScheduleCalculator(String method, FinScheduleData finScheduleData, BigDecimal desiredPftAmount) {
+	private ScheduleCalculator(String method, FinScheduleData finScheduleData, BigDecimal desiredPftAmount) {
 		logger.debug("Entering");
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
@@ -1155,12 +1155,12 @@ public class ScheduleCalculator {
 
 		//FIXME: When Recal From Date and Recal To Date are different periods. Delete this line once proved working
 		//Same code is kept in add disbursement also (Whereever recal is possible in two periods..)
-		
+
 		if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_ADJMDT)) {
 			finMain.setRecalFromDate(finMain.getMaturityDate());
 			finMain.setRecalToDate(finMain.getMaturityDate());
 		}
-		
+
 		if (finMain.getRecalFromDate().compareTo(finMain.getGrcPeriodEndDate()) <= 0
 				&& finMain.getRecalToDate().compareTo(finMain.getGrcPeriodEndDate()) > 0) {
 
@@ -2801,30 +2801,33 @@ public class ScheduleCalculator {
 			List<Date> repayDateList = new ArrayList<Date>(1);
 			List<BigDecimal> schAmountListWithFee = new ArrayList<BigDecimal>(1);
 			List<FinFeeDetail> finFeeDList = finSchdData.getFinFeeDetailList();
-			
+
 			BigDecimal feeAmount = BigDecimal.ZERO;
 			for (FinFeeDetail finFeeDetail : finFeeDList) {
-				if(!StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT, finFeeDetail.getFeeScheduleMethod()) 
-						&& !StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR, finFeeDetail.getFeeScheduleMethod())
-						&& !StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS, finFeeDetail.getFeeScheduleMethod())){
+				if (!StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT,
+						finFeeDetail.getFeeScheduleMethod())
+						&& !StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR,
+								finFeeDetail.getFeeScheduleMethod())
+						&& !StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS,
+								finFeeDetail.getFeeScheduleMethod())) {
 					feeAmount = feeAmount.add(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount()));
 				}
 			}
-			
+
 			//FIXME CH Servicing Fees should be handled
 			for (FinanceScheduleDetail finScheduleDetail : finSchdData.getFinanceScheduleDetails()) {
 
 				if (finScheduleDetail.isDisbOnSchDate()) {
- 					repayDateList.add(finScheduleDetail.getSchDate());
-					
+					repayDateList.add(finScheduleDetail.getSchDate());
+
 					calcAmount = finScheduleDetail.getDisbAmount().subtract(finScheduleDetail.getDownPaymentAmount());
 					calcAmount = calcAmount.multiply(new BigDecimal(-1));
 					schAmountList.add(calcAmount);
-					
-					if(DateUtility.compare(finScheduleDetail.getSchDate(), finMain.getFinStartDate())==0){
+
+					if (DateUtility.compare(finScheduleDetail.getSchDate(), finMain.getFinStartDate()) == 0) {
 						calcAmount = calcAmount.add(feeAmount);
-					} 
-					
+					}
+
 					schAmountListWithFee.add(calcAmount);
 				}
 
@@ -2834,10 +2837,11 @@ public class ScheduleCalculator {
 					repayDateList.add(finScheduleDetail.getSchDate());
 				}
 			}
-			/*cal_IRR = RateCalculation.calculateIRR(schAmountList);
-			 int termsPerYear = CalculationUtil.getTermsPerYear(finMain.getRepayPftFrq());
-			  calculated_IRR = calculated_IRR.multiply(new BigDecimal(termsPerYear));
-			 */			
+			/*
+			 * cal_IRR = RateCalculation.calculateIRR(schAmountList); int termsPerYear =
+			 * CalculationUtil.getTermsPerYear(finMain.getRepayPftFrq()); calculated_IRR = calculated_IRR.multiply(new
+			 * BigDecimal(termsPerYear));
+			 */
 
 			cal_XIRR = RateCalculation.calculateXIRR(schAmountList, repayDateList);
 			cal_XIRR_WithFee = RateCalculation.calculateXIRR(schAmountListWithFee, repayDateList);
@@ -4253,7 +4257,9 @@ public class ScheduleCalculator {
 
 		pmt = round(BigDecimal.valueOf(dPMT));
 
-		pmt = pmt.setScale(0, RoundingMode.HALF_DOWN);
+		//		pmt = pmt.setScale(0, RoundingMode.HALF_DOWN);
+		pmt = CalculationUtil.roundAmount(pmt, finMain.getCalRoundingMode(), finMain.getRoundingTarget());
+
 		return pmt;
 
 	}
@@ -4783,6 +4789,8 @@ public class ScheduleCalculator {
 			isRateStepOnly = true;
 		}
 
+		approxEMI = CalculationUtil.roundAmount(approxEMI, finMain.getCalRoundingMode(), finMain.getRoundingTarget());
+
 		BigDecimal stepIntRate = BigDecimal.ZERO;
 
 		int sdSize = finSchdDetails.size();
@@ -4822,7 +4830,8 @@ public class ScheduleCalculator {
 				if (isSetRepayIntructions) {
 					if (!isRateStepOnly) {
 						stepEMI = approxEMI.multiply(stepDetail.getEmiSplitPerc().divide(new BigDecimal(100)));
-						stepEMI = round(stepEMI);
+						stepEMI = CalculationUtil.roundAmount(stepEMI, finMain.getCalRoundingMode(),
+								finMain.getRoundingTarget());
 						setRpyInstructDetails(finScheduleData, curSchd.getSchDate(), finMain.getMaturityDate(),
 								stepEMI, curSchd.getSchdMethod());
 					}
@@ -4937,11 +4946,19 @@ public class ScheduleCalculator {
 
 		BigDecimal lastTriedEMI = BigDecimal.ZERO;
 		BigDecimal number2 = new BigDecimal(2);
+		BigDecimal diff_Low_High = BigDecimal.ZERO;
 
 		for (int i = 0; i < 50; i++) {
 			approxEMI = (repayAmountLow.add(repayAmountHigh)).divide(number2, 0, RoundingMode.HALF_DOWN);
+			approxEMI = CalculationUtil.roundAmount(approxEMI, finMain.getCalRoundingMode(),
+					finMain.getRoundingTarget());
 
 			if (repayAmountLow.compareTo(approxEMI) == 0 || repayAmountHigh.compareTo(approxEMI) == 0) {
+				break;
+			}
+
+			diff_Low_High = (repayAmountHigh.subtract(repayAmountLow)).abs();
+			if (diff_Low_High.compareTo(BigDecimal.valueOf(finMain.getRoundingTarget())) <= 0) {
 				break;
 			}
 
@@ -4964,6 +4981,12 @@ public class ScheduleCalculator {
 			}
 
 			if (comparisionToAmount.compareTo(comparisionAmount) == 0) {
+				logger.debug("Leaving");
+				return finScheduleData;
+			}
+
+			diff_Low_High = (comparisionToAmount.subtract(comparisionAmount)).abs();
+			if (diff_Low_High.compareTo(BigDecimal.valueOf(finMain.getRoundingTarget())) <= 0) {
 				logger.debug("Leaving");
 				return finScheduleData;
 			}
@@ -5001,6 +5024,9 @@ public class ScheduleCalculator {
 				approxEMI = repayAmountLow;
 			}
 
+			approxEMI = CalculationUtil.roundAmount(approxEMI, finMain.getCalRoundingMode(),
+					finMain.getRoundingTarget());
+
 			lastTriedEMI = approxEMI;
 			repayInstructions.get(iRpyInst).setRepayAmount(approxEMI);
 			finScheduleData = getRpyInstructDetails(finScheduleData);
@@ -5031,6 +5057,8 @@ public class ScheduleCalculator {
 				approxEMI = repayAmountLow;
 			}
 		}
+
+		approxEMI = CalculationUtil.roundAmount(approxEMI, finMain.getCalRoundingMode(), finMain.getRoundingTarget());
 
 		// SET EQUAL REPAYMENT AMOUNT AS EFFECTIVE REPAY AMOUNT AND CALL PROCESS
 		repayInstructions.get(iRpyInst).setRepayAmount(approxEMI);
@@ -5084,6 +5112,8 @@ public class ScheduleCalculator {
 		iCompare = sdSize - 1;
 
 		approxEMI = finMain.getMiscAmount();
+		approxEMI = CalculationUtil.roundAmount(approxEMI, finMain.getCalRoundingMode(), finMain.getRoundingTarget());
+
 		comparisionAmount = repayInstructions.get(iRpyInst).getRepayAmount();
 
 		//SET COMPARISION TO REPAYMENT or PRINCIPAL
@@ -5110,11 +5140,17 @@ public class ScheduleCalculator {
 		BigDecimal lastTriedEMI = BigDecimal.ZERO;
 		BigDecimal number2 = new BigDecimal(2);
 		int int100 = 100;
+		BigDecimal diff_Low_High = BigDecimal.ZERO;
 
 		for (int i = 0; i < 50; i++) {
 			approxEMI = (repayAmountLow.add(repayAmountHigh)).divide(number2, 0, RoundingMode.HALF_DOWN);
 
 			if (repayAmountLow.compareTo(approxEMI) == 0 || repayAmountHigh.compareTo(approxEMI) == 0) {
+				break;
+			}
+
+			diff_Low_High = (repayAmountHigh.subtract(repayAmountLow)).abs();
+			if (diff_Low_High.compareTo(BigDecimal.valueOf(finMain.getRoundingTarget())) <= 0) {
 				break;
 			}
 
@@ -5129,6 +5165,10 @@ public class ScheduleCalculator {
 				stepDetail = stepPolicyDetails.get(j);
 				stepEMI = approxEMI.multiply(stepDetail.getEmiSplitPerc()).divide(BigDecimal.valueOf(int100), 0,
 						RoundingMode.HALF_DOWN);
+
+				stepEMI = CalculationUtil.roundAmount(stepEMI, finMain.getCalRoundingMode(),
+						finMain.getRoundingTarget());
+
 				//stepEMI = round(stepEMI);
 				repayInstructions.get(k + j).setRepayAmount(stepEMI);
 			}
@@ -5152,6 +5192,11 @@ public class ScheduleCalculator {
 			if (comparisionToAmount.compareTo(comparisionAmount) == 0) {
 				logger.debug("Leaving");
 				return finScheduleData;
+			}
+
+			diff_Low_High = (comparisionToAmount.subtract(comparisionAmount)).abs();
+			if (diff_Low_High.compareTo(BigDecimal.valueOf(finMain.getRoundingTarget())) <= 0) {
+				break;
 			}
 
 			stepDetail = stepPolicyDetails.get(stepPolicyDetails.size() - 1);
@@ -5188,6 +5233,9 @@ public class ScheduleCalculator {
 				approxEMI = repayAmountLow;
 			}
 
+			approxEMI = CalculationUtil.roundAmount(approxEMI, finMain.getCalRoundingMode(),
+					finMain.getRoundingTarget());
+
 			lastTriedEMI = approxEMI;
 			// Step case for Grace Allowed
 			int k = 0;
@@ -5199,6 +5247,9 @@ public class ScheduleCalculator {
 				stepDetail = stepPolicyDetails.get(j);
 				stepEMI = approxEMI.multiply(stepDetail.getEmiSplitPerc()).divide(BigDecimal.valueOf(int100), 0,
 						RoundingMode.HALF_DOWN);
+				stepEMI = CalculationUtil.roundAmount(stepEMI, finMain.getCalRoundingMode(),
+						finMain.getRoundingTarget());
+
 				//stepEMI = round(stepEMI);
 				repayInstructions.get(k + j).setRepayAmount(stepEMI);
 			}
@@ -5242,6 +5293,9 @@ public class ScheduleCalculator {
 			stepDetail = stepPolicyDetails.get(j);
 			stepEMI = approxEMI.multiply(stepDetail.getEmiSplitPerc()).divide(BigDecimal.valueOf(int100), 0,
 					RoundingMode.HALF_DOWN);
+
+			stepEMI = CalculationUtil.roundAmount(stepEMI, finMain.getCalRoundingMode(), finMain.getRoundingTarget());
+
 			//stepEMI = round(stepEMI);
 			repayInstructions.get(k + j).setRepayAmount(stepEMI);
 		}

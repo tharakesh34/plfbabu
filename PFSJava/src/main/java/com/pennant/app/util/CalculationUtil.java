@@ -613,7 +613,13 @@ public class CalculationUtil implements Serializable {
 	}
 
 	public static BigDecimal roundAmount(BigDecimal amount, String roundingMode, int roundingTarget) {
-		amount = amount.add(BigDecimal.valueOf(roundingTarget / 2)).divide(amount);
+		
+		//PV 10MAY17: Temorary code till finance type and finance type are modified with rounding modes
+		roundingMode = RoundingMode.HALF_DOWN.name();
+		roundingTarget = 100;
+		
+		
+		amount = amount.add(BigDecimal.valueOf(roundingTarget / 2)).divide(BigDecimal.valueOf(roundingTarget));
 
 		if (StringUtils.equals(roundingMode, RoundingMode.HALF_DOWN.name())) {
 			amount = amount.setScale(0, RoundingMode.HALF_DOWN);
@@ -631,7 +637,7 @@ public class CalculationUtil implements Serializable {
 			amount = amount.setScale(0, RoundingMode.UP);
 		}
 
-		amount = amount.multiply(BigDecimal.valueOf(roundingTarget / 2));
+		amount = amount.multiply(BigDecimal.valueOf(roundingTarget));
 		
 		return amount;
 	}
