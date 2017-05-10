@@ -1929,7 +1929,6 @@ public class PennantAppUtil {
 			} else {
 				List<String> list = new ArrayList<String>();
 				list.add(AccountEventConstants.ACCEVENT_ADDDBSF);
-				list.add(AccountEventConstants.ACCEVENT_ADDDBSN);
 				filters = new Filter[2];
 				filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
 				filters[1] = new Filter("AEEventCode", list, Filter.OP_NOT_IN);
@@ -1940,7 +1939,6 @@ public class PennantAppUtil {
 			
 			if(!ImplementationConstants.ALLOW_ADDDBSF) {
 				list.add(AccountEventConstants.ACCEVENT_ADDDBSF);
-				list.add(AccountEventConstants.ACCEVENT_ADDDBSN);
 			}
 			
 			filters = new Filter[2];
@@ -1965,10 +1963,10 @@ public class PennantAppUtil {
 		JdbcSearchObject<AccountEngineEvent> searchObject = new JdbcSearchObject<AccountEngineEvent>(
 				AccountEngineEvent.class);
 		accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSP);
+		accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSN);
 		
 		if (ImplementationConstants.ALLOW_ADDDBSF) {
 			accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSF);
-			accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSN);
 		}
 
 		Filter[] filters = new Filter[2];
@@ -1983,8 +1981,7 @@ public class PennantAppUtil {
 		
 		if (ImplementationConstants.ALLOW_ADDDBSF) {
 			for (AccountEngineEvent accountEngineEvent : accountEngineEventsList) {
-				if (StringUtils.equals(AccountEventConstants.ACCEVENT_ADDDBSF, accountEngineEvent.getId())
-						|| StringUtils.equals(AccountEventConstants.ACCEVENT_ADDDBSN, accountEngineEvent.getId())) {
+				if (StringUtils.equals(AccountEventConstants.ACCEVENT_ADDDBSF, accountEngineEvent.getId())) {
 					accountEngineEvent.setMandatory(AccountEventConstants.ACCEVENT_ADDDBSF_REQ);
 				}
 			}
@@ -2029,7 +2026,6 @@ public class PennantAppUtil {
 		} else {
 			List<String> accEngineEventsList = new ArrayList<String>();
 			accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSF);
-			accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSN);
 			filters = new Filter[3];
 			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
 			filters[1] = new Filter("ODApplicable", 1, Filter.OP_EQUAL);

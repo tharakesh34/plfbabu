@@ -238,13 +238,13 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 		if(ImplementationConstants.ALLOW_ADDDBSF) {
 			if (AccountEventConstants.ACCEVENT_ADDDBSF_REQ && !isOverdraft) {
 				setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSF, true);
-				setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, true);
+				//setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, true);
 			} else {
 				setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSF, false);
-				setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, false);
+				//setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, false);
 			}
 			
-			if (financeTypeDialogCtrl.getFinanceType().getLovDescAERule().containsKey(AccountEventConstants.ACCEVENT_ADDDBSF)) {
+			/*if (financeTypeDialogCtrl.getFinanceType().getLovDescAERule().containsKey(AccountEventConstants.ACCEVENT_ADDDBSF)) {
 				if (isOverdraft) {
 					setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, true);
 				} else {
@@ -256,9 +256,9 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 				} else {
 					setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, true);
 				}
-			}
+			}*/
 		}
-		
+		setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, true);
 		if (isOverdraft) {
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_AMZPD, true);
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_CMTDISB, true);
