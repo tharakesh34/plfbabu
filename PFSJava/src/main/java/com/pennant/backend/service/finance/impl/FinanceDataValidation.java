@@ -1891,12 +1891,30 @@ public class FinanceDataValidation {
 			String[] valueParm = new String[1];
 			valueParm[0] = finMain.getFinType();
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91129", valueParm)));
+			return errorDetails;
 		} else if (!finMain.isStepFinance() && financeType.isSteppingMandatory()) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finMain.getFinType();
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91128", valueParm)));
+			return errorDetails;
+		}
+		
+		// ScheduleMethod
+		if (StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Calculated Interest on Frequency";
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30552", valueParm)));
+			return errorDetails;
 		}
 
+		if (StringUtils.equals(finMain.getStepType(), FinanceConstants.STEPTYPE_PRIBAL)
+				&& StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Equal Installments (Principal and Interest)";
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30555", valueParm)));
+			return errorDetails;
+		}
+		
 		//Planned EMI Holidays also requested?
 		/*
 		 * if (finMain.isPlanEMIHAlw()) { errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90150", null))); }
@@ -1919,15 +1937,6 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90204", valueParm)));
 				return errorDetails;
 			}
-			//ScheduleMethod
-			if(!(StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL) || StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT))){
-				String[] valueParm = new String[1];
-				valueParm[0] = finMain.getScheduleMethod();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30552", valueParm)));
-				return errorDetails;
-				
-			}
-
 			//Step Type
 			if (!StringUtils.equals(finMain.getStepType(), FinanceConstants.STEPTYPE_EMI)
 					&& !StringUtils.equals(finMain.getStepType(), FinanceConstants.STEPTYPE_PRIBAL)) {
