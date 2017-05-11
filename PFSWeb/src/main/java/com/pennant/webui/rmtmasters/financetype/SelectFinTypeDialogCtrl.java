@@ -68,7 +68,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/SolutionFactory/Promotion/SelectPromotionDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/SolutionFactory/FinanceType/SelectFinTypeDialog.zul file.
  */
 public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 

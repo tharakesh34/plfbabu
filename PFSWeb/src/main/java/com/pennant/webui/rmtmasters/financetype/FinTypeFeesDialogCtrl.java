@@ -1112,6 +1112,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			this.maxWaiver.setValue(getFinTypeFees().getMaxWaiverPerc());
 			this.alwModifyFee.setDisabled(isReadOnly("FinTypeFeesDialog_alwModifyFee"));
 			this.alwModifyFeeSchdMthd.setDisabled(isReadOnly("FinTypeFeesDialog_alwModifyFeeSchdMthd"));
+			this.alwDeviation.setDisabled(isReadOnly("FinTypeFeesDialog_alwDeviation"));
 		}
 	}
 	
