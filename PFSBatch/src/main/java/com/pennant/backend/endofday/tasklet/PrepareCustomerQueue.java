@@ -51,6 +51,7 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.dao.CustomerDatesDAO;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 
@@ -76,7 +77,9 @@ public class PrepareCustomerQueue implements Tasklet {
 		customerDatesDAO.saveCustomerDates(appDate, valueDate, nextBusinessDate);
 
 		customerQueuingDAO.delete();
-		customerQueuingDAO.prepareCustomerQueue(valueDate);
+		int count = customerQueuingDAO.prepareCustomerQueue(valueDate);
+		BatchUtil.setExecution(context, "TOTAL", String.valueOf(count));
+		BatchUtil.setExecution(context, "PROCESSED", String.valueOf(count));
 
 		logger.debug("COMPLETE: Prepare Customer Queue On :" + valueDate);
 		return RepeatStatus.FINISHED;
