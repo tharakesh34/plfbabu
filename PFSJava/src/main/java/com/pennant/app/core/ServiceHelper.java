@@ -79,11 +79,13 @@ import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.SecondaryAccount;
-import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennant.eod.dao.CustomerDatesDAO;
 import com.pennant.eod.dao.CustomerQueuingDAO;
@@ -133,16 +135,12 @@ abstract public class ServiceHelper implements Serializable {
 		return getPostingsPreparationUtil().postAccountingEOD(aeEvent);
 	}
 
-	public long getAccountingID(String finType, String accountingEvent) {
-		List<FinTypeAccounting> acountingSets = FinanceConfigCache.getFinanceType(finType).getFinTypeAccountingList();
-
-		for (int i = 0; i < acountingSets.size(); i++) {
-			if (!StringUtils.equals(accountingEvent, acountingSets.get(i).getEvent())) {
-				continue;
-			}
-			return acountingSets.get(i).getAccountSetID();
+	public long getAccountingID(FinanceMain main ,String eventCode) {
+		if (StringUtils.isNotBlank(main.getPromotionCode())) {
+			return AccountingConfigCache.getAccountSetID(main.getPromotionCode(), eventCode, FinanceConstants.MODULEID_PROMOTION);
+		} else {
+			return AccountingConfigCache.getAccountSetID(main.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE);
 		}
-		return Long.MIN_VALUE;
 	}
 
 	/**

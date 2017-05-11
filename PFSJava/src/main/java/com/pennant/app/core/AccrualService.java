@@ -590,7 +590,7 @@ public class AccrualService extends ServiceHelper {
 			eventCode = AccountEventConstants.ACCEVENT_AMZSUSP;
 		}
 		
-		long accountingID = getAccountingID(finPftDetail.getFinType(), eventCode);
+		long accountingID = getAccountingID(finEODEvent.getFinanceMain(), eventCode);
 		if (accountingID == Long.MIN_VALUE) {
 			return;
 		} 

@@ -49,8 +49,7 @@ public class AutoDisbursementService extends ServiceHelper {
 	public void postFutureDisbursement(Date valueDate, FinEODEvent finEODEvent, FinanceDisbursement curDisbursment)
 			throws Exception {
 		logger.debug(" Entering ");
-		String finType = finEODEvent.getFinType().getFinType();
-		long accountingID = getAccountingID(finType, AccountEventConstants.ACCEVENT_ADDDBSN);
+		long accountingID = getAccountingID(finEODEvent.getFinanceMain(), AccountEventConstants.ACCEVENT_ADDDBSN);
 		if (accountingID == Long.MIN_VALUE) {
 			return;
 		}

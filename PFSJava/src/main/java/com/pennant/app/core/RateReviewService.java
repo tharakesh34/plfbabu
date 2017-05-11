@@ -244,7 +244,7 @@ public class RateReviewService extends ServiceHelper {
 		rateReview.setRecalToDate(finMain.getRecalToDate());
 		financeRateReviewDAO.save(rateReview);
 		aeEvent.setFinType(finMain.getFinType());
-		long accountingID = getAccountingID(finMain.getFinType(), AccountEventConstants.ACCEVENT_RATCHG);
+		long accountingID = getAccountingID(finMain, AccountEventConstants.ACCEVENT_RATCHG);
 		if (accountingID == Long.MIN_VALUE) {
 			return;
 		} else {

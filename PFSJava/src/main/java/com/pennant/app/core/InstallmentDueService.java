@@ -58,9 +58,8 @@ public class InstallmentDueService extends ServiceHelper {
 	public void postInstallmentDues(FinEODEvent finEODEvent, FinanceScheduleDetail finSchd, Date valueDate)
 			throws Exception {
 		logger.debug(" Entering ");
-		String finType = finEODEvent.getFinType().getFinType();
 		
-		long accountingID = getAccountingID(finType, AccountEventConstants.ACCEVENT_INSTDATE);
+		long accountingID = getAccountingID(finEODEvent.getFinanceMain(), AccountEventConstants.ACCEVENT_INSTDATE);
 		if (accountingID == Long.MIN_VALUE) {
 			return;
 		}
