@@ -440,7 +440,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				this.feeTypeID.setValue(aManualAdvise.getFeeTypeCode(), aManualAdvise.getFeeTypeDesc());
 				this.feeTypeID.setObject(new FeeType(aManualAdvise.getFeeTypeID()));
 			} else {
-				this.label_FeeTypeID.setValue("Bounce ID");
+				this.label_FeeTypeID.setValue(Labels.getLabel("label_ManualAdviseDialog_BounceID.value"));
 				this.feeTypeID.setAttribute("BounceID", aManualAdvise.getBounceID());
 				this.feeTypeID.setValue(String.valueOf(aManualAdvise.getBounceID()), "");
 			}
