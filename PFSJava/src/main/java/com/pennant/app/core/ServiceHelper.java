@@ -150,7 +150,7 @@ abstract public class ServiceHelper implements Serializable {
 	 * @return
 	 */
 	public final FinanceType getFinanceType(String fintype) {
-		return FinanceConfigCache.getFinanceType(fintype);
+		return FinanceConfigCache.getFinanceType(StringUtils.trimToEmpty(fintype));
 
 	}
 	
@@ -163,7 +163,7 @@ abstract public class ServiceHelper implements Serializable {
 	}
 
 	public Long getBucketID(String finStatus) {
-		DPDBucket dpdBucket = FinanceConfigCache.getDPDBucketCode(finStatus);
+		DPDBucket dpdBucket = FinanceConfigCache.getDPDBucketCode(StringUtils.trimToEmpty(finStatus));
 		if (dpdBucket != null) {
 			return dpdBucket.getBucketID();
 		}
@@ -173,11 +173,11 @@ abstract public class ServiceHelper implements Serializable {
 
 
 	public List<DPDBucketConfiguration> getBucketConfigurations(String productCode) {
-		return FinanceConfigCache.getDPDBucketConfiguration(productCode);
+		return FinanceConfigCache.getDPDBucketConfiguration(StringUtils.trimToEmpty(productCode));
 	}
 
 	public List<NPABucketConfiguration> getNPABucketConfigurations(String productCode){
-		return FinanceConfigCache.getNPABucketConfiguration(productCode);
+		return FinanceConfigCache.getNPABucketConfiguration(StringUtils.trimToEmpty(productCode));
 	}
 	
 

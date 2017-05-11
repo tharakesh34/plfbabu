@@ -3704,7 +3704,6 @@
 		class="com.pennant.webui.projectedpftdetails.ProjectedProfitDetailsCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="amortizationService" ref="amortizationService"></property>
-		<property name="eodProperties" ref="eodProperties"></property>
 		<property name="pagedListService" ref="pagedListService" />
 	</bean>
 

@@ -52,7 +52,6 @@ import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.app.core.DateService;
 import com.pennant.app.util.DateUtility;
-import com.pennant.eod.util.EODProperties;
 
 public class BeforeEOD implements Tasklet {
 	private Logger	logger	= Logger.getLogger(BeforeEOD.class);
@@ -61,7 +60,6 @@ public class BeforeEOD implements Tasklet {
 
 	}
 
-	private EODProperties		eodProperties;
 	private DateService			dateService;
 
 	@Override
@@ -69,16 +67,12 @@ public class BeforeEOD implements Tasklet {
 		Date valueDate = DateUtility.getAppValueDate();
 		logger.debug("START: Before EOD On : " + valueDate);
 
-		eodProperties.init();
 		dateService.doUpdatebeforeEod(true);
 		logger.debug("COMPLETE: Before EOD On :" + valueDate);
 		return RepeatStatus.FINISHED;
 
 	}
 
-	public void setEodProperties(EODProperties eodProperties) {
-		this.eodProperties = eodProperties;
-	}
 
 
 	public void setDateService(DateService dateService) {

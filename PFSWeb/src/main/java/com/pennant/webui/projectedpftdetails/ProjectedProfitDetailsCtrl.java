@@ -8,6 +8,12 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
+
 import org.apache.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.media.AMedia;
@@ -35,17 +41,10 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.eod.util.EODProperties;
 import com.pennant.search.Filter;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.export.JRXlsExporter;
-import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
 public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet>{
 
@@ -61,7 +60,6 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet>{
 	ProcessExecution posting;
 	
 	private AmortizationService amortizationService; 
-	private EODProperties eodProperties;
 	AccrualProcess accrualProcess = AccrualProcess.getInstance();
 	private  ReportConfiguration reportConfiguration;
 	private transient PagedListService pagedListService;
@@ -109,7 +107,6 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet>{
 		if("COMPLETED".equals(AccrualProcess.ACC_RUNNING)) {
 			Clients.showNotification(Labels.getLabel("labels_ProcessCompleted.value"),  "info", null, null, -1);
 			AccrualProcess.ACC_RUNNING = "";
-			getEodProperties().destroy();
 		}
 		
 		if("FAILED".equals(AccrualProcess.ACC_RUNNING)) {
@@ -119,7 +116,6 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet>{
 			timer.stop();
 			this.valueDate.setDisabled(false);
 			this.btnExecute.setVisible(true);
-			getEodProperties().destroy();
 		}
 		
 		logger.debug("Leaving  : "+event);
@@ -130,7 +126,6 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet>{
 		logger.debug("Entering : "+event);
 		
 		try {
-			getEodProperties().init();
 			
 			// To Check Last Day income Adding One Day to Value Date(Because Calculation will Follow End Of the Day process )
 			String valueDate = DateUtility.formatToShortDate(this.valueDate.getValue());
@@ -347,14 +342,6 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet>{
 		return amortizationService;
 	}
 
-
-	public void setEodProperties(EODProperties eodProperties) {
-		this.eodProperties = eodProperties;
-	}
-
-	public EODProperties getEodProperties() {
-		return eodProperties;
-	}
 	public PagedListService getPagedListService() {
 		return pagedListService;
 	}

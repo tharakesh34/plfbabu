@@ -7025,18 +7025,6 @@
 
 
 	<!-- EOD Parameter Details -->
-	<bean id="eodProperties" class="com.pennant.eod.util.EODProperties">
-		<property name="financeTypeDAO" ref="financeTypeDAO" />
-		<property name="currencyDAO" ref="currencyDAO" />
-		<property name="ruleDAO" ref="ruleDAO" />
-		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
-		<property name="takafulProviderDAO" ref="takafulProviderDAO" />
-		<property name="dPDBucketConfigurationDAO" ref="dPDBucketConfigurationDAO" />
-		<property name="dPDBucketDAO" ref="dPDBucketDAO" />
-		<property name="nPABucketConfigurationDAO" ref="nPABucketConfigurationDAO" />
-		<property name="nPABucketDAO" ref="nPABucketDAO" />
-		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
-	</bean>
 
 	<bean name="approvalStatusEnquiryService"
 		class="com.pennant.backend.service.approvalstatusenquiry.impl.ApprovalStatusEnquiryServiceImpl">

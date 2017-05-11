@@ -93,19 +93,6 @@
 	<bean id="SysParamUtil " class="com.pennant.app.util.SysParamUtil" init-method="Init">
 		<property name="pFSParameterDAO" ref="pFSParameterDAO" />
 	</bean>
-	<!-- EOD Parameter Details -->
-	<bean id="eodProperties" class="com.pennant.eod.util.EODProperties">
-		<property name="financeTypeDAO" ref="financeTypeDAO" />
-		<property name="currencyDAO" ref="currencyDAO" />
-		<property name="ruleDAO" ref="ruleDAO" />
-		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
-		<property name="takafulProviderDAO" ref="takafulProviderDAO" />
-		<property name="dPDBucketConfigurationDAO" ref="dPDBucketConfigurationDAO" />
-		<property name="dPDBucketDAO" ref="dPDBucketDAO" />
-		<property name="nPABucketConfigurationDAO" ref="nPABucketConfigurationDAO" />
-		<property name="nPABucketDAO" ref="nPABucketDAO" />
-		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
-	</bean>
 	<!-- Database backup on EOD -->
 	<bean id="backupDatabase" class="com.pennant.eod.util.BackupDatabase">
 		<property name="dataSource" ref="pfsDatasource" />
@@ -329,7 +316,6 @@
 		<property name="dataSource" ref="pfsExtDatasource" />
 	</bean>
 	<bean id="eodJobListener" class="com.pennant.backend.batch.listeners.EodJobListener">
-		<property name="eodProperties" ref="eodProperties" />
 	</bean>
 	<!-- End Of Month Decider -->
 	<bean id="eodBackupDecider" class="com.pennant.backend.endofday.limitdecider.EodBackupDecider" />
