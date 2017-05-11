@@ -421,7 +421,7 @@ public class FinTypeInsuranceDAOImpl extends BasisCodeDAO<FinTypeInsurances> imp
 		FinTypeInsurances finTypeInsurance = new FinTypeInsurances();
 		finTypeInsurance.setAmountRule(ruleCode);
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
-		selectSql.append(" From FinTypeFees");
+		selectSql.append(" From FinTypeInsurances");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where AmountRule =:AmountRule");
 
