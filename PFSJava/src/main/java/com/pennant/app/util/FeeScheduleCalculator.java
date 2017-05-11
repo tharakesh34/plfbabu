@@ -12,23 +12,23 @@
 
 /**
  ******************************************************************************************** 
- * FILE HEADER *
+ * FILE HEADER 																				*
  ******************************************************************************************** 
  * 
- * FileName : ScheduleCalculator.java *
+ * FileName : ScheduleCalculator.java 														*
  * 
- * Author : PENNANT TECHONOLOGIES *
+ * Author : PENNANT TECHONOLOGIES 															*
  * 
- * Creation Date : 26-04-2011 *
+ * Creation Date : 26-04-2011 																*
  * 
- * Modified Date : 30-07-2011 *
+ * Modified Date : 30-07-2011 																*
  * 
- * Description : *
+ * Description : 																			*
  * 
  ******************************************************************************************** 
- * Date Author Version Comments *
+ * Date Author Version Comments 															*
  ******************************************************************************************** 
- * 26-04-2011 Pennant 0.1 * * * * * * * * *
+ * 26-04-2011 Pennant 0.1 																	*
  ******************************************************************************************** 
  */
 package com.pennant.app.util;
@@ -38,12 +38,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
@@ -53,12 +48,14 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.util.PennantConstants;
 
 public class FeeScheduleCalculator {
-	private final static Logger	logger					= Logger.getLogger(FeeScheduleCalculator.class);
+	private final static Logger logger = Logger.getLogger(FeeScheduleCalculator.class);
 
-	private FinScheduleData		finScheduleData;
+	private FinScheduleData finScheduleData;
 
 	public FeeScheduleCalculator() {
 
@@ -71,10 +68,18 @@ public class FeeScheduleCalculator {
 	// Constructors
 	private FeeScheduleCalculator(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
-		setFinScheduleData(prepareFeeScheduleData(finScheduleData));
+
+		if (finScheduleData.getFinanceMain().isNew()
+				|| StringUtils.equals(finScheduleData.getFinanceMain().getRecordType(),
+						PennantConstants.RECORD_TYPE_NEW)) {
+			setFinScheduleData(prepareFeeScheduleData(finScheduleData));
+		} else {
+			
+		}
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for Processing Schedule calculation to get the Total Desired Profit by including Planned Deferment Terms
 	 * 
@@ -84,187 +89,81 @@ public class FeeScheduleCalculator {
 	@SuppressWarnings("unchecked")
 	private FinScheduleData prepareFeeScheduleData(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
-		
-		List<FinFeeDetail> finFeeDetailList = finScheduleData.getFinFeeDetailList();
-		List<FinFeeScheduleDetail> finFeeScheduleDetailList;
-		Set<Date> feeScheduleDatesSet = new HashSet<Date>(); 
-			
-		if (finFeeDetailList != null && !finFeeDetailList.isEmpty()
-				&& finScheduleData.getFinanceScheduleDetails() != null
-				&& !finScheduleData.getFinanceScheduleDetails().isEmpty()) {
-			FinFeeScheduleDetail finFeeScheduleDetail = null;
 
-			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-				finFeeScheduleDetailList = new ArrayList<FinFeeScheduleDetail>();
-				
-				if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)) {
-					for (FinanceScheduleDetail finScheduleDetailTemp : finScheduleData.getFinanceScheduleDetails()) {
-						
-						if (!allowFeeToSchedule(finScheduleDetailTemp, finScheduleData)) {
-							continue;
-						}
-												
-						finFeeScheduleDetail = new FinFeeScheduleDetail();
-						finFeeScheduleDetail.setFeeID(finFeeDetail.getFeeID());
-						finFeeScheduleDetail.setSchDate(finScheduleDetailTemp.getSchDate());
-						finFeeScheduleDetail.setSchAmount(finFeeDetail.getRemainingFee());
-						finFeeScheduleDetailList.add(finFeeScheduleDetail);
-						
-						if (feeScheduleDatesSet.contains(finScheduleDetailTemp.getSchDate())) {
-							finScheduleDetailTemp.setFeeSchd(finScheduleDetailTemp.getFeeSchd().add(
-									finFeeDetail.getRemainingFee()));
-						} else {
-							finScheduleDetailTemp.setFeeSchd(finFeeDetail.getRemainingFee());
-							feeScheduleDatesSet.add(finScheduleDetailTemp.getSchDate());
-						}
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		List<FinFeeDetail> finFeeDetails = finScheduleData.getFinFeeDetailList();
+		List<FinFeeScheduleDetail> finFeeScheduleDetails;
+		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
+		FinFeeScheduleDetail finFeeScheduleDetail = null;
+
+		// No Fees available
+		if (finFeeDetails == null || finFeeDetails.isEmpty()) {
+			return finScheduleData;
+		}
+
+		// Schedule Detail not available
+		if (finSchdDetails == null || finSchdDetails.isEmpty()) {
+			return finScheduleData;
+		}
+
+		// Find 1st Schedule Date, Last Schedule Date and Total Terms
+		int reqTerms = 0;
+		
+		for (FinFeeDetail finFeeDetail : finFeeDetails) {
+			
+			if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+					CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)) {
+				reqTerms = 1;
+			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+					CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
+				reqTerms = finFeeDetail.getTerms();
+			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+					CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)) {
+				reqTerms = finMain.getCalTerms();
+			} else {
+				continue;
+			}
+			
+			int schTerms = 0;
+			finFeeScheduleDetails = new ArrayList<FinFeeScheduleDetail>();
+			BigDecimal totalFeeSchdAmt = BigDecimal.ZERO;
+			BigDecimal feeSchdAmt = (finFeeDetail.getRemainingFee()).divide(new BigDecimal(reqTerms), 0, RoundingMode.HALF_DOWN);
+			feeSchdAmt = CalculationUtil.roundAmount(feeSchdAmt, finMain.getCalRoundingMode(), finMain.getRoundingTarget());
+			
+			for (FinanceScheduleDetail curSchd : finSchdDetails) {
+				if (StringUtils.isEmpty(curSchd.getBpiOrHoliday()) && curSchd.isRepayOnSchDate()) {
+					schTerms = schTerms + 1;
+					
+					if (reqTerms == schTerms) {
+						feeSchdAmt = finFeeDetail.getRemainingFee().subtract(totalFeeSchdAmt);
+					}
+					
+					totalFeeSchdAmt = totalFeeSchdAmt.add(feeSchdAmt);
+
+					finFeeScheduleDetail = new FinFeeScheduleDetail();
+					finFeeScheduleDetail.setFeeID(finFeeDetail.getFeeID());
+					finFeeScheduleDetail.setSchDate(curSchd.getSchDate());
+					finFeeScheduleDetail.setSchAmount(feeSchdAmt);
+					finFeeScheduleDetails.add(finFeeScheduleDetail);
+
+					curSchd.setFeeSchd(curSchd.getFeeSchd().add(feeSchdAmt));
+
+					if (reqTerms == schTerms) {
 						break;
 					}
-				} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)) {
-					List<FinanceScheduleDetail> paymentDates = new ArrayList<FinanceScheduleDetail>();
-					BigDecimal feeSchdAmt = BigDecimal.ZERO;
-					BigDecimal totFeeSchdAmt = BigDecimal.ZERO;
-					BigDecimal totUnchangedFeeSchdAmt = BigDecimal.ZERO;
-					Date recalFromDate = null;
-					Date recalToDate = null;
-					recalFromDate = finScheduleData.getFinanceMain().getRecalFromDate();
-					recalToDate = finScheduleData.getFinanceMain().getRecalToDate();
-					Map<Date, FinFeeScheduleDetail> feeScheduleMap = new HashMap<>();
-					
-					if (recalFromDate != null) {
-						if (recalToDate == null) {
-							recalToDate = recalFromDate;
-						}
-					}
-					
-					if(finFeeDetail.getFinFeeScheduleDetailList() != null){
-						for (FinFeeScheduleDetail feeScheduleDetail : finFeeDetail.getFinFeeScheduleDetailList()) {
-							
-							// FIXME To validate when this dates will have Null values
-							if (DateUtility.compare(feeScheduleDetail.getSchDate(), recalFromDate) < 0
-									|| DateUtility.compare(feeScheduleDetail.getSchDate(), recalToDate) > 0) {
-								feeScheduleMap.put(feeScheduleDetail.getSchDate(), feeScheduleDetail);
-								continue;
-							}
-						}
-					}
-					
-					for (int i = 1; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
-						FinanceScheduleDetail finScheduleDetailTemp = finScheduleData.getFinanceScheduleDetails().get(i);
-						
-						if (!allowFeeToSchedule(finScheduleDetailTemp, finScheduleData)) {
-							finScheduleDetailTemp.setFeeSchd(BigDecimal.ZERO);
-							continue;
-						}
-
-						// FIXME To validate when this dates will have Null values
-						if (DateUtility.compare(finScheduleDetailTemp.getSchDate(), recalFromDate) < 0
-								|| DateUtility.compare(finScheduleDetailTemp.getSchDate(), recalToDate) > 0) {
-							if(feeScheduleMap.containsKey(finScheduleDetailTemp.getSchDate())){
-								finFeeScheduleDetailList.add(feeScheduleMap.get(finScheduleDetailTemp.getSchDate()));
-								totUnchangedFeeSchdAmt = totUnchangedFeeSchdAmt.add(feeScheduleMap.get(finScheduleDetailTemp.getSchDate()).getSchAmount());
-							}	
-						//	totUnchangedFeeSchdAmt = totUnchangedFeeSchdAmt.add(finScheduleDetailTemp.getFeeSchd());
-							continue;
-						}
-
-						paymentDates.add(finScheduleDetailTemp);
-						
-						System.out.println("" + finScheduleDetailTemp.getSchDate());
-					}
-					
-					if(paymentDates.size() == 0 ){
-						return finScheduleData;
-					}
-					
-					// Payment Dates should never be Zero in the below condition and hence not handling Div/Zero
-					feeSchdAmt = (finFeeDetail.getRemainingFee().subtract(totUnchangedFeeSchdAmt)).divide(new BigDecimal(paymentDates.size()), 0, RoundingMode.HALF_DOWN);
-					int count = 0 ;
-					for (FinanceScheduleDetail finScheduleDetail : paymentDates) {
-						count++;
-						if(count == paymentDates.size()){
-							feeSchdAmt = finFeeDetail.getRemainingFee().subtract(totUnchangedFeeSchdAmt).subtract(totFeeSchdAmt);
-						}
-						
-						totFeeSchdAmt = totFeeSchdAmt.add(feeSchdAmt);
-						finFeeScheduleDetail = new FinFeeScheduleDetail();
-						finFeeScheduleDetail.setFeeID(finFeeDetail.getFeeID());
-						finFeeScheduleDetail.setSchDate(finScheduleDetail.getSchDate());
-						finFeeScheduleDetail.setSchAmount(feeSchdAmt);
-						finFeeScheduleDetailList.add(finFeeScheduleDetail);
-						
-						if (feeScheduleDatesSet.contains(finScheduleDetail.getSchDate())) {
-							finScheduleDetail.setFeeSchd(finScheduleDetail.getFeeSchd().add(feeSchdAmt));
-						} else {
-							finScheduleDetail.setFeeSchd(feeSchdAmt);
-							feeScheduleDatesSet.add(finScheduleDetail.getSchDate());
-						}
-					}
-				} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
-					if (finFeeDetail.getTerms() == 0) {
-						continue;
-					}
-
-					int count = 0;
-					BigDecimal feeSchdAmt = BigDecimal.ZERO;
-					feeSchdAmt = finFeeDetail.getRemainingFee().divide(new BigDecimal(finFeeDetail.getTerms()), 0, RoundingMode.HALF_DOWN);
-					BigDecimal totFeeSchdAmt = BigDecimal.ZERO;
-					
-					for (FinanceScheduleDetail finScheduleDetail : finScheduleData.getFinanceScheduleDetails()) {
-						if (count == finFeeDetail.getTerms()) {
-							break;
-						}
-						if (!allowFeeToSchedule(finScheduleDetail, finScheduleData)) {
-							continue;
-						}
-						if (count == finFeeDetail.getTerms() - 1) {
-							feeSchdAmt = finFeeDetail.getRemainingFee().subtract(totFeeSchdAmt);
-						}
-						finFeeScheduleDetail = new FinFeeScheduleDetail();
-						finFeeScheduleDetail.setFeeID(finFeeDetail.getFeeID());
-						finFeeScheduleDetail.setSchDate(finScheduleDetail.getSchDate());
-						finFeeScheduleDetail.setSchAmount(feeSchdAmt);
-						totFeeSchdAmt = totFeeSchdAmt.add(feeSchdAmt);
-						finFeeScheduleDetailList.add(finFeeScheduleDetail);
-
-						if (feeScheduleDatesSet.contains(finScheduleDetail.getSchDate())) {
-							finScheduleDetail.setFeeSchd(finScheduleDetail.getFeeSchd().add(feeSchdAmt));
-						} else {
-							finScheduleDetail.setFeeSchd(feeSchdAmt);
-							feeScheduleDatesSet.add(finScheduleDetail.getSchDate());
-						}
-						count++;
-					}
 				}
-
-				Comparator<FinFeeScheduleDetail> beanComp = new BeanComparator("schDate");
-				Collections.sort(finFeeScheduleDetailList, beanComp);
-				finFeeDetail.setFinFeeScheduleDetailList(finFeeScheduleDetailList);
 			}
+			
+			Comparator<FinFeeScheduleDetail> beanComp = new BeanComparator("schDate");
+			Collections.sort(finFeeScheduleDetails, beanComp);
+			finFeeDetail.setFinFeeScheduleDetailList(finFeeScheduleDetails);
 		}
 		
 		logger.debug("Leaving");
-		
+
 		return finScheduleData;
 	}
 
-	
-	private boolean allowFeeToSchedule(FinanceScheduleDetail finScheduleDetail,FinScheduleData finScheduleDataTemp){
-		/*if (finScheduleDetail.isDisbOnSchDate() || !finScheduleDetail.isRepayOnSchDate() || StringUtils.isNotEmpty(finScheduleDetail.getBpiOrHoliday()) || 
-				finScheduleDetail.getSchDate().compareTo(finScheduleDataTemp.getFinanceMain().getGrcPeriodEndDate()) <= 0 ||
-				finScheduleDetail.getSchDate().compareTo(finScheduleDataTemp.getFinanceMain().getCalMaturity()) > 0){
-			return false;
-		} else {
-			return true;
-		}*/
-		
-		if (!finScheduleDetail.isRepayOnSchDate()) {
-			return false;
-		}
-
-		return true;
-	}
-	
-	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
