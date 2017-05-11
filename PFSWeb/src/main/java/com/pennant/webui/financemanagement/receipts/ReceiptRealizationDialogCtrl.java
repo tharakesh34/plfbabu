@@ -66,7 +66,6 @@ import org.zkoss.zul.Window;
 import com.pennant.AccountSelectionBox;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ErrorDetails;
@@ -251,11 +250,6 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 		int formatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
 
 		//Receipts Details
-		this.finType.setMaxlength(8);
-		this.finReference.setMaxlength(20);
-		this.finCcy.setMaxlength(LengthConstants.LEN_CURRENCY);
-		this.finBranch.setMaxlength(LengthConstants.LEN_BRANCH);
-		this.custCIF.setMaxlength(LengthConstants.LEN_CIF);
 		this.receiptAmount.setProperties(true , formatter);
 		this.realizationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
@@ -485,11 +479,11 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 		// Receipt Header Details
 		FinReceiptHeader header = getReceiptHeader();
 		
-		this.finType.setValue(header.getFinType());
+		this.finType.setValue(header.getFinType()+"-"+header.getFinTypeDesc());
 		this.finReference.setValue(header.getReference());
-		this.finCcy.setValue(header.getFinCcy());
-		this.finBranch.setValue(header.getFinBranch());;
-		this.custCIF.setValue(header.getCustCIF());
+		this.finCcy.setValue(header.getFinCcy()+"-"+header.getFinCcyDesc());
+		this.finBranch.setValue(header.getFinBranch()+"-"+header.getFinBranchDesc());;
+		this.custCIF.setValue(header.getCustCIF()+"-"+header.getCustShrtName());
 		int finFormatter = CurrencyUtil.getFormat(this.finCcy.getValue());
 		
 		fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), "");

@@ -559,7 +559,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.receipt_finReference.setMaxlength(20);
 		this.receipt_finCcy.setMaxlength(LengthConstants.LEN_CURRENCY);
 		this.receipt_finBranch.setMaxlength(LengthConstants.LEN_BRANCH);
-		this.receipt_CustCIF.setMaxlength(LengthConstants.LEN_CIF);
 		this.receipt_paidByCustomer.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.receiptAmount.setProperties(true , formatter);
 		
@@ -597,7 +596,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.allocation_finReference.setMaxlength(20);
 		this.allocation_finCcy.setMaxlength(LengthConstants.LEN_CURRENCY);
 		this.allocation_finBranch.setMaxlength(LengthConstants.LEN_BRANCH);
-		this.allocation_CustCIF.setMaxlength(LengthConstants.LEN_CIF);
 		this.allocation_paidByCustomer.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 
 		logger.debug("Leaving");
@@ -768,9 +766,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.finCcy.setValue(getRepayMain().getFinCcy());
 		fillComboBox(this.profitDayBasis, getRepayMain().getProfitDaysBais(), PennantStaticListUtil.getProfitDaysBasis(), "");
 		this.custID.setValue(getRepayMain().getCustID());
+		String custShrtname = "";
 		if(customer != null){
 			this.lovDescCustCIF.setValue(customer.getCustCIF());
 			this.custShrtName.setValue(customer.getCustShrtName());
+			custShrtname = customer.getCustShrtName();
 		}
 		this.finBranch.setValue(getRepayMain().getFinBranch());
 		this.finStartDate.setValue(getRepayMain().getDateStart());
@@ -810,6 +810,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.receipt_finBranch.setValue(getRepayMain().getFinBranch());
 		if(customer != null){
 			this.receipt_CustCIF.setValue(customer.getCustCIF());
+			if(StringUtils.isNotEmpty(custShrtname)){
+				this.receipt_CustCIF.setValue(customer.getCustCIF()+"-"+custShrtname);
+			}
 		}
 		this.receipt_paidByCustomer.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, finformatter));
 
@@ -820,6 +823,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.allocation_finBranch.setValue(getRepayMain().getFinBranch());
 		if(customer != null){
 			this.allocation_CustCIF.setValue(customer.getCustCIF());
+			if(StringUtils.isNotEmpty(custShrtname)){
+				this.allocation_CustCIF.setValue(customer.getCustCIF()+"-"+custShrtname);
+			}
 		}
 		this.allocation_paidByCustomer.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, finformatter));
 
@@ -830,6 +836,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.payment_finBranch.setValue(getRepayMain().getFinBranch());
 		if(customer != null){
 			this.payment_CustCIF.setValue(customer.getCustCIF());
+			if(StringUtils.isNotEmpty(custShrtname)){
+				this.payment_CustCIF.setValue(customer.getCustCIF()+"-"+custShrtname);
+			}
 		}
 		this.payment_paidByCustomer.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO, finformatter));
 
