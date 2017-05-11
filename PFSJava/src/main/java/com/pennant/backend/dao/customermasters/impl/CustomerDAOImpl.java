@@ -460,7 +460,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 
 	@Override
 	public boolean isDuplicateCif(long custId, String cif) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean exists = false;
 
@@ -473,14 +473,14 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		String sql = QueryUtil.getCountQuery(new String[] { "Customers_Temp", "Customers" },
 				"CustID != :CustID and CustCIF = :CustCIF");
 
-		logger.debug("SQL: " + sql.toString());
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, Integer.class);
+		logger.trace(Literal.SQL + sql);
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		if (count > 0) {
 			exists = true;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return exists;
 	}
 
@@ -1377,7 +1377,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 
 	@Override
 	public boolean isDuplicateCrcpr(long custId, String custCRCPR) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean exists = false;
 
@@ -1390,14 +1390,14 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		String sql = QueryUtil.getCountQuery(new String[] { "Customers_Temp", "Customers" },
 				"CustID != :CustID and CustCRCPR = :CustCRCPR");
 
-		logger.debug("SQL: " + sql.toString());
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, Integer.class);
+		logger.trace(Literal.SQL + sql);
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		if (count > 0) {
 			exists = true;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return exists;
 	}
 

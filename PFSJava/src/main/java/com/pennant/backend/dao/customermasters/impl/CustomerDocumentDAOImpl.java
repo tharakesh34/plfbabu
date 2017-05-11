@@ -68,6 +68,7 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
@@ -490,7 +491,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 
 	@Override
 	public boolean isDuplicateTitle(long custId, String custDocCategory, String custDocTitle) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean exists = false;
 
@@ -506,14 +507,14 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		String sql = QueryUtil.getCountQuery(new String[] { "CustomerDocuments_Temp", "CustomerDocuments" },
 				"CustID != :CustID and CustDocCategory = :CustDocCategory and CustDocTitle = :CustDocTitle");
 
-		logger.debug("SQL: " + sql.toString());
-		Integer count = namedParameterJdbcTemplate.queryForObject(sql.toString(), paramSource, Integer.class);
+		logger.trace(Literal.SQL + sql);
+		Integer count = namedParameterJdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		if (count > 0) {
 			exists = true;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return exists;
 	}
 
