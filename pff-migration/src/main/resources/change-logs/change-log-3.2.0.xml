@@ -989,4 +989,13 @@ update WorkFlowDetails set workflowactive='0' where workflowtype='BFSD_ORIGINATI
 		UPDATE  errordetails SET errormessage = REPLACE(errormessage, 'Finance', 'Loan');
 	</sql>
 </changeSet>
+
+<changeSet id="77" author="Siva">
+		<addColumn tableName="FinReceiptHeader">
+			<column name="CancelReason" type="varchar(8)" />
+		</addColumn>
+		<addColumn tableName="FinReceiptHeader_Temp">
+			<column name="CancelReason" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

@@ -348,4 +348,10 @@ WHERE     (TH.AuditTranType != 'W') AND (TH.AuditModule = 'FinanceType')
 </createView>
 </changeSet>
 
+	<changeSet id="5" author="Siva">
+		<addColumn tableName="AdtFinReceiptHeader">
+			<column name="CancelReason" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
