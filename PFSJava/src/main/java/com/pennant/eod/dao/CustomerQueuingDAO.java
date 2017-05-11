@@ -6,7 +6,7 @@ import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 
 public interface CustomerQueuingDAO {
 
-	void prepareCustomerQueue(Date date);
+	int prepareCustomerQueue(Date date);
 
 	int getProgressCountByCust(long custID);
 

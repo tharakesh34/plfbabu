@@ -6,7 +6,7 @@ import com.pennant.eod.beans.CustomerDates;
 
 public interface CustomerDatesDAO {
 
-	void saveCustomerDates(Date appDate, Date valueDate, Date nextBusinessDate);
+	int saveCustomerDates(Date appDate, Date valueDate, Date nextBusinessDate);
 
 	void updateCustomerDates(long custId, Date appDate, Date valueDate, Date nextBusinessDate);
 

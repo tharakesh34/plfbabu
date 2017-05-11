@@ -38,7 +38,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 	}
 
 	@Override
-	public void prepareCustomerQueue(Date date) {
+	public int prepareCustomerQueue(Date date) {
 		logger.debug("Entering");
 
 		CustomerQueuing customerQueuing = new CustomerQueuing();
@@ -50,9 +50,8 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		logger.debug("updateSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		return this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
 
-		logger.debug("Leaving");
 	}
 
 	@Override

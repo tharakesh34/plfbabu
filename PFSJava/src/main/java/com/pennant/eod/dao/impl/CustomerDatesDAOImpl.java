@@ -31,9 +31,10 @@ public class CustomerDatesDAOImpl implements CustomerDatesDAO {
 	 * @param appDate
 	 * @param valueDate
 	 * @param nextBusinessDate
+	 * @return 
 	 */
 	@Override
-	public void saveCustomerDates(Date appDate, Date valueDate, Date nextBusinessDate) {
+	public int saveCustomerDates(Date appDate, Date valueDate, Date nextBusinessDate) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -47,9 +48,9 @@ public class CustomerDatesDAOImpl implements CustomerDatesDAO {
 
 		logger.debug("updateSql: "+ insertSql.toString());
 
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), source);
-
 		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.update(insertSql.toString(), source);
+
 	}
 
 	/**
