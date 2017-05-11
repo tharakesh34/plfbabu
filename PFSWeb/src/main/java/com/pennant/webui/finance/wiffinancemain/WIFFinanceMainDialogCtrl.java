@@ -4264,7 +4264,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				String msg = PennantApplicationUtil.getSavingStatus(aFinanceMain.getRoleCode(), aFinanceMain
-						.getNextRoleCode(), aFinanceMain.getFinReference(), " Finance ",
+						.getNextRoleCode(), aFinanceMain.getFinReference(), " Loan ",
 						StringUtils.isBlank(aFinanceMain.getRecordStatus()) ? PennantConstants.RCD_STATUS_SAVED
 								: aFinanceMain.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);
