@@ -3,8 +3,6 @@ package com.pennanttech.test;
 import java.io.IOException;
 import java.util.Arrays;
 
-import jxl.read.biff.BiffException;
-
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -19,13 +17,16 @@ import org.testng.annotations.Test;
 import com.pennant.backend.dao.impl.ErrorDetailsDAOImpl;
 import com.pennanttech.util.Dataset;
 
+import jxl.read.biff.BiffException;
+
 public class LoadConfigTest {
 	final String[]				CONFIG_LOCATIONS	= new String[] {
 			"../PLFInterface/src/main/resources/applicationContext-core-interface.xml",
 			"../PLFInterface/src/main/resources/applicationContext-mq-interface.xml",
 			"../PFSJava/src/main/resources/applicationContext-daos.xml",
 			"../PFSWeb/src/main/resources/applicationContext-db.xml", "/src/test/resources/applicationContext.xml",
-			"../pff-interface-bajaj/src/main/resources/client-interfaces-context.xml" };
+			"../pff-interface-bajaj/src/main/resources/client-interfaces-context.xml",
+			"../PFSWeb/src/main/resources/eod-batch-config-service.xml" };
 	static ApplicationContext	context;
 
 	@BeforeSuite
