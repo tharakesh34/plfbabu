@@ -1435,6 +1435,7 @@ public class ScheduleCalculator {
 		int adjTerms = 0;
 		finMain.setCompareToExpected(false);
 		finMain.setRecalSchdMethod(CalculationConstants.RPYCHG_ADJMDT);
+		finMain.setCalculateRepay(false);
 
 		int sdSize = finScheduleData.getFinanceScheduleDetails().size();
 
@@ -1484,6 +1485,7 @@ public class ScheduleCalculator {
 		int adjTerms = 0;
 		finMain.setCompareToExpected(false);
 		finMain.setRecalSchdMethod(CalculationConstants.RPYCHG_ADJMDT);
+		finMain.setCalculateRepay(false);
 
 		int sdSize = finScheduleData.getFinanceScheduleDetails().size();
 

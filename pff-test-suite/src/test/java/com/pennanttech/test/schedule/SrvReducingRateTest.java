@@ -600,10 +600,10 @@ public class SrvReducingRateTest {
 			fm.setEventFromDate(schedule.getFinanceScheduleDetails().get(2).getSchDate());
 			fm.setEventToDate(schedule.getFinanceScheduleDetails().get(4).getSchDate());
 			
-			schedule.getFinanceScheduleDetails().get(3).setSchdPftPaid(new BigDecimal(1561932));
-			schedule.getFinanceScheduleDetails().get(3).setSchdPriPaid(new BigDecimal(754213));
-			schedule.getFinanceScheduleDetails().get(4).setSchdPftPaid(new BigDecimal(788003));
-			schedule.getFinanceScheduleDetails().get(4).setSchdPriPaid(new BigDecimal(2686214));
+			schedule.getFinanceScheduleDetails().get(3).setSchdPftPaid(new BigDecimal(787629));
+			schedule.getFinanceScheduleDetails().get(3).setSchdPriPaid(new BigDecimal(1528516));
+			schedule.getFinanceScheduleDetails().get(4).setSchdPftPaid(new BigDecimal(730621));
+			schedule.getFinanceScheduleDetails().get(4).setSchdPriPaid(new BigDecimal(2743596));
 			
 			schedule = ScheduleCalculator.reAging(schedule);
 		}
@@ -614,10 +614,10 @@ public class SrvReducingRateTest {
 			fm.setEventFromDate(schedule.getFinanceScheduleDetails().get(2).getSchDate());
 			fm.setEventToDate(schedule.getFinanceScheduleDetails().get(4).getSchDate());
 
-			schedule.getFinanceScheduleDetails().get(3).setSchdPftPaid(new BigDecimal(1561932));
-			schedule.getFinanceScheduleDetails().get(3).setSchdPriPaid(new BigDecimal(754213));
-			schedule.getFinanceScheduleDetails().get(4).setSchdPftPaid(new BigDecimal(788003));
-			schedule.getFinanceScheduleDetails().get(4).setSchdPriPaid(new BigDecimal(2686214));
+			schedule.getFinanceScheduleDetails().get(3).setSchdPftPaid(new BigDecimal(787629));
+			schedule.getFinanceScheduleDetails().get(3).setSchdPriPaid(new BigDecimal(1528516));
+			schedule.getFinanceScheduleDetails().get(4).setSchdPftPaid(new BigDecimal(730621));
+			schedule.getFinanceScheduleDetails().get(4).setSchdPriPaid(new BigDecimal(2743596));
 
 			schedule = ScheduleCalculator.reAging(schedule);
 		}
