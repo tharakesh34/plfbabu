@@ -984,4 +984,9 @@ update WorkFlowDetails set workflowactive='0' where workflowtype='BFSD_ORIGINATI
 		UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
 	</sql>
 </changeSet>
+<changeSet id="76" author="Siva">
+	<sql>
+		UPDATE  errordetails SET errormessage = REPLACE(errormessage, 'Finance', 'Loan');
+	</sql>
+</changeSet>
 </databaseChangeLog>
