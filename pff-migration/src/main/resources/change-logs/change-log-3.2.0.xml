@@ -192,7 +192,7 @@ Update wifFinanceMain set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS NULL;
 	</sql>
 		</changeSet>
 		
-	 <changeSet id="17" author="Manojkumar.P">
+	<!--  <changeSet id="17" author="Manojkumar.P">
 		<sql>
 		DELETE FROM DATA_ENGINE_PROCESS_LOG;
 		DELETE FROM DATA_ENGINE_LOG;
@@ -239,7 +239,7 @@ Update wifFinanceMain set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS NULL;
 		UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
 		UPDATE SEQ_DATA_ENGINE_STATUS SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_STATUS);
 		</sql>
-	</changeSet>
+	</changeSet> -->
 		
 	
 	<changeSet id="18" author="Jayant">    
