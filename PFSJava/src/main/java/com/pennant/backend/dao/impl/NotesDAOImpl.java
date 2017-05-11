@@ -58,29 +58,12 @@ import com.pennant.backend.dao.NotesDAO;
 import com.pennant.backend.model.Notes;
 
 public class NotesDAOImpl extends BasisNextidDaoImpl<Notes> implements NotesDAO{
-	
 	private static Logger logger = Logger.getLogger(NotesDAOImpl.class);
 
-	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public NotesDAOImpl() {
 		super();
-	}
-	
-	@Override
-	public List<Notes> getNotesByID(Notes notes) {
-		logger.debug("Entering");
-		StringBuilder   selectSql = new StringBuilder("Select NoteId, ModuleName, Reference,  " );
-		selectSql.append(" RemarkType, AlignType, RoleCode, Version, Remarks, InputBy, InputDate " );
-		selectSql.append(" From Notes ");
-		selectSql.append(" Where Reference = :Reference and ModuleName = :ModuleName and Version = :Version");
-		logger.debug("selectSql: " + selectSql.toString());
-		
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
-		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
-		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 	
 	public List<Notes> getNotesList(Notes notes, boolean isNotes){
@@ -138,25 +121,6 @@ public class NotesDAOImpl extends BasisNextidDaoImpl<Notes> implements NotesDAO{
 		return tempRoleCodes;
 	}
 	
-	public List<Notes> getNotesListAsc(Notes notes, boolean isNotes){
-		logger.debug("Entering");
-		StringBuilder   selectSql = new StringBuilder(" Select NoteId, ModuleName, Reference, " );
-		selectSql.append(" RemarkType, AlignType, T1.RoleCode, T1.Version, Remarks, InputBy, InputDate, T2.UsrLogin From Notes T1 "); 
-		selectSql.append(" INNER JOIN SecUsers T2 on T2.UsrID = T1.InputBy ");
-		selectSql.append(" Where Reference = :Reference and ModuleName = :ModuleName " );
-		if(isNotes){
-			selectSql.append(" AND RemarkType IN('N', 'I') " );
-		}else{
-			selectSql.append(" AND RemarkType IN('R', 'C') " );
-		}
-		selectSql.append(" ORDER BY InputDate Asc ");
-		
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
-		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
-		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
 	public List<Notes> getNotesListAsc(Notes notes){
 		logger.debug("Entering");
 		notes.setRemarkType("N");

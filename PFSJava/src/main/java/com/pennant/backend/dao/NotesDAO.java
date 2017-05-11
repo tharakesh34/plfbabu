@@ -47,11 +47,7 @@ import java.util.List;
 import com.pennant.backend.model.Notes;
 
 public interface NotesDAO {
-	List<Notes> getNotesByID(Notes notes);
-
 	List<Notes> getNotesList(Notes notes, boolean isNotes);
-
-	List<Notes> getNotesListAsc(Notes notes, boolean isNotes);
 
 	List<Notes> getNotesListAsc(Notes notes);
 
