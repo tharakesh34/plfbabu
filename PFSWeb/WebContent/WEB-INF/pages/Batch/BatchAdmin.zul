@@ -90,11 +90,9 @@
 								<rows>
 									<row>
 										<hbox widths="25%,25%,25%,25%" pack="stretch" width="100%">
-											<exePannel id="masterStep" border="normal" title="${c:l('label_masterStep')}" imgSrc="/images/icons/send.gif" />
-											<exePannel id="microEOD" border="normal" title="${c:l('label_microEOD')}" imgSrc="/images/icons/send.gif" />
-											<hbox>
-												<exePannel id="microEODMonitor" border="normal" title="${c:l('label_microEOD')}" imgSrc="/images/icons/send.gif" visible="false" />
-											</hbox>
+											<exePannel id="masterStep" border="normal" title="${c:l('label_masterStep')}" imgSrc="/images/icons/send.gif" visible="false"/>
+											<exePannel id="microEOD" border="normal" title="${c:l('label_microEOD')}" imgSrc="/images/icons/send.gif" visible="false" />
+											<exePannel id="microEODMonitor" border="normal" title="${c:l('label_microEOD')}" imgSrc="/images/icons/send.gif" visible="false" />
 											<hbox></hbox>
 										</hbox>
 									</row>
