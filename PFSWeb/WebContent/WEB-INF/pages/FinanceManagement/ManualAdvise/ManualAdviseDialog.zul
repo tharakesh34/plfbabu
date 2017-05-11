@@ -135,12 +135,12 @@
 							</row>
 							<row id="row3">
 								<label id="label_AdviseType"
-									value="${c:l('label_ManualAdviseDialog_AdviseType.value')}" visible="false"/>
-								<hbox visible="false">
+									value="${c:l('label_ManualAdviseDialog_AdviseType.value')}" visible="true"/>
+								<hbox visible="true">
 									<space spacing="2px"
 										sclass="mandatory" />
 									<combobox id="adviseType"
-										width="90px" />
+										width="120px" />
 								</hbox>
 								<hbox id="hbox_Sequence">
 									<label id="label_Sequence"
