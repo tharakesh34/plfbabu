@@ -76,6 +76,7 @@ import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Div;
@@ -334,6 +335,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Hbox										hbox_planEmiMethod;
 	protected Combobox									planEmiMethod;
 	protected Row										row_MaxPlanEmi;
+	protected Row										row_PlannedEMIH;
 	protected Intbox									maxPlanEmiPerAnnum;
 	protected Intbox									maxPlanEmi;
 	protected Row										row_PlanEmiHLockPeriod;
@@ -5643,11 +5645,24 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private void onCheckPlannedEmiholiday() {
 		logger.debug("Entering");
+		FinanceType financeType = new FinanceType();
+		financeType= getFinanceDetail().getFinScheduleData().getFinanceType();
+		FinanceMain aFinanceMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		if (this.alwPlannedEmiHoliday.isChecked()) {
 			this.label_FinanceMainDialog_PlanEmiHolidayMethod.setVisible(true);
+			this.row_PlannedEMIH.setVisible(true);
 			this.hbox_planEmiMethod.setVisible(true);
 			this.row_MaxPlanEmi.setVisible(true);
 			this.row_PlanEmiHLockPeriod.setVisible(true);
+			this.planEmiHLockPeriod.setValue(financeType.getPlanEMIHLockPeriod());
+			this.cpzAtPlanEmi.setChecked(financeType.isPlanEMICpz());
+			this.maxPlanEmiPerAnnum.setValue(financeType.getPlanEMIHMaxPerYear());
+			this.maxPlanEmi.setValue(financeType.getPlanEMIHMax());
+			if(aFinanceMain.getPlanEMIHMethod()==null){
+				setComboboxSelectedItem(this.planEmiMethod, FinanceConstants.PLANEMIHMETHOD_FRQ);
+			} else {
+				setComboboxSelectedItem(this.planEmiMethod, aFinanceMain.getPlanEMIHMethod());
+			}
 		} else {
 			this.planEmiHLockPeriod.setErrorMessage("");
 			this.planEmiMethod.setErrorMessage("");
@@ -5662,6 +5677,10 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			fillComboBox(this.planEmiMethod, "", PennantStaticListUtil.getPlanEmiHolidayMethod(), "");
 			this.maxPlanEmi.setValue(0);
 			this.cpzAtPlanEmi.setChecked(false);
+			if (getFinanceDetail().getFinScheduleData().getFinanceType().isPlanEMIHAlw()
+					&& !isReadOnly("WIFFinanceMainDialog_AlwPlannedEmiHoliday")) {
+				this.row_PlannedEMIH.setVisible(true);
+			}
 		}
 		logger.debug("Leaving");
 
@@ -7198,6 +7217,16 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		utilizedAmt = utilizedAmt.subtract(PennantAppUtil.unFormateAmount(
 				this.downPayBank.getActualValue().subtract(this.downPaySupl.getActualValue()), formatter));
 		getFinanceDetail().getFinScheduleData().getFinanceMain().setFinCurrAssetValue(utilizedAmt);
+	}
+	
+	private void setComboboxSelectedItem(Combobox combobox, String selectedValue) {
+		List<Comboitem> comboitems = combobox.getItems();
+		for (Comboitem comboitem : comboitems) {
+			if (StringUtils.equals(comboitem.getValue().toString(), selectedValue)) {
+				combobox.setSelectedItem(comboitem);
+				break;
+			}
+		}
 	}
 
 	// ******************************************************//
