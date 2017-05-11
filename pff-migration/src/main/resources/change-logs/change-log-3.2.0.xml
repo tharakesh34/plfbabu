@@ -1138,4 +1138,10 @@ Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSP
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
 		</createView>
 	</changeSet>
+	<changeSet id="85" author="Srikanth">
+	<sql>
+	INSERT INTO ErrorDetails VALUES('90278','EN','E','Phone Number is invalid. Allowed Characters are [0-9].','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	update errorDetails set ErrorMessage='PAN Number invalid. Please Provide valid PAN Number.Allowed Format is CCCCCNNNNC.' where ErrorCode='90251';
+	</sql>
+	</changeSet>
 </databaseChangeLog>
