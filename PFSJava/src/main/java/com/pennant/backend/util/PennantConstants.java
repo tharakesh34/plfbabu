@@ -634,9 +634,8 @@ public class PennantConstants {
 	
 	
 	//RejectCodes
-	public static final String Reject_FRUAD = "FRUAD";
-	public static final String Reject_POLICYRISK = "POLICYRISK";
-	public static final String Reject_POLICYUNDERWRITING = "POLICYUNDERWRITING";
+	public static final String Reject_Finance = "Finance";
+	public static final String Reject_Payment = "Payment";
 	
 	// Branches
 	public static final String Branch_AREAOFC = "AREAOFFICE";

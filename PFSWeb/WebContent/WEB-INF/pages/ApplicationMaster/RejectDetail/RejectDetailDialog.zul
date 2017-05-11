@@ -109,7 +109,8 @@
 									id="label_RejectDetailDialog_RejectType"
 									value="${c:l('label_RejectDetailDialog_RejectType.value')}" />
 								<hbox>
-									<space spacing="2px" />
+									<space spacing="2px" 
+										sclass="mandatory" />
 									<combobox id="rejectType"
 										width="200px" />
 								</hbox>

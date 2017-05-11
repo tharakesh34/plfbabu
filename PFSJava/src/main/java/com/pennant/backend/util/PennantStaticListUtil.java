@@ -2434,9 +2434,8 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getRejectTypeList() {
 		if(rejectType == null){
 			rejectType = new ArrayList<ValueLabel>(3);
-			rejectType.add(new ValueLabel(PennantConstants.Reject_FRUAD,Labels.getLabel("label_Fruad")));
-			rejectType.add(new ValueLabel(PennantConstants.Reject_POLICYRISK,Labels.getLabel("label_PolicyRisk")));
-			rejectType.add(new ValueLabel(PennantConstants.Reject_POLICYUNDERWRITING ,Labels.getLabel("label_PolicyUnderwriting")));
+			rejectType.add(new ValueLabel(PennantConstants.Reject_Finance,Labels.getLabel("label_RejectType_Finance")));
+			rejectType.add(new ValueLabel(PennantConstants.Reject_Payment,Labels.getLabel("label_RejectType_Payment")));
 		}
 		return rejectType;
 	}

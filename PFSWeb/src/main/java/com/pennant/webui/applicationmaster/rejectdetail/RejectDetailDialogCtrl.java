@@ -44,7 +44,6 @@ package com.pennant.webui.applicationmaster.rejectdetail;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -61,7 +60,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ErrorDetails;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.RejectDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -71,6 +69,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -103,7 +102,6 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 	
 	// ServiceDAOs / Domain Classes
 	private transient RejectDetailService rejectDetailService;
-	private final List<ValueLabel>			rejectTypeList		= PennantStaticListUtil.getRejectTypeList();
 
 	/**
 	 * default constructor.<br>
@@ -310,7 +308,7 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 		this.rejectCode.setValue(aRejectDetail.getRejectCode());
 		this.rejectDesc.setValue(aRejectDetail.getRejectDesc());
 		this.rejectIsActive.setChecked(aRejectDetail.isRejectIsActive());
-		fillComboBox(this.rejectType,aRejectDetail.getRejectType(),rejectTypeList,"");
+		fillComboBox(this.rejectType,aRejectDetail.getRejectType(),PennantStaticListUtil.getRejectTypeList(),"");
 		
 		this.recordStatus.setValue(aRejectDetail.getRecordStatus());
 
@@ -434,7 +432,7 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 		}
 		// Reject Type
 		if (!this.rejectType.isDisabled()) {
-			this.rejectType.setConstraint(new PTStringValidator(Labels.getLabel("label_RejectDetailDialog_RejectType.value"), null, false,true));
+			this.rejectType.setConstraint(new StaticListValidator(PennantStaticListUtil.getRejectTypeList(), Labels.getLabel("label_RejectDetailDialog_RejectType.value")));
 		}
 		logger.debug("Leaving");
 	}

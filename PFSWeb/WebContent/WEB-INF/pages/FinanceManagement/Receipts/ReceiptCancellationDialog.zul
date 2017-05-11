@@ -223,6 +223,13 @@
 													id="bounceRemarks" width="180px" />
 											</hbox>
 										</row>
+										<row id="row_CancelReason">
+											<label
+												id="label_ReceiptCancellationDialog_CancelReason"
+												value="${c:l('label_ReceiptCancellationDialog_CancelReason.value')}" />
+											<extendedcombobox
+												id="cancelReason" />
+										</row>
 									</rows>
 								</grid>
 							</groupbox>

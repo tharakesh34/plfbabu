@@ -55,6 +55,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -171,7 +172,7 @@ public class FinanceRejectCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	public void doWriteBeanToComponents(FinanceMain aFinanceMain) {
 		logger.debug("Entering ");
-		fillComboBox(this.financeRejectStatus,StringUtils.trimToEmpty(aFinanceMain.getRejectStatus()), PennantAppUtil.getRejectCodes(),"");
+		fillComboBox(this.financeRejectStatus,StringUtils.trimToEmpty(aFinanceMain.getRejectStatus()), PennantAppUtil.getRejectCodes(PennantConstants.Reject_Finance),"");
 		this.remarks.setValue(aFinanceMain.getRejectReason());
 		logger.debug("Leaving ");
 	}

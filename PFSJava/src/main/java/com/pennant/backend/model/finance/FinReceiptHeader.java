@@ -27,8 +27,11 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String receiptMode;
 	private String excessAdjustTo;
 	private String finType;
+	private String finTypeDesc;
 	private String finBranch;
+	private String finBranchDesc;
 	private String finCcy;
+	private String finCcyDesc;
 	private String custCIF;
 	private String custShrtName;
 	private String allocationType;
@@ -36,6 +39,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String effectSchdMethod;
 	private String receiptModeStatus;
 	private Date realizationDate;
+	private String cancelReason;
+	private String cancelReasonDesc;
 	
 	private boolean newRecord;
 	private String lovValue;
@@ -69,6 +74,9 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("excessReserves");
 		excludeFields.add("postBranch");
 		excludeFields.add("logSchInPresentment");
+		excludeFields.add("finTypeDesc");
+		excludeFields.add("finBranchDesc");
+		excludeFields.add("finCcyDesc");
 
 		return excludeFields;
 	}
@@ -304,6 +312,47 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	public void setLogSchInPresentment(boolean logSchInPresentment) {
 		this.logSchInPresentment = logSchInPresentment;
 	}
+
+	public String getFinTypeDesc() {
+		return finTypeDesc;
+	}
+
+	public void setFinTypeDesc(String finTypeDesc) {
+		this.finTypeDesc = finTypeDesc;
+	}
+
+	public String getFinBranchDesc() {
+		return finBranchDesc;
+	}
+
+	public void setFinBranchDesc(String finBranchDesc) {
+		this.finBranchDesc = finBranchDesc;
+	}
+
+	public String getFinCcyDesc() {
+		return finCcyDesc;
+	}
+
+	public void setFinCcyDesc(String finCcyDesc) {
+		this.finCcyDesc = finCcyDesc;
+	}
+
+	public String getCancelReason() {
+		return cancelReason;
+	}
+
+	public void setCancelReason(String cancelReason) {
+		this.cancelReason = cancelReason;
+	}
+
+	public String getCancelReasonDesc() {
+		return cancelReasonDesc;
+	}
+
+	public void setCancelReasonDesc(String cancelReasonDesc) {
+		this.cancelReasonDesc = cancelReasonDesc;
+	}
+
 
 
 }

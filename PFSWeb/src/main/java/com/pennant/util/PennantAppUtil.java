@@ -864,7 +864,7 @@ public class PennantAppUtil {
 	}
 	
 	
-	public static ArrayList<ValueLabel> getRejectCodes() {
+	public static ArrayList<ValueLabel> getRejectCodes(String rejectType) {
 		ArrayList<ValueLabel> rejectList = new ArrayList<ValueLabel>();
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 
@@ -873,8 +873,9 @@ public class PennantAppUtil {
 		searchObject.addField("RejectCode");
 		searchObject.addField("RejectDesc");
 		
-		Filter[] filters = new Filter[1];
+		Filter[] filters = new Filter[2];
 		filters[0] = new Filter("RejectIsActive", 1, Filter.OP_EQUAL);
+		filters[1] = new Filter("RejectType", rejectType, Filter.OP_EQUAL);
 		searchObject.addFilters(filters);
 
 		List<RejectDetail> appList = pagedListService.getBySearchObject(searchObject);
