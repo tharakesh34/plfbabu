@@ -48,7 +48,7 @@ public class EodService {
 	private PlatformTransactionManager	transactionManager;
 
 	// Constants
-	private static final String			SQL		= "SELECT * FROM CustomerQueuing WHERE ThreadId=? AND Progress IS NULL ";
+	private static final String			SQL		= "SELECT CustId FROM CustomerQueuing WHERE ThreadId=? AND Progress IS NULL ";
 
 	public EodService() {
 		super();
