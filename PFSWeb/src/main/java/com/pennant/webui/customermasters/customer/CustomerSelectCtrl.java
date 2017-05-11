@@ -113,8 +113,8 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 	protected Listbox sortOperator_custTarget; 			// autowired
 	protected Combobox custCategory; 					// autowired
 	protected Listbox sortOperator_custCategory; 		// autowired
-	protected Textbox 		phoneCountryCode; 						
-	protected Textbox 		phoneAreaCode; 
+	//protected Textbox 		phoneCountryCode; 						
+	//protected Textbox 		phoneAreaCode; 
 	protected Paging pagingCustomerList; 				// autowired
 	protected Listbox listBoxCustomer; 					// autowired
 	protected Grid searchGrid; 							// autowired
@@ -404,36 +404,6 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 				}
 			}
 		}
-		if (StringUtils.isNotBlank(this.phoneCountryCode.getValue())) {
-			// get the search operator
-			final Listitem itemCustCtgCode = this.sortOperator_custMobile.getSelectedItem();
-			if (itemCustCtgCode != null) {
-				final int searchOpId = ((SearchOperators) itemCustCtgCode.getAttribute("data")).getSearchOperatorId();
-
-				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("PhoneCountryCode", "%" + this.phoneCountryCode.getValue().toUpperCase() + "%", searchOpId));
-				} else if (searchOpId == -1) {
-					// do nothing
-				} else {
-					searchObject.addFilter(new Filter("PhoneCountryCode", this.phoneCountryCode.getValue(), searchOpId));
-				}
-			}
-		}
-		if (StringUtils.isNotBlank(this.phoneAreaCode.getValue())) {
-			// get the search operator
-			final Listitem itemCustCtgCode = this.sortOperator_custMobile.getSelectedItem();
-			if (itemCustCtgCode != null) {
-				final int searchOpId = ((SearchOperators) itemCustCtgCode.getAttribute("data")).getSearchOperatorId();
-
-				if (searchOpId == Filter.OP_LIKE) {
-					searchObject.addFilter(new Filter("PhoneAreaCode", "%" + this.phoneAreaCode.getValue().toUpperCase() + "%", searchOpId));
-				} else if (searchOpId == -1) {
-					// do nothing
-				} else {
-					searchObject.addFilter(new Filter("PhoneAreaCode", this.phoneAreaCode.getValue(), searchOpId));
-				}
-			}
-		}
 		if (StringUtils.isNotBlank(this.custMobile.getValue())) {
 			// get the search operator
 			final Listitem itemCustCtgCode = this.sortOperator_custMobile.getSelectedItem();
@@ -600,8 +570,6 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 		this.custName.setValue("");
 		this.sortOperator_custName.setSelectedIndex(0);
 		this.custMobile.setValue("");
-		this.phoneAreaCode.setValue("");
-		this.phoneCountryCode.setValue("");
 		this.sortOperator_custMobile.setSelectedIndex(0);
 		this.custEid.setValue("");
 		this.sortOperator_custEID.setSelectedIndex(0);
@@ -628,9 +596,7 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 		this.custCIF.setMaxlength(12);
 		this.custDob.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.custName.setMaxlength(25);
-		this.phoneAreaCode.setMaxlength(3);
-		this.phoneCountryCode.setMaxlength(3);
-		this.custMobile.setMaxlength(8);
+		this.custMobile.setMaxlength(10);
 		this.custEid.setMaxlength(20);
 		this.custPassport.setMaxlength(50);
 		this.custType.setMaxlength(8);

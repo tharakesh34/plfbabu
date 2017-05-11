@@ -83,16 +83,7 @@
 								<listbox id="sortOperator_custMobile"
 									width="43px" mold="select" rows="1" />
 								<hbox>
-									<textbox id="phoneCountryCode"
-										width="35px" />
-									<label value="-"
-										style="display:inline-block;padding-top:4px;" />
-									<textbox id="phoneAreaCode"
-										width="35px" />
-									<label value="-"
-										style="display:inline-block;padding-top:4px;" />
-									<textbox id="custMobile"
-										width="60px" />
+									<textbox id="custMobile" width="150px" />
 								</hbox>
 							</row>
 							<row>
