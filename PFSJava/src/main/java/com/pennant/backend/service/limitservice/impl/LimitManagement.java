@@ -245,7 +245,6 @@ public class LimitManagement {
 					} else {
 						details.setReservedLimit(details.getReservedLimit().subtract(limitAmount));
 					}
-					details.setReservedLimit(details.getReservedLimit().subtract(limitAmount));
 					details.setUtilisedLimit(details.getUtilisedLimit().add(limitAmount));
 					limitDetailDAO.updateReserveUtilise(details, "");
 				}
