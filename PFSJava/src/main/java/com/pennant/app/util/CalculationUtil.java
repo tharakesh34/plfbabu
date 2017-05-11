@@ -613,7 +613,11 @@ public class CalculationUtil implements Serializable {
 	}
 
 	public static BigDecimal roundAmount(BigDecimal amount, String roundingMode, int roundingTarget) {
-		
+
+		if (roundingTarget == 0) {
+			return amount;
+		}
+
 		amount = amount.add(BigDecimal.valueOf(roundingTarget / 2)).divide(BigDecimal.valueOf(roundingTarget));
 
 		if (StringUtils.equals(roundingMode, RoundingMode.HALF_DOWN.name())) {
@@ -633,7 +637,7 @@ public class CalculationUtil implements Serializable {
 		}
 
 		amount = amount.multiply(BigDecimal.valueOf(roundingTarget));
-		
+
 		return amount;
 	}
 

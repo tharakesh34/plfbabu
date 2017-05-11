@@ -1,6 +1,7 @@
 package com.pennanttech.util;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Date;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -485,6 +486,8 @@ public class BeanFactory {
 		fm.setCalculateRepay(true);
 		fm.setEqualRepay(true);
 		fm.setProductCategory(FinanceConstants.PRODUCT_CONVENTIONAL);
+		fm.setCalRoundingMode(RoundingMode.HALF_DOWN.name());
+		fm.setRoundingTarget(0);
 
 		FinanceDisbursement fd = schedule.getDisbursementDetails().get(0);
 		fd.setDisbDate(fm.getFinStartDate());
