@@ -81,17 +81,22 @@ public class PartitioningMaster implements Partitioner {
 				recordslessThanThread = true;
 				noOfRows = 1;
 			}
+			
 
 			for (int i = 1; i <= threadCount; i++) {
 
-				customerQueuingDAO.updateThreadIDByRowNumber(valueDate, noOfRows, EodConstants.THREAD + i);
-
+				if (i==threadCount) {
+					//last thread will have the remaining records
+					customerQueuingDAO.updateThreadIDByRowNumber(valueDate, 0, EodConstants.THREAD + i);
+				}else{
+					customerQueuingDAO.updateThreadIDByRowNumber(valueDate, noOfRows, EodConstants.THREAD + i);
+				}
 				addExecution(i, partitionData);
-
 				if (recordslessThanThread && i == custIdCount) {
 					break;
 				}
 			}
+
 		}
 
 		logger.debug("COMPLETE: Thread Allocation On :" + valueDate);

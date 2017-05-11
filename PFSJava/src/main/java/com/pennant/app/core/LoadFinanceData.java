@@ -1,6 +1,7 @@
 package com.pennant.app.core;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -8,8 +9,12 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.pennant.app.constants.HolidayHandlerTypes;
+import com.pennant.app.util.BusinessCalendar;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -19,13 +24,16 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pff.core.TableType;
 
 public class LoadFinanceData extends ServiceHelper {
 
 	private static final long	serialVersionUID	= -281578785120363314L;
 
-	public CustEODEvent prepareFinEODEvents(CustEODEvent custEODEvent) throws Exception {
+	public CustEODEvent prepareFinEODEvents(CustEODEvent custEODEvent, long custId) throws Exception {
+		
+		custEODEvent.setCustomer(getCustomerDAO().getCustomerEOD(custId));
 
 		long custID = custEODEvent.getCustomer().getCustID();
 
@@ -149,6 +157,28 @@ public class LoadFinanceData extends ServiceHelper {
 
 		returnDataSets.clear();
 	}
+	
+	public void updateCustomerDate(long custId, Date date){
+		Date nextDate = DateUtility.addDays(date, 1);
+		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+		Calendar nextBusDate = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT, date);
+		//update customer business Dates
+		Date tempNextBussDate = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT,
+				nextBusDate.getTime()).getTime();
+		getCustomerDatesDAO().updateCustomerDates(custId, nextDate, nextDate, tempNextBussDate);
+	}
+	
+	
+	public void updateEnd(Date date, long custId) {
+
+		CustomerQueuing customerQueuing = new CustomerQueuing();
+		customerQueuing.setCustID(custId);
+		customerQueuing.setEodDate(date);
+		customerQueuing.setProgress(EodConstants.PROGRESS_COMPLETED);
+		getCustomerQueuingDAO().updateProgress(customerQueuing);
+
+	}
+
 
 	private PresentmentDetail getPresentmentDetailbyRef(String finrefere, List<PresentmentDetail> presentments) {
 		for (PresentmentDetail presentmentDetail : presentments) {

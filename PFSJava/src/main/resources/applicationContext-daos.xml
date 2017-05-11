@@ -9282,6 +9282,8 @@
 		
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+		<property name="customerDatesDAO" ref="customerDatesDAO" />
 		
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
@@ -9303,8 +9305,6 @@
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
 		
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
-		<property name="dPDBucketConfigurationDAO" ref="dPDBucketConfigurationDAO" />
-		<property name="dPDBucketDAO" ref="dPDBucketDAO" />
 	</bean>
 	<!-- Accrual -->
 	<bean id="accrualService" class="com.pennant.app.core.AccrualService" parent="serviceHelper">

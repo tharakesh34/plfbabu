@@ -61,8 +61,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
-import com.pennant.backend.dao.applicationmaster.DPDBucketConfigurationDAO;
-import com.pennant.backend.dao.applicationmaster.DPDBucketDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinContributorDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
@@ -87,6 +85,8 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.cache.util.FinanceConfigCache;
+import com.pennant.eod.dao.CustomerDatesDAO;
+import com.pennant.eod.dao.CustomerQueuingDAO;
 
 abstract public class ServiceHelper implements Serializable {
 
@@ -96,6 +96,8 @@ abstract public class ServiceHelper implements Serializable {
 	//customer
 	private CustomerDAO					customerDAO;
 	private CustomerStatusCodeDAO		customerStatusCodeDAO;
+	private CustomerDatesDAO			customerDatesDAO;
+	private CustomerQueuingDAO			customerQueuingDAO;
 	//Loan
 	private FinanceTypeDAO				financeTypeDAO;
 	private FinanceMainDAO				financeMainDAO;
@@ -113,11 +115,9 @@ abstract public class ServiceHelper implements Serializable {
 	private PostingsDAO					postingsDAO;
 	private SecondaryAccountDAO			secondaryAccountDAO;
 	private AccountProcessUtil			accountProcessUtil;
+	private PostingsPreparationUtil		postingsPreparationUtil;
 	//over due
 	private FinODDetailsDAO				finODDetailsDAO;
-	private DPDBucketDAO				dPDBucketDAO;
-	private DPDBucketConfigurationDAO	dPDBucketConfigurationDAO;
-	private PostingsPreparationUtil		postingsPreparationUtil;
 
 	/**
 	 * Post Accounting
@@ -360,14 +360,6 @@ abstract public class ServiceHelper implements Serializable {
 		this.finTypeAccountingDAO = finTypeAccountingDAO;
 	}
 
-	public void setdPDBucketConfigurationDAO(DPDBucketConfigurationDAO dPDBucketConfigurationDAO) {
-		this.dPDBucketConfigurationDAO = dPDBucketConfigurationDAO;
-	}
-
-	public void setdPDBucketDAO(DPDBucketDAO dPDBucketDAO) {
-		this.dPDBucketDAO = dPDBucketDAO;
-	}
-
 	public RepayInstructionDAO getRepayInstructionDAO() {
 		return repayInstructionDAO;
 	}
@@ -446,6 +438,22 @@ abstract public class ServiceHelper implements Serializable {
 
 	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
 		this.accountProcessUtil = accountProcessUtil;
+	}
+
+	public CustomerDatesDAO getCustomerDatesDAO() {
+		return customerDatesDAO;
+	}
+
+	public void setCustomerDatesDAO(CustomerDatesDAO customerDatesDAO) {
+		this.customerDatesDAO = customerDatesDAO;
+	}
+
+	public CustomerQueuingDAO getCustomerQueuingDAO() {
+		return customerQueuingDAO;
+	}
+
+	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
+		this.customerQueuingDAO = customerQueuingDAO;
 	}
 
 }

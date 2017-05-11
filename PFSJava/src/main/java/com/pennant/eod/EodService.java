@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.sql.DataSource;
@@ -15,7 +14,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.AutoDisbursementService;
 import com.pennant.app.core.CustEODEvent;
@@ -28,24 +26,12 @@ import com.pennant.app.core.LoadFinanceData;
 import com.pennant.app.core.NPAService;
 import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.ReceiptPaymentService;
-import com.pennant.app.util.BusinessCalendar;
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.customermasters.CustomerDAO;
-import com.pennant.backend.model.customerqueuing.CustomerQueuing;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.eod.constants.EodConstants;
-import com.pennant.eod.dao.CustomerDatesDAO;
-import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class EodService {
 
 	private static Logger				logger	= Logger.getLogger(EodService.class);
 
 	private DataSource					dataSource;
-	private CustomerDAO					customerDAO;
-	private CustomerDatesDAO			customerDatesDAO;
-	private CustomerQueuingDAO			customerQueuingDAO;
 
 	private LatePayMarkingService		latePayMarkingService;
 	private LatePayPenaltyService		latePayPenaltyService;
@@ -57,7 +43,6 @@ public class EodService {
 	private AccrualService				accrualService;
 	private AutoDisbursementService		autoDisbursementService;
 	private ReceiptPaymentService		receiptPaymentService;
-
 	private InstallmentDueService		installmentDueService;
 
 	private PlatformTransactionManager	transactionManager;
@@ -94,15 +79,15 @@ public class EodService {
 			while (resultSet.next()) {
 				//BEGIN TRANSACTION
 				txStatus = transactionManager.getTransaction(txDef);
-				
+
 				custId = resultSet.getLong("CustId");
-				
+
 				//process
 				doProcess(connection, custId, date);
-				
+
 				//Update Status
-				updateEnd(date, custId);
-				
+				loadFinanceData.updateEnd(date, custId);
+
 				//COMMIT THE TRANSACTION
 				transactionManager.commit(txStatus);
 			}
@@ -122,11 +107,10 @@ public class EodService {
 
 		/**************** Fetch and Set EOD Event ***********/
 		CustEODEvent custEODEvent = new CustEODEvent();
-		custEODEvent.setCustomer(getCustomerDAO().getCustomerEOD(custId));
 		custEODEvent.setEodDate(date);
 		custEODEvent.setEodValueDate(date);
 
-		custEODEvent = loadFinanceData.prepareFinEODEvents(custEODEvent);
+		custEODEvent = loadFinanceData.prepareFinEODEvents(custEODEvent, custId);
 
 		//late pay marking
 		custEODEvent = latePayMarkingService.processLatePayMarking(custEODEvent);
@@ -169,31 +153,13 @@ public class EodService {
 		//receipt postings
 		receiptPaymentService.processrReceipts(custEODEvent);
 
-		//Date and holiday check
-		Date nextDate = DateUtility.addDays(date, 1);
-		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
-		Calendar nextBusDate = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT, date);
-		//update customer business Dates
-		Date tempNextBussDate = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT,
-				nextBusDate.getTime()).getTime();
-		customerDatesDAO.updateCustomerDates(custId, nextDate, nextDate, tempNextBussDate);
+		//customer Date update
+		loadFinanceData.updateCustomerDate(custId, date);
 
 		//clear data after the process
 		custEODEvent.getFinEODEvents().clear();
 		custEODEvent = null;
 
-	}
-
-	public void updateEnd(Date date, long custId) {
-		logger.debug("Entering");
-
-		CustomerQueuing customerQueuing = new CustomerQueuing();
-		customerQueuing.setCustID(custId);
-		customerQueuing.setEodDate(date);
-		customerQueuing.setProgress(EodConstants.PROGRESS_COMPLETED);
-		customerQueuingDAO.updateProgress(customerQueuing);
-
-		logger.debug("Leaving");
 	}
 
 	public void setDataSource(DataSource dataSource) {
@@ -206,10 +172,6 @@ public class EodService {
 
 	public void setRateReviewService(RateReviewService rateReviewService) {
 		this.rateReviewService = rateReviewService;
-	}
-
-	public void setCustomerDatesDAO(CustomerDatesDAO customerDatesDAO) {
-		this.customerDatesDAO = customerDatesDAO;
 	}
 
 	public void setDateRollOverService(DateRollOverService dateRollOverService) {
@@ -250,18 +212,6 @@ public class EodService {
 
 	public void setLoadFinanceData(LoadFinanceData loadFinanceData) {
 		this.loadFinanceData = loadFinanceData;
-	}
-
-	public CustomerDAO getCustomerDAO() {
-		return customerDAO;
-	}
-
-	public void setCustomerDAO(CustomerDAO customerDAO) {
-		this.customerDAO = customerDAO;
-	}
-
-	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
-		this.customerQueuingDAO = customerQueuingDAO;
 	}
 
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {

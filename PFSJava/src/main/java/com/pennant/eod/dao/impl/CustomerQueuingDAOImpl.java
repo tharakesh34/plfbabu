@@ -21,10 +21,14 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
 	private static Logger				logger			= Logger.getLogger(CustomerQueuingDAOImpl.class);
 
-	private static final String			TH_UPDATE_SQL	= "UPDATE Top(:RowCount) CustomerQueuing set ThreadId=:ThreadId "
+	private static final String			UPDATE_SQL	= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
 																+ "Where ThreadId IS NULL AND EodDate = :EodDate";
-	private static final String			TH_UPDATE_ORCL	= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
-																+ "Where ROWNUM <=:RowCount AND ThreadId IS NULL AND EodDate = :EodDate";
+	private static final String			UPDATE_ORCL	= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
+																+ "Where  ThreadId IS NULL AND EodDate = :EodDate";
+	private static final String			UPDATE_SQL_RC	= "UPDATE Top(:RowCount) CustomerQueuing set ThreadId=:ThreadId "
+			+ "Where ThreadId IS NULL AND EodDate = :EodDate";
+	private static final String			UPDATE_ORCL_RC	= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
+			+ "Where ROWNUM <=:RowCount AND ThreadId IS NULL AND EodDate = :EodDate";
 
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
@@ -87,15 +91,28 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		source.addValue("ThreadId", threadId);
 		source.addValue("EodDate", date);
 		try {
-			if (App.DATABASE == Database.SQL_SERVER) {
-				logger.debug("selectSql: " + TH_UPDATE_SQL);
-				this.namedParameterJdbcTemplate.update(TH_UPDATE_SQL, source);
+			
+			if (noOfRows == 0) {
+				if (App.DATABASE == Database.SQL_SERVER) {
+					logger.debug("selectSql: " + UPDATE_SQL_RC);
+					this.namedParameterJdbcTemplate.update(UPDATE_SQL, source);
 
-			} else if (App.DATABASE == Database.ORACLE) {
-				logger.debug("selectSql: " + TH_UPDATE_ORCL);
-				this.namedParameterJdbcTemplate.update(TH_UPDATE_ORCL, source);
+				} else if (App.DATABASE == Database.ORACLE) {
+					logger.debug("selectSql: " + UPDATE_ORCL_RC);
+					this.namedParameterJdbcTemplate.update(UPDATE_ORCL, source);
+				}
+				
+			}else{
+				if (App.DATABASE == Database.SQL_SERVER) {
+					logger.debug("selectSql: " + UPDATE_SQL_RC);
+					this.namedParameterJdbcTemplate.update(UPDATE_SQL_RC, source);
+				} else if (App.DATABASE == Database.ORACLE) {
+					logger.debug("selectSql: " + UPDATE_ORCL_RC);
+					this.namedParameterJdbcTemplate.update(UPDATE_ORCL_RC, source);
+				}
+
 			}
-
+	
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error("Exception: ", dae);
 		}

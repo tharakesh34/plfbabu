@@ -12,6 +12,8 @@
 
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+		<property name="customerDatesDAO" ref="customerDatesDAO" />
 
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
@@ -32,8 +34,6 @@
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
 
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
-		<property name="dPDBucketConfigurationDAO" ref="dPDBucketConfigurationDAO" />
-		<property name="dPDBucketDAO" ref="dPDBucketDAO" />
 	</bean>
 	<bean id="paymentRecoveryService" class="com.pennant.eod.PaymentRecoveryService">
 		<property name="paymentRecoveryHeaderDAO" ref="paymentRecoveryHeaderDAO" />
@@ -125,8 +125,6 @@
 		<property name="dataSource" ref="pfsDatasource" />
 		<property name="accrualService" ref="accrualService" />
 		<property name="rateReviewService" ref="rateReviewService" />
-		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
-		<property name="customerDatesDAO" ref="customerDatesDAO" />
 		<property name="dateRollOverService" ref="dateRollOverService" />
 		<property name="installmentDueService" ref="installmentDueService" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
@@ -136,7 +134,6 @@
 		<property name="autoDisbursementService" ref="autoDisbursementService" />
 		<property name="receiptPaymentService" ref="receiptPaymentService" />
 		<property name="loadFinanceData" ref="loadFinanceData" />
-		<property name="customerDAO" ref="customerDAO" />
 		<property name="transactionManager" ref="pfsTransactionManager" />
 	</bean>
 	<bean id="archivalService" class="com.pennant.eod.ArchivalService" parent="serviceHelper">
