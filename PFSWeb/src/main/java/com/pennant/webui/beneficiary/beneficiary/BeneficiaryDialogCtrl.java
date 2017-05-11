@@ -482,6 +482,11 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		if (enqiryModule) {
 			this.btnCtrl.setBtnStatus_Enquiry();
 			this.btnNotes.setVisible(false);
+			readOnlyComponent(true, this.bankBranchID);
+			readOnlyComponent(true, this.accNumber);
+			readOnlyComponent(true, this.accHolderName);
+			readOnlyComponent(true, this.phoneNumber);
+			readOnlyComponent(true, this.email);
 		}
 
 		doWriteBeanToComponents(beneficiary);
