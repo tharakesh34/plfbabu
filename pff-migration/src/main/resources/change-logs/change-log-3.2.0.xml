@@ -1078,4 +1078,11 @@ update WorkFlowDetails set workflowactive='0' where workflowtype='BFSD_ORIGINATI
 		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
 	</sql>
 </changeSet>
+
+		<changeSet id="82" author="pruthvi">
+	<sql>
+Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('FEE_POSTPONEMENT_METHOD','Fee Postponement Method when scheule installment postponed','int ',0,'1',1,0,null,null,'1: Postpone to next available schedule 2: Set along with postponed installment',1,1000,to_date('30-APR-2017 00:00:00','DD-MON-RRRR HH24:MI:SS'),'Approved',null,null,null,null,null,0);
+Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('FEE_RECAL_ON_DELETE_TERMS','Fee Calculation Method when scheule installments reduced','int ',0,'2',1,0,null,null,'1: Adjust to next available schedule 2: Recalculate 3: Adjust to Last schedule',1,1000,to_date('30-APR-2017 00:00:00','DD-MON-RRRR HH24:MI:SS'),'Approved',null,null,null,null,null,0);
+</sql>
+</changeSet>
 </databaseChangeLog>
