@@ -45,7 +45,6 @@ package com.pennant.webui.util;
 import java.io.IOException;
 import java.util.Date;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -119,42 +118,36 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 		logger.debug("Entering");
 		
 		super.doAfterCompose(comp);
-		
 		user = getUserWorkspace().getLoggedInUser();
 		
-		if(StringUtils.trimToNull(user.getUserName())!=null){
-			
-			set_LoginTimeText(PennantAppUtil.getTime(user.getLogonTime()).toString());
-			set_LoginDateText(DateUtility.getAppDate(DateFormat.SHORT_DATE));
-			set_UserText(user.getUserName());
-			set_BranchCodeText(user.getBranchCode());
-			set_DepartmentCodeText(user.getDepartmentCode());
-			doShowLabel();
+		set_LoginTimeText(PennantAppUtil.getTime(user.getLogonTime()).toString());
+		set_LoginDateText(DateUtility.getAppDate(DateFormat.SHORT_DATE));
+		set_UserText(user.getUserName());
+		set_BranchCodeText(user.getBranchCode());
+		set_DepartmentCodeText(user.getDepartmentCode());
+		doShowLabel();
 
-			// Listener for Last Login
-			EventQueues.lookup("lastLoginEventQueue", EventQueues.DESKTOP, true).subscribe(new EventListener<Event>() {
-				public void onEvent(Event event) throws Exception {
-					doShowLastLogin();
-				}
-			});
-			
-			switch (App.AUTH_TYPE) {
-			case SSO:
-				menuitem_logout.setVisible(false);
-				menuitem_changePasssword.setVisible(false);
-				break;
-			case LDAP:
-				menuitem_logout.setVisible(true);
-				menuitem_changePasssword.setVisible(false);
-				break;
-			default:			
-				menuitem_logout.setVisible(true);
-				menuitem_changePasssword.setVisible(true);
-				break;
-			}	
-		}
+		// Listener for Last Login
+		EventQueues.lookup("lastLoginEventQueue", EventQueues.DESKTOP, true).subscribe(new EventListener<Event>() {
+			public void onEvent(Event event) throws Exception {
+				doShowLastLogin();
+			}
+		});
 		
-		
+		switch (App.AUTH_TYPE) {
+		case SSO:
+			menuitem_logout.setVisible(false);
+			menuitem_changePasssword.setVisible(false);
+			break;
+		case LDAP:
+			menuitem_logout.setVisible(true);
+			menuitem_changePasssword.setVisible(false);
+			break;
+		default:			
+			menuitem_logout.setVisible(true);
+			menuitem_changePasssword.setVisible(true);
+			break;
+		}		
 
 		logger.debug("Leaving");
 	}

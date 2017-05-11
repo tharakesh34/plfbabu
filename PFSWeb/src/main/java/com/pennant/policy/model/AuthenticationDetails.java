@@ -57,9 +57,6 @@ public class AuthenticationDetails {
 			}
 
 		} else {
-			if (currentUser.getPrincipal().getClass().equals(String.class)) {
-				return new LoggedInUser();
-			}
 			UserImpl userImpl = (UserImpl) currentUser.getPrincipal();
 			loggedInUser = getUserDetails(userImpl.getSecurityUser());
 			WebAuthenticationDetails details = (WebAuthenticationDetails) currentUser.getDetails();
@@ -90,9 +87,6 @@ public class AuthenticationDetails {
 				grantedAuthorities = getGrantedAuthority(user);
 			}
 		} else {
-			if (currentUser.getPrincipal().getClass().equals(String.class)) {
-				return new ArrayList<GrantedAuthority>();
-			}
 			UserImpl userImpl = (UserImpl) currentUser.getPrincipal();
 			grantedAuthorities = userImpl.getAuthorities();
 		}
@@ -120,9 +114,6 @@ public class AuthenticationDetails {
 				roles = userService.getUserRolesByUserID(user.getUsrID());
 			}
 		} else {
-			if (currentUser.getPrincipal().getClass().equals(String.class)) {
-				return new ArrayList<SecurityRole>();
-			}
 			UserImpl userImpl = (UserImpl) currentUser.getPrincipal();
 			roles = userImpl.getSecurityRole();
 		}
