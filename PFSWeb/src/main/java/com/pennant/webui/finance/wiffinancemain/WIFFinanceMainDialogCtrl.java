@@ -1276,6 +1276,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		oncheckalwBpiTreatment(false);
 		this.alwPlannedEmiHoliday.setChecked(aFinanceMain.isPlanEMIHAlw());
 		onCheckPlannedEmiholiday();
+		setPlanEMIHMethods(false);
 		fillComboBox(this.planEmiMethod, aFinanceMain.getPlanEMIHMethod(),
 				PennantStaticListUtil.getPlanEmiHolidayMethod(), "");
 		this.maxPlanEmiPerAnnum.setValue(aFinanceMain.getPlanEMIHMaxPerYear());
@@ -3105,7 +3106,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @return true, if data are changed, otherwise false
 	 */
-	private boolean isSchdlRegenerate() {
+	public boolean isSchdlRegenerate() {
 		logger.debug("Entering");
 
 		// To clear the Error Messages
@@ -5640,6 +5641,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onCheck$alwPlannedEmiHoliday(Event event) {
 		logger.debug("Entering");
 		onCheckPlannedEmiholiday();
+		setPlanEMIHMethods(true);
 		logger.debug("Leaving");
 	}
 
@@ -5684,6 +5686,41 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving");
 
+	}
+	
+	
+	/**
+	 * Method for Setting Planned EMI Holiday Methods
+	 */
+	public void onChange$planEmiMethod(Event event) {
+		logger.debug("Entering" + event.toString());
+		setPlanEMIHMethods(true);
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * Method for Setting Variables on Schedule Tab based on selected Planned EMI Holiday Method
+	 * 
+	 * @param isAction
+	 */
+	private void setPlanEMIHMethods(boolean isAction) {
+		// Setting Planned EMI Holiday Methods
+		if (getScheduleDetailDialogCtrl() != null) {
+
+			boolean alwPlanEMIHMethods = false;
+			boolean alwPlanEMIHDates = false;
+			if (StringUtils.equals(getComboboxValue(this.planEmiMethod), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+				alwPlanEMIHMethods = true;
+				// Data Setting on Rendering
+				if (!isAction) {
+					getScheduleDetailDialogCtrl().setPlanEMIHMonths(
+							getFinanceDetail().getFinScheduleData().getPlanEMIHmonths());
+				}
+			} else if (StringUtils.equals(getComboboxValue(this.planEmiMethod), FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
+				alwPlanEMIHDates = true;
+			}
+			getScheduleDetailDialogCtrl().visiblePlanEMIHolidays(alwPlanEMIHMethods, alwPlanEMIHDates);
+		}
 	}
 
 	/**
@@ -5744,7 +5781,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				//Fill Finance Schedule details List data into ListBox
 				if (getScheduleDetailDialogCtrl() != null) {
 					getScheduleDetailDialogCtrl().doFillScheduleList(getFinanceDetail().getFinScheduleData());
-
+					getScheduleDetailDialogCtrl().setPlanEMIHDateList(new ArrayList<Date>());
 					getScheduleDetailDialogCtrl().effectiveRateOfReturn.setValue(PennantApplicationUtil.formatRate(
 							getFinanceDetail().getFinScheduleData().getFinanceMain().getEffectiveRateOfReturn()
 									.doubleValue(), PennantConstants.rateFormate)

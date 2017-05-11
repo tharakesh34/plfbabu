@@ -2375,7 +2375,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	/**
 	 * Method for Setting Planned EMI Holiday Months when Planned EMI Holidays Allowed
 	 */
-	protected void visiblePlanEMIHolidays(boolean alwPlanEMIHMonths, boolean alwPlanEMIHDates){
+	public void visiblePlanEMIHolidays(boolean alwPlanEMIHMonths, boolean alwPlanEMIHDates){
 		logger.debug("Entering");
 		
 		String dialogName = "FinanceMainDialog";
@@ -2440,7 +2440,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	/**
 	 * Method for Getting Planned EMI Holiday Months when Planned EMI Holidays Allowed
 	 */
-	protected List<Integer> setPlanEMIHMonths(List<Integer> planEMIHMonths){
+	public List<Integer> setPlanEMIHMonths(List<Integer> planEMIHMonths){
 		logger.debug("Entering");
 		
 		if(this.grid_monthDetails.isVisible()){
