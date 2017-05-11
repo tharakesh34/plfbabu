@@ -288,7 +288,25 @@ public class ScoringMetricsDAOImpl extends BasisCodeDAO<ScoringMetrics> implemen
 		}
 		logger.debug("Leaving");
 	}
+	
+	@Override
+	public int getScoringMetricsByRuleCode(long ruleId, String type) {
+		logger.debug("Entering");
+		ScoringMetrics scoringMetrics = new ScoringMetrics();
+		scoringMetrics.setScoringId(ruleId);
 
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From RMTScoringMetrics");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where ScoringId =:ScoringId");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringMetrics);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+	
 	private ErrorDetails  getError(String errorId, String scoreMetricCode,String scoringGroupCode, String userLanguage){
 
 		String[][] parms= new String[2][2];

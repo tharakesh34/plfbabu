@@ -245,6 +245,24 @@ public class CheckListDAOImpl extends BasisNextidDaoImpl<CheckList> implements C
 		logger.debug("Leaving");
 	}
 	
+	@Override
+	public int getCheckListByRuleCode(String ruleCode, String type) {
+		logger.debug("Entering");
+		CheckList checkList = new CheckList();
+		checkList.setCheckRule(ruleCode);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From BMTCheckList");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CheckRule =:CheckRule");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkList);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+	
 	private ErrorDetails  getError(String errorId, String checkListDesc, String userLanguage){
 		String[][] parms= new String[2][1];
 		parms[1][0] = checkListDesc;

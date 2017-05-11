@@ -51,9 +51,17 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.applicationmaster.AgreementDefinitionDAO;
+import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
+import com.pennant.backend.dao.applicationmaster.CheckListDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.limit.LimitGroupLinesDAO;
+import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeInsuranceDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
+import com.pennant.backend.dao.rmtmasters.PromotionDAO;
+import com.pennant.backend.dao.rmtmasters.ScoringMetricsDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -85,6 +93,15 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	private FinTypeFeesDAO finTypeFeesDAO;
 	private FinTypeInsuranceDAO finTypeInsuranceDAO;
 	private TransactionEntryDAO transactionEntryDAO;
+	private AgreementDefinitionDAO agreementDefinitionDAO;
+	private CheckListDAO checkListDAO;
+	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
+	private ScoringMetricsDAO scoringMetricsDAO;
+	private FinanceTypeDAO financeTypeDAO;
+	private PromotionDAO promotionDAO;
+	private BounceReasonDAO bounceReasonDAO;
+	private LimitGroupLinesDAO limitGroupLinesDAO;
+	
 	public RuleServiceImpl() {
 		super();
 	}
@@ -455,18 +472,44 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 				}
 			}
 		}
-		
+
 		if (StringUtils.trimToEmpty(rule.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
-			int count=0;
-			switch (rule.getRuleModule()){
+			int count = 0;
+			switch (rule.getRuleModule()) {
 			case RuleConstants.MODULE_FEES:
-				count = finTypeFeesDAO.getFinTypeFeesByRuleCode(rule.getRuleCode(),"_View");
+				count = finTypeFeesDAO.getFinTypeFeesByRuleCode(rule.getRuleCode(), "_View");
 				break;
 			case RuleConstants.MODULE_INSRULE:
-				count = finTypeInsuranceDAO.getFinTypeInsuranceByRuleCode(rule.getRuleCode(),"_View");
+				count = finTypeInsuranceDAO.getFinTypeInsuranceByRuleCode(rule.getRuleCode(), "_View");
 				break;
 			case RuleConstants.MODULE_SUBHEAD:
-				count = transactionEntryDAO.getTransactionEntryByRuleCode(rule.getRuleCode(),"_View");
+				count = transactionEntryDAO.getTransactionEntryByRuleCode(rule.getRuleCode(), "_View");
+				break;
+			case RuleConstants.MODULE_AGRRULE:
+				count = agreementDefinitionDAO.getAgreementDefinitionByRuleCode(rule.getRuleCode(), "_View");
+				break;
+			case RuleConstants.MODULE_CLRULE:
+				count = checkListDAO.getCheckListByRuleCode(rule.getRuleCode(), "_View");
+				break;
+			case RuleConstants.MODULE_ELGRULE:
+				count = financeReferenceDetailDAO.getFinanceReferenceDetailByRuleCode(rule.getRuleId(), "_View");
+				break;
+			case RuleConstants.MODULE_SCORES:
+				count = scoringMetricsDAO.getScoringMetricsByRuleCode(rule.getRuleId(), "_View");
+				break;
+			case RuleConstants.MODULE_DOWNPAYRULE:
+				if (financeTypeDAO.getFinanceTypeByRuleCode(rule.getRuleId(), "_View") != 0) {
+					count = financeTypeDAO.getFinanceTypeByRuleCode(rule.getRuleId(), "_View");
+				}
+				if (promotionDAO.getPromotionByRuleCode(rule.getRuleId(), "_View") != 0) {
+					count = promotionDAO.getPromotionByRuleCode(rule.getRuleId(), "_View");
+				}
+				break;
+			case RuleConstants.MODULE_BOUNCE:
+				count = bounceReasonDAO.getBounceReasonByRuleCode(rule.getRuleId(), "_View");
+				break;
+			case RuleConstants.MODULE_LMTLINE:
+				count = limitGroupLinesDAO.getLimitLinesByRuleCode(rule.getRuleCode(), "_View");
 				break;
 			}
 			if (count != 0) {
@@ -575,6 +618,70 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 
 	public void setTransactionEntryDAO(TransactionEntryDAO transactionEntryDAO) {
 		this.transactionEntryDAO = transactionEntryDAO;
+	}
+
+	public AgreementDefinitionDAO getAgreementDefinitionDAO() {
+		return agreementDefinitionDAO;
+	}
+
+	public void setAgreementDefinitionDAO(AgreementDefinitionDAO agreementDefinitionDAO) {
+		this.agreementDefinitionDAO = agreementDefinitionDAO;
+	}
+
+	public CheckListDAO getCheckListDAO() {
+		return checkListDAO;
+	}
+
+	public void setCheckListDAO(CheckListDAO checkListDAO) {
+		this.checkListDAO = checkListDAO;
+	}
+
+	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
+		return financeReferenceDetailDAO;
+	}
+
+	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
+		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
+	}
+
+	public ScoringMetricsDAO getScoringMetricsDAO() {
+		return scoringMetricsDAO;
+	}
+
+	public void setScoringMetricsDAO(ScoringMetricsDAO scoringMetricsDAO) {
+		this.scoringMetricsDAO = scoringMetricsDAO;
+	}
+
+	public FinanceTypeDAO getFinanceTypeDAO() {
+		return financeTypeDAO;
+	}
+
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
+	}
+
+	public PromotionDAO getPromotionDAO() {
+		return promotionDAO;
+	}
+
+	public void setPromotionDAO(PromotionDAO promotionDAO) {
+		this.promotionDAO = promotionDAO;
+	}
+
+	public BounceReasonDAO getBounceReasonDAO() {
+		return bounceReasonDAO;
+	}
+
+	public void setBounceReasonDAO(BounceReasonDAO bounceReasonDAO) {
+		this.bounceReasonDAO = bounceReasonDAO;
+	}
+
+	public LimitGroupLinesDAO getLimitGroupLinesDAO() {
+		return limitGroupLinesDAO;
+	}
+
+	public void setLimitGroupLinesDAO(LimitGroupLinesDAO limitGroupLinesDAO) {
+		this.limitGroupLinesDAO = limitGroupLinesDAO;
 	}
 
 }

@@ -325,5 +325,23 @@ public class AgreementDefinitionDAOImpl extends BasisNextidDaoImpl<AgreementDefi
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
+
+	@Override
+	public int getAgreementDefinitionByRuleCode(String ruleCode, String type) {
+		logger.debug("Entering");
+		AgreementDefinition agreementDefinition = new AgreementDefinition();
+		agreementDefinition.setAgrRule(ruleCode);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From BMTAggrementDef");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where AgrRule =:AgrRule");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(agreementDefinition);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
 	
 }

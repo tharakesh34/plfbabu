@@ -727,4 +727,22 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		return financeType;
 	}
 	
+	@Override
+	public int getFinanceTypeByRuleCode(long ruleId, String type) {
+		logger.debug("Entering");
+		FinanceType financeType = new FinanceType();
+		financeType.setDownPayRule(ruleId);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From RMTFinanceTypes");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where DownPayRule =:DownPayRule");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+	
 }

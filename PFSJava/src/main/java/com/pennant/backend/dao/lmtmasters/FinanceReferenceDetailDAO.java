@@ -71,4 +71,5 @@ public interface FinanceReferenceDetailDAO {
 	void saveHandlInstructionDetails(HandlingInstruction handlingInstruction);
 	
 	FinCollaterals getFinCollaterals(String finReference, String collateralType);
+	int getFinanceReferenceDetailByRuleCode(long ruleId, String type);
 }

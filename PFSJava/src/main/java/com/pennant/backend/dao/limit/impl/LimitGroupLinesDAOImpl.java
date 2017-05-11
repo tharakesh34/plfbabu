@@ -554,6 +554,23 @@ public class LimitGroupLinesDAOImpl extends BasisCodeDAO<LimitGroupLines> implem
 		}
 	}
 	
+	@Override
+	public int getLimitLinesByRuleCode(String ruleCode, String type) {
+		logger.debug("Entering");
+		LimitGroupLines limitGroupItemsItems= new LimitGroupLines();
+		limitGroupItemsItems.setLimitLine(ruleCode);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From LimitGroupLines");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where LimitLine =:LimitLine");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroupItemsItems);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
 
 	
 }

@@ -44,6 +44,7 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -284,6 +285,24 @@ public class BounceReasonDAOImpl extends BasisNextidDaoImpl<BounceReason> implem
 	 */
 	public void setDataSource(DataSource dataSource) {
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
+	
+	@Override
+	public int getBounceReasonByRuleCode(long ruleId, String type) {
+		logger.debug("Entering");
+		BounceReason bounceReason = new BounceReason();
+		bounceReason.setRuleID(ruleId);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From BounceReasons");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where RuleID =:RuleID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bounceReason);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 	
 }	

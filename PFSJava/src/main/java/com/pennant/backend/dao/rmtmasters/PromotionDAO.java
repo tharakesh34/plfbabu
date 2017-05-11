@@ -54,4 +54,5 @@ public interface PromotionDAO {
 	int getPromtionCodeCount(String promotionCode, String type);
 	int getFinanceTypeCountById(String finType);
 	List<Promotion> getPromotionsByFinType(String finType, String type);
+	int getPromotionByRuleCode(long ruleId, String type);
 }

@@ -716,4 +716,23 @@ public class FinanceReferenceDetailDAOImpl extends BasisNextidDaoImpl<FinanceRef
 		return finCollaterals;
 	}
 	
+	@Override
+	public int getFinanceReferenceDetailByRuleCode(long ruleId, String type) {
+		logger.debug("Entering");
+		FinanceReferenceDetail financeReferenceDetail = new FinanceReferenceDetail();
+
+		financeReferenceDetail.setId(ruleId);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From LMTFinRefDetail");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinRefId =:FinRefId");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+	
 }

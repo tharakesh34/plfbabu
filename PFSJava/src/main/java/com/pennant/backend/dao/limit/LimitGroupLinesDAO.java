@@ -38,4 +38,6 @@ public interface LimitGroupLinesDAO {
 
 	List<LimitGroupLines> getAllLimitLinesByGroup(String group, String type);
 
+	int getLimitLinesByRuleCode(String ruleCode, String type);
+
 }

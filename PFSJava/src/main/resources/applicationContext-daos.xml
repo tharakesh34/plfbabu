@@ -3474,6 +3474,14 @@
 		<property name="finTypeFeesDAO" ref="finTypeFeesDAO" />
 		<property name="finTypeInsuranceDAO" ref="finTypeInsuranceDAO" />
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
+		<property name="agreementDefinitionDAO" ref="agreementDefinitionDAO" />
+		<property name="checkListDAO" ref="checkListDAO" />
+		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
+		<property name="scoringMetricsDAO" ref="scoringMetricsDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="promotionDAO" ref="promotionDAO" />
+		<property name="bounceReasonDAO" ref="bounceReasonDAO" />
+		<property name="limitGroupLinesDAO" ref="limitGroupLinesDAO" />
 	</bean>
 
 	<!--============ Mail Template Details ============== -->

@@ -368,4 +368,22 @@ public class PromotionDAOImpl extends BasisCodeDAO<Promotion> implements Promoti
 		logger.debug("Leaving");
 		return PromotionList;
 	}
+	
+	@Override
+	public int getPromotionByRuleCode(long ruleId, String type) {
+		logger.debug("Entering");
+		Promotion promotion = new Promotion();
+		promotion.setDownPayRule(ruleId);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From Promotions");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where DownPayRule =:DownPayRule");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
+
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
 }

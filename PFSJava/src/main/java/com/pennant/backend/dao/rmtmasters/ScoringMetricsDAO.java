@@ -54,5 +54,6 @@ public interface ScoringMetricsDAO {
 	String save(ScoringMetrics scoringMetrics,String type);
 	List<ScoringMetrics> getScoringMetricsByScoreGrpId(final long scoreGrpId, String categoryType, String type);
 	void delete(long scoreGroupId , String type);
+	int getScoringMetricsByRuleCode(long ruleId, String type);
 	
 }
