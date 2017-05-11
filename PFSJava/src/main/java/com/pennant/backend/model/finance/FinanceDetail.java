@@ -212,8 +212,8 @@ public class FinanceDetail implements java.io.Serializable {
 	@XmlElement(name="mandateDetail")
 	private Mandate mandate;
 	
-	@XmlElementWrapper(name="flags")
-	@XmlElement(name="flag")
+	@XmlElementWrapper(name="financeFlags")
+	@XmlElement(name="financeFlag")
 	private List<FinFlagsDetail> finFlagsDetails;
 	@XmlElementWrapper(name="fees")
 	@XmlElement(name="fee")

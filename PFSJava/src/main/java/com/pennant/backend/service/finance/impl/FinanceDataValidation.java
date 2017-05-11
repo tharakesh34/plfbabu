@@ -32,7 +32,6 @@ import com.pennant.backend.dao.applicationmaster.FlagDAO;
 import com.pennant.backend.dao.applicationmaster.SplRateDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
@@ -49,6 +48,7 @@ import com.pennant.backend.model.collateral.CollateralThirdParty;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -99,7 +99,6 @@ public class FinanceDataValidation {
 	private BaseRateDAO					baseRateDAO;
 	private SplRateDAO					splRateDAO;
 	private BranchDAO					branchDAO;
-	private FinanceTypeDAO				financeTypeDAO;
 	private CustomerDAO					customerDAO;
 	private FinanceMainDAO				financeMainDAO;
 	private FinanceDetailService		financeDetailService;
@@ -567,7 +566,6 @@ public class FinanceDataValidation {
 		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		Customer customer = null;
 		boolean isCreateLoan = false;
 
 		if (StringUtils.equals(vldGroup, PennantConstants.VLD_CRT_LOAN)) {
@@ -575,109 +573,109 @@ public class FinanceDataValidation {
 		}
 
 		// Validate customer
-		if (isCreateLoan || StringUtils.isNotBlank(finMain.getLovDescCustCIF())) {
-			customer = customerDAO.getCustomerByCIF(finMain.getLovDescCustCIF(), "");
-			getFinanceDetail().getCustomerDetails().setCustomer(customer);
+		if ((isCreateLoan || StringUtils.isNotBlank(finMain.getLovDescCustCIF()))) {
+			Customer customer = customerDAO.getCustomerByCIF(finMain.getLovDescCustCIF(), "");
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finMain.getLovDescCustCIF();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90101", valueParm)));
 				finScheduleData.setErrorDetails(errorDetails);
 				return finScheduleData;
-			}
-		}
-
-		// Validate Finance Type
-		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(finMain.getFinType(), "_AView");
-		if (financeType != null) {
-			finScheduleData.setFinanceType(financeType);
-			if (finMain.getFinContractDate() == null) {
-				finMain.setFinContractDate(financeType.getStartDate());
 			} else {
-				if (finMain.getFinContractDate().compareTo(finMain.getFinStartDate()) > 0) {
-					String[] valueParm = new String[2];
-					valueParm[0] = DateUtility.formatDate(finMain.getFinContractDate(), PennantConstants.XMLDateFormat);
-					valueParm[1] = DateUtility.formatDate(finMain.getFinStartDate(), PennantConstants.XMLDateFormat);
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90205", valueParm)));
-				}
-			}
-			if (financeType.isLimitRequired() && ImplementationConstants.LIMIT_INTERNAL) {
-				/*
-				 * if (StringUtils.isBlank(finMain.getFinLimitRef())) { String[] valueParm = new String[1]; valueParm[0]
-				 * = "finLimitRef"; errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm))); }
-				 * else { //TODO }
-				 */
-			}
-
-			if (StringUtils.equals(finMain.getFinRepayMethod(), FinanceConstants.REPAYMTH_AUTO)) {
-				if (StringUtils.isBlank(finMain.getRepayAccountId())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "repayAccountId";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
-				}
-			}
-			if (financeType.isFinDepreciationReq()) {
-				if (StringUtils.isBlank(finMain.getDepreciationFrq())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "depreciationFrq";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
-				} else {
-					ErrorDetails errorDetail = FrequencyUtil.validateFrequency(finMain.getDepreciationFrq());
-					if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getErrorCode())) {
-						String[] valueParm = new String[1];
-						valueParm[0] = finMain.getDepreciationFrq();
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90207", valueParm)));
-					}
-				}
-			}
-			if (StringUtils.isNotBlank(finMain.getDsaCode())) {
-				RelationshipOfficer relationshipOfficer = relationshipOfficerService
-						.getApprovedRelationshipOfficerById(finMain.getDsaCode());
-				if (relationshipOfficer == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = finMain.getDsaCode();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
-				}
-			}
-			if (StringUtils.isNotBlank(finMain.getAccountsOfficer())) {
-				GeneralDepartment generalDepartment = generalDepartmentService.getApprovedGeneralDepartmentById(finMain
-						.getAccountsOfficer());
-				if (generalDepartment == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = finMain.getAccountsOfficer();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
-				}
-			}
-			if (StringUtils.isNotBlank(finMain.getSalesDepartment())) {
-				GeneralDepartment generalDepartment = generalDepartmentService.getApprovedGeneralDepartmentById(finMain
-						.getSalesDepartment());
-				if (generalDepartment == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = finMain.getAccountsOfficer();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
-				}
-			}
-			if (StringUtils.isNotBlank(finMain.getDmaCode())) {
-				RelationshipOfficer relationshipOfficer = relationshipOfficerService
-						.getApprovedRelationshipOfficerById(finMain.getDmaCode());
-				if (relationshipOfficer == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = finMain.getDsaCode();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
-				}
-			}
-			if (StringUtils.isNotBlank(finMain.getReferralId())) {
-				RelationshipOfficer relationshipOfficer = relationshipOfficerService
-						.getApprovedRelationshipOfficerById(finMain.getReferralId());
-				if (relationshipOfficer == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = finMain.getDsaCode();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
-				}
+				CustomerDetails customerDetails = new CustomerDetails();
+				customerDetails.setCustomer(customer);
+				getFinanceDetail().setCustomerDetails(customerDetails);
 			}
 		}
 
-		//Validate Finance Currency
+		FinanceType financeType = finScheduleData.getFinanceType();
+		finScheduleData.setFinanceType(financeType);
+		if (finMain.getFinContractDate() == null) {
+			finMain.setFinContractDate(financeType.getStartDate());
+		} else {
+			if (finMain.getFinContractDate().compareTo(finMain.getFinStartDate()) > 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = DateUtility.formatDate(finMain.getFinContractDate(), PennantConstants.XMLDateFormat);
+				valueParm[1] = DateUtility.formatDate(finMain.getFinStartDate(), PennantConstants.XMLDateFormat);
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90205", valueParm)));
+			}
+		}
+		if (financeType.isLimitRequired() && ImplementationConstants.LIMIT_INTERNAL) {
+			/*
+			 * if (StringUtils.isBlank(finMain.getFinLimitRef())) { String[] valueParm = new String[1]; valueParm[0]
+			 * = "finLimitRef"; errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm))); }
+			 * else { //TODO }
+			 */
+		}
+
+		if (StringUtils.equals(finMain.getFinRepayMethod(), FinanceConstants.REPAYMTH_AUTO)) {
+			if (StringUtils.isBlank(finMain.getRepayAccountId())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "repayAccountId";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+			}
+		}
+		if (financeType.isFinDepreciationReq()) {
+			if (StringUtils.isBlank(finMain.getDepreciationFrq())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "depreciationFrq";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+			} else {
+				ErrorDetails errorDetail = FrequencyUtil.validateFrequency(finMain.getDepreciationFrq());
+				if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getErrorCode())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = finMain.getDepreciationFrq();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90207", valueParm)));
+				}
+			}
+		}
+		if (StringUtils.isNotBlank(finMain.getDsaCode())) {
+			RelationshipOfficer relationshipOfficer = relationshipOfficerService
+					.getApprovedRelationshipOfficerById(finMain.getDsaCode());
+			if (relationshipOfficer == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finMain.getDsaCode();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
+			}
+		}
+		if (StringUtils.isNotBlank(finMain.getAccountsOfficer())) {
+			GeneralDepartment generalDepartment = generalDepartmentService.getApprovedGeneralDepartmentById(finMain
+					.getAccountsOfficer());
+			if (generalDepartment == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finMain.getAccountsOfficer();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
+			}
+		}
+		if (StringUtils.isNotBlank(finMain.getSalesDepartment())) {
+			GeneralDepartment generalDepartment = generalDepartmentService.getApprovedGeneralDepartmentById(finMain
+					.getSalesDepartment());
+			if (generalDepartment == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finMain.getAccountsOfficer();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
+			}
+		}
+		if (StringUtils.isNotBlank(finMain.getDmaCode())) {
+			RelationshipOfficer relationshipOfficer = relationshipOfficerService
+					.getApprovedRelationshipOfficerById(finMain.getDmaCode());
+			if (relationshipOfficer == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finMain.getDsaCode();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
+			}
+		}
+		if (StringUtils.isNotBlank(finMain.getReferralId())) {
+			RelationshipOfficer relationshipOfficer = relationshipOfficerService
+					.getApprovedRelationshipOfficerById(finMain.getReferralId());
+			if (relationshipOfficer == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finMain.getDsaCode();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
+			}
+		}
+
+		// Validate Finance Currency
 		Currency currency = CurrencyUtil.getCurrencyObject(finMain.getFinCcy());
 		if (currency == null) {
 			String[] valueParm = new String[1];
@@ -1412,6 +1410,9 @@ public class FinanceDataValidation {
 				String[] valueParm = new String[1];
 				valueParm[0] = finMain.getLovDescCustCIF();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90101", valueParm)));
+			} else {
+				finScheduleData.getFinanceMain().setCustID(customer.getCustID());
+				getFinanceDetail().getCustomerDetails().setCustomer(customer);
 			}
 		}
 
@@ -1899,7 +1900,7 @@ public class FinanceDataValidation {
 			return errorDetails;
 		}
 		
-/*		// ScheduleMethod
+		// ScheduleMethod
 		if (StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Calculated Interest on Frequency";
@@ -1913,7 +1914,7 @@ public class FinanceDataValidation {
 			valueParm[0] = "Equal Installments (Principal and Interest)";
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30555", valueParm)));
 			return errorDetails;
-		}*/
+		}
 		
 		//Planned EMI Holidays also requested?
 		/*
@@ -3490,15 +3491,6 @@ public class FinanceDataValidation {
 			}
 			int months = DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate());
 
-			//Customer Data Fetching
-			if (customer == null) {
-				if (StringUtils.isNotBlank(financeMain.getLovDescCustCIF())) {
-					customer = customerDAO.getCustomerByCIF(financeMain.getLovDescCustCIF(), "");
-				}
-				customer = customerDAO.getCustomerByID(customer.getCustID(), "_AView");
-				detail.getCustomerDetails().setCustomer(customer);
-			}
-
 			//Get Customer Employee Designation
 			String custEmpDesg = "";
 			String custEmpSector = "";
@@ -3639,10 +3631,6 @@ public class FinanceDataValidation {
 
 	public void setBranchDAO(BranchDAO branchDAO) {
 		this.branchDAO = branchDAO;
-	}
-
-	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
-		this.financeTypeDAO = financeTypeDAO;
 	}
 
 	public void setCustomerDAO(CustomerDAO customerDAO) {

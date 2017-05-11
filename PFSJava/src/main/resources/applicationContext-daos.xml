@@ -4192,7 +4192,6 @@
 		<property name="baseRateDAO" ref="baseRateDAO" />
 		<property name="splRateDAO" ref="splRateDAO" />
 		<property name="branchDAO" ref="branchDAO" />
-		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeDetailService" ref="financeDetailService" />

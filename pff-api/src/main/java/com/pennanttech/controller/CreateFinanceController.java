@@ -297,14 +297,12 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		// setting required values which are not received from API
-		if (StringUtils.isNotBlank(financeMain.getLovDescCustCIF()) && financeMain.getCustID() == 0) {
-			Customer customer = customerDetailsService.getCustomerByCIF(financeMain.getLovDescCustCIF());
-			CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(customer.getCustID(), true, "");
+		if (financeMain.getCustID() > 0) {
+			CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true, "");
 			if (customerDetails != null) {
 				customerDetails.setUserDetails(userDetails);
+				financeDetail.setCustomerDetails(customerDetails);
 			}
-			financeDetail.setCustomerDetails(customerDetails);
-			financeMain.setCustID(customer.getCustID());
 		}
 		
 		// process disbursement details

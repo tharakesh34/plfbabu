@@ -197,7 +197,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			}
 			//validate FinanceDetail Validations
 			// validate finance data
-			if (!StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
+			if (StringUtils.isNotBlank(financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
 				CustomerDetails customerDetails = new CustomerDetails();
 				customerDetails.setCustomer(null);
 				financeDetail.setCustomerDetails(customerDetails);

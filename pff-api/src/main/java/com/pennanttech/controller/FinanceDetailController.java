@@ -34,7 +34,6 @@ import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.configuration.VASRecording;
-import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
@@ -249,17 +248,10 @@ public class FinanceDetailController extends SummaryDetailService {
 			financeMain.setFinBranch(userDetails.getBranchCode());
 		}
 		
-		// setting required values which are not received from API
-		if (StringUtils.isNotBlank(financeMain.getLovDescCustCIF()) && financeMain.getCustID() == 0) {
-			Customer customer = customerDetailsService.getCustomerByCIF(financeMain.getLovDescCustCIF());
-			financeMain.setCustID(customer.getCustID());
-		}
-		
-		// Fee Details
 		FinanceDetail financeDetail = new FinanceDetail();
 		financeDetail.setFinScheduleData(finScheduleData);
-		if(financeMain.getCustID()>0){
-			CustomerDetails custDetails=customerDetailsService.getApprovedCustomerById(financeMain.getCustID());
+		if (financeMain.getCustID() > 0) {
+			CustomerDetails custDetails = customerDetailsService.getApprovedCustomerById(financeMain.getCustID());
 			financeDetail.setCustomerDetails(custDetails);
 		}
 		
