@@ -40,7 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
 */
-
 package com.pennant.backend.service;
 
 import java.util.List;
@@ -49,14 +48,15 @@ import com.pennant.backend.dao.NotesDAO;
 import com.pennant.backend.model.Notes;
 
 public interface NotesService {
-	
-	List<Notes> getNotesById(Notes notes);
 	List<Notes> getNotesList(Notes notes, boolean isNotes);
-	List<Notes> getNotesListByRole(Notes notes, boolean isNotes,String[] roleCodes); 
-	
+
+	List<Notes> getNotesListByRole(Notes notes, boolean isNotes, String[] roleCodes);
+
 	void setNotesDAO(NotesDAO notesDAO);
+
 	void saveOrUpdate(Notes notes);
+
 	void delete(Notes notes);
+
 	void deleteAllNotes(Notes notes);
-	
 }

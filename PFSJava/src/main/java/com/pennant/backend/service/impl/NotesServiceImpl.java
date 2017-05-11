@@ -78,11 +78,6 @@ public class NotesServiceImpl implements NotesService {
 	public void delete(Notes notes) {
 		getNotesDAO().delete(notes);
 	}
-
-	@Override
-	public List<Notes> getNotesById(Notes notes) {
-		return getNotesDAO().getNotesByID(notes);
-	}
 	
 	@Override
 	public List<Notes> getNotesList(Notes notes, boolean isNotes) {
