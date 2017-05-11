@@ -12,6 +12,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.app.core.SnapshotService;
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.util.BatchUtil;
 
 public class SnapShotPreparation implements Tasklet {
 	private Logger			logger	= Logger.getLogger(SnapShotPreparation.class);
@@ -20,11 +21,13 @@ public class SnapShotPreparation implements Tasklet {
 	private SnapshotService	snapshotService;
 
 	@Override
-	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
 		Date valueDate = DateUtility.getAppValueDate();
 		logger.debug("START: Snap Shot Preparation On : " + valueDate);
 
-		//getSnapshotService().doSnapshotPreparation(valueDate);
+//		int count =getSnapshotService().doSnapshotPreparation(valueDate);
+//		BatchUtil.setExecution(context, "TOTAL", String.valueOf(count));
+//		BatchUtil.setExecution(context, "PROCESSED", String.valueOf(count));
 
 		logger.debug("COMPLETE: Snap Shot Preparation On :" + valueDate);
 		return RepeatStatus.FINISHED;
