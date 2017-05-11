@@ -307,6 +307,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 				//Change Frequency is not allowed for the schedule which has the presenment
 				if(curSchd.getPresentmentId() > 0){
+					prvSchd = curSchd;
 					continue;
 				}
 				//Not Review Date
@@ -343,6 +344,16 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 				
 				if(i == financeScheduleDetails.size() -1){
+					continue;
+				}
+				
+				if(curSchd.getSchDate().compareTo(DateUtility.getAppDate()) < 0){
+					this.cbFrqFromDate.getItems().clear();
+					comboitem = new Comboitem();
+					comboitem.setValue("#");
+					comboitem.setLabel(Labels.getLabel("Combo.Select"));
+					this.cbFrqFromDate.appendChild(comboitem);
+					prvSchd = curSchd;
 					continue;
 				}
 				
