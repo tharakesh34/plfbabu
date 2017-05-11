@@ -943,4 +943,19 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 	</sql>
 </changeSet>
 
+	<changeSet id="67" author="Siva">
+		<modifyDataType tableName="RMTFinanceTypes" columnName="RoundingMode"
+			newDataType="varchar(10)" />
+	</changeSet>
+	<changeSet id="68" author="Siva">
+		<modifyDataType tableName="RMTFinanceTypes_Temp" columnName="RoundingMode"
+			newDataType="varchar(10)" />
+	</changeSet>
+	
+	<changeSet id="69" author="Siva">
+	<sql>
+		UPDATE RMTFINANCETYPES SET ROUNDINGMODE = 'HALF_DOWN';
+		UPDATE RMTFINANCETYPES SET ROUNDINGTARGET = 100;
+	</sql>
+</changeSet>
 </databaseChangeLog>
