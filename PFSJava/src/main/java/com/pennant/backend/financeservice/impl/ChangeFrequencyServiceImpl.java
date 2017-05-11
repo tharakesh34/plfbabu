@@ -74,6 +74,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			
 			Calendar newDate = Calendar.getInstance();
 			newDate.setTime(curSchd.getSchDate());
+			Date oldDate = curSchd.getSchDate();
 			int maxdays = newDate.getActualMaximum(Calendar.DAY_OF_MONTH);
 
 			if (day > maxdays) {
@@ -91,6 +92,16 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			curSchd.setDisbOnSchDate(false);
 			curSchd.setDisbAmount(BigDecimal.ZERO);
 			curSchd.setFeeChargeAmt(BigDecimal.ZERO);
+			
+			if(scheduleData.getFinanceMain().isPlanEMIHAlw() && StringUtils.equals(scheduleData.getFinanceMain().getPlanEMIHMethod(), 
+					FinanceConstants.PLANEMIHMETHOD_ADHOC)){
+				for (Date planEMIHDate : scheduleData.getPlanEMIHDates()) {
+					if(planEMIHDate.compareTo(oldDate) == 0){
+						scheduleData.getPlanEMIHDates().remove(oldDate);
+						scheduleData.getPlanEMIHDates().add(curSchd.getSchDate());
+					}
+				}
+			}
 			
 			if(prvSchd != null && prvSchd.getSchDate().compareTo(curSchd.getSchDate()) == 0){
 				scheduleList.remove(i-1);
@@ -197,9 +208,9 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		// Plan EMI Holidays Resetting after Rescheduling
 		if(scheduleData.getFinanceMain().isPlanEMIHAlw()){
 			scheduleData.getFinanceMain().setEventFromDate(fromDate);
-			scheduleData.getFinanceMain().setEventToDate(scheduleData.getFinanceMain().getMaturityDate());
+			scheduleData.getFinanceMain().setEventToDate(scheduleData.getFinanceMain().getCalMaturity());
 			scheduleData.getFinanceMain().setRecalFromDate(fromDate);
-			scheduleData.getFinanceMain().setRecalToDate(scheduleData.getFinanceMain().getMaturityDate());
+			scheduleData.getFinanceMain().setRecalToDate(scheduleData.getFinanceMain().getCalMaturity());
 			scheduleData.getFinanceMain().setRecalSchdMethod(scheduleData.getFinanceMain().getScheduleMethod());
 
 			if(StringUtils.equals(scheduleData.getFinanceMain().getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)){
