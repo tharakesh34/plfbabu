@@ -182,9 +182,9 @@
 								<listheader id="listheader_FinBasicType"
 									label="${c:l('listheader_ODFinDaysCalType.label')}" sort="auto"
 									hflex="min" />
-								<listheader id="listheader_FinAcType"
+								<!-- <listheader id="listheader_FinAcType"
 									label="${c:l('listheader_FinAcType.label')}" sort="auto"
-									hflex="min" />
+									hflex="min" /> -->
 								<listheader id="listheader_SchdMthd"
 									label="${c:l('listheader_ODFinSchdMthd.label')}" sort="auto"
 									hflex="min" />
