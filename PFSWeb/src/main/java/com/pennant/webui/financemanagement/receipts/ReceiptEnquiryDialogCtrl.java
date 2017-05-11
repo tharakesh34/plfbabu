@@ -132,19 +132,7 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 				getReceiptHeader().setBefImage(befImage);
 
 			}
-			
-			doLoadWorkFlow(receiptHeader.isWorkflow(), receiptHeader.getWorkflowId(), receiptHeader.getNextTaskId());
-
-			if (isWorkFlowEnabled()) {
-				String recStatus = StringUtils.trimToEmpty(receiptHeader.getRecordStatus());
-				if (recStatus.equals(PennantConstants.RCD_STATUS_REJECTED)) {
-					this.userAction = setRejectRecordStatus(this.userAction);
-				} else {
-					this.userAction = setListRecordStatus(this.userAction);
-				}
-			} else {
-				this.south.setHeight("0px");
-			}
+			this.south.setHeight("0px");
 
 			// set Field Properties
 			doSetFieldProperties();

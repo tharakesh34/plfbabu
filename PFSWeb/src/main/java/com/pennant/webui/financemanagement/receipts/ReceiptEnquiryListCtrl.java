@@ -53,6 +53,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listheader listheader_ReceiptFinBranch;
 	protected Listheader listheader_ReceiptCusomer;
 	protected Listheader listheader_ReceiptCustName;
+	protected Listheader listheader_ReceiptStatus;
 
 	protected Button btnNew;
 	protected Button btnSearch;
@@ -128,6 +129,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				sortOperator_ReceiptFinType, Operators.STRING);
 		registerField("finBranch", listheader_ReceiptFinBranch, SortOrder.NONE, finBranch, sortOperator_ReceiptFinBranch,
 				Operators.STRING);
+		registerField("ReceiptModeStatus", listheader_ReceiptStatus);
 
 		// Render the page and display the data.
 		doRenderPage();

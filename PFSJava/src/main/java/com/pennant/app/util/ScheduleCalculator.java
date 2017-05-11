@@ -4639,10 +4639,10 @@ public class ScheduleCalculator {
 				FinanceScheduleDetail prvSchd = finSchdDetails.get(j - 1);
 
 				if (prvSchd.getBaseRate() != null) {
-					prvSchd.setMrgRate(stepIntRate);
+					prvSchd.setMrgRate(prvSchd.getMrgRate().add(stepIntRate));
 				} else {
-					prvSchd.setActRate(stepIntRate);
-					prvSchd.setCalculatedRate(stepIntRate);
+					prvSchd.setActRate(prvSchd.getActRate().add(stepIntRate));
+					prvSchd.setCalculatedRate(prvSchd.getCalculatedRate().add(stepIntRate));
 				}
 
 				if (!curSchd.isRepayOnSchDate()) {
@@ -4660,10 +4660,10 @@ public class ScheduleCalculator {
 
 				if (j == (sdSize - 1)) {
 					if (curSchd.getBaseRate() != null) {
-						curSchd.setMrgRate(stepIntRate);
+						curSchd.setMrgRate(curSchd.getMrgRate().add(stepIntRate));
 					} else {
-						curSchd.setActRate(stepIntRate);
-						curSchd.setCalculatedRate(stepIntRate);
+						curSchd.setActRate(curSchd.getActRate().add(stepIntRate));
+						curSchd.setCalculatedRate(curSchd.getCalculatedRate().add(stepIntRate));
 					}
 				}
 
@@ -4862,18 +4862,18 @@ public class ScheduleCalculator {
 				FinanceScheduleDetail prvSchd = finSchdDetails.get(j - 1);
 
 				if (prvSchd.getBaseRate() != null) {
-					prvSchd.setMrgRate(stepIntRate);
+					prvSchd.setMrgRate(prvSchd.getMrgRate().add(stepIntRate));
 				} else {
-					prvSchd.setActRate(stepIntRate);
-					prvSchd.setCalculatedRate(stepIntRate);
+					prvSchd.setActRate(prvSchd.getActRate().add(stepIntRate));
+					prvSchd.setCalculatedRate(prvSchd.getCalculatedRate().add(stepIntRate));
 				}
 
 				if (j == (sdSize - 1)) {
 					if (curSchd.getBaseRate() != null) {
-						curSchd.setMrgRate(stepIntRate);
+						curSchd.setMrgRate(curSchd.getMrgRate().add(stepIntRate));
 					} else {
-						curSchd.setActRate(stepIntRate);
-						curSchd.setCalculatedRate(stepIntRate);
+						curSchd.setActRate(curSchd.getActRate().add(stepIntRate));
+						curSchd.setCalculatedRate(curSchd.getCalculatedRate().add(stepIntRate));
 					}
 				}
 
