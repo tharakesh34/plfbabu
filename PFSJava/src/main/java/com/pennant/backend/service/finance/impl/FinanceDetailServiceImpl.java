@@ -43,7 +43,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.constants.AccountEventConstants;
@@ -109,7 +108,6 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
 import com.pennant.backend.model.finance.BundledProductsDetail;
-import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
@@ -189,7 +187,6 @@ import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pff.core.services.disbursement.DisbursementRequest;
 import com.rits.cloning.Cloner;
 
 /**
@@ -243,8 +240,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private PromotionDAO					promotionDAO;
 	private FinFeeDetailDAO					finFeeDetailDAO;
 
-	@Autowired
-	private DisbursementRequest disbursementRequest;
 	
 	public FinanceDetailServiceImpl() {
 		super();
@@ -3821,24 +3816,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (!isWIF) {
 			getFinStageAccountingLogDAO()
 					.update(financeMain.getFinReference(), financeDetail.getModuleDefiner(), false);
-			if(StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)){
-				processDisbursementRequets(financeDetail);
-			}	
 		}
 
 		logger.debug("Leaving");
 		return auditHeader;
 
-	}
-
-	private void processDisbursementRequets(FinanceDetail financeDetail) {
-		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
-		List<FinAdvancePayments> list = financeDetail.getAdvancePaymentsList();
-		try {
-			disbursementRequest.sendReqest(finMain.getFinType(), list, finMain.getLastMntBy());
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		}
 	}
 
 	/**
