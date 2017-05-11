@@ -1032,6 +1032,7 @@ update WorkFlowDetails set workflowactive='0' where workflowtype='BFSD_ORIGINATI
 		Update BMTRejectCodes SET REJECTTYPE = 'Finance';
 	</sql>
 </changeSet>
+
 	<changeSet id="80" author="Siva">
 	<createView viewName="FINRECEIPTHEADER_VIEW" replaceIfExists="true">
 		  SELECT     T1.ReceiptID, T1.ReceiptDate, T1.ReceiptType,T1.RecAgainst,T1.Reference, T1.ReceiptPurpose, 
@@ -1065,4 +1066,16 @@ update WorkFlowDetails set workflowactive='0' where workflowtype='BFSD_ORIGINATI
 				                            WHERE      ReceiptID = T1.ReceiptID)
 		</createView>
 	</changeSet>
+		<changeSet id="81" author="Siva">
+	<sql>
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+					
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ReceiptCancellationDialog_cancelReason','ReceiptCancellationDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='RECEIPTCANCEL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ReceiptCancellationDialog_cancelReason'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+	</sql>
+</changeSet>
 </databaseChangeLog>
