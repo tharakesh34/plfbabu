@@ -70,10 +70,24 @@
 			</constraint>
 		</field>
 
-		<!-- <field name="mobileNo"> <constraint annotation="org.hibernate.validator.constraints.Length"> 
-			<message>phoneNumber should have maximum 12 characters</message> <groups> 
-			<value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.UpdateValidationGroup</value> 
-			</groups> <element name="max">12</element> </constraint> </field> -->
+		<field name="mobileNo">
+	<constraint annotation="org.hibernate.validator.constraints.Length">
+		<message>phoneNumber should have maximum 10 characters</message>
+		<groups>
+			<value>com.pennant.validation.SaveValidationGroup</value>
+			<value>com.pennant.validation.UpdateValidationGroup</value>
+		</groups>
+		<element name="max">10</element>
+	</constraint>
+	<constraint annotation="org.hibernate.validator.constraints.Length">
+		<message>phoneNumber should have 10 characters</message>
+		<groups>
+			<value>com.pennant.validation.SaveValidationGroup</value>
+			<value>com.pennant.validation.UpdateValidationGroup</value>
+		</groups>
+		<element name="min">10</element>
+	</constraint>
+</field>
 
 		<field name="emailId">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
@@ -244,8 +258,8 @@
 			</constraint>
 
 
-			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
-				<message>name is not required for bankCustomer </message>
+			 <constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+				<message>name is Applicable  for non bank customer </message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
@@ -267,33 +281,33 @@
 					}
 
 				</element>
-			</constraint>
+			</constraint> 
 
 
-			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
-				<message>iDNumber is not required for bankCustomer </message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.UpdateValidationGroup</value>
-				</groups>
-				<element name="lang">javascript</element>
-				<element name="script">
-					if ((_this.bankCustomer)) {
-					if(_this.coOwnerIDNumber != null &amp;&amp; _this.coOwnerIDNumber
-					!= ""){
-					false;
-					} else {
-					true;
-					}
-					} else {
-					if(_this.coOwnerIDNumber != null &amp;&amp; _this.coOwnerIDNumber != ""){
-					true;
-					} else {
-					false
-					}
-					}
-				</element>
-			</constraint>
+			<!-- <constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+	<message>iDNumber is not required for bankCustomer </message>
+	<groups>
+		<value>com.pennant.validation.SaveValidationGroup</value>
+		<value>com.pennant.validation.UpdateValidationGroup</value>
+	</groups>
+	<element name="lang">javascript</element>
+	<element name="script">
+		if ((_this.bankCustomer)) {
+		if(_this.coOwnerIDNumber != null &amp;&amp; _this.coOwnerIDNumber
+		!= ""){
+		false;
+		} else {
+		true;
+		}
+		} else {
+		if(_this.coOwnerIDNumber != null &amp;&amp; _this.coOwnerIDNumber != ""){
+		true;
+		} else {
+		false
+		}
+		}
+	</element>
+</constraint> -->
 		</field>
 	</bean>
 </constraint-mappings>

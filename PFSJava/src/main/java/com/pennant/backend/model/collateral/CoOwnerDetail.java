@@ -14,7 +14,7 @@ import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 @XmlType(propOrder = { "bankCustomer", "coOwnerIDType", "coOwnerId", "coOwnerPercentage", "coOwnerCIF",
-		"coOwnerCIFName", "emailId", "coOwnerIDNumber", "addrHNbr", "flatNbr", "addrStreet", "addrLine1", "addrLine2",
+		"coOwnerCIFName","mobileNo", "emailId", "coOwnerIDNumber", "addrHNbr", "flatNbr", "addrStreet", "addrLine1", "addrLine2",
 		"POBox", "addrCountry", "addrProvince", "addrCity", "addrZIP", "remarks" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class CoOwnerDetail extends AbstractWorkflowEntity implements Entity {
@@ -43,6 +43,7 @@ public class CoOwnerDetail extends AbstractWorkflowEntity implements Entity {
 	
 	@XmlElement(name="ownershipPerc")
 	private BigDecimal			coOwnerPercentage;
+	@XmlElement(name="phoneNumber")
 	private String				mobileNo;
 	
 	@XmlElement(name="email")

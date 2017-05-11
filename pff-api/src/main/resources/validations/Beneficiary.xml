@@ -130,7 +130,7 @@
 		</field>
 
 
-		<field name="phoneCountryCode">
+		<!-- <field name="phoneCountryCode">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>phoneCountryCode should have maximum 3 characters</message>
 				<groups>
@@ -151,16 +151,24 @@
 				</groups>
 				<element name="max">3</element>
 			</constraint>
-		</field>
+		</field> -->
 
 		<field name="phoneNumber">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>phoneNumber should have maximum 8 characters</message>
+				<message>phoneNumber should have maximum 10 characters</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
-				<element name="max">8</element>
+				<element name="max">10</element>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>phoneNumber should be 10 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="min">10</element>
 			</constraint>
 		</field>
 		<field name="validateBeneficiary">
@@ -182,7 +190,7 @@
 					}
 				</element>
 			</constraint>
-			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+			<!-- <constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
 				<message>phoneAreaCode is Applicable only if phoneCountryCode specified</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -231,7 +239,7 @@
 					}
 					}
 				</element>
-			</constraint> 
+			</constraint>  -->
 		</field>
 
 	</bean>

@@ -396,11 +396,11 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 			}
 		}
 
-		if (StringUtils.equals(customerDocument.getCustDocCategory(), "01")) {
-			Pattern r = Pattern.compile("^[0-9]{12}$");
+		if (StringUtils.equals(customerDocument.getCustDocCategory(), "03")) {
+			Pattern pattern = Pattern.compile("^[A-Za-z]{5}\\d{4}[A-Za-z]{1}");
 			if(customerDocument.getCustDocTitle() !=null){
-			Matcher m = r.matcher(customerDocument.getCustDocTitle());
-			if(m.find() == false ){
+			Matcher matcher = pattern.matcher(customerDocument.getCustDocTitle());
+			if(matcher.find() == false ){
 				String[] valueParm = new String[0];
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90251", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);

@@ -14,6 +14,7 @@ import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
+import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
@@ -29,6 +30,7 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerBankInfoService;
 import com.pennant.backend.service.customermasters.CustomerChequeInfoService;
@@ -65,6 +67,8 @@ public class CustomerDetailsController {
 	private CustomerBankInfoService customerBankInfoService;
 	private CustomerChequeInfoService customerChequeInfoService;
 	private CustomerExtLiabilityService customerExtLiabilityService;
+	private DocumentManagerDAO			documentManagerDAO;
+
 
 	/**
 	 * get the Customer PhoneNumbers By the Customer Id
@@ -1323,6 +1327,10 @@ public class CustomerDetailsController {
 			if (customerDocumentsList != null && !customerDocumentsList.isEmpty()) {
 				response = new CustomerDetails();
 				response.setCustCIF(cif);
+				for (CustomerDocument documents : customerDocumentsList) {
+					byte[] custDocImage = getDocumentImage(documents.getDocRefId());
+					documents.setCustDocImage(custDocImage);
+				}
 				response.setCustomerDocumentsList(customerDocumentsList);
 				response.setCustomer(null);
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
@@ -1343,6 +1351,13 @@ public class CustomerDetailsController {
 		logger.debug("Leaving");
 		return response;
 
+	}
+	private byte[] getDocumentImage(long docID) {
+		DocumentManager docImage=documentManagerDAO.getById(docID);
+		if(docImage != null){
+			return docImage.getDocImage();
+		}
+		return null;
 	}
 	/**
 	 * Method for create CustomerDocument in PLF system.
@@ -1638,4 +1653,8 @@ public class CustomerDetailsController {
 	public void setCustomerExtLiabilityService(CustomerExtLiabilityService customerExtLiabilityService) {
 		this.customerExtLiabilityService = customerExtLiabilityService;
 	}
+	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
+		this.documentManagerDAO = documentManagerDAO;
+	}
+
 }

@@ -951,10 +951,10 @@ public class FinanceDataValidation {
 					}
 				}
 
-				if (StringUtils.equals(detail.getDocCategory(), "01")) {
-					Pattern r = Pattern.compile("^[0-9]{12}$");
-					Matcher m = r.matcher(detail.getCustDocTitle());
-					if (m.find() == false) {
+				if (StringUtils.equals(detail.getDocCategory(), "03")) {
+					Pattern pattern = Pattern.compile("^[A-Za-z]{5}\\d{4}[A-Za-z]{1}");
+					Matcher matcher = pattern.matcher(detail.getCustDocTitle());
+					if (matcher.find() == false) {
 						String[] valueParm = new String[0];
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90251", valueParm)));
 					}
@@ -1108,7 +1108,7 @@ public class FinanceDataValidation {
 				 * valueParm[0] = "maxLimit"; errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502",
 				 * valueParm))); }
 				 */
-				if (StringUtils.isNotBlank(mandate.getPhoneCountryCode())) {
+				/*if (StringUtils.isNotBlank(mandate.getPhoneCountryCode())) {
 					if (StringUtils.isBlank(mandate.getPhoneAreaCode())) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "phoneAreaCode";
@@ -1119,7 +1119,7 @@ public class FinanceDataValidation {
 						valueParm[0] = "phoneNumber";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
 					}
-				}
+				}*/
 				//validate Dates
 				if (mandate.getStartDate().compareTo(mandate.getExpiryDate()) > 0) {
 					String[] valueParm = new String[2];
@@ -1133,6 +1133,8 @@ public class FinanceDataValidation {
 						String[] valueParm = new String[1];
 						valueParm[0] = mandate.getIFSC();
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90301", valueParm)));
+					}else{
+						mandate.setBankCode(bankBranch.getBankCode());
 					}
 				} else if (StringUtils.isNotBlank(mandate.getBankCode())
 						&& StringUtils.isNotBlank(mandate.getBranchCode())) {
@@ -1146,6 +1148,24 @@ public class FinanceDataValidation {
 					}
 				}
 
+			/*	//validate AccNumber length
+				if(StringUtils.isNotBlank(mandate.getBankCode())){
+					int accNoLength = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
+					if(mandate.getAccNumber().length()!=accNoLength){
+						String[] valueParm = new String[2];
+						valueParm[0] = "AccountNumber";
+						valueParm[1] = String.valueOf(accNoLength)+" characters";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30570", valueParm)));
+						return errorDetails;
+					}
+				}*/
+				//validate Phone number
+				String mobileNumber = mandate.getPhoneNumber();
+				if (StringUtils.isNotBlank(mobileNumber)) {
+					if (!(mobileNumber.matches("\\d{10}"))) {
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90278", null)));
+					}
+				}
 				// validate MandateType
 				if (StringUtils.isNotBlank(mandate.getMandateType())) {
 					List<ValueLabel> mandateType = PennantStaticListUtil.getMandateTypeList();
@@ -1223,7 +1243,7 @@ public class FinanceDataValidation {
 		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
 		
 		// validate disbursement details
-		List<FinAdvancePayments> finAdvPayments = financeDetail.getAdvancePaymentsList();
+ 		List<FinAdvancePayments> finAdvPayments = financeDetail.getAdvancePaymentsList();
 		BigDecimal totalDisbAmtFromInst = BigDecimal.ZERO;
 		if (finAdvPayments != null) {
 			for (FinAdvancePayments advPayment : finAdvPayments) {
@@ -1343,7 +1363,6 @@ public class FinanceDataValidation {
 						valueParm[1] = advPayment.getBeneficiaryAccNo();
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90217", valueParm)));
 					}
-
 					// Account holder name
 					if (StringUtils.isBlank(advPayment.getBeneficiaryName())) {
 						String[] valueParm = new String[2];
@@ -1352,16 +1371,18 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90217", valueParm)));
 					}
 
-					// phone country code
-					/*
-					 * if (StringUtils.equals(advPayment.getPaymentType(),
-					 * RepayConstants.PAYMENT_TYPE_IMPS) &&
-					 * StringUtils.isBlank(advPayment.getPhoneCountryCode())) {
-					 * String[] valueParm = new String[2]; valueParm[0] =
-					 * "phoneCountryCode"; valueParm[1] =
-					 * advPayment.getPaymentType(); return
-					 * getErrorDetails("90217", valueParm); }
-					 */
+					// phone number
+					if (StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IMPS)
+							&& StringUtils.isBlank(advPayment.getPhoneNumber())) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "phoneNumber";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+					}
+					if (StringUtils.isNotBlank(advPayment.getPhoneNumber())) {
+						if (!(advPayment.getPhoneNumber().matches("\\d{10}"))) {
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90278", null)));
+						}
+					}
 
 					if (StringUtils.isNotBlank(advPayment.getPhoneCountryCode())
 							&& StringUtils.isBlank(advPayment.getPhoneAreaCode())) {

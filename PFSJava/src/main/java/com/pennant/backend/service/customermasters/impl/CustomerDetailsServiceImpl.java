@@ -1567,7 +1567,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							String[] valueParm = new String[2];
 							valueParm[0] = DateUtility.formatDate(empDetail.getCustEmpFrom(), PennantConstants.XMLDateFormat);
 							valueParm[1] = DateUtility.formatDate(empDetail.getCustEmpTo(), PennantConstants.XMLDateFormat);
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90121", "", valueParm), "EN");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30551", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 						}	
 						if (empDetail.getCustEmpTo().compareTo(DateUtility.getAppDate()) != -1 || SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(empDetail.getCustEmpTo()) >= 0) {
@@ -1655,6 +1655,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			boolean isPhonePrority=false;
 			ErrorDetails errorDetail = new ErrorDetails();
 			for (CustomerPhoneNumber custPhoneDetail : custPhones) {
+				//Validate Phone number
+				String mobileNumber= custPhoneDetail.getPhoneNumber();
+				if (!(mobileNumber.matches("\\d{10}"))){
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90278", "", null), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;	
+				}
 				auditDetail.setErrorDetail(validateMasterCode("BMTPhoneTypes", "PhoneTypeCode",
 						custPhoneDetail.getPhoneTypeCode()));
 				if(!(custPhoneDetail.getPhoneTypePriority()>=1 && custPhoneDetail.getPhoneTypePriority()<=5)){

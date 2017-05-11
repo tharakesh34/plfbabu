@@ -312,7 +312,13 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 				return getErrorDetails("90308", valueParm);
 			}
 		}
-
+		//validate Phone number
+		String mobileNumber = mandate.getPhoneNumber();
+		if (StringUtils.isNotBlank(mobileNumber)) {
+			if (!(mobileNumber.matches("\\d{10}"))) {
+				return getErrorDetails("90278", null);
+			}
+		}
 		// validate status
 		if (StringUtils.isNotBlank(mandate.getStatus())) {
 			List<ValueLabel> status = PennantStaticListUtil.getStatusTypeList();

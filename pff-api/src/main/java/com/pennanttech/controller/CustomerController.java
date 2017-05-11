@@ -14,6 +14,7 @@ import org.springframework.dao.DataAccessException;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
@@ -30,6 +31,7 @@ import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerEmploymentDetailService;
 import com.pennant.backend.service.customermasters.CustomerService;
@@ -50,6 +52,7 @@ public class CustomerController {
 	private CustomerDetailsService customerDetailsService;
 	private ErrorDetailService errorDetailService;
 	private CustomerEmploymentDetailService customerEmploymentDetailService;
+	private DocumentManagerDAO documentManagerDAO;
 
 	private final String PROCESS_TYPE_SAVE = "Save";
 	private final String PROCESS_TYPE_UPDATE = "Update";
@@ -528,7 +531,14 @@ public class CustomerController {
 				response.setCustDftBranch(response.getCustomer().getCustDftBranch());
 				response.setCustBaseCcy(response.getCustomer().getCustBaseCcy());
 				response.setPrimaryRelationOfficer(response.getCustomer().getCustRO1());
+				if(response.getCustomerDocumentsList() !=null){
+				for (CustomerDocument documents : response.getCustomerDocumentsList()) {
+					byte[] custDocImage = getDocumentImage(documents.getDocRefId());
+					documents.setCustDocImage(custDocImage);
+				}
+				}
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
 			} else {
 				response = new CustomerDetails();
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -543,6 +553,13 @@ public class CustomerController {
 		return response;
 	}
 
+	private byte[] getDocumentImage(long docID) {
+		DocumentManager docImage=documentManagerDAO.getById(docID);
+		if(docImage != null){
+			return docImage.getDocImage();
+		}
+		return null;
+	}
 	/**
 	 * delete the Customer by given CustomerId
 	 * 
@@ -994,5 +1011,13 @@ public class CustomerController {
 
 	public void setCustomerEmploymentDetailService(CustomerEmploymentDetailService customerEmploymentDetailService) {
 		this.customerEmploymentDetailService = customerEmploymentDetailService;
+	}
+
+	public DocumentManagerDAO getDocumentManagerDAO() {
+		return documentManagerDAO;
+	}
+
+	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
+		this.documentManagerDAO = documentManagerDAO;
 	}
 }

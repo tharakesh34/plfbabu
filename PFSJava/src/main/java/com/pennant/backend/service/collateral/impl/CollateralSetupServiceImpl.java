@@ -2391,6 +2391,19 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 						valueParm[0] = coOwnerDetail.getCoOwnerCIF();
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90905", "", valueParm)));
 					}
+				} else {
+					String mobileNumber=coOwnerDetail.getMobileNo();
+					if(StringUtils.isBlank(mobileNumber)){
+						String[] valueParm = new String[1];
+						valueParm[0] = "phoneNumber";
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm)));
+					} else {
+						if (!(mobileNumber.matches("\\d{10}"))){
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90278", "", null)));
+							return auditDetail;	
+						}
+					}
+					
 				}
 
 				// validate address

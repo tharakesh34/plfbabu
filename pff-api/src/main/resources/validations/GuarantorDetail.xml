@@ -73,12 +73,12 @@
 		</field>
 		<field name="mobileNo">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>mobileNo should have maximum 20 characters</message>
+				<message>mobileNo should have maximum 12 characters</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 				</groups>
-				<element name="max">20</element>
+				<element name="max">12</element>
 			</constraint>
 		</field>
 		<field name="emailId">

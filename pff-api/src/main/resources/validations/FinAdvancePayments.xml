@@ -205,7 +205,7 @@
 				<element name="max">50</element>
 			</constraint>
 		</field>
-		<field name="phoneCountryCode">
+		<!-- <field name="phoneCountryCode">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>phoneCountryCode should have maximum 5 characters</message>
 				<groups>
@@ -226,17 +226,27 @@
 				</groups>
 				<element name="max">8</element>
 			</constraint>
-		</field>
+		</field> -->
 		<field name="phoneNumber">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>phoneAreaCode should have maximum 12 characters</message>
+				<message>phoneNumber should have maximum 10 characters</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 					<value>com.pennant.validation.AddDisbursementGroup</value>
 				</groups>
-				<element name="max">12</element>
+				<element name="max">10</element>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>phoneNumber should be 10 characters</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+					<value>com.pennant.validation.AddDisbursementGroup</value>
+				</groups>
+				<element name="min">10</element>
 			</constraint>
 		</field>
 	</bean>
 	</constraint-mappings>
+

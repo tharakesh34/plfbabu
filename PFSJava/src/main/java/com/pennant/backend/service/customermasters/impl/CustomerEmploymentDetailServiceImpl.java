@@ -353,14 +353,14 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 				auditDetail.setErrorDetail(validateMasterCode("RMTGenDepartments", "GenDepartment",	custEmpDetails.getCustEmpDept()));
 			}
 			if (custEmpDetails.getCustEmpTo() != null) {
-				if (custEmpDetails.getCustEmpFrom().compareTo(custEmpDetails.getCustEmpTo()) < 0) {
-					ErrorDetails errorDetail = new ErrorDetails();
-					String[] valueParm = new String[2];
-					valueParm[0] = DateUtility.formatDate(custEmpDetails.getCustEmpFrom(), PennantConstants.XMLDateFormat);
-					valueParm[1] = DateUtility.formatDate(custEmpDetails.getCustEmpTo(), PennantConstants.XMLDateFormat);
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90122", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
-				}
+					if (custEmpDetails.getCustEmpFrom().compareTo(custEmpDetails.getCustEmpTo()) > 0) {
+						ErrorDetails errorDetail = new ErrorDetails();
+						String[] valueParm = new String[2];
+						valueParm[0] = DateUtility.formatDate(custEmpDetails.getCustEmpFrom(), PennantConstants.XMLDateFormat);
+						valueParm[1] = DateUtility.formatDate(custEmpDetails.getCustEmpTo(), PennantConstants.XMLDateFormat);
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30551", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+					}	
 				if (custEmpDetails.getCustEmpTo().compareTo(DateUtility.getAppDate()) != -1 || SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(custEmpDetails.getCustEmpTo()) >= 0) {
 					ErrorDetails errorDetail = new ErrorDetails();
 					String[] valueParm = new String[2];

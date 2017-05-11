@@ -373,8 +373,15 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 	public AuditDetail doValidations(CustomerPhoneNumber customerPhoneNumber) {
 		AuditDetail auditDetail = new AuditDetail();
 		ErrorDetails errorDetail = new ErrorDetails();
-
-		// validate Master code with PLF system masters
+		//Validate Phone number
+		String mobileNumber= customerPhoneNumber.getPhoneNumber();
+		
+		if (!(mobileNumber.matches("\\d{10}"))){
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90278", "", null), "EN");
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;	
+		}
+		// Validate Master code with PLF system masters
 		int count = getCustomerPhoneNumberDAO().getPhoneTypeCodeCount(customerPhoneNumber.getPhoneTypeCode());
 		if (count <= 0) {
 			String[] valueParm = new String[2];

@@ -210,6 +210,13 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService,Benefic
 				beneficiary.setBankCode(bankBranch.getBankCode());
 			}
 		}
+		//validate Phone number
+		String mobileNumber = beneficiary.getPhoneNumber();
+		if (StringUtils.isNotBlank(mobileNumber)) {
+			if (!(mobileNumber.matches("\\d{10}"))) {
+				return getErrorDetails("90278", null);
+			}
+		}
 		//validate AccNumber length
 				if(StringUtils.isNotBlank(beneficiary.getBankCode())){
 					int accNoLength = bankDetailService.getAccNoLengthByCode(beneficiary.getBankCode());
