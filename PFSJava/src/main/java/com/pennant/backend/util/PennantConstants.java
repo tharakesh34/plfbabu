@@ -63,11 +63,6 @@ public class PennantConstants {
 
 	// Date Formats
 	public static final String dateFormat = "dd/MM/yyyy"; // DateFormat.SHORT_DATE.getPattern()
-	/**
-	 * @deprecated Replaced by {@link com.pennanttech.pff.core.util.DateUtil.DateFormat.LONG_DATE}
-	 */
-	@Deprecated
-	public static final String dateFormate = "dd-MMM-yyyy";
 	public static final String DBTimeFormat = "HH:mm:ss"; // DateFormat.LONG_TIME.getPattern()
 	public static final String monthYearFormat = "MMM/yyyy";
 	public static final String timeFormat = "hh:mm:ss";
