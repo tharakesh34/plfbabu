@@ -9973,6 +9973,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceMain.setGrcPeriodEndDate(DateUtility.getDate(DateUtility.formatUtilDate(
 					this.gracePeriodEndDate_two.getValue(), PennantConstants.dateFormat)));
 			aFinanceMain.setGraceTerms(0);
+			aFinanceMain.setAllowGrcRepay(false);
+			aFinanceMain.setGraceBaseRate(null);
+			aFinanceMain.setGraceSpecialRate(null);
+			aFinanceMain.setGrcMargin(BigDecimal.ZERO);
+			aFinanceMain.setGrcProfitDaysBasis(null);
+			aFinanceMain.setGrcAdvBaseRate(null);
+			aFinanceMain.setGrcAdvMargin(BigDecimal.ZERO);
+			aFinanceMain.setGrcAdvPftRate(BigDecimal.ZERO);
+			aFinanceMain.setGrcPftRate(BigDecimal.ZERO);
 		}
 
 		//FinanceMain Details tab ---> 3. Repayment Period Details
