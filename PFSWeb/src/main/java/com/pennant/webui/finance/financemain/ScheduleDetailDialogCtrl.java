@@ -1079,6 +1079,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			}
 			
 			doFillSchInsDetails(aFinSchData.getFinInsuranceList());
+			setPlanEMIHDateList(aFinSchData.getPlanEMIHDates());
+			setPlanEMIHMonths(aFinSchData.getPlanEMIHmonths());
 
 			// ##########################################################################################
 			// Reset Schedule Data after Servicing Actions
