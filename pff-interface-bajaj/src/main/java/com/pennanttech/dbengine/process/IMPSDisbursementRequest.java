@@ -76,7 +76,7 @@ public class IMPSDisbursementRequest extends DatabaseDataEngine {
 	}
 
 	@Override
-	protected MapSqlParameterSource mapData(ResultSet rs) throws SQLException {
+	protected MapSqlParameterSource mapData(ResultSet rs) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
 		map.addValue("BCAGENTID", null);
@@ -84,22 +84,41 @@ public class IMPSDisbursementRequest extends DatabaseDataEngine {
 		map.addValue("RECEIVERNAME", rs.getString("BENFICIARY_NAME"));
 		
 		
-		String mobileNo = rs.getString("BENFICIARY_MOBILE");
-		
-		if(mobileNo == null) {
-			
+		String mobileNo = rs.getString("BENFICIARY_MOBILE");		
+		if (StringUtils.isEmpty(mobileNo)) {
+			throw new Exception("Customer Mobile Number cannot be blank");
 		}
 		
-		map.addValue("RECEIVERMOBILENO", rs.getString("BENFICIARY_MOBILE"));
-		map.addValue("RECEIVEREMAILID", rs.getString("CUSTOMER_EMAIL"));
-		map.addValue("IFSCODE", rs.getString("IFSC_CODE"));
-		map.addValue("BANK", rs.getString("BENFICIARY_BANK"));
-		map.addValue("RECEVIERBANKSTATE", rs.getString("BENFICIARY_BRANCH_STATE"));
-		map.addValue("RECEVIERBANKCITY", rs.getString("BENFICIARY_BRANCH_CITY"));
+		String emailId = rs.getString("CUSTOMER_EMAIL");
+		if (StringUtils.isEmpty(emailId)) {
+			throw new Exception("Customer Email cannot be blank");
+		}
+		
+		String branchState = rs.getString("BENFICIARY_BRANCH_STATE");
+		if (StringUtils.isEmpty(branchState)) {
+			throw new Exception("Bank State cannot be blank");
+		}
+		
+		String branchCity = rs.getString("BENFICIARY_BRANCH_CITY");
+		if (StringUtils.isEmpty(branchCity)) {
+			throw new Exception("Bank City cannot be blank");
+		}
+		
+		String remarks = rs.getString("REMARKS");
+		if (StringUtils.isEmpty(remarks)) {
+			throw new Exception("Remarks cannot be blank");
+		}
+		
+		map.addValue("RECEIVERMOBILENO", mobileNo);
+		map.addValue("RECEIVEREMAILID", emailId);		
+		map.addValue("IFSCODE", rs.getString("IFSC_CODE"));		
+		map.addValue("BANK", rs.getString("BENFICIARY_BANK"));		
+		map.addValue("RECEVIERBANKSTATE", branchState);		
+		map.addValue("RECEVIERBANKCITY", branchCity);		
 		map.addValue("RECEVIERBANKBRANCH", rs.getString("BENFICIARY_BRANCH"));
 		map.addValue("RECEVIERACCOUNTNUMBER", rs.getString("BENFICIARY_ACCOUNT"));
-		map.addValue("AMOUNT", rs.getString("BENFICIARY_ACCOUNT"));
-		map.addValue("REMARKS",  StringUtils.substring(rs.getString("REMARKS"), 0, 9));
+		map.addValue("AMOUNT", rs.getString("DISBURSEMENT_AMOUNT"));
+		map.addValue("REMARKS",  StringUtils.substring(remarks, 0, 9));
 		map.addValue("CHANNELPARTNERREFNO", rs.getString("ID"));
 		map.addValue("PICKUPFLAG", Status.N.name());
 		map.addValue("AGREEMENTID", BigDecimal.ZERO);

@@ -221,7 +221,6 @@ public class DisbursementRequestService extends BajajService implements RequestS
 			export.setParameterMap(parameterMap);
 			export.exportData(configName);
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error(Literal.EXCEPTION, e);
 		} finally {
 			export = null;
