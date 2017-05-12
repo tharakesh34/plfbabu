@@ -1206,5 +1206,9 @@ Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSP
 	INSERT INTO RBFIELDDETAILS VALUES ('BOUNCE','BOUNCE','rd_paymentType','Mandate Types','nvarchar',8,'0','1','FINRECEIPTDETAIL','static,global,dbvalue','');
 	</sql>
 	</changeSet>
-	
+	<changeSet id="89" author="Surekha">
+		<sql>
+			 update ReportList set FieldLabels='listheader_MandateId.label,listheader_CustCIF.label,listheader_MandateType.label,listheader_CustName.label,listheader_BankName.label,listheader_AccNumber.label,listheader_AccType.label,listheader_Amount.label,listheader_ExpiryDate.label,listheader_Status.label,listheader_InputDate.label,listheader_RecordStatus.label,listheader_RecordType.label' , FieldValues='mandateID,custCIF,mandateType,custShrtName,bankName,accNumber,accType,maxLimit,expiryDate,status,inputDate,recordStatus,recordType' , FieldType='long,String,String,String,String,String,String,BigDecimal,Date,String,Date,String,String' , reportFileName='ReportList13' where Code='Mandate';
+		</sql>
+	</changeSet>
 </databaseChangeLog>

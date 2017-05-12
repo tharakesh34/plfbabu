@@ -56,10 +56,10 @@ import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -90,8 +90,10 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	protected Borderlayout				borderLayout_MandateList;
 	protected Paging					pagingMandateList;
 	protected Listbox					listBoxMandate;
-
+	
 	protected Listheader				listheader_CustCIF;
+	protected Listheader				listheader_MandateId;
+	protected Listheader				listheader_CustName;
 	protected Listheader				listheader_MandateType;
 	protected Listheader				listheader_BankName;
 	protected Listheader				listheader_AccNumber;
@@ -104,7 +106,8 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	protected Button					button_MandateList_NewMandate;
 	protected Button					button_MandateList_MandateSearch;
 
-	protected Longbox					mandateID;
+	protected Intbox					mandateID;
+	protected Textbox					custCIF;
 	protected Combobox					mandateType;
 	protected Textbox					custShrtName;
 	protected Textbox					bankName;
@@ -116,6 +119,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 
 	protected Listbox					sortOperator_MandateID;
 	protected Listbox					sortOperator_CustCIF;
+	protected Listbox					sortOperator_CustName;
 	protected Listbox					sortOperator_MandateType;
 	protected Listbox					sortOperator_BankName;
 	protected Listbox					sortOperator_AccNumber;
@@ -173,9 +177,10 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 		fillComboBox(this.accType, "", PennantStaticListUtil.getAccTypeList(), "");
 		fillComboBox(this.status, "", PennantStaticListUtil.getStatusTypeList(), Collections.singletonList(MandateConstants.STATUS_FIN));
 
-		registerField("mandateID", mandateID, SortOrder.ASC, sortOperator_MandateID, Operators.NUMERIC);
+		registerField("mandateID", listheader_MandateId, SortOrder.ASC, mandateID,  sortOperator_MandateID, Operators.NUMERIC);
+		registerField("custCIF", listheader_CustCIF, SortOrder.ASC, custCIF,sortOperator_CustCIF, Operators.STRING);
 		registerField("mandateType", listheader_MandateType, SortOrder.NONE, mandateType, sortOperator_MandateType, Operators.STRING);
-		registerField("custShrtName", listheader_CustCIF, SortOrder.NONE, custShrtName, sortOperator_CustCIF, Operators.STRING);
+		registerField("custShrtName", listheader_CustName, SortOrder.NONE, custShrtName, sortOperator_CustName, Operators.STRING);
 		registerField("accNumber", listheader_AccNumber, SortOrder.NONE, accNumber, sortOperator_AccNumber, Operators.STRING);
 		registerField("accType", listheader_AccType, SortOrder.NONE, accType, sortOperator_AccType, Operators.STRING);
 		registerField("expiryDate", listheader_ExpiryDate, SortOrder.NONE, expiryDate, sortOperator_ExpiryDate, Operators.DATE);

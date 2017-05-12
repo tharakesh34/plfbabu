@@ -83,8 +83,11 @@ public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, 
 			listbox.setCheckmark(true);
 		}
 		Listcell lc;
-		/*lc = new Listcell(PennantAppUtil.getlabelDesc(mandate.getMandateType(),
-				PennantStaticListUtil.getMandateTypeList()));*/
+		
+		lc = new Listcell(String.valueOf(mandate.getMandateID()));
+		lc.setParent(item);
+		lc = new Listcell(mandate.getCustCIF());
+		lc.setParent(item);
 		lc = new Listcell(mandate.getMandateType());
 		lc.setParent(item);
 		lc = new Listcell(mandate.getCustShrtName());
