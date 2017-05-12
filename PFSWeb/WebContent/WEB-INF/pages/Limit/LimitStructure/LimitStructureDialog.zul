@@ -153,7 +153,7 @@
 													label="${c:l('listheader_GroupCode.label')}" hflex="min" />
 													<listheader
 													id="listheader_Revolving" align="left"
-													label="${c:l('listheader_LimitRevolving.label')}" hflex="min" />
+													label="${c:l('listheader_LimitRevolving.label')}" hflex="min" visible="false"/>
 											<!-- 	<listheader
 													id="listheader_ItemCode" align="center"
 													label="${c:l('listheader_ItemCode.label')}" width="30%" /> -->

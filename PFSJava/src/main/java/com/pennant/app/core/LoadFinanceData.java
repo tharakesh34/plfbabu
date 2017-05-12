@@ -159,13 +159,9 @@ public class LoadFinanceData extends ServiceHelper {
 	}
 	
 	public void updateCustomerDate(long custId, Date date){
-		Date nextDate = DateUtility.addDays(date, 1);
 		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
 		Calendar nextBusDate = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT, date);
-		//update customer business Dates
-		Date tempNextBussDate = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT,
-				nextBusDate.getTime()).getTime();
-		getCustomerDatesDAO().updateCustomerDates(custId, nextDate, nextDate, tempNextBussDate);
+		getCustomerDAO().updateCustAppDate(custId,nextBusDate.getTime());
 	}
 	
 	

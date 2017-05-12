@@ -166,4 +166,6 @@ public interface CustomerDAO {
 	
 	Customer getCustomerEOD(long id);
 
+	void updateCustAppDate(long custId, Date custAppDate);
+
 }

@@ -1820,7 +1820,18 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		return customer;
 	}
 	
-	
-	
+	@Override
+    public void updateCustAppDate(long custId,Date custAppDate) {
+		logger.debug("Entering");
+		MapSqlParameterSource source=new MapSqlParameterSource();
+		source.addValue("CustAppDate", custAppDate);
+		source.addValue("CustId", custId);
+		StringBuilder selectSql = new StringBuilder("Update Customers  " );
+		selectSql.append(" Set CustAppDate = :CustAppDate  WHERE CustId=:CustId ");
+		logger.debug("selectSql: " + selectSql.toString());
+		
+		logger.debug("Leaving");
+		this.namedParameterJdbcTemplate.update(selectSql.toString(), source);
+    }
 	
 }	

@@ -534,7 +534,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		logger.debug("Entering");
 		limitStructureDetail.setNewRecord(true);
 		limitStructureDetail.setEditable(true);
-		limitStructureDetail.setRevolving(false);
+		limitStructureDetail.setRevolving(true);
 		limitStructureDetail.setLimitCheck(true);
 		limitStructureDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		limitStructureDetail.setVersion(limitStructureDetail.getVersion() + 1);
