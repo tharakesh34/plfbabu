@@ -450,7 +450,7 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 		sql.append(" Set STATUS = :STATUS, CLEARINGDATE = :CLEARINGDATE, TRANSACTIONREF = :TRANSACTIONREF");
 		sql.append(", REJECTREASON = :REJECTREASON");
 		
-		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(disbursement.getPaymentType())) {
+		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(disbursement.getPaymentType()) || DisbursementConstants.PAYMENT_TYPE_DD.equals(disbursement.getPaymentType())) {
 			sql.append(", LLREFERENCENO = :LLREFERENCENO, LLDATE = :LLDATE");
 			paramMap.addValue("LLREFERENCENO", disbursement.getLlReferenceNo());
 			paramMap.addValue("LLDATE", disbursement.getClearingDate());
