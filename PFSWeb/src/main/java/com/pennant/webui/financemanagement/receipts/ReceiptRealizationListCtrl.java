@@ -130,7 +130,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 				sortOperator_receiptRealizationCustomer, Operators.STRING);
 		registerField("custShrtName", listheader_ReceiptRealizationCustName, SortOrder.NONE, customer,
 				sortOperator_receiptRealizationCustomer, Operators.STRING);
-		fillComboBox(this.purpose, "", PennantStaticListUtil.getReceiptPurpose(), "");
+		fillComboBox(this.purpose, "", PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,");
 		registerField("receiptPurpose", listheader_ReceiptRealizationPurpose, SortOrder.NONE, purpose,
 				sortOperator_receiptRealizationPurpose, Operators.STRING);
 		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModes(), "");

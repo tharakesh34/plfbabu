@@ -129,10 +129,12 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			// Fetch List of Repay Schedules
 			List<RepayScheduleDetail> rpySchList = getFinanceRepaymentsDAO().getRpySchdList(
 					receiptHeader.getReference(), "");
-			for (FinRepayHeader finRepayHeader : rpyHeaderList) {
-				for (RepayScheduleDetail repaySchd : rpySchList) {
-					if (finRepayHeader.getRepayID() == repaySchd.getRepayID()) {
-						finRepayHeader.getRepayScheduleDetails().add(repaySchd);
+			if(rpySchList != null && !rpySchList.isEmpty()){
+				for (FinRepayHeader finRepayHeader : rpyHeaderList) {
+					for (RepayScheduleDetail repaySchd : rpySchList) {
+						if (finRepayHeader.getRepayID() == repaySchd.getRepayID()) {
+							finRepayHeader.getRepayScheduleDetails().add(repaySchd);
+						}
 					}
 				}
 			}
@@ -148,7 +150,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			receiptHeader.setReceiptDetails(receiptDetailList);
 
 			// Bounce reason Code
-			if (StringUtils.isNotEmpty(receiptHeader.getRecordType())) {
+			if (StringUtils.isNotEmpty(receiptHeader.getRecordType()) && 
+					StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.MODULETYPE_BOUNCE)) {
 				receiptHeader.setManualAdvise(getManualAdviseDAO().getManualAdviseByReceiptId(receiptID, "_TView"));
 			}
 		}

@@ -2526,10 +2526,11 @@ public class PennantStaticListUtil {
 	
 	public static ArrayList<ValueLabel> getReceiptPurpose(){
 		if(receiptPurposes == null){
-			receiptPurposes = new ArrayList<ValueLabel>(3);
+			receiptPurposes = new ArrayList<ValueLabel>(4);
 			receiptPurposes.add(new ValueLabel(FinanceConstants.FINSER_EVENT_SCHDRPY, Labels.getLabel("label_ReceiptPurpose_SchedulePayment")));
 			receiptPurposes.add(new ValueLabel(FinanceConstants.FINSER_EVENT_EARLYRPY, Labels.getLabel("label_ReceiptPurpose_PartialSettlement")));
 			receiptPurposes.add(new ValueLabel(FinanceConstants.FINSER_EVENT_EARLYSETTLE, Labels.getLabel("label_ReceiptPurpose_EarlySettlement")));
+			//receiptPurposes.add(new ValueLabel(FinanceConstants.FINSER_EVENT_FEEPAYMENT, Labels.getLabel("label_ReceiptPurpose_FeePayment")));
 		}
 		return receiptPurposes;
 	}
