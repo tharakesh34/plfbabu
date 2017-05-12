@@ -74,7 +74,7 @@ public class PrepareCustomerQueue implements Tasklet {
 		logger.debug("START: Prepare Customer Queue On : " + valueDate);
 
 		// save customer business dates when EOD starts
-		customerDatesDAO.saveCustomerDates(appDate, valueDate, nextBusinessDate);
+		//customerDatesDAO.saveCustomerDates(appDate, valueDate, nextBusinessDate);
 
 		customerQueuingDAO.delete();
 		int count = customerQueuingDAO.prepareCustomerQueue(valueDate);
