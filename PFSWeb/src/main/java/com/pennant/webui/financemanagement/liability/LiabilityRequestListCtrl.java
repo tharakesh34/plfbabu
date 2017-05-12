@@ -62,7 +62,6 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.Customer;
@@ -82,6 +81,9 @@ import com.pennant.search.Filter;
 import com.pennant.webui.financemanagement.liability.model.LiabilityRequestListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
+import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pff.core.App;
@@ -123,7 +125,7 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 	private WorkFlowDetails workFlowDetails = null;
 	private CustomerDetailsService customerDetailsService;
 
-	protected ExtendedCombobox finReference; 
+	protected Textbox finReference; 
 	protected Textbox custCIF; 
 	protected Textbox finType; 
 	protected Textbox finCcy; 
@@ -143,6 +145,8 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 	private String moduleDefiner = "";
 	private String workflowCode = "";
 	private String eventCodeRef = "";
+	
+	private int oldVar_sortOperator_finReference;
 
 	// NEEDED for the ReUse in the SearchWindow
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
@@ -257,7 +261,6 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		doRenderPage();
 		search();
 	
-		doSetFieldProperties();
 		logger.debug("Leaving");
 	}
 
@@ -304,29 +307,6 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 	}
 
 	
-	protected void doSetFieldProperties() {
-		String buildedWhereCondition = "";
-		this.finReference.setMaxlength(20);
-		this.finReference.getSpace().detach();
-		this.finReference.setTextBoxWidth(150);
-		this.finReference.setMandatoryStyle(true);
-		this.finReference.setModuleName("LiabilityRequest");
-		this.finReference.setValueColumn("FinReference");
-
-		this.finReference.setValidateColumns(new String[] { "FinReference" });
-
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_NOCISSUANCE)) {
-			buildedWhereCondition = "FinEvent=" + "'" + FinanceConstants.FINSER_EVENT_NOCISSUANCE + "'";
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LIABILITYREQ)) {
-			buildedWhereCondition = "FinEvent=" + "'" + FinanceConstants.FINSER_EVENT_LIABILITYREQ + "'";
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_TIMELYCLOSURE)) {
-			buildedWhereCondition = "FinEvent=" + "'" + FinanceConstants.FINSER_EVENT_TIMELYCLOSURE + "'";
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_INSCLAIM)) {
-			buildedWhereCondition = "FinEvent=" + "'" + FinanceConstants.FINSER_EVENT_INSCLAIM + "'";
-		}
-		this.finReference.setWhereClause(buildedWhereCondition);
-	}
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -471,32 +451,63 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 	 * @param event
 	 */
 
-/*	public void onClick$btnSearchFinRef(Event event) {
+	public void onClick$btnSearchFinRef(Event event) {
 		logger.debug("Entering " + event.toString());
-		
+		Filter[] module = new Filter[1];
+		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_NOCISSUANCE)) {
+			module[0] = new Filter("FinEvent",FinanceConstants.FINSER_EVENT_NOCISSUANCE, Filter.OP_EQUAL);
+		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LIABILITYREQ)){
+			module[0] = new Filter("FinEvent",FinanceConstants.FINSER_EVENT_LIABILITYREQ, Filter.OP_EQUAL);
+		}else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_TIMELYCLOSURE)) {
+			module[0] = new Filter("FinEvent",FinanceConstants.FINSER_EVENT_TIMELYCLOSURE, Filter.OP_EQUAL);
+		}else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_INSCLAIM)) {
+			module[0] = new Filter("FinEvent",FinanceConstants.FINSER_EVENT_INSCLAIM, Filter.OP_EQUAL);
+		}
 		if (this.oldVar_sortOperator_finReference == Filter.OP_IN
 				|| this.oldVar_sortOperator_finReference == Filter.OP_NOT_IN) {
 			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_LiabilityRequestList,
-					"LiabilityRequest", this.finReference.getValue(), null);
+					"LiabilityRequest", this.finReference.getValue(), module,StringUtils.trimToNull(this.searchObject.getWhereClause()));
 			if (selectedValues != null) {
 				this.finReference.setValue(selectedValues);
 			}
 
 		} else {
-			Object dataObject = ExtendedSearchListBox.show(this.window_LiabilityRequestList, "LiabilityRequest");
 
+			Object dataObject = ExtendedSearchListBox.show(this.window_LiabilityRequestList, "LiabilityRequest",this.finReference.getValue(),module,StringUtils.trimToNull(this.searchObject.getWhereClause()));
 			if (dataObject instanceof String) {
 				this.finReference.setValue("");
 			} else {
-				FinanceMain details = (FinanceMain) dataObject;
+				LiabilityRequest details = (LiabilityRequest) dataObject;
 				if (details != null) {
 					this.finReference.setValue(details.getFinReference());
 				}
 			}
 		}
 		logger.debug("Leaving " + event.toString());
-	}*/
+	}
+	
+	public void onSelect$sortOperator_finReference(Event event) {
+		this.oldVar_sortOperator_finReference = doChangeStringOperator(sortOperator_FinReference, oldVar_sortOperator_finReference, this.finReference);
+	}
+	
+	private int doChangeStringOperator(Listbox listbox, int oldOperator, Textbox textbox) {
+
+		final Listitem item = listbox.getSelectedItem();
+		final int searchOpId = ((SearchOperators) item.getAttribute("data")).getSearchOperatorId();
+
+		if (oldOperator == Filter.OP_IN || oldOperator == Filter.OP_NOT_IN) {
+			if (!(searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN)) {
+				textbox.setValue("");
+			}
+		} else {
+			if (searchOpId == Filter.OP_IN || searchOpId == Filter.OP_NOT_IN) {
+				textbox.setValue("");
+			}
+		}
+		return searchOpId;
+
+	}
 
 	/**
 	 * When user clicks on "btnSearchBranch" button This method displays

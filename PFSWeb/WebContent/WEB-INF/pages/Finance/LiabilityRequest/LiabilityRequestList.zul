@@ -76,9 +76,13 @@
 									<listbox
 										id="sortOperator_FinReference" width="43px" mold="select"
 										rows="1" />
-									
-										<extendedcombobox
-											id="finReference" />
+									<hbox>
+										<uppercasebox id="finReference"
+											width="150px" />
+										<button id="btnSearchFinRef"
+											tooltiptext="${c:l('label_RequestList_btnSearchFinRef.tooltiptext')}"
+											image="/images/icons/LOVSearch.png" />
+									</hbox>
 									
 									<label
 										id="label_RequestList_InitiatedBy"
