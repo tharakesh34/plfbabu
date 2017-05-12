@@ -1211,4 +1211,9 @@ Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSP
 			 update ReportList set FieldLabels='listheader_MandateId.label,listheader_CustCIF.label,listheader_MandateType.label,listheader_CustName.label,listheader_BankName.label,listheader_AccNumber.label,listheader_AccType.label,listheader_Amount.label,listheader_ExpiryDate.label,listheader_Status.label,listheader_InputDate.label,listheader_RecordStatus.label,listheader_RecordType.label' , FieldValues='mandateID,custCIF,mandateType,custShrtName,bankName,accNumber,accType,maxLimit,expiryDate,status,inputDate,recordStatus,recordType' , FieldType='long,String,String,String,String,String,String,BigDecimal,Date,String,Date,String,String' , reportFileName='ReportList13' where Code='Mandate';
 		</sql>
 	</changeSet>
+	<changeSet id="90" author="Surekha">
+		<sql>
+			 update ReportList set FieldLabels='listheader_MandateId.label,listheader_CustCIF.label,listheader_MandateType.label,listheader_CustName.label,listheader_BankName.label,listheader_AccNumber.label,listheader_AccType.label,listheader_Amount.label,listheader_ExpiryDate.label,listheader_Status.label,listheader_InputDate.label' , FieldValues='mandateID,custCIF,mandateType,custShrtName,bankName,accNumber,accType,maxLimit,expiryDate,status,inputDate' , FieldType='long,String,String,String,String,String,String,BigDecimal,Date,String,Date' , reportFileName='ReportList11' where Code='Mandate';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
