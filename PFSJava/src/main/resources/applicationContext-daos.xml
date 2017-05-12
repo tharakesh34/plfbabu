@@ -9647,8 +9647,5 @@
 		<property name="nPABucketDAO" ref="nPABucketDAO"/>
 		<property name="nPABucketConfigurationDAO" ref="nPABucketConfigurationDAO"/>
 	</bean>
-	<bean id="customerDatesDAO" class="com.pennant.eod.dao.impl.CustomerDatesDAOImpl">
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
 
 </beans>
