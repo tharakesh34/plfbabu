@@ -417,7 +417,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	 * @param tableName
 	 */
 	@Override
-	public void dropTable(String module, String subModule){
+	public void dropTable(String module, String subModule){/*
 		logger.debug("Entering");
 
 		for (int i = 0; i < 3; i++) {
@@ -450,7 +450,7 @@ public class ExtendedFieldHeaderDAOImpl extends BasisNextidDaoImpl<ExtendedField
 			}
 
 		}
-	}
+	*/}
 
 	private ErrorDetails  getError(String errorId, String moduleId, String userLanguage){
 		String[][] parms= new String[2][1];

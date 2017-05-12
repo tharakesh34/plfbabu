@@ -410,7 +410,6 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		try {
 			ResultSet rs = presentmentHeaderDAO.getPresentmentDetails(header);
 			while (rs.next()) {
-				
 
 				PresentmentDetail pDetail = new PresentmentDetail();
 				pDetail.setPresentmentAmt(BigDecimal.ZERO);
@@ -529,14 +528,13 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 			return;
 		}
 
-		// Mandate Not Approved
-		if (!MandateConstants.TYPE_ECS.equals(presentmentDetail.getMandateType())
-				&& !MandateConstants.STATUS_APPROVED.equals(presentmentDetail.getMandateStatus())) {
+		if (!MandateConstants.TYPE_ECS.equals(presentmentDetail.getMandateType()) && !MandateConstants.STATUS_APPROVED.equals(presentmentDetail.getMandateStatus())) {
 			presentmentDetail.setExcludeReason(RepayConstants.PEXC_MANDATE_NOTAPPROV);
 			return;
 		}
 
-		if (MandateConstants.TYPE_ECS.equals(presentmentDetail.getMandateType())
+		// Mandate Not Approved
+		if (!MandateConstants.TYPE_ECS.equals(presentmentDetail.getMandateType())
 				&& !((MandateConstants.STATUS_APPROVED.equals(presentmentDetail.getMandateStatus()))
 						|| (MandateConstants.STATUS_AWAITCON.equals(presentmentDetail.getMandateStatus())) || (MandateConstants.STATUS_NEW
 							.equals(presentmentDetail.getMandateStatus())))) {

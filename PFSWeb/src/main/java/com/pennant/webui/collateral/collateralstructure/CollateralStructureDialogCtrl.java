@@ -579,7 +579,8 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 
 		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CollateralStructureDialog_btnNew"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CollateralStructureDialog_btnDelete"));
+		this.btnDelete.setVisible(false);
+		/*getUserWorkspace().isAllowed("button_CollateralStructureDialog_btnDelete")*/
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CollateralStructureDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
@@ -993,6 +994,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			this.btnCtrl.setBtnStatus_Enquiry();
 		}
 
+		this.btnDelete.setVisible(false);
 		// fill the components with the data
 		doWriteBeanToComponents(collateralStructure);
 		
