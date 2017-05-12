@@ -134,7 +134,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 
 		doRenderPage();
 		search();
-
+		this.borderLayout_DisbursementFileDownloadList.setHeight(borderLayoutHeight+ "px");
 		logger.debug(Literal.LEAVING);
 	}
 
