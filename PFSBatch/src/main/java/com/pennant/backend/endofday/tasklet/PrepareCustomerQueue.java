@@ -68,8 +68,6 @@ public class PrepareCustomerQueue implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date appDate = DateUtility.getAppDate();
-		Date nextBusinessDate = DateUtility.getNextBusinessdate();
 		Date valueDate = DateUtility.getAppValueDate();
 		logger.debug("START: Prepare Customer Queue On : " + valueDate);
 

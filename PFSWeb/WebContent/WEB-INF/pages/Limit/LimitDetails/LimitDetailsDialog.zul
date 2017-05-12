@@ -237,9 +237,10 @@
 
 								<listheader id="listheader_LimitCheck"
 									label="${c:l('listheader_LimitCheck.label')}" hflex="min" />
+									
 								<listheader id="listheader_Revolving"
 									align="left" label="${c:l('listheader_LimitRevolving.label')}"
-									hflex="min" />
+									hflex="min" visible="false"/>
 								<listheader
 									id="listheader_ReservedOrActual"
 									label="${c:l('listheader_ReservedOrActual.label')}"
