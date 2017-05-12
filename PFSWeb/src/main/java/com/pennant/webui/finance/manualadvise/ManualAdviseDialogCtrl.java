@@ -664,7 +664,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.feeTypeID.setConstraint(new PTStringValidator(Labels.getLabel("label_ManualAdviseDialog_FeeTypeID.value"), null, true, true));
 
 
-		if (!this.adviseType.isReadonly()) {
+		if (!this.adviseType.isDisabled()) {
 			this.adviseType.setConstraint(new StaticListValidator(listAdviseType,
 					Labels.getLabel("label_ManualAdviseDialog_AdviseType.value")));
 		}
@@ -822,7 +822,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			//readOnlyComponent(true, this.adviseAmount);
 			readOnlyComponent(true, this.paidAmount);
 			readOnlyComponent(true, this.waivedAmount);
-			readOnlyComponent(true, this.adviseType);
+			//readOnlyComponent(true, this.adviseType);
 			readOnlyComponent(true, this.sequence);
 			readOnlyComponent(true, this.postDate);
 		}
@@ -831,10 +831,12 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_Remarks"), this.remarks);
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_AdviseAmount"), this.adviseAmount);
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_ValueDate"), this.valueDate);
+			readOnlyComponent(isReadOnly("ManualAdviseDialog_AdviseType"), this.adviseType);
 		} else {
 			readOnlyComponent(true, this.adviseAmount);
 			readOnlyComponent(true, this.remarks);
 			readOnlyComponent(true, this.valueDate);
+			readOnlyComponent(true, this.adviseType);
 		}
 
 		if (isWorkFlowEnabled()) {
