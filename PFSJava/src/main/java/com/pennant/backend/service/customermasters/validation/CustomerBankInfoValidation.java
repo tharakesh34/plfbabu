@@ -148,38 +148,4 @@ public class CustomerBankInfoValidation {
 
 		return null;
 	}	
-	
-	/**
-	 * Validate CustomerBankInfo.
-	 * @param customerBankInfo
-	 * @return AuditDetail
-	 */
-	public AuditDetail doValidations(CustomerBankInfo customerBankInfo) {
-		AuditDetail auditDetail = new AuditDetail();
-		ErrorDetails errorDetail = new ErrorDetails();
-
-		// validate Master code with PLF system masters
-		int count = getCustomerBankInfoDAO().getBankCodeCount(customerBankInfo.getBankName());
-		if (count <= 0) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "BankCode";
-			valueParm[1] = customerBankInfo.getBankName();
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
-			auditDetail.setErrorDetail(errorDetail);
-			return auditDetail;	
-		}
-		count = getCustomerBankInfoDAO().getAccTypeCount(customerBankInfo.getAccountType());
-		if (count <= 0) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "AccType";
-			valueParm[1] = customerBankInfo.getAccountType();
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
-			auditDetail.setErrorDetail(errorDetail);
-			return auditDetail;	
-		}
-		
-		auditDetail.setErrorDetail(errorDetail);
-		return auditDetail;
-	}
-
 }

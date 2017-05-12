@@ -1253,8 +1253,7 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 
 		AuditHeader auditHeader = getAuditHeader(customerBankInfoDetail.getCustomerBankInfo(), PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
-		CustomerBankInfoValidation validation = new CustomerBankInfoValidation(customerBankInfoDAO);
-		AuditDetail auditDetail = validation.doValidations(customerBankInfoDetail.getCustomerBankInfo());
+		AuditDetail auditDetail = customerBankInfoService.doValidations(customerBankInfoDetail.getCustomerBankInfo());
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
@@ -1309,8 +1308,7 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		AuditHeader auditHeader = getAuditHeader(customerBankInfoDetail.getCustomerBankInfo(), PennantConstants.TRAN_WF);
 
 		// validate customer details as per the API specification
-		CustomerBankInfoValidation validation = new CustomerBankInfoValidation(customerBankInfoDAO);
-		AuditDetail auditDetail = validation.doValidations(customerBankInfoDetail.getCustomerBankInfo());
+		AuditDetail auditDetail = customerBankInfoService.doValidations(customerBankInfoDetail.getCustomerBankInfo());
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());

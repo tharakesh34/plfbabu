@@ -9017,6 +9017,7 @@
 		class="com.pennant.backend.service.customermasters.impl.CustomerBankInfoServiceImpl">
 		<property name="customerBankInfoDAO" ref="customerBankInfoDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="lovFieldDetailService" ref="lovFieldDetailService" />
 	</bean>
 	<!--============ Customer ChequeInfo Details ============== -->
 

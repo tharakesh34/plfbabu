@@ -6,18 +6,24 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
+import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
+import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.customermasters.CustomerBankInfoService;
+import com.pennant.backend.service.systemmasters.LovFieldDetailService;
 import com.pennant.backend.util.PennantConstants;
 
 public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	private static Logger logger = Logger.getLogger(CustomerBankInfoServiceImpl.class);
 
-	private CustomerBankInfoDAO customerBankInfoDAO;
-	private AuditHeaderDAO auditHeaderDAO;
+	private CustomerBankInfoDAO		customerBankInfoDAO;
+	private AuditHeaderDAO			auditHeaderDAO;
+	private LovFieldDetailService	lovFieldDetailService;
 
 	/**
 	 * getBankInfoByCustomerId fetch the details by using CustomerBankInfoDAO's getBankInfoByCustomer method . with
@@ -128,6 +134,49 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
+	}
+	/**
+	 * Validate CustomerBankInfo.
+	 * @param customerBankInfo
+	 * @return AuditDetail
+	 */
+	@Override
+	public AuditDetail doValidations(CustomerBankInfo customerBankInfo) {
+
+		AuditDetail auditDetail = new AuditDetail();
+		ErrorDetails errorDetail = new ErrorDetails();
+
+		// validate Master code with PLF system masters
+		int count = getCustomerBankInfoDAO().getBankCodeCount(customerBankInfo.getBankName());
+		if (count <= 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "BankCode";
+			valueParm[1] = customerBankInfo.getBankName();
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;	
+		}
+		
+		LovFieldDetail lovFieldDetail=getLovFieldDetailService().getApprovedLovFieldDetailById("ACC_TYPE",customerBankInfo.getAccountType());
+		if (lovFieldDetail == null) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Acctype";
+			valueParm[1] = customerBankInfo.getAccountType();
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+			auditDetail.setErrorDetail(errorDetail);
+		}
+		
+		auditDetail.setErrorDetail(errorDetail);
+		return auditDetail;
+	
+	}
+
+	public LovFieldDetailService getLovFieldDetailService() {
+		return lovFieldDetailService;
+	}
+
+	public void setLovFieldDetailService(LovFieldDetailService lovFieldDetailService) {
+		this.lovFieldDetailService = lovFieldDetailService;
 	}
 
 }
