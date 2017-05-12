@@ -66,6 +66,8 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.DateUtility;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
@@ -128,11 +130,10 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 		registerField("FileName");
 		registerField("Status");
 		registerField("Name");
-
+		registerField("EndTime");
 
 		doRenderPage();
 		search();
-	  
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -214,6 +215,9 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 
 			lc = new Listcell(fileDownlaod.getFileName());
 			lc.setParent(item);
+			
+			lc = new Listcell(DateUtility.formatDate(fileDownlaod.getEndTime(), PennantConstants.dateTimeFormat));
+			lc.setParent(item);
 
 
 			lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());
@@ -238,10 +242,9 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 				downlaod.setTooltiptext("File not available.");
 			} else if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
 				downlaod.setDisabled(true);
-				downlaod.setTooltiptext("Disbursement request for file generation failed.");
+				downlaod.setTooltiptext("File generation failed.");
 			}
 
-			downlaod.setTooltiptext("Disbursement request download.");
 			lc.setParent(item);
 		}
 	}

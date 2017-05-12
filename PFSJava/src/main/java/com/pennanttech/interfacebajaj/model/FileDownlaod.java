@@ -1,5 +1,7 @@
 package com.pennanttech.interfacebajaj.model;
 
+import java.util.Date;
+
 public class FileDownlaod {
 	
 	private int    Id;
@@ -11,6 +13,7 @@ public class FileDownlaod {
 	private String partnerBankName;
 	private int    alwFileDownload;
 	private String status;
+	private Date endTime;
 
 	public String getName() {
 		return name;
@@ -82,6 +85,14 @@ public class FileDownlaod {
 
 	public void setId(int id) {
 		Id = id;
+	}
+
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
 	}
 
 }

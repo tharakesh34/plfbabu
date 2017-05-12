@@ -16,8 +16,8 @@ import com.pennanttech.pff.core.job.scheduler.AbstractJobScheduler;
 import com.pennanttech.pff.core.job.scheduler.JobSchedulerDetails;
 
 public class BajaJobScheduler extends AbstractJobScheduler {
-	protected DataSource			dataSource;
-	private static Configuration	conf;
+	protected DataSource dataSource;
+	private static Configuration conf;
 
 	public BajaJobScheduler() {
 		super();
@@ -32,7 +32,7 @@ public class BajaJobScheduler extends AbstractJobScheduler {
 		JobSchedulerDetails jobDetails = null;
 
 		loadConfiguration("DISB_HDFC_IMPORT");
-		
+
 		if (conf == null) {
 			return;
 		}
@@ -44,10 +44,10 @@ public class BajaJobScheduler extends AbstractJobScheduler {
 		} catch (Exception e) {
 			throw new ParseException(schduleTime, 0);
 		}
-		
+
 		if (StringUtils.trimToNull(schduleTime) != null) {
 			jobDetails = new JobSchedulerDetails();
-			jobDetails.setJobDetail(JobBuilder.newJob(AutoDisburseFileResponseJob.class)
+			jobDetails.setJobDetail(JobBuilder.newJob(DisbursementResponseJob.class)
 					.withIdentity("AUTO_DISB_RES_FILE", "AUTO_DISB_RES_FILE").withDescription("AUTO_DISB_RES_FILE")
 					.build());
 			jobDetails.setTrigger(TriggerBuilder.newTrigger().withIdentity("AUTO_DISB_RES_FILE", "AUTO_DISB_RES_FILE")

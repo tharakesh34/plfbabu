@@ -51,7 +51,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -66,6 +65,8 @@ import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.DateUtility;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
@@ -148,6 +149,7 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 		registerField("FileName");
 		registerField("FileLocation");
 		registerField("Status");
+		registerField("EndTime");
 
 		doRenderPage();
 		search();
@@ -253,8 +255,10 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 
 			lc = new Listcell(fileDownlaod.getFileName());
 			lc.setParent(item);
-
-
+ 
+			lc = new Listcell(DateUtility.formatDate(fileDownlaod.getEndTime(), PennantConstants.dateTimeFormat));
+			lc.setParent(item);
+ 
 			lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());
 			lc.setParent(item);
 
@@ -287,15 +291,13 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 				downlaod.setTooltiptext("Disbursement request download.");
 				break;
 			case MANDATES:
-				if (0 == fileDownlaod.getAlwFileDownload()) {
-					downlaod.setTooltiptext("Not allow to download disbursement request file.");
-				}
-
-				if (StringUtils.containsIgnoreCase(fileDownlaod.getFileName(), "IMPS")) {
+				if(!file.exists()) {
+					 downlaod.setDisabled(true);
+					 downlaod.setTooltiptext("File not available.");
+				} else  if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
 					downlaod.setDisabled(true);
-					downlaod.setTooltiptext("IMPS Disbursement.");
-				}
-
+					downlaod.setTooltiptext("File generation failed.");
+				} 
 				break;
 			case SAPGL:
 				downlaod.setTooltiptext("SAPGL Files download.");

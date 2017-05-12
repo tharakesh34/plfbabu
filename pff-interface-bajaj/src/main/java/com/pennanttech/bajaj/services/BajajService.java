@@ -1,6 +1,8 @@
 package com.pennanttech.bajaj.services;
 
 import java.util.Date;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
@@ -68,9 +70,26 @@ public abstract class BajajService {
 		}
 	}
 	
-	protected Date getAppDate() throws Exception {
-		String appDate = (String) getSMTParameter("APP_VALUEDATE", String.class);
-		return DateUtil.parse(appDate, "yyyy-MM-dd"); //FIXME Deriving Application date should be from core.
+	protected Date getAppDate() {
+		String appDate;
+		try {
+			appDate = (String) getSMTParameter("APP_VALUEDATE", String.class);
+			return DateUtil.parse(appDate, "yyyy-MM-dd"); // FIXME Deriving Application date should be from core.
+		} catch (Exception e) {
+
+		}
+		return null;
+	}
+	
+	public static MapSqlParameterSource getMapSqlParameterSource(Map<String, Object> map) {
+		MapSqlParameterSource parmMap = new MapSqlParameterSource();
+
+		for (Entry<String, Object> entry : map.entrySet()) {
+			parmMap.addValue(entry.getKey(), entry.getValue());
+		}
+
+		return parmMap;
+
 	}
 	
 }

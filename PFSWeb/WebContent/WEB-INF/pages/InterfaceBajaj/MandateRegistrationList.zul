@@ -90,55 +90,55 @@
 										<button id="btnbranchDetails" image="/images/icons/LOVSearch.png" />
 										</cell>
 								</row>
-							</rows>
-						</grid>
-						
-						
-						<grid sclass="GridLayoutNoBorder" fixedLayout="true">
-							<columns>
-								<column width="20%" />
-								<column width="30%" />
-								<column width="5%" />
-								<column width="15%" />
-							</columns>
-							<rows>
-							
-								<row>
+								
+						 	<row>
 									<label value="${c:l('label_MandateList_FromDate.value')}" />
+									<label/>
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
 									<datebox id="fromDate" width="171px" />
-									
 									</hbox>
-
+									
 									<label value="${c:l('label_MandateList_ToDate.value')}" />
 									<label value="" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
 									<datebox id="toDate" width="171px" />
 									</hbox>
-								</row>
-							</rows>
+								</row> 
+							</rows> 
 						</grid>
-						
-					
 
-						
-
-						<listbox id="listBoxMandateRegistration" fixedLayout="true" span="true" width="100%" height="100%" multiple="true" autopaging="true">
+						<listbox id="listBoxMandateRegistration"
+							fixedLayout="true" span="true" width="100%" height="100%"
+							sizedByContent="true" multiple="true">
 							<listhead sizable="true">
-								<listheader id="listHeader_CheckBox_Name"   hflex="min" align="center"/>
-								<listheader id="listheader_MandateType" label="${c:l('listheader_MandateType.label')}"  hflex="min" />
-								<listheader id="listheader_CustCIF" label="${c:l('listheader_CustCIF.label')}"  hflex="min" />
-								<listheader id="listheader_BankName" label="${c:l('listheader_Mandate_BankName.label')}"  hflex="min" />
-								<listheader id="listheader_AccNumber" label="${c:l('listheader_AccNumber.label')}"  hflex="min" />
-								<listheader id="listheader_AccType" label="${c:l('listheader_AccType.label')}"  hflex="min" />
-								<listheader id="listheader_Amount" label="${c:l('listheader_Amount.label')}"  hflex="min" />
-								<listheader id="listheader_ExpiryDate" label="${c:l('listheader_ExpiryDate.label')}"  hflex="min" />
-								<listheader id="listheader_Status" label="${c:l('listheader_Status.label')}"  hflex="min" />
-								<listheader id="listheader_InputDate" label="${c:l('listheader_InputDate.label')}"  hflex="min" />
-								<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"  hflex="min" visible="false" />
-								<listheader id="listheader_RecordType" label="${c:l('listheader_RecordType.label')}"  hflex="min" visible="false" />
+								<listheader
+									id="listHeader_CheckBox_Name" hflex="min" align="center" />
+								<listheader id="listheader_MandateType"
+									label="${c:l('listheader_MandateType.label')}" hflex="min" />
+								<listheader id="listheader_CustCIF"
+									label="${c:l('listheader_CustCIF.label')}" hflex="min" />
+								<listheader id="listheader_BankName"
+									label="${c:l('listheader_Mandate_BankName.label')}" hflex="min" />
+								<listheader id="listheader_AccNumber"
+									label="${c:l('listheader_AccNumber.label')}" hflex="min" />
+								<listheader id="listheader_AccType"
+									label="${c:l('listheader_AccType.label')}" hflex="min" />
+								<listheader id="listheader_Amount"
+									label="${c:l('listheader_Amount.label')}" hflex="min" />
+								<listheader id="listheader_ExpiryDate"
+									label="${c:l('listheader_ExpiryDate.label')}" hflex="min" />
+								<listheader id="listheader_Status"
+									label="${c:l('listheader_Status.label')}" hflex="min" />
+								<listheader id="listheader_InputDate"
+									label="${c:l('listheader_InputDate.label')}" hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" hflex="min"
+									visible="false" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}" hflex="min"
+									visible="false" />
 							</listhead>
 						</listbox>
 					</div>

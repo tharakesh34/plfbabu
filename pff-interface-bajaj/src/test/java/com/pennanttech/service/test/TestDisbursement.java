@@ -9,19 +9,17 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
-import com.pennanttech.bajaj.services.DisbursementRequestImpl;
-import com.pennanttech.bajaj.services.SAPGLServiceImpl;
-import com.pennanttech.pff.core.services.disbursement.DisbursementRequest;
+import com.pennanttech.bajaj.services.DisbursementRequestService;
 
 public class TestDisbursement {
 
-	private DisbursementRequest	disbursementRequest;
+	private DisbursementRequestService	disbursementRequest;
 
 	@Before
 	public void startAHI() {
 		try {
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
-		disbursementRequest = context.getBean(DisbursementRequestImpl.class);
+		disbursementRequest = context.getBean(DisbursementRequestService.class);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

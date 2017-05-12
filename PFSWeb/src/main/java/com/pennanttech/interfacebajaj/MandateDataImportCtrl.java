@@ -24,21 +24,21 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.bajaj.services.DisbursementResponseFileService;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.DataEngineConstants.ParserNames;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.dataengine.util.ConfigUtil;
+import com.pennanttech.framework.component.dataengine.ConfigUtil;
 import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.file.service.FileService;
 
-public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
-	private static final Logger logger = Logger.getLogger(DisbursementDataImportCtrl.class);
+public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	private static final long serialVersionUID = 1297405999029019920L;
+	private static final Logger logger = Logger.getLogger(MandateDataImportCtrl.class);
 
-	protected Window window_DisbursementDataImportCtrl;
+	protected Window window_MandateDataImportCtrl;
 	protected Button btnImport;
 	protected Button btnFileUpload;
 
@@ -54,20 +54,20 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	private File file = null;
 
 	protected DataEngineConfig dataEngineConfig;
-	private Configuration config = null;
-	private DataEngineStatus hdfcStatus;
-	private DataEngineStatus otherStatus;
 	private List<ValueLabel> serverFiles = null;
 
 	private long userId;
 	
+	private Configuration config = null;
+	private DataEngineStatus status;
+	
 	@Autowired
-	private DisbursementResponseFileService disbursementResponseFileService;
+	private FileService mandateResponseFileService;
 
 	/**
 	 * default constructor.<br>
 	 */
-	public DisbursementDataImportCtrl() {
+	public MandateDataImportCtrl() {
 		super();
 	}
 
@@ -84,7 +84,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 *            An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
-	public void onCreate$window_DisbursementDataImportCtrl(Event event) throws Exception {
+	public void onCreate$window_MandateDataImportCtrl(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -103,17 +103,13 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 		for (Configuration config : configList) {
 			String configName = config.getName();
-			if ("DISB_HDFC_IMPORT".equals(configName) || "DISB_OTHER_IMPORT".equals(configName)) {
-				if ("DISB_HDFC_IMPORT".equals(configName)) {
-					hdfcStatus = dataEngineConfig.getLatestExecution("DISB_HDFC_IMPORT");
-					valueLabel = new ValueLabel(configName, "HDFC Bank Disbursement Response");
-					 doFillExePanels(config, hdfcStatus);
-				} else {
-					otherStatus = dataEngineConfig.getLatestExecution("DISB_OTHER_IMPORT");
-					valueLabel = new ValueLabel(configName, "Other Bank Disbursement Response");
-					 doFillExePanels(config, otherStatus);
-				}
+			valueLabel = new ValueLabel(config.getName(), config.getName());
+			if ((StringUtils.equals(configName, "MANDATES_IMPORT"))) {
+				this.config = config;
 				menuList.add(valueLabel);
+				status = dataEngineConfig.getLatestExecution(config.getName());
+				doFillExePanels();
+				break;
 			}
 		}
 		
@@ -132,11 +128,11 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		logger.debug(Literal.ENTERING);
 
 		try {
-			String fileConfig = this.fileConfiguration.getSelectedItem().getValue();
+			String fileConfig = this.fileConfiguration.getSelectedItem().getLabel();
 			fileName.setValue("");
 			serverFileName.setValue("");
 			row1.setVisible(false);
-			if (!StringUtils.equals("#", fileConfig)) {
+			if (!StringUtils.equals(Labels.getLabel("Combo.Select"), fileConfig)) {
 				this.btnImport.setDisabled(false);
 				config = dataEngineConfig.getConfigurationByName(fileConfig);
 			} else {
@@ -144,7 +140,9 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 				return;
 			}
 			try {
-				fileConfigurationSetup();
+				if (!ParserNames.DB.name().equals(config.getParserName())) {
+					fileConfigurationSetup();
+				}
 			} catch (Exception e) {
 				exceptionTrace(e);
 			}
@@ -161,6 +159,8 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 * @throws Exception
 	 */
 	private void fileConfigurationSetup() throws Exception {
+		logger.debug(Literal.ENTERING);
+
 		String path = config.getUploadPath();
 		String uploadLoc = config.getUploadLocation();
 
@@ -168,9 +168,9 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			path = path + File.separator;
 		}
 
-		if (ConfigUtil.CLIENT_FILE_LOCATION.equals(uploadLoc)) {
+		if (StringUtils.equalsIgnoreCase(ConfigUtil.CLIENT_FILE_LOCATION, uploadLoc)) {
 			setComponentsVisibility(true);
-		} else if (ConfigUtil.SERVER_FILE_LOCATION.equals(uploadLoc)) {
+		} else if (StringUtils.equalsIgnoreCase(ConfigUtil.SERVER_FILE_LOCATION, uploadLoc)) {
 			setComponentsVisibility(false);
 			serverFiles = new ArrayList<ValueLabel>();
 			File file = new File(path);
@@ -178,14 +178,14 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 			if (files != null) {
 				for (File file2 : files) {
-					if (file2.isDirectory()) {
-						continue;
+					if (StringUtils.startsWith(file2.getName(), config.getFilePrefixName())) {
+						serverFiles.add(new ValueLabel(file2.getPath(), file2.getName()));
 					}
-					serverFiles.add(new ValueLabel(file2.getPath(), file2.getName()));
 				}
 				fillComboBox(serverFileName, "", serverFiles, "");
 			}
 		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -205,28 +205,29 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 * @throws Exception
 	 */
 	public void onClick$btnImport(Event event) throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+		
+		if (status != null && ExecutionStatus.I.name().equals(status.getStatus())) {
+			MessageUtil.showErrorMessage("Export is in progress for the selected configuration.");
+			return;
+		}
+
 		this.btnImport.setDisabled(true);
 		try {
-			Thread thread = null;
-			if (fileConfiguration.getSelectedItem().getValue().equals("DISB_HDFC_IMPORT")) {
-				if (hdfcStatus == null) {
-					hdfcStatus = new DataEngineStatus();
-					hdfcStatus.setName("DISB_HDFC_IMPORT");
-				}
-				thread = new Thread(new ProcessData(userId, hdfcStatus));
-			} else {
-				if (otherStatus == null) {
-					otherStatus = new DataEngineStatus();
-					otherStatus.setName("DISB_OTHER_IMPORT");
-				}
-				thread = new Thread(new ProcessData(userId, otherStatus));
+			
+			if(status == null) {
+				status = new DataEngineStatus();
+				status.setName(config.getName());
 			}
 			
+			Thread thread = new Thread(new ProcessData(userId, status));
 			thread.start();
 		} catch (Exception e) {
 			MessageUtil.showErrorMessage(e.getMessage());
 			return;
 		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void exceptionTrace(Exception e) throws InterruptedException {
@@ -243,6 +244,8 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	public void onUpload$btnFileUpload(UploadEvent event) throws Exception {
 		fileName.setText("");
 		media = event.getMedia();
+		String type = media.getContentType();
+		System.out.println("type :" + type);
 		fileName.setText(media.getName());
 	}
 
@@ -261,6 +264,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			for (Hbox hbox : hboxs) {
 				List<ProcessExecution> list = hbox.getChildren();
 				for (ProcessExecution pe : list) {
+					pe.setProcess(status);
 
 					String status = pe.getProcess().getStatus();
 					if (ExecutionStatus.I.name().equals(status)) {
@@ -281,21 +285,20 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		}
 	}
 
-	private void doFillExePanels(Configuration config, DataEngineStatus ds) throws Exception {
-		if (ds == null) {
-			ds = new DataEngineStatus();
-			ds.setName(config.getName());
+	private void doFillExePanels() throws Exception {
+		if (status == null) {
+			status = new DataEngineStatus();
 		}
-		doFillPanel(ds, config);
+		doFillPanel();
 	}
 	
-	private void doFillPanel(DataEngineStatus ds, Configuration config) {
+	private void doFillPanel() {
 		ProcessExecution pannelExecution = new ProcessExecution();
 		pannelExecution.setId(config.getName());
 		pannelExecution.setBorder("normal");
 		pannelExecution.setTitle(config.getName());
 		pannelExecution.setWidth("480px");
-		pannelExecution.setProcess(ds);
+		pannelExecution.setProcess(status);
 		pannelExecution.render();
 
 		Row rows = (Row) panelRows.getLastChild();
@@ -335,16 +338,18 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			this.status = status;
 		}
 
+		byte[] fileData;
+
 		@Override
 		public void run() {
 			try {
-				disbursementResponseFileService.processFile(userId, status, file, media, false);
+				mandateResponseFileService.processFile(userId, status, file, media, false);
 			} catch (Exception e) {
-				logger.error("Exception:", e);
+				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 	}
-
+	
 	public void setDataEngineConfig(DataEngineConfig dataEngineConfig) {
 		this.dataEngineConfig = dataEngineConfig;
 	}

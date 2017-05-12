@@ -90,12 +90,12 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.bajaj.services.DisbursementRequestService;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.MultiLineMessageBox;
 import com.pennanttech.framework.web.components.SearchFilterControl;
 import com.pennanttech.pff.core.Literal;
-import com.pennanttech.pff.core.services.disbursement.DisbursementRequest;
 
 /**
  * ************************************************************<br>
@@ -148,7 +148,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	private Map<Long, FinAdvancePayments> disbursementMap = new HashMap<Long, FinAdvancePayments>();
 
 	@Autowired
-	private DisbursementRequest disbursementRequest;
+	private DisbursementRequestService disbursementRequestService;
 
 	/**
 	 * default constructor.<br>
@@ -537,7 +537,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}
 		try {
 			btnDownload.setDisabled(true);
-			DisbursementProcess process = new DisbursementProcess(getUserWorkspace().getLoggedInUser().getLoginUsrID(), this.finType.getValue(), disbushmentList);
+			DisbursementProcess process = new DisbursementProcess(getUserWorkspace().getLoggedInUser().getLoginUsrID(),
+					this.finType.getValue(), disbushmentList);
 			Thread thread = new Thread(process);
 			DisbursementProcess.sleep(2000);
 			thread.start();
@@ -545,8 +546,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			args.put("module", "DISBURSEMENT");
 
 			MessageUtil.showMessage("File download process initiated.");
-			createNewPage("/WEB-INF/pages/InterfaceBajaj/DisbursementFileDownloadList.zul", "menu_Item_DisbursementFileDownlaods",
-					args);
+			createNewPage("/WEB-INF/pages/InterfaceBajaj/DisbursementFileDownloadList.zul",
+					"menu_Item_DisbursementFileDownlaods", args);
 
 		} finally {
 			this.disbursementMap.clear();
@@ -587,26 +588,26 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		tab.setSelected(true);
 	}
 
-	 public class DisbursementProcess extends Thread {
+	public class DisbursementProcess extends Thread {
 
-			String						finType;
-			List<FinAdvancePayments>	disbushmentList;
-			long						userId;
+		long userId;
+		String finType;
+		List<FinAdvancePayments> disbushmentList;
 
-			public DisbursementProcess(long userId, String finType, List<FinAdvancePayments> disbushmentList) {
-				this.userId = userId;
-				this.userId = userId;
-				this.disbushmentList = disbushmentList;
-			}
+		public DisbursementProcess(long userId, String finType, List<FinAdvancePayments> disbushmentList) {
+			this.userId = userId;
+			this.finType = finType;
+			this.disbushmentList = disbushmentList;
+		}
 
-			@Override
-			public void run() {
-				try {
-					disbursementRequest.sendReqest(finType, disbushmentList, userId);
-				} catch (Exception e) {
+		@Override
+		public void run() {
+			try {
+				disbursementRequestService.sendReqest(finType, disbushmentList, userId);
+			} catch (Exception e) {
 
-				}
 			}
 		}
+	}
 
 }

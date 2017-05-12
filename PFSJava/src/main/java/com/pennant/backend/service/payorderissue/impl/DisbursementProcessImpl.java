@@ -36,11 +36,14 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 
 	@Override
 	public void process(FinAdvancePayments disbursement) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+		
 		FinanceMain financeMain = null;
 		List<ReturnDataSet> list = null;
+		
 		financeMain = financeMainDAO.getDisbursmentFinMainById(disbursement.getFinReference(), TableType.MAIN_TAB);
 		String paymentType = disbursement.getPaymentType();
+		
 		try {
 			if (StringUtils.equals("E", disbursement.getStatus())) {
 				disbursement.setStatus(DisbursementConstants.STATUS_PAID);
@@ -65,10 +68,8 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 		} catch(Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-
 		
 		logger.debug(Literal.LEAVING);
-
 	}
 
 	public void addToCustomerBeneficiary(FinAdvancePayments finAdvPay, long cusID) {

@@ -34,6 +34,7 @@
 						
 							<listheader label="${c:l('listheader_DisbursementFileDownloadName.label')}"  hflex="min" />
 							<listheader label="${c:l('listheader_FileName.label')}" hflex="min" />
+							<listheader label="${c:l('listheader_ProcessedDate.label')}" hflex="min" />
 							<listheader label="${c:l('listheader_Status.label')}" hflex="min" />
 							<listheader label="${c:l('listheader_Downlaod.label')}"  hflex="min" />
 						</listhead>

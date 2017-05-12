@@ -157,6 +157,8 @@
 	<menu id="menu_Category_Mandates"  rightName="menuCat_Mandates" >
 		<menuItem id="menu_Item_MandateRegistration" zulNavigation="/WEB-INF/pages/InterfaceBajaj/MandateRegistrationList.zul" rightName="menuItem_MandateRegistration"/>
 		<menuItem id="menu_Item_MandatesFileDownlaods" zulNavigation="/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul?module=MANDATES" rightName="menuItem_MandateFileDownlaods"/>
+		<menuItem id="menu_Item_MandatesFileImport" zulNavigation="/WEB-INF/pages/InterfaceBajaj/MandateDataImport.zul" rightName="menuItem_DataEngine_DataImport"/>
+		
  	</menu>
 	<menu id="menu_Category_Disbursement"  rightName="menuCat_Disbursement" >
 		<menuItem id="menu_Item_DisbursementRegistration" zulNavigation="/WEB-INF/pages/InterfaceBajaj/DisbursementRegistrationList.zul" rightName="menuItem_DisbursementRegistration"/>

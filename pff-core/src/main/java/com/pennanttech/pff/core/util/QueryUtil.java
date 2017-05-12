@@ -11,6 +11,8 @@
  */
 package com.pennanttech.pff.core.util;
 
+import java.util.Set;
+
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -75,5 +77,27 @@ public final class QueryUtil {
 		} else {
 			return " and Version = :Version - 1";
 		}
+	}
+	
+	public static String getInsertQuery(Set<String> columnSet, String tableName) {
+		StringBuilder columns = new StringBuilder();
+		StringBuilder values = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
+		sql.append("Insert into ").append(tableName);
+
+		for (String key : columnSet) {
+			if (values.length() > 0) {
+				values.append(", ");
+			}
+			values.append(key);
+			if (columns.length() > 0) {
+				columns.append(", ");
+			}
+			columns.append(":" + key);
+		}
+		sql.append(" (").append(values.toString()).append(") ");
+		sql.append("Values (").append(columns.toString()).append(")");
+
+		return sql.toString();
 	}
 }

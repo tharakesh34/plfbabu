@@ -102,7 +102,7 @@ public class DataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 		for (Configuration config : configList) {
 			valueLabel = new ValueLabel(config.getName(), config.getName());
-			if (getUserWorkspace().isAllowed(config.getName())) {
+			if (getUserWorkspace().isAllowed(config.getName()) && !(config.getName().startsWith("DISB_"))) {
 				menuList.add(valueLabel);
 				doFillExePanels(config, dataEngineConfig.getLatestExecution(config.getName()));
 			}

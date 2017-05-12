@@ -45,16 +45,16 @@ package com.pennanttech.interfacebajaj;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zhtml.Messagebox;
 import org.zkoss.zk.ui.Executions;
@@ -100,7 +100,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennanttech.dataengine.DataEngineExport;
+import com.pennanttech.bajaj.services.MandateRequestService;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.MultiLineMessageBox;
@@ -175,6 +175,9 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	private transient boolean validationOn;
 
 	private Map<Long, String> mandateIdMap = new HashMap<Long, String>();
+	
+	@Autowired
+	private MandateRequestService mandateRequestService;
 
 	/**
 	 * default constructor.<br>
@@ -187,8 +190,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	protected void doSetProperties() {
 		super.moduleCode = "MandateRegistration";
 		super.pageRightName = "MandateRegistration";
-		super.tableName = "Mandates_AView";
-		super.queueTableName = "Mandates_AView";
+		super.tableName = "INT_MANDATE_REQUEST_VIEW";
+		super.queueTableName = "INT_MANDATE_REQUEST_VIEW";
 	}
 
 	/**
@@ -211,8 +214,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		fillComboBox(this.status, "", PennantStaticListUtil.getStatusTypeList(),
 				Collections.singletonList(MandateConstants.STATUS_FIN));
 
-		registerField("FromDate");
-		registerField("ToDate");
+		registerField("inputDate");
 
 		registerField("BranchCode", branchDetails, SortOrder.ASC, sortOperator_btnbranchDetails, Operators.MULTISELECT);
 		registerField("mandateID", mandateID, SortOrder.ASC, sortOperator_MandateID, Operators.NUMERIC);
@@ -367,8 +369,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	private List<Long> getMandateList() {
 
 		JdbcSearchObject<Map<String, Long>> searchObject = new JdbcSearchObject<>();
-		searchObject.addFilterEqual("active", 1);
-		searchObject.addFilterEqual("Status", MandateConstants.STATUS_NEW);
+		//searchObject.addFilterEqual("active", 1);
+		//searchObject.addFilterEqual("Status", MandateConstants.STATUS_NEW);
 		// searchObject.addFilter(Filter.isNotNull("OrgReference"));
 		searchObject.addField("mandateID");
 		searchObject.addTabelName(this.tableName);
@@ -418,7 +420,6 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		} else {
 			listHeader_CheckBox_Comp.setDisabled(true);
 			listBoxMandateRegistration.setEmptyMessage(Labels.getLabel("listEmptyMessage.title"));
-
 		}
 	}
 
@@ -449,8 +450,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		String fromDate = PennantAppUtil.formateDate(this.fromDate.getValue(), PennantConstants.DBDateFormat);
 		String toDate = PennantAppUtil.formateDate(this.toDate.getValue(), PennantConstants.DBDateFormat);
 
-		searchObject.addFilterEqual("active", 1);
-		searchObject.addFilterEqual("Status", MandateConstants.STATUS_NEW);
+		//searchObject.addFilterEqual("active", 1);
+		//searchObject.addFilterEqual("Status", MandateConstants.STATUS_NEW);
 		// OrgReference
 		// searchObject.addFilter(Filter.isNotNull("OrgReference"));
 
@@ -560,6 +561,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			listHeader_CheckBox_Comp.setDisabled(false);
 		} else {
 			listHeader_CheckBox_Comp.setDisabled(true);
+			listBoxMandateRegistration.setEmptyMessage("");
+
 		}
 
 	}
@@ -664,7 +667,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		}
 		try {
 			btnDownload.setDisabled(true);
-			DataEngineExport dataEngine = null;
+			/*DataEngineExport dataEngine = null;
 			dataEngine = new DataEngineExport(dataSource, getUserWorkspace().getLoggedInUser().getLoginUsrID(),
 					App.DATABASE.name());
 
@@ -682,7 +685,12 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			dataEngine.setFilterMap(filterMap);
 			dataEngine.setParameterMap(parameterMap);
 			dataEngine.setUserName(getUserWorkspace().getLoggedInUser().getUserName());
-			dataEngine.exportData("MANDATES_EXPORT");
+			dataEngine.exportData("MANDATES_EXPORT");*/
+				
+			MandateProcess process = new MandateProcess(mandateIdList, fromDate.getValue(), toDate.getValue(), getUserWorkspace().getLoggedInUser().getLoginUsrID() ,getUserWorkspace().getLoggedInUser().getUserName(), this.branchDetails.getValue());
+			Thread thread = new Thread(process);
+			thread.start();
+			
 
 			Map<String, Object> args = new HashMap<String, Object>();
 			args.put("module", "MANDATES");
@@ -746,4 +754,39 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	public boolean isValidationOn() {
 		return this.validationOn;
 	}
+	
+	public class MandateProcess extends Thread {
+
+		List<Long> mandateIdList;
+		Date fromDate;
+		Date toDate;
+		long userId;
+		String userName;
+		String branchDetails;
+
+		public MandateProcess(List<Long> mandateIdList, Date fromDate, Date toDate, long userId, String userName,
+				String branchDetails) {
+			this.userId = userId;
+			this.mandateIdList = mandateIdList;
+			this.fromDate = fromDate;
+			this.toDate = toDate;
+			this.userId = userId;
+			this.userName = userName;
+			this.branchDetails = branchDetails;
+
+		}
+
+		@Override
+		public void run() {
+			try {
+				mandateRequestService.sendReqest(mandateIdList, this.fromDate, this.toDate, getUserWorkspace()
+						.getLoggedInUser().getLoginUsrID(), getUserWorkspace().getLoggedInUser().getUserName(),
+						this.branchDetails);
+			} catch (Exception e) {
+
+			}
+		}
+
+	}
+
 }

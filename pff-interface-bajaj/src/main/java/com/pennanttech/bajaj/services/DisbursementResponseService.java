@@ -10,16 +10,16 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.services.ResponseService;
 import com.pennanttech.pff.core.services.disbursement.DisbursementProcess;
-import com.pennanttech.pff.core.services.disbursement.DisbursementResponse;
 
-public class DisbursementResponseImpl extends BajajService implements DisbursementResponse {
+public class DisbursementResponseService extends BajajService implements ResponseService {
 	private final Logger		logger	= Logger.getLogger(getClass());
 
 	@Autowired
 	private DisbursementProcess	disbursementProcess;
 
-	public DisbursementResponseImpl() {
+	public DisbursementResponseService() {
 		super();
 	}
 
@@ -29,6 +29,7 @@ public class DisbursementResponseImpl extends BajajService implements Disburseme
 		StringBuilder sql = null;
 		List<FinAdvancePayments> disbursements = null;
 		RowMapper<FinAdvancePayments> rowMapper = null;
+		
 		try {
 			sql = new StringBuilder();
 			sql.append(" SELECT FA.PAYMENTID,FA.FINREFERENCE, FA.LINKEDTRANID, DR.PAYMENT_DATE LLDATE, FA.PAYMENTTYPE, DR.STATUS,");
@@ -52,13 +53,8 @@ public class DisbursementResponseImpl extends BajajService implements Disburseme
 					logger.error(Literal.EXCEPTION, e);
 				}
 			}
-
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-		} finally {
-			sql = null;
-			paramMap = null;
-			rowMapper = null;
-		}
+		} 
 	}
 }

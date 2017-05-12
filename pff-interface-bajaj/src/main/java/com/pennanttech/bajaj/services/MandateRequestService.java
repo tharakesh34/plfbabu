@@ -1,0 +1,195 @@
+package com.pennanttech.bajaj.services;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ColumnMapRowMapper;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+
+import com.pennanttech.dataengine.DataEngineExport;
+import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.services.RequestService;
+import com.pennanttech.pff.core.util.QueryUtil;
+
+public class MandateRequestService extends BajajService implements RequestService {
+	private final Logger logger = Logger.getLogger(getClass());
+
+	@Override
+	public void sendReqest(Object... params) throws Exception {
+		@SuppressWarnings("unchecked")
+		List<Long> mandateIdList = (List<Long>) params[0];
+		Date fromDate = (Date) params[1];
+		Date toDate = (Date) params[2];
+		long userId = (Long) params[3];
+		String userName = (String) params[4];
+		String selectedBranchs = (String) params[5];
+
+		String[] mandateIds = new String[mandateIdList.size()];
+
+		int i = 0;
+		for (Long mandateId : mandateIdList) {
+			mandateIds[i++] = String.valueOf(mandateId);
+		}
+
+		List<String> mandates = prepareRequest(mandateIds);
+
+		if (mandates == null || mandates.isEmpty()) {
+			return;
+		}
+
+		Map<String, Object> filterMap = new HashMap<>();
+		Map<String, Object> parameterMap = new HashMap<>();
+		filterMap.put("ID", mandates);
+		filterMap.put("FROMDATE", fromDate);
+		filterMap.put("TODATE", toDate);
+
+		if (StringUtils.isNotBlank(selectedBranchs)) {
+			filterMap.put("BRANCHCODE", Arrays.asList(selectedBranchs.split(",")));
+		}
+
+		parameterMap.put("USER_NAME", userName);
+		DataEngineExport dataEngine = null;
+		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name());
+
+		dataEngine.setFilterMap(filterMap);
+		dataEngine.setParameterMap(parameterMap);
+		dataEngine.setUserName(userName);
+		dataEngine.setValueDate(getAppDate());
+		dataEngine.exportData("MANDATES_EXPORT");
+	}
+
+	private List<String> prepareRequest(String[] mandateIds) throws Exception {
+		logger.debug(Literal.ENTERING);
+		final Map<String, Integer> bankCodeSeq = getCountByProcessed();
+
+		MapSqlParameterSource paramMap;
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT");
+		sql.append(" MANDATEID,");
+		sql.append(" BANKCODE BANK_CODE,");
+		sql.append(" BANKNAME BANK_NAME,");
+		sql.append(" BRANCHDESC BRANCH_NAME,");
+		sql.append(" CUSTCIF,");
+		sql.append(" CUSTSHRTNAME CUSTOMER_NAME,");
+		sql.append(" FINTYPE,");
+		sql.append(" FINREFERENCE,");
+		sql.append(" EMI,");
+		sql.append(" OPENMANDATE OPENFLAG,");
+		sql.append(" ACCNUMBER ACCT_NUMBER,");
+		sql.append(" ACCTYPE ACCT_TYPE,");
+		sql.append(" ACCHOLDERNAME ACCT_HOLDER_NAME,");
+		sql.append(" MICR MICR_CODE,");
+		sql.append(" FIRSTDUEDATE EFFECTIVE_DATE,");
+		sql.append(" EMIENDDATE EMI_ENDDATE,");
+		sql.append(" EXPIRYDATE OPEN_ENDDATE,");
+		sql.append(" MAXLIMIT UPPER_LIMIT,");
+		sql.append(" DEBITAMOUNT DEBIT_AMOUNT,");
+		sql.append(" STARTDATE START_DATE,");
+		sql.append(" EXPIRYDATE END_DATE,");
+		sql.append(" APPLICATIONNO APPLICATION_NUMBER,");
+		sql.append(" MANDATETYPE MANDATE_TYPE,");
+		sql.append(" STATUS");
+		sql.append(" FROM INT_MANDATE_REQUEST_VIEW");
+		sql.append(" WHERE MANDATEID IN (:MANDATEID)");
+
+		paramMap = new MapSqlParameterSource();
+		paramMap.addValue("MANDATEID", Arrays.asList(mandateIds));
+
+		final ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
+		try {
+			return namedJdbcTemplate.query(sql.toString(), paramMap, new RowMapper<String>() {
+				@Override
+				public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+					String id = null;
+					Map<String, Object> rowMap = rowMapper.mapRow(rs, rowNum);
+					rowMap.put("BATCH_ID", 0);
+					rowMap.put("BANK_SEQ", getSequence((String) rowMap.get("BANK_CODE"), bankCodeSeq));
+					rowMap.put("EXTRACTION_DATE", getAppDate());
+					
+					id = String.valueOf(insertData(rowMap));
+					rowMap = null;
+					return id;
+				}
+			});
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		} finally {
+			paramMap = null;
+			sql = null;
+		}
+
+		logger.debug(Literal.ENTERING);
+		return null;
+	}
+
+	private long insertData(Map<String, Object> rowMap) {
+		String sql = QueryUtil.getInsertQuery(rowMap.keySet(), "MANDATE_REQUESTS");
+		final KeyHolder keyHolder = new GeneratedKeyHolder();
+		try {
+			namedJdbcTemplate.update(sql, getMapSqlParameterSource(rowMap), keyHolder, new String[] {"ID"});
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		return keyHolder.getKey().longValue();
+	}
+
+	private String getSequence(String bankCode, Map<String, Integer> bankCodeSeq) {
+		int seq = 0;
+		if (bankCodeSeq.get(bankCode) == null) {
+			bankCodeSeq.put(bankCode, 0);
+		} else {
+			seq = bankCodeSeq.get(bankCode);
+		}
+		
+		seq = seq+1;
+		bankCodeSeq.put(bankCode, seq);
+		
+		return bankCode + "-" + seq;
+	}
+
+	private Map<String, Integer> getCountByProcessed() {
+		final Map<String, Integer> bankCodeMap = new HashMap<>();
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" Select BANK_CODE, count(*) From MANDATE_REQUESTS");
+		sql.append(" Where EXTRACTION_DATE =:EXTRACTION_DATE");
+		sql.append(" GROUP BY BANK_CODE");
+
+		paramMap.addValue("EXTRACTION_DATE", getAppDate());
+
+		try {
+			return namedJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<Map<String, Integer>>() {
+				@Override
+				public Map<String, Integer> extractData(ResultSet rs) throws SQLException, DataAccessException {
+					while (rs.next()) {
+						bankCodeMap.put(rs.getString(1), rs.getInt(2));
+					}
+					return bankCodeMap;
+				}
+
+			});
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		} finally {
+			paramMap = null;
+			sql = null;
+		}
+		return bankCodeMap;
+	}
+
+}

@@ -4123,6 +4123,10 @@
 		<property name="mandateService" ref="mandateService" />
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
+	<bean id="mandateDataImportCtrl" class="com.pennanttech.interfacebajaj.MandateDataImportCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="dataEngineConfig" ref="dataEngineConfig"/>
+	</bean>
+	
 	<bean id="fileDownloadListCtrl" class="com.pennanttech.interfacebajaj.FileDownloadListCtrl" parent="basisListCtrl" scope="prototype"/>
 	<bean id="disbursementfileDownloadListCtrl" class="com.pennanttech.interfacebajaj.DisbursementFileDownloadListCtrl" parent="basisListCtrl" scope="prototype"/>
 	<bean id="disbursementDataImportCtrl" class="com.pennanttech.interfacebajaj.DisbursementDataImportCtrl" parent="basisListCtrl" scope="prototype">
@@ -4588,5 +4592,9 @@
 		<property name="accountMappingService" ref="accountMappingService"/>
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
+	
+	<bean id="exceptionLogCtrl" class="com.pennanttech.framework.component.dataengine.ExceptionLogCtrl" parent="basisCtrl" scope="prototype">
+	</bean>
+	
 
 </beans>
