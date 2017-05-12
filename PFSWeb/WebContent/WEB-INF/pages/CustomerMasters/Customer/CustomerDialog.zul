@@ -311,8 +311,12 @@
 													id="row_custStatus">
 													<label
 														value="${c:l('label_CustomerDialog_CustSts.value')}" />
-													<extendedcombobox
-														id="custSts" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<textbox
+															id="custSts" width="150px" />
+													</hbox>
 												</row>
 												<row
 													id="row_party_segment">

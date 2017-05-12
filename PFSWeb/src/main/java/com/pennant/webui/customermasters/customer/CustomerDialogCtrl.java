@@ -188,7 +188,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Space								space_CustArabicName;															// autowired
 	protected Textbox							motherMaidenName;																// autowired
 	protected ExtendedCombobox					custLng;																		// autowired
-	protected ExtendedCombobox					custSts;																		// autowired
+	protected Textbox							custSts;																		// autowired
 	protected ExtendedCombobox					custSector;																	// autowired
 	protected ExtendedCombobox					custIndustry;																	// autowired
 	protected ExtendedCombobox					custSegment;																	// autowired
@@ -669,13 +669,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custLng.setDescColumn("LngDesc");
 		this.custLng.setValidateColumns(new String[] { "LngCode" });
 
-		this.custSts.setMaxlength(8);
-		this.custSts.setTextBoxWidth(121);
-		this.custSts.setMandatoryStyle(false);
-		this.custSts.setModuleName("CustomerStatusCode");
-		this.custSts.setValueColumn("CustStsCode");
-		this.custSts.setDescColumn("CustStsDescription");
-		this.custSts.setValidateColumns(new String[] { "CustStsCode" });
+		this.custSts.setReadonly(true);
 
 		this.custSector.setMaxlength(8);
 		this.custSector.setTextBoxWidth(121);
@@ -1035,7 +1029,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custBaseCcy.setDescription(CurrencyUtil.getCcyDesc(aCustomer.getCustBaseCcy()));
 		this.custNationality.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustNationalityName()));
 		this.custLng.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustLngName()));
-		this.custSts.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustStsName()));
 		this.custSector.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustSectorName()));
 		this.custIndustry.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustIndustryName()));
 		this.custCOB.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustCOBName()));
@@ -1257,8 +1250,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 
 		try {
-			aCustomer.setLovDescCustStsName(this.custSts.getDescription());
-			aCustomer.setCustSts(StringUtils.trimToNull(this.custSts.getValidatedValue()));
+			aCustomer.setCustSts(this.custSts.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1904,10 +1896,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 			}
 			if (StringUtils.isEmpty(this.custSts.getValue())) {
-				this.custSts.setReadonly(isReadOnly("CustomerDialog_custSts"));
-				if (!this.custSts.isReadonly()) {
-					this.custSts.setMandatoryStyle(false);
-				}
+				this.custSts.setReadonly(true);
 			}
 			if (StringUtils.isEmpty(this.custSector.getValue())) {
 				this.custSector.setReadonly(isReadOnly("CustomerDialog_custSector"));
@@ -2159,11 +2148,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		if (!this.custSts.isReadonly()) {
 			this.custSts.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustSts.value"),
 					null, false, true));
-		}
-
-		if (!this.custSegment.isReadonly()) {
-			this.custSegment.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_CustomerDialog_CustSegment.value"), null, false, true));
 		}
 
 		if (isRetailCustomer) {
@@ -2463,7 +2447,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.custTypeCode.setReadonly(isReadOnly("CustomerDialog_custTypeCode"));
 				this.custNationality.setReadonly(isReadOnly("CustomerDialog_custNationality"));
 				this.custLng.setReadonly(isReadOnly("CustomerDialog_custLng"));
-				this.custSts.setReadonly(isReadOnly("CustomerDialog_custSts"));
+				this.custSts.setReadonly(true);//isReadOnly("CustomerDialog_custSts")
 				this.custSector.setReadonly(isReadOnly("CustomerDialog_custSector"));
 				this.custIndustry.setReadonly(isReadOnly("CustomerDialog_custIndustry"));
 				this.custCOB.setReadonly(isReadOnly("CustomerDialog_custCOB"));
@@ -2666,7 +2650,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custLng.setValue("");
 		this.custLng.setDescription("");
 		this.custSts.setValue("");
-		this.custSts.setDescription("");
 		this.custSector.setValue("");
 		this.custSector.setDescription("");
 		this.custIndustry.setValue("");
