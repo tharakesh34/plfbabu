@@ -33,7 +33,13 @@
 			<column name="PrvovisionRate" type="decimal(13,9)" />
 		</addColumn>
 	</changeSet>
+<changeSet id="3" author="satish">
+	<addColumn tableName="AdtCustomers">
+		<column name="CustAppDate" type="datetime">
+		</column>
+	</addColumn>
 
+</changeSet>
 
 
 </databaseChangeLog>

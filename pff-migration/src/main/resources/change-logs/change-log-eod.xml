@@ -373,4 +373,16 @@
 
 </changeSet>
 
+<changeSet id="42" author="satish">
+	<addColumn tableName="Customers">
+		<column name="CustAppDate" type="datetime">
+		</column>
+	</addColumn>
+	<addColumn tableName="Customers_Temp">
+		<column name="CustAppDate" type="datetime">
+		</column>
+	</addColumn>
+</changeSet>
+
+
 </databaseChangeLog>
