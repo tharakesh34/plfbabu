@@ -1199,4 +1199,12 @@ Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSP
 	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
 		</createView>
 	</changeSet>
+	
+	<changeSet id="88" author="Durgaprasad G">
+	<sql>
+	DELETE from RBFIELDDETAILS Where RBMODULE = 'BOUNCE' and RBEVENT = 'BOUNCE' and RBFLDNAME = 'rd_paymentType';
+	INSERT INTO RBFIELDDETAILS VALUES ('BOUNCE','BOUNCE','rd_paymentType','Mandate Types','nvarchar',8,'0','1','FINRECEIPTDETAIL','static,global,dbvalue','');
+	</sql>
+	</changeSet>
+	
 </databaseChangeLog>
