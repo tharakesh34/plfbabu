@@ -2480,7 +2480,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		Map<String, ReceiptAllocationDetail> allocationMap = new HashMap<>();
 		if(allocations != null && !allocations.isEmpty()){
 			for (int i = 0; i < allocations.size(); i++) {
-				allocationMap.put(allocations.get(i).getAllocationType(), allocations.get(i));
+				if(allocations.get(i).getAllocationTo() != 0){
+					allocationMap.put(allocations.get(i).getAllocationType()+"_"+allocations.get(i).getAllocationTo(), allocations.get(i));
+				}else{
+					allocationMap.put(allocations.get(i).getAllocationType(), allocations.get(i));
+				}
 			}
 		}
 		
@@ -2510,15 +2514,16 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			for (int i = 0; i < allocateTypes.size(); i++) {
 
 				String allocationType = allocateTypes.get(i);
-				if(allocateTypes.get(i).contains("_")){
-					allocationType = allocateTypes.get(i).substring(0, allocateTypes.get(i).indexOf("_"));
-				}
 				if(allocationMap.containsKey(allocationType)){
 					allocation = allocationMap.get(allocationType);
 				}else{
 					allocation = new ReceiptAllocationDetail();
 				}
 
+				if(allocateTypes.get(i).contains("_")){
+					allocationType = allocateTypes.get(i).substring(0, allocateTypes.get(i).indexOf("_"));
+				}
+				
 				BigDecimal totalCalAmount = getReceiptData().getAllocationMap().get(allocateTypes.get(i));
 
 				item = new Listitem();
