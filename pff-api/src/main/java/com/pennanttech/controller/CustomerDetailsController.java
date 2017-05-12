@@ -1096,8 +1096,8 @@ public class CustomerDetailsController {
 		logger.debug("Entering");
 		WSReturnStatus response = null;
 		try{
-		CustomerChequeInfo curCustChequeInfo = customerChequeInfoService.getCustomerChequeInfoById(customerChequeInfo.getCustID(),
-				customerChequeInfo.getChequeSeq());
+		CustomerChequeInfo curCustChequeInfo = customerChequeInfoDAO.getCustomerChequeInfoById(customerChequeInfo.getCustID(),
+				customerChequeInfo.getChequeSeq(),"");
 
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		curCustChequeInfo.setUserDetails(userDetails);

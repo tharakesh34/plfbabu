@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
+import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WSReturnStatus;
@@ -27,7 +27,6 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerBankInfoService;
-import com.pennant.backend.service.customermasters.CustomerChequeInfoService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.customermasters.CustomerEMailService;
@@ -36,7 +35,6 @@ import com.pennant.backend.service.customermasters.CustomerExtLiabilityService;
 import com.pennant.backend.service.customermasters.CustomerIncomeService;
 import com.pennant.backend.service.customermasters.CustomerPhoneNumberService;
 import com.pennant.backend.service.customermasters.CustomerService;
-import com.pennant.backend.service.customermasters.validation.CustomerBankInfoValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerExtLiabilityValidation;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.exception.PFFInterfaceException;
@@ -66,22 +64,22 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAPService {
 	private final static Logger logger = Logger.getLogger(CustomerWebServiceImpl.class);
 
-	private CustomerController customerController;
-	private CustomerDetailsController customerDetailsController;
-	private ValidationUtility validationUtility;
-	private CustomerDetailsService customerDetailsService;
-	private CustomerService customerService;
-	private CustomerEmploymentDetailService customerEmploymentDetailService;
-	private CustomerPhoneNumberService customerPhoneNumberService;
-	private CustomerAddresService customerAddresService;
-	private CustomerEMailService customerEMailService;
-	private CustomerIncomeService customerIncomeService;
-	private CustomerBankInfoDAO customerBankInfoDAO;
-	private CustomerExtLiabilityDAO customerExtLiabilityDAO;
-	private CustomerDocumentService customerDocumentService;
-	private CustomerBankInfoService customerBankInfoService;
-	private CustomerChequeInfoService customerChequeInfoService;
-	private CustomerExtLiabilityService customerExtLiabilityService;
+	private CustomerController				customerController;
+	private CustomerDetailsController		customerDetailsController;
+	private ValidationUtility				validationUtility;
+	private CustomerDetailsService			customerDetailsService;
+	private CustomerService					customerService;
+	private CustomerEmploymentDetailService	customerEmploymentDetailService;
+	private CustomerPhoneNumberService		customerPhoneNumberService;
+	private CustomerAddresService			customerAddresService;
+	private CustomerEMailService			customerEMailService;
+	private CustomerIncomeService			customerIncomeService;
+	private CustomerExtLiabilityDAO			customerExtLiabilityDAO;
+	private CustomerDocumentService			customerDocumentService;
+	private CustomerBankInfoService			customerBankInfoService;
+	private CustomerExtLiabilityService		customerExtLiabilityService;
+	private CustomerChequeInfoDAO			customerChequeInfoDAO;
+
 
 	/**
 	 * Method for create customer in PLF system.
@@ -1481,8 +1479,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 
 		WSReturnStatus response = null;
 		// validate Customer with given CustCIF
-		CustomerChequeInfo customerChequeInfo = customerChequeInfoService.getCustomerChequeInfoById(customer.getCustID(),
-				customerChequeInfoDetail.getCustomerChequeInfo().getChequeSeq());
+		CustomerChequeInfo customerChequeInfo = customerChequeInfoDAO.getCustomerChequeInfoById(customer.getCustID(),
+				customerChequeInfoDetail.getCustomerChequeInfo().getChequeSeq(),"");
 		if (customerChequeInfo != null) {
 			// call update customer if there is no errors
 			response = customerDetailsController.updateCustomerAccountBehaviour(
@@ -1555,8 +1553,8 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		}
 		WSReturnStatus response = null;
 		// validate Customer with given CustCIF
-		CustomerChequeInfo custChequeInfo = customerChequeInfoService.getCustomerChequeInfoById(
-				customerChequeInfo.getCustID(), customerChequeInfo.getChequeSeq());
+		CustomerChequeInfo custChequeInfo = customerChequeInfoDAO.getCustomerChequeInfoById(
+				customerChequeInfo.getCustID(), customerChequeInfo.getChequeSeq(),"");
 		if (custChequeInfo != null) {
 			// call delete customer service
 			response = customerDetailsController.deleteCustomerAccountBehaviour(customerChequeInfo);
@@ -2150,12 +2148,6 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 	public void setCustomerIncomeService(CustomerIncomeService customerIncomeService) {
 		this.customerIncomeService = customerIncomeService;
 	}
-
-	@Autowired
-	public void setCustomerBankInfoDAO(CustomerBankInfoDAO customerBankInfoDAO) {
-		this.customerBankInfoDAO = customerBankInfoDAO;
-	}
-
 	@Autowired
 	public void setCustomerExtLiabilityDAO(CustomerExtLiabilityDAO customerExtLiabilityDAO) {
 		this.customerExtLiabilityDAO = customerExtLiabilityDAO;
@@ -2169,12 +2161,12 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		this.customerBankInfoService = customerBankInfoService;
 	}
 	@Autowired
-	public void setCustomerChequeInfoService(CustomerChequeInfoService customerChequeInfoService) {
-		this.customerChequeInfoService = customerChequeInfoService;
-	}
-	@Autowired
 	public void setCustomerExtLiabilityService(CustomerExtLiabilityService customerExtLiabilityService) {
 		this.customerExtLiabilityService = customerExtLiabilityService;
+	}
+	@Autowired
+	public void setCustomerChequeInfoDAO(CustomerChequeInfoDAO customerChequeInfoDAO) {
+		this.customerChequeInfoDAO = customerChequeInfoDAO;
 	}
 
 
