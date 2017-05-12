@@ -305,6 +305,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String ruleCode;
 	private String custSuspMvtType;
 	private String custSwiftBrnCode;
+	private Date custAppDate;
 
 	// API validation purpose only
 	@SuppressWarnings("unused")
@@ -1761,6 +1762,14 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 
 	public void setCustSwiftBrnCode(String custSwiftBrnCode) {
 		this.custSwiftBrnCode = custSwiftBrnCode;
+	}
+
+	public Date getCustAppDate() {
+		return custAppDate;
+	}
+
+	public void setCustAppDate(Date custAppDate) {
+		this.custAppDate = custAppDate;
 	}
 
 }
