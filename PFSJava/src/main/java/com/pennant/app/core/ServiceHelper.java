@@ -87,7 +87,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
-import com.pennant.eod.dao.CustomerDatesDAO;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 
 abstract public class ServiceHelper implements Serializable {
@@ -98,7 +97,6 @@ abstract public class ServiceHelper implements Serializable {
 	//customer
 	private CustomerDAO					customerDAO;
 	private CustomerStatusCodeDAO		customerStatusCodeDAO;
-	private CustomerDatesDAO			customerDatesDAO;
 	private CustomerQueuingDAO			customerQueuingDAO;
 	//Loan
 	private FinanceTypeDAO				financeTypeDAO;
@@ -436,14 +434,6 @@ abstract public class ServiceHelper implements Serializable {
 
 	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
 		this.accountProcessUtil = accountProcessUtil;
-	}
-
-	public CustomerDatesDAO getCustomerDatesDAO() {
-		return customerDatesDAO;
-	}
-
-	public void setCustomerDatesDAO(CustomerDatesDAO customerDatesDAO) {
-		this.customerDatesDAO = customerDatesDAO;
 	}
 
 	public CustomerQueuingDAO getCustomerQueuingDAO() {

@@ -13,7 +13,6 @@
 	<!-- prepareCustomerQueue -->
 
 	<bean id="prepareCustomerQueueTaskLet" class="com.pennant.backend.endofday.tasklet.PrepareCustomerQueue">
-		<property name="customerDatesDAO" ref="customerDatesDAO" />
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 	</bean>
 

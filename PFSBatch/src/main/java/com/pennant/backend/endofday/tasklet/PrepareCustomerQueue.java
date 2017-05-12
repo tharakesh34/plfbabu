@@ -52,14 +52,12 @@ import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.BatchUtil;
-import com.pennant.eod.dao.CustomerDatesDAO;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class PrepareCustomerQueue implements Tasklet {
 
 	private Logger				logger	= Logger.getLogger(PrepareCustomerQueue.class);
 
-	private CustomerDatesDAO	customerDatesDAO;
 	private CustomerQueuingDAO	customerQueuingDAO;
 
 	public PrepareCustomerQueue() {
@@ -71,9 +69,6 @@ public class PrepareCustomerQueue implements Tasklet {
 		Date valueDate = DateUtility.getAppValueDate();
 		logger.debug("START: Prepare Customer Queue On : " + valueDate);
 
-		// save customer business dates when EOD starts
-		//customerDatesDAO.saveCustomerDates(appDate, valueDate, nextBusinessDate);
-
 		customerQueuingDAO.delete();
 		int count = customerQueuingDAO.prepareCustomerQueue(valueDate);
 		BatchUtil.setExecution(context, "TOTAL", String.valueOf(count));
@@ -81,10 +76,6 @@ public class PrepareCustomerQueue implements Tasklet {
 
 		logger.debug("COMPLETE: Prepare Customer Queue On :" + valueDate);
 		return RepeatStatus.FINISHED;
-	}
-
-	public void setCustomerDatesDAO(CustomerDatesDAO customerDatesDAO) {
-		this.customerDatesDAO = customerDatesDAO;
 	}
 
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
