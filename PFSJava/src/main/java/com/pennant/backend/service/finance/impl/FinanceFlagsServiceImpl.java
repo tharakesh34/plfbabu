@@ -750,7 +750,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 			for (FinFlagsDetail detail : finFlagsDetailList) {
 				// validate Master code with PLF system masters
 				Flag flag = flagService.getApprovedFlagById(detail.getFlagCode());
-				if (flag == null) {
+				if (flag == null || !flag.isActive()) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "flagCode";
 					valueParm[1] = detail.getFlagCode();

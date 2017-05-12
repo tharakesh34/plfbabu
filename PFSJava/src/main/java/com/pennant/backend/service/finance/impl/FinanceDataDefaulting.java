@@ -87,10 +87,10 @@ public class FinanceDataDefaulting {
 
 		//Validate Finance Type (Mandatory for Defaulting)
 		FinanceType financeType = financeTypeDAO.getOrgFinanceTypeByID(finMain.getFinType(), "_ORGView");
-		if (financeType == null) {
+		if (financeType == null || !financeType.isFinIsActive()) {
 			Promotion promotion = promotionService.getApprovedPromotionById(finMain.getFinType(),
 					FinanceConstants.MODULEID_PROMOTION, true);
-			if (promotion == null) {
+			if (promotion == null || !promotion.isActive()) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finMain.getFinType();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90202", valueParm)));

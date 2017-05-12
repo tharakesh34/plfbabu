@@ -229,7 +229,7 @@
 		</field> -->
 		<field name="phoneNumber">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>phoneNumber should have maximum 10 characters</message>
+				<message>90279%%disbursement</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
@@ -238,7 +238,7 @@
 				<element name="max">10</element>
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>phoneNumber should be 10 characters</message>
+				<message>90279%%disbursement</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
