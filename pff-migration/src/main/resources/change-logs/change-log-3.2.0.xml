@@ -1376,4 +1376,11 @@ Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSP
       		ORDER BY DS.ID DESC
 	 	</createView>
 	</changeSet>
+	<changeSet id="96" author="Srikanth">
+	<sql>
+		INSERT INTO ErrorDetails VALUES('90280','EN','E','Toatl disbursement Amount:{0} Exceeded the Max disbursement amount:{1}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		INSERT INTO ErrorDetails VALUES('90279','EN','E','PhoneNumber should be 10 digits in ({0})','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		Update ErrorDetails set ErrorMessage = 'Disbursement instructions amount:{0} should match with the net disbursement amount:{1}' where ErrorCode = '60401';
+	</sql>
+	</changeSet>
 </databaseChangeLog>
