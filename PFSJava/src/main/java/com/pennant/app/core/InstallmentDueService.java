@@ -26,6 +26,7 @@ public class InstallmentDueService extends ServiceHelper {
 	 * @throws Exception
 	 */
 	public void processDueDatePostings(CustEODEvent custEODEvent) throws Exception {
+		logger.debug(" Entering ");
 
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		Date valueDate = custEODEvent.getEodValueDate();
@@ -49,6 +50,8 @@ public class InstallmentDueService extends ServiceHelper {
 			}
 
 		}
+
+		logger.debug(" Leaving ");
 	}
 
 	/**
@@ -58,16 +61,17 @@ public class InstallmentDueService extends ServiceHelper {
 	public void postInstallmentDues(FinEODEvent finEODEvent, FinanceScheduleDetail finSchd, Date valueDate)
 			throws Exception {
 		logger.debug(" Entering ");
-		
+
 		long accountingID = getAccountingID(finEODEvent.getFinanceMain(), AccountEventConstants.ACCEVENT_INSTDATE);
 		if (accountingID == Long.MIN_VALUE) {
 			return;
 		}
-		
+
 		FinanceProfitDetail profiDetails = finEODEvent.getFinProfitDetail();
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(profiDetails, AccountEventConstants.ACCEVENT_INSTDATE, valueDate, finSchd.getSchDate());
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(profiDetails, AccountEventConstants.ACCEVENT_INSTDATE, valueDate,
+				finSchd.getSchDate());
 		aeEvent.getAcSetIDList().add(accountingID);
-		
+
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		amountCodes.setInstpft(finSchd.getProfitSchd());
 		amountCodes.setInstpri(finSchd.getPrincipalSchd());

@@ -75,6 +75,7 @@ public class LatePayMarkingService extends ServiceHelper {
 	 * @throws Exception
 	 */
 	public CustEODEvent processLatePayMarking(CustEODEvent custEODEvent) throws Exception {
+		logger.debug(" Entering ");
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		Date valueDate = custEODEvent.getEodValueDate();
 
@@ -88,7 +89,7 @@ public class LatePayMarkingService extends ServiceHelper {
 			}
 
 		}
-
+		logger.debug(" Leaving ");
 		return custEODEvent;
 	}
 
@@ -224,6 +225,7 @@ public class LatePayMarkingService extends ServiceHelper {
 	 * @throws Exception
 	 */
 	public CustEODEvent processDPDBuketing(CustEODEvent custEODEvent) throws Exception {
+		logger.debug(" Entering ");
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		Date valueDate = custEODEvent.getEodValueDate();
 
@@ -238,12 +240,12 @@ public class LatePayMarkingService extends ServiceHelper {
 				finEODEvent.getFinProfitDetail().setDueBucket(finEODEvent.getFinanceMain().getDueBucket());
 			}
 		}
-
+		logger.debug(" Leaving ");
 		return custEODEvent;
 	}
 
 	public CustEODEvent processCustomerStatus(CustEODEvent custEODEvent) {
-
+		logger.debug(" Entering ");
 		Date valueDate = custEODEvent.getEodValueDate();
 		String newBucketCode = FinanceConstants.FINSTSRSN_SYSTEM;
 		int maxBuckets = 0;
@@ -266,6 +268,7 @@ public class LatePayMarkingService extends ServiceHelper {
 			custEODEvent.getCustomer().setCustSts(newBucketCode);
 			custEODEvent.getCustomer().setCustStsChgDate(valueDate);
 		}
+		logger.debug(" Leaving ");
 
 		return custEODEvent;
 
@@ -376,7 +379,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		finODDetail.setFinType(finEODEvent.getFinanceMain().getFinType());
 		finODDetail.setCustID(finEODEvent.getFinanceMain().getCustID());
 		finODDetail.setFinODTillDate(valueDate);
-		
+
 		finODDetail.setFinCurODPri(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
 		finODDetail.setFinCurODPft(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
 		finODDetail.setFinCurODAmt(finODDetail.getFinCurODPft().add(finODDetail.getFinCurODPri()));

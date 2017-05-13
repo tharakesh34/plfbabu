@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -56,6 +57,7 @@ import com.pennant.backend.util.RuleReturnType;
 public class NPAService extends ServiceHelper {
 
 	private static final long	serialVersionUID	= 6161809223570900644L;
+	private static Logger		logger				= Logger.getLogger(NPAService.class);
 	private ProvisionDAO		provisionDAO;
 	private RuleExecutionUtil	ruleExecutionUtil;
 	private RuleDAO				ruleDAO;
@@ -68,6 +70,7 @@ public class NPAService extends ServiceHelper {
 	}
 
 	public CustEODEvent processNPABuckets(CustEODEvent custEODEvent) throws Exception {
+		logger.debug(" Entering ");
 		String prvRule = "";
 		Object object = SysParamUtil.getValue("PROVISION_RULE");
 		if (object != null) {
@@ -88,6 +91,7 @@ public class NPAService extends ServiceHelper {
 			finEODEvent = findProvision(finEODEvent, valueDate, rule);
 
 		}
+		logger.debug(" Leaving ");
 		return custEODEvent;
 
 	}

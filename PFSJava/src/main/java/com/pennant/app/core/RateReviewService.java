@@ -80,6 +80,7 @@ public class RateReviewService extends ServiceHelper {
 	}
 
 	public CustEODEvent processRateReview(CustEODEvent custEODEvent) throws Exception {
+		logger.debug(" Entering ");
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
@@ -93,7 +94,7 @@ public class RateReviewService extends ServiceHelper {
 				reviewRateUpdate(finEODEvent, custEODEvent.getEodValueDate());
 			}
 		}
-
+		logger.debug(" Leaving ");
 		return custEODEvent;
 	}
 
@@ -201,7 +202,7 @@ public class RateReviewService extends ServiceHelper {
 
 		BigDecimal totalPftSchdOld = profitDetail.getTotalPftSchd();
 		BigDecimal totalPftCpzOld = profitDetail.getTotalPftCpz();
-		
+
 		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
 		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
 
@@ -250,7 +251,7 @@ public class RateReviewService extends ServiceHelper {
 		} else {
 			aeEvent.getAcSetIDList().add(accountingID);
 		}
-		
+
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);

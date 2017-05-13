@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
@@ -14,12 +15,14 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 
 public class DateRollOverService extends ServiceHelper {
 
+	private static Logger		logger				= Logger.getLogger(DateRollOverService.class);
 	private static final long	serialVersionUID	= -3371115026576113554L;
 
 	public CustEODEvent process(CustEODEvent custEODEvent) throws Exception {
+		logger.debug(" Entering ");
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		custEODEvent.setEodValueDate(DateUtility.addDays(custEODEvent.getEodValueDate(), 1));
-		
+
 		for (FinEODEvent finEODEvent : finEODEvents) {
 			Date valueDate = custEODEvent.getEodValueDate();
 			FinanceMain finMain = finEODEvent.getFinanceMain();
@@ -75,7 +78,7 @@ public class DateRollOverService extends ServiceHelper {
 				}
 			}
 		}
-
+		logger.debug(" Leaving ");
 		return custEODEvent;
 
 	}
@@ -96,7 +99,7 @@ public class DateRollOverService extends ServiceHelper {
 			return;
 		}
 
-		int i = getIndexFromMap(datesMap,finMain.getNextGrcCpzDate());
+		int i = getIndexFromMap(datesMap, finMain.getNextGrcCpzDate());
 		FinanceScheduleDetail curSchd = null;
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
@@ -127,7 +130,7 @@ public class DateRollOverService extends ServiceHelper {
 			return;
 		}
 
-		int i = getIndexFromMap(datesMap,finMain.getNextGrcPftDate());
+		int i = getIndexFromMap(datesMap, finMain.getNextGrcPftDate());
 		FinanceScheduleDetail curSchd = null;
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
@@ -170,7 +173,7 @@ public class DateRollOverService extends ServiceHelper {
 			}
 		}
 
-		int i = getIndexFromMap(datesMap,finMain.getNextGrcPftRvwDate());
+		int i = getIndexFromMap(datesMap, finMain.getNextGrcPftRvwDate());
 		FinanceScheduleDetail curSchd = null;
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
@@ -206,7 +209,7 @@ public class DateRollOverService extends ServiceHelper {
 			return;
 		}
 
-		int i = getIndexFromMap(datesMap,finMain.getNextRepayCpzDate());
+		int i = getIndexFromMap(datesMap, finMain.getNextRepayCpzDate());
 		FinanceScheduleDetail curSchd = null;
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
@@ -238,7 +241,7 @@ public class DateRollOverService extends ServiceHelper {
 			return;
 		}
 
-		int i = getIndexFromMap(datesMap,finMain.getNextRepayDate());
+		int i = getIndexFromMap(datesMap, finMain.getNextRepayDate());
 		FinanceScheduleDetail curSchd = null;
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
@@ -271,7 +274,7 @@ public class DateRollOverService extends ServiceHelper {
 			return;
 		}
 
-		int i = getIndexFromMap(datesMap,finMain.getNextRepayPftDate());
+		int i = getIndexFromMap(datesMap, finMain.getNextRepayPftDate());
 		FinanceScheduleDetail curSchd = null;
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
@@ -313,7 +316,7 @@ public class DateRollOverService extends ServiceHelper {
 				finEODEvent.setRateReview(true);
 			}
 		}
-		
+
 		int i = getIndexFromMap(datesMap, finMain.getNextRepayRvwDate());
 		FinanceScheduleDetail curSchd = null;
 

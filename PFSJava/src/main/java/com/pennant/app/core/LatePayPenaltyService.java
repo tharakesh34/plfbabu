@@ -52,8 +52,8 @@ import com.pennant.backend.util.FinanceConstants;
 
 public class LatePayPenaltyService extends ServiceHelper {
 
-	private static final long		serialVersionUID	= 6161809223570900644L;
-	private static Logger			logger				= Logger.getLogger(LatePayPenaltyService.class);
+	private static final long	serialVersionUID	= 6161809223570900644L;
+	private static Logger		logger				= Logger.getLogger(LatePayPenaltyService.class);
 
 	/**
 	 * Default constructor
@@ -63,6 +63,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 	}
 
 	public CustEODEvent processLatePayPenalty(CustEODEvent custEODEvent) throws Exception {
+		logger.debug(" Entering ");
 
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		Date valueDate = custEODEvent.getEodValueDate();
@@ -75,6 +76,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 			finEODEvent = computeLPP(finEODEvent, valueDate);
 
 		}
+
+		logger.debug(" Leaving ");
 		return custEODEvent;
 
 	}
@@ -117,7 +120,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 				fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid())
 						.subtract(fod.getTotWaived()));
 
-//				updateLPPenaltInODDetails(fod);
+				//				updateLPPenaltInODDetails(fod);
 				continue;
 			}
 
@@ -128,7 +131,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 				fod.setTotPenaltyAmt(penalty);
 				fod.setTotPenaltyBal(penalty.subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
 
-//				updateLPPenaltInODDetails(fod);
+				//				updateLPPenaltInODDetails(fod);
 				continue;
 			}
 
@@ -152,7 +155,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 				fod.setTotPenaltyAmt(penalty);
 				fod.setTotPenaltyBal(penalty.subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
 
-//				updateLPPenaltInODDetails(fod);
+				//				updateLPPenaltInODDetails(fod);
 				continue;
 			}
 
@@ -160,12 +163,12 @@ public class LatePayPenaltyService extends ServiceHelper {
 			if (FinanceConstants.PENALTYTYPE_PERCONDUEMTH.equals(fod.getODChargeType())) {
 				finEODEvent = prepareMonthlyData(finEODEvent, fod, valueDate);
 
-//				updateLPPenaltInODDetails(fod);
+				//				updateLPPenaltInODDetails(fod);
 				continue;
 			}
 			//On Due Days
 			finEODEvent = prepareDueDateData(finEODEvent, fod, valueDate);
-//			updateLPPenaltInODDetails(fod);
+			//			updateLPPenaltInODDetails(fod);
 
 		}
 
@@ -438,6 +441,5 @@ public class LatePayPenaltyService extends ServiceHelper {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-
 
 }

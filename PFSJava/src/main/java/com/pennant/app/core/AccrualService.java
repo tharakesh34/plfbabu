@@ -67,12 +67,14 @@ public class AccrualService extends ServiceHelper {
 	private FinanceSuspHeadDAO	suspHeadDAO;
 
 	public CustEODEvent processAccrual(CustEODEvent custEODEvent) throws Exception {
+		logger.debug(" Entering ");
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		Date valueDate = custEODEvent.getEodValueDate();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 			finEODEvent = calculateAccruals(finEODEvent, valueDate);
 		}
+		logger.debug(" Leaving ");
 
 		return custEODEvent;
 
@@ -589,13 +591,12 @@ public class AccrualService extends ServiceHelper {
 		if (finPftDetail.isPftInSusp()) {
 			eventCode = AccountEventConstants.ACCEVENT_AMZSUSP;
 		}
-		
+
 		long accountingID = getAccountingID(finEODEvent.getFinanceMain(), eventCode);
 		if (accountingID == Long.MIN_VALUE) {
 			return;
-		} 
-		
-	
+		}
+
 		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finPftDetail, eventCode, valueDate, valueDate);
 		aeEvent.setDataMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());
 		aeEvent.getAcSetIDList().add(accountingID);

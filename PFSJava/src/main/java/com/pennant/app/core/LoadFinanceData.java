@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.util.BusinessCalendar;
@@ -17,6 +18,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
@@ -29,10 +31,13 @@ import com.pennanttech.pff.core.TableType;
 
 public class LoadFinanceData extends ServiceHelper {
 
+	private static Logger		logger				= Logger.getLogger(LoadFinanceData.class);
+
 	private static final long	serialVersionUID	= -281578785120363314L;
 
 	public CustEODEvent prepareFinEODEvents(CustEODEvent custEODEvent, long custId) throws Exception {
-		
+		logger.debug(" Entering ");
+
 		custEODEvent.setCustomer(getCustomerDAO().getCustomerEOD(custId));
 
 		long custID = custEODEvent.getCustomer().getCustID();
@@ -42,6 +47,7 @@ public class LoadFinanceData extends ServiceHelper {
 
 		List<FinanceMain> custFinMains = getFinanceMainDAO().getFinanceMainsByCustId(custID, true);
 		List<PresentmentDetail> presentments = getPresentmentHeaderDAO().getPresentmenToPost(custID, businesdate);
+		List<FinanceProfitDetail> listprofitDetails = getFinanceProfitDetailDAO().getFinProfitDetailsByCustId(custID);
 
 		for (int i = 0; i < custFinMains.size(); i++) {
 			FinEODEvent finEODEvent = new FinEODEvent();
@@ -77,7 +83,7 @@ public class LoadFinanceData extends ServiceHelper {
 			finEODEvent.setFinSchFrqInsurances(getFinInsurancesDAO().getInsSchdToPost(finReference, businesdate));
 
 			//FINPROFIT DETAILS
-			finEODEvent.setFinProfitDetail(getFinanceProfitDetailDAO().getFinProfitDetailsById(finReference));
+			finEODEvent.setFinProfitDetail(getFinanceProfitDetailRef(finReference, listprofitDetails));
 
 			PresentmentDetail presentment = getPresentmentDetailbyRef(finReference, presentments);
 			if (presentment != null) {
@@ -91,13 +97,14 @@ public class LoadFinanceData extends ServiceHelper {
 		//clear temporary data
 		presentments.clear();
 		custFinMains.clear();
-
+		logger.debug(" Leaving ");
 		return custEODEvent;
 	}
 
 	public void updateFinEODEvents(CustEODEvent custEODEvent) throws Exception {
+		logger.debug(" Entering ");
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
-		List<ReturnDataSet> returnDataSets=new ArrayList<ReturnDataSet>(1);
+		List<ReturnDataSet> returnDataSets = new ArrayList<ReturnDataSet>(1);
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 
@@ -122,7 +129,7 @@ public class LoadFinanceData extends ServiceHelper {
 			if (odDetails != null && !odDetails.isEmpty()) {
 				for (FinODDetails finODDetails : odDetails) {
 					if (StringUtils.equals(finODDetails.getRcdAction(), PennantConstants.RECORD_INSERT)) {
-						if (finODDetails.getFinCurODDays()!=0) {
+						if (finODDetails.getFinCurODDays() != 0) {
 							getFinODDetailsDAO().save(finODDetails);
 						}
 					} else if (StringUtils.equals(finODDetails.getRcdAction(), PennantConstants.RECORD_UPDATE)) {
@@ -143,10 +150,10 @@ public class LoadFinanceData extends ServiceHelper {
 				}
 				getRepayInstructionDAO().saveList(lisRepayIns, "", false);
 			}
-			
+
 			returnDataSets.addAll(finEODEvent.getReturnDataSet());
 		}
-		
+
 		getAccountProcessUtil().procAccountUpdate(returnDataSets);
 
 		if (custEODEvent.isUpdCustomer()) {
@@ -155,16 +162,18 @@ public class LoadFinanceData extends ServiceHelper {
 					custEODEvent.getCustomer().getCustID());
 		}
 
+		logger.debug(" Leaving ");
 		returnDataSets.clear();
 	}
-	
-	public void updateCustomerDate(long custId, Date date){
+
+	public void updateCustomerDate(long custId, Date date) {
+		logger.debug(" Entering ");
 		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
 		Calendar nextBusDate = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT, date);
-		getCustomerDAO().updateCustAppDate(custId,nextBusDate.getTime());
+		getCustomerDAO().updateCustAppDate(custId, nextBusDate.getTime());
+		logger.debug(" Leaving ");
 	}
-	
-	
+
 	public void updateEnd(Date date, long custId) {
 
 		CustomerQueuing customerQueuing = new CustomerQueuing();
@@ -175,11 +184,19 @@ public class LoadFinanceData extends ServiceHelper {
 
 	}
 
-
 	private PresentmentDetail getPresentmentDetailbyRef(String finrefere, List<PresentmentDetail> presentments) {
 		for (PresentmentDetail presentmentDetail : presentments) {
 			if (StringUtils.equals(presentmentDetail.getFinReference(), finrefere)) {
 				return presentmentDetail;
+			}
+		}
+		return null;
+	}
+
+	private FinanceProfitDetail getFinanceProfitDetailRef(String finrefere, List<FinanceProfitDetail> listprofitDetails) {
+		for (FinanceProfitDetail financeProfitDetail : listprofitDetails) {
+			if (StringUtils.equals(financeProfitDetail.getFinReference(), finrefere)) {
+				return financeProfitDetail;
 			}
 		}
 		return null;

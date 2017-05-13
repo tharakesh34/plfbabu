@@ -21,6 +21,7 @@ public class AutoDisbursementService extends ServiceHelper {
 	 * @throws Exception
 	 */
 	public void processDisbursementPostings(CustEODEvent custEODEvent) throws Exception {
+		logger.debug(" Entering ");
 
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		Date valueDate = custEODEvent.getEodValueDate();
@@ -39,6 +40,8 @@ public class AutoDisbursementService extends ServiceHelper {
 			}
 
 		}
+
+		logger.debug(" Leaving ");
 
 	}
 

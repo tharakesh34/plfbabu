@@ -128,6 +128,39 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		logger.debug("Leaving");
 		return finProfitDetails;
 	}
+	
+	/**
+	 * Method for get the FinanceProfitDetail Object by Key finReference
+	 */
+	@Override
+	public List<FinanceProfitDetail> getFinProfitDetailsByCustId(long custID) {
+		logger.debug("Entering");
+		
+		FinanceProfitDetail finProfitDetails = new FinanceProfitDetail();
+		finProfitDetails.setCustId(custID);
+		
+		StringBuilder selectSql = new StringBuilder("Select FinReference, CustId,  ");
+		selectSql.append(" FinBranch, FinType, FinCcy, LastMdfDate, FinIsActive,");
+		selectSql.append(" TotalPftSchd, TotalPftCpz, TotalPftPaid, TotalPftBal, TotalPftPaidInAdv,");
+		selectSql.append(" TotalPriPaid, TotalPriBal, TdSchdPft, TdPftCpz, TdSchdPftPaid,");
+		selectSql.append(" TdSchdPftBal, PftAccrued, PftAccrueSusp, PftAmz, PftAmzSusp,");
+		selectSql.append(" TdSchdPri, TdSchdPriPaid, TdSchdPriBal, AcrTillLBD,");
+		selectSql.append(" AmzTillLBD, FinWorstStatus, FinStatus, FinStsReason, ");
+		selectSql.append(" ClosingStatus, FinCategory, PrvRpySchDate, NSchdDate, PrvRpySchPri, PrvRpySchPft, ");
+		selectSql.append(" LatestRpyDate, LatestRpyPri, LatestRpyPft, TotalWriteoff, FirstODDate, PrvODDate, ");
+		selectSql.append(" ODPrincipal, ODProfit, CurODDays, FinStartDate, ");
+		selectSql.append(" ExcessAmt, EmiInAdvance, ");
+		selectSql.append(" PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv");
+		selectSql.append(" From FinPftDetails");
+		selectSql.append(" Where CustId =:CustId");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
+		RowMapper<FinanceProfitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceProfitDetail.class);
+		return  this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
+	}
 
 	/**
 	 * Method for get the FinanceProfitDetail Object by Key finReference

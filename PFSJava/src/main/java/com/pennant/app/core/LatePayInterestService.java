@@ -34,7 +34,6 @@
 package com.pennant.app.core;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -53,8 +52,8 @@ import com.pennant.backend.util.FinanceConstants;
 
 public class LatePayInterestService extends ServiceHelper {
 
-	private static final long		serialVersionUID	= 6161809223570900644L;
-	private static Logger			logger				= Logger.getLogger(LatePayInterestService.class);
+	private static final long	serialVersionUID	= 6161809223570900644L;
+	private static Logger		logger				= Logger.getLogger(LatePayInterestService.class);
 
 	/**
 	 * Default constructor
@@ -64,6 +63,7 @@ public class LatePayInterestService extends ServiceHelper {
 	}
 
 	public CustEODEvent processLatePayInterest(CustEODEvent custEODEvent) throws Exception {
+		logger.debug(" Entering ");
 
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		Date valueDate = custEODEvent.getEodValueDate();
@@ -82,6 +82,7 @@ public class LatePayInterestService extends ServiceHelper {
 			finEODEvent = computeLPI(finEODEvent, valueDate);
 
 		}
+		logger.debug(" Leaving ");
 		return custEODEvent;
 
 	}
@@ -97,7 +98,6 @@ public class LatePayInterestService extends ServiceHelper {
 		if (finODDetails == null || finODDetails.size() == 0) {
 			return finEODEvent;
 		}
-
 
 		for (int i = 0; i < finODDetails.size(); i++) {
 			FinODDetails fod = finODDetails.get(i);
@@ -196,7 +196,8 @@ public class LatePayInterestService extends ServiceHelper {
 			schdODCRecoveries.add(odcr);
 		}
 
-		fod.setLPIAmt(BigDecimal.ZERO);;
+		fod.setLPIAmt(BigDecimal.ZERO);
+		;
 		String idb = finEODEvent.getFinanceMain().getProfitDaysBasis();
 		//Calculate the Penalty
 		for (int i = 0; i < schdODCRecoveries.size() - 1; i++) {
@@ -233,7 +234,8 @@ public class LatePayInterestService extends ServiceHelper {
 	}
 
 	public List<OverdueChargeRecovery> addRepayToODCR(FinanceRepayments repayment,
-			List<OverdueChargeRecovery> schdODCRecoveries, BigDecimal paidPri, BigDecimal paidPft, BigDecimal penaltyRate) throws Exception {
+			List<OverdueChargeRecovery> schdODCRecoveries, BigDecimal paidPri, BigDecimal paidPft,
+			BigDecimal penaltyRate) throws Exception {
 		Date rpyValueDate = repayment.getFinValueDate();
 
 		for (int i = 0; i < schdODCRecoveries.size(); i++) {
@@ -261,21 +263,21 @@ public class LatePayInterestService extends ServiceHelper {
 
 	}
 
-	public BigDecimal getPenaltyRate(List<FinanceScheduleDetail> finSchdDetails, Date mvtDate, BigDecimal lpiMargin) throws Exception {
+	public BigDecimal getPenaltyRate(List<FinanceScheduleDetail> finSchdDetails, Date mvtDate, BigDecimal lpiMargin)
+			throws Exception {
 		BigDecimal penaltyRate = BigDecimal.ZERO;
 
 		for (int i = 0; i < finSchdDetails.size(); i++) {
-			if (finSchdDetails.get(i).getSchDate().compareTo(mvtDate)>0) {
+			if (finSchdDetails.get(i).getSchDate().compareTo(mvtDate) > 0) {
 				break;
 			}
-			
+
 			penaltyRate = finSchdDetails.get(i).getCalculatedRate();
-			
+
 		}
-		
+
 		penaltyRate = penaltyRate.add(lpiMargin);
 		return penaltyRate;
 	}
-	
 
 }

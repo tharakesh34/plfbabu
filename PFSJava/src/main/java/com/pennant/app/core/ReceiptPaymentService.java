@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -18,6 +20,7 @@ import com.pennant.backend.util.RepayConstants;
 
 public class ReceiptPaymentService extends ServiceHelper {
 	private static final long		serialVersionUID	= 1442146139821584760L;
+	private static Logger			logger				= Logger.getLogger(ReceiptPaymentService.class);
 
 	private RepaymentProcessUtil	repaymentProcessUtil;
 
@@ -28,6 +31,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 	 * @throws Exception
 	 */
 	public void processrReceipts(CustEODEvent custEODEvent) throws Exception {
+		logger.debug(" Entering ");
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		Date businessDate = custEODEvent.getEodValueDate();
 		for (FinEODEvent finEODEvent : finEODEvents) {
@@ -97,13 +101,15 @@ public class ReceiptPaymentService extends ServiceHelper {
 				}
 
 				header.setReceiptDetails(receiptDetails);
-				repaymentProcessUtil.calcualteAndPayReceipt(financeMain, custEODEvent.getCustomer(),scheduleDetails, profitDetail, header,
-						repayHeirarchy, businessDate);
+				repaymentProcessUtil.calcualteAndPayReceipt(financeMain, custEODEvent.getCustomer(), scheduleDetails,
+						profitDetail, header, repayHeirarchy, businessDate);
 				getPresentmentHeaderDAO().updateReceptId(presentmentDetail.getId(), header.getReceiptID());
 
 			}
 
 		}
+
+		logger.debug(" Leaving ");
 
 	}
 
