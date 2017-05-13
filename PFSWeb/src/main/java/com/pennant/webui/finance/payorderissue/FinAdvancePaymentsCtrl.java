@@ -305,14 +305,14 @@ public class FinAdvancePaymentsCtrl {
 
 				if (subtotalRequired) {
 					//sub total Display Totals On Footer
-					addListItem(listbox, Labels.getLabel("listheader_AdvancePayments_SubTotal.label"), subTotal,true);
+					addListItem(listbox, Labels.getLabel("listheader_AdvancePayments_SubTotal.label"), subTotal, true);
 				}
 			}
 
 			//group total
 			if (listbox != null && listbox.getItems().size() > 0) {
 				// Display Totals On Footer
-				addListItem(listbox, Labels.getLabel("listheader_AdvancePayments_GrandTotal.label"), grandTotal,false);
+				addListItem(listbox, Labels.getLabel("listheader_AdvancePayments_GrandTotal.label"), grandTotal, false);
 			}
 		}
 		logger.debug("Leaving");
@@ -344,6 +344,8 @@ public class FinAdvancePaymentsCtrl {
 			if (!isEnquiry && isDeleteRecord(aFinAdvancePayments)) {
 				MessageUtil.showMessage(Labels.getLabel("common_NoMaintainance"));
 			} else if (!isEnquiry && isApprovedDisbursments(aFinAdvancePayments)) {
+				MessageUtil.showMessage(Labels.getLabel("common_NoMaintainance"));
+			} else if (!isEnquiry && !allowMaintainAfterRequestSent(aFinAdvancePayments)) {
 				MessageUtil.showMessage(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				aFinAdvancePayments.setNewRecord(false);
@@ -389,8 +391,8 @@ public class FinAdvancePaymentsCtrl {
 	private void addListItem(Listbox listbox, String lable, BigDecimal total, boolean footer) {
 		//sub total Display Totals On Footer
 		Listgroupfoot item = new Listgroupfoot();
-		Listitem listitem=new Listitem();
-		
+		Listitem listitem = new Listitem();
+
 		Listcell listcell;
 
 		listcell = new Listcell();
@@ -411,16 +413,16 @@ public class FinAdvancePaymentsCtrl {
 
 		if (footer) {
 			listbox.appendChild(item);
-		}else{
+		} else {
 			listbox.appendChild(listitem);
 		}
 
 	}
-	
-	private void setParent(boolean footer,Listcell listcell,Listgroupfoot item,Listitem listitem){
+
+	private void setParent(boolean footer, Listcell listcell, Listgroupfoot item, Listitem listitem) {
 		if (footer) {
 			listcell.setParent(item);
-		}else{
+		} else {
 			listcell.setParent(listitem);
 		}
 	}
@@ -464,6 +466,18 @@ public class FinAdvancePaymentsCtrl {
 			return true;
 		}
 		return false;
+	}
+
+	private boolean allowMaintainAfterRequestSent(FinAdvancePayments aFinAdvancePayments) {
+		if (StringUtils.equals(DisbursementConstants.STATUS_AWAITCON, aFinAdvancePayments.getStatus())) {
+			if (StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE, aFinAdvancePayments.getPaymentType())
+					|| StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD, aFinAdvancePayments.getPaymentType())) {
+				return true;
+			}
+			return false;
+		}
+
+		return true;
 	}
 
 	private List<ErrorDetails> validate(List<FinAdvancePayments> list, boolean loanApproved) {
@@ -525,11 +539,11 @@ public class FinAdvancePaymentsCtrl {
 		//since if the loan not approved then user can cancel the instruction and resubmit the record in loan origination
 		if (loanApproved) {
 			for (FinanceDisbursement disbursement : financeDisbursement) {
-				
-				if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, disbursement.getDisbStatus())){
+
+				if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, disbursement.getDisbStatus())) {
 					continue;
 				}
-				
+
 				Date disbDate = disbursement.getDisbDate();
 				BigDecimal singletDisbursment = disbursement.getDisbAmount();
 
@@ -581,18 +595,18 @@ public class FinAdvancePaymentsCtrl {
 				if (group && seq != financeDisbursement.getDisbSeq()) {
 					continue;
 				}
-				
+
 				if (!group) {
-					if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, financeDisbursement.getDisbStatus())){
+					if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, financeDisbursement.getDisbStatus())) {
 						continue;
 					}
 				}
-				
+
 				date = financeDisbursement.getDisbDate();
-				
+
 				//check is first disbursement
 				if (financeDisbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()) {
-					
+
 					totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
 					totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
 					totdisbAmt = totdisbAmt.subtract(main.getDeductInsDisb());

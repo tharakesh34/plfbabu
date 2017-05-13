@@ -55,7 +55,7 @@ public class DisbursementConstants {
 	// Disbursement Status	
 	public static final String	STATUS_NEW					= "NEW";
 	public static final String	STATUS_APPROVED				= "APPROVED";
-	public static final String	STATUS_AWAITCON				= "AWAITCON";
+	public static final String	STATUS_AWAITCON				= "AC";
 	public static final String	STATUS_REJECTED				= "REJECTED";
 	public static final String	STATUS_CANCEL				= "CANCELED";
 	public static final String	STATUS_PAID					= "PAID";
