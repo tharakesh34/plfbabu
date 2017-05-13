@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.model.finance;
 
@@ -59,109 +59,110 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
  * Model class for the <b>EtihadCreditBureauDetail table</b>.<br>
- *
+ * 
  */
 @XmlType(propOrder = { "paymentDetail", "paymentType", "llDate", "amtToBeReleased", "remarks", "bankCode",
 		"liabilityHoldName", "payableLoc", "printingLoc", "valueDate", "llReferenceNo", "branchBankCode", "branchCode",
-		"iFSC", "beneficiaryAccNo", "beneficiaryName","partnerBankID", "phoneCountryCode", "phoneAreaCode", "phoneNumber" })
+		"iFSC", "beneficiaryAccNo", "beneficiaryName", "partnerBankID", "phoneCountryCode", "phoneAreaCode",
+		"phoneNumber" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity {
-	
-	private static final long serialVersionUID = -6234931333270161797L;
 
-	private long paymentId=Long.MIN_VALUE;
-	private String finReference;
-	private int paymentSeq;
-	private int disbSeq;
-	
-	@XmlElement(name="disbParty")
-	private String paymentDetail;
-	
-	@XmlElement(name="disbAmount")
-	private BigDecimal amtToBeReleased = BigDecimal.ZERO;
-	
-	@XmlElement(name="favourName")
-	private String liabilityHoldName;
-	
-	@XmlElement(name="acHolderName")
-	private String beneficiaryName;
-	
-	@XmlElement(name="accountNo")
-	private String beneficiaryAccNo;
-	private String description;
-	
-	@XmlElement(name="disbType")
-	private String paymentType;
-	
-	@XmlElement(name="chequeNo")
-	private String llReferenceNo;
-	
-	@XmlElement(name="disbDate")
-	private Date llDate;
-	private BigDecimal custContribution = BigDecimal.ZERO;
-	private BigDecimal sellerContribution = BigDecimal.ZERO;
-	
+	private static final long	serialVersionUID	= -6234931333270161797L;
+
+	private long				paymentId			= Long.MIN_VALUE;
+	private String				finReference;
+	private int					paymentSeq;
+	private int					disbSeq;
+
+	@XmlElement(name = "disbParty")
+	private String				paymentDetail;
+
+	@XmlElement(name = "disbAmount")
+	private BigDecimal			amtToBeReleased		= BigDecimal.ZERO;
+
+	@XmlElement(name = "favourName")
+	private String				liabilityHoldName;
+
+	@XmlElement(name = "acHolderName")
+	private String				beneficiaryName;
+
+	@XmlElement(name = "accountNo")
+	private String				beneficiaryAccNo;
+	private String				description;
+
+	@XmlElement(name = "disbType")
+	private String				paymentType;
+
+	@XmlElement(name = "chequeNo")
+	private String				llReferenceNo;
+
+	@XmlElement(name = "disbDate")
+	private Date				llDate;
+	private BigDecimal			custContribution	= BigDecimal.ZERO;
+	private BigDecimal			sellerContribution	= BigDecimal.ZERO;
+
 	@XmlElement
-	private String remarks;
-	
-	@XmlElement(name="issueBank")
-	private String bankCode;
-	private String bankName;
-	
-	@XmlElement(name="bankCode")
-	private String branchBankCode;
-	private String branchBankName;
-	
+	private String				remarks;
+
+	@XmlElement(name = "issueBank")
+	private String				bankCode;
+	private String				bankName;
+
+	@XmlElement(name = "bankCode")
+	private String				branchBankCode;
+	private String				branchBankName;
+
 	@XmlElement
-	private String branchCode;
-	private String branchDesc;
-	private String city;
-	
-	@XmlElement(name="ifsc")
-	private String iFSC;
-	
+	private String				branchCode;
+	private String				branchDesc;
+	private String				city;
+
+	@XmlElement(name = "ifsc")
+	private String				iFSC;
+
 	@XmlElement
-	private String payableLoc;
-	
+	private String				payableLoc;
+
 	@XmlElement
-	private String printingLoc;
-	
+	private String				printingLoc;
+
 	@XmlElement
-	private Date valueDate;
-	private long bankBranchID;
-	
+	private Date				valueDate;
+	private long				bankBranchID;
+
 	@XmlElement
-	private String phoneCountryCode;
-	
+	private String				phoneCountryCode;
+
 	@XmlElement
-	private String phoneAreaCode;
-	
+	private String				phoneAreaCode;
+
 	@XmlElement
-	private String phoneNumber;
-	private Date clearingDate;
-	private String status;
-	private String active;
-	private Date inputDate;
-	private String disbCCy;
-	private boolean pOIssued;
-	
-	private boolean newRecord=false;
-	private String lovValue;
-	private FinAdvancePayments befImage;
-	private LoggedInUser userDetails;
+	private String				phoneNumber;
+	private Date				clearingDate;
+	private String				status;
+	private String				active;
+	private Date				inputDate;
+	private String				disbCCy;
+	private boolean				pOIssued;
+
+	private boolean				newRecord			= false;
+	private String				lovValue;
+	private FinAdvancePayments	befImage;
+	private LoggedInUser		userDetails;
 	@XmlElement(name = "partnerBankId")
-	private long partnerBankID;
-	private String partnerbankCode;
-	private String partnerBankName;
-	private String finType;
-	private String custShrtName;
-	private long linkedTranId;
-	private String partnerBankAcType;
-	private String transactionRef;
-	private String rejectReason;
-	
-	private String partnerBankAc;
-	
+	private long				partnerBankID;
+	private String				partnerbankCode;
+	private String				partnerBankName;
+	private String				finType;
+	private String				custShrtName;
+	private long				linkedTranId;
+	private String				partnerBankAcType;
+	private String				transactionRef;
+	private String				rejectReason;
+
+	private String				partnerBankAc;
+	private boolean				alwFileDownload;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -171,7 +172,6 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		super();
 	}
 
-	
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("branchCode");
@@ -189,28 +189,30 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("transactionRef");
 		excludeFields.add("rejectReason");
 		excludeFields.add("partnerBankAc");
+		excludeFields.add("alwFileDownload");
 		return excludeFields;
 	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	@Override
 	public long getId() {
-		
+
 		return paymentId;
-	
+
 	}
 
 	@Override
 	public void setId(long paymentId) {
-		this.paymentId=paymentId;
+		this.paymentId = paymentId;
 	}
 
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
@@ -250,6 +252,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	public String getBeneficiaryName() {
 		return beneficiaryName;
 	}
+
 	public void setBeneficiaryName(String beneficiaryName) {
 		this.beneficiaryName = beneficiaryName;
 	}
@@ -257,6 +260,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	public String getBeneficiaryAccNo() {
 		return beneficiaryAccNo;
 	}
+
 	public void setBeneficiaryAccNo(String beneficiaryAccNo) {
 		this.beneficiaryAccNo = beneficiaryAccNo;
 	}
@@ -320,27 +324,31 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	public boolean isNewRecord() {
 		return newRecord;
 	}
+
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
+
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
 
-	public FinAdvancePayments getBefImage(){
+	public FinAdvancePayments getBefImage() {
 		return this.befImage;
 	}
-	public void setBefImage(FinAdvancePayments beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(FinAdvancePayments beforeImage) {
+		this.befImage = beforeImage;
 	}
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
+
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
@@ -401,7 +409,6 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		this.phoneNumber = phoneNumber;
 	}
 
-
 	public String getStatus() {
 		return status;
 	}
@@ -409,7 +416,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
+
 	public String getPOStatus() {
 		return status;
 	}
@@ -482,7 +489,6 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		this.iFSC = iFSC;
 	}
 
-
 	public long getBankBranchID() {
 		return bankBranchID;
 	}
@@ -522,7 +528,6 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	public void setpOIssued(boolean pOIssued) {
 		this.pOIssued = pOIssued;
 	}
-
 
 	public int getDisbSeq() {
 		return disbSeq;
@@ -587,7 +592,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	public void setLinkedTranId(long linkedTranId) {
 		this.linkedTranId = linkedTranId;
 	}
- 
+
 	public String getTransactionRef() {
 		return transactionRef;
 	}
@@ -620,6 +625,11 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		this.partnerBankAcType = partnerBankAcType;
 	}
 
+	public boolean isAlwFileDownload() {
+		return alwFileDownload;
+	}
 
-
+	public void setAlwFileDownload(boolean alwFileDownload) {
+		this.alwFileDownload = alwFileDownload;
+	}
 }

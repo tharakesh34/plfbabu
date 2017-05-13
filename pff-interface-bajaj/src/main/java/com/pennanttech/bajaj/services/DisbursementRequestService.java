@@ -71,22 +71,22 @@ public class DisbursementRequestService extends BajajService implements RequestS
 	}
 
 	private void generateRequest(String finType, long userId, List<FinAdvancePayments> disbusments) {
-		List<FinAdvancePayments> hdfc_IMPS = new ArrayList<>();
+		List<FinAdvancePayments> stp_IMPS = new ArrayList<>();
 		List<FinAdvancePayments> other_IMPS = new ArrayList<>();
 
-		List<FinAdvancePayments> hdfc_RTGS = new ArrayList<>();
+		List<FinAdvancePayments> stp_RTGS = new ArrayList<>();
 		List<FinAdvancePayments> other_RTGS = new ArrayList<>();
 
-		List<FinAdvancePayments> hdfc_NEFT = new ArrayList<>();
+		List<FinAdvancePayments> stp_NEFT = new ArrayList<>();
 		List<FinAdvancePayments> other_NEFT = new ArrayList<>();
 
-		List<FinAdvancePayments> hdfc_DD = new ArrayList<>();
+		List<FinAdvancePayments> stp_DD = new ArrayList<>();
 		List<FinAdvancePayments> other_DD = new ArrayList<>();
 
-		List<FinAdvancePayments> hdfc_CHEQUE = new ArrayList<>();
+		List<FinAdvancePayments> stp_CHEQUE = new ArrayList<>();
 		List<FinAdvancePayments> other_CHEQUE = new ArrayList<>();
 
-		List<FinAdvancePayments> hdfc_Other = new ArrayList<>();
+		List<FinAdvancePayments> stp_Other = new ArrayList<>();
 		List<FinAdvancePayments> other_Other = new ArrayList<>();
 
 		for (FinAdvancePayments disbursment : disbusments) {
@@ -94,43 +94,43 @@ public class DisbursementRequestService extends BajajService implements RequestS
 
 			switch (type) {
 			case IMPS:
-				if ("HDFC".equalsIgnoreCase(disbursment.getPartnerbankCode())) {
-					hdfc_IMPS.add(disbursment);
+				if (disbursment.isAlwFileDownload()) {
+					stp_IMPS.add(disbursment);
 				} else {
 					other_IMPS.add(disbursment);
 				}
 				break;
 			case NEFT:
-				if ("HDFC".equalsIgnoreCase(disbursment.getPartnerbankCode())) {
-					hdfc_NEFT.add(disbursment);
+				if (disbursment.isAlwFileDownload()) {
+					stp_NEFT.add(disbursment);
 				} else {
 					other_NEFT.add(disbursment);
 				}
 				break;
 			case RTGS:
-				if ("HDFC".equalsIgnoreCase(disbursment.getPartnerbankCode())) {
-					hdfc_RTGS.add(disbursment);
+				if (disbursment.isAlwFileDownload()) {
+					stp_RTGS.add(disbursment);
 				} else {
 					other_RTGS.add(disbursment);
 				}
 				break;
 			case DD:
-				if ("HDFC".equalsIgnoreCase(disbursment.getPartnerbankCode())) {
-					hdfc_DD.add(disbursment);
+				if (disbursment.isAlwFileDownload()) {
+					stp_DD.add(disbursment);
 				} else {
 					other_DD.add(disbursment);
 				}
 				break;
 			case CHEQUE:
-				if ("HDFC".equalsIgnoreCase(disbursment.getPartnerbankCode())) {
-					hdfc_CHEQUE.add(disbursment);
+				if (disbursment.isAlwFileDownload()) {
+					stp_CHEQUE.add(disbursment);
 				} else {
 					other_CHEQUE.add(disbursment);
 				}
 				break;
 			default:
-				if ("HDFC".equalsIgnoreCase(disbursment.getPartnerbankCode())) {
-					hdfc_Other.add(disbursment);
+				if (disbursment.isAlwFileDownload()) {
+					stp_Other.add(disbursment);
 				} else {
 					other_Other.add(disbursment);
 				}
@@ -138,19 +138,19 @@ public class DisbursementRequestService extends BajajService implements RequestS
 			}
 		}
 
-		if (!hdfc_IMPS.isEmpty()) {
-			sendIMPSRequest("DISB_IMPS_EXPORT", getPaymentIds(hdfc_IMPS), userId);
+		if (!stp_IMPS.isEmpty()) {
+			sendIMPSRequest("DISB_IMPS_EXPORT", getPaymentIds(stp_IMPS), userId);
 		}
 
 		if (!other_IMPS.isEmpty()) {
 			sendIMPSRequest("DISB_IMPS_EXPORT", getPaymentIds(other_IMPS), userId);
 		}
 
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, hdfc_NEFT);
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, hdfc_RTGS);
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.CHEQUE.name(), finType, userId, hdfc_CHEQUE);
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.DD.name(), finType, userId, hdfc_DD);
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.I.name(), finType, userId, hdfc_Other);
+		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, stp_NEFT);
+		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, stp_RTGS);
+		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.CHEQUE.name(), finType, userId, stp_CHEQUE);
+		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.DD.name(), finType, userId, stp_DD);
+		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.I.name(), finType, userId, stp_Other);
 
 		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, other_NEFT);
 		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, other_RTGS);
