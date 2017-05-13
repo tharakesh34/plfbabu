@@ -5602,6 +5602,7 @@
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
 		<property name="accountingSetDAO" ref="accountingSetDAO" />
 		<property name="commitmentDAO" ref="commitmentDAO" />
+		<property name="customerDAO" ref="customerDAO" />
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="agreementDetailService" ref="finAgreementDetailService" />

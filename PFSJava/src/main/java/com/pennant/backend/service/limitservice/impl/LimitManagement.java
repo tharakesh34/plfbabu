@@ -721,24 +721,25 @@ public class LimitManagement {
 	private void processRepay(LimitReferenceMapping mapping, BigDecimal limitAmount,
 			List<LimitDetails> custLimitDetails, String tansType) {
 		logger.debug(" Entering ");
-		boolean revolvingLine = false;
-		for (LimitDetails details : custLimitDetails) {
-			if (details.isRevolving() && StringUtils.endsWith(mapping.getLimitLine(), details.getLimitLine())) {
-				revolvingLine = true;
-				break;
-			}
-		}
-
-		if (!revolvingLine) {
-			return;
-		}
+		boolean revolvingLine = true;
+		//Since all the limit are revolving we have commented  this code. once we are allowing revolving in limits we will allow
+//		for (LimitDetails details : custLimitDetails) {
+//			if (details.isRevolving() && StringUtils.endsWith(mapping.getLimitLine(), details.getLimitLine())) {
+//				revolvingLine = true;
+//				break;
+//			}
+//		}
+//
+//		if (!revolvingLine) {
+//			return;
+//		}
 		for (LimitDetails details : custLimitDetails) {
 			if (revolvingLine) {
 				details.setVersion(details.getVersion() + 1);
 				if (StringUtils.equals(tansType, LimitConstants.REPAY)) {
 					//Check need add it to reserved or not
 					details.setUtilisedLimit(details.getUtilisedLimit().subtract(limitAmount));
-					details.setUtilisedLimit(details.getReservedLimit().add(limitAmount));
+					details.setReservedLimit(details.getReservedLimit().add(limitAmount));
 					limitDetailDAO.updateReserveUtilise(details, "");
 				} else if (StringUtils.equals(tansType, LimitConstants.PRINPAY)) {
 					//Check need add it to reserved or not

@@ -2645,9 +2645,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					totalAdvWaivedAmount = totalAdvWaivedAmount.add(PennantApplicationUtil.unFormateAmount(allocationWaived.getActualValue(), finFormatter));
 				}else{
 					this.listBoxPastdues.appendChild(item);
-					totalDueAmount = totalDueAmount.add(totalCalAmount);
-					totalPaidAmount = totalPaidAmount.add(PennantApplicationUtil.unFormateAmount(allocationPaid.getActualValue(), finFormatter));
-					totalWaivedAmount = totalWaivedAmount.add(PennantApplicationUtil.unFormateAmount(allocationWaived.getActualValue(), finFormatter));
+					if(!StringUtils.equals(allocationType, RepayConstants.ALLOCATION_TDS)){
+						totalDueAmount = totalDueAmount.add(totalCalAmount);
+						totalPaidAmount = totalPaidAmount.add(PennantApplicationUtil.unFormateAmount(allocationPaid.getActualValue(), finFormatter));
+						totalWaivedAmount = totalWaivedAmount.add(PennantApplicationUtil.unFormateAmount(allocationWaived.getActualValue(), finFormatter));
+					}
 				}
 			}
 		}else{

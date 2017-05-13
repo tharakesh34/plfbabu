@@ -34,6 +34,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.commitment.Commitment;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -895,7 +896,16 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// send Limit Amendment Request to ACP Interface and save log details
 		//=======================================
 		if (ImplementationConstants.LIMIT_INTERNAL) {
-			//getLimitManagement().processLoanRepay(rceiptData, false);
+			BigDecimal priAmt=BigDecimal.ZERO;
+			
+			for (FinReceiptDetail finReceiptDetail : receiptHeader.getReceiptDetails()) {
+				for (FinRepayHeader header : finReceiptDetail.getRepayHeaders()) {
+					priAmt=priAmt.add(header.getPriAmount());
+				}
+			}
+			Customer customer = getCustomerDAO().getCustomerByID(financeMain.getCustID());
+			getLimitManagement().processLoanRepay(financeMain,customer,priAmt,
+					StringUtils.trimToEmpty(financeMain.getProductCategory()));
 		} else {
 			getLimitCheckDetails().doProcessLimits(financeMain,	FinanceConstants.AMENDEMENT);
 		}
