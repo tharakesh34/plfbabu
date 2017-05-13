@@ -110,7 +110,6 @@ import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.model.rulefactory.AmountCode;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.FinanceWriteoffService;
@@ -1311,16 +1310,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			aFinanceDetail.setDocumentDetailsList(getDocumentDetailDialogCtrl().getDocumentDetailsList());
 		} else {
 			aFinanceDetail.setDocumentDetailsList(null);
-		}
-
-		//Finance Fee Charge Details Tab
-		if (getFeeDetailDialogCtrl() != null && getFinanceDetail().getFinScheduleData().getFeeRules() != null
-				&& getFinanceDetail().getFinScheduleData().getFeeRules().size() > 0) {
-			// check if fee & charges rules executed or not
-			if (!getFeeDetailDialogCtrl().isFeeChargesExecuted()) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Fee"));
-				return;
-			}
 		}
 
 		//Finance Stage Accounting Details Tab

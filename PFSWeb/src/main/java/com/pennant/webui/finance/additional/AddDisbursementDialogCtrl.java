@@ -93,7 +93,6 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
-import com.pennant.webui.finance.financemain.FeeDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.FinFeeDetailListCtrl;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -141,7 +140,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private FinScheduleData finScheduleData; // overhanded per param
 	private FinanceScheduleDetail financeScheduleDetail; // overhanded per param
 	private transient ScheduleDetailDialogCtrl scheduleDetailDialogCtrl;
-	private transient FeeDetailDialogCtrl feeDetailDialogCtrl;
 	private transient FinFeeDetailListCtrl finFeeDetailListCtrl;
 	private AccountInterfaceService accountInterfaceService;
 	private AccountsService accountsService;
@@ -204,10 +202,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			// delete WIFFinanceMain here.
 			if (arguments.containsKey("financeMainDialogCtrl")) {
 				setScheduleDetailDialogCtrl((ScheduleDetailDialogCtrl) arguments.get("financeMainDialogCtrl"));
-			}
-
-			if (arguments.containsKey("feeDetailDialogCtrl")) {
-				setFeeDetailDialogCtrl((FeeDetailDialogCtrl) arguments.get("feeDetailDialogCtrl"));
 			}
 
 			if (arguments.containsKey("feeDetailListCtrl")) {
@@ -1075,14 +1069,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
-	}
-
-	public void setFeeDetailDialogCtrl(FeeDetailDialogCtrl feeDetailDialogCtrl) {
-		this.feeDetailDialogCtrl = feeDetailDialogCtrl;
-	}
-
-	public FeeDetailDialogCtrl getFeeDetailDialogCtrl() {
-		return feeDetailDialogCtrl;
 	}
 
 	public AccountInterfaceService getAccountInterfaceService() {

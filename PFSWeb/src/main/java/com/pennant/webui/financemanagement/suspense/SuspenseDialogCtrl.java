@@ -101,7 +101,6 @@ import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
-import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.financemanagement.SuspenseService;
@@ -863,16 +862,6 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 			aFinanceDetail.setDocumentDetailsList(null);
 		}
 
-		// Finance Fee Charge Details Tab
-		if (getFeeDetailDialogCtrl() != null && getFinanceDetail().getFinScheduleData().getFeeRules() != null
-				&& getFinanceDetail().getFinScheduleData().getFeeRules().size() > 0) {
-			// check if fee & charges rules executed or not
-			if (!getFeeDetailDialogCtrl().isFeeChargesExecuted()) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Fee"));
-				return;
-			}
-		}
-
 		// Finance Stage Accounting Details Tab
 		if (!recSave && getStageAccountingDetailDialogCtrl() != null) {
 			// check if accounting rules executed or not
@@ -1442,12 +1431,6 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 
 		List<ReturnDataSet> returnSetEntries = null;
 
-		Map<String, FeeRule> feeRuleMap = null;
-		if (getFeeDetailDialogCtrl() != null) {
-			feeRuleMap = getFeeDetailDialogCtrl().getFeeRuleDetailsMap();
-		}
-
-		dataMap.putAll(feeRuleMap);
 		aeEvent.setDataMap(dataMap);
 
 		if (!getFinanceDetail().getFinScheduleData().getFinanceType().isAllowRIAInvestment()) {

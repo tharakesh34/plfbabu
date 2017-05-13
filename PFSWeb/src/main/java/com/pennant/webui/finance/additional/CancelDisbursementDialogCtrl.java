@@ -71,15 +71,11 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.service.accounts.AccountsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.backend.util.RuleConstants;
 import com.pennant.component.Uppercasebox;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.webui.finance.financemain.FeeDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -107,7 +103,6 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private FinScheduleData finScheduleData; // overhanded per param
 	private FinanceScheduleDetail financeScheduleDetail; // overhanded per param
 	private transient ScheduleDetailDialogCtrl scheduleDetailDialogCtrl;
-	private transient FeeDetailDialogCtrl feeDetailDialogCtrl;
 	private AccountInterfaceService accountInterfaceService;
 	private AccountsService accountsService;
 	private transient CancelDisbursementService cancelDisbursementService;
@@ -164,10 +159,6 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			// delete WIFFinanceMain here.
 			if (arguments.containsKey("financeMainDialogCtrl")) {
 				setScheduleDetailDialogCtrl((ScheduleDetailDialogCtrl) arguments.get("financeMainDialogCtrl"));
-			}
-
-			if (arguments.containsKey("feeDetailDialogCtrl")) {
-				setFeeDetailDialogCtrl((FeeDetailDialogCtrl) arguments.get("feeDetailDialogCtrl"));
 			}
 
 			// set Field Properties
@@ -416,28 +407,6 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		finMain.setRecalToDate(finMain.getMaturityDate());
 
 		BigDecimal addingFeeToFinance = BigDecimal.ZERO;
-		if (getFeeDetailDialogCtrl() != null) {
-			try {
-				setFinScheduleData(getFeeDetailDialogCtrl().doExecuteFeeCharges(true, false, getFinScheduleData(),
-						false, finServiceInstruction.getFromDate()));
-
-				// Fee Details fetching based on Schedule Date/ Disbursement
-				// Date
-				List<FeeRule> feeRuleList = getFinScheduleData().getFeeRules();
-				for (FeeRule feeRule : feeRuleList) {
-					if (feeRule.getSchDate().compareTo(finServiceInstruction.getFromDate()) == 0) {
-
-						if (StringUtils.equals(feeRule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)) {
-							addingFeeToFinance = addingFeeToFinance.add(feeRule.getFeeAmount().subtract(
-									feeRule.getWaiverAmount().subtract(feeRule.getPaidAmount())));
-						} 
-					}
-				}
-
-			} catch (PFFInterfaceException e) {
-				logger.error("Exception: ", e);
-			}
-		}
 		
 		// Service details calling for Schedule calculation
 		setFinScheduleData(cancelDisbursementService.getCancelDisbDetails(getFinScheduleData()));		
@@ -605,13 +574,6 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	}
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
-	}
-
-	public void setFeeDetailDialogCtrl(FeeDetailDialogCtrl feeDetailDialogCtrl) {
-		this.feeDetailDialogCtrl = feeDetailDialogCtrl;
-	}
-	public FeeDetailDialogCtrl getFeeDetailDialogCtrl() {
-		return feeDetailDialogCtrl;
 	}
 
 	public AccountInterfaceService getAccountInterfaceService() {

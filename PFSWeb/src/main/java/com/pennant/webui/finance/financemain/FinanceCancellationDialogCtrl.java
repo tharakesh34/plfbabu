@@ -844,16 +844,6 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			}
 		}
 
-		// Finance Fee Charge Details Tab
-		if (getFeeDetailDialogCtrl() != null && getFinanceDetail().getFinScheduleData().getFeeRules() != null
-				&& getFinanceDetail().getFinScheduleData().getFeeRules().size() > 0) {
-			// check if fee & charges rules executed or not
-			if (!getFeeDetailDialogCtrl().isFeeChargesExecuted()) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Fee"));
-				return;
-			}
-		}
-
 		// Finance Stage Accounting Details Tab
 		if (!recSave && getStageAccountingDetailDialogCtrl() != null) {
 			// check if accounting rules executed or not

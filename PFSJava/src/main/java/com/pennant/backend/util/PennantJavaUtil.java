@@ -847,7 +847,7 @@ public class PennantJavaUtil {
 						"NFRuleDesc", "MaxScore" }, null, 300));
 
 		ModuleUtil.register("ScoringGroup", new ModuleMapping("ScoringGroup", ScoringGroup.class, new String[] {
-				"RMTScoringGroup", "RMTScoringGroup_AView" }, scoreGrpWF, new String[] { "ScoreGroupId",
+				"RMTScoringGroup", "RMTScoringGroup_AView" }, masterWF, new String[] { "ScoreGroupId",
 				"ScoreGroupName" }, null, 350));
 
 		ModuleUtil.register("ScoringSlab", new ModuleMapping("ScoringSlab", ScoringSlab.class, new String[] {

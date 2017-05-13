@@ -247,7 +247,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	private List<Date> planEMIHDateList = new ArrayList<>(); 
 
 	private Object financeMainDialogCtrl = null;
-	private FeeDetailDialogCtrl feeDetailDialogCtrl = null;
 	private FinFeeDetailListCtrl finFeeDetailListCtrl = null;
 	private FinScheduleData finScheduleData = null;
 	private FinanceDetail financeDetail = null;
@@ -334,11 +333,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.financeMainDialogCtrl = (Object) arguments.get("financeMainDialogCtrl");
 		}
 
-		if (arguments.containsKey("feeDetailDialogCtrl")) {
-			this.feeDetailDialogCtrl = (FeeDetailDialogCtrl) arguments.get("feeDetailDialogCtrl");
-		}
 
-			this.setFinFeeDetailListCtrl((FinFeeDetailListCtrl) financeMainDialogCtrl.getClass().
+		this.setFinFeeDetailListCtrl((FinFeeDetailListCtrl) financeMainDialogCtrl.getClass().
 					getMethod("getFinFeeDetailListCtrl").invoke(financeMainDialogCtrl));
 		
 		boolean isEnquiry = false;
@@ -679,7 +675,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void doFillScheduleList(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
 		
-	//	aFinSchData = FeeScheduleCalculator.getFeeScheduleDetails(aFinSchData);
+		//aFinSchData = FeeScheduleCalculator.getFeeScheduleDetails(aFinSchData);
 
 		doSetPropVisiblity(aFinSchData);
 
@@ -1678,7 +1674,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			map.put("financeScheduleDetail", financeScheduleDetail);
 			map.put("financeMainDialogCtrl", this);
 			map.put("reviewrate", true);
-			map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 			map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 			map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 
@@ -1714,7 +1709,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			map.put("financeScheduleDetail", financeScheduleDetail);
 			map.put("financeMainDialogCtrl", this);
 			map.put("disbursement", true);
-			map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 			map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 			map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 			map.put("isWIF", isWIF);
@@ -1750,7 +1744,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			map.put("financeScheduleDetail", financeScheduleDetail);
 			map.put("financeMainDialogCtrl", this);
 			map.put("repayment", true);
-			map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 			map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 			map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 
@@ -1778,7 +1771,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
-		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 
@@ -1804,7 +1796,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
-		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 		
@@ -1831,7 +1822,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("repayment", true);
-		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 
@@ -1856,7 +1846,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
-		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 
@@ -1929,7 +1918,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
-		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("disbursement", true);
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
@@ -1956,7 +1944,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
-		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("disbursement", true);
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
@@ -1984,7 +1971,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
-		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 		map.put("moduleDefiner", moduleDefiner);
@@ -2011,7 +1997,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
-		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 		map.put("moduleDefiner", moduleDefiner);
@@ -2038,7 +2023,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
-		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 		map.put("moduleDefiner", moduleDefiner);
@@ -2066,7 +2050,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("addTerms", true);
-		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 
@@ -2093,7 +2076,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("addTerms", false);
-		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 
@@ -2119,7 +2101,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
-		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 
@@ -2145,7 +2126,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
-		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
 		map.put("moduleDefiner", moduleDefiner);
@@ -2195,7 +2175,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
-		map.put("feeDetailDialogCtrl", getFeeDetailDialogCtrl());
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
 		map.put("disbursement", true);
 		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
@@ -2622,14 +2601,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 	public void setFeeChargesMap(Map<Date, ArrayList<FeeRule>> feeChargesMap) {
 		this.feeChargesMap = feeChargesMap;
-	}
-
-	public FeeDetailDialogCtrl getFeeDetailDialogCtrl() {
-		return feeDetailDialogCtrl;
-	}
-
-	public void setFeeDetailDialogCtrl(FeeDetailDialogCtrl feeDetailDialogCtrl) {
-		this.feeDetailDialogCtrl = feeDetailDialogCtrl;
 	}
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {

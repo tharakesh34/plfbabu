@@ -1960,22 +1960,6 @@
 		class="com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl"
 		parent="basisListCtrl" scope="prototype" />
 
-	<!--============ Finance Fee Detail ============== -->
-
-	<bean id="feeDetailDialogCtrl"
-		class="com.pennant.webui.finance.financemain.FeeDetailDialogCtrl"
-		parent="basisListCtrl" scope="prototype">
-		<property name="customerService" ref="customerService" />
-		<property name="engineExecution" ref="engineExecution" />
-		<property name="takafulProviderService" ref="takafulProviderService" />
-		<property name="financeDetailService" ref="financeDetailService" />
-		<property name="mailUtil" ref="mailUtil" />
-		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
-		<property name="ruleService" ref="ruleService" />
-		
-	</bean>
-
 	<!--============ Document Detail ============== -->
 
 	<bean id="documentDetailDialogCtrl"

@@ -667,9 +667,6 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// Customer Details
 		appendCustomerDetailTab();
 
-		// Fee Details Tab
-		appendFeeDetailsTab(true);
-
 		// Schedule Details
 		appendScheduleDetailTab(true, true);
 
@@ -895,17 +892,6 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 
-		// DDA Modification Re-check with Existing Approved Data
-		if (!(StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_WRITEOFFPAY))) {
-			if (getFeeDetailDialogCtrl() != null) {
-				try {
-					aFinanceSchData = getFeeDetailDialogCtrl().doExecuteFeeCharges(true, isFeeReExecute,
-							aFinanceSchData, true, aFinanceMain.getFinStartDate());
-				} catch (PFFInterfaceException e) {
-					logger.error("Exception: ", e);
-				}
-			}
-		}
 		aFinanceSchData = super.doWriteSchData(aFinanceSchData, false);
 
 		FinanceMain finMain = aFinanceSchData.getFinanceMain();
@@ -1285,10 +1271,6 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			List<ReturnDataSet> returnSetEntries = null;
 			Map<String, FeeRule> map = null;
-
-			if (getFeeDetailDialogCtrl() != null) {
-				map = getFeeDetailDialogCtrl().getFeeRuleDetailsMap();
-			}
 
 			dataMap.putAll(map);
 			aeEvent.setDataMap(dataMap);
@@ -2134,15 +2116,6 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		isNew = aFinanceDetail.isNew();
 
-		// Finance Fee Charge Details Tab
-		if (getFeeDetailDialogCtrl() != null && getFinanceDetail().getFinScheduleData().getFeeRules() != null
-				&& getFinanceDetail().getFinScheduleData().getFeeRules().size() > 0) {
-			// check if fee & charges rules executed or not
-			if (!getFeeDetailDialogCtrl().isFeeChargesExecuted()) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Fee"));
-				return;
-			}
-		}
 		// Collateral Flags
 		fetchFlagDetals();
 		if (getFinFlagsDetailList() != null && !getFinFlagsDetailList().isEmpty()) {
@@ -2291,7 +2264,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			getFinanceMainExtService().saveFinanceMainExtDetails(financeMainExt);
 		}
 
-		if (isFeeReExecute && getFeeDetailDialogCtrl() != null) {
+		if (isFeeReExecute) {
 			String message = Labels.getLabel("label_FeeExecute");
 			Messagebox.show(message, Labels.getLabel("message.Information"), Messagebox.OK, Messagebox.INFORMATION);
 		}

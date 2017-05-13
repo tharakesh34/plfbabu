@@ -152,7 +152,6 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
-import com.pennant.webui.finance.financemain.FeeDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.FinFeeDetailListCtrl;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
@@ -477,7 +476,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	//Sub Window Child Details Dialog Controllers
 	private ScheduleDetailDialogCtrl					scheduleDetailDialogCtrl		= null;
-	private FeeDetailDialogCtrl							feeDetailDialogCtrl				= null;
 	private FinFeeDetailListCtrl						finFeeDetailListCtrl			= null;
 	private StepDetailDialogCtrl						stepDetailDialogCtrl			= null;
 	private IndicativeTermDetailDialogCtrl				indicativeTermDetailDialogCtrl	= null;
@@ -1434,9 +1432,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//Step Policy Details
 		appendStepDetailTab(true);
-
-		//Fee Details Tab Addition
-		appendFeeDetailsTab(true);
 
 		//Fee Details Tab Addition
 		appendFeeDetailTab(true);
@@ -2415,32 +2410,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			aFinanceSchData.getFinanceMain().setFeeChargeAmt(BigDecimal.ZERO);
 			aFinanceSchData.getFinanceMain().setInsuranceAmt(BigDecimal.ZERO);
-			if (getFeeDetailDialogCtrl() != null) {
-				try {
-					aFinanceSchData = getFeeDetailDialogCtrl().doExecuteFeeCharges(true, isFeeReExecute,
-							aFinanceSchData, true, aFinanceMain.getFinStartDate());
-				} catch (PFFInterfaceException e) {
-					logger.error("Exception: ", e);
-				}
-
-				// Fee Details Validation
-				getFeeDetailDialogCtrl().doClearErrorMessages();
-				ArrayList<WrongValueException> valueException = getFeeDetailDialogCtrl().doValidate(
-						aFinanceMain.getNumberOfTerms());
-				if (valueException != null && !valueException.isEmpty()) {
-
-					if (tabsIndexCenter.getFellowIfAny("feeDetailTab") != null) {
-						Tab tab = (Tab) tabsIndexCenter.getFellowIfAny("feeDetailTab");
-						getFeeDetailDialogCtrl().doRemoveConstraints();
-						getFeeDetailDialogCtrl().doSetLabels(getFinBasicDetails());
-						showErrorDetails(valueException, tab);
-					}
-				}
-				getFeeDetailDialogCtrl().doStoreInitValues();
-
-				//Fee Details Data set to Bean Object
-				aFinanceSchData = getFeeDetailDialogCtrl().doWriteComponentsToBean(aFinanceSchData, false, true);
-			}
 
 			if (finFeeDetailListCtrl != null) {
 				finFeeDetailListCtrl.doExecuteFeeCharges(true, aFinanceSchData);
@@ -2456,27 +2425,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			disbursementDetails.setInsuranceAmt(aFinanceSchData.getFinanceMain().getInsuranceAmt());
 			disbursementDetails.setDisbAccountId("");
 			aFinanceSchData.getDisbursementDetails().add(disbursementDetails);
-		}
-
-		//Fee Details Data set to Bean Object
-		if (getFeeDetailDialogCtrl() != null) {
-
-			// Fee Details Validation
-			if (!buildEvent) {
-				getFeeDetailDialogCtrl().doClearErrorMessages();
-				ArrayList<WrongValueException> valueException = getFeeDetailDialogCtrl().doValidate(
-						aFinanceMain.getNumberOfTerms());
-				if (valueException != null && !valueException.isEmpty()) {
-
-					if (tabsIndexCenter.getFellowIfAny("feeDetailTab") != null) {
-						Tab tab = (Tab) tabsIndexCenter.getFellowIfAny("feeDetailTab");
-						getFeeDetailDialogCtrl().doRemoveConstraints();
-						getFeeDetailDialogCtrl().doSetLabels(getFinBasicDetails());
-						showErrorDetails(valueException, tab);
-					}
-				}
-			}
-			aFinanceSchData = getFeeDetailDialogCtrl().doWriteComponentsToBean(aFinanceSchData, true, false);
 		}
 
 		aFinanceSchData.setFinanceMain(aFinanceMain);
@@ -2767,69 +2715,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				tab = (Tab) tabsIndexCenter.getFellowIfAny("stepDetailsTab");
 				tab.setDisabled(true);
 				tab.setVisible(false);
-			}
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Method for Rendering Schedule Details Data in finance
-	 */
-	private void appendFeeDetailsTab(boolean onLoadProcess) {
-		logger.debug("Entering");
-
-		boolean createTab = false;
-		if (getFinanceDetail().getFinScheduleData().getFeeRules() != null
-				&& getFinanceDetail().getFinScheduleData().getFeeRules().size() > 0) {
-
-			if (tabsIndexCenter.getFellowIfAny("feeDetailTab") == null) {
-				createTab = true;
-			}
-		} else if (onLoadProcess) {
-			createTab = true;
-		}
-
-		Tabpanel tabpanel = null;
-		if (createTab) {
-
-			Tab tab = new Tab("Fees");
-			tab.setId("feeDetailTab");
-			tabsIndexCenter.appendChild(tab);
-
-			tabpanel = new Tabpanel();
-			tabpanel.setId("feeDetailTabPanel");
-			tabpanel.setStyle("overflow:auto;");
-			tabpanel.setParent(tabpanelsBoxIndexCenter);
-			tabpanel.setHeight(this.borderLayoutHeight - 100 + "px");
-			ComponentsCtrl.applyForward(tab, "onSelect=onSelectFeeDetailsTab");
-			tab.setVisible(false);
-		} else {
-
-			if (tabpanelsBoxIndexCenter.getFellowIfAny("feeDetailTabPanel") != null) {
-				tabpanel = (Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny("feeDetailTabPanel");
-				tabpanel.setStyle("overflow:auto;");
-				tabpanel.getChildren().clear();
-			}
-		}
-
-		if ((getFinanceDetail().getFinScheduleData().getFeeRules() != null && getFinanceDetail().getFinScheduleData()
-				.getFeeRules().size() > 0)
-				|| (getFinanceDetail().getFeeCharges() != null && getFinanceDetail().getFeeCharges().size() > 0)) {
-
-			//Fee Detail Tab
-			final HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("financeMainDialogCtrl", this);
-			map.put("financeDetail", getFinanceDetail());
-			map.put("profitDaysBasisList", profitDaysBasisList);
-			map.put("schMethodList", schMethodList);
-			map.put("isModify", true);
-			map.put("isWIF", true);
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FeeDetailDialog.zul", tabpanel, map);
-
-			Tab tab = null;
-			if (tabsIndexCenter.getFellowIfAny("feeDetailTab") != null) {
-				tab = (Tab) tabsIndexCenter.getFellowIfAny("feeDetailTab");
-				tab.setVisible(true);
 			}
 		}
 		logger.debug("Leaving");
@@ -3384,13 +3269,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (!getFinanceDetail().getFinScheduleData().getFinanceMain().isLovDescIsSchdGenerated()) {
-			return true;
-		}
-
-		if (getFeeDetailDialogCtrl() != null && getFeeDetailDialogCtrl().isDataChanged(false)) {
-			return true;
-		}
-		if (feeDetailDialogCtrl != null && feeDetailDialogCtrl.getFinInsuranceList() != oldVar_finInsuranceList) {
 			return true;
 		}
 
@@ -4201,16 +4079,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		isNew = aFinanceDetail.isNew();
-
-		//Finance Fee Charge Details Tab
-		if (getFeeDetailDialogCtrl() != null && getFinanceDetail().getFinScheduleData().getFeeRules() != null
-				&& getFinanceDetail().getFinScheduleData().getFeeRules().size() > 0) {
-			// check if fee & charges rules executed or not
-			if (!getFeeDetailDialogCtrl().isFeeChargesExecuted()) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Fee"));
-				return;
-			}
-		}
 
 		//Finance Fee Details Tab
 		if (finFeeDetailListCtrl != null) {
@@ -5336,17 +5204,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		if (getFeeDetailDialogCtrl() != null) {
-			if (isFeesModified) {
-				getFeeDetailDialogCtrl().dofillFeeCharges(getFinanceDetail().getFeeCharges(), false, false, false,
-						getFinanceDetail().getFinScheduleData(), false);
-			}
-		} else {
-			if (isFeesModified) {
-				appendFeeDetailsTab(false);
-			}
-		}
-
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -5561,10 +5418,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void onSelectStepDetailsTab(ForwardEvent event) {
 		getStepDetailDialogCtrl().doSetLabels(getFinBasicDetails());
-	}
-
-	public void onSelectFeeDetailsTab(ForwardEvent event) {
-		getFeeDetailDialogCtrl().doSetLabels(getFinBasicDetails());
 	}
 
 	public void onSelectFeeTab(ForwardEvent event) {
@@ -7324,14 +7177,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setScheduleDetailDialogCtrl(ScheduleDetailDialogCtrl scheduleDetailDialogCtrl) {
 		this.scheduleDetailDialogCtrl = scheduleDetailDialogCtrl;
-	}
-
-	public FeeDetailDialogCtrl getFeeDetailDialogCtrl() {
-		return feeDetailDialogCtrl;
-	}
-
-	public void setFeeDetailDialogCtrl(FeeDetailDialogCtrl feeDetailDialogCtrl) {
-		this.feeDetailDialogCtrl = feeDetailDialogCtrl;
 	}
 
 	public void setStepDetailDialogCtrl(StepDetailDialogCtrl stepDetailDialogCtrl) {

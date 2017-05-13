@@ -76,8 +76,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
-import com.pennant.exception.PFFInterfaceException;
-import com.pennant.webui.finance.financemain.FeeDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -115,7 +113,6 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	// not auto wired vars
 	private FinScheduleData finScheduleData; // overhanded per param
 	private ScheduleDetailDialogCtrl scheduleDetailDialogCtrl;
-	private FeeDetailDialogCtrl feeDetailDialogCtrl;
 	private PostponementService postponementService;
 	
 	/**
@@ -166,11 +163,6 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 			if (arguments.containsKey("moduleDefiner")) {
 				moduleDefiner = (String) arguments.get("moduleDefiner");
-			}
-
-			if (arguments.containsKey("feeDetailDialogCtrl")) {
-				setFeeDetailDialogCtrl((FeeDetailDialogCtrl) arguments
-						.get("feeDetailDialogCtrl"));
 			}
 
 			doSetFieldProperties();
@@ -629,14 +621,6 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 		}
 		
-		if(getFeeDetailDialogCtrl() != null){
-			try {
-				setFinScheduleData(getFeeDetailDialogCtrl().doExecuteFeeCharges(true, false, getFinScheduleData(),true,fromDate));
-			} catch (PFFInterfaceException e) {
-				logger.error("Exception: ", e);
-			}
-		}
-		
 		finServiceInstruction.setRecalFromDate(recalFromDate);
 		finServiceInstruction.setRecalToDate(recalToDate);
 		if(StringUtils.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT, moduleDefiner) ||
@@ -949,13 +933,6 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.scheduleDetailDialogCtrl = scheduleDetailDialogCtrl;
 	}	
 	
-	public void setFeeDetailDialogCtrl(FeeDetailDialogCtrl feeDetailDialogCtrl) {
-		this.feeDetailDialogCtrl = feeDetailDialogCtrl;
-	}
-	public FeeDetailDialogCtrl getFeeDetailDialogCtrl() {
-		return feeDetailDialogCtrl;
-	}
-
 	public void setPostponementService(PostponementService postponementService) {
 		this.postponementService = postponementService;
 	}

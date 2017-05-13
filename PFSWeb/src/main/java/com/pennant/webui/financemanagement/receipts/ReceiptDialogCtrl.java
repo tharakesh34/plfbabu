@@ -180,7 +180,6 @@ import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.AgreementDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
-import com.pennant.webui.finance.financemain.FeeDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.FinanceBaseCtrl;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.finance.financemain.StageAccountingDetailDialogCtrl;
@@ -350,7 +349,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private transient FinanceReferenceDetailService			financeReferenceDetailService;
 
 	private transient AccountingDetailDialogCtrl			accountingDetailDialogCtrl			= null;
-	private transient FeeDetailDialogCtrl					feeDetailDialogCtrl					= null;
 	private transient DocumentDetailDialogCtrl				documentDetailDialogCtrl			= null;
 	private transient AgreementDetailDialogCtrl				agreementDetailDialogCtrl			= null;
 	private transient CustomerDialogCtrl					customerDialogCtrl					= null;
@@ -4705,13 +4703,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	}
 	public void setCommitmentService(CommitmentService commitmentService) {
 		this.commitmentService = commitmentService;
-	}
-
-	public FeeDetailDialogCtrl getFeeDetailDialogCtrl() {
-		return feeDetailDialogCtrl;
-	}
-	public void setFeeDetailDialogCtrl(FeeDetailDialogCtrl feeDetailDialogCtrl) {
-		this.feeDetailDialogCtrl = feeDetailDialogCtrl;
 	}
 
 	public DocumentDetailDialogCtrl getDocumentDetailDialogCtrl() {

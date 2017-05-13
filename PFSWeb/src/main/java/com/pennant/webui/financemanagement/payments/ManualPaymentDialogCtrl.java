@@ -171,7 +171,6 @@ import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.AgreementDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
-import com.pennant.webui.finance.financemain.FeeDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.FinanceBaseCtrl;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.finance.financemain.StageAccountingDetailDialogCtrl;
@@ -325,7 +324,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private transient FinanceReferenceDetailService			financeReferenceDetailService;
 
 	private transient AccountingDetailDialogCtrl			accountingDetailDialogCtrl			= null;
-	private transient FeeDetailDialogCtrl					feeDetailDialogCtrl					= null;
 	private transient DocumentDetailDialogCtrl				documentDetailDialogCtrl			= null;
 	private transient AgreementDetailDialogCtrl				agreementDetailDialogCtrl			= null;
 	private transient CustomerDialogCtrl					customerDialogCtrl					= null;
@@ -1801,14 +1799,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			tranType = PennantConstants.TRAN_UPD;
 		}
 
-		if (getFeeDetailDialogCtrl() != null) {
-			Map<String, FeeRule> feeMap = getFeeDetailDialogCtrl().getFeeRuleDetailsMap();
-			if (feeMap != null && feeMap.size() > 0) {
-				List<FeeRule> feeList = new ArrayList<FeeRule>(feeMap.values());
-				aRepayData.getFinanceDetail().getFinScheduleData().setFeeRules(feeList);
-			}
-		}
-
 		//Document Details Saving
 		if (getDocumentDetailDialogCtrl() != null) {
 			aRepayData.getFinanceDetail()
@@ -2216,12 +2206,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		List<ReturnDataSet> returnSetEntries = null;
 
-		Map<String, FeeRule> feeRuleMap = null;
-		if (getFeeDetailDialogCtrl() != null) {
-			feeRuleMap = getFeeDetailDialogCtrl().getFeeRuleDetailsMap();
-		}
-
-		dataMap.putAll(feeRuleMap);
 		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 		aeEvent.setDataMap(dataMap);
 		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
@@ -3669,14 +3653,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	public void setCommitmentService(CommitmentService commitmentService) {
 		this.commitmentService = commitmentService;
-	}
-
-	public FeeDetailDialogCtrl getFeeDetailDialogCtrl() {
-		return feeDetailDialogCtrl;
-	}
-
-	public void setFeeDetailDialogCtrl(FeeDetailDialogCtrl feeDetailDialogCtrl) {
-		this.feeDetailDialogCtrl = feeDetailDialogCtrl;
 	}
 
 	public DocumentDetailDialogCtrl getDocumentDetailDialogCtrl() {

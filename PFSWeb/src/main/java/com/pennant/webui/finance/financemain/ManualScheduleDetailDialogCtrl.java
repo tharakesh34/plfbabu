@@ -182,7 +182,6 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	protected Listheader listheader_ScheduleDetailDialog_ScheduleEndBal;
 
 	private Object financeMainDialogCtrl = null;
-	private FeeDetailDialogCtrl feeDetailDialogCtrl = null;
 	private FinScheduleData finScheduleData = null;
 	private FinanceDetail financeDetail = null;
 	private FinanceDetailService financeDetailService;
@@ -230,10 +229,6 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			this.financeMainDialogCtrl = (Object) arguments.get("financeMainDialogCtrl");
 		}
 
-		if (arguments.containsKey("feeDetailDialogCtrl")) {
-			this.feeDetailDialogCtrl = (FeeDetailDialogCtrl) arguments.get("feeDetailDialogCtrl");
-		}
-		
 		doSetLabels();
 		doShowDialog();
 
@@ -2016,13 +2011,6 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	}
 	public void setFeeChargesMap(Map<Date, ArrayList<FeeRule>> feeChargesMap) {
 		this.feeChargesMap = feeChargesMap;
-	}
-
-	public FeeDetailDialogCtrl getFeeDetailDialogCtrl() {
-		return feeDetailDialogCtrl;
-	}
-	public void setFeeDetailDialogCtrl(FeeDetailDialogCtrl feeDetailDialogCtrl) {
-		this.feeDetailDialogCtrl = feeDetailDialogCtrl;
 	}
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {

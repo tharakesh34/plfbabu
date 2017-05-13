@@ -442,17 +442,6 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		this.doWriteComponentsToBean(aFinanceDetail.getFinScheduleData());
 		isNew = getLiabilityRequest().isNew();
 
-		// Finance Fee Charge Details Tab
-		if (getFeeDetailDialogCtrl() != null && getFinanceDetail().getFinScheduleData().getFeeRules() != null
-				&& getFinanceDetail().getFinScheduleData().getFeeRules().size() > 0) {
-
-			// check if fee & charges rules executed or not
-			if (!getFeeDetailDialogCtrl().isFeeChargesExecuted()) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Fee"));
-				return;
-			}
-		}
-
 		// Document Details Saving
 		if (getDocumentDetailDialogCtrl() != null) {
 			aFinanceDetail.setDocumentDetailsList(getDocumentDetailDialogCtrl().getDocumentDetailsList());
@@ -1659,9 +1648,6 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 
 		// Customer Details
 		appendCustomerDetailTab(true);
-
-		// Fee Details Tab Addition
-		appendFeeDetailsTab(true);
 
 		// Schedule Details Tab Adding
 		appendScheduleDetailTab(true, true);
