@@ -116,7 +116,7 @@ public class FinanceDetailController extends SummaryDetailService {
 					}
 					// fees calculation
 					if(!finScheduleData.getFinFeeDetailList().isEmpty()) {
-						finScheduleData = FeeScheduleCalculator.getFeeScheduleDetails(finScheduleData);
+						finScheduleData = FeeScheduleCalculator.feeSchdBuild(finScheduleData);
 					}
 				}
 

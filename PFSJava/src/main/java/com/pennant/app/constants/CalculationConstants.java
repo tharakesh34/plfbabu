@@ -141,5 +141,11 @@ public class CalculationConstants {
 	public static final String	RATEREVIEW_RVWALL					= "RVWALL";
 	public static final String	RATEREVIEW_NORVW					= "NORVW";
 	
+	public static final int	FEE_POSTPONEMENT_METHOD_NEXT			= 1;
+	public static final int	FEE_POSTPONEMENT_METHOD_ALONG			= 2;
+
+	public static final int	FEE_RECAL_ON_DELETE_TERMS_NEXT			= 1;
+	public static final int	FEE_RECAL_ON_DELETE_TERMS_RECAL			= 2;
+	public static final int	FEE_RECAL_ON_DELETE_TERMS_LAST			= 3;
 
 }

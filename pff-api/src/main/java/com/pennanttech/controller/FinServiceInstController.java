@@ -1417,7 +1417,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		// fees calculation
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		if (!finScheduleData.getFinFeeDetailList().isEmpty()) {
-			finScheduleData = FeeScheduleCalculator.getFeeScheduleDetails(finScheduleData);
+			finScheduleData = FeeScheduleCalculator.feeSchdBuild(finScheduleData);
 		}
 		
 		if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {

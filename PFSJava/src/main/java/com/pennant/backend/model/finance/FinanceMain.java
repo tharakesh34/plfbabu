@@ -538,7 +538,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal pftForSelectedPeriod = BigDecimal.ZERO;
 	private BigDecimal miscAmount = BigDecimal.ZERO;
 	private int indexMisc = 0;
-	
+
 	private boolean compareToExpected = false;
 	private BigDecimal compareExpectedResult = BigDecimal.ZERO;
 	private int compareExpectIndex = 0;
@@ -550,6 +550,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private int indexStart = 0;
 	private int indexEnd = 0;
 	private int newMaturityIndex = 0;
+	private Date reqMaturity;
 
 	private String procMethod = "";
 
@@ -557,7 +558,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	// Can be Deleted
 	private int reqTerms;
-	private Date reqMaturity;
 	private boolean increaseTerms = false;
 	private String lovDescFinDivision;
 	private String lovValue;
@@ -606,6 +606,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private Date lastDisbDate;
 	private int dueBucket=0;
+
+	//For Fee Reca Calculation
+	private BigDecimal recalFee = BigDecimal.ZERO;
+	private int recalTerms = 0;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -715,8 +719,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("swiftBranchCode");
 		excludeFields.add("receiptMode");
 		
-
 		excludeFields.add("roundingTarget");
+		excludeFields.add("recalFee");
+		excludeFields.add("recalTerms");
+
 		return excludeFields;
 	}
 
@@ -3457,6 +3463,22 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setRoundingTarget(int roundingTarget) {
 		this.roundingTarget = roundingTarget;
+	}
+
+	public BigDecimal getRecalFee() {
+		return recalFee;
+	}
+
+	public void setRecalFee(BigDecimal recalFee) {
+		this.recalFee = recalFee;
+	}
+
+	public int getRecalTerms() {
+		return recalTerms;
+	}
+
+	public void setRecalTerms(int recalTerms) {
+		this.recalTerms = recalTerms;
 	}
 	
 }

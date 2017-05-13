@@ -65,7 +65,6 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
-import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -628,8 +627,6 @@ public class ScheduleCalculator {
 		finMain.setEventFromDate(finMain.getFinStartDate());
 		finMain.setEventToDate(finMain.getMaturityDate());
 
-		// Fee Schedule Calculation
-		finScheduleData = feeSchedulePreparation(finScheduleData, null);
 
 		//Insurance  calculation
 		insuranceCalculation(finScheduleData);
@@ -1406,9 +1403,6 @@ public class ScheduleCalculator {
 		 * } else { finScheduleData = calSchdProcess(finScheduleData, false, false); }
 		 */
 
-		// Fee Schedule Calculation
-		finScheduleData = feeSchedulePreparation(finScheduleData, finMain.getEventToDate());
-
 		if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_ADDTERM)
 				|| StringUtils.equals(recaltype, CalculationConstants.RPYCHG_ADDRECAL)) {
 
@@ -1801,16 +1795,6 @@ public class ScheduleCalculator {
 		finScheduleData = calSchdProcess(finScheduleData, false, false);
 		finMain = finScheduleData.getFinanceMain();
 		finMain.setScheduleMaintained(true);
-
-		// Fee Schedule Calculation
-		Date feeCalFromdate = finMain.getFinStartDate();
-		for (int i = 0; i < sdSize; i++) {
-			if (finSchdDetails.get(i).getSchDate().compareTo(finMain.getRecalFromDate()) >= 0) {
-				break;
-			}
-			feeCalFromdate = finSchdDetails.get(i).getSchDate();
-		}
-		finScheduleData = feeSchedulePreparation(finScheduleData, feeCalFromdate);
 
 		// Insurance Schedule Calculation
 		finScheduleData = insuranceCalculation(finScheduleData);
@@ -2698,9 +2682,14 @@ public class ScheduleCalculator {
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> finScheduleDetails = finScheduleData.getFinanceScheduleDetails();
 
+		//FIXME: PV: 13MAY17: It is kept on the assumption reqMaturity fields in not used any where else
+		if (finMain.isNew() || StringUtils.equals(finMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+			finMain.setReqMaturity(finMain.getCalMaturity());
+		}
+		
+		FeeScheduleCalculator.feeSchdBuild(finScheduleData);
+		
 		boolean isFirstAdjSet = false;
-		FeeScheduleCalculator.getFeeScheduleDetails(finScheduleData);
-
 		int sdSize = finScheduleData.getFinanceScheduleDetails().size();
 		finMain.setTotalGraceCpz(BigDecimal.ZERO);
 		finMain.setTotalGracePft(BigDecimal.ZERO);
@@ -4008,87 +3997,6 @@ public class ScheduleCalculator {
 		finScheduleData = setFinanceTotals(finScheduleData);
 
 		logger.debug("Leaving");
-		return finScheduleData;
-	}
-
-	/**
-	 * Method for Distribute Calculated Fee Amount based on Remaining Schedule Method and Number of Installments
-	 * 
-	 * @param finScheduleData
-	 * @return
-	 */
-	private FinScheduleData feeSchedulePreparation(FinScheduleData finScheduleData, Date fromDate) {
-		Date maturityDate = finScheduleData.getFinanceMain().getCalMaturity();
-		List<FeeRule> feeRuleList = finScheduleData.getFeeRules();
-		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
-
-		for (int i = 0; i < feeRuleList.size(); i++) {
-
-			FeeRule feeRule = feeRuleList.get(i);
-			if (StringUtils.equals(feeRule.getFeeMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)
-					|| StringUtils.equals(feeRule.getFeeMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
-				continue;
-			}
-
-			BigDecimal feeToBeSchedule = feeRule.getFeeAmount().subtract(
-					feeRule.getWaiverAmount().subtract(feeRule.getPaidAmount()));
-
-			if (feeToBeSchedule.compareTo(BigDecimal.ZERO) <= 0) {
-				continue;
-			}
-
-			int feeSchdTerms = feeRule.getScheduleTerms();
-
-			if (feeSchdTerms == 0) {
-				finScheduleData.setErrorDetail(new ErrorDetails("SCH40",
-						"Calculate Fee Schedule Term with Mentioned Remaining Schedule method is not matched",
-						new String[] { " " }));
-				return finScheduleData;
-			}
-
-			// Distribute Fee Amount to each Schedule Installment
-			int size = finScheduleData.getFinanceScheduleDetails().size();
-			int calFrqTerms = 0;
-			FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
-
-			for (int j = 0; j < size; j++) {
-				curSchd = finSchdDetails.get(j);
-				if (curSchd.isFrqDate()) {
-					calFrqTerms = calFrqTerms + 1;
-				}
-			}
-
-			if (feeSchdTerms > calFrqTerms) {
-				feeSchdTerms = calFrqTerms;
-			}
-
-			// Equal Distribution of Calculated Fee Amount by Number of Terms.
-			BigDecimal instlFeeAmt = feeToBeSchedule.divide(new BigDecimal(feeSchdTerms), 0, RoundingMode.HALF_DOWN);
-
-			for (int j = 0; j < size; j++) {
-
-				curSchd = finSchdDetails.get(j);
-				curSchd.setSchdFeeOS(feeToBeSchedule);
-
-				if (feeToBeSchedule.compareTo(BigDecimal.ZERO) <= 0) {
-					break;
-				}
-
-				if (!curSchd.isFrqDate()) {
-					continue;
-				}
-
-				if (instlFeeAmt.compareTo(feeToBeSchedule) >= 0 || curSchd.getSchDate().compareTo(maturityDate) == 0) {
-					curSchd.setFeeSchd(feeToBeSchedule);
-					feeToBeSchedule = new BigDecimal(0);
-					break;
-				} else {
-					curSchd.setFeeSchd(instlFeeAmt);
-					feeToBeSchedule = feeToBeSchedule.subtract(instlFeeAmt);
-				}
-			}
-		}
-
 		return finScheduleData;
 	}
 
