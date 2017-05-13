@@ -52,6 +52,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -69,6 +70,7 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pff.core.Literal;
@@ -92,7 +94,8 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 	private Button downlaod;
 
 	String module = null;
-
+	@Autowired
+	protected DataEngineConfig dataEngineConfig;
 	/**
 	 * default constructor.<br>
 	 */
@@ -160,6 +163,10 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
 	public void onClick$btnRefresh(Event event) throws Exception {
+		refresh();
+	}
+
+	private void refresh() {
 		doReset();
 		search();
 	}
@@ -192,8 +199,11 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 			Filedownload.save(stream.toByteArray(), "text/plain", fileName);
 			stream.close();
 			stream = null;
+			
+			dataEngineConfig.saveDowloadHistory(fileDownlaod.getId(),getUserWorkspace().getUserDetails().getUserId());
+			refresh();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -208,7 +218,6 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 		@Override
 		public void render(Listitem item, FileDownlaod fileDownlaod, int count) throws Exception {
 			Listcell lc;
-
 
 			lc = new Listcell(fileDownlaod.getName());
 			lc.setParent(item);
@@ -236,8 +245,11 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 			builder.append(fileDownlaod.getFileName());
 
 			File file = new File(builder.toString());
-
-			if (!file.exists()) {
+			
+			if(!fileDownlaod.isAlwFileDownload()) {
+				downlaod.setDisabled(true);
+				downlaod.setTooltiptext("Not allowed to download.");
+			} else  if (!file.exists()) {
 				downlaod.setDisabled(true);
 				downlaod.setTooltiptext("File not available.");
 			} else if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
@@ -252,6 +264,5 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 	public void onTimer$timer(Event event) {
 		Events.postEvent("onCreate", this.window_DisbursementFileDownloadList, event);
 		  searchObject.clearFields();
-
 	}
 }

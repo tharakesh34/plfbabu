@@ -4,14 +4,14 @@ import java.util.Date;
 
 public class FileDownlaod {
 	
-	private int    Id;
+	private long    Id;
 	private String finReference;
 	private String partnerBankCode;
 	private String name;
 	private String fileName;
 	private String fileLocation;
 	private String partnerBankName;
-	private int    alwFileDownload;
+	private boolean  alwFileDownload;
 	private String status;
 	private Date endTime;
 
@@ -47,11 +47,11 @@ public class FileDownlaod {
 		this.partnerBankName = partnerBankName;
 	}
 
-	public int getAlwFileDownload() {
+	public boolean isAlwFileDownload() {
 		return alwFileDownload;
 	}
 
-	public void setAlwFileDownload(int alwFileDownload) {
+	public void setAlwFileDownload(boolean alwFileDownload) {
 		this.alwFileDownload = alwFileDownload;
 	}
 
@@ -79,13 +79,6 @@ public class FileDownlaod {
 		this.finReference = finReference;
 	}
 
-	public int getId() {
-		return Id;
-	}
-
-	public void setId(int id) {
-		Id = id;
-	}
 
 	public Date getEndTime() {
 		return endTime;
@@ -93,6 +86,14 @@ public class FileDownlaod {
 
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
+	}
+
+	public long getId() {
+		return Id;
+	}
+
+	public void setId(long id) {
+		Id = id;
 	}
 
 }

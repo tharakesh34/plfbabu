@@ -32,7 +32,7 @@ public abstract class BajajService {
 		this.namedJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
-	protected Object getSMTParameter(String sysParmCode, Class<?> type) throws Exception {
+	protected Object getSMTParameter(String sysParmCode, Class<?> type) {
 		MapSqlParameterSource paramMap;
 
 		StringBuilder sql = new StringBuilder();
@@ -44,12 +44,12 @@ public abstract class BajajService {
 		try {
 			return namedJdbcTemplate.queryForObject(sql.toString(), paramMap, type);
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw new Exception("The parameter code " + sysParmCode + " not configured.");
+			logger.error("The parameter code " + sysParmCode + " not configured.");
 		} finally {
 			paramMap = null;
 			sql = null;
 		}
+		return null;
 	}
 
 	protected int updateParameter(String sysParmCode, Object value) throws Exception {

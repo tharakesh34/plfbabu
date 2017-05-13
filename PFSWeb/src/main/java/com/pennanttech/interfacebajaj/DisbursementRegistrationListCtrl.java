@@ -201,6 +201,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		registerField("paymentId");
 		registerField("partnerBankID");
 		registerField("branchDesc");
+		registerField("alwFileDownload");
 
 		registerField("partnerbankCode", partnerBank, SortOrder.NONE, sortOperator_PartnerBank, Operators.STRING);
 		registerField("paymentType", listheader_Disbursement_DisbTypes, SortOrder.NONE, disbTypes,
@@ -289,7 +290,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	 */
 	public void onClick_listCellCheckBox(ForwardEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
-
+		
 		Checkbox checkBox = (Checkbox) event.getOrigin().getTarget();
 
 		FinAdvancePayments advancePayments = (FinAdvancePayments) checkBox.getAttribute("finAdvancePayments");
@@ -363,9 +364,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	 * Getting the Disbursement List using JdbcSearchObject with search criteria..
 	 */
 	private Map<Long, FinAdvancePayments> getDisbursementDetails() {
-
-		JdbcSearchObject<Map<Long, FinAdvancePayments>> searchObject = new JdbcSearchObject<>();
-		FinAdvancePayments finAdvancePayments = null;
+		JdbcSearchObject<FinAdvancePayments> searchObject = new JdbcSearchObject<FinAdvancePayments>(FinAdvancePayments.class);
+		
 		searchObject.addField("paymentid");
 		searchObject.addField("PaymentType");
 		searchObject.addField("PartnerBankId");
@@ -373,6 +373,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		searchObject.addField("BranchCode");
 		searchObject.addField("BranchDesc");
 		searchObject.addField("PARTNERBANKCODE");
+		searchObject.addField("alwFileDownload");
 		searchObject.addTabelName(this.tableName);
 
 		for (SearchFilterControl searchControl : searchControls) {
@@ -382,24 +383,18 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			}
 		}
 
-		List<Map<Long, FinAdvancePayments>> list = getPagedListWrapper().getPagedListService().getBySearchObject(
-				searchObject);
+		List<FinAdvancePayments> list = getPagedListWrapper().getPagedListService().getBySearchObject(searchObject);
 
 		Map<Long, FinAdvancePayments> disbMap = new HashMap<Long, FinAdvancePayments>();
-
-		if (list != null && !list.isEmpty()) {
-			for (int i = 0; i < list.size(); i++) {
-				finAdvancePayments = new FinAdvancePayments();
-				Map<Long, FinAdvancePayments> map = (Map<Long, FinAdvancePayments>) list.get(i);
-				long paymentid = Long.parseLong(String.valueOf(map.get("paymentid")));
-				finAdvancePayments.setPaymentId(paymentid);
-				finAdvancePayments.setPaymentType(String.valueOf(map.get("PaymentType")));
-				finAdvancePayments.setPartnerBankID(Long.parseLong(String.valueOf(map.get("PartnerBankId"))));
-				finAdvancePayments.setPartnerbankCode(String.valueOf(map.get("PARTNERBANKCODE")));
-
-				disbMap.put(paymentid, finAdvancePayments);
-			}
+		
+		if(list == null || list.isEmpty()) {
+			return disbMap;
 		}
+
+		for (FinAdvancePayments disbursement : list) {
+			disbMap.put(disbursement.getPaymentId(), disbursement);
+		}
+		
 		return disbMap;
 	}
 

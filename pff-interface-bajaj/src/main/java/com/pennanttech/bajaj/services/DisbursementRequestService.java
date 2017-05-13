@@ -1,5 +1,7 @@
 package com.pennanttech.bajaj.services;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,7 +10,11 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.ColumnMapRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennanttech.dataengine.DataEngineExport;
@@ -16,9 +22,10 @@ import com.pennanttech.dbengine.process.IMPSDisbursementRequest;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.RequestService;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 public class DisbursementRequestService extends BajajService implements RequestService {
-	private final Logger	logger	= Logger.getLogger(getClass());
+	private final Logger logger = Logger.getLogger(getClass());
 
 	public enum DisbursementTypes {
 		IMPS, RTGS, NEFT, DD, CHEQUE, I;
@@ -59,12 +66,6 @@ public class DisbursementRequestService extends BajajService implements RequestS
 			list.append(fa.getPaymentId());
 		}
 
-		int count = prepareRequest(list.toString().split(","));
-
-		if (count == 0) {
-			return;
-		}
-
 		generateRequest(finType, userId, disbursements);
 
 		logger.debug(Literal.LEAVING);
@@ -94,42 +95,42 @@ public class DisbursementRequestService extends BajajService implements RequestS
 
 			switch (type) {
 			case IMPS:
-				if (disbursment.isAlwFileDownload()) {
+				if (!disbursment.isAlwFileDownload()) {
 					stp_IMPS.add(disbursment);
 				} else {
 					other_IMPS.add(disbursment);
 				}
 				break;
 			case NEFT:
-				if (disbursment.isAlwFileDownload()) {
+				if (!disbursment.isAlwFileDownload()) {
 					stp_NEFT.add(disbursment);
 				} else {
 					other_NEFT.add(disbursment);
 				}
 				break;
 			case RTGS:
-				if (disbursment.isAlwFileDownload()) {
+				if (!disbursment.isAlwFileDownload()) {
 					stp_RTGS.add(disbursment);
 				} else {
 					other_RTGS.add(disbursment);
 				}
 				break;
 			case DD:
-				if (disbursment.isAlwFileDownload()) {
+				if (!disbursment.isAlwFileDownload()) {
 					stp_DD.add(disbursment);
 				} else {
 					other_DD.add(disbursment);
 				}
 				break;
 			case CHEQUE:
-				if (disbursment.isAlwFileDownload()) {
+				if (!disbursment.isAlwFileDownload()) {
 					stp_CHEQUE.add(disbursment);
 				} else {
 					other_CHEQUE.add(disbursment);
 				}
 				break;
 			default:
-				if (disbursment.isAlwFileDownload()) {
+				if (!disbursment.isAlwFileDownload()) {
 					stp_Other.add(disbursment);
 				} else {
 					other_Other.add(disbursment);
@@ -169,7 +170,13 @@ public class DisbursementRequestService extends BajajService implements RequestS
 			List<String> parnerBanks = new ArrayList<String>(map.keySet());
 
 			for (String bank : parnerBanks) {
-				generateFile(configName, getPaymentIds(map.get(bank)), paymentType, bank, finType, userId);
+				List<String> idList = null;
+				try {
+					idList = prepareRequest(getPaymentIds(map.get(bank)).split(","));
+				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
+				}
+				generateFile(configName, idList, paymentType, bank, finType, userId);
 			}
 		}
 	}
@@ -196,24 +203,28 @@ public class DisbursementRequestService extends BajajService implements RequestS
 				builder.append(",");
 			}
 			builder.append(disbursement.getPaymentId());
-
 		}
-
 		return builder.toString();
 	}
 
-	private void generateFile(String configName, String paymentIds, String paymentType, String partnerbankCode,
+	private void generateFile(String configName, List<String> idList, String paymentType, String partnerbankCode,
 			String finType, long userId) {
 		DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name());
 
 		Map<String, Object> filterMap = new HashMap<>();
-		filterMap.put("PAYMENTID", paymentIds);
+		filterMap.put("ID", idList);
 		filterMap.put("STATUS", "APPROVED");
 
 		Map<String, Object> parameterMap = new HashMap<>();
 		parameterMap.put("PRODUCT_CODE", StringUtils.trimToEmpty(finType));
 		parameterMap.put("PAYMENT_TYPE", paymentType);
 		parameterMap.put("PARTNER_BANK_CODE", partnerbankCode);
+
+		if ("DISB_HDFC_EXPORT".equals(configName)) {
+			parameterMap.put("CLIENT_CODE", (String) getSMTParameter("CLIENT_CODE", String.class));
+			parameterMap.put("GROUP_ID", (String) getSMTParameter("GROUP_ID", String.class));
+			parameterMap.put("SEQ_DATE_FILE", StringUtils.leftPad(getSTPFileSequence(), 4, "0"));
+		}
 
 		try {
 			export.setValueDate(getAppDate());
@@ -226,6 +237,25 @@ public class DisbursementRequestService extends BajajService implements RequestS
 			export = null;
 			parameterMap = null;
 		}
+	}
+
+	private String getSTPFileSequence() {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" select COALESCE(FILESEQUENCENO, 0) +1 from DATA_ENGINE_CONFIG");
+		sql.append(" where Name = :Name AND LASTPROCESSEDON = :LASTPROCESSEDON");
+
+		paramMap.addValue("Name", "DISB_HDFC_EXPORT");
+		paramMap.addValue("LASTPROCESSEDON", getAppDate());
+
+		try {
+			return namedJdbcTemplate.queryForObject(sql.toString(), paramMap, String.class);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		return "1";
 	}
 
 	private void sendIMPSRequest(String configName, String paymentIds, long userId) {
@@ -242,23 +272,21 @@ public class DisbursementRequestService extends BajajService implements RequestS
 
 	}
 
-	private int prepareRequest(String[] disbursments) throws Exception {
+	private List<String> prepareRequest(String[] disbursments) throws Exception {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap;
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" INSERT INTO DISBURSEMENT_REQUESTS SELECT");
-		sql.append(" SEQ_DISBURSEMENT_REQUESTS.NEXTVAL,");
-		sql.append(" :BATCH_ID,");
-		sql.append(" PAYMENTID,");
+		sql.append(" SELECT");
+		sql.append(" PAYMENTID DISBURSEMENT_ID,");
 		sql.append(" CUSTCIF,");
 		sql.append(" FINREFERENCE,");
-		sql.append(" AMTTOBERELEASED,");
+		sql.append(" AMTTOBERELEASED DISBURSEMENT_AMOUNT,");
 		sql.append(" DISBURSEMENT_TYPE,");
-		sql.append(" DISBDATE,");
-		sql.append(" PAYABLELOC,");
-		sql.append(" PRINTINGLOC,");
-		sql.append(" CUSTSHRTNAME,");
+		sql.append(" DISBDATE DISBURSEMENT_DATE,");
+		sql.append(" PAYABLELOC DRAWEE_LOCATION,");
+		sql.append(" PRINTINGLOC PRINT_LOCATION,");
+		sql.append(" CUSTSHRTNAME CUSTOMER_NAME,");
 		sql.append(" CUSTOMER_MOBILE,");
 		sql.append(" CUSTOMER_EMAIL,");
 		sql.append(" CUSTOMER_STATE,");
@@ -268,54 +296,59 @@ public class DisbursementRequestService extends BajajService implements RequestS
 		sql.append(" CUSTOMER_ADDRESS3,");
 		sql.append(" CUSTOMER_ADDRESS4,");
 		sql.append(" CUSTOMER_ADDRESS5,");
-		sql.append(" BANKNAME,");
-		sql.append(" BRANCHDESC,");
+		sql.append(" BANKNAME BENFICIARY_BANK,");
+		sql.append(" BRANCHDESC BENFICIARY_BRANCH,");
 		sql.append(" BENFICIARY_BRANCH_STATE,");
 		sql.append(" BENFICIARY_BRANCH_CITY,");
 		sql.append(" MICR_CODE,");
 		sql.append(" IFSC_CODE,");
-		sql.append(" BENEFICIARYACCNO,");
-		sql.append(" BENEFICIARYNAME,");
-		sql.append(" BENEFICIARY_MOBILE,");
+		sql.append(" BENEFICIARYACCNO BENFICIARY_ACCOUNT,");
+		sql.append(" BENEFICIARYNAME BENFICIARY_NAME,");
+		sql.append(" BENEFICIARY_MOBILE BENFICIARY_MOBILE,");
 		sql.append(" BENFICIRY_EMAIL,");
-		sql.append(" BENFICIARY_STATE,");
-		sql.append(" BENFICIARY_CITY,");
+		sql.append(" BENFICIARY_STATE BENFICIRY_STATE,");
+		sql.append(" BENFICIARY_CITY BENFICIRY_CITY,");
 		sql.append(" BENFICIARY_ADDRESS1,");
 		sql.append(" BENFICIARY_ADDRESS2,");
 		sql.append(" BENFICIARY_ADDRESS3,");
 		sql.append(" BENFICIARY_ADDRESS4,");
 		sql.append(" BENFICIARY_ADDRESS5,");
-		sql.append(" :PAYMENT_DETAIL1,");
 		sql.append(" PAYMENT_DETAIL2,");
 		sql.append(" PAYMENT_DETAIL3,");
 		sql.append(" PAYMENT_DETAIL4,");
 		sql.append(" PAYMENT_DETAIL5,");
 		sql.append(" PAYMENT_DETAIL6,");
 		sql.append(" PAYMENT_DETAIL7,");
-		sql.append(" :RESP_BATCH_ID,");
-		sql.append(" :TRANSACTIONREF,");
-		sql.append(" :CHEQUE_NUMBER,");
-		sql.append(" :DD_CHEQUE_CHARGE,");
-		sql.append(" :PAYMENT_DATE,");
 		sql.append(" STATUS,");
-		sql.append(" REMARKS,");
-		sql.append(" :REJECT_REASON");
+		sql.append(" REMARKS");
 		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW ");
 		sql.append(" WHERE PAYMENTID IN (:PAYMENTID)");
 
 		paramMap = new MapSqlParameterSource();
-		paramMap.addValue("BATCH_ID", 0);
-		paramMap.addValue("PAYMENT_DETAIL1", getSMTParameter("DISB_FI_EMAIL", String.class));
-		paramMap.addValue("RESP_BATCH_ID", 0);
-		paramMap.addValue("TRANSACTIONREF", null);
-		paramMap.addValue("CHEQUE_NUMBER", null);
-		paramMap.addValue("DD_CHEQUE_CHARGE", null);
-		paramMap.addValue("PAYMENT_DATE", null);
-		paramMap.addValue("REJECT_REASON", null);
 		paramMap.addValue("PAYMENTID", Arrays.asList(disbursments));
 
+		final String DISB_FI_EMAIL = (String) getSMTParameter("DISB_FI_EMAIL", String.class);
+		final ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
 		try {
-			return namedJdbcTemplate.update(sql.toString(), paramMap);
+			return namedJdbcTemplate.query(sql.toString(), paramMap, new RowMapper<String>() {
+				@Override
+				public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+					String id = null;
+					Map<String, Object> rowMap = rowMapper.mapRow(rs, rowNum);
+					rowMap.put("BATCH_ID", 0);
+					rowMap.put("PAYMENT_DETAIL1", DISB_FI_EMAIL);
+					rowMap.put("RESP_BATCH_ID", 0);
+					rowMap.put("TRANSACTIONREF", null);
+					rowMap.put("CHEQUE_NUMBER", null);
+					rowMap.put("DD_CHEQUE_CHARGE", null);
+					rowMap.put("PAYMENT_DATE", null);
+					rowMap.put("REJECT_REASON", null);
+
+					id = String.valueOf(insertData(rowMap));
+					rowMap = null;
+					return id;
+				}
+			});
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		} finally {
@@ -324,16 +357,26 @@ public class DisbursementRequestService extends BajajService implements RequestS
 		}
 
 		logger.debug(Literal.ENTERING);
+		return null;
+	}
 
-		return 0;
+	private long insertData(Map<String, Object> rowMap) {
+		String sql = QueryUtil.getInsertQuery(rowMap.keySet(), "DISBURSEMENT_REQUESTS");
+		final KeyHolder keyHolder = new GeneratedKeyHolder();
+		try {
+			namedJdbcTemplate.update(sql, getMapSqlParameterSource(rowMap), keyHolder, new String[] { "ID" });
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		return keyHolder.getKey().longValue();
 	}
 
 	public class DisbursementProcessThread extends Thread {
-		private final Logger				logger	= Logger.getLogger(DisbursementProcessThread.class);
+		private final Logger logger = Logger.getLogger(DisbursementProcessThread.class);
 
-		private String						finType;
-		private long						userId;
-		private List<FinAdvancePayments>	disbursements;
+		private String finType;
+		private long userId;
+		private List<FinAdvancePayments> disbursements;
 
 		public DisbursementProcessThread(String finType, long userId, List<FinAdvancePayments> disbursements) {
 			this.finType = finType;
