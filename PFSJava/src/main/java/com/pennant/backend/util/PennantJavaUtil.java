@@ -560,8 +560,8 @@ public class PennantJavaUtil {
 				new String[][] { { "Active", "0", "1" } }, 500));
 		
 		ModuleUtil.register("BankBranch", new ModuleMapping("BankBranch", BankBranch.class, new String[] {
-				"BankBranches", "BankBranches_AView" }, masterWF, new String[] { "BankCode", "BankName", "BranchCode",
-				"BranchDesc", "MICR", "IFSC" }, null, 700));
+			"BankBranches", "BankBranches_AView" }, masterWF, new String[] { "BranchCode", "BranchDesc", 
+			"BankCode", "BankName",  "MICR", "IFSC" }, null, 1200));
 		
 		ModuleUtil.register("DataEngine", new ModuleMapping("BankBranch", BankBranch.class, new String[] {
 			"BankBranches", "BankBranches_AView" }, masterWF, new String[] { "BranchCode", "BankName", "BankCode",
