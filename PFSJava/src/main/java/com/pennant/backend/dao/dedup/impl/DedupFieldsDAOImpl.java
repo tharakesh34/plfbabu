@@ -323,6 +323,8 @@ public class DedupFieldsDAOImpl extends BasisCodeDAO<DedupFields> implements Ded
 		String selectListSql = " select fieldName,fieldDesc ,fieldControl from DedupFields where QueryModule='"+queryModule+"'";
 		RowMapper<BuilderTable> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(BuilderTable.class);
+		logger.debug("selectSql: "+ selectListSql.toString());
+
 
 		try {
 			fieldList = this.namedParameterJdbcTemplate.getJdbcOperations()

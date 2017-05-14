@@ -51,6 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -440,8 +441,14 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		
 		doEdit();
 		doWriteBeanToComponents(presentmentHeader);
-		setDialog(DialogType.EMBEDDED);
-
+		try {
+			setDialog(DialogType.EMBEDDED);
+		} catch (UiException e){
+			logger.error("Exception: ", e);
+			this.window_PresentmentHeaderDialog.onClose();
+		} catch (Exception e) {
+			throw e;
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
