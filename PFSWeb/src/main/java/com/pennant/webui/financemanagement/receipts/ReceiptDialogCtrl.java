@@ -3299,6 +3299,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					amountCodes.setRpPri(amountCodes.getRpPri().add(rsd.getPrincipalSchdPayNow()));
 					amountCodes.setRpTds(amountCodes.getRpTds().add(rsd.getTdsSchdPayNow()));
 					totRpyPri = totRpyPri.add(rsd.getPrincipalSchdPayNow());
+					
+					// Penalties
+					amountCodes.setPenaltyPaid(amountCodes.getPenaltyPaid().add(rsd.getPenaltyPayNow()));
+					amountCodes.setPenaltyWaived(amountCodes.getPenaltyWaived().add(rsd.getWaivedAmt()));
 
 					// Fee Details
 					amountCodes.setSchFeePay(amountCodes.getSchFeePay().add(rsd.getSchdFeePayNow()));
@@ -3343,6 +3347,16 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE));
 				}
 				
+				if(amountCodes.getPenaltyPaid().compareTo(BigDecimal.ZERO) > 0 || 
+						amountCodes.getPenaltyWaived().compareTo(BigDecimal.ZERO) > 0){
+					
+					if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
+						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_PROMOTION));
+					} else {
+						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), AccountEventConstants.ACCEVENT_LATEPAY, FinanceConstants.MODULEID_FINTYPE));
+					}
+				}
+				
 				aeEvent.setAccountingEvent(eventCode);
 				HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues(); 
 				aeEvent.setDataMap(dataMap);
@@ -3362,6 +3376,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				amountCodes.setExcessAmt(BigDecimal.ZERO);
 				amountCodes.setEmiInAdvance(BigDecimal.ZERO);
 				amountCodes.setPayableAdvise(BigDecimal.ZERO);
+				amountCodes.setPenaltyPaid(BigDecimal.ZERO);
+				amountCodes.setPenaltyWaived(BigDecimal.ZERO);
 			}
 		}
 
