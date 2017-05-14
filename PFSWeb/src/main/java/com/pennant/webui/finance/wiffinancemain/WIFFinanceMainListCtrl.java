@@ -441,6 +441,8 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		//Clears all the filters
 		this.searchObj.clearFilters();
 		addDivisionFilters();
+		this.pagingWIFFinanceMainList.setActivePage(0);
+		this.pagingWIFFinanceMainList.setDetailed(true);
 		// Set the ListModel for the articles.
 		getPagedListWrapper().init(this.searchObj,this.listBoxWIFFinanceMain,this.pagingWIFFinanceMainList);
 
@@ -493,6 +495,8 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.searchObj.addField("finStartDate");
 		this.searchObj.addField("finAmount");
 		this.searchObj.addField("FinCurrAssetValue");
+		this.searchObj.addField("FeeChargeAmt");
+		this.searchObj.addField("InsuranceAmt");
 		this.searchObj.addField("recordStatus");
 		this.searchObj.addField("recordType");
 		this.searchObj.clearFilters();
