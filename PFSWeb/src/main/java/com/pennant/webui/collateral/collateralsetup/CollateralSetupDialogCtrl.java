@@ -99,6 +99,7 @@ import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.MailUtil;
 import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -983,6 +984,9 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 		//Bank LTV
 		try {
+			if(this.bankLtv.getValue() == null){
+				this.bankLtv.setValue(BigDecimal.ZERO);
+			}
 			aCollateralSetup.setBankLTV(this.bankLtv.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1167,6 +1171,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 
+		Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
+		
 		//Collateral Ref reg
 		if (!this.collateralRef.isReadonly()) {
 			this.collateralRef.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralSetupDialog_CollateralRef.value"),
@@ -1201,13 +1207,13 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		//Expiry Date
 		if (!this.expiryDate.isDisabled()) {
 			this.expiryDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CollateralSetupDialog_ExpiryDate.value"),
-					false, true, null, false));
+					false, true, appEndDate, false));
 		}
 
 		//Next Review Date
 		if (!this.nextReviewDate.isDisabled()) {
 			this.nextReviewDate.setConstraint(new PTDateValidator(Labels.getLabel("label_CollateralSetupDialog_NextReviewDate.value"),
-					false, true, null, false));
+					false, true, appEndDate, false));
 		}
 		//Remarks
 		if (!this.remarks.isReadonly()) {
