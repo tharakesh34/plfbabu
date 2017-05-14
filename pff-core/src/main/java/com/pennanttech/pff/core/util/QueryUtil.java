@@ -72,7 +72,7 @@ public final class QueryUtil {
 	}
 
 	public static String getConcurrencyCondition(TableType tableType) {
-		if (TableType.TEMP_TAB.equals(tableType)) {
+		if (tableType == TableType.TEMP_TAB) {
 			return " and LastMntOn = :PrevMntOn";
 		} else {
 			return " and Version = :Version - 1";
