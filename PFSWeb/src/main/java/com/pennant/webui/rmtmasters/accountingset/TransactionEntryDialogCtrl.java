@@ -60,6 +60,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Column;
@@ -1627,6 +1628,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	public void onUser$btnSimulate(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		if (validate(event)) {
+			Clients.clearWrongValue(this.amountRule);
 			// create a new window for input values
 			createSimulationWindow(variables);
 		}
