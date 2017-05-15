@@ -9,14 +9,13 @@ public class CustomerQueuing implements Serializable {
 
 	private long				custID;
 	private Date				eodDate;
-	private String				threadId;
+	private int					threadId;
+	private int					progress;
 
-	private String				progress;
-	
-//	private Date				startTime;
-//	private Date				endTime;
-//	private String				errorLog;
-//	private String				status;
+	//	private Date				startTime;
+	//	private Date				endTime;
+	//	private String				errorLog;
+	//	private String				status;
 	public CustomerQueuing() {
 		super();
 	}
@@ -29,56 +28,57 @@ public class CustomerQueuing implements Serializable {
 		this.custID = custID;
 	}
 
-//	public String getErrorLog() {
-//		return errorLog;
-//	}
-//
-//	public void setErrorLog(String errorLog) {
-//		this.errorLog = errorLog;
-//	}
-//
-//	public String getStatus() {
-//		return status;
-//	}
-//
-//	public void setStatus(String status) {
-//		this.status = status;
-//	}
-//
-//	public Date getStartTime() {
-//		return startTime;
-//	}
-//
-//	public void setStartTime(Date startTime) {
-//		this.startTime = startTime;
-//	}
-//
-//	public Date getEndTime() {
-//		return endTime;
-//	}
-//
-//	public void setEndTime(Date endTime) {
-//		this.endTime = endTime;
-//	}
+	//	public String getErrorLog() {
+	//		return errorLog;
+	//	}
+	//
+	//	public void setErrorLog(String errorLog) {
+	//		this.errorLog = errorLog;
+	//	}
+	//
+	//	public String getStatus() {
+	//		return status;
+	//	}
+	//
+	//	public void setStatus(String status) {
+	//		this.status = status;
+	//	}
+	//
+	//	public Date getStartTime() {
+	//		return startTime;
+	//	}
+	//
+	//	public void setStartTime(Date startTime) {
+	//		this.startTime = startTime;
+	//	}
+	//
+	//	public Date getEndTime() {
+	//		return endTime;
+	//	}
+	//
+	//	public void setEndTime(Date endTime) {
+	//		this.endTime = endTime;
+	//	}
 
-	public String getProgress() {
-		return progress;
+	
+	public Date getEodDate() {
+		return eodDate;
 	}
 
-	public void setProgress(String progress) {
-		this.progress = progress;
-	}
-
-	public String getThreadId() {
+	public int getThreadId() {
 		return threadId;
 	}
 
-	public void setThreadId(String threadId) {
+	public void setThreadId(int threadId) {
 		this.threadId = threadId;
 	}
 
-	public Date getEodDate() {
-		return eodDate;
+	public int getProgress() {
+		return progress;
+	}
+
+	public void setProgress(int progress) {
+		this.progress = progress;
 	}
 
 	public void setEodDate(Date eodDate) {

@@ -230,8 +230,11 @@ public class HolidayMasterDAOImpl extends BasisCodeDAO<HolidayMaster> implements
 		logger.debug("selectListSql: " + selectListSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(holidayMaster);
 		RowMapper<HolidayMaster> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(HolidayMaster.class);
+		
+		List<HolidayMaster> holidayMasters = this.namedParameterJdbcTemplate.query(selectListSql.toString(), beanParameters, typeRowMapper); 
+		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectListSql.toString(), beanParameters, typeRowMapper);
+		return holidayMasters;
 	}
 
 	/**

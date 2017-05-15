@@ -120,8 +120,8 @@ public class CalculationConstants {
 	public static final String	REMFEE_SCHD_TO_FIRST_INSTALLMENT	= "STFI";
 	public static final String	REMFEE_SCHD_TO_ENTIRE_TENOR			= "STET";
 	public static final String	REMFEE_SCHD_TO_N_INSTALLMENTS		= "STNI";
-	public static final String	REMFEE_PAID_BY_CUSTOMER		        = "PBCU";
-	public static final String	REMFEE_WAIVED_BY_BANK		        = "WVEB";
+	public static final String	REMFEE_PAID_BY_CUSTOMER				= "PBCU";
+	public static final String	REMFEE_WAIVED_BY_BANK				= "WVEB";
 
 	// PAST DUE PROFIT CALCULATION METHODS
 	public static final String	PDPFTCAL_NOTAPP						= "N";
@@ -130,7 +130,7 @@ public class CalculationConstants {
 
 	public static final String	FIN_STATE_NORMAL					= "N";
 	public static final String	FIN_STATE_PD						= "PD";
-	
+
 	public static final String	COMPARE_PRI							= "P";
 	public static final String	COMPARE_PFT							= "I";
 	public static final String	COMPARE_REPAY						= "R";
@@ -140,12 +140,8 @@ public class CalculationConstants {
 	public static final String	RATEREVIEW_RVWUPR					= "RVWUPR";
 	public static final String	RATEREVIEW_RVWALL					= "RVWALL";
 	public static final String	RATEREVIEW_NORVW					= "NORVW";
-	
-	public static final int	FEE_POSTPONEMENT_METHOD_NEXT			= 1;
-	public static final int	FEE_POSTPONEMENT_METHOD_ALONG			= 2;
 
-	public static final int	FEE_RECAL_ON_DELETE_TERMS_NEXT			= 1;
-	public static final int	FEE_RECAL_ON_DELETE_TERMS_RECAL			= 2;
-	public static final int	FEE_RECAL_ON_DELETE_TERMS_LAST			= 3;
-
+	public static final String	TDS_PERCENTAGE						= "TDS_PERCENTAGE";
+	public static final String	TDS_ROUNDINGMODE					= "TDS_ROUNDINGMODE";
+	public static final String	TDS_ROUNDINGTARGET					= "TDS_ROUNDINGTARGET";
 }

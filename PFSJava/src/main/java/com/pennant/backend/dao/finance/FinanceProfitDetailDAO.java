@@ -74,5 +74,5 @@ public interface FinanceProfitDetailDAO {
 	void resetAcrTsfdInSusp();
 	void updateAcrTsfdInSusp(List<AccountHoldStatus> list);
 	FinanceProfitDetail getFinProfitDetailsForSummary(String finReference);
-	List<FinanceProfitDetail> getFinProfitDetailsByCustId(long custID);
+	List<FinanceProfitDetail> getFinProfitDetailsByCustId(long custID, boolean isActive);
 }

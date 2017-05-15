@@ -317,9 +317,12 @@ public class PFSParameterDAOImpl extends BasisCodeDAO<PFSParameter> implements P
 		selectSql.append(" SysParmList, SysParmValdMod, SysParmDescription, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn From SMTparameters");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new PFSParameter());
+		
 		RowMapper<PFSParameter> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PFSParameter.class);
+		List<PFSParameter> systemParms = this.namedParameterJdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);  
+
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);
+		return systemParms;
 	}
 	
 	/**

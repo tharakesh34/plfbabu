@@ -86,7 +86,7 @@ public class PFSBatchAdmin implements Serializable {
 		jobRepository 	= (JobRepository)PFS_JOB_CONTEXT.getBean("jobRepository");
 		jobOperator 	= (SimpleJobOperator)PFS_JOB_CONTEXT.getBean("jobOperator");
 		jobLauncher 	= (JobLauncher)PFS_JOB_CONTEXT.getBean("jobLauncher");
-		job 			= (Job) PFS_JOB_CONTEXT.getBean("equationEodJob");
+		job 			= (Job) PFS_JOB_CONTEXT.getBean("plfEodJob");
 		
 		builder = new JobParametersBuilder();		
 		logger.debug("Leaving");

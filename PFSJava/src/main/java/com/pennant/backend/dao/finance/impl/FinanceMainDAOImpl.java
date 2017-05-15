@@ -2725,7 +2725,8 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-
+		
+		logger.debug("Leaving");
 	}
 	
 	/**
@@ -2771,12 +2772,17 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		logger.debug("selectSql: " + selectSql.toString());
+		
+		List<FinanceMain> finMains = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper); 
+		
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		return finMains;
 	}
 	
 	@Override
 	public int getFinanceMainByBank(String bankCode, String type) {
+		logger.debug("Entering");
+
 		FinanceMain financeMain = new FinanceMain();
 		financeMain.setBankName(bankCode);
 
@@ -2813,5 +2819,8 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 		 this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		 logger.debug("Leaving");
+
 	}
 }

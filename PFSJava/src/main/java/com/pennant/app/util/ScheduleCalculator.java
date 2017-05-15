@@ -2704,7 +2704,10 @@ public class ScheduleCalculator {
 		Date schdDate = new Date();
 		int instNumber = 0;
 
-		BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValueAsString("PERCENTAGE_TDS"));
+		BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
+		String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+		int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+		
 		for (int i = 0; i < sdSize; i++) {
 			curSchd = finScheduleDetails.get(i);
 			schdDate = curSchd.getSchDate();
@@ -2712,6 +2715,7 @@ public class ScheduleCalculator {
 			if (finMain.isTDSApplicable() && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
 				BigDecimal tdsAmount = (curSchd.getProfitSchd().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
 						RoundingMode.HALF_DOWN);
+				CalculationUtil.roundAmount(tdsAmount, tdsRoundMode, tdsRoundingTarget);
 				curSchd.setTDSAmount(tdsAmount);
 			}
 

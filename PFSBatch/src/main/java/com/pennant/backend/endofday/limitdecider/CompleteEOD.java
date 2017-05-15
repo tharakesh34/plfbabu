@@ -54,6 +54,7 @@ import org.springframework.batch.core.job.flow.JobExecutionDecider;
 
 import com.pennant.app.core.DateService;
 import com.pennant.app.util.DateUtility;
+import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class CompleteEOD implements JobExecutionDecider {
@@ -77,7 +78,8 @@ public class CompleteEOD implements JobExecutionDecider {
 
 		stepExecution.getExecutionContext().put(stepExecution.getId().toString(), valueDate);
 		// Log the Customer queuing data and threads status
-		customerQueuingDAO.logCustomerQueuing();
+		customerQueuingDAO.logCustomerQueuing(EodConstants.PROGRESS_SUCCESS);
+
 		//Update value dates check Holiday 
 		dateService.doUpdateValueDate();
 		boolean processed = dateService.doUpdateAftereod(true);

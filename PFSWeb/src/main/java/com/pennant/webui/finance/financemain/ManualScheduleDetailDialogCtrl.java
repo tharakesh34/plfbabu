@@ -1517,7 +1517,9 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			logger.debug(e);
 		}
 		
-		BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValueAsString("PERCENTAGE_TDS"));
+		BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
+		String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+		int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
 
 		for (int i = 1; i < this.listBoxSchedule.getItemCount(); i++) {
 
@@ -1681,7 +1683,9 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				BigDecimal tdsValue = BigDecimal.ZERO;
 				if(tdsPerc.compareTo(BigDecimal.ZERO) > 0){
 					tdsValue = (calInt.multiply(tdsPerc)).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+					tdsValue = CalculationUtil.roundAmount(tdsValue, tdsRoundMode, tdsRoundingTarget);
 				}
+				
 				tdsAmount.setValue(PennantAppUtil.amountFormate(tdsValue, formatter));
 			}
 

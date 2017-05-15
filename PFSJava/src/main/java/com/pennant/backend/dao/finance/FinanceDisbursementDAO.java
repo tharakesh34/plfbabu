@@ -42,6 +42,7 @@
 */
 
 package com.pennant.backend.dao.finance;
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -57,5 +58,5 @@ public interface FinanceDisbursementDAO {
 	void saveList(List<FinanceDisbursement> financeDisbursement, String type,boolean isWIF);
 	void updateLinkedTranId(String finReference, long linkedTranId, String type);
 	void updateBatchDisb(FinanceDisbursement disbursement, String type);
-	List<FinanceDisbursement> getFinanceDisbursementDetails(String finrefernce, String disbStatus);
+	List<FinanceDisbursement> getDisbursementToday(String finRefernce, Date disbDate);
 }

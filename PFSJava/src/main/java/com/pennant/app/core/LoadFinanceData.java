@@ -44,10 +44,12 @@ public class LoadFinanceData extends ServiceHelper {
 
 		//For SOD Operations
 		Date businesdate = DateUtility.addDays(custEODEvent.getEodValueDate(), 1);
-
 		List<FinanceMain> custFinMains = getFinanceMainDAO().getFinanceMainsByCustId(custID, true);
-		List<PresentmentDetail> presentments = getPresentmentHeaderDAO().getPresentmenToPost(custID, businesdate);
-		List<FinanceProfitDetail> listprofitDetails = getFinanceProfitDetailDAO().getFinProfitDetailsByCustId(custID);
+
+		//FIXME: PV 14MAY17 to be moved to finEODEvent related to presentment
+		//List<PresentmentDetail> presentments = getPresentmentHeaderDAO().getPresentmenToPost(custID, businesdate);
+		List<FinanceProfitDetail> listprofitDetails = getFinanceProfitDetailDAO().getFinProfitDetailsByCustId(custID,
+				true);
 
 		for (int i = 0; i < custFinMains.size(); i++) {
 			FinEODEvent finEODEvent = new FinEODEvent();
@@ -61,6 +63,7 @@ public class LoadFinanceData extends ServiceHelper {
 			//FINANCE TYPE
 			FinanceType financeType = getFinanceType(finType);
 			finEODEvent.setFinType(financeType);
+			//FIXME: PV 14MAY17 What about promotions
 
 			//FINSCHDULE DETAILS
 			List<FinanceScheduleDetail> finSchdDetails = getFinanceScheduleDetailDAO().getFinScheduleDetails(
@@ -73,29 +76,33 @@ public class LoadFinanceData extends ServiceHelper {
 
 			finEODEvent.setDatesMap(datesMap);
 			finEODEvent.setFinanceScheduleDetails(finSchdDetails);
-			finEODEvent.setFinanceDisbursements(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference,
-					FinanceConstants.DISB_STATUS_CANCEL));
+			finEODEvent.setFinanceDisbursements(getFinanceDisbursementDAO().getDisbursementToday(finReference,
+					businesdate));
 
 			//fin fee schedule
 			finEODEvent.setFinFeeScheduleDetails(getFinFeeScheduleDetailDAO()
 					.getFeeSchdTPost(finReference, businesdate));
+
 			// fin insurance schedule
 			finEODEvent.setFinSchFrqInsurances(getFinInsurancesDAO().getInsSchdToPost(finReference, businesdate));
 
 			//FINPROFIT DETAILS
 			finEODEvent.setFinProfitDetail(getFinanceProfitDetailRef(finReference, listprofitDetails));
 
-			PresentmentDetail presentment = getPresentmentDetailbyRef(finReference, presentments);
-			if (presentment != null) {
-				finEODEvent.getPresentmentDetails().add(presentment);
-			}
+			//FIXME: PV 14MAY17 to be moved to finEODEvent related to presentment
+			/*
+			 * PresentmentDetail presentment = getPresentmentDetailbyRef(finReference, presentments); if (presentment !=
+			 * null) { finEODEvent.getPresentmentDetails().add(presentment); }
+			 */
 
 			custEODEvent.getFinEODEvents().add(finEODEvent);
 
 		}
 
 		//clear temporary data
-		presentments.clear();
+		//FIXME: PV 14MAY17 to be moved to finEODEvent related to presentment
+		//presentments.clear();
+		listprofitDetails.clear();
 		custFinMains.clear();
 		logger.debug(" Leaving ");
 		return custEODEvent;
@@ -179,23 +186,23 @@ public class LoadFinanceData extends ServiceHelper {
 		CustomerQueuing customerQueuing = new CustomerQueuing();
 		customerQueuing.setCustID(custId);
 		customerQueuing.setEodDate(date);
-		customerQueuing.setProgress(EodConstants.PROGRESS_COMPLETED);
+		customerQueuing.setProgress(EodConstants.PROGRESS_SUCCESS);
 		getCustomerQueuingDAO().updateProgress(customerQueuing);
 
 	}
 
-	private PresentmentDetail getPresentmentDetailbyRef(String finrefere, List<PresentmentDetail> presentments) {
+	private PresentmentDetail getPresentmentDetailbyRef(String finMainRef, List<PresentmentDetail> presentments) {
 		for (PresentmentDetail presentmentDetail : presentments) {
-			if (StringUtils.equals(presentmentDetail.getFinReference(), finrefere)) {
+			if (StringUtils.equals(presentmentDetail.getFinReference(), finMainRef)) {
 				return presentmentDetail;
 			}
 		}
 		return null;
 	}
 
-	private FinanceProfitDetail getFinanceProfitDetailRef(String finrefere, List<FinanceProfitDetail> listprofitDetails) {
+	private FinanceProfitDetail getFinanceProfitDetailRef(String finMainRef, List<FinanceProfitDetail> listprofitDetails) {
 		for (FinanceProfitDetail financeProfitDetail : listprofitDetails) {
-			if (StringUtils.equals(financeProfitDetail.getFinReference(), finrefere)) {
+			if (StringUtils.equals(financeProfitDetail.getFinReference(), finMainRef)) {
 				return financeProfitDetail;
 			}
 		}

@@ -10,16 +10,16 @@ public interface CustomerQueuingDAO {
 
 	int getProgressCountByCust(long custID);
 
-	void updateThreadIDByRowNumber(Date date, long noOfRows, String threadId);
-
-	void updateThreadID(Date date, String threadId);
-
-	void logCustomerQueuing();
+	void updateThreadIDByRowNumber(Date date, long noOfRows, int threadId);
 
 	void delete();
 
 	void updateProgress(CustomerQueuing customerQueuing);
 
 	long getCountByProgress(Date date);
+
+	void updateThreadID(Date date, int threadId);
+
+	void logCustomerQueuing(int progressSts);
 
 }

@@ -7,8 +7,10 @@ public interface EodConstants {
 	String	STATUS_STARTED		= "STARTED";
 	String	STATUS_RUNNING		= "RUNNING";
 
-	String	PROGRESS_START		= "STARTED";
-	String	PROGRESS_COMPLETED	= "COMPLETED";
+	int		PROGRESS_WAIT		= 0;
+	int		PROGRESS_IN_PROCESS	= 1;
+	int		PROGRESS_SUCCESS	= 2;
+
 	String	MICRO_EOD			= "MICROEOD";
 
 	// Collateral De-Marking

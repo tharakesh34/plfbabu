@@ -87,9 +87,9 @@ public class PartitioningMaster implements Partitioner {
 
 				if (i==threadCount) {
 					//last thread will have the remaining records
-					customerQueuingDAO.updateThreadIDByRowNumber(valueDate, 0, EodConstants.THREAD + i);
+					customerQueuingDAO.updateThreadIDByRowNumber(valueDate, 0, i);
 				}else{
-					customerQueuingDAO.updateThreadIDByRowNumber(valueDate, noOfRows, EodConstants.THREAD + i);
+					customerQueuingDAO.updateThreadIDByRowNumber(valueDate, noOfRows, i);
 				}
 				addExecution(i, partitionData);
 				if (recordslessThanThread && i == custIdCount) {
@@ -107,10 +107,10 @@ public class PartitioningMaster implements Partitioner {
 		this.customerQueuingDAO = customerQueuingDAO;
 	}
 
-	private void addExecution(int theadCount, Map<String, ExecutionContext> partitionData) {
+	private void addExecution(int threadCount, Map<String, ExecutionContext> partitionData) {
 		ExecutionContext execution = new ExecutionContext();
-		execution.put(EodConstants.THREAD, EodConstants.THREAD + theadCount);
-		partitionData.put(EodConstants.THREAD + theadCount, execution);
+		execution.put(EodConstants.THREAD, threadCount);
+		partitionData.put(Integer.toString(threadCount), execution);
 	}
 
 }

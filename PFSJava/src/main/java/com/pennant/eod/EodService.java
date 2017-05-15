@@ -48,7 +48,7 @@ public class EodService {
 	private PlatformTransactionManager	transactionManager;
 
 	// Constants
-	private static final String			SQL		= "SELECT CustId FROM CustomerQueuing WHERE ThreadId=? AND Progress IS NULL ";
+	private static final String			SQL		= "SELECT CustId FROM CustomerQueuing WHERE ThreadId=? AND Progress = 0";
 
 	public EodService() {
 		super();
@@ -59,9 +59,9 @@ public class EodService {
 	 * @throws Exception
 	 * @throws SQLException
 	 */
-	public void startProcess(Date date, String threadId) throws Exception {
+	public void startProcess(Date date, int threadId) throws Exception {
 
-		logger.info("process Statred by the Thread :" + threadId + " with date" + date.toString());
+		logger.info("process Statred by the Thread : " + threadId + " with date " + date.toString());
 		Connection connection = null;
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
@@ -74,7 +74,7 @@ public class EodService {
 		try {
 			connection = DataSourceUtils.doGetConnection(dataSource);
 			sqlStatement = connection.prepareStatement(SQL);
-			sqlStatement.setString(1, threadId);
+			sqlStatement.setInt(1, threadId);
 			resultSet = sqlStatement.executeQuery();
 			while (resultSet.next()) {
 				//BEGIN TRANSACTION

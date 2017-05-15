@@ -248,16 +248,17 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		feeSchd.setSchDate(schDate);
 		
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FT.FEETYPECODE,FED.FINREFERENCE,FESD.SCHDATE,FESD.SCHAMOUNT,FESD.OSAMOUNT " );
-		selectSql.append(" ,FESD.PAIDAMOUNT,FESD.WAIVERAMOUNT,FESD.WRITEOFFAMOUNT ");
+		selectSql.append(" SELECT FED.FINREFERENCE, FESD.SCHDATE, FESD.SCHAMOUNT, FESD.OSAMOUNT, " );
+		selectSql.append(" FESD.PAIDAMOUNT, FESD.WAIVERAMOUNT, FESD.WRITEOFFAMOUNT ");
 		selectSql.append(" FROM FINFEESCHEDULEDETAIL FESD inner join FINFEEDETAIL FED ON ");
-		selectSql.append(" FESD.FEEID=FED.FEEID Inner join FEETYPES FT on FT.FEETYPEID= FED.FEETYPEID ");
+		selectSql.append(" FESD.FEEID=FED.FEEID ");
 		selectSql.append(" WHERE FED.FinReference=:FinReference AND FESD.SchDate=:SchDate ");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeSchd);
 		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
 		List<FinFeeScheduleDetail> feeList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		
 		logger.debug("Leaving");
 		return feeList;
 	}

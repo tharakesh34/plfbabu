@@ -7,7 +7,7 @@
 	<!-- ====================================================== -->
 	<!-- Generic Common DAOs -->
 	<!-- ====================================================== -->
-	<import resource="applicationContext-mq-interface.xml" />
+	<!-- <import resource="applicationContext-mq-interface.xml" /> -->
 	<import resource="applicationContext-core-interface.xml" />
 
 	<!-- Error Details -->

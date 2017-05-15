@@ -22,7 +22,6 @@ import jxl.read.biff.BiffException;
 public class LoadConfigTest {
 	final String[]				CONFIG_LOCATIONS	= new String[] {
 			"../PLFInterface/src/main/resources/applicationContext-core-interface.xml",
-			"../PLFInterface/src/main/resources/applicationContext-mq-interface.xml",
 			"../PFSJava/src/main/resources/applicationContext-daos.xml",
 			"../PFSWeb/src/main/resources/applicationContext-db.xml", "/src/test/resources/applicationContext.xml",
 			"../pff-interface-bajaj/src/main/resources/client-interfaces-context.xml",

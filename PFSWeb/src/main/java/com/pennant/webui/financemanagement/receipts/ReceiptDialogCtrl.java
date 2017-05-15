@@ -2806,7 +2806,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if(getFinanceDetail().getFinScheduleData().getFinanceMain().isTDSApplicable()){
 			
 			BigDecimal tdsMultiplier = BigDecimal.ONE;
-			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue("PERCENTAGE_TDS").toString());
+			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+			String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+			int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+
 			if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
 				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
 			}
