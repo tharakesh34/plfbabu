@@ -20,23 +20,23 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.dbengine.DBProcessEngine;
 import com.pennanttech.pff.baja.BajajInterfaceConstants.Status;
+import com.pennanttech.pff.core.Literal;
 
-public class DisbursemenIMPSResponseRequest  extends DBProcessEngine {
-
-	private static final Logger logger = Logger.getLogger(DisbursemenIMPSRequest.class);
+public class DisbursemenIMPSResponse extends DBProcessEngine {
+	private static final Logger logger = Logger.getLogger(DisbursemenIMPSResponse.class);
 	
 	private Connection destConnection = null;
 	private Connection sourceConnection = null;
 	private DataEngineStatus executionStatus = null;
 	private NamedParameterJdbcTemplate jdbcTemplate = null;
 
-	public DisbursemenIMPSResponseRequest(DataSource dataSource, String appDBName, DataEngineStatus executionStatus) {
+	public DisbursemenIMPSResponse(DataSource dataSource, String appDBName, DataEngineStatus executionStatus) {
 		super(dataSource, appDBName, executionStatus);
 		this.executionStatus = executionStatus;
 	}
 
 	public void process(long userId, Configuration config) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		executionStatus.setStartTime(DateUtil.getSysDate());
 		executionStatus.setName(config.getName());

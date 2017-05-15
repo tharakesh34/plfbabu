@@ -1,5 +1,8 @@
 package com.pennanttech.service.test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.junit.Before;
@@ -7,19 +10,19 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.pennanttech.dbengine.process.IMPSDisbursementRequest;
+import com.pennanttech.dbengine.process.DisbursemenIMPSRequest;
 import com.pennanttech.pff.core.App;
 
 public class TestImps {
-	
-	private DataSource dataSource;
-	
+
+	private DataSource	dataSource;
+
 	@Before
 	public void startAHI() {
 		try {
-		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
-		dataSource = (DataSource)context.getBean("dataSource");
-		} catch(Exception e) {
+			ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
+			dataSource = (DataSource) context.getBean("dataSource");
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -27,8 +30,11 @@ public class TestImps {
 	@Test
 	public void process() {
 		try {
-			IMPSDisbursementRequest impsRequest = new IMPSDisbursementRequest(dataSource, App.DATABASE.name());
-			impsRequest.setPaymentIds("175");
+			DisbursemenIMPSRequest impsRequest = new DisbursemenIMPSRequest(dataSource, App.DATABASE.name());
+			List<String> list = new ArrayList<>();
+			list.add("175");
+
+			impsRequest.setDisbursments(list);
 			impsRequest.process(1000, "DISB_IMPS_EXPORT");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

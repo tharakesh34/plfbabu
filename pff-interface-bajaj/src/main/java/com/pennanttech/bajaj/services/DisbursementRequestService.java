@@ -18,14 +18,14 @@ import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennanttech.dataengine.DataEngineExport;
-import com.pennanttech.dbengine.process.IMPSDisbursementRequest;
+import com.pennanttech.dbengine.process.DisbursemenIMPSRequest;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.RequestService;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 public class DisbursementRequestService extends BajajService implements RequestService {
-	private final Logger logger = Logger.getLogger(getClass());
+	private final Logger	logger	= Logger.getLogger(getClass());
 
 	public enum DisbursementTypes {
 		IMPS, RTGS, NEFT, DD, CHEQUE, I;
@@ -140,11 +140,23 @@ public class DisbursementRequestService extends BajajService implements RequestS
 		}
 
 		if (!stp_IMPS.isEmpty()) {
-			sendIMPSRequest("DISB_IMPS_EXPORT", getPaymentIds(stp_IMPS), userId);
+			List<String> idList = null;
+			try {
+				idList = prepareRequest(getPaymentIds(stp_IMPS).split(","));
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+			sendIMPSRequest("DISB_IMPS_EXPORT", idList, userId);
 		}
 
 		if (!other_IMPS.isEmpty()) {
-			sendIMPSRequest("DISB_IMPS_EXPORT", getPaymentIds(other_IMPS), userId);
+			List<String> idList = null;
+			try {
+				idList = prepareRequest(getPaymentIds(other_IMPS).split(","));
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+			sendIMPSRequest("DISB_IMPS_EXPORT", idList, userId);
 		}
 
 		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, stp_NEFT);
@@ -258,10 +270,10 @@ public class DisbursementRequestService extends BajajService implements RequestS
 		return "1";
 	}
 
-	private void sendIMPSRequest(String configName, String paymentIds, long userId) {
-		IMPSDisbursementRequest impsRequest = new IMPSDisbursementRequest(dataSource, App.DATABASE.name());
+	private void sendIMPSRequest(String configName, List<String> dibursements, long userId) {
+		DisbursemenIMPSRequest impsRequest = new DisbursemenIMPSRequest(dataSource, App.DATABASE.name());
 
-		impsRequest.setPaymentIds(paymentIds);
+		impsRequest.setDisbursments(dibursements);
 		impsRequest.process(userId, configName);
 
 		try {
@@ -372,11 +384,11 @@ public class DisbursementRequestService extends BajajService implements RequestS
 	}
 
 	public class DisbursementProcessThread extends Thread {
-		private final Logger logger = Logger.getLogger(DisbursementProcessThread.class);
+		private final Logger				logger	= Logger.getLogger(DisbursementProcessThread.class);
 
-		private String finType;
-		private long userId;
-		private List<FinAdvancePayments> disbursements;
+		private String						finType;
+		private long						userId;
+		private List<FinAdvancePayments>	disbursements;
 
 		public DisbursementProcessThread(String finType, long userId, List<FinAdvancePayments> disbursements) {
 			this.finType = finType;
