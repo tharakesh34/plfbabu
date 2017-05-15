@@ -1807,5 +1807,10 @@ FROM          Postings T1 INNER JOIN
                        BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode
 	 	</createView>
 	</changeSet>			
+<changeSet id="123" author="Madhubabu.p">
+<sql>
+ update reportlist set reportheading='Disbursement Instructions',moduletype='Loan Origination' where code='PayOrderIssueHeader'
+</sql>	 	
+</changeSet>			
 	
 </databaseChangeLog>
