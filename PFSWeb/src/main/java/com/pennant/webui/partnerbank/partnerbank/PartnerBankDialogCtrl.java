@@ -419,6 +419,12 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			this.btnSearchBranchCode.setDisabled(true);
 		}
 		
+		if (this.alwReceipts.isChecked() || this.alwDisburment.isChecked() ) {
+			this.reqFileDownload.setDisabled(isReadOnly("PartnerBankDialog_AlwFileDownload"));
+		} else {
+			this.reqFileDownload.setDisabled(true);
+		}
+		
 		if (aPartnerBank.isNewRecord()) {
 			this.bankCode.setDescription("");
 			this.bankBranchCode.setDescription("");
@@ -1553,11 +1559,17 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	private void onCheckDisburment() {
 		logger.debug("Entering");
 		doRemoveValidation();
+		if(this.alwDisburment.isChecked()||this.alwReceipts.isChecked()){
+			this.reqFileDownload.setDisabled(false);
+		}else{
+			this.reqFileDownload.setDisabled(true);
+		}
 		if (this.alwDisburment.isChecked()) {
 			this.btnSearchModeDisbursment.setDisabled(false);
 			this.modeDisbursment.setReadonly(true);
 			this.modeDisbursment.setValue("");
 			this.space_modeDisbursments.setSclass(PennantConstants.mandateSclass);
+		
 			
 		} else {
 			this.btnSearchModeDisbursment.setDisabled(true);
@@ -1590,6 +1602,12 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	private void onCheckReceipts() {
 		logger.debug("Entering");
 		doRemoveValidation();
+		if (this.alwReceipts.isChecked() || this.alwDisburment.isChecked() ) {
+			this.reqFileDownload.setDisabled(false);
+		} else {
+			this.reqFileDownload.setDisabled(true);
+			
+		}
 		if (this.alwReceipts.isChecked()) {
 			this.modeReceipts.setReadonly(true);
 			this.btnSearchModeReceipts.setDisabled(false);

@@ -743,7 +743,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), "");
 		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
 		fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModes(), "");
-		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(header.getReceiptAmount(), finFormatter));
+		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(header.getReceiptAmount(), CurrencyUtil.getFormat(header.getFinCcy())));
 
 		fillComboBox(this.allocationMethod, header.getAllocationType(), PennantStaticListUtil.getAllocationMethods(), "");
 		fillComboBox(this.effScheduleMethod, header.getEffectSchdMethod(), PennantStaticListUtil.getEarlyPayEffectOn(), ",NOEFCT,");
@@ -753,7 +753,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		ManualAdvise bounceReason = header.getManualAdvise();
 		if(bounceReason != null){
 			this.bounceCode.setValue(String.valueOf(bounceReason.getBounceID()), bounceReason.getBounceCode());
-			this.bounceCharge.setValue(PennantApplicationUtil.formateAmount(bounceReason.getAdviseAmount(), finFormatter));
+			this.bounceCharge.setValue(PennantApplicationUtil.formateAmount(bounceReason.getAdviseAmount(), CurrencyUtil.getFormat(header.getFinCcy())));
 			this.bounceRemarks.setValue(bounceReason.getRemarks());
 		}
 		
