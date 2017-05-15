@@ -62,6 +62,7 @@ private static final long serialVersionUID = 1L;
 	private String feeTypeCode;
 	private String feeTypeDesc;
 	private boolean manualAdvice;
+	private int 	adviseType;
 	private Long 	accountSetId;
 	private String 	accountSetCode;
 	private String 	accountSetCodeName;
@@ -191,6 +192,14 @@ private static final long serialVersionUID = 1L;
 
 	public void setManualAdvice(boolean manualAdvice) {
 		this.manualAdvice = manualAdvice;
+	}
+
+	public int getAdviseType() {
+		return adviseType;
+	}
+
+	public void setAdviseType(int adviseType) {
+		this.adviseType = adviseType;
 	}
 
 }

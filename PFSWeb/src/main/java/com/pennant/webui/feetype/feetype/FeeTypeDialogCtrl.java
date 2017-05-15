@@ -45,6 +45,7 @@ package com.pennant.webui.feetype.feetype;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -54,6 +55,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
@@ -65,17 +67,21 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.feetype.FeeTypeService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -113,6 +119,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	protected Hbox						hlayout_ManualAdvice;
 	protected Space						space_ManualAdvice;
 	protected Checkbox					manualAdvice;
+	protected Combobox 					adviseType;
 
 	protected Label						label_AccountingSetID;
 	protected Hbox						hlayout_AccountingSetID;
@@ -132,6 +139,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 	private FeeType						feeType;
 	private transient FeeTypeListCtrl	feeTypeListCtrl;
+	private List<ValueLabel> listAdviseType = PennantStaticListUtil.getManualAdviseTypes();
+	public static final int DEFAULT_ADVISETYPE = FinanceConstants.MANUAL_ADVISE_RECEIVABLE;
 
 	private transient FeeTypeService	feeTypeService;
 	private transient PagedListService	pagedListService;
@@ -358,6 +367,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		readOnlyComponent(true, this.manualAdvice);
 		readOnlyComponent(true, this.accountingSetID);
 		readOnlyComponent(true, this.active);
+		readOnlyComponent(true, this.adviseType);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -430,16 +440,15 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.feeTypeCode.setValue(aFeeType.getFeeTypeCode());
 		this.feeTypeDesc.setValue(aFeeType.getFeeTypeDesc());
 		this.manualAdvice.setChecked(aFeeType.isManualAdvice());
+		fillComboBox(this.adviseType, String.valueOf(aFeeType.getAdviseType()), listAdviseType, "");
 		if (this.manualAdvice.isChecked()) {
-			this.label_AccountingSetID.setVisible(true);
-			this.hlayout_AccountingSetID.setVisible(true);
+			this.row2.setVisible(true);
 			if(aFeeType.getAccountSetId() != null){
 				this.accountingSetID.setValue(aFeeType.getAccountSetCode(), aFeeType.getAccountSetCodeName());
 				this.accountingSetID.setObject(new AccountingSet(aFeeType.getAccountSetId()));
 			}
 		} else {
-			this.label_AccountingSetID.setVisible(false);
-			this.hlayout_AccountingSetID.setVisible(false);
+			this.row2.setVisible(false);
 			this.accountingSetID.setValue("");
 		}
 		this.active.setChecked(aFeeType.isActive());
@@ -493,6 +502,22 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		// Advise Type
+		try {
+			String strAdviseType = null;
+			if (this.adviseType.getSelectedItem() != null) {
+				strAdviseType = this.adviseType.getSelectedItem().getValue().toString();
+			}
+			if (strAdviseType != null && !PennantConstants.List_Select.equals(strAdviseType)) {
+				aFeeType.setAdviseType(Integer.parseInt(strAdviseType));
+
+			} else {
+				aFeeType.setAdviseType(DEFAULT_ADVISETYPE);
+			}
+		} catch (WrongValueException we) {
+					wve.add(we);
+				}
 		//Active
 		try {
 			aFeeType.setActive(this.active.isChecked());
@@ -529,9 +554,13 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.feeTypeDesc.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_FeeTypeDialog_FeeTypeDesc.value"), PennantRegularExpressions.REGEX_COMPANY_NAME, true));
 		}
-		if (!this.accountingSetID.isReadonly()) {
+		if (!this.accountingSetID.isReadonly() && this.row2.isVisible()) {
 				this.accountingSetID.setConstraint(new PTStringValidator(Labels
 						.getLabel("label_FeeTypeDialog_AccountingSetID.value"), null, this.manualAdvice.isChecked()));
+		}
+		if (!this.adviseType.isDisabled() && this.row2.isVisible()) {
+			this.adviseType.setConstraint(new StaticListValidator(listAdviseType,
+					Labels.getLabel("label_FeeTypeDialog_AdviseType.value")));
 		}
 		logger.debug("Leaving");
 	}
@@ -544,6 +573,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.feeTypeCode.setConstraint("");
 		this.feeTypeDesc.setConstraint("");
 		this.accountingSetID.setConstraint("");
+		this.adviseType.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -584,14 +614,14 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	
 	public void onCheck$manualAdvice(Event event) {
 		logger.debug("Entering");
+		FeeType aFeeType =new FeeType();
 		if (this.manualAdvice.isChecked()) {
-			this.label_AccountingSetID.setVisible(true);
-			this.hlayout_AccountingSetID.setVisible(true);
+			this.row2.setVisible(true);
+			fillComboBox(this.adviseType, String.valueOf(aFeeType.getAdviseType()), listAdviseType, "");
 			this.accountingSetID.setValue("");
 
 		}else{
-			this.label_AccountingSetID.setVisible(false);
-			this.hlayout_AccountingSetID.setVisible(false);
+			this.row2.setVisible(false);
 			this.accountingSetID.setValue("");
 		}
 	}
@@ -618,6 +648,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		readOnlyComponent(isReadOnly("FeeTypeDialog_Active"), this.active);
 		this.manualAdvice.setDisabled(isReadOnly("FeeTypeDialog_ApplicableFor"));
 		this.accountingSetID.setReadonly(isReadOnly("FeeTypeDialog_AccountSetId"));
+		this.adviseType.setDisabled(isReadOnly("FeeTypeDialog_AdviseType"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -755,6 +786,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.feeTypeDesc.setValue("");
 		this.manualAdvice.setValue("");
 		this.accountingSetID.setValue("");
+		this.adviseType.setSelectedIndex(0);
 		this.active.setValue("");
 		logger.debug("Leaving");
 	}

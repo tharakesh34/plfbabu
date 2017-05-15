@@ -97,24 +97,31 @@
 										<space id="space_ManualAdvice"
 											spacing="2px" />
 										<checkbox id="manualAdvice" />
-
 									</hbox>
-									<label id="label_AccountingSetID" visible="false"
-										value="${c:l('label_FeeTypeDialog_AccountingSetID.value')}" />
-									<hbox id="hlayout_AccountingSetID" visible="false">
-										<space id="space_AccountingSetID"
-											spacing="2px" />
-										<extendedcombobox id="accountingSetID"
-											 width="200px" />
-									</hbox>
-								</row>
-								<row id="row2">
 									<label id="label_Active"
 										value="${c:l('label_FeeTypeDialog_Active.value')}" />
 									<hbox id="hlayout_Active">
 										<space id="space_Active"
 											spacing="2px" />
 										<checkbox id="active" />
+									</hbox>
+								</row>
+								<row id="row2">
+									<label id="label_AdviseType"
+									value="${c:l('label_FeeTypeDialog_AdviseType.value')}" visible="true"/>
+								<hbox visible="true">
+									<space spacing="2px"
+										sclass="mandatory" />
+									<combobox id="adviseType"
+										width="120px" />
+								</hbox>
+								<label id="label_AccountingSetID" 
+										value="${c:l('label_FeeTypeDialog_AccountingSetID.value')}" />
+									<hbox id="hlayout_AccountingSetID" >
+										<space id="space_AccountingSetID"
+											spacing="2px" />
+										<extendedcombobox id="accountingSetID"
+											 width="200px" />
 									</hbox>
 								</row>
 							</rows>
