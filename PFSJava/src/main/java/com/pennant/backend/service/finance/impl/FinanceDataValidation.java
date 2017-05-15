@@ -2022,7 +2022,7 @@ public class FinanceDataValidation {
 				finMain.setPlanEMIHMax(financeType.getPlanEMIHMax());
 			}
 			if (finMain.getUnPlanEMIHLockPeriod() <= 0) {
-				finMain.setPlanEMIHMax(financeType.getUnPlanEMIHLockPeriod());
+				finMain.setUnPlanEMIHLockPeriod(financeType.getUnPlanEMIHLockPeriod());
 			}
 			// planEMIHMethod
 			if (!StringUtils.equals(finMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)
