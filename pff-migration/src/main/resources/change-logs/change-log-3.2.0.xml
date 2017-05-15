@@ -1811,6 +1811,63 @@ FROM          Postings T1 INNER JOIN
 <sql>
  update reportlist set reportheading='Disbursement Instructions',moduletype='Loan Origination' where code='PayOrderIssueHeader'
 </sql>	 	
-</changeSet>			
+</changeSet>
+<changeSet id="124" author="Irfan">
+		<addColumn tableName="FeeTypes">
+		<column name="AdviseType" type="int"/>
+		</addColumn>
+		
+		<addColumn tableName="FeeTypes_Temp">
+		<column name="AdviseType" type="int"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="125" author="Irfan">
+	<createView viewName="FEETYPES_VIEW" replaceIfExists="true">
+	
+	SELECT		T1.FeeTypeID, T1.FeeTypeCode, T1.FeeTypeDesc, T1.ManualAdvice, T1.AdviseType, T1.AccountSetId, T1.Active,		
+						T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+           					 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.ACCOUNTSETCODE, T2.ACCOUNTSETCODENAME
+			FROM    	FeeTypes_Temp  T1  LEFT JOIN 
+						RMTACCOUNTINGSET T2 ON T1.AccountSetId = T2.ACCOUNTSETID     
+			UNION ALL
+
+			SELECT		T1.FeeTypeID, T1.FeeTypeCode, T1.FeeTypeDesc, T1.ManualAdvice, T1.AdviseType, T1.AccountSetId, T1.Active,	
+						T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, 
+            			T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.ACCOUNTSETCODE, T2.ACCOUNTSETCODENAME
+			FROM    	FeeTypes  T1 LEFT JOIN 
+						RMTACCOUNTINGSET T2 ON T1.AccountSetId = T2.ACCOUNTSETID     
+			WHERE     	NOT EXISTS (SELECT 1 FROM FeeTypes_TEMP WHERE FeeTypeID = T1.FeeTypeID)
+	
+	</createView>
+	</changeSet>
+	<changeSet id="126" author="Irfan">
+	<createView viewName="FEETYPES_TVIEW" replaceIfExists="true">
+		SELECT		T1.FeeTypeID, T1.FeeTypeCode, T1.FeeTypeDesc, T1.ManualAdvice, T1.AdviseType, T1.AccountSetId, T1.Active,		
+						T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+           					 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.ACCOUNTSETCODE, T2.ACCOUNTSETCODENAME
+			FROM    	FeeTypes_Temp  T1  LEFT JOIN 
+						RMTACCOUNTINGSET T2 ON T1.AccountSetId = T2.ACCOUNTSETID
+	</createView>
+	
+	</changeSet>
+	<changeSet id="127" author="Irfan">
+		<createView viewName="FEETYPES_AVIEW" replaceIfExists="true">
+		SELECT		T1.FeeTypeID, T1.FeeTypeCode, T1.FeeTypeDesc, T1.ManualAdvice, T1.AdviseType, T1.AccountSetId, T1.Active,		
+						T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+           					 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.ACCOUNTSETCODE, T2.ACCOUNTSETCODENAME
+			FROM    	FeeTypes  T1  LEFT JOIN 
+						RMTACCOUNTINGSET T2 ON T1.AccountSetId = T2.ACCOUNTSETID
+		</createView>
+	</changeSet>	
+	<changeSet id="128" author="Irfan">
+	<sql>
+	Update FeeTypes set AdviseType=0; 
+	Update FeeTypes_Temp set AdviseType=0;
+	</sql>
+	</changeSet>
+	<changeSet id="129" author="Irfan">
+		<addNotNullConstraint tableName="FeeTypes" columnName="AdviseType" columnDataType="int"/>
+		<addNotNullConstraint tableName="FeeTypes_Temp" columnName="AdviseType" columnDataType="int"/>
+	</changeSet>			
 	
 </databaseChangeLog>
