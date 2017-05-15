@@ -633,9 +633,9 @@
 <!--//APPEND AFTER THIS//-->
 	<menu id="menu_Category_PresentmentDetails" rightName="menuCat_PresentmentDetails">
 		<menuItem id="menu_Item_PresentmentExtractDetail" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentDetailExtractList.zul" rightName="menuItem_PresentmentDetail_PresentmentExtract"/>
-		<menuItem id="menu_Item_PresentmentBatchCreation" zulNavigation="/WEB-INF/pages/Financemanagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=N" rightName="menuItem_PresentmentDetail_PresentmentBatchCreation"/>
-		<menuItem id="menu_Item_PresentmentHeaderApprove" zulNavigation="/WEB-INF/pages/Financemanagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=A" rightName="menuItem_PresentmentDetail_PresentmentReview"/>
-		<menuItem id="menu_Item_PresentmentHeaderEnquiry" zulNavigation="/WEB-INF/pages/Financemanagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=E" rightName="menuItem_PresentmentDetail_PresentmentReview"/>
+		<menuItem id="menu_Item_PresentmentBatchCreation" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=N" rightName="menuItem_PresentmentDetail_PresentmentBatchCreation"/>
+		<menuItem id="menu_Item_PresentmentHeaderApprove" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=A" rightName="menuItem_PresentmentDetail_PresentmentReview"/>
+		<menuItem id="menu_Item_PresentmentHeaderEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=E" rightName="menuItem_PresentmentDetail_PresentmentReview"/>
 		<menuItem id="menu_Item_PresentmentFileImport" 	zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/ImportPresentmentDetails.zul" rightName="menuItem_PresentmentDetail_PresentmentReview" />													
 	</menu>												
 
