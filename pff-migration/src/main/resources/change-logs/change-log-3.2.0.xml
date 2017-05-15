@@ -1697,5 +1697,35 @@ Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSP
 		UPDATE SEQ_DATA_ENGINE_STATUS SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_STATUS);		
 		</sql>
 	</changeSet>
+<changeSet id="107" author="pruthvi">
+<dropTable tableName="CUSTOMERQUEUING" />
+</changeSet>
 
+<changeSet id="108" author="pruthvi">
+		<createTable tableName="CUSTOMERQUEUING">
+			<column name="CUSTID" type="bigint">
+			<constraints nullable="false" />
+			</column>
+			<column name="EODDATE" type="DATETIME">
+			<constraints nullable="false" />
+			</column>
+			<column name="THREADID" type="DECIMAL(5,0)"/>
+			<column name="STARTTIME"  type="DATETIME"/>
+			<column name="ENDTIME" 	type="DATETIME"/>
+			<column name="PROGRESS" type="DECIMAL(3,0)"/>
+			<column name="ERRORLOG" type="Varchar(2000)"/>
+			<column name="STATUS" type="Varchar(15)"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="109" author="pruthvi">
+	<addPrimaryKey columnNames="CUSTID" constraintName="CUSTOMERQUEUING_PK"
+			tableName="CUSTOMERQUEUING" />
+	</changeSet>
+		<changeSet id="110" author="pruthvi">
+	<createIndex tableName="CUSTOMERQUEUING" indexName="IX_CUST_QUEUE_THREAD">
+	        <column name="THREADID" type="DECIMAL(5,0)"/>
+	        <column name="PROGRESS" type="DECIMAL(3,0)"/>
+	    </createIndex>
+			</changeSet>
 </databaseChangeLog>
