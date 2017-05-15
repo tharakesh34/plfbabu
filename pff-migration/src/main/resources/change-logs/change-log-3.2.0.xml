@@ -1781,4 +1781,21 @@ Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSP
 	        <column name="INSID" type="bigint"/>
 	    </createIndex>
 			</changeSet>
+		<changeSet id="120" author="pruthvi">
+<sql>
+delete from smtparameters where sysparmcode ='FEE_POSTPONEMENT_METHOD';
+delete from smtparameters where sysparmcode ='FEE_RECAL_ON_DELETE_TERMS';
+</sql>
+</changeSet>
+
+
+<changeSet id="121" author="pruthvi">
+<sql>
+Update smtparameters set sysparmcode='TDS_PERCENTAGE' where sysparmcode='PERCENTAGE_TDS';
+
+Insert into SMTPARAMETERS  values ('TDS_ROUNDINGMODE','TDS Rounding Mode','String',1,'HALF_DOWN',8,0,null,null,'TDS Rounding Mode',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+Insert into SMTPARAMETERS  values ('TDS_ROUNDINGTARGET','TDS Rounding Target','int',1,'100',5,0,null,null,'TDS Rounding Target',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+</sql>
+</changeSet>	
+	
 </databaseChangeLog>
