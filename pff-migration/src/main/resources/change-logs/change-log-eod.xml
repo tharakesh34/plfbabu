@@ -383,6 +383,11 @@
 		</column>
 	</addColumn>
 </changeSet>
+<changeSet id="43" author="satish">
+<sql>
+update smtparameters set sysparmlength=3  where sysparmcode='EOD_THREAD_COUNT'
+</sql>
+</changeSet>
 
 
 </databaseChangeLog>
