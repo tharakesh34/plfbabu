@@ -275,11 +275,10 @@ Update wifFinanceMain set FinCurrAssetValue = 0 WHERE FinCurrAssetValue IS NULL;
 	    </createIndex>
 	</changeSet>
 	<changeSet id="28" author="Jayant">
-	    <dropIndex tableName="SecGroupRights" indexName="IX_SGR_GID"/>
 	    <createIndex tableName="SecGroupRights" indexName="IX_SGR_GID">
 	        <column name="GrpID" type="bigint"/>
 	    </createIndex>
-	    <dropIndex tableName="SecGroupRights" indexName="IX_group_right_right_id"/>
+	   
 		 <createIndex tableName="secgrouprights" indexName="ix_group_right_right_id">
 	        <column name="rightid" type="bigint"/>
 	    </createIndex>
