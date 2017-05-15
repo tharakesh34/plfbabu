@@ -45,9 +45,12 @@ package com.pennant.backend.service.finance;
 
 import java.util.List;
 
+import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceDisbursement;
+import com.pennant.backend.model.finance.FinanceMain;
 
 public interface FinAdvancePaymentsService {
 	List<FinAdvancePayments> getFinAdvancePaymentsById(String id,String type);
@@ -60,5 +63,7 @@ public interface FinAdvancePaymentsService {
 	void doCancel(FinanceDetail financeDetail);
 	void Update(long paymentId, long linkedTranId);
 	int getCountByFinReference(String finReference);
+	List<ErrorDetails> validateFinAdvPayments(List<FinAdvancePayments> advancePaymentsList,
+			List<FinanceDisbursement> disbursementDetails, FinanceMain financeMain, boolean loanApproved);
 	
 }

@@ -45,12 +45,16 @@ package com.pennant.backend.service.finance.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.finance.limits.LimitCheckDetails;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
@@ -556,6 +560,153 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	}
 
+	public List<ErrorDetails> validateFinAdvPayments(List<FinAdvancePayments> list, List<FinanceDisbursement> financeDisbursement, 
+			FinanceMain financeMain, boolean loanApproved) {
+		logger.debug(" Entering ");
+
+		FinanceDisbursement totDisb = getTotal(financeDisbursement, financeMain, 0, false);
+
+		BigDecimal netFinAmount = totDisb.getDisbAmount();
+		List<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
+		boolean checkMode = true;
+
+		BigDecimal totDisbAmt = BigDecimal.ZERO;
+		Map<Integer, BigDecimal> map = new HashMap<Integer, BigDecimal>();
+
+		if (financeMain.isQuickDisb() && financeDisbursement != null && financeDisbursement.size() > 1) {
+			//Multiple disbursement not allowed in quick disbursement
+			ErrorDetails error = new ErrorDetails("60405", null);
+			errorList.add(error);
+			return errorList;
+		}
+
+		for (FinAdvancePayments finAdvPayment : list) {
+			if (financeMain.isQuickDisb() && checkMode) {
+				if (!StringUtils.equals(finAdvPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)) {
+					checkMode = false;
+				}
+			}
+
+			if (!isDeleteRecord(finAdvPayment)) {
+				int key = finAdvPayment.getDisbSeq();
+
+				BigDecimal totalGroupAmt = map.get(key);
+				if (totalGroupAmt == null) {
+					totalGroupAmt = BigDecimal.ZERO;
+				}
+				totalGroupAmt = totalGroupAmt.add(finAdvPayment.getAmtToBeReleased());
+				map.put(key, totalGroupAmt);
+				totDisbAmt = totDisbAmt.add(finAdvPayment.getAmtToBeReleased());
+			}
+		}
+
+		if (netFinAmount.compareTo(totDisbAmt) != 0) {
+			//since if the loan not approved then user can cancel the instruction and resubmit the record in loan origination
+			if (loanApproved) {
+				//Total amount should match with disbursement amount.
+				String[] valueParm = new String[2];
+				valueParm[0] = String.valueOf(totDisbAmt);
+				valueParm[1] = String.valueOf(netFinAmount);
+				ErrorDetails error = new ErrorDetails("60401", valueParm);
+				errorList.add(error);
+				return errorList;
+			}
+		}
+
+		if (!checkMode) {
+			//For quick disbursement, only payment type cheque is allowed.
+			ErrorDetails error = new ErrorDetails("60402", null);
+			errorList.add(error);
+			return errorList;
+		}
+
+		//since if the loan not approved then user can cancel the instruction and resubmit the record in loan origination
+		if (loanApproved) {
+			for (FinanceDisbursement disbursement : financeDisbursement) {
+
+				if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, disbursement.getDisbStatus())){
+					continue;
+				}
+
+				Date disbDate = disbursement.getDisbDate();
+				BigDecimal singletDisbursment = disbursement.getDisbAmount();
+
+				if (disbDate.compareTo(financeMain.getFinStartDate()) == 0) {
+					singletDisbursment = singletDisbursment.subtract(financeMain.getDownPayment());
+					singletDisbursment = singletDisbursment.subtract(financeMain.getDeductFeeDisb());
+					singletDisbursment = singletDisbursment.subtract(financeMain.getDeductInsDisb());
+					if (StringUtils.trimToEmpty(financeMain.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
+						singletDisbursment = singletDisbursment.subtract(financeMain.getBpiAmount());
+					}
+				}
+				int key = disbursement.getDisbSeq();
+
+				BigDecimal totalGroupAmt = map.get(key);
+				if (totalGroupAmt == null) {
+					totalGroupAmt = BigDecimal.ZERO;
+				}
+				if (singletDisbursment.compareTo(totalGroupAmt) != 0) {
+					String errorDesc = DateUtility.formatToLongDate(disbDate) + " , " + disbursement.getDisbSeq();
+					//Total amount should match with disbursement amount dated :{0}.
+					ErrorDetails error = new ErrorDetails("60404", new String[] { errorDesc });
+					errorList.add(error);
+					return errorList;
+				}
+			}
+		}
+
+		return errorList;
+
+	}
+	
+	private static FinanceDisbursement getTotal(List<FinanceDisbursement> list, FinanceMain main, int seq, boolean group) {
+		BigDecimal totdisbAmt = BigDecimal.ZERO;
+		Date date = null;
+		if (list != null && !list.isEmpty()) {
+			for (FinanceDisbursement financeDisbursement : list) {
+				if (group && seq != financeDisbursement.getDisbSeq()) {
+					continue;
+				}
+				
+				if (!group) {
+					if(StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, financeDisbursement.getDisbStatus())){
+						continue;
+					}
+				}
+				
+				date = financeDisbursement.getDisbDate();
+				
+				//check is first disbursement
+				if (financeDisbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()) {
+					totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
+					totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
+					totdisbAmt = totdisbAmt.subtract(main.getDeductInsDisb());
+					if (StringUtils.trimToEmpty(main.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
+						totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());
+					}
+				}
+				totdisbAmt = totdisbAmt.add(financeDisbursement.getDisbAmount());
+			}
+		}
+
+		FinanceDisbursement disbursement = new FinanceDisbursement();
+		disbursement.setDisbAmount(totdisbAmt);
+		if (date != null) {
+			disbursement.setDisbDate(date);
+		}
+		return disbursement;
+
+	}
+	
+	private boolean isDeleteRecord(FinAdvancePayments aFinAdvancePayments) {
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, aFinAdvancePayments.getRecordType())
+				|| StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, aFinAdvancePayments.getRecordType())
+				|| StringUtils.equals(DisbursementConstants.STATUS_CANCEL, aFinAdvancePayments.getStatus())) {
+			return true;
+		}
+		return false;
+	}
+	
 	public PayOrderIssueHeaderDAO getPayOrderIssueHeaderDAO() {
 		return payOrderIssueHeaderDAO;
 	}

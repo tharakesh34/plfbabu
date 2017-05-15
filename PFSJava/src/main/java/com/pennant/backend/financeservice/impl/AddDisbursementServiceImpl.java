@@ -84,9 +84,9 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		String finReference = financeMain.getFinReference();
 		boolean isWIF = finServiceInstruction.isWif();
 		Date fromDate = finServiceInstruction.getFromDate();
-		BigDecimal disbAmount = finServiceInstruction.getAmount();
+		BigDecimal actualDisbAmount = finServiceInstruction.getAmount();
 
-		if(!finScheduleData.getFinanceType().isAlwMultiPartyDisb()) {
+		if(!finScheduleData.getFinanceType().isFinIsAlwMD()) {
 			String[] valueParm = new String[2];
 			valueParm[0] = financeMain.getFinReference();
 			valueParm[1] = financeMain.getFinType();
@@ -148,9 +148,9 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			availableLimit = availableLimit.subtract(closingbal);
 
 			// Validating against Available Limit amount
-			if (disbAmount.compareTo(availableLimit) > 0) {
+			if (actualDisbAmount.compareTo(availableLimit) > 0) {
 				String[] valueParm = new String[2];
-				valueParm[0] = String.valueOf(disbAmount);
+				valueParm[0] = String.valueOf(actualDisbAmount);
 				valueParm[1] = String.valueOf(availableLimit);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91119", valueParm)));
 			} else {
@@ -159,13 +159,12 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				for (FinanceDisbursement finDisbursment : finScheduleData.getDisbursementDetails()) {
 					totDisbAmount = totDisbAmount.add(finDisbursment.getDisbAmount());
 				}
-				totDisbAmount = disbAmount.add(totDisbAmount);
+				totDisbAmount = actualDisbAmount.add(totDisbAmount);
 				if (totDisbAmount.compareTo(financeMain.getFinAssetValue()) > 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = String.valueOf(totDisbAmount);
 					valueParm[1] = String.valueOf(financeMain.getFinAssetValue());
-					auditDetail
-					.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91120", valueParm)));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91120", valueParm)));
 				}
 			}
 		}
@@ -274,13 +273,26 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", valueParm)));
 			}
 		}
+
 		// validate disbursement amount
 		if (finScheduleData.getFinanceType().isAlwMaxDisbCheckReq()) {
+			BigDecimal totDisbAmount = BigDecimal.ZERO;
+			for (FinanceDisbursement finDisbursment : finScheduleData.getDisbursementDetails()) {
+				totDisbAmount = totDisbAmount.add(finDisbursment.getDisbAmount());
+			}
+			totDisbAmount = actualDisbAmount.add(totDisbAmount);
+			if (totDisbAmount.compareTo(financeMain.getFinAssetValue()) > 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = String.valueOf(totDisbAmount);
+				valueParm[1] = String.valueOf(financeMain.getFinAssetValue());
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90280", valueParm)));
+			}
+			
 			BigDecimal finAssetValue = financeMain.getFinAssetValue();
 			BigDecimal finCurAssetValue = financeMain.getFinCurrAssetValue();
-			if (disbAmount.compareTo(finAssetValue.subtract(finCurAssetValue)) > 0) {
+			if (actualDisbAmount.compareTo(finAssetValue.subtract(finCurAssetValue)) > 0) {
 				String[] valueParm = new String[2];
-				valueParm[0] = "Disbursement amount:" + disbAmount;
+				valueParm[0] = "Disbursement amount:" + actualDisbAmount;
 				valueParm[1] = "Remaining finAssetValue:" + finAssetValue.subtract(finCurAssetValue);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("30551", valueParm)));
 			}
@@ -291,14 +303,6 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			totalDisbAmtFromInst = totalDisbAmtFromInst.add(finAdvancePayment.getAmtToBeReleased());
 		}
 		
-		if(totalDisbAmtFromInst.compareTo(disbAmount) != 0) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "Disbursement amount:" + disbAmount;
-			valueParm[1] = "Total disbursement amount from instructions:"+ totalDisbAmtFromInst;
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90277", valueParm)));
-			return auditDetail;
-		}
-		// validate disbursement instructions
 		List<ErrorDetails> errors = financeDataValidation.disbursementValidation(financeDetail);
 		for (ErrorDetails errorDetails : errors) {
 			auditDetail.setErrorDetail(errorDetails);
@@ -337,4 +341,5 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
 		this.financeDataValidation = financeDataValidation;
 	}
+
 }

@@ -8,20 +8,13 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
-@XmlType(propOrder = { "finReference", "fromDate", "toDate", "pftDaysBasis", "actualRate", "baseRate", "splRate",
-		"margin", "recalType", "recalFromDate", "recalToDate", "nonStp", "processStage", "reqType", "returnStatus",
-		"amount", "schdMethod", "pftIntact", "terms", "grcPeriodEndDate", "nextGrcRepayDate", "nextRepayDate",
-		"disbursementDetails", "finFeeDetails", "repayFrq", "frqDay", "refund", "dsaCode", "salesDepartment",
-		"dmaCode", "accountsOfficer", "referralId", "finODPenaltyRate" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinServiceInstruction  extends AbstractWorkflowEntity implements Entity {
-
 	private static final long serialVersionUID = 2803331023129230226L;
 
 	public FinServiceInstruction() {
@@ -90,11 +83,15 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 	@XmlElement
 	private String referralId;
 	private int adjRpyTerms = 0;
-
+	@XmlElement
+	private String paymentMode;
+	@XmlElement
+	private String excessAdjustTo;
+	@XmlElement
+	private FinReceiptDetail receiptDetail;
 	@XmlElementWrapper(name="disbursements")
 	@XmlElement(name="disbursement")
 	private List<FinAdvancePayments> disbursementDetails;
-
 	@XmlElementWrapper(name="fees")
 	@XmlElement(name="fee")
 	private List<FinFeeDetail> finFeeDetails;
@@ -457,5 +454,29 @@ public class FinServiceInstruction  extends AbstractWorkflowEntity implements En
 
 	public void setAdjRpyTerms(int adjRpyTerms) {
 		this.adjRpyTerms = adjRpyTerms;
+	}
+	
+	public String getPaymentMode() {
+		return paymentMode;
+	}
+
+	public void setPaymentMode(String paymentMode) {
+		this.paymentMode = paymentMode;
+	}
+
+	public String getExcessAdjustTo() {
+		return excessAdjustTo;
+	}
+
+	public void setExcessAdjustTo(String excessAdjustTo) {
+		this.excessAdjustTo = excessAdjustTo;
+	}
+
+	public FinReceiptDetail getReceiptDetail() {
+		return receiptDetail;
+	}
+
+	public void setReceiptDetail(FinReceiptDetail receiptDetail) {
+		this.receiptDetail = receiptDetail;
 	}
 }

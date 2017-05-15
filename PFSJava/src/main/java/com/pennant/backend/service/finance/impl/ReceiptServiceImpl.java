@@ -19,6 +19,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinanceRepayPriorityDAO;
@@ -86,7 +87,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private ReceiptAllocationDetailDAO		allocationDetailDAO;		
 	private ManualAdviseDAO					manualAdviseDAO;	
 	private RepaymentProcessUtil			repayProcessUtil;
-
+	private ReceiptCalculator				receiptCalculator;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -1219,6 +1220,247 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		return receipts;
 	}
 	
+	
+	/**
+	 * Method for Calculate Payment Details based on Entered Receipts
+	 * @param financeMain
+	 * @param finSchDetails
+	 * @param isReCal
+	 * @param method
+	 * @param valueDate
+	 * @return
+	 */
+	@Override
+	public FinReceiptData calculateRepayments(FinReceiptData finReceiptData) {
+		logger.debug("Entering");
+
+		finReceiptData.setBuildProcess("R");
+		finReceiptData.getRepayMain().setRepayAmountNow(BigDecimal.ZERO);
+		finReceiptData.getRepayMain().setPrincipalPayNow(BigDecimal.ZERO);
+		finReceiptData.getRepayMain().setProfitPayNow(BigDecimal.ZERO);
+		
+		// Prepare Receipt Details Data
+		FinReceiptHeader receiptHeader = finReceiptData.getReceiptHeader();
+		FinanceDetail financeDetail = finReceiptData.getFinanceDetail();
+		receiptHeader.setReceiptAmount(receiptHeader.getReceiptAmount());//TODO: DDP getTotalReceiptAmt();
+		receiptHeader.getAllocations().clear();
+		
+		// Basic Receipt Mode Details
+		//int finFormatter = CurrencyUtil.getFormat(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy());
+		//this.receipt_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(receiptHeader.getReceiptAmount(), finFormatter));
+		//this.allocation_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(receiptHeader.getReceiptAmount(), finFormatter));
+		//this.payment_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(receiptHeader.getReceiptAmount(), finFormatter));
+		
+/*		Map<String, FinExcessAmount> excessMap = new HashMap<>();
+		if(getExcessList() != null && !getExcessList().isEmpty()){
+			for (int i = 0; i < getExcessList().size(); i++) {
+				excessMap.put(getExcessList().get(i).getAmountType(), getExcessList().get(i));
+			}
+		}*/
+		
+		List<FinReceiptDetail> receiptDetailList = new ArrayList<>();
+		int payOrder = 1;
+		FinReceiptDetail receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.PAYTYPE_EMIINADV);
+		// EMI In Advance Receipt Mode
+		/*if (StringUtils.equals(receiptHeader.getExcessAdjustTo(), RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
+			if(receiptHeader.get.compareTo(BigDecimal.ZERO) > 0){
+				if(receiptDetail == null){
+					receiptDetail = new FinReceiptDetail();
+				}
+				receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+				receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+				receiptDetail.setPaymentType(RepayConstants.PAYTYPE_EMIINADV);
+				receiptDetail.setPayAgainstID(excessMap.get(RepayConstants.EXAMOUNTTYPE_EMIINADV).getExcessID());
+				receiptDetail.setAmount(PennantApplicationUtil.unFormateAmount(emiAdvance.getActualValue(), finFormatter));
+				receiptDetail.setValueDate(this.valueDate.getValue());
+				receiptDetail.setReceivedDate(this.valueDate.getValue());
+				receiptDetail.setDelRecord(false);// Internal Purpose
+				receiptDetail.setPayOrder(payOrder);
+				payOrder = payOrder + 1;
+				receiptDetail.getAdvMovements().clear();
+				receiptDetail.getRepayHeaders().clear();
+				receiptDetailList.add(receiptDetail);
+			}else{
+				if(receiptDetail != null){
+					receiptDetail.setDelRecord(true);
+					receiptDetail.getAdvMovements().clear();
+					receiptDetail.getRepayHeaders().clear();
+					receiptDetailList.add(receiptDetail);
+				}
+			}
+		}
+		
+		// Excess Amount Receipt Detail
+		receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.PAYTYPE_EXCESS);
+		if(this.listBoxExcess.getFellowIfAny("ExcessAmount_"+RepayConstants.EXAMOUNTTYPE_EXCESS) != null){
+			CurrencyBox excessAmount = (CurrencyBox) this.listBoxExcess.getFellowIfAny("ExcessAmount_"+RepayConstants.EXAMOUNTTYPE_EXCESS);
+			if(excessAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0){
+				if(receiptDetail == null){
+					receiptDetail = new FinReceiptDetail();
+				}
+				receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+				receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+				receiptDetail.setPaymentType(RepayConstants.PAYTYPE_EXCESS);
+				receiptDetail.setPayAgainstID(excessMap.get(RepayConstants.EXAMOUNTTYPE_EXCESS).getExcessID());
+				receiptDetail.setAmount(PennantApplicationUtil.unFormateAmount(excessAmount.getActualValue(), finFormatter));
+				receiptDetail.setValueDate(this.valueDate.getValue());
+				receiptDetail.setReceivedDate(this.valueDate.getValue());
+				receiptDetail.setDelRecord(false);// Internal Purpose
+				receiptDetail.setPayOrder(payOrder);
+				payOrder = payOrder + 1;
+				receiptDetail.getAdvMovements().clear();
+				receiptDetail.getRepayHeaders().clear();
+				receiptDetailList.add(receiptDetail);
+			}else{
+				if(receiptDetail != null){
+					receiptDetail.setDelRecord(true);
+					receiptDetail.getAdvMovements().clear();
+					receiptDetail.getRepayHeaders().clear();
+					receiptDetailList.add(receiptDetail);
+				}
+			}
+		}*/
+		
+		// Payable Advise Receipt Modes TODO 
+		
+		// Receipt Mode case
+		receiptDetail = getExistingReceiptDetail(receiptHeader, "");
+		if (!StringUtils.equals(RepayConstants.RECEIPTMODE_EXCESS, receiptHeader.getReceiptMode())) {
+			if (receiptDetail == null) {
+				receiptDetail = new FinReceiptDetail();
+			}
+			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+			receiptDetail.setPaymentType(receiptHeader.getReceiptMode());
+			receiptDetail.setPayAgainstID(0);
+			receiptDetail.setAmount(receiptHeader.getReceiptAmount());
+/*			receiptDetail.setFavourNumber(this.favourNo.getValue());
+			receiptDetail.setValueDate(this.valueDate.getValue());
+			receiptDetail.setBankCode(this.bankCode.getValue());
+			receiptDetail.setFavourName(this.favourName.getValue());
+			receiptDetail.setDepositDate(this.depositDate.getValue());
+			receiptDetail.setDepositNo(this.depositNo.getValue());
+			receiptDetail.setPaymentRef(this.paymentRef.getValue());
+			receiptDetail.setTransactionRef(this.transactionRef.getValue());
+			receiptDetail.setChequeAcNo(this.chequeAcNo.getValue());
+			receiptDetail.setFundingAc(Long.valueOf(this.fundingAccount.getValue()));
+			receiptDetail.setReceivedDate(this.receivedDate.getValue());
+			receiptDetail.setRemarks(this.remarks.getValue());*/
+			receiptDetail.setDelRecord(false);// Internal Purpose
+			receiptDetail.setPayOrder(payOrder);
+			payOrder = payOrder + 1;
+			receiptDetail.getAdvMovements().clear();
+			receiptDetail.getRepayHeaders().clear();
+			receiptDetailList.add(receiptDetail);
+		} else {
+			if (receiptDetail != null) {
+				receiptDetail.setDelRecord(true);
+				receiptDetail.getAdvMovements().clear();
+				receiptDetail.getRepayHeaders().clear();
+				receiptDetailList.add(receiptDetail);
+			}
+		}
+		
+		receiptHeader.setReceiptDetails(receiptDetailList);
+		
+		// Prepare Allocation Details
+		List<String> allocateTypes = new ArrayList<>(finReceiptData.getAllocationMap().keySet());
+		ReceiptAllocationDetail allocationDetail = null;
+		for (int i = 0; i < allocateTypes.size(); i++) {
+			allocationDetail = new ReceiptAllocationDetail();
+			
+			String allocationType = allocateTypes.get(i);
+			long allocateTo = 0;
+			if(allocateTypes.get(i).contains("_")){
+				allocationType = allocateTypes.get(i).substring(0, allocateTypes.get(i).indexOf("_"));
+				allocateTo = Long.valueOf(allocateTypes.get(i).substring(allocateTypes.get(i).indexOf("_")+1));
+			}
+			
+			allocationDetail.setAllocationID(i+1);
+			allocationDetail.setAllocationType(allocationType);
+			allocationDetail.setAllocationTo(allocateTo);
+/*			if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_MANADV)){
+				
+				if(this.listBoxManualAdvises.getFellowIfAny("AllocatePaid_"+allocateTypes.get(i)) != null){
+					CurrencyBox paidAllocate = (CurrencyBox) this.listBoxManualAdvises.getFellowIfAny("AllocatePaid_"+allocateTypes.get(i));
+					allocationDetail.setPaidAmount(PennantApplicationUtil.unFormateAmount(paidAllocate.getActualValue(), finFormatter));
+				}
+				
+				if(this.listBoxManualAdvises.getFellowIfAny("AllocateAdvWaived_"+allocateTypes.get(i)) != null){
+					CurrencyBox waivedAllocate = (CurrencyBox) this.listBoxManualAdvises.getFellowIfAny("AllocateAdvWaived_"+allocateTypes.get(i));
+					allocationDetail.setWaivedAmount(PennantApplicationUtil.unFormateAmount(waivedAllocate.getActualValue(), finFormatter));
+				}
+			}else{
+				
+				if(this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+allocateTypes.get(i)) != null){
+					CurrencyBox paidAllocate = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+allocateTypes.get(i));
+					allocationDetail.setPaidAmount(PennantApplicationUtil.unFormateAmount(paidAllocate.getActualValue(), finFormatter));
+				}
+				
+				if(this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+allocateTypes.get(i)) != null){
+					CurrencyBox waivedAllocate = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocateWaived_"+allocateTypes.get(i));
+					allocationDetail.setWaivedAmount(PennantApplicationUtil.unFormateAmount(waivedAllocate.getActualValue(), finFormatter));
+				}
+			}*/
+			
+			if(allocationDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0){
+				receiptHeader.getAllocations().add(allocationDetail);
+			}
+		}
+		
+		// Setting Extra amount for Partial Settlement case
+/*		if(StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYRPY)){
+			boolean isPriRcdFound = false;
+			for (ReceiptAllocationDetail detail : receiptHeader.getAllocations()) {
+				if(StringUtils.equals(detail.getAllocationType(), RepayConstants.ALLOCATION_PRI) && 
+						this.remBalAfterAllocation.getValue().compareTo(BigDecimal.ZERO) > 0){
+					detail.setPaidAmount(detail.getPaidAmount().add(PennantApplicationUtil.unFormateAmount(this.remBalAfterAllocation.getValue(), finFormatter)));
+					isPriRcdFound = true;
+					break;
+				}
+			}
+			if(!isPriRcdFound){
+				allocationDetail = new ReceiptAllocationDetail();
+				allocationDetail.setAllocationID(receiptHeader.getAllocations().size()+1);
+				allocationDetail.setAllocationType(RepayConstants.ALLOCATION_PRI);
+				allocationDetail.setAllocationTo(0);
+				allocationDetail.setPaidAmount(PennantApplicationUtil.unFormateAmount(this.remBalAfterAllocation.getValue(), finFormatter));
+				receiptHeader.getAllocations().add(allocationDetail);
+			}
+		}*/
+		
+		//excessMap = null;
+		finReceiptData.setReceiptHeader(receiptHeader);
+		finReceiptData = receiptCalculator.initiateReceipt(finReceiptData, financeDetail.getFinScheduleData(),
+				receiptHeader.getReceiptPurpose());
+		
+		logger.debug("Leaving");
+		return finReceiptData;
+	}
+	
+	/**
+	 * Method for identifying the existing record
+	 * @param header
+	 * @param receiptType
+	 * @return
+	 */
+	private FinReceiptDetail getExistingReceiptDetail(FinReceiptHeader header, String receiptType) {
+		FinReceiptDetail detail = null;
+		for (FinReceiptDetail receiptDetail : header.getReceiptDetails()) {
+			if (StringUtils.equals(receiptDetail.getPaymentType(), receiptType)) {
+				detail = receiptDetail;
+				break;
+			}
+			if (StringUtils.isEmpty(receiptType)
+					&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)
+					&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)) {
+				detail = receiptDetail;
+				break;
+			}
+		}
+		return detail;
+	}
+	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -1306,5 +1548,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	public void setRepayProcessUtil(RepaymentProcessUtil repayProcessUtil) {
 		this.repayProcessUtil = repayProcessUtil;
 	}
-	
+
+	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
+		this.receiptCalculator = receiptCalculator;
+	}
+
 }

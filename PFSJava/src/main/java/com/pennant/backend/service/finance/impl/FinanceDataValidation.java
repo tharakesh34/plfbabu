@@ -1241,10 +1241,9 @@ public class FinanceDataValidation {
 
 	public List<ErrorDetails> disbursementValidation(FinanceDetail financeDetail) {
 		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
-		
+
 		// validate disbursement details
- 		List<FinAdvancePayments> finAdvPayments = financeDetail.getAdvancePaymentsList();
-		BigDecimal totalDisbAmtFromInst = BigDecimal.ZERO;
+		List<FinAdvancePayments> finAdvPayments = financeDetail.getAdvancePaymentsList();
 		if (finAdvPayments != null) {
 			for (FinAdvancePayments advPayment : finAdvPayments) {
 				// partnerbankid
@@ -1398,17 +1397,6 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90214", valueParm)));
 					}
 				}
-				
-				// validate total disb amounts
-				totalDisbAmtFromInst = totalDisbAmtFromInst.add(advPayment.getAmtToBeReleased());
-			}
-			
-			if(totalDisbAmtFromInst.compareTo(financeDetail.getFinScheduleData().getFinanceMain().getFinAmount()) != 0) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "Disbursement amount:" + financeDetail.getFinScheduleData().getFinanceMain().getFinAmount();
-				valueParm[1] = "Total disbursement amount from instructions:"+ totalDisbAmtFromInst;
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90277", valueParm)));
-				return errorDetails;
 			}
 		}
 		return errorDetails;
@@ -3150,7 +3138,6 @@ public class FinanceDataValidation {
 	 */
 	private List<ErrorDetails> feeValidations(String vldGroup, FinScheduleData finSchdData, boolean isAPICall, String eventCode) {
 		List<ErrorDetails> errorDetails = finSchdData.getErrorDetails();
-		int formatter = CurrencyUtil.getFormat(finSchdData.getFinanceMain().getFinCcy());
 		String finEvent = eventCode;
 		boolean isOrigination = false;
 		if(!StringUtils.equals(PennantConstants.VLD_SRV_LOAN, vldGroup)) {
@@ -3221,8 +3208,8 @@ public class FinanceDataValidation {
 		}
 
 		List<FinTypeFees> finTypeFeeDetail = null;
-		if(!finSchdData.getFinanceType().isPromotionType()) {
-			finTypeFeeDetail = getFinanceDetailService().getFinTypeFees(finSchdData.getFinanceType().getFinType(), 
+		if(StringUtils.equals(PennantConstants.VLD_SRV_LOAN, vldGroup) || !finSchdData.getFinanceType().isPromotionType()) {
+			finTypeFeeDetail = getFinanceDetailService().getFinTypeFees(finSchdData.getFinanceMain().getFinType(), 
 					finEvent, isOrigination, FinanceConstants.MODULEID_FINTYPE);
 		} else {
 			finTypeFeeDetail = getFinanceDetailService().getFinTypeFees(finSchdData.getFinanceType().getPromotionCode(), 
@@ -3249,77 +3236,23 @@ public class FinanceDataValidation {
 
 							// validate fee schedule method
 							if (!finTypeFee.isAlwModifyFeeSchdMthd() && !StringUtils.equals(feeDetail.getFeeScheduleMethod(),
-											finTypeFee.getFeeScheduleMethod())) {
+									finTypeFee.getFeeScheduleMethod())) {
 								String[] valueParm = new String[1];
 								valueParm[0] = feeDetail.getFeeTypeCode();
 								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90246", valueParm)));
 								return errorDetails;
 							}
 
-							// calculate percentage amount
-							if (StringUtils.equals(finTypeFee.getCalculationType(), PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE)) {
-								BigDecimal calPercentageFee = getCalculatedPercentageFee(finTypeFee, finSchdData,
-										formatter);
-								finTypeFee.setAmount(calPercentageFee);
-							}
-
-							// validate allow modify fee amount
-							if (!StringUtils.equals(finTypeFee.getCalculationType(), PennantConstants.FEE_CALCULATION_TYPE_RULE)) {
-								if (!finTypeFee.isAlwModifyFee()
-										&& feeDetail.getActualAmount().compareTo(finTypeFee.getAmount()) != 0) {
-									String[] valueParm = new String[3];
-									valueParm[0] = "Fee amount";
-									valueParm[1] = "Actual fee amount:" + String.valueOf(finTypeFee.getAmount());
-									valueParm[2] = feeDetail.getFeeTypeCode();
-									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90258", valueParm)));
-									return errorDetails;
-								}
-							}
-
-							// validate paid amount with with actual fee amount
-							if (!StringUtils.equals(finTypeFee.getCalculationType(), PennantConstants.FEE_CALCULATION_TYPE_RULE)) {
-								if (feeDetail.getPaidAmount().compareTo(finTypeFee.getAmount()) > 0) {
-									String[] valueParm = new String[3];
-									valueParm[0] = "Paid amount";
-									valueParm[1] = "Actual amount:" + String.valueOf(finTypeFee.getAmount());
-									valueParm[2] = feeDetail.getFeeTypeCode();
-									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90257", valueParm)));
-									return errorDetails;
-								}
-
-								// validate waiver amount
-								BigDecimal maxWaiverPer = finTypeFee.getMaxWaiverPerc();
-								finWaiverAmount = (finTypeFee.getAmount().multiply(maxWaiverPer)).divide(new BigDecimal(100));
-								if (feeDetail.getWaivedAmount().compareTo(finWaiverAmount) > 0) {
-									String[] valueParm = new String[3];
-									valueParm[0] = "Waiver amount";
-									valueParm[1] = "Actual waiver amount:" + String.valueOf(finWaiverAmount);
-									valueParm[2] = feeDetail.getFeeTypeCode();
-									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90257", valueParm)));
-									return errorDetails;
-								}
-
-								// validate actual fee amount with waiver+paid amount
-								BigDecimal remainingFee = feeDetail.getActualAmount().subtract(
-										feeDetail.getWaivedAmount().add(feeDetail.getPaidAmount()));
-								if (remainingFee.compareTo(BigDecimal.ZERO) < 0) {
+							// validate actual fee amount with waiver+paid amount
+							BigDecimal remainingFee = feeDetail.getActualAmount().subtract(feeDetail.getWaivedAmount().add(feeDetail.getPaidAmount()));
+							if(StringUtils.equals(PennantConstants.VLD_SRV_LOAN, vldGroup)) {
+								if (remainingFee.compareTo(BigDecimal.ZERO) != 0) {
 									String[] valueParm = new String[3];
 									valueParm[0] = "Sum of waiver and paid amounts";
 									valueParm[1] = "Actual fee amount:" + String.valueOf(feeDetail.getActualAmount());
 									valueParm[2] = feeDetail.getFeeTypeCode();
-									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90257", valueParm)));
+									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90268", valueParm)));
 									return errorDetails;
-								}
-								
-								if(StringUtils.equals(PennantConstants.VLD_SRV_LOAN, vldGroup)) {
-									if (remainingFee.compareTo(BigDecimal.ZERO) != 0) {
-										String[] valueParm = new String[3];
-										valueParm[0] = "Sum of waiver and paid amounts";
-										valueParm[1] = "Actual fee amount:" + String.valueOf(feeDetail.getActualAmount());
-										valueParm[2] = feeDetail.getFeeTypeCode();
-										errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90268", valueParm)));
-										return errorDetails;
-									}
 								}
 							}
 							// validate paid by Customer method
@@ -3364,27 +3297,6 @@ public class FinanceDataValidation {
 		}
 
 		return errorDetails;
-	}
-
-	/**
-	 * Method for calculate Actual fee amount for percentage configured in loan type.
-	 * 
-	 * @param finFeeDetail
-	 * @param finScheduleData
-	 * @param formatter
-	 * @return
-	 */
-	private BigDecimal getCalculatedPercentageFee(FinTypeFees finFeeDetail, FinScheduleData finScheduleData,
-			int formatter) {
-		BigDecimal calculatedAmt = BigDecimal.ZERO;
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		if (StringUtils.equals(PennantConstants.FEE_CALCULATEDON_TOTALASSETVALUE, finFeeDetail.getCalculateOn())) {
-			calculatedAmt = financeMain.getFinAssetValue();
-		} else {
-			calculatedAmt = financeMain.getFinAmount().subtract(financeMain.getDownPayment());
-		}
-		calculatedAmt = calculatedAmt.multiply(finFeeDetail.getPercentage()).divide(BigDecimal.valueOf(100));
-		return calculatedAmt;
 	}
 
 	/**

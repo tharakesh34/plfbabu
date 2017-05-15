@@ -6,8 +6,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
 import com.pennant.backend.model.Entity;
 
+@XmlAccessorType(XmlAccessType.NONE)
 public class FinReceiptDetail implements Entity {
 
 	private long						receiptID		= 0;										// Only setting from Receipt Header
@@ -25,13 +30,18 @@ public class FinReceiptDetail implements Entity {
 	private String						favourName;
 	private Date						depositDate;
 	private String						depositNo;
+	@XmlElement
 	private String						paymentRef;
+	@XmlElement
 	private String						transactionRef;
 	private String						chequeAcNo;
+	@XmlElement(name="fundingAccount")
 	private long						fundingAc		= 0;
 	private String						fundingAcDesc;
+	@XmlElement
 	private Date						receivedDate;
 	private String						status;
+	@XmlElement
 	private String						remarks;
 	private long						logKey			= 0;
 	private boolean						delRecord		= false;

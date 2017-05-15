@@ -577,6 +577,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		}
 
 		// validate service instruction data
+/*		for(FinAdvancePayments payment: finServiceInstruction.getDisbursementDetails()) {
+			financeDetail.getAdvancePaymentsList().add(payment);
+		}*/
 		financeDetail.setAdvancePaymentsList(finServiceInstruction.getDisbursementDetails());
 		AuditDetail auditDetail = addDisbursementService.doValidations(financeDetail, finServiceInstruction);
 		if (auditDetail.getErrorDetails() != null) {

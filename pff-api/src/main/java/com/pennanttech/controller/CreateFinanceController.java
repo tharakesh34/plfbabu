@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeScheduleCalculator;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.ScheduleCalculator;
@@ -55,6 +56,7 @@ import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.fees.FeeDetailService;
+import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainService;
@@ -70,22 +72,23 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class CreateFinanceController extends SummaryDetailService {
 
-	private final static Logger logger = Logger.getLogger(CreateFinanceController.class);
+	private final static Logger			logger	= Logger.getLogger(CreateFinanceController.class);
 
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private CustomerDetailsService customerDetailsService;
-	private FinanceDetailService financeDetailService;
-	private FinanceStepDetailDAO financeStepDetailDAO;
-	private StepPolicyDetailDAO stepPolicyDetailDAO;
-	private StepPolicyHeaderDAO stepPolicyHeaderDAO;
-	private BankBranchService bankBranchService;
-	private FinanceMainDAO financeMainDAO;
-	private FeeDetailService feeDetailService;
-	private FinFeeDetailService finFeeDetailService;
-	private CollateralSetupService collateralSetupService;
-	private FinanceMainService financeMainService;
-	private JointAccountDetailService jointAccountDetailService;
-	
+	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
+	private CustomerDetailsService		customerDetailsService;
+	private FinanceDetailService		financeDetailService;
+	private FinanceStepDetailDAO		financeStepDetailDAO;
+	private StepPolicyDetailDAO			stepPolicyDetailDAO;
+	private StepPolicyHeaderDAO			stepPolicyHeaderDAO;
+	private BankBranchService			bankBranchService;
+	private FinanceMainDAO				financeMainDAO;
+	private FeeDetailService			feeDetailService;
+	private FinFeeDetailService			finFeeDetailService;
+	private CollateralSetupService		collateralSetupService;
+	private FinanceMainService			financeMainService;
+	private JointAccountDetailService	jointAccountDetailService;
+	private FinAdvancePaymentsService	finAdvancePaymentsService;
+
 	/**
 	 * Method for process create finance request
 	 * 
@@ -140,23 +143,17 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 
 			if (!loanWithWIF) {
-				FinanceDisbursement disbursementDetails = new FinanceDisbursement();
-				disbursementDetails.setDisbDate(finScheduleData.getFinanceMain().getFinStartDate());
-				disbursementDetails.setDisbAmount(finScheduleData.getFinanceMain().getFinAmount());
-				finScheduleData.getDisbursementDetails().add(disbursementDetails);
-				finScheduleData.getFinanceMain().setCalculateRepay(true);
-
 				// call schedule calculator
 				finScheduleData.getFinanceMain().setCalculateRepay(true);
 				finScheduleData = ScheduleGenerator.getNewSchd(finScheduleData);
 				if (finScheduleData.getFinanceScheduleDetails().size() != 0) {
-					
+
 					finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
 					finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
-					
+
 					finScheduleData = ScheduleCalculator.getCalSchd(finScheduleData, BigDecimal.ZERO);
 					finScheduleData.setSchduleGenerated(true);
-					
+
 					// process planned EMI details
 					doProcessPlanEMIHDays(finScheduleData);
 					if (finScheduleData.getErrorDetails() != null) {
@@ -168,7 +165,7 @@ public class CreateFinanceController extends SummaryDetailService {
 							return response;
 						}
 					}
-					
+
 					// fees calculation
 					if (!finScheduleData.getFinFeeDetailList().isEmpty()) {
 						finScheduleData = FeeScheduleCalculator.feeSchdBuild(finScheduleData);
@@ -410,7 +407,6 @@ public class CreateFinanceController extends SummaryDetailService {
 			detail.setDocImage(PennantApplicationUtil.decode(detail.getDocImage()));
 		}
 
-		// Fee Details
 		financeDetail.setFinScheduleData(finScheduleData);
 		if (financeMain.getCustID() > 0) {
 			CustomerDetails custDetails = customerDetailsService.getApprovedCustomerById(financeMain.getCustID());
@@ -435,6 +431,27 @@ public class CreateFinanceController extends SummaryDetailService {
 		// execute fee charges
 		String finEvent = "";
 		feeDetailService.doExecuteFeeCharges(financeDetail, finEvent);
+
+		// validate disbursement instructions
+		FinanceDisbursement disbursementDetails = new FinanceDisbursement();
+		disbursementDetails.setDisbDate(financeMain.getFinStartDate());
+		disbursementDetails.setDisbAmount(financeMain.getFinAmount());
+		disbursementDetails.setDisbSeq(1);
+		disbursementDetails.setDisbReqDate(DateUtility.getAppDate());
+		disbursementDetails.setFeeChargeAmt(financeMain.getFeeChargeAmt());
+		disbursementDetails.setInsuranceAmt(financeMain.getInsuranceAmt());
+		disbursementDetails.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(financeMain.getDisbAccountId()));
+		finScheduleData.getDisbursementDetails().add(disbursementDetails);
+		
+		for(FinAdvancePayments advPayments: financeDetail.getAdvancePaymentsList()) {
+			advPayments.setDisbSeq(finScheduleData.getDisbursementDetails().size());
+		}
+		List<ErrorDetails> errors = finAdvancePaymentsService.validateFinAdvPayments(financeDetail.getAdvancePaymentsList(),
+				finScheduleData.getDisbursementDetails(), finScheduleData.getFinanceMain(), true);
+		for (ErrorDetails erroDetails : errors) {
+			finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(erroDetails.getErrorCode(),
+					erroDetails.getErrorParameters())));
+		}
 		
 		// Step Policy Details
 		if(financeMain.isStepFinance()) {
@@ -874,5 +891,9 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	public void setJointAccountDetailService(JointAccountDetailService jointAccountDetailService) {
 		this.jointAccountDetailService = jointAccountDetailService;
+	}
+
+	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
+		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 }

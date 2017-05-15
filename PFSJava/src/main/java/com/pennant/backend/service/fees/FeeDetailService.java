@@ -76,7 +76,7 @@ public class FeeDetailService {
 				feeRuleCodes.add(finFeeDetail.getRuleCode());
 			}
 		}
-
+		
 		if (feeRuleCodes.size() > 0) {
 			List<Rule> feeRules = ruleService.getRuleDetailList(feeRuleCodes, RuleConstants.MODULE_FEES,
 					finScheduleData.getFeeEvent());
@@ -106,82 +106,37 @@ public class FeeDetailService {
 					ruleSqlMap.put(feeRule.getRuleCode(), feeRule.getSQLRule());
 				}
 				for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
-					List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
 					if (StringUtils.isEmpty(finFeeDetail.getRuleCode())) {
 						continue;
 					}
 					BigDecimal feeResult = getFeeResult(ruleSqlMap.get(finFeeDetail.getRuleCode()), executionMap,
 							finScheduleData.getFinanceMain().getFinCcy());
 					finFeeDetail.setCalculatedAmount(feeResult);
-					/*int formatter = CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy());
-					BigDecimal calcAmount = PennantApplicationUtil.unFormateAmount(finFeeDetail.getCalculatedAmount(), formatter);*/
-					BigDecimal calcAmount = finFeeDetail.getCalculatedAmount();
-					
-					if (!finFeeDetail.isAlwModifyFee()
-							&& finFeeDetail.getActualAmount().compareTo(calcAmount) != 0) {
-						String[] valueParm = new String[3];
-						valueParm[0] = "Fee amount";
-						valueParm[1] = "Actual fee amount:"+String.valueOf(calcAmount);
-						valueParm[2] = finFeeDetail.getFeeTypeCode();
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90258", valueParm)));
-						finScheduleData.setErrorDetails(errorDetails);
-						//return finScheduleData;	
-					}
-					if (finFeeDetail.getPaidAmount().compareTo(calcAmount) > 0) {
-						String[] valueParm = new String[3];
-						valueParm[0] = "Paid amount";
-						valueParm[1] = "Actual amount:"+String.valueOf(calcAmount);
-						valueParm[2] = finFeeDetail.getFeeTypeCode();
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90257", valueParm)));
-						finScheduleData.setErrorDetails(errorDetails);
-					}
-					BigDecimal maxWaiverPer = finFeeDetail.getMaxWaiverPerc();
-					BigDecimal finWaiverAmount = (calcAmount.multiply(maxWaiverPer)).divide(new BigDecimal(100));
-					//finWaiverAmount = PennantApplicationUtil.unFormateAmount(finWaiverAmount, formatter);
-					if (finFeeDetail.getWaivedAmount().compareTo(finWaiverAmount) > 0) {
-						String[] valueParm = new String[3];
-						valueParm[0] = "Waiver amount";
-						valueParm[1] = "Actual waiver amount:"+String.valueOf(finWaiverAmount);
-						valueParm[2] = finFeeDetail.getFeeTypeCode();
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90257", valueParm)));
-						finScheduleData.setErrorDetails(errorDetails);
-					}
-					if (finFeeDetail.getActualAmount().compareTo(BigDecimal.ZERO) == 0) {
+					if(finFeeDetail.getActualAmount().compareTo(BigDecimal.ZERO) == 0){
 						finFeeDetail.setActualAmount(feeResult);
 					}
-					finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
-							.subtract(finFeeDetail.getWaivedAmount()));
-					
-					if(finFeeDetail.getRemainingFee().compareTo(BigDecimal.ZERO) < 0) {
-						String[] valueParm = new String[3];
-						valueParm[0] = "Sum of waiver and paid amounts";
-						valueParm[1] = "Actual fee amount:"+String.valueOf(finFeeDetail.getActualAmount());
-						valueParm[2] = finFeeDetail.getFeeTypeCode();
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90257", valueParm)));
-						finScheduleData.setErrorDetails(errorDetails);
-					}
+					finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount()).
+							subtract(finFeeDetail.getWaivedAmount()));
 				}
-				
 			}
 		}
 		
 		calculateFeePercentageAmount(finScheduleData);
+		
+		validateFeeConfig(getFinFeeDetailList(), finScheduleData);
 
 		BigDecimal deductFeeFromDisbTot = BigDecimal.ZERO;
 		BigDecimal feeAddToDisbTot = BigDecimal.ZERO;
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
 			if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
 				deductFeeFromDisbTot = deductFeeFromDisbTot.add(finFeeDetail.getRemainingFee());
-			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-					CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
 				feeAddToDisbTot = feeAddToDisbTot.add(finFeeDetail.getRemainingFee());
-			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-					CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
+			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
 				if (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) == 0) {
 					finFeeDetail.setPaidAmount(finFeeDetail.getActualAmount());
 				}
-			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-					CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
+			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
 				if (finFeeDetail.getWaivedAmount().compareTo(BigDecimal.ZERO) == 0) {
 					finFeeDetail.setWaivedAmount(finFeeDetail.getActualAmount());
 				}
@@ -189,7 +144,8 @@ public class FeeDetailService {
 			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
 					.subtract(finFeeDetail.getWaivedAmount()));
 		}
-		if (StringUtils.isBlank(financeDetail.getModuleDefiner())) {
+		if (StringUtils.isBlank(financeDetail.getModuleDefiner()) ||
+				StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())) {
 			finScheduleData.getFinanceMain().setDeductFeeDisb(deductFeeFromDisbTot);
 			finScheduleData.getFinanceMain().setFeeChargeAmt(feeAddToDisbTot);
 		}
@@ -278,6 +234,52 @@ public class FeeDetailService {
 		logger.debug("Leaving");
 	}
 	
+	private void validateFeeConfig(List<FinFeeDetail> finFeeDetails, FinScheduleData finScheduleData) {
+		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
+		for (FinFeeDetail finFeeDetail : finFeeDetails) {
+			BigDecimal calcAmount = finFeeDetail.getCalculatedAmount();
+			if (!finFeeDetail.isAlwModifyFee() && finFeeDetail.getActualAmount().compareTo(calcAmount) != 0) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "Fee amount";
+				valueParm[1] = "Actual fee amount:" + String.valueOf(calcAmount);
+				valueParm[2] = finFeeDetail.getFeeTypeCode();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90258", valueParm)));
+				finScheduleData.setErrorDetails(errorDetails);
+				//return finScheduleData;	
+			}
+			if (finFeeDetail.getPaidAmount().compareTo(calcAmount) > 0) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "Paid amount";
+				valueParm[1] = "Actual amount:" + String.valueOf(calcAmount);
+				valueParm[2] = finFeeDetail.getFeeTypeCode();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90257", valueParm)));
+				finScheduleData.setErrorDetails(errorDetails);
+			}
+			BigDecimal maxWaiverPer = finFeeDetail.getMaxWaiverPerc();
+			BigDecimal finWaiverAmount = (calcAmount.multiply(maxWaiverPer)).divide(new BigDecimal(100));
+			//finWaiverAmount = PennantApplicationUtil.unFormateAmount(finWaiverAmount, formatter);
+			if (finFeeDetail.getWaivedAmount().compareTo(finWaiverAmount) > 0) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "Waiver amount";
+				valueParm[1] = "Actual waiver amount:" + String.valueOf(finWaiverAmount);
+				valueParm[2] = finFeeDetail.getFeeTypeCode();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90257", valueParm)));
+				finScheduleData.setErrorDetails(errorDetails);
+			}
+			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
+					.subtract(finFeeDetail.getWaivedAmount()));
+
+			if (finFeeDetail.getRemainingFee().compareTo(BigDecimal.ZERO) < 0) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "Sum of waiver and paid amounts";
+				valueParm[1] = "Actual fee amount:" + String.valueOf(finFeeDetail.getActualAmount());
+				valueParm[2] = finFeeDetail.getFeeTypeCode();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90257", valueParm)));
+				finScheduleData.setErrorDetails(errorDetails);
+			}
+		}
+	}
+
 	private List<FinFeeDetail> prepareActualFinFees(List<FinFeeDetail> finTypeFees, List<FinFeeDetail> finFeeDetailList) {
 		for(FinFeeDetail finTypeFeeDetail: finTypeFees) {
 			for(FinFeeDetail finFeeDetail: finFeeDetailList) {

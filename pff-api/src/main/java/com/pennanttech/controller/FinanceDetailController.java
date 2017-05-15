@@ -51,6 +51,7 @@ import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.exception.PFFInterfaceException;
@@ -298,9 +299,11 @@ public class FinanceDetailController extends SummaryDetailService {
 		FinanceDisbursement disbursementDetails = new FinanceDisbursement();
 		disbursementDetails.setDisbDate(financeMain.getFinStartDate());
 		disbursementDetails.setDisbAmount(financeMain.getFinAmount());
+		disbursementDetails.setDisbSeq(1);
 		disbursementDetails.setDisbReqDate(DateUtility.getAppDate());
 		disbursementDetails.setFeeChargeAmt(financeMain.getFeeChargeAmt());
 		disbursementDetails.setInsuranceAmt(financeMain.getInsuranceAmt());
+		disbursementDetails.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(financeMain.getDisbAccountId()));
 		finScheduleData.getDisbursementDetails().add(disbursementDetails);
 
 		logger.debug("Leaving");

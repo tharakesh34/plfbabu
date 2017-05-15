@@ -16,5 +16,5 @@ public interface ReceiptService {
 	AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 	FinanceProfitDetail getPftDetailForEarlyStlReport(String finReference);
 	FinReceiptHeader getFinReceiptHeaderById(long receiptID, String type);
-
+	FinReceiptData calculateRepayments(FinReceiptData finReceiptData);
 }
