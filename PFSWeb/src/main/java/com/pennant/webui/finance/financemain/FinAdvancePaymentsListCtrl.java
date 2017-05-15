@@ -230,8 +230,10 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities("FinAdvancePaymentsList", roleCode);
-		this.btnNew_NewFinAdvancePayments.setVisible(getUserWorkspace().isAllowed(
-				"FinAdvancePaymentsList_NewFinAdvancePaymentsDetail"));
+		if (!StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CANCELDISB)){			
+			this.btnNew_NewFinAdvancePayments.setVisible(getUserWorkspace().isAllowed(
+					"FinAdvancePaymentsList_NewFinAdvancePaymentsDetail"));
+		}
 		logger.debug("leaving");
 	}
 
