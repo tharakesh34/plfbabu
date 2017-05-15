@@ -353,5 +353,18 @@ WHERE     (TH.AuditTranType != 'W') AND (TH.AuditModule = 'FinanceType')
 			<column name="CancelReason" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="6" author="Irfan">
+		<addColumn tableName="ADTFEETYPES">
+		<column name="AdviseType" type="int"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="7" author="Irfan">
+	<sql>
+	Update ADTFEETYPES set AdviseType=0; 
+	</sql>
+	</changeSet>
+	<changeSet id="8" author="Irfan">
+		<addNotNullConstraint tableName="ADTFEETYPES" columnName="AdviseType" columnDataType="int"/>
+	</changeSet>
 
 </databaseChangeLog>
