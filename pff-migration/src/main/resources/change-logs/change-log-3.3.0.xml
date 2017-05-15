@@ -32,6 +32,114 @@
 		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
 		</sql>
 	</changeSet>
-
-	
+	<changeSet id="02.0" author="Jayant">
+	    <dropIndex tableName="FINPFTDETAILS" indexName="IX_FINPFTDTL_CUST_ACTIVE"  />
+	</changeSet>
+	<changeSet id="02" author="Jayant">
+	    <createIndex tableName="FINPFTDETAILS" indexName="IX_FINPFTDTL_CUST_ACTIVE">
+	        <column name="CUSTID" type="bigint"/>
+	        <column name="FINISACTIVE" type="boolean"/>
+	    </createIndex>
+	</changeSet>
+	<changeSet id="03.0" author="Jayant">
+	    <dropIndex tableName="FINANCEMAIN" indexName="IX_FM_CUST_ID"  />
+	</changeSet>
+	<changeSet id="03" author="Jayant">
+	    <createIndex tableName="FINANCEMAIN" indexName="IX_FM_CUST_ID">
+	        <column name="CUSTID" type="bigint"/>
+	        <column name="FINISACTIVE" type="boolean"/>
+	    </createIndex>
+	</changeSet>
+	<!--
+	 <changeSet id="03" author="Jayant">
+	    <createIndex tableName="FINFEEDETAIL" indexName="IX_FEEDETAIL_FINREF">
+	        <column name="FINREFERENCE" type="bigint"/>
+	    </createIndex>
+	</changeSet> -->
+	<changeSet id="04.0" author="Jayant">
+	    <dropIndex tableName="FINFEEDETAIL" indexName="IX_FEEDETAIL_FEETYPE"  />
+	</changeSet>
+	<changeSet id="04" author="Jayant">
+	    <createIndex tableName="FINFEEDETAIL" indexName="IX_FEEDETAIL_FEETYPE">
+	        <column name="FEETYPEID" type="bigint"/>
+	        <column name="FEEID" type="bigint"/>
+	    </createIndex>
+	</changeSet>
+	<changeSet id="05.0" author="Jayant">
+	    <dropIndex tableName="FINFEEDETAIL" indexName="IX_FEEDETAIL_FINREF"  />
+	</changeSet>
+	<changeSet id="05" author="Jayant">
+	    <createIndex tableName="FINFEEDETAIL" indexName="IX_FEEDETAIL_FINREF">
+	        <column name="FINREFERENCE" type="VARCHAR2(20)"/>
+	        <column name="FEEID" type="bigint"/>
+	    </createIndex>
+	</changeSet>
+	<changeSet id="06.0" author="Jayant">
+	    <dropIndex tableName="FININSURANCES" indexName="IX_FININSURANCE_FINREF_INSID"  />
+	</changeSet>
+	<changeSet id="06" author="Jayant">
+	    <createIndex tableName="FININSURANCES" indexName="IX_FININSURANCE_FINREF_INSID">
+	        <column name="REFERENCE" type="VARCHAR2(20)"/>
+	        <column name="INSID" type="VARCHAR2(20)"/>
+	    </createIndex>
+	</changeSet>
+	<changeSet id="07" author="Jayant">
+	    <createIndex tableName="DPDBUCKETSCONFIG" indexName="IX_DPDBUCKET_PROD_BUCKET_DAYS">
+	        <column name="PRODUCTCODE" type="VARCHAR2(8)"/>
+	        <column name="BUCKETID" type="bigint"/>
+	        <column name="DUEDAYS" type="int"/>
+	    </createIndex>
+	</changeSet>
+	<changeSet id="08" author="Jayant">
+	    <createIndex tableName="DPDBUCKETSCONFIG" indexName="IX_DPDBUCKET_PROD_DAYS">
+	        <column name="PRODUCTCODE" type="VARCHAR2(8)"/>
+	        <column name="DUEDAYS" type="int"/>
+	    </createIndex>
+	</changeSet>
+	<changeSet id="08.1" author="Jayant">
+	    <sql>
+	    	INSERT INTO "PLF"."SMTPARAMETERS" (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, 
+	    	SYSPARMDEC, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, WORKFLOWID) 
+	    	VALUES ('AMZ_POSTING_EVENT', 'Accrual / Amortization Posting Date 0:Daily 1: APP Month End 2: APP Extended Month End', 
+	    	'int', '1', '0', '1', '0', 'Accrual / Amortization Posting Date 0:Daily 1: APP Month End 2: APP Extended Month End', '1',
+	    	'1000', TO_DATE('2017-05-02 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 'Approved', '0');    
+	    </sql>
+	</changeSet>
+	<changeSet id="09" author="Jayant">
+	    <createIndex tableName="PRESENTMENTDETAILS" indexName="IX_PRESENTMENTDTL_REF_DATE">
+	        <column name="FINREFERENCE" type="VARCHAR2(20)"/>
+	        <column name="SCHDATE" type="DATETIME"/>
+	    </createIndex>
+	</changeSet>
+	<changeSet id="10" author="Jayant">
+	    <createIndex tableName="PRESENTMENTDETAILS" indexName="IX_PRESENTMENTDTL_MID">
+	        <column name="MANDATEID" type="bigint"/>
+	    </createIndex>
+	</changeSet>
+	<changeSet id="11" author="Jayant">
+	    <createIndex tableName="PRESENTMENTDETAILS" indexName="IX_PRESENTMENTDTL_PID_FINREF">
+	        <column name="PRESENTMENTID" type="bigint"/>
+	        <column name="FINREFERENCE" type="VARCHAR2(20)"/>
+	        <column name="SCHDATE" type="DATETIME"/> 
+	    </createIndex>
+	</changeSet>
+	<changeSet id="12" author="Jayant">
+	    <createIndex tableName="PRESENTMENTHEADER" indexName="IX_PRESENTMENTHDR_PBID">
+	        <column name="PARTNERBANKID" type="bigint"/>
+	    </createIndex>
+	</changeSet>
+	<changeSet id="13" author="Jayant">
+	    <createIndex tableName="PRESENTMENTHEADER" indexName="IX_PRESENTMENTHDR_PDATE">
+	        <column name="PRESENTMENTDATE" type="DATETIME"/>   
+	    </createIndex>
+	</changeSet>
+	<changeSet id="14.0" author="Jayant">
+	    <dropIndex tableName="FINANCEMAIN" indexName="IX_FM_RCD_MNT_STS"  />
+	</changeSet>
+	<changeSet id="14" author="Jayant">
+	    <createIndex tableName="FINANCEMAIN" indexName="IX_FM_CID_FINREF">
+	        <column name="CUSTID" type="bigint"/>
+	        <column name="FINREFERENCE" type="VARCHAR2(20)"/>
+	    </createIndex>
+	</changeSet>
 </databaseChangeLog>
