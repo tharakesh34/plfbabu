@@ -69,7 +69,7 @@ public class LatePayInterestService extends ServiceHelper {
 		Date valueDate = custEODEvent.getEodValueDate();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
-			if (!finEODEvent.isOdFiance()) {
+			if (!finEODEvent.isPastDueExist()) {
 				continue;
 			}
 

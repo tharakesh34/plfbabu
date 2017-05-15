@@ -28,15 +28,18 @@ public class AutoDisbursementService extends ServiceHelper {
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 
+			if (!finEODEvent.isDisbExist()) {
+				continue;
+			}
+
+			String finReference = finEODEvent.getFinanceMain().getFinReference();
+
+			finEODEvent.setFinanceDisbursements(getFinanceDisbursementDAO().getDisbursementToday(finReference,
+					valueDate));
+
 			List<FinanceDisbursement> disbrusments = finEODEvent.getFinanceDisbursements();
 			for (FinanceDisbursement financeDisbursement : disbrusments) {
-				if (financeDisbursement.getDisbDate().compareTo(valueDate) != 0) {
-					continue;
-				}
-
-				if (financeDisbursement.getDisbDate().compareTo(valueDate) == 0) {
-					postFutureDisbursement(valueDate, finEODEvent, financeDisbursement);
-				}
+				postFutureDisbursement(valueDate, finEODEvent, financeDisbursement);
 			}
 
 		}
@@ -53,6 +56,7 @@ public class AutoDisbursementService extends ServiceHelper {
 			throws Exception {
 		logger.debug(" Entering ");
 		long accountingID = getAccountingID(finEODEvent.getFinanceMain(), AccountEventConstants.ACCEVENT_ADDDBSN);
+
 		if (accountingID == Long.MIN_VALUE) {
 			return;
 		}

@@ -71,7 +71,7 @@ public interface FinanceScheduleDetailDAO {
 
 	int getFrqDfrCount(String finReference);
 
-	void updateList(List<FinanceScheduleDetail> financeScheduleDetail, String type);
+	void updateForRateReview(List<FinanceScheduleDetail> financeScheduleDetail);
 
 	void saveList(List<FinanceScheduleDetail> financeScheduleDetail, String type, boolean isWIF);
 

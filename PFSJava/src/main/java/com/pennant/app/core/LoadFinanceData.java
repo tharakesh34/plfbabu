@@ -1,5 +1,6 @@
 package com.pennant.app.core;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -21,10 +22,8 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
-import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pff.core.TableType;
@@ -46,8 +45,6 @@ public class LoadFinanceData extends ServiceHelper {
 		Date businesdate = DateUtility.addDays(custEODEvent.getEodValueDate(), 1);
 		List<FinanceMain> custFinMains = getFinanceMainDAO().getFinanceMainsByCustId(custID, true);
 
-		//FIXME: PV 14MAY17 to be moved to finEODEvent related to presentment
-		//List<PresentmentDetail> presentments = getPresentmentHeaderDAO().getPresentmenToPost(custID, businesdate);
 		List<FinanceProfitDetail> listprofitDetails = getFinanceProfitDetailDAO().getFinProfitDetailsByCustId(custID,
 				true);
 
@@ -65,9 +62,13 @@ public class LoadFinanceData extends ServiceHelper {
 			finEODEvent.setFinType(financeType);
 			//FIXME: PV 14MAY17 What about promotions
 
+			//FINPROFIT DETAILS
+			finEODEvent.setFinProfitDetail(getFinanceProfitDetailRef(finReference, listprofitDetails));
+
 			//FINSCHDULE DETAILS
 			List<FinanceScheduleDetail> finSchdDetails = getFinanceScheduleDetailDAO().getFinScheduleDetails(
 					finReference, TableType.MAIN_TAB.getSuffix(), false);
+			finEODEvent.setFinanceScheduleDetails(finSchdDetails);
 
 			//Place schedule dates to Map
 			for (int j = 0; j < finSchdDetails.size(); j++) {
@@ -75,33 +76,45 @@ public class LoadFinanceData extends ServiceHelper {
 			}
 
 			finEODEvent.setDatesMap(datesMap);
-			finEODEvent.setFinanceScheduleDetails(finSchdDetails);
-			finEODEvent.setFinanceDisbursements(getFinanceDisbursementDAO().getDisbursementToday(finReference,
-					businesdate));
 
-			//fin fee schedule
-			finEODEvent.setFinFeeScheduleDetails(getFinFeeScheduleDetailDAO()
-					.getFeeSchdTPost(finReference, businesdate));
+			int idx = getIndexFromMap(datesMap, businesdate);
 
-			// fin insurance schedule
-			finEODEvent.setFinSchFrqInsurances(getFinInsurancesDAO().getInsSchdToPost(finReference, businesdate));
+			if (idx != 0) {
+				FinanceScheduleDetail curSchd = finSchdDetails.get(idx);
 
-			//FINPROFIT DETAILS
-			finEODEvent.setFinProfitDetail(getFinanceProfitDetailRef(finReference, listprofitDetails));
+				//Disbursement Exist
+				if (curSchd.isDisbOnSchDate()) {
+					finEODEvent.setDisbExist(true);
+				}
 
-			//FIXME: PV 14MAY17 to be moved to finEODEvent related to presentment
-			/*
-			 * PresentmentDetail presentment = getPresentmentDetailbyRef(finReference, presentments); if (presentment !=
-			 * null) { finEODEvent.getPresentmentDetails().add(presentment); }
-			 */
+				//Fee Due Exist
+				BigDecimal dueAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
+				if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
+					finEODEvent.setFeeDueExist(true);
+				}
+
+				//Insurance Due Exist
+				dueAmount = curSchd.getInsSchd().subtract(curSchd.getSchdInsPaid());
+
+				if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
+					finEODEvent.setInsuranceDueExist(true);
+				}
+
+				//Installment Due Exist
+				dueAmount = curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()).subtract(curSchd.getSchdPriPaid())
+						.subtract(curSchd.getSchdPftPaid());
+
+				if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
+					finEODEvent.setInstDueExist(true);
+				}
+
+			}
 
 			custEODEvent.getFinEODEvents().add(finEODEvent);
 
 		}
 
 		//clear temporary data
-		//FIXME: PV 14MAY17 to be moved to finEODEvent related to presentment
-		//presentments.clear();
 		listprofitDetails.clear();
 		custFinMains.clear();
 		logger.debug(" Leaving ");
@@ -117,7 +130,7 @@ public class LoadFinanceData extends ServiceHelper {
 
 			//update finance main
 			if (finEODEvent.isUpdFinMain()) {
-				finEODEvent.getFinanceMain().setVersion(finEODEvent.getFinanceMain().getVersion() + 1);
+				//finEODEvent.getFinanceMain().setVersion(finEODEvent.getFinanceMain().getVersion() + 1);
 				getFinanceMainDAO().updateFinanceInEOD(finEODEvent.getFinanceMain());
 			}
 
@@ -127,8 +140,8 @@ public class LoadFinanceData extends ServiceHelper {
 			}
 
 			//update schedule details 
-			if (finEODEvent.isUpdFinSchedule()) {
-				getFinanceScheduleDetailDAO().updateList(finEODEvent.getFinanceScheduleDetails(), "");
+			if (finEODEvent.isupdFinSchdForRateRvw()) {
+				getFinanceScheduleDetailDAO().updateForRateReview(finEODEvent.getFinanceScheduleDetails());
 			}
 
 			//Update overdue details
@@ -189,15 +202,6 @@ public class LoadFinanceData extends ServiceHelper {
 		customerQueuing.setProgress(EodConstants.PROGRESS_SUCCESS);
 		getCustomerQueuingDAO().updateProgress(customerQueuing);
 
-	}
-
-	private PresentmentDetail getPresentmentDetailbyRef(String finMainRef, List<PresentmentDetail> presentments) {
-		for (PresentmentDetail presentmentDetail : presentments) {
-			if (StringUtils.equals(presentmentDetail.getFinReference(), finMainRef)) {
-				return presentmentDetail;
-			}
-		}
-		return null;
 	}
 
 	private FinanceProfitDetail getFinanceProfitDetailRef(String finMainRef, List<FinanceProfitDetail> listprofitDetails) {

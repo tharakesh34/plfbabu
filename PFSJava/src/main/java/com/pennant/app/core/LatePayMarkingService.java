@@ -83,7 +83,7 @@ public class LatePayMarkingService extends ServiceHelper {
 
 			finEODEvent = findLatePay(finEODEvent, valueDate);
 
-			if (finEODEvent.isOdFiance()) {
+			if (finEODEvent.isPastDueExist()) {
 				updateFinPftDetails(finEODEvent, valueDate);
 				finEODEvent.setUpdFinPft(true);
 			}
@@ -123,7 +123,7 @@ public class LatePayMarkingService extends ServiceHelper {
 
 			if (isAmountDue) {
 				finEODEvent = latePayMarking(finEODEvent, curSchd, valueDate);
-				finEODEvent.setOdFiance(true);
+				finEODEvent.setPastDueExist(true);
 			}
 
 		}
@@ -240,6 +240,7 @@ public class LatePayMarkingService extends ServiceHelper {
 				finEODEvent.getFinProfitDetail().setDueBucket(finEODEvent.getFinanceMain().getDueBucket());
 			}
 		}
+		
 		logger.debug(" Leaving ");
 		return custEODEvent;
 	}
@@ -367,6 +368,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		FinODPenaltyRate penaltyRate = finEODEvent.getPenaltyrate();
 		String finReference = finEODEvent.getFinanceMain().getFinReference();
 
+		//Load One time and keep it for finance
 		if (penaltyRate == null) {
 			penaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finReference, "");
 			finEODEvent.setPenaltyrate(penaltyRate);

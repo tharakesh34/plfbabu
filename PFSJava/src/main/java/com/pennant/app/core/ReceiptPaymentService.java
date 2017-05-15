@@ -34,7 +34,12 @@ public class ReceiptPaymentService extends ServiceHelper {
 		logger.debug(" Entering ");
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		Date businessDate = custEODEvent.getEodValueDate();
+		long custID = custEODEvent.getCustomer().getCustID();
+
+		List<PresentmentDetail> presentments = getPresentmentHeaderDAO().getPresentmenToPost(custID, businessDate);
+
 		for (FinEODEvent finEODEvent : finEODEvents) {
+
 			List<PresentmentDetail> presentmentList = finEODEvent.getPresentmentDetails();
 
 			for (PresentmentDetail presentmentDetail : presentmentList) {

@@ -84,13 +84,13 @@ public class RateReviewService extends ServiceHelper {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
-			if (!finEODEvent.isRateReview()) {
+			if (!finEODEvent.isRateReviewExist()) {
 				continue;
 			}
 
 			processRateReview(finEODEvent, custEODEvent.getEodValueDate());
 
-			if (finEODEvent.isRateReview()) {
+			if (finEODEvent.isRateReviewExist()) {
 				reviewRateUpdate(finEODEvent, custEODEvent.getEodValueDate());
 			}
 		}
@@ -106,7 +106,7 @@ public class RateReviewService extends ServiceHelper {
 		int i = getIndexFromMap(datesMap, valueDate);
 		int iNext = i + 1;
 
-		finEODEvent.setRateReview(false);
+		finEODEvent.setRateReviewExist(false);
 
 		//No Rate Review on start date
 		if (valueDate.compareTo(finMain.getFinStartDate()) == 0) {
@@ -114,33 +114,33 @@ public class RateReviewService extends ServiceHelper {
 		}
 
 		//No Rate Review on Maturity date
-		if (valueDate.compareTo(finMain.getFinStartDate()) == 0) {
+		if (valueDate.compareTo(finMain.getMaturityDate()) == 0) {
 			return;
 		}
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
-
+			
 			if (StringUtils.isEmpty(finSchdDetails.get(j).getBaseRate())) {
 				continue;
 			}
 
-			finEODEvent.setRateReview(true);
+			finEODEvent.setRateReviewExist(true);
 			break;
 		}
 
 		//No base Rate found after the new review date
-		if (!finEODEvent.isRateReview()) {
+		if (!finEODEvent.isRateReviewExist()) {
 			return;
 		}
 
-		finEODEvent.setRateReview(false);
+		finEODEvent.setRateReviewExist(false);
 
 		FinanceScheduleDetail curSchd = null;
 
 		//SET Event From Date
 		if (StringUtils.equals(finMain.getRvwRateApplFor(), CalculationConstants.RATEREVIEW_RVWALL)) {
 			finEODEvent.setEventFromDate(valueDate);
-			finEODEvent.setRateReview(true);
+			finEODEvent.setRateReviewExist(true);
 			finEODEvent.setRateOnChgDate(finSchdDetails.get(i).getBaseRate());
 		} else if (StringUtils.equals(finMain.getRvwRateApplFor(), CalculationConstants.RATEREVIEW_RVWUPR)) {
 			for (int j = iNext; j < finSchdDetails.size(); j++) {
@@ -150,14 +150,14 @@ public class RateReviewService extends ServiceHelper {
 					continue;
 				}
 
-				finEODEvent.setRateReview(true);
+				finEODEvent.setRateReviewExist(true);
 				finEODEvent.setEventFromDate(finSchdDetails.get(j - 1).getSchDate());
 				finEODEvent.setRateOnChgDate(finSchdDetails.get(j - 1).getBaseRate());
 				break;
 			}
 		}
 
-		if (!finEODEvent.isRateReview()) {
+		if (!finEODEvent.isRateReviewExist()) {
 			return;
 		}
 
@@ -227,7 +227,7 @@ public class RateReviewService extends ServiceHelper {
 		}
 
 		finEODEvent.setUpdFinMain(true);
-		finEODEvent.setUpdFinSchedule(true);
+		finEODEvent.setupdFinSchdForRateRvw(true);
 		finEODEvent.setUpdRepayInstruct(true);
 		finEODEvent.setFinanceScheduleDetails(finScheduleData.getFinanceScheduleDetails());
 		finEODEvent.setRepayInstructions(finScheduleData.getRepayInstructions());
@@ -246,6 +246,7 @@ public class RateReviewService extends ServiceHelper {
 		financeRateReviewDAO.save(rateReview);
 		aeEvent.setFinType(finMain.getFinType());
 		long accountingID = getAccountingID(finMain, AccountEventConstants.ACCEVENT_RATCHG);
+		
 		if (accountingID == Long.MIN_VALUE) {
 			return;
 		} else {
@@ -253,6 +254,7 @@ public class RateReviewService extends ServiceHelper {
 		}
 
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+
 		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());

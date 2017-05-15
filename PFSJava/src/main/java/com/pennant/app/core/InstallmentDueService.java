@@ -33,20 +33,16 @@ public class InstallmentDueService extends ServiceHelper {
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 
-			List<FinanceScheduleDetail> scheduledetails = finEODEvent.getFinanceScheduleDetails();
-			for (FinanceScheduleDetail finSchd : scheduledetails) {
-				if (finSchd.getSchDate().compareTo(valueDate) < 0) {
-					continue;
-				}
+			long accountingID = getAccountingID(finEODEvent.getFinanceMain(), AccountEventConstants.ACCEVENT_INSTDATE);
 
-				if (finSchd.getSchDate().compareTo(valueDate) > 0) {
-					break;
-				}
+			if (accountingID == Long.MIN_VALUE) {
+				return;
+			}
 
-				if (finSchd.getSchDate().compareTo(valueDate) == 0) {
-					postInstallmentDues(finEODEvent, finSchd, valueDate);
-				}
-
+			if (finEODEvent.isInstDueExist() || finEODEvent.isFeeDueExist() || finEODEvent.isInsuranceDueExist()) {
+				int idx = getIndexFromMap(finEODEvent.getDatesMap(), valueDate);
+				FinanceScheduleDetail curSchd = finEODEvent.getFinanceScheduleDetails().get(idx);
+				postInstallmentDues(finEODEvent, curSchd, valueDate, accountingID);
 			}
 
 		}
@@ -58,28 +54,34 @@ public class InstallmentDueService extends ServiceHelper {
 	 * @param resultSet
 	 * @throws Exception
 	 */
-	public void postInstallmentDues(FinEODEvent finEODEvent, FinanceScheduleDetail finSchd, Date valueDate)
-			throws Exception {
+	public void postInstallmentDues(FinEODEvent finEODEvent, FinanceScheduleDetail curSchd, Date valueDate,
+			long accountingID) throws Exception {
 		logger.debug(" Entering ");
 
-		long accountingID = getAccountingID(finEODEvent.getFinanceMain(), AccountEventConstants.ACCEVENT_INSTDATE);
-		if (accountingID == Long.MIN_VALUE) {
-			return;
+		String finReference = curSchd.getFinReference();
+
+		if (finEODEvent.isFeeDueExist()) {
+			finEODEvent.setFinFeeScheduleDetails(getFinFeeScheduleDetailDAO().getFeeSchdTPost(finReference, valueDate));
+		}
+
+		if (finEODEvent.isInsuranceDueExist()) {
+			finEODEvent.setFinSchFrqInsurances(getFinInsurancesDAO().getInsSchdToPost(finReference, valueDate));
 		}
 
 		FinanceProfitDetail profiDetails = finEODEvent.getFinProfitDetail();
 		AEEvent aeEvent = AEAmounts.procCalAEAmounts(profiDetails, AccountEventConstants.ACCEVENT_INSTDATE, valueDate,
-				finSchd.getSchDate());
+				curSchd.getSchDate());
 		aeEvent.getAcSetIDList().add(accountingID);
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		amountCodes.setInstpft(finSchd.getProfitSchd());
-		amountCodes.setInstpri(finSchd.getPrincipalSchd());
+		amountCodes.setInstpft(curSchd.getProfitSchd());
+		amountCodes.setInstpri(curSchd.getPrincipalSchd());
 		amountCodes.setInsttot(amountCodes.getInstpft().add(amountCodes.getInstpri()));
 
 		amountCodes.setPftS(profiDetails.getTdSchdPft());
 		amountCodes.setPftSP(profiDetails.getTdSchdPftPaid());
 		amountCodes.setPftSB(amountCodes.getPftS().subtract(amountCodes.getPftSP()));
+
 		if (amountCodes.getPftSB().compareTo(BigDecimal.ZERO) < 0) {
 			amountCodes.setPftSB(BigDecimal.ZERO);
 		}
@@ -87,11 +89,14 @@ public class InstallmentDueService extends ServiceHelper {
 		amountCodes.setPriS(profiDetails.getTdSchdPri());
 		amountCodes.setPriSP(profiDetails.getTdSchdPriPaid());
 		amountCodes.setPriSB(amountCodes.getPriS().subtract(amountCodes.getPriSP()));
+
 		if (amountCodes.getPriSB().compareTo(BigDecimal.ZERO) < 0) {
 			amountCodes.setPriSB(BigDecimal.ZERO);
 		}
+
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
+		//FIXME: Fee and Insurance should it be posted similar to the disbusrement in a loop
 		List<FinFeeScheduleDetail> feelist = finEODEvent.getFinFeeScheduleDetails();
 		if (feelist != null && !feelist.isEmpty()) {
 			for (FinFeeScheduleDetail feeSchd : feelist) {
@@ -110,6 +115,7 @@ public class InstallmentDueService extends ServiceHelper {
 			}
 		}
 		aeEvent.setDataMap(dataMap);
+
 		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());

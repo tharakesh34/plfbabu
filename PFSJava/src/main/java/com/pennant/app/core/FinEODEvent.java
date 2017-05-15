@@ -37,8 +37,6 @@ public class FinEODEvent implements Serializable {
 	private List<FinSchFrqInsurance>	finSchFrqInsurances		= new ArrayList<FinSchFrqInsurance>(1);
 	private List<PresentmentDetail>		presentmentDetails		= new ArrayList<PresentmentDetail>(1);
 	private List<ReturnDataSet>			returnDataSet			= new ArrayList<ReturnDataSet>(1);
-	private boolean						rateReview				= false;
-	private boolean						odFiance				= false;
 	private Date						eventFromDate;
 	private Date						eventToDate;
 	private Date						recalFromDate;
@@ -46,8 +44,16 @@ public class FinEODEvent implements Serializable {
 	private String						recalType;
 	private String						recalSchdMethod;
 	private String						rateOnChgDate;
+	private boolean						rateReviewExist			= false;
+	private boolean						pastDueExist			= false;
+	private boolean						disbExist				= false;
+	private boolean						instDueExist			= false;
+	private boolean						feeDueExist				= false;
+	private boolean						insuranceDueExist		= false;
+	private boolean						presentmentExist		= false;
+
 	private boolean						updFinMain				= false;
-	private boolean						updFinSchedule			= false;
+	private boolean						updFinSchdForRateRvw	= false;
 	private boolean						updFinPft				= false;
 	private boolean						updRepayInstruct		= false;
 
@@ -115,20 +121,20 @@ public class FinEODEvent implements Serializable {
 		this.odcRecoveries = odcRecoveries;
 	}
 
-	public boolean isRateReview() {
-		return rateReview;
+	public boolean isRateReviewExist() {
+		return rateReviewExist;
 	}
 
-	public void setRateReview(boolean rateReview) {
-		this.rateReview = rateReview;
+	public void setRateReviewExist(boolean rateReviewExist) {
+		this.rateReviewExist = rateReviewExist;
 	}
 
-	public boolean isOdFiance() {
-		return odFiance;
+	public boolean isPastDueExist() {
+		return pastDueExist;
 	}
 
-	public void setOdFiance(boolean odFiance) {
-		this.odFiance = odFiance;
+	public void setPastDueExist(boolean pastDueExist) {
+		this.pastDueExist = pastDueExist;
 	}
 
 	public Date getEventFromDate() {
@@ -195,12 +201,12 @@ public class FinEODEvent implements Serializable {
 		this.updFinMain = updFinMain;
 	}
 
-	public boolean isUpdFinSchedule() {
-		return updFinSchedule;
+	public boolean isupdFinSchdForRateRvw() {
+		return updFinSchdForRateRvw;
 	}
 
-	public void setUpdFinSchedule(boolean updFinSchedule) {
-		this.updFinSchedule = updFinSchedule;
+	public void setupdFinSchdForRateRvw(boolean updFinSchdForRateRvw) {
+		this.updFinSchdForRateRvw = updFinSchdForRateRvw;
 	}
 
 	public boolean isUpdFinPft() {
@@ -265,6 +271,46 @@ public class FinEODEvent implements Serializable {
 
 	public void setReturnDataSet(List<ReturnDataSet> returnDataSet) {
 		this.returnDataSet = returnDataSet;
+	}
+
+	public boolean isDisbExist() {
+		return disbExist;
+	}
+
+	public void setDisbExist(boolean disbExist) {
+		this.disbExist = disbExist;
+	}
+
+	public boolean isInstDueExist() {
+		return instDueExist;
+	}
+
+	public void setInstDueExist(boolean instDueExist) {
+		this.instDueExist = instDueExist;
+	}
+
+	public boolean isFeeDueExist() {
+		return feeDueExist;
+	}
+
+	public void setFeeDueExist(boolean feeDueExist) {
+		this.feeDueExist = feeDueExist;
+	}
+
+	public boolean isInsuranceDueExist() {
+		return insuranceDueExist;
+	}
+
+	public void setInsuranceDueExist(boolean insuranceDueExist) {
+		this.insuranceDueExist = insuranceDueExist;
+	}
+
+	public boolean isPresentmentExist() {
+		return presentmentExist;
+	}
+
+	public void setPresentmentExist(boolean presentmentExist) {
+		this.presentmentExist = presentmentExist;
 	}
 
 }

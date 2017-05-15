@@ -504,45 +504,18 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		logger.debug("Leaving");
 	}
 
-	public void updateList(List<FinanceScheduleDetail> financeScheduleDetail, String type) {
+	public void updateForRateReview(List<FinanceScheduleDetail> financeScheduleDetail) {
 		logger.debug("Entering");
 
-		StringBuilder updateSql = new StringBuilder("Update FinScheduleDetails");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql
-				.append(" Set PftOnSchDate= :PftOnSchDate, CpzOnSchDate = :CpzOnSchDate, RepayOnSchDate= :RepayOnSchDate,");
-		updateSql.append(" RvwOnSchDate= :RvwOnSchDate, DisbOnSchDate= :DisbOnSchDate, ");
-		updateSql.append(" DownpaymentOnSchDate = :DownpaymentOnSchDate,");
-		updateSql
-				.append(" BalanceForPftCal= :BalanceForPftCal, BaseRate= :BaseRate, SplRate= :SplRate,MrgRate =:MrgRate,");
-		updateSql
-				.append(" ActRate= :ActRate, NoOfDays= :NoOfDays,CalOnIndRate = :CalOnIndRate, DayFactor =:DayFactor, ProfitCalc= :ProfitCalc,");
-		updateSql.append(" ProfitSchd= :ProfitSchd, PrincipalSchd= :PrincipalSchd, RepayAmount= :RepayAmount,");
-		updateSql
-				.append(" ProfitBalance=:ProfitBalance, DisbAmount= :DisbAmount, DownPaymentAmount= :DownPaymentAmount,");
-		updateSql
-				.append(" CpzAmount= :CpzAmount, FeeChargeAmt=:FeeChargeAmt,InsuranceAmt=:InsuranceAmt, RefundOrWaiver=:RefundOrWaiver, EarlyPaid =:EarlyPaid, EarlyPaidBal=:EarlyPaidBal ,");
-		updateSql
-				.append(" ClosingBalance= :ClosingBalance,WriteoffPrincipal=:WriteoffPrincipal, WriteoffProfit=:WriteoffProfit ,");
-		updateSql.append(" ProfitFraction= :ProfitFraction, PrvRepayAmount= :PrvRepayAmount,");
-		updateSql.append(" CalculatedRate =:CalculatedRate, ");
-		updateSql.append(" SchdPriPaid= :SchdPriPaid, SchdPftPaid= :SchdPftPaid, SchPriPaid= :SchPriPaid,");
-		updateSql.append(" SchPftPaid= :SchPftPaid,Specifier= :Specifier,");
-		updateSql.append("  DefSchdDate= :DefSchdDate, SchdMethod = :SchdMethod, ");
-		updateSql.append("  InstNumber= :InstNumber, BpiOrHoliday= :BpiOrHoliday, FrqDate= :FrqDate, ");
-		updateSql.append(" OrgPft =:OrgPft , OrgPri=:OrgPri, OrgEndBal=:OrgEndBal, OrgPlanPft=:OrgPlanPft, ");
-		updateSql
-				.append(" FeeSchd=:FeeSchd , SchdFeePaid=:SchdFeePaid , SchdFeeOS=:SchdFeeOS, InsSchd=:InsSchd, SchdInsPaid=:SchdInsPaid, ");
-		updateSql
-				.append(" AdvBaseRate=:AdvBaseRate , AdvMargin=:AdvMargin , AdvPftRate=:AdvPftRate , AdvCalRate=:AdvCalRate , AdvProfit=:AdvProfit , AdvRepayAmount=:AdvRepayAmount, ");
-		updateSql
-				.append(" SuplRent=:SuplRent , IncrCost=:IncrCost , SuplRentPaid=:SuplRentPaid , IncrCostPaid=:IncrCostPaid ,  ");
-		updateSql.append(" TDSAmount=:TDSAmount, TDSPaid=:TDSPaid, PftDaysBasis=:PftDaysBasis, ");
-		updateSql
-				.append(" RolloverOnSchDate=:RolloverOnSchDate , RolloverAmount=:RolloverAmount, RolloverAmountPaid=:RolloverAmountPaid, ");
-		updateSql.append(" WriteoffIns=:WriteoffIns , ");
-		updateSql
-				.append(" WriteoffIncrCost=:WriteoffIncrCost, WriteoffSuplRent=:WriteoffSuplRent, WriteoffSchFee=:WriteoffSchFee  ");
+		//FIXME: PV: 15MAY17: Mechanism to find which records to be updated need to be identified at the caller level
+		StringBuilder updateSql = new StringBuilder("Update FinScheduleDetails Set");
+		updateSql.append(" BalanceForPftCal= :BalanceForPftCal, BaseRate= :BaseRate, SplRate= :SplRate, ");
+		updateSql.append(" MrgRate =:MrgRate, ActRate= :ActRate, CalculatedRate =:CalculatedRate, ");
+		updateSql.append(" ProfitCalc= :ProfitCalc, ProfitSchd= :ProfitSchd, PrincipalSchd= :PrincipalSchd, ");
+		updateSql.append(" RepayAmount= :RepayAmount, ProfitBalance=:ProfitBalance, CpzAmount= :CpzAmount, ");
+		updateSql.append(" ClosingBalance= :ClosingBalance, ProfitFraction= :ProfitFraction, ");
+		updateSql.append(" PrvRepayAmount= :PrvRepayAmount, SchPriPaid= :SchPriPaid, SchPftPaid= :SchPftPaid, ");
+		updateSql.append(" SchdMethod = :SchdMethod, TDSAmount=:TDSAmount, TDSPaid=:TDSPaid, ");
 		updateSql.append(" Where FinReference =:FinReference AND SchDate = :SchDate AND SchSeq = :SchSeq ");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -607,7 +580,8 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceScheduleDetail.class);
 
-		List<FinanceScheduleDetail> finSchdDetails = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper); 
+		List<FinanceScheduleDetail> finSchdDetails = this.namedParameterJdbcTemplate.query(selectSql.toString(),
+				beanParameters, typeRowMapper);
 		logger.debug("Leaving");
 		return finSchdDetails;
 	}

@@ -469,7 +469,6 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 			finODDetailsList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
 		}
 		logger.debug("Leaving");
 		return finODDetailsList;

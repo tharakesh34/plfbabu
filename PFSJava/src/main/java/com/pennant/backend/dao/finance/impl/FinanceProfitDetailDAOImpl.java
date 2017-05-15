@@ -153,7 +153,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		selectSql.append(" PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv");
 		selectSql.append(" From FinPftDetails");
 		selectSql.append(" Where CustId =:CustId");
-		
+
 		if (isActive) {
 			selectSql.append(" AND FinIsActive = 1");
 		}
@@ -367,13 +367,13 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		updateSql.append(" TotalRbtSchd = :TotalRbtSchd, TotalPriPaidInAdv = :TotalPriPaidInAdv,");
 		updateSql.append(" TotalPftPaidInAdv = :TotalPftPaidInAdv,");
 		updateSql.append(" ExcessAmt = :ExcessAmt, ");
-		updateSql
-				.append(" EmiInAdvance = :EmiInAdvance, PayableAdvise = :PayableAdvise, ExcessAmtResv = :ExcessAmtResv,");
-		updateSql.append(" EmiInAdvanceResv = :EmiInAdvanceResv, PayableAdviseResv = :PayableAdviseResv,  ");
-		updateSql.append(" LastMdfDate = :LastMdfDate");
+		updateSql.append(" EmiInAdvance = :EmiInAdvance, PayableAdvise = :PayableAdvise, ");
+		updateSql.append(" ExcessAmtResv = :ExcessAmtResv,  EmiInAdvanceResv = :EmiInAdvanceResv, ");
+		updateSql.append("  PayableAdviseResv = :PayableAdviseResv,  LastMdfDate = :LastMdfDate");
+
 		if (isRpyProcess) {
-			updateSql
-					.append(" ,LatestRpyDate = :LatestRpyDate, LatestRpyPri =:LatestRpyPri, LatestRpyPft = :LatestRpyPft ");
+			updateSql.append(" ,LatestRpyDate = :LatestRpyDate, ");
+			updateSql.append(" LatestRpyPri =:LatestRpyPri, LatestRpyPft = :LatestRpyPft ");
 		}
 
 		updateSql.append(" Where FinReference =:FinReference");

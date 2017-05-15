@@ -117,10 +117,15 @@ public class AccountConstants {
 	public static final String	PARTNERSBANK_DISB				= "D";
 	public static final String	PARTNERSBANK_PAYMENT			= "P";
 	public static final String	PARTNERSBANK_RECEIPTS			= "R";
-	
+
 	public static final String	POSTINGS_SUCCESS				= "S";
 	public static final String	POSTINGS_FAILURE				= "F";
 	public static final String	POSTINGS_REVERSE				= "R";
 	public static final String	POSTINGS_CANCEL					= "C";
+
+	public static final String	AMZ_POSTING_EVENT				= "AMZ_POSTING_EVENT";
+	public static final int		AMZ_POSTING_DAILY				= 0;
+	public static final int		AMZ_POSTING_APP_MTH_END			= 1;
+	public static final int		AMZ_POSTING_APP_EXT_MTH_END		= 2;
 
 }

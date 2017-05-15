@@ -169,7 +169,7 @@ public class DateRollOverService extends ServiceHelper {
 		if (!StringUtils.equals(finMain.getRvwRateApplFor(), CalculationConstants.RATEREVIEW_NORVW)) {
 			if (finMain.getFinStartDate().compareTo(valueDate) != 0
 					&& finMain.getMaturityDate().compareTo(valueDate) != 0) {
-				finEODEvent.setRateReview(true);
+				finEODEvent.setRateReviewExist(true);
 			}
 		}
 
@@ -313,7 +313,7 @@ public class DateRollOverService extends ServiceHelper {
 		if (!StringUtils.equals(finMain.getRvwRateApplFor(), CalculationConstants.RATEREVIEW_NORVW)) {
 			if (finMain.getFinStartDate().compareTo(valueDate) != 0
 					&& finMain.getMaturityDate().compareTo(valueDate) != 0) {
-				finEODEvent.setRateReview(true);
+				finEODEvent.setRateReviewExist(true);
 			}
 		}
 
