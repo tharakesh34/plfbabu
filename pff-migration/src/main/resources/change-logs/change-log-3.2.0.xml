@@ -1728,4 +1728,58 @@ Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSP
 	        <column name="PROGRESS" type="DECIMAL(3,0)"/>
 	    </createIndex>
 			</changeSet>
+					<changeSet id="111" author="pruthvi">
+<dropIndex tableName="FINPFTDETAILS" indexName="FPD_CUSTID_IDX"/>
+</changeSet>
+
+		<changeSet id="112" author="pruthvi">
+	<createIndex tableName="FINPFTDETAILS" indexName="IX_FINPFTDTL_CUST_ACTIVE">
+	        <column name="CUSTID" type="bigint"/>
+	        <column name="FINISACTIVE" type="boolean"/>
+	    </createIndex>
+			</changeSet>
+	<changeSet id="113" author="pruthvi">		
+<dropIndex tableName="FINANCEMAIN" indexName="IX_FM_CUST_ID"/>
+</changeSet>
+
+		<changeSet id="114" author="pruthvi">
+	<createIndex tableName="FINANCEMAIN" indexName="IX_FM_CUST_ID">
+	        <column name="CUSTID" type="bigint"/>
+	        <column name="FINISACTIVE" type="boolean"/>
+	    </createIndex>
+			</changeSet>			
+	
+
+
+
+		<changeSet id="115" author="pruthvi">
+	<createIndex tableName="FINFEEDETAIL" indexName="IX_FEEDETAIL_FINREF">
+	        <column name="FINREFERENCE" type="varchar(20)"/>
+	 	    </createIndex>
+			</changeSet>
+
+ 		<changeSet id="116" author="pruthvi">
+	<createIndex tableName="FINFEEDETAIL" indexName="IX_FEEDETAIL_FEETYPE">
+	        <column name="FEETYPEID" type="bigint"/>
+			 <column name="FEEID" type="bigint"/>
+	 	    </createIndex>
+			</changeSet>
+  
+	<changeSet id="117" author="pruthvi">
+  <dropIndex tableName="FINFEEDETAIL" indexName="IX_FEEDETAIL_FINREF"/>
+		</changeSet>
+
+		<changeSet id="118" author="pruthvi">
+	<createIndex tableName="FINFEEDETAIL" indexName="IX_FEEDETAIL_FINREF">
+	        <column name="FINREFERENCE" type="varchar(20)"/>
+	        <column name="FEEID" type="bigint"/>
+	    </createIndex>
+			</changeSet>
+
+	<changeSet id="119" author="pruthvi">
+	<createIndex tableName="FININSURANCES" indexName="IX_FININSURANCE_FINREF_INSID">
+	        <column name="REFERENCE" type="varchar(20)"/>
+	        <column name="INSID" type="bigint"/>
+	    </createIndex>
+			</changeSet>
 </databaseChangeLog>
