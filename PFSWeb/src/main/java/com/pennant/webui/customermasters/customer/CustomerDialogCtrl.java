@@ -4325,6 +4325,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Entering");
 		if (custEmploymentDetails != null && !custEmploymentDetails.isEmpty()) {
 			setCustomerEmploymentDetailList(custEmploymentDetails);
+			for (CustomerEmploymentDetail customerEmploymentDetail : custEmploymentDetails) {
+				 customerEmploymentDetail.setLovDescCustCIF(getCustomerDetails().getCustomer().getCustCIF());
+			}
+			
 			ListModelList<CustomerEmploymentDetail> listModelList = new ListModelList<CustomerEmploymentDetail>(
 					custEmploymentDetails);
 			this.listBoxCustomerEmploymentDetail.setModel(listModelList);
