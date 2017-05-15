@@ -1796,6 +1796,16 @@ Update smtparameters set sysparmcode='TDS_PERCENTAGE' where sysparmcode='PERCENT
 Insert into SMTPARAMETERS  values ('TDS_ROUNDINGMODE','TDS Rounding Mode','String',1,'HALF_DOWN',8,0,null,null,'TDS Rounding Mode',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 Insert into SMTPARAMETERS  values ('TDS_ROUNDINGTARGET','TDS Rounding Target','int',1,'100',5,0,null,null,'TDS Rounding Target',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 </sql>
-</changeSet>	
+</changeSet>
+<changeSet id="122" author="Madhubabu.p">
+	 	<createView viewName="Postings_View" replaceIfExists="true">
+		
+SELECT     T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent, T1.PostDate, T1.ValueDate,T1.AppValueDate,T1.AppDate, T1.TranCode, T1.RevTranCode, T1.DrOrCr, 
+                      T1.Account, T1.PostAmount, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T2.AEEventCodeDesc LovDescEventCodeName, 
+                      T1.ShadowPosting, T1.TranDesc, T1.AmountType, T1.AcCcy, T1.PostBranch, T1.Userbranch
+FROM          Postings T1 INNER JOIN
+                       BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode
+	 	</createView>
+	</changeSet>			
 	
 </databaseChangeLog>
