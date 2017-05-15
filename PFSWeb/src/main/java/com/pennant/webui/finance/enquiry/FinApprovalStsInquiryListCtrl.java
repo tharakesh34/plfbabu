@@ -221,7 +221,6 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 		registerField("DownPayment");
 		registerField("FeeChargeAmt");
 		registerField("FinStartDate",listheader_FinApprovalStsInquiryList_FinStartDate);
-		registerField("lastMntByUser",listheader_FinApprovalStsInquiryList_lastMntByUser);
 		registerField("CUSTID");
 		registerField("RoleCode");
 		registerField("NextRoleCode");

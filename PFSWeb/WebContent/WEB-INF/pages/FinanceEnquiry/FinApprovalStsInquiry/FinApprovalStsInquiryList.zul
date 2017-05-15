@@ -217,10 +217,6 @@
 									label="${c:l('listheader_FinStartDate.label')}" sort="none"
 									hflex="min" />
 								<listheader
-									id="listheader_FinApprovalStsInquiryList_lastMntByUser"
-									label="${c:l('listheader_LastMntByUser.label')}" sort="none"
-									hflex="min" />
-								<listheader
 									id="listheader_FinApprovalStsInquiryList_CurrentRole"
 									label="${c:l('listheader_NextRoleDesc.label')}" sort="auto"
 									hflex="min" />

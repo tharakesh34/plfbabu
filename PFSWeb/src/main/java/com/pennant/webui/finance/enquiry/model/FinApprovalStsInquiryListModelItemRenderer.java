@@ -49,8 +49,6 @@ public class FinApprovalStsInquiryListModelItemRenderer implements ListitemRende
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(enquiry.getFinStartDate()));
 		lc.setParent(item);
-		lc = new Listcell(StringUtils.trimToEmpty(enquiry.getLastMntByUser()));
-		lc.setParent(item);
 		lc = new Listcell(enquiry.getNextRoleDesc());
 		lc.setParent(item);
 		lc = new Listcell(enquiry.getPrvRoleDesc());
