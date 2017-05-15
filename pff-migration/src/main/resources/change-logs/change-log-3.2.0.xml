@@ -2023,4 +2023,14 @@ update WorkFlowDetails set workflowactive='0' where workflowtype='BFSD_ORIGINATI
 		UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
 	</sql>
 </changeSet>
+
+    <changeSet id="137" author="Manoj.P">
+    <sql>
+     DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE IN ('GROUP_ID', 'CLIENT_CODE');
+     INSERT INTO SMTPARAMETERS VALUES ('GROUP_ID',      'Group Id',       		'string',  		1,  'FCAT_BAFLTD',   			'50', 	0, NULL, NULL, 'Group Id',			1,1000,	CURRENT_TIMESTAMP,	'Approved'	,NULL,	NULL,	NULL,	NULL,	NULL,	0);
+     INSERT INTO SMTPARAMETERS VALUES ('CLIENT_CODE',   'Client Code',      	'string',  		1,  'BF1C',     				'50', 	0, NULL, NULL, 'Client Code',		1,1000,	CURRENT_TIMESTAMP,	'Approved'	,NULL,	NULL,	NULL,	NULL,	NULL,	0);
+	</sql>
+    
+    
+    </changeSet>
 </databaseChangeLog>
