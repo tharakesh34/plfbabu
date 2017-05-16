@@ -53,7 +53,7 @@ public interface AccountingSetDAO {
 	 void delete(AccountingSet accountingSet,String type);
 	 long save(AccountingSet accountingSet,String type);
 	 List<AccountingSet> getListAERuleBySysDflt(boolean isAllowedRIA, String type);
-	 AccountingSet getAccSetSysDflByEvent(String event, String type);
+	 AccountingSet getAccSetSysDflByEvent(String event, String setCode,String type);
 	
 	//Commitments
 	 Long getAccountingSetId(String eventCode, String accSetCode);

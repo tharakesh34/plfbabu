@@ -309,10 +309,11 @@ public class AccountingSetDAOImpl extends BasisNextidDaoImpl<AccountingSet> impl
 	}
 
 	@Override
-	public AccountingSet getAccSetSysDflByEvent(String event, String type) {
+	public AccountingSet getAccSetSysDflByEvent(String event, String setCode, String type) {
 		logger.debug("Entering");
 		AccountingSet accountingSet = new AccountingSet();
 		accountingSet.setEventCode(event);
+		accountingSet.setAccountSetCode(setCode);
 
 		StringBuilder selectSql = new StringBuilder(
 		        "Select AccountSetid, EventCode, AccountSetCode, AccountSetCodeName,EntryByInvestment");
@@ -321,7 +322,7 @@ public class AccountingSetDAOImpl extends BasisNextidDaoImpl<AccountingSet> impl
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From RMTAccountingSet");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where EventCode =:EventCode and SystemDefault=1 ");
+		selectSql.append(" Where EventCode =:EventCode and AccountSetCode = :AccountSetCode and SystemDefault=1 ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountingSet);

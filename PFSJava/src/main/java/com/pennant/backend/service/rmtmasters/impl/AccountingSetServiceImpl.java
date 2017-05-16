@@ -257,8 +257,8 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 		return accountingSet;
 	}
 	
-	public AccountingSet getAccSetSysDflByEvent(String event,String type){
-		return  getAccountingSetDAO().getAccSetSysDflByEvent(event,type);
+	public AccountingSet getAccSetSysDflByEvent(String event,String setCode,String type){
+		return  getAccountingSetDAO().getAccSetSysDflByEvent(event,setCode,type);
 	}
 
 	/**

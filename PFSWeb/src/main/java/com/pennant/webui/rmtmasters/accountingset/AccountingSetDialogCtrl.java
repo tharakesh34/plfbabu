@@ -388,7 +388,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		this.systemDefault.setChecked(aAccountingSet.isSystemDefault());
 		
 		doFilllistbox(aAccountingSet.getTransactionEntries());
-		checkSystemDefault(aAccountingSet.getEventCode());
+		checkSystemDefault(aAccountingSet.getEventCode(),aAccountingSet.getAccountSetCode());
 		if (aAccountingSet.getLovDescEventCodeName()!=null) {
 			this.lovDescEventCodeName.setValue(aAccountingSet.getLovDescEventCodeName());
 		}
@@ -1044,7 +1044,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			AccountEngineEvent details = (AccountEngineEvent) dataObject;
 
 			if (details != null) {
-				checkSystemDefault(details.getAEEventCode());
+				checkSystemDefault(details.getAEEventCode(),"");
 
 				this.eventCode.setValue(details.getAEEventCode());
 				this.lovDescEventCodeName.setValue(details.getAEEventCodeDesc());
@@ -1242,11 +1242,11 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		return String.valueOf(this.accountingSet.getAccountSetid());
 	}
 
-	private void checkSystemDefault(String eventCode) {
+	private void checkSystemDefault(String eventCode, String setCode) {
 		if (eventCode != null && StringUtils.isNotEmpty(eventCode)) {
-			AccountingSet accountingSetmain = getAccountingSetService().getAccSetSysDflByEvent(eventCode, "_AView");
+			AccountingSet accountingSetmain = getAccountingSetService().getAccSetSysDflByEvent(eventCode,setCode, "_AView");
 			if (accountingSetmain == null) {	
-				AccountingSet accountingSettemp = getAccountingSetService().getAccSetSysDflByEvent(eventCode ,"_View");	
+				AccountingSet accountingSettemp = getAccountingSetService().getAccSetSysDflByEvent(eventCode , setCode, "_View");	
 				checkSysHelper(accountingSettemp);
 			}else{
 				checkSysHelper(accountingSetmain);

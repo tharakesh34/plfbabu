@@ -60,7 +60,7 @@ public interface AccountingSetService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	TransactionEntry getNewTransactionEntry();
-	AccountingSet getAccSetSysDflByEvent(String event,String type);
+	AccountingSet getAccSetSysDflByEvent(String event,String setCode,String type);
 	List<TransactionEntry> getODTransactionEntries();
 	Map<String,List<FinTypeFees>> fetchFinTypeFees(AccountingSet aAccountingSet);
 }

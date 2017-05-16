@@ -690,7 +690,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		this.customerGroupName.setValue(aLimitHeader.getGroupName());
 		this.customerId.setValue(aLimitHeader.getCustCIF());
 		custFullName.setValue(aLimitHeader.getCustFullName());
-		custSalutationCode.setValue(aLimitHeader.getCustSalutationCode());
+		//custSalutationCode.setValue(aLimitHeader.getCustSalutationCode());
 		custDftBranchCode.setValue(aLimitHeader.getCustDftBranch());
 		aLimitHeader.setResponsibleBranch(aLimitHeader.getCustDftBranch());
 		custDftBranchName.setValue(aLimitHeader.getResponsibleBranchName());
