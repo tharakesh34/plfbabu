@@ -142,4 +142,16 @@
 	        <column name="FINREFERENCE" type="VARCHAR2(20)"/>
 	    </createIndex>
 	</changeSet>
+	<changeSet id="16" author="Madhubabu">
+	   <sql>
+	   	Update SeqSecRights set SeqNo = (select MAX(RightID) from SecRights);
+		Update SeqSecGroupRights set SeqNo = (select MAX(GrpRightID) from SecGroupRights);
+	  	INSERT INTO SecRights SELECT (select (SeqNo+1) from SeqSecRights),3,'JVPostingDialog_PostingAgainst','JVPostingDialog',0,1000,'2017-01-03 12:41:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+     	INSERT INTO SecRights SELECT (select (SeqNo+2) from SeqSecRights),3,'JVPostingDialog_Reference','JVPostingDialog',0,1000,'2017-01-03 12:41:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select Grpid from SecGroups where grpcode='JVPOSTINGS_MAKER'), (select rightid from secrights where rightname='JVPostingDialog_PostingAgainst'),1,0,10000,'2017-01-03 12:41:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select Grpid from SecGroups where grpcode='JVPOSTINGS_MAKER'), (select rightid from secrights where rightname='JVPostingDialog_Reference'),1,0,10000,'2017-01-03 12:41:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		Update SeqSecRights set SeqNo = (select MAX(RightID) from SecRights);
+		Update SeqSecGroupRights set SeqNo = (select MAX(GrpRightID) from SecGroupRights);
+	   </sql>
+	   </changeSet>
 </databaseChangeLog>
