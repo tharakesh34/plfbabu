@@ -325,5 +325,10 @@ public class FinanceConstants {
 	// Manual Advise Types 
 	public static final int	MANUAL_ADVISE_RECEIVABLE			= 1;	//Receivable Advise
 	public static final int	MANUAL_ADVISE_PAYABLE				= 2;  	//Payable Advise
+	
+	public static final String	POSTING_AGAINST_LOAN			= "L";  	//Misc. Postings
+	public static final String	POSTING_AGAINST_CUST			= "C";  	//Misc. Postings
+	public static final String	POSTING_AGAINST_CMTMNT			= "CMT";  	//Misc. Postings
+	public static final String	POSTING_AGAINST_COLLATERAL      = "CLT";  	//Misc. Postings
 
 }
