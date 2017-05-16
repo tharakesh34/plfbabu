@@ -70,7 +70,7 @@ public class MicroEOD implements Tasklet {
 		logger.debug("START: Micro EOD On : " + valueDate);
 		int thread = (int) context.getStepContext().getStepExecutionContext().get(EodConstants.THREAD);
 
-		getEodService().startProcess(valueDate, thread);
+		getEodService().startProcess(valueDate, thread, context.getStepContext().getStepExecution().getExecutionContext());
 
 		logger.debug("COMPLETE: Micro EOD On :" + valueDate);
 		return RepeatStatus.FINISHED;

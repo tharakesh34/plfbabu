@@ -9,6 +9,7 @@ import java.util.Date;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -48,7 +49,7 @@ public class EodService {
 	private PlatformTransactionManager	transactionManager;
 
 	// Constants
-	private static final String			SQL		= "SELECT CustId FROM CustomerQueuing WHERE ThreadId=? AND Progress = 0";
+	private static final String			SQL		= "SELECT CustId FROM CustomerQueuing WHERE ThreadId=? AND Progress = 0 ";
 
 	public EodService() {
 		super();
@@ -56,10 +57,11 @@ public class EodService {
 
 	/**
 	 * @param threadId
+	 * @param map 
 	 * @throws Exception
 	 * @throws SQLException
 	 */
-	public void startProcess(Date date, int threadId) throws Exception {
+	public void startProcess(Date date, int threadId, ExecutionContext executionContext) throws Exception {
 
 		logger.info("process Statred by the Thread : " + threadId + " with date " + date.toString());
 		Connection connection = null;
@@ -76,7 +78,9 @@ public class EodService {
 			sqlStatement = connection.prepareStatement(SQL);
 			sqlStatement.setInt(1, threadId);
 			resultSet = sqlStatement.executeQuery();
+			int count=0; 
 			while (resultSet.next()) {
+				
 				//BEGIN TRANSACTION
 				txStatus = transactionManager.getTransaction(txDef);
 
@@ -90,6 +94,9 @@ public class EodService {
 
 				//COMMIT THE TRANSACTION
 				transactionManager.commit(txStatus);
+				count++;
+				
+				executionContext.put("Completed", count);
 			}
 
 			resultSet.close();

@@ -95,7 +95,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 	}
 
 	@Override
-	public void updateThreadIDByRowNumber(Date date, long noOfRows, int threadId) {
+	public int updateThreadIDByRowNumber(Date date, long noOfRows, int threadId) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -108,20 +108,20 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 			if (noOfRows == 0) {
 				if (App.DATABASE == Database.SQL_SERVER) {
 					logger.debug("selectSql: " + UPDATE_SQL);
-					this.namedParameterJdbcTemplate.update(UPDATE_SQL, source);
+					return this.namedParameterJdbcTemplate.update(UPDATE_SQL, source);
 
 				} else if (App.DATABASE == Database.ORACLE) {
 					logger.debug("selectSql: " + UPDATE_ORCL);
-					this.namedParameterJdbcTemplate.update(UPDATE_ORCL, source);
+					return	this.namedParameterJdbcTemplate.update(UPDATE_ORCL, source);
 				}
 
 			} else {
 				if (App.DATABASE == Database.SQL_SERVER) {
 					logger.debug("selectSql: " + UPDATE_SQL_RC);
-					this.namedParameterJdbcTemplate.update(UPDATE_SQL_RC, source);
+					return	this.namedParameterJdbcTemplate.update(UPDATE_SQL_RC, source);
 				} else if (App.DATABASE == Database.ORACLE) {
 					logger.debug("selectSql: " + UPDATE_ORCL_RC);
-					this.namedParameterJdbcTemplate.update(UPDATE_ORCL_RC, source);
+					return this.namedParameterJdbcTemplate.update(UPDATE_ORCL_RC, source);
 				}
 
 			}
@@ -131,6 +131,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		}
 
 		logger.debug("Leaving");
+		return 0;
 
 	}
 
@@ -173,6 +174,27 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		logger.debug("Leaving");
 	}
 
+	@Override
+	public void update(CustomerQueuing customerQueuing, boolean start) {
+		logger.debug("Entering");
+
+		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing");
+		if (start) {
+			updateSql.append(" StartTime =:StartTime,");
+		} else {
+			updateSql.append(" EndTime = :EndTime,");
+		}
+		updateSql.append(" Progress = :Progress Where CustID =:CustID and EodDate=:EodDate");
+
+		logger.debug("updateSql: " + updateSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		logger.debug("Leaving");
+	}
+	
+	
 	@Override
 	public void delete() {
 		logger.debug("Entering");

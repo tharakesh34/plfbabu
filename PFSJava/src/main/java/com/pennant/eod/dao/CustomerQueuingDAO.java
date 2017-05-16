@@ -10,7 +10,7 @@ public interface CustomerQueuingDAO {
 
 	int getProgressCountByCust(long custID);
 
-	void updateThreadIDByRowNumber(Date date, long noOfRows, int threadId);
+	int updateThreadIDByRowNumber(Date date, long noOfRows, int threadId);
 
 	void delete();
 
@@ -21,5 +21,7 @@ public interface CustomerQueuingDAO {
 	void updateThreadID(Date date, int threadId);
 
 	void logCustomerQueuing(int progressSts);
+
+	void update(CustomerQueuing customerQueuing, boolean start);
 
 }
