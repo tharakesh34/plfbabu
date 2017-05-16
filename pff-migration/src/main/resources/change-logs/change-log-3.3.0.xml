@@ -191,7 +191,7 @@
 			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
 		</sql>
 	</changeSet>
-		<changeSet id="18" author="SreeRavali">
+		<!-- <changeSet id="18" author="SreeRavali">
 		<sql>
 		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
 		
@@ -200,7 +200,7 @@
 		
 		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
 	</sql>
-	</changeSet>
+	</changeSet> -->
 	 <changeSet id="19" author="Madhubabu" >
 	<addColumn tableName="jvpostings_temp">
 		<column name="Reference" type="nvarchar(20)"/>
@@ -212,5 +212,55 @@
 		<column name="Reference" type="nvarchar(20)"/>
 		<column name="PostAgainst" type="char(5)"/>
 	</addColumn>
+	</changeSet>
+	
+	<changeSet author="Madhubabu" id="21">
+		<createView replaceIfExists="true" viewName="JVPOSTINGS_VIEW">
+          SELECT     T1.BatchReference, T1.Batch, T1.Filename, T1.DebitCount, T1.CreditsCount, T1.TotDebitsByBatchCcy, T1.TotCreditsByBatchCcy, T1.BatchPurpose, T1.Currency, 
+                      T1.ExchangeRateType, T1.ValidationStatus, T1.Version, T1.LastMntBy, T1.LastMntOn, T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, 
+                      T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T3.CcyEditField  CurrencyEditField, T3.CcyDesc  CurrencyDesc, 
+                      T1.BatchPostingStatus, T3.CcyNumber, T1.Branch, T1.PostingDate,T1.expReference,T1.Reference,T1.PostAgainst
+
+FROM         JVPostings_Temp  T1 INNER JOIN
+                      SecUsers  T2 ON T1.LastMntBy = T2.UsrID INNER JOIN
+                      RMTCurrencies  T3 ON T1.Currency = T3.CcyCode
+UNION ALL
+SELECT     T1.BatchReference, T1.Batch, T1.Filename, T1.DebitCount, T1.CreditsCount, T1.TotDebitsByBatchCcy, T1.TotCreditsByBatchCcy, T1.BatchPurpose, T1.Currency, 
+                      T1.ExchangeRateType, T1.ValidationStatus, T1.Version, T1.LastMntBy, T1.LastMntOn, T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, 
+                      T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T3.CcyEditField  CurrencyEditField, T3.CcyDesc  CurrencyDesc, 
+                      T1.BatchPostingStatus, T3.CcyNumber, T1.Branch, T1.PostingDate,T1.expReference,T1.Reference,T1.PostAgainst
+
+FROM         JVPostings  T1 INNER JOIN
+                    SecUsers  T2 ON T1.LastMntBy = T2.UsrID INNER JOIN
+                      RMTCurrencies  T3 ON T1.Currency = T3.CcyCode
+WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          JVPostings_TEMP
+                            WHERE      BatchReference = T1.BatchReference)
+          
+        </createView>
+	</changeSet>
+	<changeSet author="Madhubabu" id="22">
+		<createView replaceIfExists="true" viewName="JVPOSTINGS_TVIEW">
+          SELECT     T1.BatchReference, T1.Batch, T1.Filename, T1.DebitCount, T1.CreditsCount, T1.TotDebitsByBatchCcy, T1.TotCreditsByBatchCcy, T1.BatchPurpose, T1.Currency, 
+                      T1.ExchangeRateType, T1.ValidationStatus, T1.Version, T1.LastMntBy, T1.LastMntOn, T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, 
+                      T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+                      T1.BatchPostingStatus,T1.Branch, T1.PostingDate,T1.expReference,T1.Reference,T1.PostAgainst
+FROM          JVPostings_Temp T1 INNER JOIN
+                       SecUsers T2 ON T1.LastMntBy = T2.UsrID
+          
+        </createView>
+	</changeSet>
+	<changeSet author="Madhubabu" id="23">
+		<createView replaceIfExists="true" viewName="JVPOSTINGS_AVIEW">
+          SELECT     T1.BatchReference, T1.Batch, T1.Filename, T1.DebitCount, T1.CreditsCount, T1.TotDebitsByBatchCcy, T1.TotCreditsByBatchCcy, T1.BatchPurpose, T1.Currency, 
+                      T1.ExchangeRateType, T1.ValidationStatus, T1.Version, T1.LastMntBy, T1.LastMntOn, T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, 
+                      T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T3.CcyEditField  CurrencyEditField, T3.CcyDesc  CurrencyDesc, 
+                      T1.BatchPostingStatus, T3.CcyNumber, T1.Branch, T1.PostingDate,T1.expReference,T1.Reference,T1.PostAgainst
+FROM                  JVPostings  T1 INNER JOIN
+                      SecUsers  T2 ON T1.LastMntBy = T2.UsrID INNER JOIN
+                      RMTCurrencies  T3 ON T1.Currency = T3.CcyCode
+          
+        </createView>
 	</changeSet>
 </databaseChangeLog>
