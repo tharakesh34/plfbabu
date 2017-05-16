@@ -154,4 +154,9 @@
 		Update SeqSecGroupRights set SeqNo = (select MAX(GrpRightID) from SecGroupRights);
 	   </sql>
 	   </changeSet>
+	   	<changeSet id="15" author="Surekha">
+		<sql>
+ 			INSERT INTO ErrorDetails VALUES ('WMAN01','EN','W','{0} Customer already having {1} open Mandates ','','Approved','','','','','',0,null,1000,0);  
+		</sql>
+	</changeSet>
 </databaseChangeLog>
