@@ -589,4 +589,22 @@ public class MandateDAOImpl extends BasisNextidDaoImpl<Mandate> implements Manda
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
+
+	@Override
+	public List<Mandate> getMnadateByCustID(long custID, long mandateID) {
+		Mandate mandate = new Mandate();
+		mandate.setCustID(custID);
+		mandate.setOpenMandate(true);
+		mandate.setActive(true);
+		mandate.setMandateID(mandateID);
+		
+		StringBuilder selectSql = new StringBuilder("Select  MandateType");
+		selectSql.append(" From Mandates");
+		selectSql.append(" Where CustID =:CustID and OpenMandate =:OpenMandate and Active =:Active and MandateID !=:MandateID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
+		RowMapper<Mandate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Mandate.class);
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,	typeRowMapper);
+	}
 }

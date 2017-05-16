@@ -85,6 +85,11 @@ public class FinMandateServiceImpl implements FinMandateService {
 	public Mandate getMnadateByID(long mandateID) {
 		return mandateDAO.getMandateById(mandateID, "_View");
 	}
+	
+	@Override
+	public List<Mandate> getMnadateByCustID(long custID, long mandateID) {
+		return mandateDAO.getMnadateByCustID(custID, mandateID);
+	}
 
 	@Override
 	public void saveOrUpdate(FinanceDetail financeDetail, AuditHeader auditHeader, String tableType) {

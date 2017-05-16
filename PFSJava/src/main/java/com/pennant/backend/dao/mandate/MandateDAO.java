@@ -77,4 +77,6 @@ public interface MandateDAO {
 	Mandate getMandateByOrgReference(String orgReference, String status, String type);
 
 	int getBranch(long bankBranchID, String type);
+
+	List<Mandate> getMnadateByCustID(long custID, long mandateID);
 }

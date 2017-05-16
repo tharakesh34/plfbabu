@@ -5302,7 +5302,85 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (mandate.getMaxLimit().compareTo(exposure) < 0) {
 				auditDetail.setErrorDetail(90320);
 			}
+			
+			if (!mandate.isUseExisting()) {
+				int count= getFinMandateService().getMnadateByCustID(mandate.getCustID(), mandate.getMandateID()).size();
+				if (count != 0) {
+					String[] errParmMan = new String[2];
+					String[] valueParmMan = new String[2];
+					valueParmMan[0] = String.valueOf(mandate.getCustID());
+					valueParmMan[1] = String.valueOf(count);
+
+					errParmMan[0] = " CustID : " + valueParmMan[0];
+					errParmMan[1] =  valueParmMan[1];
+					
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"WMAN01",
+							errParmMan, valueParmMan), ""));
+				}
+			}
+			if (!validateFrequency(financeMain.getRepayFrq().charAt(0), mandate.getPeriodicity().charAt(0))) {
+				
+				String[] errParmFrq = new String[2];
+				errParmFrq[0] = PennantJavaUtil.getLabel("label_MandateDialog_Periodicity.value") ;
+				errParmFrq[1] = PennantJavaUtil.getLabel("label_FinanceMainDialog_RepayFrq.value") ;
+				
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"90220",
+						errParmFrq, null), ""));
+			}
+
 		}
+	}
+
+	private Boolean validateFrequency(char repayFrq, char mandateFrq) {
+		boolean valFrq = true;
+		if (repayFrq == mandateFrq) {
+			valFrq = true;
+		} else {
+			switch (repayFrq) {
+			case 'D':
+				if (mandateFrq != 'D') {
+					valFrq = false;
+				}
+				break;
+			case 'W':
+				if (mandateFrq != 'D') {
+					valFrq = false;
+				}
+				break;
+			case 'X':
+				if (mandateFrq != 'D' || mandateFrq != 'W') {
+					valFrq = false;
+				}
+				break;
+			case 'F':
+				if (mandateFrq != 'D' || mandateFrq != 'W' || mandateFrq != 'X') {
+					valFrq = false;
+				}
+				break;
+			case 'M':
+				if (mandateFrq == 'B'|| mandateFrq == 'Q' || mandateFrq == 'H' || mandateFrq == 'Y') {
+					valFrq = false;
+				}
+				break;
+			case 'B':
+				if (mandateFrq == 'Q' || mandateFrq == 'H' || mandateFrq == 'Y') {
+					valFrq = false;
+				}
+				break;
+
+			case 'Q':
+				if (mandateFrq == 'H' || mandateFrq == 'Y') {
+					valFrq = false;
+				}
+				break;
+			case 'H':
+				if (mandateFrq == 'Y') {
+					valFrq = false;
+				}
+				break;
+			}
+		}
+		return valFrq;
 	}
 
 	/**
