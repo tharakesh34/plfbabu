@@ -790,6 +790,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 				}
 			}
 			
+			aErrorDetail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 			aErrorDetail.setTaskId(getTaskId());
 			aErrorDetail.setNextTaskId(getNextTaskId());
 			aErrorDetail.setRoleCode(getRole());
