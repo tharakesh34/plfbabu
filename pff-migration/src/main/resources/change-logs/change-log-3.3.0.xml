@@ -191,7 +191,7 @@
 			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
 		</sql>
 	</changeSet>
-		<!-- <changeSet id="18" author="SreeRavali">
+		<changeSet id="18" author="SreeRavali">
 		<sql>
 		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
 		
@@ -200,7 +200,7 @@
 		
 		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
 	</sql>
-	</changeSet> -->
+	</changeSet>
 	 <changeSet id="19" author="Madhubabu" >
 	<addColumn tableName="jvpostings_temp">
 		<column name="Reference" type="nvarchar(20)"/>
@@ -262,5 +262,10 @@ FROM                  JVPostings  T1 INNER JOIN
                       RMTCurrencies  T3 ON T1.Currency = T3.CcyCode
           
         </createView>
+	</changeSet>
+		<changeSet id="24" author="Surekha">
+		<sql>
+			update RBFieldDetails set RBFLDTABLENAME='', RBSTFLDS='static,global' , MODULECODE='' where RBModule='BOUNCE' and RBFLDNAME='MandateType';
+		</sql>
 	</changeSet>
 </databaseChangeLog>
