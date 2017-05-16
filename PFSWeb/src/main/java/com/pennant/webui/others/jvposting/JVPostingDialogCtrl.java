@@ -65,6 +65,7 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Hlayout;
 import org.zkoss.zul.Intbox;
@@ -98,9 +99,11 @@ import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.service.expenses.LegalExpensesService;
 import com.pennant.backend.service.others.JVPostingService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -182,6 +185,10 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	
 	
 	protected ExtendedCombobox expReference;
+	
+	protected ExtendedCombobox reference;
+	protected Combobox postingAgainst;
+	
 	protected Textbox batch;
 	protected Label label_ExchangeRateType;
 	protected ExtendedCombobox exchangeRateType;
@@ -224,6 +231,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	private Currency aCurrency = null;
 	private Decimalbox expAmount;
 	private transient LegalExpensesService legalExpensesService;
+	
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -820,6 +829,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		readOnlyComponent(true, this.batchReference);
 		readOnlyComponent(isReadOnly("JVPostingDialog_BatchCcy"), this.baseCCy);
 		readOnlyComponent(isReadOnly("JVPostingDialog_Branch"), this.postingBranch);
+		readOnlyComponent(isReadOnly("JVPostingDialog_PostingAgainst"), this.postingAgainst);
+		readOnlyComponent(isReadOnly("JVPostingDialog_Reference"), this.reference);
 		
 		setExtAccess("JVPostingDialog_ExchRateType", tempReadOnly,
 				this.exchangeRateType, row2);
@@ -897,8 +908,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.expReference.setValueColumn("ExpReference");
 		this.expReference.setValidateColumns(new String[] { "ExpReference" });
 		this.expReference.getButton().setVisible(false);
-		
-		
+
 		this.baseCCy.setMaxlength(LengthConstants.LEN_CURRENCY);
 		this.baseCCy.setMandatoryStyle(true);
 		this.baseCCy.setModuleName("Currency");
@@ -937,6 +947,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 
 		logger.debug("Leaving");
 	}
+	
 
 	/**
 	 * Writes the bean data to the components.<br>
@@ -953,12 +964,14 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			this.baseCCy.setValue(aJVPosting.getCurrency());
 			this.postingBranch.setValue(getUserWorkspace().getLoggedInUser().getBranchCode());
 			getJVPosting().setPostingDate(DateUtility.getSysDate());
+			fillComboBox(this.postingAgainst, "", PennantStaticListUtil.getpostingPurposeList(), "");
 		} else {
 			this.batchReference.setValue(String.valueOf(aJVPosting
 					.getBatchReference()));
 			this.baseCCy.setValue(aJVPosting.getCurrency());
 			this.postingBranch.setValue(aJVPosting.getBranch());
 			this.postingBranch.setDescription(aJVPosting.getBranchDesc());
+			fillComboBox(this.postingAgainst, aJVPosting.getPostAginst(), PennantStaticListUtil.getpostingPurposeList(), "");
 		}
 		
 		//Added to map with legal expenses
@@ -1873,6 +1886,34 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		logger.debug("Leaving" + event.toString());
 	}
 
+	
+	public void onChange$postingAgainst(Event event) {
+		this.reference.setValue("", "");
+		if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue().toString(),
+				FinanceConstants.POSTING_AGAINST_LOAN)) {
+			addFilters("FinanceMain", "FinReference", "FinType");
+		}
+		if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue().toString(),
+				FinanceConstants.POSTING_AGAINST_CUST)) {
+			addFilters("Customer", "CustCIF", "CustShrtName");
+		}
+		if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue().toString(),
+				FinanceConstants.POSTING_AGAINST_CMTMNT)) {
+			addFilters("Commitment", "CmtReference", "CmtTitle");
+		}
+		if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue().toString(),
+				FinanceConstants.POSTING_AGAINST_COLLATERAL)) {
+			addFilters("Collateral", "CAFReference", "Currency");
+		}
+	}
+
+	private void addFilters(String modulename,String valuecolumn,String descColumn) {
+		this.reference.setModuleName(modulename);
+		this.reference.setValueColumn(valuecolumn);
+		this.reference.setDescColumn(descColumn);
+		this.reference.setValidateColumns(new String[] { valuecolumn });
+	}
+	
 	public Window getWindow_JVPostingDialog() {
 		return window_JVPostingDialog;
 	}

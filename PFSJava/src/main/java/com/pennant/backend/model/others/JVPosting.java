@@ -73,6 +73,7 @@ public class JVPosting extends AbstractWorkflowEntity implements Entity {
 	private String lovValue;
 	private JVPosting befImage;
 	private LoggedInUser userDetails;
+	private String postAginst;
 	
 	public boolean isNew() {
 		return isNewRecord();
@@ -333,5 +334,13 @@ public class JVPosting extends AbstractWorkflowEntity implements Entity {
 
 	public void setExpReference(String expReference) {
 		this.expReference = expReference;
+	}
+
+	public String getPostAginst() {
+		return postAginst;
+	}
+
+	public void setPostAginst(String postAginst) {
+		this.postAginst = postAginst;
 	}
 }

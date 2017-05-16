@@ -20,22 +20,28 @@
 							<toolbar align="start"
 								sclass="toolbar-start">
 								<button id="btnNew" visible="false"
-									 tooltiptext="${c:l('btnNew.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+									tooltiptext="${c:l('btnNew.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
 								<button id="btnEdit" visible="false"
-									 tooltiptext="${c:l('btnEdit.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+									tooltiptext="${c:l('btnEdit.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
 								<button id="btnDelete" visible="false"
-									 tooltiptext="${c:l('btnDelete.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+									tooltiptext="${c:l('btnDelete.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
 								<button id="btnSave" visible="false"
-									 tooltiptext="${c:l('btnSave.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+									tooltiptext="${c:l('btnSave.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
 								<button id="btnCancel" visible="false"
-									 tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
+									tooltiptext="${c:l('btnCancel.tooltiptext')}"
+									sclass="z-toolbarbutton" />
 								<button id="btnNotes" visible="false"
-									 tooltiptext="${c:l('btnNotes.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+									tooltiptext="${c:l('btnNotes.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
 							</toolbar>
 							<!-- SEARCH AREA -->
 							<toolbar align="center"
@@ -46,13 +52,15 @@
 							</toolbar>
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
-								<button id="btnHelp" visible="false" 
+								<button id="btnHelp" visible="false"
 									label="${c:l('label_Help')}"
 									tooltiptext="${c:l('btnHelp.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-								<button id="btnClose" 
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnClose"
 									tooltiptext="${c:l('btnClose.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
 							</toolbar>
 						</hbox>
 					</div>
@@ -69,7 +77,7 @@
 									<column width="20%" />
 									<column width="30%" />
 									<column width="20%" />
-									<column width="30%"/>
+									<column width="30%" />
 								</columns>
 								<rows>
 									<row id="row0">
@@ -80,7 +88,7 @@
 											<space id="space_Batch"
 												spacing="2px" sclass="mandatory" />
 											<uppercasebox id="batch"
-												maxlength="5" />
+												width="190px" maxlength="5" />
 										</hlayout>
 										<label id="label_BatchReference"
 											value="${c:l('label_JVPostingDialog_BatchReference.value')}" />
@@ -89,18 +97,36 @@
 											<space
 												id="space_BatchReference" spacing="2px" />
 											<uppercasebox
-												id="batchReference" maxlength="50" />
+												id="batchReference" maxlength="50" width="190px" />
 										</hlayout>
 									</row>
 									<row id="row_expReference">
 										<label id="label_ExpReference"
-										value="${c:l('label_JVPostingDialog_ExpReference.value')}" />
-									<hbox>
-										<extendedcombobox
-											id="expReference" />
-									</hbox>
-									<decimalbox id="expAmount" width="150px" readonly="true" tabindex="-1"
-									 style="border:none; background-color:white ;font-weight:bold; text-align:left;"/> 
+											value="${c:l('label_JVPostingDialog_ExpReference.value')}" />
+										<hbox>
+											<extendedcombobox
+												id="expReference" />
+										</hbox>
+										<decimalbox id="expAmount"
+											width="150px" readonly="true" tabindex="-1"
+											style="border:none; background-color:white ;font-weight:bold; text-align:left;" />
+									</row>
+									<row id="row_finReference" visible="false">
+										<label id="label_PostingAgainst"
+											value="${c:l('label_JVPostingDialog_PostingAgainst.value')}" />
+										<hbox>
+										<space
+												id="space_postingAgainst" spacing="2px" />
+											<combobox
+												id="postingAgainst" />
+										</hbox>
+										<label id="label_Reference"
+											value="${c:l('label_JVPostingDialog_Reference.value')}" />
+										<hbox>
+											<extendedcombobox
+												id="reference" />
+										</hbox>
+
 									</row>
 									<row id="row2">
 										<label id="label_BaseCcy"
@@ -142,8 +168,8 @@
 									<row id="row4" valign="top">
 										<label id="label_DebitCount"
 											value="${c:l('label_JVPostingDialog_DebitCount.value')}" />
-										<hlayout
-											id="hlayout_DebitCount" spacing="2px">
+										<hlayout id="hlayout_DebitCount"
+											spacing="2px">
 											<space id="space_DebitCount"
 												spacing="2px" />
 											<intbox id="debitCount"
@@ -167,7 +193,8 @@
 											<space
 												id="space_BatchPurpose" spacing="2px" />
 											<textbox id="batchPurpose"
-												maxlength="35" multiline="true" rows="3" width="250px" style="resize: none;"/>
+												maxlength="35" multiline="true" rows="3" width="250px"
+												style="resize: none;" />
 										</hlayout>
 										<label id="label_Upload"
 											value="${c:l('label_Upload.value')}" visible="false" />
@@ -185,23 +212,20 @@
 							</grid>
 						</groupbox>
 						<groupbox id="gb_EntryList">
-							<div sclass="z-toolbar" style="padding:0"
-								>
+							<div sclass="z-toolbar" style="padding:0">
 								<hbox pack="stretch"
-									sclass="hboxRemoveWhiteStrips"  width="100%"
+									sclass="hboxRemoveWhiteStrips" width="100%"
 									style=" padding:1px;">
 									<toolbar align="start"
 										style="border-style: none;">
 										<button
-											id="btnNewJVPostingEntry" 
-											label="${c:l('label_New')}"
+											id="btnNewJVPostingEntry" label="${c:l('label_New')}"
 											autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 											tooltiptext="${c:l('btnNew.tooltiptext')}" />
 										<button id="btnValidate"
 											label="validate" />
 									</toolbar>
-									<toolbar align="center"
-										>
+									<toolbar align="center">
 										<label
 											id="label_JVPostingEntryList_Title"
 											style="font-weight:bold; font-size: 12px;" />
@@ -227,8 +251,8 @@
 										style="border:none;">
 										<listbox
 											id="listBoxJVPostingEntry" span="true" sizedByContent="true"
-											  tooltiptext="${c:l('listbox.tooltiptext')}"
-											width="100%" multiple="false"
+											tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+											multiple="false"
 											emptyMessage="${c:l('listEmptyMessage.title')}">
 											<listhead sizable="true">
 												<listheader
@@ -282,9 +306,10 @@
 										id="tabPanel_AccountingWindow" width="100%" height="100%"
 										style="border:none;">
 										<listbox
-											id="listBoxJVPostingAccounting" span="true" sizedByContent="true"
-											  tooltiptext="${c:l('listbox.tooltiptext')}"
-											width="100%" multiple="false"
+											id="listBoxJVPostingAccounting" span="true"
+											sizedByContent="true"
+											tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+											multiple="false"
 											emptyMessage="${c:l('listEmptyMessage.title')}">
 											<listhead sizable="true">
 												<listheader
@@ -336,8 +361,7 @@
 						<caption label="${c:l('Action')}" />
 						<hbox width="95%">
 							<radiogroup id="userAction" name="action" />
-							<label
-								id="label_PostingStatus_RecordStatus"
+							<label id="label_PostingStatus_RecordStatus"
 								value="${c:l('label_South_RecordStatus.value')}"
 								sclass="label-status" />
 							<label id="recordStatus" />
