@@ -191,5 +191,14 @@
 			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
 		</sql>
 	</changeSet>
-	
+		<changeSet id="18" author="SreeRavali">
+		<sql>
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'ErrorDetail_MAKER'), (Select RightID from SecRights where RightName = 'menuCat_ApplicationMaster'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'ErrorDetail_APPROVER'), (Select RightID from SecRights where RightName = 'menuCat_ApplicationMaster'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
