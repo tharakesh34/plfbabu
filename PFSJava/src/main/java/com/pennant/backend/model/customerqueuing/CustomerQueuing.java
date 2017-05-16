@@ -12,8 +12,9 @@ public class CustomerQueuing implements Serializable {
 	private int					threadId;
 	private int					progress;
 
-	//	private Date				startTime;
-	//	private Date				endTime;
+	private Date				startTime;
+	private Date				endTime;
+
 	//	private String				errorLog;
 	//	private String				status;
 	public CustomerQueuing() {
@@ -44,23 +45,22 @@ public class CustomerQueuing implements Serializable {
 	//		this.status = status;
 	//	}
 	//
-	//	public Date getStartTime() {
-	//		return startTime;
-	//	}
-	//
-	//	public void setStartTime(Date startTime) {
-	//		this.startTime = startTime;
-	//	}
-	//
-	//	public Date getEndTime() {
-	//		return endTime;
-	//	}
-	//
-	//	public void setEndTime(Date endTime) {
-	//		this.endTime = endTime;
-	//	}
+	public Date getStartTime() {
+		return startTime;
+	}
 
-	
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
+
 	public Date getEodDate() {
 		return eodDate;
 	}

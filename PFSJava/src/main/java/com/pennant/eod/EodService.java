@@ -80,17 +80,19 @@ public class EodService {
 			resultSet = sqlStatement.executeQuery();
 			int count=0; 
 			while (resultSet.next()) {
+				custId = resultSet.getLong("CustId");
+				
+				//update start
+				loadFinanceData.updateStart(threadId, custId);
 				
 				//BEGIN TRANSACTION
 				txStatus = transactionManager.getTransaction(txDef);
-
-				custId = resultSet.getLong("CustId");
 
 				//process
 				doProcess(connection, custId, date);
 
 				//Update Status
-				loadFinanceData.updateEnd(date, custId);
+				loadFinanceData.updateEnd(threadId, custId);
 
 				//COMMIT THE TRANSACTION
 				transactionManager.commit(txStatus);

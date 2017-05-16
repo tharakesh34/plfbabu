@@ -194,13 +194,25 @@ public class LoadFinanceData extends ServiceHelper {
 		logger.debug(" Leaving ");
 	}
 
-	public void updateEnd(Date date, long custId) {
+	public void updateStart(int threadId, long custId) {
 
 		CustomerQueuing customerQueuing = new CustomerQueuing();
 		customerQueuing.setCustID(custId);
-		customerQueuing.setEodDate(date);
+		customerQueuing.setThreadId(threadId);
+		customerQueuing.setStartTime(DateUtility.getSysDate());
+		customerQueuing.setProgress(EodConstants.PROGRESS_IN_PROCESS);
+		getCustomerQueuingDAO().update(customerQueuing, true);
+
+	}
+
+	public void updateEnd(int threadId, long custId) {
+
+		CustomerQueuing customerQueuing = new CustomerQueuing();
+		customerQueuing.setCustID(custId);
+		customerQueuing.setThreadId(threadId);
+		customerQueuing.setEndTime(DateUtility.getSysDate());
 		customerQueuing.setProgress(EodConstants.PROGRESS_SUCCESS);
-		getCustomerQueuingDAO().updateProgress(customerQueuing);
+		getCustomerQueuingDAO().update(customerQueuing, false);
 
 	}
 

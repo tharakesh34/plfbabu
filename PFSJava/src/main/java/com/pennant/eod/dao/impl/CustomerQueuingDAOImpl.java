@@ -178,13 +178,13 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 	public void update(CustomerQueuing customerQueuing, boolean start) {
 		logger.debug("Entering");
 
-		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing");
+		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing set");
 		if (start) {
 			updateSql.append(" StartTime =:StartTime,");
 		} else {
 			updateSql.append(" EndTime = :EndTime,");
 		}
-		updateSql.append(" Progress = :Progress Where CustID =:CustID and EodDate=:EodDate");
+		updateSql.append(" Progress = :Progress Where CustID =:CustID and ThreadId=:ThreadId");
 
 		logger.debug("updateSql: " + updateSql.toString());
 
