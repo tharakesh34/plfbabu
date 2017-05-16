@@ -159,4 +159,37 @@
  			INSERT INTO ErrorDetails VALUES ('WMAN01','EN','W','{0} Customer already having {1} open Mandates ','','Approved','','','','','',0,null,1000,0);  
 		</sql>
 	</changeSet>
+	<changeSet id="17" author="SreeRavali">
+		<sql>
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		
+			
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'ErrorDetail_MAKER','WF Maker for ErrorDetail', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'ErrorDetail_APPROVER','WF Maker for ErrorDetail', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+			
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'ErrorDetail_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_ErrorDetail_ErrorDetail'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'ErrorDetail_MAKER'), (Select RightID from SecRights where RightName = 'button_ErrorDetailDialog_btnEdit'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'ErrorDetail_MAKER'), (Select RightID from SecRights where RightName = 'button_ErrorDetailDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'ErrorDetail_MAKER'), (Select RightID from SecRights where RightName = 'ErrorDetailDialog_ErrorSeverity'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'ErrorDetail_MAKER'), (Select RightID from SecRights where RightName = 'ErrorDetailDialog_ErrorMessage'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'ErrorDetail_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_ErrorDetail_ErrorDetail'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'ErrorDetail_APPROVER'), (Select RightID from SecRights where RightName = 'button_ErrorDetailDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+			-- Security Role Groups
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='ErrorDetail_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='MSTGRP1_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='ErrorDetail_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='MSTGRP1_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+		
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
