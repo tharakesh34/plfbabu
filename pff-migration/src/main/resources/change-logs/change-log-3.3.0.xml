@@ -191,7 +191,7 @@
 			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
 		</sql>
 	</changeSet>
-		<changeSet id="18" author="SreeRavali">
+	 <changeSet id="18" author="SreeRavali">
 		<sql>
 		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
 		
@@ -268,4 +268,16 @@ FROM                  JVPostings  T1 INNER JOIN
 			update RBFieldDetails set RBFLDTABLENAME='', RBSTFLDS='static,global' , MODULECODE='' where RBModule='BOUNCE' and RBFLDNAME='MandateType';
 		</sql>
 	</changeSet>
+	
+			<changeSet id="25" author="DURGAPRASAD G">
+		<addColumn tableName="PRESENTMENTDETAILS">
+			<column name="BOUNCERETURNCODE" type="VARCHAR2(8)"/>
+		</addColumn>
+	</changeSet>	
+		<changeSet id="26" author="DURGAPRASAD G">
+		<addColumn tableName="PRESENTMENTDETAILS_TEMP">
+			<column name="BOUNCERETURNCODE" type="VARCHAR2(8)"/>
+		</addColumn>
+	</changeSet>	
+	
 </databaseChangeLog>
