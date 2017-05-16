@@ -201,4 +201,16 @@
 		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
 	</sql>
 	</changeSet>
+	 <changeSet id="19" author="Madhubabu" >
+	<addColumn tableName="jvpostings_temp">
+		<column name="Reference" type="nvarchar(20)"/>
+		<column name="PostAgainst" type="char(5)"/>
+	</addColumn>
+	</changeSet>
+	<changeSet id="20" author="Madhubabu" >
+	<addColumn tableName="jvpostings">
+		<column name="Reference" type="nvarchar(20)"/>
+		<column name="PostAgainst" type="char(5)"/>
+	</addColumn>
+	</changeSet>
 </databaseChangeLog>
