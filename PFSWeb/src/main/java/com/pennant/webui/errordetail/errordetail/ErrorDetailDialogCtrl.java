@@ -553,7 +553,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 		logger.debug("Entering");
 		//Error Code
 		if (!this.errorCode.isReadonly()){
-			this.errorCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ErrorDetailDialog_ErrorCode.value"),PennantRegularExpressions.REGEX_UPPERCASENAME,true));
+			this.errorCode.setConstraint(new PTStringValidator(Labels.getLabel("label_ErrorDetailDialog_ErrorCode.value"),PennantRegularExpressions.REGEX_NUMERIC,true));
 		}
 		//Error Language
 		if (!this.errorLanguage.isReadonly()){
