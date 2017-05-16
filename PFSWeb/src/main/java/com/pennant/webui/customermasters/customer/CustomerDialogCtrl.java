@@ -3311,6 +3311,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 							return false;
 						}
 					}
+					if (!isRetailCustomer && StringUtils.equals(PennantConstants.TRADELICENSE, custDocument.getCustDocCategory())) {
+						if (!this.custDOB.isDisabled() && this.custDOB.getValue() != null
+								&& custDocument.getCustDocIssuedOn() != null &&
+								DateUtility.compare(custDocument.getCustDocIssuedOn(), this.custDOB.getValue())!=0) {
+							doShowValidationMessage(custTab, 6, custDocument.getLovDescCustDocCategory());
+							return false;
+						}
+					}
 				
 			}
 		}
@@ -3361,6 +3369,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			msg = Labels.getLabel("DATE_NO_EMPTY",
 					new String[] { Labels.getLabel("label_CustomerDocumentDialog_CustDocType.value") + " : " + value
 							+ " , " + Labels.getLabel("label_CustomerDocumentDialog_CustDocExpDate.value") });
+			break;
+		case 6:
+			msg = Labels.getLabel(
+					"EIDNumber_NotEqual",
+					new String[] {
+						 Labels.getLabel("label_CustomerDialog_CustDateOfIncorporation.value"),
+							Labels.getLabel("PersonalDetails"), value, Labels.getLabel("DocumentDetails") });
 			break;
 		}
 
@@ -3770,10 +3785,19 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 		return idNumber;
 	}
-
+	
+	public Date getcustIncorpDate() {
+		return this.custDOB.getValue();
+	}
 	public void setMandatoryIDNumber(String eidNumber) {
 		logger.debug("Entering");
 		this.eidNumber.setValue(eidNumber);
+		logger.debug("Leaving");
+	}
+
+	public void setCustDob(Date dateofInc) {
+		logger.debug("Entering");
+		this.custDOB.setValue(dateofInc);
 		logger.debug("Leaving");
 	}
 

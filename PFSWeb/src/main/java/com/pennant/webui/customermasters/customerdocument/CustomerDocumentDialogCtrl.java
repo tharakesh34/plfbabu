@@ -1557,6 +1557,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 							}else{
 								if(StringUtils.equals(PennantConstants.TRADELICENSE,this.custDocType.getValue())){
 									getCustomerDialogCtrl().setMandatoryIDNumber(this.custDocTitle.getValue());
+									getCustomerDialogCtrl().setCustDob(this.custDocIssuedOn.getValue());
 								}
 							}
 						}
@@ -1578,12 +1579,20 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			}else{
 				if(StringUtils.equals(PennantConstants.TRADELICENSE,this.custDocType.getValue())){
 					getCustomerDialogCtrl().setMandatoryIDNumber(this.custDocTitle.getValue());
+					getCustomerDialogCtrl().setCustDob(this.custDocIssuedOn.getValue());
 				}
 			}
 		}else{
-			if(StringUtils.equals(PennantConstants.PANNUMBER,this.custDocType.getValue())){
-				getCustomerDialogCtrl().setMandatoryIDNumber(this.custDocTitle.getValue());
+			if(isRetailCustomer){
+				if(StringUtils.equals(PennantConstants.PANNUMBER,this.custDocType.getValue())){
+					getCustomerDialogCtrl().setMandatoryIDNumber(this.custDocTitle.getValue());
+				}
+			}else{
+				if(StringUtils.equals(PennantConstants.TRADELICENSE,this.custDocType.getValue())){
+					getCustomerDialogCtrl().setCustDob(this.custDocIssuedOn.getValue());
+				}
 			}
+			
 		}
 	}
 		logger.debug("Leaving");
@@ -1968,6 +1977,10 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		} else {
 			if (PennantConstants.PANNUMBER.equals(this.custDocType.getValue())) {
 				this.custDocTitle.setValue(getCustomerDialogCtrl().getCustIDNumber(PennantConstants.PANNUMBER));
+			}else if (PennantConstants.TRADELICENSE.equals(this.custDocType.getValue())) {
+				if (getCustomerDialogCtrl() != null) {
+					this.custDocIssuedOn.setValue(getCustomerDialogCtrl().getcustIncorpDate());
+				} 
 			}
 		}
 
