@@ -28,7 +28,7 @@
 
 	<appender name="FILE" class="org.apache.log4j.RollingFileAppender">
 		
-		<param name="File" value="D:/Pennant/PFF/BASE/logs/PFFAHB.log" />
+		<!-- <param name="File" value="D:/Pennant/PFF/BASE/logs/PFFAHB.log" /> -->
 		<param name="MaxFileSize" value="5MB" />
 		<param name="MaxBackupIndex" value="20" />
 		<param name="Threshold" value="ERROR" />
