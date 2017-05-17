@@ -113,7 +113,8 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  */
 public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	private static final long					serialVersionUID	= 1L;
-	private final static Logger					logger				= Logger.getLogger(FinAdvancePaymentsDialogCtrl.class);
+	private final static Logger					logger				= Logger
+			.getLogger(FinAdvancePaymentsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -174,7 +175,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected Caption							caption_FinAdvancePaymentsDialog_ChequeDetails;
 
 	// not auto wired vars
-	private FinAdvancePayments					finAdvancePayments;														// over handed per param
+	private FinAdvancePayments					finAdvancePayments;								// over handed per param
 
 	private transient boolean					newFinance;
 
@@ -336,7 +337,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.userAction = setListRecordStatus(this.userAction);
 			}
 
-			getUserWorkspace().allocateAuthorities("FinAdvancePaymentsDialog",getRole());
+			getUserWorkspace().allocateAuthorities("FinAdvancePaymentsDialog", getRole());
 
 			/* set components visible dependent of the users rights */
 			doCheckRights();
@@ -658,7 +659,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.bankBranchID.setDescColumn("");
 		this.bankBranchID.setDisplayStyle(2);
 		this.bankBranchID.setValidateColumns(new String[] { "IFSC" });
-		
+
 		this.partnerBankID.setButtonDisabled(true);
 		this.partnerBankID.setReadonly(true);
 		this.partnerBankID.setModuleName("FinTypePartner");
@@ -667,7 +668,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.partnerBankID.setDescColumn("PartnerBankName");
 		this.partnerBankID.setMaxlength(8);
 		this.partnerBankID.setValidateColumns(new String[] { "PartnerBankCode" });
-		
+
 		this.phoneNumber.setMaxlength(10);
 		this.phoneNumber.setWidth("180px");
 
@@ -745,9 +746,10 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		if (aFinAdvnancePayments.getPartnerBankID() != Long.MIN_VALUE && aFinAdvnancePayments.getPartnerBankID() != 0) {
 			this.partnerBankID.getButton().setDisabled(isReadOnly("FinAdvancePaymentsDialog_partnerBankID"));
 			this.partnerBankID.setAttribute("partnerBankId", aFinAdvnancePayments.getPartnerBankID());
-			this.partnerBankID.setValue(aFinAdvnancePayments.getPartnerbankCode(),aFinAdvnancePayments.getPartnerBankName());
-		}		
-		
+			this.partnerBankID.setValue(aFinAdvnancePayments.getPartnerbankCode(),
+					aFinAdvnancePayments.getPartnerBankName());
+		}
+
 		this.bank.setValue(StringUtils.trimToEmpty(aFinAdvnancePayments.getBranchBankName()));
 		this.branch.setValue(aFinAdvnancePayments.getBranchDesc());
 		this.city.setValue(StringUtils.trimToEmpty(aFinAdvnancePayments.getCity()));
@@ -767,7 +769,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		//unused
 		this.custContribution.setValue(formate(aFinAdvnancePayments.getCustContribution()));
 		this.sellerContribution.setValue(formate(aFinAdvnancePayments.getSellerContribution()));
-		
+
 		this.description.setValue(aFinAdvnancePayments.getDescription());
 		checkPaymentType(aFinAdvnancePayments.getPaymentType());
 		this.recordStatus.setValue(aFinAdvnancePayments.getRecordStatus());
@@ -950,33 +952,29 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		
 		try {
 			if (this.llDate.getValue() != null) {
-
-				Comboitem item = this.disbDate.getSelectedItem();
-				if (item != null) {
-					Object data = item.getAttribute("data");
-					if (data != null) {
-						FinanceDisbursement disbursement = (FinanceDisbursement) data;
-						if (this.llDate.getValue().compareTo(disbursement.getDisbDate()) < 0) {
-							throw new WrongValueException(this.llDate, Labels.getLabel("DATE_ALLOWED_MINDATE_EQUAL",
-									new String[] { Labels.getLabel("label_FinAdvancePaymentsDialog_LLDate.value"),
-											Labels.getLabel("label_FinAdvancePaymentsDialog_DisbDate.value") }));
-						}
-					}
-				}
-
 				if (financeMain != null && financeMain.getMaturityDate() != null) {
-					if (this.llDate.getValue().compareTo(financeMain.getMaturityDate()) > 0) {
-						String val = Labels.getLabel("label_MaturityDate") + ":"
-								+ DateUtility.formatToLongDate(financeMain.getMaturityDate());
-						throw new WrongValueException(this.llDate, Labels.getLabel("DATE_ALLOWED_MAXDATE_EQUAL",
-								new String[] { Labels.getLabel("label_FinAdvancePaymentsDialog_LLDate.value"), val }));
+					Comboitem item = this.disbDate.getSelectedItem();
+					if (item != null) {
+						Object data = item.getAttribute("data");
+						if (data != null) {
+							FinanceDisbursement disbursement = (FinanceDisbursement) data;
+							if (this.llDate.getValue().before(disbursement.getDisbDate())
+									|| this.llDate.getValue().after(financeMain.getMaturityDate())) {
+								
+								String maturityDate =DateUtility.formatToLongDate(financeMain.getMaturityDate());
+								String disbDate = DateUtility.formatToLongDate(disbursement.getDisbDate());
+								
+								throw new WrongValueException(this.llDate, Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
+										new String[] { Labels.getLabel("label_FinAdvancePaymentsDialog_LLDate.value"),
+												disbDate,maturityDate }));
+							}
+						}
+						aFinAdvancePayments.setLLDate(this.llDate.getValue());
 					}
 				}
-
-				aFinAdvancePayments.setLLDate(this.llDate.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1079,6 +1077,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		aFinAdvancePayments.setLinkedTranId(0);
 		doRemoveValidation();
 		doClearMessage();
@@ -1093,10 +1092,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		aFinAdvancePayments.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
 	}
-	
-	
-	
-	
+
 	/**
 	 * Change the partnerBankID for the Account on changing the finance Branch
 	 * 
@@ -1117,7 +1113,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.partnerBankID.setAttribute("partnerBankId", partnerBank.getPartnerBankID());
 				this.finAdvancePayments.setPartnerbankCode(partnerBank.getPartnerBankCode());
 				this.finAdvancePayments.setPartnerBankName(partnerBank.getPartnerBankName());
-				
+
 			}
 		}
 
@@ -1131,88 +1127,91 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		logger.debug("Entering");
 
 		if (!this.paymentDetail.isDisabled()) {
-			this.paymentDetail.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinAdvancePaymentsDialog_PaymentDetail.value"), null, true));
+			this.paymentDetail.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinAdvancePaymentsDialog_PaymentDetail.value"), null, true));
 		}
 		if (!this.amtToBeReleased.isDisabled()) {
-			this.amtToBeReleased.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_FinAdvancePaymentsDialog_AmtToBeReleased.value"), ccyFormatter, true, false));
+			this.amtToBeReleased.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_AmtToBeReleased.value"),
+							ccyFormatter, true, false));
 		}
 		if (!this.paymentType.isDisabled()) {
-			this.paymentType.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinAdvancePaymentsDialog_PaymentType.value"), null, true));
+			this.paymentType.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinAdvancePaymentsDialog_PaymentType.value"), null, true));
 		}
 		if (!this.description.isReadonly()) {
-			this.description.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinAdvancePaymentsDialog_Description.value"), null, false));
+			this.description.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinAdvancePaymentsDialog_Description.value"), null, false));
 		}
 		if (!this.remarks.isReadonly()) {
-			this.remarks.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinAdvancePaymentsDialog_Remarks.value"), null, false));
+			this.remarks.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinAdvancePaymentsDialog_Remarks.value"), null, false));
 		}
 		if (this.hbox_llReferenceNo.isVisible() && !this.llReferenceNo.isReadonly()) {
-			this.llReferenceNo.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinAdvancePaymentsDialog_LLReferenceNo.value"), null, false));
+			this.llReferenceNo.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinAdvancePaymentsDialog_LLReferenceNo.value"), null, false));
 		}
 		if (this.hbox_llDate.isVisible() && !this.llDate.isDisabled()) {
-			this.llDate.setConstraint(new PTDateValidator(Labels
-					.getLabel("label_FinAdvancePaymentsDialog_LLDate.value"), true, DateUtility.getAppDate(), null,
-					true));
+			this.llDate
+					.setConstraint(new PTDateValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_LLDate.value"),
+							true, DateUtility.getAppDate(), null, true));
 		}
 		if (this.hbox_custContribution.isVisible() && !this.custContribution.isDisabled()) {
-			this.custContribution.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_FinAdvancePaymentsDialog_CustContribution.value"), ccyFormatter, false, false));
+			this.custContribution.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_CustContribution.value"),
+							ccyFormatter, false, false));
 		}
 		if (this.hbox_sellerContribution.isVisible() && !this.sellerContribution.isDisabled()) {
-			this.sellerContribution.setConstraint(new PTDecimalValidator(Labels
-					.getLabel("label_FinAdvancePaymentsDialog_SellerContribution.value"), ccyFormatter, false, false));
+			this.sellerContribution.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_SellerContribution.value"),
+							ccyFormatter, false, false));
 		}
-		
+
 		if (!this.partnerBankID.isReadonly()) {
-			this.partnerBankID.setConstraint(new PTStringValidator(Labels
-					.getLabel("label_FinAdvancePaymentsDialog_PartnerbankId.value"), null, true));
+			this.partnerBankID.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinAdvancePaymentsDialog_PartnerbankId.value"), null, true));
 		}
 
 		if (gb_ChequeDetails.isVisible()) {
 			if (this.hbox_liabilityHoldName.isVisible() && !this.liabilityHoldName.isReadonly()) {
-				this.liabilityHoldName.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_FinAdvancePaymentsDialog_LiabilityHoldName.value"),
-						PennantRegularExpressions.REGEX_NAME, true));
+				this.liabilityHoldName.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_LiabilityHoldName.value"),
+								PennantRegularExpressions.REGEX_NAME, true));
 			}
 			if (!this.bankCode.isReadonly()) {
-				this.bankCode.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_FinAdvancePaymentsDialog_BankCode.value"), null, true));
+				this.bankCode.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_FinAdvancePaymentsDialog_BankCode.value"), null, true));
 			}
 			if (!this.payableLoc.isReadonly()) {
-				this.payableLoc.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_FinAdvancePaymentsDialog_PayableLoc.value"),
-						PennantRegularExpressions.REGEX_ADDRESS, true));
+				this.payableLoc.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_PayableLoc.value"),
+								PennantRegularExpressions.REGEX_ADDRESS, true));
 			}
 			if (!this.printingLoc.isReadonly()) {
-				this.printingLoc.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_FinAdvancePaymentsDialog_PrintingLoc.value"),
-						PennantRegularExpressions.REGEX_ADDRESS, true));
+				this.printingLoc.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_PrintingLoc.value"),
+								PennantRegularExpressions.REGEX_ADDRESS, true));
 			}
 			if (!this.valueDate.isReadonly()) {
 				Date todate = DateUtility.addMonths(DateUtility.getAppDate(), 6);
-				this.valueDate.setConstraint(new PTDateValidator(Labels
-						.getLabel("label_FinAdvancePaymentsDialog_ValueDate.value"), true, DateUtility.getAppDate(),
-						todate, true));
+				this.valueDate.setConstraint(
+						new PTDateValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_ValueDate.value"), true,
+								DateUtility.getAppDate(), todate, true));
 			}
 		} else {
 			if (!this.bankBranchID.isReadonly()) {
-				this.bankBranchID.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_FinAdvancePaymentsDialog_BankBranchID.value"), null, true));
+				this.bankBranchID.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_FinAdvancePaymentsDialog_BankBranchID.value"), null, true));
 			}
 			if (!this.beneficiaryName.isReadonly()) {
-				this.beneficiaryName.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryName.value"),
-						PennantRegularExpressions.REGEX_NAME, true));
+				this.beneficiaryName.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryName.value"),
+								PennantRegularExpressions.REGEX_NAME, true));
 			}
 			if (!this.beneficiaryAccNo.isReadonly()) {
-				this.beneficiaryAccNo.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryAccNo.value"),
-						PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true, accNoLength));
+				this.beneficiaryAccNo.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryAccNo.value"),
+								PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true, accNoLength));
 			}
 		}
 
@@ -1244,8 +1243,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.phoneNumber.setConstraint("");
 		logger.debug("Leaving");
 	}
-
-
 
 	/**
 	 * Remove Error Messages for Fields
@@ -1323,8 +1320,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 					int retValue = auditHeader.getProcessStatus();
 					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 						if (this.moduleType.equals("LOAN")) {
-							getFinAdvancePaymentsListCtrl().doFillFinAdvancePaymentsDetails(
-									this.finAdvancePaymentsDetails);
+							getFinAdvancePaymentsListCtrl()
+									.doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails);
 						} else {
 							getPayOrderIssueDialogCtrl()
 									.doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails);
@@ -1515,9 +1512,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				if (afinAdvancePayments.getPaymentSeq() == loanDetail.getPaymentSeq()) { // Both Current and Existing list rating same
 
 					if (isNewRecord()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace()
-								.getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
@@ -1635,13 +1632,13 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.partnerBankID.setReadonly(false);
 		Filter[] filters = new Filter[4];
 		filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
-		filters[1] = new Filter("Purpose","D", Filter.OP_EQUAL);
-		filters[2] = new Filter("PaymentMode",dType, Filter.OP_EQUAL);
-		filters[3] = new Filter("Active",1,Filter.OP_EQUAL);
+		filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
+		filters[2] = new Filter("PaymentMode", dType, Filter.OP_EQUAL);
+		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.partnerBankID.setFilters(filters);
 		this.partnerBankID.setValue("");
 		this.partnerBankID.setDescription("");
-		
+
 		checkPaymentType(dType);
 	}
 
@@ -1711,17 +1708,16 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 	}
 
-	public void doaddFilter(String payMode){
+	public void doaddFilter(String payMode) {
 		Filter[] filters = new Filter[4];
 		filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
-		filters[1] = new Filter("Purpose","D", Filter.OP_EQUAL);
-		filters[2] = new Filter("PaymentMode",payMode, Filter.OP_EQUAL);
-		filters[3] = new Filter("Active",1,Filter.OP_EQUAL);
+		filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
+		filters[2] = new Filter("PaymentMode", payMode, Filter.OP_EQUAL);
+		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.partnerBankID.setFilters(filters);
-		
+
 	}
-	
-	
+
 	public void onClick$btnGetCustBeneficiary(Event event) {
 		logger.debug("Entering");
 		Filter filter[] = new Filter[1];
