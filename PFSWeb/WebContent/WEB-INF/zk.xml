@@ -44,6 +44,10 @@
 	<!-- ThreadLocal values. -->
 	<!-- ====================================================== -->
 	<listener>
+		<description>ResourceLoader</description>
+		<listener-class>com.pennanttech.framework.web.util.ResourceLoader</listener-class>
+	</listener>
+	<listener>
 		<description>ThreadLocal Synchronization Listener
 		</description>
 		<listener-class>org.zkoss.zkplus.util.ThreadLocalListener
@@ -58,7 +62,6 @@
 	   <listener-class>com.pennant.web.security.util.CsrfMetaAppender</listener-class>
 	</listener>
 	
-
 	<!-- ====================================================== -->
 	<!-- Besides that, you have to specify what -->
 	<!-- ThreadLocal variables you want to sync. -->
@@ -147,10 +150,10 @@
 	    <value>true</value>
 	</library-property>
 
-<library-property>
+	<library-property>
 	    <name>org.zkoss.zk.WCS.cache</name>
 	    <value>true</value>
-	</library-property>
+	</library-property>s
 
 	<device-config>
 		<device-type>ajax</device-type>
