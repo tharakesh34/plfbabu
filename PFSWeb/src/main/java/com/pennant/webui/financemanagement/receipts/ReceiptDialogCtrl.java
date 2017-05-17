@@ -1070,6 +1070,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			Filter.and(fundingAcFilters);
 			this.fundingAccount.setFilters(fundingAcFilters);
 			this.row_fundingAcNo.setVisible(true);
+			this.row_remarks.setVisible(true);
 			
 			if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)
 					|| StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_DD)) {
@@ -1079,7 +1080,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				this.bankCode.setMandatoryStyle(true);
 				this.row_DepositDate.setVisible(true);
 				this.row_PaymentRef.setVisible(false);
-				this.row_remarks.setVisible(false);
 				
 				if(StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)){
 					this.row_ChequeAcNo.setVisible(true);
@@ -1113,7 +1113,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				this.row_DepositDate.setVisible(false);
 				this.row_ChequeAcNo.setVisible(false);
 				this.row_PaymentRef.setVisible(false);
-				this.row_remarks.setVisible(true);
 				
 				if(isUserAction){
 					this.receivedDate.setValue(DateUtility.getAppDate());
@@ -1126,7 +1125,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				this.row_DepositDate.setVisible(false);
 				this.row_ChequeAcNo.setVisible(false);
 				this.row_PaymentRef.setVisible(true);
-				this.row_remarks.setVisible(true);
 			}
 		}
 		logger.debug("Leaving");
@@ -2984,7 +2982,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_CHEQUE)){
 			
 			if(!this.chequeAcNo.isReadonly()){
-				this.chequeAcNo.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptDialog_ChequeAccountNo.value"), null, true));
+				this.chequeAcNo.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptDialog_ChequeAccountNo.value"), null, false));
 			}
 		}
 		
@@ -3007,7 +3005,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if(StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_DD)){
 					label = Labels.getLabel("label_ReceiptDialog_DDFavourNo.value");
 				}
-				this.favourNo.setConstraint(new PTStringValidator(label, PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+				this.favourNo.setConstraint(new PTStringValidator(label, PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true, 6, 50));
 			}
 			
 			if(!this.valueDate.isDisabled()){
@@ -3031,7 +3029,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			
 			if(!this.depositNo.isReadonly()){
 				this.depositNo.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptDialog_depositNo.value"),
-						PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+						PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, false));
 			}
 		}
 		
@@ -3052,7 +3050,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		if(!this.remarks.isReadonly()){
 			this.remarks.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptDialog_Remarks.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, false));
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		logger.debug("Leaving");

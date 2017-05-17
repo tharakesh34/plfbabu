@@ -320,10 +320,10 @@
 													id="depositDate" width="100px" />
 											</hbox>
 											<label
-												id="label_ReceiptCancellationDialog_depositNo"
+												id="label_ReceiptCancellationDialog_depositNo" visible="false"
 												value="${c:l('label_ReceiptCancellationDialog_depositNo.value')}" />
 											<hbox
-												id="hbox_ReceiptCancellationDialog_depositNo">
+												id="hbox_ReceiptCancellationDialog_depositNo" visible="false">
 												<space spacing="2px"
 													sclass="mandatory" />
 												<uppercasebox

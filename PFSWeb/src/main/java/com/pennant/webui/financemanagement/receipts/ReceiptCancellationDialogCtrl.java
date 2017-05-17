@@ -467,6 +467,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			this.gb_ReceiptDetails.setVisible(true);
 			this.caption_receiptDetail.setLabel(this.receiptMode.getSelectedItem().getLabel());
 			this.receiptAmount.setMandatory(false);
+			this.row_fundingAcNo.setVisible(true);
 
 			if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)
 					|| StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_DD)) {
@@ -476,14 +477,11 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 				this.bankCode.setMandatoryStyle(true);
 				this.row_DepositDate.setVisible(true);
 				this.row_PaymentRef.setVisible(false);
-				this.row_remarks.setVisible(false);
 
 				if(StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)){
-					this.row_fundingAcNo.setVisible(true);
 					this.row_ChequeAcNo.setVisible(true);
 					this.label_ReceiptCancellationDialog_favourNo.setValue(Labels.getLabel("label_ReceiptCancellationDialog_ChequeFavourNo.value"));
 				}else{
-					this.row_fundingAcNo.setVisible(false);
 					this.row_ChequeAcNo.setVisible(false);
 					this.label_ReceiptCancellationDialog_favourNo.setValue(Labels.getLabel("label_ReceiptCancellationDialog_DDFavourNo.value"));
 				}
@@ -496,8 +494,6 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 				this.row_DepositDate.setVisible(false);
 				this.row_ChequeAcNo.setVisible(false);
 				this.row_PaymentRef.setVisible(false);
-				this.row_fundingAcNo.setVisible(true);
-				this.row_remarks.setVisible(true);
 
 			} else {
 				this.row_favourNo.setVisible(false);
@@ -507,7 +503,6 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 				this.row_ChequeAcNo.setVisible(false);
 				this.row_fundingAcNo.setVisible(false);
 				this.row_PaymentRef.setVisible(true);
-				this.row_remarks.setVisible(true);
 			}
 		}
 		logger.debug("Leaving");

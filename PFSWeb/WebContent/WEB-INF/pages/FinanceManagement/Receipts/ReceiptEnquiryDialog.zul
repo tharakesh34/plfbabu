@@ -290,10 +290,10 @@
 											width="100px" />
 									</hbox>
 									<label
-										id="label_ReceiptDialog_depositNo"
+										id="label_ReceiptDialog_depositNo" visible="false"
 										value="${c:l('label_ReceiptDialog_depositNo.value')}" />
 									<hbox
-										id="hbox_ReceiptDialog_depositNo">
+										id="hbox_ReceiptDialog_depositNo" visible="false">
 										<space spacing="2px"
 											sclass="mandatory" />
 										<uppercasebox id="depositNo"
