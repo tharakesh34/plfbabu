@@ -426,4 +426,12 @@ FROM         AMTVehicleDealer T1 LEFT OUTER JOIN
              RMTCountryVsProvince T9 ON T1.Emirates = T9.CPProvince
 	</createView>
 	</changeSet>
+	<changeSet id="36" author="Irfan">
+	<sql>
+	update AMTVEHICLEDEALER set ZipCode='1';
+	update AMTVEHICLEDEALER set Active=1;
+	</sql>
+	<addNotNullConstraint tableName="AMTVEHICLEDEALER" columnName="ZipCode" columnDataType="varchar2(20)"/>
+	<addNotNullConstraint tableName="AMTVEHICLEDEALER_TEMP" columnName="ZipCode" columnDataType="varchar2(20)"/>
+	</changeSet>
 </databaseChangeLog>
