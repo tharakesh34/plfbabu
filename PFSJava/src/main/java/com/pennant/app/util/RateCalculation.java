@@ -81,7 +81,11 @@ public class RateCalculation {
 				fValue = fValue.add(schAmount.multiply(BigDecimal.valueOf(Math.pow((xirr.doubleValue() + 1.0), (dateDiff / 365.0)))));
 				fDerivative = fDerivative.add(schAmount.multiply(BigDecimal.valueOf((1.0 / 365.0) * dateDiff * Math.pow((xirr.doubleValue() + 1.0), (dateDiff / 365.0) - 1.0))));
 			}
-
+			
+			if(fDerivative.compareTo(BigDecimal.ZERO)==0){
+				break;
+			}
+				
 			xirr_One = xirr.subtract(fValue.divide(fDerivative, 15, RoundingMode.HALF_DOWN));
 			err = Math.abs(xirr_One.subtract(xirr).doubleValue());
 			xirr = xirr_One;

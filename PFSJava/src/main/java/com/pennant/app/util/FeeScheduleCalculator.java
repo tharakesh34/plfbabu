@@ -61,7 +61,7 @@ public class FeeScheduleCalculator {
 	}
 
 	/**
-	 * Method for Processing Schedule calculation to get the Total Desired Profit by including Planned Deferment Terms
+	 * Method for Processing Schedule calculation to set the Fee Scheduled based on the Schedule Fee method 
 	 * 
 	 * @param finScheduleData
 	 * @return
@@ -71,16 +71,17 @@ public class FeeScheduleCalculator {
 
 		Map<Date, Integer> rpySchdMap = new HashMap<Date, Integer>();
 		Map<Date, Integer> hldSchdMap = new HashMap<Date, Integer>();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
+		List<FinFeeDetail> feeDetails;
 		Date evtFromDate = null;
 		boolean isNewLoan = false;
 
-		if (finMain.isNew() || StringUtils.equals(finMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+		if (financeMain.isNew() || StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			isNewLoan = true;
 		}
-
-		List<FinFeeDetail> feeDetails = finScheduleData.getFinFeeDetailList();
+		
+		feeDetails = finScheduleData.getFinFeeDetailList();
 
 		// No Fees available
 		if (feeDetails == null || feeDetails.isEmpty()) {
@@ -94,7 +95,7 @@ public class FeeScheduleCalculator {
 
 		//Event From Date
 		if (isNewLoan) {
-			evtFromDate = finMain.getFinStartDate();
+			evtFromDate = financeMain.getFinStartDate();
 		} else {
 			if (evtFromDate == null) {
 				evtFromDate = DateUtility.getAppDate();
@@ -105,17 +106,34 @@ public class FeeScheduleCalculator {
 			}
 		}
 
-		//Fill Repayment Schedules to Map to simplify the schedule search
+		//Fill Repayments Schedules to Map to simplify the schedule search
 		fillSchdMap(finScheduleData, evtFromDate, rpySchdMap, hldSchdMap);
+		String feeScheduleMethod ;
+		
+		for (FinFeeDetail finFeeDetail : feeDetails) {
 
-		for (int i = 0; i < feeDetails.size(); i++) {
-			if (isNewLoan) {
-				prepareNewLoanSchd(finScheduleData, rpySchdMap, i);
-			} else {
-				prepareExistingLoanSchd(finScheduleData, rpySchdMap, i, evtFromDate);
+			if(finFeeDetail.getRemainingFee().compareTo(BigDecimal.ZERO) <= 0){
+				continue;
 			}
 
-			calFeeSchd(finScheduleData, rpySchdMap, i, evtFromDate);
+			//If Not Schedule Fee method Clear the Fee Schedule Details
+			feeScheduleMethod = finFeeDetail.getFeeScheduleMethod();
+			if(feeScheduleMethod.equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)
+					|| feeScheduleMethod.equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+
+				if(finFeeDetail.getFinFeeScheduleDetailList() != null){
+					finFeeDetail.getFinFeeScheduleDetailList().clear();
+				}
+				continue;
+			}
+
+			if (isNewLoan) {
+				prepareNewLoanSchd(financeMain, rpySchdMap, finFeeDetail);
+			} else {
+				prepareExistingLoanSchd(financeMain, rpySchdMap, finFeeDetail, evtFromDate);
+			}
+
+			calFeeSchd(financeMain, rpySchdMap, finFeeDetail, evtFromDate);
 		}
 
 		setFeeToSchd(finScheduleData, rpySchdMap, hldSchdMap);
@@ -124,12 +142,16 @@ public class FeeScheduleCalculator {
 
 		return finScheduleData;
 	}
+	
+	/**
+	 * Calculate the recalculate Terms for new terms
+	 * @param financemain
+	 * @param rpySchdMap
+	 * @param feeDetail
+	 */
+	private static void prepareNewLoanSchd(FinanceMain financemain, Map<Date, Integer> rpySchdMap, FinFeeDetail feeDetail) {
 
-	public static void prepareNewLoanSchd(FinScheduleData finScheduleData, Map<Date, Integer> rpySchdMap, int feeIdx) {
-
-		List<FinFeeDetail> feeDetails = finScheduleData.getFinFeeDetailList();
-		FinFeeDetail feeDetail = feeDetails.get(feeIdx);
-		List<FinFeeScheduleDetail> feeScheduleDetails = feeDetail.getFinFeeScheduleDetailList();
+ 		List<FinFeeScheduleDetail> feeScheduleDetails = feeDetail.getFinFeeScheduleDetailList();
 
 		int recalTerms = 0;
 		BigDecimal recalFee = BigDecimal.ZERO;
@@ -149,26 +171,27 @@ public class FeeScheduleCalculator {
 		}
 
 		recalFee = feeDetail.getRemainingFee();
+		
+		feeScheduleDetails.clear();
+		
 
-		//Reset Fee Schedules
-		for (int i = 0; i < feeScheduleDetails.size(); i++) {
-			feeScheduleDetails.remove(i);
-			i = i - 1;
-		}
-
-		finScheduleData.getFinanceMain().setRecalTerms(recalTerms);
-		finScheduleData.getFinanceMain().setRecalFee(recalFee);
-
+		financemain.setRecalTerms(recalTerms);
+		financemain.setRecalFee(recalFee);
 	}
 
-	public static void prepareExistingLoanSchd(FinScheduleData finScheduleData, Map<Date, Integer> rpySchdMap,
-			int feeIdx, Date evtFromDate) {
+	/**
+	 * 
+	 * @param financeMain
+	 * @param rpySchdMap
+	 * @param feeIdx
+	 * @param evtFromDate
+	 */
+	private static void prepareExistingLoanSchd(FinanceMain financeMain, Map<Date, Integer> rpySchdMap,
+			FinFeeDetail finFeeDetail, Date evtFromDate) {
 		logger.debug("Entering");
 
-		FinanceMain finMain = finScheduleData.getFinanceMain();
 
-		List<FinFeeDetail> feeDetails = finScheduleData.getFinFeeDetailList();
-		List<FinFeeScheduleDetail> feeSchdDetails = feeDetails.get(feeIdx).getFinFeeScheduleDetailList();
+		List<FinFeeScheduleDetail> feeSchdDetails = finFeeDetail.getFinFeeScheduleDetailList();
 		FinFeeScheduleDetail feeSchdDetail;
 
 		BigDecimal totalSchdFee = BigDecimal.ZERO;
@@ -226,7 +249,7 @@ public class FeeScheduleCalculator {
 			}
 
 			if (!isDateFound) {
-				if (rpySchdList.get(i).compareTo(finMain.getReqMaturity()) <= 0) {
+				if (rpySchdList.get(i).compareTo(financeMain.getReqMaturity()) <= 0) {
 					availableTerms = availableTerms + 1;
 				}
 			}
@@ -238,36 +261,34 @@ public class FeeScheduleCalculator {
 		}
 
 		if (availableTerms < recalTerms
-				|| StringUtils.equals(feeDetails.get(feeIdx).getFeeScheduleMethod(),
+				|| StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
 						CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)) {
 			recalTerms = availableTerms;
 		}
 
-		finScheduleData.getFinanceMain().setRecalTerms(recalTerms);
-		finScheduleData.getFinanceMain().setRecalFee(recalFee);
+		financeMain.setRecalTerms(recalTerms);
+		financeMain.setRecalFee(recalFee);
 
 		logger.debug("Leaving");
 
 	}
 
-	public static void calFeeSchd(FinScheduleData finScheduleData, Map<Date, Integer> rpySchdMap, int feeIdx,
+	private static void calFeeSchd(FinanceMain financeMain, Map<Date, Integer> rpySchdMap, FinFeeDetail finFeeDetail,
 			Date evtFromDate) {
 
 		logger.debug("Entering");
 
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		List<FinFeeDetail> feeDetails = finScheduleData.getFinFeeDetailList();
-		List<FinFeeScheduleDetail> feeSchdDetails = feeDetails.get(feeIdx).getFinFeeScheduleDetailList();
+		List<FinFeeScheduleDetail> feeSchdDetails = finFeeDetail.getFinFeeScheduleDetailList();
 		FinFeeScheduleDetail feeSchdDetail;
 
-		long feeID = feeDetails.get(feeIdx).getFeeID();
+		long feeID = finFeeDetail.getFeeID();
 		int schTerms = 0;
-		int recalTerms = finMain.getRecalTerms();
-		BigDecimal recalFee = finMain.getRecalFee();
+		int recalTerms = financeMain.getRecalTerms();
+		BigDecimal recalFee = financeMain.getRecalFee();
 
 		BigDecimal totalNewSchdFee = BigDecimal.ZERO;
 		BigDecimal newSchdFee = recalFee.divide(new BigDecimal(recalTerms), 0, RoundingMode.HALF_DOWN);
-		newSchdFee = CalculationUtil.roundAmount(newSchdFee, finMain.getCalRoundingMode(), finMain.getRoundingTarget());
+		newSchdFee = CalculationUtil.roundAmount(newSchdFee, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
 
 		//Find Total Available Repayment Schedules for Fee Recalculation
 		List<Date> rpySchdList = new ArrayList<>(rpySchdMap.keySet());
@@ -314,7 +335,7 @@ public class FeeScheduleCalculator {
 
 	}
 
-	public static void fillSchdMap(FinScheduleData finScheduleData, Date evtFromDate, Map<Date, Integer> rpySchdMap,
+	private static void fillSchdMap(FinScheduleData finScheduleData, Date evtFromDate, Map<Date, Integer> rpySchdMap,
 			Map<Date, Integer> hldSchdMap) {
 		logger.debug("Entering");
 
@@ -325,7 +346,7 @@ public class FeeScheduleCalculator {
 		for (int i = 0; i < finSchdDetails.size(); i++) {
 			curSchd = finSchdDetails.get(i);
 
-			curSchd.setFeeSchd(BigDecimal.ZERO);
+			curSchd.setFeeSchd(BigDecimal.ZERO);							//This might cause issue  in servicing
 
 			if (curSchd.getSchDate().before(evtFromDate)) {
 				continue;
@@ -353,7 +374,7 @@ public class FeeScheduleCalculator {
 
 	}
 
-	public static void setFeeToSchd(FinScheduleData finScheduleData, Map<Date, Integer> rpySchdMap,
+	private static void setFeeToSchd(FinScheduleData finScheduleData, Map<Date, Integer> rpySchdMap,
 			Map<Date, Integer> hldSchdMap) {
 		logger.debug("Entering");
 

@@ -2838,10 +2838,9 @@ public class ScheduleCalculator {
 			 * BigDecimal(termsPerYear));
 			 */
 
-			//FIXME: PV: 10MAY17: Should remove comments.
-/*			cal_XIRR = RateCalculation.calculateXIRR(schAmountList, repayDateList);
+			cal_XIRR = RateCalculation.calculateXIRR(schAmountList, repayDateList);
 			cal_XIRR_WithFee = RateCalculation.calculateXIRR(schAmountListWithFee, repayDateList);
-*/		}
+		}
 
 		finMain.setAnualizedPercRate(cal_XIRR.setScale(9));
 		finMain.setEffectiveRateOfReturn(cal_XIRR_WithFee.setScale(9));

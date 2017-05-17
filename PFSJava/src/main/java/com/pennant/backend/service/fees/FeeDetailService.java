@@ -512,9 +512,9 @@ public class FeeDetailService {
 	public List<FinFeeDetail> getFinFeeDetailList() {
 		List<FinFeeDetail> finFeeDetailTemp = new ArrayList<FinFeeDetail>();
 		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-			if (finFeeDetail.isRcdVisible()) {
+		//	if (finFeeDetail.isRcdVisible()) {
 				finFeeDetailTemp.add(finFeeDetail);
-			}
+			//}
 		}
 		return finFeeDetailTemp;
 	}

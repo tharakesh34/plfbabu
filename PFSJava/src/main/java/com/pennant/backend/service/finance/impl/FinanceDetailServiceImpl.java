@@ -341,10 +341,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeDetail.setJountAccountDetailList(getJointAccountDetailService().getJoinAccountDetail(finReference,
 				"_TView"));
 
-		// Accounting Fee Charge Details TODO: Is it required?
-		scheduleData.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finReference, procEdtEvent, false,
-				"_TView"));
-
 		// Finance Fee Details
 		financeDetail.getFinScheduleData().setFinFeeDetailList(
 				getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView"));
@@ -733,7 +729,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Finance Fee Details
-		scheduleData.setFinFeeDetailList(getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView"));
+		scheduleData.getFinFeeDetailList().addAll((getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView")));
 
 		// Collateral Details
 		if (ImplementationConstants.COLLATERAL_INTERNAL) {
@@ -768,10 +764,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinanceDetail financeDetail = getFinSchdDetailById(finReference, "_View", true);
 		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
 		FinanceMain financeMain = scheduleData.getFinanceMain();
-
-		//Finance Accounting Fee Charge Details
-		scheduleData
-				.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finReference, procEdtEvent, true, "_View"));
 
 		// Finance Fee Details
 		scheduleData.setFinFeeDetailList(getFinFeeDetailService().getFinFeeDetailById(finReference, true, "_View"));
@@ -886,10 +878,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 			financeDetail.setRolledoverFinanceHeader(header);
 		}
-
-		//Finance Accounting Fee Charge Details
-		scheduleData.setFeeRules(getFinFeeChargesDAO()
-				.getFeeChargesByFinRef(finReference, procEdtEvent, isWIF, "_View"));
 
 		if (isWIF && reqCustDetail && scheduleData.getFinanceMain() != null) {
 
@@ -1107,10 +1095,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Finance Service Instructions
 		financeDetail.getFinScheduleData().setFinServiceInstructions(
 				getFinServiceInstructionDAO().getFinServiceInstructions(finReference, "_Temp", procEdtEvent));
-
-		//Finance Accounting Fee Charge Details TODO
-		scheduleData
-				.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finReference, procEdtEvent, true, "_View"));
 
 		// Finance Fee Details
 		financeDetail.getFinScheduleData().setFinFeeDetailList(
@@ -1383,14 +1367,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, isWIF));
 			
  			// Fee Details
-			scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinFeeDetailByFinRef(finReference, false, "_View"));
-
+			List<FinFeeDetail> finOriginationFeeList = getFinFeeDetailDAO().getFinFeeDetailByFinRef(finReference, false, "_View");
+			scheduleData.setFinFeeDetailList(finOriginationFeeList);
+			
 			// Finance Fee Schedule Details
-			if (scheduleData.getFinFeeDetailList() != null && !scheduleData.getFinFeeDetailList().isEmpty()) {
+			if (finOriginationFeeList != null && !finOriginationFeeList.isEmpty()) {
 
 				List<Long> feeIDList = new ArrayList<>();
-				for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++) {
-					FinFeeDetail feeDetail = scheduleData.getFinFeeDetailList().get(i);
+				for (int i = 0; i < finOriginationFeeList.size(); i++) {
+					FinFeeDetail feeDetail = finOriginationFeeList.get(i);
 
 					if (StringUtils.equals(feeDetail.getFeeScheduleMethod(),
 							CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
@@ -1399,6 +1384,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							|| StringUtils.equals(feeDetail.getFeeScheduleMethod(),
 									CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)) {
 						feeIDList.add(feeDetail.getFeeID());
+						feeDetail.setRcdVisible(false);
 					}
 				}
 
@@ -1422,8 +1408,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 						}
 
-						for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++) {
-							FinFeeDetail feeDetail = scheduleData.getFinFeeDetailList().get(i);
+						for (int i = 0; i < finOriginationFeeList.size(); i++) {
+							FinFeeDetail feeDetail = finOriginationFeeList.get(i);
 							if (schFeeMap.containsKey(feeDetail.getFeeID())) {
 								feeDetail.setFinFeeScheduleDetailList(schFeeMap.get(feeDetail.getFeeID()));
 							}
@@ -5182,27 +5168,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 			}
 
-			// Fee Details Waiver Validations
-			//=======================================
-			List<FeeRule> feeRuleList = financeDetail.getFinScheduleData().getFeeRules();
-			if (feeRuleList != null && !feeRuleList.isEmpty()) {
-
-				for (FeeRule feeRule : feeRuleList) {
-
-					String[] errParm1 = new String[1];
-					String[] valueParm1 = new String[1];
-					valueParm[0] = feeRule.getFeeCodeDesc();
-					errParm[0] = PennantJavaUtil.getLabel("label_FeeCode") + ":" + valueParm[0];
-
-					BigDecimal maxWaiverAmt = feeRule.getFeeAmount().multiply(feeRule.getWaiverPerc())
-							.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
-					if (feeRule.getWaiverAmount().compareTo(maxWaiverAmt) > 0) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(
-								PennantConstants.KEY_FIELD, "30537", errParm1, valueParm1), usrLanguage));
-					}
-				}
-			}
-
 			//Finance Insurance Validation
 			//validate the Insurances against the finance Type having list of configured insurances
 			List<String> mandPolicyList;
@@ -6224,7 +6189,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (logKey == 0) {
 			finSchData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(finSchData.getFinanceMain().getFinType(),
 					"_AView"));
-			finSchData.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finReference, "", false, ""));
 			finSchData = getFinMaintainenceDetails(finSchData);
 			finSchData.setAccrueValue(getAccrueAmount(finReference));
 		}
