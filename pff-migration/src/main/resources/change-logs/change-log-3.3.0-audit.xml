@@ -27,4 +27,7 @@
 	</sql>
 	<addNotNullConstraint tableName="ADTAMTVEHICLEDEALER" columnName="ZipCode" columnDataType="varchar2(20)"/>
 	</changeSet>
+	<changeSet id="04" author="Irfan">
+	<addNotNullConstraint tableName="ADTAMTVEHICLEDEALER" columnName="Active" columnDataType="boolean"/>
+	</changeSet>
 </databaseChangeLog>
