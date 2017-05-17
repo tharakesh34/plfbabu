@@ -164,7 +164,6 @@ public class PayOrderIssueListCtrl extends GFCBaseListCtrl<PayOrderIssueHeader> 
 		// Render the page and display the data.
 		doRenderPage();
 		search();
-
 	}
 
 	/**

@@ -403,6 +403,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					finFeeDetail.setRecordType("");
 					finFeeDetail.setRecordStatus("");
 				}
+				List<FinFeeDetail> originationFeeList = new ArrayList<>();
+				originationFeeList.addAll(financeDetail.getFinScheduleData().getFinFeeDetailActualList());
+				finFeeDetailList = convertToFinanceFees(financeDetail.getFinTypeFeesList());
+
+				calculateFees(finFeeDetailList, financeDetail.getFinScheduleData());
+ 				financeDetail.getFinScheduleData().getFinFeeDetailList().addAll(originationFeeList);
+
 				doFillFinFeeDetailList(financeDetail.getFinScheduleData().getFinFeeDetailActualList());
 			}else{
 				finFeeDetailList = convertToFinanceFees(financeDetail.getFinTypeFeesList());
@@ -641,6 +648,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			int formatter = CurrencyUtil.getFormat(aFinScheduleData.getFinanceMain().getFinCcy());
 			for (FinFeeDetail finFeeDetail : this.finFeeDetailList) {
 				if (!finFeeDetail.isRcdVisible()) {
+					finFeeDetail.setDataModified(isDataMaintained(finFeeDetail, finFeeDetail.getBefImage()));
+					if(StringUtils.isBlank(aFinScheduleData.getFinanceMain().getRecordType())) {
+						finFeeDetail.setNewRecord(true);
+						finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					}
 					continue;
 				}
 

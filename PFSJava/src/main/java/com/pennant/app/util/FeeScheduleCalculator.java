@@ -284,6 +284,11 @@ public class FeeScheduleCalculator {
 		long feeID = finFeeDetail.getFeeID();
 		int schTerms = 0;
 		int recalTerms = financeMain.getRecalTerms();
+		
+		//FIXME Temporary Fix
+		if(recalTerms == 0) {
+			return;
+		}
 		BigDecimal recalFee = financeMain.getRecalFee();
 
 		BigDecimal totalNewSchdFee = BigDecimal.ZERO;

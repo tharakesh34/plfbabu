@@ -730,7 +730,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Finance Fee Details
-		scheduleData.getFinFeeDetailList().addAll((getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView")));
+		scheduleData.getFinFeeDetailList().addAll((getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView", eventCodeRef)));
 
 		// Collateral Details
 		if (ImplementationConstants.COLLATERAL_INTERNAL) {
@@ -1368,25 +1368,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, isWIF));
 			
  			// Fee Details
-			List<FinFeeDetail> finOriginationFeeList = getFinFeeDetailDAO().getFinFeeDetailByFinRef(finReference, false, "_View");
+			List<FinFeeDetail> finOriginationFeeList = getFinFeeDetailDAO().getFinScheduleFees(finReference, false, "_View");
 			scheduleData.setFinFeeDetailList(finOriginationFeeList);
 			
 			// Finance Fee Schedule Details
 			if (finOriginationFeeList != null && !finOriginationFeeList.isEmpty()) {
 
 				List<Long> feeIDList = new ArrayList<>();
-				for (int i = 0; i < finOriginationFeeList.size(); i++) {
-					FinFeeDetail feeDetail = finOriginationFeeList.get(i);
-
-					if (StringUtils.equals(feeDetail.getFeeScheduleMethod(),
-							CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
-							|| StringUtils.equals(feeDetail.getFeeScheduleMethod(),
-									CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)
-							|| StringUtils.equals(feeDetail.getFeeScheduleMethod(),
-									CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)) {
-						feeIDList.add(feeDetail.getFeeID());
-						feeDetail.setRcdVisible(false);
-					}
+				for (FinFeeDetail feeDetail : finOriginationFeeList) {
+					feeIDList.add(feeDetail.getFeeID());
+					feeDetail.setRcdVisible(false);
 				}
 
 				if (!feeIDList.isEmpty()) {

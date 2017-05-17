@@ -117,6 +117,20 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	@Override
+	public List<FinFeeDetail> getFinFeeDetailById(String finReference, boolean isWIF, String type, String eventCodeRef) {
+		logger.debug("Entering");
+		List<FinFeeDetail> finFeeDetails = getFinFeeDetailDAO().getFinFeeDetailByFinRef(finReference, isWIF, type, eventCodeRef);
+		// Finance Fee Schedule Details
+		if (finFeeDetails != null && !finFeeDetails.isEmpty()) {
+			for (FinFeeDetail finFeeDetail : finFeeDetails) {
+				finFeeDetail.setFinFeeScheduleDetailList(getFinFeeScheduleDetailDAO().getFeeScheduleByFeeID(finFeeDetail.getFeeID(), isWIF, type));
+			}
+		}
+		logger.debug("Leaving");
+		return finFeeDetails;
+	}
+	
+	@Override
 	public List<AuditDetail> saveOrUpdate(List<FinFeeDetail> finFeeDetails, String tableType, String auditTranType,boolean isWIF) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -163,7 +177,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					finFeeDetail.setNextTaskId("");
 				}
 				
-				finFeeDetail.setWorkflowId(0);		
+			//	finFeeDetail.setWorkflowId(0);		
 				if (finFeeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					deleteRecord = true;
 				} else if (finFeeDetail.isNewRecord()) {
@@ -285,8 +299,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		for (FinFeeDetail finFeeDetail : finFeeDetails) {
 			
 			if("doApprove".equals(method) && !StringUtils.trimToEmpty(finFeeDetail.getRecordStatus()).equals(PennantConstants.RCD_STATUS_SAVED))  {
-				finFeeDetail.setWorkflowId(0);
-				finFeeDetail.setNewRecord(true);
+				//finFeeDetail.setWorkflowId(0);
+				if (StringUtils.equals(finFeeDetail.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+					finFeeDetail.setNewRecord(true);
+				}
 			} else {
 				finFeeDetail.setWorkflowId(workFlowId);
 			}
@@ -364,8 +380,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 		String[] errParm= new String[1];
 		String[] valueParm= new String[1];
-		valueParm[0]=String.valueOf(finFeeDetail.getFinReference());
-		errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
+		valueParm[0]=String.valueOf(finFeeDetail.getFeeTypeDesc());
+		errParm[0]=PennantJavaUtil.getLabel("FeeType")+":"+valueParm[0];
 
 		if (finFeeDetail.isNew()){ // for New record or new record into work flow
 
