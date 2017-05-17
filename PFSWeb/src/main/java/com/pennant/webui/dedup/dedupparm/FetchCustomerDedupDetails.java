@@ -23,8 +23,7 @@ public class FetchCustomerDedupDetails {
 
 	private final static Logger		logger					= Logger.getLogger(FetchCustomerDedupDetails.class);
 
-	private static final String		CUSTOMERDEDUP_LABELS	= "custCIF,custDOB,custFName,custLName,custCRCPR,custPassportNo,mobileNumber,"
-																+ "custNationality,dedupRule,override,overridenby";
+	private static final String		CUSTOMERDEDUP_LABELS	= "custCIF,custDOB,custShrtName,custCRCPR,mobileNumber,appScore,override";
 
 	private static DedupParmService	dedupParmService;
 	private static CustomerDedupDAO	customerDedupDAO;
