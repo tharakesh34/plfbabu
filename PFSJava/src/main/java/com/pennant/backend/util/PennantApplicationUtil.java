@@ -301,16 +301,19 @@ public class PennantApplicationUtil {
 		return accountNumber;
 	}
 	
-	public static String formatPhoneNumber(String countryCode, String areaCode, String phNumber){
+	public static String formatPhoneNumber(String countryCode, String areaCode,
+			String phNumber) {
 		String phoneNumber = "";
-		if (StringUtils.isNotBlank(countryCode)) {
-			phoneNumber = countryCode +"-";
+		if (StringUtils.isNotBlank(countryCode)
+				&& !"null".equalsIgnoreCase(countryCode)) {
+			phoneNumber = countryCode + "-";
 		}
-		if (StringUtils.isNotBlank(areaCode)) {
-			phoneNumber = phoneNumber+areaCode +"-";
+		if (StringUtils.isNotBlank(areaCode)
+				&& !"null".equalsIgnoreCase(areaCode)) {
+			phoneNumber = phoneNumber + areaCode + "-";
 		}
 		if (StringUtils.isNotBlank(phNumber)) {
-			phoneNumber = phoneNumber+phNumber ;
+			phoneNumber = phoneNumber + phNumber;
 		}
 		return phoneNumber;
 	}

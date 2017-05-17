@@ -161,6 +161,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
@@ -5897,9 +5898,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				} else {
 					if (aFinanceDetail.getCustomerDedupList() != null
 							&& !aFinanceDetail.getCustomerDedupList().isEmpty()) {
-						aFinanceDetail.getCustomerDetails().getCustomer()
-								.setCustCoreBank(aFinanceDetail.getCustomerDedupList().get(0).getCustCoreBank());
-						logger.debug("Posidex Id:" + aFinanceDetail.getCustomerDedupList().get(0).getCustCoreBank());
+						CustomerDedup dedup = aFinanceDetail.getCustomerDedupList().get(0);
+						if (dedup != null) {
+							aFinanceDetail.getCustomerDetails().getCustomer()
+									.setCustCoreBank(dedup.getCustCoreBank());
+						}
+						logger.debug("Posidex Id:" + dedup.getCustCoreBank());
 					}
 				}
 

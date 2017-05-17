@@ -64,7 +64,7 @@ public class FetchFinCustomerDedupDetails {
 			if(StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 				// get customer dedup details from interface
 				custDedupData = dedupParmService.getDedupCustomerDetails(aFinanceDetail.getCustomerDetails());
-				CUSTOMERDEDUP_LABELS = "custCIF,custDOB,custShrtName,custCRCPR,mobileNumber,appScore,override";
+				CUSTOMERDEDUP_LABELS = "custCIF,custDOB,custShrtName,custCRCPR,phoneNumber,appScore,override";
 			} else {
 				custDedupData = getDedupParmService().fetchCustomerDedupDetails(userRole,customerDedup, curLoginUser, aFinanceMain.getFinType());
 			}
