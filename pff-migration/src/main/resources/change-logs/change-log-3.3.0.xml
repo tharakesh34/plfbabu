@@ -191,7 +191,7 @@
 			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
 		</sql>
 	</changeSet>
-	 <changeSet id="18" author="SreeRavali">
+	 <!-- <changeSet id="18" author="SreeRavali">
 		<sql>
 		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
 		
@@ -200,7 +200,7 @@
 		
 		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
 	</sql>
-	</changeSet>
+	</changeSet> -->
 	 <changeSet id="19" author="Madhubabu" >
 	<addColumn tableName="jvpostings_temp">
 		<column name="Reference" type="nvarchar(20)"/>
@@ -278,6 +278,14 @@ FROM                  JVPostings  T1 INNER JOIN
 		<addColumn tableName="PRESENTMENTDETAILS_TEMP">
 			<column name="BOUNCERETURNCODE" type="VARCHAR2(8)"/>
 		</addColumn>
+	</changeSet>	
+		<changeSet id="27" author="Madhubabu">
+		<sql>
+	Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+	insert into secrolegroups values((select max(rolegrpid)+1 from secrolegroups),(select grpid from secgroups where grpcode='FINANCE_REFERENCEDETAIL_MAKER'),
+	(select roleid from secroles where rolecd='MSTGRP1_MAKER'),0,1000,current_timestamp,'','','','','','',0);
+	Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>
 	</changeSet>	
 	
 </databaseChangeLog>
