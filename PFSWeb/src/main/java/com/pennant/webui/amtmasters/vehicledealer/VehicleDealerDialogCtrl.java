@@ -303,7 +303,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		emiratesRegNumb[0] = new Filter("CPCountry", "AE", Filter.OP_EQUAL);
 		this.emirates.setFilters(emiratesRegNumb);
 
-		this.commisionCalRule.setMandatoryStyle(true);
+		this.commisionCalRule.setMandatoryStyle(false);
 		this.commisionCalRule.setTextBoxWidth(161);
 		this.commisionCalRule.setModuleName("Rule");
 		this.commisionCalRule.setValueColumn("RuleCode");
@@ -911,7 +911,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			this.commisionCalRule
 					.setConstraint(new PTStringValidator(
 							Labels.getLabel("label_VehicleDealerDialog_CommisionCalRule.value"),
-							null, true, true));
+							null, false, true));
 		}
 		if (!this.paymentMode.isDisabled()
 				&& !"N".equals(this.commisionPaid.getSelectedItem().getValue()

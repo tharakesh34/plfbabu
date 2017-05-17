@@ -984,6 +984,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND FinStartDate < '" + appDate+"' " );
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RECEIPT)){
 			//whereClause.append(" AND FinStartDate < '" + appDate+"' " );
+			whereClause.append(" AND FinCurrAssetValue > 0 "); 
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SCHDRPY)){
 			whereClause.append(" AND FinStartDate < '" + appDate+"' " );
 			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 

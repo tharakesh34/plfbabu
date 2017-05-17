@@ -51,6 +51,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
@@ -82,15 +83,18 @@ public class VASProductCategoryListCtrl extends GFCBaseListCtrl<VASProductCatego
 
 	protected Listheader						listheader_ProductCtg;
 	protected Listheader						listheader_ProductCtgDesc;
+	protected Listheader 						listheader_ProductCtgActive;
 
 	protected Button							button_VASProductCategoryList_NewVASProductCategory;
 	protected Button							button_VASProductCategoryList_VASProductCategorySearch;
 
 	protected Textbox							productCtg;
 	protected Textbox							productCtgDesc;
+	protected Checkbox							active;
 
 	protected Listbox							sortOperator_ProductCtg;
 	protected Listbox							sortOperator_ProductCtgDesc;
+	protected Listbox							sortOperator_Active;
 
 	private transient VASProductCategoryService	vASProductCategoryService;
 
@@ -130,6 +134,8 @@ public class VASProductCategoryListCtrl extends GFCBaseListCtrl<VASProductCatego
 				Operators.STRING);
 		registerField("productCtgDesc", listheader_ProductCtgDesc, SortOrder.NONE, productCtgDesc,
 				sortOperator_ProductCtgDesc, Operators.STRING);
+		registerField("active", listheader_ProductCtgActive, SortOrder.NONE, active,
+				sortOperator_Active, Operators.BOOLEAN);
 
 		// Render the page and display the data.
 		doRenderPage();

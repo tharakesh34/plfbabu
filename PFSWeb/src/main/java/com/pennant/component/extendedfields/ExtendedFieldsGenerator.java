@@ -815,7 +815,6 @@ public class ExtendedFieldsGenerator {
 				} else if(StringUtils.isNotBlank(detail.getFieldDefaultValue())){
 					countryCode.setValue(detail.getFieldDefaultValue());
 				}
-				fieldValueMap.get(detail.getFieldName()).toString();
 				Textbox areaCode = new Textbox();
 				areaCode.setId("ad_".concat(detail.getFieldName().concat("_AC")));
 				areaCode.setMaxlength(4);

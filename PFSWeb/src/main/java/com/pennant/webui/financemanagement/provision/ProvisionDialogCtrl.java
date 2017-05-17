@@ -465,7 +465,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		appendCustomerDetailTab();
 
 		// Fee Details Tab
-		appendFeeDetailTab();
+		appendFeeDetailTab(true);
 
 		// Schedule Details Tab Adding
 		appendScheduleDetailTab(true, false);

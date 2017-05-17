@@ -368,6 +368,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Space space_oDGraceDays; // autoWired
 	protected Space space_oDChargeType; // autoWired
 
+	protected Groupbox	gb_VasDetails;
 	protected Textbox alwdVasProduct;
 	protected Button btnAlwVasProducts;
 	protected Textbox mandVasProduct;
@@ -874,14 +875,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.row_Deferement.setVisible(ImplementationConstants.ALLOW_PLANNED_DEFERMENTS);
 		this.row_pftUnchanged.setVisible(ImplementationConstants.ALLOW_PFTUNCHG);
 
-		if (isWorkFlowEnabled()) {
-			this.groupboxWf.setVisible(true);
-		} else {
-			this.groupboxWf.setVisible(false);
-		}
-
 		if (ImplementationConstants.ALLOW_QUICK_DISB && !isOverdraft) {
 			this.row_QuickDisb.setVisible(true);
+		}
+		
+		if(ImplementationConstants.ALLOW_VAS && !isOverdraft){
+			this.gb_VasDetails.setVisible(true);
 		}
 
 		this.row_ApplyPricingPolicy.setVisible(ImplementationConstants.ALLOW_PRICINGPOLICY);
@@ -906,7 +905,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		
 		finDepreciationFrq.setVisible(ImplementationConstants.ALLOW_DEPRECIATION);
 		label_FinanceTypeDialog_FinDepreciationFrq.setVisible(ImplementationConstants.ALLOW_DEPRECIATION);
-		
+
+		if (isWorkFlowEnabled()) {
+			this.groupboxWf.setVisible(true);
+		} else {
+			this.groupboxWf.setVisible(false);
+		}
+
 		logger.debug("Leaving");
 		
 	}

@@ -46,6 +46,7 @@ package com.pennant.webui.configuration.vasproducttype.model;
 import java.io.Serializable;
 
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
@@ -70,6 +71,12 @@ public class VASProductTypeListModelItemRenderer implements ListitemRenderer<VAS
 		lc = new Listcell(vASProductType.getProductTypeDesc());
 		lc.setParent(item);
 		lc = new Listcell(vASProductType.getProductCtg());
+		lc.setParent(item);
+		lc = new Listcell();
+		final Checkbox active = new Checkbox();
+		active.setDisabled(true);
+		active.setChecked(vASProductType.isActive());
+		lc.appendChild(active);
 		lc.setParent(item);
 		lc = new Listcell(vASProductType.getRecordStatus());
 		lc.setParent(item);

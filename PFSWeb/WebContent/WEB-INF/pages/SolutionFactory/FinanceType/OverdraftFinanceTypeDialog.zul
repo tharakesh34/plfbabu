@@ -243,7 +243,8 @@
 														id="overrideLimit" checked="false" />
 												</hbox>
 											</row>
-											<row id="row_QuickDisb" visible="false">
+											<row id="row_QuickDisb"
+												visible="false">
 												<label
 													id="label_FinanceTypeDialog_AllowQDP"
 													value="${c:l('label_FinanceTypeDialog_AllowQDP.value')}" />
@@ -296,7 +297,8 @@
 														style="text-align:right" />
 												</hbox>
 											</row>
-											<row id = "row_ApplyPricingPolicy">
+											<row
+												id="row_ApplyPricingPolicy">
 												<label
 													id="label_ApplyRpyPricing"
 													value="${c:l('label_OverDraftFinanceTypeDialog_ApplyRpyPricing.value')}" />
@@ -600,39 +602,44 @@
 											</row>
 										</rows>
 									</grid>
-									<grid sclass="GridLayoutNoBorder"
-										fixedLayout="true" style="border:0px">
-										<columns>
-											<column width="260px" />
-											<column />
-											<column width="260px" />
-											<column />
-										</columns>
-										<rows>
-											<row visible="false">
-												<label
-													id="label_FinanceTypeDialog_AlwVasProducts"
-													value="${c:l('label_OverDraftFinanceTypeDialog_AlwVasProducts.value')}" />
-												<hbox>
-													<textbox
-														id="alwdVasProduct" width="170px" readonly="true" />
-													<button
-														id="btnAlwVasProducts"
-														image="/images/icons/LOVSearch.png" />
-												</hbox>
-												<label
-													id="label_FinanceTypeDialog_MandatoryVasProducts"
-													value="${c:l('label_OverDraftFinanceTypeDialog_MandatoryVasProducts.value')}" />
-												<hbox>
-													<textbox
-														id="mandVasProduct" width="170px" readonly="true" />
-													<button
-														id="btnMandatoryVasProduct"
-														image="/images/icons/LOVSearch.png" />
-												</hbox>
-											</row>
-										</rows>
-									</grid>
+									<groupbox id="gb_VasDetails" visible="false">
+										<caption
+											label="${c:l('label_FinanceTypeDialog_VasDetails')}" />
+										<grid
+											sclass="GridLayoutNoBorder" fixedLayout="true"
+											style="border:0px">
+											<columns>
+												<column width="260px" />
+												<column />
+												<column width="260px" />
+												<column />
+											</columns>
+											<rows>
+												<row>
+													<label
+														id="label_FinanceTypeDialog_AlwVasProducts"
+														value="${c:l('label_OverDraftFinanceTypeDialog_AlwVasProducts.value')}" />
+													<hbox>
+														<textbox
+															id="alwdVasProduct" width="170px" readonly="true" />
+														<button
+															id="btnAlwVasProducts"
+															image="/images/icons/LOVSearch.png" />
+													</hbox>
+													<label
+														id="label_FinanceTypeDialog_MandatoryVasProducts"
+														value="${c:l('label_OverDraftFinanceTypeDialog_MandatoryVasProducts.value')}" />
+													<hbox>
+														<textbox
+															id="mandVasProduct" width="170px" readonly="true" />
+														<button
+															id="btnMandatoryVasProduct"
+															image="/images/icons/LOVSearch.png" />
+													</hbox>
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
 								</groupbox>
 							</div>
 						</tabpanel>
@@ -678,7 +685,8 @@
 												id="financeGrcBaseRate" />
 
 										</row>
-										<row id = "row_ApplyGracePricingPolicy">
+										<row
+											id="row_ApplyGracePricingPolicy">
 											<label
 												id="label_ApplyGrcPricing"
 												value="${c:l('label_OverDraftFinanceTypeDialog_ApplyGrcPricing.value')}" />
@@ -813,7 +821,8 @@
 											<frequencybox
 												id="finGrcRvwFrq" />
 										</row>
-										<row id="row_FinGrcRvwRateApplFor" visible="true">
+										<row
+											id="row_FinGrcRvwRateApplFor" visible="true">
 											<label
 												id="label_FinanceTypeDialog_FinGrcRvwRateApplFor"
 												value="${c:l('label_OverDraftFinanceTypeDialog_FinGrcRvwRateApplFor.value')}" />
@@ -1331,7 +1340,8 @@
 													</hbox>
 												</hbox>
 											</row>
-											<row id="row_RoundingMode">
+											<row
+												id="row_RoundingMode">
 												<label
 													id="label_FinanceTypeDialog_RoundingMode"
 													value="${c:l('label_FinanceTypeDialog_RoundingMode.value')}" />
@@ -1342,11 +1352,12 @@
 														id="roundingMode" width="250px" readonly="true" />
 												</hbox>
 												<label
-													id="label_FinanceTypeDialog_RoundingTarget" 
+													id="label_FinanceTypeDialog_RoundingTarget"
 													value="${c:l('label_FinanceTypeDialog_RoundingTarget.value')}" />
 												<hbox>
 													<space
-														id="space_roundingTarget" sclass="mandatory" spacing="2px" />
+														id="space_roundingTarget" sclass="mandatory"
+														spacing="2px" />
 													<combobox
 														id="roundingTarget" width="250px" readonly="true" />
 												</hbox>
@@ -1450,7 +1461,8 @@
 											<label
 												id="label_FinanceTypeDialog_FinDepreciationReq"
 												value="${c:l('label_OverDraftFinanceTypeDialog_FinDepreciationReq.value')}" />
-											<hbox id="hbox_FinDepreciationReq">
+											<hbox
+												id="hbox_FinDepreciationReq">
 												<space spacing="2px" />
 												<checkbox
 													id="finDepreciationReq" />

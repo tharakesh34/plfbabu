@@ -1305,17 +1305,26 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @throws InterruptedException
 	 */
-	protected void appendFeeDetailTab() throws InterruptedException {
+	protected void appendFeeDetailTab(boolean isLoadProcess) throws InterruptedException {
 		logger.debug("Entering");
 		try {
-			createTab(AssetConstants.UNIQUE_ID_FEE, true);
-			HashMap<String, Object> map = getDefaultArguments();
-			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FEE));
-			map.put("moduleDefiner", this.moduleDefiner);
-			map.put("eventCode", eventCode);
-			map.put("numberOfTermsLabel", Labels.getLabel("label_FinanceMainDialog_NumberOfTerms.value"));
-			feeDetailWindow = Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinFeeDetailList.zul",
-					getTabpanel(AssetConstants.UNIQUE_ID_FEE), map);
+			
+			if (tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_FEE)) == null) {
+				createTab(AssetConstants.UNIQUE_ID_FEE, isLoadProcess);
+			}
+			if(isLoadProcess){
+				
+				Tab tab = (Tab) tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_FEE));
+				tab.setVisible(true);
+				
+				HashMap<String, Object> map = getDefaultArguments();
+				map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FEE));
+				map.put("moduleDefiner", this.moduleDefiner);
+				map.put("eventCode", eventCode);
+				map.put("numberOfTermsLabel", Labels.getLabel("label_FinanceMainDialog_NumberOfTerms.value"));
+				feeDetailWindow = Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinFeeDetailList.zul",
+						getTabpanel(AssetConstants.UNIQUE_ID_FEE), map);
+			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			Messagebox.show(e.toString());

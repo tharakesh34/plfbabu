@@ -581,6 +581,48 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		logger.debug("Leaving");
 	}
 	
+	/**
+	 * Method for rendering or adding VAS fee to existing Fee Details
+	 * @param vasFee
+	 */
+	public void renderVASFee(FinFeeDetail vasFee){
+		logger.debug("Entering");
+		List<FinFeeDetail> feelist = fetchFeeDetails(getFinanceDetail().getFinScheduleData(), false);
+		if(feelist == null){
+			feelist = new ArrayList<>();
+		}
+		feelist.add(vasFee);
+		doFillFinFeeDetailList(feelist);
+		setFinFeeDetailList(feelist);
+		dataChanged = true;
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for rendering or adding VAS fee to existing Fee Details
+	 * @param vasFee
+	 */
+	public void removeVASFee(String vasReferene){
+		logger.debug("Entering");
+		List<FinFeeDetail> feelist = fetchFeeDetails(getFinanceDetail().getFinScheduleData(), false);
+		if(feelist == null){
+			feelist = new ArrayList<>();
+		}
+		for (int i = 0; i < feelist.size(); i++) {
+			
+			FinFeeDetail feeDetail = feelist.get(i);
+			if(StringUtils.equals(feeDetail.getVasReference(), vasReferene)){
+				feelist.remove(i);
+				break;
+			}
+			
+		}
+		doFillFinFeeDetailList(feelist);
+		setFinFeeDetailList(feelist);
+		dataChanged = true;
+		logger.debug("Leaving");
+	}
+	
 	private List<FinFeeDetail> fetchFeeDetails(FinScheduleData aFinScheduleData, boolean validate) {
 		logger.debug("Entering");
 		doClearFeeWrongValueExceptions();
@@ -872,7 +914,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 				Listitem item = new Listitem();
 				Listcell lc;
-				lc = new Listcell(detail.getFeeTypeDesc());
+				if(StringUtils.isNotEmpty(detail.getVasReference())){
+					lc = new Listcell(detail.getVasReference());
+				}else{
+					lc = new Listcell(detail.getFeeTypeDesc());
+				}
 				lc.setParent(item);
 				
 				//Calculate Amount
@@ -1207,7 +1253,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	}
 	
 	private String getComponentId(String feeField,FinFeeDetail finFeeDetail){
-		return  feeField+finFeeDetail.getFinEvent()+"_"+finFeeDetail.getFeeTypeCode();
+		if(StringUtils.isEmpty(finFeeDetail.getVasReference())){
+			return  feeField+finFeeDetail.getFinEvent()+"_"+finFeeDetail.getFeeTypeCode();
+		}else {
+			return  feeField+finFeeDetail.getFinEvent()+"_"+finFeeDetail.getVasReference();
+		}
 	}
 	
 	private boolean isDeleteRecord(String rcdType){

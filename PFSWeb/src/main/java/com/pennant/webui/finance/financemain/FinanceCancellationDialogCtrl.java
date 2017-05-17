@@ -401,7 +401,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		appendCustomerDetailTab();
 
 		// Fee Details
-		appendFeeDetailTab();
+		appendFeeDetailTab(true);
 
 		// Schedule Details
 		appendScheduleDetailTab(true, true);

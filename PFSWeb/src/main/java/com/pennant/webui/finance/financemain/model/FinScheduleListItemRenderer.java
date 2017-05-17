@@ -570,8 +570,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 							BigDecimal actFeeCharge = finFeeDetail.getRemainingFee();
 							if(actFeeCharge.compareTo(BigDecimal.ZERO) >= 0){
 
-								doFillListBox(getFinanceScheduleDetail(), count, finFeeDetail.getFeeTypeDesc(),BigDecimal.ZERO,BigDecimal.ZERO,
-										BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO , BigDecimal.ZERO, actFeeCharge, actFeeCharge,
+								doFillListBox(getFinanceScheduleDetail(), count, StringUtils.isEmpty(finFeeDetail.getFeeTypeDesc()) ? finFeeDetail.getVasReference() :finFeeDetail.getFeeTypeDesc() ,
+										BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO, BigDecimal.ZERO,BigDecimal.ZERO , BigDecimal.ZERO, actFeeCharge, actFeeCharge,
 										getFinanceScheduleDetail().getClosingBalance().subtract(feeChargeAmt).subtract(insuranceAmt).add(actFeeCharge),
 										false, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "#F87217","color_Disbursement",0, null,true,false);
 

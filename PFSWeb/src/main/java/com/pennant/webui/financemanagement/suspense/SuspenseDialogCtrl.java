@@ -376,7 +376,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		appendCustomerDetailTab();
 
 		// Fee Details Tab
-		appendFeeDetailTab();
+		appendFeeDetailTab(true);
 
 		// Schedule Details
 		appendScheduleDetailTab(true, false);

@@ -125,8 +125,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 				aeEvent.setFinReference(financeMain.getFinReference());
 				aeEvent.setPostingUserBranch(postBranch);
-				amountCodes.setPenalty(penaltyPaidNow);
-				amountCodes.setWaiver(waiverAmt);
+				amountCodes.setPenaltyPaid(penaltyPaidNow);
+				amountCodes.setPenaltyWaived(waiverAmt);
 				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
 				aeEvent.setValueDate(dateValueDate);
 				aeEvent.setSchdDate(schdDate);

@@ -240,6 +240,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Combobox										allocationMethod;
 	protected Combobox										effScheduleMethod;
 	protected Decimalbox									remBalAfterAllocation;
+	protected Decimalbox									custPaid;
 	
 	protected Groupbox										gb_ReceiptDetails;
 	protected Caption										caption_receiptDetail;
@@ -952,10 +953,26 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	/**
 	 * Method for Processing Captured details based on Receipt Purpose
 	 * @param event
+	 * @throws InterruptedException 
 	 */
-	public void onChange$receiptPurpose(Event event) {
+	public void onChange$receiptPurpose(Event event) throws InterruptedException {
 		String recPurpose = this.receiptPurpose.getSelectedItem().getValue().toString();
 		checkByReceiptPurpose(recPurpose);
+		
+		/*boolean makeFeeRender = false;
+		if(this.receiptPurpose.getSelectedIndex() > 0){ 
+			if(StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)){
+				eventCode = AccountEventConstants.ACCEVENT_REPAY;
+			}else if(StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){
+				eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
+			}else if(StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+				eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+			}
+
+			makeFeeRender = true;
+		}
+		//Fee Details Tab Addition
+		appendFeeDetailTab(makeFeeRender);*/
 		
 		// To set Payment details by default using Auto Allocation mode , if exists
 		setAutoAllocationPayments();
@@ -2342,7 +2359,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		appendCustomerDetailTab();
 
 		//Fee Details Tab Addition
-		appendFeeDetailTab();
+		appendFeeDetailTab(false);
 
 		// Schedule Details
 		appendScheduleDetailTab(true, false);
@@ -2672,6 +2689,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			remBal = BigDecimal.ZERO;
 		}
 		this.remBalAfterAllocation.setValue(PennantApplicationUtil.formateAmount(remBal, finFormatter));
+		this.custPaid.setValue(PennantApplicationUtil.formateAmount(totalDueAmount.add(totalAdvDueAmount), finFormatter));
 		if(this.remBalAfterAllocation.getValue().compareTo(BigDecimal.ZERO) > 0){
 			
 			if(StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)){
@@ -3301,6 +3319,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					amountCodes.setRpPft(amountCodes.getRpPft().add(rsd.getProfitSchdPayNow()).add(rsd.getLatePftSchdPayNow()));
 					amountCodes.setRpPri(amountCodes.getRpPri().add(rsd.getPrincipalSchdPayNow()));
 					amountCodes.setRpTds(amountCodes.getRpTds().add(rsd.getTdsSchdPayNow()));
+					amountCodes.setRpTds(amountCodes.getRpTds().add(rsd.getTdsSchdPayNow()));
+					amountCodes.setPenaltyWaived(BigDecimal.ZERO);
 					totRpyPri = totRpyPri.add(rsd.getPrincipalSchdPayNow());
 					
 					// Penalties

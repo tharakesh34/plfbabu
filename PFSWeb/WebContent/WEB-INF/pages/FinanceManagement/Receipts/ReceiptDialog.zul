@@ -548,6 +548,15 @@
 														id="remBalAfterAllocation" width="180px" disabled="true"
 														style="font-weight:bold;" />
 												</hbox>
+												<label
+													value="${c:l('label_ReceiptDialog_CustToBePaid.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<decimalbox
+														id="custPaid" width="180px" disabled="true"
+														style="font-weight:bold;" />
+												</hbox>
 											</row>
 										</rows>
 									</grid>

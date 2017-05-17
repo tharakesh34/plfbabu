@@ -2040,7 +2040,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		appendCustomerDetailTab();
 
 		//Fee Details Tab Addition
-		appendFeeDetailTab();
+		appendFeeDetailTab(true);
 
 		// Schedule Details
 		appendScheduleDetailTab(true, false);

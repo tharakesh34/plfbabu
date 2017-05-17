@@ -233,10 +233,16 @@ public class ScheduleGenerator {
 
 			if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) < 0) {
 				curSchd.setActRate(financeMain.getGrcPftRate());
-				curSchd.setCalculatedRate(financeMain.getGrcPftRate());
 				curSchd.setBaseRate(financeMain.getGraceBaseRate());
 				curSchd.setSplRate(financeMain.getGraceSpecialRate());
 				curSchd.setMrgRate(financeMain.getGrcMargin());
+				if(StringUtils.isNotBlank(curSchd.getBaseRate())){
+					BigDecimal calrate = RateUtil.rates(financeMain.getGraceBaseRate(), financeMain.getFinCcy(), financeMain.getGraceSpecialRate(), 
+							financeMain.getGrcMargin(), financeMain.getGrcMinRate(), financeMain.getGrcMaxRate()).getNetRefRateLoan();
+					curSchd.setCalculatedRate(calrate);
+				}else{
+					curSchd.setCalculatedRate(financeMain.getGrcPftRate());
+				}
 				curSchd.setAdvBaseRate(financeMain.getGrcAdvBaseRate());
 				curSchd.setAdvMargin(financeMain.getGrcAdvMargin());
 				curSchd.setAdvPftRate(financeMain.getGrcAdvPftRate());
@@ -251,6 +257,14 @@ public class ScheduleGenerator {
 				curSchd.setAdvBaseRate(financeMain.getRpyAdvBaseRate());
 				curSchd.setAdvMargin(financeMain.getRpyAdvMargin());
 				curSchd.setAdvPftRate(financeMain.getRpyAdvPftRate());
+				
+				if(StringUtils.isNotBlank(curSchd.getBaseRate())){
+					BigDecimal calrate = RateUtil.rates(financeMain.getRepayBaseRate(), financeMain.getFinCcy(), financeMain.getRepaySpecialRate(), 
+							financeMain.getRepayMargin(), financeMain.getRpyMinRate(), financeMain.getRpyMaxRate()).getNetRefRateLoan();
+					curSchd.setCalculatedRate(calrate);
+				}else{
+					curSchd.setCalculatedRate(financeMain.getGrcPftRate());
+				}
 
 				if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0) {
 					curSchd.setSchdMethod(newGrcSchdMethod);

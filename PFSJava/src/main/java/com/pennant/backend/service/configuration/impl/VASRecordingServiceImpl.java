@@ -501,7 +501,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		
 		// Processing Accounting Details
 		if(StringUtils.equals(vASRecording.getRecordType(), PennantConstants.RECORD_TYPE_NEW) || StringUtils.equals(vASRecording.getVasStatus(),"C")){
-			auditHeader = executeAccountingProcess(auditHeader, DateUtility.getAppDate());
+			//auditHeader = executeAccountingProcess(auditHeader, DateUtility.getAppDate());
 		}
 
 		if (vASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -1449,7 +1449,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		VASRecording vASRecording = new VASRecording("");
 		BeanUtils.copyProperties((VASRecording) auditHeader.getAuditDetail().getModelData(), vASRecording);
 
-		String finBranch =null;
 		try {
 			
 			if(vASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
@@ -1498,7 +1497,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			} else {
 				linkedTranId = list.get(0).getLinkedTranId();
 			}
-			finBranch =  list.get(0).getFinBranch();
 			
 			//Method for Checking for Reverse Calculations Based upon Negative Amounts
 			for (ReturnDataSet returnDataSet : list) {

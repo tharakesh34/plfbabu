@@ -707,7 +707,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		appendCustomerDetailTab();
 
 		// Fee Details
-		appendFeeDetailTab();
+		appendFeeDetailTab(true);
 
 		// Agreement Details Tab
 		appendAgreementsDetailTab(true);

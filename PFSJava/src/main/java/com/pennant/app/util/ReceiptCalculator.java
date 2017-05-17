@@ -1580,7 +1580,8 @@ public class ReceiptCalculator implements Serializable {
 					// Adding Fee Details to Map
 					if(pastFeeAmount.compareTo(BigDecimal.ZERO) > 0){
 						receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_FEE+"_"+feeDetail.getFeeID(), pastFeeAmount);
-						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_FEE+"_"+feeDetail.getFeeID(), feeDetail.getFeeTypeDesc());
+						receiptData.getAllocationDescMap().put(RepayConstants.ALLOCATION_FEE+"_"+feeDetail.getFeeID(), 
+								StringUtils.isEmpty(feeDetail.getFeeTypeDesc()) ? feeDetail.getVasReference() : feeDetail.getFeeTypeDesc());
 					}
 				}
 			}

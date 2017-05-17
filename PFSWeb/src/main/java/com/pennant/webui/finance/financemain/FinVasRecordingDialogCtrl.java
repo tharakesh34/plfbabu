@@ -94,8 +94,7 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	protected Groupbox 						finBasicdetails;
 	private Component 						parent = null;
 
-	private Object 							financeMainDialogCtrl = null;
-	private transient FinFeeDetailListCtrl	finFeeDetailListCtrl;
+	private FinanceMainBaseCtrl 			financeMainDialogCtrl = null;
 	private String 							roleCode = "";
 	private FinBasicDetailsCtrl 			finBasicDetailsCtrl;
 	private List<VASRecording> 				vasRecordings = null;
@@ -142,7 +141,7 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			}
 			
 			if (arguments.containsKey("financeMainDialogCtrl")) {
-				this.financeMainDialogCtrl = (Object) arguments.get("financeMainDialogCtrl");
+				this.financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainDialogCtrl");
 			}
 
 			if (arguments.containsKey("roleCode")) {
@@ -151,10 +150,6 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			
 			if (arguments.containsKey("finType")) {
 				this.finType = (String) arguments.get("finType");
-			}
-			
-			if (arguments.containsKey("finFeeDetailListCtrl")) {
-				this.finFeeDetailListCtrl = (FinFeeDetailListCtrl) arguments.get("finFeeDetailListCtrl");
 			}
 			
 			doCheckRights();
@@ -346,7 +341,6 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				
 				map.put("finVasRecordingDialogCtrl", this);
 				map.put("roleCode", this.roleCode);
-				map.put("finFeeDetailListCtrl", getFinFeeDetailListCtrl());
 				map.put("vASRecording", recording);
 
 				// call the zul-file with the parameters packed in a map
@@ -384,10 +378,10 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public Object getFinanceMainDialogCtrl() {
+	public FinanceMainBaseCtrl getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
 	}
-	public void setFinanceMainDialogCtrl(Object financeMainDialogCtrl) {
+	public void setFinanceMainDialogCtrl(FinanceMainBaseCtrl financeMainDialogCtrl) {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
 
@@ -410,14 +404,6 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	}
 	public void setVasConfigurationService(VASConfigurationService vasConfigurationService) {
 		this.vasConfigurationService = vasConfigurationService;
-	}
-
-	public FinFeeDetailListCtrl getFinFeeDetailListCtrl() {
-		return finFeeDetailListCtrl;
-	}
-
-	public void setFinFeeDetailListCtrl(FinFeeDetailListCtrl finFeeDetailListCtrl) {
-		this.finFeeDetailListCtrl = finFeeDetailListCtrl;
 	}
 
 }

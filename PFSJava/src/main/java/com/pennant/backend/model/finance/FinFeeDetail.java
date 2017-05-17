@@ -104,6 +104,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal maxWaiverPerc = BigDecimal.ZERO;
 	private boolean alwModifyFee;
 	private boolean alwModifyFeeSchdMthd;
+	private String vasReference;
 
 	private boolean dataModified = false;
 	private boolean rcdVisible = true;
@@ -396,6 +397,14 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setFinFeeScheduleDetailList(List<FinFeeScheduleDetail> finFeeScheduleDetailList) {
 		this.finFeeScheduleDetailList = finFeeScheduleDetailList;
+	}
+
+	public String getVasReference() {
+		return vasReference;
+	}
+
+	public void setVasReference(String vasReference) {
+		this.vasReference = vasReference;
 	}
 
 }

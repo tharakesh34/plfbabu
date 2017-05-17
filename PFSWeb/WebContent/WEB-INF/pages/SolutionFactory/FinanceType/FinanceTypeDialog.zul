@@ -1608,7 +1608,7 @@
 									</rows>
 								</grid>
 							</groupbox>
-							<groupbox id="gb_VasDetails">
+							<groupbox id="gb_VasDetails" visible="false">
 								<caption
 									label="${c:l('label_FinanceTypeDialog_VasDetails')}" />
 								<grid sclass="GridLayoutNoBorder"

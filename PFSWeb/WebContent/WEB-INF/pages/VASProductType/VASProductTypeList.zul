@@ -21,7 +21,7 @@
 					<toolbar align="center"
 						style="border-style: none;">
 						<button
-							id="button_VASProductTypeList_VASProductTypeSearch"
+							id="button_VASProductTypeList_VASProductTypeSearch" height="24px"
 							label="${c:l('label_Filter')}"
 							autodisable="button_VASProductTypeList_VASProductTypeSearch,print,button_VASProductTypeList_NewVASProductType,btnRefresh,help"
 							tooltiptext="${c:l('button_VASProductTypeList_VASProductTypeSearch.tooltiptext')}" />
@@ -93,8 +93,14 @@
 										rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="productCtg"
 										width="100px" maxlength="8" />
+									<label
+										id="label_VASProductTypeList_Active"
+										value="${c:l('label_VASProductTypeList_Active.value')}" />
+									<listbox id="sortOperator_Active"
+										width="43px" mold="select" rows="1" />
+									<checkbox id="active"
+										checked="false" />
 								</row>
-
 								<row>
 									<label
 										id="label_VASProductTypeList_RecordStatus"
@@ -130,6 +136,9 @@
 									hflex="min" />
 								<listheader id="listheader_ProductCtg"
 									label="${c:l('listheader_ProductCtg.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_ProductTypeActive"
+									label="${c:l('listheader_ProductTypeActive.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_RecordStatus"
 									label="${c:l('listheader_RecordStatus.label')}" sort="auto"

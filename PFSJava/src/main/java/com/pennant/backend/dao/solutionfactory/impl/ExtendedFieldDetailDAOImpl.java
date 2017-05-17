@@ -445,7 +445,15 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 			} else {
 				sql.append("add ");
 			}
-			sql.append(fieldDetail.getFieldName());
+			
+			if (App.DATABASE == Database.ORACLE && 
+					(FieldType.valueOf(fieldDetail.getFieldType()) == FieldType.BASERATE ||
+					FieldType.valueOf(fieldDetail.getFieldType()) == FieldType.PHONE)) {
+				sql.append("("+fieldDetail.getFieldName());
+			}else{
+				sql.append(fieldDetail.getFieldName());
+			}
+			
 			sql.append(getDatatype(fieldDetail));
 			logger.debug("SQL: " + sql.toString());
 			
@@ -568,7 +576,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				datatype.append(fieldDetail.getFieldName()); 
 				datatype.append("_SR varchar2(8) , "); 
 				datatype.append(fieldDetail.getFieldName()); 
-				datatype.append("_MR number(13,9) "); 
+				datatype.append("_MR number(13,9) ) "); 
 			} else {
 				datatype.append("_BR varchar(8) , "); 
 				datatype.append(fieldDetail.getFieldName()); 
@@ -590,7 +598,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 				datatype.append(fieldDetail.getFieldName()); 
 				datatype.append("_AC varchar2(4) , "); 
 				datatype.append(fieldDetail.getFieldName()); 
-				datatype.append("_SC varchar2(8) "); 
+				datatype.append("_SC varchar2(8) ) "); 
 			} else {
 				datatype.append("_CC varchar(4) , "); 
 				datatype.append(fieldDetail.getFieldName()); 

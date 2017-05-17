@@ -6,7 +6,7 @@
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-	
+
 	<window>
 		<window id="window_VASProductCategoryList"
 			apply="${vASProductCategoryListCtrl}" border="none" width="100%">
@@ -16,7 +16,7 @@
 
 					<!-- COMMON BUTTONS -->
 					<label value="" />
-					
+
 					<!-- SEARCH AREA -->
 					<toolbar align="center"
 						style="border-style: none;">
@@ -25,9 +25,8 @@
 							height="24px" label="${c:l('label_Filter')}"
 							autodisable="button_VASProductCategoryList_VASProductCategorySearch,print,button_VASProductCategoryList_NewVASProductCategory,btnRefresh,help"
 							tooltiptext="${c:l('button_VASProductCategoryList_VASProductCategorySearch.tooltiptext')}" />
-						<button
-							id="print"
-							label="${c:l('label_Print')}" height="24px"
+						<button id="print" label="${c:l('label_Print')}"
+							height="24px"
 							autodisable="button_VASProductCategoryList_VASProductCategorySearch,print,button_VASProductCategoryList_NewVASProductCategory,btnRefresh,help"
 							tooltiptext="${c:l('button_VASProductCategoryList_PrintList.tooltiptext')}" />
 					</toolbar>
@@ -86,6 +85,15 @@
 								</row>
 								<row>
 									<label
+										id="label_VASProductCategoryList_Active"
+										value="${c:l('label_VASProductCategoryList_Active')}" />
+									<listbox id="sortOperator_Active"
+										width="43px" mold="select" rows="1" />
+									<checkbox id="active"
+										checked="false" />
+								</row>
+								<row>
+									<label
 										id="label_VASProductCategoryList_RecordStatus"
 										value="${c:l('label_VASProductCategoryList_RecordStatus.value')}" />
 									<listbox
@@ -116,6 +124,10 @@
 								<listheader
 									id="listheader_ProductCtgDesc"
 									label="${c:l('listheader_ProductCtgDesc.label')}" sort="auto"
+									hflex="min" />
+								<listheader
+									id="listheader_ProductCtgActive"
+									label="${c:l('listheader_ProductCtgActive.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_RecordStatus"
 									label="${c:l('listheader_RecordStatus.label')}" sort="auto"

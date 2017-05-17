@@ -298,9 +298,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if(fromApproved){
 				finScheduleData = getFinanceDetailService().getFinSchDataById(this.finReference, "_AView", true);
 				if (finScheduleData.getFinanceMain() == null) {
-					if (vASRecordingDialogCtrl != null) {
-						this.vASRecordingDialogCtrl.primaryLinkRef.setValue("");
-					}
 					Clients.showNotification("Finance Reference Is Not Valid Create New Finance Reference");
 					this.window_FinEnqHeaderDialog.onClose();
 				}
