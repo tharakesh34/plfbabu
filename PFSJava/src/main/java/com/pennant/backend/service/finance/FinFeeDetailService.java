@@ -50,6 +50,7 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 
 public interface FinFeeDetailService {
 	List<FinFeeDetail> getFinFeeDetailById(String id,boolean isWIF,String type);
+	List<FinFeeDetail> getFinFeeDetailById(String id,boolean isWIF,String type, String eventCodeRef);
 	List<AuditDetail> saveOrUpdate(List<FinFeeDetail> finFeeDetails, String tableType, String auditTranType, boolean isWIF);
 	List<AuditDetail> doApprove(List<FinFeeDetail> finFeeDetails, String tableType, String auditTranType, boolean isWIF);
 	List<AuditDetail> delete(List<FinFeeDetail> finFeeDetails, String tableType, String auditTranType, boolean isWIF);
