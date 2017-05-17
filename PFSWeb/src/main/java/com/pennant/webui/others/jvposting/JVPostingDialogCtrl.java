@@ -1927,6 +1927,9 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	}
 
 	private void setFilters(String postValue) {
+		if (StringUtils.equals(postValue,PennantConstants.List_Select)) {
+			addFilters("", "", "");
+		}
 		if (StringUtils.equals(postValue,FinanceConstants.POSTING_AGAINST_LOAN)) {
 			addFilters("FinanceMain", "FinReference", "FinType");
 		}
