@@ -41,6 +41,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private Date realizationDate;
 	private String cancelReason;
 	private String cancelReasonDesc;
+	private boolean finIsActive;
 	
 	private boolean newRecord;
 	private String lovValue;
@@ -78,6 +79,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("finBranchDesc");
 		excludeFields.add("finCcyDesc");
 		excludeFields.add("cancelReasonDesc");
+		excludeFields.add("finIsActive");
 
 		return excludeFields;
 	}
@@ -352,6 +354,13 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setCancelReasonDesc(String cancelReasonDesc) {
 		this.cancelReasonDesc = cancelReasonDesc;
+	}
+
+	public boolean isFinIsActive() {
+		return finIsActive;
+	}
+	public void setFinIsActive(boolean finIsActive) {
+		this.finIsActive = finIsActive;
 	}
 
 

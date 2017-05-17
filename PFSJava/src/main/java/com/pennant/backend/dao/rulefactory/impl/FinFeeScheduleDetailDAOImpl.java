@@ -210,7 +210,7 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT FeeID, SchDate, PaidAmount " );
 		selectSql.append(" FROM FinFeeScheduleDetail_View ");
-		selectSql.append(" WHERE  FeeID = :FeeID ");
+		selectSql.append(" WHERE FinReference=:FinReference AND SchDate=:SchDate ");
 		
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeSchd);
@@ -268,7 +268,7 @@ private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.clas
 		logger.debug("Entering");
 		
 		StringBuilder updateSql = new StringBuilder("Update FinFeeScheduleDetail ");
-		updateSql.append(" Set PaidAmount = :PaidAmount, OsAmount = :OsAmount ");
+		updateSql.append(" Set PaidAmount = :PaidAmount, WaiverAmount = :WaiverAmount, OsAmount = :OsAmount ");
 		updateSql.append(" Where FeeID =:FeeID AND SchDate=:SchDate ");
 		
 		logger.debug("updateSql: " + updateSql.toString());

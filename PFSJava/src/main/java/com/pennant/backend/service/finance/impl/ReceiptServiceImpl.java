@@ -727,6 +727,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		List<FinanceScheduleDetail> schdList = scheduleData.getFinanceScheduleDetails();
 		schdList=getRepayProcessUtil().doProcessReceipts(financeMain, schdList, 
 				profitDetail, receiptHeader, scheduleData,DateUtility.getAppDate());
+		if(schdList == null){
+			schdList = scheduleData.getFinanceScheduleDetails();
+		}
 
 		tranType = PennantConstants.TRAN_UPD;
 		financeMain.setRecordType("");

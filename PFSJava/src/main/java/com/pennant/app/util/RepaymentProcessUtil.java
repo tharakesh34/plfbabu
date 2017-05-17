@@ -572,8 +572,9 @@ public class RepaymentProcessUtil {
 
 	private void updateFeeDetails(RepayScheduleDetail rpySchd) {
 		BigDecimal remBalPaidAmount = rpySchd.getSchdFeePayNow();
+		BigDecimal remBalWaivedAmount = rpySchd.getSchdFeeWaivedNow();
 
-		if (remBalPaidAmount.compareTo(BigDecimal.ZERO) == 0) {
+		if (remBalPaidAmount.compareTo(BigDecimal.ZERO) == 0 && remBalWaivedAmount.compareTo(BigDecimal.ZERO) == 0) {
 			return;
 		}
 		List<FinFeeScheduleDetail> list = finFeeScheduleDetailDAO.getFeeSchedules(rpySchd.getFinReference(),
@@ -581,7 +582,7 @@ public class RepaymentProcessUtil {
 		List<FinFeeScheduleDetail> updateFeeList = new ArrayList<>();
 		for (FinFeeScheduleDetail feeSchd : list) {
 
-			if (remBalPaidAmount.compareTo(BigDecimal.ZERO) == 0) {
+			if (remBalPaidAmount.compareTo(BigDecimal.ZERO) == 0 && remBalWaivedAmount.compareTo(BigDecimal.ZERO) == 0) {
 				break;
 			}
 			BigDecimal feeBal = feeSchd.getSchAmount().subtract(
@@ -589,10 +590,20 @@ public class RepaymentProcessUtil {
 			if (feeBal.compareTo(remBalPaidAmount) > 0) {
 				feeBal = remBalPaidAmount;
 			}
-			feeSchd.setPaidAmount(feeSchd.getPaidAmount().add(feeBal));
-			feeSchd.setOsAmount(feeSchd.getSchAmount().subtract(feeSchd.getPaidAmount()));
+			
+			if(remBalPaidAmount.compareTo(BigDecimal.ZERO) == 0){
+				if (feeBal.compareTo(remBalWaivedAmount) > 0) {
+					feeBal = remBalWaivedAmount;
+				}
+				feeSchd.setWaiverAmount(feeSchd.getWaiverAmount().add(feeBal));
+				remBalWaivedAmount = remBalWaivedAmount.subtract(feeBal);
+			}else{
+				feeSchd.setPaidAmount(feeSchd.getPaidAmount().add(feeBal));
+				remBalPaidAmount = remBalPaidAmount.subtract(feeBal);
+			}
+			
+			feeSchd.setOsAmount(feeSchd.getSchAmount().subtract(feeSchd.getPaidAmount()).subtract(feeSchd.getWaiverAmount()));
 			updateFeeList.add(feeSchd);
-			remBalPaidAmount = remBalPaidAmount.subtract(feeBal);
 
 		}
 		if (!updateFeeList.isEmpty()) {
