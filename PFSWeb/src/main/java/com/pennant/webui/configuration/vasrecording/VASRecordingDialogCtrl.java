@@ -692,6 +692,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			
 			if(isFinanceVas()){
 				aVASRecording.setFeeAccounting(vASConfiguration.getFeeAccounting());
+				aVASRecording.setFinanceProcess(true);
 				AuditHeader auditHeader =  processVasRecords(aVASRecording,tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_VASRecordingDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();

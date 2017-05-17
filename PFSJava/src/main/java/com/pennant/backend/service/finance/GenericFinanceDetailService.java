@@ -1304,8 +1304,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @throws InvocationTargetException
 	 * @throws PFFInterfaceException
 	 */
-	private List<ReturnDataSet> prepareVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordingList) throws IllegalAccessException, 
-		InvocationTargetException, PFFInterfaceException{
+	protected List<ReturnDataSet> processVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordingList) {
 
 		List<ReturnDataSet> datasetList = new ArrayList<>();
 		if (vasRecordingList != null && !vasRecordingList.isEmpty()) {
@@ -1316,7 +1315,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				aeEvent.getAcSetIDList().add(recording.getFeeAccounting());
 
 				aeEvent.setLinkedTranId(0);
-				aeEvent = engineExecution.getAccEngineExecResults(aeEvent);
+				try {
+					aeEvent = engineExecution.getAccEngineExecResults(aeEvent);
+				} catch (IllegalAccessException | InvocationTargetException | PFFInterfaceException e) {
+					e.printStackTrace();
+				}
 				datasetList.addAll(aeEvent.getReturnDataSet());
 			}
 		}
@@ -1534,11 +1537,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		if(isNew){
 			if(financeDetail.getFinScheduleData().getVasRecordingList() != null && 
 					!financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()){
-				try {
-					accountingSetEntries.addAll(prepareVasAccounting(aeEvent, financeDetail.getFinScheduleData().getVasRecordingList()));
-				} catch (IllegalAccessException | InvocationTargetException | PFFInterfaceException e) {
-					e.printStackTrace();
-				}
+				accountingSetEntries.addAll(processVasAccounting(aeEvent, financeDetail.getFinScheduleData().getVasRecordingList()));
 			}
 		}
 

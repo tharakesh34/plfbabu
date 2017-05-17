@@ -8146,6 +8146,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public List<String> getUsersLoginList(List<String> nextRoleCodes) {
 		return getFinanceMainDAO().getUsersLoginList(nextRoleCodes);
 	}
+	
+	@Override
+	public List<ReturnDataSet> prepareVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings) {
+		return processVasAccounting(aeEvent, vasRecordings);
+	}
 
 	// ******************************************************//
 	// *************** EOD PROCESS Details ******************//
@@ -8499,11 +8504,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
 		this.finFeeDetailDAO = finFeeDetailDAO;
-	}
-
-	@Override
-	public List<ReturnDataSet> prepareVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings) {
-		return prepareVasAccounting(aeEvent, vasRecordings);
 	}
 
 }

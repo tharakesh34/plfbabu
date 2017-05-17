@@ -193,8 +193,9 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 		if ("C".equals(module)) {
 			this.searchObject.addWhereClause("(RecordType IS NULL AND VasStatus != 'C') OR (VasStatus = 'C' AND RecordType IS NOT NULL)");
 		} else if ("N".equals(module)) {
-			Filter[] filters = new Filter[1];
+			Filter[] filters = new Filter[2];
 			filters[0] = new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_EQUAL);
+			filters[1] = new Filter("FinanceProcess", 0, Filter.OP_EQUAL);
 			this.searchObject.addFilterAnd(filters);
 		}
 	}
