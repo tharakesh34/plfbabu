@@ -185,7 +185,7 @@
 		<menuItem id="menu_Item_MailTemplate" zulNavigation="/WEB-INF/pages/Mail/MailTemplate/MailTemplateList.zul" />
 		<menuItem id="menu_Item_FeeDetails" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/FeeRuleList.zul"   rightName="menuItem_RulesFactory_FeeRules"/>
 		<!-- <menuItem id="menu_Item_InsuranceRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/InsuranceRuleList.zul"   rightName="menuItem_RulesFactory_InsuranceRules"/> -->
-		<menuItem id="menu_Item_RateRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/RateRuleList.zul" rightName="menuItem_RulesFactory_RateRules" />
+		<!-- <menuItem id="menu_Item_RateRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/RateRuleList.zul" rightName="menuItem_RulesFactory_RateRules" /> -->
 		<menuItem id="menu_Item_LoanDedupParm" zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/LoanDedupParmList.zul"  rightName="menuItem_RulesFactory_LoanDedupParm"/>		
 		<menuItem id="menu_Item_Notifications" zulNavigation="/WEB-INF/pages/Mail/Notifications/NotificationsList.zul" rightName="menuItem_RulesFactory_Notifications"/>
 		<menuItem id="menu_Item_PoliceDedupParm" zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/PoliceDedupParmList.zul"  rightName="menuItem_RulesFactory_PoliceDedupParm"/>
