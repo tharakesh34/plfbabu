@@ -14,4 +14,10 @@
 		<column name="PostAgainst" type="char(5)"/>
 	</addColumn>
 	</changeSet>
+	<changeSet id="02" author="Irfan">
+	<addColumn tableName="ADTAMTVEHICLEDEALER">
+		<column name="ZIPCODE" type="VARCHAR2(20)"/>
+		<column name="ACTIVE" type="boolean"></column>
+	</addColumn>
+	</changeSet>
 </databaseChangeLog>
