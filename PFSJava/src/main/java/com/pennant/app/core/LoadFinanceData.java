@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -217,12 +218,17 @@ public class LoadFinanceData extends ServiceHelper {
 	}
 
 	private FinanceProfitDetail getFinanceProfitDetailRef(String finMainRef, List<FinanceProfitDetail> listprofitDetails) {
-		for (FinanceProfitDetail financeProfitDetail : listprofitDetails) {
+		FinanceProfitDetail profitDetail = null;
+		Iterator<FinanceProfitDetail> it = listprofitDetails.iterator();
+		while (it.hasNext()) {
+			FinanceProfitDetail financeProfitDetail = (FinanceProfitDetail) it.next();
 			if (StringUtils.equals(financeProfitDetail.getFinReference(), finMainRef)) {
-				return financeProfitDetail;
+				profitDetail = financeProfitDetail;
+				it.remove();
+				break;
 			}
 		}
-		return null;
+		return profitDetail;
 	}
 
 }
