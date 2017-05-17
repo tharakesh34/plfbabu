@@ -486,6 +486,20 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
+
+		try {
+			if (this.custEmpTo.getValue()!=null && this.custEmpFrom.getValue()!=null) {
+				if (this.custEmpTo.getValue().before(this.custEmpFrom.getValue())) {
+					throw new WrongValueException(this.custEmpTo,  Labels.getLabel("DATE_NOT_AFTER", 
+							new String[] { Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpFrom.value"),
+							Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpTo.value") }));
+					
+				}
+			}
+		}catch (WrongValueException we ) {
+			wve.add(we);
+		}
+		
 		try {
 	 		aCustomerEmploymentDetail.setLovDescCustEmpDesgName(this.custEmpDesg.getDescription());
 	 		aCustomerEmploymentDetail.setCustEmpDesg(this.custEmpDesg.getValidatedValue());	
