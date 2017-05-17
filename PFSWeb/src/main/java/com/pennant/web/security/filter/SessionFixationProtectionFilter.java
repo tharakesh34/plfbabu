@@ -14,8 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
+
 
 /**
  * Filter used to protected against session fixation attacks while still keeping
@@ -27,11 +29,18 @@ import org.springframework.web.filter.GenericFilterBean;
  */
 
 public class SessionFixationProtectionFilter extends GenericFilterBean {
+	
+	private static final Logger logger = Logger.getLogger(SessionFixationProtectionFilter.class);
+
 
 	@Override
 	public void doFilter(ServletRequest sRequest, ServletResponse sResponse,
 			FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) sRequest;
+		String requestHostIp = request.getRemoteHost();
+		if (request.getHeader("X-FORWARDED-FOR") != null) {
+			requestHostIp = request.getHeader("X-FORWARDED-FOR");
+		}
 		HttpServletResponse response = (HttpServletResponse) sResponse;
 		HttpSession session = request.getSession(false);
 
@@ -42,9 +51,8 @@ public class SessionFixationProtectionFilter extends GenericFilterBean {
 			return;
 		}
 
-		if (StringUtils.equals(activeRemoteHost, request.getRemoteHost())) {
-			//
-		} else {
+		if (!StringUtils.equals(activeRemoteHost, requestHostIp)) {
+			logger.warn("Invalid hostID logout the user. : " + requestHostIp + " : " + activeRemoteHost );
 			abortUser(request, response);
 		}
 
