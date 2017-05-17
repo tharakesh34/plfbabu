@@ -111,12 +111,12 @@
 											width="150px" readonly="true" tabindex="-1"
 											style="border:none; background-color:white ;font-weight:bold; text-align:left;" />
 									</row>
-									<row id="row_finReference" visible="false">
+									<row id="row_finReference">
 										<label id="label_PostingAgainst"
 											value="${c:l('label_JVPostingDialog_PostingAgainst.value')}" />
 										<hbox>
 										<space
-												id="space_postingAgainst" spacing="2px" />
+												id="space_postingAgainst" sclass="mandatory" spacing="2px" />
 											<combobox
 												id="postingAgainst" />
 										</hbox>

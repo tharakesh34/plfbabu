@@ -612,6 +612,8 @@ public class PostingsPreparationUtil implements Serializable {
 			returnDataSet.setTranDesc(jvPostingEntry.getAccountName());
 			returnDataSet.setPostDate(jvPostingEntry.getPostingDate());
 			returnDataSet.setValueDate(jvPostingEntry.getValueDate());
+			returnDataSet.setAppDate(DateUtility.getAppDate());
+			returnDataSet.setAppValueDate(DateUtility.getAppDate());
 			returnDataSet.setTranCode(jvPostingEntry.getTxnCode());
 			returnDataSet.setRevTranCode(jvPostingEntry.getRevTxnCode());
 			returnDataSet.setDrOrCr(jvPostingEntry.getTxnEntry());

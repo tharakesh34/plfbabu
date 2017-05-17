@@ -855,6 +855,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			readOnlyComponent(true, this.debitCount);
 			readOnlyComponent(true, this.creditsCount);
 			readOnlyComponent(true, this.batchPurpose);
+			readOnlyComponent(true, this.postingAgainst);
+			readOnlyComponent(true, this.reference);
 			this.btnNewJVPostingEntry.setVisible(false);
 			this.btnValidate.setVisible(false);
 			this.btnNotes.setVisible(false);
@@ -944,6 +946,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.expAmount.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		this.expAmount.setScale(2);*/
 		this.batchPurpose.setMaxlength(35);
+		this.reference.setMandatoryStyle(true);		
 
 		logger.debug("Leaving");
 	}
@@ -971,7 +974,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			this.baseCCy.setValue(aJVPosting.getCurrency());
 			this.postingBranch.setValue(aJVPosting.getBranch());
 			this.postingBranch.setDescription(aJVPosting.getBranchDesc());
-			fillComboBox(this.postingAgainst, aJVPosting.getPostAginst(), PennantStaticListUtil.getpostingPurposeList(), "");
+			fillComboBox(this.postingAgainst, aJVPosting.getPostAgainst(), PennantStaticListUtil.getpostingPurposeList(), "");
 		}
 		
 		//Added to map with legal expenses
@@ -997,6 +1000,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.totCreditsByBatchCcy.setValue(PennantAppUtil.formateAmount(
 				getJVPosting().getTotCreditsByBatchCcy(),CurrencyUtil.getFormat(getJVPosting().getCurrency())));
 		this.batchPurpose.setValue(aJVPosting.getBatchPurpose());
+		setFilters(StringUtils.equals(null, aJVPosting.getPostAgainst())? aJVPosting.getPostAgainst():aJVPosting.getPostAgainst().trim());
+		this.reference.setValue(aJVPosting.getReference());
 
 		this.recordStatus.setValue(aJVPosting.getRecordStatus());
 		doFillJVPostingEntryDetails(aJVPosting.getJVPostingEntrysList());
@@ -1108,6 +1113,25 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		//reference
+		try {
+			if (this.reference.getValue() != null) {
+				aJVPosting.setReference(this.reference.getValue());
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		//postingagainst
+		try {
+			if (getComboboxValue(this.postingAgainst).equals(PennantConstants.List_Select)) {
+				throw new WrongValueException(this.postingAgainst, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_JVPostingDialog_PostingAgainst.value") }));
+			}
+			aJVPosting.setPostAgainst(getComboboxValue(this.postingAgainst));
+
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		/*// jVPostingEntryList setting
 		try {
 			// Preparing Updated List with Deleted Flag
@@ -1144,11 +1168,17 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 					.getLabel("label_JVPostingDialog_Batch.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, true));
 		}
-			// Fin Reference
+			//Exp Reference
 		if (!this.expReference.isReadonly()) {
 			this.expReference.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_JVPostingDialog_ExpReference.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM, false));
+		}
+		//  Reference
+		if (!this.reference.isReadonly()) {
+			this.reference.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_JVPostingDialog_Reference.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
 
@@ -1168,6 +1198,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.totDebitsByBatchCcy.setConstraint("");
 		this.totCreditsByBatchCcy.setConstraint("");
 		this.batchPurpose.setConstraint("");
+		this.reference.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -1210,6 +1241,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.totDebitsByBatchCcy.setErrorMessage("");
 		this.totCreditsByBatchCcy.setErrorMessage("");
 		this.batchPurpose.setErrorMessage("");
+		this.reference.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -1888,22 +1920,24 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 
 	
 	public void onChange$postingAgainst(Event event) {
+		this.reference.setConstraint("");
+		this.reference.setErrorMessage("");
 		this.reference.setValue("", "");
-		if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue().toString(),
-				FinanceConstants.POSTING_AGAINST_LOAN)) {
+		setFilters(this.postingAgainst.getSelectedItem().getValue().toString());
+	}
+
+	private void setFilters(String postValue) {
+		if (StringUtils.equals(postValue,FinanceConstants.POSTING_AGAINST_LOAN)) {
 			addFilters("FinanceMain", "FinReference", "FinType");
 		}
-		if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue().toString(),
-				FinanceConstants.POSTING_AGAINST_CUST)) {
+		if (StringUtils.equals(postValue,FinanceConstants.POSTING_AGAINST_CUST)) {
 			addFilters("Customer", "CustCIF", "CustShrtName");
 		}
-		if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue().toString(),
-				FinanceConstants.POSTING_AGAINST_CMTMNT)) {
+		if (StringUtils.equals(postValue,FinanceConstants.POSTING_AGAINST_CMTMNT)) {
 			addFilters("Commitment", "CmtReference", "CmtTitle");
 		}
-		if (StringUtils.equals(this.postingAgainst.getSelectedItem().getValue().toString(),
-				FinanceConstants.POSTING_AGAINST_COLLATERAL)) {
-			addFilters("Collateral", "CAFReference", "Currency");
+		if (StringUtils.equals(postValue,FinanceConstants.POSTING_AGAINST_COLLATERAL)) {
+			addFilters("CollateralSetup", "CollateralRef", "CollateralType");
 		}
 	}
 
