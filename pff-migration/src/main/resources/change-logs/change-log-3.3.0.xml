@@ -287,5 +287,28 @@ FROM                  JVPostings  T1 INNER JOIN
 	Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
 		</sql>
 	</changeSet>	
+		<changeSet id="28" author="Madhubabu">
+	<sql>
+		Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		
+		INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups),'FINANCE_REFERENCEDETAIL_APPROVER','Loan Process Editor Approver', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+		
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FINANCE_REFERENCEDETAIL_APPROVER'), (Select RightID from SecRights where RightName ='menuItem_SolutionFactory_FinanceReferenceDetail'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FINANCE_REFERENCEDETAIL_APPROVER'), (Select RightID from SecRights where RightName ='button_FinanceReferenceDetailDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+	</sql>
+</changeSet>
+	<changeSet id="29" author="Madhubabu">
+		<sql>
+	Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+	insert into secrolegroups values((select max(rolegrpid)+1 from secrolegroups),(select grpid from secgroups where grpcode='FINANCE_REFERENCEDETAIL_APPROVER'),
+	(select roleid from secroles where rolecd='MSTGRP1_APPROVER'),0,1000,current_timestamp,'','','','','','',0);
+	Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>
+	</changeSet>	
 	
 </databaseChangeLog>
