@@ -350,4 +350,13 @@ FROM                  JVPostings  T1 INNER JOIN
 				                            WHERE      ReceiptID = T1.ReceiptID)
         </createView>
 	</changeSet>
+	<changeSet author="Madhubabu" id="32">
+		<sql>
+		delete from secrolegroups where grpid in (select grpid from secgroups where grpcode='FINANCE_REFERENCEDETAIL_MAKER') and roleid in (select roleid from secroles where rolecd='MSTGRP1_MAKER');
+		delete from secgrouprights where grpid in (select grpid from secgroups where grpcode='FINANCE_REFERENCEDETAIL_APPROVER') and rightid in (Select RightID from SecRights where RightName ='menuItem_SolutionFactory_FinanceReferenceDetail'); 
+		delete from secgrouprights where grpid in (select grpid from secgroups where grpcode='FINANCE_REFERENCEDETAIL_APPROVER') and rightid in (Select RightID from SecRights where RightName ='button_FinanceReferenceDetailDialog_btnSave');
+	    delete  from secrolegroups where grpid in (select grpid from secgroups where grpcode='FINANCE_REFERENCEDETAIL_APPROVER') and roleid in (select roleid from secroles where rolecd='MSTGRP1_APPROVER');
+		delete from secgroups where grpcode='FINANCE_REFERENCEDETAIL_APPROVER';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
