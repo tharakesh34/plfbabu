@@ -52,7 +52,7 @@ public class CustomerDedupService {
 			 response = (DedupeResponse) client.postProcess(serviceURL, "DedupeService", prepareRequest(dedupCustomerDetail), DedupeResponse.class);
 			 logger.info("Response : " + response.toString());
 			 customerResponse = prepareResponse(response);
-			
+			 logger.warn("response-->"+ response);
 		} catch (Exception exception) {
 			logger.error("Error from Dedup Response : " + exception.getMessage(), exception);
 			throw exception;
@@ -174,6 +174,7 @@ public class CustomerDedupService {
 			for (CustomerPhoneNumber phoneNumber : listPhoneNumbers) {
 				
 				if("MOBILE".equalsIgnoreCase(phoneNumber.getPhoneTypeCode()) && !mobileSelected){					
+					request.setOfficeMobile(phoneNumber.getPhoneNumber());
 					request.setMobile(phoneNumber.getPhoneNumber());
 					mobileSelected=true;
 				}
@@ -279,12 +280,16 @@ public class CustomerDedupService {
 			customerDetail= new DedupCustomerDetail();
 			
 			//set Demographic details
-			if(detail.getCustDGDetails()!=null && !detail.getCustDGDetails().isEmpty()){
+			if (detail.getCustDGDetails() != null && !detail.getCustDGDetails().isEmpty()) {
 				setDGDetails(detail.getCustDGDetails().get(0), customerDetail);
 				//get posidex id.
-				logger.debug(""+detail.getReportDetails().getFiller1());
-				if(detail.getReportDetails()!=null)
-				customerDetail.getCustomer().setCustCoreBank(detail.getReportDetails().getFiller1());
+				if (detail.getReportDetails() != null && detail.getReportDetails().getFiller1() != null) {
+					logger.debug("posidex id--->" + detail.getReportDetails().getFiller1());
+					customerDetail.getCustomer().setCustCoreBank(detail.getReportDetails().getFiller1());
+				} else {
+					logger.debug("posidex id--->" + customerDetail.getCustCIF());
+					customerDetail.getCustomer().setCustCoreBank(customerDetail.getCustCIF());
+				}
 			}
 		}
 
