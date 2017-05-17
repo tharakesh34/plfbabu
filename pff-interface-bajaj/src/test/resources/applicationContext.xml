@@ -17,9 +17,11 @@
 	 <bean id="bajajService" class="com.pennanttech.bajaj.services.BajajService" abstract="true">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-   <bean id="disbursementRequest" class="com.pennanttech.bajaj.services.DisbursementRequestImpl" scope="prototype" parent="bajajService"/>     
+   <bean id="disbursementRequest" class="com.pennanttech.bajaj.services.DisbursementRequestService" scope="prototype" parent="bajajService"/>     
 	
 	<bean id="SAPGLService" class="com.pennanttech.bajaj.services.SAPGLServiceImpl">
 		<property name="dataSource" ref="dataSource"/>
-	</bean>	
+	</bean>
+	
+	 <bean id="almRequestService" class="com.pennanttech.bajaj.services.ALMRequestService" scope="prototype" parent="bajajService"/> 
 </beans>

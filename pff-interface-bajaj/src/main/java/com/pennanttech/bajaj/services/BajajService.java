@@ -74,7 +74,7 @@ public abstract class BajajService {
 		String appDate;
 		try {
 			appDate = (String) getSMTParameter("APP_VALUEDATE", String.class);
-			return DateUtil.parse(appDate, "yyyy-MM-dd"); // FIXME Deriving Application date should be from core.
+			return DateUtil.parse(appDate, "yyyy-MM-dd"); // FIXME Deriving Application date should be from single place for all modules.
 		} catch (Exception e) {
 
 		}
