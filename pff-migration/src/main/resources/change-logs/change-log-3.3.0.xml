@@ -529,4 +529,71 @@ INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (
 
 </sql>
 </changeSet>
+<changeSet id="41" author="SreeRavali">
+		<sql>
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			
+			
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'RESTRUCTURE_MAKER','WF Maker for Restructure', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'RESTRUCTURE_APPROVER','WF Approver for Restructure', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+		
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_RestructureDialog_btnValidate', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_RestructureDialog_btnSave', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_RestructureDialog_btnBuildSchd', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RestructureDialog_numberOfTerms', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RestructureDialog_paymentAmount', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RestructureDialog_paymentSchdMthd', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RestructureDialog_repayRateBasis', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RestructureDialog_repayProfitRate', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RestructureDialog_repayRate', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RestructureDialog_repayFrq', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RestructureDialog_repayPftFrq', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RestructureDialog_firstInterestFrqDate', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RestructureDialog_firstDueDate', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RestructureDialog_repayRvwFrq', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RestructureDialog_firstPaymentReviewDate', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RestructureDialog_repayCpzFrq', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RestructureDialog_firstCpzDate', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RestructureDialog_maturityDate', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RestructureDialog_finRepayPftOnFrq', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RestructureDialog_capitalizeODCharges', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RestructureDialog_capitalizeODInterest', 'RestructureDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'button_RestructureDialog_btnValidate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'button_RestructureDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'button_RestructureDialog_btnBuildSchd'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'RestructureDialog_numberOfTerms'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'RestructureDialog_paymentAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'RestructureDialog_paymentSchdMthd'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'RestructureDialog_repayRateBasis'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'RestructureDialog_repayProfitRate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'RestructureDialog_repayRate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'RestructureDialog_repayPftFrq'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'RestructureDialog_repayFrq'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'RestructureDialog_firstInterestFrqDate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'RestructureDialog_firstDueDate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'RestructureDialog_repayRvwFrq'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'RestructureDialog_firstPaymentReviewDate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'RestructureDialog_repayCpzFrq'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'RestructureDialog_firstCpzDate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'RestructureDialog_maturityDate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'RestructureDialog_finRepayPftOnFrq'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'RestructureDialog_capitalizeODCharges'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName = 'RestructureDialog_capitalizeODInterest'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RESTRUCTURE_APPROVER'), (Select RightID from SecRights where RightName = 'button_RestructureDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'RESTRUCTURE_MAKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'RESTRUCTURE_APPROVER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
