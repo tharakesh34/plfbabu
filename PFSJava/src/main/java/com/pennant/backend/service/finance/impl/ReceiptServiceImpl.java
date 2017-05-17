@@ -24,6 +24,7 @@ import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinanceRepayPriorityDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
@@ -88,6 +89,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private ManualAdviseDAO					manualAdviseDAO;	
 	private RepaymentProcessUtil			repayProcessUtil;
 	private ReceiptCalculator				receiptCalculator;
+	private OverdraftScheduleDetailDAO		overdraftScheduleDetailDAO;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -145,6 +147,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			//Finance Schedule Details
 			scheduleData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference,
 					"_View", false));
+			
+			//Overdraft Details
+			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
+				scheduleData.setOverdraftScheduleDetails(getOverdraftScheduleDetailDAO().getOverdraftScheduleDetails(
+						finReference, "", false));
+			}
 			
 			//Finance Disbursement Details
 			scheduleData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, "_View" , false));
@@ -1554,6 +1562,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
 		this.receiptCalculator = receiptCalculator;
+	}
+
+	public OverdraftScheduleDetailDAO getOverdraftScheduleDetailDAO() {
+		return overdraftScheduleDetailDAO;
+	}
+
+	public void setOverdraftScheduleDetailDAO(OverdraftScheduleDetailDAO overdraftScheduleDetailDAO) {
+		this.overdraftScheduleDetailDAO = overdraftScheduleDetailDAO;
 	}
 
 }
