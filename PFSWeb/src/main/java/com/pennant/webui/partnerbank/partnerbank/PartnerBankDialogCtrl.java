@@ -54,7 +54,6 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
@@ -113,7 +112,6 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	protected Textbox						branchCity;
 	protected Textbox						utilityCode;
 	protected Textbox						accountNo;
-	protected Bandbox						bd1;
 	protected Checkbox						active;
 	protected ExtendedCombobox				acType;
 	protected Checkbox						reqFileDownload;

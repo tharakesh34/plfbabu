@@ -79,7 +79,7 @@
 							<column width="35%" />
 						</columns>
 						<rows>
-							<row visible="true">
+							<row visible="false">
 								<label
 									id="label_VehicleDealerDialog_DealerType"
 									value="${c:l('label_VehicleDealerDialog_DealerType.value')}" />
@@ -89,6 +89,8 @@
 									<combobox id="dealerType"
 										readonly="true" width="180px" />
 								</hbox>
+							</row>
+							<row>
 								<label
 									id="label_VehicleDealerDialog_DealerName"
 									value="${c:l('label_VehicleDealerDialog_DealerName.value')}" />
@@ -97,6 +99,13 @@
 										sclass="mandatory" />
 									<uppercasebox id="dealerName"
 										 width="180px" />
+								</hbox>
+								<label id ="label_VehicleDealerDialog_Email" value="${c:l('label_VehicleDealerDialog_Email.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="email"
+										width="280px" />
 								</hbox>
 							</row>
 							<row visible="true">
@@ -129,13 +138,6 @@
 								</hbox>
 							</row>
 							<row visible="true">
-							<label id ="label_VehicleDealerDialog_Email" value="${c:l('label_VehicleDealerDialog_Email.value')}" />
-							<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<textbox id="email"
-										width="280px" />
-								</hbox>
 								<label
 									id="label_VehicleDealerDialog_DealerAddress1"
 									value="${c:l('label_VehicleDealerDialog_DealerAddress1.value')}" />
@@ -145,10 +147,7 @@
 									<textbox id="dealerAddress1"
 										width="280px" />
 								</hbox>
-								
-							</row>
-							<row visible="true">
-							<label
+								<label
 									id="label_VehicleDealerDialog_DealerAddress2"
 									value="${c:l('label_VehicleDealerDialog_DealerAddress2.value')}" />
 								<hbox>
@@ -156,6 +155,9 @@
 									<textbox id="dealerAddress2"
 										width="280px" />
 								</hbox>
+								
+							</row>
+							<row visible="true">
 								<label
 									id="label_VehicleDealerDialog_DealerAddress3"
 									value="${c:l('label_VehicleDealerDialog_DealerAddress3.value')}" />
@@ -164,19 +166,16 @@
 									<textbox id="dealerAddress3"
 										width="280px" />
 								</hbox>
-								
-							</row>
-							<row>
 								<label
 									id="label_VehicleDealerDialog_Country"
 									value="${c:l('label_VehicleDealerDialog_DealerCountry.value')}" />
 								<extendedcombobox id="dealerCountry" />
-								<label
+							</row>
+							<row visible="true">
+							<label
 									id="label_VehicleDealerDialog_DealerProvince"
 									value="${c:l('label_VehicleDealerDialog_DealerProvince.value')}" />
 								<extendedcombobox id="dealerProvince" />
-							</row>
-							<row visible="true">
 								<label
 									id="label_VehicleDealerDialog_DealerCity"
 									value="${c:l('label_VehicleDealerDialog_DealerCity.value')}" />
@@ -186,6 +185,8 @@
 									<textbox id="cityName"
 										width="180px" />
 								</hbox>
+								</row>
+								<row visible="true">
 								<label
 									id="label_VehicleDealerDialog_Pobox"
 									value="${c:l('label_VehicleDealerDialog_Pobox.value')}" />
@@ -195,7 +196,24 @@
 									<textbox id="dealerPoBox"
 										width="150px" />
 								</hbox>
-
+								<label
+									id="label_VehicleDealerDialog_ZipCode"
+									value="${c:l('label_VehicleDealerDialog_ZipCode.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="zipCode"
+										width="150px" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label	id="label_VehicleDealerDialog_Active"
+										value="${c:l('label_VehicleDealerDialog_Active.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="active"
+											checked="false" />
+									</hbox>
 							</row>
 							<row visible="false">
 							<label
@@ -217,7 +235,7 @@
 								</hbox>
 							</row>
 							
-							<row visible="true">
+							<row visible="false">
 								<label
 									id="label_VehicleDealerDialog_CommisionPaidAt"
 									value="${c:l('label_VehicleDealerDialog_CommisionPaidAt.value')}" />
@@ -231,7 +249,7 @@
 									value="${c:l('label_VehicleDealerDialog_CommisionCalRule.value')}" />
 								<extendedcombobox id="commisionCalRule" />
 							</row>
-							<row visible="true">
+							<row visible="false">
 								<label
 									id="label_VehicleDealerDialog_PaymentMode"
 									value="${c:l('label_VehicleDealerDialog_PaymentMode.value')}" />
@@ -252,7 +270,7 @@
 										visible="true" width="195px" />
 								</hbox>
 							</row>
-							<row visible="true">
+							<row visible="false">
 								<label
 									id="label_VehicleDealerDialog_AccountingTreatment"
 									value="${c:l('label_VehicleDealerDialog_AccountingTreatment.value')}" />

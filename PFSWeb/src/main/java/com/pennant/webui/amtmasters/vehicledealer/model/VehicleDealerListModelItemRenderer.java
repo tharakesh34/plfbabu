@@ -47,6 +47,7 @@ import java.io.Serializable;
 
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
@@ -76,7 +77,19 @@ public class VehicleDealerListModelItemRenderer implements ListitemRenderer<Vehi
 		lc.setParent(item);
 		lc = new Listcell(vehicleDealer.getDealerName());
 		lc.setParent(item);
+		lc = new Listcell(vehicleDealer.getEmail());
+		lc.setParent(item);
 		lc = new Listcell(vehicleDealer.getDealerTelephone());
+		lc.setParent(item);
+		lc = new Listcell(vehicleDealer.getDealerProvince());
+		lc.setParent(item);
+		lc = new Listcell(vehicleDealer.getDealerCity());
+		lc.setParent(item);
+		lc = new Listcell();
+		final Checkbox cbActive = new Checkbox();
+		cbActive.setDisabled(true);
+		cbActive.setChecked(vehicleDealer.isActive());
+		lc.appendChild(cbActive);
 		lc.setParent(item);
 		lc = new Listcell(vehicleDealer.getDealerFax());
 		lc.setParent(item);

@@ -67,7 +67,7 @@
 							<column />
 						</columns>
 						<rows>
-							<row>
+							<row visible="false">
 								<label
 									id="label_VehicleDealerSearch_DealerType"
 									value="${c:l('label_VehicleDealerSearch_DealerType.value')}" />
@@ -91,6 +91,29 @@
 									width="43px" mold="select" rows="1" />
 								<textbox id="dealerName" width="300px" />
 								<label
+										id="label_VehicleDealerSearch_Email"
+										value="${c:l('label_VehicleDealerSearch_Email.value')}" />
+									<listbox id="sortOperator_email"
+										width="43px" mold="select" rows="1" />
+									<textbox id="email" width="171px"
+										maxlength="50" />
+							</row>
+							<row>
+							<label id="label_VehicleDealerSearch_DealerProvince"
+									value="${c:l('label_VehicleDealerSearch_DealerProvince.value')}" />
+								<listbox id="sortOperator_dealerProvince"
+									width="43px" mold="select" rows="1" />
+								<uppercasebox id="dealerProvince"
+									width="100px" maxlength="8" />
+							<label id="label_VehicleDealerSearch_DealerCity"
+									value="${c:l('label_VehicleDealerSearch_DealerCity.value')}" />
+								<listbox id="sortOperator_dealerCity"
+									width="43px" mold="select" rows="1" />
+								<uppercasebox id="dealerCity" width="100px"
+									maxlength="8" />
+							</row>
+							<row>
+							<label
 									id="label_VehicleDealerSearch_DealerTelephone"
 									value="${c:l('label_VehicleDealerSearch_DealerTelephone.value')}" />
 								<listbox
@@ -108,6 +131,14 @@
 									<textbox id="dealerTelephone"
 										width="80px" />
 								</hbox>
+							<label id="label_VehicleDealerSearch_Active"
+										value="${c:l('label_VehicleDealerSearch_Active.value')}" />
+									<listbox
+										id="sortOperator_active" width="43px" mold="select"
+										rows="1" />
+									<checkbox id="active"
+										checked="false" />
+							
 							</row>
 							<row id="row_AlwWorkflow">
 								<label
@@ -132,16 +163,28 @@
 						height="100%" sizedByContent="true" multiple="false" span="true"
 						emptyMessage="${c:l('listbox.emptyMessage')}">
 						<listhead sizable="true">
-							<listheader id="listheader_DealerType"
+							<listheader id="listheader_DealerType" visible="false"
 								label="${c:l('listheader_DealerType.label')}" sort="auto"
 								hflex="min" />
 							<listheader id="listheader_DealerName"
 								label="${c:l('listheader_DealerName.label')}" sort="auto"
 								hflex="min" />
+							<listheader id="listheader_Email"
+								label="${c:l('listheader_Email.label')}" sort="auto"
+								hflex="min" />
 							<listheader id="listheader_DealerTelephone"
 								label="${c:l('listheader_DealerTelephone.label')}" sort="auto"
 								hflex="min" />
-							<listheader id="listheader_DealerFax"
+							<listheader id="listheader_DealerProvince"
+								label="${c:l('listheader_DealerProvince.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_DealerCity"
+								label="${c:l('listheader_DealerCity.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_Active"
+								label="${c:l('listheader_Active.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_DealerFax" visible="false"
 								label="${c:l('listheader_DealerFax.label')}" sort="auto"
 								hflex="min" />
 							<listheader id="listheader_RecordStatus"

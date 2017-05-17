@@ -11,5 +11,6 @@ public class VASConsatnts {
 	public static final String VASAGAINST_CUSTOMER              = "Customer";
 	public static final String VASAGAINST_FINANCE				= "Finance";
 	public static final String VASAGAINST_COLLATERAL            = "Collateral";
+	public static final String VASAGAINST_VASM            		= "VASM";
 
 }

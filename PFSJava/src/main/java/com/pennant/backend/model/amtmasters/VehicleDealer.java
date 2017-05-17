@@ -87,6 +87,8 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	private String lovValue;
 	private VehicleDealer befImage;
 	private LoggedInUser userDetails;
+	private boolean active;
+	private String  zipCode;
 	
 	public VehicleDealer() {
 		super();
@@ -379,6 +381,22 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	public void setSellerType(String sellerType) {
 	    this.sellerType = sellerType;
     }
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public String getZipCode() {
+		return zipCode;
+	}
+
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
+	}
 
 	
 	

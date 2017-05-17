@@ -50,6 +50,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -86,6 +87,10 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	protected Listheader listheader_DealerName;
 	protected Listheader listheader_DealerTelephone;
 	protected Listheader listheader_DealerFax;
+	protected Listheader listheader_Email;
+	protected Listheader listheader_DealerProvince;
+	protected Listheader listheader_DealerCity;
+	protected Listheader listheader_Active;
 
 	protected Button button_VehicleDealerList_NewVehicleDealer;
 	protected Button button_VehicleDealerList_VehicleDealerSearchDialog;
@@ -96,11 +101,21 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 	protected Textbox dealerTelephone;
 	protected Textbox phoneCountryCode;
 	protected Textbox phoneAreaCode;
+	protected Textbox email;
+	protected Textbox dealerProvince;
+	protected Textbox dealerCity;
+	protected Checkbox active;
 
 	protected Listbox sortOperator_dealerId;
 	protected Listbox sortOperator_dealerName;
 	protected Listbox sortOperator_dealerType;
 	protected Listbox sortOperator_dealerTelephone;
+	protected Listbox sortOperator_email;
+	protected Listbox sortOperator_dealerProvince;
+	protected Listbox sortOperator_dealerCity;
+	protected Listbox sortOperator_active;
+	
+	
 
 	private transient VehicleDealerService vehicleDealerService;
 
@@ -162,8 +177,14 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 				Operators.STRING);
 		registerField("dealerName", listheader_DealerName, SortOrder.NONE, dealerName, sortOperator_dealerName,
 				Operators.STRING);
+		registerField("email", listheader_Email, SortOrder.NONE,email,sortOperator_email,Operators.STRING);
 		registerField("dealerTelephone", listheader_DealerTelephone, SortOrder.NONE);
 		registerField("dealerFax", listheader_DealerFax, SortOrder.NONE);
+		registerField("dealerProvince", listheader_DealerProvince, SortOrder.NONE, dealerProvince, sortOperator_dealerProvince,
+				Operators.STRING);
+		registerField("dealerCity", listheader_DealerCity, SortOrder.NONE, dealerCity, sortOperator_dealerCity, Operators.STRING);
+		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_active,
+				Operators.BOOLEAN);
 
 		SearchFilterControl.renderOperators(this.sortOperator_dealerTelephone, Operators.STRING);
 

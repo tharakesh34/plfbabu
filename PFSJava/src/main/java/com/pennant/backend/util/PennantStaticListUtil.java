@@ -970,11 +970,12 @@ public class PennantStaticListUtil {
 
 	public static ArrayList<ValueLabel> getDealerType() {
 		if(dealerType == null){
-			dealerType = new ArrayList<ValueLabel>(3);
+			dealerType = new ArrayList<ValueLabel>(4);
 			dealerType.add(new ValueLabel("D", Labels.getLabel("label_Dealer")));
 			dealerType.add(new ValueLabel("V", Labels.getLabel("label_Vendor")));
 			dealerType.add(new ValueLabel("S", Labels.getLabel("label_Supplier")));
 			dealerType.add(new ValueLabel("DSA", Labels.getLabel("label_DSA")));
+			dealerType.add(new ValueLabel(VASConsatnts.VASAGAINST_VASM, "VAS Manufacturer"));
 		}
 		return dealerType;
 	}
