@@ -44,6 +44,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zkoss.zk.ui.WrongValueException;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -118,7 +119,8 @@ public class FeeScheduleCalculator {
 
 			//If Not Schedule Fee method Clear the Fee Schedule Details
 			feeScheduleMethod = finFeeDetail.getFeeScheduleMethod();
-			if(feeScheduleMethod.equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)
+			if(!finFeeDetail.isOriginationFee() 
+					|| feeScheduleMethod.equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)
 					|| feeScheduleMethod.equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
 
 				if(finFeeDetail.getFinFeeScheduleDetailList() != null){
@@ -164,7 +166,8 @@ public class FeeScheduleCalculator {
 			recalTerms = feeDetail.getTerms();
 
 			if (avalableTerms < recalTerms) {
-				recalTerms = avalableTerms;
+				//recalTerms = avalableTerms;
+				throw new WrongValueException("Number of Terms not matching the Available terms ");
 			}
 		} else {
 			recalTerms = avalableTerms;
@@ -173,7 +176,6 @@ public class FeeScheduleCalculator {
 		recalFee = feeDetail.getRemainingFee();
 		
 		feeScheduleDetails.clear();
-		
 
 		financemain.setRecalTerms(recalTerms);
 		financemain.setRecalFee(recalFee);
@@ -285,10 +287,6 @@ public class FeeScheduleCalculator {
 		int schTerms = 0;
 		int recalTerms = financeMain.getRecalTerms();
 		
-		//FIXME Temporary Fix
-		if(recalTerms == 0) {
-			return;
-		}
 		BigDecimal recalFee = financeMain.getRecalFee();
 
 		BigDecimal totalNewSchdFee = BigDecimal.ZERO;

@@ -300,9 +300,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			
 			if("doApprove".equals(method) && !StringUtils.trimToEmpty(finFeeDetail.getRecordStatus()).equals(PennantConstants.RCD_STATUS_SAVED))  {
 				//finFeeDetail.setWorkflowId(0);
-				if (StringUtils.equals(finFeeDetail.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+				/*if (StringUtils.equals(finFeeDetail.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 					finFeeDetail.setNewRecord(true);
-				}
+				}*/
 			} else {
 				finFeeDetail.setWorkflowId(workFlowId);
 			}
