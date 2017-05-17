@@ -126,6 +126,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	private String manufacturerDesc; 
 	private String vasStatus;
 	private boolean financeProcess;
+	private long feeAccounting = 0;
 	
 	@XmlTransient
 	private boolean newRecord = false;
@@ -197,6 +198,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 		excludeFields.add("finBranch");
 		excludeFields.add("extendedDetails");
 		excludeFields.add("returnStatus");
+		excludeFields.add("feeAccounting");
 		return excludeFields;
 	}
 
@@ -574,6 +576,14 @@ public class VASRecording extends AbstractWorkflowEntity {
 
 	public void setReturnStatus(WSReturnStatus returnStatus) {
 		this.returnStatus = returnStatus;
+	}
+
+	public long getFeeAccounting() {
+		return feeAccounting;
+	}
+
+	public void setFeeAccounting(long feeAccounting) {
+		this.feeAccounting = feeAccounting;
 	}
 
 

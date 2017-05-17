@@ -691,6 +691,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		try {
 			
 			if(isFinanceVas()){
+				aVASRecording.setFeeAccounting(vASConfiguration.getFeeAccounting());
 				AuditHeader auditHeader =  processVasRecords(aVASRecording,tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_VASRecordingDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
@@ -2377,7 +2378,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			
 			HashMap<String, Object> dataMap = new HashMap<String, Object>();
 			getVASRecording().getDeclaredFieldValues(dataMap);
-			/*List<ReturnDataSet> returnSetEntries = getEngineExecution().processAccountingByEvent(aeEvent, dataMap);
+			/*aeEvent.getAcSetIDList().add(vASConfiguration.getFeeAccounting());
+			List<ReturnDataSet> returnSetEntries = getEngineExecution().processAccountingByEvent(aeEvent, dataMap);
 			getVASRecording().setReturnDataSetList(returnSetEntries);
 			accountingSetEntries.addAll(returnSetEntries);*/
 		}

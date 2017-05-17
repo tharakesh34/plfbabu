@@ -80,6 +80,7 @@ import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.commitment.CommitmentMovement;
+import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
@@ -1293,7 +1294,34 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 		return aeEvent;
 	}
- 
+	
+	/**
+	 * Method for Preparing List of Entries based on recordings for VAS
+	 * @param aeEvent
+	 * @param vasRecordingList
+	 * @return
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws PFFInterfaceException
+	 */
+	private List<ReturnDataSet> prepareVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordingList) throws IllegalAccessException, 
+		InvocationTargetException, PFFInterfaceException{
+
+		List<ReturnDataSet> datasetList = new ArrayList<>();
+		if (vasRecordingList != null && !vasRecordingList.isEmpty()) {
+
+			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+			for (VASRecording recording : vasRecordingList) {
+				recording.getDeclaredFieldValues(aeEvent.getDataMap());
+				aeEvent.getAcSetIDList().add(recording.getFeeAccounting());
+
+				aeEvent.setLinkedTranId(0);
+				aeEvent = engineExecution.getAccEngineExecResults(aeEvent);
+				datasetList.addAll(aeEvent.getReturnDataSet());
+			}
+		}
+		return datasetList;
+	}
 
 	protected long getAccountingResults(AuditHeader auditHeader, FinanceDetail financeDetail,
 			List<ReturnDataSet> accountingSetEntries, Date curBDay, AEEvent aeEvent)
@@ -1500,6 +1528,18 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		boolean isNew = false;
 		if (StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			isNew = true;
+		}
+		
+		// Vas Recording Accounting Entries
+		if(isNew){
+			if(financeDetail.getFinScheduleData().getVasRecordingList() != null && 
+					!financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()){
+				try {
+					accountingSetEntries.addAll(prepareVasAccounting(aeEvent, financeDetail.getFinScheduleData().getVasRecordingList()));
+				} catch (IllegalAccessException | InvocationTargetException | PFFInterfaceException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 
 		doSave_PftDetails(pftDetail, isNew);

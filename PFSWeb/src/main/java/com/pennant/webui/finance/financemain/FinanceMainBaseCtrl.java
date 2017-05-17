@@ -160,6 +160,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.commitment.Commitment;
+import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerEMail;
@@ -11259,6 +11260,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			accountingSetEntries.addAll(disbursementPostings.getDisbPosting(getFinanceDetail().getAdvancePaymentsList(), getFinanceDetail().getFinScheduleData().getFinanceMain()));
 			
 		//	prepareDisbInstructionPosting(accountingSetEntries, aeEvent);
+		}
+		
+		// Vas Recording Accounting Entries
+		if(StringUtils.isEmpty(moduleDefiner)){
+			if(finVasRecordingDialogCtrl != null && finVasRecordingDialogCtrl.getVasRecordings() != null && 
+					!finVasRecordingDialogCtrl.getVasRecordings().isEmpty()){
+				accountingSetEntries.addAll(getFinanceDetailService().prepareVasAccounting(aeEvent, finVasRecordingDialogCtrl.getVasRecordings()));
+			}
 		}
 
 		getFinanceDetail().setReturnDataSetList(accountingSetEntries);

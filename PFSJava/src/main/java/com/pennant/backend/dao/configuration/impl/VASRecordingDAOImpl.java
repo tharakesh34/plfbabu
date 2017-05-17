@@ -91,8 +91,9 @@ public class VASRecordingDAOImpl extends BasisCodeDAO<VASRecording> implements V
 	@Override
 	public VASRecording getVASRecording() {
 		logger.debug("Entering");
+		VASRecording recording = new VASRecording();
 		logger.debug("Leaving");
-		return new VASRecording();
+		return recording;
 	}
  
 	/**
@@ -174,7 +175,7 @@ public class VASRecordingDAOImpl extends BasisCodeDAO<VASRecording> implements V
 		sql.append(" RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,VasStatus,FinanceProcess");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", ProductDesc, DsaIdDesc, DmaIDDesc, FulfilOfficerIdDesc, ReferralIdDesc ");
-			sql.append(", ProductType, ProductTypeDesc, ProductCtg, ProductCtgDesc, ManufacturerDesc ");
+			sql.append(", ProductType, ProductTypeDesc, ProductCtg, ProductCtgDesc, ManufacturerDesc, FeeAccounting ");
 		}
 		sql.append(" From VASRecording");
 		sql.append(StringUtils.trimToEmpty(type));
