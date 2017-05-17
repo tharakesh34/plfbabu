@@ -27,7 +27,7 @@
 	</changeSet>
 	<changeSet id="1.1" author="Siva">
 		<sql>
-			DELETE FROM SECRIGHTS WHERE RightName LIKE '%VAS%';
+			DELETE FROM SECRIGHTS WHERE RightName like '%VAS%';
 		</sql>
 	</changeSet>
 	<changeSet id="2" author="Siva">
@@ -291,6 +291,30 @@
 			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'VASRECORDING_MAKER', 'VAS Recording Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
 			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'VASRECORDING_APPROVER', 'VAS Recording Approver', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
 			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FINVASRECORDING_MAKER', 'Fin VAS Recording Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+
+            delete from SECRIGHTS where rightname='button_FinVasRecordingDialog_btnNew';
+			delete from SECRIGHTS where rightname='button_VASRecordingDialog_btnDelete';
+			delete from SECRIGHTS where rightname='button_VASRecordingDialog_btnEdit';
+			delete from SECRIGHTS where rightname='button_VASRecordingDialog_btnNew';
+			delete from SECRIGHTS where rightname='button_VASRecordingDialog_btnSave';
+			delete from SECRIGHTS where rightname='menuItem_Finance_VASRecording';
+			delete from SECRIGHTS where rightname= 'VASRecordingDialog_AccrualTillDate';
+			delete from SECRIGHTS where rightname='VASRecordingDialog_DmaId';
+			delete from SECRIGHTS where rightname='VASRecordingDialog_DsaId';
+			delete from SECRIGHTS where rightname='VASRecordingDialog_ExtendedFields';
+			delete from SECRIGHTS where rightname='VASRecordingDialog_Fee';
+			delete from SECRIGHTS where rightname='VASRecordingDialog_FeePaymentMode';
+			delete from SECRIGHTS where rightname='VASRecordingDialog_FulfilOfficerId';
+			delete from SECRIGHTS where rightname='VASRecordingDialog_PostingAgainst';
+			delete from SECRIGHTS where rightname='VASRecordingDialog_PrimaryLinkRef';
+			delete from SECRIGHTS where rightname='VASRecordingDialog_ProductCode';
+			delete from SECRIGHTS where rightname='VASRecordingDialog_RecurringDate';
+			delete from SECRIGHTS where rightname='VASRecordingDialog_ReferralId';
+			delete from SECRIGHTS where rightname='VASRecordingDialog_ValueDate';
+			delete from SECRIGHTS where rightname='VASRecordingDialog_VasReference';
+			delete from SECRIGHTS where rightname='menuItem_Finance_VASCancel';
+			delete from SECRIGHTS where rightname='menuItem_Enquiry_VASRecording';
+			
 
 			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'button_FinVasRecordingDialog_btnNew','FinVasRecordingDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
 			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_VASRecordingDialog_btnDelete','VASRecordingDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
