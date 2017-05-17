@@ -278,7 +278,8 @@ FROM                  JVPostings  T1 INNER JOIN
 		<addColumn tableName="PRESENTMENTDETAILS_TEMP">
 			<column name="BOUNCERETURNCODE" type="VARCHAR2(8)"/>
 		</addColumn>
-	</changeSet>	
+	</changeSet>
+		
 		<changeSet id="27" author="Madhubabu">
 		<sql>
 	Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
@@ -358,5 +359,71 @@ FROM                  JVPostings  T1 INNER JOIN
 	    delete  from secrolegroups where grpid in (select grpid from secgroups where grpcode='FINANCE_REFERENCEDETAIL_APPROVER') and roleid in (select roleid from secroles where rolecd='MSTGRP1_APPROVER');
 		delete from secgroups where grpcode='FINANCE_REFERENCEDETAIL_APPROVER';
 		</sql>
+	</changeSet>
+	<changeSet id="33" author="Irfan">
+	<addColumn tableName="AMTVEHICLEDEALER">
+		<column name="ZIPCODE" type="VARCHAR2(20)"/>
+		<column name="ACTIVE" type="boolean"></column>
+	</addColumn>
+	<addColumn tableName="AMTVEHICLEDEALER_TEMP">
+		<column name="ZIPCODE" type="VARCHAR2(20)"/>
+		<column name="ACTIVE" type="boolean"></column>
+	</addColumn>
+	</changeSet>
+	<changeSet id="34" author="Irfan">
+		<createView viewName="AMTVEHICLEDEALER_VIEW" replaceIfExists="true">
+			 SELECT       T1.DealerId,T1.DealerType,T1.DealerName,T1.DealerTelephone,T1.DealerFax,T1.DealerAddress1,T1.DealerAddress2,
+             T1.DealerAddress3,T1.DealerAddress4,T1.DealerCountry,T5.CountryDesc lovDescCountry,T1.DealerProvince,
+             T4.CPProvinceName lovDescProvince,T1.DealerCity,T3.PCCityName lovDescCity,T1.Email,T1.POBox, T1.ZipCode, T1.Active, T1.Emirates
+             ,T1.CommisionPaidAt,T1.CalculationRule,T7.RuleCodeDesc CalRuleDesc,T1.PaymentMode,T1.AccountNumber,T1.AccountingSetId,
+             T8.AccountSetCode AccountingSetCode ,T8.AccountSetCodeName AccountingSetDesc,T9.CPProvinceName EmiratesDescription,T1.SellerType,
+             T1.Version,T1.LastMntBy,T1.LastMntOn,T1.RecordStatus,T1.RoleCode,T1.NextRoleCode,T1.TaskId,T1.NextTaskId,T1.RecordType,T1.WorkflowId
+FROM         AMTVehicleDealer_Temp T1 LEFT OUTER JOIN
+             RMTProvinceVsCity T3 ON T1.DealerCountry = T3.PCCountry AND T1.DealerProvince = T3.PCProvince AND T1.DealerCity = T3.PCCity LEFT OUTER JOIN
+             RMTCountryVsProvince T4 ON T1.DealerCountry = T4.CPCountry AND T1.DealerProvince = T4.CPProvince LEFT OUTER JOIN
+             BMTCountries T5 ON T1.DealerCountry = T5.CountryCode LEFT OUTER JOIN
+             Rules T7 ON T1.CalculationRule = T7.RuleCode AND RuleEvent = 'ADDDBS' LEFT OUTER JOIN
+             RMTAccountingSet T8 ON T1.AccountingSetId = T8.AccountSetid LEFT OUTER JOIN
+             RMTCountryVsProvince T9 ON T1.Emirates = T9.CPProvince
+
+
+UNION ALL
+
+SELECT       T1.DealerId,T1.DealerType,T1.DealerName,T1.DealerTelephone,T1.DealerFax,T1.DealerAddress1,T1.DealerAddress2,
+             T1.DealerAddress3,T1.DealerAddress4,T1.DealerCountry,T5.CountryDesc lovDescCountry,T1.DealerProvince,
+             T4.CPProvinceName lovDescProvince,T1.DealerCity,T3.PCCityName lovDescCity,T1.Email,T1.POBox, T1.ZipCode, T1.Active, T1.Emirates
+             ,T1.CommisionPaidAt,T1.CalculationRule,T7.RuleCodeDesc CalRuleDesc,T1.PaymentMode,T1.AccountNumber,T1.AccountingSetId,
+             T8.AccountSetCode AccountingSetCode ,T8.AccountSetCodeName AccountingSetDesc,T9.CPProvinceName EmiratesDescription,T1.SellerType,
+             T1.Version,T1.LastMntBy,T1.LastMntOn,T1.RecordStatus,T1.RoleCode,T1.NextRoleCode,T1.TaskId,T1.NextTaskId,T1.RecordType,T1.WorkflowId
+FROM         AMTVehicleDealer T1 LEFT OUTER JOIN
+             RMTProvinceVsCity T3 ON T1.DealerCountry = T3.PCCountry AND T1.DealerProvince = T3.PCProvince AND T1.DealerCity = T3.PCCity AND T1.DealerCity = T3.PCCity LEFT OUTER JOIN
+             RMTCountryVsProvince T4 ON T1.DealerCountry = T4.CPCountry AND T1.DealerProvince = T4.CPProvince LEFT OUTER JOIN
+             BMTCountries T5 ON T1.DealerCountry = T5.CountryCode   LEFT OUTER JOIN
+             Rules T7 ON T1.CalculationRule = T7.RuleCode AND RuleEvent = 'ADDDBS' LEFT OUTER JOIN
+             RMTAccountingSet T8 ON T1.AccountingSetId = T8.AccountSetid LEFT OUTER JOIN
+             RMTCountryVsProvince T9 ON T1.Emirates = T9.CPProvince
+
+WHERE     NOT EXISTS
+
+ (SELECT 1 FROM AMTVehicleDealer_TEMP 
+  WHERE DealerId = T1.DealerId)
+		</createView>
+	</changeSet>
+	<changeSet id="35" author="Irfan">
+	<createView viewName="AMTVEHICLEDEALER_AVIEW" replaceIfExists="true">
+	SELECT       T1.DealerId,T1.DealerType,T1.DealerName,T1.DealerTelephone,T1.DealerFax,T1.DealerAddress1,T1.DealerAddress2,
+             T1.DealerAddress3,T1.DealerAddress4,T1.DealerCountry,T5.CountryDesc lovDescCountry,T1.DealerProvince,
+             T4.CPProvinceName lovDescProvince,T1.DealerCity,T3.PCCityName lovDescCity,T1.Email,T1.POBox, T1.ZipCode, T1.Active, T1.Emirates
+             ,T1.CommisionPaidAt,T1.CalculationRule,T7.RuleCodeDesc CalRuleDesc,T1.PaymentMode,T1.AccountNumber,T1.AccountingSetId,
+             T8.AccountSetCode AccountingSetCode ,T8.AccountSetCodeName AccountingSetDesc,T9.CPProvinceName EmiratesDescription,T1.SellerType,
+             T1.Version,T1.LastMntBy,T1.LastMntOn,T1.RecordStatus,T1.RoleCode,T1.NextRoleCode,T1.TaskId,T1.NextTaskId,T1.RecordType,T1.WorkflowId
+FROM         AMTVehicleDealer T1 LEFT OUTER JOIN
+             RMTProvinceVsCity T3 ON T1.DealerCountry = T3.PCCountry AND T1.DealerProvince = T3.PCProvince AND T1.DealerCity = T3.PCCity  AND T1.DealerCity = T3.PCCity  LEFT OUTER JOIN
+             RMTCountryVsProvince T4 ON T1.DealerCountry = T4.CPCountry AND T1.DealerProvince = T4.CPProvince LEFT OUTER JOIN
+             BMTCountries T5 ON T1.DealerCountry = T5.CountryCode LEFT OUTER JOIN
+             Rules T7 ON T1.CalculationRule = T7.RuleCode AND RuleEvent = 'ADDDBS' LEFT OUTER JOIN
+             RMTAccountingSet T8 ON T1.AccountingSetId = T8.AccountSetid LEFT OUTER JOIN
+             RMTCountryVsProvince T9 ON T1.Emirates = T9.CPProvince
+	</createView>
 	</changeSet>
 </databaseChangeLog>
