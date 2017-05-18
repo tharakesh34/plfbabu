@@ -813,4 +813,10 @@ WHERE     NOT EXISTS
 			update SecRights set RightType=3 where rightName='DivisionDetailDialog_EntityCode';
 		</sql>
 	</changeSet>
+		<changeSet id="27" author="Surekha">
+		<sql>
+			delete from ErrorDetails where ErrorCode='WMAN01';
+ 			INSERT INTO ErrorDetails VALUES ('65013','EN','W','{0} Customer already having {1} open Mandates ','','Approved','','','','','',0,null,1000,0);  
+		</sql>
+	</changeSet>
 </databaseChangeLog>
