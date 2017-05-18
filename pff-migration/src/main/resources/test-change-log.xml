@@ -6,7 +6,7 @@
 	<!-- Create Table with Primary key constraint -->
 	<changeSet id="kittu-jrg-1" author="Sai">
 		<createTable tableName="Person">
-			<column name="Id" type="bigint">
+			<column name="Id" type="bigint" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="Photo" type="blob" />
@@ -38,14 +38,6 @@
 			<column name="actual_block" type="varchar(4000)" />
 			<column name="add_field_1" type="float" />
 			<column name="add_field_2" type="binary(50)" />
-		</createTable>
-	</changeSet>
-	<changeSet id="kittu-jrg-2" author="Sai">
-		<createTable tableName="person1">
-			<column name="Id" type="bigint">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="code1" type="char(10)" />
 		</createTable>
 	</changeSet>
 </databaseChangeLog>
