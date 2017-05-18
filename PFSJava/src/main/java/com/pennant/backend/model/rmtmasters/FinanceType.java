@@ -177,7 +177,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private int	maxReAgeHolidays;
 	
 	private String	roundingMode;
-	private int	roundingTarget;
+	private int	roundingTarget = 0;
 
 	// Advised profit Rates
 	private String grcAdvBaseRate;
