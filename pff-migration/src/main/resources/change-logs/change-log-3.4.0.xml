@@ -753,5 +753,59 @@
   INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'RESTRUCTURE_APPROVER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'OPERATIONS_MANAGER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 	</sql>
 	</changeSet>
-	
+	<changeSet id="20" author="Surekha">
+		<createView viewName="SMTDIVISIONDETAIL_VIEW" replaceIfExists="true">
+			SELECT     T1.DivisionCode, T1.DivisionCodeDesc, T1.Active, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, 
+                      T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.AlwPromotion, T1.DivSuspTrigger, T1.DivSuspRemarks, T1.EntityCode,T2.EntityDesc
+FROM         SMTDivisionDetail_Temp T1 LEFT JOIN
+            Entities T2 ON T1.EntityCode= T2.EntityCode
+
+UNION ALL 
+SELECT     T1.DivisionCode, T1.DivisionCodeDesc, T1.Active, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, 
+                      T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.AlwPromotion, T1.DivSuspTrigger, T1.DivSuspRemarks,T1.EntityCode,T2.EntityDesc
+FROM         SMTDivisionDetail T1 LEFT JOIN
+            Entities T2 ON T1.EntityCode= T2.EntityCode
+WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          SMTDivisionDetail_TEMP
+                            WHERE      DivisionCode = T1.DivisionCode)
+		</createView>
+	</changeSet>
+	<changeSet id="21" author="Surekha">
+		<createView viewName="SMTDIVISIONDETAIL_TVIEW" replaceIfExists="true">
+			SELECT     T1.DivisionCode, T1.DivisionCodeDesc, T1.Active, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, 
+                      T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.AlwPromotion, T1.DivSuspTrigger, T1.DivSuspRemarks, T1.EntityCode,T2.EntityDesc
+			FROM         SMTDivisionDetail_Temp T1 LEFT JOIN
+            			 Entities T2 ON T1.EntityCode= T2.EntityCode
+
+		</createView>
+	</changeSet>
+	<changeSet id="22" author="Surekha">
+		<createView viewName="SMTDIVISIONDETAIL_AVIEW" replaceIfExists="true">
+			SELECT     T1.DivisionCode, T1.DivisionCodeDesc, T1.Active, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, 
+                      T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.AlwPromotion, T1.DivSuspTrigger, T1.DivSuspRemarks, T1.EntityCode,T2.EntityDesc
+			FROM         SMTDivisionDetail T1 LEFT JOIN
+            			 Entities T2 ON T1.EntityCode= T2.EntityCode
+
+		</createView>
+	</changeSet>
+	<changeSet id="23" author="Surekha">
+		<addNotNullConstraint tableName="SMTDIVISIONDETAIL" columnName="EntityCode"/>
+	</changeSet>
+	<changeSet id="24" author="Surekha">
+		<addNotNullConstraint tableName="SMTDIVISIONDETAIL_Temp" columnName="EntityCode"/>
+	</changeSet>
+	<changeSet id="25" author="Surekha">
+		<sql>
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0,'DivisionDetailDialog_EntityCode', 'DivisionDetailDialog', 1,1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode ='DIVISIONDETAIL_MAKER'), (Select RightID from SecRights where RightName ='DivisionDetailDialog_EntityCode'), 1, 1, 1000,CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
