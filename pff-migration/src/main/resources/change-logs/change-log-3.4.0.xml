@@ -1001,4 +1001,10 @@ WHERE     NOT EXISTS
 			update SMTDIVISIONDETAIL set EntityCode='pffHyd';
 		</sql>
 	</changeSet> 
+	<changeSet id="34" author="Srikanth">
+	<sql>
+	INSERT INTO ErrorDetails VALUES('90284','EN','E','Vas details should be matched with configured Vas details in Loan Type {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	INSERT INTO ErrorDetails VALUES('90285','EN','E','{0} is not configured in given Loan Type {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
