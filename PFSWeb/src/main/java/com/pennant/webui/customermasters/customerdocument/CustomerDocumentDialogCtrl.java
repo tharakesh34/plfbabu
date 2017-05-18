@@ -1977,7 +1977,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		} else {
 			if (PennantConstants.PANNUMBER.equals(this.custDocType.getValue())) {
 				this.custDocTitle.setValue(getCustomerDialogCtrl().getCustIDNumber(PennantConstants.PANNUMBER));
-			}else if (PennantConstants.TRADELICENSE.equals(this.custDocType.getValue())) {
+			}else if (!isRetailCustomer && PennantConstants.TRADELICENSE.equals(this.custDocType.getValue())) {
 				if (getCustomerDialogCtrl() != null) {
 					this.custDocIssuedOn.setValue(getCustomerDialogCtrl().getcustIncorpDate());
 				} 
