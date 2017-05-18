@@ -691,4 +691,11 @@ FROM    	BuilderGroup  T1
 WHERE     NOT EXISTS (SELECT 1 FROM BuilderGroup_TEMP WHERE Id = T1.Id)
 </createView>
 </changeSet>
+
+	<changeSet id="49" author="satish">
+	<sql>
+	Update MANDATES_TEMP set AcCType ='11' where AcCType ='29';
+	</sql>
+	</changeSet>
+
 </databaseChangeLog>
