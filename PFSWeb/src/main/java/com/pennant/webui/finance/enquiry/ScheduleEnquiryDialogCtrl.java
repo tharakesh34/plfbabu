@@ -222,7 +222,10 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 			this.listheader_ODLimit.setVisible(true);
 			if(getFinScheduleData().getFinanceType().isDroplineOD()){
 				this.listheader_LimitChange.setVisible(true);
+				listheader_LimitChange.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_LimitChange"));
 			}
+			listheader_AvailableLimit.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_AvailableLimit"));
+			listheader_ODLimit.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_ODLimit"));
 		}
 
 		logger.debug("Leaving " + event.toString());

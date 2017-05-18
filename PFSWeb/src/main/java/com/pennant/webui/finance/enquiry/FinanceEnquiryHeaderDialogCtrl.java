@@ -690,8 +690,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				list.add(subList1);
 				List<FinanceScheduleReportData> subList = finRender.getPrintScheduleData(finScheduleData,rpyDetailsMap, penaltyDetailsMap, true);
 				list.add(subList);
-
-				ReportGenerationUtil.generateReport("FINENQ_ScheduleDetail", finScheduleData.getFinanceMain(), list,
+				String reportName = "FINENQ_ScheduleDetail";
+				 if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,finScheduleData.getFinanceMain().getProductCategory())) {
+					reportName = "ODFINENQ_ScheduleDetail";
+				}
+				ReportGenerationUtil.generateReport(reportName, finScheduleData.getFinanceMain(), list,
 						true, 1, getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog);
 			}
 		}
