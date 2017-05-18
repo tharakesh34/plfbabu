@@ -808,4 +808,9 @@ WHERE     NOT EXISTS
 			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
 		</sql>
 	</changeSet>
+	<changeSet id="26" author="Surekha">
+		<sql>
+			update SecRights set RightType=3 where rightName='DivisionDetailDialog_EntityCode';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
