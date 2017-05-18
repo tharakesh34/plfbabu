@@ -487,6 +487,7 @@
 		class="com.pennant.backend.service.systemmasters.impl.AddressTypeServiceImpl">
 		<property name="addressTypeDAO" ref="addressTypeDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="customerAddresDAO" ref="customerAddresDAO" />
 	</bean>
 
 	<!--============ Black List Reason Codes ============== -->
