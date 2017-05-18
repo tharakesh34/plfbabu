@@ -713,6 +713,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			this.accountNumber.setReadonly(true);
 			
 		}
+		this.salaryAccount.setDisabled(isReadOnly("CustomerBankInfoDialog_SalaryAccount"));
 		this.custID.setReadonly(true);
 		this.custCIF.setReadonly(true);
 		this.accountType.setReadonly(isReadOnly("CustomerBankInfoDialog_AccountType"));
@@ -772,6 +773,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.bankName.setReadonly(true);
 		this.accountType.setReadonly(true);
 		this.accountNumber.setReadonly(true);
+		
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
