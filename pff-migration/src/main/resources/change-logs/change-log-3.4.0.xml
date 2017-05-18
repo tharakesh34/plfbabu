@@ -789,6 +789,11 @@ WHERE     NOT EXISTS
 
 		</createView>
 	</changeSet>
+	<changeSet id="23.1" author="Surekha">
+		<sql>
+			update SMTDIVISIONDETAIL set EntityCode='pffHyd' where EntityCode is null;
+		</sql>
+	</changeSet> 
 	<changeSet id="23" author="Surekha">
 		<addNotNullConstraint tableName="SMTDIVISIONDETAIL" columnName="EntityCode"/>
 	</changeSet>
@@ -996,11 +1001,7 @@ WHERE     NOT EXISTS
 			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
 		</sql>
 	</changeSet>
-		<changeSet id="33" author="Surekha">
-		<sql>
-			update SMTDIVISIONDETAIL set EntityCode='pffHyd';
-		</sql>
-	</changeSet> 
+		
 	<changeSet id="34" author="Srikanth">
 	<sql>
 	INSERT INTO ErrorDetails VALUES('90284','EN','E','Vas details should be matched with configured Vas details in Loan Type {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
