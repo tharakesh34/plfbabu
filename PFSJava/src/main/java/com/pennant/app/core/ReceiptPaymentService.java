@@ -33,9 +33,25 @@ public class ReceiptPaymentService extends ServiceHelper {
 	public void processrReceipts(CustEODEvent custEODEvent) throws Exception {
 		logger.debug(" Entering ");
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
+
+		//	check at least one presentment exists or not.
+		boolean presetment = false;
+		for (FinEODEvent finEODEvent : finEODEvents) {
+			if (finEODEvent.isPresentmentExist()) {
+				presetment = true;
+				break;
+			}
+		}
+
+		if (!presetment) {
+			return;
+		}
+		
+		//if presentment exists then fetch all the presentment related to the customer at once process accordingly
+		
 		Date businessDate = custEODEvent.getEodValueDate();
 		long custID = custEODEvent.getCustomer().getCustID();
-
+		
 		List<PresentmentDetail> presentments = getPresentmentHeaderDAO().getPresentmenToPost(custID, businessDate);
 
 		for (PresentmentDetail presentmentDetail : presentments) {
