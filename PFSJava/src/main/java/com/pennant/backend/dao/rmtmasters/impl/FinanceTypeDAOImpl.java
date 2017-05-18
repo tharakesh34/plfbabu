@@ -128,7 +128,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		selectSql.append(" MaxUnplannedEmi, MaxReAgeHolidays, RoundingMode, RoundingTarget, FrequencyDays,alwMaxDisbCheckReq,quickDisb, ProfitCenterID, ");
 		
 		if (type.contains("View")) {
-			selectSql.append(" ProductCategory, lovDescProductCodeDesc, DownPayRuleDesc, ");
+			selectSql.append(" ProductCategory, DownPayRuleDesc, ");
 			selectSql.append(" lovDescFinContingentAcTypeName,lovDescFinBankContAcTypeName,lovDescFinProvisionAcTypeName,lovDescFinAcTypeName,");
 			selectSql.append(" lovDescPftPayAcTypeName,lovDescFinSuspAcTypeName, lovDescFinDivisionName,lovDescPromoFinTypeDesc, ProfitCenterCode, ProfitCenterDesc, ");
 		}
