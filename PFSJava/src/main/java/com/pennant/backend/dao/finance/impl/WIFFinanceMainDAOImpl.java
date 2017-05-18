@@ -105,7 +105,7 @@ public class WIFFinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements 
 		selectSql.append(" ProfitDaysBasis, ReqMaturity, CalTerms, CalMaturity, FirstRepay, LastRepay,"); 
 		selectSql.append(" FinStartDate, FinAmount, FinRepaymentAmount, CustID, Defferments, FinIsActive,");
 		selectSql.append(" FinBranch, FinSourceID, AllowedDefRpyChange, AvailedDefRpyChange, AllowedDefFrqChange,"); 
-		selectSql.append(" AvailedDefFrqChange, RecalType, MinDownPayPerc, ");
+		selectSql.append(" AvailedDefFrqChange, RecalType, MinDownPayPerc, FinCategory, ProductCategory, ");
 
 
 		if(StringUtils.trimToEmpty(type).contains("View")){
@@ -212,7 +212,7 @@ public class WIFFinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements 
 		insertSql.append(" ProfitDaysBasis, ReqMaturity, CalTerms, CalMaturity, FirstRepay, LastRepay,"); 
 		insertSql.append(" FinStartDate, FinAmount, FinRepaymentAmount, CustID, Defferments,");
 		insertSql.append(" FinBranch, FinSourceID, AllowedDefRpyChange, AvailedDefRpyChange, AllowedDefFrqChange,"); 
-		insertSql.append(" AvailedDefFrqChange, RecalType, FinIsActive,");
+		insertSql.append(" AvailedDefFrqChange, RecalType, FinIsActive, FinCategory, ProductCategory,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		insertSql.append(" NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:FinReference, :NumberOfTerms, :GrcPeriodEndDate, :AllowGrcPeriod,");
@@ -225,7 +225,7 @@ public class WIFFinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements 
 		insertSql.append(" :ProfitDaysBasis,:ReqMaturity,:CalTerms,:CalMaturity,:FirstRepay,:LastRepay,"); 
 		insertSql.append(" :FinStartDate,:FinAmount,:FinRepaymentAmount,:CustID,:Defferments,");
 		insertSql.append(" :FinBranch, :FinSourceID, :AllowedDefRpyChange, :AvailedDefRpyChange, :AllowedDefFrqChange,"); 
-		insertSql.append(" :AvailedDefFrqChange, :RecalType, :FinIsActive,");
+		insertSql.append(" :AvailedDefFrqChange, :RecalType, :FinIsActive, :FinCategory, :ProductCategory");
 		insertSql.append(" :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
 		insertSql.append(" :NextTaskId,:RecordType,:WorkflowId,:MinDownPayPerc)");
 		logger.debug("insertSql: " + insertSql.toString());
@@ -280,7 +280,7 @@ public class WIFFinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements 
 		updateSql.append(" Defferments = :Defferments, FinBranch =:FinBranch, FinSourceID= :FinSourceID,");
 		updateSql.append(" AllowedDefRpyChange= :AllowedDefRpyChange, AvailedDefRpyChange= :AvailedDefRpyChange,");
 		updateSql.append(" AllowedDefFrqChange= :AllowedDefFrqChange, AvailedDefFrqChange= :AvailedDefFrqChange,");
-		updateSql.append(" RecalType=:RecalType, FinIsActive= :FinIsActive");
+		updateSql.append(" RecalType=:RecalType, FinIsActive= :FinIsActive,FinCategory = :FinCategory, ProductCategory=:ProductCategory");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, MinDownPayPerc=:MinDownPayPerc");
