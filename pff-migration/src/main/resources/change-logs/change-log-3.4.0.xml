@@ -79,5 +79,55 @@
 		</column>
 	</addColumn>
 </changeSet>
-	
+	<changeSet id="03" author="SreeRavali">
+	<sql>
+
+		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from
+		SecGroupRights);
+
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights
+		where RightName = 'menuItem_FinanceManagement_Restructure');
+		Delete from SecRights where RightName =
+		'menuItem_FinanceManagement_Restructure';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0,
+		'menuItem_FinanceManagement_Restructure', 'RestructureDialog', 1,
+		1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from
+		SecGroupRights), (Select GrpID from SecGroups where GrpCode =
+		'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName =
+		'menuItem_FinanceManagement_Restructure'), 1, 1, 1000,
+		CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights
+		where RightName = 'menuCat_FinanceManagement') and grpid in (select
+		grpid from secgroups where grpcode ='RESTRUCTURE_MAKER');
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from
+		SecGroupRights), (Select GrpID from SecGroups where GrpCode =
+		'RESTRUCTURE_MAKER'), (Select RightID from SecRights where RightName =
+		'menuCat_FinanceManagement'), 1, 1, 1000, CURRENT_TIMESTAMP, null,
+		null, null, null, null, null, 0 );
+
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from
+		SecGroupRights), (Select GrpID from SecGroups where GrpCode =
+		'RESTRUCTURE_APPROVER'), (Select RightID from SecRights where
+		RightName = 'menuItem_FinanceManagement_Restructure'), 1, 1, 1000,
+		CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights
+		where RightName = 'menuCat_FinanceManagement') and grpid in (select
+		grpid from secgroups where grpcode ='RESTRUCTURE_APPROVER');
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from
+		SecGroupRights), (Select GrpID from SecGroups where GrpCode =
+		'RESTRUCTURE_APPROVER'), (Select RightID from SecRights where
+		RightName = 'menuCat_FinanceManagement'), 1, 1, 1000,
+		CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from
+		SecGroupRights);
+
+	</sql>
+</changeSet>
 </databaseChangeLog>
