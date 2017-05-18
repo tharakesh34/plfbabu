@@ -28,7 +28,6 @@
 	</bean>
 
 
-	<!-- Loop Limit Decider -->
 	<bean id="completeEODDecider" class="com.pennant.backend.endofday.limitdecider.CompleteEOD">
 		<property name="dataSource" ref="pfsDatasource" />
 		<property name="dateService" ref="dateService" />
@@ -38,6 +37,10 @@
 	<bean id="snapShotPreparationTaskLet" class="com.pennant.backend.endofday.tasklet.SnapShotPreparation">
 		<property name="dataSource" ref="pfsDatasource" />
 		<property name="snapshotService" ref="snapshotService" />
+	</bean>
+	
+	<bean id="dataExtractTaskLet" class="com.pennant.backend.endofday.tasklet.DataExtract">
+		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 
 	<!-- To be deleted -->
