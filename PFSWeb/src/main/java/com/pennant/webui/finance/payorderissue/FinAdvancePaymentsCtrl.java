@@ -72,6 +72,7 @@ import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -97,9 +98,9 @@ public class FinAdvancePaymentsCtrl {
 	private FinanceMain					financeMain;
 	private List<FinanceDisbursement>	financeDisbursement;
 	private List<FinanceDisbursement>	approvedDisbursments;
+	private FinAdvancePaymentsService	finAdvancePaymentsService;
 
-	public FinAdvancePaymentsCtrl(Listbox listbox, String ccy, boolean multiParty, String role) {
-		super();
+	public void init(Listbox listbox, String ccy, boolean multiParty, String role) {
 		this.ccyFormat = CurrencyUtil.getFormat(ccy);
 		this.ccy = ccy;
 		this.multiParty = multiParty;
@@ -479,100 +480,9 @@ public class FinAdvancePaymentsCtrl {
 
 		return true;
 	}
-
+	
 	private List<ErrorDetails> validate(List<FinAdvancePayments> list, boolean loanApproved) {
-		logger.debug(" Entering ");
-
-		FinanceDisbursement totDisb = getTotal(financeDisbursement, financeMain, 0, false);
-
-		BigDecimal netFinAmount = totDisb.getDisbAmount();
-		List<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
-		boolean checkMode = true;
-
-		BigDecimal totDisbAmt = BigDecimal.ZERO;
-		Map<Integer, BigDecimal> map = new HashMap<Integer, BigDecimal>();
-
-		if (financeMain.isQuickDisb() && financeDisbursement != null && financeDisbursement.size() > 1) {
-			//Multiple disbursement not allowed in quick disbursement
-			ErrorDetails error = new ErrorDetails("60405", null);
-			errorList.add(error);
-			return errorList;
-		}
-
-		for (FinAdvancePayments finAdvPayment : list) {
-			if (financeMain.isQuickDisb() && checkMode) {
-				if (!StringUtils.equals(finAdvPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)) {
-					checkMode = false;
-				}
-			}
-
-			if (!isDeleteRecord(finAdvPayment)) {
-				int key = finAdvPayment.getDisbSeq();
-
-				BigDecimal totalGroupAmt = map.get(key);
-				if (totalGroupAmt == null) {
-					totalGroupAmt = BigDecimal.ZERO;
-				}
-				totalGroupAmt = totalGroupAmt.add(finAdvPayment.getAmtToBeReleased());
-				map.put(key, totalGroupAmt);
-				totDisbAmt = totDisbAmt.add(finAdvPayment.getAmtToBeReleased());
-			}
-		}
-
-		if (netFinAmount.compareTo(totDisbAmt) != 0) {
-			//since if the loan not approved then user can cancel the instruction and resubmit the record in loan origination
-			if (loanApproved) {
-				//Total amount should match with disbursement amount.
-				ErrorDetails error = new ErrorDetails("60401", null);
-				errorList.add(error);
-				return errorList;
-			}
-		}
-
-		if (!checkMode) {
-			//For quick disbursement, only payment type cheque is allowed.
-			ErrorDetails error = new ErrorDetails("60402", null);
-			errorList.add(error);
-			return errorList;
-		}
-
-		//since if the loan not approved then user can cancel the instruction and resubmit the record in loan origination
-		if (loanApproved) {
-			for (FinanceDisbursement disbursement : financeDisbursement) {
-
-				if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, disbursement.getDisbStatus())) {
-					continue;
-				}
-
-				Date disbDate = disbursement.getDisbDate();
-				BigDecimal singletDisbursment = disbursement.getDisbAmount();
-
-				if (disbDate.compareTo(financeMain.getFinStartDate()) == 0) {
-					singletDisbursment = singletDisbursment.subtract(financeMain.getDownPayment());
-					singletDisbursment = singletDisbursment.subtract(financeMain.getDeductFeeDisb());
-					singletDisbursment = singletDisbursment.subtract(financeMain.getDeductInsDisb());
-					if (StringUtils.trimToEmpty(financeMain.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
-						singletDisbursment = singletDisbursment.subtract(financeMain.getBpiAmount());
-					}
-				}
-				int key = disbursement.getDisbSeq();
-
-				BigDecimal totalGroupAmt = map.get(key);
-				if (totalGroupAmt == null) {
-					totalGroupAmt = BigDecimal.ZERO;
-				}
-				if (singletDisbursment.compareTo(totalGroupAmt) != 0) {
-					String errorDesc = DateUtility.formatToLongDate(disbDate) + " , " + disbursement.getDisbSeq();
-					//Total amount should match with disbursement amount dated :{0}.
-					ErrorDetails error = new ErrorDetails("60404", new String[] { errorDesc });
-					errorList.add(error);
-					return errorList;
-				}
-			}
-		}
-
-		return errorList;
-
+		return finAdvancePaymentsService.validateFinAdvPayments(list, financeDisbursement, financeMain, loanApproved);
 	}
 
 	private boolean isApprovedDisbursments(FinAdvancePayments aFinAdvancePayments) {
@@ -637,6 +547,9 @@ public class FinAdvancePaymentsCtrl {
 
 	public void setApprovedDisbursments(List<FinanceDisbursement> approvedDisbursments) {
 		this.approvedDisbursments = approvedDisbursments;
+	}
+	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
+		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
 }

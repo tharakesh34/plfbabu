@@ -268,7 +268,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 			doCheckEnquiry();
 			FinanceMain finMain = getFinancedetail().getFinScheduleData().getFinanceMain();
 			FinanceType financeType = getFinancedetail().getFinScheduleData().getFinanceType();
-			finAdvancePaymentsCtrl = new FinAdvancePaymentsCtrl(this.listBoxAdvancePayments,
+			finAdvancePaymentsCtrl.init(this.listBoxAdvancePayments,
 					finMain.getFinCcy(), financeType.isAlwMultiPartyDisb(), roleCode);
 			finAdvancePaymentsCtrl.setFinanceDisbursement(getFinancedetail().getFinScheduleData().getDisbursementDetails());
 			finAdvancePaymentsCtrl.setFinanceMain(finMain);
@@ -505,6 +505,10 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 
 	public void setFinBasicDetailsCtrl(FinBasicDetailsCtrl finBasicDetailsCtrl) {
 		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
+	}
+	
+	public void setFinAdvancePaymentsCtrl(FinAdvancePaymentsCtrl finAdvancePaymentsCtrl) {
+		this.finAdvancePaymentsCtrl = finAdvancePaymentsCtrl;
 	}
 
 }

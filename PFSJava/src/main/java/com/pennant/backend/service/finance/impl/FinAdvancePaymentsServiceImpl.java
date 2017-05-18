@@ -54,6 +54,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.finance.limits.LimitCheckDetails;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -72,6 +73,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 
@@ -564,6 +566,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			FinanceMain financeMain, boolean loanApproved) {
 		logger.debug(" Entering ");
 
+		int ccyFormat = CurrencyUtil.getFormat(financeMain.getFinCcy());
 		FinanceDisbursement totDisb = getTotal(financeDisbursement, financeMain, 0, false);
 
 		BigDecimal netFinAmount = totDisb.getDisbAmount();
@@ -605,8 +608,8 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			if (loanApproved) {
 				//Total amount should match with disbursement amount.
 				String[] valueParm = new String[2];
-				valueParm[0] = String.valueOf(totDisbAmt);
-				valueParm[1] = String.valueOf(netFinAmount);
+				valueParm[0] = PennantApplicationUtil.amountFormate(totDisbAmt, ccyFormat);
+				valueParm[1] = PennantApplicationUtil.amountFormate(netFinAmount, ccyFormat);
 				ErrorDetails error = new ErrorDetails("60401", valueParm);
 				errorList.add(error);
 				return errorList;

@@ -488,7 +488,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		}
 
 		try {
-			finAdvancePaymentsCtrl = new FinAdvancePaymentsCtrl(this.listboxPayOrderIssue, financeMain.getFinCcy(),
+			finAdvancePaymentsCtrl.init(this.listboxPayOrderIssue, financeMain.getFinCcy(),
 					header.isAlwMultiPartyDisb(), getRole());
 			finAdvancePaymentsCtrl.setFinanceDisbursement(header.getFinanceDisbursements());
 			finAdvancePaymentsCtrl.setFinanceMain(financeMain);
@@ -1193,6 +1193,10 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
 		this.disbursementPostings = disbursementPostings;
+	}
+	
+	public void setFinAdvancePaymentsCtrl(FinAdvancePaymentsCtrl finAdvancePaymentsCtrl) {
+		this.finAdvancePaymentsCtrl = finAdvancePaymentsCtrl;
 	}
 
 }
