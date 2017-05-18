@@ -59,4 +59,5 @@ public interface CustomerAddresDAO {
 	 void deleteByCustomer(final long id,String type);
 	 int getAddrTypeCount(String addType);
 	 int getVersion(long id, String addrType);
+	 int getcustAddressCount(String addrType);
 }

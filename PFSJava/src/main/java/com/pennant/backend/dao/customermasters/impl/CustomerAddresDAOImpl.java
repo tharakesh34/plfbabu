@@ -369,6 +369,38 @@ public class CustomerAddresDAOImpl extends BasisCodeDAO<CustomerAddres> implemen
 		
 		return recordCount;
 	}
+	
+	/**
+	 * Method for get total number of records from BMTAddressTypes master table.<br>
+	 * 
+	 * @param addrType
+	 * 
+	 * @return Integer
+	 */
+	@Override
+	public int getcustAddressCount(String addrType) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource source=new MapSqlParameterSource();
+		source.addValue("CustAddrType", addrType);
+		
+		StringBuffer selectSql = new StringBuffer();
+		selectSql.append("SELECT COUNT(*) FROM CustomerAddresses");
+		selectSql.append(" WHERE ");
+		selectSql.append("CustAddrType= :CustAddrType");
+		
+		logger.debug("insertSql: " + selectSql.toString());
+		int recordCount = 0;
+		try {
+			recordCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch(EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+			recordCount = 0;
+		}
+		logger.debug("Leaving");
+		
+		return recordCount;
+	}
 
 	/**
 	 * Fetch current version of the record.
