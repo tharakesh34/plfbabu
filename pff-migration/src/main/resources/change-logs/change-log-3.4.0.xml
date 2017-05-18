@@ -1234,4 +1234,10 @@ update reportlist set  fieldlabels='listheader_CostCenterCode.label,listheader_C
 			UPDATE SeqSecOperationRoles SET SeqNo = (SELECT MAX(OprRoleID) FROM SecOperationRoles);
 		</sql>
 	</changeSet>
+	<changeSet id="41" author="Surekha">
+		<sql>
+			INSERT INTO Entities 	VALUES ('BFL', 'Bajaj Finance Limited',1, 1, 1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0); 
+			INSERT INTO Entities 	VALUES ('HFC', 'Bajaj Housing Finance Corporation',1, 1, 1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);  
+		</sql>
+	</changeSet>
 </databaseChangeLog>
