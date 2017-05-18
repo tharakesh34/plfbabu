@@ -745,4 +745,13 @@
 		INSERT INTO ErrorDetails VALUES('90290','EN','E','The record is in use and therefore cannot be deleted.','','Approved','','','','','',0,current_timestamp,1000,0);
 	</sql>
 	</changeSet>
+	<changeSet id="19" author="SreeRavali">
+	<sql>
+	delete from secrolegroups where grpid in(select grpid from secgroups where grpcode  ='RESTRUCTURE_MAKER');
+   delete from secrolegroups where grpid in(select grpid from secgroups where grpcode  ='RESTRUCTURE_APPROVER');
+   INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'RESTRUCTURE_MAKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'OPERATIONS_OFFICER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+  INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'RESTRUCTURE_APPROVER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'OPERATIONS_MANAGER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+	</sql>
+	</changeSet>
+	
 </databaseChangeLog>
