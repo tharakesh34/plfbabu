@@ -24,7 +24,11 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Image;
+import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
@@ -53,49 +57,45 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  * This is the controller class for the /WEB-INF/pages/Batch/BatchAdmin.zul file.
  */
 public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
-	private static final long		serialVersionUID	= 4309463490869641570L;
-	private final static Logger		logger				= Logger.getLogger(BatchAdminCtrl.class);
+	private static final long serialVersionUID = 4309463490869641570L;
+	private final static Logger logger = Logger.getLogger(BatchAdminCtrl.class);
 
-	protected Window				window_BatchAdmin;
-	protected Textbox				lable_LastBusiness_Date;
-	protected Textbox				lable_NextBusiness_Date;
-	protected Textbox				lable_Value_Date;
-	protected Checkbox				lock;
-	protected Timer					timer;
-	protected Textbox				estimatedTime;
-	protected Textbox				completedTime;
-	protected Label					label_elapsed_Time;
-	protected Hbox					batchStatus;
-	protected Button				btnStartJob;
-	protected Button				btnStaleJob;
-	protected Label					lable_current_step;
-	protected Borderlayout			borderLayoutBatchAdmin;
+	protected Window window_BatchAdmin;
+	protected Textbox lable_LastBusiness_Date;
+	protected Textbox lable_NextBusiness_Date;
+	protected Textbox lable_Value_Date;
+	protected Checkbox lock;
+	protected Timer timer;
+	protected Textbox estimatedTime;
+	protected Textbox completedTime;
+	protected Label label_elapsed_Time;
+	protected Hbox batchStatus;
+	protected Button btnStartJob;
+	protected Button btnStaleJob;
+	protected Label lable_current_step;
+	protected Borderlayout borderLayoutBatchAdmin;
+	// protected Hbox panelCustomerMicroEOD;
 
-	protected Label					status				= new Label();
+	protected Label status = new Label();
 
-	String[]						args				= new String[1];
-	private boolean					isInitialise		= false;
-	private boolean					islock				= false;
+	String[] args = new String[1];
+	private boolean isInitialise = false;
+	private boolean islock = false;
 
-	protected ProcessExecution		beforeEOD;
-	protected ProcessExecution		prepareCustomerQueue;
+	protected ProcessExecution beforeEOD;
+	protected ProcessExecution prepareCustomerQueue;
 
-	protected ProcessExecution		masterStep;
-	protected ProcessExecution		microEOD;
-	protected ProcessExecution		microEODMonitor;
+	protected ProcessExecution masterStep;
+	protected ProcessExecution microEOD;
+	protected ProcessExecution microEODMonitor;
 
-	protected ProcessExecution		snapShotPreparation;
+	protected ProcessExecution snapShotPreparation;
 
-	Map<String, ExecutionStatus>	processMap			= new HashMap<String, ExecutionStatus>();
-	private JobExecution			jobExecution;
+	Map<String, ExecutionStatus> processMap = new HashMap<String, ExecutionStatus>();
+	private JobExecution jobExecution;
 
 	public enum PFSBatchProcessess {
-		beforeEOD,
-		prepareCustomerQueue,
-		masterStep,
-		microEOD,
-		microEODMonitor,
-		snapShotPreparation
+		beforeEOD, prepareCustomerQueue, masterStep, microEOD, microEODMonitor, snapShotPreparation
 	}
 
 	public BatchAdminCtrl() {
@@ -105,7 +105,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 	public void onCreate$window_BatchAdmin(Event event) throws Exception {
 		// databaseBackupBeforEod.setVisible(false);
-
+		// panelCustomerMicroEOD.setVisible(true);
 		if (!isInitialise) {
 			setDates();
 			this.timer.setDelay(SysParamUtil.getValueAsInt("EOD_BATCH_REFRESH_TIME"));
@@ -165,6 +165,10 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			this.batchStatus.appendChild(status);
 			setRunningStatus();
 
+		} else {
+			if (this.timer.isRunning()) {
+				this.timer.stop();
+			}
 		}
 
 		if (this.btnStartJob.isDisabled()) {
@@ -246,7 +250,6 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		MultiLineMessageBox.doSetTemplate();
 		int conf = 0;
 
-
 		String msg = "";
 		if ("Start".equals(this.btnStartJob.getLabel())) {
 			args[0] = DateUtility.formatToShortDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT));
@@ -261,6 +264,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		if (conf == MultiLineMessageBox.YES) {
 			closeOtherTabs();
 			PFSBatchAdmin.getInstance();
+			timer.start();
 
 			this.btnStartJob.setDisabled(true);
 			BatchMonitor.jobExecutionId = 0;
@@ -341,7 +345,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 				// Collections.reverse(stepExecutionList);
 				for (StepExecution stepExecution : stepExecutionList) {
 
-					if ("EXECUTING".equals(stepExecution.getExitStatus().getExitCode())) {
+					if ("EXECUTING".equals(stepExecution.getExitStatus().getExitCode()) && !stepExecution.getStepName().contains(PFSBatchProcessess.microEOD.name())) {
 						exeStatus = BatchUtil.EXECUTING;
 					} else {
 						exeStatus = new ExecutionStatus();
@@ -394,21 +398,24 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	 */
 	private void renderPanels(String stepName) {
 		PFSBatchProcessess processName = null;
-
+		ExecutionStatus status = processMap.get(stepName);
 		try {
+
 			if (stepName.contains(PFSBatchProcessess.microEOD.name())) {
-				//TODO MICRO EOD Monitor
-			}else{
+				if (listBoxThread != null) {
+					doFillCustomerEodDetails(status);
+				}
+
+			} else {
 				processName = PFSBatchProcessess.valueOf(stepName);
 			}
-			
+
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			return;
 		}
 
-		ExecutionStatus status = processMap.get(stepName);
-		if (status != null && processName!=null) {
+		if (status != null && processName != null) {
 
 			switch (processName) {
 			case beforeEOD:
@@ -497,6 +504,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		if (snapShotPreparation.getChildren() != null) {
 			snapShotPreparation.getChildren().clear();
 		}
+		this.listBoxThread.getItems().clear();
 
 	}
 
@@ -518,6 +526,14 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 		if (source.getExecutionContext().containsKey("VDATE")) {
 			destination.setValueDate((Date) source.getExecutionContext().get("VDATE"));
+		}
+
+		if (source.getExecutionContext().containsKey("CustomerCount")) {
+			destination.setCustomerCount(source.getExecutionContext().getInt("CustomerCount"));
+		}
+
+		if (source.getExecutionContext().containsKey("Completed")) {
+			destination.setCompleted((Integer) source.getExecutionContext().get("Completed"));
 		}
 
 		destination.setExecutionName(source.getStepName());
@@ -613,6 +629,48 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 				tab.close();
 			}
+
+		}
+	}
+
+	protected Listbox listBoxThread;
+	protected Intbox noOfthread;
+	protected Intbox noOfCustomer;
+	
+	
+	public void doFillCustomerEodDetails(ExecutionStatus status) {
+		logger.debug("Entering");
+		noOfthread.setValue(SysParamUtil.getValueAsInt("EOD_THREAD_COUNT"));
+		noOfCustomer.setValue(0);
+		
+		if (status != null) {
+			String trheadName = status.getExecutionName();
+			Listitem listitem = null;
+			Listcell listcell = null;
+			String threadId = trheadName.replace(":", "_");
+
+			Component comp = listBoxThread.getFellowIfAny(threadId);
+			if (comp != null && comp instanceof Listitem) {
+				listitem = (Listitem) comp;
+				listitem.getChildren().clear();
+			}else {
+				listitem = new Listitem();
+			}
+			listitem.setId(threadId);
+
+			listcell = new Listcell(threadId);
+			listcell.setParent(listitem);
+
+			listcell = new Listcell(Integer.toString(status.getCustomerCount()));
+			listcell.setParent(listitem);
+
+			listcell = new Listcell(Integer.toString(status.getCompleted()));
+			listcell.setParent(listitem);
+
+			listcell = new Listcell(status.getStatus());
+			listcell.setId(threadId+"Status");
+			listcell.setParent(listitem);
+			listBoxThread.appendChild(listitem);
 
 		}
 	}
