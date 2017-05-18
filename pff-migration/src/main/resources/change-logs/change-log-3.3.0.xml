@@ -607,5 +607,90 @@ INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (
 		Inner Join RMTCurrencies RC on RC.CcyCode=F.FinCcy
 		</createView>
 	</changeSet>
-	
+	<changeSet id="43" author="Vinay">
+	<sql>
+		CREATE TABLE BUILDERGROUP
+   (	ID 								NUMBER GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT by 1)  NOT NULL ENABLE, 
+		NAME							VARCHAR2(50 BYTE) NOT NULL ENABLE, 
+		SEGMENTATION 					VARCHAR2(50 BYTE) NOT NULL ENABLE, 
+		VERSION 						NUMBER(10,0) NOT NULL ENABLE, 
+		LASTMNTBY 						NUMBER(19,0), 
+		LASTMNTON 						DATE, 
+		RECORDSTATUS 					VARCHAR2(50 BYTE), 
+		ROLECODE 						VARCHAR2(100 BYTE), 
+		NEXTROLECODE 					VARCHAR2(100 BYTE), 
+		TASKID 							VARCHAR2(50 BYTE), 
+		NEXTTASKID 						VARCHAR2(50 BYTE), 
+		RECORDTYPE 						VARCHAR2(50 BYTE), 
+		WORKFLOWID 						NUMBER(19,0),
+		CONSTRAINT "PK_BUILDERGROUP_ID" PRIMARY KEY (ID)
+		
+		USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 
+		STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+		PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+		BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+		TABLESPACE "PFF"  ENABLE
+   ) 
+	</sql>
+</changeSet>
+<changeSet id="44" author="Vinay">
+	<sql>
+		ALTER TABLE BUILDERGROUP
+		ADD CONSTRAINT UK_BUILDERGROUP_NAME UNIQUE (NAME);
+	</sql>
+</changeSet>
+<changeSet id="45" author="Vinay">
+	<sql>
+		CREATE TABLE BUILDERGROUP_TEMP
+   (	ID 								NUMBER GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT by 1)  NOT NULL ENABLE, 
+		NAME							VARCHAR2(50 BYTE) NOT NULL ENABLE, 
+		SEGMENTATION 					VARCHAR2(50 BYTE) NOT NULL ENABLE, 
+		VERSION 						NUMBER(10,0) NOT NULL ENABLE, 
+		LASTMNTBY 						NUMBER(19,0), 
+		LASTMNTON 						DATE, 
+		RECORDSTATUS 					VARCHAR2(50 BYTE), 
+		ROLECODE 						VARCHAR2(100 BYTE), 
+		NEXTROLECODE 					VARCHAR2(100 BYTE), 
+		TASKID 							VARCHAR2(50 BYTE), 
+		NEXTTASKID 						VARCHAR2(50 BYTE), 
+		RECORDTYPE 						VARCHAR2(50 BYTE), 
+		WORKFLOWID 						NUMBER(19,0),
+		CONSTRAINT "PK_BUILDERGROUP_TEMP_ID" PRIMARY KEY (ID)
+		
+		USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 
+		STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+		PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+		BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+		TABLESPACE "PFF"  ENABLE
+   ) 
+	</sql>
+</changeSet>
+<changeSet id="46" author="Vinay">
+	<sql>
+		ALTER TABLE BUILDERGROUP_TEMP
+		ADD CONSTRAINT UK_BUILDERGROUP_TEMP_NAME UNIQUE (NAME);
+	</sql>
+</changeSet>
+<changeSet id="47" author="Vinay">
+	<createView viewName="BuilderGroup_AView" replaceIfExists="true">
+AS
+SELECT		T1.Id, T1.Name, T1.Segmentation		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	BuilderGroup AS T1 
+</createView>
+</changeSet>
+	<changeSet id="48" author="Vinay">
+	<createView viewName="BuilderGroup_View" replaceIfExists="true">
+AS
+SELECT		T1.Id, T1.Name, T1.Segmentation		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	BuilderGroup_Temp AS T1 
+UNION ALL
+
+SELECT		T1.Id, T1.Name, T1.Segmentation		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	BuilderGroup AS T1 
+WHERE     NOT EXISTS (SELECT 1 FROM BuilderGroup_TEMP WHERE Id = T1.Id)
+</createView>
+</changeSet>
 </databaseChangeLog>
