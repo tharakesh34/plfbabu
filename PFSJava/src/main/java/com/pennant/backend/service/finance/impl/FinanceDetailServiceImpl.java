@@ -5260,7 +5260,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetail.setErrorDetail(90320);
 			}
 			
-			if(!StringUtils.equals(mandate.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
+			if(!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
 				if (!mandate.isUseExisting()) {
 					int count= getFinMandateService().getMnadateByCustID(mandate.getCustID(), mandate.getMandateID()).size();
 					if (count != 0) {
@@ -5272,7 +5272,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						errParmMan[0] = " CustID : " + valueParmMan[0];
 						errParmMan[1] =  valueParmMan[1];
 						
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"WMAN01",
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"65013",
 								errParmMan, valueParmMan), ""));
 					}
 				}

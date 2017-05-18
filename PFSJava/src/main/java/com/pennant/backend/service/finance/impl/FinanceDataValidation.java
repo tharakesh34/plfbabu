@@ -632,6 +632,7 @@ public class FinanceDataValidation {
 				CustomerDetails customerDetails = new CustomerDetails();
 				customerDetails.setCustomer(customer);
 				getFinanceDetail().setCustomerDetails(customerDetails);
+				getFinanceDetail().getFinScheduleData().getFinanceMain().setCustID(customer.getCustID());
 			}
 		}
 

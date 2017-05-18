@@ -130,7 +130,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			finScheduleData.setFinanceMain(financeMain);
 
 			// set required mandatory values into finance details object
-			doSetRequiredDetails(financeDetail);
+			doSetRequiredDetails(financeDetail, loanWithWIF);
 
 			if (financeDetail.getFinScheduleData().getErrorDetails() != null) {
 				for (ErrorDetails errorDetail : financeDetail.getFinScheduleData().getErrorDetails()) {
@@ -268,8 +268,9 @@ public class CreateFinanceController extends SummaryDetailService {
 	 * prepare finance detail object with required data to process finance origination.<br>
 	 * 
 	 * @param financeDetail
+	 * @param loanWithWIF 
 	 */
-	private void doSetRequiredDetails(FinanceDetail financeDetail) {
+	private void doSetRequiredDetails(FinanceDetail financeDetail, boolean loanWithWIF) {
 		logger.debug("Entering");
 
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
@@ -433,15 +434,17 @@ public class CreateFinanceController extends SummaryDetailService {
 		feeDetailService.doExecuteFeeCharges(financeDetail, finEvent);
 
 		// validate disbursement instructions
-		FinanceDisbursement disbursementDetails = new FinanceDisbursement();
-		disbursementDetails.setDisbDate(financeMain.getFinStartDate());
-		disbursementDetails.setDisbAmount(financeMain.getFinAmount());
-		disbursementDetails.setDisbSeq(1);
-		disbursementDetails.setDisbReqDate(DateUtility.getAppDate());
-		disbursementDetails.setFeeChargeAmt(financeMain.getFeeChargeAmt());
-		disbursementDetails.setInsuranceAmt(financeMain.getInsuranceAmt());
-		disbursementDetails.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(financeMain.getDisbAccountId()));
-		finScheduleData.getDisbursementDetails().add(disbursementDetails);
+		if(!loanWithWIF) {
+			FinanceDisbursement disbursementDetails = new FinanceDisbursement();
+			disbursementDetails.setDisbDate(financeMain.getFinStartDate());
+			disbursementDetails.setDisbAmount(financeMain.getFinAmount());
+			disbursementDetails.setDisbSeq(1);
+			disbursementDetails.setDisbReqDate(DateUtility.getAppDate());
+			disbursementDetails.setFeeChargeAmt(financeMain.getFeeChargeAmt());
+			disbursementDetails.setInsuranceAmt(financeMain.getInsuranceAmt());
+			disbursementDetails.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(financeMain.getDisbAccountId()));
+			finScheduleData.getDisbursementDetails().add(disbursementDetails);
+		}
 		
 		for(FinAdvancePayments advPayments: financeDetail.getAdvancePaymentsList()) {
 			advPayments.setDisbSeq(finScheduleData.getDisbursementDetails().size());
