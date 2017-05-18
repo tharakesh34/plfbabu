@@ -90,12 +90,13 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	protected ProcessExecution microEODMonitor;
 
 	protected ProcessExecution snapShotPreparation;
+	protected ProcessExecution dataExtract;
 
 	Map<String, ExecutionStatus> processMap = new HashMap<String, ExecutionStatus>();
 	private JobExecution jobExecution;
 
 	public enum PFSBatchProcessess {
-		beforeEOD, prepareCustomerQueue, masterStep, microEOD, microEODMonitor, snapShotPreparation
+		beforeEOD, prepareCustomerQueue, masterStep, microEOD, microEODMonitor, snapShotPreparation,dataExtract
 	}
 
 	public BatchAdminCtrl() {
@@ -467,6 +468,15 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 					setRunningProcess(this.snapShotPreparation);
 				}
 				break;
+		
+			case dataExtract:
+				this.dataExtract.setProcess(status);
+				this.dataExtract.render();
+				setRunningProcess(this.dataExtract);
+				if ("EXECUTING".equals(status.getStatus())) {
+					setRunningProcess(this.dataExtract);
+				}
+				break;
 
 			}
 		}
@@ -503,6 +513,9 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 		if (snapShotPreparation.getChildren() != null) {
 			snapShotPreparation.getChildren().clear();
+		}
+		if (dataExtract.getChildren() != null) {
+			dataExtract.getChildren().clear();
 		}
 		this.listBoxThread.getItems().clear();
 

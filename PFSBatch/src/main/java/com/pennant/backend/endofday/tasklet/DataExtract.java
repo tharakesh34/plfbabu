@@ -13,15 +13,21 @@ import org.springframework.batch.repeat.RepeatStatus;
 import com.pennant.app.util.DateUtility;
 
 public class DataExtract implements Tasklet {
-	private Logger			logger	= Logger.getLogger(DataExtract.class);
+	private Logger		logger	= Logger.getLogger(DataExtract.class);
 
-	private DataSource		dataSource;
+	private DataSource	dataSource;
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
 		Date valueDate = DateUtility.getAppValueDate();
 		logger.debug("START: Data Extract Preparation On : " + valueDate);
 
+		try {
+			//TODO Add the required code here
+
+		} catch (Exception e) {
+			logger.error("Exception", e);
+		}
 
 		logger.debug("COMPLETE: Data Extract Preparation On :" + valueDate);
 		return RepeatStatus.FINISHED;
@@ -38,6 +44,5 @@ public class DataExtract implements Tasklet {
 	public DataSource getDataSource() {
 		return dataSource;
 	}
-
 
 }
