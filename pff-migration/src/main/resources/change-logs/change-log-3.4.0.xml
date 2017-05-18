@@ -1195,4 +1195,9 @@ update reportlist set  fieldlabels='listheader_BounceCode.label,listheader_Reaso
 update reportlist set  fieldlabels='listheader_CostCenterCode.label,listheader_CostCenterDesc.label,listheader_Active.label', fieldvalues='costCenterCode,costCenterDesc,active', fieldtype='String,String,boolean', reportfilename='ReportList03'  where code='CostCenter';
 			</sql>
 	</changeSet>
+	<changeSet id="39" author="Madhubabu">
+		<sql>
+		update secrights set righttype=3 where rightname='CustomerBankInfoDialog_SalaryAccount'
+		</sql>
+	</changeSet>
 </databaseChangeLog>
