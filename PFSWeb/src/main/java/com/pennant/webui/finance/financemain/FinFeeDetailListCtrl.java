@@ -399,7 +399,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		if(financeDetail.isNewRecord() || StringUtils.isEmpty(financeDetail.getFinScheduleData().getFinanceMain().getRecordType())){
 			if(!financeDetail.getFinScheduleData().getFinFeeDetailActualList().isEmpty()){
 				for (FinFeeDetail finFeeDetail : financeDetail.getFinScheduleData().getFinFeeDetailActualList()) {
-					finFeeDetail.setNewRecord(true);
+					//finFeeDetail.setNewRecord(true);
 					finFeeDetail.setRecordType("");
 					finFeeDetail.setRecordStatus("");
 				}

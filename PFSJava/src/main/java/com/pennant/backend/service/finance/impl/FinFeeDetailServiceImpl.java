@@ -148,8 +148,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		if (finFeeDetails != null && !finFeeDetails.isEmpty()) {
-			
-			
 			int i = 0;
 			boolean saveRecord = false;
 			boolean updateRecord = false;
