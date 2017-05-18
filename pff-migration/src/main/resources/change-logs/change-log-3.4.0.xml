@@ -981,4 +981,19 @@ WHERE     NOT EXISTS
 			UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
 	      </sql>
 	    </changeSet>
+	    <changeSet id="32" author="Madhubabu">
+		<sql>
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0,'CustomerBankInfoDialog_SalaryAccount', 'CustomerBankInfoDialog', 1,1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode ='CustomerBankInfo_Maker'), (Select RightID from SecRights where RightName ='CustomerBankInfoDialog_SalaryAccount'), 1, 1, 1000,CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode ='CL_ORIGINATION_WRM'), (Select RightID from SecRights where RightName ='CustomerBankInfoDialog_SalaryAccount'), 1, 1, 1000,CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode ='BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName ='CustomerBankInfoDialog_SalaryAccount'), 1, 1, 1000,CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
