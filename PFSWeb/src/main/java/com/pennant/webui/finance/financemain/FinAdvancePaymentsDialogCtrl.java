@@ -1151,11 +1151,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.llReferenceNo.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_FinAdvancePaymentsDialog_LLReferenceNo.value"), null, false));
 		}
-		if (this.hbox_llDate.isVisible() && !this.llDate.isDisabled()) {
-			this.llDate
-					.setConstraint(new PTDateValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_LLDate.value"),
-							true, DateUtility.getAppDate(), null, true));
-		}
 		if (this.hbox_custContribution.isVisible() && !this.custContribution.isDisabled()) {
 			this.custContribution.setConstraint(
 					new PTDecimalValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_CustContribution.value"),
