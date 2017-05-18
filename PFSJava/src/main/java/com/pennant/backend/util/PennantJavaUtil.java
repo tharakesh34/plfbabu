@@ -95,6 +95,7 @@ import com.pennant.backend.model.applicationmaster.CustomerNotesType;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
+import com.pennant.backend.model.applicationmaster.Entities;
 import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.applicationmaster.FinanceApplicationCode;
 import com.pennant.backend.model.applicationmaster.FinanceStatusCode;
@@ -707,7 +708,8 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FinanceStatusCode",new ModuleMapping("FinanceStatusCode", FinanceStatusCode.class, new String[]{"FINANCESTATUSCODES", "FINANCESTATUSCODES_AView"},masterWF, new String[] {"StatusCode","StatusDesc"} , null,300));
 		ModuleUtil.register("NPABucketConfiguration",new ModuleMapping("NPABucketConfiguration", NPABucketConfiguration.class, new String[]{"NPABUCKETSCONFIG", "NPABUCKETSCONFIG_AView"}, masterWF,new String[] {"ConfigID","DueDays"} , null, 300));
 		ModuleUtil.register("DPDBucketConfiguration",new ModuleMapping("DPDBucketConfiguration", DPDBucketConfiguration.class, new String[]{"DPDBUCKETSCONFIG", "DPDBUCKETSCONFIG_AView"},masterWF, new String[] {"ConfigID","DueDays"} , null, 300));
-		 
+		ModuleUtil.register("Entities", new ModuleMapping("Entities", Entities.class, new String[] { "Entities", "Entities_AView" },
+				masterWF, new String[] { "EntityCode", "EntityDesc" },  new String[][] { { "Active", "0", "1" } }, 300));
 
 		/************* Accounts *************/
 

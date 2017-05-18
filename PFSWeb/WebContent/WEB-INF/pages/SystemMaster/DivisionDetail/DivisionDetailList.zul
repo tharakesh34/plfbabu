@@ -36,7 +36,7 @@
 					<toolbar align="end" sclass="toolbar-end">
 						<button
 							id="button_DivisionDetailList_NewDivisionDetail"
-							label="${c:l('label_New')}" visible="false"
+							label="${c:l('label_New')}" 
 							autodisable="button_DivisionDetailList_DivisionDetailSearch,print,button_DivisionDetailList_NewDivisionDetail,btnRefresh,help"
 							tooltiptext="${c:l('button_DivisionDetailList_NewDivisionDetail.tooltiptext')}"
 							sclass="z-toolbarbutton" />
@@ -85,7 +85,7 @@
 										id="sortOperator_DivisionCodeDesc" width="43px" mold="select"
 										rows="1" />
 									<textbox id="divisionCodeDesc"
-										width="320px" maxlength="50" />
+										width="150px" maxlength="50" />
 								</row>
 								<row>
 									<label

@@ -64,6 +64,7 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -111,9 +112,13 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	protected Checkbox 		alwPromotion; 
 	protected Checkbox 		active; 
 	
+	protected Row 			row_Suspremarks;
 	protected Combobox		suspTrigger;
 	protected Label			label_DivisionDetailDialog_DivisionSuspRemarks;
 	protected Textbox		divisionSuspRemarks;
+	
+	protected Label			label_EntityCode;
+	protected ExtendedCombobox		entityCode;
 
 	protected Label 		recordType;	 
 	protected Groupbox 		gb_statusDetails;
@@ -394,6 +399,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		this.alwPromotion.setDisabled(isReadOnly("DivisionDetailDialog_Active"));
 		this.suspTrigger.setDisabled(isReadOnly("DivisionDetailDialog_Active"));
 		this.divisionSuspRemarks.setReadonly(isReadOnly("DivisionDetailDialog_Active"));
+		this.entityCode.setReadonly(isReadOnly("DivisionDetailDialog_EntityCode"));
 		this.alwPromotion.setDisabled(true);
 		
         this.active.setDisabled(isReadOnly("DivisionDetailDialog_Active"));
@@ -440,6 +446,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		this.alwPromotion.setDisabled(true);
 		this.suspTrigger.setDisabled(true);
 		this.active.setDisabled(true);
+		this.entityCode.setReadonly(true);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -487,8 +494,13 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		//Empty sent any required attributes
 		this.divisionCode.setMaxlength(8);
 		this.divisionCodeDesc.setMaxlength(50);
-		this.label_DivisionDetailDialog_DivisionSuspRemarks.setVisible(false);
-		this.divisionSuspRemarks.setVisible(false);
+		this.row_Suspremarks.setVisible(false);
+		
+		this.entityCode.setModuleName("Entities");
+		this.entityCode.setMandatoryStyle(true);
+		this.entityCode.setValueColumn("EntityCode");
+		this.entityCode.setDescColumn("EntityDesc");
+		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
 	
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -512,21 +524,27 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 
 		this.alwPromotion.setChecked(aDivisionDetail.isAlwPromotion());
 		this.active.setChecked(aDivisionDetail.isActive());
+		this.entityCode.setValue(aDivisionDetail.getEntityCode());
 		this.recordStatus.setValue(aDivisionDetail.getRecordStatus());
 		//this.recordType.setValue(aDivisionDetail.getRecordType());
 		if(aDivisionDetail.isNew()){
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
-			this.divisionSuspRemarks.setVisible(false);
 		} else {
 			if(StringUtils.equals(getComboboxValue(this.suspTrigger), PennantConstants.SUSP_TRIG_MAN)) {
-				this.label_DivisionDetailDialog_DivisionSuspRemarks.setVisible(true);
-				this.divisionSuspRemarks.setVisible(true);
+				this.row_Suspremarks.setVisible(true);
 			}
-			if(this.divisionSuspRemarks.isVisible()) {
+			if(this.row_Suspremarks.isVisible()) {
 				this.divisionSuspRemarks.setValue(aDivisionDetail.getDivSuspRemarks());
 			}
 		}
+		
+		if (aDivisionDetail.isNewRecord()) {
+			this.entityCode.setDescription("");
+		} else {
+			this.entityCode.setDescription(aDivisionDetail.getEntityDesc());
+		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -578,7 +596,15 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		//Active
 		try {
 			aDivisionDetail.setActive(this.active.isChecked());
-		}catch (WrongValueException we ) {
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		//ENtity Code
+		try {
+			aDivisionDetail.setEntityCode(this.entityCode.getValidatedValue());
+			aDivisionDetail.setEntityDesc(this.entityCode.getDescription());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		
@@ -599,11 +625,9 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	public void onSelect$suspTrigger(Event event) {
 		logger.debug("Entering" + event.toString());
 		if(StringUtils.equals(getComboboxValue(this.suspTrigger), PennantConstants.SUSP_TRIG_MAN)) {
-			this.label_DivisionDetailDialog_DivisionSuspRemarks.setVisible(true);
-			this.divisionSuspRemarks.setVisible(true);
+			this.row_Suspremarks.setVisible(true);
 		} else {
-			this.label_DivisionDetailDialog_DivisionSuspRemarks.setVisible(false);
-			this.divisionSuspRemarks.setVisible(false);
+			this.row_Suspremarks.setVisible(false);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -613,6 +637,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
+		doClearMessage();
 		//Division Code
 		if (!this.divisionCode.isReadonly()){
 			this.divisionCode.setConstraint(new PTStringValidator(Labels.getLabel("label_DivisionDetailDialog_DivisionCode.value"),PennantRegularExpressions.REGEX_UPPERCASENAME,true));
@@ -620,6 +645,12 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		//Division Code Desc
 		if (!this.divisionCodeDesc.isReadonly()){
 			this.divisionCodeDesc.setConstraint(new PTStringValidator(Labels.getLabel("label_DivisionDetailDialog_DivisionCodeDesc.value"),PennantRegularExpressions.REGEX_NAME,true));
+		}
+		
+		if (!this.entityCode.isReadonly()) {
+			this.entityCode.setConstraint(new PTStringValidator(Labels
+					.getLabel("label_DivisionDetailDialog_EntityCode.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 	logger.debug("Leaving");
 	}
@@ -631,6 +662,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		logger.debug("Entering");
 		this.divisionCode.setConstraint("");
 		this.divisionCodeDesc.setConstraint("");
+		this.entityCode.setConstraint("");
 	logger.debug("Leaving");
 	}
 
@@ -659,6 +691,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 			this.divisionCode.setErrorMessage("");
 			this.divisionCodeDesc.setErrorMessage("");
 			this.suspTrigger.setErrorMessage("");
+			this.entityCode.setErrorMessage("");
 	logger.debug("Leaving");
 	}
 
@@ -729,6 +762,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		
 		this.divisionCode.setValue("");
 		this.divisionCodeDesc.setValue("");
+		this.entityCode.setValue("");
 		this.suspTrigger.setSelectedIndex(0);
 		this.alwPromotion.setChecked(false);
 		this.active.setChecked(false);

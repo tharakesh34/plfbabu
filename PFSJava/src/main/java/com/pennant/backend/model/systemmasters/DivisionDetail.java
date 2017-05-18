@@ -62,6 +62,8 @@ public class DivisionDetail extends AbstractWorkflowEntity {
 	private String divSuspRemarks;
 	private boolean alwPromotion;
 	private boolean active;
+	private String entityCode;
+	private String entityDesc;
 	private boolean newRecord;
 	private String lovValue;
 	private DivisionDetail befImage;
@@ -81,7 +83,9 @@ public class DivisionDetail extends AbstractWorkflowEntity {
 	}
 
 	public Set<String> getExcludeFields(){
-		return new HashSet<String>();
+		Set<String> excludeFields=new HashSet<String>();
+		excludeFields.add("entityDesc");
+		return excludeFields;
 	}
 
 	// ******************************************************//
@@ -178,4 +182,21 @@ public class DivisionDetail extends AbstractWorkflowEntity {
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
+
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
+	}
+
+	public String getEntityDesc() {
+		return entityDesc;
+	}
+
+	public void setEntityDesc(String entityDesc) {
+		this.entityDesc = entityDesc;
+	}
+
 }

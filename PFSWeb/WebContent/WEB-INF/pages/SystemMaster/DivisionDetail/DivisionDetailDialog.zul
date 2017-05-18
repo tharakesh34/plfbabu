@@ -96,6 +96,11 @@
 											maxlength="50" width="250px" />
 									</hlayout>
 								</row>
+								<row>
+									<label id="label_EntityCode"
+										value="${c:l('label_DivisionDetailDialog_EntityCode.value')}" />
+									<extendedcombobox id="entityCode" />
+								</row>
 								<row visible = "false"> 
 								<label id="label_AlwPromotions"
 										value="${c:l('label_DivisionDetailDialog_AlwPromotions.value')}" />
@@ -103,16 +108,6 @@
 										<space id="space_AlwPromotions" 
 											spacing="2px" />
 										<checkbox id="alwPromotion"
-											checked="false" />
-									</hlayout>
-								</row>
-								<row id="row1">
-									<label id="label_Active"
-										value="${c:l('label_DivisionDetailDialog_Active.value')}" />
-									<hlayout id="hlayout_Active">
-										<space id="space_Active" 
-											spacing="2px" />
-										<checkbox id="active"
 											checked="false" />
 									</hlayout>
 								</row>
@@ -125,16 +120,27 @@
 										<combobox id="suspTrigger"
 											disabled="false" />
 									</hbox>
+								</row>
+								<row id="row_Suspremarks" visible="false">
 									<label
 										id="label_DivisionDetailDialog_DivisionSuspRemarks"
 										value="${c:l('label_DivisionDetailDialog_DivisionSuspRemarks.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<textbox id="divisionSuspRemarks" height ="50px" width="250px" multiline="true" />
+										<textbox
+											id="divisionSuspRemarks" height="50px" width="250px"
+											multiline="true" />
 									</hbox>
 								</row>
-								<row visible="true">
-									
+								<row id="row1">
+									<label id="label_Active"
+										value="${c:l('label_DivisionDetailDialog_Active.value')}" />
+									<hlayout id="hlayout_Active">
+										<space id="space_Active"
+											spacing="2px" />
+										<checkbox id="active"
+											checked="false" />
+									</hlayout>
 								</row>
 							</rows>
 						</grid>

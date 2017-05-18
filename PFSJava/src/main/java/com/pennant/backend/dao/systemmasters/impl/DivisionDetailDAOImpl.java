@@ -96,10 +96,10 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 		DivisionDetail divisionDetail = new DivisionDetail();
 		divisionDetail.setId(id);
 		
-		StringBuilder selectSql = new StringBuilder("Select DivisionCode, DivisionCodeDesc, Active, DivSuspTrigger, DivSuspRemarks ");
+		StringBuilder selectSql = new StringBuilder("Select DivisionCode, DivisionCodeDesc, Active, DivSuspTrigger, DivSuspRemarks, EntityCode ");
 		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,AlwPromotion");
 		if(StringUtils.trimToEmpty(type).contains("View")){
-			selectSql.append("");
+			selectSql.append(", EntityDesc");
 		}
 		selectSql.append(" From SMTDivisionDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -162,9 +162,9 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 		// Prepare the SQL.
 		StringBuilder sql =new StringBuilder("insert into SMTDivisionDetail");
 		sql.append(tableType.getSuffix());
-		sql.append(" (DivisionCode, DivisionCodeDesc, Active, DivSuspTrigger, DivSuspRemarks ");
+		sql.append(" (DivisionCode, DivisionCodeDesc, Active, DivSuspTrigger, DivSuspRemarks, EntityCode ");
 		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,AlwPromotion)");
-		sql.append(" values(:DivisionCode, :DivisionCodeDesc, :Active, :DivSuspTrigger, :DivSuspRemarks ");
+		sql.append(" values(:DivisionCode, :DivisionCodeDesc, :Active, :DivSuspTrigger, :DivSuspRemarks, :EntityCode ");
 		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:AlwPromotion)");
 		
 		// Execute the SQL, binding the arguments.
@@ -187,7 +187,7 @@ public class DivisionDetailDAOImpl extends BasisCodeDAO<DivisionDetail> implemen
 		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql =new StringBuilder("update SMTDivisionDetail");
 		sql.append(tableType.getSuffix()); 
-		sql.append(" set DivisionCodeDesc = :DivisionCodeDesc, Active = :Active, DivSuspTrigger=:DivSuspTrigger, DivSuspRemarks=:DivSuspRemarks");
+		sql.append(" set DivisionCodeDesc = :DivisionCodeDesc, Active = :Active, DivSuspTrigger=:DivSuspTrigger, DivSuspRemarks=:DivSuspRemarks, EntityCode = :EntityCode");
 		sql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, AlwPromotion = :AlwPromotion");
 		sql.append(" where DivisionCode =:DivisionCode");
