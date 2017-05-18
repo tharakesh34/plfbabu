@@ -80,7 +80,7 @@ public class FinanceTypeListModelItemRenderer implements ListitemRenderer<Financ
 	public void render(Listitem item, FinanceType financeType, int count) throws Exception {
 
 		if (item instanceof Listgroup) {
-			Listcell  cell= new Listcell(String.valueOf(financeType.getLovDescProductCodeDesc()));
+			Listcell  cell= new Listcell(financeType.getFinCategoryDesc());
 			cell.setStyle("font-weight:bold;color:##FF4500;");
 			item.appendChild(cell);
 		} else if (item instanceof Listgroupfoot) {

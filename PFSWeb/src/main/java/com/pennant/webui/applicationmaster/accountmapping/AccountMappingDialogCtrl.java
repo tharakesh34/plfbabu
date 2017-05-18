@@ -168,7 +168,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 		this.finType.setModuleName("FinanceType");
 		this.finType.setValueColumn("FinType");
 		this.finType.setDescColumn("FinTypeDesc");
-		this.finType.setValidateColumns(new String[] { "FinType", "LovDescProductCodeDesc", "FinTypeDesc" });
+		this.finType.setValidateColumns(new String[] { "FinType", "FinCategory", "FinTypeDesc" });
 		this.finType.setMandatoryStyle(true);
  		
 		logger.debug(Literal.LEAVING);

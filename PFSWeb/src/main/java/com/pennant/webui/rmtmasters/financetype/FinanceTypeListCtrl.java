@@ -228,7 +228,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 			registerField("fInIsAlwGrace", listheader_AlwGrace, SortOrder.NONE, finIsAlwGrace, sortOperator_finIsAlwGrace, Operators.BOOLEAN);
 		}
 		registerField("finDivision", listheader_FinDivision, SortOrder.NONE, finDivision, sortOperator_finDivision, Operators.STRING);
-		registerField("LovDescProductCodeDesc", SortOrder.DESC);
+		registerField("FinCategoryDesc", SortOrder.DESC);
 		registerField("FinCategory");
 		
 		// Render the page and display the data.

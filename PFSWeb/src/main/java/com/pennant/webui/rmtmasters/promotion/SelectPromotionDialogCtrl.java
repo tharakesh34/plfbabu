@@ -177,7 +177,7 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.finType.setModuleName("FinanceType");
 		this.finType.setValueColumn("FinCategory");
 		this.finType.setDescColumn("FinTypeDesc");
-		this.finType.setValidateColumns(new String[] { "FinType", "LovDescProductCodeDesc", "FinTypeDesc" });
+		this.finType.setValidateColumns(new String[] { "FinType", "FinCategory", "FinTypeDesc" });
 		this.finType.setMandatoryStyle(true);
 
 		logger.debug("Leaving");

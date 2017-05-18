@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "finCcy", "lovDescFinCcyName", "finDaysCalType", "lovDescFinDaysCalTypeName", "finMinAmount",
-		"finMaxAmount", "finCategory", "lovDescProductCodeDesc", "finAssetType", "finIsDwPayRequired", "downPayRule",
+		"finMaxAmount", "finCategory", "FinCategory", "finAssetType", "finIsDwPayRequired", "downPayRule",
 		"downPayRuleDesc", "fInIsAlwGrace", "finIsAlwMD", "finDepreciationReq", "limitRequired", "overrideLimit",
 		"finCollateralReq", "finCollateralOvrride", "collateralType", "allowRIAInvestment", "alwAdvanceRent",
 		"finDivision", "finIsActive", "allowDownpayPgm", "rollOverFinance", "rollOverFrq", "finCommitmentReq",
@@ -44,8 +44,6 @@ public class BasicDetail implements Serializable {
 
 	private String finCategory;
 
-	@XmlElement(name = "finCategoryDesc")
-	private String lovDescProductCodeDesc;
 	private String finAssetType;
 
 	@XmlElement(name = "downPayReq")
@@ -152,14 +150,6 @@ public class BasicDetail implements Serializable {
 
 	public void setFinCategory(String finCategory) {
 		this.finCategory = finCategory;
-	}
-
-	public String getLovDescProductCodeDesc() {
-		return lovDescProductCodeDesc;
-	}
-
-	public void setLovDescProductCodeDesc(String lovDescProductCodeDesc) {
-		this.lovDescProductCodeDesc = lovDescProductCodeDesc;
 	}
 
 	public String getFinAssetType() {

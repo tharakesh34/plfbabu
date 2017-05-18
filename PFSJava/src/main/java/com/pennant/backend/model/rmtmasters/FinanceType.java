@@ -52,6 +52,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String product = "";
 	private String finType;
 	private String finCategory;
+	private String finCategoryDesc;
 	private String finTypeDesc;
 	private String finCcy;
 	private String finDaysCalType;
@@ -260,7 +261,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String lovDescEVFinAEBuyOrInceptionName;
 	private String lovDescFinAESellOrMaturityName;
 	private String lovDescEVFinAESellOrMaturityName;
-	private String lovDescProductCodeDesc;
 	private String lovDescPromoFinTypeDesc;
 	private String productCategory;
 	
@@ -310,6 +310,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 		excludeFields.add("profitcenterCode");
 		excludeFields.add("profitCenterDesc");
 		excludeFields.add("promotionType");
+		excludeFields.add("finCategoryDesc");
 		return excludeFields;
 	}
 
@@ -1282,13 +1283,6 @@ public class FinanceType extends AbstractWorkflowEntity {
     	this.oDMaxWaiverPerc = oDMaxWaiverPerc;
     }
 
-	public String getLovDescProductCodeDesc() {
-    	return lovDescProductCodeDesc;
-    }
-	public void setLovDescProductCodeDesc(String lovDescProductCodeDesc) {
-    	this.lovDescProductCodeDesc = lovDescProductCodeDesc;
-    }
-
 	public List<FinTypeAccount> getFinTypeAccounts() {
     	return finTypeAccounts;
     }
@@ -1919,5 +1913,13 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setRoundingTarget(int roundingTarget) {
 		this.roundingTarget = roundingTarget;
+	}
+
+	public String getFinCategoryDesc() {
+		return finCategoryDesc;
+	}
+
+	public void setFinCategoryDesc(String finCategoryDesc) {
+		this.finCategoryDesc = finCategoryDesc;
 	}
 }

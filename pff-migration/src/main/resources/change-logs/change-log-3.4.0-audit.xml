@@ -46,4 +46,16 @@
 		</column>
 	</addColumn>
 </changeSet>
+<changeSet id="03" author="Irfan">
+	<addColumn tableName="ADTRMTFINANCETYPES">
+		<column name="ProductCategory" type="varchar(8)"/>
+	</addColumn>
+</changeSet>
+<changeSet id="04" author="Irfan">
+	<addColumn tableName="ADTFINANCEMAIN">
+		<column name="ReAgeBucket" type="int"/>
+		<column name="FinCategory" type="VARCHAR(8)"/>
+		<column name="ProductCategory"  type="VARCHAR(8)"/>
+	</addColumn>
+	</changeSet>
 </databaseChangeLog>
