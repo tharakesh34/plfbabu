@@ -97,6 +97,9 @@
 	    </createIndex>
 	</changeSet>
 	<changeSet id="08.1" author="Jayant">
+	<sql>
+	delete from SMTPARAMETERS where SYSPARMCODE='AMZ_POSTING_EVENT';
+	</sql>
 	    <sql>
 	    	INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, 
 	    	SYSPARMDEC, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, WORKFLOWID) 
@@ -146,10 +149,10 @@
 	   <sql>
 	   	Update SeqSecRights set SeqNo = (select MAX(RightID) from SecRights);
 		Update SeqSecGroupRights set SeqNo = (select MAX(GrpRightID) from SecGroupRights);
-	  	INSERT INTO SecRights SELECT (select (SeqNo+1) from SeqSecRights),3,'JVPostingDialog_PostingAgainst','JVPostingDialog',0,1000,'2017-01-03 12:41:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
-     	INSERT INTO SecRights SELECT (select (SeqNo+2) from SeqSecRights),3,'JVPostingDialog_Reference','JVPostingDialog',0,1000,'2017-01-03 12:41:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
-		INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select Grpid from SecGroups where grpcode='JVPOSTINGS_MAKER'), (select rightid from secrights where rightname='JVPostingDialog_PostingAgainst'),1,0,10000,'2017-01-03 12:41:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-		INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select Grpid from SecGroups where grpcode='JVPOSTINGS_MAKER'), (select rightid from secrights where rightname='JVPostingDialog_Reference'),1,0,10000,'2017-01-03 12:41:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	  	INSERT INTO SecRights SELECT (select (SeqNo+1) from SeqSecRights),3,'JVPostingDialog_PostingAgainst','JVPostingDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+     	INSERT INTO SecRights SELECT (select (SeqNo+2) from SeqSecRights),3,'JVPostingDialog_Reference','JVPostingDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select Grpid from SecGroups where grpcode='JVPOSTINGS_MAKER'), (select rightid from secrights where rightname='JVPostingDialog_PostingAgainst'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select Grpid from SecGroups where grpcode='JVPOSTINGS_MAKER'), (select rightid from secrights where rightname='JVPostingDialog_Reference'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
 		Update SeqSecRights set SeqNo = (select MAX(RightID) from SecRights);
 		Update SeqSecGroupRights set SeqNo = (select MAX(GrpRightID) from SecGroupRights);
 	   </sql>
@@ -481,46 +484,46 @@ FROM         AMTVehicleDealer T1 LEFT OUTER JOIN
 			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 
 
-INSERT INTO SecGroups SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'BUILDERGROUP_VIEW', 'Allow to view BuilderGroup', 0,1000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
-INSERT INTO SecGroups SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'BUILDERGROUP_MAKER', 'WF Maker for BuilderGroup', 0,1000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
-INSERT INTO SecGroups SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'BUILDERGROUP_APPROVER', 'WF Maker for BuilderGroup', 0,1000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'BUILDERGROUP_VIEW', 'Allow to view BuilderGroup', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'BUILDERGROUP_MAKER', 'WF Maker for BuilderGroup', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'BUILDERGROUP_APPROVER', 'WF Maker for BuilderGroup', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
 
-INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'menuItem_masters_BuilderGroup','MENU',0,1000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
-INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'menuItem_masters_BuilderGroupEnquiry','MENU',0,1000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'menuItem_masters_BuilderGroup','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'menuItem_masters_BuilderGroupEnquiry','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
 
-INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_BuilderGroupList_PrintList','BuilderGroupList',0,1000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
-INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_BuilderGroupList_NewBuilderGroup','BuilderGroupList',0,1000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
-INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_BuilderGroupDialog_btnNew','BuilderGroupDialog',0,1000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
-INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_BuilderGroupDialog_btnEdit','BuilderGroupDialog',0,1000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
-INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_BuilderGroupDialog_btnDelete','BuilderGroupDialog',0,1000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
-INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_BuilderGroupDialog_btnSave','BuilderGroupDialog',0,1000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_BuilderGroupList_PrintList','BuilderGroupList',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_BuilderGroupList_NewBuilderGroup','BuilderGroupList',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_BuilderGroupDialog_btnNew','BuilderGroupDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_BuilderGroupDialog_btnEdit','BuilderGroupDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_BuilderGroupDialog_btnDelete','BuilderGroupDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_BuilderGroupDialog_btnSave','BuilderGroupDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
 
-INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'BuilderGroupDialog_id','BuilderGroupDialog',0,1000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
-INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'BuilderGroupDialog_name','BuilderGroupDialog',0,1000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
-INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'BuilderGroupDialog_segmentation','BuilderGroupDialog',0,1000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
-
-
-INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_MAKER'), (select max(RightID) from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,'2017-05-17 10:58:26',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-
-INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_masters_BuilderGroup'),1,0,10000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-
-INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_masters_BuilderGroupEnquiry'),1,0,10000,'2017-05-17 10:58:26',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-
-INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_BuilderGroupList_NewBuilderGroup'),1,0,10000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_BuilderGroupDialog_btnDelete'),1,0,10000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_BuilderGroupDialog_btnSave'),1,0,10000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BuilderGroupDialog_id'),1,0,10000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BuilderGroupDialog_name'),1,0,10000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BuilderGroupDialog_segmentation'),1,0,10000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-
-INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_APPROVER'), (select max(RightID) from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_masters_BuilderGroup'),1,0,10000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_masters_BuilderGroupEnquiry'),1,0,10000,'2017-05-17 10:58:26',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_BuilderGroupDialog_btnSave'),1,0,10000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'BuilderGroupDialog_id','BuilderGroupDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'BuilderGroupDialog_name','BuilderGroupDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'BuilderGroupDialog_segmentation','BuilderGroupDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
 
 
-INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_MAKER'), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
-INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_APPROVER'), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,'2017-05-17 10:58:26','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_MAKER'), (select max(RightID) from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_masters_BuilderGroup'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_masters_BuilderGroupEnquiry'),1,0,10000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_BuilderGroupList_NewBuilderGroup'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_BuilderGroupDialog_btnDelete'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_BuilderGroupDialog_btnSave'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BuilderGroupDialog_id'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BuilderGroupDialog_name'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BuilderGroupDialog_segmentation'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_APPROVER'), (select max(RightID) from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_masters_BuilderGroup'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_masters_BuilderGroupEnquiry'),1,0,10000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_BuilderGroupDialog_btnSave'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+
+
+INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_MAKER'), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERGROUP_APPROVER'), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
 
 			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
 			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
