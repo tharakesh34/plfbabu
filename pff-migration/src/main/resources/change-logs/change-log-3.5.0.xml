@@ -19,6 +19,78 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
-	
-	
+	<changeSet id="1" author="Prasad">
+	<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		  <![CDATA[  Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
+		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
+		 from ( 
+			Select T1.Finreference,Schdate, (case when T1.Disbonschdate=1 then 'Amount Financed - Payable ('||T1.Finreference||')' else 
+											  'Due for Installment '||T1.INSTNUMBER||' ('||T1.Finreference||')' end) Particulars,
+			 case when T1.Disbonschdate=1 then 0 else T1.Repayamount end Debit,
+			 case when T1.Disbonschdate=1 then T1.DisbAmount else 0 end Credit,1 Ordby
+	   from finscheduledetails T1
+	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY!='B' or BPIORHOLIDAY is null) and 
+			 schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  	
+  union
+  Select T1.Finreference,T2.FInApprovedDate,'Broken Period Interest Receivable- Due('||T1.Finreference||')' Particulars,
+			 Repayamount Debit, 0 Credit,2 Ordby
+	   from finscheduledetails T1
+          inner join Financemain T2 on T2.Finreference = T1.Finreference
+	   where BPIORHOLIDAY='B' and Repayamount!=0
+	union 	
+		SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) ||'- Due ('||Finreference||')' ,m.ADVISEAMOUNT Debit ,0 Credit ,3 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		LEFT JOIN BOUNCEREASONS T3 ON M.BounceID = T3.BOUNCEID		
+	union	
+		Select REFERENCE,Receiveddate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '||PAYMENTTYPE ||' No.:'||CHEQUEACNO ||'('||REFERENCE||')'
+										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('||REFERENCE||')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'||CHEQUEACNO ||'('||REFERENCE||')' end) Particulars,
+			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit,4 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID			 
+	union 	
+		Select finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' || to_char(FINODTILLDATE, 'dd/mm/yyyy') Particulars, 
+		TotPenaltyAmt Debit, 0 credit,5 Ordby
+		From FinODDetails where TOtPenaltyAmt > 0 
+  union
+    Select T1.Finreference,FInApprovedDate,Feetypedesc||'- Due ('||T1.Finreference||')', RemainingFee Debit, 0 credit,6 Ordby
+    from finfeedetail T1 
+    inner join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    where Originationfee=1 and feeSchedulemethod='DISB'
+  union
+    Select T1.Finreference,T2.FInApprovedDate,'Amount Paid Vide '||PaymentType||' :'|| (case when PaymentType in ('CHEQUE','DD') then LLREFERENCENO else Transactionref end)||'('||T1.Finreference||')' ,
+    AmtToBeReleased Debit, 0 credit,7 Ordby
+    from FINADVANCEPAYMENTS T1 inner join Financemain T2 on T2.Finreference = T1.Finreference
+    where Status!='CANCELED'
+	)T1 
+	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
+		</createView>
+	</changeSet>
+	<changeSet id="2" author="Prasad">
+	<createView viewName="RPT_SOA_LOAN_VIEW" replaceIfExists="true">
+		  <![CDATA[  Select FM.FinReference,FP.TotalPriSchd LoanAmount,
+		   FM.RepayBaseRate PLRRate,FM.repaymargin Variance,FM.EffectiveRateOfReturn IRR,FP.CURREDUCINGRATE ROI,
+		   FM.CalTerms Tenure,TotalPriPaid EMIReceivedPri ,TotalPftPaid EMIReceivedPft,
+		   0.00 PreferredCardLimit,PRVRPYSCHPRI PrevInstAmtPri,PRVRPYSCHPFT PrevInstAmtPft,
+		   Case when FM.RvwRateApplFor is null or FM.RvwRateApplFor='#' then 'Fixed' else 'Floating' end intRateType,FP.latestDisbDate LastDisbursalDate,
+		   FP.FirstRepayDate FirstDueDate,FP.MaturityDate EndInstallmentDate,
+		   '0.00/ 0' AdvInstAmt,FP.FinIsActive,FM.closingstatus,
+		   FP.Futureinst FutureInstNo,FP.totalpriSchd FuturePri1,FP.tdSchdPri FuturePri2,
+       FP.totalPftSchd FutureRpyPft1,FP.tdSchdPft FutureRpyPft2,
+		   FP.totchargespaid Charge_coll_cust,
+		   FP.UpFrontFee Upfront_int_cust,	0 Int_paid_Dealer_upfront,0 Pre_emi_Int_Paid,
+		   '' Repo_Status,'' Repo_Date,'' Sale_Date,'' Release_Date,FP.LATESTRPYDATE,
+       C.ccyMinorccyunits,ccyEditField
+	From FinanceMain FM inner join
+       FinPftDetails FP on FP.FinReference = FM.FinReference inner join
+       RMTCURRENCIES C on C.ccycode= FP.finccy]]>
+		</createView>
+	</changeSet>
+	<changeSet id="3" author="Prasad">
+	<sql>Update FinanceMain set ReqMaturity  = MaturityDate</sql>
+	</changeSet>
 </databaseChangeLog>
