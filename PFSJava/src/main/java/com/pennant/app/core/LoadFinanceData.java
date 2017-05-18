@@ -108,6 +108,10 @@ public class LoadFinanceData extends ServiceHelper {
 				if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
 					finEODEvent.setInstDueExist(true);
 				}
+				
+				if (curSchd.getDefSchdDate().compareTo(businesdate)==0 && curSchd.getPresentmentId() != 0) {
+					finEODEvent.setPresentmentExist(true);
+				}
 
 			}
 
