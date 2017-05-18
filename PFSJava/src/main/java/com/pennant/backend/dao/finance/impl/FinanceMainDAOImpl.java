@@ -297,7 +297,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 				" SupplementRent, IncreasedCost , feeAccountId, MinDownPayPerc, TDSApplicable, FeeChargeAmt, InsuranceAmt, AlwBPI , BpiTreatment , PlanEMIHAlw ,");
 		selectSql.append(
 				" PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax , PlanEMIHLockPeriod , PlanEMICpz , CalRoundingMode , AlwMultiDisb, BpiAmount, ");
-		selectSql.append(" DeductFeeDisb, RvwRateApplFor, SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,PastduePftMargin,  FinCategory, ProductCategory");
+		selectSql.append(" DeductFeeDisb, RvwRateApplFor, SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,PastduePftMargin,  FinCategory, ProductCategory,");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" lovDescFinTypeName, lovDescFinBranchName, ");
