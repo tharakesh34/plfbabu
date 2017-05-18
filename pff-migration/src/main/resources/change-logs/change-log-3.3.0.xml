@@ -596,4 +596,16 @@ INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (
 			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
 		</sql>
 	</changeSet>
+	
+	<changeSet id="42" author="durgaprasad g">
+		<createView viewName="INT_ALM_VIEW" replaceIfExists="true">
+		Select substr(F.FinReference,length(F.FinReference)-7,length(F.FinReference)) AGREEMENTID, F.FinReference AGREEMENTNO,F.FinType PRODUCTFLAG,'' NPA_STAGEID ,
+		(FP.TotalPriBal+Fp.TotalPftBal)/CcyMinorCcyUnits INSTLAMT,FP.TotalPriBal/CcyMinorCcyUnits PRINCOMP,Fp.TotalPftBal/CcyMinorCcyUnits INTCOMP,Fp.FirstRepayDate DUEDATE,
+		Fp.PftAccrued/CcyMinorCcyUnits ACCRUEDAMT,NULL ACCRUEDON,Fp.PftAccrued/CcyMinorCcyUnits CUMULATIVE_ACCRUAL_AMT,'N' ADVFLAG
+		from FinanceMain F
+		INNER JOIN FINPFTDETAILS FP ON FP.FINREFERENCE=F.FINREFERENCE
+		Inner Join RMTCurrencies RC on RC.CcyCode=F.FinCcy
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
