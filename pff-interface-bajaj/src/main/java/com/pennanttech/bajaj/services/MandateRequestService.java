@@ -1,5 +1,6 @@
 package com.pennanttech.bajaj.services;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -96,6 +97,7 @@ public class MandateRequestService extends BajajService implements RequestServic
 		sql.append(" EMIENDDATE EMI_ENDDATE,");
 		sql.append(" EXPIRYDATE OPEN_ENDDATE,");
 		sql.append(" MAXLIMIT UPPER_LIMIT,");
+		sql.append(" CCYMINORCCYUNITS,");
 		sql.append(" DEBITAMOUNT DEBIT_AMOUNT,");
 		sql.append(" STARTDATE START_DATE,");
 		sql.append(" EXPIRYDATE END_DATE,");
@@ -117,7 +119,14 @@ public class MandateRequestService extends BajajService implements RequestServic
 					Map<String, Object> rowMap = rowMapper.mapRow(rs, rowNum);
 					rowMap.put("BATCH_ID", 0);
 					rowMap.put("BANK_SEQ", getSequence((String) rowMap.get("BANK_CODE"), bankCodeSeq));
+					
+					BigDecimal UPPER_LIMIT = (BigDecimal) rowMap.get("UPPER_LIMIT");
+					BigDecimal minorccyunits = (BigDecimal) rowMap.get("CCYMINORCCYUNITS");
+					
+					rowMap.put("UPPER_LIMIT", UPPER_LIMIT.divide(minorccyunits));
+					
 					rowMap.put("EXTRACTION_DATE", getAppDate());
+					rowMap.remove("CCYMINORCCYUNITS");
 					
 					id = String.valueOf(insertData(rowMap));
 					rowMap = null;
