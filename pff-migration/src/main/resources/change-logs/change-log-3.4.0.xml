@@ -20,5 +20,64 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 	
+	<changeSet id="01" author="Surekha">
+				<createTable tableName="Entities">
+			<column name="EntityCode" type="varchar(8)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="EntityDesc" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />   
+		</createTable> 
+	</changeSet>
+	
+	<changeSet id="02" author="Surekha">
+				<createTable tableName="Entities_Temp">
+			<column name="EntityCode" type="varchar(8)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="EntityDesc" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />   
+		</createTable> 
+	</changeSet>
+	<changeSet id="03" author="Surekha">
+	<addColumn tableName="SMTDivisionDetail">
+		<column name="EntityCode" type="varchar(8)">
+		</column>
+	</addColumn>
+</changeSet>
+<changeSet id="03" author="Surekha">
+	<addColumn tableName="SMTDivisionDetail_Temp">
+		<column name="EntityCode" type="varchar(8)">
+		</column>
+	</addColumn>
+</changeSet>
 	
 </databaseChangeLog>
