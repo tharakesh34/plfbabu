@@ -228,6 +228,7 @@ public class FinanceDetailController extends SummaryDetailService {
 			vasRecording.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			vasRecording.setVasReference(ReferenceUtil.generateVASRef());
 			vasRecording.setPostingAgainst(VASConsatnts.VASAGAINST_FINANCE);
+			vasRecording.setVasStatus("N");
 		}
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		

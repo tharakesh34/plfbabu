@@ -248,15 +248,17 @@ public class FinanceDataValidation {
 		return finScheduleData;
 	}
 
-	private List<ErrorDetails> vasRecordingValidations(String vldGroup, FinScheduleData finScheduleData,
-			boolean isAPICall, String string) {
+	private List<ErrorDetails> vasRecordingValidations(String vldGroup, FinScheduleData finScheduleData, boolean isAPICall, String string) {
+		
 		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
-		if (finScheduleData.getVasRecordingList() != null) {
+		
+		if (finScheduleData.getVasRecordingList() != null && !finScheduleData.getVasRecordingList().isEmpty()) {
 			FinanceType financeType = finScheduleData.getFinanceType();
 			//fetch the vasProduct list based on the FinanceType
-			financeType.setFinTypeVASProductsList(
-					finTypeVASProductsDAO.getVASProductsByFinType(financeType.getFinType(), ""));
+			financeType.setFinTypeVASProductsList(finTypeVASProductsDAO.getVASProductsByFinType(financeType.getFinType(), ""));
 			int mandatoryVasCount = 0;
+			int userVasCount = 0;
+
 			boolean isVasProduct = false;
 			if (financeType.getFinTypeVASProductsList() != null) {
 				for (FinTypeVASProducts vasProduct : financeType.getFinTypeVASProductsList()) {
@@ -264,33 +266,32 @@ public class FinanceDataValidation {
 						mandatoryVasCount++;
 					}
 				}
-			}
-			for (FinTypeVASProducts vasProduct : financeType.getFinTypeVASProductsList()) {
-				if (financeType.getFinTypeVASProductsList() != null) {
-					if (finScheduleData.getVasRecordingList().size() != financeType.getFinTypeVASProductsList()
-							.size()) {
-						if (mandatoryVasCount != finScheduleData.getVasRecordingList().size()) {
-							String[] valueParm = new String[1];
-							valueParm[0] = "Vas structure";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90265", valueParm)));
-							return errorDetails;
-						}
-					}
+				for (FinTypeVASProducts vasProduct : financeType.getFinTypeVASProductsList()) {
 					for (VASRecording detail : finScheduleData.getVasRecordingList()) {
 						if (StringUtils.equals(detail.getProductCode(), vasProduct.getVasProduct())) {
 							isVasProduct = true;
+							if (vasProduct.isMandatory()) {
+								userVasCount++;
+							}
 						}
 
 					}
 				}
-
 			}
+
 			if (!isVasProduct) {
 				String[] valueParm = new String[1];
-				valueParm[0] = "not in loan type product";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+				valueParm[0] = financeType.getFinType();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90284", valueParm)));
 				return errorDetails;
 			}
+			if (userVasCount != mandatoryVasCount) {
+				String[] valueParm = new String[1];
+				valueParm[0] = financeType.getFinType();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90284", valueParm)));
+				return errorDetails;
+			}
+			
 
 			for (VASRecording detail : finScheduleData.getVasRecordingList()) {
 				if (StringUtils.isBlank(detail.getProductCode())) {

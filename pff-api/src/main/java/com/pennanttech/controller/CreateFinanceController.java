@@ -19,6 +19,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeScheduleCalculator;
 import com.pennant.app.util.ReferenceGenerator;
+import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
@@ -34,6 +35,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -65,6 +67,7 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.financetype.FinInquiryDetail;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
@@ -341,7 +344,15 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 			}
 		}
-
+		//vas Details
+		for(VASRecording vasRecording:finScheduleData.getVasRecordingList()){
+			vasRecording.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			vasRecording.setNewRecord(true);
+			vasRecording.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			vasRecording.setVasReference(ReferenceUtil.generateVASRef());
+			vasRecording.setPostingAgainst(VASConsatnts.VASAGAINST_FINANCE);
+			vasRecording.setVasStatus("N");
+		}
 		// process finance flags
 		List<FinFlagsDetail> finFlagsDetails = financeDetail.getFinFlagsDetails();
 		if (finFlagsDetails != null) {
