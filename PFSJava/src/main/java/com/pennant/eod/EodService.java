@@ -55,64 +55,63 @@ public class EodService {
 		super();
 	}
 
-	/**
-	 * @param threadId
-	 * @param map 
-	 * @throws Exception
-	 * @throws SQLException
-	 */
-	public void startProcess(Date date, int threadId, ExecutionContext executionContext) throws Exception {
+//	/**
+//	 * @param threadId
+//	 * @param map
+//	 * @throws Exception
+//	 * @throws SQLException
+//	 */
+//	public void startProcess(Date date, int threadId, ExecutionContext executionContext) throws Exception {
+//
+//		logger.info("process Statred by the Thread : " + threadId + " with date " + date.toString());
+//		Connection connection = null;
+//		ResultSet resultSet = null;
+//		PreparedStatement sqlStatement = null;
+//		long custId = 0;
+//		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+//		txDef.setReadOnly(true);
+//		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRED);
+//		TransactionStatus txStatus = null;
+//
+//		try {
+//			connection = DataSourceUtils.doGetConnection(dataSource);
+//			sqlStatement = connection.prepareStatement(SQL);
+//			sqlStatement.setInt(1, threadId);
+//			resultSet = sqlStatement.executeQuery();
+//			int count = 0;
+//			while (resultSet.next()) {
+//				custId = resultSet.getLong("CustId");
+//
+//				//update start
+//
+//				//BEGIN TRANSACTION
+//				txStatus = transactionManager.getTransaction(txDef);
+//
+//				//process
+//				doProcess(connection, custId, date);
+//
+//				//Update Status
+//				loadFinanceData.updateEnd(threadId, custId);
+//
+//				//COMMIT THE TRANSACTION
+//				transactionManager.commit(txStatus);
+//				count++;
+//
+//				executionContext.put("Completed", count);
+//			}
+//
+//			resultSet.close();
+//			sqlStatement.close();
+//		} catch (Exception e) {
+//			transactionManager.rollback(txStatus);
+//			logger.error("Exception: ", e);
+//			throw e;
+//		} finally {
+//			DataSourceUtils.releaseConnection(connection, dataSource);
+//		}
+//	}
 
-		logger.info("process Statred by the Thread : " + threadId + " with date " + date.toString());
-		Connection connection = null;
-		ResultSet resultSet = null;
-		PreparedStatement sqlStatement = null;
-		long custId = 0;
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-		txDef.setReadOnly(true);
-		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRED);
-		TransactionStatus txStatus = null;
-
-		try {
-			connection = DataSourceUtils.doGetConnection(dataSource);
-			sqlStatement = connection.prepareStatement(SQL);
-			sqlStatement.setInt(1, threadId);
-			resultSet = sqlStatement.executeQuery();
-			int count=0; 
-			while (resultSet.next()) {
-				custId = resultSet.getLong("CustId");
-				
-				//update start
-				loadFinanceData.updateStart(threadId, custId);
-				
-				//BEGIN TRANSACTION
-				txStatus = transactionManager.getTransaction(txDef);
-
-				//process
-				doProcess(connection, custId, date);
-
-				//Update Status
-				loadFinanceData.updateEnd(threadId, custId);
-
-				//COMMIT THE TRANSACTION
-				transactionManager.commit(txStatus);
-				count++;
-				
-				executionContext.put("Completed", count);
-			}
-
-			resultSet.close();
-			sqlStatement.close();
-		} catch (Exception e) {
-			transactionManager.rollback(txStatus);
-			logger.error("Exception: ", e);
-			throw e;
-		} finally {
-			DataSourceUtils.releaseConnection(connection, dataSource);
-		}
-	}
-
-	private void doProcess(Connection connection, long custId, Date date) throws Exception {
+	public void doProcess(Connection connection, long custId, Date date) throws Exception {
 
 		/**************** Fetch and Set EOD Event ***********/
 		CustEODEvent custEODEvent = new CustEODEvent();
@@ -169,6 +168,14 @@ public class EodService {
 		custEODEvent.getFinEODEvents().clear();
 		custEODEvent = null;
 
+	}
+
+	public void updateStart(int threadId, long custId) {
+		loadFinanceData.updateStart(threadId, custId);
+	}
+
+	public void updateEnd(int threadId, long custId) {
+		loadFinanceData.updateEnd(threadId, custId);
 	}
 
 	public void setDataSource(DataSource dataSource) {
