@@ -38,7 +38,7 @@
 		<menuItem id="menu_Item_IncomeType" zulNavigation="/WEB-INF/pages/SystemMaster/IncomeType/IncomeTypeList.zul"  rightName="menuItem_SystemMaster_IncomeType"/>
 		<menuItem id="menu_Item_Industry" zulNavigation="/WEB-INF/pages/SystemMaster/Industry/IndustryList.zul"  rightName="menuItem_SystemMaster_Industry"/>
 		<menuItem id="menu_Item_LovFieldDetail" zulNavigation="/WEB-INF/pages/SystemMaster/LovFieldDetail/LovFieldDetailList.zul"  rightName="menuItem_SystemMaster_LovFieldDetail"/>
-		<menuItem id="menu_Item_VehicleDealer" zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul" rightName="menuItem_SystemMaster_VehicleDealer"/>
+		<!-- <menuItem id="menu_Item_VehicleDealer" zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul" rightName="menuItem_SystemMaster_VehicleDealer"/> -->
 		<menuItem id="menu_Item_MaritalStatusCode" zulNavigation="/WEB-INF/pages/SystemMaster/MaritalStatusCode/MaritalStatusCodeList.zul"  rightName="menuItem_SystemMaster_MaritalStatusCode"/>
 		<menuItem id="menu_Item_NationalityCode" zulNavigation="/WEB-INF/pages/SystemMaster/NationalityCode/NationalityCodeList.zul"  rightName="menuItem_SystemMaster_NationalityCode"/>
 		<menuItem id="menu_Item_PhoneType" zulNavigation="/WEB-INF/pages/SystemMaster/PhoneType/PhoneTypeList.zul"  rightName="menuItem_SystemMaster_PhoneType"/>
@@ -232,11 +232,11 @@
  		<menuItem id="menu_Item_PFSParameter" zulNavigation="/WEB-INF/pages/SolutionFactory/PFSParameter/PFSParameterList.zul"  rightName="menuItem_SolutionFactory_PFSParameter"/>
  	 
 		<!-- <menuItem id="menu_Item_Calendar" zulNavigation="/WEB-INF/pages/SolutionFactory/Calendar/HolidayCalendar.zul"  rightName="menuItem_SolutionFactory_Calendar"/> -->
-		<menuItem id="menu_Item_VASProductCategory" zulNavigation="/WEB-INF/pages/VASProductCategory/VASProductCategoryList.zul"  rightName="menuItem_SolutionFactory_VASProductCategory"/>
-		<menuItem id="menu_Item_VASProductType" zulNavigation="/WEB-INF/pages/VASProductType/VASProductTypeList.zul"  rightName="menuItem_SolutionFactory_VASProductType"/>
+		<!-- <menuItem id="menu_Item_VASProductCategory" zulNavigation="/WEB-INF/pages/VASProductCategory/VASProductCategoryList.zul"  rightName="menuItem_vasproduct_VASProductCategory"/>
+		<menuItem id="menu_Item_VASProductType" zulNavigation="/WEB-INF/pages/VASProductType/VASProductTypeList.zul"  rightName="menuItem_VASProductType_VASProductType"/>
 	 	<menuItem id="menu_Item_VASConfiguration" zulNavigation="/WEB-INF/pages/VASConfiguration/VASConfigurationList.zul"  rightName="menuItem_Solutionfactory_VASConfiguration" />
 	 	<menuItem id="menu_Item_VASReferenceDetail" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceReferenceDetail/FinanceReferenceDetailList.zul?module=VAS&amp;event=Origination" rightName="menuItem_SolutionFactory_VASReferenceDetail"/>
-		<menuItem id="menu_Item_VASWorkFlow" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowList.zul?module=VAS&amp;eventAction=Origination"  rightName="menuItem_SolutionFactory_VASWorkFlow" />
+		<menuItem id="menu_Item_VASWorkFlow" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowList.zul?module=VAS&amp;eventAction=Origination"  rightName="menuItem_SolutionFactory_VASWorkFlow" /> -->
  		<menuItem id="menu_Item_WorkFlowDetails" zulNavigation="/WEB-INF/pages/SolutionFactory/workFlow/workFlowList.zul"  /> <!-- rightName="menuItem_SolutionFactory_WorkFlowDetail" -->
 		
 		<!-- <menuItem id="menu_Item_DeviationParam" zulNavigation="/WEB-INF/pages/SolutionFactory/DeviationParam/DeviationParamList.zul" rightName="menuItem_SolutionFactory_DeviationParam"/> -->
@@ -262,8 +262,8 @@
 		<menuItem id="menu_Item_AgreementGeneration" zulNavigation="/WEB-INF/pages/Reports/AgreementGenerationDialog.zul" rightName="menu_Item_AgreementGeneration"/>
 		<menuItem id="menu_Item_ExtFinance" zulNavigation="/WEB-INF/pages/Finance/ExternalFinance/ExtFinanceUploadDialog.zul"  />
 		<menuItem id="menu_Item_ExtFinanceLimit" zulNavigation="/WEB-INF/pages/Finance/ExternalFinance/ExtFinanceLimitUploadDialog.zul"  /> -->
-	 	<menuItem id="menu_Item_VASRecording" zulNavigation="/WEB-INF/pages/VASRecording/VASRecordingList.zul?module=N" rightName="menuItem_Finance_VASRecording" />
-	 	<menuItem id="menu_Item_VASCancel" zulNavigation="/WEB-INF/pages/VASRecording/VASRecordingList.zul?module=C" rightName="menuItem_Finance_VASCancel" />
+	 	<!-- <menuItem id="menu_Item_VASRecording" zulNavigation="/WEB-INF/pages/VASRecording/VASRecordingList.zul?module=N" rightName="menuItem_Finance_VASRecording" />
+	 	<menuItem id="menu_Item_VASCancel" zulNavigation="/WEB-INF/pages/VASRecording/VASRecordingList.zul?module=C" rightName="menuItem_Finance_VASCancel" /> -->
 	</menu>
 	
 	 <!--<menu id="menu_Category_Facility"  rightName="menuCat_Facility" >
@@ -376,7 +376,7 @@
        <menuItem id="menu_Item_ReceiptBounce" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationList.zul?module=B"  rightName="menuItem_FinanceManagement_ReceiptBounce" />
        <menuItem id="menu_Item_ReceiptCancellation" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationList.zul?module=C"  rightName="menuItem_FinanceManagement_ReceiptCancellation" />
        <menuItem id="menu_Item_ReceiptRealization" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptRealizationList.zul"  rightName="menuItem_FinanceManagement_ReceiptRealization" />
-       <menuItem id="menu_Item_FeeReceipts" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/FeeReceiptList.zul"  rightName="menuItem_FinanceManagement_FeeReceipts" />
+       <!-- <menuItem id="menu_Item_FeeReceipts" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/FeeReceiptList.zul"  rightName="menuItem_FinanceManagement_FeeReceipts" /> -->
 	   <menuItem id="menu_Item_Recalculate" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"  rightName="menuItem_FinanceManagement_Recalculate"/>
 	   <menuItem id="menu_Item_Receipts" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" rightName="menuItem_FinanceManagement_Receipts" />
 	   <!-- <menuItem id="menu_Item_ReinstateFinance" zulNavigation="/WEB-INF/pages/Finance/ReinstateFinance/ReinstateFinanceList.zul" rightName="menuItem_FinanceManagement_ReinstateFinance"/> -->
@@ -440,8 +440,8 @@
 		<!-- <menuItem id="menu_Item_DDAEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DDAEnquiryList.zul"  rightName= "menuItem_Enquiry_DeviationEnquiry"/> -->
  		<menuItem id="menu_Item_FinMandateEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/FinMandateEnquiryList.zul" rightName="menuItem_Enquiry_FinMandate"/>
 		<!-- <menuItem id="menu_Item_DDARepresentment" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DDARepresentmentList.zul"  rightName="menuItem_Enquiry_WIFFinanceMain"/> -->
-		<!-- <menuItem id="menu_Item_DeviationTracker" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DeviationTrackerList.zul"  rightName="menuItem_Enquiry_DeviationEnquiry"/>-->
-		<menuItem id="menu_Item_VASEnquiry" zulNavigation="/WEB-INF/pages/VASRecording/VASRecordingList.zul?module=E" rightName="menuItem_Enquiry_VASRecording" /> 
+		<!-- <menuItem id="menu_Item_DeviationTracker" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DeviationTrackerList.zul"  rightName="menuItem_Enquiry_DeviationEnquiry"/>
+		<menuItem id="menu_Item_VASEnquiry" zulNavigation="/WEB-INF/pages/VASRecording/VASRecordingList.zul?module=E" rightName="menuItem_Enquiry_VASRecording" /> -->
 		<menuItem id="menu_Item_ManualAdviseEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/ManualAdviseEnquiryList.zul?enqiryModule=Y" rightName="menuItem_finance_ManualAdviseEnquiry"	/>
 		<menuItem id="menu_Item_ReceiptEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptEnquiryList.zul?enqiryModule=Y"  rightName="menuItem_Enquiry_ReceiptEnquiry" />
 	</menu>

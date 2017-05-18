@@ -652,7 +652,6 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	
 	
 	public void doFillCustomerEodDetails(ExecutionStatus status) {
-		logger.debug("Entering");
 		noOfthread.setValue(SysParamUtil.getValueAsInt("EOD_THREAD_COUNT"));
 		noOfCustomer.setValue(0);
 		
