@@ -10,7 +10,7 @@
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
 		<property name="url" value="jdbc:oracle:thin:@192.168.1.19:1521:orcl" />
-		<property name="username" value="Plf" />
+		<property name="username" value="plfdev" />
 		<property name="password" value="pff123" />
 	</bean>
 	
@@ -24,4 +24,7 @@
 	</bean>
 	
 	 <bean id="almRequestService" class="com.pennanttech.bajaj.services.ALMRequestService" scope="prototype" parent="bajajService"/> 
+	 <bean id="posidexRequestService" class="com.pennanttech.bajaj.services.PosidexRequestService" scope="prototype" parent="bajajService"/> 
+	 <bean id="posidexResponceService" class="com.pennanttech.bajaj.services.PosidexResponceService" scope="prototype" parent="bajajService"/> 
+	 <bean id="controlDumpRequestService" class="com.pennanttech.bajaj.services.ControlDumpRequestService" scope="prototype" parent="bajajService"/> 
 </beans>

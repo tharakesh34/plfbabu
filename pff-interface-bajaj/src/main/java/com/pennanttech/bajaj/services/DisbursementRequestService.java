@@ -18,7 +18,7 @@ import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennanttech.dataengine.DataEngineExport;
-import com.pennanttech.dbengine.process.DisbursemenIMPSRequest;
+import com.pennanttech.dbengine.process.DisbursemenIMPSRequestProcess;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.RequestService;
@@ -271,7 +271,7 @@ public class DisbursementRequestService extends BajajService implements RequestS
 	}
 
 	private void sendIMPSRequest(String configName, List<String> dibursements, long userId) {
-		DisbursemenIMPSRequest impsRequest = new DisbursemenIMPSRequest(dataSource, App.DATABASE.name());
+		DisbursemenIMPSRequestProcess impsRequest = new DisbursemenIMPSRequestProcess(dataSource, App.DATABASE.name());
 
 		impsRequest.setDisbursments(dibursements);
 		impsRequest.process(userId, configName);

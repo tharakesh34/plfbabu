@@ -1,129 +1,87 @@
 package com.pennanttech.dbengine.process;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.transaction.TransactionStatus;
 
-import com.pennanttech.dataengine.constants.ExecutionStatus;
-import com.pennanttech.dataengine.model.Configuration;
-import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.dataengine.util.DateUtil;
-import com.pennanttech.dbengine.DBProcessEngine;
+import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.pff.baja.BajajInterfaceConstants.Status;
+import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 
-public class DisbursemenIMPSResponse extends DBProcessEngine {
-	private static final Logger logger = Logger.getLogger(DisbursemenIMPSResponse.class);
-	
-	private Connection destConnection = null;
-	private Connection sourceConnection = null;
-	private DataEngineStatus executionStatus = null;
-	private NamedParameterJdbcTemplate jdbcTemplate = null;
+public class DisbursemenIMPSResponseProcess extends DatabaseDataEngine {
+	private static final Logger logger = Logger.getLogger(DisbursemenIMPSResponseProcess.class);
 
-	public DisbursemenIMPSResponse(DataSource dataSource, String appDBName, DataEngineStatus executionStatus) {
-		super(dataSource, appDBName, executionStatus);
-		this.executionStatus = executionStatus;
+	private String status;
+
+	public DisbursemenIMPSResponseProcess(DataSource dataSource, String status, Date valueDate) {
+		super(dataSource, App.DATABASE.name());
+		this.status = status;
+		this.valueDate = valueDate;
 	}
 
-	public void process(long userId, Configuration config) {
+	@Override
+	protected void processData() {
 		logger.debug(Literal.ENTERING);
 
-		executionStatus.setStartTime(DateUtil.getSysDate());
-		executionStatus.setName(config.getName());
-		executionStatus.setUserId(userId);
-		executionStatus.setReference(config.getName());
-		executionStatus.setStatus(ExecutionStatus.I.name());
-		executionStatus.setRemarks("Loading configuration..");
+		executionStatus.setRemarks("Loading data..");
+		MapSqlParameterSource parmMap;
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT CHANNELPARTNERREFNO, TRANSACTIONID, STATUS, DESCRIPTION, PROCESSFLAG FROM INT_DSBIMPS_RESPONSE ");
+		sql.append(" WHERE  PROCESSFLAG = :PROCESSFLAG ");
 
-		ResultSet resultSet = null;
-		StringBuilder remarks = new StringBuilder();
-		long headerId = 0;
-		try {
-			saveBatchStatus();
+		parmMap = new MapSqlParameterSource();
+		parmMap.addValue("PROCESSFLAG", status);
 
-			executionStatus.setRemarks("Loading destination database connection...");
-			sourceConnection = getConnection(config);
-			destConnection = DataSourceUtils.doGetConnection(dataSource);
+		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
+			TransactionStatus txnStatus = null;
+			long headerId = 0;
 
-			executionStatus.setRemarks("Fetching data from source table...");
-			resultSet = getSourceData();
-
-			this.jdbcTemplate = getJdbcTemplate(dataSource);
-
-			if (resultSet != null) {
-				resultSet.last();
-				totalRecords = resultSet.getRow();
-				resultSet.beforeFirst();
-				executionStatus.setTotalRecords(totalRecords);
-
-				if (resultSet.getRow() > 0) {
+			@Override
+			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
+				if (rs.getRow() > 0) {
 					headerId = saveHeader(config.getId(), totalRecords);
-					while (resultSet.next()) {
-						executionStatus.setRemarks("Saving data to destination table...");
-						try {
-							processedCount++;
-							processRecord(resultSet, headerId);
-							successCount++;
-						} catch (Exception e) {
-							failedCount++;
-							logger.error("Exception :", e);
-						}
-						executionStatus.setProcessedRecords(processedCount);
-						executionStatus.setSuccessRecords(successCount);
-						executionStatus.setFailedRecords(failedCount);
+				}
+				while (rs.next()) {
+					executionStatus.setRemarks("processing the record " + ++totalRecords);
+					processedCount++;
+					txnStatus = transManager.getTransaction(transDef);
+					try {
+						processRecord(rs, headerId);
+						successCount++;
+
+						transManager.commit(txnStatus);
+
+					} catch (Exception e) {
+						logger.error(Literal.ENTERING);
+						transManager.rollback(txnStatus);
+						failedCount++;
+						saveBatchLog(rs.getString("AGREEMENTID"), "F", e.getMessage());
+					} finally {
+						txnStatus.flush();
+						txnStatus = null;
 					}
 				}
+				return totalRecords;
 			}
+		});
 
-			if (totalRecords > 0) {
-				if (failedCount > 0) {
-					remarks.append("Completed with exceptions, Total records:  ");
-					remarks.append(totalRecords);
-					remarks.append(", Processed: ");
-					remarks.append(processedCount);
-					remarks.append(", Sucess: ");
-					remarks.append(successCount);
-					remarks.append(", Failure: ");
-					remarks.append(failedCount + ".");
-				} else {
-					remarks.append("Processed successfully , Total records: ");
-					remarks.append(totalRecords);
-					remarks.append(", Processed: ");
-					remarks.append(processedCount);
-					remarks.append(", Sucess: ");
-					remarks.append(successCount + ".");
-				}
-				updateBatchStatus(ExecutionStatus.S.name(), remarks.toString());
-			}
-		} catch (Exception e) {
-			logger.error("Exception :", e);
-			updateBatchStatus(ExecutionStatus.F.name(), e.getMessage());
-			remarks.append(e.getMessage());
-			executionStatus.setStatus(ExecutionStatus.F.name());
-		} finally {
-			releaseResorces(resultSet, destConnection, sourceConnection);
-			resultSet = null;
-			executionStatus.setRemarks(remarks.toString());
-			updateHeader(headerId, processedCount);
-		}
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
-	
 
 	private void processRecord(ResultSet rs, long headerId) throws Exception {
 
-		String channelRefNum = getValue(rs, "CHANNELPARTNERREFNO");
+		String channelRefNum = (String) rs.getObject("CHANNELPARTNERREFNO");
 		MapSqlParameterSource insertSource = new MapSqlParameterSource();
 		MapSqlParameterSource updateSource = new MapSqlParameterSource();
 
@@ -138,17 +96,17 @@ public class DisbursemenIMPSResponse extends DBProcessEngine {
 			insertSource.addValue("TransactionStatus", Status.R.name());
 			updateSource.addValue("PROCESSFLAG", Status.R.name());
 		}
-		
+
 		insertSource.addValue("ID", getNextId("DISB_PAY_DET_SEQ", true));
 		insertSource.addValue("HeaderID", headerId);
 		insertSource.addValue("DisbursementReference", Long.valueOf(channelRefNum));
-		insertSource.addValue("DisbursementAmount", 0.00);//FIXME
-		insertSource.addValue("TransactionDate", new Timestamp(System.currentTimeMillis()));//FIXME
-		insertSource.addValue("BankReferenceNumber",  getValue(rs, "TRANSACTIONID"));
+		insertSource.addValue("DisbursementAmount", 0.00);// FIXME
+		insertSource.addValue("TransactionDate", new Timestamp(System.currentTimeMillis()));// FIXME
+		insertSource.addValue("BankReferenceNumber", rs.getObject("TRANSACTIONID"));
 		insertSource.addValue("PLFStatus", Status.I.name());
 		insertSource.addValue("InputTime", new Timestamp(System.currentTimeMillis()));
-		
-		String description = getValue(rs, "DESCRIPTION");
+
+		String description = (String) rs.getObject("DESCRIPTION");
 		if (!description.isEmpty()) {
 			insertSource.addValue("PaymentRemarks1", StringUtils.substring(description, 0, 49));
 			insertSource.addValue("PaymentRemarks2", StringUtils.substring(description, 50, 99));
@@ -156,11 +114,10 @@ public class DisbursemenIMPSResponse extends DBProcessEngine {
 			insertSource.addValue("PaymentRemarks4", StringUtils.substring(description, 150, 199));
 		}
 		save(insertSource);
-		
+
 		updateSource.addValue("CHANNELPARTNERREFNO", channelRefNum);
 		update(updateSource);
 	}
-
 
 	private void update(MapSqlParameterSource updateSource) {
 
@@ -183,7 +140,7 @@ public class DisbursemenIMPSResponse extends DBProcessEngine {
 
 		this.jdbcTemplate.update(sql.toString(), insertSource);
 	}
-	
+
 	private long saveHeader(long configID, int totalRecords) {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuffer sql = new StringBuffer();
@@ -200,17 +157,17 @@ public class DisbursemenIMPSResponse extends DBProcessEngine {
 
 		sql.append(" Insert INTERFACE_HEADER Values (ID, Category, InterfaceType, FileName, ConfigID, Status, TotalCount, InputTime)");
 		sql.append(" VAlues (:ID, :Category, :InterfaceType, :FileName, :ConfigID, :Status, :TotalCount, :InputTime)");
-		
+
 		this.jdbcTemplate.update(sql.toString(), source);
 		return id;
 	}
-	
+
 	private void updateHeader(long id, int processedCount) {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuffer sql = new StringBuffer();
 
 		source.addValue("NoofRecordsProcessed", processedCount);
-		source.addValue("ProcessedTime",new Timestamp(System.currentTimeMillis()));
+		source.addValue("ProcessedTime", new Timestamp(System.currentTimeMillis()));
 		source.addValue("ID", id);
 
 		sql.append(" Update INTERFACE_HEADER set NoofRecordsProcessed = :NoofRecordsProcessed,");
@@ -219,7 +176,7 @@ public class DisbursemenIMPSResponse extends DBProcessEngine {
 		this.jdbcTemplate.update(sql.toString(), source);
 
 	}
-	
+
 	private boolean isChannelRefExists(String channelRefNum) throws Exception {
 		logger.debug("Entering");
 		MapSqlParameterSource parameter = null;
@@ -243,28 +200,10 @@ public class DisbursemenIMPSResponse extends DBProcessEngine {
 		return false;
 	}
 
-	private ResultSet getSourceData() throws Exception {
-		logger.debug("Entering");
-
-		ResultSet rs = null;
-		StringBuilder sql = null;
-		try {
-			sql = new StringBuilder();
-			sql.append(" SELECT CHANNELPARTNERREFNO, TRANSACTIONID, STATUS, DESCRIPTION, PROCESSFLAG FROM INT_DSBIMPS_RESPONSE ");
-			sql.append(" WHERE  PROCESSFLAG = ? ");
-
-			PreparedStatement stmt = sourceConnection.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			stmt.setString(1, Status.N.name());
-			
-			rs = stmt.executeQuery();
-		} catch (SQLException e) {
-			logger.error("Exception {}", e);
-			throw e;
-		} finally {
-			sql = null;
-		}
-		logger.debug("Leaving");
-		return rs;
+	@Override
+	protected MapSqlParameterSource mapData(ResultSet rs) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
-	
+
 }

@@ -7,18 +7,18 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.pennanttech.bajaj.services.ALMRequestService;
+import com.pennanttech.bajaj.services.PosidexRequestService;
 import com.pennanttech.pff.core.util.DateUtil;
 
-public class TestAMLRequest {
+public class TestPosidexRequestService {
 
-	ALMRequestService almRequestService;
+	PosidexRequestService requestService;
 
 	@Before
 	public void startAHI() {
 		try {
 			ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
-			almRequestService = context.getBean(ALMRequestService.class);
+			requestService = context.getBean(PosidexRequestService.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -29,8 +29,7 @@ public class TestAMLRequest {
 		try {
 			Date fromDate = DateUtil.getMonthStart(DateUtil.addMonths(DateUtil.getSysDate(), -1));
 			Date toDate =DateUtil.getMonthEnd(DateUtil.addMonths(DateUtil.getSysDate(), -1));
-
-			almRequestService.sendReqest(new Long(1000), fromDate, toDate);
+			requestService.sendReqest(new Long(1000), fromDate, toDate);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

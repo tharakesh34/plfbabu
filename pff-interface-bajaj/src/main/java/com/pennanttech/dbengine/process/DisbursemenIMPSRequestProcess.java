@@ -19,12 +19,12 @@ import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.pff.baja.BajajInterfaceConstants.Status;
 import com.pennanttech.pff.core.Literal;
 
-public class DisbursemenIMPSRequest extends DatabaseDataEngine {
-	private static final Logger	logger	= Logger.getLogger(DisbursemenIMPSRequest.class);
+public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
+	private static final Logger	logger	= Logger.getLogger(DisbursemenIMPSRequestProcess.class);
 
 	private List<String> disbursments;
 	
-	public DisbursemenIMPSRequest(DataSource dataSource, String database) {
+	public DisbursemenIMPSRequestProcess(DataSource dataSource, String database) {
 		super(dataSource, database);
 	}
 

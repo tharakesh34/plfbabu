@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.pennanttech.dbengine.process.DisbursemenIMPSRequest;
+import com.pennanttech.dbengine.process.DisbursemenIMPSRequestProcess;
 import com.pennanttech.pff.core.App;
 
 public class TestImps {
@@ -30,7 +30,7 @@ public class TestImps {
 	@Test
 	public void process() {
 		try {
-			DisbursemenIMPSRequest impsRequest = new DisbursemenIMPSRequest(dataSource, App.DATABASE.name());
+			DisbursemenIMPSRequestProcess impsRequest = new DisbursemenIMPSRequestProcess(dataSource, App.DATABASE.name());
 			List<String> list = new ArrayList<>();
 			list.add("175");
 
