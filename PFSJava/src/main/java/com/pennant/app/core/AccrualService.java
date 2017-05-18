@@ -279,7 +279,7 @@ public class AccrualService extends ServiceHelper {
 		pftDetail.setTotalTenor(0);
 		//FIXME for summary we are maintaining these details. so they may not be required since the application will refer the actual tables
 		//		//Set Excess Amounts
-				List<FinExcessAmount> finExcessAmounts = finExcessAmountDAO.getExcessAmountsByRef(pftDetail.getFinReference());
+				/*List<FinExcessAmount> finExcessAmounts = finExcessAmountDAO.getExcessAmountsByRef(pftDetail.getFinReference());
 				if (finExcessAmounts.size() > 0) {
 					for (int i = 0; i < finExcessAmounts.size(); i++) {
 						BigDecimal totBalAvailable = finExcessAmounts.get(i).getAmount()
@@ -299,7 +299,7 @@ public class AccrualService extends ServiceHelper {
 							pftDetail.setPayableAdviseResv(totBalAvailable);
 						}
 					}
-				}
+				}*/
 
 	}
 

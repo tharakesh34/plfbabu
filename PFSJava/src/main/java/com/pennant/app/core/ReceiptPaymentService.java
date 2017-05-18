@@ -37,7 +37,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		//	check at least one presentment exists or not.
 		boolean presetment = false;
 		for (FinEODEvent finEODEvent : finEODEvents) {
-			if (finEODEvent.isPresentmentExist()) {
+			if (finEODEvent.isCheckPresentment()) {
 				presetment = true;
 				break;
 			}

@@ -81,9 +81,9 @@ public class LatePayMarkingService extends ServiceHelper {
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 
-			finEODEvent = findLatePay(finEODEvent, valueDate);
-
 			if (finEODEvent.isPastDueExist()) {
+				finEODEvent = findLatePay(finEODEvent, valueDate);
+
 				updateFinPftDetails(finEODEvent, valueDate);
 				finEODEvent.setUpdFinPft(true);
 			}
@@ -123,7 +123,6 @@ public class LatePayMarkingService extends ServiceHelper {
 
 			if (isAmountDue) {
 				finEODEvent = latePayMarking(finEODEvent, curSchd, valueDate);
-				finEODEvent.setPastDueExist(true);
 			}
 
 		}

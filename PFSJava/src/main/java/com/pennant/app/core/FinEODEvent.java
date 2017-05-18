@@ -50,7 +50,7 @@ public class FinEODEvent implements Serializable {
 	private boolean						instDueExist			= false;
 	private boolean						feeDueExist				= false;
 	private boolean						insuranceDueExist		= false;
-	private boolean						presentmentExist		= false;
+	private boolean						checkPresentment		= false;
 
 	private boolean						updFinMain				= false;
 	private boolean						updFinSchdForRateRvw	= false;
@@ -305,12 +305,12 @@ public class FinEODEvent implements Serializable {
 		this.insuranceDueExist = insuranceDueExist;
 	}
 
-	public boolean isPresentmentExist() {
-		return presentmentExist;
+	public boolean isCheckPresentment() {
+		return checkPresentment;
 	}
 
-	public void setPresentmentExist(boolean presentmentExist) {
-		this.presentmentExist = presentmentExist;
+	public void setCheckPresentment(boolean checkPresentment) {
+		this.checkPresentment = checkPresentment;
 	}
 
 }

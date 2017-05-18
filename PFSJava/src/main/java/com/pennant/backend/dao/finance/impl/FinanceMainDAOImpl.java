@@ -2733,7 +2733,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 	 * Method for get the Finance Details and FinanceShedule Details
 	 */
 	@Override
-	public List<FinanceMain> getFinanceMainsByCustId(long custId, boolean isActive) {
+	public List<FinanceMain> getFinMainsForEODByCustId(long custId, boolean isActive) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();

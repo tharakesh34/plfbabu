@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.HolidayHandlerTypes;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.BusinessCalendar;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -43,8 +44,9 @@ public class LoadFinanceData extends ServiceHelper {
 		long custID = custEODEvent.getCustomer().getCustID();
 
 		//For SOD Operations
+		Date valueDate = custEODEvent.getEodValueDate();
 		Date businesdate = DateUtility.addDays(custEODEvent.getEodValueDate(), 1);
-		List<FinanceMain> custFinMains = getFinanceMainDAO().getFinanceMainsByCustId(custID, true);
+		List<FinanceMain> custFinMains = getFinanceMainDAO().getFinMainsForEODByCustId(custID, true);
 
 		List<FinanceProfitDetail> listprofitDetails = getFinanceProfitDetailDAO().getFinProfitDetailsByCustId(custID,
 				true);
@@ -109,10 +111,34 @@ public class LoadFinanceData extends ServiceHelper {
 					finEODEvent.setInstDueExist(true);
 				}
 				
+				//Presentment Required
 				if (curSchd.getDefSchdDate().compareTo(businesdate)==0 && curSchd.getPresentmentId() != 0) {
-					finEODEvent.setPresentmentExist(true);
+					finEODEvent.setCheckPresentment(true);
 				}
+				
+				//Do not Include Today Late payment Calculation
+				if (!finEODEvent.isPastDueExist() && curSchd.getSchDate().compareTo(valueDate) < 0) {
+					boolean isAmountDue = false;
+					//Paid Principal OR Paid Interest Less than scheduled amounts 
+					if (curSchd.getSchdPriPaid().compareTo(curSchd.getPrincipalSchd()) < 0
+							|| curSchd.getSchdPftPaid().compareTo(curSchd.getProfitSchd()) < 0) {
+						isAmountDue = true;
+					}
 
+					//Islamic Implementation
+					if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
+						//Paid Supplementary rent OR Paid Increase Cost less than scheduled amounts 
+						if (curSchd.getSuplRentPaid().compareTo(curSchd.getSuplRent()) < 0
+								|| curSchd.getIncrCostPaid().compareTo(curSchd.getIncrCost()) < 0) {
+							isAmountDue = true;
+						}
+					}
+
+					if (isAmountDue) {
+						finEODEvent.setPastDueExist(true);
+					}
+	
+				}
 			}
 
 			custEODEvent.getFinEODEvents().add(finEODEvent);

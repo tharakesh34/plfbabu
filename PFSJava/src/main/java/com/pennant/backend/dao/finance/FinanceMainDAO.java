@@ -256,7 +256,7 @@ public interface FinanceMainDAO {
 	void updateBucketStatus(String finReference, String status, int bucket,
 			String statusReason);
 	
-	List<FinanceMain> getFinanceMainsByCustId(long custId, boolean isActive);
+	List<FinanceMain> getFinMainsForEODByCustId(long custId, boolean isActive);
 
 	int getFinanceMainByBank(String bankCode, String type);
 

@@ -27,24 +27,42 @@ public class DateRollOverService extends ServiceHelper {
 			Date valueDate = custEODEvent.getEodValueDate();
 			FinanceMain finMain = finEODEvent.getFinanceMain();
 
-			//Set Next Grace Capitalization Date
-			if (finMain.getNextGrcCpzDate() != null && finMain.getNextGrcCpzDate().compareTo(valueDate) == 0) {
-				setNextGraceCpzDate(finEODEvent);
+			if (finMain.isAllowGrcPeriod()) {
+				//Set Next Grace Capitalization Date
+				if (finMain.isAllowGrcCpz()) {
+					if (finMain.getNextGrcCpzDate().compareTo(valueDate) == 0
+							&& finMain.getNextGrcPftDate().compareTo(finMain.getGrcPeriodEndDate()) < 0) {
+						setNextGraceCpzDate(finEODEvent);
+					}
+				}
+
+				//Set Next Grace Profit Date
+				if (finMain.getNextGrcPftDate().compareTo(valueDate) == 0
+						&& finMain.getNextGrcPftDate().compareTo(finMain.getGrcPeriodEndDate()) < 0) {
+					setNextGrcPftDate(finEODEvent);
+				}
+
+				//Set Next Grace Profit Review Date
+				if (finMain.isAllowGrcPftRvw()) {
+					if (finMain.getNextGrcPftRvwDate().compareTo(valueDate) == 0
+							&& finMain.getNextGrcPftRvwDate().compareTo(finMain.getGrcPeriodEndDate()) < 0) {
+						setNextGrcPftRvwDate(finEODEvent, custEODEvent.getEodValueDate());
+					}
+				}
+
 			}
 
-			//Set Next Grace Profit Date
-			if (finMain.getNextGrcPftDate() != null && finMain.getNextGrcPftDate().compareTo(valueDate) == 0) {
-				setNextGrcPftDate(finEODEvent);
-			}
-
-			//Set Next Grace Profit Review Date
-			if (finMain.getNextGrcPftRvwDate() != null && finMain.getNextGrcPftRvwDate().compareTo(valueDate) == 0) {
-				setNextGrcPftRvwDate(finEODEvent, custEODEvent.getEodValueDate());
+			//Next Dates in Reapyment Period
+			if (finMain.getNextRepayDate().compareTo(finMain.getMaturityDate()) >= 0) {
+				continue;
 			}
 
 			//Set Next Repay Capitalization Date
-			if (finMain.getNextRepayCpzDate() != null && finMain.getNextRepayCpzDate().compareTo(valueDate) == 0) {
-				setNextRepayCpzDate(finEODEvent);
+
+			if (finMain.isAllowRepayCpz()) {
+				if (finMain.getNextRepayCpzDate().compareTo(valueDate) == 0) {
+					setNextRepayCpzDate(finEODEvent);
+				}
 			}
 
 			//Set Next Repayment Date
@@ -58,16 +76,19 @@ public class DateRollOverService extends ServiceHelper {
 			}
 
 			//Set Next Repayment Profit Review Date
-			if (finMain.getNextRepayRvwDate() != null && finMain.getNextRepayRvwDate().compareTo(valueDate) == 0) {
-				setNextRepayRvwDate(finEODEvent, custEODEvent.getEodValueDate());
+			if (finMain.isAllowRepayRvw()) {
+				if (finMain.getNextRepayRvwDate() != null && finMain.getNextRepayRvwDate().compareTo(valueDate) == 0) {
+					setNextRepayRvwDate(finEODEvent, custEODEvent.getEodValueDate());
+				}
 			}
 
 			//Set Next Depreciation Date
 			if (finMain.getNextDepDate() != null && finMain.getNextDepDate().compareTo(valueDate) == 0) {
 				if (!StringUtils.isEmpty(finMain.getDepreciationFrq())) {
 					if (finMain.getNextDepDate().compareTo(finMain.getMaturityDate()) < 0) {
-						finMain.setNextDepDate(FrequencyUtil.getNextDate(finMain.getDepreciationFrq(), 1, valueDate,
-								"A", false).getNextFrequencyDate());
+						finMain.setNextDepDate(
+								FrequencyUtil.getNextDate(finMain.getDepreciationFrq(), 1, valueDate, "A", false)
+										.getNextFrequencyDate());
 					}
 
 					if (finMain.getNextDepDate().compareTo(finMain.getMaturityDate()) > 0) {
@@ -78,6 +99,7 @@ public class DateRollOverService extends ServiceHelper {
 				}
 			}
 		}
+
 		logger.debug(" Leaving ");
 		return custEODEvent;
 
@@ -90,14 +112,6 @@ public class DateRollOverService extends ServiceHelper {
 		FinanceMain finMain = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
 		Map<Date, Integer> datesMap = finEODEvent.getDatesMap();
-
-		if (!finMain.isAllowGrcCpz()) {
-			return;
-		}
-
-		if (finMain.getNextGrcPftDate().compareTo(finMain.getGrcPeriodEndDate()) >= 0) {
-			return;
-		}
 
 		int i = getIndexFromMap(datesMap, finMain.getNextGrcCpzDate());
 		FinanceScheduleDetail curSchd = null;
@@ -126,10 +140,6 @@ public class DateRollOverService extends ServiceHelper {
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
 		Map<Date, Integer> datesMap = finEODEvent.getDatesMap();
 
-		if (finMain.getNextGrcPftDate().compareTo(finMain.getGrcPeriodEndDate()) >= 0) {
-			return;
-		}
-
 		int i = getIndexFromMap(datesMap, finMain.getNextGrcPftDate());
 		FinanceScheduleDetail curSchd = null;
 
@@ -157,14 +167,6 @@ public class DateRollOverService extends ServiceHelper {
 		FinanceMain finMain = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
 		Map<Date, Integer> datesMap = finEODEvent.getDatesMap();
-
-		if (!finMain.isAllowGrcPftRvw()) {
-			return;
-		}
-
-		if (finMain.getNextGrcPftRvwDate().compareTo(finMain.getGrcPeriodEndDate()) >= 0) {
-			return;
-		}
 
 		if (!StringUtils.equals(finMain.getRvwRateApplFor(), CalculationConstants.RATEREVIEW_NORVW)) {
 			if (finMain.getFinStartDate().compareTo(valueDate) != 0
@@ -201,14 +203,6 @@ public class DateRollOverService extends ServiceHelper {
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
 		Map<Date, Integer> datesMap = finEODEvent.getDatesMap();
 
-		if (!finMain.isAllowRepayCpz()) {
-			return;
-		}
-
-		if (finMain.getNextRepayCpzDate().compareTo(finMain.getMaturityDate()) >= 0) {
-			return;
-		}
-
 		int i = getIndexFromMap(datesMap, finMain.getNextRepayCpzDate());
 		FinanceScheduleDetail curSchd = null;
 
@@ -236,10 +230,6 @@ public class DateRollOverService extends ServiceHelper {
 		FinanceMain finMain = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
 		Map<Date, Integer> datesMap = finEODEvent.getDatesMap();
-
-		if (finMain.getNextRepayDate().compareTo(finMain.getMaturityDate()) >= 0) {
-			return;
-		}
 
 		int i = getIndexFromMap(datesMap, finMain.getNextRepayDate());
 		FinanceScheduleDetail curSchd = null;
@@ -270,10 +260,6 @@ public class DateRollOverService extends ServiceHelper {
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
 		Map<Date, Integer> datesMap = finEODEvent.getDatesMap();
 
-		if (finMain.getNextRepayPftDate().compareTo(finMain.getMaturityDate()) >= 0) {
-			return;
-		}
-
 		int i = getIndexFromMap(datesMap, finMain.getNextRepayPftDate());
 		FinanceScheduleDetail curSchd = null;
 
@@ -301,14 +287,6 @@ public class DateRollOverService extends ServiceHelper {
 		FinanceMain finMain = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
 		Map<Date, Integer> datesMap = finEODEvent.getDatesMap();
-
-		if (!finMain.isAllowRepayRvw()) {
-			return;
-		}
-
-		if (finMain.getNextRepayRvwDate().compareTo(finMain.getMaturityDate()) >= 0) {
-			return;
-		}
 
 		if (!StringUtils.equals(finMain.getRvwRateApplFor(), CalculationConstants.RATEREVIEW_NORVW)) {
 			if (finMain.getFinStartDate().compareTo(valueDate) != 0
