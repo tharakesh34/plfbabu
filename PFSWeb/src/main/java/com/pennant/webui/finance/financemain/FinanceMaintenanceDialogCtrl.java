@@ -3616,19 +3616,28 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	}
 
 	private void addMandateFiletrs(String repaymethod, long custid) {
+
+		// 1.Mandate Swap is allowed after the registration process is completed 
+		// 2.Mandate already tagged to the current loan should also made available.
+		// 3.Open mandate should be made available even the it is linked to another loan
+		// 4.Mandate should be active
+
 		repaymethod = StringUtils.trimToEmpty(repaymethod);
 		Filter[] filters = new Filter[3];
 		filters[0] = new Filter("CustID", custid, Filter.OP_EQUAL);
 		filters[1] = new Filter("MandateType", repaymethod, Filter.OP_EQUAL);
 		filters[2] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.mandateRef.setFilters(filters);
-		StringBuilder whereCaluse = new StringBuilder("(OpenMandate = 1 OR MandateRef IS NOT NULL");
-		if (this.finReference.getValue() != null) {
-			whereCaluse.append(" OR OrgReference = '");
-			whereCaluse.append(this.finReference.getValue());
-			whereCaluse.append("'");
-		}
-		whereCaluse.append(")");
+		StringBuilder whereCaluse = new StringBuilder("(OpenMandate = 1 OR");
+		whereCaluse.append("((MANDATEID not in (SELECT MANDATEID FROM FINANCEMAIN WHERE FINANCEMAIN.CUSTID=");
+		whereCaluse.append(custid);
+		whereCaluse.append("AND FINANCEMAIN.FINREFERENCE != '");
+		whereCaluse.append(getFinanceMain().getFinReference());
+		whereCaluse.append("' )) AND MANDATEREF IS NOT NULL OR MANDATEID IN (SELECT MANDATEID FROM FINANCEMAIN FM ");
+		whereCaluse.append(" WHERE FM.FINREFERENCE='");
+		whereCaluse.append(getFinanceMain().getFinReference());
+		whereCaluse.append("')))");
+
 		this.mandateRef.setWhereClause(whereCaluse.toString());
 
 	}

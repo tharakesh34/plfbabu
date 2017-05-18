@@ -47,7 +47,6 @@ import com.pennant.backend.service.collateral.impl.FlagDetailValidation;
 import com.pennant.backend.service.finance.FinanceMaintenanceService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -839,13 +838,6 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinFlagsDetail");
 			details = processingFinFlagDetailList(details, financeDetail, "");
 			auditDetails.addAll(details);
-		}
-		//update orgReferece
-		String finRepaymethod = StringUtils.trimToEmpty(financeMain.getFinRepayMethod());
-		if (MandateConstants.TYPE_ECS.equals(finRepaymethod) || MandateConstants.TYPE_DDM.equals(finRepaymethod)
-				|| MandateConstants.TYPE_NACH.equals(finRepaymethod)) {
-			mandateDAO.updateOrgReferecne(financeMain.getMandateID(), financeMain.getFinReference(), "");
-
 		}
 
 		if (ImplementationConstants.COLLATERAL_INTERNAL) {
