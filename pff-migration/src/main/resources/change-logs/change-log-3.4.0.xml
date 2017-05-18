@@ -740,4 +740,9 @@
                   		   ProfitCenters T69 ON T69.ProfitCenterID = T1.ProfitCenterID
 		</createView>
 	</changeSet>
+	<changeSet id="18" author="Madhubabu">
+	<sql>
+		INSERT INTO ErrorDetails VALUES('90290','EN','E','The record is in use and therefore cannot be deleted.','','Approved','','','','','',0,current_timestamp,1000,0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
