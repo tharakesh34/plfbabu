@@ -673,23 +673,21 @@ INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (
 </changeSet>
 <changeSet id="47" author="Vinay">
 	<createView viewName="BuilderGroup_AView" replaceIfExists="true">
-AS
 SELECT		T1.Id, T1.Name, T1.Segmentation		
 			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
-FROM    	BuilderGroup AS T1 
+FROM    	BuilderGroup T1
 </createView>
 </changeSet>
 	<changeSet id="48" author="Vinay">
 	<createView viewName="BuilderGroup_View" replaceIfExists="true">
-AS
 SELECT		T1.Id, T1.Name, T1.Segmentation		
 			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
-FROM    	BuilderGroup_Temp AS T1 
+FROM    	BuilderGroup_Temp  T1 
 UNION ALL
 
 SELECT		T1.Id, T1.Name, T1.Segmentation		
 			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
-FROM    	BuilderGroup AS T1 
+FROM    	BuilderGroup  T1 
 WHERE     NOT EXISTS (SELECT 1 FROM BuilderGroup_TEMP WHERE Id = T1.Id)
 </createView>
 </changeSet>
