@@ -50,7 +50,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
-import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -58,7 +57,6 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.RepayConstants;
 
 public class AccrualService extends ServiceHelper {
 
@@ -277,29 +275,29 @@ public class AccrualService extends ServiceHelper {
 		pftDetail.setFutureInst(0);
 		pftDetail.setRemainingTenor(0);
 		pftDetail.setTotalTenor(0);
-
-		//Set Excess Amounts
-		List<FinExcessAmount> finExcessAmounts = finExcessAmountDAO.getExcessAmountsByRef(pftDetail.getFinReference());
-		if (finExcessAmounts.size() > 0) {
-			for (int i = 0; i < finExcessAmounts.size(); i++) {
-				BigDecimal totBalAvailable = finExcessAmounts.get(i).getAmount()
-						.subtract(finExcessAmounts.get(i).getUtilisedAmt());
-				BigDecimal reservedAmt = finExcessAmounts.get(i).getReservedAmt();
-
-				if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(), RepayConstants.EXAMOUNTTYPE_EXCESS)) {
-					pftDetail.setExcessAmt(totBalAvailable);
-					pftDetail.setExcessAmtResv(reservedAmt);
-				} else if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(),
-						RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
-					pftDetail.setEmiInAdvance(totBalAvailable);
-					pftDetail.setEmiInAdvanceResv(reservedAmt);
-				} else if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(),
-						RepayConstants.EXAMOUNTTYPE_PAYABLE)) {
-					pftDetail.setPayableAdvise(totBalAvailable);
-					pftDetail.setPayableAdviseResv(totBalAvailable);
-				}
-			}
-		}
+		//FIXME for summary we are maintaining these details. so they may not be required since the application will refer the actual tables
+		//		//Set Excess Amounts
+		//		List<FinExcessAmount> finExcessAmounts = finExcessAmountDAO.getExcessAmountsByRef(pftDetail.getFinReference());
+		//		if (finExcessAmounts.size() > 0) {
+		//			for (int i = 0; i < finExcessAmounts.size(); i++) {
+		//				BigDecimal totBalAvailable = finExcessAmounts.get(i).getAmount()
+		//						.subtract(finExcessAmounts.get(i).getUtilisedAmt());
+		//				BigDecimal reservedAmt = finExcessAmounts.get(i).getReservedAmt();
+		//
+		//				if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(), RepayConstants.EXAMOUNTTYPE_EXCESS)) {
+		//					pftDetail.setExcessAmt(totBalAvailable);
+		//					pftDetail.setExcessAmtResv(reservedAmt);
+		//				} else if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(),
+		//						RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
+		//					pftDetail.setEmiInAdvance(totBalAvailable);
+		//					pftDetail.setEmiInAdvanceResv(reservedAmt);
+		//				} else if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(),
+		//						RepayConstants.EXAMOUNTTYPE_PAYABLE)) {
+		//					pftDetail.setPayableAdvise(totBalAvailable);
+		//					pftDetail.setPayableAdviseResv(totBalAvailable);
+		//				}
+		//			}
+		//		}
 
 	}
 
