@@ -67,18 +67,6 @@
 			<column name="WorkflowId" type="bigint" />   
 		</createTable> 
 	</changeSet>
-	<changeSet id="03" author="Surekha">
-	<addColumn tableName="SMTDivisionDetail">
-		<column name="EntityCode" type="varchar(8)">
-		</column>
-	</addColumn>
-</changeSet>
-<changeSet id="03" author="Surekha">
-	<addColumn tableName="SMTDivisionDetail_Temp">
-		<column name="EntityCode" type="varchar(8)">
-		</column>
-	</addColumn>
-</changeSet>
 	<changeSet id="03" author="SreeRavali">
 	<sql>
 
@@ -130,4 +118,17 @@
 
 	</sql>
 </changeSet>
+	<changeSet id="04" author="Surekha">
+	<addColumn tableName="SMTDivisionDetail">
+		<column name="EntityCode" type="varchar(8)">
+		</column>
+	</addColumn>
+</changeSet>
+<changeSet id="05" author="Surekha">
+	<addColumn tableName="SMTDivisionDetail_Temp">
+		<column name="EntityCode" type="varchar(8)">
+		</column>
+	</addColumn>
+</changeSet>
+	
 </databaseChangeLog>
