@@ -672,6 +672,9 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		this.manufacturer.setValueColumn("DealerId");
 		this.manufacturer.setDescColumn("DealerName");
 		this.manufacturer.setValidateColumns(new String[] { "DealerId" });
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("DealerType", VASConsatnts.VASAGAINST_VASM, Filter.OP_EQUAL);
+		this.manufacturer.setFilters(filters);
 		
 		this.feeAccounting.setMandatoryStyle(true);
 		setPropertiesForAEExtCombobox(this.feeAccounting, AccountEventConstants.ACCEVENT_VAS_FEE);
