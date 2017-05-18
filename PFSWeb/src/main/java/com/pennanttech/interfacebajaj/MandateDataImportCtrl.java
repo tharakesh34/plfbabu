@@ -217,9 +217,9 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			
 			if(status == null) {
 				status = new DataEngineStatus();
-				status.setName(config.getName());
 			}
-			
+			status.setName(config.getName());
+
 			Thread thread = new Thread(new ProcessData(userId, status));
 			thread.start();
 		} catch (Exception e) {
