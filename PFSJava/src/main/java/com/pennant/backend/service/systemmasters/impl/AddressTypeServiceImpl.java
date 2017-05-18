@@ -43,11 +43,13 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.dao.systemmasters.AddressTypeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -71,6 +73,7 @@ public class AddressTypeServiceImpl extends GenericService<AddressType>
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private AddressTypeDAO addressTypeDAO;
+	private CustomerAddresDAO customerAddresDAO; 
 
 	public AddressTypeServiceImpl() {
 		super();
@@ -94,6 +97,10 @@ public class AddressTypeServiceImpl extends GenericService<AddressType>
 
 	public void setAddressTypeDAO(AddressTypeDAO addressTypeDAO) {
 		this.addressTypeDAO = addressTypeDAO;
+	}
+
+	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
+		this.customerAddresDAO = customerAddresDAO;
 	}
 
 	/**
@@ -342,16 +349,23 @@ public class AddressTypeServiceImpl extends GenericService<AddressType>
 		// Get the model object.
 		AddressType addressType = (AddressType) auditDetail.getModelData();
 		String code = addressType.getAddrTypeCode();
+		String[] parameters = new String[1];
+		parameters[0] = PennantJavaUtil.getLabel("label_AddrTypeCode") + ": " + code;
 
 		// Check the unique keys.
 		if (addressType.isNew()
 				&& PennantConstants.RECORD_TYPE_NEW.equals(addressType.getRecordType())
 				&& addressTypeDAO.isDuplicateKey(code, addressType.isWorkflow() ? TableType.BOTH_TAB
 						: TableType.MAIN_TAB)) {
-			String[] parameters = new String[1];
-			parameters[0] = PennantJavaUtil.getLabel("label_AddrTypeCode") + ": " + code;
 
 			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41014", parameters, null));
+		}
+		
+		if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, addressType.getRecordType())){
+			int count =customerAddresDAO.getcustAddressCount(addressType.getAddrTypeCode());
+			if(count>0){
+				auditDetail.setErrorDetail(new ErrorDetails("90290", null));
+			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -359,5 +373,7 @@ public class AddressTypeServiceImpl extends GenericService<AddressType>
 		logger.debug("Leaving");
 		return auditDetail;
 	}
+
+	
 
 }
