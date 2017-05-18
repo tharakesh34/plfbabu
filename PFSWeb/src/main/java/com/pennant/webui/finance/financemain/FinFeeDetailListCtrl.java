@@ -647,8 +647,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		if (this.finFeeDetailList != null && !this.finFeeDetailList.isEmpty()) {
 			int formatter = CurrencyUtil.getFormat(aFinScheduleData.getFinanceMain().getFinCcy());
 			for (FinFeeDetail finFeeDetail : this.finFeeDetailList) {
+				finFeeDetail.setDataModified(isDataMaintained(finFeeDetail, finFeeDetail.getBefImage()));
 				if (!finFeeDetail.isRcdVisible()) {
-					finFeeDetail.setDataModified(isDataMaintained(finFeeDetail, finFeeDetail.getBefImage()));
 					if(StringUtils.isBlank(aFinScheduleData.getFinanceMain().getRecordType())) {
 						finFeeDetail.setNewRecord(true);
 						finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
