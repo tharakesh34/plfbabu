@@ -735,7 +735,12 @@ public class ReceiptCalculator implements Serializable {
 				repayHeader.setFinReference(receiptData.getFinReference());
 				repayHeader.setValueDate(DateUtility.getAppDate());
 				repayHeader.setRepayAmount(totalReceiptAmt);
-				repayHeader.setFinEvent(receiptData.getReceiptHeader().getExcessAdjustTo());
+				if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+					repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_EARLYSETTLE);
+				}else{
+					repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_SCHDRPY);
+				}
+				//repayHeader.setFinEvent(receiptData.getReceiptHeader().getExcessAdjustTo());
 				repayHeader.setPriAmount(BigDecimal.ZERO);
 				repayHeader.setPftAmount(BigDecimal.ZERO);
 				repayHeader.setLatePftAmount(BigDecimal.ZERO);
@@ -745,7 +750,7 @@ public class ReceiptCalculator implements Serializable {
 				repayHeader.setTotalWaiver(BigDecimal.ZERO);
 
 				// Adding Repay Schedule Details to Repay Header
-				repayHeader.setRepayScheduleDetails(null);
+				repayHeader.setRepayScheduleDetails(pastdueRpySchdList);
 				repayHeaderList.add(repayHeader);
 			}
 			

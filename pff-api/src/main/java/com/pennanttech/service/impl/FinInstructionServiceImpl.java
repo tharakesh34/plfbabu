@@ -1007,14 +1007,23 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return financeDetail;
 		}
 
-		int count = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "", false);
-		if (count <= 0) {
+		if(StringUtils.isBlank(finServiceInstruction.getFinReference())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
 			String[] valueParm = new String[1];
-			valueParm[0] = finServiceInstruction.getFinReference();
-			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+			valueParm[0] = "Loan Reference";
+			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 			return financeDetail;
+		} else {
+			int count = financeMainDAO.getFinanceCountById(finServiceInstruction.getFinReference(), "", false);
+			if (count <= 0) {
+				financeDetail = new FinanceDetail();
+				doEmptyResponseObject(financeDetail);
+				String[] valueParm = new String[1];
+				valueParm[0] = finServiceInstruction.getFinReference();
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+				return financeDetail;
+			}
 		}
 
 		// validate service instruction data

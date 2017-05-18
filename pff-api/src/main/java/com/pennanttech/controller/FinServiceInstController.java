@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
@@ -22,13 +19,10 @@ import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeScheduleCalculator;
-import com.pennant.app.util.OverDueRecoveryPostingsUtil;
-import com.pennant.app.util.RepayCalculator;
-import com.pennant.app.util.RepaymentPostingsUtil;
+import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
-import com.pennant.backend.dao.finance.FinanceRepayPriorityDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
 import com.pennant.backend.financeservice.AddRepaymentService;
@@ -43,23 +37,20 @@ import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinFeeDetail;
-import com.pennant.backend.model.finance.FinLogEntryDetail;
-import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
-import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -68,16 +59,12 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
-import com.pennant.backend.model.finance.FinanceRepayPriority;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
-import com.pennant.backend.model.finance.ForeClosure;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.Insurance;
 import com.pennant.backend.model.finance.JointAccountDetail;
-import com.pennant.backend.model.finance.RepayData;
-import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
@@ -88,12 +75,13 @@ import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainService;
-import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.service.APIErrorHandlerService;
@@ -111,24 +99,19 @@ public class FinServiceInstController extends SummaryDetailService {
 	private AddDisbursementService		addDisbursementService;
 	private ChangeFrequencyService		changeFrequencyService;
 	private ReScheduleService			reScheduleService;
-	private ManualPaymentService		manualPaymentService;
 	private PostponementService			postponementService;
-
-	private RepayCalculator				repayCalculator;
 	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
-
 	private AddTermsService				addTermsService;
 	private RemoveTermsService			rmvTermsService;
 	private FinanceMainService			financeMainService;
 	private FinODPenaltyRateDAO			finODPenaltyRateDAO;
 	private FinanceProfitDetailDAO		profitDetailsDAO;
-	private RepaymentPostingsUtil		repayPostingUtil;
-	private OverDueRecoveryPostingsUtil	recoveryPostingsUtil;
-	private FinanceRepayPriorityDAO		financeRepayPriorityDAO;
 	private FeeDetailService 			feeDetailService;
 	private BankBranchService 			bankBranchService;
 	private FinAdvancePaymentsService	finAdvancePaymentsService;
 	private ReceiptService				receiptService;
+	private RepaymentProcessUtil		repayProcessUtil;
+	private FinTypePartnerBankService 	finTypePartnerBankService;
 
 
 	/**
@@ -1031,6 +1014,15 @@ public class FinServiceInstController extends SummaryDetailService {
 
 		//Fetch Total Repayment Amount till Maturity date for Early Settlement
 		BigDecimal repayAmt = financeScheduleDetailDAO.getTotalRepayAmount(finServiceInst.getFinReference());
+		if(finServiceInst.getAmount().compareTo(repayAmt) < 0) {
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			String[] valueParm = new String[2];
+			valueParm[0] = "Amount:"+finServiceInst.getAmount();
+			valueParm[1] = "Total outstandin amount:"+repayAmt;
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90205", valueParm));
+			return response;
+		}
 		finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYSETTLE);
 		finServiceInst.setAmount(repayAmt);
 
@@ -1057,7 +1049,7 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 				}
 			}
-			response = doProcessPayments(financeDetail, finServiceInst);
+			response = doProcessReceipt(financeDetail, finServiceInst, FinanceConstants.FINSER_EVENT_EARLYSETTLE);
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			response = new FinanceDetail();
@@ -1100,7 +1092,7 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 				}
 			}
-			response = doProcessPayments(financeDetail, finServiceInst);
+			response = doProcessReceipt(financeDetail, finServiceInst, FinanceConstants.FINSER_EVENT_EARLYRPY);
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			response = new FinanceDetail();
@@ -1142,8 +1134,7 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 				}
 			}
-			response = doProcessPayments(financeDetail, finServiceInst);
-			//response = doProcessReceipt(financeDetail, finServiceInst);
+			response = doProcessReceipt(financeDetail, finServiceInst, FinanceConstants.FINSER_EVENT_SCHDRPY);
 			
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -1157,39 +1148,117 @@ public class FinServiceInstController extends SummaryDetailService {
 		return response;
 	}
 
-	private FinanceDetail doProcessReceipt(FinanceDetail aFinanceDetail, FinServiceInstruction finServiceInst) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	private FinanceDetail doProcessReceipt(FinanceDetail aFinanceDetail, FinServiceInstruction finServiceInst,
+			String purpose) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
 
 		if (finServiceInst.getFromDate() == null) {
 			finServiceInst.setFromDate(DateUtility.getAppDate());
 		}
 
+		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+
 		Cloner cloner = new Cloner();
 		FinanceDetail financeDetail = cloner.deepClone(aFinanceDetail);
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 
+		String rpyHierarchy = finScheduleData.getFinanceType().getRpyHierarchy();
+		finScheduleData.getFinanceType().setRpyHierarchy(rpyHierarchy);
+
 		FinReceiptData finReceiptData = new FinReceiptData();
 		FinReceiptHeader finReceiptHeader = new FinReceiptHeader();
-		
+
 		FinReceiptDetail finReceiptDetail = finServiceInst.getReceiptDetail();
+		if (finReceiptDetail == null) {
+			finReceiptDetail = new FinReceiptDetail();
+			finReceiptDetail.setReceivedDate(DateUtility.getAppDate());
+		}
+		finReceiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		finReceiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+		finReceiptDetail.setPaymentType("");
+		finReceiptDetail.setAmount(finServiceInst.getAmount());
+
 		List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
 		receiptDetails.add(finReceiptDetail);
-		
-		finReceiptHeader.setReceiptAmount(finServiceInst.getAmount());
-		//finReceiptHeader.setReceiptType(receiptType);
-		//finReceiptHeader.setReceiptMode(receiptMode);
 		finReceiptHeader.setReceiptDetails(receiptDetails);
+
+		finReceiptHeader.setReceiptAmount(finServiceInst.getAmount());
+		finReceiptHeader.setReceiptMode(finServiceInst.getPaymentMode());
+
+		finReceiptHeader.setReference(finServiceInst.getFinReference());
+		finReceiptHeader.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		finReceiptHeader.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
+		finReceiptHeader.setReceiptDate(DateUtility.getAppDate());
+		finReceiptHeader.setReceiptPurpose(purpose);
+		if (StringUtils.isBlank(finReceiptHeader.getExcessAdjustTo())) {
+			finReceiptHeader.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		}
+		finReceiptHeader.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
+
+		finReceiptHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		finReceiptHeader.setNewRecord(true);
+		finReceiptHeader.setLastMntBy(userDetails.getLoginUsrID());
+		finReceiptHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		finReceiptHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		finReceiptHeader.setUserDetails(userDetails);
+
 		finReceiptData.setReceiptHeader(finReceiptHeader);
 		finReceiptData.setFinanceDetail(financeDetail);
 		finReceiptData.setFinReference(finServiceInst.getFinReference());
+		finReceiptData.setSourceId(PennantConstants.FINSOURCE_ID_API);
 
-		// call change frequency service
-		finReceiptData = receiptService.calculateRepayments(finReceiptData);
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		Customer customer = financeDetail.getCustomerDetails().getCustomer();
+		List<FinanceScheduleDetail> scheduleDetails = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
+		FinanceProfitDetail profitDetail = new FinanceProfitDetail();
+		profitDetail.setFinStartDate(financeMain.getFinStartDate());
+		profitDetail.setFinReference(financeMain.getFinReference());
+		Date receiDate = DateUtility.getDBDate(DateUtility.formatDate(finReceiptDetail.getReceivedDate(),
+				PennantConstants.DBDateFormat));
 
+		if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			finReceiptData = receiptService.setEarlyRepayEffectOnSchedule(finReceiptData, finServiceInst);
+		} else {
+			finReceiptData = receiptService.calculateRepayments(finReceiptData);
+			finReceiptHeader = repayProcessUtil.processReceiptPayments(financeMain, customer, scheduleDetails,
+					profitDetail, finReceiptHeader, rpyHierarchy, receiDate);
+		}
+
+		List<ErrorDetails> errorDetails = finReceiptData.getFinanceDetail().getFinScheduleData().getErrorDetails();
+		if(!errorDetails.isEmpty()) {
+			for(ErrorDetails error:errorDetails) {
+				FinanceDetail response = new FinanceDetail();
+				doEmptyResponseObject(response);
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(error.getErrorCode()));
+				return response;
+			}
+		}
 		if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {
+			int count = finTypePartnerBankService.getPartnerBankCount(financeMain.getFinType(),
+					finServiceInst.getPaymentMode(), finReceiptDetail.getFundingAc());
+			if (count <= 0) {
+				FinanceDetail response = new FinanceDetail();
+				doEmptyResponseObject(response);
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90263"));
+				return response;
+			}
+
+			if (finReceiptDetail.getReceivedDate().compareTo(financeMain.getFinStartDate()) < 0
+					|| finReceiptDetail.getReceivedDate().compareTo(DateUtility.getAppDate()) > 0) {
+				FinanceDetail response = new FinanceDetail();
+				doEmptyResponseObject(response);
+				String[] valueParm = new String[3];
+				valueParm[0] = "Received Date " + DateUtility.formatToShortDate(finReceiptDetail.getReceivedDate());
+				valueParm[1] = DateUtility.formatToShortDate(financeMain.getFinStartDate());
+				valueParm[2] = DateUtility.formatToShortDate(DateUtility.getAppDate());
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90282", valueParm));
+				return response;
+			}
+
 			// Set Version value
 			int version = financeDetail.getFinScheduleData().getFinanceMain().getVersion();
 			financeDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
+			financeDetail.getFinScheduleData().getFinanceMain().setRecordType("");
 			finScheduleData.setSchduleGenerated(true);
 
 			// Save the Schedule details
@@ -1214,238 +1283,16 @@ public class FinServiceInstController extends SummaryDetailService {
 			}
 			finReceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 			financeDetail = getServiceInstResponse(finReceiptData.getFinanceDetail().getFinScheduleData());
-		} else {/*
-			FinScheduleData scheduleData = finReceiptData.getFinanceDetail().getFinScheduleData();
-
-			//Repayments Posting Process Execution
-			//=====================================
-			FinRepayHeader finRepayHeader = repayData.getFinRepayHeader();
-			financeMain.setRepayAccountId(finRepayHeader.getRepayAccountId());
-			FinanceProfitDetail profitDetail = profitDetailsDAO.getFinPftDetailForBatch(financeMain.getFinReference());
-			Date valuedate = finServiceInst.getFromDate();
-
-			FinanceProfitDetail tempPftDetail = new FinanceProfitDetail();
-			getAccrualService().calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(), tempPftDetail, valuedate);
-
-			List<RepayScheduleDetail> repaySchdList = repayData.getRepayScheduleDetails();
-			BigDecimal totPriPayNow = BigDecimal.ZERO;
-			BigDecimal totPftPayNow = BigDecimal.ZERO;
-			BigDecimal totPenaltyPayNow = BigDecimal.ZERO;
-			for (RepayScheduleDetail repayShdData : repaySchdList) {
-				totPriPayNow = totPriPayNow.add(repayShdData.getPrincipalSchdPayNow());
-				totPenaltyPayNow = totPenaltyPayNow.add(repayShdData.getPenaltyPayNow());
-			}
-			totPftPayNow = totPftPayNow.add(tempPftDetail.getPftAmz().subtract(tempPftDetail.getTdSchdPftPaid()));
-
-			// fore closure details
-			List<ForeClosure> foreClosureList = new ArrayList<ForeClosure>();
-			ForeClosure foreClosure = new ForeClosure();
-			foreClosure.setValueDate(finServiceInst.getFromDate());
-			foreClosure.setForeCloseAmount(totPriPayNow.add(totPenaltyPayNow).add(totPftPayNow));
-			foreClosure.setAccuredIntTillDate(totPftPayNow);
-			foreClosureList.add(foreClosure);
-
-			// penalty details
-			List<FinODDetails> finODDetailList = new ArrayList<FinODDetails>();
-			FinODDetails finoDetail = new FinODDetails();
-			finoDetail.setFinCurODAmt(totPenaltyPayNow);
-			finODDetailList.add(finoDetail);
-
-			List<Object> returnList = processRepaymentPostings(financeMain, scheduleData.getFinanceScheduleDetails(),
-					profitDetail, repaySchdList, finRepayHeader.getInsRefund(), repayData.getEventCodeRef(),
-					scheduleData.getFeeRules(), scheduleData.getFinanceType().getFinDivision());
-			if (!(Boolean) returnList.get(0)) {
-				String errParm = (String) returnList.get(1);
-				throw new PFFInterfaceException("9999", errParm);
-			}
-
-			financeMain.setRecordType("");
-
-			//Create log entry for Action for Schedule Modification
-			FinLogEntryDetail entryDetail = new FinLogEntryDetail();
-			entryDetail.setFinReference(financeMain.getFinReference());
-			entryDetail.setEventAction(finRepayHeader.getFinEvent());
-			entryDetail.setSchdlRecal(finRepayHeader.isSchdRegenerated());
-			entryDetail.setPostDate(DateUtility.getAppDate());
-			entryDetail.setReversalCompleted(false);
-
-			// ScheduleDetails delete and save
-			//=======================================
-			scheduleData.setFinanceScheduleDetails((List<FinanceScheduleDetail>) returnList.get(4));
-			financeDetail = getServiceInstResponse(scheduleData);
-
-			financeDetail.setForeClosureDetails(foreClosureList);
-			financeDetail.getFinScheduleData().setFinODDetails(finODDetailList);
-		*/}
-
-		logger.debug("Leaving");
-		return financeDetail;
-	}
-
-	/**
-	 * Method for process Early settlement and partial payment requests
-	 * 
-	 * @param financeDetail
-	 * @param finServiceInst
-	 * @return
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws PFFInterfaceException
-	 * @throws AccountNotFoundException 
-	 */
-	@SuppressWarnings("unchecked")
-	public FinanceDetail doProcessPayments(FinanceDetail aFinanceDetail, FinServiceInstruction finServiceInst)
-			throws IllegalAccessException, InvocationTargetException, PFFInterfaceException, AccountNotFoundException {
-		logger.debug("Entering");
-
-		if (finServiceInst.getFromDate() == null) {
-			finServiceInst.setFromDate(DateUtility.getAppDate());
-		}
-
-		Cloner cloner = new Cloner();
-		FinanceDetail financeDetail = cloner.deepClone(aFinanceDetail);
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-
-		RepayData repayData = new RepayData();
-		repayData.setBuildProcess("R");
-		repayData.setFinanceDetail(financeDetail);
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		List<FinanceScheduleDetail> financeScheduleDetails = finScheduleData.getFinanceScheduleDetails();
-		Date valueDate = finServiceInst.getFromDate();
-
-		// Initiate Repay calculations
-		repayData.getRepayMain().setRepayAmountNow(finServiceInst.getAmount());
-		repayData = repayCalculator.initiateRepay(repayData, financeMain, financeScheduleDetails, "", null, false,
-				finServiceInst.getRecalType(), valueDate, finServiceInst.getModuleDefiner());
-		repayData.setRepayMain(repayData.getRepayMain());
-
-		String finEvent = AccountEventConstants.ACCEVENT_EARLYSTL;
-		if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
-			finEvent = AccountEventConstants.ACCEVENT_REPAY;
-
-			aFinanceDetail = financeDetail;
-		} else if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
-			finEvent = AccountEventConstants.ACCEVENT_EARLYPAY;
-			if (!StringUtils.equals(finServiceInst.getRecalType(), CalculationConstants.EARLYPAY_NOEFCT)) {
-				repayData = manualPaymentService.setEarlyRepayEffectOnSchedule(repayData, finServiceInst);
-				aFinanceDetail = repayData.getFinanceDetail();
-			}
-		}
-
-		// call change frequency service
-		manualPaymentService.doCalcRepayments(repayData, aFinanceDetail, finServiceInst);
-
-		if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {
-			// Set Version value
-			int version = financeDetail.getFinScheduleData().getFinanceMain().getVersion();
-			financeDetail.getFinScheduleData().getFinanceMain().setVersion(version + 1);
-			finScheduleData.setSchduleGenerated(true);
-			repayData.setSourceId(APIConstants.FINSOURCE_ID_API);
-			repayData.setFinReference(finScheduleData.getFinReference());
-
-			FinRepayHeader finRepayHeader = new FinRepayHeader();
-			finRepayHeader.setFinReference(repayData.getFinReference());
-			finRepayHeader.setFinEvent(finEvent);
-			finRepayHeader.setValueDate(finServiceInst.getFromDate());
-			finRepayHeader.setRepayAmount(repayData.getRepayMain().getRepayAmountNow());
-			finRepayHeader.setPriAmount(repayData.getRepayMain().getPrincipalPayNow());
-			finRepayHeader.setPftAmount(repayData.getRepayMain().getProfitPayNow());
-			finRepayHeader.setTotalRefund(repayData.getRepayMain().getRefundNow());
-			finRepayHeader.setTotalWaiver(BigDecimal.ZERO);
-			finRepayHeader.setInsRefund(repayData.getRepayMain().getInsRefund());
-			finRepayHeader.setSchdRegenerated(true);
-
-			repayData.setFinRepayHeader(finRepayHeader);
-
-			// Save the Schedule details
-			AuditHeader auditHeader = getAuditHeader(repayData, PennantConstants.TRAN_WF);
-			RepayData aRepayData = (RepayData) auditHeader.getAuditDetail().getModelData();
-			aRepayData.getFinanceDetail().getFinScheduleData().getFinanceMain().setVersion(version + 1);
-			aRepayData.getFinanceDetail().getFinScheduleData().getFinanceMain().setRecordType("");
-
-			//get the header details from the request
-			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
-					.get(APIHeader.API_HEADER_KEY);
-			//set the headerDetails to AuditHeader
-			auditHeader.setApiHeader(reqHeaderDetails);
-
-			auditHeader = manualPaymentService.doApprove(auditHeader);
-
-			if (auditHeader.getErrorMessage() != null) {
-				for (ErrorDetails errorDetail : auditHeader.getErrorMessage()) {
-					FinanceDetail response = new FinanceDetail();
-					doEmptyResponseObject(response);
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
-							errorDetail.getError()));
-					return response;
-				}
-			}
-			aRepayData = (RepayData) auditHeader.getAuditDetail().getModelData();
-			financeDetail = getServiceInstResponse(aRepayData.getFinanceDetail().getFinScheduleData());
 		} else {
-			FinScheduleData scheduleData = repayData.getFinanceDetail().getFinScheduleData();
-
-			//Repayments Posting Process Execution
-			//=====================================
-			FinRepayHeader finRepayHeader = repayData.getFinRepayHeader();
-			financeMain.setRepayAccountId(finRepayHeader.getRepayAccountId());
-			FinanceProfitDetail profitDetail = profitDetailsDAO.getFinPftDetailForBatch(financeMain.getFinReference());
-			Date valuedate = finServiceInst.getFromDate();
-
-			FinanceProfitDetail tempPftDetail = new FinanceProfitDetail();
-			getAccrualService().calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(), tempPftDetail, valuedate);
-
-			List<RepayScheduleDetail> repaySchdList = repayData.getRepayScheduleDetails();
-			BigDecimal totPriPayNow = BigDecimal.ZERO;
-			BigDecimal totPftPayNow = BigDecimal.ZERO;
-			BigDecimal totPenaltyPayNow = BigDecimal.ZERO;
-			for (RepayScheduleDetail repayShdData : repaySchdList) {
-				totPriPayNow = totPriPayNow.add(repayShdData.getPrincipalSchdPayNow());
-				totPenaltyPayNow = totPenaltyPayNow.add(repayShdData.getPenaltyPayNow());
-			}
-			totPftPayNow = totPftPayNow.add(tempPftDetail.getPftAmz().subtract(tempPftDetail.getTdSchdPftPaid()));
-
-			// fore closure details
-			List<ForeClosure> foreClosureList = new ArrayList<ForeClosure>();
-			ForeClosure foreClosure = new ForeClosure();
-			foreClosure.setValueDate(finServiceInst.getFromDate());
-			foreClosure.setForeCloseAmount(totPriPayNow.add(totPenaltyPayNow).add(totPftPayNow));
-			foreClosure.setAccuredIntTillDate(totPftPayNow);
-			foreClosureList.add(foreClosure);
-
-			// penalty details
-			List<FinODDetails> finODDetailList = new ArrayList<FinODDetails>();
-			FinODDetails finoDetail = new FinODDetails();
-			finoDetail.setFinCurODAmt(totPenaltyPayNow);
-			finODDetailList.add(finoDetail);
-
-			List<Object> returnList = processRepaymentPostings(financeMain, scheduleData.getFinanceScheduleDetails(),
-					profitDetail, repaySchdList, finRepayHeader.getInsRefund(), repayData.getEventCodeRef(),
-					scheduleData.getFeeRules(), scheduleData.getFinanceType().getFinDivision());
-			if (!(Boolean) returnList.get(0)) {
-				String errParm = (String) returnList.get(1);
-				throw new PFFInterfaceException("9999", errParm);
-			}
-
-			financeMain.setRecordType("");
-
-			//Create log entry for Action for Schedule Modification
-			FinLogEntryDetail entryDetail = new FinLogEntryDetail();
-			entryDetail.setFinReference(financeMain.getFinReference());
-			entryDetail.setEventAction(finRepayHeader.getFinEvent());
-			entryDetail.setSchdlRecal(finRepayHeader.isSchdRegenerated());
-			entryDetail.setPostDate(DateUtility.getAppDate());
-			entryDetail.setReversalCompleted(false);
-
-			// ScheduleDetails delete and save
-			//=======================================
-			scheduleData.setFinanceScheduleDetails((List<FinanceScheduleDetail>) returnList.get(4));
-			financeDetail = getServiceInstResponse(scheduleData);
-
-			financeDetail.setForeClosureDetails(foreClosureList);
-			financeDetail.getFinScheduleData().setFinODDetails(finODDetailList);
+			financeDetail = finReceiptData.getFinanceDetail();
+			FinReceiptHeader receiptHeader = finReceiptData.getReceiptHeader();
+			profitDetail = profitDetailsDAO.getFinProfitDetailsById(finReceiptData.getFinReference());
+			List<FinanceScheduleDetail> schedDetails = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
+			receiptHeader.setInquiryReq(true);
+			schedDetails = repayProcessUtil.doProcessReceipts(financeMain, schedDetails, profitDetail, receiptHeader,
+					financeDetail.getFinScheduleData(), DateUtility.getAppDate());
+			financeDetail = getServiceInstResponse(finReceiptData.getFinanceDetail().getFinScheduleData());
 		}
-
 		logger.debug("Leaving");
 		return financeDetail;
 	}
@@ -1562,15 +1409,6 @@ public class FinServiceInstController extends SummaryDetailService {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, afinanceDetail.getBefImage(), afinanceDetail);
 		return new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null, null, null, auditDetail,
 				afinanceDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
-	}
-	
-	/**
-	 * Get Audit Header Details
-	 */
-	private AuditHeader getAuditHeader(RepayData repayData, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, repayData);
-		return new AuditHeader(repayData.getFinReference(), null, null, null, auditDetail, repayData.getFinanceDetail()
-				.getFinScheduleData().getFinanceMain().getUserDetails(), new HashMap<String, ArrayList<ErrorDetails>>());
 	}
 
 	/**
@@ -1717,181 +1555,6 @@ public class FinServiceInstController extends SummaryDetailService {
 		detail.setReturnDataSetList(null);
 	}
 
-	/**
-	 * Method for Repayment Details Posting Process
-	 * 
-	 * @param financeMain
-	 * @param scheduleDetails
-	 * @param repaySchdList
-	 * @param insRefund
-	 * @return
-	 * @throws IllegalAccessException
-	 * @throws AccountNotFoundException
-	 * @throws InvocationTargetException
-	 */
-	public List<Object> processRepaymentPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
-			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, BigDecimal insRefund,
-			String eventCodeRef, List<FeeRule> feeRuleList, String finDivision)
-			throws IllegalAccessException, PFFInterfaceException, InvocationTargetException, AccountNotFoundException {
-		logger.debug("Entering");
-
-		List<Object> returnList = new ArrayList<Object>();
-		try {
-
-			Map<String, FeeRule> feeRuleDetailsMap = null;
-			if (feeRuleList != null && !feeRuleList.isEmpty()) {
-
-				feeRuleDetailsMap = new HashMap<String, FeeRule>();
-				for (FeeRule feeRule : feeRuleList) {
-					if (!feeRuleDetailsMap.containsKey(feeRule.getFeeCode())) {
-						feeRuleDetailsMap.put(feeRule.getFeeCode(), feeRule);
-					}
-				}
-			}
-
-			// FETCH Finance type Repayment Priority
-			FinanceRepayPriority repayPriority = financeRepayPriorityDAO.getFinanceRepayPriorityById(
-					financeMain.getFinType(), "");
-
-			//Check Finance is RIA Finance Type or Not
-			BigDecimal totRpyPri = BigDecimal.ZERO;
-			BigDecimal totRpyPft = BigDecimal.ZERO;
-			BigDecimal totRpyTds = BigDecimal.ZERO;
-			BigDecimal totRefund = BigDecimal.ZERO;
-			BigDecimal totSchdFee = BigDecimal.ZERO;
-			BigDecimal totSchdCrIns = BigDecimal.ZERO;
-			BigDecimal totSchdSuplRent = BigDecimal.ZERO;
-			BigDecimal totSchdIncrCost = BigDecimal.ZERO;
-
-			List<FinRepayQueue> finRepayQueues = new ArrayList<FinRepayQueue>();
-			Map<String, BigDecimal> totalsMap = new HashMap<String, BigDecimal>();
-			FinRepayQueue finRepayQueue = null;
-			Date curBDay = DateUtility.getAppDate();
-
-			for (int i = 0; i < repaySchdList.size(); i++) {
-
-				finRepayQueue = new FinRepayQueue();
-				finRepayQueue.setFinReference(financeMain.getFinReference());
-				finRepayQueue.setRpyDate(repaySchdList.get(i).getSchDate());
-				finRepayQueue.setFinRpyFor(repaySchdList.get(i).getSchdFor());
-				finRepayQueue.setRcdNotExist(true);
-				finRepayQueue = doWriteDataToBean(finRepayQueue, financeMain, repaySchdList.get(i), repayPriority);
-
-				//Overdue Details preparation
-				recoveryPostingsUtil.recoveryCalculation(finRepayQueue, financeMain.getProfitDaysBasis(), curBDay,
-						false, false);
-
-				finRepayQueue.setRefundAmount(repaySchdList.get(i).getRefundReq());
-				finRepayQueue.setPenaltyPayNow(repaySchdList.get(i).getPenaltyPayNow());
-				finRepayQueue.setWaivedAmount(repaySchdList.get(i).getWaivedAmt());
-				finRepayQueue.setPenaltyBal(repaySchdList.get(i).getPenaltyAmt()
-						.subtract(repaySchdList.get(i).getPenaltyPayNow()));
-				finRepayQueue.setChargeType(repaySchdList.get(i).getChargeType());
-
-				//Total Repayments Calculation for Principal, Profit & Refunds
-				totRpyPri = totRpyPri.add(repaySchdList.get(i).getPrincipalSchdPayNow());
-				totRpyPft = totRpyPft.add(repaySchdList.get(i).getProfitSchdPayNow());
-				totRpyTds = totRpyTds.add(repaySchdList.get(i).getTdsSchdPayNow());
-				totRefund = totRefund.add(repaySchdList.get(i).getRefundReq());
-
-				//Fee Details
-				totSchdFee = totSchdFee.add(repaySchdList.get(i).getSchdFeePayNow());
-				totSchdSuplRent = totSchdSuplRent.add(repaySchdList.get(i).getSchdSuplRentPayNow());
-				totSchdIncrCost = totSchdIncrCost.add(repaySchdList.get(i).getSchdIncrCostPayNow());
-
-				finRepayQueues.add(finRepayQueue);
-
-			}
-
-			totalsMap.put("totRpyTot", totRpyPri.add(totRpyPft));
-			totalsMap.put("totRpyPri", totRpyPri);
-			totalsMap.put("totRpyPft", totRpyPft);
-			totalsMap.put("totRpyTds", totRpyTds);
-			totalsMap.put("totRefund", totRefund);
-			//Schedule Early Settlement Insurance Refund
-			totalsMap.put("INSREFUND", insRefund);
-
-			//Fee Details
-			totalsMap.put("crInsPay", totSchdCrIns);
-			totalsMap.put("schFeePay", totSchdFee);
-			totalsMap.put("suplRentPay", totSchdSuplRent);
-			totalsMap.put("incrCostPay", totSchdIncrCost);
-
-			//Repayments Process For Schedule Repay List			
-			returnList = repayPostingUtil.postingsScreenRepayProcess(financeMain, scheduleDetails, profitDetail,
-					finRepayQueues, totalsMap, eventCodeRef, feeRuleDetailsMap, finDivision);
-
-			if ((Boolean) returnList.get(0)) {
-				returnList.add(finRepayQueues);
-			}
-
-		} catch (PFFInterfaceException e) {
-			logger.error("Exception: ", e);
-			throw e;
-		} catch (IllegalAccessException e) {
-			logger.error("Exception: ", e);
-			throw e;
-		} catch (InvocationTargetException e) {
-			logger.error("Exception: ", e);
-			throw e;
-		}
-
-		logger.debug("Leaving");
-		return returnList;
-	}
-
-	/**
-	 * Method for prepare RepayQueue data
-	 * 
-	 * @param resultSet
-	 * @return
-	 */
-	private FinRepayQueue doWriteDataToBean(FinRepayQueue finRepayQueue, FinanceMain financeMain,
-			RepayScheduleDetail rsd, FinanceRepayPriority repayPriority) {
-		logger.debug("Entering");
-
-		finRepayQueue.setBranch(financeMain.getFinBranch());
-		finRepayQueue.setFinType(financeMain.getFinType());
-		finRepayQueue.setCustomerID(financeMain.getCustID());
-
-		if (repayPriority != null) {
-			finRepayQueue.setFinPriority(repayPriority.getFinPriority());
-		} else {
-			finRepayQueue.setFinPriority(9999);
-		}
-
-		finRepayQueue.setSchdPft(rsd.getProfitSchd());
-		finRepayQueue.setSchdPri(rsd.getPrincipalSchd());
-		finRepayQueue.setSchdPftBal(rsd.getProfitSchd().subtract(rsd.getProfitSchdPaid()));
-		finRepayQueue.setSchdPriBal(rsd.getPrincipalSchd().subtract(rsd.getPrincipalSchdPaid()));
-		finRepayQueue.setSchdPriPayNow(rsd.getPrincipalSchdPayNow());
-		finRepayQueue.setSchdPftPayNow(rsd.getProfitSchdPayNow());
-		finRepayQueue.setSchdPriPaid(rsd.getPrincipalSchdPaid());
-		finRepayQueue.setSchdPftPaid(rsd.getProfitSchdPaid());
-
-		// Fee Details
-		//	1. Schedule Fee Amount
-		finRepayQueue.setSchdFee(rsd.getSchdFee());
-		finRepayQueue.setSchdFeeBal(rsd.getSchdFeeBal());
-		finRepayQueue.setSchdFeePayNow(rsd.getSchdFeePayNow());
-		finRepayQueue.setSchdFeePaid(rsd.getSchdFeePaid());
-
-		//	5. Schedule Supplementary Rent Amount
-		finRepayQueue.setSchdSuplRent(rsd.getSchdSuplRent());
-		finRepayQueue.setSchdSuplRentBal(rsd.getSchdSuplRentBal());
-		finRepayQueue.setSchdSuplRentPayNow(rsd.getSchdSuplRentPayNow());
-		finRepayQueue.setSchdSuplRentPaid(rsd.getSchdSuplRentPaid());
-
-		//	6. Schedule Fee Amount
-		finRepayQueue.setSchdIncrCost(rsd.getSchdIncrCost());
-		finRepayQueue.setSchdIncrCostBal(rsd.getSchdIncrCostBal());
-		finRepayQueue.setSchdIncrCostPayNow(rsd.getSchdIncrCostPayNow());
-		finRepayQueue.setSchdIncrCostPaid(rsd.getSchdIncrCostPaid());
-
-		logger.debug("Leaving");
-		return finRepayQueue;
-	}
-
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
@@ -1944,28 +1607,8 @@ public class FinServiceInstController extends SummaryDetailService {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
-	public void setManualPaymentService(ManualPaymentService manualPaymentService) {
-		this.manualPaymentService = manualPaymentService;
-	}
-
-	public void setRepayCalculator(RepayCalculator repayCalculator) {
-		this.repayCalculator = repayCalculator;
-	}
-
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
 		this.profitDetailsDAO = profitDetailsDAO;
-	}
-
-	public void setRepayPostingUtil(RepaymentPostingsUtil repayPostingUtil) {
-		this.repayPostingUtil = repayPostingUtil;
-	}
-
-	public void setRecoveryPostingsUtil(OverDueRecoveryPostingsUtil recoveryPostingsUtil) {
-		this.recoveryPostingsUtil = recoveryPostingsUtil;
-	}
-
-	public void setFinanceRepayPriorityDAO(FinanceRepayPriorityDAO financeRepayPriorityDAO) {
-		this.financeRepayPriorityDAO = financeRepayPriorityDAO;
 	}
 
 	public void setPostponementService(PostponementService postponementService) {
@@ -1986,5 +1629,13 @@ public class FinServiceInstController extends SummaryDetailService {
 
 	public void setReceiptService(ReceiptService receiptService) {
 		this.receiptService = receiptService;
+	}
+
+	public void setRepayProcessUtil(RepaymentProcessUtil repayProcessUtil) {
+		this.repayProcessUtil = repayProcessUtil;
+	}
+
+	public void setFinTypePartnerBankService(FinTypePartnerBankService finTypePartnerBankService) {
+		this.finTypePartnerBankService = finTypePartnerBankService;
 	}
 }

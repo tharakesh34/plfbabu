@@ -45,6 +45,7 @@ import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
+import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -74,6 +75,7 @@ import com.pennant.backend.service.handlinstruction.HandlingInstructionService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.CollateralConstants;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -1697,6 +1699,58 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		// validate from date
 		Date fromDate = finServiceInstruction.getFromDate();
+		if(StringUtils.isBlank(finServiceInstruction.getPaymentMode())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Payment mode";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), lang));
+			return auditDetail;
+		} else if(!StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_NEFT)
+				&& !StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_RTGS)
+				&& !StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_IMPS)){
+			String[] valueParm = new String[2];
+			valueParm[0] = "Payment mode";
+			valueParm[1] = DisbursementConstants.PAYMENT_TYPE_NEFT+","
+							+DisbursementConstants.PAYMENT_TYPE_RTGS+","+DisbursementConstants.PAYMENT_TYPE_IMPS;
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90281", "", valueParm), lang));
+			return auditDetail;
+		}
+		
+		if(StringUtils.equals(finServiceInstruction.getReqType(), "Post") && finServiceInstruction.getReceiptDetail() == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Receipt Details";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), lang));
+			return auditDetail;
+		} else if(StringUtils.equals(finServiceInstruction.getReqType(), "Post")) {
+			FinReceiptDetail receiptDetail = finServiceInstruction.getReceiptDetail();
+			if(StringUtils.isBlank(receiptDetail.getTransactionRef())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Transaction Reference";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), lang));
+				return auditDetail;
+			}
+			if(receiptDetail.getFundingAc() <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Funding Account";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), lang));
+				return auditDetail;
+			}
+			if(receiptDetail.getReceivedDate() == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Received Date";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), lang));
+				return auditDetail;
+			}
+		}
+		if(StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYRPY) && StringUtils.isNotBlank(finServiceInstruction.getRecalType())) {
+			if(!StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.EARLYPAY_ADJMUR)
+					&& !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.EARLYPAY_RECRPY)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Recal type code";
+				valueParm[1] = CalculationConstants.EARLYPAY_ADJMUR+","+CalculationConstants.EARLYPAY_RECRPY;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90281", "", valueParm), lang));
+				return auditDetail;
+			}
+		}
 		if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 			// It should be greater than or equals to application date
 			if (fromDate.compareTo(DateUtility.getAppDate()) < 0) {

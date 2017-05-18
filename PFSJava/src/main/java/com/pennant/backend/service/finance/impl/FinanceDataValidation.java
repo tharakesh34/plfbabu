@@ -31,6 +31,7 @@ import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.applicationmaster.FlagDAO;
 import com.pennant.backend.dao.applicationmaster.SplRateDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ScriptError;
@@ -64,6 +65,7 @@ import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
+import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -117,7 +119,8 @@ public class FinanceDataValidation {
 	private ScriptValidationService 	scriptValidationService;
 	private RuleExecutionUtil 			ruleExecutionUtil;
 	private RuleService 				ruleService;
-
+	private FinTypeVASProductsDAO 		finTypeVASProductsDAO;
+	
 	private FinanceDetail 				financeDetail;
 
 	public FinanceDataValidation() {
@@ -248,9 +251,48 @@ public class FinanceDataValidation {
 	private List<ErrorDetails> vasRecordingValidations(String vldGroup, FinScheduleData finScheduleData,
 			boolean isAPICall, String string) {
 		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
-		if(finScheduleData.getVasRecordingList() != null){
-			for(VASRecording detail:finScheduleData.getVasRecordingList()){
+		if (finScheduleData.getVasRecordingList() != null) {
+			FinanceType financeType = finScheduleData.getFinanceType();
+			//fetch the vasProduct list based on the FinanceType
+			financeType.setFinTypeVASProductsList(
+					finTypeVASProductsDAO.getVASProductsByFinType(financeType.getFinType(), ""));
+			int mandatoryVasCount = 0;
+			boolean isVasProduct = false;
+			if (financeType.getFinTypeVASProductsList() != null) {
+				for (FinTypeVASProducts vasProduct : financeType.getFinTypeVASProductsList()) {
+					if (vasProduct.isMandatory()) {
+						mandatoryVasCount++;
+					}
+				}
+			}
+			for (FinTypeVASProducts vasProduct : financeType.getFinTypeVASProductsList()) {
+				if (financeType.getFinTypeVASProductsList() != null) {
+					if (finScheduleData.getVasRecordingList().size() != financeType.getFinTypeVASProductsList()
+							.size()) {
+						if (mandatoryVasCount != finScheduleData.getVasRecordingList().size()) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "Vas structure";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90265", valueParm)));
+							return errorDetails;
+						}
+					}
+					for (VASRecording detail : finScheduleData.getVasRecordingList()) {
+						if (StringUtils.equals(detail.getProductCode(), vasProduct.getVasProduct())) {
+							isVasProduct = true;
+						}
 
+					}
+				}
+
+			}
+			if (!isVasProduct) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "not in loan type product";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+				return errorDetails;
+			}
+
+			for (VASRecording detail : finScheduleData.getVasRecordingList()) {
 				if (StringUtils.isBlank(detail.getProductCode())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "product";
@@ -264,8 +306,8 @@ public class FinanceDataValidation {
 					return errorDetails;
 				}
 
-				VASConfiguration vASConfiguration = vASConfigurationService.getVASConfigurationByCode(detail
-						.getProductCode());
+				VASConfiguration vASConfiguration = vASConfigurationService
+						.getVASConfigurationByCode(detail.getProductCode());
 				if (vASConfiguration == null) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "Product";
@@ -273,6 +315,7 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90224", valueParm)));
 					return errorDetails;
 				}
+
 				if (!StringUtils.equals(vASConfiguration.getRecAgainst(), detail.getPostingAgainst())) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "PostingAgainst";
@@ -392,7 +435,8 @@ public class FinanceDataValidation {
 				}
 				int extendedDetailsCount = 0;
 				if (vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails() != null) {
-					for (ExtendedFieldDetail extended : vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails()) {
+					for (ExtendedFieldDetail extended : vASConfiguration.getExtendedFieldHeader()
+							.getExtendedFieldDetails()) {
 						if (extended.isFieldMandatory()) {
 							extendedDetailsCount++;
 						}
@@ -426,7 +470,8 @@ public class FinanceDataValidation {
 							if (vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails() != null) {
 								for (ExtendedFieldDetail extendedDetail : vASConfiguration.getExtendedFieldHeader()
 										.getExtendedFieldDetails()) {
-									if (StringUtils.equals(extendedDetail.getFieldName(), extendedFieldData.getFieldName())) {
+									if (StringUtils.equals(extendedDetail.getFieldName(),
+											extendedFieldData.getFieldName())) {
 										isFeild = true;
 									}
 								}
@@ -441,29 +486,31 @@ public class FinanceDataValidation {
 					}
 
 				}
-				Map<String, Object>	mapValues = new HashMap<String, Object>();
+				Map<String, Object> mapValues = new HashMap<String, Object>();
 				for (ExtendedField details : detail.getExtendedDetails()) {
 					for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
 						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
 					}
 				}
-				
+
 				// do script pre validation and post validation
 				ScriptErrors errors = null;
 				if (vASConfiguration.isPostValidationReq()) {
-					errors = scriptValidationService.getPostValidationErrors(vASConfiguration.getPostValidation(), mapValues);
+					errors = scriptValidationService.getPostValidationErrors(vASConfiguration.getPostValidation(),
+							mapValues);
 				}
 				if (errors != null) {
 					List<ScriptError> errorsList = errors.getAll();
 					for (ScriptError error : errorsList) {
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("","90909","",error.getValue(),null,null)));
+						errorDetails.add(ErrorUtil
+								.getErrorDetail(new ErrorDetails("", "90909", "", error.getValue(), null, null)));
 						return errorDetails;
 					}
 				}
 			}
 		}
 		return errorDetails;
-		
+
 	}
 
 	/**
@@ -1097,11 +1144,13 @@ public class FinanceDataValidation {
 					String[] valueParm = new String[1];
 					valueParm[0] = "startDate";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+					return errorDetails;
 				}
 				if (mandate.getExpiryDate() == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "expiryDate";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+					return errorDetails;
 				}
 				/*
 				 * if (mandate.getMaxLimit().compareTo(BigDecimal.ZERO) < 0) { String[] valueParm = new String[1];
@@ -1909,20 +1958,29 @@ public class FinanceDataValidation {
 			return errorDetails;
 		}
 		
-		// ScheduleMethod
-		if (StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "Calculated Interest on Frequency";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30552", valueParm)));
-			return errorDetails;
-		}
+		if(finMain.isStepFinance()) {
+			// ScheduleMethod
+			if (StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Calculated Interest on Frequency";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30552", valueParm)));
+				return errorDetails;
+			}
 
-		if (StringUtils.equals(finMain.getStepType(), FinanceConstants.STEPTYPE_PRIBAL)
-				&& StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "Equal Installments (Principal and Interest)";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30555", valueParm)));
-			return errorDetails;
+			if (StringUtils.equals(finMain.getStepType(), FinanceConstants.STEPTYPE_PRIBAL)
+					&& StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Equal Installments (Principal and Interest)";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30555", valueParm)));
+				return errorDetails;
+			}
+
+			if(finMain.isPlanEMIHAlw()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Planned EMI";
+				valueParm[1] = "step";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90283", valueParm)));
+			}
 		}
 		
 		//Planned EMI Holidays also requested?
@@ -2015,14 +2073,35 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
 				return errorDetails;
 			}
-			if (finMain.getPlanEMIHMaxPerYear() <= 0) {
+			if (finMain.getPlanEMIHMaxPerYear() == 0) {
 				finMain.setPlanEMIHMaxPerYear(financeType.getPlanEMIHMaxPerYear());
 			}
-			if (finMain.getPlanEMIHMax() <= 0) {
+			if (finMain.getPlanEMIHMaxPerYear() < 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "PlanEMIHMaxPerYear";
+				valueParm[1] = "0";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91121", valueParm)));
+				return errorDetails;
+			}
+			if (finMain.getPlanEMIHMax() == 0) {
 				finMain.setPlanEMIHMax(financeType.getPlanEMIHMax());
 			}
-			if (finMain.getUnPlanEMIHLockPeriod() <= 0) {
-				finMain.setUnPlanEMIHLockPeriod(financeType.getUnPlanEMIHLockPeriod());
+			if(finMain.getPlanEMIHMax() < 0){
+				String[] valueParm = new String[2];
+				valueParm[0] = "PlanEMIHMax";
+				valueParm[1] = "0";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91121", valueParm)));
+				return errorDetails;
+			}
+			if (finMain.getPlanEMIHLockPeriod() == 0) {
+				finMain.setPlanEMIHLockPeriod(financeType.getPlanEMIHLockPeriod());
+			}
+			if(finMain.getPlanEMIHLockPeriod() < 0){
+				String[] valueParm = new String[2];
+				valueParm[0] = "PlanEMIHLockPeriod";
+				valueParm[1] = "0";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91121", valueParm)));
+				return errorDetails;
 			}
 			// planEMIHMethod
 			if (!StringUtils.equals(finMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)
@@ -2046,18 +2125,18 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90240", valueParm)));
 				return errorDetails;
 			}
-			if(finMain.getPlanEMIHMax() != financeType.getPlanEMIHMax()){
+			if(finMain.getPlanEMIHMax() > financeType.getPlanEMIHMax()){
 				String[] valueParm = new String[2];
 				valueParm[0] = "PlanEMIHMax";
 				valueParm[1] = String.valueOf(financeType.getPlanEMIHMax());
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90264", valueParm)));
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30551", valueParm)));
 				return errorDetails;	
 			}
-			if(finMain.getPlanEMIHMaxPerYear() != financeType.getPlanEMIHMaxPerYear()){
+			if(finMain.getPlanEMIHMaxPerYear() > financeType.getPlanEMIHMaxPerYear()){
 				String[] valueParm = new String[2];
 				valueParm[0] = "PlanEMIHMaxPerYear";
 				valueParm[1] = String.valueOf(financeType.getPlanEMIHMaxPerYear());
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90264", valueParm)));
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30551", valueParm)));
 				return errorDetails;	
 			}
 			if(!(financeType.getPlanEMIHLockPeriod() >= finMain.getPlanEMIHLockPeriod())){
@@ -2083,7 +2162,7 @@ public class FinanceDataValidation {
 					}
 					for (FinPlanEmiHoliday detail : finScheduleData.getApiPlanEMIHmonths()) {
 						int count=0;
-						if (!(detail.getPlanEMIHMonth() >= 0 && detail.getPlanEMIHMonth() <= 12)) {
+						if (!(detail.getPlanEMIHMonth() > 0 && detail.getPlanEMIHMonth() <= 12)) {
 							String[] valueParm = new String[3];
 							valueParm[0] = "holidayMonth";
 							valueParm[1] = "1";
@@ -3645,5 +3724,9 @@ public class FinanceDataValidation {
 	
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
+	}
+	
+	public void setFinTypeVASProductsDAO(FinTypeVASProductsDAO finTypeVASProductsDAO) {
+		this.finTypeVASProductsDAO = finTypeVASProductsDAO;
 	}
 }

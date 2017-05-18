@@ -83,4 +83,5 @@ public interface FinanceTypeDAO {
 	FinanceType getProductDetails(String finype);
 
 	int getFinanceTypeByRuleCode(long ruleId, String type);
+
 }

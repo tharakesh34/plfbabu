@@ -4219,6 +4219,7 @@
 		<property name="vASConfigurationService" ref="vASConfigurationService" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="ruleService" ref="ruleService" />
+		<property name="finTypeVASProductsDAO" ref="finTypeVASProductsDAO" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->
@@ -5625,6 +5626,7 @@
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="overdraftScheduleDetailDAO" ref="overdraftScheduleDetailDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="receiptCalculator" ref="receiptCalculator" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />

@@ -190,7 +190,7 @@ public class FinStatementController extends SummaryDetailService {
 				Cloner cloner = new Cloner();
 				FinanceDetail aFinanceDetail = cloner.deepClone(financeDetail);
 				serviceInstruction.setFromDate(DateUtility.addDays(DateUtility.getAppDate(), i));
-				aFinanceDetail = finServiceInstController.doProcessPayments(aFinanceDetail, serviceInstruction);
+				//aFinanceDetail = finServiceInstController.doProcessPayments(aFinanceDetail, serviceInstruction);
 
 				foreClosureList.add(aFinanceDetail.getForeClosureDetails().get(0));
 				finOdDetaiList.add(aFinanceDetail.getFinScheduleData().getFinODDetails().get(0));

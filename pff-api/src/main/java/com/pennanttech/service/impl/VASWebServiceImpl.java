@@ -57,15 +57,16 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 			vasConfiguration = vASConfigurationService.getApprovedVASConfigurationByCode(product);
 			if (vasConfiguration != null) {
 				if (vasConfiguration.getExtendedFieldHeader() != null) {
-					vasConfiguration.setExtendedFieldDetailList(vasConfiguration.getExtendedFieldHeader()
-							.getExtendedFieldDetails());
+					vasConfiguration.setExtendedFieldDetailList(
+							vasConfiguration.getExtendedFieldHeader().getExtendedFieldDetails());
 				}
 				vasConfiguration.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			} else {
 				vasConfiguration = new VASConfiguration();
-				String[] valueParm = new String[1];
-				valueParm[0] = product;
-				vasConfiguration.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+				String[] valueParm = new String[2];
+				valueParm[0] = "Product";
+				valueParm[1] = product;
+				vasConfiguration.setReturnStatus(APIErrorHandlerService.getFailedStatus("90701", valueParm));
 			}
 		} catch (Exception e) {
 			logger.error(e);

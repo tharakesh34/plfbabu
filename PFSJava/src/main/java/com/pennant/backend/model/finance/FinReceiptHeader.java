@@ -50,6 +50,9 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private LoggedInUser userDetails;
 	private String postBranch;
 	private boolean logSchInPresentment;
+	
+	// Used for API Inquiry request cases only
+	private boolean inquiryReq;
 
 	private List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>(1);
 	private List<FinExcessAmount> excessAmounts = new ArrayList<FinExcessAmount>(1);
@@ -80,6 +83,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("finCcyDesc");
 		excludeFields.add("cancelReasonDesc");
 		excludeFields.add("finIsActive");
+		excludeFields.add("inquiryReq");
 
 		return excludeFields;
 	}
@@ -361,6 +365,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	}
 	public void setFinIsActive(boolean finIsActive) {
 		this.finIsActive = finIsActive;
+	}
+
+	public boolean isInquiryReq() {
+		return inquiryReq;
+	}
+
+	public void setInquiryReq(boolean inquiryReq) {
+		this.inquiryReq = inquiryReq;
 	}
 
 

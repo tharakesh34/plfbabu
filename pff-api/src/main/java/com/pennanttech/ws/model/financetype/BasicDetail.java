@@ -10,11 +10,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "finCcy", "lovDescFinCcyName", "finDaysCalType", "lovDescFinDaysCalTypeName", "finMinAmount",
-		"finMaxAmount", "finCategory", "FinCategory", "finAssetType", "finIsDwPayRequired", "downPayRule",
-		"downPayRuleDesc", "fInIsAlwGrace", "finIsAlwMD", "finDepreciationReq", "limitRequired", "overrideLimit",
-		"finCollateralReq", "finCollateralOvrride", "collateralType", "allowRIAInvestment", "alwAdvanceRent",
-		"finDivision", "finIsActive", "allowDownpayPgm", "rollOverFinance", "rollOverFrq", "finCommitmentReq",
-		"finCommitmentOvrride", "finAcType", "lovDescFinAcTypeName", "finContingentAcType",
+		"finMaxAmount", "finCategory", "finAssetType", "finIsDwPayRequired", "downPayRule",
+		"downPayRuleDesc", "fInIsAlwGrace", "finIsAlwMD", "alwMaxDisbCheckReq", "finDepreciationReq", "limitRequired",
+		"overrideLimit", "finCollateralReq", "finCollateralOvrride", "collateralType", "allowRIAInvestment",
+		"alwAdvanceRent", "finDivision", "finIsActive", "allowDownpayPgm", "rollOverFinance", "rollOverFrq",
+		"finCommitmentReq", "finCommitmentOvrride", "finAcType", "lovDescFinAcTypeName", "finContingentAcType",
 		"lovDescFinContingentAcTypeName", "finBankContingentAcType", "lovDescFinBankContAcTypeName",
 		"finProvisionAcType", "lovDescFinProvisionAcTypeName", "finSuspAcType", "lovDescFinSuspAcTypeName",
 		"pftPayAcType", "lovDescPftPayAcTypeName", "finIsOpenPftPayAcc", "finIsOpenNewFinAc", "alwMultiPartyDisb",
@@ -52,6 +52,7 @@ public class BasicDetail implements Serializable {
 	private String downPayRuleDesc;
 	private boolean fInIsAlwGrace;
 	private boolean finIsAlwMD;
+	private boolean alwMaxDisbCheckReq;
 	private boolean finDepreciationReq;
 	private boolean limitRequired;
 	private boolean overrideLimit;
@@ -447,4 +448,13 @@ public class BasicDetail implements Serializable {
 	public void settDSApplicable(boolean tDSApplicable) {
 		this.tDSApplicable = tDSApplicable;
 	}
+	
+	public boolean isAlwMaxDisbCheckReq() {
+		return alwMaxDisbCheckReq;
+	}
+
+	public void setAlwMaxDisbCheckReq(boolean alwMaxDisbCheckReq) {
+		this.alwMaxDisbCheckReq = alwMaxDisbCheckReq;
+	}
+
 }

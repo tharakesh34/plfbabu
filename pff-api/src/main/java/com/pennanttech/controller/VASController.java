@@ -52,6 +52,7 @@ public class VASController {
 			vasRecording.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			vasRecording.setSourceId(APIConstants.FINSOURCE_ID_API);
 			vasRecording.setNewRecord(true);
+			vasRecording.setVasStatus("N");
 			vasRecording.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			vasRecording.setLastMntBy(userDetails.getLoginUsrID());
 			vasRecording.setLastMntOn(new Timestamp(System.currentTimeMillis()));
