@@ -267,6 +267,7 @@ public class FinScheduleData {
 		this.financeMain.setDepreciationFrq(financeType.getFinDepreciationFrq());
 		this.financeMain.setTDSApplicable(financeType.isTDSApplicable());
 		this.financeMain.setProductCategory(financeType.getProductCategory());
+		this.financeMain.setFinCategory(financeType.getFinCategory());
 		//Step Policy Details 
 		if(financeType.isSteppingMandatory()){
 			this.financeMain.setStepFinance(financeType.isStepFinance());

@@ -606,6 +606,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private Date lastDisbDate;
 	private int dueBucket=0;
+	private int reAgeBucket=0;
+	private String finCategory;
 
 	//For Fee Reca Calculation
 	private BigDecimal recalFee = BigDecimal.ZERO;
@@ -696,7 +698,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("preApprovalFinance");
 		excludeFields.add("preApprovalExpired");
 		excludeFields.add("scheduleChange");
-		excludeFields.add("productCategory");
 		excludeFields.add("stepDetailList");
 		excludeFields.add("feeRuleList");
 		excludeFields.add("insuranceList");
@@ -3479,6 +3480,22 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setRecalTerms(int recalTerms) {
 		this.recalTerms = recalTerms;
+	}
+
+	public int getReAgeBucket() {
+		return reAgeBucket;
+	}
+
+	public void setReAgeBucket(int reAgeBucket) {
+		this.reAgeBucket = reAgeBucket;
+	}
+
+	public String getFinCategory() {
+		return finCategory;
+	}
+
+	public void setFinCategory(String finCategory) {
+		this.finCategory = finCategory;
 	}
 	
 }
