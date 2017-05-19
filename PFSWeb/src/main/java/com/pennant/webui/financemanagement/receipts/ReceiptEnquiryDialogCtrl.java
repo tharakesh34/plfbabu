@@ -80,6 +80,7 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 	protected AccountSelectionBox							chequeAcNo;
 	protected ExtendedCombobox								fundingAccount;
 	protected Datebox										receivedDate;
+	protected Uppercasebox									receiptNo;
 	protected Textbox										remarks;
 
 	protected Row											row_favourNo;	
@@ -175,6 +176,7 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 		this.chequeAcNo.setTextBoxWidth(180);
 
 		this.receivedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.receiptNo.setMaxlength(50);
 		this.remarks.setMaxlength(100);
 		this.favourName.setMaxlength(50);
 		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -227,6 +229,7 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 		readOnlyComponent(true, this.paymentRef);
 		readOnlyComponent(true, this.transactionRef);
 		readOnlyComponent(true, this.receivedDate);
+		readOnlyComponent(true, this.receiptNo);
 		readOnlyComponent(true, this.remarks);
 
 		logger.debug("Leaving");
@@ -354,6 +357,7 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 					this.fundingAccount.setValue(String.valueOf(receiptDetail.getFundingAc()));
 					this.fundingAccount.setDescription(receiptDetail.getFundingAcDesc());
 					this.receivedDate.setValue(receiptDetail.getReceivedDate());
+					this.receiptNo.setValue(receiptDetail.getReceiptNo());
 					this.remarks.setValue(receiptDetail.getRemarks());
 				}
 			}
