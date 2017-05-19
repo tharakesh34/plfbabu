@@ -44,7 +44,7 @@
 		</field>
 		<field name="guranteePercentage">
 			<constraint annotation="javax.validation.constraints.Min">
-			<message>guranteePercentage should be Positive</message>
+			<message>guranteePercentage should be greater than ZERO</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
@@ -70,15 +70,32 @@
 				</groups>
 				<element name="max">100</element>
 			</constraint>
-		</field>
-		<field name="mobileNo">
-			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>mobileNo should have maximum 12 characters</message>
+			<constraint annotation="javax.validation.constraints.Pattern">
+			<message>Name  invalid. Allowed Characters are [a-z A-Z and special character ' ] must starts with Characters only.
+			</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 				</groups>
-				<element name="max">12</element>
+				<element name="regexp">^$|^[A-Za-z]+[A-Za-z_\s]*</element>
+			</constraint> 
+		</field>
+		<field name="mobileNo">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>mobileNo should have maximum 10 characters</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="max">10</element>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>mobileNo should be 10 characters</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="min">10</element>
 			</constraint>
 		</field>
 		<field name="emailId">
@@ -89,16 +106,6 @@
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 				</groups>
 				<element name="max">200</element>
-			</constraint>
-		</field>
-		<field name="guarantorProofName">
-			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>guarantorProofName should have maximum 500 characters</message>
-				<groups>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
-					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
-				</groups>
-				<element name="max">500</element>
 			</constraint>
 		</field>
 		<field name="addrHNbr">
@@ -160,6 +167,14 @@
 				</groups>
 				<element name="max">8</element>
 			</constraint>
+			<constraint annotation="javax.validation.constraints.Pattern">
+			<message>poBox is invalid. Allowed Characters are [0-9].</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="regexp">^$|[0-9]+</element>
+			</constraint>
 		</field>
 		<field name="addrCountry">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
@@ -199,6 +214,14 @@
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 				</groups>
 				<element name="max">50</element>
+			</constraint>
+				<constraint annotation="javax.validation.constraints.Pattern">
+			<message>addrZIP is invalid. Allowed Characters are [0-9].</message>
+				<groups>
+				<value>com.pennant.validation.CreateFinanceGroup</value>
+				<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="regexp">^$|[0-9]+</element>
 			</constraint>
 		</field>
 		<field name="validateGuarantor">
@@ -303,29 +326,6 @@
 				<element name="lang">javascript</element>
 				<element name="script">
 				if ((_this.emailId != null) &amp;&amp; (_this.emailId != "")) {
-					if (_this.bankCustomer){
-							false;	
-					}else{
-							true;
-							}	
-					}else{
-					if (_this.bankCustomer){
-							true;	
-					}else{
-							false;
-					}	
-				}
-				</element>
-			</constraint>
-			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
-				<message>guarantorProofName Mandatory only for Non-Bank Customer</message>
-				<groups>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
-					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
-				</groups>
-				<element name="lang">javascript</element>
-				<element name="script">
-				if ((_this.guarantorProofName != null) &amp;&amp; (_this.guarantorProofName != "")) {
 					if (_this.bankCustomer){
 							false;	
 					}else{
@@ -568,6 +568,21 @@
 							false;
 					}	
 				}
+				</element>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+				<message>90242%%guranteePercentage</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+				</groups>
+				<element name="lang">javascript</element>
+				<element name="script">
+					if (_this.guranteePercentage !=null &amp;&amp; _this.guranteePercentage != "") {
+					true;
+					} else {
+					false
+					}
 				</element>
 			</constraint>
 		</field>

@@ -1790,14 +1790,16 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 						}
 					}
 
-					if (StringUtils.equals(detail.getDocCategory(), "01")) {
-						Pattern r = Pattern.compile("^[0-9]{12}$");
-						Matcher m = r.matcher(detail.getCustDocTitle());
-						if (m.find() == false) {
+					if (StringUtils.equals(detail.getDocCategory(), "03")) {
+						Pattern pattern = Pattern.compile("^[A-Za-z]{5}\\d{4}[A-Za-z]{1}");
+						if(detail.getCustDocTitle() !=null){
+						Matcher matcher = pattern.matcher(detail.getCustDocTitle());
+						if(matcher.find() == false ){
 							String[] valueParm = new String[0];
 							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90251", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;
+						}
 						}
 					}
 

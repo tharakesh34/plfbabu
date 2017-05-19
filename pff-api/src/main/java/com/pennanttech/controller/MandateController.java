@@ -26,6 +26,7 @@ import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.mandate.MandateService;
+import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennant.ws.exception.ServiceException;
@@ -290,6 +291,9 @@ public class MandateController {
 		}
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		mandate.setUserDetails(userDetails);
+		if (StringUtils.isBlank(mandate.getPeriodicity())) {
+			mandate.setPeriodicity(MandateConstants.MANDATE_DEFAULT_FRQ);
+		}
 		mandate.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		mandate.setIFSC(bankBranch.getIFSC());
 		mandate.setBankBranchID(bankBranch.getBankBranchID());

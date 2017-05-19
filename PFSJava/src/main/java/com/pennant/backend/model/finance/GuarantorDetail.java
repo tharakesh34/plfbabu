@@ -45,7 +45,7 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  */
 @XmlType(propOrder = { "bankCustomer", "guarantorCIF", "guranteePercentage", "name", "mobileNo", "emailId",
 		"guarantorIDType", "guarantorIDNumber", "addrHNbr", "flatNbr", "addrStreet", "addrLine1", "addrLine2", "POBox",
-		"addrCountry", "addrProvince", "addrCity", "addrZIP", "guarantorProofName" })
+		"addrCountry", "addrProvince", "addrCity", "addrZIP" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
@@ -75,7 +75,6 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 	
 	@XmlTransient
 	private byte[] guarantorProof = new byte[Byte.valueOf("0")];
-	@XmlElement
 	private String guarantorProofName;
 	private String remarks;
 	private String primaryExposure;

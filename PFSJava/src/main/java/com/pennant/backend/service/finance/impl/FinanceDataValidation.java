@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.validator.routines.EmailValidator;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
@@ -33,6 +34,8 @@ import com.pennant.backend.dao.applicationmaster.SplRateDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.systemmasters.CityDAO;
+import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
@@ -73,8 +76,10 @@ import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.model.staticparms.ExtendedField;
 import com.pennant.backend.model.staticparms.ExtendedFieldData;
+import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.model.systemmasters.GeneralDepartment;
+import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
@@ -91,6 +96,7 @@ import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.service.systemmasters.GeneralDepartmentService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
@@ -120,7 +126,8 @@ public class FinanceDataValidation {
 	private RuleExecutionUtil 			ruleExecutionUtil;
 	private RuleService 				ruleService;
 	private FinTypeVASProductsDAO 		finTypeVASProductsDAO;
-	
+	private ProvinceDAO					provinceDAO;
+	private CityDAO						cityDAO;
 	private FinanceDetail 				financeDetail;
 
 	public FinanceDataValidation() {
@@ -925,6 +932,13 @@ public class FinanceDataValidation {
 		List<GuarantorDetail> guarantorDetails = financeDetail.getGurantorsDetailList();
 		if (guarantorDetails != null) {
 			for (GuarantorDetail detail : guarantorDetails) {
+				if(detail.getGuranteePercentage().compareTo(new BigDecimal(100)) == 1) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "GuranteePercentage";
+					valueParm[1] = "100";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30508", valueParm)));
+					return errorDetails;
+				}
 				if (detail.isBankCustomer()) {
 					String guarantorCIF = detail.getGuarantorCIF();
 					if (StringUtils.equals(guarantorCIF, financeDetail.getFinScheduleData().getFinanceMain()
@@ -940,6 +954,40 @@ public class FinanceDataValidation {
 						String[] valueParm = new String[1];
 						valueParm[0] = guarantorCIF;
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90103", valueParm)));
+					}
+				} else {
+					//validate Phone number
+					String mobileNumber = detail.getMobileNo();
+					if (StringUtils.isNotBlank(mobileNumber)) {
+						if (!(mobileNumber.matches("\\d{10}"))) {
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90278", null)));
+							return errorDetails;
+						}
+					}
+					 boolean validRegex =  EmailValidator.getInstance().isValid(detail.getEmailId());
+						if(!validRegex){
+							String[] valueParm = new String[1];
+							valueParm[0] = detail.getEmailId();
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90237", valueParm)));
+							return errorDetails;
+						}
+					Province province = provinceDAO.getProvinceById(detail.getAddrCountry(),
+							detail.getAddrProvince(), "");
+					if (province == null) {
+						String[] valueParm = new String[2];
+						valueParm[0] = detail.getAddrProvince();
+						valueParm[1] = detail.getAddrCountry();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90701", valueParm)));
+						return errorDetails;
+					}
+					City city = cityDAO.getCityById(detail.getAddrCountry(), detail.getAddrProvince(),
+							detail.getAddrCity(), "");
+					if (city == null) {
+						String[] valueParm = new String[2];
+						valueParm[0] = detail.getAddrCity();
+						valueParm[1] = detail.getAddrProvince();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90701", valueParm)));
+						return errorDetails;
 					}
 				}
 			}
@@ -1122,7 +1170,7 @@ public class FinanceDataValidation {
 				}
 
 				if (StringUtils.isBlank(mandate.getIFSC())) {
-					if ((StringUtils.isBlank(mandate.getBankCode()) && StringUtils.isBlank(mandate.getBranchCode()))) {
+					if ((StringUtils.isBlank(mandate.getBankCode()) || StringUtils.isBlank(mandate.getBranchCode()))) {
 						String[] valueParm = new String[1];
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90313", valueParm)));
 					}
@@ -1174,8 +1222,8 @@ public class FinanceDataValidation {
 				//validate Dates
 				if (mandate.getStartDate().compareTo(mandate.getExpiryDate()) > 0) {
 					String[] valueParm = new String[2];
-					valueParm[0] = DateUtility.formatDate(mandate.getStartDate(), PennantConstants.XMLDateFormat);
-					valueParm[1] = DateUtility.formatDate(mandate.getExpiryDate(), PennantConstants.XMLDateFormat);
+					valueParm[0] = DateUtility.formatDate(mandate.getExpiryDate(), PennantConstants.XMLDateFormat);
+					valueParm[1] = DateUtility.formatDate(mandate.getStartDate(), PennantConstants.XMLDateFormat);
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90205", valueParm)));
 				}
 				if (StringUtils.isNotBlank(mandate.getIFSC())) {
@@ -1186,6 +1234,16 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90301", valueParm)));
 					}else{
 						mandate.setBankCode(bankBranch.getBankCode());
+						if(StringUtils.isBlank(mandate.getMICR())){
+							mandate.setMICR(bankBranch.getMICR());
+						} else {
+							if(!StringUtils.equals(bankBranch.getMICR(), mandate.getMICR())){
+								String[] valueParm = new String[2];
+								valueParm[0] = "MICR";
+								valueParm[1] = mandate.getMICR();
+								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90701", valueParm)));
+							}
+						}
 					}
 				} else if (StringUtils.isNotBlank(mandate.getBankCode())
 						&& StringUtils.isNotBlank(mandate.getBranchCode())) {
@@ -1196,10 +1254,23 @@ public class FinanceDataValidation {
 						valueParm[0] = mandate.getBankCode();
 						valueParm[1] = mandate.getBranchCode();
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90302", valueParm)));
+					} else {
+						mandate.setBankCode(bankBranch.getBankCode());
+						if(StringUtils.isBlank(mandate.getMICR())){
+							mandate.setMICR(bankBranch.getMICR());
+						} else {
+							if(!StringUtils.equals(bankBranch.getMICR(), mandate.getMICR())){
+								String[] valueParm = new String[2];
+								valueParm[0] = "MICR";
+								valueParm[1] = mandate.getMICR();
+								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90701", valueParm)));
+							}
+						}
+					
 					}
 				}
 
-			/*	//validate AccNumber length
+				//validate AccNumber length
 				if(StringUtils.isNotBlank(mandate.getBankCode())){
 					int accNoLength = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
 					if(mandate.getAccNumber().length()!=accNoLength){
@@ -1209,7 +1280,7 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30570", valueParm)));
 						return errorDetails;
 					}
-				}*/
+				}
 				//validate Phone number
 				String mobileNumber = mandate.getPhoneNumber();
 				if (StringUtils.isNotBlank(mobileNumber)) {
@@ -1217,6 +1288,25 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90278", null)));
 					}
 				}
+				//validate names
+				String accHolderName = mandate.getAccHolderName();
+				if (StringUtils.isNotBlank(accHolderName)) {
+					if (!(accHolderName.matches("^$|^[A-Za-z]+[A-Za-z.\\s]*"))) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "AccHolderName";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90237", valueParm)));
+					}
+				}
+				String  jointAccHolderName= mandate.getJointAccHolderName();
+				if (StringUtils.isNotBlank(jointAccHolderName)) {
+					if (!(jointAccHolderName.matches("^$|^[A-Za-z]+[A-Za-z.\\s]*"))) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "JointAccHolderName";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90237", valueParm)));
+					}
+				}
+				
+				
 				// validate MandateType
 				if (StringUtils.isNotBlank(mandate.getMandateType())) {
 					List<ValueLabel> mandateType = PennantStaticListUtil.getMandateTypeList();
@@ -1259,6 +1349,8 @@ public class FinanceDataValidation {
 						valueParm[0] = mandate.getPeriodicity();
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90207", valueParm)));
 					}
+				} else {
+					mandate.setPeriodicity(MandateConstants.MANDATE_DEFAULT_FRQ);
 				}
 
 				//validate status
@@ -3731,4 +3823,11 @@ public class FinanceDataValidation {
 	public void setFinTypeVASProductsDAO(FinTypeVASProductsDAO finTypeVASProductsDAO) {
 		this.finTypeVASProductsDAO = finTypeVASProductsDAO;
 	}
+	public void setProvinceDAO(ProvinceDAO provinceDAO) {
+		this.provinceDAO = provinceDAO;
+	}
+	public void setCityDAO(CityDAO cityDAO) {
+		this.cityDAO = cityDAO;
+	}
+
 }

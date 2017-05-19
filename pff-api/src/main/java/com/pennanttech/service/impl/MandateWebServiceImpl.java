@@ -344,7 +344,7 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 				valueParm[0] = mandate.getPeriodicity();
 				return getErrorDetails("90207", valueParm);
 			}
-		}
+		} 
 
 		// validate Mandate fields
 		if (StringUtils.isNotBlank(mandate.getIFSC())) {
@@ -355,6 +355,16 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 				return getErrorDetails("90301", valueParm);
 			} else{
 				mandate.setBankCode(bankBranch.getBankCode());
+				if(StringUtils.isBlank(mandate.getMICR())){
+					mandate.setMICR(bankBranch.getMICR());
+				} else {
+					if(!StringUtils.equals(bankBranch.getMICR(), mandate.getMICR())){
+						String[] valueParm = new String[2];
+						valueParm[0] = "MICR";
+						valueParm[1] = mandate.getMICR();
+						return getErrorDetails("90701", valueParm);
+					}
+				}
 			}
 		} else if (StringUtils.isNotBlank(mandate.getBankCode()) && StringUtils.isNotBlank(mandate.getBranchCode())) {
 			BankBranch bankBranch = bankBranchService
@@ -366,6 +376,16 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 				return getErrorDetails("90302", valueParm);
 			} else {
 				mandate.setBankCode(bankBranch.getBankCode());
+				if(StringUtils.isBlank(mandate.getMICR())){
+					mandate.setMICR(bankBranch.getMICR());
+				} else {
+					if(!StringUtils.equals(bankBranch.getMICR(), mandate.getMICR())){
+						String[] valueParm = new String[2];
+						valueParm[0] = "MICR";
+						valueParm[1] = mandate.getMICR();
+						return getErrorDetails("90701", valueParm);
+					}
+				}
 			}
 		}
 		//validate AccNumber length
@@ -381,8 +401,8 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 		//validate Dates
 		if(mandate.getStartDate().compareTo(mandate.getExpiryDate())>0) {
 			String[] valueParm = new String[2];
-			valueParm[0] = DateUtility.formatDate(mandate.getStartDate(), PennantConstants.XMLDateFormat);
-			valueParm[1] = DateUtility.formatDate(mandate.getExpiryDate(), PennantConstants.XMLDateFormat);
+			valueParm[0] = DateUtility.formatDate(mandate.getExpiryDate(), PennantConstants.XMLDateFormat);
+			valueParm[1] = DateUtility.formatDate(mandate.getStartDate(), PennantConstants.XMLDateFormat);
 			return getErrorDetails("90205", valueParm);
 		}
 		logger.debug("Leaving");

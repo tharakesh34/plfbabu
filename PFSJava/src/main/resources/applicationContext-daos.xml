@@ -4220,6 +4220,8 @@
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="ruleService" ref="ruleService" />
 		<property name="finTypeVASProductsDAO" ref="finTypeVASProductsDAO" />
+		<property name="provinceDAO" ref="provinceDAO" />
+		<property name="cityDAO" ref="cityDAO" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->
