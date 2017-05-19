@@ -162,7 +162,8 @@ public class LoadFinanceData extends ServiceHelper {
 			//update finance main
 			if (finEODEvent.isUpdFinMain()) {
 				//finEODEvent.getFinanceMain().setVersion(finEODEvent.getFinanceMain().getVersion() + 1);
-				getFinanceMainDAO().updateFinanceInEOD(finEODEvent.getFinanceMain());
+				getFinanceMainDAO().updateFinanceInEOD(finEODEvent.getFinanceMain(),finEODEvent.getFinMainUpdateFields(),
+						finEODEvent.isupdFinSchdForRateRvw());
 			}
 
 			//update profit details

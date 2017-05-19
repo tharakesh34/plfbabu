@@ -260,5 +260,6 @@ public interface FinanceMainDAO {
 
 	int getFinanceMainByBank(String bankCode, String type);
 
-	void updateFinanceInEOD(FinanceMain financeMain);
+
+	void updateFinanceInEOD(FinanceMain financeMain, List<String> updateFields, boolean rateRvw);
 }

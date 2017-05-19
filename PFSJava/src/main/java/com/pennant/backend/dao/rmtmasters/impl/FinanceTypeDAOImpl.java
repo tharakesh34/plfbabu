@@ -702,29 +702,6 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		return count;
 	}
 	
-	@Override
-	public FinanceType getProductDetails(String finype) {
-		logger.debug("Entering");
-		
-		FinanceType financeType = new FinanceType();
-		financeType.setFinType(finype);
-		
-		StringBuilder selectSql = new StringBuilder("select FinCategory, ProductCategory");
-		selectSql.append(" From RMTFinanceTypes");
-		selectSql.append(" Where FinType =:FinType");
-		
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
-		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
-		
-		try {
-			financeType = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(dae);
-		}
-		logger.debug("Leaving");
-		return financeType;
-	}
 	
 	@Override
 	public int getFinanceTypeByRuleCode(long ruleId, String type) {

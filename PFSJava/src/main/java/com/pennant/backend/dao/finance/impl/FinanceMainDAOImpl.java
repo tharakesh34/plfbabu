@@ -2761,7 +2761,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		selectSql.append(" FinStatus, FinStsReason, BankName, Iban, AccountType, DdaReferenceNo, ");
 		selectSql.append(" DroplineFrq, FirstDroplineDate, PftServicingODLimit, ");
 		selectSql.append(" UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, PromotionCode,  ");
-		selectSql.append("  MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, FinCategory, ProductCategory, ReAgeBucket  ");
+		selectSql.append(" MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, FinCategory, ProductCategory, ReAgeBucket  ");
 		selectSql.append(" FROM FinanceMain Where CustID=:CustID ");
 		
 		if (isActive) {
@@ -2799,28 +2799,40 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 	}
 	
 	@Override
-	public void updateFinanceInEOD(FinanceMain financeMain) {
+	public void updateFinanceInEOD(FinanceMain financeMain, List<String> updateFields, boolean rateRvw) {
 		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinanceMain");
-		updateSql.append(" Set FinStatus = :FinStatus, DueBucket = :DueBucket ");
-		updateSql.append(" ,NextGrcCpzDate = :NextGrcCpzDate, NextGrcPftDate = :NextGrcPftDate ");
-		updateSql.append(" ,NextGrcPftRvwDate = :NextGrcPftRvwDate, LastRepayCpzDate = :LastRepayCpzDate ");
-		updateSql.append(" ,NextRepayCpzDate = :NextRepayCpzDate, LastRepayDate = :LastRepayDate ");
-		updateSql.append(" ,NextRepayDate = :NextRepayDate, LastRepayPftDate = :LastRepayPftDate ");
-		updateSql.append(" ,NextRepayPftDate = :NextRepayPftDate, LastRepayRvwDate = :LastRepayRvwDate ");
-		updateSql.append(" ,NextRepayRvwDate = :NextRepayRvwDate, NextDepDate = :NextDepDate ");
-		//profit related fields for rate review
-		updateSql.append(" ,TotalGracePft = :TotalGracePft, TotalGraceCpz = :TotalGraceCpz ");
-		updateSql.append(" ,TotalGrossGrcPft = :TotalGrossGrcPft, TotalProfit = :TotalProfit ");
-		updateSql.append(" ,TotalCpz = :TotalCpz, TotalGrossPft = :TotalGrossPft ");
-		updateSql.append(" ,TotalRepayAmt = :TotalRepayAmt, FinRepaymentAmount = :FinRepaymentAmount ");
+		StringBuilder updateSql = new StringBuilder("Update FinanceMain Set ");
+
+		if (!updateFields.isEmpty()) {
+
+			for (int i = 0; i < updateFields.size(); i++) {
+				updateSql.append(updateFields.get(i));
+				updateSql.append(" = :");
+				updateSql.append(updateFields.get(i));
+				if (i != updateFields.size()-1) {
+					updateSql.append(" ,");
+				}
+			}
+
+			if (rateRvw) {
+				updateSql.append(" ,");
+			}
+		}
+		if (rateRvw) {
+			//profit related fields for rate review
+			updateSql.append(" TotalGracePft = :TotalGracePft, TotalGraceCpz = :TotalGraceCpz ");
+			updateSql.append(" ,TotalGrossGrcPft = :TotalGrossGrcPft, TotalProfit = :TotalProfit ");
+			updateSql.append(" ,TotalCpz = :TotalCpz, TotalGrossPft = :TotalGrossPft ");
+			updateSql.append(" ,TotalRepayAmt = :TotalRepayAmt, FinRepaymentAmount = :FinRepaymentAmount ");
+		}
+
 		updateSql.append(" Where FinReference =:FinReference");
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		 this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
-		 logger.debug("Leaving");
+		logger.debug("Leaving");
 
 	}
 }

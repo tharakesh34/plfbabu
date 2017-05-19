@@ -56,6 +56,7 @@ public class FinEODEvent implements Serializable {
 	private boolean						updFinSchdForRateRvw	= false;
 	private boolean						updFinPft				= false;
 	private boolean						updRepayInstruct		= false;
+	private List<String>				finMainUpdateFields		= new ArrayList<String>(1);
 
 	public FinanceMain getFinanceMain() {
 		return financeMain;
@@ -311,6 +312,18 @@ public class FinEODEvent implements Serializable {
 
 	public void setCheckPresentment(boolean checkPresentment) {
 		this.checkPresentment = checkPresentment;
+	}
+
+	public List<String> getFinMainUpdateFields() {
+		return finMainUpdateFields;
+	}
+
+	public void setFinMainUpdateFields(List<String> finMainUpdateFields) {
+		this.finMainUpdateFields = finMainUpdateFields;
+	}
+
+	public void addToFinMianUpdate(String fieldName) {
+		finMainUpdateFields.add(fieldName);
 	}
 
 }

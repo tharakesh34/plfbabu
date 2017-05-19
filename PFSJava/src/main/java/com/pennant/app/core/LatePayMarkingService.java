@@ -234,6 +234,8 @@ public class LatePayMarkingService extends ServiceHelper {
 
 			if (isFinStsChanged) {
 				finEODEvent.setUpdFinMain(true);
+				finEODEvent.addToFinMianUpdate("FinStatus");
+				finEODEvent.addToFinMianUpdate("DueBucket");
 				finEODEvent.setUpdFinPft(true);
 				finEODEvent.getFinProfitDetail().setFinStatus(finEODEvent.getFinanceMain().getFinStatus());
 				finEODEvent.getFinProfitDetail().setDueBucket(finEODEvent.getFinanceMain().getDueBucket());

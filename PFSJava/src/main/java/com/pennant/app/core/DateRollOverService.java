@@ -96,6 +96,7 @@ public class DateRollOverService extends ServiceHelper {
 					}
 
 					finEODEvent.setUpdFinMain(true);
+					finEODEvent.addToFinMianUpdate("NextDepDate");
 				}
 			}
 		}
@@ -125,6 +126,7 @@ public class DateRollOverService extends ServiceHelper {
 			if (curSchd.isCpzOnSchDate()) {
 				finMain.setNextGrcCpzDate(curSchd.getSchDate());
 				finEODEvent.setUpdFinMain(true);
+				finEODEvent.addToFinMianUpdate("NextGrcCpzDate");
 				return;
 			}
 		}
@@ -152,6 +154,7 @@ public class DateRollOverService extends ServiceHelper {
 			if (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()) {
 				finMain.setNextGrcPftDate(finSchdDetails.get(i).getSchDate());
 				finEODEvent.setUpdFinMain(true);
+				finEODEvent.addToFinMianUpdate("NextGrcPftDate");
 
 				return;
 			}
@@ -188,6 +191,7 @@ public class DateRollOverService extends ServiceHelper {
 			if (curSchd.isRvwOnSchDate() || curSchd.getSchDate().compareTo(finMain.getGrcPeriodEndDate()) == 0) {
 				finMain.setNextGrcPftRvwDate(curSchd.getSchDate());
 				finEODEvent.setUpdFinMain(true);
+				finEODEvent.addToFinMianUpdate("NextGrcPftRvwDate");
 				return;
 			}
 		}
@@ -216,6 +220,8 @@ public class DateRollOverService extends ServiceHelper {
 				finMain.setLastRepayCpzDate(finMain.getNextRepayCpzDate());
 				finMain.setNextRepayCpzDate(curSchd.getSchDate());
 				finEODEvent.setUpdFinMain(true);
+				finEODEvent.addToFinMianUpdate("LastRepayCpzDate");
+				finEODEvent.addToFinMianUpdate("NextRepayCpzDate");
 				return;
 			}
 		}
@@ -245,6 +251,8 @@ public class DateRollOverService extends ServiceHelper {
 				finMain.setLastRepayDate(finMain.getNextRepayDate());
 				finMain.setNextRepayDate(curSchd.getSchDate());
 				finEODEvent.setUpdFinMain(true);
+				finEODEvent.addToFinMianUpdate("LastRepayDate");
+				finEODEvent.addToFinMianUpdate("NextRepayDate");
 				return;
 			}
 		}
@@ -273,6 +281,8 @@ public class DateRollOverService extends ServiceHelper {
 				finMain.setLastRepayPftDate(finMain.getNextRepayPftDate());
 				finMain.setNextRepayPftDate(curSchd.getSchDate());
 				finEODEvent.setUpdFinMain(true);
+				finEODEvent.addToFinMianUpdate("LastRepayPftDate");
+				finEODEvent.addToFinMianUpdate("NextRepayPftDate");
 				return;
 			}
 		}
@@ -308,6 +318,8 @@ public class DateRollOverService extends ServiceHelper {
 				finMain.setLastRepayRvwDate(finMain.getNextRepayRvwDate());
 				finMain.setNextRepayRvwDate(curSchd.getSchDate());
 				finEODEvent.setUpdFinMain(true);
+				finEODEvent.addToFinMianUpdate("LastRepayRvwDate");
+				finEODEvent.addToFinMianUpdate("NextRepayRvwDate");
 				return;
 			}
 		}

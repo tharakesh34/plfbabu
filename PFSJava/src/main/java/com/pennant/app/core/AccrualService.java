@@ -50,21 +50,19 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
-import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.RepayConstants;
 
 public class AccrualService extends ServiceHelper {
 
 	private static final long	serialVersionUID	= 6161809223570900644L;
 	private static Logger		logger				= Logger.getLogger(AccrualService.class);
 
+	@SuppressWarnings("unused")
 	private FinExcessAmountDAO	finExcessAmountDAO;
 	private FinanceSuspHeadDAO	suspHeadDAO;
 
@@ -177,9 +175,8 @@ public class AccrualService extends ServiceHelper {
 			pftDetail.setDownPayment(finMain.getDownPayment());
 			pftDetail.setFinCommitmentRef(finMain.getFinCommitmentRef());
 			pftDetail.setFinWorstStatus(finMain.getFinStatus());
-			FinanceType finType = getFinanceTypeDAO().getProductDetails(finMain.getFinType());
-			pftDetail.setFinCategory(finType.getFinCategory());
-			pftDetail.setProductCategory(finType.getProductCategory());
+			pftDetail.setFinCategory(finMain.getFinCategory());
+			pftDetail.setProductCategory(finMain.getProductCategory());
 		}
 
 		//Miscellaneous Fields
