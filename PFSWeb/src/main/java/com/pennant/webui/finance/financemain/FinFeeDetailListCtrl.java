@@ -1237,8 +1237,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		Combobox feeSchdMethodBox = (Combobox) list.get(4);
 		Intbox termBox = (Intbox) list.get(5);
 
-		paidBox.setDisabled(false);
-		waiverBox.setDisabled(false);
+		//paidBox.setDisabled(false);
+		//waiverBox.setDisabled(false);
 		String feeSchedule = getComboboxValue(feeSchdMethodBox);
 		if (StringUtils.equals(feeSchedule, CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
 			termBox.setDisabled(false);
