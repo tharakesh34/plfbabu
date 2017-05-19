@@ -12244,15 +12244,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//FinanceMain Details Tab ---> 1. Basic Details
 		if (financeMain.isNewRecord()) {
 			doEditGenFinRef(financeType);
+			readOnlyComponent(isReadOnly("FinanceMainDialog_finBranch"), this.finBranch);
 		} else {
 			this.finReference.setReadonly(true);
+			readOnlyComponent(true, this.finBranch);
 		}
 
 		this.viewCustInfo.setVisible(false);
 		this.btnSearchFinType.setDisabled(true);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_finCcy"), this.finCcy);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_profitDaysBasis"), this.cbProfitDaysBasis);
-		readOnlyComponent(isReadOnly("FinanceMainDialog_finBranch"), this.finBranch);
 		this.finBranch.setMandatoryStyle(false);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_custID"), this.custCIF);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_finRemarks"), this.finRemarks);
