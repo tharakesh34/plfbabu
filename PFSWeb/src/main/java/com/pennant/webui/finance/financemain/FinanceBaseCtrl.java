@@ -4606,6 +4606,14 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 						aFinanceMain.setNextGrcPftDate(DateUtility.getDate(DateUtility.formatUtilDate(
 								this.nextGrcPftDate_two.getValue(), PennantConstants.dateFormat)));
 					}
+					//Validation Against the Repay Frequency and the next Frequency Date
+					if (ImplementationConstants.FRQ_DATE_VALIDATION  && this.nextGrcPftDate.getValue() != null
+							&& !FrequencyUtil.isFrqDate(this.gracePftFrq.getValue(), this.nextGrcPftDate.getValue())) {
+						throw new WrongValueException(this.nextGrcPftDate, Labels.getLabel(
+								"FRQ_DATE_MISMATCH",
+								new String[] { Labels.getLabel("label_FinanceMainDialog_NextGrcPftDate.value"),
+										Labels.getLabel("label_FinanceMainDialog_GracePftFrq.value") }));
+					}
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -4628,6 +4636,15 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 					if (FrequencyUtil.validateFrequency(this.gracePftRvwFrq.getValue()) == null) {
 						aFinanceMain.setNextGrcPftRvwDate(DateUtility.getDate(DateUtility.formatUtilDate(
 								this.nextGrcPftRvwDate_two.getValue(), PennantConstants.dateFormat)));
+					}
+					//Validation Against the Repay Frequency and the next Frequency Date
+					if (ImplementationConstants.FRQ_DATE_VALIDATION  && this.nextGrcPftRvwDate.getValue() != null
+							&& !FrequencyUtil.isFrqDate(this.gracePftRvwFrq.getValue(), this.nextGrcPftRvwDate.getValue())) {
+						throw new WrongValueException(this.nextGrcPftRvwDate,
+								Labels.getLabel("FRQ_DATE_MISMATCH",
+										new String[] {
+												Labels.getLabel("label_FinanceMainDialog_NextGrcPftRvwDate.value"),
+												Labels.getLabel("label_FinanceMainDialog_GracePftRvwFrq.value") }));
 					}
 				}
 			} catch (WrongValueException we) {
@@ -4655,7 +4672,14 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 						aFinanceMain.setNextGrcCpzDate(DateUtility.getDate(DateUtility.formatUtilDate(
 								this.nextGrcCpzDate_two.getValue(), PennantConstants.dateFormat)));
 					}
-
+					//Validation Against the Repay Frequency and the next Frequency Date
+					if (ImplementationConstants.FRQ_DATE_VALIDATION  && this.nextGrcCpzDate.getValue() != null
+							&& !FrequencyUtil.isFrqDate(this.graceCpzFrq.getValue(), this.nextGrcCpzDate.getValue())) {
+						throw new WrongValueException(this.nextGrcCpzDate, Labels.getLabel(
+								"FRQ_DATE_MISMATCH",
+								new String[] { Labels.getLabel("label_FinanceMainDialog_NextGrcCpzDate.value"),
+										Labels.getLabel("label_FinanceMainDialog_GraceCpzFrq.value") }));
+					}
 				} else {
 					aFinanceMain.setNextGrcCpzDate(this.nextGrcCpzDate.getValue());
 				}
@@ -4846,6 +4870,16 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 					aFinanceMain.setNextRepayPftDate(DateUtility.getDate(DateUtility.formatUtilDate(
 							this.nextRepayPftDate_two.getValue(), PennantConstants.dateFormat)));
 				}
+				//Validation Against the Repay Frequency and the next Frequency Date
+				if (ImplementationConstants.FRQ_DATE_VALIDATION && this.nextRepayPftDate.getValue() != null
+						&& !FrequencyUtil.isFrqDate(this.repayPftFrq.getValue(),
+								this.nextRepayPftDate.getValue())) {
+					throw new WrongValueException(this.nextRepayPftDate,
+							Labels.getLabel("FRQ_DATE_MISMATCH",
+									new String[] {
+											Labels.getLabel("label_FinanceMainDialog_NextRepayPftDate.value"),
+											Labels.getLabel("label_FinanceMainDialog_RepayPftFrq.value") }));
+				}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -4875,6 +4909,14 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 					aFinanceMain.setNextRepayRvwDate(DateUtility.getDate(DateUtility.formatUtilDate(
 							this.nextRepayRvwDate_two.getValue(), PennantConstants.dateFormat)));
 				}
+				//Validation Against the Repay Frequency and the next Frequency Date
+				if (ImplementationConstants.FRQ_DATE_VALIDATION  && this.nextRepayRvwDate.getValue() != null
+						&& !FrequencyUtil.isFrqDate(this.repayRvwFrq.getValue(), this.nextRepayRvwDate.getValue())) {
+					throw new WrongValueException(this.nextRepayRvwDate,
+							Labels.getLabel("FRQ_DATE_MISMATCH",
+									new String[] { Labels.getLabel("label_FinanceMainDialog_NextRepayRvwDate.value"),
+											Labels.getLabel("label_FinanceMainDialog_RepayRvwFrq.value") }));
+				}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -4897,6 +4939,14 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				if (FrequencyUtil.validateFrequency(this.repayCpzFrq.getValue()) == null) {
 					aFinanceMain.setNextRepayCpzDate(DateUtility.getDate(DateUtility.formatUtilDate(
 							this.nextRepayCpzDate_two.getValue(), PennantConstants.dateFormat)));
+				}
+				//Validation Against the Repay Frequency and the next Frequency Date
+				if (ImplementationConstants.FRQ_DATE_VALIDATION  && this.nextRepayCpzDate.getValue() != null
+						&& !FrequencyUtil.isFrqDate(this.repayCpzFrq.getValue(), this.nextRepayCpzDate.getValue())) {
+					throw new WrongValueException(this.nextRepayCpzDate,
+							Labels.getLabel("FRQ_DATE_MISMATCH",
+									new String[] { Labels.getLabel("label_FinanceMainDialog_NextRepayCpzDate.value"),
+											Labels.getLabel("label_FinanceMainDialog_RepayCpzFrq.value") }));
 				}
 			}
 		} catch (WrongValueException we) {
@@ -4936,6 +4986,14 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				if (FrequencyUtil.validateFrequency(this.repayFrq.getValue()) == null) {
 					aFinanceMain.setNextRepayDate(DateUtility.getDate(DateUtility.formatUtilDate(
 							this.nextRepayDate_two.getValue(), PennantConstants.dateFormat)));
+				}
+				//Validation Against the Repay Frequency and the next Frequency Date
+				if (ImplementationConstants.FRQ_DATE_VALIDATION  && this.nextRepayDate.getValue() != null
+						&& !FrequencyUtil.isFrqDate(this.repayFrq.getValue(), this.nextRepayDate.getValue())) {
+					throw new WrongValueException(this.nextRepayDate,
+							Labels.getLabel("FRQ_DATE_MISMATCH",
+									new String[] { Labels.getLabel("label_FinanceMainDialog_NextRepayDate.value"),
+											Labels.getLabel("label_FinanceMainDialog_RepayFrq.value") }));
 				}
 			}
 		} catch (WrongValueException we) {
