@@ -12,6 +12,5 @@ public interface FinReceiptDetailDAO {
 	void deleteByReceiptID(long receiptID, TableType tableType);
 	void updateReceiptStatus(long receiptID, long receiptSeqID, String status);
 	int getReceiptHeaderByBank(String bankCode, String type);
-	void update(FinReceiptDetail receiptDetail, TableType tableType);
 
 }

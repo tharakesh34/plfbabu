@@ -281,4 +281,10 @@ where code='ScoreRule';
 				       BMTRejectCodes T7 ON T1.CancelReason = T7.RejectCode
 		</createView>
 	</changeSet>
+	
+	<changeSet id="15" author="Siva">
+	<sql>
+		INSERT INTO ErrorDetails VALUES('60209','EN','E','Record not in the Process of approval. Not possible to Cancel the receipt','','Approved','','','','','',0,current_timestamp,1000,0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>

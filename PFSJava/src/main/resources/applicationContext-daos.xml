@@ -5687,6 +5687,7 @@
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
 		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 	

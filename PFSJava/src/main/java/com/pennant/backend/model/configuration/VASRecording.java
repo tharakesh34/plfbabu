@@ -67,7 +67,6 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
-import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.staticparms.ExtendedField;
 import com.pennant.backend.model.staticparms.ExtendedFieldRender;
@@ -148,7 +147,6 @@ public class VASRecording extends AbstractWorkflowEntity {
 	private HashMap<String, List<AuditDetail>>	auditDetailMap		= new HashMap<String, List<AuditDetail>>();
 	private List<FinanceReferenceDetail>		checkLists			= null;
 	private VasCustomer							vasCustomer			= null;
-	private List<TransactionEntry> 				transactionEntries 	= new ArrayList<TransactionEntry>(1);
 	private List<ReturnDataSet> 				returnDataSetList 	= new ArrayList<ReturnDataSet>(1);
 	private List<FinFeeDetail>					finFeeDetailsList	= new ArrayList<FinFeeDetail>();
 	@XmlElementWrapper(name="extendedDetails")
@@ -505,13 +503,6 @@ public class VASRecording extends AbstractWorkflowEntity {
 	}
 	public void setManufacturerDesc(String manufacturerDesc) {
 		this.manufacturerDesc = manufacturerDesc;
-	}
-
-	public List<TransactionEntry> getTransactionEntries() {
-		return transactionEntries;
-	}
-	public void setTransactionEntries(List<TransactionEntry> transactionEntries) {
-		this.transactionEntries = transactionEntries;
 	}
 
 	public List<ReturnDataSet> getReturnDataSetList() {

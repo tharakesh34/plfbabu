@@ -96,7 +96,7 @@ public class ReceiptCancellationListModelItemRenderer implements ListitemRendere
 		lc = new Listcell(PennantJavaUtil.getLabel(header.getRecordType()));
 		lc.setParent(item);
 		
-		item.setAttribute("id", header.getReceiptID());
+		item.setAttribute("data", header);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onReceiptCancellationItemDoubleClicked");
 	}
 }

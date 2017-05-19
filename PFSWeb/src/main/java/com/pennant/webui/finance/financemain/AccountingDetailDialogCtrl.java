@@ -103,7 +103,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_AccountingDetailDialog; // autoWired
-	
+
 	//Finance Basic Details for Filling DIV Details Fields
 	protected Label 		acc_finType; 							// autoWired
 	protected Label 		acc_finCcy; 							// autoWired
@@ -129,20 +129,21 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	protected Tab			postAccountDetails;
 	protected Tabpanel		postAccountingtab;
 	protected Checkbox		showZeroCal;
-	
+
 	private FinanceDetail financeDetail = null; // over handed per parameters
 	private Object financeMainDialogCtrl = null;
 	private  VASRecordingDialogCtrl vASRecordingdialogCtrl = null;   
+	private  Object dialogCtrl = null;   
 	private transient boolean 	accountingsExecuted;
 	private boolean isNotFinanceProcess = false;
 	private String moduleName;
 	private long acSetID;
 	private VASRecording vasRecording;
-	
+
 	private FinBasicDetailsCtrl  finBasicDetailsCtrl;
 	private CollateralBasicDetailsCtrl  collateralBasicDetailsCtrl;
 	protected Groupbox finBasicdetails;
-	
+
 	private transient BigDecimal disbCrSum = BigDecimal.ZERO;
 	private transient BigDecimal disbDrSum = BigDecimal.ZERO;
 	public List<ReturnDataSet> postingAccountSet = null;
@@ -184,30 +185,43 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		if (arguments.containsKey("financeMainDialogCtrl")) {
 			setFinanceMainDialogCtrl((Object) arguments.get("financeMainDialogCtrl"));
 		}
-		
+
 		if (arguments.containsKey("acSetID")) {
 			acSetID = (long) arguments.get("acSetID");
 		}
-		
+
 		if (arguments.containsKey("isNotFinanceProcess")) {
 			isNotFinanceProcess = (boolean) arguments.get("isNotFinanceProcess");
 		}
 		if (arguments.containsKey("moduleName")) {
 			this.moduleName = (String) arguments.get("moduleName");
 		}
-		
+
 		if (arguments.containsKey("vASRecording")) {
 			this.vasRecording = (VASRecording) arguments.get("vASRecording");
 		}
-		if (arguments.containsKey("vASRecordingdialogCtrl")) {
-			setVASRecordingdialogCtrl((VASRecordingDialogCtrl)arguments.get("vASRecordingdialogCtrl"));
+
+		// Common Dialog Controller
+		if (arguments.containsKey("dialogCtrl")) {
+			setDialogCtrl((Object)arguments.get("dialogCtrl"));
+			this.btnPrintAccounting.setVisible(false);
+			this.showZeroCal.setDisabled(true);
 		}
-		
+
+		// Post Details Previous Accounting is Visible or not
+		if (arguments.containsKey("postAccReq")) {
+			boolean postAccReq = (boolean) arguments.get("postAccReq");
+			if(!postAccReq){
+				postAccountDetails.setVisible(false);
+				postAccountingtab.setVisible(false);
+			}
+		}
+
 		// append finance basic details 
 		if (arguments.containsKey("finHeaderList")) {
 			appendFinBasicDetails((ArrayList<Object> )arguments.get("finHeaderList"));
 		}
-		
+
 		if (arguments.containsKey("enqModule")) {
 			enqiryModule = (boolean) arguments.get("enqModule");
 		}
@@ -217,7 +231,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	}
 
 	// GUI operations
-	
+
 	/**
 	 * Opens the Dialog window modal.
 	 * 
@@ -228,29 +242,28 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	 */
 	public void doShowDialog() throws Exception {
 		logger.debug("Entering");
-		
+
 		Exception wvea = null;
 		try {
-			
+
 			//Seeting the visibility of the execute button.
 			this.btnAccounting.setVisible(!enqiryModule);
-			
-			if(getVASRecordingdialogCtrl()!=null){
+
+			if(getDialogCtrl() != null){
+
 				try {
-					getVASRecordingdialogCtrl().getClass().getMethod("setAccountingDetailDialogCtrl", 
-							this.getClass()).invoke(getVASRecordingdialogCtrl(), this);
+					getDialogCtrl().getClass().getMethod("setAccountingDetailDialogCtrl", 
+							this.getClass()).invoke(getDialogCtrl(), this);
 				} catch (Exception e) {
 					logger.error("Exception: ", e);
 				}
-				if((vasRecording.getTransactionEntries()!=null && !vasRecording.getTransactionEntries().isEmpty())|| 
-						(vasRecording.getReturnDataSetList()!=null && !vasRecording.getReturnDataSetList().isEmpty())){
 
+				// Accounting Posting Details 
+				List<TransactionEntry> transactionEntries = AccountingConfigCache.getTransactionEntry(acSetID);
+				if (transactionEntries != null && !transactionEntries.isEmpty()) {				
 					boolean executed = false;
+
 					try {
-						
-						postAccountDetails.setVisible(false);
-						postAccountingtab.setVisible(false);
-						
 						executeAccounting(true);
 						executed = true;
 					} catch (Exception e) {
@@ -258,13 +271,12 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 							wvea = e;
 						}
 						logger.error("Exception: ", e);
-					}
+					}	
+
 					if(!executed){
-						doFillAccounting(vasRecording.getTransactionEntries());
+						doFillAccounting(transactionEntries);
 					}
 				}
-
-
 			} else {
 				FinanceMain main = getFinanceDetail().getFinScheduleData().getFinanceMain();
 
@@ -324,7 +336,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method to fill list box in Accounting Tab <br>
 	 *  
@@ -339,8 +351,8 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		setDisbDrSum(BigDecimal.ZERO);
 		List<ReturnDataSet> rdSetaccountingSetEntries = null ;
 		int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
-		
-		if(getVASRecordingdialogCtrl() == null){
+
+		if(vasRecording == null){
 			formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		}
 		this.listBoxFinAccountings.getItems().clear();
@@ -476,19 +488,17 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		this.getLabel_AccountingDisbDrVal().setValue(PennantAppUtil.amountFormate(getDisbDrSum(), formatter));
 		logger.debug("Leaving");
 	}
-	
+
 	public void onCheck$showZeroCal(){
 		logger.debug("Entering");
-		if(getVASRecordingdialogCtrl()!=null){
-			if(vasRecording!=null && vasRecording.getReturnDataSetList().size()>0){
-				doFillAccounting(vasRecording.getReturnDataSetList());
-			}
+		if(vasRecording!=null){
+			doFillAccounting(vasRecording.getReturnDataSetList());
 		}else{
 			doFillAccounting(getFinanceDetail().getReturnDataSetList());
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	public List<ReturnDataSet> doRemovePostAmount(List<ReturnDataSet> rdSetList){
 		logger.debug("Entering");
 		List<ReturnDataSet> accountingDetails = new ArrayList<ReturnDataSet>();
@@ -586,7 +596,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 				lc.setStyle("font-weight:bold;color:red;");
 				lc.setTooltiptext(postAccountSet.getErrorMsg());
 				lc.setParent(item);
-				
+
 				this.listBoxPostAccountings.appendChild(item);
 			}
 
@@ -605,18 +615,18 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	 */
 	public void doFillCmtAccounting(List<?> cmtFinEntries, int formatter) {
 		logger.debug("Entering");
-		
+
 		BigDecimal cmtCrEntry = BigDecimal.ZERO;
 		BigDecimal cmtDrEntry = BigDecimal.ZERO;
-		
+
 		this.listBoxFinAccountings.getItems().clear();
 		this.listBoxFinAccountings.setSizedByContent(true);
 		boolean isOverdraft = false;
-		
+
 		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory())){
 			isOverdraft = true;
 		}
-		
+
 		if (cmtFinEntries != null && !cmtFinEntries.isEmpty()) {
 			for (int i = 0; i < cmtFinEntries.size(); i++) {
 
@@ -687,11 +697,11 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 					lc = new Listcell(PennantApplicationUtil.formatAccountNumber(entry.getAccount()));
 					lc.setStyle("font-weight:bold;");
 					lc.setParent(item);
-					
+
 					lc = new Listcell(entry.getAcCcy());
 					lc.setParent(item);
 					BigDecimal amt = entry.getPostAmount()!=null?entry.getPostAmount(): BigDecimal.ZERO.setScale(0, RoundingMode.FLOOR);
-					
+
 					if(isOverdraft){
 						if (entry.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT)) {
 							cmtCrEntry = cmtCrEntry.add(amt);
@@ -717,7 +727,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method to fill list box in GraceEnd Postings Accounting Tab <br>
 	 * 
@@ -729,21 +739,21 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	public void doFillGraceEndAccounting(List<?> grcEndFinEntries) {
 		logger.debug("Entering");
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		
+
 		if (grcEndFinEntries != null && !grcEndFinEntries.isEmpty()) {
 			for (int i = 0; i < grcEndFinEntries.size(); i++) {
-		
+
 				Listitem item = new Listitem();
 				Listcell lc;
 				if (grcEndFinEntries.get(i) instanceof TransactionEntry) {
 					TransactionEntry entry = (TransactionEntry) grcEndFinEntries.get(i);
-					
+
 					//Adding List Group to ListBox
 					if(i == 0){
 						Listgroup listgroup = new Listgroup(entry.getLovDescEventCodeName()+"-"+entry.getLovDescEventCodeDesc());
 						listBoxFinAccountings.appendChild(listgroup);
 					}
-					
+
 					lc = new Listcell(PennantAppUtil.getlabelDesc(entry.getDebitcredit(), PennantStaticListUtil.getTranType()));
 					lc.setParent(item);
 					lc = new Listcell(entry.getTransDesc());
@@ -764,13 +774,13 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 					lc.setParent(item);
 				} else if (grcEndFinEntries.get(i) instanceof ReturnDataSet) {
 					ReturnDataSet entry = (ReturnDataSet) grcEndFinEntries.get(i);
-					
+
 					//Adding List Group to ListBox
 					if(i == 0){
 						Listgroup listgroup = new Listgroup(entry.getFinEvent()+"-"+entry.getLovDescEventCodeName());
 						listBoxFinAccountings.appendChild(listgroup);
 					}
-					
+
 					Hbox hbox = new Hbox();
 					Label label = new Label(PennantAppUtil.getlabelDesc(entry.getDrOrCr(), PennantStaticListUtil.getTranType()));
 					hbox.appendChild(label);
@@ -800,12 +810,12 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 					lc = new Listcell(PennantApplicationUtil.formatAccountNumber(entry.getAccount()));
 					lc.setStyle("font-weight:bold;");
 					lc.setParent(item);
-					
+
 					lc = new Listcell(entry.getAcCcy());
 					lc.setParent(item);
-					
+
 					BigDecimal amt = entry.getPostAmount()!=null?entry.getPostAmount(): BigDecimal.ZERO.setScale(0, RoundingMode.FLOOR);
-					
+
 					lc = new Listcell(PennantAppUtil.amountFormate(amt,formatter));
 					lc.setStyle("font-weight:bold;text-align:right;");
 					lc.setParent(item);
@@ -819,7 +829,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 
 	// New Button & Double Click Events for Finance Contributor List
 
@@ -841,9 +851,9 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	private void executeAccounting(boolean onAction) throws Exception{
 		logger.debug("Entering");
 
-		if(getVASRecordingdialogCtrl()!=null){
+		if(getDialogCtrl() != null){
 			try {
-				getVASRecordingdialogCtrl().getClass().getMethod("executeAccounting").invoke(getVASRecordingdialogCtrl());				
+				getDialogCtrl().getClass().getMethod("executeAccounting").invoke(getDialogCtrl());				
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
 				if(e.getCause().getClass().equals(WrongValuesException.class)){
@@ -883,10 +893,10 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			formatter = 2;
 		}else{
 			rdList = getFinanceDetail().getReturnDataSetList();
-			 financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+			financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 			formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 		}
-		
+
 		if (accountingsExecuted) {
 			list = new ArrayList<Object>();
 			List<TransactionDetail> accountingDetails = new ArrayList<TransactionDetail>();
@@ -903,12 +913,12 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 						formatter : dataSet.getFormatter()));
 				accountingDetails.add(detail);
 			}
-			
+
 			Window window= (Window) this.window_AccountingDetailDialog.getParent().getParent().getParent().getParent().getParent().getParent().getParent();
 			if(!accountingDetails.isEmpty()){
 				list.add(accountingDetails);
 			}
-				
+
 			if(vASRecordingdialogCtrl!=null){
 				ReportGenerationUtil.generateReport("FINENQ_AccountingDetail",vasRecording, 
 						list, true, 1, usrName,window);
@@ -939,7 +949,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		} catch (Exception e) {
 			logger.debug(e);
 		}
-		
+
 	}
 
 	public void doSetLabels(ArrayList<Object> finHeaderList) {
@@ -953,10 +963,10 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	/*
 	 * Method to Get PostingAccount Details
 	 */
-	
+
 	public List<ReturnDataSet> getPostingAccount(String finReference){
 		logger.debug("Entering");
-		
+
 		List<ReturnDataSet> postingAccount = new ArrayList<ReturnDataSet>();
 		JdbcSearchObject<ReturnDataSet> searchObject=new JdbcSearchObject<ReturnDataSet>(ReturnDataSet.class);
 		searchObject.addTabelName("Postings_view");
@@ -965,12 +975,12 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		if(postings!=null && !postings.isEmpty()){
 			return postings;
 		}
-		
+
 		logger.debug("Leaving");
 		return postingAccount ;
-		
+
 	}
-	
+
 	public void onSelect$postAccountDetails(Event event){
 		logger.debug("Entering");
 		if(postingAccountSet!=null && !postingAccountSet.isEmpty()){
@@ -995,7 +1005,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}
-	
+
 	public Object getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
 	}
@@ -1013,7 +1023,6 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	public void setDisbCrSum(BigDecimal disbCrSum) {
 		this.disbCrSum = disbCrSum;
 	}
-
 	public BigDecimal getDisbCrSum() {
 		return disbCrSum;
 	}
@@ -1021,7 +1030,6 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	public void setDisbDrSum(BigDecimal disbDrSum) {
 		this.disbDrSum = disbDrSum;
 	}
-
 	public BigDecimal getDisbDrSum() {
 		return disbDrSum;
 	}
@@ -1029,7 +1037,6 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	public void setLabel_AccountingDisbCrVal(Label labelAccountingDisbCrVal) {
 		this.label_AccountingDisbCrVal = labelAccountingDisbCrVal;
 	}
-
 	public Label getLabel_AccountingDisbCrVal() {
 		return label_AccountingDisbCrVal;
 	}
@@ -1037,7 +1044,6 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	public void setLabel_AccountingDisbDrVal(Label labelAccountingDisbDrVal) {
 		this.label_AccountingDisbDrVal = labelAccountingDisbDrVal;
 	}
-
 	public Label getLabel_AccountingDisbDrVal() {
 		return label_AccountingDisbDrVal;
 	}
@@ -1045,7 +1051,6 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	public FinBasicDetailsCtrl getFinBasicDetailsCtrl() {
 		return finBasicDetailsCtrl;
 	}
-
 	public void setFinBasicDetailsCtrl(FinBasicDetailsCtrl finBasicDetailsCtrl){
 		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
 	}
@@ -1060,7 +1065,6 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	public Label getLabel_PostAccountingDisbCrVal() {
 		return label_PostAccountingDisbCrVal;
 	}
-
 	public void setLabel_PostAccountingDisbCrVal(
 			Label label_PostAccountingDisbCrVal) {
 		this.label_PostAccountingDisbCrVal = label_PostAccountingDisbCrVal;
@@ -1069,7 +1073,6 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	public Label getLabel_PostAccountingDisbDrVal() {
 		return label_PostAccountingDisbDrVal;
 	}
-
 	public void setLabel_PostAccountingDisbDrVal(
 			Label label_PostAccountingDisbDrVal) {
 		this.label_PostAccountingDisbDrVal = label_PostAccountingDisbDrVal;
@@ -1083,13 +1086,11 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		this.collateralBasicDetailsCtrl = collateralBasicDetailsCtrl;
 	}
 
-	public VASRecordingDialogCtrl getVASRecordingdialogCtrl() {
-		return vASRecordingdialogCtrl;
+	public Object getDialogCtrl() {
+		return dialogCtrl;
+	}
+	public void setDialogCtrl(Object dialogCtrl) {
+		this.dialogCtrl = dialogCtrl;
 	}
 
-	public void setVASRecordingdialogCtrl(VASRecordingDialogCtrl vASRecordingdialogCtrl) {
-		this.vASRecordingdialogCtrl = vASRecordingdialogCtrl;
-	}
-
-	
 }

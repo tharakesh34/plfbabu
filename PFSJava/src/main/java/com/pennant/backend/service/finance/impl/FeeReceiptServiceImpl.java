@@ -10,6 +10,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
@@ -20,6 +22,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FeeReceiptService;
 import com.pennant.backend.util.PennantConstants;
@@ -35,6 +38,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 	private FinReceiptHeaderDAO				finReceiptHeaderDAO;
 	private FinReceiptDetailDAO				finReceiptDetailDAO;
 	private FinFeeDetailDAO					finFeeDetailDAO;
+	private PostingsPreparationUtil			postingsPreparationUtil;
+	private FinanceRepaymentsDAO			financeRepaymentsDAO;
 	private AuditHeaderDAO 					auditHeaderDAO;
 
 	public FeeReceiptServiceImpl() {
@@ -58,6 +63,16 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		// Fetch Receipt Detail List
 		if(receiptHeader != null){
 			List<FinReceiptDetail> receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptID, "_TView");
+			
+			// Fetch Repay Headers List
+			List<FinRepayHeader> rpyHeaderList = getFinanceRepaymentsDAO().getFinRepayHeadersByRef(receiptHeader.getReference(), TableType.TEMP_TAB.getSuffix());
+			for (FinReceiptDetail receiptDetail : receiptDetailList) {
+				for (FinRepayHeader finRepayHeader : rpyHeaderList) {
+					if(finRepayHeader.getReceiptSeqID() == receiptDetail.getReceiptSeqID()){
+						receiptDetail.getRepayHeaders().add(finRepayHeader);
+					}
+				}
+			}
 			receiptHeader.setReceiptDetails(receiptDetailList);
 			
 			// Paid Fee Details
@@ -114,21 +129,33 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 
 		// Receipt Header Details Save And Update
 		//=======================================
+		long receiptID = receiptHeader.getReceiptID();
 		if (receiptHeader.isNew()) {
 			receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_FEES);
 			
 			// Save Receipt Header
-			long receiptID = getFinReceiptHeaderDAO().save(receiptHeader, tableType);
-			for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
-				receiptDetail.setReceiptID(receiptID);
-				getFinReceiptDetailDAO().save(receiptDetail, tableType);
-			}
+			receiptID = getFinReceiptHeaderDAO().save(receiptHeader, tableType);
 			
 		} else {
 			getFinReceiptHeaderDAO().update(receiptHeader, tableType);
 			
-			for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
-				getFinReceiptDetailDAO().update(receiptDetail, tableType);
+			// Delete Save Receipt Detail List by Reference
+			getFinReceiptDetailDAO().deleteByReceiptID(receiptID, tableType);
+
+			// Delete and Save FinRepayHeader Detail list by Reference
+			getFinanceRepaymentsDAO().deleteByRef(receiptHeader.getReference(), tableType);
+		}
+		
+		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
+			receiptDetail.setReceiptID(receiptID);
+			long receiptSeqID = getFinReceiptDetailDAO().save(receiptDetail, tableType);
+			
+			List<FinRepayHeader> rpyHeaderList = receiptDetail.getRepayHeaders();
+			for (FinRepayHeader rpyHeader : rpyHeaderList) {
+				rpyHeader.setReceiptSeqID(receiptSeqID);
+				
+				//Save Repay Header details
+				getFinanceRepaymentsDAO().saveFinRepayHeader(rpyHeader, tableType.getSuffix());
 			}
 		}
 		
@@ -166,6 +193,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		FinReceiptHeader receiptHeader = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
 
 		// Delete Receipt Header
+		getFinanceRepaymentsDAO().deleteByRef(receiptHeader.getReference(), TableType.TEMP_TAB);
+		getFinReceiptDetailDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
 		getFinReceiptHeaderDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
@@ -206,6 +235,26 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		FinReceiptHeader receiptHeader = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
+		
+		// Accounting Process Execution
+		/*AEEvent aeEvent = new AEEvent();
+		aeEvent.getAcSetIDList().add(Long.MIN_VALUE);
+		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		HashMap<String, Object>	dataMap = aeEvent.getDataMap();
+		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
+		aeEvent.setDataMap(dataMap);
+
+		try {
+			getPostingsPreparationUtil().postAccounting(aeEvent);
+
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (PFFInterfaceException e) {
+			e.printStackTrace();
+		}*/
 
 		// Receipt Header Updation
 		//=======================================
@@ -218,20 +267,25 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		receiptHeader.setTaskId("");
 		receiptHeader.setNextTaskId("");
 		receiptHeader.setWorkflowId(0);
-		getFinReceiptHeaderDAO().update(receiptHeader, TableType.MAIN_TAB);
+		getFinReceiptHeaderDAO().save(receiptHeader, TableType.MAIN_TAB);
 		
-		// Update Receipt Details based on Receipt Mode 
-		for (int i = 0; i < receiptHeader.getReceiptDetails().size(); i++) {
-			FinReceiptDetail receiptDetail = receiptHeader.getReceiptDetails().get(i);
-			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE) ||
-					StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DD)){
-				getFinReceiptDetailDAO().updateReceiptStatus(receiptDetail.getReceiptID(), 
-						receiptDetail.getReceiptSeqID(), RepayConstants.PAYSTATUS_REALIZED);
-				break;
+		// Save Receipt Header
+		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
+			
+			long receiptSeqID = getFinReceiptDetailDAO().save(receiptDetail, TableType.MAIN_TAB);
+			
+			List<FinRepayHeader> rpyHeaderList = receiptDetail.getRepayHeaders();
+			for (FinRepayHeader rpyHeader : rpyHeaderList) {
+				rpyHeader.setReceiptSeqID(receiptSeqID);
+				
+				//Save Repay Header details
+				getFinanceRepaymentsDAO().saveFinRepayHeader(rpyHeader, TableType.MAIN_TAB.getSuffix());
 			}
 		}
 
 		// Delete Receipt Header
+		getFinanceRepaymentsDAO().deleteByRef(receiptHeader.getReference(), TableType.TEMP_TAB);
+		getFinReceiptDetailDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
 		getFinReceiptHeaderDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), receiptHeader.getExcludeFields());
@@ -402,6 +456,22 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 
 	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
 		this.finFeeDetailDAO = finFeeDetailDAO;
+	}
+
+	public PostingsPreparationUtil getPostingsPreparationUtil() {
+		return postingsPreparationUtil;
+	}
+
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	public FinanceRepaymentsDAO getFinanceRepaymentsDAO() {
+		return financeRepaymentsDAO;
+	}
+
+	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
+		this.financeRepaymentsDAO = financeRepaymentsDAO;
 	}
 
 }

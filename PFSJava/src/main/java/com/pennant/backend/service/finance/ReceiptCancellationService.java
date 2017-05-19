@@ -11,7 +11,7 @@ import com.pennant.exception.PFFInterfaceException;
 
 public interface ReceiptCancellationService {
 
-	FinReceiptHeader getFinReceiptHeaderById(long receiptID, String type);
+	FinReceiptHeader getFinReceiptHeaderById(long receiptID, boolean isFeePayment);
 	AuditHeader saveOrUpdate(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 	AuditHeader doApprove(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 	AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException;

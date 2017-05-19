@@ -35,6 +35,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.search.Filter;
@@ -235,8 +236,13 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		Listitem selectedItem = this.listBoxReceiptCancellation.getSelectedItem();
 
 		// Get the selected entity.
-		long receiptID = (long) selectedItem.getAttribute("id");
-		FinReceiptHeader header = receiptCancellationService.getFinReceiptHeaderById(receiptID, "_View");
+		FinReceiptHeader headerListItem = (FinReceiptHeader) selectedItem.getAttribute("data");
+		boolean isFeePayment = false;
+		if(StringUtils.equals(headerListItem.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_FEEPAYMENT)){
+			isFeePayment = true;
+		}
+		
+		FinReceiptHeader header = receiptCancellationService.getFinReceiptHeaderById(headerListItem.getReceiptID(),isFeePayment);
 
 		if (header == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));

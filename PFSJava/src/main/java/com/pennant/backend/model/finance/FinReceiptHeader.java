@@ -42,6 +42,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String cancelReason;
 	private String cancelReasonDesc;
 	private boolean finIsActive;
+	private String scheduleMethod;
+	private String pftDaysBasis;
 	
 	private boolean newRecord;
 	private String lovValue;
@@ -371,7 +373,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	public boolean isInquiryReq() {
 		return inquiryReq;
 	}
-
 	public void setInquiryReq(boolean inquiryReq) {
 		this.inquiryReq = inquiryReq;
 	}
@@ -379,11 +380,22 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	public List<FinFeeDetail> getPaidFeeList() {
 		return paidFeeList;
 	}
-
 	public void setPaidFeeList(List<FinFeeDetail> paidFeeList) {
 		this.paidFeeList = paidFeeList;
 	}
 
+	public String getPftDaysBasis() {
+		return pftDaysBasis;
+	}
+	public void setPftDaysBasis(String pftDaysBasis) {
+		this.pftDaysBasis = pftDaysBasis;
+	}
 
+	public String getScheduleMethod() {
+		return scheduleMethod;
+	}
+	public void setScheduleMethod(String scheduleMethod) {
+		this.scheduleMethod = scheduleMethod;
+	}
 
 }

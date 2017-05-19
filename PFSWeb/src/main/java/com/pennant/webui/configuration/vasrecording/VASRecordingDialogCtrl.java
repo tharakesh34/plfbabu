@@ -1632,11 +1632,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	protected void appendAccountingDetailTab(boolean onLoadProcess){
 		logger.debug("Entering");
 		boolean createTab = false;
-		if ((getVASRecording().getTransactionEntries() != null && !getVASRecording().getTransactionEntries().isEmpty()) ||
-				(getVASRecording().getReturnDataSetList() != null && !getVASRecording().getReturnDataSetList().isEmpty())) {
-			if(getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) == null){
-				createTab = true;
-			}
+		if(getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) == null){
+			createTab = true;
 		}
 		
 		if(createTab){
@@ -1644,11 +1641,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}else{
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_ACCOUNTING);
 		}
-		if (!onLoadProcess && ((getVASRecording().getTransactionEntries() != null && !getVASRecording().getTransactionEntries().isEmpty()) ||
-				(getVASRecording().getReturnDataSetList() != null && !getVASRecording().getReturnDataSetList().isEmpty()))) {
+		if (!onLoadProcess) {
 			
 			final HashMap<String, Object> map = getDefaultArguments();
 			map.put("vASRecording", getVASRecording());
+			map.put("acSetID", vASConfiguration.getFeeAccounting());
 			if (isCancelProcess || enqiryModule) {
 				map.put("enqModule", true);
 			}
@@ -2212,10 +2209,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public HashMap<String, Object> getDefaultArguments() {
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 	 	map.put("roleCode", getRole());
-		map.put("vASRecordingdialogCtrl", this);
+		map.put("dialogCtrl", this);
 		map.put("finHeaderList", getHeaderBasicDetails());
 		map.put("isNotFinanceProcess", true);
 		map.put("moduleName", VASConsatnts.MODULE_NAME);
+		map.put("postAccReq", false);
 		return map;
 	}
 

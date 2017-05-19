@@ -109,12 +109,17 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 * @return
 	 */
 	@Override
-	public FinReceiptHeader getFinReceiptHeaderById(long receiptID, String type) {
+	public FinReceiptHeader getFinReceiptHeaderById(long receiptID, boolean isFeePayment) {
 		logger.debug("Entering");
 
 		// Receipt Header Details
 		FinReceiptHeader receiptHeader = null;
-		receiptHeader = getFinReceiptHeaderDAO().getReceiptHeaderByID(receiptID, "_View");
+		
+		String tableType = "_View";
+		if(isFeePayment){
+			tableType = "_FView";
+		}
+		receiptHeader = getFinReceiptHeaderDAO().getReceiptHeaderByID(receiptID, tableType);
 
 		// Fetch Receipt Detail List
 		if (receiptHeader != null) {
@@ -127,13 +132,15 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 					receiptHeader.getReference(), "");
 
 			// Fetch List of Repay Schedules
-			List<RepayScheduleDetail> rpySchList = getFinanceRepaymentsDAO().getRpySchdList(
-					receiptHeader.getReference(), "");
-			if(rpySchList != null && !rpySchList.isEmpty()){
-				for (FinRepayHeader finRepayHeader : rpyHeaderList) {
-					for (RepayScheduleDetail repaySchd : rpySchList) {
-						if (finRepayHeader.getRepayID() == repaySchd.getRepayID()) {
-							finRepayHeader.getRepayScheduleDetails().add(repaySchd);
+			if(!isFeePayment){
+				List<RepayScheduleDetail> rpySchList = getFinanceRepaymentsDAO().getRpySchdList(
+						receiptHeader.getReference(), "");
+				if(rpySchList != null && !rpySchList.isEmpty()){
+					for (FinRepayHeader finRepayHeader : rpyHeaderList) {
+						for (RepayScheduleDetail repaySchd : rpySchList) {
+							if (finRepayHeader.getRepayID() == repaySchd.getRepayID()) {
+								finRepayHeader.getRepayScheduleDetails().add(repaySchd);
+							}
 						}
 					}
 				}
@@ -305,7 +312,12 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 		// Finance Repayment Cancellation Posting Process Execution
 		// =====================================
-		String errorCode = procReceiptCancellation(receiptHeader);
+		String errorCode = "";
+		if(StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_FEEPAYMENT)){
+			errorCode = procFeeReceiptCancellation(receiptHeader);
+		}else{
+			errorCode = procReceiptCancellation(receiptHeader);
+		}
 		if (StringUtils.isNotBlank(errorCode)) {
 			throw new PFFInterfaceException("9999", errorCode);
 		}
@@ -459,6 +471,15 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 				}
 			}
 		}
+		
+		// Fee Payment Cancellation or Bounce cancellation stopped When Loan is not in Workflow Process
+		if(StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_FEEPAYMENT)){
+			String finReference = receiptHeader.getReference();
+			boolean rcdAvailable = getFinanceMainDAO().isFinReferenceExists(finReference, "_Temp", false);
+			if (!rcdAvailable) {
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("60209", "", null, null),usrLanguage));
+			}
+		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
@@ -480,7 +501,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	public PresentmentDetail presentmentCancellation(PresentmentDetail presentmentDetail, String returnCode) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		FinReceiptHeader receiptHeader = getFinReceiptHeaderById(presentmentDetail.getReceiptID(), "");
+		FinReceiptHeader receiptHeader = getFinReceiptHeaderById(presentmentDetail.getReceiptID(), false);
 		
 		if(receiptHeader == null){
 			presentmentDetail.setErrorDesc("FinReceiptHeader not available for the receipt id :" + presentmentDetail.getReceiptID());
@@ -883,6 +904,32 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 				}
 			}
 		}
+
+		return null;
+	}
+	
+	/**
+	 * Method for Processing Fee Payments Cancellation Based on Event and Reference
+	 * 
+	 * @param receiptHeader
+	 * @throws PFFInterfaceException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
+	 */
+	private String procFeeReceiptCancellation(FinReceiptHeader receiptHeader) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+		logger.debug("Entering");
+		
+		long linkedTranId = 0;
+		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
+			for (FinRepayHeader rpyHeader : receiptDetail.getRepayHeaders()) {
+				linkedTranId = rpyHeader.getLinkedTranId();
+				break;
+			}
+		}
+
+		// Posting Reversal Case Program Calling in Equation
+		// ============================================
+		getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranId);
 
 		return null;
 	}

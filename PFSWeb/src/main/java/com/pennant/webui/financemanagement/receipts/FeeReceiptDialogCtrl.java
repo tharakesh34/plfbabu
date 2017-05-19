@@ -54,9 +54,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
@@ -69,6 +73,11 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabbox;
+import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Tabpanels;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -85,8 +94,11 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.FeeReceiptService;
+import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -98,9 +110,11 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
+import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -159,13 +173,18 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Row											row_PaymentRef;	
 	protected Row											row_ChequeAcNo;	
 	protected Row											row_fundingAcNo;	
-	protected Row											row_remarks;	
+	protected Row											row_remarks;
+	
+	protected Tabbox										tabBoxIndexCenter;
+	protected Tabs											tabsIndexCenter;
+	protected Tabpanels										tabpanelsBoxIndexCenter;
 
 	//Buttons
 	protected Button										btnReceipt;
 
 	private transient FeeReceiptService						feeReceiptService;
-	protected transient FeeReceiptListCtrl					feeReceiptListCtrl					= null;											// over handed per parameters
+	protected transient FeeReceiptListCtrl					feeReceiptListCtrl					= null;		
+	private transient AccountingDetailDialogCtrl			accountingDetailDialogCtrl;
 	private FinReceiptHeader								receiptHeader						= null;
 
 	/**
@@ -646,30 +665,42 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				doWriteComponentsToBean();
 				
 				FinReceiptHeader header = getReceiptHeader();
-				List<FinReceiptDetail> receiptDetails = header.getReceiptDetails();
-				if(receiptDetails.isEmpty()){
+				if(header.getReceiptDetails().isEmpty()){
 					FinReceiptDetail receiptDetail = new FinReceiptDetail();
 					receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 					receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-					receiptDetails.add(receiptDetail);
+					header.getReceiptDetails().add(receiptDetail);
 				}
 				
-				for (FinReceiptDetail receiptDetail : receiptDetails) {
-						receiptDetail.setAmount(header.getReceiptAmount());
-						receiptDetail.setPaymentType(header.getReceiptMode());
-						receiptDetail.setFavourNumber(this.favourNo.getValue());
-						receiptDetail.setValueDate(this.valueDate.getValue());
-						receiptDetail.setBankCode(this.bankCode.getValue());
-						receiptDetail.setFavourName(this.favourName.getValue());
-						receiptDetail.setDepositDate(this.depositDate.getValue());
-						receiptDetail.setDepositNo(this.depositNo.getValue());
-						receiptDetail.setPaymentRef(this.paymentRef.getValue());
-						receiptDetail.setTransactionRef(this.transactionRef.getValue());
-						receiptDetail.setChequeAcNo(this.chequeAcNo.getValue());
-						receiptDetail.setFundingAc(Long.valueOf(this.fundingAccount.getValue()));
-						receiptDetail.setReceivedDate(this.receivedDate.getValue());
-						receiptDetail.setRemarks(this.remarks.getValue());
-						receiptDetail.setReceiptNo(this.receiptNo.getValue());
+				for (FinReceiptDetail receiptDetail : header.getReceiptDetails()) {
+					receiptDetail.setAmount(header.getReceiptAmount());
+					receiptDetail.setPaymentType(header.getReceiptMode());
+					receiptDetail.setFavourNumber(this.favourNo.getValue());
+					receiptDetail.setValueDate(this.valueDate.getValue());
+					receiptDetail.setBankCode(this.bankCode.getValue());
+					receiptDetail.setFavourName(this.favourName.getValue());
+					receiptDetail.setDepositDate(this.depositDate.getValue());
+					receiptDetail.setDepositNo(this.depositNo.getValue());
+					receiptDetail.setPaymentRef(this.paymentRef.getValue());
+					receiptDetail.setTransactionRef(this.transactionRef.getValue());
+					receiptDetail.setChequeAcNo(this.chequeAcNo.getValue());
+					receiptDetail.setFundingAc(Long.valueOf(this.fundingAccount.getValue()));
+					receiptDetail.setReceivedDate(this.receivedDate.getValue());
+					receiptDetail.setRemarks(this.remarks.getValue());
+					receiptDetail.setReceiptNo(this.receiptNo.getValue());
+					
+					if(receiptDetail.getRepayHeaders().isEmpty()){
+						FinRepayHeader repayHeader = new FinRepayHeader();
+						repayHeader.setFinReference(this.finReference.getValue());
+						repayHeader.setValueDate(this.receivedDate.getValue());
+						repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
+						repayHeader.setRepayAmount(header.getReceiptAmount());
+						
+						receiptDetail.getRepayHeaders().add(repayHeader);
+					}else{
+						receiptDetail.getRepayHeaders().get(0).setValueDate(this.receivedDate.getValue());
+						receiptDetail.getRepayHeaders().get(0).setRepayAmount(header.getReceiptAmount());
+					}
 				}
 			}
 
@@ -813,11 +844,153 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		
 		// Fee Details
 		doFillFeeDetails(header.getPaidFeeList());
+		
+		//Show Accounting Tab Details Based upon Role Condition using Work flow
+		if ("Accounting".equals(getTaskTabs(getTaskId(getRole())))) {
+			//Accounting Details Tab Addition
+			appendAccountingDetailTab(true);
+		}
 
 		this.recordStatus.setValue(header.getRecordStatus());
 		logger.debug("Leaving");
 	}
 	
+	/**
+	 * Method for Rendering Schedule Details Data in finance
+	 */
+	protected void appendAccountingDetailTab(boolean onLoadProcess) {
+		logger.debug("Entering");
+		boolean createTab = false;
+		if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) == null) {
+			createTab = true;
+		}
+		
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_ACCOUNTING, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_ACCOUNTING);
+		}
+		if (!onLoadProcess) {
+			final HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("roleCode", getRole());
+			map.put("dialogCtrl", this);
+			map.put("finHeaderList", getFinBasicDetails());
+			map.put("acSetID", Long.MIN_VALUE);
+			map.put("postAccReq", false);
+			
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AccountingDetailDialog.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_ACCOUNTING), map);
+			Tab tab = getTab(AssetConstants.UNIQUE_ID_ACCOUNTING);
+			if (tab != null) {
+				tab.setVisible(true);
+			}
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * fill finance basic details to List
+	 * 
+	 * @return
+	 */
+	private ArrayList<Object> getFinBasicDetails() {
+		ArrayList<Object> arrayList = new ArrayList<Object>();
+		arrayList.add(0, this.finType.getValue());
+		arrayList.add(1, this.finCcy.getValue());
+		arrayList.add(2, PennantAppUtil.getlabelDesc(getReceiptHeader().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods()));
+		arrayList.add(3, this.finReference.getValue());
+		arrayList.add(4, PennantAppUtil.getlabelDesc(getReceiptHeader().getPftDaysBasis(), PennantStaticListUtil.getProfitDaysBasis()));
+		arrayList.add(5, null);
+		arrayList.add(6, false);
+		arrayList.add(7, false);
+		arrayList.add(8, null);
+		arrayList.add(9, this.custName.getValue());
+		arrayList.add(10, true);
+		arrayList.add(11, null);
+		return arrayList;
+	}
+	
+	/**
+	 * This method will create tab and will assign corresponding tab selection method and makes tab visibility based on
+	 * parameter
+	 * 
+	 * @param moduleID
+	 * @param tabVisible
+	 */
+	public void createTab(String moduleID, boolean tabVisible) {
+		logger.debug("Entering");
+		String tabName = Labels.getLabel("tab_label_" + moduleID);
+		Tab tab = new Tab(tabName);
+		tab.setId(getTabID(moduleID));
+		tab.setVisible(tabVisible);
+		tabsIndexCenter.appendChild(tab);
+		Tabpanel tabpanel = new Tabpanel();
+		tabpanel.setId(getTabpanelID(moduleID));
+		tabpanel.setStyle("overflow:auto;");
+		tabpanel.setParent(tabpanelsBoxIndexCenter);
+		tabpanel.setHeight("100%");
+		ComponentsCtrl.applyForward(tab, ("onSelect=onSelectAccountTab"));
+		logger.debug("Leaving");
+	}
+	
+	public void onSelectAccountTab(ForwardEvent event){
+		
+		Tab tab = (Tab) event.getOrigin().getTarget();
+		tab.removeForward(Events.ON_SELECT, tab, "onSelectAccountTab");
+		appendAccountingDetailTab(false);
+		if (accountingDetailDialogCtrl != null) {
+			accountingDetailDialogCtrl.doSetLabels(getFinBasicDetails());
+		}
+	}
+	
+	private String getTabID(String id) {
+		return "TAB" + StringUtils.trimToEmpty(id);
+	}
+
+	private String getTabpanelID(String id) {
+		return "TABPANEL" + StringUtils.trimToEmpty(id);
+	}
+
+	private void clearTabpanelChildren(String id) {
+		Tabpanel tabpanel = getTabpanel(id);
+		if (tabpanel != null) {
+			tabpanel.setStyle("overflow:auto;");
+			tabpanel.getChildren().clear();
+		}
+	}
+
+	private Tab getTab(String id) {
+		return (Tab) tabsIndexCenter.getFellowIfAny(getTabID(id));
+	}
+
+	private Tabpanel getTabpanel(String id) {
+		return (Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny(getTabpanelID(id));
+	}
+	
+	/**
+	 * Method for Executing Eligibility Details
+	 * 
+	 * @throws Exception
+	 */
+	public void executeAccounting() throws Exception{
+		logger.debug("Entering");
+
+		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
+		/*AEEvent aeEvent = new AEEvent();
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+
+		HashMap<String, Object> dataMap = new HashMap<String, Object>();
+		aeEvent.getAcSetIDList().add(vASConfiguration.getFeeAccounting());
+		List<ReturnDataSet> returnSetEntries = getEngineExecution().processAccountingByEvent(aeEvent, dataMap);
+		getVASRecording().setReturnDataSetList(returnSetEntries);
+		accountingSetEntries.addAll(returnSetEntries);*/
+		if(accountingDetailDialogCtrl != null){
+			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
+		}
+
+		logger.debug("Leaving");
+	}
+
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */

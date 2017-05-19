@@ -706,12 +706,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		//Check list Details
 		getCheckListDetailService().fetchVASCheckLists(vasRecording, checkListdetails);
 		
-		// Accounting Entries
-		long accSetId = vasRecording.getVasConfiguration().getFeeAccounting();
-		if(accSetId != Long.MIN_VALUE && accSetId != 0){
-			vasRecording.setTransactionEntries(getTransactionEntryDAO().getListTransactionEntryById(accSetId, "_AEView", true));
-		}
-
 		logger.debug("Leaving");
 		return vasRecording;
 	}
