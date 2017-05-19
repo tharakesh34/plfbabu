@@ -1776,6 +1776,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			if (isValidComboValue(this.cbfinProductType,
 					Labels.getLabel("label_FinanceTypeDialog_FinProductType.Value"))) {
 				aFinanceType.setFinCategory(this.cbfinProductType.getSelectedItem().getValue().toString());
+				aFinanceType.setProductCategory(this.cbfinProductType.getSelectedItem().getValue().toString());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
