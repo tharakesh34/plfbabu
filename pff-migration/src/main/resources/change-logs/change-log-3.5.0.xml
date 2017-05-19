@@ -93,4 +93,14 @@
 	<changeSet id="3" author="Prasad">
 	<sql>Update FinanceMain set ReqMaturity  = MaturityDate</sql>
 	</changeSet>
+		<changeSet id="4" author="pruthvi">
+		<sql>
+	update reportlist
+set fieldlabels='listheader_RuleCode.label,listheader_RuleCodeDesc.label',
+fieldvalues='ruleCode,ruleCodeDesc',
+fieldtype='String,String',
+ReportFileName='ReportList02'
+where code='ScoreRule';
+</sql>
+</changeSet>
 </databaseChangeLog>
