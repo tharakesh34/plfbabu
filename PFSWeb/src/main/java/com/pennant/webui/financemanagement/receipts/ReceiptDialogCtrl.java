@@ -256,6 +256,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected AccountSelectionBox							chequeAcNo;
 	protected ExtendedCombobox								fundingAccount;
 	protected Datebox										receivedDate;
+	protected Textbox										receiptNo;
 	protected Textbox										remarks;
 	
 	protected Row											row_favourNo;	
@@ -575,6 +576,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		this.receivedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.remarks.setMaxlength(100);
+		this.receiptNo.setMaxlength(50);
 		this.favourName.setMaxlength(50);
 		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.favourNo.setMaxlength(50);
@@ -626,6 +628,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("ReceiptDialog_transactionRef"), this.transactionRef);
 		readOnlyComponent(isReadOnly("ReceiptDialog_fundingAccount"), this.fundingAccount);
 		readOnlyComponent(isReadOnly("ReceiptDialog_cashReceivedDate"), this.receivedDate);
+		readOnlyComponent(isReadOnly("ReceiptDialog_receiptNo"), this.receiptNo);
 		readOnlyComponent(isReadOnly("ReceiptDialog_remarks"), this.remarks);
 
 		logger.debug("Leaving");
@@ -658,6 +661,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.paymentRef);
 			readOnlyComponent(true, this.transactionRef);
 			readOnlyComponent(true, this.receivedDate);
+			readOnlyComponent(true, this.receiptNo);
 			readOnlyComponent(true, this.remarks);
 		}else{
 			//Receipt Details
@@ -672,6 +676,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			readOnlyComponent(isReadOnly("ReceiptDialog_transactionRef"), this.transactionRef);
 			readOnlyComponent(isReadOnly("ReceiptDialog_fundingAccount"), this.fundingAccount);
 			readOnlyComponent(isReadOnly("ReceiptDialog_cashReceivedDate"), this.receivedDate);
+			readOnlyComponent(isReadOnly("ReceiptDialog_receiptNo"), this.receiptNo);
 			readOnlyComponent(isReadOnly("ReceiptDialog_remarks"), this.remarks);
 		}
 
@@ -1042,6 +1047,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.fundingAccount.setDescription("");
 			this.fundingAccount.setObject(null);
 			this.receivedDate.setValue(DateUtility.getAppDate());
+			this.receiptNo.setValue("");
 			this.remarks.setValue("");
 		}
 		
@@ -1633,6 +1639,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			receiptDetail.setChequeAcNo(this.chequeAcNo.getValue());
 			receiptDetail.setFundingAc(Long.valueOf(this.fundingAccount.getValue()));
 			receiptDetail.setReceivedDate(this.receivedDate.getValue());
+			receiptDetail.setReceiptNo(this.receiptNo.getValue());
 			receiptDetail.setRemarks(this.remarks.getValue());
 			receiptDetail.setDelRecord(false);// Internal Purpose
 			receiptDetail.setPayOrder(payOrder);
@@ -1969,6 +1976,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						receiptDetail.setChequeAcNo(this.chequeAcNo.getValue());
 						receiptDetail.setFundingAc(Long.valueOf(this.fundingAccount.getValue()));
 						receiptDetail.setReceivedDate(this.receivedDate.getValue());
+						receiptDetail.setReceiptNo(this.receiptNo.getValue());
 						receiptDetail.setRemarks(this.remarks.getValue());
 					}
 				}
@@ -2319,6 +2327,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					this.fundingAccount.setValue(String.valueOf(receiptDetail.getFundingAc()));
 					this.fundingAccount.setDescription(receiptDetail.getFundingAcDesc());
 					this.receivedDate.setValue(receiptDetail.getReceivedDate());
+					this.receiptNo.setValue(receiptDetail.getReceiptNo());
 					this.remarks.setValue(receiptDetail.getRemarks());
 				}
 			}
@@ -3048,6 +3057,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 		
+		if (!this.receiptNo.isReadonly()) {
+			this.receiptNo.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptDialog_ReceiptNo.value"),
+					PennantRegularExpressions.REGEX_NUMERIC, true));
+		}
+		
 		if(!this.remarks.isReadonly()){
 			this.remarks.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptDialog_Remarks.value"),
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
@@ -3080,6 +3094,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.chequeAcNo.setConstraint("");
 		this.fundingAccount.setConstraint("");
 		this.receivedDate.setConstraint("");
+		this.receiptNo.setConstraint("");
 		this.remarks.setConstraint("");
 
 		logger.debug("Leaving");
@@ -3109,6 +3124,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.chequeAcNo.setErrorMessage("");
 		this.fundingAccount.setErrorMessage("");
 		this.receivedDate.setErrorMessage("");
+		this.receiptNo.setErrorMessage("");
 		this.remarks.setErrorMessage("");
 
 		logger.debug("Leaving");
@@ -3213,6 +3229,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		try {
 			this.receivedDate.getValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			this.receiptNo.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

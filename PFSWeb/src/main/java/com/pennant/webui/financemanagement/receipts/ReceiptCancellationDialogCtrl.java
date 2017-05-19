@@ -163,6 +163,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	protected AccountSelectionBox							chequeAcNo;
 	protected ExtendedCombobox								fundingAccount;
 	protected Datebox										receivedDate;
+	protected Textbox										receiptNo;
 	protected Textbox										remarks;
 	
 	protected Row											row_BounceReason;	
@@ -371,6 +372,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 
 		this.receivedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.remarks.setMaxlength(100);
+		this.receiptNo.setMaxlength(50);
 		this.favourName.setMaxlength(50);
 		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.favourNo.setMaxlength(50);
@@ -425,6 +427,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		readOnlyComponent(true, this.paymentRef);
 		readOnlyComponent(true, this.transactionRef);
 		readOnlyComponent(true, this.receivedDate);
+		readOnlyComponent(true, this.receiptNo);
 		readOnlyComponent(true, this.remarks);
 
 		logger.debug("Leaving");
@@ -800,6 +803,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 					this.fundingAccount.setValue(String.valueOf(receiptDetail.getFundingAc()));
 					this.fundingAccount.setDescription(receiptDetail.getFundingAcDesc());
 					this.receivedDate.setValue(receiptDetail.getReceivedDate());
+					this.receiptNo.setValue(receiptDetail.getReceiptNo());
 					this.remarks.setValue(receiptDetail.getRemarks());
 					
 					isReceiptModeDetail = true;

@@ -328,7 +328,16 @@
 									</hbox>
 								</row>
 								<row id="row_remarks" visible="false">
-									<label
+								<label
+									id="label_ReceiptRealizationDialog_ReceiptNo"
+									value="${c:l('label_ReceiptRealizationDialog_ReceiptNo.value')}" />
+								<hbox
+									id="hbox_ReceiptRealizationDialog_ReceiptNo">
+									<space spacing="2px" />
+									<textbox id="receiptNo"
+										width="180px" />
+								</hbox>
+								<label
 										id="label_ReceiptRealizationDialog_Remarks"
 										value="${c:l('label_ReceiptRealizationDialog_Remarks.value')}" />
 									<hbox
