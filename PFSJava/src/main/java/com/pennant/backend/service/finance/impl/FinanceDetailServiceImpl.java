@@ -5277,7 +5277,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					}
 				}
 			}
-			if (!validateFrequency(financeMain.getRepayFrq().charAt(0), mandate.getPeriodicity().charAt(0))) {
+			if (!validatePayFrequency(financeMain.getRepayFrq().charAt(0), mandate.getPeriodicity().charAt(0))) {
 				
 				String[] errParmFrq = new String[2];
 				errParmFrq[0] = PennantJavaUtil.getLabel("label_MandateDialog_Periodicity.value") ;
@@ -5286,11 +5286,24 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"90220",
 						errParmFrq, null), ""));
 			}
+			
+			if(financeMain.isFinRepayPftOnFrq()){
+				if(!validatePayFrequency(financeMain.getRepayPftFrq().charAt(0),mandate.getPeriodicity().charAt(0))) {
+					
+					String[] errParmFrq = new String[2];
+					errParmFrq[0] = PennantJavaUtil.getLabel("label_MandateDialog_Periodicity.value") ;
+					errParmFrq[1] = PennantJavaUtil.getLabel("label_FinanceMainDialog_RepayPftFrq.value") ;
+					
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"90220",
+							errParmFrq, null), ""));
+					
+				}
+			}
 
 		}
 	}
 
-	private Boolean validateFrequency(char repayFrq, char mandateFrq) {
+	private Boolean validatePayFrequency(char repayFrq, char mandateFrq) {
 		boolean valFrq = true;
 		if (repayFrq == mandateFrq) {
 			valFrq = true;
