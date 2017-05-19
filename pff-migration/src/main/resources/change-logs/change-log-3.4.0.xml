@@ -1240,4 +1240,73 @@ update reportlist set  fieldlabels='listheader_CostCenterCode.label,listheader_C
 			INSERT INTO Entities 	VALUES ('HFC', 'Bajaj Housing Finance Corporation',1, 1, 1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);  
 		</sql>
 	</changeSet>
+	
+	<changeSet id="42" author="Vinay">
+		<dropTable tableName="BUILDERGROUP" />
+		<dropTable tableName="BUILDERGROUP_TEMP" />
+	</changeSet>
+		
+	<changeSet id="43" author="Vinay">
+				<createTable tableName="BUILDERGROUP">
+			<column name="ID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="NAME" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEGMENTATION" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />   
+		</createTable> 
+	</changeSet>
+	
+	<changeSet id="44" author="Vinay">
+				<createTable tableName="BUILDERGROUP_TEMP">
+			<column name="ID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="NAME" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEGMENTATION" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />   
+		</createTable> 
+	</changeSet>
+	
+	<changeSet id="45" author="Vinay">
+		<addUniqueConstraint columnNames="NAME"
+			constraintName="UK_BUILDERGROUP_NAME" deferrable="true" disabled="true"
+			initiallyDeferred="true" tableName="BUILDERGROUP" />
+	</changeSet>
+	
+	<changeSet id="46" author="Vinay">
+		<addUniqueConstraint columnNames="NAME"
+			constraintName="UK_BUILDERGROUP_TEMP_NAME" deferrable="true" disabled="true"
+			initiallyDeferred="true" tableName="BUILDERGROUP_TEMP" />
+	</changeSet>
 </databaseChangeLog>
