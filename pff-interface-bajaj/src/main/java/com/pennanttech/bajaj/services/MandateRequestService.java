@@ -68,7 +68,7 @@ public class MandateRequestService extends BajajService implements RequestServic
 		dataEngine.setFilterMap(filterMap);
 		dataEngine.setParameterMap(parameterMap);
 		dataEngine.setUserName(userName);
-		dataEngine.setValueDate(getAppDate());
+		dataEngine.setValueDate(getValueDate());
 		dataEngine.exportData("MANDATES_EXPORT");
 	}
 
@@ -125,7 +125,7 @@ public class MandateRequestService extends BajajService implements RequestServic
 					
 					rowMap.put("UPPER_LIMIT", UPPER_LIMIT.divide(minorccyunits));
 					
-					rowMap.put("EXTRACTION_DATE", getAppDate());
+					rowMap.put("EXTRACTION_DATE", getValueDate());
 					rowMap.remove("CCYMINORCCYUNITS");
 					
 					id = String.valueOf(insertData(rowMap));
@@ -179,7 +179,7 @@ public class MandateRequestService extends BajajService implements RequestServic
 		sql.append(" Where EXTRACTION_DATE =:EXTRACTION_DATE");
 		sql.append(" GROUP BY BANK_CODE");
 
-		paramMap.addValue("EXTRACTION_DATE", getAppDate());
+		paramMap.addValue("EXTRACTION_DATE", getValueDate());
 
 		try {
 			return namedJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<Map<String, Integer>>() {

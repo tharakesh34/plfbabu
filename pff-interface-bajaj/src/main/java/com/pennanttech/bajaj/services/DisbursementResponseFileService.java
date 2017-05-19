@@ -96,7 +96,7 @@ public class DisbursementResponseFileService extends BajajService implements Fil
 		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), status, null);
 		dataEngine.setFile(file);
 		dataEngine.setMedia(media);
-		dataEngine.setValueDate(getAppDate());
+		dataEngine.setValueDate(getValueDate());
 		dataEngine.importData(configName);
 
 		do {

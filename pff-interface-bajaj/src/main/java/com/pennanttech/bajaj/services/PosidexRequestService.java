@@ -9,7 +9,7 @@ public class PosidexRequestService extends BajajService implements RequestServic
 
 	@Override
 	public void sendReqest(Object... params) throws Exception {
-		PosidexRequestProcess service = new PosidexRequestProcess(dataSource, (Date) params[1], (Date) params[2], getAppDate());
+		PosidexRequestProcess service = new PosidexRequestProcess(dataSource, (Date) params[1], (Date) params[2], getValueDate());
 		service.process((Long) params[0], "POSIDEX_UPDATE_EODREQUEST");
 	}
 }

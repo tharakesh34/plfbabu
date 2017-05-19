@@ -472,7 +472,7 @@ public class SAPGLServiceImpl extends BajajService implements GeneralLedgerServi
 		monthStartDate = DateUtil.getMonthStart(glDate);
 		monthEndDate = DateUtil.getMonthEnd(glDate);
 
-		valueDate = getAppDate();
+		valueDate = getValueDate();
 	}
 
 	private int groupTranactions() {

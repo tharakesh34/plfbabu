@@ -70,7 +70,7 @@ public abstract class BajajService {
 		}
 	}
 	
-	protected Date getAppDate() {
+	protected Date getValueDate() {
 		String appDate;
 		try {
 			appDate = (String) getSMTParameter("APP_VALUEDATE", String.class);

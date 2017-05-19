@@ -7,7 +7,7 @@ public class DisbursemenIMPSResponseService extends BajajService implements Requ
 
 	@Override
 	public void sendReqest(Object... params) throws Exception {
-		DisbursemenIMPSResponseProcess service = new DisbursemenIMPSResponseProcess(dataSource, (String) params[0], getAppDate());
+		DisbursemenIMPSResponseProcess service = new DisbursemenIMPSResponseProcess(dataSource, (String) params[0], getValueDate());
 		service.process((Long) params[1], "ALM_REQUEST");
 	}
 

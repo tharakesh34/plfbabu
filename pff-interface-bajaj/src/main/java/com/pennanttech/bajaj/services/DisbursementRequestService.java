@@ -239,7 +239,7 @@ public class DisbursementRequestService extends BajajService implements RequestS
 		}
 
 		try {
-			export.setValueDate(getAppDate());
+			export.setValueDate(getValueDate());
 			export.setFilterMap(filterMap);
 			export.setParameterMap(parameterMap);
 			export.exportData(configName);
@@ -259,7 +259,7 @@ public class DisbursementRequestService extends BajajService implements RequestS
 		sql.append(" where Name = :Name AND LASTPROCESSEDON = :LASTPROCESSEDON");
 
 		paramMap.addValue("Name", "DISB_HDFC_EXPORT");
-		paramMap.addValue("LASTPROCESSEDON", getAppDate());
+		paramMap.addValue("LASTPROCESSEDON", getValueDate());
 
 		try {
 			return namedJdbcTemplate.queryForObject(sql.toString(), paramMap, String.class);

@@ -50,7 +50,7 @@ public class MandateResponseFileService extends BajajService implements FileServ
 		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), status, null);
 		dataEngine.setFile(file);
 		dataEngine.setMedia(media);
-		dataEngine.setValueDate(getAppDate());
+		dataEngine.setValueDate(getValueDate());
 		dataEngine.importData(configName);
 		logger.debug(Literal.LEAVING);
 	}
