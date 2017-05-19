@@ -33,7 +33,7 @@ import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.service.finance.FeeReceiptService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.search.Filter;
@@ -90,7 +90,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected int   oldVar_sortOperator_finType;
 	protected int   oldVar_sortOperator_finBranch;
 
-	private transient ReceiptService receiptService;
+	private FeeReceiptService feeReceiptService;
 
 	/**
 	 * The default constructor.
@@ -103,9 +103,9 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected void doSetProperties() {
 		super.moduleCode = "FeeReceipt";
 		super.pageRightName = "FeeReceiptList";
-		super.tableName = "FinReceiptHeader_View";
-		super.queueTableName = "FinReceiptHeader_View";
-		super.enquiryTableName = "FinReceiptHeader_View";
+		super.tableName = "FinReceiptHeader_FView";
+		super.queueTableName = "FinReceiptHeader_FView";
+		super.enquiryTableName = "FinReceiptHeader_FView";
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		// Set the page level components.
 		setPageComponents(window_FeeReceiptList, borderLayout_FeeReceiptList, listBoxFeeReceipt, pagingFeeReceiptList);
 		setItemRender(new ReceiptRealizationListModelItemRenderer());
-		registerButton(btnNew, "button_AcademicList_NewAcademic", false);
+		registerButton(btnNew, "button_FeeReceiptList_NewFeeReceipt", true);
 		registerButton(btnSearch);
 
 		registerField("receiptID");
@@ -192,7 +192,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$button_FeeReceiptList_NewFeeReceipt(Event event) {
+	public void onClick$btnNew(Event event) {
 		logger.debug("Entering");
 
 		// Create a new entity.
@@ -213,7 +213,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onFeeReceiptItemDoubleClicked(Event event) {
+	public void onReceiptItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 
 		// Get the selected record.
@@ -221,7 +221,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 		// Get the selected entity.
 		long receiptID = (long) selectedItem.getAttribute("id");
-		FinReceiptHeader header = receiptService.getFinReceiptHeaderById(receiptID, "_View");
+		FinReceiptHeader header = feeReceiptService.getFinReceiptHeaderById(receiptID, "_View");
 
 		if (header == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -428,7 +428,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		search();
 	}
 
-	public void setReceiptService(ReceiptService receiptService) {
-		this.receiptService = receiptService;
+	public void setFeeReceiptService(FeeReceiptService feeReceiptService) {
+		this.feeReceiptService = feeReceiptService;
 	}
 }

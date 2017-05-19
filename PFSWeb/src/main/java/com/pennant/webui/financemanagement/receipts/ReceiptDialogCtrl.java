@@ -256,7 +256,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected AccountSelectionBox							chequeAcNo;
 	protected ExtendedCombobox								fundingAccount;
 	protected Datebox										receivedDate;
-	protected Textbox										receiptNo;
+	protected Uppercasebox									receiptNo;
 	protected Textbox										remarks;
 	
 	protected Row											row_favourNo;	
@@ -570,7 +570,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.fundingAccount.setValidateColumns(new String[] { "PartnerBankID" });
 		
 		this.chequeAcNo.setButtonVisible(false);
-		this.chequeAcNo.setMandatory(true);
+		this.chequeAcNo.setMandatory(false);
 		this.chequeAcNo.setAcountDetails("", "", true);
 		this.chequeAcNo.setTextBoxWidth(180);
 		
@@ -956,6 +956,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				this.bankCode.setAttribute("bankCode", details.getBankCode());
 			}
 		}
+		logger.debug("Leaving" + event.toString());
 	}
 	
 	/**
@@ -3059,7 +3060,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		if (!this.receiptNo.isReadonly()) {
 			this.receiptNo.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptDialog_ReceiptNo.value"),
-					PennantRegularExpressions.REGEX_NUMERIC, true));
+					PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
 		}
 		
 		if(!this.remarks.isReadonly()){
@@ -4643,26 +4644,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * When record is rejected . <br>
-	 * 
-	 */
-	public void doReject() throws InterruptedException {
-		logger.debug("Entering");
-
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("financeMain", getFinanceDetail().getFinScheduleData().getFinanceMain());
-		map.put("financeMainDialogCtrl", this);
-		try {
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceReject.zul",
-					window_ReceiptDialog, map);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
-		}
-		logger.debug("Leaving");
 	}
 
 	/**

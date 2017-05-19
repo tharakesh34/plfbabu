@@ -222,6 +222,10 @@
 									id="listheader_FeeReceiptCustName" visible="false"
 									label="${c:l('listheader_FeeReceiptCustName.label')}"
 									sort="auto" hflex="min" />
+								<listheader
+									id="listheader_FeeReceiptModeSts" visible="false"
+									label="${c:l('listheader_FeeReceiptModeSts.label')}"
+									sort="auto" hflex="min" />
 								<listheader id="listheader_RecordStatus"
 									label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
 								<listheader id="listheader_RecordType"

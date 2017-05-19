@@ -2853,7 +2853,13 @@
 	<bean id="feeReceiptListCtrl"
 		class="com.pennant.webui.financemanagement.receipts.FeeReceiptListCtrl"
 		parent="basisListCtrl" scope="prototype">
-		<property name="receiptService" ref="receiptService" />
+		<property name="feeReceiptService" ref="feeReceiptService" />
+	</bean>
+	
+	<bean id="feeReceiptDialogCtrl"
+		class="com.pennant.webui.financemanagement.receipts.FeeReceiptDialogCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="feeReceiptService" ref="feeReceiptService" />
 	</bean>
 	
 	<!--============ Receipt Cancellation Process Details ============== -->

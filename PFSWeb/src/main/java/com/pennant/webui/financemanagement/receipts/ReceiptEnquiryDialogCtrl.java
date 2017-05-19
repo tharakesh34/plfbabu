@@ -171,7 +171,7 @@ public class ReceiptEnquiryDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader> {
 		this.fundingAccount.setValidateColumns(new String[] { "PartnerBankID" });
 		
 		this.chequeAcNo.setButtonVisible(false);
-		this.chequeAcNo.setMandatory(true);
+		this.chequeAcNo.setMandatory(false);
 		this.chequeAcNo.setAcountDetails("", "", true);
 		this.chequeAcNo.setTextBoxWidth(180);
 

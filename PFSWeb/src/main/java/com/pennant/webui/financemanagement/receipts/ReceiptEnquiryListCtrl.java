@@ -180,7 +180,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onReceiptRealizationItemDoubleClicked(Event event) {
+	public void onReceiptItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 
 		// Get the selected record.

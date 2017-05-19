@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.systemmasters.buildergroup;
 
 import java.sql.Timestamp;
@@ -72,7 +72,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.Literal;
-	
+
 
 /**
  * This is the controller class for the
@@ -82,7 +82,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 
 	private static final long serialVersionUID = 1L;
 	private final static Logger logger = Logger.getLogger(BuilderGroupDialogCtrl.class);
-	
+
 	/*
 	 * All the components that are defined here and have a corresponding
 	 * component with the same 'id' in the zul-file are getting  by our
@@ -90,12 +90,12 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 	 */
 	protected Window window_BuilderGroupDialog; 
 	protected Textbox 		name; 
-    protected ExtendedCombobox 		segmentation; 
+	protected ExtendedCombobox 		segmentation; 
 	private BuilderGroup builderGroup; // overhanded per param
 
 	private transient BuilderGroupListCtrl builderGroupListCtrl; // overhanded per param
 	private transient BuilderGroupService builderGroupService;
-	
+
 
 	/**
 	 * default constructor.<br>
@@ -108,14 +108,14 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 	protected void doSetProperties() {
 		super.pageRightName = "BuilderGroupDialog";
 	}
-	
+
 	@Override
 	protected String getReference() {
 		StringBuffer referenceBuffer= new StringBuffer(String.valueOf(this.builderGroup.getId()));
 		return referenceBuffer.toString();
 	}
 
-	
+
 	/**
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
@@ -126,11 +126,11 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 	 */
 	public void onCreate$window_BuilderGroupDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Set the page level components.
 		setPageComponents(window_BuilderGroupDialog);
 
-		
+
 		try {
 			// Get the required arguments.
 			this.builderGroup = (BuilderGroup) arguments.get("builderGroup");
@@ -144,7 +144,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 			BuilderGroup builderGroup = new BuilderGroup();
 			BeanUtils.copyProperties(this.builderGroup, builderGroup);
 			this.builderGroup.setBefImage(builderGroup);
-			
+
 			// Render the page and display the data.
 			doLoadWorkFlow(this.builderGroup.isWorkflow(), this.builderGroup.getWorkflowId(),
 					this.builderGroup.getNextTaskId());
@@ -166,7 +166,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 			closeDialog();
 			MessageUtil.showError(e.toString());
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -178,19 +178,19 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 		logger.debug(Literal.ENTERING);
 
 		this.name.setMaxlength(50);
-		
+
 		this.segmentation.setModuleName("LovFieldDetail");
 		this.segmentation.setMandatoryStyle(true);
 		this.segmentation.setValueColumn("FieldCodeValue");
 		this.segmentation.setDescColumn("ValueDesc");
 		this.segmentation.setDisplayStyle(2);
 		this.segmentation.setValidateColumns(new String[] {"FieldCodeValue"});
-		this.segmentation.setFilters(new Filter[]{ new Filter("FieldCodeValue",builderGroup.getSegmentation(),Filter.OP_EQUAL)});
+		this.segmentation.setFilters(new Filter[]{ new Filter("FieldCode","SEGMENT",Filter.OP_EQUAL)});
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Set Visible for components by checking if there's a right for it.
 	 */
@@ -216,7 +216,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 		logger.debug(Literal.ENTERING);
 		doSave();
 		logger.debug(Literal.LEAVING);
-		
+
 	}
 
 	/**
@@ -313,20 +313,20 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 
 		logger.debug(Literal.LEAVING);
 	}
-	
 
 
-      public void onFulfillSegmentation(Event event){
-    	  logger.debug(Literal.ENTERING);
-    	  
-    	if(!this.segmentation.getDescription().equals("")){
-    	
-    	}else{
-    		
-    	
-    	}
-    	
-    	logger.debug(Literal.LEAVING);
+
+	public void onFulfillSegmentation(Event event){
+		logger.debug(Literal.ENTERING);
+
+		if(!this.segmentation.getDescription().equals("")){
+
+		}else{
+
+
+		}
+
+		logger.debug(Literal.LEAVING);
 	}	
 
 
@@ -340,19 +340,21 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 	 */
 	public void doWriteBeanToComponents(BuilderGroup aBuilderGroup) {
 		logger.debug(Literal.ENTERING);
-	
-			this.name.setValue(aBuilderGroup.getName());
-		   this.segmentation.setValue(aBuilderGroup.getSegmentation());
-		
+
+		this.name.setValue(aBuilderGroup.getName());
+		this.segmentation.setValue(aBuilderGroup.getSegmentation());
+
 		if (aBuilderGroup.isNewRecord()){
-			   this.segmentation.setDescription("");
+			this.segmentation.setDescription("");
 		}else{
-			   this.segmentation.setDescription(aBuilderGroup.getSegmentationName());
+			this.segmentation.setDescription(aBuilderGroup.getSegmentationName());
 		}
 		
+		this.recordStatus.setValue(aBuilderGroup.getRecordStatus());
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -360,27 +362,27 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 	 */
 	public void doWriteComponentsToBean(BuilderGroup aBuilderGroup) {
 		logger.debug(Literal.LEAVING);
-		
+
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		//Name
 		try {
-		    aBuilderGroup.setName(this.name.getValue());
+			aBuilderGroup.setName(this.name.getValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
 		//Segmentation
 		try {
-			 aBuilderGroup.setSegmentation(this.segmentation.getValue());
+			aBuilderGroup.setSegmentation(this.segmentation.getValue());
 		}catch (WrongValueException we ) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		
+
 		if (!wve.isEmpty()) {
 			WrongValueException [] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -388,7 +390,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -445,20 +447,20 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 		if (!this.segmentation.isReadonly()){
 			this.segmentation.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderGroupDialog_segmentation.value"),PennantRegularExpressions.REGEX_NAME,true, true));
 		}
-	
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
 		logger.debug(Literal.LEAVING);
-		
+
 		this.name.setConstraint("");
 		this.segmentation.setConstraint("");
-	
-	logger.debug(Literal.LEAVING);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 
@@ -468,34 +470,34 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
-		
+
 		//id
 		//Name
 		//Segmentation
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
 
 	private void doRemoveLOVValidation() {
 		logger.debug(Literal.LEAVING);
-		
-		
+
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
 		logger.debug(Literal.LEAVING);
-		
-	
-	logger.debug(Literal.LEAVING);
+
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -505,16 +507,16 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
-		
+
 		final BuilderGroup aBuilderGroup = new BuilderGroup();
 		BeanUtils.copyProperties(this.builderGroup, aBuilderGroup);
 		String tranType=PennantConstants.TRAN_WF;
-		
+
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aBuilderGroup.getId();
 		final String title = Labels.getLabel("message.Deleting.Record");
 		MultiLineMessageBox.doSetTemplate();
-		
+
 		int conf =  (MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES| MultiLineMessageBox.NO, Messagebox.QUESTION, true));
 
 		if (conf==MultiLineMessageBox.YES){
@@ -523,7 +525,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 			if (StringUtils.trimToEmpty(aBuilderGroup.getRecordType()).equals("")){
 				aBuilderGroup.setVersion(aBuilderGroup.getVersion()+1);
 				aBuilderGroup.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
+
 				if (isWorkFlowEnabled()){
 					aBuilderGroup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aBuilderGroup.setNewRecord(true);
@@ -544,9 +546,9 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 				logger.error("Exception",  e);
 				showErrorMessage(this.window_BuilderGroupDialog,e);
 			}
-			
+
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -555,303 +557,301 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 	 */
 	private void doEdit() {
 		logger.debug(Literal.LEAVING);
-		
+
 		if (this.builderGroup.isNewRecord()) {
 			this.btnCancel.setVisible(false);
 			readOnlyComponent(false, this.name);
 		} else {
 			this.btnCancel.setVisible(true);
 			readOnlyComponent(true, this.name);
-			
 		}
-	
-			readOnlyComponent(isReadOnly("BuilderGroupDialog_segmentation"), this.segmentation);
-			
-			if (isWorkFlowEnabled()) {
-				for (int i = 0; i < userAction.getItemCount(); i++) {
-					userAction.getItemAtIndex(i).setDisabled(false);
-				}
-				if (this.builderGroup.isNewRecord()) {
-					this.btnCtrl.setBtnStatus_Edit();
-					btnCancel.setVisible(false);
-				} else {
-					this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
-				}
-			} else {
-				this.btnCtrl.setBtnStatus_Edit();
-			}
 
-			
+		readOnlyComponent(isReadOnly("BuilderGroupDialog_segmentation"), this.segmentation);
+
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(false);
+			}
+			if (this.builderGroup.isNewRecord()) {
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(false);
+			} else {
+				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
+			}
+		} else {
+			this.btnCtrl.setBtnStatus_Edit();
+		}
+
 		logger.debug(Literal.LEAVING);
 	}	
-			
-		/**
-		 * Set the components to ReadOnly. <br>
-		 */
-		public void doReadOnly() {
-			logger.debug(Literal.LEAVING);
-			
-	
-			readOnlyComponent(true, this.name);
-			readOnlyComponent(true, this.segmentation);
 
-			if (isWorkFlowEnabled()) {
-				for (int i = 0; i < userAction.getItemCount(); i++) {
-					userAction.getItemAtIndex(i).setDisabled(true);
-				}
-				this.recordStatus.setValue("");
-				this.userAction.setSelectedIndex(0);
-	
+	/**
+	 * Set the components to ReadOnly. <br>
+	 */
+	public void doReadOnly() {
+		logger.debug(Literal.LEAVING);
+
+
+		readOnlyComponent(true, this.name);
+		readOnlyComponent(true, this.segmentation);
+
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(true);
 			}
+			this.recordStatus.setValue("");
+			this.userAction.setSelectedIndex(0);
 
-			logger.debug(Literal.LEAVING);
 		}
 
-		
-		/**
-		 * Clears the components values. <br>
-		 */
-		public void doClear() {
-			logger.debug("Entering");
-				this.name.setValue("");
-			  	this.segmentation.setValue("");
-			  	this.segmentation.setDescription("");
+		logger.debug(Literal.LEAVING);
+	}
 
-			logger.debug("Leaving");
-		}
 
-		/**
-		 * Saves the components to table. <br>
-		 */
-		public void doSave() {
-			logger.debug("Entering");
-			final BuilderGroup aBuilderGroup = new BuilderGroup();
-			BeanUtils.copyProperties(this.builderGroup, aBuilderGroup);
-			boolean isNew = false;
+	/**
+	 * Clears the components values. <br>
+	 */
+	public void doClear() {
+		logger.debug("Entering");
+		this.name.setValue("");
+		this.segmentation.setValue("");
+		this.segmentation.setDescription("");
 
-			doSetValidation();
-			doWriteComponentsToBean(aBuilderGroup);
+		logger.debug("Leaving");
+	}
 
-			isNew = aBuilderGroup.isNew();
-			String tranType = "";
+	/**
+	 * Saves the components to table. <br>
+	 */
+	public void doSave() {
+		logger.debug("Entering");
+		final BuilderGroup aBuilderGroup = new BuilderGroup();
+		BeanUtils.copyProperties(this.builderGroup, aBuilderGroup);
+		boolean isNew = false;
 
-			if (isWorkFlowEnabled()) {
-				tranType = PennantConstants.TRAN_WF;
-				if (StringUtils.isBlank(aBuilderGroup.getRecordType())) {
-					aBuilderGroup.setVersion(aBuilderGroup.getVersion() + 1);
-					if (isNew) {
-						aBuilderGroup.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					} else {
-						aBuilderGroup.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-						aBuilderGroup.setNewRecord(true);
-					}
-				}
-			} else {
+		doSetValidation();
+		doWriteComponentsToBean(aBuilderGroup);
+
+		isNew = aBuilderGroup.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aBuilderGroup.getRecordType())) {
 				aBuilderGroup.setVersion(aBuilderGroup.getVersion() + 1);
 				if (isNew) {
-					tranType = PennantConstants.TRAN_ADD;
+					aBuilderGroup.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					tranType = PennantConstants.TRAN_UPD;
+					aBuilderGroup.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aBuilderGroup.setNewRecord(true);
 				}
 			}
-
-			try {
-				if (doProcess(aBuilderGroup, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-
-			} catch (final DataAccessException e) {
-				logger.error(e);
-				MessageUtil.showError(e);
-			}
-			logger.debug("Leaving");
-		}
-
-		/**
-		 * Set the workFlow Details List to Object
-		 * 
-		 * @param aAuthorizedSignatoryRepository
-		 *            (AuthorizedSignatoryRepository)
-		 * 
-		 * @param tranType
-		 *            (String)
-		 * 
-		 * @return boolean
-		 * 
-		 */
-		private boolean doProcess(BuilderGroup aBuilderGroup, String tranType) {
-			logger.debug("Entering");
-			boolean processCompleted = false;
-			AuditHeader auditHeader = null;
-			String nextRoleCode = "";
-
-			aBuilderGroup.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
-			aBuilderGroup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			aBuilderGroup.setUserDetails(getUserWorkspace().getLoggedInUser());
-
-			if (isWorkFlowEnabled()) {
-				String taskId = getTaskId(getRole());
-				String nextTaskId = "";
-				aBuilderGroup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-
-				if ("Save".equals(userAction.getSelectedItem().getLabel())) {
-					nextTaskId = taskId + ";";
-				} else {
-					nextTaskId = StringUtils.trimToEmpty(aBuilderGroup.getNextTaskId());
-
-					nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
-					if ("".equals(nextTaskId)) {
-						nextTaskId = getNextTaskIds(taskId, aBuilderGroup);
-					}
-
-					if (isNotesMandatory(taskId, aBuilderGroup)) {
-						if (!notesEntered) {
-							MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-
-					}
-				}
-				if (!StringUtils.isBlank(nextTaskId)) {
-					String[] nextTasks = nextTaskId.split(";");
-
-					if (nextTasks != null && nextTasks.length > 0) {
-						for (int i = 0; i < nextTasks.length; i++) {
-
-							if (nextRoleCode.length() > 1) {
-								nextRoleCode = nextRoleCode.concat(",");
-							}
-							nextRoleCode = getTaskOwner(nextTasks[i]);
-						}
-					} else {
-						nextRoleCode = getTaskOwner(nextTaskId);
-					}
-				}
-
-				aBuilderGroup.setTaskId(taskId);
-				aBuilderGroup.setNextTaskId(nextTaskId);
-				aBuilderGroup.setRoleCode(getRole());
-				aBuilderGroup.setNextRoleCode(nextRoleCode);
-
-				auditHeader = getAuditHeader(aBuilderGroup, tranType);
-				String operationRefs = getServiceOperations(taskId, aBuilderGroup);
-
-				if ("".equals(operationRefs)) {
-					processCompleted = doSaveProcess(auditHeader, null);
-				} else {
-					String[] list = operationRefs.split(";");
-
-					for (int i = 0; i < list.length; i++) {
-						auditHeader = getAuditHeader(aBuilderGroup, PennantConstants.TRAN_WF);
-						processCompleted = doSaveProcess(auditHeader, list[i]);
-						if (!processCompleted) {
-							break;
-						}
-					}
-				}
+		} else {
+			aBuilderGroup.setVersion(aBuilderGroup.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
 			} else {
-				auditHeader = getAuditHeader(aBuilderGroup, tranType);
-				processCompleted = doSaveProcess(auditHeader, null);
+				tranType = PennantConstants.TRAN_UPD;
 			}
-
-			logger.debug("Leaving");
-			return processCompleted;
 		}
 
-		/**
-		 * Get the result after processing DataBase Operations
-		 * 
-		 * @param AuditHeader
-		 *            auditHeader
-		 * @param method
-		 *            (String)
-		 * @return boolean
-		 * 
-		 */
+		try {
+			if (doProcess(aBuilderGroup, tranType)) {
+				refreshList();
+				closeDialog();
+			}
 
-		private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-			logger.debug("Entering");
-			boolean processCompleted = false;
-			int retValue = PennantConstants.porcessOVERIDE;
-			BuilderGroup aBuilderGroup = (BuilderGroup) auditHeader.getAuditDetail().getModelData();
-			boolean deleteNotes = false;
+		} catch (final DataAccessException e) {
+			logger.error(e);
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving");
+	}
 
-			try {
+	/**
+	 * Set the workFlow Details List to Object
+	 * 
+	 * @param aAuthorizedSignatoryRepository
+	 *            (AuthorizedSignatoryRepository)
+	 * 
+	 * @param tranType
+	 *            (String)
+	 * 
+	 * @return boolean
+	 * 
+	 */
+	private boolean doProcess(BuilderGroup aBuilderGroup, String tranType) {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
 
-				while (retValue == PennantConstants.porcessOVERIDE) {
+		aBuilderGroup.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aBuilderGroup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aBuilderGroup.setUserDetails(getUserWorkspace().getLoggedInUser());
 
-					if (StringUtils.isBlank(method)) {
-						if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-							auditHeader = builderGroupService.delete(auditHeader);
+		if (isWorkFlowEnabled()) {
+			String taskId = getTaskId(getRole());
+			String nextTaskId = "";
+			aBuilderGroup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+
+			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
+				nextTaskId = taskId + ";";
+			} else {
+				nextTaskId = StringUtils.trimToEmpty(aBuilderGroup.getNextTaskId());
+
+				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
+				if ("".equals(nextTaskId)) {
+					nextTaskId = getNextTaskIds(taskId, aBuilderGroup);
+				}
+
+				if (isNotesMandatory(taskId, aBuilderGroup)) {
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
+					}
+
+				}
+			}
+			if (!StringUtils.isBlank(nextTaskId)) {
+				String[] nextTasks = nextTaskId.split(";");
+
+				if (nextTasks != null && nextTasks.length > 0) {
+					for (int i = 0; i < nextTasks.length; i++) {
+
+						if (nextRoleCode.length() > 1) {
+							nextRoleCode = nextRoleCode.concat(",");
+						}
+						nextRoleCode = getTaskOwner(nextTasks[i]);
+					}
+				} else {
+					nextRoleCode = getTaskOwner(nextTaskId);
+				}
+			}
+
+			aBuilderGroup.setTaskId(taskId);
+			aBuilderGroup.setNextTaskId(nextTaskId);
+			aBuilderGroup.setRoleCode(getRole());
+			aBuilderGroup.setNextRoleCode(nextRoleCode);
+
+			auditHeader = getAuditHeader(aBuilderGroup, tranType);
+			String operationRefs = getServiceOperations(taskId, aBuilderGroup);
+
+			if ("".equals(operationRefs)) {
+				processCompleted = doSaveProcess(auditHeader, null);
+			} else {
+				String[] list = operationRefs.split(";");
+
+				for (int i = 0; i < list.length; i++) {
+					auditHeader = getAuditHeader(aBuilderGroup, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
+						break;
+					}
+				}
+			}
+		} else {
+			auditHeader = getAuditHeader(aBuilderGroup, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
+		}
+
+		logger.debug("Leaving");
+		return processCompleted;
+	}
+
+	/**
+	 * Get the result after processing DataBase Operations
+	 * 
+	 * @param AuditHeader
+	 *            auditHeader
+	 * @param method
+	 *            (String)
+	 * @return boolean
+	 * 
+	 */
+
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		BuilderGroup aBuilderGroup = (BuilderGroup) auditHeader.getAuditDetail().getModelData();
+		boolean deleteNotes = false;
+
+		try {
+
+			while (retValue == PennantConstants.porcessOVERIDE) {
+
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = builderGroupService.delete(auditHeader);
+						deleteNotes = true;
+					} else {
+						auditHeader = builderGroupService.saveOrUpdate(auditHeader);
+					}
+
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = builderGroupService.doApprove(auditHeader);
+
+						if (aBuilderGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
-						} else {
-							auditHeader = builderGroupService.saveOrUpdate(auditHeader);
+						}
+
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = builderGroupService.doReject(auditHeader);
+						if (aBuilderGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
 
 					} else {
-						if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-							auditHeader = builderGroupService.doApprove(auditHeader);
-
-							if (aBuilderGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-								deleteNotes = true;
-							}
-
-						} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-							auditHeader = builderGroupService.doReject(auditHeader);
-							if (aBuilderGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-								deleteNotes = true;
-							}
-
-						} else {
-							auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
-									.getLabel("InvalidWorkFlowMethod"), null));
-							retValue = ErrorControl.showErrorControl(this.window_BuilderGroupDialog, auditHeader);
-							return processCompleted;
-						}
-					}
-
-					auditHeader = ErrorControl.showErrorDetails(this.window_BuilderGroupDialog, auditHeader);
-					retValue = auditHeader.getProcessStatus();
-
-					if (retValue == PennantConstants.porcessCONTINUE) {
-						processCompleted = true;
-
-						if (deleteNotes) {
-							deleteNotes(getNotes(this.builderGroup), true);
-						}
-					}
-
-					if (retValue == PennantConstants.porcessOVERIDE) {
-						auditHeader.setOveride(true);
-						auditHeader.setErrorMessage(null);
-						auditHeader.setInfoMessage(null);
-						auditHeader.setOverideMessage(null);
+						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
+								.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_BuilderGroupDialog, auditHeader);
+						return processCompleted;
 					}
 				}
-			} catch (InterruptedException e) {
-				logger.error("Exception: ", e);
+
+				auditHeader = ErrorControl.showErrorDetails(this.window_BuilderGroupDialog, auditHeader);
+				retValue = auditHeader.getProcessStatus();
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.builderGroup), true);
+					}
+				}
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
+					auditHeader.setOveride(true);
+					auditHeader.setErrorMessage(null);
+					auditHeader.setInfoMessage(null);
+					auditHeader.setOverideMessage(null);
+				}
 			}
-			setOverideMap(auditHeader.getOverideMap());
-
-			logger.debug("Leaving");
-			return processCompleted;
+		} catch (InterruptedException e) {
+			logger.error("Exception: ", e);
 		}
+		setOverideMap(auditHeader.getOverideMap());
 
-		/**
-		 * @param aAuthorizedSignatoryRepository
-		 * @param tranType
-		 * @return
-		 */
+		logger.debug("Leaving");
+		return processCompleted;
+	}
 
-		private AuditHeader getAuditHeader(BuilderGroup aBuilderGroup, String tranType) {
-			AuditDetail auditDetail = new AuditDetail(tranType, 1, aBuilderGroup.getBefImage(), aBuilderGroup);
-			return new AuditHeader(getReference(), null, null, null, auditDetail, aBuilderGroup.getUserDetails(),
-					getOverideMap());
-		}
+	/**
+	 * @param aAuthorizedSignatoryRepository
+	 * @param tranType
+	 * @return
+	 */
 
-		public void setBuilderGroupService(BuilderGroupService builderGroupService) {
-			this.builderGroupService = builderGroupService;
-		}
-			
+	private AuditHeader getAuditHeader(BuilderGroup aBuilderGroup, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aBuilderGroup.getBefImage(), aBuilderGroup);
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aBuilderGroup.getUserDetails(),
+				getOverideMap());
+	}
+
+	public void setBuilderGroupService(BuilderGroupService builderGroupService) {
+		this.builderGroupService = builderGroupService;
+	}
+
 }

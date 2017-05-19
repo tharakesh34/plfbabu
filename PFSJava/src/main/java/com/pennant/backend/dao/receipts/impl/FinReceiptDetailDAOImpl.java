@@ -48,6 +48,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -55,9 +56,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
+import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -132,6 +137,31 @@ public class FinReceiptDetailDAOImpl extends BasisNextidDaoImpl<FinReceiptDetail
 		return receiptDetail.getId();
 	}
 
+	@SuppressWarnings("serial")
+	@Override
+	public void update(FinReceiptDetail receiptDetail, TableType tableType) {
+		int recordCount = 0;
+		logger.debug("Entering");
+		StringBuilder updateSql = new StringBuilder("Update FinReceiptDetail");
+		updateSql.append(tableType.getSuffix());
+		updateSql.append(" Set PaymentType=:PaymentType , Amount=:Amount , FavourNumber=:FavourNumber, ValueDate=:ValueDate, ");
+		updateSql.append(" BankCode=:BankCode , FavourName=:FavourName , DepositDate=:DepositDate , DepositNo=:DepositNo , ");
+		updateSql.append(" PaymentRef=:PaymentRef , TransactionRef=:TransactionRef , ChequeAcNo=:ChequeAcNo , FundingAc=:FundingAc , ");
+		updateSql.append(" ReceivedDate=:ReceivedDate , Status=:Status , Remarks=:Remarks  ");
+		updateSql.append(" Where ReceiptSeqID =:ReceiptSeqID");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(receiptDetail);
+		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		if (recordCount <= 0) {
+			logger.debug("Error Update Method Count :" + recordCount);
+			ErrorDetails errorDetails = getError("41004", receiptDetail.getReceiptSeqID(), PennantConstants.default_Language);
+			throw new DataAccessException(errorDetails.getError()) {};
+		}
+		logger.debug("Leaving");
+	}
+	
 	@Override
 	public void deleteByReceiptID(long receiptID, TableType tableType) {
 		logger.debug("Entering");
@@ -181,6 +211,14 @@ public class FinReceiptDetailDAOImpl extends BasisNextidDaoImpl<FinReceiptDetail
 
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+
+	private ErrorDetails getError(String errorId, long receiptSeqID, String userLanguage) {
+		String[][] parms = new String[2][1];
+		parms[1][0] = String.valueOf(receiptSeqID);
+		parms[0][0] = PennantJavaUtil.getLabel("label_ReceiptSeqID") + ":" + parms[1][0];
+		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
+				userLanguage);
 	}
 
 }

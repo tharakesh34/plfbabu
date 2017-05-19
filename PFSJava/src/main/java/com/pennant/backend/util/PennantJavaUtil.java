@@ -359,6 +359,7 @@ public class PennantJavaUtil {
 	private static String comInvenWF = "COMMODITY_INVENTORY";
 	private static String realizationWF   = "REALIZATION_PROCESS";
 	private static String receiptCancelWF   = "BOUNCE_PROCESS";
+	private static String feeReceiptWF = "FEERECEIPT_PROCESS";
 
 	public static String getLabel(String label) {
 		if(StringUtils.isEmpty(StringUtils.trimToEmpty(label))){
@@ -1250,7 +1251,7 @@ public class PennantJavaUtil {
 				null, 300));
 		
 		ModuleUtil.register("FeeReceipt", new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] {
-				"FinReceiptHeader" }, realizationWF, new String[] { "ReceiptID", "ReceiptPurpose" },
+				"FinReceiptHeader" }, feeReceiptWF, new String[] { "ReceiptID", "ReceiptPurpose" },
 				null, 300));
 		
 		ModuleUtil.register("ReceiptBounce", new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] {

@@ -100,6 +100,6 @@ public class ReceiptRealizationListModelItemRenderer implements ListitemRenderer
 		lc.setParent(item);
 		
 		item.setAttribute("id", header.getReceiptID());
-		ComponentsCtrl.applyForward(item, "onDoubleClick=onReceiptRealizationItemDoubleClicked");
+		ComponentsCtrl.applyForward(item, "onDoubleClick=onReceiptItemDoubleClicked");
 	}
 }

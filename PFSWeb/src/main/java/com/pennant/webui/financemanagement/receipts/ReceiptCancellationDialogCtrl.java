@@ -163,7 +163,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 	protected AccountSelectionBox							chequeAcNo;
 	protected ExtendedCombobox								fundingAccount;
 	protected Datebox										receivedDate;
-	protected Textbox										receiptNo;
+	protected Uppercasebox									receiptNo;
 	protected Textbox										remarks;
 	
 	protected Row											row_BounceReason;	
@@ -366,7 +366,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 		this.fundingAccount.setValidateColumns(new String[] { "PartnerBankID" });
 
 		this.chequeAcNo.setButtonVisible(false);
-		this.chequeAcNo.setMandatory(true);
+		this.chequeAcNo.setMandatory(false);
 		this.chequeAcNo.setAcountDetails("", "", true);
 		this.chequeAcNo.setTextBoxWidth(180);
 

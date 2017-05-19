@@ -2532,7 +2532,7 @@ public class PennantStaticListUtil {
 			receiptPurposes.add(new ValueLabel(FinanceConstants.FINSER_EVENT_SCHDRPY, Labels.getLabel("label_ReceiptPurpose_SchedulePayment")));
 			receiptPurposes.add(new ValueLabel(FinanceConstants.FINSER_EVENT_EARLYRPY, Labels.getLabel("label_ReceiptPurpose_PartialSettlement")));
 			receiptPurposes.add(new ValueLabel(FinanceConstants.FINSER_EVENT_EARLYSETTLE, Labels.getLabel("label_ReceiptPurpose_EarlySettlement")));
-			//receiptPurposes.add(new ValueLabel(FinanceConstants.FINSER_EVENT_FEEPAYMENT, Labels.getLabel("label_ReceiptPurpose_FeePayment")));
+			receiptPurposes.add(new ValueLabel(FinanceConstants.FINSER_EVENT_FEEPAYMENT, Labels.getLabel("label_ReceiptPurpose_FeePayment")));
 		}
 		return receiptPurposes;
 	}

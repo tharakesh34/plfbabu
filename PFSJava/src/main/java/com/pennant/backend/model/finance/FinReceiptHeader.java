@@ -59,6 +59,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private List<FinExcessAmountReserve> excessReserves = new ArrayList<FinExcessAmountReserve>(1);
 	private List<ReceiptAllocationDetail> allocations = new ArrayList<ReceiptAllocationDetail>(1);
 	private ManualAdvise manualAdvise; // Bounce Reason
+	private List<FinFeeDetail> paidFeeList; // Paid Fee Detail List for Fee Receipt
 	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -373,6 +374,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setInquiryReq(boolean inquiryReq) {
 		this.inquiryReq = inquiryReq;
+	}
+
+	public List<FinFeeDetail> getPaidFeeList() {
+		return paidFeeList;
+	}
+
+	public void setPaidFeeList(List<FinFeeDetail> paidFeeList) {
+		this.paidFeeList = paidFeeList;
 	}
 
 

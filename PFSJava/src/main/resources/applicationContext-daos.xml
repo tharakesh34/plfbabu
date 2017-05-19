@@ -5660,6 +5660,34 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	
+	<!--============ Fee Receipt Process Details ============== -->
+
+	<bean id="feeReceiptService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="feeReceiptServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="feeReceiptServiceTarget"
+		class="com.pennant.backend.service.finance.impl.FeeReceiptServiceImpl">
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
+		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+	
 	<!--============ Receipt Realization Process Details ============== -->
 
 	<bean id="receiptRealizationService"

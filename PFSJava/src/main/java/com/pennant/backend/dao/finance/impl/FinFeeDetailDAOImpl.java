@@ -250,6 +250,34 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 	}
 	
 	/**
+	 * Method for Fetching Fee Details only Paid by Customer upfront
+	 * @param reference
+	 * @param type
+	 * @return
+	 */
+	@Override
+	public List<FinFeeDetail> getPaidFinFeeDetails(final String reference, String type) {
+		logger.debug("Entering");
+		FinFeeDetail finFeeDetail = new FinFeeDetail();
+		finFeeDetail.setFinReference(reference);
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT FeeOrder, CalculatedAmount, ActualAmount, WaivedAmount, PaidAmount, RemainingFee, VasReference " );
+		if(StringUtils.trimToEmpty(type).contains("View")){
+			selectSql.append(" ,FeeTypeCode, FeeTypeDesc ");
+		}
+		selectSql.append(" From FinFeeDetail");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference = :FinReference And PaidAmount > 0 ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
+		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+	}
+	
+	/**
 	 * This method refresh the Record.
 	 * @param finFeeDetail (FinFeeDetail)
  	 * @return void

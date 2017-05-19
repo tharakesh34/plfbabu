@@ -334,7 +334,7 @@
 								<hbox
 									id="hbox_ReceiptRealizationDialog_ReceiptNo">
 									<space spacing="2px" />
-									<textbox id="receiptNo"
+									<uppercasebox id="receiptNo"
 										width="180px" />
 								</hbox>
 								<label
