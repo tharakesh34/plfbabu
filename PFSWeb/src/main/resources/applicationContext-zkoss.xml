@@ -4586,5 +4586,16 @@
 		class="com.pennant.webui.finance.payorderissue.FinAdvancePaymentsCtrl" scope="prototype">
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 	</bean>
-
+	
+		
+	<!-- BuilderGroup -->
+	<bean id="builderGroupListCtrl" class="com.pennant.webui.systemmasters.buildergroup.BuilderGroupListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="builderGroupService" ref="builderGroupService" />
+	</bean>
+	<bean id="builderGroupDialogCtrl" class="com.pennant.webui.systemmasters.buildergroup.BuilderGroupDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="builderGroupService" ref="builderGroupService"/>
+	</bean>
+	
+	
 </beans>

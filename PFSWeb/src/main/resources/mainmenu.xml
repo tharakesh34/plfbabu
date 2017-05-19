@@ -18,6 +18,7 @@
 	<menu id="menu_Category_SystemMaster" rightName="menuCat_SystemMaster" >
 <!-- 		<menuItem id="menu_Item_Academic" zulNavigation="/WEB-INF/pages/SystemMaster/Academic/AcademicList.zul"  rightName="menuItem_SystemMaster_Academic"/> -->
  		<menuItem id="menu_Item_AddressType" zulNavigation="/WEB-INF/pages/SystemMaster/AddressType/AddressTypeList.zul"  rightName="menuItem_SystemMaster_AddressType"/>
+ 		<menuItem id="menu_Item_BuilderGroup" zulNavigation="/WEB-INF/pages/SystemMaster/BuilderGroup/BuilderGroupList.zul" rightName="menuItem_masters_BuilderGroup"/>
 		<!-- <menuItem id="menu_Item_BlackListReasonCode" zulNavigation="/WEB-INF/pages/SystemMaster/BlackListReasonCode/BlackListReasonCodeList.zul"  rightName="menuItem_SystemMaster_BlackListReasonCode"/> -->
 		<menuItem id="menu_Item_City" zulNavigation="/WEB-INF/pages/SystemMaster/City/CityList.zul"  rightName="menuItem_SystemMaster_City"/>
 		<menuItem id="menu_Item_Country" zulNavigation="/WEB-INF/pages/SystemMaster/Country/CountryList.zul"  rightName="menuItem_SystemMaster_Country"/>
@@ -48,7 +49,9 @@
 		<menuItem id="menu_Item_Salutation" zulNavigation="/WEB-INF/pages/SystemMaster/Salutation/SalutationList.zul"  rightName="menuItem_SystemMaster_Salutation"/>
 		<menuItem id="menu_Item_CustomerType" zulNavigation="/WEB-INF/pages/SolutionFactory/CustomerType/CustomerTypeList.zul"  rightName="menuItem_SolutionFactory_CustomerType"/>
 		<menuItem id="menu_Item_Sector" zulNavigation="/WEB-INF/pages/SystemMaster/Sector/SectorList.zul"  rightName="menuItem_SystemMaster_Sector"/>
-		<menuItem id="menu_Item_SubSector" zulNavigation="/WEB-INF/pages/SystemMaster/SubSector/SubSectorList.zul"  rightName="menuItem_SystemMaster_SubSector"/>		
+		<menuItem id="menu_Item_SubSector" zulNavigation="/WEB-INF/pages/SystemMaster/SubSector/SubSectorList.zul"  rightName="menuItem_SystemMaster_SubSector"/>
+				
+				
 <!-- 		<menuItem id="menu_Item_Segment" zulNavigation="/WEB-INF/pages/SystemMaster/Segment/SegmentList.zul"  rightName="menuItem_SystemMaster_Segment"/>
 		<menuItem id="menu_Item_SubSegment" zulNavigation="/WEB-INF/pages/SystemMaster/SubSegment/SubSegmentList.zul"  rightName="menuItem_SystemMaster_SubSegment"/>
  -->	

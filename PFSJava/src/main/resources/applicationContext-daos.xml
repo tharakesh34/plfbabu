@@ -9652,5 +9652,27 @@
 		<property name="nPABucketDAO" ref="nPABucketDAO"/>
 		<property name="nPABucketConfigurationDAO" ref="nPABucketConfigurationDAO"/>
 	</bean>
+	
+		<!-- BuilderGroup -->
+	<bean id="builderGroupDAO" class="com.pennant.backend.dao.systemmasters.impl.BuilderGroupDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="builderGroupService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
+	   <property name="target"><ref bean="builderGroupServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
 
+ 	<bean name="builderGroupServiceTarget" class="com.pennant.backend.service.systemmasters.impl.BuilderGroupServiceImpl">
+       <property name="builderGroupDAO" ref="builderGroupDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
 </beans>

@@ -301,6 +301,7 @@ import com.pennant.backend.model.staticparms.ScheduleMethod;
 import com.pennant.backend.model.systemmasters.Academic;
 import com.pennant.backend.model.systemmasters.AddressType;
 import com.pennant.backend.model.systemmasters.BlackListReasonCode;
+import com.pennant.backend.model.systemmasters.BuilderGroup;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Department;
@@ -1926,6 +1927,9 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FinTypePartner", new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
 				new String[] { "FinTypePartnerBanks","FinTypePartnerBanks_AView" }, masterWF,
 				new String[] { "PartnerBankID","PartnerBankCode", "PartnerBankName" }, null, 450));
+		
+		ModuleUtil.register("BuilderGroup", new ModuleMapping("BuilderGroup", BuilderGroup.class, new String[] { "BuilderGroup",
+		"BuilderGroup_AView" }, masterWF, new String[] {"name","segmentation"},null, 600));
 
 	}
 
