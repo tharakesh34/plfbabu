@@ -22,11 +22,8 @@ import com.pennanttech.pff.core.Literal;
 public class DisbursemenIMPSResponseProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(DisbursemenIMPSResponseProcess.class);
 
-	private String status;
-
 	public DisbursemenIMPSResponseProcess(DataSource dataSource, String status, Date valueDate) {
 		super(dataSource, App.DATABASE.name());
-		this.status = status;
 		this.valueDate = valueDate;
 	}
 
@@ -37,11 +34,11 @@ public class DisbursemenIMPSResponseProcess extends DatabaseDataEngine {
 		executionStatus.setRemarks("Loading data..");
 		MapSqlParameterSource parmMap;
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT CHANNELPARTNERREFNO, TRANSACTIONID, STATUS, DESCRIPTION, PROCESSFLAG FROM INT_DSBIMPS_RESPONSE ");
+		sql.append(" SELECT CHANNELPARTNERREFNO, TRANSACTIONID, STATUS, DESCRIPTION, PROCESSFLAG FROM INT_DSBIMPS_RESPONSE");
 		sql.append(" WHERE  PROCESSFLAG = :PROCESSFLAG ");
 
 		parmMap = new MapSqlParameterSource();
-		parmMap.addValue("PROCESSFLAG", status);
+		parmMap.addValue("PROCESSFLAG", "Y");
 
 		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
 			TransactionStatus txnStatus = null;

@@ -74,8 +74,6 @@ public class DisbursementResponseFileService extends BajajService implements Fil
 
 		String configName = status.getName();
 
-		
-
 		if (!auto && BajajInterfaceConstants.autoDisbResFileJob) {
 			throw new Exception("Auto disbursement file [ " + status.getFileName() + " ] is inprogress please wait..");
 		}
