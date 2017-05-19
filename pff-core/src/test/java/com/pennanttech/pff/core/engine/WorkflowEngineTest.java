@@ -134,8 +134,10 @@ public class WorkflowEngineTest {
 		Assert.assertEquals(engine2.getUserTaskId("RTL_LPO_RECIEPT_OFFICER"), "_2BB16D88-CDCC-4E0E-B2CE-0F8E0C3937A3");
 		Assert.assertEquals(engine2.getUserTaskId("RTL_LPO_ISSUE_OFFICER"), "_BA282A03-59C0-4F67-A7FE-AC5760990322");
 		Assert.assertEquals(engine2.getUserTaskId("RTL_CNTRT_GEN_OFFICER"), "_0DD7377B-A88D-4A08-8FAA-EF9FEB5FCA75");
-		Assert.assertEquals(engine2.getUserTaskId("RTL_CNTRT_SIGNING_OFFICER"), "_1AD9DA13-C1C9-4A4F-B060-64C3273462F0");
-		Assert.assertEquals(engine2.getUserTaskId("RTL_CNTRT_VERIFY_APPROVER"), "_BC08150B-5702-480E-A2A4-867C93DD1F31");
+		Assert.assertEquals(engine2.getUserTaskId("RTL_CNTRT_SIGNING_OFFICER"),
+				"_1AD9DA13-C1C9-4A4F-B060-64C3273462F0");
+		Assert.assertEquals(engine2.getUserTaskId("RTL_CNTRT_VERIFY_APPROVER"),
+				"_BC08150B-5702-480E-A2A4-867C93DD1F31");
 		Assert.assertEquals(engine2.getUserTaskId("RTL_DEALER"), "_5B25FB9F-584D-4E57-9343-472CDD30BF3C");
 		Assert.assertEquals(engine2.getUserTaskId("RTL_CPV_CHECK"), "_1BB3BA72-F049-44A2-84D2-018CC89CFEAA");
 		Assert.assertEquals(engine2.getUserTaskId("RTL_SHARIA_APPROVAL"), "_D8E2AEA9-04A6-48FD-A784-CBB16B26DB8C");
@@ -157,8 +159,7 @@ public class WorkflowEngineTest {
 	public void getUserActions2() {
 		Assert.assertEquals(engine2.getUserActions("_7B64C6C5-337C-44C2-98C6-A723EC862BFF"),
 				"Cancel=Cancelled/Submit=Submitted");
-		Assert.assertEquals(
-				engine2.getUserActions("_56EEA3F6-C886-40AA-8253-BED29D71D4C9"),
+		Assert.assertEquals(engine2.getUserActions("_56EEA3F6-C886-40AA-8253-BED29D71D4C9"),
 				"Reject=Declined/Resubmit=Resubmitted/Approve Subject To=Approved Subject To/Not Recommended=Not Recommended/Return=Returned/Approve=Approved/Submit to Waive CPV Check=Submitted by Waiving CPV Check");
 		Assert.assertEquals(engine2.getUserActions("_D2BFB860-8EE1-41CB-ACCC-5974C83EAE72"), "");
 		Assert.assertEquals(engine2.getUserActions("_B158B71E-1D24-455A-9ADF-B1A0A2EAE064"),
@@ -183,40 +184,41 @@ public class WorkflowEngineTest {
 		Assert.assertEquals(engine2.getUserActions("_0AEAC513-D824-4D5E-AFF0-890D0246B290"),
 				"Submit=Submitted/Resubmit=Resubmitted");
 		Assert.assertEquals(engine2.getUserActions("_34BC23F6-B68A-44D4-B73C-1ADB48836A48"), "Reject=Rejected");
-		Assert.assertEquals(
-				engine2.getUserActions("_37A43FB4-414E-458A-89A6-5B819E8B245B"),
+		Assert.assertEquals(engine2.getUserActions("_37A43FB4-414E-458A-89A6-5B819E8B245B"),
 				"Resubmit=Resubmitted/Cancel=Cancelled/Approve Subject To=Approved Subject To/Not Recommended=Not Recommended/Return=Returned");
 		Assert.assertEquals(engine2.getUserActions("_5EB30BA6-D9EB-4862-999B-98E944C084F9"), "");
 	}
 
 	@Test
 	public void getServiceOperations() {
-		Assert.assertEquals(engine.getServiceOperations("_7B64C6C5-337C-44C2-98C6-A723EC862BFF", new TestEntity(
-				"Submitted", null, false)), "");
-		Assert.assertEquals(engine.getServiceOperations("_7B64C6C5-337C-44C2-98C6-A723EC862BFF", new TestEntity(
-				"Cancelled", null, false)), "doReject");
-		Assert.assertEquals(engine.getServiceOperations("_77E97F8E-6071-449B-9BD7-4B0F3A5A657A", new TestEntity(
-				"Approved", null, false)), "doApprove");
-		Assert.assertEquals(engine.getServiceOperations("_77E97F8E-6071-449B-9BD7-4B0F3A5A657A", new TestEntity(
-				"Resubmitted", null, false)), "");
-		Assert.assertEquals(engine.getServiceOperations("_77E97F8E-6071-449B-9BD7-4B0F3A5A657A", new TestEntity(
-				"Rejected", null, false)), "doReject");
+		Assert.assertEquals(engine.getServiceOperations("_7B64C6C5-337C-44C2-98C6-A723EC862BFF",
+				new TestEntity("Submitted", null, false)), "");
+		Assert.assertEquals(engine.getServiceOperations("_7B64C6C5-337C-44C2-98C6-A723EC862BFF",
+				new TestEntity("Cancelled", null, false)), "doReject");
+		Assert.assertEquals(engine.getServiceOperations("_77E97F8E-6071-449B-9BD7-4B0F3A5A657A",
+				new TestEntity("Approved", null, false)), "doApprove");
+		Assert.assertEquals(engine.getServiceOperations("_77E97F8E-6071-449B-9BD7-4B0F3A5A657A",
+				new TestEntity("Resubmitted", null, false)), "");
+		Assert.assertEquals(engine.getServiceOperations("_77E97F8E-6071-449B-9BD7-4B0F3A5A657A",
+				new TestEntity("Rejected", null, false)), "doReject");
 	}
 
 	@Test
 	public void getServiceOperations2() {
-		Assert.assertEquals(engine2.getServiceOperations("_B158B71E-1D24-455A-9ADF-B1A0A2EAE064", new TestEntity(
-				"Resubmitted", null, false)), "");
-		Assert.assertEquals(engine2.getServiceOperations("_B158B71E-1D24-455A-9ADF-B1A0A2EAE064", new TestEntity(
-				"Approved", null, true)), "doCheckDeviations;doCheckShariaRequired");
-		Assert.assertEquals(engine2.getServiceOperations("_B158B71E-1D24-455A-9ADF-B1A0A2EAE064", new TestEntity(
-				"Approved", null, false)), "doCheckDeviations;doCheckShariaRequired;doCheckProspectCustomer");
+		Assert.assertEquals(engine2.getServiceOperations("_B158B71E-1D24-455A-9ADF-B1A0A2EAE064",
+				new TestEntity("Resubmitted", null, false)), "");
+		Assert.assertEquals(engine2.getServiceOperations("_B158B71E-1D24-455A-9ADF-B1A0A2EAE064",
+				new TestEntity("Approved", null, true)), "doCheckDeviations;doCheckShariaRequired");
+		Assert.assertEquals(
+				engine2.getServiceOperations("_B158B71E-1D24-455A-9ADF-B1A0A2EAE064",
+						new TestEntity("Approved", null, false)),
+				"doCheckDeviations;doCheckShariaRequired;doCheckProspectCustomer");
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void getNextTaskIdsInternal() throws NoSuchMethodException, SecurityException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
+	public void getNextTaskIdsInternal()
+			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		final Method getNextTaskIds = WorkflowEngine.class.getDeclaredMethod("getNextTaskIds", Element.class,
 				String.class, Object.class);
 		getNextTaskIds.setAccessible(true);
@@ -247,15 +249,15 @@ public class WorkflowEngineTest {
 
 	@Test
 	public void getNextTaskIds() {
-		Assert.assertEquals(engine.getNextTaskIds("_7B64C6C5-337C-44C2-98C6-A723EC862BFF", new TestEntity("Submitted",
-				null, false)), "_77E97F8E-6071-449B-9BD7-4B0F3A5A657A");
-		Assert.assertEquals(engine.getNextTaskIds("_7B64C6C5-337C-44C2-98C6-A723EC862BFF", new TestEntity("Cancelled",
-				null, false)), "");
+		Assert.assertEquals(engine.getNextTaskIds("_7B64C6C5-337C-44C2-98C6-A723EC862BFF",
+				new TestEntity("Submitted", null, false)), "_77E97F8E-6071-449B-9BD7-4B0F3A5A657A");
+		Assert.assertEquals(engine.getNextTaskIds("_7B64C6C5-337C-44C2-98C6-A723EC862BFF",
+				new TestEntity("Cancelled", null, false)), "");
 		Assert.assertEquals(
 				engine.getNextTaskIds("_77E97F8E-6071-449B-9BD7-4B0F3A5A657A", new TestEntity("Approved", null, false)),
 				"");
-		Assert.assertEquals(engine.getNextTaskIds("_77E97F8E-6071-449B-9BD7-4B0F3A5A657A", new TestEntity(
-				"Resubmitted", null, false)), "_7B64C6C5-337C-44C2-98C6-A723EC862BFF");
+		Assert.assertEquals(engine.getNextTaskIds("_77E97F8E-6071-449B-9BD7-4B0F3A5A657A",
+				new TestEntity("Resubmitted", null, false)), "_7B64C6C5-337C-44C2-98C6-A723EC862BFF");
 		Assert.assertEquals(
 				engine.getNextTaskIds("_77E97F8E-6071-449B-9BD7-4B0F3A5A657A", new TestEntity("Rejected", null, false)),
 				"");
@@ -263,42 +265,41 @@ public class WorkflowEngineTest {
 
 	@Test
 	public void getNextTaskIds2() {
-		Assert.assertEquals(engine2.getNextTaskIds("_B158B71E-1D24-455A-9ADF-B1A0A2EAE064", new TestEntity(
-				"Resubmitted", null, false)), "_56EEA3F6-C886-40AA-8253-BED29D71D4C9");
+		Assert.assertEquals(engine2.getNextTaskIds("_B158B71E-1D24-455A-9ADF-B1A0A2EAE064",
+				new TestEntity("Resubmitted", null, false)), "_56EEA3F6-C886-40AA-8253-BED29D71D4C9");
 		Assert.assertEquals(
 				engine2.getNextTaskIds("_B158B71E-1D24-455A-9ADF-B1A0A2EAE064", new TestEntity("Approved", null, true)),
 				"_D8E2AEA9-04A6-48FD-A784-CBB16B26DB8C");
-		Assert.assertEquals(engine2.getNextTaskIds("_B158B71E-1D24-455A-9ADF-B1A0A2EAE064", new TestEntity("Approved",
-				null, false)), "_BA282A03-59C0-4F67-A7FE-AC5760990322");
+		Assert.assertEquals(engine2.getNextTaskIds("_B158B71E-1D24-455A-9ADF-B1A0A2EAE064",
+				new TestEntity("Approved", null, false)), "_BA282A03-59C0-4F67-A7FE-AC5760990322");
 	}
 
 	@Test
 	public void getAuditingReq() {
-		Assert.assertFalse(engine.getAuditingReq("_7B64C6C5-337C-44C2-98C6-A723EC862BFF", new TestEntity("Submitted",
-				null, false)));
-		Assert.assertTrue(engine.getAuditingReq("_7B64C6C5-337C-44C2-98C6-A723EC862BFF", new TestEntity("Cancelled",
-				null, false)));
-		Assert.assertFalse(engine.getAuditingReq("_77E97F8E-6071-449B-9BD7-4B0F3A5A657A", new TestEntity("Approved",
-				null, false)));
-		Assert.assertTrue(engine.getAuditingReq("_77E97F8E-6071-449B-9BD7-4B0F3A5A657A", new TestEntity("Resubmitted",
-				null, false)));
-		Assert.assertTrue(engine.getAuditingReq("_77E97F8E-6071-449B-9BD7-4B0F3A5A657A", new TestEntity("Rejected",
-				null, false)));
+		Assert.assertFalse(engine.getAuditingReq("_7B64C6C5-337C-44C2-98C6-A723EC862BFF",
+				new TestEntity("Submitted", null, false)));
+		Assert.assertTrue(engine.getAuditingReq("_7B64C6C5-337C-44C2-98C6-A723EC862BFF",
+				new TestEntity("Cancelled", null, false)));
+		Assert.assertFalse(engine.getAuditingReq("_77E97F8E-6071-449B-9BD7-4B0F3A5A657A",
+				new TestEntity("Approved", null, false)));
+		Assert.assertTrue(engine.getAuditingReq("_77E97F8E-6071-449B-9BD7-4B0F3A5A657A",
+				new TestEntity("Resubmitted", null, false)));
+		Assert.assertTrue(engine.getAuditingReq("_77E97F8E-6071-449B-9BD7-4B0F3A5A657A",
+				new TestEntity("Rejected", null, false)));
 	}
 
 	@Test
 	public void getAuditingReq2() {
-		Assert.assertTrue(engine2.getAuditingReq("_B158B71E-1D24-455A-9ADF-B1A0A2EAE064", new TestEntity("Resubmitted",
-				null, false)));
-		Assert.assertFalse(engine2.getAuditingReq("_B158B71E-1D24-455A-9ADF-B1A0A2EAE064", new TestEntity("Approved",
-				null, true)));
-		Assert.assertFalse(engine2.getAuditingReq("_B158B71E-1D24-455A-9ADF-B1A0A2EAE064", new TestEntity("Approved",
-				null, false)));
+		Assert.assertTrue(engine2.getAuditingReq("_B158B71E-1D24-455A-9ADF-B1A0A2EAE064",
+				new TestEntity("Resubmitted", null, false)));
+		Assert.assertFalse(engine2.getAuditingReq("_B158B71E-1D24-455A-9ADF-B1A0A2EAE064",
+				new TestEntity("Approved", null, true)));
+		Assert.assertFalse(engine2.getAuditingReq("_B158B71E-1D24-455A-9ADF-B1A0A2EAE064",
+				new TestEntity("Approved", null, false)));
 	}
 
 	@Test
-	public void getUserTask() throws NoSuchMethodException, SecurityException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
+	public void getUserTask() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		final Method getUserTask = WorkflowEngine.class.getDeclaredMethod("getUserTask", String.class);
 		getUserTask.setAccessible(true);
 
@@ -321,10 +322,10 @@ public class WorkflowEngineTest {
 
 	@Test
 	public void getUserTaskAdditionalForms() {
-		Assert.assertEquals(StringUtils.join(engine2.getUserTask("_BC08150B-5702-480E-A2A4-867C93DD1F31")
-				.getAdditionalForms(), ','), "Accounting");
-		Assert.assertEquals(StringUtils.join(engine2.getUserTask("_1AD9DA13-C1C9-4A4F-B060-64C3273462F0")
-				.getAdditionalForms(), ','), "");
+		Assert.assertEquals(StringUtils.join(
+				engine2.getUserTask("_BC08150B-5702-480E-A2A4-867C93DD1F31").getAdditionalForms(), ','), "Accounting");
+		Assert.assertEquals(StringUtils
+				.join(engine2.getUserTask("_1AD9DA13-C1C9-4A4F-B060-64C3273462F0").getAdditionalForms(), ','), "");
 	}
 
 	@Test
@@ -339,8 +340,7 @@ public class WorkflowEngineTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void getSequenceFlows() throws NoSuchMethodException, SecurityException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
+	public void getSequenceFlows() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		final Method getSequenceFlows = WorkflowEngine.class.getDeclaredMethod("getSequenceFlows", Element.class,
 				String.class);
 		getSequenceFlows.setAccessible(true);
