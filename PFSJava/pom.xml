@@ -95,11 +95,13 @@
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>sqljdbc4</artifactId>
 			<version>1.5.0_22-b03</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>ojdbc</groupId>
 			<artifactId>ojdbc</artifactId>
 			<version>6</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- Scheduler -->
