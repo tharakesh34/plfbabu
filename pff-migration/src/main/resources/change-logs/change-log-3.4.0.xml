@@ -794,11 +794,17 @@ WHERE     NOT EXISTS
 			update SMTDIVISIONDETAIL set EntityCode='pffHyd' where EntityCode is null;
 		</sql>
 	</changeSet> 
-	<changeSet id="23" author="Surekha">
-		<addNotNullConstraint tableName="SMTDIVISIONDETAIL" columnName="EntityCode"/>
+	<changeSet id="23" author="Surekha" dbms="oracle">
+		<addNotNullConstraint tableName="SMTDIVISIONDETAIL" columnName="EntityCode" />
 	</changeSet>
-	<changeSet id="24" author="Surekha">
+	<changeSet id="23" author="Surekha" dbms="mssql">
+		<addNotNullConstraint tableName="SMTDIVISIONDETAIL" columnName="EntityCode" columnDataType="varchar(8)"/>
+	</changeSet>
+	<changeSet id="24" author="Surekha" dbms="oracle">
 		<addNotNullConstraint tableName="SMTDIVISIONDETAIL_Temp" columnName="EntityCode"/>
+	</changeSet>
+	<changeSet id="24" author="Surekha" dbms="mssql">
+		<addNotNullConstraint tableName="SMTDIVISIONDETAIL_Temp" columnName="EntityCode" columnDataType="varchar(8)"/>
 	</changeSet>
 	<changeSet id="25" author="Surekha">
 		<sql>
