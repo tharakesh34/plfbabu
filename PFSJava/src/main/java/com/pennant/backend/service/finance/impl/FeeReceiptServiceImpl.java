@@ -355,8 +355,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		errParm[0] = PennantJavaUtil.getLabel("label_ReceiptID") + ":" + valueParm[0];
 		String[] errParm2 = new String[1];
 		String[] valueParm2 = new String[1];
-		valueParm[0] = String.valueOf(receiptHeader.getReference());
-		errParm[0] = PennantJavaUtil.getLabel("label_Reference") + ":" + valueParm2[0];
+		valueParm2[0] = String.valueOf(receiptHeader.getReference());
+		errParm2[0] = PennantJavaUtil.getLabel("label_Reference") + ":" + valueParm2[0];
 		if (receiptHeader.isNew()) { // for New record or new record into work flow
 			
 			if (!receiptHeader.isWorkflow()) {// With out Work flow only new
