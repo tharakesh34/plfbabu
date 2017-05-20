@@ -357,4 +357,9 @@ where code='ScoreRule';
 		INSERT INTO BMTAEEVENTS VALUES('FEEPAY','Accounting on Fee Receipt',1,1000,current_timestamp,'Approved','','','','','',0,1,1,0);
 		</sql>
 	</changeSet>
+	<changeSet id="21" author="Irfan">
+		<sql>
+			INSERT INTO BMTAMOUNTCODES VALUES('FEEPAY',0,'ae_paidFee','Accounting on Fee Receipt',1,1,1000,current_timestamp,'Approved','','','','','',0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
