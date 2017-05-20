@@ -252,6 +252,7 @@ public class ReceiptCalculator implements Serializable {
 				}
 				totalWaivedAmt = totalWaivedAmt.add(allocate.getWaivedAmount());
 			}
+			 	receiptData.getReceiptHeader().setWaviedAmt(totalWaivedAmt);
 		}
 		
 		List<FinRepayHeader> repayHeaderList = null;
