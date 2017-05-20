@@ -385,5 +385,18 @@ where code='ScoreRule';
 			<column name="RESERVEDAMT" type="NUMBER(18)" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="26" author="Irfan">
+	<sql>
+		delete  from ErrorDetails where errorcode='65015';
+		INSERT INTO ErrorDetails VALUES('65015','EN','E','Accounting entries not created to proceed further.','','Approved','','','','','',0,current_timestamp,1000,0);
+	</sql>
+	</changeSet>
+	
+	<changeSet id="27" author="Irfan">
+	<sql>
+		delete  from ErrorDetails where errorcode='65014';
+		INSERT INTO ErrorDetails VALUES('65014','EN','W','Fee Receipt on reference:{0} is already exists. Do you want to proceed?','','Approved','','','','','',0,current_timestamp,1000,0);
+	</sql>
+	</changeSet>
 	
 </databaseChangeLog>
