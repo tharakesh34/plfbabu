@@ -81,11 +81,11 @@ REM Preapare the required attributes based on the user input.
 set "change_log_file=db-change-log-%adate%_%atime%.xml"
 if %dbms% == mssql (
 	set "driver=com.microsoft.sqlserver.jdbc.SQLServerDriver"
-	set "classpath=snakeyaml-1.17.jar;pennapps-liquibase-ext-1.3.0.jar;sqljdbc4-4.0.2206.100.jar"
+	set "classpath=lib/snakeyaml-1.17.jar;lib/pennapps-liquibase-ext-1.3.0.jar;lib/sqljdbc4-4.0.2206.100.jar"
 	set "url=jdbc:sqlserver://%hostname%:%port%;database=%database%"
 ) else (
 	set "driver=oracle.jdbc.driver.OracleDriver"
-	set "classpath=snakeyaml-1.17.jar;pennapps-liquibase-ext-1.3.0.jar;ojdbc-6.jar"
+	set "classpath=lib/snakeyaml-1.17.jar;lib/pennapps-liquibase-ext-1.3.0.jar;lib/ojdbc-6.jar"
 	set "url=jdbc:oracle:thin:@%hostname%:%port%:%database%"
 )
 
