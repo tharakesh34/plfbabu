@@ -347,4 +347,9 @@ where code='ScoreRule';
 	
 	</createView>
 	</changeSet>
+	<changeSet id="19" author="Irfan">
+	<sql>
+		INSERT INTO ErrorDetails VALUES('65014','EN','W','{0} {1} {2}Already Exists {0}. Do you want to proceed?','','Approved','','','','','',0,current_timestamp,1000,0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
