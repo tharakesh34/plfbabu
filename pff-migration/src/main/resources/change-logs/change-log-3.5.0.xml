@@ -352,4 +352,9 @@ where code='ScoreRule';
 		INSERT INTO ErrorDetails VALUES('65014','EN','W','{0} {1} {2}Already Exists {0}. Do you want to proceed?','','Approved','','','','','',0,current_timestamp,1000,0);
 	</sql>
 	</changeSet>
+	<changeSet id="20" author="Irfan">
+		<sql>
+		INSERT INTO BMTAEEVENTS VALUES('FEEPAY','Accounting on Fee Receipt',1,1000,current_timestamp,'Approved','','','','','',0,1,1,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
