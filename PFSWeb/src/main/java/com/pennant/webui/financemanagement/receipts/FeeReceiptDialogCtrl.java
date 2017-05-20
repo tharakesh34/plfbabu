@@ -1438,6 +1438,16 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug("Leaving");
 		return processCompleted;
 	}
+	
+	/**
+	 * when user clicks on button "Notes"
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onClick$btnNotes(Event event) throws Exception {
+		doShowNotes(getReceiptHeader());
+	}
 
 	/**
 	 * Get Audit Header Details
