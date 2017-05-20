@@ -2,7 +2,6 @@ package com.pennant.backend.service.finance.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -27,6 +26,7 @@ import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FeeReceiptService;
@@ -251,13 +251,21 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		aeEvent.setCcy(receiptHeader.getFinCcy());
 		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());	
 		
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		if(amountCodes == null){
+			amountCodes = new AEAmountCodes();
+		}
+		
+		FinReceiptDetail finreceiptDetail = receiptHeader.getReceiptDetails().get(0);
+		amountCodes.setPartnerBankAc(finreceiptDetail.getPartnerBankAc());
+		amountCodes.setPartnerBankAcType(finreceiptDetail.getPartnerBankAcType());
+		amountCodes.setPaidFee(finreceiptDetail.getAmount());
+		
 		// Fetch Accounting Set ID
 		AccountingSet accountingSet = getAccountingSetDAO().getAccSetSysDflByEvent(AccountEventConstants.ACCEVENT_FEEPAY, 
 				AccountEventConstants.ACCEVENT_FEEPAY, "");
 		if(accountingSet != null){
-			HashMap<String, Object> dataMap = new HashMap<String, Object>();
-			dataMap.put("ae_paidFee", receiptHeader.getReceiptAmount());
-			aeEvent.setDataMap(dataMap);
+			aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 			aeEvent.getAcSetIDList().add(accountingSet.getAccountSetid());
 			
 			try {
@@ -269,6 +277,10 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 			} catch (PFFInterfaceException e) {
 				e.printStackTrace();
 			}
+		}else{
+			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.KEY_FIELD, "", null, null));
+			logger.debug("Leaving");
+			return auditHeader;
 		}
 
 		// Receipt Header Updation

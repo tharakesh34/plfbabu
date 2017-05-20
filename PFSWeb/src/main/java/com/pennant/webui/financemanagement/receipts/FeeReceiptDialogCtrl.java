@@ -99,6 +99,7 @@ import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.FeeReceiptService;
@@ -914,7 +915,17 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			map.put("roleCode", getRole());
 			map.put("dialogCtrl", this);
 			map.put("finHeaderList", getFinBasicDetails());
-			map.put("acSetID", Long.MIN_VALUE);
+			
+			// Fetch Accounting Set ID
+			AccountingSet accountingSet = accountingSetService.getAccSetSysDflByEvent(AccountEventConstants.ACCEVENT_FEEPAY,
+					AccountEventConstants.ACCEVENT_FEEPAY, "");
+			
+			long acSetID = 0;
+			if(accountingSet != null){
+				acSetID = accountingSet.getAccountSetid();
+			}
+			
+			map.put("acSetID", acSetID);
 			map.put("postAccReq", false);
 			
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AccountingDetailDialog.zul",
@@ -1022,15 +1033,25 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		aeEvent.setBranch(this.finBranch.getValue());
 		aeEvent.setCcy(this.finCcy.getValue());
 		
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		if(amountCodes == null){
+			amountCodes = new AEAmountCodes();
+		}
+		
+		FinReceiptDetail receiptDetail = getReceiptHeader().getReceiptDetails().get(0);
+		amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
+		amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
+		amountCodes.setPaidFee(receiptDetail.getAmount());
+		
 		// Fetch Accounting Set ID
 		AccountingSet accountingSet = accountingSetService.getAccSetSysDflByEvent(AccountEventConstants.ACCEVENT_FEEPAY,
 				AccountEventConstants.ACCEVENT_FEEPAY, "");
 		if(accountingSet != null){
-			HashMap<String, Object> dataMap = new HashMap<String, Object>();
-			dataMap.put("ae_paidFee", PennantApplicationUtil.unFormateAmount(this.receiptAmount.getActualValue(), CurrencyUtil.getFormat(aeEvent.getCcy())));
 			aeEvent.getAcSetIDList().add(accountingSet.getAccountSetid());
-			aeEvent.setDataMap(dataMap);
+			aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 			accountingSetEntries.addAll(engineExecution.getAccEngineExecResults(aeEvent).getReturnDataSet());
+		}else{
+			Clients.showNotification(Labels.getLabel("label_FeeReceiptDialog_NoAccounting.value"), "warning", null, null, -1);
 		}
 		if(accountingDetailDialogCtrl != null){
 			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
@@ -1552,6 +1573,14 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	public void setAccountingSetService(AccountingSetService accountingSetService) {
 		this.accountingSetService = accountingSetService;
+	}
+
+	public AccountingDetailDialogCtrl getAccountingDetailDialogCtrl() {
+		return accountingDetailDialogCtrl;
+	}
+
+	public void setAccountingDetailDialogCtrl(AccountingDetailDialogCtrl accountingDetailDialogCtrl) {
+		this.accountingDetailDialogCtrl = accountingDetailDialogCtrl;
 	}
 
 }

@@ -352,7 +352,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		List<ReturnDataSet> rdSetaccountingSetEntries = null ;
 		int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 
-		if(vasRecording == null){
+		if(getDialogCtrl() == null){
 			formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		}
 		this.listBoxFinAccountings.getItems().clear();

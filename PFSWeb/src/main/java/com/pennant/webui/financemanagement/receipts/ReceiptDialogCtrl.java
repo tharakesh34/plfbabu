@@ -2405,6 +2405,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		//Document Details
 		appendDocumentDetailTab();
 
+		setFinanceDetail(financeDetail);
 		// Stage Accounting Details
 		appendStageAccountingDetailsTab(true);
 
