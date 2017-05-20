@@ -68,7 +68,7 @@ import com.pennanttech.pff.core.util.ModuleUtil;
 
 public class ExtendedCombobox extends Hbox {
 	private static final long			serialVersionUID	= -4246285143621221275L;
-	private final static Logger			logger				= Logger.getLogger(ExtendedCombobox.class);
+	private static final Logger			logger				= Logger.getLogger(ExtendedCombobox.class);
 
 	private Space						space;
 	private Textbox						textbox;
