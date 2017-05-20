@@ -353,9 +353,12 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		String[] valueParm = new String[1];
 		valueParm[0] = String.valueOf(receiptHeader.getReceiptID());
 		errParm[0] = PennantJavaUtil.getLabel("label_ReceiptID") + ":" + valueParm[0];
-
+		String[] errParm2 = new String[1];
+		String[] valueParm2 = new String[1];
+		valueParm[0] = String.valueOf(receiptHeader.getReference());
+		errParm[0] = PennantJavaUtil.getLabel("label_Reference") + ":" + valueParm2[0];
 		if (receiptHeader.isNew()) { // for New record or new record into work flow
-
+			
 			if (!receiptHeader.isWorkflow()) {// With out Work flow only new
 				// records
 				if (beFinReceiptHeader != null) { // Record Already Exists in the
@@ -415,6 +418,11 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 				}
 			}
 		}
+		
+		// Duplicate FEEReceipt reference and purpose
+		if (getFeeReceiptExist(receiptHeader.getReference(),receiptHeader.getReceiptPurpose())) {
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65014", errParm2, valueParm2));
+		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
@@ -424,6 +432,21 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 
 		return auditDetail;
 	}
+
+	private boolean getFeeReceiptExist(String reference, String receiptPurpose) {
+		logger.debug("Entering");
+
+		boolean codeExist = false;
+
+		if (getFinReceiptHeaderDAO().geFeeReceiptCount(reference, receiptPurpose) != 0) {
+			codeExist = true;
+		}
+
+		logger.debug("Leaving");
+
+		return codeExist;
+	}
+	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//

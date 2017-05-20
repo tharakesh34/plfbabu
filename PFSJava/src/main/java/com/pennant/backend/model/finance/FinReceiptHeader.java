@@ -44,6 +44,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private boolean finIsActive;
 	private String scheduleMethod;
 	private String pftDaysBasis;
+	private BigDecimal waviedAmt = BigDecimal.ZERO;
 	
 	private boolean newRecord;
 	private String lovValue;
@@ -398,6 +399,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	}
 	public void setScheduleMethod(String scheduleMethod) {
 		this.scheduleMethod = scheduleMethod;
+	}
+
+	public BigDecimal getWaviedAmt() {
+		return waviedAmt;
+	}
+
+	public void setWaviedAmt(BigDecimal waviedAmt) {
+		this.waviedAmt = waviedAmt;
 	}
 
 }

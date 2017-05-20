@@ -10,4 +10,5 @@ public interface FinReceiptHeaderDAO {
 	void update(FinReceiptHeader receiptHeader, TableType tableType);
 	void deleteByReceiptID(long receiptID, TableType tableType);
 	FinReceiptHeader getReceiptHeaderByID(long receiptID, String type);
+	int geFeeReceiptCount(String reference, String receiptPurpose);
 }
