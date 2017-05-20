@@ -5689,6 +5689,7 @@
 		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
+		<property name="accountingSetDAO" ref="accountingSetDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 	

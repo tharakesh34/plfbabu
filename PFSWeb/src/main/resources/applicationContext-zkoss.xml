@@ -2860,6 +2860,9 @@
 		class="com.pennant.webui.financemanagement.receipts.FeeReceiptDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="feeReceiptService" ref="feeReceiptService" />
+		<property name="eventManager" ref="eventManager" />
+		<property name="accountingSetService" ref="accountingSetService" />
+		<property name="engineExecution" ref="engineExecution" />
 	</bean>
 	
 	<!--============ Receipt Cancellation Process Details ============== -->

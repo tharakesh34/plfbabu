@@ -84,6 +84,8 @@ import org.zkoss.zul.Window;
 import com.pennant.AccountSelectionBox;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -96,8 +98,11 @@ import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.rmtmasters.AccountingSet;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.FeeReceiptService;
+import com.pennant.backend.service.rmtmasters.AccountingSetService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -107,6 +112,8 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.component.Uppercasebox;
+import com.pennant.core.EventManager;
+import com.pennant.core.EventManager.Notify;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
@@ -182,10 +189,13 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	//Buttons
 	protected Button										btnReceipt;
 
-	private transient FeeReceiptService						feeReceiptService;
 	protected transient FeeReceiptListCtrl					feeReceiptListCtrl					= null;		
 	private transient AccountingDetailDialogCtrl			accountingDetailDialogCtrl;
 	private FinReceiptHeader								receiptHeader						= null;
+	private transient FeeReceiptService						feeReceiptService;
+	private AccountingSetService							accountingSetService;
+	private AccountEngineExecution							engineExecution;
+	private EventManager									eventManager;
 
 	/**
 	 * default constructor.<br>
@@ -771,6 +781,35 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						aReceiptHeader.getNextRoleCode(), this.finReference.getValue(), " Fee Receipt ",
 						aReceiptHeader.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);
+				
+
+				// User Notifications Message/Alert
+				try {
+					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
+
+						// Send message Notification to Users
+						String nextRoleCodes = aReceiptHeader.getNextRoleCode();
+						if (StringUtils.isNotEmpty(nextRoleCodes)) {
+							Notify notify = Notify.valueOf("ROLE");
+							String[] to = nextRoleCodes.split(",");
+							if (StringUtils.isNotEmpty(aReceiptHeader.getReference())) {
+
+								String reference = aReceiptHeader.getReference();
+								if (!PennantConstants.RCD_STATUS_CANCELLED.equalsIgnoreCase(aReceiptHeader.getRecordStatus())) {
+									getEventManager().publish(
+											Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":"
+													+ reference, notify, to);
+								}
+							} else {
+								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
+							}
+						}
+					}
+				} catch (Exception e) {
+					logger.error("Exception: ", e);
+				}
 
 				closeDialog();
 			}
@@ -976,14 +1015,23 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
-		/*AEEvent aeEvent = new AEEvent();
+		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
-
-		HashMap<String, Object> dataMap = new HashMap<String, Object>();
-		aeEvent.getAcSetIDList().add(vASConfiguration.getFeeAccounting());
-		List<ReturnDataSet> returnSetEntries = getEngineExecution().processAccountingByEvent(aeEvent, dataMap);
-		getVASRecording().setReturnDataSetList(returnSetEntries);
-		accountingSetEntries.addAll(returnSetEntries);*/
+		aeEvent.setFinReference(this.finReference.getValue());
+		aeEvent.setCustCIF(this.custCIF.getValue());
+		aeEvent.setBranch(this.finBranch.getValue());
+		aeEvent.setCcy(this.finCcy.getValue());
+		
+		// Fetch Accounting Set ID
+		AccountingSet accountingSet = accountingSetService.getAccSetSysDflByEvent(AccountEventConstants.ACCEVENT_FEEPAY,
+				AccountEventConstants.ACCEVENT_FEEPAY, "");
+		if(accountingSet != null){
+			HashMap<String, Object> dataMap = new HashMap<String, Object>();
+			dataMap.put("ae_paidFee", PennantApplicationUtil.unFormateAmount(this.receiptAmount.getActualValue(), CurrencyUtil.getFormat(aeEvent.getCcy())));
+			aeEvent.getAcSetIDList().add(accountingSet.getAccountSetid());
+			aeEvent.setDataMap(dataMap);
+			accountingSetEntries.addAll(engineExecution.getAccEngineExecResults(aeEvent).getReturnDataSet());
+		}
 		if(accountingDetailDialogCtrl != null){
 			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
 		}
@@ -1488,6 +1536,22 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 	public void setFeeReceiptService(FeeReceiptService feeReceiptService) {
 		this.feeReceiptService = feeReceiptService;
+	}
+
+	public EventManager getEventManager() {
+		return eventManager;
+	}
+
+	public void setEventManager(EventManager eventManager) {
+		this.eventManager = eventManager;
+	}
+
+	public void setEngineExecution(AccountEngineExecution engineExecution) {
+		this.engineExecution = engineExecution;
+	}
+
+	public void setAccountingSetService(AccountingSetService accountingSetService) {
+		this.accountingSetService = accountingSetService;
 	}
 
 }

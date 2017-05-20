@@ -2,6 +2,7 @@ package com.pennant.backend.service.finance.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -9,6 +10,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
@@ -16,6 +18,7 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
+import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -23,6 +26,8 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
+import com.pennant.backend.model.rmtmasters.AccountingSet;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FeeReceiptService;
 import com.pennant.backend.util.PennantConstants;
@@ -40,6 +45,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 	private FinFeeDetailDAO					finFeeDetailDAO;
 	private PostingsPreparationUtil			postingsPreparationUtil;
 	private FinanceRepaymentsDAO			financeRepaymentsDAO;
+	private AccountingSetDAO				accountingSetDAO;
 	private AuditHeaderDAO 					auditHeaderDAO;
 
 	public FeeReceiptServiceImpl() {
@@ -237,24 +243,33 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		FinReceiptHeader receiptHeader = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
 		
 		// Accounting Process Execution
-		/*AEEvent aeEvent = new AEEvent();
-		aeEvent.getAcSetIDList().add(Long.MIN_VALUE);
-		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
-		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		HashMap<String, Object>	dataMap = aeEvent.getDataMap();
-		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
-		aeEvent.setDataMap(dataMap);
-
-		try {
-			getPostingsPreparationUtil().postAccounting(aeEvent);
-
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (PFFInterfaceException e) {
-			e.printStackTrace();
-		}*/
+		AEEvent aeEvent = new AEEvent();
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+		aeEvent.setFinReference(receiptHeader.getReference());
+		aeEvent.setCustCIF(receiptHeader.getCustCIF());
+		aeEvent.setBranch(receiptHeader.getFinBranch());
+		aeEvent.setCcy(receiptHeader.getFinCcy());
+		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());	
+		
+		// Fetch Accounting Set ID
+		AccountingSet accountingSet = getAccountingSetDAO().getAccSetSysDflByEvent(AccountEventConstants.ACCEVENT_FEEPAY, 
+				AccountEventConstants.ACCEVENT_FEEPAY, "");
+		if(accountingSet != null){
+			HashMap<String, Object> dataMap = new HashMap<String, Object>();
+			dataMap.put("ae_paidFee", receiptHeader.getReceiptAmount());
+			aeEvent.setDataMap(dataMap);
+			aeEvent.getAcSetIDList().add(accountingSet.getAccountSetid());
+			
+			try {
+				getPostingsPreparationUtil().postAccounting(aeEvent);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (PFFInterfaceException e) {
+				e.printStackTrace();
+			}
+		}
 
 		// Receipt Header Updation
 		//=======================================
@@ -351,12 +366,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = String.valueOf(receiptHeader.getReceiptID());
-		errParm[0] = PennantJavaUtil.getLabel("label_ReceiptID") + ":" + valueParm[0];
-		String[] errParm2 = new String[1];
-		String[] valueParm2 = new String[1];
-		valueParm2[0] = String.valueOf(receiptHeader.getReference());
-		errParm2[0] = PennantJavaUtil.getLabel("label_Reference") + ":" + valueParm2[0];
+		valueParm[0] = String.valueOf(receiptHeader.getReference());
+		errParm[0] = PennantJavaUtil.getLabel("label_Reference") + ":" + valueParm[0];
 		if (receiptHeader.isNew()) { // for New record or new record into work flow
 			
 			if (!receiptHeader.isWorkflow()) {// With out Work flow only new
@@ -421,7 +432,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		
 		// Duplicate FEEReceipt reference and purpose
 		if (getFeeReceiptExist(receiptHeader.getReference(),receiptHeader.getReceiptPurpose())) {
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65014", errParm2, valueParm2));
+			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65014", errParm, valueParm));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -476,7 +487,6 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 	public FinFeeDetailDAO getFinFeeDetailDAO() {
 		return finFeeDetailDAO;
 	}
-
 	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
 		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
@@ -484,7 +494,6 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 	public PostingsPreparationUtil getPostingsPreparationUtil() {
 		return postingsPreparationUtil;
 	}
-
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
@@ -492,9 +501,15 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 	public FinanceRepaymentsDAO getFinanceRepaymentsDAO() {
 		return financeRepaymentsDAO;
 	}
-
 	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
 		this.financeRepaymentsDAO = financeRepaymentsDAO;
+	}
+
+	public AccountingSetDAO getAccountingSetDAO() {
+		return accountingSetDAO;
+	}
+	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
+		this.accountingSetDAO = accountingSetDAO;
 	}
 
 }
