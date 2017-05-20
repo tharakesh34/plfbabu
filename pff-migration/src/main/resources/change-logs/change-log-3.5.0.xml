@@ -362,4 +362,28 @@ where code='ScoreRule';
 			INSERT INTO BMTAMOUNTCODES VALUES('FEEPAY',0,'ae_paidFee','Accounting on Fee Receipt',1,1,1000,current_timestamp,'Approved','','','','','',0);
 		</sql>
 	</changeSet>
+	
+	<changeSet id="22" author="durgapraad G">
+		<addColumn tableName="MANUALADVISE">
+			<column name="RESERVEDAMT" type="NUMBER(18)" />
+			<column name="BALANCEAMT" type="NUMBER(18)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="23" author="Durgaprasad G">
+		<addColumn tableName="MANUALADVISE_TEMP">
+			<column name="RESERVEDAMT" type="NUMBER(18)" />
+			<column name="BALANCEAMT" type="NUMBER(18)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="24" author="Durgaprasad G">
+		<addColumn tableName="MANUALADVISEMOVEMENTS">
+			<column name="RESERVEDAMT" type="NUMBER(18)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="25" author="Durgaprasad G">
+		<addColumn tableName="MANUALADVISEMOVEMENTS_TEMP">
+			<column name="RESERVEDAMT" type="NUMBER(18)" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
