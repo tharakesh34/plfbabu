@@ -87,6 +87,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("cancelReasonDesc");
 		excludeFields.add("finIsActive");
 		excludeFields.add("inquiryReq");
+		excludeFields.add("scheduleMethod");
+		excludeFields.add("pftDaysBasis");
 
 		return excludeFields;
 	}
