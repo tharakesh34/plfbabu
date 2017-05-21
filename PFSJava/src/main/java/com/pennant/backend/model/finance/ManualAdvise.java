@@ -77,6 +77,8 @@ private static final long serialVersionUID = 1L;
 	private BigDecimal adviseAmount;
 	private BigDecimal paidAmount;
 	private BigDecimal waivedAmount;
+	private BigDecimal reservedAmt;
+	private BigDecimal balanceAmt;
 	private String remarks;
 	private Date   valueDate;
 	private Date   postDate;
@@ -283,6 +285,22 @@ private static final long serialVersionUID = 1L;
 
 	public void setPostDate(Date postDate) {
 		this.postDate = postDate;
+	}
+
+	public BigDecimal getReservedAmt() {
+		return reservedAmt;
+	}
+
+	public void setReservedAmt(BigDecimal reservedAmt) {
+		this.reservedAmt = reservedAmt;
+	}
+
+	public BigDecimal getBalanceAmt() {
+		return balanceAmt;
+	}
+
+	public void setBalanceAmt(BigDecimal balanceAmt) {
+		this.balanceAmt = balanceAmt;
 	}
 
 }

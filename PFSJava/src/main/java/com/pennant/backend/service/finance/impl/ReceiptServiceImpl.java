@@ -56,6 +56,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
+import com.pennant.backend.model.finance.ManualAdviseReserve;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
@@ -294,7 +295,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				}
 				
 				// Repay Headers setting to Receipt Details
-				List<FinExcessAmountReserve> reserveList = new ArrayList<>();
+				List<FinExcessAmountReserve> excessReserves = new ArrayList<>();
+				List<ManualAdviseReserve> payableReserves = new ArrayList<>();
 				for (FinReceiptDetail receiptDetail : receiptDetailList) {
 					for (FinRepayHeader finRepayHeader : rpyHeaderList) {
 						if(finRepayHeader.getReceiptSeqID() == receiptDetail.getReceiptSeqID()){
@@ -306,14 +308,22 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					receiptDetail.setAdvMovements(getManualAdviseDAO().getAdvMovementsByReceiptSeq(receiptDetail.getReceiptID(),receiptDetail.getReceiptSeqID(), TableType.TEMP_TAB.getSuffix()));
 					
 					// Excess Reserve Amounts
-					reserveList.addAll(getFinExcessAmountDAO().getExcessReserveList(receiptDetail.getReceiptSeqID()));
+					excessReserves.addAll(getFinExcessAmountDAO().getExcessReserveList(receiptDetail.getReceiptSeqID()));
+					
+					// Payable Reserve Amounts
+					payableReserves.addAll(getManualAdviseDAO().getPayableReserveList(receiptDetail.getReceiptSeqID()));
 				}
-				receiptData.getReceiptHeader().setExcessReserves(reserveList);
+				receiptData.getReceiptHeader().setExcessReserves(excessReserves);
+				receiptData.getReceiptHeader().setPayableReserves(payableReserves);
 				
 				receiptData.getReceiptHeader().setReceiptDetails(receiptDetailList);
 				
 				// Fetch Excess Amount Details
 				receiptData.getReceiptHeader().setExcessAmounts(getFinExcessAmountDAO().getExcessAmountsByRef(finReference));
+				
+				// Fetch Payable Advise Amount Details
+				receiptData.getReceiptHeader().setPayableAdvises(getManualAdviseDAO().getManualAdviseByRef(finReference, 
+						FinanceConstants.MANUAL_ADVISE_PAYABLE, "_AView"));
 				
 				// Receipt Allocation Details
 				receiptData.getReceiptHeader().setAllocations(getAllocationDetailDAO().getAllocationsByReceiptID(
@@ -331,6 +341,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				
 				// Fetch Excess Amount Details
 				receiptData.getReceiptHeader().setExcessAmounts(getFinExcessAmountDAO().getExcessAmountsByRef(finReference));
+				
+				// Fetch Payable Advise Amount Details
+				receiptData.getReceiptHeader().setPayableAdvises(getManualAdviseDAO().getManualAdviseByRef(finReference, 
+						FinanceConstants.MANUAL_ADVISE_PAYABLE, "_AView"));
 				
 			}
 		}
@@ -465,6 +479,32 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						
 						// Update Excess Reserve Log
 						getFinExcessAmountDAO().updateExcessReserveLog(receiptSeqID, receiptDetail.getPayAgainstID(), diffInReserve);
+					}
+				}
+			}
+			
+			// Payable Amount Reserve
+			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+
+				// Payable Amount make utilization
+				ManualAdviseReserve payableReserve = getManualAdviseDAO().getPayableReserve(receiptSeqID, receiptDetail.getPayAgainstID());
+				if(payableReserve == null){
+
+					// Update Payable Amount in Reserve
+					getManualAdviseDAO().updatePayableReserve(receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
+
+					// Save Payable Reserve Log Amount
+					getManualAdviseDAO().savePayableReserveLog(receiptSeqID, receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
+
+				}else{
+					if(receiptDetail.getAmount().compareTo(payableReserve.getReservedAmt()) != 0){
+						BigDecimal diffInReserve = receiptDetail.getAmount().subtract(payableReserve.getReservedAmt());
+
+						// Update Reserve Amount in Manual Advise
+						getManualAdviseDAO().updatePayableReserve(receiptDetail.getPayAgainstID(), diffInReserve);
+
+						// Update Payable Reserve Log
+						getManualAdviseDAO().updatePayableReserveLog(receiptSeqID, receiptDetail.getPayAgainstID(), diffInReserve);
 					}
 				}
 			}
@@ -615,6 +655,21 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 					// Delete Reserved Log against Excess and Receipt ID
 					getFinExcessAmountDAO().deleteExcessReserve(receiptSeqID, receiptDetail.getPayAgainstID());
+				}
+			}
+			
+			// Payable Amount Reserve
+			if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+
+				// Payable Amount make utilization
+				ManualAdviseReserve payableReserve = getManualAdviseDAO().getPayableReserve(receiptSeqID, receiptDetail.getPayAgainstID());
+				if(payableReserve != null){
+
+					// Update Reserve Amount in ManualAdvise
+					getManualAdviseDAO().updatePayableReserve(receiptDetail.getPayAgainstID(), payableReserve.getReservedAmt().negate());
+
+					// Delete Reserved Log against Payable Advise ID and Receipt ID
+					getManualAdviseDAO().deletePayableReserve(receiptSeqID, receiptDetail.getPayAgainstID());
 				}
 			}
 		}

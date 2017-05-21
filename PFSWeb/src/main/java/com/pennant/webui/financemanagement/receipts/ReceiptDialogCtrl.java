@@ -136,6 +136,8 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.ManualAdviseReserve;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
@@ -335,6 +337,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Button										btnCalcReceipts;
 	protected Listbox										listBoxPayment;
 	protected Listbox										listBoxSchedule;
+	protected Listheader									listheader_ReceiptSchedule_SchFee;
 
 	private transient OverdueChargeRecoveryService			overdueChargeRecoveryService;
 	private transient AccountsService						accountsService;
@@ -361,6 +364,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private FinReceiptHeader								receiptHeader						= null;
 	private List<FinExcessAmount>							excessList							= null;
 	private List<FinExcessAmountReserve>					excessReserveList					= null;
+	private List<ManualAdvise>								payableList							= null;
+	private List<ManualAdviseReserve>						payableReserveList					= null;
 	private FinanceDetail									financeDetail;
 	private FinanceType										financeType;
 	private RepayMain										repayMain							= null;
@@ -405,13 +410,21 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		try {
 			if (arguments.containsKey("repayData")) {
+				
 				setReceiptData((FinReceiptData) arguments.get("repayData"));
 				financeDetail = getReceiptData().getFinanceDetail();
 				financeType = financeDetail.getFinScheduleData().getFinanceType();
 				setFinanceDetail(financeDetail);
 				receiptHeader = getReceiptData().getReceiptHeader();
+				
+				// Excess Amounts
 				setExcessList(receiptHeader.getExcessAmounts());
 				setExcessReserveList(receiptHeader.getExcessReserves());
+				
+				// Payable Amounts
+				setPayableList(receiptHeader.getPayableAdvises());
+				setPayableReserveList(receiptHeader.getPayableReserves());
+				
 				recordType = financeDetail.getFinScheduleData().getFinanceMain().getRecordType();
 				version = financeDetail.getFinScheduleData().getFinanceMain().getVersion();
 
@@ -690,6 +703,16 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if(listBoxExcess.getFellowIfAny("ExcessAmount_A") != null){
 			CurrencyBox emiInAdvBox = (CurrencyBox) listBoxExcess.getFellowIfAny("ExcessAmount_A");
 			emiInAdvBox.setReadonly(true);
+		}
+		
+		// Payable Amounts
+		List<Listitem> payableItems = this.listBoxExcess.getItems();
+		for (int i = 0; i < payableItems.size(); i++) {
+			Listitem item = payableItems.get(i);
+			if(item.getId().contains("Payable")){
+				CurrencyBox payableAmount = (CurrencyBox) this.listBoxExcess.getFellowIfAny(item.getId().replaceAll("Item", "Amount"));
+				payableAmount.setReadonly(true);
+			}
 		}
 		
 		// Pastdue Allocations
@@ -1259,6 +1282,16 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			totalReceiptAmount = totalReceiptAmount.add(PennantApplicationUtil.unFormateAmount(emiInAdvBox.getActualValue(), formatter));
 		}
 		
+		// Payable Amounts
+		List<Listitem> payableItems = this.listBoxExcess.getItems();
+		for (int i = 0; i < payableItems.size(); i++) {
+			Listitem item = payableItems.get(i);
+			if(item.getId().contains("Payable")){
+				CurrencyBox payableAmount = (CurrencyBox) this.listBoxExcess.getFellowIfAny(item.getId().replaceAll("Item", "Amount"));
+				totalReceiptAmount = totalReceiptAmount.add(PennantApplicationUtil.unFormateAmount(payableAmount.getActualValue(), formatter));
+			}
+		}
+		
 		return totalReceiptAmount;
 	}
 
@@ -1470,6 +1503,23 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					}
 				}
 			}
+			
+			//Schedule Fee Column Visibility Check
+			boolean isSchdFee = false;
+			List<FinanceScheduleDetail> schdList = aFinScheduleData.getFinanceScheduleDetails();
+			for (int i = 0; i < schdList.size(); i++) {
+				FinanceScheduleDetail curSchd = schdList.get(i);
+				if(curSchd.getFeeSchd().compareTo(BigDecimal.ZERO) > 0){
+					isSchdFee = true;
+					break;
+				}
+			}
+
+			if (isSchdFee) {
+				this.listheader_ReceiptSchedule_SchFee.setVisible(true);
+			} else {
+				this.listheader_ReceiptSchedule_SchFee.setVisible(false);
+			}
 
 			//Clear all the listitems in listbox
 			this.listBoxSchedule.getItems().clear();
@@ -1545,6 +1595,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.allocation_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(receiptHeader.getReceiptAmount(), finFormatter));
 		this.payment_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(receiptHeader.getReceiptAmount(), finFormatter));
 		
+		// Excess Amounts
 		Map<String, FinExcessAmount> excessMap = new HashMap<>();
 		if(getExcessList() != null && !getExcessList().isEmpty()){
 			for (int i = 0; i < getExcessList().size(); i++) {
@@ -1552,12 +1603,23 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 		
+		// Payable Amounts
+		Map<Long, ManualAdvise> payableMap = new HashMap<>();
+		if(getPayableList() != null && !getPayableList().isEmpty()){
+			for (int i = 0; i < getPayableList().size(); i++) {
+				payableMap.put(getPayableList().get(i).getAdviseID(), getPayableList().get(i));
+			}
+		}
+		
 		List<FinReceiptDetail> receiptDetailList = new ArrayList<>();
 		int payOrder = 1;
-		FinReceiptDetail receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.PAYTYPE_EMIINADV);
+		FinReceiptDetail receiptDetail = null;
 		// EMI In Advance Receipt Mode
 		if(this.listBoxExcess.getFellowIfAny("ExcessAmount_"+RepayConstants.EXAMOUNTTYPE_EMIINADV) != null){
 			CurrencyBox emiAdvance = (CurrencyBox) this.listBoxExcess.getFellowIfAny("ExcessAmount_"+RepayConstants.EXAMOUNTTYPE_EMIINADV);
+			
+			receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.PAYTYPE_EMIINADV, 
+					excessMap.get(RepayConstants.EXAMOUNTTYPE_EMIINADV).getExcessID());
 			if(emiAdvance.getActualValue().compareTo(BigDecimal.ZERO) > 0){
 				if(receiptDetail == null){
 					receiptDetail = new FinReceiptDetail();
@@ -1586,9 +1648,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		
 		// Excess Amount Receipt Detail
-		receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.PAYTYPE_EXCESS);
 		if(this.listBoxExcess.getFellowIfAny("ExcessAmount_"+RepayConstants.EXAMOUNTTYPE_EXCESS) != null){
 			CurrencyBox excessAmount = (CurrencyBox) this.listBoxExcess.getFellowIfAny("ExcessAmount_"+RepayConstants.EXAMOUNTTYPE_EXCESS);
+			
+			receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.PAYTYPE_EXCESS, 
+					excessMap.get(RepayConstants.EXAMOUNTTYPE_EXCESS).getExcessID());
 			if(excessAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0){
 				if(receiptDetail == null){
 					receiptDetail = new FinReceiptDetail();
@@ -1616,10 +1680,45 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 		
-		// Payable Advise Receipt Modes TODO 
+		// Payable Advise Receipt Modes 
+		List<Listitem> payableItems = this.listBoxExcess.getItems();
+		for (int i = 0; i < payableItems.size(); i++) {
+			Listitem item = payableItems.get(i);
+			if(item.getId().contains("Payable")){
+				CurrencyBox payableAmount = (CurrencyBox) this.listBoxExcess.getFellowIfAny(item.getId().replaceAll("Item", "Amount"));
+				long payableAdviseID = Long.valueOf(payableAmount.getId().substring(payableAmount.getId().indexOf("_")+1));
+				
+				receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.PAYTYPE_PAYABLE, payableAdviseID);
+				if(payableAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0){
+					if(receiptDetail == null){
+						receiptDetail = new FinReceiptDetail();
+					}
+					receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+					receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+					receiptDetail.setPaymentType(RepayConstants.PAYTYPE_PAYABLE);
+					receiptDetail.setPayAgainstID(payableMap.get(payableAdviseID).getAdviseID());
+					receiptDetail.setAmount(PennantApplicationUtil.unFormateAmount(payableAmount.getActualValue(), finFormatter));
+					receiptDetail.setValueDate(this.valueDate.getValue());
+					receiptDetail.setReceivedDate(this.valueDate.getValue());
+					receiptDetail.setDelRecord(false);// Internal Purpose
+					receiptDetail.setPayOrder(payOrder);
+					payOrder = payOrder + 1;
+					receiptDetail.getAdvMovements().clear();
+					receiptDetail.getRepayHeaders().clear();
+					receiptDetailList.add(receiptDetail);
+				}else{
+					if(receiptDetail != null){
+						receiptDetail.setDelRecord(true);
+						receiptDetail.getAdvMovements().clear();
+						receiptDetail.getRepayHeaders().clear();
+						receiptDetailList.add(receiptDetail);
+					}
+				}
+			}
+		}
 		
 		// Receipt Mode case
-		receiptDetail = getExistingReceiptDetail(receiptHeader, "");
+		receiptDetail = getExistingReceiptDetail(receiptHeader, "", 0);
 		if(!StringUtils.equals(RepayConstants.RECEIPTMODE_EXCESS, receiptHeader.getReceiptMode())){
 			if(receiptDetail == null){
 				receiptDetail = new FinReceiptDetail();
@@ -1740,15 +1839,15 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @param receiptType
 	 * @return
 	 */
-	private FinReceiptDetail getExistingReceiptDetail(FinReceiptHeader header, String receiptType){
+	private FinReceiptDetail getExistingReceiptDetail(FinReceiptHeader header, String receiptType, long payAgainstID){
 		FinReceiptDetail detail = null;
 		for (FinReceiptDetail receiptDetail : header.getReceiptDetails()) {
-			if(StringUtils.equals(receiptDetail.getPaymentType(), receiptType)){
+			if(StringUtils.equals(receiptDetail.getPaymentType(), receiptType) && 
+					receiptDetail.getPayAgainstID() == payAgainstID){
 				detail = receiptDetail;
 				break;
 			}
-			if(StringUtils.isEmpty(receiptType) && !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) &&
-					!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
+			if(StringUtils.isEmpty(receiptType) && receiptDetail.getPayAgainstID() == 0){
 				detail = receiptDetail;
 				break;
 			}
@@ -1863,6 +1962,16 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if(listBoxExcess.getFellowIfAny("ExcessAmount_A") != null){
 			CurrencyBox emiInAdvBox = (CurrencyBox) listBoxExcess.getFellowIfAny("ExcessAmount_A");
 			emiInAdvBox.setReadonly(isReadOnly("ReceiptDialog_ExcessAmount"));
+		}
+		
+		// Payable Amounts
+		List<Listitem> payableItems = this.listBoxExcess.getItems();
+		for (int i = 0; i < payableItems.size(); i++) {
+			Listitem item = payableItems.get(i);
+			if(item.getId().contains("Payable")){
+				CurrencyBox payableAmount = (CurrencyBox) this.listBoxExcess.getFellowIfAny(item.getId().replaceAll("Item", "Amount"));
+				payableAmount.setReadonly(isReadOnly("ReceiptDialog_PayableAmount"));
+			}
 		}
 
 		// Pastdue Allocations
@@ -2310,7 +2419,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if(header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()){
 			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
 				FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
-				receiptAmountsMap.put(receiptDetail.getPaymentType(), receiptDetail.getAmount());
+				if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+					receiptAmountsMap.put(receiptDetail.getPaymentType()+"_"+receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
+				}else{
+					receiptAmountsMap.put(receiptDetail.getPaymentType(), receiptDetail.getAmount());
+				}
 				if(!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS) && 
 						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) &&
 						!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
@@ -2336,6 +2449,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		// Render Excess Amount Details
 		doFillExcessAmounts(receiptAmountsMap);
+		doFillPayableAmounts(receiptAmountsMap);
 		receiptAmountsMap = null;
 
 		// Render Allocation Details & Manual Advises
@@ -2405,7 +2519,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		//Document Details
 		appendDocumentDetailTab();
 
-		setFinanceDetail(financeDetail);
 		// Stage Accounting Details
 		appendStageAccountingDetailsTab(true);
 
@@ -2500,7 +2613,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			list.add(excessBal);
 			list.add(excessAmount);
 			list.add(balLabel);
-			excessAmount.addForward("onFulfill", this.window_ReceiptDialog, "onExcessAmountChange", list);
+			excessAmount.addForward("onFulfill", this.window_ReceiptDialog, "onExcessPayableAmountChange", list);
 			lc = new Listcell();
 			lc.appendChild(balLabel);
 			lc.setStyle("text-align:right;");
@@ -2509,6 +2622,92 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		excessAmountTypes = null;
 		excessMap = null;
+
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for Rendering Payable Amount Details
+	 */
+	private void doFillPayableAmounts(Map<String, BigDecimal> receiptAmountsMap){
+		logger.debug("Entering");
+
+		// Excess Amounts
+		int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+
+		Map<Long, BigDecimal> payableMap = new HashMap<>();
+		List<ManualAdvise> payableAmountList = getPayableList();
+		if(payableAmountList != null && !payableAmountList.isEmpty()){
+			for (int i = 0; i < payableAmountList.size(); i++) {
+				BigDecimal balAmount = payableAmountList.get(i).getBalanceAmt();
+				if(getPayableReserveList() != null && !getPayableReserveList().isEmpty()){
+					for (ManualAdviseReserve reserve : getPayableReserveList()) {
+						if(reserve.getAdviseID() == payableAmountList.get(i).getAdviseID()){
+							balAmount = balAmount.add(reserve.getReservedAmt());
+							break;
+						}
+					}
+				}
+				payableMap.put(payableAmountList.get(i).getAdviseID(), balAmount);
+			}
+		}
+
+		BigDecimal payableBal = BigDecimal.ZERO;
+		Listitem item = null;
+		Listcell lc = null;
+		this.listBoxExcess.getItems().clear();
+		for (int i = 0; i < payableAmountList.size(); i++) {
+
+			ManualAdvise payableAdvise = payableAmountList.get(i);
+			if(payableMap.containsKey(payableAdvise.getAdviseID())){
+				payableBal = payableMap.get(payableAdvise.getAdviseID());
+			}else{
+				payableBal = BigDecimal.ZERO;
+			}
+			item = new Listitem();
+
+			lc = new Listcell(payableAdvise.getFeeTypeDesc());
+			lc.setStyle("font-weight:bold;color: #191a1c;");
+			lc.setParent(item);
+
+			lc = new Listcell(PennantApplicationUtil.amountFormate(payableBal, finFormatter));
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+
+			BigDecimal paidAmount = BigDecimal.ZERO;
+			if(receiptAmountsMap.containsKey(RepayConstants.PAYTYPE_PAYABLE+"_"+payableAdvise.getAdviseID())){
+				paidAmount = receiptAmountsMap.get(RepayConstants.PAYTYPE_PAYABLE+"_"+payableAdvise.getAdviseID());
+			}
+			
+			lc = new Listcell();
+			lc.setStyle("text-align:right;");
+			CurrencyBox payableAmt = new CurrencyBox();
+			payableAmt.setStyle("text-align:right;");
+			payableAmt.setBalUnvisible(true);
+			setProps(payableAmt, false, finFormatter, 120);
+			payableAmt.setId("PayableAmount_"+payableAdvise.getAdviseID());
+			payableAmt.setValue(PennantApplicationUtil.formateAmount(paidAmount, finFormatter));
+			payableAmt.setReadonly(isReadOnly("ReceiptDialog_PayableAmount"));
+			lc.appendChild(payableAmt);
+			lc.setParent(item);
+
+			BigDecimal balanceAmount = payableBal.subtract(paidAmount);
+			Label balLabel = new Label(PennantApplicationUtil.amountFormate(balanceAmount, finFormatter));
+			balLabel.setId("PayableBal_"+payableAdvise.getAdviseID());
+
+			List<Object> list = new ArrayList<>();
+			list.add(payableBal);
+			list.add(payableAmt);
+			list.add(balLabel);
+			payableAmt.addForward("onFulfill", this.window_ReceiptDialog, "onExcessPayableAmountChange", list);
+			lc = new Listcell();
+			lc.appendChild(balLabel);
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+			item.setId("PayableItem_"+payableAdvise.getAdviseID());
+			this.listBoxExcess.appendChild(item);
+		}
+		payableMap = null;
 
 		logger.debug("Leaving");
 	}
@@ -2804,7 +3003,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onExcessAmountChange(ForwardEvent event)throws Exception{
+	public void onExcessPayableAmountChange(ForwardEvent event)throws Exception{
 		logger.debug("Entering");
 
 		int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
@@ -3061,7 +3260,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		if (!this.receiptNo.isReadonly()) {
 			this.receiptNo.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptDialog_ReceiptNo.value"),
-					PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 		
 		if(!this.remarks.isReadonly()){
@@ -4870,6 +5069,22 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	public void setExcessReserveList(List<FinExcessAmountReserve> excessReserveList) {
 		this.excessReserveList = excessReserveList;
+	}
+
+	public List<ManualAdvise> getPayableList() {
+		return payableList;
+	}
+
+	public void setPayableList(List<ManualAdvise> payableList) {
+		this.payableList = payableList;
+	}
+
+	public List<ManualAdviseReserve> getPayableReserveList() {
+		return payableReserveList;
+	}
+
+	public void setPayableReserveList(List<ManualAdviseReserve> payableReserveList) {
+		this.payableReserveList = payableReserveList;
 	}
 
 }

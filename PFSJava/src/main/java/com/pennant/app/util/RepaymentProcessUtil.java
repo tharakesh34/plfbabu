@@ -46,11 +46,13 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennanttech.pff.core.TableType;
@@ -607,9 +609,11 @@ public class RepaymentProcessUtil {
 		}
 
 		for (int i = 0; i < receiptDetailList.size(); i++) {
+			
+			FinReceiptDetail receiptDetail = receiptDetailList.get(i);
 
 			// Repay Header list process individually based on List existence
-			List<FinRepayHeader> repayHeaderList = receiptDetailList.get(i).getRepayHeaders();
+			List<FinRepayHeader> repayHeaderList = receiptDetail.getRepayHeaders();
 
 			if (i != 0) {
 				postDate = getPostDate(DateUtility.getAppDate());
@@ -624,25 +628,48 @@ public class RepaymentProcessUtil {
 						&& !StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())) {
 
 					// Update Excess amount (Adding amount and balance updation)
-					if (receiptDetailList.get(i).getPayAgainstID() != 0
-							&& receiptDetailList.get(i).getPayAgainstID() != Long.MIN_VALUE) {
-						getFinExcessAmountDAO().updateExcessBal(receiptDetailList.get(i).getPayAgainstID(),
-								repayHeader.getRepayAmount());
-					} else {
-						int recordCount = getFinExcessAmountDAO().updateExcessBalByRef(finReference,
-								repayHeader.getFinEvent(), repayHeader.getRepayAmount());
-						// If record Not found then record count should be zero. Need to create new Excess Record
-						if (recordCount <= 0) {
-							FinExcessAmount excess = new FinExcessAmount();
-							excess.setFinReference(finReference);
-							excess.setAmountType(repayHeader.getFinEvent());
-							excess.setAmount(repayHeader.getRepayAmount());
-							excess.setBalanceAmt(repayHeader.getRepayAmount());
-							excess.setUtilisedAmt(BigDecimal.ZERO);
-							excess.setReservedAmt(BigDecimal.ZERO);
-							if (!receiptHeader.isInquiryReq()) {
-								getFinExcessAmountDAO().saveExcess(excess);
+					if(StringUtils.equals(repayHeader.getFinEvent(), RepayConstants.EXCESSADJUSTTO_EXCESS) ||
+							StringUtils.equals(repayHeader.getFinEvent(), RepayConstants.EXCESSADJUSTTO_EMIINADV)){
+						
+						if (receiptDetail.getPayAgainstID() != 0 && receiptDetail.getPayAgainstID() != Long.MIN_VALUE) {
+							getFinExcessAmountDAO().updateExcessBal(receiptDetail.getPayAgainstID(),
+									repayHeader.getRepayAmount());
+						} else {
+							int recordCount = getFinExcessAmountDAO().updateExcessBalByRef(finReference,
+									repayHeader.getFinEvent(), repayHeader.getRepayAmount());
+							// If record Not found then record count should be zero. Need to create new Excess Record
+							if (recordCount <= 0) {
+								FinExcessAmount excess = new FinExcessAmount();
+								excess.setFinReference(finReference);
+								excess.setAmountType(repayHeader.getFinEvent());
+								excess.setAmount(repayHeader.getRepayAmount());
+								excess.setBalanceAmt(repayHeader.getRepayAmount());
+								excess.setUtilisedAmt(BigDecimal.ZERO);
+								excess.setReservedAmt(BigDecimal.ZERO);
+								if (!receiptHeader.isInquiryReq()) {
+									getFinExcessAmountDAO().saveExcess(excess);
+								}
 							}
+						}
+					}
+					
+					// Create New Payable Amount
+					if(StringUtils.equals(repayHeader.getFinEvent(), RepayConstants.EXCESSADJUSTTO_PAYABLE)){
+						
+						ManualAdvise manualAdvise = new ManualAdvise();
+						manualAdvise.setAdviseType(FinanceConstants.MANUAL_ADVISE_PAYABLE);
+						manualAdvise.setFinReference(receiptHeader.getReference());
+						manualAdvise.setFeeTypeID(0);
+						manualAdvise.setSequence(0);
+						manualAdvise.setAdviseAmount(repayHeader.getRepayAmount());
+						manualAdvise.setBalanceAmt(repayHeader.getRepayAmount());
+						manualAdvise.setValueDate(receiptDetail.getValueDate());
+						manualAdvise.setPostDate(receiptDetail.getValueDate());
+						manualAdvise.setReceiptID(receiptHeader.getReceiptID());
+						manualAdvise.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+
+						if (!receiptHeader.isInquiryReq()) {
+							getManualAdviseDAO().save(manualAdvise, TableType.MAIN_TAB);
 						}
 					}
 
@@ -669,8 +696,7 @@ public class RepaymentProcessUtil {
 				rpyProcessed = true;
 				List<RepayScheduleDetail> repaySchdList = repayHeader.getRepayScheduleDetails();
 				List<Object> returnList = doRepayPostings(financeMain, scheduleDetails, profitDetail, repaySchdList,
-						getEventCode(repayHeader.getFinEvent()), valueDate, receiptDetailList.get(i),
-						receiptHeader.getPostBranch());
+						getEventCode(repayHeader.getFinEvent()), valueDate, receiptDetail, receiptHeader.getPostBranch());
 
 				if (!(Boolean) returnList.get(0)) {
 					String errParm = (String) returnList.get(1);
@@ -709,6 +735,7 @@ public class RepaymentProcessUtil {
 			receiptDetail.setStatus(RepayConstants.PAYSTATUS_APPROVED);
 			long receiptSeqID = getFinReceiptDetailDAO().save(receiptDetail, TableType.MAIN_TAB);
 
+			// Excess Amounts
 			if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)
 					|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)) {
 
@@ -729,6 +756,30 @@ public class RepaymentProcessUtil {
 					movement.setTranType(AccountConstants.TRANTYPE_DEBIT);
 					movement.setAmount(receiptDetail.getAmount());
 					getFinExcessAmountDAO().saveExcessMovement(movement);
+				}
+			}
+			
+			// Payable Advise Amounts
+			if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)) {
+
+				long payAgainstID = receiptDetail.getPayAgainstID();
+
+				// Payable Advise Amount make utilization
+				if (payAgainstID != 0) {
+					getManualAdviseDAO().updateUtilise(payAgainstID, receiptDetail.getAmount());
+
+					// Delete Reserved Log against Advise and Receipt Seq ID
+					getManualAdviseDAO().deletePayableReserve(receiptSeqID, payAgainstID);
+
+					// Payable Advise Movement Creation
+					ManualAdviseMovements movement = new ManualAdviseMovements();
+					movement.setAdviseID(payAgainstID);
+					movement.setReceiptID(receiptID);
+					movement.setReceiptSeqID(receiptSeqID);
+					movement.setMovementDate(DateUtility.getAppDate());
+					movement.setMovementAmount(receiptDetail.getAmount());
+					movement.setPaidAmount(receiptDetail.getAmount());
+					getManualAdviseDAO().saveMovement(movement, TableType.MAIN_TAB.getSuffix());
 				}
 			}
 

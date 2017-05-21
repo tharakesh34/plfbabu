@@ -48,6 +48,7 @@ import java.util.List;
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
+import com.pennant.backend.model.finance.ManualAdviseReserve;
 import com.pennanttech.pff.core.TableType;
 
 public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
@@ -62,5 +63,12 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	void deleteMovementsByReceiptID(long receiptID, String type);
 	List<ManualAdviseMovements> getAdvMovementsByReceiptSeq(long receiptID, long receiptSeqID, String string);
 	void updateMovementStatus(long receiptID, long receiptSeqID, String string, String string2);
+	List<ManualAdviseReserve> getPayableReserveList(long receiptSeqID);
+	ManualAdviseReserve getPayableReserve(long receiptSeqID, long payAgainstID);
+	void savePayableReserveLog(long receiptSeqID, long payAgainstID, BigDecimal reserveAmt);
+	void updatePayableReserveLog(long receiptID, long payAgainstID, BigDecimal diffInReserve);
+	void deletePayableReserve(long receiptID, long payAgainstID);
+	void updatePayableReserve(long payAgainstID, BigDecimal reserveAmt);
+	void updateUtilise(long adviseID, BigDecimal amount);
 	
 }

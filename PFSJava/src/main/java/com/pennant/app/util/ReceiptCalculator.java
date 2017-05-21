@@ -243,7 +243,7 @@ public class ReceiptCalculator implements Serializable {
 					waivedAllocationMap.put(allocate.getAllocationType(), allocate.getWaivedAmount());
 				}else{
 					paidAllocationMap.put(allocate.getAllocationType()+"_"+allocate.getAllocationTo(), allocate.getPaidAmount().add(allocate.getWaivedAmount()));
-					
+
 					BigDecimal waivedAmount = BigDecimal.ZERO;
 					if(waivedAllocationMap.containsKey(allocate.getAllocationType())){
 						waivedAmount = waivedAllocationMap.get(allocate.getAllocationType());
@@ -252,7 +252,9 @@ public class ReceiptCalculator implements Serializable {
 				}
 				totalWaivedAmt = totalWaivedAmt.add(allocate.getWaivedAmount());
 			}
-			 	receiptData.getReceiptHeader().setWaviedAmt(totalWaivedAmt);
+			
+			// Setting Total Waived amount to Header details for Information Only
+			receiptData.getReceiptHeader().setWaviedAmt(totalWaivedAmt);
 		}
 		
 		List<FinRepayHeader> repayHeaderList = null;

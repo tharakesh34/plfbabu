@@ -71,7 +71,8 @@ public class RepayConstants {
 	// Excess Adjustment to in Receipts
 	public static final String	EXCESSADJUSTTO_EXCESS	= "E";
 	public static final String	EXCESSADJUSTTO_EMIINADV	= "A";
-	public static final String	EXCESSADJUSTTO_PARTPAY 	= "P";
+	public static final String	EXCESSADJUSTTO_PAYABLE 	= "P";
+	public static final String	EXCESSADJUSTTO_PARTPAY 	= "S";
 	
 	// Receipt Modes
 	public static final String	RECEIPTMODE_CASH		= "CASH";

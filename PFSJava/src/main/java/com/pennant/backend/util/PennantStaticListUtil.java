@@ -2539,10 +2539,11 @@ public class PennantStaticListUtil {
 	
 	public static ArrayList<ValueLabel> getExcessAdjustmentTypes(){
 		if(excessAdjustTo == null){
-			excessAdjustTo = new ArrayList<ValueLabel>(3);
+			excessAdjustTo = new ArrayList<ValueLabel>(4);
 			excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_EXCESS, Labels.getLabel("label_ExcessAdjustTo_ExcessAmount")));
 			excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_EMIINADV, Labels.getLabel("label_ExcessAdjustTo_EMIInAdvance")));
-			/*excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_PARTPAY, Labels.getLabel("label_ExcessAdjustTo_PartialSettlement")));*/
+			//excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_PAYABLE, Labels.getLabel("label_ExcessAdjustTo_PayableAdvise")));
+			//excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_PARTPAY, Labels.getLabel("label_ExcessAdjustTo_PartialSettlement")));
 		}
 		return excessAdjustTo;
 	}

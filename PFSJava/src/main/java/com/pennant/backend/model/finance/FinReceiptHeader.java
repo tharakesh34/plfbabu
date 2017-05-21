@@ -60,6 +60,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>(1);
 	private List<FinExcessAmount> excessAmounts = new ArrayList<FinExcessAmount>(1);
 	private List<FinExcessAmountReserve> excessReserves = new ArrayList<FinExcessAmountReserve>(1);
+	private List<ManualAdvise> payableAdvises = new ArrayList<ManualAdvise>(1);
+	private List<ManualAdviseReserve> payableReserves = new ArrayList<ManualAdviseReserve>(1);
 	private List<ReceiptAllocationDetail> allocations = new ArrayList<ReceiptAllocationDetail>(1);
 	private ManualAdvise manualAdvise; // Bounce Reason
 	private List<FinFeeDetail> paidFeeList; // Paid Fee Detail List for Fee Receipt
@@ -90,6 +92,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("inquiryReq");
 		excludeFields.add("scheduleMethod");
 		excludeFields.add("pftDaysBasis");
+		excludeFields.add("payableAdvises");
+		excludeFields.add("payableReserves");
 
 		return excludeFields;
 	}
@@ -407,6 +411,22 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setWaviedAmt(BigDecimal waviedAmt) {
 		this.waviedAmt = waviedAmt;
+	}
+
+	public List<ManualAdvise> getPayableAdvises() {
+		return payableAdvises;
+	}
+
+	public void setPayableAdvises(List<ManualAdvise> payableAdvises) {
+		this.payableAdvises = payableAdvises;
+	}
+
+	public List<ManualAdviseReserve> getPayableReserves() {
+		return payableReserves;
+	}
+
+	public void setPayableReserves(List<ManualAdviseReserve> payableReserves) {
+		this.payableReserves = payableReserves;
 	}
 
 }

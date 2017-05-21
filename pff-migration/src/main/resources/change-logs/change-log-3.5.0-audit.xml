@@ -14,4 +14,11 @@
 		</addColumn>
 </changeSet>
 
+	<changeSet id="2" author="Siva">
+		<addColumn tableName="ADTMANUALADVISE">
+			<column name="RESERVEDAMT" type="NUMBER(18)" />
+			<column name="BALANCEAMT" type="NUMBER(18)" />
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>

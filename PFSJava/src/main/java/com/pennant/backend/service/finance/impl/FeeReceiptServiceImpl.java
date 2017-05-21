@@ -264,23 +264,23 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		// Fetch Accounting Set ID
 		AccountingSet accountingSet = getAccountingSetDAO().getAccSetSysDflByEvent(AccountEventConstants.ACCEVENT_FEEPAY, 
 				AccountEventConstants.ACCEVENT_FEEPAY, "");
-		if(accountingSet != null){
-			aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
-			aeEvent.getAcSetIDList().add(accountingSet.getAccountSetid());
-			
-			try {
-				getPostingsPreparationUtil().postAccounting(aeEvent);
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			} catch (PFFInterfaceException e) {
-				e.printStackTrace();
-			}
-		}else{
+		if(accountingSet == null){
 			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.KEY_FIELD, "", null, null));
 			logger.debug("Leaving");
 			return auditHeader;
+		}
+			
+		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+		aeEvent.getAcSetIDList().add(accountingSet.getAccountSetid());
+
+		try {
+			getPostingsPreparationUtil().postAccounting(aeEvent);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (PFFInterfaceException e) {
+			e.printStackTrace();
 		}
 
 		// Receipt Header Updation

@@ -1156,7 +1156,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		
 		if (!this.receiptNo.isReadonly()) {
 			this.receiptNo.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_ReceiptNo.value"),
-					PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 		
 		if(!this.remarks.isReadonly()){

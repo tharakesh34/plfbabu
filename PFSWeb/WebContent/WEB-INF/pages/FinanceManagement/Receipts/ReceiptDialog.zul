@@ -1075,47 +1075,47 @@
 									style="padding:0px;position:relative;">
 									<listheader hflex="min" />
 									<listheader
-										id="listheader_ScheduleDetailDialog_Date" hflex="min" value=""
+										id="listheader_ReceiptSchedule_Date" hflex="min" value=""
 										label="${c:l('listheader_ScheduleDate.label')}" />
 									<listheader
-										id="listheader_ScheduleDetailDialog_ScheduleEvent" hflex="min"
+										id="listheader_ReceiptSchedule_ScheduleEvent" hflex="min"
 										label="${c:l('listheader_ScheduleEvent.label')}" />
 									<listheader
-										id="listheader_ScheduleDetailDialog_CalProfit" hflex="min"
+										id="listheader_ReceiptSchedule_CalProfit" hflex="min"
 										align="right" label="${c:l('listheader_CalProfit.label')}" />
 									<listheader
-										id="listheader_ScheduleDetailDialog_SupplementRent"
+										id="listheader_ReceiptSchedule_SupplementRent"
 										hflex="min" visible="false" align="right" />
 									<listheader
-										id="listheader_ScheduleDetailDialog_IncreasedCost" hflex="min"
+										id="listheader_ReceiptSchedule_IncreasedCost" hflex="min"
 										visible="false" align="right" />
 									<listheader
-										id="listheader_ScheduleDetailDialog_SchFee" hflex="min"
+										id="listheader_ReceiptSchedule_SchFee" hflex="min"
 										align="right" label="${c:l('listheader_SchFee.label')}"
 										visible="false" />
 									<listheader
-										id="listheader_ScheduleDetailDialog_TDSAmount" hflex="min"
+										id="listheader_ReceiptSchedule_TDSAmount" hflex="min"
 										align="right" label="${c:l('listheader_TDSAmount.label')}" />
 									<listheader
-										id="listheader_ScheduleDetailDialog_SchAdvProfit" hflex="min"
+										id="listheader_ReceiptSchedule_SchAdvProfit" hflex="min"
 										visible="false" align="right" />
 									<listheader
-										id="listheader_ScheduleDetailDialog_SchProfit" hflex="min"
+										id="listheader_ReceiptSchedule_SchProfit" hflex="min"
 										align="right" label="${c:l('listheader_SchProfit.label')}" />
 									<listheader
-										id="listheader_ScheduleDetailDialog_Principal" hflex="min"
+										id="listheader_ReceiptSchedule_Principal" hflex="min"
 										align="right" label="${c:l('listheader_Principal.label')}" />
 									<listheader
-										id="listheader_ScheduleDetailDialog_AdvTotal" hflex="min"
+										id="listheader_ReceiptSchedule_AdvTotal" hflex="min"
 										visible="false" align="right" />
 									<listheader
-										id="listheader_ScheduleDetailDialog_Rebate" hflex="min"
+										id="listheader_ReceiptSchedule_Rebate" hflex="min"
 										visible="false" align="right" />
 									<listheader
-										id="listheader_ScheduleDetailDialog_Total" hflex="min"
+										id="listheader_ReceiptSchedule_Total" hflex="min"
 										align="right" label="${c:l('listheader_Total.label')}" />
 									<listheader
-										id="listheader_ScheduleDetailDialog_ScheduleEndBal"
+										id="listheader_ReceiptSchedule_ScheduleEndBal"
 										hflex="min" align="right"
 										label="${c:l('listheader_ScheduleEndBal.label')}" />
 									<listheader
