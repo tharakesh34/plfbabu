@@ -585,6 +585,54 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		logger.debug("Leaving");
 		return finSchdDetails;
 	}
+	
+	@Override
+	public List<FinanceScheduleDetail> getFinScheduleDetails(long Custid,boolean isActive) {
+		logger.debug("Entering");
+		MapSqlParameterSource source=new MapSqlParameterSource();
+		source.addValue("CustID", Custid);
+		
+		StringBuilder selectSql = new StringBuilder(" Select FinReference, SchDate, SchSeq, PftOnSchDate,");
+		selectSql.append(" CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, DisbOnSchDate,");
+		selectSql.append(" DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate, ActRate, NoOfDays,");
+		selectSql.append(" CalOnIndRate, DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount, ");
+		selectSql.append(" ProfitBalance, DisbAmount, DownPaymentAmount, CpzAmount, ");
+		selectSql.append(" OrgPft , OrgPri, OrgEndBal,OrgPlanPft,");
+		selectSql.append(" ClosingBalance, ProfitFraction, PrvRepayAmount, CalculatedRate,FeeChargeAmt,InsuranceAmt, ");
+		selectSql.append(" FeeSchd , SchdFeePaid , SchdFeeOS,  InsSchd, SchdInsPaid, ");
+		selectSql.append(" TDSAmount, TDSPaid, PftDaysBasis, ");
+		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid,Specifier,");
+		selectSql.append(" DefSchdDate, SchdMethod, InstNumber, BpiOrHoliday, FrqDate");
+		
+		if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
+			selectSql.append(", AdvBaseRate , AdvMargin , AdvPftRate , AdvCalRate , AdvProfit , AdvRepayAmount, ");
+			selectSql.append(" SuplRent , IncrCost , SuplRentPaid , IncrCostPaid, ");
+			selectSql.append(" RolloverOnSchDate , RolloverAmount, RolloverAmountPaid ");
+		}
+		selectSql.append(", RefundOrWaiver, EarlyPaid , EarlyPaidBal ,WriteoffPrincipal, WriteoffProfit, ");
+		selectSql.append(" PresentmentId, WriteoffIns , WriteoffSchFee ");
+		
+		if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
+			selectSql.append(", WriteoffIncrCost, WriteoffSuplRent ");
+		}
+		
+		selectSql.append(" From FinScheduleDetails");
+		selectSql.append(" Where FinReference IN (Select FinReference from FinanceMain where CustID = :CustID ");
+		if (isActive) {
+			selectSql.append(" AND FinIsActive = 1");
+		}
+		selectSql.append(" ) order by SchDate asc");
+		
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceScheduleDetail.class);
+		
+		List<FinanceScheduleDetail> finSchdDetails = this.namedParameterJdbcTemplate.query(selectSql.toString(),
+				source, typeRowMapper);
+		logger.debug("Leaving");
+		return finSchdDetails;
+	}
 
 	@Override
 	public List<FinanceScheduleDetail> getFinScheduleDetails(String id, String type, boolean isWIF, long logKey) {

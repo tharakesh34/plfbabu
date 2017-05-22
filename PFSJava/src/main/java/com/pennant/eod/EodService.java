@@ -38,8 +38,6 @@ public class EodService {
 
 	private PlatformTransactionManager	transactionManager;
 
-	// Constants
-	private static final String			SQL	= "SELECT CustId FROM CustomerQueuing WHERE ThreadId=? AND Progress = 0 ";
 
 	public EodService() {
 		super();
@@ -117,8 +115,12 @@ public class EodService {
 
 	}
 
-	public void updCustQueue(int threadId, long custId, Date startDateTime, Date endDateTime) {
-		loadFinanceData.updCustQueue(threadId, custId, startDateTime, endDateTime);
+	public void updateStart(int threadId, long custId) {
+		loadFinanceData.updateStart(threadId, custId);
+	}
+
+	public void updateEnd(int threadId, long custId) {
+		loadFinanceData.updateEnd(threadId, custId);
 	}
 
 	public void setDataSource(DataSource dataSource) {

@@ -29,7 +29,6 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
-import com.pennanttech.pff.core.TableType;
 
 public class LoadFinanceData extends ServiceHelper {
 
@@ -43,8 +42,9 @@ public class LoadFinanceData extends ServiceHelper {
 		custEODEvent.setCustomer(getCustomerDAO().getCustomerEOD(custId));
 
 		long custID = custEODEvent.getCustomer().getCustID();
-		//For SOD Operations
 		List<FinanceMain> custFinMains = getFinanceMainDAO().getFinMainsForEODByCustId(custID, true);
+		List<FinanceScheduleDetail> custfinSchdDetails = getFinanceScheduleDetailDAO().getFinScheduleDetails(custID,
+				true);
 
 		List<FinanceProfitDetail> listprofitDetails = getFinanceProfitDetailDAO().getFinProfitDetailsByCustId(custID,
 				true);
@@ -66,8 +66,7 @@ public class LoadFinanceData extends ServiceHelper {
 			finEODEvent.setFinProfitDetail(getFinanceProfitDetailRef(finReference, listprofitDetails));
 
 			//FINSCHDULE DETAILS
-			List<FinanceScheduleDetail> finSchdDetails = getFinanceScheduleDetailDAO()
-					.getFinScheduleDetails(finReference, TableType.MAIN_TAB.getSuffix(), false);
+			List<FinanceScheduleDetail> finSchdDetails = getFinanceScheduleDetailRef(finReference, custfinSchdDetails);
 			finEODEvent.setFinanceScheduleDetails(finSchdDetails);
 
 			custEODEvent.getFinEODEvents().add(finEODEvent);
@@ -322,13 +321,23 @@ public class LoadFinanceData extends ServiceHelper {
 		logger.debug(" Leaving ");
 	}
 
-	public void updCustQueue(int threadId, long custId, Date startDateTime, Date endDateTime) {
+	public void updateStart(int threadId, long custId) {
 
 		CustomerQueuing customerQueuing = new CustomerQueuing();
 		customerQueuing.setCustID(custId);
 		customerQueuing.setThreadId(threadId);
-		customerQueuing.setStartTime(startDateTime);
-		customerQueuing.setEndTime(endDateTime);
+		customerQueuing.setStartTime(DateUtility.getSysDate());
+		customerQueuing.setProgress(EodConstants.PROGRESS_IN_PROCESS);
+		getCustomerQueuingDAO().update(customerQueuing, true);
+
+	}
+
+	public void updateEnd(int threadId, long custId) {
+
+		CustomerQueuing customerQueuing = new CustomerQueuing();
+		customerQueuing.setCustID(custId);
+		customerQueuing.setThreadId(threadId);
+		customerQueuing.setEndTime(DateUtility.getSysDate());
 		customerQueuing.setProgress(EodConstants.PROGRESS_SUCCESS);
 		getCustomerQueuingDAO().update(customerQueuing, false);
 
@@ -349,4 +358,17 @@ public class LoadFinanceData extends ServiceHelper {
 		return profitDetail;
 	}
 
+	private List<FinanceScheduleDetail> getFinanceScheduleDetailRef(String finMainRef,
+			List<FinanceScheduleDetail> financeScheduleDetails) {
+		List<FinanceScheduleDetail> finSchedulelist = new ArrayList<FinanceScheduleDetail>();
+		Iterator<FinanceScheduleDetail> it = financeScheduleDetails.iterator();
+		while (it.hasNext()) {
+			FinanceScheduleDetail financeProfitDetail = (FinanceScheduleDetail) it.next();
+			if (StringUtils.equals(financeProfitDetail.getFinReference(), finMainRef)) {
+				finSchedulelist.add(financeProfitDetail);
+				it.remove();
+			}
+		}
+		return finSchedulelist;
+	}
 }

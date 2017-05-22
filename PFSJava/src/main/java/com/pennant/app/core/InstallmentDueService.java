@@ -40,6 +40,10 @@ public class InstallmentDueService extends ServiceHelper {
 			}
 
 			int idx = finEODEvent.getIdxDue();
+			if (idx == -1) {
+				continue;
+			}
+
 			FinanceScheduleDetail curSchd = finEODEvent.getFinanceScheduleDetails().get(idx);
 			postInstallmentDues(finEODEvent, curSchd, valueDate, accountingID);
 

@@ -93,9 +93,6 @@ public class MicroEOD implements Tasklet {
 		txDef.setReadOnly(true);
 		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRED);
 		TransactionStatus txStatus = null;
-		Date startDateTime;
-		Date endDateTime;
-		
 		try {
 			connection = DataSourceUtils.doGetConnection(dataSource);
 			sqlStatement = connection.prepareStatement(sqlCustForProcess);
@@ -106,7 +103,8 @@ public class MicroEOD implements Tasklet {
 			//Read all customers to be processed with Forward Cursor
 			while (resultSet.next()) {
 				custId = resultSet.getLong("CustId");
-				startDateTime = DateUtility.getSysDate();
+				//update start
+				eodService.updateStart(threadId, custId);
 
 				//BEGIN TRANSACTION
 				txStatus = transactionManager.getTransaction(txDef);
@@ -115,8 +113,7 @@ public class MicroEOD implements Tasklet {
 				eodService.doProcess(connection, custId, valueDate);
 
 				//Update Status
-				endDateTime = DateUtility.getSysDate();
-				eodService.updCustQueue(threadId, custId, startDateTime, endDateTime);
+				eodService.updateEnd(threadId, custId);
 
 				//COMMIT THE TRANSACTION
 				transactionManager.commit(txStatus);

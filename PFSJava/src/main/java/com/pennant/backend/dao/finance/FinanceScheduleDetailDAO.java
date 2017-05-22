@@ -114,4 +114,6 @@ public interface FinanceScheduleDetailDAO {
 	FinanceScheduleDetail getNextSchPayment(String finReference, Date curBussDate);
 
 	boolean getFinScheduleCountByDate(String finReference, Date fromDate, boolean isWIF);
+
+	List<FinanceScheduleDetail> getFinScheduleDetails(long Custid, boolean isActive);
 }

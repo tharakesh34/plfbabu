@@ -22,13 +22,13 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 	private static Logger				logger			= Logger.getLogger(CustomerQueuingDAOImpl.class);
 
 	private static final String			UPDATE_SQL		= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
-			+ "Where ThreadId = 0";
+																+ "Where ThreadId = 0";
 	private static final String			UPDATE_ORCL		= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
-			+ "Where  ThreadId = 0";
+																+ "Where  ThreadId = 0";
 	private static final String			UPDATE_SQL_RC	= "UPDATE Top(:RowCount) CustomerQueuing set ThreadId=:ThreadId "
-			+ "Where ThreadId = 0";
+																+ "Where ThreadId = 0";
 	private static final String			UPDATE_ORCL_RC	= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
-			+ "Where ROWNUM <=:RowCount AND ThreadId = 0";
+																+ "Where ROWNUM <=:RowCount AND ThreadId = 0";
 
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
@@ -44,8 +44,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		CustomerQueuing customerQueuing = new CustomerQueuing();
 		customerQueuing.setEodDate(date);
 
-		StringBuilder insertSql = new StringBuilder(
-				"INSERT INTO CustomerQueuing (CustID, EodDate, THREADID, PROGRESS)");
+		StringBuilder insertSql = new StringBuilder("INSERT INTO CustomerQueuing (CustID, EodDate, THREADID, PROGRESS)");
 		insertSql.append(" SELECT  DISTINCT CustID, :EodDate, 0, 0 FROM FinanceMain where FinIsActive = 1");
 
 		logger.debug("updateSql: " + insertSql.toString());
@@ -179,9 +178,12 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing set");
-		updateSql.append(" StartTime =:StartTime,");
-		updateSql.append(" EndTime = :EndTime,");
-		updateSql.append(" Progress = :Progress Where CustID =:CustID and ThreadId=:ThreadId");
+		if (start) {
+			updateSql.append(" StartTime =:StartTime,");
+		} else {
+			updateSql.append(" EndTime = :EndTime,");
+		}
+		updateSql.append(" Progress = :Progress Where CustID =:CustID");
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
