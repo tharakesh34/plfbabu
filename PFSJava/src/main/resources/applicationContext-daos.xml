@@ -8404,6 +8404,7 @@
 	<bean name="recalServiceTarget"
 		class="com.pennant.backend.financeservice.impl.RecalculateServiceImpl">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 	<bean id="changeProfitService"

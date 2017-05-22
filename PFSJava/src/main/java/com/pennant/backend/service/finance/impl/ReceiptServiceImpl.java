@@ -1311,44 +1311,25 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Prepare Receipt Details Data
 		FinReceiptHeader receiptHeader = finReceiptData.getReceiptHeader();
 		FinanceDetail financeDetail = finReceiptData.getFinanceDetail();
-		receiptHeader.setReceiptAmount(receiptHeader.getReceiptAmount());//TODO: DDP getTotalReceiptAmt();
+		receiptHeader.setReceiptAmount(receiptHeader.getReceiptAmount());
 		receiptHeader.getAllocations().clear();
 
-		List<FinReceiptDetail> receiptDetailList = new ArrayList<>();
-		int payOrder = 1;
-		FinReceiptDetail receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.PAYTYPE_EMIINADV);
-
 		// Receipt Mode case
-		receiptDetail = getExistingReceiptDetail(receiptHeader, "");
-		if (!StringUtils.equals(RepayConstants.RECEIPTMODE_EXCESS, receiptHeader.getReceiptMode())) {
-			if (receiptDetail == null) {
-				receiptDetail = new FinReceiptDetail();
-			}
-			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-			receiptDetail.setPaymentType(receiptHeader.getReceiptMode());
-			receiptDetail.setPayAgainstID(0);
-			receiptDetail.setAmount(receiptHeader.getReceiptAmount());
-			receiptDetail.setDelRecord(false);
-			receiptDetail.setPayOrder(payOrder);
-			payOrder = payOrder + 1;
-			receiptDetail.getAdvMovements().clear();
-			receiptDetail.getRepayHeaders().clear();
-			receiptDetailList.add(receiptDetail);
-		} else {
-			if (receiptDetail != null) {
-				receiptDetail.setDelRecord(true);
-				receiptDetail.getAdvMovements().clear();
-				receiptDetail.getRepayHeaders().clear();
-				receiptDetailList.add(receiptDetail);
-			}
-		}
-
-		receiptHeader.setReceiptDetails(receiptDetailList);
+		FinReceiptDetail receiptDetail = receiptHeader.getReceiptDetails().get(0);
+		receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+		receiptDetail.setPaymentType(receiptHeader.getReceiptMode());
+		receiptDetail.setPayAgainstID(0);
+		receiptDetail.setAmount(receiptHeader.getReceiptAmount());
+		receiptDetail.setDelRecord(false);
+		receiptDetail.setPayOrder(1);
+		receiptDetail.getAdvMovements().clear();
+		receiptDetail.getRepayHeaders().clear();
 
 		// Prepare Allocation Details
 		List<String> allocateTypes = new ArrayList<>(finReceiptData.getAllocationMap().keySet());
 		ReceiptAllocationDetail allocationDetail = null;
+		BigDecimal totalPaid = BigDecimal.ZERO;
 		for (int i = 0; i < allocateTypes.size(); i++) {
 			allocationDetail = new ReceiptAllocationDetail();
 
@@ -1362,39 +1343,47 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			allocationDetail.setAllocationID(i+1);
 			allocationDetail.setAllocationType(allocationType);
 			allocationDetail.setAllocationTo(allocateTo);
+			allocationDetail.setPaidAmount(finReceiptData.getAllocationMap().get(allocateTypes.get(i)));
 			if (allocationDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
+				receiptHeader.getAllocations().add(allocationDetail);
+				totalPaid = totalPaid.add(allocationDetail.getPaidAmount());
+			}
+		}
+		
+		// Setting Valid Components to open based upon Remaining Balance
+		BigDecimal totReceiptAmount = receiptHeader.getReceiptAmount();
+		BigDecimal remBal = totReceiptAmount.subtract(totalPaid);
+		if(remBal.compareTo(BigDecimal.ZERO) < 0){
+			remBal = BigDecimal.ZERO;
+		}
+		
+		// Setting Extra amount for Partial Settlement case
+		if(StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYRPY)){
+			boolean isPriRcdFound = false;
+			for (ReceiptAllocationDetail detail : receiptHeader.getAllocations()) {
+				if(StringUtils.equals(detail.getAllocationType(), RepayConstants.ALLOCATION_PRI) && 
+						remBal.compareTo(BigDecimal.ZERO) > 0){
+					detail.setPaidAmount(detail.getPaidAmount().add(remBal));
+					isPriRcdFound = true;
+					break;
+				}
+			}
+			if(!isPriRcdFound && remBal.compareTo(BigDecimal.ZERO) > 0){
+				allocationDetail = new ReceiptAllocationDetail();
+				allocationDetail.setAllocationID(receiptHeader.getAllocations().size()+1);
+				allocationDetail.setAllocationType(RepayConstants.ALLOCATION_PRI);
+				allocationDetail.setAllocationTo(0);
+				allocationDetail.setPaidAmount(remBal);
 				receiptHeader.getAllocations().add(allocationDetail);
 			}
 		}
+
 		finReceiptData.setReceiptHeader(receiptHeader);
 		finReceiptData = receiptCalculator.initiateReceipt(finReceiptData, financeDetail.getFinScheduleData(),
 				receiptHeader.getReceiptPurpose());
 
 		logger.debug("Leaving");
 		return finReceiptData;
-	}
-	
-	/**
-	 * Method for identifying the existing record
-	 * @param header
-	 * @param receiptType
-	 * @return
-	 */
-	private FinReceiptDetail getExistingReceiptDetail(FinReceiptHeader header, String receiptType) {
-		FinReceiptDetail detail = null;
-		for (FinReceiptDetail receiptDetail : header.getReceiptDetails()) {
-			if (StringUtils.equals(receiptDetail.getPaymentType(), receiptType)) {
-				detail = receiptDetail;
-				break;
-			}
-			if (StringUtils.isEmpty(receiptType)
-					&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)
-					&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)) {
-				detail = receiptDetail;
-				break;
-			}
-		}
-		return detail;
 	}
 	
 	/**
@@ -1415,12 +1404,20 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		financeDetail.setFinScheduleData(getFinanceDetailService().getFinSchDataForReceipt(receiptData.getFinReference(), "_AView"));
 		FinanceMain aFinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		
+		BigDecimal totalBal = receiptData.getReceiptHeader().getReceiptAmount();
+		if(receiptData.getAllocationMap() != null && !receiptData.getAllocationMap().isEmpty()){
+			List<String> allocationKeys = new ArrayList<>(receiptData.getAllocationMap().keySet());
+			for (int i = 0; i < allocationKeys.size(); i++) {
+				totalBal = totalBal.subtract(receiptData.getAllocationMap().get(allocationKeys.get(i)));
+			}
+		}
 
 		String method = finServiceInstruction.getRecalType();
 		// Schedule re-modifications only when Effective Schedule Method modified
 		if (!StringUtils.equals(method, CalculationConstants.EARLYPAY_NOEFCT)) {
 
-			receiptData.getRepayMain().setEarlyPayAmount(finServiceInstruction.getAmount());
+			receiptData.getRepayMain().setEarlyPayAmount(totalBal);
 
 			if (StringUtils.equals(method, CalculationConstants.EARLYPAY_RECPFI)
 					|| StringUtils.equals(method, CalculationConstants.EARLYPAY_ADMPFI)) {
@@ -1496,18 +1493,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		//Repayments Calculation
 		receiptData = calculateRepayments(receiptData);
-		FinReceiptHeader finReceiptHeader = receiptData.getReceiptHeader();
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		Customer customer = financeDetail.getCustomerDetails().getCustomer();
-		List<FinanceScheduleDetail> scheduleDetails = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
-		FinanceProfitDetail profitDetail = new FinanceProfitDetail();
-		profitDetail.setFinStartDate(financeMain.getFinStartDate());
-		profitDetail.setFinReference(financeMain.getFinReference());
-		Date receiveDate = finServiceInstruction.getReceiptDetail().getReceivedDate();
-		Date receiDate = DateUtility.getDBDate(DateUtility.formatDate(receiveDate, PennantConstants.DBDateFormat));
-		String rpyHierarchy = financeDetail.getFinScheduleData().getFinanceType().getRpyHierarchy();
-		finReceiptHeader = repayProcessUtil.processReceiptPayments(financeMain, customer, scheduleDetails, profitDetail, 
-				finReceiptHeader, rpyHierarchy, receiDate);
 		logger.debug("Leaving");
 		return receiptData;
 	}
