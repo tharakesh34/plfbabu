@@ -992,7 +992,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		filter[0] = new Filter("PolicyCode", Arrays.asList(alwdStepPolices), Filter.OP_IN);
 		this.stepPolicy.setFilters(filter);
 
-		this.accountsOfficer.setProperties("GeneralDepartment", "GenDepartment", "GenDeptDesc", true, 8);
+		this.accountsOfficer.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", true, 8);
 		this.dsaCode.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", true, 8);
 
 		// Finance Basic Details Tab ---> 2. Grace Period Details
