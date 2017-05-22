@@ -20,5 +20,10 @@
 			<column name="BALANCEAMT" type="NUMBER(18)" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="3" author="Surekha">
+		<addColumn tableName="AdtAccountMapping">
+			<column name="AccountType" type="varchar(15)"/>
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
