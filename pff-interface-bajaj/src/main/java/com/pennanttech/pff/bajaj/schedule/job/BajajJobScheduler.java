@@ -17,15 +17,15 @@ import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.job.scheduler.AbstractJobScheduler;
 import com.pennanttech.pff.core.job.scheduler.JobSchedulerDetails;
 
-public class BajaJobScheduler extends AbstractJobScheduler {
+public class BajajJobScheduler extends AbstractJobScheduler {
 	
-	private static final Logger		logger				= Logger.getLogger(BajaJobScheduler.class);
+	private static final Logger		logger				= Logger.getLogger(BajajJobScheduler.class);
 	
 	protected DataSource dataSource;
 	private JobSchedulerDetails jobDetails = null;
 	private DataEngineConfig datEngine = null;
 
-	public BajaJobScheduler() {
+	public BajajJobScheduler() {
 		super();
 	}
 

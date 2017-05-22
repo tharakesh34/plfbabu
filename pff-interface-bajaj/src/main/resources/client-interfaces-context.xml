@@ -17,7 +17,7 @@
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
 	
-	<bean id="bajaJobScheduler" class="com.pennanttech.pff.bajaj.schedule.job.BajaJobScheduler" init-method="startJob"  parent="bajajService"/>
+	<bean id="bajajJobScheduler" class="com.pennanttech.pff.bajaj.schedule.job.BajajJobScheduler" init-method="startJob"  parent="bajajService"/>
         
 	<bean id="disbursementRequest" class="com.pennanttech.bajaj.services.DisbursementRequestService" scope="prototype" parent="bajajService"/>
 	<bean id="disbursementResponse" class="com.pennanttech.bajaj.services.DisbursementResponseService" parent="bajajService"/>
