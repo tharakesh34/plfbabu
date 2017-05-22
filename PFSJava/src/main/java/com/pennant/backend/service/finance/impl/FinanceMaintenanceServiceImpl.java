@@ -13,11 +13,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
@@ -30,6 +32,8 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinCollaterals;
+import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinWriteoffPayment;
@@ -93,15 +97,61 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		//Finance Schedule Details
 		scheduleData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type,
 				false));
+		
 
 		// Finance Disbursement details
 		scheduleData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference,
 				type, false));
 
-		//Finance Accounting Fee Charge Details
-		scheduleData.setFeeRules(getFinFeeChargesDAO()
-				.getFeeChargesByFinRef(finReference, procEdtEvent, false, "_View"));
+		// Fee Details
+		scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinFeeDetailByFinRef(finReference, false, "_View"));
 
+		// Finance Fee Schedule Details
+		if (scheduleData.getFinFeeDetailList() != null && !scheduleData.getFinFeeDetailList().isEmpty()) {
+
+			List<Long> feeIDList = new ArrayList<>();
+			for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++) {
+				FinFeeDetail feeDetail = scheduleData.getFinFeeDetailList().get(i);
+
+				if (StringUtils.equals(feeDetail.getFeeScheduleMethod(),
+						CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
+						|| StringUtils.equals(feeDetail.getFeeScheduleMethod(),
+								CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)
+						|| StringUtils.equals(feeDetail.getFeeScheduleMethod(),
+								CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)) {
+					feeIDList.add(feeDetail.getFeeID());
+				}
+			}
+
+			if (!feeIDList.isEmpty()) {
+				List<FinFeeScheduleDetail> feeScheduleList = getFinFeeScheduleDetailDAO().getFeeScheduleByFinID(
+						feeIDList, false, "");
+
+				if (feeScheduleList != null && !feeScheduleList.isEmpty()) {
+
+					HashMap<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();
+					for (int i = 0; i < feeScheduleList.size(); i++) {
+						FinFeeScheduleDetail schdFee = feeScheduleList.get(i);
+
+						List<FinFeeScheduleDetail> schList = new ArrayList<>();
+						if (schFeeMap.containsKey(schdFee.getFeeID())) {
+							schList = schFeeMap.get(schdFee.getFeeID());
+							schFeeMap.remove(schdFee.getFeeID());
+						}
+						schList.add(schdFee);
+						schFeeMap.put(schdFee.getFeeID(), schList);
+
+					}
+
+					for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++) {
+						FinFeeDetail feeDetail = scheduleData.getFinFeeDetailList().get(i);
+						if (schFeeMap.containsKey(feeDetail.getFeeID())) {
+							feeDetail.setFinFeeScheduleDetailList(schFeeMap.get(feeDetail.getFeeID()));
+						}
+					}
+				}
+			}
+		}
 		//Finance Customer Details			
 		if (scheduleData.getFinanceMain().getCustID() != 0
 				&& scheduleData.getFinanceMain().getCustID() != Long.MIN_VALUE) {
@@ -1726,5 +1776,5 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	public void setMandateDAO(MandateDAO mandateDAO) {
 		this.mandateDAO = mandateDAO;
 	}
-
+ 
 }

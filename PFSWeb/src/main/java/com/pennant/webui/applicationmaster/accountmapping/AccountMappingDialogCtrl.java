@@ -235,7 +235,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping>{
 					rule = subHeadMap.get(transactionEntry.getAccountSubHeadRule());
 
 					executeMap.put("acType", transactionEntry.getAccountType());
-					executeMap.put("ft_finType", financeType.getFinType());
+					executeMap.put("ae_finType", financeType.getFinType());
 					String glCode = (String) ruleExecutionUtil.executeRule(rule.getSQLRule(), executeMap, null,
 							RuleReturnType.CALCSTRING);
 

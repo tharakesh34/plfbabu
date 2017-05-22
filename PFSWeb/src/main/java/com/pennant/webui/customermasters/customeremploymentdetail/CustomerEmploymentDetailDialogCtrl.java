@@ -490,7 +490,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		try {
 			if (this.custEmpTo.getValue()!=null && this.custEmpFrom.getValue()!=null) {
 				if (this.custEmpTo.getValue().before(this.custEmpFrom.getValue())) {
-					throw new WrongValueException(this.custEmpTo,  Labels.getLabel("DATE_NOT_AFTER", 
+					throw new WrongValueException(this.custEmpFrom,  Labels.getLabel("DATE_NOT_AFTER", 
 							new String[] { Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpFrom.value"),
 							Labels.getLabel("label_CustomerEmploymentDetailDialog_CustEmpTo.value") }));
 					

@@ -70,6 +70,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
@@ -172,16 +173,15 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 		
 		//Schedule Fee Column Visibility Check
 		boolean isSchdFee = false;
-		List<FeeRule> feeList = getFinScheduleData().getFeeRules();
-		for (int i = 0; i < feeList.size(); i++) {
-			FeeRule feeRule = feeList.get(i);
-			if(!StringUtils.equals(feeRule.getFeeMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE) &&
-					!StringUtils.equals(feeRule.getFeeMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
+		List<FinFeeDetail> finFeeDetailList = getFinScheduleData().getFinFeeDetailList();
+		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+			if(!StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE) &&
+					!StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
 				isSchdFee = true;
 				break;
 			}
 		}
-
+ 
 		if (isSchdFee) {
 			this.listheader_SchFee.setVisible(true);
 		} else {

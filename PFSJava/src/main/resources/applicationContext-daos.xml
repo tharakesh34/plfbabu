@@ -6047,7 +6047,9 @@
 		<property name="finFlagDetailsDAO" ref="finFlagDetailsDAO" />
 		<property name="mandateDAO" ref="mandateDAO" />
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
-
+		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
+		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
+		
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 	</bean>

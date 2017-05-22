@@ -45,6 +45,7 @@ import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.ext.ExtTablesDAO;
 import com.pennant.backend.dao.finance.FinCollateralsDAO;
+import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
@@ -165,6 +166,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private FinCollateralsDAO				finCollateralsDAO;
 	private FinTypeAccountingDAO			finTypeAccountingDAO;
 	private FinPlanEmiHolidayDAO			finPlanEmiHolidayDAO;
+	private FinFeeDetailDAO					finFeeDetailDAO;
+
 
 	// DocumentManagerDAO
 	private DocumentManagerDAO				documentManagerDAO;
@@ -2795,6 +2798,14 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
 		this.disbursementPostings = disbursementPostings;
+	}
+
+	public FinFeeDetailDAO getFinFeeDetailDAO() {
+		return finFeeDetailDAO;
+	}
+
+	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
+		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
 
 }
