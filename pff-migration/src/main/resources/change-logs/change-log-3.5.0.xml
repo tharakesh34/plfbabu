@@ -817,6 +817,12 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 				
 		</createView>
 	</changeSet>
+	<changeSet id="55" author="Surekha">
+		<sql>
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='ACCOUNTMAPPING_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_AccountMappingDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		</sql>
+	</changeSet>
+	
 	<changeSet id="56" author="Jayant">
 	    <createIndex tableName="BATCH_STEP_EXECUTION" indexName="IX_STEP_JOBID_STEPID">
 	        <column name="JOB_EXECUTION_ID" type="bigint"/>
