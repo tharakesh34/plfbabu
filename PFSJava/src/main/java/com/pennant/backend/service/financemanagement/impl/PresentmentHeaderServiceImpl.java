@@ -75,10 +75,11 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
-import com.pennanttech.dbengine.process.PresentmentRequest;
+import com.pennanttech.bajaj.process.PresentmentRequest;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.DateUtil;
 
 /**
  * Service implementation for methods that depends on <b>PresentmentHeader</b>.<br>
@@ -576,9 +577,9 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		logger.debug(Literal.ENTERING);
 
 		try {
-			PresentmentRequest presentmentRequest = new PresentmentRequest(dataSource, App.DATABASE.name());
+			PresentmentRequest presentmentRequest = new PresentmentRequest(dataSource, App.DATABASE.name(), 1000, DateUtil.getSysDate());
 			presentmentRequest.setPresentmentId(presentmentId);
-			presentmentRequest.process(1000, "PRESENTMENT_REQUEST");
+			presentmentRequest.process("PRESENTMENT_REQUEST");
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;

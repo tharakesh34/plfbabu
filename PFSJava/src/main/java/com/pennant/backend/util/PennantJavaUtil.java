@@ -1886,8 +1886,8 @@ public class PennantJavaUtil {
 				AmountCode.class, new String[] { "BMTAmountCodes", "BMTAmountCodes" },
 				masterWF, new String[] { "AllowedEvent", "AmountCode", "AmountCodeDesc" }, new String[][] { { "AmountCodeIsActive", "0", "1" } }, 300));
 		ModuleUtil.register("DisbursementRegistration", new ModuleMapping("DisbursementRegistration",
-				FinAdvancePayments.class, new String[] { "INT_DISBURSEMENT_EXPORT_VIEW",
-						" INT_DISBURSEMENT_EXPORT_VIEW" }, null, new String[] { "PAYMENTID", "FINREFERENCE" }, null, 300));
+				FinAdvancePayments.class, new String[] { "INT_DISBURSEMENT_REQUEST_VIEW",
+						" INT_DISBURSEMENT_REQUEST_VIEW" }, null, new String[] { "PAYMENTID", "FINREFERENCE" }, null, 300));
 
 		ModuleUtil.register("MandateRegistration", new ModuleMapping("Mandate", Mandate.class, new String[] {
 				"Mandates", "Mandates_AView" }, null, new String[] { "MandateID", "BankCode", "BankName", "BranchCode", "BranchDesc", "MICR", "IFSC" }, null, 700));
