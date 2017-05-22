@@ -17,7 +17,7 @@ import com.pennant.app.util.SysParamUtil;
 
 /**
  * 
- *@Deprecated Please refer BajaJobScheduler class to configure new JOB.
+ *@Deprecated Please refer BajajJobScheduler class to configure new JOB.
  */
 @Deprecated
 public class ApplicationStartup implements ServletContextListener {
