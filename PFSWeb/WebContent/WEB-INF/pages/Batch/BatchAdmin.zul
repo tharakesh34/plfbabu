@@ -137,7 +137,7 @@
 												<listhead sizable="true">
 													<listheader id="threadID" label="${c:l('label_Thread_ID_MicroEod.value')}" sort="auto" hflex="min" />
 													<listheader id="customerAssigned" label="${c:l('label_Customer_Assigned_MicroEod.value')}" sort="auto" hflex="min" />
-													<listheader id="completedCustomers" label="${c:l('label_Completed_Customers_MicroEod.value')}" sort="auto" hflex="min" />
+													<listheader id="completedCustomers" label="${c:l('label_Completed_Customers_MicroEod.value')}" sort="auto" hflex="min" visible="false" />
 													<listheader id="failedCustomers" label="${c:l('label_Failed_Customers_MicroEod.value')}" sort="auto" hflex="min" />
 												</listhead>
 											</listbox>
