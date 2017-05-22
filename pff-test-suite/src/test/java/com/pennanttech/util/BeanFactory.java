@@ -19,6 +19,7 @@ public class BeanFactory {
 	//BASE RATE MIBOR IN RMTBaseRates MUST BE AVAILABLE	with 11% latest
 	//SPECIAL RATE S1 IN RMTSplRates MUST BE AVAILABLE	with 1.5% latest
 	//So Net Rate will be 11% - 1.5% + Margin = 10%
+	// TDS_PERCENTAGE may be 20
 
 	public static final String	BASE_RATE				= "MIBOR";
 	public static final String	SPECIAL_RATE			= "S1";
