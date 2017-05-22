@@ -2726,6 +2726,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (!validatePhoneDetails(this.tabkYCDetails)) {
 				return;
 			}
+			if (!validateEmailDetails(this.tabkYCDetails)) {
+				return;
+			}
 		}
 		CustEmployeeDetail custEmployeeDetail = aCustomerDetails.getCustEmployeeDetail();
 		// Write the additional validations as per below example
@@ -3099,6 +3102,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if (!validatePhoneDetails(tab)) {
 					return false;
 				}
+				if (!validateEmailDetails(tab)) {
+					return false;
+				}
 				if (this.btnNew_CustomerPhoneNumber.isVisible() && validateAllDetails) {
 					boolean isphonenum = false;
 					boolean iscustNationality = false;
@@ -3138,6 +3144,31 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	
+
+	private boolean validateEmailDetails(Tab tab) {
+		logger.debug("Entering");
+		boolean isMandAddExist = false;
+		if (this.customerEmailDetailList.isEmpty()) {
+			return !isMandAddExist;
+		} else {
+			for (CustomerEMail custEmail : this.customerEmailDetailList) {
+				if (StringUtils.equals(PennantConstants.EMAILPRIORITY_VeryHigh,
+						String.valueOf(custEmail.getCustEMailPriority()))) {
+					isMandAddExist = true;
+					break;
+				}
+			}
+
+			if (!isMandAddExist) {
+				String msg = Labels.getLabel("CustomerEmail_High_Priority");
+				MultiLineMessageBox.show(msg, Labels.getLabel("title_CustomerEmail_Confirmation"),
+						MultiLineMessageBox.OK, Messagebox.ERROR, true);
+			}
+		}
+
+		logger.debug("Leaving");
+		return isMandAddExist;
+	}
 
 	private boolean validateAddressDetails(Tab custTab) {
 		logger.debug("Entering");
