@@ -22,6 +22,7 @@ import com.pennant.app.core.ReceiptPaymentService;
 
 public class EodService {
 
+	@SuppressWarnings("unused")
 	private DataSource					dataSource;
 
 	private LatePayMarkingService		latePayMarkingService;
@@ -115,12 +116,12 @@ public class EodService {
 
 	}
 
-	public void updateStart(int threadId, long custId) {
-		loadFinanceData.updateStart(threadId, custId);
+	public void updateCustQueueStatus(int threadId, long custId,int progress,boolean start) {
+		loadFinanceData.updateCustQueueStatus(threadId, custId,progress,start);
 	}
-
-	public void updateEnd(int threadId, long custId) {
-		loadFinanceData.updateEnd(threadId, custId);
+	
+	public void updateFailed(int threadId, long custId) {
+		loadFinanceData.updateFailed(threadId, custId);
 	}
 
 	public void setDataSource(DataSource dataSource) {

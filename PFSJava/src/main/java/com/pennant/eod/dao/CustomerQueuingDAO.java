@@ -24,4 +24,6 @@ public interface CustomerQueuingDAO {
 
 	long getCountByProgress();
 
+	void updateFailed(CustomerQueuing customerQueuing);
+
 }

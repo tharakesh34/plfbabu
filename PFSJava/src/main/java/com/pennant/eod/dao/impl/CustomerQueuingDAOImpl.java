@@ -191,6 +191,21 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
 		logger.debug("Leaving");
 	}
+	
+	@Override
+	public void updateFailed(CustomerQueuing customerQueuing) {
+		logger.debug("Entering");
+		
+		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing set");
+		updateSql.append(" EndTime = :EndTime, ThreadId = :ThreadId,");
+		updateSql.append(" Progress = :Progress Where CustID =:CustID");
+		logger.debug("updateSql: " + updateSql.toString());
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		
+		logger.debug("Leaving");
+	}
 
 	@Override
 	public void delete() {

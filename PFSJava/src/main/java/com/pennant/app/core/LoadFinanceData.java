@@ -321,27 +321,26 @@ public class LoadFinanceData extends ServiceHelper {
 		logger.debug(" Leaving ");
 	}
 
-	public void updateStart(int threadId, long custId) {
-
+	public void updateCustQueueStatus(int threadId, long custId,int progress,boolean start) {
 		CustomerQueuing customerQueuing = new CustomerQueuing();
 		customerQueuing.setCustID(custId);
 		customerQueuing.setThreadId(threadId);
 		customerQueuing.setStartTime(DateUtility.getSysDate());
-		customerQueuing.setProgress(EodConstants.PROGRESS_IN_PROCESS);
-		getCustomerQueuingDAO().update(customerQueuing, true);
-
+		customerQueuing.setEndTime(DateUtility.getSysDate());
+		customerQueuing.setProgress(progress);
+		getCustomerQueuingDAO().update(customerQueuing, start);
 	}
-
-	public void updateEnd(int threadId, long custId) {
-
+	
+	public void updateFailed(int threadId, long custId) {
 		CustomerQueuing customerQueuing = new CustomerQueuing();
 		customerQueuing.setCustID(custId);
-		customerQueuing.setThreadId(threadId);
 		customerQueuing.setEndTime(DateUtility.getSysDate());
-		customerQueuing.setProgress(EodConstants.PROGRESS_SUCCESS);
-		getCustomerQueuingDAO().update(customerQueuing, false);
-
+		//reset thread for reallocation
+		customerQueuing.setThreadId(0);
+		customerQueuing.setProgress(EodConstants.PROGRESS_WAIT);
+		getCustomerQueuingDAO().updateFailed(customerQueuing);
 	}
+
 
 	private FinanceProfitDetail getFinanceProfitDetailRef(String finMainRef,
 			List<FinanceProfitDetail> listprofitDetails) {

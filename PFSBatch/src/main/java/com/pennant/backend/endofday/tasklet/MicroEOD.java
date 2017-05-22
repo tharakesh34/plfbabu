@@ -45,7 +45,9 @@ package com.pennant.backend.endofday.tasklet;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -65,13 +67,13 @@ import com.pennant.eod.constants.EodConstants;
 
 public class MicroEOD implements Tasklet {
 
-	private Logger						logger	= Logger.getLogger(MicroEOD.class);
+	private Logger						logger				= Logger.getLogger(MicroEOD.class);
 
-	private static final String			sqlCustForProcess		= "SELECT CustId FROM CustomerQueuing WHERE ThreadId=? AND Progress = 0 ";
-	
+	private static final String			sqlCustForProcess	= "SELECT CustId FROM CustomerQueuing WHERE ThreadId=? AND Progress = ? ";
+
 	private EodService					eodService;
 	private DataSource					dataSource;
-	
+
 	private PlatformTransactionManager	transactionManager;
 
 	public MicroEOD() {
@@ -97,35 +99,54 @@ public class MicroEOD implements Tasklet {
 			connection = DataSourceUtils.doGetConnection(dataSource);
 			sqlStatement = connection.prepareStatement(sqlCustForProcess);
 			sqlStatement.setInt(1, threadId);
+			sqlStatement.setInt(2, EodConstants.PROGRESS_WAIT);
 			resultSet = sqlStatement.executeQuery();
 			int count = 0;
-			
+
+			//Since Thread should not fail even one customer fails. So we are delaying throwing the exception. 
+			List<Exception> list = new ArrayList<Exception>(1);
 			//Read all customers to be processed with Forward Cursor
 			while (resultSet.next()) {
 				custId = resultSet.getLong("CustId");
 				//update start
-				eodService.updateStart(threadId, custId);
+				eodService.updateCustQueueStatus(threadId, custId, EodConstants.PROGRESS_IN_PROCESS, true);
 
-				//BEGIN TRANSACTION
-				txStatus = transactionManager.getTransaction(txDef);
+				try {
+					//BEGIN TRANSACTION
+					txStatus = transactionManager.getTransaction(txDef);
 
-				//process
-				eodService.doProcess(connection, custId, valueDate);
+					//process
+					eodService.doProcess(connection, custId, valueDate);
 
-				//Update Status
-				eodService.updateEnd(threadId, custId);
+					//Update END
+					eodService.updateCustQueueStatus(threadId, custId, EodConstants.PROGRESS_SUCCESS, false);
 
-				//COMMIT THE TRANSACTION
-				transactionManager.commit(txStatus);
-				count++;
+					//COMMIT THE TRANSACTION
+					transactionManager.commit(txStatus);
+					count++;
+
+				} catch (Exception e) {
+					list.add(e);
+					transactionManager.rollback(txStatus);
+					//Update Fails and reset thread id for re-allocation
+					eodService.updateFailed(threadId, custId);
+				}
 
 				context.getStepContext().getStepExecution().getExecutionContext().put("Completed", count);
+			}
+
+			if (!list.isEmpty()) {
+				// to maintain the readability, we are printing all the exception at once 
+				for (Exception exception : list) {
+					logger.error("Exception: ", exception);
+				}
+				//to stop the process form further processing.
+				throw new RuntimeException();
 			}
 
 			resultSet.close();
 			sqlStatement.close();
 		} catch (Exception e) {
-			transactionManager.rollback(txStatus);
 			logger.error("Exception: ", e);
 			throw e;
 		} finally {
