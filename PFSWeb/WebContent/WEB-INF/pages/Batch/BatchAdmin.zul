@@ -63,7 +63,7 @@
 				</north>
 				<center border="none" autoscroll="true">
 					<div>
-						<groupbox width="100%">
+						<groupbox width="91%">
 							<caption label="Pre EOD"></caption>
 							<grid sclass="GridLayoutNoBorder">
 								<columns>
@@ -71,7 +71,7 @@
 								</columns>
 								<rows>
 									<row>
-										<hbox widths="25%,25%,25%,25%" pack="stretch" width="100%">
+										<hbox pack="stretch" width="100%">
 											<exePannel id="beforeEOD" border="normal" title="${c:l('label_beforeEOD')}" imgSrc="/images/icons/send.gif" visible="false" />
 											<exePannel id="prepareCustomerQueue" border="normal" title="${c:l('label_prepareCustomerQueue')}" imgSrc="/images/icons/send.gif" />
 											<hbox></hbox>
@@ -81,44 +81,7 @@
 								</rows>
 							</grid>
 						</groupbox>
-						<groupbox width="100%" contentStyle="overflow:auto;" visible="false">
-							<caption label="Micro EOD"></caption>
-							<grid sclass="GridLayoutNoBorder">
-								<columns>
-									<column width="100%" />
-								</columns>
-								<rows>
-									<row>
-										<hbox widths="65%,65%,65%,65%" pack="stretch" width="100%">
-											<exePannel id="masterStep" border="normal" title="${c:l('label_masterStep')}" imgSrc="/images/icons/send.gif" visible="false" />
-											<exePannel id="microEOD" border="normal" title="${c:l('label_microEOD')}" imgSrc="/images/icons/send.gif" visible="false" />
-											<exePannel id="microEODMonitor" border="normal" title="${c:l('label_microEOD')}" imgSrc="/images/icons/send.gif" visible="false" />
-										</hbox>
-									</row>
-									<row>
-										<hbox widths="22%,25%,25%,65%" width="60%">
-											<label value="${c:l('label_Number_Of_Thread_Started_MicroEod.value')}" />
-											<intbox id="noOfthread" width="60px" readonly="true" style="background-color : #fdf7fa;" />
-											<label value="${c:l('label_Total_Number_Of_Customers_MicroEod.value')}" />
-											<intbox id="noOfCustomer" width="60px" readonly="true" style="background-color : #fdf7fa;" />
-										</hbox>
-									</row>
-									<row>
-										<hbox widths="22%,18%,18%,18%" width="80%">
-											<listbox id="listBoxThread" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" sizedByContent="true" span="true" visible="true">
-												<listhead sizable="true">
-													<listheader id="threadID" label="${c:l('label_Thread_ID_MicroEod.value')}" sort="auto" hflex="min" />
-													<listheader id="customerAssigned" label="${c:l('label_Customer_Assigned_MicroEod.value')}" sort="auto" hflex="min" />
-													<listheader id="completedCustomers" label="${c:l('label_Completed_Customers_MicroEod.value')}" sort="auto" hflex="min" />
-													<listheader id="failedCustomers" label="${c:l('label_Failed_Customers_MicroEod.value')}" sort="auto" hflex="min" />
-												</listhead>
-											</listbox>
-										</hbox>
-									</row>
-								</rows>
-							</grid>
-						</groupbox>
-						<groupbox width="100%">
+						<groupbox width="91%">
 							<caption label="Post EOD"></caption>
 							<grid sclass="GridLayoutNoBorder">
 								<columns>
@@ -126,7 +89,7 @@
 								</columns>
 								<rows>
 									<row>
-										<hbox widths="25%,25%,25%,25%" pack="stretch" width="100%">
+										<hbox pack="stretch" width="100%">
 											<exePannel id="snapShotPreparation" border="normal" title="${c:l('label_snapShotPreparation')}" imgSrc="/images/icons/send.gif" visible="false" />
 											<exePannel id="dataExtract" border="normal" title="${c:l('label_dataExtract')}" imgSrc="/images/icons/send.gif" visible="true" />
 											<hbox></hbox>
@@ -144,6 +107,47 @@
 						</groupbox>
 					</div>
 				</center>
+				<east border="none" autoscroll="true" style="position:absolute;top:15%;right:43%;">
+					<div>
+						<groupbox width="100%" contentStyle="overflow:auto;">
+							<caption label="Micro EOD"></caption>
+							<grid sclass="GridLayoutNoBorder">
+								<columns>
+									<column width="100%" />
+								</columns>
+								<rows>
+									<row>
+										<hbox pack="stretch" width="100%">
+											<exePannel id="masterStep" border="normal" title="${c:l('label_masterStep')}" imgSrc="/images/icons/send.gif" visible="false" />
+											<exePannel id="microEOD" border="normal" title="${c:l('label_microEOD')}" imgSrc="/images/icons/send.gif" visible="false" />
+											<exePannel id="microEODMonitor" border="normal" title="${c:l('label_microEOD')}" imgSrc="/images/icons/send.gif" visible="false" />
+										</hbox>
+									</row>
+									<row>
+										<hbox pack="stretch" width="100%">
+											<label value="${c:l('label_Number_Of_Thread_Started_MicroEod.value')}" />
+											<intbox id="noOfthread" width="60px" readonly="true" style="background-color : #fdf7fa;" />
+											<label value="${c:l('label_Total_Number_Of_Customers_MicroEod.value')}" />
+											<intbox id="noOfCustomer" width="60px" readonly="true" style="background-color : #fdf7fa;" />
+										</hbox>
+									</row>
+									<row>
+										<hbox pack="stretch" width="100%">
+											<listbox id="listBoxThread" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" sizedByContent="true" span="true" visible="true">
+												<listhead sizable="true">
+													<listheader id="threadID" label="${c:l('label_Thread_ID_MicroEod.value')}" sort="auto" hflex="min" />
+													<listheader id="customerAssigned" label="${c:l('label_Customer_Assigned_MicroEod.value')}" sort="auto" hflex="min" />
+													<listheader id="completedCustomers" label="${c:l('label_Completed_Customers_MicroEod.value')}" sort="auto" hflex="min" />
+													<listheader id="failedCustomers" label="${c:l('label_Failed_Customers_MicroEod.value')}" sort="auto" hflex="min" />
+												</listhead>
+											</listbox>
+										</hbox>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+					</div>
+				</east>
 			</borderlayout>
 		</window>
 	</window>

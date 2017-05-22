@@ -96,7 +96,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	private JobExecution jobExecution;
 
 	public enum PFSBatchProcessess {
-		beforeEOD, prepareCustomerQueue, masterStep, microEOD, microEODMonitor, snapShotPreparation,dataExtract
+		beforeEOD, prepareCustomerQueue, masterStep, microEOD, microEODMonitor, snapShotPreparation, dataExtract
 	}
 
 	public BatchAdminCtrl() {
@@ -346,7 +346,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 				// Collections.reverse(stepExecutionList);
 				for (StepExecution stepExecution : stepExecutionList) {
 
-					if ("EXECUTING".equals(stepExecution.getExitStatus().getExitCode()) && !stepExecution.getStepName().contains(PFSBatchProcessess.microEOD.name())) {
+					if ("EXECUTING".equals(stepExecution.getExitStatus().getExitCode())
+							&& !stepExecution.getStepName().contains(PFSBatchProcessess.microEOD.name())) {
 						exeStatus = BatchUtil.EXECUTING;
 					} else {
 						exeStatus = new ExecutionStatus();
@@ -404,7 +405,12 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 			if (stepName.contains(PFSBatchProcessess.microEOD.name())) {
 				if (listBoxThread != null) {
+					this.microEOD.setProcess(status);
 					doFillCustomerEodDetails(status);
+					setRunningProcess(this.microEOD);
+					if ("EXECUTING".equals(status.getStatus())) {
+						setRunningProcess(this.microEOD);
+					}
 				}
 
 			} else {
@@ -468,7 +474,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 					setRunningProcess(this.snapShotPreparation);
 				}
 				break;
-		
+
 			case dataExtract:
 				this.dataExtract.setProcess(status);
 				this.dataExtract.render();
@@ -649,23 +655,29 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	protected Listbox listBoxThread;
 	protected Intbox noOfthread;
 	protected Intbox noOfCustomer;
-	
-	
+
 	public void doFillCustomerEodDetails(ExecutionStatus status) {
 		noOfthread.setValue(SysParamUtil.getValueAsInt("EOD_THREAD_COUNT"));
 		noOfCustomer.setValue(0);
-		
+
 		if (status != null) {
 			String trheadName = status.getExecutionName();
 			Listitem listitem = null;
 			Listcell listcell = null;
 			String threadId = trheadName.replace(":", "_");
 
-			Component comp = listBoxThread.getFellowIfAny(threadId);
-			if (comp != null && comp instanceof Listitem) {
-				listitem = (Listitem) comp;
-				listitem.getChildren().clear();
-			}else {
+			Component listItemComp = listBoxThread.getFellowIfAny(threadId);
+			if (listItemComp != null && listItemComp instanceof Listitem) {
+				listitem = (Listitem) listItemComp;
+				Component listcellComp = listitem.getFellowIfAny(threadId + "Status".hashCode());
+
+				if (listcellComp != null && listcellComp instanceof Listcell) {
+					listcell = (Listcell) listcellComp;
+					if (!status.getStatus().equals(listcell.getLabel().toString())) {
+						listitem.getChildren().clear();
+					}
+				}
+			} else {
 				listitem = new Listitem();
 			}
 			listitem.setId(threadId);
@@ -680,8 +692,9 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			listcell.setParent(listitem);
 
 			listcell = new Listcell(status.getStatus());
-			listcell.setId(threadId+"Status");
-			listcell.setParent(listitem);
+			listcell.setId(threadId + "Status".hashCode());
+			if (!listitem.hasFellow(threadId + "Status".hashCode()))
+				listcell.setParent(listitem);
 			listBoxThread.appendChild(listitem);
 
 		}
