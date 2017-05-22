@@ -561,7 +561,7 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91121", valueParm)));
 				}
 			}
-			if (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERCONETIME)) {
+			if (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)) {
 				if (finODPenaltyRate.getODChargeAmtOrPerc().compareTo(new BigDecimal(99)) > 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "ODChargeAmtOrPerc";
@@ -582,10 +582,10 @@ public class FinanceDataValidation {
 					String[] valueParm = new String[2];
 					valueParm[0] = finODPenaltyRate.getODChargeType();
 					valueParm[1] = FinanceConstants.PENALTYTYPE_FLAT + ","
-							+ FinanceConstants.PENALTYTYPE_FLATAMTONPASTDUEMTH + ","
-							+ FinanceConstants.PENALTYTYPE_PERCONDUEDAYS + ","
-							+ FinanceConstants.PENALTYTYPE_PERCONDUEMTH + ","
-							+ FinanceConstants.PENALTYTYPE_PERCONETIME;
+							+ FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH + ","
+							+ FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS + ","
+							+ FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH + ","
+							+ FinanceConstants.PENALTYTYPE_PERC_ONETIME;
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90316", valueParm)));
 				}
 			}

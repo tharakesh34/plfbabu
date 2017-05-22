@@ -41,6 +41,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -58,9 +59,11 @@ import com.pennant.backend.util.SMTParameterConstants;
 
 public class LatePayMarkingService extends ServiceHelper {
 
-	private static final long	serialVersionUID	= 6161809223570900644L;
-	private static Logger		logger				= Logger.getLogger(LatePayMarkingService.class);
-	private FinODPenaltyRateDAO	finODPenaltyRateDAO;
+	private static final long		serialVersionUID	= 6161809223570900644L;
+	private static Logger			logger				= Logger.getLogger(LatePayMarkingService.class);
+	private FinODPenaltyRateDAO		finODPenaltyRateDAO;
+	private LatePayPenaltyService	latePayPenaltyService;
+	private LatePayInterestService	latePayInterestService;
 
 	/**
 	 * Default constructor
@@ -95,7 +98,7 @@ public class LatePayMarkingService extends ServiceHelper {
 
 			finEODEvent = findLatePay(finEODEvent, valueDate);
 		}
-		
+
 		logger.debug(" Leaving ");
 		return custEODEvent;
 	}
@@ -174,6 +177,14 @@ public class LatePayMarkingService extends ServiceHelper {
 			}
 
 			updateFinPftDetails(finEODEvent, fod, valueDate);
+			latePayPenaltyService.computeLPP(fod, valueDate, finEODEvent.getFinanceMain().getFinReference());
+
+			String lpiMethod = finEODEvent.getFinanceMain().getPastduePftCalMthd();
+
+			if (!StringUtils.equals(lpiMethod, CalculationConstants.PDPFTCAL_NOTAPP)) {
+				latePayInterestService.computeLPI(finEODEvent, fod, valueDate);
+			}
+
 			break;
 
 		}
@@ -393,6 +404,10 @@ public class LatePayMarkingService extends ServiceHelper {
 
 	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
 		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
+	}
+
+	public void setLatePayInterestService(LatePayInterestService latePayInterestService) {
+		this.latePayInterestService = latePayInterestService;
 	}
 
 }

@@ -34,6 +34,7 @@
 package com.pennant.app.core;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,209 +63,98 @@ public class LatePayInterestService extends ServiceHelper {
 		super();
 	}
 
-	public CustEODEvent processLatePayInterest(CustEODEvent custEODEvent) throws Exception {
-		logger.debug(" Entering ");
-
-		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
-		Date valueDate = custEODEvent.getEodValueDate();
-
-		for (FinEODEvent finEODEvent : finEODEvents) {
-			if (finEODEvent.getIdxPD() <=0) {
-				continue;
-			}
-
-			//No need to apply OD penalty 
-			String lpiMethod = finEODEvent.getFinanceMain().getPastduePftCalMthd();
-			if (StringUtils.equals(lpiMethod, CalculationConstants.PDPFTCAL_NOTAPP)) {
-				continue;
-			}
-
-			finEODEvent = computeLPI(finEODEvent, valueDate);
-
-		}
-		logger.debug(" Leaving ");
-		return custEODEvent;
-
-	}
-
-	public FinEODEvent computeLPI(FinEODEvent finEODEvent, Date valueDate) throws Exception {
+	public FinODDetails computeLPI(FinEODEvent finEODEvent, FinODDetails fod, Date valueDate) throws Exception {
 		logger.debug("Entering");
 
-		List<FinODDetails> finODDetails = null;
-
-		finODDetails = finEODEvent.getFinODDetails();
-
-		//No OD Details found
-		if (finODDetails == null || finODDetails.size() == 0) {
-			return finEODEvent;
+		//Still before the grace days no need to calculate OD penalty
+		if (fod.getFinCurODDays() <= fod.getODGraceDays()) {
+			return fod;
 		}
 
-		for (int i = 0; i < finODDetails.size(); i++) {
-			FinODDetails fod = finODDetails.get(i);
-
-			//OD Details found but OD cleared and No Penalty Balance
-			if (fod.getFinCurODPri().compareTo(BigDecimal.ZERO) == 0
-					&& fod.getFinCurODPft().compareTo(BigDecimal.ZERO) == 0
-					&& fod.getLPIBal().compareTo(BigDecimal.ZERO) == 0) {
-				continue;
-			}
-
-			//On Due Days
-			finEODEvent = prepareDueDateData(finEODEvent, fod, valueDate);
-			//updateLPPenaltInODDetails(fod);
-
-		}
-
-		logger.debug("Leaving");
-		return finEODEvent;
+		return fod;
 	}
 
-	public FinEODEvent prepareDueDateData(FinEODEvent finEODEvent, FinODDetails fod, Date valueDate) throws Exception {
+	public void prepareDueDateData(FinEODEvent finEODEvent, FinODDetails fod, Date valueDate) throws Exception {
 
-		String finReference = finEODEvent.getFinanceMain().getFinReference();
+		String finReference = fod.getFinReference();
 		Date odDate = fod.getFinODSchdDate();
-		BigDecimal lpiMargin = finEODEvent.getFinanceMain().getPastduePftMargin();
+		String idb = finEODEvent.getFinanceMain().getProfitDaysBasis();
+		BigDecimal lpiMargin = finEODEvent.getFinanceMain().getPastduePftMargin().divide(new BigDecimal(100));
+
+		BigDecimal odPri = fod.getFinMaxODPri();
+		BigDecimal odPft = fod.getFinMaxODPft();
 
 		List<OverdueChargeRecovery> schdODCRecoveries = new ArrayList<OverdueChargeRecovery>();
 		OverdueChargeRecovery odcr = new OverdueChargeRecovery();
 
 		//Add Schedule Date to the ODC Recovery
-		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
-		Map<Date, Integer> datesMap = finEODEvent.getDatesMap();
-		int idx = getIndexFromMap(datesMap, odDate);
-		BigDecimal schdPri = BigDecimal.ZERO;
-		BigDecimal schdPft = BigDecimal.ZERO;
-
-		//Prepare schedule from OD Date to value date
-		for (int i = idx; i < finSchdDetails.size(); i++) {
-			odcr = new OverdueChargeRecovery();
-			FinanceScheduleDetail curSchd = finSchdDetails.get(i);
-
-			if (curSchd.getSchDate().compareTo(valueDate) > 0) {
-				break;
-			}
-
-			if (!curSchd.isPftOnSchDate() && !curSchd.isRepayOnSchDate()) {
-				continue;
-			}
-
-			if (i == idx) {
-				schdPri = curSchd.getPrincipalSchd();
-				schdPft = curSchd.getProfitSchd();
-			}
-
-			odcr.setFinReference(finReference);
-			odcr.setFinODSchdDate(odDate);
-			odcr.setFinODFor(FinanceConstants.SCH_TYPE_LATEPAYPROFIT);
-			odcr.setMovementDate(odDate);
-			odcr.setPenaltyAmtPerc(curSchd.getCalculatedRate().add(lpiMargin));
-			schdODCRecoveries.add(odcr);
-		}
+		odcr.setFinReference(finReference);
+		odcr.setFinODSchdDate(odDate);
+		odcr.setFinODFor(FinanceConstants.SCH_TYPE_SCHEDULE);
+		odcr.setMovementDate(odDate);
+		odcr.setFinCurODPri(odPri);
+		odcr.setFinCurODPft(odPft);
+		odcr.setFinCurODAmt(odPri.add(odPft));
+		schdODCRecoveries.add(odcr);
 
 		List<FinanceRepayments> repayments = getFinanceRepaymentsDAO().getByFinRefAndSchdDate(finReference, odDate);
-
-		BigDecimal paidPri = BigDecimal.ZERO;
-		BigDecimal paidPft = BigDecimal.ZERO;
 
 		//Load Overdue Charge Recovery from Repayment Movements
 		for (int i = 0; i < repayments.size(); i++) {
 			FinanceRepayments repayment = repayments.get(i);
-			paidPri = paidPri.add(repayment.getFinSchdPriPaid());
-			paidPft = paidPft.add(repayment.getFinSchdPftPaid());
-			BigDecimal penaltyRate = getPenaltyRate(finSchdDetails, repayment.getFinValueDate(), lpiMargin);
-			schdODCRecoveries = addRepayToODCR(repayment, schdODCRecoveries, paidPri, paidPft, penaltyRate);
-		}
 
-		//Add record with today date
-		boolean isAddTodayRcd = true;
-		for (int i = 0; i < schdODCRecoveries.size(); i++) {
-			odcr = schdODCRecoveries.get(i);
-			if (odcr.getMovementDate().compareTo(valueDate) == 0) {
-				isAddTodayRcd = false;
-				break;
+			//MAx OD amounts is same as repayment balance amounts
+			if (repayment.getFinSchdDate().compareTo(repayment.getFinValueDate()) == 0) {
+				continue;
 			}
-		}
 
-		if (isAddTodayRcd) {
-			odcr = new OverdueChargeRecovery();
+			odPri = odPri.subtract(repayment.getFinSchdPriPaid());
+			odPft = odPri.subtract(repayment.getFinSchdPftPaid());
+
 			odcr.setFinReference(finReference);
 			odcr.setFinODSchdDate(odDate);
-			odcr.setFinODFor(FinanceConstants.SCH_TYPE_LATEPAYPROFIT);
-			odcr.setMovementDate(valueDate);
-			odcr.setCurPaidPri(paidPri);
-			odcr.setCurPaidPft(paidPft);
+			odcr.setFinODFor(FinanceConstants.SCH_TYPE_SCHEDULE);
+			odcr.setMovementDate(repayment.getFinValueDate());
+			odcr.setFinCurODPri(odPri);
+			odcr.setFinCurODPft(odPft);
+			odcr.setFinCurODAmt(odPri.add(odPft));
 			schdODCRecoveries.add(odcr);
 		}
 
-		fod.setLPIAmt(BigDecimal.ZERO);
-		;
-		String idb = finEODEvent.getFinanceMain().getProfitDaysBasis();
+		fod.setTotPenaltyAmt(BigDecimal.ZERO);
 		//Calculate the Penalty
 		for (int i = 0; i < schdODCRecoveries.size() - 1; i++) {
 			OverdueChargeRecovery odcrCur = schdODCRecoveries.get(i);
 			OverdueChargeRecovery odcrNext = schdODCRecoveries.get(i + 1);
 
-			odcrCur.setFinCurODPri(schdPri.subtract(paidPri));
-			odcrCur.setFinCurODPft(schdPft.subtract(paidPft));
-			odcrCur.setFinCurODAmt(odcrCur.getFinCurODPri().add(odcrCur.getFinCurODPft()));
-
 			//Calculate the Penalty
-			BigDecimal balanceForCal = odcrCur.getFinCurODPri();
+			BigDecimal balanceForCal = BigDecimal.ZERO;
+			if (StringUtils.equals(fod.getODChargeCalOn(), FinanceConstants.ODCALON_SPFT)) {
+				balanceForCal = odcrCur.getFinCurODPft();
+			} else if (StringUtils.equals(fod.getODChargeCalOn(), FinanceConstants.ODCALON_SPRI)) {
+				balanceForCal = odcrCur.getFinCurODPri();
+			} else {
+				balanceForCal = odcrCur.getFinCurODAmt();
+			}
 
 			//As same field is used to store both amount and percentage the value is stored in minor units without decimals
 			Date dateCur = odcrCur.getMovementDate();
 			Date dateNext = odcrNext.getMovementDate();
 
-			BigDecimal penaltyRate = odcrCur.getPenaltyAmtPerc();
+			BigDecimal penaltyRate = getPenaltyRate(finEODEvent.getFinanceScheduleDetails(), dateCur, lpiMargin);
 			BigDecimal penalty = CalculationUtil.calInterest(dateCur, dateNext, balanceForCal, idb, penaltyRate);
 
-			odcrCur.setPenalty(penalty);
-			fod.setLPIAmt(fod.getLPIAmt().add(penalty));
+			odcr.setPenalty(penalty);
+			fod.setTotPenaltyAmt(fod.getTotPenaltyAmt().add(penalty));
 		}
 
-		fod.setLPIBal(fod.getLPIAmt().subtract(fod.getLPIPaid()).subtract(fod.getLPIWaived()));
-
-		//Load all ODC Recovery events to the finEODEvent for DB Update at one time
-		for (int i = 0; i < schdODCRecoveries.size(); i++) {
-			odcr = schdODCRecoveries.get(i);
-			finEODEvent.getOdcRecoveries().add(odcr);
-		}
-
-		return finEODEvent;
-	}
-
-	public List<OverdueChargeRecovery> addRepayToODCR(FinanceRepayments repayment,
-			List<OverdueChargeRecovery> schdODCRecoveries, BigDecimal paidPri, BigDecimal paidPft,
-			BigDecimal penaltyRate) throws Exception {
-		Date rpyValueDate = repayment.getFinValueDate();
-
-		for (int i = 0; i < schdODCRecoveries.size(); i++) {
-			OverdueChargeRecovery odcr = schdODCRecoveries.get(i);
-			if (rpyValueDate.compareTo(odcr.getMovementDate()) == 0) {
-				odcr.setCurPaidPri(odcr.getCurPaidPri().add(paidPri));
-				odcr.setCurPaidPft(odcr.getFinCurODPft().add(paidPft));
-				schdODCRecoveries.set(i, odcr);
-				return schdODCRecoveries;
-			}
-		}
-
-		OverdueChargeRecovery odcr = new OverdueChargeRecovery();
-
-		odcr.setFinReference(repayment.getFinReference());
-		odcr.setFinODSchdDate(repayment.getFinSchdDate());
-		odcr.setFinODFor(FinanceConstants.SCH_TYPE_LATEPAYPROFIT);
-		odcr.setMovementDate(repayment.getFinValueDate());
-		odcr.setPenaltyAmtPerc(penaltyRate);
-		odcr.setCurPaidPri(paidPri);
-		odcr.setCurPaidPft(paidPft);
-		schdODCRecoveries.add(odcr);
-
-		return schdODCRecoveries;
+		fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
 
 	}
 
 	public BigDecimal getPenaltyRate(List<FinanceScheduleDetail> finSchdDetails, Date mvtDate, BigDecimal lpiMargin)
 			throws Exception {
+
 		BigDecimal penaltyRate = BigDecimal.ZERO;
 
 		for (int i = 0; i < finSchdDetails.size(); i++) {

@@ -2640,12 +2640,12 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				fillComboBox(this.oDChargeType, penaltyRate.getODChargeType(),
 						PennantStaticListUtil.getODCChargeType(), "");
 				if (FinanceConstants.PENALTYTYPE_FLAT.equals(getComboboxValue(this.oDChargeType))
-						|| FinanceConstants.PENALTYTYPE_FLATAMTONPASTDUEMTH.equals(getComboboxValue(this.oDChargeType))) {
+						|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 					this.oDChargeAmtOrPerc.setValue(PennantAppUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(),
 							CurrencyUtil.getFormat(aFinanceMain.getFinCcy())));
-				} else if (FinanceConstants.PENALTYTYPE_PERCONETIME.equals(getComboboxValue(this.oDChargeType))
-						|| FinanceConstants.PENALTYTYPE_PERCONDUEDAYS.equals(getComboboxValue(this.oDChargeType))
-						|| FinanceConstants.PENALTYTYPE_PERCONDUEMTH.equals(getComboboxValue(this.oDChargeType))) {
+				} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
+						|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
+						|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 					this.oDChargeAmtOrPerc
 							.setValue(PennantAppUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(), 2));
 				}
@@ -5244,8 +5244,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			try {
 				if (this.applyODPenalty.isChecked()
 						&& !getComboboxValue(this.oDChargeType).equals(PennantConstants.List_Select)) {
-					if ((FinanceConstants.PENALTYTYPE_PERCONETIME.equals(getComboboxValue(this.oDChargeType))
-							|| FinanceConstants.PENALTYTYPE_PERCONDUEDAYS.equals(getComboboxValue(this.oDChargeType)) || FinanceConstants.PENALTYTYPE_PERCONDUEMTH
+					if ((FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
+							|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType)) || FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH
 								.equals(getComboboxValue(this.oDChargeType)))
 							&& this.oDChargeAmtOrPerc.getValue().compareTo(new BigDecimal(100)) > 0) {
 						throw new WrongValueException(this.oDChargeAmtOrPerc, Labels.getLabel(
@@ -5256,13 +5256,13 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				if (FinanceConstants.PENALTYTYPE_FLAT.equals(getComboboxValue(this.oDChargeType))
-						|| FinanceConstants.PENALTYTYPE_FLATAMTONPASTDUEMTH.equals(getComboboxValue(this.oDChargeType))) {
+						|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 					penaltyRate.setODChargeAmtOrPerc(PennantAppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(),
 							CurrencyUtil
 									.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy())));
-				} else if (FinanceConstants.PENALTYTYPE_PERCONETIME.equals(getComboboxValue(this.oDChargeType))
-						|| FinanceConstants.PENALTYTYPE_PERCONDUEDAYS.equals(getComboboxValue(this.oDChargeType))
-						|| FinanceConstants.PENALTYTYPE_PERCONDUEMTH.equals(getComboboxValue(this.oDChargeType))) {
+				} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
+						|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
+						|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 					penaltyRate.setODChargeAmtOrPerc(PennantAppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(),
 							2));
 				}

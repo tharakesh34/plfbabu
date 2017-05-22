@@ -288,7 +288,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				prvRecovery = getRecoveryDAO().getMaxOverdueChargeRecoveryById(odDetails.getFinReference(),
 						odDetails.getFinODSchdDate(), odDetails.getFinODFor(), "_AMView");
 
-				if (FinanceConstants.PENALTYTYPE_PERCONDUEDAYS.equals(odDetails.getODChargeType())
+				if (FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odDetails.getODChargeType())
 						&& prvRecovery != null && prvRecovery.isRcdCanDel() && !isEnqPurpose) {
 					getRecoveryDAO().deleteUnpaid(odDetails.getFinReference(), odDetails.getFinODSchdDate(),
 							odDetails.getFinODFor(), "");
@@ -329,7 +329,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				BigDecimal prvPenalty = BigDecimal.ZERO;
 				BigDecimal prvPenaltyBal = BigDecimal.ZERO;
 
-				if (FinanceConstants.PENALTYTYPE_PERCONDUEDAYS.equals(odDetails.getODChargeType())
+				if (FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odDetails.getODChargeType())
 						&& prvRecovery != null && prvRecovery.isRcdCanDel()) {
 
 					String tableType = "_AMView";
@@ -346,7 +346,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				boolean resetTotals = true;
 				int seqNo = 1;
 				//Stop calculation for paid penalty for Charge Type 'FLAT' & 'PERCONETIME'
-				if (!FinanceConstants.PENALTYTYPE_PERCONDUEDAYS.equals(odDetails.getODChargeType())
+				if (!FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odDetails.getODChargeType())
 						&& recovery != null
 						&& (recovery.getPenaltyPaid().compareTo(BigDecimal.ZERO) > 0 || recovery.getWaivedAmt()
 								.compareTo(BigDecimal.ZERO) > 0)) {
@@ -366,7 +366,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 						resetTotals = false;
 					}
 
-					if (!FinanceConstants.PENALTYTYPE_PERCONDUEDAYS.equals(odDetails.getODChargeType())
+					if (!FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odDetails.getODChargeType())
 							&& prvRecovery != null) {
 						if (!isEnqPurpose) {
 							getRecoveryDAO().deleteUnpaid(odDetails.getFinReference(), odDetails.getFinODSchdDate(),
@@ -421,7 +421,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 					recovery.setPenalty(odDetails.getODChargeAmtOrPerc());
 
-				} else if (FinanceConstants.PENALTYTYPE_PERCONETIME.equals(odDetails.getODChargeType())) {
+				} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(odDetails.getODChargeType())) {
 
 					if (odDetails.getODChargeCalOn().equals(FinanceConstants.ODCALON_SPFT)) {
 
@@ -438,7 +438,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 								odDetails.getODChargeAmtOrPerc()));
 					}
 
-				} else if (FinanceConstants.PENALTYTYPE_PERCONDUEDAYS.equals(odDetails.getODChargeType())) {
+				} else if (FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odDetails.getODChargeType())) {
 
 					if (odDetails.getODChargeCalOn().equals(FinanceConstants.ODCALON_SPFT)) {
 
@@ -463,7 +463,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				prvPenalty = recovery.getPenalty().add(prvPenalty);
 				prvPenaltyBal = recovery.getPenalty().add(prvPenaltyBal);
 
-				if (FinanceConstants.PENALTYTYPE_PERCONDUEDAYS.equals(odDetails.getODChargeType())) {
+				if (FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odDetails.getODChargeType())) {
 					recovery.setPenaltyBal(recovery.getPenalty().add(recovery.getPenaltyBal()));
 					recovery.setPenaltyPaid(BigDecimal.ZERO);
 					recovery.setWaivedAmt(BigDecimal.ZERO);

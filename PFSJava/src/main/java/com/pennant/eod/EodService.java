@@ -26,8 +26,6 @@ public class EodService {
 	private DataSource					dataSource;
 
 	private LatePayMarkingService		latePayMarkingService;
-	private LatePayPenaltyService		latePayPenaltyService;
-	private LatePayInterestService		latePayInterestService;
 	private NPAService					npaService;
 	private DateRollOverService			dateRollOverService;
 	private LoadFinanceData				loadFinanceData;
@@ -63,14 +61,6 @@ public class EodService {
 
 		//customer status update
 		custEODEvent = latePayMarkingService.processCustomerStatus(custEODEvent);
-
-		if (custEODEvent.isPastDueExist()) {
-			//late pay penalty
-			custEODEvent = latePayPenaltyService.processLatePayPenalty(custEODEvent);
-
-			//late pay interest
-			custEODEvent = latePayInterestService.processLatePayInterest(custEODEvent);
-		}
 
 		//NPA Service
 		custEODEvent = npaService.processNPABuckets(custEODEvent);
@@ -146,14 +136,6 @@ public class EodService {
 
 	public void setLatePayMarkingService(LatePayMarkingService latePayMarkingService) {
 		this.latePayMarkingService = latePayMarkingService;
-	}
-
-	public void setLatePayPenaltyService(LatePayPenaltyService latePayPenaltyService) {
-		this.latePayPenaltyService = latePayPenaltyService;
-	}
-
-	public void setLatePayInterestService(LatePayInterestService latePayInterestService) {
-		this.latePayInterestService = latePayInterestService;
 	}
 
 	public void setNpaService(NPAService npaService) {

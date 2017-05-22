@@ -103,10 +103,6 @@ public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 	private BigDecimal				pendingODC					= BigDecimal.ZERO;
 	private BigDecimal				totWaived					= BigDecimal.ZERO;
 
-	//Fields not in DB
-	private BigDecimal				curPaidPri					= BigDecimal.ZERO;
-	private BigDecimal				curPaidPft					= BigDecimal.ZERO;
-
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -444,21 +440,5 @@ public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 
 	public void setFinCcy(String finCcy) {
 		this.finCcy = finCcy;
-	}
-
-	public BigDecimal getCurPaidPri() {
-		return curPaidPri;
-	}
-
-	public void setCurPaidPri(BigDecimal curPaidPri) {
-		this.curPaidPri = curPaidPri;
-	}
-
-	public BigDecimal getCurPaidPft() {
-		return curPaidPft;
-	}
-
-	public void setCurPaidPft(BigDecimal curPaidPft) {
-		this.curPaidPft = curPaidPft;
 	}
 }

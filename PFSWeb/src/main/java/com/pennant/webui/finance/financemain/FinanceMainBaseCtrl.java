@@ -3529,13 +3529,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				fillComboBox(this.oDChargeType, penaltyRate.getODChargeType(),
 						PennantStaticListUtil.getODCChargeType(), "");
 				if (FinanceConstants.PENALTYTYPE_FLAT.equals(getComboboxValue(this.oDChargeType))
-						|| FinanceConstants.PENALTYTYPE_FLATAMTONPASTDUEMTH.equals(getComboboxValue(this.oDChargeType))) {
+						|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 					onChangeODChargeType(true);
 					this.oDChargeAmtOrPerc.setValue(PennantAppUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(),
 							format));
-				} else if (FinanceConstants.PENALTYTYPE_PERCONETIME.equals(getComboboxValue(this.oDChargeType))
-						|| FinanceConstants.PENALTYTYPE_PERCONDUEDAYS.equals(getComboboxValue(this.oDChargeType))
-						|| FinanceConstants.PENALTYTYPE_PERCONDUEMTH.equals(getComboboxValue(this.oDChargeType))) {
+				} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
+						|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
+						|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 					this.oDChargeAmtOrPerc
 							.setValue(PennantAppUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(), 2));
 				}
@@ -4891,13 +4891,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					&& StringUtils.isNotEmpty(this.space_oDChargeAmtOrPerc.getSclass())) {
 
 				if (FinanceConstants.PENALTYTYPE_FLAT.equals(getComboboxValue(this.oDChargeType))
-						|| FinanceConstants.PENALTYTYPE_FLATAMTONPASTDUEMTH.equals(getComboboxValue(this.oDChargeType))) {
+						|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 					this.oDChargeAmtOrPerc.setConstraint(new PTDecimalValidator(Labels
 							.getLabel("label_FinanceMainDialog_ODChargeAmtOrPerc.value"), finFormatter, true, false,
 							9999999));
-				} else if (FinanceConstants.PENALTYTYPE_PERCONETIME.equals(getComboboxValue(this.oDChargeType))
-						|| FinanceConstants.PENALTYTYPE_PERCONDUEDAYS.equals(getComboboxValue(this.oDChargeType))
-						|| FinanceConstants.PENALTYTYPE_PERCONDUEMTH.equals(getComboboxValue(this.oDChargeType))) {
+				} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
+						|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
+						|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 					this.oDChargeAmtOrPerc.setConstraint(new PTDecimalValidator(Labels
 							.getLabel("label_FinanceMainDialog_ODChargeAmtOrPerc.value"), 2, true, false,100));
 				}
@@ -10859,12 +10859,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 				if (FinanceConstants.PENALTYTYPE_FLAT.equals(getComboboxValue(this.oDChargeType))
-						|| FinanceConstants.PENALTYTYPE_FLATAMTONPASTDUEMTH.equals(getComboboxValue(this.oDChargeType))) {
+						|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 					penaltyRate.setODChargeAmtOrPerc(PennantAppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(),
 							formatter));
-				} else if (FinanceConstants.PENALTYTYPE_PERCONETIME.equals(getComboboxValue(this.oDChargeType))
-						|| FinanceConstants.PENALTYTYPE_PERCONDUEDAYS.equals(getComboboxValue(this.oDChargeType))
-						|| FinanceConstants.PENALTYTYPE_PERCONDUEMTH.equals(getComboboxValue(this.oDChargeType))) {
+				} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
+						|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
+						|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 					penaltyRate.setODChargeAmtOrPerc(PennantAppUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(),
 							2));
 				}
@@ -14684,7 +14684,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.oDChargeAmtOrPerc);
 			this.space_oDChargeAmtOrPerc.setSclass("");
 		} else if (getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_FLAT)
-				|| getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_FLATAMTONPASTDUEMTH)) {
+				|| getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH)) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDChargeAmtOrPerc"), this.oDChargeAmtOrPerc);
 			//this.oDChargeAmtOrPerc.setMaxlength(15);
 			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(CurrencyUtil
@@ -14700,7 +14700,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		}
 
-		if (!getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_PERCONDUEDAYS)) {
+		if (!getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)) {
 			readOnlyComponent(true, this.oDIncGrcDays);
 			if (changeAction) {
 				this.oDIncGrcDays.setChecked(false);

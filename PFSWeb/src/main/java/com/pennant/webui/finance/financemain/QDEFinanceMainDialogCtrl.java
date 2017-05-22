@@ -2390,7 +2390,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.oDChargeAmtOrPerc);
 			this.space_oDChargeAmtOrPerc.setSclass("");
 		} else if (getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_FLAT)
-				|| getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_FLATAMTONPASTDUEMTH)) {
+				|| getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH)) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDChargeAmtOrPerc"), this.oDChargeAmtOrPerc);
 			this.oDChargeAmtOrPerc.setMaxlength(15);
 			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(
