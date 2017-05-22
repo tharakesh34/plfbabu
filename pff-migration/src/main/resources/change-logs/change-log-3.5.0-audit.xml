@@ -25,5 +25,7 @@
 			<column name="AccountType" type="varchar(15)"/>
 		</addColumn>
 	</changeSet>
-
+	<changeSet id="4" author="Surekha">
+	<dropPrimaryKey constraintName="PK_ADTACCOUNTMAPPING" tableName="AdtAccountMapping"/>
+	</changeSet>
 </databaseChangeLog>
