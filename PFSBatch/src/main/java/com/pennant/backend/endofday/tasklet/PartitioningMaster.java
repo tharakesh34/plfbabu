@@ -52,6 +52,7 @@ import org.springframework.batch.item.ExecutionContext;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 
@@ -67,18 +68,18 @@ public class PartitioningMaster implements Partitioner {
 		logger.debug("START: Thread Allocation On : " + valueDate);
 		Map<String, ExecutionContext> partitionData = new HashMap<String, ExecutionContext>();
 
-		boolean recordslessThanThread = false;
+		boolean recordsLessThanThread = false;
 		//configured thread count
-		int threadCount = SysParamUtil.getValueAsInt("EOD_THREAD_COUNT");
+		int threadCount = SysParamUtil.getValueAsInt(SMTParameterConstants.EOD_THREAD_COUNT);
 
 		//count by progress
-		long custIdCount = customerQueuingDAO.getCountByProgress(valueDate);
+		long custIdCount = customerQueuingDAO.getCountByProgress();
 
 		if (custIdCount != 0) {
 
 			long noOfRows = Math.round((new Double(custIdCount) / new Double(threadCount)));
 			if (custIdCount < threadCount) {
-				recordslessThanThread = true;
+				recordsLessThanThread = true;
 				noOfRows = 1;
 			}
 
@@ -91,8 +92,9 @@ public class PartitioningMaster implements Partitioner {
 				} else {
 					customerCount = customerQueuingDAO.updateThreadIDByRowNumber(valueDate, noOfRows, i);
 				}
+				
 				addExecution(i, partitionData, customerCount);
-				if (recordslessThanThread && i == custIdCount) {
+				if (recordsLessThanThread && i == custIdCount) {
 					break;
 				}
 			}

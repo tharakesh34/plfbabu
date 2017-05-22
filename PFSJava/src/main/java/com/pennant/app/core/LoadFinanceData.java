@@ -16,6 +16,7 @@ import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.BusinessCalendar;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
@@ -42,10 +43,7 @@ public class LoadFinanceData extends ServiceHelper {
 		custEODEvent.setCustomer(getCustomerDAO().getCustomerEOD(custId));
 
 		long custID = custEODEvent.getCustomer().getCustID();
-
 		//For SOD Operations
-		Date valueDate = custEODEvent.getEodValueDate();
-		Date businesdate = DateUtility.addDays(custEODEvent.getEodValueDate(), 1);
 		List<FinanceMain> custFinMains = getFinanceMainDAO().getFinMainsForEODByCustId(custID, true);
 
 		List<FinanceProfitDetail> listprofitDetails = getFinanceProfitDetailDAO().getFinProfitDetailsByCustId(custID,
@@ -53,7 +51,6 @@ public class LoadFinanceData extends ServiceHelper {
 
 		for (int i = 0; i < custFinMains.size(); i++) {
 			FinEODEvent finEODEvent = new FinEODEvent();
-			Map<Date, Integer> datesMap = new HashMap<Date, Integer>();
 
 			//FINANCE MAIN
 			finEODEvent.setFinanceMain(custFinMains.get(i));
@@ -69,80 +66,12 @@ public class LoadFinanceData extends ServiceHelper {
 			finEODEvent.setFinProfitDetail(getFinanceProfitDetailRef(finReference, listprofitDetails));
 
 			//FINSCHDULE DETAILS
-			List<FinanceScheduleDetail> finSchdDetails = getFinanceScheduleDetailDAO().getFinScheduleDetails(
-					finReference, TableType.MAIN_TAB.getSuffix(), false);
+			List<FinanceScheduleDetail> finSchdDetails = getFinanceScheduleDetailDAO()
+					.getFinScheduleDetails(finReference, TableType.MAIN_TAB.getSuffix(), false);
 			finEODEvent.setFinanceScheduleDetails(finSchdDetails);
 
-			//Place schedule dates to Map
-			for (int j = 0; j < finSchdDetails.size(); j++) {
-				datesMap.put(finSchdDetails.get(j).getSchDate(), j);
-			}
-
-			finEODEvent.setDatesMap(datesMap);
-
-			int idx = getIndexFromMap(datesMap, businesdate);
-
-			if (idx != 0) {
-				FinanceScheduleDetail curSchd = finSchdDetails.get(idx);
-
-				//Disbursement Exist
-				if (curSchd.isDisbOnSchDate()) {
-					finEODEvent.setDisbExist(true);
-				}
-
-				//Fee Due Exist
-				BigDecimal dueAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
-				if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
-					finEODEvent.setFeeDueExist(true);
-				}
-
-				//Insurance Due Exist
-				dueAmount = curSchd.getInsSchd().subtract(curSchd.getSchdInsPaid());
-
-				if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
-					finEODEvent.setInsuranceDueExist(true);
-				}
-
-				//Installment Due Exist
-				dueAmount = curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()).subtract(curSchd.getSchdPriPaid())
-						.subtract(curSchd.getSchdPftPaid());
-
-				if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
-					finEODEvent.setInstDueExist(true);
-				}
-				
-				//Presentment Required
-				if (curSchd.getDefSchdDate().compareTo(businesdate)==0 && curSchd.getPresentmentId() != 0) {
-					finEODEvent.setCheckPresentment(true);
-				}
-				
-				//Do not Include Today Late payment Calculation
-				if (!finEODEvent.isPastDueExist() && curSchd.getSchDate().compareTo(valueDate) < 0) {
-					boolean isAmountDue = false;
-					//Paid Principal OR Paid Interest Less than scheduled amounts 
-					if (curSchd.getSchdPriPaid().compareTo(curSchd.getPrincipalSchd()) < 0
-							|| curSchd.getSchdPftPaid().compareTo(curSchd.getProfitSchd()) < 0) {
-						isAmountDue = true;
-					}
-
-					//Islamic Implementation
-					if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
-						//Paid Supplementary rent OR Paid Increase Cost less than scheduled amounts 
-						if (curSchd.getSuplRentPaid().compareTo(curSchd.getSuplRent()) < 0
-								|| curSchd.getIncrCostPaid().compareTo(curSchd.getIncrCost()) < 0) {
-							isAmountDue = true;
-						}
-					}
-
-					if (isAmountDue) {
-						finEODEvent.setPastDueExist(true);
-					}
-	
-				}
-			}
-
 			custEODEvent.getFinEODEvents().add(finEODEvent);
-
+			setEventFlags(custEODEvent, i);
 		}
 
 		//clear temporary data
@@ -150,6 +79,175 @@ public class LoadFinanceData extends ServiceHelper {
 		custFinMains.clear();
 		logger.debug(" Leaving ");
 		return custEODEvent;
+	}
+
+	public void setEventFlags(CustEODEvent custEODEvent, int iFinEvent) throws Exception {
+
+		Map<Date, Integer> datesMap = new HashMap<Date, Integer>();
+		FinEODEvent finEODEvent = custEODEvent.getFinEODEvents().get(iFinEvent);
+		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
+		Date valueDate = custEODEvent.getEodValueDate();
+		Date businessDate = DateUtility.addDays(custEODEvent.getEodValueDate(), 1);
+
+		boolean isAmountDue = false;
+
+		//Place schedule dates to Map
+		for (int i = 0; i < finSchdDetails.size(); i++) {
+			FinanceScheduleDetail curSchd = finSchdDetails.get(i);
+			datesMap.put(finSchdDetails.get(i).getSchDate(), i);
+
+			//Find various events required today or not
+			if (curSchd.getSchDate().compareTo(valueDate) == 0) {
+				//Disbursement Exist
+				if (curSchd.isDisbOnSchDate()) {
+					finEODEvent.setIdxDisb(i);
+					custEODEvent.setDisbExist(true);
+				}
+
+				//Fee Due Exist
+				BigDecimal dueAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
+				if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
+					finEODEvent.setIdxDue(i);
+					custEODEvent.setDueExist(true);
+				}
+
+				//Insurance Due Exist
+				dueAmount = curSchd.getInsSchd().subtract(curSchd.getSchdInsPaid());
+
+				if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
+					finEODEvent.setIdxDue(i);
+					custEODEvent.setDueExist(true);
+				}
+
+				//Installment Due Exist
+				dueAmount = curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()).subtract(curSchd.getSchdPriPaid())
+						.subtract(curSchd.getSchdPftPaid());
+
+				if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
+					finEODEvent.setIdxDue(i);
+					custEODEvent.setDueExist(true);
+				}
+
+				//Presentment Required
+				if (curSchd.getDefSchdDate().compareTo(businessDate) == 0 && curSchd.getPresentmentId() != 0) {
+					finEODEvent.setIdxPresentment(i);
+					custEODEvent.setCheckPresentment(true);
+				}
+			}
+
+			//Date Rollover Setting
+			if (curSchd.getSchDate().compareTo(businessDate) == 0) {
+				setDateRollover(custEODEvent, iFinEvent, curSchd.getSchDate(), i);
+			}
+
+			//PastDue Index Setting
+			if (finEODEvent.getIdxPD() > 0) {
+				continue;
+			}
+
+			//Do not Include Today Late payment Calculation
+			if (curSchd.getSchDate().compareTo(valueDate) >= 0) {
+				continue;
+			}
+
+			//Paid Principal OR Paid Interest Less than scheduled amounts 
+			if (curSchd.getSchdPriPaid().compareTo(curSchd.getPrincipalSchd()) < 0
+					|| curSchd.getSchdPftPaid().compareTo(curSchd.getProfitSchd()) < 0) {
+				isAmountDue = true;
+			} else {
+				//Islamic Implementation
+				if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
+					//Paid Supplementary rent OR Paid Increase Cost less than scheduled amounts 
+					if (curSchd.getSuplRentPaid().compareTo(curSchd.getSuplRent()) < 0
+							|| curSchd.getIncrCostPaid().compareTo(curSchd.getIncrCost()) < 0) {
+						isAmountDue = true;
+					}
+				}
+			}
+
+			if (isAmountDue) {
+				finEODEvent.setIdxPD(i);
+				custEODEvent.setPastDueExist(true);
+			}
+
+		}
+
+		finEODEvent.setDatesMap(datesMap);
+
+	}
+
+	public void setDateRollover(CustEODEvent custEODEvent, int iFinEvent, Date schdDate, int iSchd) throws Exception {
+		FinEODEvent finEODEvent = custEODEvent.getFinEODEvents().get(iFinEvent);
+		FinanceMain finMain = finEODEvent.getFinanceMain();
+
+		if (finMain.isAllowGrcPeriod() && schdDate.compareTo(finMain.getGrcPeriodEndDate()) < 0) {
+			//Set Next Grace Capitalization Date
+			if (finMain.isAllowGrcCpz() && finMain.getNextGrcCpzDate().compareTo(finMain.getGrcPeriodEndDate()) < 0
+					&& schdDate.compareTo(finMain.getNextGrcCpzDate()) == 0) {
+				finEODEvent.setIdxGrcCpz(iSchd);
+				custEODEvent.setDateRollover(true);
+			}
+
+			//Set Next Grace Profit Date
+			if (finMain.getNextGrcPftDate().compareTo(finMain.getGrcPeriodEndDate()) < 0
+					&& schdDate.compareTo(finMain.getNextGrcPftDate()) == 0) {
+				finEODEvent.setIdxGrcPft(iSchd);
+				custEODEvent.setDateRollover(true);
+			}
+
+			//Set Next Grace Profit Review Date
+			if (finMain.isAllowGrcPftRvw()
+					&& finMain.getNextGrcPftRvwDate().compareTo(finMain.getGrcPeriodEndDate()) < 0
+					&& schdDate.compareTo(finMain.getNextGrcPftRvwDate()) == 0) {
+				finEODEvent.setIdxGrcPftRvw(iSchd);
+				custEODEvent.setDateRollover(true);
+			}
+		}
+
+		//Set Next Repay Capitalization Date
+
+		if (finMain.isAllowRepayCpz() && schdDate.compareTo(finMain.getNextRepayCpzDate()) == 0) {
+			finEODEvent.setIdxRpyCpz(iSchd);
+			custEODEvent.setDateRollover(true);
+		}
+
+		//Set Next Repayment Date
+		if (schdDate.compareTo(finMain.getNextRepayDate()) == 0) {
+			finEODEvent.setIdxRpy(iSchd);
+			custEODEvent.setDateRollover(true);
+		}
+
+		//Set Next Repayment Profit Date
+		if (schdDate.compareTo(finMain.getNextRepayPftDate()) == 0) {
+			finEODEvent.setIdxRpyPft(iSchd);
+			custEODEvent.setDateRollover(true);
+		}
+
+		//Set Next Repayment Profit Review Date
+		if (finMain.isAllowRepayRvw()) {
+			if (schdDate.compareTo(finMain.getNextRepayRvwDate()) == 0) {
+				finEODEvent.setIdxRpyPftRvw(iSchd);
+				custEODEvent.setDateRollover(true);
+			}
+		}
+
+		//Set Next Depreciation Date
+		if (finMain.getNextDepDate() != null && schdDate.compareTo(finMain.getNextDepDate()) == 0) {
+			if (!StringUtils.isEmpty(finMain.getDepreciationFrq())) {
+				if (finMain.getNextDepDate().compareTo(finMain.getMaturityDate()) < 0) {
+					finMain.setNextDepDate(FrequencyUtil
+							.getNextDate(finMain.getDepreciationFrq(), 1, schdDate, "A", false).getNextFrequencyDate());
+				}
+
+				if (finMain.getNextDepDate().compareTo(finMain.getMaturityDate()) > 0) {
+					finMain.setNextDepDate(finMain.getMaturityDate());
+				}
+
+				finEODEvent.setUpdFinMain(true);
+				finEODEvent.addToFinMianUpdate("NextDepDate");
+			}
+		}
+
 	}
 
 	public void updateFinEODEvents(CustEODEvent custEODEvent) throws Exception {
@@ -162,14 +260,12 @@ public class LoadFinanceData extends ServiceHelper {
 			//update finance main
 			if (finEODEvent.isUpdFinMain()) {
 				//finEODEvent.getFinanceMain().setVersion(finEODEvent.getFinanceMain().getVersion() + 1);
-				getFinanceMainDAO().updateFinanceInEOD(finEODEvent.getFinanceMain(),finEODEvent.getFinMainUpdateFields(),
-						finEODEvent.isupdFinSchdForRateRvw());
+				getFinanceMainDAO().updateFinanceInEOD(finEODEvent.getFinanceMain(),
+						finEODEvent.getFinMainUpdateFields(), finEODEvent.isupdFinSchdForRateRvw());
 			}
 
 			//update profit details
-			if (finEODEvent.isUpdFinPft()) {
-				getFinanceProfitDetailDAO().update(finEODEvent.getFinProfitDetail(), false);
-			}
+			getFinanceProfitDetailDAO().update(finEODEvent.getFinProfitDetail(), false);
 
 			//update schedule details 
 			if (finEODEvent.isupdFinSchdForRateRvw()) {
@@ -193,8 +289,8 @@ public class LoadFinanceData extends ServiceHelper {
 			//update repay instruction
 			if (finEODEvent.isUpdRepayInstruct()) {
 
-				getRepayInstructionDAO().deleteByFinReference(finEODEvent.getFinanceMain().getFinReference(), "",
-						false, 0);
+				getRepayInstructionDAO().deleteByFinReference(finEODEvent.getFinanceMain().getFinReference(), "", false,
+						0);
 				//Add repay instructions
 				List<RepayInstruction> lisRepayIns = finEODEvent.getRepayInstructions();
 				for (RepayInstruction repayInstruction : lisRepayIns) {
@@ -226,29 +322,20 @@ public class LoadFinanceData extends ServiceHelper {
 		logger.debug(" Leaving ");
 	}
 
-	public void updateStart(int threadId, long custId) {
+	public void updCustQueue(int threadId, long custId, Date startDateTime, Date endDateTime) {
 
 		CustomerQueuing customerQueuing = new CustomerQueuing();
 		customerQueuing.setCustID(custId);
 		customerQueuing.setThreadId(threadId);
-		customerQueuing.setStartTime(DateUtility.getSysDate());
-		customerQueuing.setProgress(EodConstants.PROGRESS_IN_PROCESS);
-		getCustomerQueuingDAO().update(customerQueuing, true);
-
-	}
-
-	public void updateEnd(int threadId, long custId) {
-
-		CustomerQueuing customerQueuing = new CustomerQueuing();
-		customerQueuing.setCustID(custId);
-		customerQueuing.setThreadId(threadId);
-		customerQueuing.setEndTime(DateUtility.getSysDate());
+		customerQueuing.setStartTime(startDateTime);
+		customerQueuing.setEndTime(endDateTime);
 		customerQueuing.setProgress(EodConstants.PROGRESS_SUCCESS);
 		getCustomerQueuingDAO().update(customerQueuing, false);
 
 	}
 
-	private FinanceProfitDetail getFinanceProfitDetailRef(String finMainRef, List<FinanceProfitDetail> listprofitDetails) {
+	private FinanceProfitDetail getFinanceProfitDetailRef(String finMainRef,
+			List<FinanceProfitDetail> listprofitDetails) {
 		FinanceProfitDetail profitDetail = null;
 		Iterator<FinanceProfitDetail> it = listprofitDetails.iterator();
 		while (it.hasNext()) {

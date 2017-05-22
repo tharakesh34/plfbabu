@@ -2740,28 +2740,22 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" SELECT FinReference,GraceTerms, NumberOfTerms, GrcPeriodEndDate, AllowGrcPeriod,");
-		selectSql.append(" GraceBaseRate, GraceSpecialRate, GrcPftRate, GrcPftFrq,NextGrcPftDate, AllowGrcPftRvw,");
-		selectSql.append(" GrcPftRvwFrq, NextGrcPftRvwDate, AllowGrcCpz, GrcCpzFrq, NextGrcCpzDate,RepayBaseRate,");
+		selectSql.append(" SELECT FinReference, GrcPeriodEndDate, AllowGrcPeriod,");
+		selectSql.append(" GraceBaseRate, GraceSpecialRate, GrcPftRate, GrcPftFrq, NextGrcPftDate, AllowGrcPftRvw,");
+		selectSql.append(" GrcPftRvwFrq, NextGrcPftRvwDate, AllowGrcCpz, GrcCpzFrq, NextGrcCpzDate, RepayBaseRate,");
 		selectSql.append(" RepaySpecialRate, RepayProfitRate, RepayFrq, NextRepayDate, RepayPftFrq, NextRepayPftDate,");
 		selectSql.append(" AllowRepayRvw,RepayRvwFrq, NextRepayRvwDate, AllowRepayCpz, RepayCpzFrq, NextRepayCpzDate,");
-		selectSql.append(" MaturityDate, CpzAtGraceEnd, ReqRepayAmount, ");
-		selectSql.append(" GrcRateBasis, RepayRateBasis, FinType, FinCcy, ScheduleMethod,");
-		selectSql.append(" ProfitDaysBasis, ReqMaturity, CalTerms, CalMaturity, FirstRepay, LastRepay,");
+		selectSql.append(" MaturityDate, CpzAtGraceEnd, GrcRateBasis, RepayRateBasis, FinType, FinCcy, ");
+		selectSql.append(" ProfitDaysBasis, FirstRepay, LastRepay,");
 		selectSql.append(" FinStartDate, FinAmount, CustID, FinBranch, FinSourceID, RecalType, FinIsActive, ");
 		selectSql.append(" LastRepayDate, LastRepayPftDate, LastRepayRvwDate, LastRepayCpzDate, AllowGrcRepay, ");
-		selectSql.append(" GrcSchdMthd, GrcMargin, RepayMargin, ClosingStatus, FinRepayPftOnFrq , ");
-		selectSql.append(" GrcProfitDaysBasis, StepFinance , StepPolicy, AlwManualSteps, NoOfSteps, StepType, ");
+		selectSql.append(" GrcSchdMthd, GrcMargin, RepayMargin, ClosingStatus, FinRepayPftOnFrq, GrcProfitDaysBasis,");
 		selectSql.append(" GrcMinRate, GrcMaxRate , RpyMinRate, RpyMaxRate, ManualSchedule,");
-		selectSql.append(" TDSApplicable, FeeChargeAmt, InsuranceAmt, AlwBPI , BpiTreatment , PlanEMIHAlw ,");
-		selectSql.append(" PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax, PlanEMIHLockPeriod, PlanEMICpz, ");
-		selectSql.append(" CalRoundingMode, BpiAmount, DeductFeeDisb, RvwRateApplFor, SchCalOnRvw, ");
+		selectSql.append(" CalRoundingMode, RvwRateApplFor, SchCalOnRvw, ");
 		selectSql.append(" PastduePftCalMthd, DroppingMethod, RateChgAnyDay, PastduePftMargin, FinRepayMethod, ");
 		selectSql.append(" MigratedFinance, ScheduleMaintained, ScheduleRegenerated, MandateID, ");
-		selectSql.append(" FinStatus, FinStsReason, BankName, Iban, AccountType, DdaReferenceNo, ");
-		selectSql.append(" DroplineFrq, FirstDroplineDate, PftServicingODLimit, ");
-		selectSql.append(" UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, PromotionCode,  ");
-		selectSql.append(" MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, FinCategory, ProductCategory, ReAgeBucket  ");
+		selectSql.append(" FinStatus, FinStsReason, BankName, Iban, AccountType, DdaReferenceNo, PromotionCode, ");
+		selectSql.append(" FinCategory, ProductCategory, ReAgeBucket  ");
 		selectSql.append(" FROM FinanceMain Where CustID=:CustID ");
 		
 		if (isActive) {
@@ -2818,6 +2812,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 				updateSql.append(" ,");
 			}
 		}
+		
 		if (rateRvw) {
 			//profit related fields for rate review
 			updateSql.append(" TotalGracePft = :TotalGracePft, TotalGraceCpz = :TotalGraceCpz ");

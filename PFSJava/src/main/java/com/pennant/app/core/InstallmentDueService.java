@@ -39,11 +39,9 @@ public class InstallmentDueService extends ServiceHelper {
 				return;
 			}
 
-			if (finEODEvent.isInstDueExist() || finEODEvent.isFeeDueExist() || finEODEvent.isInsuranceDueExist()) {
-				int idx = getIndexFromMap(finEODEvent.getDatesMap(), valueDate);
-				FinanceScheduleDetail curSchd = finEODEvent.getFinanceScheduleDetails().get(idx);
-				postInstallmentDues(finEODEvent, curSchd, valueDate, accountingID);
-			}
+			int idx = finEODEvent.getIdxDue();
+			FinanceScheduleDetail curSchd = finEODEvent.getFinanceScheduleDetails().get(idx);
+			postInstallmentDues(finEODEvent, curSchd, valueDate, accountingID);
 
 		}
 
@@ -60,11 +58,13 @@ public class InstallmentDueService extends ServiceHelper {
 
 		String finReference = curSchd.getFinReference();
 
-		if (finEODEvent.isFeeDueExist()) {
+		BigDecimal dueAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
+		if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
 			finEODEvent.setFinFeeScheduleDetails(getFinFeeScheduleDetailDAO().getFeeSchdTPost(finReference, valueDate));
 		}
 
-		if (finEODEvent.isInsuranceDueExist()) {
+		dueAmount = curSchd.getInsSchd().subtract(curSchd.getSchdInsPaid());
+		if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
 			finEODEvent.setFinSchFrqInsurances(getFinInsurancesDAO().getInsSchdToPost(finReference, valueDate));
 		}
 
@@ -96,7 +96,6 @@ public class InstallmentDueService extends ServiceHelper {
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
-		//FIXME: Fee and Insurance should it be posted similar to the disbusrement in a loop
 		List<FinFeeScheduleDetail> feelist = finEODEvent.getFinFeeScheduleDetails();
 		if (feelist != null && !feelist.isEmpty()) {
 			for (FinFeeScheduleDetail feeSchd : feelist) {
@@ -107,13 +106,13 @@ public class InstallmentDueService extends ServiceHelper {
 		}
 
 		List<FinSchFrqInsurance> finInsList = finEODEvent.getFinSchFrqInsurances();
-
 		if (finInsList != null && !finInsList.isEmpty()) {
 			for (FinSchFrqInsurance insschd : finInsList) {
 				dataMap.put(insschd.getInsuranceType() + "_SCH", insschd.getAmount());
 				dataMap.put(insschd.getInsuranceType() + "_P", insschd.getInsurancePaid());
 			}
 		}
+
 		aeEvent.setDataMap(dataMap);
 
 		//Postings Process and save all postings related to finance for one time accounts update

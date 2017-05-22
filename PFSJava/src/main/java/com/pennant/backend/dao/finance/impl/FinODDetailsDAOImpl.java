@@ -437,11 +437,12 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 	 * Method for get the FinODDetails Object by Key finReference
 	 */
 	@Override
-	public List<FinODDetails> getFinODDetailsByFinReference(String finReference) {
+	public List<FinODDetails> getFinODDByFinRef(String finReference, Date odSchdDate) {
 		logger.debug("Entering");
 
 		FinODDetails finODDetails = new FinODDetails();
 		finODDetails.setFinReference(finReference);
+		finODDetails.setFinODSchdDate(odSchdDate);
 
 		StringBuilder selectSql = new StringBuilder("Select FinReference, FinODSchdDate, FinODFor, FinBranch,");
 		selectSql.append(" FinType, CustID, FinODTillDate, FinCurODAmt, FinCurODPri, FinCurODPft, FinMaxODAmt,");
@@ -451,13 +452,14 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		selectSql.append(" ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc,  ");
 		selectSql.append(" FinLMdfDate ");
 
-		/*
-		 * if (type.contains("View")) {
-		 * selectSql.append(" , ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays, ODChargeCalOn , ");
-		 * selectSql.append(" ODChargeAmtOrPerc, ODAllowWaiver , ODMaxWaiverPerc "); }
-		 */
 		selectSql.append(" From FinODDetails");
-		selectSql.append(" Where FinReference =:FinReference ORDER BY FinODSchdDate");
+		selectSql.append(" Where FinReference =:FinReference ");
+		
+		if (odSchdDate != null) {
+			selectSql.append(" AND FinODSchdDate >= :FinODSchdDate ");	
+		}
+		
+		selectSql.append(" ORDER BY FinODSchdDate");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
@@ -470,6 +472,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 		}
+		
 		logger.debug("Leaving");
 		return finODDetailsList;
 	}

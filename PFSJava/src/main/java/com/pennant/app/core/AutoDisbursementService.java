@@ -28,7 +28,7 @@ public class AutoDisbursementService extends ServiceHelper {
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 
-			if (!finEODEvent.isDisbExist()) {
+			if (finEODEvent.getIdxDisb() < 0) {
 				continue;
 			}
 

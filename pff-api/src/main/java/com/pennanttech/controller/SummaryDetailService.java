@@ -131,7 +131,7 @@ public class SummaryDetailService {
 			}
 
 			// Get FinODDetails
-			List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDetailsByFinReference(finReference);
+			List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
 			if (finODDetailsList != null) {
 				// ODcharges
 				summary.setFinODDetail(finODDetailsList);

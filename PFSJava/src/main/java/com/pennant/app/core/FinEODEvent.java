@@ -44,17 +44,23 @@ public class FinEODEvent implements Serializable {
 	private String						recalType;
 	private String						recalSchdMethod;
 	private String						rateOnChgDate;
+
 	private boolean						rateReviewExist			= false;
-	private boolean						pastDueExist			= false;
-	private boolean						disbExist				= false;
-	private boolean						instDueExist			= false;
-	private boolean						feeDueExist				= false;
-	private boolean						insuranceDueExist		= false;
-	private boolean						checkPresentment		= false;
+
+	private int							idxPD					= -1;
+	private int							idxGrcCpz				= -1;
+	private int							idxGrcPft				= -1;
+	private int							idxGrcPftRvw			= -1;
+	private int							idxRpyCpz				= -1;
+	private int							idxRpyPft				= -1;
+	private int							idxRpyPftRvw			= -1;
+	private int							idxRpy					= -1;
+	private int							idxDisb					= -1;
+	private int							idxDue					= -1;
+	private int							idxPresentment			= -1;
 
 	private boolean						updFinMain				= false;
 	private boolean						updFinSchdForRateRvw	= false;
-	private boolean						updFinPft				= false;
 	private boolean						updRepayInstruct		= false;
 	private List<String>				finMainUpdateFields		= new ArrayList<String>(1);
 
@@ -130,14 +136,6 @@ public class FinEODEvent implements Serializable {
 		this.rateReviewExist = rateReviewExist;
 	}
 
-	public boolean isPastDueExist() {
-		return pastDueExist;
-	}
-
-	public void setPastDueExist(boolean pastDueExist) {
-		this.pastDueExist = pastDueExist;
-	}
-
 	public Date getEventFromDate() {
 		return eventFromDate;
 	}
@@ -210,14 +208,6 @@ public class FinEODEvent implements Serializable {
 		this.updFinSchdForRateRvw = updFinSchdForRateRvw;
 	}
 
-	public boolean isUpdFinPft() {
-		return updFinPft;
-	}
-
-	public void setUpdFinPft(boolean updFinPft) {
-		this.updFinPft = updFinPft;
-	}
-
 	public boolean isUpdRepayInstruct() {
 		return updRepayInstruct;
 	}
@@ -274,46 +264,6 @@ public class FinEODEvent implements Serializable {
 		this.returnDataSet = returnDataSet;
 	}
 
-	public boolean isDisbExist() {
-		return disbExist;
-	}
-
-	public void setDisbExist(boolean disbExist) {
-		this.disbExist = disbExist;
-	}
-
-	public boolean isInstDueExist() {
-		return instDueExist;
-	}
-
-	public void setInstDueExist(boolean instDueExist) {
-		this.instDueExist = instDueExist;
-	}
-
-	public boolean isFeeDueExist() {
-		return feeDueExist;
-	}
-
-	public void setFeeDueExist(boolean feeDueExist) {
-		this.feeDueExist = feeDueExist;
-	}
-
-	public boolean isInsuranceDueExist() {
-		return insuranceDueExist;
-	}
-
-	public void setInsuranceDueExist(boolean insuranceDueExist) {
-		this.insuranceDueExist = insuranceDueExist;
-	}
-
-	public boolean isCheckPresentment() {
-		return checkPresentment;
-	}
-
-	public void setCheckPresentment(boolean checkPresentment) {
-		this.checkPresentment = checkPresentment;
-	}
-
 	public List<String> getFinMainUpdateFields() {
 		return finMainUpdateFields;
 	}
@@ -324,6 +274,102 @@ public class FinEODEvent implements Serializable {
 
 	public void addToFinMianUpdate(String fieldName) {
 		finMainUpdateFields.add(fieldName);
+	}
+
+	public int getIdxPD() {
+		return idxPD;
+	}
+
+	public void setIdxPD(int idxPD) {
+		this.idxPD = idxPD;
+	}
+
+	public int getIdxGrcCpz() {
+		return idxGrcCpz;
+	}
+
+	public void setIdxGrcCpz(int idxGrcCpz) {
+		this.idxGrcCpz = idxGrcCpz;
+	}
+
+	public int getIdxGrcPft() {
+		return idxGrcPft;
+	}
+
+	public void setIdxGrcPft(int idxGrcPft) {
+		this.idxGrcPft = idxGrcPft;
+	}
+
+	public int getIdxGrcPftRvw() {
+		return idxGrcPftRvw;
+	}
+
+	public void setIdxGrcPftRvw(int idxGrcPftRvw) {
+		this.idxGrcPftRvw = idxGrcPftRvw;
+	}
+
+	public int getIdxRpyCpz() {
+		return idxRpyCpz;
+	}
+
+	public void setIdxRpyCpz(int idxRpyCpz) {
+		this.idxRpyCpz = idxRpyCpz;
+	}
+
+	public int getIdxRpyPft() {
+		return idxRpyPft;
+	}
+
+	public void setIdxRpyPft(int idxRpyPft) {
+		this.idxRpyPft = idxRpyPft;
+	}
+
+	public int getIdxRpyPftRvw() {
+		return idxRpyPftRvw;
+	}
+
+	public void setIdxRpyPftRvw(int idxRpyPftRvw) {
+		this.idxRpyPftRvw = idxRpyPftRvw;
+	}
+
+	public int getIdxRpy() {
+		return idxRpy;
+	}
+
+	public void setIdxRpy(int idxRpy) {
+		this.idxRpy = idxRpy;
+	}
+
+	public boolean isUpdFinSchdForRateRvw() {
+		return updFinSchdForRateRvw;
+	}
+
+	public void setUpdFinSchdForRateRvw(boolean updFinSchdForRateRvw) {
+		this.updFinSchdForRateRvw = updFinSchdForRateRvw;
+	}
+
+	public int getIdxDisb() {
+		return idxDisb;
+	}
+
+	public void setIdxDisb(int idxDisb) {
+		this.idxDisb = idxDisb;
+	}
+
+	public int getIdxDue() {
+		return idxDue;
+	}
+
+	public void setIdxDue(int idxDue) {
+		this.idxDue = idxDue;
+	}
+
+	public int getIdxPresentment() {
+		return idxPresentment;
+	}
+
+	public void setIdxPresentment(int idxPresentment) {
+		this.idxPresentment = idxPresentment;
 	}
 
 }

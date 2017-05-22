@@ -16,12 +16,12 @@ public interface CustomerQueuingDAO {
 
 	void updateProgress(CustomerQueuing customerQueuing);
 
-	long getCountByProgress(Date date);
-
 	void updateThreadID(Date date, int threadId);
 
 	void logCustomerQueuing(int progressSts);
 
 	void update(CustomerQueuing customerQueuing, boolean start);
+
+	long getCountByProgress();
 
 }

@@ -12,8 +12,16 @@ public class CustEODEvent extends AbstractEntity {
 	private Customer customer;
 	private Date						eodDate;
 	private Date						eodValueDate;
+
 	private List<FinEODEvent> finEODEvents = new ArrayList<FinEODEvent>(1);
 	private boolean updCustomer = false;
+	private boolean						pastDueExist			= false;
+	private boolean						dateRollover			= false;
+	private boolean						rateRvwExist			= false;
+	private boolean						disbExist				= false;
+	private boolean						dueExist			= false;
+	private boolean						checkPresentment		= false;
+
 	
 	
 	public Customer getCustomer() {
@@ -45,6 +53,42 @@ public class CustEODEvent extends AbstractEntity {
 	}
 	public void setUpdCustomer(boolean updCustomer) {
 		this.updCustomer = updCustomer;
+	}
+	public boolean isPastDueExist() {
+		return pastDueExist;
+	}
+	public void setPastDueExist(boolean pastDueExist) {
+		this.pastDueExist = pastDueExist;
+	}
+	public boolean isDateRollover() {
+		return dateRollover;
+	}
+	public void setDateRollover(boolean dateRollover) {
+		this.dateRollover = dateRollover;
+	}
+	public boolean isRateRvwExist() {
+		return rateRvwExist;
+	}
+	public void setRateRvwExist(boolean rateRvwExist) {
+		this.rateRvwExist = rateRvwExist;
+	}
+	public boolean isDisbExist() {
+		return disbExist;
+	}
+	public void setDisbExist(boolean disbExist) {
+		this.disbExist = disbExist;
+	}
+	public boolean isDueExist() {
+		return dueExist;
+	}
+	public void setDueExist(boolean dueExist) {
+		this.dueExist = dueExist;
+	}
+	public boolean isCheckPresentment() {
+		return checkPresentment;
+	}
+	public void setCheckPresentment(boolean checkPresentment) {
+		this.checkPresentment = checkPresentment;
 	}
 
 }

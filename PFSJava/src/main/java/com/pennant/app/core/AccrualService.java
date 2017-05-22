@@ -56,6 +56,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 
 public class AccrualService extends ServiceHelper {
 
@@ -118,7 +119,6 @@ public class AccrualService extends ServiceHelper {
 
 		if (isAmzPostToday) {
 			postAccruals(finEODEvent, valueDate);
-			finEODEvent.setUpdFinPft(true);
 		}
 
 		logger.debug(" Leaving ");
@@ -132,8 +132,12 @@ public class AccrualService extends ServiceHelper {
 		String finRef = finMain.getFinReference();
 		Date dateSusp = null;
 
-		if (!StringUtils.equals(finMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
-			dateSusp = suspHeadDAO.getFinSuspDate(finRef);
+		int suspReq = SysParamUtil.getValueAsInt(SMTParameterConstants.SUSP_CHECK_REQ);
+
+		if (suspReq == 1) {
+			if (!StringUtils.equals(finMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+				dateSusp = suspHeadDAO.getFinSuspDate(finRef);
+			}
 		}
 
 		if (dateSusp == null) {
@@ -276,27 +280,20 @@ public class AccrualService extends ServiceHelper {
 		pftDetail.setTotalTenor(0);
 		//FIXME for summary we are maintaining these details. so they may not be required since the application will refer the actual tables
 		//		//Set Excess Amounts
-				/*List<FinExcessAmount> finExcessAmounts = finExcessAmountDAO.getExcessAmountsByRef(pftDetail.getFinReference());
-				if (finExcessAmounts.size() > 0) {
-					for (int i = 0; i < finExcessAmounts.size(); i++) {
-						BigDecimal totBalAvailable = finExcessAmounts.get(i).getAmount()
-								.subtract(finExcessAmounts.get(i).getUtilisedAmt());
-						BigDecimal reservedAmt = finExcessAmounts.get(i).getReservedAmt();
-		
-						if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(), RepayConstants.EXAMOUNTTYPE_EXCESS)) {
-							pftDetail.setExcessAmt(totBalAvailable);
-							pftDetail.setExcessAmtResv(reservedAmt);
-						} else if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(),
-								RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
-							pftDetail.setEmiInAdvance(totBalAvailable);
-							pftDetail.setEmiInAdvanceResv(reservedAmt);
-						} else if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(),
-								RepayConstants.EXAMOUNTTYPE_PAYABLE)) {
-							pftDetail.setPayableAdvise(totBalAvailable);
-							pftDetail.setPayableAdviseResv(totBalAvailable);
-						}
-					}
-				}*/
+		/*
+		 * List<FinExcessAmount> finExcessAmounts =
+		 * finExcessAmountDAO.getExcessAmountsByRef(pftDetail.getFinReference()); if (finExcessAmounts.size() > 0) { for
+		 * (int i = 0; i < finExcessAmounts.size(); i++) { BigDecimal totBalAvailable =
+		 * finExcessAmounts.get(i).getAmount() .subtract(finExcessAmounts.get(i).getUtilisedAmt()); BigDecimal
+		 * reservedAmt = finExcessAmounts.get(i).getReservedAmt();
+		 * 
+		 * if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(), RepayConstants.EXAMOUNTTYPE_EXCESS)) {
+		 * pftDetail.setExcessAmt(totBalAvailable); pftDetail.setExcessAmtResv(reservedAmt); } else if
+		 * (StringUtils.equals(finExcessAmounts.get(i).getAmountType(), RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
+		 * pftDetail.setEmiInAdvance(totBalAvailable); pftDetail.setEmiInAdvanceResv(reservedAmt); } else if
+		 * (StringUtils.equals(finExcessAmounts.get(i).getAmountType(), RepayConstants.EXAMOUNTTYPE_PAYABLE)) {
+		 * pftDetail.setPayableAdvise(totBalAvailable); pftDetail.setPayableAdviseResv(totBalAvailable); } } }
+		 */
 
 	}
 
@@ -352,8 +349,8 @@ public class AccrualService extends ServiceHelper {
 			} else if (valueDate.compareTo(curSchdDate) > 0 && valueDate.compareTo(nextSchdDate) <= 0) {
 				int days = getNoDays(valueDate, curSchdDate);
 				int daysInCurPeriod = nextSchd.getNoOfDays();
-				pftAmz = nextSchd.getProfitCalc().multiply(new BigDecimal(days))
-						.divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
+				pftAmz = nextSchd.getProfitCalc().multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod),
+						0, RoundingMode.HALF_DOWN);
 			} else {
 				pftAmz = nextSchd.getProfitCalc();
 			}
@@ -556,8 +553,8 @@ public class AccrualService extends ServiceHelper {
 
 		// Suspense Amortization
 		if (dateSusp.compareTo(pftDetail.getMaturityDate()) <= 0) {
-			pftDetail.setPftAmzSusp(pftDetail.getPftAmz().subtract(pftDetail.getPftAmzNormal())
-					.subtract(pftDetail.getPftAmzPD()));
+			pftDetail.setPftAmzSusp(
+					pftDetail.getPftAmz().subtract(pftDetail.getPftAmzNormal()).subtract(pftDetail.getPftAmzPD()));
 			pftDetail.setPftInSusp(true);
 			//Value Equivalent accrual after suspended date
 			pftDetail.setPftAccrueSusp(pftDetail.getPftAccrued().subtract(pftDetail.getPftAccrueSusp()));

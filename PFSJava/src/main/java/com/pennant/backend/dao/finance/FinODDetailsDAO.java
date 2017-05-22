@@ -83,7 +83,7 @@ public interface FinODDetailsDAO {
 	void updateLatePftTotals(String finReference, Date odSchDate, BigDecimal paidNow, BigDecimal waivedNow);
 	FinODDetails getFinODyFinRefSchDate(String finReference, Date schdate);
 	void updateReversals(String finReference, Date odSchDate, BigDecimal penaltyPaid, BigDecimal latePftPaid);
-	List<FinODDetails> getFinODDetailsByFinReference(String finReference);
 	FinODDetails getFinODDetailsForBatch(String finReference, Date schdDate);
 	int getFinCurSchdODDays(String finReference, Date finODSchdDate);
+	List<FinODDetails> getFinODDByFinRef(String finReference, Date odSchdDate);
 }

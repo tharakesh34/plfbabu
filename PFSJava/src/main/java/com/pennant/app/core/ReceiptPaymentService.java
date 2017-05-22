@@ -37,7 +37,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		//	check at least one presentment exists or not.
 		boolean presetment = false;
 		for (FinEODEvent finEODEvent : finEODEvents) {
-			if (finEODEvent.isCheckPresentment()) {
+			if (finEODEvent.getIdxPresentment() >= 0) {
 				presetment = true;
 				break;
 			}
@@ -46,12 +46,12 @@ public class ReceiptPaymentService extends ServiceHelper {
 		if (!presetment) {
 			return;
 		}
-		
+
 		//if presentment exists then fetch all the presentment related to the customer at once process accordingly
-		
+
 		Date businessDate = custEODEvent.getEodValueDate();
 		long custID = custEODEvent.getCustomer().getCustID();
-		
+
 		List<PresentmentDetail> presentments = getPresentmentHeaderDAO().getPresentmenToPost(custID, businessDate);
 
 		for (PresentmentDetail presentmentDetail : presentments) {

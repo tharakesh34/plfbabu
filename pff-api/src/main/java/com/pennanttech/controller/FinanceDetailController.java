@@ -475,7 +475,7 @@ public class FinanceDetailController extends SummaryDetailService {
 				response.setFinanceSummary(getFinanceSummary(financeDetail));
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 				//get FinODDetails
-				List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDetailsByFinReference(finReference);
+				List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
 				response.setFinODDetails(finODDetailsList);
 				// to remove un-necessary objects from response make them as null
 				response.setDisbursementDetails(null);

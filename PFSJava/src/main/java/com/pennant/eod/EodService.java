@@ -1,19 +1,11 @@
 package com.pennant.eod;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
-import org.springframework.batch.item.ExecutionContext;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.AutoDisbursementService;
@@ -29,8 +21,6 @@ import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.ReceiptPaymentService;
 
 public class EodService {
-
-	private static Logger				logger	= Logger.getLogger(EodService.class);
 
 	private DataSource					dataSource;
 
@@ -49,67 +39,11 @@ public class EodService {
 	private PlatformTransactionManager	transactionManager;
 
 	// Constants
-	private static final String			SQL		= "SELECT CustId FROM CustomerQueuing WHERE ThreadId=? AND Progress = 0 ";
+	private static final String			SQL	= "SELECT CustId FROM CustomerQueuing WHERE ThreadId=? AND Progress = 0 ";
 
 	public EodService() {
 		super();
 	}
-
-//	/**
-//	 * @param threadId
-//	 * @param map
-//	 * @throws Exception
-//	 * @throws SQLException
-//	 */
-//	public void startProcess(Date date, int threadId, ExecutionContext executionContext) throws Exception {
-//
-//		logger.info("process Statred by the Thread : " + threadId + " with date " + date.toString());
-//		Connection connection = null;
-//		ResultSet resultSet = null;
-//		PreparedStatement sqlStatement = null;
-//		long custId = 0;
-//		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-//		txDef.setReadOnly(true);
-//		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRED);
-//		TransactionStatus txStatus = null;
-//
-//		try {
-//			connection = DataSourceUtils.doGetConnection(dataSource);
-//			sqlStatement = connection.prepareStatement(SQL);
-//			sqlStatement.setInt(1, threadId);
-//			resultSet = sqlStatement.executeQuery();
-//			int count = 0;
-//			while (resultSet.next()) {
-//				custId = resultSet.getLong("CustId");
-//
-//				//update start
-//
-//				//BEGIN TRANSACTION
-//				txStatus = transactionManager.getTransaction(txDef);
-//
-//				//process
-//				doProcess(connection, custId, date);
-//
-//				//Update Status
-//				loadFinanceData.updateEnd(threadId, custId);
-//
-//				//COMMIT THE TRANSACTION
-//				transactionManager.commit(txStatus);
-//				count++;
-//
-//				executionContext.put("Completed", count);
-//			}
-//
-//			resultSet.close();
-//			sqlStatement.close();
-//		} catch (Exception e) {
-//			transactionManager.rollback(txStatus);
-//			logger.error("Exception: ", e);
-//			throw e;
-//		} finally {
-//			DataSourceUtils.releaseConnection(connection, dataSource);
-//		}
-//	}
 
 	public void doProcess(Connection connection, long custId, Date date) throws Exception {
 
@@ -121,7 +55,9 @@ public class EodService {
 		custEODEvent = loadFinanceData.prepareFinEODEvents(custEODEvent, custId);
 
 		//late pay marking
-		custEODEvent = latePayMarkingService.processLatePayMarking(custEODEvent);
+		if (custEODEvent.isPastDueExist()) {
+			custEODEvent = latePayMarkingService.processLatePayMarking(custEODEvent);
+		}
 
 		//DPD Bucketing
 		custEODEvent = latePayMarkingService.processDPDBuketing(custEODEvent);
@@ -129,37 +65,48 @@ public class EodService {
 		//customer status update
 		custEODEvent = latePayMarkingService.processCustomerStatus(custEODEvent);
 
-		//late pay penalty
-		custEODEvent = latePayPenaltyService.processLatePayPenalty(custEODEvent);
+		if (custEODEvent.isPastDueExist()) {
+			//late pay penalty
+			custEODEvent = latePayPenaltyService.processLatePayPenalty(custEODEvent);
 
-		//late pay interest
-		custEODEvent = latePayInterestService.processLatePayInterest(custEODEvent);
+			//late pay interest
+			custEODEvent = latePayInterestService.processLatePayInterest(custEODEvent);
+		}
 
 		//NPA Service
 		custEODEvent = npaService.processNPABuckets(custEODEvent);
 
 		/**************** SOD ***********/
-
-		//date rollover
-		custEODEvent = dateRollOverService.process(custEODEvent);
+		//Date rollover
+		if (custEODEvent.isDateRollover()) {
+			custEODEvent = dateRollOverService.process(custEODEvent);
+		}
 
 		//Rate review
-		custEODEvent = rateReviewService.processRateReview(custEODEvent);
+		if (custEODEvent.isRateRvwExist()) {
+			custEODEvent = rateReviewService.processRateReview(custEODEvent);
+		}
 
 		//Accrual
 		custEODEvent = accrualService.processAccrual(custEODEvent);
 
 		//Auto disbursements
-		autoDisbursementService.processDisbursementPostings(custEODEvent);
+		if (custEODEvent.isDisbExist()) {
+			autoDisbursementService.processDisbursementPostings(custEODEvent);
+		}
 
-		//installment 
-		installmentDueService.processDueDatePostings(custEODEvent);
+		//installment
+		if (custEODEvent.isDueExist()) {
+			installmentDueService.processDueDatePostings(custEODEvent);
+		}
 
 		//update customer EOD
 		loadFinanceData.updateFinEODEvents(custEODEvent);
 
 		//receipt postings
-		receiptPaymentService.processrReceipts(custEODEvent);
+		if (custEODEvent.isCheckPresentment()) {
+			receiptPaymentService.processrReceipts(custEODEvent);
+		}
 
 		//customer Date update
 		loadFinanceData.updateCustomerDate(custId, date);
@@ -170,12 +117,8 @@ public class EodService {
 
 	}
 
-	public void updateStart(int threadId, long custId) {
-		loadFinanceData.updateStart(threadId, custId);
-	}
-
-	public void updateEnd(int threadId, long custId) {
-		loadFinanceData.updateEnd(threadId, custId);
+	public void updCustQueue(int threadId, long custId, Date startDateTime, Date endDateTime) {
+		loadFinanceData.updCustQueue(threadId, custId, startDateTime, endDateTime);
 	}
 
 	public void setDataSource(DataSource dataSource) {
@@ -228,6 +171,10 @@ public class EodService {
 
 	public void setLoadFinanceData(LoadFinanceData loadFinanceData) {
 		this.loadFinanceData = loadFinanceData;
+	}
+
+	public PlatformTransactionManager getTransactionManager() {
+		return transactionManager;
 	}
 
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
