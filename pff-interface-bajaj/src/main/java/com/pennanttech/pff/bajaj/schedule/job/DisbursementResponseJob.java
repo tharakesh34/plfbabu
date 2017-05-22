@@ -22,8 +22,7 @@ public class DisbursementResponseJob implements Job, Serializable {
 		disbursementResponseFileService.execute(context);
 	}
 
-	public static void setDisbursementResponseFileService(
-			DisbursementResponseFileService disbursementResponseFileService) {
+	public static void setDisbursementResponseFileService(DisbursementResponseFileService disbursementResponseFileService) {
 		DisbursementResponseJob.disbursementResponseFileService = disbursementResponseFileService;
 	}
 }
