@@ -205,6 +205,11 @@ public class CustomerController {
 			curCustomer.setCustLng(PennantConstants.default_Language);
 		}
 		
+		if (StringUtils.equals(curCustomer.getCustCtgCode(),PennantConstants.PFF_CUSTCTG_INDIV)) {
+			curCustomer.setCustShrtName(PennantApplicationUtil.getFullName(curCustomer.getCustFName(),
+					curCustomer.getCustMName(), curCustomer.getCustLName()));
+		}
+		
 		if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
 			// generate new customer CIF
 			String custCIF = customerDetailsService.getNewProspectCustomerCIF();

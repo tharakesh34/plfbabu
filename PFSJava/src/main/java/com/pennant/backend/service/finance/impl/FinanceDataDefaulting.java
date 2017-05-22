@@ -57,6 +57,9 @@ public class FinanceDataDefaulting {
 			return finScheduleData;
 		}
 
+		// Date formats
+		setDefaultDateFormats(finScheduleData.getFinanceMain());
+		
 		// Basic Details Defaulting
 		basicDefaulting(vldGroup, finScheduleData);
 
@@ -75,6 +78,54 @@ public class FinanceDataDefaulting {
 	 * MAIN METHODS
 	 * ################################################################################################################
 	 */
+
+	private void setDefaultDateFormats(FinanceMain financeMain) {
+		if(financeMain.getFinStartDate() != null) {
+			financeMain.setFinStartDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getFinStartDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		
+		if(financeMain.getGrcPeriodEndDate() != null){
+			financeMain.setGrcPeriodEndDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getGrcPeriodEndDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		if(financeMain.getNextGrcPftDate() != null){
+			financeMain.setNextGrcPftDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getNextGrcPftDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		if(financeMain.getNextGrcPftRvwDate() != null){
+			financeMain.setNextGrcPftRvwDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getNextGrcPftRvwDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		if(financeMain.getNextGrcCpzDate()!= null){
+			financeMain.setNextGrcCpzDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getNextGrcCpzDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		if(financeMain.getNextRepayDate()!= null){
+			financeMain.setNextRepayDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getNextRepayDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		if(financeMain.getNextRepayPftDate()!= null){
+			financeMain.setNextRepayPftDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getNextRepayPftDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		if(financeMain.getNextRepayRvwDate()!= null){
+			financeMain.setNextRepayRvwDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getNextRepayRvwDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		if(financeMain.getNextRepayCpzDate()!= null){
+			financeMain.setNextRepayCpzDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getNextRepayCpzDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		if(financeMain.getMaturityDate()!= null){
+			financeMain.setMaturityDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getMaturityDate(),
+					PennantConstants.DBDateFormat)));
+		}
+		if(financeMain.getNextRolloverDate()!= null){
+			financeMain.setNextRolloverDate(DateUtility.getDBDate(DateUtility.formatDate(financeMain.getNextRolloverDate(),
+					PennantConstants.DBDateFormat)));
+		}
+	}
 
 	/*
 	 * ================================================================================================================
@@ -469,6 +520,7 @@ public class FinanceDataDefaulting {
 			finMain.setGrcAdvMargin(zeroValue);
 			finMain.setGrcAdvPftRate(zeroValue);
 			finMain.setCalGrcEndDate(finMain.getFinStartDate());
+			finMain.setGrcRateBasis(PennantConstants.List_Select);
 			return;
 		}
 		
