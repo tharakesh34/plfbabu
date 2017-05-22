@@ -78,7 +78,7 @@ set /p password=Enter the password:
 echo.
 
 REM Preapare the required attributes based on the user input.
-set "change_log_file=db-change-log-%adate%_%atime%.xml"
+set "change_log_file=out/db-change-log-%adate%_%atime%.xml"
 if %dbms% == mssql (
 	set "driver=com.microsoft.sqlserver.jdbc.SQLServerDriver"
 	set "classpath=lib/snakeyaml-1.17.jar;lib/pennapps-liquibase-ext-1.3.0.jar;lib/sqljdbc4-4.0.2206.100.jar"
