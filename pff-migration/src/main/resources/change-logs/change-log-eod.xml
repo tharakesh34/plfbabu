@@ -388,6 +388,12 @@
 update smtparameters set sysparmlength=3  where sysparmcode='EOD_THREAD_COUNT'
 </sql>
 </changeSet>
+<changeSet id="45" author="satish">
+<sql>
+Delete from SMTparameters where SYSPARMCODE='SUSP_CHECK_REQ';
+INSERT INTO SMTparameters (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, WORKFLOWID) VALUES ('SUSP_CHECK_REQ', 'Suspense Check Require', 'int', '0', '0', '1', '0', 'Suspense Check Require. 0: NO 1: YES', '1', '1000', CURRENT_TIMESTAMP, 'Approved', '0');
+</sql>
+</changeSet>
 
 
 </databaseChangeLog>
