@@ -203,6 +203,15 @@
 												checked="false" />
 										</hbox>
 									</row>
+
+									<row id="row_Notes">
+										<label id="notes"
+											value="${c:l('label_RuleDialog_Notes.value')}"
+											style="font-weight: bold;" />
+									</row>
+									<row id="row_NotesValue" spans="2">
+										<label id="notesValue" />
+									</row>
 								</rows>
 							</grid>
 						</groupbox>

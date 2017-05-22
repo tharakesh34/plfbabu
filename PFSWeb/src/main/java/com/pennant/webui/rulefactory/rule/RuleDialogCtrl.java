@@ -131,6 +131,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	protected Label label_RuleDialog_ruleCodeDesc;
 	protected Label label_seqOrder;
 	protected Label label_DeviationType;
+	protected Label notesValue;
 	
 	protected Hbox	hbox_DeviationType;
 
@@ -139,6 +140,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	protected Row row_DeviationType;
 	protected Row row_Revolving;
 	protected Row row_AllowDeviation;
+	protected Row row_Notes;
+	protected Row row_NotesValue;
 
 	protected Button btnReadValues;
 	protected Button btnSimulation;
@@ -433,52 +436,65 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		this.ruleCode.setMaxlength(8);
 		this.ruleCodeDesc.setMaxlength(50);
 		this.seqOrder.setMaxlength(4);
+		
+		String notes = "\n\t" + Labels.getLabel("label_RuleDialog_NotesValue.value");
 
 		switch (module) {
 		case RuleConstants.MODULE_AGRRULE:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_BOOLEAN);
+			this.notesValue.setValue(notes +" Boolean");
 			break;
 
 		case RuleConstants.MODULE_CLRULE:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_BOOLEAN);
+			this.notesValue.setValue(notes +" Boolean");
 			break;
 
 		case RuleConstants.MODULE_DOWNPAYRULE:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
+			this.notesValue.setValue(notes +" Decimal");
 			break;
 
 		case RuleConstants.MODULE_ELGRULE:
 			this.row_DeviationType.setVisible(true);
 			this.label_DeviationType.setVisible(true);
 			this.hbox_DeviationType.setVisible(true);
+			this.row_NotesValue.setVisible(false);
+			this.row_Notes.setVisible(false);
 			break;
 
 		case RuleConstants.MODULE_FEES:
 			this.row_FeeType.setVisible(true);
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
+			this.notesValue.setValue(notes +" Decimal");
 			break;
 
 		case RuleConstants.MODULE_INSRULE:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
+			this.notesValue.setValue(notes +" Decimal");
 			break;
 
 		case RuleConstants.MODULE_RATERULE:
 			this.row_AllowDeviation.setVisible(true);
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
+			this.notesValue.setValue(notes +" Decimal");
 			break;
 
 		case RuleConstants.MODULE_PROVSN:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
+			this.notesValue.setValue(notes +" Decimal");
 			break;
 
 		case RuleConstants.MODULE_REFUND:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
+			this.notesValue.setValue(notes +" Decimal");
 			break;
 
 		case RuleConstants.MODULE_SCORES:
 			this.label_seqOrder.setValue(Labels.getLabel("label_RuleDialog_metricSeqOrder.value"));
 			this.row_SeqOrder.setVisible(true);
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_INTEGER);
+			this.notesValue.setValue(notes +" Integer");
 			break;
 
 		case RuleConstants.MODULE_SUBHEAD:
@@ -486,12 +502,15 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			this.label_DeviationType.setVisible(false);
 			this.hbox_DeviationType.setVisible(false);
 			//this.rule.setReturnType(RuleConstants.RETURNTYPE_STRING);
+			this.row_NotesValue.setVisible(false);
+			this.row_Notes.setVisible(false);
 			break;
 
 		case RuleConstants.MODULE_LMTLINE:
 			this.label_RuleDialog_ruleCode.setValue(Labels.getLabel("label_LimitLineDialog_Code.value"));
 			this.label_RuleDialog_ruleCodeDesc.setValue(Labels.getLabel("label_LimitLineDialog_Desc.value"));
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_BOOLEAN);
+			this.notesValue.setValue(notes +" Boolean");
 
 			/*if (StringUtils.equals(LimitConstants.LIMIT_CATEGORY_CUST, event)) {
 				this.row_Revolving.setVisible(true);
@@ -500,6 +519,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			break;
 		case RuleConstants.MODULE_BOUNCE:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
+			this.notesValue.setValue(notes +" Decimal");
 			break;
 		}
 
