@@ -773,6 +773,7 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 		      WHERE STATUS='Approved' AND PAYMENTID NOT IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS)
 		</createView>
 	</changeSet>
+	
 	<changeSet id="53" author="Surekha">
 		<createView viewName="ACCOUNTMAPPING_VIEW" replaceIfExists="true">
 			  SELECT		T1.Account, T1.HostAccount, T1.ProfitCenterID, T1.CostCenterID,	T1.FinType,	T1.AccountType,
@@ -816,5 +817,20 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 				
 		</createView>
 	</changeSet>
-	
+	<changeSet id="56" author="Jayant">
+	    <createIndex tableName="BATCH_STEP_EXECUTION" indexName="IX_STEP_JOBID_STEPID">
+	        <column name="JOB_EXECUTION_ID" type="bigint"/>
+	        <column name="STEP_EXECUTION_ID" type="bigint"/>	      
+	    </createIndex>
+	</changeSet>
+	<changeSet id="57" author="Jayant">
+	    <createIndex tableName="BATCH_JOB_EXECUTION_PARAMS" indexName="IX_JOBID">
+	        <column name="JOB_EXECUTION_ID" type="bigint"/>
+	    </createIndex>
+	</changeSet>
+	<changeSet id="58" author="Jayant">
+	    <createIndex tableName="BATCH_JOB_PARAMS" indexName="IX_JOB_INSTANCE_ID">
+	        <column name="JOB_INSTANCE_ID" type="bigint"/>
+	    </createIndex>
+	</changeSet>
 </databaseChangeLog>
