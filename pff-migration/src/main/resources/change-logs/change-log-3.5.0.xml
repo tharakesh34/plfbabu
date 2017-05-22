@@ -833,4 +833,9 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 	        <column name="JOB_INSTANCE_ID" type="bigint"/>
 	    </createIndex>
 	</changeSet>
+	<changeSet id="59" author="Irfan">
+		<sql>
+			update BMTAMOUNTCODES set amountcode='vr_vasFee' where  amountcode='vf_vasFee';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
