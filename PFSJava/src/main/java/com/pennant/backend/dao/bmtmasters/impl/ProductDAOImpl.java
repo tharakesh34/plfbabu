@@ -115,6 +115,40 @@ public class ProductDAOImpl extends BasisCodeDAO<Product> implements ProductDAO 
 		logger.debug("Leaving");
 		return product;
 	}
+	
+	/**
+	 * Fetch the Record Product Detail details by key field
+	 * 
+	 * @param id
+	 *         (String)
+	 * @param type
+	 *         (String) ""/_Temp/_View
+	 * @return Product
+	 */
+	@Override
+	public String getProductCtgByProduct(final String code) {
+		logger.debug("Entering");
+		Product product = new Product();
+		product.setProductCode(code);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("Select ProductCategory From BMTProduct ");
+		selectSql.append(" Where ProductCode =:ProductCode");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(product);
+
+		String productCtg = null;
+		try {
+			productCtg = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			productCtg = null;
+		}
+		logger.debug("Leaving");
+		return productCtg;
+	}
+
 
 	/**
 	 * To Set dataSource

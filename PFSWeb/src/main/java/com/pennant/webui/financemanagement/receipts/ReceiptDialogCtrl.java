@@ -243,6 +243,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Combobox										effScheduleMethod;
 	protected Decimalbox									remBalAfterAllocation;
 	protected Decimalbox									custPaid;
+	protected Row											row_RealizationDate;
+	protected Datebox										realizationDate;
 	
 	protected Groupbox										gb_ReceiptDetails;
 	protected Caption										caption_receiptDetail;
@@ -574,6 +576,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.receipt_finBranch.setMaxlength(LengthConstants.LEN_BRANCH);
 		this.receipt_paidByCustomer.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.receiptAmount.setProperties(true , formatter);
+		this.realizationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		
 		this.fundingAccount.setModuleName("FinTypePartner");
 		this.fundingAccount.setMandatoryStyle(true);
@@ -628,6 +631,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("ReceiptDialog_receiptAmount"), this.receiptAmount);
 		readOnlyComponent(isReadOnly("ReceiptDialog_allocationMethod"), this.allocationMethod);
 		readOnlyComponent(isReadOnly("ReceiptDialog_effScheduleMethod"), this.effScheduleMethod);
+		readOnlyComponent(isReadOnly("ReceiptDialog_realizationDate"), this.realizationDate);
 		
 		//Receipt Details
 		readOnlyComponent(isReadOnly("ReceiptDialog_favourNo"), this.favourNo);
@@ -2406,6 +2410,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		fillComboBox(this.effScheduleMethod, header.getEffectSchdMethod(), PennantStaticListUtil.getEarlyPayEffectOn(), excldMthds);
 		this.remBalAfterAllocation.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
+		this.realizationDate.setValue(header.getRealizationDate());
+		if(!isReadOnly("ReceiptDialog_realizationDate") || header.getRealizationDate() != null){
+			this.row_RealizationDate.setVisible(true);
+		}else{
+			this.row_RealizationDate.setVisible(false);
+		}
 
 		// Receipt Mode Details , if FinReceiptDetails Exists
 		this.receipt_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(header.getReceiptAmount(), finFormatter));
@@ -3189,6 +3199,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					.getLabel("label_ReceiptDialog_EffecScheduleMethod.value")));
 		}
 		
+		if(!this.realizationDate.isDisabled()){
+			this.realizationDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ReceiptRealizationDialog_RealizationDate.value"), 
+					true, true,	DateUtility.getAppDate(), true));
+		}
+		
 		if (StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_CHEQUE)){
 			
 			if(!this.chequeAcNo.isReadonly()){
@@ -3283,6 +3298,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.excessAdjustTo.setConstraint("");
 		this.allocationMethod.setConstraint("");
 		this.effScheduleMethod.setConstraint("");
+		this.realizationDate.setConstraint("");
 		
 		this.favourNo.setConstraint("");
 		this.valueDate.setConstraint("");
@@ -3313,6 +3329,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.excessAdjustTo.setErrorMessage("");
 		this.allocationMethod.setErrorMessage("");
 		this.effScheduleMethod.setErrorMessage("");
+		this.realizationDate.setErrorMessage("");
 		
 		this.favourNo.setErrorMessage("");
 		this.valueDate.setErrorMessage("");
@@ -3375,6 +3392,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			header.setEffectSchdMethod(getComboboxValue(effScheduleMethod));
 		} catch (WrongValueException we) {
 			wve.add(we);
+		}
+		try {
+			header.setRealizationDate(this.realizationDate.getValue());
+		} catch (WrongValueException we) {
+			throw we;
 		}
 		
 		// Receipt Mode Details

@@ -814,7 +814,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		listSave(scheduleData, "", 0);
 
 		// Save Receipt Header
-		receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_APPROVED);
+		if(StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYRPY) || 
+				StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+			receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
+		}else{
+			receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_APPROVED);
+		}
 		receiptHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		receiptHeader.setRecordType("");
 		receiptHeader.setRoleCode("");

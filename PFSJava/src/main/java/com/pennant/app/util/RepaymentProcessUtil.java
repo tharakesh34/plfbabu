@@ -799,6 +799,7 @@ public class RepaymentProcessUtil {
 		finRepayQueue.setSchdPftBal(rsd.getProfitSchd().subtract(rsd.getProfitSchdPaid()));
 		finRepayQueue.setSchdPftPayNow(rsd.getProfitSchdPayNow());
 		finRepayQueue.setSchdPftWaivedNow(rsd.getPftSchdWaivedNow());
+		finRepayQueue.setSchdTdsPayNow(rsd.getTdsSchdPayNow());
 
 		// Profit Amount
 		finRepayQueue.setSchdPri(rsd.getPrincipalSchd());

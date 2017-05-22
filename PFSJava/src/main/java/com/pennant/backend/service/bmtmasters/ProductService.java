@@ -59,5 +59,6 @@ public interface ProductService {
 	AuditHeader delete(AuditHeader auditHeader);
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
+	String getProductCtgByProduct(String productCode);
 
 }

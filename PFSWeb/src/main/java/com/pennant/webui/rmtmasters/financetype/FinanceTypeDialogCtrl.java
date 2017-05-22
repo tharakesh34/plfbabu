@@ -119,7 +119,6 @@ import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
-import com.pennant.backend.model.bmtmasters.Product;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
@@ -233,10 +232,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Row row_FinGrcRates; // autoWired
 	protected Decimalbox finGrcIntRate; // autoWired
 	protected RateBox financeGrcBaseRate;
-	// protected ExtendedCombobox finGrcBaseRate; // autoWired
-	// protected ExtendedCombobox finGrcSplRate; // autoWired
-	// protected Decimalbox finGrcMargin; // autoWired
-	// protected Label labe_GrcEffectiveRate; // autoWired
 	protected FrequencyBox finGrcDftIntFrq; // autoWired
 	protected Checkbox finIsAlwGrcRepay; // autoWired
 	protected Combobox finGrcSchdMthd; // autoWired
@@ -578,7 +573,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					this.financeType.getNextTaskId());
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				// getUserWorkspace().allocateRoleAuthorities(getRole(), "FinanceTypeDialog");
 			}
 
 			this.basicDetailDiv.setHeight(this.borderLayoutHeight - 90 + "px");
@@ -1085,8 +1079,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.quickDisb.setChecked(aFinanceType.isQuickDisb());
 
 		doCheckRollOverFrq();
-		doCheckRIA(aFinanceType.getFinCategory());
-		doSetProductBasedLabels(aFinanceType.getFinCategory());
+		doCheckRIA(aFinanceType.getProductCategory());
+		doSetProductBasedLabels(aFinanceType.getProductCategory());
 
 		// ================= Tab 2
 		fillComboBox(this.cbfinGrcRateType, aFinanceType.getFinGrcRateType(),
@@ -1430,7 +1424,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finSuspRemarks.setValue(aFinanceType.getFinSuspRemarks());
 		doChangeSuspTrigger();
 
-		doSetDownpayProperties(aFinanceType.getFinCategory(), false);
+		doSetDownpayProperties(aFinanceType.getProductCategory(), false);
 		doSetCollateralProp();
 
 		this.recordStatus.setValue(aFinanceType.getRecordStatus());
@@ -1666,7 +1660,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug("Entering");
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		int format = CurrencyUtil.getFormat(null);
-		Product product = getProductService().getApprovedProductById(this.cbfinProductType.getSelectedItem().getValue().toString(), this.cbfinProductType.getSelectedItem().getValue().toString());
 		
 		// ************* Start of tab 1 ************//
 		if (isPromotion) {
@@ -1780,9 +1773,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			if (isValidComboValue(this.cbfinProductType,
 					Labels.getLabel("label_FinanceTypeDialog_FinProductType.Value"))) {
 				aFinanceType.setFinCategory(this.cbfinProductType.getSelectedItem().getValue().toString());
-				if(product !=null){
-					aFinanceType.setProductCategory(product.getProductCategory());
-				}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -4866,12 +4856,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		if (this.cbfinProductType.getSelectedItem() != null) {
 			this.allowRIAInvestment.setChecked(false);
-			Product product = getProductService().getApprovedProductById(this.cbfinProductType.getSelectedItem().getValue().toString(), this.cbfinProductType.getSelectedItem().getValue().toString());
-			doSetProductBasedLabels(product.getProductCode());
-			doSetDownpayProperties(product.getProductCategory(), true);
-			doCheckRIA(product.getProductCategory().toString());
+			String productCtg = getProductService().getProductCtgByProduct(this.cbfinProductType.getSelectedItem().getValue().toString());
+			getFinanceType().setProductCategory(productCtg);
+			doSetProductBasedLabels(productCtg);
+			doSetDownpayProperties(productCtg, true);
+			doCheckRIA(productCtg.toString());
 
-			if (StringUtils.equals(getComboboxValue(this.cbfinProductType), FinanceConstants.PRODUCT_ISTISNA)) {
+			if (StringUtils.equals(productCtg, FinanceConstants.PRODUCT_ISTISNA)) {
 				this.fInIsAlwGrace.setChecked(true);
 				this.fInIsAlwGrace.setDisabled(true);
 				this.gracePeriod.setDisabled(false);
@@ -4901,7 +4892,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.rpyAdvBaseRate.setValue("", "");
 		this.rpyAdvMargin.setText("");
 		this.rpyAdvPftRate.setText("");
-		if (StringUtils.equals(getComboboxValue(this.cbfinProductType), FinanceConstants.PRODUCT_STRUCTMUR)) {
+		if (StringUtils.equals(getFinanceType().getProductCategory(), FinanceConstants.PRODUCT_STRUCTMUR)) {
 			this.row_GrcAdvBaseRate.setVisible(true);
 			this.row_GrcAdvMargin.setVisible(true);
 			this.row_RpyAdvBaseRate.setVisible(true);
@@ -5113,8 +5104,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 	}
 
-	private void doSetProductBasedLabels(String value) {
-		if (StringUtils.isNotBlank(value) && FinanceConstants.PRODUCT_SUKUK.equals(value)) {
+	private void doSetProductBasedLabels(String productCtg) {
+		if (StringUtils.isNotBlank(productCtg) && FinanceConstants.PRODUCT_SUKUK.equals(productCtg)) {
 			this.label_FinanceTypeSearch_FinCapitalize.setValue(Labels
 					.getLabel("label_FinanceTypeSearch_FinCompound.value"));
 		}

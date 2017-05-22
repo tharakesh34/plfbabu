@@ -238,6 +238,11 @@ public class ProductServiceImpl extends GenericService<Product> implements Produ
 		product.setProductAssetList(getProductAssetDAO().getProductAssetByProdCode(product.getProductCode(),"_AView"));
 		return product;
 	}
+	
+	public String getProductCtgByProduct(String productCode) {
+		return getProductDAO().getProductCtgByProduct(productCode);
+	}
+
 
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by

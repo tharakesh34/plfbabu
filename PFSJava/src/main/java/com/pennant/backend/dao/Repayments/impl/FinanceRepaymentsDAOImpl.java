@@ -171,7 +171,7 @@ public class FinanceRepaymentsDAOImpl extends BasisNextidDaoImpl<FinanceRepaymen
 		selectSql.append(" T1.FinRpyAmount, T1.FinSchdDate, T1.FinValueDate, T1.FinBranch,");
 	    selectSql.append(" T1.FinType, T1.FinCustID, T1.FinSchdPriPaid, T1.FinSchdPftPaid, T1.FinSchdTdsPaid,");
 		selectSql.append(" T1.FinTotSchdPaid, T1.FinFee, T1.FinWaiver, T1.FinRefund, T1.SchdFeePaid , T1.SchdInsPaid , ");
-		selectSql.append(" T1.SchdSuplRentPaid , SchdIncrCostPaid");
+		selectSql.append(" T1.SchdSuplRentPaid , T1.SchdIncrCostPaid");
 		if(isRpyCancelProc){
 			selectSql.append(" ,T1.LinkedTranId");
 		}

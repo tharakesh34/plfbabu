@@ -53,4 +53,5 @@ public interface ProductDAO {
 	void update(Product product, String type);
 	void delete(Product product, String type);
 	String save(Product product, String type);
+	String getProductCtgByProduct(String productCode);
 }
