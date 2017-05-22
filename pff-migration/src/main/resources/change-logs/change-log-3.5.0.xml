@@ -600,5 +600,9 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 		<dropForeignKeyConstraint baseTableName="EMPLOYERDETAIL"
 			constraintName="FK_EMYRDTL_RMTEMPTYPES" />
 	</changeSet>
-	
+	<changeSet id="48" author="Irfan">
+		<sql>
+			update BMTAMOUNTCODES set amountcode='vf_vasFee' where  amountcode='ae_vasFee';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
