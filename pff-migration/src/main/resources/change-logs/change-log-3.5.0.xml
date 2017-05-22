@@ -601,16 +601,4 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 			constraintName="FK_EMYRDTL_RMTEMPTYPES" />
 	</changeSet>
 	
-	<!-- <changeSet id="52" author="Madhubabu">
-		<addForeignKeyConstraint constraintName="FK_EMYRDTL_TEMP_BMTINDUSTRY"
-			referencedTableName="BMTINDUSTRIES" referencedColumnNames="INDUSTRYCODE"
-			baseTableName="EMPLOYERDETAIL_TEMP" baseColumnNames="EMPINDUSTRY" />
-	</changeSet>
-	
-	<changeSet id="53" author="Madhubabu">
-		<addForeignKeyConstraint constraintName="FK_EMYRDTL_BMTINDUSTRY"
-			referencedTableName="BMTINDUSTRIES" referencedColumnNames="INDUSTRYCODE"
-			baseTableName="EMPLOYERDETAIL" baseColumnNames="EMPINDUSTRY" />
-	</changeSet> -->
-	
 </databaseChangeLog>
