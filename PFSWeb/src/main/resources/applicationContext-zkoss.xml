@@ -4606,5 +4606,8 @@
 		<property name="builderGroupService" ref="builderGroupService"/>
 	</bean>
 	
+	<!-- Reload Resources -->
+	<bean id="reloadResourceCtrl" class="com.pennant.web.reloadresources.ReloadResourceCtrl" parent="basisCtrl" scope="prototype">
+	</bean>
 	
 </beans>

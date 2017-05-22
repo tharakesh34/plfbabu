@@ -14,6 +14,8 @@
 	
 	<menuItem id="menu_Item_BatchAdmin" zulNavigation="/WEB-INF/pages/Batch/BatchAdmin.zul"  rightName="menuItem_EOD_CustomerEOD" />
 	
+	<menuItem id="menu_Item_ReloadResources" zulNavigation="/WEB-INF/pages/ReloadResources/ReloadResources.zul" rightName = 'menuItem_Reload_Resources'/>
+	
 	<!-- System Masters Menu Tree -->
 	<menu id="menu_Category_SystemMaster" rightName="menuCat_SystemMaster" >
 <!-- 		<menuItem id="menu_Item_Academic" zulNavigation="/WEB-INF/pages/SystemMaster/Academic/AcademicList.zul"  rightName="menuItem_SystemMaster_Academic"/> -->
@@ -305,7 +307,7 @@
 			zulNavigation="/WEB-INF/pages/PasswordReset/SecurityUser/SecurityUserChangePasswordList.zul?moduleType=PSWDRST"
 			rightName="menuItem_Administration_UserpasswordReset" />
 	</menu>
-		
+	
 	<!-- Static Parameter Menu Tree -->
  	<menu id="menu_Category_StaticParm" rightName="menuCat_StaticParms">
 <!--		<menuItem id="menu_Item_ExtendedFieldHeader" zulNavigation="/WEB-INF/pages/StaticParms/ExtendedFieldHeader/ExtendedFieldHeaderList.zul"	rightName="menuItem_StaticParms_ExtendedFieldHeader" />-->

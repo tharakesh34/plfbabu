@@ -36,8 +36,9 @@ public class ResourceLoader implements WebAppInit {
 
 	public static void loadCustomRegex(String defaultFilePath) {
 		String customFilePath = PathUtil.getPath(PathUtil.CONFIG) + File.separator + "regex.properties";
-
-		RegexPatternUtil.load(defaultFilePath);
+		if (!new File(customFilePath).exists()) {
+			RegexPatternUtil.load(defaultFilePath);
+		}
 
 		if (new File(customFilePath).exists()) {
 			RegexPatternUtil.load(customFilePath);
