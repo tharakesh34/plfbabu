@@ -302,6 +302,7 @@ public class LoadFinanceData extends ServiceHelper {
 			returnDataSets.addAll(finEODEvent.getReturnDataSet());
 		}
 
+		saveAccountingEOD(returnDataSets);
 		getAccountProcessUtil().procAccountUpdate(returnDataSets);
 
 		if (custEODEvent.isUpdCustomer()) {

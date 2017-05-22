@@ -83,6 +83,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.SecondaryAccount;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.cache.util.AccountingConfigCache;
@@ -119,26 +120,23 @@ abstract public class ServiceHelper implements Serializable {
 	//over due
 	private FinODDetailsDAO				finODDetailsDAO;
 
-	/**
-	 * Post Accounting
-	 * 
-	 * @param dataSet
-	 * @param amountCodes
-	 * @param financeType
-	 * @return
-	 * @throws Exception
-	 */
+	public long getAccountingID(FinanceMain main, String eventCode) {
+		if (StringUtils.isNotBlank(main.getPromotionCode())) {
+			return AccountingConfigCache.getAccountSetID(main.getPromotionCode(), eventCode,
+					FinanceConstants.MODULEID_PROMOTION);
+		} else {
+			return AccountingConfigCache.getAccountSetID(main.getFinType(), eventCode,
+					FinanceConstants.MODULEID_FINTYPE);
+		}
+	}
+
 	public final AEEvent postAccountingEOD(AEEvent aeEvent) throws Exception {
 		aeEvent.setPostingUserBranch("EOD");//FIXME
 		return getPostingsPreparationUtil().postAccountingEOD(aeEvent);
 	}
 
-	public long getAccountingID(FinanceMain main ,String eventCode) {
-		if (StringUtils.isNotBlank(main.getPromotionCode())) {
-			return AccountingConfigCache.getAccountSetID(main.getPromotionCode(), eventCode, FinanceConstants.MODULEID_PROMOTION);
-		} else {
-			return AccountingConfigCache.getAccountSetID(main.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE);
-		}
+	public final void saveAccountingEOD(List<ReturnDataSet> returnDataSets) throws Exception {
+		getPostingsPreparationUtil().saveAccountingEOD(returnDataSets);
 	}
 
 	/**
@@ -149,7 +147,7 @@ abstract public class ServiceHelper implements Serializable {
 		return FinanceConfigCache.getFinanceType(StringUtils.trimToEmpty(fintype));
 
 	}
-	
+
 	public String getBucket(long bucketID) {
 		DPDBucket dpdBucket = FinanceConfigCache.getDPDBucket(bucketID);
 		if (dpdBucket != null) {
@@ -166,16 +164,13 @@ abstract public class ServiceHelper implements Serializable {
 		return Long.valueOf(0);
 	}
 
-
-
 	public List<DPDBucketConfiguration> getBucketConfigurations(String productCode) {
 		return FinanceConfigCache.getDPDBucketConfiguration(StringUtils.trimToEmpty(productCode));
 	}
 
-	public List<NPABucketConfiguration> getNPABucketConfigurations(String productCode){
+	public List<NPABucketConfiguration> getNPABucketConfigurations(String productCode) {
 		return FinanceConfigCache.getNPABucketConfiguration(StringUtils.trimToEmpty(productCode));
 	}
-	
 
 	public void sortBucketConfig(List<DPDBucketConfiguration> list) {
 
@@ -190,7 +185,6 @@ abstract public class ServiceHelper implements Serializable {
 
 	}
 
-	
 	public void sortNPABucketConfig(List<NPABucketConfiguration> list) {
 
 		if (list != null && !list.isEmpty()) {
@@ -203,6 +197,7 @@ abstract public class ServiceHelper implements Serializable {
 		}
 
 	}
+
 	public BigDecimal getDecimal(ResultSet resultSet, String name) throws SQLException {
 		BigDecimal val = resultSet.getBigDecimal(name);
 		if (val == null) {
@@ -210,7 +205,7 @@ abstract public class ServiceHelper implements Serializable {
 		}
 		return val;
 	}
-	
+
 	public BigDecimal getDecimal(BigDecimal bigDecimal) {
 		if (bigDecimal == null) {
 			bigDecimal = BigDecimal.ZERO;
@@ -225,7 +220,7 @@ abstract public class ServiceHelper implements Serializable {
 		}
 		return 0;
 	}
-	
+
 	public Date formatDate(Date date) {
 		if (date != null) {
 			return DateUtility.getDate(DateUtility.formateDate(date, PennantConstants.DBDateFormat),
@@ -243,7 +238,6 @@ abstract public class ServiceHelper implements Serializable {
 		return getSecordayAccounts(getSecondaryAccounts(finReference));
 	}
 
-
 	/**
 	 * @param finReference
 	 * @return
@@ -251,7 +245,6 @@ abstract public class ServiceHelper implements Serializable {
 	public final List<SecondaryAccount> getSecondaryAccounts(String finReference) {
 		return getSecondaryAccountDAO().getSecondaryAccountsByFinRef(finReference, "");
 	}
-
 
 	/**
 	 * @param listSecondary
@@ -274,8 +267,7 @@ abstract public class ServiceHelper implements Serializable {
 		return secordayAccounts.toString();
 
 	}
-	
-	
+
 	public FinContributorDetailDAO getFinContributorDetailDAO() {
 		return finContributorDetailDAO;
 	}

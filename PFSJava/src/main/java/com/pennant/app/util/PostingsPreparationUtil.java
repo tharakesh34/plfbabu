@@ -706,21 +706,24 @@ public class PostingsPreparationUtil implements Serializable {
 		
 		getEngineExecution().getAccEngineExecResults(aeEvent);
 
-		List<ReturnDataSet> returnDatasetList = aeEvent.getReturnDataSet();
 		if (!aeEvent.isPostingSucess()) {
 			return aeEvent;
 		}
 
-		if (returnDatasetList == null || returnDatasetList.isEmpty()) {
-			return aeEvent;
-		}
-		
-		getPostingsDAO().saveBatch(returnDatasetList);
-
 		logger.debug("Leaving");
 		return aeEvent;
 
-}
+	}
+	
+	public void saveAccountingEOD(List<ReturnDataSet> returnDatasetList) {
+		logger.debug("Entering");
+
+		if (returnDatasetList != null && !returnDatasetList.isEmpty()) {
+			getPostingsDAO().saveBatch(returnDatasetList);
+		}
+
+		logger.debug("Leaving");
+	}
 
 	
 	/**
