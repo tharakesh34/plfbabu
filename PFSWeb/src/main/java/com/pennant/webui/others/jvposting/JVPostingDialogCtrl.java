@@ -1123,7 +1123,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		}
 		//postingagainst
 		try {
-			if (getComboboxValue(this.postingAgainst).equals(PennantConstants.List_Select)) {
+			if (!this.postingAgainst.isReadonly() && getComboboxValue(this.postingAgainst).equals(PennantConstants.List_Select)) {
 				throw new WrongValueException(this.postingAgainst, Labels.getLabel("STATIC_INVALID",
 						new String[] { Labels.getLabel("label_JVPostingDialog_PostingAgainst.value") }));
 			}
