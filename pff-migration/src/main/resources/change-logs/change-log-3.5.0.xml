@@ -485,5 +485,44 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 	<changeSet id="36" author="Surekha">
 		<addNotNullConstraint tableName="AccountMapping" columnName="AccountType" columnDataType="varchar(15)"/>
 	</changeSet>
+	<changeSet id="37" author="Surekha">
+		<createView viewName="ACCOUNTMAPPING_VIEW" replaceIfExists="true">
+			SELECT		T1.Account, T1.HostAccount, T1.ProfitCenterID, T1.CostCenterID,	T1.FinType,	T1.AccountType,
+				            T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+				          	T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				          	T2.PROFITCENTERCODE, T2.PROFITCENTERDESC,
+				          	T3.COSTCENTERCODE, T3.COSTCENTERDESC, T4.ACTypeDesc AccountTypeDesc
+				FROM    	AccountMapping_Temp  T1  INNER JOIN
+				         	ProfitCenters T2 ON T1.ProfitCenterID = T2.ProfitCenterID  INNER JOIN
+				         	CostCenters T3 ON T1.CostCenterID = T3.CostCenterID INNER JOIN 
+				         	RMTAccountTypes T4 ON T1.AccountType = T4.AcType
+				UNION ALL
+				
+				SELECT		T1.Account, T1.HostAccount, T1.ProfitCenterID, T1.CostCenterID,	T1.FinType,	T1.AccountType,
+				          	T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+				         	T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				          	T2.PROFITCENTERCODE, T2.PROFITCENTERDESC,
+				          	T3.COSTCENTERCODE, T3.COSTCENTERDESC, T4.ACTypeDesc AccountTypeDesc
+				FROM    	AccountMapping  T1  INNER JOIN
+				          	ProfitCenters T2 ON T1.ProfitCenterID = T2.ProfitCenterID  INNER JOIN
+				          	CostCenters T3 ON T1.CostCenterID = T3.CostCenterID INNER JOIN 
+				         	RMTAccountTypes T4 ON T1.AccountType = T4.AcType
+				          
+				WHERE     	NOT EXISTS (SELECT 1 FROM AccountMapping_TEMP WHERE Account = T1.Account)
+		</createView>
+	</changeSet>
+	<changeSet id="38" author="Surekha">
+		<createView viewName="ACCOUNTMAPPING_AVIEW" replaceIfExists="true">
+			SELECT		T1.Account, T1.HostAccount, T1.ProfitCenterID, T1.CostCenterID,	T1.FinType,	T1.AccountType,
+				            T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+				          	T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				          	T2.PROFITCENTERCODE, T2.PROFITCENTERDESC,
+				          	T3.COSTCENTERCODE, T3.COSTCENTERDESC, T4.ACTypeDesc AccountTypeDesc
+				FROM    	AccountMapping  T1  INNER JOIN
+				         	ProfitCenters T2 ON T1.ProfitCenterID = T2.ProfitCenterID  INNER JOIN
+				         	CostCenters T3 ON T1.CostCenterID = T3.CostCenterID INNER JOIN 
+				         	RMTAccountTypes T4 ON T1.AccountType = T4.AcType
+		</createView>
+	</changeSet>
 	
 </databaseChangeLog>
