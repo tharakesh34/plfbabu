@@ -295,7 +295,7 @@ public class DisbursementRequestService extends BajajService implements RequestS
 		sql.append(" FINREFERENCE,");
 		sql.append(" AMTTOBERELEASED DISBURSEMENT_AMOUNT,");
 		sql.append(" DISBURSEMENT_TYPE,");
-		sql.append(" DISBDATE DISBURSEMENT_DATE,");
+		sql.append(" LLDATE DISBURSEMENT_DATE,");
 		sql.append(" PAYABLELOC DRAWEE_LOCATION,");
 		sql.append(" PRINTINGLOC PRINT_LOCATION,");
 		sql.append(" CUSTSHRTNAME CUSTOMER_NAME,");

@@ -172,13 +172,13 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		if (fromDate.getValue() != null) {
 			String fromDate = PennantAppUtil.formateDate(this.fromDate.getValue(), PennantConstants.DBDateFormat);
 			Filter[] filters = new Filter[1];
-			filters[0] = new Filter("INPUTDATE", fromDate, Filter.OP_GREATER_OR_EQUAL);
+			filters[0] = new Filter("LLDATE", fromDate, Filter.OP_GREATER_OR_EQUAL);
 			this.searchObject.addFilters(filters);
 		}
 		if (toDate.getValue() != null) {
 			String toDate = PennantAppUtil.formateDate(this.toDate.getValue(), PennantConstants.DBDateFormat);
 			Filter[] filters = new Filter[1];
-			filters[0] = new Filter("INPUTDATE", toDate, Filter.OP_LESS_OR_EQUAL);
+			filters[0] = new Filter("LLDATE", toDate, Filter.OP_LESS_OR_EQUAL);
 			this.searchObject.addFilters(filters);
 
 		}
@@ -535,7 +535,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			DisbursementProcess process = new DisbursementProcess(getUserWorkspace().getLoggedInUser().getLoginUsrID(),
 					this.finType.getValue(), disbushmentList);
 			Thread thread = new Thread(process);
-			DisbursementProcess.sleep(2000);
+			//DisbursementProcess.sleep(2000);
 			thread.start();
 			Map<String, Object> args = new HashMap<String, Object>();
 			args.put("module", "DISBURSEMENT");
@@ -543,6 +543,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			MessageUtil.showMessage("File download process initiated.");
 			createNewPage("/WEB-INF/pages/InterfaceBajaj/DisbursementFileDownloadList.zul",
 					"menu_Item_DisbursementFileDownlaods", args);
+			DisbursementProcess.sleep(4000);
 
 		} finally {
 			this.disbursementMap.clear();
