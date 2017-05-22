@@ -9360,6 +9360,8 @@
 	<!-- Late Pay Marking -->
 	<bean id="latePayMarkingService" class="com.pennant.app.core.LatePayMarkingService" parent="serviceHelper">
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
+		<property name="latePayPenaltyService" ref="latePayPenaltyService" />
+		<property name="latePayInterestService" ref="latePayInterestService" />
 	</bean>
 	<!-- AccountTypeGroup -->
 	<bean id="accountTypeGroupService"

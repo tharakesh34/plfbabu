@@ -49,6 +49,8 @@
 	<!-- Late Pay Marking -->
 	<bean id="latePayMarkingService" class="com.pennant.app.core.LatePayMarkingService" parent="serviceHelper">
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
+		<property name="latePayPenaltyService" ref="latePayPenaltyService" />
+		<property name="latePayInterestService" ref="latePayInterestService" />
 	</bean>
 
 	<!-- Late Pay Interest -->
@@ -127,8 +129,6 @@
 		<property name="dateRollOverService" ref="dateRollOverService" />
 		<property name="installmentDueService" ref="installmentDueService" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
-		<property name="latePayPenaltyService" ref="latePayPenaltyService" />
-		<property name="latePayInterestService" ref="latePayInterestService" />
 		<property name="npaService" ref="npaService" />
 		<property name="autoDisbursementService" ref="autoDisbursementService" />
 		<property name="receiptPaymentService" ref="receiptPaymentService" />

@@ -406,6 +406,10 @@ public class LatePayMarkingService extends ServiceHelper {
 		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
 	}
 
+	public void setLatePayPenaltyService(LatePayPenaltyService latePayPenaltyService) {
+		this.latePayPenaltyService = latePayPenaltyService;
+	}
+
 	public void setLatePayInterestService(LatePayInterestService latePayInterestService) {
 		this.latePayInterestService = latePayInterestService;
 	}
