@@ -109,7 +109,7 @@ public class MicroEOD implements Tasklet {
 			while (resultSet.next()) {
 				custId = resultSet.getLong("CustId");
 				//update start
-//				eodService.updateCustQueueStatus(threadId, custId, EodConstants.PROGRESS_IN_PROCESS, true);
+				eodService.updateCustQueueStatus(threadId, custId, EodConstants.PROGRESS_IN_PROCESS, true);
 
 				try {
 					//BEGIN TRANSACTION
