@@ -17,8 +17,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennanttech.bajaj.process.DisbursemenIMPSRequestProcess;
 import com.pennanttech.dataengine.DataEngineExport;
-import com.pennanttech.dbengine.process.DisbursemenIMPSRequestProcess;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.RequestService;
@@ -89,9 +89,11 @@ public class DisbursementRequestService extends BajajService implements RequestS
 
 		List<FinAdvancePayments> stp_Other = new ArrayList<>();
 		List<FinAdvancePayments> other_Other = new ArrayList<>();
+		
+		DisbursementTypes type = null;
 
 		for (FinAdvancePayments disbursment : disbusments) {
-			DisbursementTypes type = DisbursementTypes.valueOf(disbursment.getPaymentType());
+			type = DisbursementTypes.valueOf(disbursment.getPaymentType());
 
 			switch (type) {
 			case IMPS:
@@ -142,17 +144,28 @@ public class DisbursementRequestService extends BajajService implements RequestS
 		if (!stp_IMPS.isEmpty()) {
 			List<String> idList = null;
 			try {
-				idList = prepareRequest(getPaymentIds(stp_IMPS).split(","));
+				idList = prepareRequest(getPaymentIds(stp_IMPS).split(","), type.name());
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
-			sendIMPSRequest("DISB_IMPS_EXPORT", idList, userId);
+			
+			if (idList != null && !idList.isEmpty()) {
+				List<String> ids = new ArrayList<>();
+				for (String id : idList) {
+					if (StringUtils.trimToNull(id) != null) {
+						ids.add(id);
+					}
+				}
+				if (ids != null && !ids.isEmpty()) {
+					sendIMPSRequest("DISB_IMPS_EXPORT", ids, userId);
+				}
+			}
 		}
 
 		if (!other_IMPS.isEmpty()) {
 			List<String> idList = null;
 			try {
-				idList = prepareRequest(getPaymentIds(other_IMPS).split(","));
+				idList = prepareRequest(getPaymentIds(other_IMPS).split(","), type.name());
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
@@ -184,7 +197,7 @@ public class DisbursementRequestService extends BajajService implements RequestS
 			for (String bank : parnerBanks) {
 				List<String> idList = null;
 				try {
-					idList = prepareRequest(getPaymentIds(map.get(bank)).split(","));
+					idList = prepareRequest(getPaymentIds(map.get(bank)).split(","), paymentType);
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
 				}
@@ -200,7 +213,6 @@ public class DisbursementRequestService extends BajajService implements RequestS
 			if (map.get(disbursement.getPartnerbankCode()) == null) {
 				map.put(disbursement.getPartnerbankCode(), new ArrayList<FinAdvancePayments>());
 			}
-
 			map.get(disbursement.getPartnerbankCode()).add(disbursement);
 		}
 		return map;
@@ -225,7 +237,7 @@ public class DisbursementRequestService extends BajajService implements RequestS
 
 		Map<String, Object> filterMap = new HashMap<>();
 		filterMap.put("ID", idList);
-		filterMap.put("STATUS", "APPROVED");
+		filterMap.put("STATUS", "Approved");
 
 		Map<String, Object> parameterMap = new HashMap<>();
 		parameterMap.put("PRODUCT_CODE", StringUtils.trimToEmpty(finType));
@@ -271,20 +283,20 @@ public class DisbursementRequestService extends BajajService implements RequestS
 	}
 
 	private void sendIMPSRequest(String configName, List<String> dibursements, long userId) {
-		DisbursemenIMPSRequestProcess impsRequest = new DisbursemenIMPSRequestProcess(dataSource, App.DATABASE.name());
+		DisbursemenIMPSRequestProcess impsRequest = new DisbursemenIMPSRequestProcess(dataSource, App.DATABASE.name(), userId, getValueDate());
 
 		impsRequest.setDisbursments(dibursements);
-		impsRequest.process(userId, configName);
+		impsRequest.process(configName);
 
 		try {
-			impsRequest.process(userId, configName);
+			impsRequest.process(configName);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 	}
 
-	private List<String> prepareRequest(String[] disbursments) throws Exception {
+	private List<String> prepareRequest(String[] disbursments, final String type) throws Exception {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap;
 
@@ -356,6 +368,14 @@ public class DisbursementRequestService extends BajajService implements RequestS
 					rowMap.put("PAYMENT_DATE", null);
 					rowMap.put("REJECT_REASON", null);
 
+					if (DisbursementTypes.IMPS.name().equals(type)) {
+						try {
+							validateImpsRequest(rs);
+						} catch (Exception e) {
+							logger.error(Literal.EXCEPTION, e);
+							return null;
+						}
+					}
 					id = String.valueOf(insertData(rowMap));
 					rowMap = null;
 					return id;
@@ -404,5 +424,34 @@ public class DisbursementRequestService extends BajajService implements RequestS
 				logger.error(Literal.EXCEPTION, e);
 			}
 		}
+	}
+	
+	private boolean validateImpsRequest(ResultSet rs) throws Exception {
+
+		String mobileNo = rs.getString("BENFICIARY_MOBILE");
+		if (StringUtils.isEmpty(mobileNo)) {
+			throw new Exception("Customer Mobile Number cannot be blank");
+		}
+
+		String emailId = rs.getString("CUSTOMER_EMAIL");
+		if (StringUtils.isEmpty(emailId)) {
+			throw new Exception("Customer Email cannot be blank");
+		}
+
+		String branchState = rs.getString("BENFICIARY_BRANCH_STATE");
+		if (StringUtils.isEmpty(branchState)) {
+			throw new Exception("Bank State cannot be blank");
+		}
+
+		String branchCity = rs.getString("BENFICIARY_BRANCH_CITY");
+		if (StringUtils.isEmpty(branchCity)) {
+			throw new Exception("Bank City cannot be blank");
+		}
+
+		String remarks = rs.getString("REMARKS");
+		if (StringUtils.isEmpty(remarks)) {
+			throw new Exception("Remarks cannot be blank");
+		}
+		return true;
 	}
 }
