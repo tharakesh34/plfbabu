@@ -586,5 +586,10 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 				         	RMTFinanceTypes T5 ON T1.FinType = T5.FinType
 		</createView>
 	</changeSet>
+	<changeSet id="44" author="Irfan">
+		<sql>
+			INSERT INTO BMTAMOUNTCODES VALUES('VASFEE',0,'ae_vasFee','Accounting on Vas Fee',1,1,1000,current_timestamp,'Approved','','','','','',0);
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
