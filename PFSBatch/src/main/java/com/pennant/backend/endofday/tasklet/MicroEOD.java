@@ -132,7 +132,7 @@ public class MicroEOD implements Tasklet {
 					eodService.updateFailed(threadId, custId);
 				}
 
-				context.getStepContext().getStepExecution().getExecutionContext().put("Completed", count);
+				context.getStepContext().getStepExecution().getExecutionContext().put(EodConstants.DATA_COMPLETED, count);
 			}
 
 			if (!list.isEmpty()) {

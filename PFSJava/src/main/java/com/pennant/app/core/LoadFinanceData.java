@@ -66,7 +66,7 @@ public class LoadFinanceData extends ServiceHelper {
 			finEODEvent.setFinProfitDetail(getFinanceProfitDetailRef(finReference, listprofitDetails));
 
 			//FINSCHDULE DETAILS
-			List<FinanceScheduleDetail> finSchdDetails = getFinanceScheduleDetailRef(finReference, custfinSchdDetails);
+			List<FinanceScheduleDetail> finSchdDetails = getFinSchdDetailRef(finReference, custfinSchdDetails);
 			finEODEvent.setFinanceScheduleDetails(finSchdDetails);
 
 			custEODEvent.getFinEODEvents().add(finEODEvent);
@@ -234,8 +234,8 @@ public class LoadFinanceData extends ServiceHelper {
 		if (finMain.getNextDepDate() != null && schdDate.compareTo(finMain.getNextDepDate()) == 0) {
 			if (!StringUtils.isEmpty(finMain.getDepreciationFrq())) {
 				if (finMain.getNextDepDate().compareTo(finMain.getMaturityDate()) < 0) {
-					finMain.setNextDepDate(FrequencyUtil
-							.getNextDate(finMain.getDepreciationFrq(), 1, schdDate, "A", false).getNextFrequencyDate());
+					finMain.setNextDepDate(FrequencyUtil.getNextDate(finMain.getDepreciationFrq(), 1, schdDate, "A",
+							false).getNextFrequencyDate());
 				}
 
 				if (finMain.getNextDepDate().compareTo(finMain.getMaturityDate()) > 0) {
@@ -264,7 +264,8 @@ public class LoadFinanceData extends ServiceHelper {
 			}
 
 			//update profit details
-			getFinanceProfitDetailDAO().update(finEODEvent.getFinProfitDetail(), false);
+			getFinanceProfitDetailDAO().updateEOD(finEODEvent.getFinProfitDetail(), finEODEvent.isUpdLBDPostings(),
+					finEODEvent.isUpdMonthEndPostings());
 
 			//update schedule details 
 			if (finEODEvent.isupdFinSchdForRateRvw()) {
@@ -288,8 +289,8 @@ public class LoadFinanceData extends ServiceHelper {
 			//update repay instruction
 			if (finEODEvent.isUpdRepayInstruct()) {
 
-				getRepayInstructionDAO().deleteByFinReference(finEODEvent.getFinanceMain().getFinReference(), "", false,
-						0);
+				getRepayInstructionDAO().deleteByFinReference(finEODEvent.getFinanceMain().getFinReference(), "",
+						false, 0);
 				//Add repay instructions
 				List<RepayInstruction> lisRepayIns = finEODEvent.getRepayInstructions();
 				for (RepayInstruction repayInstruction : lisRepayIns) {
@@ -321,7 +322,7 @@ public class LoadFinanceData extends ServiceHelper {
 		logger.debug(" Leaving ");
 	}
 
-	public void updateCustQueueStatus(int threadId, long custId,int progress,boolean start) {
+	public void updateCustQueueStatus(int threadId, long custId, int progress, boolean start) {
 		CustomerQueuing customerQueuing = new CustomerQueuing();
 		customerQueuing.setCustID(custId);
 		customerQueuing.setThreadId(threadId);
@@ -330,7 +331,7 @@ public class LoadFinanceData extends ServiceHelper {
 		customerQueuing.setProgress(progress);
 		getCustomerQueuingDAO().update(customerQueuing, start);
 	}
-	
+
 	public void updateFailed(int threadId, long custId) {
 		CustomerQueuing customerQueuing = new CustomerQueuing();
 		customerQueuing.setCustID(custId);
@@ -341,9 +342,7 @@ public class LoadFinanceData extends ServiceHelper {
 		getCustomerQueuingDAO().updateFailed(customerQueuing);
 	}
 
-
-	private FinanceProfitDetail getFinanceProfitDetailRef(String finMainRef,
-			List<FinanceProfitDetail> listprofitDetails) {
+	private FinanceProfitDetail getFinanceProfitDetailRef(String finMainRef, List<FinanceProfitDetail> listprofitDetails) {
 		FinanceProfitDetail profitDetail = null;
 		Iterator<FinanceProfitDetail> it = listprofitDetails.iterator();
 		while (it.hasNext()) {
@@ -357,10 +356,9 @@ public class LoadFinanceData extends ServiceHelper {
 		return profitDetail;
 	}
 
-	private List<FinanceScheduleDetail> getFinanceScheduleDetailRef(String finMainRef,
-			List<FinanceScheduleDetail> financeScheduleDetails) {
+	private List<FinanceScheduleDetail> getFinSchdDetailRef(String finMainRef, List<FinanceScheduleDetail> finSchdlist) {
 		List<FinanceScheduleDetail> finSchedulelist = new ArrayList<FinanceScheduleDetail>();
-		Iterator<FinanceScheduleDetail> it = financeScheduleDetails.iterator();
+		Iterator<FinanceScheduleDetail> it = finSchdlist.iterator();
 		while (it.hasNext()) {
 			FinanceScheduleDetail financeProfitDetail = (FinanceScheduleDetail) it.next();
 			if (StringUtils.equals(financeProfitDetail.getFinReference(), finMainRef)) {

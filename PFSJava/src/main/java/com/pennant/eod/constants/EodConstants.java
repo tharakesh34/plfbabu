@@ -11,7 +11,10 @@ public interface EodConstants {
 	int		PROGRESS_IN_PROCESS	= 1;
 	int		PROGRESS_SUCCESS	= 2;
 
-	String	MICRO_EOD			= "MICROEOD";
+	String	DATA_CUSTOMERCOUNT		= "CustomerCount";
+	String	DATA_COMPLETED		= "Completed";
+	String	DATA_TOTALCUSTOMER		= "TotalCustomer";
+	
 
 	// Collateral De-Marking
 	String	FIN_CLOSESTS		= "M";

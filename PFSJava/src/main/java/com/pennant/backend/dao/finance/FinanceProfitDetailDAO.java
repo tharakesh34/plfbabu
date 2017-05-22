@@ -75,4 +75,5 @@ public interface FinanceProfitDetailDAO {
 	void updateAcrTsfdInSusp(List<AccountHoldStatus> list);
 	FinanceProfitDetail getFinProfitDetailsForSummary(String finReference);
 	List<FinanceProfitDetail> getFinProfitDetailsByCustId(long custID, boolean isActive);
+	void updateEOD(FinanceProfitDetail finProfitDetails, boolean posted, boolean monthend);
 }

@@ -62,6 +62,8 @@ public class FinEODEvent implements Serializable {
 	private boolean						updFinMain				= false;
 	private boolean						updFinSchdForRateRvw	= false;
 	private boolean						updRepayInstruct		= false;
+	private boolean						updLBDPostings			= false;
+	private boolean						updMonthEndPostings		= false;
 	private List<String>				finMainUpdateFields		= new ArrayList<String>(1);
 
 	public FinanceMain getFinanceMain() {
@@ -370,6 +372,22 @@ public class FinEODEvent implements Serializable {
 
 	public void setIdxPresentment(int idxPresentment) {
 		this.idxPresentment = idxPresentment;
+	}
+
+	public boolean isUpdLBDPostings() {
+		return updLBDPostings;
+	}
+
+	public void setUpdLBDPostings(boolean updLBDPostings) {
+		this.updLBDPostings = updLBDPostings;
+	}
+
+	public boolean isUpdMonthEndPostings() {
+		return updMonthEndPostings;
+	}
+
+	public void setUpdMonthEndPostings(boolean updMonthEndPostings) {
+		this.updMonthEndPostings = updMonthEndPostings;
 	}
 
 }

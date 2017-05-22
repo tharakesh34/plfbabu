@@ -60,7 +60,7 @@
 		<!-- -->
 	</job>
 	<step id="microEOD" xmlns="http://www.springframework.org/schema/batch">
-		<tasklet ref="microEODTaskLet">
+		<tasklet ref="microEODTaskLet" allow-start-if-complete="true">
 		<transaction-attributes propagation="NEVER"/>	
 		</tasklet>
 	</step>

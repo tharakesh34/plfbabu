@@ -92,8 +92,12 @@ public class PartitioningMaster implements Partitioner {
 				} else {
 					customerCount = customerQueuingDAO.updateThreadIDByRowNumber(valueDate, noOfRows, i);
 				}
-				
-				addExecution(i, partitionData, customerCount);
+
+				ExecutionContext execution = addExecution(i, partitionData, customerCount);
+				partitionData.put(Integer.toString(i), execution);
+				if (i == 1) {
+					execution.put(EodConstants.DATA_TOTALCUSTOMER, custIdCount);
+				}
 				if (recordsLessThanThread && i == custIdCount) {
 					break;
 				}
@@ -105,15 +109,15 @@ public class PartitioningMaster implements Partitioner {
 		return partitionData;
 	}
 
-	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
-		this.customerQueuingDAO = customerQueuingDAO;
-	}
-
-	private void addExecution(int threadID, Map<String, ExecutionContext> partitionData, int customerCount) {
+	private ExecutionContext addExecution(int threadID, Map<String, ExecutionContext> partitionData, int customerCount) {
 		ExecutionContext execution = new ExecutionContext();
 		execution.put(EodConstants.THREAD, threadID);
-		execution.put("CustomerCount", customerCount);
-		partitionData.put(Integer.toString(threadID), execution);
+		execution.put(EodConstants.DATA_CUSTOMERCOUNT, customerCount);
+		return execution;
+	}
+
+	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
+		this.customerQueuingDAO = customerQueuingDAO;
 	}
 
 }

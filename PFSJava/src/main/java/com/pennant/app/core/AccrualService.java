@@ -280,20 +280,27 @@ public class AccrualService extends ServiceHelper {
 		pftDetail.setTotalTenor(0);
 		//FIXME for summary we are maintaining these details. so they may not be required since the application will refer the actual tables
 		//		//Set Excess Amounts
-		/*
-		 * List<FinExcessAmount> finExcessAmounts =
-		 * finExcessAmountDAO.getExcessAmountsByRef(pftDetail.getFinReference()); if (finExcessAmounts.size() > 0) { for
-		 * (int i = 0; i < finExcessAmounts.size(); i++) { BigDecimal totBalAvailable =
-		 * finExcessAmounts.get(i).getAmount() .subtract(finExcessAmounts.get(i).getUtilisedAmt()); BigDecimal
-		 * reservedAmt = finExcessAmounts.get(i).getReservedAmt();
-		 * 
-		 * if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(), RepayConstants.EXAMOUNTTYPE_EXCESS)) {
-		 * pftDetail.setExcessAmt(totBalAvailable); pftDetail.setExcessAmtResv(reservedAmt); } else if
-		 * (StringUtils.equals(finExcessAmounts.get(i).getAmountType(), RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
-		 * pftDetail.setEmiInAdvance(totBalAvailable); pftDetail.setEmiInAdvanceResv(reservedAmt); } else if
-		 * (StringUtils.equals(finExcessAmounts.get(i).getAmountType(), RepayConstants.EXAMOUNTTYPE_PAYABLE)) {
-		 * pftDetail.setPayableAdvise(totBalAvailable); pftDetail.setPayableAdviseResv(totBalAvailable); } } }
-		 */
+		//		List<FinExcessAmount> finExcessAmounts = finExcessAmountDAO.getExcessAmountsByRef(pftDetail.getFinReference());
+		//		if (finExcessAmounts.size() > 0) {
+		//			for (int i = 0; i < finExcessAmounts.size(); i++) {
+		//				BigDecimal totBalAvailable = finExcessAmounts.get(i).getAmount()
+		//						.subtract(finExcessAmounts.get(i).getUtilisedAmt());
+		//				BigDecimal reservedAmt = finExcessAmounts.get(i).getReservedAmt();
+		//
+		//				if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(), RepayConstants.EXAMOUNTTYPE_EXCESS)) {
+		//					pftDetail.setExcessAmt(totBalAvailable);
+		//					pftDetail.setExcessAmtResv(reservedAmt);
+		//				} else if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(),
+		//						RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
+		//					pftDetail.setEmiInAdvance(totBalAvailable);
+		//					pftDetail.setEmiInAdvanceResv(reservedAmt);
+		//				} else if (StringUtils.equals(finExcessAmounts.get(i).getAmountType(),
+		//						RepayConstants.EXAMOUNTTYPE_PAYABLE)) {
+		//					pftDetail.setPayableAdvise(totBalAvailable);
+		//					pftDetail.setPayableAdviseResv(totBalAvailable);
+		//				}
+		//			}
+		//		}
 
 	}
 
@@ -349,8 +356,8 @@ public class AccrualService extends ServiceHelper {
 			} else if (valueDate.compareTo(curSchdDate) > 0 && valueDate.compareTo(nextSchdDate) <= 0) {
 				int days = getNoDays(valueDate, curSchdDate);
 				int daysInCurPeriod = nextSchd.getNoOfDays();
-				pftAmz = nextSchd.getProfitCalc().multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod),
-						0, RoundingMode.HALF_DOWN);
+				pftAmz = nextSchd.getProfitCalc().multiply(new BigDecimal(days))
+						.divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
 			} else {
 				pftAmz = nextSchd.getProfitCalc();
 			}
@@ -553,8 +560,8 @@ public class AccrualService extends ServiceHelper {
 
 		// Suspense Amortization
 		if (dateSusp.compareTo(pftDetail.getMaturityDate()) <= 0) {
-			pftDetail.setPftAmzSusp(
-					pftDetail.getPftAmz().subtract(pftDetail.getPftAmzNormal()).subtract(pftDetail.getPftAmzPD()));
+			pftDetail.setPftAmzSusp(pftDetail.getPftAmz().subtract(pftDetail.getPftAmzNormal())
+					.subtract(pftDetail.getPftAmzPD()));
 			pftDetail.setPftInSusp(true);
 			//Value Equivalent accrual after suspended date
 			pftDetail.setPftAccrueSusp(pftDetail.getPftAccrued().subtract(pftDetail.getPftAccrueSusp()));
@@ -618,6 +625,7 @@ public class AccrualService extends ServiceHelper {
 		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
+		finEODEvent.setUpdLBDPostings(true);
 
 		//posting done update the accrual balance
 		finPftDetail.setAmzTillLBD(finPftDetail.getPftAmz());
@@ -635,10 +643,11 @@ public class AccrualService extends ServiceHelper {
 			finPftDetail.setPrvMthAmzNrm(finPftDetail.getPftAmzNormal());
 			finPftDetail.setPrvMthAmzPD(finPftDetail.getPftAmzPD());
 			finPftDetail.setPrvMthAmzSusp(finPftDetail.getPftAmzSusp());
+			finEODEvent.setUpdMonthEndPostings(true);
 		}
 		// these fields should be update after the accrual posting only so these will not be considered in normal update.
 
-		getFinanceProfitDetailDAO().updateLBDAccruals(finPftDetail, false);
+//		getFinanceProfitDetailDAO().updateLBDAccruals(finPftDetail, false);
 		logger.debug(" Leaving ");
 	}
 
