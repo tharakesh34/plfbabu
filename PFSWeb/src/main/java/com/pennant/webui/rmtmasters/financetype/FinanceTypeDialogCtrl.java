@@ -119,6 +119,7 @@ import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
+import com.pennant.backend.model.bmtmasters.Product;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
@@ -126,6 +127,7 @@ import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.FinTypeAccount;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.systemmasters.DivisionDetail;
+import com.pennant.backend.service.bmtmasters.ProductService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -511,6 +513,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected FinTypeInsuranceListCtrl finTypeInsuranceListCtrl;
 	protected FinTypeAccountingListCtrl finTypeAccountingListCtrl;
 	protected FinTypePartnerBankListCtrl finTypePartnerBankListCtrl;
+	private ProductService productService;
 
 	/** default constructor.<br> */
 	public FinanceTypeDialogCtrl() {
@@ -1663,7 +1666,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug("Entering");
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		int format = CurrencyUtil.getFormat(null);
-
+		Product product = getProductService().getApprovedProductById(this.cbfinProductType.getSelectedItem().getValue().toString(), this.cbfinProductType.getSelectedItem().getValue().toString());
+		
 		// ************* Start of tab 1 ************//
 		if (isPromotion) {
 			try {
@@ -1776,7 +1780,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			if (isValidComboValue(this.cbfinProductType,
 					Labels.getLabel("label_FinanceTypeDialog_FinProductType.Value"))) {
 				aFinanceType.setFinCategory(this.cbfinProductType.getSelectedItem().getValue().toString());
-				aFinanceType.setProductCategory(this.cbfinProductType.getSelectedItem().getValue().toString());
+				if(product !=null){
+					aFinanceType.setProductCategory(product.getProductCategory());
+				}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -4860,9 +4866,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		if (this.cbfinProductType.getSelectedItem() != null) {
 			this.allowRIAInvestment.setChecked(false);
-			doSetProductBasedLabels(cbfinProductType.getSelectedItem().getValue().toString());
-			doSetDownpayProperties(cbfinProductType.getSelectedItem().getValue().toString(), true);
-			doCheckRIA(cbfinProductType.getSelectedItem().getValue().toString());
+			Product product = getProductService().getApprovedProductById(this.cbfinProductType.getSelectedItem().getValue().toString(), this.cbfinProductType.getSelectedItem().getValue().toString());
+			doSetProductBasedLabels(product.getProductCode());
+			doSetDownpayProperties(product.getProductCategory(), true);
+			doCheckRIA(product.getProductCategory().toString());
 
 			if (StringUtils.equals(getComboboxValue(this.cbfinProductType), FinanceConstants.PRODUCT_ISTISNA)) {
 				this.fInIsAlwGrace.setChecked(true);
@@ -6891,4 +6898,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	public void setFinTypePartnerBankListCtrl(FinTypePartnerBankListCtrl finTypePartnerBankListCtrl) {
 		this.finTypePartnerBankListCtrl = finTypePartnerBankListCtrl;
 	}
+
+	public ProductService getProductService() {
+		return productService;
+	}
+
+	public void setProductService(ProductService productService) {
+		this.productService = productService;
+	}
+
 }

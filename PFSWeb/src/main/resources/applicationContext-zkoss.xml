@@ -1615,6 +1615,8 @@
 		class="com.pennant.webui.rmtmasters.financetype.FinanceTypeDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="financeTypeService" ref="financeTypeService" />
+		<property name="productService" ref="productService" />
+		
 	</bean>
 
 	<bean id="selectFinanceTypeDialogCtrl"
