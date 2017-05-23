@@ -109,7 +109,7 @@
 				</center>
 				<east border="none" autoscroll="true" style="position:absolute;top:15%;right:43%;">
 					<div>
-						<groupbox width="100%" contentStyle="overflow:auto;">
+						<groupbox width="100%">
 							<caption label="Micro EOD"></caption>
 							<grid sclass="GridLayoutNoBorder">
 								<columns>
@@ -128,7 +128,7 @@
 											<label value="${c:l('label_Number_Of_Thread_Started_MicroEod.value')}" />
 											<intbox id="noOfthread" width="60px" readonly="true" style="background-color : #fdf7fa;" />
 											<label value="${c:l('label_Total_Number_Of_Customers_MicroEod.value')}" />
-											<intbox id="noOfCustomer" width="60px" readonly="true" style="background-color : #fdf7fa;" />
+											<longbox id="noOfCustomer" width="60px" readonly="true" style="background-color : #fdf7fa;" />
 										</hbox>
 									</row>
 									<row>
@@ -137,7 +137,7 @@
 												<listhead sizable="true">
 													<listheader id="threadID" label="${c:l('label_Thread_ID_MicroEod.value')}" sort="auto" hflex="min" />
 													<listheader id="customerAssigned" label="${c:l('label_Customer_Assigned_MicroEod.value')}" sort="auto" hflex="min" />
-													<listheader id="completedCustomers" label="${c:l('label_Completed_Customers_MicroEod.value')}" sort="auto" hflex="min" visible="false" />
+													<listheader id="completedCustomers" label="${c:l('label_Completed_Customers_MicroEod.value')}" sort="auto" hflex="min"/>
 													<listheader id="failedCustomers" label="${c:l('label_Failed_Customers_MicroEod.value')}" sort="auto" hflex="min" />
 												</listhead>
 											</listbox>

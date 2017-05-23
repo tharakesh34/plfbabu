@@ -29,6 +29,7 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
@@ -47,6 +48,7 @@ import com.pennant.backend.model.ExecutionStatus;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.eod.constants.EodConstants;
 import com.pennant.policy.model.UserImpl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -523,7 +525,10 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		if (dataExtract.getChildren() != null) {
 			dataExtract.getChildren().clear();
 		}
-		this.listBoxThread.getItems().clear();
+
+		if (listBoxThread.getItems() != null) {
+			this.listBoxThread.getItems().clear();
+		}
 
 	}
 
@@ -547,12 +552,17 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			destination.setValueDate((Date) source.getExecutionContext().get("VDATE"));
 		}
 
-		if (source.getExecutionContext().containsKey("CustomerCount")) {
-			destination.setCustomerCount(source.getExecutionContext().getInt("CustomerCount"));
+		if (source.getExecutionContext().containsKey(EodConstants.DATA_CUSTOMERCOUNT)) {
+			destination.setCustomerCount(source.getExecutionContext().getInt(EodConstants.DATA_CUSTOMERCOUNT));
 		}
 
-		if (source.getExecutionContext().containsKey("Completed")) {
-			destination.setCompleted((Integer) source.getExecutionContext().get("Completed"));
+		if (source.getExecutionContext().containsKey(EodConstants.DATA_COMPLETED)) {
+			destination.setCompleted((Integer) source.getExecutionContext().get(EodConstants.DATA_COMPLETED));
+		}
+
+		if (source.getExecutionContext().containsKey(EodConstants.DATA_TOTALCUSTOMER)) {
+			destination.setTotalCustomer(((Number) (source.getExecutionContext().get(EodConstants.DATA_TOTALCUSTOMER)))
+					.longValue());
 		}
 
 		destination.setExecutionName(source.getStepName());
@@ -654,13 +664,14 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 	protected Listbox listBoxThread;
 	protected Intbox noOfthread;
-	protected Intbox noOfCustomer;
+	protected Longbox noOfCustomer;
 
 	public void doFillCustomerEodDetails(ExecutionStatus status) {
 		noOfthread.setValue(SysParamUtil.getValueAsInt("EOD_THREAD_COUNT"));
-		noOfCustomer.setValue(0);
-
 		if (status != null) {
+			if (status.getTotalCustomer() != null) {
+				noOfCustomer.setValue(status.getTotalCustomer());
+			}
 			String trheadName = status.getExecutionName();
 			Listitem listitem = null;
 			Listcell listcell = null;
@@ -669,14 +680,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			Component listItemComp = listBoxThread.getFellowIfAny(threadId);
 			if (listItemComp != null && listItemComp instanceof Listitem) {
 				listitem = (Listitem) listItemComp;
-				Component listcellComp = listitem.getFellowIfAny(threadId + "Status".hashCode());
-
-				if (listcellComp != null && listcellComp instanceof Listcell) {
-					listcell = (Listcell) listcellComp;
-					if (!status.getStatus().equals(listcell.getLabel().toString())) {
-						listitem.getChildren().clear();
-					}
-				}
+				listitem.getChildren().clear();
 			} else {
 				listitem = new Listitem();
 			}
@@ -692,8 +696,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			listcell.setParent(listitem);
 
 			listcell = new Listcell(status.getStatus());
-			listcell.setId(threadId + "Status".hashCode());
-			if (!listitem.hasFellow(threadId + "Status".hashCode()))
+			listcell.setId(threadId + EodConstants.STATUS);
+			if (!listitem.hasFellow(threadId + EodConstants.STATUS))
 				listcell.setParent(listitem);
 			listBoxThread.appendChild(listitem);
 

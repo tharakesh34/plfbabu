@@ -24,10 +24,12 @@ public class ExecutionStatus implements Serializable {
 	private String remarks;
 	private int customerCount;
 	private int completed;
-	
+	private Long totalCustomer;
+
 	public ExecutionStatus() {
-		
+
 	}
+
 	public String getExecutionName() {
 		return executionName;
 	}
@@ -134,7 +136,7 @@ public class ExecutionStatus implements Serializable {
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
-	
+
 	public void reset() {
 		executionName = "";
 		actualCount = 0;
@@ -162,5 +164,11 @@ public class ExecutionStatus implements Serializable {
 		this.completed = completed;
 	}
 
+	public Long getTotalCustomer() {
+		return totalCustomer;
+	}
 
+	public void setTotalCustomer(Long totalCustomer) {
+		this.totalCustomer = totalCustomer;
+	}
 }
