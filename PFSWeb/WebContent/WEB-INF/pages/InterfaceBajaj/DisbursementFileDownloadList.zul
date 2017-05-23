@@ -8,7 +8,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 <window>
 	<window id="window_DisbursementFileDownloadList" apply="${disbursementfileDownloadListCtrl}" border="none" width="100%">
-		<timer id="timer" delay="50000" repeats="true" />
+		<timer id="timer" delay="10000" repeats="true" />
 		<div sclass="z-toolbar" style="padding:0px">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 
