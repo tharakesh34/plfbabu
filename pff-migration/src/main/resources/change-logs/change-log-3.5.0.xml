@@ -1328,4 +1328,12 @@ update WorkFlowDetails set workflowactive='0' where workflowtype='FEERECEIPT_PRO
 		UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
 	</sql>
 </changeSet>
+
+<changeSet id="92" author="DurgaPrasad.G">
+	<sql>
+	DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_IMPS_RESPONSE';
+	INSERT INTO DATA_ENGINE_CONFIG VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'DISB_IMPS_RESPONSE', 'Disbrsement imps response.', 1, NULL, NULL, NULL, NULL , 0, 0, NULL, NULL,  NULL, 'S', NULL, 'Disbrsement imps', NULL, 0, NULL, NULL, '0 0/5 * * * ?', 0, NULL, 1, 1); 
+	</sql>
+</changeSet>
+
 </databaseChangeLog>
