@@ -9748,6 +9748,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				} else {
 					aFinanceMain.setGrcPftRate(this.gracePftRate.getValue());
 				}
+				
+				if(aFinanceMain.getGrcPftRate() == null){
+					aFinanceMain.setGrcPftRate(BigDecimal.ZERO);
+				}
 
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -10096,6 +10100,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 									Labels.getLabel("label_FinanceMainDialog_ProfitRate.value") }));
 				}
 				aFinanceMain.setRepayProfitRate(this.repayProfitRate.getValue());
+			}
+			
+			if(aFinanceMain.getRepayProfitRate() == null){
+				aFinanceMain.setRepayProfitRate(BigDecimal.ZERO);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

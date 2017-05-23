@@ -3266,11 +3266,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, false));
 		}
 		
-		if(!this.remarks.isReadonly()){
-			this.remarks.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptDialog_Remarks.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if(!StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_EXCESS)){
+			if(!this.remarks.isReadonly()){
+				this.remarks.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptDialog_Remarks.value"),
+						PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			}
 		}
-
 		logger.debug("Leaving");
 	}
 

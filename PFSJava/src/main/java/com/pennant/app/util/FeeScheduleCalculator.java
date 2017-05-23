@@ -44,7 +44,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.zkoss.zk.ui.WrongValueException;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -166,8 +165,8 @@ public class FeeScheduleCalculator {
 			recalTerms = feeDetail.getTerms();
 
 			if (avalableTerms < recalTerms) {
-				//recalTerms = avalableTerms;
-				throw new WrongValueException("Number of Terms not matching the Available terms ");
+				recalTerms = avalableTerms;
+				//throw new WrongValueException("Number of Terms not matching the Available terms ");
 			}
 		} else {
 			recalTerms = avalableTerms;
@@ -206,17 +205,18 @@ public class FeeScheduleCalculator {
 			feeSchdDetail = feeSchdDetails.get(i);
 			Date feeSchdDate = feeSchdDetail.getSchDate();
 
+			totalSchdFee = totalSchdFee.add(feeSchdDetail.getSchAmount());
+
 			//Fee Schedule date is before event from date
 			if (feeSchdDate.compareTo(evtFromDate) < 0) {
 				continue;
 			}
 
-			totalSchdFee = totalSchdFee.add(feeSchdDetail.getSchAmount());
-			//Find O/S Fee exclusing written-off fee.
+			//Find O/S Fee excluding written-off fee.
 			BigDecimal osFee = feeSchdDetail.getSchAmount().subtract(feeSchdDetail.getPaidAmount())
 					.subtract(feeSchdDetail.getWaiverAmount());
 
-			//No Fees are due, so no postponement required
+			//No Fees are due, so no postpone required
 			if (osFee.compareTo(BigDecimal.ZERO) <= 0) {
 				continue;
 			}
@@ -285,6 +285,7 @@ public class FeeScheduleCalculator {
 		long feeID = finFeeDetail.getFeeID();
 		int schTerms = 0;
 		int recalTerms = financeMain.getRecalTerms();
+		
 		if(recalTerms == 0 ){
 			return;
 		}
@@ -298,7 +299,8 @@ public class FeeScheduleCalculator {
 		//Find Total Available Repayment Schedules for Fee Recalculation
 		List<Date> rpySchdList = new ArrayList<>(rpySchdMap.keySet());
 		Collections.sort(rpySchdList);
-
+		boolean totFeeAdjusted = false;
+		
 		for (int i = 0; i < rpySchdList.size(); i++) {
 			Date schdDate = rpySchdList.get(i);
 			boolean isDateFound = false;
@@ -319,7 +321,14 @@ public class FeeScheduleCalculator {
 
 			schTerms = schTerms + 1;
 
+			if(totalNewSchdFee.add(newSchdFee).compareTo(recalFee) > 0 ){
+				totFeeAdjusted = true;
+				newSchdFee = recalFee.subtract(totalNewSchdFee);
+			}
+			
+			
 			if (recalTerms == schTerms) {
+				totFeeAdjusted = true;
 				newSchdFee = recalFee.subtract(totalNewSchdFee);
 			}
 
@@ -330,7 +339,7 @@ public class FeeScheduleCalculator {
 			feeSchdDetail.setSchAmount(newSchdFee);
 			feeSchdDetails.add(feeSchdDetail);
 
-			if (recalTerms == schTerms) {
+			if (totFeeAdjusted) {
 				break;
 			}
 
@@ -350,7 +359,6 @@ public class FeeScheduleCalculator {
 		//Place Repayment Schedule dates and Holiday Schedule Dates to respective maps
 		for (int i = 0; i < finSchdDetails.size(); i++) {
 			curSchd = finSchdDetails.get(i);
-
 
 			if (curSchd.getSchDate().before(evtFromDate)) {
 				continue;
@@ -399,11 +407,13 @@ public class FeeScheduleCalculator {
 				if(!rpySchdMap.containsKey(feeSchdDetail.getSchDate())){
 					continue;
 				}
+
 				int schdIdx = rpySchdMap.get(feeSchdDetail.getSchDate());
 
 				if (schdIdx <= 0) {
 					schdIdx = hldSchdMap.get(feeSchdDetail.getSchDate());
 				}
+
 				FinanceScheduleDetail curSchd = finSchdDetails.get(schdIdx);
 				curSchd.setFeeSchd(curSchd.getFeeSchd().add(feeSchdDetail.getSchAmount()));
 			}

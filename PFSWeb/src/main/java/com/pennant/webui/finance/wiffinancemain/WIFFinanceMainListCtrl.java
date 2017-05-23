@@ -231,8 +231,8 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.listheader_ScheduleMethod.setSortDescending(new FieldComparator("scheduleMethod", false));
 		this.listheader_Amount.setSortAscending(new FieldComparator("finAmount", true));
 		this.listheader_Amount.setSortDescending(new FieldComparator("finAmount", false));
-		this.listheader_NoOfTerms.setSortAscending(new FieldComparator("numberOfTerms", true));
-		this.listheader_NoOfTerms.setSortDescending(new FieldComparator("numberOfTerms", false));
+		this.listheader_NoOfTerms.setSortAscending(new FieldComparator("calTerms", true));
+		this.listheader_NoOfTerms.setSortDescending(new FieldComparator("calTerms", false));
 		this.listheader_StartDate.setSortAscending(new FieldComparator("finStartDate", true));
 		this.listheader_StartDate.setSortDescending(new FieldComparator("finStartDate", false));
 		this.listheader_GraceEndDate.setSortAscending(new FieldComparator("grcPeriodEndDate", true));
@@ -490,7 +490,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.searchObj.addField("LovDescFinProduct");
 		this.searchObj.addField("grcPeriodEndDate");
 		this.searchObj.addField("maturityDate");
-		this.searchObj.addField("numberOfTerms");
+		this.searchObj.addField("calTerms");
 		this.searchObj.addField("scheduleMethod");
 		this.searchObj.addField("finStartDate");
 		this.searchObj.addField("finAmount");
