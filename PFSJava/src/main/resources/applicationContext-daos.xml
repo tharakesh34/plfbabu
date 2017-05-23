@@ -6530,6 +6530,7 @@
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
+		<property name="allocationDetailDAO" ref="receiptAllocationDetailDAO" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />

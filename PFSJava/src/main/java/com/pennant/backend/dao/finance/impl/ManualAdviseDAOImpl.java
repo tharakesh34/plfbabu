@@ -310,11 +310,11 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		StringBuilder	sql =new StringBuilder("update ManualAdvise" );
 		sql.append(tableType.getSuffix());
 		sql.append(" set ");
-		if(paidAmount.compareTo(BigDecimal.ZERO) > 0){
+		if(paidAmount.compareTo(BigDecimal.ZERO) != 0){
 			sql.append(" PaidAmount = PaidAmount + :PaidAmount ");
 		}
-		if(waivedAmount.compareTo(BigDecimal.ZERO) > 0){
-			if(paidAmount.compareTo(BigDecimal.ZERO) > 0){
+		if(waivedAmount.compareTo(BigDecimal.ZERO) != 0){
+			if(paidAmount.compareTo(BigDecimal.ZERO) != 0){
 				sql.append(" , ");
 			}
 			sql.append(" WaivedAmount = WaivedAmount+:WaivedAmount ");

@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -29,6 +30,7 @@ import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
+import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
@@ -48,6 +50,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
+import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
@@ -75,6 +78,7 @@ public class RepaymentProcessUtil {
 	private FinFeeScheduleDetailDAO		finFeeScheduleDetailDAO;
 	private FinInsurancesDAO			finInsurancesDAO;
 	private LimitManagement				limitManagement;
+	private ReceiptAllocationDetailDAO	allocationDetailDAO;	
 
 	public RepaymentProcessUtil() {
 		super();
@@ -470,6 +474,34 @@ public class RepaymentProcessUtil {
 	public void doSaveReceipts(FinReceiptHeader receiptHeader) {
 		long receiptID = getFinReceiptHeaderDAO().save(receiptHeader, TableType.MAIN_TAB);
 		receiptHeader.setReceiptID(receiptID);
+		
+		// Receipt Allocation Details
+		Map<String, BigDecimal> allocationPaidMap = null;
+		Map<String, BigDecimal> allocationWaivedMap = null;
+		if(receiptHeader.getAllocations() != null && !receiptHeader.getAllocations().isEmpty()){
+			allocationPaidMap = new HashMap<>();
+			allocationWaivedMap = new HashMap<>();
+			
+			for (int i = 0; i < receiptHeader.getAllocations().size(); i++) {
+				ReceiptAllocationDetail allocation = receiptHeader.getAllocations().get(i);
+				allocation.setReceiptID(receiptID);
+				allocation.setAllocationID(i+1);
+				
+				allocationPaidMap.put(allocation.getAllocationType()+"_"+allocation.getAllocationTo(), allocation.getPaidAmount());
+				allocationWaivedMap.put(allocation.getAllocationType()+"_"+allocation.getAllocationTo(), allocation.getWaivedAmount());
+
+				// Manual Advises updation
+				if(StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_MANADV)){
+					if(allocation.getPaidAmount().compareTo(BigDecimal.ZERO) > 0 || 
+							allocation.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0){
+						getManualAdviseDAO().updateAdvPayment(allocation.getAllocationTo(),
+								allocation.getPaidAmount(), allocation.getWaivedAmount(), TableType.MAIN_TAB);
+					}
+				}
+			}
+
+			getAllocationDetailDAO().saveAllocations(receiptHeader.getAllocations() , TableType.MAIN_TAB);
+		}
 
 		// Save Receipt Detail List by setting Receipt Header ID
 		List<FinReceiptDetail> receiptDetails = sortReceiptDetails(receiptHeader.getReceiptDetails());
@@ -549,7 +581,7 @@ public class RepaymentProcessUtil {
 						rpySchd.setRepaySchID(i + 1);
 						rpySchd.setLinkedTranId(rpyHeader.getLinkedTranId());
 						//update fee schedule details
-						updateFeeDetails(rpySchd);
+						updateFeeDetails(rpySchd, allocationPaidMap, allocationWaivedMap);
 						//update insurance schedule details
 						updateInsuranceDetails(rpySchd);
 					}
@@ -618,7 +650,14 @@ public class RepaymentProcessUtil {
 
 	}
 
-	private void updateFeeDetails(RepayScheduleDetail rpySchd) {
+	/**
+	 * Method for updating Fee Schedule Details based on Allocations and Paid Amounts 
+	 * @param rpySchd
+	 * @param allocationPaidMap
+	 * @param allocationWaivedMap
+	 */
+	private void updateFeeDetails(RepayScheduleDetail rpySchd, Map<String, BigDecimal> allocationPaidMap, 
+			Map<String, BigDecimal> allocationWaivedMap) {
 		BigDecimal remBalPaidAmount = rpySchd.getSchdFeePayNow();
 		BigDecimal remBalWaivedAmount = rpySchd.getSchdFeeWaivedNow();
 
@@ -637,18 +676,68 @@ public class RepaymentProcessUtil {
 					feeSchd.getPaidAmount().subtract(feeSchd.getWaiverAmount()));
 			if (feeBal.compareTo(remBalPaidAmount) > 0) {
 				feeBal = remBalPaidAmount;
+
+				if(allocationPaidMap != null){
+					if(allocationPaidMap.containsKey(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID())){
+						BigDecimal remPaidBal = allocationPaidMap.get(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID());
+						if(feeBal.compareTo(remPaidBal) > 0){
+							feeBal = remPaidBal;
+						}
+					}else{
+						feeBal = BigDecimal.ZERO;
+					}
+				}
 			}
 			
 			if(remBalPaidAmount.compareTo(BigDecimal.ZERO) == 0){
 				if (feeBal.compareTo(remBalWaivedAmount) > 0) {
 					feeBal = remBalWaivedAmount;
+					
+					if(allocationWaivedMap != null){
+						if(allocationWaivedMap.containsKey(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID())){
+							BigDecimal remWaivedBal = allocationWaivedMap.get(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID());
+							if(feeBal.compareTo(remWaivedBal) > 0){
+								feeBal = remWaivedBal;
+							}
+						}else{
+							feeBal = BigDecimal.ZERO;
+						}
+					}
 				}
+				
+				// If Fees not allocated on paids then No updates
+				if(feeBal.compareTo(BigDecimal.ZERO) == 0){
+					continue;
+				}
+				
 				feeSchd.setWaiverAmount(feeSchd.getWaiverAmount().add(feeBal));
 				remBalWaivedAmount = remBalWaivedAmount.subtract(feeBal);
+				
+				if(allocationWaivedMap != null){
+					if(allocationWaivedMap.containsKey(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID())){
+						BigDecimal remWaivedBal = allocationWaivedMap.get(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID());
+						allocationWaivedMap.put(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID(), remWaivedBal.subtract(feeBal));
+					}
+				}
+				
 			}else{
+				
+				// If Fees not allocated on paids then No updates
+				if(feeBal.compareTo(BigDecimal.ZERO) == 0){
+					continue;
+				}
+				
 				feeSchd.setPaidAmount(feeSchd.getPaidAmount().add(feeBal));
 				remBalPaidAmount = remBalPaidAmount.subtract(feeBal);
+				
+				if(allocationPaidMap != null){
+					if(allocationPaidMap.containsKey(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID())){
+						BigDecimal remPaidBal = allocationPaidMap.get(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID());
+						allocationPaidMap.put(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID(), remPaidBal.subtract(feeBal));
+					}
+				}
 			}
+			
 			
 			feeSchd.setOsAmount(feeSchd.getSchAmount().subtract(feeSchd.getPaidAmount()).subtract(feeSchd.getWaiverAmount()));
 			updateFeeList.add(feeSchd);
@@ -1151,6 +1240,14 @@ public class RepaymentProcessUtil {
 
 	public void setLimitManagement(LimitManagement limitManagement) {
 		this.limitManagement = limitManagement;
+	}
+
+	public ReceiptAllocationDetailDAO getAllocationDetailDAO() {
+		return allocationDetailDAO;
+	}
+
+	public void setAllocationDetailDAO(ReceiptAllocationDetailDAO allocationDetailDAO) {
+		this.allocationDetailDAO = allocationDetailDAO;
 	}
 
 }

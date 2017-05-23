@@ -833,27 +833,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		repayProcessUtil.doSaveReceipts(receiptHeader);
 		long receiptID = receiptHeader.getReceiptID();
 		
-		// Receipt Allocation Details
-		if(receiptHeader.getAllocations() != null && !receiptHeader.getAllocations().isEmpty()){
-			
-			for (int i = 0; i < receiptHeader.getAllocations().size(); i++) {
-				ReceiptAllocationDetail allocation = receiptHeader.getAllocations().get(i);
-				allocation.setReceiptID(receiptID);
-				allocation.setAllocationID(i+1);
-
-				// Manual Advises updation
-				if(StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_MANADV)){
-					if(allocation.getPaidAmount().compareTo(BigDecimal.ZERO) > 0 || 
-							allocation.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0){
-						getManualAdviseDAO().updateAdvPayment(allocation.getAllocationTo(),
-								allocation.getPaidAmount(), allocation.getWaivedAmount(), TableType.MAIN_TAB);
-					}
-				}
-			}
-			
-			getAllocationDetailDAO().saveAllocations(receiptHeader.getAllocations() , TableType.MAIN_TAB);
-		}
-
 		if(!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, rceiptData.getSourceId())) {
 			// Save Document Details
 			if (rceiptData.getFinanceDetail().getDocumentDetailsList() != null
