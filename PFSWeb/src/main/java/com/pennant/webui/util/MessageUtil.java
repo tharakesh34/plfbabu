@@ -69,28 +69,28 @@ import com.pennanttech.pff.core.Literal;
  * </p>
  */
 public final class MessageUtil {
-	private static final Logger logger = Logger.getLogger(MessageUtil.class);
+	private static final Logger	logger		= Logger.getLogger(MessageUtil.class);
 
 	/** A symbol consisting of an exclamation point in a triangle with a yellow background. */
-	public static final String EXCLAMATION = Messagebox.EXCLAMATION;
+	public static final String	EXCLAMATION	= Messagebox.EXCLAMATION;
 	/** A symbol of a lower case letter i in a circle. */
-	public static final String INFORMATION = Messagebox.INFORMATION;
+	public static final String	INFORMATION	= Messagebox.INFORMATION;
 	/** A symbol consisting of a white X in a circle with a red background. */
-	public static final String ERROR = Messagebox.ERROR;
+	public static final String	ERROR		= Messagebox.ERROR;
 	/** A OK button. */
-	public static final int OK = Messagebox.OK;
+	public static final int		OK			= Messagebox.OK;
 	/** A Cancel button. */
-	public static final int CANCEL = Messagebox.CANCEL;
+	public static final int		CANCEL		= Messagebox.CANCEL;
 	/** A Yes button. */
-	public static final int YES = Messagebox.YES;
+	public static final int		YES			= Messagebox.YES;
 	/** A No button. */
-	public static final int NO = Messagebox.NO;
+	public static final int		NO			= Messagebox.NO;
 	/** A Abort button. */
-	public static final int ABORT = Messagebox.ABORT;
+	public static final int		ABORT		= Messagebox.ABORT;
 	/** A Retry button. */
-	public static final int RETRY = Messagebox.RETRY;
+	public static final int		RETRY		= Messagebox.RETRY;
 	/** A IGNORE button. */
-	public static final int IGNORE = Messagebox.IGNORE;
+	public static final int		IGNORE		= Messagebox.IGNORE;
 
 	private MessageUtil() {
 		super();
@@ -129,7 +129,7 @@ public final class MessageUtil {
 
 		MultiLineMessageBox.show(message, App.NAME, OK, ERROR);
 	}
-	
+
 	/**
 	 * Shows a message box. The message box will be displayed with the following parameters:<br/>
 	 * <b>title</b> - {@link App#NAME} is used.<br/>
