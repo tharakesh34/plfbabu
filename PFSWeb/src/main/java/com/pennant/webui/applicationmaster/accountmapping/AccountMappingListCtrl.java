@@ -52,8 +52,11 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Radio;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.applicationmaster.AccountMapping;
@@ -61,31 +64,53 @@ import com.pennant.backend.service.applicationmaster.AccountMappingService;
 import com.pennant.webui.applicationmaster.accountmapping.model.AccountMappingListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.framework.core.SearchOperator.Operators;
+import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pff.core.Literal;
 
 /**
- * This is the controller class for the /WEB-INF/pages/com.pennant.applicationmaster/AccountMapping/AccountMappingList.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/com.pennant.applicationmaster/AccountMapping/AccountMappingList.zul file.
  * 
  */
 public class AccountMappingListCtrl extends GFCBaseListCtrl<AccountMapping> {
-	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(AccountMappingListCtrl.class);
+	private static final long				serialVersionUID	= 1L;
+	private static final Logger				logger				= Logger.getLogger(AccountMappingListCtrl.class);
 
-	protected Window window_AccountMappingList;
-	protected Borderlayout borderLayout_AccountMappingList;
-	protected Paging pagingAccountMappingList;
-	protected Listbox listBoxAccountMapping;
+	protected Window						window_AccountMappingList;
+	protected Borderlayout					borderLayout_AccountMappingList;
+	protected Paging						pagingAccountMappingList;
+	protected Listbox						listBoxAccountMapping;
 
 	// List headers
-
+	protected Listheader					listheader_AccountType;
+	protected Listheader					listheader_Account;
+	protected Listheader					listheader_HostAccount;
+	protected Listheader					listheader_ProfitCenter;
+	protected Listheader					listheader_CostCenter;
+	protected Listheader					listheader_FinType;
 	// checkRights
-	protected Button button_AccountMappingList_NewAccountMapping;
-	protected Button button_AccountMappingList_AccountMappingSearch;
+	protected Button						button_AccountMappingList_NewAccountMapping;
+	protected Button						button_AccountMappingList_AccountMappingSearch;
 
 	// Search Fields
-	
-	
-	private transient AccountMappingService accountMappingService;
+	protected Textbox						accountType;
+	protected Textbox						account;
+	protected Textbox						hostAccount;
+	protected Textbox						profitCenter;
+	protected Textbox						costCenter;
+	protected Textbox						finType;
+	protected Radio							loanTypeAc;
+	protected Radio							normalAc;
+
+	protected Listbox						sortOperator_accountType;
+	protected Listbox						sortOperator_account;
+	protected Listbox						sortOperator_hostAccount;
+	protected Listbox						sortOperator_profitCenter;
+	protected Listbox						sortOperator_costCenter;
+	protected Listbox						sortOperator_finType;
+
+	private transient AccountMappingService	accountMappingService;
 
 	/**
 	 * default constructor.<br>
@@ -118,10 +143,20 @@ public class AccountMappingListCtrl extends GFCBaseListCtrl<AccountMapping> {
 
 		// Register buttons and fields.
 		registerButton(button_AccountMappingList_AccountMappingSearch);
-		registerButton(button_AccountMappingList_NewAccountMapping, "button_AccountMappingList_NewAccountMapping", true);
+		registerButton(button_AccountMappingList_NewAccountMapping, "button_AccountMappingList_NewAccountMapping",
+				true);
 
-		registerField("account");		
-		registerField("hostAccount");		
+		registerField("accountType", listheader_AccountType, SortOrder.ASC, accountType, sortOperator_accountType,
+				Operators.STRING);
+		registerField("account", listheader_Account, SortOrder.NONE, account, sortOperator_account, Operators.STRING);
+		registerField("hostAccount", listheader_HostAccount, SortOrder.NONE, hostAccount, sortOperator_hostAccount,
+				Operators.STRING);
+		registerField("profitCenterCode", listheader_ProfitCenter, SortOrder.NONE, profitCenter,
+				sortOperator_profitCenter, Operators.STRING);
+		registerField("costCenterCode", listheader_CostCenter, SortOrder.NONE, costCenter, sortOperator_costCenter,
+				Operators.STRING);
+		registerField("finType", listheader_FinType, SortOrder.ASC, finType, sortOperator_finType,
+				Operators.STRING);
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -168,7 +203,6 @@ public class AccountMappingListCtrl extends GFCBaseListCtrl<AccountMapping> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -179,7 +213,7 @@ public class AccountMappingListCtrl extends GFCBaseListCtrl<AccountMapping> {
 
 	public void onAccountMappingItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxAccountMapping.getSelectedItem();
 		final String account = (String) selectedItem.getAttribute("account");
@@ -189,13 +223,13 @@ public class AccountMappingListCtrl extends GFCBaseListCtrl<AccountMapping> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  Account = '");
-		whereCond.append( accountmapping.getAccount());
+		whereCond.append(accountmapping.getAccount());
 		whereCond.append("' AND  version=");
 		whereCond.append(accountmapping.getVersion());
-	
+
 		if (doCheckAuthority(accountmapping, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && accountmapping.getWorkflowId() == 0) {
@@ -205,10 +239,10 @@ public class AccountMappingListCtrl extends GFCBaseListCtrl<AccountMapping> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -221,12 +255,22 @@ public class AccountMappingListCtrl extends GFCBaseListCtrl<AccountMapping> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("accountmapping", accountmapping);
 		arg.put("accountmappingListCtrl", this);
-		
-		try {
-			Executions.createComponents("/WEB-INF/pages/com.pennant.applicationmaster/AccountMapping/AccountMappingDialog.zul", null, arg);
-		} catch (Exception e) {
-			logger.error("Exception:", e);
-			MessageUtil.showError(e);
+		if (!accountmapping.isNewRecord()) {
+			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/AccountMapping/NormAccountMappingDialog.zul",
+					null, arg);
+		} else {
+			try {
+				if (loanTypeAc.isChecked()) {
+					Executions.createComponents(
+							"/WEB-INF/pages/ApplicationMaster/AccountMapping/AccountMappingDialog.zul", null, arg);
+				} else if (normalAc.isChecked()) {
+					Executions.createComponents(
+							"/WEB-INF/pages/ApplicationMaster/AccountMapping/NormAccountMappingDialog.zul", null, arg);
+				}
+			} catch (Exception e) {
+				logger.error("Exception:", e);
+				MessageUtil.showError(e);
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -251,7 +295,7 @@ public class AccountMappingListCtrl extends GFCBaseListCtrl<AccountMapping> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

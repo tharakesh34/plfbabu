@@ -4589,6 +4589,9 @@
 		<property name="accountMappingService" ref="accountMappingService"/>
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
+	<bean id="normAccountMappingDialogCtrl" class="com.pennant.webui.applicationmaster.accountmapping.NormAccountMappingDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="accountMappingService" ref="accountMappingService"/>
+	</bean>
 	
 	<bean id="exceptionLogCtrl" class="com.pennanttech.framework.component.dataengine.ExceptionLogCtrl" parent="basisCtrl" scope="prototype">
 	</bean>

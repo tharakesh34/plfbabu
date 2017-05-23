@@ -43,10 +43,14 @@
 package com.pennant.backend.model.applicationmaster;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.pennant.backend.model.LoggedInUser;
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
 /**
@@ -54,23 +58,30 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  *
  */
 public class AccountMapping extends AbstractWorkflowEntity {
-private static final long serialVersionUID = 1L;
+	private static final long					serialVersionUID	= 1L;
 
-	private String account;
-	private String hostAccount;
-	private String finType;
-	private boolean newRecord=false;
-	private String lovValue;
-	private AccountMapping befImage;
-	private  LoggedInUser userDetails;
-	
-	private long profitCenterID;
-	private long costCenterID;
-	private String profitCenterDesc;
-	private String costCenterDesc;
-	private String costCenterCode;
-	private String profitCenterCode;
-	
+	private String								account;
+	private String								hostAccount;
+	private String								finType;
+	private boolean								newRecord			= false;
+	private String								lovValue;
+	private AccountMapping						befImage;
+	private LoggedInUser						userDetails;
+
+	private long								profitCenterID;
+	private long								costCenterID;
+	private String								profitCenterDesc;
+	private String								costCenterDesc;
+	private String								costCenterCode;
+	private String								profitCenterCode;
+	private String								accountType;
+	private String								accountTypeDesc;
+	private String								finTypeDesc;
+
+	private List<AccountMapping>				accountMappingList	= new ArrayList<AccountMapping>();
+	private HashMap<String, List<AuditDetail>>	auditDetailMap		= new HashMap<String, List<AuditDetail>>();
+	private String								tranType			= "";
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -83,37 +94,43 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("profitCenterDesc");
 		excludeFields.add("costCenterDesc");
 		excludeFields.add("costCenterCode");
 		excludeFields.add("profitCenterCode");
-	return excludeFields;
+		excludeFields.add("accountTypeDesc");
+		excludeFields.add("finTypeDesc");
+		excludeFields.add("tranType");
+		return excludeFields;
 	}
 
 	public String getId() {
 		return account;
 	}
-	
-	public void setId (String id) {
+
+	public void setId(String id) {
 		this.account = id;
 	}
+
 	public String getAccount() {
 		return account;
 	}
+
 	public void setAccount(String account) {
 		this.account = account;
 	}
-	
+
 	public String getHostAccount() {
 		return hostAccount;
 	}
+
 	public void setHostAccount(String hostAccount) {
 		this.hostAccount = hostAccount;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -121,7 +138,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -130,19 +147,19 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public AccountMapping getBefImage(){
+	public AccountMapping getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(AccountMapping beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(AccountMapping beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
@@ -206,4 +223,51 @@ private static final long serialVersionUID = 1L;
 		this.profitCenterCode = profitCenterCode;
 	}
 
+	public String getAccountType() {
+		return accountType;
+	}
+
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
+	}
+
+	public String getAccountTypeDesc() {
+		return accountTypeDesc;
+	}
+
+	public void setAccountTypeDesc(String accountTypeDesc) {
+		this.accountTypeDesc = accountTypeDesc;
+	}
+
+	public String getFinTypeDesc() {
+		return finTypeDesc;
+	}
+
+	public void setFinTypeDesc(String finTypeDesc) {
+		this.finTypeDesc = finTypeDesc;
+	}
+
+	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+		return auditDetailMap;
+	}
+
+	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+		this.auditDetailMap = auditDetailMap;
+	}
+
+	public List<AccountMapping> getAccountMappingList() {
+		return accountMappingList;
+	}
+
+	public void setAccountMappingList(List<AccountMapping> accountMappingList) {
+		this.accountMappingList = accountMappingList;
+	}
+
+	public String getTranType() {
+		return tranType;
+	}
+
+	public void setTranType(String tranType) {
+		this.tranType = tranType;
+	}
 }

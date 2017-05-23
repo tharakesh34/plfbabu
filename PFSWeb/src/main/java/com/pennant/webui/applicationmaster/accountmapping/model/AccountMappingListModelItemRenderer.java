@@ -52,7 +52,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -65,17 +64,29 @@ public class AccountMappingListModelItemRenderer implements ListitemRenderer<Acc
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, AccountMapping accountMapping, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(accountMapping.getRecordStatus());
+		lc = new Listcell(accountMapping.getAccount());
+		lc.setParent(item);
+		lc = new Listcell(accountMapping.getHostAccount());
+		lc.setParent(item);
+		lc = new Listcell(accountMapping.getProfitCenterCode());
+		lc.setParent(item);
+		lc = new Listcell(accountMapping.getCostCenterCode());
+		lc.setParent(item);
+		lc = new Listcell(accountMapping.getFinType());
+		lc.setParent(item);
+		lc = new Listcell(accountMapping.getAccountType());
+		lc.setParent(item);
+		lc = new Listcell(accountMapping.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(accountMapping.getRecordType()));
 		lc.setParent(item);
+
 		item.setAttribute("account", accountMapping.getAccount());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onAccountMappingItemDoubleClicked");
 	}
 }
