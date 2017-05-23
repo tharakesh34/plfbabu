@@ -169,7 +169,18 @@ public class DisbursementRequestService extends BajajService implements RequestS
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
-			sendIMPSRequest("DISB_IMPS_EXPORT", idList, userId);
+			
+			if (idList != null && !idList.isEmpty()) {
+				List<String> ids = new ArrayList<>();
+				for (String id : idList) {
+					if (StringUtils.trimToNull(id) != null) {
+						ids.add(id);
+					}
+				}
+				if (ids != null && !ids.isEmpty()) {
+					sendIMPSRequest("DISB_IMPS_EXPORT", ids, userId);
+				}
+			}
 		}
 
 		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, stp_NEFT);
