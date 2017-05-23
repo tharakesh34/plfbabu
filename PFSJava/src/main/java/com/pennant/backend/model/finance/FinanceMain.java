@@ -499,6 +499,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean cadrequired = false;
 	private boolean feeExists = false;
 	private String receiptMode;
+	private String receiptPurpose;
+	private BigDecimal waivedAmt = BigDecimal.ZERO;
 
 	// ===========================================
 	// =========Purpose to Other Modules==========
@@ -719,6 +721,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("lastDisbDate");
 		excludeFields.add("swiftBranchCode");
 		excludeFields.add("receiptMode");
+		excludeFields.add("receiptPurpose");
+		excludeFields.add("waivedAmt");
 		
 		excludeFields.add("roundingTarget");
 		excludeFields.add("recalFee");
@@ -3496,6 +3500,22 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setFinCategory(String finCategory) {
 		this.finCategory = finCategory;
+	}
+
+	public String getReceiptPurpose() {
+		return receiptPurpose;
+	}
+
+	public void setReceiptPurpose(String receiptPurpose) {
+		this.receiptPurpose = receiptPurpose;
+	}
+
+	public BigDecimal getWaivedAmt() {
+		return waivedAmt;
+	}
+
+	public void setWaivedAmt(BigDecimal waivedAmt) {
+		this.waivedAmt = waivedAmt;
 	}
 	
 }

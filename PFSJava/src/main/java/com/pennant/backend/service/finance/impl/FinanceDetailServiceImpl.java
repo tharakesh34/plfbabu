@@ -1289,12 +1289,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		//Finance Overdue Penalty Rate Details
 		scheduleData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference, type));
 
-		//Fetch Finance Premium Details
-	/*	String productCode = scheduleData.getFinanceType().getFinCategory();
-		if (productCode.equals(FinanceConstants.PRODUCT_SUKUK)) {
-			//FIXME : DataSet Removal to be worked on if it requires in future
-		}*/
-
 		//Fetch Secondary account Details
 		if (ImplementationConstants.ACCOUNTS_APPLICABLE) {
 			scheduleData.getFinanceMain().setSecondaryAccount(
@@ -1411,17 +1405,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			//Finance Overdue Penalty Rate Details
-			String productCode = scheduleData.getFinanceType().getFinCategory();
 			if (!isWIF) {
 
 				//Finance Flag Details
 				financeDetail.setFinFlagsDetails(getFinFlagDetailsDAO().getFinFlagsByFinRef(finReference,
 						FinanceConstants.MODULE_NAME, type));
 
-				//Fetch Finance Premium Details
-				if (productCode.equals(FinanceConstants.PRODUCT_SUKUK)) {
-					//FIXME : DataSet Removal to be worked on if it requires in future
-				}
 			}
 
 			//insurance Details

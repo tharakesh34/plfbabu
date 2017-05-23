@@ -2256,6 +2256,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			
 			// Setting Receipt Mode to FinanceMain Object for Workflow Process
 			aFinanceMain.setReceiptMode(aReceiptData.getReceiptHeader().getReceiptMode());
+			aFinanceMain.setReceiptPurpose(aReceiptData.getReceiptHeader().getReceiptPurpose());
+			aFinanceMain.setWaivedAmt(aReceiptData.getReceiptHeader().getWaviedAmt());
 			
 			if (doProcess(aReceiptData, tranType)) {
 
