@@ -8158,6 +8158,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return processVasAccounting(aeEvent, vasRecordings);
 	}
 
+	@Override
+	public FinanceMain getFinanceMainForBatch(String finReference) {
+		return getFinanceMainDAO().getFinanceMainForBatch(finReference);
+	}
+
 	// ******************************************************//
 	// *************** EOD PROCESS Details ******************//
 	// ******************************************************//

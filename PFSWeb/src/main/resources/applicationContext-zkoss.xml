@@ -4212,7 +4212,6 @@
 	<bean id="vASRecordingDialogCtrl"
 		class="com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl"
 		parent="basisCtrl" scope="prototype">
-		<property name="pagedListService" ref="pagedListService" />
 		<property name="vASRecordingService" ref="vASRecordingService" />
 		<property name="collateralSetupService" ref="collateralSetupService" />
 		<property name="scriptValidationService" ref="scriptValidationService" />
@@ -4221,6 +4220,7 @@
 		<property name="mailUtil" ref="mailUtil" />
 		<property name="eventManager" ref="eventManager" />
 		<property name="engineExecution" ref="engineExecution" />	
+		<property name="financeDetailService" ref="financeDetailService" />	
 	</bean>
 
 	  <bean id="selectVASConfigurationDialogCtrl" class="com.pennant.webui.configuration.vasrecording.SelectVASConfigurationDialogCtrl"

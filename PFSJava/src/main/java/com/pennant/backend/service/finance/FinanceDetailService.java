@@ -179,5 +179,6 @@ public interface FinanceDetailService {
 	// EOD Process Checking
 	int getProgressCountByCust(long custID);
 	List<ReturnDataSet> prepareVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings);
+	FinanceMain getFinanceMainForBatch(String finReference);
 	
  }

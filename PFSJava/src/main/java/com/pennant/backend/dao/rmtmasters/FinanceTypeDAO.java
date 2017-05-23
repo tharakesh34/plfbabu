@@ -82,4 +82,6 @@ public interface FinanceTypeDAO {
 
 	int getFinanceTypeByRuleCode(long ruleId, String type);
 
+	boolean isStepPolicyExists(String policyCode);
+
 }

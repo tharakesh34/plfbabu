@@ -720,5 +720,29 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
+
+	/**
+	 * Method for Checking Step Policy Code is already using in Existing FinType or not
+	 */
+	@Override
+	public boolean isStepPolicyExists(String policyCode) {
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(FinType)");
+		selectSql.append(" From RMTFinanceTypes_View ");
+		selectSql.append(" Where ");
+		selectSql.append(",");
+		selectSql.append("AlwdStepPolicies");
+		selectSql.append(",");
+		selectSql.append(" LIKE ");
+		selectSql.append("%,"+policyCode+",%");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new FinanceType());
+		int rcdCount =  this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		
+		logger.debug("Leaving");
+		return rcdCount > 0 ? true : false;
+	}
 	
 }

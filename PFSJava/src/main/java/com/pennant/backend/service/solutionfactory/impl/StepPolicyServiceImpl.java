@@ -52,6 +52,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -72,6 +73,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private StepPolicyHeaderDAO stepPolicyHeaderDAO;
+	private FinanceTypeDAO financeTypeDAO;
 	private StepPolicyDetailDAO stepPolicyDetailDAO;
 	
 	public StepPolicyServiceImpl() {
@@ -103,6 +105,13 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
     	this.stepPolicyDetailDAO = stepPolicyDetailDAO;
     }
 	
+	public FinanceTypeDAO getFinanceTypeDAO() {
+		return financeTypeDAO;
+	}
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
+	}
+
 	@Override
 	public StepPolicyDetail getStepPolicyDetail() {
 		return getStepPolicyDetailDAO().getStepPolicyDetail();
@@ -481,9 +490,15 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 						&& !oldStepPolicyHeader.getLastMntOn().equals(tempStepPolicyHeader.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
-
 			}
-
+		}
+		
+		// If Step already utilizing , Not allowed to Delete
+		if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, stepPolicyHeader.getRecordType())){
+			boolean isStepUsed = getFinanceTypeDAO().isStepPolicyExists(stepPolicyHeader.getPolicyCode());
+			if(isStepUsed){
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, null));
+			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
