@@ -21,6 +21,7 @@
 		<property name="eodService" ref="eodService" />
 		<property name="transactionManager" ref="pfsTransactionManager" />
 		<property name="dataSource" ref="pfsDatasource" />
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 	</bean>
 
 	<bean id="microEODMonitorTaskLet" class="com.pennant.backend.endofday.tasklet.MicroEODMonitor">

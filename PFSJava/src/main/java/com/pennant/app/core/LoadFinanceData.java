@@ -18,7 +18,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -27,7 +26,6 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.eod.constants.EodConstants;
 
 public class LoadFinanceData extends ServiceHelper {
 
@@ -58,7 +56,7 @@ public class LoadFinanceData extends ServiceHelper {
 			finEODEvent.setFinType(financeType);
 
 			//FINPROFIT DETAILS
-			finEODEvent.setFinProfitDetail(getFinanceProfitDetailRef(finReference, custpftDet));
+			finEODEvent.setFinProfitDetail(getFinPftDetailRef(finReference, custpftDet));
 
 			//FINSCHDULE DETAILS
 			List<FinanceScheduleDetail> finSchdDetails = getFinSchdDetailRef(finReference, custSchdDetails);
@@ -336,25 +334,25 @@ public class LoadFinanceData extends ServiceHelper {
 		getCustomerDAO().updateCustAppDate(custId, nextBusDate.getTime());
 		logger.debug(" Leaving ");
 	}
-
-	public void updateCustQueueStatus(int threadId, long custId, int progress, boolean start) {
-		CustomerQueuing customerQueuing = new CustomerQueuing();
-		customerQueuing.setCustID(custId);
-		customerQueuing.setThreadId(threadId);
-		customerQueuing.setStartTime(DateUtility.getSysDate());
-		customerQueuing.setEndTime(DateUtility.getSysDate());
-		customerQueuing.setProgress(progress);
-		getCustomerQueuingDAO().update(customerQueuing, start);
-	}
-
-	public void updateFailed(int threadId, long custId) {
-		CustomerQueuing customerQueuing = new CustomerQueuing();
-		customerQueuing.setCustID(custId);
-		customerQueuing.setEndTime(DateUtility.getSysDate());
-		//reset thread for reallocation
-		customerQueuing.setThreadId(0);
-		customerQueuing.setProgress(EodConstants.PROGRESS_WAIT);
-		getCustomerQueuingDAO().updateFailed(customerQueuing);
-	}
+//
+//	public void updateCustQueueStatus(int threadId, long custId, int progress, boolean start) {
+//		CustomerQueuing customerQueuing = new CustomerQueuing();
+//		customerQueuing.setCustID(custId);
+//		customerQueuing.setThreadId(threadId);
+//		customerQueuing.setStartTime(DateUtility.getSysDate());
+//		customerQueuing.setEndTime(DateUtility.getSysDate());
+//		customerQueuing.setProgress(progress);
+//		getCustomerQueuingDAO().update(customerQueuing, start);
+//	}
+//
+//	public void updateFailed(int threadId, long custId) {
+//		CustomerQueuing customerQueuing = new CustomerQueuing();
+//		customerQueuing.setCustID(custId);
+//		customerQueuing.setEndTime(DateUtility.getSysDate());
+//		//reset thread for reallocation
+//		customerQueuing.setThreadId(0);
+//		customerQueuing.setProgress(EodConstants.PROGRESS_WAIT);
+//		getCustomerQueuingDAO().updateFailed(customerQueuing);
+//	}
 
 }

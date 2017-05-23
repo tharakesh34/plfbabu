@@ -283,7 +283,7 @@ abstract public class ServiceHelper implements Serializable {
 	}
 	
 	
-	public FinanceProfitDetail getFinanceProfitDetailRef(String finMainRef, List<FinanceProfitDetail> listprofitDetails) {
+	public FinanceProfitDetail getFinPftDetailRef(String finMainRef, List<FinanceProfitDetail> listprofitDetails) {
 		FinanceProfitDetail profitDetail = null;
 		Iterator<FinanceProfitDetail> it = listprofitDetails.iterator();
 		while (it.hasNext()) {

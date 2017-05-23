@@ -62,8 +62,10 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 import com.pennant.eod.EodService;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class MicroEOD implements Tasklet {
 
@@ -73,6 +75,7 @@ public class MicroEOD implements Tasklet {
 
 	private EodService					eodService;
 	private DataSource					dataSource;
+	private CustomerQueuingDAO			customerQueuingDAO;
 
 	private PlatformTransactionManager	transactionManager;
 
@@ -109,7 +112,7 @@ public class MicroEOD implements Tasklet {
 			while (resultSet.next()) {
 				custId = resultSet.getLong("CustId");
 				//update start
-				eodService.updateCustQueueStatus(threadId, custId, EodConstants.PROGRESS_IN_PROCESS, true);
+				updateCustQueueStatus(threadId, custId, EodConstants.PROGRESS_IN_PROCESS, true);
 
 				try {
 					//BEGIN TRANSACTION
@@ -119,7 +122,7 @@ public class MicroEOD implements Tasklet {
 					eodService.doProcess(connection, custId, valueDate);
 
 					//Update END
-					eodService.updateCustQueueStatus(threadId, custId, EodConstants.PROGRESS_SUCCESS, false);
+					updateCustQueueStatus(threadId, custId, EodConstants.PROGRESS_SUCCESS, false);
 
 					//COMMIT THE TRANSACTION
 					transactionManager.commit(txStatus);
@@ -129,10 +132,11 @@ public class MicroEOD implements Tasklet {
 					list.add(e);
 					transactionManager.rollback(txStatus);
 					//Update Fails and reset thread id for re-allocation
-					eodService.updateFailed(threadId, custId);
+					updateFailed(threadId, custId);
 				}
 
-				context.getStepContext().getStepExecution().getExecutionContext().put(EodConstants.DATA_COMPLETED, count);
+				context.getStepContext().getStepExecution().getExecutionContext()
+						.put(EodConstants.DATA_COMPLETED, count);
 			}
 
 			if (!list.isEmpty()) {
@@ -157,6 +161,26 @@ public class MicroEOD implements Tasklet {
 		return RepeatStatus.FINISHED;
 	}
 
+	public void updateCustQueueStatus(int threadId, long custId, int progress, boolean start) {
+		CustomerQueuing customerQueuing = new CustomerQueuing();
+		customerQueuing.setCustID(custId);
+		customerQueuing.setThreadId(threadId);
+		customerQueuing.setStartTime(DateUtility.getSysDate());
+		customerQueuing.setEndTime(DateUtility.getSysDate());
+		customerQueuing.setProgress(progress);
+		customerQueuingDAO.update(customerQueuing, start);
+	}
+
+	public void updateFailed(int threadId, long custId) {
+		CustomerQueuing customerQueuing = new CustomerQueuing();
+		customerQueuing.setCustID(custId);
+		customerQueuing.setEndTime(DateUtility.getSysDate());
+		//reset thread for reallocation
+		customerQueuing.setThreadId(0);
+		customerQueuing.setProgress(EodConstants.PROGRESS_WAIT);
+		customerQueuingDAO.updateFailed(customerQueuing);
+	}
+
 	public void setEodService(EodService eodService) {
 		this.eodService = eodService;
 	}
@@ -167,6 +191,10 @@ public class MicroEOD implements Tasklet {
 
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
+	}
+
+	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
+		this.customerQueuingDAO = customerQueuingDAO;
 	}
 
 }

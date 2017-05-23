@@ -104,14 +104,6 @@ public class EodService {
 
 	}
 
-	public void updateCustQueueStatus(int threadId, long custId,int progress,boolean start) {
-		loadFinanceData.updateCustQueueStatus(threadId, custId,progress,start);
-	}
-	
-	public void updateFailed(int threadId, long custId) {
-		loadFinanceData.updateFailed(threadId, custId);
-	}
-
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
