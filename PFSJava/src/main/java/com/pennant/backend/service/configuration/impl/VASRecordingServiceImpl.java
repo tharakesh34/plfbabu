@@ -1467,7 +1467,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					aeEvent.setFinReference(vASRecording.getVasReference());
 				}
 				
-				getVASRecording().getDeclaredFieldValues(aeEvent.getDataMap());
+				vASRecording.getDeclaredFieldValues(aeEvent.getDataMap());
 				aeEvent.getAcSetIDList().add(vASRecording.getVasConfiguration().getFeeAccounting());
 				list = getEngineExecution().getAccEngineExecResults(aeEvent).getReturnDataSet();
 
