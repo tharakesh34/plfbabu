@@ -441,16 +441,12 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.feeTypeDesc.setValue(aFeeType.getFeeTypeDesc());
 		this.manualAdvice.setChecked(aFeeType.isManualAdvice());
 		fillComboBox(this.adviseType, String.valueOf(aFeeType.getAdviseType()), listAdviseType, "");
-		if (this.manualAdvice.isChecked()) {
-			this.row2.setVisible(true);
-			if(aFeeType.getAccountSetId() != null){
-				this.accountingSetID.setValue(aFeeType.getAccountSetCode(), aFeeType.getAccountSetCodeName());
-				this.accountingSetID.setObject(new AccountingSet(aFeeType.getAccountSetId()));
-			}
-		} else {
-			this.row2.setVisible(false);
-			this.accountingSetID.setValue("");
+		
+		if (aFeeType.getAccountSetId() != null) {
+			this.accountingSetID.setValue(aFeeType.getAccountSetCode(), aFeeType.getAccountSetCodeName());
+			this.accountingSetID.setObject(new AccountingSet(aFeeType.getAccountSetId()));
 		}
+		
 		this.active.setChecked(aFeeType.isActive());
 		
 		if(aFeeType.isNew() || (aFeeType.getRecordType() != null ? aFeeType.getRecordType() : "").equals(PennantConstants.RECORD_TYPE_NEW)){
@@ -554,11 +550,11 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.feeTypeDesc.setConstraint(new PTStringValidator(Labels
 					.getLabel("label_FeeTypeDialog_FeeTypeDesc.value"), PennantRegularExpressions.REGEX_COMPANY_NAME, true));
 		}
-		if (!this.accountingSetID.isReadonly() && this.row2.isVisible()) {
+		if (!this.accountingSetID.isReadonly()) {
 				this.accountingSetID.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_FeeTypeDialog_AccountingSetID.value"), null, this.manualAdvice.isChecked()));
+						.getLabel("label_FeeTypeDialog_AccountingSetID.value"), null, true));
 		}
-		if (!this.adviseType.isDisabled() && this.row2.isVisible()) {
+		if (!this.adviseType.isDisabled()) {
 			this.adviseType.setConstraint(new StaticListValidator(listAdviseType,
 					Labels.getLabel("label_FeeTypeDialog_AdviseType.value")));
 		}
@@ -612,19 +608,6 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		feeTypeListCtrl.search();
 	}
 	
-	public void onCheck$manualAdvice(Event event) {
-		logger.debug("Entering");
-		FeeType aFeeType =new FeeType();
-		if (this.manualAdvice.isChecked()) {
-			this.row2.setVisible(true);
-			fillComboBox(this.adviseType, String.valueOf(aFeeType.getAdviseType()), listAdviseType, "");
-			this.accountingSetID.setValue("");
-
-		}else{
-			this.row2.setVisible(false);
-			this.accountingSetID.setValue("");
-		}
-	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// +++++++++++++++++++++++++ crud operations +++++++++++++++++++++++
