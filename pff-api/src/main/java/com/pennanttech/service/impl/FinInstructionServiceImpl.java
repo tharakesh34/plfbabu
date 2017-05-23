@@ -15,6 +15,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
 import com.pennant.backend.financeservice.AddRepaymentService;
+import com.pennant.backend.financeservice.AddTermsService;
 import com.pennant.backend.financeservice.ChangeFrequencyService;
 import com.pennant.backend.financeservice.ChangeProfitService;
 import com.pennant.backend.financeservice.PostponementService;
@@ -75,6 +76,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	private RecalculateService			recalService;
 	private RemoveTermsService			rmvTermsService;
 	private PostponementService			postponementService;
+	private AddTermsService				addTermsService;
 
 	private FinanceMainDAO				financeMainDAO;
 	private ValidationUtility			validationUtility;
@@ -310,6 +312,18 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return financeDetail;
 		}
 
+		// validate service instruction data
+		AuditDetail auditDetail = addTermsService.doValidations(finServiceInstruction);
+		if (auditDetail.getErrorDetails() != null) {
+			for (ErrorDetails errorDetail : auditDetail.getErrorDetails()) {
+				financeDetail = new FinanceDetail();
+				doEmptyResponseObject(financeDetail);
+				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getErrorCode(),
+						errorDetail.getError()));
+				return financeDetail;
+			}
+		}
+		
 		// validate fees
 		String eventCode = AccountEventConstants.ACCEVENT_SCDCHG;
 		List<ErrorDetails> errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN,
@@ -542,14 +556,6 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		logger.debug("Entering");
 		
 		FinanceDetail financeDetail = null;
-		if (finServiceInstruction.getDisbursementDetails() == null) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			String valueParm[] = new String[1];
-			valueParm[0] = "DisbursementDetails";
-			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
-			return financeDetail;
-		}
 		validationUtility.validate(finServiceInstruction, AddDisbursementGroup.class);
 		
 		// validate ReqType
@@ -561,6 +567,16 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return financeDetail;
 		}
 
+		if (StringUtils.equals(finServiceInstruction.getReqType(), APIConstants.REQTYPE_POST) 
+				&& finServiceInstruction.getDisbursementDetails() == null) {
+			financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			String valueParm[] = new String[1];
+			valueParm[0] = "DisbursementDetails";
+			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return financeDetail;
+		}
+		
 		returnStatus = validateFinReference(finServiceInstruction);
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
@@ -576,10 +592,6 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			finServiceInstruction.setToDate(financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate());
 		}
 
-		// validate service instruction data
-/*		for(FinAdvancePayments payment: finServiceInstruction.getDisbursementDetails()) {
-			financeDetail.getAdvancePaymentsList().add(payment);
-		}*/
 		financeDetail.setAdvancePaymentsList(finServiceInstruction.getDisbursementDetails());
 		AuditDetail auditDetail = addDisbursementService.doValidations(financeDetail, finServiceInstruction);
 		if (auditDetail.getErrorDetails() != null) {
@@ -1277,5 +1289,10 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	@Autowired
 	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
 		this.financeDataValidation = financeDataValidation;
+	}
+	
+	@Autowired
+	public void setAddTermsService(AddTermsService addTermsService) {
+		this.addTermsService = addTermsService;
 	}
 }

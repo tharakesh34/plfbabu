@@ -171,7 +171,7 @@
 			
 		</field>
 		
-		<field name="terms">
+<!-- 		<field name="terms">
 			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>terms allow 3 digits only</message>
 				<groups>
@@ -186,7 +186,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-		</field>
+		</field> -->
 		<field name="actualRate">
 			<constraint annotation="javax.validation.constraints.DecimalMax">
 				<message>actualRate allow 4 digits only</message>

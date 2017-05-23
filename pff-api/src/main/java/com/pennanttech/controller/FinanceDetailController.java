@@ -1,5 +1,6 @@
 package com.pennanttech.controller;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
@@ -82,9 +83,11 @@ public class FinanceDetailController extends SummaryDetailService {
 	 * @return
 	 * @throws JaxenException
 	 * @throws PFFInterfaceException
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
 	public FinScheduleData doCreateFinanceSchedule(FinScheduleData finScheduleData)throws JaxenException,
-			PFFInterfaceException {
+			PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Enteing");
 
 		if (finScheduleData != null) {
@@ -219,7 +222,7 @@ public class FinanceDetailController extends SummaryDetailService {
 	}
 
 	
-	private void doSetRequiredData(FinScheduleData finScheduleData) {
+	private void doSetRequiredData(FinScheduleData finScheduleData) throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		
 		for(VASRecording vasRecording:finScheduleData.getVasRecordingList()){

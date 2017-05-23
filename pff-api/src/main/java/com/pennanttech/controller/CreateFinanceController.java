@@ -1,5 +1,6 @@
 package com.pennanttech.controller;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
@@ -272,8 +273,10 @@ public class CreateFinanceController extends SummaryDetailService {
 	 * 
 	 * @param financeDetail
 	 * @param loanWithWIF 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	private void doSetRequiredDetails(FinanceDetail financeDetail, boolean loanWithWIF) {
+	private void doSetRequiredDetails(FinanceDetail financeDetail, boolean loanWithWIF) throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
