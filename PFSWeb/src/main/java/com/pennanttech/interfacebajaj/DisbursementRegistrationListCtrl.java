@@ -543,7 +543,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			MessageUtil.showMessage("File download process initiated.");
 			createNewPage("/WEB-INF/pages/InterfaceBajaj/DisbursementFileDownloadList.zul",
 					"menu_Item_DisbursementFileDownlaods", args);
-			DisbursementProcess.sleep(4000);
+		    DisbursementProcess.sleep(5000);
 
 		} finally {
 			this.disbursementMap.clear();
