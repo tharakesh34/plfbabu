@@ -28,4 +28,12 @@
 	<changeSet id="4" author="Surekha">
 	<dropPrimaryKey constraintName="PK_ADTACCOUNTMAPPING" tableName="AdtAccountMapping"/>
 	</changeSet>
+	
+	<changeSet id="5" author="SreeRavali" >
+		<addColumn tableName="AdtFinanceMain">
+			<column name="RestructureLoan" type="boolean"/>
+			<column name="RestructureReference" type="nvarchar(20)"/>
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
