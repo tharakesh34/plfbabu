@@ -27,7 +27,10 @@
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 	</bean>
 
-
+	<bean id="microEODDecider" class="com.pennant.backend.endofday.limitdecider.MicroEODDecider">
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+	</bean>
+	
 	<bean id="completeEODDecider" class="com.pennant.backend.endofday.limitdecider.CompleteEOD">
 		<property name="dataSource" ref="pfsDatasource" />
 		<property name="dateService" ref="dateService" />

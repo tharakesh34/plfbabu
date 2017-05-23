@@ -32,8 +32,12 @@
 			<fail on="FAILED" />
 		</step>
 
-		<!-- <step id="threadAllocation"> <tasklet ref="threadAllocationTaskLet" /> <next on="*" to="microEOD" /> <fail on="FAILED" /> </step> <step id="microEOD"> <tasklet allow-start-if-complete="true" ref="microEODTaskLet" > <transaction-attributes propagation="NEVER"/> </tasklet> <next on="*" to="microEODMonitor" /> <fail on="FAILED" /> </step> <step id="microEODMonitor"> <tasklet allow-start-if-complete="true" ref="microEODMonitorTaskLet" /> <next on="*" to="microEODDecision" /> <fail on="FAILED" 
-			/> </step> <decision id="microEODDecision" decider="microEODDecider"> <next on="UNKNOWN" to="microEOD" /> <next on="*" to="snapShotPreparation" /> <fail on="FAILED" /> </decision> -->
+<!-- 		<decision id="microEODDecision" decider="microEODDecider">
+			<next on="UNKNOWN" to="masterStep" />
+			<next on="*" to="snapShotPreparation" />
+			<fail on="FAILED" />
+		</decision> -->
+
 		<step id="snapShotPreparation">
 			<tasklet ref="snapShotPreparationTaskLet" />
 			<next on="*" to="dataExtract" />
@@ -65,7 +69,9 @@
 		</tasklet>
 	</step>
 
-	<bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor" />
+	<bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor" >
+		<property name="ConcurrencyLimit" value="100"></property>
+	</bean>
 	<bean id="partitioningMaster" class="com.pennant.backend.endofday.tasklet.PartitioningMaster">
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 	</bean>
