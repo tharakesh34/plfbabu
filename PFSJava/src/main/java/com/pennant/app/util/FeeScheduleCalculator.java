@@ -355,7 +355,7 @@ public class FeeScheduleCalculator {
 				continue;
 			}
 
-			if (!curSchd.isRepayOnSchDate()) {
+			if (!curSchd.isRepayOnSchDate() && !curSchd.isPftOnSchDate()) {
 				continue;
 			}
 
