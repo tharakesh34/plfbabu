@@ -120,7 +120,6 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.model.staticparms.ExtendedFieldRender;
-import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.configuration.VASRecordingService;
@@ -1329,7 +1328,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				this.fee.setReadonly(true);
 			}
 		}else{
-			if (vASConfiguration.isAllowFeeToModify() && !isCancelProcess) {
+			if (vASConfiguration.isAllowFeeToModify() && !isCancelProcess && !enqiryModule) {
 				this.fee.setReadonly(isReadOnly("VASRecordingDialog_Fee"));
 			} else {
 				this.fee.setReadonly(true);
@@ -1360,7 +1359,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 
 		// Fee Accrual Till Date
-		if (vASConfiguration.isFeeAccrued() && !isCancelProcess) {
+		if (vASConfiguration.isFeeAccrued() && !isCancelProcess && !enqiryModule) {
 			this.accrualTillDate.setDisabled(isReadOnly("VASRecordingDialog_AccrualTillDate"));
 		} else {
 			this.accrualTillDate.setDisabled(true);
@@ -1370,7 +1369,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 
 		// Recurring Date
-		if (vASConfiguration.isRecurringType() && !isCancelProcess) {
+		if (vASConfiguration.isRecurringType() && !isCancelProcess && !enqiryModule) {
 			this.recurringDate.setDisabled(isReadOnly("VASRecordingDialog_RecurringDate"));
 		} else {
 			this.recurringDate.setDisabled(true);
@@ -1380,7 +1379,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 
 		//Renewal fee
-		if (vASConfiguration.isRecurringType() && !isCancelProcess) {
+		if (vASConfiguration.isRecurringType() && !isCancelProcess && !enqiryModule) {
 			this.renewalFee.setReadonly(isReadOnly("VASRecordingDialog_Fee"));
 		} else {
 			this.renewalFee.setReadonly(true);
@@ -1410,10 +1409,12 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		if (!isFinanceVas()) {
 			//Agreements Detail Tab Addition
-			appendAgreementsDetailTab(true);//Pending
+			if(!enqiryModule && !isCancelProcess){
+				appendAgreementsDetailTab(true);
 
-			//CheckList Details Tab Addition
-			appendCheckListDetailTab(aVASRecording);//Pending
+				//CheckList Details Tab Addition
+				appendCheckListDetailTab(aVASRecording);
+			}
 
 			// Document Detail Tab Addition
 			appendDocumentDetailTab();
@@ -1422,7 +1423,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			appendRecommendDetailTab(true);
 
 			// Accounting Details Tab Addition
-			appendAccountingDetailTab(true);//Pending
+			if(!enqiryModule){
+				appendAccountingDetailTab(true);
+			}
 		}
 
 		logger.debug("Leaving");

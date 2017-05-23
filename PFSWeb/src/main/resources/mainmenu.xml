@@ -41,7 +41,7 @@
 		<menuItem id="menu_Item_IncomeType" zulNavigation="/WEB-INF/pages/SystemMaster/IncomeType/IncomeTypeList.zul"  rightName="menuItem_SystemMaster_IncomeType"/>
 		<menuItem id="menu_Item_Industry" zulNavigation="/WEB-INF/pages/SystemMaster/Industry/IndustryList.zul"  rightName="menuItem_SystemMaster_Industry"/>
 		<menuItem id="menu_Item_LovFieldDetail" zulNavigation="/WEB-INF/pages/SystemMaster/LovFieldDetail/LovFieldDetailList.zul"  rightName="menuItem_SystemMaster_LovFieldDetail"/>
-		<!-- <menuItem id="menu_Item_VehicleDealer" zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul" rightName="menuItem_SystemMaster_VehicleDealer"/> -->
+		<menuItem id="menu_Item_VehicleDealer" zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul" rightName="menuItem_SystemMaster_VehicleDealer"/>
 		<menuItem id="menu_Item_MaritalStatusCode" zulNavigation="/WEB-INF/pages/SystemMaster/MaritalStatusCode/MaritalStatusCodeList.zul"  rightName="menuItem_SystemMaster_MaritalStatusCode"/>
 		<menuItem id="menu_Item_NationalityCode" zulNavigation="/WEB-INF/pages/SystemMaster/NationalityCode/NationalityCodeList.zul"  rightName="menuItem_SystemMaster_NationalityCode"/>
 		<menuItem id="menu_Item_PhoneType" zulNavigation="/WEB-INF/pages/SystemMaster/PhoneType/PhoneTypeList.zul"  rightName="menuItem_SystemMaster_PhoneType"/>
@@ -237,8 +237,8 @@
  		<menuItem id="menu_Item_PFSParameter" zulNavigation="/WEB-INF/pages/SolutionFactory/PFSParameter/PFSParameterList.zul"  rightName="menuItem_SolutionFactory_PFSParameter"/>
  	 
 		<!-- <menuItem id="menu_Item_Calendar" zulNavigation="/WEB-INF/pages/SolutionFactory/Calendar/HolidayCalendar.zul"  rightName="menuItem_SolutionFactory_Calendar"/> -->
-		<menuItem id="menu_Item_VASProductCategory" zulNavigation="/WEB-INF/pages/VASProductCategory/VASProductCategoryList.zul"  rightName="menuItem_vasproduct_VASProductCategory"/>
-		<menuItem id="menu_Item_VASProductType" zulNavigation="/WEB-INF/pages/VASProductType/VASProductTypeList.zul"  rightName="menuItem_VASProductType_VASProductType"/>
+		<menuItem id="menu_Item_VASProductCategory" zulNavigation="/WEB-INF/pages/VASProductCategory/VASProductCategoryList.zul"  rightName="menuItem_SolutionFactory_VASProductCategory"/>
+		<menuItem id="menu_Item_VASProductType" zulNavigation="/WEB-INF/pages/VASProductType/VASProductTypeList.zul"  rightName="menuItem_SolutionFactory_VASProductType"/>
 	 	<menuItem id="menu_Item_VASConfiguration" zulNavigation="/WEB-INF/pages/VASConfiguration/VASConfigurationList.zul"  rightName="menuItem_Solutionfactory_VASConfiguration" />
 	 	<menuItem id="menu_Item_VASReferenceDetail" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceReferenceDetail/FinanceReferenceDetailList.zul?module=VAS&amp;event=Origination" rightName="menuItem_SolutionFactory_VASReferenceDetail"/>
 		<menuItem id="menu_Item_VASWorkFlow" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowList.zul?module=VAS&amp;eventAction=Origination"  rightName="menuItem_SolutionFactory_VASWorkFlow" />
