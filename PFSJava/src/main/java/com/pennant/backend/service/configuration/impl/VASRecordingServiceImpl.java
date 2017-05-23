@@ -92,8 +92,10 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
@@ -501,7 +503,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		
 		// Processing Accounting Details
 		if(StringUtils.equals(vASRecording.getRecordType(), PennantConstants.RECORD_TYPE_NEW) || StringUtils.equals(vASRecording.getVasStatus(),"C")){
-			//auditHeader = executeAccountingProcess(auditHeader, DateUtility.getAppDate());
+			auditHeader = executeAccountingProcess(auditHeader, DateUtility.getAppDate());
 		}
 
 		if (vASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -1446,30 +1448,35 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		try {
 			
 			if(vASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
+				
 				AEEvent aeEvent = new AEEvent();
 				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
-				HashMap<String, Object> dataMap = new HashMap<String, Object>();
-				vASRecording.getDeclaredFieldValues(dataMap);
-				list = getEngineExecution().getVasExecResults(aeEvent, dataMap);
-			}else if(StringUtils.equals("C", vASRecording.getVasStatus())){
-				list = getPostingsDAO().getPostingsByPostref(vASRecording.getVasReference(), AccountEventConstants.ACCEVENT_VAS_FEE);
-				for(ReturnDataSet returnDataSet:list){
-					
-					String tranCode = returnDataSet.getTranCode();
-					String revTranCode = returnDataSet.getRevTranCode();
-					String debitOrCredit = returnDataSet.getDrOrCr();
-
-					returnDataSet.setTranCode(revTranCode);
-					returnDataSet.setRevTranCode(tranCode);
-
-					if (debitOrCredit.equals(AccountConstants.TRANTYPE_CREDIT)) {
-						returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
-					} else {
-						returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
+				
+				// If VAS Created Against Finance Reference
+				if(StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, vASRecording.getPostingAgainst())){
+					FinanceMain financeMain = financeMainDAO.getFinanceMainForBatch(vASRecording.getPrimaryLinkRef());
+					AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+					if(amountCodes == null){
+						amountCodes = new AEAmountCodes();
 					}
+					
+					amountCodes.setFinType(financeMain.getFinType());
+					aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+					aeEvent.setBranch(financeMain.getFinBranch());
+					aeEvent.setCcy(financeMain.getFinCcy());
+					aeEvent.setFinReference(vASRecording.getVasReference());
 				}
-				// Get List from Posting
-				//Make Post Amount as Negate by looping
+				
+				getVASRecording().getDeclaredFieldValues(aeEvent.getDataMap());
+				aeEvent.getAcSetIDList().add(vASRecording.getVasConfiguration().getFeeAccounting());
+				list = getEngineExecution().getAccEngineExecResults(aeEvent).getReturnDataSet();
+
+			}else if(StringUtils.equals("C", vASRecording.getVasStatus())){
+				
+				list = getPostingsDAO().getPostingsByPostref(vASRecording.getVasReference(), AccountEventConstants.ACCEVENT_VAS_FEE);
+				for(ReturnDataSet returnDataSet : list){
+					returnDataSet.setPostAmount(returnDataSet.getPostAmount().negate());
+				}
 			}
 			
 
@@ -1486,7 +1493,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 			// Method for validating Postings with interface program and
 			// return results
-			if (list.get(0).getLinkedTranId() == Long.MIN_VALUE) {
+			if (list.get(0).getLinkedTranId() == Long.MIN_VALUE || list.get(0).getLinkedTranId() == 0) {
 				linkedTranId = getPostingsDAO().getLinkedTransId();
 			} else {
 				linkedTranId = list.get(0).getLinkedTranId();
@@ -2077,49 +2084,55 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	public CustomerDAO getCustomerDAO() {
 		return customerDAO;
 	}
-
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
 	}
+	
 	public TransactionEntryDAO getTransactionEntryDAO() {
 		return transactionEntryDAO;
 	}
 	public void setTransactionEntryDAO(TransactionEntryDAO transactionEntryDAO) {
 		this.transactionEntryDAO = transactionEntryDAO;
 	}
+	
 	public AccountEngineExecution getEngineExecution() {
 		return engineExecution;
 	}
 	public void setEngineExecution(AccountEngineExecution engineExecution) {
 		this.engineExecution = engineExecution;
 	}
+
 	public PostingsDAO getPostingsDAO() {
 		return postingsDAO;
 	}
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
 		this.postingsDAO = postingsDAO;
 	}
+	
 	public AccountProcessUtil getAccountProcessUtil() {
 		return accountProcessUtil;
 	}
 	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
 		this.accountProcessUtil = accountProcessUtil;
 	}
+	
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
+
 	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
 		this.collateralSetupService = collateralSetupService;
 	}
+	
 	public void setRelationshipOfficerService(RelationshipOfficerService relationshipOfficerService) {
 		this.relationshipOfficerService = relationshipOfficerService;
 	}
+	
 	public ScriptValidationService getScriptValidationService() {
 		return scriptValidationService;
 	}
 	public void setScriptValidationService(ScriptValidationService scriptValidationService) {
 		this.scriptValidationService = scriptValidationService;
 	}
-	
 
 }

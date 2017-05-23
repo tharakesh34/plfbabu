@@ -8155,7 +8155,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	
 	@Override
 	public List<ReturnDataSet> prepareVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings) {
-		return processVasAccounting(aeEvent, vasRecordings);
+		return processVasAccounting(aeEvent, vasRecordings, false);
 	}
 
 	@Override

@@ -115,6 +115,7 @@ import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
@@ -123,6 +124,7 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.configuration.VASRecordingService;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -197,9 +199,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	// ServiceDAOs / Domain Classes
 	private transient VASRecordingService					vASRecordingService;
 	private transient CollateralSetupService				collateralSetupService;
-	private transient PagedListService						pagedListService;
+	private transient FinanceDetailService					financeDetailService;
 	protected JdbcSearchObject<Customer>					custCIFSearchObject;
-	protected JdbcSearchObject<FinanceMain>					financeSearchObject;
 	private Window											mainWindow				= null;
 
 	protected Tabbox										tabBoxIndexCenter;
@@ -2375,12 +2376,25 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			AEEvent aeEvent = new AEEvent();
 			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
 			
-			HashMap<String, Object> dataMap = new HashMap<String, Object>();
-			getVASRecording().getDeclaredFieldValues(dataMap);
-			/*aeEvent.getAcSetIDList().add(vASConfiguration.getFeeAccounting());
-			List<ReturnDataSet> returnSetEntries = getEngineExecution().processAccountingByEvent(aeEvent, dataMap);
+			// If VAS Created Against Finance Reference
+			if(StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, getVASRecording().getPostingAgainst())){
+				FinanceMain financeMain = getFinanceDetailService().getFinanceMainForBatch(getVASRecording().getPrimaryLinkRef());
+				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+				if(amountCodes == null){
+					amountCodes = new AEAmountCodes();
+				}
+				
+				amountCodes.setFinType(financeMain.getFinType());
+				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+				aeEvent.setBranch(financeMain.getFinBranch());
+				aeEvent.setCcy(financeMain.getFinCcy());
+			}
+			
+			getVASRecording().getDeclaredFieldValues(aeEvent.getDataMap());
+			aeEvent.getAcSetIDList().add(vASConfiguration.getFeeAccounting());
+			List<ReturnDataSet> returnSetEntries = getEngineExecution().getAccEngineExecResults(aeEvent).getReturnDataSet();
 			getVASRecording().setReturnDataSetList(returnSetEntries);
-			accountingSetEntries.addAll(returnSetEntries);*/
+			accountingSetEntries.addAll(returnSetEntries);
 		}
 		if(accountingDetailDialogCtrl != null){
 			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
@@ -2497,14 +2511,6 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 	public VASRecordingListCtrl getVASRecordingListCtrl() {
 		return this.vASRecordingListCtrl;
-	}
-
-	public PagedListService getPagedListService() {
-		return pagedListService;
-	}
-
-	public void setPagedListService(PagedListService pagedListService) {
-		this.pagedListService = pagedListService;
 	}
 
 	public VASConfiguration getvASConfiguration() {
@@ -2698,6 +2704,13 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	}
 	public void setFinFeeDetailsList(List<FinFeeDetail> finFeeDetailsList) {
 		this.finFeeDetailsList = finFeeDetailsList;
+	}
+
+	public FinanceDetailService getFinanceDetailService() {
+		return financeDetailService;
+	}
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
 	}
 
 
