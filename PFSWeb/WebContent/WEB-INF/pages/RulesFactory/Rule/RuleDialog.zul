@@ -208,9 +208,9 @@
 										<label id="notes"
 											value="${c:l('label_RuleDialog_Notes.value')}"
 											style="font-weight: bold;" />
-									</row>
-									<row id="row_NotesValue" spans="2">
-										<label id="notesValue" />
+										<cell colspan="3">
+											<label id="notesValue"/>
+										</cell>
 									</row>
 								</rows>
 							</grid>
