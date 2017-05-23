@@ -14,7 +14,7 @@ import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
 
-@XmlType(propOrder = { "docCategory", "custDocTitle", "custDocIssuedCountry", "custDocIssuedOn", "custDocExpDate",
+@XmlType(propOrder = { "docCategory", "custDocTitle", "custDocIssuedCountry", "custDocSysName", "custDocIssuedOn", "custDocExpDate",
 		"docPurpose", "docName", "doctype", "docImage", "docUri" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
@@ -36,6 +36,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private boolean docIsCustDoc;
 	@XmlElement
 	private String custDocTitle;
+	@XmlElement(name="custDocIssuedAuth")
 	private String custDocSysName;
 	private Timestamp custDocRcvdOn;
 	@XmlElement

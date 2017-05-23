@@ -2590,6 +2590,7 @@
 		<property name="incomeTypeDAO" ref="incomeTypeDAO" />
 		<property name="customerDocumentService" ref="customerDocumentService" />
 		<property name="lovFieldDetailService" ref="lovFieldDetailService" />
+		<property name="bankDetailService" ref="bankDetailService" />
 	</bean>
 
 	<!--============ CoreCustomers ============== -->
@@ -4224,6 +4225,7 @@
 		<property name="finTypeVASProductsDAO" ref="finTypeVASProductsDAO" />
 		<property name="provinceDAO" ref="provinceDAO" />
 		<property name="cityDAO" ref="cityDAO" />
+		<property name="customerDocumentService" ref="customerDocumentService" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->
@@ -9361,6 +9363,12 @@
 	<bean id="accrualService" class="com.pennant.app.core.AccrualService" parent="serviceHelper">
 		<property name="suspHeadDAO" ref="financeSuspHeadDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+	</bean>
+	 <!-- Late Pay Penalty -->
+	<bean id="latePayPenaltyService" class="com.pennant.app.core.LatePayPenaltyService" parent="serviceHelper">
+	</bean>
+	<!-- Late Pay Interest -->
+	<bean id="latePayInterestService" class="com.pennant.app.core.LatePayInterestService" parent="serviceHelper">
 	</bean>
 	<!-- Late Pay Marking -->
 	<bean id="latePayMarkingService" class="com.pennant.app.core.LatePayMarkingService" parent="serviceHelper">

@@ -38,6 +38,7 @@ import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -299,10 +300,10 @@ public class CreateFinanceController extends SummaryDetailService {
 		if (StringUtils.isBlank(financeMain.getFinBranch())) {
 			financeMain.setFinBranch(userDetails.getBranchCode());
 		}
-
+		CustomerDetails customerDetails = null;
 		// setting required values which are not received from API
 		if (financeMain.getCustID() > 0) {
-			CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true, "");
+			 customerDetails = customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true, "");
 			if (customerDetails != null) {
 				customerDetails.setUserDetails(userDetails);
 				financeDetail.setCustomerDetails(customerDetails);
@@ -404,6 +405,29 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		// guarantor details
 		for (GuarantorDetail guarantorDetail : financeDetail.getGurantorsDetailList()) {
+			if (guarantorDetail.isBankCustomer()) {
+				if (customerDetails != null) {
+					if (customerDetails.getCustomer() != null) {
+						guarantorDetail.setGuarantorIDNumber(customerDetails.getCustomer().getCustCRCPR());
+						guarantorDetail.setMobileNo(customerDetails.getCustomer().getPhoneNumber());
+						guarantorDetail.setEmailId(customerDetails.getCustomer().getEmailID());
+					}
+					List<CustomerAddres> address = customerDetails.getAddressList();
+					if (address != null && !address.isEmpty()) {
+						CustomerAddres customerAddress = address.get(0);
+						guarantorDetail.setAddrCity(customerAddress.getCustAddrCity());
+						guarantorDetail.setAddrCountry(customerAddress.getCustAddrCountry());
+						guarantorDetail.setAddrHNbr(customerAddress.getCustAddrHNbr());
+						guarantorDetail.setAddrLine1(customerAddress.getCustAddrLine1());
+						guarantorDetail.setAddrLine2(customerAddress.getCustAddrLine2());
+						guarantorDetail.setAddrProvince(customerAddress.getCustAddrProvince());
+						guarantorDetail.setAddrStreet(customerAddress.getCustAddrStreet());
+						guarantorDetail.setAddrZIP(customerAddress.getCustAddrZIP());
+						guarantorDetail.setPOBox(customerAddress.getCustPOBox());
+						guarantorDetail.setFlatNbr(customerAddress.getCustFlatNbr());
+					}
+				}
+			}
 			guarantorDetail.setFinReference(financeMain.getFinReference());
 			guarantorDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			guarantorDetail.setNewRecord(true);

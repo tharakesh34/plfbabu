@@ -44,6 +44,9 @@
 		<field name="advancePaymentsList">
 			<valid />
 			</field>
+		<field name="finFlagsDetails">
+			<valid />
+			</field>
 		
 	</bean>
 </constraint-mappings>

@@ -91,6 +91,7 @@ import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.model.systemmasters.Sector;
 import com.pennant.backend.model.systemmasters.SubSector;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.customermasters.validation.CorporateCustomerValidation;
@@ -175,6 +176,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private CustomerChequeInfoValidation customerChequeInfoValidation;
 	private CustomerExtLiabilityValidation customerExtLiabilityValidation;
 	private LovFieldDetailService lovFieldDetailService;
+	private BankDetailService	bankDetailService;
 
 	public CustomerDetailsServiceImpl() {
 		super();
@@ -1577,6 +1579,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90319", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 						}
+					} else {
+						empDetail.setCurrentEmployer(true);
 					}
 					if (empDetail.getCustEmpFrom() != null && empDetail.getCustEmpFrom().compareTo(DateUtility.getAppDate()) != -1 || SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(empDetail.getCustEmpFrom()) >= 0) {
 						ErrorDetails errorDetail = new ErrorDetails();
@@ -1602,6 +1606,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		
 		if (custAddress != null) {
 			boolean isAddressPrority=false;
+			ErrorDetails errorDetail = new ErrorDetails();
 			for (CustomerAddres adress : custAddress) {
 				auditDetail.setErrorDetail(validateMasterCode("BMTAddressTypes", "AddrTypeCode",
 						adress.getCustAddrType()));
@@ -1609,7 +1614,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				Province province = getProvinceDAO().getProvinceById(adress.getCustAddrCountry(),
 						adress.getCustAddrProvince(), "");
 				if (province == null) {
-					ErrorDetails errorDetail = new ErrorDetails();
 					String[] valueParm = new String[2];
 					valueParm[0] = adress.getCustAddrProvince();
 					valueParm[1] = adress.getCustAddrCountry();
@@ -1619,7 +1623,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				City city = getCityDAO().getCityById(adress.getCustAddrCountry(), adress.getCustAddrProvince(),
 						adress.getCustAddrCity(), "");
 				if (city == null) {
-					ErrorDetails errorDetail = new ErrorDetails();
 					String[] valueParm = new String[2];
 					valueParm[0] = adress.getCustAddrCity();
 					valueParm[1] = adress.getCustAddrProvince();
@@ -1628,18 +1631,43 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				}
 
 				if (!(adress.getCustAddrPriority() >= 1 && adress.getCustAddrPriority() <= 5)) {
-					ErrorDetails errorDetail = new ErrorDetails();
 					String[] valueParm = new String[1];
 					valueParm[0] = String.valueOf(adress.getCustAddrPriority());
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90114", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
-				if(adress.getCustAddrPriority() ==1){
+				if(adress.getCustAddrPriority() == Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)){
 					isAddressPrority = true;
 				}
+				int addressPriorityCount = 0;
+				int addType = 0;
+				for (CustomerAddres aAdress : custAddress) {
+					if (aAdress.getCustAddrPriority() == adress.getCustAddrPriority()) {
+						addressPriorityCount++;
+						if (addressPriorityCount > 1) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "Priority";
+							valueParm[1] = String.valueOf(adress.getCustAddrPriority());
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30702", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+					}
+					if (StringUtils.equals(aAdress.getCustAddrType(), adress.getCustAddrType())) {
+						addType++;
+						if (addType > 1) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "AddressType";
+							valueParm[1] = aAdress.getCustAddrType();
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("41001", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+					}
+				}
+				
 			}
 			if (!isAddressPrority) {
-				ErrorDetails errorDetail = new ErrorDetails();
 				String[] valueParm = new String[2];
 				valueParm[0] = "Address Details";
 				valueParm[1] = "Address";
@@ -1670,8 +1698,34 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90115", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
-				if(custPhoneDetail.getPhoneTypePriority() == 1){
+				if(custPhoneDetail.getPhoneTypePriority() == Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)){
 					isPhonePrority = true;
+				}
+				int phonePriorityCount = 0;
+				int phoneType = 0;
+				for (CustomerPhoneNumber aPhones : custPhones) {
+					if (aPhones.getPhoneTypePriority() == custPhoneDetail.getPhoneTypePriority()) {
+						phonePriorityCount++;
+						if (phonePriorityCount > 1) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "Priority";
+							valueParm[1] = String.valueOf(aPhones.getPhoneTypePriority());
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90287", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+					}
+					if (StringUtils.equals(aPhones.getPhoneTypeCode(), custPhoneDetail.getPhoneTypeCode())) {
+						phoneType++;
+						if (phoneType > 1) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "PhoneType";
+							valueParm[1] = aPhones.getPhoneTypeCode();
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("41001", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+					}
 				}
 			}
 			if (!isPhonePrority) {
@@ -1706,6 +1760,32 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90237", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
+				int emailPriorityCount = 0;
+				int emailType = 0;
+				for (CustomerEMail acustEmail : custEmails) {
+					if (acustEmail.getCustEMailPriority() == custEmail.getCustEMailPriority()) {
+						emailPriorityCount++;
+						if (emailPriorityCount > 1) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "Priority";
+							valueParm[1] = String.valueOf(acustEmail.getCustEMailPriority());
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90288", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+					}
+					if (StringUtils.equals(acustEmail.getCustEMailTypeCode(), custEmail.getCustEMailTypeCode())) {
+						emailType++;
+						if (emailType > 1) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "EmailType";
+							valueParm[1] = acustEmail.getCustEMailTypeCode();
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("41001", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+					}
+				}
 			}
 		}
 
@@ -1730,31 +1810,57 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 
 		List<CustomerDocument> custDocuments = customerDetails.getCustomerDocumentsList();
-		if(custDocuments !=null){
-		for (CustomerDocument custDocument : custDocuments) {
-			AuditDetail auditDetail1 = customerDocumentService.validateCustomerDocuments(custDocument);
-			if(auditDetail1 != null && auditDetail1.getErrorDetails() != null && !auditDetail1.getErrorDetails().isEmpty()) {
-				return auditDetail1;
+		boolean panMandatory = false;
+		if (custDocuments != null) {
+			for (CustomerDocument custDocument : custDocuments) {
+				if (StringUtils.equals(custDocument.getCustDocCategory(), "03")) {
+					panMandatory = true;
+				}
+				AuditDetail auditDetail1 = customerDocumentService.validateCustomerDocuments(custDocument);
+				if (auditDetail1 != null && auditDetail1.getErrorDetails() != null
+						&& !auditDetail1.getErrorDetails().isEmpty()) {
+					return auditDetail1;
+				}
 			}
-		}
+		} 
+		if(!panMandatory){
+			String[] valueParm = new String[1];
+			valueParm[0] = "PAN document";
+			ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
 		}
 		
 		// customer bank info details
 		List<CustomerBankInfo> custBankDetails = customerDetails.getCustomerBankInfoList();
 		if (custBankDetails != null) {
+			ErrorDetails errorDetail = new ErrorDetails();
 			for (CustomerBankInfo custBankInfo : custBankDetails) {
 				auditDetail.setErrorDetail(validateMasterCode("BMTBankDetail", "BankCode", custBankInfo.getBankName()));
 			
 				LovFieldDetail lovFieldDetail=getLovFieldDetailService().getApprovedLovFieldDetailById("ACC_TYPE",custBankInfo.getAccountType());
 				if (lovFieldDetail == null) {
-					ErrorDetails errorDetail = new ErrorDetails();
+				
 					String[] valueParm = new String[2];
 					valueParm[0] = "Acctype";
 					valueParm[1] = custBankInfo.getAccountType();
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
+				//validate AccNumber length
+				if(StringUtils.isNotBlank(custBankInfo.getBankName())){
+					int accNoLength = bankDetailService.getAccNoLengthByCode(custBankInfo.getBankName());
+					if(custBankInfo.getAccountNumber().length()!=accNoLength){
+						String[] valueParm = new String[2];
+						valueParm[0] = "AccountNumber";
+						valueParm[1] = String.valueOf(accNoLength)+" characters";
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30570", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+						return auditDetail;
+					}
+				}
 			}
+			
 		}
 
 		//
@@ -4897,5 +5003,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	public void setLovFieldDetailService(LovFieldDetailService lovFieldDetailService) {
 		this.lovFieldDetailService = lovFieldDetailService;
 	}
+	public void setBankDetailService(BankDetailService bankDetailService) {
+		this.bankDetailService = bankDetailService;
+	}
+
 
 }

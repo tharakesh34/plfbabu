@@ -14,6 +14,8 @@
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.DeleteValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 				</groups>
 				<element name="max">8</element>
 			</constraint>
@@ -22,10 +24,28 @@
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.DeleteValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 				</groups>
 			</constraint>
 		</field>
-
+		<field name="flagDesc">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>flagDesc should have maximum 50 characters</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="max">50</element>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>flagDesc is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+			</constraint>
+		</field>
 	</bean>
 </constraint-mappings>
 		

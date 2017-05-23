@@ -386,9 +386,9 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 		if (customerDocument.getCustDocIssuedOn() != null && customerDocument.getCustDocExpDate() != null) {
 			if (customerDocument.getCustDocIssuedOn().compareTo(customerDocument.getCustDocExpDate()) > 0) {
 				String[] valueParm = new String[2];
-				valueParm[0] = DateUtility.formatDate(customerDocument.getCustDocIssuedOn(),
+				valueParm[0] = "custDocExpDate: " +DateUtility.formatDate(customerDocument.getCustDocExpDate(),
 						PennantConstants.XMLDateFormat);
-				valueParm[1] = DateUtility.formatDate(customerDocument.getCustDocExpDate(),
+				valueParm[1] = "custDocIssuedOn: " +DateUtility.formatDate(customerDocument.getCustDocIssuedOn(),
 						PennantConstants.XMLDateFormat);
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
@@ -396,18 +396,6 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 			}
 		}
 
-		if (StringUtils.equals(customerDocument.getCustDocCategory(), "03")) {
-			Pattern pattern = Pattern.compile("^[A-Za-z]{5}\\d{4}[A-Za-z]{1}");
-			if(customerDocument.getCustDocTitle() !=null){
-			Matcher matcher = pattern.matcher(customerDocument.getCustDocTitle());
-			if(matcher.find() == false ){
-				String[] valueParm = new String[0];
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90251", "", valueParm), "EN");
-				auditDetail.setErrorDetail(errorDetail);
-				return auditDetail;
-			}
-			}
-		}
 		
 		if(StringUtils.isBlank(customerDocument.getDocUri())) {
 			if(customerDocument.getCustDocImage() ==null || customerDocument.getCustDocImage().length<=0){
@@ -445,14 +433,33 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				valueParm[1] = docType.getDocTypeCode();
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90402", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
 			}
 		}
-
+		if (StringUtils.equals(customerDocument.getCustDocCategory(), "03")) {
+			Pattern pattern = Pattern.compile("^[A-Za-z]{5}\\d{4}[A-Za-z]{1}");
+			if(customerDocument.getCustDocTitle() !=null){
+			Matcher matcher = pattern.matcher(customerDocument.getCustDocTitle());
+			if(matcher.find() == false ){
+				String[] valueParm = new String[0];
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90251", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+			}
+		}
 		// validate custDocIssuedCountry
-		if (docType.isDocIsCustDoc() && docType.isDocIssuedAuthorityMand()) {
 			if (StringUtils.isBlank(customerDocument.getCustDocIssuedCountry())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "CustDocIssuedCountry";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+			}
+			// validate DocIssuedAuthority
+			if (docType.isDocIsCustDoc() && docType.isDocIssuedAuthorityMand()) {
+			if (StringUtils.isBlank(customerDocument.getCustDocSysName())) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "CustDocIssuedAuth";
 				valueParm[1] = docType.getDocTypeCode();
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90402", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);

@@ -32,7 +32,6 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
@@ -44,7 +43,7 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  * 
  */
 @XmlType(propOrder = { "bankCustomer", "guarantorCIF", "guranteePercentage", "name", "mobileNo", "emailId",
-		"guarantorIDType", "guarantorIDNumber", "addrHNbr", "flatNbr", "addrStreet", "addrLine1", "addrLine2", "POBox",
+		"guarantorIDType", "guarantorIDNumber","guarantorProof", "addrHNbr", "flatNbr", "addrStreet", "addrLine1", "addrLine2", "POBox",
 		"addrCountry", "addrProvince", "addrCity", "addrZIP" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
@@ -73,7 +72,7 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private String emailId;
 	
-	@XmlTransient
+	@XmlElement(name = "idDocContent")
 	private byte[] guarantorProof = new byte[Byte.valueOf("0")];
 	private String guarantorProofName;
 	private String remarks;

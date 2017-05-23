@@ -46,6 +46,7 @@ import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.model.applicationmasters.Flag;
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -54,6 +55,7 @@ import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -88,6 +90,7 @@ import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
@@ -130,7 +133,7 @@ public class FinanceDataValidation {
 	private ProvinceDAO					provinceDAO;
 	private CityDAO						cityDAO;
 	private FinanceDetail 				financeDetail;
-
+	private CustomerDocumentService 	customerDocumentService;
 	public FinanceDataValidation() {
 		super();
 	}
@@ -1033,6 +1036,7 @@ public class FinanceDataValidation {
 		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
 		// validate document details
 		List<DocumentDetails> documentDetails = financeDetail.getDocumentDetailsList();
+		AuditDetail auditDetails = null;
 		if (documentDetails != null) {
 			for (DocumentDetails detail : documentDetails) {
 
@@ -1040,21 +1044,12 @@ public class FinanceDataValidation {
 				if (detail.getCustDocIssuedOn() != null && detail.getCustDocExpDate() != null) {
 					if (detail.getCustDocIssuedOn().compareTo(detail.getCustDocExpDate()) > 0) {
 						String[] valueParm = new String[2];
-						valueParm[0] = DateUtility.formatDate(detail.getCustDocIssuedOn(),
+						valueParm[0] = "custDocExpDate: " +DateUtility.formatDate(detail.getCustDocExpDate(),
 								PennantConstants.XMLDateFormat);
-						valueParm[1] = DateUtility.formatDate(detail.getCustDocExpDate(),
+						valueParm[1] = "custDocIssuedOn: " +DateUtility.formatDate(detail.getCustDocIssuedOn(),
 								PennantConstants.XMLDateFormat);
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90205", valueParm)));
 						return errorDetails;
-					}
-				}
-
-				if (StringUtils.equals(detail.getDocCategory(), "03")) {
-					Pattern pattern = Pattern.compile("^[A-Za-z]{5}\\d{4}[A-Za-z]{1}");
-					Matcher matcher = pattern.matcher(detail.getCustDocTitle());
-					if (matcher.find() == false) {
-						String[] valueParm = new String[0];
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90251", valueParm)));
 					}
 				}
 
@@ -1077,42 +1072,36 @@ public class FinanceDataValidation {
 
 				// validate Is Customer document?
 				if (docType.isDocIsCustDoc()) {
-					if (StringUtils.isBlank(detail.getCustDocTitle())) {
-						String[] valueParm = new String[2];
-						valueParm[0] = "CustDocTitle";
-						valueParm[1] = docType.getDocTypeCode();
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90402", valueParm)));
-					}
+					CustomerDocument custDocs = new CustomerDocument();
+					custDocs.setCustDocCategory(detail.getDocCategory());
+					custDocs.setCustDocIssuedOn(detail.getCustDocIssuedOn());
+					custDocs.setCustDocExpDate(detail.getCustDocExpDate());
+					custDocs.setCustDocTitle(detail.getCustDocTitle());
+					custDocs.setCustDocIssuedCountry(detail.getCustDocIssuedCountry());
+					custDocs.setCustDocSysName(detail.getCustDocSysName());
+					custDocs.setCustDocIssuedOn(detail.getCustDocIssuedOn());
+					custDocs.setCustDocExpDate(detail.getCustDocExpDate());
+					custDocs.setDocUri(detail.getDocUri());
+					custDocs.setCustDocImage(detail.getDocImage());
+					custDocs.setCustDocType(detail.getDoctype());
+					auditDetails=customerDocumentService.validateCustomerDocuments(custDocs);
 				}
 
-				// validate custDocIssuedCountry
-				if (docType.isDocIsCustDoc() && docType.isDocIssuedAuthorityMand()) {
-					if (StringUtils.isBlank(detail.getCustDocIssuedCountry())) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "CustDocIssuedCountry";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90402", valueParm)));
+				if (StringUtils.equals(detail.getDocCategory(), "03")) {
+					Pattern pattern = Pattern.compile("^[A-Za-z]{5}\\d{4}[A-Za-z]{1}");
+					if(detail.getCustDocTitle() != null){
+					Matcher matcher = pattern.matcher(detail.getCustDocTitle());
+					if (matcher.find() == false) {
+						String[] valueParm = new String[0];
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90251", valueParm)));
 					}
-				}
-				// validate custDocIssuedOn
-				if (docType.isDocIssueDateMand()) {
-					if (detail.getCustDocIssuedOn() == null) {
-						String[] valueParm = new String[2];
-						valueParm[0] = "CustDocIssuedOn";
-						valueParm[1] = docType.getDocTypeCode();
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90402", valueParm)));
-					}
-				}
-
-				// validate custDocExpDate
-				if (docType.isDocExpDateIsMand()) {
-					if (detail.getCustDocExpDate() == null) {
-						String[] valueParm = new String[2];
-						valueParm[0] = "CustDocExpDate";
-						valueParm[1] = docType.getDocTypeCode();
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90402", valueParm)));
 					}
 				}
 			}
+		}
+		if (auditDetails != null && auditDetails.getErrorDetails() != null
+				&& !auditDetails.getErrorDetails().isEmpty()) {
+			return auditDetails.getErrorDetails();
 		}
 		return errorDetails;
 	}
@@ -3829,6 +3818,9 @@ public class FinanceDataValidation {
 	}
 	public void setCityDAO(CityDAO cityDAO) {
 		this.cityDAO = cityDAO;
+	}
+	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
+		this.customerDocumentService = customerDocumentService;
 	}
 
 }

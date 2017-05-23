@@ -208,12 +208,20 @@
 		</field>
 		<field name="addrZIP">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>addrZIP should have maximum 50 characters</message>
+				<message>addrZIP should have maximum 6 characters</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 				</groups>
-				<element name="max">50</element>
+				<element name="max">6</element>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>addrZIP should have minimum 3 characters</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="min">3</element>
 			</constraint>
 				<constraint annotation="javax.validation.constraints.Pattern">
 			<message>addrZIP is invalid. Allowed Characters are [0-9].</message>
@@ -556,6 +564,52 @@
 				<element name="lang">javascript</element>
 				<element name="script">
 				if ((_this.addrZIP != null) &amp;&amp; (_this.addrZIP != "")) {
+					if (_this.bankCustomer){
+							false;	
+					}else{
+							true;
+							}	
+					}else{
+					if (_this.bankCustomer){
+							true;	
+					}else{
+							false;
+					}	
+				}
+				</element>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert"> 
+				<message>guarantorIDType Mandatory only for Non-Bank Customer</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="lang">javascript</element>
+				<element name="script">
+				if ((_this.guarantorIDType != null) &amp;&amp; (_this.guarantorIDType != "")) {
+					if (_this.bankCustomer){
+							false;	
+					}else{
+							true;
+							}	
+					}else{
+					if (_this.bankCustomer){
+							true;	
+					}else{
+							false;
+					}	
+				}
+				</element>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert"> 
+				<message>guarantorIDNumber Mandatory only for Non-Bank Customer</message>
+				<groups>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="lang">javascript</element>
+				<element name="script">
+				if ((_this.guarantorIDNumber != null) &amp;&amp; (_this.guarantorIDNumber != "")) {
 					if (_this.bankCustomer){
 							false;	
 					}else{

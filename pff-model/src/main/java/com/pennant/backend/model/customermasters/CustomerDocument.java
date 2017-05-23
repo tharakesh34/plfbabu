@@ -59,7 +59,7 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  * Model class for the <b>CustomerDocument table</b>.<br>
  * 
  */
-@XmlType(propOrder = { "custDocCategory", "custDocTitle", "custDocIssuedCountry", "custDocIssuedOn", "custDocExpDate",
+@XmlType(propOrder = { "custDocCategory", "custDocTitle", "custDocIssuedCountry", "custDocSysName", "custDocIssuedOn", "custDocExpDate",
 		"docPurpose", "custDocName", "custDocType", "custDocImage", "docUri" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerDocument extends AbstractWorkflowEntity {
@@ -76,6 +76,7 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private String lovDescCustDocCategory;
 	@XmlElement
 	private String custDocTitle;
+	@XmlElement(name = "custDocIssuedAuth")
 	private String custDocSysName;
 	private Timestamp custDocRcvdOn;
 	@XmlElement
