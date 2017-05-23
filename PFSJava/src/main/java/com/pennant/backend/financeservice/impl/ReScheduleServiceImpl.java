@@ -601,6 +601,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				String[] valueParm = new String[1];
 				valueParm[0] = "FromDate:"+DateUtility.formatToShortDate(finServiceInstruction.getFromDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", "", valueParm), lang));
+				return auditDetail;
 			}
 		}
 		if(finServiceInstruction.getNextRepayDate() == null) {

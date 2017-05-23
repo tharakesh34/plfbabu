@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
@@ -1413,9 +1414,9 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90216", valueParm)));
 					}
 				}
-				int count = finTypePartnerBankService.getPartnerBankCount(
-						financeDetail.getFinScheduleData().getFinanceType().getFinType(), advPayment.getPaymentType(),
-						advPayment.getPartnerBankID());
+				String finType = financeDetail.getFinScheduleData().getFinanceType().getFinType();
+				int count = finTypePartnerBankService.getPartnerBankCount(finType, advPayment.getPaymentType(), 
+						AccountConstants.PARTNERSBANK_DISB, advPayment.getPartnerBankID());
 				if (count <= 0) {
 					String[] valueParm = new String[1];
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90263", valueParm)));

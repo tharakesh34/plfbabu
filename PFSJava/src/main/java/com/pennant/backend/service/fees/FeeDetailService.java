@@ -1,5 +1,6 @@
 package com.pennant.backend.service.fees;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -47,8 +49,10 @@ public class FeeDetailService {
 	 * Calculate and execute fee details
 	 *  
 	 * @param financeDetail
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	private void executeFeeCharges(FinanceDetail financeDetail, boolean isOriginationFee) {
+	private void executeFeeCharges(FinanceDetail financeDetail, boolean isOriginationFee) throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -150,11 +154,15 @@ public class FeeDetailService {
 			finScheduleData.getFinanceMain().setFeeChargeAmt(feeAddToDisbTot);
 		}
 
-		//doFillFinFeeDetailList(getFinFeeDetailUpdateList());
-
-		finScheduleData.setFinFeeDetailList(getFinFeeDetailList());
-
-		//fetchFeeDetails(finScheduleData, true);
+		for(FinFeeDetail prvFeeDetail: finScheduleData.getFinFeeDetailList()) {
+			for(FinFeeDetail currFeeDetail: getFinFeeDetailList()) {
+				if(StringUtils.equals(prvFeeDetail.getFinEvent(), currFeeDetail.getFinEvent()) 
+						&& StringUtils.equals(prvFeeDetail.getFeeTypeCode(), currFeeDetail.getFeeTypeCode())) {
+					BeanUtils.copyProperties(prvFeeDetail, currFeeDetail);
+				}
+			}
+		}
+		//finScheduleData.setFinFeeDetailList(getFinFeeDetailList());
 
 		// Insurance Amounts calculation
 		List<FinInsurances> insurances = financeDetail.getFinScheduleData().getFinInsuranceList();
@@ -474,8 +482,10 @@ public class FeeDetailService {
 	 * 	FinEvent is always empty for origination fees.
 	 * @param financeDetail
 	 * @param finEvent
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	public void doExecuteFeeCharges(FinanceDetail financeDetail, String finEvent) {
+	public void doExecuteFeeCharges(FinanceDetail financeDetail, String finEvent) throws IllegalAccessException, InvocationTargetException {
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		boolean isOriginationFee = false;
 		if (StringUtils.isBlank(finEvent)) {
@@ -497,6 +507,11 @@ public class FeeDetailService {
 		} else {
 			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeDetail.getFinScheduleData().getFinanceType().getPromotionCode(), finEvent,
 					isOriginationFee, FinanceConstants.MODULEID_PROMOTION));
+		}
+		if(isOriginationFee) {
+			for(FinFeeDetail finFeeDetail:financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+				finFeeDetail.setFinEvent(finEvent);
+			}
 		}
 		executeFeeCharges(financeDetail, isOriginationFee);
 	}

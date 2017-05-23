@@ -394,14 +394,16 @@ public class FeeScheduleCalculator {
 			List<FinFeeScheduleDetail> feeSchdDetails = feeDetails.get(i).getFinFeeScheduleDetailList();
 			for (int j = 0; j < feeSchdDetails.size(); j++) {
 				feeSchdDetail = feeSchdDetails.get(j);
-				int schdIdx = rpySchdMap.get(feeSchdDetail.getSchDate());
-
-				if (schdIdx <= 0) {
-					schdIdx = hldSchdMap.get(feeSchdDetail.getSchDate());
+				if(rpySchdMap.containsKey(feeSchdDetail.getSchDate())) {
+					int schdIdx = rpySchdMap.get(feeSchdDetail.getSchDate());
+					
+					if (schdIdx <= 0) {
+						schdIdx = hldSchdMap.get(feeSchdDetail.getSchDate());
+					}
+					
+					FinanceScheduleDetail curSchd = finSchdDetails.get(schdIdx);
+					curSchd.setFeeSchd(curSchd.getFeeSchd().add(feeSchdDetail.getSchAmount()));
 				}
-
-				FinanceScheduleDetail curSchd = finSchdDetails.get(schdIdx);
-				curSchd.setFeeSchd(curSchd.getFeeSchd().add(feeSchdDetail.getSchAmount()));
 			}
 		}
 

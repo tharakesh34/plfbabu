@@ -534,6 +534,13 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 		return auditDetails;
 	}
 
+	@Override
+	public int getPartnerBankCount(String finType, String paymentType, String purpose, long partnerBankID) {
+		logger.debug("Entering");
+		logger.debug("Leaving");
+		return getFinTypePartnerBankDAO().getPartnerBankCount(finType, paymentType, purpose, partnerBankID);
+	}
+	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -566,12 +573,5 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 	 */
 	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
 		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
-	}
-
-	@Override
-	public int getPartnerBankCount(String finType, String paymentType, long partnerBankID) {
-		logger.debug("Entering");
-		logger.debug("Leaving");
-		return getFinTypePartnerBankDAO().getPartnerBankCount(finType, paymentType, partnerBankID);
 	}
 }

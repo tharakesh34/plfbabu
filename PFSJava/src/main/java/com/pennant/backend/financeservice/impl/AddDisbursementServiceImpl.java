@@ -94,10 +94,12 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			return auditDetail;
 		}
 		// It shouldn't be past date when compare to appdate
-		if (fromDate.compareTo(DateUtility.getAppDate()) < 0) {
-			String[] valueParm = new String[1];
+		if (fromDate.compareTo(DateUtility.getAppDate()) < 0 || fromDate.compareTo(financeMain.getMaturityDate()) >= 0) {
+			String[] valueParm = new String[3];
 			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("91111", valueParm)));
+			valueParm[1] = "application Date:" + DateUtility.formatToShortDate(DateUtility.getAppDate());
+			valueParm[2] = "maturity Date:" + DateUtility.formatToShortDate(financeMain.getMaturityDate());
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90282", valueParm)));
 		}
 
 		// validate from date
@@ -299,13 +301,15 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		}
 		
 		BigDecimal totalDisbAmtFromInst = BigDecimal.ZERO;
-		for(FinAdvancePayments finAdvancePayment: financeDetail.getAdvancePaymentsList()) {
-			totalDisbAmtFromInst = totalDisbAmtFromInst.add(finAdvancePayment.getAmtToBeReleased());
-		}
-		
-		List<ErrorDetails> errors = financeDataValidation.disbursementValidation(financeDetail);
-		for (ErrorDetails errorDetails : errors) {
-			auditDetail.setErrorDetail(errorDetails);
+		if(financeDetail.getAdvancePaymentsList() != null && !financeDetail.getAdvancePaymentsList().isEmpty()) {
+			for(FinAdvancePayments finAdvancePayment: financeDetail.getAdvancePaymentsList()) {
+				totalDisbAmtFromInst = totalDisbAmtFromInst.add(finAdvancePayment.getAmtToBeReleased());
+			}
+			
+			List<ErrorDetails> errors = financeDataValidation.disbursementValidation(financeDetail);
+			for (ErrorDetails errorDetails : errors) {
+				auditDetail.setErrorDetail(errorDetails);
+			}
 		}
 				
 		logger.debug("Leaving");

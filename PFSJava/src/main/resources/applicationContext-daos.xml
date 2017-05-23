@@ -8359,6 +8359,7 @@
 
 	<bean name="addTermsServiceTarget"
 		class="com.pennant.backend.financeservice.impl.AddTermsServiceImpl">
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO"/>
 	</bean>
 
 	<bean id="rmvTermsService"

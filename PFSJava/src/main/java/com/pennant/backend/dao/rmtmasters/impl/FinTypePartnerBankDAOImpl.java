@@ -279,16 +279,17 @@ public class FinTypePartnerBankDAOImpl extends BasisNextidDaoImpl<FinTypePartner
 	 * @return Integer
 	 */
 	@Override
-	public int getPartnerBankCount(String finType, String paymentType, long partnerBankID) {
+	public int getPartnerBankCount(String finType, String paymentType, String purpose, long partnerBankID) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Fintype", finType);
 		source.addValue("PaymentMode", paymentType);
+		source.addValue("Purpose", purpose);
 		source.addValue("PartnerBankID", partnerBankID);
 
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) From FinTypePartnerBanks");
-		selectSql.append(" Where Fintype = :Fintype AND PaymentMode = :PaymentMode AND PartnerBankID = :PartnerBankID");
+		selectSql.append(" Where Fintype = :Fintype AND PaymentMode = :PaymentMode AND Purpose = :Purpose AND PartnerBankID = :PartnerBankID");
 
 		logger.debug("selectSql: " + selectSql.toString());
 
