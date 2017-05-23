@@ -479,7 +479,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 		this.finCcy.setValue(header.getFinCcy()+"-"+header.getFinCcyDesc());
 		this.finBranch.setValue(header.getFinBranch()+"-"+header.getFinBranchDesc());;
 		this.custCIF.setValue(header.getCustCIF()+"-"+header.getCustShrtName());
-		int finFormatter = CurrencyUtil.getFormat(this.finCcy.getValue());
+		int finFormatter = CurrencyUtil.getFormat(header.getFinCcy());
 		
 		fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), "");
 		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");

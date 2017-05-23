@@ -62,6 +62,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	protected Listheader listheader_ReceiptCancellationReference;
 	protected Listheader listheader_ReceiptCancellationPurpose;
 	protected Listheader listheader_ReceiptCancellationMode;
+	protected Listheader listheader_ReceiptCancellationAmount;
 	protected Listheader listheader_ReceiptCancellationAllocattionType;
 	protected Listheader listheader_ReceiptCancellationFinType;
 	protected Listheader listheader_ReceiptCancellationFinBranch;
@@ -133,7 +134,6 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		registerButton(btnSearch);
 
 		registerField("receiptID");
-		registerField("receiptAmount");
 		registerField("finCcy");
 		registerField("reference", listheader_ReceiptCancellationReference, SortOrder.ASC, receiptReference,
 				sortOperator_ReceiptCancellationReference, Operators.STRING);
@@ -145,6 +145,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModes(), "");
 		registerField("receiptMode", listheader_ReceiptCancellationMode, SortOrder.NONE, receiptMode, sortOperator_ReceiptCancellationReceiptMode,
 				Operators.STRING);
+		registerField("receiptAmount", listheader_ReceiptCancellationAmount);
 		fillComboBox(this.allocationType, "", PennantStaticListUtil.getAllocationMethods(), "");
 		registerField("allocationType", listheader_ReceiptCancellationAllocattionType, SortOrder.NONE, allocationType,
 				sortOperator_ReceiptCancellationAllocationType, Operators.STRING);

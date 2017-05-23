@@ -60,6 +60,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	protected Listheader listheader_ReceiptRealizationReference;
 	protected Listheader listheader_ReceiptRealizationPurpose;
 	protected Listheader listheader_ReceiptRealizationMode;
+	protected Listheader listheader_ReceiptRealizationAmount;
 	protected Listheader listheader_ReceiptRealizationAllocattionType;
 	protected Listheader listheader_ReceiptRealizationFinType;
 	protected Listheader listheader_ReceiptRealizationFinBranch;
@@ -122,7 +123,6 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 		registerButton(btnSearch);
 
 		registerField("receiptID");
-		registerField("receiptAmount");
 		registerField("finCcy");
 		registerField("reference", listheader_ReceiptRealizationReference, SortOrder.ASC, receiptReference,
 				sortOperator_receiptRealizationReference, Operators.STRING);
@@ -136,6 +136,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModes(), "");
 		registerField("receiptMode", listheader_ReceiptRealizationMode, SortOrder.NONE, receiptMode, sortOperator_receiptRealizationReceiptMode,
 				Operators.STRING);
+		registerField("receiptAmount", listheader_ReceiptRealizationAmount);
 		fillComboBox(this.allocationType, "", PennantStaticListUtil.getAllocationMethods(), "");
 		registerField("allocationType", listheader_ReceiptRealizationAllocattionType, SortOrder.NONE, allocationType,
 				sortOperator_receiptAllocationType, Operators.STRING);

@@ -60,6 +60,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listheader listheader_FeeReceiptReference;
 	protected Listheader listheader_FeeReceiptPurpose;
 	protected Listheader listheader_FeeReceiptMode;
+	protected Listheader listheader_FeeReceiptAmount;
 	protected Listheader listheader_FeeReceiptAllocattionType;
 	protected Listheader listheader_FeeReceiptFinType;
 	protected Listheader listheader_FeeReceiptFinBranch;
@@ -122,7 +123,6 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		registerButton(btnSearch);
 
 		registerField("receiptID");
-		registerField("receiptAmount");
 		registerField("finCcy");
 		registerField("reference", listheader_FeeReceiptReference, SortOrder.ASC, receiptReference,
 				sortOperator_FeeReceiptReference, Operators.STRING);
@@ -136,6 +136,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModes(), "");
 		registerField("receiptMode", listheader_FeeReceiptMode, SortOrder.NONE, receiptMode, sortOperator_FeeReceiptReceiptMode,
 				Operators.STRING);
+		registerField("receiptAmount", listheader_FeeReceiptAmount);
 		fillComboBox(this.allocationType, "", PennantStaticListUtil.getAllocationMethods(), "");
 		registerField("allocationType", listheader_FeeReceiptAllocattionType, SortOrder.NONE, allocationType,
 				sortOperator_FeeReceiptAllocationType, Operators.STRING);
