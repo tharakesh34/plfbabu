@@ -292,16 +292,6 @@
 										<row id="row_PaymentRef"
 											visible="false">
 											<label
-												id="label_FeeReceiptDialog_paymentReference"
-												value="${c:l('label_FeeReceiptDialog_paymentReference.value')}" />
-											<hbox
-												id="hbox_FeeReceiptDialog_paymentReference">
-												<space spacing="2px"
-													sclass="mandatory" />
-												<uppercasebox
-													id="paymentRef" width="180px" />
-											</hbox>
-											<label
 												id="label_FeeReceiptDialog_tranReference"
 												value="${c:l('label_FeeReceiptDialog_tranReference.value')}" />
 											<hbox
@@ -341,16 +331,14 @@
 										<row id="row_remarks"
 											visible="false">
 											<label
-													id="label_FeeReceiptDialog_ReceiptNo"
-													value="${c:l('label_FeeReceiptDialog_ReceiptNo.value')}" />
-												<hbox
-													id="hbox_FeeReceiptDialog_ReceiptNo">
-													<space
-														spacing="2px"
-														sclass="mandatory" />
-													<uppercasebox
-														id="receiptNo" width="180px" />
-												</hbox>
+												id="label_FeeReceiptDialog_paymentReference"
+												value="${c:l('label_FeeReceiptDialog_paymentReference.value')}" />
+											<hbox
+												id="hbox_FeeReceiptDialog_paymentReference">
+												<space spacing="2px"/>
+												<uppercasebox
+													id="paymentRef" width="180px" />
+											</hbox>
 											<label
 												id="label_FeeReceiptDialog_Remarks"
 												value="${c:l('label_FeeReceiptDialog_Remarks.value')}" />

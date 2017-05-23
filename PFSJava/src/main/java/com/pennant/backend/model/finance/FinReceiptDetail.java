@@ -43,7 +43,6 @@ public class FinReceiptDetail implements Entity {
 	private String						status;
 	@XmlElement
 	private String						remarks;
-	private String						receiptNo;
 	private long						logKey			= 0;
 	private boolean						delRecord		= false;
 	private String						partnerBankAc;
@@ -319,14 +318,6 @@ public class FinReceiptDetail implements Entity {
 
 	public void setPartnerBankAcType(String partnerBankAcType) {
 		this.partnerBankAcType = partnerBankAcType;
-	}
-
-	public String getReceiptNo() {
-		return receiptNo;
-	}
-
-	public void setReceiptNo(String receiptNo) {
-		this.receiptNo = receiptNo;
 	}
 
 }

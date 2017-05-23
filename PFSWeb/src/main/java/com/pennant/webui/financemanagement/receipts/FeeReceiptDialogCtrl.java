@@ -172,7 +172,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected AccountSelectionBox							chequeAcNo;
 	protected ExtendedCombobox								fundingAccount;
 	protected Datebox										receivedDate;
-	protected Uppercasebox									receiptNo;
 	protected Textbox										remarks;
 	
 	protected Row											row_favourNo;	
@@ -325,10 +324,9 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		
 		this.receivedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.remarks.setMaxlength(100);
-		this.receiptNo.setMaxlength(50);
 		this.favourName.setMaxlength(50);
 		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-		this.favourNo.setMaxlength(50);
+		this.favourNo.setMaxlength(6);
 		this.depositDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.depositNo.setMaxlength(50);
 		this.paymentRef.setMaxlength(50);
@@ -382,7 +380,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		readOnlyComponent(isReadOnly("FeeReceiptDialog_fundingAccount"), this.fundingAccount);
 		readOnlyComponent(isReadOnly("FeeReceiptDialog_cashReceivedDate"), this.receivedDate);
 		readOnlyComponent(isReadOnly("FeeReceiptDialog_remarks"), this.remarks);
-		readOnlyComponent(isReadOnly("FeeReceiptDialog_receiptNo"), this.receiptNo);
 
 		logger.debug("Leaving");
 	}
@@ -562,7 +559,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.fundingAccount.setObject(null);
 			this.receivedDate.setValue(DateUtility.getAppDate());
 			this.remarks.setValue("");
-			this.receiptNo.setValue("");
 		}
 		
 		if (StringUtils.isEmpty(recMode) || StringUtils.equals(recMode, PennantConstants.List_Select) ||
@@ -698,7 +694,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					receiptDetail.setFundingAc(Long.valueOf(this.fundingAccount.getValue()));
 					receiptDetail.setReceivedDate(this.receivedDate.getValue());
 					receiptDetail.setRemarks(this.remarks.getValue());
-					receiptDetail.setReceiptNo(this.receiptNo.getValue());
 					
 					if(receiptDetail.getRepayHeaders().isEmpty()){
 						FinRepayHeader repayHeader = new FinRepayHeader();
@@ -877,7 +872,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					this.fundingAccount.setDescription(receiptDetail.getFundingAcDesc());
 					this.receivedDate.setValue(receiptDetail.getReceivedDate());
 					this.remarks.setValue(receiptDetail.getRemarks());
-					this.receiptNo.setValue(receiptDetail.getReceiptNo());
 				}
 			}
 		}
@@ -1111,7 +1105,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				if(StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_DD)){
 					label = Labels.getLabel("label_FeeReceiptDialog_DDFavourNo.value");
 				}
-				this.favourNo.setConstraint(new PTStringValidator(label, PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true, 6, 50));
+				this.favourNo.setConstraint(new PTStringValidator(label, PennantRegularExpressions.REGEX_NUMERIC, true, 1, 6));
 			}
 			
 			if(!this.valueDate.isDisabled()){
@@ -1143,20 +1137,15 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_RTGS) || 
 				StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_IMPS)){
 			
-			if(!this.paymentRef.isReadonly()){
-				this.paymentRef.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_paymentReference.value"),
-						PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
-			}
-
 			if(!this.transactionRef.isReadonly()){
 				this.transactionRef.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_tranReference.value"),
 						PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 			}
 		}
 		
-		if (!this.receiptNo.isReadonly()) {
-			this.receiptNo.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_ReceiptNo.value"),
-					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		if(!this.paymentRef.isReadonly()){
+			this.paymentRef.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_paymentReference.value"),
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, false));
 		}
 		
 		if(!this.remarks.isReadonly()){
@@ -1190,7 +1179,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.fundingAccount.setConstraint("");
 		this.receivedDate.setConstraint("");
 		this.remarks.setConstraint("");
-		this.receiptNo.setConstraint("");
 
 		logger.debug("Leaving");
 	}
@@ -1219,7 +1207,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.fundingAccount.setErrorMessage("");
 		this.receivedDate.setErrorMessage("");
 		this.remarks.setErrorMessage("");
-		this.receiptNo.setErrorMessage("");
 
 		logger.debug("Leaving");
 	}
@@ -1314,11 +1301,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 		try {
 			this.receivedDate.getValue();
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			this.receiptNo.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

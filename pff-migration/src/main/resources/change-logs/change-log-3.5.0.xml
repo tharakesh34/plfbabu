@@ -1213,4 +1213,10 @@ WHERE     NOT EXISTS (SELECT 1 FROM BuilderCompany_TEMP WHERE Id = T1.Id)
 			   PartnerBanks T3 ON T1.FundingAc  = T3.PartnerBankID
 </createView>
 </changeSet>
+	<changeSet id="81" author="Siva">
+		<sql>
+			Update FinReceiptDetail set FavourNumber = ${call.substr}(FavourNumber, 0, 6) WHERE ${call.collength}(FavourNumber) > 6;
+			Update FinReceiptDetail_Temp set FavourNumber = ${call.substr}(FavourNumber, 0, 6) WHERE ${call.collength}(FavourNumber) > 6;
+		</sql>
+	</changeSet>
 </databaseChangeLog>

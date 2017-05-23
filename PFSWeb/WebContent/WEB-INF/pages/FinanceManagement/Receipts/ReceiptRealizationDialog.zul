@@ -271,7 +271,8 @@
 										id="label_ReceiptRealizationDialog_depositNo" visible="false"
 										value="${c:l('label_ReceiptRealizationDialog_depositNo.value')}" />
 									<hbox
-										id="hbox_ReceiptRealizationDialog_depositNo" visible="false">
+										id="hbox_ReceiptRealizationDialog_depositNo"
+										visible="false">
 										<space spacing="2px"
 											sclass="mandatory" />
 										<uppercasebox id="depositNo"
@@ -280,16 +281,6 @@
 								</row>
 								<row id="row_PaymentRef"
 									visible="false">
-									<label
-										id="label_ReceiptRealizationDialog_paymentReference"
-										value="${c:l('label_ReceiptRealizationDialog_paymentReference.value')}" />
-									<hbox
-										id="hbox_ReceiptRealizationDialog_paymentReference">
-										<space spacing="2px"
-											sclass="mandatory" />
-										<uppercasebox id="paymentRef"
-											width="180px" />
-									</hbox>
 									<label
 										id="label_ReceiptRealizationDialog_tranReference"
 										value="${c:l('label_ReceiptRealizationDialog_tranReference.value')}" />
@@ -328,16 +319,16 @@
 									</hbox>
 								</row>
 								<row id="row_remarks" visible="false">
-								<label
-									id="label_ReceiptRealizationDialog_ReceiptNo"
-									value="${c:l('label_ReceiptRealizationDialog_ReceiptNo.value')}" />
-								<hbox
-									id="hbox_ReceiptRealizationDialog_ReceiptNo">
-									<space spacing="2px" />
-									<uppercasebox id="receiptNo"
-										width="180px" />
-								</hbox>
-								<label
+									<label
+										id="label_ReceiptRealizationDialog_paymentReference"
+										value="${c:l('label_ReceiptRealizationDialog_paymentReference.value')}" />
+									<hbox
+										id="hbox_ReceiptRealizationDialog_paymentReference">
+										<space spacing="2px" />
+										<uppercasebox id="paymentRef"
+											width="180px" />
+									</hbox>
+									<label
 										id="label_ReceiptRealizationDialog_Remarks"
 										value="${c:l('label_ReceiptRealizationDialog_Remarks.value')}" />
 									<hbox

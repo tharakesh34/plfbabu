@@ -85,7 +85,8 @@
 							label="${c:l('label_ReceiptCancellationDialog_PostingDetails')}" />
 					</tabs>
 					<tabpanels id="tabpanelsBoxIndexCenter">
-						<tabpanel style="overflow:auto" ca:data-scrollable="true">
+						<tabpanel style="overflow:auto"
+							ca:data-scrollable="true">
 							<groupbox style="border:0px;">
 								<grid sclass="GridLayoutNoBorder"
 									fixedLayout="true" style="border:0px" width="100%">
@@ -215,7 +216,7 @@
 												id="bounceCharge" />
 										</row>
 										<row id="row_BounceRemarks">
-										<label
+											<label
 												id="label_ReceiptCancellationDialog_BounceRemarks"
 												value="${c:l('label_ReceiptCancellationDialog_BounceRemarks.value')}" />
 											<hbox>
@@ -321,10 +322,12 @@
 													id="depositDate" width="100px" />
 											</hbox>
 											<label
-												id="label_ReceiptCancellationDialog_depositNo" visible="false"
+												id="label_ReceiptCancellationDialog_depositNo"
+												visible="false"
 												value="${c:l('label_ReceiptCancellationDialog_depositNo.value')}" />
 											<hbox
-												id="hbox_ReceiptCancellationDialog_depositNo" visible="false">
+												id="hbox_ReceiptCancellationDialog_depositNo"
+												visible="false">
 												<space spacing="2px"
 													sclass="mandatory" />
 												<uppercasebox
@@ -333,16 +336,6 @@
 										</row>
 										<row id="row_PaymentRef"
 											visible="false">
-											<label
-												id="label_ReceiptCancellationDialog_paymentReference"
-												value="${c:l('label_ReceiptCancellationDialog_paymentReference.value')}" />
-											<hbox
-												id="hbox_ReceiptCancellationDialog_paymentReference">
-												<space spacing="2px"
-													sclass="mandatory" />
-												<uppercasebox
-													id="paymentRef" width="180px" />
-											</hbox>
 											<label
 												id="label_ReceiptCancellationDialog_tranReference"
 												value="${c:l('label_ReceiptCancellationDialog_tranReference.value')}" />
@@ -383,14 +376,14 @@
 										<row id="row_remarks"
 											visible="false">
 											<label
-											id="label_ReceiptCancellationDialog_ReceiptNo"
-											value="${c:l('label_ReceiptCancellationDialog_ReceiptNo.value')}" />
-										<hbox
-											id="hbox_ReceiptCancellationDialog_ReceiptNo">
-											<space spacing="2px" />
-											<uppercasebox id="receiptNo"
-												width="180px" />
-										</hbox>
+												id="label_ReceiptCancellationDialog_paymentReference"
+												value="${c:l('label_ReceiptCancellationDialog_paymentReference.value')}" />
+											<hbox
+												id="hbox_ReceiptCancellationDialog_paymentReference">
+												<space spacing="2px" />
+												<uppercasebox
+													id="paymentRef" width="180px" />
+											</hbox>
 											<label
 												id="label_ReceiptCancellationDialog_Remarks"
 												value="${c:l('label_ReceiptCancellationDialog_Remarks.value')}" />
@@ -478,9 +471,9 @@
 										<listheader
 											label="${c:l('listheader_PftPayNow.label')}" sort="false"
 											hflex="min" />
-										<listheader  id="listheader_Tds" visible="false"
-											label="${c:l('listheader_TdsPayNow.label')}" sort="false"
-											hflex="min" />
+										<listheader id="listheader_Tds"
+											visible="false" label="${c:l('listheader_TdsPayNow.label')}"
+											sort="false" hflex="min" />
 										<listheader
 											id="listheader_LatePft" visible="false"
 											label="${c:l('listheader_LatePftPayNow.label')}" sort="false"
