@@ -1646,4 +1646,12 @@ update WorkFlowDetails set workflowactive='0' where workflowtype='FEERECEIPT_PRO
 			);
 		</sql>
 	</changeSet>
+		
+	<changeSet id="100" author="Chaitanya.Ch">
+		<sql>
+		
+			Update FinanceMain_Temp set  ReqMaturity = MaturityDate where ReqMaturity is null ;
+			Update FinanceMain set  ReqMaturity = MaturityDate where ReqMaturity is null ;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
