@@ -1263,4 +1263,13 @@ vo.waivedAmt &lt;= 0</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequ
 		UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
 	</sql>
 </changeSet>
+<changeSet id="86" author="Srikanth">
+	<sql>
+	INSERT INTO ErrorDetails VALUES('90286','EN','E','First Disbursement date is same as Current Business date. Not allowed for Payment.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	update ERRORDETAILS set ErrorMessage = '{0} should between or including {1} and {2}.' where ERRORCODE = '90282';
+	update ErrorDetails set ErrorMessage ='Invalid {0}, Available {1} are: {2}.' where Errorcode = '90264';
+	INSERT INTO ErrorDetails VALUES('90287','EN','E','{0} Already had one Phone with {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	INSERT INTO ErrorDetails VALUES('90288','EN','E','{0} Already had one Email with {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+</changeSet>
 </databaseChangeLog>
