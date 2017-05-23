@@ -1068,4 +1068,9 @@ INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (
 		<column name="RestructureReference" type="nvarchar(20)"/>
 	</addColumn>
 	</changeSet>
+	<changeSet id="68" author="Irfan">
+		<sql>
+			update BMTAMOUNTCODES set amountcode='vr_fee' where  amountcode='vr_vasFee';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
