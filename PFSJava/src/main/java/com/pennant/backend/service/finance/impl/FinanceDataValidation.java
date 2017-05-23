@@ -958,6 +958,11 @@ public class FinanceDataValidation {
 						String[] valueParm = new String[1];
 						valueParm[0] = guarantorCIF;
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90103", valueParm)));
+					} else {
+						detail.setGuarantorIDNumber(guarantor.getCustCRCPR());
+						detail.setMobileNo(guarantor.getPhoneNumber());
+						detail.setEmailId(guarantor.getEmailID());
+						detail.setCustID(guarantor.getCustID());
 					}
 				} else {
 					//validate Phone number

@@ -122,6 +122,7 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 	// API validation purpose only
 	@SuppressWarnings("unused")
 	private GuarantorDetail validateGuarantor = this;
+	private long custID;
 
 	public GuarantorDetail() {
 		super();
@@ -144,6 +145,7 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("sumGurantorDetails");
 		excludeFields.add("name");
 		excludeFields.add("validateGuarantor");
+		excludeFields.add("custID");
 		return excludeFields;
 	}
 
@@ -510,5 +512,13 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setAddrZIP(String addrZIP) {
 		this.addrZIP = addrZIP;
+	}
+
+	public long getCustID() {
+		return custID;
+	}
+
+	public void setCustID(long custID) {
+		this.custID = custID;
 	}
 }

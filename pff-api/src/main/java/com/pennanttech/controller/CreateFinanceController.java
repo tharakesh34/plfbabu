@@ -58,6 +58,7 @@ import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
+import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
@@ -93,6 +94,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private FinanceMainService			financeMainService;
 	private JointAccountDetailService	jointAccountDetailService;
 	private FinAdvancePaymentsService	finAdvancePaymentsService;
+	private CustomerAddresService		customerAddresService;
 
 	/**
 	 * Method for process create finance request
@@ -406,13 +408,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		// guarantor details
 		for (GuarantorDetail guarantorDetail : financeDetail.getGurantorsDetailList()) {
 			if (guarantorDetail.isBankCustomer()) {
-				if (customerDetails != null) {
-					if (customerDetails.getCustomer() != null) {
-						guarantorDetail.setGuarantorIDNumber(customerDetails.getCustomer().getCustCRCPR());
-						guarantorDetail.setMobileNo(customerDetails.getCustomer().getPhoneNumber());
-						guarantorDetail.setEmailId(customerDetails.getCustomer().getEmailID());
-					}
-					List<CustomerAddres> address = customerDetails.getAddressList();
+				List<CustomerAddres> address = customerAddresService.getApprovedCustomerAddresById(guarantorDetail.getCustID());
 					if (address != null && !address.isEmpty()) {
 						CustomerAddres customerAddress = address.get(0);
 						guarantorDetail.setAddrCity(customerAddress.getCustAddrCity());
@@ -425,7 +421,6 @@ public class CreateFinanceController extends SummaryDetailService {
 						guarantorDetail.setAddrZIP(customerAddress.getCustAddrZIP());
 						guarantorDetail.setPOBox(customerAddress.getCustPOBox());
 						guarantorDetail.setFlatNbr(customerAddress.getCustFlatNbr());
-					}
 				}
 			}
 			guarantorDetail.setFinReference(financeMain.getFinReference());
@@ -937,4 +932,9 @@ public class CreateFinanceController extends SummaryDetailService {
 	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
 		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
+
+	public void setCustomerAddresService(CustomerAddresService customerAddresService) {
+		this.customerAddresService = customerAddresService;
+	}
+
 }
