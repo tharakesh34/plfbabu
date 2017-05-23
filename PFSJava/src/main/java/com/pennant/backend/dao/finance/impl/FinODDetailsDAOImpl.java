@@ -787,5 +787,52 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 		logger.debug("Leaving");
 		return null;
 	}
+	
+	/**
+	 * Method for Finance Overdue Details Insertion
+	 */
+	@Override
+	public void saveList(List<FinODDetails> finOdDetails) {
+		logger.debug("Entering");
+
+		StringBuilder insertSql = new StringBuilder("Insert Into FinODDetails");
+		insertSql.append(" (FinReference, FinODSchdDate, FinODFor, FinBranch, FinType, CustID, FinODTillDate,");
+		insertSql.append(" FinCurODAmt, FinCurODPri, FinCurODPft, FinMaxODAmt, FinMaxODPri, FinMaxODPft,");
+		insertSql.append(" GraceDays, IncGraceDays, FinCurODDays, TotPenaltyAmt, TotWaived, TotPenaltyPaid,");
+		insertSql.append(" TotPenaltyBal, FinLMdfDate, LPIAmt, LPIPaid, LPIBal, LPIWaived,");
+		insertSql.append(" ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays, ");
+		insertSql.append(" ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc ) ");
+		insertSql.append(" Values");
+		insertSql.append("(:FinReference, :FinODSchdDate, :FinODFor, :FinBranch, :FinType, :CustID, :FinODTillDate,");
+		insertSql.append(" :FinCurODAmt, :FinCurODPri, :FinCurODPft, :FinMaxODAmt, :FinMaxODPri, :FinMaxODPft,");
+		insertSql.append(" :GraceDays, :IncGraceDays, :FinCurODDays, :TotPenaltyAmt, :TotWaived, :TotPenaltyPaid,");
+		insertSql.append(" :TotPenaltyBal, :FinLMdfDate, :LPIAmt, :LPIPaid, :LPIBal, :LPIWaived, ");
+		insertSql.append(" :ApplyODPenalty, :ODIncGrcDays, :ODChargeType, :ODGraceDays, ");
+		insertSql.append(" :ODChargeCalOn, :ODChargeAmtOrPerc, :ODAllowWaiver, :ODMaxWaiverPerc )");
+
+		logger.debug("insertSql: " + insertSql.toString());
+
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finOdDetails.toArray());
+		this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+	
+	@Override
+	public void deleteAfterODDate(String finReference, Date odDate) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinOdSchdDate", odDate);
+		source.addValue("FinReference", finReference);
+
+		StringBuilder deleteSql = new StringBuilder(" Delete From FinODDetails ");
+		deleteSql.append(" Where FinReference = :FinReference");
+		deleteSql.append(" AND FinOdSchdDate >= :FinOdSchdDate ");
+
+		logger.debug("deleteSql: " + deleteSql.toString());
+		this.namedParameterJdbcTemplate.update(deleteSql.toString(), source);
+		logger.debug("Leaving");
+	}
+	
 
 }

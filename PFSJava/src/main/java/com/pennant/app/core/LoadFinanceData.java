@@ -45,11 +45,11 @@ public class LoadFinanceData extends ServiceHelper {
 		List<FinanceScheduleDetail> custSchdDetails = getFinanceScheduleDetailDAO().getFinScheduleDetails(custID, true);
 		List<FinanceProfitDetail> custpftDet = getFinanceProfitDetailDAO().getFinProfitDetailsByCustId(custID, true);
 
-		for (int i = 0; i < custFinMains.size(); i++) {
+		for (FinanceMain main : custFinMains) {
 			FinEODEvent finEODEvent = new FinEODEvent();
 
 			//FINANCE MAIN
-			finEODEvent.setFinanceMain(custFinMains.get(i));
+			finEODEvent.setFinanceMain(main);
 			String finType = finEODEvent.getFinanceMain().getFinType();
 			String finReference = finEODEvent.getFinanceMain().getFinReference();
 
@@ -71,6 +71,7 @@ public class LoadFinanceData extends ServiceHelper {
 		//clear temporary data
 		custpftDet.clear();
 		custFinMains.clear();
+		custSchdDetails.clear();
 		logger.debug(" Leaving ");
 		return custEODEvent;
 	}
@@ -169,29 +170,39 @@ public class LoadFinanceData extends ServiceHelper {
 
 	}
 
+	/**
+	 * @param custEODEvent
+	 * @param finEODEvent
+	 * @param schdDate
+	 * @param iSchd
+	 * @throws Exception
+	 */
 	public void setDateRollover(CustEODEvent custEODEvent, FinEODEvent finEODEvent, Date schdDate, int iSchd)
 			throws Exception {
 		FinanceMain finMain = finEODEvent.getFinanceMain();
 
-		if (finMain.isAllowGrcPeriod() && schdDate.compareTo(finMain.getGrcPeriodEndDate()) < 0) {
+		Date grcEndDate = finMain.getGrcPeriodEndDate();
+
+		if (finMain.isAllowGrcPeriod() && schdDate.compareTo(grcEndDate) < 0) {
 			//Set Next Grace Capitalization Date
-			if (finMain.isAllowGrcCpz() && finMain.getNextGrcCpzDate().compareTo(finMain.getGrcPeriodEndDate()) < 0
-					&& schdDate.compareTo(finMain.getNextGrcCpzDate()) == 0) {
+			Date nextGrcCpzDate = finMain.getNextGrcCpzDate();
+			if (finMain.isAllowGrcCpz() && nextGrcCpzDate.compareTo(grcEndDate) < 0
+					&& schdDate.compareTo(nextGrcCpzDate) == 0) {
 				finEODEvent.setIdxGrcCpz(iSchd);
 				custEODEvent.setDateRollover(true);
 			}
 
 			//Set Next Grace Profit Date
-			if (finMain.getNextGrcPftDate().compareTo(finMain.getGrcPeriodEndDate()) < 0
-					&& schdDate.compareTo(finMain.getNextGrcPftDate()) == 0) {
+			Date nextGrcPftDate = finMain.getNextGrcPftDate();
+			if (nextGrcPftDate.compareTo(grcEndDate) < 0 && schdDate.compareTo(nextGrcPftDate) == 0) {
 				finEODEvent.setIdxGrcPft(iSchd);
 				custEODEvent.setDateRollover(true);
 			}
 
 			//Set Next Grace Profit Review Date
-			if (finMain.isAllowGrcPftRvw()
-					&& finMain.getNextGrcPftRvwDate().compareTo(finMain.getGrcPeriodEndDate()) < 0
-					&& schdDate.compareTo(finMain.getNextGrcPftRvwDate()) == 0) {
+			Date nextGrcPftRvwDate = finMain.getNextGrcPftRvwDate();
+			if (finMain.isAllowGrcPftRvw() && nextGrcPftRvwDate.compareTo(grcEndDate) < 0
+					&& schdDate.compareTo(nextGrcPftRvwDate) == 0) {
 				finEODEvent.setIdxGrcPftRvw(iSchd);
 				custEODEvent.setDateRollover(true);
 			}
@@ -225,14 +236,17 @@ public class LoadFinanceData extends ServiceHelper {
 		}
 
 		//Set Next Depreciation Date
-		if (finMain.getNextDepDate() != null && schdDate.compareTo(finMain.getNextDepDate()) == 0) {
-			if (!StringUtils.isEmpty(finMain.getDepreciationFrq())) {
-				if (finMain.getNextDepDate().compareTo(finMain.getMaturityDate()) < 0) {
-					finMain.setNextDepDate(FrequencyUtil.getNextDate(finMain.getDepreciationFrq(), 1, schdDate, "A",
-							false).getNextFrequencyDate());
+		Date nextDepDate = finMain.getNextDepDate();
+		String deprFrq = finMain.getDepreciationFrq();
+		if (nextDepDate != null && schdDate.compareTo(nextDepDate) == 0) {
+			if (!StringUtils.isEmpty(deprFrq)) {
+				if (nextDepDate.compareTo(finMain.getMaturityDate()) < 0) {
+					Date nextFrqDate = FrequencyUtil.getNextDate(deprFrq, 1, schdDate, "A", false)
+							.getNextFrequencyDate();
+					finMain.setNextDepDate(nextFrqDate);
 				}
 
-				if (finMain.getNextDepDate().compareTo(finMain.getMaturityDate()) > 0) {
+				if (nextDepDate.compareTo(finMain.getMaturityDate()) > 0) {
 					finMain.setNextDepDate(finMain.getMaturityDate());
 				}
 
@@ -249,60 +263,66 @@ public class LoadFinanceData extends ServiceHelper {
 		List<ReturnDataSet> returnDataSets = new ArrayList<ReturnDataSet>(1);
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
+
 			FinanceMain finMain = finEODEvent.getFinanceMain();
+			Map<Date, Integer> dateMap = finEODEvent.getDatesMap();
+
+			String finRef = finMain.getFinReference();
+			boolean rateReview = finEODEvent.isupdFinSchdForRateRvw();
+			boolean monthEnd = finEODEvent.isUpdMonthEndPostings();
+			boolean lbdPosted = finEODEvent.isUpdLBDPostings();
 
 			//update finance main
 			if (finEODEvent.isUpdFinMain()) {
 				//finEODEvent.getFinanceMain().setVersion(finEODEvent.getFinanceMain().getVersion() + 1);
-				getFinanceMainDAO().updateFinanceInEOD(finMain, finEODEvent.getFinMainUpdateFields(),
-						finEODEvent.isupdFinSchdForRateRvw());
+				getFinanceMainDAO().updateFinanceInEOD(finMain, finEODEvent.getFinMainUpdateFields(), rateReview);
 			}
 
 			//update profit details
-			getFinanceProfitDetailDAO().updateEOD(finEODEvent.getFinProfitDetail(), finEODEvent.isUpdLBDPostings(),
-					finEODEvent.isUpdMonthEndPostings());
+			getFinanceProfitDetailDAO().updateEOD(finEODEvent.getFinProfitDetail(), lbdPosted, monthEnd);
 
 			//update schedule details 
-			if (finEODEvent.isupdFinSchdForRateRvw()) {
+			if (rateReview) {
 				getFinanceScheduleDetailDAO().updateForRateReview(finEODEvent.getFinanceScheduleDetails());
 			}
 
 			//Update overdue details
 			List<FinODDetails> odDetails = finEODEvent.getFinODDetails();
-			if (odDetails != null && !odDetails.isEmpty()) {
-				for (FinODDetails finODDetails : odDetails) {
-					if (StringUtils.equals(finODDetails.getRcdAction(), PennantConstants.RECORD_INSERT)) {
-						if (finODDetails.getFinCurODDays() != 0) {
-							getFinODDetailsDAO().save(finODDetails);
-						}
-					} else if (StringUtils.equals(finODDetails.getRcdAction(), PennantConstants.RECORD_UPDATE)) {
-						getFinODDetailsDAO().update(finODDetails);
-					}
-				}
+			Date odDate = getDateFromMap(dateMap, finEODEvent.getIdxPD());
+
+			if (odDate != null && odDetails != null && !odDetails.isEmpty()) {
+				// delete and insert based on the current OD index
+				getFinODDetailsDAO().deleteAfterODDate(finRef, odDate);
+				getFinODDetailsDAO().saveList(odDetails);
 			}
 
 			//update repay instruction
 			if (finEODEvent.isUpdRepayInstruct()) {
-
-				getRepayInstructionDAO().deleteByFinReference(finMain.getFinReference(), "", false, 0);
+				//delete 
+				getRepayInstructionDAO().deleteInEOD(finRef);
 				//Add repay instructions
 				List<RepayInstruction> lisRepayIns = finEODEvent.getRepayInstructions();
 				for (RepayInstruction repayInstruction : lisRepayIns) {
-					repayInstruction.setFinReference(finEODEvent.getFinanceMain().getFinReference());
+					repayInstruction.setFinReference(finRef);
 				}
-				getRepayInstructionDAO().saveList(lisRepayIns, "", false);
+				getRepayInstructionDAO().saveListInEOD(lisRepayIns);
 			}
-
+			// group all the posting
 			returnDataSets.addAll(finEODEvent.getReturnDataSet());
 		}
 
+		//save postings
 		saveAccountingEOD(returnDataSets);
+		//update accounts
 		getAccountProcessUtil().procAccountUpdate(returnDataSets);
 
+		//update customer
 		if (custEODEvent.isUpdCustomer()) {
 			Customer customer = custEODEvent.getCustomer();
-			getCustomerDAO().updateCustStatus(customer.getCustSts(), customer.getCustStsChgDate(),
-					custEODEvent.getCustomer().getCustID());
+			long custID = customer.getCustID();
+			String custSts = customer.getCustSts();
+			Date stsChgDate = customer.getCustStsChgDate();
+			getCustomerDAO().updateCustStatus(custSts, stsChgDate, custID);
 		}
 
 		logger.debug(" Leaving ");

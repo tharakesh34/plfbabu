@@ -57,33 +57,65 @@ import com.pennant.backend.model.finance.FinODDetails;
 public interface FinODDetailsDAO {
 
 	void update(FinODDetails finOdDetails);
+
 	void save(FinODDetails finOdDetails);
+
 	int getPendingOverDuePayment(String finReference);
+
 	void updateTotals(FinODDetails detail);
+
 	void resetTotals(FinODDetails detail);
+
 	int getFinODDays(String finReference, String type);
+
 	FinODDetails getFinODSummary(String finReference, int graceDays, boolean crbCheck, String type);
+
 	Long checkCustPastDue(long custID);
+
 	void updateBatch(FinODDetails finOdDetails);
+
 	void saveHoldAccountStatus(List<AccountHoldStatus> returnAcList);
+
 	void saveODDeferHistory(String finReference, List<Date> pastdueDefDateList);
+
 	void deleteODDeferHistory(String finReference, List<Date> pastdueDefDateList);
+
 	int getMaxODDaysOnDeferSchd(String finReference, List<Date> pastdueDefDateList);
+
 	FinODDetails getMaxDaysFinODDetails(String finReference);
+
 	List<Date> getMismatchODDates(String finReference, List<Date> schDateList);
+
 	void updatePenaltyTotals(FinODDetails detail);
+
 	FinODDetails getTotals(String finReference);
+
 	FinODDetails getFinODSummary(String finReference);
+
 	BigDecimal getTotalPenaltyBal(String finReference);
+
 	BigDecimal getTotalODPftBal(String finReference);
 
 	//Receipts
 	List<FinODDetails> getFinODBalByFinRef(String finReference);
+
 	Date getFinDueFromDate(String finReference);
+
 	void updateLatePftTotals(String finReference, Date odSchDate, BigDecimal paidNow, BigDecimal waivedNow);
+
 	FinODDetails getFinODyFinRefSchDate(String finReference, Date schdate);
+
 	void updateReversals(String finReference, Date odSchDate, BigDecimal penaltyPaid, BigDecimal latePftPaid);
+
 	FinODDetails getFinODDetailsForBatch(String finReference, Date schdDate);
+
 	int getFinCurSchdODDays(String finReference, Date finODSchdDate);
+
+	//EOD
 	List<FinODDetails> getFinODDByFinRef(String finReference, Date odSchdDate);
+
+	void deleteAfterODDate(String finReference, Date odDate);
+
+	void saveList(List<FinODDetails> finOdDetails);
+
 }

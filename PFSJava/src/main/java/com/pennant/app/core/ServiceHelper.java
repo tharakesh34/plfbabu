@@ -53,6 +53,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
@@ -223,6 +224,15 @@ abstract public class ServiceHelper implements Serializable {
 			return datesMap.get(formatDate);
 		}
 		return 0;
+	}
+	
+	public Date getDateFromMap(Map<Date, Integer> datesMap, int index) {
+		for (Entry<Date, Integer> entryset : datesMap.entrySet()) {
+			if (entryset.getValue() == index) {
+				return formatDate(entryset.getKey());
+			}
+		}
+		return null;
 	}
 
 	public Date formatDate(Date date) {

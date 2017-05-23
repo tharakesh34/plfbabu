@@ -39,23 +39,38 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.finance;
+
 import java.util.List;
 
 import com.pennant.backend.model.finance.RepayInstruction;
 
 public interface RepayInstructionDAO {
 
-	RepayInstruction getRepayInstructionById(String id,String type,boolean isWIF);
-	void update(RepayInstruction repayInstruction,String type,boolean isWIF);
-	void deleteByFinReference(String id,String type,boolean isWIF, long logKey);
-	String save(RepayInstruction repayInstruction,String type,boolean isWIF);
-	List<RepayInstruction> getRepayInstructions(String id, String type,boolean isWIF);
-	List<RepayInstruction> getRepayInstructions(String id, String type,boolean isWIF, long logKey);
-	void delete(RepayInstruction repayInstruction,String type,boolean isWIF);
-	void saveList(List<RepayInstruction> repayInstruction, String type,boolean isWIF);
+	RepayInstruction getRepayInstructionById(String id, String type, boolean isWIF);
+
+	void update(RepayInstruction repayInstruction, String type, boolean isWIF);
+
+	void deleteByFinReference(String id, String type, boolean isWIF, long logKey);
+
+	String save(RepayInstruction repayInstruction, String type, boolean isWIF);
+
+	List<RepayInstruction> getRepayInstructions(String id, String type, boolean isWIF);
+
+	List<RepayInstruction> getRepayInstructions(String id, String type, boolean isWIF, long logKey);
+
+	void delete(RepayInstruction repayInstruction, String type, boolean isWIF);
+
+	void saveList(List<RepayInstruction> repayInstruction, String type, boolean isWIF);
+
 	void updateList(List<RepayInstruction> repayInstruction, String type, boolean isWIF);
+
+	//EOD
 	List<RepayInstruction> getRepayInstrEOD(String id);
+
+	void deleteInEOD(String id);
+
+	void saveListInEOD(List<RepayInstruction> repayInstruction);
 }

@@ -461,7 +461,58 @@ public class RepayInstructionDAOImpl extends BasisCodeDAO<RepayInstruction> impl
 
 		List<RepayInstruction> repayInstructions = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving");
-		return repayInstructions;	}
+		return repayInstructions;	
+	}
+	
+	@Override
+	public void deleteInEOD(String id) {
+		logger.debug("Entering");
+		RepayInstruction repayInstruction = new RepayInstruction();
+		repayInstruction.setId(id);
+		StringBuilder deleteSql = new StringBuilder("Delete ");
+		deleteSql.append(" From FinRepayInstruction");	
+		deleteSql.append(" Where FinReference =:FinReference");
+		logger.debug("deleteSql: " + deleteSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(repayInstruction);
+		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * This method insert list of new Records into FinRepayInstruction or FinRepayInstruction_Temp.
+	 *
+	 * save Repay Instruction Detail 
+	 * 
+	 * @param Repay Instruction Detail (repayInstruction)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return void
+	 * @throws DataAccessException
+	 * 
+	 */
+	
+	@Override
+	public void saveListInEOD(List<RepayInstruction> repayInstruction) {
+		logger.debug("Entering");
+		
+		StringBuilder insertSql =new StringBuilder("Insert Into ");
+		insertSql.append(" FinRepayInstruction");	
+		insertSql.append(" (FinReference, RepayDate, RepayAmount, RepaySchdMethod, ");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:FinReference, :RepayDate, :RepayAmount, :RepaySchdMethod, ");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		
+		logger.debug("insertSql: " + insertSql.toString());
+		
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(repayInstruction.toArray());
+		try {
+			this.namedParameterJdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		} catch(Exception e) {
+			logger.error("Exception", e);
+			throw e;
+		}
+		logger.debug("Leaving");
+	}
 
 	
 }
