@@ -1272,4 +1272,18 @@ vo.waivedAmt &lt;= 0</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequ
 	INSERT INTO ErrorDetails VALUES('90288','EN','E','{0} Already had one Email with {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 </changeSet>
+<changeSet id="87" author="Irfan">
+<sql>
+	Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+	Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+	
+	Delete from SecGroupRights where RightID In (Select RightID from SecRights	where RightName = 'ReceiptDialog_receiptNo');
+	Delete from SecGroupRights where RightID In (Select RightID from SecRights	where RightName = 'FeeReceiptDialog_receiptNo');
+	Delete from SecRights where RightName ='ReceiptDialog_receiptNo';
+	Delete from SecRights where RightName ='FeeReceiptDialog_receiptNo';
+	
+	Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);	
+	Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+</sql>
+</changeSet>
 </databaseChangeLog>
