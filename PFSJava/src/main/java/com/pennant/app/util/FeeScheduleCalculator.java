@@ -206,13 +206,12 @@ public class FeeScheduleCalculator {
 			feeSchdDetail = feeSchdDetails.get(i);
 			Date feeSchdDate = feeSchdDetail.getSchDate();
 
-			totalSchdFee = totalSchdFee.add(feeSchdDetail.getSchAmount());
-
 			//Fee Schedule date is before event from date
 			if (feeSchdDate.compareTo(evtFromDate) < 0) {
 				continue;
 			}
 
+			totalSchdFee = totalSchdFee.add(feeSchdDetail.getSchAmount());
 			//Find O/S Fee exclusing written-off fee.
 			BigDecimal osFee = feeSchdDetail.getSchAmount().subtract(feeSchdDetail.getPaidAmount())
 					.subtract(feeSchdDetail.getWaiverAmount());
@@ -286,6 +285,9 @@ public class FeeScheduleCalculator {
 		long feeID = finFeeDetail.getFeeID();
 		int schTerms = 0;
 		int recalTerms = financeMain.getRecalTerms();
+		if(recalTerms == 0 ){
+			return;
+		}
 		
 		BigDecimal recalFee = financeMain.getRecalFee();
 
@@ -349,11 +351,11 @@ public class FeeScheduleCalculator {
 		for (int i = 0; i < finSchdDetails.size(); i++) {
 			curSchd = finSchdDetails.get(i);
 
-			curSchd.setFeeSchd(BigDecimal.ZERO);							//This might cause issue  in servicing
 
 			if (curSchd.getSchDate().before(evtFromDate)) {
 				continue;
 			}
+			curSchd.setFeeSchd(BigDecimal.ZERO);							//This might cause issue  in servicing
 
 			if (!curSchd.isRepayOnSchDate() && !curSchd.isPftOnSchDate()) {
 				continue;
@@ -394,16 +396,16 @@ public class FeeScheduleCalculator {
 			List<FinFeeScheduleDetail> feeSchdDetails = feeDetails.get(i).getFinFeeScheduleDetailList();
 			for (int j = 0; j < feeSchdDetails.size(); j++) {
 				feeSchdDetail = feeSchdDetails.get(j);
-				if(rpySchdMap.containsKey(feeSchdDetail.getSchDate())) {
-					int schdIdx = rpySchdMap.get(feeSchdDetail.getSchDate());
-					
-					if (schdIdx <= 0) {
-						schdIdx = hldSchdMap.get(feeSchdDetail.getSchDate());
-					}
-					
-					FinanceScheduleDetail curSchd = finSchdDetails.get(schdIdx);
-					curSchd.setFeeSchd(curSchd.getFeeSchd().add(feeSchdDetail.getSchAmount()));
+				if(!rpySchdMap.containsKey(feeSchdDetail.getSchDate())){
+					continue;
 				}
+				int schdIdx = rpySchdMap.get(feeSchdDetail.getSchDate());
+
+				if (schdIdx <= 0) {
+					schdIdx = hldSchdMap.get(feeSchdDetail.getSchDate());
+				}
+				FinanceScheduleDetail curSchd = finSchdDetails.get(schdIdx);
+				curSchd.setFeeSchd(curSchd.getFeeSchd().add(feeSchdDetail.getSchAmount()));
 			}
 		}
 
