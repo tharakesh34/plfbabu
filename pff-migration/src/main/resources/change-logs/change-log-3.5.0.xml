@@ -950,6 +950,8 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
        RMTCURRENCIES C on C.ccycode= FP.finccy]]>
 		</createView>
 	</changeSet>
+
+	
 	<changeSet id="63" author="Madhubabu">
 		<createTable tableName="FeePostings">
 			<column name="PostId" type="bigint">
@@ -999,6 +1001,7 @@ SELECT		T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence,
 			
 		</createTable>
 	</changeSet>
+
 	
 	<changeSet id="65" author="satya">
 	<sql>
@@ -1073,4 +1076,114 @@ INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (
 			update BMTAMOUNTCODES set amountcode='vr_fee' where  amountcode='vr_vasFee';
 		</sql>
 	</changeSet>
+	             <changeSet id="69" author="Satya" >
+				<createTable tableName="BUILDERCOMPANY">
+			<column name="ID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="NAME" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEGMENTATION" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+                       <column name="GROUPID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />   
+		</createTable> 
+	</changeSet>
+        <changeSet id="70" author="satya">
+		<addForeignKeyConstraint constraintName="FK_BuilderGroup"
+			referencedTableName="BUILDERGROUP" referencedColumnNames="ID"
+			baseTableName="BUILDERCOMPANY" baseColumnNames="GROUPID" />
+	</changeSet>
+		<changeSet id="71" author="Satya">
+	<createTable tableName="BUILDERCOMPANY_TEMP">
+			<column name="ID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="NAME" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEGMENTATION" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+                       <column name="GROUPID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />   
+		</createTable> 
+	</changeSet>
+<changeSet id="72" author="satya">
+		<addForeignKeyConstraint constraintName="FK_BuilderGroup_TEMP"
+			referencedTableName="BUILDERGROUP" referencedColumnNames="ID"
+			baseTableName="BUILDERCOMPANY_TEMP" baseColumnNames="GROUPID" />
+	</changeSet>
+	
+<changeSet id="73" author="Satya">
+	<sql>
+		ALTER TABLE BUILDERCOMPANY
+		ADD CONSTRAINT UK_BUILDERCOMPANY_NAME UNIQUE (NAME);
+	</sql>
+</changeSet>
+<changeSet id="74" author="Satya">
+	<sql>
+		ALTER TABLE BUILDERCOMPANY_TEMP
+		ADD CONSTRAINT UK_BUILDERCMPY_TMP_NME UNIQUE (NAME);
+	</sql>
+</changeSet>
+
+
+<changeSet id="75" author="Satya">
+	<createView viewName="BuilderCompany_AView" replaceIfExists="true">
+SELECT		T1.Id, T1.Name, T1.Segmentation,T1.GroupId		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	BuilderCompany T1
+</createView>
+</changeSet>
+
+<changeSet id="76" author="Satya">
+	<createView viewName="BuilderCompany_TView" replaceIfExists="true">
+SELECT		T1.Id, T1.Name, T1.Segmentation,T1.GroupId		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	BuilderCompany_Temp T1
+</createView>
+</changeSet>
+
+	<changeSet id="77" author="Satya">
+	<createView viewName="BuilderCompany_View" replaceIfExists="true">
+SELECT		T1.Id, T1.Name, T1.Segmentation,T1.GroupId	
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	BuilderCompany_Temp  T1 
+UNION ALL
+
+SELECT		T1.Id, T1.Name, T1.Segmentation,T1.GroupId	
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	BuilderCompany  T1 
+WHERE     NOT EXISTS (SELECT 1 FROM BuilderCompany_TEMP WHERE Id = T1.Id)
+</createView>
+</changeSet>
 </databaseChangeLog>
