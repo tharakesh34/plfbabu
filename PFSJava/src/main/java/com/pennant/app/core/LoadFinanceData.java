@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -43,11 +42,8 @@ public class LoadFinanceData extends ServiceHelper {
 
 		long custID = custEODEvent.getCustomer().getCustID();
 		List<FinanceMain> custFinMains = getFinanceMainDAO().getFinMainsForEODByCustId(custID, true);
-		List<FinanceScheduleDetail> custfinSchdDetails = getFinanceScheduleDetailDAO().getFinScheduleDetails(custID,
-				true);
-
-		List<FinanceProfitDetail> listprofitDetails = getFinanceProfitDetailDAO().getFinProfitDetailsByCustId(custID,
-				true);
+		List<FinanceScheduleDetail> custSchdDetails = getFinanceScheduleDetailDAO().getFinScheduleDetails(custID, true);
+		List<FinanceProfitDetail> custpftDet = getFinanceProfitDetailDAO().getFinProfitDetailsByCustId(custID, true);
 
 		for (int i = 0; i < custFinMains.size(); i++) {
 			FinEODEvent finEODEvent = new FinEODEvent();
@@ -60,30 +56,28 @@ public class LoadFinanceData extends ServiceHelper {
 			//FINANCE TYPE
 			FinanceType financeType = getFinanceType(finType);
 			finEODEvent.setFinType(financeType);
-			//FIXME: PV 14MAY17 What about promotions
 
 			//FINPROFIT DETAILS
-			finEODEvent.setFinProfitDetail(getFinanceProfitDetailRef(finReference, listprofitDetails));
+			finEODEvent.setFinProfitDetail(getFinanceProfitDetailRef(finReference, custpftDet));
 
 			//FINSCHDULE DETAILS
-			List<FinanceScheduleDetail> finSchdDetails = getFinSchdDetailRef(finReference, custfinSchdDetails);
+			List<FinanceScheduleDetail> finSchdDetails = getFinSchdDetailRef(finReference, custSchdDetails);
 			finEODEvent.setFinanceScheduleDetails(finSchdDetails);
 
+			setEventFlags(custEODEvent, finEODEvent);
 			custEODEvent.getFinEODEvents().add(finEODEvent);
-			setEventFlags(custEODEvent, i);
 		}
 
 		//clear temporary data
-		listprofitDetails.clear();
+		custpftDet.clear();
 		custFinMains.clear();
 		logger.debug(" Leaving ");
 		return custEODEvent;
 	}
 
-	public void setEventFlags(CustEODEvent custEODEvent, int iFinEvent) throws Exception {
+	public void setEventFlags(CustEODEvent custEODEvent, FinEODEvent finEODEvent) throws Exception {
 
 		Map<Date, Integer> datesMap = new HashMap<Date, Integer>();
-		FinEODEvent finEODEvent = custEODEvent.getFinEODEvents().get(iFinEvent);
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
 		Date valueDate = custEODEvent.getEodValueDate();
 		Date businessDate = DateUtility.addDays(custEODEvent.getEodValueDate(), 1);
@@ -136,7 +130,7 @@ public class LoadFinanceData extends ServiceHelper {
 
 			//Date Rollover Setting
 			if (curSchd.getSchDate().compareTo(businessDate) == 0) {
-				setDateRollover(custEODEvent, iFinEvent, curSchd.getSchDate(), i);
+				setDateRollover(custEODEvent, finEODEvent, curSchd.getSchDate(), i);
 			}
 
 			//PastDue Index Setting
@@ -175,8 +169,8 @@ public class LoadFinanceData extends ServiceHelper {
 
 	}
 
-	public void setDateRollover(CustEODEvent custEODEvent, int iFinEvent, Date schdDate, int iSchd) throws Exception {
-		FinEODEvent finEODEvent = custEODEvent.getFinEODEvents().get(iFinEvent);
+	public void setDateRollover(CustEODEvent custEODEvent, FinEODEvent finEODEvent, Date schdDate, int iSchd)
+			throws Exception {
 		FinanceMain finMain = finEODEvent.getFinanceMain();
 
 		if (finMain.isAllowGrcPeriod() && schdDate.compareTo(finMain.getGrcPeriodEndDate()) < 0) {
@@ -255,12 +249,13 @@ public class LoadFinanceData extends ServiceHelper {
 		List<ReturnDataSet> returnDataSets = new ArrayList<ReturnDataSet>(1);
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
+			FinanceMain finMain = finEODEvent.getFinanceMain();
 
 			//update finance main
 			if (finEODEvent.isUpdFinMain()) {
 				//finEODEvent.getFinanceMain().setVersion(finEODEvent.getFinanceMain().getVersion() + 1);
-				getFinanceMainDAO().updateFinanceInEOD(finEODEvent.getFinanceMain(),
-						finEODEvent.getFinMainUpdateFields(), finEODEvent.isupdFinSchdForRateRvw());
+				getFinanceMainDAO().updateFinanceInEOD(finMain, finEODEvent.getFinMainUpdateFields(),
+						finEODEvent.isupdFinSchdForRateRvw());
 			}
 
 			//update profit details
@@ -289,8 +284,7 @@ public class LoadFinanceData extends ServiceHelper {
 			//update repay instruction
 			if (finEODEvent.isUpdRepayInstruct()) {
 
-				getRepayInstructionDAO().deleteByFinReference(finEODEvent.getFinanceMain().getFinReference(), "",
-						false, 0);
+				getRepayInstructionDAO().deleteByFinReference(finMain.getFinReference(), "", false, 0);
 				//Add repay instructions
 				List<RepayInstruction> lisRepayIns = finEODEvent.getRepayInstructions();
 				for (RepayInstruction repayInstruction : lisRepayIns) {
@@ -343,30 +337,4 @@ public class LoadFinanceData extends ServiceHelper {
 		getCustomerQueuingDAO().updateFailed(customerQueuing);
 	}
 
-	private FinanceProfitDetail getFinanceProfitDetailRef(String finMainRef, List<FinanceProfitDetail> listprofitDetails) {
-		FinanceProfitDetail profitDetail = null;
-		Iterator<FinanceProfitDetail> it = listprofitDetails.iterator();
-		while (it.hasNext()) {
-			FinanceProfitDetail financeProfitDetail = (FinanceProfitDetail) it.next();
-			if (StringUtils.equals(financeProfitDetail.getFinReference(), finMainRef)) {
-				profitDetail = financeProfitDetail;
-				it.remove();
-				break;
-			}
-		}
-		return profitDetail;
-	}
-
-	private List<FinanceScheduleDetail> getFinSchdDetailRef(String finMainRef, List<FinanceScheduleDetail> finSchdlist) {
-		List<FinanceScheduleDetail> finSchedulelist = new ArrayList<FinanceScheduleDetail>();
-		Iterator<FinanceScheduleDetail> it = finSchdlist.iterator();
-		while (it.hasNext()) {
-			FinanceScheduleDetail financeProfitDetail = (FinanceScheduleDetail) it.next();
-			if (StringUtils.equals(financeProfitDetail.getFinReference(), finMainRef)) {
-				finSchedulelist.add(financeProfitDetail);
-				it.remove();
-			}
-		}
-		return finSchedulelist;
-	}
 }

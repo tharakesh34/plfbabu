@@ -46,9 +46,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -80,6 +82,8 @@ import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.SecondaryAccount;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEEvent;
@@ -266,6 +270,34 @@ abstract public class ServiceHelper implements Serializable {
 
 		return secordayAccounts.toString();
 
+	}
+	
+	
+	public FinanceProfitDetail getFinanceProfitDetailRef(String finMainRef, List<FinanceProfitDetail> listprofitDetails) {
+		FinanceProfitDetail profitDetail = null;
+		Iterator<FinanceProfitDetail> it = listprofitDetails.iterator();
+		while (it.hasNext()) {
+			FinanceProfitDetail financeProfitDetail = (FinanceProfitDetail) it.next();
+			if (StringUtils.equals(financeProfitDetail.getFinReference(), finMainRef)) {
+				profitDetail = financeProfitDetail;
+				it.remove();
+				break;
+			}
+		}
+		return profitDetail;
+	}
+
+	public List<FinanceScheduleDetail> getFinSchdDetailRef(String finMainRef, List<FinanceScheduleDetail> finSchdlist) {
+		List<FinanceScheduleDetail> finSchedulelist = new ArrayList<FinanceScheduleDetail>();
+		Iterator<FinanceScheduleDetail> it = finSchdlist.iterator();
+		while (it.hasNext()) {
+			FinanceScheduleDetail financeProfitDetail = (FinanceScheduleDetail) it.next();
+			if (StringUtils.equals(financeProfitDetail.getFinReference(), finMainRef)) {
+				finSchedulelist.add(financeProfitDetail);
+				it.remove();
+			}
+		}
+		return finSchedulelist;
 	}
 
 	public FinContributorDetailDAO getFinContributorDetailDAO() {
