@@ -494,12 +494,12 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		}
 		
 		// If Step already utilizing , Not allowed to Delete
-		if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, stepPolicyHeader.getRecordType())){
+		/*if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, stepPolicyHeader.getRecordType())){
 			boolean isStepUsed = getFinanceTypeDAO().isStepPolicyExists(stepPolicyHeader.getPolicyCode());
 			if(isStepUsed){
 				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, null));
 			}
-		}
+		}*/
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 		if ("doApprove".equals(StringUtils.trimToEmpty(method))	|| !stepPolicyHeader.isWorkflow()) {

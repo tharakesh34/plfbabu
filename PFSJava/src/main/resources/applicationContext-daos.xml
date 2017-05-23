@@ -3818,6 +3818,8 @@
 		<property name="stepPolicyHeaderDAO" ref="stepPolicyHeaderDAO" />
 		<property name="stepPolicyDetailDAO" ref="stepPolicyDetailDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		
 	</bean>
 
 	<!-- Transaction Entry -->
