@@ -3199,7 +3199,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					.getLabel("label_ReceiptDialog_EffecScheduleMethod.value")));
 		}
 		
-		if(!this.realizationDate.isDisabled()){
+		if(this.row_RealizationDate.isVisible() && !this.realizationDate.isDisabled()){
 			this.realizationDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ReceiptRealizationDialog_RealizationDate.value"), 
 					true, true,	DateUtility.getAppDate(), true));
 		}
