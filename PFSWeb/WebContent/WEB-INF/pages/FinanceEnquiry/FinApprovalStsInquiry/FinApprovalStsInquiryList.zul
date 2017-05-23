@@ -157,7 +157,7 @@
 									</hbox>
 									
 								</row>
-								<row visible="true">
+								<row id="row_Role" visible="true">
 									<label
 										id="label_FinApprovalStsInquiryList_CurrentRole"
 										value="${c:l('label_FinApprovalStsInquiryList_CurrentRole.value')}" />

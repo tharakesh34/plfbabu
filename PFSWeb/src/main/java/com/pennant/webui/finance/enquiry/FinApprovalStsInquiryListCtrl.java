@@ -56,6 +56,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -128,6 +129,8 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 
 	protected Textbox previousRole;
 	protected Listbox sortOperator_PreviousRole;
+	
+	protected Row	row_Role;
 
 	protected Button btnSearchFinType;
 	protected Button btnSearchBranch;
@@ -231,6 +234,9 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 		// Render the page and display the data.
 		doRenderPage();
 		approvedList = true;
+		this.listheader_FinApprovalStsInquiryList_CurrentRole.setVisible(false);
+		this.listheader_FinApprovalStsInquiryList_PreviousRole.setVisible(false);
+		this.row_Role.setVisible(false);
 		doDesignByMode();
 
 	}
@@ -335,6 +341,13 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 	 */
 	public void onCheck$fromApproved(Event event) {
 		approvedList = true;
+		this.listheader_FinApprovalStsInquiryList_CurrentRole.setVisible(false);
+		this.listheader_FinApprovalStsInquiryList_PreviousRole.setVisible(false);
+		this.row_Role.setVisible(false);
+		this.currentRole.setValue("");
+		this.previousRole.setValue("");
+		this.sortOperator_CurrentRole.setSelectedIndex(0);
+		this.sortOperator_PreviousRole.setSelectedIndex(0);
 		search();
 	}
 
@@ -346,6 +359,9 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 	 */
 	public void onCheck$fromWorkFlow(Event event) {
 		approvedList = false;
+		this.listheader_FinApprovalStsInquiryList_CurrentRole.setVisible(true);
+		this.listheader_FinApprovalStsInquiryList_PreviousRole.setVisible(true);
+		this.row_Role.setVisible(true);
 		search();
 	}
 
