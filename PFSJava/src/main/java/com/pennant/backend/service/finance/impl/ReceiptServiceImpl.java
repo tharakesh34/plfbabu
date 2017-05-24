@@ -170,7 +170,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			scheduleData.setFinanceType(financeType);
 			
 			// Fee Details
-			scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinFeeDetailByFinRef(finReference, false, "_View"));
+			//scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinFeeDetailByFinRef(finReference, false, "_View"));//FIXME Fees
+			scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinScheduleFees(finReference, false, "_View"));
 			
 			// Finance Fee Schedule Details
 			if (scheduleData.getFinFeeDetailList() != null && !scheduleData.getFinFeeDetailList().isEmpty()) {
@@ -178,19 +179,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				List<Long> feeIDList = new ArrayList<>();
 				for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++) {
 					FinFeeDetail feeDetail = scheduleData.getFinFeeDetailList().get(i);
-
-					if(StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT) ||
-							StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS) ||
-							StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)){
-						feeIDList.add(feeDetail.getFeeID());
-					}
+					feeDetail.setRcdVisible(false);
+					feeIDList.add(feeDetail.getFeeID());
 				}
 
 				if(!feeIDList.isEmpty()){
 					List<FinFeeScheduleDetail> feeScheduleList = getFinFeeScheduleDetailDAO().getFeeScheduleByFinID(feeIDList, false, "");
 
 					if(feeScheduleList != null && !feeScheduleList.isEmpty()){
-
 						HashMap<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();                        
 						for (int i = 0; i < feeScheduleList.size(); i++) {
 							FinFeeScheduleDetail schdFee = feeScheduleList.get(i);
@@ -569,6 +565,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				&& !rceiptData.getFinanceDetail().getFinanceCheckList().isEmpty()) {
 			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(rceiptData.getFinanceDetail(), tableType.getSuffix()));
 		}
+		
+		// Finance Fee Details
+		// =======================================
+		if (rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList() != null
+				&& !rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList().isEmpty()) {
+			auditDetails.addAll(getFinFeeDetailService().saveOrUpdate(
+					rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailActualList(), tableType.getSuffix(),
+					auditHeader.getAuditTranType(), false));
+		}
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain
@@ -714,11 +719,18 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				.getBefImage(), financeMain));
 		auditHeader.setAuditModule("FinanceDetail");
 		getAuditHeaderDAO().addAudit(auditHeader);
+		
+		if (receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList() != null) {
+			auditHeader.getAuditDetails().addAll(getFinFeeDetailService().delete(
+					receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailActualList(), "_Temp",
+					auditHeader.getAuditTranType(), false));
+		}
 
 		//Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(receiptData);
 
 		logger.debug("Leaving");
+		
 		return auditHeader;
 	}
 
@@ -945,6 +957,21 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					}
 				}
 			}
+		}
+		
+		// Finance Fee Details
+		if (!rceiptData.getFinanceDetail().isExtSource()) {
+			if (rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList() != null) {
+				getFinFeeDetailService().doApprove(rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailActualList(), "",
+						tranType, false);
+			}
+		}
+		
+		//Fin Fee Details Deletion
+		if (rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList() != null) {
+			auditDetails.addAll(getFinFeeDetailService().delete(
+					rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailActualList(), "_Temp",
+					auditHeader.getAuditTranType(), false));
 		}
 
 		// send Limit Amendment Request to ACP Interface and save log details
@@ -1233,6 +1260,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if (financeCheckList != null && !financeCheckList.isEmpty()) {
 				auditDetails.addAll(getCheckListDetailService().getAuditDetail(auditDetailMap, financeDetail,
 						auditTranType, method));
+			}
+		}
+		
+		// Finance Fee details
+		if (!financeDetail.isExtSource()) {
+			if (financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
+				auditDetails.addAll(getFinFeeDetailService().validate(
+						financeDetail.getFinScheduleData().getFinFeeDetailActualList(), financeMain.getWorkflowId(),
+						method, auditTranType, auditHeader.getUsrLanguage(), false));
 			}
 		}
 
@@ -1592,6 +1628,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	public void setOverdraftScheduleDetailDAO(OverdraftScheduleDetailDAO overdraftScheduleDetailDAO) {
 		this.overdraftScheduleDetailDAO = overdraftScheduleDetailDAO;
+	}
+
+	@Override
+	public List<FinFeeDetail> getFinFeeDetailById(String finReference, boolean isWIF, String type, String eventCode) {
+		return getFinFeeDetailService().getFinFeeDetailById(finReference, isWIF, type, eventCode);
 	}
 
 }

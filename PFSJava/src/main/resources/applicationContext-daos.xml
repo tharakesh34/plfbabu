@@ -5633,6 +5633,7 @@
 		<property name="overdraftScheduleDetailDAO" ref="overdraftScheduleDetailDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="receiptCalculator" ref="receiptCalculator" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />

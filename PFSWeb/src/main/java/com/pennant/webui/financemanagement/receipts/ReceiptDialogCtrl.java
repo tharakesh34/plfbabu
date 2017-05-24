@@ -126,6 +126,7 @@ import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.finance.EarlySettlementReportData;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -142,6 +143,7 @@ import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
+import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
@@ -768,6 +770,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		if (isChgReceipt) {
 			aFinScheduleData = getFinanceDetailService().getFinSchDataForReceipt(financeMain.getFinReference(), "_AView");
+			aFinScheduleData.getFinFeeDetailList().addAll(this.receiptService.getFinFeeDetailById(finReference.getValue(), false, "_TView", eventCode));
 			getFinanceDetail().setFinScheduleData(aFinScheduleData);
 		} else {
 			Cloner cloner = new Cloner();
@@ -990,7 +993,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		String recPurpose = this.receiptPurpose.getSelectedItem().getValue().toString();
 		checkByReceiptPurpose(recPurpose);
 		
-		/*boolean makeFeeRender = false;
+		boolean makeFeeRender = false;
 		if(this.receiptPurpose.getSelectedIndex() > 0){ 
 			if(StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)){
 				eventCode = AccountEventConstants.ACCEVENT_REPAY;
@@ -1002,8 +1005,41 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			makeFeeRender = true;
 		}
+		List<FinTypeFees> finTypeFeesList = this.financeDetailService.getFinTypeFees(finType.getValue(), eventCode, false, FinanceConstants.MODULEID_FINTYPE);
+		getFinanceDetail().setFinTypeFeesList(finTypeFeesList);
+		
+		List<FinFeeDetail> finFeeDetails = new ArrayList<>();
+		for (FinFeeDetail finFeeDetail : getFinanceDetail().getFinScheduleData().getFinFeeDetailList()) {
+			if (finFeeDetail.isOriginationFee()) {
+				finFeeDetail.setRcdVisible(false);
+			} else {
+				if (finFeeDetail.isNew()) {
+					continue;
+				} else {
+					if (StringUtils.equals(finFeeDetail.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+						finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+						finFeeDetail.setRcdVisible(false);
+					} else if (StringUtils.equals(finFeeDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+						if(!finTypeFeesList.isEmpty()) {
+							FinTypeFees finTypeFee = finTypeFeesList.get(0);
+							if(finTypeFee.isOriginationFee() == finFeeDetail.isOriginationFee() &&
+									finTypeFee.getFeeTypeID() == finFeeDetail.getFeeTypeID() &&
+									StringUtils.equals(finTypeFee.getFinEvent(), finFeeDetail.getFinEvent())) {
+								finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+								finFeeDetail.setRcdVisible(true);
+								finTypeFeesList.remove(0);
+							}
+						}
+					}
+				}
+			}
+			finFeeDetails.add(finFeeDetail);
+		}
+		
+		getFinanceDetail().getFinScheduleData().setFinFeeDetailList(finFeeDetails);
+		
 		//Fee Details Tab Addition
-		appendFeeDetailTab(makeFeeRender);*/
+		appendFeeDetailTab(makeFeeRender);
 		
 		// To set Payment details by default using Auto Allocation mode , if exists
 		setAutoAllocationPayments();
@@ -2502,9 +2538,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		//Customer Details   
 		appendCustomerDetailTab();
 
-		//Fee Details Tab Addition
-		appendFeeDetailTab(false);
-
 		// Schedule Details
 		if(visibleSchdTab){
 			appendScheduleDetailTab(true, false);
@@ -2530,8 +2563,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			//Accounting Details Tab Addition
 			appendAccountingDetailTab(true);
 		}
+		
+		getFinanceDetail().getFinScheduleData().getFinFeeDetailList().addAll(this.receiptService.getFinFeeDetailById(finReference.getValue(), false, "_TView", eventCode));
+		
+		// Fee Details Tab Addition
+		appendFeeDetailTab(true);
 
 		this.recordStatus.setValue(getFinanceDetail().getFinScheduleData().getFinanceMain().getRecordStatus());
+		
 		logger.debug("Leaving");
 	}
 	
@@ -3446,6 +3485,18 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.remarks.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
+		}
+		
+		/*// Finance Fee Details
+		List<FinFeeDetail> feeDetails = new ArrayList<>();
+		for(FinFeeDetail feeDetail : getReceiptData().getFinanceDetail().getFinScheduleData().getFinFeeDetailActualList()) {
+			if(!feeDetail.isOriginationFee()) {
+				feeDetails.add(feeDetail);
+			}
+		}
+		getReceiptData().getFinanceDetail().getFinScheduleData().setFinFeeDetailList(feeDetails);*/
+		if (getFinFeeDetailListCtrl() != null) {
+			getFinFeeDetailListCtrl().processFeeDetails(getReceiptData().getFinanceDetail().getFinScheduleData());
 		}
 		
 		doRemoveValidation();

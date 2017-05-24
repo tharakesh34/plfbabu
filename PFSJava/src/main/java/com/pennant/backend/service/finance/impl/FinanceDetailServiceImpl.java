@@ -6224,7 +6224,47 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Fee Details
-		scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinFeeDetailByFinRef(finReference, false, "_View"));
+		scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinScheduleFees(finReference, false, "_View"));
+		
+		// Finance Fee Schedule Details
+		if (scheduleData.getFinFeeDetailList() != null && !scheduleData.getFinFeeDetailList().isEmpty()) {
+
+			List<Long> feeIDList = new ArrayList<>();
+			for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++) {
+				FinFeeDetail feeDetail = scheduleData.getFinFeeDetailList().get(i);
+				feeDetail.setRcdVisible(false);
+				feeIDList.add(feeDetail.getFeeID());
+			}
+
+			if(!feeIDList.isEmpty()){
+				List<FinFeeScheduleDetail> feeScheduleList = getFinFeeScheduleDetailDAO().getFeeScheduleByFinID(feeIDList, false, "");
+
+				if(feeScheduleList != null && !feeScheduleList.isEmpty()){
+					HashMap<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();                        
+					for (int i = 0; i < feeScheduleList.size(); i++) {
+						FinFeeScheduleDetail schdFee = feeScheduleList.get(i);
+
+						List<FinFeeScheduleDetail> schList = new ArrayList<>();
+						if (schFeeMap.containsKey(schdFee.getFeeID())) {
+							schList = schFeeMap.get(schdFee.getFeeID());
+							schFeeMap.remove(schdFee.getFeeID());
+						}
+						schList.add(schdFee);
+						schFeeMap.put(schdFee.getFeeID(), schList);
+
+					}
+
+					for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++) {
+						FinFeeDetail feeDetail = scheduleData.getFinFeeDetailList().get(i);
+						if (schFeeMap.containsKey(feeDetail.getFeeID())) {
+							feeDetail.setFinFeeScheduleDetailList(schFeeMap.get(feeDetail.getFeeID()));
+						}
+					}
+				}
+			}
+		}
+		
+		/*scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinFeeDetailByFinRef(finReference, false, "_View"));
 
 		// Finance Fee Schedule Details
 		if (scheduleData.getFinFeeDetailList() != null && !scheduleData.getFinFeeDetailList().isEmpty()) {
@@ -6271,7 +6311,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					}
 				}
 			}
-		}
+		}*/
 
 		// Insurance Details
 		if (ImplementationConstants.ALLOW_INSURANCE) {

@@ -395,11 +395,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	 */
 	public void doWriteBeanToComponents(FinanceDetail financeDetail) {
 		logger.debug("Entering ");
-		doFillFeePaymentDetails(financeDetail.getFeePaymentDetailList(),false);
-		if(financeDetail.isNewRecord() || StringUtils.isEmpty(financeDetail.getFinScheduleData().getFinanceMain().getRecordType())){
-			if(!financeDetail.getFinScheduleData().getFinFeeDetailActualList().isEmpty()){
+		doFillFeePaymentDetails(financeDetail.getFeePaymentDetailList(), false);
+		if (financeDetail.isNewRecord()
+				|| StringUtils.isEmpty(financeDetail.getFinScheduleData().getFinanceMain().getRecordType())) {
+			if (!financeDetail.getFinScheduleData().getFinFeeDetailActualList().isEmpty()) {
 				for (FinFeeDetail finFeeDetail : financeDetail.getFinScheduleData().getFinFeeDetailActualList()) {
-					//finFeeDetail.setNewRecord(true);
 					finFeeDetail.setRecordType("");
 					finFeeDetail.setRecordStatus("");
 				}
@@ -408,15 +408,15 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				finFeeDetailList = convertToFinanceFees(financeDetail.getFinTypeFeesList());
 
 				calculateFees(finFeeDetailList, financeDetail.getFinScheduleData());
- 				financeDetail.getFinScheduleData().getFinFeeDetailList().addAll(originationFeeList);
+				financeDetail.getFinScheduleData().getFinFeeDetailList().addAll(originationFeeList);
 
 				doFillFinFeeDetailList(financeDetail.getFinScheduleData().getFinFeeDetailActualList());
-			}else{
+			} else {
 				finFeeDetailList = convertToFinanceFees(financeDetail.getFinTypeFeesList());
 				calculateFees(finFeeDetailList, financeDetail.getFinScheduleData());
 				doFillFinFeeDetailList(finFeeDetailList);
 			}
-		}else{
+		} else {
 			doFillFinFeeDetailList(financeDetail.getFinScheduleData().getFinFeeDetailActualList());
 		}
 		doFillFinInsurances(financeDetail.getFinScheduleData().getFinInsuranceList());
@@ -909,7 +909,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		int formatter =  CurrencyUtil.getFormat(finMain.getFinCcy());
 		finFeeDetails = sortFeesByFeeOrder(finFeeDetails);
 		setFinFeeDetailList(finFeeDetails);
-		boolean readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance"); 
+		//boolean readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance"); //FIXME Rights
+		boolean readOnly = false;
 		if (finMain.isQuickDisb() && readOnly) {
 			readOnly=isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance_QDP"); 
 		}
