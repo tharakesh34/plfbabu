@@ -50,7 +50,7 @@ public class CustomerAccountService extends ServiceHelper {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(" SELECT T1.PostDate, T1.ValueDate, T1.AppDate, T1.AppValueDate, T1.CustAppDate, ");
-		sb.append(" T1.DrOrCr, T1.Account, T1.ShadowPosting, T1.PostAmount, T1.AcCcy, T2.FinBranch ");
+		sb.append(" T1.DrOrCr, T1.Account, T1.ShadowPosting, T1.PostAmount, T1.AcCcy, T2.FinBranch, AccountType ");
 		sb.append(" FROM Postings T1 INNER JOIN FinanceMain T2 on T1.FinReference = T2.FinReference "); 
 		sb.append(" WHERE postCategory=? AND PostStatus = 'S'");
 		
