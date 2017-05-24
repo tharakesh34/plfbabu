@@ -79,4 +79,8 @@
 		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage"
 			constraintName="PK_AdtBuilderCompany" tableName="AdtBuilderCompany" />
 	</changeSet>
+	 
+	 <changeSet id="08" author="Vijay">
+	<dropNotNullConstraint tableName="ADTWORKFLOWDETAILS" columnName="WORKFLOWDESC"/>
+	</changeSet>
 </databaseChangeLog>
