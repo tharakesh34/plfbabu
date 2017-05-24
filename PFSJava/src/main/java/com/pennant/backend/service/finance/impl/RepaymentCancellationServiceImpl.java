@@ -520,7 +520,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 							finReference, financeRepayment.getFinSchdDate(), "", false);
 
 					scheduleDetail = updateScheduleDetailsData(scheduleDetail, financeRepayment);
-					getFinanceScheduleDetailDAO().updateForRpy(scheduleDetail, financeRepayment.getFinRpyFor());
+					getFinanceScheduleDetailDAO().updateForRpy(scheduleDetail);
 
 				}
 
