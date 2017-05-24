@@ -35,12 +35,6 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 	private static final String			UPDATE_ORCL_RC		= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
 																	+ "Where ROWNUM <=:RowCount AND ThreadId = 0";
 
-	private static final String			START_CID_SQL		= "UPDATE CustomerQueuing set Progress=1, StartTime = :StartTime "
-																	+ "Where ThreadId = :ThreadId AND Progress=0";
-
-	private static final String			START_CID_ORCL		= "UPDATE CustomerQueuing set Progress=1, StartTime = :StartTime "
-																	+ "Where ThreadId = :ThreadId AND Progress=0";
-
 	private static final String			START_CID_SQL_RC	= "UPDATE Top(:RowCount) CustomerQueuing set Progress=1 ,StartTime = :StartTime "
 																	+ "Where ThreadId = :ThreadId AND Progress=0";
 
@@ -276,25 +270,12 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		source.addValue("StartTime", DateUtility.getSysDate());
 
 		try {
-
-			if (noOfRows == 0) {
-				if (App.DATABASE == Database.SQL_SERVER) {
-					logger.debug("selectSql: " + START_CID_SQL);
-					return this.namedParameterJdbcTemplate.update(START_CID_SQL, source);
-
-				} else if (App.DATABASE == Database.ORACLE) {
-					logger.debug("selectSql: " + START_CID_ORCL);
-					return this.namedParameterJdbcTemplate.update(START_CID_ORCL, source);
-				}
-
-			} else {
-				if (App.DATABASE == Database.SQL_SERVER) {
-					logger.debug("selectSql: " + START_CID_SQL_RC);
-					return this.namedParameterJdbcTemplate.update(START_CID_SQL_RC, source);
-				} else if (App.DATABASE == Database.ORACLE) {
-					logger.debug("selectSql: " + START_CID_ORCL_RC);
-					return this.namedParameterJdbcTemplate.update(START_CID_ORCL_RC, source);
-				}
+			if (App.DATABASE == Database.SQL_SERVER) {
+				logger.debug("selectSql: " + START_CID_SQL_RC);
+				return this.namedParameterJdbcTemplate.update(START_CID_SQL_RC, source);
+			} else if (App.DATABASE == Database.ORACLE) {
+				logger.debug("selectSql: " + START_CID_ORCL_RC);
+				return this.namedParameterJdbcTemplate.update(START_CID_ORCL_RC, source);
 			}
 
 		} catch (EmptyResultDataAccessException dae) {
@@ -319,7 +300,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		selectSql.append(" CustPOB, CustCOB, CustGroupID, CustSts, CustStsChgDate, CustIsStaff, CustIndustry, ");
 		selectSql.append(" CustSector, CustSubSector, CustEmpSts, CustSegment, CustSubSegment, CustParentCountry, ");
 		selectSql.append(" CustResdCountry, CustRiskCountry, CustNationality, SalariedCustomer, custSuspSts, ");
-		selectSql.append(" custSuspDate, custSuspTrigger,CustAppDate ");
+		selectSql.append(" custSuspDate, custSuspTrigger, CustAppDate ");
 		selectSql.append(" FROM  Customers CUST INNER JOIN CustomerQueuing CQ ");
 		selectSql.append(" ON CUST.CustID = CQ.CustID Where ThreadID = :ThreadId and Progress=:Progress");
 
