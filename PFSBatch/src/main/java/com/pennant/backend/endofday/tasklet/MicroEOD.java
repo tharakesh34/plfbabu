@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.endofday.tasklet;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,7 +53,6 @@ import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -88,13 +86,12 @@ public class MicroEOD implements Tasklet {
 		logger.info("process Statred by the Thread : " + threadId + " with date " + valueDate.toString());
 
 		int chunkSize = 100;
-		Connection connection = DataSourceUtils.doGetConnection(dataSource);
 
 		while (true) {
 			int countForProcess = customerQueuingDAO.startEODForCID(valueDate, chunkSize, threadId);
 
 			if (countForProcess > 0) {
-				processCustChunks(connection, threadId, valueDate);
+				processCustChunks(threadId, valueDate);
 			} else {
 				break;
 			}
@@ -102,12 +99,11 @@ public class MicroEOD implements Tasklet {
 			logger.debug("COMPLETE: Micro EOD On :" + valueDate);
 		}
 
-		DataSourceUtils.releaseConnection(connection, dataSource);
 
 		return RepeatStatus.FINISHED;
 	}
 
-	public void processCustChunks(Connection connection, int threadId, Date valueDate) {
+	public void processCustChunks(int threadId, Date valueDate) {
 
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setReadOnly(true);
@@ -126,7 +122,7 @@ public class MicroEOD implements Tasklet {
 			custEODEvents.add(custEODEvent);
 
 			try {
-				eodService.doProcess(connection, custEODEvent, valueDate);
+				eodService.doProcess(custEODEvent, valueDate);
 				custEODEvents.set(i, custEODEvent);
 			} catch (Exception e) {
 				custEODEvent.setEodSuccess(false);

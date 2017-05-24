@@ -1,6 +1,5 @@
 package com.pennant.eod;
 
-import java.sql.Connection;
 import java.util.Date;
 
 import javax.sql.DataSource;
@@ -40,7 +39,7 @@ public class EodService {
 		super();
 	}
 
-	public void doProcess(Connection connection, CustEODEvent custEODEvent, Date date) throws Exception {
+	public void doProcess(CustEODEvent custEODEvent, Date date) throws Exception {
 
 		/**************** Fetch and Set EOD Event ***********/
 
@@ -118,8 +117,6 @@ public class EodService {
 	public void setAutoDisbursementService(AutoDisbursementService autoDisbursementService) {
 		this.autoDisbursementService = autoDisbursementService;
 	}
-
-
 
 	public LoadFinanceData getLoadFinanceData() {
 		return loadFinanceData;
