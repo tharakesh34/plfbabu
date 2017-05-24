@@ -5206,7 +5206,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
-		validateMandate(auditDetail, financeDetail);
+		getFinMandateService().validateMandate(auditDetail, financeDetail);
+		if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
+			getFinMandateService().promptMandate(auditDetail, financeDetail);
+		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
@@ -5217,133 +5220,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return auditDetail;
 	}
 
-	/**
-	 * Validate the mandate assigned to the finance.
-	 * 
-	 * @param auditDetail
-	 * @param financeDetail
-	 * @param financeMain
-	 */
-	private void validateMandate(AuditDetail auditDetail, FinanceDetail financeDetail) {
-		Mandate mandate = financeDetail.getMandate();
-
-
-		if (!financeDetail.isActionSave() &&  mandate != null && mandate.getMaxLimit() != null 
-				&& mandate.getMaxLimit().compareTo(BigDecimal.ZERO) > 0) {
-			BigDecimal exposure = BigDecimal.ZERO;
-
-			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-
-			for (FinanceScheduleDetail schedule : financeDetail.getFinScheduleData().getFinanceScheduleDetails()) {
-				if (exposure.compareTo(schedule.getRepayAmount()) < 0) {
-					exposure = schedule.getRepayAmount();
-				}
-			}
-
-			if (mandate.isUseExisting()) {
-				exposure = exposure.add(getFinanceMainDAO().getTotalMaxRepayAmount(mandate.getMandateID(),
-						financeMain.getFinReference()));
-			}
-
-			if (mandate.getMaxLimit().compareTo(exposure) < 0) {
-				auditDetail.setErrorDetail(90320);
-			}
-			
-			if(!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
-				if (!mandate.isUseExisting()) {
-					int count= getFinMandateService().getMnadateByCustID(mandate.getCustID(), mandate.getMandateID()).size();
-					if (count != 0) {
-						String[] errParmMan = new String[2];
-						String[] valueParmMan = new String[2];
-						valueParmMan[0] = String.valueOf(mandate.getCustCIF());
-						valueParmMan[1] = String.valueOf(count);
-						
-						errParmMan[0] = " CustCIF : " + valueParmMan[0];
-						errParmMan[1] =  valueParmMan[1];
-						
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"65013",
-								errParmMan, valueParmMan), ""));
-					}
-				}
-			}
-			if (!validatePayFrequency(financeMain.getRepayFrq().charAt(0), mandate.getPeriodicity().charAt(0))) {
-				
-				String[] errParmFrq = new String[2];
-				errParmFrq[0] = PennantJavaUtil.getLabel("label_MandateDialog_Periodicity.value") ;
-				errParmFrq[1] = PennantJavaUtil.getLabel("label_FinanceMainDialog_RepayFrq.value") ;
-				
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"90220",
-						errParmFrq, null), ""));
-			}
-			
-			if(financeMain.isFinRepayPftOnFrq()){
-				if(!validatePayFrequency(financeMain.getRepayPftFrq().charAt(0),mandate.getPeriodicity().charAt(0))) {
-					
-					String[] errParmFrq = new String[2];
-					errParmFrq[0] = PennantJavaUtil.getLabel("label_MandateDialog_Periodicity.value") ;
-					errParmFrq[1] = PennantJavaUtil.getLabel("label_FinanceMainDialog_RepayPftFrq.value") ;
-					
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"90220",
-							errParmFrq, null), ""));
-					
-				}
-			}
-
-		}
-	}
-
-	private Boolean validatePayFrequency(char repayFrq, char mandateFrq) {
-		boolean valFrq = true;
-		if (repayFrq == mandateFrq) {
-			valFrq = true;
-		} else {
-			switch (repayFrq) {
-			case 'D':
-				if (mandateFrq != 'D') {
-					valFrq = false;
-				}
-				break;
-			case 'W':
-				if (mandateFrq != 'D') {
-					valFrq = false;
-				}
-				break;
-			case 'X':
-				if (mandateFrq != 'D' || mandateFrq != 'W') {
-					valFrq = false;
-				}
-				break;
-			case 'F':
-				if (mandateFrq != 'D' || mandateFrq != 'W' || mandateFrq != 'X') {
-					valFrq = false;
-				}
-				break;
-			case 'M':
-				if (mandateFrq == 'B'|| mandateFrq == 'Q' || mandateFrq == 'H' || mandateFrq == 'Y') {
-					valFrq = false;
-				}
-				break;
-			case 'B':
-				if (mandateFrq == 'Q' || mandateFrq == 'H' || mandateFrq == 'Y') {
-					valFrq = false;
-				}
-				break;
-
-			case 'Q':
-				if (mandateFrq == 'H' || mandateFrq == 'Y') {
-					valFrq = false;
-				}
-				break;
-			case 'H':
-				if (mandateFrq == 'Y') {
-					valFrq = false;
-				}
-				break;
-			}
-		}
-		return valFrq;
-	}
-
+	
 	/**
 	 * Common Method for Retrieving AuditDetails List
 	 * 

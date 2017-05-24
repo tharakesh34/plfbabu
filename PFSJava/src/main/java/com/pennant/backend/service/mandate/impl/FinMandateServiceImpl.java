@@ -43,6 +43,7 @@
 
 package com.pennant.backend.service.mandate.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,13 +52,17 @@ import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
+import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.service.mandate.FinMandateService;
@@ -76,6 +81,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 	private AuditHeaderDAO		auditHeaderDAO;
 	private MandateDAO			mandateDAO;
 	private MandateStatusDAO	mandateStatusDAO;
+	private FinanceMainDAO		financeMainDAO;
 
 	public FinMandateServiceImpl() {
 		super();
@@ -245,6 +251,135 @@ public class FinMandateServiceImpl implements FinMandateService {
 		header.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(header);
 	}
+	
+	/**
+	 * Validate the mandate assigned to the finance.
+	 * 
+	 * @param auditDetail
+	 * @param financeDetail
+	 * @param financeMain
+	 */
+	public void validateMandate(AuditDetail auditDetail, FinanceDetail financeDetail) {
+		Mandate mandate = financeDetail.getMandate();
+
+		if (!financeDetail.isActionSave() && mandate != null && mandate.getMaxLimit() != null
+				&& mandate.getMaxLimit().compareTo(BigDecimal.ZERO) > 0) {
+			BigDecimal exposure = BigDecimal.ZERO;
+
+			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
+			for (FinanceScheduleDetail schedule : financeDetail.getFinScheduleData().getFinanceScheduleDetails()) {
+				if (exposure.compareTo(schedule.getRepayAmount()) < 0) {
+					exposure = schedule.getRepayAmount();
+				}
+			}
+
+			if (mandate.isUseExisting()) {
+				exposure = exposure.add(getFinanceMainDAO().getTotalMaxRepayAmount(mandate.getMandateID(),
+						financeMain.getFinReference()));
+			}
+
+			if (mandate.getMaxLimit().compareTo(exposure) < 0) {
+				auditDetail.setErrorDetail(90320);
+			}
+
+			if (!validatePayFrequency(financeMain.getRepayFrq().charAt(0), mandate.getPeriodicity().charAt(0))) {
+
+				String[] errParmFrq = new String[2];
+				errParmFrq[0] = PennantJavaUtil.getLabel("label_MandateDialog_Periodicity.value");
+				errParmFrq[1] = PennantJavaUtil.getLabel("label_FinanceMainDialog_RepayFrq.value");
+
+				auditDetail.setErrorDetail(ErrorUtil
+						.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "90220", errParmFrq, null), ""));
+			}
+
+			if (financeMain.isFinRepayPftOnFrq()) {
+				if (!validatePayFrequency(financeMain.getRepayPftFrq().charAt(0), mandate.getPeriodicity().charAt(0))) {
+
+					String[] errParmFrq = new String[2];
+					errParmFrq[0] = PennantJavaUtil.getLabel("label_MandateDialog_Periodicity.value");
+					errParmFrq[1] = PennantJavaUtil.getLabel("label_FinanceMainDialog_RepayPftFrq.value");
+
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD, "90220", errParmFrq, null), ""));
+
+				}
+			}
+
+		}
+	}
+
+	public void promptMandate(AuditDetail auditDetail, FinanceDetail financeDetail) {
+		Mandate mandate = financeDetail.getMandate();
+		if (!mandate.isUseExisting()) {
+			int count = getMnadateByCustID(mandate.getCustID(), mandate.getMandateID()).size();
+			if (count != 0) {
+				String[] errParmMan = new String[2];
+				String[] valueParmMan = new String[2];
+				valueParmMan[0] = String.valueOf(mandate.getCustCIF());
+				valueParmMan[1] = String.valueOf(count);
+
+				errParmMan[0] = " CustCIF : " + valueParmMan[0];
+				errParmMan[1] = valueParmMan[1];
+
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetails(PennantConstants.KEY_FIELD, "65013", errParmMan, valueParmMan), ""));
+			}
+		}
+	}
+
+	private Boolean validatePayFrequency(char repayFrq, char mandateFrq) {
+		boolean valFrq = true;
+		if (repayFrq == mandateFrq) {
+			valFrq = true;
+		} else {
+			switch (repayFrq) {
+			case 'D':
+				if (mandateFrq != 'D') {
+					valFrq = false;
+				}
+				break;
+			case 'W':
+				if (mandateFrq != 'D') {
+					valFrq = false;
+				}
+				break;
+			case 'X':
+				if (mandateFrq != 'D' || mandateFrq != 'W') {
+					valFrq = false;
+				}
+				break;
+			case 'F':
+				if (mandateFrq != 'D' || mandateFrq != 'W' || mandateFrq != 'X') {
+					valFrq = false;
+				}
+				break;
+			case 'M':
+				if (mandateFrq == 'B'|| mandateFrq == 'Q' || mandateFrq == 'H' || mandateFrq == 'Y') {
+					valFrq = false;
+				}
+				break;
+			case 'B':
+				if (mandateFrq == 'Q' || mandateFrq == 'H' || mandateFrq == 'Y') {
+					valFrq = false;
+				}
+				break;
+
+			case 'Q':
+				if (mandateFrq == 'H' || mandateFrq == 'Y') {
+					valFrq = false;
+				}
+				break;
+			case 'H':
+				if (mandateFrq == 'Y') {
+					valFrq = false;
+				}
+				break;
+			}
+		}
+		return valFrq;
+	}
+
 
 	public AuditHeader getAuditHeader(AuditHeader auditHeader) {
 		AuditHeader newauditHeader = new AuditHeader();
@@ -274,6 +409,14 @@ public class FinMandateServiceImpl implements FinMandateService {
 
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 }

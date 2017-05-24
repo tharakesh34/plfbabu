@@ -45,6 +45,7 @@ package com.pennant.backend.service.mandate;
 
 import java.util.List;
 
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.mandate.Mandate;
@@ -60,5 +61,9 @@ public interface FinMandateService {
 	void doApprove(FinanceDetail financeDetail, AuditHeader auditHeader, String tableType);
 
 	List<Mandate> getMnadateByCustID(long custID, long mandateID);
+	
+	void validateMandate(AuditDetail auditDetail,FinanceDetail financeDetail );
+	
+	void promptMandate(AuditDetail auditDetail,FinanceDetail financeDetail );
 
 }

@@ -8290,6 +8290,7 @@
 		class="com.pennant.backend.service.mandate.impl.FinMandateServiceImpl">
 		<property name="mandateDAO" ref="mandateDAO" />
 		<property name="mandateStatusDAO" ref="mandateStatusDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
