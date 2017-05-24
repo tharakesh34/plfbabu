@@ -1839,8 +1839,8 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		logger.debug("Entering");
 		MapSqlParameterSource source=new MapSqlParameterSource();
 		source.addValue("CustId", custId);
-		StringBuilder selectSql = new StringBuilder("Update Customers  " );
-		selectSql.append(" Set CustAppDate = :CustAppDate  WHERE CustId=:CustId ");
+		StringBuilder selectSql = new StringBuilder("select CustAppDate from Customers" );
+		selectSql.append(" WHERE CustId=:CustId ");
 		logger.debug("selectSql: " + selectSql.toString());
 		
 		logger.debug("Leaving");
