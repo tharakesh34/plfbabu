@@ -145,5 +145,10 @@ INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+	<changeSet id="05" author="Srikanth">
+	<sql>
+	INSERT INTO ErrorDetails VALUES('90289','EN','E','Uploaded Document {0} and docFormat {1} should be same.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	INSERT INTO ErrorDetails VALUES('90291','EN','E','Uploaded document {0} extension should be required.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
