@@ -311,19 +311,21 @@ public class FinMandateServiceImpl implements FinMandateService {
 
 	public void promptMandate(AuditDetail auditDetail, FinanceDetail financeDetail) {
 		Mandate mandate = financeDetail.getMandate();
-		if (!mandate.isUseExisting()) {
-			int count = getMnadateByCustID(mandate.getCustID(), mandate.getMandateID()).size();
-			if (count != 0) {
-				String[] errParmMan = new String[2];
-				String[] valueParmMan = new String[2];
-				valueParmMan[0] = String.valueOf(mandate.getCustCIF());
-				valueParmMan[1] = String.valueOf(count);
+		if (mandate != null) {
+			if (!mandate.isUseExisting()) {
+				int count = getMnadateByCustID(mandate.getCustID(), mandate.getMandateID()).size();
+				if (count != 0) {
+					String[] errParmMan = new String[2];
+					String[] valueParmMan = new String[2];
+					valueParmMan[0] = String.valueOf(mandate.getCustCIF());
+					valueParmMan[1] = String.valueOf(count);
 
-				errParmMan[0] = " CustCIF : " + valueParmMan[0];
-				errParmMan[1] = valueParmMan[1];
+					errParmMan[0] = " CustCIF : " + valueParmMan[0];
+					errParmMan[1] = valueParmMan[1];
 
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetails(PennantConstants.KEY_FIELD, "65013", errParmMan, valueParmMan), ""));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD, "65013", errParmMan, valueParmMan), ""));
+				}
 			}
 		}
 	}
