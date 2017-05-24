@@ -158,4 +158,13 @@ INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (
 	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 	</sql>
 	</changeSet>
+	<changeSet id="07" author="Irfan">
+	<sql>
+		INSERT INTO ReportList Values('VASWorkFlow','VASWorkFlow','listheader_FinType.label,listheader_ScreenCode.label,listheader_WorkFlowType.label','finType,screenCode,workFlowType',
+		'String,String,String','','ReportList03','VAS WorkFlow','Solution Factory',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
+	
+		INSERT INTO ReportList Values('VASRecording','VASRecording','listheader_ProductCode.label,listheader_PostingAgainst.label,listheader_PrimaryLinkRef.label,listheader_VasReference.label,listheader_FeePaymentMode.label,','productCode,postingAgainst,primaryLinkRef,vasReference,feePaymentMode',
+		'String,String,String,String,String','','ReportList05','VAS Recording','Loan Origination',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
