@@ -1265,6 +1265,7 @@ vo.waivedAmt &lt;= 0</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequ
 </changeSet>
 <changeSet id="86" author="Srikanth">
 	<sql>
+	Delete from ErrorDetails where ErrorCode in('90286','90287','90288');
 	INSERT INTO ErrorDetails VALUES('90286','EN','E','First Disbursement date is same as Current Business date. Not allowed for Payment.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	update ERRORDETAILS set ErrorMessage = '{0} should between or including {1} and {2}.' where ERRORCODE = '90282';
 	update ErrorDetails set ErrorMessage ='Invalid {0}, Available {1} are: {2}.' where Errorcode = '90264';
