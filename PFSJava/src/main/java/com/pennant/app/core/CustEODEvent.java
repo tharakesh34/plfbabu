@@ -21,6 +21,7 @@ public class CustEODEvent extends AbstractEntity {
 	private boolean				disbExist			= false;
 	private boolean				dueExist			= false;
 	private boolean				checkPresentment	= false;
+	private boolean				eodSuccess			= true;
 
 	public Customer getCustomer() {
 		return customer;
@@ -108,6 +109,14 @@ public class CustEODEvent extends AbstractEntity {
 
 	public void setCheckPresentment(boolean checkPresentment) {
 		this.checkPresentment = checkPresentment;
+	}
+
+	public boolean isEodSuccess() {
+		return eodSuccess;
+	}
+
+	public void setEodSuccess(boolean eodSuccess) {
+		this.eodSuccess = eodSuccess;
 	}
 
 }

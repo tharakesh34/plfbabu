@@ -40,13 +40,11 @@ public class EodService {
 		super();
 	}
 
-	public void doProcess(Connection connection, long custId, Date date) throws Exception {
+	public void doProcess(Connection connection, CustEODEvent custEODEvent, Date date) throws Exception {
 
 		/**************** Fetch and Set EOD Event ***********/
-		CustEODEvent custEODEvent = new CustEODEvent();
-		custEODEvent.setEodDate(date);
-		custEODEvent.setEodValueDate(date);
 
+		long custId = custEODEvent.getCustomer().getCustID();
 		custEODEvent = loadFinanceData.prepareFinEODEvents(custEODEvent, custId);
 
 		//late pay marking
@@ -87,21 +85,6 @@ public class EodService {
 			installmentDueService.processDueDatePostings(custEODEvent);
 		}
 
-		//update customer EOD
-		loadFinanceData.updateFinEODEvents(custEODEvent);
-
-		//receipt postings
-		if (custEODEvent.isCheckPresentment()) {
-			receiptPaymentService.processrReceipts(custEODEvent);
-		}
-
-		//customer Date update
-		loadFinanceData.updateCustomerDate(custId, date);
-
-		//clear data after the process
-		custEODEvent.getFinEODEvents().clear();
-		custEODEvent = null;
-
 	}
 
 	public void setDataSource(DataSource dataSource) {
@@ -136,9 +119,7 @@ public class EodService {
 		this.autoDisbursementService = autoDisbursementService;
 	}
 
-	public void setReceiptPaymentService(ReceiptPaymentService receiptPaymentService) {
-		this.receiptPaymentService = receiptPaymentService;
-	}
+
 
 	public LoadFinanceData getLoadFinanceData() {
 		return loadFinanceData;
@@ -154,6 +135,14 @@ public class EodService {
 
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
+	}
+
+	public ReceiptPaymentService getReceiptPaymentService() {
+		return receiptPaymentService;
+	}
+
+	public void setReceiptPaymentService(ReceiptPaymentService receiptPaymentService) {
+		this.receiptPaymentService = receiptPaymentService;
 	}
 
 }

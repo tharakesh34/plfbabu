@@ -26,6 +26,7 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pff.core.TableType;
 
 public class LoadFinanceData extends ServiceHelper {
 
@@ -36,11 +37,9 @@ public class LoadFinanceData extends ServiceHelper {
 	public CustEODEvent prepareFinEODEvents(CustEODEvent custEODEvent, long custId) throws Exception {
 		logger.debug(" Entering ");
 
-		custEODEvent.setCustomer(getCustomerDAO().getCustomerEOD(custId));
-
 		long custID = custEODEvent.getCustomer().getCustID();
 		List<FinanceMain> custFinMains = getFinanceMainDAO().getFinMainsForEODByCustId(custID, true);
-		List<FinanceScheduleDetail> custSchdDetails = getFinanceScheduleDetailDAO().getFinScheduleDetails(custID, true);
+		//List<FinanceScheduleDetail> custSchdDetails = getFinanceScheduleDetailDAO().getFinScheduleDetails(custID, true);
 		List<FinanceProfitDetail> custpftDet = getFinanceProfitDetailDAO().getFinProfitDetailsByCustId(custID, true);
 
 		for (FinanceMain main : custFinMains) {
@@ -59,7 +58,8 @@ public class LoadFinanceData extends ServiceHelper {
 			finEODEvent.setFinProfitDetail(getFinPftDetailRef(finReference, custpftDet));
 
 			//FINSCHDULE DETAILS
-			List<FinanceScheduleDetail> finSchdDetails = getFinSchdDetailRef(finReference, custSchdDetails);
+			List<FinanceScheduleDetail> finSchdDetails = getFinanceScheduleDetailDAO()
+					.getFinScheduleDetails(finReference, TableType.MAIN_TAB.getSuffix(), false);
 			finEODEvent.setFinanceScheduleDetails(finSchdDetails);
 
 			setEventFlags(custEODEvent, finEODEvent);
@@ -69,7 +69,7 @@ public class LoadFinanceData extends ServiceHelper {
 		//clear temporary data
 		custpftDet.clear();
 		custFinMains.clear();
-		custSchdDetails.clear();
+//		custSchdDetails.clear();
 		logger.debug(" Leaving ");
 		return custEODEvent;
 	}

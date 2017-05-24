@@ -1,7 +1,9 @@
 package com.pennant.eod.dao;
 
 import java.util.Date;
+import java.util.List;
 
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 
 public interface CustomerQueuingDAO {
@@ -25,5 +27,10 @@ public interface CustomerQueuingDAO {
 	long getCountByProgress();
 
 	void updateFailed(CustomerQueuing customerQueuing);
+
+	int startEODForCID(Date date, long noOfRows, int threadId);
+
+	List<Customer> getCustForProcess(int threadId);
+
 
 }

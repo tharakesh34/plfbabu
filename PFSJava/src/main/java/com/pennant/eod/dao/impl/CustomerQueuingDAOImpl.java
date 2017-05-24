@@ -1,16 +1,21 @@
 package com.pennant.eod.dao.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
@@ -19,16 +24,28 @@ import com.pennanttech.pff.core.App.Database;
 
 public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
-	private static Logger				logger			= Logger.getLogger(CustomerQueuingDAOImpl.class);
+	private static Logger				logger				= Logger.getLogger(CustomerQueuingDAOImpl.class);
 
-	private static final String			UPDATE_SQL		= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
-																+ "Where ThreadId = 0";
-	private static final String			UPDATE_ORCL		= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
-																+ "Where  ThreadId = 0";
-	private static final String			UPDATE_SQL_RC	= "UPDATE Top(:RowCount) CustomerQueuing set ThreadId=:ThreadId "
-																+ "Where ThreadId = 0";
-	private static final String			UPDATE_ORCL_RC	= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
-																+ "Where ROWNUM <=:RowCount AND ThreadId = 0";
+	private static final String			UPDATE_SQL			= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
+																	+ "Where ThreadId = 0";
+	private static final String			UPDATE_ORCL			= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
+																	+ "Where  ThreadId = 0";
+	private static final String			UPDATE_SQL_RC		= "UPDATE Top(:RowCount) CustomerQueuing set ThreadId=:ThreadId "
+																	+ "Where ThreadId = 0";
+	private static final String			UPDATE_ORCL_RC		= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
+																	+ "Where ROWNUM <=:RowCount AND ThreadId = 0";
+
+	private static final String			START_CID_SQL		= "UPDATE CustomerQueuing set Progress=1, StartTime = :StartTime "
+																	+ "Where ThreadId = :ThreadId AND Progress=0";
+
+	private static final String			START_CID_ORCL		= "UPDATE CustomerQueuing set Progress=1, StartTime = :StartTime "
+																	+ "Where ThreadId = :ThreadId AND Progress=0";
+
+	private static final String			START_CID_SQL_RC	= "UPDATE Top(:RowCount) CustomerQueuing set Progress=1 ,StartTime = :StartTime "
+																	+ "Where ThreadId = :ThreadId AND Progress=0";
+
+	private static final String			START_CID_ORCL_RC	= "UPDATE CustomerQueuing set Progress=1 ,StartTime = :StartTime "
+																	+ "Where ROWNUM <=:RowCount AND ThreadId = :ThreadId AND Progress=0";
 
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
@@ -183,6 +200,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		} else {
 			updateSql.append(" EndTime = :EndTime,");
 		}
+
 		updateSql.append(" Progress = :Progress Where CustID =:CustID");
 		logger.debug("updateSql: " + updateSql.toString());
 
@@ -191,19 +209,19 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public void updateFailed(CustomerQueuing customerQueuing) {
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing set");
 		updateSql.append(" EndTime = :EndTime, ThreadId = :ThreadId,");
 		updateSql.append(" Progress = :Progress Where CustID =:CustID");
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -247,4 +265,71 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
+	@Override
+	public int startEODForCID(Date date, long noOfRows, int threadId) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("RowCount", noOfRows);
+		source.addValue("ThreadId", threadId);
+		source.addValue("EodDate", date);
+		source.addValue("StartTime", DateUtility.getSysDate());
+
+		try {
+
+			if (noOfRows == 0) {
+				if (App.DATABASE == Database.SQL_SERVER) {
+					logger.debug("selectSql: " + START_CID_SQL);
+					return this.namedParameterJdbcTemplate.update(START_CID_SQL, source);
+
+				} else if (App.DATABASE == Database.ORACLE) {
+					logger.debug("selectSql: " + START_CID_ORCL);
+					return this.namedParameterJdbcTemplate.update(START_CID_ORCL, source);
+				}
+
+			} else {
+				if (App.DATABASE == Database.SQL_SERVER) {
+					logger.debug("selectSql: " + START_CID_SQL_RC);
+					return this.namedParameterJdbcTemplate.update(START_CID_SQL_RC, source);
+				} else if (App.DATABASE == Database.ORACLE) {
+					logger.debug("selectSql: " + START_CID_ORCL_RC);
+					return this.namedParameterJdbcTemplate.update(START_CID_ORCL_RC, source);
+				}
+			}
+
+		} catch (EmptyResultDataAccessException dae) {
+			logger.error("Exception: ", dae);
+		}
+
+		logger.debug("Leaving");
+		return 0;
+
+	}
+
+	@Override
+	public List<Customer> getCustForProcess(int threadId) {
+		logger.debug("Entering");
+
+		CustomerQueuing custQueue = new CustomerQueuing();
+		custQueue.setThreadId(threadId);
+		custQueue.setProgress(1);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" Select CUST.CustID, CustCIF, CustCoreBank, CustCtgCode, CustTypeCode, CustDftBranch, ");
+		selectSql.append(" CustPOB, CustCOB, CustGroupID, CustSts, CustStsChgDate, CustIsStaff, CustIndustry, ");
+		selectSql.append(" CustSector, CustSubSector, CustEmpSts, CustSegment, CustSubSegment, CustParentCountry, ");
+		selectSql.append(" CustResdCountry, CustRiskCountry, CustNationality, SalariedCustomer, custSuspSts, ");
+		selectSql.append(" custSuspDate, custSuspTrigger,CustAppDate ");
+		selectSql.append(" FROM  Customers CUST INNER JOIN CustomerQueuing CQ ");
+		selectSql.append(" ON CUST.CustID = CQ.CustID Where ThreadID = :ThreadId and Progress=:Progress");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(custQueue);
+		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+
+		List<Customer> customers = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
+		return customers;
+	}
 }

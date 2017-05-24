@@ -596,7 +596,8 @@ public class LimitManagement {
 		//Customer limit process
 		if (custHeader != null) {
 			// check already mapping available or not 
-			LimitReferenceMapping mapping = identifyLine(finMain, finType, custHeader.getHeaderId());
+			LimitReferenceMapping mapping = limitReferenceMappingDAO.getLimitReferencemapping(
+					finMain.getFinReference(), custHeader.getHeaderId());
 			if (mapping != null) {
 				List<LimitDetails> limitDetails = getCustomerLimitDetails(mapping);
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, custHeader.getLimitCcy(), tranAmt);
@@ -623,7 +624,8 @@ public class LimitManagement {
 		//Customer group limit process
 		if (groupHeader != null) {
 			// check already mapping available or not 
-			LimitReferenceMapping mapping = identifyLine(finMain, finType, groupHeader.getHeaderId());
+			LimitReferenceMapping mapping = limitReferenceMappingDAO.getLimitReferencemapping(
+					finMain.getFinReference(), groupHeader.getHeaderId());
 			if (mapping != null) {
 				List<LimitDetails> limitDetails = getCustomerLimitDetails(mapping);
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, groupHeader.getLimitCcy(), tranAmt);
@@ -723,16 +725,16 @@ public class LimitManagement {
 		logger.debug(" Entering ");
 		boolean revolvingLine = true;
 		//Since all the limit are revolving we have commented  this code. once we are allowing revolving in limits we will allow
-//		for (LimitDetails details : custLimitDetails) {
-//			if (details.isRevolving() && StringUtils.endsWith(mapping.getLimitLine(), details.getLimitLine())) {
-//				revolvingLine = true;
-//				break;
-//			}
-//		}
-//
-//		if (!revolvingLine) {
-//			return;
-//		}
+		//		for (LimitDetails details : custLimitDetails) {
+		//			if (details.isRevolving() && StringUtils.endsWith(mapping.getLimitLine(), details.getLimitLine())) {
+		//				revolvingLine = true;
+		//				break;
+		//			}
+		//		}
+		//
+		//		if (!revolvingLine) {
+		//			return;
+		//		}
 		for (LimitDetails details : custLimitDetails) {
 			if (revolvingLine) {
 				details.setVersion(details.getVersion() + 1);
