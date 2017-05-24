@@ -167,4 +167,10 @@ INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (
 		'String,String,String,String,String','','ReportList05','VAS Recording','Loan Origination',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
 	</sql>
 	</changeSet>
+	
+	<changeSet id="08" author="Irfan">
+	<sql>
+		Update ReportList set FIELDLABELS='listheader_ProductCtg.label,listheader_ProductCtgDesc.label' where CODE='VASProductCategory';
+	</sql>
+	</changeSet>
 </databaseChangeLog>
