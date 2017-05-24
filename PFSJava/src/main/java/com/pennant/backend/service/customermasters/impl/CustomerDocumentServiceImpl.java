@@ -434,6 +434,8 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90402", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
+			} else {
+				customerDocument.setCustDocTitle(customerDocument.getCustDocTitle().toUpperCase());
 			}
 		}
 		if (StringUtils.equals(customerDocument.getCustDocCategory(), "03")) {
@@ -500,13 +502,38 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 		}
 		if(!(StringUtils.equals(customerDocument.getCustDocType(),PennantConstants.DOC_TYPE_PDF) 
 				|| StringUtils.equals(customerDocument.getCustDocType(),PennantConstants.DOC_TYPE_DOC)
-				|| StringUtils.equals(customerDocument.getCustDocType(),PennantConstants.DOC_TYPE_DOCX))){
+				|| StringUtils.equals(customerDocument.getCustDocType(),PennantConstants.DOC_TYPE_DOCX)
+				|| StringUtils.equals(customerDocument.getCustDocType(),PennantConstants.DOC_TYPE_IMAGE))){
 			String[] valueParm = new String[1];
 			valueParm[0] = customerDocument.getCustDocType();
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90122", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 		}
-}
+			String docFormate = customerDocument.getCustDocName()
+					.substring(customerDocument.getCustDocName().lastIndexOf(".") + 1);
+			if (StringUtils.equals(customerDocument.getCustDocName(), docFormate)) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "docName: " + docFormate;
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90291", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+			}
+			boolean isImage = false;
+			if (StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_IMAGE)) {
+				if (StringUtils.equals(docFormate, "jpg") || StringUtils.equals(docFormate, "jpeg")
+						|| StringUtils.equals(docFormate, "png")) {
+					isImage = true;
+				}
+			}
+			if (!isImage) {
+				if (!StringUtils.equals(customerDocument.getCustDocType(), docFormate)) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "document type: " + docFormate;
+					valueParm[1] = "docFormat: " + customerDocument.getCustDocType();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90289", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+				}
+			}
+}	
 		logger.debug("Leaving");
 		return auditDetail;
 		

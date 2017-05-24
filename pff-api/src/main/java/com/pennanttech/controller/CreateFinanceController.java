@@ -438,7 +438,6 @@ public class CreateFinanceController extends SummaryDetailService {
 			detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			detail.setDocModule(FinanceConstants.MODULE_NAME);
 			detail.setUserDetails(financeMain.getUserDetails());
-			detail.setDocImage(PennantApplicationUtil.decode(detail.getDocImage()));
 		}
 
 		financeDetail.setFinScheduleData(finScheduleData);

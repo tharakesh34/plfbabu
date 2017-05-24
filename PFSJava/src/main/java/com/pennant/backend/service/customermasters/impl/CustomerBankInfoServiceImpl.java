@@ -14,6 +14,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
+import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.customermasters.CustomerBankInfoService;
 import com.pennant.backend.service.systemmasters.LovFieldDetailService;
 import com.pennant.backend.util.PennantConstants;
@@ -24,7 +25,8 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	private CustomerBankInfoDAO		customerBankInfoDAO;
 	private AuditHeaderDAO			auditHeaderDAO;
 	private LovFieldDetailService	lovFieldDetailService;
-
+	private BankDetailService		bankDetailService;
+	
 	/**
 	 * getBankInfoByCustomerId fetch the details by using CustomerBankInfoDAO's getBankInfoByCustomer method . with
 	 * parameter custID. it fetches the records from the CustomerBankInfo.
@@ -166,6 +168,19 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 			auditDetail.setErrorDetail(errorDetail);
 		}
 		
+		//validate AccNumber length
+		if(StringUtils.isNotBlank(customerBankInfo.getBankName())){
+			int accNoLength = bankDetailService.getAccNoLengthByCode(customerBankInfo.getBankName());
+			if(customerBankInfo.getAccountNumber().length()!=accNoLength){
+				String[] valueParm = new String[2];
+				valueParm[0] = "AccountNumber";
+				valueParm[1] = String.valueOf(accNoLength)+" characters";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30570", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+		}
+		
 		auditDetail.setErrorDetail(errorDetail);
 		return auditDetail;
 	
@@ -178,5 +193,9 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	public void setLovFieldDetailService(LovFieldDetailService lovFieldDetailService) {
 		this.lovFieldDetailService = lovFieldDetailService;
 	}
+	public void setBankDetailService(BankDetailService bankDetailService) {
+		this.bankDetailService = bankDetailService;
+	}
+
 
 }

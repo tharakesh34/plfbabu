@@ -9067,6 +9067,7 @@
 		<property name="customerBankInfoDAO" ref="customerBankInfoDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="lovFieldDetailService" ref="lovFieldDetailService" />
+		<property name="bankDetailService" ref="bankDetailService" />
 	</bean>
 	<!--============ Customer ChequeInfo Details ============== -->
 

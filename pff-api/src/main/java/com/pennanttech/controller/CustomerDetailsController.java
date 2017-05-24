@@ -43,7 +43,6 @@ import com.pennant.backend.service.customermasters.CustomerPhoneNumberService;
 import com.pennant.backend.service.customermasters.validation.CustomerBankInfoValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerChequeInfoValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerExtLiabilityValidation;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.util.APIConstants;
@@ -1380,7 +1379,6 @@ public class CustomerDetailsController {
 		customerDocument.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		customerDocument.setLastMntBy(userDetails.getLoginUsrID());
 		customerDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		customerDocument.setCustDocImage(PennantApplicationUtil.decode(customerDocument.getCustDocImage()));
 		customerDocument.setVersion(1);
 		//get the header details from the request
 		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
@@ -1425,7 +1423,7 @@ public class CustomerDetailsController {
 		customerDocument.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		customerDocument.setLastMntBy(userDetails.getLoginUsrID());
 		customerDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		customerDocument.setVersion((customerEMailService.getVersion(customerDocument.getCustID(),
+		customerDocument.setVersion((customerDocumentService.getVersion(customerDocument.getCustID(),
 				customerDocument.getCustDocCategory())) + 1);
 		//get the header details from the request
 		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
