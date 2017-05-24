@@ -1079,6 +1079,7 @@ public class FinanceDataValidation {
 				if (docType.isDocIsCustDoc()) {
 					CustomerDocument custDocs = new CustomerDocument();
 					custDocs.setCustDocCategory(detail.getDocCategory());
+					custDocs.setCustDocName(detail.getDocName());
 					custDocs.setCustDocIssuedOn(detail.getCustDocIssuedOn());
 					custDocs.setCustDocExpDate(detail.getCustDocExpDate());
 					custDocs.setCustDocTitle(detail.getCustDocTitle());

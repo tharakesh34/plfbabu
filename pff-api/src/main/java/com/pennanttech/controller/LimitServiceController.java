@@ -10,6 +10,7 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.util.APIHeader;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.limit.LimitStructureDetailDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -121,6 +122,7 @@ public class LimitServiceController {
 					LimitStructureDetail limitStrucDetail = limitStructureDetailDAO.getLimitStructureDetail(
 							limitStructureId, "_AView");
 					detail.setLimitStructureDetails(limitStrucDetail);
+					detail.setLimitSanctioned(PennantApplicationUtil.formateAmount(detail.getLimitSanctioned(), CurrencyUtil.getFormat(headerDetail.getLimitCcy())));
 				}
 			}
 
@@ -364,6 +366,7 @@ public class LimitServiceController {
 				detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				detail.setLastMntOn(new Timestamp(new Date().getTime()));
 				detail.setUserDetails(userDetails);
+				detail.setLimitSanctioned(PennantApplicationUtil.unFormateAmount(detail.getLimitSanctioned(), CurrencyUtil.getFormat(limitHeader.getLimitCcy())));
 			}
 		}
 
