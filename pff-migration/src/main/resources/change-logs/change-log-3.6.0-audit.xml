@@ -8,4 +8,7 @@
 <property name="call.maindb" value="PLF.." dbms="mssql"/>
 <property name="call.maindb" value="PLF." dbms="oracle"/>
 
+<changeSet id="01" author="Vijay">
+	<modifyDataType tableName="ADTWORKFLOWDETAILS" columnName="WORKFLOWDESC" newDataType="VARCHAR2(200)"/>
+	</changeSet>
 </databaseChangeLog>
