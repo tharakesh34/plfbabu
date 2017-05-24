@@ -1679,7 +1679,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate", isWIF);
-		aAuditHeader = processLimitSaveOrUpdate(aAuditHeader);
+		if (!isWIF && aAuditHeader.isNextProcess()) {
+			aAuditHeader = processLimitSaveOrUpdate(aAuditHeader);
+		}
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		if (!aAuditHeader.isNextProcess()) {
 			logger.debug("Leaving");
@@ -2860,7 +2862,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		String roleCode = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		aAuditHeader = businessValidation(aAuditHeader, "doApprove", isWIF);
-		if (!isWIF) {
+		if (!isWIF && aAuditHeader.isNextProcess()) {
 			aAuditHeader = processLimitApprove(aAuditHeader);
 		}
 		if (!aAuditHeader.isNextProcess()) {
