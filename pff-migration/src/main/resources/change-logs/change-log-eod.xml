@@ -410,6 +410,12 @@ INSERT INTO SMTparameters (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, 
 update Postings set PostCategory=0 where PostCategory is null;
 </sql>
 </changeSet>
+<changeSet id="48" author="satish">
+	<addColumn tableName="Postings">
+		<column name="AccountType" type="varchar(8)">
+		</column>
+	</addColumn>
+</changeSet>
 
 
 </databaseChangeLog>
