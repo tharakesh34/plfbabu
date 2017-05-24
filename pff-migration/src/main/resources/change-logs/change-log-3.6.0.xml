@@ -173,4 +173,58 @@ INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (
 		Update ReportList set FIELDLABELS='listheader_ProductCtg.label,listheader_ProductCtgDesc.label' where CODE='VASProductCategory';
 	</sql>
 	</changeSet>
+	
+	<changeSet id="09" author="Amit">
+	<dropTable tableName="ExtendedMonthEnd"/>
+	</changeSet>
+	
+	<changeSet id="10" author="Amit">
+	<dropTable tableName="ExtendedMonthEnd_Temp"/>
+	</changeSet>
+	
+	<changeSet id="11" author="Amit">
+		<createTable tableName="EodConfig">
+			<column name="EodConfigId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ExtMnthRequired" type="bit" />
+			<column name="MnthExtTo" type="datetime" />
+			<column name="Active" type="bit"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="12" author="Amit">
+		<createTable tableName="EodConfig_Temp">
+			<column name="EodConfigId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ExtMnthRequired" type="bit" />
+			<column name="MnthExtTo" type="datetime" />
+			<column name="Active" type="bit"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
 </databaseChangeLog>
