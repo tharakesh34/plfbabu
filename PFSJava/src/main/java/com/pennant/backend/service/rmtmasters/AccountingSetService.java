@@ -63,4 +63,5 @@ public interface AccountingSetService {
 	AccountingSet getAccSetSysDflByEvent(String event,String setCode,String type);
 	List<TransactionEntry> getODTransactionEntries();
 	Map<String,List<FinTypeFees>> fetchFinTypeFees(AccountingSet aAccountingSet);
+	long getAccountingSetId(String event, String setCode);
 }

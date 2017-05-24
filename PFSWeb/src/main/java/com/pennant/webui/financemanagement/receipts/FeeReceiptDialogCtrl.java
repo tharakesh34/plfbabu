@@ -1038,10 +1038,10 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		amountCodes.setPaidFee(receiptDetail.getAmount());
 		
 		// Fetch Accounting Set ID
-		AccountingSet accountingSet = accountingSetService.getAccSetSysDflByEvent(AccountEventConstants.ACCEVENT_FEEPAY,
-				AccountEventConstants.ACCEVENT_FEEPAY, "");
-		if(accountingSet != null){
-			aeEvent.getAcSetIDList().add(accountingSet.getAccountSetid());
+		long accountingSetID = accountingSetService.getAccountingSetId(AccountEventConstants.ACCEVENT_FEEPAY,
+				AccountEventConstants.ACCEVENT_FEEPAY);
+		if(accountingSetID != 0 && accountingSetID != Long.MIN_VALUE){
+			aeEvent.getAcSetIDList().add(accountingSetID);
 			aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 			accountingSetEntries.addAll(engineExecution.getAccEngineExecResults(aeEvent).getReturnDataSet());
 		}else{

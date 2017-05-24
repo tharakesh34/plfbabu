@@ -260,6 +260,11 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 	public AccountingSet getAccSetSysDflByEvent(String event,String setCode,String type){
 		return  getAccountingSetDAO().getAccSetSysDflByEvent(event,setCode,type);
 	}
+	
+	@Override
+	public long getAccountingSetId(String event,String setCode){
+		return  getAccountingSetDAO().getAccountingSetId(event,setCode);
+	}
 
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by

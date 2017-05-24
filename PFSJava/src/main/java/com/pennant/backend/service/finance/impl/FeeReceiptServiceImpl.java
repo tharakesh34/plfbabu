@@ -25,7 +25,6 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
-import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
@@ -262,16 +261,16 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		amountCodes.setPaidFee(finreceiptDetail.getAmount());
 		
 		// Fetch Accounting Set ID
-		AccountingSet accountingSet = getAccountingSetDAO().getAccSetSysDflByEvent(AccountEventConstants.ACCEVENT_FEEPAY, 
-				AccountEventConstants.ACCEVENT_FEEPAY, "");
-		if(accountingSet == null){
+		long accountingSetID = accountingSetDAO.getAccountingSetId(AccountEventConstants.ACCEVENT_FEEPAY,
+				AccountEventConstants.ACCEVENT_FEEPAY);
+		if(accountingSetID == 0 || accountingSetID == Long.MIN_VALUE){
 			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.KEY_FIELD, "", null, null));
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 			
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
-		aeEvent.getAcSetIDList().add(accountingSet.getAccountSetid());
+		aeEvent.getAcSetIDList().add(accountingSetID);
 
 		try {
 			getPostingsPreparationUtil().postAccounting(aeEvent);
