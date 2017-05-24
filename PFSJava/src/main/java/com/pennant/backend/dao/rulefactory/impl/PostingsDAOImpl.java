@@ -187,18 +187,20 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 	@Override
 	public void saveBatch(List<ReturnDataSet> dataSetList) {
 		logger.debug("Entering");
-		
+
 		StringBuilder insertSql = new StringBuilder();
-		insertSql.append("Insert Into ");
-		insertSql.append(" Postings");
+		insertSql.append("Insert Into Postings");
 		insertSql.append(" (LinkedTranId, Postref, PostingId, finReference, FinEvent,");
 		insertSql.append(" PostDate, ValueDate, TranCode, TranDesc, RevTranCode, DrOrCr, Account,ShadowPosting,");
 		insertSql.append(" PostAmountLcCcy, TransOrder, DerivedTranOrder,PostToSys,ExchangeRate, ");
-		insertSql.append(" PostAmount,AmountType, PostStatus, ErrorId, ErrorMsg, AcCcy, TranOrderId,PostBranch, AppDate, AppValueDate, UserBranch)");
+		insertSql.append(" PostAmount,AmountType, PostStatus, ErrorId, ErrorMsg, AcCcy, TranOrderId,");
+		insertSql.append(" PostBranch, AppDate, AppValueDate, UserBranch, PostCategory , CustAppDate)");
 		insertSql.append(" Values(:LinkedTranId, :Postref, :PostingId, :finReference, :FinEvent,");
-		insertSql.append(" :PostDate, :ValueDate, :TranCode, :TranDesc, :RevTranCode, :DrOrCr, :Account, :ShadowPosting,");
-		insertSql.append(" :PostAmountLcCcy, :TransOrder, :DerivedTranOrder,:PostToSys,:ExchangeRate,");
-		insertSql.append(" :PostAmount, :AmountType, :PostStatus, :ErrorId, :ErrorMsg, :AcCcy, :TranOrderId,:PostBranch, :AppDate, :AppValueDate, :UserBranch)");
+		insertSql.append(" :PostDate, :ValueDate, :TranCode, :TranDesc, :RevTranCode, :DrOrCr, :Account,");
+		insertSql.append(" :ShadowPosting,:PostAmountLcCcy, :TransOrder, :DerivedTranOrder,:PostToSys,");
+		insertSql.append(" :ExchangeRate,:PostAmount, :AmountType, :PostStatus, :ErrorId, :ErrorMsg, ");
+		insertSql.append(" :AcCcy,:TranOrderId,:PostBranch, :AppDate, :AppValueDate, :UserBranch, ");
+		insertSql.append(" :PostCategory , :CustAppDate)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(dataSetList.toArray());

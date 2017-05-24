@@ -395,5 +395,21 @@ INSERT INTO SMTparameters (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, 
 </sql>
 </changeSet>
 
+<changeSet id="46" author="satish">
+	<addColumn tableName="Postings">
+		<column name="CustAppDate" type="datetime">
+		</column>
+	</addColumn>
+	<addColumn tableName="Postings">
+		<column name="PostCategory" type="int">
+		</column>
+	</addColumn>
+</changeSet>
+<changeSet id="47" author="satish">
+<sql>
+update Postings set PostCategory=0 where PostCategory is null;
+</sql>
+</changeSet>
+
 
 </databaseChangeLog>
