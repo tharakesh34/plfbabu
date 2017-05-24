@@ -1660,4 +1660,7 @@ update WorkFlowDetails set workflowactive='0' where workflowtype='FEERECEIPT_PRO
       			values ('AccountMapping','AccountMapping','label_AccountMapping.Account,label_AccountMapping.HostAccount,label_AccountMapping.ProfitCenter,label_AccountMapping.CostCenter,label_AccountMapping.FinType,label_AccountMapping.AccountType,listheader_RecordStatus.label,listheader_RecordType.label','account,hostAccount,profitCenterCode,costCenterCode,finType,accountType,recordStatus,recordType','String,String,String,String,String,String,String,String',' ','ReportList08','SAP GL Mapping','Application Masters',2,1001,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
 		</sql>
 	</changeSet>
+	<changeSet id="102" author="Vijay">
+	<dropNotNullConstraint tableName="WORKFLOWDETAILS" columnName="WORKFLOWDESC"/>
+	</changeSet>
 </databaseChangeLog>
