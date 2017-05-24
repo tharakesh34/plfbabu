@@ -46,7 +46,7 @@
 							<!-- SEARCH AREA -->
 							<toolbar align="center"
 								sclass="toolbar-center">
-								<label
+								<label id="windowTitle"
 									value="${c:l('window_VASRecordingDialog.title')}"
 									sclass="label-heading" />
 							</toolbar>

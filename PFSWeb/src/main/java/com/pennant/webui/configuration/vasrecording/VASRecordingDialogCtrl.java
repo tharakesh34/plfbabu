@@ -73,6 +73,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
@@ -170,6 +171,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * GenericForwardComposer. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window										window_VASRecordingDialog;
+	protected Label											windowTitle;
 	protected ExtendedCombobox								productCode;
 	protected Combobox										postingAgainst;
 	protected Textbox										primaryLinkRef;
@@ -1205,6 +1207,12 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			// fill the components with the data
 			doWriteBeanToComponents(aVASRecording);
 			
+			if(enqiryModule){
+				this.windowTitle.setValue(Labels.getLabel("window_VASRecordingEnquiryDialog.title"));
+			}else  if(isCancelProcess){
+				this.windowTitle.setValue(Labels.getLabel("window_VASRecordingCancelDialog.title"));
+			}
+
 			if(isFinanceVas()){
 				
 				// Height Calculation
