@@ -259,12 +259,6 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 				ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm), "EN");
 				errDetails.add(errorDetail);
 			}
-			if (StringUtils.isBlank(workFlowDetails.getWorkFlowDesc())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "WorkFlowDesc";
-				ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm), "EN");
-				errDetails.add(errorDetail);
-			}
 			if (StringUtils.isBlank(workFlowDetails.getWorkFlowRoles())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "WorkFlowRoles";
@@ -288,10 +282,10 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 				errDetails.add(errorDetail);
 			}
 			if (StringUtils.isNotBlank(workFlowDetails.getWorkFlowDesc())
-					&& workFlowDetails.getWorkFlowDesc().length() > 50) {
+					&& workFlowDetails.getWorkFlowDesc().length() > 200) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "WorkFlowDesc Length";
-				valueParm[1] = "50.";
+				valueParm[1] = "200.";
 				ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30508", valueParm), "EN");
 				errDetails.add(errorDetail);
 			}
