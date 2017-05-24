@@ -107,4 +107,43 @@ INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (
 		</createView>
 	</changeSet>
 	
+	<changeSet id="03" author="Amit">
+		<createTable tableName="ExtendedMonthEnd">
+			<column name="ExtMnthRequired" type="bit" />
+			<column name="MnthExtTo" type="datetime" />
+			<column name="Active" type="bit"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="04" author="Amit">
+		<createTable tableName="ExtendedMonthEnd_Temp">
+			<column name="ExtMnthRequired" type="bit" />
+			<column name="MnthExtTo" type="datetime" />
+			<column name="Active" type="bit"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
 </databaseChangeLog>
