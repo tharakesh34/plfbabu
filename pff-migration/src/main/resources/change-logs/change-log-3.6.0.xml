@@ -227,4 +227,115 @@ INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="13" author="Madhubabu">
+		<createTable tableName="FeePostings">
+			<column name="PostId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="PostAgainst" type="nchar(10)" />
+			<column name="Reference" type="varchar(20)" />
+			<column name="FeeTyeCode" type="char(10)" />
+			<column name="PostingAmount" type="decimal(18,0)"/>
+			<column name="PostDate" type="datetime" />
+			<column name="ValueDate" type="datetime" />
+			<column name="Version" type="NUMBER(10,0)" />
+			<column name="Remarks" type="nvarchar(200)" />
+			<column name="PartnerBankId" type="NUMBER(19,0)" />
+			<column name="Lastmntby" type="NUMBER(19,0)" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="nvarchar(50)" />
+			<column name="Rolecode" type="nvarchar(50)" />
+			<column name="Nextrolecode" type="nvarchar(200)" />
+			<column name="Taskid" type="nvarchar(50)" />
+			<column name="Nexttaskid" type="nvarchar(200)" />
+			<column name="Recordtype" type="nvarchar(50)" />
+			<column name="Workflowid" type="NUMBER(19,0)" />
+			
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="14" author="Madhubabu">
+		<createTable tableName="FeePostings_Temp">
+			<column name="PostId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="PostAgainst" type="nchar(10)" />
+			<column name="Reference" type="varchar(20)" />
+			<column name="FeeTyeCode" type="char(10)" />
+			<column name="PostingAmount" type="decimal(18,0)"/>
+			<column name="PostDate" type="datetime" />
+			<column name="ValueDate" type="datetime" />
+			<column name="Version" type="NUMBER(10,0)" />
+			<column name="Remarks" type="nvarchar(200)" />
+			<column name="PartnerBankId" type="NUMBER(19,0)" />
+			<column name="Lastmntby" type="NUMBER(19,0)" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="nvarchar(50)" />
+			<column name="Rolecode" type="nvarchar(50)" />
+			<column name="Nextrolecode" type="nvarchar(200)" />
+			<column name="Taskid" type="nvarchar(50)" />
+			<column name="Nexttaskid" type="nvarchar(200)" />
+			<column name="Recordtype" type="nvarchar(50)" />
+			<column name="Workflowid" type="NUMBER(19,0)" />
+			
+		</createTable>
+	</changeSet>
+	<changeSet id="15" author="Madhubabu">
+	<dropTable tableName="FeePostings" />
+	<dropTable tableName="FeePostings_temp" />
+	</changeSet>
+	<changeSet id="16" author="Madhubabu">
+		<createTable tableName="FeePostings">
+			<column name="PostId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="PostAgainst" type="nchar(10)" />
+			<column name="Reference" type="varchar(20)" />
+			<column name="FeeTyeCode" type="char(10)" />
+			<column name="PostingAmount" type="decimal(18,0)"/>
+			<column name="PostDate" type="datetime" />
+			<column name="ValueDate" type="datetime" />
+			<column name="Version" type="NUMBER(10,0)" />
+			<column name="Remarks" type="nvarchar(200)" />
+			<column name="PartnerBankId" type="NUMBER(19,0)" />
+			<column name="Lastmntby" type="NUMBER(19,0)" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="nvarchar(50)" />
+			<column name="Rolecode" type="nvarchar(50)" />
+			<column name="Nextrolecode" type="nvarchar(200)" />
+			<column name="Taskid" type="nvarchar(50)" />
+			<column name="Nexttaskid" type="nvarchar(200)" />
+			<column name="Recordtype" type="nvarchar(50)" />
+			<column name="Workflowid" type="NUMBER(19,0)" />
+			
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="17" author="Madhubabu">
+		<createTable tableName="FeePostings_Temp">
+			<column name="PostId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="PostAgainst" type="nchar(10)" />
+			<column name="Reference" type="varchar(20)" />
+			<column name="FeeTyeCode" type="char(10)" />
+			<column name="PostingAmount" type="decimal(18,0)"/>
+			<column name="PostDate" type="datetime" />
+			<column name="ValueDate" type="datetime" />
+			<column name="Version" type="NUMBER(10,0)" />
+			<column name="Remarks" type="nvarchar(200)" />
+			<column name="PartnerBankId" type="NUMBER(19,0)" />
+			<column name="Lastmntby" type="NUMBER(19,0)" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="nvarchar(50)" />
+			<column name="Rolecode" type="nvarchar(50)" />
+			<column name="Nextrolecode" type="nvarchar(200)" />
+			<column name="Taskid" type="nvarchar(50)" />
+			<column name="Nexttaskid" type="nvarchar(200)" />
+			<column name="Recordtype" type="nvarchar(50)" />
+			<column name="Workflowid" type="NUMBER(19,0)" />
+			
+		</createTable>
+	</changeSet>
+	
 </databaseChangeLog>
