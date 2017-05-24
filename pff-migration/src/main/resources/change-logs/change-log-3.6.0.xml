@@ -151,4 +151,11 @@ INSERT INTO SecRoleGroups SELECT (Select MAX(RoleGrpID)+1 From SecRoleGroups), (
 	INSERT INTO ErrorDetails VALUES('90291','EN','E','Uploaded document {0} extension should be required.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 	</changeSet>
+	<changeSet id="06" author="satya">
+	<sql>
+	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+	INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BUILDERCOMPANY_MAKER'), (select max(RightID) from SecRights WHERE RightName='BuilderCompanyDialog_groupId'),1,0,10000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
