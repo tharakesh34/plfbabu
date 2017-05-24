@@ -766,17 +766,17 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 				List<FinanceScheduleDetail> updateSchdList = new ArrayList<>();
 				List<FinFeeScheduleDetail> updateFeeList = new ArrayList<>();
 				List<FinSchFrqInsurance> updateInsList = new ArrayList<>();
-				Map<Date, FinanceScheduleDetail> schdMap = null;
+				Map<String, FinanceScheduleDetail> schdMap = null;
 				
 				FinScheduleData scheduleData = null;
 				if(!alwSchdReversalByLog){
 					
 					schdMap = new HashMap<>();
 					scheduleData = new FinScheduleData();
-					scheduleData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, "", false, 0));
+					scheduleData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, "", false));
 					
 					for (FinanceScheduleDetail schd : scheduleData.getFinanceScheduleDetails()) {
-						schdMap.put(schd.getSchDate(), schd);
+						schdMap.put(DateUtility.formatDate(schd.getSchDate(), PennantConstants.DBDateFormat), schd);
 					}
 				}
 
@@ -787,8 +787,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 						FinanceScheduleDetail curSchd = null;
 						boolean schdUpdated = false;
-						if(schdMap.containsKey(rpySchd.getSchDate())){
-							curSchd = schdMap.get(rpySchd.getSchDate());
+						if(schdMap.containsKey(DateUtility.formatDate(rpySchd.getSchDate(), PennantConstants.DBDateFormat))){
+							curSchd = schdMap.get(DateUtility.formatDate(rpySchd.getSchDate(), PennantConstants.DBDateFormat));
 
 							// Principal Payment 
 							if(rpySchd.getPrincipalSchdPayNow().compareTo(BigDecimal.ZERO) > 0){

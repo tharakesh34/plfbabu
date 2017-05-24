@@ -468,6 +468,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			this.caption_receiptDetail.setLabel(this.receiptMode.getSelectedItem().getLabel());
 			this.receiptAmount.setMandatory(false);
 			this.row_fundingAcNo.setVisible(true);
+			this.row_remarks.setVisible(true);
 
 			if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)
 					|| StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_DD)) {
