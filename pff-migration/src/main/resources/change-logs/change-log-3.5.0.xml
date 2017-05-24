@@ -1657,7 +1657,7 @@ update WorkFlowDetails set workflowactive='0' where workflowtype='FEERECEIPT_PRO
 	<changeSet id="101" author="Surekha">
 		<sql>
 			Insert INTO REPORTLIST (CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ) 
-      			values ('AccountMapping','AccountMapping','label_AccountMapping.Account,label_AccountMapping.HostAccount,label_AccountMapping.ProfitCenter,label_AccountMapping.CostCenter,label_AccountMapping.FinType,label_AccountMapping.AccountType,listheader_RecordStatus.label,listheader_RecordType.label','account,hostAccount,profitCenterCode,costCenterCode,finType,accountType,recordStatus,recordType','String,String,String,String,String,String,String,String',' ','ReportList08','SAP GL Mapping Details','Application Masters',2,1001,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+      			values ('AccountMapping','AccountMapping','label_AccountMapping.Account,label_AccountMapping.HostAccount,label_AccountMapping.ProfitCenter,label_AccountMapping.CostCenter,label_AccountMapping.FinType,label_AccountMapping.AccountType,listheader_RecordStatus.label,listheader_RecordType.label','account,hostAccount,profitCenterCode,costCenterCode,finType,accountType,recordStatus,recordType','String,String,String,String,String,String,String,String',' ','ReportList08','SAP GL Mapping','Application Masters',2,1001,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
 		</sql>
 	</changeSet>
 </databaseChangeLog>
