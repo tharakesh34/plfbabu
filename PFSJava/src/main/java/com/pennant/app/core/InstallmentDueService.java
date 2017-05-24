@@ -29,7 +29,6 @@ public class InstallmentDueService extends ServiceHelper {
 		logger.debug(" Entering ");
 
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
-		Date valueDate = custEODEvent.getEodValueDate();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 
@@ -45,7 +44,7 @@ public class InstallmentDueService extends ServiceHelper {
 			}
 
 			FinanceScheduleDetail curSchd = finEODEvent.getFinanceScheduleDetails().get(idx);
-			postInstallmentDues(finEODEvent, curSchd, valueDate, accountingID);
+			postInstallmentDues(finEODEvent, curSchd, custEODEvent, accountingID);
 
 		}
 
@@ -56,13 +55,14 @@ public class InstallmentDueService extends ServiceHelper {
 	 * @param resultSet
 	 * @throws Exception
 	 */
-	public void postInstallmentDues(FinEODEvent finEODEvent, FinanceScheduleDetail curSchd, Date valueDate,
+	public void postInstallmentDues(FinEODEvent finEODEvent, FinanceScheduleDetail curSchd, CustEODEvent custEODEvent,
 			long accountingID) throws Exception {
 		logger.debug(" Entering ");
 
 		String finReference = curSchd.getFinReference();
 
 		BigDecimal dueAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
+		Date valueDate=custEODEvent.getEodValueDate();
 		if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
 			finEODEvent.setFinFeeScheduleDetails(getFinFeeScheduleDetailDAO().getFeeSchdTPost(finReference, valueDate));
 		}
@@ -118,7 +118,7 @@ public class InstallmentDueService extends ServiceHelper {
 		}
 
 		aeEvent.setDataMap(dataMap);
-
+		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
 		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());

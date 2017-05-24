@@ -137,6 +137,7 @@ abstract public class ServiceHelper implements Serializable {
 
 	public final AEEvent postAccountingEOD(AEEvent aeEvent) throws Exception {
 		aeEvent.setPostingUserBranch("EOD");//FIXME
+		aeEvent.setEOD(true);
 		return getPostingsPreparationUtil().postAccountingEOD(aeEvent);
 	}
 

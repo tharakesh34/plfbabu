@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.backend.model.Entity;
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = { "postref", "finEvent", "postDate", "valueDate", "tranCode",
@@ -31,6 +32,7 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	private Date valueDate;
 	private Date appDate;
 	private Date appValueDate;
+	private Date custAppDate;
 	@XmlElement
 	private String tranCode;
 	private int transOrder;
@@ -79,6 +81,13 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	private String finRpyFor;
 	private String userBranch;
 	
+	/**
+	 * Possible values 
+	 * 0- NON EOD posting 
+	 * 1- EOD Postings 
+	 * 2- EOD Postings and Accounts Updates
+	 */
+	private int					postCategory		= AccountConstants.POSTING_CATEGORY_NORMAL;
 	
 	public ReturnDataSet() {
 		
@@ -464,6 +473,22 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 
 	public void setUserBranch(String userBranch) {
 		this.userBranch = userBranch;
+	}
+
+	public Date getCustAppDate() {
+		return custAppDate;
+	}
+
+	public void setCustAppDate(Date custAppDate) {
+		this.custAppDate = custAppDate;
+	}
+
+	public int getPostCategory() {
+		return postCategory;
+	}
+
+	public void setPostCategory(int postCategory) {
+		this.postCategory = postCategory;
 	}
 
 	

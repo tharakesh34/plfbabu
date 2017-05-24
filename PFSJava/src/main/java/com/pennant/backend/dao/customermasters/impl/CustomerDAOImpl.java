@@ -1799,7 +1799,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		StringBuilder selectSql = new StringBuilder("SELECT CustID, CustCIF, CustCoreBank, CustCtgCode, ");
 		selectSql.append(" CustTypeCode, CustDftBranch, CustPOB, CustCOB, CustGroupID,  ");
 		selectSql.append(" CustSts, CustStsChgDate, CustIsStaff, CustIndustry, CustSector, CustSubSector, ");
-		selectSql.append(" CustEmpSts, CustSegment, CustSubSegment, " );
+		selectSql.append(" CustEmpSts, CustSegment, CustSubSegment, CustAppDate, " );
 		selectSql.append(" CustParentCountry, CustResdCountry, CustRiskCountry, CustNationality, " );
 		selectSql.append(" SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger " );
 		
@@ -1833,5 +1833,18 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		logger.debug("Leaving");
 		this.namedParameterJdbcTemplate.update(selectSql.toString(), source);
     }
+	
+	@Override
+	public Date getCustAppDate(long custId) {
+		logger.debug("Entering");
+		MapSqlParameterSource source=new MapSqlParameterSource();
+		source.addValue("CustId", custId);
+		StringBuilder selectSql = new StringBuilder("Update Customers  " );
+		selectSql.append(" Set CustAppDate = :CustAppDate  WHERE CustId=:CustId ");
+		logger.debug("selectSql: " + selectSql.toString());
+		
+		logger.debug("Leaving");
+		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source,Date.class);
+	}
 	
 }	

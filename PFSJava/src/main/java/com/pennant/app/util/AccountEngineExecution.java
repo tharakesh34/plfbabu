@@ -644,6 +644,12 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSet.setPostDate(aeEvent.getPostDate());
 			returnDataSet.setAppDate(aeEvent.getAppDate());
 			returnDataSet.setAppValueDate(aeEvent.getAppValueDate());
+			if (aeEvent.isEOD()) {
+				returnDataSet.setPostCategory(AccountConstants.POSTING_CATEGORY_EOD);
+				returnDataSet.setCustAppDate(aeEvent.getCustAppDate());
+			}else{
+				returnDataSet.setCustAppDate(getCustomerDAO().getCustAppDate(aeEvent.getCustID()));
+			}
 
 			returnDataSets.add(returnDataSet);
 			if (newEntries != null) {

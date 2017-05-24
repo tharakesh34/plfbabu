@@ -168,4 +168,6 @@ public interface CustomerDAO {
 
 	void updateCustAppDate(long custId, Date custAppDate);
 
+	Date getCustAppDate(long custId);
+
 }

@@ -70,10 +70,9 @@ public class AccrualService extends ServiceHelper {
 	public CustEODEvent processAccrual(CustEODEvent custEODEvent) throws Exception {
 		logger.debug(" Entering ");
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
-		Date valueDate = custEODEvent.getEodValueDate();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
-			finEODEvent = calculateAccruals(finEODEvent, valueDate);
+			finEODEvent = calculateAccruals(finEODEvent, custEODEvent);
 		}
 		logger.debug(" Leaving ");
 
@@ -81,7 +80,7 @@ public class AccrualService extends ServiceHelper {
 
 	}
 
-	public FinEODEvent calculateAccruals(FinEODEvent finEODEvent, Date valueDate) throws Exception {
+	public FinEODEvent calculateAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
 		logger.debug(" Entering ");
 
 		FinanceMain finMain = finEODEvent.getFinanceMain();
@@ -93,7 +92,7 @@ public class AccrualService extends ServiceHelper {
 			profitDetail = getFinanceProfitDetailDAO().getFinProfitDetailsById(finMain.getFinReference());
 		}
 
-		profitDetail = calProfitDetails(finMain, scheduleDetailList, profitDetail, valueDate);
+		profitDetail = calProfitDetails(finMain, scheduleDetailList, profitDetail, custEODEvent.getEodValueDate());
 
 		//FIXME: PV 15MAY17: To confirm it is being updated in latePayMarkingService.processDPDBuketing OR latePayMarkingService.processCustomerStatus
 		//String worstSts = getCustomerStatusCodeDAO().getFinanceStatus(finReference, false);
@@ -103,13 +102,13 @@ public class AccrualService extends ServiceHelper {
 		int amzPostingEvent = SysParamUtil.getValueAsInt(AccountConstants.AMZ_POSTING_EVENT);
 		boolean isAmzPostToday = false;
 		if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_MTH_END) {
-			Date date1 = DateUtility.addDays(valueDate, -1);
+			Date date1 = DateUtility.addDays(custEODEvent.getEodValueDate(), -1);
 			//Is yesterday month end?
 			if (date1.compareTo(DateUtility.getMonthEnd(date1)) == 0) {
 				isAmzPostToday = true;
 			}
 		} else if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_EXT_MTH_END) {
-			Date date1 = DateUtility.addDays(valueDate, -1);
+			Date date1 = DateUtility.addDays(custEODEvent.getEodValueDate(), -1);
 			if (date1.compareTo(DateUtility.getAppValueDate()) == 0) {
 				isAmzPostToday = true;
 			}
@@ -118,7 +117,7 @@ public class AccrualService extends ServiceHelper {
 		}
 
 		if (isAmzPostToday) {
-			postAccruals(finEODEvent, valueDate);
+			postAccruals(finEODEvent, custEODEvent);
 		}
 
 		logger.debug(" Leaving ");
@@ -603,7 +602,7 @@ public class AccrualService extends ServiceHelper {
 	 * @param resultSet
 	 * @throws Exception
 	 */
-	public void postAccruals(FinEODEvent finEODEvent, Date valueDate) throws Exception {
+	public void postAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
 		logger.debug(" Entering ");
 
 		String eventCode = AccountEventConstants.ACCEVENT_AMZ;
@@ -618,9 +617,10 @@ public class AccrualService extends ServiceHelper {
 			return;
 		}
 
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finPftDetail, eventCode, valueDate, valueDate);
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finPftDetail, eventCode, custEODEvent.getEodValueDate(), custEODEvent.getEodValueDate());
 		aeEvent.setDataMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());
 		aeEvent.getAcSetIDList().add(accountingID);
+		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
 
 		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
@@ -636,7 +636,7 @@ public class AccrualService extends ServiceHelper {
 		finPftDetail.setAcrSuspTillLBD(finPftDetail.getPftAccrueSusp());
 
 		//Month End move all the balances to previous month also
-		if (DateUtility.getDay(valueDate) == 1) {
+		if (DateUtility.getDay(custEODEvent.getEodValueDate()) == 1) {
 			finPftDetail.setPrvMthAcr(finPftDetail.getPftAccrued());
 			finPftDetail.setPrvMthAcrSusp(finPftDetail.getPftAccrueSusp());
 			finPftDetail.setPrvMthAmz(finPftDetail.getPftAmz());
@@ -646,8 +646,6 @@ public class AccrualService extends ServiceHelper {
 			finEODEvent.setUpdMonthEndPostings(true);
 		}
 		// these fields should be update after the accrual posting only so these will not be considered in normal update.
-
-//		getFinanceProfitDetailDAO().updateLBDAccruals(finPftDetail, false);
 		logger.debug(" Leaving ");
 	}
 

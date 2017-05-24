@@ -1,6 +1,5 @@
 package com.pennant.app.core;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -24,7 +23,6 @@ public class AutoDisbursementService extends ServiceHelper {
 		logger.debug(" Entering ");
 
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
-		Date valueDate = custEODEvent.getEodValueDate();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 
@@ -35,11 +33,11 @@ public class AutoDisbursementService extends ServiceHelper {
 			String finReference = finEODEvent.getFinanceMain().getFinReference();
 
 			finEODEvent.setFinanceDisbursements(getFinanceDisbursementDAO().getDisbursementToday(finReference,
-					valueDate));
+					custEODEvent.getEodValueDate()));
 
 			List<FinanceDisbursement> disbrusments = finEODEvent.getFinanceDisbursements();
 			for (FinanceDisbursement financeDisbursement : disbrusments) {
-				postFutureDisbursement(valueDate, finEODEvent, financeDisbursement);
+				postFutureDisbursement(custEODEvent, finEODEvent, financeDisbursement);
 			}
 
 		}
@@ -52,7 +50,7 @@ public class AutoDisbursementService extends ServiceHelper {
 	 * @param resultSet
 	 * @throws Exception
 	 */
-	public void postFutureDisbursement(Date valueDate, FinEODEvent finEODEvent, FinanceDisbursement curDisbursment)
+	public void postFutureDisbursement(CustEODEvent custEODEvent, FinEODEvent finEODEvent, FinanceDisbursement curDisbursment)
 			throws Exception {
 		logger.debug(" Entering ");
 		long accountingID = getAccountingID(finEODEvent.getFinanceMain(), AccountEventConstants.ACCEVENT_ADDDBSN);
@@ -62,11 +60,12 @@ public class AutoDisbursementService extends ServiceHelper {
 		}
 
 		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finEODEvent.getFinProfitDetail(),
-				AccountEventConstants.ACCEVENT_ADDDBSN, valueDate, valueDate);
+				AccountEventConstants.ACCEVENT_ADDDBSN, custEODEvent.getEodValueDate(), custEODEvent.getEodValueDate());
 		aeEvent.getAcSetIDList().add(accountingID);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		amountCodes.setDisburse(curDisbursment.getDisbAmount().add(curDisbursment.getFeeChargeAmt()));
 		aeEvent.setDataMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());
+		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
 		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());

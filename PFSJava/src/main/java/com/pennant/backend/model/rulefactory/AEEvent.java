@@ -19,6 +19,7 @@ public class AEEvent {
 	private Date					appDate;
 	private Date					appValueDate;
 	private Date					schdDate;
+	private Date					custAppDate;
 
 	private boolean					newRecord			= false;
 	private boolean					createNow			= false;
@@ -309,6 +310,14 @@ public class AEEvent {
 
 	public void setPostingUserBranch(String postingUserBranch) {
 		this.postingUserBranch = postingUserBranch;
+	}
+
+	public Date getCustAppDate() {
+		return custAppDate;
+	}
+
+	public void setCustAppDate(Date custAppDate) {
+		this.custAppDate = custAppDate;
 	}
 
 }

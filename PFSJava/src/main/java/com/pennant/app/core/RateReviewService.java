@@ -91,7 +91,7 @@ public class RateReviewService extends ServiceHelper {
 			processRateReview(finEODEvent, custEODEvent.getEodValueDate());
 
 			if (finEODEvent.isRateReviewExist()) {
-				reviewRateUpdate(finEODEvent, custEODEvent.getEodValueDate());
+				reviewRateUpdate(finEODEvent, custEODEvent);
 			}
 		}
 		logger.debug(" Leaving ");
@@ -179,11 +179,11 @@ public class RateReviewService extends ServiceHelper {
 
 	}
 
-	private void reviewRateUpdate(FinEODEvent finEODEvent, Date valueDate) throws Exception {
+	private void reviewRateUpdate(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
 
 		String finRef = finEODEvent.getFinanceMain().getFinReference();
 		FinScheduleData finScheduleData = getFinSchDataByFinRef(finEODEvent);
-
+		Date valueDate=custEODEvent.getEodValueDate();
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 
@@ -254,7 +254,7 @@ public class RateReviewService extends ServiceHelper {
 		}
 
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
-
+		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
 		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());

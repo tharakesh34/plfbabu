@@ -128,4 +128,8 @@ public class AccountConstants {
 	public static final int		AMZ_POSTING_APP_MTH_END			= 1;
 	public static final int		AMZ_POSTING_APP_EXT_MTH_END		= 2;
 
+	public static final int		POSTING_CATEGORY_NORMAL			= 0;
+	public static final int		POSTING_CATEGORY_EOD			= 1;
+	public static final int		POSTING_CATEGORY_ACUPDATE		= 2;
+
 }
