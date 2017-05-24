@@ -89,7 +89,7 @@ public interface FinanceScheduleDetailDAO {
 
 	FinanceScheduleDetail getFinSchdDetailForRpy(String finReference, Date rpyDate, String finRpyFor);
 
-	void updateForRpy(FinanceScheduleDetail financeScheduleDetail, String rpyFor);
+	void updateForRpy(FinanceScheduleDetail financeScheduleDetail);
 
 	Date getFirstRepayDate(String finReference);
 
@@ -116,4 +116,6 @@ public interface FinanceScheduleDetailDAO {
 	boolean getFinScheduleCountByDate(String finReference, Date fromDate, boolean isWIF);
 
 	List<FinanceScheduleDetail> getFinScheduleDetails(long Custid, boolean isActive);
+
+	void updateListForRpy(List<FinanceScheduleDetail> schdList);
 }

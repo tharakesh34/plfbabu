@@ -53,6 +53,7 @@ import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
@@ -603,6 +604,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	private String procReceiptCancellation(FinReceiptHeader receiptHeader) throws PFFInterfaceException,
 			IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
+		
+		boolean alwSchdReversalByLog = false;
 
 		// Valid Check for Finance Reversal On Active Finance Or not with ValueDate CheckUp
 		String finReference = receiptHeader.getReference();
@@ -631,20 +634,22 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 				if (isBounceProcess
 						&& (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)
-								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) || StringUtils
-									.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE))) {
+								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV) 
+								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE))) {
 					continue;
 				}
 
 				// Fetch Log Entry Details Greater than this Repayments Entry , which are having Schedule Recalculation
 				// If Any Exist Case after this Repayments with Schedule Recalculation then Stop Process
 				// ============================================
-				List<FinLogEntryDetail> list = getFinLogEntryDetailDAO().getFinLogEntryDetailList(finReference,
-						receiptDetail.getLogKey());
-				if (list != null && !list.isEmpty()) {
-					ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60206", "", null),
-							PennantConstants.default_Language);
-					return errorDetail.getErrorMessage();
+				if(alwSchdReversalByLog){
+					List<FinLogEntryDetail> list = getFinLogEntryDetailDAO().getFinLogEntryDetailList(finReference,
+							receiptDetail.getLogKey());
+					if (list != null && !list.isEmpty()) {
+						ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60206", "", null),
+								PennantConstants.default_Language);
+						return errorDetail.getErrorMessage();
+					}
 				}
 
 				// Finance Repayments Amount Updation if Principal Amount Exists
@@ -730,155 +735,227 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 			}
 
-			// Making Single Set of Repay Schedule Details and sent to Rendering
-			Map<Date, RepayScheduleDetail> rpySchdMap = new HashMap<>();
-			for (RepayScheduleDetail rpySchd : rpySchdList) {
+			if(!rpySchdList.isEmpty()){
+				
+				// Making Single Set of Repay Schedule Details and sent to Rendering
+				Map<Date, RepayScheduleDetail> rpySchdMap = new HashMap<>();
+				for (RepayScheduleDetail rpySchd : rpySchdList) {
 
-				RepayScheduleDetail curRpySchd = null;
-				if (rpySchdMap.containsKey(rpySchd.getSchDate())) {
-					curRpySchd = rpySchdMap.get(rpySchd.getSchDate());
-					curRpySchd.setPrincipalSchdPayNow(curRpySchd.getPrincipalSchdPayNow().add(
-							rpySchd.getPrincipalSchdPayNow()));
-					curRpySchd.setProfitSchdPayNow(curRpySchd.getProfitSchdPayNow().add(rpySchd.getProfitSchdPayNow()));
-					curRpySchd.setTdsSchdPayNow(curRpySchd.getTdsSchdPayNow().add(rpySchd.getTdsSchdPayNow()));
-					curRpySchd.setLatePftSchdPayNow(curRpySchd.getLatePftSchdPayNow().add(
-							rpySchd.getLatePftSchdPayNow()));
-					curRpySchd.setSchdFeePayNow(curRpySchd.getSchdFeePayNow().add(rpySchd.getSchdFeePayNow()));
-					curRpySchd.setSchdInsPayNow(curRpySchd.getSchdInsPayNow().add(rpySchd.getSchdInsPayNow()));
-					curRpySchd.setPenaltyPayNow(curRpySchd.getPenaltyPayNow().add(rpySchd.getPenaltyPayNow()));
-					rpySchdMap.remove(rpySchd.getSchDate());
-				} else {
-					curRpySchd = rpySchd;
+					RepayScheduleDetail curRpySchd = null;
+					if (rpySchdMap.containsKey(rpySchd.getSchDate())) {
+						curRpySchd = rpySchdMap.get(rpySchd.getSchDate());
+						curRpySchd.setPrincipalSchdPayNow(curRpySchd.getPrincipalSchdPayNow().add(
+								rpySchd.getPrincipalSchdPayNow()));
+						curRpySchd.setProfitSchdPayNow(curRpySchd.getProfitSchdPayNow().add(rpySchd.getProfitSchdPayNow()));
+						curRpySchd.setTdsSchdPayNow(curRpySchd.getTdsSchdPayNow().add(rpySchd.getTdsSchdPayNow()));
+						curRpySchd.setLatePftSchdPayNow(curRpySchd.getLatePftSchdPayNow().add(
+								rpySchd.getLatePftSchdPayNow()));
+						curRpySchd.setSchdFeePayNow(curRpySchd.getSchdFeePayNow().add(rpySchd.getSchdFeePayNow()));
+						curRpySchd.setSchdInsPayNow(curRpySchd.getSchdInsPayNow().add(rpySchd.getSchdInsPayNow()));
+						curRpySchd.setPenaltyPayNow(curRpySchd.getPenaltyPayNow().add(rpySchd.getPenaltyPayNow()));
+						rpySchdMap.remove(rpySchd.getSchDate());
+					} else {
+						curRpySchd = rpySchd;
+					}
+
+					// Adding New Repay Schedule Object to Map after Summing data
+					rpySchdMap.put(rpySchd.getSchDate(), curRpySchd);
 				}
 
-				// Adding New Repay Schedule Object to Map after Summing data
-				rpySchdMap.put(rpySchd.getSchDate(), curRpySchd);
-			}
-
-			rpySchdList = sortRpySchdDetails(new ArrayList<>(rpySchdMap.values()));
-			List<FinFeeScheduleDetail> updateFeeList = new ArrayList<>();
-			List<FinSchFrqInsurance> updateInsList = new ArrayList<>();
-			for (RepayScheduleDetail rpySchd : rpySchdList) {
-
-				// Overdue Recovery Details Reset Back to Original State , If any penalties Paid On this Repayments
-				// Process
-				// ============================================
-				if (rpySchd.getPenaltyPayNow().compareTo(BigDecimal.ZERO) > 0
-						|| rpySchd.getLatePftSchdPayNow().compareTo(BigDecimal.ZERO) > 0) {
-					getFinODDetailsDAO().updateReversals(finReference, rpySchd.getSchDate(),
-							rpySchd.getPenaltyPayNow(), rpySchd.getLatePftSchdPayNow());
-				}
-
-				// Update Fee Balance
-				// ============================================
-				if (rpySchd.getSchdFeePayNow().compareTo(BigDecimal.ZERO) > 0) {
-					List<FinFeeScheduleDetail> feeList = getFinFeeScheduleDetailDAO().getFeeScheduleBySchDate(
-							finReference, rpySchd.getSchDate());
-					BigDecimal feebal = rpySchd.getSchdFeePayNow();
-					for (int j = feeList.size() - 1; j >= 0; j--) {
-						FinFeeScheduleDetail feeSchd = feeList.get(j);
-						BigDecimal paidReverse = BigDecimal.ZERO;
-						if (feebal.compareTo(BigDecimal.ZERO) == 0) {
-							continue;
-						}
-						if (feeSchd.getPaidAmount().compareTo(BigDecimal.ZERO) == 0) {
-							continue;
-						}
-
-						if (feebal.compareTo(feeSchd.getPaidAmount()) > 0) {
-							paidReverse = feeSchd.getPaidAmount();
-						} else {
-							paidReverse = feebal;
-						}
-						feebal = feebal.subtract(paidReverse);
-
-						// Create list of updated objects to save one time
-						FinFeeScheduleDetail updFeeSchd = new FinFeeScheduleDetail();
-						updFeeSchd.setFeeID(feeSchd.getFeeID());
-						updFeeSchd.setSchDate(feeSchd.getSchDate());
-						updFeeSchd.setPaidAmount(paidReverse.negate());
-						updateFeeList.add(updFeeSchd);
+				rpySchdList = sortRpySchdDetails(new ArrayList<>(rpySchdMap.values()));
+				List<FinanceScheduleDetail> updateSchdList = new ArrayList<>();
+				List<FinFeeScheduleDetail> updateFeeList = new ArrayList<>();
+				List<FinSchFrqInsurance> updateInsList = new ArrayList<>();
+				Map<Date, FinanceScheduleDetail> schdMap = null;
+				
+				FinScheduleData scheduleData = null;
+				if(!alwSchdReversalByLog){
+					
+					schdMap = new HashMap<>();
+					scheduleData = new FinScheduleData();
+					scheduleData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, "", false, 0));
+					
+					for (FinanceScheduleDetail schd : scheduleData.getFinanceScheduleDetails()) {
+						schdMap.put(schd.getSchDate(), schd);
 					}
 				}
 
-				// Update Insurance Balance
-				// ============================================
-				if (rpySchd.getSchdInsPayNow().compareTo(BigDecimal.ZERO) > 0) {
-					List<FinSchFrqInsurance> insList = getFinInsurancesDAO().getInsScheduleBySchDate(finReference,
-							rpySchd.getSchDate());
-					BigDecimal insBal = rpySchd.getSchdInsPayNow();
-					for (int j = insList.size() - 1; j >= 0; j--) {
-						FinSchFrqInsurance insSchd = insList.get(j);
-						BigDecimal paidReverse = BigDecimal.ZERO;
+				for (RepayScheduleDetail rpySchd : rpySchdList) {
 
-						if (insBal.compareTo(BigDecimal.ZERO) == 0) {
-							continue;
-						}
-						if (insSchd.getInsurancePaid().compareTo(BigDecimal.ZERO) == 0) {
-							continue;
-						}
+					// Schedule Detail Reversals
+					if(!alwSchdReversalByLog){
 
-						if (insBal.compareTo(insSchd.getInsurancePaid()) > 0) {
-							paidReverse = insSchd.getInsurancePaid();
-						} else {
-							paidReverse = insBal;
-						}
-						insBal = insBal.subtract(paidReverse);
+						FinanceScheduleDetail curSchd = null;
+						boolean schdUpdated = false;
+						if(schdMap.containsKey(rpySchd.getSchDate())){
+							curSchd = schdMap.get(rpySchd.getSchDate());
 
-						// Create list of updated objects to save one time
-						FinSchFrqInsurance updInsSchd = new FinSchFrqInsurance();
-						updInsSchd.setInsId(insSchd.getInsId());
-						updInsSchd.setInsSchDate(insSchd.getInsSchDate());
-						updInsSchd.setInsurancePaid(paidReverse.negate());
-						updateInsList.add(updInsSchd);
+							// Principal Payment 
+							if(rpySchd.getPrincipalSchdPayNow().compareTo(BigDecimal.ZERO) > 0){
+								curSchd.setSchdPriPaid(curSchd.getSchdPriPaid().subtract(rpySchd.getPrincipalSchdPayNow()));
+								schdUpdated = true;
+							}
+							
+							// Profit Payment 
+							if(rpySchd.getProfitSchdPayNow().compareTo(BigDecimal.ZERO) > 0){
+								curSchd.setSchdPftPaid(curSchd.getSchdPftPaid().subtract(rpySchd.getProfitSchdPayNow()));
+								schdUpdated = true;
+							}
+							
+							// TDS Payment 
+							if(rpySchd.getTdsSchdPayNow().compareTo(BigDecimal.ZERO) > 0){
+								curSchd.setTDSPaid(curSchd.getTDSPaid().subtract(rpySchd.getTdsSchdPayNow()));
+								schdUpdated = true;
+							}
+							
+							// Fee Detail Payment 
+							if(rpySchd.getSchdFeePayNow().compareTo(BigDecimal.ZERO) > 0){
+								curSchd.setSchdFeePaid(curSchd.getSchdFeePaid().subtract(rpySchd.getSchdFeePayNow()));
+								schdUpdated = true;
+							}
+							
+							// Insurance Detail Payment 
+							if(rpySchd.getSchdInsPayNow().compareTo(BigDecimal.ZERO) > 0){
+								curSchd.setSchdInsPaid(curSchd.getSchdInsPaid().subtract(rpySchd.getSchdInsPayNow()));
+								schdUpdated = true;
+							}
+							
+							// Prepare List Schedules which will be updated
+							if(schdUpdated){
+								updateSchdList.add(curSchd);
+							}
+						}
+					}
+
+					// Overdue Recovery Details Reset Back to Original State , If any penalties Paid On this Repayments
+					// Process
+					// ============================================
+					if (rpySchd.getPenaltyPayNow().compareTo(BigDecimal.ZERO) > 0
+							|| rpySchd.getLatePftSchdPayNow().compareTo(BigDecimal.ZERO) > 0) {
+						getFinODDetailsDAO().updateReversals(finReference, rpySchd.getSchDate(),
+								rpySchd.getPenaltyPayNow(), rpySchd.getLatePftSchdPayNow());
+					}
+
+					// Update Fee Balance
+					// ============================================
+					if (rpySchd.getSchdFeePayNow().compareTo(BigDecimal.ZERO) > 0) {
+						List<FinFeeScheduleDetail> feeList = getFinFeeScheduleDetailDAO().getFeeScheduleBySchDate(
+								finReference, rpySchd.getSchDate());
+						BigDecimal feebal = rpySchd.getSchdFeePayNow();
+						for (int j = feeList.size() - 1; j >= 0; j--) {
+							FinFeeScheduleDetail feeSchd = feeList.get(j);
+							BigDecimal paidReverse = BigDecimal.ZERO;
+							if (feebal.compareTo(BigDecimal.ZERO) == 0) {
+								continue;
+							}
+							if (feeSchd.getPaidAmount().compareTo(BigDecimal.ZERO) == 0) {
+								continue;
+							}
+
+							if (feebal.compareTo(feeSchd.getPaidAmount()) > 0) {
+								paidReverse = feeSchd.getPaidAmount();
+							} else {
+								paidReverse = feebal;
+							}
+							feebal = feebal.subtract(paidReverse);
+
+							// Create list of updated objects to save one time
+							FinFeeScheduleDetail updFeeSchd = new FinFeeScheduleDetail();
+							updFeeSchd.setFeeID(feeSchd.getFeeID());
+							updFeeSchd.setSchDate(feeSchd.getSchDate());
+							updFeeSchd.setPaidAmount(paidReverse.negate());
+							updateFeeList.add(updFeeSchd);
+						}
+					}
+
+					// Update Insurance Balance
+					// ============================================
+					if (rpySchd.getSchdInsPayNow().compareTo(BigDecimal.ZERO) > 0) {
+						List<FinSchFrqInsurance> insList = getFinInsurancesDAO().getInsScheduleBySchDate(finReference,
+								rpySchd.getSchDate());
+						BigDecimal insBal = rpySchd.getSchdInsPayNow();
+						for (int j = insList.size() - 1; j >= 0; j--) {
+							FinSchFrqInsurance insSchd = insList.get(j);
+							BigDecimal paidReverse = BigDecimal.ZERO;
+
+							if (insBal.compareTo(BigDecimal.ZERO) == 0) {
+								continue;
+							}
+							if (insSchd.getInsurancePaid().compareTo(BigDecimal.ZERO) == 0) {
+								continue;
+							}
+
+							if (insBal.compareTo(insSchd.getInsurancePaid()) > 0) {
+								paidReverse = insSchd.getInsurancePaid();
+							} else {
+								paidReverse = insBal;
+							}
+							insBal = insBal.subtract(paidReverse);
+
+							// Create list of updated objects to save one time
+							FinSchFrqInsurance updInsSchd = new FinSchFrqInsurance();
+							updInsSchd.setInsId(insSchd.getInsId());
+							updInsSchd.setInsSchDate(insSchd.getInsSchDate());
+							updInsSchd.setInsurancePaid(paidReverse.negate());
+							updateInsList.add(updInsSchd);
+						}
 					}
 				}
-			}
 
-			// Fee Schedule Details Updation
-			if (!updateFeeList.isEmpty()) {
-				getFinFeeScheduleDetailDAO().updateFeeSchdPaids(updateFeeList);
-			}
+				// Schedule Details Updation
+				if (!updateSchdList.isEmpty()) {
+					getFinanceScheduleDetailDAO().updateListForRpy(updateSchdList);
+				}
+				
+				// Fee Schedule Details Updation
+				if (!updateFeeList.isEmpty()) {
+					getFinFeeScheduleDetailDAO().updateFeeSchdPaids(updateFeeList);
+				}
 
-			// Insurance Schedule Details Updation
-			if (!updateInsList.isEmpty()) {
-				getFinInsurancesDAO().updateInsSchdPaids(updateInsList);
-			}
+				// Insurance Schedule Details Updation
+				if (!updateInsList.isEmpty()) {
+					getFinInsurancesDAO().updateInsSchdPaids(updateInsList);
+				}
 
-			rpySchdList = null;
-			rpySchdMap = null;
-			updateFeeList = null;
-			updateInsList = null;
+				rpySchdList = null;
+				rpySchdMap = null;
+				updateSchdList = null;
+				updateFeeList = null;
+				updateInsList = null;
 
-			// Deletion of Finance Schedule Related Details From Main Table
-			listDeletion(finReference, "", false, 0);
+				// Deletion of Finance Schedule Related Details From Main Table
+				FinanceProfitDetail pftDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(finReference);
+				if(alwSchdReversalByLog){
+					listDeletion(finReference, "", false, 0);
 
-			// Fetching Last Log Entry Finance Details
-			FinanceProfitDetail pftDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(finReference);
-			FinScheduleData scheduleData = getFinSchDataByFinRef(finReference, logKey, "_Log");
-			scheduleData.setFinanceMain(financeMain);
+					// Fetching Last Log Entry Finance Details
+					scheduleData = getFinSchDataByFinRef(finReference, logKey, "_Log");
+					scheduleData.setFinanceMain(financeMain);
 
-			// Re-Insert Log Entry Data before Repayments Process Recalculations
-			listSave(scheduleData, "", 0);
+					// Re-Insert Log Entry Data before Repayments Process Recalculations
+					listSave(scheduleData, "", 0);
 
-			// Delete Data from Log Entry Tables After Inserting into Main Tables
-			for (int i = 0; i < receiptDetails.size(); i++) {
-				listDeletion(finReference, "_Log", false, receiptDetails.get(i).getLogKey());
-			}
+					// Delete Data from Log Entry Tables After Inserting into Main Tables
+					for (int i = 0; i < receiptDetails.size(); i++) {
+						listDeletion(finReference, "_Log", false, receiptDetails.get(i).getLogKey());
+					}
+				}else{
+					scheduleData.setFinanceScheduleDetails(new ArrayList<>(schdMap.values()));
+				}
 
-			// Check Current Finance Max Status For updation
-			// ============================================
-			getRepaymentPostingsUtil().updateStatus(financeMain, DateUtility.getAppDate(),
-					scheduleData.getFinanceScheduleDetails(), pftDetail);
-			if (totalPriAmount.compareTo(BigDecimal.ZERO) > 0) {
+				// Check Current Finance Max Status For updation
+				// ============================================
+				getRepaymentPostingsUtil().updateStatus(financeMain, DateUtility.getAppDate(),
+						scheduleData.getFinanceScheduleDetails(), pftDetail);
+				if (totalPriAmount.compareTo(BigDecimal.ZERO) > 0) {
 
-				// Finance Main Details Update
-				financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().subtract(totalPriAmount));
-				getFinanceMainDAO().updateRepaymentAmount(
-						finReference,
-						financeMain.getFinCurrAssetValue().add(financeMain.getFeeChargeAmt())
-								.add(financeMain.getInsuranceAmt()), financeMain.getFinRepaymentAmount(),
-						financeMain.getFinStatus(), FinanceConstants.FINSTSRSN_MANUAL, true, false);
+					// Finance Main Details Update
+					financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().subtract(totalPriAmount));
+					getFinanceMainDAO().updateRepaymentAmount(finReference,
+							financeMain.getFinCurrAssetValue().add(financeMain.getFeeChargeAmt())
+							.add(financeMain.getInsuranceAmt()), financeMain.getFinRepaymentAmount(),
+							financeMain.getFinStatus(), FinanceConstants.FINSTSRSN_MANUAL, true, false);
+				}
 			}
 		}
 

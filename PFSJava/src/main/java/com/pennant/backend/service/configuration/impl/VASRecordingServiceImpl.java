@@ -1465,6 +1465,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					aeEvent.setBranch(financeMain.getFinBranch());
 					aeEvent.setCcy(financeMain.getFinCcy());
 					aeEvent.setFinReference(vASRecording.getVasReference());
+					aeEvent.setCustID(financeMain.getCustID());
 				}
 				
 				vASRecording.getDeclaredFieldValues(aeEvent.getDataMap());

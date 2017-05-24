@@ -2391,6 +2391,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 				aeEvent.setBranch(financeMain.getFinBranch());
 				aeEvent.setCcy(financeMain.getFinCcy());
+				aeEvent.setCustID(financeMain.getCustID());
 			}
 			
 			getVASRecording().getDeclaredFieldValues(aeEvent.getDataMap());

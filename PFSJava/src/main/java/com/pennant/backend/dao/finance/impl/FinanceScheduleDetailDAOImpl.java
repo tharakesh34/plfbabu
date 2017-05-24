@@ -476,17 +476,14 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 
 	@SuppressWarnings("serial")
 	@Override
-	public void updateForRpy(FinanceScheduleDetail financeScheduleDetail, String rpyFor) {
+	public void updateForRpy(FinanceScheduleDetail financeScheduleDetail) {
 		int recordCount = 0;
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update FinScheduleDetails SET ");
-
-		updateSql
-				.append(" SchdPftPaid=:SchdPftPaid, SchdPriPaid=:SchdPriPaid, SchPftPaid=:SchPftPaid , SchPriPaid=:SchPriPaid , ");
-		updateSql.append(" SchdFeePaid=:SchdFeePaid,SchdInsPaid=:SchdInsPaid, ");
-		updateSql.append(" SuplRentPaid=:SuplRentPaid, IncrCostPaid=:IncrCostPaid, ");
-		updateSql.append(" Rebate = :Rebate ");
+		updateSql.append(" SchdPftPaid=:SchdPftPaid, SchdPriPaid=:SchdPriPaid, SchPftPaid=:SchPftPaid , SchPriPaid=:SchPriPaid , ");
+		updateSql.append(" TDSPaid =:TDSPaid , SchdFeePaid=:SchdFeePaid,SchdInsPaid=:SchdInsPaid, SuplRentPaid=:SuplRentPaid, ");
+		updateSql.append(" IncrCostPaid=:IncrCostPaid,  Rebate = :Rebate ");
 		updateSql.append(" Where FinReference =:FinReference AND SchDate = :SchDate AND SchSeq = :SchSeq");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -503,6 +500,23 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		}
 		logger.debug("Leaving");
 	}
+	
+	@Override
+	public void updateListForRpy(List<FinanceScheduleDetail> schdList) {
+		logger.debug("Entering");
+		
+		StringBuilder updateSql = new StringBuilder("Update FinScheduleDetails SET ");
+		updateSql.append(" SchdPftPaid=:SchdPftPaid, SchdPriPaid=:SchdPriPaid, SchPftPaid=:SchPftPaid , SchPriPaid=:SchPriPaid , ");
+		updateSql.append(" TDSPaid =:TDSPaid , SchdFeePaid=:SchdFeePaid,SchdInsPaid=:SchdInsPaid, SuplRentPaid=:SuplRentPaid, ");
+		updateSql.append(" IncrCostPaid=:IncrCostPaid,  Rebate = :Rebate ");
+		updateSql.append(" Where FinReference =:FinReference AND SchDate = :SchDate ");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(schdList.toArray());
+		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+	
 
 	public void updateForRateReview(List<FinanceScheduleDetail> financeScheduleDetail) {
 		logger.debug("Entering");

@@ -202,7 +202,7 @@ public class FinReceiptHeaderDAOImpl extends BasisNextidDaoImpl<FinReceiptHeader
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append( " ,FinType, FinCcy, FinBranch, CustCIF, CustShrtName,FinTypeDesc, FinCcyDesc, FinBranchDesc, CancelReasonDesc, FinIsActive ");
 			if (StringUtils.trimToEmpty(type).contains("FView")) {
-				selectSql.append( " ,ScheduleMethod, PftDaysBasis ");
+				selectSql.append( " ,ScheduleMethod, PftDaysBasis, CustID ");
 			}
 		}
 		selectSql.append(" From FinReceiptHeader");

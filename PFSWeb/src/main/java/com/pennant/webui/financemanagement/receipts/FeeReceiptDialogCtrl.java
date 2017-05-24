@@ -1022,10 +1022,11 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
-		aeEvent.setFinReference(this.finReference.getValue());
-		aeEvent.setCustCIF(this.custCIF.getValue());
-		aeEvent.setBranch(this.finBranch.getValue());
-		aeEvent.setCcy(this.finCcy.getValue());
+		aeEvent.setFinReference(getReceiptHeader().getReference());
+		aeEvent.setCustCIF(getReceiptHeader().getCustCIF());
+		aeEvent.setBranch(getReceiptHeader().getFinBranch());
+		aeEvent.setCcy(getReceiptHeader().getFinCcy());
+		aeEvent.setCustID(getReceiptHeader().getCustID());
 		
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if(amountCodes == null){
