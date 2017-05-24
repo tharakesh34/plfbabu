@@ -456,6 +456,23 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		logger.debug("Leaving");
 		return returnDataSetList;
 	}
+	
+	@Override
+	public void updatePostCtg() {
+		logger.debug("Entering");
+		MapSqlParameterSource source=new MapSqlParameterSource();
+		source.addValue("PostCategory", AccountConstants.POSTING_CATEGORY_ACUPDATE);
+		source.addValue("PostCategory_From", AccountConstants.POSTING_CATEGORY_EOD);
+		
+		StringBuilder updateSql = new StringBuilder();
+		updateSql.append("Update Postings");
+		updateSql.append(" set PostCategory=:PostCategory WHERE postCategory=:PostCategory_From");
+		logger.debug("updateSql: " + updateSql.toString());
+		
+		this.namedParameterJdbcTemplate.update(updateSql.toString(),source);
+		logger.debug("Leaving");
+	}
+
 	/**
 	 * To Set  dataSource
 	 * @param dataSource

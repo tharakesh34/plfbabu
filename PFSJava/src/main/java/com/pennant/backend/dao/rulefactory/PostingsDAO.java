@@ -78,4 +78,6 @@ public interface PostingsDAO {
 	List<ReturnDataSet> getPostingsByFinRef(String finReference);
 
 	List<ReturnDataSet> getPostingsByTransIdList(List<Long> tranIdList);
+
+	void updatePostCtg();
 }
