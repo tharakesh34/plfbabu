@@ -757,5 +757,14 @@ SELECT		T1.id, T1.name, T1.city
 FROM    	Locality  T1 
 	</createView>
 </changeSet>
-
+<changeSet id="55" author="jayant">
+    <sql>
+        INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='AGREEMENTDEFINITION_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_AgreementDefinitionDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+    </sql>
+</changeSet>
+<changeSet id="56" author="jayant">
+    <sql>
+        UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);  
+    </sql>
+</changeSet>
 </databaseChangeLog>
