@@ -658,4 +658,104 @@ values ('VehicleDealer','VehicleDealer',
 'ReportList06','VAS Manufacturer','System Masters',1,1001,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
 </sql>
 </changeSet>
+<changeSet id="50"  author="ahmad">
+<sql>
+INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'LOCALITY_VIEW', 'Allow to view Locality', 0,1000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'LOCALITY_MAKER', 'WF Maker for Locality', 0,1000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'LOCALITY_APPROVER', 'WF Approver for Locality', 0,1000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+1) from SeqSecRights),0,'menuCat_masters','MENU',0,1000,'2017-05-22  09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+2) from SeqSecRights),0,'menuCat_mastersEnquiry','MENU',0,1000,'2017-05-22  09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+3) from SeqSecRights),0,'menuItem_masters_Locality','MENU',0,1000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+4) from SeqSecRights),0,'menuItem_masters_LocalityEnquiry','MENU',0,1000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+5) from SeqSecRights),2,'button_LocalityList_PrintList','LocalityList',0,1000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+6) from SeqSecRights),2,'button_LocalityList_NewLocality','LocalityList',0,1000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+7) from SeqSecRights),2,'button_LocalityDialog_btnNew','LocalityDialog',0,1000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+8) from SeqSecRights),2,'button_LocalityDialog_btnEdit','LocalityDialog',0,1000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+9) from SeqSecRights),2,'button_LocalityDialog_btnDelete','LocalityDialog',0,1000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10) from SeqSecRights),2,'button_LocalityDialog_btnSave','LocalityDialog',0,1000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+1) from SeqSecRights),3,'LocalityDialog_id','LocalityDialog',0,1000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+2) from SeqSecRights),3,'LocalityDialog_name','LocalityDialog',0,1000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+3) from SeqSecRights),3,'LocalityDialog_city','LocalityDialog',0,1000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_mastersEnquiry'),1,0,10000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),1,0,10000,'2017-05-22 09:32:37',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+16) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_masters'),1,0,10000,'2017-05-22 09:32:37',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,0,10000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),1,0,10000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+1) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+1) from SeqSecRights),1,0,10000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+2) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+2) from SeqSecRights),1,0,10000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+3) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+3) from SeqSecRights),1,0,10000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+24+3) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_masters'),1,0,10000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+25+3) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+26+3) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+update SeqSecGroupRights set SeqNo = (SeqNo+26+3) ;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups), (select (SeqNo+2) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups), (select (SeqNo+3) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+update SeqSecRoleGroups set SeqNo = (SeqNo+2) ;
+INSERT INTO PTMenuDetails SELECT (select (SeqNo+1) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFF'),'Locality','menu_Item_Locality','/WEB-INF/pages/masters/Locality/LocalityList.zul',0,10000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0,'menuItem_masters_Locality' FROM SeqPTMenuDetails WHERE 0=0;
+INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFF'),'LocalityEnquiry','menu_Item_LocalityEnquiry?enqiryModule=Y" ','/WEB-INF/pages/masters/Locality/LocalityEnquiryList.zul',0,10000,'2017-05-22 09:32:37','Approved',' ',' ',' ',' ',' ',0,'menuItem_masters_Locality' FROM SeqPTMenuDetails WHERE 0=0;
+update SeqPTMenuDetails set SeqNo = (SeqNo+2) ;
+update SeqSecGroups set SeqNo = (SeqNo+3) ;
+update SeqSecRights set SeqNo = (SeqNo+10+3) ;
+</sql>
+</changeSet>
+
+<changeSet id="51" author="ahmad">
+	<createTable tableName="Locality">
+			<column name="id" type="bigint"/>
+			<column name="name" type="varchar2(8)"/>
+			<column name="city" type="varchar2(20)" />
+			<column name="Version" type="NUMBER(10,0)" />
+			<column name="Lastmntby" type="NUMBER(19,0)" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="nvarchar(50)" />
+			<column name="Rolecode" type="nvarchar(50)" />
+			<column name="Nextrolecode" type="nvarchar(200)" />
+			<column name="Taskid" type="nvarchar(50)" />
+			<column name="Nexttaskid" type="nvarchar(200)" />
+			<column name="Recordtype" type="nvarchar(50)" />
+			<column name="Workflowid" type="NUMBER(19,0)" />
+	</createTable>
+</changeSet>
+<changeSet id="52" author="ahmad">
+	<createTable tableName="Locality_Temp">
+			<column name="id" type="bigint"/>
+			<column name="name" type="varchar2(8)"/>
+			<column name="city" type="varchar2(20)" />
+			<column name="Version" type="NUMBER(10,0)" />
+			<column name="Lastmntby" type="NUMBER(19,0)" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="nvarchar(50)" />
+			<column name="Rolecode" type="nvarchar(50)" />
+			<column name="Nextrolecode" type="nvarchar(200)" />
+			<column name="Taskid" type="nvarchar(50)" />
+			<column name="Nexttaskid" type="nvarchar(200)" />
+			<column name="Recordtype" type="nvarchar(50)" />
+			<column name="Workflowid" type="NUMBER(19,0)" />
+	</createTable>
+</changeSet>
+<changeSet id="53" author="ahmad">
+<createView viewName="Locality_View" replaceIfExists="true">
+
+SELECT		T1.id, T1.name, T1.city		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	Locality_Temp  T1 
+UNION ALL
+
+SELECT		T1.id, T1.name, T1.city		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	Locality  T1 
+WHERE     NOT EXISTS (SELECT 1 FROM Locality_TEMP WHERE id = T1.id)
+	</createView>
+</changeSet>
+<changeSet id="54" author="ahmad"> 
+<createView viewName="Locality_AView" replaceIfExists="true">
+
+SELECT		T1.id, T1.name, T1.city		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	Locality  T1 
+	</createView>
+</changeSet>
+
 </databaseChangeLog>
