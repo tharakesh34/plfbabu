@@ -487,6 +487,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		} else {
 			listHeader_CheckBox_Comp.setDisabled(true);
 		}
+		this.pagingDisbursementList.setTotalSize(0);
 	}
 
 	/**
