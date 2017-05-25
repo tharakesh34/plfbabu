@@ -649,4 +649,13 @@ update SeqSecRights set SeqNo = (SeqNo+10+4) ;
 where code='VASWorkFlow'
 </sql>
 </changeSet>
+	<changeSet id="49" author="pruthvi">
+		<sql>
+Insert into REPORTLIST  
+values ('VehicleDealer','VehicleDealer',
+'label_VehicleDealerSearch_DealerName.value,label_VehicleDealerSearch_Email.value,label_VehicleDealerSearch_DealerTelephone.value,listheader_DealerProvince.label,label_VehicleDealerSearch_DealerCity.value,label_VehicleDealerSearch_Active.value',
+'dealerName,email,dealerTelephone,dealerProvince,dealerCity,active','String,String,String,String,String,String',' ',
+'ReportList06','VAS Manufacturer','System Masters',1,1001,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+</sql>
+</changeSet>
 </databaseChangeLog>
