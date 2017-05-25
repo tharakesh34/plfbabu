@@ -382,6 +382,17 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 			this.btnCancel.setVisible(true);
 		}
 
+		this.postingAgainst.setDisabled(isReadOnly("FeePostingsDialog_postAgainst"));
+		this.reference.setReadonly(isReadOnly("FeePostingsDialog_reference"));
+		this.feeTypeCode.setReadonly(isReadOnly("FeePostingsDialog_feeTypeCode"));
+		this.partnerBankID.setReadonly(isReadOnly("FeePostingsDialog_partnerbankId"));
+		this.postingAmount.setReadonly(isReadOnly("FeePostingsDialog_postingAmount"));
+		this.postingCcy.setReadonly(isReadOnly("FeePostingsDialog_postingCurrency"));
+		this.postDate.setDisabled(isReadOnly("FeePostingsDialog_postingDate"));
+		this.valueDate.setDisabled(isReadOnly("FeePostingsDialog_valueDate"));
+		this.remarks.setDisabled(isReadOnly("FeePostingsDialog_remarks"));
+		
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -539,6 +550,20 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 */
 	public void doReadOnly(boolean readOnly) {
 
+		logger.debug("Entering");
+		
+		this.postingAgainst.setDisabled(true);
+		this.reference.setReadonly(true);
+		this.feeTypeCode.setReadonly(true);
+		this.partnerBankID.setReadonly(true);
+		this.postingAmount.setReadonly(true);
+		this.postingCcy.setReadonly(true);
+		this.postDate.setDisabled(true);
+		this.valueDate.setDisabled(true);
+		this.remarks.setDisabled(true);
+		
+		logger.debug("Leaving");
+		
 	}
 
 	// Helpers
