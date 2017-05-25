@@ -11,17 +11,18 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.transaction.TransactionStatus;
 
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 
 public class ALMRequestProcess extends DatabaseDataEngine {
-	private static final Logger logger = Logger.getLogger(ALMRequestProcess.class);
-
-	public ALMRequestProcess(DataSource dataSource, long userId, Date valueDate) {
+	private static final Logger	logger	= Logger.getLogger(ALMRequestProcess.class);
+	
+	private Date appDate;
+	public ALMRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, App.DATABASE.name(), userId, valueDate);
+		this.appDate = appDate;
 	}
 
 	@Override
@@ -36,35 +37,35 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 		parmMap = new MapSqlParameterSource();
 
 		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
-			MapSqlParameterSource map = null;
-			TransactionStatus txnStatus = null;
+			MapSqlParameterSource	map			= null;
+			//TransactionStatus		txnStatus	= null;
 
 			@Override
 			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
 				String[] filterFields = new String[1];
-				filterFields[0] = "AGREEMENTID";
+				filterFields[0] = "AGREEMENTNO";
 				while (rs.next()) {
 					executionStatus.setRemarks("processing the record " + ++totalRecords);
 					processedCount++;
-					txnStatus = transManager.getTransaction(transDef);
+					//txnStatus = transManager.getTransaction(transDef);
 					try {
 						map = mapData(rs);
 						saveOrUpdate(map, "ALM", destinationJdbcTemplate, filterFields);
 						successCount++;
-						transManager.commit(txnStatus);
+						//transManager.commit(txnStatus);
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
-						transManager.rollback(txnStatus);
+						//transManager.rollback(txnStatus);
 						failedCount++;
-						String keyId = rs.getString("AGREEMENTID");
+						String keyId = rs.getString("AGREEMENTNO");
 						if (StringUtils.trimToNull(keyId) == null) {
 							keyId = String.valueOf(processedCount);
 						}
 						saveBatchLog(keyId, "F", e.getMessage());
 					} finally {
 						map = null;
-						txnStatus.flush();
-						txnStatus = null;
+						//txnStatus.flush();
+						//txnStatus = null;
 					}
 				}
 				return totalRecords;
@@ -75,10 +76,13 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 
 	@Override
 	protected MapSqlParameterSource mapData(ResultSet rs) throws Exception {
-
 		MapSqlParameterSource map = new MapSqlParameterSource();
-		map.addValue("AGREEMENTID", rs.getObject("AGREEMENTID"));
-		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
+		
+		String finReference = rs.getString("AGREEMENTNO");
+		String appId = StringUtils.substring(finReference, finReference.length()-8, finReference.length());	
+			
+		map.addValue("AGREEMENTID", appId);
+		map.addValue("AGREEMENTNO", finReference);
 		map.addValue("PRODUCTFLAG", rs.getObject("PRODUCTFLAG"));
 		map.addValue("NPA_STAGEID", rs.getObject("NPA_STAGEID"));
 		map.addValue("INSTLAMT", rs.getObject("INSTLAMT"));
@@ -86,7 +90,7 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 		map.addValue("INTCOMP", rs.getObject("INTCOMP"));
 		map.addValue("DUEDATE", rs.getObject("DUEDATE"));
 		map.addValue("ACCRUEDAMT", rs.getObject("ACCRUEDAMT"));
-		map.addValue("ACCRUEDON", rs.getObject("ACCRUEDON"));
+		map.addValue("ACCRUEDON", appDate);
 		map.addValue("CUMULATIVE_ACCRUAL_AMT", rs.getObject("CUMULATIVE_ACCRUAL_AMT"));
 		map.addValue("ADVFLAG", rs.getObject("ADVFLAG"));
 		return map;

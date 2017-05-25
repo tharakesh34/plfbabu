@@ -123,7 +123,11 @@ public class MandateRequestService extends BajajService implements RequestServic
 					BigDecimal UPPER_LIMIT = (BigDecimal) rowMap.get("UPPER_LIMIT");
 					BigDecimal minorccyunits = (BigDecimal) rowMap.get("CCYMINORCCYUNITS");
 					
-					rowMap.put("UPPER_LIMIT", UPPER_LIMIT.divide(minorccyunits));
+					if (UPPER_LIMIT == null || minorccyunits == null) {
+						rowMap.put("UPPER_LIMIT", BigDecimal.ZERO);
+					} else {
+						rowMap.put("UPPER_LIMIT", UPPER_LIMIT.divide(minorccyunits));
+					}
 					
 					rowMap.put("EXTRACTION_DATE", getValueDate());
 					rowMap.remove("CCYMINORCCYUNITS");

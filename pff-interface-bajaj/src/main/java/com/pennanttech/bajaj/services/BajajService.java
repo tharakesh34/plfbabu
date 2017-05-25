@@ -81,6 +81,17 @@ public abstract class BajajService {
 		return null;
 	}
 	
+	protected Date getAppDate() {
+		String appDate;
+		try {
+			appDate = (String) getSMTParameter("APP_DATE", String.class);
+			return DateUtil.parse(appDate, "yyyy-MM-dd"); // FIXME Deriving Application date should be from single place for all modules.
+		} catch (Exception e) {
+
+		}
+		return null;
+	}
+	
 	public static MapSqlParameterSource getMapSqlParameterSource(Map<String, Object> map) {
 		MapSqlParameterSource parmMap = new MapSqlParameterSource();
 
