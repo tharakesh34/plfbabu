@@ -11,4 +11,17 @@
 <changeSet id="01" author="Vijay">
 	<modifyDataType tableName="ADTWORKFLOWDETAILS" columnName="WORKFLOWDESC" newDataType="VARCHAR2(200)"/>
 	</changeSet>
+	<changeSet id="05" author="Surekha">
+		<modifyDataType tableName="AdtRMTTRANSACTIONENTRY" columnName="ACCOUNTTYPE" newDataType="VARCHAR(15)"/>
+	</changeSet>
+	<changeSet id="06" author="Surekha">
+		<modifyDataType tableName="AdtRMTFINANCETYPES" columnName="FINACTYPE" newDataType="VARCHAR(15)"/>
+		<modifyDataType tableName="AdtRMTFINANCETYPES" columnName="FINCONTINGENTACTYPE" newDataType="VARCHAR(15)"/>
+		<modifyDataType tableName="AdtRMTFINANCETYPES" columnName="FINBANKCONTINGENTACTYPE" newDataType="VARCHAR(15)"/>
+		<modifyDataType tableName="AdtRMTFINANCETYPES" columnName="FINPROVISIONACTYPE" newDataType="VARCHAR(15)"/>
+		<modifyDataType tableName="AdtRMTFINANCETYPES" columnName="FINSUSPACTYPE" newDataType="VARCHAR(15)"/>
+	</changeSet>
+	<changeSet id="07" author="Surekha">
+		<modifyDataType tableName="AdtACCOUNTS" columnName="ACTYPE" newDataType="VARCHAR(15)"/>
+	</changeSet>
 </databaseChangeLog>
