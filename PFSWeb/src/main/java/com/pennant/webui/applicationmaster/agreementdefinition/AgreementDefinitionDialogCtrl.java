@@ -176,7 +176,7 @@ public class AgreementDefinitionDialogCtrl extends
 
 		try {
 			/* set components visible dependent of the users rights */
-			doCheckRights();
+			
 
 			if (arguments.containsKey("agreementDefinition")) {
 				this.agreementDefinition = (AgreementDefinition) arguments
@@ -193,6 +193,8 @@ public class AgreementDefinitionDialogCtrl extends
 			doLoadWorkFlow(this.agreementDefinition.isWorkflow(),
 					this.agreementDefinition.getWorkflowId(),
 					this.agreementDefinition.getNextTaskId());
+			
+			
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
@@ -207,7 +209,7 @@ public class AgreementDefinitionDialogCtrl extends
 			} else {
 				setAgreementDefinitionListCtrl(null);
 			}
-
+			doCheckRights();
 			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(getAgreementDefinition());
