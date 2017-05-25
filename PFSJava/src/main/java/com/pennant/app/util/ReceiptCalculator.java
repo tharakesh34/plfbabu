@@ -1529,7 +1529,7 @@ public class ReceiptCalculator implements Serializable {
 								.divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
 						
 						pftAccruedTillNow = pftAccruedTillNow.add(accruedPft);
-						priBalance = priBalance.add(curSchd.getClosingBalance().subtract(curSchd.getCpzAmount()));
+						priBalance = priBalance.add(curSchd.getClosingBalance().subtract(curSchd.getCpzAmount())).add(curSchd.getPrincipalSchd());
 					}
 				}
 			}
