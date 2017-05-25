@@ -580,4 +580,19 @@ update SeqSecRights set SeqNo = (SeqNo+10+4) ;
 		<modifyDataType tableName="ACCOUNTS" columnName="ACTYPE" newDataType="VARCHAR(15)"/>
 		<modifyDataType tableName="ACCOUNTS_Temp" columnName="ACTYPE" newDataType="VARCHAR(15)"/>
 	</changeSet>
+	<changeSet author="Siva" id="37">
+		<addForeignKeyConstraint constraintName="FK_VPTC_VPC"
+			baseTableName="vasproducttype" baseColumnNames="ProductCtg" referencedColumnNames="ProductCtg"
+			referencedTableName="vasproductcategory" />
+	</changeSet>
+	<changeSet author="Siva" id="38">
+		<addForeignKeyConstraint constraintName="FK_VSPT_VPT"
+			baseTableName="vasstructure" baseColumnNames="ProductType" referencedColumnNames="ProductType"
+			referencedTableName="vasproducttype" />
+	</changeSet>
+	<changeSet author="Siva" id="39">
+		<addForeignKeyConstraint constraintName="FK_VSMID_VMID"
+			baseTableName="vasstructure" baseColumnNames="ManufacturerID" referencedColumnNames="DealerID"
+			referencedTableName="amtvehicledealer" />
+	</changeSet>
 </databaseChangeLog>
