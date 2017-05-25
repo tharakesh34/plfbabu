@@ -11,6 +11,73 @@
 <changeSet id="01" author="Vijay">
 	<modifyDataType tableName="ADTWORKFLOWDETAILS" columnName="WORKFLOWDESC" newDataType="VARCHAR2(200)"/>
 	</changeSet>
+	<changeSet id="02" author="Madhubabu">
+		<createTable tableName="ADTFeePostings">
+			<column name="PostId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="PostAgainst" type="nchar(10)" />
+			<column name="Reference" type="varchar(20)" />
+			<column name="FeeTyeCode" type="char(10)" />
+			<column name="PostingAmount" type="decimal(18,0)"/>
+			<column name="PostDate" type="datetime" />
+			<column name="ValueDate" type="datetime" />
+			<column name="Version" type="NUMBER(10,0)" />
+			<column name="Remarks" type="nvarchar(200)" />
+			<column name="PartnerBankId" type="NUMBER(19,0)" />
+			<column name="Lastmntby" type="NUMBER(19,0)" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="nvarchar(50)" />
+			<column name="Rolecode" type="nvarchar(50)" />
+			<column name="Nextrolecode" type="nvarchar(200)" />
+			<column name="Taskid" type="nvarchar(50)" />
+			<column name="Nexttaskid" type="nvarchar(200)" />
+			<column name="Recordtype" type="nvarchar(50)" />
+			<column name="Workflowid" type="NUMBER(19,0)" />
+			
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="03" author="Madhubabu">
+	<dropTable tableName="ADTFeePostings"/>
+	</changeSet>
+	
+	<changeSet id="04" author="Madhubabu">
+		<createTable tableName="ADTFeePostings">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="PostId" type="bigint"/>
+			<column name="PostAgainst" type="nchar(10)" />
+			<column name="Reference" type="varchar(20)" />
+			<column name="FeeTyeCode" type="char(10)" />
+			<column name="PostingAmount" type="decimal(18,0)"/>
+			<column name="PostDate" type="datetime" />
+			<column name="ValueDate" type="datetime" />
+			<column name="Version" type="NUMBER(10,0)" />
+			<column name="Remarks" type="nvarchar(200)" />
+			<column name="PartnerBankId" type="NUMBER(19,0)" />
+			<column name="Lastmntby" type="NUMBER(19,0)" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="nvarchar(50)" />
+			<column name="Rolecode" type="nvarchar(50)" />
+			<column name="Nextrolecode" type="nvarchar(200)" />
+			<column name="Taskid" type="nvarchar(50)" />
+			<column name="Nexttaskid" type="nvarchar(200)" />
+			<column name="Recordtype" type="nvarchar(50)" />
+			<column name="Workflowid" type="NUMBER(19,0)" />
+			
+		</createTable>
+	</changeSet>
 	<changeSet id="05" author="Surekha">
 		<modifyDataType tableName="AdtRMTTRANSACTIONENTRY" columnName="ACCOUNTTYPE" newDataType="VARCHAR(15)"/>
 	</changeSet>
