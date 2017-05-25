@@ -599,4 +599,19 @@ update SeqSecRights set SeqNo = (SeqNo+10+4) ;
 		<modifyDataType tableName="RMTFINANCETYPES_Temp" columnName="PFTPAYACTYPE" newDataType="VARCHAR(15)"/>
 		<modifyDataType tableName="RMTFINANCETYPES" columnName="PFTPAYACTYPE" newDataType="VARCHAR(15)"/>
 	</changeSet>
+	<changeSet author="Siva" id="41">
+		<addForeignKeyConstraint constraintName="FK_VPTC_Temp_VPC"
+			baseTableName="vasproducttype_Temp" baseColumnNames="ProductCtg" referencedColumnNames="ProductCtg"
+			referencedTableName="vasproductcategory" />
+	</changeSet>
+	<changeSet author="Siva" id="42">
+		<addForeignKeyConstraint constraintName="FK_VSPT_Temp_VPT"
+			baseTableName="vasstructure_Temp" baseColumnNames="ProductType" referencedColumnNames="ProductType"
+			referencedTableName="vasproducttype" />
+	</changeSet>
+	<changeSet author="Siva" id="43">
+		<addForeignKeyConstraint constraintName="FK_VSMID_Temp_VMID"
+			baseTableName="vasstructure_Temp" baseColumnNames="ManufacturerID" referencedColumnNames="DealerID"
+			referencedTableName="amtvehicledealer" />
+	</changeSet>
 </databaseChangeLog>
