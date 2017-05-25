@@ -1071,16 +1071,26 @@ public class ReceiptCalculator implements Serializable {
 		char[] rpyOrder = repayHierarchy.replace("CS", "").toCharArray();
 		Map<String, BigDecimal> allocatePaidMap = new HashMap<>();
 		int lastRenderSeq = 0;
+		boolean isLastTermForES = false;// Last Term for Early Settlement
+		boolean pftCalcCompleted = false;// Profit calculation Completed flag setting for Last term on Early settlement
 		
 		// Load Pending Schedules until balance available for payment
 		for (int i = 1; i < scheduleDetails.size(); i++) {
 			FinanceScheduleDetail curSchd = scheduleDetails.get(i);
 			Date schdDate = curSchd.getSchDate();
+			Date prvSchdDate = scheduleDetails.get(i-1).getSchDate();
 
 			// Skip if repayment date after Current Business date
 			if (schdDate.compareTo(curBussniessDate) > 0 && 
 					!StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 				break;
+			}
+			
+			// Early settlement case to calculate profit Till Accrual amount
+			if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+				if (schdDate.compareTo(curBussniessDate) >= 0){
+					isLastTermForES = true;
+				}
 			}
 
 			for (int j = 0; j < rpyOrder.length; j++) {
@@ -1105,12 +1115,29 @@ public class ReceiptCalculator implements Serializable {
 					}
 				}else if(repayTo == RepayConstants.REPAY_PROFIT){
 					
+					// On Early settlement case, If profit is calculated upto Accruals, from Next Schedule onwards no need to consider Profit Amount
+					if(pftCalcCompleted){
+						continue;
+					}
+					
 					String profit = ImplementationConstants.REPAY_INTEREST_HIERARCHY;
 					char[] pftPayOrder = profit.toCharArray();
 					for (char pftPayTo : pftPayOrder) {
 						if(pftPayTo == RepayConstants.REPAY_PROFIT){
 							
 							BigDecimal balPft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
+
+							// On Early settlement Case, for the last terms should consider total outstanding Principal
+							if(isLastTermForES){
+								pftCalcCompleted = true;
+								if (schdDate.compareTo(curBussniessDate) > 0){
+									int days = DateUtility.getDaysBetween(prvSchdDate, curBussniessDate);
+									int daysInCurPeriod = curSchd.getNoOfDays();
+									balPft = curSchd.getProfitCalc().multiply(new BigDecimal(days))
+											.divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
+								}
+							}
+							
 							if(balPft.compareTo(BigDecimal.ZERO) > 0){
 
 								//TDS Calculation, if Applicable
@@ -1398,6 +1425,8 @@ public class ReceiptCalculator implements Serializable {
 		tempScheduleDetails = sortSchdDetails(tempScheduleDetails);
 
 		boolean setEarlyPayRecord = false;
+		BigDecimal pftAccruedTillNow = BigDecimal.ZERO;
+		boolean partAccrualReq = true;
 		FinanceScheduleDetail curSchd = null;
 		FinanceScheduleDetail prvSchd = null;
 		for (int i = 0; i < tempScheduleDetails.size(); i++) {
@@ -1418,7 +1447,8 @@ public class ReceiptCalculator implements Serializable {
 				repayMain.setCurFinAmount(repayMain.getCurFinAmount().subtract(curSchd.getCpzAmount()));
 			}else{
 				
-				if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){
+				if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY) || 
+						StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
 					if (DateUtility.getDaysBetween(curBussniessDate, schdDate) == 0) {
 						repayMain.setEarlyPayOnSchDate(curSchd.getSchDate());
 						repayMain.setEarlyRepayNewSchd(null);
@@ -1451,12 +1481,38 @@ public class ReceiptCalculator implements Serializable {
 							newSchdlEP.setEarlyPaidBal(prvSchd.getEarlyPaidBal());
 							repayMain.setEarlyRepayNewSchd(newSchdlEP);
 						}
+						
+						// Setting Total Outstanding balance to Early Payment Amount
+						if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+							repayMain.setEarlyPayAmount(repayMain.getEarlyPayAmount().add(curSchd.getPrincipalSchd()));
+						}
 					}
 				}
 			}
 
 			// Profit scheduled and Paid
 			repayMain.setProfit(repayMain.getProfit().add(curSchd.getProfitSchd()));
+			
+			// Accrued Profit Calculation
+			if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+				if (DateUtility.compare(schdDate, curBussniessDate) < 0) {
+					pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitSchd());
+				}else if (DateUtility.compare(curBussniessDate, schdDate) == 0) {
+					pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitSchd());
+					partAccrualReq = false;
+				} else {
+					if(partAccrualReq && prvSchd != null){
+						partAccrualReq = false;
+						int days = DateUtility.getDaysBetween(prvSchd.getSchDate(), curBussniessDate);
+						int daysInCurPeriod = curSchd.getNoOfDays();
+						BigDecimal accruedPft = curSchd.getProfitCalc().multiply(new BigDecimal(days))
+								.divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
+						
+						pftAccruedTillNow = pftAccruedTillNow.add(accruedPft);
+					}
+				}
+			}
+			
 			pftPaid = pftPaid.add(curSchd.getSchdPftPaid());
 
 			// Principal scheduled and Paid
@@ -1531,7 +1587,7 @@ public class ReceiptCalculator implements Serializable {
 		// Profit Amount
 		BigDecimal pftAmt = BigDecimal.ZERO;
 		if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
-			pftAmt = repayMain.getProfitBalance();
+			pftAmt = pftAccruedTillNow.subtract(pftPaid);
 		}else{
 			pftAmt = repayMain.getOverdueProfit();
 		}

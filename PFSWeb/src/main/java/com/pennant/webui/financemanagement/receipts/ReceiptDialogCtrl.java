@@ -932,8 +932,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			return;
 		}
 
-		if (StringUtils.equals(getComboboxValue(this.receiptPurpose), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
-			recalEarlyPaySchd(getReceiptData());
+		String recptPurpose = getComboboxValue(this.receiptPurpose);
+		if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY) ||
+				StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			recalEarlyPaySchd(getReceiptData(), recptPurpose);
 		} else {
 			FinReceiptData receiptData = null;
 			receiptData = calculateRepayments(getFinanceDetail().getFinScheduleData());
@@ -1335,7 +1337,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @param receiptData
 	 * @throws InterruptedException
 	 */
-	public void recalEarlyPaySchd(FinReceiptData receiptData) throws InterruptedException {
+	public void recalEarlyPaySchd(FinReceiptData receiptData, String recptPurpose) throws InterruptedException {
 		logger.debug("Entering");
 		
 		//Schedule Recalculation Depends on Earlypay Effective Schedule method
@@ -1344,12 +1346,23 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		FinanceMain aFinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		
-		String method = getComboboxValue(this.effScheduleMethod);
+		// Setting Effective Recalculation Schedule Method
+		String method = null;
+		if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){
+			method = getComboboxValue(this.effScheduleMethod);
+		}else if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+			method = CalculationConstants.EARLYPAY_ADJMUR;
+		}
+		
 		// Schedule re-modifications only when Effective Schedule Method modified
 		if (!StringUtils.equals(method, CalculationConstants.EARLYPAY_NOEFCT)) {
 			
-			receiptData.getRepayMain().setEarlyPayAmount(PennantApplicationUtil.unFormateAmount(this.remBalAfterAllocation.getValue(), 
-					CurrencyUtil.getFormat(this.finCcy.getValue())));
+			// Setting Early Payment Amount for Calculation, 
+			//Not required to Set in case of Early settlement(Already calculated in ReceiptCaculator)
+			if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){
+				receiptData.getRepayMain().setEarlyPayAmount(PennantApplicationUtil.unFormateAmount(this.remBalAfterAllocation.getValue(), 
+						CurrencyUtil.getFormat(this.finCcy.getValue())));
+			}
 
 			if (StringUtils.equals(method, CalculationConstants.EARLYPAY_RECPFI)
 					|| StringUtils.equals(method, CalculationConstants.EARLYPAY_ADMPFI)) {
