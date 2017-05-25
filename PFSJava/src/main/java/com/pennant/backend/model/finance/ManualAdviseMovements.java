@@ -10,9 +10,9 @@ public class ManualAdviseMovements {
 	private long receiptID = Long.MIN_VALUE;
 	private long receiptSeqID = Long.MIN_VALUE;
 	private Date movementDate;
-	private BigDecimal movementAmount;
-	private BigDecimal paidAmount;
-	private BigDecimal waivedAmount;
+	private BigDecimal movementAmount = BigDecimal.ZERO;
+	private BigDecimal paidAmount = BigDecimal.ZERO;
+	private BigDecimal waivedAmount = BigDecimal.ZERO;
 	private String status;
 	
 	// Enquiry Purpose
