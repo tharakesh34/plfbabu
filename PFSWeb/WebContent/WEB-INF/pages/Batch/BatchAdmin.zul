@@ -138,6 +138,7 @@
 													<listheader id="customerAssigned" label="${c:l('label_Customer_Assigned_MicroEod.value')}" sort="auto" hflex="min" />
 													<listheader id="completedCustomers" label="${c:l('label_Completed_Customers_MicroEod.value')}" sort="auto" hflex="min"/>
 													<listheader id="failedCustomers" label="${c:l('label_Failed_Customers_MicroEod.value')}" sort="auto" hflex="min" />
+													<listheader id="threadCompletedTime" label="${c:l('label_Time_Taken_MicroEod.value')}" sort="auto" hflex="min" />
 												</listhead>
 											</listbox>
 										</hbox>

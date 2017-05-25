@@ -718,6 +718,10 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			listcell.setId(threadId + EodConstants.STATUS);
 			if (!listitem.hasFellow(threadId + EodConstants.STATUS))
 				listcell.setParent(listitem);
+			
+			listcell = new Listcell(DateUtility.timeBetween(status.getEndTime(),
+					status.getStartTime()));
+			listcell.setParent(listitem);
 			listBoxThread.appendChild(listitem);
 
 		}
