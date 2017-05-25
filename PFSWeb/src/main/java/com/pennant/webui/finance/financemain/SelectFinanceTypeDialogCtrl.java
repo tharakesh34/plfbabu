@@ -421,7 +421,11 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		}
 
 		if (StringUtils.isBlank(this.promotionCode.getValue())) {
-			filters[0] = new Filter("FinType", this.finType.getValue(), Filter.OP_EQUAL);
+			if(StringUtils.isBlank(this.finType.getValue())){
+				filters[0] = new Filter("FinType", this.finType.getValue(), Filter.OP_NOT_EQUAL);
+			}else{
+				filters[0] = new Filter("FinType", this.finType.getValue(), Filter.OP_EQUAL);
+			}
 		} else {
 			filters[0] = new Filter("FinType", this.promotionCode.getValue(), Filter.OP_EQUAL);
 		}
@@ -512,6 +516,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				this.finType.setValue(details.getLovDescProductName());
 				this.finType.setDescription(details.getLovDescFinTypeName());
 				CheckScreenCode(details.getScreenCode());
+			}else{
+				FinanceType aFinanceType = new FinanceType();
+				this.productCategory = aFinanceType.getProductCategory();
 			}
 		}
 

@@ -1322,7 +1322,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showErrorMessage(e.getMessage());
 		}
 		logger.debug("Leaving");
 	}
