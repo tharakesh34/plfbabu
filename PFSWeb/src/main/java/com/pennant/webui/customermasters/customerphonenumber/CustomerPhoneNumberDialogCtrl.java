@@ -906,11 +906,12 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 
 				if (isNewRecord()) {
 					
-					if (customerPhoneNumber.getPhoneTypePriority() == aCustomerPhoneNumber.getPhoneTypePriority()) {
+					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerPhoneNumber.getRecordType())
+							&& customerPhoneNumber.getPhoneTypePriority() == aCustomerPhoneNumber.getPhoneTypePriority()) {
 						valueParm[1]=this.custPhonePriority.getSelectedItem().getLabel();
 						errParm[1] = PennantJavaUtil.getLabel("label_PhoneTypePriority") + ":"+valueParm[1];
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(
-								PennantConstants.KEY_FIELD, "30702", errParm, valueParm), getUserWorkspace()
+								PennantConstants.KEY_FIELD, "90287", errParm, valueParm), getUserWorkspace()
 								.getUserLanguage()));
 						return auditHeader;
 					}
