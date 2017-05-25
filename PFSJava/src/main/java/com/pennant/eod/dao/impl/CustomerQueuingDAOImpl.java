@@ -293,7 +293,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
 		CustomerQueuing custQueue = new CustomerQueuing();
 		custQueue.setThreadId(threadId);
-		custQueue.setProgress(1);
+		custQueue.setProgress(EodConstants.PROGRESS_IN_PROCESS);
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" Select CUST.CustID, CustCIF, CustCoreBank, CustCtgCode, CustTypeCode, CustDftBranch, ");

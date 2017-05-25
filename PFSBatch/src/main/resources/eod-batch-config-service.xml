@@ -106,6 +106,13 @@
 	<bean id="autoDisbursementService" class="com.pennant.app.core.AutoDisbursementService" parent="serviceHelper">
 	</bean>
 
+	<bean id="customerAccountService" class="com.pennant.app.core.CustomerAccountService" parent="serviceHelper">
+		<property name="accountsDAO" ref="accountsDAO" />
+		<property name="accountsHistoryDAO" ref="accountsHistoryDAO" />
+		<property name="accountTypeDAO" ref="accountTypeDAO" />
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
 
 	<bean id="snapshotService" class="com.pennant.app.core.SnapshotService">
 		<property name="dataSource" ref="pfsDatasource" />

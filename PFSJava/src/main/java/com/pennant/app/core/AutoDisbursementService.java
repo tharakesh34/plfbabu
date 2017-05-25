@@ -50,8 +50,8 @@ public class AutoDisbursementService extends ServiceHelper {
 	 * @param resultSet
 	 * @throws Exception
 	 */
-	public void postFutureDisbursement(CustEODEvent custEODEvent, FinEODEvent finEODEvent, FinanceDisbursement curDisbursment)
-			throws Exception {
+	public void postFutureDisbursement(CustEODEvent custEODEvent, FinEODEvent finEODEvent,
+			FinanceDisbursement curDisbursment) throws Exception {
 		logger.debug(" Entering ");
 		long accountingID = getAccountingID(finEODEvent.getFinanceMain(), AccountEventConstants.ACCEVENT_ADDDBSN);
 
@@ -71,8 +71,9 @@ public class AutoDisbursementService extends ServiceHelper {
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 
 		curDisbursment.setDisbDisbursed(true);
+		//FIXME how to handle in case of cancellation
 		curDisbursment.setLinkedTranId(aeEvent.getLinkedTranId());
-		getFinanceDisbursementDAO().updateBatchDisb(curDisbursment, "");
+		curDisbursment.setPosted(true);
 		logger.debug(" Leaving ");
 	}
 

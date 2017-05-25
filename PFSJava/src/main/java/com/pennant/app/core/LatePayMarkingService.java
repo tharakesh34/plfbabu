@@ -54,7 +54,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 
 public class LatePayMarkingService extends ServiceHelper {
@@ -169,7 +168,6 @@ public class LatePayMarkingService extends ServiceHelper {
 				fod.setFinCurODAmt(fod.getFinCurODPft().add(fod.getFinCurODPri()));
 				fod.setFinCurODDays(DateUtility.getDaysBetween(fod.getFinODSchdDate(), valueDate));
 				fod.setFinLMdfDate(valueDate);
-				fod.setRcdAction(PennantConstants.RECORD_UPDATE);
 				finEODEvent.getFinODDetails().set(i, fod);
 			} else {
 				//OD Details not found. Create it now
@@ -394,7 +392,6 @@ public class LatePayMarkingService extends ServiceHelper {
 		finODDetail.setODChargeAmtOrPerc(getDecimal(penaltyRate.getODChargeAmtOrPerc()));
 		finODDetail.setODAllowWaiver(penaltyRate.isODAllowWaiver());
 		finODDetail.setODMaxWaiverPerc(penaltyRate.getODMaxWaiverPerc());
-		finODDetail.setRcdAction(PennantConstants.RECORD_INSERT);
 		finEODEvent.getFinODDetails().add(finODDetail);
 	}
 

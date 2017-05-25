@@ -240,11 +240,14 @@ public class LimitManagement {
 
 				for (LimitDetails details : limitDetails) {
 					details.setVersion(details.getVersion() + 1);
-					if (blockAmount.compareTo(BigDecimal.ZERO) != 0 && blockAmount.compareTo(limitAmount) < 0) {
-						details.setReservedLimit(details.getReservedLimit().subtract(blockAmount));
-					} else {
-						details.setReservedLimit(details.getReservedLimit().subtract(limitAmount));
+					if (blockAmount.compareTo(BigDecimal.ZERO) != 0) {
+						if (blockAmount.compareTo(limitAmount) < 0) {
+							details.setReservedLimit(details.getReservedLimit().subtract(blockAmount));
+						} else {
+							details.setReservedLimit(details.getReservedLimit().subtract(limitAmount));
+						}
 					}
+
 					details.setUtilisedLimit(details.getUtilisedLimit().add(limitAmount));
 					limitDetailDAO.updateReserveUtilise(details, "");
 				}

@@ -45,6 +45,8 @@ package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -108,6 +110,7 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 	private String lovValue;
 	private FinanceDisbursement befImage;
 	private LoggedInUser userDetails;
+	private boolean posted=false;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -120,6 +123,13 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 	public FinanceDisbursement(String id) {
 		super();
 		this.setId(id);
+	}
+	
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("posted");
+		return excludeFields;
 	}
 
 	// ******************************************************//
@@ -373,6 +383,14 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 
 	public void setDisbStatus(String disbStatus) {
 		this.disbStatus = disbStatus;
+	}
+
+	public boolean isPosted() {
+		return posted;
+	}
+
+	public void setPosted(boolean posted) {
+		this.posted = posted;
 	}
 
 }

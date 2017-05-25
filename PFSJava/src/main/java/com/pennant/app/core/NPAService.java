@@ -45,7 +45,6 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -53,12 +52,12 @@ import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennant.eod.constants.EodConstants;
 
 public class NPAService extends ServiceHelper {
 
 	private static final long	serialVersionUID	= 6161809223570900644L;
 	private static Logger		logger				= Logger.getLogger(NPAService.class);
-	private ProvisionDAO		provisionDAO;
 	private RuleExecutionUtil	ruleExecutionUtil;
 	private RuleDAO				ruleDAO;
 
@@ -158,14 +157,15 @@ public class NPAService extends ServiceHelper {
 		}
 		provision.setNpaBucketID(npaBucket);
 
-		Provision prvProvison = provisionDAO.getCurNPABucket(finReference);
+		Provision prvProvison = getProvisionDAO().getCurNPABucket(finReference);
 		if (prvProvison != null) {
-			provisionDAO.updateProvisonAmounts(provision);
+			provision.setRcdAction(EodConstants.RECORD_UPDATE);
 		} else {
 			if (provision.getNpaBucketID() != 0 && provision.getProvisionAmtCal().compareTo(BigDecimal.ZERO) != 0) {
-				provisionDAO.save(provision, "");
+				provision.setRcdAction(EodConstants.RECORD_INSERT);
 			}
 		}
+		finEODEvent.getProvisions().add(provision);
 		return finEODEvent;
 
 	}
@@ -207,10 +207,6 @@ public class NPAService extends ServiceHelper {
 
 		}
 		return provisonAmt;
-	}
-
-	public void setProvisionDAO(ProvisionDAO provisionDAO) {
-		this.provisionDAO = provisionDAO;
 	}
 
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {

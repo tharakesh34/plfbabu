@@ -38,6 +38,7 @@ public class EodService {
 	public EodService() {
 		super();
 	}
+	
 
 	public void doProcess(CustEODEvent custEODEvent, Date date) throws Exception {
 

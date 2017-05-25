@@ -61,8 +61,8 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	private BigDecimal	exchangeRate = BigDecimal.ZERO;
 	private BigDecimal	postAmountLcCcy = BigDecimal.ZERO;
 
-	//External Purpose fields
 	private String accountType;
+	//External Purpose fields
 	//private String ruleDecider;
 	private String eventCodeName;
 	private String accSetCodeName;
@@ -87,7 +87,7 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	 * 1- EOD Postings 
 	 * 2- EOD Postings and Accounts Updates
 	 */
-	private int					postCategory		= AccountConstants.POSTING_CATEGORY_NORMAL;
+	private int	postCategory	= AccountConstants.POSTING_CATEGORY_NORMAL;
 	
 	public ReturnDataSet() {
 		

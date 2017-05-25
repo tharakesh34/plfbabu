@@ -90,10 +90,9 @@
 								<rows>
 									<row>
 										<hbox pack="stretch" width="100%">
+											<exePannel id="accountsUpdate" border="normal" title="${c:l('label_accountsUpdate')}" imgSrc="/images/icons/send.gif" visible="false" />
 											<exePannel id="snapShotPreparation" border="normal" title="${c:l('label_snapShotPreparation')}" imgSrc="/images/icons/send.gif" visible="false" />
 											<exePannel id="dataExtract" border="normal" title="${c:l('label_dataExtract')}" imgSrc="/images/icons/send.gif" visible="true" />
-											<hbox></hbox>
-											<hbox></hbox>
 											<hbox></hbox>
 										</hbox>
 									</row>

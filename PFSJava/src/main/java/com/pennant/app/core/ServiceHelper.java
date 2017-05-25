@@ -74,6 +74,7 @@ import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.finance.SecondaryAccountDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentHeaderDAO;
+import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
@@ -124,6 +125,7 @@ abstract public class ServiceHelper implements Serializable {
 	private PostingsPreparationUtil		postingsPreparationUtil;
 	//over due
 	private FinODDetailsDAO				finODDetailsDAO;
+	private ProvisionDAO				provisionDAO;
 
 	public long getAccountingID(FinanceMain main, String eventCode) {
 		if (StringUtils.isNotBlank(main.getPromotionCode())) {
@@ -226,7 +228,7 @@ abstract public class ServiceHelper implements Serializable {
 		}
 		return 0;
 	}
-	
+
 	public Date getDateFromMap(Map<Date, Integer> datesMap, int index) {
 		for (Entry<Date, Integer> entryset : datesMap.entrySet()) {
 			if (entryset.getValue() == index) {
@@ -282,8 +284,7 @@ abstract public class ServiceHelper implements Serializable {
 		return secordayAccounts.toString();
 
 	}
-	
-	
+
 	public FinanceProfitDetail getFinPftDetailRef(String finMainRef, List<FinanceProfitDetail> listprofitDetails) {
 		FinanceProfitDetail profitDetail = null;
 		Iterator<FinanceProfitDetail> it = listprofitDetails.iterator();
@@ -477,6 +478,14 @@ abstract public class ServiceHelper implements Serializable {
 
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
+	}
+
+	public ProvisionDAO getProvisionDAO() {
+		return provisionDAO;
+	}
+
+	public void setProvisionDAO(ProvisionDAO provisionDAO) {
+		this.provisionDAO = provisionDAO;
 	}
 
 }

@@ -17,6 +17,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
+import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 
@@ -37,6 +38,7 @@ public class FinEODEvent implements Serializable {
 	private List<FinSchFrqInsurance>	finSchFrqInsurances		= new ArrayList<FinSchFrqInsurance>(1);
 	private List<PresentmentDetail>		presentmentDetails		= new ArrayList<PresentmentDetail>(1);
 	private List<ReturnDataSet>			returnDataSet			= new ArrayList<ReturnDataSet>(1);
+	private List<Provision>				provisions				= new ArrayList<Provision>(1);
 	private Date						eventFromDate;
 	private Date						eventToDate;
 	private Date						recalFromDate;
@@ -388,6 +390,14 @@ public class FinEODEvent implements Serializable {
 
 	public void setUpdMonthEndPostings(boolean updMonthEndPostings) {
 		this.updMonthEndPostings = updMonthEndPostings;
+	}
+
+	public List<Provision> getProvisions() {
+		return provisions;
+	}
+
+	public void setProvisions(List<Provision> provisions) {
+		this.provisions = provisions;
 	}
 
 }

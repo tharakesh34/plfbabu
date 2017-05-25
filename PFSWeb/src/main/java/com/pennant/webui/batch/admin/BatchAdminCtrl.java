@@ -59,46 +59,54 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
  * This is the controller class for the /WEB-INF/pages/Batch/BatchAdmin.zul file.
  */
 public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
-	private static final long serialVersionUID = 4309463490869641570L;
-	private final static Logger logger = Logger.getLogger(BatchAdminCtrl.class);
+	private static final long		serialVersionUID	= 4309463490869641570L;
+	private final static Logger		logger				= Logger.getLogger(BatchAdminCtrl.class);
 
-	protected Window window_BatchAdmin;
-	protected Textbox lable_LastBusiness_Date;
-	protected Textbox lable_NextBusiness_Date;
-	protected Textbox lable_Value_Date;
-	protected Checkbox lock;
-	protected Timer timer;
-	protected Textbox estimatedTime;
-	protected Textbox completedTime;
-	protected Label label_elapsed_Time;
-	protected Hbox batchStatus;
-	protected Button btnStartJob;
-	protected Button btnStaleJob;
-	protected Label lable_current_step;
-	protected Borderlayout borderLayoutBatchAdmin;
+	protected Window				window_BatchAdmin;
+	protected Textbox				lable_LastBusiness_Date;
+	protected Textbox				lable_NextBusiness_Date;
+	protected Textbox				lable_Value_Date;
+	protected Checkbox				lock;
+	protected Timer					timer;
+	protected Textbox				estimatedTime;
+	protected Textbox				completedTime;
+	protected Label					label_elapsed_Time;
+	protected Hbox					batchStatus;
+	protected Button				btnStartJob;
+	protected Button				btnStaleJob;
+	protected Label					lable_current_step;
+	protected Borderlayout			borderLayoutBatchAdmin;
 	// protected Hbox panelCustomerMicroEOD;
 
-	protected Label status = new Label();
+	protected Label					status				= new Label();
 
-	String[] args = new String[1];
-	private boolean isInitialise = false;
-	private boolean islock = false;
+	String[]						args				= new String[1];
+	private boolean					isInitialise		= false;
+	private boolean					islock				= false;
 
-	protected ProcessExecution beforeEOD;
-	protected ProcessExecution prepareCustomerQueue;
+	protected ProcessExecution		beforeEOD;
+	protected ProcessExecution		prepareCustomerQueue;
 
-	protected ProcessExecution masterStep;
-	protected ProcessExecution microEOD;
-	protected ProcessExecution microEODMonitor;
+	protected ProcessExecution		masterStep;
+	protected ProcessExecution		microEOD;
+	protected ProcessExecution		microEODMonitor;
 
-	protected ProcessExecution snapShotPreparation;
-	protected ProcessExecution dataExtract;
+	protected ProcessExecution		snapShotPreparation;
+	protected ProcessExecution		dataExtract;
+	protected ProcessExecution		accountsUpdate;
 
-	Map<String, ExecutionStatus> processMap = new HashMap<String, ExecutionStatus>();
-	private JobExecution jobExecution;
+	Map<String, ExecutionStatus>	processMap			= new HashMap<String, ExecutionStatus>();
+	private JobExecution			jobExecution;
 
 	public enum PFSBatchProcessess {
-		beforeEOD, prepareCustomerQueue, masterStep, microEOD, microEODMonitor, snapShotPreparation, dataExtract
+		beforeEOD,
+		prepareCustomerQueue,
+		masterStep,
+		microEOD,
+		microEODMonitor,
+		snapShotPreparation,
+		dataExtract,
+		accountsUpdate
 	}
 
 	public BatchAdminCtrl() {
@@ -485,6 +493,14 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 					setRunningProcess(this.dataExtract);
 				}
 				break;
+			case accountsUpdate:
+				this.accountsUpdate.setProcess(status);
+				this.accountsUpdate.render();
+				setRunningProcess(this.accountsUpdate);
+				if ("EXECUTING".equals(status.getStatus())) {
+					setRunningProcess(this.accountsUpdate);
+				}
+				break;
 
 			}
 		}
@@ -524,6 +540,9 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		}
 		if (dataExtract.getChildren() != null) {
 			dataExtract.getChildren().clear();
+		}
+		if (accountsUpdate.getChildren() != null) {
+			accountsUpdate.getChildren().clear();
 		}
 
 		if (listBoxThread.getItems() != null) {
@@ -662,9 +681,9 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		}
 	}
 
-	protected Listbox listBoxThread;
-	protected Intbox noOfthread;
-	protected Longbox noOfCustomer;
+	protected Listbox	listBoxThread;
+	protected Intbox	noOfthread;
+	protected Longbox	noOfCustomer;
 
 	public void doFillCustomerEodDetails(ExecutionStatus status) {
 		noOfthread.setValue(SysParamUtil.getValueAsInt("EOD_THREAD_COUNT"));

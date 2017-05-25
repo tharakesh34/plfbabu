@@ -97,6 +97,7 @@ public class Provision extends AbstractWorkflowEntity {
 	private FinanceDetail			financeDetail;
 
 	private List<ProvisionMovement>	provisionMovementList	= new ArrayList<ProvisionMovement>();
+	private String rcdAction = "";
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -118,6 +119,7 @@ public class Provision extends AbstractWorkflowEntity {
 		excludeFields.add("prevProvisionedAmt");
 		excludeFields.add("transRef");
 		excludeFields.add("financeDetail");
+		excludeFields.add("rcdAction");
 		return excludeFields;
 	}
 
@@ -403,6 +405,14 @@ public class Provision extends AbstractWorkflowEntity {
 
 	public void setPrvovisionRate(BigDecimal prvovisionRate) {
 		this.prvovisionRate = prvovisionRate;
+	}
+
+	public String getRcdAction() {
+		return rcdAction;
+	}
+
+	public void setRcdAction(String rcdAction) {
+		this.rcdAction = rcdAction;
 	}
 
 }

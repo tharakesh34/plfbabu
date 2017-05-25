@@ -28,16 +28,17 @@
 			<partition step="microEOD" partitioner="partitioningMaster">
 				<handler task-executor="taskExecutor" />
 			</partition>
-			<next on="*" to="snapShotPreparation" />
+			<next on="*" to="accountsUpdate" />
 			<fail on="FAILED" />
 		</step>
 
-<!-- 		<decision id="microEODDecision" decider="microEODDecider">
-			<next on="UNKNOWN" to="masterStep" />
+		<!-- <decision id="microEODDecision" decider="microEODDecider"> <next on="UNKNOWN" to="masterStep" /> <next on="*" to="snapShotPreparation" /> <fail on="FAILED" /> </decision> -->
+
+		<step id="accountsUpdate">
+			<tasklet ref="accountsUpdateTaskLet" />
 			<next on="*" to="snapShotPreparation" />
 			<fail on="FAILED" />
-		</decision> -->
-
+		</step>
 		<step id="snapShotPreparation">
 			<tasklet ref="snapShotPreparationTaskLet" />
 			<next on="*" to="dataExtract" />
@@ -65,11 +66,11 @@
 	</job>
 	<step id="microEOD" xmlns="http://www.springframework.org/schema/batch">
 		<tasklet ref="microEODTaskLet" allow-start-if-complete="true">
-		<transaction-attributes propagation="NEVER"/>	
+			<transaction-attributes propagation="NEVER" />
 		</tasklet>
 	</step>
 
-	<bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor" >
+	<bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor">
 		<property name="ConcurrencyLimit" value="100"></property>
 	</bean>
 	<bean id="partitioningMaster" class="com.pennant.backend.endofday.tasklet.PartitioningMaster">

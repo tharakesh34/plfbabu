@@ -20,7 +20,6 @@
 	<bean id="microEODTaskLet" class="com.pennant.backend.endofday.tasklet.MicroEOD">
 		<property name="eodService" ref="eodService" />
 		<property name="transactionManager" ref="pfsTransactionManager" />
-		<property name="dataSource" ref="pfsDatasource" />
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 	</bean>
 
@@ -41,6 +40,10 @@
 	<bean id="snapShotPreparationTaskLet" class="com.pennant.backend.endofday.tasklet.SnapShotPreparation">
 		<property name="dataSource" ref="pfsDatasource" />
 		<property name="snapshotService" ref="snapshotService" />
+	</bean>
+	
+	<bean id="accountsUpdateTaskLet" class="com.pennant.backend.endofday.tasklet.AccountsUpdate">
+		<property name="customerAccountService" ref="customerAccountService" />
 	</bean>
 	
 	 <bean id="bajajService" class="com.pennanttech.bajaj.services.BajajService" abstract="true">

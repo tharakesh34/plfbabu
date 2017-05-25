@@ -19,13 +19,16 @@ import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
+import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pff.core.TableType;
 
 public class LoadFinanceData extends ServiceHelper {
@@ -34,10 +37,9 @@ public class LoadFinanceData extends ServiceHelper {
 
 	private static final long	serialVersionUID	= -281578785120363314L;
 
-	public CustEODEvent prepareFinEODEvents(CustEODEvent custEODEvent, long custId) throws Exception {
+	public CustEODEvent prepareFinEODEvents(CustEODEvent custEODEvent, long custID) throws Exception {
 		logger.debug(" Entering ");
 
-		long custID = custEODEvent.getCustomer().getCustID();
 		List<FinanceMain> custFinMains = getFinanceMainDAO().getFinMainsForEODByCustId(custID, true);
 		//List<FinanceScheduleDetail> custSchdDetails = getFinanceScheduleDetailDAO().getFinScheduleDetails(custID, true);
 		List<FinanceProfitDetail> custpftDet = getFinanceProfitDetailDAO().getFinProfitDetailsByCustId(custID, true);
@@ -305,6 +307,25 @@ public class LoadFinanceData extends ServiceHelper {
 				}
 				getRepayInstructionDAO().saveListInEOD(lisRepayIns);
 			}
+			
+			//provisions
+			if (!finEODEvent.getProvisions().isEmpty()) {
+				for (Provision provision : finEODEvent.getProvisions()) {
+					if (StringUtils.equals(provision.getRcdAction(), EodConstants.RECORD_INSERT)) {
+						getProvisionDAO().updateProvisonAmounts(provision);
+					}else if (StringUtils.equals(provision.getRcdAction(), EodConstants.RECORD_INSERT)) {
+						getProvisionDAO().save(provision,"");
+					}
+					
+				}
+			}
+			//disbursement postings
+			for (FinanceDisbursement disbursement : finEODEvent.getFinanceDisbursements()) {
+				if (disbursement.isPosted()) {
+					getFinanceDisbursementDAO().updateBatchDisb(disbursement, "");
+				}
+			}
+			
 			// group all the posting
 			returnDataSets.addAll(finEODEvent.getReturnDataSet());
 		}
@@ -312,7 +333,7 @@ public class LoadFinanceData extends ServiceHelper {
 		//save postings
 		saveAccountingEOD(returnDataSets);
 		//update accounts
-		getAccountProcessUtil().procAccountUpdate(returnDataSets);
+		//getAccountProcessUtil().procAccountUpdate(returnDataSets);
 
 		//update customer
 		if (custEODEvent.isUpdCustomer()) {

@@ -566,7 +566,6 @@ public class AccountEngineExecution implements Serializable {
 			String ref = aeEvent.getFinReference() + "/" + aeEvent.getAccountingEvent() + "/"
 					+ transactionEntry.getTransOrder();
 			returnDataSet.setPostingId(ref);
-			returnDataSet.setAccountType(transactionEntry.getAccount());
 
 			returnDataSet.setPostref(aeEvent.getBranch() + "-" + transactionEntry.getAccountType() + "-"
 					+ aeEvent.getCcy());

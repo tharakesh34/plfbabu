@@ -34,7 +34,7 @@ public class CustomerAccountService extends ServiceHelper {
 	private AccountsHistoryDAO	accountsHistoryDAO;
 	private AccountTypeDAO		accountTypeDAO;
 	private DataSource			dataSource;
-	String						getAccounts			= "   ";
+
 
 	/**
 	 * @param custId
@@ -50,7 +50,7 @@ public class CustomerAccountService extends ServiceHelper {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(" SELECT T1.PostDate, T1.ValueDate, T1.AppDate, T1.AppValueDate, T1.CustAppDate, ");
-		sb.append(" T1.DrOrCr, T1.Account, T1.ShadowPosting, T1.PostAmount, T1.AcCcy, T2.FinBranch, AccountType ");
+		sb.append(" T1.DrOrCr, T1.Account, T1.ShadowPosting, T1.PostAmount, T1.AcCcy, T2.FinBranch, T1.AccountType ");
 		sb.append(" FROM Postings T1 INNER JOIN FinanceMain T2 on T1.FinReference = T2.FinReference "); 
 		sb.append(" WHERE postCategory=? AND PostStatus = 'S'");
 		
@@ -60,7 +60,7 @@ public class CustomerAccountService extends ServiceHelper {
 
 		try {
 			connection = DataSourceUtils.doGetConnection(dataSource);
-			sqlStatement = connection.prepareStatement(getAccounts);
+			sqlStatement = connection.prepareStatement(sb.toString());
 			sqlStatement.setInt(1, AccountConstants.POSTING_CATEGORY_EOD);
 			resultSet = sqlStatement.executeQuery();
 			while (resultSet.next()) {
@@ -121,6 +121,11 @@ public class CustomerAccountService extends ServiceHelper {
 			returnDataSet.setAcCcy(resultSet.getString("AcCcy"));
 			returnDataSet.setAccountType(resultSet.getString("AccountType"));
 			returnDataSet.setFinBranch(resultSet.getString("FinBranch"));
+			returnDataSet.setPostDate(resultSet.getDate("PostDate"));
+			returnDataSet.setValueDate(resultSet.getDate("ValueDate"));
+			returnDataSet.setAppDate(resultSet.getDate("AppDate"));
+			returnDataSet.setAppValueDate(resultSet.getDate("AppValueDate"));
+			returnDataSet.setCustAppDate(resultSet.getDate("CustAppDate"));
 		} catch (SQLException e) {
 		}
 
@@ -244,6 +249,10 @@ public class CustomerAccountService extends ServiceHelper {
 
 	public void setAccountsHistoryDAO(AccountsHistoryDAO accountsHistoryDAO) {
 		this.accountsHistoryDAO = accountsHistoryDAO;
+	}
+	
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
 	}
 
 }
