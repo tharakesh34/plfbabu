@@ -203,9 +203,9 @@
 						</grid>
 
 						<listbox id="listBoxVASRecording"
-							fixedLayout="true" vflex="min" span="true"
-							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-							 multiple="false">
+							fixedLayout="true" 	tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							emptyMessage="${c:l('listbox.emptyMessage')}" height="100%" sizedByContent="true"
+							 multiple="false" span="true">
 							<listhead sizable="true">
 								<listheader id="listheader_ProductCode"
 									label="${c:l('listheader_ProductCode.label')}" sort="auto"
