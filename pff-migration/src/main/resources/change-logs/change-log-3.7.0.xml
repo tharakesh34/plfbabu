@@ -237,4 +237,9 @@ WHERE     NOT EXISTS (SELECT 1 FROM BuilderProjcet_TEMP WHERE Id = T1.Id)
 			);
 		</sql>
 	</changeSet>
+	<changeSet id="13" author="Madhubabu">
+	<sql>
+		update errordetails set errormessage='{0} Already had one Phone Number with {1}' where errorcode='90287';
+	</sql>
+	</changeSet>
 </databaseChangeLog>
