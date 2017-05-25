@@ -410,4 +410,107 @@ WHERE     (NOT EXISTS
 		<column name="PayInterestonFrq" type="boolean" />
 	</createTable>
 </changeSet>
+<changeSet id="27" author="Amit">
+		<createView viewName="EodConfig_AView" replaceIfExists="true">
+SELECT		T1.EodConfigId, T1.ExtMnthRequired, T1.MnthExtTo, T1.Active		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	EodConfig  T1
+</createView>
+	</changeSet>
+	<changeSet id="28" author="Amit">
+		<createView viewName="EodConfig_View" replaceIfExists="true">
+SELECT		T1.EodConfigId, T1.ExtMnthRequired, T1.MnthExtTo, T1.Active		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	EodConfig_Temp T1 
+UNION ALL
+
+SELECT		T1.EodConfigId, T1.ExtMnthRequired, T1.MnthExtTo, T1.Active		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	EodConfig  T1 
+WHERE     NOT EXISTS (SELECT 1 FROM EodConfig_TEMP WHERE EodConfigId = T1.EodConfigId)
+</createView>
+	</changeSet>
+	<changeSet id="29" author="Amit">
+		<createTable tableName="SeqEodConfig">
+			<column name="SeqNo" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="30" author="Amit">
+		<sql>
+		
+		UPDATE SEQSECRIGHTS SET SEQNO=
+			(SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE
+			SEQSECGROUPRIGHTS SET
+			SEQNO = (SELECT MAX(GRPRIGHTID) FROM
+			SECGROUPRIGHTS);
+			UPDATE
+			SEQSECGROUPS SET SEQNO=(SELECT MAX(GRPID) FROM
+			SECGROUPS);
+			UPDATE
+			SEQSECROLEGROUPS SET SEQNO=(SELECT MAX(ROLEGRPID)
+			FROM SECROLEGROUPS);
+			UPDATE SeqPTMenuDetails SET SEQNO= (SELECT
+			MAX(menuId) FROM
+			PTMenuDetails);
+		
+		INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'EODCONFIG_VIEW', 'Allow to view EODConfig', 0,1000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'EODCONFIG_MAKER', 'WF Maker for EODConfig', 0,1000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'EODCONFIG_APPROVER', 'WF Approver for EODConfig', 0,1000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+1) from SeqSecRights),0,'menuCat_eod','MENU',0,1000,'2017-05-24  07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+2) from SeqSecRights),0,'menuCat_eodEnquiry','MENU',0,1000,'2017-05-24  07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+3) from SeqSecRights),0,'menuItem_eod_EODConfig','MENU',0,1000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+4) from SeqSecRights),0,'menuItem_eod_EODConfigEnquiry','MENU',0,1000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+5) from SeqSecRights),2,'button_EODConfigList_PrintList','EODConfigList',0,1000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+6) from SeqSecRights),2,'button_EODConfigList_NewEODConfig','EODConfigList',0,1000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+7) from SeqSecRights),2,'button_EODConfigDialog_btnNew','EODConfigDialog',0,1000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+8) from SeqSecRights),2,'button_EODConfigDialog_btnEdit','EODConfigDialog',0,1000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+9) from SeqSecRights),2,'button_EODConfigDialog_btnDelete','EODConfigDialog',0,1000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10) from SeqSecRights),2,'button_EODConfigDialog_btnSave','EODConfigDialog',0,1000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+1) from SeqSecRights),3,'EODConfigDialog_EodConfigId','EODConfigDialog',0,1000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+2) from SeqSecRights),3,'EODConfigDialog_ExtMnthRequired','EODConfigDialog',0,1000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+3) from SeqSecRights),3,'EODConfigDialog_MnthExtTo','EODConfigDialog',0,1000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecRights SELECT (select (SeqNo+10+4) from SeqSecRights),3,'EODConfigDialog_Active','EODConfigDialog',0,1000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_eodEnquiry'),1,0,10000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select (SeqNo+4) from SeqSecRights),1,0,10000,'2017-05-24 07:26:48',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+16) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_eod'),1,0,10000,'2017-05-24 07:26:48',' ',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,0,10000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),1,0,10000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+1) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+1) from SeqSecRights),1,0,10000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+2) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+2) from SeqSecRights),1,0,10000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+3) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+3) from SeqSecRights),1,0,10000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+20+4) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+4) from SeqSecRights),1,0,10000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+24+4) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select max(RightID) from SecRights WHERE RightName='menuCat_eod'),1,0,10000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+25+4) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+INSERT INTO SecGroupRights SELECT (select (SeqNo+26+4) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+update SeqSecGroupRights set SeqNo = (SeqNo+26+4) ;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups), (select (SeqNo+2) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups), (select (SeqNo+3) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+update SeqSecRoleGroups set SeqNo = (SeqNo+2) ;
+INSERT INTO PTMenuDetails SELECT (select (SeqNo+1) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'EODConfig','menu_Item_EODConfig','/WEB-INF/pages/eod/EODConfig/EODConfigList.zul',0,10000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0,'menuItem_eod_EODConfig' FROM SeqPTMenuDetails WHERE 0=0;
+INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'EODConfigEnquiry','menu_Item_EODConfigEnquiry?enqiryModule=Y" ','/WEB-INF/pages/eod/EODConfig/EODConfigEnquiryList.zul',0,10000,'2017-05-24 07:26:48','Approved',' ',' ',' ',' ',' ',0,'menuItem_eod_EODConfig' FROM SeqPTMenuDetails WHERE 0=0;
+update SeqPTMenuDetails set SeqNo = (SeqNo+2) ;
+update SeqSecGroups set SeqNo = (SeqNo+3) ;
+update SeqSecRights set SeqNo = (SeqNo+10+4) ;
+		
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM
+			SECRIGHTS);
+			UPDATE
+			SEQSECGROUPRIGHTS SET SEQNO = (SELECT
+			MAX(GRPRIGHTID) FROM
+			SECGROUPRIGHTS);
+			UPDATE SEQSECGROUPS SET
+			SEQNO=(SELECT MAX(GRPID) FROM
+			SECGROUPS);
+			UPDATE SEQSECROLEGROUPS SET
+			SEQNO=(SELECT MAX(ROLEGRPID)
+			FROM SECROLEGROUPS);
+			UPDATE
+			SeqPTMenuDetails SET SEQNO= (SELECT
+			MAX(menuId) FROM PTMenuDetails);
+		
+		</sql>
+	</changeSet>
 </databaseChangeLog>
