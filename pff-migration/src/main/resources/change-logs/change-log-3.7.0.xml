@@ -138,15 +138,9 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 			<column name="WorkflowId" type="bigint" />   
 		</createTable> 
 	</changeSet>
-	<changeSet id="5.1" author="Satya">
-	<sql>
-		ALTER TABLE BUILDERCOMPANY
-		ADD CONSTRAINT UK_BUILDERCOMPANY_GRPID UNIQUE (GROUPID);
-	</sql>
-</changeSet>
-        <changeSet id="6" author="satya">
+	        <changeSet id="6" author="satya">
 		<addForeignKeyConstraint constraintName="FK_BuilderCompany"
-			referencedTableName="BUILDERCOMPANY" referencedColumnNames="GROUPID"
+			referencedTableName="BUILDERCOMPANY" referencedColumnNames="ID"
 			baseTableName="BUILDERPROJCET" baseColumnNames="BUILDERID" />
 	</changeSet>
 		<changeSet id="7" author="Satya">
@@ -173,15 +167,10 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 			<column name="WorkflowId" type="bigint" />   
 		</createTable> 
 	</changeSet>
-		<changeSet id="7.1" author="Satya">
-	<sql>
-		ALTER TABLE BUILDERCOMPANY_TEMP
-		ADD CONSTRAINT UK_BUILDERCOMPANY_TMP_GRPID UNIQUE (GROUPID);
-	</sql>
-</changeSet>
+
 <changeSet id="8" author="satya">
 		<addForeignKeyConstraint constraintName="FK_BuilderCompany_TEMP"
-			referencedTableName="BUILDERCOMPANY" referencedColumnNames="GROUPID"
+			referencedTableName="BUILDERCOMPANY" referencedColumnNames="ID"
 			baseTableName="BUILDERPROJCET_TEMP" baseColumnNames="BUILDERID" />
 	</changeSet>
 
