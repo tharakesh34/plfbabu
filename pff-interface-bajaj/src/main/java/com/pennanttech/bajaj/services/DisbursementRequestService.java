@@ -381,7 +381,7 @@ public class DisbursementRequestService extends BajajService implements RequestS
 
 					if (DisbursementTypes.IMPS.name().equals(type)) {
 						try {
-							validateImpsRequest(rs);
+							//validateImpsRequest(rs);
 						} catch (Exception e) {
 							logger.error(Literal.EXCEPTION, e);
 							return null;
