@@ -455,6 +455,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		
 		if(isFinanceVas()){
 			this.viewInfo.setVisible(false);
+		}else{
+			this.viewInfo.setVisible(false);
 		}
 
 		if (isWorkFlowEnabled()) {
@@ -1786,38 +1788,35 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private void doSearchSlectionInfo(String stmtType) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
 
+		if (this.primaryLinkRef.getValue().equals("")) {
+			return;
+		}
+
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		if (VASConsatnts.VASAGAINST_CUSTOMER.equals(stmtType)) {
-			if (!this.primaryLinkRef.getValue().equals("")) {
-				map.put("custid", Long.valueOf(this.primaryLinkRef.getValue()));
-				map.put("custCIF", this.productCode.getValue());
-				map.put("finReference", this.vasReference.getValue());
-				map.put("finance", true);
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/fincustomerdetailsenq.zul",
-						getMainWindow(), map);
-			}
+			map.put("custid", getVASRecording().getVasCustomer().getCustomerId());
+			map.put("finReference", this.vasReference.getValue());
+			map.put("finance", true);
+			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/fincustomerdetailsenq.zul",
+					getMainWindow(), map);
 		} else if (VASConsatnts.VASAGAINST_FINANCE.equals(stmtType)) {
-			if (!this.primaryLinkRef.getValue().equals("")) {
-				FinanceEnquiry aFinanceEnq = new FinanceEnquiry();
-				aFinanceEnq.setFinReference(this.primaryLinkRef.getValue());
-				map.put("moduleCode", moduleCode);
-				map.put("fromApproved", true);
-				map.put("childDialog", true);
-				map.put("financeEnquiry", aFinanceEnq);
-				map.put("VASRecordingDialog", this);
-				map.put("enquiryType", this.enquiryType.getValue());
-				Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
-						getMainWindow(), map);
-			}
+			FinanceEnquiry aFinanceEnq = new FinanceEnquiry();
+			aFinanceEnq.setFinReference(this.primaryLinkRef.getValue());
+			map.put("moduleCode", moduleCode);
+			map.put("fromApproved", true);
+			map.put("childDialog", true);
+			map.put("financeEnquiry", aFinanceEnq);
+			map.put("VASRecordingDialog", this);
+			map.put("enquiryType", this.enquiryType.getValue());
+			Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
+					getMainWindow(), map);
 		} else if (VASConsatnts.VASAGAINST_COLLATERAL.equals(stmtType)) {
-			if (!this.primaryLinkRef.getValue().equals("")) {
-				CollateralSetup collateralSetup = getCollateralSetupService().getCollateralSetupByRef(
-						this.primaryLinkRef.getValue(), "", true);
-				map.put("collateralSetup", collateralSetup);
-				map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
-				Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupDialog.zul",
-						null, map);
-			}
+			CollateralSetup collateralSetup = getCollateralSetupService().getCollateralSetupByRef(
+					this.primaryLinkRef.getValue(), "", true);
+			map.put("collateralSetup", collateralSetup);
+			map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
+			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupDialog.zul",
+					null, map);
 		}
 		logger.debug("Leaving");
 	}
