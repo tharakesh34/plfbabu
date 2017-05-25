@@ -186,7 +186,7 @@
 		<menuItem id="menu_Item_CheckRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/CheckRuleList.zul"   rightName="menuItem_RulesFactory_CheckRules"/>
 	    <menuItem id="menu_Item_DedupParm" zulNavigation="/WEB-INF/pages/SolutionFactory/DedupParm/DedupParmList.zul"  rightName="menuItem_RulesFactory_CustDedupParm"/>
 		<menuItem id="menu_Item_DownpaymentRules" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/DownpaymentRuleList.zul"   rightName="menuItem_RulesFactory_DownpaymentRules"/>
-<!-- 		<menuItem id="menu_Item_EligibilityRules" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/EligibilityRuleList.zul"   rightName="menuItem_RulesFactory_EligibilityRules"/> -->
+		<menuItem id="menu_Item_EligibilityRules" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/EligibilityRuleList.zul"   rightName="menuItem_RulesFactory_EligibilityRules"/>
 		<menuItem id="menu_Item_MailTemplate" zulNavigation="/WEB-INF/pages/Mail/MailTemplate/MailTemplateList.zul" />
 		<menuItem id="menu_Item_FeeDetails" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/FeeRuleList.zul"   rightName="menuItem_RulesFactory_FeeRules"/>
 		<!-- <menuItem id="menu_Item_InsuranceRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/InsuranceRuleList.zul"   rightName="menuItem_RulesFactory_InsuranceRules"/> -->
