@@ -576,4 +576,8 @@ update SeqSecRights set SeqNo = (SeqNo+10+4) ;
 		<modifyDataType tableName="RMTFINANCETYPES_Temp" columnName="FINPROVISIONACTYPE" newDataType="VARCHAR(15)"/>
 		<modifyDataType tableName="RMTFINANCETYPES_Temp" columnName="FINSUSPACTYPE" newDataType="VARCHAR(15)"/>
 	</changeSet>
+	<changeSet id="36" author="Surekha">
+		<modifyDataType tableName="ACCOUNTS" columnName="ACTYPE" newDataType="VARCHAR(15)"/>
+		<modifyDataType tableName="ACCOUNTS_Temp" columnName="ACTYPE" newDataType="VARCHAR(15)"/>
+	</changeSet>
 </databaseChangeLog>
