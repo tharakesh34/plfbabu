@@ -46,6 +46,7 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -217,19 +218,19 @@ public class RuleExecutionUtil implements Serializable {
 				result = BigDecimal.ZERO;
 			} else if (result instanceof BigDecimal) {
 				resultBigDecimal = (BigDecimal) result;
-				//resultBigDecimal = resultBigDecimal.setScale(2, RoundingMode.UP);
+				resultBigDecimal = resultBigDecimal.setScale(2, RoundingMode.UP);
 				result = resultBigDecimal;
 			} else if (result instanceof Double) {
 				if (((Double) result).isNaN()) {
 					result = BigDecimal.ZERO;
 				} else {
 					resultBigDecimal = new BigDecimal(result.toString());
-					//resultBigDecimal = resultBigDecimal.setScale(2, RoundingMode.UP);
+					resultBigDecimal = resultBigDecimal.setScale(2, RoundingMode.UP);
 					result = resultBigDecimal;
 				}
 			} else if (result instanceof Integer) {
 				resultBigDecimal = new BigDecimal(result.toString());
-				//resultBigDecimal = resultBigDecimal.setScale(2, RoundingMode.UP);
+				resultBigDecimal = resultBigDecimal.setScale(2, RoundingMode.UP);
 				result = resultBigDecimal;
 			} else {
 				throw new DatatypeConfigurationException(Labels.getLabel("RuleExecution_Decimal_Exception"));
