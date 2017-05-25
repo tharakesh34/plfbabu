@@ -64,6 +64,7 @@ import com.pennant.backend.model.fees.FeePostings;
 import com.pennant.backend.service.fees.feepostings.FeePostingService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.Fees.FeePostings.model.FeePostingsListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -154,7 +155,7 @@ public class FeePostingsListCtrl extends GFCBaseListCtrl<FeePostings> {
 
 		registerField("PostingAmount", listheader_PostingAmount);
 		registerField("PostDate", listheader_PostDate);
-
+		fillComboBox(this.postAgainst, "", PennantStaticListUtil.getpostingPurposeList(), "");
 		// Render the page and display the data.
 		doRenderPage();
 		search();
