@@ -2194,18 +2194,20 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.accrualTillDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.recurringDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.productCode.setProperties("VASConfiguration", "ProductCode", "ProductDesc", true, 8);
+		this.primaryLinkRef.setWidth("180px");
 		this.dsaId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", true, 8);
 		this.dmaId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", true, 8);
 		this.fulfilOfficerId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", true, 8);
 		this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", true, 8);
 		this.productCode.setTextBoxWidth(145);
-		this.dsaId.setTextBoxWidth(140);
+		this.dsaId.setTextBoxWidth(145);
 		this.dmaId.setTextBoxWidth(145);
-		this.fulfilOfficerId.setTextBoxWidth(140);
+		this.fulfilOfficerId.setTextBoxWidth(145);
 		this.referralId.setTextBoxWidth(145);
 		this.postingAgainst.setDisabled(true);
 		this.fee.setProperties(true, getCcyFormat());
 		this.renewalFee.setProperties(false, getCcyFormat());
+		this.renewalFee.setWidth("100px");
 		logger.debug("Leaving");
 	}
 	
