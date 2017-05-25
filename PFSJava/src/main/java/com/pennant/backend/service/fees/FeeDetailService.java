@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -32,6 +33,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
@@ -115,6 +117,11 @@ public class FeeDetailService {
 					}
 					BigDecimal feeResult = getFeeResult(ruleSqlMap.get(finFeeDetail.getRuleCode()), executionMap,
 							finScheduleData.getFinanceMain().getFinCcy());
+					
+					//unFormating feeResult
+					int formatter = CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy());
+					feeResult = PennantApplicationUtil.unFormateAmount(feeResult, formatter);
+					
 					finFeeDetail.setCalculatedAmount(feeResult);
 					if(finFeeDetail.getActualAmount().compareTo(BigDecimal.ZERO) == 0){
 						finFeeDetail.setActualAmount(feeResult);

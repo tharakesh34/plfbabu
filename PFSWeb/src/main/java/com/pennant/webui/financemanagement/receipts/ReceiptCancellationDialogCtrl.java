@@ -669,16 +669,18 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 								break;
 							}
 						}
-						
 					}
 				}
 				Rule rule = getRuleService().getRuleById(details.getRuleID(), "");
 				BigDecimal bounceAmt = BigDecimal.ZERO;
+				int formatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
 				if(rule != null){
 					bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(),
 							executeMap, getReceiptHeader().getFinCcy(), RuleReturnType.DECIMAL);
+					// unFormating bounceAmt
+					bounceAmt = PennantApplicationUtil.unFormateAmount(bounceAmt, formatter);
 				}
-				this.bounceCharge.setValue(PennantApplicationUtil.formateAmount(bounceAmt, CurrencyUtil.getFormat(getReceiptHeader().getFinCcy())));
+				this.bounceCharge.setValue(PennantApplicationUtil.formateAmount(bounceAmt, formatter));
 			}
 		}
 	}

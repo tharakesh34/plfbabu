@@ -1668,6 +1668,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					}
 					BigDecimal feeResult = getFeeResult(ruleSqlMap.get(finFeeDetail.getRuleCode()), executionMap,
 							finScheduleData.getFinanceMain().getFinCcy());
+					//unFormating feeResult
+					int formatter = CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy());
+					feeResult = PennantApplicationUtil.unFormateAmount(feeResult, formatter);
+					
 					finFeeDetail.setCalculatedAmount(feeResult);
 					if(finFeeDetail.getActualAmount().compareTo(BigDecimal.ZERO) == 0){
 						finFeeDetail.setActualAmount(feeResult);

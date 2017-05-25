@@ -51,6 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.util.CalculationUtil;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.finance.FinanceEligibilityDetailDAO;
@@ -65,6 +66,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.EligibilityDetailService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -210,7 +212,13 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
   		
   		Object object = getRuleExecutionUtil().executeRule(rule, customerEligibilityCheck.getDeclaredFieldValues(), finCcy, RuleReturnType.DECIMAL);
   		
+  		
 		if (object != null) {
+			if(object instanceof BigDecimal) {
+				//unFormating object
+				int formatter = CurrencyUtil.getFormat(finCcy);
+				object = PennantApplicationUtil.unFormateAmount((BigDecimal) object, formatter);
+			} 
 			ruleResString = object.toString();
 		} else {
 			ruleResString = null;

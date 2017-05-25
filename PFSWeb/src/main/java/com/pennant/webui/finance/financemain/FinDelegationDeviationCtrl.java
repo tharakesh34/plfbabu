@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.CalculationUtil;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.customermasters.CustomerDocument;
@@ -34,6 +35,7 @@ import com.pennant.backend.model.solutionfactory.DeviationParam;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.service.solutionfactory.DelegationDeviationService;
 import com.pennant.backend.util.DeviationConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.util.PennantAppUtil;
@@ -147,6 +149,13 @@ public class FinDelegationDeviationCtrl {
 		String resultValue = null;
 		switch (ruleReturnType) {
 		case DECIMAL:
+			if(object != null && object instanceof BigDecimal) {
+				//unFormating object
+				int formatter = CurrencyUtil.getFormat(finCcy);
+				object = PennantApplicationUtil.unFormateAmount((BigDecimal) object, formatter);
+			} 
+			finElgDetail.setRuleResult(object.toString());
+			break;
 		case INTEGER:
 			finElgDetail.setRuleResult(object.toString());
 			break;
