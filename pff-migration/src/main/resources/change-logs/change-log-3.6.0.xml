@@ -328,5 +328,86 @@ WHERE     (NOT EXISTS
 			<column name="IFSC" type="varchar(20)" />
 		</createIndex>
 		</changeSet>	
-	
+<changeSet id="22" author="SreeRavali">
+	<createTable tableName="Restructure">
+		<column name="FinReference" type="nvarchar(20)">
+			<constraints primaryKey="true" nullable="false" />
+		</column>
+		<column name="NoofInstalments" type="int">
+			<constraints nullable="false" />
+		</column>
+		<column name="PaymentAmount" type="decimal(18,0)" />
+		<column name="ScheduleMethod" type="varchar(10)">
+			<constraints nullable="false" />
+		</column>
+		<column name="InterestRateType" type="varchar(8)">
+			<constraints nullable="false" />
+		</column>
+		<column name="RepayProfitRate" type="decimal(13,9)" />
+		<column name="RepayBaseRate" type="varchar(8)" />
+		<column name="RepaySpecialRate" type="varchar(8)" />
+		<column name="RepayMargin" type="decimal(13,9)" />
+		<column name="CapitalizeODCharges" type="boolean" />
+		<column name="CapitalizeODInterest" type="boolean" />
+		<column name="RepayFrq" type="varchar(5)">
+			<constraints nullable="false" />
+		</column>
+		<column name="NextRepayDate" type="datetime" />
+		<column name="RepayPftFrq" type="varchar(5)">
+			<constraints nullable="false" />
+		</column>
+		<column name="NextRepayPftDate" type="datetime" />
+		<column name="RepayRvwFrq" type="varchar(5)">
+			<constraints nullable="false" />
+		</column>
+		<column name="NextRepayRvwDate" type="datetime" />
+		<column name="RepayCpzFrq" type="varchar(5)" />
+		<column name="NextRepayCpzDate" type="datetime" />
+		<column name="MaturityDate" type="datetime">
+			<constraints nullable="false" />
+		</column>
+		<column name="PayInterestonFrq" type="boolean" />
+	</createTable>
+</changeSet>
+<changeSet id="23" author="SreeRavali">
+	<createTable tableName="Restructure_Temp">
+		<column name="FinReference" type="nvarchar(20)">
+			<constraints primaryKey="true" nullable="false" />
+		</column>
+		<column name="NoofInstalments" type="int">
+			<constraints nullable="false" />
+		</column>
+		<column name="PaymentAmount" type="decimal(18,0)" />
+		<column name="ScheduleMethod" type="varchar(10)">
+			<constraints nullable="false" />
+		</column>
+		<column name="InterestRateType" type="varchar(8)">
+			<constraints nullable="false" />
+		</column>
+		<column name="RepayProfitRate" type="decimal(13,9)" />
+		<column name="RepayBaseRate" type="varchar(8)" />
+		<column name="RepaySpecialRate" type="varchar(8)" />
+		<column name="RepayMargin" type="decimal(13,9)" />
+		<column name="CapitalizeODCharges" type="boolean" />
+		<column name="CapitalizeODInterest" type="boolean" />
+		<column name="RepayFrq" type="varchar(5)">
+			<constraints nullable="false" />
+		</column>
+		<column name="NextRepayDate" type="datetime" />
+		<column name="RepayPftFrq" type="varchar(5)">
+			<constraints nullable="false" />
+		</column>
+		<column name="NextRepayPftDate" type="datetime" />
+		<column name="RepayRvwFrq" type="varchar(5)">
+			<constraints nullable="false" />
+		</column>
+		<column name="NextRepayRvwDate" type="datetime" />
+		<column name="RepayCpzFrq" type="varchar(5)" />
+		<column name="NextRepayCpzDate" type="datetime" />
+		<column name="MaturityDate" type="datetime">
+			<constraints nullable="false" />
+		</column>
+		<column name="PayInterestonFrq" type="boolean" />
+	</createTable>
+</changeSet>
 </databaseChangeLog>
