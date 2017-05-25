@@ -24,4 +24,7 @@
 	<changeSet id="07" author="Surekha">
 		<modifyDataType tableName="AdtACCOUNTS" columnName="ACTYPE" newDataType="VARCHAR(15)"/>
 	</changeSet>
+	<changeSet id="08" author="Surekha">
+		<modifyDataType tableName="AdtRMTFINANCETYPES" columnName="PFTPAYACTYPE" newDataType="VARCHAR(15)"/>
+	</changeSet>
 </databaseChangeLog>

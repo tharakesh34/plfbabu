@@ -595,4 +595,8 @@ update SeqSecRights set SeqNo = (SeqNo+10+4) ;
 			baseTableName="vasstructure" baseColumnNames="ManufacturerID" referencedColumnNames="DealerID"
 			referencedTableName="amtvehicledealer" />
 	</changeSet>
+	<changeSet id="40" author="Surekha">
+		<modifyDataType tableName="RMTFINANCETYPES_Temp" columnName="PFTPAYACTYPE" newDataType="VARCHAR(15)"/>
+		<modifyDataType tableName="RMTFINANCETYPES" columnName="PFTPAYACTYPE" newDataType="VARCHAR(15)"/>
+	</changeSet>
 </databaseChangeLog>
