@@ -487,8 +487,9 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 	/**
 	 * When user clicks on button "productType" button
 	 * @param event
+	 * @throws InterruptedException 
 	 */
-	public void onFulfill$productType(Event event) {
+	public void onFulfill$productType(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 
 		this.productType.setConstraint("");
@@ -500,7 +501,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			this.productType.setDescription("");
 			showProductTypeRow("");
 		} else {
-			
+
 			if(dataObject instanceof FinanceWorkFlow){
 				FinanceWorkFlow details = (FinanceWorkFlow) dataObject;
 				/* Set FinanceWorkFloe object */
@@ -511,12 +512,18 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 				VASConfiguration details = (VASConfiguration) dataObject;
 				this.productType.setValue(details.getProductCode());
 				this.productType.setDescription(details.getProductDesc());
-		}
+			}
 		}
 		if (StringUtils.trimToNull(this.productType.getValue()) != null && !isFinanceProcess) {
 			//Fetching the vasConfiguration details
 			vasConfiguration = getVasConfigurationService().getApprovedVASConfigurationByCode(this.productType.getValue());
-			showProductTypeRow(vasConfiguration.getRecAgainst());
+			if(vasConfiguration == null){
+				this.productType.setValue("","");
+				this.productType.setObject(null);
+				MessageUtil.showErrorMessage(Labels.getLabel("label_SelectVASConfiguration_Product_NotExists"));
+			}else{
+				showProductTypeRow(vasConfiguration.getRecAgainst());
+			}
 		}
 
 		logger.debug("Leaving " + event.toString());
