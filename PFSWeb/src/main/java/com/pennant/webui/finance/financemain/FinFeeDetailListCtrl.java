@@ -15,7 +15,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  FinFeeDetailListCtrl.java                                                   * 	  
+ * FileName    		:  FinFeeDetailListCtrl.java                                            * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*

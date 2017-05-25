@@ -2041,4 +2041,23 @@ public class PennantAppUtil {
 		return accountEngineEventsList;
 	}
 	
+	public static List<AccountEngineEvent> fetchAccountingEvents() {
+		
+		List<AccountEngineEvent> accountEngineEventsList = new ArrayList<AccountEngineEvent>();
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+
+		JdbcSearchObject<AccountEngineEvent> searchObject = new JdbcSearchObject<AccountEngineEvent>(
+				AccountEngineEvent.class);
+
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+
+		searchObject.addFilters(filters);
+		searchObject.addTabelName("BMTAEevents");
+		searchObject.addSort("AEEventCode", false);
+		accountEngineEventsList = pagedListService.getBySearchObject(searchObject);
+		
+		return accountEngineEventsList;
+	}
+	
 }

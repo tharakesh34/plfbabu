@@ -426,7 +426,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		this.ruleEvent.setValueColumn("AEEventCode");
 		this.ruleEvent.setDescColumn("AEEventCodeDesc");
 		this.ruleEvent.setValidateColumns(new String[] { "AEEventCode" });
-		this.ruleEvent.setList(PennantAppUtil.getOriginationAccountingEvents());
+		this.ruleEvent.setList(PennantAppUtil.fetchAccountingEvents());
 		this.ruleEvent.getTextbox().setDisabled(true);
 
 		String module = this.rule.getRuleModule();
