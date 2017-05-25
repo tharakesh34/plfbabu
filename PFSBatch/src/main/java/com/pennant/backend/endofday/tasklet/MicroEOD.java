@@ -57,8 +57,10 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.EodService;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
@@ -81,7 +83,7 @@ public class MicroEOD implements Tasklet {
 		int threadId = (int) context.getStepContext().getStepExecutionContext().get(EodConstants.THREAD);
 		logger.info("process Statred by the Thread : " + threadId + " with date " + valueDate.toString());
 
-		int chunkSize = 10;
+		int chunkSize = SysParamUtil.getValueAsInt(SMTParameterConstants.EOD_CHUNK_SIZE);
 
 		while (true) {
 			int countForProcess = customerQueuingDAO.startEODForCID(valueDate, chunkSize, threadId);

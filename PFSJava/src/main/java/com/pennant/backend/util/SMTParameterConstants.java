@@ -34,7 +34,6 @@
 
 package com.pennant.backend.util;
 
-
 /**
  * This stores all constants required for running the application
  */
@@ -42,9 +41,10 @@ public class SMTParameterConstants {
 	private SMTParameterConstants() {
 		super();
 	}
-	
-	public static final String SUSP_CHECK_REQ						= "SUSP_CHECK_REQ";
-	public static final String EOD_THREAD_COUNT						= "EOD_THREAD_COUNT";
-	public static final String IGNORING_BUCKET						= "IGNORING_BUCKET";
+
+	public static final String	SUSP_CHECK_REQ		= "SUSP_CHECK_REQ";
+	public static final String	EOD_THREAD_COUNT	= "EOD_THREAD_COUNT";
+	public static final String	IGNORING_BUCKET		= "IGNORING_BUCKET";
+	public static final String	EOD_CHUNK_SIZE		= "EOD_CHUNK_SIZE";
 
 }
