@@ -46,8 +46,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -69,9 +67,7 @@ public class MicroEOD implements Tasklet {
 
 	private Logger						logger	= Logger.getLogger(MicroEOD.class);
 	private EodService					eodService;
-	private DataSource					dataSource;
 	private CustomerQueuingDAO			customerQueuingDAO;
-
 	private PlatformTransactionManager	transactionManager;
 
 	public MicroEOD() {
@@ -85,7 +81,7 @@ public class MicroEOD implements Tasklet {
 		int threadId = (int) context.getStepContext().getStepExecutionContext().get(EodConstants.THREAD);
 		logger.info("process Statred by the Thread : " + threadId + " with date " + valueDate.toString());
 
-		int chunkSize = 100;
+		int chunkSize = 10;
 
 		while (true) {
 			int countForProcess = customerQueuingDAO.startEODForCID(valueDate, chunkSize, threadId);
@@ -105,11 +101,6 @@ public class MicroEOD implements Tasklet {
 
 	public void processCustChunks(int threadId, Date valueDate) {
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-		txDef.setReadOnly(true);
-		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRED);
-		TransactionStatus txStatus = null;
-
 		List<CustEODEvent> custEODEvents = new ArrayList<CustEODEvent>(1);
 		List<Customer> customers = customerQueuingDAO.getCustForProcess(threadId);
 
@@ -128,6 +119,11 @@ public class MicroEOD implements Tasklet {
 				custEODEvent.setEodSuccess(false);
 			}
 		}
+		
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+		txDef.setReadOnly(true);
+		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRED);
+		TransactionStatus txStatus = null;
 
 		//BEGIN TRANSACTION
 		txStatus = transactionManager.getTransaction(txDef);
@@ -190,10 +186,6 @@ public class MicroEOD implements Tasklet {
 
 	public void setEodService(EodService eodService) {
 		this.eodService = eodService;
-	}
-
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
 	}
 
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
