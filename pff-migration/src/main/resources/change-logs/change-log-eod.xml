@@ -417,5 +417,12 @@ update Postings set PostCategory=0 where PostCategory is null;
 	</addColumn>
 </changeSet>
 
+<changeSet id="49" author="satish">
+<sql>
+INSERT INTO SMTparameters (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, WORKFLOWID) VALUES ('EOD_CHUNK_SIZE', 'Eod Chunk Size', 'int', '1', '5', '3', '0', 'Eod Chunk Size', '1', '1000', CURRENT_TIMESTAMP, 'Approved', '0');
+</sql>
+</changeSet>
+
+
 
 </databaseChangeLog>
