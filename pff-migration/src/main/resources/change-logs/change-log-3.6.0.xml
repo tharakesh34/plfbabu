@@ -323,6 +323,10 @@ WHERE     (NOT EXISTS
 
 		</createView>
 </changeSet>		
-	
+<changeSet id="21" author="pruthvi">
+<createIndex indexName="idx_BankBranches_IFSC" tableName="BankBranches">
+			<column name="IFSC" type="varchar(20)" />
+		</createIndex>
+		</changeSet>	
 	
 </databaseChangeLog>
