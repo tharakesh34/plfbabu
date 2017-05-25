@@ -116,9 +116,15 @@ public class LimitServiceController {
 			if (headerDetail != null && headerDetail.getCustomerLimitDetailsList() != null) {
 				for (LimitDetails detail : headerDetail.getCustomerLimitDetailsList()) {
 					long limitStructureId = detail.getLimitStructureDetailsID();
-					detail.setReservedexposure(detail.getReservedexposure());
-					detail.setActualexposure(detail.getActualexposure());
-					detail.setActualLimit(detail.getActualLimit());
+					detail.setLimitReservedexposure(PennantApplicationUtil.formateAmount(detail.getReservedexposure(),
+							CurrencyUtil.getFormat(headerDetail.getLimitCcy())));
+					detail.setLimitActualexposure(PennantApplicationUtil.formateAmount(detail.getActualexposure(),
+							CurrencyUtil.getFormat(headerDetail.getLimitCcy())));
+					detail.setReservedLimit(PennantApplicationUtil.formateAmount(detail.getReservedLimit(),
+							CurrencyUtil.getFormat(headerDetail.getLimitCcy())));
+					detail.setActualLimit(PennantApplicationUtil.formateAmount(
+							detail.getLimitSanctioned().subtract(detail.getUtilisedLimit()),
+							CurrencyUtil.getFormat(headerDetail.getLimitCcy())));
 					LimitStructureDetail limitStrucDetail = limitStructureDetailDAO.getLimitStructureDetail(
 							limitStructureId, "_AView");
 					detail.setLimitStructureDetails(limitStrucDetail);

@@ -67,7 +67,7 @@ import com.pennant.backend.util.WorkFlowUtil;
  *
  */
 @XmlType(propOrder = { "detailId","limitStructureDetailsID", "limitStructureDetails", "expiryDate", "limitCheck",
-		"limitChkMethod", "limitSanctioned", "reservedLimit", "actualexposure", "reservedexposure", "actualLimit" })
+		"limitChkMethod", "limitSanctioned", "reservedLimit", "limitActualexposure", "limitReservedexposure", "actualLimit" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class LimitDetails implements java.io.Serializable, Entity {
 
@@ -86,16 +86,14 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	@XmlElement
 	private BigDecimal limitSanctioned = BigDecimal.ZERO;
 	
-	@XmlElement
 	private BigDecimal actualexposure = BigDecimal.ZERO;
-	
+
 	@XmlElement
 	private BigDecimal reservedLimit = BigDecimal.ZERO;
 	
 	@XmlElement(name="availableLimit")
 	private BigDecimal actualLimit = BigDecimal.ZERO;
 	
-	@XmlElement
 	private BigDecimal reservedexposure = BigDecimal.ZERO;
 	
 	private BigDecimal utilisedLimit = BigDecimal.ZERO;
@@ -176,6 +174,12 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	private String userAction = "Save";
 	@XmlTransient
 	private long workflowId = 0;
+	
+	//API Purpose
+	@XmlElement(name = "actualexposure")
+	private BigDecimal limitActualexposure = BigDecimal.ZERO;
+	@XmlElement(name = "reservedexposure")
+	private BigDecimal limitReservedexposure = BigDecimal.ZERO;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -224,6 +228,8 @@ public class LimitDetails implements java.io.Serializable, Entity {
 		excludeFields.add("referenceCode");
 		excludeFields.add("referenceNumber");
 		excludeFields.add("limitStructureDetails");
+		excludeFields.add("limitActualexposure");
+		excludeFields.add("limitReservedexposure");
 
 		return excludeFields;
 	}
@@ -730,4 +736,19 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	public void setItemPriority(int itemPriority) {
 		this.itemPriority = itemPriority;
 	}
+	public BigDecimal getLimitActualexposure() {
+		return limitActualexposure;
+	}
+
+	public void setLimitActualexposure(BigDecimal limitActualexposure) {
+		this.limitActualexposure = limitActualexposure;
+	}
+	public BigDecimal getLimitReservedexposure() {
+		return limitReservedexposure;
+	}
+
+	public void setLimitReservedexposure(BigDecimal limitReservedexposure) {
+		this.limitReservedexposure = limitReservedexposure;
+	}
+
 }
