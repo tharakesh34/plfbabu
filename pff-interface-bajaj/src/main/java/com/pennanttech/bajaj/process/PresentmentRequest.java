@@ -56,7 +56,7 @@ public class PresentmentRequest extends DatabaseDataEngine {
 						processedCount++;
 						try {
 							map = mapData(rs);
-							insertData(map, "PDC_CONSL_EMI_DTL_TEMP", destinationJdbcTemplate);
+							save(map, "PDC_CONSL_EMI_DTL_TEMP", destinationJdbcTemplate);
 							successCount++;
 						} catch (Exception e) {
 							logger.error("Exception :", e);

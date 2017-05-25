@@ -66,10 +66,10 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 						ctrlMap = mapCtrlMapData(rs, batchId);
 						loanMap = mapLoanMapData(rs, batchId);
 
-						insertData(custMap, "DEDUP_EOD_CUST_DEMO_DTL", destinationJdbcTemplate);
-						insertData(adrrMap, "DEDUP_EOD_CUST_ADDR_DTL", destinationJdbcTemplate);
-						insertData(ctrlMap, "PUSH_PULL_CONTROL_T", destinationJdbcTemplate);
-						insertData(loanMap, "DEDUP_EOD_CUST_LOAN_DTL", destinationJdbcTemplate);
+						save(custMap, "DEDUP_EOD_CUST_DEMO_DTL", destinationJdbcTemplate);
+						save(adrrMap, "DEDUP_EOD_CUST_ADDR_DTL", destinationJdbcTemplate);
+						save(ctrlMap, "PUSH_PULL_CONTROL_T", destinationJdbcTemplate);
+						save(loanMap, "DEDUP_EOD_CUST_LOAN_DTL", destinationJdbcTemplate);
 
 						successCount++;
 						transManager.commit(txnStatus);

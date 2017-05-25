@@ -35,17 +35,16 @@ public class DataExtract implements Tasklet {
 		try {
 			// ALMRequestService
 			try {
-				logger.debug("ALMRequestService started...");
-				Date alFromDate = DateUtil.getMonthStart(DateUtil.addMonths(DateUtil.getSysDate(), -1));
-				Date alToDate = DateUtil.getMonthEnd(DateUtil.addMonths(DateUtil.getSysDate(), -1));
-				this.almRequestService.sendReqest(new Long(1000), alFromDate, alToDate);
+				logger.debug("ALM Request Service started...");
+				this.almRequestService.sendReqest(new Long(1000));
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
 
 			// ControlDumpRequestService
 			try {
-				logger.debug("ControlDumpRequestService started...");
+				//FIXME from date and to date
+				logger.debug("Control Dump Request Service started...");
 				this.controlDumpRequestService.sendReqest(new Long(1000));
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
@@ -53,7 +52,7 @@ public class DataExtract implements Tasklet {
 
 			// PosidexRequestService
 			try {
-				logger.debug("PosidexRequestService started...");
+				logger.debug("Posidex Request Service started...");
 				Date poFromDate = DateUtil.getMonthStart(DateUtil.addMonths(DateUtil.getSysDate(), -1));
 				Date toDate = DateUtil.getMonthEnd(DateUtil.addMonths(DateUtil.getSysDate(), -1));
 				this.posidexRequestService.sendReqest(new Long(1000), poFromDate, toDate);
@@ -63,7 +62,7 @@ public class DataExtract implements Tasklet {
 
 			// PosidexResponceService
 			try {
-				logger.debug("PosidexResponceService started...");
+				logger.debug("Posidex Responce Service started...");
 				this.posidexResponceService.sendReqest(new Long(1000));
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);

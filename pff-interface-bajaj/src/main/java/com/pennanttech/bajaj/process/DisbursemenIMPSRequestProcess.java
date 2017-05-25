@@ -57,7 +57,7 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 
 						updateDisbursementRequest(rs.getLong("ID"), batchId);
 
-						insertData(map, "INT_DSBIMPS_REQUEST", destinationJdbcTemplate);
+						save(map, "INT_DSBIMPS_REQUEST", destinationJdbcTemplate);
 
 						successCount++;
 

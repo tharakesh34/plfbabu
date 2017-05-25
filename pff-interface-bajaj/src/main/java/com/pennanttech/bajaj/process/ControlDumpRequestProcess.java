@@ -11,18 +11,25 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.transaction.TransactionStatus;
 
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
+import com.pennanttech.pff.core.util.DateUtil;
 
 public class ControlDumpRequestProcess extends DatabaseDataEngine {
 
 	private static final Logger logger = Logger.getLogger(ControlDumpRequestProcess.class);
 
-	public ControlDumpRequestProcess(DataSource dataSource, long userId, Date valueDate) {
+	Date currentDate = null;
+	Date fromDate = null;
+	Date toDate = null;
+
+	public ControlDumpRequestProcess(DataSource dataSource, long userId, Date fromDate, Date toDate, Date valueDate) {
 		super(dataSource, App.DATABASE.name(), userId, valueDate);
+		currentDate = DateUtil.getSysDate();
+		this.fromDate = fromDate;
+		this.toDate = toDate;
 	}
 
 	@Override
@@ -30,53 +37,63 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		logger.debug(Literal.ENTERING);
 
 		executionStatus.setRemarks("Loading data..");
+
+		// Delete data from log table if already current date data logged.
+		final String[] filterFields = deleteLogData();
+
+		// Copy the data from main table to log table.
+		copyDataFromMainToLogTable(currentDate);
+
+		// Saving the data into main table.
 		MapSqlParameterSource parmMap;
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT * from INT_CF_CONTROL_VIEW WHERE FinIsActive = :FinIsActive");
-	
+		sql.append(" SELECT * from INT_CF_CONTROL_VIEW WHERE FinIsActive = :FinIsActive AND MATURITY_DATE >= :FromDate AND MATURITY_DATE <= :ToDate ");
+
 		parmMap = new MapSqlParameterSource();
 		parmMap.addValue("FinIsActive", 1);
+		parmMap.addValue("FromDate", fromDate);
+		parmMap.addValue("ToDate", toDate);
 
 		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
 			MapSqlParameterSource map = null;
-			TransactionStatus txnStatus = null;
 
 			@Override
 			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
-				while (rs.next()) {
+				boolean isError = false;
 
+				while (rs.next()) {
 					executionStatus.setRemarks("processing the record " + ++totalRecords);
 					processedCount++;
-					txnStatus = transManager.getTransaction(transDef);
 					try {
+						if (isError) {
+							break;
+						}
 						map = mapData(rs);
-
-						insertData(map, "CF_CONTROL_DUMP", destinationJdbcTemplate);
-
+						save(map, "CF_CONTROL_DUMP", destinationJdbcTemplate);
 						successCount++;
-
-						transManager.commit(txnStatus);
-
 					} catch (Exception e) {
 						logger.error(Literal.ENTERING);
-						transManager.rollback(txnStatus);
 						failedCount++;
-						
+
 						String keyId = rs.getString("AGREEMENTID");
 						if (StringUtils.trimToNull(keyId) == null) {
 							keyId = String.valueOf(processedCount);
 						}
 						saveBatchLog(keyId, "F", e.getMessage());
+						isError = true;
 					} finally {
 						map = null;
-						txnStatus.flush();
-						txnStatus = null;
 					}
+				}
+				if (isError) {
+					//Deleting the data from CF_CONTROL_DUMP table when error occured...
+					map = new MapSqlParameterSource();
+					map.addValue("CREATED_ON", currentDate);
+					delete(map, "CF_CONTROL_DUMP", destinationJdbcTemplate, filterFields);
 				}
 				return totalRecords;
 			}
 		});
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -207,8 +224,59 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		map.addValue("REPO_DATE", rs.getObject("REPO_DATE"));
 		map.addValue("LOCAL_OUTSTATION_FLAG", rs.getObject("LOCAL_OUTSTATION_FLAG"));
 		map.addValue("FIRST_REPAYDUE_DATE", rs.getObject("FIRST_REPAYDUE_DATE"));
+		map.addValue("CREATED_ON", currentDate);
 
 		return map;
 	}
 
+	private void copyDataFromMainToLogTable(final Date currentDate) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT * from CF_CONTROL_DUMP");
+
+		jdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), new ResultSetExtractor<Boolean>() {
+			MapSqlParameterSource map = null;
+
+			@Override
+			public Boolean extractData(ResultSet rs) throws SQLException, DataAccessException {
+				boolean isError = false;
+
+				while (rs.next()) {
+					try {
+						if (isError) {
+							break;
+						}
+						map = mapData(rs);
+						map.addValue("CREATED_ON", rs.getObject("CREATED_ON"));
+						map.addValue("LOGGED_ON", currentDate);
+
+						save(map, "CF_CONTROL_DUMP_LOG", destinationJdbcTemplate);
+					} catch (Exception e) {
+						logger.error(Literal.ENTERING);
+						isError = true;
+					} finally {
+						map = null;
+					}
+				}
+				return isError;
+			}
+		});
+		logger.debug(Literal.LEAVING);
+	}
+
+	private String[] deleteLogData() {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource logMap = new MapSqlParameterSource();
+		logMap.addValue("LOGGED_ON", currentDate);
+
+		final String[] filterFields = new String[1];
+		filterFields[0] = "LOGGED_ON";
+		delete(logMap, "CF_CONTROL_DUMP_LOG", destinationJdbcTemplate, filterFields);
+
+		logger.debug(Literal.LEAVING);
+
+		return filterFields;
+	}
 }

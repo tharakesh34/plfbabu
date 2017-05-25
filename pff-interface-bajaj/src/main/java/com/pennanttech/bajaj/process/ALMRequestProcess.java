@@ -20,41 +20,36 @@ import com.pennanttech.pff.core.Literal;
 public class ALMRequestProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(ALMRequestProcess.class);
 
-	private Date dueDateFrom;
-	private Date dueDateTo;
-
-	public ALMRequestProcess(DataSource dataSource, Date dueDateFrom, Date dueDateTo, long userId, Date valueDate) {
+	public ALMRequestProcess(DataSource dataSource, long userId, Date valueDate) {
 		super(dataSource, App.DATABASE.name(), userId, valueDate);
-		this.dueDateFrom = dueDateFrom;
-		this.dueDateTo = dueDateTo;
 	}
 
 	@Override
 	protected void processData() {
 		logger.debug(Literal.ENTERING);
-		
+
 		executionStatus.setRemarks("Loading data..");
 		MapSqlParameterSource parmMap;
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT * from INT_ALM_VIEW  Where DUEDATE >= :DueDateFrom AND DUEDATE <= :DueDateTo ");
-		
+		sql.append(" SELECT * from INT_ALM_VIEW ");
+
 		parmMap = new MapSqlParameterSource();
-		parmMap.addValue("DueDateFrom", dueDateFrom);
-		parmMap.addValue("DueDateTo", dueDateTo);
 
 		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
 			MapSqlParameterSource map = null;
 			TransactionStatus txnStatus = null;
+
 			@Override
 			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
-				
+				String[] filterFields = new String[1];
+				filterFields[0] = "AGREEMENTID";
 				while (rs.next()) {
 					executionStatus.setRemarks("processing the record " + ++totalRecords);
 					processedCount++;
 					txnStatus = transManager.getTransaction(transDef);
 					try {
 						map = mapData(rs);
-						insertData(map, "ALM", destinationJdbcTemplate);
+						saveOrUpdate(map, "ALM", destinationJdbcTemplate, filterFields);
 						successCount++;
 						transManager.commit(txnStatus);
 					} catch (Exception e) {
@@ -80,7 +75,7 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 
 	@Override
 	protected MapSqlParameterSource mapData(ResultSet rs) throws Exception {
-		
+
 		MapSqlParameterSource map = new MapSqlParameterSource();
 		map.addValue("AGREEMENTID", rs.getObject("AGREEMENTID"));
 		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
