@@ -410,6 +410,49 @@ WHERE     (NOT EXISTS
 		<column name="PayInterestonFrq" type="boolean" />
 	</createTable>
 </changeSet>
+<changeSet id="24" author="Madhubabu">
+		<createView viewName="FeePostings_View" replaceIfExists="true">
+   SELECT     T1.PostId,T1.PostAgainst, T1.Reference, T1.FeeTyeCode,T1.PostingAmount,T1.PostDate, T1.ValueDate,T1.PartnerBankId ,T2.partnerBankName,T2.Accountno partnerBankAc,
+             T3.AccountSetId,T1.Remarks, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    FeePostings_Temp T1 INNER JOIN
+					PartnerBanks T2 ON T1.PartnerBankId = T2.PartnerBankId Left outer  Join
+					Feetypes T3 ON T3.FeeTypeCode=T1.FeeTyeCode
+					
+  UNION ALL	
+
+SELECT     T1.PostId,T1.PostAgainst, T1.Reference, T1.FeeTyeCode,T1.PostingAmount,T1.PostDate, T1.ValueDate,T1.PartnerBankId ,T2.partnerBankName,T2.Accountno partnerBankAc,
+             T3.AccountSetId,T1.Remarks, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    FeePostings T1 INNER JOIN
+					PartnerBanks T2 ON T1.PartnerBankId = T2.PartnerBankId Left outer  Join
+					Feetypes T3 ON T3.FeeTypeCode=T1.FeeTyeCode
+
+WHERE     (NOT EXISTS
+                          (SELECT     1 Expr1
+                            FROM           FeePostings_Temp
+                            WHERE      (PostId = T1.PostId)))
+	  
+</createView>
+</changeSet>
+<changeSet id="25" author="Madhubabu">
+		<createView viewName="FeePostings_AView" replaceIfExists="true">
+ SELECT     T1.PostId,T1.PostAgainst, T1.Reference, T1.FeeTyeCode,T1.PostingAmount,T1.PostDate, T1.ValueDate,T1.PartnerBankId ,T2.partnerBankName,T2.Accountno partnerBankAc,
+             T3.AccountSetId,T1.Remarks, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    FeePostings T1 INNER JOIN
+					PartnerBanks T2 ON T1.PartnerBankId = T2.PartnerBankId Left outer  Join
+					Feetypes T3 ON T3.FeeTypeCode=T1.FeeTyeCode
+
+
+		</createView>
+</changeSet>		
+<changeSet id="26" author="Madhubabu">
+		<createView viewName="FeePostings_TView" replaceIfExists="true">
+  SELECT     T1.PostId,T1.PostAgainst, T1.Reference, T1.FeeTyeCode,T1.PostingAmount,T1.PostDate, T1.ValueDate,T1.PartnerBankId ,T2.partnerBankName,T2.Accountno partnerBankAc,
+             T3.AccountSetId,T1.Remarks, T1.Version, T1.LastMntBy, T1.LastMntOn,T1.RecordStatus,T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    FeePostings_Temp T1 INNER JOIN
+					PartnerBanks T2 ON T1.PartnerBankId = T2.PartnerBankId Left outer  Join
+					Feetypes T3 ON T3.FeeTypeCode=T1.FeeTyeCode
+		</createView>
+	</changeSet>
 <changeSet id="27" author="Amit">
 		<createView viewName="EodConfig_AView" replaceIfExists="true">
 SELECT		T1.EodConfigId, T1.ExtMnthRequired, T1.MnthExtTo, T1.Active		
