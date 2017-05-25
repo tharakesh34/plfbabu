@@ -639,10 +639,10 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		this.empTelexNo.setMaxlength(8);
 		this.bankRefNo.setMaxlength(20);
 		this.empIndustry.setMandatoryStyle(true);
-		this.empIndustry.setModuleName("EmploymentType");
-		this.empIndustry.setValueColumn("EmpType");
-		this.empIndustry.setDescColumn("EmpTypeDesc");
-		this.empIndustry.setValidateColumns(new String[]{"EmpType"});
+		this.empIndustry.setModuleName("Industry");
+		this.empIndustry.setValueColumn("IndustryCode");
+		this.empIndustry.setDescColumn("IndustryDesc");
+		this.empIndustry.setValidateColumns(new String[]{"IndustryCode"});
 		
 		this.empCountry.setMandatoryStyle(true);
 		this.empCountry.setModuleName("Country");
