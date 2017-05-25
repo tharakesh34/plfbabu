@@ -63,7 +63,8 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  * Model class for the <b>Collateral table</b>.<br>
  *
  */
-@XmlType(propOrder = { "feeTypeCode", "actualAmount", "waivedAmount", "paidAmount", "feeScheduleMethod", "terms","remainingFee"})
+@XmlType(propOrder = { "feeCategory", "feeTypeCode", "actualAmount", "waivedAmount", "paidAmount", "feeScheduleMethod",
+		"terms", "remainingFee" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
@@ -86,6 +87,8 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	private int terms = 0;
 	@XmlElement(name= "feeBalance")
 	private BigDecimal remainingFee = BigDecimal.ZERO;
+	@XmlElement
+	private String feeCategory;
 	private String paymentRef;
 	
 	private int feeOrder;
@@ -141,6 +144,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("dataModified");
 		excludeFields.add("rcdVisible");
 		excludeFields.add("validateFinFeeDetail");
+		excludeFields.add("feeCategory");
 		return excludeFields;
 	}
 	
@@ -405,6 +409,14 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setVasReference(String vasReference) {
 		this.vasReference = vasReference;
+	}
+	
+	public String getFeeCategory() {
+		return feeCategory;
+	}
+
+	public void setFeeCategory(String feeCategory) {
+		this.feeCategory = feeCategory;
 	}
 
 }

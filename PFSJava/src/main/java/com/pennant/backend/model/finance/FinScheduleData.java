@@ -77,8 +77,9 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 
 @XmlType(propOrder = { "finReference", "financeMain", "repayInstructions", "rateInstruction", "finFeeDetailList",
-		"insuranceList", "stepPolicyDetails", "financeScheduleDetails", "finODPenaltyRate", "apiPlanEMIHmonths",
-		"apiPlanEMIHDates","finODDetails","financeSummary","vasRecordingList","returnStatus" })
+		"feeDues", "foreClosureFees", "insuranceList", "stepPolicyDetails", "financeScheduleDetails",
+		"finODPenaltyRate", "apiPlanEMIHmonths", "apiPlanEMIHDates", "finODDetails", "financeSummary",
+		"vasRecordingList", "returnStatus" })
 @XmlRootElement(name = "financeSchedule")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinScheduleData {
@@ -134,9 +135,6 @@ public class FinScheduleData {
 	
 	private List<Date> planEMIHDates = new ArrayList<Date>(); 
 	
-	//TODO: To be removed(DDP)
-	@XmlElement(name="overdueCharges")
-	private List<FinODDetails> finODDetails = new ArrayList<FinODDetails>(); 
 	private List<BaseRate> baseRates = new ArrayList<BaseRate>();
 	private List<SplRate> splRates = new ArrayList<SplRate>();
 	@XmlElement(name="planEMIHDates")
@@ -147,7 +145,17 @@ public class FinScheduleData {
 	@XmlElementWrapper(name="vas")
 	@XmlElement(name="vasRecording")
 	private List<VASRecording> vasRecordingList = new ArrayList<VASRecording>(1);
-
+	
+	// API specific fields
+	@XmlElement(name="overdueCharges")
+	private List<FinODDetails> finODDetails = new ArrayList<FinODDetails>(); 
+	@XmlElementWrapper(name="foreClosureFees")
+	@XmlElement(name="foreClosureFee")
+	List<FinFeeDetail> foreClosureFees;
+	
+	@XmlElementWrapper(name="feeDues")
+	@XmlElement(name="feeDue")
+	List<FinFeeDetail> feeDues;
 	@XmlElement
 	private WSReturnStatus returnStatus;
 
@@ -665,6 +673,20 @@ public class FinScheduleData {
 	public void setVasRecordingList(List<VASRecording> vasRecordingList) {
 		this.vasRecordingList = vasRecordingList;
 	}
+	
+	public List<FinFeeDetail> getForeClosureFees() {
+		return foreClosureFees;
+	}
 
+	public void setForeClosureFees(List<FinFeeDetail> foreClosureFees) {
+		this.foreClosureFees = foreClosureFees;
+	}
+	
+	public List<FinFeeDetail> getFeeDues() {
+		return feeDues;
+	}
 
+	public void setFeeDues(List<FinFeeDetail> feeDues) {
+		this.feeDues = feeDues;
+	}
 }

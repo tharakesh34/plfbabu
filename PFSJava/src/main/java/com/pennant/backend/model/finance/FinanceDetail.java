@@ -80,10 +80,10 @@ import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 
-@XmlType(propOrder = { "finReference", "stp", "processStage", "finScheduleData","foreClosureDetails", "customerDetails",
-		"advancePaymentsList", "mandate", "jountAccountDetailList", "gurantorsDetailList", "documentDetailsList",
-		"covenantTypeList", "collateralAssignmentList", "finFlagsDetails", "finFeeDetails", "returnDataSetList",
-		"collateralSetup",  "returnStatus" })
+@XmlType(propOrder = { "finReference", "stp", "processStage", "finScheduleData", "foreClosureDetails",
+		"customerDetails", "advancePaymentsList", "mandate", "jountAccountDetailList", "gurantorsDetailList",
+		"documentDetailsList", "covenantTypeList", "collateralAssignmentList", "finFlagsDetails", "finFeeDetails",
+		"returnDataSetList", "collateralSetup", "returnStatus" })
 @XmlRootElement(name = "finance")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceDetail implements java.io.Serializable {

@@ -259,7 +259,8 @@ public class FinanceDataDefaulting {
 			}
 
 			//Grace Rate Type/Rate Basis
-			if (StringUtils.isNotBlank(finMain.getGrcRateBasis())) {
+			if (StringUtils.isNotBlank(finMain.getGrcRateBasis()) && 
+					!StringUtils.equals(finMain.getGrcRateBasis(), PennantConstants.List_Select)) {
 				if (!StringUtils.equals(finMain.getGrcRateBasis(), CalculationConstants.RATE_BASIS_F)
 						&& !StringUtils.equals(finMain.getGrcRateBasis(), CalculationConstants.RATE_BASIS_R)) {
 					String[] valueParm = new String[1];

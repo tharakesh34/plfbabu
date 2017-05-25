@@ -25,6 +25,7 @@ import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
 import com.pennant.backend.financeservice.AddRepaymentService;
 import com.pennant.backend.financeservice.ChangeFrequencyService;
@@ -68,6 +69,7 @@ import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
@@ -110,7 +112,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	private ReceiptService				receiptService;
 	private FinTypePartnerBankService 	finTypePartnerBankService;
 	private ReceiptCalculator			receiptCalculator;
-
+	private PartnerBankDAO				partnerBankDAO;
 
 	/**
 	 * Method for process AddRateChange request and re-calculate schedule details
@@ -1050,7 +1052,7 @@ public class FinServiceInstController extends SummaryDetailService {
 					return response;
 				}
 			}
-			response = doProcessReceipt(financeDetail, finServiceInst, FinanceConstants.FINSER_EVENT_EARLYSETTLE);
+			response = doProcessReceipt(financeDetail, finServiceInst, finServiceInst.getModuleDefiner());
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			response = new FinanceDetail();
@@ -1239,6 +1241,12 @@ public class FinServiceInstController extends SummaryDetailService {
 				return response;
 			}
 
+			// fetch partner bank details
+			PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(finReceiptDetail.getFundingAc(), "");
+			if(partnerBank != null) {
+				finReceiptDetail.setPartnerBankAc(partnerBank.getAccountNo());
+				finReceiptDetail.setPartnerBankAcType(partnerBank.getAcType());
+			}
 			Date finStartDate = DateUtility.getDBDate(DateUtility.formatDate(financeMain.getFinStartDate(),
 					PennantConstants.DBDateFormat));
 			Date appDate = DateUtility.getDBDate(DateUtility.formatDate(DateUtility.getAppDate(),
@@ -1254,6 +1262,13 @@ public class FinServiceInstController extends SummaryDetailService {
 				return response;
 			}
 
+			if(finScheduleData.getFinFeeDetailList() != null) {
+				for(FinFeeDetail finFeeDetail:finScheduleData.getFinFeeDetailList()) {
+					if(StringUtils.equals(finFeeDetail.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
+						finFeeDetail.setRecordType("");
+					}
+				}
+			}
 			// Set Version value
 			int version = finReceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getVersion();
 			finReceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().setVersion(version + 1);
@@ -1653,5 +1668,9 @@ public class FinServiceInstController extends SummaryDetailService {
 
 	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
 		this.receiptCalculator = receiptCalculator;
+	}
+	
+	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
+		this.partnerBankDAO = partnerBankDAO;
 	}
 }
