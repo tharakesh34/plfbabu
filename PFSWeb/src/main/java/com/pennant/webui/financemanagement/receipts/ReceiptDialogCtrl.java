@@ -4125,8 +4125,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getPrincipalSchdBal(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getProfitSchdPayNow(), finFormatter));
-				totalPft = totalPft.add(repaySchd.getProfitSchdPayNow());
+				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getProfitSchdPayNow().subtract(repaySchd.getTdsSchdPayNow()), finFormatter));
+				totalPft = totalPft.add(repaySchd.getProfitSchdPayNow().subtract(repaySchd.getTdsSchdPayNow()));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getTdsSchdPayNow(), finFormatter));
@@ -4191,7 +4191,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						.add(repaySchd.getSchdInsPayNow()).add(repaySchd.getSchdFeePayNow())
 						.add(repaySchd.getSchdSuplRentPayNow()).add(repaySchd.getSchdIncrCostPayNow())
 						.add(repaySchd.getPenaltyPayNow()).add(repaySchd.getLatePftSchdPayNow())
-						.subtract(refundPft);
+						.subtract(refundPft).subtract(repaySchd.getTdsSchdPayNow());
 				lc = new Listcell(PennantAppUtil.amountFormate(netPay, finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);

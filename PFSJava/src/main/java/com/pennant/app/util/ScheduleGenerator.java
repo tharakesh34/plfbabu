@@ -1142,7 +1142,7 @@ public class ScheduleGenerator {
 			if (financeMain.getNextRepayCpzDate().before(financeMain.getNextRepayPftDate())) {
 				errorParm2[0] = DateUtility.formatToShortDate(financeMain.getNextRepayCpzDate());
 				errorParm2[1] = DateUtility.formatToShortDate(financeMain.getNextRepayPftDate());
-				return getErrorDetail("Schedule", "30525", errorParm2, errorParm2);
+				return getErrorDetail("Schedule", "30528", errorParm2, errorParm2);
 			}
 
 		}
