@@ -562,6 +562,13 @@ update SeqSecRights set SeqNo = (SeqNo+10+4) ;
 	<changeSet id="32" author="Surekha">
 		<modifyDataType tableName="RMTTRANSACTIONENTRY_Temp" columnName="ACCOUNTTYPE" newDataType="VARCHAR(15)"/>
 	</changeSet>
+	<changeSet id="33" author="Madhubabu" dbms="oracle">	
+   		<sql splitStatements="false">
+     		 begin
+              execute immediate 'CREATE SEQUENCE SeqFeePostings START WITH 1 INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	 </sql>
+ 	</changeSet>
 	<changeSet id="34" author="Surekha">
 		<modifyDataType tableName="RMTFINANCETYPES" columnName="FINACTYPE" newDataType="VARCHAR(15)"/>
 		<modifyDataType tableName="RMTFINANCETYPES" columnName="FINCONTINGENTACTYPE" newDataType="VARCHAR(15)"/>
