@@ -383,4 +383,14 @@ WHERE     NOT EXISTS (SELECT 1 FROM BuilderProjcet_TEMP WHERE Id = T1.Id)
 		WHERE M.STATUS = 'NEW'
 	 </createView>
 	</changeSet>
+	
+	<changeSet id="17" author="Irfan">
+	<sql>
+		update manualadvise set reservedAmt=0 where reservedAmt is null and advisetype=2;
+		update manualadvise_temp set reservedAmt=0 where reservedAmt is null and advisetype=2;
+		update manualadvise set balanceAmt=(adviseamount-paidamount-waivedamount-reservedAmt) where balanceAmt is null and advisetype=2;
+		update manualadvise_temp set balanceAmt=(adviseamount-paidamount-waivedamount-reservedAmt) where balanceAmt is null and advisetype=2;
+	
+	</sql>
+	</changeSet>
 </databaseChangeLog>
