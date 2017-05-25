@@ -631,4 +631,8 @@ update SeqSecRights set SeqNo = (SeqNo+10+4) ;
 			baseTableName="vasRecording" baseColumnNames="ProductCode" referencedColumnNames="ProductCode"
 			referencedTableName="vasstructure" />
 	</changeSet>
+		<changeSet id="46" author="Surekha">
+		 <dropNotNullConstraint columnDataType="VARCHAR2(8)" columnName="FINTYPE" tableName="ACCOUNTMAPPING"/>
+		 <dropNotNullConstraint columnDataType="VARCHAR2(8)" columnName="FINTYPE" tableName="ACCOUNTMAPPING_Temp"/>
+	</changeSet>
 </databaseChangeLog>
