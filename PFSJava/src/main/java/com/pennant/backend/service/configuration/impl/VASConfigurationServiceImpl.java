@@ -53,6 +53,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.configuration.VASConfigurationDAO;
+import com.pennant.backend.dao.lmtmasters.FinanceWorkFlowDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -80,6 +81,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	private VASConfigurationDAO			vASConfigurationDAO;
 	private ExtendedFieldDetailDAO		extendedFieldDetailDAO;
 	private ExtendedFieldHeaderDAO		extendedFieldHeaderDAO;
+	private FinanceWorkFlowDAO          financeWorkFlowDAO;
 
 	/**
 	 * @return the auditHeaderDAO
@@ -509,7 +511,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 			
 			List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method,onlineRequest);
-			
+			auditDetails.add(auditDetail);
 			VASConfiguration  vasConfiguration = (VASConfiguration) auditDetail.getModelData();
 			String usrLanguage =  vasConfiguration.getUserDetails().getUsrLanguage();
 			
@@ -612,6 +614,14 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 					}
 				}
 			}
+			
+			// If VAS Structure Product Code is already utilized in Workflow 
+			if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, vASConfiguration.getRecordType())){
+				boolean workflowExists = getFinanceWorkFlowDAO().isWorkflowExists(vASConfiguration.getProductCode(), PennantConstants.WORFLOW_MODULE_VAS);
+				if(workflowExists){
+					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm));
+				}
+			}
 
 			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 			
@@ -694,6 +704,14 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	@Override
 	public boolean isVASTypeExists(String productType) {
 		return getVASConfigurationDAO().isVASTypeExists(productType);
+	}
+
+	public FinanceWorkFlowDAO getFinanceWorkFlowDAO() {
+		return financeWorkFlowDAO;
+	}
+
+	public void setFinanceWorkFlowDAO(FinanceWorkFlowDAO financeWorkFlowDAO) {
+		this.financeWorkFlowDAO = financeWorkFlowDAO;
 	}
 		
 }

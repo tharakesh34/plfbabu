@@ -8578,6 +8578,7 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="extendedFieldDetailDAO" ref="extendedFieldDetailDAO" />
 		<property name="extendedFieldHeaderDAO" ref="extendedFieldHeaderDAO" />
+		<property name="financeWorkFlowDAO" ref="financeWorkFlowDAO" />
 	</bean>
 
 	<!-- VASConfiguration -->
@@ -8611,6 +8612,7 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="extendedFieldDetailDAO" ref="extendedFieldDetailDAO" />
 		<property name="extendedFieldHeaderDAO" ref="extendedFieldHeaderDAO" />
+		<property name="financeWorkFlowDAO" ref="financeWorkFlowDAO" />
 	</bean>
 	<!-- VASRecording -->
 	<bean id="vASRecordingDAO"

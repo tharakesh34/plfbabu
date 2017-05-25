@@ -555,6 +555,12 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			if (this.adviseAmount.getActualValue() != null) {
 				aManualAdvise.setAdviseAmount(PennantApplicationUtil.unFormateAmount(this.adviseAmount.getActualValue(),
 						PennantConstants.defaultCCYDecPos));
+				
+				if (StringUtils.equals(this.adviseType.getSelectedItem().getValue().toString(),
+						String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE))) {
+					aManualAdvise.setBalanceAmt(PennantApplicationUtil.unFormateAmount(
+							this.adviseAmount.getActualValue(), PennantConstants.defaultCCYDecPos));
+				}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

@@ -56,5 +56,6 @@ public interface FinanceWorkFlowDAO {
 	void saveList(List<FinanceWorkFlow> financeWorkFlowList, String type);
 	String getFinanceWorkFlowType(String finType, String finEvent,	String moduleName, String type);
 	List<String> getFinanceWorkFlowRoles(String module,String finEvent);
+	boolean isWorkflowExists(String finType, String moduleName);
 	
 }

@@ -53,6 +53,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.CollateralStructureDAO;
+import com.pennant.backend.dao.lmtmasters.FinanceWorkFlowDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -79,6 +80,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 	private ExtendedFieldsValidation	extendedFieldsValidation;
 	private ExtendedFieldDetailDAO		extendedFieldDetailDAO;
 	private ExtendedFieldHeaderDAO		extendedFieldHeaderDAO;
+	private FinanceWorkFlowDAO          financeWorkFlowDAO;
 
 	public CollateralStructureServiceImpl() {
 		super();
@@ -483,7 +485,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
-
+		auditDetails.add(auditDetail);
 		CollateralStructure collateralStructure = (CollateralStructure) auditDetail.getModelData();
 		String usrLanguage = collateralStructure.getUserDetails().getUsrLanguage();
 
@@ -644,6 +646,14 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 			}
 		}
 
+		// If Collateral Structure Product Code is already utilized in Workflow 
+		if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, collateralStructure.getRecordType())){
+			boolean workflowExists = getFinanceWorkFlowDAO().isWorkflowExists(collateralStructure.getCollateralType(), PennantConstants.WORFLOW_MODULE_COLLATERAL);
+			if(workflowExists){
+				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", errParm, valueParm));
+			}
+		}
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if (StringUtils.trimToEmpty(method).equals("doApprove") || !collateralStructure.isWorkflow()) {
@@ -652,6 +662,14 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 
 		logger.debug("Leaving");
 		return auditDetail;
+	}
+
+	public FinanceWorkFlowDAO getFinanceWorkFlowDAO() {
+		return financeWorkFlowDAO;
+	}
+
+	public void setFinanceWorkFlowDAO(FinanceWorkFlowDAO financeWorkFlowDAO) {
+		this.financeWorkFlowDAO = financeWorkFlowDAO;
 	}
 
 }

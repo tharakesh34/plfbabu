@@ -66,8 +66,10 @@ import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceWorkFlowDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.VASConsatnts;
 
 /**
  * DAO methods implementation for the <b>FinanceWorkFlow model</b> class.<br>
@@ -374,6 +376,24 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		parms[1][0] = finType;
 		parms[0][0] = PennantJavaUtil.getLabel("label_FinType")+ ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
+	}
+
+	@Override
+	public boolean isWorkflowExists(String finType, String moduleName) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinType", finType);
+		source.addValue("ModuleName", moduleName);
+		
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(FinType)");
+		selectSql.append(" From LMTFinanceWorkFlowDef_View ");
+		selectSql.append(" Where FinType=:FinType AND ModuleName=:ModuleName");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		int rcdCount =  this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		
+		logger.debug("Leaving");
+		return rcdCount > 0 ? true : false;
 	}
 
 }
