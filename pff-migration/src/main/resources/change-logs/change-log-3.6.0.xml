@@ -767,4 +767,81 @@ FROM    	Locality  T1
         UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);  
     </sql>
 </changeSet>
+<changeSet id="57" author="Prasad">
+	<createView viewName="RPT_SOA_TXNDETAILS_VIEW" replaceIfExists="true">
+		  <![CDATA[Select T1.Finreference,Schdate,Particulars,Debit,Credit,ccyMinorccyunits,ccyEditField,
+		 (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') APP_DATE ,Ordby
+		 from ( 
+			Select T1.Finreference,Schdate, (case when T1.Disbonschdate=1 then 'Amount Financed - Payable ('||T1.Finreference||')' else 
+											  'Due for Installment '||T1.INSTNUMBER||' ('||T1.Finreference||')' end) Particulars,
+			 case when T1.Disbonschdate=1 then 0 else T1.Repayamount end Debit,
+			 case when T1.Disbonschdate=1 then T1.DisbAmount else 0 end Credit,1 Ordby
+	   from finscheduledetails T1
+	   where (BPIORHOLIDAY!='H' or BPIORHOLIDAY!='B' or BPIORHOLIDAY is null) and 
+			 schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  	
+  union
+  Select T1.Finreference,T2.FInApprovedDate,'Broken Period Interest Receivable- Due('||T1.Finreference||')' Particulars,
+			 Repayamount Debit, 0 Credit,2 Ordby
+	   from finscheduledetails T1
+          inner join Financemain T2 on T2.Finreference = T1.Finreference
+	   where BPIORHOLIDAY='B' and Repayamount!=0
+	union 	
+		SELECT FINREFERENCE,M.POSTDATE,(CASE WHEN F.FEETYPEID IS NOT NULL THEN FEETYPEDESC 
+		else 'Bounce' end) ||'- Due ('||Finreference||')' ,m.ADVISEAMOUNT Debit ,0 Credit ,3 Ordby
+		FROM MANUALADVISE M
+		LEFT JOIN FEETYPES F ON F.FEETYPEID = M.FEETYPEID 	
+		LEFT JOIN BOUNCEREASONS T3 ON M.BounceID = T3.BOUNCEID		
+	union	
+		Select REFERENCE,Receiveddate,(Case when PAYMENTTYPE NOT in ('EXCESS','CASH') then 'Payment Recieved vide '||PAYMENTTYPE ||' No.:'||CHEQUEACNO ||'('||REFERENCE||')'
+										 when PAYMENTTYPE in ('EXCESS') then 'Amount Adjusted ('||REFERENCE||')' 
+										 when PAYMENTTYPE in ('CASH') then 'Cash received Vide Receipt No.'||CHEQUEACNO ||'('||REFERENCE||')' end) Particulars,
+			    Case when PAYMENTTYPE NOT in ('EXCESS') then 0  when PAYMENTTYPE in ('EXCESS') then Amount end debit,Amount credit,4 Ordby
+		from FINRECEIPTHEADER T1 inner join 
+			 FINRECEIPTDETAIL T2 on T1.RECEIPTID =T2.RECEIPTID			 
+	union 	
+		Select finreference, FinODSchdDate, 'Penalty Due Created for Past due till date ' || to_char(FINODTILLDATE, 'dd/mm/yyyy') Particulars, 
+		TotPenaltyAmt Debit, 0 credit,5 Ordby
+		From FinODDetails where TOtPenaltyAmt > 0 
+  union
+    Select T1.Finreference,FInApprovedDate,Feetypedesc||'- Due ('||T1.Finreference||')', RemainingFee Debit, 0 credit,6 Ordby
+    from finfeedetail T1 
+    inner join feetypes T2 on T1.Feetypeid = T2.Feetypeid
+    inner join Financemain T3 on T3.Finreference = T1.Finreference
+    where Originationfee=1 and feeSchedulemethod='DISB'
+  union
+    Select T1.Finreference,T1.LLDate,'Amount Paid Vide '||PaymentType||' :'|| (case when PaymentType in ('CHEQUE','DD') then LLREFERENCENO else Transactionref end)||'('||T1.Finreference||')' ,
+    AmtToBeReleased Debit, 0 credit,7 Ordby
+    from FINADVANCEPAYMENTS T1 inner join Financemain T2 on T2.Finreference = T1.Finreference
+    where Status!='CANCELED' and LLDate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE') 
+	)T1 
+	 inner join finpftdetails t2 on t2.Finreference=t1.Finreference
+	 inner join RMTCURRENCIES C on C.ccycode= T2.finccy]]>
+		</createView>
+	</changeSet>
+	<changeSet id="58" author="Prasad">
+	<createView viewName="RPT_SOA_FINSMRY_VIEW" replaceIfExists="true">
+		  <![CDATA[ Select FinReference,comp,due,Receipt, C.ccyMinorccyunits,ccyEditField,
+  (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')APP_DATE from (
+  Select T1.FinReference,T1.finccy,'Instalment Amount' comp,coalesce((TdSchdPft+TdSchdPri+Feeschd),0) due,coalesce((TdSchdPriPaid+TdSchdPftPaid+Schdfeepaid),0) Receipt 
+  from FinPftDetails T1 left join (Select Finreference,SUM(Feeschd)Feeschd,SUM(Schdfeepaid)Schdfeepaid  from FinScheduledetails 
+   where schdate<=(Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')  
+   group by Finreference) T2 on T1.FinReference = T2.FinReference union all
+	Select FinReference,finccy,'Principal Component' comp,	coalesce(TdSchdPri,0) due,coalesce(TdSchdPriPaid,0) Receipt 
+  from FinPftDetails  union all
+	Select FinReference,finccy,'Interest Component' comp,coalesce(TdSchdPft,0) due,coalesce(TdSchdPftPaid,0)Receipt 
+  from FinPftDetails  union all
+	Select FinReference,finccy,'Late Payment Penalty' comp,coalesce(PenaltyDue,0) due,	coalesce(PenaltyPaid,0) Receipt 
+  from FinPftDetails union all
+	Select t1.Finreference,finccy,'Bounce Charges' comp, Sum(AdviseAmount) due,Sum(PaidAmount) Receipt
+  from manualadvise t1 inner join FinPftDetails t2 on t1.finreference =T2.finreference where Bounceid>0 group by t1.Finreference,finccy union all
+  Select t1.Finreference,finccy,'Other Receivables' comp, Sum(AdviseAmount) due,Sum(PaidAmount) Receipt
+  from manualadvise t1 inner join FinPftDetails t2 on t1.finreference =T2.finreference where advisetype=1 
+  group by t1.Finreference,finccy union all
+   Select t1.Finreference,finccy,'Unadjusted Amount' comp,SUM(Amount)due,sum(utilisedamt) from finexcessamount t1 inner join FinPftDetails t2 on t1.finreference =T2.finreference
+   group by t1.Finreference,finccy union all
+    Select t1.Finreference,finccy,'Other Payables' comp, Sum(AdviseAmount) due,Sum(PaidAmount) Receipt
+  from manualadvise t1 inner join FinPftDetails t2 on t1.finreference =T2.finreference where advisetype=2
+  group by t1.Finreference,finccy)T inner join RMTCURRENCIES C on C.ccycode= T.finccy]]>
+		</createView>
+	</changeSet>
 </databaseChangeLog>
