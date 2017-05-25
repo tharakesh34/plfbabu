@@ -7,5 +7,46 @@
 <property name="call.concatenate" value="||" dbms="oracle" />
 <property name="call.maindb" value="PLF.." dbms="mssql"/>
 <property name="call.maindb" value="PLF." dbms="oracle"/>
-
+<changeSet id="01" author="Satya">
+	<createTable tableName="AdtBuilderProjcet">
+		<column name="AuditId" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="AuditDate" type="datetime">
+			<constraints nullable="false" />
+		</column>
+		<column name="AuditSeq" type="int">
+			<constraints nullable="false" />
+		</column>
+		<column name="AuditImage" type="varchar(20)">
+			<constraints nullable="false" />
+		</column>
+		<column name="ID" type="int">
+			<constraints nullable="false" />
+		</column>
+		<column name="NAME" type="varchar(50)">
+			<constraints nullable="false" />
+		</column>
+		<column name="BUILDERID" type="bigint" />
+			
+                       <column name="APFNO" type="varchar(20)" />
+			
+		<column name="Version" type="int">
+			<constraints nullable="false" />
+		</column>
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="varchar(50)" />
+		<column name="RoleCode" type="varchar(100)" />
+		<column name="NextRoleCode" type="varchar(200)" />
+		<column name="TaskId" type="varchar(50)" />
+		<column name="NextTaskId" type="varchar(200)" />
+		<column name="RecordType" type="varchar(50)" />
+		<column name="WorkflowId" type="bigint" />
+	</createTable>
+</changeSet>
+	<changeSet id="02" author="Satya">
+		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage"
+			constraintName="PK_AdtBuilderProjcet" tableName="AdtBuilderProjcet" />
+	</changeSet>
 </databaseChangeLog>
