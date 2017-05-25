@@ -643,5 +643,10 @@ update SeqSecRights set SeqNo = (SeqNo+10+4) ;
 		<dropNotNullConstraint tableName="INT_DSBIMPS_REQUEST" columnName="RECEVIERBANKCITY" columnDataType="VARCHAR2(35)" />
 		<dropNotNullConstraint tableName="INT_DSBIMPS_REQUEST" columnName="REMARKS" columnDataType="VARCHAR2(10)" />
 	</changeSet>
-	
+		<changeSet id="48" author="pruthvi">
+		<sql>
+	update reportlist set fieldlabels='listheader_VASProductCode.label,listheader_ScreenCode.label,listheader_WorkFlowType.label'
+where code='VASWorkFlow'
+</sql>
+</changeSet>
 </databaseChangeLog>
