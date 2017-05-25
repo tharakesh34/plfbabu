@@ -614,4 +614,14 @@ update SeqSecRights set SeqNo = (SeqNo+10+4) ;
 			baseTableName="vasstructure_Temp" baseColumnNames="ManufacturerID" referencedColumnNames="DealerID"
 			referencedTableName="amtvehicledealer" />
 	</changeSet>
+	<changeSet author="Siva" id="44">
+		<addForeignKeyConstraint constraintName="FK_VRPC_Temp_VSPC"
+			baseTableName="vasRecording_Temp" baseColumnNames="ProductCode" referencedColumnNames="ProductCode"
+			referencedTableName="vasstructure" />
+	</changeSet>
+	<changeSet author="Siva" id="45">
+		<addForeignKeyConstraint constraintName="FK_VRPC_VSPC"
+			baseTableName="vasRecording" baseColumnNames="ProductCode" referencedColumnNames="ProductCode"
+			referencedTableName="vasstructure" />
+	</changeSet>
 </databaseChangeLog>
