@@ -42,6 +42,7 @@ public class LoadConfiguration implements ServletContextListener {
 		try {
 			// Head less mode enabled for Jasper Reports
 			System.setProperty("java.awt.headless", "true");
+			System.setProperty("line.separator","\r\n");
 			
 			AccessController
 					.doPrivileged(new PrivilegedExceptionAction<Object>() {

@@ -2710,7 +2710,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		BigDecimal payableBal = BigDecimal.ZERO;
 		Listitem item = null;
 		Listcell lc = null;
-		this.listBoxExcess.getItems().clear();
 		for (int i = 0; i < payableAmountList.size(); i++) {
 
 			ManualAdvise payableAdvise = payableAmountList.get(i);

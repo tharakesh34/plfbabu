@@ -676,32 +676,32 @@ public class RepaymentProcessUtil {
 					feeSchd.getPaidAmount().subtract(feeSchd.getWaiverAmount()));
 			if (feeBal.compareTo(remBalPaidAmount) > 0) {
 				feeBal = remBalPaidAmount;
-
-				if(allocationPaidMap != null){
-					if(allocationPaidMap.containsKey(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID())){
-						BigDecimal remPaidBal = allocationPaidMap.get(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID());
-						if(feeBal.compareTo(remPaidBal) > 0){
-							feeBal = remPaidBal;
-						}
-					}else{
-						feeBal = BigDecimal.ZERO;
+			}
+			
+			if(allocationPaidMap != null){
+				if(allocationPaidMap.containsKey(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID())){
+					BigDecimal remPaidBal = allocationPaidMap.get(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID());
+					if(feeBal.compareTo(remPaidBal) > 0){
+						feeBal = remPaidBal;
 					}
+				}else{
+					feeBal = BigDecimal.ZERO;
 				}
 			}
 			
 			if(remBalPaidAmount.compareTo(BigDecimal.ZERO) == 0){
 				if (feeBal.compareTo(remBalWaivedAmount) > 0) {
 					feeBal = remBalWaivedAmount;
-					
-					if(allocationWaivedMap != null){
-						if(allocationWaivedMap.containsKey(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID())){
-							BigDecimal remWaivedBal = allocationWaivedMap.get(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID());
-							if(feeBal.compareTo(remWaivedBal) > 0){
-								feeBal = remWaivedBal;
-							}
-						}else{
-							feeBal = BigDecimal.ZERO;
+				}
+				
+				if(allocationWaivedMap != null){
+					if(allocationWaivedMap.containsKey(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID())){
+						BigDecimal remWaivedBal = allocationWaivedMap.get(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID());
+						if(feeBal.compareTo(remWaivedBal) > 0){
+							feeBal = remWaivedBal;
 						}
+					}else{
+						feeBal = BigDecimal.ZERO;
 					}
 				}
 				
