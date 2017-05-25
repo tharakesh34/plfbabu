@@ -556,6 +556,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		this.listBoxMandateRegistration.getItems().clear();
 		this.fromDate.setValue(null);
 		this.toDate.setValue(null);
+		
 
 		if (listBoxMandateRegistration.getItems().size() > 0) {
 			listHeader_CheckBox_Comp.setDisabled(false);
@@ -564,7 +565,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			listBoxMandateRegistration.setEmptyMessage("");
 
 		}
-
+		this.pagingMandateList.setTotalSize(0);
+		
 	}
 
 	/**
