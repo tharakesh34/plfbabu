@@ -556,4 +556,24 @@ update SeqSecRights set SeqNo = (SeqNo+10+4) ;
 		
 		</sql>
 	</changeSet>
+	<changeSet id="31" author="Surekha">
+		<modifyDataType tableName="RMTTRANSACTIONENTRY" columnName="ACCOUNTTYPE" newDataType="VARCHAR(15)"/>
+	</changeSet>
+	<changeSet id="32" author="Surekha">
+		<modifyDataType tableName="RMTTRANSACTIONENTRY_Temp" columnName="ACCOUNTTYPE" newDataType="VARCHAR(15)"/>
+	</changeSet>
+	<changeSet id="34" author="Surekha">
+		<modifyDataType tableName="RMTFINANCETYPES" columnName="FINACTYPE" newDataType="VARCHAR(15)"/>
+		<modifyDataType tableName="RMTFINANCETYPES" columnName="FINCONTINGENTACTYPE" newDataType="VARCHAR(15)"/>
+		<modifyDataType tableName="RMTFINANCETYPES" columnName="FINBANKCONTINGENTACTYPE" newDataType="VARCHAR(15)"/>
+		<modifyDataType tableName="RMTFINANCETYPES" columnName="FINPROVISIONACTYPE" newDataType="VARCHAR(15)"/>
+		<modifyDataType tableName="RMTFINANCETYPES" columnName="FINSUSPACTYPE" newDataType="VARCHAR(15)"/>
+	</changeSet>
+	<changeSet id="35" author="Surekha">
+		<modifyDataType tableName="RMTFINANCETYPES_Temp" columnName="FINACTYPE" newDataType="VARCHAR(15)"/>
+		<modifyDataType tableName="RMTFINANCETYPES_Temp" columnName="FINCONTINGENTACTYPE" newDataType="VARCHAR(15)"/>
+		<modifyDataType tableName="RMTFINANCETYPES_Temp" columnName="FINBANKCONTINGENTACTYPE" newDataType="VARCHAR(15)"/>
+		<modifyDataType tableName="RMTFINANCETYPES_Temp" columnName="FINPROVISIONACTYPE" newDataType="VARCHAR(15)"/>
+		<modifyDataType tableName="RMTFINANCETYPES_Temp" columnName="FINSUSPACTYPE" newDataType="VARCHAR(15)"/>
+	</changeSet>
 </databaseChangeLog>
