@@ -8654,14 +8654,14 @@
 		<property name="extendedFieldDetailDAO" ref="extendedFieldDetailDAO" />
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
 		<property name="financeCheckListReferenceDAO" ref="financeCheckListReferenceDAO" />
-		<property name="documentTypeService" ref="documentTypeService" />
+		<property name="documentTypeDAO" ref="documentTypeDAO" />
 		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
 		<property name="customerDAO" ref="customerDAO" />
+		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="collateralSetupService" ref="collateralSetupService" />
-		<property name="relationshipOfficerService" ref="relationshipOfficerService" />
+		<property name="relationshipOfficerDAO" ref="relationshipOfficerDAO" />
 		<property name="scriptValidationService" ref="scriptValidationService" />
 	</bean>
 

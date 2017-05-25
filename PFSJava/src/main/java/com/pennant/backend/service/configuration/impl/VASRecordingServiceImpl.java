@@ -64,7 +64,9 @@ import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.applicationmaster.RelationshipOfficerDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
@@ -78,6 +80,7 @@ import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
+import com.pennant.backend.dao.systemmasters.DocumentTypeDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
@@ -85,6 +88,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.configuration.VasCustomer;
@@ -105,8 +109,6 @@ import com.pennant.backend.model.staticparms.ExtendedFieldHeader;
 import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.GenericService;
-import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
-import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.impl.DocumentDetailValidation;
 import com.pennant.backend.service.collateral.impl.ExtendedFieldDetailsValidation;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
@@ -114,7 +116,6 @@ import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.configuration.VASRecordingService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.CheckListDetailService;
-import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -145,7 +146,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	private ExtendedFieldDetailDAO			extendedFieldDetailDAO;
 	private DocumentManagerDAO				documentManagerDAO;
 	private FinanceCheckListReferenceDAO	financeCheckListReferenceDAO;
-	private DocumentTypeService				documentTypeService;
+	private DocumentTypeDAO					documentTypeDAO;
 	private CustomerDocumentDAO				customerDocumentDAO;
 	private TransactionEntryDAO				transactionEntryDAO;
 	
@@ -153,13 +154,13 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	private DocumentDetailValidation		vasDocumentValidation;
 	private ExtendedFieldDetailsValidation	extendedFieldDetailsValidation;
 	private CustomerDAO						customerDAO;
+	private CollateralSetupDAO				collateralSetupDAO;
 	private VasRecordingValidation			vasRecordingValidation;
 	private AccountEngineExecution 			engineExecution;
 	private PostingsDAO 					postingsDAO;
 	private AccountProcessUtil 				accountProcessUtil;
 	private FinanceMainDAO 					financeMainDAO;
-	private CollateralSetupService 			collateralSetupService;
-	private RelationshipOfficerService		relationshipOfficerService;
+	private RelationshipOfficerDAO			relationshipOfficerDAO;
 	private ScriptValidationService 		scriptValidationService;
 
 	
@@ -1451,23 +1452,32 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				
 				AEEvent aeEvent = new AEEvent();
 				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
-				
-				// If VAS Created Against Finance Reference
-				if(StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, vASRecording.getPostingAgainst())){
-					FinanceMain financeMain = financeMainDAO.getFinanceMainForBatch(vASRecording.getPrimaryLinkRef());
-					AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-					if(amountCodes == null){
-						amountCodes = new AEAmountCodes();
-					}
-					
-					amountCodes.setFinType(financeMain.getFinType());
-					aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
-					aeEvent.setBranch(financeMain.getFinBranch());
-					aeEvent.setCcy(financeMain.getFinCcy());
-					aeEvent.setFinReference(vASRecording.getVasReference());
-					aeEvent.setCustID(financeMain.getCustID());
+				aeEvent.setFinReference(vASRecording.getVasReference());
+				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+				if(amountCodes == null){
+					amountCodes = new AEAmountCodes();
 				}
 				
+				// Based on VAS Created Against, details will be captured  
+				if(StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, vASRecording.getPostingAgainst())){
+					FinanceMain financeMain = financeMainDAO.getFinanceMainForBatch(vASRecording.getPrimaryLinkRef());
+					amountCodes.setFinType(financeMain.getFinType());
+					aeEvent.setBranch(financeMain.getFinBranch());
+					aeEvent.setCcy(financeMain.getFinCcy());
+					aeEvent.setCustID(financeMain.getCustID());
+				} else if(StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, getVASRecording().getPostingAgainst())){
+					Customer customer = getCustomerDAO().getCustomerByCIF(getVASRecording().getPrimaryLinkRef(),"");
+					aeEvent.setBranch(customer.getCustDftBranch());
+					aeEvent.setCcy(customer.getCustBaseCcy());
+					aeEvent.setCustID(customer.getCustID());
+				} else if(StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, getVASRecording().getPostingAgainst())){
+					CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(
+							getVASRecording().getPrimaryLinkRef(),"");
+					aeEvent.setCcy(collateralSetup.getCollateralCcy());
+					aeEvent.setCustID(collateralSetup.getDepositorId());
+				}
+				
+				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 				vASRecording.getDeclaredFieldValues(aeEvent.getDataMap());
 				aeEvent.getAcSetIDList().add(vASRecording.getVasConfiguration().getFeeAccounting());
 				list = getEngineExecution().getAccEngineExecResults(aeEvent).getReturnDataSet();
@@ -1642,7 +1652,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				}
 			} else if (StringUtils.equalsIgnoreCase(VASConsatnts.VASAGAINST_COLLATERAL,
 					vasRecording.getPostingAgainst())) {
-				int count = collateralSetupService.getCountByCollateralRef(vasRecording.getPrimaryLinkRef());
+				int count = collateralSetupDAO.getCountByCollateralRef(vasRecording.getPrimaryLinkRef());
 				if (count <= 0) {
 					String[] valueParm = new String[1];
 					valueParm[0] = vasRecording.getPrimaryLinkRef();
@@ -1723,8 +1733,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			} else {
-				RelationshipOfficer relationshipOfficer = relationshipOfficerService
-						.getApprovedRelationshipOfficerById(vasRecording.getDsaId());
+				RelationshipOfficer relationshipOfficer = relationshipOfficerDAO
+						.getRelationshipOfficerById(vasRecording.getDsaId(), "");
 				if (relationshipOfficer == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = vasRecording.getDsaId();
@@ -1740,8 +1750,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			} else {
-				RelationshipOfficer dmaCode = relationshipOfficerService
-						.getApprovedRelationshipOfficerById(vasRecording.getDmaId());
+				RelationshipOfficer dmaCode = relationshipOfficerDAO
+						.getRelationshipOfficerById(vasRecording.getDsaId(), "");
 				if (dmaCode == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = vasRecording.getDmaId();
@@ -1764,8 +1774,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
 			} else {
-				RelationshipOfficer referralId = relationshipOfficerService
-						.getApprovedRelationshipOfficerById(vasRecording.getReferralId());
+				RelationshipOfficer referralId = relationshipOfficerDAO
+						.getRelationshipOfficerById(vasRecording.getDsaId(), "");
 				if (referralId == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = vasRecording.getReferralId();
@@ -1816,7 +1826,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 						}
 					}
 
-					DocumentType docType = documentTypeService.getDocumentTypeById(detail.getDocCategory());
+					DocumentType docType = documentTypeDAO.getDocumentTypeById(detail.getDocCategory(),"");
 					if (docType == null) {
 						String[] valueParm = new String[1];
 						valueParm[0] = detail.getDocCategory();
@@ -2031,14 +2041,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		this.financeCheckListReferenceDAO = financeCheckListReferenceDAO;
 	}
 
-	public DocumentTypeService getDocumentTypeService() {
-		return documentTypeService;
-	}
-
-	public void setDocumentTypeService(DocumentTypeService documentTypeService) {
-		this.documentTypeService = documentTypeService;
-	}
-
 	public DocumentDetailValidation getVASDocumentValidation() {
 		if (vasDocumentValidation == null) {
 			this.vasDocumentValidation = new DocumentDetailValidation(documentDetailsDAO, documentManagerDAO,
@@ -2121,19 +2123,23 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		this.financeMainDAO = financeMainDAO;
 	}
 
-	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
-		this.collateralSetupService = collateralSetupService;
-	}
-	
-	public void setRelationshipOfficerService(RelationshipOfficerService relationshipOfficerService) {
-		this.relationshipOfficerService = relationshipOfficerService;
-	}
-	
 	public ScriptValidationService getScriptValidationService() {
 		return scriptValidationService;
 	}
 	public void setScriptValidationService(ScriptValidationService scriptValidationService) {
 		this.scriptValidationService = scriptValidationService;
+	}
+	
+	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
+		this.collateralSetupDAO = collateralSetupDAO;
+	}
+
+	public void setRelationshipOfficerDAO(RelationshipOfficerDAO relationshipOfficerDAO) {
+		this.relationshipOfficerDAO = relationshipOfficerDAO;
+	}
+
+	public void setDocumentTypeDAO(DocumentTypeDAO documentTypeDAO) {
+		this.documentTypeDAO = documentTypeDAO;
 	}
 
 }

@@ -124,6 +124,7 @@ import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.configuration.VASRecordingService;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.util.AssetConstants;
@@ -201,6 +202,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private transient VASRecordingService					vASRecordingService;
 	private transient CollateralSetupService				collateralSetupService;
 	private transient FinanceDetailService					financeDetailService;
+	private transient CustomerDetailsService				customerDetailsService;
 	protected JdbcSearchObject<Customer>					custCIFSearchObject;
 	private Window											mainWindow				= null;
 
@@ -2387,22 +2389,31 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			getVASRecording().setFee(PennantAppUtil.unFormateAmount(this.fee.getActualValue(), getCcyFormat()));
 			AEEvent aeEvent = new AEEvent();
 			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+			if(amountCodes == null){
+				amountCodes = new AEAmountCodes();
+			}
 			
-			// If VAS Created Against Finance Reference
+			// Based on VAS Created Against, details will be captured  
 			if(StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, getVASRecording().getPostingAgainst())){
 				FinanceMain financeMain = getFinanceDetailService().getFinanceMainForBatch(getVASRecording().getPrimaryLinkRef());
-				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-				if(amountCodes == null){
-					amountCodes = new AEAmountCodes();
-				}
-				
 				amountCodes.setFinType(financeMain.getFinType());
-				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 				aeEvent.setBranch(financeMain.getFinBranch());
 				aeEvent.setCcy(financeMain.getFinCcy());
 				aeEvent.setCustID(financeMain.getCustID());
+			}else if(StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, getVASRecording().getPostingAgainst())){
+				Customer customer = getCustomerDetailsService().getCustomerByCIF(getVASRecording().getPrimaryLinkRef());
+				aeEvent.setBranch(customer.getCustDftBranch());
+				aeEvent.setCcy(customer.getCustBaseCcy());
+				aeEvent.setCustID(customer.getCustID());
+			}else if(StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, getVASRecording().getPostingAgainst())){
+				CollateralSetup collateralSetup = getCollateralSetupService().getApprovedCollateralSetupById(
+						getVASRecording().getPrimaryLinkRef());
+				aeEvent.setCcy(collateralSetup.getCollateralCcy());
+				aeEvent.setCustID(collateralSetup.getDepositorId());
 			}
 			
+			aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 			getVASRecording().getDeclaredFieldValues(aeEvent.getDataMap());
 			aeEvent.getAcSetIDList().add(vASConfiguration.getFeeAccounting());
 			List<ReturnDataSet> returnSetEntries = getEngineExecution().getAccEngineExecResults(aeEvent).getReturnDataSet();
@@ -2726,5 +2737,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.financeDetailService = financeDetailService;
 	}
 
+	public CustomerDetailsService getCustomerDetailsService() {
+		return customerDetailsService;
+	}
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
+	}
 
 }

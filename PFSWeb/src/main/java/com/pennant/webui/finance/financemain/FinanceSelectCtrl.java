@@ -996,10 +996,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFF)){
 			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
-			
+			whereClause.append(" AND MaturityDate < '" + appDate + "'"); 
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)){
 			whereClause.append(" AND ProductCategory != '"+FinanceConstants.PRODUCT_ODFACILITY+"'"); 
-			
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CANCELRPY)){
 			//whereClause.append(" OR (FinIsActive = 0 AND ClosingStatus = 'M') ");
 		}else if(moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CANCELFIN)){
