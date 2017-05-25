@@ -3065,6 +3065,25 @@
 		<property name="jVPostingService" ref="jVPostingService" />
 	</bean>
 
+
+
+
+<!--============ FEE Posting Details ============== -->
+
+	<!-- FEEPOSTING -->
+	<bean id="feePostingListCtrl" class="com.pennant.webui.Fees.FeePostings.FeePostingsListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="feePostingService" ref="feePostingService" />
+	</bean>
+
+	 <bean id="feePostingsDialogCtrl" class="com.pennant.webui.Fees.FeePostings.FeePostingsDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="engineExecution" ref="engineExecution" />	
+		<property name="financeDetailService" ref="financeDetailService" />	
+		<property name="accountingSetService" ref="accountingSetService" />
+		<property name="feePostingService" ref="feePostingService" />
+	</bean>
+
 	<!--============ IJARAH Bulk Rate Change Details ============== -->
 
 	<bean id="ijaraBulkRateChangeCtrl"

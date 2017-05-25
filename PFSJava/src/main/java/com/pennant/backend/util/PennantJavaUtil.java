@@ -180,6 +180,7 @@ import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.errordetail.ErrorDetail;
 import com.pennant.backend.model.expenses.LegalExpenses;
 import com.pennant.backend.model.facility.Facility;
+import com.pennant.backend.model.fees.FeePostings;
 import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.AgreementFieldDetails;
 import com.pennant.backend.model.finance.BulkProcessDetails;
@@ -1143,7 +1144,11 @@ public class PennantJavaUtil {
 		ModuleUtil.register("JVPostingEntry", new ModuleMapping("JVPostingEntry", JVPostingEntry.class, new String[] {
 				"JVPostingEntry", "JVPostingEntry_AView" }, masterWF , new String[] { "BatchReference", "Account" }, null,
 				300));
-
+		/************* FEE Postings *************/
+		
+		ModuleUtil.register("FeePostings", new ModuleMapping("FeePostings", FeePostings.class, new String[] { "FeePostings",
+		"FeePostings_AView" }, masterWF, new String[] { "PostId", "PostAgainst","Reference"}, null, 300));
+		
 		/************* Finance Maintenance Details *************/
 
 		ModuleUtil.register("AddRateChange", new ModuleMapping("FinanceMain", FinanceMain.class, new String[] {

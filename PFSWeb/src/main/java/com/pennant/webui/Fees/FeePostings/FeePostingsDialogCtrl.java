@@ -1,0 +1,1242 @@
+/**
+ * Copyright 2011 - Pennant Technologies
+ * 
+ * This file is part of Pennant Java Application Framework and related Products. 
+ * All components/modules/functions/classes/logic in this software, unless 
+ * otherwise stated, the property of Pennant Technologies. 
+ * 
+ * Copyright and other intellectual property laws protect these materials. 
+ * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
+ * without the prior written consent of the copyright holder, is a violation of 
+ * copyright law.
+ */
+
+/**
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *																							*
+ * FileName    		:  JVPostingDialogCtrl.java                                                   * 	  
+ *                                                                    						*
+ * Author      		:  PENNANT TECHONOLOGIES              									*
+ *                                                                  						*
+ * Creation Date    :  21-06-2013    														*
+ *                                                                  						*
+ * Modified Date    :  21-06-2013    														*
+ *                                                                  						*
+ * Description 		:                                             							*
+ *                                                                                          *
+ ********************************************************************************************
+ * Date             Author                   Version      Comments                          *
+ ********************************************************************************************
+ * 21-06-2013       Pennant	                 0.1                                            * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ ********************************************************************************************
+ */
+package com.pennant.webui.Fees.FeePostings;
+
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
+import org.springframework.dao.DataAccessException;
+import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.HtmlBasedComponent;
+import org.zkoss.zk.ui.UiException;
+import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.WrongValuesException;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabbox;
+import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Tabpanels;
+import org.zkoss.zul.Tabs;
+import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Window;
+
+import com.pennant.CurrencyBox;
+import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.LengthConstants;
+import com.pennant.app.util.AccountEngineExecution;
+import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.applicationmaster.Currency;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.fees.FeePostings;
+import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.partnerbank.PartnerBank;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.service.fees.feepostings.FeePostingService;
+import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.rmtmasters.AccountingSetService;
+import com.pennant.backend.util.AssetConstants;
+import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.VASConsatnts;
+import com.pennant.exception.PFFInterfaceException;
+import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTDecimalValidator;
+import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
+import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.MessageUtil;
+import com.pennant.webui.util.ScreenCTL;
+import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+
+/**
+ * This is the controller class for the /WEB-INF/pages/others/JVPosting/jVPostingDialog.zul file.
+ */
+public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
+	private static final long						serialVersionUID	= 1L;
+	private final static Logger						logger				= Logger.getLogger(FeePostingsDialogCtrl.class);
+
+	/*
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 */
+	protected Window								window_feePostingsDialog;
+	protected Tab									tab_Accounting;
+	protected Combobox								postingAgainst;
+	protected ExtendedCombobox						reference;
+	protected ExtendedCombobox						feeTypeCode;
+	protected Textbox								remarks;
+	protected CurrencyBox							postingAmount;
+	protected ExtendedCombobox						postingCcy;
+	protected Datebox								postDate;
+	protected Datebox								valueDate;
+
+	private boolean									enqModule			= false;
+	// not auto wired vars
+	private transient FeePostingsListCtrl			feePostingsListCtrl;												// overhanded per
+
+	protected Tabbox								tabbox;
+	protected Component								jVSummaryEntryListPage;
+	protected Component								accountingEntryListPage;
+
+	// ServiceDAOs / Domain Classes
+	private transient FeePostingService				feePostingService;
+	private transient PostingsPreparationUtil		postingsPreparationUtil;
+	protected Textbox								moduleType;															// autowired
+
+	private FeePostings								feePostings;
+	protected ExtendedCombobox						partnerBankID;
+	private Currency								aCurrency			= null;
+	protected Tabpanels								tabpanelsBoxIndexCenter;
+	protected Tab									basicDetailsTab;
+	protected Tabbox								tabBoxIndexCenter;
+	protected Tabs									tabsIndexCenter;
+	protected String								selectMethodName	= "onSelectTab";
+	private transient AccountingDetailDialogCtrl	accountingDetailDialogCtrl;
+	private transient FinanceDetailService			financeDetailService;
+	private transient AccountingSetService			accountingSetService;
+	private AccountEngineExecution					engineExecution;
+	private boolean									isAccountingExecuted	= true;
+
+	/**
+	 * default constructor.<br>
+	 */
+	public FeePostingsDialogCtrl() {
+		super();
+	}
+
+	@Override
+	protected void doSetProperties() {
+		super.pageRightName = "FeePostingsDialog";
+	}
+
+	// Component Events
+
+	/**
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected JVPosting object in a Map.
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onCreate$window_feePostingsDialog(Event event) throws Exception {
+		logger.debug("Entering");
+
+		// Set the page level components.
+		setPageComponents(window_feePostingsDialog);
+
+		try {
+			// READ OVERHANDED params !
+			if (arguments.containsKey("enqModule")) {
+				enqModule = (Boolean) arguments.get("enqModule");
+			} else {
+				enqModule = false;
+			}
+
+			if (arguments.containsKey("FeePostingsListCtrl")) {
+				setFeePostingsListCtrl((FeePostingsListCtrl) arguments.get("FeePostingsListCtrl"));
+			} else {
+				setFeePostingsListCtrl(null);
+			}
+			// READ OVERHANDED params !
+			if (arguments.containsKey("feePostings")) {
+				this.feePostings = (FeePostings) arguments.get("feePostings");
+				FeePostings befImage = new FeePostings();
+				BeanUtils.copyProperties(this.feePostings, befImage);
+				this.feePostings.setBefImage(befImage);
+				setFeePostings(this.feePostings);
+			} else {
+				setFeePostings(null);
+			}
+			doLoadWorkFlow(this.feePostings.isWorkflow(), this.feePostings.getWorkflowId(),
+					this.feePostings.getNextTaskId());
+
+			if (isWorkFlowEnabled() && !enqModule) {
+				this.userAction = setListRecordStatus(this.userAction);
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "FeePostingsDialog");
+			} else {
+				getUserWorkspace().allocateAuthorities(super.pageRightName);
+			}
+
+			
+				aCurrency = PennantAppUtil.getCurrencyBycode(SysParamUtil.getValueAsString("EXT_BASE_CCY"));
+				getFeePostings().setCurrency(aCurrency.getCcyCode());
+			
+			/* set components visible dependent of the users rights */
+			doCheckRights();
+
+			doSetFieldProperties();
+			//this.listBoxJVPostingAccounting.setHeight(this.borderLayoutHeight - 350 + "px");
+			doShowDialog(getFeePostings());
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			MessageUtil.showErrorMessage(e);
+			this.window_feePostingsDialog.onClose();
+		}
+
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the "delete" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onClick$btnDelete(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		doDelete();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the "save" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onClick$btnSave(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+		doSave();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the "cancel" button is clicked. <br>
+	 * 
+	 * @param event
+	 */
+	public void onClick$btnCancel(Event event) {
+		logger.debug("Entering" + event.toString());
+		//doWriteBeanToComponents(this.feePostings.getBefImage());
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * when the "help" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onClick$btnHelp(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		MessageUtil.showHelpWindow(event, window_feePostingsDialog);
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * The Click event is raised when the Close Button control is clicked.
+	 * 
+	 * @param event
+	 *            An event sent to the event handler of a component.
+	 */
+	public void onClick$btnClose(Event event) {
+		if (doClose(this.btnSave.isVisible())) {
+			getFeePostingsListCtrl().refreshList();
+		}
+	}
+
+	/**
+	 * Get the window for entering Notes
+	 * 
+	 * @param event
+	 *            (Event)
+	 * 
+	 * @throws Exception
+	 */
+	public void onClick$btnNotes(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+		try {
+
+			ScreenCTL.displayNotes(
+					getNotes("JVPosting", String.valueOf(getFeePostings().getPostId()), getFeePostings().getVersion()),
+					this);
+
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			MessageUtil.showErrorMessage(e);
+		}
+		logger.debug("Leaving" + event.toString());
+
+	}
+
+	// GUI operations
+
+	/**
+	 * Opens the Dialog window modal.
+	 * 
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
+	 * 
+	 * @param aJVPosting
+	 * @throws Exception
+	 */
+	public void doShowDialog(FeePostings aFeePostings) throws Exception {
+		logger.debug("Entering");
+		// set Read only mode accordingly if the object is new or not.
+		if (aFeePostings.isNew()) {
+			this.btnCtrl.setInitNew();
+			doEdit();
+			// setFocus
+		} else {
+			if (isWorkFlowEnabled()) {
+				if (StringUtils.isNotBlank(aFeePostings.getRecordType())) {
+					this.btnNotes.setVisible(true);
+				}
+				doEdit();
+			} else {
+				this.btnCtrl.setInitEdit();
+				doReadOnly(true);
+				btnCancel.setVisible(false);
+			}
+			if (enqModule) {
+				doReadOnly(true);
+			}
+		}
+		try {
+			// fill the components with the data
+			doWriteBeanToComponents(aFeePostings);
+
+			// set ReadOnly mode accordingly if the object is new or not.
+			setDialog(DialogType.EMBEDDED);
+		} catch (UiException e) {
+			logger.error("Exception: ", e);
+			this.window_feePostingsDialog.onClose();
+		} catch (Exception e) {
+			throw e;
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Set the components for edit mode. <br>
+	 */
+	private void doEdit() {
+		logger.debug("Entering");
+
+		if (getFeePostings().isNewRecord()) {
+			this.btnCancel.setVisible(false);
+		} else {
+			this.btnCancel.setVisible(true);
+		}
+
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(false);
+			}
+
+			if (this.feePostings.isNewRecord()) {
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(false);
+			} else {
+				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
+			}
+		} else {
+			this.btnCtrl.setBtnStatus_Edit();
+			//btnCancel.setVisible(true);
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Method for Executing Accountng Details
+	 * 
+	 * @throws Exception
+	 */
+	public void executeAccounting() throws Exception {
+		logger.debug("Entering");
+
+		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
+
+		getFeePostings().setPostingAmount(
+				PennantAppUtil.unFormateAmount(this.postingAmount.getActualValue(), aCurrency.getCcyEditField()));
+		AEEvent aeEvent = new AEEvent();
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_MANFEE);
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		if (amountCodes == null) {
+			amountCodes = new AEAmountCodes();
+		}
+
+		// If Fees Created Against Finance Reference
+		if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_LOAN, getFeePostings().getPostAgainst())) {
+			FinanceMain financeMain = getFinanceDetailService().getFinanceMainForBatch(getFeePostings().getReference());
+
+			amountCodes.setFinType(financeMain.getFinType());
+			aeEvent.setBranch(financeMain.getFinBranch());
+			aeEvent.setCustID(financeMain.getCustID());
+		}
+
+		//if fees created against customer
+		if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_CUST, getFeePostings().getPostAgainst())) {
+			//Fixme to send any additional Data
+			
+		}
+		//if fees created against customer
+		if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_COLLATERAL, getFeePostings().getPostAgainst())) {
+			//Fixme to send any additional Data
+		}
+		
+
+		amountCodes.setPartnerBankAc(getFeePostings().getPartnerBankAc());
+		amountCodes.setPartnerBankAcType(getFeePostings().getPartnerBankAcType());
+		
+		aeEvent.setCcy(getFeePostings().getCurrency());
+		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+		
+		getFeePostings().getDeclaredFieldValues(aeEvent.getDataMap());
+		aeEvent.getAcSetIDList().add(Long.valueOf(getFeePostings().getAccountSetId()));
+		aeEvent.getAcSetIDList().add(accountingSetService.getAccountingSetId(AccountEventConstants.ACCEVENT_MANFEE,
+				AccountEventConstants.ACCEVENT_MANFEE));
+		
+		List<ReturnDataSet> returnSetEntries = getEngineExecution().getAccEngineExecResults(aeEvent).getReturnDataSet();
+		getFeePostings().setReturnDataSetList(returnSetEntries);
+		accountingSetEntries.addAll(returnSetEntries);
+		if (accountingDetailDialogCtrl != null) {
+			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
+		}
+
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Method for Rendering Schedule Details Data in finance
+	 */
+	protected void appendAccountingDetailTab(boolean onLoadProcess) {
+		logger.debug("Entering");
+		boolean createTab = false;
+		if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) == null) {
+			createTab = true;
+		}
+
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_ACCOUNTING, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_ACCOUNTING);
+		}
+		if (!onLoadProcess) {
+
+			final HashMap<String, Object> map = getDefaultArguments();
+			map.put("feePosting", getFeePostings());
+			map.put("acSetID", Long.valueOf(getFeePostings().getAccountSetId()));
+			if (enqiryModule) {
+				map.put("enqModule", true);
+			}
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AccountingDetailDialog.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_ACCOUNTING), map);
+			Tab tab = getTab(AssetConstants.UNIQUE_ID_ACCOUNTING);
+			if (tab != null) {
+				tab.setVisible(true);
+			}
+		}
+		logger.debug("Leaving");
+	}
+
+	public HashMap<String, Object> getDefaultArguments() {
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("roleCode", getRole());
+		map.put("dialogCtrl", this);
+		map.put("isNotFinanceProcess", true);
+		map.put("moduleName", VASConsatnts.MODULE_NAME);
+		map.put("postAccReq", false);
+		return map;
+	}
+
+	/**
+	 * This method will create tab and will assign corresponding tab selection method and makes tab visibility based on
+	 * parameter
+	 * 
+	 * @param moduleID
+	 * @param tabVisible
+	 */
+	public void createTab(String moduleID, boolean tabVisible) {
+		logger.debug("Entering");
+		String tabName = Labels.getLabel("tab_label_" + moduleID);
+		Tab tab = new Tab(tabName);
+		tab.setId(getTabID(moduleID));
+		tab.setVisible(tabVisible);
+		tabsIndexCenter.appendChild(tab);
+		Tabpanel tabpanel = new Tabpanel();
+		tabpanel.setId(getTabpanelID(moduleID));
+		tabpanel.setStyle("overflow:auto;");
+		tabpanel.setParent(tabpanelsBoxIndexCenter);
+		tabpanel.setHeight("100%");
+		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
+		logger.debug("Leaving");
+	}
+
+	private String getTabID(String id) {
+		return "TAB" + StringUtils.trimToEmpty(id);
+	}
+
+	private String getTabpanelID(String id) {
+		return "TABPANEL" + StringUtils.trimToEmpty(id);
+	}
+
+	/**
+	 * Set the components to ReadOnly. <br>
+	 */
+	public void doReadOnly(boolean readOnly) {
+
+	}
+
+	// Helpers
+
+	/**
+	 * User rights check. <br>
+	 * Only components are set visible=true if the logged-in <br>
+	 * user have the right for it. <br>
+	 * 
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
+	 */
+	private void doCheckRights() {
+		logger.debug("Entering");
+		if (!enqModule) {
+			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_JVPostingDialog_btnNew"));
+			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_JVPostingDialog_btnEdit"));
+			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_JVPostingDialog_btnDelete"));
+			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_JVPostingDialog_btnSave"));
+
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Set the properties of the fields, like maxLength.<br>
+	 */
+	private void doSetFieldProperties() {
+
+		this.reference.setMandatoryStyle(true);
+		this.feeTypeCode.setMandatoryStyle(true);
+		this.feeTypeCode.setModuleName("FeeType");
+		this.feeTypeCode.setValueColumn("FeeTypeCode");
+		this.postingCcy.setDescColumn("FeeTypeDesc");
+		this.postingCcy.setValidateColumns(new String[] { "FeeTypeCode" });
+
+		this.postingCcy.setMaxlength(LengthConstants.LEN_CURRENCY);
+		this.postingCcy.setMandatoryStyle(true);
+		this.postingCcy.setModuleName("Currency");
+		this.postingCcy.setValueColumn("CcyCode");
+		this.postingCcy.setDescColumn("CcyDesc");
+		this.postingCcy.setValidateColumns(new String[] { "CcyCode" });
+
+		this.partnerBankID.setModuleName("PartnerBank");
+		this.partnerBankID.setValueColumn("PartnerBankId");
+		this.partnerBankID.setDescColumn("PartnerBankName");
+		this.partnerBankID.setValidateColumns(new String[] { "PartnerBankId", "PartnerBankName" });
+		this.partnerBankID.setMandatoryStyle(true);
+
+		this.postDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+
+		this.postingAmount.setProperties(true, aCurrency.getCcyEditField());
+
+	}
+
+	/**
+	 * Writes the bean data to the components.<br>
+	 * 
+	 * @param aJVPosting
+	 *            JVPosting
+	 */
+	public void doWriteBeanToComponents(FeePostings aFeePostings) {
+		logger.debug("Entering");
+		fillComboBox(this.postingAgainst, aFeePostings.getPostAgainst(), PennantStaticListUtil.getpostingPurposeList(),
+				"");
+		this.reference.setValue(aFeePostings.getReference());
+		this.feeTypeCode.setValue(aFeePostings.getFeeTyeCode());
+		this.postingAmount.setValue(PennantAppUtil.formateAmount(aFeePostings.getPostingAmount(), aCurrency.getCcyEditField()));
+		this.postingCcy.setValue(aFeePostings.getCurrency());
+		if(aFeePostings.isNew()){
+			this.postDate.setValue(DateUtility.getAppDate());
+			this.valueDate.setValue(DateUtility.getAppDate());	
+		}else{			
+			this.postDate.setValue(aFeePostings.getPostDate());
+			this.valueDate.setValue(aFeePostings.getValueDate());
+		}
+		
+		if (!aFeePostings.isNew()) {
+			this.partnerBankID.setObject(new PartnerBank(aFeePostings.getPartnerBankId()));
+			this.partnerBankID.setValue(String.valueOf(aFeePostings.getPartnerBankId()));
+			this.partnerBankID.setDescription(aFeePostings.getPartnerBankName());
+		}
+
+		this.remarks.setValue(aFeePostings.getRemarks());
+		setFilters(StringUtils.equals(null, aFeePostings.getPostAgainst()) ? aFeePostings.getPostAgainst()
+				: aFeePostings.getPostAgainst().trim());
+		appendAccountingDetailTab(true);
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Writes the components values to the bean.<br>
+	 * 
+	 * @param aJVPosting
+	 */
+	public void doWriteComponentsToBean(FeePostings aFeePostings) throws InterruptedException {
+
+		logger.debug("Entering");
+		// doSetValidation();
+
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		doSetValidation();
+
+		// Posting Against
+		try {
+			if (getComboboxValue(this.postingAgainst).equals(PennantConstants.List_Select)) {
+				throw new WrongValueException(this.postingAgainst, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_feePostingsDialog_PostingAgainst.value") }));
+			}
+			aFeePostings.setPostAgainst(getComboboxValue(this.postingAgainst));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFeePostings.setReference(this.reference.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFeePostings.setFeeTyeCode(this.feeTypeCode.getValue().trim());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// Partner Bank ID
+		try {
+			PartnerBank partnerBank = (PartnerBank) this.partnerBankID.getObject();
+			aFeePostings.setPartnerBankId(partnerBank.getPartnerBankId());
+			aFeePostings.setPartnerBankName(this.partnerBankID.getDescription());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFeePostings.setPostingAmount(
+					PennantAppUtil.unFormateAmount(this.postingAmount.getActualValue(), aCurrency.getCcyEditField()));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFeePostings.setCurrency(this.postingCcy.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFeePostings.setPostDate(this.postDate.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFeePostings.setValueDate(this.valueDate.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFeePostings.setRemarks(this.remarks.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// Basic Details Error Detail
+		showErrorDetails(wve, this.basicDetailsTab);
+
+		logger.debug("Leaving");
+
+	}
+
+	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
+		logger.debug("Entering");
+
+		doRemoveValidation();
+
+		if (wve.size() > 0) {
+			logger.debug("Throwing occured Errors By using WrongValueException");
+			tab.setSelected(true);
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = wve.get(i);
+				if (i == 0) {
+					Component comp = wvea[i].getComponent();
+					if (comp instanceof HtmlBasedComponent) {
+						Clients.scrollIntoView(comp);
+					}
+				}
+				logger.debug(wvea[i]);
+			}
+			throw new WrongValuesException(wvea);
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Sets the Validation by setting the accordingly constraints to the fields.
+	 */
+	private void doSetValidation() {
+		this.partnerBankID.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_FinTypePartnerBankDialog_PartnerBankID.value"), null, true, true));
+		this.feeTypeCode.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_feePostingsDialog_FeeTypeCode.value"), null, true, true));
+		this.reference.setConstraint(
+				new PTStringValidator(Labels.getLabel("label_feePostingsDialog_Reference.value"), null, true, true));
+		if (this.postingAmount.isVisible() && !this.postingAmount.isReadonly()) {
+			this.postingAmount.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_feePostingsDialog_PostingAmount.value"),
+							aCurrency.getCcyEditField(), true, false));
+		}
+		
+		if (!this.postDate.isDisabled()){
+			this.postDate.setConstraint(new PTDateValidator(Labels.getLabel("label_feePostingsDialog_PostDate.value"), true));
+		}
+
+		if (!this.valueDate.isDisabled()){
+			this.valueDate.setConstraint(new PTDateValidator(Labels.getLabel("label_feePostingsDialog_ValueDate.value"), true));
+		}
+	}
+
+	/**
+	 * Remove the Validation by setting empty constraints.
+	 */
+	private void doRemoveValidation() {
+
+	}
+
+	/**
+	 * Set Validations for LOV Fields
+	 */
+
+	private void doSetLOVValidation() {
+
+	}
+
+	/**
+	 * Remove the Validation by setting empty constraints.
+	 */
+
+	private void doRemoveLOVValidation() {
+
+	}
+
+	/**
+	 * Remove Error Messages for Fields
+	 */
+
+	@Override
+	protected void doClearMessage() {
+
+	}
+
+	public void onSelectTab(ForwardEvent event) throws Exception {
+		Tab tab = (Tab) event.getOrigin().getTarget();
+		logger.debug(tab.getId() + " --> " + "Entering");
+		String module = getIDbyTab(tab.getId());
+		doRemoveValidation();
+		doClearMessage();
+
+		if (StringUtils.equals(module, AssetConstants.UNIQUE_ID_ACCOUNTING)) {
+			doWriteComponentsToBean(getFeePostings());
+			appendAccountingDetailTab(false);
+		}
+
+	}
+
+	private String getIDbyTab(String tabID) {
+		return tabID.replace("TAB", "");
+	}
+
+	private Tab getTab(String id) {
+		return (Tab) tabsIndexCenter.getFellowIfAny(getTabID(id));
+	}
+
+	private void clearTabpanelChildren(String id) {
+		Tabpanel tabpanel = getTabpanel(id);
+		if (tabpanel != null) {
+			tabpanel.setStyle("overflow:auto;");
+			tabpanel.getChildren().clear();
+		}
+	}
+
+	private Tabpanel getTabpanel(String id) {
+		return (Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny(getTabpanelID(id));
+	}
+
+	/**
+	 * Deletes a JVPosting object from database.<br>
+	 * 
+	 * @throws InterruptedException
+	 */
+	private void doDelete() throws InterruptedException {
+
+	}
+
+	/**
+	 * Clears the components values. <br>
+	 */
+	public void doClear() {
+		logger.debug("Entering");
+		// remove validation, if there are a save before
+
+		logger.debug("Leaving");
+	}
+
+	public void onFulfill$feeTypeCode(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = this.feeTypeCode.getObject();
+		if (dataObject == null || dataObject instanceof String) {
+			this.feeTypeCode.setValue("", "");
+		} else {
+			FeeType feeType = (FeeType) dataObject;
+			getFeePostings().setAccountSetId(String.valueOf(feeType.getAccountSetId()));
+
+		}
+		logger.debug("Leaving" + event.toString());
+
+	}
+
+	public void onFulfill$partnerBankID(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+
+		Object dataObject = partnerBankID.getObject();
+
+		if (dataObject instanceof String) {
+			this.partnerBankID.setValue(dataObject.toString());
+			this.partnerBankID.setDescription("");
+		} else {
+			PartnerBank partnerbank = (PartnerBank) dataObject;
+			if (partnerbank != null) {
+				this.partnerBankID.setValue(String.valueOf(partnerbank.getPartnerBankId()));
+				this.partnerBankID.setDescription(partnerbank.getPartnerBankName());
+				getFeePostings().setPartnerBankAc(partnerbank.getAccountNo());
+				getFeePostings().setPartnerBankAcType(partnerbank.getAcType());
+			}
+		}
+
+		logger.debug("Leaving");
+	}
+
+	public void onChange$postingAgainst(Event event) {
+		this.reference.setConstraint("");
+		this.reference.setErrorMessage("");
+		this.reference.setValue("", "");
+		setFilters(this.postingAgainst.getSelectedItem().getValue().toString());
+	}
+
+	private void setFilters(String postValue) {
+		if (StringUtils.equals(postValue, PennantConstants.List_Select)) {
+			addFilters("", "", "");
+		}
+		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_LOAN)) {
+			addFilters("FinanceMain", "FinReference", "FinType");
+		}
+		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_CUST)) {
+			addFilters("Customer", "CustCIF", "CustShrtName");
+		}
+		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_CMTMNT)) {
+			addFilters("Commitment", "CmtReference", "CmtTitle");
+		}
+		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_COLLATERAL)) {
+			addFilters("CollateralSetup", "CollateralRef", "CollateralType");
+		}
+	}
+
+	private void addFilters(String modulename, String valuecolumn, String descColumn) {
+		this.reference.setModuleName(modulename);
+		this.reference.setValueColumn(valuecolumn);
+		this.reference.setDescColumn(descColumn);
+		this.reference.setValidateColumns(new String[] { valuecolumn });
+	}
+
+	/**
+	 * Saves the components to table. <br>
+	 * 
+	 * @throws InterruptedException
+	 */
+	public void doSave() throws Exception {
+		logger.debug("Entering");
+
+		final FeePostings aFeePosting = new FeePostings();
+		BeanUtils.copyProperties(getFeePostings(), aFeePosting);
+		boolean isNew = false;
+
+		doClearMessage();
+		doSetValidation();
+		// fill the FinanceType object with the components data
+		doWriteComponentsToBean(aFeePosting);
+
+		// Accounting Details Validations
+		if (getAccountingDetailDialogCtrl() != null && !isAccountingExecuted) {
+			MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Accountings"));
+			return;
+		}
+
+		// doStoreInitValues();
+		isNew = aFeePosting.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aFeePosting.getRecordType())) {
+				aFeePosting.setVersion(aFeePosting.getVersion() + 1);
+				if (isNew) {
+					aFeePosting.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else {
+					aFeePosting.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aFeePosting.setNewRecord(true);
+				}
+			}
+		} else {
+			aFeePosting.setVersion(aFeePosting.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+			}
+		}
+		// save it to database
+		try {
+			if (doProcess(aFeePosting, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+		} catch (final DataAccessException e) {
+			logger.error("Exception: ", e);
+			MessageUtil.showErrorMessage(e.getMessage());
+		}
+		logger.debug("Leaving");
+
+	}
+
+	/**
+	 * Method for Refreshing List after Save/Delete a Record
+	 */
+	private void refreshList() {
+		final JdbcSearchObject<FeePostings> soFeePostings = getFeePostingsListCtrl().getSearchObject();
+		getFeePostingsListCtrl().pagingFeePostingList.setActivePage(0);
+		getFeePostingsListCtrl().getPagedListWrapper().setSearchObject(soFeePostings);
+		if (getFeePostingsListCtrl().listBoxFeePosting != null) {
+			getFeePostingsListCtrl().listBoxFeePosting.getListModel();
+		}
+	}
+
+	/**
+	 * Set the workFlow Details List to Object
+	 * 
+	 * @param aAuthorizedSignatoryRepository
+	 *            (AuthorizedSignatoryRepository)
+	 * 
+	 * @param tranType
+	 *            (String)
+	 * 
+	 * @return boolean
+	 * @throws PFFInterfaceException 
+	 * 
+	 */
+
+	private boolean doProcess(FeePostings aFeePostings, String tranType) throws PFFInterfaceException {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
+
+		aFeePostings.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginUsrID());
+		aFeePostings.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aFeePostings.setUserDetails(getUserWorkspace().getLoggedInUser());
+
+		if (isWorkFlowEnabled()) {
+			String taskId = getTaskId(getRole());
+			String nextTaskId = "";
+			aFeePostings.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+
+			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
+				nextTaskId = taskId + ";";
+			} else {
+				nextTaskId = StringUtils.trimToEmpty(aFeePostings.getNextTaskId());
+
+				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
+				if ("".equals(nextTaskId)) {
+					nextTaskId = getNextTaskIds(taskId, aFeePostings);
+				}
+
+				if (isNotesMandatory(taskId, aFeePostings)) {
+					try {
+						if (!notesEntered) {
+							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
+							return false;
+						}
+					} catch (InterruptedException e) {
+						logger.error("Exception: ", e);
+					}
+				}
+			}
+
+			if (StringUtils.isBlank(nextTaskId)) {
+				nextRoleCode = getFirstTaskOwner();
+			} else {
+				String[] nextTasks = nextTaskId.split(";");
+
+				if (nextTasks != null && nextTasks.length > 0) {
+					for (int i = 0; i < nextTasks.length; i++) {
+
+						if (nextRoleCode.length() > 1) {
+							nextRoleCode = nextRoleCode.concat(",");
+						}
+						nextRoleCode = getTaskOwner(nextTasks[i]);
+					}
+				} else {
+					nextRoleCode = getTaskOwner(nextTaskId);
+				}
+			}
+
+			aFeePostings.setTaskId(taskId);
+			aFeePostings.setNextTaskId(nextTaskId);
+			aFeePostings.setRoleCode(getRole());
+			aFeePostings.setNextRoleCode(nextRoleCode);
+
+			auditHeader = getAuditHeader(aFeePostings, tranType);
+
+			String operationRefs = getServiceOperations(taskId, aFeePostings);
+
+			if ("".equals(operationRefs)) {
+				processCompleted = doSaveProcess(auditHeader, null);
+			} else {
+				String[] list = operationRefs.split(";");
+
+				for (int i = 0; i < list.length; i++) {
+					auditHeader = getAuditHeader(aFeePostings, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
+						break;
+					}
+				}
+			}
+		} else {
+			auditHeader = getAuditHeader(aFeePostings, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
+		}
+		logger.debug("Leaving");
+		return processCompleted;
+	}
+
+	/**
+	 * Get the result after processing DataBase Operations
+	 * 
+	 * @param AuditHeader
+	 *            auditHeader
+	 * @param method
+	 *            (String)
+	 * @return boolean
+	 * @throws PFFInterfaceException 
+	 * 
+	 */
+
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws PFFInterfaceException {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		FeePostings aFeePostings = (FeePostings) auditHeader.getAuditDetail().getModelData();
+		boolean deleteNotes = false;
+		try {
+			while (retValue == PennantConstants.porcessOVERIDE) {
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = getFeePostingService().delete(auditHeader);
+						deleteNotes = true;
+					} else {
+						auditHeader = getFeePostingService().saveOrUpdate(auditHeader);
+					}
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = getFeePostingService().doApprove(auditHeader);
+						if (aFeePostings.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+							deleteNotes = true;
+						}
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = getFeePostingService().doReject(auditHeader);
+						if (aFeePostings.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
+						}
+					} else {
+						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_feePostingsDialog, auditHeader);
+						return processCompleted;
+					}
+				}
+				auditHeader = ErrorControl.showErrorDetails(this.window_feePostingsDialog, auditHeader);
+				retValue = auditHeader.getProcessStatus();
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.feePostings), true);
+					}
+				}
+				if (retValue == PennantConstants.porcessOVERIDE) {
+					auditHeader.setOveride(true);
+					auditHeader.setErrorMessage(null);
+					auditHeader.setInfoMessage(null);
+					auditHeader.setOverideMessage(null);
+				}
+			}
+			setOverideMap(auditHeader.getOverideMap());
+		} catch (InterruptedException e) {
+			logger.error("Exception: ", e);
+		}
+		logger.debug("Leaving");
+		return processCompleted;
+	}
+
+	// WorkFlow Components
+
+	/**
+	 * @param aAuthorizedSignatoryRepository
+	 * @param tranType
+	 * @return
+	 */
+
+	private AuditHeader getAuditHeader(FeePostings aFeePostings, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFeePostings.getBefImage(), aFeePostings);
+		return new AuditHeader(Long.toString(aFeePostings.getPostId()), null, null, null, auditDetail,
+				aFeePostings.getUserDetails(), getOverideMap());
+	}
+
+	// ******************************************************//
+	// ****************** getter / setter *******************//
+	// ******************************************************//
+
+	public Window getWindow_JVPostingDialog() {
+		return window_feePostingsDialog;
+	}
+
+	public void setWindow_JVPostingDialog(Window windowJVPostingDialog) {
+		this.window_feePostingsDialog = windowJVPostingDialog;
+	}
+
+	public FeePostingsListCtrl getFeePostingsListCtrl() {
+		return feePostingsListCtrl;
+	}
+
+	public void setFeePostingsListCtrl(FeePostingsListCtrl feePostingsListCtrl) {
+		this.feePostingsListCtrl = feePostingsListCtrl;
+	}
+
+	public PostingsPreparationUtil getPostingsPreparationUtil() {
+		return postingsPreparationUtil;
+	}
+
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	public FeePostings getFeePostings() {
+		return feePostings;
+	}
+
+	public void setFeePostings(FeePostings feePostings) {
+		this.feePostings = feePostings;
+	}
+
+	public AccountingDetailDialogCtrl getAccountingDetailDialogCtrl() {
+		return accountingDetailDialogCtrl;
+	}
+
+	public void setAccountingDetailDialogCtrl(AccountingDetailDialogCtrl accountingDetailDialogCtrl) {
+		this.accountingDetailDialogCtrl = accountingDetailDialogCtrl;
+	}
+
+	public FinanceDetailService getFinanceDetailService() {
+		return financeDetailService;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
+	}
+
+	public AccountEngineExecution getEngineExecution() {
+		return engineExecution;
+	}
+
+	public void setEngineExecution(AccountEngineExecution engineExecution) {
+		this.engineExecution = engineExecution;
+	}
+
+	public AccountingSetService getAccountingSetService() {
+		return accountingSetService;
+	}
+
+	public void setAccountingSetService(AccountingSetService accountingSetService) {
+		this.accountingSetService = accountingSetService;
+	}
+
+	public FeePostingService getFeePostingService() {
+		return feePostingService;
+	}
+
+	public void setFeePostingService(FeePostingService feePostingService) {
+		this.feePostingService = feePostingService;
+	}
+
+}

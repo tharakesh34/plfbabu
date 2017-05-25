@@ -9728,4 +9728,40 @@
        <property name="builderGroupDAO" ref="builderGroupDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
+ 
+   <!-- Fee Postings -->
+	<bean id="feePostingsDAO"
+		class="com.pennant.backend.dao.fees.impl.FeePostingsDAOImpl"
+		parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="feePostingService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="pfsTransactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="feePostingServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	<bean name="feePostingServiceTarget"
+		class="com.pennant.backend.service.fees.feepostings.impl.FeePostingServiceImpl">
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="feePostingsDAO" ref="feePostingsDAO" />
+		<property name="engineExecution" ref="engineExecution" />
+		<property name="postingsDAO" ref="postingsDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="accountingSetDAO" ref="accountingSetDAO" />		
+
+	</bean>
+   
 </beans>
