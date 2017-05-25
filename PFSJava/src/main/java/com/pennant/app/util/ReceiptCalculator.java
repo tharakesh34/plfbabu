@@ -1499,11 +1499,6 @@ public class ReceiptCalculator implements Serializable {
 							newSchdlEP.setEarlyPaidBal(prvSchd.getEarlyPaidBal());
 							repayMain.setEarlyRepayNewSchd(newSchdlEP);
 						}
-						
-						// Setting Total Outstanding balance to Early Payment Amount
-						if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
-							repayMain.setEarlyPayAmount(repayMain.getEarlyPayAmount().add(curSchd.getPrincipalSchd()));
-						}
 					}
 				}
 			}
@@ -1519,6 +1514,7 @@ public class ReceiptCalculator implements Serializable {
 				}else if (DateUtility.compare(curBussniessDate, schdDate) == 0) {
 					pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitSchd());
 					priBalance = priBalance.add(curSchd.getPrincipalSchd().add(curSchd.getClosingBalance()));
+					repayMain.setEarlyPayAmount(curSchd.getClosingBalance());
 					partAccrualReq = false;
 				} else {
 					if(partAccrualReq && prvSchd != null){
@@ -1529,7 +1525,8 @@ public class ReceiptCalculator implements Serializable {
 								.divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
 						
 						pftAccruedTillNow = pftAccruedTillNow.add(accruedPft);
-						priBalance = priBalance.add(curSchd.getClosingBalance().subtract(curSchd.getCpzAmount())).add(curSchd.getPrincipalSchd());
+						priBalance = priBalance.add(prvSchd.getClosingBalance());
+						repayMain.setEarlyPayAmount(prvSchd.getClosingBalance());
 					}
 				}
 			}
