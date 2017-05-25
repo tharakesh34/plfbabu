@@ -635,4 +635,13 @@ update SeqSecRights set SeqNo = (SeqNo+10+4) ;
 		 <dropNotNullConstraint columnDataType="VARCHAR2(8)" columnName="FINTYPE" tableName="ACCOUNTMAPPING"/>
 		 <dropNotNullConstraint columnDataType="VARCHAR2(8)" columnName="FINTYPE" tableName="ACCOUNTMAPPING_Temp"/>
 	</changeSet>
+	
+	<changeSet id="47" author="Durgaprasad G">
+		<dropNotNullConstraint tableName="INT_DSBIMPS_REQUEST" columnName="RECEIVERMOBILENO" columnDataType="VARCHAR2(105)" />
+		<dropNotNullConstraint tableName="INT_DSBIMPS_REQUEST" columnName="RECEIVEREMAILID" columnDataType="VARCHAR2(105)" />
+		<dropNotNullConstraint tableName="INT_DSBIMPS_REQUEST" columnName="RECEVIERBANKSTATE" columnDataType="VARCHAR2(105)" />
+		<dropNotNullConstraint tableName="INT_DSBIMPS_REQUEST" columnName="RECEVIERBANKCITY" columnDataType="VARCHAR2(35)" />
+		<dropNotNullConstraint tableName="INT_DSBIMPS_REQUEST" columnName="REMARKS" columnDataType="VARCHAR2(10)" />
+	</changeSet>
+	
 </databaseChangeLog>
