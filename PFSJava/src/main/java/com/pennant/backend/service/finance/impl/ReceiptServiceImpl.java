@@ -169,6 +169,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			FinanceType financeType = getFinanceTypeDAO().getFinanceTypeByID(financeMain.getFinType(), "_AView");
 			scheduleData.setFinanceType(financeType);
 			
+			/*
 			// Fee Details
 			//scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinFeeDetailByFinRef(finReference, false, "_View"));//FIXME Fees
 			scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinScheduleFees(finReference, false, "_View"));
@@ -187,6 +188,52 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					List<FinFeeScheduleDetail> feeScheduleList = getFinFeeScheduleDetailDAO().getFeeScheduleByFinID(feeIDList, false, "");
 
 					if(feeScheduleList != null && !feeScheduleList.isEmpty()){
+						HashMap<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();                        
+						for (int i = 0; i < feeScheduleList.size(); i++) {
+							FinFeeScheduleDetail schdFee = feeScheduleList.get(i);
+
+							List<FinFeeScheduleDetail> schList = new ArrayList<>();
+							if (schFeeMap.containsKey(schdFee.getFeeID())) {
+								schList = schFeeMap.get(schdFee.getFeeID());
+								schFeeMap.remove(schdFee.getFeeID());
+							}
+							schList.add(schdFee);
+							schFeeMap.put(schdFee.getFeeID(), schList);
+
+						}
+
+						for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++) {
+							FinFeeDetail feeDetail = scheduleData.getFinFeeDetailList().get(i);
+							if (schFeeMap.containsKey(feeDetail.getFeeID())) {
+								feeDetail.setFinFeeScheduleDetailList(schFeeMap.get(feeDetail.getFeeID()));
+							}
+						}
+					}
+				}
+			}*/
+			
+			// Fee Details
+			scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinFeeDetailByFinRef(finReference, false, "_View"));
+			
+			// Finance Fee Schedule Details
+			if (scheduleData.getFinFeeDetailList() != null && !scheduleData.getFinFeeDetailList().isEmpty()) {
+
+				List<Long> feeIDList = new ArrayList<>();
+				for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++) {
+					FinFeeDetail feeDetail = scheduleData.getFinFeeDetailList().get(i);
+
+					if(StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT) ||
+							StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS) ||
+							StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)){
+						feeIDList.add(feeDetail.getFeeID());
+					}
+				}
+
+				if(!feeIDList.isEmpty()){
+					List<FinFeeScheduleDetail> feeScheduleList = getFinFeeScheduleDetailDAO().getFeeScheduleByFinID(feeIDList, false, "");
+
+					if(feeScheduleList != null && !feeScheduleList.isEmpty()){
+
 						HashMap<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();                        
 						for (int i = 0; i < feeScheduleList.size(); i++) {
 							FinFeeScheduleDetail schdFee = feeScheduleList.get(i);
@@ -568,12 +615,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		
 		// Finance Fee Details
 		// =======================================
-		if (rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList() != null
+		/*if (rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList() != null
 				&& !rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList().isEmpty()) {
 			auditDetails.addAll(getFinFeeDetailService().saveOrUpdate(
 					rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailActualList(), tableType.getSuffix(),
 					auditHeader.getAuditTranType(), false));
-		}
+		}*/
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain
@@ -720,11 +767,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		auditHeader.setAuditModule("FinanceDetail");
 		getAuditHeaderDAO().addAudit(auditHeader);
 		
-		if (receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList() != null) {
+		/*if (receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList() != null) {
 			auditHeader.getAuditDetails().addAll(getFinFeeDetailService().delete(
 					receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailActualList(), "_Temp",
 					auditHeader.getAuditTranType(), false));
-		}
+		}*/
 
 		//Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(receiptData);
@@ -960,7 +1007,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		
 		// Finance Fee Details
-		if (!rceiptData.getFinanceDetail().isExtSource()) {
+		/*if (!rceiptData.getFinanceDetail().isExtSource()) {
 			if (rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList() != null) {
 				getFinFeeDetailService().doApprove(rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailActualList(), "",
 						tranType, false);
@@ -972,7 +1019,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			auditDetails.addAll(getFinFeeDetailService().delete(
 					rceiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailActualList(), "_Temp",
 					auditHeader.getAuditTranType(), false));
-		}
+		}*/
 
 		// send Limit Amendment Request to ACP Interface and save log details
 		//=======================================
@@ -1264,13 +1311,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		
 		// Finance Fee details
-		if (!financeDetail.isExtSource()) {
+		/*if (!financeDetail.isExtSource()) {
 			if (financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
 				auditDetails.addAll(getFinFeeDetailService().validate(
 						financeDetail.getFinScheduleData().getFinFeeDetailActualList(), financeMain.getWorkflowId(),
 						method, auditTranType, auditHeader.getUsrLanguage(), false));
 			}
-		}
+		}*/
 
 		financeDetail.setAuditDetailMap(auditDetailMap);
 		repayData.setFinanceDetail(financeDetail);

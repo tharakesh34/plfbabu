@@ -6224,7 +6224,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Fee Details
-		scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinScheduleFees(finReference, false, "_View"));
+		/*scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinScheduleFees(finReference, false, "_View"));
 		
 		// Finance Fee Schedule Details
 		if (scheduleData.getFinFeeDetailList() != null && !scheduleData.getFinFeeDetailList().isEmpty()) {
@@ -6262,9 +6262,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					}
 				}
 			}
-		}
+		}*/
 		
-		/*scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinFeeDetailByFinRef(finReference, false, "_View"));
+		scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinFeeDetailByFinRef(finReference, false, "_View"));
 
 		// Finance Fee Schedule Details
 		if (scheduleData.getFinFeeDetailList() != null && !scheduleData.getFinFeeDetailList().isEmpty()) {
@@ -6311,7 +6311,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					}
 				}
 			}
-		}*/
+		}
 
 		// Insurance Details
 		if (ImplementationConstants.ALLOW_INSURANCE) {

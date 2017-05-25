@@ -1314,12 +1314,12 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			}
 			if(isLoadProcess){
 				Tab tab = (Tab) tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_FEE));
-				if(feeDetailWindow != null) {
+				/*if(feeDetailWindow != null) {
 					tab.close();
 					createTab(AssetConstants.UNIQUE_ID_FEE, isLoadProcess);
 					tab = (Tab) tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_FEE));
 					feeDetailWindow = null;
-				}
+				}*/
 				tab.setVisible(true);
 				
 				HashMap<String, Object> map = getDefaultArguments();

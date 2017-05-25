@@ -909,8 +909,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		int formatter =  CurrencyUtil.getFormat(finMain.getFinCcy());
 		finFeeDetails = sortFeesByFeeOrder(finFeeDetails);
 		setFinFeeDetailList(finFeeDetails);
-		//boolean readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance"); //FIXME Rights
-		boolean readOnly = false;
+		boolean readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance");
 		if (finMain.isQuickDisb() && readOnly) {
 			readOnly=isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance_QDP"); 
 		}
