@@ -48,10 +48,11 @@
 	<include file="change-logs/change-log-2.55.0.xml" />
 	<include file="change-logs/change-log-3.0.0.xml" />
 	<include file="change-logs/change-log-3.1.0.xml" />
-	<include file="change-logs/change-log-3.2.0.xml" />
-	<include file="change-logs/change-log-3.3.0.xml" />
+	<!-- <include file="change-logs/change-log-3.2.0.xml" />
+	<include file="change-logs/change-log-3.3.0.xml" /> -->
 		<include file="change-logs/change-log-vas.xml" />
 	<include file="change-logs/change-log-3.4.0.xml" />
 	<include file="change-logs/change-log-3.5.0.xml" />
 	<include file="change-logs/change-log-3.6.0.xml" />
+	<include file="change-logs/change-log-3.7.0.xml" />
 </databaseChangeLog>
