@@ -240,6 +240,9 @@ public class FeeDetailService {
 			}
 		}
 
+		if(AccountEventConstants.ACCEVENT_EARLYSTL.equals(finScheduleData.getFinanceMain().getFinSourceID())) {
+			finScheduleData.setFinFeeDetailList(actualFinFeeList);
+		}
 		//Insurance Amounts
 		finScheduleData.getFinanceMain().setInsuranceAmt(insAddToDisb);
 		finScheduleData.getFinanceMain().setDeductInsDisb(deductInsFromDisb);
@@ -298,7 +301,8 @@ public class FeeDetailService {
 	private List<FinFeeDetail> prepareActualFinFees(List<FinFeeDetail> finTypeFees, List<FinFeeDetail> finFeeDetailList) {
 		for(FinFeeDetail finTypeFeeDetail: finTypeFees) {
 			for(FinFeeDetail finFeeDetail: finFeeDetailList) {
-				if(StringUtils.equals(finTypeFeeDetail.getFeeTypeCode(), finFeeDetail.getFeeTypeCode())) {
+				if(StringUtils.equals(finTypeFeeDetail.getFeeTypeCode(), finFeeDetail.getFeeTypeCode())
+						&& StringUtils.equals(finTypeFeeDetail.getFinEvent(), finFeeDetail.getFinEvent())) {
 					finTypeFeeDetail.setFeeScheduleMethod(finFeeDetail.getFeeScheduleMethod());
 					finTypeFeeDetail.setPaidAmount(finFeeDetail.getPaidAmount());
 					finTypeFeeDetail.setTerms(finFeeDetail.getTerms());

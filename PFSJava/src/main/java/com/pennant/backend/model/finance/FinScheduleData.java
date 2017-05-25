@@ -79,7 +79,8 @@ import com.pennant.backend.util.WorkFlowUtil;
 @XmlType(propOrder = { "finReference", "financeMain", "repayInstructions", "rateInstruction", "finFeeDetailList",
 		"feeDues", "foreClosureFees", "insuranceList", "stepPolicyDetails", "financeScheduleDetails",
 		"finODPenaltyRate", "apiPlanEMIHmonths", "apiPlanEMIHDates", "finODDetails", "financeSummary",
-		"vasRecordingList", "returnStatus" })
+		"vasRecordingList", "excessAmount", "advPaymentAmount", "outstandingPri", "overduePft", "tdPftAccured",
+		"returnStatus" })
 @XmlRootElement(name = "financeSchedule")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinScheduleData {
@@ -156,6 +157,17 @@ public class FinScheduleData {
 	@XmlElementWrapper(name="feeDues")
 	@XmlElement(name="feeDue")
 	List<FinFeeDetail> feeDues;
+	@XmlElement
+	private BigDecimal excessAmount = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal advPaymentAmount = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal outstandingPri = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal overduePft = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal tdPftAccured = BigDecimal.ZERO;
+	
 	@XmlElement
 	private WSReturnStatus returnStatus;
 
@@ -688,5 +700,44 @@ public class FinScheduleData {
 
 	public void setFeeDues(List<FinFeeDetail> feeDues) {
 		this.feeDues = feeDues;
+	}
+	public BigDecimal getExcessAmount() {
+		return excessAmount;
+	}
+
+	public void setExcessAmount(BigDecimal excessAmount) {
+		this.excessAmount = excessAmount;
+	}
+
+	public BigDecimal getAdvPaymentAmount() {
+		return advPaymentAmount;
+	}
+
+	public void setAdvPaymentAmount(BigDecimal advPaymentAmount) {
+		this.advPaymentAmount = advPaymentAmount;
+	}
+
+	public BigDecimal getOutstandingPri() {
+		return outstandingPri;
+	}
+
+	public void setOutstandingPri(BigDecimal outstandingPri) {
+		this.outstandingPri = outstandingPri;
+	}
+
+	public BigDecimal getOverduePft() {
+		return overduePft;
+	}
+
+	public void setOverduePft(BigDecimal overduePft) {
+		this.overduePft = overduePft;
+	}
+
+	public BigDecimal getTdPftAccured() {
+		return tdPftAccured;
+	}
+
+	public void setTdPftAccured(BigDecimal tdPftAccured) {
+		this.tdPftAccured = tdPftAccured;
 	}
 }

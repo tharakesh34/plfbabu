@@ -36,9 +36,9 @@ public class SummaryDetailService {
 	private final static Logger		logger	= Logger.getLogger(SummaryDetailService.class);
 
 	private FinanceDisbursementDAO	financeDisbursementDAO;
-	protected FinODDetailsDAO			finODDetailsDAO;
+	protected FinODDetailsDAO		finODDetailsDAO;
 	private FinanceProfitDetailDAO	financeProfitDetailDAO;
-	private AccrualService 			accrualService;
+	private AccrualService			accrualService;
 
 	public FinanceSummary getFinanceSummary(FinanceDetail financeDetail) {
 		logger.debug("Entering");
@@ -251,6 +251,10 @@ public class SummaryDetailService {
 	@Autowired
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
+	}
+	
+	public FinanceProfitDetailDAO getFinanceProfitDetailDAO() {
+		return financeProfitDetailDAO;
 	}
 
 	public AccrualService getAccrualService() {

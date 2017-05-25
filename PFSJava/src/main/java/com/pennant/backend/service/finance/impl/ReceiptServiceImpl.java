@@ -2,6 +2,7 @@ package com.pennant.backend.service.finance.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,6 +18,7 @@ import org.apache.log4j.Logger;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.finance.limits.LimitCheckDetails;
+import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReceiptCalculator;
@@ -1462,8 +1464,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * @throws IllegalAccessException 
 	 */
 	@Override
-	public FinReceiptData setEarlyRepayEffectOnSchedule(FinReceiptData receiptData, FinServiceInstruction finServiceInstruction) 
-			throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	public FinReceiptData recalEarlypaySchdl(FinReceiptData receiptData, FinServiceInstruction finServiceInstruction, 
+			String recptPurpose) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
 
 		//Schedule Recalculation Depends on Earlypay Effective Schedule method
@@ -1472,19 +1474,67 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinanceMain aFinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		
+		// Setting Effective Recalculation Schedule Method
+		String method = null;
+		if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			method = finServiceInstruction.getRecalType();
+		} else if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)
+				||StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+			method = CalculationConstants.EARLYPAY_ADJMUR;
+		}
+		
 		BigDecimal totalBal = receiptData.getReceiptHeader().getReceiptAmount();
-		if(receiptData.getAllocationMap() != null && !receiptData.getAllocationMap().isEmpty()){
-			List<String> allocationKeys = new ArrayList<>(receiptData.getAllocationMap().keySet());
-			for (int i = 0; i < allocationKeys.size(); i++) {
-				totalBal = totalBal.subtract(receiptData.getAllocationMap().get(allocationKeys.get(i)));
+		if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			if(receiptData.getAllocationMap() != null && !receiptData.getAllocationMap().isEmpty()){
+				List<String> allocationKeys = new ArrayList<>(receiptData.getAllocationMap().keySet());
+				for (int i = 0; i < allocationKeys.size(); i++) {
+					totalBal = totalBal.subtract(receiptData.getAllocationMap().get(allocationKeys.get(i)));
+				}
+			}
+		}
+		
+		// Accrued Profit Calculation
+		Date curBussniessDate = DateUtility.getAppDate();
+		BigDecimal priBalance = BigDecimal.ZERO;
+		if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+
+			FinanceScheduleDetail curSchd = null;
+			FinanceScheduleDetail prvSchd = null;
+
+			for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
+				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+				if(i != 0){
+					prvSchd = finScheduleData.getFinanceScheduleDetails().get(i - 1);
+				}
+				if (DateUtility.compare(curBussniessDate, curSchd.getSchDate()) == 0) {
+					if(StringUtils.equals(curSchd.getSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)){
+						priBalance = curSchd.getClosingBalance().subtract(curSchd.getCpzAmount()).add(curSchd.getProfitCalc().add(prvSchd.getProfitBalance()));
+					}else{
+						priBalance = curSchd.getClosingBalance().subtract(curSchd.getCpzAmount());
+					}
+					break;
+				} else if (DateUtility.compare(curBussniessDate, curSchd.getSchDate()) < 0) {
+					priBalance = prvSchd.getClosingBalance();
+					
+					if(StringUtils.equals(curSchd.getSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)){
+						BigDecimal accruedPft = CalculationUtil.calInterest(prvSchd.getSchDate(), curBussniessDate, curSchd.getBalanceForPftCal(),
+								prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
+						accruedPft = accruedPft.setScale(0, RoundingMode.HALF_DOWN);
+						priBalance = priBalance.add(accruedPft.add(prvSchd.getProfitBalance()));
+					}
+					break;
+				}
 			}
 		}
 
-		String method = finServiceInstruction.getRecalType();
 		// Schedule re-modifications only when Effective Schedule Method modified
 		if (!StringUtils.equals(method, CalculationConstants.EARLYPAY_NOEFCT)) {
 
-			receiptData.getRepayMain().setEarlyPayAmount(totalBal);
+			if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+				receiptData.getRepayMain().setEarlyPayAmount(totalBal);
+			}else if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
+				receiptData.getRepayMain().setEarlyPayAmount(priBalance);
+			}
 
 			if (StringUtils.equals(method, CalculationConstants.EARLYPAY_RECPFI)
 					|| StringUtils.equals(method, CalculationConstants.EARLYPAY_ADMPFI)) {

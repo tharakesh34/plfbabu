@@ -18,9 +18,11 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RepayCalculator;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinRepayHeader;
@@ -42,6 +44,8 @@ import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.util.APIConstants;
@@ -60,11 +64,11 @@ public class FinStatementController extends SummaryDetailService {
 	private FeeDetailService			feeDetailService;
 
 	// TODO: cleanup required(DDP)
-	private FinServiceInstController	finServiceInstController;
 	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
 	private RepayCalculator				repayCalculator;
 	private ManualPaymentService		manualPaymentService;
 	private ManualAdviseDAO				manualAdviseDAO;
+	private FinExcessAmountDAO			finExcessAmountDAO;
 
 	/**
 	 * get the FinStatement Details by the given FinReferences.
@@ -155,9 +159,31 @@ public class FinStatementController extends SummaryDetailService {
 					FinanceDetail aFinanceDetail = cloner.deepClone(financeDetail);
 					financeDetail = getForeClosureDetails(financeDetail, days);
 					
+					FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 					// setting old values
 					financeDetail.setCustomerDetails(aFinanceDetail.getCustomerDetails());
-					financeDetail.getFinScheduleData().setFinanceMain(aFinanceDetail.getFinScheduleData().getFinanceMain());
+					finScheduleData.setFinanceMain(aFinanceDetail.getFinScheduleData().getFinanceMain());
+					
+					// fetch excess amount
+					FinExcessAmount finExcessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference, 
+							RepayConstants.EXAMOUNTTYPE_EXCESS);
+					if(finExcessAmount != null) {
+						finScheduleData.setExcessAmount(finExcessAmount.getAmount());
+					}
+					
+					// calculate advPaymentAmount, outstandingPri, overduePft and tdPftAccured
+					FinanceProfitDetail finPftDetail = getFinanceProfitDetailDAO().getFinProfitDetailsForSummary(finReference);
+					if (finPftDetail == null) {
+						finPftDetail = new FinanceProfitDetail();
+						finPftDetail.setFinStartDate(finScheduleData.getFinanceMain().getFinStartDate());
+						finPftDetail = getAccrualService().calProfitDetails(finScheduleData.getFinanceMain(), financeDetail.getFinScheduleData()
+								.getFinanceScheduleDetails(), finPftDetail, DateUtility.getAppDate());
+					} 
+					
+					finScheduleData.setAdvPaymentAmount(finPftDetail.getTotalPftPaidInAdv().add(finPftDetail.getTotalPriPaidInAdv()));
+					finScheduleData.setOutstandingPri(finPftDetail.getTotalPriBal());
+					finScheduleData.setOverduePft(finPftDetail.getODProfit());
+					finScheduleData.setTdPftAccured(finPftDetail.getAmzTillLBD().subtract(finPftDetail.getTdSchdPftPaid()));
 				}
 
 				// generate response info
@@ -208,12 +234,14 @@ public class FinStatementController extends SummaryDetailService {
 		List<FinODDetails> finOdDetaiList = new ArrayList<FinODDetails>();
 		List<FinFeeDetail> finFeeDetails = new ArrayList<FinFeeDetail>();
 		try {
-			for (int i = 1; i <= days; i++) {
+			for (int i = 0; i <= days; i++) {
+				Cloner cloner = new Cloner();
+				FinanceDetail aFinanceDetail = cloner.deepClone(financeDetail);
 				serviceInstruction.setFromDate(DateUtility.addDays(DateUtility.getAppDate(), i));
-				financeDetail = doProcessPayments(financeDetail, serviceInstruction);
-				finFeeDetails = financeDetail.getFinScheduleData().getFinFeeDetailList();
-				foreClosureList.add(financeDetail.getForeClosureDetails().get(0));
-				finOdDetaiList.add(financeDetail.getFinScheduleData().getFinODDetails().get(0));
+				aFinanceDetail = doProcessPayments(aFinanceDetail, serviceInstruction);
+				finFeeDetails = aFinanceDetail.getFinScheduleData().getFinFeeDetailList();
+				foreClosureList.add(aFinanceDetail.getForeClosureDetails().get(0));
+				finOdDetaiList.add(aFinanceDetail.getFinScheduleData().getFinODDetails().get(0));
 			}
 			
 			scheduleData.setFinReference(finReference);
@@ -265,13 +293,19 @@ public class FinStatementController extends SummaryDetailService {
 		}
 		
 		// foreclosure fees
+		List<FinFeeDetail> foreClosureFees = new ArrayList<FinFeeDetail>();
+		financeDetail.getFinScheduleData().getFinanceMain().setFinSourceID(AccountEventConstants.ACCEVENT_EARLYSTL);
 		feeDetailService.doExecuteFeeCharges(financeDetail, AccountEventConstants.ACCEVENT_EARLYSTL);
 		if(financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
 			for(FinFeeDetail fee:financeDetail.getFinScheduleData().getFinFeeDetailList()) {
 				if(StringUtils.equals(fee.getFinEvent(), AccountEventConstants.ACCEVENT_EARLYSTL)) {
-					scheduleData.getForeClosureFees().add(fee);
+					if(StringUtils.equals(fee.getFeeScheduleMethod(), PennantConstants.List_Select)) {
+						fee.setFeeScheduleMethod(null);
+					}
+					foreClosureFees.add(fee);
 				}
 			}
+			scheduleData.setForeClosureFees(foreClosureFees);
 		}
 	}
 
@@ -455,10 +489,6 @@ public class FinStatementController extends SummaryDetailService {
 		this.collateralSetupService = collateralSetupService;
 	}
 
-	public void setFinServiceInstController(FinServiceInstController finServiceInstController) {
-		this.finServiceInstController = finServiceInstController;
-	}
-
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
@@ -477,6 +507,10 @@ public class FinStatementController extends SummaryDetailService {
 
 	public void setFeeDetailService(FeeDetailService feeDetailService) {
 		this.feeDetailService = feeDetailService;
+	}
+	
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
 }

@@ -20,7 +20,8 @@ public interface ReceiptService {
 	FinanceProfitDetail getPftDetailForEarlyStlReport(String finReference);
 	FinReceiptHeader getFinReceiptHeaderById(long receiptID, String type);
 	FinReceiptData calculateRepayments(FinReceiptData finReceiptData);
-	FinReceiptData setEarlyRepayEffectOnSchedule(FinReceiptData receiptData, FinServiceInstruction finServiceInstruction) throws IllegalAccessException, 
+	FinReceiptData recalEarlypaySchdl(FinReceiptData receiptData, FinServiceInstruction finServiceInstruction, String purpose) 
+			throws IllegalAccessException, 
 	InvocationTargetException, PFFInterfaceException;
 	List<FinFeeDetail> getFinFeeDetailById(String finReference, boolean isWIF, String type, String eventCode);
 }

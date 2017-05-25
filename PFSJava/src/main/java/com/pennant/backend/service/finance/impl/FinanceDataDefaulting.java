@@ -461,6 +461,14 @@ public class FinanceDataDefaulting {
 		if (StringUtils.isBlank(finMain.getProfitDaysBasis())) {
 			finMain.setProfitDaysBasis(financeType.getFinDaysCalType());
 		}
+		
+		// Review rate applied for
+		finMain.setRvwRateApplFor(financeType.getFinRvwRateApplFor());
+		finMain.setFinCategory(financeType.getFinCategory());
+		finMain.setRateChgAnyDay(financeType.isRateChgAnyDay());
+		finMain.setPastduePftCalMthd(financeType.getPastduePftCalMthd());
+		finMain.setPastduePftMargin(financeType.getPastduePftMargin());
+		finMain.setSchCalOnRvw(financeType.getFinSchCalCodeOnRvw());
 
 		// Multi Disbursement
 		if (financeType.isFinIsAlwMD()) {

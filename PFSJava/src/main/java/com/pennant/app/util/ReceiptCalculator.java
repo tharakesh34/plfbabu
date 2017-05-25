@@ -1078,6 +1078,7 @@ public class ReceiptCalculator implements Serializable {
 		// Load Pending Schedules until balance available for payment
 		for (int i = 1; i < scheduleDetails.size(); i++) {
 			FinanceScheduleDetail curSchd = scheduleDetails.get(i);
+			FinanceScheduleDetail prvSchd = scheduleDetails.get(i-1);
 			Date schdDate = curSchd.getSchDate();
 			Date prvSchdDate = scheduleDetails.get(i-1).getSchDate();
 
@@ -1108,10 +1109,8 @@ public class ReceiptCalculator implements Serializable {
 					
 					if(isLastTermForES){
 						priCalcCompleted = true;
-						if (schdDate.compareTo(curBussniessDate) > 0){
+						if (schdDate.compareTo(curBussniessDate) >= 0){
 							balPri = balPri.add(curSchd.getClosingBalance().subtract(curSchd.getCpzAmount()));
-						}else if (schdDate.compareTo(curBussniessDate) == 0){
-							balPri = balPri.add(curSchd.getClosingBalance());
 						}
 					}
 					
@@ -1148,10 +1147,10 @@ public class ReceiptCalculator implements Serializable {
 							if(isLastTermForES){
 								pftCalcCompleted = true;
 								if (schdDate.compareTo(curBussniessDate) > 0){
-									int days = DateUtility.getDaysBetween(prvSchdDate, curBussniessDate);
-									int daysInCurPeriod = curSchd.getNoOfDays();
-									balPft = curSchd.getProfitCalc().multiply(new BigDecimal(days))
-											.divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
+									balPft = CalculationUtil.calInterest(prvSchd.getSchDate(), curBussniessDate, curSchd.getBalanceForPftCal(),
+											prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
+								}else if (schdDate.compareTo(curBussniessDate) == 0){
+									balPft = curSchd.getProfitCalc().subtract(curSchd.getSchdPftPaid()).add(prvSchd.getProfitBalance());
 								}
 							}
 							
@@ -1510,21 +1509,24 @@ public class ReceiptCalculator implements Serializable {
 			if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
 				if (DateUtility.compare(schdDate, curBussniessDate) < 0) {
 					pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitSchd());
-					priBalance = priBalance.add(curSchd.getPrincipalSchd());
+					priBalance = priBalance.add(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
 				}else if (DateUtility.compare(curBussniessDate, schdDate) == 0) {
-					pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitSchd());
-					priBalance = priBalance.add(curSchd.getPrincipalSchd().add(curSchd.getClosingBalance()));
-					repayMain.setEarlyPayAmount(curSchd.getClosingBalance());
+					pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitCalc().add(prvSchd.getProfitBalance()));
+					priBalance = priBalance.add(curSchd.getPrincipalSchd().add(curSchd.getClosingBalance())).subtract(curSchd.getCpzAmount()).subtract(curSchd.getSchdPriPaid());
+					
+					if(StringUtils.equals(curSchd.getSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)){
+						repayMain.setEarlyPayAmount(curSchd.getClosingBalance().subtract(curSchd.getCpzAmount()).add(curSchd.getProfitCalc().add(prvSchd.getProfitBalance())));
+					}else{
+						repayMain.setEarlyPayAmount(curSchd.getClosingBalance().subtract(curSchd.getCpzAmount()));
+					}
 					partAccrualReq = false;
 				} else {
 					if(partAccrualReq && prvSchd != null){
 						partAccrualReq = false;
-						int days = DateUtility.getDaysBetween(prvSchd.getSchDate(), curBussniessDate);
-						int daysInCurPeriod = curSchd.getNoOfDays();
-						BigDecimal accruedPft = curSchd.getProfitCalc().multiply(new BigDecimal(days))
-								.divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
+						BigDecimal accruedPft = CalculationUtil.calInterest(prvSchd.getSchDate(), curBussniessDate, curSchd.getBalanceForPftCal(),
+								prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
 						
-						pftAccruedTillNow = pftAccruedTillNow.add(accruedPft);
+						pftAccruedTillNow = pftAccruedTillNow.add(accruedPft).add(prvSchd.getProfitBalance());
 						priBalance = priBalance.add(prvSchd.getClosingBalance());
 						repayMain.setEarlyPayAmount(prvSchd.getClosingBalance());
 					}
