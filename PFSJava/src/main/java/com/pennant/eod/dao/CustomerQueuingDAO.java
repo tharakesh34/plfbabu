@@ -32,5 +32,7 @@ public interface CustomerQueuingDAO {
 
 	List<Customer> getCustForProcess(int threadId);
 
+	void updateSucess(int threadId);
+
 
 }

@@ -10,6 +10,7 @@ public interface EodConstants {
 	int		PROGRESS_WAIT		= 0;
 	int		PROGRESS_IN_PROCESS	= 1;
 	int		PROGRESS_SUCCESS	= 2;
+	int		PROGRESS_FAILED		= 3;
 
 	String	DATA_CUSTOMERCOUNT	= "CustomerCount";
 	String	DATA_COMPLETED		= "Completed";

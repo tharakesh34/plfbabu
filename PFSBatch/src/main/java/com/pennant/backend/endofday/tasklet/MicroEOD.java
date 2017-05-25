@@ -97,7 +97,6 @@ public class MicroEOD implements Tasklet {
 			logger.debug("COMPLETE: Micro EOD On :" + valueDate);
 		}
 
-
 		return RepeatStatus.FINISHED;
 	}
 
@@ -121,7 +120,7 @@ public class MicroEOD implements Tasklet {
 				custEODEvent.setEodSuccess(false);
 			}
 		}
-		
+
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setReadOnly(true);
 		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRED);
@@ -146,12 +145,11 @@ public class MicroEOD implements Tasklet {
 					}
 
 					//customer Date update
-					eodService.getLoadFinanceData().updateCustomerDate(custEODEvent.getCustomer().getCustID(), valueDate);
-					
-					updateCustQueueStatus(threadId, custEODEvent.getCustomer().getCustID(), EodConstants.PROGRESS_SUCCESS, false);
+					eodService.getLoadFinanceData().updateCustomerDate(custEODEvent.getCustomer().getCustID(),
+							valueDate);
+					//					updateCustQueueStatus(threadId, custEODEvent.getCustomer().getCustID(), EodConstants.PROGRESS_SUCCESS, false);
 
 				} catch (Exception e) {
-					transactionManager.rollback(txStatus);
 					updateFailed(threadId, custEODEvent.getCustomer().getCustID());
 				}
 
@@ -160,6 +158,7 @@ public class MicroEOD implements Tasklet {
 				custEODEvent = null;
 			}
 		}
+		customerQueuingDAO.updateSucess(threadId);
 
 		//COMMIT THE TRANSACTION
 		transactionManager.commit(txStatus);
@@ -182,7 +181,7 @@ public class MicroEOD implements Tasklet {
 		customerQueuing.setEndTime(DateUtility.getSysDate());
 		//reset thread for reallocation
 		customerQueuing.setThreadId(0);
-		customerQueuing.setProgress(EodConstants.PROGRESS_WAIT);
+		customerQueuing.setProgress(EodConstants.PROGRESS_FAILED);
 		customerQueuingDAO.updateFailed(customerQueuing);
 	}
 

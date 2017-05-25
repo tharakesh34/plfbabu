@@ -203,6 +203,25 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
 		logger.debug("Leaving");
 	}
+	
+	@Override
+	public void updateSucess(int threadId) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ThreadId", threadId);
+		source.addValue("Progress", EodConstants.PROGRESS_SUCCESS);
+		source.addValue("InProgress", EodConstants.PROGRESS_IN_PROCESS);
+		source.addValue("EndTime", DateUtility.getSysDate());
+
+		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing set");
+		updateSql.append(" EndTime = :EndTime,");
+		updateSql.append(" Progress = :Progress Where ThreadId=:ThreadId AND Progress=:InProgress ");
+		logger.debug("updateSql: " + updateSql.toString());
+
+		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
+
+		logger.debug("Leaving");
+	}
 
 	@Override
 	public void updateFailed(CustomerQueuing customerQueuing) {
