@@ -393,4 +393,10 @@ WHERE     NOT EXISTS (SELECT 1 FROM BuilderProjcet_TEMP WHERE Id = T1.Id)
 	
 	</sql>
 	</changeSet>
+	<changeSet id="18" author="Jayant">
+	    <sql>
+	        update manualadvise set balanceAmt=(adviseamount-paidamount-waivedamount-reservedAmt) where  advisetype=2;
+		update manualadvise_temp set balanceAmt=(adviseamount-paidamount-waivedamount-reservedAmt) where  advisetype=2;
+	    </sql>
+	</changeSet>
 </databaseChangeLog>
