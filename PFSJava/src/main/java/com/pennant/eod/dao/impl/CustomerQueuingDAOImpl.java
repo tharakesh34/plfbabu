@@ -27,19 +27,17 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 	private static Logger				logger				= Logger.getLogger(CustomerQueuingDAOImpl.class);
 
 	private static final String			UPDATE_SQL			= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
-																	+ "Where ThreadId = 0";
-	private static final String			UPDATE_ORCL			= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
-																	+ "Where  ThreadId = 0";
+																	+ "Where ThreadId = :ThreadId";
 	private static final String			UPDATE_SQL_RC		= "UPDATE Top(:RowCount) CustomerQueuing set ThreadId=:ThreadId "
-																	+ "Where ThreadId = 0";
+																	+ "Where ThreadId = :AcThreadId";
 	private static final String			UPDATE_ORCL_RC		= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
-																	+ "Where ROWNUM <=:RowCount AND ThreadId = 0";
+																	+ "Where ROWNUM <=:RowCount AND ThreadId = :AcThreadId";
 
-	private static final String			START_CID_SQL_RC	= "UPDATE Top(:RowCount) CustomerQueuing set Progress=1 ,StartTime = :StartTime "
-																	+ "Where ThreadId = :ThreadId AND Progress=0";
+	private static final String			START_CID_SQL_RC	= "UPDATE Top(:RowCount) CustomerQueuing set Progress=:Progress ,StartTime = :StartTime "
+																	+ "Where ThreadId = :ThreadId AND Progress=:ProgressWait";
 
-	private static final String			START_CID_ORCL_RC	= "UPDATE CustomerQueuing set Progress=1 ,StartTime = :StartTime "
-																	+ "Where ROWNUM <=:RowCount AND ThreadId = :ThreadId AND Progress=0";
+	private static final String			START_CID_ORCL_RC	= "UPDATE CustomerQueuing set Progress=:Progress ,StartTime = :StartTime "
+																	+ "Where ROWNUM <=:RowCount AND ThreadId = :ThreadId AND Progress=:ProgressWait";
 
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
@@ -113,18 +111,13 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		source.addValue("RowCount", noOfRows);
 		source.addValue("ThreadId", threadId);
 		source.addValue("EodDate", date);
+		source.addValue("AcThreadId", 0);
 
 		try {
 
 			if (noOfRows == 0) {
-				if (App.DATABASE == Database.SQL_SERVER) {
-					logger.debug("selectSql: " + UPDATE_SQL);
-					return this.namedParameterJdbcTemplate.update(UPDATE_SQL, source);
-
-				} else if (App.DATABASE == Database.ORACLE) {
-					logger.debug("selectSql: " + UPDATE_ORCL);
-					return this.namedParameterJdbcTemplate.update(UPDATE_ORCL, source);
-				}
+				logger.debug("selectSql: " + UPDATE_SQL);
+				return this.namedParameterJdbcTemplate.update(UPDATE_SQL, source);
 
 			} else {
 				if (App.DATABASE == Database.SQL_SERVER) {
@@ -287,6 +280,8 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		source.addValue("ThreadId", threadId);
 		source.addValue("EodDate", date);
 		source.addValue("StartTime", DateUtility.getSysDate());
+		source.addValue("ProgressWait", EodConstants.PROGRESS_WAIT);
+		source.addValue("Progress",EodConstants.PROGRESS_IN_PROCESS);
 
 		try {
 			if (App.DATABASE == Database.SQL_SERVER) {
