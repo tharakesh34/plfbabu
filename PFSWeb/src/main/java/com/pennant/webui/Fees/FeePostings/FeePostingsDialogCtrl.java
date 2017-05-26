@@ -84,6 +84,8 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.fees.FeePostings;
 import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -91,6 +93,8 @@ import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.service.collateral.CollateralSetupService;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.fees.feepostings.FeePostingService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.rmtmasters.AccountingSetService;
@@ -157,9 +161,11 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	protected String								selectMethodName	= "onSelectTab";
 	private transient AccountingDetailDialogCtrl	accountingDetailDialogCtrl;
 	private transient FinanceDetailService			financeDetailService;
+	private transient CustomerDetailsService        customerDetailsService;
+	private transient CollateralSetupService		collateralSetupService;
 	private transient AccountingSetService			accountingSetService;
 	private AccountEngineExecution					engineExecution;
-	private boolean									isAccountingExecuted	= true;
+	private boolean									isAccountingExecuted	= false;
 
 	/**
 	 * default constructor.<br>
@@ -433,20 +439,17 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		// If Fees Created Against Finance Reference
 		if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_LOAN, getFeePostings().getPostAgainst())) {
 			FinanceMain financeMain = getFinanceDetailService().getFinanceMainForBatch(getFeePostings().getReference());
-
 			amountCodes.setFinType(financeMain.getFinType());
 			aeEvent.setBranch(financeMain.getFinBranch());
 			aeEvent.setCustID(financeMain.getCustID());
-		}
-
-		//if fees created against customer
-		if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_CUST, getFeePostings().getPostAgainst())) {
-			//Fixme to send any additional Data
-			
-		}
-		//if fees created against customer
-		if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_COLLATERAL, getFeePostings().getPostAgainst())) {
-			//Fixme to send any additional Data
+		} else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_CUST, getFeePostings().getPostAgainst())) {
+			Customer customer = getCustomerDetailsService().getCustomerByCIF(getFeePostings().getReference());
+			aeEvent.setBranch(customer.getCustDftBranch());
+			aeEvent.setCustID(customer.getCustID());
+		} else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_COLLATERAL, getFeePostings().getPostAgainst())) {
+			CollateralSetup collateralSetup = getCollateralSetupService()
+					.getApprovedCollateralSetupById(getFeePostings().getReference());
+			aeEvent.setCustID(collateralSetup.getDepositorId());
 		}
 		
 
@@ -466,6 +469,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		accountingSetEntries.addAll(returnSetEntries);
 		if (accountingDetailDialogCtrl != null) {
 			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
+			isAccountingExecuted=true;
 		}
 
 		logger.debug("Leaving");
@@ -953,7 +957,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		doWriteComponentsToBean(aFeePosting);
 
 		// Accounting Details Validations
-		if (getAccountingDetailDialogCtrl() != null && !isAccountingExecuted) {
+		if (!isAccountingExecuted) {
 			MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Accountings"));
 			return;
 		}
@@ -1262,6 +1266,22 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 	public void setFeePostingService(FeePostingService feePostingService) {
 		this.feePostingService = feePostingService;
+	}
+
+	public CustomerDetailsService getCustomerDetailsService() {
+		return customerDetailsService;
+	}
+
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
+	}
+
+	public CollateralSetupService getCollateralSetupService() {
+		return collateralSetupService;
+	}
+
+	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
+		this.collateralSetupService = collateralSetupService;
 	}
 
 }
