@@ -159,15 +159,14 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 			recordCount = this.namedParameterJdbcTemplate.update(
 					deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41003",
-						vehicleDealer.getDealerId(), vehicleDealer
-								.getUserDetails().getUsrLanguage());
+				ErrorDetails errorDetails = getError("41003", vehicleDealer.getDealerName(), 
+						vehicleDealer.getUserDetails().getUsrLanguage());
 				throw new DataAccessException(errorDetails.getError()) {
 				};
 			}
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", vehicleDealer.getDealerId(),
+			ErrorDetails errorDetails = getError("41006", vehicleDealer.getDealerName(),
 					vehicleDealer.getUserDetails().getUsrLanguage());
 			throw new DataAccessException(errorDetails.getError()) {
 			};
@@ -261,7 +260,7 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",vehicleDealer.getDealerId() ,
+			ErrorDetails errorDetails= getError("41004",vehicleDealer.getDealerName() ,
 					vehicleDealer.getUserDetails().getUsrLanguage());
 			throw new DataAccessException(errorDetails.getError()) {
 			};
@@ -276,11 +275,11 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 	 * @param userLanguage (String)
 	 * @return ErrorDetails
 	 */
-	private ErrorDetails getError(String errorId, long dealerId, String userLanguage) {
+	private ErrorDetails getError(String errorId, String dealerName, String userLanguage) {
 
 		String[][] parms = new String[2][1];
-		parms[1][0] = String.valueOf(dealerId);
-		parms[0][0] = PennantJavaUtil.getLabel("label_DealerId") + ":" + parms[1][0];
+		parms[1][0] = dealerName;
+		parms[0][0] = PennantJavaUtil.getLabel("label_DealerName") + ":" + parms[1][0];
 		return ErrorUtil.getErrorDetail(new ErrorDetails(
 				PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),userLanguage);
 	}

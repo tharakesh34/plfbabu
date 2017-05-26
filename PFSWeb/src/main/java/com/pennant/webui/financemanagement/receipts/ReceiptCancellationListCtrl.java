@@ -164,7 +164,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		super.doAddFilters();
 		
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
-			this.searchObject.addWhereClause(" FinIsActive = 1 AND ReceiptPurpose = '"+FinanceConstants.FINSER_EVENT_SCHDRPY+"' AND (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_APPROVED+"' OR (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_REALIZED+"' AND RecordType IS NULL )"
+			this.searchObject.addWhereClause(" FinIsActive = 1 AND ReceiptMode != '"+RepayConstants.RECEIPTMODE_EXCESS+"' AND ReceiptPurpose = '"+FinanceConstants.FINSER_EVENT_SCHDRPY+"' AND (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_APPROVED+"' OR (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_REALIZED+"' AND RecordType IS NULL )"
 					+ " OR ( ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_BOUNCE+"' AND RecordType IS NOT NULL) ) ");
 		}else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
 			this.searchObject.addWhereClause("  FinIsActive = 1 AND ReceiptPurpose = '"+FinanceConstants.FINSER_EVENT_SCHDRPY+"' AND (ReceiptModeStatus = '"+RepayConstants.PAYSTATUS_APPROVED+"'"

@@ -965,8 +965,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				finTypeVASProductsList = financeTypeService.getFinTypeVasProducts(finType.getValue());
 			}
 
+			List<VASRecording> vasRecordingList = new ArrayList<VASRecording>();
 			for (FinTypeVASProducts finTypeVASProducts : finTypeVASProductsList) {
-				List<VASRecording> vasRecordingList = new ArrayList<VASRecording>();
 				if (finTypeVASProducts.isMandatory()) {
 					VASRecording vasRecording = new VASRecording();
 					vasRecording.setNewRecord(true);
@@ -981,8 +981,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					vasRecording.setRecordType(PennantConstants.RCD_ADD);
 					vasRecordingList.add(vasRecording);
 				}
-				financeDetail.getFinScheduleData().setVasRecordingList(vasRecordingList);
 			}
+			financeDetail.getFinScheduleData().setVasRecordingList(vasRecordingList);
 		}
 
 		financeDetail.setNewRecord(true);

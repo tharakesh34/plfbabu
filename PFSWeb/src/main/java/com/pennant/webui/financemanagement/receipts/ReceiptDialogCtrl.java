@@ -1850,7 +1850,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 			
-			if(allocationDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0){
+			if(allocationDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0 || 
+					allocationDetail.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0){
 				receiptHeader.getAllocations().add(allocationDetail);
 			}
 		}
@@ -2516,10 +2517,18 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				ReceiptAllocationDetail allocate = header.getAllocations().get(i);
 				if(allocate.getAllocationTo() == 0 || allocate.getAllocationTo() == Long.MIN_VALUE){
 					paidAllocationMap.put(allocate.getAllocationType(), allocate.getPaidAmount());
-					waivedAllocationMap.put(allocate.getAllocationType(), allocate.getWaivedAmount());
+					if(StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_MANADV)){
+						waivedAllocationMap.put("AllocateAdvWaived_"+allocate.getAllocationType(), allocate.getWaivedAmount());
+					}else{
+						waivedAllocationMap.put("AllocateWaived_"+allocate.getAllocationType(), allocate.getWaivedAmount());
+					}
 				}else{
 					paidAllocationMap.put(allocate.getAllocationType()+"_"+allocate.getAllocationTo(), allocate.getPaidAmount());
-					waivedAllocationMap.put(allocate.getAllocationType()+"_"+allocate.getAllocationTo(), allocate.getWaivedAmount());
+					if(StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_MANADV)){
+						waivedAllocationMap.put("AllocateAdvWaived_"+allocate.getAllocationType()+"_"+allocate.getAllocationTo(), allocate.getWaivedAmount());
+					}else{
+						waivedAllocationMap.put("AllocateWaived_"+allocate.getAllocationType()+"_"+allocate.getAllocationTo(), allocate.getWaivedAmount());
+					}
 				}
 			}
 		}

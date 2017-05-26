@@ -1035,18 +1035,11 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		final VehicleDealer aVehicleDealer = new VehicleDealer();
 		BeanUtils.copyProperties(getVehicleDealer(), aVehicleDealer);
 		String tranType = PennantConstants.TRAN_WF;
-		String dealerDesc = PennantStaticListUtil.getlabelDesc(
-				StringUtils.trimToEmpty(aVehicleDealer.getDealerType()),
-				PennantStaticListUtil.getDealerType());
 
 		// Show a confirm box
 		final String msg = Labels
 				.getLabel("message.Question.Are_you_sure_to_delete_this_record")
 				+ "\n\n --> "
-				+ Labels.getLabel("label_VehicleDealerDialog_DealerType.value")
-				+ " : "
-				+ dealerDesc
-				+ ","
 				+ Labels.getLabel("label_VehicleDealerDialog_DealerName.value")
 				+ " : " + aVehicleDealer.getDealerName();
 		final String title = Labels.getLabel("message.Deleting.Record");
