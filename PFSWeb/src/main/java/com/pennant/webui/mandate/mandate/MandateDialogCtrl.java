@@ -637,6 +637,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.micr.setValue("");
 		this.ifsc.setValue("");
 		this.city.setValue("");
+		this.cityName.setValue("");
 		onChangeMandateType(str);
 
 	}
