@@ -26,6 +26,7 @@ import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyHeaderDAO;
@@ -52,6 +53,7 @@ import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
@@ -95,6 +97,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private JointAccountDetailService	jointAccountDetailService;
 	private FinAdvancePaymentsService	finAdvancePaymentsService;
 	private CustomerAddresService		customerAddresService;
+	private ManualAdviseDAO				manualAdviseDAO;
 
 	/**
 	 * Method for process create finance request
@@ -810,8 +813,34 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		List<FinFeeDetail> finFeeDetail = financeDetail.getFinScheduleData().getFinFeeDetailList();
+		if(finFeeDetail != null) {
+			for(FinFeeDetail feeDetail: finFeeDetail) {
+				feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_LOAN);
+			}
+		}
 		financeDetail.setFinFeeDetails(finFeeDetail);
-
+		
+		// Bounce and manual advice fees if applicable
+		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
+		List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdviseByRef(finReference, 
+				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_View");
+		if(manualAdviseFees != null && !manualAdviseFees.isEmpty()) {
+			for(ManualAdvise advisedFees: manualAdviseFees) {
+				FinFeeDetail feeDetail = new FinFeeDetail();
+				if(advisedFees.getBounceID() > 0) {
+					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_BOUNCE);
+				} else {
+					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_ADVISE);
+				}
+				feeDetail.setFeeTypeCode(advisedFees.getFeeTypeCode());
+				feeDetail.setActualAmount(advisedFees.getAdviseAmount());
+				feeDetail.setPaidAmount(advisedFees.getPaidAmount());
+				feeDetail.setRemainingFee(advisedFees.getBalanceAmt());
+				
+				financeDetail.getFinFeeDetails().add(feeDetail);
+			}
+		}
+		
 		// Fetch summary details
 		FinanceSummary summary = getFinanceSummary(financeDetail);
 		financeDetail.getFinScheduleData().setFinanceSummary(summary);
@@ -934,6 +963,10 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	public void setCustomerAddresService(CustomerAddresService customerAddresService) {
 		this.customerAddresService = customerAddresService;
+	}
+
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
 }

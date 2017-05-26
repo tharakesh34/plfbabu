@@ -8,12 +8,11 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import javax.security.auth.login.AccountNotFoundException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.core.LatePayPenaltyService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RepayCalculator;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
@@ -46,7 +45,6 @@ import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.statement.FinStatementRequest;
@@ -69,6 +67,7 @@ public class FinStatementController extends SummaryDetailService {
 	private ManualPaymentService		manualPaymentService;
 	private ManualAdviseDAO				manualAdviseDAO;
 	private FinExcessAmountDAO			finExcessAmountDAO;
+	private LatePayPenaltyService		latePayPenaltyService;
 
 	/**
 	 * get the FinStatement Details by the given FinReferences.
@@ -157,12 +156,17 @@ public class FinStatementController extends SummaryDetailService {
 				if (StringUtils.equals(APIConstants.STMT_FORECLOSURE, serviceName)) {
 					Cloner cloner = new Cloner();
 					FinanceDetail aFinanceDetail = cloner.deepClone(financeDetail);
+					//get FinODDetails
+					List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
+					aFinanceDetail.getFinScheduleData().setFinODDetails(finODDetailsList);
+					financeDetail.getFinScheduleData().setFinODDetails(finODDetailsList);
 					financeDetail = getForeClosureDetails(financeDetail, days);
 					
 					FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 					// setting old values
 					financeDetail.setCustomerDetails(aFinanceDetail.getCustomerDetails());
 					finScheduleData.setFinanceMain(aFinanceDetail.getFinScheduleData().getFinanceMain());
+					finScheduleData.setFinODDetails(aFinanceDetail.getFinScheduleData().getFinODDetails());
 					
 					// fetch excess amount
 					FinExcessAmount finExcessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference, 
@@ -234,7 +238,7 @@ public class FinStatementController extends SummaryDetailService {
 		List<FinODDetails> finOdDetaiList = new ArrayList<FinODDetails>();
 		List<FinFeeDetail> finFeeDetails = new ArrayList<FinFeeDetail>();
 		try {
-			for (int i = 0; i <= days; i++) {
+			for (int i = 1; i <= days; i++) {
 				Cloner cloner = new Cloner();
 				FinanceDetail aFinanceDetail = cloner.deepClone(financeDetail);
 				serviceInstruction.setFromDate(DateUtility.addDays(DateUtility.getAppDate(), i));
@@ -249,6 +253,8 @@ public class FinStatementController extends SummaryDetailService {
 			
 			// process fees and charges
 			processFeesAndCharges(financeDetail, scheduleData, finFeeDetails);
+			
+			// setting penalty amount
 			
 			finStmtDetail.setForeClosureDetails(foreClosureList);
 			finStmtDetail.setFinScheduleData(scheduleData);
@@ -401,13 +407,9 @@ public class FinStatementController extends SummaryDetailService {
 	 * @param financeDetail
 	 * @param finServiceInst
 	 * @return
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws PFFInterfaceException
-	 * @throws AccountNotFoundException 
+	 * @throws Exception 
 	 */
-	public FinanceDetail doProcessPayments(FinanceDetail financeDetail, FinServiceInstruction finServiceInst)
-			throws IllegalAccessException, InvocationTargetException, PFFInterfaceException, AccountNotFoundException {
+	public FinanceDetail doProcessPayments(FinanceDetail financeDetail, FinServiceInstruction finServiceInst) throws Exception {
 		logger.debug("Entering");
 
 		if (finServiceInst.getFromDate() == null) {
@@ -462,6 +464,17 @@ public class FinStatementController extends SummaryDetailService {
 		foreClosure.setValueDate(finServiceInst.getFromDate());
 		foreClosure.setForeCloseAmount(totPriPayNow.add(totPenaltyPayNow).add(totPftPayNow));
 		foreClosure.setAccuredIntTillDate(totPftPayNow);
+		
+		// calculate total penalty amount
+		List<FinODDetails> finOdDetails = financeDetail.getFinScheduleData().getFinODDetails();
+		BigDecimal totPenaltyAmt = BigDecimal.ZERO;
+		if(finOdDetails != null) {
+			for(FinODDetails odDetails: finOdDetails) {
+				FinODDetails detail = latePayPenaltyService.computeLPP(odDetails, finServiceInst.getFromDate(), financeMain.getProfitDaysBasis());
+				totPenaltyAmt = totPenaltyAmt.add(detail.getTotPenaltyAmt());
+			}
+		}
+		foreClosure.setChargeAmount(totPenaltyAmt);
 		foreClosureList.add(foreClosure);
 
 		// penalty details
@@ -512,5 +525,8 @@ public class FinStatementController extends SummaryDetailService {
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
-
+	
+	public void setLatePayPenaltyService(LatePayPenaltyService latePayPenaltyService) {
+		this.latePayPenaltyService = latePayPenaltyService;
+	}
 }
