@@ -152,6 +152,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Checkbox								useExisting;
 	protected Checkbox								active;
 	protected Textbox								reason;
+	protected Textbox								umrNumber;
 	protected Space									space_Reason;
 	protected Space									space_Expirydate;
 
@@ -382,6 +383,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		addMandateFiletrs(null);
 		this.active.setChecked(true);
 		this.reason.setMaxlength(60);
+		this.umrNumber.setReadonly(true);
 		
 		if(StringUtils.isNotBlank(this.mandate.getBankCode())){
 			accNoLength = getBankDetailService().getAccNoLengthByCode(this.mandate.getBankCode());
@@ -620,6 +622,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.maxLimit.setValue(BigDecimal.ZERO);
 		this.periodicity.setValue("");
 		this.phoneNumber.setValue("");
+		this.umrNumber.setValue("");
 		this.openMandate.setChecked(false);
 		this.space_Expirydate.setSclass("mandatory");
 		//Frequency
@@ -821,6 +824,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(isReadOnly("MandateDialog_ApprovalID"), this.approvalID);
 		readOnlyComponent(isReadOnly("MandateDialog_Status"), this.status);
 		readOnlyComponent(isReadOnly("MandateDialog_Status"), this.reason);
+		readOnlyComponent(true,this.umrNumber);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -885,6 +889,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(true, this.phoneNumber);
 		readOnlyComponent(true, this.status);
 		readOnlyComponent(true, this.approvalID);
+		readOnlyComponent(true, this.umrNumber);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1000,6 +1005,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.periodicity.setValue(aMandate.getPeriodicity());
 		this.phoneNumber.setValue(aMandate.getPhoneNumber());
 		this.reason.setValue(aMandate.getReason());
+		this.umrNumber.setValue(aMandate.getMandateRef());
 
 		if (!enqModule && !registration) {
 			checkOpenMandate();

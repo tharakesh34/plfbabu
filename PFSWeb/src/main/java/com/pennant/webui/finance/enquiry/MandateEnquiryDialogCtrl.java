@@ -125,6 +125,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Checkbox						useExisting;
 	protected Checkbox						active;
 	protected Textbox						reason;
+	protected Textbox						umrNumber;
 	protected Space							space_Reason;
 	protected Space							space_Expirydate;
 
@@ -277,6 +278,8 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.mandateRef.setDescColumn("CustID");
 		this.mandateRef.setDisplayStyle(2);
 		this.mandateRef.setValidateColumns(new String[] { "MandateID", "CustID" });
+		
+		this.umrNumber.setReadonly(true);
 
 		this.active.setChecked(true);
 		logger.debug("Leaving");
@@ -372,6 +375,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(true, this.phoneNumber);
 		readOnlyComponent(true, this.status);
 		readOnlyComponent(true, this.approvalID);
+		readOnlyComponent(true, this.umrNumber);
 
 		logger.debug("Leaving ");
 	}
@@ -433,6 +437,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.phoneCountryCode.setValue(aMandate.getPhoneCountryCode());
 		this.phoneAreaCode.setValue(aMandate.getPhoneAreaCode());
 		this.phoneNumber.setValue(aMandate.getPhoneNumber());
+		this.umrNumber.setValue(aMandate.getMandateRef());
 
 	}
 
