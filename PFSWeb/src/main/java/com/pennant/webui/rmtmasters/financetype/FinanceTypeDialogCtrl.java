@@ -637,7 +637,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finCcy.setDescColumn("CcyDesc");
 		this.finCcy.setValidateColumns(new String[] { "CcyCode" });
 		if (ImplementationConstants.ALLOW_FINACTYPES) {
-			this.finAcType.setMaxlength(8);
+			this.finAcType.setMaxlength(15);
 			this.finAcType.setMandatoryStyle(false);
 			this.finAcType.setModuleName("AccountType");
 			this.finAcType.setValueColumn("AcType");
@@ -647,7 +647,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			finAcTypeFilters[0] = new Filter("AcPurpose", "F", Filter.OP_EQUAL);
 			finAcTypeFilters[1] = new Filter("internalAc", "0", Filter.OP_EQUAL);
 			this.finAcType.setFilters(finAcTypeFilters);
-			this.pftPayAcType.setMaxlength(8);
+			this.pftPayAcType.setMaxlength(15);
 			this.pftPayAcType.setMandatoryStyle(false);
 			this.pftPayAcType.setModuleName("AccountType");
 			this.pftPayAcType.setValueColumn("AcType");
@@ -657,7 +657,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			pftPayAcTypeFilters[0] = new Filter("AcPurpose", "U", Filter.OP_EQUAL);
 			pftPayAcTypeFilters[1] = new Filter("internalAc", "0", Filter.OP_EQUAL);
 			this.pftPayAcType.setFilters(pftPayAcTypeFilters);
-			this.finSuspAcType.setMaxlength(8);
+			this.finSuspAcType.setMaxlength(15);
 			this.finSuspAcType.setMandatoryStyle(false);
 			this.finSuspAcType.setModuleName("AccountType");
 			this.finSuspAcType.setValueColumn("AcType");
@@ -668,7 +668,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			finSuspAcTypeFilters[1] = new Filter("internalAc", "0", Filter.OP_EQUAL);
 			this.finSuspAcType.setFilters(finSuspAcTypeFilters);
 
-			this.finProvisionAcType.setMaxlength(8);
+			this.finProvisionAcType.setMaxlength(15);
 			this.finProvisionAcType.setMandatoryStyle(false);
 			this.finProvisionAcType.setModuleName("AccountType");
 			this.finProvisionAcType.setValueColumn("AcType");
@@ -679,7 +679,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			finProvisionAcTypeFilters[1] = new Filter("internalAc", "0", Filter.OP_EQUAL);
 			this.finProvisionAcType.setFilters(finProvisionAcTypeFilters);
 
-			this.finBankContingentAcType.setMaxlength(8);
+			this.finBankContingentAcType.setMaxlength(15);
 			this.finBankContingentAcType.setMandatoryStyle(false);
 			this.finBankContingentAcType.setModuleName("AccountType");
 			this.finBankContingentAcType.setValueColumn("AcType");
@@ -690,7 +690,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			finBankContingentAcTypeFilters[1] = new Filter("internalAc", "0", Filter.OP_EQUAL);
 			this.finBankContingentAcType.setFilters(finBankContingentAcTypeFilters);
 
-			this.finContingentAcType.setMaxlength(8);
+			this.finContingentAcType.setMaxlength(15);
 			this.finContingentAcType.setMandatoryStyle(false);
 			this.finContingentAcType.setModuleName("AccountType");
 			this.finContingentAcType.setValueColumn("AcType");
