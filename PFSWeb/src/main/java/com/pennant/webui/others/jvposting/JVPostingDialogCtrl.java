@@ -1936,9 +1936,6 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		if (StringUtils.equals(postValue,FinanceConstants.POSTING_AGAINST_CUST)) {
 			addFilters("Customer", "CustCIF", "CustShrtName");
 		}
-		if (StringUtils.equals(postValue,FinanceConstants.POSTING_AGAINST_CMTMNT)) {
-			addFilters("Commitment", "CmtReference", "CmtTitle");
-		}
 		if (StringUtils.equals(postValue,FinanceConstants.POSTING_AGAINST_COLLATERAL)) {
 			addFilters("CollateralSetup", "CollateralRef", "CollateralType");
 		}
