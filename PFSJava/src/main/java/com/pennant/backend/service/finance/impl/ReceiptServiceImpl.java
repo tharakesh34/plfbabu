@@ -2,7 +2,6 @@ package com.pennant.backend.service.finance.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,7 +17,6 @@ import org.apache.log4j.Logger;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.finance.limits.LimitCheckDetails;
-import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReceiptCalculator;
@@ -1488,7 +1486,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if(receiptData.getAllocationMap() != null && !receiptData.getAllocationMap().isEmpty()){
 				List<String> allocationKeys = new ArrayList<>(receiptData.getAllocationMap().keySet());
 				for (int i = 0; i < allocationKeys.size(); i++) {
-					totalBal = totalBal.subtract(receiptData.getAllocationMap().get(allocationKeys.get(i)));
+					if(!StringUtils.equals(allocationKeys.get(i), RepayConstants.ALLOCATION_TDS)){
+						totalBal = totalBal.subtract(receiptData.getAllocationMap().get(allocationKeys.get(i)));
+					}
 				}
 			}
 		}
@@ -1515,13 +1515,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					break;
 				} else if (DateUtility.compare(curBussniessDate, curSchd.getSchDate()) < 0) {
 					priBalance = prvSchd.getClosingBalance();
-					
-					if(StringUtils.equals(curSchd.getSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)){
-						BigDecimal accruedPft = CalculationUtil.calInterest(prvSchd.getSchDate(), curBussniessDate, curSchd.getBalanceForPftCal(),
-								prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
-						accruedPft = accruedPft.setScale(0, RoundingMode.HALF_DOWN);
-						priBalance = priBalance.add(accruedPft.add(prvSchd.getProfitBalance()));
-					}
 					break;
 				}
 			}
@@ -1541,15 +1534,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				aFinanceMain.setPftIntact(true);
 			}
 
-			if (receiptData.getRepayMain().getEarlyRepayNewSchd() != null) {
-				if (StringUtils.equals(method, CalculationConstants.EARLYPAY_RECPFI)) {
-					receiptData.getRepayMain().getEarlyRepayNewSchd().setRepayOnSchDate(false);
-					receiptData.getRepayMain().getEarlyRepayNewSchd().setPftOnSchDate(false);
-					receiptData.getRepayMain().getEarlyRepayNewSchd().setRepayAmount(BigDecimal.ZERO);
-				}
-				finScheduleData.getFinanceScheduleDetails().add(receiptData.getRepayMain().getEarlyRepayNewSchd());
-			}
 			receiptData.getRepayMain().setEarlyPayOnSchDate(DateUtility.getAppDate());
+			boolean isSchdDateFound = false;
 			for (FinanceScheduleDetail detail : finScheduleData.getFinanceScheduleDetails()) {
 				if (detail.getSchDate().compareTo(receiptData.getRepayMain().getEarlyPayOnSchDate()) == 0) {
 					if (StringUtils.equals(method, CalculationConstants.EARLYPAY_RECPFI)) {
@@ -1561,6 +1547,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						receiptData.getRepayMain().setEarlyPayAmount(detail.getPrincipalSchd().add(
 								receiptData.getRepayMain().getEarlyPayAmount()).add(earlypaidBal));
 					}
+					isSchdDateFound = true;
 				}
 				if (detail.getSchDate().compareTo(receiptData.getRepayMain().getEarlyPayOnSchDate()) >= 0) {
 					detail.setEarlyPaid(BigDecimal.ZERO);
@@ -1573,11 +1560,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 			// Finding Next Repay Schedule on date
 			Date nextRepaySchDate = receiptData.getRepayMain().getEarlyPayNextSchDate();
-			if(nextRepaySchDate == null){
+			if (isSchdDateFound) {
 				for (FinanceScheduleDetail curSchd : finScheduleData.getFinanceScheduleDetails()) {
-					if(DateUtility.compare(curSchd.getSchDate(), receiptData.getRepayMain().getEarlyPayOnSchDate()) <= 0){
+					if (DateUtility.compare(curSchd.getSchDate(), receiptData.getRepayMain().getEarlyPayOnSchDate()) <= 0) {
 						finScheduleData.getFinanceMain().setRecalSchdMethod(curSchd.getSchdMethod());
-					}else{
+						if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){
+							receiptData.getRepayMain().setEarlyPayAmount(receiptData.getRepayMain().getEarlyPayAmount().add(
+									curSchd.getProfitSchd()));
+						}
+					} else {
 						nextRepaySchDate = curSchd.getSchDate();
 						break;
 					}

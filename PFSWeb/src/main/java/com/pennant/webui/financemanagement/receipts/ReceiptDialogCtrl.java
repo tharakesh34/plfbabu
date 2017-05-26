@@ -1403,6 +1403,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				for (FinanceScheduleDetail curSchd : finScheduleData.getFinanceScheduleDetails()) {
 					if(DateUtility.compare(curSchd.getSchDate(), receiptData.getRepayMain().getEarlyPayOnSchDate()) <= 0){
 						finScheduleData.getFinanceMain().setRecalSchdMethod(curSchd.getSchdMethod());
+						if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){
+							receiptData.getRepayMain().setEarlyPayAmount(receiptData.getRepayMain().getEarlyPayAmount().add(
+									curSchd.getProfitSchd()));
+						}
 					}else{
 						nextRepaySchDate = curSchd.getSchDate();
 						break;
@@ -1663,8 +1667,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if(this.listBoxExcess.getFellowIfAny("ExcessAmount_"+RepayConstants.EXAMOUNTTYPE_EMIINADV) != null){
 			CurrencyBox emiAdvance = (CurrencyBox) this.listBoxExcess.getFellowIfAny("ExcessAmount_"+RepayConstants.EXAMOUNTTYPE_EMIINADV);
 			
-			receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.PAYTYPE_EMIINADV, 
-					excessMap.get(RepayConstants.EXAMOUNTTYPE_EMIINADV).getExcessID());
+			if(excessMap.containsKey(RepayConstants.EXAMOUNTTYPE_EMIINADV)){
+				receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.PAYTYPE_EMIINADV, 
+						excessMap.get(RepayConstants.EXAMOUNTTYPE_EMIINADV).getExcessID());
+			}
 			if(emiAdvance.getActualValue().compareTo(BigDecimal.ZERO) > 0){
 				if(receiptDetail == null){
 					receiptDetail = new FinReceiptDetail();
@@ -1696,8 +1702,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if(this.listBoxExcess.getFellowIfAny("ExcessAmount_"+RepayConstants.EXAMOUNTTYPE_EXCESS) != null){
 			CurrencyBox excessAmount = (CurrencyBox) this.listBoxExcess.getFellowIfAny("ExcessAmount_"+RepayConstants.EXAMOUNTTYPE_EXCESS);
 			
-			receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.PAYTYPE_EXCESS, 
-					excessMap.get(RepayConstants.EXAMOUNTTYPE_EXCESS).getExcessID());
+			if(excessMap.containsKey(RepayConstants.EXAMOUNTTYPE_EXCESS)){
+				receiptDetail = getExistingReceiptDetail(receiptHeader, RepayConstants.PAYTYPE_EXCESS, 
+						excessMap.get(RepayConstants.EXAMOUNTTYPE_EXCESS).getExcessID());
+			}
 			if(excessAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0){
 				if(receiptDetail == null){
 					receiptDetail = new FinReceiptDetail();
