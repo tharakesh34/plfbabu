@@ -42,15 +42,22 @@
  */
 package com.pennant.backend.endofday.tasklet;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -67,10 +74,18 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class MicroEOD implements Tasklet {
 
-	private Logger						logger	= Logger.getLogger(MicroEOD.class);
+	private Logger						logger		= Logger.getLogger(MicroEOD.class);
 	private EodService					eodService;
 	private CustomerQueuingDAO			customerQueuingDAO;
 	private PlatformTransactionManager	transactionManager;
+	private DataSource					dataSource;
+
+	private static final String			customerSQL	= "Select CUST.CustID, CustCIF, CustCoreBank, CustCtgCode, CustTypeCode, CustDftBranch,"
+															+ " CustPOB, CustCOB, CustGroupID, CustSts, CustStsChgDate, CustIsStaff, CustIndustry,CustSector,"
+															+ " CustSubSector, CustEmpSts, CustSegment, CustSubSegment, CustParentCountry,CustResdCountry,"
+															+ " CustRiskCountry, CustNationality, SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger,"
+															+ " CustAppDate FROM  Customers CUST INNER JOIN CustomerQueuing CQ ON CUST.CustID = CQ.CustID "
+															+ " Where ThreadID = :ThreadId and Progress=:Progress";
 
 	public MicroEOD() {
 
@@ -80,7 +95,8 @@ public class MicroEOD implements Tasklet {
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		Date valueDate = DateUtility.getAppValueDate();
 		logger.debug("START: Micro EOD On : " + valueDate);
-		int threadId = (int) context.getStepContext().getStepExecutionContext().get(EodConstants.THREAD);
+
+		final int threadId = (int) context.getStepContext().getStepExecutionContext().get(EodConstants.THREAD);
 		logger.info("process Statred by the Thread : " + threadId + " with date " + valueDate.toString());
 
 		int chunkSize = SysParamUtil.getValueAsInt(SMTParameterConstants.EOD_CHUNK_SIZE);
@@ -89,7 +105,85 @@ public class MicroEOD implements Tasklet {
 			int countForProcess = customerQueuingDAO.startEODForCID(valueDate, chunkSize, threadId);
 
 			if (countForProcess > 0) {
-				processCustChunks(threadId, valueDate);
+
+				List<CustEODEvent> custEODEvents = new ArrayList<CustEODEvent>(1);
+
+				//List<Customer> customers = customerQueuingDAO.getCustForProcess(threadId);
+				JdbcCursorItemReader<Customer> cursorItemReader = new JdbcCursorItemReader<Customer>();
+				cursorItemReader.setSql(customerSQL);
+				cursorItemReader.setDataSource(dataSource);
+				cursorItemReader.setRowMapper(new BeanPropertyRowMapper<Customer>(Customer.class));
+				cursorItemReader.setPreparedStatementSetter(new PreparedStatementSetter() {
+					@Override
+					public void setValues(PreparedStatement ps) throws SQLException {
+
+						ps.setLong(1, threadId);
+						ps.setInt(2, EodConstants.PROGRESS_IN_PROCESS);
+
+					}
+				});
+				cursorItemReader.open(context.getStepContext().getStepExecution().getExecutionContext());
+				Customer customer;
+				while ((customer = cursorItemReader.read()) != null) {
+					CustEODEvent custEODEvent = new CustEODEvent();
+					custEODEvent.setCustomer(customer);
+
+					custEODEvent.setEodDate(valueDate);
+					custEODEvent.setEodValueDate(valueDate);
+					custEODEvents.add(custEODEvent);
+
+					try {
+						eodService.doProcess(custEODEvent, valueDate);
+						custEODEvents.add(custEODEvent);
+					} catch (Exception e) {
+						custEODEvent.setEodSuccess(false);
+					}
+
+				}
+				cursorItemReader.close();
+
+				DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+				txDef.setReadOnly(true);
+				txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRED);
+				TransactionStatus txStatus = null;
+
+				//BEGIN TRANSACTION
+				txStatus = transactionManager.getTransaction(txDef);
+
+				for (int i = 0; i < custEODEvents.size(); i++) {
+					CustEODEvent custEODEvent = custEODEvents.get(i);
+					long custID = custEODEvent.getCustomer().getCustID();
+					if (!custEODEvent.isEodSuccess()) {
+						updateFailed(threadId, custID);
+					} else {
+
+						//update customer EOD
+						try {
+							eodService.getLoadFinanceData().updateFinEODEvents(custEODEvent);
+
+							//receipt postings
+							if (custEODEvent.isCheckPresentment()) {
+								eodService.getReceiptPaymentService().processrReceipts(custEODEvent);
+							}
+
+							//customer Date update
+							eodService.getLoadFinanceData().updateCustomerDate(custID, valueDate);
+
+						} catch (Exception e) {
+							updateFailed(threadId, custID);
+						}
+
+						//clear data after the process
+						custEODEvent.getFinEODEvents().clear();
+						custEODEvent = null;
+					}
+				}
+
+				customerQueuingDAO.updateSucess(threadId);
+				customer=null;
+				//COMMIT THE TRANSACTION
+				transactionManager.commit(txStatus);
+
 			} else {
 				break;
 			}
@@ -98,71 +192,6 @@ public class MicroEOD implements Tasklet {
 		}
 
 		return RepeatStatus.FINISHED;
-	}
-
-	public void processCustChunks(int threadId, Date valueDate) {
-
-		List<CustEODEvent> custEODEvents = new ArrayList<CustEODEvent>(1);
-		List<Customer> customers = customerQueuingDAO.getCustForProcess(threadId);
-
-		for (int i = 0; i < customers.size(); i++) {
-			CustEODEvent custEODEvent = new CustEODEvent();
-			custEODEvent.setCustomer(customers.get(i));
-
-			custEODEvent.setEodDate(valueDate);
-			custEODEvent.setEodValueDate(valueDate);
-			custEODEvents.add(custEODEvent);
-
-			try {
-				eodService.doProcess(custEODEvent, valueDate);
-				custEODEvents.set(i, custEODEvent);
-			} catch (Exception e) {
-				custEODEvent.setEodSuccess(false);
-			}
-		}
-
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-		txDef.setReadOnly(true);
-		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRED);
-		TransactionStatus txStatus = null;
-
-		//BEGIN TRANSACTION
-		txStatus = transactionManager.getTransaction(txDef);
-
-		for (int i = 0; i < custEODEvents.size(); i++) {
-			CustEODEvent custEODEvent = custEODEvents.get(i);
-			if (!custEODEvent.isEodSuccess()) {
-				updateFailed(threadId, custEODEvent.getCustomer().getCustID());
-			} else {
-
-				//update customer EOD
-				try {
-					eodService.getLoadFinanceData().updateFinEODEvents(custEODEvent);
-
-					//receipt postings
-					if (custEODEvent.isCheckPresentment()) {
-						eodService.getReceiptPaymentService().processrReceipts(custEODEvent);
-					}
-
-					//customer Date update
-					eodService.getLoadFinanceData().updateCustomerDate(custEODEvent.getCustomer().getCustID(),
-							valueDate);
-					//					updateCustQueueStatus(threadId, custEODEvent.getCustomer().getCustID(), EodConstants.PROGRESS_SUCCESS, false);
-
-				} catch (Exception e) {
-					updateFailed(threadId, custEODEvent.getCustomer().getCustID());
-				}
-
-				//clear data after the process
-				custEODEvent.getFinEODEvents().clear();
-				custEODEvent = null;
-			}
-		}
-		customerQueuingDAO.updateSucess(threadId);
-
-		//COMMIT THE TRANSACTION
-		transactionManager.commit(txStatus);
-
 	}
 
 	public void updateCustQueueStatus(int threadId, long custId, int progress, boolean start) {
@@ -195,6 +224,10 @@ public class MicroEOD implements Tasklet {
 
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
+	}
+
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
 	}
 
 }
