@@ -418,7 +418,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.accountingSetID.setValueColumn("AccountSetCode");
 		this.accountingSetID.setDescColumn("AccountSetCodeName");
 		this.accountingSetID.setValidateColumns(new String[] { "AccountSetCode" });
-		this.accountingSetID.setMandatoryStyle(true);
+		this.accountingSetID.setMandatoryStyle(false);
 		
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
@@ -552,7 +552,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		}
 		if (!this.accountingSetID.isReadonly()) {
 				this.accountingSetID.setConstraint(new PTStringValidator(Labels
-						.getLabel("label_FeeTypeDialog_AccountingSetID.value"), null, true));
+						.getLabel("label_FeeTypeDialog_AccountingSetID.value"), null, false));
 		}
 		if (!this.adviseType.isDisabled()) {
 			this.adviseType.setConstraint(new StaticListValidator(listAdviseType,
