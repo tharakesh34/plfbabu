@@ -785,4 +785,9 @@ update WorkFlowDetails set workflowactive='0' where workflowtype='RECEIPTCANCEL_
 		UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
 	</sql>
 </changeSet>
+<changeSet id="54" author="satya">
+<sql>
+Insert into reportlist values('BuilderGroup','BuilderGroup','listheader_name.label,listheader_segmentation.label','name,segmentation','String,String','','ReportList02','Builder Group','System Masters',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
+</sql>
+</changeSet>
 </databaseChangeLog>
