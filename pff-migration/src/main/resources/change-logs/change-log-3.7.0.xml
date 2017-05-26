@@ -493,5 +493,26 @@ vo.waivedAmt &lt;= 0</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequ
 			referencedTableName="BUILDERCOMPANY" referencedColumnNames="GROUPID"
 			baseTableName="BUILDERPROJCET_TEMP" baseColumnNames="BUILDERID" />
 	</changeSet>
-	
+	<changeSet id="28" author="SreeRavali">
+		<addColumn tableName="Restructure_Temp">
+			<column name="CustomerCIF" type="varchar(20)" />
+			<column name="OldFinRef" type="varchar(20)"/>
+			<column name="FinType" type="varChar(8)" />
+			<column name="FinCategory" type="varchar(8)" />
+			<column name="FinCcy" type="char(3)" />
+			<column name="FinBranch" type="varchar(12)" />
+			<column name="StartDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="29" author="SreeRavali">
+		<addColumn tableName="Restructure">
+			<column name="CustomerCIF" type="varchar(20)" />
+			<column name="OldFinRef" type="varchar(20)" />
+			<column name="FinType" type="varChar(8)" />
+			<column name="FinCategory" type="varchar(8)" />
+			<column name="FinCcy" type="char(3)" />
+			<column name="FinBranch" type="varchar(12)" />
+			<column name="StartDate" type="datetime" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
