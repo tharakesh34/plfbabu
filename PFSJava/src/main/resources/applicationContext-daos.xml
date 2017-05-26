@@ -8293,6 +8293,7 @@
 		<property name="mandateStatusDAO" ref="mandateStatusDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="bankBranchService" ref="bankBranchService" />
 	</bean>
 
 	<bean id="rateChangeService"

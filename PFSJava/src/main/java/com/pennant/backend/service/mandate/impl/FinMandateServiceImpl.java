@@ -60,11 +60,13 @@ import com.pennant.backend.dao.mandate.MandateStatusDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatus;
+import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -82,6 +84,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 	private MandateDAO			mandateDAO;
 	private MandateStatusDAO	mandateStatusDAO;
 	private FinanceMainDAO		financeMainDAO;
+	private BankBranchService bankBranchService;
 
 	public FinMandateServiceImpl() {
 		super();
@@ -311,7 +314,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 
 	public void promptMandate(AuditDetail auditDetail, FinanceDetail financeDetail) {
 		Mandate mandate = financeDetail.getMandate();
-		if (mandate != null) {
+		if (!financeDetail.isActionSave() && mandate != null) {
 			if (!mandate.isUseExisting()) {
 				int count = getMnadateByCustID(mandate.getCustID(), mandate.getMandateID()).size();
 				if (count != 0) {
@@ -325,6 +328,30 @@ public class FinMandateServiceImpl implements FinMandateService {
 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetails(PennantConstants.KEY_FIELD, "65013", errParmMan, valueParmMan), ""));
+				}
+ 				if(mandate.getBankBranchID()!=0){
+					BankBranch bankBranch = bankBranchService.getBankBranchById(mandate.getBankBranchID());
+				if((mandate.getMandateType() == MandateConstants.TYPE_ECS || mandate.getMandateType() == MandateConstants.TYPE_NACH) && bankBranch.isDda()){
+					
+					String[] errParmBranch = new String[1];
+					String[] valueParmBranch = new String[1];
+					valueParmBranch[0] = bankBranch.getBankName();
+					errParmBranch[0] = valueParmBranch[0];
+					
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetails(PennantConstants.KEY_FIELD, "65016", errParmBranch, valueParmBranch), ""));
+						
+					}else if(mandate.getMandateType() == MandateConstants.TYPE_ECS && bankBranch.isNach()){
+						
+						String[] errParmBranch = new String[1];
+						String[] valueParmBranch = new String[1];
+						valueParmBranch[0] = bankBranch.getBankName();
+						errParmBranch[0] = valueParmBranch[0];
+						
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetails(PennantConstants.KEY_FIELD, "65017", errParmBranch, valueParmBranch), ""));
+							
+					}
 				}
 			}
 		}
@@ -419,6 +446,14 @@ public class FinMandateServiceImpl implements FinMandateService {
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
+	}
+
+	public BankBranchService getBankBranchService() {
+		return bankBranchService;
+	}
+
+	public void setBankBranchService(BankBranchService bankBranchService) {
+		this.bankBranchService = bankBranchService;
 	}
 
 }
