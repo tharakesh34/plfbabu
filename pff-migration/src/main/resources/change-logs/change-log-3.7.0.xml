@@ -646,4 +646,13 @@ vo.waivedAmt &lt;= 0</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequ
 			referencedTableName="RMTPROVINCEVSCITY" referencedColumnNames="PCCITY"
 			baseTableName="Locality_Temp" baseColumnNames="CITY" />
 				</changeSet>
+				
+	<changeSet id="46" author="manoj.p">
+	<sql>
+		update data_engine_column SET RULEFORVALUE = 'if((STATUS ==  ''Y'' )){Result =''REJECTED'';  return;}else {Result =''APPROVED'';  return;}'
+		where tableId In (
+		select ID from DATA_ENGINE_TABLE WHERE ConfigId IN (
+		select ID from DATA_ENGINE_CONFIG where Name = 'MANDATES_IMPORT')) and Name = 'STATUS';
+	</sql>
+	</changeSet>
 </databaseChangeLog>
