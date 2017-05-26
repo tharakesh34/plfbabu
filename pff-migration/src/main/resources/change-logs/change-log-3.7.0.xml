@@ -724,4 +724,32 @@ FROM    	Locality  T1
 		</createView>
 	</changeSet>
 	
+	<changeSet id="49" author="Siva">
+	<sql>
+				
+		DELETE FROM Secrolegroups WHERE ROLEID = (Select RoleID from SecRoles WHERE ROLECD = 'BOUNCE_MAKER') AND GRPID = (Select GrpID From SecGroups WHERE GRPCODE = 'RECEIPTCANCEL_MAKER');
+		DELETE FROM Secrolegroups WHERE ROLEID = (Select RoleID from SecRoles WHERE ROLECD = 'BOUNCE_APPROVER') AND GRPID = (Select GrpID From SecGroups WHERE GRPCODE = 'RECEIPTCANCEL_APPROVER');
+		
+		UPDATE SECROLES SET ROLEDESC = 'Receipt Bounce Approver'  WHERE ROLECD = 'BOUNCE_APPROVER';
+		UPDATE SECROLES SET ROLEDESC = 'Receipt Bounce Maker'  WHERE ROLECD = 'BOUNCE_MAKER';
+		
+		UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SECROLES);
+		UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
+		
+		INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'RECEIPTCANCEL_APPROVER', 'Receipt Cancellation Approver','FINANCE', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+		INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'RECEIPTCANCEL_MAKER', 'Receipt Cancellation Maker','FINANCE', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECROLES WHERE 0=0;
+		
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='RECEIPTCANCEL_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='RECEIPTCANCEL_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='RECEIPTCANCEL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='RECEIPTCANCEL_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+		
+		INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='RECEIPTCANCEL_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+		INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='MAKER'), (Select  RoleID  From SecRoles Where RoleCd='RECEIPTCANCEL_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+		
+		UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SECROLES);
+		UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
+
+	</sql>
+	</changeSet>
 </databaseChangeLog>
