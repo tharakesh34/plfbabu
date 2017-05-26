@@ -175,7 +175,7 @@ public class LatePayMarkingService extends ServiceHelper {
 			}
 
 			updateFinPftDetails(finEODEvent, fod, valueDate);
-			latePayPenaltyService.computeLPP(fod, valueDate, finEODEvent.getFinanceMain().getFinReference());
+			latePayPenaltyService.computeLPP(fod, valueDate, finEODEvent.getFinanceMain().getProfitDaysBasis());
 
 			String lpiMethod = finEODEvent.getFinanceMain().getPastduePftCalMthd();
 
