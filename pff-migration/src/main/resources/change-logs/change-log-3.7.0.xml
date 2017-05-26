@@ -557,4 +557,22 @@ vo.waivedAmt &lt;= 0</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequ
 			<column name="SeqNo" type="bigint" />
 		</createTable>
 	</changeSet>
+	<changeSet id="30" author="Satya">
+	<dropForeignKeyConstraint baseTableName="BUILDERCOMPANY"
+			constraintName="FK_BuilderGroup" />
+	<dropForeignKeyConstraint baseTableName="BUILDERCOMPANY_TEMP"
+			constraintName="FK_BuilderGroup_TEMP" />
+	</changeSet>
+	
+	<changeSet id="37" author="satya">
+		<addForeignKeyConstraint constraintName="FK_BuilderGroup"
+			referencedTableName="BUILDERGROUP" referencedColumnNames="ID"
+			baseTableName="BUILDERCOMPANY" baseColumnNames="GROUPID" />
+	</changeSet>
+
+<changeSet id="38" author="satya">
+		<addForeignKeyConstraint constraintName="FK_BuilderGroup_TEMP"
+			referencedTableName="BUILDERGROUP" referencedColumnNames="ID"
+			baseTableName="BUILDERCOMPANY_TEMP" baseColumnNames="GROUPID" />
+	</changeSet>
 </databaseChangeLog>
