@@ -143,11 +143,11 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 		List<FinanceRepayments> repayments = getFinanceRepaymentsDAO().getByFinRefAndSchdDate(finReference, odDate);
 
-		//Load Overdue Charge Recovery from Repayment Movements
+		//Load Overdue Charge Recovery from Repayments Movements
 		for (int i = 0; i < repayments.size(); i++) {
 			FinanceRepayments repayment = repayments.get(i);
 
-			//MAx OD amounts is same as repayment balance amounts
+			//MAx OD amounts is same as repayments balance amounts
 			if (repayment.getFinSchdDate().compareTo(repayment.getFinValueDate()) == 0) {
 				continue;
 			}
@@ -166,6 +166,26 @@ public class LatePayPenaltyService extends ServiceHelper {
 		}
 
 		fod.setTotPenaltyAmt(BigDecimal.ZERO);
+
+		//Add record with today date
+		boolean isAddTodayRcd = true;
+		for (int i = 0; i < schdODCRecoveries.size(); i++) {
+			odcr = schdODCRecoveries.get(i);
+			if (odcr.getMovementDate().compareTo(valueDate) == 0) {
+				isAddTodayRcd = false;
+				break;
+			}
+		}
+
+		if (isAddTodayRcd) {
+			odcr = new OverdueChargeRecovery();
+			odcr.setFinReference(finReference);
+			odcr.setFinODSchdDate(odDate);
+			odcr.setFinODFor(FinanceConstants.SCH_TYPE_SCHEDULE);
+			odcr.setMovementDate(valueDate);
+			schdODCRecoveries.add(odcr);
+		}
+
 		//Calculate the Penalty
 		for (int i = 0; i < schdODCRecoveries.size() - 1; i++) {
 			OverdueChargeRecovery odcrCur = schdODCRecoveries.get(i);

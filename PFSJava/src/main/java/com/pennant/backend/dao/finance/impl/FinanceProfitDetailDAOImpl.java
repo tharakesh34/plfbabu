@@ -138,6 +138,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 
 		FinanceProfitDetail finProfitDetails = new FinanceProfitDetail();
 		finProfitDetails.setCustId(custID);
+		finProfitDetails.setFinIsActive(isActive);
 
 		StringBuilder selectSql = new StringBuilder("Select FinReference, CustId,  ");
 		selectSql.append(" FinBranch, FinType, FinCcy, LastMdfDate, FinIsActive,");
@@ -155,7 +156,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		selectSql.append(" Where CustId =:CustId");
 
 		if (isActive) {
-			selectSql.append(" AND FinIsActive = 1");
+			selectSql.append(" AND FinIsActive = :FinIsActive ");
 		}
 
 		logger.debug("selectSql: " + selectSql.toString());

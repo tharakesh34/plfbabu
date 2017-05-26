@@ -34,16 +34,13 @@
 package com.pennant.app.core;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinODDetails;
@@ -122,6 +119,27 @@ public class LatePayInterestService extends ServiceHelper {
 		}
 
 		fod.setTotPenaltyAmt(BigDecimal.ZERO);
+		
+		//Add record with today date
+		boolean isAddTodayRcd = true;
+		for (int i = 0; i < schdODCRecoveries.size(); i++) {
+			odcr = schdODCRecoveries.get(i);
+			if (odcr.getMovementDate().compareTo(valueDate) == 0) {
+				isAddTodayRcd = false;
+				break;
+			}
+		}
+
+		if (isAddTodayRcd) {
+			odcr = new OverdueChargeRecovery();
+			odcr.setFinReference(finReference);
+			odcr.setFinODSchdDate(odDate);
+			odcr.setFinODFor(FinanceConstants.SCH_TYPE_SCHEDULE);
+			odcr.setMovementDate(valueDate);
+			schdODCRecoveries.add(odcr);
+		}
+		
+		
 		//Calculate the Penalty
 		for (int i = 0; i < schdODCRecoveries.size() - 1; i++) {
 			OverdueChargeRecovery odcrCur = schdODCRecoveries.get(i);

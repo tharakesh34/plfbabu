@@ -2759,10 +2759,11 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		selectSql.append(" FROM FinanceMain Where CustID=:CustID ");
 		
 		if (isActive) {
-			selectSql.append(" and FinIsActive = 1");
+			selectSql.append(" and FinIsActive = :FinIsActive ");
 		}
 
 		source.addValue("CustID", custId);
+		source.addValue("FinIsActive", isActive);
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		logger.debug("selectSql: " + selectSql.toString());
