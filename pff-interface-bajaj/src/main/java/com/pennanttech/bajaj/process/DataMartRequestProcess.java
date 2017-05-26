@@ -27,7 +27,8 @@ public class DataMartRequestProcess {
 	public void importData() {
 		logger.debug(Literal.ENTERING);
 
-		new DisbursementDataMart(dataSource, userId, valueDate, appDate).run();
+		DisbursementDataMart disbursementDM = new DisbursementDataMart(dataSource, userId, valueDate, appDate);
+		disbursementDM.process("DATA_MART_REQUEST");
 
 		logger.debug(Literal.LEAVING);
 	}
