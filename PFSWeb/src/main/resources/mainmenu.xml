@@ -22,7 +22,7 @@
  		<menuItem id="menu_Item_AddressType" zulNavigation="/WEB-INF/pages/SystemMaster/AddressType/AddressTypeList.zul"  rightName="menuItem_SystemMaster_AddressType"/>
  		<menuItem id="menu_Item_BuilderCompany" zulNavigation="/WEB-INF/pages/SystemMaster/BuilderCompany/BuilderCompanyList.zul"  rightName="menuItem_masters_BuilderCompany"/>
  		<menuItem id="menu_Item_BuilderGroup" zulNavigation="/WEB-INF/pages/SystemMaster/BuilderGroup/BuilderGroupList.zul" rightName="menuItem_masters_BuilderGroup"/>
- 		<menuItem id="menu_Item_BuilderProjcet" zulNavigation="/WEB-INF/pages/SystemMaster/BuilderProjcet/BuilderProjcetList.zul" rightName="menuItem_masters_BuilderProjcet"/>
+ 		<menuItem id="menu_Item_BuilderProjcet" zulNavigation="/WEB-INF/pages/SystemMaster/BuilderProjcet/BuilderProjcetList.zul" rightName="menuItem_SystemMaster_BuilderProjcet"/>
         <!-- <menuItem id="menu_Item_BuilderProjcetEnquiry" zulNavigation="/WEB-INF/pages/masters/BuilderProjcet/BuilderProjcetEnquiryList.zul?enqiryModule=Y" " iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_masters_BuilderProjcetEnquiry"/> -->
        <!--  <menuItem id="menu_Item_BuilderCompanyEnquiry" zulNavigation="/WEB-INF/pages/SystemMaster/BuilderCompany/BuilderCompanyEnquiryList.zul?enqiryModule=Y" " iconName="/images/icons/main_menu/menuitem_Icon.png" rightName="menuItem_masters_BuilderCompanyEnquiry"/> -->
 		<!-- <menuItem id="menu_Item_BlackListReasonCode" zulNavigation="/WEB-INF/pages/SystemMaster/BlackListReasonCode/BlackListReasonCodeList.zul"  rightName="menuItem_SystemMaster_BlackListReasonCode"/> -->
