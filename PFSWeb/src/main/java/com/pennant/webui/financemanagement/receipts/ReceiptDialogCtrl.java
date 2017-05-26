@@ -1403,7 +1403,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				for (FinanceScheduleDetail curSchd : finScheduleData.getFinanceScheduleDetails()) {
 					if(DateUtility.compare(curSchd.getSchDate(), receiptData.getRepayMain().getEarlyPayOnSchDate()) <= 0){
 						finScheduleData.getFinanceMain().setRecalSchdMethod(curSchd.getSchdMethod());
-						if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){
+						if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY) &&
+								DateUtility.compare(curSchd.getSchDate(), receiptData.getRepayMain().getEarlyPayOnSchDate()) == 0){
 							receiptData.getRepayMain().setEarlyPayAmount(receiptData.getRepayMain().getEarlyPayAmount().add(
 									curSchd.getProfitSchd()));
 						}
@@ -2960,7 +2961,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					totalAdvWaivedAmount = totalAdvWaivedAmount.add(PennantApplicationUtil.unFormateAmount(allocationWaived.getActualValue(), finFormatter));
 				}else{
 					this.listBoxPastdues.appendChild(item);
-					if(!StringUtils.equals(allocationType, RepayConstants.ALLOCATION_TDS)){
+					if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_TDS)){
+						totalDueAmount = totalDueAmount.subtract(totalCalAmount);
+						totalPaidAmount = totalPaidAmount.subtract(PennantApplicationUtil.unFormateAmount(allocationPaid.getActualValue(), finFormatter));
+						totalWaivedAmount = totalWaivedAmount.subtract(PennantApplicationUtil.unFormateAmount(allocationWaived.getActualValue(), finFormatter));
+					}else{
 						totalDueAmount = totalDueAmount.add(totalCalAmount);
 						totalPaidAmount = totalPaidAmount.add(PennantApplicationUtil.unFormateAmount(allocationPaid.getActualValue(), finFormatter));
 						totalWaivedAmount = totalWaivedAmount.add(PennantApplicationUtil.unFormateAmount(allocationWaived.getActualValue(), finFormatter));
@@ -3124,24 +3129,24 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		
 		BigDecimal tdsCalculated = BigDecimal.ZERO;
-		if(getFinanceDetail().getFinScheduleData().getFinanceMain().isTDSApplicable()){
-			
-			BigDecimal tdsMultiplier = BigDecimal.ONE;
-			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-			String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
-			int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+		if(StringUtils.equals(allocatePaid.getId(), "AllocatePaid_"+RepayConstants.ALLOCATION_PFT)){
+			if(getFinanceDetail().getFinScheduleData().getFinanceMain().isTDSApplicable()){
 
-			if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
-				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
-			}
-			
-			if(StringUtils.equals(allocatePaid.getId(), "AllocatePaid_"+RepayConstants.ALLOCATION_PFT)){
 				if(this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+RepayConstants.ALLOCATION_TDS) != null){
+					BigDecimal tdsMultiplier = BigDecimal.ONE;
+					BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+					String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+					int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+
+					if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
+						tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
+					}
+
 					CurrencyBox allocateTDSPaid = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+RepayConstants.ALLOCATION_TDS);
-					BigDecimal actPftAdjust = paidAllocateAmt.multiply(tdsMultiplier);
-					tdsCalculated = actPftAdjust.subtract(paidAllocateAmt);
+					BigDecimal actPftAdjust = paidAllocateAmt.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+					tdsCalculated = paidAllocateAmt.subtract(actPftAdjust);
 					allocateTDSPaid.setValue(PennantApplicationUtil.amountFormate(tdsCalculated, finFormatter));
-					
+
 					if(paidAllocationMap != null){ 
 						if(paidAllocationMap.containsKey(allocateTDSPaid.getId())){
 							paidAllocationMap.remove(allocateTDSPaid.getId());
@@ -4141,8 +4146,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getPrincipalSchdBal(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getProfitSchdPayNow().subtract(repaySchd.getTdsSchdPayNow()), finFormatter));
-				totalPft = totalPft.add(repaySchd.getProfitSchdPayNow().subtract(repaySchd.getTdsSchdPayNow()));
+				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getProfitSchdPayNow(), finFormatter));
+				totalPft = totalPft.add(repaySchd.getProfitSchdPayNow());
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getTdsSchdPayNow(), finFormatter));
@@ -4207,7 +4212,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						.add(repaySchd.getSchdInsPayNow()).add(repaySchd.getSchdFeePayNow())
 						.add(repaySchd.getSchdSuplRentPayNow()).add(repaySchd.getSchdIncrCostPayNow())
 						.add(repaySchd.getPenaltyPayNow()).add(repaySchd.getLatePftSchdPayNow())
-						.subtract(refundPft).subtract(repaySchd.getTdsSchdPayNow());
+						.subtract(refundPft);
 				lc = new Listcell(PennantAppUtil.amountFormate(netPay, finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
@@ -4555,9 +4560,19 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 		
+		// TDS Balance Amount Calculation
+		BigDecimal tdsAmount = BigDecimal.ZERO;
+		if(getReceiptData().getAllocationMap().containsKey(RepayConstants.ALLOCATION_TDS)){
+			tdsAmount = getReceiptData().getAllocationMap().get(RepayConstants.ALLOCATION_TDS);
+			if(this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+RepayConstants.ALLOCATION_TDS) != null){
+				CurrencyBox tdsPaid = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+RepayConstants.ALLOCATION_TDS);
+				tdsAmount = tdsAmount.subtract(PennantApplicationUtil.unFormateAmount(tdsPaid.getActualValue(), formatter));
+			}
+		}
+		
 		// Early settlement Validation , if entered amount not sufficient with paid and waived amounts
 		if(StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
-			BigDecimal earlySettleBal = totReceiptAmount.subtract(totalDue.subtract(totalWaived)).subtract(totalAdvDue.subtract(totalAdvWaived));
+			BigDecimal earlySettleBal = totReceiptAmount.subtract((totalDue.add(tdsAmount)).subtract(totalWaived)).subtract(totalAdvDue.subtract(totalAdvWaived));
 			if(earlySettleBal.compareTo(BigDecimal.ZERO) < 0){
 				MessageUtil.showErrorMessage(Labels.getLabel("label_ReceiptDialog_Valid_Amount_EarlySettlement"));
 				return false;
