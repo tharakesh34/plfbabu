@@ -1614,6 +1614,15 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				}
 			}
 
+			//in delete case if approver approves needs notes 
+			if (StringUtils.equals(aMandate.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)
+					&& StringUtils.equals(aMandate.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
+				if (!notesEntered) {
+					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+					return false;
+				}
+
+			}
 			aMandate.setTaskId(getTaskId());
 			aMandate.setNextTaskId(getNextTaskId());
 			aMandate.setRoleCode(getRole());
