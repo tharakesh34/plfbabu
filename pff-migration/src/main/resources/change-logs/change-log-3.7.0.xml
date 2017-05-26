@@ -796,6 +796,7 @@ Insert into reportlist values('BuilderGroup','BuilderGroup','listheader_name.lab
 Insert into reportlist values('Locality','Locality','listheader_name.label,listheader_city.label','name,city','String,String','','ReportList02','Locality','System Masters',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
 </sql>
 </changeSet>
+
 <changeSet id="56" author="satya">
 <sql>
 Insert into reportlist values('BuilderCompany','BuilderCompany','listheader_name.label,listheader_segmentation.label,listheader_groupId.label','name,segmentation,groupId','String,String,long','','ReportList03',
@@ -807,4 +808,11 @@ Insert into reportlist values('BuilderProjcet','BuilderProjcet','listheader_name
 
 </sql>
 </changeSet>
+
+<changeSet id="57" author="ahmad">
+	<sql>
+		Insert into SeqLocality values (1);
+	</sql>
+</changeSet>
+
 </databaseChangeLog>
