@@ -38,8 +38,7 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 
 		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
 			MapSqlParameterSource	map			= null;
-			//TransactionStatus		txnStatus	= null;
-
+			
 			@Override
 			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
 				String[] filterFields = new String[1];
@@ -47,25 +46,22 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 				while (rs.next()) {
 					executionStatus.setRemarks("processing the record " + ++totalRecords);
 					processedCount++;
-					//txnStatus = transManager.getTransaction(transDef);
 					try {
 						map = mapData(rs);
 						saveOrUpdate(map, "ALM", destinationJdbcTemplate, filterFields);
 						successCount++;
-						//transManager.commit(txnStatus);
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
-						//transManager.rollback(txnStatus);
 						failedCount++;
 						String keyId = rs.getString("AGREEMENTNO");
+						
 						if (StringUtils.trimToNull(keyId) == null) {
 							keyId = String.valueOf(processedCount);
 						}
+						
 						saveBatchLog(keyId, "F", e.getMessage());
 					} finally {
 						map = null;
-						//txnStatus.flush();
-						//txnStatus = null;
 					}
 				}
 				return totalRecords;
