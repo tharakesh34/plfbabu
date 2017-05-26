@@ -680,9 +680,9 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "81004", errParm, null));// warning
 		}
 		
-		if (financeType.isPlanEMIHAlw() && financeType.isStepFinance()) {
+		/*if (financeType.isPlanEMIHAlw() && financeType.isStepFinance()) {
 			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "30573", errParm, null));
-		}
+		}*/
 		
 		if(financeType.isPlanEMIHAlw() && financeType.isFinIsAlwMD()){
 			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "30574", errParm, null));
