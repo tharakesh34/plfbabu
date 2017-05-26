@@ -819,7 +819,7 @@ public class LimitManagement {
 
 			if (limitDetail.getExpiryDate() != null) {
 				if (limitDetail.getExpiryDate().compareTo(date) <= 0) {
-					return new ErrorDetails("60311", new String[] { param });
+					return new ErrorDetails(param, "60311", new String[] { param }, null);
 				}
 			}
 			BigDecimal limitAmount = BigDecimal.ZERO;
@@ -834,7 +834,7 @@ public class LimitManagement {
 					//return new ErrorDetails("60312", new String[] { param });
 					return new ErrorDetails(param, "60312", new String[] { param }, null);
 				} else {
-					return new ErrorDetails("60314", new String[] { param });
+					return new ErrorDetails(param, "60314", new String[] { param }, null);
 				}
 			}
 		}
