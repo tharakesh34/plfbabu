@@ -44,6 +44,7 @@
 		<!-- <menuItem id="menu_Item_IdentityDetails" zulNavigation="/WEB-INF/pages/SystemMaster/IdentityDetails/IdentityDetailsList.zul"  rightName="menuItem_SystemMaster_IdentityDetails"/> -->
 		<menuItem id="menu_Item_IncomeType" zulNavigation="/WEB-INF/pages/SystemMaster/IncomeType/IncomeTypeList.zul"  rightName="menuItem_SystemMaster_IncomeType"/>
 		<menuItem id="menu_Item_Industry" zulNavigation="/WEB-INF/pages/SystemMaster/Industry/IndustryList.zul"  rightName="menuItem_SystemMaster_Industry"/>
+		<menuItem id="menu_Item_Locality" zulNavigation="/WEB-INF/pages/masters/Locality/LocalityList.zul" rightName="menuItem_masters_Locality"/>
 		<menuItem id="menu_Item_LovFieldDetail" zulNavigation="/WEB-INF/pages/SystemMaster/LovFieldDetail/LovFieldDetailList.zul"  rightName="menuItem_SystemMaster_LovFieldDetail"/>
 		<menuItem id="menu_Item_VehicleDealer" zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul" rightName="menuItem_SystemMaster_VehicleDealer"/>
 		<menuItem id="menu_Item_MaritalStatusCode" zulNavigation="/WEB-INF/pages/SystemMaster/MaritalStatusCode/MaritalStatusCodeList.zul"  rightName="menuItem_SystemMaster_MaritalStatusCode"/>

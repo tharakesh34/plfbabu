@@ -252,6 +252,7 @@ import com.pennant.backend.model.lmtmasters.ProcessEditorDetail;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatus;
+import com.pennant.backend.model.masters.Locality;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.model.partnerbank.PartnerBank;
@@ -1949,7 +1950,10 @@ public class PennantJavaUtil {
 				new String[] { "FinTypePartnerBanks","FinTypePartnerBanks_AView" }, masterWF,
 				new String[] { "PartnerBankID","PartnerBankCode", "PartnerBankName" }, null, 450));
 		
-
+		
+		ModuleUtil.register("Locality",
+				new ModuleMapping("Locality", Locality.class, new String[] { "Locality", "Locality_AView" }, masterWF,
+						new String[] { "id", "name", "city" }, null, 600));
 	}
 
 	public static ModuleMapping getModuleMap(String code) {

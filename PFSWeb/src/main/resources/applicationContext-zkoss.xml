@@ -4636,7 +4636,16 @@
 	<!-- Reload Resources -->
 	<bean id="reloadResourceCtrl" class="com.pennant.web.reloadresources.ReloadResourceCtrl" parent="basisCtrl" scope="prototype">
 	</bean>
-	
+
+	<!-- Locality -->
+	<bean id="localityListCtrl" class="com.pennant.webui.masters.locality.LocalityListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="localityService" ref="localityService" />
+	</bean>
+	<bean id="localityDialogCtrl" class="com.pennant.webui.masters.locality.LocalityDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="localityService" ref="localityService" />
+	</bean>
 		
 	<!-- BuilderCompany -->
 	<bean id="builderCompanyListCtrl" class="com.pennant.webui.systemmasters.buildercompany.BuilderCompanyListCtrl"
