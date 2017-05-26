@@ -140,7 +140,7 @@ UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 	</changeSet>
 	        <changeSet id="6" author="satya">
 		<addForeignKeyConstraint constraintName="FK_BuilderCompany"
-			referencedTableName="BUILDERCOMPANY" referencedColumnNames="ID"
+			referencedTableName="BUILDERCOMPANY" referencedColumnNames="GROUPID"
 			baseTableName="BUILDERPROJCET" baseColumnNames="BUILDERID" />
 	</changeSet>
 		<changeSet id="7" author="Satya">
@@ -476,4 +476,22 @@ vo.waivedAmt &lt;= 0</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequ
 			<column name="Workflowid" type="NUMBER(19,0)" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="25" author="Satya">
+	<dropForeignKeyConstraint baseTableName="BUILDERPROJCET"
+			constraintName="FK_BuilderCompany" />
+	<dropForeignKeyConstraint baseTableName="BUILDERPROJCET_TEMP"
+			constraintName="FK_BuilderCompany_TEMP" />
+	</changeSet>
+	
+	        <changeSet id="26" author="satya">
+		<addForeignKeyConstraint constraintName="FK_BuilderCompany"
+			referencedTableName="BUILDERCOMPANY" referencedColumnNames="GROUPID"
+			baseTableName="BUILDERPROJCET" baseColumnNames="BUILDERID" />
+	</changeSet>
+	<changeSet id="27" author="satya">
+		<addForeignKeyConstraint constraintName="FK_BuilderCompany_TEMP"
+			referencedTableName="BUILDERCOMPANY" referencedColumnNames="GROUPID"
+			baseTableName="BUILDERPROJCET_TEMP" baseColumnNames="BUILDERID" />
+	</changeSet>
+	
 </databaseChangeLog>
