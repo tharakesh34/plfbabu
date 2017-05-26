@@ -314,7 +314,7 @@ public class FinanceProfitDetailDAOImpl implements FinanceProfitDetailDAO {
 		selectSql.append(" TotalPftPaid, TotalPftBal, TotalPftPaidInAdv, TotalPriPaid, TotalPriBal, FinStartDate,");
 		selectSql.append(" NOInst, MaturityDate, FirstRepayAmt, NSchdDate, NSchdPri, NSchdPft, FirstRepayDate,");
 		selectSql.append(" NSchdDate, PrvRpySchDate, ODPrincipal, ODProfit, NOODInst, NOPaidInst, ClosingStatus, ");
-		selectSql.append(" TotalPftPaidInAdv, TotalPriPaidInAdv,");
+		selectSql.append(" TotalPftPaidInAdv, TotalPriPaidInAdv, AmzTillLBD, TdSchdPftPaid,");
 		selectSql.append(" ExcessAmt, EmiInAdvance, PayableAdvise");
 		selectSql.append(" From FinPftDetails");
 		selectSql.append(" Where FinReference =:FinReference");
