@@ -575,4 +575,75 @@ vo.waivedAmt &lt;= 0</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequ
 			referencedTableName="BUILDERGROUP" referencedColumnNames="ID"
 			baseTableName="BUILDERCOMPANY_TEMP" baseColumnNames="GROUPID" />
 	</changeSet>
+	<changeSet id="39" author="Pruthvi">
+<dropTable tableName="Locality" />
+	</changeSet>
+	
+<changeSet id="41" author="Pruthvi">
+				<createTable tableName="Locality">
+			<column name="ID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="NAME" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CITY" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />   
+		</createTable> 
+	</changeSet>
+	
+	<changeSet id="42" author="Pruthvi">
+	<addForeignKeyConstraint constraintName="FK_LOCALITY_CITY"
+			referencedTableName="RMTPROVINCEVSCITY" referencedColumnNames="PCCITY"
+			baseTableName="Locality" baseColumnNames="CITY" />
+				</changeSet>
+				
+<changeSet id="43" author="Pruthvi">
+<dropTable tableName="Locality_Temp" />
+	</changeSet>
+	
+<changeSet id="44" author="Pruthvi">
+				<createTable tableName="Locality_Temp">
+			<column name="ID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="NAME" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CITY" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />   
+		</createTable> 
+	</changeSet>
+	
+	<changeSet id="45" author="Pruthvi">
+	<addForeignKeyConstraint constraintName="FK_LOCALITY_TMP_CITY"
+			referencedTableName="RMTPROVINCEVSCITY" referencedColumnNames="PCCITY"
+			baseTableName="Locality_Temp" baseColumnNames="CITY" />
+				</changeSet>
 </databaseChangeLog>
