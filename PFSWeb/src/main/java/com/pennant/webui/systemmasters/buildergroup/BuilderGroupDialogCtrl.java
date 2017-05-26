@@ -445,7 +445,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 			this.name.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderGroupDialog_name.value"),PennantRegularExpressions.REGEX_NAME,true));
 		}
 		if (!this.segmentation.isReadonly()){
-			this.segmentation.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderGroupDialog_segmentation.value"),PennantRegularExpressions.REGEX_NAME,true, true));
+			this.segmentation.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderGroupDialog_segmentation.value"),null,true, true));
 		}
 
 		logger.debug(Literal.LEAVING);

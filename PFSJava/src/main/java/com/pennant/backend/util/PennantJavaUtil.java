@@ -302,7 +302,9 @@ import com.pennant.backend.model.staticparms.ScheduleMethod;
 import com.pennant.backend.model.systemmasters.Academic;
 import com.pennant.backend.model.systemmasters.AddressType;
 import com.pennant.backend.model.systemmasters.BlackListReasonCode;
+import com.pennant.backend.model.systemmasters.BuilderCompany;
 import com.pennant.backend.model.systemmasters.BuilderGroup;
+import com.pennant.backend.model.systemmasters.BuilderProjcet;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Department;
@@ -387,6 +389,15 @@ public class PennantJavaUtil {
 		ModuleUtil.register("AddressType", new ModuleMapping("AddressType", AddressType.class, new String[] {
 				"BMTAddressTypes", "BMTAddressTypes_AView" }, masterWF, new String[] { "AddrTypeCode", "AddrTypeDesc" },
 				new String[][] { { "AddrTypeIsActive", "0", "1" } }, 300));
+		
+		ModuleUtil.register("BuilderGroup", new ModuleMapping("BuilderGroup", BuilderGroup.class, new String[] { "BuilderGroup",
+		"BuilderGroup_AView" }, masterWF, new String[] {"Id","Name"},null, 350));
+		
+		ModuleUtil.register("BuilderCompany", new ModuleMapping("BuilderCompany", BuilderCompany.class, new String[] { "BuilderCompany",
+		"BuilderCompany_AView" }, masterWF, new String[] {"GroupId","Name"},null, 600));
+		
+		ModuleUtil.register("BuilderProjcet", new ModuleMapping("BuilderProjcet", BuilderProjcet.class, new String[] { "BuilderProjcet",
+		"BuilderProjcet_AView" }, masterWF, new String[] {"id","name","builderId","apfNo"},null, 600));
 
 		ModuleUtil.register("BlackListReasonCode", new ModuleMapping("BlackListReasonCode", BlackListReasonCode.class,
 				new String[] { "BMTBlackListRsnCodes", "BMTBlackListRsnCodes_AView" }, masterWF, new String[] {
@@ -532,7 +543,10 @@ public class PennantJavaUtil {
 		ModuleUtil.register("SubSegment", new ModuleMapping("SubSegment", SubSegment.class, new String[] {
 				"BMTSubSegments", "BMTSubSegments_AView" }, masterWF, new String[] { "SubSegmentCode",
 				"SubSegmentDesc" }, new String[][] { { "SubSegmentIsActive", "0", "1" } }, 500));
-
+		
+		ModuleUtil.register("BuilderCompany", new ModuleMapping("BuilderCompany", BuilderCompany.class, new String[] { "BuilderCompany",
+		"BuilderCompany_AView" }, masterWF, new String[] {"name","segmentation","groupId"},null, 600));
+		
 		/************* Application Masters *************/
 
 		ModuleUtil.register("AgreementDefinition", new ModuleMapping("AgreementDefinition", AgreementDefinition.class,
@@ -1935,8 +1949,6 @@ public class PennantJavaUtil {
 				new String[] { "FinTypePartnerBanks","FinTypePartnerBanks_AView" }, masterWF,
 				new String[] { "PartnerBankID","PartnerBankCode", "PartnerBankName" }, null, 450));
 		
-		ModuleUtil.register("BuilderGroup", new ModuleMapping("BuilderGroup", BuilderGroup.class, new String[] { "BuilderGroup",
-		"BuilderGroup_AView" }, masterWF, new String[] {"name","segmentation"},null, 600));
 
 	}
 

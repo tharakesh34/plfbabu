@@ -4637,4 +4637,26 @@
 	<bean id="reloadResourceCtrl" class="com.pennant.web.reloadresources.ReloadResourceCtrl" parent="basisCtrl" scope="prototype">
 	</bean>
 	
+		
+	<!-- BuilderCompany -->
+	<bean id="builderCompanyListCtrl" class="com.pennant.webui.systemmasters.buildercompany.BuilderCompanyListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="builderCompanyService" ref="builderCompanyService" />
+	</bean>
+	<bean id="builderCompanyDialogCtrl" class="com.pennant.webui.systemmasters.buildercompany.BuilderCompanyDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="builderCompanyService" ref="builderCompanyService"/>
+	</bean>
+	
+		
+	<!-- BuilderProjcet -->
+	<bean id="builderProjcetListCtrl" class="com.pennant.webui.systemmasters.builderprojcet.BuilderProjcetListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="builderProjcetService" ref="builderProjcetService" />
+	</bean>
+	<bean id="builderProjcetDialogCtrl" class="com.pennant.webui.systemmasters.builderprojcet.BuilderProjcetDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="builderProjcetService" ref="builderProjcetService"/>
+	</bean>
+	
+	
+	
 </beans>
