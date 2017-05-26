@@ -59,6 +59,7 @@ import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
@@ -276,11 +277,12 @@ public class CollateralStructureListCtrl extends GFCBaseListCtrl<CollateralStruc
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onCollateralStructureItemDoubleClicked(Event event) {
+	public void onCollateralStructureItemDoubleClicked(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Get the selected record.
-		Listitem selectedItem = this.listBoxCollateralStructure.getSelectedItem();
+		//Listitem selectedItem = this.listBoxCollateralStructure.getSelectedItem();
+		Listitem selectedItem = (Listitem) event.getOrigin().getTarget();
 
 		// Get the selected entity.
 		String collateralType = (String) selectedItem.getAttribute("CollateralType");
