@@ -796,4 +796,15 @@ Insert into reportlist values('BuilderGroup','BuilderGroup','listheader_name.lab
 Insert into reportlist values('Locality','Locality','listheader_name.label,listheader_city.label','name,city','String,String','','ReportList02','Locality','System Masters',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
 </sql>
 </changeSet>
+<changeSet id="56" author="satya">
+<sql>
+Insert into reportlist values('BuilderCompany','BuilderCompany','listheader_name.label,listheader_segmentation.label,listheader_groupId.label','name,segmentation,groupId','String,String,long','','ReportList03',
+'Builder Company','System Masters',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
+
+
+Insert into reportlist values('BuilderProjcet','BuilderProjcet','listheader_name.label,listheader_builderId.label,listheader_apfNo.label','name,builderId,apfNo','String,long,String','','ReportList03',
+'Builder Project','System Masters',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
+
+</sql>
+</changeSet>
 </databaseChangeLog>
