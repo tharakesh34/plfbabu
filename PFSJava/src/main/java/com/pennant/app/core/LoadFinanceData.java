@@ -2,7 +2,6 @@ package com.pennant.app.core;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,9 +10,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.BusinessCalendar;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -350,9 +347,8 @@ public class LoadFinanceData extends ServiceHelper {
 
 	public void updateCustomerDate(long custId, Date date) {
 		logger.debug(" Entering ");
-		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
-		Calendar nextBusDate = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT, date);
-		getCustomerDAO().updateCustAppDate(custId, nextBusDate.getTime());
+		Date nextDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT);
+		getCustomerDAO().updateCustAppDate(custId, nextDate);
 		logger.debug(" Leaving ");
 	}
 //

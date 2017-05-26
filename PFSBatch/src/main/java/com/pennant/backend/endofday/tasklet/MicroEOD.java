@@ -130,14 +130,13 @@ public class MicroEOD implements Tasklet {
 
 					custEODEvent.setEodDate(valueDate);
 					custEODEvent.setEodValueDate(valueDate);
-					custEODEvents.add(custEODEvent);
 
 					try {
 						eodService.doProcess(custEODEvent, valueDate);
-						custEODEvents.add(custEODEvent);
 					} catch (Exception e) {
 						custEODEvent.setEodSuccess(false);
 					}
+					custEODEvents.add(custEODEvent);
 
 				}
 				cursorItemReader.close();
@@ -178,7 +177,8 @@ public class MicroEOD implements Tasklet {
 						custEODEvent = null;
 					}
 				}
-
+				custEODEvents.clear();
+				custEODEvents=null;
 				customerQueuingDAO.updateSucess(threadId);
 				customer=null;
 				//COMMIT THE TRANSACTION
