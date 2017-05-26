@@ -1496,6 +1496,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Accrued Profit Calculation
 		Date curBussniessDate = DateUtility.getAppDate();
 		BigDecimal priBalance = BigDecimal.ZERO;
+		boolean isLastTermAdjusted = false;
 		if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
 
 			FinanceScheduleDetail curSchd = null;
@@ -1512,10 +1513,18 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					}else{
 						priBalance = curSchd.getClosingBalance().subtract(curSchd.getCpzAmount());
 					}
-					break;
+					isLastTermAdjusted = true;
+					
+					// Future Disbursements into Early paid Balance
+					priBalance = priBalance.add(curSchd.getDisbAmount());
+					
 				} else if (DateUtility.compare(curBussniessDate, curSchd.getSchDate()) < 0) {
-					priBalance = prvSchd.getClosingBalance();
-					break;
+					if(!isLastTermAdjusted){
+						priBalance = prvSchd.getClosingBalance();
+						isLastTermAdjusted = true;
+					}
+					// Future Disbursements into Early paid Balance
+					priBalance = priBalance.add(curSchd.getDisbAmount());
 				}
 			}
 		}
