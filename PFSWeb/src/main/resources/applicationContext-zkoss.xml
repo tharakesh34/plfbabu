@@ -3082,6 +3082,9 @@
 		<property name="financeDetailService" ref="financeDetailService" />	
 		<property name="accountingSetService" ref="accountingSetService" />
 		<property name="feePostingService" ref="feePostingService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="collateralSetupService" ref="collateralSetupService"/> 
+		<property name="limitDetailService" ref="limitDetailService" />
 	</bean>
 
 	<!--============ IJARAH Bulk Rate Change Details ============== -->

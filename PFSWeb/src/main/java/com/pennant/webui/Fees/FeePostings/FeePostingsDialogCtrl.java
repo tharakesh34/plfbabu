@@ -89,6 +89,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.fees.FeePostings;
 import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
@@ -97,6 +98,7 @@ import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.fees.feepostings.FeePostingService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.limit.LimitDetailService;
 import com.pennant.backend.service.rmtmasters.AccountingSetService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -163,6 +165,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	private transient FinanceDetailService			financeDetailService;
 	private transient CustomerDetailsService        customerDetailsService;
 	private transient CollateralSetupService		collateralSetupService;
+	private transient LimitDetailService			limitDetailService;
 	private transient AccountingSetService			accountingSetService;
 	private AccountEngineExecution					engineExecution;
 	private boolean									isAccountingExecuted	= false;
@@ -450,6 +453,9 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 			CollateralSetup collateralSetup = getCollateralSetupService()
 					.getApprovedCollateralSetupById(getFeePostings().getReference());
 			aeEvent.setCustID(collateralSetup.getDepositorId());
+		}else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_LIMIT, getFeePostings().getPostAgainst())) {
+				LimitHeader header =getLimitDetailService().getCustomerLimits(Long.valueOf(getFeePostings().getReference()));
+				aeEvent.setCustID(header.getCustomerId());
 		}
 		
 
@@ -457,6 +463,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		amountCodes.setPartnerBankAcType(getFeePostings().getPartnerBankAcType());
 		
 		aeEvent.setCcy(getFeePostings().getCurrency());
+		aeEvent.setFinReference(getFeePostings().getReference());
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		
 		getFeePostings().getDeclaredFieldValues(aeEvent.getDataMap());
@@ -582,10 +589,10 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 		if (!enqModule) {
-			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_JVPostingDialog_btnNew"));
-			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_JVPostingDialog_btnEdit"));
-			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_JVPostingDialog_btnDelete"));
-			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_JVPostingDialog_btnSave"));
+			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FeePostingsDialog_btnNew"));
+			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FeePostingsDialog_btnEdit"));
+			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FeePostingsDialog_btnDelete"));
+			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FeePostingsDialog_btnSave"));
 
 		}
 		logger.debug("Leaving");
@@ -741,8 +748,6 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
 		logger.debug("Entering");
 
-		doRemoveValidation();
-
 		if (wve.size() > 0) {
 			logger.debug("Throwing occured Errors By using WrongValueException");
 			tab.setSelected(true);
@@ -787,28 +792,6 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		}
 	}
 
-	/**
-	 * Remove the Validation by setting empty constraints.
-	 */
-	private void doRemoveValidation() {
-
-	}
-
-	/**
-	 * Set Validations for LOV Fields
-	 */
-
-	private void doSetLOVValidation() {
-
-	}
-
-	/**
-	 * Remove the Validation by setting empty constraints.
-	 */
-
-	private void doRemoveLOVValidation() {
-
-	}
 
 	/**
 	 * Remove Error Messages for Fields
@@ -823,11 +806,13 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		Tab tab = (Tab) event.getOrigin().getTarget();
 		logger.debug(tab.getId() + " --> " + "Entering");
 		String module = getIDbyTab(tab.getId());
-		doRemoveValidation();
 		doClearMessage();
 
 		if (StringUtils.equals(module, AssetConstants.UNIQUE_ID_ACCOUNTING)) {
 			doWriteComponentsToBean(getFeePostings());
+			if(StringUtils.equals(null, getFeePostings().getAccountSetId())){
+				
+			}
 			appendAccountingDetailTab(false);
 		}
 
@@ -924,11 +909,11 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_CUST)) {
 			addFilters("Customer", "CustCIF", "CustShrtName");
 		}
-		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_CMTMNT)) {
-			addFilters("Commitment", "CmtReference", "CmtTitle");
-		}
 		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_COLLATERAL)) {
 			addFilters("CollateralSetup", "CollateralRef", "CollateralType");
+		}
+		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_LIMIT)) {
+			addFilters("LimitHeader", "HeaderId", "ResponsibleBranch");
 		}
 	}
 
@@ -950,14 +935,15 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		final FeePostings aFeePosting = new FeePostings();
 		BeanUtils.copyProperties(getFeePostings(), aFeePosting);
 		boolean isNew = false;
+		boolean validate = false;
 
 		doClearMessage();
 		doSetValidation();
 		// fill the FinanceType object with the components data
 		doWriteComponentsToBean(aFeePosting);
-
+		validate = validateAccounting(validate);
 		// Accounting Details Validations
-		if (!isAccountingExecuted) {
+		if (validate && !isAccountingExecuted) {
 			MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Accountings"));
 			return;
 		}
@@ -997,6 +983,17 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		}
 		logger.debug("Leaving");
 
+	}
+
+	private boolean validateAccounting(boolean validate) {
+		if (this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Cancel")
+				|| this.userAction.getSelectedItem().getLabel().contains("Reject")
+				|| this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
+			validate=false;
+		}else{
+			validate=true;
+		}
+		return validate;
 	}
 
 	/**
@@ -1282,6 +1279,14 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
 		this.collateralSetupService = collateralSetupService;
+	}
+
+	public LimitDetailService getLimitDetailService() {
+		return limitDetailService;
+	}
+
+	public void setLimitDetailService(LimitDetailService limitDetailService) {
+		this.limitDetailService = limitDetailService;
 	}
 
 }

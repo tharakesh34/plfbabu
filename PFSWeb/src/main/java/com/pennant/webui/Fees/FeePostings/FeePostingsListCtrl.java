@@ -306,7 +306,7 @@ public class FeePostingsListCtrl extends GFCBaseListCtrl<FeePostings> {
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) throws InterruptedException {
-		new PTListReportUtils("JVPosting", searchObject, this.pagingFeePostingList.getTotalSize() + 1);
+		new PTListReportUtils("FeePostings", searchObject, this.pagingFeePostingList.getTotalSize() + 1);
 		logger.debug("Leaving");
 	}
 

@@ -59,15 +59,21 @@ import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.collateral.CollateralSetupDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.fees.FeePostingsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.limit.LimitHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.fees.FeePostings;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -90,6 +96,9 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 	private PostingsDAO				postingsDAO;
 	private FinanceMainDAO 		   	financeMainDAO;
 	private AccountingSetDAO        accountingSetDAO;
+	private CustomerDAO				customerDAO;
+	private CollateralSetupDAO      collateralSetupDAO;
+	private LimitHeaderDAO 			limitHeaderDAO;  
 
 	@Override
 	public FeePostings getFeePostings() {
@@ -357,41 +366,39 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				AEEvent aeEvent = new AEEvent();
 				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_MANFEE);
 				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+				
+				if (amountCodes == null) {
+					amountCodes = new AEAmountCodes();
+				}
 
 				// If Fee postings Created Against Finance Reference
 				if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_LOAN, feePostings.getPostAgainst())) {
-					FinanceMain financeMain=getFinanceMainDAO().getFinanceMainForBatch(feePostings.getReference());
-					if (amountCodes == null) {
-						amountCodes = new AEAmountCodes();
-					}
-
+					FinanceMain financeMain=financeMainDAO.getFinanceMainForBatch(feePostings.getReference());
 					amountCodes.setFinType(financeMain.getFinType());
 					amountCodes.setPartnerBankAc(getFeePostings().getPartnerBankAc());
 					aeEvent.setBranch(financeMain.getFinBranch());
 					aeEvent.setCustID(financeMain.getCustID());
-				}
-				
-				//if fees created against customer
-				if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_CUST, feePostings.getPostAgainst())) {
-					if (amountCodes == null) {
-						amountCodes = new AEAmountCodes();
-					}
-					//FIXME:To send any additional data
-				}
-				
-				//if fees created against Collateral
-				if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_COLLATERAL, feePostings.getPostAgainst())) {
-					if (amountCodes == null) {
-						amountCodes = new AEAmountCodes();
-					}
-					//FIXME:To send any additional data
+					aeEvent.setCcy(financeMain.getFinCcy());
+				}else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_CUST, feePostings.getPostAgainst())) {
+					Customer customer = customerDAO.getCustomerByCIF(feePostings.getReference(), "");
+					aeEvent.setBranch(customer.getCustDftBranch());
+					aeEvent.setCustID(customer.getCustID());
+					aeEvent.setCcy(customer.getCustBaseCcy());
+				}else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_COLLATERAL, feePostings.getPostAgainst())) {
+					CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(feePostings.getReference(),"");
+					aeEvent.setCustID(collateralSetup.getDepositorId());
+					aeEvent.setCcy(collateralSetup.getCollateralCcy());
+				} else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_LIMIT, feePostings.getPostAgainst())) {
+					LimitHeader header = limitHeaderDAO.getLimitHeaderById(Long.valueOf(feePostings.getReference()),"");
+					aeEvent.setCustID(header.getCustomerId());
+					aeEvent.setCcy(header.getLimitCcy());
 				}
 				
 				amountCodes.setPartnerBankAc(feePostings.getPartnerBankAc());
 				amountCodes.setPartnerBankAcType(feePostings.getPartnerBankAcType());
-				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 				aeEvent.setFinReference(feePostings.getReference());
-				aeEvent.setCcy(feePostings.getCurrency());
+				
+				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 
 				feePostings.getDeclaredFieldValues(aeEvent.getDataMap());
 				aeEvent.getAcSetIDList().add(Long.valueOf(feePostings.getAccountSetId()));
@@ -480,8 +487,32 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
-		// TODO Auto-generated method stub
-		return null;
+
+		logger.debug("Entering");
+		
+		auditHeader = businessValidation(auditHeader, "doApprove");
+		if (!auditHeader.isNextProcess()) {
+			return auditHeader;
+		}
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		FeePostings feePostings = (FeePostings) auditHeader.getAuditDetail().getModelData();
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+
+		String[] fields = PennantJavaUtil.getFieldDetails(new FeePostings(), feePostings.getExcludeFields());
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], feePostings.getBefImage(), feePostings));
+
+		getFeePostingsDAO().delete(feePostings, "_Temp");
+
+		getAuditHeaderDAO().addAudit(auditHeader);
+		logger.debug("Leaving");
+		auditHeader.setAuditDetails(auditDetails);
+		getAuditHeaderDAO().addAudit(auditHeader);
+		
+		logger.debug("Leaving");
+		return auditHeader;
+
+	
 	}
 
 	public AuditHeaderDAO getAuditHeaderDAO() {
@@ -516,9 +547,6 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		this.postingsDAO = postingsDAO;
 	}
 
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
@@ -530,6 +558,25 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 
 	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
 		this.accountingSetDAO = accountingSetDAO;
+	}
+
+	
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
+	public CollateralSetupDAO getCollateralSetupDAO() {
+		return collateralSetupDAO;
+	}
+
+	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
+		this.collateralSetupDAO = collateralSetupDAO;
+	}
+
+
+	public void setLimitHeaderDAO(LimitHeaderDAO limitHeaderDAO) {
+		this.limitHeaderDAO = limitHeaderDAO;
 	}
 
 }

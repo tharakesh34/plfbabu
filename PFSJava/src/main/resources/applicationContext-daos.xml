@@ -9763,7 +9763,10 @@
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="accountingSetDAO" ref="accountingSetDAO" />		
+		<property name="accountingSetDAO" ref="accountingSetDAO" />	
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="collateralSetupDAO" ref="collateralSetupDAO" />	
+		<property name="limitHeaderDAO" ref="limitHeaderDAO" />
 
 	</bean>
    

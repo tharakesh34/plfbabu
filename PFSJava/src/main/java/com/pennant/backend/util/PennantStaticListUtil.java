@@ -2671,8 +2671,8 @@ public class PennantStaticListUtil {
 			postingPurposeList = new ArrayList<ValueLabel>(4);
 			postingPurposeList.add(new ValueLabel(FinanceConstants.POSTING_AGAINST_LOAN,Labels.getLabel("label_Finance")));
 			postingPurposeList.add(new ValueLabel(FinanceConstants.POSTING_AGAINST_CUST,Labels.getLabel("label_Customer")));
-			postingPurposeList.add(new ValueLabel(FinanceConstants.POSTING_AGAINST_CMTMNT,Labels.getLabel("label_Commitment")));
 			postingPurposeList.add(new ValueLabel(FinanceConstants.POSTING_AGAINST_COLLATERAL,Labels.getLabel("label_Collateral")));
+			postingPurposeList.add(new ValueLabel(FinanceConstants.POSTING_AGAINST_LIMIT,Labels.getLabel("label_Limit")));
 		}
 		return postingPurposeList;
 	}
