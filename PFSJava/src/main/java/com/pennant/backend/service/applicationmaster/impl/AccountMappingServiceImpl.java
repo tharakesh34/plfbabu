@@ -429,8 +429,8 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		// List
-		auditHeader = prepareChildsAudit(auditHeader, method);
 		auditHeader.setErrorList(validateChilds(auditHeader, auditHeader.getUsrLanguage(), method));
+		auditHeader = prepareChildsAudit(auditHeader, method);
 
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());

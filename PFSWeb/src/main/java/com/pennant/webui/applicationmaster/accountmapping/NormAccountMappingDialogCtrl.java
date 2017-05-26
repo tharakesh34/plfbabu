@@ -39,7 +39,6 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	protected Window							window_NormAccountMappingDialog;
 	protected Uppercasebox						account;
 	protected Textbox							hostAccount;
-	protected ExtendedCombobox					finType;
 	protected ExtendedCombobox					accountType;
 	protected ExtendedCombobox					profitCenter;
 	protected ExtendedCombobox					costCenter;
@@ -120,13 +119,6 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 
 		this.account.setMaxlength(15);
 		this.hostAccount.setMaxlength(15);
-
-		this.finType.setModuleName("FinanceType");
-		this.finType.setValueColumn("FinType");
-		this.finType.setDescColumn("FinTypeDesc");
-		this.finType.setDisplayStyle(2);
-		this.finType.setValidateColumns(new String[] { "FinType" });
-		this.finType.setMandatoryStyle(true);
 
 		this.profitCenter.setModuleName("ProfitCenter");
 		this.profitCenter.setValueColumn("ProfitCenterCode");
@@ -267,15 +259,11 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 			this.costCenter.setObject(new CostCenter(accountMapping.getCostCenterID()));
 			this.costCenter.setValue(accountMapping.getCostCenterCode(), accountMapping.getCostCenterDesc());
 		}
-
-		this.finType.setValue(accountMapping.getFinType());
 		this.accountType.setValue(accountMapping.getAccountType());
 
 		if (accountMapping.isNewRecord()) {
-			this.finType.setDescription("");
 			this.accountType.setDescription("");
 		} else {
-			this.finType.setDescription(accountMapping.getFinTypeDesc());
 			this.accountType.setDescription(accountMapping.getAccountTypeDesc());
 		}
 
@@ -303,12 +291,6 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		}
 		try {
 			accountMapping.setHostAccount(this.hostAccount.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			accountMapping.setFinType(this.finType.getValue());
-			accountMapping.setFinTypeDesc(this.finType.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -423,10 +405,6 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 			this.costCenter.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_NormAccountMappingDialog_CostCenter.value"), null, false));
 		}
-		if (!this.finType.isReadonly()) {
-			this.finType.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_NormAccountMappingDialog_FinType.value"), null, true));
-		}
 		if (!this.accountType.isReadonly()) {
 			this.accountType.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_NormAccountMappingDialog_AccountType.value"), null, true));
@@ -446,7 +424,6 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.hostAccount.setConstraint("");
 		this.profitCenter.setConstraint("");
 		this.costCenter.setConstraint("");
-		this.finType.setConstraint("");
 		this.accountType.setConstraint("");
 
 		logger.debug("Leaving");
@@ -473,7 +450,6 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 
 		this.account.setErrorMessage("");
 		this.hostAccount.setErrorMessage("");
-		this.finType.setErrorMessage("");
 		this.accountType.setErrorMessage("");
 		this.profitCenter.setErrorMessage("");
 		this.costCenter.setErrorMessage("");
@@ -547,7 +523,6 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.hostAccount.setReadonly(isReadOnly("AccountMappingDialog_HostAccount"));
 		this.profitCenter.setReadonly(isReadOnly("AccountMappingDialog_ProfitCenter"));
 		this.costCenter.setReadonly(isReadOnly("AccountMappingDialog_CostCenter"));
-		this.finType.setReadonly(isReadOnly("AccountMappingDialog_FinType"));
 		this.accountType.setReadonly(isReadOnly("AccountMappingDialog_AccountType"));
 
 		if (isWorkFlowEnabled()) {
@@ -576,7 +551,6 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.hostAccount.setReadonly(true);
 		this.profitCenter.setReadonly(true);
 		this.costCenter.setReadonly(true);
-		this.finType.setReadonly(true);
 		this.accountType.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
@@ -603,7 +577,6 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.hostAccount.setValue("");
 		this.profitCenter.setValue("");
 		this.costCenter.setValue("");
-		this.finType.setValue("");
 		this.accountType.setValue("");
 
 		logger.debug("Leaving");

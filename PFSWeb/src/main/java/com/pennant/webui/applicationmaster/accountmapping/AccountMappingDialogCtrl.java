@@ -74,7 +74,6 @@ import com.pennant.backend.model.applicationmaster.CostCenter;
 import com.pennant.backend.model.applicationmaster.ProfitCenter;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -193,7 +192,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.finType.setDescColumn("FinTypeDesc");
 		this.finType.setValidateColumns(new String[] { "FinType", "FinCategory", "FinTypeDesc" });
 		this.finType.setMandatoryStyle(true);
-
+		
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -263,7 +262,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 				Hbox hbox = null;
 				ExtendedCombobox profitCenter = null;
 				ExtendedCombobox costCenter = null;
-				ExtendedCombobox accountType = null;
+				Textbox accountType = null;
 
 				int count = 0;
 				AccountMapping accountMapping = null;
@@ -290,18 +289,18 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 					String costCenterDesc = null;
 					String profitCenterCode = null;
 					String costCenterCode = null;
-					String accountTypeDesc = null;
 					boolean newRecord = false;
 					if (accountMapping == null) {
 						hostAccount = "";
 						newRecord = true;
+						accountMapping = new AccountMapping();
+						accountMapping.setNewRecord(true);
 					} else {
 						hostAccount = accountMapping.getHostAccount();
 						profitCenterCode = accountMapping.getProfitCenterCode();
 						costCenterCode = accountMapping.getCostCenterCode();
 						profitCenterDesc = accountMapping.getProfitCenterDesc();
 						costCenterDesc = accountMapping.getCostCenterDesc();
-						accountTypeDesc = accountMapping.getAccountTypeDesc();
 					}
 
 					item = new Listitem();
@@ -328,6 +327,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 					sapGlCode_Textbox.setParent(cell);
 					sapGlCode_Textbox.setId("sapGlCode_" + count);
 					sapGlCode_Textbox.setAttribute("newRecord", newRecord);
+					sapGlCode_Textbox.setAttribute("befImage", accountMapping);
 					sapGlCode_Textbox.setValue(hostAccount);
 					sapGlCode_Textbox.setParent(hbox);
 					cell.setParent(item);
@@ -368,19 +368,10 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 					cell.setParent(item);
 
 					cell = new Listcell();
-					accountType = new ExtendedCombobox();
-					accountType.setModuleName("AccountType");
+					accountType = new Textbox();
+					accountType.setReadonly(true);
 					accountType.setId("accountType_" + count);
-					accountType.setValueColumn("AcType");
-					accountType.setDescColumn("AcTypeDesc");
-					accountType.setDisplayStyle(2);
-					accountType.setValidateColumns(new String[] { "AcType" });
-					accountType.setMandatoryStyle(true);
-					if (!newRecord) {
-						accountType.setValue(accountMapping.getAccountType());
-						accountType.setObject(new AccountType(accountMapping.getAccountType()));
-						accountType.setDescription(accountTypeDesc);
-					}
+					accountType.setValue(transactionEntry.getAccountType());
 					accountType.setParent(cell);
 					cell.setParent(item);
 
@@ -437,9 +428,10 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 			accMapping.setTranType(tranType);
 
 			if (count == 0) {
-				accMapping.setBefImage(accMapping);
 				BeanUtils.copyProperties(accMapping, accountMapping);
+				accMapping.setBefImage(accMapping);
 			} else {
+				accMapping.setBefImage(accMapping);
 				accountMapping.getAccountMappingList().add(accMapping);
 			}
 
@@ -833,21 +825,28 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		boolean newRecord;
 		ExtendedCombobox profitCenterId;
 		ExtendedCombobox costCenterId;
-		ExtendedCombobox accountType;
+		Textbox accountType;
 
 		for (Listitem listItem : items) {
 			accountMapping = new AccountMapping();
-			BeanUtils.copyProperties(this.accountMapping, accountMapping);
+			//BeanUtils.copyProperties(this.accountMapping, accountMapping);
 			glCode_Label = (Label) listItem.getFellow("glCode_" + count);
 			sapGlCode_Textbox = (Textbox) listItem.getFellow("sapGlCode_" + count);
+			accountType = (Textbox) listItem.getFellow("accountType_" + count);
 			newRecord = (boolean) sapGlCode_Textbox.getAttribute("newRecord");
+			accountMapping = (AccountMapping) sapGlCode_Textbox.getAttribute("befImage");
+			accountMapping.setWorkflowId(this.accountMapping.getWorkflowId());
+			
 			sapGlCode_Textbox.setErrorMessage("");
+			accountType.setErrorMessage("");
+			if (!newRecord) {
+				accountMapping.setBefImage(accountMapping);
+			}
 			sapGlCode_Textbox.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_HostAccount.value"),
 							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 			profitCenterId = (ExtendedCombobox) listItem.getFellow("profitCenter_" + count);
 			costCenterId = (ExtendedCombobox) listItem.getFellow("costCenter_" + count);
-			accountType = (ExtendedCombobox) listItem.getFellow("accountType_" + count);
 			profitCenterId.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_ProfitCenter.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM, true));
@@ -856,7 +855,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 							PennantRegularExpressions.REGEX_ALPHANUM, true));
 			accountType.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_AccountMappingDialog_AccountType.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM, true));
+							PennantRegularExpressions.REGEX_ALPHANUM, false));
 			//GL Code
 			try {
 				accountMapping.setAccount(glCode_Label.getValue());
@@ -886,9 +885,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 			}
 
 			try {
-				AccountType accountTypes = (AccountType) accountType.getObject();
-				accountMapping.setAccountType(accountTypes.getId());
-				accountMapping.setAccountTypeDesc(accountTypes.getAcTypeDesc());
+				accountMapping.setAccountType(accountType.getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -912,7 +909,6 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		}
 
 		setAuditPreparation(accountMappingList, finTypeValue);
-		//accountMappingService.save(accountMappingList, finTypeValue);	//FIXME
 
 		logger.debug(Literal.LEAVING);
 
@@ -1028,9 +1024,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		boolean deleteNotes = false;
 
 		try {
-
 			while (retValue == PennantConstants.porcessOVERIDE) {
-
 				if (StringUtils.isBlank(method)) {
 					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = accountMappingService.delete(auditHeader);
@@ -1038,7 +1032,6 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 					} else {
 						auditHeader = accountMappingService.saveOrUpdate(auditHeader);
 					}
-
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = accountMappingService.doApprove(auditHeader);

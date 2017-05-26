@@ -192,7 +192,9 @@ public class AccountMappingDAOImpl extends BasisCodeDAO<AccountMapping> implemen
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, FinType = :FinType,");
 		sql.append(" CostCenterID = :CostCenterID, ProfitCenterID = :ProfitCenterID, AccountType = :AccountType");
 		sql.append(" where account = :account ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		if (tableType == TableType.MAIN_TAB) {
+			sql.append(" and Version = :Version - 1");
+		} 
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

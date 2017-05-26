@@ -96,19 +96,16 @@
 							</row>
 							<row visible="true">
 								<label
-									id="label_NormAccountMappingDialog_FinType"
-									value="${c:l('label_NormAccountMappingDialog_FinType.value')}" />
-									<extendedcombobox id="finType" />
-								<label
 									id="label_NormAccountMappingDialog_AccountType"
 									value="${c:l('label_NormAccountMappingDialog_AccountType.value')}" />
 									<extendedcombobox id="accountType" />
-							</row>
-							<row visible="true">
 								<label
 									id="label_NormAccountMappingDialog_ProfitCenter"
 									value="${c:l('label_NormAccountMappingDialog_ProfitCenter.value')}" />
 									<extendedcombobox id="profitCenter" />
+							</row>
+							<row visible="true">
+								
 								<label
 									id="label_NormAccountMappingDialog_CostCenter"
 									value="${c:l('label_NormAccountMappingDialog_CostCenter.value')}" />
