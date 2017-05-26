@@ -1268,9 +1268,22 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					.getLabel("label_VASRecordingDialog_RenewalFee.value"), 2, false, false));
 		}
 
+		if (!this.valueDate.isDisabled()) {
+			this.valueDate.setConstraint(new PTDateValidator(Labels
+					.getLabel("label_VASRecordingDialog_ValueDate.value"), true, SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE), 
+					DateUtility.getAppDate(), true));
+		}
+		
 		if (!this.accrualTillDate.isDisabled()) {
 			this.accrualTillDate.setConstraint(new PTDateValidator(Labels
-					.getLabel("label_VASRecordingDialog_AccrualTillDate.value"), true));
+					.getLabel("label_VASRecordingDialog_AccrualTillDate.value"), true, DateUtility.getAppDate(), 
+					SysParamUtil.getValueAsDate("APP_DFT_END_DATE"), true));
+		}
+		
+		if (!this.recurringDate.isDisabled()) {
+			this.recurringDate.setConstraint(new PTDateValidator(Labels
+					.getLabel("label_VASRecordingDialog_RecurringDate.value"), true, DateUtility.getAppDate(), 
+					SysParamUtil.getValueAsDate("APP_DFT_END_DATE"), true));
 		}
 
 		if (!this.dsaId.isButtonDisabled()) {
@@ -1972,7 +1985,14 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		// Do data level validations here
 		Map<String, Object> map = null;
 		try {
-			map = generator.doSave(getExtendedFieldHeader().getExtendedFieldDetails(), false);
+			boolean isReadOnly = false;
+			if (enqiryModule || isCancelProcess) {
+				isReadOnly = true;
+			} else {
+				isReadOnly = isReadOnly("VASRecordingDialog_ExtendedFields");
+			}
+			
+			map = generator.doSave(getExtendedFieldHeader().getExtendedFieldDetails(), isReadOnly);
 			aExetendedFieldRender.setMapValues(map);
 		} catch (WrongValuesException wves) {
 			WrongValueException[] wvea = wves.getWrongValueExceptions();
@@ -2107,6 +2127,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.dmaId.setReadonly(true);
 		this.fulfilOfficerId.setReadonly(true);
 		this.referralId.setReadonly(true);
+		this.viewInfo.setVisible(false);
 		
 		if (isWorkFlowEnabled() && !isCancelProcess) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

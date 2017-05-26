@@ -1524,6 +1524,9 @@ public class ReceiptCalculator implements Serializable {
 						repayMain.setEarlyPayAmount(curSchd.getClosingBalance().subtract(curSchd.getCpzAmount()));
 					}
 					partAccrualReq = false;
+					
+					// Future Disbursements into Early paid Balance
+					repayMain.setEarlyPayAmount(repayMain.getEarlyPayAmount().add(curSchd.getDisbAmount()));
 				} else {
 					if(partAccrualReq && prvSchd != null){
 						partAccrualReq = false;
@@ -1534,6 +1537,9 @@ public class ReceiptCalculator implements Serializable {
 						priBalance = priBalance.add(prvSchd.getClosingBalance());
 						repayMain.setEarlyPayAmount(prvSchd.getClosingBalance());
 					}
+					
+					// Future Disbursements into Early paid Balance
+					repayMain.setEarlyPayAmount(repayMain.getEarlyPayAmount().add(curSchd.getDisbAmount()));
 				}
 			}
 			

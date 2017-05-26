@@ -504,6 +504,7 @@ public class ExtendedFieldsGenerator {
 				bandBox.setId("ad_".concat(detail.getFieldName()));
 				bandBox.setReadonly(true);
 				bandBox.setTabindex(-1);
+				bandBox.setDisabled(isReadOnly);
 
 				Bandpopup bandpopup=new Bandpopup();
 				listBox.setMultiple(true);
