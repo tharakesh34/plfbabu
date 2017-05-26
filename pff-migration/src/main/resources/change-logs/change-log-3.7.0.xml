@@ -438,4 +438,13 @@ vo.waivedAmt &lt;= 0</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequ
 		UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
 	</sql>
 </changeSet>
+<changeSet id="22" author="Surekha">
+	<sql>
+		delete  from ErrorDetails where errorcode='65016';
+		INSERT INTO ErrorDetails VALUES('65016','EN','W','Auto Debit facility is available with the Bank {0}','','Approved','','','','','',0,current_timestamp,1000,0);
+		delete  from ErrorDetails where errorcode='65017';
+		INSERT INTO ErrorDetails VALUES('65017','EN','W','{0} Bank is covered under NACH','','Approved','','','','','',0,current_timestamp,1000,0);
+		
+	</sql>
+	</changeSet>
 </databaseChangeLog>
