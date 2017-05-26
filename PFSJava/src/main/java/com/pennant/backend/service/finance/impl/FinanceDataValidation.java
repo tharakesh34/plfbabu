@@ -1205,9 +1205,10 @@ public class FinanceDataValidation {
 					return errorDetails;
 				}
 				
-				if(mandate.getMaxLimit().compareTo(BigDecimal.ZERO) < 0) {
-					String[] valueParm = new String[1];
+				if(mandate.getMaxLimit().compareTo(BigDecimal.ZERO) <= 0) {
+					String[] valueParm = new String[2];
 					valueParm[0] = "maxLimit";
+					valueParm[1] = "0";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91125", valueParm)));
 					return errorDetails;
 				}
