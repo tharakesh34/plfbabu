@@ -655,4 +655,27 @@ vo.waivedAmt &lt;= 0</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequ
 		select ID from DATA_ENGINE_CONFIG where Name = 'MANDATES_IMPORT')) and Name = 'STATUS';
 	</sql>
 	</changeSet>
+	<changeSet id="47" author="Ahmad">
+		<createView viewName="LOCALITY_VIEW" replaceIfExists="true">
+			SELECT		T1.id, T1.name, T1.city, C.PCCITYNAME CityName
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	Locality_Temp  T1 
+  inner join RMTProvinceVsCity C on C.PCCITY = T1.City
+UNION ALL
+SELECT		T1.id, T1.name, T1.city, C.PCCITYNAME				
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	Locality  T1 
+  inner join RMTProvinceVsCity C on C.PCCITY = T1.City
+WHERE     NOT EXISTS (SELECT 1 FROM Locality_TEMP WHERE id = T1.id)
+		</createView>
+		</changeSet>
+		<changeSet id="48" author="Ahmad">
+		<createView viewName="LOCALITY_AVIEW" replaceIfExists="true">
+			SELECT		T1.id, T1.name, T1.city, C.PCCITYNAME CityName
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	Locality  T1
+  inner join RMTProvinceVsCity C on C.PCCITY = T1.City
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
