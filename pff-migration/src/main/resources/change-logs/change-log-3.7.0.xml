@@ -529,16 +529,6 @@ vo.waivedAmt &lt;= 0</bpmn2:conditionExpression></bpmn2:sequenceFlow><bpmn2:sequ
 			constraintName="FK_BuilderCompany_TEMP" />
 	</changeSet>
 	
-	      <!--   <changeSet id="26" author="satya">
-		<addForeignKeyConstraint constraintName="FK_BuilderCompany"
-			referencedTableName="BUILDERCOMPANY" referencedColumnNames="GROUPID"
-			baseTableName="BUILDERPROJCET" baseColumnNames="BUILDERID" />
-	</changeSet> -->
-	<changeSet id="27" author="satya">
-		<addForeignKeyConstraint constraintName="FK_BuilderCompany_TEMP"
-			referencedTableName="BUILDERCOMPANY" referencedColumnNames="GROUPID"
-			baseTableName="BUILDERPROJCET_TEMP" baseColumnNames="BUILDERID" />
-	</changeSet>
 	<changeSet id="28" author="SreeRavali">
 		<addColumn tableName="Restructure_Temp">
 			<column name="CustomerCIF" type="varchar(20)" />
