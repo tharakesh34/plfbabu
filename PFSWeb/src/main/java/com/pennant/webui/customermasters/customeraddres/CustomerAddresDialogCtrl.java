@@ -1144,7 +1144,8 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 					}
 				} 
 				
-				if(aCustomerAddres.getCustAddrType().equals(customerAddres.getCustAddrType())){ // Both Current and Existing list addresses same
+				if(!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerAddres.getRecordType()) &&
+						aCustomerAddres.getCustAddrType().equals(customerAddres.getCustAddrType())){ // Both Current and Existing list addresses same
 					
 					if(isNewRecord()){
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41001",errParm,valueParm), getUserWorkspace().getUserLanguage()));
