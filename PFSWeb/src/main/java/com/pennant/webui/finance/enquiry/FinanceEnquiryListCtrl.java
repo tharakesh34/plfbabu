@@ -520,7 +520,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 */
 	public void onClick$button_Print(Event event) throws InterruptedException{
 		logger.debug("Entering " + event.toString());
-		new PTListReportUtils(this.enquiryType.getValue(), getSearchObj(), this.pagingEnquiryList.getTotalSize()+1);
+		if(this.listBoxEnquiryResult.getItemCount()>0){			
+			new PTListReportUtils(this.enquiryType.getValue(), getSearchObj(), this.pagingEnquiryList.getTotalSize()+1);
+		}
 		logger.debug("Leaving " + event.toString());
 	}
 	
