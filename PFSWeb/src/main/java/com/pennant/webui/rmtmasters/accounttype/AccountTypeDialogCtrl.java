@@ -225,8 +225,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		logger.debug("Entering");
 
 		// Empty sent any required attributes
-		int acTypeLen = SysParamUtil.getValueAsInt("ACCOUNT_TYPE_LEN");
-		this.acType.setMaxlength(acTypeLen);
+		this.acType.setMaxlength(14);
 		this.acTypeDesc.setMaxlength(50);
 		this.acLmtCategory.setMaxlength(100);
 

@@ -84,7 +84,7 @@
 										<space spacing="2px"
 											sclass="mandatory" />
 										<textbox id="acType"
-											maxlength="8" width="50px" visible="false" />
+											maxlength="15" width="50px" visible="false" />
 										<textbox id="lovDescAcTypeDesc"
 											width="400px" readonly="true" />
 									</hbox>

@@ -59,7 +59,6 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.service.rmtmasters.AccountTypeService;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -305,8 +304,7 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> {
 	}
 	
 	private void doSetFieldProperties() {
-		int acTypeLen = SysParamUtil.getValueAsInt("ACCOUNT_TYPE_LEN");
-		this.acType.setMaxlength(acTypeLen);
+		this.acType.setMaxlength(14);
 		
 	}
 

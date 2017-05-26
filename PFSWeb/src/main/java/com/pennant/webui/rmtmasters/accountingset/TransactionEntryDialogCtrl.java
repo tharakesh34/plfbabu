@@ -299,7 +299,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		// Empty sent any required attributes
 		this.transOrder.setMaxlength(3);
 		this.transDesc.setMaxlength(50);
-		this.accountType.setMaxlength(8);
+		this.accountType.setMaxlength(15);
 		this.accountBranch.setMaxlength(LengthConstants.LEN_BRANCH);
 		this.accountSubHeadRule.setMaxlength(8);
 		this.transcationCode.setMaxlength(8);

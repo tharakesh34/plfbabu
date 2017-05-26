@@ -262,7 +262,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		this.acHead.setMaxlength(4);
 		this.ccyNumber.setMaxlength(3);
 		this.acCcy.setMaxlength(LengthConstants.LEN_CURRENCY);
-		this.acType.setMaxlength(8);
+		this.acType.setMaxlength(15);
 		this.acType.setReadonly(true);
 		this.acPurpose.setReadonly(true);
 		this.acBranch.setMaxlength(LengthConstants.LEN_BRANCH);
