@@ -235,7 +235,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 	public void delete() {
 		logger.debug("Entering");
 
-		StringBuilder updateSql = new StringBuilder("Delete from CustomerQueuing");
+		StringBuilder updateSql = new StringBuilder("TRUNCATE TABLE CustomerQueuing");
 
 		logger.debug("updateSql: " + updateSql.toString());
 
