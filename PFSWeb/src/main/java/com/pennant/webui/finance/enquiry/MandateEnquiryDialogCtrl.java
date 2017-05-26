@@ -254,7 +254,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.phoneCountryCode.setWidth("50px");
 		this.phoneAreaCode.setMaxlength(3);
 		this.phoneAreaCode.setWidth("50px");
-		this.phoneNumber.setMaxlength(8);
+		this.phoneNumber.setMaxlength(10);
 		this.phoneNumber.setWidth("100px");
 		this.approvalID.setMaxlength(50);
 

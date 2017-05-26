@@ -1198,11 +1198,20 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
 					return errorDetails;
 				}
-				/*
-				 * if (mandate.getMaxLimit().compareTo(BigDecimal.ZERO) < 0) { String[] valueParm = new String[1];
-				 * valueParm[0] = "maxLimit"; errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502",
-				 * valueParm))); }
-				 */
+				if(mandate.getMaxLimit() == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "maxLimit"; 
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90242", valueParm)));
+					return errorDetails;
+				}
+				
+				if(mandate.getMaxLimit().compareTo(BigDecimal.ZERO) < 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "maxLimit";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91125", valueParm)));
+					return errorDetails;
+				}
+
 				/*if (StringUtils.isNotBlank(mandate.getPhoneCountryCode())) {
 					if (StringUtils.isBlank(mandate.getPhoneAreaCode())) {
 						String[] valueParm = new String[1];
@@ -1480,6 +1489,8 @@ public class FinanceDataValidation {
 							String[] valueParm = new String[1];
 							valueParm[0] = advPayment.getiFSC();
 							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90301", valueParm)));
+						} else {
+							advPayment.setBankCode(bankBranch.getBankCode());
 						}
 					}
 					if (StringUtils.isNotBlank(advPayment.getBranchBankCode())
@@ -1491,6 +1502,8 @@ public class FinanceDataValidation {
 							valueParm[0] = advPayment.getBranchBankCode();
 							valueParm[1] = advPayment.getBranchCode();
 							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90302", valueParm)));
+						} else {
+							advPayment.setBankCode(bankBranch.getBankCode());
 						}
 					}
 
@@ -1500,6 +1513,16 @@ public class FinanceDataValidation {
 						valueParm[0] = "accountNo";
 						valueParm[1] = advPayment.getBeneficiaryAccNo();
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90217", valueParm)));
+					} else {
+						//validate AccNumber length
+						int accNoLength = bankDetailService.getAccNoLengthByCode(advPayment.getBankCode());
+						if (advPayment.getBeneficiaryAccNo().length() != accNoLength) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "AccountNumber(Disbursement)";
+							valueParm[1] = String.valueOf(accNoLength) + " characters";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30570", valueParm)));
+							return errorDetails;
+						}
 					}
 					// Account holder name
 					if (StringUtils.isBlank(advPayment.getBeneficiaryName())) {

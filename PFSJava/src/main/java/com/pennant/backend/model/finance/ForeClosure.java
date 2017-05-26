@@ -12,8 +12,9 @@ public class ForeClosure implements Serializable {
 	private static final long	serialVersionUID	= 1051334309884378798L;
 
 	private Date				valueDate;
-	private BigDecimal				accuredIntTillDate;
-	private BigDecimal			foreCloseAmount;
+	private BigDecimal			accuredIntTillDate	= BigDecimal.ZERO;
+	private BigDecimal			foreCloseAmount		= BigDecimal.ZERO;
+	private BigDecimal			chargeAmount		= BigDecimal.ZERO;
 
 	public ForeClosure() {
 
@@ -41,5 +42,13 @@ public class ForeClosure implements Serializable {
 
 	public void setForeCloseAmount(BigDecimal foreCloseAmount) {
 		this.foreCloseAmount = foreCloseAmount;
+	}
+
+	public BigDecimal getChargeAmount() {
+		return chargeAmount;
+	}
+
+	public void setChargeAmount(BigDecimal chargeAmount) {
+		this.chargeAmount = chargeAmount;
 	}
 }

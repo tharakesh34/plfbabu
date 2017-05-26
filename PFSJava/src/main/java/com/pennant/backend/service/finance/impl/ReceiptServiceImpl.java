@@ -1564,7 +1564,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				for (FinanceScheduleDetail curSchd : finScheduleData.getFinanceScheduleDetails()) {
 					if (DateUtility.compare(curSchd.getSchDate(), receiptData.getRepayMain().getEarlyPayOnSchDate()) <= 0) {
 						finScheduleData.getFinanceMain().setRecalSchdMethod(curSchd.getSchdMethod());
-						if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)){
+						if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY) &&
+								DateUtility.compare(curSchd.getSchDate(), receiptData.getRepayMain().getEarlyPayOnSchDate()) == 0){
 							receiptData.getRepayMain().setEarlyPayAmount(receiptData.getRepayMain().getEarlyPayAmount().add(
 									curSchd.getProfitSchd()));
 						}

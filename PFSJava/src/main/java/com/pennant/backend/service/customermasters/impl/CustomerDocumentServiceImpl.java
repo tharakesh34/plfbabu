@@ -527,8 +527,8 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 			if (!isImage) {
 				if (!StringUtils.equals(customerDocument.getCustDocType(), docFormate)) {
 					String[] valueParm = new String[2];
-					valueParm[0] = "document type: " + docFormate;
-					valueParm[1] = "docFormat: " + customerDocument.getCustDocType();
+					valueParm[0] = "document type: " + customerDocument.getCustDocName();
+					valueParm[1] = customerDocument.getCustDocType();
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90289", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
