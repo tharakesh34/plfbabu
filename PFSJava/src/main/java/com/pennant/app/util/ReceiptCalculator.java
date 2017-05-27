@@ -426,6 +426,10 @@ public class ReceiptCalculator implements Serializable {
 												}
 											}
 											
+											if(pftAllocateBal.compareTo(balPft) < 0){
+												balPft = pftAllocateBal;
+											}
+											
 											BigDecimal actPftAdjust = balPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
 											if(totalReceiptAmt.compareTo(pftAllocateBal) >= 0){
 												if(pftAllocateBal.compareTo(balPft) < 0){
