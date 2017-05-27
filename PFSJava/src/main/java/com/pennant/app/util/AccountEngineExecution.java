@@ -572,6 +572,7 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSet.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
 			returnDataSet.setAmountType(transactionEntry.getChargeType());
 			returnDataSet.setUserBranch(aeEvent.getPostingUserBranch());
+			returnDataSet.setPostBranch(aeEvent.getBranch());
 
 			//Set Account Number
 			IAccounts acc = (IAccounts) accountsMap.get(String.valueOf(transactionEntry.getTransOrder()));
