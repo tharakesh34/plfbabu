@@ -387,8 +387,10 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 		if (getFeePostings().isNewRecord()) {
 			this.btnCancel.setVisible(false);
+			
 		} else {
 			this.btnCancel.setVisible(true);
+			this.postDate.setDisabled(isReadOnly("FeePostingsDialog_postingDate"));
 		}
 
 		this.postingAgainst.setDisabled(isReadOnly("FeePostingsDialog_postAgainst"));
@@ -397,7 +399,6 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		this.partnerBankID.setReadonly(isReadOnly("FeePostingsDialog_partnerbankId"));
 		this.postingAmount.setReadonly(isReadOnly("FeePostingsDialog_postingAmount"));
 		this.postingCcy.setReadonly(isReadOnly("FeePostingsDialog_postingCurrency"));
-		this.postDate.setDisabled(isReadOnly("FeePostingsDialog_postingDate"));
 		this.valueDate.setDisabled(isReadOnly("FeePostingsDialog_valueDate"));
 		this.remarks.setDisabled(isReadOnly("FeePostingsDialog_remarks"));
 		
@@ -618,12 +619,13 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		this.postingCcy.setValidateColumns(new String[] { "CcyCode" });
 
 		this.partnerBankID.setModuleName("PartnerBank");
-		this.partnerBankID.setValueColumn("PartnerBankId");
+		this.partnerBankID.setValueColumn("PartnerBankCode");
 		this.partnerBankID.setDescColumn("PartnerBankName");
-		this.partnerBankID.setValidateColumns(new String[] { "PartnerBankId", "PartnerBankName" });
+		this.partnerBankID.setValidateColumns(new String[] { "PartnerBankCode", "PartnerBankName" });
 		this.partnerBankID.setMandatoryStyle(true);
 
 		this.postDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.postDate.setDisabled(true);
 		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		this.postingAmount.setProperties(true, aCurrency.getCcyEditField());
@@ -726,6 +728,18 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		try {
+			if (this.valueDate.getValue() != null) {
+				if (DateUtility.compare(this.valueDate.getValue(), DateUtility.getAppDate()) >0) {
+					throw new WrongValueException(this.valueDate, Labels.getLabel("DATE_EMPTY_FUTURE",
+							new String[] { Labels.getLabel("label_feePostingsDialog_ValueDate.value"),
+									DateUtility.getAppDate(DateFormat.LONG_DATE) }));
+				}
+			} 
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		try {
 			aFeePostings.setValueDate(this.valueDate.getValue());
 		} catch (WrongValueException we) {
@@ -789,7 +803,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 		if (!this.valueDate.isDisabled()){
 			this.valueDate.setConstraint(new PTDateValidator(Labels.getLabel("label_feePostingsDialog_ValueDate.value"), true));
-		}
+		}	
 	}
 
 
@@ -882,7 +896,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		} else {
 			PartnerBank partnerbank = (PartnerBank) dataObject;
 			if (partnerbank != null) {
-				this.partnerBankID.setValue(String.valueOf(partnerbank.getPartnerBankId()));
+				this.partnerBankID.setValue(String.valueOf(partnerbank.getPartnerBankCode()));
 				this.partnerBankID.setDescription(partnerbank.getPartnerBankName());
 				getFeePostings().setPartnerBankAc(partnerbank.getAccountNo());
 				getFeePostings().setPartnerBankAcType(partnerbank.getAcType());
