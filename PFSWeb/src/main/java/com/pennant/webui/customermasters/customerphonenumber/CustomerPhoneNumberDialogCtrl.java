@@ -917,8 +917,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 					}
 				}
 
-				if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerPhoneNumber.getRecordType())
-						&& customerPhoneNumber.getPhoneTypeCode().equals(aCustomerPhoneNumber.getPhoneTypeCode())) { 
+				if (customerPhoneNumber.getPhoneTypeCode().equals(aCustomerPhoneNumber.getPhoneTypeCode())) { 
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(
