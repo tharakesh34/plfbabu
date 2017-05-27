@@ -826,5 +826,17 @@ Insert into reportlist values('BuilderProjcet','BuilderProjcet','listheader_name
 			Update errordetails SET ErrorMessage = 'Fee Receipt on {0} is already exists. Do you want to proceed?' where errorcode = '65014';
 		</sql>
 	</changeSet>
+	<changeSet id="60" author="Madhubabu">
+		<sql>
+			Insert into bmtamountcodes values ('MANFEE','0','fp_postingAmount','Total Posting Amount',1,1,1005,current_timestamp,'Approved',null,null,null,null,null,0);
+
+			insert into rmtaccountingset values((select max(accountsetid)+1 from rmtaccountingset),'MANFEE','MANFEE','MANFEE',0,0,1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+
+			Insert into RMTTRANSACTIONENTRY values ((SELECT ACCOUNTSETID From RMTACCOUNTINGSET where eventcode = 'MANFEE'),10,'Fee Posting','C',0,'UPTIN',null,'BUILD','GLCODE','510','010','Result=fp_postingAmount;',null,null,'D',0,0,1,0,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,'E',0);
+			
+			Insert into RMTTRANSACTIONENTRY values ((SELECT ACCOUNTSETID From RMTACCOUNTINGSET where eventcode = 'MANFEE'),20,'Fee Posting','D',0,'PROIN',null,'BUILD','GLCODE','010','510','Result=fp_postingAmount;',null,null,'D',0,0,1,0,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,'E',0);
+
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
