@@ -91,4 +91,63 @@
 		<column name="FinStartDate" type="datetime" />
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="04" author="SreeRavali">
+		<dropTable tableName="ADTRestructure" />
+	</changeSet>
+
+	<changeSet id="05" author="SreeRavali">
+		<createTable tableName="ADTRestructure">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FinReference" type="nvarchar(20)"/>
+			<column name="NoofInstalments" type="int" />
+			<column name="PaymentAmount" type="decimal(18,0)" />
+			<column name="ScheduleMethod" type="varchar(10)" />
+			<column name="InterestRateType" type="varchar(8)" />
+			<column name="RepayProfitRate" type="decimal(13,9)" />
+			<column name="RepayBaseRate" type="varchar(8)" />
+			<column name="RepaySpecialRate" type="varchar(8)" />
+			<column name="RepayMargin" type="decimal(13,9)" />
+			<column name="CapitalizeODCharges" type="boolean" />
+			<column name="CapitalizeODInterest" type="boolean" />
+			<column name="RepayFrq" type="varchar(5)" />
+			<column name="NextRepayDate" type="datetime" />
+			<column name="RepayPftFrq" type="varchar(5)" />
+			<column name="NextRepayPftDate" type="datetime" />
+			<column name="RepayRvwFrq" type="varchar(5)" />
+			<column name="NextRepayRvwDate" type="datetime"/>
+			<column name="RepayCpzFrq" type="varchar(5)" />
+			<column name="NextRepayCpzDate" type="datetime"  />
+		    <column name="MaturityDate" type="datetime" />
+			<column name="PayInterestonFrq" type="boolean" />
+			<column name="Version" type="NUMBER(10,0)" />
+			<column name="Lastmntby" type="NUMBER(19,0)" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="nvarchar(50)" />
+			<column name="Rolecode" type="nvarchar(50)" />
+			<column name="Nextrolecode" type="nvarchar(200)" />
+			<column name="Taskid" type="nvarchar(50)" />
+			<column name="Nexttaskid" type="nvarchar(200)" />
+			<column name="Recordtype" type="nvarchar(50)" />
+			<column name="Workflowid" type="NUMBER(19,0)" />
+			<column name="OldFinRef" type="varchar(20)" />
+			<column name="FinType" type="varChar(8)" />
+			<column name="FinCategory" type="varchar(8)" />
+			<column name="FinCcy" type="char(3)" />
+			<column name="FinBranch" type="varchar(12)" />
+			<column name="CustCIF" type="varchar(20)" />
+		<column name="FinStartDate" type="datetime" />
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
