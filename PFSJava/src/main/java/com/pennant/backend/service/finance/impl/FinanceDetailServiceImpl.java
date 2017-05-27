@@ -5104,11 +5104,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						"60203", errParm, valueParm), usrLanguage));
 			}
 		}
-		//stepping loan and max planned emi holiday both are not allowed
-		if (financeMain.isPlanEMIHAlw() && financeMain.isStepFinance()) {
-			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "30573", errParm, null));
-		}
-		
 
 		if (auditDetail.getErrorDetails() == null || auditDetail.getErrorDetails().isEmpty()) {
 			if (!isWIF && !method.equals(PennantConstants.method_doReject)
