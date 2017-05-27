@@ -196,6 +196,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private AccountingSetService							accountingSetService;
 	private AccountEngineExecution							engineExecution;
 	private EventManager									eventManager;
+	private boolean											feesExists = false;
 
 	/**
 	 * default constructor.<br>
@@ -366,6 +367,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		readOnlyComponent(isReadOnly("FeeReceiptDialog_excessAdjustTo"), this.excessAdjustTo);
 		readOnlyComponent(isReadOnly("FeeReceiptDialog_receiptMode"), this.receiptMode);
 		readOnlyComponent(isReadOnly("FeeReceiptDialog_receiptAmount"), this.receiptAmount);
+		this.excessAdjustTo.setDisabled(true);
 		
 		//Receipt Details
 		readOnlyComponent(isReadOnly("FeeReceiptDialog_favourNo"), this.favourNo);
@@ -459,6 +461,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		Listitem item;
 
 		this.listBoxFeeDetail.getItems().clear();
+		feesExists = false;
 		if (feeDetails != null) {
 			int finFormatter = CurrencyUtil.getFormat(this.finCcy.getValue());
 			BigDecimal totalPaid = BigDecimal.ZERO;
@@ -491,6 +494,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 
 			if(totalPaid.compareTo(BigDecimal.ZERO) > 0){
+				feesExists = true;
 				doFillSummaryDetails(totalPaid, finFormatter);
 			}
 		}
@@ -664,6 +668,12 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 							|| "Reject".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) || "Cancel"
 							.equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()))) {
 				recReject = true;
+			}
+			
+			// If Fee Details not exists against Reference , not allowed to proceed further
+			if(!feesExists){
+				MessageUtil.showErrorMessage(Labels.getLabel("label_FeeReceiptDialog_NoFees.value"));
+				return;
 			}
 
 			if(!recReject){

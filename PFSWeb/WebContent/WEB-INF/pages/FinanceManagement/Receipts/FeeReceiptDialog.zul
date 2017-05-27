@@ -200,7 +200,7 @@
 											<currencyBox
 												id="receiptAmount" />
 										</row>
-										<row>
+										<row visible="false">
 											<label
 												value="${c:l('label_FeeReceiptDialog_ExcessAdjustTo.value')}" />
 											<hbox>
