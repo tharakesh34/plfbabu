@@ -106,6 +106,9 @@
 							height="100%" multiple="false" sizedByContent="true"
 							span="true">
 							<listhead sizable="true">
+								<listheader id="listheader_id"
+									label="${c:l('listheader_id.label')}" sort="auto"
+									hflex="min" />
 								<listheader id="listheader_name"
 									label="${c:l('listheader_name.label')}" sort="auto"
 									hflex="min" />

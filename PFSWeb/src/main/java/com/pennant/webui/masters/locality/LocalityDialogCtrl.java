@@ -76,20 +76,20 @@ import com.pennanttech.pff.core.Literal;
  * This is the controller class for the /WEB-INF/pages/masters/Locality/localityDialog.zul file. <br>
  */
 public class LocalityDialogCtrl extends GFCBaseCtrl<Locality> {
-	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(LocalityDialogCtrl.class);
+	private static final long			serialVersionUID	= 1L;
+	private final static Logger			logger				= Logger.getLogger(LocalityDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_LocalityDialog;
-	protected Uppercasebox name;
-	protected ExtendedCombobox city;
-	private Locality locality; // overhanded per param
+	protected Window					window_LocalityDialog;
+	protected Uppercasebox				name;
+	protected ExtendedCombobox			city;
+	private Locality					locality;															// overhanded per param
 
-	private transient LocalityListCtrl localityListCtrl; // overhanded per param
-	private transient LocalityService localityService;
+	private transient LocalityListCtrl	localityListCtrl;													// overhanded per param
+	private transient LocalityService	localityService;
 
 	/**
 	 * default constructor.<br>
@@ -422,7 +422,7 @@ public class LocalityDialogCtrl extends GFCBaseCtrl<Locality> {
 
 		if (!this.name.isReadonly()) {
 			this.name.setConstraint(new PTStringValidator(Labels.getLabel("label_LocalityDialog_name.value"),
-					PennantRegularExpressions.REGEX_NAME, true));
+					PennantRegularExpressions.REGEX_UPPERCASENAME, true));
 		}
 		if (!this.city.isReadonly()) {
 			this.city.setConstraint(
