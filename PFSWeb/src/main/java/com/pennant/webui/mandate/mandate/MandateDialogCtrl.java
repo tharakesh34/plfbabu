@@ -837,6 +837,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
+			
+			if(StringUtils.equals(getMandate().getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)){
+				this.btnNotes.setVisible(true);
+			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
@@ -1622,8 +1626,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 
 			//in delete case if approver approves needs notes 
-			if (StringUtils.equals(aMandate.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)
-					&& StringUtils.equals(aMandate.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
+			if (StringUtils.equals(aMandate.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 				if (!notesEntered) {
 					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
 					return false;
