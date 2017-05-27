@@ -4638,12 +4638,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							continue;
 						}
 
-						if (financeMain.getNextGrcCpzDate() != null
+						if (financeMain.getNextGrcCpzDate() != null && financeMain.isAllowGrcCpz()
 								&& curSchd.getSchDate().compareTo(financeMain.getNextGrcCpzDate()) <= 0) {
 							validFrom = curSchd.getSchDate();
 							continue;
 						}
-						if (financeMain.getNextGrcPftRvwDate() != null
+						if (financeMain.getNextGrcPftRvwDate() != null && financeMain.isAllowGrcPftRvw()
 								&& curSchd.getSchDate().compareTo(financeMain.getNextGrcPftRvwDate()) <= 0) {
 							validFrom = curSchd.getSchDate();
 							continue;

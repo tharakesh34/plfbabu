@@ -264,7 +264,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		long accountingSetID = accountingSetDAO.getAccountingSetId(AccountEventConstants.ACCEVENT_FEEPAY,
 				AccountEventConstants.ACCEVENT_FEEPAY);
 		if(accountingSetID == 0 || accountingSetID == Long.MIN_VALUE){
-			auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.KEY_FIELD, "", null, null));
+			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "65015", null, null)));
 			logger.debug("Leaving");
 			return auditHeader;
 		}
