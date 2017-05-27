@@ -239,6 +239,7 @@ public class FinanceDetailController extends SummaryDetailService {
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		financeMain.setUserDetails(userDetails);
 		financeMain.setFinIsActive(true);
+		financeMain.setVersion(1);
 		financeMain.setLastMntBy(userDetails.getLoginUsrID());
 		financeMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		financeMain.setFinStatus(financeDetailService.getCustStatusByMinDueDays());
@@ -304,6 +305,7 @@ public class FinanceDetailController extends SummaryDetailService {
 		disbursementDetails.setDisbDate(financeMain.getFinStartDate());
 		disbursementDetails.setDisbAmount(financeMain.getFinAmount());
 		disbursementDetails.setDisbSeq(1);
+		disbursementDetails.setVersion(1);
 		disbursementDetails.setDisbReqDate(DateUtility.getAppDate());
 		disbursementDetails.setFeeChargeAmt(financeMain.getFeeChargeAmt());
 		disbursementDetails.setInsuranceAmt(financeMain.getInsuranceAmt());

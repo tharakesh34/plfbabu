@@ -292,6 +292,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		financeDetail.setNewRecord(true);
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		financeMain.setVersion(1);
 		financeMain.setFinIsActive(true);
 		financeMain.setFinStatus(financeDetailService.getCustStatusByMinDueDays());
 
@@ -324,11 +325,13 @@ public class CreateFinanceController extends SummaryDetailService {
 				advPayment.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				advPayment.setNewRecord(true);
 				advPayment.setLastMntBy(userDetails.getLoginUsrID());
+				advPayment.setVersion(1);
 				advPayment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				advPayment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				advPayment.setUserDetails(financeMain.getUserDetails());
 				advPayment.setPaymentSeq(paymentSeq);
-				advPayment.setLLDate(null);
+				advPayment.setLLDate(DateUtility.getAppDate());
+				advPayment.setDisbCCy(financeMain.getFinCcy());
 				paymentSeq++;
 
 				if (StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IMPS)
@@ -357,6 +360,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		for(VASRecording vasRecording:finScheduleData.getVasRecordingList()){
 			vasRecording.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			vasRecording.setNewRecord(true);
+			vasRecording.setVersion(1);
 			vasRecording.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			vasRecording.setVasReference(ReferenceUtil.generateVASRef());
 			vasRecording.setPostingAgainst(VASConsatnts.VASAGAINST_FINANCE);
@@ -370,6 +374,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				flagDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				flagDetail.setModuleName(FinanceConstants.MODULE_NAME);
 				flagDetail.setNewRecord(true);
+				flagDetail.setVersion(1);
 				flagDetail.setLastMntBy(userDetails.getLoginUsrID());
 				flagDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				flagDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -387,6 +392,13 @@ public class CreateFinanceController extends SummaryDetailService {
 				bankBranch = bankBranchService.getBankBrachByCode(mandate.getBankCode(), mandate.getBranchCode());
 			}
 
+			financeDetail.getMandate().setNewRecord(true);
+			financeDetail.getMandate().setLastMntBy(userDetails.getLoginUsrID());
+			financeDetail.getMandate().setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			financeDetail.getMandate().setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			financeDetail.getMandate().setUserDetails(financeMain.getUserDetails());
+			financeDetail.getMandate().setVersion(1);
+			
 			// mandate details
 			financeDetail.getMandate().setCustCIF(financeMain.getLovDescCustCIF());
 			financeDetail.getMandate().setCustID(financeMain.getCustID());
@@ -395,6 +407,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeDetail.getMandate().setBankBranchID(bankBranch.getBankBranchID());
 			financeDetail.getMandate().setIFSC(bankBranch.getIFSC());
 			financeDetail.getMandate().setBankBranchID(bankBranch.getBankBranchID());
+			financeDetail.getMandate().setInputDate(DateUtility.getAppDate());
 		}
 
 		// co-applicant details
@@ -406,6 +419,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			jointAccDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			jointAccDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			jointAccDetail.setUserDetails(financeMain.getUserDetails());
+			jointAccDetail.setVersion(1);
 		}
 
 		// guarantor details
@@ -433,6 +447,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			guarantorDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			guarantorDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			guarantorDetail.setUserDetails(financeMain.getUserDetails());
+			guarantorDetail.setVersion(1);
 		}
 
 		// document details
@@ -441,6 +456,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			detail.setDocModule(FinanceConstants.MODULE_NAME);
 			detail.setUserDetails(financeMain.getUserDetails());
+			detail.setVersion(1);
 		}
 
 		financeDetail.setFinScheduleData(finScheduleData);
@@ -462,6 +478,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			detail.setLastMntBy(userDetails.getLoginUsrID());
 			detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			detail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			detail.setVersion(1);
 		}
 
 		// execute fee charges
@@ -473,6 +490,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			FinanceDisbursement disbursementDetails = new FinanceDisbursement();
 			disbursementDetails.setDisbDate(financeMain.getFinStartDate());
 			disbursementDetails.setDisbAmount(financeMain.getFinAmount());
+			disbursementDetails.setVersion(1);
 			disbursementDetails.setDisbSeq(1);
 			disbursementDetails.setDisbReqDate(DateUtility.getAppDate());
 			disbursementDetails.setFeeChargeAmt(financeMain.getFeeChargeAmt());
