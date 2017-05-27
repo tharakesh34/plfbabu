@@ -638,7 +638,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 
-				if (oldCollateralStructure != null
+				if (oldCollateralStructure != null && tempCollateralStructure!=null 
 						&& !oldCollateralStructure.getLastMntOn().equals(tempCollateralStructure.getLastMntOn())) {
 					auditDetail
 							.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
