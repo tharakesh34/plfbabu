@@ -1025,4 +1025,9 @@ Insert into reportlist values('BuilderProjcet','BuilderProjcet','listheader_name
 			<column name="REJECT_REASON" 		type="VARCHAR(100)"/>
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="67" author="Siva">
+	<dropForeignKeyConstraint baseTableName="FinRepayHeader"
+			constraintName="FK_FINREPAYHEADER_FINMAIN" />
+	</changeSet>
 </databaseChangeLog>
