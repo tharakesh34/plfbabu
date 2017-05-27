@@ -452,7 +452,7 @@
  		<menuItem id="menu_Item_FinMandateEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/FinMandateEnquiryList.zul" rightName="menuItem_Enquiry_FinMandate"/>
 		<!-- <menuItem id="menu_Item_DDARepresentment" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DDARepresentmentList.zul"  rightName="menuItem_Enquiry_WIFFinanceMain"/> -->
 		<!-- <menuItem id="menu_Item_DeviationTracker" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DeviationTrackerList.zul"  rightName="menuItem_Enquiry_DeviationEnquiry"/>-->
-		<menuItem id="menu_Item_VASEnquiry" zulNavigation="/WEB-INF/pages/VASRecording/VASRecordingList.zul?module=E" rightName="menuItem_Enquiry_VASRecording" /> 
+		<menuItem id="menu_Item_VASEnquiry" zulNavigation="/WEB-INF/pages/VASRecording/VASRecordingList.zul?module=E&amp;enqiryModule=Y" rightName="menuItem_Enquiry_VASRecording" /> 
 		<menuItem id="menu_Item_ManualAdviseEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/ManualAdviseEnquiryList.zul?enqiryModule=Y" rightName="menuItem_finance_ManualAdviseEnquiry"	/>
 		<menuItem id="menu_Item_ReceiptEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptEnquiryList.zul?enqiryModule=Y"  rightName="menuItem_Enquiry_ReceiptEnquiry" />
 	</menu>

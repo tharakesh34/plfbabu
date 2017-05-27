@@ -252,6 +252,9 @@
 								<listheader id="listheader_ReferralId"
 									label="${c:l('listheader_ReferralId.label')}" sort="auto"
 									hflex="min" visible="false" />
+								<listheader id="listheader_VasStatus"
+									label="${c:l('listheader_VasStatus.label')}" sort="auto"
+									hflex="min" visible="false" />
 								<listheader id="listheader_RecordStatus"
 									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
 									hflex="min" />

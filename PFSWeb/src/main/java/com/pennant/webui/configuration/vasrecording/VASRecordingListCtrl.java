@@ -116,6 +116,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 	protected Listheader listheader_DmaId;
 	protected Listheader listheader_FulfilOfficerId;
 	protected Listheader listheader_ReferralId;
+	protected Listheader listheader_VasStatus;
 	
 	// checkRights
 	protected Button 	btnHelp;
@@ -229,12 +230,16 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 		registerField("feePaymentMode", listheader_FeePaymentMode, SortOrder.NONE, feePaymentMode,
 				sortOperator_FeePaymentMode, Operators.SIMPLE_NUMARIC);
 		registerField("nextRoleCode");
+		registerField("VasStatus");
 		// Render the page and display the data.
 		doRenderPage();
 		search();
 
 		if ("C".equals(module) || "E".equals(module)) {
 			this.button_VASRecordingList_NewVASRecording.setVisible(false);
+		}
+		if ("E".equals(module)) {
+			this.listheader_VasStatus.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -317,7 +322,8 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 				userRole = workFlowDetails.getFirstTaskOwner();
 			}
 		}
-		VASRecording aVASRecording = getVASRecordingService().getVASRecordingByRef(vasRecording.getVasReference(), userRole, false);
+		
+		VASRecording aVASRecording = getVASRecordingService().getVASRecordingByRef(vasRecording.getVasReference(), userRole, enqiryModule);
 		if (aVASRecording == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;

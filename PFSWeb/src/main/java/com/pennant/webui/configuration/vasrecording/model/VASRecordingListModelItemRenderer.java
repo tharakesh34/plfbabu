@@ -45,6 +45,8 @@ package com.pennant.webui.configuration.vasrecording.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -95,6 +97,21 @@ public class VASRecordingListModelItemRenderer implements ListitemRenderer<VASRe
 	  	lc = new Listcell(vASRecording.getFulfilOfficerId());
 		lc.setParent(item);
 	  	lc = new Listcell(vASRecording.getReferralId());
+		lc.setParent(item);
+		
+		String vasStatus = "";
+		if(StringUtils.equals(vASRecording.getVasStatus(), "C")){
+			vasStatus = Labels.getLabel("label_VasStatus_Cancel");
+		}else {
+			if(StringUtils.isEmpty(vASRecording.getRecordType())){
+				vasStatus = Labels.getLabel("label_VasStatus_Approved");
+			}
+		}
+				
+		lc = new Listcell(vasStatus);
+		if(StringUtils.equals(vASRecording.getVasStatus(), "C")){
+			lc.setStyle("color:red");
+		}
 		lc.setParent(item);
 	  	lc = new Listcell(vASRecording.getRecordStatus());
 		lc.setParent(item);
