@@ -6274,6 +6274,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		int retValue = PennantConstants.porcessOVERIDE;
 		while (retValue == PennantConstants.porcessOVERIDE) {
+			FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 
 			ArrayList<ErrorDetails> errorList = new ArrayList<ErrorDetails>();
 
@@ -6407,6 +6408,12 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 					}
 				}
+				
+				//both step and EMI holiday not allowed
+				if (financeType.isPlanEMIHAlw()) {
+					errorList.add(new ErrorDetails("30573", null));
+				}	
+				
 			}
 
 			//FinanceMain Details Tab ---> 2. Grace Period Details
