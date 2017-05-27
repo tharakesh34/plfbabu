@@ -431,11 +431,7 @@ public class ReceiptCalculator implements Serializable {
 											}
 											
 											BigDecimal actPftAdjust = balPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-											if(totalReceiptAmt.compareTo(pftAllocateBal) >= 0){
-												if(pftAllocateBal.compareTo(balPft) < 0){
-													balPft = pftAllocateBal;
-												}
-											}else{
+											if(totalReceiptAmt.compareTo(pftAllocateBal) < 0){
 												if(totalReceiptAmt.compareTo(actPftAdjust) >= 0){
 													balPft = pftAllocateBal;
 												}else{
@@ -443,11 +439,10 @@ public class ReceiptCalculator implements Serializable {
 												}
 											}
 											
-											BigDecimal tdsAdjust = BigDecimal.ZERO;
-											tdsAdjust = balPft.subtract(actPftAdjust);
 											rsd = prepareRpyRecord(curSchd, rsd, pftPayTo, balPft);
 											
 											// TDS Payments
+											BigDecimal tdsAdjust = balPft.subtract(actPftAdjust);
 											if(tdsAdjust.compareTo(BigDecimal.ZERO) > 0){
 												rsd = prepareRpyRecord(curSchd, rsd, RepayConstants.REPAY_TDS, tdsAdjust);
 												
