@@ -69,7 +69,7 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 	private long accSetId;
 	private String finType;
 	private String CustCIF;
-	private String finBranch;
+//	private String finBranch;
 	private boolean flagCreateNew;
 	private boolean flagCreateIfNF;
 	private boolean internalAc;
@@ -288,13 +288,13 @@ public class ReturnDataSet implements java.io.Serializable, Entity {
 		CustCIF = custCIF;
 	}
 
-	public String getFinBranch() {
-		return finBranch;
-	}
-
-	public void setFinBranch(String finBranch) {
-		this.finBranch = finBranch;
-	}
+//	public String getFinBranch() {
+//		return finBranch;
+//	}
+//
+//	public void setFinBranch(String finBranch) {
+//		this.finBranch = finBranch;
+//	}
 
 	public boolean isFlagCreateNew() {
 		return flagCreateNew;

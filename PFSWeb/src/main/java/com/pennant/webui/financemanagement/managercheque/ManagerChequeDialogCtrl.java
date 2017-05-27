@@ -1294,7 +1294,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		postings.setCustCIF(this.custCIF.getValue());
 		postings.setPostref(this.chequeNo.getValue());
 		postings.setFinReference(this.chequeNo.getValue());
-		postings.setFinBranch(this.branchCode.getValidatedValue());
+		postings.setPostBranch(this.branchCode.getValidatedValue());
 		postings.setPostDate(postDate);
 		postings.setValueDate(this.valueDate.getValue());
 

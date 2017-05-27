@@ -50,9 +50,9 @@ public class CustomerAccountService extends ServiceHelper {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(" SELECT T1.PostDate, T1.ValueDate, T1.AppDate, T1.AppValueDate, T1.CustAppDate, ");
-		sb.append(" T1.DrOrCr, T1.Account, T1.ShadowPosting, T1.PostAmount, T1.AcCcy, T2.FinBranch, T1.AccountType ");
-		sb.append(" FROM Postings T1 INNER JOIN FinanceMain T2 on T1.FinReference = T2.FinReference "); 
-		sb.append(" WHERE postCategory=? AND PostStatus = 'S'");
+		sb.append(" T1.DrOrCr, T1.Account, T1.ShadowPosting, T1.PostAmount, T1.AcCcy, T1.PostBranch, T1.AccountType ");
+		sb.append(" FROM Postings T1 "); 
+		sb.append(" WHERE postCategory=? AND PostStatus = ?");
 		
 		Connection connection = null;
 		ResultSet resultSet = null;
@@ -62,6 +62,7 @@ public class CustomerAccountService extends ServiceHelper {
 			connection = DataSourceUtils.doGetConnection(dataSource);
 			sqlStatement = connection.prepareStatement(sb.toString());
 			sqlStatement.setInt(1, AccountConstants.POSTING_CATEGORY_EOD);
+			sqlStatement.setString(2, AccountConstants.POSTINGS_SUCCESS);
 			resultSet = sqlStatement.executeQuery();
 			while (resultSet.next()) {
 
@@ -120,12 +121,12 @@ public class CustomerAccountService extends ServiceHelper {
 			returnDataSet.setPostAmount(resultSet.getBigDecimal("PostAmount"));
 			returnDataSet.setAcCcy(resultSet.getString("AcCcy"));
 			returnDataSet.setAccountType(resultSet.getString("AccountType"));
-			returnDataSet.setFinBranch(resultSet.getString("FinBranch"));
 			returnDataSet.setPostDate(resultSet.getDate("PostDate"));
 			returnDataSet.setValueDate(resultSet.getDate("ValueDate"));
 			returnDataSet.setAppDate(resultSet.getDate("AppDate"));
 			returnDataSet.setAppValueDate(resultSet.getDate("AppValueDate"));
 			returnDataSet.setCustAppDate(resultSet.getDate("CustAppDate"));
+			returnDataSet.setPostBranch(resultSet.getString("PostBranch"));
 		} catch (SQLException e) {
 		}
 
@@ -164,7 +165,7 @@ public class CustomerAccountService extends ServiceHelper {
 		account.setAccountId(posting.getAccount());
 		account.setAcCcy(posting.getAcCcy());
 		account.setAcType(posting.getAccountType());
-		account.setAcBranch(posting.getFinBranch());
+		account.setAcBranch(posting.getPostBranch());
 		account.setAcCustId(0);
 		account.setAcPurpose(accountType.getAcPurpose());
 		account.setAcFullName(accountType.getAcTypeDesc());

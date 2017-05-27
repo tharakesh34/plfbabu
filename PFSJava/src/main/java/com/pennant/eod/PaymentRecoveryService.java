@@ -87,7 +87,7 @@ public class PaymentRecoveryService {
 			detail.setFinanceReference(dataSet.getFinReference());
 			detail.setCustomerReference(dataSet.getCustCIF());
 			detail.setTransactionPurpose(dataSet.getTranDesc());
-			detail.setFinanceBranch(dataSet.getFinBranch());
+			detail.setFinanceBranch(dataSet.getPostBranch());
 			detail.setFinanceType(dataSet.getFinType());
 			detail.setFinancePurpose(dataSet.getFinPurpose());
 			if (negateCounter) {

@@ -620,7 +620,7 @@ public class PostingsPreparationUtil implements Serializable {
 			returnDataSet.setShadowPosting(false);
 			returnDataSet.setFlagCreateIfNF(true);
 			returnDataSet.setFlagCreateNew(false);
-			returnDataSet.setFinBranch(jVPosting.getBranch());
+			returnDataSet.setPostBranch(jVPosting.getBranch());
 
 			if (jvPostingEntry.isExternalAccount()) {
 				returnDataSet.setInternalAc(false);

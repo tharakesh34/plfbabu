@@ -550,7 +550,6 @@ public class AccountEngineExecution implements Serializable {
 			//Set Object Data of ReturnDataSet(s)
 			returnDataSet.setLinkedTranId(aeEvent.getLinkedTranId());
 			returnDataSet.setFinReference(aeEvent.getFinReference());
-			returnDataSet.setFinBranch(aeEvent.getBranch());
 			returnDataSet.setFinEvent(aeEvent.getAccountingEvent());
 			returnDataSet.setLovDescEventCodeName(transactionEntry.getLovDescEventCodeDesc());
 			returnDataSet.setAccSetCodeName(transactionEntry.getLovDescAccSetCodeName());
@@ -591,7 +590,7 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSet.setFinType(aeEvent.getFinType());
 
 			returnDataSet.setCustCIF(aeEvent.getCustCIF());
-			returnDataSet.setFinBranch(aeEvent.getBranch());
+			returnDataSet.setPostBranch(aeEvent.getBranch());
 			returnDataSet.setFlagCreateNew(acc.getFlagCreateNew());
 			returnDataSet.setFlagCreateIfNF(acc.getFlagCreateIfNF());
 			returnDataSet.setInternalAc(acc.getInternalAc());

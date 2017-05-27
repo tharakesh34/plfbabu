@@ -139,7 +139,7 @@ public class AccountProcessUtil implements Serializable {
 		account.setAccountId(posting.getAccount());
 		account.setAcCcy(posting.getAcCcy());
 		account.setAcType(posting.getAccountType());
-		account.setAcBranch(posting.getFinBranch());
+		account.setAcBranch(posting.getPostBranch());
 		account.setAcCustId(0);
 		account.setAcPurpose(accountType.getAcPurpose());
 		account.setAcFullName(accountType.getAcTypeDesc());
