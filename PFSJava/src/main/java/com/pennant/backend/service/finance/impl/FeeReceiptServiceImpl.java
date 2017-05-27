@@ -246,6 +246,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader>  imp
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
 		aeEvent.setFinReference(receiptHeader.getReference());
 		aeEvent.setCustCIF(receiptHeader.getCustCIF());
+		aeEvent.setCustID(receiptHeader.getCustID());
 		aeEvent.setBranch(receiptHeader.getFinBranch());
 		aeEvent.setCcy(receiptHeader.getFinCcy());
 		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());	
