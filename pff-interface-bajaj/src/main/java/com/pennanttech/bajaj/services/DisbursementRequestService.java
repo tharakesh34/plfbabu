@@ -348,6 +348,7 @@ public class DisbursementRequestService extends BajajService implements RequestS
 		sql.append(" BENFICIARY_ADDRESS3,");
 		sql.append(" BENFICIARY_ADDRESS4,");
 		sql.append(" BENFICIARY_ADDRESS5,");
+		sql.append(" PAYMENT_DETAIL1,");
 		sql.append(" PAYMENT_DETAIL2,");
 		sql.append(" PAYMENT_DETAIL3,");
 		sql.append(" PAYMENT_DETAIL4,");
