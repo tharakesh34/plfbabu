@@ -15,6 +15,9 @@ public class CustomerQueuing implements Serializable {
 	private Date				startTime;
 	private Date				endTime;
 
+	//Unused variable for bean parameter. Temporary
+	private boolean				active;
+
 	//	private String				errorLog;
 	//	private String				status;
 	public CustomerQueuing() {
@@ -83,5 +86,13 @@ public class CustomerQueuing implements Serializable {
 
 	public void setEodDate(Date eodDate) {
 		this.eodDate = eodDate;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }

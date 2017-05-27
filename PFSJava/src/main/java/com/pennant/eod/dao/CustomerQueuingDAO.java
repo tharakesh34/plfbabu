@@ -28,11 +28,11 @@ public interface CustomerQueuingDAO {
 
 	void updateFailed(CustomerQueuing customerQueuing);
 
-	int startEODForCID(Date date, long noOfRows, int threadId);
-
 	List<Customer> getCustForProcess(int threadId);
 
-	void updateSucess(int threadId);
+	int startEODForCID(long custID);
+
+	void updateSucess(long custID);
 
 
 }

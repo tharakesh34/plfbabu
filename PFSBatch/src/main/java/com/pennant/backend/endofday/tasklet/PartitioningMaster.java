@@ -78,6 +78,7 @@ public class PartitioningMaster implements Partitioner {
 		if (custIdCount != 0) {
 
 			long noOfRows = Math.round((new Double(custIdCount) / new Double(threadCount)));
+			
 			if (custIdCount < threadCount) {
 				recordsLessThanThread = true;
 				noOfRows = 1;

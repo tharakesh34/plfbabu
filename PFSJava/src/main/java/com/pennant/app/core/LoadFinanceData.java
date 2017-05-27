@@ -329,10 +329,11 @@ public class LoadFinanceData extends ServiceHelper {
 
 		//save postings
 		saveAccountingEOD(returnDataSets);
+
 		//update accounts
 		//getAccountProcessUtil().procAccountUpdate(returnDataSets);
 
-		//update customer
+/*		//update customer
 		if (custEODEvent.isUpdCustomer()) {
 			Customer customer = custEODEvent.getCustomer();
 			long custID = customer.getCustID();
@@ -340,15 +341,15 @@ public class LoadFinanceData extends ServiceHelper {
 			Date stsChgDate = customer.getCustStsChgDate();
 			getCustomerDAO().updateCustStatus(custSts, stsChgDate, custID);
 		}
-
+*/
 		logger.debug(" Leaving ");
 		returnDataSets.clear();
 	}
 
-	public void updateCustomerDate(long custId, Date date) {
+	public void updateCustomerDate(long custId, Date date, String newCustStatus) {
 		logger.debug(" Entering ");
 		Date nextDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT);
-		getCustomerDAO().updateCustAppDate(custId, nextDate);
+		getCustomerDAO().updateCustAppDate(custId, nextDate, newCustStatus);
 		logger.debug(" Leaving ");
 	}
 //

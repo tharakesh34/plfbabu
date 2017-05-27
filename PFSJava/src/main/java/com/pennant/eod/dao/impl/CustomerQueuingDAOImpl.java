@@ -24,20 +24,17 @@ import com.pennanttech.pff.core.App.Database;
 
 public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
-	private static Logger				logger				= Logger.getLogger(CustomerQueuingDAOImpl.class);
+	private static Logger				logger			= Logger.getLogger(CustomerQueuingDAOImpl.class);
 
-	private static final String			UPDATE_SQL			= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
-																	+ "Where ThreadId = :ThreadId";
-	private static final String			UPDATE_SQL_RC		= "UPDATE Top(:RowCount) CustomerQueuing set ThreadId=:ThreadId "
-																	+ "Where ThreadId = :AcThreadId";
-	private static final String			UPDATE_ORCL_RC		= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
-																	+ "Where ROWNUM <=:RowCount AND ThreadId = :AcThreadId";
+	private static final String			UPDATE_SQL		= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
+			+ "Where ThreadId = :ThreadId";
+	private static final String			UPDATE_SQL_RC	= "UPDATE Top(:RowCount) CustomerQueuing set ThreadId=:ThreadId "
+			+ "Where ThreadId = :AcThreadId";
+	private static final String			UPDATE_ORCL_RC	= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
+			+ "Where ROWNUM <=:RowCount AND ThreadId = :AcThreadId";
 
-	private static final String			START_CID_SQL_RC	= "UPDATE Top(:RowCount) CustomerQueuing set Progress=:Progress ,StartTime = :StartTime "
-																	+ "Where ThreadId = :ThreadId AND Progress=:ProgressWait";
-
-	private static final String			START_CID_ORCL_RC	= "UPDATE CustomerQueuing set Progress=:Progress ,StartTime = :StartTime "
-																	+ "Where ROWNUM <=:RowCount AND ThreadId = :ThreadId AND Progress=:ProgressWait";
+	private static final String			START_CID_RC	= "UPDATE CustomerQueuing set Progress=:Progress ,StartTime = :StartTime "
+			+ "Where CustID = :CustID AND Progress=:ProgressWait";
 
 	// Spring Named JDBC Template
 	private NamedParameterJdbcTemplate	namedParameterJdbcTemplate;
@@ -51,10 +48,15 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		logger.debug("Entering");
 
 		CustomerQueuing customerQueuing = new CustomerQueuing();
+		customerQueuing.setThreadId(0);
+		customerQueuing.setProgress(0);
 		customerQueuing.setEodDate(date);
+		customerQueuing.setActive(true);
 
-		StringBuilder insertSql = new StringBuilder("INSERT INTO CustomerQueuing (CustID, EodDate, THREADID, PROGRESS)");
-		insertSql.append(" SELECT  DISTINCT CustID, :EodDate, 0, 0 FROM FinanceMain where FinIsActive = 1");
+		StringBuilder insertSql = new StringBuilder(
+				"INSERT INTO CustomerQueuing (CustID, EodDate, THREADID, PROGRESS)");
+		insertSql.append(
+				" SELECT  DISTINCT CustID, :EodDate, :ThreadId, :Progress FROM FinanceMain where FinIsActive = :Active");
 
 		logger.debug("updateSql: " + insertSql.toString());
 
@@ -72,7 +74,9 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		logger.debug("Entering");
 
 		CustomerQueuing customerQueuing = new CustomerQueuing();
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(CustID) from CustomerQueuing where Progress = 0");
+		customerQueuing.setProgress(0);
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT COUNT(CustID) from CustomerQueuing where Progress = :Progress");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
 
 		long progressCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
@@ -196,19 +200,18 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
-	public void updateSucess(int threadId) {
+	public void updateSucess(long custID) {
 		logger.debug("Entering");
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ThreadId", threadId);
+		source.addValue("CustID", custID);
 		source.addValue("Progress", EodConstants.PROGRESS_SUCCESS);
-		source.addValue("InProgress", EodConstants.PROGRESS_IN_PROCESS);
 		source.addValue("EndTime", DateUtility.getSysDate());
 
 		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing set");
 		updateSql.append(" EndTime = :EndTime,");
-		updateSql.append(" Progress = :Progress Where ThreadId=:ThreadId AND Progress=:InProgress ");
+		updateSql.append(" Progress = :Progress Where CustID=:CustID ");
 		logger.debug("updateSql: " + updateSql.toString());
 
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
@@ -272,26 +275,18 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 	}
 
 	@Override
-	public int startEODForCID(Date date, long noOfRows, int threadId) {
+	public int startEODForCID(long custID) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("RowCount", noOfRows);
-		source.addValue("ThreadId", threadId);
-		source.addValue("EodDate", date);
+		source.addValue("CustID", custID);
 		source.addValue("StartTime", DateUtility.getSysDate());
 		source.addValue("ProgressWait", EodConstants.PROGRESS_WAIT);
-		source.addValue("Progress",EodConstants.PROGRESS_IN_PROCESS);
+		source.addValue("Progress", EodConstants.PROGRESS_IN_PROCESS);
 
 		try {
-			if (App.DATABASE == Database.SQL_SERVER) {
-				logger.debug("selectSql: " + START_CID_SQL_RC);
-				return this.namedParameterJdbcTemplate.update(START_CID_SQL_RC, source);
-			} else if (App.DATABASE == Database.ORACLE) {
-				logger.debug("selectSql: " + START_CID_ORCL_RC);
-				return this.namedParameterJdbcTemplate.update(START_CID_ORCL_RC, source);
-			}
-
+			logger.debug("selectSql: " + START_CID_RC);
+			return this.namedParameterJdbcTemplate.update(START_CID_RC, source);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error("Exception: ", dae);
 		}
