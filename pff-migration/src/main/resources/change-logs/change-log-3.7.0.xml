@@ -815,10 +815,16 @@ Insert into reportlist values('BuilderProjcet','BuilderProjcet','listheader_name
 	</sql>
 </changeSet>
   
-   		<changeSet id="58" author="Manoj.P">
-   	         <sql>
-			 alter table DATA_ENGINE_CONFIG add  FORCEEXCEL	NUMBER(1, 0) DEFAULT(0) NOT NULL
-   	         </sql>
-   		</changeSet>
+   	<changeSet id="58" author="Manoj.P">
+   	    <sql>
+		 alter table DATA_ENGINE_CONFIG add  FORCEEXCEL	NUMBER(1, 0) DEFAULT(0) NOT NULL
+   	   </sql>
+   	</changeSet>
+
+	<changeSet id="59" author="Siva">
+		<sql>
+			Update errordetails SET ErrorMessage = 'Fee Receipt on {0} is already exists. Do you want to proceed?' where errorcode = '65014';
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
