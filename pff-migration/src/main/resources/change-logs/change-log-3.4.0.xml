@@ -157,7 +157,6 @@
 	<addColumn tableName="RMTFINANCETYPES_TEMP">
 		<column name="ProductCategory" type="VARCHAR(8)"/>
 	</addColumn>
-	
 	</changeSet>
 	<changeSet id="09" author="Irfan">
 		<createView viewName="RMTFINANCETYPES_VIEW" replaceIfExists="true">
