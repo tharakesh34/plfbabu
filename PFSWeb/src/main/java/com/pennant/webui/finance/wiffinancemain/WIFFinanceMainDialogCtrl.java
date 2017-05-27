@@ -6409,6 +6409,13 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 				
+				if (getStepDetailDialogCtrl() != null) {
+					errorList.addAll(getStepDetailDialogCtrl().doValidateStepDetails(
+							getFinanceDetail().getFinScheduleData().getFinanceMain(),
+							this.numberOfTerms_two.intValue(), this.alwManualSteps.isChecked(),
+							this.noOfSteps.intValue(), this.stepType.getSelectedItem().getValue().toString()));
+				}
+				
 				//both step and EMI holiday not allowed
 				if (financeType.isPlanEMIHAlw()) {
 					errorList.add(new ErrorDetails("30573", null));
@@ -6737,15 +6744,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
-			//Setting Step Policy Details Installments & Validations
-			if (this.stepFinance.isChecked()) {
-				if (getStepDetailDialogCtrl() != null) {
-					errorList.addAll(getStepDetailDialogCtrl().doValidateStepDetails(
-							getFinanceDetail().getFinScheduleData().getFinanceMain(),
-							this.numberOfTerms_two.intValue(), this.alwManualSteps.isChecked(),
-							this.noOfSteps.intValue(), this.stepType.getSelectedItem().getValue().toString()));
-				}
-			}
 
 			if (this.finRepayPftOnFrq.isChecked()) {
 				String errorCode = FrequencyUtil.validateFrequencies(this.repayPftFrq.getValue(),
