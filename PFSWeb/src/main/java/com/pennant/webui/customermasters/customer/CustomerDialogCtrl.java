@@ -3192,7 +3192,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					}
 				} else {
 					if (StringUtils.equals(PennantConstants.EMAILPRIORITY_VeryHigh,
-							String.valueOf(custAddres.getCustAddrPriority()))) {
+							String.valueOf(custAddres.getCustAddrPriority()))
+							&& !StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, custAddres.getRecordType())) {
 						isMandAddExist = true;
 						break;
 					}
@@ -3232,7 +3233,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		if (this.customerPhoneNumberDetailList != null && !this.customerPhoneNumberDetailList.isEmpty()) {
 			for (CustomerPhoneNumber customerPhone : this.customerPhoneNumberDetailList) {
 				if (StringUtils.equals(PennantConstants.EMAILPRIORITY_VeryHigh,
-						String.valueOf(customerPhone.getPhoneTypePriority()))) {
+						String.valueOf(customerPhone.getPhoneTypePriority()))
+						&& !StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerPhone.getRecordType())) {
 					isMandAddExist = true;
 					break;
 				}
