@@ -25,6 +25,7 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -113,6 +114,14 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 				finServiceInst.setFromDate(eventFromdate);
 			}
 			
+			// For Grace Period Date Selection check Repay Instruction Details
+			List<RepayInstruction> instructionList = scheduleData.getRepayInstructions();
+			for (int ri = 0; ri < instructionList.size(); ri++) {
+				if (oldDate != null && oldDate.compareTo(instructionList.get(ri).getRepayDate()) == 0) {
+					instructionList.get(ri).setRepayDate(curSchd.getSchDate());
+				}
+			}
+			
 			prvSchdate = curSchd.getSchDate();
 			prvSchd = curSchd;
 		}
@@ -190,7 +199,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		if(disbMaturityCrossed){
 			return scheduleData;
 		}
-
+		
 		// Setting Recalculation Type Method
 		scheduleData.getFinanceMain().setRecalFromDate(eventFromdate);
 		scheduleData.getFinanceMain().setEventFromDate(eventFromdate);
