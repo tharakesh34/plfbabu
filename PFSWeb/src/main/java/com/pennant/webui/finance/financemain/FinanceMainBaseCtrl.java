@@ -8604,7 +8604,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 					}
 				}
-
+				if (stepDetailDialogCtrl != null) {
+					errorList.addAll(stepDetailDialogCtrl.doValidateStepDetails(getFinanceDetail().getFinScheduleData()
+							.getFinanceMain(), this.numberOfTerms_two.intValue(), this.alwManualSteps.isChecked(),
+							this.noOfSteps.intValue(), this.stepType.getSelectedItem().getValue().toString()));
+				}
+				
+				//both step and EMI holiday not allowed
+				if (financeType.isPlanEMIHAlw()) {
+					errorList.add(new ErrorDetails("30573", null));
+				}	
 			}
 
 			//FinanceMain Details Tab ---> 2. Grace Period Details
@@ -8976,15 +8985,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
-			//Setting Step Policy Details Installments & Validations
-			if (this.stepFinance.isChecked()) {
-				if (stepDetailDialogCtrl != null) {
-					errorList.addAll(stepDetailDialogCtrl.doValidateStepDetails(getFinanceDetail().getFinScheduleData()
-							.getFinanceMain(), this.numberOfTerms_two.intValue(), this.alwManualSteps.isChecked(),
-							this.noOfSteps.intValue(), this.stepType.getSelectedItem().getValue().toString()));
-				}
-			}
-
 			// validate finance grace profit days basis
 			if (!this.grcPftDaysBasis.isDisabled() && this.gb_gracePeriodDetails.isVisible()) {
 				if (getComboboxValue(this.grcPftDaysBasis).equals(PennantConstants.List_Select)) {
@@ -9062,6 +9062,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 			}
+			
 
 			// Setting error list to audit header
 			auditHeader.setErrorList(ErrorUtil.getErrorDetails(errorList, getUserWorkspace().getUserLanguage()));
