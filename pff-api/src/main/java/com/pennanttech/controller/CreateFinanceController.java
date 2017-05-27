@@ -330,7 +330,6 @@ public class CreateFinanceController extends SummaryDetailService {
 				advPayment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				advPayment.setUserDetails(financeMain.getUserDetails());
 				advPayment.setPaymentSeq(paymentSeq);
-				advPayment.setLLDate(DateUtility.getAppDate());
 				advPayment.setDisbCCy(financeMain.getFinCcy());
 				paymentSeq++;
 
