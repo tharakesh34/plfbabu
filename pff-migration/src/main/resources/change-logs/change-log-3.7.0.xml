@@ -814,5 +814,11 @@ Insert into reportlist values('BuilderProjcet','BuilderProjcet','listheader_name
 		Insert into SeqLocality values (1);
 	</sql>
 </changeSet>
+  
+   		<changeSet id="58" author="Manoj.P">
+   	         <sql>
+			 alter table DATA_ENGINE_CONFIG add  FORCEEXCEL	NUMBER(1, 0) DEFAULT(0) NOT NULL
+   	         </sql>
+   		</changeSet>
 
 </databaseChangeLog>
