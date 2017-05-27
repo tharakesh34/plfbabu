@@ -1459,6 +1459,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (conf == MultiLineMessageBox.YES) {
 			logger.debug("doDelete: Yes");
 
+			//in delete case if approver approves needs notes 
+				if (this.btnNotes.isVisible() && !notesEntered) {
+					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+					return ;
+				}
+			
 			if (StringUtils.trimToEmpty(aMandate.getRecordType()).equals("")) {
 				aMandate.setVersion(aMandate.getVersion() + 1);
 				aMandate.setRecordType(PennantConstants.RECORD_TYPE_DEL);
@@ -1625,14 +1631,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				}
 			}
 
-			//in delete case if approver approves needs notes 
-			if (StringUtils.equals(aMandate.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
-				if (!notesEntered) {
-					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
-					return false;
-				}
-
-			}
+		
 			aMandate.setTaskId(getTaskId());
 			aMandate.setNextTaskId(getNextTaskId());
 			aMandate.setRoleCode(getRole());
