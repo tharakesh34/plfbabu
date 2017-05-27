@@ -382,14 +382,7 @@ where code='ScoreRule';
 	</changeSet>
 	<changeSet id="25" author="Durgaprasad G">
 		<addColumn tableName="MANUALADVISEMOVEMENTS_TEMP">
-			<column name="RESERVEDAMT" type="NUMBER(18)" >
-			
-			<
-			</column>
-			
-			
-			
-			
+			<column name="RESERVEDAMT" type="NUMBER(18)" />
 		</addColumn>
 	</changeSet>
 	<changeSet id="26" author="Irfan">
