@@ -981,5 +981,48 @@ Insert into reportlist values('BuilderProjcet','BuilderProjcet','listheader_name
 			WHERE M.STATUS = 'NEW'
 	   </createView>
 	</changeSet>
-
+	
+	 <changeSet id="65" author="Manoj.P">
+		<modifyDataType tableName="MANDATE_REQUESTS" columnName="FINTYPE"
+			newDataType="varchar(50)" />
+	</changeSet>
+	
+	<changeSet id="66" author="Manojkumar.P">
+	    <createTable tableName="MANDATE_RESPONSE">			
+			<column name="ID"  	type="bigint" autoIncrement="true" incrementBy="1">
+			  <constraints primaryKey="true"  nullable="false" />
+			 </column>
+			<column name="BATCH_ID" 			type="bigint"/>
+			<column name="MANDATEID" 			type="bigint"/>
+			<column name="BANK_SEQ" 			type="VARCHAR(20)"/>
+			<column name="BANK_CODE" 			type="VARCHAR(8)"/>
+			<column name="BANK_NAME" 			type="VARCHAR(50)"/>
+			<column name="BRANCH_NAME" 			type="VARCHAR(200)"/>
+			<column name="CUSTCIF" 				type="VARCHAR(20)"/>
+			<column name="CUSTOMER_NAME" 		type="VARCHAR(200)"/>
+			<column name="FINTYPE" 				type="VARCHAR(50)"/>
+			<column name="FINREFERENCE" 		type="VARCHAR(20)"/>
+			<column name="EMI" 					type="VARCHAR(200)"/>
+			<column name="OPENFLAG" 			type="VARCHAR(20)"/>
+			<column name="ACCT_NUMBER" 			type="VARCHAR(50)"/>
+			<column name="ACCT_TYPE" 			type="VARCHAR(20)"/>
+			<column name="ACCT_HOLDER_NAME" 	type="VARCHAR(50)"/>
+			<column name="MICR_CODE" 			type="VARCHAR(20)"/>
+			<column name="EXTRACTION_DATE" 		type="datetime"/>
+			<column name="EFFECTIVE_DATE" 		type="datetime"/>
+			<column name="EMI_ENDDATE" 			type="datetime"/>
+			<column name="OPEN_ENDDATE" 		type="datetime"/>
+			<column name="UPPER_LIMIT" 			type="VARCHAR(200)"/>
+			<column name="DEBIT_AMOUNT" 		type="VARCHAR(200)"/>
+			<column name="START_DATE" 			type="datetime"/>
+			<column name="END_DATE" 			type="datetime"/>
+			<column name="APPLICATION_NUMBER" 	type="VARCHAR(200)"/>
+			<column name="MANDATE_TYPE" 		type="VARCHAR(20)"/>
+			<column name="MANDATE_REG_NO" 		type="VARCHAR(25)"/>
+			<column name="RESP_BATCH_ID" 		type="bigint"/>
+			<column name="STATUS" 				type="VARCHAR(50)"/>
+			<column name="REMARKS" 				type="VARCHAR(500)"/>
+			<column name="REJECT_REASON" 		type="VARCHAR(100)"/>
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
