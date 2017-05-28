@@ -59,15 +59,13 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.accounts.AccountsDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.accounts.Accounts;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>Accounts model</b> class.<br>
@@ -203,7 +201,6 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public void delete(Accounts accounts,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -217,15 +214,10 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",accounts.getAccountId() ,accounts.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
-		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",accounts.getAccountId() ,accounts.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
 		}
 		
 		logger.debug("Leaving");
@@ -323,8 +315,6 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 	 * @throws DataAccessException
 	 * 
 	 */
-	
-	@SuppressWarnings("serial")
 	@Override
 	public void update(Accounts accounts,String type) {
 		int recordCount = 0;
@@ -352,10 +342,7 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",accounts.getAccountId() ,accounts.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -414,13 +401,6 @@ public class AccountsDAOImpl extends BasisCodeDAO<Accounts> implements AccountsD
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
     }
-	
-	private ErrorDetails  getError(String errorId, String accountId, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = accountId;
-		parms[0][0] = PennantJavaUtil.getLabel("label_AccountId")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
 
 	@Override
 	public boolean saveOrUpdate(Accounts account, String type) {
