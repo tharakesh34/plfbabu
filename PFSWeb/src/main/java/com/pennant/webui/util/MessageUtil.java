@@ -46,7 +46,6 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -61,24 +60,83 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.AppException;
+import com.pennanttech.pff.core.ErrorCode;
 import com.pennanttech.pff.core.Literal;
 
 /**
- * <p>
  * A suite of utilities surrounding the use of the {@link org.zkoss.zul.Messagebox} object.
- * </p>
  */
 public final class MessageUtil {
-	private static final Logger	logger		= Logger.getLogger(MessageUtil.class);
+	private static final Logger	logger	= Logger.getLogger(MessageUtil.class);
+
+	/**
+	 * A symbol consisting of a white X in a circle with a red background.
+	 */
+	public static final String	ERROR	= Messagebox.ERROR;
+
+	/**
+	 * A OK button.
+	 */
+	public static final int		OK		= Messagebox.OK;
+
+	public static final String	SUFFIX	= "\n\n";
+
+	private MessageUtil() {
+		super();
+	}
+
+	/**
+	 * Shows an error message box and logs the message and cause. Displays<br/>
+	 * - detail message of the exception for application exception.<br/>
+	 * - generic message for unhandled exception.
+	 * 
+	 * @param e
+	 *            The exception.
+	 */
+	public static void showError(Exception e) {
+		if (e instanceof AppException) {
+			show((AppException) e);
+		} else {
+			show(e);
+		}
+	}
+
+	/**
+	 * Shows an error message box for application exception and logs the message and cause.
+	 * 
+	 * @param e
+	 *            The exception.
+	 */
+	private static void show(AppException e) {
+		if (e.getCause() != null) {
+			logger.warn(Literal.EXCEPTION, e);
+		} else {
+			logger.info(e.getMessage());
+		}
+
+		MultiLineMessageBox.doSetTemplate();
+		MultiLineMessageBox.show(e.getMessage().concat(SUFFIX), App.NAME, OK, ERROR);
+	}
+
+	/**
+	 * Shows an error message box for unhandled exception and logs the message and cause.
+	 * 
+	 * @param e
+	 *            The exception.
+	 */
+	private static void show(Exception e) {
+		logger.error("Exception: ", e);
+
+		MultiLineMessageBox.doSetTemplate();
+		MultiLineMessageBox.show(ErrorCode.PPS_00001.getMessage().concat(SUFFIX), App.NAME, OK, ERROR);
+	}
+
+	// TODO: Re-factor below code.
 
 	/** A symbol consisting of an exclamation point in a triangle with a yellow background. */
 	public static final String	EXCLAMATION	= Messagebox.EXCLAMATION;
 	/** A symbol of a lower case letter i in a circle. */
 	public static final String	INFORMATION	= Messagebox.INFORMATION;
-	/** A symbol consisting of a white X in a circle with a red background. */
-	public static final String	ERROR		= Messagebox.ERROR;
-	/** A OK button. */
-	public static final int		OK			= Messagebox.OK;
 	/** A Cancel button. */
 	public static final int		CANCEL		= Messagebox.CANCEL;
 	/** A Yes button. */
@@ -91,10 +149,6 @@ public final class MessageUtil {
 	public static final int		RETRY		= Messagebox.RETRY;
 	/** A IGNORE button. */
 	public static final int		IGNORE		= Messagebox.IGNORE;
-
-	private MessageUtil() {
-		super();
-	}
 
 	/**
 	 * Shows a message box and returns what button is pressed. The message box will be displayed with the following
@@ -202,62 +256,6 @@ public final class MessageUtil {
 								Tab tab = (Tab) component;
 								if (tab.isSelected()) {
 									tab.close();
-									break;
-								}
-							}
-						}
-					}
-				});
-	}
-
-	public static void showError(Exception e) {
-		if (e instanceof AppException) {
-			show((AppException) e);
-		} else if (e instanceof DataAccessException) {
-			show((DataAccessException) e);
-		} else {
-			show(e);
-		}
-	}
-
-	private static void show(AppException e) {
-		if (e.getCause() != null) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(e.getMessage(), App.NAME, OK, ERROR);
-	}
-
-	/**
-	 * @deprecated Remove below condition once the validation changes completed through out the application.
-	 * @param e
-	 */
-	@Deprecated
-	private static void show(DataAccessException e) {
-		logger.error("Exception: ", e);
-
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(e.getMessage(), App.NAME, OK, ERROR);
-	}
-
-	private static void show(Exception e) {
-		logger.error("Exception: ", e);
-
-		String title = Labels.getLabel("message.Error");
-		String message = Labels.getLabel("message.SystemError");
-
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(message, title, MultiLineMessageBox.OK, "ERROR", true,
-				new org.zkoss.zk.ui.event.EventListener<Event>() {
-					@Override
-					public void onEvent(Event event) throws InterruptedException {
-						for (Component component : Executions.getCurrent().getDesktop().getComponents()) {
-							if (component instanceof Tab) {
-								Tab tab = (Tab) component;
-								if (tab.isSelected()) {
-									tab.close();
-
 									break;
 								}
 							}
