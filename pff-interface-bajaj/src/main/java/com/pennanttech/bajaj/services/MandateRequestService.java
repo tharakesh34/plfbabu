@@ -130,12 +130,16 @@ public class MandateRequestService extends BajajService implements RequestServic
 					}
 					
 					rowMap.put("EXTRACTION_DATE", getValueDate());
-					
-					String finReference = rs.getString("FINREFERENCE");
-					String appId = StringUtils.substring(finReference, finReference.length()-8, finReference.length());	
-					appId = StringUtils.trim(appId);
-										
-					rowMap.put("APPLICATION_NUMBER", Integer.parseInt(appId));
+					String appId = null;
+					String finReference = StringUtils.trimToNull(rs.getString("FINREFERENCE"));
+					if(finReference!= null){
+						appId =  StringUtils.substring(finReference, finReference.length()-8, finReference.length());
+						appId = StringUtils.trim(appId);
+						rowMap.put("APPLICATION_NUMBER", Integer.parseInt(appId));
+					} else {
+						rowMap.put("APPLICATION_NUMBER", null);
+
+					}
 					rowMap.remove("CCYMINORCCYUNITS");
 					
 					id = String.valueOf(insertData(rowMap));
