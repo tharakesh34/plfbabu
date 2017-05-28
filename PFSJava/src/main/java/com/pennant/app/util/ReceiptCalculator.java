@@ -1514,11 +1514,17 @@ public class ReceiptCalculator implements Serializable {
 					pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitSchd());
 					priBalance = priBalance.add(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
 				}else if (DateUtility.compare(curBussniessDate, schdDate) == 0) {
-					pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitCalc().add(prvSchd.getProfitBalance()));
+					pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitCalc());
+					if(prvSchd != null){
+						pftAccruedTillNow = pftAccruedTillNow.add(prvSchd.getProfitBalance());
+					}
 					priBalance = priBalance.add(curSchd.getPrincipalSchd().add(curSchd.getClosingBalance())).subtract(curSchd.getCpzAmount()).subtract(curSchd.getSchdPriPaid());
 					
 					if(StringUtils.equals(curSchd.getSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)){
-						repayMain.setEarlyPayAmount(curSchd.getClosingBalance().subtract(curSchd.getCpzAmount()).add(curSchd.getProfitCalc().add(prvSchd.getProfitBalance())));
+						repayMain.setEarlyPayAmount(curSchd.getClosingBalance().subtract(curSchd.getCpzAmount()).add(curSchd.getProfitCalc()));
+						if(prvSchd != null){
+							repayMain.setEarlyPayAmount(repayMain.getEarlyPayAmount().add(prvSchd.getProfitBalance()));
+						}
 					}else{
 						repayMain.setEarlyPayAmount(curSchd.getClosingBalance().subtract(curSchd.getCpzAmount()));
 					}
