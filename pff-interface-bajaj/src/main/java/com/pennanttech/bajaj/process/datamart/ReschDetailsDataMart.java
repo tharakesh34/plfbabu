@@ -15,10 +15,10 @@ import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 
-public class DisbursementDataMart extends DatabaseDataEngine implements Runnable {
-	private static final Logger logger = Logger.getLogger(DisbursementDataMart.class);
+public class ReschDetailsDataMart extends DatabaseDataEngine implements Runnable {
+	private static final Logger logger = Logger.getLogger(ReschDetailsDataMart.class);
 
-	public DisbursementDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
+	public ReschDetailsDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, App.DATABASE.name(), userId, valueDate);
 	}
 
@@ -33,7 +33,7 @@ public class DisbursementDataMart extends DatabaseDataEngine implements Runnable
 
 		MapSqlParameterSource parmMap;
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT * from DM_DISB_DETAILS_DAILY_VIEW ");
+		sql.append(" SELECT * from DM_RESCH_DETAILS_DAILY_VIEW ");
 
 		parmMap = new MapSqlParameterSource();
 
@@ -43,15 +43,15 @@ public class DisbursementDataMart extends DatabaseDataEngine implements Runnable
 			@Override
 			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
 				String[] filterFields = new String[1];
-				filterFields[0] = "DISBURSEMENTNO";
+				filterFields[0] = "AGREEMENTNO";
 				while (rs.next()) {
 
 					try {
 						map = mapData(rs);
-						saveOrUpdate(map, "DM_DISB_DETAILS_DAILY", destinationJdbcTemplate, filterFields);
+						saveOrUpdate(map, "DM_RESCH_DETAILS_DAILY", destinationJdbcTemplate, filterFields);
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
-						String keyId = rs.getString("DISBURSEMENTNO");
+						String keyId = rs.getString("AGREEMENTNO");
 						saveBatchLog(keyId, "F", e.getMessage());
 					} finally {
 						map = null;
@@ -67,51 +67,43 @@ public class DisbursementDataMart extends DatabaseDataEngine implements Runnable
 	protected MapSqlParameterSource mapData(ResultSet rs) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
-		map.addValue("DISBURSEDAMT", rs.getObject("DISBURSEDAMT"));
+		map.addValue("APPLID", rs.getObject("APPLID"));
+		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
 		map.addValue("DISB_STATUS", rs.getObject("DISB_STATUS"));
-		map.addValue("FIRST_DUE_DATE", rs.getObject("FIRST_DUE_DATE"));
 		map.addValue("GROSS_TENURE", rs.getObject("GROSS_TENURE"));
 		map.addValue("NET_TENURE", rs.getObject("NET_TENURE"));
 		map.addValue("MATURITYDATE", rs.getObject("MATURITYDATE"));
 		map.addValue("EXPIRYDATE", rs.getObject("EXPIRYDATE"));
-		map.addValue("NO_OF_ADV_INSTL", rs.getObject("NO_OF_ADV_INSTL"));
-		map.addValue("ADV_EMI_AMT", rs.getObject("ADV_EMI_AMT"));
 		map.addValue("EMI", rs.getObject("EMI"));
 		map.addValue("REPAYMENT_MODE", rs.getObject("REPAYMENT_MODE"));
 		map.addValue("PRODUCTFLAG", rs.getObject("PRODUCTFLAG"));
-		map.addValue("PROMOTIONID", rs.getObject("PROMOTIONID"));
-		map.addValue("ICICI_LOMBARD", rs.getObject("ICICI_LOMBARD"));
-		map.addValue("BAGIC", rs.getObject("BAGIC"));
-		map.addValue("BALIC_CHARGES", rs.getObject("BALIC_CHARGES"));
 		map.addValue("BUSINESSDATE", rs.getObject("BUSINESSDATE"));
 		map.addValue("PROCESSED_FLAG", rs.getObject("PROCESSED_FLAG"));
 		map.addValue("PROCESS_DATE", rs.getObject("PROCESS_DATE"));
 		map.addValue("SEGMENTS", rs.getObject("SEGMENTS"));
-		map.addValue("FEE", rs.getObject("FEE"));
-		map.addValue("DEALER_SUBV", rs.getObject("DEALER_SUBV"));
-		map.addValue("MANU_SUBV_DED", rs.getObject("MANU_SUBV_DED"));
-		map.addValue("MANU_SUBV_NDED", rs.getObject("MANU_SUBV_NDED"));
-		map.addValue("PREEMI", rs.getObject("PREEMI"));
-		map.addValue("EXISTING_LANNO", rs.getObject("EXISTING_LANNO"));
-		map.addValue("MORTGAGE_FEE", rs.getObject("MORTGAGE_FEE"));
-		map.addValue("COMMITMENT_FEE", rs.getObject("COMMITMENT_FEE"));
-		map.addValue("PROCESSING_FEE", rs.getObject("PROCESSING_FEE"));
-		map.addValue("PRE_EMI_RECEIVABLE", rs.getObject("PRE_EMI_RECEIVABLE"));
-		map.addValue("INSURANCE", rs.getObject("INSURANCE"));
-		map.addValue("PAYMENTMODE", rs.getObject("PAYMENTMODE"));
 		map.addValue("FREQ", rs.getObject("FREQ"));
-		map.addValue("CHEQUENUM", rs.getObject("CHEQUENUM"));
+		map.addValue("LOAN_STATUS", rs.getObject("LOAN_STATUS"));
+		map.addValue("CLOSUREDATE", rs.getObject("CLOSUREDATE"));
 		map.addValue("CUST_ACCT_NO", rs.getObject("CUST_ACCT_NO"));
 		map.addValue("BANKNAME", rs.getObject("BANKNAME"));
 		map.addValue("MICRCODE", rs.getObject("MICRCODE"));
+		map.addValue("CUST_BANK_BRANCH", rs.getObject("CUST_BANK_BRANCH"));
+		map.addValue("CUST_BANK_CITY", rs.getObject("CUST_BANK_CITY"));
 		map.addValue("BUSINESS_YEAR", rs.getObject("BUSINESS_YEAR"));
-		map.addValue("EMI_CHARGE", rs.getObject("EMI_CHARGE"));
-		map.addValue("PDC_CHARGE", rs.getObject("PDC_CHARGE"));
-		map.addValue("IRR_PER", rs.getObject("IRR_PER"));
-		map.addValue("FEE_WL", rs.getObject("FEE_WL"));
-		map.addValue("ELC_CHARGE", rs.getObject("ELC_CHARGE"));
-		map.addValue("CREDIT_VIDYA_FEES", rs.getObject("CREDIT_VIDYA_FEES"));
-		map.addValue("BATCH_ID", rs.getObject("BATCH_ID"));
+		map.addValue("PDCID", rs.getObject("PDCID"));
+		map.addValue("PCFLAG", rs.getObject("PCFLAG"));
+		map.addValue("TIE_UP", rs.getObject("TIE_UP"));
+		map.addValue("MARGIN", rs.getObject("MARGIN"));
+		map.addValue("SPECIALMARGIN", rs.getObject("SPECIALMARGIN"));
+		map.addValue("FIXEDTENOR", rs.getObject("FIXEDTENOR"));
+		map.addValue("CEEFFECTIVEDATE", rs.getObject("CEEFFECTIVEDATE"));
+		map.addValue("EFF_RATE", rs.getObject("EFF_RATE"));
+		map.addValue("PLRRATE", rs.getObject("PLRRATE"));
+		map.addValue("TIE_UP_WITH", rs.getObject("TIE_UP_WITH"));
+		map.addValue("DATE_OF_CLOSURE", rs.getObject("DATE_OF_CLOSURE"));
+		map.addValue("PDCMS_SEQ_GENERATED_DATE", rs.getObject("PDCMS_SEQ_GENERATED_DATE"));
+		map.addValue("INSTRUMENT_DATA_ENTRY_DATE", rs.getObject("INSTRUMENT_DATA_ENTRY_DATE"));
+		map.addValue("PAYMENT_AUTHORIZATION_DATE", rs.getObject("PAYMENT_AUTHORIZATION_DATE"));
 
 		return map;
 

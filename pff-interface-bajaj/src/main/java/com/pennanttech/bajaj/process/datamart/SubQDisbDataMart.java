@@ -15,10 +15,10 @@ import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 
-public class DisbursementDataMart extends DatabaseDataEngine implements Runnable {
-	private static final Logger logger = Logger.getLogger(DisbursementDataMart.class);
+public class SubQDisbDataMart extends DatabaseDataEngine implements Runnable {
+	private static final Logger logger = Logger.getLogger(SubQDisbDataMart.class);
 
-	public DisbursementDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
+	public SubQDisbDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, App.DATABASE.name(), userId, valueDate);
 	}
 
@@ -33,7 +33,7 @@ public class DisbursementDataMart extends DatabaseDataEngine implements Runnable
 
 		MapSqlParameterSource parmMap;
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT * from DM_DISB_DETAILS_DAILY_VIEW ");
+		sql.append(" SELECT * from DM_SUBQ_DISB_DETAILS_VIEW ");
 
 		parmMap = new MapSqlParameterSource();
 
@@ -48,7 +48,7 @@ public class DisbursementDataMart extends DatabaseDataEngine implements Runnable
 
 					try {
 						map = mapData(rs);
-						saveOrUpdate(map, "DM_DISB_DETAILS_DAILY", destinationJdbcTemplate, filterFields);
+						saveOrUpdate(map, "DM_SUBQ_DISB_DETAILS", destinationJdbcTemplate, filterFields);
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
 						String keyId = rs.getString("DISBURSEMENTNO");
@@ -67,6 +67,14 @@ public class DisbursementDataMart extends DatabaseDataEngine implements Runnable
 	protected MapSqlParameterSource mapData(ResultSet rs) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 
+		map.addValue("AGREEMENTDATE", rs.getObject("AGREEMENTDATE"));
+		map.addValue("APPLID", rs.getObject("APPLID"));
+		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
+		map.addValue("DISBURSEMENTNO", rs.getObject("DISBURSEMENTNO"));
+		map.addValue("DISBURSEMENTDATE", rs.getObject("DISBURSEMENTDATE"));
+		map.addValue("PARENT_AGREEMENTNO", rs.getObject("PARENT_AGREEMENTNO"));
+		map.addValue("AMTFIN", rs.getObject("AMTFIN"));
+		map.addValue("NET_AMTFIN", rs.getObject("NET_AMTFIN"));
 		map.addValue("DISBURSEDAMT", rs.getObject("DISBURSEDAMT"));
 		map.addValue("DISB_STATUS", rs.getObject("DISB_STATUS"));
 		map.addValue("FIRST_DUE_DATE", rs.getObject("FIRST_DUE_DATE"));
@@ -101,16 +109,6 @@ public class DisbursementDataMart extends DatabaseDataEngine implements Runnable
 		map.addValue("PAYMENTMODE", rs.getObject("PAYMENTMODE"));
 		map.addValue("FREQ", rs.getObject("FREQ"));
 		map.addValue("CHEQUENUM", rs.getObject("CHEQUENUM"));
-		map.addValue("CUST_ACCT_NO", rs.getObject("CUST_ACCT_NO"));
-		map.addValue("BANKNAME", rs.getObject("BANKNAME"));
-		map.addValue("MICRCODE", rs.getObject("MICRCODE"));
-		map.addValue("BUSINESS_YEAR", rs.getObject("BUSINESS_YEAR"));
-		map.addValue("EMI_CHARGE", rs.getObject("EMI_CHARGE"));
-		map.addValue("PDC_CHARGE", rs.getObject("PDC_CHARGE"));
-		map.addValue("IRR_PER", rs.getObject("IRR_PER"));
-		map.addValue("FEE_WL", rs.getObject("FEE_WL"));
-		map.addValue("ELC_CHARGE", rs.getObject("ELC_CHARGE"));
-		map.addValue("CREDIT_VIDYA_FEES", rs.getObject("CREDIT_VIDYA_FEES"));
 		map.addValue("BATCH_ID", rs.getObject("BATCH_ID"));
 
 		return map;
