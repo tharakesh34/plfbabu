@@ -64,11 +64,9 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.Abuser;
 import com.pennant.backend.model.customermasters.Customer;
@@ -85,10 +83,11 @@ import com.pennant.backend.model.reports.AvailPastDue;
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -286,7 +285,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(Customer customer,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -301,13 +300,10 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003", customer.getCustCIF(), customer.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006", customer.getCustCIF(), customer.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -394,7 +390,6 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(Customer customer,String type) {
 		int recordCount = 0;
@@ -449,11 +444,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			
-			ErrorDetails errorDetails= getError("41004", customer.getCustCIF(), 
-					customer.getUserDetails() == null ? PennantConstants.default_Language : customer.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -958,7 +949,6 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 	
     }
 	
-	@SuppressWarnings("serial")
 	@Override
     public void updateWIFCustomer(WIFCustomer customer) {
 		int recordCount = 0;
@@ -979,10 +969,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			
-			ErrorDetails errorDetails= getError("41004", customer.getCustCRCPR(), PennantConstants.default_Language);
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	
@@ -1312,16 +1299,6 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 		}
 		logger.debug("Leaving");
 		return count > 0 ? true : false;
-	}
-	
-	
-	
-	private ErrorDetails  getError(String errorId, String custCIF,String userLanguage){
-		String[][] parms= new String[2][2]; 
-
-		parms[1][0] = custCIF;
-		parms[0][0] = PennantJavaUtil.getLabel("label_CustCIF")+ ":" + parms[1][0] ;
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
 
 	@Override

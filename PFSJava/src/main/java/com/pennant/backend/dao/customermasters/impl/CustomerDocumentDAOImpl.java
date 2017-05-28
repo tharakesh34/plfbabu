@@ -60,14 +60,12 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -221,7 +219,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(CustomerDocument customerDocument, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -237,16 +235,10 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41004", customerDocument.getCustID(),
-						customerDocument.getCustDocType(), customerDocument.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) { };
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", customerDocument.getCustID(),
-					customerDocument.getCustDocType(), customerDocument.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -333,7 +325,6 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(CustomerDocument customerDocument, String type) {
 		logger.debug("Entering");
@@ -359,10 +350,7 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails =getError("41003", customerDocument.getCustID(),
-					customerDocument.getCustDocType(), customerDocument.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -469,24 +457,6 @@ public class CustomerDocumentDAOImpl extends BasisCodeDAO<CustomerDocument>	impl
 
 		logger.debug("Leaving");
 		return documentDetails;	
-	}
-	
-	/**
-	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
-	 * @return ErrorDetails
-	 */
-	private ErrorDetails  getError(String errorId, long customerID,String docType, String userLanguage){
-		String[][] parms= new String[2][2]; 
-		parms[1][0] = String.valueOf(customerID);
-		parms[1][1] = docType;
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_CustID")+ ":" + parms[1][0];
-		parms[0][1] = PennantJavaUtil.getLabel("label_CustDocType")+ ":" + parms[1][1];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
-				errorId, parms[0],parms[1]), userLanguage);
 	}
 
 	@Override

@@ -55,13 +55,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.CustEmployeeDetailDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>CustEmployeeDetail model</b> class.<br>
@@ -140,7 +138,7 @@ public class CustEmployeeDetailDAOImpl extends BasisCodeDAO<CustEmployeeDetail> 
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(CustEmployeeDetail custEmployeeDetail,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -154,15 +152,10 @@ public class CustEmployeeDetailDAOImpl extends BasisCodeDAO<CustEmployeeDetail> 
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41004", custEmployeeDetail.getCustID(),custEmployeeDetail.getEmpStatus(),
-						custEmployeeDetail.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006", custEmployeeDetail.getCustID(), 
-					custEmployeeDetail.getEmpStatus(),custEmployeeDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -215,7 +208,6 @@ public class CustEmployeeDetailDAOImpl extends BasisCodeDAO<CustEmployeeDetail> 
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(CustEmployeeDetail custEmployeeDetail,String type) {
 		int recordCount = 0;
@@ -241,24 +233,8 @@ public class CustEmployeeDetailDAOImpl extends BasisCodeDAO<CustEmployeeDetail> 
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41003", custEmployeeDetail.getCustID(), 
-					custEmployeeDetail.getEmpStatus(), custEmployeeDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
-	private ErrorDetails  getError(String errorId, long customerId,String bankName, String userLanguage){
-		String[][] parms= new String[2][2]; 
-		
-		parms[1][0] = String.valueOf(customerId);
-		parms[1][1] = bankName;
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_CustID")+ ":" + parms[1][0];
-		parms[0][1] = PennantJavaUtil.getLabel("label_EmpStatus")+ ":" + parms[1][1];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
-				errorId, parms[0],parms[1]), userLanguage);
-	}
-
 }
