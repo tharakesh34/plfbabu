@@ -38,15 +38,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.commitment.CommitmentMovementDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.commitment.CommitmentMovement;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>CommitmentMovement model</b> class.<br>
@@ -164,7 +162,7 @@ public class CommitmentMovementDAOImpl extends BasisCodeDAO<CommitmentMovement> 
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(CommitmentMovement commitmentMovement, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -179,17 +177,10 @@ public class CommitmentMovementDAOImpl extends BasisCodeDAO<CommitmentMovement> 
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),
 			        beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41003", commitmentMovement.getId(),
-				        commitmentMovement.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", commitmentMovement.getId(),
-			        commitmentMovement.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -265,7 +256,6 @@ public class CommitmentMovementDAOImpl extends BasisCodeDAO<CommitmentMovement> 
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(CommitmentMovement commitmentMovement, String type) {
 		int recordCount = 0;
@@ -288,11 +278,7 @@ public class CommitmentMovementDAOImpl extends BasisCodeDAO<CommitmentMovement> 
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", commitmentMovement.getId(),
-			        commitmentMovement.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -316,14 +302,4 @@ public class CommitmentMovementDAOImpl extends BasisCodeDAO<CommitmentMovement> 
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
     }
-
-	private ErrorDetails getError(String errorId, String cmtReference, String userLanguage) {
-		String[][] parms = new String[2][1];
-		parms[1][0] = cmtReference;
-		parms[0][0] = PennantJavaUtil.getLabel("label_CmtReference") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId,
-		        parms[0], parms[1]), userLanguage);
-	}
-
-
 }

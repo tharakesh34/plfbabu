@@ -60,13 +60,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.collateral.CollateralSetup;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>CollateralSetup model</b> class.<br>
@@ -142,7 +140,7 @@ public class CollateralSetupDAOImpl extends BasisCodeDAO<CollateralSetup> implem
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(CollateralSetup collateralSetup, String type) {
 		logger.debug("Entering");
 
@@ -154,17 +152,10 @@ public class CollateralSetupDAOImpl extends BasisCodeDAO<CollateralSetup> implem
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(collateralSetup);
 		try {
 			if (this.jdbcTemplate.update(sql.toString(), beanParameters) <= 0) {
-				ErrorDetails errorDetails = getError("41003", collateralSetup.getId(), collateralSetup.getUserDetails()
-						.getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error(e);
-			ErrorDetails errorDetails = getError("41006", collateralSetup.getId(), collateralSetup.getUserDetails()
-					.getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -220,8 +211,6 @@ public class CollateralSetupDAOImpl extends BasisCodeDAO<CollateralSetup> implem
 	 * @throws DataAccessException
 	 * 
 	 */
-
-	@SuppressWarnings("serial")
 	@Override
 	public void update(CollateralSetup collateralSetup, String type) {
 		int recordCount = 0;
@@ -242,21 +231,9 @@ public class CollateralSetupDAOImpl extends BasisCodeDAO<CollateralSetup> implem
 		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", collateralSetup.getId(), collateralSetup.getUserDetails()
-					.getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
-	}
-
-	private ErrorDetails getError(String errorId, String collateralRef, String userLanguage) {
-		String[][] parms = new String[2][1];
-		parms[1][0] = collateralRef;
-		parms[0][0] = PennantJavaUtil.getLabel("label_CollateralRef") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
-				userLanguage);
 	}
 	
 	@Override

@@ -14,13 +14,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.collateral.FinAssetTypeDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.finance.FinAssetTypes;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 public class FinAssetTypesDAOImpl extends BasisCodeDAO<FinAssetTypes> implements FinAssetTypeDAO {
 private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
@@ -83,7 +81,6 @@ private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(FinAssetTypes finAssetTypes, String type) {
 		int recordCount = 0;
@@ -105,9 +102,7 @@ private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",finAssetTypes.getReference() ,finAssetTypes.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 		
@@ -181,7 +176,6 @@ private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
 	 * 
 	 */
 	@Override
-	@SuppressWarnings("serial")
 	public void delete(FinAssetTypes finAssetTypes, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -195,13 +189,10 @@ private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",finAssetTypes.getReference() ,finAssetTypes.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",finAssetTypes.getReference() ,finAssetTypes.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 		
@@ -224,20 +215,4 @@ private static Logger logger = Logger.getLogger(FinAssetTypesDAOImpl.class);
 
 		logger.debug("Leaving");
 	}
-
-	/**
-	 * Method for Showing Error Details preparation
-	 * @param errorId
-	 * @param assignmentId
-	 * @param userLanguage
-	 * @return
-	 */
-	private ErrorDetails  getError(String errorId, String assignmentId, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = assignmentId;
-		parms[0][0] = PennantJavaUtil.getLabel("label_AssignmentId")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-	
-
 }

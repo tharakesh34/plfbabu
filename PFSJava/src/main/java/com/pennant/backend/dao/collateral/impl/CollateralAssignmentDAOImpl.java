@@ -59,15 +59,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.collateral.AssignmentDetails;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralMovement;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>CollateralAssignment model</b> class.<br>
@@ -108,7 +106,6 @@ public class CollateralAssignmentDAOImpl extends BasisNextidDaoImpl<CollateralMo
 	 * 
 	 */
 	@Override
-	@SuppressWarnings("serial")
 	public void delete(CollateralAssignment collateralAssignment,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -122,13 +119,10 @@ public class CollateralAssignmentDAOImpl extends BasisNextidDaoImpl<CollateralMo
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",collateralAssignment.getCollateralRef() ,collateralAssignment.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",collateralAssignment.getCollateralRef() ,collateralAssignment.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -197,7 +191,6 @@ public class CollateralAssignmentDAOImpl extends BasisNextidDaoImpl<CollateralMo
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(CollateralAssignment collateralAssignment,String type) {
 		int recordCount = 0;
@@ -219,9 +212,7 @@ public class CollateralAssignmentDAOImpl extends BasisNextidDaoImpl<CollateralMo
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",collateralAssignment.getCollateralRef() ,collateralAssignment.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -453,20 +444,4 @@ public class CollateralAssignmentDAOImpl extends BasisNextidDaoImpl<CollateralMo
 		logger.debug("Leaving");
 		return list;
 	}
-	
-	/**
-	 * 
-	 * @param errorId
-	 * @param assignmentId
-	 * @param userLanguage
-	 * @return
-	 */
-	private ErrorDetails  getError(String errorId, String assignmentId, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = assignmentId;
-		parms[0][0] = PennantJavaUtil.getLabel("label_CollateralRef")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-
-
 }
