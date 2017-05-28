@@ -3,6 +3,7 @@ package com.pennanttech.bajaj.services;
 import java.io.File;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.media.Media;
 
 import com.pennanttech.dataengine.DataEngineImport;
@@ -18,6 +19,9 @@ public class MandateResponseFileService extends BajajService implements FileServ
 	public MandateResponseFileService() {
 		super();
 	}
+	
+	@Autowired
+	private MandateResponseService	mandateResponse;
 	
 	@Override
 	public void processFile(Object... params) throws Exception {
@@ -52,6 +56,15 @@ public class MandateResponseFileService extends BajajService implements FileServ
 		dataEngine.setMedia(media);
 		dataEngine.setValueDate(getValueDate());
 		dataEngine.importData(configName);
+		
+		do {
+			if ("S".equals(status.getStatus()) || "F".equals(status.getStatus())) {
+				mandateResponse.receiveResponse(status.getId());
+				break;
+			}
+		} while ("S".equals(status.getStatus()) || "F".equals(status.getStatus()));
+		
+		
 		logger.debug(Literal.LEAVING);
 	}
 

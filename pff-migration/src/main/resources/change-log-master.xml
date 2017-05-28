@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
-	<include file="change-logs/change-log-2.26-unicode_char_cleanup.xml" />
+	<!-- <include file="change-logs/change-log-2.26-unicode_char_cleanup.xml" />
 	<include file="change-logs/change-log-2.26-bool-correction.xml" />
 	<include file="change-logs/change-log-2.26.xml" />
 	<include file="change-logs/change-log-2.27-bool-correction.xml" />
@@ -23,12 +23,12 @@
 	<include file="change-logs/change-log-2.38.0-bankBranches-Bajaj.xml" />
 	<include file="change-logs/change-log-Dataengine-Oracle.xml" />
 	<include file="change-logs/change-log-Dataengine-Data.xml" />
-	<!-- <include file="change-logs/change-log-secusers-bajaj.xml" /> -->
+	<include file="change-logs/change-log-secusers-bajaj.xml" />
 	<include file="change-logs/change-log-2.39.0.xml" />
 	<include file="change-logs/change-log-2.40.0.xml" />
 	<include file="change-logs/change-log-2.40.1.xml" />
 	<include file="change-logs/change-log-2.41.0.xml" />
-	<!-- <include file="change-logs/change-log-2.41.1.xml" />-->
+	<include file="change-logs/change-log-2.41.1.xml" />
 	<include file="change-logs/change-log-2.42.0.xml" />
 	<include file="change-logs/change-log-2.44.0.xml" />	
 	<include file="change-logs/change-log-2.45.0.xml" />
@@ -48,11 +48,11 @@
 	<include file="change-logs/change-log-2.55.0.xml" />
 	<include file="change-logs/change-log-3.0.0.xml" />
 	<include file="change-logs/change-log-3.1.0.xml" />
-	<!-- <include file="change-logs/change-log-3.2.0.xml" />
-	<include file="change-logs/change-log-3.3.0.xml" /> -->
+	<include file="change-logs/change-log-3.2.0.xml" />
+	<include file="change-logs/change-log-3.3.0.xml" />
 		<include file="change-logs/change-log-vas.xml" />
 	<include file="change-logs/change-log-3.4.0.xml" />
 	<include file="change-logs/change-log-3.5.0.xml" />
-	<include file="change-logs/change-log-3.6.0.xml" />
+	<include file="change-logs/change-log-3.6.0.xml" /> -->
 	<include file="change-logs/change-log-3.7.0.xml" />
 </databaseChangeLog>

@@ -112,8 +112,8 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 					otherStatus = dataEngineConfig.getLatestExecution("DISB_OTHER_IMPORT");
 					valueLabel = new ValueLabel(configName, "Other Bank Disbursement Response");
 					 doFillExePanels(config, otherStatus);
+					 menuList.add(valueLabel);
 				}
-				menuList.add(valueLabel);
 			}
 		}
 		
@@ -209,16 +209,8 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		try {
 			Thread thread = null;
 			if (fileConfiguration.getSelectedItem().getValue().equals("DISB_HDFC_IMPORT")) {
-				if (hdfcStatus == null) {
-					hdfcStatus = new DataEngineStatus();
-					hdfcStatus.setName("DISB_HDFC_IMPORT");
-				}
 				thread = new Thread(new ProcessData(userId, hdfcStatus));
 			} else {
-				if (otherStatus == null) {
-					otherStatus = new DataEngineStatus();
-					otherStatus.setName("DISB_OTHER_IMPORT");
-				}
 				thread = new Thread(new ProcessData(userId, otherStatus));
 			}
 			
@@ -243,6 +235,12 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	public void onUpload$btnFileUpload(UploadEvent event) throws Exception {
 		fileName.setText("");
 		media = event.getMedia();
+		
+		if(!(StringUtils.endsWith(media.getName().toUpperCase(),".CSV" ))){
+			MessageUtil.showErrorMessage("Invalid file format.");
+			return;
+		}
+		
 		fileName.setText(media.getName());
 	}
 

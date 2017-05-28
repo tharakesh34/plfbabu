@@ -244,8 +244,12 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	public void onUpload$btnFileUpload(UploadEvent event) throws Exception {
 		fileName.setText("");
 		media = event.getMedia();
-		String type = media.getContentType();
-		System.out.println("type :" + type);
+		
+		if(!(StringUtils.endsWith(media.getName().toUpperCase(),".CSV" ))){
+			MessageUtil.showErrorMessage("Invalid file format.");
+			return;
+		}
+		
 		fileName.setText(media.getName());
 	}
 

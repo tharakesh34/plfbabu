@@ -1,5 +1,5 @@
 package com.pennanttech.pff.core.services;
 
-public interface ResponseService {
+public interface ResponseDisbursementService {
 	public void receiveResponse(Object... params) throws Exception;
 }
