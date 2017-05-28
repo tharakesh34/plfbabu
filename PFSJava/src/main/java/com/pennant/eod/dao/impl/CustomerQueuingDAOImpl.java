@@ -27,11 +27,14 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 	private static Logger				logger			= Logger.getLogger(CustomerQueuingDAOImpl.class);
 
 	private static final String			UPDATE_SQL		= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
-			+ "Where ThreadId = :ThreadId";
+			+ "Where ThreadId = :AcThreadId";
+	
 	private static final String			UPDATE_SQL_RC	= "UPDATE Top(:RowCount) CustomerQueuing set ThreadId=:ThreadId "
 			+ "Where ThreadId = :AcThreadId";
+	
 	private static final String			UPDATE_ORCL_RC	= "UPDATE CustomerQueuing set ThreadId=:ThreadId "
 			+ "Where ROWNUM <=:RowCount AND ThreadId = :AcThreadId";
+	
 
 	private static final String			START_CID_RC	= "UPDATE CustomerQueuing set Progress=:Progress ,StartTime = :StartTime "
 			+ "Where CustID = :CustID AND Progress=:ProgressWait";

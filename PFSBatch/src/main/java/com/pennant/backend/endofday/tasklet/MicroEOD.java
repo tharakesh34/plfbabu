@@ -62,8 +62,10 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.EodService;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
@@ -95,12 +97,12 @@ public class MicroEOD implements Tasklet {
 		final int threadId = (int) context.getStepContext().getStepExecutionContext().get(EodConstants.THREAD);
 		logger.info("process Statred by the Thread : " + threadId + " with date " + valueDate.toString());
 
+		int chunkSize = SysParamUtil.getValueAsInt(SMTParameterConstants.EOD_CHUNK_SIZE);
+
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-		txDef.setReadOnly(true);
-		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRED);
+		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus txStatus = null;
 
-		//List<Customer> customers = customerQueuingDAO.getCustForProcess(threadId);
 		JdbcCursorItemReader<Customer> cursorItemReader = new JdbcCursorItemReader<Customer>();
 		cursorItemReader.setSql(customerSQL);
 		cursorItemReader.setDataSource(dataSource);
@@ -113,6 +115,10 @@ public class MicroEOD implements Tasklet {
 			}
 		});
 
+		//for transaction 
+		int count = 0;
+		boolean trnsactionCompleted = true;
+
 		cursorItemReader.open(context.getStepContext().getStepExecution().getExecutionContext());
 		Customer customer;
 		while ((customer = cursorItemReader.read()) != null) {
@@ -123,15 +129,19 @@ public class MicroEOD implements Tasklet {
 				//update start
 				customerQueuingDAO.startEODForCID(custID);
 
-				//BEGIN TRANSACTION
-				txStatus = transactionManager.getTransaction(txDef);
-
 				CustEODEvent custEODEvent = new CustEODEvent();
 				custEODEvent.setCustomer(customer);
 				custEODEvent.setEodDate(valueDate);
 				custEODEvent.setEodValueDate(valueDate);
 
 				eodService.doProcess(custEODEvent, valueDate);
+
+				if (count == 0) {
+					//BEGIN TRANSACTION
+					txStatus = transactionManager.getTransaction(txDef);
+					trnsactionCompleted = false;
+				}
+
 				//update customer EOD
 				eodService.getLoadFinanceData().updateFinEODEvents(custEODEvent);
 				//receipt postings
@@ -147,21 +157,33 @@ public class MicroEOD implements Tasklet {
 				eodService.getLoadFinanceData().updateCustomerDate(custID, valueDate, newCustStatus);
 				//update  end
 				customerQueuingDAO.updateSucess(custID);
+				count++;
 
-				//COMMIT THE TRANSACTION
-				transactionManager.commit(txStatus);
+				if (count == chunkSize) {
+					//COMMIT THE TRANSACTION
+					transactionManager.commit(txStatus);
+					count = 0;//To Create new transaction
+					trnsactionCompleted = true;
+				}
 
 				custEODEvent.getFinEODEvents().clear();
 				custEODEvent = null;
 
 			} catch (Exception e) {
 				transactionManager.rollback(txStatus);
+				count = 0;//To Create new transaction
+				trnsactionCompleted = true;
 				updateFailed(threadId, custID);
 			}
-
 			//clear data after the process
 			customer = null;
 		}
+
+		if (!trnsactionCompleted) {
+			//COMMIT THE TRANSACTION
+			transactionManager.commit(txStatus);
+		}
+
 		cursorItemReader.close();
 
 		logger.debug("COMPLETE: Micro EOD On :" + valueDate);
