@@ -54,13 +54,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.bmtmasters.ProductDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.bmtmasters.Product;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>Product model</b> class.<br>
@@ -171,7 +169,7 @@ public class ProductDAOImpl extends BasisCodeDAO<Product> implements ProductDAO 
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(Product product, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -186,17 +184,10 @@ public class ProductDAOImpl extends BasisCodeDAO<Product> implements ProductDAO 
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-
-				ErrorDetails errorDetails = getError("41004",product.getProductCode() ,product.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-
-			ErrorDetails errorDetails = getError("41006",product.getProductCode() ,product.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -244,7 +235,6 @@ public class ProductDAOImpl extends BasisCodeDAO<Product> implements ProductDAO 
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(Product product, String type) {
 		int recordCount = 0;
@@ -267,18 +257,8 @@ public class ProductDAOImpl extends BasisCodeDAO<Product> implements ProductDAO 
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004",product.getProductCode() ,product.getUserDetails().getUsrLanguage()); 
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
-	}
-
-	private ErrorDetails  getError(String errorId, String productCode, String userLanguage){
-		String[][] parms= new String[1][1]; 
-		parms[1][0] = productCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_ProductCode")+":" +parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0]), userLanguage);
 	}
 }
