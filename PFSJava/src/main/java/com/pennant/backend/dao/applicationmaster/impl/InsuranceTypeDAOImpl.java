@@ -56,14 +56,12 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.InsuranceTypeDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.InsuranceType;
 import com.pennant.backend.model.applicationmaster.InsuranceTypeProvider;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>InsuranceType model</b> class.<br>
@@ -165,7 +163,6 @@ public class InsuranceTypeDAOImpl extends BasisCodeDAO<InsuranceType> implements
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public void delete(InsuranceType insuranceType, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -180,18 +177,10 @@ public class InsuranceTypeDAOImpl extends BasisCodeDAO<InsuranceType> implements
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
 			if (recordCount <= 0) {
-
-				ErrorDetails errorDetails = getError("41003", insuranceType.getId(), insuranceType.getUserDetails()
-						.getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error(e);
-			ErrorDetails errorDetails = getError("41006", insuranceType.getId(), insuranceType.getUserDetails()
-					.getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -242,8 +231,6 @@ public class InsuranceTypeDAOImpl extends BasisCodeDAO<InsuranceType> implements
 	 * @throws DataAccessException
 	 * 
 	 */
-
-	@SuppressWarnings("serial")
 	@Override
 	public void update(InsuranceType insuranceType, String type) {
 		int recordCount = 0;
@@ -267,22 +254,10 @@ public class InsuranceTypeDAOImpl extends BasisCodeDAO<InsuranceType> implements
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", insuranceType.getInsuranceType(),
-					insuranceType.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 
-	}
-
-	private ErrorDetails getError(String errorId, String insuranceType, String userLanguage) {
-		String[][] parms = new String[2][1];
-		parms[1][0] = insuranceType;
-		parms[0][0] = PennantJavaUtil.getLabel("label_InsuranceType") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
-				userLanguage);
 	}
 
 	@Override
@@ -374,7 +349,6 @@ public class InsuranceTypeDAOImpl extends BasisCodeDAO<InsuranceType> implements
 
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void delete(InsuranceTypeProvider insTypeProvider, String type) {
 
@@ -390,33 +364,13 @@ public class InsuranceTypeDAOImpl extends BasisCodeDAO<InsuranceType> implements
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount < 0) {
-				ErrorDetails errorDetails = getError("41003", insTypeProvider.getInsuranceType(),
-						insTypeProvider.getProviderCode(), insTypeProvider.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", insTypeProvider.getInsuranceType(),
-					insTypeProvider.getProviderCode(), insTypeProvider.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 
-	}
-
-	private ErrorDetails getError(String errorId, String finType, String insurance, String userLanguage) {
-		String[][] parms = new String[2][3];
-
-		parms[1][0] = finType;
-		parms[1][1] = insurance;
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_InsuranceType") + ":" + parms[1][0] + " "
-				+ PennantJavaUtil.getLabel("label_InsCode") + ":" + parms[1][1];
-		parms[0][1] = PennantJavaUtil.getLabel("label_Event") + ":" + parms[1][2];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
-				userLanguage);
 	}
 	
 	@Override

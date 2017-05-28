@@ -55,13 +55,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.SukukBrokerDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmasters.SukukBroker;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>SukukBroker model</b> class.<br>
@@ -139,7 +137,7 @@ public class SukukBrokerDAOImpl extends BasisCodeDAO<SukukBroker> implements Suk
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(SukukBroker sukukBroker, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -153,15 +151,10 @@ public class SukukBrokerDAOImpl extends BasisCodeDAO<SukukBroker> implements Suk
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",sukukBroker.getId() ,sukukBroker.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",sukukBroker.getId() ,sukukBroker.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -210,7 +203,6 @@ public class SukukBrokerDAOImpl extends BasisCodeDAO<SukukBroker> implements Suk
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(SukukBroker sukukBroker, String type) {
 		int recordCount = 0;
@@ -231,20 +223,8 @@ public class SukukBrokerDAOImpl extends BasisCodeDAO<SukukBroker> implements Suk
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",sukukBroker.getId() ,sukukBroker.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
-	private ErrorDetails  getError(String errorId, String brokerCode, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = brokerCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_BrokerCode")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-
-	
 }
