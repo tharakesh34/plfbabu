@@ -54,13 +54,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.CustomerNotesTypeDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.CustomerNotesType;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>CustomerNotesType model</b> class.<br>
@@ -140,7 +138,6 @@ public class CustomerNotesTypeDAOImpl extends BasisCodeDAO<CustomerNotesType> im
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public void delete(CustomerNotesType customerNotesType, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -157,18 +154,10 @@ public class CustomerNotesTypeDAOImpl extends BasisCodeDAO<CustomerNotesType> im
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),	beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41004", customerNotesType.getCustNotesTypeCode(),
-					customerNotesType.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.debug("Error in delete Method");
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006", customerNotesType.getCustNotesTypeCode(),
-					customerNotesType.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -225,7 +214,6 @@ public class CustomerNotesTypeDAOImpl extends BasisCodeDAO<CustomerNotesType> im
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(CustomerNotesType customerNotesType, String type) {
 		logger.debug("Entering");
@@ -250,27 +238,8 @@ public class CustomerNotesTypeDAOImpl extends BasisCodeDAO<CustomerNotesType> im
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-
-			ErrorDetails errorDetails= getError("41003", customerNotesType.getCustNotesTypeCode(), 
-					customerNotesType.getUserDetails().getUsrLanguage());	
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
-	}
-
-	/**
-	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
-	 * @return ErrorDetails
-	 */
-	private ErrorDetails  getError(String errorId, String custNotesTypeCode,String userLanguage){
-		String[][] parms= new String[2][2]; 
-		parms[1][0] = custNotesTypeCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_CustNotesTypeCode")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
 }

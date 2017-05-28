@@ -59,16 +59,15 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.CheckListDetailDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>CheckListDetail model</b> class.<br>
@@ -261,7 +260,6 @@ public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> 
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public void delete(CheckListDetail checkListDetail, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -275,17 +273,10 @@ public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> 
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",checkListDetail.getLovDescCheckListDesc(),checkListDetail.getAnsDesc(), 
-						checkListDetail.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",checkListDetail.getLovDescCheckListDesc(),checkListDetail.getAnsDesc(),
-					checkListDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -360,7 +351,6 @@ public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> 
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(CheckListDetail checkListDetail, String type) {
 		int recordCount = 0;
@@ -384,22 +374,8 @@ public class CheckListDetailDAOImpl extends BasisNextidDaoImpl<CheckListDetail> 
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",checkListDetail.getLovDescCheckListDesc(),checkListDetail.getAnsDesc(), 
-					checkListDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
-	private ErrorDetails  getError(String errorId, String checklistDesc, String ansDescription, String userLanguage){
-		String[][] parms= new String[2][2];
-		parms[1][0] =checklistDesc;
-		parms[1][1] = ansDescription;
-		parms[0][0] = PennantJavaUtil.getLabel("label_CheckListDesc")+ ":" + parms[1][0];
-		parms[0][1] =  PennantJavaUtil.getLabel("label_AnsDesc")+ ":" + parms[1][1];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-	
 }
