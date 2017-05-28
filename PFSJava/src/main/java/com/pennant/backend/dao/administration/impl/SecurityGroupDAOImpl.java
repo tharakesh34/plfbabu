@@ -55,13 +55,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.administration.SecurityGroupDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.administration.SecurityGroup;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>SecurityGroup model</b> class.<br>
@@ -174,7 +172,6 @@ public class SecurityGroupDAOImpl extends BasisNextidDaoImpl<SecurityGroup> impl
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public void delete(SecurityGroup securityGroup,String type) {
 
 		logger.debug("Entering ");
@@ -191,17 +188,10 @@ public class SecurityGroupDAOImpl extends BasisNextidDaoImpl<SecurityGroup> impl
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetail= getError("41003", securityGroup.getGrpCode(), 
-						securityGroup.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetail.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.warn("Exception: ", e);
-			ErrorDetails errorDetail= getError("41006", securityGroup.getGrpCode(), 
-					securityGroup.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetail.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 
 		logger.debug("Leaving ");
@@ -260,7 +250,6 @@ public class SecurityGroupDAOImpl extends BasisNextidDaoImpl<SecurityGroup> impl
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(SecurityGroup securityGroup,String type) {
 		int recordCount = 0;
@@ -284,21 +273,8 @@ public class SecurityGroupDAOImpl extends BasisNextidDaoImpl<SecurityGroup> impl
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetail= getError("41004", securityGroup.getGrpCode(), securityGroup.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetail.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving ");
 	}
-	
-	
-	private ErrorDetails  getError(String errorId, String groupCode, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = groupCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_GrpCode")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
-				errorId, parms[0],parms[1]), userLanguage);
-	}
-
 }

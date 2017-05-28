@@ -58,15 +58,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.administration.SecurityGroupRightsDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.administration.SecurityGroup;
 import com.pennant.backend.model.administration.SecurityGroupRights;
 import com.pennant.backend.model.administration.SecurityRight;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 public class SecurityGroupRightsDAOImpl extends BasisNextidDaoImpl<SecurityGroup> implements SecurityGroupRightsDAO{
 	private static Logger logger = Logger.getLogger(SecurityGroupRightsDAOImpl .class);
@@ -150,12 +148,12 @@ public class SecurityGroupRightsDAOImpl extends BasisNextidDaoImpl<SecurityGroup
 		logger.debug("Leaving ");
 
 	}
+
 	/**
 	 * This method deletes the record from SecGroupRights where GrpID,RightID condition
 	 * @param securityGroupRights (SecurityGroupRights)
 	 * @throws DataAccessException
 	 */
-	@SuppressWarnings("serial")
 	public void delete(SecurityGroupRights securityGroupRights) {
 		logger.debug("Entering ");
 		
@@ -165,20 +163,12 @@ public class SecurityGroupRightsDAOImpl extends BasisNextidDaoImpl<SecurityGroup
 		try {
 			long recordCount=this.namedParameterJdbcTemplate.update(deleteSql, beanParameters);
 			if (recordCount <= 0) {		
-				ErrorDetails errorDetail=getError("41003",securityGroupRights.getLovDescGrpCode(),
-						securityGroupRights.getLovDescRightName(),
-						securityGroupRights.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetail.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.warn("Exception: ", e);
-			ErrorDetails errorDetail=getError("41006",securityGroupRights.getLovDescGrpCode(),
-					securityGroupRights.getLovDescRightName(),
-					securityGroupRights.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetail.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
+
 		logger.debug("Leaving ");
 	}
 
@@ -291,16 +281,4 @@ public class SecurityGroupRightsDAOImpl extends BasisNextidDaoImpl<SecurityGroup
 		logger.debug("Leaving ");
 		return secGroupRights;	
 	}
-	
-	private ErrorDetails  getError(String errorId, String groupCode,String rightName, String userLanguage){
-		String[][] parms= new String[2][2];
-		parms[1][0] = groupCode;
-		parms[1][1] = rightName;
-		parms[0][0] = PennantJavaUtil.getLabel("label_GrpCode")+ ":" + parms[1][0];
-		parms[0][1] = PennantJavaUtil.getLabel("label_RightName")+ ":" + parms[1][1];
-		
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
-				errorId, parms[0],parms[1]), userLanguage);
-	}
-
 }

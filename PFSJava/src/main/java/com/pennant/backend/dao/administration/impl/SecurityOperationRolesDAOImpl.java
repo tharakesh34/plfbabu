@@ -59,16 +59,14 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.administration.SecurityOperationRolesDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.administration.SecurityOperation;
 import com.pennant.backend.model.administration.SecurityOperationRoles;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUserOperations;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 public class SecurityOperationRolesDAOImpl extends BasisNextidDaoImpl<SecurityOperation> implements
 		SecurityOperationRolesDAO {
@@ -135,7 +133,6 @@ public class SecurityOperationRolesDAOImpl extends BasisNextidDaoImpl<SecurityOp
 	 * @param securityOperationRoles(SecurityOperationRoles)
 	 * @throws DataAccessException
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void delete(SecurityOperationRoles securityOperationRoles,String type) {
 			
@@ -150,15 +147,10 @@ public class SecurityOperationRolesDAOImpl extends BasisNextidDaoImpl<SecurityOp
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityOperationRoles);
 			recordCount = this.jdbcTemplate.update( deleteSql.toString(),beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails=getError("41004", securityOperationRoles.getOprID(), securityOperationRoles.getUserDetails().getUsrLanguage()); 
-				throw new DataAccessException(errorDetails.getError()){};
-
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.warn("Exception: ", e);
-			ErrorDetails errorDetails=getError("41006", securityOperationRoles.getOprID(), securityOperationRoles.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving ");
 	}  
@@ -324,7 +316,6 @@ public class SecurityOperationRolesDAOImpl extends BasisNextidDaoImpl<SecurityOp
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(SecurityOperationRoles securityOperationRoles, String type) {
 		logger.debug("Entering ");
@@ -346,9 +337,7 @@ public class SecurityOperationRolesDAOImpl extends BasisNextidDaoImpl<SecurityOp
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError ("41004",securityOperationRoles.getId() , securityOperationRoles.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving ");
 	}
@@ -391,7 +380,6 @@ public class SecurityOperationRolesDAOImpl extends BasisNextidDaoImpl<SecurityOp
 	 * @param securityOperationRoles(SecurityOperationRoles)
 	 * @throws DataAccessException
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void delete(SecurityOperationRoles securityOperationRoles) {
 		 logger.debug("Entering ");
@@ -403,30 +391,14 @@ public class SecurityOperationRolesDAOImpl extends BasisNextidDaoImpl<SecurityOp
 			 recordCount = this.jdbcTemplate.update( deleteRoleGroupSql,beanParameters);
 
 			 if (recordCount <= 0) {
-				 logger.debug("Error delete Method Count :"+recordCount);				
-				 ErrorDetails errorDetail= getError("41003", securityOperationRoles.getLovDescOprCode(),securityOperationRoles.getLovDescRoleCode() ,securityOperationRoles.getUserDetails().getUsrLanguage());
-				 throw new DataAccessException(errorDetail.getError()) {};
+				throw new ConcurrencyException();
 			 }
 		 }catch(DataAccessException e){
-			 logger.warn("Exception: ", e);
-			 ErrorDetails errorDetail= getError("41006", securityOperationRoles.getLovDescOprCode(),securityOperationRoles.getLovDescRoleCode() ,securityOperationRoles.getUserDetails().getUsrLanguage());
-			 throw new DataAccessException(errorDetail.getError()) {};
+			throw new DependencyFoundException(e);
 		 }
 		 logger.debug("Leaving ");
 	 }
 
-	
-	private ErrorDetails  getError(String errorId, String oprCode,String roleCode, String userLanguage){
-		String[][] parms= new String[2][2]; 
-		
-		parms[1][0] = String.valueOf(roleCode);
-		parms[1][1] = String.valueOf(oprCode);
-		
-		parms[0][0] = PennantJavaUtil.getLabel("label_RoleCd")+":" +parms[1][0];
-		parms[0][1] = PennantJavaUtil.getLabel("label_OprCode")+":" +parms[1][1];
-		
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
 	/**
 	 * This Method selects the records from SecOperationRoles_AView table with UsrID condition
 	 * @param secOpr(SecOpr)
@@ -482,15 +454,4 @@ public class SecurityOperationRolesDAOImpl extends BasisNextidDaoImpl<SecurityOp
 		}
 		return 0;
 	}
-	
-	private ErrorDetails  getError(String errorId, long usrId, String userLanguage){
-		String[][] parms= new String[2][1]; 
-		
-		parms[1][0] = String.valueOf(usrId);
-		parms[0][0] = PennantJavaUtil.getLabel("label_OprID")+parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-
-
-	
 }

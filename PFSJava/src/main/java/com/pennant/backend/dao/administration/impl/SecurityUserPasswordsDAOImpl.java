@@ -12,13 +12,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.administration.SecurityUserPasswordsDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.administration.SecurityUser;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 public class SecurityUserPasswordsDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements SecurityUserPasswordsDAO {
 	private static Logger logger = Logger.getLogger(SecurityUserPasswordsDAOImpl.class);
@@ -72,7 +70,6 @@ public class SecurityUserPasswordsDAOImpl extends BasisNextidDaoImpl<SecurityUse
 	/**
 	 * This method  deletes the record from SecUserPasswords with specific condition
 	 */
-	@SuppressWarnings("serial")
 	public void delete(SecurityUser securityUser) {
 		logger.debug("Entering ");
 
@@ -86,27 +83,11 @@ public class SecurityUserPasswordsDAOImpl extends BasisNextidDaoImpl<SecurityUse
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError ("41003",securityUser.getUsrID() , 
-						securityUser.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.warn("Exception: ", e);
-			ErrorDetails errorDetails= getError ("41006",securityUser.getUsrID() , 
-					securityUser.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving ");
 	}
-
-	private ErrorDetails  getError(String errorId, long userId, String userLanguage){
-		String[][] parms= new String[2][1]; 
-		parms[1][0] = String.valueOf(userId);
-		parms[0][0] = PennantJavaUtil.getLabel("label_UsrID")+":" +parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
-				errorId, parms[0],parms[1]), userLanguage);
-	}
-
 }

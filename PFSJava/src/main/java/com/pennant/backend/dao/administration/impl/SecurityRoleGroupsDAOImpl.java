@@ -59,15 +59,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.administration.SecurityRoleGroupsDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.administration.SecurityGroup;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityRoleGroups;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 public class SecurityRoleGroupsDAOImpl extends BasisNextidDaoImpl<SecurityRole> implements SecurityRoleGroupsDAO {
 	private static Logger logger = Logger.getLogger(SecurityRoleGroupsDAOImpl.class);
@@ -164,8 +162,6 @@ public class SecurityRoleGroupsDAOImpl extends BasisNextidDaoImpl<SecurityRole> 
 	  * @throws DataAccessException
 	  * 
 	  */
-
-	 @SuppressWarnings("serial")
 	public void delete(SecurityRoleGroups securityRoleGroups) {
 		 logger.debug("Entering");
 
@@ -177,16 +173,10 @@ public class SecurityRoleGroupsDAOImpl extends BasisNextidDaoImpl<SecurityRole> 
 			 recordCount = this.namedParameterJdbcTemplate.update( deleteRoleGroupSql,beanParameters);
 
 			 if (recordCount <= 0) {
-				 logger.debug("Error delete Method Count :"+recordCount);				
-				 ErrorDetails errorDetail= getError("41003", securityRoleGroups.getLovDescGrpCode(),securityRoleGroups.getLovDescRoleCode() ,securityRoleGroups.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetail.getError()) {
-				};
+				throw new ConcurrencyException();
 			 }
 		} catch (DataAccessException e) {
-			logger.warn("Exception: ", e);
-			 ErrorDetails errorDetail= getError("41006", securityRoleGroups.getLovDescGrpCode(),securityRoleGroups.getLovDescRoleCode() ,securityRoleGroups.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetail.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	 }
@@ -316,19 +306,6 @@ public class SecurityRoleGroupsDAOImpl extends BasisNextidDaoImpl<SecurityRole> 
 		}
 		return secRolesGroups;
 	}
-
-	 private ErrorDetails  getError(String errorId, String groupCode,String roleCode, String userLanguage){
-		 String[][] parms= new String[2][2]; 
-
-		 parms[1][0] = String.valueOf(roleCode);
-		 parms[1][1] = String.valueOf(groupCode);
-
-		 parms[0][0] = PennantJavaUtil.getLabel("label_RoleCd")+":" +parms[1][0];
-		 parms[0][1] = PennantJavaUtil.getLabel("label_GrpCode")+":" +parms[1][1];
-
-		 return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
-				 errorId, parms[0],parms[1]), userLanguage);
-	 }
 
 	/**
 	 * This method Selects the SecurityRoleGroups records from SecRoleGroups
