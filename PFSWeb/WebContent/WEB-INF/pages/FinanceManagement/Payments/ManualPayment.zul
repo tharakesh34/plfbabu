@@ -1,0 +1,833 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<style>
+		div.z-column-cnt { padding: 3px; } div.z-column-cnt,
+		div.z-row-cnt { color: #000000;
+		font-family:Verdana,Tahoma,Arial,Helvetica,sans-serif;
+		font-size: 11px; font-weight: bold; }
+	</style>
+
+	<window id="window_ManualPaymentDialog" border="normal" width="100%"
+		height="100%" sizable="false" apply="${manualPaymentDialogCtrl}">
+
+		<div sclass="z-toolbar" style="padding:0">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+				width="100%" widths="35%,30%,35%">
+
+				<!-- COMMON BUTTONS -->
+				<toolbar align="start" sclass="toolbar-start">
+					<button id="btnPay" label="${c:l('btnPay.label')}"
+						tooltiptext="${c:l('btnPay.tooltiptext')}"
+						autodisable="btnPay,btnChangeRepay,btnCalcRepayments,btnNotes"
+						sclass="z-toolbarbutton" />
+					<button id="btnChangeRepay"
+						label="${c:l('btnChangeRepayment.label')}"
+						tooltiptext="${c:l('btnChangeRepayment.tooltiptext')}"
+						autodisable="btnPay,btnChangeRepay,btnCalcRepayments,btnNotes"
+						sclass="z-toolbarbutton" />
+					<button id="btnCalcRepayments"
+						label="${c:l('btnCalcRepayments.label')}"
+						tooltiptext="${c:l('btnCalcRepayments.tooltiptext')}"
+						autodisable="btnPay,btnChangeRepay,btnCalcRepayments,btnNotes"
+						sclass="z-toolbarbutton" />
+					<button id="btnNotes"
+						label="${c:l('btnNotes.label')}"
+						tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+						autodisable="btnPay,btnChangeRepay,btnCalcRepayments,btnNotes"
+						sclass="z-toolbarbutton" />
+					<button id="btnPrint" label="${c:l('label_Print')}"
+						autodisable="btnPay,btnChangeRepay,btnCalcRepayments,btnNotes"
+						tooltiptext="${c:l('btnPrint.tooltiptext')}" visible="false"
+						sclass="z-toolbarbutton" />
+				</toolbar>
+
+				<!-- SEARCH AREA -->
+				<toolbar align="center" sclass="toolbar-center">
+					<label id="windowTitle"
+						value="${c:l('window_ManualPaymentDialog.title')}"
+						sclass="label-heading" />
+				</toolbar>
+
+				<!-- CRUD BUTTONS -->
+				<toolbar align="end" sclass="toolbar-end">
+					<button id="btnHelp" visible="false"
+						label="${c:l('label_Help')}"
+						tooltiptext="${c:l('btnHelp.tooltiptext')}"
+						autodisable="btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnClose"
+						label="${c:l('btnClose.label')}"
+						tooltiptext="${c:l('btnClose.tooltiptext')}"
+						autodisable="btnHelp,btnClose" sclass="z-toolbarbutton" />
+				</toolbar>
+			</hbox>
+		</div>
+
+		<borderlayout id="borderlayout_ManualPayment">
+			<center border="none">
+				<tabbox id="tabBoxIndexCenter" width="99%"
+					height="100%">
+					<tabs id="tabsIndexCenter">
+						<tab id="summaryDetailsTab"
+							label="${c:l('label_SummaryDetails')}" />
+						<tab id="repaymentDetailsTab"
+							label="${c:l('label_RepaymentDetails')}" />
+						<tab id="effectiveScheduleTab"
+							label="${c:l('label_EffectiveSchedule')}" visible="false" />
+					</tabs>
+					<tabpanels id="tabpanelsBoxIndexCenter">
+						<tabpanel style="overflow:auto">
+							<grid id="grid_Summary"
+								sclass="GridLayoutNoBorder" fixedLayout="true"
+								style="border:0px" width="100%">
+								<columns>
+									<column width="220px" />
+									<column />
+									<column width="220px" />
+									<column />
+								</columns>
+								<rows>
+									<row>
+										<label
+											id="label_PaymentDialog_FinType"
+											value="${c:l('label_PaymentDialog_FinType.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="finType"
+												readonly="true" width="180px" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_FinReference"
+											value="${c:l('label_PaymentDialog_FinReference.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="finReference"
+												width="180px" readonly="true" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_PaymentDialog_FinCcy"
+											value="${c:l('label_PaymentDialog_FinCcy.value')}" />
+										<extendedcombobox id="finCcy"
+											readonly="true" />
+										<label
+											id="label_PaymentDialog_ProfitDayBasis"
+											value="${c:l('label_PaymentDialog_ProfitDayBasis.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<combobox
+												id="profitDayBasis" width="180px" disabled="true" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_PaymentDialog_CustID"
+											value="${c:l('label_PaymentDialog_CustID.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<longbox id="custID"
+												readonly="true" visible="false" />
+											<textbox id="lovDescCustCIF"
+												width="120px" readonly="true" />
+											<label id="custShrtName"
+												style="margin-left:10px;display:inline-block;padding-top:3px;" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_FinBranch"
+											value="${c:l('label_PaymentDialog_FinBranch.value')}" />
+										<extendedcombobox id="finBranch"
+											readonly="true" />
+									</row>
+									<row>
+										<label
+											id="label_PaymentDialog_FinStartDate"
+											value="${c:l('label_PaymentDialog_FinStartDate.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<datebox id="finStartDate"
+												width="120px" disabled="true" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_MaturityDate"
+											value="${c:l('label_PaymentDialog_MaturityDate.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<datebox id="maturityDate"
+												disabled="true" width="120px" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_PaymentDialog_TotDisbursements"
+											value="${c:l('label_PaymentDialog_TotDisbursements.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox
+												id="totDisbursements" width="150px" readonly="true" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_TotDownPayment"
+											value="${c:l('label_PaymentDialog_TotDownpayment.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox
+												id="totDownPayment" width="150px" readonly="true" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_PaymentDialog_TotCpzAmt"
+											value="${c:l('label_PaymentDialog_TotCpzAmt.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox id="totCpzAmt"
+												width="150px" readonly="true" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_PaymentDialog_TotPriAmt"
+											value="${c:l('label_PaymentDialog_TotPriAmt.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox id="totPriAmt"
+												width="150px" readonly="true" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_TotPftAmt"
+											value="${c:l('label_PaymentDialog_TotPftAmt.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox id="totPftAmt"
+												width="150px" readonly="true" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_PaymentDialog_TotFeeAmt"
+											value="${c:l('label_PaymentDialog_TotFeeAmt.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox id="totFeeAmt"
+												width="150px" readonly="true" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_TotChargeAmt"
+											value="${c:l('label_PaymentDialog_TotChargeAmt.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox
+												id="totChargeAmt" width="150px" readonly="true" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_PaymentDialog_TotWaiverAmt"
+											value="${c:l('label_PaymentDialog_TotWaiverAmt.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox
+												id="totWaiverAmt" width="150px" readonly="true" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_PaymentDialog_SchPriTillNextDue"
+											value="${c:l('label_PaymentDialog_SchPriTillNextDue.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox
+												id="schPriTillNextDue" width="150px" readonly="true" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_SchPftTillNextDue"
+											value="${c:l('label_PaymentDialog_SchPftTillNextDue.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox
+												id="schPftTillNextDue" width="150px" readonly="true" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_PaymentDialog_TotPriPaid"
+											value="${c:l('label_PaymentDialog_TotPriPaid.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox id="totPriPaid"
+												width="150px" readonly="true" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_TotPftPaid"
+											value="${c:l('label_PaymentDialog_TotPftPaid.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox id="totPftPaid"
+												width="150px" readonly="true" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_PaymentDialog_TotPriDue"
+											value="${c:l('label_PaymentDialog_TotPriDue.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox id="totPriDue"
+												width="150px" readonly="true" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_TotPftDue"
+											value="${c:l('label_PaymentDialog_TotPftDue.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox id="totPftDue"
+												width="150px" readonly="true" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_PaymentDialog_OverDuePrincipal"
+											value="${c:l('label_PaymentDialog_OverDuePrincipal.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox
+												id="overDuePrincipal" width="150px" readonly="true" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_OverDueProfit"
+											value="${c:l('label_PaymentDialog_OverDueProfit.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox
+												id="overDueProfit" width="150px" readonly="true" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_PaymentDialog_LastFullyPaidDate"
+											value="${c:l('label_PaymentDialog_LastFullyPaidDate.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<datebox
+												id="lastFullyPaidDate" disabled="true" width="120px" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_NextPayDueDate"
+											value="${c:l('label_PaymentDialog_NextPayDueDate.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<datebox id="nextPayDueDate"
+												disabled="true" width="120px" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_PaymentDialog_AccruedPft"
+											value="${c:l('label_PaymentDialog_AccruedPft.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox id="accruedPft"
+												readonly="true" width="150px" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_PendingODC"
+											value="${c:l('label_PaymentDialog_PendingODC.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox id="pendingODC"
+												width="150px" readonly="true" />
+										</hbox>
+									</row>
+									<row id="row_provisionedAmt"
+										visible="false">
+										<label
+											id="label_PaymentDialog_ProvisionedAmt"
+											value="${c:l('label_PaymentDialog_ProvisionedAmt.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox
+												id="provisionedAmt" width="150px" readonly="true" />
+										</hbox>
+									</row>
+									<row id="row_InsAmount"
+										visible="true">
+										<label
+											id="label_PaymentDialog_InsPayment"
+											value="${c:l('label_PaymentDialog_InsPayment.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox id="insPayment"
+												width="150px" readonly="true" />
+										</hbox>
+									</row>
+									<row id="row_SchdFee"
+										visible="true">
+										<label
+											id="label_PaymentDialog_SchdFeeAmount"
+											value="${c:l('label_PaymentDialog_SchdFeeAmount.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox
+												id="schdFeeAmount" width="150px" readonly="true" />
+										</hbox>
+									</row>
+									<row id="row_SuplRentNIncrCost"
+										visible="false">
+										<label
+											id="label_PaymentDialog_SuplRentAmount"
+											value="${c:l('label_PaymentDialog_SuplRentAmount.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox
+												id="suplRentAmount" width="150px" readonly="true" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_IncrCostAmount"
+											value="${c:l('label_PaymentDialog_IncrCostAmount.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox
+												id="incrCostAmount" width="150px" readonly="true" />
+										</hbox>
+									</row>
+								</rows>
+							</grid>
+						</tabpanel>
+						<tabpanel style="overflow:auto">
+							<grid id="grid_Repayment"
+								sclass="GridLayoutNoBorder" fixedLayout="true"
+								style="border:0px" width="100%">
+								<columns>
+									<column width="220px" />
+									<column />
+									<column width="220px" />
+									<column />
+								</columns>
+								<rows>
+									<row>
+										<label
+											value="${c:l('label_PaymentDialog_FinType.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="finType1"
+												readonly="true" width="180px" />
+										</hbox>
+										<label
+											value="${c:l('label_PaymentDialog_FinReference.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="finReference1"
+												width="180px" readonly="true" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											value="${c:l('label_PaymentDialog_FinCcy.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="finCcy1"
+												readonly="true" visible="false" />
+											<textbox
+												id="lovDescFinCcyName1" width="180px" readonly="true" />
+										</hbox>
+										<label
+											value="${c:l('label_PaymentDialog_FinBranch.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="finBranch1"
+												readonly="true" width="72px" visible="false" />
+											<textbox
+												id="lovDescFinBranchName1" readonly="true" width="180px" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											value="${c:l('label_PaymentDialog_CustID.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<longbox id="custID1"
+												readonly="true" visible="false" />
+											<textbox
+												id="lovDescCustCIF1" width="120px" readonly="true" />
+											<label id="custShrtName1"
+												style="margin-left:10px;display:inline-block;padding-top:3px;" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_InsRefundAmt"
+											value="${c:l('label_PaymentDialog_InsRefundAmt.value')}"
+											visible="false" />
+										<hbox id="hbox_insRefundAmt"
+											visible="false">
+											<space spacing="2px" />
+											<decimalbox
+												id="insRefundAmt" width="150px" disabled="true" />
+											<decimalbox
+												id="actInsRefundAmt" width="150px" disabled="true"
+												visible="false" style="font-weight:bold;" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_PaymentDialog_RpyAmount"
+											value="${c:l('label_PaymentDialog_RpyAmount.value')}" />
+										<currencyBox id="rpyAmount" />
+										<label
+											id="label_PaymentDialog_RepayAccount"
+											value="${c:l('label_PaymentDialog_RepayAccount.value')}" />
+										<hbox id="hbox_repayAccount">
+											<accountSelectionBox
+												id="repayAccount" />
+											<decimalbox
+												id="earlySettlementBal" tabindex="-1" visible="false"
+												disabled="true" sclass="decimalToString" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_PaymentDialog_PriPayment"
+											value="${c:l('label_PaymentDialog_PriPayment.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox id="priPayment"
+												width="150px" disabled="true" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_PftPayment"
+											value="${c:l('label_PaymentDialog_PftPayment.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox id="pftPayment"
+												width="150px" disabled="true" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_PaymentDialog_TotPenaltyAmt"
+											value="${c:l('label_PaymentDialog_TotPenaltyAmt.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox
+												id="totPenaltyAmt" width="150px" disabled="true" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_TotRefundAmt" visible="false"
+											value="${c:l('label_PaymentDialog_TotRefundAmt.value')}" />
+										<hbox visible="false">
+											<space spacing="2px" />
+											<decimalbox
+												id="totRefundAmt" width="150px" disabled="true" />
+										</hbox>
+									</row>
+									<row id="row_EarlyRepayEffectOnSchd"
+										visible="false">
+										<label
+											id="label_PaymentDialog_EarlyRepayEffectOnSchd"
+											value="${c:l('label_PaymentDialog_EarlyRepayEffectOnSchd.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<combobox
+												id="earlyRpyEffectOnSchd" width="180px" disabled="true" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_TotWaivedAmt"
+											value="${c:l('label_PaymentDialog_TotWaivedAmt.value')}"
+											visible="false" />
+										<hbox visible="false">
+											<space spacing="2px" />
+											<decimalbox
+												id="totWaivedAmt" width="150px" disabled="true" />
+										</hbox>
+									</row>
+									<row id="row_EarlySettleDate"
+										visible="false">
+										<label
+											id="label_PaymentDialog_EarlySettlementDate"
+											value="${c:l('label_PaymentDialog_EarlySettlementDate.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<datebox
+												id="earlySettlementDate" width="120px" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_EarlySettlementTillDate"
+											value="${c:l('label_PaymentDialog_EarlySettlementTillDate.value')}"
+											visible="false" />
+										<hbox id="hbox_esTilllDate"
+											visible="false">
+											<space spacing="2px" />
+											<combobox
+												id="earlySettlementTillDate" width="180px" readonly="true" />
+										</hbox>
+									</row>
+									<row id="row_paidByCustomer"
+										visible="false">
+										<label
+											id="label_PaymentDialog_PaidByCustomer"
+											value="${c:l('label_PaymentDialog_PaidByCustomer.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox
+												id="paidByCustomer" width="150px" disabled="true"
+												style="font-weight:bold;" />
+										</hbox>
+										<label
+											id="label_PaymentDialog_UnEarnedAmt"
+											value="${c:l('label_PaymentDialog_UnEarnedAmt.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox
+												id="unEarnedAmount" width="150px" disabled="true" />
+										</hbox>
+									</row>
+									<row id="row_payApportionment"
+										visible="false">
+										<label
+											id="label_PaymentDialog_PaymentApportionment"
+											value="${c:l('label_PaymentDialog_PaymentApportionment.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<combobox
+												id="paymentApportionment" width="180px" readonly="true" />
+										</hbox>
+									</row>
+									<row height="15px" />
+								</rows>
+							</grid>
+							<listbox id="listBoxPayment"
+								fixedLayout="true" sizedByContent="true" span="true"
+								emptyMessage="${c:l('listbox.emptyMessage')}" width="99.8%"
+								height="100%" multiple="false">
+								<listhead sizable="false"
+									style="padding:0px;position:relative;">
+									<listheader
+										label="${c:l('listheader_SchDateType.label')}" sort="false"
+										hflex="min" />
+									<listheader
+										label="${c:l('listheader_SchPftBal.label')}" sort="false"
+										hflex="min" />
+									<listheader
+										label="${c:l('listheader_SchPriBal.label')}" sort="false"
+										hflex="min" />
+									<listheader
+										label="${c:l('listheader_PftPayNow.label')}" sort="false"
+										hflex="min" />
+									<listheader
+										label="${c:l('listheader_PriPayNow.label')}" sort="false"
+										hflex="min" />
+									<listheader
+										label="${c:l('listheader_PenaltyPayNow.label')}" sort="false"
+										visible="true" hflex="min" />
+									<listheader
+										label="${c:l('listheader_MaxAlwRefund.label')}" sort="false"
+										visible="false" hflex="min" />
+									<listheader
+										label="${c:l('listheader_RefundPft.label')}" sort="false"
+										hflex="min" />
+									<listheader
+										id="listheader_InsPayment"
+										label="${c:l('listheader_InsPayment.label')}" sort="false"
+										visible="false" hflex="min" />
+									<listheader id="listheader_SchdFee"
+										label="${c:l('listheader_SchdFee.label')}" sort="false"
+										visible="false" hflex="min" />
+									<listheader id="listheader_SuplRent"
+										label="${c:l('listheader_SuplRent.label')}" sort="false"
+										visible="false" hflex="min" />
+									<listheader id="listheader_IncrCost"
+										label="${c:l('listheader_IncrCost.label')}" sort="false"
+										visible="false" hflex="min" />
+									<listheader
+										label="${c:l('listheader_NetPayment.label')}" sort="false"
+										hflex="min" />
+									<listheader
+										label="${c:l('listheader_RpyAmtBal.label')}" sort="false"
+										hflex="min" />
+								</listhead>
+							</listbox>
+						</tabpanel>
+						<tabpanel style="overflow:auto">
+							<groupbox id="gb_commonDetails" mold="3d">
+								<grid id="scheduleGrid"
+									sclass="GridLayoutNoBorder" fixedLayout="true"
+									style="border:0px" width="100%">
+									<columns>
+										<column width="190px" />
+										<column />
+										<column width="190px" />
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<label
+												value="${c:l('label_PaymentDialog_FinType.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<label id="finSchType"
+													style="font-weight:bold" />
+											</hbox>
+											<label
+												value="${c:l('label_PaymentDialog_FinCcy.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<label id="finSchCcy"
+													style="font-weight:bold" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_PaymentDialog_ScheduleMethod.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<label id="finSchMethod"
+													style="font-weight:bold" />
+											</hbox>
+											<label
+												value="${c:l('label_PaymentDialog_ProfitDayBasis.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<label
+													id="finSchProfitDaysBasis" style="font-weight:bold" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_PaymentDialog_FinReference.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<label
+													id="finSchReference" style="font-weight:bold" />
+											</hbox>
+											<label
+												value="${c:l('label_PaymentDialog_FinGracePeriodEndDate.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<label
+													id="finSchGracePeriodEndDate" style="font-weight:bold" />
+											</hbox>
+										</row>
+										<row visible="false">
+											<label
+												value="${c:l('label_PaymentDialog_EffectiveRateOfReturn.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<label
+													id="effectiveRateOfReturn" style="font-weight:bold;" />
+											</hbox>
+											<label
+												value="${c:l('label_PaymentDialog_AnualizedPercRate.value')}"
+												visible="false" />
+											<hbox visible="false">
+												<space spacing="2px" />
+												<label
+													id="anualizedPercRate" style="font-weight:bold;" />
+											</hbox>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+							<toolbar align="start" visible="false"
+								style="border-style: none;" width="100%">
+								<button id="btnPrintSchedule"
+									label="${c:l('label_Print')}"
+									tooltiptext="${c:l('btnPrintSchedule.tooltiptext')}"
+									style="float:right;" visible="false" />
+								<space width="2px" />
+							</toolbar>
+							<listbox id="listBoxSchedule"
+								emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+								sizedByContent="true" span="true"  width="100%"
+								height="100%" multiple="false">
+								<listhead sizable="false"
+									style="padding:0px;position:relative;">
+									<listheader hflex="min" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_Date" hflex="min" value=""
+										label="${c:l('listheader_ScheduleDate.label')}" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_ScheduleEvent" hflex="min"
+										label="${c:l('listheader_ScheduleEvent.label')}" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_CalProfit" hflex="min"
+										align="right" label="${c:l('listheader_CalProfit.label')}" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_SupplementRent"
+										hflex="min" visible="false" align="right" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_IncreasedCost" hflex="min"
+										visible="false" align="right" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_SchFee" hflex="min"
+										align="right" label="${c:l('listheader_SchFee.label')}"
+										visible="false" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_TDSAmount" hflex="min"
+										align="right" label="${c:l('listheader_TDSAmount.label')}" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_SchAdvProfit" hflex="min"
+										visible="false" align="right" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_SchProfit" hflex="min"
+										align="right" label="${c:l('listheader_SchProfit.label')}" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_Principal" hflex="min"
+										align="right" label="${c:l('listheader_Principal.label')}" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_AdvTotal" hflex="min"
+										visible="false" align="right" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_Rebate" hflex="min"
+										visible="false" align="right" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_Total" hflex="min"
+										align="right" label="${c:l('listheader_Total.label')}" />
+									<listheader
+										id="listheader_ScheduleDetailDialog_ScheduleEndBal"
+										hflex="min" align="right"
+										label="${c:l('listheader_ScheduleEndBal.label')}" />
+									<listheader
+										id="listheader_LimitChange" hflex="min" align="right"
+										visible="false" />
+									<listheader
+										id="listheader_AvailableLimit" hflex="min" align="right"
+										visible="false" />
+									<listheader id="listheader_ODLimit"
+										hflex="min" align="right" visible="false" />
+									<listheader visible="false"
+										id="listHeader_planEMIHDates" hflex="min" align="center" />
+									<listheader
+										id="listHeader_cashFlowEffect" hflex="min" align="right"
+										visible="false" />
+									<listheader id="listHeader_vSProfit"
+										hflex="min" align="right" visible="false" />
+									<listheader
+										id="listHeader_orgPrincipalDue" hflex="min" align="right"
+										visible="false" />
+								</listhead>
+							</listbox>
+						</tabpanel>
+					</tabpanels>
+				</tabbox>
+			</center>
+			<south id="south" sclass="south-dialog">
+				<groupbox id="groupboxWf" width="98%">
+					<caption label="${c:l('Action')}" />
+					<hbox width="95%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_PaymentDialog_RecordStatus"
+							value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

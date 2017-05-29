@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportWithObjects_subreport1" pageWidth="802" pageHeight="400" columnWidth="535" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="29be931e-24a9-494d-b6c5-a7165a75466a">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<template><![CDATA["../StyleSheet/Template.jrtx"]]></template>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="schdPft" class="java.lang.String">
+		<fieldDescription><![CDATA[schdPft]]></fieldDescription>
+	</field>
+	<field name="pftAmount" class="java.lang.String">
+		<fieldDescription><![CDATA[pftAmount]]></fieldDescription>
+	</field>
+	<field name="schDate" class="java.lang.String">
+		<fieldDescription><![CDATA[schDate]]></fieldDescription>
+	</field>
+	<field name="label" class="java.lang.String">
+		<fieldDescription><![CDATA[label]]></fieldDescription>
+	</field>
+	<field name="endBal" class="java.lang.String">
+		<fieldDescription><![CDATA[endBal]]></fieldDescription>
+	</field>
+	<field name="totalAmount" class="java.lang.String">
+		<fieldDescription><![CDATA[totalAmount]]></fieldDescription>
+	</field>
+	<field name="schdPri" class="java.lang.String">
+		<fieldDescription><![CDATA[schdPri]]></fieldDescription>
+	</field>
+	<columnHeader>
+		<band height="37">
+			<frame>
+				<reportElement uuid="cd7a3558-81df-4bdc-b40e-c9b44f21f9fc" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="802" height="14" isRemoveLineWhenBlank="true" backcolor="#DAD3C4"/>
+				<staticText>
+					<reportElement uuid="94a97dc0-62f0-44cd-8c9f-d29f8f064f3e" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="8" y="0" width="210" height="14"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Schedule Details]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement uuid="f979d7a2-00a0-4d16-8003-e3c1e01a35c7" mode="Opaque" x="0" y="16" width="802" height="16" isPrintInFirstWholeBand="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<staticText>
+					<reportElement uuid="57672400-3b77-42b3-b902-1b48c18288ca" style="Detail Header" x="5" y="0" width="67" height="15"/>
+					<textElement/>
+					<text><![CDATA[Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="08b75a29-b0b2-44b3-8463-fdffa93f572f" style="Detail Header" x="90" y="0" width="44" height="15"/>
+					<textElement/>
+					<text><![CDATA[Events]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="abe85f55-c582-4970-8ec0-67723ed1bc2b" style="Detail Header" x="217" y="0" width="122" height="15"/>
+					<textElement textAlignment="Right"/>
+					<text><![CDATA[Cal.Interest/ RateChange]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="e8835da2-e37c-47ec-9aab-8c87ed1aeba2" style="Detail Header" x="354" y="0" width="88" height="15"/>
+					<textElement/>
+					<text><![CDATA[Schedule Interest]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="56f25389-ba57-45d9-8769-9a38061ac418" style="Detail Header" x="483" y="0" width="61" height="15"/>
+					<textElement/>
+					<text><![CDATA[Principal]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="72e7516a-7ce8-4f62-9561-734d4202971d" style="Detail Header" x="598" y="0" width="53" height="15"/>
+					<textElement/>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="0362d0cc-daf1-4349-9db1-b6be155f44ca" style="Detail Header" x="701" y="0" width="91" height="15"/>
+					<textElement/>
+					<text><![CDATA[Ending Balance]]></text>
+				</staticText>
+			</frame>
+			<line>
+				<reportElement uuid="e3e9547b-e74a-4f34-809f-d0f1eed6fe51" x="5" y="33" width="787" height="1"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16">
+			<frame>
+				<reportElement uuid="7fc153f7-25ac-41e0-9ec5-9508a1fb967c" mode="Opaque" x="0" y="0" width="802" height="16" isPrintInFirstWholeBand="true"/>
+				<textField pattern="" isBlankWhenNull="false">
+					<reportElement uuid="ffe10684-8c23-4bc7-9ac4-5e348828db12" style="Detail Value" x="218" y="0" width="121" height="15"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{pftAmount}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="false">
+					<reportElement uuid="a902dd5d-67da-4d3d-8365-aa7e98a9c33d" style="Detail Value" x="90" y="0" width="117" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{label}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="false">
+					<reportElement uuid="2048cbfe-e3d1-4099-9e5d-f1a9f8b01461" style="Detail Value" x="344" y="0" width="98" height="15"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{schdPft}]]></textFieldExpression>
+				</textField>
+				<textField pattern="">
+					<reportElement uuid="266c4efb-4e6d-4475-a65f-f7d1db609263" style="Detail Value" x="464" y="0" width="80" height="15"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{schdPri}]]></textFieldExpression>
+				</textField>
+				<textField pattern="">
+					<reportElement uuid="5e83b401-473b-4b9c-a128-23fd49c4ccc3" style="Detail Value" x="577" y="0" width="74" height="15"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{totalAmount}]]></textFieldExpression>
+				</textField>
+				<textField pattern="">
+					<reportElement uuid="4ecc84bc-c9f0-4781-8c40-a70f76238743" style="Detail Value" x="673" y="0" width="119" height="15"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{endBal}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="86db8e43-95ae-4ee7-b8c2-9dcf927b2619" style="Detail Value" x="6" y="0" width="76" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{schDate}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

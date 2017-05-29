@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_ManagerChequeList"
+			apply="${managerChequeListCtrl}" border="none" width="100%"
+			title="${c:l('panel_managerChequeList.title')}">
+			<div sclass="z-toolbar" style="padding:0px" height="28px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+					width="100%" widths="40%,40%,20%">
+					<label value="" />
+					<toolbar align="center" sclass="toolbar-center">
+						<hbox style="paddin:0px">
+						<button
+							id="button_ManagerChequeList_ManagerChequeSearch" 
+							label="${c:l('label_Filter')}"
+							autodisable="button_ManagerChequeList_ManagerChequeSearch,print,button_ManagerChequeList_NewManagerCheque,btnRefresh,help"
+							tooltiptext="${c:l('button_ManagerChequeList_ManagerChequeSearch.tooltiptext')}" />
+						<button id="print" 
+							label="${c:l('label_Print')}"
+							autodisable="button_ManagerChequeList_ManagerChequeSearch,print,button_ManagerChequeList_NewManagerCheque,btnRefresh,help"
+							tooltiptext="${c:l('button_ManagerChequeList_PrintList.tooltiptext')}" />
+							<space width="20px"/>
+							<menubar id="menubar" width="auto" style="float:left; border-style: none;  ">
+								<menu id="menu_filter" visible="false">
+									<menupopup id="menupopup_filter" width="240px" />
+								</menu>
+							</menubar>
+						</hbox>
+					</toolbar>
+
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" sclass="toolbar-end">
+						<button
+							id="button_ManagerChequeList_NewManagerCheque" 
+							label="${c:l('label_New')}" visible="false"
+							autodisable="button_ManagerChequeList_ManagerChequeSearch,print,button_ManagerChequeList_NewManagerCheque,btnRefresh,help"
+							tooltiptext="${c:l('button_ManagerChequeList_NewManagerCheque.tooltiptext')}" />
+						<button id="btnRefresh" 
+							label="${c:l('label_Refresh')}"
+							autodisable="button_ManagerChequeList_ManagerChequeSearch,print,button_ManagerChequeList_NewManagerCheque,btnRefresh,help"
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						<button id="help" visible="false" 
+							label="${c:l('label_Help')}"
+							autodisable="button_ManagerChequeList_ManagerChequeSearch,print,button_ManagerChequeList_NewManagerCheque,btnRefresh,help"
+							tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+					</toolbar>
+				</hbox>
+			</div>
+			<borderlayout id="borderLayout_ManagerChequeList">
+				<north border="none" />
+				<center border="none">
+					<div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="15%" />
+								<column width="5%" />
+								<column width="30%" />
+								<column width="15%" />
+								<column width="5%" />
+								<column width="30%" />
+							</columns>
+							<rows>
+								<row>
+									<label
+										id="label_ManagerChequeList_ChqPurposeCode"
+										value="${c:l('label_ManagerChequeList_ChqPurposeCode.value')}" />
+									<listbox
+										id="sortOperator_ChqPurposeCode" width="43px" mold="select"
+										rows="1" />
+									<combobox id="chqPurposeCode"
+										width="128px" />
+									<label
+										id="label_ManagerChequeList_ChequeRef"
+										value="${c:l('label_ManagerChequeList_ChequeRef.value')}" />
+									<listbox id="sortOperator_ChequeRef"
+										width="43px" mold="select" rows="1" />
+									<textbox id="chequeRef"
+										width="120px" maxlength="20" />
+								</row>
+								<row>
+									<label
+										id="label_ManagerChequeList_ChequeNo"
+										value="${c:l('label_ManagerChequeList_ChequeNo.value')}" />
+									<listbox id="sortOperator_ChequeNo"
+										width="43px" mold="select" rows="1" />
+									<textbox id="chequeNo" width="120px"
+										maxlength="120" />
+									<label
+										id="label_ManagerChequeList_BeneficiaryName"
+										value="${c:l('label_ManagerChequeList_BeneficiaryName.value')}" />
+									<listbox
+										id="sortOperator_BeneficiaryName" width="43px" mold="select"
+										rows="1" />
+									<textbox id="beneficiaryName"
+										width="120px" maxlength="50" />
+								</row>
+								<row>
+									<label
+										id="label_ManagerChequeList_CustCIF"
+										value="${c:l('label_ManagerChequeList_CustCIF.value')}" />
+									<listbox id="sortOperator_custCIF"
+										width="43px" mold="select" rows="1" />
+									<textbox id="custCIF" width="120px"
+										maxlength="19" />
+									<label
+										id="label_ManagerChequeList_ValueDate"
+										value="${c:l('label_ManagerChequeList_ValueDate.value')}" />
+									<listbox id="sortOperator_ValueDate"
+										width="43px" mold="select" rows="1" />
+									<hbox>
+										<datebox id="valueDate_one"
+											width="128px" format="dd/MM/yyyy" />
+										<label id="label_valueDate"
+											value="To" style="font-weight:bold;font-size:10px;"
+											visible="false" />
+										<datebox id="valueDate_two"
+											width="128px" format="dd/MM/yyyy" visible="false" />
+									</hbox>
+								</row>
+								<row>
+									<label
+										id="label_ManagerChequeList_DraftCcy"
+										value="${c:l('label_ManagerChequeList_DraftCcy.value')}" />
+									<listbox id="sortOperator_DraftCcy"
+										width="43px" mold="select" rows="1" />
+									<textbox id="draftCcy" width="45px"
+										maxlength="3" />
+									<label
+										id="label_ManagerChequeList_ChequeAmount"
+										value="${c:l('label_ManagerChequeList_ChequeAmount.value')}" />
+									<listbox
+										id="sortOperator_ChequeAmount" width="43px" mold="select"
+										rows="1" />
+									<decimalbox id="chequeAmount"
+										width="120px" maxlength="18" />
+								</row>
+
+								<row>
+									<label
+										id="label_ManagerChequeList_RecordStatus"
+										value="${c:l('label_ManagerChequeList_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_RecordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="120px" maxlength="50" />
+									<label
+										id="label_ManagerChequeList_RecordType"
+										value="${c:l('label_ManagerChequeList_RecordType.value')}" />
+									<listbox
+										id="sortOperator_RecordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="125px" mold="select" />
+								</row>
+								<row id="workFlowFrom">
+									<label
+										value="${c:l('common.fetch.selectfrom')}" />
+									<cell colspan="5">
+										<radiogroup>
+											<radio id="fromApproved"
+												selected="true"
+												label="${c:l('common.fetch.fromapproved')}">
+											</radio>
+											<radio id="fromWorkFlow"
+												label="${c:l('common.fetch.fromWorkFlow')}">
+											</radio>
+										</radiogroup>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+						<listbox id="listBoxManagerCheque"
+							fixedLayout="true" span="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_ChqPurposeCode"
+									label="${c:l('listheader_ChqPurposeCode.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_ChequeRef"
+									label="${c:l('listheader_ChequeRef.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_ChequeNo"
+									label="${c:l('listheader_ChequeNo.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_CustCIF"
+									label="${c:l('listheader_CustCIF.label')}" sort="auto"
+									hflex="min" />
+								<listheader visible="false"
+									id="listheader_BeneficiaryName"
+									label="${c:l('listheader_BeneficiaryName.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_ValueDate"
+									label="${c:l('listheader_ValueDate.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_DraftCcy"
+									label="${c:l('listheader_DraftCcy.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_ChequeAmount"
+									label="${c:l('listheader_ChequeAmount.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('listheader_RecordType.label')}" sort="auto"
+									hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
+				</center>
+
+				<south border="none">
+					<paging id="pagingManagerChequeList" height="35px" />
+				</south>
+
+			</borderlayout>
+		</window>
+	</window>
+</zk>

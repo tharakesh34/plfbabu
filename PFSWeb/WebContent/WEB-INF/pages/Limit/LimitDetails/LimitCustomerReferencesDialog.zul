@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_LimitCustomerReferenceDialog" border="normal" apply="${limitCustomerReferenceDialogCtrl}" width="90%" height="80%" sizable="false" mode="modal">
+			<borderlayout id="borderlayoutLimitHeader">
+				<north>
+					<div sclass="z-toolbar">
+						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+							<toolbar align="start" sclass="toolbar-start"></toolbar>
+							<toolbar align="center" sclass="toolbar-center">
+								<label id="dialogTitle" value="${c:l('window_LimitReferenceMappingDialog.title')}" sclass="label-heading" />
+							</toolbar>
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnClose" label="Close" autodisable="btnDelete,btnSave,btnNotes,btnHelp,btnClose,btnCopyTo" tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+				<center border="none" autoscroll="true">
+					<div>
+						<groupbox mold="3d" style="overflow-x:hidden;">
+							<caption label="${c:l('gb_header_LimitReferenceMapping')}" />
+							<listbox id="listBoxLimitCustRef" fixedLayout="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false">
+								<listhead sizable="false">
+									<listheader id="listheader_Reference" label="Reference Number" hflex="min" />
+									<listheader id="listheader_ReferenceType" label="Reference Type" hflex="min" />
+								</listhead>
+							</listbox>
+						</groupbox>
+						<groupbox id="gb_transactiondetails" mold="3d" style="overflow-x:hidden;">
+							<caption label="${c:l('gb_header_TransactionDetails')}" />
+							<listbox id="listBoxTransactionDetails" fixedLayout="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false">
+								<listhead sizable="false">
+									<listheader id="listheader_LimitItem" label="${c:l('listheader_Limitreference')}" hflex="min" />
+									<listheader id="listheader_limitCurrency" label="${c:l('listheader_limitCurrency')}" hflex="min" />
+									<listheader id="listheader_LimitAmount" label="${c:l('listheader_LimitAmount')}" align="right" hflex="min" />
+									<listheader id="listheader_TransactionCurrency" label="${c:l('listheader_TransactionCurrency')}" hflex="min" />
+									<listheader id="listheader_TransactionAmount" label="${c:l('listheader_TransactionAmount')}" align="right" hflex="min" />
+									<listheader id="listheader_TranType" label="${c:l('listheader_TranType')}" hflex="min" />
+									<listheader id="listheader_TranDate" label="${c:l('listheader_TranDate')}" hflex="min" />
+								</listhead>
+							</listbox>
+						</groupbox>
+					</div>
+				</center>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

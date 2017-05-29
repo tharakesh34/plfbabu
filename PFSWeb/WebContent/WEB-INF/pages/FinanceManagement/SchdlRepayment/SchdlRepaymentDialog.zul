@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns:w="client" xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_SchdlRepaymentDialog"
+		title="${c:l('window_SchdlRepaymentDialog.title')}" border="normal"
+		apply="${schdlRepaymentDialogCtrl}" width="60%" height="260px"
+		sizable="true">
+
+		<div sclass="z-toolbar" style="padding:0">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+				width="100%">
+
+				<!-- COMMON BUTTONS -->
+				<toolbar align="start"
+					sclass="toolbar-start">
+				</toolbar>
+				<!-- SEARCH AREA -->
+				<toolbar align="center"
+					sclass="toolbar-center">
+					<hbox align="center" style="padding: 2px"></hbox>
+				</toolbar>
+
+				<!-- CRUD BUTTONS -->
+				<toolbar align="end"
+					sclass="toolbar-end">
+					<button id="btnHelp" visible="false" 
+						label = "${c:l('label_Help')}"
+						tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
+					<button id="btnClose"  
+					image="/images/icons/btn_exitdoor2_16x16.gif"
+						tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
+				</toolbar>
+			</hbox>
+		</div>
+
+		<borderlayout id="borderlayoutRule">
+			<center border="none" autoscroll="false">
+
+				<groupbox  width="100%">
+					<caption label="Schedule Repayment Details" />
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px">
+						<columns>
+							<column width="160px" />
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<label
+									value="${c:l('label_SchdlRepaymentDialog_finReference.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="finReference"
+										width="200px" readonly="true" />
+									<button
+										label="${c:l('btnSearch.label')}" id="btnSearchFinReference"
+										image="/images/icons/LOVSearch.png"  />
+								</hbox>
+							</row>
+							<row>
+								<label
+									value="${c:l('label_SchdlRepaymentDialog_schdlDate.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<datebox id="schdlDate" disabled="true"
+										width="100px" format="dd/MM/yyyy" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									value="${c:l('label_SchdlRepaymentDialog_schdlAmount.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<decimalbox id="schdlAmount"
+										width="150px" readonly="true" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									value="${c:l('label_SchdlRepaymentDialog_schdlBalAmount.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<decimalbox id="schdlBalAmount"
+										width="150px" readonly="true" />
+								</hbox>
+							</row>
+							<row spans="2">
+								<label value="   " />
+							</row>
+							<row spans="2">
+								<label value="   " />
+							</row>
+							<row>
+								<label value="" />
+								<button id="btnPay"  style="font-weight:bold;fint-size:12;"
+									tooltiptext="${c:l('btnPay.tooltiptext')}" label="Pay" />
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

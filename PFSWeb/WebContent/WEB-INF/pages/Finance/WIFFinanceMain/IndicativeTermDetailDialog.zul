@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_IndTermDetailDialog" border="none"
+		apply="${indicativeTermDetailDialogCtrl}" width="100%" height="100%"
+		sizable="false">
+
+		<div id="toolbar" sclass="z-toolbar" style="padding:0px">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+				width="100%">
+				<!-- COMMON BUTTONS -->
+				<toolbar align="start"
+					sclass="toolbar-start">
+					<button id="btnNew" 
+						tooltiptext="${c:l('btnNew.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnEdit" 
+						tooltiptext="${c:l('btnEdit.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnDelete" 
+						tooltiptext="${c:l('btnDelete.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnSave" 
+						tooltiptext="${c:l('btnSave.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnCancel" 
+						tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
+					<button id="btnNotes" 
+						tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+				</toolbar>
+
+				<!-- SEARCH AREA -->
+				<toolbar align="center"
+					sclass="toolbar-center">
+					<hbox align="center" style="padding: 2px"></hbox>
+				</toolbar>
+
+				<!-- CRUD BUTTONS -->
+				<toolbar align="end"
+					sclass="toolbar-end">
+					<button id="btnHelp" visible="false" 
+						label="${c:l('label_Help')}"
+						tooltiptext="${c:l('btnHelp.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnClose" 
+						tooltiptext="${c:l('btnClose.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+				</toolbar>
+			</hbox>
+		</div>
+
+		<borderlayout id="borderlayoutIndTermDetail">
+			<center border="none" autoscroll="true">
+				<groupbox id="gb_basicDetails" closable="false">
+					<caption id="caption_IndTerm"
+						label="${c:l('IndTermDetail')}" />
+					<grid id="grid_IndTermDetails"
+						sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px">
+						<columns>
+							<column width="200px" />
+							<column />
+							<column width="200px" />
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<label />
+								<hbox>
+									<label />
+								</hbox>
+								<label />
+								<hbox>
+									<toolbar align="end"
+										style="float:right; border-style: none;">
+										<button
+											id="btnGenerateTermSheet"
+											label="${c:l('label_GenerateIndicativeTermSheet')}"
+											tooltiptext="${c:l('btnGenerateTermSheet.tooltiptext')}" />
+									</toolbar>
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_IndTermDetailDialog_RpsnName"
+									value="${c:l('label_IndTermDetailDialog_RpsnName.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="rpsnName" width="171px"
+										readonly="false" />
+								</hbox>
+								<label
+									id="label_IndTermDetailDialog_RpsnDesg"
+									value="${c:l('label_IndTermDetailDialog_RpsnDesg.value')}" />
+								<extendedcombobox id="rpsnDesg" />
+							</row>
+							<row>
+								<label
+									id="label_IndTermDetailDialog_CustName"
+									value="${c:l('label_IndTermDetailDialog_CustName.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<longbox id="custId" width="171px"
+										visible="false" />
+									<textbox id="custName" width="171px"
+										maxlength="26" readonly="true" />
+									<label id="custShrtName" />
+								</hbox>
+								<label
+									id="label_IndTermDetailDialog_FacilityType"
+									value="${c:l('label_IndTermDetailDialog_FacilityType.value')}" />
+								<extendedcombobox id="facilityType" />
+							</row>
+							<row>
+								<label
+									id="label_IndTermDetailDialog_tenorPeriod"
+									value="${c:l('label_IndTermDetailDialog_tenorPeriod.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<intbox id="tenorYear"
+									          width="50px" />
+									<label
+										value="${c:l('label_IndTermDetailDialog_tenorYear.value')}" />
+									<intbox id="tenorMonth" 
+									        width="50px" />
+									<label
+										value="${c:l('label_IndTermDetailDialog_tenorMonth.value')}" />
+								</hbox>
+								<label
+									id="label_IndTermDetailDialog_tenorDesc"
+									value="${c:l('label_IndTermDetailDialog_tenorDesc.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<textbox id="tenorDesc"
+										 width="150px" />
+								</hbox>
+							</row>
+							<row>
+								<label
+									id="label_IndTermDetailDialog_transactionType"
+									value="${c:l('label_IndTermDetailDialog_transactionType.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory"/>
+									<combobox id="transactionType" readonly="true" />
+								</hbox>
+							</row>
+							<row id="row_totalFacility">
+								<label id="label_IndTermDetailDialog_totalFacilityCCY"
+									value="${c:l('label_IndTermDetailDialog_totalFacilityCCY.value')}" />
+								<extendedcombobox id="totalFacilityCCY" />
+								<label id="label_IndTermDetailDialog_totalFacility"
+									value="${c:l('label_IndTermDetailDialog_totalFacility.value')}" />
+								<currencyBox id="totalFacility" />
+							</row>
+							<row id="row_underWriting">
+								<label id="label_IndTermDetailDialog_underWritingCCY"
+									value="${c:l('label_IndTermDetailDialog_underWritingCCY.value')}" />
+								<extendedcombobox id="underWritingCCY" />
+								<label id="label_IndTermDetailDialog_underWriting"
+									value="${c:l('label_IndTermDetailDialog_underWriting.value')}" />
+								<currencyBox id="underWriting" />
+							</row>
+							<row id="row_propFinalTake">
+								<label id="label_IndTermDetailDialog_propFinalTakeCCY"
+									value="${c:l('label_IndTermDetailDialog_propFinalTakeCCY.value')}" />
+								<extendedcombobox id="propFinalTakeCCY" />
+								<label id="label_IndTermDetailDialog_propFinalTake"
+									value="${c:l('label_IndTermDetailDialog_propFinalTake.value')}" />
+								<currencyBox id="propFinalTake" />
+							</row>
+							<row spans="1,3">
+								<label
+									id="label_IndTermDetailDialog_Pricing"
+									value="${c:l('label_IndTermDetailDialog_Pricing.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="pricing" width="800px" />
+								</hbox>
+							</row>
+							<row spans="1,3">
+								<label
+									id="label_IndTermDetailDialog_Repayments"
+									value="${c:l('label_IndTermDetailDialog_Repayments.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="repayments"
+										width="800px" />
+								</hbox>
+							</row>
+							<row id="row_LCPeriod" spans="1,3">
+								<label
+									id="label_IndTermDetailDialog_LCPeriod"
+									value="${c:l('label_IndTermDetailDialog_LCPeriod.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="lCPeriod"
+										width="800px" />
+								</hbox>
+							</row>
+							<row id="row_UsancePeriod" spans="1,3">
+								<label
+									id="label_IndTermDetailDialog_UsancePeriod"
+									value="${c:l('label_IndTermDetailDialog_UsancePeriod.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="usancePeriod"
+										width="800px" />
+								</hbox>
+							</row>
+							<row spans="1,3">
+								<label
+									id="label_IndTermDetailDialog_SecurityClean"
+									value="${c:l('label_IndTermDetailDialog_SecurityClean.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<vbox>
+										<checkbox id="securityClean"
+											checked="false" />
+										<ptCKeditor id="securityName"
+											width="778px" />
+									</vbox>
+								</hbox>
+							</row>
+							<row spans="1,3">
+								<label
+									id="label_IndTermDetailDialog_Utilization"
+									value="${c:l('label_IndTermDetailDialog_Utilization.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="utilization"
+										width="800px" />
+								</hbox>
+							</row>
+							<row spans="1,3">
+								<label
+									id="label_IndTermDetailDialog_Commission"
+									value="${c:l('label_IndTermDetailDialog_Commission.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<ptCKeditor id="commission"
+										width="800px" />
+								</hbox>
+							</row>
+							<row spans="1,3">
+								<label
+									id="label_IndTermDetailDialog_Purpose"
+									value="${c:l('label_IndTermDetailDialog_Purpose.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<ptCKeditor id="purpose"
+										width="800px" />
+								</hbox>
+							</row>
+							<row spans="1,3">
+								<label
+									id="label_IndTermDetailDialog_Guarantee"
+									value="${c:l('label_IndTermDetailDialog_Guarantee.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<ptCKeditor id="guarantee"
+										width="800px" />
+								</hbox>
+							</row>
+							<row spans="1,3">
+								<label
+									id="label_IndTermDetailDialog_Covenants"
+									value="${c:l('label_IndTermDetailDialog_Covenants.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<ptCKeditor id="covenants"
+										width="800px" />
+								</hbox>
+							</row>
+							<row spans="1,3">
+								<label id="label_IndTermDetailDialog_agentBank"
+									value="${c:l('label_IndTermDetailDialog_agentBank.value')}" />
+								<hbox>
+									<space id="space_AgentBank" spacing="2px" />
+									<textbox id="agentBank" width="800px" />
+								</hbox>
+							</row>
+							<row spans="1,3">
+								<label id="label_IndTermDetailDialog_otherDetails"
+									value="${c:l('label_IndTermDetailDialog_otherDetails.value')}" />
+								<hbox>
+									<space id="space_OtherDetails" spacing="2px" />
+									<textbox id="otherDetails" width="800px" />
+								</hbox>
+							</row>
+							<row spans="1,3">
+								<label
+									id="label_IndTermDetailDialog_DocumentsRequired"
+									value="${c:l('label_IndTermDetailDialog_DocumentsRequired.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<ptCKeditor id="documentsRequired"
+										width="800px" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</center>
+
+			<south sclass="south-dialog" visible="false" size="0px">
+				<groupbox id="groupboxWf" width="99%"
+					closable="false">
+					<caption label="${c:l('Action')}" />
+					<hbox width="75%">
+						<radiogroup id="userAction" name="action" />
+						<label
+							id="label_IndTermDetailDialog_RecordStatus"
+							value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+	<!-- BEAN FOR GENERATING THE DATA SOURCES -->
+	<bean id="secDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="resourceRef" value="true" />
+		<property name="jndiName" value="jdbc/PFFSEC" />
+		<property name="lookupOnStartup" value="true" />
+	</bean>
+	<bean id="pfsDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="resourceRef" value="true" />
+		<property name="jndiName" value="jdbc/PFF" />
+		<property name="lookupOnStartup" value="true" />
+	</bean>
+	<bean id="auditDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="resourceRef" value="true" />
+		<property name="jndiName" value="jdbc/PFFAUDIT" />
+		<property name="lookupOnStartup" value="true" />
+	</bean>
+	<bean id="pfsExtDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="resourceRef" value="true" />
+		<property name="jndiName" value="jdbc/PFFEXT" />
+		<property name="lookupOnStartup" value="true" />
+	</bean>
+
+	<!-- BEAN FOR GENERATING THE PRIMARY KEYS -->
+	<bean id="nextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+		<property name="extDataSource" ref="pfsExtDatasource" />
+		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
+	</bean>
+
+	<bean id="secNextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
+		<property name="dataSource" ref="secDatasource" />
+		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
+	</bean>
+
+	<bean id="auditNextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
+		<property name="dataSource" ref="auditDatasource" />
+		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
+	</bean>
+
+</beans>

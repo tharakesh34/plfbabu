@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_LocalityList" apply="${localityListCtrl}"
+			border="none" width="100%">
+			<div sclass="z-toolbar" style="padding:0px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+					width="100%" widths="30%,40%,30%">
+
+					<!-- COMMON BUTTONS -->
+					<label value="" />
+					<!-- SEARCH AREA -->
+					<toolbar align="center" style="toolbar-center">
+						<button id="button_LocalityList_LocalitySearch"
+							label="${c:l('label_Filter')}"
+							autodisable="button_LocalityList_LocalitySearch,print,button_LocalityList_NewLocality,btnRefresh,help"
+							tooltiptext="${c:l('button_LocalityList_LocalitySearch.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+						<button id="print" label="${c:l('label_Print')}"
+							autodisable="button_LocalityList_LocalitySearch,print,button_LocalityList_NewLocality,btnRefresh,help"
+							tooltiptext="${c:l('button_LocalityList_PrintList.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+					</toolbar>
+
+					<!-- CRUD BUTTONS -->
+					<button id="button_LocalityList_NewLocality"
+						label="${c:l('label_New')}"
+						autodisable="button_LocalityList_LocalitySearch,print,button_LocalityList_NewLocality,btnRefresh,help"
+						tooltiptext="${c:l('button_LocalityList_NewLocality.tooltiptext')}"
+						sclass="z-toolbarbutton" />
+					<toolbar align="end" style="border-style: none;">
+						<button id="btnRefresh"
+							label="${c:l('label_Refresh')}"
+							autodisable="button_LocalityList_LocalitySearch,print,button_LocalityList_NewLocality,btnRefresh,help"
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+						<button id="help" label="${c:l('label_Help')}"
+							autodisable="button_LocalityList_LocalitySearch,print,button_LocalityList_NewLocality,btnRefresh,help"
+							tooltiptext="${c:l('btnHelp.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+					</toolbar>
+				</hbox>
+			</div>
+			<borderlayout id="borderLayout_LocalityList">
+				<north border="none">
+					<textbox id="moduleType" value="ENQ"
+						visible="false" />
+				</north>
+				<center border="none">
+					<div>
+						<grid id="searchGrid"
+							sclass="GridLayoutNoBorder" fixedLayout="true">
+							<columns>
+								<column width="15%" />
+								<column width="5%" />
+								<column width="30%" />
+								<column width="15%" />
+								<column width="5%" />
+								<column width="30%" />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_LocalityList_id"
+										value="${c:l('label_LocalityList_id.value')}" />
+									<listbox id="sortOperator_id"
+										width="43px" mold="select" rows="1"
+										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+									<longbox id="id" width="171px"
+										maxlength="26" />
+									<label id="label_LocalityList_name"
+										value="${c:l('label_LocalityList_name.value')}" />
+									<listbox id="sortOperator_name"
+										width="43px" mold="select" rows="1"
+										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+									<textbox id="name" width="135px"
+										maxlength="15" />
+								</row>
+								<row>
+									<label id="label_LocalityList_city"
+										value="${c:l('label_LocalityList_city.value')}" />
+									<listbox id="sortOperator_city"
+										width="43px" mold="select" rows="1"
+										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+									<textbox id="city" width="200px"
+										maxlength="50" />
+								</row>
+
+								<row>
+									<label
+										id="label_LocalityList_RecordStatus"
+										value="${c:l('label_LocalityList_RecordStatus.value')}" />
+									<listbox
+										id="sortOperator_RecordStatus" width="43px" mold="select"
+										rows="1" />
+									<textbox id="recordStatus"
+										width="100px" maxlength="50" />
+									<label
+										id="label_LocalityList_RecordType"
+										value="${c:l('label_LocalityList_RecordType.value')}" />
+									<listbox
+										id="sortOperator_RecordType" width="43px" mold="select"
+										rows="1" />
+									<listbox id="recordType"
+										width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+
+						<listbox id="listBoxLocality"
+							emptyMessage="${c:l('listbox.emptyMessage')}"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false" sizedByContent="true"
+							span="true">
+							<listhead sizable="true">
+								<listheader id="listheader_name"
+									label="${c:l('listheader_name.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_city"
+									label="${c:l('listheader_city.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_RecordStatus"
+									label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
+								<listheader id="listheader_RecordType"
+									label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
+				</center>
+
+				<south border="none">
+					<paging id="pagingLocalityList" height="35px" />
+				</south>
+
+			</borderlayout>
+		</window>
+	</window>
+</zk>

@@ -1,0 +1,99 @@
+<!-- <?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_CustomerMaintenaceList"
+		apply="${customerMaintenaceListCtrl}" border="none" width="100%">
+
+		<div sclass="z-toolbar" style="padding:0" height="28px">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+				width="100%">
+
+				<!-- COMMON BUTTONS -->
+				<toolbar align="start"
+					sclass="toolbar-start" width="150px">
+					<hbox align="center" style="padding: 2px"/>
+				</toolbar>
+
+				<!-- SEARCH AREA -->
+				<toolbar align="center"
+					sclass="toolbar-center">
+					<hbox align="center">
+						<button
+							id="button_CustomerMaintenaceList_CustomerSearchDialog"
+							 label="${c:l('label_Filter')}"
+							tooltiptext="${c:l('button_CustomerMaintenaceList_CustomerSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
+						<button
+							id="button_CustomerMaintenaceList_PrintList" 
+							label="${c:l('label_Print')}"
+							tooltiptext="${c:l('button_CustomerMaintenaceList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
+					</hbox>
+				</toolbar>
+
+				<!-- CRUD BUTTONS -->
+				<toolbar align="end"
+					sclass="toolbar-end">
+					<button
+						id="button_CustomerMaintenaceList_NewCustomer" 
+						label="${c:l('label_New')}" visible="false"
+						tooltiptext="${c:l('button_CustomerMaintenaceList_NewCustomer.tooltiptext')}" sclass="z-toolbarbutton" />
+					<button id="btnRefresh" 
+						label="${c:l('label_Refresh')}"
+						tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
+					<button id="btnHelp" visible="false" 
+						label="${c:l('label_Help')}"
+						tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
+				</toolbar>
+			</hbox>
+		</div>
+
+		<borderlayout id="borderLayout_CustomerMaintenaceList">
+			<north border="none" />
+
+			<center border="none">
+
+				<listbox id="listBoxCustomer"  
+					emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+					tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+					span="true" height="100%" multiple="false" sizedByContent="true" hflex="true">
+					
+					<listhead sizable="true">
+						<listheader id="listheader_CustCIF"
+							label="${c:l('listheader_CustCIF.label')}" sort="auto"
+							hflex="min" />
+						<listheader id="listheader_CustCoreBank"
+							label="${c:l('listheader_CustCoreBank.label')}" sort="auto"
+							hflex="min" />
+						<listheader id="listheader_CustShrtName"
+							label="${c:l('listheader_CustShrtName.label')}" sort="auto"
+							hflex="min" />
+						<listheader id="listheader_CustDftBranch"
+							label="${c:l('listheader_CustDftBranch.label')}" sort="auto"
+							hflex="min" />
+						<listheader id="listheader_CustCtgCode"
+							label="${c:l('listheader_CustCtgCode.label')}" sort="auto"
+							hflex="min" />
+						<listheader id="listheader_CustTypeCode"
+							label="${c:l('listheader_CustTypeCode.label')}" sort="auto"
+							hflex="min" />
+						<listheader id="listheader_RecordStatus"
+							label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+							hflex="min" />
+						<listheader id="listheader_RecordType"
+							label="${c:l('listheader_RecordType.label')}" sort="auto"
+							hflex="min" />
+					</listhead>
+				</listbox>
+			</center>
+			<south border="none">
+				<paging id="pagingCustomerMaintenaceList"   />
+			</south>
+
+		</borderlayout>
+	</window>
+</zk> -->

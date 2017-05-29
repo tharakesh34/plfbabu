@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window id="window_SelectNewFacilityDialog" title="${c:l('window_SelectNewFacilityDialog.title')}" border="normal" apply="${selectNewFacilityDialogCtrl}" width="60%" height="25%" sizable="false" closable="true">
+		<borderlayout id="borderlayoutFinanceMain">
+			<center border="none" autoscroll="true">
+				<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" >
+					<columns>
+						<column width="250px" />
+						<column />
+					</columns>
+					<rows>
+						<row visible="true">
+							<label value="${c:l('label_SelectNewFacilityDialog_ApprovalFor.value')}"></label>
+							<hbox>
+								<space width="2px" sclass="mandatory"></space>
+								<combobox id="approvalFor" width="180px" readonly="true" />
+							</hbox>
+						</row>
+						<row visible="true">
+							<label  id="label_financeReference" value="${c:l('label_SelectNewFacilityDialog_FinanceReference.value')}"></label>
+							<extendedcombobox id="financeReference" />
+						</row>
+						<row visible="true">
+							<space />
+							<hbox>
+								<space spacing="2px" />
+								<hbox>
+									<space spacing="10px" />
+									<button id="btnProceed" label="${c:l('label_SelectFinanceTypeDialog_btnProceed.value')}"  style="align:center" tooltiptext="${c:l('label_SelectFinanceTypeDialog_btnProceed.tooltiptext')}" autodisable="btnProceed"/>
+								</hbox>
+							</hbox>
+						</row>
+					</rows>
+				</grid>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

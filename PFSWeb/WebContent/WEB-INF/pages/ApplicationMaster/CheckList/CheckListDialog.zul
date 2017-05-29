@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="window_CheckListDialog" border="normal"
+			apply="${checkListDialogCtrl}" width="100%" height="100%"
+			sizable="false">
+			<borderlayout id="borderlayoutCheckList">
+				<north>
+					<div sclass="z-toolbar">
+						<hbox pack="stretch"
+							sclass="hboxRemoveWhiteStrips" width="100%"
+							widths="35%,30%,35%">
+
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start"
+								sclass="toolbar-start">
+								<button id="btnNew" 
+									tooltiptext="${c:l('btnNew.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnEdit" 
+									tooltiptext="${c:l('btnEdit.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnDelete" 
+									tooltiptext="${c:l('btnDelete.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnSave" 
+									tooltiptext="${c:l('btnSave.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnCancel" 
+									tooltiptext="${c:l('btnCancel.tooltiptext')}" />
+								<button id="btnNotes" 
+									tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							</toolbar>
+
+							<!-- SEARCH AREA -->
+							<toolbar align="center"
+								sclass="toolbar-center">
+								<label
+									value="${c:l('window_CheckListDialog.title')}"
+									sclass="label-heading" />
+							</toolbar>
+
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnHelp" visible="false" 
+									label="${c:l('label_Help')}"
+									tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+								<button id="btnClose" 
+									tooltiptext="${c:l('btnClose.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+
+				<center border="none" autoscroll="false">
+					<vlayout>
+						<groupbox id="gb_basicDetails"
+							sclass="gb-dialog">
+							<grid sclass="GridLayoutNoBorder"
+								fixedLayout="true" id="grid_Basicdetails">
+								<columns>
+									<column width="150px" />
+									<column />
+									<column width="150px" />
+									<column />
+								</columns>
+								<rows>
+									<row>
+										<label
+											id="label_CheckListDialog_CheckListDesc"
+											value="${c:l('label_CheckListDialog_CheckListDesc.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<textbox id="checkListDesc"
+												maxlength="100" width="450px" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_CheckListDialog_CheckMinCount"
+											value="${c:l('label_CheckListDialog_CheckMinCount.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<intbox id="checkMinCount"
+												width="90px" maxlength="14" />
+										</hbox>
+										<label
+											id="label_CheckListDialog_CheckMaxCount"
+											value="${c:l('label_CheckListDialog_CheckMaxCount.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<intbox id="checkMaxCount"
+												width="90px" maxlength="14" />
+										</hbox>
+									</row>
+									<row>
+										<label
+											id="label_CheckListDialog_ModuleName"
+											value="${c:l('label_CheckListDialog_ModuleName.value')}" />
+										<hbox>
+											<space id='space_ModuleName'
+												spacing="2px"  sclass="mandatory"/>
+											<combobox id="moduleName"
+												width="250px" />
+										</hbox>
+										<label
+											id="label_CheckListDialog_CheckRule"
+											value="${c:l('label_CheckListDialog_CheckRule.value')}" />
+										<extendedcombobox
+											id="checkRule" />
+									</row>
+									<row visible="true">
+										<label
+											id="label_CheckListDialog_Active"
+											value="${c:l('label_CheckListDialog_Active.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<checkbox id="active"
+												checked="false" />
+										</hbox>
+										<label
+											id="label_CheckListDetailDialog_DocRequired"
+											value="${c:l('label_CheckListDetailDialog_DocRequired.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<checkbox id="docRequired"
+												checked="false" />
+										</hbox>
+									</row>
+									<row spans="2">
+										<label value="   " />
+									</row>
+									<row spans="2">
+										<label value="   " />
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox id="gb_CheckListDetail"
+							sclass="gb-dialog">
+							<div sclass="z-toolbar" height="auto">
+								<hbox pack="stretch"
+									sclass="hboxRemoveWhiteStrips" width="100%">
+
+									<!-- COMMON BUTTONS -->
+									<toolbar align="start"
+										sclass="toolbar-start" width="300px">
+										<label
+											value="${c:l('label_CheckListDialog_CheckListDetail.title')}"
+											style="font-weight:bold; font-size: 11px;" />
+									</toolbar>
+
+									<!-- SEARCH AREA -->
+									<toolbar align="center"
+										sclass="toolbar-center" />
+
+									<!-- CRUD BUTTONS -->
+									<toolbar align="end"
+										sclass="toolbar-end">
+										<button
+											id="btnNew_CheckListDetail" label="${c:l('label_New')}"
+											tooltiptext="${c:l('button_NewCheckListDetailList.tooltiptext')}" />
+									</toolbar>
+								</hbox>
+							</div>
+							<listbox id="listbox_ChkListDetails"
+								multiple="true" style="border:none" width="100%"
+								sizedByContent="true" span="true"
+								emptyMessage="${c:l('listbox.emptyMessage')}">
+								<listhead sizable="true">
+									<listheader
+										id="listheader_ChkListDetailAnsDesc"
+										label="${c:l('listheader_CheckListDialog_AnsDesc.label')}"
+										hflex="min" />
+									<listheader
+										id="listheader_RemarksAllow"
+										label="${c:l('listheader_CheckListDialog_RemarksAllow.label')}"
+										hflex="min" />
+									<listheader visible="false"
+										id="listheader_DocReqired"
+										label="${c:l('listheader_CheckListDialog_DocRequired.label')}"
+										hflex="min" />
+									<listheader
+										id="listheader_RemarksMand"
+										label="${c:l('listheader_CheckListDialog_RemarksMand.label')}"
+										hflex="min" />
+									<listheader
+										id="listheader_RecordStatus"
+										label="${c:l('listheader_CheckListDialog_RecordStatus.value')}"
+										hflex="min" />
+									<listheader
+										id="listheader_RecordType"
+										label="${c:l('listheader_RecordType.label')}" hflex="min" />
+								</listhead>
+							</listbox>
+							<paging id="pagingChkListDetailsList" />
+						</groupbox>
+					</vlayout>
+				</center>
+
+				<south sclass="south-dialog">
+					<groupbox id="groupboxWf" width="99%">
+						<caption label="${c:l('Action')}" />
+						<hbox width="95%">
+							<radiogroup id="userAction" name="action" />
+							<label
+								id="label_CheckListDialog_RecordStatus"
+								value="${c:l('label_South_RecordStatus.value')}"
+								sclass="label-status" />
+							<label id="recordStatus" />
+						</hbox>
+					</groupbox>
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<style>
+		.filter .z-menu-item-inner-m .z-menu-item-btn {font-weight:bold;} 
+		.filtered .z-menu-item-inner-m .z-menu-item-btn {color:#008bb6;font-weight: bold;} 
+		.z-menubar-hor td.demo-sep{background: 0 none; border-left: 1px solid #ACACAC;} 
+		.z-toolbar a, .z-toolbar a:visited, .z-toolbar a:hover {border: none;}
+		.z-toolbar-start {float: none;} .z-toolbar {padding:0;}
+		.chooser-popup div.z-popup-cl {border: none;} .chooser-popup
+		.z-popup-cnt {padding: 0;} 
+		.chooser-popup .z-groupbox{-moz-border-radius: 1px 1px 1px 1px;}
+	</style>
+
+	<window id="win_Calendar"
+		apply="com.pennant.webui.masters.calendar.HolidayCalendarCtrl"
+		height="100%">
+
+		<div sclass="z-toolbar" style="padding:0">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+				width="100%">
+
+				<!-- COMMON BUTTONS -->
+				<toolbar align="start"  sclass="toolbar-start">
+
+					<!-- Module - Control Menu -->
+					<menubar style="border:1px solid #D8D8D8"
+						autodrop="true">
+						<menuitem id="currentDate"
+							tooltiptext="Date Chooser" popup="dateChooserPopup" />
+						<menuitem id="prevPage"
+							tooltiptext="Previous Month"
+							image="/images/icons/Left_Arrow.png" />
+						<menuitem id="nextPage" tooltiptext="Next Month"
+							image="/images/icons/Right_Arrow.png" />
+						<menuitem id="today" tooltiptext="Today"
+							label="Today" />
+						<!-- <menuitem label="Keyword Filter" forward="onClick=onEventFilter" sclass="filter"/> -->
+						<menuseparator sclass="demo-sep" />
+					</menubar>
+				</toolbar>
+				<!-- SEARCH AREA -->
+				<toolbar align="center"  sclass="toolbar-center">
+					<hbox align="center" style="padding: 2px"></hbox>
+				</toolbar>
+
+				<!-- CRUD BUTTONS -->
+				<toolbar align="end"  sclass="toolbar-end">
+					<button id="btnClose" 
+						tooltiptext="${c:l('btnClose.tooltiptext')}"
+						label="${c:l('label_Close')}" sclass="z-toolbarbutton" />
+				</toolbar>
+			</hbox>
+		</div>
+		<!-- Main Calendar Component -->
+		<calendars id="calendars" firstDayOfWeek="Sunday" mold="month"
+			height="545px" width="100%" context="ss">
+		</calendars>
+
+		<!-- Choose Date Popup -->
+		<popup id="dateChooserPopup" sclass="chooser-popup"
+			onOpen='dateChooser.value=calendars.currentDate;dateChooser.timeZone=calendars.defaultTimeZone'>
+			<groupbox mold="3d">
+				<caption label="Data Chooser">
+					<button id="dateConfirm" label="Close" />
+				</caption>
+				<calendar id="dateChooser" />
+			</groupbox>
+		</popup>
+
+	</window>
+
+</zk>

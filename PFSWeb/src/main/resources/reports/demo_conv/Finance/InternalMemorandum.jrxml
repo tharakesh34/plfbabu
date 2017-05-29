@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="InternalMemorandum" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="75b3fece-39d5-4866-9772-e279c55a241a">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="139"/>
+	<template><![CDATA["../StyleSheet/Template.jrtx"]]></template>
+	<parameter name="searchCriteria" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="organizationLogo" class="java.lang.String"/>
+	<parameter name="whereCondition" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<field name="appDate" class="java.lang.String"/>
+	<field name="finStartDate" class="java.lang.String"/>
+	<field name="totalTerms" class="java.lang.String"/>
+	<field name="totalPaidTerms" class="java.lang.String"/>
+	<field name="totalUnpaidTerms" class="java.lang.String"/>
+	<field name="totalPaidAmount" class="java.lang.String"/>
+	<field name="outStandingTotal" class="java.lang.String"/>
+	<field name="outStandingPft" class="java.lang.String"/>
+	<field name="discountPerc" class="java.lang.String"/>
+	<field name="discountAmount" class="java.lang.String"/>
+	<field name="insuranceFee" class="java.lang.String"/>
+	<field name="periodCoverage" class="java.lang.String"/>
+	<field name="periodCoverageAmt" class="java.lang.String"/>
+	<field name="returnInsAmount" class="java.lang.String"/>
+	<field name="totCustPaidAmount" class="java.lang.String"/>
+	<field name="finReference" class="java.lang.String"/>
+	<field name="finTypeDesc" class="java.lang.String"/>
+	<field name="custCIF" class="java.lang.String"/>
+	<field name="custShrtName" class="java.lang.String"/>
+	<field name="finType" class="java.lang.String"/>
+	<field name="earlySettlementDate" class="java.lang.String"/>
+	<field name="deptFrom" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="427" splitType="Stretch">
+			<frame>
+				<reportElement uuid="67a68082-0782-4e9b-8477-d39824ba0cab" x="0" y="0" width="555" height="60"/>
+				<image>
+					<reportElement uuid="be8bd634-3a25-4ee9-86fc-03e35d10afa3" x="438" y="20" width="96" height="30"/>
+					<imageExpression><![CDATA[$P{organizationLogo}]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement uuid="b1f251a9-0d37-41a4-8cec-96c3c2937d78" style="Title Header" x="0" y="25" width="210" height="30"/>
+					<textElement verticalAlignment="Top"/>
+					<text><![CDATA[Internal Memorandum]]></text>
+				</staticText>
+			</frame>
+			<line>
+				<reportElement uuid="ac864f46-9a0c-414d-b57e-791c58c76ce1" x="0" y="60" width="555" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<frame>
+				<reportElement uuid="bd859e46-7382-41a3-8ca2-e0bcf5e5290a" x="0" y="64" width="555" height="15"/>
+				<staticText>
+					<reportElement uuid="049b98b7-5471-474c-8777-b45bd1df452f" style="Detail Header" x="0" y="0" width="95" height="15"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="25febcf6-8765-448a-ac6a-b47f6817b9b7" style="Detail Header" x="95" y="0" width="5" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement uuid="c836208a-e4f1-40ab-9652-54b38d553432" style="Detail Value" x="100" y="0" width="338" height="15"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{appDate}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement uuid="3236d9a3-3f7c-4d23-987c-da9cc3e50b21" x="0" y="79" width="459" height="15"/>
+				<staticText>
+					<reportElement uuid="55e45699-a2dd-4edd-8205-0f6ae240c871" style="Detail Header" x="0" y="0" width="95" height="15"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[To]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="790278ee-9a53-4406-90e1-b140756fa8b0" style="Detail Header" x="95" y="0" width="5" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="55e45699-a2dd-4edd-8205-0f6ae240c871" style="Detail Value" x="100" y="0" width="359" height="15"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Operations Department]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement uuid="089e50d3-1fff-47e3-ac86-80a9c6b92c23" x="0" y="94" width="459" height="15"/>
+				<staticText>
+					<reportElement uuid="6aa58464-05c8-4bf7-a71e-61f8f3c8937b" style="Detail Header" x="0" y="0" width="95" height="15"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Department From]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="88350172-299a-4f11-9f8e-83430c317db9" style="Detail Header" x="95" y="0" width="5" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="a5ba6f7f-4f17-429b-8e8b-79ac194dc6ae" style="Detail Value" x="100" y="0" width="359" height="15"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{deptFrom}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement uuid="c49f0f1a-0d03-476b-94da-5e5e45bfb59f" x="0" y="109" width="459" height="15"/>
+				<staticText>
+					<reportElement uuid="c4697cd5-9871-4324-b84e-32e753c092aa" style="Detail Header" x="0" y="0" width="95" height="15"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Subject]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="9cf76a02-dbe2-48b6-b521-a2875938a6cc" style="Detail Header" x="95" y="0" width="5" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="a5ba6f7f-4f17-429b-8e8b-79ac194dc6ae" style="Detail Value" x="100" y="0" width="359" height="15"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{finTypeDesc} == null ? " ":$F{finTypeDesc}+" -"+$F{custShrtName}+" -"+$F{custCIF}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<line>
+				<reportElement uuid="6a26336b-f648-4411-91c4-08a5feb0b34d" x="100" y="124" width="359" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement uuid="c3ac21f7-113d-4c9b-b205-43587f455266" x="0" y="137" width="555" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<frame>
+				<reportElement uuid="7f390dc6-0474-4034-b7b5-cefdb6037703" x="0" y="150" width="555" height="43"/>
+				<textField>
+					<reportElement uuid="39a0e8d6-ae39-49ba-a64a-d3443c2eca2b" style="Detail Value" x="0" y="0" width="555" height="43"/>
+					<textElement/>
+					<textFieldExpression><![CDATA["            With Reference to the above mentioned subject,Please note that the customer wants to settle his Loan obligation:" + $F{finType} +" - "+ $F{finReference} +" .The early settlement will be according to the below table as of the payement will be on " + $F{earlySettlementDate}+":"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement uuid="92a358c4-5cb9-4fce-82f3-079ba8835451" mode="Opaque" x="0" y="193" width="507" height="30" backcolor="#CCCCCC"/>
+				<staticText>
+					<reportElement uuid="462d86ee-c39f-4df1-a4f0-d6801f6c710f" style="Detail Header" x="0" y="0" width="85" height="30"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[No. of total
+installments]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="cb4f3533-d40c-440f-90c8-566425480136" style="Detail Header" x="85" y="0" width="85" height="30"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[No. of paid
+installments]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="c003f086-41e7-4776-865e-047e9cc12349" style="Detail Header" x="170" y="0" width="108" height="30"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[No. of remaining
+installments]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="310ed899-abfc-41f9-a2bc-b028b28d2936" style="Detail Header" x="278" y="0" width="108" height="30"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Loan Amount]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="e5424623-b5e4-4872-86dc-63625fae1678" style="Detail Header" x="386" y="0" width="121" height="30"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Outstanding Amount(A)]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement uuid="b52d1573-78af-405d-827f-2dd940d2dd95" x="0" y="223" width="507" height="15"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="2942e321-4024-45a5-8f7c-5e62d80ccf80" style="Detail Value" x="0" y="0" width="85" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{totalTerms}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="a29bda26-c095-4086-9cab-2ca3d7a188f7" style="Detail Value" x="85" y="0" width="85" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{totalPaidTerms}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="a281bdc4-c696-4464-8c4a-df03fd9b3141" style="Detail Value" x="170" y="0" width="108" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{totalUnpaidTerms}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="91c7e906-3eab-4abf-9747-b14fff71f28e" style="Detail Value" x="278" y="0" width="108" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{totalPaidAmount}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="84e8b01d-cabb-4d90-b7a4-9e0553e0a470" style="Detail Value" x="386" y="0" width="121" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{outStandingTotal}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement uuid="9f377a05-1d45-43ac-814a-b5f8bf0e4125" mode="Opaque" x="0" y="256" width="386" height="30" backcolor="#CCCCCC"/>
+				<staticText>
+					<reportElement uuid="c1675e96-5c54-44d6-bf21-22c3fa6e9a56" style="Detail Header" x="0" y="0" width="85" height="30"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Loan Start
+Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="57ffe11a-92c5-4941-93c1-54a45608a7ca" style="Detail Header" x="85" y="0" width="85" height="30"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Outstanding
+Interest]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="a09a41cd-dfdb-411e-be0d-a05b1ba417d9" style="Detail Header" x="170" y="0" width="108" height="30"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Discount %]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="65f769a2-3eff-42f8-854c-3bcb6ea7b2e3" style="Detail Header" x="278" y="0" width="108" height="30"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Discount Amount(B)]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement uuid="fcff3f49-32d3-49e8-81cd-3a2a2c31d9c0" x="0" y="286" width="386" height="15"/>
+				<textField isStretchWithOverflow="true" pattern="dd-MMM-yyyy" isBlankWhenNull="true">
+					<reportElement uuid="fc1db71c-a73e-474e-9578-ddeaa6cc455c" style="Detail Value" x="0" y="0" width="85" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{finStartDate}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="a72af94a-a841-499a-958f-5834a95d18ec" style="Detail Value" x="85" y="0" width="85" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{outStandingPft}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="5562b017-73ae-4320-931b-acf92dcfe722" style="Detail Value" x="170" y="0" width="108" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{discountPerc}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="9647b435-5fe4-4a87-bf4f-41a256205567" style="Detail Value" x="278" y="0" width="108" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{discountAmount}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement uuid="0b43968f-9a4a-41d0-ab61-f0a59959f85a" mode="Opaque" x="0" y="319" width="386" height="30" backcolor="#CCCCCC"/>
+				<staticText>
+					<reportElement uuid="378ecf7a-6e79-4fdb-9d1c-b5c8073d57c2" style="Detail Header" x="0" y="0" width="85" height="30"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Total
+Insurance]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="b5caa630-7ac8-4f53-a9e4-ef7061fb399e" style="Detail Header" x="85" y="0" width="85" height="30"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Period Coverage]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="92c85a79-9960-42ac-9853-cb8bec150001" style="Detail Header" x="170" y="0" width="108" height="30"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Amount for Covered
+Period]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="ae82a7e5-daf0-4310-abc7-4bfb61b62397" style="Detail Header" x="278" y="0" width="108" height="30"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Remaining to be
+returned(C)]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement uuid="12cc6f93-40c7-49ef-a9cd-8b05f8b696cd" x="0" y="349" width="386" height="15"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="a3344c56-b851-4ee3-87fc-c1c40f795aec" style="Detail Value" x="0" y="0" width="85" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{insuranceFee}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="83031b3e-68ab-4c04-a396-34a06e1b9823" style="Detail Value" x="85" y="0" width="85" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{periodCoverage}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="7ce4cd39-af12-40e0-9fe2-68fed9ef9dd9" style="Detail Value" x="170" y="0" width="108" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{periodCoverageAmt}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="2289e3f5-73cd-46ed-83d6-701c51d293c6" style="Detail Value" x="278" y="0" width="108" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{returnInsAmount}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement uuid="64abc192-0dd2-4511-8e4e-a9d481fb3b4c" mode="Opaque" x="0" y="382" width="170" height="30" backcolor="#CCCCCC"/>
+				<staticText>
+					<reportElement uuid="9da699f8-557a-413e-864f-bcfc4f8ad351" style="Detail Header" x="0" y="0" width="170" height="30"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Total Amount to be paid=(A)-(B)-(C)]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement uuid="ecf469bc-11c3-4ab8-bba9-586d03513794" x="0" y="412" width="170" height="15"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="2b25e5ca-50f4-4587-bae6-727662bd0d71" style="Detail Value" x="0" y="0" width="170" height="15"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{totCustPaidAmount}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</columnHeader>
+	<summary>
+		<band height="217" splitType="Stretch">
+			<frame>
+				<reportElement uuid="94cc5778-dc5e-40e3-95ec-b172d4b1d638" x="0" y="118" width="555" height="99"/>
+				<line>
+					<reportElement uuid="89b00186-aa46-4729-b6ce-1242ee445f75" x="278" y="0" width="256" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.25"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement uuid="932e6e85-f7a0-4dab-83d3-bd0bdd5730df" style="Detail Header" x="278" y="15" width="256" height="22"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Bajaj Finance Ltd.
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="932e6e85-f7a0-4dab-83d3-bd0bdd5730df" style="Detail Value" x="278" y="0" width="256" height="15"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Approved By]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement uuid="088be281-58b2-4159-a78b-11cba62abf87" x="0" y="66" width="555" height="30"/>
+			</frame>
+		</band>
+	</summary>
+</jasperReport>

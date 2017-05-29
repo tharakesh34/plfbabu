@@ -1,0 +1,28 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<div style="overflow:auto" height="100%">
+		<groupbox mold="3d" height="50%">
+			<caption label="${c:l('message.dashboard_instructions.title')}"
+				style="color:#FF6600" />
+			<textbox rows="8" multiline="true" width="99.5%"
+				height="300px" readonly="true" draggable="false"
+				style="font-family: verdana; border: none; background-color: white; overfolw:scroll;"
+				value="${c:l('message.dashboard_instructions')} ">
+			</textbox>
+		</groupbox>
+		<groupbox mold="3d" open="false" height="50%">
+			<caption label="${c:l('message.dashboard_instructions_DrillDown.title')}"
+				style="color:#FF6600" />
+			<textbox rows="8" multiline="true" width="99.5%"
+				height="300px" readonly="true" draggable="false"
+				style="font-family: verdana; border: none; background-color: white; overfolw:scroll;"
+				value="${c:l('message.dashboard_DrillDown_instructions')} ">
+			</textbox>
+		</groupbox>
+	</div>
+</zk>
+

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_FinSuspHoldDialog" border="normal"
+		apply="${finSuspHoldDialogCtrl}" width="100%" height="100%"
+		sizable="false">
+
+		<borderlayout id="borderlayoutFinSuspHold">
+			<north>
+
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="35%,30%,35%">
+
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								tooltiptext="${c:l('btnNew.tooltiptext')}"
+								sclass="z-toolbarbutton" />
+							<button id="btnEdit"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								sclass="z-toolbarbutton" />
+							<button id="btnDelete"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								sclass="z-toolbarbutton" />
+							<button id="btnSave"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								tooltiptext="${c:l('btnSave.tooltiptext')}"
+								sclass="z-toolbarbutton" />
+							<button id="btnCancel"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								sclass="z-toolbarbutton" />
+							<button id="btnNotes"
+								tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+
+						<!-- SEARCH AREA -->
+						<toolbar align="center"
+							sclass="toolbar-center">
+							<label
+								value="${c:l('window_FinSuspHoldDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp" visible="false"
+								label="${c:l('label_Help')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}"
+								sclass="z-toolbarbutton" />
+							<button id="btnClose"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+
+			<center border="none" autoscroll="false">
+
+				<groupbox id="gb_basicDetails" sclass="gb-dialog">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="border:0px">
+						<columns>
+							<column width="220px" />
+							<column />
+						</columns>
+						<rows>
+							<row visible="true">
+								<label
+									id="label_FinSuspHoldDialog_Product"
+									value="${c:l('label_FinSuspHoldDialog_Product.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<extendedcombobox id="product" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_FinSuspHoldDialog_FinType"
+									value="${c:l('label_FinSuspHoldDialog_FinType.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<extendedcombobox id="finType" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_FinSuspHoldDialog_CustCIF"
+									value="${c:l('label_FinSuspHoldDialog_CustCIF.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<space spacing="2px" />
+									<longbox id="custID" visible="false" />
+									<uppercasebox id="custCIF" />
+									<button id="btnSearchCustCIF"
+										tooltiptext="${c:l('label_FinSuspHoldDialog_CustCIF.tooltiptext')}"
+										image="/images/icons/more.png" />
+									<space spacing="2px" />
+									<cell style="padding-top:2px;">
+										<label id="custShrtName" />
+									</cell>
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_FinSuspHoldDialog_FinReference"
+									value="${c:l('label_FinSuspHoldDialog_FinReference.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<extendedcombobox id="finReference" />
+								</hbox>
+							</row>
+							<row visible="true">
+								<label
+									id="label_FinSuspHoldDialog_Active"
+									value="${c:l('label_FinSuspHoldDialog_Active.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<space spacing="2px" />
+									<checkbox id="active"
+										checked="false" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</center>
+
+			<south sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%">
+					<caption label="${c:l('Action')}" />
+					<hbox width="75%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_FinSuspHoldDialog_RecordStatus"
+							value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+
+		</borderlayout>
+	</window>
+</zk>

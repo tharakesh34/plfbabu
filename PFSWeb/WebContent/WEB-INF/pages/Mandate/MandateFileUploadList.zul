@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_MandateFileUploadList"
+			apply="${mandateFileUploadListCtrl}" border="none" width="100%">
+			<div sclass="z-toolbar" style="padding:0px" height="28px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+					width="100%" widths="30%,40%,30%">
+
+					<!-- COMMON BUTTONS -->
+					<label value="" />
+					<!-- SEARCH AREA -->
+					<toolbar align="center">
+					</toolbar>
+
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" sclass="toolbar-end"></toolbar>
+				</hbox>
+			</div>
+			<borderlayout id="borderLayout_MandateList">
+				<north border="none" />
+				<center border="none">
+					<div style="border:1px;"	vflex="1">
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true" style="border:0px;margin:10px;">
+							<columns>
+								<column width="15%" />
+								<column width="30%" />
+								<column width="15%" />
+								<column width="30%" />
+							</columns>
+							<rows>
+								<row>
+									<label
+										id="label_MandateFileUploadList_FileName" value="${c:l('label_MandateFileUploadList_FileName.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<uppercasebox id="fileName" readonly="true" width="150px" style="overflow: hidden;" />
+										<button id="btnUpload" label="${c:l('label_MandateFileUploadList_btnUpload.value')}" upload="true" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+						<grid style="border-style : none;">
+							<columns>
+								<column width="50%" />
+								<column width="50%" />
+								<column />
+							</columns>
+							<rows>
+								<row style="vertical-align: top;">
+									<groupbox mold="3d" height="150px" width="100%" contentStyle="overflow:auto;">
+										<caption label="Mandate Details" />
+										<grid
+											style="border-style : none;">
+											<columns>
+												<column width="10%" />
+												<column width="2%" />
+												<column width="20%" />
+											</columns>
+											<rows>
+												<row>
+													<label
+														id="label_MandateFileUploadList_TotalCustomers" value="${c:l('label_MandateFileUploadList_TotalCustomers.value')}" />
+													<label value=":" />
+													<label id="totalCount" />
+												</row>
+												<row>
+													<label id="label_MandateFileUploadList_PerocCustomers" value="${c:l('label_MandateFileUploadList_ProcCustomers.value')}" />
+													<label value=":" />
+													<label id="procCustomers" />
+												</row>
+												<row>
+													<label id="label_MandateFileUploadList_Status" value="${c:l('label_MandateFileUploadList_Status.value')}" />
+													<label value=":" />
+													<label id="status" />
+												</row>
+												<row>
+													<label id="label_MandateFileUploadList_Remarks" value="${c:l('label_MandateFileUploadList_Remarks.value')}" />
+													<label value=":" />
+													<label id="remarks" />
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
+								</row>
+							</rows>
+						</grid>
+					</div>
+				</center>
+
+				<south border="none">
+					<paging id="pagingMandateList"/>
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

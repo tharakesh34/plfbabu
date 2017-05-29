@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_FinAssetEvaluationDialog"
+		 border="none"
+		apply="${finAssetEvaluationDialogCtrl}" width="100%" height="100%"
+		sizable="false">
+
+		<div id="toolbar" sclass="z-toolbar" style="padding:0">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+				width="100%" widths="35%,30%,35%">
+
+				<!-- COMMON BUTTONS -->
+				<toolbar align="start"
+					sclass="toolbar-start">
+					<button id="btnNew" 
+						tooltiptext="${c:l('btnNew.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnEdit" 
+						tooltiptext="${c:l('btnEdit.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnDelete" 
+						tooltiptext="${c:l('btnDelete.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnSave" 
+						tooltiptext="${c:l('btnSave.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"  sclass="z-toolbarbutton"/>
+					<button id="btnCancel" 
+						tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
+					<button id="btnNotes" 
+						tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+				</toolbar>
+
+				<!-- SEARCH AREA -->
+				<toolbar align="center"
+					sclass="toolbar-center">
+					<label value="${c:l('window_FinAssetEvaluationDialog.title')}" sclass="label-heading" />
+				</toolbar>
+
+				<!-- CRUD BUTTONS -->
+				<toolbar align="end"
+					sclass="toolbar-end">
+					<button id="btnHelp" visible="false" 
+						label = "${c:l('label_Help')}"
+						tooltiptext="${c:l('btnHelp.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnClose" 
+						tooltiptext="${c:l('btnClose.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+				</toolbar>
+			</hbox>
+		</div>
+		<borderlayout id="borderlayoutFinAssetEvaluation">
+			<center border="none">
+				<groupbox>
+					<groupbox id="finBasicdetails"></groupbox>
+					<groupbox id="gb_basicDetails" closable="false">
+						<caption  label="${c:l('FinAssetEvaluation_RequestDetails')}" />
+						<grid id="grid_basicDetails"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px">
+							<columns>
+								<column width="220px" />
+								<column />
+								<column width="220px" />
+								<column />
+							</columns>
+							<rows>
+								<row visible="false">
+									<label
+										id="label_FinAssetEvaluationDialog_FinReference"
+										value="${c:l('label_FinAssetEvaluationDialog_FinReference.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="finReference"
+											readonly="true" width="171px" />
+									</hbox>
+								</row>
+								<row visible="true">
+									<label
+										id="label_FinAssetEvaluationDialog_TypeofValuation"
+										value="${c:l('label_FinAssetEvaluationDialog_TypeofValuation.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<combobox id="typeofValuation" />
+									</hbox>
+									<label
+										id="label_FinAssetEvaluationDialog_CustAwareVisit"
+										value="${c:l('label_FinAssetEvaluationDialog_CustAwareVisit.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="custAwareVisit"/>
+									</hbox>
+								</row>
+								<row visible="true">
+									<label
+										id="label_FinAssetEvaluationDialog_CustRepreName"
+										value="${c:l('label_FinAssetEvaluationDialog_CustRepreName.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="custRepreName" />
+									</hbox>
+									<label
+										id="label_FinAssetEvaluationDialo_UnitVillaSize" 
+										value="${c:l('label_FinAssetEvaluationDialog_UnitVillaSize.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="unitVillaSize"
+											width="150px" />
+									</hbox>
+								</row>
+								<row>
+								<label
+										id="label_FinAssetEvaluationDialog_Leased"
+										value="${c:l('label_FinAssetEvaluationDialog_Leased.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="leased" />
+									</hbox>
+								<label
+										id="label_FinAssetEvaluationDialog_TotalRevenue"
+										value="${c:l('label_FinAssetEvaluationDialog_TotalRevenue.value')}" />
+									<hbox>
+										<currencyBox id="totalRevenue" />
+									</hbox>
+								</row>
+								<row visible="true">
+								<label
+										id="label_FinAssetEvaluationDialog_TenantContactNum"
+										value="${c:l('label_FinAssetEvaluationDialog_TenantContactNum.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox
+											id="contactNumCountryCode" width="45px" />
+										<label value="-"
+											style="display:inline-block;padding-top:4px;" />
+										<textbox id="contactNumAreaCode"
+											width="45px" />
+										<label value="-"
+											style="display:inline-block;padding-top:4px;" />
+										<textbox id="contactPhoneNumber"
+											width="85px" />
+									</hbox>
+									<label
+										id="label_FinAssetEvaluationDialog_TenantAwareVisit"
+										value="${c:l('label_FinAssetEvaluationDialog_TenantAwareVisit.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="tenantAwareVisit" />
+									</hbox>
+								</row>
+								<row>
+								<label
+										id="label_FinAssetEvaluationDialog_Remarks"
+										value="${c:l('label_FinAssetEvaluationDialog_Remarks.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="remarks"
+											multiline="true" rows="3" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox id="gp_REUEvaluation" closable="true">
+							<caption
+								label="${c:l('FinAssetEvaluation_REUValuatedDetails')}">
+							</caption>
+							<grid id="grid_Reference2"
+								sclass="GridLayoutNoBorder" fixedLayout="true"
+								style="border:0px">
+								<columns>
+									<column width="220px" />
+									<column />
+									<column width="220px" />
+									<column />
+								</columns>
+								<rows>
+									<row visible="true">
+										<label
+											id="label_FinAssetEvaluationDialog_PanelFirm"
+											value="${c:l('label_FinAssetEvaluationDialog_PanelFirm.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="panelFirm" />
+										</hbox>
+										<label
+											id="label_FinAssetEvaluationDialog_REUReference"
+											value="${c:l('label_FinAssetEvaluationDialog_REUReference.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="reuReference" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_FinAssetEvaluationDialog_PropertyDesc"
+											value="${c:l('label_FinAssetEvaluationDialog_PropertyDesc.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="propertyDesc"
+												multiline="true" rows="3" />
+										</hbox>
+										<label
+											id="label_FinAssetEvaluationDialog_VendorInstructedDate"
+											value="${c:l('label_FinAssetEvaluationDialog_VendorInstructedDate.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<datebox
+												id="vendorInstructedDate" width="155px" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_FinAssetEvaluationDialog_ReportDeliveredDate"
+											value="${c:l('label_FinAssetEvaluationDialog_ReportDeliveredDate.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<datebox
+												id="reportDeliveredDate" width="155px" />
+										</hbox>
+										<label
+											id="label_FinAssetEvaluationDialog_InspectionDate"
+											value="${c:l('label_FinAssetEvaluationDialog_InspectionDate.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<datebox id="inspectionDate"
+												width="155px" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_FinAssetEvaluationDialog_FinalReportDate"
+											value="${c:l('label_FinAssetEvaluationDialog_FinalReportDate.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<datebox
+												id="finalReportDate" width="155px" />
+										</hbox>
+										<label
+											id="label_FinAssetEvaluationDialog_MarketValueAED"
+											value="${c:l('label_FinAssetEvaluationDialog_MarketValueAED.value')}" />
+										<hbox>
+											<currencyBox
+												id="marketValueAED" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_FinAssetEvaluationDialog_ValuationDate"
+											value="${c:l('label_FinAssetEvaluationDialog_ValuationDate.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<datebox id="valuationDate"
+												width="155px" />
+										</hbox>
+										<label
+											id="label_FinAssetEvaluationDialog_Status"
+											value="${c:l('label_FinAssetEvaluationDialog_Status.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<combobox id="status" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_FinAssetEvaluationDialog_VendorValuer"
+											value="${c:l('label_FinAssetEvaluationDialog_VendorValuer.value')}" />
+										<hbox>
+											<extendedcombobox id="vendorValuer" />
+										</hbox>
+										<label
+											id="label_FinAssetEvaluationDialog_ValuerFee"
+											value="${c:l('label_FinAssetEvaluationDialog_ValuerFee.value')}" />
+										<hbox>
+											<currencyBox id="valuerFee" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_FinAssetEvaluationDialog_CustomerFee"
+											value="${c:l('label_FinAssetEvaluationDialog_CustomerFee.value')}" />
+										<hbox>
+											<currencyBox
+												id="customerFee" />
+										</hbox>
+										<label
+											id="label_FinAssetEvaluationDialog_ValuationComments"
+											value="${c:l('label_FinAssetEvaluationDialog_ValuationComments.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox
+												id="valuationComments" multiline="true" rows="3" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_FinAssetEvaluationDialog_ExpRentalIncome"
+											value="${c:l('label_FinAssetEvaluationDialog_ExpRentalIncome.value')}" />
+										<hbox>
+											<currencyBox
+												id="expRentalIncome" />
+										</hbox>
+										<label
+											id="label_FinAssetEvaluationDialog_PropIsRented"
+											value="${c:l('label_FinAssetEvaluationDialog_PropIsRented.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<checkbox id="propIsRented" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_FinAssetEvaluationDialog_PropertyStatus"
+											value="${c:l('label_FinAssetEvaluationDialog_PropertyStatus.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<combobox
+												id="propertyStatus" />
+										</hbox>
+										<label
+											id="label_FinAssetEvaluationDialog_PercWorkCompletion"
+											value="${c:l('label_FinAssetEvaluationDialog_PercWorkCompletion.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<decimalbox
+												id="percWorkCompletion" width="120px" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_FinAssetEvaluationDialog_IllegalDivAlteration"
+											value="${c:l('label_FinAssetEvaluationDialog_IllegalDivAlteration.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<checkbox
+												id="illegalDivAlteration" />
+										</hbox>
+										<label
+											id="label_FinAssetEvaluationDialog_NOCReqDevMunicipality"
+											value="${c:l('label_FinAssetEvaluationDialog_NOCReqDevMunicipality.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<checkbox
+												id="nocReqDevMunicipality" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_FinAssetEvaluationDialog_REUDecision"
+											value="${c:l('label_FinAssetEvaluationDialog_REUDecision.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<combobox id="reuDecision" />
+										</hbox>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+				</groupbox>
+			</center>
+			<south id="south" sclass="south-dialog" visible="false">
+				<groupbox id="groupboxWf" width="99%"
+					closable="false">
+					<caption label="${c:l('Action')}" />
+					<hbox width="95%">
+						<radiogroup id="userAction" name="action" />
+						<label
+							id="label_FinAssetEvaluationDialog_RecordStatus"
+							value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_FinancePurposeSelectDialog" border="normal"
+		apply="${financePurposeSelectDialogCtrl}" width="35%" height="22%"
+		sizable="false">
+		<borderlayout id="borderlayoutElgRuleResult">
+			<north>
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+						width="100%" widths="65%,35%">
+
+						<!-- SEARCH AREA -->
+						<toolbar align="center">
+							 <label
+								value="${c:l('window_FinancePurposeSelect.title')}"
+								sclass="label-heading" /> 
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnClose"
+								label="${c:l('label_Close')}"
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none">
+				<vlayout style="padding:4px;">
+					<groupbox id="gb_BasicDetails" closable="false">
+					    <space spacing="10px"></space>
+						<grid id="grid_BasicDetails"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px">
+							<columns>
+								<column width="130px" />
+								<column width="170px" />
+								<column width="30px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label
+										value="${c:l('label_FinancePurposeDialog_FinPurpose.value')}" />
+									<hbox>
+										<space id="space_FinPurpose"
+											spacing="2px" sclass="mandatory" />
+										<combobox id="finPurpose"
+											width="155px" />
+									</hbox>
+									<label />
+									<button id="btnProceed"
+										label="${c:l('label_FinancePurposeDialog_btnProceed.label')}"
+										tooltiptext="${c:l('label_FinancePurposeDialog_btnProceed.tooltiptext')}" />
+								</row>
+							</rows>
+						</grid>
+						 <space spacing="10px"></space>
+					</groupbox>
+				</vlayout>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

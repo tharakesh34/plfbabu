@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+	       http://www.springframework.org/schema/aop   
+		   http://www.springframework.org/schema/aop/spring-aop.xsd                        
+           http://www.springframework.org/schema/security
+           http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<global-method-security secured-annotations="enabled" />
+		
+	<beans:bean id="authenticationFilter" class="com.pennant.web.security.filter.LoginUsernamePasswordAuthenticationFilter">
+		<beans:property name="sessionAuthenticationStrategy" ref="sas" />
+  		<beans:property name="authenticationManager" ref="authenticationManager" />
+  		<beans:property name="authenticationFailureHandler" ref="authenticationFailureHandler" />
+	</beans:bean>
+	
+	
+	<beans:bean id="authenticationFailureHandler" class="com.pennant.web.security.handler.LoginAuthenticationFailureHandler"/>
+		
+	<beans:bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<beans:constructor-arg value="/loginDialog.zul"/>
+		<beans:constructor-arg>
+			<beans:list>
+				<beans:bean class= "org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
+				<beans:bean class= "org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler">
+					<beans:constructor-arg>
+						<beans:list>
+							<beans:value>JSESSIONID</beans:value>
+							<beans:value>SFPSESSIONID</beans:value>
+							<beans:value>SFPCOOKIEID</beans:value>
+						</beans:list>
+					</beans:constructor-arg>
+				</beans:bean>
+			</beans:list>
+		</beans:constructor-arg>
+	</beans:bean>
+	<beans:bean id="logoutFilterSSO" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<beans:constructor-arg value="/timeout.zul"/>
+		<beans:constructor-arg>
+			<beans:list>
+				<beans:bean class= "org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
+				<beans:bean class= "org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler">
+					<beans:constructor-arg>
+						<beans:list>
+							<beans:value>JSESSIONID</beans:value>
+							<beans:value>SFPSESSIONID</beans:value>
+							<beans:value>SFPCOOKIEID</beans:value>
+						</beans:list>
+					</beans:constructor-arg>
+				</beans:bean>
+			</beans:list>
+		</beans:constructor-arg>
+	</beans:bean>
+					
+	<beans:bean id="concurrencyFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter">
+		<beans:property name="sessionRegistry" ref="sessionRegistry"/>
+		<beans:property name="expiredUrl" value="/timeout.zul"/>
+		<beans:property name="logoutHandlers">
+			<beans:list>
+				<beans:bean class= "org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
+				<beans:bean class= "org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler">
+					<beans:constructor-arg>
+						<beans:list>
+							<beans:value>JSESSIONID</beans:value>
+							<beans:value>SFPSESSIONID</beans:value>
+							<beans:value>SFPCOOKIEID</beans:value>
+						</beans:list>
+					</beans:constructor-arg>
+				</beans:bean>
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+    
+    <beans:bean id="sessionFixationProtectionFilter" class="com.pennant.web.security.filter.SessionFixationProtectionFilter"/>
+    	
+	<beans:bean id="sas" class="org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy">
+		<beans:constructor-arg>
+			<beans:list>
+				<beans:bean class="org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy">
+					<beans:constructor-arg ref="sessionRegistry" />
+					<beans:property name="maximumSessions" value="2000" />
+					<beans:property name="exceptionIfMaximumExceeded" value="false" />
+				</beans:bean>
+				<beans:bean class="org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy">
+				</beans:bean>
+				<beans:bean class="org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy">
+					<beans:constructor-arg ref="sessionRegistry" />
+				</beans:bean>
+			</beans:list>
+		</beans:constructor-arg>
+	</beans:bean>
+		
+	<beans:bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl" />
+		
+	<beans:bean id="myUserDetailsService" class="com.pennant.policy.model.PolicyManager">
+		<beans:property name="userService" ref="userService" />
+	</beans:bean>
+
+	<beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+	<!-- <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.password.NoOpPasswordEncoder"/> -->
+	
+	<beans:bean id="authenticationDetails" class="com.pennant.policy.model.AuthenticationDetails" >
+		<beans:property name="userService" ref="userService" />
+	</beans:bean>
+	
+	<beans:bean id="LoginLoggingPolicyService" class="com.pennant.policy.LoginLoggingPolicyService">
+		<beans:property name="guiLoginLoggingPolicService" ref="guiLoginLoggingPolicService" />
+		<beans:property name="policyManager" ref="myUserDetailsService" />
+	</beans:bean>
+	
+	<beans:bean id="csrfSecurityRequestMatcher" class="com.pennant.web.security.util.CsrfSecurityRequestMatcher"/>
+</beans:beans>

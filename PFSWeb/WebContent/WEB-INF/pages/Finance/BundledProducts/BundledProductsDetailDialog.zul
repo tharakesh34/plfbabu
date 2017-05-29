@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_BundledProductsDetailDialog"
+		 border="none"
+		apply="${bundledProductsDetailDialogCtrl}" width="100%" height="100%"
+		sizable="false">
+
+		<div id="toolbar" sclass="z-toolbar" style="padding:0">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+				width="100%" widths="35%,30%,35%">
+
+				<!-- COMMON BUTTONS -->
+				<toolbar align="start"
+					sclass="toolbar-start">
+					<button id="btnNew" 
+						tooltiptext="${c:l('btnNew.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnEdit" 
+						tooltiptext="${c:l('btnEdit.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnDelete" 
+						tooltiptext="${c:l('btnDelete.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnSave" 
+						tooltiptext="${c:l('btnSave.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"  sclass="z-toolbarbutton"/>
+					<button id="btnCancel" 
+						tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
+					<button id="btnNotes" 
+						tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+				</toolbar>
+
+				<!-- SEARCH AREA -->
+				<toolbar align="center"
+					sclass="toolbar-center">
+					<label value="${c:l('window_BundledProductsDetailDialog.title')}" sclass="label-heading" />
+				</toolbar>
+
+				<!-- CRUD BUTTONS -->
+				<toolbar align="end"
+					sclass="toolbar-end">
+					<button id="btnHelp" visible="false" 
+						label = "${c:l('label_Help')}"
+						tooltiptext="${c:l('btnHelp.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+					<button id="btnClose" 
+						tooltiptext="${c:l('btnClose.tooltiptext')}"
+						autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+				</toolbar>
+			</hbox>
+		</div>
+		<borderlayout id="borderlayoutBundledProductsDetail">
+			<center border="none">
+				<groupbox>
+					<groupbox id="finBasicdetails"></groupbox>
+					<groupbox id="gb_basicDetails" closable="false">
+						<caption id="caption_equipmentLoan"
+							label="${c:l('BundledProductsDetail')}" />
+						<grid id="grid_basicDetails"
+							sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px">
+							<columns>
+								<column width="220px" />
+								<column />
+								<column width="220px" />
+								<column />
+							</columns>
+							<rows>
+								<row visible="false">
+									<label
+										id="label_BundledProductsDetailDialog_LoanRefNumber"
+										value="${c:l('label_BundledProductsDetailDialog_LoanRefNumber.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="finReference"
+											readonly="true" width="171px" />
+									</hbox>
+								</row>
+								<row visible="true">
+									<label
+										id="label_BundledProductsDetailDialog_CardProduct"
+										value="${c:l('label_BundledProductsDetailDialog_CardProduct.value')}" />
+									<hbox>
+										<space id="space_CardProduct"
+											spacing="2px" />
+										<textbox id="cardProduct" />
+									</hbox>
+									<label
+										id="label_BundledProductsDetailDialog_CardType"
+										value="${c:l('label_BundledProductsDetailDialog_CardType.value')}" />
+									<hbox>
+										<space id="space_CardType"
+											spacing="2px" />
+										<combobox id="cardType" />
+									</hbox>
+								</row>
+								<row visible="true">
+									<label
+										id="label_BundledProductsDetailDialog_ClassType"
+										value="${c:l('label_BundledProductsDetailDialog_ClassType.value')}" />
+									<hbox>
+										<space id="space_ClassType"
+											spacing="2px" />
+										<combobox id="classType" />
+									</hbox>
+									<label
+										id="label_BundledProductsDetailDialog_StatusOfCust"
+										value="${c:l('label_BundledProductsDetailDialog_StatusOfCust.value')}" />
+									<hbox>
+										<space id="space_StatusOfCust"
+											spacing="2px" />
+										<combobox id="statusOfCust" />
+									</hbox>
+								</row>
+								<row>
+								<label
+										id="label_BundledProductsDetailDialog_SalesStaff"
+										value="${c:l('label_BundledProductsDetailDialog_SalesStaff.value')}" />
+									<hbox>
+										<space id="space_SalesStaff"
+											spacing="2px" />
+										<textbox id="salesStaff" />
+									</hbox>
+									<label
+										id="label_BundledProductsDetailDialog_EmbossingName"
+										value="${c:l('label_BundledProductsDetailDialog_EmbossingName.value')}" />
+									<hbox>
+										<space id="space_EmbossingName"
+											spacing="2px" />
+										<textbox id="embossingName" />
+									</hbox>
+								</row>
+								<row visible="true">
+									<label
+										id="label_BundledProductsDetailDialog_MinRepay"
+										value="${c:l('label_BundledProductsDetailDialog_MinRepay.value')}" />
+									<hbox>
+										<space id="space_MinRepay"
+											spacing="2px" />
+										<decimalbox id="minRepay" />
+									</hbox>
+									<label
+										id="label_BundledProductsDetailDialog_BillingAcc"
+										value="${c:l('label_BundledProductsDetailDialog_BillingAcc.value')}" />
+									<hbox>
+										<accountSelectionBox
+											id="billingAcc" />
+									</hbox>
+								</row>
+								<row visible="true">
+									<label
+										id="label_BundledProductsDetailDialog_StmtAddress"
+										value="${c:l('label_BundledProductsDetailDialog_StmtAddress.value')}" />
+									<hbox>
+										<space id="space_StmtAddress"
+											spacing="2px" />
+										<textbox id="stmtAddress"  multiline="true" rows="4"/>
+									</hbox>
+									<label
+										id="label_BundledProductsDetailDialog_PhysicalAddress"
+										value="${c:l('label_BundledProductsDetailDialog_PhysicalAddress.value')}" />
+									<hbox>
+										<space
+											id="space_PhysicalAddress" spacing="2px" />
+										<textbox id="physicalAddress"  multiline="true"  rows="4"/>
+									</hbox>
+								</row>
+								<row visible="true">
+									<label
+										id="label_BundledProductsDetailDialog_StmtEmail"
+										value="${c:l('label_BundledProductsDetailDialog_StmtEmail.value')}" />
+									<hbox>
+										<space id="space_StmtEmail"
+											spacing="2px" />
+										<textbox id="stmtEmail" />
+									</hbox>
+									<label
+										id="label_BundledProductsDetailDialog_ContactNumber"
+										value="${c:l('label_BundledProductsDetailDialog_ContactNumber.value')}" />
+									<hbox>
+										<space id="space_ContactNumber"
+											spacing="2px" />
+										<textbox
+											id="contactNumCountryCode" width="45px" />
+										<label value="-"
+											style="display:inline-block;padding-top:4px;" />
+										<textbox id="contactNumAreaCode"
+											width="45px" />
+										<label value="-"
+											style="display:inline-block;padding-top:4px;" />
+										<textbox id="contactPhoneNumber"
+											width="85px" />
+									</hbox>
+								</row>
+								<row visible="true">
+									<label
+										id="label_BundledProductsDetailDialog_BankName"
+										value="${c:l('label_BundledProductsDetailDialog_BankName.value')}" />
+									<hbox>
+										<space id="space_BankName"
+											spacing="2px" />
+										<textbox id="bankName" />
+									</hbox>
+									<label
+										id="label_BundledProductsDetailDialog_ChequeNo"
+										value="${c:l('label_BundledProductsDetailDialog_ChequeNo.value')}" />
+									<hbox>
+										<space id="space_ChequeNo"
+											spacing="2px" />
+										<textbox id="chequeNo" />
+									</hbox>
+								</row>
+								<row visible="true">
+									<label
+										id="label_BundledProductsDetailDialog_ChequeAmt"
+										value="${c:l('label_BundledProductsDetailDialog_ChequeAmt.value')}" />
+									<hbox>
+										<currencyBox id="chequeAmt" />
+									</hbox>
+									<label
+										id="label_BundledProductsDetailDialog_LimitRecommended"
+										value="${c:l('label_BundledProductsDetailDialog_LimitRecommended.value')}" />
+									<hbox>
+										<currencyBox
+											id="limitRecommended" />
+									</hbox>
+								</row>
+								<row visible="true">
+									<label
+										id="label_BundledProductsDetailDialog_LimitApproved"
+										value="${c:l('label_BundledProductsDetailDialog_LimitApproved.value')}" />
+									<hbox>
+										<currencyBox id="limitApproved" />
+									</hbox>
+									<label
+										id="label_BundledProductsDetailDialog_ProfitRate"
+										value="${c:l('label_BundledProductsDetailDialog_ProfitRate.value')}" />
+									<hbox>
+										<space id="space_ProfitRate"
+											spacing="2px" />
+										<decimalbox id="profitRate" />
+									</hbox>
+								</row>
+								<row visible="true">
+									<label
+										id="label_BundledProductsDetailDialog_CrossSellCard"
+										value="${c:l('label_BundledProductsDetailDialog_CrossSellCard.value')}" />
+									<hbox>
+										<space id="space_CrossSellCard"
+											spacing="2px" />
+										<checkbox id="crossSellCard" />
+									</hbox>
+									<label
+										id="label_BundledProductsDetailDialog_UrgentIssuance"
+										value="${c:l('label_BundledProductsDetailDialog_UrgentIssuance.value')}" />
+									<hbox>
+										<space id="space_UrgentIssuance"
+											spacing="2px" />
+										<checkbox id="urgentIssuance" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+						<groupbox id="gp_Reference1" closable="true">
+							<caption
+								label="${c:l('gp_BundledProducts_Reference1')}">
+							</caption>
+							<grid id="grid_Reference1"
+								sclass="GridLayoutNoBorder" fixedLayout="true"
+								style="border:0px">
+								<columns>
+									<column width="215px" />
+									<column />
+									<column width="220px" />
+									<column />
+								</columns>
+								<rows>
+									<row visible="true">
+										<label
+											id="label_BundledProductsDetailDialog_Ref1Name"
+											value="${c:l('label_BundledProductsDetailDialog_Ref1Name.value')}" />
+										<hbox>
+											<space id="space_Ref1Name"
+												spacing="2px" />
+											<textbox id="ref1Name" />
+										</hbox>
+										<label
+											id="label_BundledProductsDetailDialog_Ref1PhoneNum"
+											value="${c:l('label_BundledProductsDetailDialog_Ref1PhoneNum.value')}" />
+										<hbox>
+											<space
+												id="space_Ref1PhoneNumber" spacing="2px" />
+											<textbox
+												id="ref1PhoneCountryCode" width="45px" />
+											<label value="-"
+												style="display:inline-block;padding-top:4px;" />
+											<textbox
+												id="ref1PhoneAreaCode" width="45px" />
+											<label value="-"
+												style="display:inline-block;padding-top:4px;" />
+											<textbox
+												id="ref1PhoneNumber" width="85px" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_BundledProductsDetailDialog_Ref1Email"
+											value="${c:l('label_BundledProductsDetailDialog_Ref1Email.value')}" />
+										<hbox>
+											<space id="space_Ref1Email"
+												spacing="2px" />
+											<textbox id="ref1Email" />
+										</hbox>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+					</groupbox>
+					<groupbox id="gp_Reference2" closable="true">
+							<caption
+								label="${c:l('gp_BundledProducts_Reference2')}">
+							</caption>
+							<grid id="grid_Reference2"
+								sclass="GridLayoutNoBorder" fixedLayout="true"
+								style="border:0px">
+								<columns>
+									<column width="220px" />
+									<column />
+									<column width="220px" />
+									<column />
+								</columns>
+								<rows>
+									<row visible="true">
+										<label
+											id="label_BundledProductsDetailDialog_Ref2Name"
+											value="${c:l('label_BundledProductsDetailDialog_Ref2Name.value')}" />
+										<hbox>
+											<space id="space_Ref2Name"
+												spacing="2px" />
+											<textbox id="ref2Name" />
+										</hbox>
+										<label
+											id="label_BundledProductsDetailDialog_Ref2PhoneNum"
+											value="${c:l('label_BundledProductsDetailDialog_Ref2PhoneNum.value')}" />
+										<hbox>
+											<space
+												id="space_Ref2PhoneNumber" spacing="2px" />
+											<textbox
+												id="ref2PhoneCountryCode" width="45px" />
+											<label value="-"
+												style="display:inline-block;padding-top:4px;" />
+											<textbox
+												id="ref2PhoneAreaCode" width="45px" />
+											<label value="-"
+												style="display:inline-block;padding-top:4px;" />
+											<textbox
+												id="ref2PhoneNumber" width="85px" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label
+											id="label_BundledProductsDetailDialog_Ref2Email"
+											value="${c:l('label_BundledProductsDetailDialog_Ref2Email.value')}" />
+										<hbox>
+											<space id="space_Ref2Email"
+												spacing="2px" />
+											<textbox id="ref2Email" />
+										</hbox>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+				</groupbox>
+			</center>
+			<south id="south" sclass="south-dialog" visible="false">
+				<groupbox id="groupboxWf" width="99%"
+					closable="false">
+					<caption label="${c:l('Action')}" />
+					<hbox width="95%">
+						<radiogroup id="userAction" name="action" />
+						<label
+							id="label_BundledProductsDetailDialog_RecordStatus"
+							value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

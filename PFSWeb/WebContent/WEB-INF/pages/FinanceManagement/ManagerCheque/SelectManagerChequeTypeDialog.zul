@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window id="window_SelectManagerChequeTypeDialog"
+		title="${c:l('window_SelectManagerChequeTypeDialog.title')}"
+		border="normal" apply="${selectManagerChequeDialogCtrl}" width="40%"
+		height="25%" sizable="false" closable="true">
+		<borderlayout id="borderlayoutManagerCheque">
+			<center border="none" autoscroll="true">
+				<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+					style="border:0px">
+					<columns>
+						<column width="200px" />
+						<column />
+					</columns>
+					<rows>
+						<row>
+							<cell colspan="2">
+								<radiogroup
+									id="radio_ManagerChequeType">
+									<hlayout spacing="50px">
+										<radio id="financeManagerChq"
+											label="${c:l('label_ManagerChequeDialog_FinanceManagerChq.value')}"
+											selected="true">
+										</radio>
+										<radio id="nonFinanceManagerChq"
+											label="${c:l('label_ManagerChequeDialog_NonFinanceManagerChq.value')}">
+										</radio>
+									</hlayout>
+								</radiogroup>
+							</cell>
+						</row>
+						<row>
+							<separator />
+						</row>
+						<row id="row_finReference" visible="true">
+							<hbox>
+								<space />
+								<label
+									id="label_ManagerChequeDialog_FinaceRef"
+									value="${c:l('label_ManagerChequeDialog_FinaceRef.value')}" />
+							</hbox>
+							<extendedcombobox id="finaceRef" />
+						</row>
+						<row>
+							<separator />
+						</row>
+						<row visible="true">
+							<space spacing="200px" />
+							<hbox>
+								<space spacing="2px" />
+								<hbox>
+									<space spacing="10px" />
+									<button id="btnProceed"
+										label="${c:l('label_SelectManagerChequeTypeDialog_btnProceed.value')}"
+										height="24px" style="align:center"
+										tooltiptext="${c:l('label_SelectManagerChequeTypeDialog_btnProceed.tooltiptext')}">
+									</button>
+								</hbox>
+							</hbox>
+						</row>
+					</rows>
+				</grid>
+			</center>
+		</borderlayout>
+	</window>
+</zk>
