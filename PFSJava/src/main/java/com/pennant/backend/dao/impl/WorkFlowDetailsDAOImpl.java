@@ -267,5 +267,30 @@ public class WorkFlowDetailsDAOImpl extends BasisNextidDaoImpl<WorkFlowDetails> 
 		System.out.println("Returning version = "+ version);
 		return version;
 	}
+	
+	@SuppressWarnings("deprecation")
+	@Override
+	public boolean isworkFlowTypeExist(String workFlowType) {
+		logger.debug("Entering + isworkFlowTypeExist()");
 
+		WorkFlowDetails workFlowDetails = new WorkFlowDetails();
+		workFlowDetails.setWorkFlowType(workFlowType);
+
+		String selectListSql = "select count(*) from WorkFlowDetails  where WorkFlowType =:WorkFlowType";
+		logger.debug("selectListSql: " + selectListSql);
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(
+				workFlowDetails);
+		boolean result = false;
+		try {
+			int rowCount = this.namedParameterJdbcTemplate.queryForInt(
+					selectListSql, beanParameters);
+			if (rowCount > 0) {
+				result = true;
+			}
+		} catch (Exception e) {
+			logger.warn("Exception: ", e);
+		}
+		return result;
+	}
 }

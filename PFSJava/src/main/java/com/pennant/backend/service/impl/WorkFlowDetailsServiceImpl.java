@@ -255,7 +255,7 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 		if (!"get".equals(flag)) {
 			if (StringUtils.isBlank(workFlowDetails.getWorkFlowType())) {
 				String[] valueParm = new String[1];
-				valueParm[0] = "WorkFlowType";
+				valueParm[0] = "Process Key";
 				ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm), "EN");
 				errDetails.add(errorDetail);
 			}
@@ -268,7 +268,7 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 			if (StringUtils.isNotBlank(workFlowDetails.getWorkFlowType())
 					&& workFlowDetails.getWorkFlowType().length() > 50) {
 				String[] valueParm = new String[2];
-				valueParm[0] = "WorkFlowType Length";
+				valueParm[0] = "Process Key Length";
 				valueParm[1] = "50.";
 				ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30508", valueParm), "EN");
 				errDetails.add(errorDetail);
@@ -276,7 +276,7 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 			if (StringUtils.isNotBlank(workFlowDetails.getWorkFlowSubType())
 					&& workFlowDetails.getWorkFlowSubType().length() > 50) {
 				String[] valueParm = new String[2];
-				valueParm[0] = "WorkFlowSubType Length";
+				valueParm[0] = "Process Name Length";
 				valueParm[1] = "50.";
 				ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30508", valueParm), "EN");
 				errDetails.add(errorDetail);
@@ -284,7 +284,7 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 			if (StringUtils.isNotBlank(workFlowDetails.getWorkFlowDesc())
 					&& workFlowDetails.getWorkFlowDesc().length() > 200) {
 				String[] valueParm = new String[2];
-				valueParm[0] = "WorkFlowDesc Length";
+				valueParm[0] = "Description Length";
 				valueParm[1] = "200.";
 				ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30508", valueParm), "EN");
 				errDetails.add(errorDetail);
@@ -297,6 +297,18 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 				ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("30508", valueParm), "EN");
 				errDetails.add(errorDetail);
 			}
+			if ("create".equals(flag)
+					&& getWorkFlowDetailsDAO().isworkFlowTypeExist(
+							org.apache.commons.lang3.StringUtils
+									.trimToEmpty(workFlowDetails
+											.getWorkFlowType()))) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Process Key Is";
+				ErrorDetails errorDetail = ErrorUtil.getErrorDetail(
+						new ErrorDetails("41001", valueParm), "EN");
+				errDetails.add(errorDetail);
+			}
+			
 		}
 		return errDetails;
 	}
