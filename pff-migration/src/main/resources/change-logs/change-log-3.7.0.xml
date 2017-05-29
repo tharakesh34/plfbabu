@@ -1764,4 +1764,11 @@ ALTER TABLE finrepayheader ALTER COLUMN schdregenerated TYPE smallint using (sch
 ALTER TABLE finrepayheader_temp ALTER COLUMN schdregenerated TYPE smallint using (schdregenerated::integer);
 </sql>
 </changeSet>
+<changeSet id="91" author="Surekha">
+		<sql>
+		delete REPORTLIST where Code='AccountMapping';
+			Insert INTO REPORTLIST (CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ) 
+      			values ('AccountMapping','AccountMapping','label_AccountMapping.Account,label_AccountMapping.HostAccount,label_AccountMapping.AccountType,listheader_RecordStatus.label,listheader_RecordType.label','account,hostAccount,accountType,recordStatus,recordType','String,String,String,String,String',' ','ReportList05','SAP GL Mapping','Application Masters',2,1001,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
