@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<constraint-mappings xmlns="http://jboss.org/xml/ns/javax/validation/mapping"
+	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
+					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+<!-- RateInstruction validations -->
+	<bean class="com.pennant.backend.model.finance.RateInstruction"
+		ignore-annotations="false">
+		<field name="schDate">
+			<constraint annotation="javax.validation.constraints.NotNull">
+			<message>schDate is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+			</constraint>
+		</field>
+		<field name="pftRate">
+			<constraint annotation="javax.validation.constraints.Min">
+			<message>pftRate should be Positive</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="value">1</element>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>pftRate allow 4 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="value">9999</element>
+			</constraint>
+		</field>
+		<field name="baseRate">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>baseRate is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>baseRate should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+		<field name="splRate">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>splRate is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>splRate should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+		<field name="margin">
+			<constraint annotation="javax.validation.constraints.Min">
+				<message>margin should be Positive</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="value">1</element>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>margin allow 4 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
+				</groups>
+				<element name="value">9999</element>
+			</constraint>
+		</field>
+	</bean>
+
+	</constraint-mappings>

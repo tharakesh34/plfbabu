@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<constraint-mappings xmlns="http://jboss.org/xml/ns/javax/validation/mapping"
+	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
+					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<!-- CustomerEmployementDetail validations -->
+	<bean
+		class="com.pennant.backend.model.customermasters.CustomerEmploymentDetail">
+
+	<field name="custEmpId">
+			<constraint annotation="javax.validation.constraints.Min">
+				<message>employmentId is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="value">1</element>
+
+			</constraint>
+			<constraint annotation="javax.validation.constraints.Max">
+				<message>employmentId Applicable only for update Customer</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+				<element name="value">-1</element>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>employmentId allow 19 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+				<element name="value">9999999999999999999</element>
+			</constraint>
+		</field>
+		<field name="custEmpName">
+			<constraint annotation="javax.validation.constraints.Min">
+				<message>employerId should be Positive</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="value">1</element>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>employerId allow 19 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="value">9999999999999999999</element>
+			</constraint>
+		</field>
+
+
+		<field name="custEmpType">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>custEmpType is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>custEmpType should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+
+
+		<field name="custEmpDesg">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>designation is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>designation should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+
+
+		<field name="custEmpDept">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>department should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+
+		<field name="custEmpFrom">
+			<constraint annotation="javax.validation.constraints.NotNull">
+				<message>startDate is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+			</constraint>
+		</field>
+
+	</bean>
+</constraint-mappings>
+		
