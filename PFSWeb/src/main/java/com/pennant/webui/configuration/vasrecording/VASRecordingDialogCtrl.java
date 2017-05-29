@@ -1248,6 +1248,10 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 */
 	protected void doSetValidation() {
 		logger.debug("Entering");
+		
+		if(isCancelProcess || enqiryModule){
+			return;
+		}
 
 		if (!this.productCode.isButtonDisabled()) {
 			this.productCode.setConstraint(new PTStringValidator(Labels
@@ -2006,10 +2010,12 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		showErrorDetails(wve, this.basicDetailsTab);
 				
 		// Post Validations for the Extended fields
-		if(StringUtils.isNotEmpty(getPostValidationScript())){
-			ScriptErrors postValidationErrors = getScriptValidationService().getPostValidationErrors(getPostValidationScript(), map);
-			// Preparing Wrong Value User UI exceptions
-			showErrorDetails(postValidationErrors);
+		if (!enqiryModule && !isCancelProcess) {
+			if(StringUtils.isNotEmpty(getPostValidationScript())){
+				ScriptErrors postValidationErrors = getScriptValidationService().getPostValidationErrors(getPostValidationScript(), map);
+				// Preparing Wrong Value User UI exceptions
+				showErrorDetails(postValidationErrors);
+			}
 		}
 		
 		if (aVASRecording.isNew()) {

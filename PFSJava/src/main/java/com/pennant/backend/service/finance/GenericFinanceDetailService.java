@@ -1315,6 +1315,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
 			for (VASRecording recording : vasRecordingList) {
 				recording.getDeclaredFieldValues(aeEvent.getDataMap());
+				aeEvent.getAcSetIDList().clear();
 				aeEvent.getAcSetIDList().add(recording.getFeeAccounting());
 				aeEvent.setFinReference(recording.getVasReference());
 
