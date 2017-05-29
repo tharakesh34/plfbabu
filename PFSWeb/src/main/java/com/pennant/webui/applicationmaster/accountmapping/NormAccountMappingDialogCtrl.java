@@ -125,14 +125,14 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.profitCenter.setDescColumn("ProfitCenterDesc");
 		this.profitCenter.setDisplayStyle(2);
 		this.profitCenter.setValidateColumns(new String[] { "ProfitCenterCode" });
-		this.profitCenter.setMandatoryStyle(false);
+		this.profitCenter.setMandatoryStyle(true);
 
 		this.costCenter.setModuleName("CostCenter");
 		this.costCenter.setValueColumn("CostCenterCode");
 		this.costCenter.setDescColumn("CostCenterDesc");
 		this.costCenter.setDisplayStyle(2);
 		this.costCenter.setValidateColumns(new String[] { "CostCenterCode" });
-		this.costCenter.setMandatoryStyle(false);
+		this.costCenter.setMandatoryStyle(true);
 
 		this.accountType.setModuleName("AccountType");
 		this.accountType.setValueColumn("AcType");
@@ -399,11 +399,11 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		}
 		if (!this.profitCenter.isReadonly()) {
 			this.profitCenter.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_NormAccountMappingDialog_ProfitCenter.value"), null, false));
+					Labels.getLabel("label_NormAccountMappingDialog_ProfitCenter.value"), null, true));
 		}
 		if (!this.costCenter.isReadonly()) {
 			this.costCenter.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_NormAccountMappingDialog_CostCenter.value"), null, false));
+					Labels.getLabel("label_NormAccountMappingDialog_CostCenter.value"), null, true));
 		}
 		if (!this.accountType.isReadonly()) {
 			this.accountType.setConstraint(new PTStringValidator(

@@ -72,12 +72,6 @@ public class AccountMappingListModelItemRenderer implements ListitemRenderer<Acc
 		lc.setParent(item);
 		lc = new Listcell(accountMapping.getHostAccount());
 		lc.setParent(item);
-		lc = new Listcell(accountMapping.getProfitCenterCode());
-		lc.setParent(item);
-		lc = new Listcell(accountMapping.getCostCenterCode());
-		lc.setParent(item);
-		lc = new Listcell(accountMapping.getFinType());
-		lc.setParent(item);
 		lc = new Listcell(accountMapping.getAccountType());
 		lc.setParent(item);
 		lc = new Listcell(accountMapping.getRecordStatus());

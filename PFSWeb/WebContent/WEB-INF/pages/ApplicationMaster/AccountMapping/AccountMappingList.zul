@@ -93,33 +93,6 @@
 										width="100px" maxlength="15" />
 								</row>
 								<row>
-
-									<label
-										id="label_AccountMappingList_ProfitCenter"
-										value="${c:l('label_AccountMappingList_ProfitCenter.value')}" />
-									<listbox
-										id="sortOperator_profitCenter" width="43px" mold="select"
-										rows="1" />
-									<textbox id="profitCenter"
-										width="100px" maxlength="8" />
-									<label
-										id="label_AccountMappingList_CostCenter"
-										value="${c:l('label_AccountMappingList_CostCenter.value')}" />
-									<listbox
-										id="sortOperator_costCenter" width="43px" mold="select"
-										rows="1" />
-									<textbox id="costCenter"
-										width="100px" maxlength="8" />
-
-								</row>
-								<row>
-									<label
-										id="label_AccountMappingList_FinType"
-										value="${c:l('label_AccountMappingList_FinType.value')}" />
-									<listbox id="sortOperator_finType"
-										width="43px" mold="select" rows="1" />
-									<uppercasebox id="finType"
-										width="100px" maxlength="10" />
 									<label
 										id="label_AccountMappingList_AccountType"
 										value="${c:l('label_AccountMappingList_AccountType.value')}" />
@@ -162,15 +135,6 @@
 									hflex="min" />
 								<listheader id="listheader_HostAccount"
 									label="${c:l('label_AccountMapping.HostAccount')}" sort="auto"
-									hflex="min" />
-								<listheader id="listheader_ProfitCenter"
-									label="${c:l('label_AccountMapping.ProfitCenter')}" sort="auto"
-									hflex="min" />
-								<listheader id="listheader_CostCenter"
-									label="${c:l('label_AccountMapping.CostCenter')}" sort="auto"
-									hflex="min" />
-								<listheader id="listheader_FinType"
-									label="${c:l('label_AccountMapping.FinType')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_AccountType"
 									label="${c:l('label_AccountMapping.AccountType')}" sort="auto"

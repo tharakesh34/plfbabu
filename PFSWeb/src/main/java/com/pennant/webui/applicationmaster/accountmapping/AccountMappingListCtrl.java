@@ -86,9 +86,6 @@ public class AccountMappingListCtrl extends GFCBaseListCtrl<AccountMapping> {
 	protected Listheader					listheader_AccountType;
 	protected Listheader					listheader_Account;
 	protected Listheader					listheader_HostAccount;
-	protected Listheader					listheader_ProfitCenter;
-	protected Listheader					listheader_CostCenter;
-	protected Listheader					listheader_FinType;
 	// checkRights
 	protected Button						button_AccountMappingList_NewAccountMapping;
 	protected Button						button_AccountMappingList_AccountMappingSearch;
@@ -97,18 +94,12 @@ public class AccountMappingListCtrl extends GFCBaseListCtrl<AccountMapping> {
 	protected Textbox						accountType;
 	protected Textbox						account;
 	protected Textbox						hostAccount;
-	protected Textbox						profitCenter;
-	protected Textbox						costCenter;
-	protected Textbox						finType;
 	protected Radio							loanTypeAc;
 	protected Radio							normalAc;
 
 	protected Listbox						sortOperator_accountType;
 	protected Listbox						sortOperator_account;
 	protected Listbox						sortOperator_hostAccount;
-	protected Listbox						sortOperator_profitCenter;
-	protected Listbox						sortOperator_costCenter;
-	protected Listbox						sortOperator_finType;
 
 	private transient AccountMappingService	accountMappingService;
 
@@ -150,12 +141,6 @@ public class AccountMappingListCtrl extends GFCBaseListCtrl<AccountMapping> {
 				Operators.STRING);
 		registerField("account", listheader_Account, SortOrder.NONE, account, sortOperator_account, Operators.STRING);
 		registerField("hostAccount", listheader_HostAccount, SortOrder.NONE, hostAccount, sortOperator_hostAccount,
-				Operators.STRING);
-		registerField("profitCenterCode", listheader_ProfitCenter, SortOrder.NONE, profitCenter,
-				sortOperator_profitCenter, Operators.STRING);
-		registerField("costCenterCode", listheader_CostCenter, SortOrder.NONE, costCenter, sortOperator_costCenter,
-				Operators.STRING);
-		registerField("finType", listheader_FinType, SortOrder.ASC, finType, sortOperator_finType,
 				Operators.STRING);
 
 		// Render the page and display the data.
