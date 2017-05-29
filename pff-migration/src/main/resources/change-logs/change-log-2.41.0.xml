@@ -1,0 +1,1190 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+
+
+<changeSet id="01" author="DurgaPrasad G" >
+	<dropTable tableName="SeqCustomers" />
+	</changeSet>
+	<changeSet id="02" author="DurgaPrasad G" dbms="oracle">
+		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(custid)+1 into ex  from (
+		Select CustId from Customers union
+		Select CustId from Customers_Temp )T;
+         	 execute immediate 'CREATE SEQUENCE SeqCustomers START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;     
+		</sql>
+	</changeSet>
+	<changeSet id="02" author="Prasad" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			 Select CASE WHEN MAX(custid)+1 IS NULL THEN 1 ELSE MAX(custid)+1 END  from (
+				Select CustId from Customers union
+				Select CustId from Customers_Temp )T into ex;
+			 execute 'CREATE SEQUENCE SeqCustomers START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+			  </sql>
+     		 </changeSet>
+
+ <changeSet id="02" author="DurgaPrasad G" dbms="mssql">
+		<sql splitStatements="false">
+		CREATE TABLE SeqCustomers(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+		);		
+		Declare @ex bigint;
+		Set  @ex = (Select MAX(custid)+1 from (
+		Select CustId from Customers union
+		Select CustId from Customers_Temp )T);
+		Exec('DBCC CHECKIDENT(''SeqCustomers'', RESEED,'+@ex+' )');
+
+	</sql>
+</changeSet>
+<changeSet id="03" author="SreeRavali">
+	<sql>
+	UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+	UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+	UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+
+	INSERT INTO SecGroups SELECT (select MAX(GrpID)+1 from SecGroups), 'FIN_LIABILITY_MAKER', 'Finance Liability Maker', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+	INSERT INTO SecGroups SELECT (select MAX(GrpID)+1 from SecGroups), 'FIN_LIABILITY_APPROVER', 'Finance Liability Approver', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_LIABILITY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_LIABILITY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_LiabilityRequest'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_LIABILITY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceMainDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_LIABILITY_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_LIABILITY_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_LiabilityRequest'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_LIABILITY_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceMainDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+	INSERT INTO secRoleGroups Values((Select max(RoleGrpID)+1 from secRoleGroups),(Select GrpID from SecGroups where GrpCode = 'FIN_LIABILITY_MAKER'),(Select RoleID from secRoles where RoleCd = 'OPERATIONS_OFFICER'), 0, 1000, CURRENT_TIMESTAMP, null, null,null,null,null,null,0);
+	INSERT INTO secRoleGroups Values((Select max(RoleGrpID)+1 from secRoleGroups),(Select GrpID from SecGroups where GrpCode = 'FIN_LIABILITY_APPROVER'),(Select RoleID from secRoles where RoleCd = 'OPERATIONS_MANAGER'), 0, 1000, CURRENT_TIMESTAMP, null, null,null,null,null,null,0);
+
+	UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+	UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+	UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+	</sql>
+</changeSet>
+<changeSet id="04" author="Madhubabu">
+	<dropDefaultValue  columnName="QuickDisb"
+		tableName="RMTFinanceTypes_Temp" />
+</changeSet>
+<changeSet id="05" author="Madhubabu">
+<sql>
+create table sai_temp as select * from RMTFinanceTypes_Temp;
+
+update RMTFinanceTypes_Temp set QuickDisb = null;
+
+alter table RMTFinanceTypes_Temp modify QuickDisb number(1);
+
+update RMTFinanceTypes_Temp m set (m.QuickDisb) = (select t.QuickDisb from sai_temp t where t.FinType = m.FinType) where exists (select 1 from sai_temp t where t.FinType = m.FinType);
+
+drop table sai_temp;
+
+</sql>
+
+</changeSet>
+
+<changeSet id="06" author="Madhubabu">
+	<dropDefaultValue  columnName="QuickDisb"
+		tableName="RMTFinanceTypes" />
+</changeSet>
+	<changeSet id="07" author="Madhubabu">
+		<sql>
+		create table sai_temp as select * from RMTFinanceTypes;
+
+update RMTFinanceTypes set QuickDisb = null;
+
+alter table RMTFinanceTypes modify QuickDisb number(1);
+
+update RMTFinanceTypes m set (m.QuickDisb) = (select t.QuickDisb from sai_temp t where t.FinType = m.FinType) where exists (select 1 from sai_temp t where t.FinType = m.FinType);
+
+drop table sai_temp;
+		</sql>
+	</changeSet>
+	<changeSet id="08" author="Madhubabu">
+		<sql>
+		update ErrorDetails set ErrorMessage='Select either planned emi holiday (OR) Multiple disbursement;' where ErrorCode='30574';
+		update ErrorDetails set ErrorMessage='Select either planned emi holiday (OR) Stepping finance;' where ErrorCode='30573';
+		</sql>
+	</changeSet>
+	<changeSet id="09" author="SreeRavali">
+		<sql>
+			INSERT INTO SecGroups SELECT (select MAX(GrpID)+1 from SecGroups), 'FIN_NOCISU_MAKER', 'Finance NOC ISSUANCE Maker', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select MAX(GrpID)+1 from SecGroups), 'FIN_NOCISU_APPROVER', 'Finance NOC ISSUANCE Approver', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_NOCISU_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_NOCISU_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_NOCIssuance'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_NOCISU_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceMainDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_NOCISU_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_NOCISU_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_NOCIssuance'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_NOCISU_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceMainDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+	
+			INSERT INTO secRoleGroups Values((Select max(RoleGrpID)+1 from secRoleGroups),(Select GrpID from SecGroups where GrpCode = 'FIN_NOCISU_MAKER'),(Select RoleID from secRoles where RoleCd = 'OPERATIONS_OFFICER'), 0, 1000, CURRENT_TIMESTAMP, null, null,null,null,null,null,0);
+			INSERT INTO secRoleGroups Values((Select max(RoleGrpID)+1 from secRoleGroups),(Select GrpID from SecGroups where GrpCode = 'FIN_NOCISU_APPROVER'),(Select RoleID from secRoles where RoleCd = 'OPERATIONS_MANAGER'), 0, 1000, CURRENT_TIMESTAMP, null, null,null,null,null,null,0);
+
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		</sql>
+	</changeSet>
+	<changeSet id="11" author="Prasad">
+	<createView viewName="RPT_soa_txndetails_view" replaceIfExists="true">
+	Select LinkedTranId,PostDate,TransOrder,finReference,TranDesc,PostAmount DEBITS,0 CREDITS from Postings
+      where DrOrCr='D'  union
+      Select LinkedTranId,PostDate,TransOrder,finReference,TranDesc,0 DEBITS,PostAmount CREDITS from Postings
+      where DrOrCr='C' 
+	</createView>
+</changeSet>
+<changeSet id="10" author="Madhubabu">
+		<sql>
+			update ReportList set ReportHeading='Covenant Deails' where Code='COVENQ'
+		</sql>
+	</changeSet>
+<changeSet id="12" author="SreeRavali">
+	<addColumn tableName="BulkRateChangeHeader">
+			<column name="Status" type="varchar(100)" />
+	</addColumn>
+</changeSet>
+<changeSet id="13" author="SreeRavali">
+	<addColumn tableName="BulkRateChangeHeader_Temp">
+			<column name="Status" type="varchar(100)" />
+	</addColumn>
+</changeSet>
+<changeSet id="14" author="SreeRavali">
+	<addColumn tableName="BulkRateChangeDetails">
+			<column name="Status" type="char(1))" />
+			<column name="ErrorMsg" type="varchar(1000)" />
+	</addColumn>
+</changeSet>
+<changeSet id="15" author="SreeRavali">
+	<addColumn tableName="BulkRateChangeDetails_Temp">
+			<column name="Status" type="char(1))" />
+			<column name="ErrorMsg" type="varchar(1000)" />
+	</addColumn>
+</changeSet>
+<changeSet id="16" author="Durgaprasad g">
+<createTable tableName="PresentationRequest">
+   <column name="PR_KEY" type="varchar(120)" />
+   <column name="BR_CODE" type="varchar(3)" />
+   <column name="AGREEMENTNO" type="varchar(20)" />
+   <column name="MICR_CODE" type="varchar(9)" />
+   <column name="ACC_TYPE" type="int" />
+   <column name="LEDGER_FOLIO" type="varchar(3)" />
+   <column name="FINWARE_ACNO" type="varchar(16)" />
+   <column name="DEST_ACC_HOLDER" type="varchar(100)" />
+   <column name="PDC_BY_NAME" type="varchar(100)" />
+   <column name="BANK_NAME" type="varchar(60)" />
+   <column name="BANK_ADDRESS" type="varchar(60)" />
+   <column name="EMI_NO" type="int" />
+   <column name="BFL_REF" type="varchar(3)" />
+   <column name="BATCHID" type="varchar(29)" />
+   <column name="CHEQUEAMOUNT" type="decimal(16,2)" />
+   <column name="PRESENTATIONDATE" type="datetime" />
+   <column name="RESUB_FLAG" type="varchar(1)" />
+   <column name="UMRN_NO" type="varchar(20)" />
+   <column name="IFSC_CODE" type="varchar(20)" />
+   <column name="SPONSER_BANK_CODE" type="varchar(20)" />
+   <column name="UTILITY_CODE" type="varchar(20)" />
+   <column name="MANDATE_START_DT" type="datetime" />
+   <column name="MANDATE_END_DT" type="datetime" />
+   <column name="INSTRUMENT_MODE" type="varchar(1)" />
+   <column name="PRODUCT_CODE" type="varchar(8)" />
+   <column name="LESSEEID" type="NUMBER(10)" />
+   <column name="PICKUP_BATCHID" type="NUMBER(16)" />
+   <column name="TXN_TYPE_CODE" type="NUMBER(4)" />
+   <column name="SOURCE_CODE" type="NUMBER(4)" />
+   <column name="ENTITY_CODE" type="NUMBER(8)" />
+   <column name="POSTING_DATETIME" type="datetime" />
+</createTable>
+</changeSet>
+<changeSet id="17" author="SreeRavali">
+	<createView viewName="BulkRateChange_View" replaceIfExists="true">
+	SELECT  		T1.FinType, T1.FinReference, T1.CustID, T4.CustCIF, T1.FinBranch, T1.FinCcy, T5.FinDivision AS LovDescFinDivision, 
+				T5.FinCategory AS ProductCode,T1.EffectiveRateOfReturn OldProfitRate, T1.TotalProfit OldProfit, 
+				T1.FinAmount, T1.FinIsActive, T2.SchDate FromDate, T3.CcyEditField lovDescFinFormatter, 
+				T1.AllowGrcPftRvw, T1.AllowRepayRvw, T1.FinStartDate, T1.LastRepayDate, T1.LastRepayPftDate, 
+				T1.RecordType, T1.RcdMaintainSts
+				
+		FROM	FinanceMain_Temp T1 INNER JOIN 
+				FinScheduleDetails T2 ON T1.FinReference = T2.FinReference INNER JOIN  
+				RMTCurrencies T3 ON T1.FinCcy = T3.CcyCode INNER JOIN
+				Customers T4 ON T1.CustID = T4.CustID INNER JOIN
+				RMTFinanceTypes T5 ON T5.FinType = T1.FinType
+				
+UNION ALL
+				
+SELECT  		T1.FinType, T1.FinReference, T1.CustID, T4.CustCIF, T1.FinBranch, T1.FinCcy, T5.FinDivision AS LovDescFinDivision, 
+				T5.FinCategory AS ProductCode,T1.EffectiveRateOfReturn OldProfitRate, T1.TotalProfit OldProfit, 
+				T1.FinAmount, T1.FinIsActive, T2.SchDate FromDate, T3.CcyEditField lovDescFinFormatter, 
+				T1.AllowGrcPftRvw, T1.AllowRepayRvw, T1.FinStartDate, T1.LastRepayDate, T1.LastRepayPftDate, 
+				T1.RecordType, T1.RcdMaintainSts
+				
+		FROM	FinanceMain T1 INNER JOIN 
+				FinScheduleDetails T2 ON T1.FinReference = T2.FinReference INNER JOIN  
+				RMTCurrencies T3 ON T1.FinCcy = T3.CcyCode INNER JOIN
+				Customers T4 ON T1.CustID = T4.CustID INNER JOIN
+				RMTFinanceTypes T5 ON T5.FinType = T1.FinType
+				
+		WHERE  ( NOT EXISTS (SELECT 1 AS Expr1 FROM FinanceMain_Temp  WHERE ( FinReference = T1.FinReference )))
+	</createView>
+</changeSet>
+<changeSet id="18" author="SreeRavali">
+	<createView viewName="BulkRateChange_SView"  replaceIfExists="true">
+	SELECT     	T1.BulkRateChangeRef, T1.FinReference, T1.FinBranch, T1.FinCCY, T1.CustCIF, T1.FinAmount, T1.OldProfitRate, T1.NewProfitRate, 
+			T1.OldProfit, T1.NewProfit, T1.AllowRateChange, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, 
+			T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.Status, T1.ErrorMsg, 
+			T2.FinType, T3.SchDate FromDate, T4.CcyEditField lovDescFinFormatter
+			
+FROM        BulkRateChangeDetails T1 INNER JOIN 
+			FinanceMain T2 ON T1.FinReference = T2.FinReference INNER JOIN 
+			FinScheduleDetails T3 ON T3.FinReference = T1.FinReference INNER JOIN  
+			RMTCurrencies T4 ON T1.FinCcy = T4.CcyCode
+			</createView>
+</changeSet>
+<changeSet id="19" author="SreeRavali">
+	<createView viewName="BulkRateChangeHeader_AView"  replaceIfExists="true">
+	SELECT     	B.BulkRateChangeRef, B.FinType, B.FromDate, B.ToDate, B.RateChange, B.RecalType, B.RuleType, 
+			B.Version, B.LastMntBy, B.LastMntOn, B.RecordStatus, B.RoleCode, B.NextRoleCode, B.TaskId, 
+			B.NextTaskId, B.RecordType, B.WorkflowId, B.Status, 
+			Q.SqlQuery lovDescSqlQuery, Q.QueryDesc lovDescQueryDesc, F.FinTypeDesc lovDescFinTypeDesc
+			
+FROM        BulkRateChangeHeader B  INNER JOIN 
+			RMTFinanceTypes F ON B.FinType = F.FinType LEFT JOIN 
+			Queries Q ON B.RuleType = Q.QueryCode
+	</createView>
+</changeSet>
+<changeSet id="20" author="SreeRavali">
+	<createView viewName="BulkRateChangeHeader_View" replaceIfExists="true">
+	SELECT     	B.BulkRateChangeRef, B.FinType, B.FromDate, B.ToDate, B.RateChange, B.RecalType, B.RuleType, 
+			B.Version, B.LastMntBy, B.LastMntOn, B.RecordStatus, B.RoleCode, B.NextRoleCode, B.TaskId, B.NextTaskId, B.RecordType, B.WorkflowId, 
+			Q.SqlQuery lovDescSqlQuery, Q.QueryDesc lovDescQueryDesc, F.FinTypeDesc lovDescFinTypeDesc
+			
+	FROM        BulkRateChangeHeader_Temp B  INNER JOIN 
+			RMTFinanceTypes F ON B.FinType = F.FinType LEFT JOIN 
+			Queries Q ON B.RuleType = Q.QueryCode
+			
+	UNION ALL
+
+	SELECT     	B.BulkRateChangeRef, B.FinType, B.FromDate, B.ToDate, B.RateChange, B.RecalType, B.RuleType, 
+			B.Version, B.LastMntBy, B.LastMntOn, B.RecordStatus, B.RoleCode, B.NextRoleCode, B.TaskId, B.NextTaskId, B.RecordType, B.WorkflowId, 
+			Q.SqlQuery lovDescSqlQuery, Q.QueryDesc lovDescQueryDesc, F.FinTypeDesc lovDescFinTypeDesc
+			
+	FROM        BulkRateChangeHeader B  INNER JOIN 
+			RMTFinanceTypes F ON B.FinType = F.FinType LEFT JOIN 
+			Queries Q ON B.RuleType = Q.QueryCode
+			
+	WHERE     (NOT EXISTS
+                          (SELECT     1 
+                            FROM          BulkRateChangeHeader_Temp
+                            WHERE      BulkRateChangeRef = B.BulkRateChangeRef))
+	</createView>
+</changeSet>
+<changeSet id="21" author="SreeRavali">
+	<createView viewName="BulkRateChangeDetails_AView" replaceIfExists="true">
+		SELECT     	T1.BulkRateChangeRef, T1.FinReference, T1.FinBranch, T1.FinCCY, T1.CustCIF, T1.FinAmount, T1.OldProfitRate, T1.NewProfitRate, 
+			T1.OldProfit, T1.NewProfit, T1.AllowRateChange,	T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, 
+			T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.Status, T1.ErrorMsg,
+			T2.CcyEditField lovDescFinFormatter
+			
+FROM        BulkRateChangeDetails T1 INNER JOIN  
+			RMTCurrencies T2 ON T1.FinCcy = T2.CcyCode
+	</createView>
+</changeSet>
+<changeSet id="22" author="SreeRavali">
+   <createView viewName="BulkRateChangeDetails_View" replaceIfExists="true">
+	SELECT     	T1.BulkRateChangeRef, T1.FinReference, T1.FinBranch, T1.FinCCY, T1.CustCIF, T1.FinAmount, T1.OldProfitRate, T1.NewProfitRate, T1.OldProfit, T1.NewProfit, T1.AllowRateChange,
+			T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+			T2.CcyEditField lovDescFinFormatter
+
+	FROM        BulkRateChangeDetails_Temp T1 INNER JOIN  
+			RMTCurrencies T2 ON T1.FinCcy = T2.CcyCode
+	UNION ALL
+
+	SELECT     	T1.BulkRateChangeRef, T1.FinReference, T1.FinBranch, T1.FinCCY, T1.CustCIF, T1.FinAmount, T1.OldProfitRate, T1.NewProfitRate, T1.OldProfit, T1.NewProfit, T1.AllowRateChange,
+			T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+			T2.CcyEditField lovDescFinFormatter
+			
+	FROM        BulkRateChangeDetails T1 INNER JOIN  
+			RMTCurrencies T2 ON T1.FinCcy = T2.CcyCode
+			
+	WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          BulkRateChangeDetails_Temp
+                            WHERE      BulkRateChangeRef = T1.BulkRateChangeRef)
+   </createView>
+</changeSet>
+<changeSet id="23" author="SreeRavali">
+	<sql>
+
+		update SeqSecGroups set SeqNo = (SELECT MAX(GrpID)+1 from SecGroups); 
+		update SeqSecGroupRights set SeqNo = (SELECT MAX(GrpRightID)+1 from SecGroupRights); 
+		update SeqSecRoleGroups set SeqNo = (SELECT MAX(RoleGrpID)+1 from SecRoleGroups); 
+		
+		--SecGroups
+		INSERT INTO SecGroups Values ((select MAX(GrpID)+1 from SecGroups), 'BULKRATECHANGE_MAKER', 'Bulk Rate Change Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroups Values ((select MAX(GrpID)+1 from SecGroups), 'BULKRATECHANGE_APPROVER', 'Bulk Rate Change Approver', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		
+		--SecGroupRights
+		INSERT INTO SecGroupRights values ((select MAX(GrpRightID)+1 from SecGroupRights),(select MAX(GrpId) from SecGroups WHERE  GrpCode = 'BULKRATECHANGE_MAKER'),
+					(select max(RightID) from SecRights WHERE  RightName = 'menuItem_FinanceManagement_BulkRateChange'),1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights values ((select MAX(GrpRightID)+1 from SecGroupRights),(select MAX(GrpId) from SecGroups WHERE  GrpCode = 'BULKRATECHANGE_MAKER'),
+					(select max(RightID) from SecRights WHERE  RightName = 'menuItem_FinanceManagement_BulkRateChangeEnquiry'),1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0)	;	
+		INSERT INTO SecGroupRights values ((select MAX(GrpRightID)+1 from SecGroupRights),(select MAX(GrpId) from SecGroups WHERE  GrpCode = 'BULKRATECHANGE_MAKER'),
+		 (select max(RightID) from SecRights WHERE  RightName = 'button_BulkRateChange_btnNew'),1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights values ((select MAX(GrpRightID)+1 from SecGroupRights),(select MAX(GrpId) from SecGroups WHERE  GrpCode = 'BULKRATECHANGE_MAKER'),
+					(select max(RightID) from SecRights WHERE  RightName = 'button_BulkRateChange_btnEdit'),1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights values ((select MAX(GrpRightID)+1 from SecGroupRights),(select MAX(GrpId) from SecGroups WHERE  GrpCode = 'BULKRATECHANGE_MAKER'),
+					(select max(RightID) from SecRights WHERE  RightName = 'button_BulkRateChange_btnDelete'),1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights values ((select MAX(GrpRightID)+1 from SecGroupRights),(select MAX(GrpId) from SecGroups WHERE  GrpCode = 'BULKRATECHANGE_MAKER'),
+					(select max(RightID) from SecRights WHERE  RightName = 'button_BulkRateChange_btnSearch'),1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights values ((select MAX(GrpRightID)+1 from SecGroupRights),(select MAX(GrpId) from SecGroups WHERE  GrpCode = 'BULKRATECHANGE_MAKER'),
+					(select max(RightID) from SecRights WHERE  RightName = 'button_BulkRateChange_btnSave'),1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights values ((select MAX(GrpRightID)+1 from SecGroupRights),(select MAX(GrpId) from SecGroups WHERE  GrpCode = 'BULKRATECHANGE_MAKER'),
+					(select max(RightID) from SecRights WHERE  RightName = 'button_BulkRateChange_btnAddFinList'),1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);		
+		INSERT INTO SecGroupRights values ((select MAX(GrpRightID)+1 from SecGroupRights),(select MAX(GrpId) from SecGroups WHERE  GrpCode = 'BULKRATECHANGE_MAKER'),
+					(select max(RightID) from SecRights WHERE  RightName = 'button_BulkRateChange_btnRemoveFinList'),1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights values ((select MAX(GrpRightID)+1 from SecGroupRights),(select MAX(GrpId) from SecGroups WHERE  GrpCode = 'BULKRATECHANGE_MAKER'),
+					(select max(RightID) from SecRights WHERE  RightName = 'button_BulkRateChange_btnApplyRateChange'),1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0)  ;
+		INSERT INTO SecGroupRights values ((select MAX(GrpRightID)+1 from SecGroupRights),(select MAX(GrpId) from SecGroups WHERE  GrpCode = 'BULKRATECHANGE_MAKER'),
+					(select max(RightID) from SecRights WHERE  RightName = 'BulkRateChange_finType'),1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights values ((select MAX(GrpRightID)+1 from SecGroupRights),(select MAX(GrpId) from SecGroups WHERE  GrpCode = 'BULKRATECHANGE_MAKER'),
+					(select max(RightID) from SecRights WHERE  RightName = 'BulkRateChange_fromDate'),1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights values ((select MAX(GrpRightID)+1 from SecGroupRights),(select MAX(GrpId) from SecGroups WHERE  GrpCode = 'BULKRATECHANGE_MAKER'),
+					(select max(RightID) from SecRights WHERE  RightName = 'BulkRateChange_toDate'),1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights values ((select MAX(GrpRightID)+1 from SecGroupRights),(select MAX(GrpId) from SecGroups WHERE  GrpCode = 'BULKRATECHANGE_MAKER'),
+					(select max(RightID) from SecRights WHERE  RightName = 'BulkRateChange_ruleType'),1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights values ((select MAX(GrpRightID)+1 from SecGroupRights),(select MAX(GrpId) from SecGroups WHERE  GrpCode = 'BULKRATECHANGE_MAKER'),
+					(select max(RightID) from SecRights WHERE  RightName = 'BulkRateChange_ListBoxCheckmark'),1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights values ((select MAX(GrpRightID)+1 from SecGroupRights),(select MAX(GrpId) from SecGroups WHERE  GrpCode = 'BULKRATECHANGE_APPROVER'),
+					(select max(RightID) from SecRights WHERE  RightName = 'menuItem_FinanceManagement_BulkRateChange'),1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights values ((select MAX(GrpRightID)+1 from SecGroupRights),(select MAX(GrpId) from SecGroups WHERE  GrpCode = 'BULKRATECHANGE_APPROVER'),
+					(select max(RightID) from SecRights WHERE  RightName = 'button_BulkRateChange_btnSave'),1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0)  ;
+			
+		INSERT INTO SecRoleGroups Values ((SELECT MAX(RoleGrpID)+1 from SecRoleGroups),(select MAX(GrpId) from SecGroups WHERE  GrpCode='BULKRATECHANGE_MAKER'),(select max(RoleID) from SecRoles WHERE RoleCd='OPERATIONS_OFFICER'),0,1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRoleGroups Values ((SELECT MAX(RoleGrpID)+1 from SecRoleGroups),(select MAX(GrpId) from SecGroups WHERE  GrpCode='BULKRATECHANGE_APPROVER'),(select max(RoleID) from SecRoles WHERE RoleCd='OPERATIONS_MANAGER'),0,1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0);
+	
+		update SeqSecRights set SeqNo = (SELECT MAX(RightID)+1 from SecRights); 
+		update SeqSecGroups set SeqNo = (SELECT MAX(GrpID)+1 from SecGroups); 
+		update SeqSecGroupRights set SeqNo = (SELECT MAX(GrpRightID)+1 from SecGroupRights); 
+		update SeqSecRoleGroups set SeqNo = (SELECT MAX(RoleGrpID)+1 from SecRoleGroups); 
+
+	</sql>
+</changeSet>
+<changeSet author="Kesav" id="24">
+        <createTable tableName="Promotions">
+			 <column name="PromotionCode" remarks="Promotion Code" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+			<column name="PromotionDesc" remarks="Promotion Code Description" type="varchar(50)"/>
+            <column name="FinType" remarks="Finance Type" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+			<column name="StartDate" type="datetime">
+				<constraints nullable="false"/>
+            </column>
+            <column name="EndDate" type="datetime">
+				<constraints nullable="false"/>
+            </column>
+            <column name="FinIsDwPayRequired" type="boolean"/>
+			<column name="DownPayRule" type="bigint"/>
+			<column name="ActualInterestRate" type="decimal(13, 9)"/>
+			<column name="FinBaseRate" type="varchar(8)"/>
+            <column name="FinSplRate" type="varchar(8)"/>
+            <column name="FinMargin" type="decimal(13, 9)"/>
+			<column name="ApplyRpyPricing" type="boolean"/>
+			<column name="RpyPricingMethod" type="bigint"/>
+			<column name="FinMinTerm" remarks="Minimum Terms" type="decimal(3, 0)"/>
+            <column name="FinMaxTerm" remarks="Maximum Terms" type="decimal(3, 0)"/>
+			<column name="FinMinAmount" remarks="Minimum Finance Amount" type="decimal(18, 0)"/>
+			<column name="FinMaxAmount" remarks="Maximum Finance Amount" type="decimal(18, 0)"/>
+            <column name="FInMinRate" type="decimal(13, 9)"/>
+            <column name="FinMaxRate" type="decimal(13, 9)"/>
+			<column name="Active" type="boolean"/>
+			<column defaultValueNumeric="0" name="Version" type="int"/>
+            <column name="LastMntBy" type="bigint"/>
+            <column name="LastMntOn" type="datetime"/>
+            <column name="RecordStatus" type="varchar(50)"/>
+            <column name="RoleCode" type="varchar(100)"/>
+            <column name="NextRoleCode" type="varchar(200)"/>
+            <column name="TaskId" type="varchar(50)"/>
+            <column name="NextTaskId" type="varchar(200)"/>
+            <column name="RecordType" type="varchar(50)"/>
+            <column defaultValueNumeric="0" name="WorkflowId" type="bigint"/>
+        </createTable>
+    </changeSet>
+	
+	<changeSet id="25" author="Kesava">
+		<addPrimaryKey columnNames="PromotionCode" constraintName="PK_Promotions" tableName="Promotions" />
+	</changeSet>
+	
+	<!--	PromotionFees	 -->
+	<changeSet author="Kesav" id="26">
+        <createTable tableName="PromotionFees">
+			<column name="FeeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+			<column name="PromotionCode" remarks="Promotion Code" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+			<column name="FeeTypeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FinEvent" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FeeOrder" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FeeScheduleMethod" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CalculationType" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RuleCode" type="varchar(8)"/>
+            <column name="Amount" type="decimal(18, 0)"/>
+            <column name="Percentage" type="decimal(5, 2)"/>
+            <column name="CalculateOn" type="varchar(8)"/>
+            <column name="AlwDeviation" type="boolean"/>
+            <column name="MaxWaiverPerc" type="decimal(5, 2)"/>
+            <column name="AlwModifyFee" type="boolean"/>
+            <column name="AlwModifyFeeSchdMthd" type="boolean"/>
+            <column name="Active" type="boolean"/>
+            <column defaultValueNumeric="0" name="Version" type="int"/>
+            <column name="LastMntBy" type="bigint"/>
+            <column name="LastMntOn" type="datetime"/>
+            <column name="RecordStatus" type="varchar(50)"/>
+            <column name="RoleCode" type="varchar(100)"/>
+            <column name="NextRoleCode" type="varchar(200)"/>
+            <column name="TaskId" type="varchar(50)"/>
+            <column name="NextTaskId" type="varchar(200)"/>
+            <column name="RecordType" type="varchar(50)"/>
+            <column name="WorkflowId" type="bigint" defaultValueNumeric="0"/>
+        </createTable>
+    </changeSet>
+	
+	<changeSet id="27" author="Kesava">
+		<addPrimaryKey columnNames="FeeID, PromotionCode" constraintName="PK_PromotionFees" tableName="PromotionFees" />
+	</changeSet>
+	
+	<!-- PromotionInsurances	-->
+	<changeSet author="Kesav" id="28">
+        <createTable tableName="PromotionInsurances">
+			<column name="InsuranceID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+			<column name="PromotionCode" remarks="Promotion Code" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FinType" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="InsuranceType" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Mandatory" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DftPayType" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CalType" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AmountRule" type="varchar(4000)"/>
+			<column name="ConstAmt" type="decimal(18, 0)"/>
+			<column name="Percentage" type="decimal(5, 2)"/>
+            <column name="CalculateOn" type="varchar(8)"/>
+            <column defaultValueNumeric="0" name="Version" type="int"/>
+            <column name="LastMntBy" type="bigint"/>
+            <column name="LastMntOn" type="datetime"/>
+            <column name="RecordStatus" type="varchar(50)"/>
+            <column name="RoleCode" type="varchar(100)"/>
+            <column name="NextRoleCode" type="varchar(200)"/>
+            <column name="TaskId" type="varchar(50)"/>
+            <column name="NextTaskId" type="varchar(200)"/>
+            <column name="RecordType" type="varchar(50)"/>
+            <column name="WorkflowId" type="bigint" />            
+        </createTable>
+    </changeSet>
+	
+	<changeSet id="29" author="Kesava">
+		<addPrimaryKey columnNames="InsuranceID, PromotionCode" constraintName="PK_PromotionInsurances" tableName="PromotionInsurances" />
+	</changeSet>
+	
+		<!-- PromotionAccounting	-->
+	<changeSet author="Kesav" id="30">
+        <createTable tableName="PromotionAccounting">
+			<column name="AccountingID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+			<column name="PromotionCode" remarks="Promotion Code" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Event" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AccountSetID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="Version" type="int"/>
+            <column name="LastMntBy" type="bigint"/>
+            <column name="LastMntOn" type="datetime"/>
+            <column name="RecordStatus" type="varchar(50)"/>
+            <column name="RoleCode" type="varchar(100)"/>
+            <column name="NextRoleCode" type="varchar(200)"/>
+            <column name="TaskId" type="varchar(50)"/>
+            <column name="NextTaskId" type="varchar(200)"/>
+            <column name="RecordType" type="varchar(50)"/>
+            <column name="WorkflowId" type="bigint" />   
+        </createTable>
+    </changeSet>
+	
+	<changeSet id="31" author="Kesava">
+		<addPrimaryKey columnNames="AccountingID, PromotionCode" constraintName="PK_PromotionAccounting" tableName="PromotionAccounting" />
+	</changeSet>
+	<changeSet id="32" author="SreeRavali">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		
+			INSERT INTO SecGroups SELECT (select MAX(GrpID)+1 from SecGroups), 'FIN_CANCELDISB_MAKER', 'Finance Disbursement Cancellation Maker', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select MAX(GrpID)+1 from SecGroups), 'FIN_CANCELDISB_APPROVER', 'Finance Disbursement Cancellation Approver', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+		
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_CANCELDISB_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_CANCELDISB_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_LiabilityRequest'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_CANCELDISB_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceMainDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_CANCELDISB_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceMainDialog_btnCancelDisb'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_CANCELDISB_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_CANCELDISB_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_LiabilityRequest'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_CANCELDISB_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceMainDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		
+			INSERT INTO secRoleGroups Values((Select max(RoleGrpID)+1 from secRoleGroups),(Select GrpID from SecGroups where GrpCode = 'FIN_CANCELDISB_MAKER'),(Select RoleID from secRoles where RoleCd = 'OPERATIONS_OFFICER'), 0, 1000, CURRENT_TIMESTAMP, null, null,null,null,null,null,0);
+			INSERT INTO secRoleGroups Values((Select max(RoleGrpID)+1 from secRoleGroups),(Select GrpID from SecGroups where GrpCode = 'FIN_CANCELDISB_APPROVER'),(Select RoleID from secRoles where RoleCd = 'OPERATIONS_MANAGER'), 0, 1000, CURRENT_TIMESTAMP, null, null,null,null,null,null,0);
+		
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		</sql>
+</changeSet>
+
+	<changeSet id="33" author="durgaprasad g">
+		<addColumn tableName="PresentationRequest">
+			<column name="STATUS" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="34" author="MadhuBabu">
+	<sql>
+		update RBFieldDetails set RBFldDesc='Loan Division' where RBModule='LMTLINE'and RBEvent='CUSTOMER' and RBFldName='ft_finDivision'
+	</sql>
+</changeSet>
+	
+	<changeSet author="Kesav" id="35">
+        <createTable tableName="Promotions_Temp">
+			 <column name="PromotionCode" remarks="Promotion Code" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+			<column name="PromotionDesc" remarks="Promotion Code Description" type="varchar(50)"/>
+            <column name="FinType" remarks="Finance Type" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+			<column name="StartDate" type="datetime"/>
+            <column name="EndDate" type="datetime"/>
+            <column name="FinIsDwPayRequired" type="boolean"/>
+			<column name="DownPayRule" type="bigint"/>
+			<column name="ActualInterestRate" type="decimal(13, 9)"/>
+			<column name="FinBaseRate" type="varchar(8)"/>
+            <column name="FinSplRate" type="varchar(8)"/>
+            <column name="FinMargin" type="decimal(13, 9)"/>
+			<column name="ApplyRpyPricing" type="boolean"/>
+			<column name="RpyPricingMethod" type="bigint"/>
+			<column name="FinMinTerm" remarks="Minimum Terms" type="decimal(3, 0)"/>
+            <column name="FinMaxTerm" remarks="Maximum Terms" type="decimal(3, 0)"/>
+			<column name="FinMinAmount" remarks="Minimum Finance Amount" type="decimal(18, 0)"/>
+			<column name="FinMaxAmount" remarks="Maximum Finance Amount" type="decimal(18, 0)"/>
+            <column name="FinMinRate" type="decimal(13, 9)"/>
+            <column name="FinMaxRate" type="decimal(13, 9)"/>
+			<column name="Active" type="boolean"/>
+			<column defaultValueNumeric="0" name="Version" type="int"/>
+            <column name="LastMntBy" type="bigint"/>
+            <column name="LastMntOn" type="datetime"/>
+            <column name="RecordStatus" type="varchar(50)"/>
+            <column name="RoleCode" type="varchar(100)"/>
+            <column name="NextRoleCode" type="varchar(200)"/>
+            <column name="TaskId" type="varchar(50)"/>
+            <column name="NextTaskId" type="varchar(200)"/>
+            <column name="RecordType" type="varchar(50)"/>
+            <column defaultValueNumeric="0" name="WorkflowId" type="bigint"/>
+        </createTable>
+    </changeSet>
+	
+	<changeSet id="36" author="Kesava">
+		<addPrimaryKey columnNames="PromotionCode" constraintName="PK_Promotions_Temp" tableName="Promotions_Temp" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="37">
+        <createTable tableName="PromotionFees_Temp">
+			<column name="FeeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+			<column name="PromotionCode" remarks="Promotion Code" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+			<column name="FeeTypeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FinEvent" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FeeOrder" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FeeScheduleMethod" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CalculationType" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RuleCode" type="varchar(8)"/>
+            <column name="Amount" type="decimal(18, 0)"/>
+            <column name="Percentage" type="decimal(5, 2)"/>
+            <column name="CalculateOn" type="varchar(8)"/>
+            <column name="AlwDeviation" type="boolean"/>
+            <column name="MaxWaiverPerc" type="decimal(5, 2)"/>
+            <column name="AlwModifyFee" type="boolean"/>
+            <column name="AlwModifyFeeSchdMthd" type="boolean"/>
+            <column name="Active" type="boolean"/>
+            <column defaultValueNumeric="0" name="Version" type="int"/>
+            <column name="LastMntBy" type="bigint"/>
+            <column name="LastMntOn" type="datetime"/>
+            <column name="RecordStatus" type="varchar(50)"/>
+            <column name="RoleCode" type="varchar(100)"/>
+            <column name="NextRoleCode" type="varchar(200)"/>
+            <column name="TaskId" type="varchar(50)"/>
+            <column name="NextTaskId" type="varchar(200)"/>
+            <column name="RecordType" type="varchar(50)"/>
+            <column name="WorkflowId" type="bigint" />
+			<column name="OriginationFee" type="boolean" />
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="38" author="Kesava">
+		<addPrimaryKey columnNames="FeeID, PromotionCode" constraintName="PK_PromFee_Temp" tableName="PromotionFees_Temp" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="39">
+        <createTable tableName="PromotionInsurances_Temp">
+			<column name="InsuranceID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+			<column name="PromotionCode" remarks="Promotion Code" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FinType" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="InsuranceType" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Mandatory" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DftPayType" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CalType" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AmountRule" type="varchar(4000)"/>
+			<column name="ConstAmt" type="decimal(18, 0)"/>
+			<column name="Percentage" type="decimal(5, 2)"/>
+            <column name="CalculateOn" type="varchar(8)"/>
+            <column name="Version" type="int"/>
+            <column name="LastMntBy" type="bigint"/>
+            <column name="LastMntOn" type="datetime"/>
+            <column name="RecordStatus" type="varchar(50)"/>
+            <column name="RoleCode" type="varchar(100)"/>
+            <column name="NextRoleCode" type="varchar(200)"/>
+            <column name="TaskId" type="varchar(50)"/>
+            <column name="NextTaskId" type="varchar(200)"/>
+            <column name="RecordType" type="varchar(50)"/>
+            <column name="WorkflowId" type="bigint"/>            
+        </createTable>
+    </changeSet>
+	
+	<changeSet id="40" author="Kesava">
+		<addPrimaryKey columnNames="InsuranceID, PromotionCode" constraintName="PK_PromoInsu_Temp" tableName="PromotionInsurances_Temp" />
+	</changeSet>
+	
+	<changeSet author="Kesav" id="41">
+        <createTable tableName="PromotionAccounting_Temp">
+			<column name="AccountingID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+			<column name="PromotionCode" remarks="Promotion Code" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Event" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AccountSetID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Version" type="int"/>
+            <column name="LastMntBy" type="bigint"/>
+            <column name="LastMntOn" type="datetime"/>
+            <column name="RecordStatus" type="varchar(50)"/>
+            <column name="RoleCode" type="varchar(100)"/>
+            <column name="NextRoleCode" type="varchar(200)"/>
+            <column name="TaskId" type="varchar(50)"/>
+            <column name="NextTaskId" type="varchar(200)"/>
+            <column name="RecordType" type="varchar(50)"/>
+            <column name="WorkflowId" type="bigint" />   
+        </createTable>
+    </changeSet>
+	
+	<changeSet id="42" author="Kesava">
+		<addPrimaryKey columnNames="AccountingID, PromotionCode" constraintName="PK_PromoAc_Temp" tableName="PromotionAccounting_Temp" />
+	</changeSet>
+	
+	<changeSet id="43" author="Kesava">
+		<createTable tableName="SeqPromotionFees">
+			<column name="SeqNo" type="bigint"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="44" author="Kesava">
+		<createTable tableName="SeqPromotionInsurances">
+			<column name="SeqNo" type="bigint"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="45" author="Kesava">
+		<createTable tableName="SeqPromotionAccounting">
+			<column name="SeqNo" type="bigint"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="46" author="Kesava">
+		<sql>
+			INSERT INTO  SeqPromotionFees VALUES(0);
+			INSERT INTO  SeqPromotionInsurances VALUES(0);
+			INSERT INTO  SeqPromotionAccounting VALUES(0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="47" author="Kesava">
+		<sql>
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			
+			Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER');
+			Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'PROMOTION_MAKER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER');
+			Delete from SecGroups where GrpCode = 'PROMOTION_MAKER';
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'PROMOTION_MAKER','WF Maker for Promotion', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_PromotionDialog_btnDelete');
+			Delete from SecRights where RightName = 'button_PromotionDialog_btnDelete';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_PromotionDialog_btnDelete', 'PromotionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'button_PromotionDialog_btnDelete'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'PROMOTION_MAKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_PromotionDialog_btnSave');
+			Delete from SecRights where RightName = 'button_PromotionDialog_btnSave';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_PromotionDialog_btnSave', 'PromotionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'button_PromotionDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_PromotionList_NewPromotion');
+			Delete from SecRights where RightName = 'button_PromotionList_NewPromotion';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_PromotionList_NewPromotion', 'PromotionList', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'button_PromotionList_NewPromotion'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuItem_Promotion_Promotion');
+			Delete from SecRights where RightName = 'menuItem_Promotion_Promotion';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuItem_Promotion_Promotion', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_Promotion_Promotion'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionDialog_PromotionCode');
+			Delete from SecRights where RightName = 'PromotionDialog_PromotionCode';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionDialog_PromotionCode', 'PromotionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'PromotionDialog_PromotionCode'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionDialog_PromotionDesc');
+			Delete from SecRights where RightName = 'PromotionDialog_PromotionDesc';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionDialog_PromotionDesc', 'PromotionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'PromotionDialog_PromotionDesc'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionDialog_FinType');
+			Delete from SecRights where RightName = 'PromotionDialog_FinType';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionDialog_FinType', 'PromotionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'PromotionDialog_FinType'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionDialog_StartDate');
+			Delete from SecRights where RightName = 'PromotionDialog_StartDate';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionDialog_StartDate', 'PromotionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'PromotionDialog_StartDate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionDialog_EndDate');
+			Delete from SecRights where RightName = 'PromotionDialog_EndDate';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionDialog_EndDate', 'PromotionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'PromotionDialog_EndDate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionDialog_FinIsDwPayRequired');
+			Delete from SecRights where RightName = 'PromotionDialog_FinIsDwPayRequired';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionDialog_FinIsDwPayRequired', 'PromotionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'PromotionDialog_FinIsDwPayRequired'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionDialog_DownPayRule');
+			Delete from SecRights where RightName = 'PromotionDialog_DownPayRule';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionDialog_DownPayRule', 'PromotionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'PromotionDialog_DownPayRule'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionDialog_ActualInterestRate');
+			Delete from SecRights where RightName = 'PromotionDialog_ActualInterestRate';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionDialog_ActualInterestRate', 'PromotionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'PromotionDialog_ActualInterestRate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionDialog_FinBaseRate');
+			Delete from SecRights where RightName = 'PromotionDialog_FinBaseRate';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionDialog_FinBaseRate', 'PromotionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'PromotionDialog_FinBaseRate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionDialog_ApplyRpyPricing');
+			Delete from SecRights where RightName = 'PromotionDialog_ApplyRpyPricing';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionDialog_ApplyRpyPricing', 'PromotionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'PromotionDialog_ApplyRpyPricing'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionDialog_RpyPricingMethod');
+			Delete from SecRights where RightName = 'PromotionDialog_RpyPricingMethod';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionDialog_RpyPricingMethod', 'PromotionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'PromotionDialog_RpyPricingMethod'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionDialog_FinMinTerm');
+			Delete from SecRights where RightName = 'PromotionDialog_FinMinTerm';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionDialog_FinMinTerm', 'PromotionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'PromotionDialog_FinMinTerm'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionDialog_FinMaxTerm');
+			Delete from SecRights where RightName = 'PromotionDialog_FinMaxTerm';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionDialog_FinMaxTerm', 'PromotionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'PromotionDialog_FinMaxTerm'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionDialog_FinMinAmount');
+			Delete from SecRights where RightName = 'PromotionDialog_FinMinAmount';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionDialog_FinMinAmount', 'PromotionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'PromotionDialog_FinMinAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionDialog_FinMaxAmount');
+			Delete from SecRights where RightName = 'PromotionDialog_FinMaxAmount';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionDialog_FinMaxAmount', 'PromotionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'PromotionDialog_FinMaxAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionDialog_FinMinRate');
+			Delete from SecRights where RightName = 'PromotionDialog_FinMinRate';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionDialog_FinMinRate', 'PromotionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'PromotionDialog_FinMinRate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionDialog_FinMaxRate');
+			Delete from SecRights where RightName = 'PromotionDialog_FinMaxRate';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionDialog_FinMaxRate', 'PromotionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'PromotionDialog_FinMaxRate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PromotionDialog_Active');
+			Delete from SecRights where RightName = 'PromotionDialog_Active';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PromotionDialog_Active', 'PromotionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_MAKER'), (Select RightID from SecRights where RightName = 'PromotionDialog_Active'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'Notificatons_Approver');
+			Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'Notificatons_Approver') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER');
+			Delete from SecGroups where GrpCode = 'Notificatons_Approver';
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'Notificatons_Approver','WF Approver for Promotion', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'Notificatons_Approver'), (Select RightID from SecRights where RightName = 'button_NotificationsDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'Notificatons_Approver'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'Notificatons_Approver'), (Select RightID from SecRights where RightName = 'menuItem_RulesFactory_Notifications'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="48" author="Kesav">
+		<createView viewName="Promotions_AView" replaceIfExists="true">
+			SELECT		T1.PromotionCode, T1.PromotionDesc, T1.FinType, T1.StartDate, T1.EndDate, T1.FinIsDwPayRequired, 
+			 			T1.DownPayRule, T1.ActualInterestRate, T1.FinBaseRate, T1.FinSplRate, T1.FinMargin, 
+			 			T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.FinMinTerm, T1.FinMaxTerm, T1.FinMinAmount, 
+						T1.FinMaxAmount, T1.FinMinRate, T1.FinMaxRate, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.FinCcy
+			FROM    	Promotions T1 
+			INNER JOIN  RMTFinanceTypes T2 ON T1.FinType = T2.FinType
+		</createView>
+	</changeSet>
+	
+	<changeSet id="49" author="Kesav">
+		<createView viewName="Promotions_TView" replaceIfExists="true">
+			SELECT		T1.PromotionCode, T1.PromotionDesc, T1.FinType, T1.StartDate, T1.EndDate, T1.FinIsDwPayRequired, 
+			 			T1.DownPayRule, T1.ActualInterestRate, T1.FinBaseRate, T1.FinSplRate, T1.FinMargin, 
+			 			T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.FinMinTerm, T1.FinMaxTerm, T1.FinMinAmount, 
+						T1.FinMaxAmount, T1.FinMinRate, T1.FinMaxRate, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.FinCcy
+			FROM    	Promotions_Temp T1 
+			INNER JOIN  RMTFinanceTypes T2 ON T1.FinType = T2.FinType
+		</createView>
+	</changeSet>
+	
+	<changeSet id="50" author="Kesav">
+		<createView viewName="Promotions_View" replaceIfExists="true">
+			SELECT		 T1.PromotionCode, T1.PromotionDesc, T1.FinType, T1.StartDate, T1.EndDate, T1.FinIsDwPayRequired, 
+			 			T1.DownPayRule, T1.ActualInterestRate, T1.FinBaseRate, T1.FinSplRate, T1.FinMargin, 
+			 			T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.FinMinTerm, T1.FinMaxTerm, T1.FinMinAmount, 
+						T1.FinMaxAmount, T1.FinMinRate, T1.FinMaxRate, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.FinCcy
+			FROM    	Promotions_Temp T1 
+			INNER JOIN  RMTFinanceTypes T2 ON T1.FinType = T2.FinType
+			UNION ALL
+
+			SELECT		 T1.PromotionCode, T1.PromotionDesc, T1.FinType, T1.StartDate, T1.EndDate, T1.FinIsDwPayRequired, 
+			 			T1.DownPayRule, T1.ActualInterestRate, T1.FinBaseRate, T1.FinSplRate, T1.FinMargin, 
+			 			T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.FinMinTerm, T1.FinMaxTerm, T1.FinMinAmount, 
+						T1.FinMaxAmount, T1.FinMinRate, T1.FinMaxRate, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.FinCcy
+			FROM    	Promotions T1 
+			INNER JOIN  RMTFinanceTypes T2 ON T1.FinType = T2.FinType
+			WHERE     NOT EXISTS (SELECT 1 FROM Promotions_TEMP WHERE PromotionCode = T1.PromotionCode)
+		</createView>
+	</changeSet>
+	<changeSet id="51" author="SreeRavali">
+		<sql>
+			Insert Into SMTparameters Values ('BULKRATECHANGE_DFT_THREAD_COUNT', 'Bulk Rate Change Default Thread Count','int', '1', '4', '1', '0',
+			'NULL', 'NULL','Default Thread Count', '1', '1000', CURRENT_TIMESTAMP, 'Approved', '', '', '', '','', '0');
+		</sql>
+	</changeSet>
+	
+	<changeSet id="52" author="Kesav">
+		<createView viewName="Promotions_AView" replaceIfExists="true">
+			SELECT		T1.PromotionCode, T1.PromotionDesc, T1.FinType, T1.StartDate, T1.EndDate, T1.FinIsDwPayRequired, 
+			 			T1.DownPayRule, T1.ActualInterestRate, T1.FinBaseRate, T1.FinSplRate, T1.FinMargin, 
+			 			T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.FinMinTerm, T1.FinMaxTerm, T1.FinMinAmount, 
+						T1.FinMaxAmount, T1.FinMinRate, T1.FinMaxRate, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+						T2.FinCcy,T2.FinCategory, T2.FinTypeDesc,
+						T3.RuleCode DownPayRuleCode, T3.RuleCodeDesc DownPayRuleDesc,
+						T4.RuleCode RpyPricingCode, T3.RuleCodeDesc RpyPricingDesc
+			FROM    	Promotions T1 
+			INNER JOIN  RMTFinanceTypes T2 ON T1.FinType = T2.FinType
+			LEFT JOIN  Rules T3 ON T1.DownPayRule = T3.RuleId
+			LEFT JOIN  Rules T4 ON T1.RpyPricingMethod = T4.RuleId
+		</createView>
+	</changeSet>
+	
+	<changeSet id="53" author="Kesav">
+		<createView viewName="Promotions_TView" replaceIfExists="true">
+			SELECT		T1.PromotionCode, T1.PromotionDesc, T1.FinType, T1.StartDate, T1.EndDate, T1.FinIsDwPayRequired, 
+			 			T1.DownPayRule, T1.ActualInterestRate, T1.FinBaseRate, T1.FinSplRate, T1.FinMargin, 
+			 			T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.FinMinTerm, T1.FinMaxTerm, T1.FinMinAmount, 
+						T1.FinMaxAmount, T1.FinMinRate, T1.FinMaxRate, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+						T2.FinCcy,T2.FinCategory, T2.FinTypeDesc,
+						T3.RuleCode DownPayRuleCode, T3.RuleCodeDesc DownPayRuleDesc,
+						T4.RuleCode RpyPricingCode, T3.RuleCodeDesc RpyPricingDesc
+			FROM    	Promotions_Temp T1 
+			INNER JOIN  RMTFinanceTypes T2 ON T1.FinType = T2.FinType
+			LEFT JOIN   Rules T3 ON T1.DownPayRule = T3.RuleId
+			LEFT JOIN   Rules T4 ON T1.RpyPricingMethod = T4.RuleId
+		</createView>
+	</changeSet>
+	
+	<changeSet id="54" author="Kesav">
+		<createView viewName="Promotions_View" replaceIfExists="true">
+			SELECT		T1.PromotionCode, T1.PromotionDesc, T1.FinType, T1.StartDate, T1.EndDate, T1.FinIsDwPayRequired, 
+			 			T1.DownPayRule, T1.ActualInterestRate, T1.FinBaseRate, T1.FinSplRate, T1.FinMargin, 
+			 			T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.FinMinTerm, T1.FinMaxTerm, T1.FinMinAmount, 
+						T1.FinMaxAmount, T1.FinMinRate, T1.FinMaxRate, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+						T2.FinCcy,T2.FinCategory, T2.FinTypeDesc,
+						T3.RuleCode DownPayRuleCode, T3.RuleCodeDesc DownPayRuleDesc,
+						T4.RuleCode RpyPricingCode, T3.RuleCodeDesc RpyPricingDesc
+			FROM    	Promotions_Temp T1 
+			INNER JOIN  RMTFinanceTypes T2 ON T1.FinType = T2.FinType
+			LEFT JOIN   Rules T3 ON T1.DownPayRule = T3.RuleId
+			LEFT JOIN   Rules T4 ON T1.RpyPricingMethod = T4.RuleId
+			
+			UNION ALL
+
+			SELECT		T1.PromotionCode, T1.PromotionDesc, T1.FinType, T1.StartDate, T1.EndDate, T1.FinIsDwPayRequired, 
+			 			T1.DownPayRule, T1.ActualInterestRate, T1.FinBaseRate, T1.FinSplRate, T1.FinMargin, 
+			 			T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.FinMinTerm, T1.FinMaxTerm, T1.FinMinAmount, 
+						T1.FinMaxAmount, T1.FinMinRate, T1.FinMaxRate, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+						T2.FinCcy,T2.FinCategory, T2.FinTypeDesc,
+						T3.RuleCode DownPayRuleCode, T3.RuleCodeDesc DownPayRuleDesc,
+						T4.RuleCode RpyPricingCode, T3.RuleCodeDesc RpyPricingDesc
+			FROM    	Promotions T1 
+			INNER JOIN  RMTFinanceTypes T2 ON T1.FinType = T2.FinType
+			LEFT JOIN   Rules T3 ON T1.DownPayRule = T3.RuleId
+			LEFT JOIN   Rules T4 ON T1.RpyPricingMethod = T4.RuleId
+			WHERE       NOT EXISTS (SELECT 1 FROM Promotions_TEMP WHERE PromotionCode = T1.PromotionCode)
+		</createView>
+	</changeSet>
+	
+	
+	<changeSet id="55" author="Kesav">
+		<createView viewName="Promotions_AView" replaceIfExists="true">
+			SELECT		T1.PromotionCode, T1.PromotionDesc, T1.FinType, T1.StartDate, T1.EndDate, T1.FinIsDwPayRequired, 
+			 			T1.DownPayRule, T1.ActualInterestRate, T1.FinBaseRate, T1.FinSplRate, T1.FinMargin, 
+			 			T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.FinMinTerm, T1.FinMaxTerm, T1.FinMinAmount, 
+						T1.FinMaxAmount, T1.FinMinRate, T1.FinMaxRate, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+						T2.FinCcy,T2.FinCategory, T2.FinTypeDesc,
+						T3.RuleCode DownPayRuleCode, T3.RuleCodeDesc DownPayRuleDesc,
+						T4.RuleCode RpyPricingCode, T4.RuleCodeDesc RpyPricingDesc
+			FROM    	Promotions T1 
+			INNER JOIN  RMTFinanceTypes T2 ON T1.FinType = T2.FinType
+			LEFT JOIN  Rules T3 ON T1.DownPayRule = T3.RuleId
+			LEFT JOIN  Rules T4 ON T1.RpyPricingMethod = T4.RuleId
+		</createView>
+	</changeSet>
+	
+	<changeSet id="56" author="Kesav">
+		<createView viewName="Promotions_TView" replaceIfExists="true">
+			SELECT		T1.PromotionCode, T1.PromotionDesc, T1.FinType, T1.StartDate, T1.EndDate, T1.FinIsDwPayRequired, 
+			 			T1.DownPayRule, T1.ActualInterestRate, T1.FinBaseRate, T1.FinSplRate, T1.FinMargin, 
+			 			T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.FinMinTerm, T1.FinMaxTerm, T1.FinMinAmount, 
+						T1.FinMaxAmount, T1.FinMinRate, T1.FinMaxRate, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+						T2.FinCcy,T2.FinCategory, T2.FinTypeDesc,
+						T3.RuleCode DownPayRuleCode, T3.RuleCodeDesc DownPayRuleDesc,
+						T4.RuleCode RpyPricingCode, T4.RuleCodeDesc RpyPricingDesc
+			FROM    	Promotions_Temp T1 
+			INNER JOIN  RMTFinanceTypes T2 ON T1.FinType = T2.FinType
+			LEFT JOIN   Rules T3 ON T1.DownPayRule = T3.RuleId
+			LEFT JOIN   Rules T4 ON T1.RpyPricingMethod = T4.RuleId
+		</createView>
+	</changeSet>
+	
+	<changeSet id="57" author="Kesav">
+		<createView viewName="Promotions_View" replaceIfExists="true">
+			SELECT		T1.PromotionCode, T1.PromotionDesc, T1.FinType, T1.StartDate, T1.EndDate, T1.FinIsDwPayRequired, 
+			 			T1.DownPayRule, T1.ActualInterestRate, T1.FinBaseRate, T1.FinSplRate, T1.FinMargin, 
+			 			T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.FinMinTerm, T1.FinMaxTerm, T1.FinMinAmount, 
+						T1.FinMaxAmount, T1.FinMinRate, T1.FinMaxRate, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+						T2.FinCcy,T2.FinCategory, T2.FinTypeDesc,
+						T3.RuleCode DownPayRuleCode, T3.RuleCodeDesc DownPayRuleDesc,
+						T4.RuleCode RpyPricingCode, T4.RuleCodeDesc RpyPricingDesc
+			FROM    	Promotions_Temp T1 
+			INNER JOIN  RMTFinanceTypes T2 ON T1.FinType = T2.FinType
+			LEFT JOIN   Rules T3 ON T1.DownPayRule = T3.RuleId
+			LEFT JOIN   Rules T4 ON T1.RpyPricingMethod = T4.RuleId
+			
+			UNION ALL
+
+			SELECT		T1.PromotionCode, T1.PromotionDesc, T1.FinType, T1.StartDate, T1.EndDate, T1.FinIsDwPayRequired, 
+			 			T1.DownPayRule, T1.ActualInterestRate, T1.FinBaseRate, T1.FinSplRate, T1.FinMargin, 
+			 			T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.FinMinTerm, T1.FinMaxTerm, T1.FinMinAmount, 
+						T1.FinMaxAmount, T1.FinMinRate, T1.FinMaxRate, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+						T2.FinCcy,T2.FinCategory, T2.FinTypeDesc,
+						T3.RuleCode DownPayRuleCode, T3.RuleCodeDesc DownPayRuleDesc,
+						T4.RuleCode RpyPricingCode, T4.RuleCodeDesc RpyPricingDesc
+			FROM    	Promotions T1 
+			INNER JOIN  RMTFinanceTypes T2 ON T1.FinType = T2.FinType
+			LEFT JOIN   Rules T3 ON T1.DownPayRule = T3.RuleId
+			LEFT JOIN   Rules T4 ON T1.RpyPricingMethod = T4.RuleId
+			WHERE       NOT EXISTS (SELECT 1 FROM Promotions_TEMP WHERE PromotionCode = T1.PromotionCode)
+		</createView>
+	</changeSet>
+	<changeSet id = "58" author="SreeRavali">
+		<createView viewName="FinInsurances_AView"  replaceIfExists="true">
+				SELECT  T1.InsId,T1.Reference, T1.Module,T1.InsuranceType,T2.insuranceTypeDesc,T1.InsReference,T1.InsuranceReq,T1.Provider,T3.TakafulName ProviderName,T1.PaymentMethod,T1.CalType,T1.InsuranceRate,
+		 		 T1.WaiverReason,T1.InsuranceFrq,T1.Amount,T1.CalRule,T1.CalPerc,T1.CalOn,T1.InsuranceStatus,T4.PolicyCode,T4.PolicyDesc,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		  		FROM  FinInsurances T1 INNER JOIN
+		               InsuranceType T2 ON T2.InsuranceType=T1.InsuranceType LEFT OUTER JOIN
+		               TakafulProvider T3 ON T1.provider=T3.TakafulCode LEFT OUTER JOIN
+		               InsurancePolicy T4 ON T1.PolicyCode=T4.PolicyCode
+		</createView>
+	</changeSet>
+	<changeSet id="59" author="Srikanth">
+	<sql>
+	INSERT INTO ErrorDetails VALUES('90260','EN','E','No Loans available with {0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	Update ErrorDetails set ErrorMessage ='Fees should be matched with configured fees in loan type.' where ErrorCode = '90244';
+	Update ErrorDetails set ErrorMessage ='Can not override fee({0}) schedule method configured in loan type.' where ErrorCode = '90246';
+	Update ErrorDetails set ErrorMessage ='Fee amount can not be override for FeeCode({0}), Actual fee amount is:{1}.' where ErrorCode = '90253';
+	INSERT INTO ErrorDetails VALUES('90257','EN','E','{0} should be less than or equal to {1} for feeCode:{2}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	INSERT INTO ErrorDetails VALUES('90258','EN','E','{0} should be equal to {1} for feeCode:{2}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
+	
+	<changeSet id="60" author="Durgaprasad G" dbms="mssql, oracle">
+		<dropNotNullConstraint tableName="DATA_ENGINE_CONFIG" columnName="FILEEXTENSION" columnDataType="varchar(250)" />
+	</changeSet>
+	<changeSet id="61" author="SreeRavali">
+		<sql>
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_BulkRateChngList_New', 'BulkRateChange', 1, 1000, NULL, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_BulkRateChngList_PrintList', 'BulkRateChange', 1, 1000, NULL, null, null, null, null, null, null, 0 );
+			INSERT INTO SecGroupRights values ((select MAX(GrpRightID)+1 from SecGroupRights),(select MAX(GrpId) from SecGroups WHERE  GrpCode = 'BULKRATECHANGE_MAKER'),(select max(RightID) from SecRights WHERE  RightName = 'button_BulkRateChngList_New'),1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SecGroupRights values ((select MAX(GrpRightID)+1 from SecGroupRights),(select MAX(GrpId) from SecGroups WHERE  GrpCode = 'BULKRATECHANGE_MAKER'),(select max(RightID) from SecRights WHERE  RightName = 'button_BulkRateChngList_PrintList'),1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);  
+		</sql>
+	</changeSet>
+		<changeSet id="62" author="Kesav">
+		<sql>
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+
+			Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'PROMOTION_APPROVER');
+			Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'PROMOTION_APPROVER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER');
+			Delete from SecGroups where GrpCode = 'PROMOTION_APPROVER';
+			INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'PROMOTION_APPROVER','WF Approver for Promotion', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_APPROVER'), (Select RightID from SecRights where RightName = 'button_PromotionDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'PROMOTION_APPROVER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PROMOTION_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_Promotion_Promotion'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="63">
+		<addColumn tableName="PromotionFees">
+			<column name="OriginationFee" type="boolean" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="64" author="Madhubabu">
+			<addColumn tableName="RejectDocumentDetails">
+				<column name="DocReceivedDate" type="datetime" />
+			</addColumn>
+	</changeSet>
+	
+</databaseChangeLog>

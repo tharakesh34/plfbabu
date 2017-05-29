@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	
+<changeSet id="1" author="Pruthvi">
+		<sql>
+		delete from LMTFinanceWorkFlowDef where WorkFlowType not in (select WorkFlowType from WorkFlowDetails);
+		</sql>
+	</changeSet>
+	
+<changeSet id="2" author="Pruthvi">
+	<sql>
+	Update RBFieldDetails set RBFLDDESC = REPLACE(RBFLDDESC, 'Finance', 'Loan') where UPPER(RBFLDDESC) LIKE '%FINANCE%';
+Update RBFieldDetails set RBFLDDESC = REPLACE(RBFLDDESC, 'FINANCE', 'LOAN') where UPPER(RBFLDDESC) LIKE '%FINANCE%';
+
+Update RBFieldDetails set RBFLDDESC = REPLACE(RBFLDDESC, 'Profit', 'Interest') where UPPER(RBFLDDESC) LIKE '%PROFIT%';
+Update RBFieldDetails set RBFLDDESC = REPLACE(RBFLDDESC, 'PROFIT', 'INTEREST') where UPPER(RBFLDDESC) LIKE '%PROFIT%';
+	</sql>	
+		</changeSet>
+<changeSet id="3" author="Pruthvi" dbms="mssql">
+<sql>
+update SecUsers set UsrPwd = '$2a$10$qjfUA.lTfSoR8QhVMaVNkOPYO1f5QLA90u8nP/eM4ztkdX9c3ikVi' where UsrLogin = 'ADMIN';
+UPDATE SecUsers set UsrPwd = '$2a$10$la26BQWJooJqMT6Onm/rBeTDXou7IBBP3Lq3x0rrcpl9Me8/f0JCm', UsrAcExpDt = GETDATE()-1 where UsrLogin != 'ADMIN'; 
+</sql>
+</changeSet>
+<changeSet id="3" author="Pruthvi" dbms="oracle">
+<sql>
+update SecUsers set UsrPwd = '$2a$10$qjfUA.lTfSoR8QhVMaVNkOPYO1f5QLA90u8nP/eM4ztkdX9c3ikVi' where UsrLogin = 'ADMIN';
+UPDATE SecUsers set UsrPwd = '$2a$10$la26BQWJooJqMT6Onm/rBeTDXou7IBBP3Lq3x0rrcpl9Me8/f0JCm', UsrAcExpDt = sysdate-1 where UsrLogin != 'ADMIN'; 
+</sql>
+</changeSet>
+<changeSet id="4" author="Pruthvi">
+<modifyDataType tableName="SecUserPasswords" columnName="UsrToken"
+			newDataType="varchar(200)" />
+			</changeSet>
+<changeSet id="6" author="Pruthvi" dbms="oracle">
+<dropNotNullConstraint 
+            columnDataType="varchar(200)"
+            columnName="USRTOKEN"
+            tableName="SECUSERPASSWORDS"/>
+ </changeSet>
+ <changeSet id="7" author="Pruthvi">
+ <delete tableName="LMTFinanceWorkFlowDef">
+			<where>WorkFlowType not in (select WorkFlowType from WorkFlowDetails)</where>
+		</delete>
+</changeSet>
+<changeSet author="Srikanth" id="8">
+		<insert tableName="ErrorDetails">
+			<column name="ErrorCode">92001</column>
+			<column name="ErrorLanguage">EN</column>
+			<column name="ErrorSeverity">E</column>
+			<column name="ErrorMessage">AuthDetails Not Available.</column>
+			<column name="ErrorExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+	</changeSet>
+	<changeSet author="Srikanth" id="9">
+		<insert tableName="ErrorDetails">
+			<column name="ErrorCode">92002</column>
+			<column name="ErrorLanguage">EN</column>
+			<column name="ErrorSeverity">E</column>
+			<column name="ErrorMessage">Invalid User/Password.</column>
+			<column name="ErrorExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+	</changeSet>
+	<changeSet author="Srikanth" id="10">
+		<insert tableName="ErrorDetails">
+			<column name="ErrorCode">92003</column>
+			<column name="ErrorLanguage">EN</column>
+			<column name="ErrorSeverity">E</column>
+			<column name="ErrorMessage">Invalid Token.</column>
+			<column name="ErrorExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+	</changeSet>
+	<changeSet author="Srikanth" id="11">
+		<insert tableName="ErrorDetails">
+			<column name="ErrorCode">92004</column>
+			<column name="ErrorLanguage">EN</column>
+			<column name="ErrorSeverity">E</column>
+			<column name="ErrorMessage">Token InActive.</column>
+			<column name="ErrorExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+	</changeSet>
+</databaseChangeLog>
