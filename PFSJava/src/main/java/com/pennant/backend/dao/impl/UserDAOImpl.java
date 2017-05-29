@@ -69,6 +69,7 @@ import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.Literal;
 
 /**
@@ -281,21 +282,10 @@ public class UserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements Use
 		// If the number of updated records are less than or equals zero
 		// generate new exception
 		if (recordCount <= 0) {
-			ErrorDetails errorDetail = getError("41004", secUser.getUsrLogin(), secUser.getUserDetails()
-					.getUsrLanguage());
-			throw new DataAccessException(errorDetail.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving ");
 
-	}
-
-	private ErrorDetails getError(String errorId, String userLogin, String userLanguage) {
-		String[][] parms = new String[2][1];
-		parms[1][0] = userLogin;
-		parms[0][0] = PennantJavaUtil.getLabel("label_UsrLogin") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
-				userLanguage);
 	}
 
 }

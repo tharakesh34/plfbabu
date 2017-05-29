@@ -66,6 +66,8 @@ import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>documentDetails model</b> class.<br>
@@ -151,7 +153,6 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void update(FinInsurances finInsurance, String type,boolean isWIF) {
 
@@ -184,11 +185,7 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", finInsurance.getInsReference(), finInsurance.getReference(),
-					finInsurance.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving ");
 
@@ -226,7 +223,6 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 		return finInsurance.getId();
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void delete(FinInsurances finInsurance, String type,boolean isWIF) {
 		logger.debug("Entering");
@@ -246,17 +242,10 @@ public class FinInsurancesDAOImpl extends BasisNextidDaoImpl<FinInsurances> impl
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41003", finInsurance.getInsReference(),
-						finInsurance.getReference(), finInsurance.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", finInsurance.getInsReference(), finInsurance.getReference(),
-					finInsurance.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}

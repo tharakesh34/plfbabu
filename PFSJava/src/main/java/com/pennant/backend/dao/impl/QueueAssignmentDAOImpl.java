@@ -71,6 +71,8 @@ import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.QueueAssignmentHeader;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 	private static Logger				logger	= Logger.getLogger(QueueAssignmentDAOImpl.class);
@@ -337,7 +339,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void update(QueueAssignment queueAssignment, String tableType) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -361,11 +363,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41003", queueAssignment.getReference(), queueAssignment
-					.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -389,7 +387,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 				userLanguage);
 	}
 
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(QueueAssignment queueDetail, String type) {
 		logger.debug("Entering");
 
@@ -403,11 +401,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 		try {
 			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", queueDetail.getReference(), queueDetail.getUserDetails()
-					.getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -493,16 +487,11 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41003", queueAssignmentHeader.getReference(), queueAssignmentHeader
-					.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void deleteHeader(QueueAssignmentHeader queueAssignmentHeader) {
 		logger.debug("Entering");
@@ -520,11 +509,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41003", queueAssignmentHeader.getReference(), queueAssignmentHeader
-					.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
