@@ -95,7 +95,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 
 		CustomerQueuing customerQueuing = new CustomerQueuing();
 		customerQueuing.setCustID(custID);
-		customerQueuing.setProgress(EodConstants.PROGRESS_WAIT);
+		customerQueuing.setProgress(EodConstants.PROGRESS_IN_PROCESS);
 
 		StringBuilder selectSql = new StringBuilder("SELECT COALESCE(Count(CustID),0) from CustomerQueuing ");
 		selectSql.append(" where CustID = :CustID AND Progress = :Progress");
