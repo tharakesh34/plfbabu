@@ -44,6 +44,7 @@ package com.pennant.webui.Fees.FeePostings;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -169,6 +170,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	private transient AccountingSetService			accountingSetService;
 	private AccountEngineExecution					engineExecution;
 	private boolean									isAccountingExecuted	= false;
+	Date											minReqPostingDate		= DateUtility
+			.addDays(DateUtility.getAppDate(), -SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));
 
 	/**
 	 * default constructor.<br>
@@ -729,18 +732,19 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 			wve.add(we);
 		}
 		
+		
 		try {
-			if (this.valueDate.getValue() != null) {
-				if (DateUtility.compare(this.valueDate.getValue(), DateUtility.getAppDate()) >0) {
-					throw new WrongValueException(this.valueDate, Labels.getLabel("DATE_EMPTY_FUTURE",
-							new String[] { Labels.getLabel("label_feePostingsDialog_ValueDate.value"),
-									DateUtility.getAppDate(DateFormat.LONG_DATE) }));
-				}
-			} 
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
+			if (this.valueDate.getValue().before(minReqPostingDate)
+					|| this.valueDate.getValue().after(DateUtility.getAppDate())) {
+				
+				String minreqPostDate =DateUtility.formatToLongDate(minReqPostingDate);
+				String currentDate = DateUtility.formatToLongDate(DateUtility.getAppDate());
+				
+				throw new WrongValueException(this.valueDate, Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
+						new String[] { Labels.getLabel("label_feePostingsDialog_ValueDate.value"),
+								minreqPostDate,currentDate }));
+			}
+			
 			aFeePostings.setValueDate(this.valueDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
