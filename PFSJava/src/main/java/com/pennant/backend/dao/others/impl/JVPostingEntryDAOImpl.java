@@ -60,15 +60,14 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.others.JVPostingEntryDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>JVPostingEntry model</b> class.<br>
@@ -252,7 +251,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(JVPostingEntry jVPostingEntry, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -268,18 +267,11 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),
 			        beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41003",
-						 Long.toString( jVPostingEntry.getId()), jVPostingEntry.getUserDetails()
-				                .getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006",
-					 Long.toString(jVPostingEntry.getId()), jVPostingEntry.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -407,7 +399,6 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 	 * 
 	 */
 
-	@SuppressWarnings("serial")
 	@Override
 	public void update(JVPostingEntry jVPostingEntry, String type) {
 		int recordCount = 0;
@@ -427,16 +418,11 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004",
-					 Long.toString(jVPostingEntry.getId()), jVPostingEntry.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void updateDeleteFlag(JVPostingEntry jVPostingEntry, String type) {
 		int recordCount = 0;
@@ -453,16 +439,11 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004",
-					 Long.toString(jVPostingEntry.getId()), jVPostingEntry.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void updateDeletedDetails(JVPostingEntry jVPostingEntry, String type) {
 		int recordCount = 0;
@@ -482,16 +463,11 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004",
-					 Long.toString(jVPostingEntry.getId()), jVPostingEntry.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void updateValidationStatus(JVPostingEntry jVPostingEntry, String type) {
 		int recordCount = 0;
@@ -509,11 +485,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004",
-					 Long.toString(jVPostingEntry.getId()), jVPostingEntry.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -541,7 +513,6 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		logger.debug("Leaving Updated Count ==" + cont.length);
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void updateWorkFlowDetails(JVPostingEntry jVPostingEntry, String type) {
 		int recordCount = 0;
@@ -559,11 +530,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004",
-					 Long.toString(jVPostingEntry.getId()), jVPostingEntry.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -586,7 +553,6 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		logger.debug("Leaving");
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void updatePostingStatus(JVPostingEntry jVPostingEntry, String type) {
 		int recordCount = 0;
@@ -603,25 +569,12 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004",
-					 Long.toString(jVPostingEntry.getId()), jVPostingEntry.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
 
-	private ErrorDetails getError(String errorId, String batchReference,
-	        String userLanguage) {
-		String[][] parms = new String[2][1];
-		parms[1][0] = batchReference;
-		parms[0][0] = PennantJavaUtil.getLabel("label_BatchReference") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
-		        errorId, parms[0], parms[1]), userLanguage);
-	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void deleteByID(JVPostingEntry jVPostingEntry, String tableType) {
 		logger.debug("Entering");
@@ -639,11 +592,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006",
-					 Long.toString(jVPostingEntry.getId()), jVPostingEntry.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 
@@ -830,7 +779,6 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		return count;
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void upDateSeqNoForCurrentDayBatch(JVPostingEntry jVPostingEntry) {
 		int recordCount = 0;
@@ -844,11 +792,7 @@ public class JVPostingEntryDAOImpl extends BasisCodeDAO<JVPostingEntry> implemen
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004",
-					 Long.toString(jVPostingEntry.getId()), jVPostingEntry.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}

@@ -61,13 +61,11 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.model.MailData;
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.notifications.NotificationsDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.rulefactory.Notifications;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>Notifications model</b> class.<br>
@@ -183,7 +181,7 @@ public class NotificationsDAOImpl extends BasisNextidDaoImpl<Notifications> impl
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(Notifications notifications, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -200,18 +198,10 @@ public class NotificationsDAOImpl extends BasisNextidDaoImpl<Notifications> impl
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),	beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41004", notifications.getRuleCode(), 
-						notifications.getRuleModule(), notifications.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.debug("Error in delete Method");
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006", notifications.getRuleCode(), 
-					notifications.getRuleModule(), notifications.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -272,7 +262,6 @@ public class NotificationsDAOImpl extends BasisNextidDaoImpl<Notifications> impl
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(Notifications notifications, String type) {
 		logger.debug("Entering");
@@ -298,11 +287,7 @@ public class NotificationsDAOImpl extends BasisNextidDaoImpl<Notifications> impl
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-			ErrorDetails errorDetails= getError("41003", notifications.getRuleCode(), 
-					notifications.getRuleModule(), notifications.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -387,23 +372,6 @@ public class NotificationsDAOImpl extends BasisNextidDaoImpl<Notifications> impl
     }
 
 	
-	/**
-	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
-	 * @return ErrorDetails
-	 */
-	private ErrorDetails  getError(String errorId, String ruleCode,String ruleModule, String userLanguage){
-		String[][] parms= new String[2][2]; 
-		parms[1][0] = ruleCode;
-		parms[1][1] = ruleModule;
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_MailConfig_RuleCode")+ ":" + parms[1][0];
-		parms[0][1] = PennantJavaUtil.getLabel("label_MailConfig_RuleModule")+ ":" + parms[1][1];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-
 	@Override
 	public List<MailData> getMailData(String mailName) {
 		logger.debug("Entering");

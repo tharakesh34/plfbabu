@@ -49,20 +49,16 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.masters.AuthorizationDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.masters.AuthorizationDetail;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
 
 /**
  * DAO methods implementation for the <b>AuthorizationDetail model</b> class.<br>
@@ -123,7 +119,6 @@ public class AuthorizationDetailDAOImpl extends
 		return authorizationDetail.getId();
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void update(AuthorizationDetail authorizationDetail, String type) {
 		int recordCount = 0;
@@ -148,12 +143,7 @@ public class AuthorizationDetailDAOImpl extends
 				updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004",
-					authorizationDetail.getId(), authorizationDetail
-							.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -183,11 +173,4 @@ public class AuthorizationDetailDAOImpl extends
 				beanParameters, typeRowMapper);
 	}
 
-	private ErrorDetails getError(String errorId, long uPPAuthId,String userLanguage) {
-		String[][] parms = new String[2][1];
-		parms[1][0] = String.valueOf(uPPAuthId);
-		parms[0][0] = PennantJavaUtil.getLabel("field.auth.id") + ":"
-				+ parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),userLanguage);
-	}
 }

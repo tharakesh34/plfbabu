@@ -48,7 +48,6 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -57,15 +56,12 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.Literal;
 
 /**
@@ -138,7 +134,6 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 	/**
 	 * Method for Update utilization amount after amounts Approval
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void updateUtilise(long excessID, BigDecimal amount) {
 		logger.debug("Entering");
@@ -156,9 +151,7 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", excessID, PennantConstants.default_Language);
-			throw new DataAccessException(errorDetails.getError()) { };
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -166,7 +159,6 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 	/**
 	 * Method for Update Excess Balance amount after amounts Approval
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void updateExcessBal(long excessID, BigDecimal amount) {
 		logger.debug("Entering");
@@ -184,9 +176,7 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", excessID, PennantConstants.default_Language);
-			throw new DataAccessException(errorDetails.getError()) { };
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -237,7 +227,6 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 	/**
 	 * Method for updating Reserved amount against Excess ID
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void updateExcessReserve(long payAgainstID, BigDecimal reserveAmt) {
 		logger.debug("Entering");
@@ -255,9 +244,7 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", payAgainstID, PennantConstants.default_Language);
-			throw new DataAccessException(errorDetails.getError()) { };
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -341,7 +328,6 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 	/**
 	 * Method for updating Reserved excess Amount after modifications
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void updateExcessReserveLog(long receiptID, long payAgainstID, BigDecimal diffInReserve) {
 		logger.debug("Entering");
@@ -360,9 +346,7 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", payAgainstID, PennantConstants.default_Language);
-			throw new DataAccessException(errorDetails.getError()) { };
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -389,7 +373,6 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 		logger.debug("Leaving");
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void updateExcessAmount(long excessID, String amountType, BigDecimal amount) {
 		logger.debug("Entering");
@@ -413,11 +396,7 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", finExcessAmount.getExcessID(),
-					PennantConstants.default_Language);
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 	}
 	
@@ -473,20 +452,4 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 		return finExcessAmount;
 	}
 	
-	
-	/**
-	 * Method for Populating Error Message Preparation
-	 * @param errorId
-	 * @param finReference
-	 * @param userLanguage
-	 * @return
-	 */
-	private ErrorDetails getError(String errorId, long excessID, String userLanguage) {
-		String[][] parms = new String[2][1];
-		parms[1][0] = String.valueOf(excessID);
-		parms[0][0] = PennantJavaUtil.getLabel("label_ExcessID") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId,
-				parms[0], parms[1]), userLanguage);
-	}
-
 }

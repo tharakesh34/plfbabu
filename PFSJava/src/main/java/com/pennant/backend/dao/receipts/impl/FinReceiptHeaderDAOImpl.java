@@ -55,13 +55,10 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.finance.FinReceiptHeader;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -143,7 +140,6 @@ public class FinReceiptHeaderDAOImpl extends BasisNextidDaoImpl<FinReceiptHeader
 		return receiptHeader.getId();
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void update(FinReceiptHeader receiptHeader, TableType tableType) {
 		int recordCount = 0;
@@ -163,9 +159,7 @@ public class FinReceiptHeaderDAOImpl extends BasisNextidDaoImpl<FinReceiptHeader
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", receiptHeader.getReceiptID(), PennantConstants.default_Language);
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -224,13 +218,6 @@ public class FinReceiptHeaderDAOImpl extends BasisNextidDaoImpl<FinReceiptHeader
 		return header;
 	}
 
-	private ErrorDetails getError(String errorId, long receiptID, String userLanguage) {
-		String[][] parms = new String[2][1];
-		parms[1][0] = String.valueOf(receiptID);
-		parms[0][0] = PennantJavaUtil.getLabel("label_ReceiptID") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
-				userLanguage);
-	}
 
 	@Override
 	public int geFeeReceiptCount(String reference, String receiptPurpose) {

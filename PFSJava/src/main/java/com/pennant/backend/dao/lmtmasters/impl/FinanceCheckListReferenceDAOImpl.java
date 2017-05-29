@@ -58,15 +58,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceCheckListReferenceDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>FinanceCheckListReference model</b> class.<br>
@@ -228,7 +226,7 @@ implements FinanceCheckListReferenceDAO {
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(FinanceCheckListReference financeCheckListReference,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -242,15 +240,10 @@ implements FinanceCheckListReferenceDAO {
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",financeCheckListReference
-						,financeCheckListReference.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",financeCheckListReference 
-					,financeCheckListReference.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -318,7 +311,6 @@ implements FinanceCheckListReferenceDAO {
 	 * 
 	 */
 
-	@SuppressWarnings("serial")
 	@Override
 	public void update(FinanceCheckListReference financeCheckListReference,String type) {
 		int recordCount = 0;
@@ -340,22 +332,9 @@ implements FinanceCheckListReferenceDAO {
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",financeCheckListReference
-					,financeCheckListReference.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
 
-	private ErrorDetails  getError(String errorId, FinanceCheckListReference financeCheckListReference, String userLanguage){
-		String[][] parms= new String[3][3];
-		parms[1][0] = financeCheckListReference.getFinReference();
-		parms[1][1] = financeCheckListReference.getLovDescQuesDesc();
-		parms[1][2] = financeCheckListReference.getLovDescAnswerDesc();
-		parms[0][0] = PennantJavaUtil.getLabel("label_FinReference")+ ":" + parms[1][0];
-		parms[0][1] = PennantJavaUtil.getLabel("label_CheckList")+ ":" + parms[1][1];
-		parms[0][2] = PennantJavaUtil.getLabel("label_CheckListDetail")+ ":" + parms[1][2];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
 }

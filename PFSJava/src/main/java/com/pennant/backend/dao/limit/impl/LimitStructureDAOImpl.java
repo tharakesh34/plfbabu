@@ -56,15 +56,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.limit.LimitStructureDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.limit.LimitStructure;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>LimitStructure model</b> class.<br>
@@ -167,7 +165,7 @@ public class LimitStructureDAOImpl extends BasisCodeDAO<LimitStructure> implemen
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(LimitStructure limitStructure,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -181,13 +179,10 @@ public class LimitStructureDAOImpl extends BasisCodeDAO<LimitStructure> implemen
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41003",limitStructure.getId() ,limitStructure.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006",limitStructure.getId() ,limitStructure.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -237,7 +232,6 @@ public class LimitStructureDAOImpl extends BasisCodeDAO<LimitStructure> implemen
 	 * 
 	 */
 	
-	@SuppressWarnings("serial")
 	@Override
 	public void update(LimitStructure limitStructure,String type) {
 		int recordCount = 0;
@@ -258,9 +252,7 @@ public class LimitStructureDAOImpl extends BasisCodeDAO<LimitStructure> implemen
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails = getError("41004", limitStructure.getId(), limitStructure.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -296,14 +288,5 @@ public class LimitStructureDAOImpl extends BasisCodeDAO<LimitStructure> implemen
 
 		logger.debug("Leaving");
 		return recordCount;
-	}
-	
-	private ErrorDetails  getError(String errorId, String structureCode, String userLanguage){
-		logger.debug("Entering");
-		String[][] parms= new String[2][1];
-		parms[1][0] = structureCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_StructureCode")+ ":" + parms[1][0];
-		logger.debug("Leaving");
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
 }

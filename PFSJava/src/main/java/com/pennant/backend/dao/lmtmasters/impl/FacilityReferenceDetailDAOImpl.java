@@ -60,15 +60,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.lmtmasters.FacilityReferenceDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.lmtmasters.FacilityReferenceDetail;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>FacilityReferenceDetail model</b> class.<br>
@@ -243,7 +241,7 @@ public class FacilityReferenceDetailDAOImpl extends BasisNextidDaoImpl<FacilityR
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(FacilityReferenceDetail facilityReferenceDetail, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -257,15 +255,10 @@ public class FacilityReferenceDetailDAOImpl extends BasisNextidDaoImpl<FacilityR
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41003", facilityReferenceDetail.getId(), facilityReferenceDetail.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", facilityReferenceDetail.getId(), facilityReferenceDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -323,7 +316,6 @@ public class FacilityReferenceDetailDAOImpl extends BasisNextidDaoImpl<FacilityR
 	 * 
 	 */
 
-	@SuppressWarnings("serial")
 	@Override
 	public void update(FacilityReferenceDetail facilityReferenceDetail, String type) {
 		int recordCount = 0;
@@ -346,20 +338,11 @@ public class FacilityReferenceDetailDAOImpl extends BasisNextidDaoImpl<FacilityR
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", facilityReferenceDetail.getId(), facilityReferenceDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
 
-	private ErrorDetails getError(String errorId, long finRefDetailId, String userLanguage) {
-		String[][] parms = new String[2][1];
-		parms[1][0] = String.valueOf(finRefDetailId);
-		parms[0][0] = PennantJavaUtil.getLabel("label_FinRefDetailId") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]), userLanguage);
-	}
 
 	/**
 	 * Fetch Records Details by Finance Type, Reference Type and field
