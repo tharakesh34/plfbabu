@@ -62,7 +62,7 @@ public class FinanceEnquiryPostingsListItemRenderer implements ListitemRenderer<
 				lc = new Listcell("");
 				lc.setParent(item);
 			}else{
-				lc = new Listcell(String.valueOf(DateUtility.getDBDate(dataSet.getPostDate().toString())));
+				lc = new Listcell(DateUtility.formatToLongDate(dataSet.getPostDate()));
 				lc.setParent(item);
 			}
 			lc = new Listcell(dataSet.getTranDesc());
