@@ -57,13 +57,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.rmtmasters.FinTypeAccount;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>FinanceType model</b> class.<br>
@@ -242,7 +240,6 @@ public class FinTypeAccountDAOImpl extends BasisCodeDAO<FinTypeAccount> implemen
 	 * 
 	 */
 
-	@SuppressWarnings("serial")
 	@Override
 	public void update(FinTypeAccount finTypeAccount, String type) {
 		int recordCount = 0;
@@ -266,10 +263,7 @@ public class FinTypeAccountDAOImpl extends BasisCodeDAO<FinTypeAccount> implemen
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004", finTypeAccount.getFinType(),
-					finTypeAccount.getFinCcy(),finTypeAccount.getEvent(),  finTypeAccount.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving ");
 	}
@@ -287,7 +281,7 @@ public class FinTypeAccountDAOImpl extends BasisCodeDAO<FinTypeAccount> implemen
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(FinTypeAccount finTypeAccount,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -301,13 +295,10 @@ public class FinTypeAccountDAOImpl extends BasisCodeDAO<FinTypeAccount> implemen
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",finTypeAccount.getFinType(),finTypeAccount.getFinCcy(),finTypeAccount.getEvent() ,finTypeAccount.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",finTypeAccount.getFinType(),finTypeAccount.getFinCcy(),finTypeAccount.getEvent(),finTypeAccount.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -341,19 +332,4 @@ public class FinTypeAccountDAOImpl extends BasisCodeDAO<FinTypeAccount> implemen
 		logger.debug("Leaving");
 	}
 	
-	private ErrorDetails  getError(String errorId, String finType,String finCcy,
-			String event, String userLanguage){
-		String[][] parms= new String[2][3]; 
-
-		parms[1][0] = finType;
-		parms[1][1] = finCcy;
-		parms[1][2] = event;
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_FinType")+ ":" + parms[1][0]
-		                +" "+ PennantJavaUtil.getLabel("label_FinCcy")+ ":" + parms[1][1];
-		parms[0][1]= PennantJavaUtil.getLabel("label_Event")+ ":" + parms[1][2];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
-				errorId, parms[0],parms[1]), userLanguage);
-	}
-
 }

@@ -60,13 +60,12 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>FinanceType model</b> class.<br>
@@ -291,7 +290,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(FinanceType financeType, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -308,16 +307,11 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql, beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
-						"41003", errParm, valueParm), financeType.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) { };
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
 			logger.debug("Error delete Method");
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
-					"41006", errParm, valueParm), financeType.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) { };
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -417,7 +411,6 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 	 * 
 	 */
 
-	@SuppressWarnings("serial")
 	@Override
 	public void update(FinanceType financeType, String type) {
 		int recordCount = 0;
@@ -483,16 +476,7 @@ public class FinanceTypeDAOImpl extends BasisCodeDAO<FinanceType> implements Fin
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			String[] valueParm = new String[2];
-			String[] errParm = new String[2];
-			valueParm[0] = financeType.getFinAcType();
-			errParm[0] = PennantJavaUtil.getLabel("label_FinType") + ":" + valueParm[0];
-
-			ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41004", errParm, valueParm), financeType.getUserDetails()
-			        .getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
