@@ -699,6 +699,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 
 			MessageUtil.showMessage("File Download process initiated.");
 			createNewPage("/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul", "menu_Item_MandatesFileDownlaods", args);
+			MandateProcess.sleep(4000);
 
 		} catch (Exception e) {
 			logger.error("Exception :", e);

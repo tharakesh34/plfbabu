@@ -206,6 +206,12 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 */
 	public void onClick$btnImport(Event event) throws InterruptedException {
 		this.btnImport.setDisabled(true);
+		
+		if(media == null){
+			MessageUtil.showErrorMessage("Please upload any file.");
+			return;	
+		}
+		
 		try {
 			Thread thread = null;
 			if (fileConfiguration.getSelectedItem().getValue().equals("DISB_HDFC_IMPORT")) {
@@ -238,6 +244,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		
 		if(!(StringUtils.endsWith(media.getName().toUpperCase(),".CSV" ))){
 			MessageUtil.showErrorMessage("Invalid file format.");
+			media = null;
 			return;
 		}
 		

@@ -207,10 +207,16 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	public void onClick$btnImport(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		
+		if(media == null){
+			MessageUtil.showErrorMessage("Please upload any file.");
+			return;	
+		}
+		
 		if (status != null && ExecutionStatus.I.name().equals(status.getStatus())) {
 			MessageUtil.showErrorMessage("Export is in progress for the selected configuration.");
 			return;
 		}
+		
 
 		this.btnImport.setDisabled(true);
 		try {
@@ -247,6 +253,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		
 		if(!(StringUtils.endsWith(media.getName().toUpperCase(),".CSV" ))){
 			MessageUtil.showErrorMessage("Invalid file format.");
+			media = null;
 			return;
 		}
 		

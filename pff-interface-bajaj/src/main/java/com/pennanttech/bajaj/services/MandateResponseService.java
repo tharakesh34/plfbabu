@@ -30,7 +30,7 @@ public class MandateResponseService extends BajajService implements ResponseMand
 
 		try {
 			sql = new StringBuilder();
-			sql.append(" SELECT MANDATEID, FINREFERENCE, CUSTCIF,  MICR_CODE, ACCT_NUMBER, OPENFLAG, MANDATE_TYPE, MANDATE_REG_NO mandateRef, STATUS");
+			sql.append(" SELECT MANDATEID, FINREFERENCE, CUSTCIF,  MICR_CODE, ACCT_NUMBER, OPENFLAG, MANDATE_TYPE, MANDATE_REG_NO mandateRef, STATUS, REMARKS reason");
 			sql.append(" FROM MANDATE_RESPONSE");
 			sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID");
 
