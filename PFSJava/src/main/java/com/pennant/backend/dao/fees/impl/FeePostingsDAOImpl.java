@@ -55,13 +55,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.fees.FeePostingsDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.fees.FeePostings;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>VASRecording model</b> class.<br>
@@ -164,7 +162,6 @@ public class FeePostingsDAOImpl extends BasisNextidDaoImpl<FeePostings> implemen
 	}
 	
 	@Override
-	@SuppressWarnings("serial")
 	public void update(FeePostings feePostings, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
@@ -185,15 +182,12 @@ public class FeePostingsDAOImpl extends BasisNextidDaoImpl<FeePostings> implemen
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",String.valueOf(feePostings.getPostId()) ,feePostings.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
 
 	@Override
-	@SuppressWarnings("serial")
 	public void delete(FeePostings feePostings, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -208,27 +202,12 @@ public class FeePostingsDAOImpl extends BasisNextidDaoImpl<FeePostings> implemen
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41003", String.valueOf(feePostings.getPostId()),
-						feePostings.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", String.valueOf(feePostings.getPostId()),
-					feePostings.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
-	}
-	
-	private ErrorDetails  getError(String errorId, String potId, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = potId;
-		parms[0][0] = PennantJavaUtil.getLabel("label_feePostingsDialog_PostingAgainst.value")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId,
-				parms[0],parms[1]), userLanguage);
 	}
 	
 }

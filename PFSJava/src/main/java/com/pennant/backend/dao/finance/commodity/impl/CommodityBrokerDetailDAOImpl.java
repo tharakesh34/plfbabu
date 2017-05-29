@@ -60,14 +60,12 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.commodity.CommodityBrokerDetailDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.finance.commodity.BrokerCommodityDetail;
 import com.pennant.backend.model.finance.commodity.CommodityBrokerDetail;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>CommodityBrokerDetail model</b> class.<br>
@@ -148,7 +146,7 @@ public class CommodityBrokerDetailDAOImpl extends BasisCodeDAO<CommodityBrokerDe
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(CommodityBrokerDetail commodityBrokerDetail,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -162,15 +160,10 @@ public class CommodityBrokerDetailDAOImpl extends BasisCodeDAO<CommodityBrokerDe
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",commodityBrokerDetail.getId() 
-						,commodityBrokerDetail.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",commodityBrokerDetail.getId() 
-					,commodityBrokerDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -224,7 +217,6 @@ public class CommodityBrokerDetailDAOImpl extends BasisCodeDAO<CommodityBrokerDe
 	 * 
 	 */
 	
-	@SuppressWarnings("serial")
 	@Override
 	public void update(CommodityBrokerDetail commodityBrokerDetail,String type) {
 		int recordCount = 0;
@@ -252,9 +244,7 @@ public class CommodityBrokerDetailDAOImpl extends BasisCodeDAO<CommodityBrokerDe
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",commodityBrokerDetail.getId() ,commodityBrokerDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -334,13 +324,5 @@ public class CommodityBrokerDetailDAOImpl extends BasisCodeDAO<CommodityBrokerDe
 		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
-	private ErrorDetails  getError(String errorId, String brokerCode, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = brokerCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_BrokerCode")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-
 	
 }

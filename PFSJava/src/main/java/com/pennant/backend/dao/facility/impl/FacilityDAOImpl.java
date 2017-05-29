@@ -59,13 +59,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.facility.FacilityDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.facility.Facility;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 
 
@@ -175,7 +173,7 @@ public class FacilityDAOImpl extends BasisCodeDAO<Facility> implements FacilityD
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(Facility facility,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -190,13 +188,10 @@ public class FacilityDAOImpl extends BasisCodeDAO<Facility> implements FacilityD
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",facility.getId() ,facility.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",facility.getId() ,facility.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -252,7 +247,6 @@ public class FacilityDAOImpl extends BasisCodeDAO<Facility> implements FacilityD
 	 * 
 	 */
 	
-	@SuppressWarnings("serial")
 	@Override
 	public void update(Facility facility,String type) {
 		int recordCount = 0;
@@ -277,9 +271,7 @@ public class FacilityDAOImpl extends BasisCodeDAO<Facility> implements FacilityD
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",facility.getId() ,facility.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -375,14 +367,5 @@ public class FacilityDAOImpl extends BasisCodeDAO<Facility> implements FacilityD
 		logger.debug("Leaving");
 		return facility;
 	}
-	
-
-	private ErrorDetails  getError(String errorId, String cAFReference, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = cAFReference;
-		parms[0][0] = PennantJavaUtil.getLabel("label_CAFReference")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-
 	
 }
