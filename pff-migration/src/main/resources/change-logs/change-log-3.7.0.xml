@@ -1746,4 +1746,22 @@ alter table finrepayheader modify SCHDREGENERATED number(1) not null;
 drop table sai_temp;
 	</sql>
 		</changeSet>
+	<changeSet id="89" author="pruthvi" dbms="oracle">
+		<sql>
+		update finrepayheader_Temp set SCHDREGENERATED = 0 where SCHDREGENERATED is null;
+alter table finrepayheader_Temp alter column SCHDREGENERATED bit not null;
+		</sql>
+		</changeSet>
+<changeSet id="90" author="pruthvi" dbms="mssql">
+<sql>
+update finrepayheader set SCHDREGENERATED = 0 where SCHDREGENERATED is null;
+alter table finrepayheader alter column SCHDREGENERATED bit not null;
+</sql>
+</changeSet>
+<changeSet id="90" author="pruthvi" dbms="postgresql">
+<sql>
+ALTER TABLE finrepayheader ALTER COLUMN schdregenerated TYPE smallint using (schdregenerated::integer); 
+ALTER TABLE finrepayheader_temp ALTER COLUMN schdregenerated TYPE smallint using (schdregenerated::integer);
+</sql>
+</changeSet>
 </databaseChangeLog>
