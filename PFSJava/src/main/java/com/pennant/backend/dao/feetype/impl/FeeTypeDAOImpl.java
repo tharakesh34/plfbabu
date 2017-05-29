@@ -255,4 +255,39 @@ public class FeeTypeDAOImpl extends BasisNextidDaoImpl<FeeType> implements FeeTy
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
+	/**
+	 * Fetch the Record FeeType details by Fee code
+	 * 
+	 * @param feeTypeCode
+	 *            (String)
+	 * @return FeeType
+	 */
+	@Override
+	public FeeType getApprovedFeeTypeByFeeCode(String feeTypeCode) {
+		logger.debug("Entering");
+
+		FeeType feeType = new FeeType();
+		feeType.setFeeTypeCode(feeTypeCode);
+		StringBuilder selectSql = new StringBuilder();
+
+		selectSql.append(" Select feeTypeID, feeTypeCode, feeTypeDesc, active, manualAdvice, AdviseType, AccountSetId");
+		selectSql.append(" From FeeTypes");
+		selectSql.append(" Where FeeTypeCode =:FeeTypeCode");
+
+		logger.debug("sql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeType);
+		RowMapper<FeeType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FeeType.class);
+
+		try {
+			feeType = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			feeType = null;
+		}
+
+		logger.debug("Leaving");
+		return feeType;
+
+	}
 }

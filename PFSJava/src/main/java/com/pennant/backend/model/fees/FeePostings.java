@@ -32,6 +32,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.LoggedInUser;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -41,28 +45,49 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  * Model class for the <b>JVPosting table</b>.<br>
  * 
  */
+@XmlAccessorType(XmlAccessType.NONE)
 public class FeePostings extends AbstractWorkflowEntity implements Entity {
 	private static final long	serialVersionUID	= 1L;
 
 	private long				postId =Long.MIN_VALUE;
 	private String				postAgainst;
 	private String				reference;
+	@XmlElement(name= "feeCode")
 	private String				feeTyeCode;
+	@XmlElement(name = "amount")
 	private BigDecimal			postingAmount;
 	private Date				postDate;
+	@XmlElement
 	private Date				valueDate;
 	private boolean				newRecord			= false;
 	private String				lovValue;
 	private FeePostings			befImage;
 	private LoggedInUser		userDetails;
+	@XmlElement(name="ccy")
 	private String				currency;
+	@XmlElement
 	private String				remarks;
+	@XmlElement
 	private long 				partnerBankId;
 	private String                 accountSetId;
 	private List<ReturnDataSet> 				returnDataSetList 	= new ArrayList<ReturnDataSet>(1);
 	private String				partnerBankName;
 	private String				partnerBankAc;
     private String 			    partnerBankAcType;
+    
+    //API Specific
+    @XmlElement
+    private String cif;
+    @XmlElement
+	private long limitId = Long.MIN_VALUE;
+    @XmlElement
+	private String finReference;
+    @XmlElement
+    private String collateralRef;
+    private String sourceId;
+	// API validation purpose only
+	@SuppressWarnings("unused")
+	private FeePostings validateFeePostings = this;
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -82,6 +107,12 @@ public class FeePostings extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("accountSetId");
 		excludeFields.add("currency");
 		excludeFields.add("partnerBankAcType");
+		excludeFields.add("cif");
+		excludeFields.add("limitId");
+		excludeFields.add("finReference");
+		excludeFields.add("sourceId");
+		excludeFields.add("validateFeePostings");
+		excludeFields.add("collateralRef");
 		return excludeFields;
 	}
 
@@ -261,6 +292,46 @@ public class FeePostings extends AbstractWorkflowEntity implements Entity {
 
 	public void setPartnerBankAcType(String partnerBankAcType) {
 		this.partnerBankAcType = partnerBankAcType;
+	}
+
+	public String getCif() {
+		return cif;
+	}
+
+	public void setCif(String cif) {
+		this.cif = cif;
+	}
+
+	public long getLimitId() {
+		return limitId;
+	}
+
+	public void setLimitId(long limitId) {
+		this.limitId = limitId;
+	}
+
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
+	}
+
+	public String getCollateralRef() {
+		return collateralRef;
+	}
+
+	public void setCollateralRef(String collateralRef) {
+		this.collateralRef = collateralRef;
 	}
 
 }

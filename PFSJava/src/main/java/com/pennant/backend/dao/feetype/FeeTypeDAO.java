@@ -61,5 +61,7 @@ public interface FeeTypeDAO extends BasicCrudDao<FeeType> {
 	 * @return true if the record exists.
 	 */
 	boolean isDuplicateKey(long feeTypeID, String feeTypeCode, TableType tableType);
+
+	FeeType getApprovedFeeTypeByFeeCode(String feeTyeCode);
 	
 }

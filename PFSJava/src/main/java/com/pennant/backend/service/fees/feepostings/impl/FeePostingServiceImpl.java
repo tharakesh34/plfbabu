@@ -58,12 +58,15 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.fees.FeePostingsDAO;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.limit.LimitHeaderDAO;
+import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.ErrorDetails;
@@ -72,8 +75,10 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.fees.FeePostings;
+import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.limit.LimitHeader;
+import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -97,7 +102,9 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 	private FinanceMainDAO 		   	financeMainDAO;
 	private AccountingSetDAO        accountingSetDAO;
 	private CustomerDAO				customerDAO;
-	private CollateralSetupDAO      collateralSetupDAO;
+	private CollateralSetupDAO		collateralSetupDAO;
+	private PartnerBankDAO			partnerBankDAO;
+	private FeeTypeDAO				feeTypeDAO;
 	private LimitHeaderDAO 			limitHeaderDAO;  
 
 	@Override
@@ -325,12 +332,15 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getFeePostingsDAO().delete(feePostings, "_Temp");
+		if(!StringUtils.equals(feePostings.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
+			getFeePostingsDAO().delete(feePostings, "_Temp");
 
-		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
-				feePostings.getBefImage(), feePostings));
-		auditHeader.setAuditDetails(auditDetailList);
-		getAuditHeaderDAO().addAudit(auditHeader);
+			auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
+					feePostings.getBefImage(), feePostings));
+			auditHeader.setAuditDetails(auditDetailList);
+			getAuditHeaderDAO().addAudit(auditHeader);
+		}
+
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
@@ -512,7 +522,219 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		logger.debug("Leaving");
 		return auditHeader;
 
+
+	}
 	
+	/**
+	 * Validate FeePostings.
+	 * @param feePostings
+	 * 
+	 * @return AuditDetail
+	 */
+	@Override
+	public AuditDetail doValidations(FeePostings feePostings) {
+		AuditDetail auditDetail = new AuditDetail();
+		ErrorDetails errorDetail = new ErrorDetails();
+		if(StringUtils.isBlank(feePostings.getCif()) && StringUtils.isBlank(feePostings.getFinReference())
+				&& StringUtils.isBlank(feePostings.getCollateralRef()) && feePostings.getLimitId() <= 0) {
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90292", "", null));
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
+		} else {
+			boolean isMultiValues = getPostingAgainst(feePostings);
+			if(isMultiValues) {
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90293", "", null));
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+		}
+		
+		switch (feePostings.getPostAgainst()) {
+		case FinanceConstants.POSTING_AGAINST_CUST:
+			Customer customer = customerDAO.getCustomerByCIF(feePostings.getCif(), "");
+			if (customer != null) {
+				feePostings.setReference(feePostings.getCif());
+				// validate currency
+				if (StringUtils.isNotBlank(feePostings.getCurrency())) {
+					if (!StringUtils.equalsIgnoreCase(feePostings.getCurrency(),  customer.getCustBaseCcy())) {
+						String[] valueParm = new String[2];
+						valueParm[0] = feePostings.getCurrency();
+						valueParm[1] = "Customer: "+customer.getCustBaseCcy();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90294", "", valueParm)));
+					} else {
+						feePostings.setCurrency(customer.getCustBaseCcy());
+					}
+				}
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = feePostings.getCif();
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90101", "", valueParm));
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+			break;
+		case FinanceConstants.POSTING_AGAINST_LOAN:
+			FinanceMain financeMain = financeMainDAO.getFinanceMainById(feePostings.getFinReference(), "", false);
+			if (financeMain != null) {
+				feePostings.setReference(feePostings.getFinReference());
+				// validate currency
+				if (StringUtils.isNotBlank(feePostings.getCurrency())) {
+					if (!StringUtils.equalsIgnoreCase(feePostings.getCurrency(), financeMain.getFinCcy())) {
+						String[] valueParm = new String[2];
+						valueParm[0] = feePostings.getCurrency();
+						valueParm[1] = "Loan: "+financeMain.getFinCcy();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90294", "", valueParm)));
+						return auditDetail;
+					} else {
+						feePostings.setCurrency(financeMain.getFinCcy());
+					}
+				}
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = feePostings.getFinReference();
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90201", "", valueParm));
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+			break;
+		case FinanceConstants.POSTING_AGAINST_LIMIT:
+			LimitHeader limitHeader = limitHeaderDAO.getLimitHeaderById(feePostings.getLimitId(), "");
+			if(limitHeader != null ) {
+				feePostings.setReference(String.valueOf(feePostings.getLimitId()));
+				// validate currency
+				if (StringUtils.isNotBlank(feePostings.getCurrency())) {
+					if (!StringUtils.equalsIgnoreCase(feePostings.getCurrency(), limitHeader.getLimitCcy())) {
+						String[] valueParm = new String[2];
+						valueParm[0] = feePostings.getCurrency();
+						valueParm[1] = "Limit: "+limitHeader.getLimitCcy();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90294", "", valueParm)));
+					} else {
+						feePostings.setCurrency(limitHeader.getLimitCcy());
+					}
+				}
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = String.valueOf(feePostings.getLimitId());
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90807", "", valueParm)));
+				return auditDetail;
+			}
+			break;
+		case FinanceConstants.POSTING_AGAINST_COLLATERAL:
+			CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(feePostings.getCollateralRef(),"");
+			if (collateralSetup != null) {
+				feePostings.setReference(feePostings.getCollateralRef());
+				// validate currency
+				if (StringUtils.isNotBlank(feePostings.getCurrency())) {
+					if (!StringUtils.equalsIgnoreCase(feePostings.getCurrency(), collateralSetup.getCollateralCcy())) {
+						String[] valueParm = new String[2];
+						valueParm[0] = feePostings.getCurrency();
+						valueParm[1] = "Collateral: "+collateralSetup.getCollateralCcy();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90294", "", valueParm)));
+					} else {
+						feePostings.setCurrency(collateralSetup.getCollateralCcy());
+					}
+				}
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = feePostings.getCollateralRef();
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90906", "", valueParm));
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+			break;
+
+		default:
+			
+			break;
+		}
+		//ValueDate
+		if(feePostings.getValueDate() == null) {
+		feePostings.setValueDate(DateUtility.getAppDate());
+		} else {
+			Date minReqPostingDate = DateUtility.addDays(DateUtility.getAppDate(),
+					-SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));
+			if (feePostings.getValueDate().before(minReqPostingDate)
+					|| feePostings.getValueDate().after(DateUtility.getAppDate())) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "Value Date";
+				valueParm[1] = DateUtility.formatToLongDate(minReqPostingDate);
+				valueParm[2] = DateUtility.formatToLongDate(DateUtility.getAppDate());
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+			}
+		}
+		
+		PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(feePostings.getPartnerBankId(), "");
+		if (partnerBank == null) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "PartnerBank";
+			valueParm[1] = String.valueOf(feePostings.getPartnerBankId());
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90295", "", valueParm)));
+		} else {
+			feePostings.setPartnerBankAc(partnerBank.getAccountNo());
+			feePostings.setPartnerBankAcType(partnerBank.getAcType());
+			feePostings.setPartnerBankName(partnerBank.getPartnerBankName());
+		}
+
+		FeeType feeType = feeTypeDAO.getApprovedFeeTypeByFeeCode(feePostings.getFeeTyeCode());
+		if (feeType == null) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Fee";
+			valueParm[1] = feePostings.getFeeTyeCode();
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90295", "", valueParm)));
+		} else {
+			feePostings.setAccountSetId(String.valueOf(feeType.getAccountSetId()));
+		}
+
+		return auditDetail;
+	}
+	
+	private boolean getPostingAgainst(FeePostings feePostings) {
+		boolean isMutiValues = false;
+		
+		// Posting against customer
+		if (StringUtils.isNotBlank(feePostings.getCif())) {
+			if (StringUtils.isNotBlank(feePostings.getFinReference())
+					|| StringUtils.isNotBlank(feePostings.getCollateralRef()) || feePostings.getLimitId() > 0) {
+				isMutiValues = true;
+				return isMutiValues;
+			} else {
+				feePostings.setPostAgainst(FinanceConstants.POSTING_AGAINST_CUST);
+			}
+		}
+		
+		// Posting against Finance
+		if (StringUtils.isNotBlank(feePostings.getFinReference())) {
+			if (StringUtils.isNotBlank(feePostings.getCif())
+					|| StringUtils.isNotBlank(feePostings.getCollateralRef()) || feePostings.getLimitId() > 0) {
+				isMutiValues = true;
+				return isMutiValues;
+			} else {
+				feePostings.setPostAgainst(FinanceConstants.POSTING_AGAINST_LOAN);
+			}
+		}
+		
+		// Posting against collateral
+		if (StringUtils.isNotBlank(feePostings.getCollateralRef())) {
+			if (StringUtils.isNotBlank(feePostings.getCif())
+					|| StringUtils.isNotBlank(feePostings.getFinReference()) || feePostings.getLimitId() > 0) {
+				isMutiValues = true;
+				return isMutiValues;
+			} else {
+				feePostings.setPostAgainst(FinanceConstants.POSTING_AGAINST_COLLATERAL);
+			}
+		}
+		
+		// Posting against limit
+		if (feePostings.getLimitId() > 0) {
+			if (StringUtils.isNotBlank(feePostings.getCif())
+					|| StringUtils.isNotBlank(feePostings.getFinReference()) || StringUtils.isNotBlank(feePostings.getCollateralRef())) {
+				isMutiValues = true;
+				return isMutiValues;
+			} else {
+				feePostings.setPostAgainst(FinanceConstants.POSTING_AGAINST_LIMIT);
+			}
+		}
+		return isMutiValues;
 	}
 
 	public AuditHeaderDAO getAuditHeaderDAO() {
@@ -547,7 +769,6 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		this.postingsDAO = postingsDAO;
 	}
 
-
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
@@ -560,23 +781,23 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		this.accountingSetDAO = accountingSetDAO;
 	}
 
-	
-
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
-	}
-
-	public CollateralSetupDAO getCollateralSetupDAO() {
-		return collateralSetupDAO;
 	}
 
 	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
 		this.collateralSetupDAO = collateralSetupDAO;
 	}
 
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
+	}
+
+	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
+		this.partnerBankDAO = partnerBankDAO;
+	}
 
 	public void setLimitHeaderDAO(LimitHeaderDAO limitHeaderDAO) {
 		this.limitHeaderDAO = limitHeaderDAO;
 	}
-
 }

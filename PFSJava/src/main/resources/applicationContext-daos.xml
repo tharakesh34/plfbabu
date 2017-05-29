@@ -9767,7 +9767,8 @@
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="collateralSetupDAO" ref="collateralSetupDAO" />	
 		<property name="limitHeaderDAO" ref="limitHeaderDAO" />
-
+		<property name="partnerBankDAO" ref="partnerBankDAO" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />	
 	</bean>
 	<!-- BuilderCompany -->
 	<bean id="builderCompanyDAO"
