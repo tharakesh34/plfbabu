@@ -13,12 +13,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
 
 public class PayOrderIssueHeaderDAOImpl implements PayOrderIssueHeaderDAO {
 
@@ -74,14 +71,6 @@ public class PayOrderIssueHeaderDAOImpl implements PayOrderIssueHeaderDAO {
 
 	}
 
-	
-	private ErrorDetails getError(String errorId, String finReference, String userLanguage) {
-		String[][] parms = new String[2][1];
-		parms[1][0] = finReference;
-		parms[0][0] = PennantJavaUtil.getLabel("label_FinanceRef") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId,
-		        parms[0], parms[1]), userLanguage);
-	}
 
 	/**
 	 * This method updates the Record PayOrderIssueHeader or PayOrderIssueHeader_Temp. if Record not updated then throws
@@ -95,7 +84,6 @@ public class PayOrderIssueHeaderDAOImpl implements PayOrderIssueHeaderDAO {
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(PayOrderIssueHeader paymentOrderIssue, String type) {
 		int recordCount = 0;
@@ -120,11 +108,7 @@ public class PayOrderIssueHeaderDAOImpl implements PayOrderIssueHeaderDAO {
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", paymentOrderIssue
-			        .getFinReference(), paymentOrderIssue.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 
