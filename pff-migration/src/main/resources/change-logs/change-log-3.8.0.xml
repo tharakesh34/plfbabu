@@ -293,4 +293,12 @@
 		RMTLovFieldDetail   T2 ON T1.Segmentation = T2.FIELDCODEVALUE
 	</createView>
 	</changeSet>
+	<changeSet id="15" author="Srikanth">
+	<sql>
+		INSERT INTO ErrorDetails VALUES('90292','EN','E','Request should contain any one of cif/limitId/collateralRef/finReference.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		INSERT INTO ErrorDetails VALUES('90293','EN','E','cif,limitId,collateralRef,finReference are mutually exclusive.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		INSERT INTO ErrorDetails VALUES('90294','EN','E','Currency {0} should match with given {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		INSERT INTO ErrorDetails VALUES('90295','EN','E','No {0} available with code:{1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
