@@ -2072,4 +2072,12 @@ ALTER TABLE finrepayheader_temp ALTER COLUMN schdregenerated TYPE smallint using
 		FROM     PaymentInstructions
 		</createView>
 	</changeSet>
+	
+	<changeSet id="107" author="Madhubabu">
+	<sql>
+	delete from BMTAEEvents  where AEEventCode='MANFEE';
+	Insert into BMTAEEvents values ('MANFEE','Fee Posting',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,1,1,1);
+	</sql>
+	
+	</changeSet>
 </databaseChangeLog>
