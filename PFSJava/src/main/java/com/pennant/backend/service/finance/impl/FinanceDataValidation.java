@@ -1074,6 +1074,19 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90401", valueParm)));
 					return errorDetails;
 				}
+				
+				//validate PAN
+				 Customer customer = financeDetail.getCustomerDetails().getCustomer();
+				 if(customer != null) {
+					 if(StringUtils.equals("03", detail.getDocCategory())){
+						 if(!StringUtils.equals(detail.getCustDocTitle(), customer.getCustCRCPR())){
+							 String[] valueParm = new String[1];
+							 valueParm[0] = customer.getCustCRCPR();
+							 errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90296", valueParm)));
+							 return errorDetails;
+						 }
+					 }
+				 }
 
 				// validate Is Customer document?
 				if (docType.isDocIsCustDoc()) {
