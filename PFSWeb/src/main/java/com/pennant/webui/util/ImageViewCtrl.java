@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Iframe;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -19,6 +20,7 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = -624134530458308782L;
 	protected Window			window_ImageView;
 	protected Iframe			document;
+	protected Label				label_RefId;
 
 	private final static Logger	logger				= Logger.getLogger(ImageViewCtrl.class);
 
@@ -87,7 +89,18 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 				}
 
 			}
-
+			if (arguments.containsKey("documentRef")) {
+				this.window_ImageView.setWidth("90%");
+				this.window_ImageView.setHeight("80%");
+				this.label_RefId.setVisible(true);
+				
+				DocumentDetails docDetail = (DocumentDetails) arguments.get("documentRef");
+				if (docDetail != null && docDetail.getDocUri() != null) {
+					label_RefId.setVisible(true);
+					document.setVisible(false);
+					label_RefId.setValue(docDetail.getDocUri());
+				}
+			}
 			document.setHeight(getBorderLayoutHeight());
 			this.window_ImageView.doModal();
 		} catch (Exception e) {

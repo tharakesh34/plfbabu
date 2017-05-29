@@ -217,9 +217,8 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		long docId  = Long.parseLong(event.getData().toString());
 		DocumentDetails detail = getFinanceDetailService().getFinDocDetailByDocId(docId, "_View", true);
 
-		if(StringUtils.isNotBlank(detail.getDocName()) && detail.getDocImage() != null && 
-				StringUtils.isNotBlank(detail.getDocImage().toString())){
-
+		if (StringUtils.isNotBlank(detail.getDocName()) && detail.getDocImage() != null
+				&& StringUtils.isNotBlank(detail.getDocImage().toString())) {
 			try {
 				if (StringUtils.trimToEmpty(detail.getDoctype()).equals(PennantConstants.DOC_TYPE_WORD)) {
 					Filedownload.save(detail.getDocImage(), "application/msword", detail.getDocName());
@@ -231,7 +230,11 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 			} catch (Exception e) {
 				logger.debug(e);
 			}
-		}else{
+		} else if (StringUtils.isNotBlank(detail.getDocUri())) {
+				HashMap<String, Object> map = new HashMap<String, Object>();
+				map.put("documentRef", detail);
+				Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
+		} else {
 			MessageUtil.showErrorMessage("Document Details not Found.");
 		}
 		logger.debug("Leaving" + event.toString());

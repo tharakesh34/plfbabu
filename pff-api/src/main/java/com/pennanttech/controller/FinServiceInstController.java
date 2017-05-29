@@ -732,7 +732,7 @@ public class FinServiceInstController extends SummaryDetailService {
 						advPayment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 						advPayment.setUserDetails(financeMain.getUserDetails());
 						advPayment.setPaymentSeq(paymentSeq+1);
-						advPayment.setLLDate(null);
+						advPayment.setDisbCCy(financeMain.getFinCcy());
 						
 
 						if (StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IMPS)
