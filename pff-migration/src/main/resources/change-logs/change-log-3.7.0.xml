@@ -2080,4 +2080,11 @@ ALTER TABLE finrepayheader_temp ALTER COLUMN schdregenerated TYPE smallint using
 	</sql>
 	
 	</changeSet>
+	<changeSet id="108" author="DDP">
+	<sql>
+update finadvancepayments set disbccy='INR' where disbccy is null;
+update finadvancepayments set lldate=CURRENT_TIMESTAMP where lldate is null;
+</sql>
+	
+	</changeSet>
 </databaseChangeLog>
