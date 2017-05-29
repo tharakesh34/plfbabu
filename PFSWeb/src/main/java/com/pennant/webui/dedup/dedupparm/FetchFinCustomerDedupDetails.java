@@ -35,6 +35,7 @@ public class FetchFinCustomerDedupDetails {
 	
 	@SuppressWarnings("unchecked")
 	public static FinanceDetail getFinCustomerDedup(String userRole, FinanceDetail aFinanceDetail, Window parentWindow, String curLoginUser) throws PFFInterfaceException {
+		logger.debug("Entering");
 		List<CustomerDedup> customerDedupList=null;
 		int userAction= -1;
 		Customer customer = null;
