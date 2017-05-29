@@ -311,4 +311,10 @@
 			INSERT INTO ReportList Values('VASRecording','VASRecording','listheader_ProductCode.label,listheader_PostingAgainst.label,listheader_PrimaryLinkRef.label,listheader_VasReference.label,listheader_FeePaymentMode.label,','productCode,postingAgainst,primaryLinkRef,vasReference,feePaymentMode','String,String,String,String,String','','ReportList05','VAS Recording','Loan Origination',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
 		</sql>
 	</changeSet>
+	<changeSet id="17" author="Srikanth">
+	<sql>
+	delete from errorDetails Where ErrorCode = '90296';
+	INSERT INTO ErrorDetails VALUES('90296','EN','E','PAN mismatch, Customer already having PAN:{0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
