@@ -1693,6 +1693,7 @@ Insert into reportlist values('BuilderProjcet','BuilderProjcet','listheader_name
 			
 		</sql>
 	</changeSet>
+		
 	
 	<changeSet id="87" author="Vinay">
 	<createView viewName="BuilderGroup_View" replaceIfExists="true">
@@ -1719,4 +1720,30 @@ Insert into reportlist values('BuilderProjcet','BuilderProjcet','listheader_name
 		RMTLovFieldDetail   T2 ON T1.Segmentation = T2.FIELDCODEVALUE
 		</createView>
 	</changeSet>
+	<changeSet id="89" author="pruthvi" dbms="oracle">
+		<sql>
+		alter table finrepayheader_Temp modify SCHDREGENERATED default null;
+update finrepayheader_Temp set SCHDREGENERATED = 0 where SCHDREGENERATED is null;
+create table sai_temp as select * from finrepayheader_Temp;
+alter table finrepayheader_Temp modify (SCHDREGENERATED NULL);
+update finrepayheader_Temp set SCHDREGENERATED = null;
+alter table finrepayheader_Temp modify SCHDREGENERATED number(1);
+update finrepayheader_Temp m set (m.SCHDREGENERATED) = (select t.SCHDREGENERATED from sai_temp t where t.REPAYID = m.REPAYID and t.RECEIPTSEQID = m.RECEIPTSEQID) where exists (select 1 from sai_temp t where t.REPAYID = m.REPAYID and t.RECEIPTSEQID = m.RECEIPTSEQID);
+alter table finrepayheader_Temp modify SCHDREGENERATED number(1) not null;
+drop table sai_temp;	
+	</sql>
+		</changeSet>
+			<changeSet id="90" author="pruthvi" dbms="oracle">
+		<sql>
+		alter table finrepayheader modify SCHDREGENERATED default null;
+update finrepayheader set SCHDREGENERATED = 0 where SCHDREGENERATED is null;
+create table sai_temp as select * from finrepayheader;
+alter table finrepayheader modify (SCHDREGENERATED NULL);
+update finrepayheader set SCHDREGENERATED = null;
+alter table finrepayheader modify SCHDREGENERATED number(1);
+update finrepayheader m set (m.SCHDREGENERATED) = (select t.SCHDREGENERATED from sai_temp t where t.REPAYID = m.REPAYID and t.RECEIPTSEQID = m.RECEIPTSEQID) where exists (select 1 from sai_temp t where t.REPAYID = m.REPAYID and t.RECEIPTSEQID = m.RECEIPTSEQID);
+alter table finrepayheader modify SCHDREGENERATED number(1) not null;
+drop table sai_temp;
+	</sql>
+		</changeSet>
 </databaseChangeLog>
