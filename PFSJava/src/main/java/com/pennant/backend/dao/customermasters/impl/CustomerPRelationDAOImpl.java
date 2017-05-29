@@ -56,13 +56,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.CustomerPRelationDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.customermasters.CustomerPRelation;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>CustomerPRelation model</b> class.<br>
@@ -149,7 +147,7 @@ public class CustomerPRelationDAOImpl extends BasisNextidDaoImpl<CustomerPRelati
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(CustomerPRelation customerPRelation,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -166,16 +164,10 @@ public class CustomerPRelationDAOImpl extends BasisNextidDaoImpl<CustomerPRelati
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails=getError("41003", customerPRelation.getPRCustID(),
-						customerPRelation.getPRCustPRSNo(),
-						customerPRelation.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006", customerPRelation.getPRCustID(),
-					customerPRelation.getPRCustPRSNo(), customerPRelation.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -183,7 +175,7 @@ public class CustomerPRelationDAOImpl extends BasisNextidDaoImpl<CustomerPRelati
 	/**
 	 * Method for Deletion of Customer Related List of CustomerRatings
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void deleteByCustomer(final long id,String type) {
 		logger.debug("Entering delete Method");
 		int recordCount = 0;
@@ -202,16 +194,10 @@ public class CustomerPRelationDAOImpl extends BasisNextidDaoImpl<CustomerPRelati
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003", customerPRelation.getPRCustID(),
-						customerPRelation.getPRCustPRSNo(),
-						customerPRelation.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails=getError("41006", customerPRelation.getPRCustID(),
-					customerPRelation.getPRCustPRSNo(), customerPRelation.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -277,7 +263,6 @@ public class CustomerPRelationDAOImpl extends BasisNextidDaoImpl<CustomerPRelati
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(CustomerPRelation customerPRelation,String type) {
 		int recordCount = 0;
@@ -310,10 +295,7 @@ public class CustomerPRelationDAOImpl extends BasisNextidDaoImpl<CustomerPRelati
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails= getError("41004", customerPRelation.getPRCustID(),
-					customerPRelation.getPRCustPRSNo(), customerPRelation.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -376,17 +358,4 @@ public class CustomerPRelationDAOImpl extends BasisNextidDaoImpl<CustomerPRelati
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,typeRowMapper);
 	}
 	
-	private ErrorDetails  getError(String errorId, long customerID,int sNo, String userLanguage){
-		String[][] parms= new String[2][2]; 
-		
-		parms[1][0] = String.valueOf(customerID);
-		parms[1][1] = String.valueOf(sNo);
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_PRCustID")+ ":" + parms[1][0];
-		parms[0][1] = PennantJavaUtil.getLabel("label_PRCustPRSNo")+ ":" + parms[1][1];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
-				errorId, parms[0],parms[1]), userLanguage);
-	}
-
-
 }

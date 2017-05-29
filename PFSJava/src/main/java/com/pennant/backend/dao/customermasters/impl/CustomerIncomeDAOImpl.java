@@ -59,13 +59,11 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.customermasters.CustomerIncome;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>CustomerIncome model</b> class.<br>
@@ -209,7 +207,7 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(CustomerIncome customerIncome, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -227,17 +225,10 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41004",customerIncome.getCustID(),
-						customerIncome.getCustIncomeType(),customerIncome.getCategory(), 
-						customerIncome.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006",customerIncome.getCustID(),
-					customerIncome.getCustIncomeType(),customerIncome.getCategory(),
-					customerIncome.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -364,7 +355,6 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(CustomerIncome customerIncome, String type) {
 		int recordCount = 0;
@@ -388,29 +378,9 @@ public class CustomerIncomeDAOImpl extends BasisCodeDAO<CustomerIncome> implemen
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41003",customerIncome.getCustID(),
-					customerIncome.getCustIncomeType(),customerIncome.getCategory(),
-					customerIncome.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
-	}
-
-	private ErrorDetails  getError(String errorId, long customerID,
-			String incomeType,String incomeCategory, String userLanguage){
-		
-		String[][] parms= new String[2][3]; 
-
-		parms[1][0] = String.valueOf(customerID);
-		parms[1][1] = incomeType;
-		parms[1][2] = incomeCategory;
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_CustID")+ ":" + parms[1][0] +
-						PennantJavaUtil.getLabel("label_CustIncomeType")+ ":" + parms[1][1];
-		parms[0][1]= PennantJavaUtil.getLabel("label_CustIncomeCategory")+ ":" + parms[1][2];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
-				errorId, parms[0],parms[1]), userLanguage);
 	}
 
 	/**

@@ -57,13 +57,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>CustomerPhoneNumber model</b> class.<br>
@@ -143,7 +141,7 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(CustomerPhoneNumber customerPhoneNumber,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -160,17 +158,10 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003", customerPhoneNumber.getPhoneCustID(),
-						customerPhoneNumber.getPhoneTypeCode(),
-						customerPhoneNumber.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006", customerPhoneNumber.getPhoneCustID(),
-					customerPhoneNumber.getPhoneTypeCode(),
-					customerPhoneNumber.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -221,7 +212,6 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(CustomerPhoneNumber customerPhoneNumber,String type) {
 		int recordCount = 0;
@@ -247,10 +237,7 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004", customerPhoneNumber.getPhoneCustID(),customerPhoneNumber.getPhoneTypeCode(),
-					customerPhoneNumber.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -340,17 +327,6 @@ public class CustomerPhoneNumberDAOImpl extends BasisCodeDAO<CustomerPhoneNumber
 		logger.debug("Leaving");
 	}
 	
-	private ErrorDetails  getError(String errorId, long customerID,String phoneType, String userLanguage){
-		String[][] parms= new String[2][2]; 
-		
-		parms[1][0] = String.valueOf(customerID);
-		parms[1][1] = phoneType;
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_CustID")+ ":" + parms[1][0];
-		parms[0][1] = PennantJavaUtil.getLabel("label_PhoneTypeCode")+ ":" + parms[1][1];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
-				errorId, parms[0],parms[1]), userLanguage);
-	}
 
 	/**
 	 * Fetch the Customer PhoneNumber By its CustPhoneId
