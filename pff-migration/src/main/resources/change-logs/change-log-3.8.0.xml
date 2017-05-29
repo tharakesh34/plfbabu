@@ -301,4 +301,14 @@
 		INSERT INTO ErrorDetails VALUES('90295','EN','E','No {0} available with code:{1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 	</changeSet>
+	<changeSet id="16" author="Irfan">
+		<sql>
+			delete from ReportList where Code='VASWorkFlow';
+			delete from ReportList where Code='VASRecording';
+			
+			INSERT INTO ReportList	Values('VASWorkFlow','VASWorkFlow','listheader_FinType.label,listheader_ScreenCode.label,listheader_WorkFlowType.label','finType,screenCode,workFlowType','String,String,String','','ReportList03','VAS WorkFlow','Solution	Factory',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
+
+			INSERT INTO ReportList Values('VASRecording','VASRecording','listheader_ProductCode.label,listheader_PostingAgainst.label,listheader_PrimaryLinkRef.label,listheader_VasReference.label,listheader_FeePaymentMode.label,','productCode,postingAgainst,primaryLinkRef,vasReference,feePaymentMode','String,String,String,String,String','','ReportList05','VAS Recording','Loan Origination',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
