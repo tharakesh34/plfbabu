@@ -16,13 +16,11 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.finance.FinWriteoffPayment;
 import com.pennant.backend.model.finance.FinanceWriteoff;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 
@@ -129,7 +127,6 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void delete(String finReference,String type) {
 		logger.debug("Entering");
@@ -147,13 +144,11 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",financeWriteoff.getFinReference() ,PennantConstants.default_Language);
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",financeWriteoff.getFinReference() ,PennantConstants.default_Language);
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
+
 		}
 		logger.debug("Leaving");
 	}
@@ -209,7 +204,6 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(FinanceWriteoff financeWriteoff,String type) {
 		int recordCount = 0;
@@ -234,21 +228,11 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",financeWriteoff.getFinReference() ,PennantConstants.default_Language);
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
 	
-	private ErrorDetails  getError(String errorId, String finReference, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = finReference;
-		parms[0][0] = PennantJavaUtil.getLabel("label_FinReference")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-	
-
 	@Override
 	public FinWriteoffPayment getFinWriteoffPaymentById(String finReference,
 			String type) {
@@ -276,7 +260,6 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 		return finWriteoffPayment;
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void deletefinWriteoffPayment(String finReference,long seqNo, String type) {
 		logger.debug("Entering");
@@ -295,13 +278,10 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",finWriteoffPayment.getFinReference() ,PennantConstants.default_Language);
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",finWriteoffPayment.getFinReference() ,PennantConstants.default_Language);
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 		
@@ -327,7 +307,6 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 		return finWriteoffPayment.getFinReference();
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void updateFinWriteoffPayment(FinWriteoffPayment finWriteoffPayment,
 			String type) {
@@ -346,9 +325,7 @@ public class FinanceWriteoffDAOImpl implements FinanceWriteoffDAO {
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",finWriteoffPayment.getFinReference() ,PennantConstants.default_Language);
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 		
