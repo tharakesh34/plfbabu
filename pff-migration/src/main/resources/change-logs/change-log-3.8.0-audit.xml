@@ -7,5 +7,14 @@
 <property name="call.concatenate" value="||" dbms="oracle" />
 <property name="call.maindb" value="PLF.." dbms="mssql"/>
 <property name="call.maindb" value="PLF." dbms="oracle"/>
+ 
+ 	<changeSet id="01" author="SreeRavali">
+		<dropColumn columnName="RestructureReference" tableName="ADTFinancemain" />
+	</changeSet>
+	<changeSet id="02" author="SreeRavali">
+		<addColumn tableName="ADTFinanceMain">
+			<column name="OldFinReference" type="varchar2(20)" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
