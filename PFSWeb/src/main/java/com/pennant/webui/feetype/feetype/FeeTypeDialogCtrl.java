@@ -66,6 +66,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -79,6 +80,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
+import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -420,6 +422,11 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.accountingSetID.setValidateColumns(new String[] { "AccountSetCode" });
 		this.accountingSetID.setMandatoryStyle(false);
 		
+		Filter filters[] = new Filter[1];
+		filters[0] = new Filter("AccountSetCode", AccountEventConstants.ACCEVENT_MANFEE,Filter.OP_EQUAL);
+		
+		this.accountingSetID.setFilters(filters);
+		
 		if (isWorkFlowEnabled()){
 			this.groupboxWf.setVisible(true);
 		}else{
@@ -487,7 +494,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			AccountingSet accountingSet = (AccountingSet) this.accountingSetID.getObject();
 			if(accountingSet != null){
 				aFeeType.setAccountSetId(accountingSet.getAccountSetid());
-			}	
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

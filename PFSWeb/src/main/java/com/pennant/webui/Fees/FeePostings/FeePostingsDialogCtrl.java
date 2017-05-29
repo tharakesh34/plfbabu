@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  JVPostingDialogCtrl.java                                                   * 	  
+ * FileName    		:  FeePostingsDialogCtrl.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -29,7 +29,7 @@
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 21-06-2013       Pennant	                 0.1                                            * 
+ * 21-05-2017       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -82,6 +82,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -472,8 +473,6 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		
 		getFeePostings().getDeclaredFieldValues(aeEvent.getDataMap());
 		aeEvent.getAcSetIDList().add(Long.valueOf(getFeePostings().getAccountSetId()));
-		aeEvent.getAcSetIDList().add(accountingSetService.getAccountingSetId(AccountEventConstants.ACCEVENT_MANFEE,
-				AccountEventConstants.ACCEVENT_MANFEE));
 		
 		List<ReturnDataSet> returnSetEntries = getEngineExecution().getAccEngineExecResults(aeEvent).getReturnDataSet();
 		getFeePostings().setReturnDataSetList(returnSetEntries);
@@ -505,7 +504,10 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 			final HashMap<String, Object> map = getDefaultArguments();
 			map.put("feePosting", getFeePostings());
-			map.put("acSetID", Long.valueOf(getFeePostings().getAccountSetId()));
+				if(getFeePostings().getAccountSetId()!=null){					
+					map.put("acSetID", Long.valueOf(getFeePostings().getAccountSetId()));
+				}
+			
 			if (enqiryModule) {
 				map.put("enqModule", true);
 			}
@@ -646,7 +648,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		fillComboBox(this.postingAgainst, aFeePostings.getPostAgainst(), PennantStaticListUtil.getpostingPurposeList(),
 				"");
 		this.reference.setValue(aFeePostings.getReference());
-		this.feeTypeCode.setValue(aFeePostings.getFeeTyeCode());
+		this.feeTypeCode.setValue(aFeePostings.isNew() ? aFeePostings.getFeeTyeCode():aFeePostings.getFeeTyeCode().trim());
 		this.postingAmount.setValue(PennantAppUtil.formateAmount(aFeePostings.getPostingAmount(), aCurrency.getCcyEditField()));
 		this.postingCcy.setValue(aFeePostings.getCurrency());
 		if(aFeePostings.isNew()){
@@ -828,8 +830,12 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 		if (StringUtils.equals(module, AssetConstants.UNIQUE_ID_ACCOUNTING)) {
 			doWriteComponentsToBean(getFeePostings());
-			if(StringUtils.equals(null, getFeePostings().getAccountSetId())){
-				
+			if(StringUtils.isEmpty(getFeePostings().getAccountSetId())){
+				if (tab != null) {
+					tab.setSelected(true);
+				}
+				MessageUtil.showErrorMessage("Accounting Set Not Configured for the Fee Code :"+ getFeePostings().getFeeTyeCode());
+				return;
 			}
 			appendAccountingDetailTab(false);
 		}
@@ -876,16 +882,23 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	}
 
 	public void onFulfill$feeTypeCode(Event event) {
-		logger.debug("Entering" + event.toString());
-		Object dataObject = this.feeTypeCode.getObject();
-		if (dataObject == null || dataObject instanceof String) {
+
+		logger.debug("Entering");
+
+		if (StringUtils.isBlank(this.feeTypeCode.getValue())) {
 			this.feeTypeCode.setValue("", "");
 		} else {
-			FeeType feeType = (FeeType) dataObject;
-			getFeePostings().setAccountSetId(String.valueOf(feeType.getAccountSetId()));
+			FeeType feeType = (FeeType) this.feeTypeCode.getObject();
+
+			this.feeTypeCode.setValue(feeType.getFeeTypeCode(), feeType.getFeeTypeDesc());
+			if (feeType.getAccountSetId() != null) {
+				getFeePostings().setAccountSetId(String.valueOf(feeType.getAccountSetId()));
+			} else {
+				getFeePostings().setAccountSetId(null);
+			}
 
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug("Leaving");
 
 	}
 
@@ -960,12 +973,25 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		// fill the FinanceType object with the components data
 		doWriteComponentsToBean(aFeePosting);
 		validate = validateAccounting(validate);
+		
+		
 		// Accounting Details Validations
 		if (validate && !isAccountingExecuted) {
 			MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Accountings"));
 			return;
 		}
-
+	
+	    //if Accounting set not configured stop to save
+		if (StringUtils.isEmpty(aFeePosting.getAccountSetId())) {
+			Tab tab = getTab(AssetConstants.UNIQUE_ID_ACCOUNTING);
+			if (tab != null) {
+				tab.setSelected(true);
+			}
+			MessageUtil.showErrorMessage("Accounting Set Not Configured for the Fee Code :"+ aFeePosting.getFeeTyeCode());
+			return;
+		}
+	
+		
 		// doStoreInitValues();
 		isNew = aFeePosting.isNew();
 		String tranType = "";

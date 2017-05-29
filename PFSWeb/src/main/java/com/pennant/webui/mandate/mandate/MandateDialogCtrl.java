@@ -1448,6 +1448,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		BeanUtils.copyProperties(getMandate(), aMandate);
 		String tranType = PennantConstants.TRAN_WF;
 		
+		//in delete case if approver approves needs notes 
 		if (this.btnNotes.isVisible() && !notesEntered) {
 			MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
 			return ;
@@ -1465,9 +1466,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (conf == MultiLineMessageBox.YES) {
 			logger.debug("doDelete: Yes");
 
-			//in delete case if approver approves needs notes 
-				
-			
 			if (StringUtils.trimToEmpty(aMandate.getRecordType()).equals("")) {
 				aMandate.setVersion(aMandate.getVersion() + 1);
 				aMandate.setRecordType(PennantConstants.RECORD_TYPE_DEL);
