@@ -481,7 +481,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					this.btnCtrl.setBtnStatus_Edit();
 					this.btnCancel.setVisible(false);
 				}else{
-					this.btnCtrl.setWFBtnStatus_Edit(isFinanceVas());
+					//this.btnCtrl.setWFBtnStatus_Edit(isFinanceVas());
+					this.btnCancel.setVisible(false);
 				}
 			}else{
 				this.btnCtrl.setBtnStatus_Edit();

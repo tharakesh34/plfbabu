@@ -670,9 +670,11 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 			}
 		} else {
 			String tableType = "_Temp";
-			if (financeDetail.getFinScheduleData().getFinanceMain().getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+			if (StringUtils.equals(financeDetail.getFinScheduleData().getFinanceMain().getRecordType(),
+					PennantConstants.RECORD_TYPE_DEL)) {
 				tableType = "";
 			}
+			
 
 			String finReference = financeDetail.getFinScheduleData().getFinReference();
 			financeCheckList = getCheckListDetailService().getCheckListByFinRef(finReference, tableType);				
