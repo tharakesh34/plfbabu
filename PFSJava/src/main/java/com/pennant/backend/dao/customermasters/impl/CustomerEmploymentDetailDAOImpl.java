@@ -201,7 +201,6 @@ public class CustomerEmploymentDetailDAOImpl extends BasisNextidDaoImpl<Customer
 				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
 			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
