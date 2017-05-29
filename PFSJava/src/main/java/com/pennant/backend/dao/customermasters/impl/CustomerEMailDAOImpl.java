@@ -57,13 +57,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.CustomerEMailDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>CustomerEMail model</b> class.<br>
@@ -195,7 +193,7 @@ public class CustomerEMailDAOImpl extends BasisCodeDAO<CustomerEMail> implements
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(CustomerEMail customerEMail,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -209,15 +207,10 @@ public class CustomerEMailDAOImpl extends BasisCodeDAO<CustomerEMail> implements
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41004", customerEMail.getCustID(),
-						customerEMail.getCustEMailTypeCode(), customerEMail.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006", customerEMail.getCustID(), 
-					customerEMail.getCustEMailTypeCode(), customerEMail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -294,7 +287,6 @@ public class CustomerEMailDAOImpl extends BasisCodeDAO<CustomerEMail> implements
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(CustomerEMail customerEMail,String type) {
 		int recordCount = 0;
@@ -317,24 +309,9 @@ public class CustomerEMailDAOImpl extends BasisCodeDAO<CustomerEMail> implements
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41003", customerEMail.getCustID(), 
-					customerEMail.getCustEMailTypeCode(), customerEMail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
-	}
-	
-	private ErrorDetails  getError(String errorId, long customerId,String emailTypeCode, String userLanguage){
-		String[][] parms= new String[2][2]; 
-		
-		parms[1][0] = String.valueOf(customerId);
-		parms[1][1] = emailTypeCode;
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_CustID")+ ":" + parms[1][0];
-		parms[0][1] = PennantJavaUtil.getLabel("label_CustEMailTypeCode")+ ":" + parms[1][1];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
-				errorId, parms[0],parms[1]), userLanguage);
 	}
 
 	/**
