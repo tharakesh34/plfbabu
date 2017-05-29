@@ -65,6 +65,7 @@ import com.pennant.backend.model.systemmasters.BuilderProjcet;
 import com.pennant.backend.service.systemmasters.BuilderProjcetService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -89,7 +90,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet>{
 	 */
 	protected Window                window_BuilderProjcetDialog; 
    //	protected Longbox 		        id; 
-	protected Textbox 		        name; 
+	protected Uppercasebox 		    name; 
     protected ExtendedCombobox 		builderId; 
 	protected Textbox 		        apfNo; 
 	private BuilderProjcet          builderProjcet; // overhanded per param

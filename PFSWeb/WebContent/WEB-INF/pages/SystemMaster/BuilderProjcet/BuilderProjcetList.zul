@@ -56,7 +56,7 @@
 								<row>
 									<label id="label_BuilderProjcetList_name" value="${c:l('label_BuilderProjcetList_name.value')}" />
 									<listbox id="sortOperator_name" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="name" width="200px" maxlength="50" />
+									<uppercasebox id="name" width="200px" maxlength="50" />
 									<label id="label_BuilderProjcetList_builderId" value="${c:l('label_BuilderProjcetList_builderId.value')}" />
 									<listbox id="sortOperator_builderId" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="builderId" width="171px" maxlength="19" />

@@ -79,7 +79,7 @@
 								<hbox>
 									<space spacing="2px"
 										sclass="mandatory" />
-									<textbox id="name" maxlength="50"
+									<uppercasebox id="name" maxlength="50"
 										width="200px" />
 								</hbox>
 								<label id="label_segmentation"

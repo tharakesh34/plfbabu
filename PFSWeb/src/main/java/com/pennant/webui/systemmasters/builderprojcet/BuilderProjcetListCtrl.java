@@ -61,6 +61,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.systemmasters.BuilderProjcet;
 import com.pennant.backend.service.systemmasters.BuilderProjcetService;
+import com.pennant.component.Uppercasebox;
 import com.pennant.webui.systemmasters.builderprojcet.model.BuilderProjcetListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -93,9 +94,9 @@ public class BuilderProjcetListCtrl extends GFCBaseListCtrl<BuilderProjcet> {
 
 	// Search Fields
 	protected Longbox id; // autowired
-	protected Textbox name; // autowired
-	protected Textbox builderId; // autowired
-	protected Textbox apfNo; // autowired
+	protected Uppercasebox    name; // autowired
+	protected Textbox         builderId; // autowired
+	protected Textbox         apfNo; // autowired
 
 	protected Listbox sortOperator_id;
 	protected Listbox sortOperator_name;

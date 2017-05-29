@@ -55,12 +55,12 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.systemmasters.BuilderCompany;
 import com.pennant.backend.service.systemmasters.BuilderCompanyService;
+import com.pennant.component.Uppercasebox;
 import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.buildercompany.model.BuilderCompanyListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -92,7 +92,7 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 	protected Button button_BuilderCompanyList_BuilderCompanySearch;
 
 	// Search Fields
-	protected Textbox name; // autowired
+	protected Uppercasebox     name; // autowired
 	protected ExtendedCombobox segmentation; // autowired
 	protected ExtendedCombobox groupId; // autowired
 	

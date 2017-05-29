@@ -54,7 +54,6 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
@@ -65,6 +64,7 @@ import com.pennant.backend.model.systemmasters.BuilderCompany;
 import com.pennant.backend.service.systemmasters.BuilderCompanyService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.component.Uppercasebox;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -89,7 +89,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected  Window                   window_BuilderCompanyDialog; 
-	protected  Textbox 				    name; 
+	protected  Uppercasebox 		    name; 
     protected  ExtendedCombobox 		segmentation; 
     protected  ExtendedCombobox 		groupId; 
 	private    BuilderCompany 			builderCompany; // overhanded per param
