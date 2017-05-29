@@ -68,8 +68,20 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			
 			FinanceScheduleDetail curSchd = scheduleList.get(i);
 			if(curSchd.getSchDate().compareTo(fromDate) <= 0){
-				prvSchdate = curSchd.getSchDate();
-				prvSchd = curSchd;
+				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
+					prvSchdate = curSchd.getSchDate();
+					prvSchd = curSchd;
+					continue;
+				}
+			}
+			
+			//Not Review Date
+			if (!curSchd.isRepayOnSchDate() && !financeMain.isFinRepayPftOnFrq()) {
+				continue;
+			}
+			
+			// Only allowed if payment amount is greater than Zero
+			if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0) {
 				continue;
 			}
 			

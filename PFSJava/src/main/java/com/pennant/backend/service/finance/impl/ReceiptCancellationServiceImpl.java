@@ -675,6 +675,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 						getFinExcessAmountDAO().updateExcessBal(excess.getExcessID(),
 								rpyHeader.getRepayAmount().negate());
 
+						isRcdFound = true;
 						continue;
 					}
 
@@ -708,15 +709,17 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 				// Update Log Entry Based on FinPostDate and Reference
 				// ============================================
-				FinLogEntryDetail detail = getFinLogEntryDetailDAO().getFinLogEntryDetail(receiptDetail.getLogKey());
-				if (detail == null) {
-					ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60207", "", null),
-							PennantConstants.default_Language);
-					return errorDetail.getErrorMessage();
+				if(receiptDetail.getLogKey() != 0 && receiptDetail.getLogKey() != Long.MIN_VALUE){
+					FinLogEntryDetail detail = getFinLogEntryDetailDAO().getFinLogEntryDetail(receiptDetail.getLogKey());
+					if (detail == null) {
+						ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("60207", "", null),
+								PennantConstants.default_Language);
+						return errorDetail.getErrorMessage();
+					}
+					logKey = detail.getLogKey();
+					detail.setReversalCompleted(true);
+					getFinLogEntryDetailDAO().updateLogEntryStatus(detail);
 				}
-				logKey = detail.getLogKey();
-				detail.setReversalCompleted(true);
-				getFinLogEntryDetailDAO().updateLogEntryStatus(detail);
 
 				// Manual Advise Movements Reversal
 				List<ManualAdviseMovements> advMovements = getManualAdviseDAO().getAdvMovementsByReceiptSeq(
