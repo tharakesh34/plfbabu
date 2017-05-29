@@ -206,21 +206,34 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 */
 	public void onClick$btnImport(Event event) throws InterruptedException {
 		this.btnImport.setDisabled(true);
-		
-		if(media == null){
+
+		if (media == null) {
 			MessageUtil.showErrorMessage("Please upload any file.");
-			return;	
+			return;
 		}
-		
+
 		try {
-			Thread thread = null;
-			if (fileConfiguration.getSelectedItem().getValue().equals("DISB_HDFC_IMPORT")) {
-				thread = new Thread(new ProcessData(userId, hdfcStatus));
-			} else {
-				thread = new Thread(new ProcessData(userId, otherStatus));
+			try {
+				Thread thread = null;
+				if (fileConfiguration.getSelectedItem().getValue().equals("DISB_HDFC_IMPORT")) {
+					if (hdfcStatus == null) {
+						hdfcStatus = new DataEngineStatus();
+						hdfcStatus.setName("DISB_HDFC_IMPORT");
+					}
+					thread = new Thread(new ProcessData(userId, hdfcStatus));
+				} else {
+					if (otherStatus == null) {
+						otherStatus = new DataEngineStatus();
+						otherStatus.setName("DISB_OTHER_IMPORT");
+					}
+					thread = new Thread(new ProcessData(userId, otherStatus));
+				}
+
+				thread.start();
+			} catch (Exception e) {
+				MessageUtil.showErrorMessage(e.getMessage());
+				return;
 			}
-			
-			thread.start();
 		} catch (Exception e) {
 			MessageUtil.showErrorMessage(e.getMessage());
 			return;
