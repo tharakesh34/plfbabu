@@ -58,16 +58,14 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>DedupParm model</b> class.<br>
@@ -193,7 +191,7 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(DedupParm dedupParm,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -209,15 +207,10 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41003",
-						dedupParm.getQueryCode(), dedupParm.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) { };
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.warn("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006",
-					dedupParm.getQueryCode(), dedupParm.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) { };
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -272,7 +265,6 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(DedupParm dedupParm,String type) {
 		int recordCount = 0;
@@ -299,10 +291,7 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails = getError("41004",
-					dedupParm.getQueryCode(), dedupParm.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -392,24 +381,6 @@ public class DedupParmDAOImpl extends BasisNextidDaoImpl<DedupParm> implements D
 		logger.debug("Leaving");
 	    return finRefDetail;
     }
-
-
-	/**
-	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
-	 * @return ErrorDetails
-	 */
-	private ErrorDetails  getError(String errorId, String queryCode, String userLanguage){
-		String[][] parms = new String[2][2];
-
-		parms[1][0] = queryCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_QueryCode") + ":" + parms[1][0];
-
-		return ErrorUtil.getErrorDetail(new ErrorDetails(
-				PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]), userLanguage);
-	}
 
 	@Override
     public List<String> getRuleFieldNames(String moduleType) {

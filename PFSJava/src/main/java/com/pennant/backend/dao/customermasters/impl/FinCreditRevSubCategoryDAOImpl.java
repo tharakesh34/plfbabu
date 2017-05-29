@@ -60,15 +60,13 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.FinCreditRevSubCategoryDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>FinCreditRevSubCategory model</b> class.<br>
@@ -175,7 +173,7 @@ public class FinCreditRevSubCategoryDAOImpl extends BasisCodeDAO<FinCreditRevSub
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(FinCreditRevSubCategory finCreditRevSubCategory,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -189,13 +187,10 @@ public class FinCreditRevSubCategoryDAOImpl extends BasisCodeDAO<FinCreditRevSub
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",finCreditRevSubCategory.getId() ,StringUtils.trimToEmpty(finCreditRevSubCategory.getUserDetails().getUsrLanguage()));
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",finCreditRevSubCategory.getId() ,finCreditRevSubCategory.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -292,7 +287,6 @@ public class FinCreditRevSubCategoryDAOImpl extends BasisCodeDAO<FinCreditRevSub
 	 * 
 	 */
 	
-	@SuppressWarnings("serial")
 	@Override
 	public void update(FinCreditRevSubCategory finCreditRevSubCategory,String type) {
 		int recordCount = 0;
@@ -309,19 +303,9 @@ public class FinCreditRevSubCategoryDAOImpl extends BasisCodeDAO<FinCreditRevSub
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",finCreditRevSubCategory.getId() ,finCreditRevSubCategory.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-	
-	private ErrorDetails  getError(String errorId, String subCategoryCode, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = subCategoryCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_SubCategoryCode")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-
 	
 }
