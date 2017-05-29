@@ -84,19 +84,24 @@ public class BuilderGroupDAOImpl extends BasisNextidDaoImpl<BuilderGroup> implem
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, name, segmentation, ");
 		if(type.contains("View")){
-			sql.append("id, name, segmentation, segmentation,");
+			sql.append(" segmentationName,fieldCode, ");
 		}	
 		
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		sql.append(" From BuilderGroup");
 		sql.append(type);
-		sql.append(" Where id = :id");
+		if(type.contains("View")){
+			sql.append(" Where id = :id AND FieldCode =:FieldCode");
+		}else{
+			sql.append(" Where id = :id");
+		}
 		
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
 		BuilderGroup builderGroup = new BuilderGroup();
 		builderGroup.setId(id);
+		builderGroup.setFieldCode("SEGMENT");
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(builderGroup);
 		RowMapper<BuilderGroup> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BuilderGroup.class);

@@ -65,6 +65,7 @@ import com.pennant.backend.model.systemmasters.BuilderGroup;
 import com.pennant.backend.service.systemmasters.BuilderGroupService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.component.Uppercasebox;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -89,7 +90,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_BuilderGroupDialog; 
-	protected Textbox 		name; 
+	protected Uppercasebox 		name; 
 	protected ExtendedCombobox 		segmentation; 
 	private BuilderGroup builderGroup; // overhanded per param
 
@@ -343,6 +344,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 
 		this.name.setValue(aBuilderGroup.getName());
 		this.segmentation.setValue(aBuilderGroup.getSegmentation());
+		this.segmentation.setDescColumn(aBuilderGroup.getSegmentationName());
 
 		if (aBuilderGroup.isNewRecord()){
 			this.segmentation.setDescription("");
