@@ -1063,6 +1063,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 */
 	private void paging(JdbcSearchObject<FinanceMain> searchObj) {
 		logger.debug("Entering");	
+		getPagingFinanceList().setActivePage(0);
+		getPagingFinanceList().setDetailed(true);
 		getPagedListWrapper().init(searchObj, getListBoxFinance(), getPagingFinanceList());
 		this.getListBoxFinance().setItemRenderer(new FinanceMainSelectItemRenderer());
 		logger.debug("Leaving");

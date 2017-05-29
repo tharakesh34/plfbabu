@@ -663,6 +663,10 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}else if(StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)){
 					int availedReAgeHChange = getFinScheduleData().getFinanceMain().getAvailedReAgeH();
 					getFinScheduleData().getFinanceMain().setAvailedReAgeH(availedReAgeHChange + adjTerms);
+					
+					// Reset ReAge Buckets after Process
+					int newReAgeBuckets =getFinScheduleData().getFinanceMain().getReAgeBucket() + getFinScheduleData().getFinanceMain().getDueBucket();
+					getFinScheduleData().getFinanceMain().setReAgeBucket(newReAgeBuckets);
 				}
 			}
 				

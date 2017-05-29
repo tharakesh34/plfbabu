@@ -405,8 +405,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 			updateSql.append("Update FinFeeDetail");
 		}
 		updateSql.append(StringUtils.trimToEmpty(type)); 
-		updateSql.append("  Set FeeID = :FeeID,");
-		updateSql.append("  FeeSeq = :FeeSeq, FeeOrder = :FeeOrder, CalculatedAmount = :CalculatedAmount, ActualAmount = :ActualAmount,");
+		updateSql.append("  Set FeeSeq = :FeeSeq, FeeOrder = :FeeOrder, CalculatedAmount = :CalculatedAmount, ActualAmount = :ActualAmount,");
 		updateSql.append("  WaivedAmount = :WaivedAmount, PaidAmount = :PaidAmount, FeeScheduleMethod = :FeeScheduleMethod, Terms = :Terms,");
 		updateSql.append("  RemainingFee = :RemainingFee, PaymentRef = :PaymentRef, CalculationType = :CalculationType,VasReference=:VasReference, RuleCode = :RuleCode,");
 		updateSql.append("  FixedAmount = :FixedAmount, Percentage = :Percentage, CalculateOn = :CalculateOn, AlwDeviation = :AlwDeviation,");
@@ -414,8 +413,7 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		updateSql.append("  Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, ");
 		updateSql.append("  RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append("  RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append("  Where FinReference = :FinReference and OriginationFee = :OriginationFee and ");
-		updateSql.append("  FinEvent = :FinEvent and FeeTypeID = :FeeTypeID ");
+		updateSql.append("  Where FeeID = :FeeID ");
 		
 		/*if (!type.endsWith("_Temp")){
 			updateSql.append("  AND Version= :Version-1");

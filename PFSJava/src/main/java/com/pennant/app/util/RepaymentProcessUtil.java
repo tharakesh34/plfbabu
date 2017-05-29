@@ -37,6 +37,7 @@ import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinODDetails;
@@ -101,6 +102,7 @@ public class RepaymentProcessUtil {
 			FinReceiptHeader receiptHeader, String repayHierarchy, Date valuedate) throws IllegalAccessException,
 			InvocationTargetException, PFFInterfaceException {
 		logger.debug("Entering");
+		
 		String finrefer = financeMain.getFinReference();
 		//Prepare schedule data for log
 		FinScheduleData scheduleData = new FinScheduleData();
@@ -305,7 +307,7 @@ public class RepaymentProcessUtil {
 
 		scheduleDetails = doProcessReceipts(financeMain, scheduleDetails, profitDetail, receiptHeader, scheduleData,
 				valuedate);
-		doSaveReceipts(receiptHeader);
+		doSaveReceipts(receiptHeader, null);
 		limitManagement.processLoanRepay(financeMain, customer, priPaynow, profitDetail.getFinCategory());
 		logger.debug("Leaving");
 	}
@@ -471,7 +473,9 @@ public class RepaymentProcessUtil {
 	 * 
 	 * @param receiptHeader
 	 */
-	public void doSaveReceipts(FinReceiptHeader receiptHeader) {
+	public void doSaveReceipts(FinReceiptHeader receiptHeader, List<FinFeeDetail> finFeeDetails) {
+		logger.debug("Entering");
+		
 		long receiptID = getFinReceiptHeaderDAO().save(receiptHeader, TableType.MAIN_TAB);
 		receiptHeader.setReceiptID(receiptID);
 		
@@ -580,8 +584,10 @@ public class RepaymentProcessUtil {
 						rpySchd.setRepayID(repayID);
 						rpySchd.setRepaySchID(i + 1);
 						rpySchd.setLinkedTranId(rpyHeader.getLinkedTranId());
+						
 						//update fee schedule details
-						updateFeeDetails(rpySchd, allocationPaidMap, allocationWaivedMap);
+						updateFeeDetails(rpySchd, finFeeDetails, allocationPaidMap, allocationWaivedMap);
+						
 						//update insurance schedule details
 						updateInsuranceDetails(rpySchd);
 					}
@@ -591,6 +597,10 @@ public class RepaymentProcessUtil {
 				}
 			}
 		}
+		
+		allocationPaidMap = null;
+		allocationWaivedMap = null;
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -618,8 +628,9 @@ public class RepaymentProcessUtil {
 	}
 
 	private void updateInsuranceDetails(RepayScheduleDetail rpySchd) {
+		logger.debug("Entering");
+		
 		BigDecimal remBalPaidAmount = rpySchd.getSchdInsPayNow();
-
 		if (remBalPaidAmount.compareTo(BigDecimal.ZERO) == 0) {
 			return;
 		}
@@ -647,7 +658,7 @@ public class RepaymentProcessUtil {
 		if (!updateInsList.isEmpty()) {
 			finInsurancesDAO.updateInsPaids(updateInsList);
 		}
-
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -656,97 +667,134 @@ public class RepaymentProcessUtil {
 	 * @param allocationPaidMap
 	 * @param allocationWaivedMap
 	 */
-	private void updateFeeDetails(RepayScheduleDetail rpySchd, Map<String, BigDecimal> allocationPaidMap, 
-			Map<String, BigDecimal> allocationWaivedMap) {
-		BigDecimal remBalPaidAmount = rpySchd.getSchdFeePayNow();
-		BigDecimal remBalWaivedAmount = rpySchd.getSchdFeeWaivedNow();
+	private void updateFeeDetails(RepayScheduleDetail rpySchd, List<FinFeeDetail> finFeeDetails,
+			Map<String, BigDecimal> allocationPaidMap, Map<String, BigDecimal> allocationWaivedMap) {
+		logger.debug("Entering");
+		
+		BigDecimal paidBal = rpySchd.getSchdFeePayNow();
+		BigDecimal waivedBal = rpySchd.getSchdFeeWaivedNow();
 
-		if (remBalPaidAmount.compareTo(BigDecimal.ZERO) == 0 && remBalWaivedAmount.compareTo(BigDecimal.ZERO) == 0) {
+		if (paidBal.compareTo(BigDecimal.ZERO) == 0 && waivedBal.compareTo(BigDecimal.ZERO) == 0) {
 			return;
 		}
-		List<FinFeeScheduleDetail> list = finFeeScheduleDetailDAO.getFeeSchedules(rpySchd.getFinReference(),
-				rpySchd.getSchDate());
+		
+		// If Process for EOD , Fees should be updated immediately
 		List<FinFeeScheduleDetail> updateFeeList = new ArrayList<>();
-		for (FinFeeScheduleDetail feeSchd : list) {
+		List<FinFeeScheduleDetail> list = new ArrayList<>();
+		if(finFeeDetails == null){
+			list = finFeeScheduleDetailDAO.getFeeSchedules(rpySchd.getFinReference(), rpySchd.getSchDate());
 
-			if (remBalPaidAmount.compareTo(BigDecimal.ZERO) == 0 && remBalWaivedAmount.compareTo(BigDecimal.ZERO) == 0) {
-				break;
+			// Schedule Fee Updation
+			for (FinFeeScheduleDetail feeSchd : list) {
+				feeSchd = feeSchdUpdation(feeSchd, paidBal, waivedBal,allocationPaidMap, allocationWaivedMap);
+				if(feeSchd != null){
+					updateFeeList.add(feeSchd);
+				}
+
 			}
-			BigDecimal feeBal = feeSchd.getSchAmount().subtract(
-					feeSchd.getPaidAmount().subtract(feeSchd.getWaiverAmount()));
-			if (feeBal.compareTo(remBalPaidAmount) > 0) {
-				feeBal = remBalPaidAmount;
+		}else{
+			for (FinFeeDetail fee : finFeeDetails) {
+				if(fee.getFinFeeScheduleDetailList() != null && !fee.getFinFeeScheduleDetailList().isEmpty()){
+					for (FinFeeScheduleDetail feeSchd : fee.getFinFeeScheduleDetailList()) {
+						if(DateUtility.compare(feeSchd.getSchDate(), rpySchd.getSchDate()) == 0){
+							feeSchdUpdation(feeSchd, paidBal, waivedBal,allocationPaidMap, allocationWaivedMap);
+						}
+					}
+				}
 			}
-			
-			if(allocationPaidMap != null){
-				if(allocationPaidMap.containsKey(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID())){
-					BigDecimal remPaidBal = allocationPaidMap.get(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID());
-					if(feeBal.compareTo(remPaidBal) > 0){
-						feeBal = remPaidBal;
+		}
+		
+		if (!updateFeeList.isEmpty()) {
+			finFeeScheduleDetailDAO.updateFeePaids(updateFeeList);
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for Fee Schedule Updation absed on Repayment Schedule date selection
+	 */
+	private FinFeeScheduleDetail feeSchdUpdation(FinFeeScheduleDetail feeSchd, BigDecimal paidBal,BigDecimal waivedBal,
+			Map<String, BigDecimal> allocationPaidMap, Map<String, BigDecimal> allocationWaivedMap){
+		logger.debug("Entering");
+
+		// No balance to adjust, should return back
+		if (paidBal.compareTo(BigDecimal.ZERO) == 0 && waivedBal.compareTo(BigDecimal.ZERO) == 0) {
+			return null;
+		}
+
+		BigDecimal feeBal = feeSchd.getSchAmount().subtract(feeSchd.getPaidAmount().subtract(feeSchd.getWaiverAmount()));
+		if (feeBal.compareTo(paidBal) > 0) {
+			feeBal = paidBal;
+		}
+
+		// If allocation map is present then Paid adjustment based on Allocations only
+		if(allocationPaidMap != null){
+			if(allocationPaidMap.containsKey(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID())){
+				BigDecimal remPaidBal = allocationPaidMap.get(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID());
+				if(feeBal.compareTo(remPaidBal) > 0){
+					feeBal = remPaidBal;
+				}
+			}else{
+				feeBal = BigDecimal.ZERO;
+			}
+		}
+
+		if(paidBal.compareTo(BigDecimal.ZERO) == 0){
+			if (feeBal.compareTo(waivedBal) > 0) {
+				feeBal = waivedBal;
+			}
+
+			// If allocation map is present then Waived adjustment based on Allocations only
+			if(allocationWaivedMap != null){
+				if(allocationWaivedMap.containsKey(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID())){
+					BigDecimal remWaivedBal = allocationWaivedMap.get(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID());
+					if(feeBal.compareTo(remWaivedBal) > 0){
+						feeBal = remWaivedBal;
 					}
 				}else{
 					feeBal = BigDecimal.ZERO;
 				}
 			}
-			
-			if(remBalPaidAmount.compareTo(BigDecimal.ZERO) == 0){
-				if (feeBal.compareTo(remBalWaivedAmount) > 0) {
-					feeBal = remBalWaivedAmount;
-				}
-				
-				if(allocationWaivedMap != null){
-					if(allocationWaivedMap.containsKey(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID())){
-						BigDecimal remWaivedBal = allocationWaivedMap.get(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID());
-						if(feeBal.compareTo(remWaivedBal) > 0){
-							feeBal = remWaivedBal;
-						}
-					}else{
-						feeBal = BigDecimal.ZERO;
-					}
-				}
-				
-				// If Fees not allocated on paids then No updates
-				if(feeBal.compareTo(BigDecimal.ZERO) == 0){
-					continue;
-				}
-				
-				feeSchd.setWaiverAmount(feeSchd.getWaiverAmount().add(feeBal));
-				remBalWaivedAmount = remBalWaivedAmount.subtract(feeBal);
-				
-				if(allocationWaivedMap != null){
-					if(allocationWaivedMap.containsKey(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID())){
-						BigDecimal remWaivedBal = allocationWaivedMap.get(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID());
-						allocationWaivedMap.put(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID(), remWaivedBal.subtract(feeBal));
-					}
-				}
-				
-			}else{
-				
-				// If Fees not allocated on paids then No updates
-				if(feeBal.compareTo(BigDecimal.ZERO) == 0){
-					continue;
-				}
-				
-				feeSchd.setPaidAmount(feeSchd.getPaidAmount().add(feeBal));
-				remBalPaidAmount = remBalPaidAmount.subtract(feeBal);
-				
-				if(allocationPaidMap != null){
-					if(allocationPaidMap.containsKey(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID())){
-						BigDecimal remPaidBal = allocationPaidMap.get(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID());
-						allocationPaidMap.put(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID(), remPaidBal.subtract(feeBal));
-					}
+
+			// If Fees not allocated on paids then No updates
+			if(feeBal.compareTo(BigDecimal.ZERO) == 0){
+				return null;
+			}
+
+			feeSchd.setWaiverAmount(feeSchd.getWaiverAmount().add(feeBal));
+			waivedBal = waivedBal.subtract(feeBal);
+
+			// Allocation map Balance adjustment after Collection(Paid/waived)
+			if(allocationWaivedMap != null){
+				if(allocationWaivedMap.containsKey(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID())){
+					BigDecimal remWaivedBal = allocationWaivedMap.get(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID());
+					allocationWaivedMap.put(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID(), remWaivedBal.subtract(feeBal));
 				}
 			}
-			
-			
-			feeSchd.setOsAmount(feeSchd.getSchAmount().subtract(feeSchd.getPaidAmount()).subtract(feeSchd.getWaiverAmount()));
-			updateFeeList.add(feeSchd);
 
-		}
-		if (!updateFeeList.isEmpty()) {
-			finFeeScheduleDetailDAO.updateFeePaids(updateFeeList);
+		}else{
+
+			// If Fees not allocated on paids then No updates
+			if(feeBal.compareTo(BigDecimal.ZERO) == 0){
+				return null;
+			}
+
+			feeSchd.setPaidAmount(feeSchd.getPaidAmount().add(feeBal));
+			paidBal = paidBal.subtract(feeBal);
+
+			// Allocation map Balance adjustment after Collection(Paid/waived)
+			if(allocationPaidMap != null){
+				if(allocationPaidMap.containsKey(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID())){
+					BigDecimal remPaidBal = allocationPaidMap.get(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID());
+					allocationPaidMap.put(RepayConstants.ALLOCATION_FEE+"_"+feeSchd.getFeeID(), remPaidBal.subtract(feeBal));
+				}
+			}
 		}
 
+		feeSchd.setOsAmount(feeSchd.getSchAmount().subtract(feeSchd.getPaidAmount()).subtract(feeSchd.getWaiverAmount()));
+
+		logger.debug("Leaving");
+		return feeSchd;
 	}
 
 	/**
@@ -945,7 +993,8 @@ public class RepaymentProcessUtil {
 	 */
 	private RepayScheduleDetail prepareRpyRecord(FinanceScheduleDetail curSchd, RepayScheduleDetail rsd, char rpyTo,
 			BigDecimal balPayNow, Date valueDate) {
-
+		logger.debug("Entering");
+		
 		if (rsd == null) {
 			rsd = new RepayScheduleDetail();
 			rsd.setFinReference(curSchd.getFinReference());
@@ -1012,6 +1061,7 @@ public class RepaymentProcessUtil {
 			rsd.setPenaltyPayNow(balPayNow);
 		}
 
+		logger.debug("Leaving");
 		return rsd;
 
 	}
@@ -1145,7 +1195,6 @@ public class RepaymentProcessUtil {
 	public RepaymentPostingsUtil getRepayPostingUtil() {
 		return repayPostingUtil;
 	}
-
 	public void setRepayPostingUtil(RepaymentPostingsUtil repayPostingUtil) {
 		this.repayPostingUtil = repayPostingUtil;
 	}
@@ -1153,7 +1202,6 @@ public class RepaymentProcessUtil {
 	public FinODDetailsDAO getFinODDetailsDAO() {
 		return finODDetailsDAO;
 	}
-
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
@@ -1161,7 +1209,6 @@ public class RepaymentProcessUtil {
 	public FinExcessAmountDAO getFinExcessAmountDAO() {
 		return finExcessAmountDAO;
 	}
-
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
@@ -1169,7 +1216,6 @@ public class RepaymentProcessUtil {
 	public FinReceiptHeaderDAO getFinReceiptHeaderDAO() {
 		return finReceiptHeaderDAO;
 	}
-
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
@@ -1177,7 +1223,6 @@ public class RepaymentProcessUtil {
 	public FinReceiptDetailDAO getFinReceiptDetailDAO() {
 		return finReceiptDetailDAO;
 	}
-
 	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
 		this.finReceiptDetailDAO = finReceiptDetailDAO;
 	}
@@ -1185,7 +1230,6 @@ public class RepaymentProcessUtil {
 	public FinanceRepaymentsDAO getFinanceRepaymentsDAO() {
 		return financeRepaymentsDAO;
 	}
-
 	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
 		this.financeRepaymentsDAO = financeRepaymentsDAO;
 	}
@@ -1193,7 +1237,6 @@ public class RepaymentProcessUtil {
 	public FinLogEntryDetailDAO getFinLogEntryDetailDAO() {
 		return finLogEntryDetailDAO;
 	}
-
 	public void setFinLogEntryDetailDAO(FinLogEntryDetailDAO finLogEntryDetailDAO) {
 		this.finLogEntryDetailDAO = finLogEntryDetailDAO;
 	}
@@ -1201,7 +1244,6 @@ public class RepaymentProcessUtil {
 	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
 		return financeScheduleDetailDAO;
 	}
-
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
@@ -1209,7 +1251,6 @@ public class RepaymentProcessUtil {
 	public FinanceDisbursementDAO getFinanceDisbursementDAO() {
 		return financeDisbursementDAO;
 	}
-
 	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
 		this.financeDisbursementDAO = financeDisbursementDAO;
 	}
@@ -1217,7 +1258,6 @@ public class RepaymentProcessUtil {
 	public RepayInstructionDAO getRepayInstructionDAO() {
 		return repayInstructionDAO;
 	}
-
 	public void setRepayInstructionDAO(RepayInstructionDAO repayInstructionDAO) {
 		this.repayInstructionDAO = repayInstructionDAO;
 	}
@@ -1225,7 +1265,6 @@ public class RepaymentProcessUtil {
 	public ManualAdviseDAO getManualAdviseDAO() {
 		return manualAdviseDAO;
 	}
-
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
@@ -1237,7 +1276,7 @@ public class RepaymentProcessUtil {
 	public void setFinFeeScheduleDetailDAO(FinFeeScheduleDetailDAO finFeeScheduleDetailDAO) {
 		this.finFeeScheduleDetailDAO = finFeeScheduleDetailDAO;
 	}
-
+	
 	public void setLimitManagement(LimitManagement limitManagement) {
 		this.limitManagement = limitManagement;
 	}
@@ -1245,7 +1284,6 @@ public class RepaymentProcessUtil {
 	public ReceiptAllocationDetailDAO getAllocationDetailDAO() {
 		return allocationDetailDAO;
 	}
-
 	public void setAllocationDetailDAO(ReceiptAllocationDetailDAO allocationDetailDAO) {
 		this.allocationDetailDAO = allocationDetailDAO;
 	}
