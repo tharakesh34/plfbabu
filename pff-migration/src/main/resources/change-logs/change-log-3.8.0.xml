@@ -317,4 +317,18 @@
 	INSERT INTO ErrorDetails VALUES('90296','EN','E','PAN mismatch, Customer already having PAN:{0}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 	</changeSet>
+	<changeSet id="18" author="Madhubabu">
+	<sql>
+	delete from BMTAEEvents  where AEEventCode='MANFEE';
+	Insert into BMTAEEvents values ('MANFEE','Fee Posting',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,1,1,1);
+	</sql>
+	</changeSet>
+
+	<changeSet id="19" author="Madhubabu">
+	<sql>
+	 update feetypes set accountsetid=(select Accountsetid from rmtaccountingset where Eventcode='MANFEE');
+	</sql>
+	</changeSet>
+
+	
 </databaseChangeLog>
