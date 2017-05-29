@@ -298,5 +298,9 @@
 		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage"
 			constraintName="PK_AdtPaymentInstructions" tableName="AdtPaymentInstructions" />
 	</changeSet>
+	<changeSet id="12" author="Manoj.p">
+		<modifyDataType tableName="ADTMandates" columnName="REASON"
+			newDataType="nvarchar(500)" />
+	</changeSet>
 	
 </databaseChangeLog>
