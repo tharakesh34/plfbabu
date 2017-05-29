@@ -13,14 +13,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinFlagsHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.financemanagement.FinanceFlag;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
 
 public class FinFlagsHeaderDAOImpl implements FinFlagsHeaderDAO {
 
@@ -112,15 +109,6 @@ public class FinFlagsHeaderDAOImpl implements FinFlagsHeaderDAO {
 
 	}
 
-	
-	private ErrorDetails getError(String errorId, String finReference, String userLanguage) {
-		String[][] parms = new String[2][1];
-		parms[1][0] = finReference;
-		parms[0][0] = PennantJavaUtil.getLabel("label_FinanceRef") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId,
-		        parms[0], parms[1]), userLanguage);
-	}
-
 	/**
 	 * This method updates the Record FinFlagsHeader or FinFlagsHeader_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update FinFlagsHeader by key FinReference and Version
@@ -133,7 +121,6 @@ public class FinFlagsHeaderDAOImpl implements FinFlagsHeaderDAO {
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(FinanceFlag financeFlags, String type) {
 		int recordCount = 0;
@@ -156,14 +143,9 @@ public class FinFlagsHeaderDAOImpl implements FinFlagsHeaderDAO {
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", String.valueOf(financeFlags
-			        .getFinReference()), financeFlags.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
-
 	}
 
 	@Override
