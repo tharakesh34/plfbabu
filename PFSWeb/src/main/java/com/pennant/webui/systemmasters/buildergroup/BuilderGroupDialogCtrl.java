@@ -61,6 +61,7 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.BuilderGroup;
+import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.systemmasters.BuilderGroupService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -314,17 +315,20 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 
 
 
-	public void onFulfillSegmentation(Event event){
-		logger.debug(Literal.ENTERING);
-
-		if(!this.segmentation.getDescription().equals("")){
-
+	public void onFulfill$segmentation(Event event){
+		logger.debug("Entering" + event.toString());
+		Object dataObject = segmentation.getObject();
+		if (dataObject instanceof String) {
+			this.segmentation.setObject(null);
+			this.segmentation.setValue("","");
 		}else{
-
-
+			if (dataObject instanceof LovFieldDetail) {
+				LovFieldDetail lovFieldDetail = (LovFieldDetail) dataObject;
+				this.segmentation.setObject(lovFieldDetail);
+				this.segmentation.setValue(lovFieldDetail.getFieldCodeValue(), lovFieldDetail.getValueDesc());
+			}
 		}
-
-		logger.debug(Literal.LEAVING);
+		logger.debug("Leaving" + event.toString());
 	}	
 
 
