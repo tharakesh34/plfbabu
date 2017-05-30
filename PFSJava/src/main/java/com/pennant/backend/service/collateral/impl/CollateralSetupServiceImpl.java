@@ -2419,24 +2419,15 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			
 			// validate Extended details
 			int extendedDetailsCount = 0;
-			if (collateralStructure.getExtendedFieldHeader().getExtendedFieldDetails() != null) {
-				for (ExtendedFieldDetail detail : collateralStructure.getExtendedFieldHeader().getExtendedFieldDetails()) {
-					if (detail.isFieldMandatory()) {
-						extendedDetailsCount++;
-					}
+			List<ExtendedFieldDetail> exdFldConfig = collateralStructure.getExtendedFieldHeader().getExtendedFieldDetails();
+			for (ExtendedFieldDetail detail : exdFldConfig) {
+				if (detail.isFieldMandatory()) {
+					extendedDetailsCount++;
 				}
 			}
 			if (collateralSetup.getExtendedDetails() != null || !collateralSetup.getExtendedDetails().isEmpty()) {
 				for (ExtendedField details : collateralSetup.getExtendedDetails()) {
-					if (collateralStructure.getExtendedFieldHeader().getExtendedFieldDetails().size() != details
-							.getExtendedFieldDataList().size()) {
-						if (extendedDetailsCount != details.getExtendedFieldDataList().size()) {
-							String[] valueParm = new String[1];
-							valueParm[0] = "collateral structure";
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm)));
-							return auditDetail;
-						}
-					}
+					int exdMandConfigCount = 0;
 					for (ExtendedFieldData extendedFieldData : details.getExtendedFieldDataList()) {
 						if (StringUtils.isBlank(extendedFieldData.getFieldName())) {
 							String[] valueParm = new String[1];
@@ -2451,20 +2442,24 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 							return auditDetail;
 						}
 						boolean isFeild = false;
-						if (collateralStructure.getExtendedFieldHeader().getExtendedFieldDetails() != null) {
-							for (ExtendedFieldDetail detail : collateralStructure.getExtendedFieldHeader()
-									.getExtendedFieldDetails()) {
-								if (StringUtils.equals(detail.getFieldName(), extendedFieldData.getFieldName())) {
-									isFeild = true;
+						for (ExtendedFieldDetail detail : exdFldConfig) {
+							if (StringUtils.equals(detail.getFieldName(), extendedFieldData.getFieldName())) {
+								if(detail.isFieldMandatory()) {
+									exdMandConfigCount++;
 								}
-							}
-							if (!isFeild) {
-								String[] valueParm = new String[1];
-								valueParm[0] = "collateral structure";
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm)));
-								return auditDetail;
+								isFeild = true;
 							}
 						}
+						if (!isFeild) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "collateral structure";
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90265", "", valueParm)));
+							return auditDetail;
+						}
+					}
+					if (extendedDetailsCount != exdMandConfigCount) {
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90297", "", null)));
+						return auditDetail;
 					}
 				}
 			}
