@@ -63,6 +63,11 @@
 								<column width="30%" />
 							</columns>
 							<rows>
+							<row visible="false">
+								<label id="label_LocalityList_id" value="${c:l('label_LocalityList_id.value')}" />
+									<listbox id="sortOperator_id" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+									<longbox id = "id" width="171px"  maxlength="26" />
+							</row>
 								<row>
 									<label id="label_LocalityList_name"
 										value="${c:l('label_LocalityList_name.value')}" />
