@@ -119,4 +119,13 @@ public class CustEODEvent extends AbstractEntity {
 		this.eodSuccess = eodSuccess;
 	}
 
+	public void destroy() {
+		if (this.finEODEvents != null) {
+			for (FinEODEvent eodEvent : finEODEvents) {
+				eodEvent.destroy();
+			}
+		}
+		this.finEODEvents.clear();
+	}
+
 }

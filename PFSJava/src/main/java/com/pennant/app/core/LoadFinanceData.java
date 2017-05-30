@@ -161,9 +161,6 @@ public class LoadFinanceData extends ServiceHelper {
 			}
 
 		}
-
-		finEODEvent.setDatesMap(datesMap);
-
 	}
 
 	/**
@@ -261,7 +258,6 @@ public class LoadFinanceData extends ServiceHelper {
 		for (FinEODEvent finEODEvent : finEODEvents) {
 
 			FinanceMain finMain = finEODEvent.getFinanceMain();
-			Map<Date, Integer> dateMap = finEODEvent.getDatesMap();
 
 			String finRef = finMain.getFinReference();
 			boolean rateReview = finEODEvent.isupdFinSchdForRateRvw();
@@ -284,12 +280,13 @@ public class LoadFinanceData extends ServiceHelper {
 
 			//Update overdue details
 			List<FinODDetails> odDetails = finEODEvent.getFinODDetails();
-			Date odDate = getDateFromMap(dateMap, finEODEvent.getIdxPD());
-
-			if (odDate != null && odDetails != null && !odDetails.isEmpty()) {
+			if (odDetails != null && !odDetails.isEmpty()) {
+				FinanceScheduleDetail odschd = finEODEvent.getFinanceScheduleDetails().get(finEODEvent.getIdxPD());
 				// delete and insert based on the current OD index
-				getFinODDetailsDAO().deleteAfterODDate(finRef, odDate);
-				getFinODDetailsDAO().saveList(odDetails);
+				if (odschd!=null) {
+					getFinODDetailsDAO().deleteAfterODDate(finRef, odschd.getSchDate());
+					getFinODDetailsDAO().saveList(odDetails);
+				}
 			}
 
 			//update repay instruction
