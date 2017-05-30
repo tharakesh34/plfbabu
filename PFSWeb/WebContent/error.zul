@@ -3,18 +3,16 @@
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-	<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
-	<window width="450px" closable="false" mode="modal"
-		use="org.zkoss.zul.impl.MessageboxDlg">
-		<panel title="pennApps Lending Factory" border="normal"
-			sclass="myMultiMessageBox">
+	<window id="window_ErrorDialog" width="450px" closable="false"
+		mode="modal" use="org.zkoss.zul.impl.MessageboxDlg"
+		apply="${errorCtrl}">
+		<panel id="panel" border="normal" sclass="myMultiMessageBox">
 			<panelchildren>
 				<hbox style="padding: 8px;">
-					<div class="${arg.icon}" />
+					<div class="z-messagebox-icon z-messagebox-error" />
 					<div sclass="z-messagebox"
 						style="padding: 0px 0px 0px 8px;">
-						<label multiline="true"
-							value="900: Unable to process the request. Please try again later or contact the system administrator.\n\n"
+						<label id="message" multiline="true"
 							sclass="word-wrap" />
 					</div>
 				</hbox>
