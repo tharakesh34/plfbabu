@@ -1742,6 +1742,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		// customer Email details
 		List<CustomerEMail> custEmails = customerDetails.getCustomerEMailList();
 		if (custEmails != null) {
+			boolean isEmailPrority=false;
 			ErrorDetails errorDetail = new ErrorDetails();
 			for (CustomerEMail custEmail : custEmails) {
 				auditDetail.setErrorDetail(validateMasterCode("BMTEMailTypes", "EmailTypeCode",
@@ -1759,6 +1760,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					valueParm[0] = custEmail.getCustEMail();
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90237", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
+				}
+				if(custEmail.getCustEMailPriority() == Integer.valueOf(PennantConstants.EMAILPRIORITY_VeryHigh)){
+					isEmailPrority = true;
 				}
 				int emailPriorityCount = 0;
 				int emailType = 0;
@@ -1786,6 +1790,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						}
 					}
 				}
+			}
+			if (!isEmailPrority) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Email Details";
+				valueParm[1] = "Email";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90270", "", valueParm), "EN");
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
 			}
 		}
 

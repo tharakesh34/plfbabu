@@ -1617,7 +1617,19 @@ public class FinanceDataValidation {
 						}
 					}
 
-					if (StringUtils.isNotBlank(advPayment.getPhoneCountryCode())
+					FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+					if(financeMain != null){
+					if (advPayment.getLlDate().before(financeMain.getFinStartDate())
+							|| advPayment.getLlDate().after(financeMain.getCalMaturity())) {
+						String[] valueParm = new String[3];
+						valueParm[0] = "disbDate";
+						valueParm[1] = DateUtility.formatToLongDate(financeMain.getFinStartDate());
+						valueParm[2] = DateUtility.formatToLongDate(financeMain.getCalMaturity());
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+						return errorDetails;
+					}
+					}
+					/*if (StringUtils.isNotBlank(advPayment.getPhoneCountryCode())
 							&& StringUtils.isBlank(advPayment.getPhoneAreaCode())) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "phoneAreaCode";
@@ -1629,7 +1641,7 @@ public class FinanceDataValidation {
 						String[] valueParm = new String[1];
 						valueParm[0] = "phoneNumber";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90214", valueParm)));
-					}
+					}*/
 				}
 			}
 		}
