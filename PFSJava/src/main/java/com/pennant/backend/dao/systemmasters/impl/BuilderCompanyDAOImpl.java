@@ -84,19 +84,24 @@ public class BuilderCompanyDAOImpl extends BasisNextidDaoImpl<BuilderCompany> im
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, name, segmentation, groupId, ");
 		if(type.contains("View")){
-			sql.append("id, name, segmentation, groupId, segmentation,groupId,");
+			sql.append("segmentationName, groupIdName,fieldCode,");
 		}	
 		
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		sql.append(" From BuilderCompany");
 		sql.append(type);
-		sql.append(" Where id = :id");
+		if(type.contains("View")){
+			sql.append(" Where id = :id AND FieldCode =:FieldCode");	
+		}else{
+			sql.append(" Where id = :id");
+		}
 		
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
 		BuilderCompany builderCompany = new BuilderCompany();
 		builderCompany.setId(id);
+		builderCompany.setFieldCode("SEGMENT");
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(builderCompany);
 		RowMapper<BuilderCompany> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BuilderCompany.class);

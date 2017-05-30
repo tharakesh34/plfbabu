@@ -357,23 +357,25 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
 	 * @param builderCompany
 	 * 
 	 */
-	public void doWriteBeanToComponents(BuilderCompany aBuilderCompany) {
-		logger.debug(Literal.ENTERING);
-		this.name.setValue(aBuilderCompany.getName());
-		this.segmentation.setValue(aBuilderCompany.getSegmentation());
+      public void doWriteBeanToComponents(BuilderCompany aBuilderCompany) {
+  		logger.debug(Literal.ENTERING);
+  		this.name.setValue(aBuilderCompany.getName());
+  		this.segmentation.setValue(aBuilderCompany.getSegmentation());
 
-		if (aBuilderCompany.isNewRecord()){
-			this.segmentation.setDescription("");
-			this.groupId.setDescription("");
-		}else{
-			this.segmentation.setDescription(aBuilderCompany.getsegmentationName());
-			this.groupId.setValue(String.valueOf(aBuilderCompany.getGroupId()));
-		}
-		
-		this.recordStatus.setValue(aBuilderCompany.getRecordStatus());
-		
-		logger.debug(Literal.LEAVING);
-	}
+  		if (aBuilderCompany.isNewRecord()){
+  			this.segmentation.setDescription("");
+  			this.groupId.setDescription("");
+  		}else{
+  			this.segmentation.setDescription(aBuilderCompany.getSegmentationName());
+  			this.groupId.setValue(String.valueOf(aBuilderCompany.getGroupId()));
+  			this.groupId.setDescription(String.valueOf(aBuilderCompany.getGroupIdName()));
+  		}
+  		
+  		this.recordStatus.setValue(aBuilderCompany.getRecordStatus());
+  		
+  		logger.debug(Literal.LEAVING);
+  	}
+
 	
 	/**
 	 * Writes the components values to the bean.<br>
