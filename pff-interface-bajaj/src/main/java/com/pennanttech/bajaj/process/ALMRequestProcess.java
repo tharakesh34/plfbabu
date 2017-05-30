@@ -33,7 +33,7 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 
 		MapSqlParameterSource parmMap;
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT * from INT_ALM_VIEW ");
+		sql.append(" SELECT * from INT_ALM_VIEW");
 
 		parmMap = new MapSqlParameterSource();
 

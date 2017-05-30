@@ -25,8 +25,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 	Date						monthStartDate	= null;
 	Date						monthEndDate	= null;
 
-	public ControlDumpRequestProcess(DataSource dataSource, long userId, Date monthStartDate, Date monthEndDate,
-			Date valueDate) {
+	public ControlDumpRequestProcess(DataSource dataSource, long userId, Date monthStartDate, Date monthEndDate, Date valueDate) {
 		super(dataSource, App.DATABASE.name(), userId, valueDate);
 		currentDate = DateUtil.getSysDate();
 		this.monthStartDate = monthStartDate;
@@ -51,12 +50,12 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT * from INT_CF_CONTROL_VIEW");
 		sql.append(" WHERE LOAN_STATUS = :LOAN_STATUS");
-		//sql.append(" AND latestRpyDate >= :monthStartDate AND latestRpyDate <= :monthEndDate ");
+		sql.append(" AND latestRpyDate >= :monthStartDate AND latestRpyDate <= :monthEndDate ");
 
 		parmMap = new MapSqlParameterSource();
 		parmMap.addValue("LOAN_STATUS", "A");
-		//parmMap.addValue("monthStartDate", monthStartDate);
-		//parmMap.addValue("monthEndDate", monthEndDate);
+		parmMap.addValue("monthStartDate", monthStartDate);
+		parmMap.addValue("monthEndDate", monthEndDate);
 
 		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
 			MapSqlParameterSource	map	= null;
@@ -210,9 +209,6 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		map.addValue("TOTAL_INTEREST", rs.getObject("TOTAL_INTEREST"));
 		map.addValue("WRITEOFF_DUE", rs.getObject("WRITEOFF_DUE"));
 		map.addValue("WRITEOFF_RECEIVED", rs.getObject("WRITEOFF_RECEIVED"));
-
-		//map.addValue("FINISACTIVE", rs.getObject("FINISACTIVE"));
-
 		map.addValue("CREATED_ON", currentDate);
 
 		return map;
