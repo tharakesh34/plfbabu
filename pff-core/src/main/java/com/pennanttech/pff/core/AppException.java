@@ -22,7 +22,7 @@ public class AppException extends RuntimeException {
 	 * Constructs an {@code AppException} with the default detail message.
 	 */
 	public AppException() {
-		super(ErrorCode.PPS_00001.getMessage());
+		super(ErrorCode.PPS_900.getMessage());
 	}
 
 	/**

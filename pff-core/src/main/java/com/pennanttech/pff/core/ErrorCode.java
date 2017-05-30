@@ -15,10 +15,9 @@ package com.pennanttech.pff.core;
  * Enumerates the error codes that were used in the custom exceptions.
  */
 public enum ErrorCode {
-	PPS_00001("900: Unable to process the request. Please try again later or contact the system administrator."),
-	PPS_00101(
-			"801: The record has been modified by another user. Please refresh the list to get the latest details of the record."),
-	PPS_00102("802: The record is in use and therefore cannot be deleted.");
+	PPS_900("900: Unable to process the request. Please try again later or contact the system administrator."),
+	PPS_801("801: The record has been modified by another user. Please refresh the list to get the latest details of the record."),
+	PPS_802("802: The record is in use and therefore cannot be deleted.");
 
 	private String message;
 
