@@ -148,7 +148,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Combobox								status;
 	protected Textbox								approvalID;
 	protected Groupbox								gb_basicDetails;
-	protected Groupbox								gb_enquiry;
 	protected Checkbox								useExisting;
 	protected Checkbox								active;
 	protected Textbox								reason;
@@ -759,7 +758,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.btnCancel.setVisible(false);
 			this.btnSave.setVisible(false);
 			this.btnDelete.setVisible(false);
-			this.gb_enquiry.setVisible(true);
 			this.btnNotes.setVisible(false);
 			return;
 		}
