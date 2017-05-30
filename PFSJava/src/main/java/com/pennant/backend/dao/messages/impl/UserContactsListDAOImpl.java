@@ -45,7 +45,6 @@ package com.pennant.backend.dao.messages.impl;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -128,8 +127,6 @@ public class UserContactsListDAOImpl implements UserContactsListDAO {
 
 	}
 
-
-	@SuppressWarnings("serial")
 	@Override
 	public void delete(String usrID,String type) {
 		logger.debug("Entering");
@@ -142,15 +139,10 @@ public class UserContactsListDAOImpl implements UserContactsListDAO {
 		deleteSql.append(" Where UsrID =:UsrID and Type = :Type");
 		logger.debug("deleteSql: "+ deleteSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userContactsList);
-		try{
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
-		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			logger.debug("Error in Update Method ");
-			throw new DataAccessException(e.toString()) {};
-		}
-		logger.debug("Leaving");
 
+		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -159,6 +151,4 @@ public class UserContactsListDAOImpl implements UserContactsListDAO {
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
-
-
 }
