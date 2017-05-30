@@ -319,7 +319,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 
 		}
 		 //If mandate expiry date before fin maturity date--vaidate 
-		if (mandate.getExpiryDate()!=null && mandate.getExpiryDate()
+		if (mandate!=null && mandate.getExpiryDate()!=null && mandate.getExpiryDate()
 				.before(financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate())) {
 			
 			String[] errParmFrq = new String[2];
