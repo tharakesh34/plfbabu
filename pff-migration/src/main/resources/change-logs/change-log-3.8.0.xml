@@ -451,7 +451,7 @@ WHERE     NOT EXISTS (SELECT 1 FROM BuilderProjcet_TEMP WHERE Id = T1.Id)
 		  ON NPB.BUCKETID = PR.NPABUCKETID
 		</createView>
 	</changeSet>
-	<changeSet id="30" author="Madhubabu">
+	<changeSet id="31" author="Madhubabu">
 	    <sql>
 	       insert into SMTparameters values('MANDATE_STARTDATE','mandate back value days','int ',1,30,4,0,null,null,'mandate back value days',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
 	    </sql>
