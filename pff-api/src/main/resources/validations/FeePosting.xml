@@ -10,16 +10,15 @@
 
 		<field name="feeTyeCode">
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
-				<message>FeeTye Code is Mandatory</message>
+				<message>FeeType Code is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 				</groups>
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>FeeTye Code should have maximum 8 characters</message>
+				<message>FeeType Code should have maximum 8 characters</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
 				<element name="max">20</element>
 			</constraint>
@@ -40,7 +39,6 @@
 				<message>90242%%PartnerBankId</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
 				</groups>
 
 				<element name="lang">javascript</element>
@@ -56,7 +54,6 @@
 				<message>90242%%amount</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
 				</groups>
 
 				<element name="lang">javascript</element>
