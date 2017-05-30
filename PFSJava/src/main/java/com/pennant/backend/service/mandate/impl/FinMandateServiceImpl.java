@@ -322,7 +322,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 					.before(financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate())) {
 				
 				String[] errParmFrq = new String[2];
-				errParmFrq[0] = PennantJavaUtil.getLabel("label_MandateDialog_ExpiryDate.value");
+				errParmFrq[0] = PennantJavaUtil.getLabel("tab_label_MANDATE")+" "+PennantJavaUtil.getLabel("label_MandateDialog_ExpiryDate.value");
 				errParmFrq[1] = PennantJavaUtil.getLabel("label_MaturityDate");
 				
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "30509", errParmFrq, null), ""));
