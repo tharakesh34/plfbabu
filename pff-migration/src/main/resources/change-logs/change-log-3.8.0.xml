@@ -377,5 +377,10 @@
 			<column name="ERROR_CODE" type="varchar(500)"/>
 		</createTable>	
 	</changeSet>
+	<changeSet id="25" author="Surekha">
+		<sql>
+			insert into SeqEodConfig values (0);
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
