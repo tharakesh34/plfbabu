@@ -11,6 +11,7 @@ import org.zkoss.zul.Listgroupfoot;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -79,7 +80,7 @@ public class FinanceEnquiryPostingsListItemRenderer implements ListitemRenderer<
 			lc = new Listcell(dataSet.getAcCcy());
 			lc.setParent(item);
 			BigDecimal amt = new BigDecimal(dataSet.getPostAmount().toString()).setScale(0,RoundingMode.HALF_DOWN);
-			lc = new Listcell(PennantAppUtil.amountFormate(amt,	dataSet.getFormatter()));
+			lc = new Listcell(PennantAppUtil.amountFormate(amt,	CurrencyUtil.getFormat(dataSet.getAcCcy())));
 			lc.setStyle("font-weight:bold;text-align:right;");
 			lc.setParent(item);
 		}
