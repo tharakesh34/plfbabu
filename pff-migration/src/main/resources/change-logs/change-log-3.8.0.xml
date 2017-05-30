@@ -387,5 +387,30 @@
 			INSERT INTO ReportList	Values('EODConfig','EODConfig','listheader_ExtMnthRequired.label,listheader_MnthExtTo.label,label.RecordStatus,label.RecordType','extMnthRequired,mnthExtTo,recordStatus,recordType','boolean,Date,String,String','','ReportList04','EOD Config','EOD',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
 		</sql>
 	</changeSet>
+	<changeSet id="27" author="satya">
+	<createView viewName="BuilderProjcet_View" replaceIfExists="true">
+		            SELECT		T1.Id, T1.Name, T1.BuilderId,T1.APFNO,T2.Name BuilderIdName	
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,         T1.RecordType,           T1.WorkflowId
+FROM    	BuilderProjcet_Temp  T1 inner join
+			BuilderCompany T2 ON T1.BuilderId = T2.GROUPID
+UNION ALL
+
+SELECT		T1.Id, T1.Name, T1.BuilderId,T1.APFNO,T2.Name BuilderIdName		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	BuilderProjcet  T1 inner join
+			BuilderCompany T2 ON T1.BuilderId = T2.GROUPID
+WHERE     NOT EXISTS (SELECT 1 FROM BuilderProjcet_TEMP WHERE Id = T1.Id)
+	</createView>
+</changeSet>
+
+	<changeSet id="28" author="satya">
+		<createView viewName="BuilderProjcet_AView"
+			replaceIfExists="true">
+		SELECT	T1.Id, T1.Name, T1.BuilderId,T1.APFNO,T2.Name BuilderIdName		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,       T1.WorkflowId
+        FROM    	BuilderProjcet  T1 inner join
+			BuilderCompany T2 ON T1.BuilderId = T2.GROUPID
+	</createView>
+	</changeSet>
 	
 </databaseChangeLog>
