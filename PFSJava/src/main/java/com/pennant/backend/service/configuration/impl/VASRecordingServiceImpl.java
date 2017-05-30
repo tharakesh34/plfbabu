@@ -64,6 +64,7 @@ import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.RelationshipOfficerDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
@@ -1588,7 +1589,13 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
-			} else if (!(StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, vasRecording.getPostingAgainst())
+			} else {
+				if(StringUtils.equals("Loan", vasRecording.getPostingAgainst())){
+					vasRecording.setPostingAgainst(VASConsatnts.VASAGAINST_FINANCE);
+				}
+			}
+			
+			if (!(StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, vasRecording.getPostingAgainst())
 					|| StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, vasRecording.getPostingAgainst()) || StringUtils
 						.equals(VASConsatnts.VASAGAINST_FINANCE, vasRecording.getPostingAgainst()))) {
 				String[] valueParm = new String[2];
@@ -1616,7 +1623,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 			VASConfiguration vASConfiguration = vASConfigurationService.getVASConfigurationByCode(vasRecording
 					.getProductCode());
-			if (vASConfiguration == null) {
+			if (vASConfiguration == null || !vASConfiguration.isActive()) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Product";
 				valueParm[1] = vasRecording.getProductCode();
@@ -1707,6 +1714,16 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			}
 			if (vasRecording.getValueDate() == null) {
 				vasRecording.setValueDate(DateUtility.getAppDate());
+			} else {
+				if (vasRecording.getValueDate().before(SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE))
+						|| vasRecording.getValueDate().after(DateUtility.getAppDate())) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "Value Date";
+					valueParm[1] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE));
+					valueParm[2] = DateUtility.formatToLongDate(DateUtility.getAppDate());
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+					return auditDetail;
+				}
 			}
 			if (vASConfiguration.isFeeAccrued()) {
 				if (vasRecording.getAccrualTillDate() == null) {
@@ -1715,7 +1732,28 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
+				} else {
+					if(vasRecording.getAccrualTillDate().before(DateUtility.getAppDate())
+					|| vasRecording.getAccrualTillDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))){
+						String[] valueParm = new String[3];
+						valueParm[0] = "AccrualTillDate";
+						valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
+						valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+						return auditDetail;
+					}
+					
 				}
+			} else {
+				if(vasRecording.getAccrualTillDate() != null){
+					String[] valueParm = new String[2];
+					valueParm[0] = "accrualTillDate";
+					valueParm[1] = "FeeAccrued";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90298", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				vasRecording.setAccrualTillDate(DateUtility.getAppDate());
 			}
 			if (vASConfiguration.isRecurringType()) {
 				if (vasRecording.getRecurringDate() == null) {
@@ -1724,7 +1762,28 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
+				} else {
+					if(vasRecording.getRecurringDate().before(DateUtility.getAppDate())
+							|| vasRecording.getRecurringDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))){
+								String[] valueParm = new String[3];
+								valueParm[0] = "RecurringDate";
+								valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+								valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+								return auditDetail;
+							}
 				}
+			} else {
+				if(vasRecording.getRecurringDate() != null){
+					String[] valueParm = new String[2];
+					valueParm[0] = "RecurringDate";
+					valueParm[1] = "RecurringType is Active";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90298", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				vasRecording.setRecurringDate(DateUtility.getAppDate());
+				vasRecording.setRenewalFee(BigDecimal.ZERO);
 			}
 			if (StringUtils.isBlank(vasRecording.getDsaId())) {
 				String[] valueParm = new String[1];
@@ -1751,8 +1810,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				return auditDetail;
 			} else {
 				RelationshipOfficer dmaCode = relationshipOfficerDAO
-						.getRelationshipOfficerById(vasRecording.getDsaId(), "");
-				if (dmaCode == null) {
+						.getRelationshipOfficerById(vasRecording.getDmaId(), "");
+				if (dmaCode == null ) {
 					String[] valueParm = new String[1];
 					valueParm[0] = vasRecording.getDmaId();
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90501", "", valueParm), "EN");
@@ -1766,6 +1825,16 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
+			} else {
+				RelationshipOfficer dmaCode = relationshipOfficerDAO
+						.getRelationshipOfficerById(vasRecording.getFulfilOfficerId(), "");
+				if (dmaCode == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = vasRecording.getFulfilOfficerId();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90501", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
 			}
 			if (StringUtils.isBlank(vasRecording.getReferralId())) {
 				String[] valueParm = new String[1];
@@ -1775,7 +1844,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				return auditDetail;
 			} else {
 				RelationshipOfficer referralId = relationshipOfficerDAO
-						.getRelationshipOfficerById(vasRecording.getDsaId(), "");
+						.getRelationshipOfficerById(vasRecording.getReferralId(), "");
 				if (referralId == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = vasRecording.getReferralId();
@@ -1801,10 +1870,28 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 							return auditDetail;
 						}
 					}
+					// validate custDocIssuedCountry
+					if (StringUtils.isBlank(detail.getCustDocIssuedCountry())) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "CustDocIssuedCountry";
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+						return auditDetail;
+					}
+					int count = getCustomerDocumentDAO()
+							.getCustCountryCount(detail.getCustDocIssuedCountry());
+					if (count <= 0) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "custDocIssuedCountry";
+						valueParm[1] = detail.getCustDocIssuedCountry();
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90701", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+					}
 
 					if (StringUtils.equals(detail.getDocCategory(), "03")) {
 						Pattern pattern = Pattern.compile("^[A-Za-z]{5}\\d{4}[A-Za-z]{1}");
 						if(detail.getCustDocTitle() !=null){
+							detail.setCustDocTitle(detail.getCustDocTitle().toUpperCase());;
 						Matcher matcher = pattern.matcher(detail.getCustDocTitle());
 						if(matcher.find() == false ){
 							String[] valueParm = new String[0];
@@ -1814,7 +1901,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 						}
 						}
 					}
-
 					if (StringUtils.isBlank(detail.getDocUri())) {
 						if (detail.getDocImage() == null || detail.getDocImage().length <= 0) {
 							String[] valueParm = new String[2];
@@ -1825,64 +1911,49 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 							return auditDetail;
 						}
 					}
-
 					DocumentType docType = documentTypeDAO.getDocumentTypeById(detail.getDocCategory(),"");
-					if (docType == null) {
+					if (docType == null || docType.isDocIsCustDoc()) {
 						String[] valueParm = new String[1];
 						valueParm[0] = detail.getDocCategory();
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90401", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 						return auditDetail;
-
 					}
-
-					// validate Is Customer document?
-					if (docType.isDocIsCustDoc()) {
-						if (StringUtils.isBlank(detail.getCustDocTitle())) {
-							String[] valueParm = new String[2];
-							valueParm[0] = "CustDocTitle";
-							valueParm[1] = docType.getDocTypeCode();
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90402", "", valueParm), "EN");
-							auditDetail.setErrorDetail(errorDetail);
-							return auditDetail;
-						}
+					if(!(StringUtils.equals(detail.getDoctype(),PennantConstants.DOC_TYPE_PDF) 
+							|| StringUtils.equals(detail.getDoctype(),PennantConstants.DOC_TYPE_DOC)
+							|| StringUtils.equals(detail.getDoctype(),PennantConstants.DOC_TYPE_DOCX)
+							|| StringUtils.equals(detail.getDoctype(),PennantConstants.DOC_TYPE_IMAGE))){
+						String[] valueParm = new String[1];
+						valueParm[0] = detail.getDoctype();
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90122", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
 					}
-
-					// validate custDocIssuedCountry
-					if (docType.isDocIsCustDoc() && docType.isDocIssuedAuthorityMand()) {
-						if (StringUtils.isBlank(detail.getCustDocIssuedCountry())) {
+						String docFormate = detail.getDocName()
+								.substring(detail.getDocName().lastIndexOf(".") + 1);
+						if (StringUtils.equals(detail.getDocName(), docFormate)) {
 							String[] valueParm = new String[1];
-							valueParm[0] = "CustDocIssuedCountry";
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90402", "", valueParm), "EN");
+							valueParm[0] = "docName: " + docFormate;
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90291", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
-							return auditDetail;
 						}
-					}
-					// validate custDocIssuedOn
-					if (docType.isDocIssueDateMand()) {
-						if (detail.getCustDocIssuedOn() == null) {
-							String[] valueParm = new String[2];
-							valueParm[0] = "CustDocIssuedOn";
-							valueParm[1] = docType.getDocTypeCode();
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90402", "", valueParm), "EN");
-							auditDetail.setErrorDetail(errorDetail);
-							return auditDetail;
+						boolean isImage = false;
+						if (StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_IMAGE)) {
+							if (StringUtils.equals(docFormate, "jpg") || StringUtils.equals(docFormate, "jpeg")
+									|| StringUtils.equals(docFormate, "png")) {
+								isImage = true;
+							}
 						}
-					}
-
-					// validate custDocExpDate
-					if (docType.isDocExpDateIsMand()) {
-						if (detail.getCustDocExpDate() == null) {
-							String[] valueParm = new String[2];
-							valueParm[0] = "CustDocExpDate";
-							valueParm[1] = docType.getDocTypeCode();
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90402", "", valueParm), "EN");
-							auditDetail.setErrorDetail(errorDetail);
-							return auditDetail;
+						if (!isImage) {
+							if (!StringUtils.equals(detail.getDoctype(), docFormate)) {
+								String[] valueParm = new String[2];
+								valueParm[0] = "document type: " + detail.getDocName();
+								valueParm[1] = detail.getDoctype();
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90289", "", valueParm), "EN");
+								auditDetail.setErrorDetail(errorDetail);
+							}
 						}
-					}
 				}
-
+					
 			}
 			int extendedDetailsCount = 0;
 			if (vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails() != null) {

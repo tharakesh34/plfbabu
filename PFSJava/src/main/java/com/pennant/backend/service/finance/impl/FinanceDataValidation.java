@@ -320,7 +320,7 @@ public class FinanceDataValidation {
 
 				VASConfiguration vASConfiguration = vASConfigurationService
 						.getVASConfigurationByCode(detail.getProductCode());
-				if (vASConfiguration == null) {
+				if (vASConfiguration == null || !vASConfiguration.isActive()) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "Product";
 					valueParm[1] = detail.getProductCode();
@@ -377,6 +377,16 @@ public class FinanceDataValidation {
 				}
 				if (detail.getValueDate() == null) {
 					detail.setValueDate(DateUtility.getAppDate());
+				} else {
+					if (detail.getValueDate().before(SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE))
+							|| detail.getValueDate().after(DateUtility.getAppDate())) {
+						String[] valueParm = new String[3];
+						valueParm[0] = "Value Date";
+						valueParm[1] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE));
+						valueParm[2] = DateUtility.formatToLongDate(DateUtility.getAppDate());
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", valueParm)));
+						return errorDetails;
+					}
 				}
 				if (vASConfiguration.isFeeAccrued()) {
 					if (detail.getAccrualTillDate() == null) {
@@ -384,7 +394,26 @@ public class FinanceDataValidation {
 						valueParm[0] = "accrualTillDate";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
 						return errorDetails;
+					} else {
+						if(detail.getAccrualTillDate().before(DateUtility.getAppDate())
+								|| detail.getAccrualTillDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))){
+									String[] valueParm = new String[3];
+									valueParm[0] = "AccrualTillDate";
+									valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
+									valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", valueParm)));
+									return errorDetails;
+								}
 					}
+				} else {
+					if(detail.getAccrualTillDate() != null){
+						String[] valueParm = new String[2];
+						valueParm[0] = "accrualTillDate";
+						valueParm[1] = "FeeAccrued";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90298", "", valueParm), "EN"));
+						return errorDetails;
+					}
+					detail.setAccrualTillDate(DateUtility.getAppDate());
 				}
 				if (vASConfiguration.isRecurringType()) {
 					if (detail.getRecurringDate() == null) {
@@ -392,7 +421,27 @@ public class FinanceDataValidation {
 						valueParm[0] = "recurringDate";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
 						return errorDetails;
+					}else {
+						if(detail.getRecurringDate().before(DateUtility.getAppDate())
+								|| detail.getRecurringDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))){
+									String[] valueParm = new String[3];
+									valueParm[0] = "RecurringDate";
+									valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+									valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
+									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+									return errorDetails;
+								}
 					}
+				} else {
+					if(detail.getRecurringDate() != null){
+						String[] valueParm = new String[2];
+						valueParm[0] = "RecurringDate";
+						valueParm[1] = "RecurringType is Active";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90298", "", valueParm), "EN"));
+						return errorDetails;
+					}
+					detail.setRecurringDate(DateUtility.getAppDate());
+					detail.setRenewalFee(BigDecimal.ZERO);
 				}
 				if (StringUtils.isBlank(detail.getDsaId())) {
 					String[] valueParm = new String[1];
@@ -429,6 +478,15 @@ public class FinanceDataValidation {
 					valueParm[0] = "fulfilOfficerId";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
 					return errorDetails;
+				} else {
+					RelationshipOfficer dmaCode = relationshipOfficerService
+							.getRelationshipOfficerById(detail.getFulfilOfficerId());
+					if (dmaCode == null) {
+						String[] valueParm = new String[1];
+						valueParm[0] = detail.getFulfilOfficerId();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", "", valueParm), "EN"));
+						return errorDetails;
+					}
 				}
 				if (StringUtils.isBlank(detail.getReferralId())) {
 					String[] valueParm = new String[1];

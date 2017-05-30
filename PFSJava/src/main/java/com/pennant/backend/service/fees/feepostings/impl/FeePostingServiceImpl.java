@@ -664,7 +664,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		}
 		
 		PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(feePostings.getPartnerBankId(), "");
-		if (partnerBank == null) {
+		if (partnerBank == null || partnerBank.isActive()) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "PartnerBank";
 			valueParm[1] = String.valueOf(feePostings.getPartnerBankId());
@@ -676,7 +676,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		}
 
 		FeeType feeType = feeTypeDAO.getApprovedFeeTypeByFeeCode(feePostings.getFeeTyeCode());
-		if (feeType == null) {
+		if (feeType == null || feeType.isActive()) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Fee";
 			valueParm[1] = feePostings.getFeeTyeCode();

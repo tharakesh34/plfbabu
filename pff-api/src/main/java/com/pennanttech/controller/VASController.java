@@ -26,6 +26,7 @@ import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.configuration.VASRecordingService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.VASConsatnts;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.service.impl.VASWebServiceImpl;
 import com.pennanttech.util.APIConstants;
@@ -64,6 +65,7 @@ public class VASController {
 			for (DocumentDetails detail : vasRecording.getDocuments()) {
 				detail.setRecordType(PennantConstants.RCD_ADD);
 				detail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				detail.setDocModule(VASConsatnts.MODULE_NAME);
 				detail.setNewRecord(true);
 			}
 			// process Extended field details

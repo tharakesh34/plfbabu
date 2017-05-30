@@ -406,9 +406,16 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				auditDetail.setErrorDetail(errorDetail);
 			} 
 		}
+		// validate custDocIssuedCountry
+					if (StringUtils.isBlank(customerDocument.getCustDocIssuedCountry())) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "CustDocIssuedCountry";
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+						return auditDetail;
+					}
 		int count = getCustomerDocumentDAO().getCustCountryCount(customerDocument.getCustDocIssuedCountry());
 		if (count <= 0) {
-
 			String[] valueParm = new String[2];
 			valueParm[0] = "custDocIssuedCountry";
 			valueParm[1] = customerDocument.getCustDocIssuedCountry();
@@ -450,13 +457,6 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 			}
 			}
 		}
-		// validate custDocIssuedCountry
-			if (StringUtils.isBlank(customerDocument.getCustDocIssuedCountry())) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "CustDocIssuedCountry";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm), "EN");
-				auditDetail.setErrorDetail(errorDetail);
-			}
 			// validate DocIssuedAuthority
 			if (docType.isDocIsCustDoc() && docType.isDocIssuedAuthorityMand()) {
 			if (StringUtils.isBlank(customerDocument.getCustDocSysName())) {

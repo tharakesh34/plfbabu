@@ -19,6 +19,7 @@ import com.pennant.backend.model.staticparms.ExtendedField;
 import com.pennant.backend.model.staticparms.ExtendedFieldData;
 import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.configuration.VASRecordingService;
+import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.VASController;
@@ -55,7 +56,7 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 
 			// validate VasStructre with given productCode
 			vasConfiguration = vASConfigurationService.getApprovedVASConfigurationByCode(product);
-			if (vasConfiguration != null) {
+			if (vasConfiguration != null && vasConfiguration.isActive()) {
 				if (vasConfiguration.getExtendedFieldHeader() != null) {
 					vasConfiguration.setExtendedFieldDetailList(
 							vasConfiguration.getExtendedFieldHeader().getExtendedFieldDetails());
@@ -88,6 +89,8 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 	public VASRecording recordVAS(VASRecording vasRecording) throws ServiceException {
 		logger.debug("Enetring");
 		// validate recordVAS details as per the API specification
+		// bean validations
+				validationUtility.validate(vasRecording, SaveValidationGroup.class);
 		VASRecording response = null;
 		try {
 			AuditDetail auditDetail = vASRecordingService.doValidations(vasRecording);
