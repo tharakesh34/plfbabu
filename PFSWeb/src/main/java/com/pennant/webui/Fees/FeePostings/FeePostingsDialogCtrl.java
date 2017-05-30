@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -82,11 +83,13 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ErrorDetails;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.fees.FeePostings;
 import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -104,9 +107,12 @@ import com.pennant.backend.service.rmtmasters.AccountingSetService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.NotificationConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennant.core.EventManager.Notify;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -1021,7 +1027,18 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		// save it to database
 		try {
 			if (doProcess(aFeePosting, tranType)) {
+				// List Detail Refreshment
 				refreshList();
+
+				// Confirmation message
+				String msg = PennantApplicationUtil.getSavingStatus(aFeePosting.getRoleCode(),
+						aFeePosting.getNextRoleCode(), aFeePosting.getReference(), " Fee Postings ",
+						aFeePosting.getRecordStatus());
+				if(StringUtils.equals(aFeePosting.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)){
+					msg= "Fee Postings with Reference "+ aFeePosting.getReference() + " Approveed Succesfully.";
+				}
+				Clients.showNotification(msg, "info", null, null, -1);
+
 				closeDialog();
 			}
 		} catch (final DataAccessException e) {
