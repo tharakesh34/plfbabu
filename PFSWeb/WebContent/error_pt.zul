@@ -4,28 +4,29 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
-	<window
-		title="Error Window : Code ${requestScope['javax.servlet.error.status_code']}"
-		border="normal" mode="modal">
-		<vbox align="center" style="padding:10px 30px">
-			<div align="center">
-				<separator />
-				<separator />
-				<hbox align="center">
-					<label
-						value="900: Unable to process the request. Please try again later or contact the system administrator."
-						width="100%" style="align:center" />
+	<window width="450px" closable="false" mode="modal"
+		use="org.zkoss.zul.impl.MessageboxDlg">
+		<panel title="pennApps Lending Factory" border="normal"
+			sclass="myMultiMessageBox">
+			<panelchildren>
+				<hbox style="padding: 8px;">
+					<div class="${arg.icon}" />
+					<div sclass="z-messagebox"
+						style="padding: 0px 0px 0px 8px;">
+						<label multiline="true"
+							value="900: Unable to process the request. Please try again later or contact the system administrator.\n\n"
+							sclass="word-wrap" />
+					</div>
 				</hbox>
-				<separator />
-				<separator />
-				<hbox align="center">
-					<space></space>
-					<button label="Continue"
-						onClick="spaceOwner.detach()" />
-					<button label="Reload"
-						onClick="Executions.sendRedirect(null)" />
+				<separator bar="true" />
+				<hbox width="100%" pack="center"
+					style="padding: 4px 0px 8px;">
+					<button label="Continue" sclass="z-messagebox-btn"
+						style="margin: 0px 4px;" onClick="spaceOwner.detach()" />
+					<button label="Reload" sclass="z-messagebox-btn"
+						style="margin: 0px 4px;" onClick="Executions.sendRedirect(null)" />
 				</hbox>
-			</div>
-		</vbox>
+			</panelchildren>
+		</panel>
 	</window>
 </zk>
