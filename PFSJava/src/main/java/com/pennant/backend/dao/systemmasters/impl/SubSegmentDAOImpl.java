@@ -55,13 +55,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.SubSegmentDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.systemmasters.SubSegment;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>SubSegment model</b> class.<br>
@@ -142,7 +140,7 @@ public class SubSegmentDAOImpl extends BasisCodeDAO<SubSegment> implements SubSe
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(SubSegment subSegment, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -159,18 +157,10 @@ public class SubSegmentDAOImpl extends BasisCodeDAO<SubSegment> implements SubSe
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41004",subSegment.getSegmentCode(),subSegment.getSubSegmentCode(),
-					subSegment.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.debug("Error in delete Method");
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006",subSegment.getSegmentCode(),subSegment.getSubSegmentCode(),
-					subSegment.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -222,7 +212,6 @@ public class SubSegmentDAOImpl extends BasisCodeDAO<SubSegment> implements SubSe
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(SubSegment subSegment, String type) {
 		logger.debug("Entering");
@@ -246,29 +235,9 @@ public class SubSegmentDAOImpl extends BasisCodeDAO<SubSegment> implements SubSe
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41003", subSegment.getSegmentCode(),subSegment.getSubSegmentCode(),
-					subSegment.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
-	 * @return ErrorDetails
-	 */
-	private ErrorDetails  getError(String errorId, String segmentCode, String subSegmentCode, String userLanguage){
-		String[][] parms= new String[2][2]; 
-		parms[1][0] = segmentCode;
-		parms[1][1] = subSegmentCode;
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_SegmentCode")+ ":" + parms[1][0];
-		parms[0][1] = PennantJavaUtil.getLabel("label_SubSegmentCode")+ ":" + parms[1][1];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
 }

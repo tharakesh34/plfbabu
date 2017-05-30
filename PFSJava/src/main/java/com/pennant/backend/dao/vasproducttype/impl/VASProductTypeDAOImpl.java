@@ -55,14 +55,12 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.vasproducttype.VASProductTypeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.vasproducttype.VASProductType;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>VASProductType model</b> class.<br>
@@ -164,7 +162,7 @@ public class VASProductTypeDAOImpl extends BasisCodeDAO<VASProductType> implemen
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(VASProductType vASProductType, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -179,17 +177,10 @@ public class VASProductTypeDAOImpl extends BasisCodeDAO<VASProductType> implemen
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41003", vASProductType.getId(), vASProductType.getUserDetails()
-						.getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error(e);
-			ErrorDetails errorDetails = getError("41006", vASProductType.getId(), vASProductType.getUserDetails()
-					.getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -263,22 +254,11 @@ public class VASProductTypeDAOImpl extends BasisCodeDAO<VASProductType> implemen
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", vASProductType.getId(), vASProductType.getUserDetails()
-					.getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
 
-	private ErrorDetails getError(String errorId, String productType, String userLanguage) {
-		String[][] parms = new String[2][1];
-		parms[1][0] = productType;
-		parms[0][0] = PennantJavaUtil.getLabel("label_ProductType") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
-				userLanguage);
-	}
 	
 	@Override
 	public int getVASProductTypeByActive(String productType, String type) {
