@@ -44,7 +44,6 @@ package com.pennant.webui.Fees.FeePostings;
 
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -63,7 +62,6 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.fees.FeePostings;
 import com.pennant.backend.service.fees.feepostings.FeePostingService;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.Fees.FeePostings.model.FeePostingsListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -123,7 +121,7 @@ public class FeePostingsListCtrl extends GFCBaseListCtrl<FeePostings> {
 		super.pageRightName = "FeePostings";
 		super.tableName = "FeePostings_AView";
 		super.queueTableName = "FeePostings_TView";
-		super.enquiryTableName = "FeePostings_View";
+		super.enquiryTableName = "FeePostings_AView";
 
 	}
 
@@ -252,12 +250,9 @@ public class FeePostingsListCtrl extends GFCBaseListCtrl<FeePostings> {
 		 * We can call our Dialog zul-file with parameters. So we can call them with a object of the selected item. For
 		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
 		 */
-		if (this.moduleType != null && StringUtils.equals(PennantConstants.MODULETYPE_ENQ, moduleType.getValue())) {
-			moduleCode = PennantConstants.MODULETYPE_ENQ;
-		}
 
 		Map<String, Object> arg = getDefaultArguments();
-		if (this.moduleCode != null && this.moduleCode.equalsIgnoreCase(PennantConstants.MODULETYPE_ENQ)) {
+		if (enqiryModule) {
 			arg.put("enqModule", true);
 		} else {
 			arg.put("enqModule", false);

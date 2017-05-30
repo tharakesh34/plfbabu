@@ -365,6 +365,10 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 			}
 			if (enqModule) {
 				doReadOnly(true);
+				this.btnSave.setVisible(false);
+				this.btnNotes.setVisible(false);
+				this.btnDelete.setVisible(false);
+				this.groupboxWf.setVisible(false);
 			}
 		}
 		try {
