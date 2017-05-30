@@ -2128,7 +2128,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			//Vas Recording Details
 			if (financeDetail.getFinScheduleData().getVasRecordingList() != null && !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasRecordings");
-				details = processingVasRecordngList(details, financeDetail, tableType.getSuffix());
+				details = processingVasRecordngList(details, tableType.getSuffix());
 				auditDetails.addAll(details);
 			}
 
@@ -2144,7 +2144,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			//=======================================
 			if (financeDetail.getFinFlagsDetails() != null && financeDetail.getFinFlagsDetails().size() > 0) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinFlagsDetail");
-				details = processingFinFlagDetailList(details, financeDetail, tableType.getSuffix());
+				details = processingFinFlagDetailList(details, tableType.getSuffix());
 				auditDetails.addAll(details);
 			}
 
@@ -2329,8 +2329,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * @param type
 	 * @return
 	 */
-	private List<AuditDetail> processingFinFlagDetailList(List<AuditDetail> auditDetails, FinanceDetail financeDetail,
-			String type) {
+	private List<AuditDetail> processingFinFlagDetailList(List<AuditDetail> auditDetails, String type) {
 		logger.debug("Entering");
 
 		boolean saveRecord = false;
@@ -2428,8 +2427,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * @param type
 	 * @return
 	 */
-	private List<AuditDetail> processingVasRecordngList(List<AuditDetail> auditDetails, FinanceDetail financeDetail,
-			String type) {
+	private List<AuditDetail> processingVasRecordngList(List<AuditDetail> auditDetails, String type) {
 		logger.debug("Entering");
 
 		boolean saveRecord = false;
@@ -2451,6 +2449,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				recording.setNextRoleCode("");
 				recording.setTaskId("");
 				recording.setNextTaskId("");
+				recording.setWorkflowId(0);
 			}
 
 			if (recording.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
@@ -3252,7 +3251,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (financeDetail.getFinScheduleData().getVasRecordingList() != null
 						&& !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasRecordings");
-					details = processingVasRecordngList(details, financeDetail, "");
+					details = processingVasRecordngList(details, "");
 					auditDetails.addAll(details);
 				}
 
@@ -3506,7 +3505,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Fin Flag Details
 				if (financeDetail.getFinFlagsDetails() != null && financeDetail.getFinFlagsDetails().size() > 0) {
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinFlagsDetail");
-					details = processingFinFlagDetailList(details, financeDetail, "");
+					details = processingFinFlagDetailList(details, "");
 					auditDetails.addAll(details);
 				}
 
