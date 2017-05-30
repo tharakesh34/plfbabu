@@ -239,7 +239,7 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(builderProjcet.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(builderProjcetDAO.getBuilderProjcet(builderProjcet.getId(), ""));
+			auditHeader.getAuditDetail().setBefImage(builderProjcetDAO.getBuilderProjcet(builderProjcet.getId(),builderProjcet.getbuilderIdName()));
 		}
 
 		if (builderProjcet.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {

@@ -253,5 +253,32 @@ public class BuilderCompanyDAOImpl extends BasisNextidDaoImpl<BuilderCompany> im
 	public void setDataSource(DataSource dataSource) {
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
-	
+
+	@Override
+	public boolean isIdExists(long id) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+
+		sql = new StringBuilder();
+		sql.append(" Select COUNT(*) from BuilderCompany ");
+		sql.append(" Where Id = :Id ");
+		logger.debug("Sql: " + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("Id", id);
+		try {
+			if (this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			logger.error(e);
+		} finally {
+			source = null;
+			sql = null;
+			logger.debug("Leaving");
+		}
+		return false;
+	}
+ 
 }	
