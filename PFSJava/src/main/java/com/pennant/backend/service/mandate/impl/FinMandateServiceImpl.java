@@ -316,19 +316,19 @@ public class FinMandateServiceImpl implements FinMandateService {
 					}
 				}
 			}
+			
+			 //If mandate expiry date before fin maturity date--vaidate 
+			if (mandate.getExpiryDate()!=null && mandate.getExpiryDate()
+					.before(financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate())) {
+				
+				String[] errParmFrq = new String[2];
+				errParmFrq[0] = PennantJavaUtil.getLabel("label_MandateDialog_ExpiryDate.value");
+				errParmFrq[1] = PennantJavaUtil.getLabel("label_MaturityDate");
+				
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "30509", errParmFrq, null), ""));
+			}
 
 		}
-		 //If mandate expiry date before fin maturity date--vaidate 
-		if (mandate!=null && mandate.getExpiryDate()!=null && mandate.getExpiryDate()
-				.before(financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate())) {
-			
-			String[] errParmFrq = new String[2];
-			errParmFrq[0] = PennantJavaUtil.getLabel("label_MandateDialog_ExpiryDate.value");
-			errParmFrq[1] = PennantJavaUtil.getLabel("label_MaturityDate");
-			
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "30509", errParmFrq, null), ""));
-		}
-
 	}
 
 	public void promptMandate(AuditDetail auditDetail, FinanceDetail financeDetail) {
