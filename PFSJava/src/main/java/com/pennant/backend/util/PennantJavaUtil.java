@@ -177,6 +177,7 @@ import com.pennant.backend.model.dedup.DedupFields;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
+import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.model.errordetail.ErrorDetail;
 import com.pennant.backend.model.expenses.LegalExpenses;
 import com.pennant.backend.model.facility.Facility;
@@ -735,6 +736,10 @@ public class PennantJavaUtil {
 		ModuleUtil.register("Accounts",
 				new ModuleMapping("Accounts", Accounts.class, new String[] { "Accounts", "Accounts_AView" }, masterWF,
 						new String[] { "AccountId", "AcShortName", "AcType", "AcCcy" }, null, 550));
+		
+		/************ EOD *************/
+		ModuleUtil.register("EODConfig", new ModuleMapping("EODConfig", EODConfig.class, new String[] { "EodConfig",
+		"EodConfig_AView" }, masterWF, new String[] {"ExtMnthRequired","MnthExtTo"},null, 300));
 
 		/************* Customer Masters *************/
 

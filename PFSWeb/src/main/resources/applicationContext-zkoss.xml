@@ -4765,4 +4765,12 @@
 
 	<bean id="errorCtrl" class="com.pennanttech.framework.web.ErrorCtrl"
 		scope="prototype" />
+	<!-- EODConfig -->
+	<bean id="eODConfigListCtrl" class="com.pennant.webui.eod.eodconfig.EODConfigListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="eODConfigService" ref="eODConfigService" />
+	</bean>
+	<bean id="eODConfigDialogCtrl" class="com.pennant.webui.eod.eodconfig.EODConfigDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="eODConfigService" ref="eODConfigService"/>
+	</bean>
 </beans>

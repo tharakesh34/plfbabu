@@ -163,6 +163,10 @@
 		<menuItem id="menu_Item_CustomerPRelation" zulNavigation="/WEB-INF/pages/CustomerMasters/CustomerPRelation/CustomerPRelationList.zul"  rightName="menuItem_CustomerMasters_CustomerPRelation"/>
 		<menuItem id="menu_Item_CustomerRating" zulNavigation="/WEB-INF/pages/CustomerMasters/CustomerRating/CustomerRatingList.zul" rightName="menuItem_CustomerMasters_CustomerRating"/> -->
 	</menu>
+	
+	<!-- <menu id="menu_Category_EOD"  rightName="menuCat_eod" >
+		<menuItem id="menu_Item_EODConfig" zulNavigation="/WEB-INF/pages/Eod/EODConfig/EODConfigList.zul"  rightName="menuItem_eod_EODConfig"/>
+	</menu> -->
 
 	<!-- Interface bajaj Upload and downloads -->
 	<menu id="menu_Category_Mandates"  rightName="menuCat_Mandates" >
