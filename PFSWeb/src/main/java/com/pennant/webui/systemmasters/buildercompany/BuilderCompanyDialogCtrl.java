@@ -334,20 +334,6 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
     	logger.debug(Literal.LEAVING);
 	}	
 
-
-      public void onFulfillGroupId(Event event){
-    	  logger.debug(Literal.ENTERING);
-    	  
-    	if(!this.groupId.getDescription().equals("")){
-    	
-    	}else{
-    		
-    	
-    	}
-    	
-    	logger.debug(Literal.LEAVING);
-	}	
-
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -374,7 +360,6 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
   		logger.debug(Literal.LEAVING);
   	}
 
-	
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 

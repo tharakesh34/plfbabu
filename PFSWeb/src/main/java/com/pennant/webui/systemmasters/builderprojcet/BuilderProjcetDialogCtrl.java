@@ -188,7 +188,6 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet>{
 			Filter[] fieldCode = new Filter[1] ;
 			fieldCode[0]= new Filter("FieldCode", "SEGMENT", Filter.OP_EQUAL);
 			this.builderId.setFilters(fieldCode);
-
 			this.builderId.setMandatoryStyle(true);
 			this.builderId.setFilters(new Filter[]{ new Filter("FieldCode","SEGMENT",Filter.OP_EQUAL)});
 			this.apfNo.setMaxlength(20);
@@ -321,25 +320,6 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet>{
 		logger.debug(Literal.LEAVING);
 	}
 	
-
-
-      public void onFulfillBuilderId(Event event){
-    	  logger.debug(Literal.ENTERING);
-    	  
-    	if(!this.builderId.getDescription().equals("")){
-    	
-    	}else{
-    		
-    	
-    	}
-    	
-    	logger.debug(Literal.LEAVING);
-	}	
-
-
-
-
-
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -356,6 +336,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet>{
 			   this.builderId.setDescription("");
 		}else{
 			this.builderId.setValue(String.valueOf(aBuilderProjcet.getBuilderId()));
+			this.builderId.setDescription(String.valueOf(aBuilderProjcet.getbuilderIdName()));
 		}
 		
 		logger.debug(Literal.LEAVING);

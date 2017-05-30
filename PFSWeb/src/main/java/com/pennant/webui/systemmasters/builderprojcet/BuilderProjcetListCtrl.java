@@ -122,6 +122,12 @@ public class BuilderProjcetListCtrl extends GFCBaseListCtrl<BuilderProjcet> {
 		super.queueTableName = "BuilderProjcet_View";
 		super.enquiryTableName = "BuilderProjcet_View";
 	}
+	
+	/*@Override
+	protected void doAddFilters() {
+		super.doAddFilters();
+			this.searchObject.addFilter(new Filter("FieldCode", "SEGMENT", Filter.OP_EQUAL));
+	}*/
 
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
