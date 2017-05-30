@@ -61,18 +61,16 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pff.core.AppException;
 import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
-import com.pennanttech.pff.core.App.Database;
 
 /**
  * DAO methods implementation for the <b>ExtendedFieldDetail model</b> class.<br>
@@ -384,7 +382,7 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 	/**
 	 * Method for Altering Extended Field Created table  with new column
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void alter(ExtendedFieldDetail fieldDetail, String type, boolean drop, boolean recreate, boolean isAudit) {
 		logger.debug("Entering");
 		fieldDetail.setLovDescErroDesc(null);
@@ -461,15 +459,12 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 					this.namedParameterJdbcTemplate.getJdbcOperations().update(sql.toString());
 				}
 			} catch(DataAccessException e) {
-				logger.warn("Exception: ", e);
 				fieldDetail.setLovDescErroDesc(e.getMessage());
-				throw new DataAccessException(e.getMessage()) {	};
+				throw new AppException(e.getMessage(), e);
 			}
 
 			if (recordCount < 0) {
-				logger.debug("Error Update Method Count :" + recordCount);
-				ErrorDetails errorDetails = getError("41004", fieldDetail.getFieldName(),  fieldDetail.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}
 
@@ -876,14 +871,6 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 		logger.debug("Leaving");
 	}
 
-
-	private ErrorDetails  getError(String errorId, String moduleId, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = moduleId;
-		parms[0][0] = PennantJavaUtil.getLabel("label_FieldName")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-
 	@Override
 	public void revertColumn(ExtendedFieldDetail efd) {
 		logger.debug("Entering");
@@ -901,5 +888,4 @@ public class ExtendedFieldDetailDAOImpl extends BasisNextidDaoImpl<ExtendedField
 			logger.debug("Leaving");
 		}
 	}
-
 }
