@@ -58,14 +58,13 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.BusinessCalendar;
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.smtmasters.WeekendMasterDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.smtmasters.WeekendMaster;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>WeekendMaster model</b> class.<br>
@@ -188,7 +187,7 @@ public class WeekendMasterDAOImpl extends BasisCodeDAO<WeekendMaster> implements
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(WeekendMaster weekendMaster, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -204,17 +203,10 @@ public class WeekendMasterDAOImpl extends BasisCodeDAO<WeekendMaster> implements
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41003", weekendMaster.getId(), weekendMaster.getUserDetails()
-						.getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", weekendMaster.getId(), weekendMaster.getUserDetails()
-					.getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		// Clearing cache on delete
 		BusinessCalendar.clearWeekendCache(weekendMaster.getWeekendCode());
@@ -270,7 +262,6 @@ public class WeekendMasterDAOImpl extends BasisCodeDAO<WeekendMaster> implements
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(WeekendMaster weekendMaster, String type) {
 		int recordCount = 0;
@@ -290,25 +281,11 @@ public class WeekendMasterDAOImpl extends BasisCodeDAO<WeekendMaster> implements
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", weekendMaster.getId(), weekendMaster.getUserDetails()
-					.getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		// Clearing cache on update
 		BusinessCalendar.clearWeekendCache(weekendMaster.getWeekendCode());
 		logger.debug("Leaving");
 	}
 
-	private ErrorDetails getError(String errorId, String weekendCode, String userLanguage) {
-
-		String[][] parms = new String[2][2];
-
-		parms[1][0] = weekendCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_WeekendCode") + ":" + parms[1][0];
-
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
-				userLanguage);
 	}
-}

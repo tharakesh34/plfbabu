@@ -60,13 +60,11 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.BusinessCalendar;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.smtmasters.HolidayMasterDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.smtmasters.HolidayMaster;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>HolidayMaster model</b> class.<br>
@@ -259,7 +257,7 @@ public class HolidayMasterDAOImpl extends BasisCodeDAO<HolidayMaster> implements
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(HolidayMaster holidayMaster, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -275,19 +273,10 @@ public class HolidayMasterDAOImpl extends BasisCodeDAO<HolidayMaster> implements
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41004", holidayMaster.getHolidayCode(),
-						holidayMaster.getHolidayYear(), holidayMaster.getHolidayType(), holidayMaster.getUserDetails()
-								.getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", holidayMaster.getHolidayCode(),
-					holidayMaster.getHolidayYear(), holidayMaster.getHolidayType(), holidayMaster.getUserDetails()
-							.getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 
 		// added code to clear the holidayCache
@@ -345,7 +334,6 @@ public class HolidayMasterDAOImpl extends BasisCodeDAO<HolidayMaster> implements
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(HolidayMaster holidayMaster, String type) {
 		int recordCount = 0;
@@ -367,34 +355,12 @@ public class HolidayMasterDAOImpl extends BasisCodeDAO<HolidayMaster> implements
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41003", holidayMaster.getHolidayCode(),
-					holidayMaster.getHolidayYear(), holidayMaster.getHolidayType(), holidayMaster.getUserDetails()
-							.getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 
 		// added code to clear the holidayCache
 		BusinessCalendar.clearHolidayCache(holidayMaster.getHolidayCode(), type);
 		logger.debug("Leaving");
-	}
-
-	private ErrorDetails getError(String errorId, String holidayCode, BigDecimal holidayYear, String holidayType,
-			String userLanguage) {
-		String[][] parms = new String[2][3];
-
-		parms[1][0] = holidayCode;
-		parms[1][1] = holidayYear.toString();
-		parms[1][2] = holidayType;
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_HolidayMasterDialog_HolidayCode.value") + ":" + parms[1][0]
-				+ PennantJavaUtil.getLabel("label_HolidayMasterDialog_HolidayYear.value") + ":" + parms[1][1];
-
-		parms[0][1] = PennantJavaUtil.getLabel("label_HolidayMasterDialog_HolidayType") + ":" + parms[1][2];
-
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
-				userLanguage);
 	}
 
 }

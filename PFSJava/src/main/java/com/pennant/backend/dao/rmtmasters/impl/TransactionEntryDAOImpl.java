@@ -63,16 +63,14 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.Rule;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>TransactionEntry model</b> class.<br>
@@ -516,7 +514,7 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(TransactionEntry transactionEntry,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -530,13 +528,10 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",transactionEntry.getId() ,transactionEntry.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",transactionEntry.getId() ,transactionEntry.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -618,7 +613,6 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(TransactionEntry transactionEntry,String type) {
 		int recordCount = 0;
@@ -646,9 +640,7 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",transactionEntry.getId() ,transactionEntry.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -692,14 +684,6 @@ public class TransactionEntryDAOImpl extends BasisNextidDaoImpl<TransactionEntry
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
 	}
 	
-	private ErrorDetails  getError(String errorId, long accountSetid, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = String.valueOf(accountSetid);
-		parms[0][0] = PennantJavaUtil.getLabel("label_AccountSetid")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId,
-				parms[0],parms[1]), userLanguage);
-	}
-
 	/**
 	 * Method for Getting List of Transaction entries For LATEPAY event
 	 */

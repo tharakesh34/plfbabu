@@ -61,15 +61,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.rmtmasters.ProductAssetDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.rmtmasters.ProductAsset;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>ProductAsset model</b> class.<br>
@@ -232,7 +230,7 @@ public class ProductAssetDAOImpl extends BasisNextidDaoImpl<ProductAsset> implem
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(ProductAsset productAsset,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -248,15 +246,10 @@ public class ProductAssetDAOImpl extends BasisNextidDaoImpl<ProductAsset> implem
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",productAsset.getAssetID(),productAsset.getProductCode(),
-						productAsset.getAssetCode(),productAsset.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",productAsset.getAssetID(),productAsset.getProductCode(),
-					productAsset.getAssetCode() ,productAsset.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -273,7 +266,7 @@ public class ProductAssetDAOImpl extends BasisNextidDaoImpl<ProductAsset> implem
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void deleteByProduct(ProductAsset productAsset,String type) {
 		logger.debug("Entering");
 		@SuppressWarnings("unused")
@@ -291,15 +284,10 @@ public class ProductAssetDAOImpl extends BasisNextidDaoImpl<ProductAsset> implem
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			/*if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",productAsset.getAssetID(),productAsset.getProductCode(),
-						productAsset.getAssetCode(),productAsset.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}*/
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",productAsset.getAssetID(),productAsset.getProductCode(),
-					productAsset.getAssetCode() ,productAsset.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -351,7 +339,6 @@ public class ProductAssetDAOImpl extends BasisNextidDaoImpl<ProductAsset> implem
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(ProductAsset productAsset,String type) {
 		int recordCount = 0;
@@ -372,24 +359,9 @@ public class ProductAssetDAOImpl extends BasisNextidDaoImpl<ProductAsset> implem
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",productAsset.getAssetID(),productAsset.getProductCode(),
-					productAsset.getAssetCode(),productAsset.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-
-	private ErrorDetails  getError(String errorId, long assetID, String productCode, String assetCode, String userLanguage){
-		String[][] parms= new String[2][3];
-		parms[1][0] = String.valueOf(assetID);
-		parms[1][1] = productCode;
-		parms[1][2] = assetCode;
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_AssetID")+ ":" + parms[1][0] + PennantJavaUtil.getLabel("label_ProductCode")+ ":" + parms[1][1];
-		parms[0][1]= PennantJavaUtil.getLabel("label_AssetCode")+ ":" + parms[1][2];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-
 
 }
