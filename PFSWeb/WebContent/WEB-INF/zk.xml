@@ -161,7 +161,7 @@
 
 	<error-page>
 		<exception-type>java.lang.Throwable</exception-type>
-		<location>/error_pt.zul</location>
+		<location>/error.zul</location>
 	</error-page>
 
 	<device-config>
