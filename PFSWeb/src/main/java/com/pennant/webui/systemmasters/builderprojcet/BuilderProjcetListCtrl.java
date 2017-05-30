@@ -140,7 +140,7 @@ public class BuilderProjcetListCtrl extends GFCBaseListCtrl<BuilderProjcet> {
 		registerButton(button_BuilderProjcetList_BuilderProjcetSearch);
 		registerButton(button_BuilderProjcetList_NewBuilderProjcet, "button_BuilderProjcetList_NewBuilderProjcet", true);
 
-		registerField("id");
+		registerField("id", listheader_id, SortOrder.NONE, id, sortOperator_id, Operators.NUMERIC);
 		registerField("name", listheader_name, SortOrder.NONE, name, sortOperator_name, Operators.STRING);
 		registerField("builderId", listheader_builderId, SortOrder.NONE, builderId, sortOperator_builderId, Operators.NUMERIC);
 		//registerField("builderIdName");
