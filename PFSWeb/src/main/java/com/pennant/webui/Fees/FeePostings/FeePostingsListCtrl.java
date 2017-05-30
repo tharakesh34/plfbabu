@@ -121,7 +121,7 @@ public class FeePostingsListCtrl extends GFCBaseListCtrl<FeePostings> {
 		super.pageRightName = "FeePostings";
 		super.tableName = "FeePostings_AView";
 		super.queueTableName = "FeePostings_TView";
-		super.enquiryTableName = "FeePostings_AView";
+		super.enquiryTableName = "FeePostings_View";
 
 	}
 
