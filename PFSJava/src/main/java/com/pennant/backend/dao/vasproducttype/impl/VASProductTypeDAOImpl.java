@@ -269,7 +269,7 @@ public class VASProductTypeDAOImpl extends BasisCodeDAO<VASProductType> implemen
 		int count;
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
 		selectSql.append(" From VasStructure");
-		selectSql.append(" Where ProductType =:ProductType AND Active=1");
+		selectSql.append(" Where ProductType =:ProductType");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASConfiguration);

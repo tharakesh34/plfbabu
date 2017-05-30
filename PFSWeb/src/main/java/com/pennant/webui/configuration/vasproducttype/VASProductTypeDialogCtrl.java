@@ -614,6 +614,9 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
+		if (count > 0) {
+			this.btnDelete.setVisible(false);
+		}
 
 		logger.debug("Leaving ");
 	}

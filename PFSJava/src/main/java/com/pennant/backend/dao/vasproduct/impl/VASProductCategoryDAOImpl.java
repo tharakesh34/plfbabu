@@ -269,7 +269,7 @@ public class VASProductCategoryDAOImpl extends BasisCodeDAO<VASProductCategory> 
 
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
 		selectSql.append(" From VASProductType");
-		selectSql.append(" Where ProductCtg =:ProductCtg AND Active=1");
+		selectSql.append(" Where ProductCtg =:ProductCtg ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASProductType);

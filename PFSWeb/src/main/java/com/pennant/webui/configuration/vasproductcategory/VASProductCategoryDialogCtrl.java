@@ -321,7 +321,7 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 		if (enqiryModule) {
 			this.btnCtrl.setBtnStatus_Enquiry();
 		}
-
+				
 		// fill the components with the data
 		doWriteBeanToComponents(aVASProductCategory);
 		setDialog(DialogType.EMBEDDED);
@@ -398,6 +398,7 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 	 */
 	public void doWriteBeanToComponents(VASProductCategory aVASProductCategory) {
 		logger.debug("Entering");
+		
 		this.productCtg.setValue(aVASProductCategory.getProductCtg());
 		this.productCtgDesc.setValue(aVASProductCategory.getProductCtgDesc());
 		 this.active.setChecked(aVASProductCategory.isActive());
@@ -548,6 +549,9 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
+		}
+		if(count > 0){
+			this.btnDelete.setVisible(false);
 		}
 
 		logger.debug("Leaving ");
