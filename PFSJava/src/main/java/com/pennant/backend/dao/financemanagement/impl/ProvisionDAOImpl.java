@@ -56,16 +56,14 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>Provision model</b> class.<br>
@@ -176,7 +174,7 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(Provision provision,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -190,13 +188,10 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",provision.getId() ,provision.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",provision.getId() ,provision.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -254,7 +249,6 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 	 * 
 	 */
 	
-	@SuppressWarnings("serial")
 	@Override
 	public void update(Provision provision,String type) {
 		int recordCount = 0;
@@ -279,9 +273,7 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",provision.getId() ,provision.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -291,7 +283,6 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 	 * @param provisionMovement
 	 * @param type
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void updateProvAmt(ProvisionMovement provisionMovement,String type) {
 		int recordCount = 0;
@@ -307,21 +298,11 @@ public class ProvisionDAOImpl extends BasisCodeDAO<Provision> implements Provisi
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",provisionMovement.getId() ,
-					provisionMovement.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
 	
-	private ErrorDetails  getError(String errorId, String finReference, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = finReference;
-		parms[0][0] = PennantJavaUtil.getLabel("label_FinReference")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-
 	@Override
 	public List<Provision> getProcessedProvisions() {
 		logger.debug("Entering");

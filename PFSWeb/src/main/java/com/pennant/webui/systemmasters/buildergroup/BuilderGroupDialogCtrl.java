@@ -54,7 +54,6 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
@@ -62,9 +61,11 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.BuilderGroup;
+import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.systemmasters.BuilderGroupService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.component.Uppercasebox;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -73,13 +74,11 @@ import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.Literal;
 
-
 /**
  * This is the controller class for the
  * /WEB-INF/pages/masters/BuilderGroup/builderGroupDialog.zul file. <br>
  */
 public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
-
 	private static final long serialVersionUID = 1L;
 	private final static Logger logger = Logger.getLogger(BuilderGroupDialogCtrl.class);
 
@@ -89,7 +88,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_BuilderGroupDialog; 
-	protected Textbox 		name; 
+	protected Uppercasebox 		name; 
 	protected ExtendedCombobox 		segmentation; 
 	private BuilderGroup builderGroup; // overhanded per param
 
@@ -316,17 +315,20 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 
 
 
-	public void onFulfillSegmentation(Event event){
-		logger.debug(Literal.ENTERING);
-
-		if(!this.segmentation.getDescription().equals("")){
-
+	public void onFulfill$segmentation(Event event){
+		logger.debug("Entering" + event.toString());
+		Object dataObject = segmentation.getObject();
+		if (dataObject instanceof String) {
+			this.segmentation.setObject(null);
+			this.segmentation.setValue("","");
 		}else{
-
-
+			if (dataObject instanceof LovFieldDetail) {
+				LovFieldDetail lovFieldDetail = (LovFieldDetail) dataObject;
+				this.segmentation.setObject(lovFieldDetail);
+				this.segmentation.setValue(lovFieldDetail.getFieldCodeValue(), lovFieldDetail.getValueDesc());
+			}
 		}
-
-		logger.debug(Literal.LEAVING);
+		logger.debug("Leaving" + event.toString());
 	}	
 
 
@@ -343,6 +345,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 
 		this.name.setValue(aBuilderGroup.getName());
 		this.segmentation.setValue(aBuilderGroup.getSegmentation());
+		this.segmentation.setDescColumn(aBuilderGroup.getSegmentationName());
 
 		if (aBuilderGroup.isNewRecord()){
 			this.segmentation.setDescription("");

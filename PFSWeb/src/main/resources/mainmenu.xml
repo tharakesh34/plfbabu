@@ -163,6 +163,10 @@
 		<menuItem id="menu_Item_CustomerPRelation" zulNavigation="/WEB-INF/pages/CustomerMasters/CustomerPRelation/CustomerPRelationList.zul"  rightName="menuItem_CustomerMasters_CustomerPRelation"/>
 		<menuItem id="menu_Item_CustomerRating" zulNavigation="/WEB-INF/pages/CustomerMasters/CustomerRating/CustomerRatingList.zul" rightName="menuItem_CustomerMasters_CustomerRating"/> -->
 	</menu>
+	
+	<!-- <menu id="menu_Category_EOD"  rightName="menuCat_eod" >
+		<menuItem id="menu_Item_EODConfig" zulNavigation="/WEB-INF/pages/Eod/EODConfig/EODConfigList.zul"  rightName="menuItem_eod_EODConfig"/>
+	</menu> -->
 
 	<!-- Interface bajaj Upload and downloads -->
 	<menu id="menu_Category_Mandates"  rightName="menuCat_Mandates" >
@@ -438,7 +442,8 @@
         <menuItem id="menu_Item_RecommendationsInquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/RecommendationInquiryList.zul"  rightName="menuItem_Enquiry_Recommendations"/>
         <menuItem id="menu_Item_CovenantsInquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/CovenantInquiryList.zul"  rightName="menuItem_Enquiry_Covenants"/>
 <!--         <menuItem id="menu_Item_FinanceProfitEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/ProfitEnquiryList.zul"   rightName="menuItem_Enquiry_FinProfitEnquiry" />
- -->       <menuItem id="menu_Item_JVPostingEnquiry" zulNavigation="/WEB-INF/pages/Others/JVPosting/JVPostingEnquiryList.zul?enqiryModule=Y" rightName="menuItem_others_JVPostingEnquiry"/> 
+ -->       <menuItem id="menu_Item_JVPostingEnquiry" zulNavigation="/WEB-INF/pages/Others/JVPosting/JVPostingEnquiryList.zul?enqiryModule=Y" rightName="menuItem_others_JVPostingEnquiry"/>
+ 		<menuItem id="menu_Item_FeePostingsEnquiry" zulNavigation="/WEB-INF/pages/Fees/FeePostings/FeePostingsList.zul?enqiryModule=Y" rightName="menuItem_FinanceManagement_FeePostingsEnquiry"/> 
         <menuItem id="menu_Item_CustomerEnquiry" zulNavigation="/WEB-INF/pages/Reports/CustomerEnquiryList.zul"  rightName="menuItem_Enquiry_CustomerEnquiry"/>
 		<!-- <menuItem id="menu_Item_CustomerAccount" zulNavigation="/WEB-INF/pages/Reports/CustomerAccountList.zul"  rightName="menuItem_Enquiry_CustomerAccountEnquiry"/> -->
         <!-- <menuItem id="menu_Item_FinanceEligibilityCheck" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/EligibilityCheck.zul"  rightName="menuItem_Enquiry_FinEligibility" /> -->

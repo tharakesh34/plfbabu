@@ -43,6 +43,7 @@
 
 package com.pennant.backend.service.fees.feepostings;
 
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.fees.FeePostings;
 import com.pennant.exception.PFFInterfaceException;
@@ -63,5 +64,7 @@ public interface FeePostingService {
 	AuditHeader doApprove(AuditHeader auditHeader) throws PFFInterfaceException;
 
 	AuditHeader doReject(AuditHeader auditHeader);
+
+	AuditDetail doValidations(FeePostings feePostings);
 
 }

@@ -150,4 +150,8 @@
 	<bean id="vasController" class="com.pennanttech.controller.VASController"
 		autowire="byName" scope="prototype">
 	</bean>
+	<bean id="feePostingController" class="com.pennanttech.controller.FeePostingController"
+		autowire="byName" scope="prototype">
+	</bean>
+	
 </beans>

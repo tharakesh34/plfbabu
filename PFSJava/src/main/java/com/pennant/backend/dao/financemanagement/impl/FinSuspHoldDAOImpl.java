@@ -56,16 +56,14 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
-import org.zkoss.util.resource.Labels;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.financemanagement.FinSuspHoldDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.financemanagement.FinSuspHold;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>FinSuspHold model</b> class.<br>
@@ -176,7 +174,7 @@ public class FinSuspHoldDAOImpl extends BasisNextidDaoImpl<FinSuspHold>  impleme
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(FinSuspHold finSuspHold, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -193,16 +191,10 @@ public class FinSuspHoldDAOImpl extends BasisNextidDaoImpl<FinSuspHold>  impleme
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41004",finSuspHold, finSuspHold.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.debug("Error in delete Method");
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006", finSuspHold, finSuspHold.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -258,7 +250,6 @@ public class FinSuspHoldDAOImpl extends BasisNextidDaoImpl<FinSuspHold>  impleme
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(FinSuspHold finSuspHold,String type) {
 		logger.debug("Entering");
@@ -282,11 +273,7 @@ public class FinSuspHoldDAOImpl extends BasisNextidDaoImpl<FinSuspHold>  impleme
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-
-			ErrorDetails errorDetails= getError("41003", finSuspHold, finSuspHold.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -362,48 +349,4 @@ public class FinSuspHoldDAOImpl extends BasisNextidDaoImpl<FinSuspHold>  impleme
 		logger.debug("Leaving");
 		return false;
 	}
-	
-	/**
-	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
-	 * @return ErrorDetails
-	 */
-	private ErrorDetails  getError(String errorId, FinSuspHold finSuspHold,String userLanguage){
-		String[] errParm = {getValidationMsg(finSuspHold)};
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, errParm,null), userLanguage);
-	}
-	
-	private String getValidationMsg(FinSuspHold finSuspHold){
-		logger.debug("Entering");
-		String errMsg = "";
-		if(StringUtils.isNotEmpty(finSuspHold.getProduct())){
-			errMsg = Labels.getLabel("label_FinSuspHold_Product")+" : "+ finSuspHold.getProduct();
-		}
-		if(StringUtils.isNotEmpty(finSuspHold.getFinType())){
-			if(StringUtils.isEmpty(errMsg)){
-				errMsg = Labels.getLabel("label_FinSuspHold_FinType")+" : "+ finSuspHold.getFinType();
-			}else{
-				errMsg = errMsg +","+Labels.getLabel("label_FinSuspHold_FinType")+" : "+ finSuspHold.getFinType();
-			}
-		}
-		if(StringUtils.isNotEmpty(finSuspHold.getFinReference())){
-			if(StringUtils.isEmpty(errMsg)){
-				errMsg = Labels.getLabel("label_FinSuspHold_FinReference")+" : "+ finSuspHold.getFinReference();
-			}else{
-				errMsg = errMsg +","+Labels.getLabel("label_FinSuspHold_FinReference")+" : "+ finSuspHold.getFinReference();
-			}
-		}
-		if(StringUtils.isNotEmpty(finSuspHold.getCustCIF())){
-			if(StringUtils.isEmpty(errMsg)){
-				errMsg = Labels.getLabel("label_FinSuspHold_CustCIF")+" : "+ finSuspHold.getCustCIF();
-			}else{
-				errMsg = errMsg +","+Labels.getLabel("label_FinSuspHold_CustCIF")+" : "+ finSuspHold.getCustCIF();
-			}
-		}
-		logger.debug("Leaving");
-		return errMsg;
-	}
-	
 }

@@ -56,13 +56,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>StepPolicyHeader model</b> class.<br>
@@ -135,7 +133,7 @@ public class StepPolicyHeaderDAOImpl extends BasisCodeDAO<StepPolicyHeader> impl
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(StepPolicyHeader stepPolicyHeader, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -150,16 +148,10 @@ public class StepPolicyHeaderDAOImpl extends BasisCodeDAO<StepPolicyHeader> impl
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41003", stepPolicyHeader.getPolicyCode(), 
-						stepPolicyHeader.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) { };
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.debug("Error delete Method");
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", stepPolicyHeader.getPolicyCode(), 
-					stepPolicyHeader.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) { };
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -207,7 +199,6 @@ public class StepPolicyHeaderDAOImpl extends BasisCodeDAO<StepPolicyHeader> impl
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(StepPolicyHeader stepPolicyHeader, String type) {
 		int recordCount = 0;
@@ -227,22 +218,9 @@ public class StepPolicyHeaderDAOImpl extends BasisCodeDAO<StepPolicyHeader> impl
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", stepPolicyHeader.getPolicyCode(), 
-					stepPolicyHeader.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
 	
-	private ErrorDetails  getError(String errorId, String policyCode,String userLanguage){
-		String[][] parms= new String[2][2]; 
-
-		parms[1][0] = policyCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_PolicyCode")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
-				errorId, parms[0],parms[1]), userLanguage);
-	}
-
 }

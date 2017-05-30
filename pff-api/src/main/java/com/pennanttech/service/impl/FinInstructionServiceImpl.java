@@ -980,7 +980,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			}
 		}
 		// validate fees
-		String eventCode = AccountEventConstants.ACCEVENT_REPAY;
+		String eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
 		List<ErrorDetails> errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN,
 				finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {

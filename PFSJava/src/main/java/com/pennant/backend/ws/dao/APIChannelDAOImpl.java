@@ -15,14 +15,12 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.channeldetails.APIChannel;
 import com.pennant.backend.model.channeldetails.APIChannelIP;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.ws.exception.APIException;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements APIChannelDAO {
 	private static Logger logger = Logger.getLogger(APIChannelDAOImpl.class);
@@ -122,7 +120,7 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void deleteChannelDetails(APIChannel aPIChannel, String type) {
 		logger.debug("Entering ");
 
@@ -136,17 +134,10 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 
 		try {
 			if (this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters) <= 0) {
-				ErrorDetails errorDetails = getError("41003", aPIChannel.getCode(), aPIChannel.getUserDetails()
-						.getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", aPIChannel.getCode(), aPIChannel.getUserDetails()
-					.getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving ");
 	}
@@ -202,7 +193,6 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(APIChannel aPIChannel, String type) {
 		int recordCount = 0;
@@ -222,11 +212,7 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", aPIChannel.getCode(), aPIChannel.getUserDetails()
-					.getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving ");
 	}
@@ -312,7 +298,7 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(APIChannelIP aPIChannelIP, String type) {
 		logger.debug("Entering ");
 
@@ -325,17 +311,10 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aPIChannelIP);
 		try {
 			if (this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters) <= 0) {
-				ErrorDetails errorDetails = getError("41003", aPIChannelIP.getiP(), aPIChannelIP.getUserDetails()
-						.getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", aPIChannelIP.getiP(), aPIChannelIP.getUserDetails()
-					.getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving ");
 	}
@@ -389,7 +368,6 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(APIChannelIP aPIChannelIP, String type) {
 		int recordCount = 0;
@@ -410,16 +388,11 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", aPIChannelIP.getiP(), aPIChannelIP.getUserDetails()
-					.getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving ");
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void deleteChannelAuthDetails(long id, String type) {
 		logger.debug("Entering ");
@@ -437,10 +410,7 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 		try {
 			this.namedParameterJdbcTemplate.update(sql.toString(), source);
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", String.valueOf(id), "EN");
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		} finally {
 			logger.debug("Leaving");
 			source = null;
@@ -467,15 +437,6 @@ public class APIChannelDAOImpl extends BasisNextidDaoImpl<APIChannel> implements
 		RowMapper<APIChannelIP> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(APIChannelIP.class);
 		logger.debug("Leaving ");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-	}
-
-	private ErrorDetails getError(String errorId, String reportID, String userLanguage) {
-		String[][] parms = new String[2][1];
-
-		parms[1][0] = reportID;
-		parms[0][0] = PennantJavaUtil.getLabel("label_ReportID") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
-				userLanguage);
 	}
 
 	@Override

@@ -72,6 +72,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.FinanceDedup;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennant.backend.service.GenericService;
@@ -1452,8 +1453,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	
 	
 	@Override
-	public List<CustomerDedup> getDedupCustomerDetails(CustomerDetails customerDetails) {
-		DedupCustomerDetail dedupCustomerDetail = preparededupRequest(customerDetails);
+	public List<CustomerDedup> getDedupCustomerDetails(FinanceDetail afinanceDetail) {
+		DedupCustomerDetail dedupCustomerDetail = preparededupRequest(afinanceDetail);
 		DedupCustomerResponse response = new DedupCustomerResponse();
 		try {
 			response = customerDedupService.invokeDedup(dedupCustomerDetail);
@@ -1484,33 +1485,36 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		return custDedupList;
 	}
 	
-	private DedupCustomerDetail preparededupRequest(CustomerDetails customerDetails) {
+	private DedupCustomerDetail preparededupRequest(FinanceDetail financeDetail) {
+		
+		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 		DedupCustomerDetail dedupCustomerDetail = new DedupCustomerDetail();
 		Customer customer = customerDetails.getCustomer();
-		if(customerDetails != null && customer != null) {
+		if (customerDetails != null && customer != null) {
 			dedupCustomerDetail.setFinReference("");
 			dedupCustomerDetail.setCustID(customer.getCustID());
 			dedupCustomerDetail.setCustCIF(customer.getCustCIF());
-			
-			dedupCustomerDetail.setCustomer(customer);			
+
+			dedupCustomerDetail.setCustomer(customer);
+			dedupCustomerDetail.setFinType(financeDetail.getFinScheduleData().getFinanceMain().getFinType());
 			// customer documents
-			if(customerDetails.getCustomerDocumentsList() != null) {
+			if (customerDetails.getCustomerDocumentsList() != null) {
 				dedupCustomerDetail.setCustomerDocumentsList(customerDetails.getCustomerDocumentsList());
 			}
 			// customer Address
-			if(customerDetails.getAddressList() != null) {
+			if (customerDetails.getAddressList() != null) {
 				dedupCustomerDetail.setAddressList(customerDetails.getAddressList());
 			}
 			// customer phone numbers
-			if(customerDetails.getCustomerPhoneNumList() != null) {
+			if (customerDetails.getCustomerPhoneNumList() != null) {
 				dedupCustomerDetail.setCustomerPhoneNumList(customerDetails.getCustomerPhoneNumList());
 			}
 			// customer emails
-			if(customerDetails.getCustomerEMailList() != null) {
+			if (customerDetails.getCustomerEMailList() != null) {
 				dedupCustomerDetail.setCustomerEMailList(customerDetails.getCustomerEMailList());
 			}
 		}
-		
+
 		return dedupCustomerDetail;
 	}
 

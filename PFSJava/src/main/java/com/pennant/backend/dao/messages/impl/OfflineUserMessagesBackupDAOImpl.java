@@ -49,7 +49,6 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -119,7 +118,6 @@ public class OfflineUserMessagesBackupDAOImpl implements OfflineUserMessagesBack
 
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void delete(String toUsrId) {
 		logger.debug("Entering");
@@ -129,15 +127,9 @@ public class OfflineUserMessagesBackupDAOImpl implements OfflineUserMessagesBack
 		deleteSql.append(" Where TOUSRID =:TOUSRID ");
 		logger.debug("deleteSql: "+ deleteSql.toString());
 
-		try{
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), namedParamters);
-		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			logger.debug("Error in Update Method ");
-			throw new DataAccessException(e.toString()) {};
-		}
-		logger.debug("Leaving");
+		this.namedParameterJdbcTemplate.update(deleteSql.toString(), namedParamters);
 
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -146,6 +138,4 @@ public class OfflineUserMessagesBackupDAOImpl implements OfflineUserMessagesBack
 	public void setDataSource(DataSource dataSource) {
 		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
-
-
 }

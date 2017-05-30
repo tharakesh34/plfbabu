@@ -53,6 +53,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -80,6 +81,7 @@ public class LocalityListCtrl extends GFCBaseListCtrl<Locality> {
 	protected Listbox listBoxLocality;
 
 	// List headers
+	protected Listheader listheader_id;
 	protected Listheader listheader_name;
 	protected Listheader listheader_city;
 
@@ -88,9 +90,11 @@ public class LocalityListCtrl extends GFCBaseListCtrl<Locality> {
 	protected Button button_LocalityList_LocalitySearch;
 
 	// Search Fields
+	protected Longbox id; // autowired
 	protected Textbox name; // autowired
 	protected Textbox city; // autowired
-
+    
+	protected Listbox sortOperator_id;
 	protected Listbox sortOperator_name;
 	protected Listbox sortOperator_city;
 
@@ -128,7 +132,7 @@ public class LocalityListCtrl extends GFCBaseListCtrl<Locality> {
 		registerButton(button_LocalityList_LocalitySearch);
 		registerButton(button_LocalityList_NewLocality, "button_LocalityList_NewLocality", true);
 
-		registerField("id");
+		registerField("id", listheader_id, SortOrder.NONE, id, sortOperator_id, Operators.NUMERIC);
 		registerField("name", listheader_name, SortOrder.NONE, name, sortOperator_name, Operators.STRING);
 		registerField("city", listheader_city, SortOrder.NONE, city, sortOperator_city, Operators.STRING);
 		registerField("cityName");

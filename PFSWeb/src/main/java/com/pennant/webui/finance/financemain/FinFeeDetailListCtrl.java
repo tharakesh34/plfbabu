@@ -153,6 +153,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private int ccyFormat=0;
 	private String roleCode = "";
 	private boolean isEnquiry = false;
+	private boolean isReceiptsProcess = false;
 	private transient boolean newFinance;
 	protected Groupbox finBasicdetails;
 	private FinBasicDetailsCtrl  finBasicDetailsCtrl;
@@ -238,6 +239,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			
 			if (arguments.containsKey("isEnquiry")) {
 				isEnquiry = (Boolean) arguments.get("isEnquiry");
+			}
+			
+			if (arguments.containsKey("isReceiptsProcess")) {
+				isReceiptsProcess = (Boolean) arguments.get("isReceiptsProcess");
 			}
 			
 			if (arguments.containsKey("financeDetail")) {
@@ -853,6 +858,34 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		return this.finFeeDetailList;
 	}
 	
+	/**
+	 * Method for Fetching Paid amount from the existing List on Servicing(Receipts) to Make allocations correctlys
+	 * @return
+	 */
+	public BigDecimal getFeePaidAmount(int formatter){
+		logger.debug("Entering");
+		Decimalbox actualBox;
+		Decimalbox waivedBox;
+		
+		BigDecimal totalPaidAmt = BigDecimal.ZERO;
+		if (this.finFeeDetailList != null && !this.finFeeDetailList.isEmpty()) {
+			for (FinFeeDetail finFeeDetail : this.finFeeDetailList) {
+			
+				if (!finFeeDetail.isRcdVisible()) {
+					continue;
+				}
+				actualBox = (Decimalbox) this.listBoxFeeDetail.getFellow(getComponentId(FEE_UNIQUEID_ACTUALAMOUNT, finFeeDetail));
+				waivedBox = (Decimalbox) this.listBoxFeeDetail.getFellow(getComponentId(FEE_UNIQUEID_WAIVEDAMOUNT, finFeeDetail));
+				BigDecimal actualAmt = PennantAppUtil.unFormateAmount(actualBox.getValue(), formatter);
+				BigDecimal waivedAmt = PennantAppUtil.unFormateAmount(waivedBox.getValue(), formatter);
+				totalPaidAmt = totalPaidAmt.add(actualAmt.subtract(waivedAmt));
+			}
+		}
+		
+		logger.debug("Leaving");
+		return totalPaidAmt;
+	}
+	
 	private boolean isDataMaintained(FinFeeDetail finFeeDetail,FinFeeDetail finFeeDetailBefImage){
 		if(finFeeDetailBefImage == null){
 			return true;
@@ -1147,6 +1180,15 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		// }
 		
 		this.dataChanged = true;
+		
+		// Can be utilized only on Receipts Process
+		if(isReceiptsProcess && this.financeMainDialogCtrl != null){
+			try {
+				getFinanceMainDialogCtrl().getClass().getMethod("onFeeAmountChange").invoke(getFinanceMainDialogCtrl());
+			} catch (Exception e) {
+				logger.info(e);
+			}
+		}
 
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1206,6 +1248,15 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 		
 		this.dataChanged = true;
+		
+		// Can be utilized only on Receipts Process
+		if(isReceiptsProcess && this.financeMainDialogCtrl != null){
+			try {
+				getFinanceMainDialogCtrl().getClass().getMethod("onFeeAmountChange").invoke(getFinanceMainDialogCtrl());
+			} catch (Exception e) {
+				logger.info(e);
+			}
+		}
 		
 		logger.debug("Leaving" + event.toString());
 	}

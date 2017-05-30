@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	
+	<changeSet id="1" author="Kesav">
+		<createTable tableName="FinFeeReceipts">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeId" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceiptId" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="PaidAmount" type="decimal(18, 0)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="2" author="Kesava">
+		<addPrimaryKey columnNames="Id, FeeID, ReceiptId" constraintName="PK_FinFeeReceipts" tableName="FinFeeReceipts" />
+	</changeSet>
+
+	<changeSet id="3" author="Kesav">
+		<createTable tableName="FinFeeReceipts_Temp">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeId" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceiptId" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="PaidAmount" type="decimal(18, 0)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="4" author="Kesava">
+		<addPrimaryKey columnNames="Id, FeeID, ReceiptId" constraintName="PK_FinFeeReceipts_Temp" tableName="FinFeeReceipts_Temp" />
+	</changeSet>
+	
+	<changeSet id="5" author="Kesav" dbms="oracle">
+		<sql splitStatements="false">
+			begin
+			execute immediate 'CREATE SEQUENCE SeqFinFeeReceipts START WITH 1 INCREMENT BY
+			1 MAXVALUE 9223372036854775807 NOCYCLE';
+			end;
+		</sql>
+	</changeSet>
+
+	<changeSet id="6" author="Kesav">
+		<createView viewName="FinFeeReceipts_AView" replaceIfExists="true">
+				SELECT	    T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  	T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  	T2.AMOUNT ActualAmount, T3.FeeTypeCode, T3.FeeTypeDesc
+		      	FROM    	FinFeeReceipts  T1 
+		     	Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      	Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		</createView>
+	</changeSet>
+	
+
+	<changeSet id="7" author="Kesav">
+		<createView viewName="FinFeeReceipts_View" replaceIfExists="true">
+			SELECT	    T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+	                  	T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+	                  	T2.AMOUNT ActualAmount, T3.FeeTypeCode, T3.FeeTypeDesc
+	      	FROM    	FinFeeReceipts_Temp  T1 
+	      	Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+	      	Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+	      
+	     	UNION ALL
+	      
+	      	SELECT	    T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+	                 	T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+	                  	T2.AMOUNT ActualAmount, T3.FeeTypeCode, T3.FeeTypeDesc
+	      	FROM    	FinFeeReceipts  T1 
+	      	Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+	      	Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+	     	
+	     	WHERE     (NOT EXISTS  (SELECT  1 FROM FinFeeReceipts_Temp WHERE (Id = T1.Id)))
+		</createView>
+	</changeSet>
+	
+	<changeSet id="8" author="Kesav">
+		<createView viewName="FinFeeReceipts_AView" replaceIfExists="true">
+				SELECT	    T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  	T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  	T2.AMOUNT ActualAmount, T3.FeeTypeCode, T3.FeeTypeDesc, T3.FEETYPEID
+		      	FROM    	FinFeeReceipts  T1 
+		     	Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      	Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		</createView>
+	</changeSet>
+	
+	<changeSet id="9" author="Kesav">
+		<createView viewName="FinFeeReceipts_View" replaceIfExists="true">
+			SELECT	    T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+	                  	T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+	                  	T2.AMOUNT ActualAmount, T3.FeeTypeCode, T3.FeeTypeDesc, T3.FEETYPEID
+	      	FROM    	FinFeeReceipts_Temp  T1 
+	      	Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+	      	Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+	      
+	     	UNION ALL
+	      
+	      	SELECT	    T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+	                 	T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+	                  	T2.AMOUNT ActualAmount, T3.FeeTypeCode, T3.FeeTypeDesc, T3.FEETYPEID
+	      	FROM    	FinFeeReceipts  T1 
+	      	Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+	      	Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+	     	
+	     	WHERE     (NOT EXISTS  (SELECT  1 FROM FinFeeReceipts_Temp WHERE (Id = T1.Id)))
+		</createView>
+	</changeSet>
+	
+	<changeSet id="10" author="Kesav">
+		<createView viewName="FinFeeReceipts_TView" replaceIfExists="true">
+				SELECT	    T1.Id, T1.FEEID,T1.RECEIPTID, T1.PAIDAMOUNT, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, 
+		                  	T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+		                  	T2.AMOUNT ActualAmount, T3.FeeTypeCode, T3.FeeTypeDesc, T3.FEETYPEID
+		      	FROM    	FinFeeReceipts_Temp  T1 
+		     	Inner Join  FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID
+		      	Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
+		</createView>
+	</changeSet>
+	
+</databaseChangeLog>

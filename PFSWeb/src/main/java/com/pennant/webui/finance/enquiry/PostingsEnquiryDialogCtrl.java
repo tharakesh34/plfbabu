@@ -178,8 +178,8 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 
 				getBorderLayoutHeight();
 				int rowsHeight = (financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount()*20)+1;
-				this.listBoxFinPostings.setHeight(this.borderLayoutHeight-rowsHeight-90+"px");
-				this.window_PostingsEnquiryDialog.setHeight(this.borderLayoutHeight-rowsHeight-45+"px");
+				this.listBoxFinPostings.setHeight(this.borderLayoutHeight-rowsHeight-200+"px");
+				this.window_PostingsEnquiryDialog.setHeight(this.borderLayoutHeight-rowsHeight+"px");
 				tabPanel_dialogWindow.appendChild(this.window_PostingsEnquiryDialog);
 
 			}

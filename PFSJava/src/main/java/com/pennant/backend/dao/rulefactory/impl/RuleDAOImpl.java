@@ -61,18 +61,16 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.rulefactory.BMTRBFldCriterias;
 import com.pennant.backend.model.rulefactory.BMTRBFldDetails;
 import com.pennant.backend.model.rulefactory.NFScoreRuleDetail;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.rulefactory.RuleModule;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>Rule model</b> class.<br>
@@ -304,7 +302,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(Rule rule, String type) {
 		logger.debug("Entering");
 		
@@ -321,15 +319,10 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41004",rule.getRuleCode(), rule.getRuleModule(),
-						rule.getRuleEvent(),rule.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006", rule.getRuleCode(), rule.getRuleModule(),
-					rule.getRuleEvent(), rule.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -389,7 +382,6 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(Rule rule, String type) {
 		logger.debug("Entering");
@@ -415,10 +407,7 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error in update method");
-			ErrorDetails errorDetails = getError("41003",rule.getRuleCode(), rule.getRuleModule(),
-					rule.getRuleEvent(), rule.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -663,26 +652,6 @@ public class RuleDAOImpl extends BasisNextidDaoImpl<Rule> implements RuleDAO {
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(),beanParameters, typeRowMapper);
     }
 	
-	/**
-	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
-	 * @return ErrorDetails
-	 */
-	private ErrorDetails  getError(String errorId, String code,String module,String event, String userLanguage){
-		String[][] parms= new String[2][3]; 
-		parms[1][0] =code;
-		parms[1][1] =module;
-		parms[1][2] =event;
-		
-		parms[0][0] = PennantJavaUtil.getLabel("label_RuleCode")+":" +parms[1][0]+" "+
-						PennantJavaUtil.getLabel("label_RuleModule")+":" +parms[1][1];
-		parms[0][1] = PennantJavaUtil.getLabel("label_RuleEvent")+":" +parms[1][2];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, 
-				errorId, parms[0],parms[1]), userLanguage);
-	}
-
 	/**
 	 * Method to fetch Rule details based on list of RuleCodes and module
 	 * 

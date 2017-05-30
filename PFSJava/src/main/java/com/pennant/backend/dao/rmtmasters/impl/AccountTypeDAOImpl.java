@@ -66,6 +66,8 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>AccountType model</b> class.<br>
@@ -148,7 +150,7 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(AccountType accountType, String type) {
 		logger.debug("Entering");
 
@@ -166,15 +168,10 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 					beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",accountType.getAcType(),
-						accountType.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails=  getError("41006",accountType.getAcType(),
-					accountType.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -230,7 +227,6 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(AccountType accountType, String type) {
 		int recordCount = 0;
@@ -258,10 +254,7 @@ public class AccountTypeDAOImpl extends BasisCodeDAO<AccountType> implements
 				beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-			ErrorDetails errorDetails=  getError("41004",accountType.getAcType(),
-					accountType.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}

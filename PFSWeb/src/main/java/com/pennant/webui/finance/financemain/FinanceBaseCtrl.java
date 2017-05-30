@@ -590,6 +590,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	protected String										moduleDefiner						= "";
 	protected String										eventCode							= "";
+	protected boolean										isReceiptsProcess					= false;
 	protected String										menuItemRightName					= null;
 	protected BigDecimal									availCommitAmount					= BigDecimal.ZERO;
 	protected Commitment									commitment;
@@ -638,7 +639,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected Datebox										odMaturityDate;
 
 	protected String										selectMethodName					= "onSelectTab";
-	protected Component										feeDetailWindow;
 
 	protected String										finDivision							= "";
 	Date													appStartDate						= SysParamUtil
@@ -1311,23 +1311,29 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			
 			if (tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_FEE)) == null) {
 				createTab(AssetConstants.UNIQUE_ID_FEE, isLoadProcess);
+			}else{
+				if(!isLoadProcess){
+					Tab tab = (Tab) tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_FEE));
+					tab.setVisible(false);
+				}
 			}
+			
 			if(isLoadProcess){
+				
+				Tabpanel tabPanel = getTabpanel(AssetConstants.UNIQUE_ID_FEE);
+				if(tabPanel != null) {
+					tabPanel.getChildren().clear();
+				}
 				Tab tab = (Tab) tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_FEE));
-				/*if(feeDetailWindow != null) {
-					tab.close();
-					createTab(AssetConstants.UNIQUE_ID_FEE, isLoadProcess);
-					tab = (Tab) tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_FEE));
-					feeDetailWindow = null;
-				}*/
 				tab.setVisible(true);
 				
 				HashMap<String, Object> map = getDefaultArguments();
 				map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FEE));
 				map.put("moduleDefiner", this.moduleDefiner);
 				map.put("eventCode", eventCode);
+				map.put("isReceiptsProcess", isReceiptsProcess);
 				map.put("numberOfTermsLabel", Labels.getLabel("label_FinanceMainDialog_NumberOfTerms.value"));
-				feeDetailWindow = Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinFeeDetailList.zul",
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinFeeDetailList.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_FEE), map);
 			}
 		} catch (Exception e) {

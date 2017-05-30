@@ -64,17 +64,15 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.FinanceWriteoff;
 import com.pennant.backend.model.finance.ScheduleMapDetails;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>WIFFinanceScheduleDetail model</b> class.<br>
@@ -211,7 +209,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 	 * 
 	 */
 
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(FinanceScheduleDetail wIFFinanceScheduleDetail, String type, boolean isWIF) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -232,17 +230,10 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		try {
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41003", wIFFinanceScheduleDetail.getId(),
-						wIFFinanceScheduleDetail.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", wIFFinanceScheduleDetail.getId(), wIFFinanceScheduleDetail
-					.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -407,7 +398,6 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 	 * 
 	 */
 
-	@SuppressWarnings("serial")
 	@Override
 	public void update(FinanceScheduleDetail financeScheduleDetail, String type, boolean isWIF) {
 		int recordCount = 0;
@@ -465,16 +455,11 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", financeScheduleDetail.getId(), financeScheduleDetail
-					.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void updateForRpy(FinanceScheduleDetail financeScheduleDetail) {
 		int recordCount = 0;
@@ -492,11 +477,7 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", financeScheduleDetail.getId(), financeScheduleDetail
-					.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -538,14 +519,6 @@ public class FinanceScheduleDetailDAOImpl extends BasisCodeDAO<FinanceScheduleDe
 		this.namedParameterJdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
-	}
-
-	private ErrorDetails getError(String errorId, String finReference, String userLanguage) {
-		String[][] parms = new String[2][1];
-		parms[1][0] = finReference;
-		parms[0][0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
-				userLanguage);
 	}
 
 	@Override

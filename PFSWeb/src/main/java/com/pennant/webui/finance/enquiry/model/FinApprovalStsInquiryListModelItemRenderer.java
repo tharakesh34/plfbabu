@@ -3,7 +3,6 @@ package com.pennant.webui.finance.enquiry.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -15,11 +14,10 @@ import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.util.PennantAppUtil;
 
 public class FinApprovalStsInquiryListModelItemRenderer implements ListitemRenderer<CustomerFinanceDetail>, Serializable{
-
 	private static final long serialVersionUID = 5574543684897936853L;
 
 	public FinApprovalStsInquiryListModelItemRenderer() {
-		
+		super();
 	}
 	
 	@Override

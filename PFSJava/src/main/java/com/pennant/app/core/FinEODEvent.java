@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinODDetails;
@@ -26,7 +25,6 @@ public class FinEODEvent implements Serializable {
 	private static final long			serialVersionUID		= 1183720618731771888L;
 	private FinanceMain					financeMain				= new FinanceMain();
 	private FinanceType					finType					= new FinanceType();
-	private Map<Date, Integer>			datesMap;
 	private List<FinanceScheduleDetail>	financeScheduleDetails	= new ArrayList<FinanceScheduleDetail>(1);
 	private List<RepayInstruction>		RepayInstructions		= new ArrayList<RepayInstruction>(1);
 	private FinanceProfitDetail			finProfitDetail			= new FinanceProfitDetail();
@@ -83,14 +81,14 @@ public class FinEODEvent implements Serializable {
 	public void setFinType(FinanceType finType) {
 		this.finType = finType;
 	}
-
-	public Map<Date, Integer> getDatesMap() {
-		return datesMap;
-	}
-
-	public void setDatesMap(Map<Date, Integer> datesMap) {
-		this.datesMap = datesMap;
-	}
+//
+//	public Map<Date, Integer> getDatesMap() {
+//		return datesMap;
+//	}
+//
+//	public void setDatesMap(Map<Date, Integer> datesMap) {
+//		this.datesMap = datesMap;
+//	}
 
 	public List<FinanceScheduleDetail> getFinanceScheduleDetails() {
 		return financeScheduleDetails;
@@ -400,4 +398,20 @@ public class FinEODEvent implements Serializable {
 		this.provisions = provisions;
 	}
 
+	public void destroy() {
+		this.financeMain = null;
+		this.finType = null;
+		this.financeScheduleDetails.clear();
+		this.RepayInstructions.clear();
+		this.finProfitDetail = null;
+		this.finODDetails.clear();
+		this.odcRecoveries.clear();
+		this.penaltyrate = null;
+		this.financeDisbursements.clear();
+		this.finFeeScheduleDetails.clear();
+		this.finSchFrqInsurances.clear();
+		this.presentmentDetails.clear();
+		this.returnDataSet.clear();
+		this.provisions.clear();
+	}
 }

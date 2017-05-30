@@ -128,7 +128,7 @@ public final class MessageUtil {
 		logger.error("Exception: ", e);
 
 		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(ErrorCode.PPS_00001.getMessage().concat(SUFFIX), App.NAME, OK, ERROR);
+		MultiLineMessageBox.show(ErrorCode.PPS_900.getMessage().concat(SUFFIX), App.NAME, OK, ERROR);
 	}
 
 	// TODO: Re-factor below code.

@@ -15,16 +15,15 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.NextidviewDAO;
 import com.pennant.backend.dao.finance.BulkRateChangeProcessDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.BulkRateChangeHeader;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 public class BulkRateChangeProcessDAOImpl extends BasisCodeDAO<BulkRateChangeHeader> implements BulkRateChangeProcessDAO {
 
@@ -143,7 +142,6 @@ public class BulkRateChangeProcessDAOImpl extends BasisCodeDAO<BulkRateChangeHea
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(BulkRateChangeHeader bulkRateChangeHeader, String type) {
 
@@ -169,11 +167,7 @@ public class BulkRateChangeProcessDAOImpl extends BasisCodeDAO<BulkRateChangeHea
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-			ErrorDetails errorDetails= getError("41003",bulkRateChangeHeader.getBulkRateChangeRef(), String.valueOf(bulkRateChangeHeader.getFromDate()), 
-					bulkRateChangeHeader.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 
@@ -192,7 +186,7 @@ public class BulkRateChangeProcessDAOImpl extends BasisCodeDAO<BulkRateChangeHea
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(BulkRateChangeHeader bulkRateChangeHeader, String type) {
 		logger.debug("Entering");
 
@@ -210,18 +204,10 @@ public class BulkRateChangeProcessDAOImpl extends BasisCodeDAO<BulkRateChangeHea
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),	beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41004", bulkRateChangeHeader.getBulkRateChangeRef(), 
-						String.valueOf(bulkRateChangeHeader.getFromDate()), bulkRateChangeHeader.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.debug("Error in delete Method");
-			logger.error(e);
-			ErrorDetails errorDetails= getError("41006", bulkRateChangeHeader.getBulkRateChangeRef(), 
-					String.valueOf(bulkRateChangeHeader.getFromDate()), bulkRateChangeHeader.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -314,22 +300,4 @@ public class BulkRateChangeProcessDAOImpl extends BasisCodeDAO<BulkRateChangeHea
 		return appMonthName + " - " + seqNo;
 	}
 
-
-
-	/**
-	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
-	 * @return ErrorDetails
-	 */
-	private ErrorDetails  getError(String errorId, String bulkRateChangeHeaderLevel,String bulkRateChangeHeaderDecipline, String userLanguage){
-		String[][] parms= new String[2][2]; 
-		parms[1][0] = bulkRateChangeHeaderLevel;
-		parms[1][1] = bulkRateChangeHeaderDecipline;
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_BulkRateChangeSearch_fromDate.value")+ ":" + parms[1][0];
-		parms[0][1] = PennantJavaUtil.getLabel("label_BulkRateChangeSearch_toDate.value")+ ":" + parms[1][1];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
 }

@@ -59,6 +59,7 @@ import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.AppException;
 
 public class AccountNumberGeneration implements Serializable {
 	
@@ -82,7 +83,6 @@ public class AccountNumberGeneration implements Serializable {
 		super();
 	} 
 
-	@SuppressWarnings("serial")
 	private AccountNumberGeneration (String acType,String ccyCode,
 			String accBranch) throws DataAccessException{
 		super();
@@ -97,8 +97,7 @@ public class AccountNumberGeneration implements Serializable {
 			parms[1][0] =  acType;
 			parms[0][0] = PennantJavaUtil.getLabel("label_AcType");
 			ErrorDetails details = getError("41002", parms);
-			throw new DataAccessException(details.getError()) {
-			};
+			throw new AppException(details.getError());
 		}else{
 			this.accountHeade = accountType.getAcHeadCode().trim();
 		}

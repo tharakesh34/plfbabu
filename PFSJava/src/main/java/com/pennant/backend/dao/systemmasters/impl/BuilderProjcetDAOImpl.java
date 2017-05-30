@@ -82,11 +82,14 @@ public class BuilderProjcetDAOImpl extends BasisNextidDaoImpl<BuilderProjcet> im
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, name, builderId, apfNo, ");
-		
+		if(type.contains("View")){
+			sql.append("builderIdName,");
+		}	
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		sql.append(" From BuilderProjcet");
 		sql.append(type);
 		sql.append(" Where id = :id");
+		
 		
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

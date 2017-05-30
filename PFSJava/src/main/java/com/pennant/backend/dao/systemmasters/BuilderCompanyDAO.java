@@ -48,30 +48,8 @@ import com.pennanttech.pff.core.TableType;
 
 public interface BuilderCompanyDAO extends BasicCrudDao<BuilderCompany> {
 	
-	
-	/**
-	 * Fetch the Record Academic Details details by key field
-	 * 
-	 * @param id
-	 *            id of the BuilderCompany.
-	 * @param tableType
-	 *            The type of the table.
-	 * @return BuilderCompany
-	 */
 	BuilderCompany getBuilderCompany(long id,String type);
-	/**
-	 * Checks whether another record exists with the key attributes in the specified table type.
-	 * 
-	 * @param id
-	 *            id of the BuilderCompany.
-	 * @param name
-	 *            name of the BuilderCompany.
-	 * @param groupId
-	 *            groupId of the BuilderCompany.
-	 * @param tableType
-	 *            The type of the table.
-	 * @return true if the record exists.
-	 */
-	boolean isDuplicateKey(long id, String name, long groupId, TableType tableType);	
+	boolean isDuplicateKey(long id, String name, long groupId, TableType tableType);
+	boolean isIdExists(long id);	
 	
 }

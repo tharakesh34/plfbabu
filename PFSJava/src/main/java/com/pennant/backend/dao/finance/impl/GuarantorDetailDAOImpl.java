@@ -39,16 +39,14 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.GuarantorDetail;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>GuarantorDetail model</b> class.<br>
@@ -168,7 +166,6 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void delete(GuarantorDetail guarantorDetail, String type) {
 		logger.debug("Entering");
@@ -184,17 +181,10 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),
 			        beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41003", String.valueOf(guarantorDetail
-				        .getGuarantorId()), guarantorDetail.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", String.valueOf(guarantorDetail
-			        .getGuarantorId()), guarantorDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -261,7 +251,6 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(GuarantorDetail guarantorDetail, String type) {
 		int recordCount = 0;
@@ -294,21 +283,9 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", String.valueOf(guarantorDetail
-			        .getGuarantorId()), guarantorDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
-	}
-
-	private ErrorDetails getError(String errorId, String guarantorId, String userLanguage) {
-		String[][] parms = new String[2][1];
-		parms[1][0] = guarantorId;
-		parms[0][0] = PennantJavaUtil.getLabel("label_GuarantorId") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId,
-		        parms[0], parms[1]), userLanguage);
 	}
 
 	@Override
@@ -353,7 +330,6 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 
 	}
 
-	@SuppressWarnings("serial")
 	@Override
     public void deleteByFinRef(String finReference, String type) {
 		logger.debug("Entering");
@@ -371,17 +347,10 @@ public class GuarantorDetailDAOImpl extends BasisNextidDaoImpl<GuarantorDetail> 
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),
 			        beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41003", String.valueOf(guarantorDetail
-				        .getGuarantorId()), guarantorDetail.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", String.valueOf(guarantorDetail
-			        .getGuarantorId()), guarantorDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}

@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.pennanttech.bajaj.services.ControlDumpRequestService;
+import com.pennanttech.pff.core.util.DateUtil;
 
 public class TestControlDumpRequestService {
 
@@ -24,7 +25,7 @@ public class TestControlDumpRequestService {
 	@Test
 	public void process() {
 		try {
-			controlDumpRequestService.sendReqest(new Long(1000));
+			controlDumpRequestService.sendReqest(new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

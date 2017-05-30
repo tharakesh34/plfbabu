@@ -30,29 +30,29 @@ import com.pennanttech.model.DedupCustomerResponse;
 
 public class CustomerDedupService {
 
-	private final static Logger	logger	= Logger.getLogger(CustomerDedupService.class);
+	private final static Logger logger = Logger.getLogger(CustomerDedupService.class);
 
 	public CustomerDedupService() {
 		super();
 	}
-	
-	private Properties props = null;
-	private SimpleDateFormat dateFormater = new SimpleDateFormat("dd-MMM-yyyy");
-	
-	public DedupCustomerResponse invokeDedup(DedupCustomerDetail  dedupCustomerDetail) throws Exception{
-		
-		
+
+	private Properties			props			= null;
+	private SimpleDateFormat	dateFormater	= new SimpleDateFormat("dd-MMM-yyyy");
+
+	public DedupCustomerResponse invokeDedup(DedupCustomerDetail dedupCustomerDetail) throws Exception {
+
 		String serviceURL = getProperties("posidex");
-		DedupCustomerResponse customerResponse=null;
+		DedupCustomerResponse customerResponse = null;
 		DedupeResponse response = null;
-		
-		JSONClient client= new JSONClient();
+
+		JSONClient client = new JSONClient();
 		try {
 			logger.debug("ServiceURL : " + serviceURL);
-			 response = (DedupeResponse) client.postProcess(serviceURL, "DedupeService", prepareRequest(dedupCustomerDetail), DedupeResponse.class);
-			 logger.info("Response : " + response.toString());
-			 customerResponse = prepareResponse(response);
-			 logger.warn("response-->"+ response);
+			response = (DedupeResponse) client.postProcess(serviceURL, "DedupeService",
+					prepareRequest(dedupCustomerDetail), DedupeResponse.class);
+			logger.info("Response : " + response.toString());
+			customerResponse = prepareResponse(response);
+			logger.warn("response-->" + response);
 		} catch (Exception exception) {
 			logger.error("Error from Dedup Response : " + exception.getMessage(), exception);
 			throw exception;
@@ -60,9 +60,8 @@ public class CustomerDedupService {
 		return customerResponse;
 	}
 
-	
 	public String getProperties(String property) throws IOException {
-		if(props == null) {
+		if (props == null) {
 			props = new Properties();
 			PathMatchingResourcePatternResolver loader = new PathMatchingResourcePatternResolver();
 			Resource[] resources = new Resource[0];
@@ -73,36 +72,39 @@ public class CustomerDedupService {
 		return props.getProperty(property);
 	}
 
+	private DedupeRequest prepareRequest(DedupCustomerDetail dedupCustomerDetail) {
+		boolean mobileSelected = false;
 
-	private DedupeRequest prepareRequest(DedupCustomerDetail  dedupCustomerDetail){
-		boolean mobileSelected=false;
-		
 		DedupeRequest request = new DedupeRequest();
 		//request.setDealId(dealId);
 		request.setOrg("CL");
 		request.setRequestType("Q");
 		request.setDataSource("E");
-		
-		Customer customer   = dedupCustomerDetail.getCustomer();
-		
-		request.setFirstName(customer.getCustFName());
-		request.setMiddleName(customer.getCustMName());
-		request.setLastName(customer.getCustLName());
-		
-		List<CustomerAddres> listAddres= dedupCustomerDetail.getAddressList();
-		List<CustomerPhoneNumber> listPhoneNumbers= dedupCustomerDetail.getCustomerPhoneNumList();
-		List<CustomerDocument> listDocuments= dedupCustomerDetail.getCustomerDocumentsList();
+
+		Customer customer = dedupCustomerDetail.getCustomer();
+
+		if ("RETAIL".equalsIgnoreCase(customer.getCustCtgCode())) {
+			request.setFirstName(customer.getCustFName());
+			request.setMiddleName(customer.getCustMName());
+			request.setLastName(customer.getCustLName());
+			request.setCustomerType(customer.getCustCtgCode());
+			request.setFatherName(customer.getCustFNameLclLng());
+		} else {
+			request.setFirstName(customer.getCustShrtName());
+			request.setCustomerType(customer.getCustCtgCode());
+		}
+		request.setPanNumber(customer.getCustCRCPR());
+		List<CustomerAddres> listAddres = dedupCustomerDetail.getAddressList();
+		List<CustomerPhoneNumber> listPhoneNumbers = dedupCustomerDetail.getCustomerPhoneNumList();
+		List<CustomerDocument> listDocuments = dedupCustomerDetail.getCustomerDocumentsList();
 		List<CustomerEMail> listCustEmail = dedupCustomerDetail.getCustomerEMailList();
-		
-		
- 		request.setCustomerType(customer.getCustTypeCode());
-		request.setFatherName(customer.getCustFNameLclLng());
+
 		//request.setEmployerName(customer.getc);
-		
-		if("CORP".equalsIgnoreCase(customer.getCustTypeCode())){
+
+		if ("CORP".equalsIgnoreCase(customer.getCustCtgCode())) {
 			request.setDateOfIncorporation(dateFormater.format(customer.getCustDOB()));
 			for (CustomerAddres customerAddres : listAddres) {
-				if("OFFICE".equalsIgnoreCase(customer.getCustTypeCode())){
+				if ("OFFICE".equalsIgnoreCase(customer.getCustTypeCode())) {
 					request.setAddress1(customerAddres.getCustAddrType());
 					request.setAddress2(customerAddres.getCustAddrHNbr());
 					request.setAddress3(customerAddres.getCustAddrStreet());
@@ -110,7 +112,6 @@ public class CustomerDedupService {
 					request.setPinCode(customerAddres.getCustAddrZIP());
 					//request.setArea(area);
 
-					
 					request.setOfficeAddress1(customerAddres.getCustAddrType());
 					request.setOfficeAddress2(customerAddres.getCustAddrHNbr());
 					request.setOfficeAddress3(customerAddres.getCustAddrStreet());
@@ -120,32 +121,31 @@ public class CustomerDedupService {
 					//request.setOfficelandMark(officelandMark);
 					break;
 				}
-			
+
 				for (CustomerPhoneNumber phoneNumber : listPhoneNumbers) {
-					
-					if("MOBILE".equalsIgnoreCase(phoneNumber.getPhoneTypeCode()) && !mobileSelected){
+
+					if ("MOBILE".equalsIgnoreCase(phoneNumber.getPhoneTypeCode()) && !mobileSelected) {
 						request.setMobile(phoneNumber.getPhoneNumber());
-						mobileSelected=true;
+						mobileSelected = true;
 					}
-					
-					if("WORK".equalsIgnoreCase(phoneNumber.getPhoneTypeCode()) && !mobileSelected){
+
+					if ("WORK".equalsIgnoreCase(phoneNumber.getPhoneTypeCode()) && !mobileSelected) {
 						request.setOfficeLanLine1(phoneNumber.getPhoneNumber());
 						//request.setOfficeLanLine2(phoneNumber.getPhoneNumber());
 						request.setOfficeStdCode(phoneNumber.getPhoneAreaCode());
 					}
 
 				}
-				
-			}	
-			
+
+			}
+
 			//request.setTanNo(tanNo);
-			
-			
-		}else{
+
+		} else {
 			request.setDateOfBirth(dateFormater.format(customer.getCustDOB()));
-			
+
 			for (CustomerAddres customerAddres : listAddres) {
-				if("CURRES".equalsIgnoreCase(customer.getCustTypeCode())){
+				if ("CURRES".equalsIgnoreCase(customer.getCustTypeCode())) {
 					request.setAddress1(customerAddres.getCustAddrType());
 					request.setAddress2(customerAddres.getCustAddrHNbr());
 					request.setAddress3(customerAddres.getCustAddrStreet());
@@ -154,11 +154,10 @@ public class CustomerDedupService {
 					//request.setArea(area);
 					//request.setLandMark(landMark);
 					//request.setStayingSince(customerAddres.);
-					
-					
+
 				}
-				
-				if("OFFICE".equalsIgnoreCase(customer.getCustTypeCode())){
+
+				if ("OFFICE".equalsIgnoreCase(customer.getCustTypeCode())) {
 					request.setAddress1(customerAddres.getCustAddrType());
 					request.setAddress2(customerAddres.getCustAddrHNbr());
 					request.setAddress3(customerAddres.getCustAddrStreet());
@@ -167,118 +166,107 @@ public class CustomerDedupService {
 					//request.setArea(area);
 					//request.setLandMark(landMark);
 				}
-				
-				
+
 			}
-			
+
 			for (CustomerPhoneNumber phoneNumber : listPhoneNumbers) {
-				
-				if("MOBILE".equalsIgnoreCase(phoneNumber.getPhoneTypeCode()) && !mobileSelected){					
+
+				if ("MOBILE".equalsIgnoreCase(phoneNumber.getPhoneTypeCode()) && !mobileSelected) {
 					request.setOfficeMobile(phoneNumber.getPhoneNumber());
 					request.setMobile(phoneNumber.getPhoneNumber());
-					mobileSelected=true;
+					mobileSelected = true;
 				}
-				
 
-				if("HOME".equalsIgnoreCase(phoneNumber.getPhoneTypeCode()) && !mobileSelected){
+				if ("HOME".equalsIgnoreCase(phoneNumber.getPhoneTypeCode()) && !mobileSelected) {
 					request.setLandLine1(phoneNumber.getPhoneNumber());
 					//request.setLandLine2(phoneNumber.getPhoneNumber());
 					request.setStdCode(phoneNumber.getPhoneAreaCode());
 				}
 
-				if("OFFICE".equalsIgnoreCase(phoneNumber.getPhoneTypeCode()) && !mobileSelected){
+				if ("OFFICE".equalsIgnoreCase(phoneNumber.getPhoneTypeCode()) && !mobileSelected) {
 					request.setOfficeLanLine1(phoneNumber.getPhoneNumber());
 					//request.setOfficeLanLine2(phoneNumber.getPhoneNumber());
 					request.setOfficeStdCode(phoneNumber.getPhoneAreaCode());
 				}
-					
-				
 			}
-			}
-		
-		
+		}
+
 		for (CustomerDocument customerDocument : listDocuments) {
-			
-			if("11"==customerDocument.getCustDocCategory()){
+
+			if ("11" == customerDocument.getCustDocCategory()) {
 				request.setDrivingLicense(customerDocument.getCustDocTitle());
-			}else  if("2"==customerDocument.getCustDocCategory()){
+			} else if ("02" == customerDocument.getCustDocCategory()) {
 				request.setPassportNo(customerDocument.getCustDocTitle());
-			}else if("3".equalsIgnoreCase(customerDocument.getCustDocCategory())) {
+			} else if ("03".equalsIgnoreCase(customerDocument.getCustDocCategory())) {
 				request.setPanNumber(customerDocument.getCustDocTitle());
 			}
 
-			//request.setVoterId(voterId);
-
-			
 		}
-		
-		
-		if(listCustEmail != null) {
-			for(CustomerEMail email: listCustEmail) {
+
+		if (listCustEmail != null) {
+			for (CustomerEMail email : listCustEmail) {
 				request.setEmail(email.getCustEMail());
 				break;
 			}
 		}
-		
+
 		request.setAccountNumber(dedupCustomerDetail.getAccountNumber());
 		//request.setCreditCardNumber(creditCardNumber);
 		request.setCustomerNumber((int) dedupCustomerDetail.getCustID());
 		//request.setLanNo(lanNo);
 		//request.setLan2(lan2);
 		//request.setCustomerSrNo(customerSrNo);
-		
-		
+
 		//request.setApplicationNo(dedupCustomerDetail.getApplicationNo());
 		request.setProduct(dedupCustomerDetail.getFinType());
-		
+
 		//request.setBatch(batch);
 		//request.setCityClassification(cityClassification);
 		//request.setEmploymentBusiness(employmentBusiness);
 		//request.setAge(customer.getc);
 		//request.setResidentType(residentType);
-		
+
 		//request.setCreditProgram(creditProgram);
 		//request.setAssetCategory(assetCategory);
 		//request.setFinRequestId(dedupCustomerDetail);
 		//request.setMatchProfile(matchProfile);
 		//request.setSegment(segment);
 		//request.setApplicatntType(applicatntType);
-		
+
 		//request.setOfficeMail(officeMail);
 		request.setLoanApplicationNo(dedupCustomerDetail.getApplicationNo());
 		request.setCustomerStatus("Y");
 		request.setDemoDtl("Y");
 		request.setAppscore("Y");
-		
+
 		return request;
 	}
-	
-	
-	private DedupCustomerResponse  prepareResponse(DedupeResponse response){
-		DedupCustomerResponse customerResponse= new DedupCustomerResponse(); 
+
+	private DedupCustomerResponse prepareResponse(DedupeResponse response) {
+		DedupCustomerResponse customerResponse = new DedupCustomerResponse();
 		customerResponse.setResponse(response.getResponseCode());
-		List<DedupCustomerDetail> details= new ArrayList<>();
-		
-		if(response.getErrorDescription()!=null){
+		List<DedupCustomerDetail> details = new ArrayList<>();
+
+		if (response.getErrorDescription() != null) {
 			customerResponse.setErrorCode(response.getErrorDescription().getErrorCode());
 			customerResponse.setErrorDesc(response.getErrorDescription().getErrorDescription());
 		}
-		
+
 		for (DemographicDetail detail : response.getDemographicDetails()) {
 			details.add(prepareCustomerDetail(detail));
 		}
-		
+
 		customerResponse.setDedupCustomerDetails(details);
 		logger.info(" Dedupe Response : " + customerResponse.toString());
 		return customerResponse;
 	}
-	
-	private DedupCustomerDetail prepareCustomerDetail(DemographicDetail detail){
-		
-		DedupCustomerDetail customerDetail= null;
-		if(detail!=null){
-			customerDetail= new DedupCustomerDetail();
-			
+
+	private DedupCustomerDetail prepareCustomerDetail(DemographicDetail detail) {
+
+		DedupCustomerDetail customerDetail = null;
+		if (detail != null) {
+			customerDetail = new DedupCustomerDetail();
+
 			//set Demographic details
 			if (detail.getCustDGDetails() != null && !detail.getCustDGDetails().isEmpty()) {
 				setDGDetails(detail.getCustDGDetails().get(0), customerDetail);
@@ -293,44 +281,44 @@ public class CustomerDedupService {
 			}
 		}
 
-		List<CustomerAddres> addressList= new ArrayList<CustomerAddres>();
-		
+		List<CustomerAddres> addressList = new ArrayList<CustomerAddres>();
+
 		//Customer Adderess details List
-		if(detail.getCustAddressDetails()!=null && !detail.getCustAddressDetails().isEmpty()){
+		if (detail.getCustAddressDetails() != null && !detail.getCustAddressDetails().isEmpty()) {
 			for (CustAddressDetail addressDetail : detail.getCustAddressDetails()) {
 				addressList.add(setAddress(addressDetail));
 			}
-			
+
 			customerDetail.setAddressList(addressList);
 		}
 
-		List<CustomerEMail> customerEMailList= new ArrayList<CustomerEMail>();
-		
+		List<CustomerEMail> customerEMailList = new ArrayList<CustomerEMail>();
+
 		//E-mails List 
-		if(detail.getCustEmailDetails()!=null && !detail.getCustEmailDetails().isEmpty()){
-			for (CustEmailDetail emailDetail: detail.getCustEmailDetails()) {
+		if (detail.getCustEmailDetails() != null && !detail.getCustEmailDetails().isEmpty()) {
+			for (CustEmailDetail emailDetail : detail.getCustEmailDetails()) {
 				customerEMailList.add(setEmail(emailDetail));
 			}
-			
+
 			customerDetail.setCustomerEMailList(customerEMailList);
 		}
-		
+
 		//phone numbers List
-		List<CustomerPhoneNumber> customerPhoneNumList= new ArrayList<CustomerPhoneNumber>();
-		if(detail.getCustContactDetails()!=null && !detail.getCustContactDetails().isEmpty()){
+		List<CustomerPhoneNumber> customerPhoneNumList = new ArrayList<CustomerPhoneNumber>();
+		if (detail.getCustContactDetails() != null && !detail.getCustContactDetails().isEmpty()) {
 			for (CustContactDetail contactDetail : detail.getCustContactDetails()) {
 				customerPhoneNumList.add(setPhoneNumbers(contactDetail));
 			}
 			customerDetail.setCustomerPhoneNumList(customerPhoneNumList);
 		}
-		
+
 		return customerDetail;
 	}
-	
-	private DedupCustomerDetail setDGDetails(CustDGDetail dgDetail,DedupCustomerDetail customerDetail){
-		
+
+	private DedupCustomerDetail setDGDetails(CustDGDetail dgDetail, DedupCustomerDetail customerDetail) {
+
 		customerDetail.setCustCIF(dgDetail.getCustomerId());
-		Customer customer= new Customer();
+		Customer customer = new Customer();
 		customer.setCustCIF(dgDetail.getCustomerId());
 		customer.setCustTypeCode(dgDetail.getCustomerType());
 		customer.setCustShrtName(dgDetail.getCustomerName());
@@ -340,11 +328,11 @@ public class CustomerDedupService {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		
+
 		customerDetail.setCustomer(customer);
-		
-		List<CustomerDocument> listDocuments= new ArrayList<CustomerDocument>();
-		if(dgDetail.getPanNumber()!=null){
+
+		List<CustomerDocument> listDocuments = new ArrayList<CustomerDocument>();
+		if (dgDetail.getPanNumber() != null) {
 			CustomerDocument custpan = new CustomerDocument();
 			custpan.setCustDocCategory("03");
 			listDocuments.add(custpan);
@@ -352,33 +340,29 @@ public class CustomerDedupService {
 		customerDetail.setCustomerDocumentsList(listDocuments);
 		return customerDetail;
 	}
-	
-	
-	
-	private CustomerAddres setAddress(CustAddressDetail addressDetail){
-		CustomerAddres addres= new CustomerAddres();
+
+	private CustomerAddres setAddress(CustAddressDetail addressDetail) {
+		CustomerAddres addres = new CustomerAddres();
 		addres.setCustAddrType(addressDetail.getAddressType());
 		addres.setCustAddrCity(addressDetail.getCity());
 		addres.setCustAddrZIP(addressDetail.getPin());
 		return addres;
 	}
-	
-	
-	private CustomerEMail setEmail(CustEmailDetail detail){
-		CustomerEMail  eMail= new CustomerEMail();
+
+	private CustomerEMail setEmail(CustEmailDetail detail) {
+		CustomerEMail eMail = new CustomerEMail();
 		eMail.setCustEMailTypeCode(detail.getEmailType());
 		eMail.setCustEMail(detail.getEmailId());
 		return eMail;
 	}
-	
-	private CustomerPhoneNumber setPhoneNumbers(CustContactDetail detail){
-		CustomerPhoneNumber  phoneNumber= new CustomerPhoneNumber();
+
+	private CustomerPhoneNumber setPhoneNumbers(CustContactDetail detail) {
+		CustomerPhoneNumber phoneNumber = new CustomerPhoneNumber();
 		phoneNumber.setPhoneTypeCode(detail.getPhoneType());
 		phoneNumber.setPhoneAreaCode(detail.getStdCode());
 		phoneNumber.setPhoneNumber(detail.getPhoneNumber());
-		
+
 		return phoneNumber;
 	}
-	
-	
+
 }

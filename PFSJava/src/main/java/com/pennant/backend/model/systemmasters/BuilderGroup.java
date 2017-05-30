@@ -68,6 +68,7 @@ private static final long serialVersionUID = 1L;
 	private String name;
 	private String segmentation;
 	private String segmentationName;
+	private String fieldCode;
 	@XmlTransient
 	private boolean newRecord=false;
 	@XmlTransient
@@ -93,6 +94,7 @@ private static final long serialVersionUID = 1L;
 	public Set<String> getExcludeFields(){
 		Set<String> excludeFields=new HashSet<String>();
 			excludeFields.add("segmentationName");
+			excludeFields.add("fieldCode");
 	return excludeFields;
 	}
 
@@ -165,6 +167,14 @@ private static final long serialVersionUID = 1L;
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	public String getFieldCode() {
+		return fieldCode;
+	}
+
+	public void setFieldCode(String fieldCode) {
+		this.fieldCode = fieldCode;
 	}
 
 }

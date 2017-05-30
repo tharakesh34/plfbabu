@@ -59,16 +59,14 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.rulefactory.BMTRBFldDetails;
 import com.pennant.backend.model.rulefactory.LimitFilterQuery;
 import com.pennant.backend.model.rulefactory.LimitFldCriterias;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>Rule model</b> class.<br>
@@ -221,7 +219,7 @@ public class LimitRuleDAOImpl extends BasisNextidDaoImpl<LimitFilterQuery> imple
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(LimitFilterQuery dedupParm,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -237,15 +235,10 @@ public class LimitRuleDAOImpl extends BasisNextidDaoImpl<LimitFilterQuery> imple
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails = getError("41003",
-						dedupParm.getQueryCode(), dedupParm.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) { };
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006",
-					dedupParm.getQueryCode(), dedupParm.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) { };
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -300,7 +293,6 @@ public class LimitRuleDAOImpl extends BasisNextidDaoImpl<LimitFilterQuery> imple
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(LimitFilterQuery dedupParm,String type) {
 		int recordCount = 0;
@@ -327,10 +319,7 @@ public class LimitRuleDAOImpl extends BasisNextidDaoImpl<LimitFilterQuery> imple
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails = getError("41004",
-					dedupParm.getQueryCode(), dedupParm.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -410,24 +399,5 @@ public class LimitRuleDAOImpl extends BasisNextidDaoImpl<LimitFilterQuery> imple
 		logger.debug("Leaving");
 		return fieldList;
 	}
-
-	/**
-	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
-	 * @return ErrorDetails
-	 */
-	private ErrorDetails  getError(String errorId, String queryCode, String userLanguage){
-		String[][] parms = new String[2][2];
-
-		parms[1][0] = queryCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_QueryCode") + ":" + parms[1][0];
-
-		return ErrorUtil.getErrorDetail(new ErrorDetails(
-				PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]), userLanguage);
-	}
-
-	
 
 }

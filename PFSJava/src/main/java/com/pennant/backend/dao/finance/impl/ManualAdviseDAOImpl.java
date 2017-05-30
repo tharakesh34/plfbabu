@@ -59,15 +59,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ManualAdviseReserve;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
 import com.pennanttech.pff.core.Literal;
@@ -543,7 +539,6 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 	/**
 	 * Method for updating Reserved excess Amount after modifications
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void updatePayableReserveLog(long receiptID, long payAgainstID, BigDecimal diffInReserve) {
 		logger.debug("Entering");
@@ -562,9 +557,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", payAgainstID, PennantConstants.default_Language);
-			throw new DataAccessException(errorDetails.getError()) { };
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -594,7 +587,6 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 	/**
 	 * Method for updating Reserved amount against Advise ID
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void updatePayableReserve(long payAgainstID, BigDecimal reserveAmt) {
 		logger.debug("Entering");
@@ -612,9 +604,7 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", payAgainstID, PennantConstants.default_Language);
-			throw new DataAccessException(errorDetails.getError()) { };
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -622,7 +612,6 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 	/**
 	 * Method for Update utilization amount after amounts Approval
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void updateUtilise(long adviseID, BigDecimal amount) {
 		logger.debug("Entering");
@@ -640,27 +629,9 @@ public class ManualAdviseDAOImpl extends BasisNextidDaoImpl<ManualAdvise> implem
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", adviseID, PennantConstants.default_Language);
-			throw new DataAccessException(errorDetails.getError()) { };
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
 	
-	
-	/**
-	 * Method for Populating Error Message Preparation
-	 * @param errorId
-	 * @param finReference
-	 * @param userLanguage
-	 * @return
-	 */
-	private ErrorDetails getError(String errorId, long excessID, String userLanguage) {
-		String[][] parms = new String[2][1];
-		parms[1][0] = String.valueOf(excessID);
-		parms[0][0] = PennantJavaUtil.getLabel("label_AdviseID") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId,
-				parms[0], parms[1]), userLanguage);
-	}
-
 }	

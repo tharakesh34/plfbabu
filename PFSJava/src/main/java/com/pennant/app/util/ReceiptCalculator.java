@@ -1152,6 +1152,8 @@ public class ReceiptCalculator implements Serializable {
 								if (schdDate.compareTo(curBussniessDate) > 0){
 									balPft = CalculationUtil.calInterest(prvSchd.getSchDate(), curBussniessDate, curSchd.getBalanceForPftCal(),
 											prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
+									
+									balPft = balPft.setScale(0, RoundingMode.HALF_DOWN);
 								}else if (schdDate.compareTo(curBussniessDate) == 0){
 									balPft = curSchd.getProfitCalc().subtract(curSchd.getSchdPftPaid()).add(prvSchd.getProfitBalance());
 								}
@@ -1537,6 +1539,7 @@ public class ReceiptCalculator implements Serializable {
 						partAccrualReq = false;
 						BigDecimal accruedPft = CalculationUtil.calInterest(prvSchd.getSchDate(), curBussniessDate, curSchd.getBalanceForPftCal(),
 								prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
+						accruedPft = accruedPft.setScale(0, RoundingMode.HALF_DOWN);
 						
 						pftAccruedTillNow = pftAccruedTillNow.add(accruedPft).add(prvSchd.getProfitBalance());
 						priBalance = priBalance.add(prvSchd.getClosingBalance());

@@ -15,15 +15,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.limit.LimitHeaderDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.limit.LimitHeader;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 public class LimitHeaderDAOImpl extends BasisNextidDaoImpl<LimitHeader> implements LimitHeaderDAO {
 	private static Logger logger = Logger.getLogger(LimitHeaderDAOImpl.class);
@@ -234,7 +232,6 @@ public class LimitHeaderDAOImpl extends BasisNextidDaoImpl<LimitHeader> implemen
 	 * 
 	 */
 
-	@SuppressWarnings("serial")
 	@Override
 	public void update(LimitHeader limitHeader,String type) {
 		int recordCount = 0;
@@ -255,9 +252,7 @@ public class LimitHeaderDAOImpl extends BasisNextidDaoImpl<LimitHeader> implemen
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",limitHeader.getCustShrtName() ,limitHeader.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -275,7 +270,7 @@ public class LimitHeaderDAOImpl extends BasisNextidDaoImpl<LimitHeader> implemen
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(LimitHeader limitHeader ,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -289,13 +284,11 @@ public class LimitHeaderDAOImpl extends BasisNextidDaoImpl<LimitHeader> implemen
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",limitHeader .getCustShrtName() ,limitHeader .getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",limitHeader .getCustShrtName() ,limitHeader .getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
+
 		}
 		logger.debug("Leaving");
 	}
@@ -417,13 +410,6 @@ public class LimitHeaderDAOImpl extends BasisNextidDaoImpl<LimitHeader> implemen
 
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
 		logger.debug("Leaving");
-	}
-
-	private ErrorDetails  getError(String errorId, String detailId, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = detailId;
-		parms[0][0] = PennantJavaUtil.getLabel("label_DetailId")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
 	}
 
 	/**

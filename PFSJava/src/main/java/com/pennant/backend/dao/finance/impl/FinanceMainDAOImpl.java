@@ -48,11 +48,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.ddapayments.DDAPayments;
 import com.pennant.backend.model.finance.BulkDefermentChange;
@@ -64,8 +62,6 @@ import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.reports.AvailCommitment;
 import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pff.core.App;
@@ -874,7 +870,6 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 	 * 
 	 */
 
-	@SuppressWarnings("serial")
 	public void updateInvestmentFinance(FinanceMain financeMain, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
@@ -923,11 +918,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", financeMain.getId(),
-					financeMain.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -1060,7 +1051,6 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("Leaving");
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void updateFinAccounts(String finReference, String finAccount) {
 		int recordCount = 0;
@@ -1079,11 +1069,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", financeMain.getId(),
-					financeMain.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -1130,7 +1116,6 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		return list;
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void updateRepaymentAmount(String finReference, BigDecimal finAmount, BigDecimal repaymentAmount,
 			String finStatus, String finStsReason, boolean isCancelProc, boolean pftFullyPaid) {
@@ -1170,11 +1155,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", financeMain.getId(),
-					financeMain.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 	}
 
@@ -1210,7 +1191,6 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void updateCustCIF(long custID, String finReference) {
 		logger.debug("Entering");
@@ -1229,16 +1209,11 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", financeMain.getId(),
-					financeMain.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void updateFinBlackListStatus(String finReference) {
 		logger.debug("Entering");
@@ -1257,11 +1232,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", financeMain.getId(),
-					financeMain.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -1602,7 +1573,6 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 	 * @param nextBD
 	 * @return
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void updateFinanceERR(String finReference, Date lastRepayDate, Date lastRepayPftDate,
 			BigDecimal effectiveRate, String type) {
@@ -1625,11 +1595,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", financeMain.getId(),
-					financeMain.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -1760,21 +1726,6 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for Populating Error Message Preparation
-	 * 
-	 * @param errorId
-	 * @param finReference
-	 * @param userLanguage
-	 * @return
-	 */
-	private ErrorDetails getError(String errorId, String finReference, String userLanguage) {
-		String[][] parms = new String[2][1];
-		parms[1][0] = finReference;
-		parms[0][0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
-				userLanguage);
-	}
 
 	/**
 	 * Method for fetch finance details based on priority
@@ -2091,7 +2042,6 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		return financeMain;
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void updateRepaymentAmount(String finReference, BigDecimal repaymentAmount) {
 		logger.debug("Entering");
@@ -2110,15 +2060,10 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", financeMain.getId(),
-					financeMain.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void updateStatus(String finReference, String status, String statusReason) {
 
@@ -2138,11 +2083,7 @@ public class FinanceMainDAOImpl extends BasisCodeDAO<FinanceMain> implements Fin
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", financeMain.getId(),
-					financeMain.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 	}
 

@@ -58,15 +58,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.rmtmasters.ScoringSlabDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.rmtmasters.ScoringSlab;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>ScoringSlab model</b> class.<br>
@@ -208,7 +206,7 @@ public class ScoringSlabDAOImpl extends BasisNextidDaoImpl<ScoringSlab> implemen
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(ScoringSlab scoringSlab,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -222,17 +220,10 @@ public class ScoringSlabDAOImpl extends BasisNextidDaoImpl<ScoringSlab> implemen
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",scoringSlab.getScoringSlab()
-						,scoringSlab.getLovDescScoreGroupCode()
-						,scoringSlab.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",scoringSlab.getScoringSlab()
-					,scoringSlab.getLovDescScoreGroupCode()
-					,scoringSlab.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -307,7 +298,6 @@ public class ScoringSlabDAOImpl extends BasisNextidDaoImpl<ScoringSlab> implemen
 	 * 
 	 */
 
-	@SuppressWarnings("serial")
 	@Override
 	public void update(ScoringSlab scoringSlab,String type) {
 		int recordCount = 0;
@@ -330,24 +320,9 @@ public class ScoringSlabDAOImpl extends BasisNextidDaoImpl<ScoringSlab> implemen
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",scoringSlab.getScoringSlab() 
-					,scoringSlab.getLovDescScoreGroupCode()
-					,scoringSlab.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
-
-
-	private ErrorDetails  getError(String errorId, long scoringSlab,String scoringGroupCode, String userLanguage){
-		String[][] parms= new String[2][2];
-		parms[1][0] = String.valueOf(scoringSlab);
-		parms[1][1] = scoringGroupCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_ScoringSlab")+": "+parms[1][0];
-		parms[0][1] = PennantJavaUtil.getLabel("label_ScoreGroupCode")+": "+parms[1][1];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-
 
 }

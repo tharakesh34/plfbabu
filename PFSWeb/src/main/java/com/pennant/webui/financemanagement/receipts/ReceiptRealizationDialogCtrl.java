@@ -416,7 +416,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 		
 		if(!this.realizationDate.isDisabled()){
 			this.realizationDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ReceiptRealizationDialog_RealizationDate.value"), 
-					true, true,	DateUtility.getAppDate(), true));
+					true, aReceiptHeader.getReceiptDate(),	DateUtility.getAppDate(), true));
 		}
 		
 		try {

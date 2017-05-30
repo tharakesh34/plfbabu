@@ -21,7 +21,7 @@ public class ConcurrencyException extends AppException {
 	 * Constructs a {@code ConcurrencyException} with the default detail message.
 	 */
 	public ConcurrencyException() {
-		super(ErrorCode.PPS_00101.getMessage());
+		super(ErrorCode.PPS_801.getMessage());
 	}
 
 	/**
@@ -41,7 +41,7 @@ public class ConcurrencyException extends AppException {
 	 *            The cause. (A null value is permitted, and indicates that the cause is nonexistent or unknown.)
 	 */
 	public ConcurrencyException(Throwable cause) {
-		super(ErrorCode.PPS_00101.getMessage(), cause);
+		super(ErrorCode.PPS_801.getMessage(), cause);
 	}
 
 	/**

@@ -21,7 +21,7 @@ public class DependencyFoundException extends AppException {
 	 * Constructs a {@code DependencyFoundException} with the default detail message.
 	 */
 	public DependencyFoundException() {
-		super(ErrorCode.PPS_00102.getMessage());
+		super(ErrorCode.PPS_802.getMessage());
 	}
 
 	/**
@@ -53,6 +53,6 @@ public class DependencyFoundException extends AppException {
 	 *            The cause. (A null value is permitted, and indicates that the cause is nonexistent or unknown.)
 	 */
 	public DependencyFoundException(Throwable cause) {
-		super(ErrorCode.PPS_00102.getMessage(), cause);
+		super(ErrorCode.PPS_802.getMessage(), cause);
 	}
 }

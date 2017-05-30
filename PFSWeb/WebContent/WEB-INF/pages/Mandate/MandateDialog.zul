@@ -183,20 +183,6 @@
 							</rows>
 						</grid>
 					</groupbox>
-					<groupbox id="gb_enquiry" closable="true" visible="false">
-						<caption label="${c:l('gp_Mandate')}"></caption>
-						<listbox id="listBoxCustomerFinExposure" span="true" sizedByContent="true" fixedLayout="true" vflex="true" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
-							<listhead sizable="true">
-								<listheader id="listheader_CustFinExposure_FinDate" label="${c:l('listheader_MandateDialog_FinDate.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_CustFinExposure_FinType" label="${c:l('listheader_MandateDialog_FinType.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_CustFinExposure_FinReference" label="${c:l('listheader_MandateDialog_FinReference.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_CustFinExposure_OriginalAmt" label="${c:l('listheader_MandateDialog_OriginalAmt.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_CustFinExposure_Installment" label="${c:l('listheader_MandateDialog_Installment.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_CustFinExposure_OutstandingBal" label="${c:l('listheader_MandateDialog_OutstandingBal.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_CustFinExposure_FinStatus" label="${c:l('listheader_MandateDialog_FinStatus.label')}" sort="false" hflex="min" />
-							</listhead>
-						</listbox>
-					</groupbox>
 				</div>
 			</center>
 			<south sclass="south-dialog">

@@ -57,13 +57,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.mail.MailTemplateDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.mail.MailTemplate;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>MailTemplate model</b> class.<br>
@@ -139,7 +137,7 @@ public class MailTemplateDAOImpl extends BasisNextidDaoImpl<MailTemplate> implem
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(MailTemplate mailTemplate,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -153,13 +151,10 @@ public class MailTemplateDAOImpl extends BasisNextidDaoImpl<MailTemplate> implem
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",mailTemplate.getTemplateCode() ,mailTemplate.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",mailTemplate.getTemplateCode() ,mailTemplate.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -213,7 +208,6 @@ public class MailTemplateDAOImpl extends BasisNextidDaoImpl<MailTemplate> implem
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(MailTemplate mailTemplate,String type) {
 		int recordCount = 0;
@@ -239,20 +233,11 @@ public class MailTemplateDAOImpl extends BasisNextidDaoImpl<MailTemplate> implem
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",mailTemplate.getTemplateCode() ,mailTemplate.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
 	
-	private ErrorDetails  getError(String errorId, String templateCode, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = templateCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_TemplateCode")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-
 	// TODO: Need to be checked whether this is required or not
 	public List<MailTemplate> getMailTemplates(){
 		List<MailTemplate> mailTemplateList = new ArrayList<MailTemplate>();

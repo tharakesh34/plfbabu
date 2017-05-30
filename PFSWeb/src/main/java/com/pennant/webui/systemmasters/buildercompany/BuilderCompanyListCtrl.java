@@ -118,6 +118,13 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 		super.enquiryTableName = "BuilderCompany_View";
 	}
 
+	@Override
+	protected void doAddFilters() {
+		super.doAddFilters();
+			this.searchObject.addFilter(new Filter("FieldCode", "SEGMENT", Filter.OP_EQUAL));
+	}
+
+	
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
@@ -169,6 +176,7 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 		this.groupId.setValueColumn("Id");
 		this.groupId.setDescColumn("Name");
 		this.groupId.setValidateColumns(new String[]{"Id"});
+		this.groupId.setFilters(new Filter[]{ new Filter("FieldCode","SEGMENT",Filter.OP_EQUAL)});
 		
 		logger.debug("Leaving ");
 	}

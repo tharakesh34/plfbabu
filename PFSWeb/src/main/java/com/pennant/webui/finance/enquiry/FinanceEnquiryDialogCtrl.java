@@ -697,7 +697,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.label_FinanceMainDialog_FinCurrentAssetValue.setValue("");
 				this.finCurrentAssetValue.setVisible(false);
 			} else {
-				if (!isOverdraft && financeType.isFinIsAlwMD()) {
+				if (!isOverdraft && financeType.isAlwMaxDisbCheckReq()) {
 					readOnlyComponent(isReadOnly("FinanceMainDialog_finAssetValue"), this.finAssetValue);
 					this.row_FinAssetValue.setVisible(true);
 					//this.finAssetValue.setMandatory(true);

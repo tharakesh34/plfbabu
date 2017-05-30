@@ -16,15 +16,13 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.BulkRateChangeProcessDetailsDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.BulkRateChangeDetails;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 public class BulkRateChangeProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateChangeDetails> implements BulkRateChangeProcessDetailsDAO {
 
@@ -207,7 +205,6 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateCh
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(BulkRateChangeDetails BulkRateChangeDetails, String type) {
 		logger.debug("Entering");
@@ -233,11 +230,7 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateCh
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-			ErrorDetails errorDetails= getError("41003", BulkRateChangeDetails.getBulkRateChangeRef(), 
-					String.valueOf(BulkRateChangeDetails.getFinReference()), BulkRateChangeDetails.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -336,7 +329,7 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateCh
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(BulkRateChangeDetails bulkRateChangeDetail, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -353,18 +346,10 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateCh
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(),	beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41004", bulkRateChangeDetail.getBulkRateChangeRef(), 
-						String.valueOf(bulkRateChangeDetail.getFinReference()), bulkRateChangeDetail.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.debug("Error in delete Method");
-			logger.error(e);
-			ErrorDetails errorDetails= getError("41006", bulkRateChangeDetail.getBulkRateChangeRef(), 
-					String.valueOf(bulkRateChangeDetail.getFinReference()), bulkRateChangeDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -372,6 +357,7 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateCh
 	/**	
 	 * This method is used for Delete the Details Based in Bulk Rate Change Ref 
 	 */
+	@Override
 	public void deleteBulkRateChangeDetailsByRef(String bulkRateChangeRef, String type){
 		logger.debug("Entering");
 		BulkRateChangeDetails bulkRateChangeDetails = new BulkRateChangeDetails();
@@ -385,10 +371,7 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateCh
 		try{
 			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		}catch(DataAccessException e){
-			logger.error(e);
-			ErrorDetails errorDetails= getError("41006", bulkRateChangeDetails.getBulkRateChangeRef() , bulkRateChangeDetails.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-				private static final long serialVersionUID = 1L;};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -444,36 +427,4 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasisCodeDAO<BulkRateCh
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
 	}
-
-	/**
-	 * 
-	 * @param errorId
-	 * @param bulkRateChangeRef
-	 * @param userLanguage
-	 * @return
-	 */
-	private ErrorDetails  getError(String errorId, String bulkRateChangeRef, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = bulkRateChangeRef;
-		parms[0][0] = PennantJavaUtil.getLabel("label_BulkRateChangeRef")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-
-	/**
-	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
-	 * @return ErrorDetails
-	 */
-	private ErrorDetails  getError(String errorId, String bulkRateChangeDetailsLevel,String bulkRateChangeDetailsDecipline, String userLanguage){
-		String[][] parms= new String[2][2]; 
-		parms[1][0] = bulkRateChangeDetailsLevel;
-		parms[1][1] = bulkRateChangeDetailsDecipline;
-
-		parms[0][0] = PennantJavaUtil.getLabel("label_BulkRateChangeSearch_fromDate.value")+ ":" + parms[1][0];
-		parms[0][1] = PennantJavaUtil.getLabel("label_BulkRateChangeSearch_toDate.value")+ ":" + parms[1][1];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-
 }

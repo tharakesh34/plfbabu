@@ -56,13 +56,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinAssetEvaluationDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.finance.FinAssetEvaluation;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>FinAssetEvaluation model</b> class.<br>
@@ -146,7 +144,7 @@ public class FinAssetEvaluationDAOImpl extends BasisCodeDAO<FinAssetEvaluation> 
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(FinAssetEvaluation finAssetEvaluation,String type) {
 		logger.debug("Entering");
 
@@ -160,10 +158,8 @@ public class FinAssetEvaluationDAOImpl extends BasisCodeDAO<FinAssetEvaluation> 
 		try{
 			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006",finAssetEvaluation.getFinReference(),
-					finAssetEvaluation.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
+
 		}
 		logger.debug("Leaving");
 	}
@@ -224,7 +220,6 @@ public class FinAssetEvaluationDAOImpl extends BasisCodeDAO<FinAssetEvaluation> 
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(FinAssetEvaluation finAssetEvaluation,String type) {
 		int recordCount = 0;
@@ -253,21 +248,9 @@ public class FinAssetEvaluationDAOImpl extends BasisCodeDAO<FinAssetEvaluation> 
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails = getError("41004",finAssetEvaluation.getFinReference(),
-					finAssetEvaluation.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
 	
-	
-	private ErrorDetails getError(String errorId, String finReference, String userLanguage) {
-		
-		String[][] parms = new String[2][2];
-		parms[1][0] = finReference;
-		parms[0][0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(
-				PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]), userLanguage);
-	}
 }

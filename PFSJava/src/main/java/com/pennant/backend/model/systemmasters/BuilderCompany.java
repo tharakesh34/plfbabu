@@ -69,7 +69,8 @@ private static final long serialVersionUID = 1L;
 	private String segmentation;
 	private long groupId;
 	private String segmentationName;
-	//private String groupIdName;
+	private String groupIdName;
+	private String fieldCode;
 	@XmlTransient
 	private boolean newRecord=false;
 	@XmlTransient
@@ -96,6 +97,7 @@ private static final long serialVersionUID = 1L;
 		Set<String> excludeFields=new HashSet<String>();
 			excludeFields.add("segmentationName");
 			excludeFields.add("groupIdName");
+			excludeFields.add("fieldCode");
 	return excludeFields;
 	}
 
@@ -118,13 +120,6 @@ private static final long serialVersionUID = 1L;
 	}
 	public void setSegmentation(String segmentation) {
 		this.segmentation = segmentation;
-	}
-	public String getsegmentationName() {
-		return this.segmentationName;
-	}
-
-	public void setsegmentationName (String segmentationName) {
-		this.segmentationName = segmentationName;
 	}
 	
 	public long getGroupId() {
@@ -168,6 +163,30 @@ private static final long serialVersionUID = 1L;
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	public String getGroupIdName() {
+		return groupIdName;
+	}
+
+	public void setGroupIdName(String groupIdName) {
+		this.groupIdName = groupIdName;
+	}
+
+	public String getSegmentationName() {
+		return segmentationName;
+	}
+
+	public void setSegmentationName(String segmentationName) {
+		this.segmentationName = segmentationName;
+	}
+
+	public String getFieldCode() {
+		return fieldCode;
+	}
+
+	public void setFieldCode(String fieldCode) {
+		this.fieldCode = fieldCode;
 	}
 
 }

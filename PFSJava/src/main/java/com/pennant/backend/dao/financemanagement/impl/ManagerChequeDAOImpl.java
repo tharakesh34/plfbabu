@@ -58,15 +58,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.financemanagement.ManagerChequeDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.financemanagement.ManagerCheque;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>ManagerCheque model</b> class.<br>
@@ -226,7 +224,7 @@ public class ManagerChequeDAOImpl extends BasisNextidDaoImpl<ManagerCheque> impl
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(ManagerCheque managerCheque,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -240,13 +238,10 @@ public class ManagerChequeDAOImpl extends BasisNextidDaoImpl<ManagerCheque> impl
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",managerCheque.getChequeID() ,managerCheque.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",managerCheque.getChequeID() ,managerCheque.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -303,7 +298,6 @@ public class ManagerChequeDAOImpl extends BasisNextidDaoImpl<ManagerCheque> impl
 	 * 
 	 */
 	
-	@SuppressWarnings("serial")
 	@Override
 	public void update(ManagerCheque managerCheque,String type) {
 		int recordCount = 0;
@@ -328,9 +322,7 @@ public class ManagerChequeDAOImpl extends BasisNextidDaoImpl<ManagerCheque> impl
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",managerCheque.getChequeID() ,managerCheque.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -422,14 +414,5 @@ public class ManagerChequeDAOImpl extends BasisNextidDaoImpl<ManagerCheque> impl
 		logger.debug("Leaving");
 		return count;
 	}
-	
-	
-	private ErrorDetails  getError(String errorId, long chequeID, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = String.valueOf(chequeID);
-		parms[0][0] = PennantJavaUtil.getLabel("label_ChequeID")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
-
 	
 }

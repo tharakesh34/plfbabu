@@ -55,13 +55,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.systemmasters.DispatchModeDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.systemmasters.DispatchMode;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>DispatchMode model</b> class.<br>
@@ -137,7 +135,7 @@ public class DispatchModeDAOImpl extends BasisCodeDAO<DispatchMode> implements D
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(DispatchMode dispatchMode, String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -154,16 +152,10 @@ public class DispatchModeDAOImpl extends BasisCodeDAO<DispatchMode> implements D
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41004", dispatchMode.getDispatchModeCode(), dispatchMode.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {
-				};
+				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
-			logger.debug("Error in delete Method");
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006", dispatchMode.getDispatchModeCode(), dispatchMode.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -217,7 +209,6 @@ public class DispatchModeDAOImpl extends BasisCodeDAO<DispatchMode> implements D
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void update(DispatchMode dispatchMode, String type) {
 		logger.debug("Entering");
@@ -241,26 +232,9 @@ public class DispatchModeDAOImpl extends BasisCodeDAO<DispatchMode> implements D
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(),	beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error in Update Method Count :" + recordCount);
-
-			ErrorDetails errorDetails= getError("41003", dispatchMode.getDispatchModeCode(), dispatchMode.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
 	
-	/**
-	 * This method for getting the error details
-	 * @param errorId (String)
-	 * @param Id (String)
-	 * @param userLanguage (String)
-	 * @return ErrorDetails
-	 */
-	private ErrorDetails  getError(String errorId, String dispatchModeCode,String userLanguage){
-		String[][] parms= new String[2][2]; 
-		parms[1][0] = dispatchModeCode;
-		parms[0][0] = PennantJavaUtil.getLabel("label_DispatchModeCode")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
 }

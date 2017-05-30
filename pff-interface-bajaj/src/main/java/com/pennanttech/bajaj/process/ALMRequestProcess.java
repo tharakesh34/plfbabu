@@ -18,8 +18,9 @@ import com.pennanttech.pff.core.Literal;
 
 public class ALMRequestProcess extends DatabaseDataEngine {
 	private static final Logger	logger	= Logger.getLogger(ALMRequestProcess.class);
-	
-	private Date appDate;
+
+	private Date				appDate;
+
 	public ALMRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, App.DATABASE.name(), userId, valueDate);
 		this.appDate = appDate;
@@ -28,17 +29,17 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 	@Override
 	protected void processData() {
 		logger.debug(Literal.ENTERING);
-
 		executionStatus.setRemarks("Loading data..");
+
 		MapSqlParameterSource parmMap;
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT * from INT_ALM_VIEW ");
+		sql.append(" SELECT * from INT_ALM_VIEW");
 
 		parmMap = new MapSqlParameterSource();
 
 		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
-			MapSqlParameterSource	map			= null;
-			
+			MapSqlParameterSource	map	= null;
+
 			@Override
 			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
 				String[] filterFields = new String[1];
@@ -54,11 +55,11 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 						logger.error(Literal.EXCEPTION, e);
 						failedCount++;
 						String keyId = rs.getString("AGREEMENTNO");
-						
+
 						if (StringUtils.trimToNull(keyId) == null) {
 							keyId = String.valueOf(processedCount);
 						}
-						
+
 						saveBatchLog(keyId, "F", e.getMessage());
 					} finally {
 						map = null;
@@ -73,12 +74,9 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 	@Override
 	protected MapSqlParameterSource mapData(ResultSet rs) throws Exception {
 		MapSqlParameterSource map = new MapSqlParameterSource();
-		
-		String finReference = rs.getString("AGREEMENTNO");
-		String appId = StringUtils.substring(finReference, finReference.length()-8, finReference.length());	
-			
-		map.addValue("AGREEMENTID", appId);
-		map.addValue("AGREEMENTNO", finReference);
+
+		map.addValue("AGREEMENTID", rs.getObject("AGREEMENTID"));
+		map.addValue("AGREEMENTNO", rs.getObject("AGREEMENTNO"));
 		map.addValue("PRODUCTFLAG", rs.getObject("PRODUCTFLAG"));
 		map.addValue("NPA_STAGEID", rs.getObject("NPA_STAGEID"));
 		map.addValue("INSTLAMT", rs.getObject("INSTLAMT"));

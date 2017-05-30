@@ -19,8 +19,8 @@
 			org.zkoss.zk.ui.http.SerializableUiFactory
 		</ui-factory-class>
 	</system-config>
-	
-	
+
+
 	<system-config>
 		<max-upload-size>1000000</max-upload-size>
 	</system-config>
@@ -34,7 +34,8 @@
 	<!-- ====================================================== -->
 	<device-config>
 		<device-type>ajax</device-type>
-		<server-push-class>org.zkoss.zkmax.ui.comet.CometServerPush</server-push-class>
+		<server-push-class>org.zkoss.zkmax.ui.comet.CometServerPush
+		</server-push-class>
 		<timeout-uri>/timeout.zul</timeout-uri>
 	</device-config>
 
@@ -45,7 +46,8 @@
 	<!-- ====================================================== -->
 	<listener>
 		<description>ResourceLoader</description>
-		<listener-class>com.pennanttech.framework.web.util.ResourceLoader</listener-class>
+		<listener-class>com.pennanttech.framework.web.util.ResourceLoader
+		</listener-class>
 	</listener>
 	<listener>
 		<description>ThreadLocal Synchronization Listener
@@ -55,13 +57,15 @@
 	</listener>
 	<listener>
 		<description>UserSessionInit</description>
-		<listener-class>com.pennant.framework.web.util.UserSessionInit</listener-class>
+		<listener-class>com.pennant.framework.web.util.UserSessionInit
+		</listener-class>
 	</listener>
 	<listener>
 		<description>Adding csrf meta tag for page</description>
-	   <listener-class>com.pennant.web.security.util.CsrfMetaAppender</listener-class>
+		<listener-class>com.pennant.web.security.util.CsrfMetaAppender
+		</listener-class>
 	</listener>
-	
+
 	<!-- ====================================================== -->
 	<!-- Besides that, you have to specify what -->
 	<!-- ThreadLocal variables you want to sync. -->
@@ -75,7 +79,7 @@
 			org.springframework.web.context.request.RequestContextHolder=requestAttributesHolder,inheritableRequestAttributesHolder;
 		</value>
 	</preference>
- 
+
 
 	<!-- ====================================================== -->
 	<!-- Path to the character set and sizes -->
@@ -90,11 +94,11 @@
 	</language-config>
 
 	<!-- ====================================================== -->
-	<!-- 				Automatic Timeout                       -->
+	<!-- Automatic Timeout -->
 	<!-- ====================================================== -->
 	<session-config>
 		<device-type>ajax</device-type>
-		<automatic-timeout/>
+		<automatic-timeout />
 		<max-requests-per-session>1</max-requests-per-session>
 		<max-desktops-per-session>1</max-desktops-per-session>
 	</session-config>
@@ -131,29 +135,34 @@
 	</library-property>
 
 	<library-property>
-	    <name>org.zkoss.web.classWebResource.cache.etag</name>
-	    <value>true</value>
+		<name>org.zkoss.web.classWebResource.cache.etag</name>
+		<value>true</value>
 	</library-property>
 
 	<library-property>
-	    <name>org.zkoss.web.classWebResource.cache.CSS.hours</name>
-	    <value>12</value>
+		<name>org.zkoss.web.classWebResource.cache.CSS.hours</name>
+		<value>12</value>
 	</library-property>
 
 	<library-property>
-	    <name>org.zkoss.web.classWebResource.cache</name>
-	    <value>true</value>
+		<name>org.zkoss.web.classWebResource.cache</name>
+		<value>true</value>
 	</library-property>
 
 	<library-property>
-	    <name>org.zkoss.zk.WPD.cache</name>
-	    <value>true</value>
+		<name>org.zkoss.zk.WPD.cache</name>
+		<value>true</value>
 	</library-property>
 
 	<library-property>
-	    <name>org.zkoss.zk.WCS.cache</name>
-	    <value>true</value>
-	</library-property>s
+		<name>org.zkoss.zk.WCS.cache</name>
+		<value>true</value>
+	</library-property>
+
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/error.zul</location>
+	</error-page>
 
 	<device-config>
 		<device-type>ajax</device-type>

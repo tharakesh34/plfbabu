@@ -56,13 +56,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.mandate.MandateStatus;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 /**
  * DAO methods implementation for the <b>MandateStatus model</b> class.<br>
  * 
@@ -137,7 +135,7 @@ public class MandateStatusDAOImpl extends BasisNextidDaoImpl<MandateStatus> impl
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(MandateStatus mandateStatus,String type) {
 		logger.debug("Entering");
 		int recordCount = 0;
@@ -152,13 +150,10 @@ public class MandateStatusDAOImpl extends BasisNextidDaoImpl<MandateStatus> impl
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",mandateStatus.getMandateID() ,mandateStatus.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",mandateStatus.getMandateID() ,mandateStatus.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -211,7 +206,6 @@ public class MandateStatusDAOImpl extends BasisNextidDaoImpl<MandateStatus> impl
 	 * 
 	 */
 	
-	@SuppressWarnings("serial")
 	@Override
 	public void update(MandateStatus mandateStatus,String type) {
 		int recordCount = 0;
@@ -232,17 +226,9 @@ public class MandateStatusDAOImpl extends BasisNextidDaoImpl<MandateStatus> impl
 		recordCount = this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
 		
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",mandateStatus.getMandateID() ,mandateStatus.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
 
-	private ErrorDetails  getError(String errorId, long mandateID, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = String.valueOf(mandateID);
-		parms[0][0] = PennantJavaUtil.getLabel("label_MandateID")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
 }

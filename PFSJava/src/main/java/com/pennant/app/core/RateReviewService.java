@@ -45,7 +45,6 @@ package com.pennant.app.core;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -101,9 +100,15 @@ public class RateReviewService extends ServiceHelper {
 	private void processRateReview(FinEODEvent finEODEvent, Date valueDate) throws Exception {
 		FinanceMain finMain = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
-		Map<Date, Integer> datesMap = finEODEvent.getDatesMap();
+		//FIXME Re look logic
+		int i = 0;
+		for (int j = 0; j < finSchdDetails.size(); j++) {
+			if (finSchdDetails.get(j).getSchDate().compareTo(valueDate) == 0) {
+				i = j;
+				break;
+			}
+		}
 
-		int i = getIndexFromMap(datesMap, valueDate);
 		int iNext = i + 1;
 
 		finEODEvent.setRateReviewExist(false);
@@ -119,7 +124,7 @@ public class RateReviewService extends ServiceHelper {
 		}
 
 		for (int j = i; j < finSchdDetails.size(); j++) {
-			
+
 			if (StringUtils.isEmpty(finSchdDetails.get(j).getBaseRate())) {
 				continue;
 			}
@@ -183,7 +188,7 @@ public class RateReviewService extends ServiceHelper {
 
 		String finRef = finEODEvent.getFinanceMain().getFinReference();
 		FinScheduleData finScheduleData = getFinSchDataByFinRef(finEODEvent);
-		Date valueDate=custEODEvent.getEodValueDate();
+		Date valueDate = custEODEvent.getEodValueDate();
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 
@@ -246,7 +251,7 @@ public class RateReviewService extends ServiceHelper {
 		financeRateReviewDAO.save(rateReview);
 		aeEvent.setFinType(finMain.getFinType());
 		long accountingID = getAccountingID(finMain, AccountEventConstants.ACCEVENT_RATCHG);
-		
+
 		if (accountingID == Long.MIN_VALUE) {
 			return;
 		} else {

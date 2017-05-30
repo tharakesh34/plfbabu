@@ -189,6 +189,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
 		this.groupId.setValueColumn("Id");
 		this.groupId.setDescColumn("Name");
 		this.groupId.setValidateColumns(new String[]{"Id"});
+		this.groupId.setFilters(new Filter[]{ new Filter("FieldCode","SEGMENT",Filter.OP_EQUAL)});
 		this.groupId.setMandatoryStyle(true);
 		setStatusDetails();
 
@@ -333,47 +334,32 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
     	logger.debug(Literal.LEAVING);
 	}	
 
-
-      public void onFulfillGroupId(Event event){
-    	  logger.debug(Literal.ENTERING);
-    	  
-    	if(!this.groupId.getDescription().equals("")){
-    	
-    	}else{
-    		
-    	
-    	}
-    	
-    	logger.debug(Literal.LEAVING);
-	}	
-
-
-
-
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param builderCompany
 	 * 
 	 */
-	public void doWriteBeanToComponents(BuilderCompany aBuilderCompany) {
-		logger.debug(Literal.ENTERING);
-		this.name.setValue(aBuilderCompany.getName());
-		this.segmentation.setValue(aBuilderCompany.getSegmentation());
-
-		if (aBuilderCompany.isNewRecord()){
-			this.segmentation.setDescription("");
-			this.groupId.setDescription("");
-		}else{
-			this.segmentation.setDescription(aBuilderCompany.getsegmentationName());
-			this.groupId.setValue(String.valueOf(aBuilderCompany.getGroupId()));
-		}
-		
-		this.recordStatus.setValue(aBuilderCompany.getRecordStatus());
-		
-		logger.debug(Literal.LEAVING);
-	}
 	
+      public void doWriteBeanToComponents(BuilderCompany aBuilderCompany) {
+  		logger.debug(Literal.ENTERING);
+  		this.name.setValue(aBuilderCompany.getName());
+  		this.segmentation.setValue(aBuilderCompany.getSegmentation());
+
+  		if (aBuilderCompany.isNewRecord()){
+  			this.segmentation.setDescription("");
+  			this.groupId.setDescription("");
+  		}else{
+  			this.segmentation.setDescription(aBuilderCompany.getSegmentationName());
+  			this.groupId.setValue(String.valueOf(aBuilderCompany.getGroupId()));
+  			this.groupId.setDescription(String.valueOf(aBuilderCompany.getGroupIdName()));
+  		}
+  		
+  		this.recordStatus.setValue(aBuilderCompany.getRecordStatus());
+  		
+  		logger.debug(Literal.LEAVING);
+  	}
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 

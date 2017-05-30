@@ -77,7 +77,7 @@ public class CustomerQueuingDAOImpl implements CustomerQueuingDAO {
 		logger.debug("Entering");
 
 		CustomerQueuing customerQueuing = new CustomerQueuing();
-		customerQueuing.setProgress(0);
+		customerQueuing.setProgress(EodConstants.PROGRESS_WAIT);
 		StringBuilder selectSql = new StringBuilder(
 				"SELECT COUNT(CustID) from CustomerQueuing where Progress = :Progress");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);

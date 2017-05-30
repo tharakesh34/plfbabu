@@ -54,4 +54,5 @@ public interface  WorkFlowDetailsDAO {
 	List<WorkFlowDetails> getActiveWorkFlowDetails();
 	long getWorkFlowDetailsCountByID(long id);
 	int getWorkFlowDetailsVersionByID(long id);
+	boolean isworkFlowTypeExist(String workFlowType);
 }

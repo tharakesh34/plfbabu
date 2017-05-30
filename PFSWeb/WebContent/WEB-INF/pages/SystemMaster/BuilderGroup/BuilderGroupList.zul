@@ -51,7 +51,7 @@
 								<row>
 									<label id="label_BuilderGroupList_name" value="${c:l('label_BuilderGroupList_name.value')}" />
 									<listbox id="sortOperator_name" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="name" width="200px" maxlength="50" />
+									<uppercasebox id="name" width="200px" maxlength="50" />
 									<label id="label_BuilderGroupList_segmentation" value="${c:l('label_BuilderGroupList_segmentation.value')}" />
 									<listbox id="sortOperator_segmentation" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="segmentation" width="200px" maxlength="50" />

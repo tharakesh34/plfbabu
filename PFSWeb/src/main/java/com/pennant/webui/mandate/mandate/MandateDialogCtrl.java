@@ -1260,12 +1260,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					.getLabel("label_MandateDialog_AccType.value")));
 		}
 		// Start Date
-		Date appStartDate = DateUtility.getAppDate();
+		Date mandbackDate = DateUtility.addDays(DateUtility.getAppDate(),-SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
 		Date appExpiryDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
 
 		if (!this.startDate.isDisabled() && this.expiryDate.isButtonVisible()) {
 			this.startDate.setConstraint(new PTDateValidator(Labels.getLabel("label_MandateDialog_StartDate.value"),
-					validate, appStartDate, appExpiryDate, true));
+					validate, mandbackDate, appExpiryDate, true));
 		}
 		// Expiry Date
 		if (!this.expiryDate.isDisabled() && this.expiryDate.isButtonVisible()) {
@@ -1448,6 +1448,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		BeanUtils.copyProperties(getMandate(), aMandate);
 		String tranType = PennantConstants.TRAN_WF;
 		
+		//in delete case if approver approves needs notes 
 		if (this.btnNotes.isVisible() && !notesEntered) {
 			MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
 			return ;
@@ -1465,9 +1466,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (conf == MultiLineMessageBox.YES) {
 			logger.debug("doDelete: Yes");
 
-			//in delete case if approver approves needs notes 
-				
-			
 			if (StringUtils.trimToEmpty(aMandate.getRecordType()).equals("")) {
 				aMandate.setVersion(aMandate.getVersion() + 1);
 				aMandate.setRecordType(PennantConstants.RECORD_TYPE_DEL);

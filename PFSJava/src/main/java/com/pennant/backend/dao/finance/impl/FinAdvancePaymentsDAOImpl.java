@@ -58,16 +58,14 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.util.DisbursementConstants;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 import com.pennanttech.pff.core.Literal;
 
 /**
@@ -214,7 +212,7 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 	 * @throws DataAccessException
 	 * 
 	 */
-	@SuppressWarnings("serial")
+	@Override
 	public void delete(FinAdvancePayments finAdvancePayments, String type) {
 		logger.debug("Entering");
 		StringBuilder deleteSql = new StringBuilder("Delete From FinAdvancePayments");
@@ -226,11 +224,7 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 		try {
 			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails = getError("41006", finAdvancePayments.getFinReference(), finAdvancePayments
-					.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -294,7 +288,6 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 	 * 
 	 */
 
-	@SuppressWarnings("serial")
 	@Override
 	public void update(FinAdvancePayments finAdvancePayments, String type) {
 		int recordCount = 0;
@@ -326,11 +319,7 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", finAdvancePayments.getFinReference(), finAdvancePayments
-					.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -350,14 +339,6 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
-	}
-
-	private ErrorDetails getError(String errorId, String finReference, String userLanguage) {
-		String[][] parms = new String[2][1];
-		parms[1][0] = finReference;
-		parms[0][0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
-				userLanguage);
 	}
 
 	@Override
@@ -411,7 +392,6 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 	
-	@SuppressWarnings("serial")
 	@Override
 	public void update(long paymentId, long linkedTranId) {
 		int recordCount = 0;
@@ -431,11 +411,7 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
-			ErrorDetails errorDetails = getError("41004", finAdvancePayments.getFinReference(), finAdvancePayments
-					.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {
-			};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}

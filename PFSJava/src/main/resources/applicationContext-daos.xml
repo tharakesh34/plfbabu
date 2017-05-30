@@ -9767,7 +9767,8 @@
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="collateralSetupDAO" ref="collateralSetupDAO" />	
 		<property name="limitHeaderDAO" ref="limitHeaderDAO" />
-
+		<property name="partnerBankDAO" ref="partnerBankDAO" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />	
 	</bean>
 	<!-- BuilderCompany -->
 	<bean id="builderCompanyDAO"
@@ -9860,4 +9861,27 @@
 		<property name="localityDAO" ref="localityDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
+	
+	<!-- EODConfig -->
+	<bean id="eODConfigDAO" class="com.pennant.backend.dao.eod.impl.EODConfigDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="eODConfigService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
+	   <property name="target"><ref bean="eODConfigServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="eODConfigServiceTarget" class="com.pennant.backend.service.eod.impl.EODConfigServiceImpl">
+       <property name="eODConfigDAO" ref="eODConfigDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
 </beans>

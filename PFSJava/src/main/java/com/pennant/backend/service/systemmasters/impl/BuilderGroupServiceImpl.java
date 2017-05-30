@@ -42,6 +42,7 @@
 */
 package com.pennant.backend.service.systemmasters.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -352,16 +353,23 @@ public class BuilderGroupServiceImpl extends GenericService<BuilderGroup> implem
 			// Get the model object.
 			BuilderGroup builderGroup = (BuilderGroup) auditDetail.getModelData();
 
+			String[] parameters = new String[2];
+			parameters[0] = PennantJavaUtil.getLabel("label_name") + ": " + builderGroup.getName();
 			// Check the unique keys.
 			if (builderGroup.isNew() && builderGroupDAO.isDuplicateKey(builderGroup.getId(),builderGroup.getName(),
-					builderGroup.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-				String[] parameters = new String[2];
+				builderGroup.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 				
-				parameters[0] = PennantJavaUtil.getLabel("label_name") + ": " + builderGroup.getName();
-
 				auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
-
+			
+			// If Builder Group is already utilized in Builder Company 
+			if(StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, builderGroup.getRecordType())){
+				boolean workflowExists = getBuilderGroupDAO().isIdExists(builderGroup.getId());
+				if(workflowExists){
+					auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41006", parameters, null));
+				}
+			}
+			
 			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 			
 			logger.debug(Literal.LEAVING);

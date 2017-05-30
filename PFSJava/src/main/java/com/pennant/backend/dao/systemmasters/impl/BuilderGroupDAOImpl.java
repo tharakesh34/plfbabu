@@ -84,19 +84,24 @@ public class BuilderGroupDAOImpl extends BasisNextidDaoImpl<BuilderGroup> implem
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, name, segmentation, ");
 		if(type.contains("View")){
-			sql.append("id, name, segmentation, segmentation,");
+			sql.append(" segmentationName,fieldCode, ");
 		}	
 		
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		sql.append(" From BuilderGroup");
 		sql.append(type);
-		sql.append(" Where id = :id");
+		if(type.contains("View")){
+			sql.append(" Where id = :id AND FieldCode =:FieldCode");
+		}else{
+			sql.append(" Where id = :id");
+		}
 		
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
 		BuilderGroup builderGroup = new BuilderGroup();
 		builderGroup.setId(id);
+		builderGroup.setFieldCode("SEGMENT");
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(builderGroup);
 		RowMapper<BuilderGroup> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BuilderGroup.class);
@@ -245,6 +250,33 @@ public class BuilderGroupDAOImpl extends BasisNextidDaoImpl<BuilderGroup> implem
 	 */
 	public void setDataSource(DataSource dataSource) {
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
+
+	@Override
+	public boolean isIdExists(long id) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+
+		sql = new StringBuilder();
+		sql.append(" Select COUNT(*) from BuilderCompany ");
+		sql.append(" Where GroupId = :GroupId ");
+		logger.debug("Sql: " + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("GroupId", id);
+		try {
+			if (this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			logger.error(e);
+		} finally {
+			source = null;
+			sql = null;
+			logger.debug("Leaving");
+		}
+		return false;
 	}
 	
 }	

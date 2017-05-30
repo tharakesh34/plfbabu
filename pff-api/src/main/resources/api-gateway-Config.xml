@@ -452,4 +452,31 @@
 	<jaxws:endpoint id="vasSoapService" implementor="#wsVASService"
 		address="/vasSoap" />
 
+	<!-- Fee Posting API gateway -->
+	<bean id="wsFeePostingService" class="com.pennanttech.service.impl.FeePostingWebServiceImpl" />
+	<!-- rest container -->
+	<jaxrs:server id="feePostingRestService" address="/feePostingRest">
+		<jaxrs:serviceBeans>
+			<ref bean="wsFeePostingService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<jaxws:endpoint id="feePostingSoapService" implementor="#wsFeePostingService"
+		address="/feePostingSoap" />
+		
+
 </beans>

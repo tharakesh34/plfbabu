@@ -59,13 +59,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.dao.limit.LimitDetailDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.limit.LimitDetails;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pff.core.ConcurrencyException;
+import com.pennanttech.pff.core.DependencyFoundException;
 
 /**
  * DAO methods implementation for the <b>LimitDetail model</b> class.<br>
@@ -139,7 +137,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 	 * 
 	 */
 
-	@SuppressWarnings("serial")
+	@Override
 	public void deletebyHeaderId(long headerId,String type) {
 		logger.debug("Entering");
 		LimitDetails limitDetail= new LimitDetails();
@@ -154,13 +152,10 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		try{
 			recordCount = this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				ErrorDetails errorDetails= getError("41003",limitDetail.getLimitStructureCode(),limitDetail.getUserDetails().getUsrLanguage());
-				throw new DataAccessException(errorDetails.getError()) {};
+				throw new ConcurrencyException();
 			}
 		}catch(DataAccessException e){
-			logger.error("Exception: ", e);
-			ErrorDetails errorDetails= getError("41006",limitDetail.getLimitStructureCode() ,limitDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -215,7 +210,6 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 	 * 
 	 */
 
-	@SuppressWarnings("serial")
 	@Override
 	public void update(LimitDetails limitDetail,String type) {
 		int recordCount = 0;
@@ -236,9 +230,7 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :"+recordCount);
-			ErrorDetails errorDetails= getError("41004",limitDetail.getLimitStructureCode() ,limitDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
 	}
@@ -465,7 +457,6 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 	 * This method Deletes the Record from the LimitDetails or LimitDetails_Temp.
 	 * Using LimitStructureDetailid
 	 */
-	@SuppressWarnings("serial")
 	@Override
 	public void deletebyLimitStructureDetailId(long strId, String type) {
 		logger.debug("Entering");
@@ -480,18 +471,10 @@ public class LimitDetailDAOImpl extends BasisNextidDaoImpl<LimitDetails> impleme
 		try{
 			this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);			
 		}catch(DataAccessException e){
-			logger.error(e);
-			ErrorDetails errorDetails= getError("41006",limitDetail.getLimitStructureCode() ,limitDetail.getUserDetails().getUsrLanguage());
-			throw new DataAccessException(errorDetails.getError()) {};
+			throw new DependencyFoundException(e);
 		}
 		logger.debug("Leaving");
 		
 	}
 
-	private ErrorDetails  getError(String errorId, String detailId, String userLanguage){
-		String[][] parms= new String[2][1];
-		parms[1][0] = detailId;
-		parms[0][0] = PennantJavaUtil.getLabel("label_DetailId")+ ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0],parms[1]), userLanguage);
-	}
 }
