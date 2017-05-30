@@ -189,6 +189,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
 		this.groupId.setValueColumn("Id");
 		this.groupId.setDescColumn("Name");
 		this.groupId.setValidateColumns(new String[]{"Id"});
+		this.groupId.setFilters(new Filter[]{ new Filter("FieldCode","SEGMENT",Filter.OP_EQUAL)});
 		this.groupId.setMandatoryStyle(true);
 		setStatusDetails();
 
