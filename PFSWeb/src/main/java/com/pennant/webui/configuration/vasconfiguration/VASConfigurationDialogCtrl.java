@@ -706,6 +706,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			this.accrualAccounting.setButtonDisabled(false);
 			this.accrualAccounting.setMandatoryStyle(true);
 		} else {
+			this.accrualAccounting.setValue("");
 			this.accrualAccounting.setReadonly(true);
 			this.accrualAccounting.setButtonDisabled(true);
 			this.accrualAccounting.setMandatoryStyle(false);
