@@ -15,7 +15,7 @@
 					<label value="" />	
 					<!-- SEARCH AREA -->
 					<toolbar align="center" style="toolbar-center">
-						<button  id="button_BuilderProjcetList_BuilderCompanySearch" label="${c:l('label_Filter')}"
+						<button  id="button_BuilderProjcetList_BuilderProjcetSearch" label="${c:l('label_Filter')}"
 							autodisable="button_BuilderProjcetList_BuilderProjcetSearch,print,button_BuilderProjcetList_NewBuilderProjcet,btnRefresh,help"
 							tooltiptext="${c:l('button_BuilderProjcetList_BuilderProjcetSearch.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="print" label="${c:l('label_Print')}"
@@ -59,7 +59,7 @@
 									<uppercasebox id="name" width="200px" maxlength="50" />
 									<label id="label_BuilderProjcetList_builderId" value="${c:l('label_BuilderProjcetList_builderId.value')}" />
 									<listbox id="sortOperator_builderId" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="builderId" width="171px" maxlength="19" />
+									<extendedcombobox id="builderId"/>
 								</row>
 								<row>
 									<label id="label_BuilderProjcetList_apfNo" value="${c:l('label_BuilderProjcetList_apfNo.value')}" />
@@ -81,6 +81,8 @@
 					<listbox id="listBoxBuilderProjcet" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" 
 							multiple="false" sizedByContent="true" span="true">
 						<listhead sizable="true">
+						<listheader id="listheader_id" label="${c:l('listheader_id.label')}" sort="auto" 
+								hflex="min"  />
 							<listheader id="listheader_name" label="${c:l('listheader_name.label')}" sort="auto" 
 								hflex="min"  />
 							<listheader id="listheader_builderId" label="${c:l('listheader_builderId.label')}" sort="auto" 

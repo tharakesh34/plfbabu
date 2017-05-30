@@ -348,15 +348,13 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
     	logger.debug(Literal.LEAVING);
 	}	
 
-
-
-
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param builderCompany
 	 * 
 	 */
+	
       public void doWriteBeanToComponents(BuilderCompany aBuilderCompany) {
   		logger.debug(Literal.ENTERING);
   		this.name.setValue(aBuilderCompany.getName());

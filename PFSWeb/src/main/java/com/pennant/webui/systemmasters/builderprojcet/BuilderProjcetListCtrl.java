@@ -59,9 +59,11 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.systemmasters.BuilderProjcet;
 import com.pennant.backend.service.systemmasters.BuilderProjcetService;
 import com.pennant.component.Uppercasebox;
+import com.pennant.search.Filter;
 import com.pennant.webui.systemmasters.builderprojcet.model.BuilderProjcetListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -93,10 +95,10 @@ public class BuilderProjcetListCtrl extends GFCBaseListCtrl<BuilderProjcet> {
 	protected Button button_BuilderProjcetList_BuilderProjcetSearch;
 
 	// Search Fields
-	protected Longbox id; // autowired
-	protected Uppercasebox    name; // autowired
-	protected Textbox         builderId; // autowired
-	protected Textbox         apfNo; // autowired
+	protected Longbox                  id; // autowired
+	protected Uppercasebox             name; // autowired
+	protected ExtendedCombobox         builderId; // autowired
+	protected Textbox                  apfNo; // autowired
 
 	protected Listbox sortOperator_id;
 	protected Listbox sortOperator_name;
@@ -143,10 +145,24 @@ public class BuilderProjcetListCtrl extends GFCBaseListCtrl<BuilderProjcet> {
 		registerField("builderId", listheader_builderId, SortOrder.NONE, builderId, sortOperator_builderId, Operators.NUMERIC);
 		//registerField("builderIdName");
 		registerField("apfNo", listheader_apfNo, SortOrder.NONE, apfNo, sortOperator_apfNo, Operators.STRING);
-
+		doSetFieldProperties();
 		// Render the page and display the data.
 		doRenderPage();
 		search();
+	}
+	
+	private void doSetFieldProperties() {
+		logger.debug(Literal.ENTERING);
+		
+			this.name.setMaxlength(50);
+			this.builderId.setModuleName("BuilderCompany");
+			this.builderId.setValueColumn("GroupId");
+			this.builderId.setDescColumn("Name");
+			this.builderId.setValidateColumns(new String[] {"GroupId"});
+			this.builderId.setFilters(new Filter[]{ new Filter("FieldCode","SEGMENT",Filter.OP_EQUAL)});
+			this.apfNo.setMaxlength(20);
+		
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
