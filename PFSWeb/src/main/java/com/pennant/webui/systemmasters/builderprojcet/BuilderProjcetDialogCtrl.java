@@ -185,6 +185,10 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet>{
 			this.builderId.setValueColumn("GroupId");
 			this.builderId.setDescColumn("Name");
 			this.builderId.setValidateColumns(new String[] {"GroupId"});
+			Filter[] fieldCode = new Filter[1] ;
+			fieldCode[0]= new Filter("FieldCode", "SEGMENT", Filter.OP_EQUAL);
+			this.builderId.setFilters(fieldCode);
+
 			this.builderId.setMandatoryStyle(true);
 			this.builderId.setFilters(new Filter[]{ new Filter("FieldCode","SEGMENT",Filter.OP_EQUAL)});
 			this.apfNo.setMaxlength(20);
