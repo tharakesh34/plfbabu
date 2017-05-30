@@ -451,11 +451,11 @@ WHERE     NOT EXISTS (SELECT 1 FROM BuilderProjcet_TEMP WHERE Id = T1.Id)
 		  ON NPB.BUCKETID = PR.NPABUCKETID
 		</createView>
 	</changeSet>
-	<changeSet id="31" author="Madhubabu">
+	<!-- <changeSet id="31" author="Madhubabu">
 	    <sql>
 	       insert into SMTparameters values('MANDATE_STARTDATE','mandate back value days','int ',1,30,4,0,null,null,'mandate back value days',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
 	    </sql>
-	</changeSet>
+	</changeSet> -->
 	<changeSet id="32" author="Prasad">
 	<createView viewName="RPT_SOA_LOAN_VIEW" replaceIfExists="true">
 		  <![CDATA[Select FM.FinReference,FP.TotalPriSchd LoanAmount,
@@ -475,5 +475,72 @@ WHERE     NOT EXISTS (SELECT 1 FROM BuilderProjcet_TEMP WHERE Id = T1.Id)
        FinPftDetails FP on FP.FinReference = FM.FinReference inner join
        RMTCURRENCIES C on C.ccycode= FP.finccy]]>
 		</createView>
+	</changeSet>
+	
+	
+	<changeSet id="33" author="Manoj.P">
+		<sql>
+			alter table DEDUP_EOD_CUST_DEMO_DTL  MODIFY  SOURCE_SYSTEM  NULL;
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="34" author="Manoj.P">
+	   	<dropTable tableName="DEDUP_EOD_CUST_DEMO_DTL"/> 
+	</changeSet>
+	
+	<changeSet id="35" author="Manoj.P">
+	    <createTable tableName="DEDUP_EOD_CUST_DEMO_DTL">	
+			
+			<column name="BATCHID" type="decimal(12,0)">
+				<constraints nullable="false" />
+			</column>
+			 <column name="CUSTOMERNO" type="decimal(8,0)"/>
+	        <column name="SOURCESYSID" type="varchar(5)"/>
+			<column name="FIRSTNAME" type="varchar(90)"/>
+			<column name="MIDDLENAME" type="varchar(90)"/>
+			<column name="LASTNAME" type="varchar(90)"/>
+			<column name="DOB" type="datetime"/>
+			<column name="PAN" type="varchar(30)"/>
+			<column name="DRIVINGLICENSENUMBER" type="varchar(45)"/>
+			<column name="VOTERID" type="varchar(20)"/>
+			<column name="DATEOFINCORPORATION" type="datetime"/>
+			<column name="TANNO" type="varchar(15)"/>					
+			<column name="PROCESSTYPE" type="varchar(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="APPLICANTTYPE" type="varchar(1)">
+				<constraints nullable="false" />
+			</column>
+			 <column name="EMPOYERNAME" type="varchar(105)"/>
+			<column name="FATHERNAME" type="varchar(105)"/>
+			<column name="PASSPORTNO" type="varchar(45)"/>
+			<column name="ACCOUNTNUMBER" type="varchar(20)"/>
+			<column name="CREDITCARDNUMBER" type="varchar(60)"/>
+			<column name="PROCESSFLAG" type="varchar(1)">
+			<constraints nullable="false" />
+			</column>
+			<column name="ERRORCODE" type="varchar(1)"/>
+			<column name="ERRORDESC" type="varchar(100)"/>
+			<column name="CUSTOMERID" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="SOURCESYSTEM" type="varchar(20)"/>
+			<column name="PSXBATCHID" type="decimal(18,0)"/>
+			<column name="UCINFLAG" type="varchar(10)"/>
+			<column name="EODBATCHID" type="decimal(18,0)"/>
+			<column name="INSERTTS" type="datetime">
+			<constraints nullable="false" />
+			</column>			
+			 <column name="GENDER" type="varchar(20)"/>
+			<column name="AADHARNO" type="varchar(12)"/>
+			<column name="CIN" type="varchar(100)"/>
+			<column name="DIN" type="varchar(20)"/>
+			<column name="REGISTRATIONNO" type="varchar(20)"/>
+			<column name="CANUMBER" type="varchar(100)"/>
+			<column name="SEGMENT" type="varchar(5)">
+			<constraints nullable="false" />
+			</column>
+			</createTable>
 	</changeSet>
 </databaseChangeLog>
