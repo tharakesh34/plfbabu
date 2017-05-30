@@ -40,7 +40,6 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-
 package com.pennant.webui.limit.limitdetails;
 
 import java.io.Serializable;
@@ -74,7 +73,6 @@ import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.service.limit.LimitDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.LimitConstants;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -87,17 +85,13 @@ import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.pff.core.model.ModuleMapping;
 
 /**
- * ************************************************************<br>
  * This is the controller class for the
  * /WEB-INF/pages/Limit/LimitDetails/LimitDetailsList.zul file.<br>
  * ************************************************************<br>
- * 
  */
-
 public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements Serializable {
-
 	private static final long serialVersionUID = 1L;
-	private final static Logger logger = Logger.getLogger(LimitDetailListCtrl.class);
+	private static final Logger				logger				= Logger.getLogger(LimitDetailListCtrl.class);
 
 	/*
 	 * ************************************************************************

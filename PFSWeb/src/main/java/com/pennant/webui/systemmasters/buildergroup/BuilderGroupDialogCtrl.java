@@ -54,7 +54,6 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
@@ -74,13 +73,11 @@ import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.Literal;
 
-
 /**
  * This is the controller class for the
  * /WEB-INF/pages/masters/BuilderGroup/builderGroupDialog.zul file. <br>
  */
 public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
-
 	private static final long serialVersionUID = 1L;
 	private final static Logger logger = Logger.getLogger(BuilderGroupDialogCtrl.class);
 
