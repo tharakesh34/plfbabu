@@ -1809,7 +1809,7 @@ public class CustomerDAOImpl extends BasisNextidDaoImpl<Customer> implements Cus
 
 		if (newCustStatus !=null) {
 			source.addValue("NewCustStatus", newCustStatus);
-			selectSql.append(" CustSts = :NewCustStatus ");
+			selectSql.append(", CustSts = :NewCustStatus ");
 		}
 
 		selectSql.append(" WHERE CustId=:CustId ");
