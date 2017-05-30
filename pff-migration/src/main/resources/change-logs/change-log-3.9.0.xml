@@ -20,5 +20,78 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 	
+	<changeSet id="1" author="Kesav">
+		<createTable tableName="FinFeeReceipts">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeId" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceiptId" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="PaidAmount" type="decimal(18, 0)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
 	
+	<changeSet id="2" author="Kesava">
+		<addPrimaryKey columnNames="Id, FeeID, ReceiptId" constraintName="PK_FinFeeReceipts" tableName="FinFeeReceipts" />
+	</changeSet>
+
+	<changeSet id="3" author="Kesav">
+		<createTable tableName="FinFeeReceipts_Temp">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeId" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceiptId" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="PaidAmount" type="decimal(18, 0)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="4" author="Kesava">
+		<addPrimaryKey columnNames="Id, FeeID, ReceiptId" constraintName="PK_FinFeeReceipts_Temp" tableName="FinFeeReceipts_Temp" />
+	</changeSet>
+	
+	<changeSet id="5" author="Kesav" dbms="oracle">
+		<sql splitStatements="false">
+			begin
+			execute immediate 'CREATE SEQUENCE SeqFinFeeReceipts START WITH 1 INCREMENT BY
+			1 MAXVALUE 9223372036854775807 NOCYCLE';
+			end;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
