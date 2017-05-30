@@ -412,5 +412,9 @@ WHERE     NOT EXISTS (SELECT 1 FROM BuilderProjcet_TEMP WHERE Id = T1.Id)
 			BuilderCompany T2 ON T1.BuilderId = T2.GROUPID
 	</createView>
 	</changeSet>
-	
+	<changeSet id="29" author="pruthvi">
+	    <sql>
+	        update reportlist set reportheading ='Dedup Parmameter' where code='DedupParm';
+	    </sql>
+	</changeSet>
 </databaseChangeLog>
