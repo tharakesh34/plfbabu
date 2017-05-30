@@ -382,5 +382,10 @@
 			insert into SeqEodConfig values (0);
 		</sql>
 	</changeSet>
+	<changeSet id="26" author="Surekha">
+		<sql>
+			INSERT INTO ReportList	Values('EODConfig','EODConfig','listheader_ExtMnthRequired.label,listheader_MnthExtTo.label,label.RecordStatus,label.RecordType','extMnthRequired,mnthExtTo,recordStatus,recordType','boolean,Date,String,String','','ReportList04','EOD Config','EOD',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
