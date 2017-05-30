@@ -44,7 +44,9 @@ package com.pennant.backend.endofday.tasklet;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -62,10 +64,8 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.EodService;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
@@ -97,8 +97,6 @@ public class MicroEOD implements Tasklet {
 		final int threadId = (int) context.getStepContext().getStepExecutionContext().get(EodConstants.THREAD);
 		logger.info("process Statred by the Thread : " + threadId + " with date " + valueDate.toString());
 
-		int chunkSize = SysParamUtil.getValueAsInt(SMTParameterConstants.EOD_CHUNK_SIZE);
-
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus txStatus = null;
@@ -115,9 +113,8 @@ public class MicroEOD implements Tasklet {
 			}
 		});
 
-		//for transaction 
-		int count = 0;
-		boolean trnsactionCompleted = true;
+		//to hold the exception till the process completed for all the customers
+		List<Exception> exceptions = new ArrayList<Exception>(1);
 
 		cursorItemReader.open(context.getStepContext().getStepExecution().getExecutionContext());
 		Customer customer;
@@ -129,18 +126,15 @@ public class MicroEOD implements Tasklet {
 				//update start
 				customerQueuingDAO.startEODForCID(custID);
 
+				// begin transaction
+				txStatus = transactionManager.getTransaction(txDef);
+
 				CustEODEvent custEODEvent = new CustEODEvent();
 				custEODEvent.setCustomer(customer);
 				custEODEvent.setEodDate(valueDate);
 				custEODEvent.setEodValueDate(valueDate);
 
 				eodService.doProcess(custEODEvent, valueDate);
-
-				if (count == 0) {
-					//BEGIN TRANSACTION
-					txStatus = transactionManager.getTransaction(txDef);
-					trnsactionCompleted = false;
-				}
 
 				//update customer EOD
 				eodService.getLoadFinanceData().updateFinEODEvents(custEODEvent);
@@ -157,34 +151,37 @@ public class MicroEOD implements Tasklet {
 				eodService.getLoadFinanceData().updateCustomerDate(custID, valueDate, newCustStatus);
 				//update  end
 				customerQueuingDAO.updateSucess(custID);
-				count++;
 
-				if (count == chunkSize) {
-					//COMMIT THE TRANSACTION
-					transactionManager.commit(txStatus);
-					count = 0;//To Create new transaction
-					trnsactionCompleted = true;
-				}
+				//commit
+				transactionManager.commit(txStatus);
 
 				custEODEvent.getFinEODEvents().clear();
 				custEODEvent = null;
 
 			} catch (Exception e) {
+				logger.error("Exception", e);
 				transactionManager.rollback(txStatus);
-				count = 0;//To Create new transaction
-				trnsactionCompleted = true;
-				updateFailed(threadId, custID);
+				exceptions.add(e);
+				updateFailed(custID);
 			}
 			//clear data after the process
 			customer = null;
 		}
 
-		if (!trnsactionCompleted) {
-			//COMMIT THE TRANSACTION
-			transactionManager.commit(txStatus);
-		}
-
 		cursorItemReader.close();
+
+		if (!exceptions.isEmpty()) {
+			List<StackTraceElement> elements = new ArrayList<StackTraceElement>();
+			for (Exception exp : exceptions) {
+				for (int i = 0; i < exp.getStackTrace().length; i++) {
+					elements.add(exp.getStackTrace()[i]);
+				}
+			}
+			RuntimeException exception = new RuntimeException();
+			exception.setStackTrace(elements.toArray(new StackTraceElement[elements.size()]));
+			logger.error("Exception", exception);
+			throw exception;
+		}
 
 		logger.debug("COMPLETE: Micro EOD On :" + valueDate);
 
@@ -201,13 +198,14 @@ public class MicroEOD implements Tasklet {
 		customerQueuingDAO.update(customerQueuing, start);
 	}
 
-	public void updateFailed(int threadId, long custId) {
+	public void updateFailed(long custId) {
 		CustomerQueuing customerQueuing = new CustomerQueuing();
 		customerQueuing.setCustID(custId);
 		customerQueuing.setEndTime(DateUtility.getSysDate());
 		//reset thread for reallocation
 		customerQueuing.setThreadId(0);
-		customerQueuing.setProgress(EodConstants.PROGRESS_FAILED);
+		//reset to "wait", to re run only failed cases.
+		customerQueuing.setProgress(EodConstants.PROGRESS_WAIT);
 		customerQueuingDAO.updateFailed(customerQueuing);
 	}
 
