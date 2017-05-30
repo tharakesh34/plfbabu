@@ -66,6 +66,7 @@ import com.pennant.backend.service.systemmasters.BuilderProjcetService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
+import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -179,13 +180,13 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet>{
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 		
-		 	
 			this.name.setMaxlength(50);
 			this.builderId.setModuleName("BuilderCompany");
 			this.builderId.setValueColumn("GroupId");
 			this.builderId.setDescColumn("Name");
 			this.builderId.setValidateColumns(new String[] {"GroupId"});
 			this.builderId.setMandatoryStyle(true);
+			this.builderId.setFilters(new Filter[]{ new Filter("FieldCode","SEGMENT",Filter.OP_EQUAL)});
 			this.apfNo.setMaxlength(20);
 		
 		setStatusDetails();
