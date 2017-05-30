@@ -153,7 +153,12 @@
 	<library-property>
 	    <name>org.zkoss.zk.WCS.cache</name>
 	    <value>true</value>
-	</library-property>s
+	</library-property>
+	
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/error_pt.zul</location>
+	</error-page>
 
 	<device-config>
 		<device-type>ajax</device-type>
