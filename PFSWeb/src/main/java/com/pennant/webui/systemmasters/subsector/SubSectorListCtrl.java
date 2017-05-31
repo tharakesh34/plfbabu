@@ -254,7 +254,6 @@ public class SubSectorListCtrl extends GFCBaseListCtrl<SubSector> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/SubSector/SubSectorDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

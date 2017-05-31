@@ -259,7 +259,6 @@ public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> {
 					"/WEB-INF/pages/SolutionFactory/workFlow/WorkflowDesign.zul",
 					null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

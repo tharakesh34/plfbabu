@@ -627,7 +627,6 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		try {
 			Executions.createComponents("/WEB-INF/pages/Mandate/MandateDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 
