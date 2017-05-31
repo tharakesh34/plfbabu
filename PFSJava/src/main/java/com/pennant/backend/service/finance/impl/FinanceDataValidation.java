@@ -1622,7 +1622,7 @@ public class FinanceDataValidation {
 					if (advPayment.getLlDate().before(financeMain.getFinStartDate())
 							|| advPayment.getLlDate().after(financeMain.getCalMaturity())) {
 						String[] valueParm = new String[3];
-						valueParm[0] = "disbDate";
+						valueParm[0] = "disbursement Date";
 						valueParm[1] = DateUtility.formatToLongDate(financeMain.getFinStartDate());
 						valueParm[2] = DateUtility.formatToLongDate(financeMain.getCalMaturity());
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));

@@ -1426,6 +1426,15 @@ public class FinServiceInstController extends SummaryDetailService {
 		response.getFinScheduleData().setFinanceSummary(summaryDetail);
 		response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
+		if(finScheduleData.getFinFeeDetailList() != null) {
+			List<FinFeeDetail> srvFeeList = new ArrayList<FinFeeDetail>();
+			for(FinFeeDetail feeDetail:finScheduleData.getFinFeeDetailList()) {
+				if(!feeDetail.isOriginationFee()) {
+					srvFeeList.add(feeDetail);
+				}
+			}
+			finScheduleData.setFinFeeDetailList(srvFeeList);
+		}
 		finScheduleData.setFinanceMain(null);
 		finScheduleData.setDisbursementDetails(null);
 		finScheduleData.setFinReference(null);
@@ -1583,6 +1592,11 @@ public class FinServiceInstController extends SummaryDetailService {
 		}
 
 		if (financeDetail != null) {
+			if(financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
+				for(FinFeeDetail feeDetail:financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+						feeDetail.setOriginationFee(true);
+				}
+			}
 			financeDetail.setAccountingEventCode(eventCode);
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 			financeDetail.getFinScheduleData().getFinanceMain().setUserDetails(userDetails);
