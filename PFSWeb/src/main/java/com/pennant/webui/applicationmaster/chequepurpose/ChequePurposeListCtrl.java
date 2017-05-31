@@ -239,7 +239,6 @@ public class ChequePurposeListCtrl extends GFCBaseListCtrl<ChequePurpose> {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/ChequePurpose/ChequePurposeDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

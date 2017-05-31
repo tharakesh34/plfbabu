@@ -257,7 +257,6 @@ public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/BounceReason/BounceReasonDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

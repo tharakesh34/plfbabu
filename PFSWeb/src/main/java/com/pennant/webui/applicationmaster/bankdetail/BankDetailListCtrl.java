@@ -238,7 +238,6 @@ public class BankDetailListCtrl extends GFCBaseListCtrl<BankDetail> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/BankDetail/BankDetailDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

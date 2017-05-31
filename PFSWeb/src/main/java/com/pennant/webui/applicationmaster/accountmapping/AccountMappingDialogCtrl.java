@@ -447,7 +447,6 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error(e);
 			MessageUtil.showError(e);
 		}
 

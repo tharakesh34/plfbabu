@@ -191,7 +191,6 @@ public class AccountTypeGroupListCtrl extends GFCBaseListCtrl<AccountTypeGroup> 
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/AccountTypeGroup/AccountTypeGroupDialog.zul",
 					null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

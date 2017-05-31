@@ -240,7 +240,6 @@ public class CorpRelationCodeListCtrl extends GFCBaseListCtrl<CorpRelationCode> 
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/CorpRelationCode/CorpRelationCodeDialog.zul",
 					null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");

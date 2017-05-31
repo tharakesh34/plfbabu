@@ -251,7 +251,6 @@ public class BaseRateListCtrl extends GFCBaseListCtrl<BaseRate> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/BaseRate/BaseRateDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

@@ -260,7 +260,6 @@ public class BranchListCtrl extends GFCBaseListCtrl<Branch> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/Branch/BranchDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
