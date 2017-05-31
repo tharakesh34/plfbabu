@@ -43,7 +43,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.util.CalculationUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -62,7 +61,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		super();
 	}
 
-	public FinODDetails computeLPP(FinODDetails fod, Date valueDate, String idb) throws Exception {
+	public FinODDetails computeLPP(FinODDetails fod, Date valueDate, String idb,int numberOfMonths) throws Exception {
 		logger.debug("Entering");
 
 		//Late Payment Penalty. Do not apply LPP
@@ -83,8 +82,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 			//Fixed Fee. On Every Passing Schedule Month 
 		} else if (FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(fod.getODChargeType())) {
-			int months = DateUtility.getMonthsBetween(fod.getFinODSchdDate(), valueDate);
-			penalty = fod.getODChargeAmtOrPerc().multiply(new BigDecimal(months));
+			penalty = fod.getODChargeAmtOrPerc().multiply(new BigDecimal(numberOfMonths));
 
 			//Percentage ON OD Amount. One Time 
 		} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(fod.getODChargeType())) {
@@ -105,7 +103,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			//Percentage ON OD Amount. One Time 
 		} else if (FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(fod.getODChargeType())) {
 			BigDecimal balanceForCal = BigDecimal.ZERO;
-			
+
 			if (StringUtils.equals(fod.getODChargeCalOn(), FinanceConstants.ODCALON_SPFT)) {
 				balanceForCal = fod.getFinMaxODPft();
 			} else if (StringUtils.equals(fod.getODChargeCalOn(), FinanceConstants.ODCALON_SPRI)) {
@@ -113,9 +111,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 			} else {
 				balanceForCal = fod.getFinMaxODAmt();
 			}
-			
-			int months = DateUtility.getMonthsBetween(fod.getFinODSchdDate(), valueDate);
-			penalty = fod.getFinMaxODAmt().multiply(fod.getODChargeAmtOrPerc()).multiply(new BigDecimal(months))
+
+			penalty = balanceForCal.multiply(fod.getODChargeAmtOrPerc()).multiply(new BigDecimal(numberOfMonths))
 					.divide(new BigDecimal(100));
 
 			//On Due Days
@@ -225,4 +222,28 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 		fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
 	}
+
+	public int getMonthsBetween(FinODDetails fod, List<FinanceScheduleDetail> finScheduleDetails, Date valueDate) {
+
+		int terms = 0;
+		for (FinanceScheduleDetail finSchd : finScheduleDetails) {
+
+			if (finSchd.getSchDate().before(fod.getFinODSchdDate())) {
+				continue;
+			}
+
+			if (finSchd.isRepayOnSchDate() || finSchd.isPftOnSchDate()) {
+				terms++;
+			}
+
+			if (finSchd.getSchDate().compareTo(valueDate) >= 0) {
+				break;
+			}
+
+		}
+
+		return terms;
+
+	}
+
 }
