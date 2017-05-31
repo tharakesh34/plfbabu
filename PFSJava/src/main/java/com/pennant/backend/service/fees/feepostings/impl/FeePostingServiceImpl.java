@@ -413,8 +413,6 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				feePostings.getDeclaredFieldValues(aeEvent.getDataMap());
 				aeEvent.getAcSetIDList().add(Long.valueOf(feePostings.getAccountSetId()));
 				
-				aeEvent.getAcSetIDList().add(getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_MANFEE,
-						AccountEventConstants.ACCEVENT_MANFEE));
 				list = getEngineExecution().getAccEngineExecResults(aeEvent).getReturnDataSet();
 
 			}
