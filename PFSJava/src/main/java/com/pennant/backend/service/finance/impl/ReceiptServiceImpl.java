@@ -320,6 +320,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				List<Long> feeIDList = new ArrayList<>();
 				for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++) {
 					FinFeeDetail feeDetail = scheduleData.getFinFeeDetailList().get(i);
+					
+					if(feeDetail.isOriginationFee()){
+						feeDetail.setRcdVisible(false);
+					}
 
 					if(StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT) ||
 							StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS) ||
@@ -642,6 +646,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptData receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinScheduleData scheduleData = receiptData.getFinanceDetail().getFinScheduleData();
 		FinanceMain financeMain = scheduleData.getFinanceMain();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		// Cancel All Transactions done by Finance Reference
 		//=======================================
@@ -706,12 +711,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		
 		// Receipt Header Audit Details Preparation
 		String[] rhFields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), receiptData.getReceiptHeader().getExcludeFields());
-		auditHeader.getAuditDetails().add(new AuditDetail(tranType, 1, rhFields[0], rhFields[1], receiptData.getReceiptHeader()
+		auditDetails.add(new AuditDetail(tranType, 1, rhFields[0], rhFields[1], receiptData.getReceiptHeader()
 				.getBefImage(), receiptData.getReceiptHeader()));
 		
 		// Delete Fee Details
 		if (receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList() != null) {
-			auditHeader.getAuditDetails().addAll(getFinFeeDetailService().delete(
+			auditDetails.addAll(getFinFeeDetailService().delete(
 					receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList(), "_Temp",
 					auditHeader.getAuditTranType(), false));
 		}
@@ -725,12 +730,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			List<AuditDetail> details = receiptData.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
 			details = processingDocumentDetailsList(details, TableType.TEMP_TAB.getSuffix(), receiptData.getFinanceDetail().getFinScheduleData()
 					.getFinanceMain(), receiptData.getReceiptHeader().getReceiptPurpose());
-			auditHeader.setAuditDetails(details);
+			auditDetails.addAll(details);
 		}
 
 		// Checklist Details delete
 		//=======================================
-		auditHeader.getAuditDetails().addAll(
+		auditDetails.addAll(
 				getCheckListDetailService().delete(receiptData.getFinanceDetail(), TableType.TEMP_TAB.getSuffix(), tranType));
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
@@ -738,6 +743,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], financeMain
 				.getBefImage(), financeMain));
 		auditHeader.setAuditModule("FinanceDetail");
+		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		
 		//Reset Finance Detail Object for Service Task Verifications

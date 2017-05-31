@@ -60,6 +60,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
@@ -74,7 +75,9 @@ import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
+import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceCheckListReferenceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
@@ -97,7 +100,9 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
@@ -150,6 +155,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	private DocumentTypeDAO					documentTypeDAO;
 	private CustomerDocumentDAO				customerDocumentDAO;
 	private TransactionEntryDAO				transactionEntryDAO;
+	private FinFeeDetailDAO					finFeeDetailDAO;
 	
 	// Validation Service Classes
 	private DocumentDetailValidation		vasDocumentValidation;
@@ -161,6 +167,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	private PostingsDAO 					postingsDAO;
 	private AccountProcessUtil 				accountProcessUtil;
 	private FinanceMainDAO 					financeMainDAO;
+	private FinanceScheduleDetailDAO 		financeScheduleDetailDAO;
 	private RelationshipOfficerDAO			relationshipOfficerDAO;
 	private ScriptValidationService 		scriptValidationService;
 
@@ -610,10 +617,84 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		return auditHeader;
 
 	}
+	
+	/**
+	 * Method for Checking Cancellation of VAS Record
+	 * @param recording
+	 */
+	private void procCheckForVasCancel(VASRecording recording, boolean approvalProcess){
+
+		// VAS Cancellation validations
+		if(!StringUtils.equals(recording.getVasStatus(), VASConsatnts.STATUS_CANCEL) || !recording.isFinanceProcess()){
+			return;
+		}
+		
+		// Get Fee detail record
+		FinFeeDetail vasFeeDetail = finFeeDetailDAO.getVasFeeDetailById(recording.getVasReference(), false, "");
+		if(vasFeeDetail == null){
+			return;
+		}
+
+		// Check Finance Maintenance Status if any and stop except "Deduct From Disbursement"
+		if(StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE) ||
+				StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT) ||
+				StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS) ||
+				StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)){
+			
+			boolean finOnMaintenance = financeMainDAO.isFinReferenceExists(recording.getPrimaryLinkRef(), "_Temp", false);
+			if(finOnMaintenance){
+				return;
+			}
+		}
+
+		// Get Schedule Details of Primary Link Reference and check paid Status
+		List<FinanceScheduleDetail> schdList = financeScheduleDetailDAO.getFinScheduleDetails(recording.getPrimaryLinkRef(),"", false);
+		boolean isSchdPaid = false;
+		for (int i = 0; i < schdList.size(); i++) {
+			FinanceScheduleDetail curSchd = schdList.get(i);
+			if(curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || 
+					curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 ||
+					curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0 ||
+					curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0){
+				if(!StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())){
+					isSchdPaid = true;
+					break;
+				}
+			}
+		}
+		
+		// If Schedules Paid for any dates then VAS cancellation not allowed
+		if(isSchdPaid){
+			return;
+		}
+		
+		// If not approval Process, No need of actual updations Only validation is enough
+		if(!approvalProcess){
+			return;
+		}
+
+		// Based on Fee Schedule Method schedules need to Reset
+		// 1. Deduct From Disbursement : No Change
+		// 2. Add to Disbursement on Profit Calculation : Do partial Settlement on Start Date and Recalculate total EMI
+		// 3. Schedule Terms(First Term / N Terms / Entire Tenor) : Schedule Reversal of Sum Amount in Fees
+		if(StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
+			
+		//	ScheduleCalculator.recalEarlyPaySchedule(finScheduleData, earlyPayOnSchdl, earlyPayOnNextSchdl, earlyPayAmt, method);
+			
+		}else if(StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
+			
+		}
+		
+		
+		// Update Fee Details record with Cancel status
+
+	}
 
 	/**
-	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
-	 * assign the to auditHeader 3) identify the nextprocess
+	 * businessValidation method do the following steps. 
+	 * 1) validate the audit detail 
+	 * 2) if any error/Warnings then assign the to auditHeader 
+	 * 3) identify the next process
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -2223,5 +2304,13 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	public void setDocumentTypeDAO(DocumentTypeDAO documentTypeDAO) {
 		this.documentTypeDAO = documentTypeDAO;
 	}
-
+	
+	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
+		this.finFeeDetailDAO = finFeeDetailDAO;
+	}
+	
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+	
 }

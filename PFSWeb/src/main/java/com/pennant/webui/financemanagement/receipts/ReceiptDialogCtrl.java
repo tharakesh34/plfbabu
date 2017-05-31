@@ -1736,9 +1736,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			//Clear all the listitems in listbox
 			this.listBoxSchedule.getItems().clear();
-			/*this.listBoxSchedule.setSizedByContent(true);
-			this.listBoxSchedule.setStyle("hflex:min;");*/
-
 			aFinScheduleData.setFinanceScheduleDetails(sortSchdDetails(aFinScheduleData.getFinanceScheduleDetails()));
 
 			for (int i = 0; i < aFinScheduleData.getFinanceScheduleDetails().size(); i++) {
@@ -2287,7 +2284,16 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				
 				FinReceiptData data = getReceiptData();
 				List<FinReceiptDetail> receiptDetails = data.getReceiptHeader().getReceiptDetails();
-				data.getReceiptHeader().setReceiptAmount(getTotalReceiptAmount());
+				
+				int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+				BigDecimal totReceiptAmt = getTotalReceiptAmount();
+				BigDecimal feeAmount = BigDecimal.ZERO;
+				if(getFinFeeDetailListCtrl() != null){
+					feeAmount = getFinFeeDetailListCtrl().getFeePaidAmount(finFormatter);
+				}
+				totReceiptAmt = totReceiptAmt.add(feeAmount);
+				data.getReceiptHeader().setTotFeeAmount(feeAmount);
+				data.getReceiptHeader().setReceiptAmount(totReceiptAmt);
 				
 				for (FinReceiptDetail receiptDetail : receiptDetails) {
 					if(!StringUtils.equals(RepayConstants.RECEIPTMODE_EXCESS, data.getReceiptHeader().getReceiptMode()) && 
@@ -2632,9 +2638,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		// Receipt Mode Details , if FinReceiptDetails Exists
-		this.receipt_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(header.getReceiptAmount(), finFormatter));
-		this.allocation_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(header.getReceiptAmount(), finFormatter));
-		this.payment_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(header.getReceiptAmount(), finFormatter));
+		this.receipt_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(header.getReceiptAmount().subtract(header.getTotFeeAmount()), finFormatter));
+		this.allocation_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(header.getReceiptAmount().subtract(header.getTotFeeAmount()), finFormatter));
+		this.payment_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(header.getReceiptAmount().subtract(header.getTotFeeAmount()), finFormatter));
 		checkByReceiptPurpose(header.getReceiptPurpose());
 		checkByReceiptMode(header.getReceiptMode(), false);
 		
@@ -2731,7 +2737,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		appendCustomerDetailTab();
 
 		//Fee Details Tab Addition
-		appendFeeDetailTab(false);
+		boolean isLoadProcess = false;
+		if(StringUtils.isNotEmpty(getFinanceDetail().getFinScheduleData().getFinanceMain().getRecordType())){
+			isLoadProcess = true;
+		}
+		appendFeeDetailTab(isLoadProcess);
 
 		// Schedule Details
 		if(visibleSchdTab){

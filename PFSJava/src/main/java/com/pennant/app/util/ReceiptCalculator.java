@@ -1153,7 +1153,8 @@ public class ReceiptCalculator implements Serializable {
 									balPft = CalculationUtil.calInterest(prvSchd.getSchDate(), curBussniessDate, curSchd.getBalanceForPftCal(),
 											prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
 									
-									balPft = balPft.setScale(0, RoundingMode.HALF_DOWN);
+									balPft = balPft.add(prvSchd.getProfitBalance()).add(prvSchd.getProfitFraction());
+									balPft = CalculationUtil.roundAmount(balPft, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
 								}else if (schdDate.compareTo(curBussniessDate) == 0){
 									balPft = curSchd.getProfitCalc().subtract(curSchd.getSchdPftPaid()).add(prvSchd.getProfitBalance());
 								}
@@ -1539,9 +1540,11 @@ public class ReceiptCalculator implements Serializable {
 						partAccrualReq = false;
 						BigDecimal accruedPft = CalculationUtil.calInterest(prvSchd.getSchDate(), curBussniessDate, curSchd.getBalanceForPftCal(),
 								prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
-						accruedPft = accruedPft.setScale(0, RoundingMode.HALF_DOWN);
-						
+						accruedPft = accruedPft.add(prvSchd.getProfitFraction());
+						accruedPft = CalculationUtil.roundAmount(accruedPft, finScheduleData.getFinanceMain().getCalRoundingMode(), 
+								finScheduleData.getFinanceMain().getRoundingTarget());
 						pftAccruedTillNow = pftAccruedTillNow.add(accruedPft).add(prvSchd.getProfitBalance());
+						
 						priBalance = priBalance.add(prvSchd.getClosingBalance());
 						repayMain.setEarlyPayAmount(prvSchd.getClosingBalance());
 					}

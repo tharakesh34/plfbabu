@@ -12,5 +12,8 @@ public class VASConsatnts {
 	public static final String VASAGAINST_FINANCE				= "Finance";
 	public static final String VASAGAINST_COLLATERAL            = "Collateral";
 	public static final String VASAGAINST_VASM            		= "VASM";
+	
+	// Status Details
+	public static final String STATUS_CANCEL            		= "C";
 
 }

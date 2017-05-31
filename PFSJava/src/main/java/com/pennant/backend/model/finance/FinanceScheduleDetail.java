@@ -435,7 +435,6 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 
 	public void setProfitFraction(BigDecimal profitFraction) {
 		this.profitFraction = profitFraction.setScale(9, RoundingMode.DOWN);
-		;
 	}
 
 	public BigDecimal getPrvRepayAmount() {

@@ -8668,6 +8668,7 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="relationshipOfficerDAO" ref="relationshipOfficerDAO" />
 		<property name="scriptValidationService" ref="scriptValidationService" />
+		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
 	</bean>
 
 	<!-- Beneficiary -->
