@@ -533,5 +533,15 @@
    		 <renameColumn columnDataType="decimal(18,2)" newColumnName="PDC_SWAP_CHARGES_RECEIVABLE" oldColumnName="PDC_SWAP_CHARGESRECEIVABLE" tableName="CF_CONTROL_DUMP_LOG"/>
    		 <renameColumn columnDataType="decimal(18,2)" newColumnName="PDC_SWAP_CHARGES_RECEIVED" oldColumnName="PDC_SWAP_CHARGESRECEIVED" tableName="CF_CONTROL_DUMP_LOG"/>
 	</changeSet>
-	
+	<changeSet id="21" author="Srikanth">
+	<sql>
+	Delete from ErrorDetails Where ErrorCode in('90297','90298','90299','90300','90321','90322');
+	INSERT INTO ErrorDetails VALUES('90297','EN','E','Request should contain configured mandatory extended details.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	INSERT INTO ErrorDetails VALUES('90298','EN','E','{0} is only applicable for {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	INSERT INTO ErrorDetails VALUES('90299','EN','E','{0} is invalid in extended details, It should be {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	INSERT INTO ErrorDetails VALUES('90300','EN','E','maximum length of {0} field should be equals to {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	INSERT INTO ErrorDetails VALUES('90321','EN','E','custDocIssuedOn should not be before on customer date of birth.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	INSERT INTO ErrorDetails VALUES('90322','EN','E','{0} is invalid in extended details, It should be as per configuration.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
 </databaseChangeLog>
