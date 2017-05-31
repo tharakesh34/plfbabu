@@ -36,8 +36,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 	protected void processData() {
 		logger.debug(Literal.ENTERING);
 
-		executionStatus.setRemarks("loading control dump data..");
-
+		try {
 		// Handling retry on same day.
 		deleteData("CF_CONTROL_DUMP_LOG", "CREATED_ON");
 		deleteData("CF_CONTROL_DUMP", "CREATED_ON");
@@ -45,17 +44,31 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		// Moving last run data to log table.
 		copyDataFromMainToLogTable(currentDate);
 
+		execute();
+		
+		
+		deleteOldData("CF_CONTROL_DUMP", "CREATED_ON");
+		} catch(Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		} finally {
+			deleteOldData("CF_CONTROL_DUMP", "CREATED_ON");
+		}
+		
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void execute() {
 		// Saving the data into main table.
 		MapSqlParameterSource parmMap;
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT * from INT_CF_CONTROL_VIEW");
-		//sql.append(" WHERE LOAN_STATUS = :LOAN_STATUS");
-		//sql.append(" AND latestRpyDate >= :monthStartDate AND latestRpyDate <= :monthEndDate ");
+		sql.append(" WHERE LOAN_STATUS = :LOAN_STATUS");
+		sql.append(" AND latestRpyDate >= :monthStartDate AND latestRpyDate <= :monthEndDate ");
 
 		parmMap = new MapSqlParameterSource();
-		//parmMap.addValue("LOAN_STATUS", "A");
-		//parmMap.addValue("monthStartDate", monthStartDate);
-		//parmMap.addValue("monthEndDate", monthEndDate);
+		parmMap.addValue("LOAN_STATUS", "A");
+		parmMap.addValue("monthStartDate", monthStartDate);
+		parmMap.addValue("monthEndDate", monthEndDate);
 
 		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
 			MapSqlParameterSource	map	= null;
@@ -80,7 +93,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 						String error = null;
 						if (e.getMessage().length() > 1999) {
 							
-							if(e.getMessage().contains("value larger")) {
+							if(e.getMessage().contains("invalid number")) {
 								System.out.println(map.toString());
 							}
 							
@@ -99,7 +112,6 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 				return totalRecords;
 			}
 		});
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
@@ -260,6 +272,18 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		delete(logMap, tableName, destinationJdbcTemplate, filterFields);
 
 		logger.debug(Literal.LEAVING);
+	}
+	
+	private void deleteOldData(String tableName, String columnName) {
+		logger.debug(Literal.ENTERING);
 
+		MapSqlParameterSource logMap = new MapSqlParameterSource();
+		logMap.addValue(columnName, currentDate);
+
+		final String[] filterFields = new String[1];
+		filterFields[0] = columnName;
+		delete(logMap, tableName, destinationJdbcTemplate, " where CREATED_ON !=:CREATED_ON");
+
+		logger.debug(Literal.LEAVING);
 	}
 }

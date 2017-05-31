@@ -21,10 +21,10 @@ import com.pennanttech.bajaj.process.DisbursemenIMPSRequestProcess;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
-import com.pennanttech.pff.core.services.RequestService;
+import com.pennanttech.pff.core.services.DisbursementRequest;
 import com.pennanttech.pff.core.util.QueryUtil;
 
-public class DisbursementRequestService extends BajajService implements RequestService {
+public class DisbursementRequestService extends BajajService implements DisbursementRequest {
 	private final Logger	logger	= Logger.getLogger(getClass());
 
 	public enum DisbursementTypes {

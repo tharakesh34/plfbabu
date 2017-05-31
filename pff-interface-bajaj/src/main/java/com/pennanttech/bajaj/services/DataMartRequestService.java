@@ -1,9 +1,9 @@
 package com.pennanttech.bajaj.services;
 
 import com.pennanttech.bajaj.process.DataMartRequestProcess;
-import com.pennanttech.pff.core.services.RequestService;
+import com.pennanttech.pff.core.services.DataMartRequest;
 
-public class DataMartRequestService extends BajajService implements RequestService {
+public class DataMartRequestService extends BajajService implements DataMartRequest {
 
 	@Override
 	public void sendReqest(Object... params) throws Exception {

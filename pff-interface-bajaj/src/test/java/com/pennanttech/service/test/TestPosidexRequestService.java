@@ -5,17 +5,17 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.pennanttech.bajaj.services.PosidexRequestService;
+import com.pennanttech.pff.core.services.PosidexRequest;
 
 public class TestPosidexRequestService {
 
-	PosidexRequestService requestService;
+	PosidexRequest requestService;
 
 	@Before
 	public void startAHI() {
 		try {
 			ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
-			requestService = context.getBean(PosidexRequestService.class);
+			requestService = context.getBean(PosidexRequest.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

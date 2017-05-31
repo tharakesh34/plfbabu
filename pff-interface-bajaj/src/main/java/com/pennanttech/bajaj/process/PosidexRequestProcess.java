@@ -24,7 +24,6 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 	private Date lastRunDate;
 	private long batchId;
-	private long totalCustomers;
 	private long totalLoans;
 
 	private int loanSuccessCount;
@@ -45,7 +44,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 		batchId = logHeader();
 
-		totalCustomers = getUpdatedCustomerCount();
+		totalRecords = getUpdatedCustomerCount();
 
 		totalLoans = getLoanCount();
 
@@ -105,6 +104,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 						saveOrUpdate(custMap, "DEDUP_EOD_CUST_DEMO_DTL", destinationJdbcTemplate, keyField);
 						extractCustomerAddressDetails((BigDecimal) custMap.getValue("CUSTOMER_NO"));
 						successCount++;
+						processedCount++;
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION);
 						saveBatchLog(String.valueOf(customerId), "F", e.getMessage());
@@ -296,14 +296,14 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 		super.updateRemarks(remarks);
 		StringBuilder builder = new StringBuilder();
 		if (failedCount > 0) {
-			builder.append("Completed with exceptions total customers: " + totalCustomers + ", total loans : "
+			builder.append("Completed with exceptions total customers: " + totalRecords + ", total loans : "
 					+ totalLoans);
 			builder.append("success customers: " + successCount + ", loans : " + loanSuccessCount);
 			builder.append(" inserted: " + insertCount + ", updated: " + updateCount + " customers");
 			builder.append(" inserted: " + loanInsertCount + ", updated: " + loanUpdateCount + " loans");
 			builder.append(" failed customers : " + failedCount + ", failed loans: " + loanFailedCount);
 		} else {
-			builder.append("Completed succesfully total customers: " + totalCustomers + ", total loans : " + totalLoans);
+			builder.append("Completed succesfully total customers: " + totalRecords + ", total loans : " + totalLoans);
 			builder.append("success customers: " + successCount + ", loans : " + loanSuccessCount);
 			builder.append(" inserted: " + insertCount + ", updated: " + updateCount + " customers");
 			builder.append(" inserted: " + loanInsertCount + ", updated: " + loanUpdateCount + " loans");

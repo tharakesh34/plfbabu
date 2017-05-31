@@ -11,9 +11,9 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennanttech.pff.core.Literal;
-import com.pennanttech.pff.core.services.ResponseMandateService;
+import com.pennanttech.pff.core.services.MandateResponse;
 
-public class MandateResponseService extends BajajService implements ResponseMandateService {
+public class MandateResponseService extends BajajService implements MandateResponse {
 	private final Logger logger = Logger.getLogger(getClass());
 
 	public MandateResponseService() {
