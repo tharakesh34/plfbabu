@@ -172,6 +172,133 @@
 		      	Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
 		</createView>
 	</changeSet>
+	
+	<changeSet id="1" author="Manoj.P">
+		<dropNotNullConstraint tableName="DEDUP_EOD_CUST_ADDR_DTL"
+			columnName="ADDRESS_TYPE" columnDataType="nvarchar(50)" />
+	</changeSet>
+
+	<changeSet id="2" author="Manoj.P">
+		<dropTable tableName="DEDUP_EOD_CUST_ADDR_DTL" />
+	</changeSet>
+
+
+	<changeSet id="3" author="Manoj.P">
+		<createTable tableName="DEDUP_EOD_CUST_ADDR_DTL">
+			<column name="BATCHID" type="decimal(12,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CUSTOMER_NO" type="decimal(8,0)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="SOURCE_SYS_ID" type="varchar(5)" />
+			<column name="SEGMENT" type="varchar(5)" />
+			<column name="ADDRESS_TYPE" type="varchar(24)" />
+			<column name="ADDRESS_1" type="varchar(255)" />
+			<column name="ADDRESS_2" type="varchar(255)" />
+			<column name="ADDRESS_3" type="varchar(255)" />
+			<column name="STATE" type="varchar(100)" />
+			<column name="CITY" type="varchar(105)" />
+			<column name="PIN" type="varchar(24)" />
+			<column name="LANDLINE_1" type="varchar(48)" />
+			<column name="LANDLINE_2" type="varchar(48)" />
+			<column name="MOBILE" type="varchar(105)" />
+			<column name="AREA" type="varchar(120)" />
+			<column name="LANDMARK" type="varchar(105)" />
+			<column name="STD" type="varchar(48)" />
+			<column name="PROCESS_TYPE" type="varchar(2)" />
+			<column name="EMAIL" type="varchar(105)" />
+			<column name="PROCESS_FLAG" type="varchar(1)" />
+			<column name="ERROR_CODE" type="varchar(1)" />
+			<column name="ERROR_DESC" type="varchar(100)" />
+			<column name="CUSTOMER_ID" type="varchar(20)" />
+			<column name="SOURCE_SYSTEM" type="varchar(20)" />
+			<column name="PSX_BATCH_ID" type="decimal(18,0)" />
+			<column name="EOD_BATCH_ID" type="decimal(18,0)" />
+
+		</createTable>
+	</changeSet>
+
+
+	<changeSet id="4" author="Manoj.P">
+		<dropTable tableName="DEDUP_EOD_CUST_LOAN_DTL" />
+	</changeSet>
+
+	<changeSet id="5" author="Manoj.P">
+		<createTable tableName="DEDUP_EOD_CUST_LOAN_DTL">
+			<column name="BATCHID" type="decimal(12,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CUSTOMER_NO" type="decimal(8,0)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="SOURCE_SYS_ID" type="varchar(5)"/>
+			<column name="SEGMENT" type="varchar(5)"/>
+			<column name="DEAL_ID" type="varchar(20)" />
+			<column name="LAN_NO" type="varchar(20)"/>
+			<column name="CUSTOMER_TYPE" type="varchar(1)"/>
+			<column name="APPLN_NO" type="decimal(10,0)"/>
+			<column name="PRODUCT_CODE" type="varchar(10)"/>
+			<column name="PROCESS_TYPE" type="varchar(2)"/>
+			<column name="PROCESS_FLAG" type="varchar(1)"/>
+			<column name="ERROR_CODE" type="varchar(1)" />
+			<column name="ERROR_DESC" type="varchar(100)" />
+			<column name="PSX_BATCH_ID" type="decimal(18,0)" />
+			<column name="PSX_ID" type="decimal(12,0)" />
+			<column name="CUSTOMER_ID" type="varchar(20)"/>
+			<column name="SOURCE_SYSTEM" type="varchar(20)"/>
+			<column name="EOD_BATCH_ID" type="decimal(18,0)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="6" author="Manoj.P">
+		<dropTable tableName="DEDUP_EOD_CUST_DEMO_DTL"/>
+	</changeSet>
+	
+	<changeSet id="7" author="Manoj.P">
+		<createTable tableName="DEDUP_EOD_CUST_DEMO_DTL">	
+			<column name="BATCHID" type="decimal(12,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CUSTOMER_NO" type="decimal(8,0)">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+	        <column name="SOURCE_SYS_ID" type="varchar(5)"/>
+			<column name="FIRST_NAME" type="varchar(90)"/>
+			<column name="MIDDLE_NAME" type="varchar(90)"/>
+			<column name="LAST_NAME" type="varchar(90)"/>
+			<column name="DOB" type="datetime"/>
+			<column name="PAN" type="varchar(30)"/>
+			<column name="DRIVING_LICENSE_NUMBER" type="varchar(45)"/>
+			<column name="VOTER_ID" type="varchar(20)"/>
+			<column name="DATE_OF_INCORPORATION" type="datetime"/>
+			<column name="TAN_NO" type="varchar(15)"/>					
+			<column name="PROCESS_TYPE" type="varchar(2)"/>
+			<column name="APPLICANT_TYPE" type="varchar(1)"/>
+			<column name="EMPOYER_NAME" type="varchar(105)"/>
+			<column name="FATHER_NAME" type="varchar(105)"/>
+			<column name="PASSPORT_NO" type="varchar(45)"/>
+			<column name="ACCOUNT_NUMBER" type="varchar(20)"/>
+			<column name="CREDIT_CARD_NUMBER" type="varchar(60)"/>
+			<column name="PROCESS_FLAG" type="varchar(1)"/>
+			<column name="ERROR_CODE" type="varchar(1)"/>
+			<column name="ERROR_DESC" type="varchar(100)"/>
+			<column name="CUSTOMER_ID" type="varchar(20)"/>
+			<column name="SOURCE_SYSTEM" type="varchar(20)"/>
+			<column name="PSX_BATCH_ID" type="decimal(18,0)"/>
+			<column name="UCIN_FLAG" type="varchar(10)"/>
+			<column name="EOD_BATCH_ID" type="decimal(18,0)"/>
+			<column name="INSERT_TS" type="datetime"/>
+			<column name="GENDER" type="varchar(20)"/>
+			<column name="AADHAR_NO" type="varchar(16)"/>
+			<column name="CIN" type="varchar(100)"/>
+			<column name="DIN" type="varchar(20)"/>
+			<column name="REGISTRATION_NO" type="varchar(20)"/>
+			<column name="CA_NUMBER" type="varchar(100)"/>
+			<column name="SEGMENT" type="varchar(5)"/>
+</createTable>
+	</changeSet>
+	
 	<changeSet id="11" author="Durgaprasad G">
 		<createTable tableName="SeqPaymentHeader">
 			<column name="SeqNo" type="bigint">
