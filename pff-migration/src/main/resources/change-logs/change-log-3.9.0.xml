@@ -802,4 +802,15 @@
 		</createTable>
 	</changeSet>
 			
+	<changeSet id="36" author="SreeRavali">
+		<addColumn tableName="Restructure">
+			<column name="effectiveRate" type="decimal(13,9)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="37" author="SreeRavali">
+		<addColumn tableName="Restructure_Temp">
+			<column name="effectiveRate" type="decimal(13,9)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
