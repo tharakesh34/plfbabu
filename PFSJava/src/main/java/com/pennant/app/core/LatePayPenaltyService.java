@@ -234,14 +234,13 @@ public class LatePayPenaltyService extends ServiceHelper {
 				continue;
 			}
 
-			if (finSchd.isRepayOnSchDate() || finSchd.isPftOnSchDate()) {
-				terms++;
-			}
-
 			if (finSchd.getSchDate().compareTo(valueDate) > 0) {
 				break;
 			}
 
+			if (finSchd.isRepayOnSchDate() || finSchd.isPftOnSchDate()) {
+				terms++;
+			}
 		}
 
 		return terms;
