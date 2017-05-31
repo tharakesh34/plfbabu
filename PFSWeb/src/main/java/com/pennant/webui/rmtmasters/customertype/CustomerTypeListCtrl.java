@@ -245,7 +245,6 @@ public class CustomerTypeListCtrl extends GFCBaseListCtrl<CustomerType> {
 			Executions
 					.createComponents("/WEB-INF/pages/SolutionFactory/CustomerType/CustomerTypeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

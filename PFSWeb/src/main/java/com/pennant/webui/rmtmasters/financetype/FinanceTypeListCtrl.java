@@ -317,7 +317,6 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/SelectFinTypeDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 
@@ -392,7 +391,6 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinanceTypeDialog.zul", null, map);
 			}
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");

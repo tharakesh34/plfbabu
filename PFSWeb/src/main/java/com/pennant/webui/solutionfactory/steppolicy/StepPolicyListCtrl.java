@@ -239,7 +239,6 @@ public class StepPolicyListCtrl extends GFCBaseListCtrl<StepPolicyHeader> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/StepPolicy/StepPolicyDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

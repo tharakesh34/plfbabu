@@ -193,7 +193,6 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 		try {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/Promotion/SelectPromotionDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 
@@ -254,7 +253,6 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 		try {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/Promotion/PromotionDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

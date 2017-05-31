@@ -323,7 +323,6 @@ public class ScoringGroupListCtrl extends GFCBaseListCtrl<ScoringGroup> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/RulesFactory/ScoringGroup/ScoringGroupDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

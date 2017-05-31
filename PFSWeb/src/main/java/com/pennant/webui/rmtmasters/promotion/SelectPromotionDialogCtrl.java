@@ -221,7 +221,6 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/Promotion/PromotionDialog.zul", null, aruments);
 			this.window_SelectPromotionDialog.onClose();
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

@@ -324,7 +324,6 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/RulesFactory/Rule/RuleDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 
