@@ -590,6 +590,114 @@
 		</sql>
 	</changeSet>
 	
+	
+<changeSet id="27" author="Durgaprasad G">
+	<dropTable tableName="PaymentDeatils"/>
+	<dropTable tableName="PaymentInstructions"/>
+	<dropTable tableName="PaymentHeader"/>
+	<dropTable tableName="PaymentDeatils_Temp"/>
+	<dropTable tableName="PaymentInstructions_Temp"/>
+	<dropTable tableName="PaymentHeader_Temp"/>
+</changeSet>
+
+<changeSet id="28" author="Durgaprasad G">
+        <createTable tableName="PaymentHeader">
+			<column name="PaymentId" type="bigint">
+				<constraints primaryKey="true" primaryKeyName="PK_PH_PID" nullable="false"/>
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentType" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentAmount" type="decimal(18,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedOn" type="datetime"/>
+			<column name="Status" type="char(1)"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="29" author="Durgaprasad G">
+		<createTable tableName="PaymentHeader_Temp">
+			<column name="PaymentId" type="bigint">
+				<constraints primaryKey="true" primaryKeyName="PK_PH_TEMP_PID" nullable="false"/>
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentType" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentAmount" type="decimal(18,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedOn" type="datetime"/>
+			<column name="Status" type="char(1)"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="30" author="Durgaprasad G">
+		<createTable tableName="PaymentDeatils">
+			<column name="PaymentDetailId" type="bigint">
+				<constraints primaryKey="true" primaryKeyName="PK_PD_PDID" nullable="false"/>
+			</column>
+			<column name="PaymentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AmountType" type="char(1)" />
+			<column name="Amount" type="decimal(18,2)"  />
+			<column name="ReferenceId" type="bigint" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="31" author="Durgaprasad G">
+		<addForeignKeyConstraint constraintName="FK_PD_PID"
+			referencedTableName="PaymentHeader" referencedColumnNames="PaymentId"
+			baseTableName="PaymentDeatils" baseColumnNames="PaymentId" />
+	</changeSet>
+	
+	<changeSet id="32" author="Durgaprasad G">
+		<createTable tableName="PaymentDeatils_Temp">
+			<column name="PaymentDetailId" type="bigint">
+				<constraints primaryKey="true" primaryKeyName="PK_PD_TEMP_PDID" nullable="false"/>
 			</column>
 			<column name="PaymentId" type="bigint">
 				<constraints nullable="false" />
@@ -693,4 +801,5 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
+			
 </databaseChangeLog>
