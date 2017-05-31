@@ -113,7 +113,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 				balanceForCal = fod.getFinMaxODAmt();
 			}
 			int numberOfMonths=getMonthsBetween(fod, finScheduleDetails, valueDate);
-			penalty = balanceForCal.multiply(fod.getODChargeAmtOrPerc()).multiply(new BigDecimal(numberOfMonths))
+			BigDecimal amtOrPercetage = fod.getODChargeAmtOrPerc().divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
+			penalty = balanceForCal.multiply(amtOrPercetage).multiply(new BigDecimal(numberOfMonths))
 					.divide(new BigDecimal(100));
 
 			//On Due Days
@@ -237,7 +238,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 				terms++;
 			}
 
-			if (finSchd.getSchDate().compareTo(valueDate) >= 0) {
+			if (finSchd.getSchDate().compareTo(valueDate) > 0) {
 				break;
 			}
 
