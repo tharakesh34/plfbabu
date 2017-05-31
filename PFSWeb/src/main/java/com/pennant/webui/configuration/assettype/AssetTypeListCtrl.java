@@ -308,7 +308,6 @@ public class AssetTypeListCtrl extends GFCBaseListCtrl<AssetType> implements Ser
 		try {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/AssetType/AssetTypeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

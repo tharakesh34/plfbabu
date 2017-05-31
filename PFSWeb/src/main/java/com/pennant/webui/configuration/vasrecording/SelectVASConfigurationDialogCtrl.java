@@ -378,7 +378,6 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			}
 			this.window_SelectVASConfiguration.onClose();
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");

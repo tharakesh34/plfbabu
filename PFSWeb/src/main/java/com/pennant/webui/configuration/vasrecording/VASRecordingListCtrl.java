@@ -287,7 +287,6 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/VASRecording/SelectVASConfigurationDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
@@ -417,7 +416,6 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/VASRecording/VASRecordingDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

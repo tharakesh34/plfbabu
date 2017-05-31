@@ -328,7 +328,6 @@ public class CollateralStructureListCtrl extends GFCBaseListCtrl<CollateralStruc
 		try {
 			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralStructure/CollateralStructureDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

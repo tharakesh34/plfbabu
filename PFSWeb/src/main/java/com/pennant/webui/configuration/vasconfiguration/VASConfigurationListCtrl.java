@@ -356,7 +356,6 @@ public class VASConfigurationListCtrl extends GFCBaseListCtrl<VASConfiguration> 
 		try {
 			Executions.createComponents("/WEB-INF/pages/VASConfiguration/VASConfigurationDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

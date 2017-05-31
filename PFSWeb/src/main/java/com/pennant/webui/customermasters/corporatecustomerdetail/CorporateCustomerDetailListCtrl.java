@@ -220,7 +220,6 @@ public class CorporateCustomerDetailListCtrl extends GFCBaseListCtrl<CorporateCu
 					"/WEB-INF/pages/CustomerMasters/CorporateCustomerDetail/CorporateCustomerDetailDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 
