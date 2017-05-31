@@ -1495,4 +1495,11 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="53" author="Manoj.P">
+		<sql>
+			update data_engine_config set Name = 'POSIDEX_CUSTOMER_UPDATE_RESPONSE', CRONEXPRESSION ='0 01 22 * * ?'  where Name = 'POSIDEX_CUSTOMER_UPDATEREQUEST';
+			update data_engine_config set Name = 'POSIDEX_CUSTOMER_UPDATE_REQUEST'  where Name = 'POSIDEX_UPDATE_EODREQUEST';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
