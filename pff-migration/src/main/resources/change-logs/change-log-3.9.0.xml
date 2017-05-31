@@ -532,6 +532,11 @@
 		</createTable>
 	</changeSet>
 	
-	
+	<changeSet id="20" author="murthy.y" >
+   		 <renameColumn columnDataType="decimal(18,2)" newColumnName="PDC_SWAP_CHARGES_RECEIVABLE" oldColumnName="PDC_SWAP_CHARGESRECEIVABLE" tableName="CF_CONTROL_DUMP"/>
+   		 <renameColumn columnDataType="decimal(18,2)" newColumnName="PDC_SWAP_CHARGES_RECEIVED" oldColumnName="PDC_SWAP_CHARGESRECEIVED" tableName="CF_CONTROL_DUMP"/>
+   		 <renameColumn columnDataType="decimal(18,2)" newColumnName="PDC_SWAP_CHARGES_RECEIVABLE" oldColumnName="PDC_SWAP_CHARGESRECEIVABLE" tableName="CF_CONTROL_DUMP_LOG"/>
+   		 <renameColumn columnDataType="decimal(18,2)" newColumnName="PDC_SWAP_CHARGES_RECEIVED" oldColumnName="PDC_SWAP_CHARGESRECEIVED" tableName="CF_CONTROL_DUMP_LOG"/>
+	</changeSet>
 	
 </databaseChangeLog>
