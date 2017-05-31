@@ -1493,8 +1493,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		setPreValidationScript(vasConfiguration.getPreValidation());
 		setPostValidationScript(vasConfiguration.getPostValidation());
 		setExtendedFieldHeader(vasConfiguration.getExtendedFieldHeader());
-
-		if (aVASRecording.isNew()) {
+		aVASRecording.getRecordType();
+		aVASRecording.getRecordStatus();
+		if (((isNewRecord() || isFeeEditable()) && isFinanceVas())||(!isFinanceVas()&& aVASRecording.isNewRecord()))  {
 			//get pre-validation script if record is new
 			String preValidationScript = vasConfiguration.getPreValidation();
 			if (StringUtils.isNotEmpty(preValidationScript)) {
