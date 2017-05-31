@@ -247,7 +247,6 @@ public class CustomerNotesTypeListCtrl extends GFCBaseListCtrl<CustomerNotesType
 			Executions.createComponents(
 					"/WEB-INF/pages/ApplicationMaster/CustomerNotesType/CustomerNotesTypeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

@@ -247,7 +247,6 @@ public class FinanceApplicationCodeListCtrl extends GFCBaseListCtrl<FinanceAppli
 					"/WEB-INF/pages/ApplicationMaster/FinanceApplicationCode/FinanceApplicationCodeDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

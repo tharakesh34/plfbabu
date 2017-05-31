@@ -246,7 +246,6 @@ public class DPDBucketConfigurationListCtrl extends GFCBaseListCtrl<DPDBucketCon
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/DPDBucketConfiguration/DPDBucketConfigurationDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

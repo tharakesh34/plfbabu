@@ -246,7 +246,6 @@ public class InterestRateTypeListCtrl extends GFCBaseListCtrl<InterestRateType> 
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/InterestRateType/InterestRateTypeDialog.zul",
 					null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

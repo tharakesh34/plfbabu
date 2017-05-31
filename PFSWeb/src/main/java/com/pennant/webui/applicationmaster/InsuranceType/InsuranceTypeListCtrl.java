@@ -258,7 +258,6 @@ public class InsuranceTypeListCtrl extends GFCBaseListCtrl<InsuranceType>
 					"/WEB-INF/pages/ApplicationMaster/InsuranceType/InsuranceTypeDialog.zul",
 					null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 
