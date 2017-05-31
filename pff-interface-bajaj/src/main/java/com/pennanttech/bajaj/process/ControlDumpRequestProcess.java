@@ -49,13 +49,13 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		MapSqlParameterSource parmMap;
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT * from INT_CF_CONTROL_VIEW");
-		sql.append(" WHERE LOAN_STATUS = :LOAN_STATUS");
-		sql.append(" AND latestRpyDate >= :monthStartDate AND latestRpyDate <= :monthEndDate ");
+		//sql.append(" WHERE LOAN_STATUS = :LOAN_STATUS");
+		//sql.append(" AND latestRpyDate >= :monthStartDate AND latestRpyDate <= :monthEndDate ");
 
 		parmMap = new MapSqlParameterSource();
-		parmMap.addValue("LOAN_STATUS", "A");
-		parmMap.addValue("monthStartDate", monthStartDate);
-		parmMap.addValue("monthEndDate", monthEndDate);
+		//parmMap.addValue("LOAN_STATUS", "A");
+		//parmMap.addValue("monthStartDate", monthStartDate);
+		//parmMap.addValue("monthEndDate", monthEndDate);
 
 		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
 			MapSqlParameterSource	map	= null;
@@ -79,6 +79,11 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 						}
 						String error = null;
 						if (e.getMessage().length() > 1999) {
+							
+							if(e.getMessage().contains("value larger")) {
+								System.out.println(map.toString());
+							}
+							
 							error = StringUtils.substring(e.getMessage(), e.getMessage().length() - 1999, e
 									.getMessage().length());
 						} else {
@@ -169,7 +174,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		map.addValue("MIGRATED_ADVANCE_EMI_BILLED", rs.getObject("MIGRATED_ADVANCE_EMI_BILLED"));
 		map.addValue("MIGRATED_ADVANCE_EMI_UNBILLED", rs.getObject("MIGRATED_ADVANCE_EMI_UNBILLED"));
 		map.addValue("MIG_ADV_EMI_BILLED_INTCOMP", rs.getObject("MIG_ADV_EMI_BILLED_INTCOMP"));
-		map.addValue("MIG_ADV_EMI_BILLED_PRIN_COMP", rs.getObject("MIG_ADV_EMI_BILLED_PRIN_COMP"));
+		map.addValue("MIG_ADV_EMI_BILLED_PRINCOMP", rs.getObject("MIG_ADV_EMI_BILLED_PRINCOMP"));
 		map.addValue("MIG_ADV_EMI_UNBILLED_PRINCOMP", rs.getObject("MIG_ADV_EMI_UNBILLED_PRINCOMP"));
 		map.addValue("MIG_DIFFERENCE_PAID", rs.getObject("MIG_DIFFERENCE_PAID"));
 		map.addValue("MIG_DIFFERENCE_PAYABLE", rs.getObject("MIG_DIFFERENCE_PAYABLE"));
@@ -181,8 +186,8 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		map.addValue("NO_OF_EMI_OS", rs.getObject("NO_OF_EMI_OS"));
 		map.addValue("NO_OF_UNBILLED_EMI", rs.getObject("NO_OF_UNBILLED_EMI"));
 		map.addValue("NPA_STAGEID", rs.getObject("NPA_STAGEID"));
-		map.addValue("PDC_SWAP_CHARGESRECEIVABLE", rs.getObject("PDC_SWAP_CHARGESRECEIVABLE"));
-		map.addValue("PDC_SWAP_CHARGESRECEIVED", rs.getObject("PDC_SWAP_CHARGESRECEIVED"));
+		map.addValue("PDC_SWAP_CHARGES_RECEIVABLE", rs.getObject("PDC_SWAP_CHARGES_RECEIVABLE"));
+		map.addValue("PDC_SWAP_CHARGES_RECEIVED", rs.getObject("PDC_SWAP_CHARGES_RECEIVED"));
 		map.addValue("PRINCIPAL_BALANCE", rs.getObject("PRINCIPAL_BALANCE"));
 		map.addValue("PRINCIPAL_DUE", rs.getObject("PRINCIPAL_DUE"));
 		map.addValue("PRINCIPAL_OS", rs.getObject("PRINCIPAL_OS"));
