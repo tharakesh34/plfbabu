@@ -544,4 +544,38 @@
 	INSERT INTO ErrorDetails VALUES('90322','EN','E','{0} is invalid in extended details, It should be as per configuration.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 	</changeSet>
+	<changeSet id="23" author="Siva">
+		<dropColumn tableName="FINSCHEDULEDETAILS" columnName="ProfitFraction" />
+		<dropColumn tableName="FINSCHEDULEDETAILS_TEMP" columnName="ProfitFraction" />
+		<dropColumn tableName="FINSCHEDULEDETAILS_PA" columnName="ProfitFraction" />
+		<dropColumn tableName="FINSCHEDULEDETAILS_LOG" columnName="ProfitFraction" />
+		<dropColumn tableName="REJECTFINSCHEDULEDETAILS" columnName="ProfitFraction" />
+		<dropColumn tableName="WIFFINSCHEDULEDETAILS" columnName="ProfitFraction" />
+		<dropColumn tableName="WIFFINSCHEDULEDETAILS_TEMP" columnName="ProfitFraction" />
+	</changeSet>
+	
+	<changeSet id="24" author="Siva">
+		<addColumn tableName="FINSCHEDULEDETAILS">
+			<column name="ProfitFraction" type="decimal(13,9)"/>
+		</addColumn>
+		<addColumn tableName="FINSCHEDULEDETAILS_TEMP">
+			<column name="ProfitFraction" type="decimal(13,9)"/>
+		</addColumn>
+		<addColumn tableName="FINSCHEDULEDETAILS_PA">
+			<column name="ProfitFraction" type="decimal(13,9)"/>
+		</addColumn>
+		<addColumn tableName="FINSCHEDULEDETAILS_LOG">
+			<column name="ProfitFraction" type="decimal(13,9)"/>
+		</addColumn>
+		<addColumn tableName="REJECTFINSCHEDULEDETAILS">
+			<column name="ProfitFraction" type="decimal(13,9)"/>
+		</addColumn>
+		<addColumn tableName="WIFFINSCHEDULEDETAILS">
+			<column name="ProfitFraction" type="decimal(13,9)"/>
+		</addColumn>
+		<addColumn tableName="WIFFINSCHEDULEDETAILS_TEMP">
+			<column name="ProfitFraction" type="decimal(13,9)"/>
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
