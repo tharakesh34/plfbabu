@@ -411,9 +411,14 @@
 		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage"
 			constraintName="PK_AdtPaymentInstructions" tableName="AdtPaymentInstructions" />
 	</changeSet>
-		<changeSet id="07" author="Durga Prasad D">
+	<changeSet id="07" author="Durga Prasad D">
 		<addColumn tableName="AdtFinReceiptHeader">
 			<column name="totFeeAmount" type="decimal(18,2)" />
 		</addColumn>
+	</changeSet>
+	<changeSet id="08" author="Durga Prasad D">
+	 <sql>
+	 UPDATE AdtFinReceiptHeader SET totFeeAmount = 0 WHERE totFeeAmount IS NULL;
+	 </sql>
 	</changeSet>
 </databaseChangeLog>
