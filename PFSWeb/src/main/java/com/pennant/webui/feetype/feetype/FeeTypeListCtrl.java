@@ -236,7 +236,6 @@ public class FeeTypeListCtrl extends GFCBaseListCtrl<FeeType> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/FeeType/FeeType/FeeTypeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

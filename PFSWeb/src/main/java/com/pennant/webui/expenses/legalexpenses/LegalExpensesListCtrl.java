@@ -251,7 +251,6 @@ public class LegalExpensesListCtrl extends GFCBaseListCtrl<LegalExpenses> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Expenses/LegalExpenses/LegalExpensesDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 	}

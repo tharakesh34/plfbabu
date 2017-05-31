@@ -1084,7 +1084,6 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 							null, arg);
 
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
 					MessageUtil.showError(e);
 				}
 			}

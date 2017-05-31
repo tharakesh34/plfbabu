@@ -289,7 +289,6 @@ public class TreasuryFinHeaderListCtrl extends GFCBaseListCtrl<InvestmentFinHead
 			Executions.createComponents("/WEB-INF/pages/Finance/TreasuaryFinance/TreasuaryFinHeaderDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 
