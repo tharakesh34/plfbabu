@@ -267,7 +267,6 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/BuilderCompany/BuilderCompanyDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

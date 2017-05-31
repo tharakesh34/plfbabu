@@ -245,7 +245,6 @@ public class BuilderGroupListCtrl extends GFCBaseListCtrl<BuilderGroup> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/BuilderGroup/BuilderGroupDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

@@ -240,7 +240,6 @@ public class InterestRateBasisCodeListCtrl extends GFCBaseListCtrl<InterestRateB
 			Executions.createComponents(
 					"/WEB-INF/pages/StaticParms/InterestRateBasisCode/InterestRateBasisCodeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

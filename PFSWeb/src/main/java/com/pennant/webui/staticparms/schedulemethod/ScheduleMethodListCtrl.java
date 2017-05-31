@@ -230,7 +230,6 @@ public class ScheduleMethodListCtrl extends GFCBaseListCtrl<ScheduleMethod> {
 			Executions
 					.createComponents("/WEB-INF/pages/StaticParms/ScheduleMethod/ScheduleMethodDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

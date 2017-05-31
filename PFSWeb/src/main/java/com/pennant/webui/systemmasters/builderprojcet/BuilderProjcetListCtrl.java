@@ -268,7 +268,6 @@ public class BuilderProjcetListCtrl extends GFCBaseListCtrl<BuilderProjcet> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/BuilderProjcet/BuilderProjcetDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 
