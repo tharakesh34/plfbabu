@@ -1035,7 +1035,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 						aFeePosting.getNextRoleCode(), aFeePosting.getReference(), " Fee Postings ",
 						aFeePosting.getRecordStatus());
 				if(StringUtils.equals(aFeePosting.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)){
-					msg= "Fee Postings with Reference "+ aFeePosting.getReference() + " Approveed Succesfully.";
+					msg= "Fee Postings with Reference "+ aFeePosting.getReference() + " Approved Succesfully.";
 				}
 				Clients.showNotification(msg, "info", null, null, -1);
 
