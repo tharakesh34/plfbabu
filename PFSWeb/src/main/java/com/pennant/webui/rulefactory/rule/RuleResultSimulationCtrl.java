@@ -29,8 +29,6 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.applicationmaster.RBFieldDetail;
 import com.pennant.backend.model.rulefactory.RuleResult;
-import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.webui.util.GFCBaseCtrl;
 
@@ -207,7 +205,8 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 					map.put(intbox.getId().trim(), intbox.intValue());
 				} else if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Decimalbox) {
 					decimalbox = (Decimalbox) rows_Fields.getFellowIfAny(variables.get(i));
-					map.put(decimalbox.getId().trim(), PennantApplicationUtil.unFormateAmount(decimalbox.getValue(), PennantConstants.defaultCCYDecPos));
+					//map.put(decimalbox.getId().trim(), PennantApplicationUtil.unFormateAmount(decimalbox.getValue(), PennantConstants.defaultCCYDecPos));
+					map.put(decimalbox.getId().trim(), decimalbox.getValue());
 				} else if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Datebox) {
 					datebox = (Datebox) rows_Fields.getFellowIfAny(variables.get(i));
 					map.put(datebox.getId().trim(), datebox.getValue());
@@ -242,7 +241,8 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 			switch (returnType) {
 			case DECIMAL:
 				BigDecimal tempResult = (BigDecimal) object;
-				resultValue = PennantApplicationUtil.amountFormate(tempResult, PennantConstants.defaultCCYDecPos);
+				//resultValue = PennantApplicationUtil.amountFormate(tempResult, PennantConstants.defaultCCYDecPos);
+				resultValue = tempResult.toString();
 				break;
 
 			case OBJECT:
