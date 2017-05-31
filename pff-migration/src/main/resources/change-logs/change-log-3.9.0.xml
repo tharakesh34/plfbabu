@@ -1502,4 +1502,26 @@
 			update data_engine_config set Name = 'POSIDEX_CUSTOMER_UPDATE_REQUEST'  where Name = 'POSIDEX_UPDATE_EODREQUEST';
 		</sql>
 	</changeSet>
+	
+	<changeSet id="54" author="Durgaprasad G">
+	 <createView viewName="PAYMENTINSTRUCTIONS_VIEW" replaceIfExists="true">
+  		SELECT	 T1.PaymentInstructionId, T1.PaymentId, T1.PaymentType, T1.PaymentAmount, T1.Remarks, T1.IssuingBank, T1.PatnerBankId,
+				 T1.FavourName, T1.FavourNumber, T1.PayableLoc, T1.PrintingLoc, T1.ValueDate, T1.PostDate,
+				 T1.BankBranchID, T1.AcctHolderName, T1.AccountNo, T1.PhoneCountryCode, T1.PhoneNumber, 
+				 T1.Clearingdate, T1.Active, T1.PaymentCCy,
+				 T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode,
+				 T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM     PaymentInstructions_Temp  T1 
+		UNION ALL
+		SELECT	 T1.PaymentInstructionId, T1.PaymentId, T1.PaymentType, T1.PaymentAmount, T1.Remarks, T1.IssuingBank, T1.PatnerBankId,
+				 T1.FavourName, T1.FavourNumber, T1.PayableLoc, T1.PrintingLoc, T1.ValueDate, T1.PostDate,
+				 T1.BankBranchID, T1.AcctHolderName, T1.AccountNo, T1.PhoneCountryCode, T1.PhoneNumber, 
+				 T1.Clearingdate, T1.Active, T1.PaymentCCy,
+				 T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode,
+				 T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM     PaymentInstructions  T1  
+		WHERE NOT EXISTS ( SELECT 1  FROM PaymentInstructions_Temp WHERE PaymentInstructionId = T1.PaymentInstructionId)
+	 </createView>
+	
+	</changeSet>
 </databaseChangeLog>
