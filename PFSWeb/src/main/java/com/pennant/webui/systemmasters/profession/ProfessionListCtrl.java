@@ -251,7 +251,6 @@ public class ProfessionListCtrl extends GFCBaseListCtrl<Profession> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/Profession/ProfessionDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 		

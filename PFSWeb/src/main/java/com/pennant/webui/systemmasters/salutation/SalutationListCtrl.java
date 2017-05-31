@@ -241,7 +241,6 @@ public class SalutationListCtrl extends GFCBaseListCtrl<Salutation> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/Salutation/SalutationDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

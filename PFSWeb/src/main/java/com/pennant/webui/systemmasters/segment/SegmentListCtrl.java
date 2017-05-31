@@ -250,7 +250,6 @@ public class SegmentListCtrl extends GFCBaseListCtrl<Segment> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/Segment/SegmentDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

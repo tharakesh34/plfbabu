@@ -244,7 +244,6 @@ public class NationalityCodeListCtrl extends GFCBaseListCtrl<NationalityCode> {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/NationalityCode/NationalityCodeDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 
