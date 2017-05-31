@@ -15,6 +15,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -24,6 +25,7 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
@@ -43,6 +45,7 @@ import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
@@ -62,6 +65,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
+import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -98,6 +102,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	private BounceReasonDAO bounceReasonDAO;
 	private RuleDAO ruleDAO;
 	private RuleExecutionUtil ruleExecutionUtil;
+	private LimitManagement	limitManagement;
+	private CustomerDAO		customerDAO;
 
 	public ReceiptCancellationServiceImpl() {
 		super();
@@ -342,6 +348,25 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 		// Delete Receipt Header
 		getFinReceiptHeaderDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
+		
+		
+		if (ImplementationConstants.LIMIT_INTERNAL) {
+			BigDecimal priAmt = BigDecimal.ZERO;
+
+			for (FinReceiptDetail finReceiptDetail : receiptHeader.getReceiptDetails()) {
+				for (FinRepayHeader header : finReceiptDetail.getRepayHeaders()) {
+					priAmt = priAmt.add(header.getPriAmount());
+				}
+			}
+			if (priAmt.compareTo(BigDecimal.ZERO) > 0) {
+				FinanceMain main = getFinanceMainDAO().getFinanceMainForBatch(receiptHeader.getReference());
+				Customer customer = getCustomerDAO().getCustomerByID(main.getCustID());
+				getLimitManagement().processLoanRepayCancel(main, customer, priAmt,
+						StringUtils.trimToEmpty(main.getProductCategory()));
+			}
+
+		} 
+		
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), receiptHeader.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
@@ -1307,6 +1332,22 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
+	}
+
+	public LimitManagement getLimitManagement() {
+		return limitManagement;
+	}
+
+	public void setLimitManagement(LimitManagement limitManagement) {
+		this.limitManagement = limitManagement;
+	}
+
+	public CustomerDAO getCustomerDAO() {
+		return customerDAO;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
 	}
 
 }

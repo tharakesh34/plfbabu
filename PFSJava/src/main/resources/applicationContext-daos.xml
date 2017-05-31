@@ -5768,6 +5768,8 @@
 		<property name="bounceReasonDAO" ref="bounceReasonDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="limitManagement" ref="limitManagement" />
+		<property name="customerDAO" ref="customerDAO" />
 	</bean>
 
 	<!--============ Overdue Charge Recovery Details ============== -->
