@@ -1453,7 +1453,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			appendRecommendDetailTab(true);
 
 			// Accounting Details Tab Addition
-			if(!enqiryModule){
+			if(!enqiryModule && !StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())){
 				appendAccountingDetailTab(true);
 			}
 		}
