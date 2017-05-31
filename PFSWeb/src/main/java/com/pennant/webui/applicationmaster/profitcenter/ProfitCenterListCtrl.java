@@ -241,7 +241,6 @@ public class ProfitCenterListCtrl extends GFCBaseListCtrl<ProfitCenter> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/ProfitCenter/ProfitCenterDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

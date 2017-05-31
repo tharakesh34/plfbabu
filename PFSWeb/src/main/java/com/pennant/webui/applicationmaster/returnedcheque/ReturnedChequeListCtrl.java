@@ -193,7 +193,6 @@ public class ReturnedChequeListCtrl extends GFCBaseListCtrl<ReturnedChequeDetail
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/ReturnedCheques/ReturnedChequeDialog.zul",
 					null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

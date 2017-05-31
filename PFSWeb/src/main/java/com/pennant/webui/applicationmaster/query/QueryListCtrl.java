@@ -255,7 +255,6 @@ public class QueryListCtrl extends GFCBaseListCtrl<Query> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/Query/QueryDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 
