@@ -61,7 +61,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		super();
 	}
 
-	public FinODDetails computeLPP(FinODDetails fod, Date valueDate, String idb,int numberOfMonths) throws Exception {
+	public FinODDetails computeLPP(FinODDetails fod, Date valueDate, String idb,List<FinanceScheduleDetail> finScheduleDetails) throws Exception {
 		logger.debug("Entering");
 
 		//Late Payment Penalty. Do not apply LPP
@@ -82,6 +82,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 			//Fixed Fee. On Every Passing Schedule Month 
 		} else if (FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(fod.getODChargeType())) {
+			int numberOfMonths=getMonthsBetween(fod, finScheduleDetails, valueDate);
 			penalty = fod.getODChargeAmtOrPerc().multiply(new BigDecimal(numberOfMonths));
 
 			//Percentage ON OD Amount. One Time 
@@ -111,7 +112,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			} else {
 				balanceForCal = fod.getFinMaxODAmt();
 			}
-
+			int numberOfMonths=getMonthsBetween(fod, finScheduleDetails, valueDate);
 			penalty = balanceForCal.multiply(fod.getODChargeAmtOrPerc()).multiply(new BigDecimal(numberOfMonths))
 					.divide(new BigDecimal(100));
 
@@ -223,7 +224,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
 	}
 
-	public int getMonthsBetween(FinODDetails fod, List<FinanceScheduleDetail> finScheduleDetails, Date valueDate) {
+	private int getMonthsBetween(FinODDetails fod, List<FinanceScheduleDetail> finScheduleDetails, Date valueDate) {
 
 		int terms = 0;
 		for (FinanceScheduleDetail finSchd : finScheduleDetails) {
