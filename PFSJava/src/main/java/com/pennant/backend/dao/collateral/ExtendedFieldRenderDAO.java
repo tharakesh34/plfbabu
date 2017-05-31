@@ -22,4 +22,6 @@ public interface ExtendedFieldRenderDAO {
 	void deleteList(String reference, String tableName, String tableType);
 
 	Map<String, Object> getExtendedField(String reference, String tableName, String type);
+
+	int validateMasterData(String tableName, String column, String filterColumn, String fieldValue);
 }

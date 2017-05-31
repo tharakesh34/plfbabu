@@ -1943,7 +1943,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			auditDetail.setErrorDetail(validateMasterCode("BMTMaritalStatusCodes", "MaritalStsCode",
 					customer.getCustMaritalSts()));
 		}
-		if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_CORP) ||StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_SME)){
+		if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_CORP) ||
+				StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_SME)){
 			if (StringUtils.isBlank(customer.getCustShrtName())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "shortName";

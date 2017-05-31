@@ -1854,9 +1854,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				}
 			}
 			if (vasRecording.getDocuments() != null || !vasRecording.getDocuments().isEmpty()) {
-
 				for (DocumentDetails detail : vasRecording.getDocuments()) {
-
 					//validate Dates
 					if (detail.getCustDocIssuedOn() != null && detail.getCustDocExpDate() != null) {
 						if (detail.getCustDocIssuedOn().compareTo(detail.getCustDocExpDate()) > 0) {
@@ -1975,6 +1973,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 							return auditDetail;
 						}
 					}
+					int exdMandConfigCount = 0;
 					for (ExtendedFieldData extendedFieldData : details.getExtendedFieldDataList()) {
 						if (StringUtils.isBlank(extendedFieldData.getFieldName())) {
 							String[] valueParm = new String[1];
@@ -1995,6 +1994,12 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 							for (ExtendedFieldDetail detail : vASConfiguration.getExtendedFieldHeader()
 									.getExtendedFieldDetails()) {
 								if (StringUtils.equals(detail.getFieldName(), extendedFieldData.getFieldName())) {
+									if(detail.isFieldMandatory()) {
+										exdMandConfigCount++;
+									}
+									List<ErrorDetails> errList = getExtendedFieldDetailsValidation().validateExtendedFieldData(detail, 
+											extendedFieldData);
+									auditDetail.getErrorDetails().addAll(errList);
 									isFeild = true;
 								}
 							}
@@ -2006,6 +2011,10 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 								return auditDetail;
 							}
 						}
+					}
+					if (extendedDetailsCount != exdMandConfigCount) {
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90297", "", null)));
+						return auditDetail;
 					}
 				}
 

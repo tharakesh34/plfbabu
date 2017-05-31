@@ -1242,6 +1242,10 @@ public class FinServiceInstController extends SummaryDetailService {
 				return response;
 			}
 		}
+		
+		// set fees details into finReceiptData
+		finScheduleData = finReceiptData.getFinanceDetail().getFinScheduleData();
+		finScheduleData.setFinFeeDetailList(aFinanceDetail.getFinScheduleData().getFinFeeDetailList());
 		if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {
 			int count = finTypePartnerBankService.getPartnerBankCount(financeMain.getFinType(), finServiceInst.getPaymentMode(),
 					AccountConstants.PARTNERSBANK_RECEIPTS, finReceiptDetail.getFundingAc());
@@ -1332,8 +1336,6 @@ public class FinServiceInstController extends SummaryDetailService {
 						actFinSchedule.setTDSPaid(actFinSchedule.getTDSPaid().add(chgdFinSchedule.getTdsSchdPayNow()));
 						actFinSchedule.setSchdFeePaid(actFinSchedule.getSchdFeePaid().add(chgdFinSchedule.getSchdFeePayNow()));
 						actFinSchedule.setSchdInsPaid(actFinSchedule.getSchdInsPaid().add(chgdFinSchedule.getSchdInsPayNow()));
-						//actFinSchedule.setPenaltyPayNow(chgdFinSchedule.getPenaltyPayNow());
-						//actFinSchedule.setLatePftSchdPayNow(chgdFinSchedule.getLatePftSchdPayNow().add(rpySchd.getLatePftSchdPayNow()));
 					}
 				}
 			}

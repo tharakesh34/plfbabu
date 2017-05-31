@@ -2447,6 +2447,9 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 								if(detail.isFieldMandatory()) {
 									exdMandConfigCount++;
 								}
+								List<ErrorDetails> errList = getExtendedFieldDetailsValidation().validateExtendedFieldData(detail, 
+										extendedFieldData);
+								auditDetail.getErrorDetails().addAll(errList);
 								isFeild = true;
 							}
 						}
