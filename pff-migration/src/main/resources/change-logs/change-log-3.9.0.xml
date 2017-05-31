@@ -173,4 +173,37 @@
 		</createView>
 	</changeSet>
 	
+	
+	<changeSet id="11" author="Durgaprasad G">
+		<createTable tableName="SeqPaymentHeader">
+			<column name="SeqNo" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="12" author="Durgaprasad G">
+		<createTable tableName="SeqPaymentInstructions">
+			<column name="SeqNo" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="13" author="Durgaprasad G">
+		<createTable tableName="SeqPaymentDeatils">
+			<column name="SeqNo" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+		
+	<changeSet id="14" author="Durgaprasad G">
+	   <sql>
+	    Insert into SeqPaymentHeader Values (0);
+	    Insert into SeqPaymentInstructions Values (0);
+	    Insert into SeqPaymentDeatils Values (0);
+	   </sql>
+	</changeSet>
+	
 </databaseChangeLog>
