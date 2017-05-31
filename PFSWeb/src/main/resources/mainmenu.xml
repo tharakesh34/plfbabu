@@ -628,10 +628,10 @@
 		<menuItem id="menu_Item_LimitStructureCustomerEnquiry" zulNavigation="/WEB-INF/pages/Limit/LimitStructure/LimitStructureCustomerList.zul?enqiryModule=Y" rightName="menuItem_Limit_LimitStructureDetailEnquiry" />
 	</menu>
 	
-	<menu id="menu_Category_DataEngine"  rightName="menuCat_DataEngine">
+	<!-- <menu id="menu_Category_DataEngine"  rightName="menuCat_DataEngine">
 		<menuItem id="menu_Item_DataEngine_Import" zulNavigation="/WEB-INF/pages/DataEngine/DataImport.zul" rightName="menuItem_DataEngine_DataImport"/>
 		<menuItem id="menu_Item_DataEngine_Export" zulNavigation="/WEB-INF/pages/DataEngine/DataExport.zul" rightName="menuItem_DataEngine_DataExport"/>
-	</menu>
+	</menu> -->
 	
   	<!-- CollateralType-->
  	<!-- <menu id="menu_Category_Collateral"  rightName="menuCat_Collateral">
