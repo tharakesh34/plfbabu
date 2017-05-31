@@ -902,4 +902,12 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
+	<changeSet id="21" author="murthy.y">
+   		 <renameColumn columnDataType="decimal(18,2)" newColumnName="MIG_ADV_EMI_BILLED_PRINCOMP" oldColumnName="MIG_ADV_EMI_BILLED_PRIN_COMP" tableName="CF_CONTROL_DUMP"/>
+   		 <renameColumn columnDataType="decimal(18,2)" newColumnName="MIG_ADV_EMI_BILLED_PRINCOMP" oldColumnName="MIG_ADV_EMI_BILLED_PRIN_COMP" tableName="CF_CONTROL_DUMP_LOG"/>
+	</changeSet>
+	<changeSet id="22" author="murthy.y">
+		<modifyDataType tableName="CF_CONTROL_DUMP" columnName="NPA_STAGEID" newDataType="varchar(8)" />
+		<modifyDataType tableName="CF_CONTROL_DUMP_LOG" columnName="NPA_STAGEID" newDataType="varchar(8)" />
+	</changeSet>
 </databaseChangeLog>
