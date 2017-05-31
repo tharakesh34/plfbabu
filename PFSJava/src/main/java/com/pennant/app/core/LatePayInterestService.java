@@ -60,18 +60,8 @@ public class LatePayInterestService extends ServiceHelper {
 		super();
 	}
 
-	public FinODDetails computeLPI(FinEODEvent finEODEvent, FinODDetails fod, Date valueDate) throws Exception {
-		logger.debug("Entering");
-
-		//Still before the grace days no need to calculate OD penalty
-		if (fod.getFinCurODDays() <= fod.getODGraceDays()) {
-			return fod;
-		}
-
-		return fod;
-	}
-
-	public void prepareDueDateData(FinEODEvent finEODEvent, FinODDetails fod, Date valueDate) throws Exception {
+	public void computeLPI(FinEODEvent finEODEvent, FinODDetails fod, Date valueDate) throws Exception {
+		logger.debug(" Entering ");
 
 		String finReference = fod.getFinReference();
 		Date odDate = fod.getFinODSchdDate();
@@ -87,7 +77,7 @@ public class LatePayInterestService extends ServiceHelper {
 		//Add Schedule Date to the ODC Recovery
 		odcr.setFinReference(finReference);
 		odcr.setFinODSchdDate(odDate);
-		odcr.setFinODFor(FinanceConstants.SCH_TYPE_SCHEDULE);
+		odcr.setFinODFor(FinanceConstants.SCH_TYPE_LATEPAYPROFIT);
 		odcr.setMovementDate(odDate);
 		odcr.setFinCurODPri(odPri);
 		odcr.setFinCurODPft(odPft);
@@ -110,7 +100,7 @@ public class LatePayInterestService extends ServiceHelper {
 
 			odcr.setFinReference(finReference);
 			odcr.setFinODSchdDate(odDate);
-			odcr.setFinODFor(FinanceConstants.SCH_TYPE_SCHEDULE);
+			odcr.setFinODFor(FinanceConstants.SCH_TYPE_LATEPAYPROFIT);
 			odcr.setMovementDate(repayment.getFinValueDate());
 			odcr.setFinCurODPri(odPri);
 			odcr.setFinCurODPft(odPft);
@@ -119,7 +109,7 @@ public class LatePayInterestService extends ServiceHelper {
 		}
 
 		fod.setTotPenaltyAmt(BigDecimal.ZERO);
-		
+
 		//Add record with today date
 		boolean isAddTodayRcd = true;
 		for (int i = 0; i < schdODCRecoveries.size(); i++) {
@@ -134,12 +124,11 @@ public class LatePayInterestService extends ServiceHelper {
 			odcr = new OverdueChargeRecovery();
 			odcr.setFinReference(finReference);
 			odcr.setFinODSchdDate(odDate);
-			odcr.setFinODFor(FinanceConstants.SCH_TYPE_SCHEDULE);
+			odcr.setFinODFor(FinanceConstants.SCH_TYPE_LATEPAYPROFIT);
 			odcr.setMovementDate(valueDate);
 			schdODCRecoveries.add(odcr);
 		}
-		
-		
+
 		//Calculate the Penalty
 		for (int i = 0; i < schdODCRecoveries.size() - 1; i++) {
 			OverdueChargeRecovery odcrCur = schdODCRecoveries.get(i);
@@ -167,7 +156,7 @@ public class LatePayInterestService extends ServiceHelper {
 		}
 
 		fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
-
+		logger.debug(" Leaving ");
 	}
 
 	public BigDecimal getPenaltyRate(List<FinanceScheduleDetail> finSchdDetails, Date mvtDate, BigDecimal lpiMargin)
