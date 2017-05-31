@@ -615,11 +615,12 @@ public class CalculationUtil implements Serializable {
 	public static BigDecimal roundAmount(BigDecimal amount, String roundingMode, int roundingTarget) {
 
 		if (roundingTarget == 0) {
+			amount = amount.setScale(0, RoundingMode.HALF_DOWN);
 			return amount;
 		}
 		
 		BigDecimal bdRoundTarget = BigDecimal.valueOf(roundingTarget);
-		BigDecimal number2 = BigDecimal.valueOf(2);
+		//BigDecimal number2 = BigDecimal.valueOf(2);
 		//amount = amount.add(bdRoundTarget.divide(number2)).divide(bdRoundTarget);
 		//amount = amount.add(BigDecimal.valueOf(roundingTarget / 2)).divide(BigDecimal.valueOf(roundingTarget));
 

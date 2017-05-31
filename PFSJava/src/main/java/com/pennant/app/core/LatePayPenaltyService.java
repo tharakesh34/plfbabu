@@ -46,6 +46,7 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.util.FinanceConstants;
 
@@ -103,6 +104,16 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 			//Percentage ON OD Amount. One Time 
 		} else if (FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(fod.getODChargeType())) {
+			BigDecimal balanceForCal = BigDecimal.ZERO;
+			
+			if (StringUtils.equals(fod.getODChargeCalOn(), FinanceConstants.ODCALON_SPFT)) {
+				balanceForCal = fod.getFinMaxODPft();
+			} else if (StringUtils.equals(fod.getODChargeCalOn(), FinanceConstants.ODCALON_SPRI)) {
+				balanceForCal = fod.getFinMaxODPri();
+			} else {
+				balanceForCal = fod.getFinMaxODAmt();
+			}
+			
 			int months = DateUtility.getMonthsBetween(fod.getFinODSchdDate(), valueDate);
 			penalty = fod.getFinMaxODAmt().multiply(fod.getODChargeAmtOrPerc()).multiply(new BigDecimal(months))
 					.divide(new BigDecimal(100));

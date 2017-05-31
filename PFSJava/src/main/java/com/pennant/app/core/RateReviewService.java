@@ -100,6 +100,7 @@ public class RateReviewService extends ServiceHelper {
 	private void processRateReview(FinEODEvent finEODEvent, Date valueDate) throws Exception {
 		FinanceMain finMain = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
+
 		//FIXME Re look logic
 		int i = 0;
 		for (int j = 0; j < finSchdDetails.size(); j++) {
@@ -109,7 +110,13 @@ public class RateReviewService extends ServiceHelper {
 			}
 		}
 
-		int iNext = i + 1;
+		int iNext = 0;
+		for (i = 0; i < finSchdDetails.size(); i++) {
+			if (finSchdDetails.get(i).getSchDate().compareTo(valueDate)==0) {
+				iNext = i+1;
+				break;
+			}
+		}
 
 		finEODEvent.setRateReviewExist(false);
 
