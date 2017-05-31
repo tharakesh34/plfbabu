@@ -411,5 +411,9 @@
 		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage"
 			constraintName="PK_AdtPaymentInstructions" tableName="AdtPaymentInstructions" />
 	</changeSet>
-	
+		<changeSet id="07" author="Durga Prasad D">
+		<addColumn tableName="AdtFinReceiptHeader">
+			<column name="totFeeAmount" type="decimal(18,2)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

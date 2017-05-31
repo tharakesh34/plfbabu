@@ -1184,4 +1184,13 @@
 		WHERE NOT EXISTS ( SELECT 1  FROM PaymentDeatils_Temp WHERE PaymentDetailId = T1.PaymentDetailId)
 	 </createView>
 	</changeSet>
+	
+	<changeSet id="44" author="Durga Prasad D">
+		<addColumn tableName="FinReceiptHeader_Temp">
+			<column name="totFeeAmount" type="decimal(18,2)" />
+		</addColumn>
+		<addColumn tableName="FinReceiptHeader">
+			<column name="totFeeAmount" type="decimal(18,2)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
