@@ -172,11 +172,6 @@
 		      	Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
 		</createView>
 	</changeSet>
-	
-	<changeSet id="1" author="Manoj.P">
-		<dropNotNullConstraint tableName="DEDUP_EOD_CUST_ADDR_DTL"
-			columnName="ADDRESS_TYPE" columnDataType="nvarchar(50)" />
-	</changeSet>
 
 	<changeSet id="2" author="Manoj.P">
 		<dropTable tableName="DEDUP_EOD_CUST_ADDR_DTL" />
