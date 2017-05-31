@@ -148,7 +148,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Combobox								status;
 	protected Textbox								approvalID;
 	protected Groupbox								gb_basicDetails;
-	protected Groupbox								gb_enquiry;
+	//protected Groupbox								gb_enquiry;
 	protected Checkbox								useExisting;
 	protected Checkbox								active;
 	protected Textbox								reason;
@@ -759,7 +759,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.btnCancel.setVisible(false);
 			this.btnSave.setVisible(false);
 			this.btnDelete.setVisible(false);
-			this.gb_enquiry.setVisible(true);
 			this.btnNotes.setVisible(false);
 			return;
 		}
@@ -1263,7 +1262,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		Date mandbackDate = DateUtility.addDays(DateUtility.getAppDate(),-SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
 		Date appExpiryDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
 
-		if (!this.startDate.isDisabled() && this.expiryDate.isButtonVisible()) {
+		if (!this.startDate.isDisabled() && this.startDate.isButtonVisible()) {
 			this.startDate.setConstraint(new PTDateValidator(Labels.getLabel("label_MandateDialog_StartDate.value"),
 					validate, mandbackDate, appExpiryDate, true));
 		}
