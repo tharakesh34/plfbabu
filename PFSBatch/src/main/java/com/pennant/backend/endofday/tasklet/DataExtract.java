@@ -9,23 +9,26 @@ import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.DateUtility;
 import com.pennanttech.bajaj.services.ALMRequestService;
 import com.pennanttech.bajaj.services.ControlDumpRequestService;
 import com.pennanttech.bajaj.services.PosidexRequestService;
-import com.pennanttech.bajaj.services.PosidexResponceService;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 
 public class DataExtract implements Tasklet {
-	private Logger logger = Logger.getLogger(DataExtract.class);
+	private Logger						logger	= Logger.getLogger(DataExtract.class);
 
-	private DataSource dataSource;
-	private ALMRequestService almRequestService;
-	private ControlDumpRequestService controlDumpRequestService;
-	private PosidexRequestService posidexRequestService;
-	private PosidexResponceService posidexResponceService;
+	private DataSource					dataSource;
+
+	@Autowired
+	private ALMRequestService			almRequestService;
+	@Autowired
+	private ControlDumpRequestService	controlDumpRequestService;
+	@Autowired
+	private PosidexRequestService		posidexRequestService;
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
@@ -33,22 +36,9 @@ public class DataExtract implements Tasklet {
 		logger.debug("START: Data Extract Preparation On : " + valueDate);
 
 		try {
-			// ALMRequestService
-			try {
-				logger.debug("ALM Request Service started...");
-				this.almRequestService.sendReqest(new Long(1000));
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
+			new AMLRequest(new Long(1000), almRequestService).start();
 
-			// ControlDumpRequestService
-			try {
-				//FIXME from date and to date
-				logger.debug("Control Dump Request Service started...");
-				this.controlDumpRequestService.sendReqest(new Long(1000));
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
+			new ControlDumpRequest(new Long(1000), controlDumpRequestService);
 
 			// PosidexRequestService
 			try {
@@ -63,7 +53,7 @@ public class DataExtract implements Tasklet {
 			// PosidexResponceService
 			try {
 				logger.debug("Posidex Responce Service started...");
-				this.posidexResponceService.sendReqest(new Long(1000));
+				this.posidexRequestService.sendReqest(new Long(1000));
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
@@ -89,20 +79,62 @@ public class DataExtract implements Tasklet {
 		return dataSource;
 	}
 
-	public void setAlmRequestService(ALMRequestService almRequestService) {
-		this.almRequestService = almRequestService;
+	public class AMLRequest extends Thread {
+
+		private long				userId;
+		private ALMRequestService	almRequestService;
+
+		public AMLRequest(long userId, ALMRequestService almRequestService) {
+			this.userId = userId;
+		}
+
+		public void run() {
+			// ALMRequestService
+			try {
+				logger.debug("ALM Request Service started...");
+				this.almRequestService.sendReqest(userId);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
 	}
 
-	public void setControlDumpRequestService(ControlDumpRequestService controlDumpRequestService) {
-		this.controlDumpRequestService = controlDumpRequestService;
+	public class ControlDumpRequest extends Thread {
+		private long						userId;
+		private ControlDumpRequestService	controlDumpRequestService;
+
+		public ControlDumpRequest(long userId, ControlDumpRequestService controlDumpRequestService) {
+			this.userId = userId;
+			this.controlDumpRequestService = controlDumpRequestService;
+		}
+
+		public void run() {
+			try {
+				logger.debug("Control Dump Request Service started...");
+				this.controlDumpRequestService.sendReqest(userId);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
 	}
 
-	public void setPosidexRequestService(PosidexRequestService posidexRequestService) {
-		this.posidexRequestService = posidexRequestService;
-	}
+	public class PosidexRequest extends Thread {
+		private long					userId;
+		private PosidexRequestService	posidexRequestService;
 
-	public void setPosidexResponceService(PosidexResponceService posidexResponceService) {
-		this.posidexResponceService = posidexResponceService;
+		public PosidexRequest(long userId, PosidexRequestService posidexRequestService) {
+			this.userId = userId;
+			this.posidexRequestService = posidexRequestService;
+		}
+
+		public void run() {
+			try {
+				logger.debug("Control Dump Request Service started...");
+				this.posidexRequestService.sendReqest(userId);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
 	}
 
 }
