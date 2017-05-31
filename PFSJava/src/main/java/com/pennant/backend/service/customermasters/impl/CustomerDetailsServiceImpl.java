@@ -1828,7 +1828,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				if (StringUtils.equals(custDocument.getCustDocCategory(), "03")) {
 					panMandatory = true;
 				}
-				AuditDetail auditDetail1 = customerDocumentService.validateCustomerDocuments(custDocument);
+				AuditDetail auditDetail1 = customerDocumentService.validateCustomerDocuments(custDocument,customerDetails.getCustomer());
 				if (auditDetail1 != null && auditDetail1.getErrorDetails() != null
 						&& !auditDetail1.getErrorDetails().isEmpty()) {
 					return auditDetail1;

@@ -1776,8 +1776,9 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 			valueParm[0] = "document";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
+		Customer customer = null;
 		if (StringUtils.isNotBlank(customerDocumentDetail.getCif())) {
-			Customer customer = customerDetailsService.getCustomerByCIF(customerDocumentDetail.getCif());
+			customer = customerDetailsService.getCustomerByCIF(customerDocumentDetail.getCif());
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customerDocumentDetail.getCif();
@@ -1788,7 +1789,7 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 
 		AuditHeader auditHeader = getAuditHeader(customerDocumentDetail.getCustomerDocument(), PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
-		AuditDetail auditDetail = customerDocumentService.validateCustomerDocuments(customerDocumentDetail.getCustomerDocument());
+		AuditDetail auditDetail = customerDocumentService.validateCustomerDocuments(customerDocumentDetail.getCustomerDocument(),customer);
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
@@ -1834,7 +1835,7 @@ public class CustomerWebServiceImpl implements  CustomerRESTService,CustomerSOAP
 		}
 
 		AuditHeader auditHeader = getAuditHeader(customerDocumentDetail.getCustomerDocument(), PennantConstants.TRAN_WF);
-		AuditDetail auditDetail = customerDocumentService.validateCustomerDocuments(customerDocumentDetail.getCustomerDocument());
+		AuditDetail auditDetail = customerDocumentService.validateCustomerDocuments(customerDocumentDetail.getCustomerDocument(),customer);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 

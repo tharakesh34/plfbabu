@@ -60,6 +60,7 @@ import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
@@ -377,7 +378,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 	 * @return AuditDetail
 	 */
 	@Override
-	public AuditDetail validateCustomerDocuments(CustomerDocument customerDocument) {
+	public AuditDetail validateCustomerDocuments(CustomerDocument customerDocument,Customer customer) {
 		logger.debug("Entering");
 		
 		AuditDetail auditDetail = new AuditDetail();
@@ -531,6 +532,13 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 					valueParm[1] = customerDocument.getCustDocType();
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90289", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
+				}
+			}
+			if (customerDocument.getCustDocIssuedOn() != null && customer != null) {
+				if (customerDocument.getCustDocIssuedOn().before(customer.getCustDOB())) {
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90321", "", null), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
 				}
 			}
 }	

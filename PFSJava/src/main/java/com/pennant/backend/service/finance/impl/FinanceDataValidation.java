@@ -1161,7 +1161,7 @@ public class FinanceDataValidation {
 					custDocs.setDocUri(detail.getDocUri());
 					custDocs.setCustDocImage(detail.getDocImage());
 					custDocs.setCustDocType(detail.getDoctype());
-					auditDetails=customerDocumentService.validateCustomerDocuments(custDocs);
+					auditDetails=customerDocumentService.validateCustomerDocuments(custDocs,financeDetail.getCustomerDetails().getCustomer());
 				}
 
 				if (StringUtils.equals(detail.getDocCategory(), "03")) {
