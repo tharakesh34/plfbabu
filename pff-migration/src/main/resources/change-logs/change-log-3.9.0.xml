@@ -172,8 +172,6 @@
 		      	Inner Join  FINFEEDETAIL_VIEW T3 on T1.FeeId = T3.FEEID
 		</createView>
 	</changeSet>
-	
-	
 	<changeSet id="11" author="Durgaprasad G">
 		<createTable tableName="SeqPaymentHeader">
 			<column name="SeqNo" type="bigint">
@@ -204,6 +202,30 @@
 	    Insert into SeqPaymentInstructions Values (0);
 	    Insert into SeqPaymentDeatils Values (0);
 	   </sql>
+	</changeSet>
+	<changeSet id="15" author="Satya">
+	<createView viewName="BuilderProjcet_View" replaceIfExists="true">
+		SELECT		T1.Id, T1.Name, T1.BuilderId,T1.APFNO,T2.Name BuilderIdName	
+		, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,         T1.RecordType,           T1.WorkflowId
+		FROM    	BuilderProjcet_Temp  T1 inner join
+		BuilderCompany T2 ON T1.BuilderId = T2.id
+		UNION ALL
+
+		SELECT		T1.Id, T1.Name, T1.BuilderId,T1.APFNO,T2.Name BuilderIdName		
+		, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM    	BuilderProjcet  T1 inner join
+		BuilderCompany T2 ON T1.BuilderId = T2.id
+		WHERE     NOT EXISTS (SELECT 1 FROM BuilderProjcet_TEMP WHERE Id = T1.Id)
+	</createView>
+	</changeSet>
+	
+	<changeSet id="16" author="Satya">
+	<createView viewName="BuilderProjcet_AView" replaceIfExists="true">
+		SELECT		T1.Id, T1.Name, T1.BuilderId,T1.APFNO,T2.Name BuilderIdName		
+		, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM    	BuilderProjcet  T1 inner join
+		BuilderCompany T2 ON T1.BuilderId = T2.id
+	</createView>
 	</changeSet>
 	
 </databaseChangeLog>
