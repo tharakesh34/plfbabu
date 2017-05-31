@@ -1853,7 +1853,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					return auditDetail;
 				}
 			}
-			if (vasRecording.getDocuments() != null || !vasRecording.getDocuments().isEmpty()) {
+			if (vasRecording.getDocuments() != null && !vasRecording.getDocuments().isEmpty()) {
 				for (DocumentDetails detail : vasRecording.getDocuments()) {
 					//validate Dates
 					if (detail.getCustDocIssuedOn() != null && detail.getCustDocExpDate() != null) {
