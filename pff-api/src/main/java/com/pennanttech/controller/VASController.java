@@ -62,11 +62,13 @@ public class VASController {
 					.getProductCode());
 			vasRecording.setVasConfiguration(vasConfiguration);
 			vasRecording.setVasReference(ReferenceUtil.generateVASRef());
+			if(vasRecording.getDocuments() != null){
 			for (DocumentDetails detail : vasRecording.getDocuments()) {
 				detail.setRecordType(PennantConstants.RCD_ADD);
 				detail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				detail.setDocModule(VASConsatnts.MODULE_NAME);
 				detail.setNewRecord(true);
+			}
 			}
 			// process Extended field details
 			List<ExtendedField> extendedFields = vasRecording.getExtendedDetails();
@@ -92,6 +94,8 @@ public class VASController {
 				}
 
 				vasRecording.setExtendedFieldRender(exdFieldRender);
+			} else {
+				vasRecording.setExtendedFieldRender(null);
 			}
 			//FIXME 
 

@@ -1961,7 +1961,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					}
 				}
 			}
-			if (vasRecording.getExtendedDetails() != null || !vasRecording.getExtendedDetails().isEmpty()) {
+			if (vasRecording.getExtendedDetails() != null && !vasRecording.getExtendedDetails().isEmpty()) {
 				for (ExtendedField details : vasRecording.getExtendedDetails()) {
 					if (vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails().size() != details
 							.getExtendedFieldDataList().size()) {
@@ -2020,10 +2020,12 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 			}
 			Map<String, Object>	mapValues = new HashMap<String, Object>();
+			if(vasRecording.getExtendedDetails() != null){
 			for (ExtendedField details : vasRecording.getExtendedDetails()) {
 				for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
 					mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
 				}
+			}
 			}
 			
 			// do script pre validation and post validation

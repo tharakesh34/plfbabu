@@ -2425,7 +2425,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					extendedDetailsCount++;
 				}
 			}
-			if (collateralSetup.getExtendedDetails() != null || !collateralSetup.getExtendedDetails().isEmpty()) {
+			if (collateralSetup.getExtendedDetails() != null && !collateralSetup.getExtendedDetails().isEmpty()) {
 				for (ExtendedField details : collateralSetup.getExtendedDetails()) {
 					int exdMandConfigCount = 0;
 					for (ExtendedFieldData extendedFieldData : details.getExtendedFieldDataList()) {
@@ -2468,12 +2468,13 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			}
 			
 			Map<String, Object>	mapValues = new HashMap<String, Object>();
+			if(collateralSetup.getExtendedDetails() != null) {
 			for (ExtendedField details : collateralSetup.getExtendedDetails()) {
 				for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
 					mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
 				}
 			}
-			
+			}
 			// do script pre validation and post validation
 			ScriptErrors errors = null;
 			if (collateralStructure.isPostValidationReq()) {
