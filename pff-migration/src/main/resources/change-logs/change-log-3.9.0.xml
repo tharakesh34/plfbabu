@@ -228,4 +228,149 @@
 	</createView>
 	</changeSet>
 	
+	<changeSet id="17" author="durgaprasad G">
+	 <sql>
+		Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		
+		Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER');
+		Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'PAYMENTINSTRUCTIONS_MAKER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER');
+		Delete from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER';
+		INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'PAYMENTINSTRUCTIONS_MAKER','WF Maker for PaymentInstructions', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PaymentHeaderDialog_paymentAmount');
+		Delete from SecRights where RightName = 'PaymentHeaderDialog_paymentAmount';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PaymentHeaderDialog_paymentAmount', 'PaymentHeaderDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'PaymentHeaderDialog_paymentAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_paymentAmount');
+		Delete from SecRights where RightName = 'PaymentInstructionDialog_paymentAmount';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PaymentInstructionDialog_paymentAmount', 'PaymentInstructionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_paymentAmount'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_postDate');
+		Delete from SecRights where RightName = 'PaymentInstructionDialog_postDate';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PaymentInstructionDialog_postDate', 'PaymentInstructionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_postDate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_paymentType');
+		Delete from SecRights where RightName = 'PaymentInstructionDialog_paymentType';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PaymentInstructionDialog_paymentType', 'PaymentInstructionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_paymentType'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_remarks');
+		Delete from SecRights where RightName = 'PaymentInstructionDialog_remarks';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PaymentInstructionDialog_remarks', 'PaymentInstructionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_remarks'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_bankBranchID');
+		Delete from SecRights where RightName = 'PaymentInstructionDialog_bankBranchID';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PaymentInstructionDialog_bankBranchID', 'PaymentInstructionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_bankBranchID'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_acctNumber');
+		Delete from SecRights where RightName = 'PaymentInstructionDialog_acctNumber';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PaymentInstructionDialog_acctNumber', 'PaymentInstructionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_acctNumber'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_acctHolderName');
+		Delete from SecRights where RightName = 'PaymentInstructionDialog_acctHolderName';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PaymentInstructionDialog_acctHolderName', 'PaymentInstructionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_acctHolderName'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_phoneNumber');
+		Delete from SecRights where RightName = 'PaymentInstructionDialog_phoneNumber';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PaymentInstructionDialog_phoneNumber', 'PaymentInstructionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_phoneNumber'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_issuingBank');
+		Delete from SecRights where RightName = 'PaymentInstructionDialog_issuingBank';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PaymentInstructionDialog_issuingBank', 'PaymentInstructionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_issuingBank'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_favouringName');
+		Delete from SecRights where RightName = 'PaymentInstructionDialog_favouringName';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PaymentInstructionDialog_favouringName', 'PaymentInstructionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_favouringName'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_chequeOrDDumber');
+		Delete from SecRights where RightName = 'PaymentInstructionDialog_chequeOrDDumber';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PaymentInstructionDialog_chequeOrDDumber', 'PaymentInstructionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_chequeOrDDumber'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_payableLoc');
+		Delete from SecRights where RightName = 'PaymentInstructionDialog_payableLoc';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PaymentInstructionDialog_payableLoc', 'PaymentInstructionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_payableLoc'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_printingLoc');
+		Delete from SecRights where RightName = 'PaymentInstructionDialog_printingLoc';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PaymentInstructionDialog_printingLoc', 'PaymentInstructionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_printingLoc'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_valueDate');
+		Delete from SecRights where RightName = 'PaymentInstructionDialog_valueDate';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PaymentInstructionDialog_valueDate', 'PaymentInstructionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_valueDate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_partnerBankID');
+		Delete from SecRights where RightName = 'PaymentInstructionDialog_partnerBankID';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'PaymentInstructionDialog_partnerBankID', 'PaymentInstructionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'PaymentInstructionDialog_partnerBankID'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'RuleDialog_sqlRule');
+		Delete from SecRights where RightName = 'RuleDialog_sqlRule';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3, 'RuleDialog_sqlRule', 'PaymentInstructionDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'RuleDialog_sqlRule'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_PaymentHeaderDialog_btnEdit');
+		Delete from SecRights where RightName = 'button_PaymentHeaderDialog_btnEdit';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_PaymentHeaderDialog_btnEdit', 'PaymentHeaderDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'button_PaymentHeaderDialog_btnEdit'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_PaymentHeaderDialog_btnDelete');
+		Delete from SecRights where RightName = 'button_PaymentHeaderDialog_btnDelete';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_PaymentHeaderDialog_btnDelete', 'PaymentHeaderDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'button_PaymentHeaderDialog_btnDelete'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_PaymentHeaderDialog_btnSave');
+		Delete from SecRights where RightName = 'button_PaymentHeaderDialog_btnSave';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_PaymentHeaderDialog_btnSave', 'PaymentHeaderDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'button_PaymentHeaderDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuCat_payment_PaymentInstructions');
+		Delete from SecRights where RightName = 'menuCat_payment_PaymentInstructions';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuCat_payment_PaymentInstructions', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'menuCat_payment_PaymentInstructions'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuItem_payment_PaymentInstructions');
+		Delete from SecRights where RightName = 'menuItem_payment_PaymentInstructions';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuItem_payment_PaymentInstructions', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_payment_PaymentInstructions'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_PaymentHeaderList_NewPaymentHeader');
+		Delete from SecRights where RightName = 'button_PaymentHeaderList_NewPaymentHeader';
+		Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_PaymentHeaderList_NewPaymentHeader', 'PaymentHeaderList', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_MAKER'), (Select RightID from SecRights where RightName = 'button_PaymentHeaderList_NewPaymentHeader'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_APPROVER');
+		Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'PAYMENTINSTRUCTIONS_APPROVER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER');
+		Delete from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_APPROVER';
+		INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'PAYMENTINSTRUCTIONS_APPROVER','WF Approver for PaymentInstructions', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+		
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_APPROVER'), (Select RightID from SecRights where RightName = 'button_PaymentHeaderDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'PAYMENTINSTRUCTIONS_APPROVER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+		
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_APPROVER'), (Select RightID from SecRights where RightName = 'menuCat_payment_PaymentInstructions'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PAYMENTINSTRUCTIONS_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_payment_PaymentInstructions'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+		
+		Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+	 </sql>
+	</changeSet>
 </databaseChangeLog>
