@@ -31,7 +31,7 @@ public class TestImps {
 	@Test
 	public void process() {
 		try {
-			DisbursemenIMPSRequestProcess impsRequest = new DisbursemenIMPSRequestProcess(dataSource, App.DATABASE.name(), new Long(1000), new Date());
+			DisbursemenIMPSRequestProcess impsRequest = new DisbursemenIMPSRequestProcess(dataSource, App.DATABASE.name(), new Long(1000), new Date(),false);
 			List<String> list = new ArrayList<>();
 			list.add("175");
 			impsRequest.setDisbursments(list);

@@ -577,7 +577,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		logger.debug(Literal.ENTERING);
 
 		try {
-			PresentmentRequest presentmentRequest = new PresentmentRequest(dataSource, App.DATABASE.name(), 1000, DateUtil.getSysDate());
+			PresentmentRequest presentmentRequest = new PresentmentRequest(dataSource, App.DATABASE.name(), 1000, DateUtil.getSysDate(),true);
 			presentmentRequest.setPresentmentId(presentmentId);
 			presentmentRequest.process("PRESENTMENT_REQUEST");
 		} catch (Exception e) {

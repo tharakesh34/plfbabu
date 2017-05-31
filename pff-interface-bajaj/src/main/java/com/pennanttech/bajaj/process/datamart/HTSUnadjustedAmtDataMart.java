@@ -18,8 +18,8 @@ import com.pennanttech.pff.core.Literal;
 public class HTSUnadjustedAmtDataMart extends DatabaseDataEngine implements Runnable {
 	private static final Logger logger = Logger.getLogger(HTSUnadjustedAmtDataMart.class);
 
-	public HTSUnadjustedAmtDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+	public HTSUnadjustedAmtDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate, boolean logBatch) {
+		super(dataSource, App.DATABASE.name(), userId, valueDate, logBatch);
 	}
 
 	@Override

@@ -7,7 +7,7 @@ public class DataMartRequestService extends BajajService implements RequestServi
 
 	@Override
 	public void sendReqest(Object... params) throws Exception {
-		DataMartRequestProcess requestProcess = new DataMartRequestProcess(dataSource, (Long) params[0], getValueDate(), getAppDate());
+		DataMartRequestProcess requestProcess = new DataMartRequestProcess(dataSource, (Long) params[0], getValueDate(), getAppDate(),true);
 		requestProcess.importData();
 	}
 }

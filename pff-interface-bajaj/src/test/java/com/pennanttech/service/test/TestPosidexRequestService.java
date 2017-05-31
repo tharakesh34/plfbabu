@@ -1,14 +1,11 @@
 package com.pennanttech.service.test;
 
-import java.util.Date;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.pennanttech.bajaj.services.PosidexRequestService;
-import com.pennanttech.pff.core.util.DateUtil;
 
 public class TestPosidexRequestService {
 
@@ -27,9 +24,7 @@ public class TestPosidexRequestService {
 	@Test
 	public void process() {
 		try {
-			Date fromDate = DateUtil.getMonthStart(DateUtil.addMonths(DateUtil.getSysDate(), -1));
-			Date toDate =DateUtil.getMonthEnd(DateUtil.addMonths(DateUtil.getSysDate(), -1));
-			requestService.sendReqest(new Long(1000), fromDate, toDate);
+			requestService.sendReqest(new Long(1000));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

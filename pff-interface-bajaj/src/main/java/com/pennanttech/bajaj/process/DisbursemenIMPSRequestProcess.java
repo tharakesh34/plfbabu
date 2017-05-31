@@ -25,8 +25,8 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 
 	private List<String> disbursments;
 	
-	public DisbursemenIMPSRequestProcess(DataSource dataSource, String database, long userId, Date valueDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+	public DisbursemenIMPSRequestProcess(DataSource dataSource, String database, long userId, Date valueDate,boolean logBatch) {
+		super(dataSource, App.DATABASE.name(), userId, valueDate,logBatch);
 	}
 
 	@Override

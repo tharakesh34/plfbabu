@@ -294,7 +294,7 @@ public class DisbursementRequestService extends BajajService implements RequestS
 	}
 
 	private void sendIMPSRequest(String configName, List<String> dibursements, long userId) {
-		DisbursemenIMPSRequestProcess impsRequest = new DisbursemenIMPSRequestProcess(dataSource, App.DATABASE.name(), userId, getValueDate());
+		DisbursemenIMPSRequestProcess impsRequest = new DisbursemenIMPSRequestProcess(dataSource, App.DATABASE.name(), userId, getValueDate(),true);
 
 		impsRequest.setDisbursments(dibursements);
 		impsRequest.process(configName);

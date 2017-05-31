@@ -18,10 +18,9 @@ import com.pennanttech.pff.core.Literal;
 public class LoanDetailDataMart extends DatabaseDataEngine implements Runnable {
 	private static final Logger logger = Logger.getLogger(LoanDetailDataMart.class);
 
-	public LoanDetailDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+	public LoanDetailDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate, boolean logBatch) {
+		super(dataSource, App.DATABASE.name(), userId, valueDate, logBatch);
 	}
-
 	@Override
 	public void run() {
 		processData();

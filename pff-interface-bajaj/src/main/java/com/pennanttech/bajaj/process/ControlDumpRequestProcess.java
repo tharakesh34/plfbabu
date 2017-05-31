@@ -25,8 +25,8 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 	Date						monthStartDate	= null;
 	Date						monthEndDate	= null;
 
-	public ControlDumpRequestProcess(DataSource dataSource, long userId, Date monthStartDate, Date monthEndDate, Date valueDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+	public ControlDumpRequestProcess(DataSource dataSource, long userId, Date monthStartDate, Date monthEndDate, Date valueDate,boolean logBatch) {
+		super(dataSource, App.DATABASE.name(), userId, valueDate,logBatch);
 		currentDate = DateUtil.getSysDate();
 		this.monthStartDate = monthStartDate;
 		this.monthEndDate = monthEndDate;

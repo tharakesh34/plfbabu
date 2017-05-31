@@ -18,8 +18,8 @@ import com.pennanttech.pff.core.Literal;
 public class DisbursementDataMart extends DatabaseDataEngine implements Runnable {
 	private static final Logger logger = Logger.getLogger(DisbursementDataMart.class);
 
-	public DisbursementDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+	public DisbursementDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate, boolean logBatch) {
+		super(dataSource, App.DATABASE.name(), userId, valueDate, logBatch);
 	}
 
 	@Override

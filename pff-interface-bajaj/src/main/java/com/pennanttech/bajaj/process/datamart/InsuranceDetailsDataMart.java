@@ -18,9 +18,10 @@ import com.pennanttech.pff.core.Literal;
 public class InsuranceDetailsDataMart extends DatabaseDataEngine implements Runnable {
 	private static final Logger	logger	= Logger.getLogger(InsuranceDetailsDataMart.class);
 
-	public InsuranceDetailsDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+	public InsuranceDetailsDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate, boolean logBatch) {
+		super(dataSource, App.DATABASE.name(), userId, valueDate, logBatch);
 	}
+
 
 	@Override
 	public void run() {

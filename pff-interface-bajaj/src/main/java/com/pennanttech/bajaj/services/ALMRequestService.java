@@ -7,7 +7,7 @@ public class ALMRequestService extends BajajService implements RequestService {
 
 	@Override
 	public void sendReqest(Object... params) throws Exception {
-		ALMRequestProcess service = new ALMRequestProcess(dataSource, (Long) params[0], getValueDate(), getAppDate());
+		ALMRequestProcess service = new ALMRequestProcess(dataSource, (Long) params[0], getValueDate(), getAppDate(),true);
 		service.process("ALM_REQUEST");
 	}
 }

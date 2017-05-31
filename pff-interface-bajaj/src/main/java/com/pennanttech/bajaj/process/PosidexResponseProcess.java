@@ -22,8 +22,8 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 
 	private static final Logger logger = Logger.getLogger(PosidexResponseProcess.class);
 
-	public PosidexResponseProcess(DataSource dataSource,long userId, Date valueDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+	public PosidexResponseProcess(DataSource dataSource,long userId, Date valueDate, boolean logBatch) {
+		super(dataSource, App.DATABASE.name(), userId, valueDate,logBatch);
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 		executionStatus.setRemarks("Loading data..");
 		MapSqlParameterSource parmMap;
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT UCIN_NO, CUSTOMER_ID FROM PSX_UCIN_REVERSE_FEED WHERE PROCESSED_FLAG = :PROCESSED_FLAG ");
+		sql.append(" SELECT UCIN_NO FROM PSX_UCIN_REVERSE_FEED WHERE PROCESSED_FLAG = :PROCESSED_FLAG ");
 		parmMap = new MapSqlParameterSource();
 
 		parmMap.addValue("PROCESSED_FLAG", Status.N.name());
