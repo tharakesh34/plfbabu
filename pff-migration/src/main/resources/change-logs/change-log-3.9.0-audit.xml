@@ -483,4 +483,15 @@
 		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage"
 			constraintName="PK_AdtPaymentInstructions" tableName="AdtPaymentInstructions" />
 	</changeSet>
+	
+	<changeSet id="22" author="Durgaprasad G">
+		<dropColumn columnName="PatnerBankId" tableName="AdtPaymentInstructions" />
+	</changeSet>
+	
+	<changeSet id="23" author="Durgaprasad G">
+		<addColumn tableName="AdtPaymentInstructions">
+			<column name="PartnerBankId" type="bigInt"  />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
