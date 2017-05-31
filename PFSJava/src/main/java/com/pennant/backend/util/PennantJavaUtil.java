@@ -547,7 +547,7 @@ public class PennantJavaUtil {
 				"SubSegmentDesc" }, new String[][] { { "SubSegmentIsActive", "0", "1" } }, 500));
 		
 		ModuleUtil.register("BuilderCompany", new ModuleMapping("BuilderCompany", BuilderCompany.class, new String[] { "BuilderCompany",
-		"BuilderCompany_AView" }, masterWF, new String[] {"name","segmentation","groupId"},null, 600));
+		"BuilderCompany_AView" }, masterWF, new String[] {"name","segmentation","groupId","id"},null, 600));
 		
 		/************* Application Masters *************/
 

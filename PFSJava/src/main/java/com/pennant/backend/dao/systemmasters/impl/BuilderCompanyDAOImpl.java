@@ -261,12 +261,12 @@ public class BuilderCompanyDAOImpl extends BasisNextidDaoImpl<BuilderCompany> im
 		StringBuilder sql = null;
 
 		sql = new StringBuilder();
-		sql.append(" Select COUNT(*) from BuilderCompany ");
-		sql.append(" Where Id = :Id ");
+		sql.append(" Select COUNT(*) from BuilderProjcet ");
+		sql.append(" Where BuilderId = :BuilderId ");
 		logger.debug("Sql: " + sql.toString());
 
 		source = new MapSqlParameterSource();
-		source.addValue("Id", id);
+		source.addValue("BuilderId", id);
 		try {
 			if (this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
 				return true;
