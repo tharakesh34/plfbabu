@@ -242,7 +242,6 @@ public class CustomerRatingListCtrl extends GFCBaseListCtrl<CustomerRating> {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerRating/CustomerRatingDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

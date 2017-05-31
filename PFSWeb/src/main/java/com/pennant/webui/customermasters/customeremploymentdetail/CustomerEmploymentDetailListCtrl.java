@@ -256,7 +256,6 @@ public class CustomerEmploymentDetailListCtrl extends GFCBaseListCtrl<CustomerEm
 					"/WEB-INF/pages/CustomerMasters/CustomerEmploymentDetail/CustomerEmploymentDetailDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

@@ -259,7 +259,6 @@ public class DirectorDetailListCtrl extends GFCBaseListCtrl<DirectorDetail> {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/DirectorDetail/DirectorDetailDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

@@ -253,7 +253,6 @@ public class CustomerIdentityListCtrl extends GFCBaseListCtrl<CustomerIdentity> 
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerIdentity/CustomerIdentityDialog.zul",
 					null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 
