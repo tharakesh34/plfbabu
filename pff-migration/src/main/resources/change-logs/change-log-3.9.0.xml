@@ -578,4 +578,16 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="26" author="Siva">
+		<sql>
+			UPDATE FINSCHEDULEDETAILS SET ProfitFraction = 0;
+			UPDATE FINSCHEDULEDETAILS_TEMP SET ProfitFraction = 0;
+			UPDATE FINSCHEDULEDETAILS_PA SET ProfitFraction = 0;
+			UPDATE FINSCHEDULEDETAILS_LOG SET ProfitFraction = 0;
+			UPDATE REJECTFINSCHEDULEDETAILS SET ProfitFraction = 0;
+			UPDATE WIFFINSCHEDULEDETAILS SET ProfitFraction = 0;
+			UPDATE WIFFINSCHEDULEDETAILS_TEMP SET ProfitFraction = 0;
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
