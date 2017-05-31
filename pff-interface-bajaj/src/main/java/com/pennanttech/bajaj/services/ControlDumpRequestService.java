@@ -10,7 +10,7 @@ public class ControlDumpRequestService extends BajajService implements ControlDu
 	@Override
 	public void sendReqest(Object... params) throws Exception {
 		ControlDumpRequestProcess process = new ControlDumpRequestProcess(dataSource, (Long) params[0],
-				(Date) params[1], (Date) params[2], getValueDate(), true);
+				(Date) params[1], (Date) params[2], (Date) params[3], (Date) params[4]);
 		process.process("CONTROL_DUMP_REQUEST");
 	}
 }

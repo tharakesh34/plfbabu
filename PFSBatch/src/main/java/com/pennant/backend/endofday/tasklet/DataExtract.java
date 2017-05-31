@@ -16,7 +16,6 @@ import com.pennanttech.bajaj.services.ALMRequestService;
 import com.pennanttech.bajaj.services.ControlDumpRequestService;
 import com.pennanttech.bajaj.services.PosidexRequestService;
 import com.pennanttech.pff.core.Literal;
-import com.pennanttech.pff.core.util.DateUtil;
 
 public class DataExtract implements Tasklet {
 	private Logger						logger	= Logger.getLogger(DataExtract.class);
@@ -37,27 +36,12 @@ public class DataExtract implements Tasklet {
 
 		try {
 			new AMLRequest(new Long(1000), almRequestService).start();
-
-			new ControlDumpRequest(new Long(1000), controlDumpRequestService);
+			//FIXME Satish to set the condition for month end
+			//shoud run on month end only
+			new ControlDumpRequest(new Long(1000), controlDumpRequestService).start();
 
 			// PosidexRequestService
-			try {
-				logger.debug("Posidex Request Service started...");
-				Date poFromDate = DateUtil.getMonthStart(DateUtil.addMonths(DateUtil.getSysDate(), -1));
-				Date toDate = DateUtil.getMonthEnd(DateUtil.addMonths(DateUtil.getSysDate(), -1));
-				this.posidexRequestService.sendReqest(new Long(1000), poFromDate, toDate);
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
-
-			// PosidexResponceService
-			try {
-				logger.debug("Posidex Responce Service started...");
-				this.posidexRequestService.sendReqest(new Long(1000));
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
-			// FIXME date values and mappings.....
+			new PosidexRequest(new Long(1000), posidexRequestService).start();
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -92,7 +76,7 @@ public class DataExtract implements Tasklet {
 			// ALMRequestService
 			try {
 				logger.debug("ALM Request Service started...");
-				this.almRequestService.sendReqest(userId);
+				this.almRequestService.sendReqest(userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
@@ -111,7 +95,12 @@ public class DataExtract implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("Control Dump Request Service started...");
-				this.controlDumpRequestService.sendReqest(userId);
+
+				Date monthStartDate = DateUtility.getMonthStartDate(DateUtility.getAppValueDate());
+				Date monthEndDate = DateUtility.getMonthEnd(DateUtility.getAppValueDate());
+
+				this.controlDumpRequestService.sendReqest(userId, DateUtility.getAppValueDate(),
+						DateUtility.getAppDate(), monthStartDate, monthEndDate);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
@@ -130,7 +119,8 @@ public class DataExtract implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("Control Dump Request Service started...");
-				this.posidexRequestService.sendReqest(userId);
+				this.posidexRequestService.sendReqest(userId, DateUtility.getAppValueDate(), DateUtility.getAppDate());
+
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

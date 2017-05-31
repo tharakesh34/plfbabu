@@ -15,19 +15,18 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
-import com.pennanttech.pff.core.util.DateUtil;
 
 public class ControlDumpRequestProcess extends DatabaseDataEngine {
 
 	private static final Logger	logger			= Logger.getLogger(ControlDumpRequestProcess.class);
 
-	Date						currentDate		= null;
+	Date						appDate		= null;
 	Date						monthStartDate	= null;
 	Date						monthEndDate	= null;
 
-	public ControlDumpRequestProcess(DataSource dataSource, long userId, Date monthStartDate, Date monthEndDate, Date valueDate,boolean logBatch) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate,logBatch);
-		currentDate = DateUtil.getSysDate();
+	public ControlDumpRequestProcess(DataSource dataSource, long userId,Date valueDate,Date appDate, Date monthStartDate, Date monthEndDate) {
+		super(dataSource, App.DATABASE.name(), userId, valueDate,true);
+		this.appDate = appDate;
 		this.monthStartDate = monthStartDate;
 		this.monthEndDate = monthEndDate;
 	}
@@ -42,7 +41,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		deleteData("CF_CONTROL_DUMP", "CREATED_ON");
 
 		// Moving last run data to log table.
-		copyDataFromMainToLogTable(currentDate);
+		copyDataFromMainToLogTable(appDate);
 
 		execute();
 		
@@ -226,7 +225,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		map.addValue("TOTAL_INTEREST", rs.getObject("TOTAL_INTEREST"));
 		map.addValue("WRITEOFF_DUE", rs.getObject("WRITEOFF_DUE"));
 		map.addValue("WRITEOFF_RECEIVED", rs.getObject("WRITEOFF_RECEIVED"));
-		map.addValue("CREATED_ON", currentDate);
+		map.addValue("CREATED_ON", appDate);
 
 		return map;
 	}
@@ -265,7 +264,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource logMap = new MapSqlParameterSource();
-		logMap.addValue(columnName, currentDate);
+		logMap.addValue(columnName, appDate);
 
 		final String[] filterFields = new String[1];
 		filterFields[0] = columnName;
@@ -278,7 +277,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource logMap = new MapSqlParameterSource();
-		logMap.addValue(columnName, currentDate);
+		logMap.addValue(columnName, appDate);
 
 		final String[] filterFields = new String[1];
 		filterFields[0] = columnName;

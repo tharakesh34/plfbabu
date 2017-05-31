@@ -21,8 +21,8 @@ public class ALMRequestProcess extends DatabaseDataEngine {
 
 	private Date				appDate;
 
-	public ALMRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate, boolean logBatch) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate, logBatch);
+	public ALMRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
+		super(dataSource, App.DATABASE.name(), userId, valueDate, true);
 		this.appDate = appDate;
 	}
 

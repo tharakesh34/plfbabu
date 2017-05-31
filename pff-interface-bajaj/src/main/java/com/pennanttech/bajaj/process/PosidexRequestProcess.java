@@ -31,8 +31,8 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 	private int loanInsertCount;
 	private int loanUpdateCount;
 
-	public PosidexRequestProcess(DataSource dataSource, Long userId, Date appDate, Date valueDate, boolean logBatch) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate, logBatch);
+	public PosidexRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
+		super(dataSource, App.DATABASE.name(), userId, valueDate, true);
 
 	}
 
