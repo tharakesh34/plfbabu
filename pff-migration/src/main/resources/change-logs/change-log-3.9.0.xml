@@ -590,4 +590,107 @@
 		</sql>
 	</changeSet>
 	
+			</column>
+			<column name="PaymentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AmountType" type="char(1)" />
+			<column name="Amount" type="decimal(18,2)"  />
+			<column name="ReferenceId" type="bigint" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+   </changeSet>		 	
+
+   <changeSet id="33" author="Durgaprasad G">
+		<createTable tableName="PaymentInstructions">
+			<column name="PaymentInstructionId" type="bigint">
+				<constraints primaryKey="true" primaryKeyName="PK_PI_PIID" nullable="false"/>
+			</column>
+			<column name="PaymentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentType" type="char(1)" />
+			<column name="PaymentAmount" type="decimal(18,2)"  />
+			<column name="PaymentCCy" type="varchar(3)"  />
+			<column name="BankCode" type="varchar(8)"  />
+			<column name="FavourName" type="varchar(200)"  />
+			<column name="FavourNumber" type="nvarchar(100)"  />
+			<column name="PayableLoc" type="nvarchar(50)"  />
+			<column name="PrintingLoc" type="nvarchar(50)"  />
+			<column name="ValueDate" type="datetime"  />
+			<column name="PostDate" type="datetime"  />
+			<column name="BankBranchID" type="bigInt"  />
+			<column name="AcctHolderName" type="nvarchar(200)"  />
+			<column name="AccountNo" type="varchar(100)"  />
+			<column name="PhoneCountryCode" type="varchar(5)"  />
+			<column name="PhoneNumber" type="varchar(12)"  />
+			<column name="Clearingdate" type="datetime"  />
+			<column name="Remarks" type="varchar(100)"  />
+			<column name="Active" type="Char(1)"  />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="34" author="Durgaprasad G">
+		<addForeignKeyConstraint constraintName="FK_PI_PID"
+			referencedTableName="PaymentHeader" referencedColumnNames="PaymentId"
+			baseTableName="PaymentInstructions" baseColumnNames="PaymentId" />
+	</changeSet>
+	
+	<changeSet id="35" author="Durgaprasad G">
+		<createTable tableName="PaymentInstructions_Temp">
+			<column name="PaymentInstructionId" type="bigint">
+				<constraints primaryKey="true" primaryKeyName="PK_PI_TEMP_PIID" nullable="false"/>
+			</column>
+			<column name="PaymentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentType" type="char(1)" />
+			<column name="PaymentAmount" type="decimal(18,2)"  />
+			<column name="PaymentCCy" type="varchar(3)"  />
+			<column name="BankCode" type="varchar(8)"  />
+			<column name="FavourName" type="varchar(200)"  />
+			<column name="FavourNumber" type="nvarchar(100)"  />
+			<column name="PayableLoc" type="nvarchar(50)"  />
+			<column name="PrintingLoc" type="nvarchar(50)"  />
+			<column name="ValueDate" type="datetime"  />
+			<column name="PostDate" type="datetime"  />
+			<column name="BankBranchID" type="bigInt"  />
+			<column name="AcctHolderName" type="nvarchar(200)"  />
+			<column name="AccountNo" type="varchar(100)"  />
+			<column name="PhoneCountryCode" type="varchar(5)"  />
+			<column name="PhoneNumber" type="varchar(12)"  />
+			<column name="Clearingdate" type="datetime"  />
+			<column name="Remarks" type="varchar(100)"  />
+			<column name="Active" type="Char(1)"  />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
