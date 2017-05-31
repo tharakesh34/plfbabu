@@ -261,7 +261,6 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/FeeReceiptDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

@@ -290,7 +290,6 @@ public class BulkDefermentChangeListCtrl extends GFCBaseListCtrl<BulkProcessHead
 			Executions.createComponents(
 					"/WEB-INF/pages/FinanceManagement/BulkDefermentChange/BulkDefermentChangeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
 			MessageUtil.showError(e);
 		}
 

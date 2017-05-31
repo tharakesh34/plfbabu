@@ -413,7 +413,6 @@ public class ManagerChequeListCtrl extends GFCBaseListCtrl<ManagerCheque> {
 						null, arg);
 			}
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

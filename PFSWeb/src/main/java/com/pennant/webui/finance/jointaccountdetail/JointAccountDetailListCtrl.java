@@ -216,7 +216,6 @@ public class JointAccountDetailListCtrl extends GFCBaseListCtrl<JointAccountDeta
 			Executions.createComponents("/WEB-INF/pages/Finance/JointAccountDetail/JointAccountDetailDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

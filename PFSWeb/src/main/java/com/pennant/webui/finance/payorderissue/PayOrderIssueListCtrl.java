@@ -249,7 +249,6 @@ public class PayOrderIssueListCtrl extends GFCBaseListCtrl<PayOrderIssueHeader> 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/PayOrderIssue/PayOrderIssueDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 
