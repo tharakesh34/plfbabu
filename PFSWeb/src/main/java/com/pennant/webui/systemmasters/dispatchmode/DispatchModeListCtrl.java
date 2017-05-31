@@ -243,7 +243,6 @@ public class DispatchModeListCtrl extends GFCBaseListCtrl<DispatchMode> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/DispatchMode/DispatchModeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

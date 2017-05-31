@@ -248,7 +248,6 @@ public class DocumentTypeListCtrl extends GFCBaseListCtrl<DocumentType> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/DocumentType/DocumentTypeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

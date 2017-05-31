@@ -261,7 +261,6 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/EmployerDetail/EmployerDetailDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

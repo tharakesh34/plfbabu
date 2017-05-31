@@ -242,7 +242,6 @@ public class DepartmentListCtrl extends GFCBaseListCtrl<Department> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/Department/DepartmentDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

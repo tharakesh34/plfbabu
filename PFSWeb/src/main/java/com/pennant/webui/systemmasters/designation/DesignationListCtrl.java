@@ -242,7 +242,6 @@ public class DesignationListCtrl extends GFCBaseListCtrl<Designation> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/Designation/DesignationDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

@@ -248,7 +248,6 @@ public class GenderListCtrl extends GFCBaseListCtrl<Gender> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/Gender/GenderDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

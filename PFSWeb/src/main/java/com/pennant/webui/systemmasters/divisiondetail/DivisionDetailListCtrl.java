@@ -243,7 +243,6 @@ public class DivisionDetailListCtrl extends GFCBaseListCtrl<DivisionDetail> {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/DivisionDetail/DivisionDetailDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

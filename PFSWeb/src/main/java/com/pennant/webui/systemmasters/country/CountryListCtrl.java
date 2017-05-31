@@ -258,7 +258,6 @@ public class CountryListCtrl extends GFCBaseListCtrl<Country> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/Country/CountryDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

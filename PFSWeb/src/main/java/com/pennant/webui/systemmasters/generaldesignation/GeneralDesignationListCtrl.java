@@ -240,7 +240,6 @@ public class GeneralDesignationListCtrl extends GFCBaseListCtrl<GeneralDesignati
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/GeneralDesignation/GeneralDesignationDialog.zul",
 					null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

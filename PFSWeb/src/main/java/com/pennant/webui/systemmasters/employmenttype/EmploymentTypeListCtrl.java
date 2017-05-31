@@ -238,7 +238,6 @@ public class EmploymentTypeListCtrl extends GFCBaseListCtrl<EmploymentType> {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/EmploymentType/EmploymentTypeDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 
