@@ -230,7 +230,6 @@ public class VehicleModelListCtrl extends GFCBaseListCtrl<VehicleModel> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/AMTMasters/VehicleModel/VehicleModelDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

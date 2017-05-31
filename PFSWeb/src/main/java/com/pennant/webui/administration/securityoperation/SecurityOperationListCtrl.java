@@ -237,7 +237,6 @@ public class SecurityOperationListCtrl extends GFCBaseListCtrl<SecurityOperation
 			Executions.createComponents("/WEB-INF/pages/Administration/SecurityOperations/SecurityOperationDialog.zul",
 					null, aruments);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

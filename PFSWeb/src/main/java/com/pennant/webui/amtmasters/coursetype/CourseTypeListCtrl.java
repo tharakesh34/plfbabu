@@ -227,7 +227,6 @@ public class CourseTypeListCtrl extends GFCBaseListCtrl<CourseType> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/AMTMasters/CourseType/CourseTypeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

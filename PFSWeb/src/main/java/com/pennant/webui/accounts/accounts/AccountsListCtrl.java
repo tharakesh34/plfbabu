@@ -324,7 +324,6 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 				Executions.createComponents("/WEB-INF/pages/Account/Accounts/AccountsDialog.zul",null, aruments);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");

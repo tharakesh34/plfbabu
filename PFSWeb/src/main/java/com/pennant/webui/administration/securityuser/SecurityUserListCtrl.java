@@ -314,7 +314,6 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 						arg);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
 			MessageUtil.showError(e);
 		}
 

@@ -251,7 +251,6 @@ public class AuthorizationListCtrl extends GFCBaseListCtrl<Authorization> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/AMTMasters/Authorization/AuthorizationDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

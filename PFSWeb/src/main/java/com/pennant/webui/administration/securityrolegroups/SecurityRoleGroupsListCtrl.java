@@ -230,7 +230,6 @@ public class SecurityRoleGroupsListCtrl extends GFCBaseListCtrl<SecurityRole> {
 			Executions.createComponents("/WEB-INF/pages/Administration/SecurityRoleGroups"
 					+ "/SecurityRoleGroupsDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

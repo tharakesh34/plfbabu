@@ -229,7 +229,6 @@ public class VehicleManufacturerListCtrl extends GFCBaseListCtrl<VehicleManufact
 			Executions.createComponents("/WEB-INF/pages/AMTMasters/VehicleManufacturer/VehicleManufacturerDialog.zul",
 					null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 
