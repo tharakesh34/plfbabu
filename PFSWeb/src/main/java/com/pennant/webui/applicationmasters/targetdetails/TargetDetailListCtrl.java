@@ -244,7 +244,6 @@ public class TargetDetailListCtrl extends GFCBaseListCtrl<TargetDetail> {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/TargetDetails/TargetDetailDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

@@ -744,7 +744,6 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error(e);
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");

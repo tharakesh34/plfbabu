@@ -190,7 +190,6 @@ public class PresentmentReasonCodeListCtrl extends GFCBaseListCtrl<PresentmentRe
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/PresentmentReasonCode/PresentmentReasonCodeDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

@@ -244,7 +244,6 @@ public class VesselDetailListCtrl extends GFCBaseListCtrl<VesselDetail> {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/VesselDetails/VesselDetailDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

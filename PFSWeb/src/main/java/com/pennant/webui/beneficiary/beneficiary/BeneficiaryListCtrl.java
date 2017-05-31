@@ -239,7 +239,6 @@ public class BeneficiaryListCtrl extends GFCBaseListCtrl<Beneficiary> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Beneficiary/BeneficiaryDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 
