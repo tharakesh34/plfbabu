@@ -309,7 +309,6 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 			
 			Executions.createComponents(page, null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

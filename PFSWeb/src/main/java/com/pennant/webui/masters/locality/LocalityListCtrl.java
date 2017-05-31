@@ -238,7 +238,6 @@ public class LocalityListCtrl extends GFCBaseListCtrl<Locality> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/masters/Locality/LocalityDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

@@ -329,7 +329,6 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowDialog.zul",
 					null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

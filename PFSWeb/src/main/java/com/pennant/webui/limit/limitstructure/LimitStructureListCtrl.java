@@ -268,7 +268,6 @@ public class LimitStructureListCtrl extends GFCBaseListCtrl<LimitStructure> {
 			Executions.createComponents("/WEB-INF/pages/Limit/LimitStructure/LimitStructureDialog.zul",null,arg);
 
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

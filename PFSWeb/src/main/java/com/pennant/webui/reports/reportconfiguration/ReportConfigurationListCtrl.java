@@ -250,7 +250,6 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 		try {
 			Executions.createComponents("/WEB-INF/pages/Reports/ReportConfiguration/ReportConfigurationDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 
