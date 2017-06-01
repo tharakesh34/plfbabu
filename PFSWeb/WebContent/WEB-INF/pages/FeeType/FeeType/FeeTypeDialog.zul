@@ -77,7 +77,7 @@
 										value="${c:l('label_FeeTypeDialog_FeeTypeCode.value')}" />
 									<hbox id="hlayout_FeeTypeCode">
 										<space id="space_FeeTypeCode"
-											spacing="2px" sclass="mandatory"/>
+											spacing="2px" sclass="mandatory" />
 										<uppercasebox id="feeTypeCode"
 											maxlength="8" width="72px" />
 									</hbox>
@@ -85,18 +85,18 @@
 										value="${c:l('label_FeeTypeDialog_FeeTypeDesc.value')}" />
 									<hbox id="hlayout_FeeTypeDesc">
 										<space id="space_FeeTypeDesc"
-											spacing="2px" sclass="mandatory"/>
+											spacing="2px" sclass="mandatory" />
 										<textbox id="feeTypeDesc"
 											maxlength="35" width="200px" />
 									</hbox>
 								</row>
 								<row id="row1">
-									<label id="label_ManualAdvice"
-										value="${c:l('label_FeeTypeDialog_ManualAdvice.value')}" />
-									<hbox id="hlayout_ManualAdvice">
-										<space id="space_ManualAdvice"
-											spacing="2px" />
-										<checkbox id="manualAdvice" />
+									<label id="label_AccountingSetID"
+										value="${c:l('label_FeeTypeDialog_AccountingSetID.value')}" />
+									<hbox
+										id="hlayout_AccountingSetID">
+										<extendedcombobox
+											id="accountingSetID" width="200px" />
 									</hbox>
 									<label id="label_Active"
 										value="${c:l('label_FeeTypeDialog_Active.value')}" />
@@ -107,22 +107,23 @@
 									</hbox>
 								</row>
 								<row id="row2">
-									<label id="label_AdviseType"
-									value="${c:l('label_FeeTypeDialog_AdviseType.value')}" visible="true"/>
-								<hbox visible="true">
-									<space spacing="2px"
-										sclass="mandatory" />
-									<combobox id="adviseType"
-										width="120px" />
-								</hbox>
-								<label id="label_AccountingSetID" 
-										value="${c:l('label_FeeTypeDialog_AccountingSetID.value')}" />
-									<hbox id="hlayout_AccountingSetID" >
-										<space id="space_AccountingSetID"
+									<label id="label_ManualAdvice"
+										value="${c:l('label_FeeTypeDialog_ManualAdvice.value')}" />
+									<hbox id="hlayout_ManualAdvice">
+										<space id="space_ManualAdvice"
 											spacing="2px" />
-										<extendedcombobox id="accountingSetID"
-											 width="200px" />
+										<checkbox id="manualAdvice" />
 									</hbox>
+									<label id="label_AdviseType"
+										value="${c:l('label_FeeTypeDialog_AdviseType.value')}"
+										visible="true" />
+									<hbox id="hlayout_AdviseType" visible="true">
+										<space id="space_AdviseType" spacing="2px"
+											sclass="mandatory" />
+										<combobox id="adviseType"
+											width="120px" />
+									</hbox>
+
 								</row>
 							</rows>
 						</grid>
