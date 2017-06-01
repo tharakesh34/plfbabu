@@ -38,5 +38,10 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
+	<changeSet id="02" author="Surekha">
+		<addColumn tableName="AdtPartnerBanks">
+			<column name="fileName" type="varchar(30)"/>
+		</addColumn>
+	</changeSet>
 	
 </databaseChangeLog>

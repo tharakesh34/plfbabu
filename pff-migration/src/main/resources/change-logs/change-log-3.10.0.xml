@@ -156,4 +156,53 @@
 			INSERT INTO ReportList Values('PinCode','PinCode','listheader_PinCode.label,listheader_City.label,listheader_Active.label,label.RecordStatus,label.RecordType,','pinCode,city,active,recordStatus,recordType','String,String,boolean,String,String','','ReportList05','Pin Code','Application Master',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
 		</sql>
 	</changeSet>
+	<changeSet id="09" author="Surekha">
+		<sql>
+			update REPORTLIST set FieldValues='pinCode,pCCityName,active,recordStatus,recordType' where code='PinCode';
+		</sql>
+	</changeSet>
+	<changeSet id="10" author="Surekha">
+		<addColumn tableName="PartnerBanks">
+			<column name="fileName" type="varchar(30)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="11" author="Surekha">
+		<addColumn tableName="PartnerBanks_temp">
+			<column name="fileName" type="varchar(30)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="12" author="Surekha">
+		<createView viewName="PARTNERBANKS_VIEW" replaceIfExists="true">
+			 SELECT 		T1.PartnerBankId, T1.PartnerBankCode, T1.PartnerBankName, T1.BankCode, T1.BankBranchCode, T1.BranchMICRCode, T1.BranchIFSCCode, T1.BranchCity, T1.UtilityCode, 
+						T1.AccountNo, T1.AcType, T1.AlwFileDownload, T1.AlwDisb, T1.AlwPayment, T1.AlwReceipt, T1.InFavourLength, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.BankName BankCodeName,T3.BranchDesc BankBranchCodeName,
+						T4.AcTypeDesc AcTypeName,T1.HostGLCode, T1.ProfitCenterID, T1.CostCenterID, T1.FileName
+			FROM    	PARTNERBANKS_Temp  T1 INNER JOIN
+						BMTBANKDETAIL T2  on T1.BANKCODE=T2.BANKCODE inner join
+						BankBranches T3  ON T1.BankBranchCode = T3.BranchCode and T1.bankcode=T3.bankcode INNER JOIN
+						RMTAccountTypes T4 ON T1.AcType = T4.AcType
+			UNION ALL
+			SELECT 		T1.PartnerBankId, T1.PartnerBankCode, T1.PartnerBankName, T1.BankCode, T1.BankBranchCode, T1.BranchMICRCode, T1.BranchIFSCCode, T1.BranchCity, T1.UtilityCode,
+						T1.AccountNo, T1.AcType, T1.AlwFileDownload, T1.AlwDisb, T1.AlwPayment, T1.AlwReceipt, T1.InFavourLength, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn, 
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.BankName BankCodeName,T3.BranchDesc BankBranchCodeName,
+						T4.AcTypeDesc AcTypeName,T1.HostGLCode, T1.ProfitCenterID, T1.CostCenterID, T1.FileName
+			FROM    	PartnerBanks  T1 INNER JOIN
+			            BMTBankDetail T2  ON T1.BankCode=T2.BankCode INNER JOIN
+						BankBranches T3  ON T1.BankBranchCode = T3.BranchCode and T1.bankcode=T3.bankcode INNER JOIN
+						RMTAccountTypes T4 ON T1.AcType = T4.AcType						
+			WHERE     	NOT EXISTS (SELECT 1 FROM PartnerBanks_TEMP WHERE PartnerBankId = T1.PartnerBankId)
+		</createView>
+	</changeSet>
+	<changeSet id="13" author="Surekha">
+		<createView viewName="PARTNERBANKS_AVIEW" replaceIfExists="true">
+			 SELECT 		T1.PartnerBankId, T1.PartnerBankCode, T1.PartnerBankName, T1.BankCode, T1.BankBranchCode, T1.BranchMICRCode, T1.BranchIFSCCode, T1.BranchCity, T1.UtilityCode, 
+						T1.AccountNo, T1.AcType, T1.AlwFileDownload, T1.AlwDisb, T1.AlwPayment, T1.AlwReceipt, T1.InFavourLength, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.BankName BankCodeName,T3.BranchDesc BankBranchCodeName,
+						T4.AcTypeDesc AcTypeName,T1.HostGLCode, T1.ProfitCenterID, T1.CostCenterID, T1.FileName
+			FROM    	PARTNERBANKS  T1 INNER JOIN
+						BMTBANKDETAIL T2  on T1.BANKCODE=T2.BANKCODE inner join
+						BankBranches T3  ON T1.BankBranchCode = T3.BranchCode and T1.bankcode=T3.bankcode INNER JOIN
+						RMTAccountTypes T4 ON T1.AcType = T4.AcType
+		</createView>
+	</changeSet>
 </databaseChangeLog>
