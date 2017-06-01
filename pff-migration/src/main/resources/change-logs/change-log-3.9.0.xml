@@ -1894,4 +1894,9 @@
 				LEFT JOIN NPABUCKETS NPB ON NPB.BUCKETID = PR.NPABUCKETID
 		</createView>
 	</changeSet>
+	<changeSet id="63" author="murthy.y">
+		<sql>
+			update DATA_ENGINE_CONFIG set FILENAMEFORMAT = '_${CLIENT_CODE},${ddMM},.${SEQ_DATE_FILE}' where Name = 'DISB_HDFC_EXPORT';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
