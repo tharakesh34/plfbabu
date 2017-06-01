@@ -1112,6 +1112,16 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				feeSchdMethCombo.addForward("onChange",window_FeeDetailList,"onChangeFeeScheduleMethod",amountBoxlist);
 			}
 		}
+		
+		// To Reset Totals
+		if(isReceiptsProcess && this.financeMainDialogCtrl != null){
+			try {
+				getFinanceMainDialogCtrl().getClass().getMethod("resetFeeAmounts").invoke(getFinanceMainDialogCtrl());
+			} catch (Exception e) {
+				logger.info(e);
+			}
+		}
+
 		logger.debug("Leaving");
 	}
 	
