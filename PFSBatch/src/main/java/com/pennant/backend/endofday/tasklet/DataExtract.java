@@ -73,6 +73,7 @@ public class DataExtract implements Tasklet {
 
 		public AMLRequest(long userId, ALMRequestService almRequestService) {
 			this.userId = userId;
+			this.almRequestService=almRequestService;
 		}
 
 		public void run() {
