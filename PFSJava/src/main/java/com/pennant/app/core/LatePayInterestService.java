@@ -108,7 +108,7 @@ public class LatePayInterestService extends ServiceHelper {
 			schdODCRecoveries.add(odcr);
 		}
 
-		fod.setTotPenaltyAmt(BigDecimal.ZERO);
+		fod.setLPIAmt(BigDecimal.ZERO);
 
 		//Add record with today date
 		boolean isAddTodayRcd = true;
@@ -152,10 +152,10 @@ public class LatePayInterestService extends ServiceHelper {
 			BigDecimal penalty = CalculationUtil.calInterest(dateCur, dateNext, balanceForCal, idb, penaltyRate);
 
 			odcr.setPenalty(penalty);
-			fod.setTotPenaltyAmt(fod.getTotPenaltyAmt().add(penalty));
+			fod.setLPIAmt(fod.getTotPenaltyAmt().add(penalty));
 		}
 
-		fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
+		fod.setLPIBal(fod.getLPIAmt().subtract(fod.getLPIPaid()).subtract(fod.getLPIWaived()));
 		logger.debug(" Leaving ");
 	}
 
