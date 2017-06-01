@@ -205,4 +205,12 @@
 						RMTAccountTypes T4 ON T1.AcType = T4.AcType
 		</createView>
 	</changeSet>
+	<changeSet id="14" author="Manoj.p">
+	<sql>
+		update data_engine_config set uploadpath = '/opt/PFF/disbursement/response/stp' where name = 'DISB_HDFC_IMPORT';
+		update DATA_ENGINE_CONFIG set FILEPREFIXNAME = '${CLIENT_CODE}', FILENAMEFORMAT = '${ddmm},.${SEQ_DATE_FILE}' where Name = 'DISB_HDFC_EXPORT';
+		DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE IN ('GROUP_ID', 'CLIENT_CODE');
+		update partnerbanks set FILENAME = 'FCAT_BF1C' where PARTNERBANKCODE = 'HDFC';
+	</sql>	
+	</changeSet>
 </databaseChangeLog>
