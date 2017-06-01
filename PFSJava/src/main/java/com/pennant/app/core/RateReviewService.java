@@ -123,7 +123,8 @@ public class RateReviewService extends ServiceHelper {
 		finEODEvent.setRecalToDate(finSchdDetails.get(iEvtTo).getSchDate());
 
 		for (int i = 0; i < finSchdDetails.size(); i++) {
-			if (finSchdDetails.get(i).getSchDate().compareTo(valueDate) == 0) {
+			if (finSchdDetails.get(i).getSchDate().compareTo(valueDate) == 0 && !StringUtils.isEmpty(finSchdDetails.get(i).getBaseRate())) {
+				//FIXME Filed name should be renamed
 				finEODEvent.setRateOnChgDate(finSchdDetails.get(i).getBaseRate());
 				iEvtFrom = i;
 				break;
