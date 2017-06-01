@@ -1957,4 +1957,64 @@
 		update partnerbanks set FILENAME = 'FCAT_BF1C' where PARTNERBANKCODE = 'HDFC';
 	</sql>	
 	</changeSet>
+	<changeSet id="72" author="murthy">
+		<dropTable tableName="DATA_ENGINE_PROCESS_LOG"/>
+		<dropTable tableName="DATA_ENGINE_EXECUTION_FIELDS"/>
+		<dropTable tableName="DATA_ENGINE_DOWNLOAD_HISTORY"/>
+		<dropTable tableName="DATA_ENGINE_LOG"/>
+		<dropTable tableName="DATA_ENGINE_STATUS" cascadeConstraints="true"/>
+		<dropTable tableName="SEQ_DATA_ENGINE_STATUS"/>
+		
+		<createTable tableName="DATA_ENGINE_STATUS">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="Name" type="varchar(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Status" type="char(1)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="FileName" type="varchar(100)"/>
+			<column name="Reference" type="varchar(100)"/>
+			<column name="ValueDate" type="datetime"/>
+			<column defaultValueNumeric="0" name="TotalRecords" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column defaultValueNumeric="0" name="ProcessedRecords" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column defaultValueNumeric="0" name="SuccessRecords" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column defaultValueNumeric="0" name="FailedRecords" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="StartTime" type="datetime">
+				<constraints nullable="false"/>
+			</column>
+			<column name="EndTime" type="datetime"/>
+			<column name="UserId" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Remarks" type="varchar(2000)"/>
+		</createTable>
+		<createTable tableName="DATA_ENGINE_LOG">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" foreignKeyName="FK_DEL" references="DATA_ENGINE_STATUS(ID)"/>
+			</column>
+			<column name="KeyId" type="varchar(50)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Status" type="char(1)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Reason" type="varchar(2000)"/>
+	</createTable>
+	    <createTable tableName="DATA_ENGINE_DOWNLOAD_HISTORY">			
+			<column name="ID" type="bigint" />
+			<column name="USERID" type="bigint" />
+			<column name="DOWNLOADED_DATE" type="datetime" />
+		</createTable>
+	</changeSet>	
 </databaseChangeLog>
