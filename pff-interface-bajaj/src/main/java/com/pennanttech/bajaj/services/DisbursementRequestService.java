@@ -41,8 +41,9 @@ public class DisbursementRequestService extends BajajService implements Disburse
 		String finType = (String) params[0];
 		List<FinAdvancePayments> disbusments = (List<FinAdvancePayments>) params[1];
 		long userId = (long) params[2];
+		String fileNamePrefix = (String) params[3];
 
-		DisbursementProcessThread process = new DisbursementProcessThread(finType, userId, disbusments);
+		DisbursementProcessThread process = new DisbursementProcessThread(finType, userId, disbusments, fileNamePrefix);
 		Thread thread = new Thread(process);
 		try {
 			DisbursementProcessThread.sleep(5000);
@@ -53,7 +54,7 @@ public class DisbursementRequestService extends BajajService implements Disburse
 		thread.start();
 	}
 
-	private void processDisbursements(String finType, long userId, List<FinAdvancePayments> disbursements)
+	private void processDisbursements(String finType, long userId, List<FinAdvancePayments> disbursements, String fileNamePrefix)
 			throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -66,12 +67,12 @@ public class DisbursementRequestService extends BajajService implements Disburse
 			list.append(fa.getPaymentId());
 		}
 
-		generateRequest(finType, userId, disbursements);
+		generateRequest(finType, userId, disbursements, fileNamePrefix);
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void generateRequest(String finType, long userId, List<FinAdvancePayments> disbusments) {
+	private void generateRequest(String finType, long userId, List<FinAdvancePayments> disbusments, String fileNamePrefix) {
 		List<FinAdvancePayments> stp_IMPS = new ArrayList<>();
 		List<FinAdvancePayments> other_IMPS = new ArrayList<>();
 
@@ -183,22 +184,22 @@ public class DisbursementRequestService extends BajajService implements Disburse
 			}
 		}
 
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, stp_NEFT);
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, stp_RTGS);
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.CHEQUE.name(), finType, userId, stp_CHEQUE);
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.DD.name(), finType, userId, stp_DD);
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.I.name(), finType, userId, stp_Other);
+		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, stp_NEFT, fileNamePrefix);
+		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, stp_RTGS, fileNamePrefix);
+		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.CHEQUE.name(), finType, userId, stp_CHEQUE, fileNamePrefix);
+		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.DD.name(), finType, userId, stp_DD, fileNamePrefix);
+		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.I.name(), finType, userId, stp_Other, fileNamePrefix);
 
-		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, other_NEFT);
-		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, other_RTGS);
-		generateFile("DISB_OTHER_CHEQUE_DD_EXPORT", DisbursementTypes.DD.name(), finType, userId, other_DD);
-		generateFile("DISB_OTHER_CHEQUE_DD_EXPORT", DisbursementTypes.CHEQUE.name(), finType, userId, other_CHEQUE);
-		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.I.name(), finType, userId, other_Other);
+		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, other_NEFT, null);
+		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, other_RTGS, null);
+		generateFile("DISB_OTHER_CHEQUE_DD_EXPORT", DisbursementTypes.DD.name(), finType, userId, other_DD, null);
+		generateFile("DISB_OTHER_CHEQUE_DD_EXPORT", DisbursementTypes.CHEQUE.name(), finType, userId, other_CHEQUE, null);
+		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.I.name(), finType, userId, other_Other, null);
 
 	}
 
 	private void generateFile(String configName, String paymentType, String finType, long userId,
-			List<FinAdvancePayments> disbusments) {
+			List<FinAdvancePayments> disbusments, String fileNamePrefix) {
 		Map<String, List<FinAdvancePayments>> map = null;
 		if (!disbusments.isEmpty()) {
 			map = getOtherBankMap(disbusments);
@@ -212,7 +213,7 @@ public class DisbursementRequestService extends BajajService implements Disburse
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
 				}
-				generateFile(configName, idList, paymentType, bank, finType, userId);
+				generateFile(configName, idList, paymentType, bank, finType, userId, fileNamePrefix);
 			}
 		}
 	}
@@ -243,7 +244,7 @@ public class DisbursementRequestService extends BajajService implements Disburse
 	}
 
 	private void generateFile(String configName, List<String> idList, String paymentType, String partnerbankCode,
-			String finType, long userId) {
+			String finType, long userId, String fileNamePrefix) {
 		DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate());
 
 		Map<String, Object> filterMap = new HashMap<>();
@@ -256,8 +257,7 @@ public class DisbursementRequestService extends BajajService implements Disburse
 		parameterMap.put("PARTNER_BANK_CODE", partnerbankCode);
 
 		if ("DISB_HDFC_EXPORT".equals(configName)) {
-			parameterMap.put("CLIENT_CODE", (String) getSMTParameter("CLIENT_CODE", String.class));
-			parameterMap.put("GROUP_ID", (String) getSMTParameter("GROUP_ID", String.class));
+			parameterMap.put("CLIENT_CODE", fileNamePrefix);
 			parameterMap.put("SEQ_DATE_FILE", StringUtils.leftPad(getSTPFileSequence(), 4, "0"));
 		}
 
@@ -419,19 +419,21 @@ public class DisbursementRequestService extends BajajService implements Disburse
 		private final Logger				logger	= Logger.getLogger(DisbursementProcessThread.class);
 
 		private String						finType;
+		private String						fileNamePrefix;
 		private long						userId;
 		private List<FinAdvancePayments>	disbursements;
 
-		public DisbursementProcessThread(String finType, long userId, List<FinAdvancePayments> disbursements) {
+		public DisbursementProcessThread(String finType, long userId, List<FinAdvancePayments> disbursements, String fileNamePrefix) {
 			this.finType = finType;
 			this.userId = userId;
 			this.disbursements = disbursements;
+			this.fileNamePrefix = fileNamePrefix;
 		}
 
 		@Override
 		public void run() {
 			try {
-				processDisbursements(finType, userId, disbursements);
+				processDisbursements(finType, userId, disbursements, fileNamePrefix);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
