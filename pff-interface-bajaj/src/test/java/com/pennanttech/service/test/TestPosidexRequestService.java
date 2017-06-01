@@ -5,9 +5,10 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pff.core.services.PosidexRequest;
 
-public class TestPosidexRequestService {
+public class TestPosidexRequestService  {
 
 	PosidexRequest requestService;
 
@@ -24,7 +25,7 @@ public class TestPosidexRequestService {
 	@Test
 	public void process() {
 		try {
-			requestService.sendReqest(new Long(1000));
+			requestService.sendReqest(new Long(1000),DateUtil.getSysDate(),DateUtil.getSysDate());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

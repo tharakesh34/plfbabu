@@ -31,7 +31,7 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 
 		MapSqlParameterSource parmMap;
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT UCIN_NO FROM PSX_UCIN_REVERSE_FEED WHERE PROCESSED_FLAG = :PROCESSED_FLAG ");
+		sql.append("SELECT UCIN_NO, CUSTOMER_NO FROM PSX_UCIN_REVERSE_FEED WHERE PROCESSED_FLAG = :PROCESSED_FLAG ");
 		parmMap = new MapSqlParameterSource();
 
 		parmMap.addValue("PROCESSED_FLAG", Status.N.name());
@@ -89,7 +89,7 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 	private MapSqlParameterSource mapCustData(ResultSet rs) throws SQLException {
 		MapSqlParameterSource map = new MapSqlParameterSource();
 		map.addValue("CUSTADDLVAR1", rs.getObject("UCIN_NO"));
-		map.addValue("CUSTID", rs.getObject("CUSTOMER_ID"));
+		map.addValue("CUSTID", rs.getObject("CUSTOMER_NO"));
 		return map;
 	}
 

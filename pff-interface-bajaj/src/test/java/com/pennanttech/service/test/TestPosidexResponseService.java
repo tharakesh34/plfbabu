@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.pennanttech.bajaj.services.PosidexResponseService;
+import com.pennanttech.dataengine.util.DateUtil;
 
 public class TestPosidexResponseService {
 
@@ -24,7 +25,7 @@ public class TestPosidexResponseService {
 	@Test
 	public void process() {
 		try {
-			responceService.receiveResponse(new Long(1000));
+			responceService.receiveResponse(new Long(1000),DateUtil.getSysDate(),DateUtil.getSysDate());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
