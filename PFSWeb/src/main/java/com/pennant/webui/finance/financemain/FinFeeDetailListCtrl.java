@@ -1416,7 +1416,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinInsuranceDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
 			MessageUtil.showError(e);
 		}
 
