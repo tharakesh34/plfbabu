@@ -1907,4 +1907,15 @@
 		FROM     PaymentDeatils
 		</createView>
 	</changeSet>
+		<changeSet id="65" author="Durgaprasad g">
+		<createView viewName="PaymentInstructions_AView" replaceIfExists="true">
+		SELECT   PaymentInstructionId, PaymentId, PaymentType, PaymentAmount, Remarks,  
+				 FavourName, FavourNumber, PayableLoc, PrintingLoc, ValueDate, PostDate,
+				 BankBranchID, AcctHolderName, AccountNo, PhoneCountryCode, PhoneNumber, 
+				 Clearingdate, Active, PaymentCCy,
+				 Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,
+				 TaskId, NextTaskId, RecordType, WorkflowId
+		FROM     PaymentInstructions
+		</createView>
+	</changeSet>
 </databaseChangeLog>
