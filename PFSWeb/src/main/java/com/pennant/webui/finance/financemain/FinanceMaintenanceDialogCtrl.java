@@ -3619,7 +3619,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		// 1.Mandate Swap is allowed after the registration process is completed 
 		// 2.Mandate already tagged to the current loan should also made available.
-		// 3.Open mandate should be made available even the it is linked to another loan
+		// 3.Open mandate should be made available even it is linked to another loan
 		// 4.Mandate should be active
 		// 5.For ECS registration not required
 
@@ -3634,17 +3634,13 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		whereCaluse.append(custid);
 		whereCaluse.append("AND FINANCEMAIN.FINREFERENCE != '");
 		whereCaluse.append(getFinanceMain().getFinReference());
-		whereCaluse.append("' )) AND (MANDATEREF IS NOT NULL");
-		if (MandateConstants.skipRegistration().contains(repaymethod)) {
-			whereCaluse.append(" OR MandateType = '");
-			whereCaluse.append(repaymethod);
-			whereCaluse.append("'");
-		}
-		whereCaluse.append(")");
-		whereCaluse.append(" OR MANDATEID IN (SELECT MANDATEID FROM FINANCEMAIN FM ");
+		whereCaluse.append("' )) OR MANDATEID IN (SELECT MANDATEID FROM FINANCEMAIN FM ");
 		whereCaluse.append(" WHERE FM.FINREFERENCE='");
 		whereCaluse.append(getFinanceMain().getFinReference());
 		whereCaluse.append("')))");
+		if (!MandateConstants.skipRegistration().contains(repaymethod)) {
+			whereCaluse.append(" AND MANDATEREF IS NOT NULL ");
+		}
 
 		this.mandateRef.setWhereClause(whereCaluse.toString());
 
