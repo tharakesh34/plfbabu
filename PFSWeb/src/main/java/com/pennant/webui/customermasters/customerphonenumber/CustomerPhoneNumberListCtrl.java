@@ -252,7 +252,6 @@ public class CustomerPhoneNumberListCtrl extends GFCBaseListCtrl<CustomerPhoneNu
 			Executions.createComponents(
 					"/WEB-INF/pages/CustomerMasters/CustomerPhoneNumber/CustomerPhoneNumberDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

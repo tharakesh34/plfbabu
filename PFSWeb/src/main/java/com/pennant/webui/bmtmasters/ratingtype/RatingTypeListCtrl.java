@@ -249,7 +249,6 @@ public class RatingTypeListCtrl extends GFCBaseListCtrl<RatingType> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/BMTMasters/RatingType/RatingTypeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

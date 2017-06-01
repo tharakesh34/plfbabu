@@ -256,7 +256,6 @@ public class InsurancePolicyListCtrl extends GFCBaseListCtrl<InsurancePolicy> im
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/InsurancePolicy/InsurancePolicyDialog.zul",
 					null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

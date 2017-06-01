@@ -252,7 +252,6 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtendedFieldDialog.zul",
 					null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

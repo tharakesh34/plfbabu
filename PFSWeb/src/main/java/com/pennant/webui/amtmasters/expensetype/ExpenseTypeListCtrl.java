@@ -233,7 +233,6 @@ public class ExpenseTypeListCtrl extends GFCBaseListCtrl<ExpenseType> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/AMTMasters/ExpenseType/ExpenseTypeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

@@ -19,7 +19,7 @@ public class PresentationDetailsDataMart extends DatabaseDataEngine implements R
 	private static final Logger logger = Logger.getLogger(PresentationDetailsDataMart.class);
 
 	public PresentationDetailsDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 	}
 
 	@Override

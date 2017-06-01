@@ -45,7 +45,7 @@ public class ApprovalStatusEnquiryDAOImpl implements ApprovalStatusEnquiryDAO {
 		if (facility) {
 	        selectSql.append(" from CustomerFacilityDetails");
         }else{
-        	selectSql.append(" from CustomerFinanceDetails");
+        	selectSql.append(",feeChargeAmt from CustomerFinanceDetails");
         	
         }
 		selectSql.append(StringUtils.trimToEmpty(type));

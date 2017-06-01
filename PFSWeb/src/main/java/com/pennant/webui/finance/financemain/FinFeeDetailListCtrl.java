@@ -1112,6 +1112,16 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				feeSchdMethCombo.addForward("onChange",window_FeeDetailList,"onChangeFeeScheduleMethod",amountBoxlist);
 			}
 		}
+		
+		// To Reset Totals
+		if(isReceiptsProcess && this.financeMainDialogCtrl != null){
+			try {
+				getFinanceMainDialogCtrl().getClass().getMethod("resetFeeAmounts").invoke(getFinanceMainDialogCtrl());
+			} catch (Exception e) {
+				logger.info(e);
+			}
+		}
+
 		logger.debug("Leaving");
 	}
 	
@@ -1416,7 +1426,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinInsuranceDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
 			MessageUtil.showError(e);
 		}
 

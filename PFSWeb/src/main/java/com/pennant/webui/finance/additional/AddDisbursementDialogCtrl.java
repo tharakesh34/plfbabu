@@ -86,6 +86,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.service.accounts.AccountsService;
+import com.pennant.backend.service.financemanagement.PresentmentHeaderService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -146,6 +147,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	private transient boolean validationOn;
 	private transient AddDisbursementService addDisbursementService;
+	private PresentmentHeaderService presentmentHeaderService; 
 
 	/**
 	 * default constructor.<br>
@@ -915,7 +917,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	/** To fill schedule dates */
 	private void fillSchDates(Combobox dateCombobox,
-			FinScheduleData financeDetail, Date fillAfter) {
+			FinScheduleData scheduleData, Date fillAfter) {
 		logger.debug("Entering");
 
 		dateCombobox.getChildren().clear();
@@ -924,11 +926,16 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
-		if (financeDetail.getFinanceScheduleDetails() != null) {
+		if (scheduleData.getFinanceScheduleDetails() != null) {
 			boolean checkForLastPaid = true;
 			
-			List<FinanceScheduleDetail> financeScheduleDetails = financeDetail
+			List<FinanceScheduleDetail> financeScheduleDetails = scheduleData
 					.getFinanceScheduleDetails();
+			
+			// Get Maximum Presentment Schedule Date
+			Date maxPresentmentDate = getPresentmentHeaderService().getMaxSchdPresentment(
+					scheduleData.getFinanceMain().getFinReference());
+			
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
@@ -961,6 +968,11 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				checkForLastPaid = false;
+				
+				// Excluding Present generated file Schedule Terms
+				if(maxPresentmentDate != null && maxPresentmentDate.compareTo(curSchd.getSchDate()) >= 0){
+					continue;
+				}
 
 				// New Disbursement Date Checking
 				if (this.fromDate.getValue() != null
@@ -1098,6 +1110,14 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	public void setFinFeeDetailListCtrl(FinFeeDetailListCtrl finFeeDetailListCtrl) {
 		this.finFeeDetailListCtrl = finFeeDetailListCtrl;
+	}
+
+	public PresentmentHeaderService getPresentmentHeaderService() {
+		return presentmentHeaderService;
+	}
+
+	public void setPresentmentHeaderService(PresentmentHeaderService presentmentHeaderService) {
+		this.presentmentHeaderService = presentmentHeaderService;
 	}
 
 }

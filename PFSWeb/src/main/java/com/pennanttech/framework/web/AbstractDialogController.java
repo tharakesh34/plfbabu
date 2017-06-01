@@ -287,7 +287,6 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		try {
 			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");

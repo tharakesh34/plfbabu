@@ -250,7 +250,6 @@ public class CustomerEMailListCtrl extends GFCBaseListCtrl<CustomerEMail> {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerEMail/CustomerEMailDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

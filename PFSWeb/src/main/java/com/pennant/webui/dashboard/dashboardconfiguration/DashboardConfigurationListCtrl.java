@@ -256,7 +256,6 @@ public class DashboardConfigurationListCtrl extends GFCBaseListCtrl<DashboardCon
 			Executions.createComponents(
 					"/WEB-INF/pages/DashBoards/DashBoardConfiguration/DashboardConfigurationDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

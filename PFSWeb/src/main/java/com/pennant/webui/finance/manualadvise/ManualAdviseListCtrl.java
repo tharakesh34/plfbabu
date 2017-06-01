@@ -256,7 +256,6 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

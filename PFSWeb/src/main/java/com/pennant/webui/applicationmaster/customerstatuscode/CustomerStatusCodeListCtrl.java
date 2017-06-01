@@ -245,7 +245,6 @@ public class CustomerStatusCodeListCtrl extends GFCBaseListCtrl<CustomerStatusCo
 			Executions.createComponents(
 					"/WEB-INF/pages/ApplicationMaster/CustomerStatusCode/CustomerStatusCodeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

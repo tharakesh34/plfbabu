@@ -3160,6 +3160,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 
 			if (!isMandAddExist) {
+				this.tabkYCDetails.setSelected(true);
+				if (tab != null) {
+					tab.setSelected(true);
+				}
+				this.tabkYCDetails.setSelected(true);
 				String msg = Labels.getLabel("CustomerEmail_High_Priority");
 				MultiLineMessageBox.show(msg, Labels.getLabel("title_CustomerEmail_Confirmation"),
 						MultiLineMessageBox.OK, Messagebox.ERROR, true);

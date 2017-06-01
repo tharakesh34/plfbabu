@@ -251,7 +251,6 @@ public class CustomerBalanceSheetListCtrl extends GFCBaseListCtrl<CustomerBalanc
 			Executions.createComponents(
 					"/WEB-INF/pages/CustomerMasters/CustomerBalanceSheet/CustomerBalanceSheetDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

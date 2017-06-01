@@ -46,6 +46,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String scheduleMethod;
 	private String pftDaysBasis;
 	private BigDecimal waviedAmt = BigDecimal.ZERO;
+	private BigDecimal totFeeAmount = BigDecimal.ZERO;
 	
 	private boolean newRecord;
 	private String lovValue;
@@ -426,6 +427,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setCustID(long custID) {
 		this.custID = custID;
+	}
+
+	public BigDecimal getTotFeeAmount() {
+		return totFeeAmount;
+	}
+
+	public void setTotFeeAmount(BigDecimal totFeeAmount) {
+		this.totFeeAmount = totFeeAmount;
 	}
 
 }

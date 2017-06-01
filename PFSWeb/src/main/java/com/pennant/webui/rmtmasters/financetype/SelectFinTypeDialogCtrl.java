@@ -237,7 +237,6 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 			this.window_SelectFinTypeDialog.onClose();
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

@@ -1077,6 +1077,65 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		logger.debug("Leaving");
 	}
+	
+	/**
+	 * Method for Resetting totals based on Modifications in Screen
+	 */
+	public void resetFeeAmounts(){
+		logger.debug("Entering");
+		
+		BigDecimal feeToBePaid = BigDecimal.ZERO;
+		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+		if(getFinFeeDetailListCtrl() != null){
+			feeToBePaid = getFinFeeDetailListCtrl().getFeePaidAmount(formatter);
+		}
+		
+		BigDecimal totReceiptAmount = getTotalReceiptAmount();
+		BigDecimal totReceivable = BigDecimal.ZERO;
+		if(totReceiptAmount.compareTo(BigDecimal.ZERO) > 0){
+			totReceivable = totReceiptAmount.add(feeToBePaid);
+		}
+		this.receipt_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(totReceivable, formatter));
+		this.allocation_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(totReceivable, formatter));
+		this.payment_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(totReceivable, formatter));
+		
+		BigDecimal totalDue = BigDecimal.ZERO;
+		BigDecimal totalPaid = BigDecimal.ZERO;
+		// Past due Details
+		if(this.listBoxPastdues.getFellowIfAny("allocation_totalDue") != null){
+			Label due = (Label) this.listBoxPastdues.getFellowIfAny("allocation_totalDue");
+			totalDue = PennantApplicationUtil.unFormateAmount(new BigDecimal(due.getValue().replaceAll(",", "")), formatter);
+		}
+		
+		if(this.listBoxPastdues.getFellowIfAny("allocation_totalPaid") != null){
+			Label paid = (Label) this.listBoxPastdues.getFellowIfAny("allocation_totalPaid");
+			totalPaid = PennantApplicationUtil.unFormateAmount(new BigDecimal(paid.getValue().replaceAll(",", "")), formatter);
+		}
+		
+		BigDecimal totalAdvDue = BigDecimal.ZERO;
+		BigDecimal totalAdvPaid = BigDecimal.ZERO;
+		// Manual Advises
+		if(this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalDue") != null){
+			Label due = (Label) this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalDue");
+			totalAdvDue = PennantApplicationUtil.unFormateAmount(new BigDecimal(due.getValue().replaceAll(",", "")), formatter);
+		}
+		
+		if(this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalPaid") != null){
+			Label paid = (Label) this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalPaid");
+			totalAdvPaid = PennantApplicationUtil.unFormateAmount(new BigDecimal(paid.getValue().replaceAll(",", "")), formatter);
+		}
+		
+		// User entered Receipt amounts and paid on manual Allocation validation
+		BigDecimal remBal = totReceiptAmount.subtract(totalPaid).subtract(totalAdvPaid); 
+		if(remBal.compareTo(BigDecimal.ZERO) < 0){
+			remBal = BigDecimal.ZERO;
+		}
+		
+		this.custPaid.setValue(PennantApplicationUtil.formateAmount(totalDue.add(totalAdvDue).add(feeToBePaid), formatter));
+		this.remBalAfterAllocation.setValue(PennantApplicationUtil.formateAmount(remBal, formatter));
+		
+		logger.debug("Leaving");
+	}
 
 	public void onFulfill$bankCode(Event event) {
 		logger.debug("Entering" + event.toString());
@@ -1383,34 +1442,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		// Allocation Process start
 		BigDecimal totReceiptAmount = getTotalReceiptAmount();
-		
-		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		this.receipt_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(totReceiptAmount, formatter));
-		this.allocation_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(totReceiptAmount, formatter));
-		this.payment_paidByCustomer.setValue(PennantApplicationUtil.formateAmount(totReceiptAmount, formatter));
-		
 		if(!StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_AUTO)){
-			
-			//Setting remaining Balance on Manual Allocation
-			if(StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_MANUAL)){
-				
-				BigDecimal totalPaid = BigDecimal.ZERO;
-				BigDecimal totalAdvPaid = BigDecimal.ZERO;
-				if(this.listBoxPastdues.getFellowIfAny("allocation_totalPaid") != null){
-					Label paid = (Label) this.listBoxPastdues.getFellowIfAny("allocation_totalPaid");
-					totalPaid = PennantApplicationUtil.unFormateAmount(new BigDecimal(paid.getValue().replaceAll(",", "")), formatter);
-				}
-				if(this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalPaid") != null){
-					Label paid = (Label) this.listBoxManualAdvises.getFellowIfAny("manAdvise_totalPaid");
-					totalAdvPaid = PennantApplicationUtil.unFormateAmount(new BigDecimal(paid.getValue().replaceAll(",", "")), formatter);
-				}
-				
-				BigDecimal remBal = totReceiptAmount.subtract(totalPaid).subtract(totalAdvPaid);
-				if(remBal.compareTo(BigDecimal.ZERO) < 0){
-					remBal = BigDecimal.ZERO;
-				}
-				this.remBalAfterAllocation.setValue(PennantApplicationUtil.formateAmount(remBal, formatter));
-			}
+			resetFeeAmounts();
 			logger.debug("Leaving");
 			return;
 		}
@@ -1430,6 +1463,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		doFillAllocationDetail(null, paidAllocatedMap, true);
+		resetFeeAmounts();
 		
 		logger.debug("Leaving");
 	}
@@ -1736,9 +1770,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			//Clear all the listitems in listbox
 			this.listBoxSchedule.getItems().clear();
-			/*this.listBoxSchedule.setSizedByContent(true);
-			this.listBoxSchedule.setStyle("hflex:min;");*/
-
 			aFinScheduleData.setFinanceScheduleDetails(sortSchdDetails(aFinScheduleData.getFinanceScheduleDetails()));
 
 			for (int i = 0; i < aFinScheduleData.getFinanceScheduleDetails().size(); i++) {
@@ -2287,7 +2318,16 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				
 				FinReceiptData data = getReceiptData();
 				List<FinReceiptDetail> receiptDetails = data.getReceiptHeader().getReceiptDetails();
-				data.getReceiptHeader().setReceiptAmount(getTotalReceiptAmount());
+				
+				int finFormatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+				BigDecimal totReceiptAmt = getTotalReceiptAmount();
+				BigDecimal feeAmount = BigDecimal.ZERO;
+				if(getFinFeeDetailListCtrl() != null){
+					feeAmount = getFinFeeDetailListCtrl().getFeePaidAmount(finFormatter);
+				}
+				totReceiptAmt = totReceiptAmt.add(feeAmount);
+				data.getReceiptHeader().setTotFeeAmount(feeAmount);
+				data.getReceiptHeader().setReceiptAmount(totReceiptAmt);
 				
 				for (FinReceiptDetail receiptDetail : receiptDetails) {
 					if(!StringUtils.equals(RepayConstants.RECEIPTMODE_EXCESS, data.getReceiptHeader().getReceiptMode()) && 
@@ -2731,7 +2771,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		appendCustomerDetailTab();
 
 		//Fee Details Tab Addition
-		appendFeeDetailTab(false);
+		boolean isLoadProcess = false;
+		if(StringUtils.isNotEmpty(getFinanceDetail().getFinScheduleData().getFinanceMain().getRecordType())){
+			isLoadProcess = true;
+		}
+		appendFeeDetailTab(isLoadProcess);
 
 		// Schedule Details
 		if(visibleSchdTab){
@@ -3154,6 +3198,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		this.remBalAfterAllocation.setValue(PennantApplicationUtil.formateAmount(remBal, finFormatter));
 		this.custPaid.setValue(PennantApplicationUtil.formateAmount(totalDueAmount.add(totalAdvDueAmount), finFormatter));
+		
 		if(this.remBalAfterAllocation.getValue().compareTo(BigDecimal.ZERO) > 0){
 			
 			if(StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)){

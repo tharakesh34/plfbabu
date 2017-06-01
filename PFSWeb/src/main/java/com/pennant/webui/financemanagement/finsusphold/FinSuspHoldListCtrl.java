@@ -263,7 +263,6 @@ public class FinSuspHoldListCtrl extends GFCBaseListCtrl<FinSuspHold> {
 			Executions
 					.createComponents("/WEB-INF/pages/FinanceManagement/FinSuspHold/FinSuspHoldDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

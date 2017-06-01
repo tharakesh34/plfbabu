@@ -242,7 +242,6 @@ public class PRelationCodeListCtrl extends GFCBaseListCtrl<PRelationCode> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/PRelationCode/PRelationCodeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

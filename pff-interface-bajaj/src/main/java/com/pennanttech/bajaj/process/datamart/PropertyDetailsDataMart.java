@@ -19,7 +19,7 @@ public class PropertyDetailsDataMart extends DatabaseDataEngine implements Runna
 	private static final Logger	logger	= Logger.getLogger(PropertyDetailsDataMart.class);
 
 	public PropertyDetailsDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 	}
 
 	@Override

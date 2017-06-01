@@ -246,7 +246,6 @@ public class CustomerIncomeListCtrl extends GFCBaseListCtrl<CustomerIncome> {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerIncome/CustomerIncomeDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

@@ -236,7 +236,6 @@ public class SukukBrokerListCtrl extends GFCBaseListCtrl<SukukBroker> {
 			Executions
 					.createComponents("/WEB-INF/pages/ApplicationMaster/SukukBroker/SukukBrokerDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

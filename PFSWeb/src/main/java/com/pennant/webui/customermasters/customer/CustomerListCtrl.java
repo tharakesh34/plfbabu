@@ -259,7 +259,6 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

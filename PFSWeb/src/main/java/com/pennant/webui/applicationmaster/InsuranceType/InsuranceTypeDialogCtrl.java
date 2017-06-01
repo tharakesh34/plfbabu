@@ -431,7 +431,6 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/InsuranceType/InsuranceTypeProviderDialog.zul", null,
 					map);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

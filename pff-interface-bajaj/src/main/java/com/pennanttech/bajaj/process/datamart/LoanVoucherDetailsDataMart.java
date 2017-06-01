@@ -19,7 +19,7 @@ public class LoanVoucherDetailsDataMart extends DatabaseDataEngine implements Ru
 	private static final Logger logger = Logger.getLogger(LoanVoucherDetailsDataMart.class);
 
 	public LoanVoucherDetailsDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 	}
 
 	@Override

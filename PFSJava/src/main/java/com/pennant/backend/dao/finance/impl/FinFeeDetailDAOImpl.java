@@ -519,5 +519,48 @@ public class FinFeeDetailDAOImpl extends BasisNextidDaoImpl<FinFeeDetail> implem
 		return finSummary;
     }
 	
+	/**
+	 * Fetch the Record  Goods Details details by key field
+	 * 
+	 * @param id (String)
+	 * @param  type (String)
+	 * 			""/_Temp/_View          
+	 * @return FinFeeDetail
+	 */
+	@Override
+	public FinFeeDetail getVasFeeDetailById(String vasReference, boolean isWIF, String type) {
+		logger.debug("Entering");
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT FeeID, FinReference, OriginationFee, FinEvent, FeeTypeID, FeeSeq, FeeOrder, CalculatedAmount, ActualAmount," );
+		selectSql.append(" WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee, PaymentRef, CalculationType, VasReference," );
+		selectSql.append(" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd," );
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId " );
+		if(StringUtils.trimToEmpty(type).contains("View")){
+			selectSql.append(",FeeTypeCode,FeeTypeDesc ");
+		}
+		if(isWIF){
+			selectSql.append(" From WIFFinFeeDetail");
+		}else{
+			selectSql.append(" From FinFeeDetail");
+		}
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" WHERE VasReference = :VasReference ");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
+		
+		MapSqlParameterSource parameter = new MapSqlParameterSource();
+		parameter.addValue("VasReference", vasReference);
+		
+		FinFeeDetail finFeeDetail = null;
+		try{
+			finFeeDetail = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), parameter, typeRowMapper);	
+		}catch (EmptyResultDataAccessException e) {
+			finFeeDetail = null;
+		}
+		logger.debug("Leaving");
+		return finFeeDetail;
+	}
 	
 }

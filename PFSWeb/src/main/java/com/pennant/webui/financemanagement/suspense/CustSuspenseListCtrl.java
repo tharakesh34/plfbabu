@@ -292,7 +292,6 @@ public class CustSuspenseListCtrl extends GFCBaseListCtrl<Customer> {
 						arg);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
 			MessageUtil.showError(e);
 		}
 

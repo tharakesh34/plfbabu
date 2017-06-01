@@ -1394,7 +1394,6 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 				closeDialog();
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");

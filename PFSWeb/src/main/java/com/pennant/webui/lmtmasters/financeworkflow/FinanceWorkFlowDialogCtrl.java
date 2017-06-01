@@ -754,7 +754,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
-
+		
+		int count = financeWorkFlowService.getVASProductCode(getFinanceWorkFlow().getFinType());
 		if (getFinanceWorkFlow().isNewRecord()){
 			this.finType.setReadonly(false);
 			this.moduleName.setDisabled(false);
@@ -784,6 +785,9 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 		}else{
 			this.btnCtrl.setBtnStatus_Edit();
 			btnCancel.setVisible(true);
+		}
+		if(isVAS && count > 0){
+			this.btnDelete.setVisible(false);
 		}
 
 		logger.debug("Leaving");

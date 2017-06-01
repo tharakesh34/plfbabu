@@ -80,6 +80,7 @@ import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
+import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.ManualPaymentService;
@@ -121,6 +122,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	private PartnerBankDAO				partnerBankDAO;
 	private ManualPaymentService		manualPaymentService;
 	private RepayCalculator				repayCalculator;
+	private FinFeeDetailService			finFeeDetailService;
 
 	/**
 	 * Method for process AddRateChange request and re-calculate schedule details
@@ -313,7 +315,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		logger.debug("Enteing");
 
 		// fetch finance data
-		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, AccountEventConstants.ACCEVENT_DEFRPY);
+		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, eventCode);
 
 		if (financeDetail != null) {
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -395,7 +397,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		logger.debug("Enteing");
 
 		// fetch finance data
-		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, AccountEventConstants.ACCEVENT_SCDCHG);
+		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, eventCode);
 
 		if (financeDetail != null) {
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -467,7 +469,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		logger.debug("Enteing");
 
 		// fetch finance data
-		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, AccountEventConstants.ACCEVENT_SCDCHG);
+		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, eventCode);
 
 		if (financeDetail != null) {
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -554,7 +556,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		logger.debug("Enteing");
 
 		// fetch finance data
-		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, AccountEventConstants.ACCEVENT_SCDCHG);
+		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, eventCode);
 
 		if (financeDetail != null) {
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -788,7 +790,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		logger.debug("Enteing");
 
 		// fetch finance data
-		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, AccountEventConstants.ACCEVENT_SCDCHG);
+		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, eventCode);
 
 		if (financeDetail != null) {
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -873,7 +875,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		logger.debug("Enteing");
 
 		// fetch finance data
-		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, FinanceConstants.FINSER_EVENT_RMVTERM);
+		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, eventCode);
 		if (financeDetail != null) {
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 
@@ -945,7 +947,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		logger.debug("Enteing");
 
 		// fetch finance data
-		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, AccountEventConstants.ACCEVENT_SCDCHG);
+		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, eventCode);
 		if (financeDetail != null) {
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 
@@ -1023,7 +1025,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		logger.debug("Enteing");
 
 		// fetch finance data
-		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, AccountEventConstants.ACCEVENT_EARLYSTL);
+		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, eventCode);
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 
 		//Fetch Total Repayment Amount till Maturity date for Early Settlement
@@ -1084,7 +1086,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		logger.debug("Enteing");
 
 		// fetch finance data
-		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, AccountEventConstants.ACCEVENT_EARLYPAY);
+		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, eventCode);
 		finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYRPY);
 
 		FinanceDetail response = null;
@@ -1123,7 +1125,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		logger.debug("Enteing");
 
 		// fetch finance data
-		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, AccountEventConstants.ACCEVENT_REPAY);
+		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, eventCode);
 		finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_SCHDRPY);
 
 		FinanceDetail response = null;
@@ -1212,8 +1214,14 @@ public class FinServiceInstController extends SummaryDetailService {
 		Date receiDate = DateUtility.getDBDate(DateUtility.formatDate(finReceiptDetail.getReceivedDate(),
 				PennantConstants.DBDateFormat));
 		
+		// calculate total fee amount
+		BigDecimal totFeeAmount = getTotalFeePaid(financeDetail.getFinScheduleData().getFinFeeDetailList());
+		receiptHeader.setTotFeeAmount(totFeeAmount);
+		BigDecimal totReceiptAmt = receiptHeader.getReceiptAmount().subtract(totFeeAmount);
+		
+		// calculate allocations
 		Map<String, BigDecimal> allocationMap = receiptCalculator.recalAutoAllocation(financeDetail.getFinScheduleData(), 
-				receiptHeader.getReceiptAmount(), receiptHeader.getReceiptPurpose());
+				totReceiptAmt, receiptHeader.getReceiptPurpose());
 		finReceiptData.setAllocationMap(allocationMap);
 
 		if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYRPY)
@@ -1242,6 +1250,10 @@ public class FinServiceInstController extends SummaryDetailService {
 				return response;
 			}
 		}
+		
+		// set fees details into finReceiptData
+		finScheduleData = finReceiptData.getFinanceDetail().getFinScheduleData();
+		finScheduleData.setFinFeeDetailList(aFinanceDetail.getFinScheduleData().getFinFeeDetailList());
 		if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {
 			int count = finTypePartnerBankService.getPartnerBankCount(financeMain.getFinType(), finServiceInst.getPaymentMode(),
 					AccountConstants.PARTNERSBANK_RECEIPTS, finReceiptDetail.getFundingAc());
@@ -1332,8 +1344,6 @@ public class FinServiceInstController extends SummaryDetailService {
 						actFinSchedule.setTDSPaid(actFinSchedule.getTDSPaid().add(chgdFinSchedule.getTdsSchdPayNow()));
 						actFinSchedule.setSchdFeePaid(actFinSchedule.getSchdFeePaid().add(chgdFinSchedule.getSchdFeePayNow()));
 						actFinSchedule.setSchdInsPaid(actFinSchedule.getSchdInsPaid().add(chgdFinSchedule.getSchdInsPayNow()));
-						//actFinSchedule.setPenaltyPayNow(chgdFinSchedule.getPenaltyPayNow());
-						//actFinSchedule.setLatePftSchdPayNow(chgdFinSchedule.getLatePftSchdPayNow().add(rpySchd.getLatePftSchdPayNow()));
 					}
 				}
 			}
@@ -1345,6 +1355,18 @@ public class FinServiceInstController extends SummaryDetailService {
 		}
 		logger.debug("Leaving");
 		return financeDetail;
+	}
+
+	private BigDecimal getTotalFeePaid(List<FinFeeDetail> finFeeDetailList) {
+		BigDecimal totFeeAmount = BigDecimal.ZERO;
+		if(finFeeDetailList != null) {
+			for(FinFeeDetail feeDetail: finFeeDetailList) {
+				if(!feeDetail.isOriginationFee()) {
+					totFeeAmount = totFeeAmount.add(feeDetail.getPaidAmount());
+				}
+			}
+		}
+		return totFeeAmount;
 	}
 
 	/**
@@ -1424,6 +1446,15 @@ public class FinServiceInstController extends SummaryDetailService {
 		response.getFinScheduleData().setFinanceSummary(summaryDetail);
 		response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
+		if(finScheduleData.getFinFeeDetailList() != null) {
+			List<FinFeeDetail> srvFeeList = new ArrayList<FinFeeDetail>();
+			for(FinFeeDetail feeDetail:finScheduleData.getFinFeeDetailList()) {
+				if(!feeDetail.isOriginationFee()) {
+					srvFeeList.add(feeDetail);
+				}
+			}
+			finScheduleData.setFinFeeDetailList(srvFeeList);
+		}
 		finScheduleData.setFinanceMain(null);
 		finScheduleData.setDisbursementDetails(null);
 		finScheduleData.setFinReference(null);
@@ -1579,8 +1610,16 @@ public class FinServiceInstController extends SummaryDetailService {
 		} else {
 			financeDetail = financeDetailService.getWIFFinance(finReference, false, null);
 		}
-
+		
+		List<FinFeeDetail> finServicingFeeList = finFeeDetailService.getFinFeeDetailById(finReference, false, "_TView", eventCode);
+		financeDetail.getFinScheduleData().setFinFeeDetailList(finServicingFeeList);
+		
 		if (financeDetail != null) {
+			if(financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
+				for(FinFeeDetail feeDetail:financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+						feeDetail.setOriginationFee(true);
+				}
+			}
 			financeDetail.setAccountingEventCode(eventCode);
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 			financeDetail.getFinScheduleData().getFinanceMain().setUserDetails(userDetails);
@@ -1755,5 +1794,9 @@ public class FinServiceInstController extends SummaryDetailService {
 
 	public void setManualPaymentService(ManualPaymentService manualPaymentService) {
 		this.manualPaymentService = manualPaymentService;
+	}
+
+	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
+		this.finFeeDetailService = finFeeDetailService;
 	}
 }

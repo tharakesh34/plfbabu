@@ -779,7 +779,6 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 				}
 
 			} catch (final DataAccessException e) {
-				logger.error(e);
 				MessageUtil.showError(e);
 			}
 			logger.debug("Leaving");

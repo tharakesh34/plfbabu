@@ -10,10 +10,10 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennanttech.pff.core.Literal;
-import com.pennanttech.pff.core.services.ResponseDisbursementService;
+import com.pennanttech.pff.core.services.DisbursementResponse;
 import com.pennanttech.pff.core.services.disbursement.DisbursementProcess;
 
-public class DisbursementResponseService extends BajajService implements ResponseDisbursementService {
+public class DisbursementResponseService extends BajajService implements DisbursementResponse {
 	private final Logger		logger	= Logger.getLogger(getClass());
 
 	@Autowired

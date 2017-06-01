@@ -245,7 +245,6 @@ public class CommodityDetailListCtrl extends GFCBaseListCtrl<CommodityDetail> {
 			Executions.createComponents("/WEB-INF/pages/Finance/Commodity/CommodityDetail/CommodityDetailDialog.zul",
 					null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

@@ -2731,6 +2731,7 @@
 		<property name="accountsService" ref="accountsService" />
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="addDisbursementService" ref="addDisbursementService" />
+		<property name="presentmentHeaderService" ref="presentmentHeaderService" />
 	</bean>
 
 	<!--============ Add/Remove Term Finance Maintainance Details ============== -->
@@ -4467,19 +4468,6 @@
 	<bean id="dataEngineConfig" class="com.pennanttech.dataengine.config.DataEngineConfig">
 		<constructor-arg ref="pfsDatasource" />
 	</bean>
-	<bean id="dataImportCtrl"
-		class="com.pennanttech.framework.component.dataengine.DataImportCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="dataEngineConfig" ref="dataEngineConfig" />
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-	<bean id="dataExportCtrl"
-		class="com.pennanttech.framework.component.dataengine.DataExportCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="dataEngineConfig" ref="dataEngineConfig" />
-		<property name="dataSource" ref="pfsDatasource" />
-	</bean>
-
 
 	<!-- Promotion -->
 	<bean id="promotionListCtrl"
@@ -4773,4 +4761,16 @@
 	<bean id="eODConfigDialogCtrl" class="com.pennant.webui.eod.eodconfig.EODConfigDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="eODConfigService" ref="eODConfigService"/>
 	</bean>
+	
+	<!-- PinCodes -->
+	
+	<bean id="pinCodeListCtrl" class="com.pennant.webui.applicationmaster.pincode.PinCodeListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="pinCodeService" ref="pinCodeService" />
+	</bean>
+	<bean id="pinCodeDialogCtrl" class="com.pennant.webui.applicationmaster.pincode.PinCodeDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="pinCodeService" ref="pinCodeService"/>
+	</bean>
+	
+	
 </beans>

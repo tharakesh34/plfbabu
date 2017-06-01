@@ -234,7 +234,6 @@ public class FrequencyListCtrl extends GFCBaseListCtrl<Frequency> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/StaticParms/Frequency/FrequencyDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

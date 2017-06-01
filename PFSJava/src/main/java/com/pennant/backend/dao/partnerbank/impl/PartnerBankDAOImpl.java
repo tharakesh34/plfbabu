@@ -108,7 +108,7 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		selectSql
 				.append("Select PartnerBankId, PartnerBankCode, PartnerBankName, BankCode, BankBranchCode, BranchMICRCode, BranchIFSCCode, BranchCity, UtilityCode, AccountNo ");
 		selectSql
-				.append(", AcType, AlwFileDownload, InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt, HostGLCode, ProfitCenterID, CostCenterID");
+				.append(", AcType, AlwFileDownload, InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt, HostGLCode, ProfitCenterID, CostCenterID, FileName");
 		selectSql
 				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
@@ -180,10 +180,10 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		StringBuilder sql = new StringBuilder("insert into PartnerBanks");
 		sql.append(tableType.getSuffix());
 		sql.append(" ( PartnerBankId, PartnerBankCode, PartnerBankName, BankCode, BankBranchCode, BranchMICRCode, BranchIFSCCode, BranchCity, UtilityCode, AccountNo ");
-		sql.append(", AcType, AlwFileDownload,  InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt, HostGLCode, ProfitCenterID, CostCenterID ");
+		sql.append(", AcType, AlwFileDownload,  InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt, HostGLCode, ProfitCenterID, CostCenterID, FileName ");
 		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values( :PartnerBankId, :PartnerBankCode, :PartnerBankName, :BankCode, :BankBranchCode, :BranchMICRCode, :BranchIFSCCode, :BranchCity, :UtilityCode, :AccountNo ");
-		sql.append(", :AcType, :AlwFileDownload, :InFavourLength, :Active, :AlwDisb, :AlwPayment, :AlwReceipt, :HostGLCode, :ProfitCenterID, :CostCenterID");
+		sql.append(", :AcType, :AlwFileDownload, :InFavourLength, :Active, :AlwDisb, :AlwPayment, :AlwReceipt, :HostGLCode, :ProfitCenterID, :CostCenterID, :FileName");
 		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Get the identity sequence number.
@@ -213,7 +213,7 @@ public class PartnerBankDAOImpl extends BasisNextidDaoImpl<PartnerBank> implemen
 		StringBuilder sql = new StringBuilder("update PartnerBanks");
 		sql.append(tableType.getSuffix());
 		sql.append(" set PartnerBankName = :PartnerBankName, BankCode = :BankCode, BankBranchCode = :BankBranchCode, BranchMICRCode = :BranchMICRCode, BranchIFSCCode = :BranchIFSCCode, BranchCity = :BranchCity, UtilityCode = :UtilityCode, AccountNo = :AccountNo");
-		sql.append(" , AcType = :AcType, AlwFileDownload = :AlwFileDownload,  InFavourLength = :InFavourLength,  Active = :Active, AlwDisb = :AlwDisb, AlwPayment = :AlwPayment, AlwReceipt = :AlwReceipt, HostGLCode = :HostGLCode, ProfitCenterID = :ProfitCenterID, CostCenterID = :CostCenterID");
+		sql.append(" , AcType = :AcType, AlwFileDownload = :AlwFileDownload,  InFavourLength = :InFavourLength,  Active = :Active, AlwDisb = :AlwDisb, AlwPayment = :AlwPayment, AlwReceipt = :AlwReceipt, HostGLCode = :HostGLCode, ProfitCenterID = :ProfitCenterID, CostCenterID = :CostCenterID, FileName = :FileName");
 		sql.append(", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where PartnerBankId =:PartnerBankId");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));

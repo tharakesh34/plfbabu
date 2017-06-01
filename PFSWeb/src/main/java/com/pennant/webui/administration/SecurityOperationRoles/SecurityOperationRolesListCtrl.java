@@ -217,7 +217,6 @@ public class SecurityOperationRolesListCtrl extends GFCBaseListCtrl<SecurityOper
 			Executions.createComponents(
 					"/WEB-INF/pages/Administration/SecurityOperationRoles/SecurityOperationRolesDialog.zul", null, aruments);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

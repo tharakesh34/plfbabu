@@ -229,7 +229,6 @@ public class FinanceRepayPriorityListCtrl extends GFCBaseListCtrl<FinanceRepayPr
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceRepayPriority/FinanceRepayPriorityDialog.zul",
 					null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

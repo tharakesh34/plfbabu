@@ -250,7 +250,6 @@ public class SukukBondListCtrl extends GFCBaseListCtrl<SukukBond> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/SukukBond/SukukBondDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

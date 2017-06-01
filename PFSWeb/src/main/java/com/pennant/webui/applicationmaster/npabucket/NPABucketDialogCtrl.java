@@ -638,7 +638,6 @@ public class NPABucketDialogCtrl extends GFCBaseCtrl<NPABucket>{
 				}
 
 			} catch (final DataAccessException e) {
-				logger.error(e);
 				MessageUtil.showError(e);
 			}
 			logger.debug("Leaving");

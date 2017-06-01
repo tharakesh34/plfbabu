@@ -248,7 +248,6 @@ public class WeekendMasterListCtrl extends GFCBaseListCtrl<WeekendMaster> {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/WeekendMaster/WeekendMasterDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

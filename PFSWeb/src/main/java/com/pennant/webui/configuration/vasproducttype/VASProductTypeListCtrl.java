@@ -251,7 +251,6 @@ public class VASProductTypeListCtrl extends GFCBaseListCtrl<VASProductType> {
 			Executions.createComponents("/WEB-INF/pages/VASProductType/VASProductTypeDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

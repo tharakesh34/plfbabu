@@ -337,7 +337,6 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
 			MessageUtil.showError(e);
 		}
 

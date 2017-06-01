@@ -239,7 +239,6 @@ public class SplRateListCtrl extends GFCBaseListCtrl<SplRate> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/SplRate/SplRateDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

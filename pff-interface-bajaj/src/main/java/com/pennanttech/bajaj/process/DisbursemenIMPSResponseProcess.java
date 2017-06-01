@@ -20,8 +20,8 @@ public class DisbursemenIMPSResponseProcess extends DatabaseDataEngine {
 
 	List<Long> disbIdList = null;
 
-	public DisbursemenIMPSResponseProcess(DataSource dataSource, long userId, Date valueDate, List<Long> disbIdList) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+	public DisbursemenIMPSResponseProcess(DataSource dataSource, long userId, Date valueDate, List<Long> disbIdList,boolean logBatch) {
+		super(dataSource, App.DATABASE.name(), userId, logBatch, valueDate);
 		this.disbIdList = disbIdList;
 	}
 

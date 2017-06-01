@@ -251,7 +251,6 @@ public class BankBranchListCtrl extends GFCBaseListCtrl<BankBranch> implements S
 		try {
 			Executions.createComponents("/WEB-INF/pages/BMTMasters/BankBranch/BankBranchDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

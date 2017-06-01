@@ -252,7 +252,6 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/Blacklist/BlacklistCustomerDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

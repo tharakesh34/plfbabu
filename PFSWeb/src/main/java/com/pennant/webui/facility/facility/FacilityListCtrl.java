@@ -359,7 +359,6 @@ public class FacilityListCtrl extends GFCBaseListCtrl<Facility> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Facility/Facility/FacilityDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

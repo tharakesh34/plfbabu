@@ -240,7 +240,6 @@ public class IdentityDetailsListCtrl extends GFCBaseListCtrl<IdentityDetails> {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/IdentityDetails/IdentityDetailsDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

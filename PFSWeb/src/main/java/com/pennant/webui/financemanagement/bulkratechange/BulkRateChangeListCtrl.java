@@ -208,7 +208,6 @@ public class BulkRateChangeListCtrl extends GFCBaseListCtrl<BulkRateChangeHeader
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/BulkRateChange/BulkRateChangeDialog.zul",
 					null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

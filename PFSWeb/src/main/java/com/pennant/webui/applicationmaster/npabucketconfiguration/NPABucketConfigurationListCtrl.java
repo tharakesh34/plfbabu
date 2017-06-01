@@ -243,7 +243,6 @@ public class NPABucketConfigurationListCtrl extends GFCBaseListCtrl<NPABucketCon
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/NPABucketConfiguration/NPABucketConfigurationDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

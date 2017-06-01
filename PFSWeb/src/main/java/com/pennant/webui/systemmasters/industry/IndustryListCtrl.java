@@ -242,7 +242,6 @@ public class IndustryListCtrl extends GFCBaseListCtrl<Industry> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/Industry/IndustryDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

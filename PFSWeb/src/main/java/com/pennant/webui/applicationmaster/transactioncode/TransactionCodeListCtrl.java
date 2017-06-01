@@ -250,7 +250,6 @@ public class TransactionCodeListCtrl extends GFCBaseListCtrl<TransactionCode> {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/TransactionCode/TransactionCodeDialog.zul",
 					null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");

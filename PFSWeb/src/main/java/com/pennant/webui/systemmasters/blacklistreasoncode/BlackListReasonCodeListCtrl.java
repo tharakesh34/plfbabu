@@ -254,7 +254,6 @@ public class BlackListReasonCodeListCtrl extends GFCBaseListCtrl<BlackListReason
 			Executions.createComponents(
 					"/WEB-INF/pages/SystemMaster/BlackListReasonCode/BlackListReasonCodeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

@@ -236,6 +236,14 @@
 									<checkbox id="reqFileDownload"
 										checked="false" />
 								</hlayout>
+								<label
+									id="label_PartnerBankDialog_Filename"
+									value="${c:l('label_PartnerBankDialog_FileName.value')}" />
+								<hlayout>
+									<space id="space_FileName"  spacing="2px" />
+									<textbox id="fileName"
+										maxlength="15" width="100" />
+								</hlayout>
 							</row>
 							<row>						
 								<label

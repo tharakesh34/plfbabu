@@ -237,7 +237,6 @@ public class DeviationParamListCtrl extends GFCBaseListCtrl<DeviationParam> {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/DeviationParam/DeviationParamDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

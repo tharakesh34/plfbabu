@@ -289,7 +289,6 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

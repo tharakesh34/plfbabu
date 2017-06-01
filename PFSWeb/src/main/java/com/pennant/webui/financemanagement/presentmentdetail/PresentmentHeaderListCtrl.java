@@ -293,7 +293,6 @@ public class PresentmentHeaderListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

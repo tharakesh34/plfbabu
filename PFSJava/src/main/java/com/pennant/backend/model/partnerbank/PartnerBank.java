@@ -76,6 +76,7 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 	private String				accountNo;
 	private String				acType;
 	private String 				acTypeName;
+	private String 				fileName;
 	private boolean				alwFileDownload;
 	private int					inFavourLength;
 	private boolean				active;
@@ -364,6 +365,14 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity{
 
 	public void setCostCenterID(String costCenterID) {
 		this.costCenterID = costCenterID;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 
 

@@ -342,7 +342,6 @@ public class SuspenseListCtrl extends GFCBaseListCtrl<FinanceSuspHead> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
 			MessageUtil.showError(e);
 		}
 

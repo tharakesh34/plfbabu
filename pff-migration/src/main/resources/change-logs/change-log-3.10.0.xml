@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	
+	<changeSet id="01" author="Surekha">
+		<createTable tableName="PinCodes">
+			<column name="PinCodeId" type="bigint">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="PinCode" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="City" type="varchar(8)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="02" author="Surekha">
+		<createTable tableName="PinCodes_Temp">
+			<column name="PinCodeId" type="bigint">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="PinCode" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="City" type="varchar(8)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="03" author="Surekha">
+		 <createTable tableName="SeqPinCodes">
+			<column name="SeqNo" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="04" author="Surekha">
+		<sql>
+			insert into SeqPinCodes values (0);
+		</sql>
+	</changeSet>
+	<changeSet id="05" author="Surekha">
+		<createView viewName="PinCodes_View" replaceIfExists="true">
+			SELECT		T1.PinCodeId, T1.PinCode, T1.City,T2.PCCityName, T1.Active		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	PinCodes_Temp  T1 INNER JOIN
+						RMTPROVINCEVSCITY  T2 ON T1.City=T2.PCCity
+			UNION ALL
+			
+			SELECT		T1.PinCodeId, T1.PinCode, T1.City, T2.PCCityName, T1.Active		
+						, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	PinCodes  T1 INNER JOIN
+						RMTPROVINCEVSCITY  T2 ON T1.City=T2.PCCity
+			WHERE     NOT EXISTS (SELECT 1 FROM PinCodes_TEMP WHERE PinCodeId = T1.PinCodeId)
+		</createView>
+	</changeSet>
+	<changeSet id="06" author="Surekha">
+		<createView viewName="PinCodes_AView" replaceIfExists="true">
+			SELECT		T1.PinCodeId, T1.PinCode, T1.City,T2.PCCityName, T1.Active		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	PinCodes  T1 INNER JOIN
+						RMTPROVINCEVSCITY  T2 ON T1.City=T2.PCCity
+		</createView>
+	</changeSet>
+	
+	<changeSet id="07"  author="Surekha">
+		<sql>
+		
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			
+			INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'PINCODE_VIEW', 'Allow to view PinCode', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups), 'PINCODE_MAKER', 'WF Maker for PinCode', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups), 'PINCODE_APPROVER', 'WF Approver for PinCode', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			
+			INSERT INTO SecRights SELECT (select (SeqNo+3) from SeqSecRights),0,'menuItem_master_PinCode','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+4) from SeqSecRights),0,'menuItem_master_PinCodeEnquiry','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+5) from SeqSecRights),2,'button_PinCodeList_PrintList','PinCodeList',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+6) from SeqSecRights),2,'button_PinCodeList_NewPinCode','PinCodeList',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+7) from SeqSecRights),2,'button_PinCodeDialog_btnNew','PinCodeDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+8) from SeqSecRights),2,'button_PinCodeDialog_btnEdit','PinCodeDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+9) from SeqSecRights),2,'button_PinCodeDialog_btnDelete','PinCodeDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10) from SeqSecRights),2,'button_PinCodeDialog_btnSave','PinCodeDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+1) from SeqSecRights),3,'PinCodeDialog_PinCodeId','PinCodeDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+2) from SeqSecRights),3,'PinCodeDialog_PinCode','PinCodeDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+3) from SeqSecRights),3,'PinCodeDialog_City','PinCodeDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select (SeqNo+10+4) from SeqSecRights),3,'PinCodeDialog_Active','PinCodeDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+15) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+16) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+6) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+17) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+9) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+18) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+19) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+1) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+2) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+1) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+3) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+20+2) from SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select (SeqNo+10+4) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+23) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+3) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+24) from SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select (SeqNo+10) from SeqSecRights),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups), (select (SeqNo+2) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups), (select (SeqNo+3) from SeqSecGroups), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			
+			INSERT INTO PTMenuDetails SELECT (select (SeqNo+1) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'PinCode','menu_Item_PinCode','/WEB-INF/pages/ApplicationMaster/PinCode/PinCodeList.zul',0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,'menuItem_master_PinCode' FROM SeqPTMenuDetails WHERE 0=0;
+			INSERT INTO PTMenuDetails SELECT (select (SeqNo+2) from SeqPTMenuDetails),(SELECT AppID FROM PTApplicationDetails WHERE AppCode='PFS'),'PinCodeEnquiry','menu_Item_PinCodeEnquiry?enqiryModule=Y" ','/WEB-INF/pages/ApplicationMaster/PinCode/PinCodeEnquiryList.zul',0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,'menuItem_master_PinCode' FROM SeqPTMenuDetails WHERE 0=0;
+			
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>
+	</changeSet>
+	<changeSet id="08" author="Surekha">
+		<sql>
+			INSERT INTO ReportList Values('PinCode','PinCode','listheader_PinCode.label,listheader_City.label,listheader_Active.label,label.RecordStatus,label.RecordType,','pinCode,city,active,recordStatus,recordType','String,String,boolean,String,String','','ReportList05','Pin Code','Application Master',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
+		</sql>
+	</changeSet>
+	<changeSet id="09" author="Surekha">
+		<sql>
+			update REPORTLIST set FieldValues='pinCode,pCCityName,active,recordStatus,recordType' where code='PinCode';
+		</sql>
+	</changeSet>
+	<changeSet id="10" author="Surekha">
+		<addColumn tableName="PartnerBanks">
+			<column name="fileName" type="varchar(30)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="11" author="Surekha">
+		<addColumn tableName="PartnerBanks_temp">
+			<column name="fileName" type="varchar(30)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="12" author="Surekha">
+		<createView viewName="PARTNERBANKS_VIEW" replaceIfExists="true">
+			 SELECT 		T1.PartnerBankId, T1.PartnerBankCode, T1.PartnerBankName, T1.BankCode, T1.BankBranchCode, T1.BranchMICRCode, T1.BranchIFSCCode, T1.BranchCity, T1.UtilityCode, 
+						T1.AccountNo, T1.AcType, T1.AlwFileDownload, T1.AlwDisb, T1.AlwPayment, T1.AlwReceipt, T1.InFavourLength, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.BankName BankCodeName,T3.BranchDesc BankBranchCodeName,
+						T4.AcTypeDesc AcTypeName,T1.HostGLCode, T1.ProfitCenterID, T1.CostCenterID, T1.FileName
+			FROM    	PARTNERBANKS_Temp  T1 INNER JOIN
+						BMTBANKDETAIL T2  on T1.BANKCODE=T2.BANKCODE inner join
+						BankBranches T3  ON T1.BankBranchCode = T3.BranchCode and T1.bankcode=T3.bankcode INNER JOIN
+						RMTAccountTypes T4 ON T1.AcType = T4.AcType
+			UNION ALL
+			SELECT 		T1.PartnerBankId, T1.PartnerBankCode, T1.PartnerBankName, T1.BankCode, T1.BankBranchCode, T1.BranchMICRCode, T1.BranchIFSCCode, T1.BranchCity, T1.UtilityCode,
+						T1.AccountNo, T1.AcType, T1.AlwFileDownload, T1.AlwDisb, T1.AlwPayment, T1.AlwReceipt, T1.InFavourLength, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn, 
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.BankName BankCodeName,T3.BranchDesc BankBranchCodeName,
+						T4.AcTypeDesc AcTypeName,T1.HostGLCode, T1.ProfitCenterID, T1.CostCenterID, T1.FileName
+			FROM    	PartnerBanks  T1 INNER JOIN
+			            BMTBankDetail T2  ON T1.BankCode=T2.BankCode INNER JOIN
+						BankBranches T3  ON T1.BankBranchCode = T3.BranchCode and T1.bankcode=T3.bankcode INNER JOIN
+						RMTAccountTypes T4 ON T1.AcType = T4.AcType						
+			WHERE     	NOT EXISTS (SELECT 1 FROM PartnerBanks_TEMP WHERE PartnerBankId = T1.PartnerBankId)
+		</createView>
+	</changeSet>
+	<changeSet id="13" author="Surekha">
+		<createView viewName="PARTNERBANKS_AVIEW" replaceIfExists="true">
+			 SELECT 		T1.PartnerBankId, T1.PartnerBankCode, T1.PartnerBankName, T1.BankCode, T1.BankBranchCode, T1.BranchMICRCode, T1.BranchIFSCCode, T1.BranchCity, T1.UtilityCode, 
+						T1.AccountNo, T1.AcType, T1.AlwFileDownload, T1.AlwDisb, T1.AlwPayment, T1.AlwReceipt, T1.InFavourLength, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,
+						T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T2.BankName BankCodeName,T3.BranchDesc BankBranchCodeName,
+						T4.AcTypeDesc AcTypeName,T1.HostGLCode, T1.ProfitCenterID, T1.CostCenterID, T1.FileName
+			FROM    	PARTNERBANKS  T1 INNER JOIN
+						BMTBANKDETAIL T2  on T1.BANKCODE=T2.BANKCODE inner join
+						BankBranches T3  ON T1.BankBranchCode = T3.BranchCode and T1.bankcode=T3.bankcode INNER JOIN
+						RMTAccountTypes T4 ON T1.AcType = T4.AcType
+		</createView>
+	</changeSet>
+	<changeSet id="14" author="Manoj.p">
+	<sql>
+		update data_engine_config set uploadpath = '/opt/PFF/disbursement/response/stp' where name = 'DISB_HDFC_IMPORT';
+		update DATA_ENGINE_CONFIG set FILEPREFIXNAME = '${CLIENT_CODE}', FILENAMEFORMAT = '${ddmm},.${SEQ_DATE_FILE}' where Name = 'DISB_HDFC_EXPORT';
+		DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE IN ('GROUP_ID', 'CLIENT_CODE');
+		update partnerbanks set FILENAME = 'FCAT_BF1C' where PARTNERBANKCODE = 'HDFC';
+	</sql>	
+	</changeSet>
+</databaseChangeLog>

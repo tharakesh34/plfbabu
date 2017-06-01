@@ -640,7 +640,6 @@ public class LocalityDialogCtrl extends GFCBaseCtrl<Locality> {
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error(e);
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");

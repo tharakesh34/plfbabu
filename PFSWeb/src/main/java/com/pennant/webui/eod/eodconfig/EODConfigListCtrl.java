@@ -238,7 +238,6 @@ public class EODConfigListCtrl extends GFCBaseListCtrl<EODConfig> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/EOD/EODConfig/EODConfigDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

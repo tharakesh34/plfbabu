@@ -249,7 +249,6 @@ public class AgreementDefinitionListCtrl extends GFCBaseListCtrl<AgreementDefini
 			Executions.createComponents(
 					"/WEB-INF/pages/ApplicationMaster/AgreementDefinition/AgreementDefinitionDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

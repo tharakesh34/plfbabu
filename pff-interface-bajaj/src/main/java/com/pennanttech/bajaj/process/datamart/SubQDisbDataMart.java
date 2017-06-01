@@ -19,7 +19,7 @@ public class SubQDisbDataMart extends DatabaseDataEngine implements Runnable {
 	private static final Logger logger = Logger.getLogger(SubQDisbDataMart.class);
 
 	public SubQDisbDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 	}
 
 	@Override

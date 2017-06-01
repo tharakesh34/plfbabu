@@ -95,6 +95,7 @@
 		<menuItem id="menu_Item_PartnerBank" zulNavigation="/WEB-INF/pages/PartnerBank/PartnerBank/PartnerBankList.zul"  rightName="menuItem_partnerbank_PartnerBank"/>
 		<!-- <menuItem id="menu_Item_PoliceCaseCustomers" zulNavigation="/WEB-INF/pages/ApplicationMaster/PoliceCase/PoliceCaseList.zul" rightName="menuItem_ApplicationMaster_PoliceCaseCustomers" /> -->
 		<!-- <menuItem id="menu_Item_PresentmentReasonCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/PresentmentReasonCode/PresentmentReasonCodeList.zul" rightName="menuItem_PresentmentReasonCode_PresentmentReasonCode" /> -->
+		<menuItem id="menu_Item_PinCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/PinCode/PinCodeList.zul"  rightName="menuItem_master_PinCode"/>
 		<menuItem id="menu_Item_RejectDetail" zulNavigation="/WEB-INF/pages/ApplicationMaster/RejectDetail/RejectDetailList.zul"  rightName="menuItem_ApplicationMaster_RejectDetail"/>
 		<menuItem id="menu_Item_RelationshipOfficer" zulNavigation="/WEB-INF/pages/ApplicationMaster/RelationshipOfficer/RelationshipOfficerList.zul"  rightName="menuItem_ApplicationMaster_RelationshipOfficer"/>
 		<!-- <menuItem id="menu_Item_ReturnedCheque" zulNavigation="/WEB-INF/pages/ApplicationMaster/ReturnedCheques/ReturnedChequeList.zul" rightName="menuItem_ApplicationMaster_ReturnedCheque" /> -->
@@ -511,8 +512,11 @@
 		<menuItem id="menu_Item_PendingFinances" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_PendingFinances"/>
 		<!-- <menuItem id="menu_Item_StaffProductivity" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_StaffProductivity"/> -->
 		 <!-- <menuItem id="menu_Item_LimitReports" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_Limit_LimitItem"/> -->
-		
-		
+		<!-- <menuItem id="menu_Item_CLLIMITMIS" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_CLLIMITMIS"/>
+		<menuItem id="menu_Item_LISTOFDOCUMENTEXTRACT" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_LISTOFDOCUMENTEXTRACT"/>
+		<menuItem id="menu_Item_TERMLOANTRACKER" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_TERMLOANTRACKER"/>
+		<menuItem id="menu_Item_DAILYDISBURSALREPORT" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_DAILYDISBURSALREPORT"/>
+		 -->
 		<!-- <menu id="menu_Category_AdminReports" rightName="menuCat_AdminReports">
 			<menuItem id="menu_Item_RoleGroups" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menuItem_AdminReports_RoleGroups" />
 			<menuItem id="menu_Item_GroupRights" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_AdminReports_GroupRights" />	
@@ -628,10 +632,10 @@
 		<menuItem id="menu_Item_LimitStructureCustomerEnquiry" zulNavigation="/WEB-INF/pages/Limit/LimitStructure/LimitStructureCustomerList.zul?enqiryModule=Y" rightName="menuItem_Limit_LimitStructureDetailEnquiry" />
 	</menu>
 	
-	<menu id="menu_Category_DataEngine"  rightName="menuCat_DataEngine">
+	<!-- <menu id="menu_Category_DataEngine"  rightName="menuCat_DataEngine">
 		<menuItem id="menu_Item_DataEngine_Import" zulNavigation="/WEB-INF/pages/DataEngine/DataImport.zul" rightName="menuItem_DataEngine_DataImport"/>
 		<menuItem id="menu_Item_DataEngine_Export" zulNavigation="/WEB-INF/pages/DataEngine/DataExport.zul" rightName="menuItem_DataEngine_DataExport"/>
-	</menu>
+	</menu> -->
 	
   	<!-- CollateralType-->
  	<!-- <menu id="menu_Category_Collateral"  rightName="menuCat_Collateral">

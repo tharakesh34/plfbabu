@@ -241,7 +241,6 @@ public class HolidayMasterListCtrl extends GFCBaseListCtrl<HolidayMaster> {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/HolidayMaster/HolidayMasterDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

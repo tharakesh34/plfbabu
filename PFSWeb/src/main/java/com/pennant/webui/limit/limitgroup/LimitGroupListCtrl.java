@@ -269,7 +269,6 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 		try {
 			Executions.createComponents("/WEB-INF/pages/Limit/LimitGroup/LimitGroupDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

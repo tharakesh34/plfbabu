@@ -350,7 +350,7 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 		Set<Long> checkListIdSet = new HashSet<Long>();
 
 		String showCheckListIds = "";
-		String cmtReference = vasRecording.getVasReference();
+		String vasReference = vasRecording.getVasReference();
 
 		if (financeReferenceList != null && !financeReferenceList.isEmpty()) {
 			for (FinanceReferenceDetail financeReferenceDetail : financeReferenceList) {
@@ -391,7 +391,10 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 			}
 		}
 		//Customer Document Details Fetching Depends on Customer & Doc Type List
-		List<DocumentDetails> documentList = getCustomerDocumentDAO().getCustDocByCustId(vasRecording.getVasCustomer().getCustomerId(), "");
+		List<DocumentDetails> documentList = new ArrayList<>();
+		if(vasRecording.getVasCustomer() != null){
+			documentList = getCustomerDocumentDAO().getCustDocByCustId(vasRecording.getVasCustomer().getCustomerId(), "");
+		}
 		if (vasRecording.getDocuments() != null && !vasRecording.getDocuments().isEmpty()) {
 			vasRecording.getDocuments().addAll(documentList);
 		} else {
@@ -403,7 +406,7 @@ public class CheckListDetailServiceImpl implements CheckListDetailService{
 		}
 
 		if (!vasRecording.isNewRecord()) {
-			vasCheckLists = getFinanceCheckListReferenceDAO().getCheckListByFinRef(cmtReference, showCheckListIds,
+			vasCheckLists = getFinanceCheckListReferenceDAO().getCheckListByFinRef(vasReference, showCheckListIds,
 					"_View");
 		} else {
 			vasCheckLists = new ArrayList<FinanceCheckListReference>();

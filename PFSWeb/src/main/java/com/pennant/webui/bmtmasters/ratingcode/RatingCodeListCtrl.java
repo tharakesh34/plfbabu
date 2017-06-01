@@ -247,7 +247,6 @@ public class RatingCodeListCtrl extends GFCBaseListCtrl<RatingCode> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/BMTMasters/RatingCode/RatingCodeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

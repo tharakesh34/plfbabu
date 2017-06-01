@@ -250,7 +250,6 @@ public class SalesOfficerListCtrl extends GFCBaseListCtrl<SalesOfficer> {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/SalesOfficer/SalesOfficerDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

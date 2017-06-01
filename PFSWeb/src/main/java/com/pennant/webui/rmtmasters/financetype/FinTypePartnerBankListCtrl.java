@@ -313,7 +313,6 @@ public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> 
 		try {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypePartnerBankDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
 			MessageUtil.showError(e);
 		}
 

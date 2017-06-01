@@ -208,7 +208,7 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finBranch.setValue(customerFinanceDetail.getFinBranch());
 			this.custID.setValue(StringUtils.trimToEmpty(customerFinanceDetail.getFinCcy()));
 			this.custDocType.setValue(customerFinanceDetail.getFinTypeDesc());
-			this.mobileNo.setValue(PennantApplicationUtil.amountFormate(customerFinanceDetail.getFinAmount(),
+			this.mobileNo.setValue(PennantApplicationUtil.amountFormate(customerFinanceDetail.getFinAmount().add(customerFinanceDetail.getFeeChargeAmt()),
 					CurrencyUtil.getFormat(customerFinanceDetail.getFinCcy())));
 			this.emailID.setValue(DateUtility.formatToLongDate(customerFinanceDetail.getFinStartDate()));
 			fillAuditTransactions(customerFinanceDetail.getAuditTransactionsList(),customerFinanceDetail.getNotesList());

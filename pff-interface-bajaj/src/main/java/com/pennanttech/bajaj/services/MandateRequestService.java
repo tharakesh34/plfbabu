@@ -22,10 +22,10 @@ import org.springframework.jdbc.support.KeyHolder;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
-import com.pennanttech.pff.core.services.RequestService;
+import com.pennanttech.pff.core.services.MandateRequest;
 import com.pennanttech.pff.core.util.QueryUtil;
 
-public class MandateRequestService extends BajajService implements RequestService {
+public class MandateRequestService extends BajajService implements MandateRequest {
 	private final Logger logger = Logger.getLogger(getClass());
 
 	@Override
@@ -63,7 +63,7 @@ public class MandateRequestService extends BajajService implements RequestServic
 
 		parameterMap.put("USER_NAME", userName);
 		DataEngineExport dataEngine = null;
-		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name());
+		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate());
 
 		dataEngine.setFilterMap(filterMap);
 		dataEngine.setParameterMap(parameterMap);

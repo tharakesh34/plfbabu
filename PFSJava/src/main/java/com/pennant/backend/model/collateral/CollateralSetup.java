@@ -100,14 +100,14 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	private String				collateralTypeName;
 	@XmlElement
 	private String				collateralCcy;
-	private BigDecimal			collateralValue;
+	private BigDecimal			collateralValue = BigDecimal.ZERO;
 	@XmlElement
-	private BigDecimal			maxCollateralValue;
+	private BigDecimal			maxCollateralValue = BigDecimal.ZERO;
 	
-	private BigDecimal			bankLTV;
+	private BigDecimal			bankLTV = BigDecimal.ZERO;
 	@XmlElement(name = "splLtv")
-	private BigDecimal			specialLTV;
-	private BigDecimal			bankValuation;
+	private BigDecimal			specialLTV = BigDecimal.ZERO;
+	private BigDecimal			bankValuation = BigDecimal.ZERO;
 	
 	@XmlElement
 	private String				collateralLoc;

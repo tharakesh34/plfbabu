@@ -286,7 +286,6 @@ public class CommodityInventoryListCtrl extends GFCBaseListCtrl<CommodityInvento
 			Executions.createComponents("/WEB-INF/pages/Commodity/CommodityInventory/CommodityInventoryDialog.zul",
 					null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

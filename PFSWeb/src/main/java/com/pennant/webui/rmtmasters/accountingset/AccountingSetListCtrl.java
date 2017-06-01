@@ -247,7 +247,6 @@ public class AccountingSetListCtrl extends GFCBaseListCtrl<AccountingSet> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/RulesFactory/AccountingSet/AccountingSetDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

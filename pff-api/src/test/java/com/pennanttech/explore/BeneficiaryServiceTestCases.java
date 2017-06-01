@@ -166,7 +166,7 @@ public class BeneficiaryServiceTestCases {
 		client.accept(MediaType.APPLICATION_JSON);
 		client.type(MediaType.APPLICATION_JSON);
 		client.path(path);
-		String authorization = "user:wrm:test";
+		String authorization = "user:admin:test";
 		String encodedAuth = Base64.encodeBase64String(authorization.getBytes());
 		client.header(CONSTANTS.AuthKey.get(), encodedAuth);
 		return client;

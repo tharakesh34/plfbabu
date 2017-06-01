@@ -35,7 +35,7 @@ public class FinanceEnquiryPostingsListItemRenderer implements ListitemRenderer<
 				item.appendChild(new Listcell(dataSet.getFinEvent()+" : "+dataSet.getLovDescEventCodeName()));
 				item.setStyle("text-align:left;");
 			}else if(StringUtils.equals(PennantConstants.POSTDATE, dataSet.getPostingGroupBy())){
-				item.appendChild(new Listcell(String.valueOf(DateUtility.getDBDate(dataSet.getPostDate().toString()))));
+				item.appendChild(new Listcell(DateUtility.formatToLongDate(dataSet.getPostDate())));
 			} else if(StringUtils.equals(PennantConstants.ACCNO, dataSet.getPostingGroupBy())){
 				item.appendChild(new Listcell(String.valueOf(dataSet.getAccount())));
 			} else{

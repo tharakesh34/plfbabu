@@ -217,7 +217,6 @@ public class SecurityGroupRightsListCtrl extends GFCBaseListCtrl<SecurityGroup> 
 			Executions.createComponents("/WEB-INF/pages/Administration/SecurityGroupRights"
 					+ "/SecurityGroupRightsDialog.zul", null, aruments);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

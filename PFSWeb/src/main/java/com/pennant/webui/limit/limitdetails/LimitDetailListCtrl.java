@@ -552,7 +552,6 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 				Executions.createComponents("/WEB-INF/pages/Limit/LimitDetails/LimitDetailsDialog.zul", null, arg);
 			}
 		}  catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

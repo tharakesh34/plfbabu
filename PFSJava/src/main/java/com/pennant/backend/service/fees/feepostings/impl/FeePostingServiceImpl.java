@@ -413,8 +413,6 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				feePostings.getDeclaredFieldValues(aeEvent.getDataMap());
 				aeEvent.getAcSetIDList().add(Long.valueOf(feePostings.getAccountSetId()));
 				
-				aeEvent.getAcSetIDList().add(getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_MANFEE,
-						AccountEventConstants.ACCEVENT_MANFEE));
 				list = getEngineExecution().getAccEngineExecResults(aeEvent).getReturnDataSet();
 
 			}
@@ -664,7 +662,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		}
 		
 		PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(feePostings.getPartnerBankId(), "");
-		if (partnerBank == null || partnerBank.isActive()) {
+		if (partnerBank == null || !partnerBank.isActive()) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "PartnerBank";
 			valueParm[1] = String.valueOf(feePostings.getPartnerBankId());
@@ -676,7 +674,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		}
 
 		FeeType feeType = feeTypeDAO.getApprovedFeeTypeByFeeCode(feePostings.getFeeTyeCode());
-		if (feeType == null || feeType.isActive()) {
+		if (feeType == null || !feeType.isActive()) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Fee";
 			valueParm[1] = feePostings.getFeeTyeCode();

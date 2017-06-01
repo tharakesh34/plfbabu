@@ -232,7 +232,6 @@ public class FlagListCtrl extends GFCBaseListCtrl<Flag> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/Flag/FlagDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

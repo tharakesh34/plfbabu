@@ -260,7 +260,6 @@ public class EMailTypeListCtrl extends GFCBaseListCtrl<EMailType> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/EMailType/EMailTypeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

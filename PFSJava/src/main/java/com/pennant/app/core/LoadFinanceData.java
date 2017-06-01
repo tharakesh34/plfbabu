@@ -3,9 +3,7 @@ package com.pennant.app.core;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -74,7 +72,6 @@ public class LoadFinanceData extends ServiceHelper {
 
 	public void setEventFlags(CustEODEvent custEODEvent, FinEODEvent finEODEvent) throws Exception {
 
-		Map<Date, Integer> datesMap = new HashMap<Date, Integer>();
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
 		Date valueDate = custEODEvent.getEodValueDate();
 		Date businessDate = DateUtility.addDays(custEODEvent.getEodValueDate(), 1);
@@ -84,7 +81,6 @@ public class LoadFinanceData extends ServiceHelper {
 		//Place schedule dates to Map
 		for (int i = 0; i < finSchdDetails.size(); i++) {
 			FinanceScheduleDetail curSchd = finSchdDetails.get(i);
-			datesMap.put(finSchdDetails.get(i).getSchDate(), i);
 
 			//Find various events required today or not
 			if (curSchd.getSchDate().compareTo(valueDate) == 0) {
@@ -159,7 +155,10 @@ public class LoadFinanceData extends ServiceHelper {
 				finEODEvent.setIdxPD(i);
 				custEODEvent.setPastDueExist(true);
 			}
-
+			
+			if (curSchd.getSchDate().compareTo(businessDate)>=0) {
+				break;
+			}
 		}
 	}
 

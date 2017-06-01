@@ -34,6 +34,9 @@
 
 package com.pennant.backend.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This stores all Asset constants required for running the application
  */
@@ -48,7 +51,7 @@ public class MandateConstants {
 
 	public static final String	MANDATE_AC_TYPE_CA	= "11";
 	public static final String	MANDATE_AC_TYPE_SA	= "10";
-	
+
 	public static final String	MANDATE_DEFAULT_FRQ	= "M0001";
 
 	public static final String	STATUS_FIN			= "FINANCE";
@@ -61,5 +64,12 @@ public class MandateConstants {
 
 	public static final String	MODULE_REGISTRATION	= "REGISTRATION";
 	public static final String	MODULE_STATUSUPLOAD	= "STATUSUPLOAD";
+
+	public static final List<String> skipRegistration() {
+		List<String> list = new ArrayList<String>(1);
+		list.add(TYPE_ECS);
+		return list;
+
+	}
 
 }

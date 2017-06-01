@@ -19,8 +19,9 @@ public class LeaDocDetailsDataMart extends DatabaseDataEngine implements Runnabl
 	private static final Logger logger = Logger.getLogger(LeaDocDetailsDataMart.class);
 
 	public LeaDocDetailsDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 	}
+
 
 	@Override
 	public void run() {

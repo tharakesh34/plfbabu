@@ -47,6 +47,7 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 
@@ -65,5 +66,5 @@ public interface CustomerDocumentService {
 	String getCustCRCPRById(long custId, String type);
 	List<CustomerDocument> getApprovedCustomerDocumentById(long id);
 	int getVersion(long custId,String docType);
-	AuditDetail validateCustomerDocuments(CustomerDocument customerDocument);
+	AuditDetail validateCustomerDocuments(CustomerDocument customerDocument,Customer customer);
 }

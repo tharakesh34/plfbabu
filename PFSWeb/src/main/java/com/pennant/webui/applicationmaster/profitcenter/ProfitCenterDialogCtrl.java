@@ -654,7 +654,6 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter>{
 				}
 
 			} catch (final DataAccessException e) {
-				logger.error(e);
 				MessageUtil.showError(e);
 			}
 			logger.debug("Leaving");

@@ -246,7 +246,6 @@ public class CheckListListCtrl extends GFCBaseListCtrl<CheckList> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/CheckList/CheckListDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

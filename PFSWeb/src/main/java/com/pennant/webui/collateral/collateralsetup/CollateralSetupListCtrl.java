@@ -242,7 +242,6 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/SelectCollateralTypeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
@@ -376,7 +375,6 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

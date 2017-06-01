@@ -2642,14 +2642,14 @@ public class PennantStaticListUtil {
 	 */
 	public static ArrayList<ValueLabel> getRoundingModes() {
 		if(roundingModes == null){
-			roundingModes = new ArrayList<ValueLabel>(7);
+			roundingModes = new ArrayList<ValueLabel>(6);
 			roundingModes.add(new ValueLabel(RoundingMode.UP.name(),RoundingMode.UP.name()));
 			roundingModes.add(new ValueLabel(RoundingMode.DOWN.name(),RoundingMode.DOWN.name()));
 			roundingModes.add(new ValueLabel(RoundingMode.CEILING.name(),RoundingMode.CEILING.name()));
 			roundingModes.add(new ValueLabel(RoundingMode.FLOOR.name(),RoundingMode.FLOOR.name()));
 			roundingModes.add(new ValueLabel(RoundingMode.HALF_UP.name(),RoundingMode.HALF_UP.name()));
 			roundingModes.add(new ValueLabel(RoundingMode.HALF_DOWN.name(),RoundingMode.HALF_DOWN.name()));
-			roundingModes.add(new ValueLabel(RoundingMode.HALF_EVEN.name(),RoundingMode.HALF_EVEN.name()));
+			//roundingModes.add(new ValueLabel(RoundingMode.HALF_EVEN.name(),RoundingMode.HALF_EVEN.name()));
 		}
 		return roundingModes;
 	}

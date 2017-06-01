@@ -18,12 +18,12 @@ import com.pennanttech.pff.core.job.scheduler.AbstractJobScheduler;
 import com.pennanttech.pff.core.job.scheduler.JobSchedulerDetails;
 
 public class BajajJobScheduler extends AbstractJobScheduler {
-	
-	private static final Logger		logger				= Logger.getLogger(BajajJobScheduler.class);
-	
-	protected DataSource dataSource;
-	private JobSchedulerDetails jobDetails = null;
-	private DataEngineConfig datEngine = null;
+
+	private static final Logger	logger		= Logger.getLogger(BajajJobScheduler.class);
+
+	protected DataSource		dataSource;
+	private JobSchedulerDetails	jobDetails	= null;
+	private DataEngineConfig	datEngine	= null;
 
 	public BajajJobScheduler() {
 		super();
@@ -32,16 +32,17 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 	@Override
 	public void addJobs() throws ParseException {
 		logger.debug(Literal.ENTERING);
-		
+
 		autoDisbursementJob();
 		impsDisbursementRespJob();
-		
+		posidexCustomerUpdateRespJob();
+
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void autoDisbursementJob()  {
+	private void autoDisbursementJob() {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Auto Disbrsement response file 
 		Configuration configuration = loadConfiguration("DISB_HDFC_IMPORT");
 		if (configuration != null) {
@@ -55,8 +56,13 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 
 			if (StringUtils.trimToNull(schduleTime) != null) {
 				jobDetails = new JobSchedulerDetails();
-				jobDetails.setJobDetail(JobBuilder.newJob(DisbursementResponseJob.class).withIdentity("AUTO_DISB_RES_JOB", "AUTO_DISB_RES_FILE").withDescription("Auto Disbrsement response file job").build());
-				jobDetails.setTrigger(TriggerBuilder.newTrigger().withIdentity("AUTO_DISB_RES_FILE_TRIGGER", "AUTO_DISB_RES_FILE").withDescription("Auto disbursement response file trigger.").withSchedule(CronScheduleBuilder.cronSchedule(schduleTime)).build());
+				jobDetails.setJobDetail(JobBuilder.newJob(DisbursementResponseJob.class)
+						.withIdentity("AUTO_DISB_RES_JOB", "AUTO_DISB_RES_FILE")
+						.withDescription("Auto Disbrsement response file job").build());
+				jobDetails.setTrigger(TriggerBuilder.newTrigger()
+						.withIdentity("AUTO_DISB_RES_FILE_TRIGGER", "AUTO_DISB_RES_FILE")
+						.withDescription("Auto disbursement response file trigger.")
+						.withSchedule(CronScheduleBuilder.cronSchedule(schduleTime)).build());
 				JOB_SCHEDULER_MAP.put("AUTO_DISB_RES_FILE", jobDetails);
 			}
 		}
@@ -77,12 +83,45 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 
 			if (StringUtils.trimToNull(schduleTime) != null) {
 				jobDetails = new JobSchedulerDetails();
-				jobDetails.setJobDetail(JobBuilder.newJob(DisbrsementImpsResponseJob.class).withIdentity("DISB_IMPS_RES_JOB", "DISB_IMPS_RESPONSE").withDescription("Disbrsement imps response job").build());
-				jobDetails.setTrigger(TriggerBuilder.newTrigger().withIdentity("DISB_IMPS_RES_JOB_TRIGGER", "DISB_IMPS_RESPONSE").withDescription("Disbrsement imps response job trigger.").withSchedule(CronScheduleBuilder.cronSchedule(schduleTime)).build());
+				jobDetails.setJobDetail(JobBuilder.newJob(DisbrsementImpsResponseJob.class)
+						.withIdentity("DISB_IMPS_RES_JOB", "DISB_IMPS_RESPONSE")
+						.withDescription("Disbrsement imps response job").build());
+				jobDetails.setTrigger(TriggerBuilder.newTrigger()
+						.withIdentity("DISB_IMPS_RES_JOB_TRIGGER", "DISB_IMPS_RESPONSE")
+						.withDescription("Disbrsement imps response job trigger.")
+						.withSchedule(CronScheduleBuilder.cronSchedule(schduleTime)).build());
 				JOB_SCHEDULER_MAP.put("DISB_IMPS_RES_JOB", jobDetails);
 			}
 		}
-		
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void posidexCustomerUpdateRespJob() {
+		logger.debug(Literal.ENTERING);
+
+		Configuration configuration = loadConfiguration("POSIDEX_CUSTOMER_UPDATE_RESPONSE");
+		if (configuration != null) {
+			String schduleTime = null;
+			try {
+				schduleTime = configuration.getCronExpression();
+			} catch (Exception e) {
+				logger.warn("Posidex customer update response scheduler not started.");
+			}
+
+			if (StringUtils.trimToNull(schduleTime) != null) {
+				jobDetails = new JobSchedulerDetails();
+				jobDetails.setJobDetail(JobBuilder.newJob(PosidexCustomerUpdateResponseJob.class)
+						.withIdentity("POSIDEX_RES_JOB", "POSIDEX_CUSTOMER_RESPONSE")
+						.withDescription("Posidex customer update response job trigger.").build());
+				jobDetails.setTrigger(TriggerBuilder.newTrigger()
+						.withIdentity("POSIDEX_RES_JOB_TRIGGER", "POSIDEX_CUSTOMER_RESPONSE")
+						.withDescription("Posidex customer update response job trigger.")
+						.withSchedule(CronScheduleBuilder.cronSchedule(schduleTime)).build());
+				JOB_SCHEDULER_MAP.put("POSIDEX_RES_JOB", jobDetails);
+			}
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -96,7 +135,7 @@ public class BajajJobScheduler extends AbstractJobScheduler {
 			configuration = datEngine.getConfigurationByName(configName);
 		} catch (Exception e) {
 			logger.warn("Data engine configuration details not avilable for " + configName);
-		} 
+		}
 		logger.debug(Literal.LEAVING);
 		return configuration;
 	}

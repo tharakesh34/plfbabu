@@ -254,7 +254,6 @@ public class CommodityBrokerDetailListCtrl extends GFCBaseListCtrl<CommodityBrok
 							"/WEB-INF/pages/Finance/Commodity/CommodityBrokerDetail/CommodityBrokerDetailDialog.zul",
 							null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

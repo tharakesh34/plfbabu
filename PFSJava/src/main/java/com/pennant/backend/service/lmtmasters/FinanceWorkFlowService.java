@@ -55,4 +55,5 @@ public interface FinanceWorkFlowService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	String getFinanceWorkFlowType(String finType, String workflowCode,	String moduleName);
+	int getVASProductCode(String finType);
 }

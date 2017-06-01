@@ -19,8 +19,9 @@ public class LoanWiseChargeDataMart extends DatabaseDataEngine implements Runnab
 	private static final Logger logger = Logger.getLogger(LoanWiseChargeDataMart.class);
 
 	public LoanWiseChargeDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 	}
+
 
 	@Override
 	public void run() {

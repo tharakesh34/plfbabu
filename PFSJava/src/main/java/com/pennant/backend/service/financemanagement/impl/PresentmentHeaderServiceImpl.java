@@ -43,10 +43,10 @@
 package com.pennant.backend.service.financemanagement.impl;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -577,7 +577,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		logger.debug(Literal.ENTERING);
 
 		try {
-			PresentmentRequest presentmentRequest = new PresentmentRequest(dataSource, App.DATABASE.name(), 1000, DateUtil.getSysDate());
+			PresentmentRequest presentmentRequest = new PresentmentRequest(dataSource, App.DATABASE.name(), 1000, DateUtil.getSysDate(),true);
 			presentmentRequest.setPresentmentId(presentmentId);
 			presentmentRequest.process("PRESENTMENT_REQUEST");
 		} catch (Exception e) {
@@ -655,6 +655,11 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		}
 		logger.debug(Literal.LEAVING);
 		return presentmentDetail;
+	}
+
+	@Override
+	public Date getMaxSchdPresentment(String finReference) {
+		return getPresentmentHeaderDAO().getMaxSchdPresentment(finReference);
 	}
 	
 }

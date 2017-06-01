@@ -121,11 +121,14 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	protected Hbox						hlayout_ManualAdvice;
 	protected Space						space_ManualAdvice;
 	protected Checkbox					manualAdvice;
+	
+	protected Label						label_AdviseType;
+	protected Hbox						hlayout_AdviseType;
+	protected Space						space_AdviseType;
 	protected Combobox 					adviseType;
 
 	protected Label						label_AccountingSetID;
 	protected Hbox						hlayout_AccountingSetID;
-	protected Space						space_AccountingSetID;
 	protected ExtendedCombobox			accountingSetID;
 	
 	protected Row						row2;
@@ -384,6 +387,20 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		logger.debug("Leaving");
 	}
+	
+	public void onCheck$manualAdvice(Event event) {
+		logger.debug("Entering");
+		FeeType aFeeType =new FeeType();
+		if (this.manualAdvice.isChecked()) {
+			this.label_AdviseType.setVisible(true);
+			this.hlayout_AdviseType.setVisible(true);
+			fillComboBox(this.adviseType, String.valueOf(aFeeType.getAdviseType()), listAdviseType, "");
+
+		}else{
+			this.label_AdviseType.setVisible(false);
+			this.hlayout_AdviseType.setVisible(false);
+		}
+	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++++++++ helpers ++++++++++++++++++++++++++
@@ -448,6 +465,14 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.feeTypeDesc.setValue(aFeeType.getFeeTypeDesc());
 		this.manualAdvice.setChecked(aFeeType.isManualAdvice());
 		fillComboBox(this.adviseType, String.valueOf(aFeeType.getAdviseType()), listAdviseType, "");
+		
+		if (this.manualAdvice.isChecked()) {
+			this.label_AdviseType.setVisible(true);
+			this.hlayout_AdviseType.setVisible(true);
+		} else {
+			this.label_AdviseType.setVisible(false);
+			this.hlayout_AdviseType.setVisible(false);
+		}
 		
 		if (aFeeType.getAccountSetId() != null) {
 			this.accountingSetID.setValue(aFeeType.getAccountSetCode(), aFeeType.getAccountSetCodeName());
@@ -561,7 +586,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 				this.accountingSetID.setConstraint(new PTStringValidator(Labels
 						.getLabel("label_FeeTypeDialog_AccountingSetID.value"), null, false));
 		}
-		if (!this.adviseType.isDisabled()) {
+		if (!this.adviseType.isDisabled() && this.label_AdviseType.isVisible()) {
 			this.adviseType.setConstraint(new StaticListValidator(listAdviseType,
 					Labels.getLabel("label_FeeTypeDialog_AdviseType.value")));
 		}

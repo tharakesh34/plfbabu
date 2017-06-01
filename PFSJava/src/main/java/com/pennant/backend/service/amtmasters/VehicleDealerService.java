@@ -54,4 +54,5 @@ public interface VehicleDealerService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 	AuditHeader doReject(AuditHeader auditHeader);
 	boolean SearchByName(String dealerName);
+	int getVASManufactureCode(String dealerName);
 }

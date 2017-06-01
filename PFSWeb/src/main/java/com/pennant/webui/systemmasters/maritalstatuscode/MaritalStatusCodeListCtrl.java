@@ -254,7 +254,6 @@ public class MaritalStatusCodeListCtrl extends GFCBaseListCtrl<MaritalStatusCode
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/MaritalStatusCode/MaritalStatusCodeDialog.zul",
 					null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

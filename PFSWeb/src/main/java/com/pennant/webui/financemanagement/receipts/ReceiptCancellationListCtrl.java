@@ -284,7 +284,6 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

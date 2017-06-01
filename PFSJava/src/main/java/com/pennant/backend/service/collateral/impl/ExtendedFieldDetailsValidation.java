@@ -1,20 +1,30 @@
 package com.pennant.backend.service.collateral.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
+import com.pennant.backend.model.staticparms.ExtendedFieldData;
 import com.pennant.backend.model.staticparms.ExtendedFieldRender;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.CollateralConstants;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennanttech.pff.core.model.ModuleMapping;
 
 public class ExtendedFieldDetailsValidation {
 
@@ -126,6 +136,206 @@ public class ExtendedFieldDetailsValidation {
 			extendedFieldRender.setBefImage(befExtendedFieldRender);
 		}
 		return auditDetail;
+	}
+
+	public List<ErrorDetails> validateExtendedFieldData(ExtendedFieldDetail exdConfigDetail, ExtendedFieldData exdFieldData) {
+		List<ErrorDetails> errors = new ArrayList<ErrorDetails>();
+		String fieldName = exdFieldData.getFieldName();
+		String fieldValue = exdFieldData.getFieldValue();
+
+		switch (exdConfigDetail.getFieldType()) {
+		case ExtendedFieldConstants.FIELDTYPE_DATE:
+			Date dateValue = null;
+			try {
+				dateValue = DateUtility.parse(fieldValue, PennantConstants.dateFormat);
+			} catch (Exception e) {
+				String[] valueParm = new String[2];
+				valueParm[0] = fieldName;
+				valueParm[1] = "Date";
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90299", "", valueParm)));
+				return errors;
+			}
+			errors = dateValidation(exdConfigDetail, dateValue, errors);
+			break;
+		case ExtendedFieldConstants.FIELDTYPE_AMOUNT:
+			try {
+				double rateValue = Double.parseDouble(fieldValue);
+				@SuppressWarnings("unused")
+				BigDecimal decimalValue = BigDecimal.valueOf(rateValue);
+			} catch (Exception e) {
+				String[] valueParm = new String[2];
+				valueParm[0] = fieldName;
+				valueParm[1] = "number";
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90299", "", valueParm)));
+			}
+			if(fieldValue.length() > exdConfigDetail.getFieldLength()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = fieldName;
+				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+			}
+			break;
+		case ExtendedFieldConstants.FIELDTYPE_INT:
+			if(fieldValue.length() > exdConfigDetail.getFieldLength()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = fieldName;
+				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+			}
+			try {
+				Integer.parseInt(fieldValue);
+			} catch (Exception e) {
+				String[] valueParm = new String[2];
+				valueParm[0] = fieldName;
+				valueParm[1] = "number";
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90299", "", valueParm)));
+			}
+			break;
+		case ExtendedFieldConstants.FIELDTYPE_TEXT:
+		case ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT:
+		case ExtendedFieldConstants.FIELDTYPE_PHONE:
+			if(fieldValue.length() > exdConfigDetail.getFieldLength()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = fieldName;
+				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+			}
+			
+			if(StringUtils.isNotBlank(exdConfigDetail.getFieldConstraint())) {
+				Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(
+						exdConfigDetail.getFieldConstraint()));
+				Matcher matcher = pattern.matcher(fieldValue);
+				if (matcher.find() == false) {
+					String[] valueParm = new String[0];
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90322", "", valueParm)));
+				}
+			}
+			break;
+		case ExtendedFieldConstants.FIELDTYPE_ADDRESS:
+			if(fieldValue.length() > exdConfigDetail.getFieldLength()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = fieldName;
+				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90300", "", valueParm)));
+			}
+			break;
+		case ExtendedFieldConstants.FIELDTYPE_BOOLEAN:
+			
+			break;
+		case ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO:
+			String key = exdConfigDetail.getFieldList();
+			if(key != null && key.contains(PennantConstants.DELIMITER_COMMA)) {
+				String[] values = key.split(PennantConstants.DELIMITER_COMMA);
+				key = values[0];
+			}
+			ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(key);
+			if(moduleMapping != null) {
+				String[] lovFields = moduleMapping.getLovFields();
+				String[][] filters = moduleMapping.getLovFilters();
+				int count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0], filters[0][0], fieldValue);
+				if(count <= 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = fieldName;
+					valueParm[1] = fieldValue;
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm)));
+				}
+			}
+			break;
+		case ExtendedFieldConstants.FIELDTYPE_STATICCOMBO:
+			String[] values = new String[0];
+			boolean isValid = false;
+			String staticList = exdConfigDetail.getFieldList();
+			if(staticList != null && staticList.contains(PennantConstants.DELIMITER_COMMA)) {
+				values = staticList.split(PennantConstants.DELIMITER_COMMA);
+			}
+			
+			if(values.length > 0) {
+				for(int i = 0; i<=values.length; i++) {
+					if(StringUtils.equals(fieldValue, values[i])) {
+						isValid = true;
+					}
+				}
+			}
+			
+			if(!isValid) {
+				String[] valueParm = new String[2];
+				valueParm[0] = fieldName;
+				valueParm[1] = fieldValue;
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90224", "", valueParm)));
+			}
+			break;
+		default:
+			break;
+		}
+		return errors;
+	}
+
+	private List<ErrorDetails> dateValidation(ExtendedFieldDetail exdConfigDetail, Date dateValue, List<ErrorDetails> errors) {
+		String[] value = exdConfigDetail.getFieldConstraint().split(",");
+		switch (value[0]) {
+		case "RANGE":
+			if(DateUtility.compare(dateValue, DateUtility.getUtilDate(value[1], PennantConstants.dateFormat)) < 0
+					&& DateUtility.compare(dateValue, DateUtility.getUtilDate(value[2], PennantConstants.dateFormat)) > 0) {
+				String valueParm[] = new String[3];
+				valueParm[0] = exdConfigDetail.getFieldName();
+				valueParm[1] = String.valueOf(DateUtility.getUtilDate(value[1], PennantConstants.dateFormat));
+				valueParm[2] = String.valueOf(DateUtility.getUtilDate(value[2], PennantConstants.dateFormat));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+			}
+			break;
+		case "FUTURE_DAYS":
+			if(DateUtility.compare(dateValue, DateUtility.addDays(DateUtility.getAppDate(), Integer.parseInt(value[1]))) < 0) {
+				String valueParm[] = new String[2];
+				valueParm[0] = exdConfigDetail.getFieldName()+":"+ dateValue;
+				valueParm[1] = String.valueOf(DateUtility.getAppDate());
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", null)));
+			}
+			break;
+		case "PAST_DAYS":
+			if(DateUtility.compare(dateValue, DateUtility.addDays(DateUtility.getAppDate(), -(Integer.parseInt(value[1])))) > 0) {
+				String valueParm[] = new String[2];
+				valueParm[0] = exdConfigDetail.getFieldName()+":"+ dateValue;
+				valueParm[1] = String.valueOf(DateUtility.getAppDate());
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("30551", "", null)));
+			}
+			break;
+		case "FUTURE_TODAY":
+			if(DateUtility.compare(dateValue, DateUtility.getAppDate()) > 0) {
+				String valueParm[] = new String[2];
+				valueParm[0] = exdConfigDetail.getFieldName()+":"+ dateValue;
+				valueParm[1] = String.valueOf(DateUtility.getAppDate());
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("30551", "", valueParm)));
+			}
+			break;
+		case "PAST_TODAY":
+			if(DateUtility.compare(dateValue, DateUtility.getAppDate()) < 0) {
+				String valueParm[] = new String[2];
+				valueParm[0] = exdConfigDetail.getFieldName()+":"+ dateValue;
+				valueParm[1] = String.valueOf(DateUtility.getAppDate());
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("90205", "", valueParm)));
+			}
+			break;
+		case "FUTURE":
+			if(DateUtility.compare(dateValue, DateUtility.getAppDate()) >= 0) {
+				String valueParm[] = new String[2];
+				valueParm[0] = exdConfigDetail.getFieldName()+":"+ dateValue;
+				valueParm[1] = String.valueOf(DateUtility.getAppDate());
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("30565", "", valueParm)));
+			}
+			break;
+		case "PAST":
+			if(DateUtility.compare(dateValue, DateUtility.getAppDate()) <= 0) {
+				String valueParm[] = new String[2];
+				valueParm[0] = exdConfigDetail.getFieldName()+":"+ dateValue;
+				valueParm[1] = String.valueOf(DateUtility.getAppDate());
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetails("91125", "", valueParm)));
+			}
+			break;
+
+		default:
+			break;
+		}
+		return errors;
 	}
 
 }

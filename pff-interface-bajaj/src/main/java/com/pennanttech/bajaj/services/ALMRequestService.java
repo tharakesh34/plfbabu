@@ -1,13 +1,15 @@
 package com.pennanttech.bajaj.services;
 
-import com.pennanttech.bajaj.process.ALMRequestProcess;
-import com.pennanttech.pff.core.services.RequestService;
+import java.util.Date;
 
-public class ALMRequestService extends BajajService implements RequestService {
+import com.pennanttech.bajaj.process.ALMRequestProcess;
+import com.pennanttech.pff.core.services.ALMRequest;
+
+public class ALMRequestService extends BajajService implements ALMRequest {
 
 	@Override
 	public void sendReqest(Object... params) throws Exception {
-		ALMRequestProcess service = new ALMRequestProcess(dataSource, (Long) params[0], getValueDate(), getAppDate());
+		ALMRequestProcess service = new ALMRequestProcess(dataSource, (Long) params[0], (Date)params[1], (Date)params[2]);
 		service.process("ALM_REQUEST");
 	}
 }

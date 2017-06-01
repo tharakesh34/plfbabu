@@ -19,7 +19,7 @@ public class ApplicantDetailsDataMart extends DatabaseDataEngine implements Runn
 	private static final Logger logger = Logger.getLogger(ApplicantDetailsDataMart.class);
 
 	public ApplicantDetailsDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 	}
 
 	@Override

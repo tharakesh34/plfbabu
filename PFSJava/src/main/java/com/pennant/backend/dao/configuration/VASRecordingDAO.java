@@ -45,6 +45,7 @@ package com.pennant.backend.dao.configuration;
 import java.util.List;
 
 import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.configuration.VasCustomer;
 
 public interface VASRecordingDAO {
 	VASRecording getVASRecording();
@@ -63,7 +64,7 @@ public interface VASRecordingDAO {
 
 	boolean updateVasReference(long befSeqNumber, long generatedSeqNo);
 
-	String getCustomerCif(String primaryLinkRef, String postingAgainst);
+	VasCustomer getVasCustomerCif(String primaryLinkRef, String postingAgainst);
 
 	void deleteByPrimaryLinkRef(String primaryLinkRef, String type);
 

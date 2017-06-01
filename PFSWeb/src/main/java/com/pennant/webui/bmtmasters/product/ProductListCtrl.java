@@ -249,7 +249,6 @@ public class ProductListCtrl extends GFCBaseListCtrl<Product> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/Product/ProductDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 		

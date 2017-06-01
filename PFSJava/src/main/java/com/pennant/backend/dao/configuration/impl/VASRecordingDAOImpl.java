@@ -61,6 +61,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.configuration.VasCustomer;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
@@ -396,41 +397,46 @@ public class VASRecordingDAOImpl extends BasisCodeDAO<VASRecording> implements V
 
 
 	@Override
-	public String getCustomerCif(String primaryLinkRef, String postingAgainst) {
+	public VasCustomer getVasCustomerCif(String primaryLinkRef, String postingAgainst) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = null;
 		StringBuilder sql = null;
-		String custCif = null;
 
 		sql = new StringBuilder();
 		if (VASConsatnts.VASAGAINST_FINANCE.equals(postingAgainst)) {
-			sql.append(" Select CU.CustCIF from FinanceMain FM Inner Join Customers CU ON FM.CustID = CU.CustID");
+			sql.append(" Select CU.CustID CustomerId, CU.CustCIF, CU.CustShrtName from FinanceMain FM Inner Join Customers CU ON FM.CustID = CU.CustID");
 			sql.append(" Where FM.FinReference = :PrimaryLinkRef");
 		} else if (VASConsatnts.VASAGAINST_COLLATERAL.equals(postingAgainst)) {
-			sql.append(" Select CU.CustCIF from CollateralSetup CO Inner Join Customers CU ON CO.DepositorId = CU.CustID");
+			sql.append(" Select CU.CustID CustomerId, CU.CustCIF, CU.CustShrtName from CollateralSetup CO Inner Join Customers CU ON CO.DepositorId = CU.CustID");
 			sql.append(" Where CO.CollateralRef = :PrimaryLinkRef");
+		} else if (VASConsatnts.VASAGAINST_CUSTOMER.equals(postingAgainst)) {
+			sql.append(" Select CustID CustomerId, CustCIF, CustShrtName from Customers ");
+			sql.append(" Where CustCIF = :PrimaryLinkRef");
 		}
 
 		logger.debug("Sql: " + sql.toString());
 		
+		VasCustomer vasCustomer = null;
 		try {
 			if(StringUtils.isNotEmpty(sql.toString())){
 				
 				source = new MapSqlParameterSource();
 				source.addValue("PrimaryLinkRef", primaryLinkRef);
 				
-				custCif = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, String.class);
+				RowMapper<VasCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VasCustomer.class);
+				
+				vasCustomer = this.namedParameterJdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 			}
 		} catch (Exception e) {
 			logger.error(e);
-			custCif = null;
+			vasCustomer = null;
 		} finally {
 			source = null;
 			sql = null;
 		}
 		logger.debug("Leaving");
-		return custCif;
+		return vasCustomer;
 	}
 
 }

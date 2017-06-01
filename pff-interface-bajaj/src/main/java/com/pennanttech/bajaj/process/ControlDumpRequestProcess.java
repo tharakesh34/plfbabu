@@ -15,19 +15,18 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
-import com.pennanttech.pff.core.util.DateUtil;
 
 public class ControlDumpRequestProcess extends DatabaseDataEngine {
 
 	private static final Logger	logger			= Logger.getLogger(ControlDumpRequestProcess.class);
 
-	Date						currentDate		= null;
+	Date						appDate		= null;
 	Date						monthStartDate	= null;
 	Date						monthEndDate	= null;
 
-	public ControlDumpRequestProcess(DataSource dataSource, long userId, Date monthStartDate, Date monthEndDate, Date valueDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
-		currentDate = DateUtil.getSysDate();
+	public ControlDumpRequestProcess(DataSource dataSource, long userId,Date valueDate,Date appDate, Date monthStartDate, Date monthEndDate) {
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
+		this.appDate = appDate;
 		this.monthStartDate = monthStartDate;
 		this.monthEndDate = monthEndDate;
 	}
@@ -36,15 +35,28 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 	protected void processData() {
 		logger.debug(Literal.ENTERING);
 
-		executionStatus.setRemarks("loading control dump data..");
-
+		try {
 		// Handling retry on same day.
 		deleteData("CF_CONTROL_DUMP_LOG", "CREATED_ON");
 		deleteData("CF_CONTROL_DUMP", "CREATED_ON");
 
 		// Moving last run data to log table.
-		copyDataFromMainToLogTable(currentDate);
+		copyDataFromMainToLogTable(appDate);
 
+		execute();
+		
+		
+		deleteOldData("CF_CONTROL_DUMP", "CREATED_ON");
+		} catch(Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		} finally {
+			deleteOldData("CF_CONTROL_DUMP", "CREATED_ON");
+		}
+		
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void execute() {
 		// Saving the data into main table.
 		MapSqlParameterSource parmMap;
 		StringBuilder sql = new StringBuilder();
@@ -79,6 +91,11 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 						}
 						String error = null;
 						if (e.getMessage().length() > 1999) {
+							
+							if(e.getMessage().contains("invalid number")) {
+								System.out.println(map.toString());
+							}
+							
 							error = StringUtils.substring(e.getMessage(), e.getMessage().length() - 1999, e
 									.getMessage().length());
 						} else {
@@ -94,7 +111,6 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 				return totalRecords;
 			}
 		});
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
@@ -169,7 +185,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		map.addValue("MIGRATED_ADVANCE_EMI_BILLED", rs.getObject("MIGRATED_ADVANCE_EMI_BILLED"));
 		map.addValue("MIGRATED_ADVANCE_EMI_UNBILLED", rs.getObject("MIGRATED_ADVANCE_EMI_UNBILLED"));
 		map.addValue("MIG_ADV_EMI_BILLED_INTCOMP", rs.getObject("MIG_ADV_EMI_BILLED_INTCOMP"));
-		map.addValue("MIG_ADV_EMI_BILLED_PRIN_COMP", rs.getObject("MIG_ADV_EMI_BILLED_PRIN_COMP"));
+		map.addValue("MIG_ADV_EMI_BILLED_PRINCOMP", rs.getObject("MIG_ADV_EMI_BILLED_PRINCOMP"));
 		map.addValue("MIG_ADV_EMI_UNBILLED_PRINCOMP", rs.getObject("MIG_ADV_EMI_UNBILLED_PRINCOMP"));
 		map.addValue("MIG_DIFFERENCE_PAID", rs.getObject("MIG_DIFFERENCE_PAID"));
 		map.addValue("MIG_DIFFERENCE_PAYABLE", rs.getObject("MIG_DIFFERENCE_PAYABLE"));
@@ -181,8 +197,8 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		map.addValue("NO_OF_EMI_OS", rs.getObject("NO_OF_EMI_OS"));
 		map.addValue("NO_OF_UNBILLED_EMI", rs.getObject("NO_OF_UNBILLED_EMI"));
 		map.addValue("NPA_STAGEID", rs.getObject("NPA_STAGEID"));
-		map.addValue("PDC_SWAP_CHARGESRECEIVABLE", rs.getObject("PDC_SWAP_CHARGESRECEIVABLE"));
-		map.addValue("PDC_SWAP_CHARGESRECEIVED", rs.getObject("PDC_SWAP_CHARGESRECEIVED"));
+		map.addValue("PDC_SWAP_CHARGES_RECEIVABLE", rs.getObject("PDC_SWAP_CHARGES_RECEIVABLE"));
+		map.addValue("PDC_SWAP_CHARGES_RECEIVED", rs.getObject("PDC_SWAP_CHARGES_RECEIVED"));
 		map.addValue("PRINCIPAL_BALANCE", rs.getObject("PRINCIPAL_BALANCE"));
 		map.addValue("PRINCIPAL_DUE", rs.getObject("PRINCIPAL_DUE"));
 		map.addValue("PRINCIPAL_OS", rs.getObject("PRINCIPAL_OS"));
@@ -209,7 +225,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		map.addValue("TOTAL_INTEREST", rs.getObject("TOTAL_INTEREST"));
 		map.addValue("WRITEOFF_DUE", rs.getObject("WRITEOFF_DUE"));
 		map.addValue("WRITEOFF_RECEIVED", rs.getObject("WRITEOFF_RECEIVED"));
-		map.addValue("CREATED_ON", currentDate);
+		map.addValue("CREATED_ON", appDate);
 
 		return map;
 	}
@@ -248,13 +264,25 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource logMap = new MapSqlParameterSource();
-		logMap.addValue(columnName, currentDate);
+		logMap.addValue(columnName, appDate);
 
 		final String[] filterFields = new String[1];
 		filterFields[0] = columnName;
 		delete(logMap, tableName, destinationJdbcTemplate, filterFields);
 
 		logger.debug(Literal.LEAVING);
+	}
+	
+	private void deleteOldData(String tableName, String columnName) {
+		logger.debug(Literal.ENTERING);
 
+		MapSqlParameterSource logMap = new MapSqlParameterSource();
+		logMap.addValue(columnName, appDate);
+
+		final String[] filterFields = new String[1];
+		filterFields[0] = columnName;
+		delete(logMap, tableName, destinationJdbcTemplate, " where CREATED_ON !=:CREATED_ON");
+
+		logger.debug(Literal.LEAVING);
 	}
 }

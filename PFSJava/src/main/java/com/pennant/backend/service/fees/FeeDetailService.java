@@ -263,9 +263,9 @@ public class FeeDetailService {
 				valueParm[2] = finFeeDetail.getFeeTypeCode();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90258", valueParm)));
 				finScheduleData.setErrorDetails(errorDetails);
-				//return finScheduleData;	
+				return;	
 			}
-			if (finFeeDetail.getPaidAmount().compareTo(calcAmount) > 0) {
+			if (finFeeDetail.getPaidAmount().compareTo(finFeeDetail.getActualAmount()) > 0) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "Paid amount";
 				valueParm[1] = "Actual amount:" + String.valueOf(calcAmount);
@@ -343,7 +343,7 @@ public class FeeDetailService {
 		default:
 			break;
 		}
-		calculatedAmt = calculatedAmt.multiply(finFeeDetail.getPercentage()).divide(BigDecimal.valueOf(100),2,RoundingMode.HALF_DOWN);
+		calculatedAmt = calculatedAmt.multiply(finFeeDetail.getPercentage()).divide(BigDecimal.valueOf(100));
 		return calculatedAmt;
 	}
 	

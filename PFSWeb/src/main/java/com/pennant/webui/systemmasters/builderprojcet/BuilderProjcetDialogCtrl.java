@@ -182,9 +182,9 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet>{
 		
 			this.name.setMaxlength(50);
 			this.builderId.setModuleName("BuilderCompany");
-			this.builderId.setValueColumn("GroupId");
+			this.builderId.setValueColumn("Id");
 			this.builderId.setDescColumn("Name");
-			this.builderId.setValidateColumns(new String[] {"GroupId"});
+			this.builderId.setValidateColumns(new String[] {"Id"});
 			Filter[] fieldCode = new Filter[1] ;
 			fieldCode[0]= new Filter("FieldCode", "SEGMENT", Filter.OP_EQUAL);
 			this.builderId.setFilters(fieldCode);
@@ -669,7 +669,6 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet>{
 				}
 
 			} catch (final DataAccessException e) {
-				logger.error(e);
 				MessageUtil.showError(e);
 			}
 			logger.debug("Leaving");

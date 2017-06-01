@@ -1,5 +1,5 @@
 package com.pennanttech.pff.core.services;
 
-public interface RequestService {
+public interface ControlDumpRequest {
 	public void sendReqest(Object... params) throws Exception;
 }

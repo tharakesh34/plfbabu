@@ -19,7 +19,7 @@ public class AddressDetailsDataMart extends DatabaseDataEngine implements Runnab
 	private static final Logger	logger	= Logger.getLogger(AddressDetailsDataMart.class);
 
 	public AddressDetailsDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 	}
 
 	@Override

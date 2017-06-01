@@ -301,7 +301,6 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 					this.collateralSetupListCtrl.window_CollateralSetupList, arguments);
 			this.window_SelectCollateralDialog.onClose();
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");

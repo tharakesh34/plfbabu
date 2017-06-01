@@ -19,7 +19,7 @@ public class LoanWiseRepayScheduleDataMart extends DatabaseDataEngine implements
 	private static final Logger logger = Logger.getLogger(LoanWiseRepayScheduleDataMart.class);
 
 	public LoanWiseRepayScheduleDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 	}
 
 	@Override

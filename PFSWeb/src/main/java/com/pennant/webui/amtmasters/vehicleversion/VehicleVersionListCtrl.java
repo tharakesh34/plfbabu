@@ -231,7 +231,6 @@ public class VehicleVersionListCtrl extends GFCBaseListCtrl<VehicleVersion> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/AMTMasters/VehicleVersion/VehicleVersionDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

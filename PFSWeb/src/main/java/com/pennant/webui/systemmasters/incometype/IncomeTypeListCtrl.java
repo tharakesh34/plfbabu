@@ -249,7 +249,6 @@ public class IncomeTypeListCtrl extends GFCBaseListCtrl<IncomeType> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/IncomeType/IncomeTypeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

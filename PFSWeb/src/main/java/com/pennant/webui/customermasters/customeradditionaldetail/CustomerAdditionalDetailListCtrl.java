@@ -270,7 +270,6 @@ public class CustomerAdditionalDetailListCtrl extends GFCBaseListCtrl<CustomerAd
 					"/WEB-INF/pages/CustomerMasters/CustomerAdditionalDetail/CustomerAdditionalDetailDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

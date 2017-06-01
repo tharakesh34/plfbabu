@@ -203,7 +203,6 @@ public class MMAgreementsListCtrl extends GFCBaseListCtrl<MMAgreement> {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/MMAgreements/MMAgreementsDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

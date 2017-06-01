@@ -203,7 +203,6 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/Academic/AcademicDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

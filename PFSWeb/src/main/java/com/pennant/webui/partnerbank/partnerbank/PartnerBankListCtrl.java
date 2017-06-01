@@ -259,7 +259,6 @@ public class PartnerBankListCtrl extends GFCBaseListCtrl<PartnerBank> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/PartnerBank/PartnerBank/PartnerBankDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

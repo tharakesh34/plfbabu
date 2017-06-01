@@ -249,7 +249,6 @@ public class RejectDetailListCtrl extends GFCBaseListCtrl<RejectDetail> {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/RejectDetail/RejectDetailDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

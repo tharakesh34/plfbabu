@@ -251,7 +251,6 @@ public class EmpStsCodeListCtrl extends GFCBaseListCtrl<EmpStsCode> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/EmpStsCode/EmpStsCodeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

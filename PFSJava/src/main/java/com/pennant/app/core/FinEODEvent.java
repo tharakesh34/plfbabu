@@ -81,14 +81,6 @@ public class FinEODEvent implements Serializable {
 	public void setFinType(FinanceType finType) {
 		this.finType = finType;
 	}
-//
-//	public Map<Date, Integer> getDatesMap() {
-//		return datesMap;
-//	}
-//
-//	public void setDatesMap(Map<Date, Integer> datesMap) {
-//		this.datesMap = datesMap;
-//	}
 
 	public List<FinanceScheduleDetail> getFinanceScheduleDetails() {
 		return financeScheduleDetails;

@@ -19,7 +19,7 @@ public class SendSOAEmailDataMart extends DatabaseDataEngine implements Runnable
 	private static final Logger logger = Logger.getLogger(SendSOAEmailDataMart.class);
 
 	public SendSOAEmailDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 	}
 
 	@Override

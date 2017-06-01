@@ -417,4 +417,10 @@ public class FinanceWorkFlowServiceImpl extends GenericService<FinanceWorkFlow> 
 		return auditDetail;
 	}
 
+	@Override
+	public int getVASProductCode(String finType) {
+		
+		return getFinanceWorkFlowDAO().getVASProductCode(finType, "");
+	}
+
 }

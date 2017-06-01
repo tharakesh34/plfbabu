@@ -19,7 +19,7 @@ public class HTSUnadjustedAmtDataMart extends DatabaseDataEngine implements Runn
 	private static final Logger logger = Logger.getLogger(HTSUnadjustedAmtDataMart.class);
 
 	public HTSUnadjustedAmtDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 	}
 
 	@Override

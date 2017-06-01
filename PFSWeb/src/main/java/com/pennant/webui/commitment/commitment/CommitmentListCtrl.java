@@ -477,7 +477,6 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Commitment/Commitment/CommitmentDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

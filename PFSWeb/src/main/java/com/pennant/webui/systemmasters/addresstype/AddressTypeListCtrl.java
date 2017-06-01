@@ -259,7 +259,6 @@ public class AddressTypeListCtrl extends GFCBaseListCtrl<AddressType> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/AddressType/AddressTypeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

@@ -360,7 +360,6 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			Executions.createComponents(fileLocaation.toString(), this.window_FinanceDeviationsList, arg);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
 			MessageUtil.showError(e);
 		}
 

@@ -34,7 +34,7 @@
 	<bean id="almRequestService" class="com.pennanttech.bajaj.services.ALMRequestService" scope="prototype" parent="bajajService"/>
 	<bean id="controlDumpRequestService" class="com.pennanttech.bajaj.services.ControlDumpRequestService" scope="prototype" parent="bajajService"/>
 	<bean id="posidexRequestService" class="com.pennanttech.bajaj.services.PosidexRequestService" scope="prototype" parent="bajajService"/>
-	<bean id="posidexResponceService" class="com.pennanttech.bajaj.services.PosidexResponceService" scope="prototype" parent="bajajService"/>
+	<bean id="posidexResponceService" class="com.pennanttech.bajaj.services.PosidexResponseService" scope="prototype" parent="bajajService"/>
 	
 	<!-- Disbursement Imps Response  -->
 	<bean id="disbursementIMPSResponseService" class="com.pennanttech.bajaj.services.DisbursementIMPSResponseService" parent="bajajService"/>

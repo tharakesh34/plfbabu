@@ -239,7 +239,6 @@ public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> {
 			Executions
 					.createComponents("/WEB-INF/pages/SolutionFactory/PFSParameter/PFSParameterDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

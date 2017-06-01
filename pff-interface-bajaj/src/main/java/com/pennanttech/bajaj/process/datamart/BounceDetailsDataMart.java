@@ -19,7 +19,7 @@ public class BounceDetailsDataMart extends DatabaseDataEngine implements Runnabl
 	private static final Logger logger = Logger.getLogger(BounceDetailsDataMart.class);
 
 	public BounceDetailsDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 	}
 
 	@Override

@@ -713,5 +713,11 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	public void setFinanceWorkFlowDAO(FinanceWorkFlowDAO financeWorkFlowDAO) {
 		this.financeWorkFlowDAO = financeWorkFlowDAO;
 	}
+
+	@Override
+	public boolean isWorkflowExists(String productType) {
+ 
+		return getFinanceWorkFlowDAO().isWorkflowExists(productType, PennantConstants.WORFLOW_MODULE_VAS);
+	}
 		
 }

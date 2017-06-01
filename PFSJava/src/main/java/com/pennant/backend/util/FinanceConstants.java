@@ -263,9 +263,10 @@ public class FinanceConstants {
 	public static final String	LIMITRULE_FINTYPE				= "FinanceType";
 
 	// Review Category Codes
-	public static final String	RVW_UNPAID_INST					= "RVWUPI";
+	//FIXME: PV: 31MAY17 Duplicate and different version present in calculation constants
+/*	public static final String	RVW_UNPAID_INST					= "RVWUPI";
 	public static final String	RVW_ALL							= "RVWALL";
-
+*/
 	// Method code for Schedule Change exists or not on Maintenance
 	public static final String	method_scheduleChange			= "scheduleChange";
 

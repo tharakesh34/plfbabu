@@ -246,7 +246,6 @@ public class RelationshipOfficerListCtrl extends GFCBaseListCtrl<RelationshipOff
 			Executions.createComponents(
 					"/WEB-INF/pages/ApplicationMaster/RelationshipOfficer/RelationshipOfficerDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

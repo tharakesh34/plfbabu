@@ -19,7 +19,7 @@ public class WriteOffDetailsDataMart extends DatabaseDataEngine implements Runna
 	private static final Logger logger = Logger.getLogger(WriteOffDetailsDataMart.class);
 
 	public WriteOffDetailsDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 	}
 
 	@Override

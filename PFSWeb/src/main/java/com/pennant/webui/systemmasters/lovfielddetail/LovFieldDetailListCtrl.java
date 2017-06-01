@@ -246,7 +246,6 @@ public class LovFieldDetailListCtrl extends GFCBaseListCtrl<LovFieldDetail> {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/LovFieldDetail/LovFieldDetailDialog.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

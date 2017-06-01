@@ -227,7 +227,6 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/ReceiptEnquiryDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

@@ -251,7 +251,6 @@ public class SecurityGroupListCtrl extends GFCBaseListCtrl<SecurityGroup> {
 						null, aruments);
 			}
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

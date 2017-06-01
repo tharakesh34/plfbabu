@@ -19,8 +19,9 @@ public class PrePaymentDetailsDataMart extends DatabaseDataEngine implements Run
 	private static final Logger logger = Logger.getLogger(PrePaymentDetailsDataMart.class);
 
 	public PrePaymentDetailsDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate);
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 	}
+
 
 	@Override
 	public void run() {

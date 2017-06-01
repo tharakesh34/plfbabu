@@ -247,7 +247,6 @@ public class ProvinceListCtrl extends GFCBaseListCtrl<Province> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SystemMaster/Province/ProvinceDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

@@ -242,7 +242,6 @@ public class VASProductCategoryListCtrl extends GFCBaseListCtrl<VASProductCatego
 			Executions.createComponents("/WEB-INF/pages/VASProductCategory/VASProductCategoryDialog.zul",
 					null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");

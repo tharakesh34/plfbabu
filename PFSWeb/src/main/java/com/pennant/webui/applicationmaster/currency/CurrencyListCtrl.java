@@ -246,7 +246,6 @@ public class CurrencyListCtrl extends GFCBaseListCtrl<Currency> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/Currency/CurrencyDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");

@@ -1269,7 +1269,6 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");

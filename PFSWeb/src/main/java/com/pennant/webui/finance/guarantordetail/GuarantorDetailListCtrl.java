@@ -237,7 +237,6 @@ public class GuarantorDetailListCtrl extends GFCBaseListCtrl<GuarantorDetail> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/GuarantorDetail/GuarantorDetailDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

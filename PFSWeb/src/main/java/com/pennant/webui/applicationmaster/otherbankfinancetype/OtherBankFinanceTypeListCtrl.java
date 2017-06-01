@@ -242,7 +242,6 @@ public class OtherBankFinanceTypeListCtrl extends GFCBaseListCtrl<OtherBankFinan
 			Executions.createComponents(
 					"/WEB-INF/pages/ApplicationMaster/OtherBankFinanceType/OtherBankFinanceTypeDialog.zul", null, arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			MessageUtil.showError(e);
 		}
 

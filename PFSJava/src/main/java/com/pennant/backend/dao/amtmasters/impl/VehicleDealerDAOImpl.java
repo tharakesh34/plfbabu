@@ -52,6 +52,7 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -301,5 +302,29 @@ public class VehicleDealerDAOImpl extends BasisNextidDaoImpl<VehicleDealer> impl
 		
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);	
+	}
+
+	@Override
+	public int getVASManufactureCode(String dealerName, String type) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ManufacturerName", dealerName);
+		int count;
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From VASStructure");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where ManufacturerName =:ManufacturerName ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		try {
+			 count= this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source,Integer.class);
+		} catch(EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+			return 0;
+		}
+		logger.debug("Leaving");
+		return count;
 	}
 }

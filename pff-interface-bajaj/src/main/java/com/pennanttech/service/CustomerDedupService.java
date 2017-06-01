@@ -257,7 +257,8 @@ public class CustomerDedupService {
 		}
 
 		customerResponse.setDedupCustomerDetails(details);
-		logger.info(" Dedupe Response : " + customerResponse.toString());
+		logger.debug(" Dedupe Response Code : " + customerResponse.getErrorCode());
+		logger.debug(" Dedupe Response Desc: " + customerResponse.getErrorDesc());
 		return customerResponse;
 	}
 

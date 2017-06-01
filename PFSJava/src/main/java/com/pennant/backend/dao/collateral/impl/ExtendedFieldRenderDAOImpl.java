@@ -285,4 +285,33 @@ public class ExtendedFieldRenderDAOImpl implements ExtendedFieldRenderDAO {
 			logger.debug("Leaving");
 		}
 	}
+
+	@Override
+	public int validateMasterData(String tableName, String column, String filterColumn, String fieldValue) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource source=new MapSqlParameterSource();
+		source.addValue("ColumnName", column);
+		source.addValue("Filter", filterColumn);
+		source.addValue("Value", fieldValue);
+		
+		StringBuffer selectSql = new StringBuffer();
+		selectSql.append("SELECT COUNT(*) FROM ");
+		selectSql.append(tableName);
+		selectSql.append(" WHERE ");
+		selectSql.append(column);
+		selectSql.append("= :Value AND "+filterColumn+"= 1");
+		
+		logger.debug("insertSql: " + selectSql.toString());
+		int recordCount = 0;
+		try {
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch(EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+			recordCount = 0;
+		}
+		logger.debug("Leaving");
+		
+		return recordCount;
+	}
 }

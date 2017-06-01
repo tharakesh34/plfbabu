@@ -601,7 +601,6 @@ public class FinanceStatusCodeDialogCtrl extends GFCBaseCtrl<FinanceStatusCode> 
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error(e);
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");

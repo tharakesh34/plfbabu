@@ -665,7 +665,6 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup>{
 			}
 
 		} catch (final DataAccessException e) {
-			logger.error(e);
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");

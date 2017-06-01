@@ -253,7 +253,6 @@ public class AccountMappingListCtrl extends GFCBaseListCtrl<AccountMapping> {
 							"/WEB-INF/pages/ApplicationMaster/AccountMapping/NormAccountMappingDialog.zul", null, arg);
 				}
 			} catch (Exception e) {
-				logger.error("Exception:", e);
 				MessageUtil.showError(e);
 			}
 		}

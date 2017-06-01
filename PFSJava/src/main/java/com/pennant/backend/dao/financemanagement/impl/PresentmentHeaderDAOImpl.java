@@ -776,5 +776,35 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		}
 		logger.debug(Literal.LEAVING);
 	}
+	
+	/**
+	 * Method for fetching Max Schedule Date which are in presentment Details
+	 */
+	@Override
+	public Date getMaxSchdPresentment(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT MAX(SchDate) FROM PresentmentDetails WHERE FinReference =:FinReference ");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		
+		Date maxSchdate = null;
+		try {
+			maxSchdate = jdbcTemplate.queryForObject(sql.toString(), source, Date.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			maxSchdate = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return maxSchdate;
+	}
+
 
 }
