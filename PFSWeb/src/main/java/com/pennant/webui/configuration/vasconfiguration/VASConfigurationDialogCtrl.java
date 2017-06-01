@@ -550,6 +550,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 */
 	private void doEdit() {
 		logger.debug("Entering");
+		boolean isWorkflowExists = getVasConfigurationService().isWorkflowExists(this.vASConfiguration.getProductCode());
 
 		if (this.vASConfiguration.isNewRecord()) {
 			this.productCode.setReadonly(false);
@@ -596,6 +597,9 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
+		}
+		if(isWorkflowExists){
+			this.btnDelete.setVisible(false);
 		}
 
 		logger.debug("Leaving ");

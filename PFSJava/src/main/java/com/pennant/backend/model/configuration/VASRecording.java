@@ -578,5 +578,4 @@ public class VASRecording extends AbstractWorkflowEntity {
 		this.feeAccounting = feeAccounting;
 	}
 
-
 }

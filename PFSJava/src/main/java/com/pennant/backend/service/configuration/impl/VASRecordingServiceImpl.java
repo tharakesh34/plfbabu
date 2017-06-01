@@ -346,7 +346,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			vasRecording.setVasConfiguration(getvASConfigurationService().getApprovedVASConfigurationByCode(vasRecording.getProductCode()));
 			
 			//Set CustomerDetails
-			vasRecording.setVasCustomer(getVasCustomerDetails(vasRecording));
+			vasRecording.setVasCustomer(getvASRecordingDAO().getVasCustomerCif(vasRecording.getPrimaryLinkRef(), vasRecording.getPostingAgainst()));
 			
 			// Extended Field Details
 			StringBuilder tableName = new StringBuilder();
@@ -438,28 +438,11 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	/*
 	 * Getting the customer details usnig teh 
 	 */
-	private VasCustomer getVasCustomerDetails(VASRecording vasRecording) {
+	@Override
+	public VasCustomer getVasCustomerDetails(String primaryLinkRef, String postingAgainst) {
 		logger.debug("Entering");
 
-		String cif = null;
-		VasCustomer vasCustomer = null;
-		
-		if (VASConsatnts.VASAGAINST_CUSTOMER.equals(vasRecording.getPostingAgainst())) {
-			cif = vasRecording.getPrimaryLinkRef();
-		} else {
-			cif = getvASRecordingDAO().getCustomerCif(vasRecording.getPrimaryLinkRef(), vasRecording.getPostingAgainst());
-		}
-
-		if (cif != null) {
-			Customer customer = getCustomerDAO().getCustomerByCIF(cif, "");
-			if(customer == null){
-				return vasCustomer;
-			}
-			vasCustomer = new VasCustomer();
-			vasCustomer.setCustomerId(customer.getCustID());
-			vasCustomer.setCustCIF(cif);
-			vasCustomer.setCustShrtName(customer.getCustShrtName());
-		}
+		VasCustomer vasCustomer = getvASRecordingDAO().getVasCustomerCif(primaryLinkRef, postingAgainst);
 		logger.debug("Leaving");
 		return vasCustomer;
 	}
@@ -760,9 +743,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	@Override
 	public VASRecording getProcessEditorDetails(VASRecording vasRecording, String nextRoleCode, String procEdtEvent) {
 		logger.debug("Entering");
-
+		
 		String productCode = vasRecording.getProductCode();
-
 		List<FinanceReferenceDetail> aggrementList = new ArrayList<FinanceReferenceDetail>(1);
 		List<FinanceReferenceDetail> checkListdetails = new ArrayList<FinanceReferenceDetail>(1);
 
@@ -788,6 +770,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		}
 		//Finance Agreement Details	
 		vasRecording.setAggrements(aggrementList);
+		
 		//Check list Details
 		getCheckListDetailService().fetchVASCheckLists(vasRecording, checkListdetails);
 		

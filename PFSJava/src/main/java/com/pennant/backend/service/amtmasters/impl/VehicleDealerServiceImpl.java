@@ -457,4 +457,9 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 	    return getVehicleDealerDAO().SearchName(dealerName);
     }
 
+	@Override
+	public int getVASManufactureCode(String dealerName) {
+		return getVehicleDealerDAO().getVASManufactureCode(dealerName, "_View");
+	}
+
 }

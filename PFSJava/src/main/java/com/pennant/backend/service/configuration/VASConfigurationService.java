@@ -65,4 +65,6 @@ public interface VASConfigurationService {
 	AuditHeader doReject(AuditHeader auditHeader);
 
 	boolean isVASTypeExists(String productType);
+	
+	boolean isWorkflowExists(String productType);
 }

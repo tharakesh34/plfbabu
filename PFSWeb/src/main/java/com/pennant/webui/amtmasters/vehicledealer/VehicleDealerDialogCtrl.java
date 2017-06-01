@@ -1084,6 +1084,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	private void doEdit() {
 		logger.debug("Entering");
 
+		int count = vehicleDealerService.getVASManufactureCode(getVehicleDealer().getDealerName());
 		if (getVehicleDealer().isNewRecord()) {
 			this.btnCancel.setVisible(false);
 			this.dealerType.setDisabled(false);
@@ -1165,6 +1166,9 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
+		}
+		if(count > 0){
+			this.btnDelete.setVisible(false);
 		}
 
 		logger.debug("Leaving");

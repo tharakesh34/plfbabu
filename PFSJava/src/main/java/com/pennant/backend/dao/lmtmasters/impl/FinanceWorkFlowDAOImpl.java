@@ -63,6 +63,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.impl.BasisCodeDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceWorkFlowDAO;
+import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
@@ -376,6 +377,30 @@ public class FinanceWorkFlowDAOImpl extends BasisCodeDAO<FinanceWorkFlow> implem
 		
 		logger.debug("Leaving");
 		return rcdCount > 0 ? true : false;
+	}
+
+	@Override
+	public int getVASProductCode(String finType, String type) {
+		logger.debug("Entering");
+		VASConfiguration vASProductCode = new VASConfiguration();
+		vASProductCode.setProductCode(finType);
+		int count;
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
+		selectSql.append(" From VASStructure");
+		selectSql.append(" Where ProductCode =:ProductCode ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASProductCode);
+
+		try {
+			 count= this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,Integer.class);
+		} catch(EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+			return 0;
+		}
+		logger.debug("Leaving");
+		return count;
 	}
 
 }

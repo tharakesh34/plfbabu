@@ -45,6 +45,7 @@ package com.pennant.backend.service.configuration;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.configuration.VasCustomer;
 import com.pennant.exception.PFFInterfaceException;
 
 public interface VASRecordingService {
@@ -67,5 +68,7 @@ public interface VASRecordingService {
 	VASRecording getProcessEditorDetails(VASRecording vASRecording, String role, String finserEventOrg);
 
 	AuditDetail doValidations(VASRecording vasRecording);
+
+	VasCustomer getVasCustomerDetails(String primaryLinkRef, String postingAgainst);
 
 }

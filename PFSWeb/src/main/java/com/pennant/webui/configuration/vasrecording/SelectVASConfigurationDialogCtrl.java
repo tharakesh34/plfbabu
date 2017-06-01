@@ -57,6 +57,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -70,7 +71,6 @@ import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.configuration.VasCustomer;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.service.configuration.VASConfigurationService;
@@ -83,10 +83,12 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.exception.PFFInterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.webui.finance.financemain.FinVasRecordingDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
 
@@ -284,14 +286,25 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 		if (!doFieldValidation()) {
 			return;
 		}
-
+		VasCustomer vasCustomer = new VasCustomer();
 		if (this.customerRow.isVisible()) {
+			if (!isCustomerExists()) {
+				MultiLineMessageBox.show(Labels.getLabel("Cust_NotFound"), Labels.getLabel("message.Error"),
+						MultiLineMessageBox.OK, Messagebox.ERROR, true);
+				return;
+			}
 			vasRecording.setPrimaryLinkRef(this.custCIF.getValue());
+			
 		} else if (this.loanRow.isVisible()) {
 			vasRecording.setPrimaryLinkRef(this.loanType.getValue());
 		} else if (this.collateralRow.isVisible()) {
 			vasRecording.setPrimaryLinkRef(this.collteralType.getValue());
 		}
+		
+		// Vas Customer Details
+		vasCustomer = getvASRecordingService().getVasCustomerDetails(vasRecording.getPrimaryLinkRef(), vasRecording.getPostingAgainst());
+		vasRecording.setVasCustomer(vasCustomer);
+		
 		// Setting Workflow Details
 		if (getFinanceWorkFlow() == null && !isFinanceProcess) {
 			FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
@@ -439,6 +452,48 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 		}
 		return true;
 	}
+	
+	
+	/**
+	 * Call the Customer dialog with a new empty entry. <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 * @throws PFFInterfaceException
+	 * @throws Exception
+	 */
+	public boolean isCustomerExists() throws InterruptedException, PFFInterfaceException {
+		logger.debug("Entering");
+
+		boolean isCustExists = true;
+		// Get the data of Customer from Core Banking Customer
+		try {
+			this.custCIF.setConstraint("");
+			this.custCIF.setErrorMessage("");
+			this.custCIF.clearErrorMessage();
+			String cif = StringUtils.trimToEmpty(this.custCIF.getValue());
+
+			//If  customer exist is checked 
+			Customer customer = null;
+			if (StringUtils.isEmpty(cif)) {
+				throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_EMPTY",
+						new String[] { Labels.getLabel("label_CustomerDialog_CoreCustID.value") }));
+			} else {
+
+				//check Customer Data in LOCAL PFF system
+				customer = getCustomerDetailsService().getCheckCustomerByCIF(cif);
+			}
+
+			if (customer == null) {
+				isCustExists = false;
+			}
+
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+		}
+		logger.debug("Leaving");
+		return isCustExists;
+	}
 
 	/**
 	 * When user clicks on button "customerId Search" button
@@ -528,66 +583,6 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 		logger.debug("Leaving " + event.toString());
 	}
 
-	/**
-	 * When user clicks on button "loanType" button
-	 * @param event
-	 */
-	public void onFulfill$loanType(Event event) {
-		logger.debug("Entering " + event.toString());
-
-		this.loanType.setConstraint("");
-		this.loanType.clearErrorMessage();
-		Clients.clearWrongValue(loanType);
-		Object dataObject = this.loanType.getObject();
-		if (dataObject instanceof String) {
-			this.loanType.setValue(dataObject.toString());
-			this.loanType.setDescription("");
-			showProductTypeRow("");
-		} else {
-			FinanceMain details = (FinanceMain) dataObject;
-			/* Set FinanceWorkFloe object */
-			if (details != null) {
-				Customer customer = getCustomerDAO().getCustomerByID(details.getCustID(), "");
-				VasCustomer vasCustomer = new VasCustomer();
-				vasCustomer.setCustomerId(customer.getCustID());
-				vasCustomer.setCustCIF(customer.getCustCIF());
-				vasCustomer.setCustShrtName(customer.getCustShrtName());
-				this.vasRecording.setVasCustomer(vasCustomer);
-			}
-		}
-		logger.debug("Leaving " + event.toString());
-	}
-
-	/**
-	 * When user clicks on button "collteralType" button
-	 * @param event
-	 */
-	public void onFulfill$collteralType(Event event) {
-		logger.debug("Entering " + event.toString());
-
-		this.collteralType.setConstraint("");
-		this.collteralType.clearErrorMessage();
-		Clients.clearWrongValue(collteralType);
-		Object dataObject = this.collteralType.getObject();
-		if (dataObject instanceof String) {
-			this.collteralType.setValue(dataObject.toString());
-			this.collteralType.setDescription("");
-			showProductTypeRow("");
-		} else {
-			CollateralSetup details = (CollateralSetup) dataObject;
-			/* Set FinanceWorkFloe object */
-			if (details != null) {
-				Customer customer = getCustomerDAO().getCustomerByID(details.getDepositorId(), "");
-				VasCustomer vasCustomer = new VasCustomer();
-				vasCustomer.setCustomerId(customer.getCustID());
-				vasCustomer.setCustCIF(customer.getCustCIF());
-				vasCustomer.setCustShrtName(customer.getCustShrtName());
-				this.vasRecording.setVasCustomer(vasCustomer);
-			}
-		}
-
-		logger.debug("Leaving " + event.toString());
-	}
 	/*
 	 * display the customer,Loan or commitemet deatils based on produtype selection
 	 */

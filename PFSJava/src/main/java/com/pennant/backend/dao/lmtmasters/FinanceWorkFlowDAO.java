@@ -57,5 +57,6 @@ public interface FinanceWorkFlowDAO {
 	String getFinanceWorkFlowType(String finType, String finEvent,	String moduleName, String type);
 	List<String> getFinanceWorkFlowRoles(String module,String finEvent);
 	boolean isWorkflowExists(String finType, String moduleName);
+	int getVASProductCode(String finType, String type);
 	
 }

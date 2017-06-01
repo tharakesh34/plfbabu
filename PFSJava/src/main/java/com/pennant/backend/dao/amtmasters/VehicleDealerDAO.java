@@ -57,4 +57,6 @@ public interface VehicleDealerDAO {
 	boolean SearchName(String dealerName);
 
 	int getVehicleDealerByType(String dealerType, String name,long id, String type);
+
+	int getVASManufactureCode(String dealerName, String type);
 }
