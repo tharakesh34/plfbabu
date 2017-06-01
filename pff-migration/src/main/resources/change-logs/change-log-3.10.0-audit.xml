@@ -8,5 +8,23 @@
 <property name="call.maindb" value="PLF.." dbms="mssql"/>
 <property name="call.maindb" value="PLF." dbms="oracle"/>
 
+<changeSet id="01" author="Surekha">
+		<createTable tableName="AdtPinCodes">
+			<column name="PinCodeId" type="bigint"/>
+			<column name="PinCode" type="varchar(10)"/>
+			<column name="City" type="varchar(8)" />
+			<column name="Active" type="boolean"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
 	
 </databaseChangeLog>
