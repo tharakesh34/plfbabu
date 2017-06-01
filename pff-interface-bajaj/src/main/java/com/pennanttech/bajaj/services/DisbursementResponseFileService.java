@@ -32,6 +32,10 @@ public class DisbursementResponseFileService extends BajajService implements Fil
 
 		File directory = null;
 		directory = new File(BajajInterfaceConstants.autoDisbFileLoaction);
+		
+		if(directory != null) {
+			logger.debug("Auto disbursement response file location [ " + directory + " ]");
+		}
 
 		if (!directory.exists()) {
 			logger.warn("Auto disbursement response file location [ " + directory + " ] not available.");
