@@ -88,7 +88,7 @@ public class DisbursementResponseFileService extends BajajService implements Fil
 		status.setRemarks("initiated disbursement response file [ " + name + " ] processing..");
 
 		DataEngineImport dataEngine;
-		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), status, null);
+		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true, getValueDate(), status);
 		dataEngine.setFile(file);
 		dataEngine.setMedia(media);
 		dataEngine.setValueDate(getValueDate());

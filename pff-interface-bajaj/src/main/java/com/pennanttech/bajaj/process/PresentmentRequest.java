@@ -25,7 +25,7 @@ public class PresentmentRequest extends DatabaseDataEngine {
 	private long presentmentId;
 
 	public PresentmentRequest(DataSource dataSource, String database, long userId, Date valueDate,boolean logBatch) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate, logBatch);
+		super(dataSource, App.DATABASE.name(), userId, logBatch, valueDate);
 	}
 
 	@Override

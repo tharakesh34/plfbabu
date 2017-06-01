@@ -244,7 +244,7 @@ public class DisbursementRequestService extends BajajService implements Disburse
 
 	private void generateFile(String configName, List<String> idList, String paymentType, String partnerbankCode,
 			String finType, long userId) {
-		DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name());
+		DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate());
 
 		Map<String, Object> filterMap = new HashMap<>();
 		filterMap.put("ID", idList);
@@ -294,7 +294,7 @@ public class DisbursementRequestService extends BajajService implements Disburse
 	}
 
 	private void sendIMPSRequest(String configName, List<String> dibursements, long userId) {
-		DisbursemenIMPSRequestProcess impsRequest = new DisbursemenIMPSRequestProcess(dataSource, App.DATABASE.name(), userId, getValueDate(),true);
+		DisbursemenIMPSRequestProcess impsRequest = new DisbursemenIMPSRequestProcess(dataSource, userId,getValueDate(),getAppDate());
 
 		impsRequest.setDisbursments(dibursements);
 		impsRequest.process(configName);

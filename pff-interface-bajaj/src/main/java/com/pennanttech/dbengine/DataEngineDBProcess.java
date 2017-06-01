@@ -14,12 +14,8 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 public class DataEngineDBProcess extends FileDataDataEngine {
 	private static final Logger logger = Logger.getLogger(DataEngineDBProcess.class);
 	
-	public DataEngineDBProcess(DataSource dataSource, long userId, String database) {
-		super(dataSource, userId, database);
-	}
-
-	public DataEngineDBProcess(DataSource dataSource, long userId, String database, DataEngineStatus executionStatus) {
-		super(dataSource, userId, database, executionStatus, null);
+	public DataEngineDBProcess(DataSource dataSource, long userId, String database, boolean logBatch) {
+		super();
 	}
 	
 	public void processData(String configName, String paymentId) {

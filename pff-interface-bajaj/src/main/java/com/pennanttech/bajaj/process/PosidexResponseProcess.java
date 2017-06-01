@@ -23,7 +23,7 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 	private static final Logger logger = Logger.getLogger(PosidexResponseProcess.class);
 
 	public PosidexResponseProcess(DataSource dataSource,long userId, Date valueDate, boolean logBatch) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate,logBatch);
+		super(dataSource, App.DATABASE.name(), userId, logBatch, valueDate);
 	}
 
 	@Override

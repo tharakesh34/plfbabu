@@ -51,7 +51,7 @@ public class MandateResponseFileService extends BajajService implements FileServ
 		status.setRemarks("initiated Mandate response file [ " + name + " ] processing..");
 
 		DataEngineImport dataEngine;
-		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), status, null);
+		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true, getValueDate(), status);
 		dataEngine.setFile(file);
 		dataEngine.setMedia(media);
 		dataEngine.setValueDate(getValueDate());

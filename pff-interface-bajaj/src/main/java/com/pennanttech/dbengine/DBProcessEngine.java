@@ -28,10 +28,9 @@ public class DBProcessEngine extends DataAccess {
 	protected int failedCount;
 	protected int totalRecords;
 
-	public DBProcessEngine(DataSource appDataSource, String dataBase, DataEngineStatus executionStatus) {
-		super(appDataSource, executionStatus, dataBase);
+	public DBProcessEngine(DataSource dataSource, String dataBase, DataEngineStatus executionStatus) {
 		this.database = dataBase;
-		this.jdbcTemplate = new NamedParameterJdbcTemplate(appDataSource);
+		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	protected void saveBatchLog(MapSqlParameterSource source, String sql) throws Exception {

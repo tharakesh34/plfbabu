@@ -63,7 +63,7 @@ public class MandateRequestService extends BajajService implements MandateReques
 
 		parameterMap.put("USER_NAME", userName);
 		DataEngineExport dataEngine = null;
-		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name());
+		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate());
 
 		dataEngine.setFilterMap(filterMap);
 		dataEngine.setParameterMap(parameterMap);

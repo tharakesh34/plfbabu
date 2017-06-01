@@ -20,15 +20,15 @@ import com.pennanttech.bajaj.process.datamart.SubQDisbDataMart;
 import com.pennanttech.pff.core.Literal;
 
 public class DataMartRequestProcess {
-	private static final Logger	logger	= Logger.getLogger(DataMartRequestProcess.class);
+	private static final Logger logger = Logger.getLogger(DataMartRequestProcess.class);
 
-	private DataSource			dataSource;
-	private long				userId;
-	private Date				valueDate;
-	private Date				appDate;
-	private Boolean 			logBatch;
+	private DataSource dataSource;
+	private long userId;
+	private Date valueDate;
+	private Date appDate;
+	private Boolean logBatch;
 
-	public DataMartRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate,boolean logBatch) {
+	public DataMartRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate, boolean logBatch) {
 		this.dataSource = dataSource;
 		this.userId = userId;
 		this.valueDate = valueDate;
@@ -39,43 +39,41 @@ public class DataMartRequestProcess {
 	public void importData() {
 		logger.debug(Literal.ENTERING);
 
-		DisbursementDataMart disbursementDM = new DisbursementDataMart(dataSource, userId, valueDate, appDate, true);
+		DisbursementDataMart disbursementDM = new DisbursementDataMart(dataSource, userId, valueDate, appDate);
 		disbursementDM.process("DATA_MART_REQUEST");
 		disbursementDM.run();
-		
-		LoanDetailDataMart loanDetailDM = new LoanDetailDataMart(dataSource, userId, valueDate, appDate, true);
+
+		LoanDetailDataMart loanDetailDM = new LoanDetailDataMart(dataSource, userId, valueDate, appDate);
 		loanDetailDM.process("DATA_MART_REQUEST");
 		loanDetailDM.run();
-		
-		
-		InsuranceDetailsDataMart insuranceDM = new InsuranceDetailsDataMart(dataSource, userId, valueDate, appDate, true);
+
+		InsuranceDetailsDataMart insuranceDM = new InsuranceDetailsDataMart(dataSource, userId, valueDate, appDate);
 		insuranceDM.process("DATA_MART_REQUEST");
-		
-		PropertyDetailsDataMart propertyDM = new PropertyDetailsDataMart(dataSource, userId, valueDate, appDate, true);
+
+		PropertyDetailsDataMart propertyDM = new PropertyDetailsDataMart(dataSource, userId, valueDate, appDate);
 		propertyDM.process("DATA_MART_REQUEST");
-		
-		ApplicantDetailsDataMart appDM = new ApplicantDetailsDataMart(dataSource, userId, valueDate, appDate, true);
+
+		ApplicantDetailsDataMart appDM = new ApplicantDetailsDataMart(dataSource, userId, valueDate, appDate);
 		appDM.process("DATA_MART_REQUEST");
-		
-		AddressDetailsDataMart addDM = new AddressDetailsDataMart(dataSource, userId, valueDate, appDate, true);
+
+		AddressDetailsDataMart addDM = new AddressDetailsDataMart(dataSource, userId, valueDate, appDate);
 		addDM.process("DATA_MART_REQUEST");
-		
-		ApplicationDetailsDataMart apptDm = new ApplicationDetailsDataMart(dataSource, userId, valueDate, appDate, true);
+
+		ApplicationDetailsDataMart apptDm = new ApplicationDetailsDataMart(dataSource, userId, valueDate, appDate);
 		apptDm.process("DATA_MART_REQUEST");
-		
-		CoApplicantDetailsDataMart coAppDM = new CoApplicantDetailsDataMart(dataSource, userId, valueDate, appDate, true);
+
+		CoApplicantDetailsDataMart coAppDM = new CoApplicantDetailsDataMart(dataSource, userId, valueDate, appDate);
 		coAppDM.process("DATA_MART_REQUEST");
-		
-		OpenEcsDetailsDataMart openEcsDM = new OpenEcsDetailsDataMart(dataSource, userId, valueDate, appDate, true);
+
+		OpenEcsDetailsDataMart openEcsDM = new OpenEcsDetailsDataMart(dataSource, userId, valueDate, appDate);
 		openEcsDM.process("DATA_MART_REQUEST");
-		
-		SubQDisbDataMart subqDM = new SubQDisbDataMart(dataSource, userId, valueDate, appDate, true);
+
+		SubQDisbDataMart subqDM = new SubQDisbDataMart(dataSource, userId, valueDate, appDate);
 		subqDM.process("DATA_MART_REQUEST");
-		
-		IVRFlexiDataMart ivrDM = new IVRFlexiDataMart(dataSource, userId, valueDate, appDate, true);
+
+		IVRFlexiDataMart ivrDM = new IVRFlexiDataMart(dataSource, userId, valueDate, appDate);
 		ivrDM.process("DATA_MART_REQUEST");
-		
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 

@@ -609,21 +609,21 @@ public class SAPGLServiceImpl extends BajajService implements GeneralLedgerServi
 
 	private void generateTransactionReport() throws Exception {
 		logger.info("Generating Transaction Detail Report ..");
-		DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name());
+		DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate());
 		dataEngine.setValueDate(valueDate);
 		dataEngine.exportData("GL_TRANSACTION_EXPORT");
 	}
 
 	private void generateTransactionSummaryReport() throws Exception {
 		logger.info("Generating Transaction Summary Report ..");
-		DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name());
+		DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate());
 		dataEngine.setValueDate(valueDate);
 		dataEngine.exportData("GL_TRANSACTION_SUMMARY_EXPORT");
 	}
 
 	private void generateTrailBalanceReport() throws Exception {
 		logger.info("Generating Trail Balance Report ..");
-		DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name());
+		DataEngineExport dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate());
 
 		Map<String, Object> filterMap = new HashMap<>();
 		filterMap.put("HEADERID", headerId);

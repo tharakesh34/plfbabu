@@ -32,8 +32,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 	private int loanUpdateCount;
 
 	public PosidexRequestProcess(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate, true);
-
+		super(dataSource, App.DATABASE.name(), userId,true, valueDate);
 	}
 
 	@Override

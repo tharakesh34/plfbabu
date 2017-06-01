@@ -18,8 +18,8 @@ import com.pennanttech.pff.core.Literal;
 public class PropertyDetailsDataMart extends DatabaseDataEngine implements Runnable {
 	private static final Logger	logger	= Logger.getLogger(PropertyDetailsDataMart.class);
 
-	public PropertyDetailsDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate, boolean logBatch) {
-		super(dataSource, App.DATABASE.name(), userId, valueDate, logBatch);
+	public PropertyDetailsDataMart(DataSource dataSource, long userId, Date valueDate, Date appDate) {
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 	}
 
 	@Override
