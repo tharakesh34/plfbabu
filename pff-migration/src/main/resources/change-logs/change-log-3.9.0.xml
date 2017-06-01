@@ -1918,4 +1918,10 @@
 		FROM     PaymentInstructions
 		</createView>
 	</changeSet>
+	
+	<changeSet id="66" author="Manoj.P">
+		<sql>
+			update DATA_ENGINE_CONFIG set FILENAMEFORMAT = '_${CLIENT_CODE},${ddmm},.${SEQ_DATE_FILE}' where Name = 'DISB_HDFC_EXPORT';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
