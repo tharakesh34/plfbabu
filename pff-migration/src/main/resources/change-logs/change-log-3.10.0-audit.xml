@@ -10,6 +10,18 @@
 
 <changeSet id="01" author="Surekha">
 		<createTable tableName="AdtPinCodes">
+		<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
 			<column name="PinCodeId" type="bigint"/>
 			<column name="PinCode" type="varchar(10)"/>
 			<column name="City" type="varchar(8)" />
