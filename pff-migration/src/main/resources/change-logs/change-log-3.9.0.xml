@@ -1949,17 +1949,9 @@
 				       BMTRejectCodes T7 ON T1.CancelReason = T7.RejectCode
 		</createView>
 	</changeSet>
-	<changeSet id="70" author="Manoj.p">
-	<sql>
-		update data_engine_config set uploadpath = '/opt/PFF/disbursement/response/stp' where name = 'DISB_HDFC_IMPORT';
-		update DATA_ENGINE_CONFIG set FILEPREFIXNAME = '${CLIENT_CODE}', FILENAMEFORMAT = '${ddmm},.${SEQ_DATE_FILE}' where Name = 'DISB_HDFC_EXPORT';
-		DELETE FROM  SMTPARAMETERS WHERE SYSPARMCODE IN ('GROUP_ID', 'CLIENT_CODE');
-		update partnerbanks set FILENAME = 'FCAT_BF1C' where PARTNERBANKCODE = 'HDFC';
-	</sql>	
-	</changeSet>
 	<changeSet id="72" author="murthy">
-		<dropTable tableName="DATA_ENGINE_PROCESS_LOG"/>
-		<dropTable tableName="DATA_ENGINE_EXECUTION_FIELDS"/>
+		<!-- <dropTable tableName="DATA_ENGINE_PROCESS_LOG"/>
+		<dropTable tableName="DATA_ENGINE_EXECUTION_FIELDS"/> -->
 		<dropTable tableName="DATA_ENGINE_DOWNLOAD_HISTORY"/>
 		<dropTable tableName="DATA_ENGINE_LOG"/>
 		<dropTable tableName="DATA_ENGINE_STATUS" cascadeConstraints="true"/>
