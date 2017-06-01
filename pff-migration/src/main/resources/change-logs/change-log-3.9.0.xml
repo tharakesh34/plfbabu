@@ -1924,4 +1924,12 @@
 			update DATA_ENGINE_CONFIG set FILENAMEFORMAT = '_${CLIENT_CODE},${ddmm},.${SEQ_DATE_FILE}' where Name = 'DISB_HDFC_EXPORT';
 		</sql>
 	</changeSet>
+	<changeSet id="67" author = "SreeRavali">
+	<addDefaultValue columnDataType="boolean" columnName="restructureloan"
+			 defaultValueBoolean="false" tableName="financemain" />
+	</changeSet>
+		<changeSet id="68" author = "SreeRavali">
+	<addDefaultValue columnDataType="boolean" columnName="restructureloan"
+			defaultValueBoolean="false" tableName="financemain_temp" />
+	</changeSet>
 </databaseChangeLog>
