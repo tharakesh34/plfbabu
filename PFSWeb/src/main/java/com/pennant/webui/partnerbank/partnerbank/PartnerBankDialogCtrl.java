@@ -701,7 +701,9 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
+		
 		logger.debug("Entering");
+		doClearMessage();
 		//Partner Bank Code
 		if (!this.partnerBankCode.isReadonly()) {
 			this.partnerBankCode.setConstraint(new PTStringValidator(Labels
