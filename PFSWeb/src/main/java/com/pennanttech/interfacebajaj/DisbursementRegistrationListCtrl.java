@@ -81,6 +81,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -600,7 +601,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		@Override
 		public void run() {
 			try {
-				disbursementRequestService.sendReqest(finType, disbushmentList, userId);
+				disbursementRequestService.sendReqest(finType, disbushmentList, userId, ((PartnerBank)partnerBank.getObject()).getFileName());
 			} catch (Exception e) {
 
 			}
