@@ -2731,6 +2731,7 @@
 		<property name="accountsService" ref="accountsService" />
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="addDisbursementService" ref="addDisbursementService" />
+		<property name="presentmentHeaderService" ref="presentmentHeaderService" />
 	</bean>
 
 	<!--============ Add/Remove Term Finance Maintainance Details ============== -->

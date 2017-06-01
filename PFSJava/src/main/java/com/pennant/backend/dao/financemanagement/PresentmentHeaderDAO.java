@@ -89,4 +89,6 @@ public interface PresentmentHeaderDAO extends BasicCrudDao<PresentmentHeader> {
 
 	List<PresentmentDetail> getPresentmentDetail(long presentmentId);
 
+	Date getMaxSchdPresentment(String finReference);
+
 }
