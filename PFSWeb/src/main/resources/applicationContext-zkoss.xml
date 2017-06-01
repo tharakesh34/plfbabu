@@ -4761,4 +4761,16 @@
 	<bean id="eODConfigDialogCtrl" class="com.pennant.webui.eod.eodconfig.EODConfigDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="eODConfigService" ref="eODConfigService"/>
 	</bean>
+	
+	<!-- PinCodes -->
+	
+	<bean id="pinCodeListCtrl" class="com.pennant.webui.applicationmaster.pincode.PinCodeListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="pinCodeService" ref="pinCodeService" />
+	</bean>
+	<bean id="pinCodeDialogCtrl" class="com.pennant.webui.applicationmaster.pincode.PinCodeDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="pinCodeService" ref="pinCodeService"/>
+	</bean>
+	
+	
 </beans>

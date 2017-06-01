@@ -9887,4 +9887,28 @@
        <property name="eODConfigDAO" ref="eODConfigDAO" />
 	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
    </bean>
+   
+   <!-- PinCode -->
+	<bean id="pinCodeDAO" class="com.pennant.backend.dao.applicationmaster.impl.PinCodeDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="pinCodeService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
+	   <property name="target"><ref bean="pinCodeServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="pinCodeServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.PinCodeServiceImpl">
+       <property name="pinCodeDAO" ref="pinCodeDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+   </bean>
+   
 </beans>

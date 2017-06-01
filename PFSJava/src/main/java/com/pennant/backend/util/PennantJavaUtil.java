@@ -106,6 +106,7 @@ import com.pennant.backend.model.applicationmaster.InterestRateType;
 import com.pennant.backend.model.applicationmaster.NPABucket;
 import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
 import com.pennant.backend.model.applicationmaster.OtherBankFinanceType;
+import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.applicationmaster.PoliceCaseDetail;
 import com.pennant.backend.model.applicationmaster.PresentmentReasonCode;
 import com.pennant.backend.model.applicationmaster.ProfitCenter;
@@ -568,6 +569,9 @@ public class PennantJavaUtil {
 		ModuleUtil.register("PartnerBank", new ModuleMapping("PartnerBank", PartnerBank.class, new String[] {
 				"PartnerBanks", "PartnerBanks_AView" }, masterWF, new String[] { "PartnerBankId","PartnerBankCode", "PartnerBankName" },
 				null, 400));
+		ModuleUtil.register("PinCode", new ModuleMapping("PinCode", PinCode.class, new String[] { "PinCodes",
+		"PinCodes_AView" }, masterWF, new String[] {"PinCode","City",},
+				new String[][] { { "Active", "0", "1" } }, 300));
 		
 		ModuleUtil.register("PartnerBankModes", new ModuleMapping("PartnerBankModes", PartnerBankModes.class, new String[] {
 			"PartnerBankModes", "PartnerBankModes_AView" }, masterWF, new String[] {  "PartnerBankId", "PartnerBankCode", "PartnerBankName"  },
