@@ -152,6 +152,8 @@ public class RateReviewService extends ServiceHelper {
 				finEODEvent.setEventFromDate(curSchd.getSchDate());
 				break;
 			}
+		} else {
+			finEODEvent.setRateReviewExist(true);
 		}
 
 		if (!finEODEvent.isRateReviewExist()) {
