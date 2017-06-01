@@ -1899,4 +1899,12 @@
 			update DATA_ENGINE_CONFIG set FILENAMEFORMAT = '_${CLIENT_CODE},${ddMM},.${SEQ_DATE_FILE}' where Name = 'DISB_HDFC_EXPORT';
 		</sql>
 	</changeSet>
+	<changeSet id="64" author="Durgaprasad g">
+		<createView viewName="PaymentDeatils_AView" replaceIfExists="true">
+		SELECT	 PaymentDetailId, PaymentId, AmountType, Amount, Referenceid,
+				 Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,
+				 TaskId, NextTaskId, RecordType, WorkflowId
+		FROM     PaymentDeatils
+		</createView>
+	</changeSet>
 </databaseChangeLog>
