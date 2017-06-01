@@ -26,6 +26,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -69,6 +70,10 @@ public class FinanceDataDefaulting {
 		// Repayments Details Defaulting
 		repayDefaulting(vldGroup, finScheduleData);
 
+		// Overdue penalty rates defaulting
+		if(StringUtils.equals(PennantConstants.VLD_CRT_LOAN, vldGroup)){
+		overdueDefaulting(vldGroup, finScheduleData);
+		}
 		return finScheduleData;
 
 	}
@@ -845,6 +850,22 @@ public class FinanceDataDefaulting {
 		}
 	}
 
+	private void overdueDefaulting(String vldGroup, FinScheduleData finScheduleData) {
+		FinanceType financeType = finScheduleData.getFinanceType();
+		if (finScheduleData.getFinODPenaltyRate() == null && financeType.isApplyODPenalty()) {
+			FinODPenaltyRate finODPenaltyRate = new FinODPenaltyRate();
+			finODPenaltyRate.setApplyODPenalty(financeType.isApplyODPenalty());
+			finODPenaltyRate.setODIncGrcDays(financeType.isODIncGrcDays());
+			finODPenaltyRate.setODChargeCalOn(financeType.getODChargeCalOn());
+			finODPenaltyRate.setODGraceDays(financeType.getODGraceDays());
+			finODPenaltyRate.setODChargeType(financeType.getODChargeType());
+			finODPenaltyRate.setODChargeAmtOrPerc(financeType.getODChargeAmtOrPerc());
+			finODPenaltyRate.setODAllowWaiver(financeType.isODAllowWaiver());
+			finODPenaltyRate.setODMaxWaiverPerc(financeType.getODMaxWaiverPerc());
+			finScheduleData.setFinODPenaltyRate(finODPenaltyRate);
+		}
+	}
+	
 	/*
 	 * _______________________________________________________________________________________________________________
 	 * DEFAULT STEP DETAILS

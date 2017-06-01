@@ -591,6 +591,13 @@ public class FinanceDataValidation {
 	private List<ErrorDetails> finODPenaltyRateValidation(FinScheduleData finScheduleData) {
 		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
 		FinODPenaltyRate finODPenaltyRate = finScheduleData.getFinODPenaltyRate();
+		if (!finScheduleData.getFinanceType().isApplyODPenalty() && finODPenaltyRate != null) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "overdue";
+			valueParm[1] = "loan type" + finScheduleData.getFinanceMain().getFinType();
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90204", valueParm)));
+			return errorDetails;
+		}
 		if (finODPenaltyRate != null) {
 			if (!finODPenaltyRate.isApplyODPenalty()) {
 				if (finODPenaltyRate.isODIncGrcDays() || StringUtils.isNotBlank(finODPenaltyRate.getODChargeType())
@@ -643,9 +650,8 @@ public class FinanceDataValidation {
 				if (!finODChargeTypeSts) {
 					String[] valueParm = new String[2];
 					valueParm[0] = finODPenaltyRate.getODChargeType();
-					valueParm[1] = FinanceConstants.PENALTYTYPE_FLAT + ","
-							+ FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH + ","
-							+ FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS + ","
+					valueParm[1] = FinanceConstants.PENALTYTYPE_FLAT + "," + FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH
+							+ "," + FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS + ","
 							+ FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH + ","
 							+ FinanceConstants.PENALTYTYPE_PERC_ONETIME;
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90316", valueParm)));

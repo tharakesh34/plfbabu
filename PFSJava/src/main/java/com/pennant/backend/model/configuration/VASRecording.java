@@ -78,7 +78,7 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  */
 @XmlType(propOrder = { "productCode", "postingAgainst", "primaryLinkRef", "vasReference", "fee",
 		"feePaymentMode", "valueDate", "accrualTillDate", "recurringDate", "dsaId", "dmaId", "fulfilOfficerId",
-		"referralId","renewalFee","extendedDetails", "documents","returnStatus" })
+		"referralId","renewalFee","vasStatus","extendedDetails", "documents","returnStatus" })
 @XmlRootElement(name = "vasDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class VASRecording extends AbstractWorkflowEntity {
@@ -123,6 +123,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	private String productCtg;
 	private String productCtgDesc; 
 	private String manufacturerDesc; 
+	@XmlElement
 	private String vasStatus;
 	private boolean financeProcess;
 	private long feeAccounting = 0;
