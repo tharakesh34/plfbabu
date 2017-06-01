@@ -151,5 +151,9 @@
 			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
 		</sql>
 	</changeSet>
-	
+	<changeSet id="08" author="Surekha">
+		<sql>
+			INSERT INTO ReportList Values('PinCode','PinCode','listheader_PinCode.label,listheader_City.label,listheader_Active.label,label.RecordStatus,label.RecordType,','pinCode,city,active,recordStatus,recordType','String,String,boolean,String,String','','ReportList05','Pin Code','Application Master',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
