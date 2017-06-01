@@ -2928,7 +2928,7 @@ public class ScheduleCalculator {
 
 		// FIND ALLOWED RATE CHANGE DATE
 		String rvwRateApplFor = finMain.getRvwRateApplFor();
-		if (!StringUtils.trimToEmpty(rvwRateApplFor).equals(FinanceConstants.RVW_ALL)) {
+		if (StringUtils.trimToEmpty(rvwRateApplFor).equals(CalculationConstants.RATEREVIEW_RVWUPR)) {
 			dateAllowedChange = findAllowedChangeDate(finScheduleData, rvwRateApplFor, dateAllowedChange);
 		}
 
@@ -2944,8 +2944,6 @@ public class ScheduleCalculator {
 				continue;
 			}
 
-			//--------------------------------------------------------------------
-			//FIXME: PV: Just for confirmation it is working.
 			if (curSchd.getSchDate().compareTo(finMain.getEventFromDate()) < 0) {
 				continue;
 			}
@@ -2953,7 +2951,6 @@ public class ScheduleCalculator {
 			if (curSchd.getSchDate().compareTo(finMain.getEventToDate()) > 0) {
 				break;
 			}
-			//--------------------------------------------------------------------
 
 			if (curSchd.getSchDate().compareTo(finMain.getGrcPeriodEndDate()) >= 0) {
 				break;
@@ -2961,7 +2958,9 @@ public class ScheduleCalculator {
 
 			// Fetch current rates from DB
 			if (StringUtils.isNotEmpty(curSchd.getBaseRate())) {
-				if (curSchd.isRvwOnSchDate() || i == 0) {
+				if (curSchd.isRvwOnSchDate() || i == 0
+						|| (StringUtils.trimToEmpty(rvwRateApplFor).equals(CalculationConstants.RATEREVIEW_RVWUPR)
+								&& curSchd.getSchDate().compareTo(dateAllowedChange) == 0)) {
 					curSchd.setCalculatedRate(RateUtil.ratesFromLoadedData(finScheduleData, i));
 				} else {
 					curSchd.setCalculatedRate(finSchdDetails.get(i - 1).getCalculatedRate());
@@ -2995,7 +2994,7 @@ public class ScheduleCalculator {
 
 		// FIND ALLOWED RATE CHANGE DATE
 		String rvwRateApplFor = finMain.getRvwRateApplFor();
-		if (!StringUtils.trimToEmpty(rvwRateApplFor).equals(FinanceConstants.RVW_ALL)) {
+		if (StringUtils.trimToEmpty(rvwRateApplFor).equals(CalculationConstants.RATEREVIEW_RVWUPR)) {
 			dateAllowedChange = findAllowedChangeDate(finScheduleData, rvwRateApplFor, dateAllowedChange);
 		}
 
@@ -3011,8 +3010,6 @@ public class ScheduleCalculator {
 				continue;
 			}
 
-			//--------------------------------------------------------------------
-			//FIXME: PV: Just for confirmation it is working.
 			if (curSchd.getSchDate().compareTo(finMain.getEventFromDate()) < 0) {
 				continue;
 			}
@@ -3020,12 +3017,13 @@ public class ScheduleCalculator {
 			if (curSchd.getSchDate().compareTo(finMain.getEventToDate()) > 0) {
 				break;
 			}
-			//--------------------------------------------------------------------
 
 			// Fetch current rates from DB
 			if (StringUtils.isNotEmpty(curSchd.getBaseRate())) {
 				if (curSchd.isRvwOnSchDate() || i == 0
-						|| curSchd.getSchDate().compareTo(finMain.getGrcPeriodEndDate()) == 0) {
+						|| curSchd.getSchDate().compareTo(finMain.getGrcPeriodEndDate()) == 0
+						|| (StringUtils.trimToEmpty(rvwRateApplFor).equals(CalculationConstants.RATEREVIEW_RVWUPR)
+								&& curSchd.getSchDate().compareTo(dateAllowedChange) == 0)) {
 					curSchd.setCalculatedRate(RateUtil.ratesFromLoadedData(finScheduleData, i));
 				} else {
 					curSchd.setCalculatedRate(finSchdDetails.get(i - 1).getCalculatedRate());
@@ -3054,20 +3052,10 @@ public class ScheduleCalculator {
 				continue;
 			}
 
-			if (StringUtils.trimToEmpty(rvwRateApplFor).equals(FinanceConstants.RVW_UNPAID_INST)) {
-				if (curSchd.isSchPftPaid() && curSchd.isSchPriPaid()) {
-					dateAllowedChange = curSchd.getSchDate();
-				} else {
-					break;
-				}
+			if (curSchd.isSchPftPaid() && curSchd.isSchPriPaid()) {
+				dateAllowedChange = curSchd.getSchDate();
 			} else {
-				if (curSchd.isSchPftPaid() && curSchd.isSchPriPaid()) {
-					if (curSchd.isRvwOnSchDate()) {
-						dateAllowedChange = curSchd.getSchDate();
-					}
-				} else {
-					break;
-				}
+				break;
 			}
 		}
 
@@ -3513,7 +3501,6 @@ public class ScheduleCalculator {
 		 * 
 		 * if (curSchd.getPresentmentId() > 0) { return curSchd; }
 		 */
-		
 
 		// NO PAYMENT: Applicable for Grace Period And REPAYMENT period with PFT or PRI+PFT)
 		if (curSchd.getSchdMethod().equals(CalculationConstants.SCHMTHD_NOPAY)) {

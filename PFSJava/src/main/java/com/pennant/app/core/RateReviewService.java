@@ -98,25 +98,9 @@ public class RateReviewService extends ServiceHelper {
 	}
 
 	private void processRateReview(FinEODEvent finEODEvent, Date valueDate) throws Exception {
+
 		FinanceMain finMain = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
-
-		//FIXME Re look logic
-		int i = 0;
-		for (int j = 0; j < finSchdDetails.size(); j++) {
-			if (finSchdDetails.get(j).getSchDate().compareTo(valueDate) == 0) {
-				i = j;
-				break;
-			}
-		}
-
-		int iNext = 0;
-		for (i = 0; i < finSchdDetails.size(); i++) {
-			if (finSchdDetails.get(i).getSchDate().compareTo(valueDate)==0) {
-				iNext = i+1;
-				break;
-			}
-		}
 
 		finEODEvent.setRateReviewExist(false);
 
@@ -130,41 +114,42 @@ public class RateReviewService extends ServiceHelper {
 			return;
 		}
 
-		for (int j = i; j < finSchdDetails.size(); j++) {
+		int iEvtFrom = 0;
+		int iEvtTo = finSchdDetails.size()-1;
+		
+		finEODEvent.setEventFromDate(valueDate);
+		finEODEvent.setEventToDate(finSchdDetails.get(iEvtTo).getSchDate());
+		finEODEvent.setRecalFromDate(finSchdDetails.get(iEvtTo).getSchDate());
+		finEODEvent.setRecalToDate(finSchdDetails.get(iEvtTo).getSchDate());
 
-			if (StringUtils.isEmpty(finSchdDetails.get(j).getBaseRate())) {
-				continue;
+		for (int i = 0; i < finSchdDetails.size(); i++) {
+			if (finSchdDetails.get(i).getSchDate().compareTo(valueDate) == 0) {
+				finEODEvent.setRateOnChgDate(finSchdDetails.get(i).getBaseRate());
+				iEvtFrom = i;
+				break;
 			}
-
-			finEODEvent.setRateReviewExist(true);
-			break;
 		}
 
-		//No base Rate found after the new review date
-		if (!finEODEvent.isRateReviewExist()) {
+		//Never Happens
+		if (iEvtFrom == 0) {
 			return;
 		}
 
-		finEODEvent.setRateReviewExist(false);
-
 		FinanceScheduleDetail curSchd = null;
 
-		//SET Event From Date
-		if (StringUtils.equals(finMain.getRvwRateApplFor(), CalculationConstants.RATEREVIEW_RVWALL)) {
-			finEODEvent.setEventFromDate(valueDate);
-			finEODEvent.setRateReviewExist(true);
-			finEODEvent.setRateOnChgDate(finSchdDetails.get(i).getBaseRate());
-		} else if (StringUtils.equals(finMain.getRvwRateApplFor(), CalculationConstants.RATEREVIEW_RVWUPR)) {
-			for (int j = iNext; j < finSchdDetails.size(); j++) {
+		//SET Event From Date in case Unpaid Schedules only
+		if (StringUtils.equals(finMain.getRvwRateApplFor(), CalculationConstants.RATEREVIEW_RVWUPR)) {
+			for (int i = iEvtFrom; i < finSchdDetails.size(); i++) {
 				curSchd = finSchdDetails.get(i);
 				if (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) == 0
 						&& curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) == 0) {
 					continue;
 				}
-
+				
 				finEODEvent.setRateReviewExist(true);
-				finEODEvent.setEventFromDate(finSchdDetails.get(j - 1).getSchDate());
-				finEODEvent.setRateOnChgDate(finSchdDetails.get(j - 1).getBaseRate());
+				iEvtFrom = i;
+				finEODEvent.setRateOnChgDate(finSchdDetails.get(i).getBaseRate());
+				finEODEvent.setEventFromDate(curSchd.getSchDate());
 				break;
 			}
 		}
@@ -172,23 +157,26 @@ public class RateReviewService extends ServiceHelper {
 		if (!finEODEvent.isRateReviewExist()) {
 			return;
 		}
-
-		finEODEvent.setEventToDate(finMain.getMaturityDate());
-		finEODEvent.setRecalToDate(finMain.getMaturityDate());
-
+		
 		//SET RECAL From Date
 		finEODEvent.setRecalType(finMain.getSchCalOnRvw());
 
 		if (StringUtils.isEmpty(finEODEvent.getRecalType())) {
 			finEODEvent.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
 		}
+		
+		
 
-		if (StringUtils.equals(finEODEvent.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
-			finEODEvent.setRecalFromDate(finMain.getMaturityDate());
-		} else {
-			finEODEvent = findRecalFromDate(finEODEvent, iNext);
+		if (!StringUtils.equals(finEODEvent.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
+			finEODEvent.setRecalFromDate(findRecalFromDate(finEODEvent, iEvtFrom));
+		}
+		
+		if (finEODEvent.getRecalFromDate()==null) {
+			finEODEvent.setRateReviewExist(false);
+			return;
 		}
 
+		finEODEvent.setRateReviewExist(true);
 	}
 
 	private void reviewRateUpdate(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
@@ -215,8 +203,8 @@ public class RateReviewService extends ServiceHelper {
 		BigDecimal totalPftSchdOld = profitDetail.getTotalPftSchd();
 		BigDecimal totalPftCpzOld = profitDetail.getTotalPftCpz();
 
-		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
+		//finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
+		//finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
 
 		// Rate Changes applied for Finance Schedule Data
 		finScheduleData = ScheduleCalculator.refreshRates(finScheduleData);
@@ -296,18 +284,17 @@ public class RateReviewService extends ServiceHelper {
 		return finSchData;
 	}
 
-	private FinEODEvent findRecalFromDate(FinEODEvent finEODEvent, int iNext) {
+	private Date findRecalFromDate(FinEODEvent finEODEvent, int iEvtFrom) {
 
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
 		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
 		int sdSize = finSchdDetails.size();
-		Date schdDate = new Date();
+		Date recalFromDate = null;
 
-		for (int i = iNext; i < sdSize; i++) {
+		for (int i = iEvtFrom; i < sdSize; i++) {
 			curSchd = finSchdDetails.get(i);
-			schdDate = curSchd.getSchDate();
 
-			if (schdDate.compareTo(finEODEvent.getEventFromDate()) <= 0) {
+			if (i==iEvtFrom) {
 				continue;
 			}
 
@@ -315,14 +302,13 @@ public class RateReviewService extends ServiceHelper {
 			if (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()) {
 				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) == 0
 						&& curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) == 0) {
-					finEODEvent.setRecalFromDate(schdDate);
+					recalFromDate = curSchd.getSchDate();
+					break;
 				}
-
-				break;
 			}
 		}
 
-		return finEODEvent;
+		return recalFromDate;
 
 	}
 
