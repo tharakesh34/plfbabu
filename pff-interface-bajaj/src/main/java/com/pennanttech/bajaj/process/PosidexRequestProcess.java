@@ -202,9 +202,7 @@ public class PosidexRequestProcess extends DatabaseDataEngine {
 
 		if (lastRunDate != null) {
 			sql.append(" WHERE CUST_LASTMNTON > :CUST_LASTMNTON");
-			sql.append(" OR FIN_LASTMNTON > :FIN_LASTMNTON");
 			parmMap.addValue("CUST_LASTMNTON", lastRunDate);
-			parmMap.addValue("FIN_LASTMNTON", lastRunDate);
 		}
 
 		try {
