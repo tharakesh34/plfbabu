@@ -163,6 +163,15 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 
 	private String				partnerBankAc;
 	private boolean				alwFileDownload;
+	private String				fileNamePrefix;
+	
+	public String getFileNamePrefix() {
+		return fileNamePrefix;
+	}
+
+	public void setFileNamePrefix(String fileNamePrefix) {
+		this.fileNamePrefix = fileNamePrefix;
+	}
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -190,6 +199,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("rejectReason");
 		excludeFields.add("partnerBankAc");
 		excludeFields.add("alwFileDownload");
+		excludeFields.add("fileNamePrefix");
 		return excludeFields;
 	}
 
