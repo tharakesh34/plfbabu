@@ -19,27 +19,25 @@ import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 
 public class PosidexResponseProcess extends DatabaseDataEngine {
+	private static final Logger	logger	= Logger.getLogger(PosidexResponseProcess.class);
 
-	private static final Logger logger = Logger.getLogger(PosidexResponseProcess.class);
-
-	public PosidexResponseProcess(DataSource dataSource,long userId, Date valueDate, boolean logBatch) {
-		super(dataSource, App.DATABASE.name(), userId, logBatch, valueDate);
+	public PosidexResponseProcess(DataSource dataSource, long userId, Date valueDate) {
+		super(dataSource, App.DATABASE.name(), userId, false, valueDate);
 	}
 
 	@Override
 	protected void processData() {
 		logger.debug(Literal.ENTERING);
 
-		executionStatus.setRemarks("Loading data..");
 		MapSqlParameterSource parmMap;
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT UCIN_NO FROM PSX_UCIN_REVERSE_FEED WHERE PROCESSED_FLAG = :PROCESSED_FLAG ");
+		sql.append("SELECT UCIN_NO FROM PSX_UCIN_REVERSE_FEED WHERE PROCESSED_FLAG = :PROCESSED_FLAG ");
 		parmMap = new MapSqlParameterSource();
 
 		parmMap.addValue("PROCESSED_FLAG", Status.N.name());
 
 		destinationJdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
-			TransactionStatus txnStatus = null;
+			TransactionStatus	txnStatus	= null;
 
 			@Override
 			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -48,7 +46,6 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 					MapSqlParameterSource custMap = null;
 					MapSqlParameterSource dataMap = null;
 
-					executionStatus.setRemarks("processing the record " + ++totalRecords);
 					processedCount++;
 					txnStatus = transManager.getTransaction(transDef);
 					try {
@@ -64,10 +61,12 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 						logger.error(Literal.ENTERING);
 						transManager.rollback(txnStatus);
 						failedCount++;
+
 						String keyId = rs.getString("CUSTOMER_ID");
 						if (StringUtils.trimToNull(keyId) == null) {
 							keyId = String.valueOf(processedCount);
 						}
+
 						saveBatchLog(keyId, "F", e.getMessage());
 					} finally {
 						txnStatus.flush();
@@ -99,15 +98,13 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 		StringBuilder sql;
 		try {
 			sql = new StringBuilder();
-			sql.append(" UPDATE CUSTOMERS SET CUSTADDLVAR1 = :CUSTADDLVAR1 WHERE CUSTID = :CUSTID ");
+			sql.append("UPDATE CUSTOMERS SET CUSTADDLVAR1 = :CUSTADDLVAR1 WHERE CUSTID = :CUSTID");
 
 			this.jdbcTemplate.update(sql.toString(), custMap);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			throw e;
-		} finally {
-			sql = null;
-		}
+		} 
 	}
 
 	private void updateDataStatus(MapSqlParameterSource dataMap) throws Exception {
@@ -118,11 +115,9 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 
 			this.jdbcTemplate.update(sql.toString(), dataMap);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			throw e;
-		} finally {
-			sql = null;
-		}
+		} 
 	}
 
 }

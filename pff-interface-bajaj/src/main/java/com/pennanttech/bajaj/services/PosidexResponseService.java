@@ -25,7 +25,7 @@ public class PosidexResponseService extends BajajService implements PosidexRespo
 
 	@Override
 	public void receiveResponse(Object... params) throws Exception {
-		PosidexResponseProcess service = new PosidexResponseProcess(dataSource, new Long(1000), getValueDate(), false);
+		PosidexResponseProcess service = new PosidexResponseProcess(dataSource, new Long(1000), getValueDate());
 		service.process("POSIDEX_CUSTOMER_UPDATE_RESPONSE");
 	}
 }
