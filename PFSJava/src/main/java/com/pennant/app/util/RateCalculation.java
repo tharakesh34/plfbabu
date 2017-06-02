@@ -41,101 +41,78 @@
  ********************************************************************************************
  */
 package com.pennant.app.util;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 
-public class RateCalculation {
+import org.apache.log4j.Logger;
 
-	public static final double tol = 0.001;    
+
+public class RateCalculation {
+	private final static Logger	logger					= Logger.getLogger(ScheduleCalculator.class);
 
 	/**
 	 * http://stackoverflow.com/questions/36789967/java-program-to-calculate-xirr-without-using-excel-or-any-other-library
+	 * 
 	 * @param payments
 	 * @param repayDates
 	 * @return
 	 */
 	public static BigDecimal calculateXIRR(List<BigDecimal> payments, List<Date> repayDates) {
 
-		BigDecimal xirr = new BigDecimal(0.1);	// guess
-		BigDecimal xirr_One = BigDecimal.ZERO;
-		BigDecimal xirr_Res = BigDecimal.ZERO;
-		double err = 1E+100;
+		logger.debug("Entering");
+		//Formula SUM(Payment(i) / ((1+XIRR) ** ((Date(i) - Date(0))/365))  = 0. Guess XIRR to achieve this
+		BigDecimal xIRRLow = BigDecimal.ZERO;
+		BigDecimal xIRRHigh = new BigDecimal(9999.9999);
+		BigDecimal xirr = BigDecimal.ZERO;
+		BigDecimal number2 = new BigDecimal(2);
+		BigDecimal big100 = new BigDecimal(100);
+		BigDecimal tolarance = new BigDecimal(1);
 
-		while (err > tol) {
-
-			BigDecimal schAmount = BigDecimal.ZERO;
-			Date finStartDate = repayDates.get(0);
-			Date repayDate; 
-			double dateDiff;
-			BigDecimal fValue = BigDecimal.ZERO;
-			BigDecimal fDerivative = BigDecimal.ZERO;
-
-			for (int i = 0; i < payments.size(); i++) {
-
-				repayDate = repayDates.get(i);
-				schAmount = payments.get(i);
-				dateDiff = DateUtility.getDaysBetween(finStartDate, repayDate) * -1 ;
-
-				fValue = fValue.add(schAmount.multiply(BigDecimal.valueOf(Math.pow((xirr.doubleValue() + 1.0), (dateDiff / 365.0)))));
-				fDerivative = fDerivative.add(schAmount.multiply(BigDecimal.valueOf((1.0 / 365.0) * dateDiff * Math.pow((xirr.doubleValue() + 1.0), (dateDiff / 365.0) - 1.0))));
-			}
-			
-			if(fDerivative.compareTo(BigDecimal.ZERO)==0){
-				break;
-			}
-				
-			xirr_One = xirr.subtract(fValue.divide(fDerivative, 15, RoundingMode.HALF_DOWN));
-			err = Math.abs(xirr_One.subtract(xirr).doubleValue());
-			xirr = xirr_One;
-		}
-		xirr_Res = xirr.multiply(new BigDecimal(100));
 		
-		if(xirr_Res == null){
-			xirr_Res = BigDecimal.ZERO;
-		}else if(xirr_Res.compareTo(new BigDecimal(9999))>0){
-			xirr_Res = new BigDecimal(9999);
-		}
-		xirr_Res = xirr_Res.setScale(9,RoundingMode.HALF_DOWN);
-		return xirr_Res; // Percentage
-	}
+		BigDecimal payment = BigDecimal.ZERO;
+		Date dateStart = repayDates.get(0);
+		int days = 0;
 
-	/**
-	 * https://apache.googlesource.com/poi/+/4d81d34d5d566cb22f21999e653a5829cc678ed5/src/java/org/apache/poi/ss/formula/functions/Irr.java
-	 * @param payments
-	 * @return
-	 */
-	public static BigDecimal calculateIRR(List<BigDecimal> payments) {
+		for (int i = 0; i < 50; i++) {
+			xirr = xIRRLow.add(xIRRHigh).divide(number2);
+			xirr = xirr.setScale(9, RoundingMode.HALF_DOWN);
 
-		int maxIterationCount = 20;
-		double absoluteAccuracy = 1E-7;
-		BigDecimal guess = BigDecimal.ZERO;;
-		BigDecimal irr;
-		int i = 0;
-
-		while (i < maxIterationCount) {
-
-			// the value of the function (NPV) and its derivation can be calculated in the same loop
-			BigDecimal fValue = BigDecimal.ZERO;
-			BigDecimal fDerivative = BigDecimal.ZERO;
-
-			for (int k = 0; k < payments.size(); k++) {
-
-				fValue = fValue.add(payments.get(k).divide(BigDecimal.valueOf(Math.pow(1.0 + guess.doubleValue(), k)), 15, RoundingMode.HALF_DOWN));
-				fDerivative = fDerivative.add(BigDecimal.valueOf(-k).multiply(payments.get(k).divide(BigDecimal.valueOf(Math.pow(1.0 + guess.doubleValue(), k + 1)), 15, RoundingMode.HALF_DOWN)));
+			if (xirr.compareTo(xIRRHigh) == 0 || xirr.compareTo(xIRRLow) == 0) {
+				logger.debug("Leaving");
+				return xirr;
 			}
 
-			// the essence of the NewtonRaphson Method
-			irr = guess.subtract(fValue.divide(fDerivative, 15, RoundingMode.HALF_DOWN));
+			BigDecimal netOfValue = BigDecimal.ZERO;
+			BigDecimal payOfValue = BigDecimal.ZERO;
+			BigDecimal divisor = BigDecimal.ZERO;
 
-			if (Math.abs(irr.subtract(guess).doubleValue()) <= absoluteAccuracy) {
-				return irr.multiply(new BigDecimal(100)); // Percentage
+			for (int j = 0; j < payments.size(); j++) {
+				payment = payments.get(j);
+				days = DateUtility.getDaysBetween(dateStart, repayDates.get(j));
+				divisor = BigDecimal.valueOf(Math.pow((xirr.divide(big100).doubleValue() + 1.0), (days / 365.0)));
+				payOfValue = payment.divide(divisor,9,RoundingMode.HALF_DOWN);
+				netOfValue = netOfValue.add(payOfValue);
 			}
-			guess = irr;
-			++i;
+
+			netOfValue = netOfValue.setScale(0, RoundingMode.HALF_DOWN);
+			
+			if (netOfValue.abs().compareTo(tolarance)<=0) {
+				logger.debug("Leaving");
+				return xirr;
+			}
+
+			if (netOfValue.compareTo(BigDecimal.ZERO) < 0) {
+				xIRRHigh = xirr;
+			} else {
+				xIRRLow = xirr;
+			}
+
 		}
-		// maximum number of iterations is exceeded
-		return new BigDecimal(Double.NaN);
+
+		logger.debug("Leaving");
+		return xirr;
 	}
 }

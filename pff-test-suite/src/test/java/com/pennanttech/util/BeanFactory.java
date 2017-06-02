@@ -6,6 +6,7 @@ import java.sql.Date;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -21,8 +22,13 @@ public class BeanFactory {
 	//So Net Rate will be 11% - 1.5% + Margin = 10%
 	// TDS_PERCENTAGE may be 20
 
-	public static final String	BASE_RATE				= "MIBOR";
-	public static final String	SPECIAL_RATE			= "S1";
+	//INSERT INTO RMTBASERATECODES (BRTYPE, BRTYPEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, NEXTROLECODE, WORKFLOWID, BRTYPEISACTIVE) VALUES ('UNITTEST', 'UNIT TEST CASE PURPOSE ONLY', '1', '1007', TO_DATE('2010-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 'Approved', 'MSTGRP1_MAKER', '0', '1')
+	//INSERT INTORMTBASERATES (BRTYPE, CURRENCY, BREFFDATE, BRRATE, DELEXISTINGRATES, LASTMDFDATE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, WORKFLOWID, BRTYPEISACTIVE) VALUES ('UNITTEST', 'INR', TO_DATE('2015-04-09 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), '11', '0', TO_DATE('2015-04-09 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), '1', '1000', TO_DATE('2017-02-18 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 'Approved', '0', '1')
+	//INSERT INTO RMTSPLRATECODES (SRTYPE, SRTYPEDESC, SRISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDTYPE, WORKFLOWID) VALUES ('UNITTEST', 'UNIT TEST CASE PURPOSE ONLY', '1', '1', '1007', TO_DATE('2010-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), '0', '1')
+	//INSERT INTO RMTSPLRATES (SRTYPE, SREFFDATE, SRRATE, DELEXISTINGRATES, LASTMDFDATE, VERSION, LASTMNTBY, LASTMNTON, RECORDTYPE, WORKFLOWID) VALUES ('UNITTEST', TO_DATE('2010-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), '1.5', '0', TO_DATE('2010-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), '1', '1007', TO_DATE('2010-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), '0', '1')
+
+	public static final String	BASE_RATE				= "UNITTEST";
+	public static final String	SPECIAL_RATE			= "UNITTEST";
 	public static BigDecimal	MARGIN_RATE				= new BigDecimal(0.5);
 	public static final String	MNTH_FRQ				= "M0025";
 	public static final String	QTLY_FRQ				= "Q0125";
@@ -77,6 +83,7 @@ public class BeanFactory {
 		fm.setCalculateRepay(true);
 		fm.setEqualRepay(true);
 		fm.setProductCategory(FinanceConstants.PRODUCT_CONVENTIONAL);
+		fm.setNewRecord(true);
 
 		FinanceDisbursement fd = schedule.getDisbursementDetails().get(0);
 		fd.setDisbDate(fm.getFinStartDate());
@@ -158,33 +165,33 @@ public class BeanFactory {
 
 		//Fee and Charges
 		fm.setFeeChargeAmt(new BigDecimal(1000000));
-		FeeRule feeRule = schedule.getFeeRules().get(0);
-		feeRule.setSchDate(fm.getFinStartDate());
-		feeRule.setFeeCode("PROCFEE");
-		feeRule.setCalFeeAmount(fm.getFeeChargeAmt());
-		feeRule.setFeeAmount(feeRule.getCalFeeAmount());
-		feeRule.setFinEvent("ADDDBS");
-		feeRule.setSeqNo(1);
-		feeRule.setFeeOrder(1);
+		FinFeeDetail feeDtl = new FinFeeDetail();
+		feeDtl.setCalculatedAmount(fm.getFeeChargeAmt());
+		feeDtl.setActualAmount(fm.getFeeChargeAmt());
+		feeDtl.setRemainingFee(fm.getFeeChargeAmt());
+		feeDtl.setFeeTypeCode("PROCFEE");
+		feeDtl.setFinEvent("ADDDBS");
+		feeDtl.setOriginationFee(true);
 
 		cellStrValue = Dataset.getString(cells, 10);
 		if (cellStrValue.equals("DD")) {
-			feeRule.setFeeMethod(CalculationConstants.REMFEE_PART_OF_DISBURSE);
+			feeDtl.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_DISBURSE);
+			feeDtl.setTerms(0);
 		} else if (cellStrValue.equals("PS")) {
-			feeRule.setFeeToFinance("1");
-			feeRule.setFeeMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
-			fd.setFeeChargeAmt(new BigDecimal(1000000));
+			feeDtl.setTerms(0);
+			feeDtl.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
 		} else if (cellStrValue.equals("FI")) {
-			feeRule.setFeeMethod(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT);
-			feeRule.setScheduleTerms(1);
+			feeDtl.setFeeScheduleMethod(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT);
+			feeDtl.setTerms(1);
 		} else if (cellStrValue.equals("ET")) {
-			feeRule.setFeeMethod(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR);
-			feeRule.setScheduleTerms(48);
+			feeDtl.setFeeScheduleMethod(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR);
+			feeDtl.setTerms(48);
 		} else {
-			feeRule.setFeeMethod(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS);
-			feeRule.setScheduleTerms(5);
+			feeDtl.setFeeScheduleMethod(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS);
+			feeDtl.setTerms(5);
 		}
 
+		schedule.getFinFeeDetailList().add(feeDtl);
 		schedule.getDisbursementDetails().set(0, fd);
 
 		//Dropline
@@ -387,7 +394,7 @@ public class BeanFactory {
 	}
 
 	private static FinScheduleData procPercSteps(FinScheduleData schedule, String testType) {
-		BigDecimal rate = new BigDecimal(9.5);
+		BigDecimal rate = new BigDecimal(-0.5);
 		BigDecimal rateIncrease = new BigDecimal(0.5);
 		BigDecimal stepPercent = new BigDecimal(0);
 		BigDecimal stepPercentIncrease = new BigDecimal(10);
@@ -417,7 +424,7 @@ public class BeanFactory {
 	}
 
 	private static FinScheduleData procEMISteps(FinScheduleData schedule, String testType) {
-		BigDecimal rate = new BigDecimal(0.5);
+		BigDecimal rate = new BigDecimal(0.0);
 		BigDecimal rateIncrease = new BigDecimal(0.5);
 		BigDecimal step1 = new BigDecimal(75);
 		BigDecimal step2 = new BigDecimal(95);
