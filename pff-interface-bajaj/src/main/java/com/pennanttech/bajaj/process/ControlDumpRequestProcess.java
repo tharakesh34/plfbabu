@@ -62,7 +62,7 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT * from INT_CF_CONTROL_VIEW");
 		sql.append(" WHERE LOAN_STATUS = :LOAN_STATUS");
-		sql.append(" AND latestRpyDate >= :monthStartDate AND latestRpyDate <= :monthEndDate ");
+		sql.append(" AND LASTREPAYDATE >= :monthStartDate AND LASTREPAYDATE <= :monthEndDate ");
 
 		parmMap = new MapSqlParameterSource();
 		parmMap.addValue("LOAN_STATUS", "A");
