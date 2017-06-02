@@ -1147,6 +1147,10 @@ public class FinScheduleListItemRenderer implements Serializable{
 		if (map.containsKey("totalAdvPft")) {
 			totalAdvPft = (BigDecimal) map.get("totalAdvPft");
 		}
+		
+		if (map.containsKey("isEMIHEditable")) {
+			isEMIHEditable = (Boolean) map.get("isEMIHEditable");
+		}
 
 		this.listBoxSchedule = (Listbox)window.getFellowIfAny("listBoxSchedule");
 		if((Button) window.getFellowIfAny("btnAddReviewRate") != null) {
@@ -2455,7 +2459,7 @@ public class FinScheduleListItemRenderer implements Serializable{
 				alwEMIHoliday = true;
 			}
 
-			if (!isRate && !lastRec && (data.isRepayOnSchDate() || 
+			if (!isRate && !lastRec && ((data.isRepayOnSchDate() && StringUtils.isEmpty(data.getBpiOrHoliday())) || 
 					StringUtils.equals(data.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)) && 
 					data.getClosingBalance().compareTo(BigDecimal.ZERO) != 0 && alwEMIHoliday) {
 
