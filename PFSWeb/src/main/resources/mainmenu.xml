@@ -660,27 +660,10 @@
 		<menuItem id="menu_Item_PresentmentFileImport" 	zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/ImportPresentmentDetails.zul" rightName="menuItem_PresentmentDetail_PresentmentReview" />													
 	</menu>												
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	<!-- PaymentInstructions -->
+   <menu id="menu_Category_PaymentInstructions" rightName="menuCat_payment_PaymentInstructions">
+		<menuItem id="menu_Item_PaymentInstructions" zulNavigation="/WEB-INF/pages/payment/PaymentHeaderList.zul" rightName="menuItem_payment_PaymentInstructions"/>
+		<menuItem id="menu_Item_PaymentInstructionsEnquiry" zulNavigation="/WEB-INF/pages/payment/PaymentHeaderList.zul?enqiryModule=Y" rightName="menuItem_payment_PaymentInstructionsEnquiry"/>
+   </menu>
 
 </ns2:XMLRootMenu>

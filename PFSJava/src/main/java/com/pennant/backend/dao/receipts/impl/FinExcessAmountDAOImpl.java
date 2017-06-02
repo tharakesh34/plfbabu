@@ -306,17 +306,18 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 	 * Method for Save Reserved amount against Excess ID
 	 */
 	@Override
-	public void saveExcessReserveLog(long receiptSeqID, long payAgainstID, BigDecimal reserveAmt) {
+	public void saveExcessReserveLog(long receiptSeqID, long payAgainstID, BigDecimal reserveAmt, String paymentType) {
 		logger.debug("Entering");
 		
 		FinExcessAmountReserve reserve = new FinExcessAmountReserve();
 		reserve.setReceiptSeqID(receiptSeqID);
 		reserve.setExcessID(payAgainstID);
 		reserve.setReservedAmt(reserveAmt);
+		reserve.setPaymentType(paymentType);
 		
 		StringBuilder insertSql = new StringBuilder("Insert Into FinExcessAmountReserve ");
-		insertSql.append(" (ExcessID, ReceiptSeqID, ReservedAmt )");
-		insertSql.append(" Values(:ExcessID, :ReceiptSeqID, :ReservedAmt)");
+		insertSql.append(" (ExcessID, ReceiptSeqID, ReservedAmt, PaymentType )");
+		insertSql.append(" Values(:ExcessID, :ReceiptSeqID, :ReservedAmt, :PaymentType)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -329,7 +330,7 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 	 * Method for updating Reserved excess Amount after modifications
 	 */
 	@Override
-	public void updateExcessReserveLog(long receiptID, long payAgainstID, BigDecimal diffInReserve) {
+	public void updateExcessReserveLog(long receiptID, long payAgainstID, BigDecimal diffInReserve, String paymentType) {
 		logger.debug("Entering");
 
 		int recordCount = 0;
@@ -337,10 +338,11 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 		source.addValue("ReceiptSeqID", receiptID);
 		source.addValue("ExcessID", payAgainstID);
 		source.addValue("PaidNow", diffInReserve);
+		source.addValue("PaymentType", paymentType);
 
 		StringBuilder updateSql = new StringBuilder("Update FinExcessAmountReserve ");
 		updateSql.append(" Set ReservedAmt = ReservedAmt + :PaidNow ");
-		updateSql.append(" Where ReceiptSeqID =:ReceiptSeqID AND ExcessID =:ExcessID ");
+		updateSql.append(" Where ReceiptSeqID =:ReceiptSeqID AND ExcessID =:ExcessID AND PaymentType =:PaymentType ");
 
 		logger.debug("updateSql: " + updateSql.toString());
 		recordCount = this.namedParameterJdbcTemplate.update(updateSql.toString(), source);
@@ -355,15 +357,16 @@ public class FinExcessAmountDAOImpl extends BasisNextidDaoImpl<FinExcessAmount> 
 	 * Method for Deleting Reserved Amounts against Excess ID Processed for Utilization
 	 */
 	@Override
-	public void deleteExcessReserve(long receiptID, long payAgainstID) {
+	public void deleteExcessReserve(long receiptID, long payAgainstID, String paymentType) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ReceiptSeqID", receiptID);
 		source.addValue("ExcessID", payAgainstID);
+		source.addValue("PaymentType", paymentType);
 
 		StringBuilder updateSql = new StringBuilder("Delete From FinExcessAmountReserve ");
-		updateSql.append(" Where ReceiptSeqID =:ReceiptSeqID ");
+		updateSql.append(" Where ReceiptSeqID =:ReceiptSeqID AND PaymentType =:PaymentType");
 		if(payAgainstID != 0){
 			updateSql.append(" AND ExcessID =:ExcessID ");
 		}

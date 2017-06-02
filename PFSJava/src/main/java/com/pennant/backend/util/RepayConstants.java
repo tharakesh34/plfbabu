@@ -99,7 +99,7 @@ public class RepayConstants {
 	
 	// Receipt Types
 	public static final String	RECEIPTTYPE_RECIPT		= "R";
-	public static final String	RECEIPTTYPE_PRESENTMENT	= "P";
+	public static final String	RECEIPTTYPE_PAYABLE	    = "P";
 	
 	// Receipt Types
 	public static final String	RECEIPTTO_FINANCE		= "F";
@@ -151,6 +151,13 @@ public class RepayConstants {
 	// Receipt Payment Statuses
 	public static final String	MODULETYPE_BOUNCE		= "B";
 	public static final String	MODULETYPE_CANCEL		= "C";
+	
+	// Payment Statuses
+	public static final String PAYMENT_INTIATED = "I";
+	public static final String PAYMENT_APPROVE = "A";
+	public static final String PAYMENT_DOWNLOAD = "D";
+	public static final String PAYMENT_SUCCESS = "S";
+	public static final String PAYMENT_FAILURE = "F";
 
 
 }

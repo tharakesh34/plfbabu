@@ -525,7 +525,7 @@ public class RepaymentProcessUtil {
 					getFinExcessAmountDAO().updateUtilise(payAgainstID, receiptDetail.getAmount());
 
 					// Delete Reserved Log against Excess and Receipt ID
-					getFinExcessAmountDAO().deleteExcessReserve(receiptSeqID, payAgainstID);
+					getFinExcessAmountDAO().deleteExcessReserve(receiptSeqID, payAgainstID, RepayConstants.RECEIPTTYPE_RECIPT);
 
 					// Excess Movement Creation
 					FinExcessMovement movement = new FinExcessMovement();

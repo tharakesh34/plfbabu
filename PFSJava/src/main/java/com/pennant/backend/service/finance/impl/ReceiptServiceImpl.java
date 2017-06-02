@@ -481,7 +481,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					getFinExcessAmountDAO().updateExcessReserve(receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
 					
 					// Save Excess Reserve Log Amount
-					getFinExcessAmountDAO().saveExcessReserveLog(receiptSeqID, receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
+					getFinExcessAmountDAO().saveExcessReserveLog(receiptSeqID, receiptDetail.getPayAgainstID(), receiptDetail.getAmount(), RepayConstants.RECEIPTTYPE_RECIPT);
 					
 				}else{
 					if(receiptDetail.getAmount().compareTo(exReserve.getReservedAmt()) != 0){
@@ -491,7 +491,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						getFinExcessAmountDAO().updateExcessReserve(receiptDetail.getPayAgainstID(), diffInReserve);
 						
 						// Update Excess Reserve Log
-						getFinExcessAmountDAO().updateExcessReserveLog(receiptSeqID, receiptDetail.getPayAgainstID(), diffInReserve);
+						getFinExcessAmountDAO().updateExcessReserveLog(receiptSeqID, receiptDetail.getPayAgainstID(), diffInReserve, RepayConstants.RECEIPTTYPE_RECIPT);
 					}
 				}
 			}
@@ -677,7 +677,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					getFinExcessAmountDAO().updateExcessReserve(receiptDetail.getPayAgainstID(), exReserve.getReservedAmt().negate());
 
 					// Delete Reserved Log against Excess and Receipt ID
-					getFinExcessAmountDAO().deleteExcessReserve(receiptSeqID, receiptDetail.getPayAgainstID());
+					getFinExcessAmountDAO().deleteExcessReserve(receiptSeqID, receiptDetail.getPayAgainstID(), RepayConstants.RECEIPTTYPE_RECIPT);
 				}
 			}
 			

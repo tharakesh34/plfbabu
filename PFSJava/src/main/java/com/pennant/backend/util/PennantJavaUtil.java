@@ -259,6 +259,9 @@ import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.partnerbank.PartnerBankModes;
+import com.pennant.backend.model.payment.PaymentDetail;
+import com.pennant.backend.model.payment.PaymentHeader;
+import com.pennant.backend.model.payment.PaymentInstruction;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennant.backend.model.reports.ReportConfiguration;
@@ -1963,6 +1966,17 @@ public class PennantJavaUtil {
 		ModuleUtil.register("Locality",
 				new ModuleMapping("Locality", Locality.class, new String[] { "Locality", "Locality_AView" }, masterWF,
 						new String[] { "id", "name", "city" }, null, 600));
+		
+		/*Payment Instructions*/
+		ModuleUtil.register("PaymentHeader", new ModuleMapping("PaymentHeader", PaymentHeader.class, new String[] { "PaymentHeader",
+		"PaymentHeader_AView" }, masterWF, new String[] {"PaymentType","PaymentAmount","ApprovedOn","Status"},null, 600));
+		
+		ModuleUtil.register("PaymentDetail", new ModuleMapping("PaymentDetail", PaymentDetail.class, new String[] { "PaymentDetails",
+		"PaymentDetails_AView" }, masterWF, new String[] {"AmountType","ReferenceId"},null, 600));
+		
+		ModuleUtil.register("PaymentInstruction", new ModuleMapping("PaymentInstruction", PaymentInstruction.class, new String[] { "PaymentInstructions",
+		"PaymentInstructions_AView" }, masterWF, new String[] {"PaymentType","PaymentAmount","BankCode","PaymentCCy"},null, 600));
+
 	}
 
 	public static ModuleMapping getModuleMap(String code) {

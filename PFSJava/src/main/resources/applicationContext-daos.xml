@@ -9869,6 +9869,51 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 	
+		<!-- PaymentInsructions -->
+     <bean id="paymentInstructionDAO" class="com.pennant.backend.dao.payment.impl.PaymentInstructionDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
+     <bean id="paymentDetailDAO" class="com.pennant.backend.dao.payment.impl.PaymentDetailDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+		
+	<bean id="paymentHeaderDAO" class="com.pennant.backend.dao.payment.impl.PaymentHeaderDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	<bean id="paymentHeaderService"  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+       <property name="transactionManager" ><ref bean="pfsTransactionManager" /></property>
+	   <property name="target"><ref bean="paymentHeaderServiceTarget"/></property>
+       <property name="transactionAttributes">
+           <props>
+               <prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+			   <prop key="delete*">PROPAGATION_REQUIRED</prop>
+			   <prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+   			   <prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			   <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+           </props>
+       </property>
+   </bean>
+
+ 	<bean name="paymentHeaderServiceTarget" class="com.pennant.backend.service.payment.impl.PaymentHeaderServiceImpl">
+       <property name="paymentHeaderDAO" ref="paymentHeaderDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	   <property name="paymentDetailService" ref="paymentDetailService" />
+	   <property name="paymentInstructionService" ref="paymentInstructionService" />
+   </bean>
+ 
+ 	<bean name="paymentDetailService" class="com.pennant.backend.service.payment.impl.PaymentDetailServiceImpl">
+       <property name="auditHeaderDAO" ref="auditHeaderDAO"/>
+       <property name="paymentDetailDAO" ref="paymentDetailDAO"/>
+       <property name="manualAdviseDAO" ref="manualAdviseDAO"/>
+       <property name="finExcessAmountDAO" ref="finExcessAmountDAO"/>
+    </bean>
+	
+     <bean name="paymentInstructionService" class="com.pennant.backend.service.payment.impl.PaymentInstructionServiceImpl">
+        <property name="auditHeaderDAO" ref="auditHeaderDAO"/>
+        <property name="paymentInstructionDAO" ref="paymentInstructionDAO"/>
+    </bean>
+    
 	<!-- EODConfig -->
 	<bean id="eODConfigDAO" class="com.pennant.backend.dao.eod.impl.EODConfigDAOImpl"  parent="basisNextidDao">
 		<property name="dataSource" ref="pfsDatasource" />
