@@ -374,4 +374,64 @@
 		</createTable>
 		
 		</changeSet>
+		
+	<changeSet id="23" author="Manoj.p">
+		<dropTable tableName="PSX_DEDUP_EOD_CUST_DEMO_DTL"/>
+	</changeSet>
+	
+	<changeSet id="24" author="Manoj.p">
+		<createTable tableName="PSX_DEDUP_EOD_CUST_DEMO_DTL">
+			<column name="BATCHID" type="decimal(12,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CUSTOMER_NO" type="decimal(8,0)"/>
+			<column name="SOURCE_SYS_ID" type="varchar(5)" />
+			<column name="FIRST_NAME" type="varchar(90)" />
+			<column name="MIDDLE_NAME" type="varchar(90)" />
+			<column name="LAST_NAME" type="varchar(90)" />
+			<column name="DOB" type="datetime" />
+			<column name="PAN" type="varchar(30)" />
+			<column name="DRIVING_LICENSE_NUMBER" type="varchar(45)" />
+			<column name="VOTER_ID" type="varchar(20)" />
+			<column name="DATE_OF_INCORPORATION" type="datetime" />
+			<column name="TAN_NO" type="varchar(15)" />
+			<column name="PROCESS_TYPE" type="varchar(2)" >
+			<constraints nullable="false" />
+			</column>
+			<column name="APPLICANT_TYPE" type="varchar(1)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="EMPOYER_NAME" type="varchar(105)" />
+			<column name="FATHER_NAME" type="varchar(105)" />
+			<column name="PASSPORT_NO" type="varchar(45)" />
+			<column name="ACCOUNT_NUMBER" type="varchar(20)" />
+			<column name="CREDIT_CARD_NUMBER" type="varchar(60)" />
+			<column name="PROCESS_FLAG" type="varchar(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ERROR_CODE" type="varchar(1)" />
+			<column name="ERROR_DESC" type="varchar(100)" />
+			<column name="CUSTOMER_ID" type="varchar(20)">
+				<constraints nullable="false" />
+			 </column>
+			<column name="SOURCE_SYSTEM" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PSX_BATCH_ID" type="decimal(18,0)" />
+			<column name="UCIN_FLAG" type="varchar(10)" />
+			<column name="EOD_BATCH_ID" type="decimal(18,0)" />
+			<column name="INSERT_TS" type="datetime">
+				<constraints nullable="false" />
+			 </column>
+			<column name="GENDER" type="varchar(20)" />
+			<column name="AADHAR_NO" type="varchar(16)" />
+			<column name="CIN" type="varchar(100)" />
+			<column name="DIN" type="varchar(20)" />
+			<column name="REGISTRATION_NO" type="varchar(20)" />
+			<column name="CA_NUMBER" type="varchar(100)" />
+			<column name="SEGMENT" type="varchar(5)">
+				<constraints nullable="false" />
+			</column>	
+		</createTable>
+		</changeSet>
 </databaseChangeLog>
