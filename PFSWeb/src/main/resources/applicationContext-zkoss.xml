@@ -4536,6 +4536,7 @@
 		class="com.pennant.webui.finance.manualadvise.ManualAdviseDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="manualAdviseService" ref="manualAdviseService" />
+		<property name="eventManager" ref="eventManager" />
 	</bean>
 
 	<!-- FinanceStatusCode -->

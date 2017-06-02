@@ -168,7 +168,6 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
-import com.pennant.core.EventManager.Notify;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartUtil;
@@ -1033,7 +1032,17 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if(StringUtils.equals(rcptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
 					waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 				}else{
-					waivedBox.setReadonly(true);
+					
+					String allocationType = waivedBox.getId().replace("", "");
+					if(allocationType.contains("_")){
+						allocationType = allocationType.substring(0, allocationType.indexOf("_"));
+					}
+					
+					if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_ODC)){
+						waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
+					}else{
+						waivedBox.setReadonly(true);
+					}
 				}
 			}
 		}
@@ -1049,11 +1058,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					paidBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 				}
 				CurrencyBox waivedBox = (CurrencyBox) this.listBoxManualAdvises.getFellowIfAny(item.getId().replaceAll("Item", "AdvWaived"));
-				if(StringUtils.equals(rcptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
-					waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
-				}else{
-					waivedBox.setReadonly(true);
-				}
+				waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 			}
 		}
 		
@@ -1069,8 +1074,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.excessAdjustTo);
 		}
 		
-		waivedAllocationMap = new HashMap<>();
-		paidAllocationMap = new HashMap<>();
+		/*waivedAllocationMap = new HashMap<>();
+		paidAllocationMap = new HashMap<>();*/
 		
 		// Check Auto Allocation Process existence
 		setAutoAllocationPayments();
@@ -2238,7 +2243,17 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if(StringUtils.equals(rcptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
 					waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 				}else{
-					waivedBox.setReadonly(true);
+					
+					String allocationType = waivedBox.getId().replace("", "");
+					if(allocationType.contains("_")){
+						allocationType = allocationType.substring(0, allocationType.indexOf("_"));
+					}
+					
+					if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_ODC)){
+						waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
+					}else{
+						waivedBox.setReadonly(true);
+					}
 				}
 			}
 		}
@@ -2254,11 +2269,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					paidBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 				}
 				CurrencyBox waivedBox = (CurrencyBox) this.listBoxManualAdvises.getFellowIfAny(item.getId().replaceAll("Item", "AdvWaived"));
-				if(StringUtils.equals(rcptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
-					waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
-				}else{
-					waivedBox.setReadonly(true);
-				}
+				waivedBox.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 			}
 		}
 		
@@ -2578,48 +2589,20 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
 							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
 
-						// Send message Notification to Users
-						if (financeDetail.getFinScheduleData().getFinanceMain().getNextUserId() != null) {
+						String reference = aFinanceMain.getFinReference();
+						if (StringUtils.isNotEmpty(aFinanceMain.getNextRoleCode())) {
+							if (!PennantConstants.RCD_STATUS_CANCELLED.equals(aFinanceMain.getRecordStatus())) {
+								String[] to = aFinanceMain.getNextRoleCode().split(",");
+								String message;
 
-							Notify notify = Notify.valueOf("USER");
-							String[] to = financeDetail.getFinScheduleData().getFinanceMain().getNextUserId()
-									.split(",");
-							if (StringUtils.isNotEmpty(financeDetail.getFinScheduleData().getFinanceMain()
-									.getFinReference())) {
-
-								String reference = financeDetail.getFinScheduleData().getFinanceMain()
-										.getFinReference();
-								if (!PennantConstants.RCD_STATUS_CANCELLED.equalsIgnoreCase(financeDetail
-										.getFinScheduleData().getFinanceMain().getRecordStatus())) {
-									getEventManager().publish(
-											Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":"
-													+ reference, notify, to);
-								}
-							} else {
-								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
-							}
-
-						} else {
-
-							String nextRoleCodes = financeDetail.getFinScheduleData().getFinanceMain()
-									.getNextRoleCode();
-							if (StringUtils.isNotEmpty(nextRoleCodes)) {
-								Notify notify = Notify.valueOf("ROLE");
-								String[] to = nextRoleCodes.split(",");
-								if (StringUtils.isNotEmpty(financeDetail.getFinScheduleData().getFinanceMain()
-										.getFinReference())) {
-
-									String reference = financeDetail.getFinScheduleData().getFinanceMain()
-											.getFinReference();
-									if (!PennantConstants.RCD_STATUS_CANCELLED.equalsIgnoreCase(financeDetail
-											.getFinScheduleData().getFinanceMain().getRecordStatus())) {
-										getEventManager().publish(
-												Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":"
-														+ reference, notify, to);
-									}
+								if (StringUtils.isBlank(aFinanceMain.getNextTaskId())) {
+									message = Labels.getLabel("REC_FINALIZED_MESSAGE");
 								} else {
-									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
+									message = Labels.getLabel("REC_PENDING_MESSAGE");
 								}
+								message += " with Reference" + ":" + reference;
+
+								getEventManager().publish(message, to, finDivision, aFinanceMain.getFinBranch());
 							}
 						}
 					}
@@ -3124,11 +3107,15 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					allocationWaived.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
 				}
 
-				if(!StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE) || 
-						isReadOnly("ReceiptDialog_PastdueAmount")){
-					allocationWaived.setReadonly(true);
-				}else{
+				if(StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
 					allocationWaived.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
+				}else{
+					if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_MANADV) ||
+							StringUtils.equals(allocationType, RepayConstants.ALLOCATION_ODC)){
+						allocationWaived.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
+					}else{
+						allocationWaived.setReadonly(true);
+					}
 				}
 
 				lc.appendChild(allocationWaived);

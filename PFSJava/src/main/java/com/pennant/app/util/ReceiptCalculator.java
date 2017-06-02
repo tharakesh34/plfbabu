@@ -239,10 +239,24 @@ public class ReceiptCalculator implements Serializable {
 			for (int a = 0; a < allocationList.size(); a++) {
 				ReceiptAllocationDetail allocate = allocationList.get(a);
 				if (allocate.getAllocationTo() == 0 || allocate.getAllocationTo() == Long.MIN_VALUE) {
-					paidAllocationMap.put(allocate.getAllocationType(), allocate.getPaidAmount().add(allocate.getWaivedAmount()));
+					
+					if(StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_LPFT) || 
+							StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_ODC) ||
+							StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_MANADV)){
+						paidAllocationMap.put(allocate.getAllocationType(), allocate.getPaidAmount());
+					}else{
+						paidAllocationMap.put(allocate.getAllocationType(), allocate.getPaidAmount().add(allocate.getWaivedAmount()));
+					}
 					waivedAllocationMap.put(allocate.getAllocationType(), allocate.getWaivedAmount());
 				}else{
-					paidAllocationMap.put(allocate.getAllocationType()+"_"+allocate.getAllocationTo(), allocate.getPaidAmount().add(allocate.getWaivedAmount()));
+					
+					if(StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_LPFT) || 
+							StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_ODC) ||
+							StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_MANADV)){
+						paidAllocationMap.put(allocate.getAllocationType()+"_"+allocate.getAllocationTo(), allocate.getPaidAmount());
+					}else{
+						paidAllocationMap.put(allocate.getAllocationType()+"_"+allocate.getAllocationTo(), allocate.getPaidAmount().add(allocate.getWaivedAmount()));
+					}
 
 					BigDecimal waivedAmount = BigDecimal.ZERO;
 					if(waivedAllocationMap.containsKey(allocate.getAllocationType())){
