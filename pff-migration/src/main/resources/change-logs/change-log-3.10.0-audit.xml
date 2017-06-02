@@ -44,4 +44,10 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="3" author="Siva">
+		<addColumn tableName="ADTFINFEEDETAIL">
+			<column name="Status" type="varchar(1)"/>
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
