@@ -50,4 +50,8 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="4" author="Durgaprasad.g">
+ 		<renameTable newTableName="ADTPAYMENTDETAILS" oldTableName="ADTPAYMENTDEATILS"/>
+	</changeSet>
+	
 </databaseChangeLog>
