@@ -613,4 +613,10 @@
 			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
 		 </sql>
 	</changeSet>
+	
+	<changeSet author="Manoj.P" id="31">
+		<addPrimaryKey tableName="ALM"
+			constraintName="PK_ALM_FINREF"
+			columnNames="AGREEMENTNO" />
+	</changeSet>
 </databaseChangeLog>
