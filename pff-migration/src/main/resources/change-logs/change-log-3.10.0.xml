@@ -619,4 +619,124 @@
 			constraintName="PK_ALM_FINREF"
 			columnNames="AGREEMENTNO" />
 	</changeSet>
+	
+	<changeSet id="32" author="Durgaprasad.g">
+		 <renameTable newTableName="PaymentDetails_Temp" oldTableName="PaymentDeatils_Temp"/>
+		 <renameTable newTableName="PaymentDetails" oldTableName="PAYMENTDEATILS"/>
+		 <renameTable newTableName="SeqPaymentDetails" oldTableName="SeqPaymentDeatils"/>
+	</changeSet>
+	
+	<changeSet id="33" author="Durgaprasad g">
+		<createView viewName="PaymentHeader_View" replaceIfExists="true">
+		 SELECT	 T1.PaymentId, T1.FinReference, T1.PaymentType, T1.PaymentAmount, T1.CreatedOn,  T1.ApprovedOn, T1.Status, 
+				 T1.VERSION, T1.LASTMNTBY, T1.LASTMNTON, T1.RECORDSTATUS, T1.ROLECODE, T1.NEXTROLECODE,
+				 T1.TASKID, T1.NEXTTASKID, T1.RECORDTYPE, T1.WORKFLOWID, PIT.PAYMENTTYPE PaymentInstrType
+		 FROM     PAYMENTHEADER_TEMP  T1 LEFT OUTER JOIN PAYMENTINSTRUCTIONS_TEMP PIT
+         ON T1.PaymentId = PIT.PaymentId
+    
+		UNION ALL
+		SELECT	 T1.PaymentId, T1.FinReference, T1.PaymentType, T1.PaymentAmount, T1.CreatedOn,  T1.ApprovedOn, T1.Status,
+				 T1.VERSION, T1.LASTMNTBY, T1.LASTMNTON, T1.RECORDSTATUS, T1.ROLECODE, T1.NEXTROLECODE,
+				 T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,  PI.PAYMENTTYPE PaymentInstrType
+		FROM     PAYMENTHEADER  T1   LEFT OUTER JOIN PAYMENTINSTRUCTIONS PI
+         ON T1.PaymentId = PI.PaymentId
+		WHERE NOT EXISTS ( SELECT 1  FROM PaymentHeader_Temp WHERE PaymentId = T1.PaymentId)
+		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="34" author="Durgaprasad g">
+		<createView viewName="PaymentHeader_AView" replaceIfExists="true">
+		SELECT	 T1.PaymentId, T1.FinReference, T1.PaymentType, T1.PaymentAmount, T1.CreatedOn,  T1.ApprovedOn, T1.Status,
+				 T1.VERSION, T1.LASTMNTBY, T1.LASTMNTON, T1.RECORDSTATUS, T1.ROLECODE, T1.NEXTROLECODE,
+				 T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,  PI.PAYMENTTYPE PaymentInstrType
+		FROM     PAYMENTHEADER  T1   LEFT OUTER JOIN PAYMENTINSTRUCTIONS PI
+         ON T1.PaymentId = PI.PaymentId
+		 
+		</createView>
+	</changeSet>
+
+	<changeSet id="35" author="Durgaprasad g">
+		<createView viewName="PaymentDetails_View" replaceIfExists="true">
+		SELECT	 T1.PaymentDetailId, T1.PaymentId, T1.AmountType, T1.Amount, T1.ReferenceId,
+				 T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode,
+				 T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM     PaymentDetails_Temp  T1 
+		UNION ALL
+		SELECT	 T1.PaymentDetailId, T1.PaymentId, T1.AmountType, T1.Amount, T1.ReferenceId,
+				 T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode,
+				 T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM     PaymentDetails  T1  
+		WHERE NOT EXISTS ( SELECT 1  FROM PaymentDetails_Temp WHERE PaymentDetailId = T1.PaymentDetailId)
+		</createView>
+	</changeSet>
+	
+	<changeSet id="36" author="Durgaprasad g">
+		<createView viewName="PaymentDetails_AView" replaceIfExists="true">
+		SELECT	 T1.PaymentDetailId, T1.PaymentId, T1.AmountType, T1.Amount, T1.ReferenceId,
+				 T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode,
+				 T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM     PaymentDetails  T1  
+		</createView>
+	</changeSet>
+	
+	<changeSet id="37" author="Durgaprasad g">
+		<createView viewName="PaymentInstructions_View" replaceIfExists="true">
+		SELECT	 T1.PAYMENTINSTRUCTIONID, T1.PAYMENTID, T1.PAYMENTTYPE, T1.PAYMENTAMOUNT, T1.REMARKS, T1.PARTNERBANKID,
+				 T1.IssuingBank, T1.FavourName, T1.FavourNumber, T1.PayableLoc, T1.PrintingLoc, T1.ValueDate, T1.PostDate,
+				 T1.BankBranchID, T1.AcctHolderName, T1.AccountNo, T1.PhoneCountryCode, T1.PhoneNumber, 
+				 T1.Clearingdate, T1.Active, T1.PaymentCCy,
+				 T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode,
+				 T1.TASKID, T1.NEXTTASKID, T1.RECORDTYPE, T1.WORKFLOWID,
+				 T5.PARTNERBANKCODE, T5.PARTNERBANKNAME,
+				 T3.BANKCODE BRANCHBANKCODE,T3.BRANCHCODE BANKBRANCHCODE, T3.IFSC BANKBRANCHIFSC, T3.CITY,
+				 T4.BANKNAME ISSUINGBANKNAME, 
+				 T6.PcCityName PCCityName, T3.BranchDesc, T2.BankName
+				 FROM     PaymentInstructions_Temp  T1 LEFT OUTER JOIN
+				 BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID  LEFT OUTER JOIN
+				 BMTBANKDETAIL T2 ON T2.BANKCODE = T3.BANKCODE LEFT OUTER JOIN		 
+				 BMTBANKDETAIL T4  ON T1.ISSUINGBANK = T4.BANKCODE	LEFT OUTER JOIN
+				 PARTNERBANKS T5 ON T5.PARTNERBANKID=T1.PARTNERBANKID LEFT OUTER JOIN
+				 RMTPROVINCEVSCITY T6 ON T6.PCCITY = T3.CITY   
+		UNION ALL
+				SELECT	 T1.PAYMENTINSTRUCTIONID, T1.PAYMENTID, T1.PAYMENTTYPE, T1.PAYMENTAMOUNT, T1.REMARKS, T1.PARTNERBANKID,
+				 T1.IssuingBank, T1.FavourName, T1.FavourNumber, T1.PayableLoc, T1.PrintingLoc, T1.ValueDate, T1.PostDate,
+				 T1.BankBranchID, T1.AcctHolderName, T1.AccountNo, T1.PhoneCountryCode, T1.PhoneNumber, 
+				 T1.Clearingdate, T1.Active, T1.PaymentCCy,
+				 T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode,
+				 T1.TASKID, T1.NEXTTASKID, T1.RECORDTYPE, T1.WORKFLOWID,
+				 T5.PARTNERBANKCODE, T5.PARTNERBANKNAME,
+				 T3.BANKCODE BRANCHBANKCODE,T3.BRANCHCODE BANKBRANCHCODE, T3.IFSC BANKBRANCHIFSC, T3.CITY,
+				 T4.BANKNAME ISSUINGBANKNAME, 
+				 T6.PcCityName PCCityName, T3.BranchDesc, T2.BankName
+				 FROM  PaymentInstructions  T1 LEFT OUTER JOIN
+				 BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID  LEFT OUTER JOIN
+				 BMTBANKDETAIL T2 ON T2.BANKCODE = T3.BANKCODE LEFT OUTER JOIN		 
+				 BMTBANKDETAIL T4  ON T1.ISSUINGBANK = T4.BANKCODE	LEFT OUTER JOIN
+				 PARTNERBANKS T5 ON T5.PARTNERBANKID=T1.PARTNERBANKID LEFT OUTER JOIN
+				 RMTPROVINCEVSCITY T6 ON T6.PCCITY = T3.CITY 
+				WHERE NOT EXISTS ( SELECT 1  FROM PaymentInstructions_Temp WHERE PaymentInstructionId = T1.PaymentInstructionId)
+		</createView>
+	</changeSet>
+	
+	<changeSet id="38" author="Durgaprasad g">
+		<createView viewName="PaymentInstructions_AView" replaceIfExists="true">
+		SELECT	 T1.PAYMENTINSTRUCTIONID, T1.PAYMENTID, T1.PAYMENTTYPE, T1.PAYMENTAMOUNT, T1.REMARKS, T1.PARTNERBANKID,
+				 T1.IssuingBank, T1.FavourName, T1.FavourNumber, T1.PayableLoc, T1.PrintingLoc, T1.ValueDate, T1.PostDate,
+				 T1.BankBranchID, T1.AcctHolderName, T1.AccountNo, T1.PhoneCountryCode, T1.PhoneNumber, 
+				 T1.Clearingdate, T1.Active, T1.PaymentCCy,
+				 T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode,
+				 T1.TASKID, T1.NEXTTASKID, T1.RECORDTYPE, T1.WORKFLOWID,
+				 T5.PARTNERBANKCODE, T5.PARTNERBANKNAME,
+				 T3.BANKCODE BRANCHBANKCODE,T3.BRANCHCODE BANKBRANCHCODE, T3.IFSC BANKBRANCHIFSC, T3.CITY,
+				 T4.BANKNAME ISSUINGBANKNAME, 
+				 T6.PcCityName PCCityName, T3.BranchDesc, T2.BankName
+				 FROM  PaymentInstructions  T1 LEFT OUTER JOIN
+				 BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID  LEFT OUTER JOIN
+				 BMTBANKDETAIL T2 ON T2.BANKCODE = T3.BANKCODE LEFT OUTER JOIN		 
+				 BMTBANKDETAIL T4  ON T1.ISSUINGBANK = T4.BANKCODE	LEFT OUTER JOIN
+				 PARTNERBANKS T5 ON T5.PARTNERBANKID=T1.PARTNERBANKID LEFT OUTER JOIN
+				 RMTPROVINCEVSCITY T6 ON T6.PCCITY = T3.CITY 
+		</createView>
+	</changeSet>
 </databaseChangeLog>
