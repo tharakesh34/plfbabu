@@ -61,6 +61,7 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 
@@ -157,6 +158,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			for (FinFeeDetail finFeeDetail : finFeeDetails) {
 				
 				if(!isApproveRcd && (finFeeDetail.isRcdVisible() && !finFeeDetail.isDataModified())){
+					continue;
+				}
+				
+				if(StringUtils.equals(finFeeDetail.getStatus(), FinanceConstants.FEE_STATUS_CANCEL)){
 					continue;
 				}
 				

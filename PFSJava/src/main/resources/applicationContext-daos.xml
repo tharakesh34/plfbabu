@@ -8652,7 +8652,7 @@
 		<property name="checkListDetailService" ref="finCheckListDetailService" />
 		<property name="vASConfigurationService" ref="vASConfigurationService" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="engineExecution" ref="engineExecution" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
 
 		<property name="extendedFieldHeaderDAO" ref="extendedFieldHeaderDAO" />
@@ -8669,6 +8669,10 @@
 		<property name="relationshipOfficerDAO" ref="relationshipOfficerDAO" />
 		<property name="scriptValidationService" ref="scriptValidationService" />
 		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
+		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
+		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
 	</bean>
 
 	<!-- Beneficiary -->

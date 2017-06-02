@@ -418,8 +418,8 @@ public class ReceiptCalculator implements Serializable {
 											if(financeMain.isTDSApplicable()){
 
 												BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-												String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
-												int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+												/*String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+												int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);*/
 												
 												if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
 													tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
@@ -534,6 +534,9 @@ public class ReceiptCalculator implements Serializable {
 							// Fee Detail Collection
 							for (int k = 0; k < scheduleData.getFinFeeDetailList().size(); k++) {
 								FinFeeDetail feeSchd = scheduleData.getFinFeeDetailList().get(k);
+								if(StringUtils.equals(feeSchd.getStatus(), FinanceConstants.FEE_STATUS_CANCEL)){
+									continue;
+								}
 								List<FinFeeScheduleDetail> feeSchdList = feeSchd.getFinFeeScheduleDetailList();
 
 								// No more Receipt amount left for next schedules
@@ -1083,7 +1086,6 @@ public class ReceiptCalculator implements Serializable {
 			FinanceScheduleDetail curSchd = scheduleDetails.get(i);
 			FinanceScheduleDetail prvSchd = scheduleDetails.get(i-1);
 			Date schdDate = curSchd.getSchDate();
-			Date prvSchdDate = scheduleDetails.get(i-1).getSchDate();
 
 			// Skip if repayment date after Current Business date
 			if (schdDate.compareTo(curBussniessDate) > 0 && 
@@ -1167,8 +1169,8 @@ public class ReceiptCalculator implements Serializable {
 								if(financeMain.isTDSApplicable()){
 
 									BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-									String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
-									int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+									/*String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+									int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);*/
 									if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
 										tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
 									}
@@ -1266,6 +1268,9 @@ public class ReceiptCalculator implements Serializable {
 						// Fee Detail Collection
 						for (int k = 0; k < scheduleData.getFinFeeDetailList().size(); k++) {
 							FinFeeDetail feeSchd = scheduleData.getFinFeeDetailList().get(k);
+							if(StringUtils.equals(feeSchd.getStatus(), FinanceConstants.FEE_STATUS_CANCEL)){
+								continue;
+							}
 							List<FinFeeScheduleDetail> feeSchdList = feeSchd.getFinFeeScheduleDetailList();
 							
 							// No more Receipt amount left for next schedules
@@ -1550,8 +1555,8 @@ public class ReceiptCalculator implements Serializable {
 					if(finScheduleData.getFinanceMain().isTDSApplicable()){
 
 						BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-						String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
-						int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+						/*String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+						int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);*/
 
 						if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
 							tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
@@ -1581,8 +1586,8 @@ public class ReceiptCalculator implements Serializable {
 						if(finScheduleData.getFinanceMain().isTDSApplicable()){
 
 							BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-							String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
-							int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+							/*String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+							int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);*/
 
 							if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
 								tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
@@ -1686,8 +1691,8 @@ public class ReceiptCalculator implements Serializable {
 				if(finScheduleData.getFinanceMain().isTDSApplicable()){
 
 					BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-					String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
-					int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+					/*String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+					int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);*/
 
 					if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
 						tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
@@ -1718,6 +1723,9 @@ public class ReceiptCalculator implements Serializable {
 			
 			for (int i = 0; i < finScheduleData.getFinFeeDetailList().size(); i++) {
 				FinFeeDetail feeDetail = finScheduleData.getFinFeeDetailList().get(i);
+				if(StringUtils.equals(feeDetail.getStatus(), FinanceConstants.FEE_STATUS_CANCEL)){
+					continue;
+				}
 
 				if(StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT) ||
 						StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS) ||

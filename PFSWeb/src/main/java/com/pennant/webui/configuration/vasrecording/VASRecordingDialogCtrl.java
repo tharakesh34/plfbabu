@@ -378,8 +378,10 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 *            An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 * @throws PFFInterfaceException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	public void onClick$btnDelete(Event event) throws InterruptedException, PFFInterfaceException {
+	public void onClick$btnDelete(Event event) throws InterruptedException, PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		doDelete();
 	}
 
@@ -498,8 +500,10 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * 
 	 * @throws InterruptedException
 	 * @throws PFFInterfaceException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	private void doDelete() throws InterruptedException, PFFInterfaceException {
+	private void doDelete() throws InterruptedException, PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		
 		final VASRecording aVASRecording = new VASRecording();
@@ -842,10 +846,12 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * 
 	 * @return boolean
 	 * @throws PFFInterfaceException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 * 
 	 */
 
-	private boolean doProcess(VASRecording aVASRecording, String tranType) throws PFFInterfaceException {
+	private boolean doProcess(VASRecording aVASRecording, String tranType) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1008,9 +1014,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 *            (String)
 	 * @return boolean
 	 * @throws PFFInterfaceException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws PFFInterfaceException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -1222,11 +1230,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				
 				// Height Calculation
 				int height = (this.rows.getVisibleItemCount() * 25) + 120;
-				if((borderLayoutHeight*0.8) < height){
-					height = (int) (borderLayoutHeight*0.8);
+				if((borderLayoutHeight*0.95) < height){
+					height = (int) (borderLayoutHeight*0.95);
 				}
 				this.window_VASRecordingDialog.setHeight(height+"px");
-				this.window_VASRecordingDialog.setWidth("80%");
+				this.window_VASRecordingDialog.setWidth("90%");
 				this.groupboxWf.setVisible(false);
 				this.window_VASRecordingDialog.doModal() ;
 			}else if(enqiryModule){

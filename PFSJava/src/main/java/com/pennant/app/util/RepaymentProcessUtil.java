@@ -694,6 +694,10 @@ public class RepaymentProcessUtil {
 			}
 		}else{
 			for (FinFeeDetail fee : finFeeDetails) {
+				
+				if(StringUtils.equals(fee.getStatus(), FinanceConstants.FEE_STATUS_CANCEL)){
+					continue;
+				}
 				if(fee.getFinFeeScheduleDetailList() != null && !fee.getFinFeeScheduleDetailList().isEmpty()){
 					for (FinFeeScheduleDetail feeSchd : fee.getFinFeeScheduleDetailList()) {
 						if(DateUtility.compare(feeSchd.getSchDate(), rpySchd.getSchDate()) == 0){

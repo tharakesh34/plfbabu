@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.service.configuration.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -61,10 +62,11 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.RelationshipOfficerDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -76,11 +78,14 @@ import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
+import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceCheckListReferenceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
+import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
@@ -101,6 +106,9 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinFeeScheduleDetail;
+import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
@@ -123,12 +131,12 @@ import com.pennant.backend.service.configuration.VASRecordingService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.exception.PFFInterfaceException;
+import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 /**
@@ -156,22 +164,25 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	private CustomerDocumentDAO				customerDocumentDAO;
 	private TransactionEntryDAO				transactionEntryDAO;
 	private FinFeeDetailDAO					finFeeDetailDAO;
-	
+	private FinFeeScheduleDetailDAO			finFeeScheduleDetailDAO;
+
 	// Validation Service Classes
 	private DocumentDetailValidation		vasDocumentValidation;
 	private ExtendedFieldDetailsValidation	extendedFieldDetailsValidation;
 	private CustomerDAO						customerDAO;
 	private CollateralSetupDAO				collateralSetupDAO;
 	private VasRecordingValidation			vasRecordingValidation;
-	private AccountEngineExecution 			engineExecution;
 	private PostingsDAO 					postingsDAO;
 	private AccountProcessUtil 				accountProcessUtil;
 	private FinanceMainDAO 					financeMainDAO;
 	private FinanceScheduleDetailDAO 		financeScheduleDetailDAO;
+	private FinanceDisbursementDAO			financeDisbursementDAO;
+	private RepayInstructionDAO				repayInstructionDAO;
 	private RelationshipOfficerDAO			relationshipOfficerDAO;
 	private ScriptValidationService 		scriptValidationService;
+	private PostingsPreparationUtil			postingsPreparationUtil;
 
-	
+
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
@@ -193,7 +204,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		return this.vasRecordingValidation;
 	}
 
-	
+
 	/**
 	 * @return the vASRecording
 	 */
@@ -243,16 +254,25 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 	private AuditHeader saveOrUpdate(AuditHeader auditHeader, boolean online) {
 		logger.debug("Entering");
-		
+
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate", online);
 		if (!auditHeader.isNextProcess()) {
+			logger.debug("Leaving");
+			return auditHeader;
+		}
+		VASRecording vASRecording = (VASRecording) auditHeader.getAuditDetail().getModelData();
+
+		// VAS Cancellation process verification
+		String errorCode = procVasCancellation(vASRecording, false);
+		if(StringUtils.isNotBlank(errorCode)){
+			ErrorDetails errorDetail = new ErrorDetails(errorCode, null);
+			auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(errorDetail, auditHeader.getUsrLanguage()));
 			logger.debug("Leaving");
 			return auditHeader;
 		}
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		String tableType = "";
-		VASRecording vASRecording = (VASRecording) auditHeader.getAuditDetail().getModelData();
 
 		if (vASRecording.isWorkflow()) {
 			tableType = "_Temp";
@@ -321,7 +341,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -341,13 +361,13 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 		VASRecording vasRecording = getVASRecordingDAO().getVASRecordingByReference(vasReference, "_View");
 		if (vasRecording != null) {
-			
+
 			// VasconfigurationDetails
 			vasRecording.setVasConfiguration(getvASConfigurationService().getApprovedVASConfigurationByCode(vasRecording.getProductCode()));
-			
+
 			//Set CustomerDetails
 			vasRecording.setVasCustomer(getvASRecordingDAO().getVasCustomerCif(vasRecording.getPrimaryLinkRef(), vasRecording.getPostingAgainst()));
-			
+
 			// Extended Field Details
 			StringBuilder tableName = new StringBuilder();
 			tableName.append(VASConsatnts.MODULE_NAME);
@@ -402,15 +422,15 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 						&& !StringUtils.equals(vasRecording.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 					vasRecording = getProcessEditorDetails(vasRecording, nextRoleCode, FinanceConstants.FINSER_EVENT_ORG);
 				}else if(StringUtils.equals("C", vasRecording.getVasStatus())|| StringUtils.isEmpty(vasRecording.getRecordType())){
-					
+
 					// Get details from Postings
 					// Reversals of Tran Code and & DEBIT -CREDIT
 					//set to Vas recording bean as Return dataset
-					
+
 					List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-					
+
 					list = getPostingsDAO().getPostingsByPostref(vasRecording.getVasReference(), AccountEventConstants.ACCEVENT_VAS_FEE);
-					
+
 					for(ReturnDataSet returnDataSet:list){
 						String tranCode = returnDataSet.getTranCode();
 						String revTranCode = returnDataSet.getRevTranCode();
@@ -425,7 +445,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 							returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
 						}
 					}
-					
+
 					vasRecording.setReturnDataSetList(list);
 				}
 			}
@@ -475,9 +495,11 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws PFFInterfaceException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
 
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException {
+	public AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		String tranType = "";
@@ -492,10 +514,20 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		VASRecording vASRecording = new VASRecording("");
 		BeanUtils.copyProperties((VASRecording) auditHeader.getAuditDetail().getModelData(), vASRecording);
-		
+
+		// VAS Cancellation process verification
+		String errorCode = procVasCancellation(vASRecording, true);
+		if(StringUtils.isNotBlank(errorCode)){
+			ErrorDetails errorDetail = new ErrorDetails(errorCode, null);
+			aAuditHeader.setErrorDetails(ErrorUtil.getErrorDetail(errorDetail, auditHeader.getUsrLanguage()));
+			logger.debug("Leaving");
+			return aAuditHeader;
+		}
+
 		// Processing Accounting Details
-		if(StringUtils.equals(vASRecording.getRecordType(), PennantConstants.RECORD_TYPE_NEW) || StringUtils.equals(vASRecording.getVasStatus(),"C")){
-			auditHeader = executeAccountingProcess(auditHeader, DateUtility.getAppDate());
+		if(StringUtils.equals(vASRecording.getRecordType(), PennantConstants.RECORD_TYPE_NEW) 
+				|| StringUtils.equals(vASRecording.getVasStatus(),VASConsatnts.STATUS_CANCEL)){
+			executeAccountingProcess(auditHeader, DateUtility.getAppDate());
 		}
 
 		if (vASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -575,7 +607,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		
+
 		auditHeader = businessValidation(auditHeader, "doApprove", false);
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
@@ -592,49 +624,69 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		getVASRecordingDAO().delete(vASRecording, "_Temp");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.debug("Leaving");
 		return auditHeader;
 
 	}
-	
+
 	/**
 	 * Method for Checking Cancellation of VAS Record
 	 * @param recording
 	 */
-	private void procCheckForVasCancel(VASRecording recording, boolean approvalProcess){
+	private String procVasCancellation(VASRecording recording, boolean approvalProcess){
+		logger.debug("Entering");
 
 		// VAS Cancellation validations
 		if(!StringUtils.equals(recording.getVasStatus(), VASConsatnts.STATUS_CANCEL) || !recording.isFinanceProcess()){
-			return;
+			logger.debug("Leaving");
+			return null;
 		}
-		
+
 		// Get Fee detail record
 		FinFeeDetail vasFeeDetail = finFeeDetailDAO.getVasFeeDetailById(recording.getVasReference(), false, "");
 		if(vasFeeDetail == null){
-			return;
+			logger.debug("Leaving");
+			return "90323";
+		}
+
+		// If No Balance amount to schedule effected
+		if(vasFeeDetail.getRemainingFee().compareTo(BigDecimal.ZERO) == 0){
+			finFeeDetailDAO.statusUpdate(vasFeeDetail.getFeeID(), FinanceConstants.FEE_STATUS_CANCEL, false, "");
+			logger.debug("Leaving");
+			return null;
+		}
+
+		// If No Schedule Maintenance , no need to check Finance Details
+		if(!StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE) &&
+				!StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR) &&
+				!StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS) &&
+				!StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)){
+
+			finFeeDetailDAO.statusUpdate(vasFeeDetail.getFeeID(), FinanceConstants.FEE_STATUS_CANCEL, false, "");
+			logger.debug("Leaving");
+			return null;
 		}
 
 		// Check Finance Maintenance Status if any and stop except "Deduct From Disbursement"
-		if(StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE) ||
-				StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT) ||
-				StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS) ||
-				StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)){
-			
-			boolean finOnMaintenance = financeMainDAO.isFinReferenceExists(recording.getPrimaryLinkRef(), "_Temp", false);
-			if(finOnMaintenance){
-				return;
-			}
+		boolean finOnMaintenance = financeMainDAO.isFinReferenceExists(recording.getPrimaryLinkRef(), "_Temp", false);
+		if(finOnMaintenance){
+			logger.debug("Leaving");
+			return "90324";
 		}
 
 		// Get Schedule Details of Primary Link Reference and check paid Status
-		List<FinanceScheduleDetail> schdList = financeScheduleDetailDAO.getFinScheduleDetails(recording.getPrimaryLinkRef(),"", false);
+		FinScheduleData scheduleData = getFinSchDataByFinRef(recording.getPrimaryLinkRef());
+		List<FinanceScheduleDetail> schdList = scheduleData.getFinanceScheduleDetails();
 		boolean isSchdPaid = false;
-		for (int i = 0; i < schdList.size(); i++) {
+		Date recalFromDate = null;
+		for (int i = 1; i < schdList.size(); i++) {
 			FinanceScheduleDetail curSchd = schdList.get(i);
+			if(recalFromDate == null){
+				recalFromDate = curSchd.getSchDate();
+			}
 			if(curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 || 
 					curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0 ||
 					curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0 ||
@@ -645,15 +697,17 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				}
 			}
 		}
-		
+
 		// If Schedules Paid for any dates then VAS cancellation not allowed
 		if(isSchdPaid){
-			return;
+			logger.debug("Leaving");
+			return "90325";
 		}
-		
+
 		// If not approval Process, No need of actual updations Only validation is enough
 		if(!approvalProcess){
-			return;
+			logger.debug("Leaving");
+			return null;
 		}
 
 		// Based on Fee Schedule Method schedules need to Reset
@@ -661,16 +715,127 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		// 2. Add to Disbursement on Profit Calculation : Do partial Settlement on Start Date and Recalculate total EMI
 		// 3. Schedule Terms(First Term / N Terms / Entire Tenor) : Schedule Reversal of Sum Amount in Fees
 		if(StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
-			
-		//	ScheduleCalculator.recalEarlyPaySchedule(finScheduleData, earlyPayOnSchdl, earlyPayOnNextSchdl, earlyPayAmt, method);
-			
-		}else if(StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)){
-			
-		}
-		
-		
-		// Update Fee Details record with Cancel status
 
+			FinanceMain financeMain = scheduleData.getFinanceMain();
+			financeMain.setEventFromDate(financeMain.getFinStartDate());
+			financeMain.setEventToDate(financeMain.getMaturityDate());
+			financeMain.setRecalFromDate(recalFromDate);
+			financeMain.setRecalToDate(financeMain.getMaturityDate());
+			financeMain.setFeeChargeAmt(financeMain.getFeeChargeAmt().subtract(vasFeeDetail.getRemainingFee()));
+
+			// Disbursement Details updation
+			for (FinanceDisbursement cusrDisb : scheduleData.getDisbursementDetails()) {
+				if(DateUtility.compare(cusrDisb.getDisbDate(), financeMain.getFinStartDate()) == 0){
+					cusrDisb.setFeeChargeAmt(cusrDisb.getFeeChargeAmt().subtract(vasFeeDetail.getRemainingFee()));
+					break;
+				}
+			}
+
+			// Schedule Details Updation
+			for (FinanceScheduleDetail curSchd : schdList) {
+				if(DateUtility.compare(curSchd.getSchDate(), financeMain.getFinStartDate()) == 0){
+					curSchd.setFeeChargeAmt(curSchd.getFeeChargeAmt().subtract(vasFeeDetail.getRemainingFee()));
+					break;
+				}
+			}
+
+			// Schedule Recalculation
+			scheduleData = ScheduleCalculator.reCalSchd(scheduleData, financeMain.getScheduleMethod());
+
+			// Finance Data Deletion
+			listDeletion(financeMain.getFinReference());
+
+			// Schedule Updations
+			scheduleData.getFinanceMain().setVersion(financeMain.getVersion() + 1);
+			financeMainDAO.update(scheduleData.getFinanceMain(), TableType.MAIN_TAB, false);
+			listSave(scheduleData);
+
+		}else if(StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR) ||
+				StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS) ||
+				StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)){
+
+			List<FinFeeScheduleDetail> feeSchdList = finFeeScheduleDetailDAO.getFeeScheduleByFeeID(vasFeeDetail.getFeeID(), false, "");
+			for (FinFeeScheduleDetail feeSchd : feeSchdList) {
+
+				// Schedule Details Updation
+				for (FinanceScheduleDetail curSchd : schdList) {
+					if(DateUtility.compare(curSchd.getSchDate(), feeSchd.getSchDate()) == 0){
+						curSchd.setFeeSchd(curSchd.getFeeSchd().subtract(feeSchd.getSchAmount()));
+						curSchd.setSchdFeeOS(curSchd.getSchdFeeOS().subtract(feeSchd.getSchAmount()));
+						break;
+					}
+				}
+			}
+
+			financeScheduleDetailDAO.deleteByFinReference(scheduleData.getFinanceMain().getFinReference(), "", false, 0);
+			financeScheduleDetailDAO.saveList(schdList, "", false);
+
+		}
+
+		// Update Fee Details record with Cancel status
+		finFeeDetailDAO.statusUpdate(vasFeeDetail.getFeeID(), FinanceConstants.FEE_STATUS_CANCEL, false, "");
+
+		logger.debug("Leaving");
+		return null;
+	}
+
+	/**
+	 * Method to get Schedule related data.
+	 * 
+	 * @param finReference
+	 *            (String)
+	 * @param isWIF
+	 *            (boolean)
+	 * **/
+	private FinScheduleData getFinSchDataByFinRef(String finReference) {
+		logger.debug("Entering");
+
+		FinScheduleData finSchData = new FinScheduleData();
+		finSchData.setFinanceMain(financeMainDAO.getFinanceMainById(finReference, "", false));
+		finSchData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false));
+		finSchData.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementDetails(finReference,"", false));
+		finSchData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finReference, "", false));
+		logger.debug("Leaving");
+		return finSchData;
+	}
+
+	/**
+	 * Method to delete schedule data
+	 * 
+	 * @param scheduleData
+	 * @param tableType
+	 * @param isWIF
+	 */
+	private void listDeletion(String finReference) {
+		logger.debug("Entering");
+		financeScheduleDetailDAO.deleteByFinReference(finReference, "", false, 0);
+		financeDisbursementDAO.deleteByFinReference(finReference, "", false, 0);
+		repayInstructionDAO.deleteByFinReference(finReference, "", false, 0);
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Method to save Finance Details
+	 */
+	private void listSave(FinScheduleData schData) {
+		logger.debug("Entering");
+
+		for (int i = 0; i < schData.getFinanceScheduleDetails().size(); i++) {
+			schData.getFinanceScheduleDetails().get(i).setFinReference(schData.getFinanceMain().getFinReference());
+		}
+		financeScheduleDetailDAO.saveList(schData.getFinanceScheduleDetails(), "", false);
+		
+		for (int i = 0; i < schData.getDisbursementDetails().size(); i++) {
+			schData.getDisbursementDetails().get(i).setFinReference(schData.getFinanceMain().getFinReference());
+		}
+		financeDisbursementDAO.saveList(schData.getDisbursementDetails(), "", false);
+		
+		for (int i = 0; i < schData.getRepayInstructions().size(); i++) {
+			schData.getRepayInstructions().get(i).setFinReference(schData.getFinanceMain().getFinReference());
+		}
+		repayInstructionDAO.saveList(schData.getRepayInstructions(), "", false);
+
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -743,7 +908,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	@Override
 	public VASRecording getProcessEditorDetails(VASRecording vasRecording, String nextRoleCode, String procEdtEvent) {
 		logger.debug("Entering");
-		
+
 		String productCode = vasRecording.getProductCode();
 		List<FinanceReferenceDetail> aggrementList = new ArrayList<FinanceReferenceDetail>(1);
 		List<FinanceReferenceDetail> checkListdetails = new ArrayList<FinanceReferenceDetail>(1);
@@ -770,10 +935,10 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		}
 		//Finance Agreement Details	
 		vasRecording.setAggrements(aggrementList);
-		
+
 		//Check list Details
 		getCheckListDetailService().fetchVASCheckLists(vasRecording, checkListdetails);
-		
+
 		logger.debug("Leaving");
 		return vasRecording;
 	}
@@ -1274,7 +1439,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		if (StringUtils.isEmpty(StringUtils.trimToEmpty(extendedFieldRender.getRecordType()))) {
 			return null;
 		}
-		
+
 		boolean isRcdType = false;
 		if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 			extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -1324,7 +1489,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		auditDetail.setExtended(true);
 		auditDetails.add(auditDetail);
 
-	 	logger.debug("Leaving");
+		logger.debug("Leaving");
 		return auditDetails;
 	}
 
@@ -1448,7 +1613,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 */
 	private CustomerDocument getCustomerDocument(DocumentDetails documentDetails, VASRecording vasRecording) {
 		logger.debug("Entering");
-		
+
 		CustomerDocument customerDocument = getCustomerDocumentDAO().getCustomerDocumentById(
 				vasRecording.getVasCustomer().getCustomerId(), documentDetails.getDocCategory(), "");
 
@@ -1465,7 +1630,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		customerDocument.setCustID(vasRecording.getVasCustomer().getCustomerId());
 		customerDocument.setLovDescCustCIF(vasRecording.getVasCustomer().getCustCIF());
 		customerDocument.setLovDescCustShrtName(vasRecording.getVasCustomer().getCustShrtName());
-		
+
 		customerDocument.setCustDocTitle(documentDetails.getCustDocTitle());
 		customerDocument.setCustDocIssuedCountry(documentDetails.getCustDocIssuedCountry());
 		customerDocument.setLovDescCustDocIssuedCountry(documentDetails.getLovDescCustDocIssuedCountry());
@@ -1477,7 +1642,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		customerDocument.setCustDocCategory(documentDetails.getDocCategory());
 		customerDocument.setCustDocName(documentDetails.getDocName());
 		customerDocument.setLovDescCustDocCategory(documentDetails.getLovDescDocCategoryName());
-		
+
 		if (customerDocument.getDocRefId() <= 0) {
 			DocumentManager documentManager = new DocumentManager();
 			documentManager.setDocImage(documentDetails.getDocImage());
@@ -1494,143 +1659,61 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		logger.debug("Leaving");
 		return customerDocument;
 	}
-	
+
 	/**
 	 * Method for Execute posting Details on Core Banking Side
 	 * @param auditHeader
 	 * @param curBDay
 	 * @return
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 * @throws AccountNotFoundException
 	 */
-	public AuditHeader executeAccountingProcess(AuditHeader auditHeader, Date curBDay) throws PFFInterfaceException{
+	public void executeAccountingProcess(AuditHeader auditHeader, Date curBDay) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException{
 		logger.debug("Entering");
 
-		long linkedTranId = Long.MIN_VALUE;
-		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-		
 		VASRecording vASRecording = new VASRecording("");
 		BeanUtils.copyProperties((VASRecording) auditHeader.getAuditDetail().getModelData(), vASRecording);
 
-		try {
-			
-			if(vASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
-				
-				AEEvent aeEvent = new AEEvent();
-				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
-				aeEvent.setFinReference(vASRecording.getVasReference());
-				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-				if(amountCodes == null){
-					amountCodes = new AEAmountCodes();
-				}
-				
-				// Based on VAS Created Against, details will be captured  
-				if(StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, vASRecording.getPostingAgainst())){
-					FinanceMain financeMain = financeMainDAO.getFinanceMainForBatch(vASRecording.getPrimaryLinkRef());
-					amountCodes.setFinType(financeMain.getFinType());
-					aeEvent.setBranch(financeMain.getFinBranch());
-					aeEvent.setCcy(financeMain.getFinCcy());
-					aeEvent.setCustID(financeMain.getCustID());
-				} else if(StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, getVASRecording().getPostingAgainst())){
-					Customer customer = getCustomerDAO().getCustomerByCIF(getVASRecording().getPrimaryLinkRef(),"");
-					aeEvent.setBranch(customer.getCustDftBranch());
-					aeEvent.setCcy(customer.getCustBaseCcy());
-					aeEvent.setCustID(customer.getCustID());
-				} else if(StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, getVASRecording().getPostingAgainst())){
-					CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(
-							getVASRecording().getPrimaryLinkRef(),"");
-					aeEvent.setCcy(collateralSetup.getCollateralCcy());
-					aeEvent.setCustID(collateralSetup.getDepositorId());
-				}
-				
-				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
-				vASRecording.getDeclaredFieldValues(aeEvent.getDataMap());
-				aeEvent.getAcSetIDList().add(vASRecording.getVasConfiguration().getFeeAccounting());
-				list = getEngineExecution().getAccEngineExecResults(aeEvent).getReturnDataSet();
+		if(vASRecording.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)){
 
-			}else if(StringUtils.equals("C", vASRecording.getVasStatus())){
-				
-				list = getPostingsDAO().getPostingsByPostref(vASRecording.getVasReference(), AccountEventConstants.ACCEVENT_VAS_FEE);
-				for(ReturnDataSet returnDataSet : list){
-					returnDataSet.setPostAmount(returnDataSet.getPostAmount().negate());
-				}
-			}
-			
-
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
-			errorDetails.add(new ErrorDetails("Accounting Engine", PennantConstants.ERR_UNDEF, "E",
-					"Accounting Engine Failed to Create Postings:"+e.getMessage(), new String[] {}, new String[] {}));
-			auditHeader.setErrorList(errorDetails);
-			list = null;
-		}
-
-		if(list != null && !list.isEmpty() && !StringUtils.equals("C", vASRecording.getVasStatus())) {
-
-			// Method for validating Postings with interface program and
-			// return results
-			if (list.get(0).getLinkedTranId() == Long.MIN_VALUE || list.get(0).getLinkedTranId() == 0) {
-				linkedTranId = getPostingsDAO().getLinkedTransId();
-			} else {
-				linkedTranId = list.get(0).getLinkedTranId();
-			}
-			
-			//Method for Checking for Reverse Calculations Based upon Negative Amounts
-			for (ReturnDataSet returnDataSet : list) {
-				
-				returnDataSet.setLinkedTranId(linkedTranId);
-
-				if (returnDataSet.getPostAmount().compareTo(BigDecimal.ZERO) < 0) {
-
-					String tranCode = returnDataSet.getTranCode();
-					String revTranCode = returnDataSet.getRevTranCode();
-					String debitOrCredit = returnDataSet.getDrOrCr();
-
-					returnDataSet.setTranCode(revTranCode);
-					returnDataSet.setRevTranCode(tranCode);
-
-					returnDataSet.setPostAmount(returnDataSet.getPostAmount().negate());
-
-					if (debitOrCredit.equals(AccountConstants.TRANTYPE_CREDIT)) {
-						returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
-					} else {
-						returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
-					}
-				}
+			AEEvent aeEvent = new AEEvent();
+			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+			aeEvent.setFinReference(vASRecording.getVasReference());
+			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+			if(amountCodes == null){
+				amountCodes = new AEAmountCodes();
 			}
 
-			//Core Banking Posting Process call
-			//FIXME: 050517 Needs to fill return dataset
-
-			if (list != null && list.size() > 0) {
-				ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
-				for (int i = 0; i < list.size(); i++) {
-					ReturnDataSet set = list.get(i);
-					set.setLinkedTranId(linkedTranId);
-					set.setPostDate(curBDay);
-					if (!("0000".equals(StringUtils.trimToEmpty(set.getErrorId())) || 
-							StringUtils.isEmpty(StringUtils.trimToEmpty(set.getErrorId())))) {
-						
-						errorDetails.add(new ErrorDetails(set.getAccountType(), set.getErrorId(), "E",
-								set.getErrorMsg() + " " + PennantApplicationUtil.formatAccountNumber(set.getAccount()), new String[] {}, new String[] {}));
-					} else {
-						set.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
-					}
-				}
-				auditHeader.setErrorList(errorDetails);
+			// Based on VAS Created Against, details will be captured  
+			if(StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, vASRecording.getPostingAgainst())){
+				FinanceMain financeMain = financeMainDAO.getFinanceMainForBatch(vASRecording.getPrimaryLinkRef());
+				amountCodes.setFinType(financeMain.getFinType());
+				aeEvent.setBranch(financeMain.getFinBranch());
+				aeEvent.setCcy(financeMain.getFinCcy());
+				aeEvent.setCustID(financeMain.getCustID());
+			} else if(StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, getVASRecording().getPostingAgainst())){
+				Customer customer = getCustomerDAO().getCustomerByCIF(getVASRecording().getPrimaryLinkRef(),"");
+				aeEvent.setBranch(customer.getCustDftBranch());
+				aeEvent.setCcy(customer.getCustBaseCcy());
+				aeEvent.setCustID(customer.getCustID());
+			} else if(StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, getVASRecording().getPostingAgainst())){
+				CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(
+						getVASRecording().getPrimaryLinkRef(),"");
+				aeEvent.setCcy(collateralSetup.getCollateralCcy());
+				aeEvent.setCustID(collateralSetup.getDepositorId());
 			}
-		}
 
-		if (auditHeader.getErrorMessage() == null || auditHeader.getErrorMessage().size() == 0) {
+			aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+			vASRecording.getDeclaredFieldValues(aeEvent.getDataMap());
+			aeEvent.getAcSetIDList().add(vASRecording.getVasConfiguration().getFeeAccounting());
+			postingsPreparationUtil.postAccounting(aeEvent);
 
-			// save Postings
-			if (list != null && !list.isEmpty()) {
-				getPostingsDAO().saveBatch(list);
-			}
+		}else if(StringUtils.equals("C", vASRecording.getVasStatus())){
+			postingsPreparationUtil.postReveralsByFinreference(vASRecording.getVasReference());
 		}
 
 		logger.debug("Leaving");
-		return auditHeader;
 	}
 	//validations For API Specific
 	@Override
@@ -1658,10 +1741,10 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					vasRecording.setPostingAgainst(VASConsatnts.VASAGAINST_FINANCE);
 				}
 			}
-			
+
 			if (!(StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, vasRecording.getPostingAgainst())
 					|| StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, vasRecording.getPostingAgainst()) || StringUtils
-						.equals(VASConsatnts.VASAGAINST_FINANCE, vasRecording.getPostingAgainst()))) {
+					.equals(VASConsatnts.VASAGAINST_FINANCE, vasRecording.getPostingAgainst()))) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "postingAgainst";
 				valueParm[1] = vasRecording.getPostingAgainst();
@@ -1798,7 +1881,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					return auditDetail;
 				} else {
 					if(vasRecording.getAccrualTillDate().before(DateUtility.getAppDate())
-					|| vasRecording.getAccrualTillDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))){
+							|| vasRecording.getAccrualTillDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))){
 						String[] valueParm = new String[3];
 						valueParm[0] = "AccrualTillDate";
 						valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
@@ -1806,7 +1889,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
 						return auditDetail;
 					}
-					
+
 				}
 			} else {
 				if(vasRecording.getAccrualTillDate() != null){
@@ -1829,13 +1912,13 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				} else {
 					if(vasRecording.getRecurringDate().before(DateUtility.getAppDate())
 							|| vasRecording.getRecurringDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))){
-								String[] valueParm = new String[3];
-								valueParm[0] = "RecurringDate";
-								valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
-								valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
-								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
-								return auditDetail;
-							}
+						String[] valueParm = new String[3];
+						valueParm[0] = "RecurringDate";
+						valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+						valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+						return auditDetail;
+					}
 				}
 			} else {
 				if(vasRecording.getRecurringDate() != null){
@@ -1954,13 +2037,13 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 						Pattern pattern = Pattern.compile("^[A-Za-z]{5}\\d{4}[A-Za-z]{1}");
 						if(detail.getCustDocTitle() !=null){
 							detail.setCustDocTitle(detail.getCustDocTitle().toUpperCase());;
-						Matcher matcher = pattern.matcher(detail.getCustDocTitle());
-						if(matcher.find() == false ){
-							String[] valueParm = new String[0];
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90251", "", valueParm), "EN");
-							auditDetail.setErrorDetail(errorDetail);
-							return auditDetail;
-						}
+							Matcher matcher = pattern.matcher(detail.getCustDocTitle());
+							if(matcher.find() == false ){
+								String[] valueParm = new String[0];
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90251", "", valueParm), "EN");
+								auditDetail.setErrorDetail(errorDetail);
+								return auditDetail;
+							}
 						}
 					}
 					if (StringUtils.isBlank(detail.getDocUri())) {
@@ -1990,32 +2073,32 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90122", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 					}
-						String docFormate = detail.getDocName()
-								.substring(detail.getDocName().lastIndexOf(".") + 1);
-						if (StringUtils.equals(detail.getDocName(), docFormate)) {
-							String[] valueParm = new String[1];
-							valueParm[0] = "docName: " + docFormate;
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90291", "", valueParm), "EN");
+					String docFormate = detail.getDocName()
+							.substring(detail.getDocName().lastIndexOf(".") + 1);
+					if (StringUtils.equals(detail.getDocName(), docFormate)) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "docName: " + docFormate;
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90291", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+					}
+					boolean isImage = false;
+					if (StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_IMAGE)) {
+						if (StringUtils.equals(docFormate, "jpg") || StringUtils.equals(docFormate, "jpeg")
+								|| StringUtils.equals(docFormate, "png")) {
+							isImage = true;
+						}
+					}
+					if (!isImage) {
+						if (!StringUtils.equals(detail.getDoctype(), docFormate)) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "document type: " + detail.getDocName();
+							valueParm[1] = detail.getDoctype();
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90289", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 						}
-						boolean isImage = false;
-						if (StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_IMAGE)) {
-							if (StringUtils.equals(docFormate, "jpg") || StringUtils.equals(docFormate, "jpeg")
-									|| StringUtils.equals(docFormate, "png")) {
-								isImage = true;
-							}
-						}
-						if (!isImage) {
-							if (!StringUtils.equals(detail.getDoctype(), docFormate)) {
-								String[] valueParm = new String[2];
-								valueParm[0] = "document type: " + detail.getDocName();
-								valueParm[1] = detail.getDoctype();
-								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90289", "", valueParm), "EN");
-								auditDetail.setErrorDetail(errorDetail);
-							}
-						}
+					}
 				}
-					
+
 			}
 			int extendedDetailsCount = 0;
 			if (vASConfiguration.getExtendedFieldHeader().getExtendedFieldDetails() != null) {
@@ -2085,13 +2168,13 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			}
 			Map<String, Object>	mapValues = new HashMap<String, Object>();
 			if(vasRecording.getExtendedDetails() != null){
-			for (ExtendedField details : vasRecording.getExtendedDetails()) {
-				for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
-					mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+				for (ExtendedField details : vasRecording.getExtendedDetails()) {
+					for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
+						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+					}
 				}
 			}
-			}
-			
+
 			// do script pre validation and post validation
 			ScriptErrors errors = null;
 			if (vASConfiguration.isPostValidationReq()) {
@@ -2236,19 +2319,12 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
 	}
-	
+
 	public TransactionEntryDAO getTransactionEntryDAO() {
 		return transactionEntryDAO;
 	}
 	public void setTransactionEntryDAO(TransactionEntryDAO transactionEntryDAO) {
 		this.transactionEntryDAO = transactionEntryDAO;
-	}
-	
-	public AccountEngineExecution getEngineExecution() {
-		return engineExecution;
-	}
-	public void setEngineExecution(AccountEngineExecution engineExecution) {
-		this.engineExecution = engineExecution;
 	}
 
 	public PostingsDAO getPostingsDAO() {
@@ -2257,14 +2333,14 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
 		this.postingsDAO = postingsDAO;
 	}
-	
+
 	public AccountProcessUtil getAccountProcessUtil() {
 		return accountProcessUtil;
 	}
 	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
 		this.accountProcessUtil = accountProcessUtil;
 	}
-	
+
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
@@ -2275,7 +2351,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	public void setScriptValidationService(ScriptValidationService scriptValidationService) {
 		this.scriptValidationService = scriptValidationService;
 	}
-	
+
 	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
 		this.collateralSetupDAO = collateralSetupDAO;
 	}
@@ -2287,13 +2363,29 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	public void setDocumentTypeDAO(DocumentTypeDAO documentTypeDAO) {
 		this.documentTypeDAO = documentTypeDAO;
 	}
-	
+
 	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
 		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
-	
+
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
-	
+
+	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
+		this.financeDisbursementDAO = financeDisbursementDAO;
+	}
+
+	public void setRepayInstructionDAO(RepayInstructionDAO repayInstructionDAO) {
+		this.repayInstructionDAO = repayInstructionDAO;
+	}
+
+	public void setFinFeeScheduleDetailDAO(FinFeeScheduleDetailDAO finFeeScheduleDetailDAO) {
+		this.finFeeScheduleDetailDAO = finFeeScheduleDetailDAO;
+	}
+
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
 }
