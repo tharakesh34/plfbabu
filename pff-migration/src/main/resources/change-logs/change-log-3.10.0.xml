@@ -493,4 +493,54 @@
 			<column name="EOD_BATCH_ID" type="decimal(18,0)" />
 		</createTable>
 		</changeSet>
+		
+		<changeSet id="27" author="Manoj.P">
+			<dropTable tableName="DEDUP_EOD_CUST_LOAN_DTL"/>
+		</changeSet>
+		
+		<changeSet id="28" author="Manoj.P">
+			<createTable tableName="PSX_DEDUP_EOD_CUST_LOAN_DTL">
+			<column name="BATCHID" type="decimal(12,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CUSTOMER_NO" type="decimal(8,0)" />
+			<column name="SOURCE_SYS_ID" type="varchar(5)" >
+				<constraints nullable="false"/>
+			</column>	
+			<column name="SEGMENT" type="varchar(5)">
+				<constraints nullable="false"/>
+			</column>	
+			<column name="DEAL_ID" type="varchar(20)" />
+			<column name="LAN_NO" type="varchar(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="CUSTOMER_TYPE" type="varchar(1)">
+				<constraints nullable="false"/>
+			</column>	
+			<column name="APPLN_NO" type="decimal(10,0)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="PRODUCT_CODE" type="varchar(10)">
+				<constraints nullable="false"/>
+			</column>	
+			<column name="PROCESS_TYPE" type="varchar(2)">
+				<constraints nullable="false"/>
+			</column>	
+			<column name="PROCESS_FLAG" type="varchar(1)">
+				<constraints nullable="false"/>
+			</column>		
+			<column name="ERROR_CODE" type="varchar(1)" />
+			<column name="ERROR_DESC" type="varchar(100)" />
+			<column name="PSX_BATCH_ID" type="decimal(18,0)" />
+			<column name="PSX_ID" type="decimal(12,0)" />
+			<column name="CUSTOMER_ID" type="varchar(20)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="SOURCE_SYSTEM" type="varchar(20)">
+				<constraints nullable="false"/>
+			</column>	
+			<column name="EOD_BATCH_ID" type="decimal(18,0)" />
+		</createTable>
+		
+		</changeSet>
 </databaseChangeLog>
