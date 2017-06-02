@@ -434,4 +434,63 @@
 			</column>	
 		</createTable>
 		</changeSet>
+		
+		<changeSet id="25" author="Manoj.P">
+			<dropTable tableName="DEDUP_EOD_CUST_ADDR_DTL"/>
+		</changeSet>
+		
+		<changeSet id="26" author="Manoj.P">
+			<createTable tableName="PSX_DEDUP_EOD_CUST_ADDR_DTL">
+			<column name="BATCHID" type="decimal(12,0)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="CUSTOMER_NO" type="decimal(8,0)"/>
+			<column name="SOURCE_SYS_ID" type="varchar(5)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="SEGMENT" type="varchar(5)">
+				<constraints nullable="false"/>
+			</column>	
+			<column name="ADDRESS_TYPE" type="varchar(24)">
+				<constraints nullable="false"/>
+			</column>		
+			<column name="ADDRESS_1" type="varchar(255)" >
+				<constraints nullable="false"/>
+			</column>	
+			<column name="ADDRESS_2" type="varchar(255)" />
+			<column name="ADDRESS_3" type="varchar(255)" />
+			<column name="STATE" type="varchar(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="CITY" type="varchar(105)">
+				<constraints nullable="false" />
+			</column>	
+			<column name="PIN" type="varchar(24)">
+				<constraints nullable="false"/>
+			</column>	
+			<column name="LANDLINE_1" type="varchar(48)" />
+			<column name="LANDLINE_2" type="varchar(48)" />
+			<column name="MOBILE" type="varchar(105)" />
+			<column name="AREA" type="varchar(120)" />
+			<column name="LANDMARK" type="varchar(105)" />
+			<column name="STD" type="varchar(48)" />
+			<column name="PROCESS_TYPE" type="varchar(2)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="EMAIL" type="varchar(105)" />
+			<column name="PROCESS_FLAG" type="varchar(1)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="ERROR_CODE" type="varchar(1)" />
+			<column name="ERROR_DESC" type="varchar(100)" />
+			<column name="CUSTOMER_ID" type="varchar(20)">
+				<constraints nullable="false"/>
+			</column>	
+			<column name="SOURCE_SYSTEM" type="varchar(20)">
+				<constraints nullable="false"/>
+			</column>	
+			<column name="PSX_BATCH_ID" type="decimal(18,0)" />
+			<column name="EOD_BATCH_ID" type="decimal(18,0)" />
+		</createTable>
+		</changeSet>
 </databaseChangeLog>
