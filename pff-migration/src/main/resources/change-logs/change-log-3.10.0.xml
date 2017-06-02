@@ -543,4 +543,45 @@
 		</createTable>
 		
 		</changeSet>
+		
+		<changeSet id="29" author="Manoj.P">
+			<dropTable tableName="DEDUP_EOD_CUST_REP_DTL"/>
+		</changeSet>
+		
+		<changeSet id="30" author="Manoj.P">
+		<createTable tableName="DEDUP_EOD_CUST_REP_DTL">
+			<column name="BATCHID" type="decimal(12,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SOURCE_SYS_ID" type="varchar(5)" >
+				<constraints nullable="false"/>
+			</column>	
+			<column name="CUSTOMER_ID" type="varchar(20)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="FILLER_STRING_1" type="varchar(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="FILLER_STRING_2" type="varchar(255)" />
+			<column name="FILLER_STRING_3" type="varchar(255)" />
+			<column name="FILLER_STRING_4" type="varchar(255)" />
+			<column name="FILLER_STRING_5" type="varchar(255)" />
+			<column name="FILLER_DATE_1" type="datetime" />
+			<column name="FILLER_DATE_2" type="datetime" />
+			<column name="FILLER_NUMBER_1" type="decimal(16,0)"/>
+			<column name="FILLER_NUMBER_2" type="decimal(16,0)"/>
+			<column name="FILLER_NUMBER_3" type="decimal(16,0)"/>
+			<column name="FILLER_NUMBER_4" type="decimal(16,0)"/>
+			<column name="FILLER_NUMBER_5" type="decimal(16,0)"/>
+			<column name="PSX_BATCH_ID" type="decimal(18,0)" />
+			<column name="PSX_ID" type="decimal(12,0)" />
+			<column name="SOURCE_SYSTEM" type="varchar(20)"/>
+			<column name="EOD_BATCH_ID" type="decimal(18,0)" />
+			<column name="FILLER_STRING_6" type="varchar(255)" />
+			<column name="FILLER_STRING_7" type="varchar(4000)" />
+			<column name="FILLER_STRING_8" type="varchar(255)" />
+			<column name="PROCESS_TYPE" type="varchar(2)"/>
+			<column name="FILLER_STRING_9" type="varchar(255)"/>
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
