@@ -131,6 +131,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	protected Listheader listheader_AccNumber;
 	protected Listheader listheader_AccType;
 	protected Listheader listheader_Amount;
+	protected Listheader listheader_CustName;
 	protected Listheader listheader_ExpiryDate;
 	protected Listheader listheader_Status;
 	protected Listheader listheader_InputDate;
@@ -230,6 +231,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 				Operators.STRING);
 		registerField("status", listheader_Status, SortOrder.NONE, status, sortOperator_Status, Operators.STRING);
 		registerField("maxLimit", listheader_Amount);
+		registerField("custshrtName", listheader_CustName);
+
 		// Render the page and display the data.
 		doRenderPage();
 		this.mandateIdMap.clear();
@@ -335,6 +338,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			lc = new Listcell(mandate.getMandateType());
 			lc.setParent(item);
 			lc = new Listcell(mandate.getCustCIF());
+			lc.setParent(item);
+			lc = new Listcell(mandate.getCustShrtName());
 			lc.setParent(item);
 			lc = new Listcell(mandate.getBankName());
 			lc.setParent(item);
