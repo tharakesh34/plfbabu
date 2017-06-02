@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.eod.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
@@ -195,6 +197,29 @@ public class EODConfigDAOImpl extends BasisNextidDaoImpl<EODConfig> implements E
 
 		logger.debug(Literal.LEAVING);
 	}
+	
+	@Override
+	public List<EODConfig> getEODConfig() {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" EodConfigId, ExtMnthRequired, MnthExtTo, Active ");
+		sql.append(" From EodConfig");
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		EODConfig eODConfig = new EODConfig();
+		eODConfig.setActive(true);
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(eODConfig);
+		RowMapper<EODConfig> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EODConfig.class);
+
+		List<EODConfig> list = namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		logger.debug(Literal.LEAVING);
+		return list ;
+	}	
 
 	/**
 	 * Sets a new <code>JDBC Template</code> for the given data source.
