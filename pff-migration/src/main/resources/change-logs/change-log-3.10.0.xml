@@ -205,7 +205,14 @@
 						RMTAccountTypes T4 ON T1.AcType = T4.AcType
 		</createView>
 	</changeSet>
-	<changeSet id="14" author="Manoj.p">
+	<changeSet id="14" author="Siva">
+		<sql>
+			INSERT INTO ErrorDetails VALUES('90323','EN','E','VAS Fee Details not found. Please contact system Administrator.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			INSERT INTO ErrorDetails VALUES('90324','EN','E','VAS created against Finance record is in maintenance. Not allowed to do VAS Cancellation.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			INSERT INTO ErrorDetails VALUES('90325','EN','E','Payments were already done for the Finance. Not allowed to do VAS Cancellation.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		</sql>
+	</changeSet>
+	<changeSet id="15" author="Manoj.p">
 	<sql>
 		update data_engine_config set uploadpath = '/opt/PFF/disbursement/response/stp' where name = 'DISB_HDFC_IMPORT';
 		update DATA_ENGINE_CONFIG set FILEPREFIXNAME = '${CLIENT_CODE}', FILENAMEFORMAT = '${ddmm},.${SEQ_DATE_FILE}' where Name = 'DISB_HDFC_EXPORT';
