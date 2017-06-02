@@ -302,4 +302,13 @@
 							AND FinEvent = T1.FinEvent AND FeeTypeID = T1.FeeTypeID)
 		</createView>
 	</changeSet>
+	
+	<changeSet id="20" author="Manoj.P">
+	<sql>
+		update data_engine_table set RECORDLENGTH = 16 where  name = 'MANDATE_RESPONSE';
+		update data_engine_table set RECORDLENGTH = 16 where  configid in (select id from data_engine_config where name = 'DISB_HDFC_IMPORT');
+		update data_engine_table set RECORDLENGTH = 16 where  configid in (select id from data_engine_config where name = 'DISB_OTHER_IMPORT');
+		update partnerbanks set filename = 'FCAT_BAFLTD_BF1C' where  partnerbankcode = 'HDFC'
+	</sql>	 
+	</changeSet>
 </databaseChangeLog>
