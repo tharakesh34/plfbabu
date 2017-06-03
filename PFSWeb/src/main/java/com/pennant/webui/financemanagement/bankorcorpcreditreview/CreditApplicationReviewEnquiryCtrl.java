@@ -453,17 +453,17 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				int yearCount = i;
 				switch(yearCount){
 				case 2 : if(totAsstValue0.compareTo(totLibNetWorthValue0) != 0){
-					       MessageUtil.showErrorMessage(getMessage(year-2, totAsstValue0, totLibNetWorthValue0));
+						MessageUtil.showError(getMessage(year - 2, totAsstValue0, totLibNetWorthValue0));
 					       return;
 				         } 
 				        break;
 				case 1 : if(totAsstValue1.compareTo(totLibNetWorthValue1) != 0){
-					        MessageUtil.showErrorMessage(getMessage(year-1, totAsstValue1, totLibNetWorthValue1));
+						MessageUtil.showError(getMessage(year - 1, totAsstValue1, totLibNetWorthValue1));
 					        return;
 				           } 
 				        break;
 				case 0 : if(totAsstValue2.compareTo(totLibNetWorthValue2) != 0){
-					        MessageUtil.showErrorMessage(getMessage(year-0, totAsstValue2, totLibNetWorthValue2));
+						MessageUtil.showError(getMessage(year - 0, totAsstValue2, totLibNetWorthValue2));
 					        return;
 				         }
 				        break;
@@ -605,22 +605,11 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 
 				if (isNotesMandatory(taskId, aCreditReviewDetails)) {
 					notesEnteredCount++;
-					try {
-						//if(notesEnteredCount == noOfRecords){
-							/*if (!notesEntered && notesEnteredCount != noOfRecords) {
-								//MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-								return false;
-							} */
-							
-							if(!notesEntered){
-								if(notesEnteredCount == noOfRecords){
-							      MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-								}
-							 return false;
-							}
-					//}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						if (notesEnteredCount == noOfRecords) {
+							MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						}
+						return false;
 					}
 				}
 			}
