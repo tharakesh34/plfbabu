@@ -329,15 +329,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		logger.debug("Entering" + event.toString());
 		try {
 			doSave();
-		} catch (WrongValueException exp) {
-			logger.error("Exception: ", exp);
-			throw exp;
-		} catch (WrongValuesException exp) {
-			logger.error("Exception: ", exp);
-			throw exp;
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getMessage());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1706,13 +1699,9 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 				}
 
 				if (isNotesMandatory(taskId, aDedupParm)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

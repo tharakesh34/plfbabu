@@ -514,8 +514,7 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -960,13 +959,9 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 				}
 
 				if (isNotesMandatory(taskId, aCustomerRating)) {
-					try {
-						if (!notesEntered){
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
@@ -1226,8 +1221,7 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
