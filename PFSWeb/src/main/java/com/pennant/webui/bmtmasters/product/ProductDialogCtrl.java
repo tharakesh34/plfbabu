@@ -743,10 +743,8 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 					closeDialog();
 				}
 			} else {
-				MessageUtil.showErrorMessage(Labels.getLabel(
-						"List_Error",
-						new String[] { Labels.getLabel("ProductAsset"),
-								Labels.getLabel("Product") }));
+				MessageUtil.showError(Labels.getLabel("List_Error",
+						new String[] { Labels.getLabel("ProductAsset"), Labels.getLabel("Product") }));
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -790,14 +788,9 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 				}
 
 				if (isNotesMandatory(taskId, aProduct)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels
-									.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
@@ -982,15 +975,10 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 
 			if (productAsset.getRecordStatus().equalsIgnoreCase(
 					PennantConstants.RECORD_TYPE_DEL)) {
-				MessageUtil
-						.showErrorMessage("Not Allowed to maintain This Record");
+				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else if (StringUtils.isBlank(this.productCode.getValue())) {
-				MessageUtil
-						.showErrorMessage(Labels
-								.getLabel(
-										"FIELD_NO_EMPTY",
-										new String[] { PennantJavaUtil
-												.getLabel("label_ProductAssetDialog_ProductCode.value") }));
+				MessageUtil.showError(Labels.getLabel("FIELD_NO_EMPTY",
+						new String[] { PennantJavaUtil.getLabel("label_ProductAssetDialog_ProductCode.value") }));
 			} else {
 				productAsset.setProductCode(this.productCode.getValue());
 				productAsset.setNewRecord(false);
@@ -1006,8 +994,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 									"/WEB-INF/pages/RMTMasters/ProductAsset/ProductAssetDialog.zul",
 									window_ProductDialog, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}

@@ -687,13 +687,9 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 					nextTaskId = getNextTaskIds(taskId, aRejectDetail);
 				}
 				if (isNotesMandatory(taskId, aRejectDetail)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
