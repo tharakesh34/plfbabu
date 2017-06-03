@@ -340,8 +340,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			doStoreServiceIds(getFinanceDetail().getFinScheduleData().getFinanceMain());
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FinWriteoffDialog.onClose();
 		}
 
@@ -1117,7 +1116,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						BigDecimal.ZERO) <= 0)
 				&& (this.writeoffSchFee.getValue() == null || this.writeoffSchFee.getValue().compareTo(BigDecimal.ZERO) <= 0)) {
 
-			MessageUtil.showErrorMessage("Write-off Amount must be Entered.");
+			MessageUtil.showError("Write-off Amount must be Entered.");
 			return false;
 		}
 
@@ -1134,7 +1133,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				|| woIncrCost.compareTo(financeWriteoff.getUnpaidIncrCost()) > 0
 				|| woSuplRent.compareTo(financeWriteoff.getUnpaidSuplRent()) > 0
 				|| woSchFee.compareTo(financeWriteoff.getUnpaidSchFee()) > 0) {
-			MessageUtil.showErrorMessage("Entered Write-off Amount Should be less than Unpaid Balances.");
+			MessageUtil.showError("Entered Write-off Amount Should be less than Unpaid Balances.");
 			return false;
 		}
 
@@ -1266,7 +1265,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		if (isDataChanged) {
-			MessageUtil.showErrorMessage("Amounts Changed. Must need to Recalculate Schedule.");
+			MessageUtil.showError("Amounts Changed. Must need to Recalculate Schedule.");
 			return;
 		}
 
@@ -1316,12 +1315,12 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (!recSave && getStageAccountingDetailDialogCtrl() != null) {
 			// check if accounting rules executed or not
 			if (!getStageAccountingDetailDialogCtrl().isStageAccountingsExecuted()) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_StageAccountings"));
+				MessageUtil.showError(Labels.getLabel("label_Finance_Calc_StageAccountings"));
 				return;
 			}
 			if (getStageAccountingDetailDialogCtrl().getStageDisbCrSum().compareTo(
 					getStageAccountingDetailDialogCtrl().getStageDisbDrSum()) != 0) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Acc_NotMatching"));
+				MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
 				return;
 			}
 		} else {
@@ -1332,12 +1331,12 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (!recSave && getAccountingDetailDialogCtrl() != null) {
 			// check if accounting rules executed or not
 			if (!getAccountingDetailDialogCtrl().isAccountingsExecuted()) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Accountings"));
+				MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 				return;
 			}
 			if (getAccountingDetailDialogCtrl().getDisbCrSum()
 					.compareTo(getAccountingDetailDialogCtrl().getDisbDrSum()) != 0) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Acc_NotMatching"));
+				MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
 				return;
 			}
 		}
@@ -1497,7 +1496,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				closeDialog();
 			}
 
-		} catch (final DataAccessException e) {
+		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
 			showErrorMessage(this.window_FinWriteoffDialog, e);
 		}
@@ -1601,13 +1600,9 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			String serviceTasks = getServiceTasks(taskId, afinanceMain, finishedTasks);
 
 			if (isNotesMandatory(taskId, afinanceMain)) {
-				try {
-					if (!notesEntered) {
-						MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-						return false;
-					}
-				} catch (InterruptedException e) {
-					logger.error("Exception: ", e);
+				if (!notesEntered) {
+					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+					return false;
 				}
 			}
 
@@ -1842,8 +1837,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving " + event.toString());
 	}
