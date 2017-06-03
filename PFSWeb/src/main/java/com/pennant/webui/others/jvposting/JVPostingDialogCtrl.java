@@ -1338,9 +1338,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		if (getJVPosting().isNewRecord() &&  getJVPostingService()
 				.getJVPostingByFileName(
 						this.batch.getValue()) != null) {
-			MessageUtil.showErrorMessage(Labels.getLabel(
-					"BATCH_ALREADY_EXISTS",
-					new String[] {this.batch.getValue(), DateUtility.getSysDate().toString() }));
+			MessageUtil.showError(Labels.getLabel("BATCH_ALREADY_EXISTS",
+					new String[] { this.batch.getValue(), DateUtility.getSysDate().toString() }));
 			return;
 		}
 
@@ -1406,11 +1405,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 					closeDialog();
 				}
 			} else {
-				MessageUtil
-				.showErrorMessage(Labels.getLabel(
-						"FIELD_NOT_MATCHED",
-						new String[] {
-								Labels.getLabel("label_JVPostingDialog_TotDebitsByBatchCcy.value"),
+				MessageUtil.showError(Labels.getLabel("FIELD_NOT_MATCHED",
+						new String[] { Labels.getLabel("label_JVPostingDialog_TotDebitsByBatchCcy.value"),
 								Labels.getLabel("label_JVPostingDialog_TotCreditsByBatchCcy.value") }));
 			}
 
@@ -1454,13 +1450,9 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			String serviceTasks = getServiceTasks(taskId, aJVPosting, finishedTasks);
 
 			if (isNotesMandatory(taskId, aJVPosting)) {
-				try {
-					if (!notesEntered) {
-						MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-						return false;
-					}
-				} catch (InterruptedException e) {
-					logger.error("Exception: ", e);
+				if (!notesEntered) {
+					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+					return false;
 				}
 			}
 

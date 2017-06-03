@@ -524,9 +524,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			ScreenCTL.displayNotes(
 					getNotes("Mandate", String.valueOf(getMandate().getMandateID()), getMandate().getVersion()), this);
 
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e);
-			MessageUtil.showErrorMessage(e.toString());
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 
@@ -1620,13 +1619,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 			if (!"Save".equals(userAction.getSelectedItem().getLabel())) {
 				if (auditingReq) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

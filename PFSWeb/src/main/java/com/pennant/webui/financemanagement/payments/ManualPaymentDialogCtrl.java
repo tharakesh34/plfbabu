@@ -470,8 +470,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				setDialog(DialogType.EMBEDDED);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ManualPaymentDialog.onClose();
 		}
 
@@ -801,7 +800,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						this.btnCalcRepayments.setVisible(false);
 						this.btnChangeRepay.setVisible(false);
 					} else {
-						MessageUtil.showErrorMessage("Repay Account ID must Exist.");
+						MessageUtil.showError("Repay Account ID must Exist.");
 						return true;
 					}
 				} else {
@@ -1137,7 +1136,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			setRefundAmtValidated(false);
 			String msg = Labels.getLabel("label_ManualRefundExceed",
 					new String[] { PennantApplicationUtil.amountFormate(aRepayData.getMaxRefundAmt(), finFormatter) });
-			MessageUtil.showErrorMessage(msg);
+			MessageUtil.showError(msg);
 			this.totRefundAmt.setValue(PennantApplicationUtil.formateAmount(this.oldVar_totRefundAmt, finFormatter));
 
 			return false;
@@ -1708,7 +1707,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 																: insRefundAmt.getValue()),
 										getRepayData().getRepayMain().getLovDescFinFormatter()).compareTo(
 										iAccount.getAcAvailableBal()) > 0) {
-									MessageUtil.showErrorMessage(Labels.getLabel("label_InsufficientBalance"));
+									MessageUtil.showError(Labels.getLabel("label_InsufficientBalance"));
 									this.btnChangeRepay.setDisabled(!getUserWorkspace().isAllowed(
 											"button_ManualPaymentDialog_btnChangeRepay"));
 									return;
@@ -1721,7 +1720,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					}
 
 				} else {
-					MessageUtil.showErrorMessage(" Limit exceeded ... ");
+					MessageUtil.showError("Limit exceeded ... ");
 					return;
 				}
 			}
@@ -1811,12 +1810,12 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (!recSave && getStageAccountingDetailDialogCtrl() != null) {
 			// check if accounting rules executed or not
 			if (!getStageAccountingDetailDialogCtrl().isStageAccountingsExecuted()) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_StageAccountings"));
+				MessageUtil.showError(Labels.getLabel("label_Finance_Calc_StageAccountings"));
 				return;
 			}
 			if (getStageAccountingDetailDialogCtrl().getStageDisbCrSum().compareTo(
 					getStageAccountingDetailDialogCtrl().getStageDisbDrSum()) != 0) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Acc_NotMatching"));
+				MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
 				return;
 			}
 		} else {
@@ -1826,12 +1825,12 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (!recSave && getAccountingDetailDialogCtrl() != null) {
 			// check if accounting rules executed or not
 			if (!getAccountingDetailDialogCtrl().isAccountingsExecuted()) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Accountings"));
+				MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 				return;
 			}
 			if (getAccountingDetailDialogCtrl().getDisbCrSum()
 					.compareTo(getAccountingDetailDialogCtrl().getDisbDrSum()) != 0) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Acc_NotMatching"));
+				MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
 				return;
 			}
 		}
@@ -2390,13 +2389,9 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			String serviceTasks = getServiceTasks(taskId, afinanceMain, finishedTasks);
 
 			if (isNotesMandatory(taskId, afinanceMain)) {
-				try {
-					if (!notesEntered) {
-						MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-						return false;
-					}
-				} catch (InterruptedException e) {
-					logger.error("Exception: ", e);
+				if (!notesEntered) {
+					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+					return false;
 				}
 			}
 
@@ -2828,7 +2823,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if (repaySchd.isAllowRefund()) {
 				if (repaySchd.getRefundMax().compareTo(
 						PennantAppUtil.unFormateAmount(refundProfit.getValue(), finFormatter)) < 0) {
-					MessageUtil.showErrorMessage(" Limit exceeded ... ");
+					MessageUtil.showError("Limit exceeded ... ");
 					isLimitExceeded = true;
 					return;
 				}
@@ -2836,7 +2831,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			} else if (repaySchd.isAllowWaiver()) {
 				if (repaySchd.getMaxWaiver().compareTo(
 						PennantAppUtil.unFormateAmount(refundProfit.getValue(), finFormatter)) < 0) {
-					MessageUtil.showErrorMessage(" Limit exceeded ... ");
+					MessageUtil.showError("Limit exceeded ... ");
 					isLimitExceeded = true;
 					return;
 				}
@@ -2884,8 +2879,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		Date curBussDate = DateUtility.getAppDate();
 		if (getFinanceDetail().getFinScheduleData().getFinanceMain() != null
 				&& curBussDate.compareTo(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
-			MessageUtil
-					.showErrorMessage(" Disbursement Date is Same as Current Business Date. Not Allowed for Repayment. ");
+			MessageUtil.showError("Disbursement Date is Same as Current Business Date. Not Allowed for Repayment. ");
 			return false;
 		}
 
@@ -2930,11 +2924,11 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (isChgRpy && StringUtils.isBlank(this.repayAccount.getValue())
 				&& ImplementationConstants.ACCOUNTS_APPLICABLE) {
 			String validationMsg = "Please Enter " + Labels.getLabel("label_PaymentDialog_RepayAccount.value");
-			MessageUtil.showErrorMessage(validationMsg);
+			MessageUtil.showError(validationMsg);
 			return false;
 		} else if (!rpyAmount.isDisabled() && this.rpyAmount.getActualValue().compareTo(BigDecimal.ZERO) == 0) {
 			String validationMsg = "Please Enter " + Labels.getLabel("label_PaymentDialog_RpyAmount.value");
-			MessageUtil.showErrorMessage(validationMsg);
+			MessageUtil.showError(validationMsg);
 			return false;
 		} else if (!this.rpyAmount.isDisabled() && this.rpyAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
 
@@ -2969,13 +2963,13 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				}
 				if (futureInstPaid) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_PaymentDialog_PartialSettlement_Future"));
+					MessageUtil.showError(Labels.getLabel("label_PaymentDialog_PartialSettlement_Future"));
 					return false;
 				} else if (closingBal != null) {
 					BigDecimal payAmount = PennantApplicationUtil.unFormateAmount(this.rpyAmount.getActualValue(),
 							formatter);
 					if (payAmount.compareTo(closingBal) > 0) {
-						MessageUtil.showErrorMessage(Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
+						MessageUtil.showError(Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
 								new String[] { Labels.getLabel("label_PaymentDialog_RpyAmount.value"),
 										PennantApplicationUtil.amountFormate(closingBal, formatter) }));
 						return false;
@@ -2984,12 +2978,14 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					//Checking Total Allowed Advance Amount must be less than or equal to Total Principal Due.
 					if (this.rpyAmount.getActualValue().compareTo(this.totPriDue.getValue()) > 0) {
 
-						MessageUtil.showErrorMessage(Labels.getLabel(
-								"FIELD_IS_EQUAL_OR_LESSER",
-								new String[] {
-										Labels.getLabel("label_PaymentDialog_RpyAmount.value"),
-										PennantApplicationUtil.amountFormate(PennantApplicationUtil.unFormateAmount(
-												this.totPriDue.getValue(), formatter), formatter) }));
+						MessageUtil
+								.showError(
+										Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
+												new String[] { Labels.getLabel("label_PaymentDialog_RpyAmount.value"),
+														PennantApplicationUtil.amountFormate(
+																PennantApplicationUtil.unFormateAmount(
+																		this.totPriDue.getValue(), formatter),
+																formatter) }));
 						return false;
 					}
 				}
@@ -3042,7 +3038,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 														.getValue()),
 								getRepayData().getRepayMain().getLovDescFinFormatter()).compareTo(
 								iAccount.getAcAvailableBal()) > 0) {
-							MessageUtil.showErrorMessage(Labels.getLabel("label_InsufficientBalance"));
+							MessageUtil.showError(Labels.getLabel("label_InsufficientBalance"));
 							return false;
 						}
 					}
@@ -3051,7 +3047,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		}
 		if (getRepayMain().getRepayAmountExcess().compareTo(BigDecimal.ZERO) > 0) {
-			MessageUtil.showErrorMessage(" Entered amount is more than required ...");
+			MessageUtil.showError("Entered amount is more than required ...");
 			return false;
 		}
 
@@ -3074,7 +3070,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if (this.insRefundAmt.getValue().compareTo(this.actInsRefundAmt.getValue()) > 0) {
 				String amount = PennantApplicationUtil.amountFormate(
 						PennantApplicationUtil.unFormateAmount(this.actInsRefundAmt.getValue(), formatter), formatter);
-				MessageUtil.showErrorMessage("Insurance Amount must not be greater than value: " + amount);
+				MessageUtil.showError("Insurance Amount must not be greater than value: " + amount);
 				return false;
 			}
 		}
@@ -3483,8 +3479,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceReject.zul",
 					window_ManualPaymentDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

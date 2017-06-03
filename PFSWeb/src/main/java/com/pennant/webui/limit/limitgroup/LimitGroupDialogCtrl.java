@@ -270,8 +270,8 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 		if (!active.isDisabled()) {
 			doDelete();
 		} else {
-			MessageUtil.showErrorMessage(Labels.getLabel("LIMIT_FIELD_DELETE", new String[] { getLimitGroup()
-					.getGroupCode() }));
+			MessageUtil
+					.showError(Labels.getLabel("LIMIT_FIELD_DELETE", new String[] { getLimitGroup().getGroupCode() }));
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -719,8 +719,8 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 					&& !PennantConstants.RCD_STATUS_CANCELLED.equals(aLimitGroup.getRecordStatus())) {
 				this.listBoxLimitGroupLines.setEmptyMessage("Should not be Empty. Please Add Either Groups or Items");
 				if (aLimitGroup.getGroupCode() != null && aLimitGroup.getGroupName() != null) {
-					MessageUtil
-							.showErrorMessage("This Group doesn't Contain any Line or Group. Please Add Either Line or Group.");
+					MessageUtil.showError(
+							"This Group doesn't Contain any Line or Group. Please Add Either Line or Group.");
 					throw new WrongValueException();
 				}
 			} else {
@@ -1087,8 +1087,8 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 				limitGroupItems.setLimitLines(itemCodes);
 
 			} else {
-				MessageUtil.showErrorMessage(Labels.getLabel("Limit_Group_Empty",
-						new String[] { limitGroupItems.getGroupCode() }));
+				MessageUtil.showError(
+						Labels.getLabel("Limit_Group_Empty", new String[] { limitGroupItems.getGroupCode() }));
 				return;
 			}
 			writeValuetoBean(limitGroupItems);
@@ -1232,8 +1232,8 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 				if (flag) {
 					clearChild(limitGroupItems);
 				} else {
-					MessageUtil.showErrorMessage(Labels.getLabel("LIMIT_FIELD_MODIFY", new String[] { getLimitGroup()
-							.getGroupCode() }));
+					MessageUtil.showError(
+							Labels.getLabel("LIMIT_FIELD_MODIFY", new String[] { getLimitGroup().getGroupCode() }));
 					return;
 				}
 			} else {
@@ -1379,8 +1379,8 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 					showErrorMessage(this.window_LimitGroupDialog, e);
 				}
 			} else {
-				MessageUtil.showErrorMessage(Labels.getLabel("LIMIT_FIELD_DELETE", new String[] { getLimitGroup()
-						.getGroupCode() }));
+				MessageUtil.showError(
+						Labels.getLabel("LIMIT_FIELD_DELETE", new String[] { getLimitGroup().getGroupCode() }));
 				return;
 			}
 		}
@@ -1488,13 +1488,9 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 		if (isWorkFlowEnabled()) {
 			if (!"Save".equals(userAction.getSelectedItem().getLabel())) {
 				if (auditingReq) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
