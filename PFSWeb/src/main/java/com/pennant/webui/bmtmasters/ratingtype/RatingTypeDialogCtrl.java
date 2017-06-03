@@ -698,13 +698,9 @@ public class RatingTypeDialogCtrl extends GFCBaseCtrl<RatingType> {
 				}
 
 				if (isNotesMandatory(taskId, aRatingType)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

@@ -393,8 +393,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceReject.zul",
 					window_QDEFinanceMainDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -932,8 +931,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			setDialog(DialogType.EMBEDDED);
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1433,13 +1431,13 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if (getAccountingDetailDialogCtrl() != null) {
 				// check if accounting rules executed or not
 				if (!recSave && !getAccountingDetailDialogCtrl().isAccountingsExecuted()) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Accountings"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 					return;
 				}
 				if (!recSave
 						&& getAccountingDetailDialogCtrl().getDisbCrSum().compareTo(
 								getAccountingDetailDialogCtrl().getDisbDrSum()) != 0) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Acc_NotMatching"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
 					return;
 				}
 			}
@@ -1448,12 +1446,12 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if (!recSave && getStageAccountingDetailDialogCtrl() != null) {
 				// check if accounting rules executed or not
 				if (!getStageAccountingDetailDialogCtrl().stageAccountingsExecuted) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_StageAccountings"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_Calc_StageAccountings"));
 					return;
 				}
 				if (getStageAccountingDetailDialogCtrl().stageDisbCrSum
 						.compareTo(getStageAccountingDetailDialogCtrl().stageDisbDrSum) != 0) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Acc_NotMatching"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
 					return;
 				}
 			} else {
@@ -1812,13 +1810,9 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			String serviceTasks = getServiceTasks(taskId, afinanceMain, finishedTasks);
 
 			if (isNotesMandatory(taskId, afinanceMain)) {
-				try {
-					if (!notesEntered) {
-						MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-						return false;
-					}
-				} catch (InterruptedException e) {
-					logger.error("Exception: ", e);
+				if (!notesEntered) {
+					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+					return false;
 				}
 			}
 
@@ -1921,7 +1915,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 					if (nextRoleCodes.length > 1) {
 						aFinanceDetail.getFinScheduleData().getFinanceMain().setFundsAvailConfirmed(false);
-						MessageUtil.showErrorMessage(Labels.getLabel("message.Conformation_Check"));
+						MessageUtil.showError(Labels.getLabel("message.Conformation_Check"));
 					} else {
 						aFinanceDetail.getFinScheduleData().getFinanceMain().setFundsAvailConfirmed(true);
 					}
@@ -1930,8 +1924,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					// Prospect Customer Checking
 					if (StringUtils.isBlank(aFinanceDetail.getFinScheduleData().getFinanceMain()
 							.getLovDescCustCoreBank())) {
-						MessageUtil.showErrorMessage(Labels
-								.getLabel("label_FinanceMainDialog_Mandatory_Prospect.value"));
+						MessageUtil.showError(Labels.getLabel("label_FinanceMainDialog_Mandatory_Prospect.value"));
 						return false;
 					}
 
@@ -2649,8 +2642,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving " + event.toString());
 	}
@@ -2749,7 +2741,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		doWriteComponentsToBean(aFinanceDetail, false);
 
 		if (aFinanceDetail.getFinScheduleData().getFinanceScheduleDetails().size() <= 0) {
-			MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_GenSchedule"));
+			MessageUtil.showError(Labels.getLabel("label_Finance_GenSchedule"));
 			return null;
 		}
 
@@ -2760,11 +2752,11 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (getScoringDetailDialogCtrl() != null) {
 			if (getScoringDetailDialogCtrl().isScoreExecuted()) {
 				if (!getScoringDetailDialogCtrl().isSufficientScore()) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Insufficient_Score"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_Insufficient_Score"));
 					return null;
 				}
 			} else {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Verify_Score"));
+				MessageUtil.showError(Labels.getLabel("label_Finance_Verify_Score"));
 				return null;
 			}
 		}

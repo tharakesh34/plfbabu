@@ -203,8 +203,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 			doShowDialog();
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e.toString());
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 			window_QueueAssignmentDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -633,13 +632,9 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 				}
 
 				if (isNotesMandatory(taskId, aQueueAssignmentHeader)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
@@ -1158,7 +1153,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 					combo.getTextbox().setErrorMessage("");
 					combo.getTextbox().setValue("");
 					combo.getLabel().setValue("");
-					MessageUtil.showErrorMessage(Labels.getLabel("MultipleUser_Invalid.value",
+					MessageUtil.showError(Labels.getLabel("MultipleUser_Invalid.value",
 							new String[] { details.getLovDescFirstName() }));
 					return;
 				}
@@ -1206,7 +1201,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 					this.toUser.getTextbox().setErrorMessage("");
 					this.toUser.getTextbox().setValue("");
 					this.toUser.getLabel().setValue("");
-					MessageUtil.showErrorMessage(Labels.getLabel("SingleUser_Invalid.value",
+					MessageUtil.showError(Labels.getLabel("SingleUser_Invalid.value",
 							new String[] { details.getLovDescFirstName() }));
 					return;
 				}

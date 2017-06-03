@@ -339,7 +339,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	private IAccounts										iAccount;
 	private LinkedHashMap<String, RepayScheduleDetail>		refundMap;
-	private boolean											isLimitExceeded						= false;
+	private boolean											isRefundExceeded					= false;
 
 	private boolean											isSchdRecal							= false;
 	private boolean											refundAmtValidated					= true;
@@ -1644,7 +1644,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 
 			if (isValid(isChgRpy, true)) {
-				if (!isLimitExceeded) {
+				if (!isRefundExceeded) {
 					this.btnChangeRepay.setDisabled(true);
 					this.btnCalcRepayments.setDisabled(true);
 
@@ -2815,7 +2815,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		List<Object> list = (List<Object>) event.getData();
 		Decimalbox refundProfit = (Decimalbox) list.get(0);
 		String schDate = (String) list.get(1).toString();
-		isLimitExceeded = false;
+		isRefundExceeded = false;
 		int finFormatter = getRepayData().getRepayMain().getLovDescFinFormatter();
 		if (refundMap.containsKey(schDate)) {
 			RepayScheduleDetail repaySchd = refundMap.get(schDate);
@@ -2823,16 +2823,16 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if (repaySchd.isAllowRefund()) {
 				if (repaySchd.getRefundMax().compareTo(
 						PennantAppUtil.unFormateAmount(refundProfit.getValue(), finFormatter)) < 0) {
-					MessageUtil.showError("Limit exceeded ... ");
-					isLimitExceeded = true;
+					MessageUtil.showError("Refund amount exceeded ... ");
+					isRefundExceeded = true;
 					return;
 				}
 				repaySchd.setRefundReq(PennantAppUtil.unFormateAmount(refundProfit.getValue(), finFormatter));
 			} else if (repaySchd.isAllowWaiver()) {
 				if (repaySchd.getMaxWaiver().compareTo(
 						PennantAppUtil.unFormateAmount(refundProfit.getValue(), finFormatter)) < 0) {
-					MessageUtil.showError("Limit exceeded ... ");
-					isLimitExceeded = true;
+					MessageUtil.showError("Waiver Amount exceeded ... ");
+					isRefundExceeded = true;
 					return;
 				}
 				repaySchd.setWaivedAmt(PennantAppUtil.unFormateAmount(refundProfit.getValue(), finFormatter));
