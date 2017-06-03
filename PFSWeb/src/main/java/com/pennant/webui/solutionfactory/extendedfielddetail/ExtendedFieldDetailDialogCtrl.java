@@ -258,8 +258,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			doSetFieldProperties();
 			doShowDialog(getExtendedFieldDetail());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getMessage());
+			MessageUtil.showError(e);
 			window_ExtendedFieldDetailDialog.onClose();
 		}
 
@@ -975,8 +974,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				setDialog(DialogType.EMBEDDED);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getMessage());
+			MessageUtil.showError(e);
 			this.window_ExtendedFieldDetailDialog.onClose();
 		}
 		logger.debug("Leaving");
@@ -1429,13 +1427,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				}
 
 				if (isNotesMandatory(taskId, aExtendedFieldDetail)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
