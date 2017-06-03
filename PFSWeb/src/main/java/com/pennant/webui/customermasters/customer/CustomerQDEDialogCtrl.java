@@ -539,13 +539,9 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 			// Check whether required auditing notes entered or not
 			if (isNotesMandatory(taskId, aCustomer)) {
-				try {
-					if (!notesEntered) {
-						MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-						return false;
-					}
-				} catch (InterruptedException e) {
-					logger.error("Exception: ", e);
+				if (!notesEntered) {
+					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+					return false;
 				}
 			}
 

@@ -1488,7 +1488,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 								if(aCustomerDocument.isNewRecord()){
 									for(CustomerDocument document : custDocList){
 										if(document.getCustDocCategory().equals(aCustomerDocument.getCustDocCategory())){
-											MessageUtil.showErrorMessage(aCustomerDocument.getLovDescCustDocCategory()+" is Already Existed");
+											MessageUtil.showError(aCustomerDocument.getLovDescCustDocCategory()
+													+ " is Already Existed");
 											docCount++;
 										} 
 									} 
@@ -1779,13 +1780,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				}
 
 				if (isNotesMandatory(taskId, aCustomerDocument)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
@@ -2042,7 +2039,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			} else if (media.getName().endsWith(".msg")) {
 				docType = PennantConstants.DOC_TYPE_MSG;
 			} else {
-				MessageUtil.showErrorMessage(Labels.getLabel("UnSupported_Document"));
+				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
 				return;
 			}
 			

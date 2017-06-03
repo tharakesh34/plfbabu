@@ -654,8 +654,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 			}
 			
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e.toString());
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 	}
 
@@ -1130,13 +1129,9 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 				}
 
 				if (isNotesMandatory(taskId, aCustomerEmploymentDetail)) {
-					try {
-						if (!notesEntered){
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
