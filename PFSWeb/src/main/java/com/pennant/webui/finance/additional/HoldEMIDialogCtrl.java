@@ -248,13 +248,8 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		fillSchFromDates(this.holdEMIFromDate, aFinSchData.getFinanceScheduleDetails());
 		
 		if(getComboboxValue(holdEMIFromDate).equals(PennantConstants.List_Select)){
-			try {
-				MessageUtil.showErrorMessage(Labels.getLabel("Label_holdEmi_NoSchedule"));
-				return;
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			MessageUtil.showError(Labels.getLabel("Label_holdEmi_NoSchedule"));
+			return;
 		}
 		
 		if(StringUtils.isNotEmpty(aFinSchData.getFinanceType().getFrequencyDays())){
@@ -402,7 +397,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		AuditDetail auditDetail = holdEMIService.doValidations(getFinScheduleData(),finServiceInstruction);
 		
 		if (auditDetail.getErrorDetails() != null && auditDetail.getErrorDetails().size()>0 ) {
-			MessageUtil.showErrorMessage(auditDetail.getErrorDetails().get(0).getError());
+			MessageUtil.showError(auditDetail.getErrorDetails().get(0).getError());
 			auditDetail.getErrorDetails().clear();
 		}else{
 			setFinScheduleData(holdEMIService.getHoldEmiDetails(getFinScheduleData(),finServiceInstruction));
@@ -529,7 +524,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (isDataChanged()) {
 				doSave();
 			} else {
-				MessageUtil.showErrorMessage("No Data has been changed.");
+				MessageUtil.showError("No Data has been changed.");
 			}
 		} else {
 			doSave();
