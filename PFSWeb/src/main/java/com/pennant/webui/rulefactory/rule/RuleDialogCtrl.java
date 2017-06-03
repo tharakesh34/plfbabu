@@ -290,8 +290,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			if (!active.isDisabled())
 				doDelete();
 			else {
-				MessageUtil.showErrorMessage(Labels.getLabel("LIMIT_FIELD_DELETE",
-						new String[] { this.rule.getRuleCode() }));
+				MessageUtil.showError(Labels.getLabel("LIMIT_FIELD_DELETE", new String[] { this.rule.getRuleCode() }));
 			}
 		} else {
 			doDelete();
@@ -1280,13 +1279,9 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 				}
 
 				if (isNotesMandatory(taskId, aRule)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

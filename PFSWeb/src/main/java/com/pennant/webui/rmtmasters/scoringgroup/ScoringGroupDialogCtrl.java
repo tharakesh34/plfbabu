@@ -255,8 +255,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 			doSetFieldProperties();
 			doShowDialog(getScoringGroup());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ScoringGroupDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -438,8 +437,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 			Executions.createComponents(
 					"/WEB-INF/pages/RMTMasters/ScoringSlab/ScoringSlabDialog.zul",null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -459,7 +457,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 			if (scroingSlab.getRecordType() !=null && 
 					(scroingSlab.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL) 
 							|| scroingSlab.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN))) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Not_Allowed_to_maintain"));
+				MessageUtil.showError(Labels.getLabel("label_Not_Allowed_to_maintain"));
 			}else{
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("scoringGroupDialogCtrl", this);
@@ -472,8 +470,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 							"/ScoringSlab/ScoringSlabDialog.zul",null,map);
 
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -555,8 +552,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 			Executions.createComponents(
 					"/WEB-INF/pages/RulesFactory/ScoringMetrics/ScoringMetricsDialog.zul",null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 	}
 	
@@ -576,7 +572,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 					(scoringMetrics.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
 							|| scoringMetrics.getRecordType()
 							.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN))) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Not_Allowed_to_maintain"));
+				MessageUtil.showError(Labels.getLabel("label_Not_Allowed_to_maintain"));
 			}else{
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("scoringGroupDialogCtrl", this);
@@ -591,8 +587,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 							"/ScoringMetrics/ScoringMetricsDialog.zul",null,map);
 
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -618,7 +613,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 						(scoringMetrics.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
 								|| scoringMetrics.getRecordType()
 								.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN))) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Not_Allowed_to_maintain"));
+					MessageUtil.showError(Labels.getLabel("label_Not_Allowed_to_maintain"));
 				}else{
 					final HashMap<String, Object> map = new HashMap<String, Object>();
 					map.put("scoringGroupDialogCtrl", this);
@@ -633,8 +628,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 								"/ScoringMetrics/ScoringMetricsDialog.zul",null,map);
 
 					} catch (Exception e) {
-						logger.error("Exception: Opening window", e);
-						MessageUtil.showErrorMessage(e);
+						MessageUtil.showError(e);
 					}
 				}
 			}
@@ -661,7 +655,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 						(scoringMetrics.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
 								|| scoringMetrics.getRecordType()
 								.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN))) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Not_Allowed_to_maintain"));
+					MessageUtil.showError(Labels.getLabel("label_Not_Allowed_to_maintain"));
 				}else{
 					final HashMap<String, Object> map = new HashMap<String, Object>();
 					map.put("scoringGroupDialogCtrl", this);
@@ -676,8 +670,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 								"/ScoringMetrics/ScoringMetricsDialog.zul",null,map);
 
 					} catch (Exception e) {
-						logger.error("Exception: Opening window", e);
-						MessageUtil.showErrorMessage(e);
+						MessageUtil.showError(e);
 					}
 				}
 			}
@@ -1268,8 +1261,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 					closeDialog(); 
 				}
 			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -1410,8 +1402,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 				closeDialog();
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1447,13 +1438,9 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 				}
 
 				if (isNotesMandatory(taskId, aScoringGroup)) {
-					try {
-						if (!notesEntered){
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
