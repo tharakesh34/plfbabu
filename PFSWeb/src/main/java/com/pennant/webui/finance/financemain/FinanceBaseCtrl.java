@@ -1768,8 +1768,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			try {
 				Executions.createComponents("/WEB-INF/pages/notes/notes.zul", tabpanel, map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e.toString());
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -3584,8 +3583,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		if (rateDetail.getErrorDetails() == null) {
 			effectiveRate.setValue(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
 		} else {
-			MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(),
-					getUserWorkspace().getUserLanguage()).getError());
+			MessageUtil.showError(ErrorUtil
+					.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
 			splRate.setValue("");
 			lovFieldTextBox.setDescription("");
 		}
@@ -7025,8 +7024,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 							&& (effRate.compareTo(new BigDecimal(PennantApplicationUtil.formatRate(commitment
 									.getCmtPftRateMin().doubleValue(), 9))) < 0 || effRate.compareTo(new BigDecimal(
 									PennantApplicationUtil.formatRate(commitment.getCmtPftRateMax().doubleValue(), 9))) > 0)) {
-						MessageUtil.showErrorMessage(Labels.getLabel(
-								"label_Finance_CommitRateOutOfRange",
+						MessageUtil.showError(Labels.getLabel("label_Finance_CommitRateOutOfRange",
 								new String[] { String.valueOf(commitment.getCmtPftRateMin()),
 										String.valueOf(commitment.getCmtPftRateMax()) }));
 						return false;
@@ -7035,21 +7033,21 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 				//Commitment Expire date should be greater than finance start data
 				if (commitment.getCmtExpDate().compareTo(finMain.getFinStartDate()) < 0) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_CommitExpiryDateCheck",
+					MessageUtil.showError(Labels.getLabel("label_Finance_CommitExpiryDateCheck",
 							new String[] { DateUtility.formatToLongDate(commitment.getCmtExpDate()) }));
 					return false;
 				}
 
 				//MultiBranch Utilization
 				if (!commitment.isMultiBranch() && !finMain.getFinBranch().equals(commitment.getCmtBranch())) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_MultiBranchCheck",
+					MessageUtil.showError(Labels.getLabel("label_Finance_MultiBranchCheck",
 							new String[] { commitment.getCmtBranch() }));
 					return false;
 				}
 
 				//Shared Commitment Amount Check
 				if (!commitment.isSharedCmt() && commitment.getCmtUtilizedAmount().compareTo(BigDecimal.ZERO) > 0) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_MultiFinanceCheck"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_MultiFinanceCheck"));
 					return false;
 				}
 
@@ -7073,7 +7071,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 							return false;
 						}
 					} else {
-						MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_CommitAmtCheck"));
+						MessageUtil.showError(Labels.getLabel("label_Finance_CommitAmtCheck"));
 						return false;
 					}
 				}
@@ -7504,12 +7502,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		if (rateDetail.getErrorDetails() == null) {
 			effRate.setValue(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
 		} else {
-			try {
-				MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(),
-						getUserWorkspace().getUserLanguage()).getError());
-			} catch (InterruptedException e) {
-				logger.error("Exception: ", e);
-			}
+			MessageUtil.showError(ErrorUtil
+					.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
 			effRate.setValue(BigDecimal.ZERO);
 		}
 	}

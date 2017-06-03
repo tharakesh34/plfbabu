@@ -838,7 +838,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 				if (tab != null) {
 					tab.setSelected(true);
 				}
-				MessageUtil.showErrorMessage("Accounting Set Not Configured for the Fee Code :"+ getFeePostings().getFeeTyeCode());
+				MessageUtil.showError(
+						"Accounting Set Not Configured for the Fee Code :" + getFeePostings().getFeeTyeCode());
 				return;
 			}
 			appendAccountingDetailTab(false);
@@ -981,7 +982,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		
 		// Accounting Details Validations
 		if (validate && !isAccountingExecuted) {
-			MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Accountings"));
+			MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 			return;
 		}
 	
@@ -991,7 +992,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 			if (tab != null) {
 				tab.setSelected(true);
 			}
-			MessageUtil.showErrorMessage("Accounting Set Not Configured for the Fee Code :"+ aFeePosting.getFeeTyeCode());
+			MessageUtil.showError("Accounting Set Not Configured for the Fee Code :" + aFeePosting.getFeeTyeCode());
 			return;
 		}
 	
@@ -1037,8 +1038,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 				closeDialog();
 			}
 		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getMessage());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 
@@ -1107,13 +1107,9 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 				}
 
 				if (isNotesMandatory(taskId, aFeePostings)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
