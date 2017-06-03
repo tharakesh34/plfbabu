@@ -1086,12 +1086,8 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 		errorDetail = getTreasuaryFinanceService().treasuryFinHeaderDialogValidations(getInvestmentFinHeader(),  getUserWorkspace().getUserLanguage());
 
 		if (errorDetail != null) {
-			try {
-				MessageUtil.showErrorMessage(errorDetail.getError());
-				return ;
-			} catch (InterruptedException e) {
-				logger.error("Exception: ", e);
-			}
+			MessageUtil.showError(errorDetail.getError());
+			return;
 		}else{
 
 			FinanceMain financeMain = new FinanceMain();
@@ -1140,7 +1136,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 			getInvestmentFinHeader().setFinanceDetail(financeDetail);
 
 			if (financeMain.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("treasuaryFinHeaderDialogCtrl", this);
@@ -1271,14 +1267,9 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 				}
 
 				if (isNotesMandatory(taskId, aInvFinHeader)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels
-									.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

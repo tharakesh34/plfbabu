@@ -648,7 +648,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		// Accounting Details Validations
 		if (getAccountingDetailDialogCtrl() != null && isAccountingExecuted) {
-			MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Accountings"));
+			MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 			return;
 		}
 		
@@ -827,9 +827,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 				closeDialog();
 			}
-		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getMessage());
+		} catch (DataAccessException e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -876,13 +875,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				}
 
 				if (isNotesMandatory(taskId, aVASRecording)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
@@ -1243,9 +1238,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				setDialog(DialogType.EMBEDDED);
 			}
 			
-		} catch (final Exception e) {
-			logger.error(e);
-			MessageUtil.showErrorMessage(e.toString());
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1661,8 +1655,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			try {
 				Executions.createComponents("/WEB-INF/pages/notes/notes.zul", getTabpanel(AssetConstants.UNIQUE_ID_RECOMMENDATIONS), map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e.toString());
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
