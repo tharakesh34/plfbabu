@@ -92,6 +92,13 @@ public final class MessageUtil {
 		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, ERROR);
 	}
 
+	public static void showError(String message) {
+		logger.info(message);
+
+		MultiLineMessageBox.doSetTemplate();
+		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, ERROR);
+	}
+
 	/**
 	 * Shows an error message box and logs the message and cause. Displays<br/>
 	 * - detail message of the exception for application exception.<br/>
@@ -173,22 +180,6 @@ public final class MessageUtil {
 		MultiLineMessageBox.doSetTemplate();
 
 		return MultiLineMessageBox.show(message, App.NAME, YES | NO, EXCLAMATION, NO);
-	}
-
-	/**
-	 * Shows a message box. The message box will be displayed with the following parameters:<br/>
-	 * <b>title</b> - {@link App#NAME} is used.<br/>
-	 * <b>buttons</b> - {@link #OK}.<br/>
-	 * <b>icon</b> - {@link #ERROR} to show an image.<br/>
-	 * <b>focus</b> - {@link #OK} button with focus.
-	 * 
-	 * @param message
-	 *            The message that need to be displayed.
-	 */
-	public static void showError(String message) {
-		MultiLineMessageBox.doSetTemplate();
-
-		MultiLineMessageBox.show(message, App.NAME, OK, ERROR);
 	}
 
 	/**
