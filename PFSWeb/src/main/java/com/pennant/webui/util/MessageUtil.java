@@ -92,6 +92,12 @@ public final class MessageUtil {
 		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, ERROR);
 	}
 
+	/**
+	 * Shows an error message box and logs the message.
+	 * 
+	 * @param message
+	 *            The detail message.
+	 */
 	public static void showError(String message) {
 		logger.info(message);
 
