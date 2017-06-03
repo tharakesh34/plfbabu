@@ -91,7 +91,7 @@ public final class MessageUtil {
 	 * @throws InterruptedException
 	 */
 	@Deprecated
-	public static void showErrorMessage(String message) throws InterruptedException {
+	public static void showErrorMessage(String message) {
 		logger.info(message);
 
 		MultiLineMessageBox.doSetTemplate();
