@@ -978,7 +978,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				}
 
 			} catch (DataAccessException e) {
-				MessageUtil.showErrorMessage(e.getMessage());
+				MessageUtil.showError(e);
 			}
 		}
 
@@ -1234,13 +1234,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				}
 
 				if (isNotesMandatory(taskId, aSecurityUser)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
@@ -1359,10 +1355,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			}
 			setOverideMap(auditHeader.getOverideMap());
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getMessage());
-		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving ");
 		return processCompleted;
@@ -1838,7 +1831,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 					|| StringUtils.trimToEmpty((String) userAction.getSelectedItem().getValue()).equals(
 							PennantConstants.RCD_STATUS_SUBMITTED)) {
 				this.secUserDivBranchsTab.setSelected(true);
-				MessageUtil.showErrorMessage(Labels.getLabel("SecUserDivBranchs_NotEmpty"));
+				MessageUtil.showError(Labels.getLabel("SecUserDivBranchs_NotEmpty"));
 			}
 		}
 	}
