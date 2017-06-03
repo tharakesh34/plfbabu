@@ -103,9 +103,8 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 			doCheckRights();
 			doShowDialog(this.accountMapping);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");

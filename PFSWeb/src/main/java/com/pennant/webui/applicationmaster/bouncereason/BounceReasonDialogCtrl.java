@@ -176,9 +176,8 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason>{
 			doCheckRights();
 			doShowDialog(this.bounceReason);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 		
 		logger.debug(Literal.LEAVING);

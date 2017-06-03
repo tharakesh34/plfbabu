@@ -159,9 +159,8 @@ public class NPABucketDialogCtrl extends GFCBaseCtrl<NPABucket>{
 			doCheckRights();
 			doShowDialog(this.nPABucket);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 		
 		logger.debug(Literal.LEAVING);

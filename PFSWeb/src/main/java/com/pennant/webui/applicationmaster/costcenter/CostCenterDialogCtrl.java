@@ -160,9 +160,8 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter>{
 			doCheckRights();
 			doShowDialog(this.costCenter);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 		
 		logger.debug(Literal.LEAVING);
