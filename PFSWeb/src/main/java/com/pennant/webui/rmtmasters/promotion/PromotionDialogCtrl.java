@@ -454,8 +454,9 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 						this.finBaseRate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail
 								.getNetRefRateLoan().doubleValue(), 2));
 					} else {
-						MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(),
-								getUserWorkspace().getUserLanguage()).getError());
+						MessageUtil.showError(ErrorUtil
+								.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage())
+								.getError());
 						this.finBaseRate.setBaseValue("");
 					}
 				}
@@ -479,8 +480,9 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 						this.finBaseRate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail
 								.getNetRefRateLoan().doubleValue(), 2));
 					} else {
-						MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(),
-								getUserWorkspace().getUserLanguage()).getError());
+						MessageUtil.showError(ErrorUtil
+								.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage())
+								.getError());
 						this.finBaseRate.setSpecialValue("");
 					}
 				}
@@ -509,8 +511,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			this.finBaseRate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan()
 					.doubleValue(), 2));
 		} else {
-			MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(),
-					getUserWorkspace().getUserLanguage()).getError());
+			MessageUtil.showError(ErrorUtil
+					.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
 			this.finBaseRate.setSpecialValue("");
 		}
 
@@ -1456,13 +1458,9 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 				}
 
 				if (isNotesMandatory(taskId, aPromotion)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
