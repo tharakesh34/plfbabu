@@ -288,8 +288,7 @@ public class ChequePurposeDialogCtrl extends GFCBaseCtrl<ChequePurpose> {
 			ScreenCTL.displayNotes(getNotes("ChequePurpose",getChequePurpose().getCode(),getChequePurpose().getVersion()),this);
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" +event.toString());
 
@@ -322,8 +321,7 @@ public class ChequePurposeDialogCtrl extends GFCBaseCtrl<ChequePurpose> {
 			
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving") ;
 	}
@@ -691,13 +689,9 @@ public class ChequePurposeDialogCtrl extends GFCBaseCtrl<ChequePurpose> {
 
 			if (!"Save".equals(userAction.getSelectedItem().getLabel())) {
 				if (auditingReq) {
-					try {
-						if (!notesEntered){
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.warn("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
