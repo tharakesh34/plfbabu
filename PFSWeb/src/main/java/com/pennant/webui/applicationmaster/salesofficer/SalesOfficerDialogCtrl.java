@@ -569,8 +569,7 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e.getMessage());
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -766,14 +765,9 @@ public class SalesOfficerDialogCtrl extends GFCBaseCtrl<SalesOfficer> {
 				}
 
 				if (isNotesMandatory(taskId, aSalesOfficer)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels
-									.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

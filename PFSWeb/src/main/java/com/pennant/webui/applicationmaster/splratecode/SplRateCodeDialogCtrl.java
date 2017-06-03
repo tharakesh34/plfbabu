@@ -171,8 +171,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 			doSetFieldProperties();
 			doShowDialog(getSplRateCode());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_SplRateCodeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -512,8 +511,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 					closeDialog(); 
 				}
 			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e.getMessage());
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -637,8 +635,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 				closeDialog();
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -680,15 +677,9 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 				}
 
 				if (isNotesMandatory(taskId, aSplRateCode)) {
-					try {
-						if (!notesEntered){
-							MessageUtil.showErrorMessage(Labels
-									.getLabel("Notes_NotEmpty"));
-							logger.debug("Leaving");
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
@@ -870,8 +861,7 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null,
 					map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

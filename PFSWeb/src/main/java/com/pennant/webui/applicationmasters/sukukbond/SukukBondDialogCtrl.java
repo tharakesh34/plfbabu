@@ -285,8 +285,7 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 			ScreenCTL.displayNotes(getNotes("SukukBond",getSukukBond().getBondCode(),getSukukBond().getVersion()),this);
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" +event.toString());
 	
@@ -316,8 +315,7 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 			displayComponents(ScreenCTL.getMode(enqModule,isWorkFlowEnabled(),aSukukBond.isNewRecord()));
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving") ;
 	}
@@ -552,8 +550,7 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 				}
 
 			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e.getMessage());
+				MessageUtil.showError(e);
 			}
 			
 		}
@@ -662,13 +659,9 @@ public class SukukBondDialogCtrl extends GFCBaseCtrl<SukukBond> {
 
 			if (!"Save".equals(userAction.getSelectedItem().getLabel())) {
 				if (auditingReq) {
-					try {
-						if (!notesEntered){
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
