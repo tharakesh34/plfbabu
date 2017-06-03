@@ -739,4 +739,32 @@
 				 RMTPROVINCEVSCITY T6 ON T6.PCCITY = T3.CITY 
 		</createView>
 	</changeSet>
+	
+	<changeSet author="Manoj.P" id="39">
+	<dropPrimaryKey constraintName="PK_PSX_DEDUP_EOD_CUST_LOAN_DTL"
+		tableName="PSX_DEDUP_EOD_CUST_LOAN_DTL" />
+	</changeSet>
+
+
+	<changeSet author="Manoj.P" id="40">
+		<addPrimaryKey columnNames="LAN_NO, CUSTOMER_TYPE"
+			constraintName="PK_LANNO_CUSTTYPE" tableName="PSX_DEDUP_EOD_CUST_LOAN_DTL" />
+	</changeSet>
+	
+	
+	<changeSet author="Manoj.P" id="41">
+	<dropPrimaryKey constraintName="PK_LANNO_CUSTTYPE"
+		tableName="PSX_DEDUP_EOD_CUST_LOAN_DTL" />
+	</changeSet>
+	
+	<changeSet author="Manoj.P" id="42">
+	<addNotNullConstraint columnDataType="decimal(8,0)"
+		columnName="CUSTOMER_NO" tableName="PSX_DEDUP_EOD_CUST_LOAN_DTL" />
+</changeSet>
+	
+	
+	<changeSet author="Manoj.P" id="43">
+		<addPrimaryKey columnNames="CUSTOMER_NO,LAN_NO,CUSTOMER_TYPE"
+			constraintName="PK_CU_LN_CT" tableName="PSX_DEDUP_EOD_CUST_LOAN_DTL" />
+	</changeSet>
 </databaseChangeLog>

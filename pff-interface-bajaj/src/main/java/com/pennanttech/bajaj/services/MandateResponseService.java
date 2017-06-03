@@ -39,66 +39,73 @@ public class MandateResponseService extends BajajService implements MandateRespo
 
 			rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Mandate.class);
 			mandates = namedJdbcTemplate.query(sql.toString(), paramMap, rowMapper);
-
+			
+			
 			for (Mandate respMandate : mandates) {
 				Mandate mandate = getMandateById(respMandate.getMandateID());
-
 				StringBuilder remarks = new StringBuilder();
-
-				if (!StringUtils.equalsIgnoreCase(mandate.getCustCIF(), respMandate.getCustCIF())) {
+				
+				if (mandate == null) {
+					updateMandateResponse("Mandate request not exist.", respMandate.getMandateID());
+				} else {
+					validateMandate(respMandate, mandate, remarks);
 					if (remarks.length() > 0) {
-						remarks.append("\n");
+						respMandate.setReason(remarks.toString() + " not matched with request");
+						respMandate.setStatus("Y");
 					}
-					remarks.append("Customer Code ");
 				}
-
-				if (!StringUtils.equalsIgnoreCase(mandate.getFinReference(), respMandate.getFinReference())) {
-					if (remarks.length() > 0) {
-						remarks.append("\n");
-					}
-					remarks.append("Fin Reference ");
-				}
-
-				if (!StringUtils.equalsIgnoreCase(mandate.getMICR(), respMandate.getMICR())) {
-					if (remarks.length() > 0) {
-						remarks.append("\n");
-					}
-					remarks.append("MICR Code ");
-				}
-
-				if (!StringUtils.equalsIgnoreCase(mandate.getAccNumber(), respMandate.getAccNumber())) {
-					if (remarks.length() > 0) {
-						remarks.append("\n");
-					}
-					remarks.append("Account No. ");
-				}
-
-				if (!StringUtils.equalsIgnoreCase(mandate.getMandateType(), respMandate.getMandateType())) {
-					if (remarks.length() > 0) {
-						remarks.append("\n");
-					}
-					remarks.append("Mandate Type ");
-				}
-
-				if (!(mandate.isOpenMandate() == respMandate.isOpenMandate())) {
-					if (remarks.length() > 0) {
-						remarks.append("\n");
-					}
-					remarks.append("Open Mandate ");
-				}
-
-				if (remarks.length() > 0) {
-					respMandate.setReason(remarks.toString() + " not matched with request");
-					respMandate.setStatus("Y");
-				}
-
+				
 				updateMandates(respMandate);
 				updateMandateRequest(respMandate, respBatchId);
-
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+	}
+
+	private void validateMandate(Mandate respMandate, Mandate mandate, StringBuilder remarks) {
+		if (!StringUtils.equalsIgnoreCase(mandate.getCustCIF(), respMandate.getCustCIF())) {
+			if (remarks.length() > 0) {
+				remarks.append(", ");
+			}
+			remarks.append("Customer Code");
+		}
+
+		if (!StringUtils.equalsIgnoreCase(mandate.getFinReference(), respMandate.getFinReference())) {
+			if (remarks.length() > 0) {
+				remarks.append(", ");
+			}
+			remarks.append("Fin Reference");
+		}
+
+		if (!StringUtils.equalsIgnoreCase(mandate.getMICR(), respMandate.getMICR())) {
+			if (remarks.length() > 0) {
+				remarks.append(", ");
+			}
+			remarks.append("MICR Code");
+		}
+
+		if (!StringUtils.equalsIgnoreCase(mandate.getAccNumber(), respMandate.getAccNumber())) {
+			if (remarks.length() > 0) {
+				remarks.append(", ");
+			}
+			remarks.append("Account No.");
+		}
+
+		if (!StringUtils.equalsIgnoreCase(mandate.getMandateType(), respMandate.getMandateType())) {
+			if (remarks.length() > 0) {
+				remarks.append(", ");
+			}
+			remarks.append("Mandate Type");
+		}
+
+		if (!(mandate.isOpenMandate() == respMandate.isOpenMandate())) {
+			if (remarks.length() > 0) {
+				remarks.append(", ");
+			}
+			remarks.append("Open Mandate");
+		}
+		
 	}
 
 	public Mandate getMandateById(final long id) {
@@ -134,7 +141,6 @@ public class MandateResponseService extends BajajService implements MandateRespo
 
 		sql.append("Update Mandates");
 		sql.append(" Set MANDATEREF = :MANDATEREF, STATUS = :STATUS, REASON = :REASON");
-
 		sql.append("  Where MANDATEID = :MANDATEID");
 
 		paramMap.addValue("MANDATEID", respmandate.getMandateID());
@@ -167,6 +173,23 @@ public class MandateResponseService extends BajajService implements MandateRespo
 		paramMap.addValue("MANDATEREF", respmandate.getMandateRef());
 		paramMap.addValue("REASON", respmandate.getReason());
 		paramMap.addValue("RESP_BATCH_ID", id);
+
+		this.namedJdbcTemplate.update(sql.toString(), paramMap);
+
+		logger.debug(Literal.LEAVING);
+	}
+	
+	private void updateMandateResponse(String remarks, long mandateId) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("update MANDATE_RESPONSE");
+		sql.append(" set REMARKS = :REMARKS");
+		sql.append(" where MANDATEID = :MANDATEID");
+
+		paramMap.addValue("MANDATEID", mandateId);
+		paramMap.addValue("REMARKS", remarks);
 
 		this.namedJdbcTemplate.update(sql.toString(), paramMap);
 
