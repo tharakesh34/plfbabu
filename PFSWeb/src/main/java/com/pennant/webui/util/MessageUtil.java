@@ -85,6 +85,13 @@ public final class MessageUtil {
 		super();
 	}
 
+	public static void showErrorMessage(String message) throws InterruptedException {
+		final String title = Labels.getLabel("message.Error");
+		logger.info(message);
+		MultiLineMessageBox.doSetTemplate();
+		MultiLineMessageBox.show(message, title, MultiLineMessageBox.OK, MultiLineMessageBox.ERROR, true);
+	}
+
 	/**
 	 * Shows an error message box and logs the message and cause. Displays<br/>
 	 * - detail message of the exception for application exception.<br/>
@@ -198,19 +205,6 @@ public final class MessageUtil {
 		MultiLineMessageBox.doSetTemplate();
 
 		MultiLineMessageBox.show(message, App.NAME, OK, INFORMATION);
-	}
-
-	/**
-	 * Shows a multiline ErrorMessage.<br>
-	 * 
-	 * @param e
-	 * @throws InterruptedException
-	 */
-	public static void showErrorMessage(String e) throws InterruptedException {
-		final String title = Labels.getLabel("message.Error");
-		logger.info("Message : " + e + ", title : " + title);
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(e, title, MultiLineMessageBox.OK, MultiLineMessageBox.ERROR, true);
 	}
 
 	/**
