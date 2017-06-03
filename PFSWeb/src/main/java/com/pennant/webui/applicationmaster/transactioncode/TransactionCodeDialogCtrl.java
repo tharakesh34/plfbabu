@@ -708,14 +708,9 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 				}
 
 				if (isNotesMandatory(taskId, aTransactionCode)) {
-					try {
-						if (!notesEntered){
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							logger.debug("Leaving");
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

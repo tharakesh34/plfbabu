@@ -239,8 +239,7 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -465,24 +464,18 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 					} catch (TemplateException e) {
 						logger.error("Exception: ", e);
 						success = false;
-						MessageUtil.showErrorMessage("Please Configure valid Mail Template.");
+						MessageUtil.showError("Please Configure valid Mail Template.");
 						return;
 					} catch (Exception e) {
 						logger.error("Exception: ", e);
 						success = false;
-						MessageUtil
-						.showErrorMessage("Mail sending failed...! \n Connection Failed.. Please contact administrator");
+						MessageUtil.showError(
+								"Mail sending failed...! \n Connection Failed.. Please contact administrator");
 						return;
 					}
 				} else {
 					success = false;
-					try {
-						MessageUtil.showErrorMessage("Please Configure the Email for the Customer : "
-								+ details.getCustCIF());
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
-						return;
-					}
+					MessageUtil.showError("Please Configure the Email for the Customer : " + details.getCustCIF());
 					return;
 				}
 			}
@@ -493,12 +486,7 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 			}
 		} else {
 			final String msg = "Please Select Customers for Sending a Mail";
-			try {
-				MessageUtil.showErrorMessage(msg);
-			} catch (InterruptedException e) {
-				logger.error("Exception: ", e);
-				return;
-			}
+			MessageUtil.showError(msg);
 			return;
 		}
 		logger.debug("Leaving");

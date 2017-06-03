@@ -1015,8 +1015,7 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl<TakafulProvider> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e.getMessage());
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -1258,13 +1257,9 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl<TakafulProvider> {
 
 			if (!"Save".equals(userAction.getSelectedItem().getLabel())) {
 				if (auditingReq) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.warn("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
