@@ -38,10 +38,10 @@ public class DataExtract implements Tasklet {
 
 			Date monthEndDate = DateUtility.getMonthEnd(valueDate);
 			//if month end then only it should run
-			if (monthEndDate.compareTo(valueDate) == 0) {
+//			if (monthEndDate.compareTo(valueDate) == 0) {
 				new AMLRequest(new Long(1000), almRequestService).start();
 				new ControlDumpRequest(new Long(1000), controlDumpRequestService).start();
-			}
+//			}
 
 			// PosidexRequestService
 			new PosidexRequest(new Long(1000), posidexRequestService).start();
