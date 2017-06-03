@@ -85,6 +85,12 @@ public final class MessageUtil {
 		super();
 	}
 
+	/**
+	 * @deprecated Instead use showError();
+	 * @param message
+	 * @throws InterruptedException
+	 */
+	@Deprecated
 	public static void showErrorMessage(String message) throws InterruptedException {
 		logger.info(message);
 
