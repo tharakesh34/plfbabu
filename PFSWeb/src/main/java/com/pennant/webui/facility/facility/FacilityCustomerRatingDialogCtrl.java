@@ -434,8 +434,7 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 			this.groupboxWf.setVisible(false);
 			this.window_CustomerRatingDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -774,13 +773,9 @@ public class FacilityCustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating
 					nextTaskId = getNextTaskIds(taskId, aCustomerRating);
 				}
 				if (isNotesMandatory(taskId, aCustomerRating)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

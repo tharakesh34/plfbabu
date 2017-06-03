@@ -1115,13 +1115,9 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 				}
 
 				if (isNotesMandatory(taskId, aFinCreditRevSubCategory)) {
-					try {
-						if (!notesEntered){
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
@@ -1372,8 +1368,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 		logger.debug("Entering" + event.toString());
 
 		if(StringUtils.isBlank(this.formula.getValue())){
-			MessageUtil.showErrorMessage(Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_Formula")}));
+			MessageUtil.showError(Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_Formula") }));
 		}else{
 			while (event.getData() == null) {
 				event = ((ForwardEvent) event).getOrigin();
@@ -1391,8 +1386,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 		logger.debug("Entering" + event.toString());
 		
 		if(StringUtils.isBlank(this.formula.getValue())){
-			MessageUtil.showErrorMessage(Labels.getLabel("FIELD_NO_EMPTY",
-					new String[]{Labels.getLabel("label_Formula")}));
+			MessageUtil.showError(Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_Formula") }));
 		}else{
 			while (event.getData() == null) {
 				event = ((ForwardEvent) event).getOrigin();
@@ -1466,7 +1460,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 		logger.debug("Entering" + event.toString());
 		
 		if (StringUtils.isEmpty(formula.getValue())) {
-			MessageUtil.showErrorMessage(Labels.getLabel("Code_NotEmpty"));
+			MessageUtil.showError(Labels.getLabel("Code_NotEmpty"));
 		} else {
 			JSONArray message = (JSONArray) event.getData();
 

@@ -478,8 +478,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		try {
 			ScreenCTL.displayNotes(getNotes("Facility", getFacility().getCAFReference(), getFacility().getVersion()), this);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -514,8 +513,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			 
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1432,7 +1430,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		//Validation For Mandatory Recommendation
 
 		if(validate && !isRecommeandEntered()){
-			MessageUtil.showErrorMessage(Labels.getLabel("label_FacilityDialog_RecommendMand"));
+			MessageUtil.showError(Labels.getLabel("label_FacilityDialog_RecommendMand"));
 			Tab tab = null;
 			if(tabsIndexCenter.getFellowIfAny(MODULE_RECOMMENDATIONS+"Tab") != null){
 				tab = (Tab) tabsIndexCenter.getFellowIfAny(MODULE_RECOMMENDATIONS+"Tab");
@@ -1499,7 +1497,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 					aFacility.setFacilityDetails(list);
 				}else{
 					if (validate) {
-						MessageUtil.showErrorMessage(Labels.getLabel("LABEL_ATLEAST_ONE_FACILITY"));
+						MessageUtil.showError(Labels.getLabel("LABEL_ATLEAST_ONE_FACILITY"));
 						return;
 					}
 				}
@@ -1523,7 +1521,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			if (getFacilityScoringDetailDialogCtrl() != null) {
 				getFacilityScoringDetailDialogCtrl().doSave_ScoreDetail(aFacility);
 				if (!aFacility.isSufficientScore() && validate) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Insufficient_Score"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_Insufficient_Score"));
 					return;
 				}
 			}
@@ -1684,13 +1682,9 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 
 
 			if (isNotesMandatory(taskId, aFacility)) {
-				try {
-					if (!notesEntered) {
-						MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-						return false;
-					}
-				} catch (InterruptedException e) {
-					logger.error("Exception: ", e);
+				if (!notesEntered) {
+					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+					return false;
 				}
 			}
 
@@ -1711,7 +1705,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 					//Prospect Customer Checking
 					Facility tFacility = (Facility) auditHeader.getAuditDetail().getModelData();
 					if(StringUtils.isBlank(tFacility.getCustCoreBank())){
-						MessageUtil.showErrorMessage(Labels.getLabel("label_FinanceMainDialog_Mandatory_Prospect.value"));
+						MessageUtil.showError(Labels.getLabel("label_FinanceMainDialog_Mandatory_Prospect.value"));
 						return false;
 					}
 					
@@ -2109,8 +2103,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Facility/Facility/CollateralDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -2129,8 +2122,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			try {
 				Executions.createComponents("/WEB-INF/pages/Facility/Facility/CollateralDialog.zul", null, map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e.toString());
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -2150,8 +2142,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Facility/Facility/CollateralEnquiryDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -2182,7 +2173,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			final CustomerRating customerRating = (CustomerRating) item.getAttribute("data");
 			customerRating.setNewRecord(false);
 			if (customerRating.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				MessageUtil.showErrorMessage("Not Allowed to maintain This Record");
+				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("customerRating", customerRating);
@@ -2192,8 +2183,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				try {
 					Executions.createComponents("/WEB-INF/pages/Facility/Facility/FacilityCustomerRatingDialog.zul", window_FacilityDialog, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e.toString());
+					MessageUtil.showError(e);
 				}
 			}
 		}
