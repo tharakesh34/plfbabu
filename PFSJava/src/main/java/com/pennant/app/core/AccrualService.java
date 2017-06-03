@@ -177,9 +177,11 @@ public class AccrualService extends ServiceHelper {
 			pftDetail.setFinAmount(finMain.getFinAmount());
 			pftDetail.setDownPayment(finMain.getDownPayment());
 			pftDetail.setFinCommitmentRef(finMain.getFinCommitmentRef());
-			pftDetail.setFinWorstStatus(finMain.getFinStatus());
 			pftDetail.setFinCategory(finMain.getFinCategory());
 			pftDetail.setProductCategory(finMain.getProductCategory());
+			pftDetail.setFirstODDate(pftDetail.getFinStartDate());
+			pftDetail.setPrvODDate(pftDetail.getFinStartDate());
+
 		}
 
 		//Miscellaneous Fields
@@ -190,6 +192,7 @@ public class AccrualService extends ServiceHelper {
 		pftDetail.setRepayFrq(finMain.getRepayFrq());
 		pftDetail.setFinStatus(finMain.getFinStatus());
 		pftDetail.setFinStsReason(finMain.getFinStsReason());
+		pftDetail.setFinWorstStatus(finMain.getFinStatus());
 
 		//Setting date for recal purpose
 		pftDetail.setFirstRepayDate(pftDetail.getFinStartDate());
@@ -198,8 +201,6 @@ public class AccrualService extends ServiceHelper {
 		pftDetail.setFirstDisbDate(pftDetail.getMaturityDate());
 		pftDetail.setLatestDisbDate(pftDetail.getMaturityDate());
 		pftDetail.setLatestRpyDate(finMain.getFinStartDate());
-		pftDetail.setFirstODDate(pftDetail.getFinStartDate());
-		pftDetail.setPrvODDate(pftDetail.getFinStartDate());
 
 		//Interest Calculaiton on Pastdue
 		if (StringUtils.equals(finMain.getPastduePftCalMthd(), CalculationConstants.PDPFTCAL_NOTAPP)) {
@@ -221,7 +222,6 @@ public class AccrualService extends ServiceHelper {
 		pftDetail.setTdSchdPftPaid(BigDecimal.ZERO);
 		pftDetail.setTdSchdPftBal(BigDecimal.ZERO);
 
-		pftDetail.setODProfit(BigDecimal.ZERO);
 		pftDetail.setNSchdPft(BigDecimal.ZERO);
 		pftDetail.setNSchdPftDue(BigDecimal.ZERO);
 		pftDetail.setPrvRpySchPft(BigDecimal.ZERO);
@@ -235,7 +235,6 @@ public class AccrualService extends ServiceHelper {
 		pftDetail.setTdSchdPriPaid(BigDecimal.ZERO);
 		pftDetail.setTdSchdPriBal(BigDecimal.ZERO);
 
-		pftDetail.setODPrincipal(BigDecimal.ZERO);
 		pftDetail.setNSchdPri(BigDecimal.ZERO);
 		pftDetail.setNSchdPriDue(BigDecimal.ZERO);
 		pftDetail.setPrvRpySchPri(BigDecimal.ZERO);
@@ -254,29 +253,16 @@ public class AccrualService extends ServiceHelper {
 		pftDetail.setPftAmzPD(BigDecimal.ZERO);
 		pftDetail.setPftAmzSusp(BigDecimal.ZERO);
 
-		//Interest on PD
-		pftDetail.setTotPftOnPD(BigDecimal.ZERO);
-		pftDetail.setTotPftOnPDPaid(BigDecimal.ZERO);
-		pftDetail.setTotPftOnPDWaived(BigDecimal.ZERO);
-		pftDetail.setTotPftOnPDDue(BigDecimal.ZERO);
-
-		//Penalty
-		pftDetail.setPenaltyPaid(BigDecimal.ZERO);
-		pftDetail.setPenaltyDue(BigDecimal.ZERO);
-		pftDetail.setPenaltyWaived(BigDecimal.ZERO);
-
 		pftDetail.setTotalPriPaidInAdv(BigDecimal.ZERO);
 		pftDetail.setTotalPftPaidInAdv(BigDecimal.ZERO);
 
 		//Terms
 		pftDetail.setNOInst(0);
 		pftDetail.setNOPaidInst(0);
-		pftDetail.setNOODInst(0);
-		pftDetail.setCurODDays(0);
-		pftDetail.setMaxODDays(0);
 		pftDetail.setFutureInst(0);
 		pftDetail.setRemainingTenor(0);
 		pftDetail.setTotalTenor(0);
+
 		//FIXME for summary we are maintaining these details. so they may not be required since the application will refer the actual tables
 		//		//Set Excess Amounts
 		//		List<FinExcessAmount> finExcessAmounts = finExcessAmountDAO.getExcessAmountsByRef(pftDetail.getFinReference());
@@ -300,21 +286,34 @@ public class AccrualService extends ServiceHelper {
 		//				}
 		//			}
 		//		}
-
 	}
 
 	private void calAccruals(FinanceMain finMain, List<FinanceScheduleDetail> schdDetails,
 			FinanceProfitDetail pftDetail, Date valueDate, Date dateSusp) {
 		String finState = CalculationConstants.FIN_STATE_NORMAL;
+		FinanceScheduleDetail prvSchd = null;
 		FinanceScheduleDetail curSchd = null;
 		FinanceScheduleDetail nextSchd = null;
 
+		Date prvSchdDate = null;
 		Date curSchdDate = null;
 		Date nextSchdDate = null;
+		Date accrualDate = DateUtility.addDays(valueDate, 1);
+		Date pdDate = pftDetail.getPrvODDate();
+		Date pdAccrualDate = DateUtility.addDays(pdDate, 1);
+		;
 
 		for (int i = 0; i < schdDetails.size(); i++) {
 			curSchd = schdDetails.get(i);
 			curSchdDate = curSchd.getSchDate();
+
+			if (i == 0) {
+				prvSchd = curSchd;
+			} else {
+				prvSchd = schdDetails.get(i - 1);
+			}
+
+			prvSchdDate = prvSchd.getSchDate();
 
 			// Next details: in few cases  there might be schedules present even after the maturity date. ex: when calculating the fees
 			if (curSchdDate.compareTo(finMain.getMaturityDate()) == 0 || i == schdDetails.size() - 1) {
@@ -335,7 +334,7 @@ public class AccrualService extends ServiceHelper {
 			//-------------------------------------------------------------------------------------
 
 			// Till date Calculation
-			if (curSchdDate.compareTo(valueDate) < 0) {
+			if (curSchdDate.compareTo(valueDate) <= 0) {
 				calTillDateTotals(pftDetail, curSchd);
 			} else {
 				calNextDateTotals(pftDetail, curSchd);
@@ -350,50 +349,44 @@ public class AccrualService extends ServiceHelper {
 			BigDecimal acrNormal = BigDecimal.ZERO;
 
 			// Amortization
-			if (curSchdDate.compareTo(valueDate) > 0) {
-				// do nothing
-			} else if (valueDate.compareTo(curSchdDate) > 0 && valueDate.compareTo(nextSchdDate) <= 0) {
-				int days = getNoDays(valueDate, curSchdDate);
-				int daysInCurPeriod = nextSchd.getNoOfDays();
-				pftAmz = nextSchd.getProfitCalc().multiply(new BigDecimal(days))
-						.divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
+			if (curSchdDate.compareTo(accrualDate) < 0) {
+				pftAmz = curSchd.getProfitCalc();
+			} else if (accrualDate.compareTo(prvSchdDate) > 0 && accrualDate.compareTo(nextSchdDate) <= 0) {
+				int days = getNoDays(prvSchdDate, accrualDate);
+				int daysInCurPeriod = curSchd.getNoOfDays();
+				pftAmz = curSchd.getProfitCalc().multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod),
+						0, RoundingMode.HALF_DOWN);
 			} else {
-				pftAmz = nextSchd.getProfitCalc();
+				//Do Nothing
 			}
 
-			if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate()) && curSchdDate.compareTo(valueDate) <= 0) {
-				if ((!curSchd.isSchPftPaid() || !curSchd.isSchPriPaid())) {
+			acrNormal = pftAmz.subtract(curSchd.getSchdPftPaid());
+
+			if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate()) && curSchdDate.compareTo(valueDate) < 0) {
+				if ((curSchd.getSchdPriPaid().compareTo(curSchd.getPrincipalSchd()) < 0
+						|| (curSchd.getSchdPftPaid().compareTo(curSchd.getProfitSchd()) < 0))) {
 					finState = CalculationConstants.FIN_STATE_PD;
 				}
 			}
 
-			if (finState.equals(CalculationConstants.FIN_STATE_NORMAL)) {
+			if (curSchd.getSchDate().compareTo(pdDate) <= 0) {
 				pftAmzNormal = pftAmz;
 			}
 
 			if (finState.equals(CalculationConstants.FIN_STATE_PD)) {
 				// PD Amortization
-				if (curSchdDate.after(dateSusp)) {
-					// do nothing
-				} else if (dateSusp.after(curSchdDate) && dateSusp.compareTo(nextSchdDate) <= 0) {
-					int days = getNoDays(dateSusp, curSchdDate);
-					int daysInCurPeriod = nextSchd.getNoOfDays();
-					pftAmzPD = nextSchd.getProfitCalc().multiply(new BigDecimal(days))
+				if (curSchdDate.compareTo(dateSusp) < 0) {
+					pftAmzPD = pftAmz;
+				} else if (dateSusp.compareTo(curSchdDate) >= 0 && dateSusp.compareTo(nextSchdDate) < 0) {
+					int days = getNoDays(prvSchdDate, dateSusp);
+					int daysInCurPeriod = curSchd.getNoOfDays();
+					pftAmzPD = curSchd.getProfitCalc().multiply(new BigDecimal(days))
 							.divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
-				} else if (curSchdDate.before(dateSusp)) {
-					pftAmzPD = pftAmz.subtract(pftAmzNormal);
+				} else {
+					//Do Nothing
 				}
-			}
 
-			//Accrue Till Suspense
-			//At this point the value will be similar to the amortization till suspense date
-			if (dateSusp.compareTo(curSchdDate) <= 0) {
-				acrNormal = nextSchd.getProfitCalc();
-			} else if (dateSusp.after(curSchdDate) && dateSusp.compareTo(nextSchdDate) <= 0) {
-				int days = getNoDays(dateSusp, curSchdDate);
-				int daysInCurPeriod = nextSchd.getNoOfDays();
-				acrNormal = nextSchd.getProfitCalc().multiply(new BigDecimal(days))
-						.divide(new BigDecimal(daysInCurPeriod), 0, RoundingMode.HALF_DOWN);
+				pftAmzPD = pftAmzPD.subtract(pftAmzNormal);
 			}
 
 			//This field will carry amortization till suspend date at this stage
@@ -403,7 +396,7 @@ public class AccrualService extends ServiceHelper {
 			pftDetail.setPftAmz(pftDetail.getPftAmz().add(pftAmz));
 			pftDetail.setPftAmzNormal(pftDetail.getPftAmzNormal().add(pftAmzNormal));
 			pftDetail.setPftAmzPD(pftDetail.getPftAmzPD().add(pftAmzPD));
-
+			pftDetail.setPftAccrued(pftDetail.getPftAccrued().add(acrNormal));
 		}
 
 	}
@@ -489,15 +482,16 @@ public class AccrualService extends ServiceHelper {
 			pftDetail.setFullPaidDate(curSchd.getSchDate());
 		}
 
-		if (curSchd.isPftOnSchDate() || curSchd.isPftOnSchDate()) {
+		if (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()) {
 			pftDetail.setPrvRpySchDate(curSchd.getSchDate());
 			pftDetail.setPrvRpySchPft(curSchd.getProfitSchd());
 			pftDetail.setPrvRpySchPri(curSchd.getPrincipalSchd());
 
-			if (!curSchd.isSchPftPaid() || !curSchd.isSchPriPaid()) {
-				pftDetail.setNOODInst(pftDetail.getNOODInst() + 1);
-			}
-		}
+			//FIXME: Set in Latepayment marking. Not required again
+			/*
+			 * if (!curSchd.isSchPftPaid() || !curSchd.isSchPriPaid()) { pftDetail.setNOODInst(pftDetail.getNOODInst() +
+			 * 1); }
+			 */ }
 
 		pftDetail.setCurReducingRate(curSchd.getCalculatedRate());
 
@@ -555,12 +549,13 @@ public class AccrualService extends ServiceHelper {
 			pftDetail.setCurFlatRate(BigDecimal.ZERO);
 		}
 
-		pftDetail.setPftAccrued(pftDetail.getPftAmz().subtract(pftDetail.getTotalPftPaid()));
+		//Calculated at individual level
+		//pftDetail.setPftAccrued(pftDetail.getPftAmz().subtract(pftDetail.getTotalPftPaid()));
 
 		// Suspense Amortization
 		if (dateSusp.compareTo(pftDetail.getMaturityDate()) <= 0) {
-			pftDetail.setPftAmzSusp(pftDetail.getPftAmz().subtract(pftDetail.getPftAmzNormal())
-					.subtract(pftDetail.getPftAmzPD()));
+			pftDetail.setPftAmzSusp(
+					pftDetail.getPftAmz().subtract(pftDetail.getPftAmzNormal()).subtract(pftDetail.getPftAmzPD()));
 			pftDetail.setPftInSusp(true);
 			//Value Equivalent accrual after suspended date
 			pftDetail.setPftAccrueSusp(pftDetail.getPftAccrued().subtract(pftDetail.getPftAccrueSusp()));
@@ -569,26 +564,24 @@ public class AccrualService extends ServiceHelper {
 			pftDetail.setPftAccrueSusp(BigDecimal.ZERO);
 		}
 
+		//FIXME: Delete if late pay marking is handling this. New method required to recal OD's after repayment
 		// OD Details
-		if (!StringUtils.equals(finMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
-			FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(pftDetail.getFinReference());
-			if (finODDetails != null) {
-				pftDetail.setODPrincipal(finODDetails.getFinCurODPri());
-				pftDetail.setODProfit(finODDetails.getFinCurODPft());
-				pftDetail.setPenaltyPaid(finODDetails.getTotPenaltyPaid());
-				pftDetail.setPenaltyDue(finODDetails.getTotPenaltyBal());
-				pftDetail.setPenaltyWaived(finODDetails.getTotWaived());
-				pftDetail.setFirstODDate(finODDetails.getFinODSchdDate());
-				pftDetail.setPrvODDate(finODDetails.getFinODTillDate());
-				pftDetail.setCurODDays(getNoDays(valueDate, finODDetails.getFinODTillDate()));
-
-				//Workaround solution to avoid another fields in the FinODDetails
-				pftDetail.setMaxODDays(finODDetails.getFinCurODDays());
-			}
-
-		}
-
-		int tenor = DateUtility.getMonthsBetween(pftDetail.getNSchdDate(), pftDetail.getMaturityDate());
+		/*
+		 * if (!StringUtils.equals(finMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) { FinODDetails
+		 * finODDetails = getFinODDetailsDAO().getFinODSummary(pftDetail.getFinReference()); if (finODDetails != null) {
+		 * pftDetail.setODPrincipal(finODDetails.getFinCurODPri());
+		 * pftDetail.setODProfit(finODDetails.getFinCurODPft());
+		 * pftDetail.setPenaltyPaid(finODDetails.getTotPenaltyPaid());
+		 * pftDetail.setPenaltyDue(finODDetails.getTotPenaltyBal());
+		 * pftDetail.setPenaltyWaived(finODDetails.getTotWaived());
+		 * pftDetail.setFirstODDate(finODDetails.getFinODSchdDate());
+		 * pftDetail.setPrvODDate(finODDetails.getFinODTillDate()); pftDetail.setCurODDays(getNoDays(valueDate,
+		 * finODDetails.getFinODTillDate()));
+		 * 
+		 * //Workaround solution to avoid another fields in the FinODDetails
+		 * pftDetail.setMaxODDays(finODDetails.getFinCurODDays()); } }
+		 */
+		int tenor = DateUtility.getMonthsBetween(valueDate, pftDetail.getMaturityDate());
 		pftDetail.setRemainingTenor(tenor);
 
 		tenor = DateUtility.getMonthsBetween(pftDetail.getFinStartDate(), pftDetail.getMaturityDate());
@@ -617,7 +610,8 @@ public class AccrualService extends ServiceHelper {
 			return;
 		}
 
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finPftDetail, eventCode, custEODEvent.getEodValueDate(), custEODEvent.getEodValueDate());
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finPftDetail, eventCode, custEODEvent.getEodValueDate(),
+				custEODEvent.getEodValueDate());
 		aeEvent.setDataMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());
 		aeEvent.getAcSetIDList().add(accountingID);
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());

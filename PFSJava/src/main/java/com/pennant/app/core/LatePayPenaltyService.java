@@ -61,7 +61,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		super();
 	}
 
-	public FinODDetails computeLPP(FinODDetails fod, Date valueDate, String idb,List<FinanceScheduleDetail> finScheduleDetails) throws Exception {
+	public FinODDetails computeLPP(FinODDetails fod, Date valueDate, String idb,List<FinanceScheduleDetail> finScheduleDetails, String roundingMode, int roundingTarget) throws Exception {
 		logger.debug("Entering");
 
 		//Late Payment Penalty. Do not apply LPP
@@ -123,6 +123,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 			penalty = fod.getTotPenaltyAmt();
 		}
 
+		penalty = CalculationUtil.roundAmount(penalty, roundingMode, roundingTarget);
+		
 		fod.setTotPenaltyAmt(penalty);
 		fod.setTotPenaltyBal(penalty.subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
 
