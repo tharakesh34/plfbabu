@@ -90,6 +90,7 @@ import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.WindowBaseCtrl;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.AuthenticationType;
+import com.pennanttech.pff.core.Literal;
 
 /**
  * 
@@ -424,23 +425,23 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 	
 	}
 	public void openMenu(Event event) throws InterruptedException {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 		try{
 			if (StringUtils.isBlank(menuName.getValue())){
-				MessageUtil.showErrorMessage(Labels.getLabel("Invalid_Menu_Blank"));
+				MessageUtil.showError(Labels.getLabel("Invalid_Menu_Blank"));
 			}else{
 
 				MenuDetails menuDetails = getMenuDetails(StringUtils.trimToEmpty(menuName.getValue().toUpperCase()));
 
 				if (menuDetails==null){
-					MessageUtil.showErrorMessage(Labels.getLabel("Invalid_Menu_Code"));
+					MessageUtil.showError(Labels.getLabel("Invalid_Menu_Code"));
 				}else{
 
 					if (isAllowed(menuDetails.getMenuRef())){
 						showPage(menuDetails.getMenuZulPath(), menuDetails.getMenuRef());
 						menuName.setValue("");
 					}else{
-						MessageUtil.showErrorMessage(Labels.getLabel("Not_Authorised"));
+						MessageUtil.showError(Labels.getLabel("Not_Authorised"));
 					}
 				}
 			}
@@ -448,7 +449,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	private boolean isAllowed(String menuId){

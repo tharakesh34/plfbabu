@@ -266,7 +266,7 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 			}else{
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND AccountId='"+ acounts.getAccountId()+"' AND version=" + acounts.getVersion()+" ";
@@ -277,7 +277,7 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 					if (userAcces){
 						doShowDialogPage(acounts);
 					}else{
-						MessageUtil.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
 				}else{
 					doShowDialogPage(acounts);
