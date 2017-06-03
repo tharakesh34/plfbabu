@@ -529,8 +529,7 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e.getMessage());
+				MessageUtil.showError(e);
 			}
 
 		}
@@ -714,13 +713,9 @@ public class SubSegmentDialogCtrl extends GFCBaseCtrl<SubSegment> {
 				}
 
 				if (isNotesMandatory(taskId, aSubSegment)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
