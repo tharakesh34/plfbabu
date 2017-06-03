@@ -86,10 +86,10 @@ public final class MessageUtil {
 	}
 
 	public static void showErrorMessage(String message) throws InterruptedException {
-		final String title = Labels.getLabel("message.Error");
 		logger.info(message);
+
 		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(message, title, MultiLineMessageBox.OK, MultiLineMessageBox.ERROR, true);
+		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, ERROR);
 	}
 
 	/**
