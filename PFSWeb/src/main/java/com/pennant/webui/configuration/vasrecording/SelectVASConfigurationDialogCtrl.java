@@ -167,9 +167,8 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			}
 			doSetFieldProperties();
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 		// Set the page level components.
 		setPageComponents(window_SelectVASConfiguration);

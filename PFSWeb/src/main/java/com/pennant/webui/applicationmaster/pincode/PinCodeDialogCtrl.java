@@ -156,9 +156,8 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 			doCheckRights();
 			doShowDialog(this.pinCode);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug(Literal.LEAVING);

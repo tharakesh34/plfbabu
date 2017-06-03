@@ -234,9 +234,8 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			doCheckRights();
 			doShowDialog(this.collateralStructure);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1223,8 +1222,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 					closeDialog();
 				}
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showError(e.getMessage());
+				MessageUtil.showError(e);
 			}
 		}
 
