@@ -906,17 +906,17 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 
 				proceed = false;
 				this.tab_FinancesList.setSelected(true);
-				MessageUtil.showErrorMessage(Labels.getLabel("label_RateChange_FinanceList_Empty"));
+				MessageUtil.showError(Labels.getLabel("label_RateChange_FinanceList_Empty"));
 			} else if (this.listBox_RateChangeFinList.getItems().isEmpty()) {
 
 				proceed = false;
 				this.tab_RateChangeFinList.setSelected(true);
-				MessageUtil.showErrorMessage(Labels.getLabel("label_RateChange_RateChangeFinList_Empty"));
+				MessageUtil.showError(Labels.getLabel("label_RateChange_RateChangeFinList_Empty"));
 			} else if (getBulkRateChangeHeader().getRateChange() == null || getBulkRateChangeHeader().getRateChange() == BigDecimal.ZERO) {
 
 				proceed = false;
 				this.tab_RateChangeFinList.setSelected(true);
-				MessageUtil.showErrorMessage(Labels.getLabel("label_RateChange_ApplyRateChange"));
+				MessageUtil.showError(Labels.getLabel("label_RateChange_ApplyRateChange"));
 			} else {
 				/*if (isDataChanged(false)) {
 					proceed = false;
@@ -925,8 +925,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 				}*/
 			}
 		} catch (Exception e) {
-			logger.error(e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 			proceed = false;
 		}
 
@@ -973,13 +972,9 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 				}
 
 				if (isNotesMandatory(taskId, aBulkRateChangeHeader)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
@@ -1538,7 +1533,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 
 		//Finances details List Validation
 		if (isRatechanges(false)) {
-			MessageUtil.showErrorMessage(Labels.getLabel("label_RateChange_FinanceList_Changed"));
+			MessageUtil.showError(Labels.getLabel("label_RateChange_FinanceList_Changed"));
 			return;
 		}
 
@@ -1558,7 +1553,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 
 		//Finances details List Validation
 		if (isRatechanges(false)) {
-			MessageUtil.showErrorMessage(Labels.getLabel("label_RateChange_FinanceList_Changed"));
+			MessageUtil.showError(Labels.getLabel("label_RateChange_FinanceList_Changed"));
 			return;
 		}
 
@@ -1579,7 +1574,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 		if(this.listBox_FinancesList.getItems().isEmpty() && this.listBox_RateChangeFinList.getItems().isEmpty()) {
 
 			this.tab_FinancesList.setSelected(true);
-			MessageUtil.showErrorMessage(Labels.getLabel("label_RateChange_FinanceList_Empty"));
+			MessageUtil.showError(Labels.getLabel("label_RateChange_FinanceList_Empty"));
 			return;
 		} 
 
@@ -1640,7 +1635,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 
 		//Finances details List Validation
 		if (isRatechanges(false)) {
-			MessageUtil.showErrorMessage(Labels.getLabel("label_RateChange_FinanceList_Changed"));
+			MessageUtil.showError(Labels.getLabel("label_RateChange_FinanceList_Changed"));
 			return;
 		}
 
@@ -1665,8 +1660,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/BulkRateChange/BulkRateChange.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");
@@ -1681,7 +1675,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 
 		//Finances details List Validation
 		if (isRatechanges(false)) { //TODO to many times check once
-			MessageUtil.showErrorMessage(Labels.getLabel("label_RateChange_FinanceList_Changed"));
+			MessageUtil.showError(Labels.getLabel("label_RateChange_FinanceList_Changed"));
 			return;
 		}
 		final HashMap<String, Object> map = new HashMap<String, Object>();
@@ -1693,9 +1687,8 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 		// call the zul-file with the parameters packed in a map
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/BulkRateChange/BulkRateChangeSearchDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			MessageUtil.showErrorMessage(e.toString());
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 
