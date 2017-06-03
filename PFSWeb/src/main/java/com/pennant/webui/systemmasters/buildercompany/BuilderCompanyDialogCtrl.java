@@ -162,9 +162,8 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany>{
 			doCheckRights();
 			doShowDialog(this.builderCompany);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 		
 		logger.debug(Literal.LEAVING);

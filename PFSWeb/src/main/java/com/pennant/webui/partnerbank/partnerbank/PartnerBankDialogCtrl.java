@@ -201,9 +201,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			doCheckRights();
 			doShowDialog(this.partnerBank);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");

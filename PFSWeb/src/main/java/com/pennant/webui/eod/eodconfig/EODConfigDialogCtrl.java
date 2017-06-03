@@ -155,9 +155,8 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			doCheckRights();
 			doShowDialog(this.eODConfig);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug(Literal.LEAVING);

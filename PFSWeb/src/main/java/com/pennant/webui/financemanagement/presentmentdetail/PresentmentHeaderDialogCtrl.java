@@ -168,9 +168,8 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			doCheckRights();
 			doShowDialog(this.presentmentHeader);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -550,7 +549,7 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		try {
 			this.presentmentHeaderService.updatePresentmentDetails(excludeList, afterIncludeList, userAction, aPresentmentHeader.getId(), partnerBankId);
 		} catch (Exception e) {
-			MessageUtil.showError(e.getMessage());
+			MessageUtil.showError(e);
 		}
 
 		refreshList();

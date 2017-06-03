@@ -98,9 +98,8 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 			}
 			doSetFieldProperties();
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 		setPageComponents(window_SelectPaymentHeaderDialog);
 		showSelectPaymentHeaderDialog();

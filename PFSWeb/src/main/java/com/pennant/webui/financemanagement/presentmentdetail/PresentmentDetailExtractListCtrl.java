@@ -169,7 +169,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 			MessageUtil.showError(errorMsg);
 			return;
 		} catch (Exception e) {
-			MessageUtil.showError(e.getMessage());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug(Literal.LEAVING);
