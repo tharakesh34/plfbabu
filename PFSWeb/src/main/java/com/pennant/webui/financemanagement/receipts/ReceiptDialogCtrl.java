@@ -3448,7 +3448,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		
 		if(this.row_RealizationDate.isVisible() && !this.realizationDate.isDisabled()){
 			this.realizationDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ReceiptRealizationDialog_RealizationDate.value"), 
-					true, true,	DateUtility.getAppDate(), true));
+					true, this.valueDate.getValue(), DateUtility.getAppDate(), true));
 		}
 		
 		if (StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_CHEQUE)){
@@ -3637,7 +3637,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		try {
 			header.setRealizationDate(this.realizationDate.getValue());
 		} catch (WrongValueException we) {
-			throw we;
+			wve.add(we);
 		}
 		
 		// Receipt Mode Details
