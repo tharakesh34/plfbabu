@@ -100,16 +100,17 @@ public class PostingsDAOImpl extends BasisCodeDAO<ReturnDataSet> implements Post
 		}
 		
 		if(StringUtils.equals(PennantConstants.EVENTBASE, postingGroupBy)){
-			selectSql.append(" ORDER BY FinEvent ");
+			selectSql.append(" ORDER BY FinEvent, PostDate ");
 		}
 		else if(StringUtils.equals(PennantConstants.POSTDATE, postingGroupBy)){
-			selectSql.append(" ORDER BY PostDate ");
+			selectSql.append(" ORDER BY PostDate, FinEvent ");
 		}
 		else if(StringUtils.equals(PennantConstants.ACCNO, postingGroupBy)){
-			selectSql.append(" ORDER BY Account ");
+			selectSql.append(" ORDER BY Account, PostDate, FinEvent ");
 		}else{
-			selectSql.append(" ORDER BY ValueDate , PostRef");
+			selectSql.append(" ORDER BY ValueDate ");
 		}
+		selectSql.append(" , TranOrderID ");
 	
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataSet);

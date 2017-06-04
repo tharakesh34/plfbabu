@@ -436,8 +436,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-				FinanceMain financeMain = getFinScheduleData().getFinanceMain();
-				
+ 				
 				if ((i == 0 || i == financeScheduleDetails.size() - 1)) {
 					continue;
 				}
@@ -449,15 +448,17 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if(curSchd.getPresentmentId() > 0){
 					continue;
 				}
+				
 				if(!curSchd.isRepayOnSchDate() && 
 						curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0){
 					continue;
 					
 				}
 				
-				if(financeMain.getGrcPeriodEndDate().compareTo(curSchd.getSchDate()) >= 0) {
+		/*		if(financeMain.getGrcPeriodEndDate().compareTo(curSchd.getSchDate()) >= 0) {
 					continue;
-				}
+				}*/
+				
 				if(curSchd.getSchDate().compareTo(DateUtility.getAppDate()) < 0){
 					continue;
 				}

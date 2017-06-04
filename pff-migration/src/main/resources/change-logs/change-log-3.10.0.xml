@@ -1041,4 +1041,15 @@
 			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);	
  </sql>
 	</changeSet>
+	
+	<changeSet id="49" author="chaitanya.ch">
+		<createView viewName="POSTINGS_VIEW">
+			SELECT     T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent, T1.PostDate, T1.ValueDate,T1.AppValueDate,T1.AppDate, T1.TranCode, T1.RevTranCode, T1.DrOrCr, 
+                      T1.Account, T1.PostAmount, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T2.AEEventCodeDesc LovDescEventCodeName, 
+                      T1.ShadowPosting, T1.TranDesc, T1.AmountType, T1.AcCcy, T1.PostBranch, T1.Userbranch
+						FROM          Postings T1 INNER JOIN
+                       BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode;
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
