@@ -1003,4 +1003,29 @@
 			  INNER JOIN FINANCEMAIN FM  ON FM.CUSTID = C.CUSTID
 		</createView>
 	</changeSet>
+	
+	<changeSet id="48" author="Durgaprasad g">
+		<sql>
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuItem_PresentmentDetail_PresentmentReview');
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuItem_PresentmentDetail_PresentmentApprove');
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuItem_PresentmentDetail_PresentmentEnquiry');
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuItem_PresentmentDetail_PresentmentFileImport');
+			
+			Delete from SecRights where RightName = 'menuItem_PresentmentDetail_PresentmentReview';
+			Delete from SecRights where RightName = 'menuItem_PresentmentDetail_PresentmentApprove';
+			Delete from SecRights where RightName = 'menuItem_PresentmentDetail_PresentmentEnquiry';
+			Delete from SecRights where RightName = 'menuItem_PresentmentDetail_PresentmentFileImport';
+			
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuItem_PresentmentDetail_PresentmentApprove', 'PaymentHeaderDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuItem_PresentmentDetail_PresentmentEnquiry', 'PaymentHeaderDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuItem_PresentmentDetail_PresentmentFileImport', 'PaymentHeaderDialog', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'GROUP_PRESENTMENTDETAILS'), (Select RightID from SecRights where RightName = 'menuItem_PresentmentDetail_PresentmentApprove'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'GROUP_PRESENTMENTDETAILS'), (Select RightID from SecRights where RightName = 'menuItem_PresentmentDetail_PresentmentEnquiry'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'GROUP_PRESENTMENTDETAILS'), (Select RightID from SecRights where RightName = 'menuItem_PresentmentDetail_PresentmentFileImport'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);	
+ </sql>
+	</changeSet>
 </databaseChangeLog>
