@@ -62,5 +62,7 @@ public interface EODConfigDAO extends BasicCrudDao<EODConfig> {
 	EODConfig getEODConfig(long eodConfigId,String type);
 
 	List<EODConfig> getEODConfig();
+
+	void updateExtMnthEnd(EODConfig eODConfig);
 	
 }

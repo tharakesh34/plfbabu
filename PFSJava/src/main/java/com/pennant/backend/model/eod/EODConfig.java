@@ -55,18 +55,20 @@ import com.pennanttech.pff.core.model.AbstractWorkflowEntity;
  * Model class for the <b>EODConfig table</b>.<br>
  *
  */
-public class EODConfig extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class EODConfig extends AbstractWorkflowEntity implements Entity {
+	private static final long	serialVersionUID	= 1L;
 
-	private long eodConfigId = Long.MIN_VALUE;
-	private boolean extMnthRequired;
-	private Date mnthExtTo;
-	private boolean active;
-	private boolean newRecord=false;
-	private String lovValue;
-	private EODConfig befImage;
-	private  LoggedInUser userDetails;
-	
+	private long				eodConfigId			= Long.MIN_VALUE;
+	private boolean				extMnthRequired;
+	private Date				mnthExtTo;
+	private boolean				active;
+	private boolean				newRecord			= false;
+	private String				lovValue;
+	private EODConfig			befImage;
+	private LoggedInUser		userDetails;
+	private boolean				inExtMnth;
+	private Date				prvExtMnth;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -79,47 +81,52 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		return excludeFields;
 	}
 
 	public long getId() {
 		return eodConfigId;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.eodConfigId = id;
 	}
+
 	public long getEodConfigId() {
 		return eodConfigId;
 	}
+
 	public void setEodConfigId(long eodConfigId) {
 		this.eodConfigId = eodConfigId;
 	}
-	
+
 	public boolean isExtMnthRequired() {
 		return extMnthRequired;
 	}
+
 	public void setExtMnthRequired(boolean extMnthRequired) {
 		this.extMnthRequired = extMnthRequired;
 	}
-	
+
 	public Date getMnthExtTo() {
 		return mnthExtTo;
 	}
+
 	public void setMnthExtTo(Date mnthExtTo) {
 		this.mnthExtTo = mnthExtTo;
 	}
-	
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -127,7 +134,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -136,24 +143,40 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public EODConfig getBefImage(){
+	public EODConfig getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(EODConfig beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(EODConfig beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	public boolean isInExtMnth() {
+		return inExtMnth;
+	}
+
+	public void setInExtMnth(boolean inExtMnth) {
+		this.inExtMnth = inExtMnth;
+	}
+
+	public Date getPrvExtMnth() {
+		return prvExtMnth;
+	}
+
+	public void setPrvExtMnth(Date prvExtMnth) {
+		this.prvExtMnth = prvExtMnth;
 	}
 
 }

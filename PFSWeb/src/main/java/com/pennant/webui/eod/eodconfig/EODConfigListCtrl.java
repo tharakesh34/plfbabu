@@ -139,6 +139,9 @@ public class EODConfigListCtrl extends GFCBaseListCtrl<EODConfig> {
 		// Render the page and display the data.
 		doRenderPage();
 		search();
+		if (this.listBoxEODConfig.getItemCount()>0) {
+			this.button_EODConfigList_NewEODConfig.setVisible(false);
+		}
 	}
 
 	/**

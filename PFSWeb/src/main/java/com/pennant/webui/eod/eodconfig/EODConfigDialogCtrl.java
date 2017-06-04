@@ -44,6 +44,7 @@ package com.pennant.webui.eod.eodconfig;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -89,7 +90,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	protected Datebox					mnthExtTo;
 	protected Checkbox					active;
 	private EODConfig					eODConfig;															// overhanded per param
-
+	private EODConfig					appRovedeodConfig;
 	private transient EODConfigListCtrl	eODConfigListCtrl;													// overhanded per param
 	private transient EODConfigService	eODConfigService;
 
@@ -150,6 +151,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			} else {
 				getUserWorkspace().allocateAuthorities(this.pageRightName, null);
 			}
+			appRovedeodConfig = eODConfigService.getApprovedEODConfig(eODConfig.getId());
 
 			doSetFieldProperties();
 			doCheckRights();
@@ -310,12 +312,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		this.extMnthRequired.setChecked(aEODConfig.isExtMnthRequired());
 		this.mnthExtTo.setValue(aEODConfig.getMnthExtTo());
 		this.active.setChecked(aEODConfig.isActive());
-
-		if (aEODConfig.isExtMnthRequired()) {
-			if (DateUtility.getMonth(aEODConfig.getMnthExtTo()) == DateUtility.getMonth(DateUtility.getAppDate())) {
-				readOnlyComponent(true, this.extMnthRequired);
-			}
-		}
+		doCheckMonthEnd();
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -340,17 +337,6 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		}
 		//Month Extended To
 		try {
-//			if (this.mnthExtTo.getValue() != null) {
-//				if (this.mnthExtTo.getValue().before(SysParamUtil.getValueAsDate("APP_DATE"))) {
-//					throw new WrongValueException(this.mnthExtTo, Labels.getLabel(
-//							"DATE_ALLOWED_AFTER",
-//							new String[] { Labels.getLabel("label_EODConfigDialog_MnthExtTo.value"),
-//									SysParamUtil.getValueAsString("APP_DATE") }));
-//				}
-//				aEODConfig.setMnthExtTo(new Timestamp(this.mnthExtTo.getValue().getTime()));
-//			} else {
-//				aEODConfig.setMnthExtTo(null);
-//			}
 			aEODConfig.setMnthExtTo(this.mnthExtTo.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -425,9 +411,21 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		logger.debug(Literal.LEAVING);
 
 		if (!this.mnthExtTo.isReadonly()) {
+
 			String lable = Labels.getLabel("label_EODConfigDialog_MnthExtTo.value");
-			this.mnthExtTo.setConstraint(new PTDateValidator(lable, true, DateUtility.getAppDate(), DateUtility
-					.getMonthEnd(DateUtility.getAppDate()), true));
+			if (appRovedeodConfig != null && appRovedeodConfig.isInExtMnth()) {
+				//greater than today and less than current month
+				this.mnthExtTo.setConstraint(new PTDateValidator(lable, true, DateUtility.getAppDate(),
+						DateUtility.getMonthEnd(DateUtility.getAppDate()), true));
+			} else {
+				Calendar calendar=Calendar.getInstance();
+				calendar.setTime(DateUtility.getAppDate());
+				calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH)+1);
+				//greater than current month end and less than next month end;
+				this.mnthExtTo.setConstraint(new PTDateValidator(lable, true,
+						DateUtility.getMonthEnd(DateUtility.getAppDate()),DateUtility.getMonthEnd(calendar.getTime()), false));
+			}
+
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -785,8 +783,8 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 						}
 
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetails(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_EODConfigDialog, auditHeader);
 						return processCompleted;
 					}
@@ -817,6 +815,13 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 
 		logger.debug("Leaving");
 		return processCompleted;
+	}
+
+	private void doCheckMonthEnd() {
+
+		if (appRovedeodConfig != null && appRovedeodConfig.isInExtMnth()) {
+			readOnlyComponent(true, this.extMnthRequired);
+		}
 	}
 
 	/**
