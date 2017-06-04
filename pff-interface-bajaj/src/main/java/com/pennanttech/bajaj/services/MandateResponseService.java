@@ -37,7 +37,7 @@ public class MandateResponseService extends BajajService implements MandateRespo
 		long rejected = 0;
 
 		sql = new StringBuilder();
-		sql.append(" SELECT MANDATEID, FINREFERENCE, CUSTCIF,  MICR_CODE, ACCT_NUMBER, OPENFLAG, MANDATE_TYPE, MANDATE_REG_NO mandateRef, STATUS, REMARKS reason");
+		sql.append(" SELECT MANDATEID, FINREFERENCE, CUSTCIF,  MICR_CODE MICR, ACCT_NUMBER AccNumber, case when OPENFLAG = 'Y' THEN 'New Open ECS' ELSE 'No Open ECS' END lovValue, MANDATE_TYPE, MANDATE_REG_NO mandateRef, STATUS, REMARKS reason");
 		sql.append(" FROM MANDATE_RESPONSE");
 		sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID");
 
@@ -179,8 +179,9 @@ public class MandateResponseService extends BajajService implements MandateRespo
 			}
 			remarks.append("Mandate Type");
 		}
-
-		if (!(mandate.isOpenMandate() == respMandate.isOpenMandate())) {
+		
+		
+		if (!StringUtils.equals(mandate.getLovValue(), respMandate.getLovValue())) {
 			if (remarks.length() > 0) {
 				remarks.append(", ");
 			}
@@ -195,7 +196,7 @@ public class MandateResponseService extends BajajService implements MandateRespo
 		MapSqlParameterSource source = null;
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" SELECT FINREFERENCE, CUSTCIF,  MICR_CODE, ACCT_NUMBER, OPENFLAG, MANDATE_TYPE, STATUS ");
+		sql.append(" SELECT MandateID, FINREFERENCE, CUSTCIF,  MICR_CODE MICR, ACCT_NUMBER AccNumber, OPENFLAG lovValue, MANDATE_TYPE, STATUS ");
 		sql.append(" From MANDATE_REQUESTS");
 		sql.append(" Where MandateID =:MandateID");
 		source = new MapSqlParameterSource();
