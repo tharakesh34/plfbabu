@@ -69,11 +69,11 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		parmMap.addValue("monthStartDate", monthStartDate);
 		parmMap.addValue("monthEndDate", monthEndDate);
 
-		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
+		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
 			MapSqlParameterSource	map	= null;
 
 			@Override
-			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
+			public Long extractData(ResultSet rs) throws SQLException, DataAccessException {
 				while (rs.next()) {
 					executionStatus.setRemarks("processing the record " + totalRecords++);
 					processedCount++;

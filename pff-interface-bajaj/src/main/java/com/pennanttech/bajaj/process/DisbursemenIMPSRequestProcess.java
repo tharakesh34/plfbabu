@@ -40,12 +40,12 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 		parmMap.addValue("ID", disbursments);
 		parmMap.addValue("STATUS", "Approved");
 
-		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
+		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
 			MapSqlParameterSource	map			= null;
 			TransactionStatus		txnStatus	= null;
 
 			@Override
-			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
+			public Long extractData(ResultSet rs) throws SQLException, DataAccessException {
 				while (rs.next()) {
 					executionStatus.setRemarks("processing the record " + ++totalRecords);
 					processedCount++;

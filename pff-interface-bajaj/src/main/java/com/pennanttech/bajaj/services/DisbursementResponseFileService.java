@@ -52,9 +52,7 @@ public class DisbursementResponseFileService extends BajajService implements Fil
 				}
 
 				BajajInterfaceConstants.autoDisbResFileJob = true;
-				DataEngineStatus dataenginestatus = new DataEngineStatus();
-				dataenginestatus.setName("DISB_HDFC_IMPORT");
-				processFile(new Long(1000), dataenginestatus, file, null, true);
+				processFile(new Long(1000), BajajInterfaceConstants.DISB_STP_IMPORT_STATUS, file, null, true);
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);

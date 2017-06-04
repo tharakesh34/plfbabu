@@ -36,11 +36,11 @@ public class PosidexResponseProcess extends DatabaseDataEngine {
 
 		parmMap.addValue("PROCESSED_FLAG", Status.N.name());
 
-		destinationJdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
+		destinationJdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
 			TransactionStatus	txnStatus	= null;
 
 			@Override
-			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
+			public Long extractData(ResultSet rs) throws SQLException, DataAccessException {
 				while (rs.next()) {
 
 					MapSqlParameterSource custMap = null;

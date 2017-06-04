@@ -39,11 +39,11 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		parmMap.addValue("PRESENTMENTID", presentmentId);
 		parmMap.addValue("EXCLUDEREASON", "0");
 
-		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
+		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
 			MapSqlParameterSource map = null;
 
 			@Override
-			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
+			public Long extractData(ResultSet rs) throws SQLException, DataAccessException {
 				logger.debug("Entering");
 				boolean isBatchFail = false;
 				try {
@@ -158,7 +158,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		return map;
 	}
 
-	private void updatePresentmentHeader(long presentmentId, int manualEcclude, long dBStatusId, int totalRecords) {
+	private void updatePresentmentHeader(long presentmentId, int manualEcclude, long dBStatusId, long totalRecords) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = null;
