@@ -2407,4 +2407,9 @@ FROM         FinanceMain_Temp T1 INNER JOIN
 		
 		</createView>
 	</changeSet>
+	<changeSet id="145" author="murthy.y">
+		<sql>
+			UPDATE DATA_ENGINE_TABLE SET RECORDLENGTH = 3 WHERE ID = (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_OTHER_IMPORT'));
+		</sql>
+	</changeSet>
 </databaseChangeLog>
