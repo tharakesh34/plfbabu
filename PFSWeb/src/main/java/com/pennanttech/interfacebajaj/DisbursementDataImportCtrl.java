@@ -8,7 +8,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.media.Media;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Button;
@@ -32,6 +31,7 @@ import com.pennanttech.dataengine.excecution.ProcessExecution;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.ConfigUtil;
+import com.pennanttech.pff.baja.BajajInterfaceConstants;
 import com.pennanttech.pff.core.Literal;
 
 public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
@@ -55,8 +55,6 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 	protected DataEngineConfig dataEngineConfig;
 	private Configuration config = null;
-	private DataEngineStatus hdfcStatus;
-	private DataEngineStatus otherStatus;
 	private List<ValueLabel> serverFiles = null;
 
 	private long userId;
@@ -105,13 +103,13 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			String configName = config.getName();
 			if ("DISB_HDFC_IMPORT".equals(configName) || "DISB_OTHER_IMPORT".equals(configName)) {
 				if ("DISB_HDFC_IMPORT".equals(configName)) {
-					hdfcStatus = dataEngineConfig.getLatestExecution("DISB_HDFC_IMPORT");
+					BajajInterfaceConstants.DISB_STP_IMPORT_STATUS = dataEngineConfig.getLatestExecution("DISB_HDFC_IMPORT");
 					valueLabel = new ValueLabel(configName, "HDFC Bank Disbursement Response");
-					 doFillExePanels(config, hdfcStatus);
+					doFillPanel(config, BajajInterfaceConstants.DISB_STP_IMPORT_STATUS);
 				} else {
-					otherStatus = dataEngineConfig.getLatestExecution("DISB_OTHER_IMPORT");
+					BajajInterfaceConstants.DISB_OTHER_IMPORT_STATUS = dataEngineConfig.getLatestExecution("DISB_OTHER_IMPORT");
 					valueLabel = new ValueLabel(configName, "Other Bank Disbursement Response");
-					 doFillExePanels(config, otherStatus);
+					doFillPanel(config, BajajInterfaceConstants.DISB_OTHER_IMPORT_STATUS);
 					 menuList.add(valueLabel);
 				}
 			}
@@ -216,17 +214,9 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			try {
 				Thread thread = null;
 				if (fileConfiguration.getSelectedItem().getValue().equals("DISB_HDFC_IMPORT")) {
-					if (hdfcStatus == null) {
-						hdfcStatus = new DataEngineStatus();
-						hdfcStatus.setName("DISB_HDFC_IMPORT");
-					}
-					thread = new Thread(new ProcessData(userId, hdfcStatus));
+					thread = new Thread(new ProcessData(userId, BajajInterfaceConstants.DISB_STP_IMPORT_STATUS));
 				} else {
-					if (otherStatus == null) {
-						otherStatus = new DataEngineStatus();
-						otherStatus.setName("DISB_OTHER_IMPORT");
-					}
-					thread = new Thread(new ProcessData(userId, otherStatus));
+					thread = new Thread(new ProcessData(userId, BajajInterfaceConstants.DISB_OTHER_IMPORT_STATUS));
 				}
 
 				thread.start();
@@ -279,42 +269,31 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			for (Hbox hbox : hboxs) {
 				List<ProcessExecution> list = hbox.getChildren();
 				for (ProcessExecution pe : list) {
-
 					String status = pe.getProcess().getStatus();
-					if (ExecutionStatus.I.name().equals(status)) {
-						this.btnImport.setDisabled(true);
-					} else {
-						this.btnImport.setDisabled(false);
-					}
 
-					String fileConfig = this.fileConfiguration.getSelectedItem().getLabel();
-					if (!StringUtils.equals(Labels.getLabel("Combo.Select"), fileConfig)) {
-						this.btnImport.setDisabled(false);
-					} else {
-						this.btnImport.setDisabled(true);
+					if ("DISB_OTHER_IMPORT".equals(pe.getProcess().getName())) {
+						if (ExecutionStatus.I.name().equals(status)) {
+							this.btnImport.setDisabled(true);
+							this.btnFileUpload.setDisabled(true);
+						} else {
+							this.btnImport.setDisabled(false);
+							this.btnFileUpload.setDisabled(false);
+						}
 					}
 					pe.render();
 				}
 			}
 		}
 	}
-
-	private void doFillExePanels(Configuration config, DataEngineStatus ds) throws Exception {
-		if (ds == null) {
-			ds = new DataEngineStatus();
-			ds.setName(config.getName());
-		}
-		doFillPanel(ds, config);
-	}
 	
-	private void doFillPanel(DataEngineStatus ds, Configuration config) {
-		ProcessExecution pannelExecution = new ProcessExecution();
-		pannelExecution.setId(config.getName());
-		pannelExecution.setBorder("normal");
-		pannelExecution.setTitle(config.getName());
-		pannelExecution.setWidth("480px");
-		pannelExecution.setProcess(ds);
-		pannelExecution.render();
+	private void doFillPanel(Configuration config, DataEngineStatus ds) {
+		ProcessExecution pannel = new ProcessExecution();
+		pannel.setId(config.getName());
+		pannel.setBorder("normal");
+		pannel.setTitle(config.getName());
+		pannel.setWidth("480px");
+		pannel.setProcess(ds);
+		pannel.render();
 
 		Row rows = (Row) panelRows.getLastChild();
 
@@ -323,7 +302,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			row.setStyle("overflow: visible !important");
 			Hbox hbox = new Hbox();
 			hbox.setAlign("center");
-			hbox.appendChild(pannelExecution);
+			hbox.appendChild(pannel);
 			row.appendChild(hbox);
 			panelRows.appendChild(row);
 		} else {
@@ -335,11 +314,11 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 				rows.setStyle("overflow: visible !important");
 				hbox = new Hbox();
 				hbox.setAlign("center");
-				hbox.appendChild(pannelExecution);
+				hbox.appendChild(pannel);
 				rows.appendChild(hbox);
 				panelRows.appendChild(rows);
 			} else {
-				hbox.appendChild(pannelExecution);
+				hbox.appendChild(pannel);
 			}
 		}
 	}
