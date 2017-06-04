@@ -116,7 +116,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 			this.window_SelectPaymentHeaderDialog.doModal();
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showMessage(e.toString());
 		}
 		logger.debug("Leaving");
 	}
@@ -150,12 +150,12 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		if (!doFieldValidation()) {
 			return;
 		}
-		FinanceMain financeMain = paymentHeaderService.getFinanceDetails(this.finReference.getValue());
+		FinanceMain financeMain = paymentHeaderService.getFinanceDetails(StringUtils.trimToEmpty(this.finReference.getValue()));
 		 
 		List<FinExcessAmount> finExcessAmountList = this.paymentHeaderService.getfinExcessAmount(financeMain.getFinReference());
 		List<ManualAdvise> manualAdviseList = this.paymentHeaderService.getManualAdvise(financeMain.getFinReference());
 		
-		if ((finExcessAmountList == null || finExcessAmountList.isEmpty()) || (manualAdviseList == null || manualAdviseList.isEmpty())) {
+		if (!((finExcessAmountList != null && !finExcessAmountList.isEmpty()) || (manualAdviseList != null && !manualAdviseList.isEmpty()))) {
 			MessageUtil.showError(" No details are available for the selected loan reference...");
 			this.finReference.setValue("");
 			return;
