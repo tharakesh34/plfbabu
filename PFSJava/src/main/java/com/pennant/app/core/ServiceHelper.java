@@ -58,6 +58,8 @@ import java.util.Map.Entry;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
@@ -65,6 +67,7 @@ import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.dao.finance.FinContributorDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
@@ -83,6 +86,7 @@ import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
+import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -99,6 +103,7 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 abstract public class ServiceHelper implements Serializable {
 
 	private static final long			serialVersionUID	= 4165353615228874397L;
+	private static Logger				logger				= Logger.getLogger(ServiceHelper.class);
 
 	private DataSource					dataSource;
 	//customer
@@ -126,6 +131,10 @@ abstract public class ServiceHelper implements Serializable {
 	//over due
 	private FinODDetailsDAO				finODDetailsDAO;
 	private ProvisionDAO				provisionDAO;
+
+	@Autowired
+	private EODConfigDAO				eodConfigDAO;
+	private EODConfig					eodConfig;
 
 	public long getAccountingID(FinanceMain main, String eventCode) {
 		if (StringUtils.isNotBlank(main.getPromotionCode())) {
@@ -312,6 +321,20 @@ abstract public class ServiceHelper implements Serializable {
 		return finSchedulelist;
 	}
 
+	public void loadEODConfig() {
+		try {
+			if (eodConfig == null) {
+				List<EODConfig> list = eodConfigDAO.getEODConfig();
+				if (!list.isEmpty()) {
+					eodConfig = list.get(0);
+				}
+			}
+
+		} catch (Exception e) {
+			logger.error("Exception", e);
+		}
+	}
+
 	public FinContributorDetailDAO getFinContributorDetailDAO() {
 		return finContributorDetailDAO;
 	}
@@ -486,6 +509,18 @@ abstract public class ServiceHelper implements Serializable {
 
 	public void setProvisionDAO(ProvisionDAO provisionDAO) {
 		this.provisionDAO = provisionDAO;
+	}
+
+	public EODConfigDAO getEodConfigDAO() {
+		return eodConfigDAO;
+	}
+
+	public EODConfig getEodConfig() {
+		return eodConfig;
+	}
+
+	public void setEodConfig(EODConfig eodConfig) {
+		this.eodConfig = eodConfig;
 	}
 
 }

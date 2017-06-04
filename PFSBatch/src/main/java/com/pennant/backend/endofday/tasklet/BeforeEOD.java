@@ -54,13 +54,13 @@ import com.pennant.app.core.DateService;
 import com.pennant.app.util.DateUtility;
 
 public class BeforeEOD implements Tasklet {
-	private Logger	logger	= Logger.getLogger(BeforeEOD.class);
+	private Logger logger = Logger.getLogger(BeforeEOD.class);
 
 	public BeforeEOD() {
 
 	}
 
-	private DateService			dateService;
+	private DateService dateService;
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
@@ -68,12 +68,12 @@ public class BeforeEOD implements Tasklet {
 		logger.debug("START: Before EOD On : " + valueDate);
 
 		dateService.doUpdatebeforeEod(true);
+		//one time loan of eod Config
+		dateService.loadEODConfig();
 		logger.debug("COMPLETE: Before EOD On :" + valueDate);
 		return RepeatStatus.FINISHED;
 
 	}
-
-
 
 	public void setDateService(DateService dateService) {
 		this.dateService = dateService;

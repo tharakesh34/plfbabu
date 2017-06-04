@@ -536,6 +536,10 @@
 	<bean id="limitGroupLinesDAO" class="com.pennant.backend.dao.limit.impl.LimitGroupLinesDAOImpl" parent="basisCodeDAO">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
+	<!-- EODConfig -->
+	<bean id="eODConfigDAO" class="com.pennant.backend.dao.eod.impl.EODConfigDAOImpl"  parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
 
 	<!-- AIB -->
 	<bean id="calendarInterfaceService" class="com.pennant.Interface.service.impl.aib.CalendarInterfaceServiceImpl">

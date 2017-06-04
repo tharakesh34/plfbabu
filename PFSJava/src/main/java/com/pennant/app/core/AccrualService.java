@@ -50,7 +50,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
-import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -102,16 +101,16 @@ public class AccrualService extends ServiceHelper {
 		int amzPostingEvent = SysParamUtil.getValueAsInt(AccountConstants.AMZ_POSTING_EVENT);
 		boolean isAmzPostToday = false;
 		if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_MTH_END) {
-			Date date1 = DateUtility.addDays(custEODEvent.getEodValueDate(), -1);
-			//Is yesterday month end?
-			if (date1.compareTo(DateUtility.getMonthEnd(date1)) == 0) {
+			if (custEODEvent.getEodValueDate().compareTo(DateUtility.getMonthEnd(custEODEvent.getEodValueDate())) == 0) {
 				isAmzPostToday = true;
 			}
 		} else if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_EXT_MTH_END) {
-			Date date1 = DateUtility.addDays(custEODEvent.getEodValueDate(), -1);
-			if (date1.compareTo(DateUtility.getAppValueDate()) == 0) {
-				isAmzPostToday = true;
+			if (getEodConfig() !=null && getEodConfig().isInExtMnth()) {
+				if (getEodConfig().getMnthExtTo().compareTo(custEODEvent.getEodValueDate()) == 0) {
+					isAmzPostToday = true;
+				}
 			}
+			
 		} else {
 			isAmzPostToday = true;
 		}
