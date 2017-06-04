@@ -460,6 +460,10 @@ FROM    	EodConfig  T1
 WHERE     NOT EXISTS (SELECT 1 FROM EodConfig_TEMP WHERE EodConfigId = T1.EodConfigId)
 </createView>
 	</changeSet>
-
+<changeSet id="55" author="satish">
+<sql>
+alter table finpftdetails drop constraint FK_FINPFTDETAIL_BMTCUSTSTSCODE;
+</sql>
+</changeSet>
 
 </databaseChangeLog>
