@@ -53,6 +53,8 @@ public class LimitManagement {
 	private FinanceDisbursementDAO		financeDisbursementDAO;
 	private FinanceMainDAO				financeMainDAO;
 
+	public static final  String KEY_LIMITAMT="LIMITAMT";
+	public static final  String KEY_LINEEXPIRY="LINEEXPIRY";
 	/**
 	 * @param financeDetail
 	 * @param overide
@@ -930,7 +932,7 @@ public class LimitManagement {
 
 			if (limitDetail.getExpiryDate() != null) {
 				if (limitDetail.getExpiryDate().compareTo(date) <= 0) {
-					return new ErrorDetails(param, "60311", new String[] { param }, null);
+					return new ErrorDetails(KEY_LINEEXPIRY, "60311", new String[] { param }, null);
 				}
 			}
 			BigDecimal limitAmount = BigDecimal.ZERO;
@@ -943,9 +945,9 @@ public class LimitManagement {
 			if (limitDetail.isLimitCheck() && limitDetail.getLimitSanctioned().compareTo(limitAmount) == -1) {
 				if (overrideAllowed) {
 					//return new ErrorDetails("60312", new String[] { param });
-					return new ErrorDetails(param, "60312", new String[] { param }, null);
+					return new ErrorDetails(KEY_LIMITAMT, "60312", new String[] { param }, null);
 				} else {
-					return new ErrorDetails(param, "60314", new String[] { param }, null);
+					return new ErrorDetails(KEY_LIMITAMT, "60314", new String[] { param }, null);
 				}
 			}
 		}
