@@ -127,8 +127,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	public void onCreate$window_PresentmentExtractDetailList(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		setPageComponents(window_PresentmentExtractDetailList, borderLayout_PresentmentExtractDetailList,
-				listBoxPresentmentExtractDetail, pagingPresentmentExtractDetailList);
+		setPageComponents(window_PresentmentExtractDetailList, borderLayout_PresentmentExtractDetailList, listBoxPresentmentExtractDetail, pagingPresentmentExtractDetailList);
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -225,8 +224,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		try {
 			int diffentDays = SysParamUtil.getValueAsInt("PRESENTMENT_DAYS_DEF");
 			if (DateUtility.getDaysBetween(this.fromdate.getValue(), this.toDate.getValue()) > diffentDays) {
-				throw new WrongValueException(this.toDate,
-						" From Date and To Date difference should be less than are equal to " + diffentDays);
+				throw new WrongValueException(this.toDate, " From Date and To Date difference should be less than are equal to " + diffentDays);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

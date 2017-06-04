@@ -75,11 +75,9 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
-import com.pennanttech.bajaj.process.PresentmentRequest;
-import com.pennanttech.pff.core.App;
+import com.pennanttech.bajaj.services.PresentmentRequestService;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pff.core.util.DateUtil;
 
 /**
  * Service implementation for methods that depends on <b>PresentmentHeader</b>.<br>
@@ -92,10 +90,42 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private DataSource dataSource;
 	private ReceiptCancellationService receiptCancellationService;
+	private PresentmentRequestService presentmentRequestService;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
+
+	public AuditHeaderDAO getAuditHeaderDAO() {
+		return auditHeaderDAO;
+	}
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+	public PresentmentHeaderDAO getPresentmentHeaderDAO() {
+		return presentmentHeaderDAO;
+	}
+	public void setPresentmentHeaderDAO(PresentmentHeaderDAO presentmentHeaderDAO) {
+		this.presentmentHeaderDAO = presentmentHeaderDAO;
+	}
+	public FinExcessAmountDAO getFinExcessAmountDAO() {
+		return finExcessAmountDAO;
+	}
+	public DataSource getDataSource() {
+		return dataSource;
+	}
+	public void setReceiptCancellationService(ReceiptCancellationService receiptCancellationService) {
+		this.receiptCancellationService = receiptCancellationService;
+	}
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+	public void setPresentmentRequestService(PresentmentRequestService presentmentRequestService) {
+		this.presentmentRequestService = presentmentRequestService;
+	}
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
@@ -140,34 +170,6 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 
 	}
 
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public PresentmentHeaderDAO getPresentmentHeaderDAO() {
-		return presentmentHeaderDAO;
-	}
-
-	public void setPresentmentHeaderDAO(PresentmentHeaderDAO presentmentHeaderDAO) {
-		this.presentmentHeaderDAO = presentmentHeaderDAO;
-	}
-
-	public FinExcessAmountDAO getFinExcessAmountDAO() {
-		return finExcessAmountDAO;
-	}
-
-	public DataSource getDataSource() {
-		return dataSource;
-	}
-
-	public void setReceiptCancellationService(ReceiptCancellationService receiptCancellationService) {
-		this.receiptCancellationService = receiptCancellationService;
-	}
-
 	/**
 	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
@@ -197,29 +199,6 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		return auditHeader;
 	}
 
-	/**
-	 * getPresentmentHeader fetch the details by using PresentmentHeaderDAO's getPresentmentHeaderById method.
-	 * 
-	 * @param id
-	 *            id of the PresentmentHeader.
-	 * @return PresentmentHeader
-	 */
-	@Override
-	public PresentmentHeader getPresentmentHeader(long id) {
-		return getPresentmentHeaderDAO().getPresentmentHeader(id, "_View");
-	}
-
-	/**
-	 * getApprovedPresentmentHeaderById fetch the details by using PresentmentHeaderDAO's getPresentmentHeaderById
-	 * method . with parameter id and type as blank. it fetches the approved records from the PresentmentHeader.
-	 * 
-	 * @param id
-	 *            id of the PresentmentHeader. (String)
-	 * @return PresentmentHeader
-	 */
-	public PresentmentHeader getApprovedPresentmentHeader(long id) {
-		return getPresentmentHeaderDAO().getPresentmentHeader(id, "_AView");
-	}
 
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
@@ -279,7 +258,6 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 				getPresentmentHeaderDAO().update(presentmentHeader, TableType.MAIN_TAB);
 			}
 		}
-
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -312,12 +290,9 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
-
 		PresentmentHeader presentmentHeader = (PresentmentHeader) auditHeader.getAuditDetail().getModelData();
-
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getPresentmentHeaderDAO().delete(presentmentHeader, TableType.TEMP_TAB);
-
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
@@ -361,30 +336,28 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		PresentmentHeader presentmentHeader = (PresentmentHeader) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (presentmentHeader.isNew()
-				&& presentmentHeaderDAO.isDuplicateKey(presentmentHeader.getId(), presentmentHeader.getReference(),
+		if (presentmentHeader.isNew() && presentmentHeaderDAO.isDuplicateKey(presentmentHeader.getId(), presentmentHeader.getReference(),
 						presentmentHeader.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
-
 			parameters[0] = PennantJavaUtil.getLabel("label_Reference") + ": " + presentmentHeader.getReference();
-
 			auditDetail.setErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
-
-	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
-		this.finExcessAmountDAO = finExcessAmountDAO;
+ 
+ 
+	@Override
+	public PresentmentHeader getPresentmentHeader(long id) {
+		return getPresentmentHeaderDAO().getPresentmentHeader(id, "_View");
 	}
-
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
+	 
+	public PresentmentHeader getApprovedPresentmentHeader(long id) {
+		return getPresentmentHeaderDAO().getPresentmentHeader(id, "_AView");
 	}
-
+	
 	@Override
 	public long savePresentmentHeader(PresentmentHeader presentmentHeader) {
 		return presentmentHeaderDAO.savePresentmentHeader(presentmentHeader);
@@ -399,7 +372,17 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 	public void updatePresentmentDetailHeader(long presentmentId, long extractId) {
 		presentmentHeaderDAO.updatePresentmentDetailId(presentmentId, extractId);
 	}
+	
+	@Override
+	public List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, String type) {
+		return presentmentHeaderDAO.getPresentmentDetailsList(presentmentId, isExclude, type);
+	}
 
+	@Override
+	public Date getMaxSchdPresentment(String finReference) {
+		return getPresentmentHeaderDAO().getMaxSchdPresentment(finReference);
+	}
+	
 	/* processPresentmentDetails */
 	@Override
 	public String savePresentmentDetails(PresentmentHeader header) throws Exception {
@@ -492,8 +475,10 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		return " Extracted successfully.";
 	}
 
+	//Saving the Presentment Header Details
 	private long savePresentmentHeaderDetails(PresentmentHeader header) {
-
+		logger.debug(Literal.ENTERING);
+		
 		long id = presentmentHeaderDAO.getSeqNumber("SeqPresentmentHeader");
 		String reference = StringUtils.leftPad(String.valueOf(id), 15, "0");
 		header.setId(id);
@@ -507,6 +492,8 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		header.setSuccessRecords(0);
 		header.setFailedRecords(0);
 		presentmentHeaderDAO.savePresentmentHeader(header);
+		
+		logger.debug(Literal.LEAVING);
 		return id;
 
 	}
@@ -568,42 +555,26 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 			presentmentDetail.setPresentmentAmt(presentmentDetail.getSchAmtDue().subtract(emiInAdvanceAmt));
 			presentmentDetail.setAdvanceAmt(emiInAdvanceAmt);
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
 
-
-	public void processDetails(long presentmentId) throws Exception {
-		logger.debug(Literal.ENTERING);
-
-		try {
-			PresentmentRequest presentmentRequest = new PresentmentRequest(dataSource, App.DATABASE.name(), 1000, DateUtil.getSysDate(),true);
-			presentmentRequest.setPresentmentId(presentmentId);
-			presentmentRequest.process("PRESENTMENT_REQUEST");
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, String type) {
-		return presentmentHeaderDAO.getPresentmentDetailsList(presentmentId, isExclude, type);
-	}
 
 	private String getPresentmentRef(ResultSet rs) throws SQLException {
+		logger.debug(Literal.ENTERING);
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append(rs.getString("BRANCHCODE"));
 		sb.append(rs.getString("LOANTYPE"));
 		sb.append(rs.getString("MANDATETYPE"));
+		
+		logger.debug(Literal.LEAVING);
 		return sb.toString();
 	}
 
 	@Override
 	public void updatePresentmentDetails(List<Long> excludeList, List<Long> includeList, String userAction, long presentmentId, long partnerBankId) throws Exception {
-
+		logger.debug(Literal.ENTERING);
+		
 		if ("Save".equals(userAction)) {
 			if (includeList != null && !includeList.isEmpty()) {
 				this.presentmentHeaderDAO.updatePresentmentDetials(presentmentId, includeList, 0);
@@ -636,6 +607,7 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 			this.presentmentHeaderDAO.deletePresentmentDetails(presentmentId);
 			this.presentmentHeaderDAO.deletePresentmentHeader(presentmentId);
 		}
+		logger.debug(Literal.LEAVING);
 	}
 
 
@@ -657,9 +629,15 @@ public class PresentmentHeaderServiceImpl extends GenericService<PresentmentHead
 		return presentmentDetail;
 	}
 
-	@Override
-	public Date getMaxSchdPresentment(String finReference) {
-		return getPresentmentHeaderDAO().getMaxSchdPresentment(finReference);
+	public void processDetails(long presentmentId) throws Exception {
+		logger.debug(Literal.ENTERING);
+		try {
+			presentmentRequestService.sendReqest(new Long(1000), DateUtility.getAppValueDate(), presentmentId);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
+		}
+		logger.debug(Literal.LEAVING);
 	}
 	
 }

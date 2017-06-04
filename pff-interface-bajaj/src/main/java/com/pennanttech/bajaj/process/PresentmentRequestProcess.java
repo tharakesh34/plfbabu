@@ -7,7 +7,6 @@ import java.util.Date;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -18,14 +17,13 @@ import com.pennanttech.pff.baja.BajajInterfaceConstants.Status;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 
-public class PresentmentRequest extends DatabaseDataEngine {
-
-	private static final Logger logger = Logger.getLogger(PresentmentRequest.class);
+public class PresentmentRequestProcess extends DatabaseDataEngine {
 
 	private long presentmentId;
 
-	public PresentmentRequest(DataSource dataSource, String database, long userId, Date valueDate,boolean logBatch) {
-		super(dataSource, App.DATABASE.name(), userId, logBatch, valueDate);
+	public PresentmentRequestProcess(DataSource dataSource, long userId, Date valueDate, long presentmentId) {
+		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
+		this.presentmentId = presentmentId;
 	}
 
 	@Override
@@ -223,11 +221,6 @@ public class PresentmentRequest extends DatabaseDataEngine {
 		destinationJdbcTemplate.update("INSERT INTO PDC_CONSL_EMI_DTL SELECT * FROM PDC_CONSL_EMI_DTL_TEMP", new MapSqlParameterSource());
 
 		logger.debug(Literal.LEAVING);
-	}
-	
-	
-	public void setPresentmentId(long presentmentId) {
-		this.presentmentId = presentmentId;
 	}
 
 }

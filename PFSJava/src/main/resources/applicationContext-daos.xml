@@ -9655,6 +9655,7 @@
        <property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 	   <property name="dataSource" ref="pfsDatasource" />
 	   <property name="receiptCancellationService" ref="receiptCancellationService" />
+	   <property name="presentmentRequestService" ref="presentmentRequestService" />
    </bean>
   
    
