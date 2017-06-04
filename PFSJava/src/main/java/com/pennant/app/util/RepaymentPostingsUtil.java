@@ -161,7 +161,7 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		// Penalty Payments, if any Payment calculations done
 		long linkedTranId = Long.MIN_VALUE;
-		if (rpyQueueHeader.getPenalty().compareTo(BigDecimal.ZERO) > 0) {
+		if (rpyQueueHeader.getPenalty().compareTo(BigDecimal.ZERO) > 0 || rpyQueueHeader.getPenaltyWaived().compareTo(BigDecimal.ZERO) > 0) {
 			actReturnList = doOverduePostings(linkedTranId, finRepayQueueList, valuedate, financeMain, rpyQueueHeader.getPostBranch());
 
 			if (actReturnList != null) {
@@ -226,9 +226,8 @@ public class RepaymentPostingsUtil implements Serializable {
 					fullyPaidSchd = true;
 				}
 
-				returnList = getRecoveryPostingsUtil().recoveryPayment(financeMain, dateValueDate,
-						repayQueue.getRpyDate(), repayQueue.getFinRpyFor(), dateValueDate,
-						repayQueue.getPenaltyPayNow(), BigDecimal.ZERO, repayQueue.getWaivedAmount(),
+				returnList = getRecoveryPostingsUtil().recoveryPayment(financeMain, dateValueDate, repayQueue.getRpyDate(), 
+						repayQueue.getFinRpyFor(), dateValueDate, repayQueue.getPenaltyPayNow(), repayQueue.getWaivedAmount(), 
 						repayQueue.getChargeType(), linkedTranId, fullyPaidSchd, postBranch);
 
 				if (!(Boolean) returnList.get(0)) {

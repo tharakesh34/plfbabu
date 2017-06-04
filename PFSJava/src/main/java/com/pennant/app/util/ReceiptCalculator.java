@@ -240,24 +240,11 @@ public class ReceiptCalculator implements Serializable {
 				ReceiptAllocationDetail allocate = allocationList.get(a);
 				if (allocate.getAllocationTo() == 0 || allocate.getAllocationTo() == Long.MIN_VALUE) {
 					
-					if(StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_LPFT) || 
-							StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_ODC) ||
-							StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_MANADV)){
-						paidAllocationMap.put(allocate.getAllocationType(), allocate.getPaidAmount());
-					}else{
-						paidAllocationMap.put(allocate.getAllocationType(), allocate.getPaidAmount().add(allocate.getWaivedAmount()));
-					}
+					paidAllocationMap.put(allocate.getAllocationType(), allocate.getPaidAmount().add(allocate.getWaivedAmount()));
 					waivedAllocationMap.put(allocate.getAllocationType(), allocate.getWaivedAmount());
 				}else{
 					
-					if(StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_LPFT) || 
-							StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_ODC) ||
-							StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_MANADV)){
-						paidAllocationMap.put(allocate.getAllocationType()+"_"+allocate.getAllocationTo(), allocate.getPaidAmount());
-					}else{
-						paidAllocationMap.put(allocate.getAllocationType()+"_"+allocate.getAllocationTo(), allocate.getPaidAmount().add(allocate.getWaivedAmount()));
-					}
-
+					paidAllocationMap.put(allocate.getAllocationType()+"_"+allocate.getAllocationTo(), allocate.getPaidAmount().add(allocate.getWaivedAmount()));
 					BigDecimal waivedAmount = BigDecimal.ZERO;
 					if(waivedAllocationMap.containsKey(allocate.getAllocationType())){
 						waivedAmount = waivedAllocationMap.get(allocate.getAllocationType());
@@ -859,6 +846,7 @@ public class ReceiptCalculator implements Serializable {
 									waivedNow = balWaived;
 								}
 								rsd.setLatePftSchdWaivedNow(waivedNow);
+								rsd.setLatePftSchdPayNow(rsd.getLatePftSchdPayNow().subtract(waivedNow));
 								totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
 								waivedAllocationMap.put(RepayConstants.ALLOCATION_LPFT, balWaived.subtract(waivedNow));
 							}
@@ -871,6 +859,7 @@ public class ReceiptCalculator implements Serializable {
 									waivedNow = balWaived;
 								}
 								rsd.setWaivedAmt(waivedNow);
+								rsd.setPenaltyPayNow(rsd.getPenaltyPayNow().subtract(waivedNow));
 								totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
 								waivedAllocationMap.put(RepayConstants.ALLOCATION_ODC, balWaived.subtract(waivedNow));
 							}
@@ -922,6 +911,7 @@ public class ReceiptCalculator implements Serializable {
 						waivedNow = balWaived;
 					}
 					advMovement.setWaivedAmount(waivedNow);
+					advMovement.setPaidAmount(advMovement.getPaidAmount().subtract(waivedNow));
 					totalWaivedAmt = totalWaivedAmt.subtract(waivedNow);
 					waivedAllocationMap.put(RepayConstants.ALLOCATION_MANADV, balWaived.subtract(waivedNow));
 				}

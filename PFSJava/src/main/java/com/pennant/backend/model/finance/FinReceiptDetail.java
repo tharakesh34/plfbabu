@@ -47,6 +47,7 @@ public class FinReceiptDetail implements Entity {
 	private boolean						delRecord		= false;
 	private String						partnerBankAc;
 	private String						partnerBankAcType;
+	private String						feeTypeDesc;
 
 	private List<FinRepayHeader>		repayHeaders	= new ArrayList<FinRepayHeader>(1);
 	private List<ManualAdviseMovements>	advMovements	= new ArrayList<ManualAdviseMovements>(1);
@@ -318,6 +319,14 @@ public class FinReceiptDetail implements Entity {
 
 	public void setPartnerBankAcType(String partnerBankAcType) {
 		this.partnerBankAcType = partnerBankAcType;
+	}
+
+	public String getFeeTypeDesc() {
+		return feeTypeDesc;
+	}
+
+	public void setFeeTypeDesc(String feeTypeDesc) {
+		this.feeTypeDesc = feeTypeDesc;
 	}
 
 }
