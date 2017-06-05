@@ -80,6 +80,23 @@ public class DateUtil {
 
 		return format(getSysDate(), dateFormat);
 	}
+	
+	/**
+	 * Returns the string representation with the specified date format pattern of the server time.
+	 * 
+	 * @param dateFormat
+	 *            The format describing the date and time pattern.
+	 * @return The formatted date string of the server time.
+	 * @throws IllegalArgumentException
+	 *             - If the given format is <code>null</code>.
+	 */
+	public static String getSysDate(String dateFormat) {
+		if (dateFormat == null) {
+			throw new IllegalArgumentException();
+		}
+
+		return format(getSysDate(), dateFormat);
+	}
 
 	/**
 	 * <p>
