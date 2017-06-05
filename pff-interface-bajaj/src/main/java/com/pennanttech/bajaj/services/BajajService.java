@@ -10,6 +10,9 @@ import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pff.core.Literal;
@@ -22,6 +25,9 @@ public abstract class BajajService {
 	protected JdbcTemplate					jdbcTemplate;
 	protected NamedParameterJdbcTemplate	namedJdbcTemplate;
 	
+	protected DataSourceTransactionManager transManager;
+	protected DefaultTransactionDefinition transDef;
+	
 	public BajajService() {
 		super();
 	}
@@ -30,6 +36,7 @@ public abstract class BajajService {
 		this.dataSource = dataSource;
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 		this.namedJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		setTransManager(dataSource);
 	}
 
 	protected Object getSMTParameter(String sysParmCode, Class<?> type) {
@@ -100,7 +107,17 @@ public abstract class BajajService {
 		}
 
 		return parmMap;
+	}
+	
+	private void setTransManager(DataSource dataSource) {
+		this.dataSource = dataSource;
+		this.namedJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 
+		this.transManager = new DataSourceTransactionManager(dataSource);
+		this.transDef = new DefaultTransactionDefinition();
+		this.transDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		this.transDef.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
+		this.transDef.setTimeout(60);
 	}
 	
 }

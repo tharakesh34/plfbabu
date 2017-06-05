@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
+import org.springframework.transaction.TransactionStatus;
 
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennanttech.dataengine.model.DataEngineLog;
@@ -59,11 +60,8 @@ public class MandateResponseService extends BajajService implements MandateRespo
 				StringBuilder remarks = new StringBuilder();
 
 				if (mandate == null) {
-					if(respMandate.getReason() == null) {
-						respMandate.setReason("Mandate request not exist.");
-					}
+					respMandate.setReason("Mandate request not exist or already processed.");
 					updateMandateResponse(respMandate);
-					rejected++;
 					logMandate(respBatchId, respMandate);
 				} else {
 					validateMandate(respMandate, mandate, remarks);
@@ -73,10 +71,23 @@ public class MandateResponseService extends BajajService implements MandateRespo
 						respMandate.setStatus("Y");
 						matched = false;
 					}
-					
+
 					if (matched) {
-						updateMandates(respMandate);
-						updateMandateRequest(respMandate, respBatchId);
+						TransactionStatus txnStatus = null;
+						try {
+							txnStatus = transManager.getTransaction(transDef);
+							updateMandates(respMandate);
+							updateMandateRequest(respMandate, respBatchId);
+							transManager.commit(txnStatus);
+						} catch (Exception e) {
+							logger.error(Literal.EXCEPTION, e);
+							respMandate.setReason(e.getMessage());
+							logMandate(respBatchId, respMandate);
+							transManager.rollback(txnStatus);
+						} finally {
+							txnStatus.flush();
+							txnStatus = null;
+						}
 
 						if ("Y".equals(respMandate.getStatus())) {
 							rejected++;
@@ -84,10 +95,10 @@ public class MandateResponseService extends BajajService implements MandateRespo
 						} else {
 							approved++;
 						}
-					}  else {
+					} else {
 						notMatched++;
 					}
-					
+
 					if (!matched || reject) {
 						logMandate(respBatchId, respMandate);
 					}
@@ -103,7 +114,7 @@ public class MandateResponseService extends BajajService implements MandateRespo
 
 	private void updateRemarks(long respBatchId, long approved, long rejected, long notMatched) {
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-	
+
 		StringBuilder remarks = new StringBuilder(BajajInterfaceConstants.MANDATE_INMPORT_STATUS.getRemarks());
 		remarks.append(", Approved: ");
 		remarks.append(approved);
@@ -111,7 +122,7 @@ public class MandateResponseService extends BajajService implements MandateRespo
 		remarks.append(rejected);
 		remarks.append(", Not Matched: ");
 		remarks.append(notMatched);
-		
+
 		BajajInterfaceConstants.MANDATE_INMPORT_STATUS.setRemarks(remarks.toString());
 
 		StringBuffer query = new StringBuffer();
@@ -193,8 +204,7 @@ public class MandateResponseService extends BajajService implements MandateRespo
 			}
 			remarks.append("Mandate Type");
 		}
-		
-		
+
 		if (!StringUtils.equals(mandate.getLovValue(), respMandate.getLovValue())) {
 			if (remarks.length() > 0) {
 				remarks.append(", ");
@@ -212,7 +222,7 @@ public class MandateResponseService extends BajajService implements MandateRespo
 
 		sql.append(" SELECT MandateID, FINREFERENCE, CUSTCIF,  MICR_CODE MICR, ACCT_NUMBER AccNumber, OPENFLAG lovValue, MANDATE_TYPE, STATUS ");
 		sql.append(" From MANDATE_REQUESTS");
-		sql.append(" Where MandateID =:MandateID");
+		sql.append(" Where MandateID =:MandateID and RESP_BATCH_ID IS NULL");
 		source = new MapSqlParameterSource();
 		source.addValue("MandateID", id);
 
