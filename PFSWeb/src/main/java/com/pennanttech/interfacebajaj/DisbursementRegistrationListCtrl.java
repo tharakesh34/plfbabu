@@ -518,7 +518,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}
 
 		if (disbushmentList.isEmpty()) {
-			MessageUtil.showErrorMessage(Labels.getLabel("MandateDataList_NoEmpty"));
+			MessageUtil.showError(Labels.getLabel("MandateDataList_NoEmpty"));
 			return;
 		}
 

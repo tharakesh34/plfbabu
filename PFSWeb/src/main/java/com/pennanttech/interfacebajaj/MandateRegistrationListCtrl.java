@@ -658,7 +658,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		}
 
 		if (mandateIdList.isEmpty()) {
-			MessageUtil.showErrorMessage(Labels.getLabel("MandateDataList_NoEmpty"));
+			MessageUtil.showError(Labels.getLabel("MandateDataList_NoEmpty"));
 			return;
 		}
 

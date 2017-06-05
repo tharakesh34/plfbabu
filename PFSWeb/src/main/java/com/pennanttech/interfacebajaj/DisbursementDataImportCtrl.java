@@ -206,7 +206,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		this.btnImport.setDisabled(true);
 
 		if (media == null) {
-			MessageUtil.showErrorMessage("Please upload any file.");
+			MessageUtil.showError("Please upload any file.");
 			return;
 		}
 
@@ -246,7 +246,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		media = event.getMedia();
 		
 		if(!(StringUtils.endsWith(media.getName().toUpperCase(),".CSV" ))){
-			MessageUtil.showErrorMessage("Invalid file format.");
+			MessageUtil.showError("Invalid file format.");
 			media = null;
 			return;
 		}
