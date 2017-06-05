@@ -1,10 +1,6 @@
 package com.pennant.exception;
 
 public class PFFInterfaceException extends Exception {
-
-	/**
-	 * 
-	 */
 	private static final long	serialVersionUID	= 7376419132045778376L;
 
 	public String				errorMessage;
