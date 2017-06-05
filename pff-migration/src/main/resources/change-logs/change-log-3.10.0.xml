@@ -1051,5 +1051,13 @@
                        BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode;
 		</createView>
 	</changeSet>
-	
+	<changeSet id="50" author="jayant.k">
+	    <createView viewName="FILE_DOWNLOAD_VIEW" replaceIfExists="true">
+	   	SELECT DC.NAME, DC.UPLOADPATH FILELOCATION, DS.FILENAME,  DS.STATUS FROM  DATA_ENGINE_STATUS DS
+		INNER JOIN DATA_ENGINE_CONFIG DC ON DC.NAME = DS.NAME WHere DC.NAME = 'MANDATES_EXPORT'
+	    </createView>
+	</changeSet>
+		<changeSet id="51" author="jayant.k">
+	    <dropView viewName="FILE_DOWNLOAD_VIEW" />
+	</changeSet>
 </databaseChangeLog>
