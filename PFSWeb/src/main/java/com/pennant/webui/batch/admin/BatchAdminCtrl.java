@@ -40,16 +40,13 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ProcessExecution;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SessionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.endofday.main.BatchMonitor;
 import com.pennant.backend.endofday.main.PFSBatchAdmin;
 import com.pennant.backend.model.ExecutionStatus;
-import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
-import com.pennant.policy.model.UserImpl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
@@ -301,8 +298,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 			} catch (Exception e) {
 				timer.stop();
-				MessageUtil.showErrorMessage(e.getMessage());
-				logger.error("Exception: ", e);
+				MessageUtil.showError(e);
 			}
 		}
 
@@ -330,8 +326,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 				BatchMonitor.avgTime = 0;
 				Events.postEvent("onCreate", this.window_BatchAdmin, event);
 			} catch (Exception e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e.getMessage());
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -618,29 +613,6 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			lable_current_step.setVisible(true);
 		}
 		logger.debug("Leaving" + event.toString());
-	}
-
-	private String getLoggedInUsers() {
-		StringBuilder builder = new StringBuilder();
-		List<UserImpl> users = SessionUtil.getLoggedInUsers();
-		SecurityUser secUser = null;
-		if (!users.isEmpty()) {
-			for (UserImpl user : users) {
-				if (user.getUserId() != getUserWorkspace().getLoggedInUser().getLoginUsrID()) {
-					if (builder.length() > 0) {
-						builder.append("</br>");
-					}
-					secUser = user.getSecurityUser();
-					builder.append("&bull;")
-							.append("&nbsp;")
-							.append(user.getUserId())
-							.append("&ndash;")
-							.append(secUser.getUsrFName() + " " + StringUtils.trimToEmpty(secUser.getUsrMName()) + " "
-									+ secUser.getUsrLName());
-				}
-			}
-		}
-		return builder.toString();
 	}
 
 	// ******************************************************//

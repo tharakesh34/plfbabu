@@ -220,7 +220,7 @@ public class ScoringTypeListCtrl extends GFCBaseListCtrl<ScoringType> {
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm),
 						getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 			}else{
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND ScoType='"+ scoringType.getScoType()+"' AND version=" + scoringType.getVersion()+" ";
@@ -231,7 +231,7 @@ public class ScoringTypeListCtrl extends GFCBaseListCtrl<ScoringType> {
 					if (userAcces){
 						showDetailView(scoringType);
 					}else{
-						MessageUtil.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
 				}else{
 					showDetailView(scoringType);
