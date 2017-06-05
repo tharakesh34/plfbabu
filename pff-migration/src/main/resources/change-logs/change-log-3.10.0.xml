@@ -1077,4 +1077,9 @@
 			 update DATA_ENGINE_CONFIG set FILEEXTENSION = '.CSV' where name = 'DISB_HDFC_EXPORT';
 		</sql>
 	</changeSet>
+	<changeSet id="54" author="murthy.y">
+		<sql>
+			update DATA_ENGINE_TABLE set RECORDLENGTH = 3 WHERE CONFIGID IN (select ID from DATA_ENGINE_CONFIG where NAME = 'DISB_OTHER_IMPORT');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
