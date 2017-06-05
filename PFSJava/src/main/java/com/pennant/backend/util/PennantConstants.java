@@ -487,7 +487,6 @@ public class PennantConstants {
 	public static final String EVALUATION_STATUS_COMPLETED = "C";
 	public static final String EVALUATION_STATUS_NOTPROGRESSED = "N";
 
-	public static final String ADDRESS_TYPE_RESIDENCE = "CURRES";
 	public static final String LEGEL_FEES = "Legal Fees";
 	public static final String FINES = "Fines";
 	public static final String OTHERS = "Others";
@@ -617,8 +616,6 @@ public class PennantConstants {
 	public static final String REU_DECISION_DECLINE = "D";
 	public static final String REU_DECISION_PENDING = "P";
 
-	public static final String ADDRESS_TYPE_OFFICE = "OFFICE";
-
 	public static final String FIXED_DEPOSIT = "FD";
 	public static final String SECURITY_CHEQUE = "SC";
 
@@ -668,4 +665,9 @@ public class PennantConstants {
 	public static final String FILESTATUS_COMPLETED = "COMPLETED";
 	public static final String FILESTATUS_FAILED = "FAILED";
 	public static final String FILESTATUS_SUCCESS= "SUCCESS";
+	
+	// Address Types Mapping
+	public static String				ADDRESS_TYPE_PERMANENT				= "PER";
+	public static String				ADDRESS_TYPE_RESIDENCE				= "CURRES";
+	public static String				ADDRESS_TYPE_OFFICE					= "OFFICE";
 }
