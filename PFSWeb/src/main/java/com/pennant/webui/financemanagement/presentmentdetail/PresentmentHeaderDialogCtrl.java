@@ -74,6 +74,7 @@ import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.financemanagement.PresentmentHeaderService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -187,7 +188,10 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		this.partnerBank.setDescColumn("PartnerBankCode");
 		this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
 		this.partnerBank.setMandatoryStyle(true);
-
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("AlwReceipt", 1, Filter.OP_EQUAL);
+		this.partnerBank.setFilters(filters);
+		
 		this.listBox_Include.setHeight(getListBoxHeight(4));
 		this.listBox_ManualExclude.setHeight(getListBoxHeight(4));
 		this.listBox_AutoExclude.setHeight(getListBoxHeight(4));
