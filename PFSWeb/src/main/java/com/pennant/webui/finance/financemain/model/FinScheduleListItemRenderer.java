@@ -3580,8 +3580,8 @@ public class FinScheduleListItemRenderer implements Serializable{
 				if(StringUtils.isBlank(aScheduleDetail.getBaseRate())){
 					data.setPftAmount(formatAmt(aScheduleDetail.getCalculatedRate(),true,false));
 				}else{
-					data.setPftAmount("[ " +aScheduleDetail.getBaseRate()+(StringUtils.isEmpty(aScheduleDetail.getSplRate())?"":","+aScheduleDetail.getSplRate())+
-							(aScheduleDetail.getMrgRate() == null ?"":","+PennantApplicationUtil.formatRate(aScheduleDetail.getMrgRate().doubleValue(), 9))+" ]"+
+					data.setPftAmount("[" +aScheduleDetail.getBaseRate()+(StringUtils.isEmpty(aScheduleDetail.getSplRate())?"":","+aScheduleDetail.getSplRate())+
+							(aScheduleDetail.getMrgRate() == null ?"":","+PennantApplicationUtil.formatRate(aScheduleDetail.getMrgRate().doubleValue(), 9))+"]"+
 							PennantApplicationUtil.formatRate(aScheduleDetail.getCalculatedRate().doubleValue(), PennantConstants.rateFormate) + "%");
 				}
 				

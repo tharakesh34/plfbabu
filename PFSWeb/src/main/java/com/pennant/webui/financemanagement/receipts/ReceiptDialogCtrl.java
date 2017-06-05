@@ -1591,11 +1591,20 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if(nextRepaySchDate == null){
 				for (FinanceScheduleDetail curSchd : finScheduleData.getFinanceScheduleDetails()) {
 					if(DateUtility.compare(curSchd.getSchDate(), receiptData.getRepayMain().getEarlyPayOnSchDate()) <= 0){
-						finScheduleData.getFinanceMain().setRecalSchdMethod(curSchd.getSchdMethod());
+						if(DateUtility.compare(curSchd.getSchDate(), aFinanceMain.getGrcPeriodEndDate()) <= 0){
+							if(StringUtils.equals(curSchd.getSchdMethod(), CalculationConstants.SCHMTHD_PFT)){
+								finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI_PFT);
+							}else{
+								finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI);
+							}
+						}else{
+							finScheduleData.getFinanceMain().setRecalSchdMethod(curSchd.getSchdMethod());
+						}
 						if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY) &&
 								DateUtility.compare(curSchd.getSchDate(), receiptData.getRepayMain().getEarlyPayOnSchDate()) == 0){
-							receiptData.getRepayMain().setEarlyPayAmount(receiptData.getRepayMain().getEarlyPayAmount().add(
-									curSchd.getProfitSchd()));
+							if(!StringUtils.equals(finScheduleData.getFinanceMain().getRecalSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)){
+								receiptData.getRepayMain().setEarlyPayAmount(receiptData.getRepayMain().getEarlyPayAmount().add(curSchd.getProfitSchd()));
+							}
 						}
 					}else{
 						nextRepaySchDate = curSchd.getSchDate();
@@ -3814,6 +3823,35 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if(!StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, repayHeader.getFinEvent()) &&
 						!StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, repayHeader.getFinEvent()) &&
 						!StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, repayHeader.getFinEvent())){
+					
+					// Accounting Postings Process Execution
+					aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
+					
+					amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
+					amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
+					amountCodes.setToExcessAmt(BigDecimal.ZERO);
+					amountCodes.setToEmiAdvance(BigDecimal.ZERO);
+					if(StringUtils.equals(repayHeader.getFinEvent(), RepayConstants.EXCESSADJUSTTO_EXCESS)){
+						amountCodes.setToExcessAmt(repayHeader.getRepayAmount());
+					}else {
+						amountCodes.setToEmiAdvance(repayHeader.getRepayAmount());
+					}
+					
+					aeEvent.getAcSetIDList().clear();
+					if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
+						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_PROMOTION));
+					} else {
+						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_FINTYPE));
+					}
+
+					aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+
+					// Accounting Entry Execution
+					aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+					returnSetEntries.addAll(aeEvent.getReturnDataSet());
+					
+					amountCodes.setToExcessAmt(BigDecimal.ZERO);
+					amountCodes.setToEmiAdvance(BigDecimal.ZERO);
 					
 					continue;
 				}

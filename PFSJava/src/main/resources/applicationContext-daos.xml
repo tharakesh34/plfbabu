@@ -6542,6 +6542,7 @@
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
 		<property name="finInsurancesDAO" ref="finInsurancesDAO" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="limitManagement" ref="limitManagement" />
 	</bean>
 

@@ -87,6 +87,8 @@ public class AEAmountCodes {
 	private BigDecimal	emiInAdvance		= BigDecimal.ZERO;
 	private BigDecimal	payableAdvise		= BigDecimal.ZERO;
 	private BigDecimal	excessBal			= BigDecimal.ZERO;
+	private BigDecimal	toExcessAmt			= BigDecimal.ZERO;
+	private BigDecimal	toEmiAdvance		= BigDecimal.ZERO;
 
 	private BigDecimal	downpayB			= BigDecimal.ZERO;
 	private BigDecimal	downpayS			= BigDecimal.ZERO;
@@ -872,6 +874,22 @@ public class AEAmountCodes {
 
 	public void setRpTds(BigDecimal rpTds) {
 		this.rpTds = rpTds;
+	}
+
+	public BigDecimal getToExcessAmt() {
+		return toExcessAmt;
+	}
+
+	public void setToExcessAmt(BigDecimal toExcessAmt) {
+		this.toExcessAmt = toExcessAmt;
+	}
+
+	public BigDecimal getToEmiAdvance() {
+		return toEmiAdvance;
+	}
+
+	public void setToEmiAdvance(BigDecimal toEmiAdvance) {
+		this.toEmiAdvance = toEmiAdvance;
 	}
 
 }

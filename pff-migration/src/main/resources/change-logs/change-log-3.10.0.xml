@@ -1041,6 +1041,13 @@
 			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);	
  </sql>
 	</changeSet>
+
+	<changeSet id="49" author="Siva">
+		<sql>
+			Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('REPAY',0,'ae_toExcessAmt','To Excess Amount','1',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('REPAY',0,'ae_toEmiAdvance','To EMI Advance Amount','1',1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+ 		</sql>
+	</changeSet>
 	
 	<changeSet id="49" author="chaitanya.ch">
 		<createView viewName="POSTINGS_VIEW" replaceIfExists="true">

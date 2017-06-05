@@ -54,10 +54,13 @@ import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.exception.PFFInterfaceException;
 import com.pennanttech.pff.core.TableType;
 
@@ -80,6 +83,7 @@ public class RepaymentProcessUtil {
 	private FinInsurancesDAO			finInsurancesDAO;
 	private LimitManagement				limitManagement;
 	private ReceiptAllocationDetailDAO	allocationDetailDAO;	
+	private PostingsPreparationUtil		postingsPreparationUtil;
 
 	public RepaymentProcessUtil() {
 		super();
@@ -384,6 +388,45 @@ public class RepaymentProcessUtil {
 					// Update Excess amount (Adding amount and balance updation)
 					if(StringUtils.equals(repayHeader.getFinEvent(), RepayConstants.EXCESSADJUSTTO_EXCESS) ||
 							StringUtils.equals(repayHeader.getFinEvent(), RepayConstants.EXCESSADJUSTTO_EMIINADV)){
+						
+						// Accounting Postings Process Execution
+						AEEvent aeEvent = new AEEvent();
+						AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+						if(amountCodes == null){
+							amountCodes = new AEAmountCodes();
+						}
+						
+						aeEvent.setCustID(financeMain.getCustID());
+						aeEvent.setFinReference(finReference);
+						aeEvent.setFinType(financeMain.getFinType());
+						aeEvent.setPromotion(financeMain.getPromotionCode());
+						aeEvent.setBranch(financeMain.getFinBranch());
+						aeEvent.setCcy(financeMain.getFinCcy());
+						aeEvent.setPostingUserBranch(receiptHeader.getPostBranch());
+						aeEvent.setLinkedTranId(0);
+						aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_REPAY);
+						
+						amountCodes.setFinType(financeMain.getFinType());
+						amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
+						amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
+						amountCodes.setToExcessAmt(BigDecimal.ZERO);
+						amountCodes.setToEmiAdvance(BigDecimal.ZERO);
+						if(StringUtils.equals(repayHeader.getFinEvent(), RepayConstants.EXCESSADJUSTTO_EXCESS)){
+							amountCodes.setToExcessAmt(repayHeader.getRepayAmount());
+						}else {
+							amountCodes.setToEmiAdvance(repayHeader.getRepayAmount());
+						}
+						
+						if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
+							aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getPromotionCode(), AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_PROMOTION));
+						} else {
+							aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getFinType(), AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_FINTYPE));
+						}
+
+						aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+
+						// Accounting Entry Execution
+						getPostingsPreparationUtil().postAccounting(aeEvent);
 						
 						if (receiptDetail.getPayAgainstID() != 0 && receiptDetail.getPayAgainstID() != Long.MIN_VALUE) {
 							getFinExcessAmountDAO().updateExcessBal(receiptDetail.getPayAgainstID(),
@@ -1290,6 +1333,14 @@ public class RepaymentProcessUtil {
 	}
 	public void setAllocationDetailDAO(ReceiptAllocationDetailDAO allocationDetailDAO) {
 		this.allocationDetailDAO = allocationDetailDAO;
+	}
+
+	public PostingsPreparationUtil getPostingsPreparationUtil() {
+		return postingsPreparationUtil;
+	}
+
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 
 }
