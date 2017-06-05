@@ -53,8 +53,10 @@ import org.apache.log4j.Logger;
 import com.pennant.backend.dao.smtmasters.PFSParameterDAO;
 import com.pennant.backend.model.GlobalVariable;
 import com.pennant.backend.model.smtmasters.PFSParameter;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pff.core.Literal;
 
 /**
  * A suite of utilities surrounding the use of the system parameters that contain information about the environment for
@@ -177,6 +179,7 @@ public class SysParamUtil {
 		parmDetails = null;
 		getParmList();
 		dbQueryConstants();
+		initializeConstants();
 	}
 
 
@@ -212,10 +215,11 @@ public class SysParamUtil {
 	}
 	
 	public static void updateParamDetails(String code, String value) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		setParmDetails(code, value);
 		getPFSParameterDAO().update(code, value, "");
-		logger.debug("Leaving");
+		initializeConstants();
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -277,6 +281,29 @@ public class SysParamUtil {
 		}
 	}
 	
+	private static void initializeConstants() {
+		logger.debug("Initilizing conatants...");
+
+		if (getValueAsString("CBIL_REPORT_PATH") != null) {
+			PennantConstants.CBIL_REPORT_PATH = getValueAsString("CBIL_REPORT_PATH");
+		}
+
+		if (getValueAsString("CBIL_REPORT_MEMBER_ID") != null) {
+			PennantConstants.CBIL_REPORT_MEMBER_ID = getValueAsString("CBIL_REPORT_MEMBER_ID");
+		}
+
+		if (getValueAsString("ADDRESS_TYPE_PERMANENT") != null) {
+			PennantConstants.ADDRESS_TYPE_PERMANENT = getValueAsString("ADDRESS_TYPE_PERMANENT");
+		}
+
+		if (getValueAsString("ADDRESS_TYPE_RESIDENCE") != null) {
+			PennantConstants.ADDRESS_TYPE_RESIDENCE = getValueAsString("ADDRESS_TYPE_RESIDENCE");
+		}
+
+		if (getValueAsString("ADDRESS_TYPE_OFFICE") != null) {
+			PennantConstants.ADDRESS_TYPE_OFFICE = getValueAsString("ADDRESS_TYPE_OFFICE");
+		}
+	}
 
 	private static PFSParameterDAO getPFSParameterDAO() {
 		return pFSParameterDAO;
