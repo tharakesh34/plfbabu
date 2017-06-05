@@ -35,6 +35,7 @@ public class MandateResponseService extends BajajService implements MandateRespo
 
 		long approved = 0;
 		long rejected = 0;
+		long notMatched = 0;
 
 		sql = new StringBuilder();
 		sql.append(" SELECT MANDATEID, FINREFERENCE, CUSTCIF,  MICR_CODE MICR, ACCT_NUMBER AccNumber, case when OPENFLAG = 'Y' THEN 'New Open ECS' ELSE 'No Open ECS' END lovValue, MANDATE_TYPE, MANDATE_REG_NO mandateRef, STATUS, REMARKS reason");
@@ -52,6 +53,8 @@ public class MandateResponseService extends BajajService implements MandateRespo
 		}
 		try {
 			for (Mandate respMandate : mandates) {
+				boolean matched = true;
+				boolean reject = false;
 				Mandate mandate = getMandateById(respMandate.getMandateID());
 				StringBuilder remarks = new StringBuilder();
 
@@ -68,16 +71,25 @@ public class MandateResponseService extends BajajService implements MandateRespo
 					if (remarks.length() > 0) {
 						respMandate.setReason(remarks.toString() + " not matched with request");
 						respMandate.setStatus("Y");
+						matched = false;
 					}
+					
+					if (matched) {
+						updateMandates(respMandate);
+						updateMandateRequest(respMandate, respBatchId);
 
-					updateMandates(respMandate);
-					updateMandateRequest(respMandate, respBatchId);
-
-					if ("Y".equals(respMandate.getStatus())) {
-						rejected++;
+						if ("Y".equals(respMandate.getStatus())) {
+							rejected++;
+							reject = true;
+						} else {
+							approved++;
+						}
+					}  else {
+						notMatched++;
+					}
+					
+					if (!matched || reject) {
 						logMandate(respBatchId, respMandate);
-					} else {
-						approved++;
 					}
 				}
 
@@ -85,11 +97,11 @@ public class MandateResponseService extends BajajService implements MandateRespo
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		} finally {
-			updateRemarks(respBatchId, approved, rejected);
+			updateRemarks(respBatchId, approved, rejected, notMatched);
 		}
 	}
 
-	private void updateRemarks(long respBatchId, long approved, long rejected) {
+	private void updateRemarks(long respBatchId, long approved, long rejected, long notMatched) {
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 	
 		StringBuilder remarks = new StringBuilder(BajajInterfaceConstants.MANDATE_INMPORT_STATUS.getRemarks());
@@ -97,6 +109,8 @@ public class MandateResponseService extends BajajService implements MandateRespo
 		remarks.append(approved);
 		remarks.append(", Rejected: ");
 		remarks.append(rejected);
+		remarks.append(", Not Matched: ");
+		remarks.append(notMatched);
 		
 		BajajInterfaceConstants.MANDATE_INMPORT_STATUS.setRemarks(remarks.toString());
 
