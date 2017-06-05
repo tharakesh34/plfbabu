@@ -860,8 +860,10 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
 				}
+			}else if(StringUtils.equals(aCustomerAddres.getRecordType(), PennantConstants.RCD_UPD)){
+				  aCustomerAddres.setNewRecord(true);	
 			}
-
+		
 			try {
 				if(isNewCustomer()){
 					tranType=PennantConstants.TRAN_DEL;
@@ -1152,7 +1154,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 					
 					
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
-						if(aCustomerAddres.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
+						if(aCustomerAddres.getRecordType().equals(PennantConstants.RCD_UPD)){
 							aCustomerAddres.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 							recordAdded=true;
 							customerAddress.add(aCustomerAddres);
