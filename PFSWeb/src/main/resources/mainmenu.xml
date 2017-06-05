@@ -209,7 +209,7 @@
 		<menuItem id="menu_Item_RefundRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/RefundList.zul"   rightName="menuItem_RulesFactory_RefundRules"/>
 		<menuItem id="menu_Item_ScoringGroup" zulNavigation="/WEB-INF/pages/RulesFactory/ScoringGroup/ScoringGroupList.zul"  rightName="menuItem_RulesFactory_Notifications"/>
 		<menuItem id="menu_Item_ScoringMetrics" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/ScoringRuleList.zul"   rightName="menuItem_RulesFactory_Notifications"/>		
-		<menuItem id="menu_Item_ScoringType" zulNavigation="/WEB-INF/pages/BMTMasters/ScoringType/ScoringTypeList.zul"  rightName="menuItem_RulesFactory_Notifications"/>
+		<!-- <menuItem id="menu_Item_ScoringType" zulNavigation="/WEB-INF/pages/BMTMasters/ScoringType/ScoringTypeList.zul"  rightName="menuItem_RulesFactory_Notifications"/> -->
 		<menuItem id="menu_Item_Query" zulNavigation="/WEB-INF/pages/ApplicationMaster/Query/QueryList.zul" rightName="menuItem_RulesFactory_Query"/>
 		<menuItem id="menu_Item_SubHeadRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/SubHeadRuleList.zul"   rightName="menuItem_RulesFactory_SubHeadRules"/>
 	</menu>
