@@ -33,6 +33,9 @@
  */
 package com.pennant.backend.util;
 
+import java.io.File;
+
+import com.pennant.app.util.PathUtil;
 import com.pennant.backend.model.ExecutionStatus;
 
 /**
@@ -670,4 +673,8 @@ public class PennantConstants {
 	public static String				ADDRESS_TYPE_PERMANENT				= "PER";
 	public static String				ADDRESS_TYPE_RESIDENCE				= "CURRES";
 	public static String				ADDRESS_TYPE_OFFICE					= "OFFICE";
+
+	//Constants for CIBIL Report
+	public static String CBIL_REPORT_PATH = PathUtil.APP_ROOT_PATH + File.separator + "CIBIL";
+	public static String CBIL_REPORT_MEMBER_ID = "NB68030221";
 }
