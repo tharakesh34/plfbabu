@@ -674,6 +674,11 @@ public class PennantConstants {
 	public static String				ADDRESS_TYPE_RESIDENCE				= "CURRES";
 	public static String				ADDRESS_TYPE_OFFICE					= "OFFICE";
 
+	// Phone Types mapping
+	public static String				PHONE_TYPE_MOBILE					= "MOBILE";
+	public static String				PHONE_TYPE_HOME						= "HOME";
+	public static String				PHONE_TYPE_OFFICE					= "OFFICE";
+
 	//Constants for CIBIL Report
 	public static String CBIL_REPORT_PATH = PathUtil.APP_ROOT_PATH + File.separator + "CIBIL";
 	public static String CBIL_REPORT_MEMBER_ID = "NB68030221";

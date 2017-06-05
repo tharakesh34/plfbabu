@@ -303,6 +303,18 @@ public class SysParamUtil {
 		if (getValueAsString("ADDRESS_TYPE_OFFICE") != null) {
 			PennantConstants.ADDRESS_TYPE_OFFICE = getValueAsString("ADDRESS_TYPE_OFFICE");
 		}
+		
+		if (getValueAsString("PHONE_TYPE_MOBILE") != null) {
+			PennantConstants.PHONE_TYPE_MOBILE = getValueAsString("PHONE_TYPE_MOBILE");
+		}
+		
+		if (getValueAsString("PHONE_TYPE_HOME") != null) {
+			PennantConstants.PHONE_TYPE_HOME = getValueAsString("PHONE_TYPE_HOME");
+		}
+		
+		if (getValueAsString("PHONE_TYPE_OFFICE") != null) {
+			PennantConstants.PHONE_TYPE_OFFICE = getValueAsString("PHONE_TYPE_OFFICE");
+		}
 	}
 
 	private static PFSParameterDAO getPFSParameterDAO() {
