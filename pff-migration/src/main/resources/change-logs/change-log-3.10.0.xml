@@ -1060,8 +1060,7 @@
 	</changeSet>
 	<changeSet id="50" author="jayant.k">
 	    <createView viewName="FILE_DOWNLOAD_VIEW" replaceIfExists="true">
-	   	SELECT DC.NAME, DC.UPLOADPATH FILELOCATION, DS.FILENAME,  DS.STATUS FROM  DATA_ENGINE_STATUS DS
-		INNER JOIN DATA_ENGINE_CONFIG DC ON DC.NAME = DS.NAME WHere DC.NAME = 'MANDATES_EXPORT'
+	   select cust.CustID from Customers cust left join FinanceMain finmain  on finmain.CustId = cust.CustId;
 	    </createView>
 	</changeSet>
 		<changeSet id="51" author="jayant.k">
