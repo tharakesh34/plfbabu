@@ -1072,4 +1072,10 @@
 	   		update secrights set page='RuleDialog' where rightname='RuleDialog_sqlRule';
 	   </sql>
 	</changeSet>
+	
+	<changeSet id="53" author="Manoj.P">
+		<sql>
+			 update DATA_ENGINE_CONFIG set FILEEXTENSION = '.CSV' where name = 'DISB_HDFC_EXPORT';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
