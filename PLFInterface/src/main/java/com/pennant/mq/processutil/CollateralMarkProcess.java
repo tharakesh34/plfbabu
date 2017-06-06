@@ -39,7 +39,7 @@ public class CollateralMarkProcess extends MQProcess {
 		logger.debug("Entering");
 
 		if (collateralMarking == null) {
-			throw new InterfaceException("PTI3001", new String[]{"CollateralMark"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", "CollateralMark Cannot Be Blank");
 		}
 
 		//set MQ Message configuration details 

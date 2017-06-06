@@ -37,7 +37,7 @@ public class CreateAccountProcess extends MQProcess {
 		logger.debug("Entering");
 
 		if (accountdetail == null) {
-			throw new InterfaceException("PTI3001", new String[]{"Customer"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", "Customer Cannot Be Blank");
 		}
 
 		//set MQ Message configuration details 

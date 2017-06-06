@@ -36,7 +36,7 @@ public class CustomerDedupProcess extends MQProcess  {
 		logger.debug("Entering");
 
 		if (dedupCustomer == null) {
-			throw new InterfaceException("PTI3001", new String[]{"Customer"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", "Customer Cannot Be Blank");
 		}
 
 		CUST_CTG_CODE = dedupCustomer.getCustCtgCode();

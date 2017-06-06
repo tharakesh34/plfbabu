@@ -29,7 +29,7 @@ public class AccountPostingDetailProcess extends MQProcess {
 		logger.debug("Entering");
 
 		if (accPostingReq == null) {
-			throw new InterfaceException("PTI3001", new String[]{"AccountPostingRequest"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", "AccountPostingRequest Cannot Be Blank");
 		}
 
 		//set MQ Message configuration details 

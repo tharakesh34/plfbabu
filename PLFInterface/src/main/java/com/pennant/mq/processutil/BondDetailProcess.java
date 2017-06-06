@@ -46,7 +46,7 @@ public class BondDetailProcess extends MQProcess {
 		logger.debug("Entering");
 
 		if (nationalBondDetail == null) {
-			throw new InterfaceException("PTI3001", new String[]{"NationalBondDetail"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", "NationalBondDetail Cannot Be Blank");
 		}
 
 		//set MQ Message configuration details

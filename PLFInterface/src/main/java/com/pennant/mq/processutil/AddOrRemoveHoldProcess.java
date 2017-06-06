@@ -37,7 +37,7 @@ public class AddOrRemoveHoldProcess extends MQProcess {
 		logger.debug("Entering");
 
 		if (addHold == null) {
-			throw new InterfaceException("PTI3001", new String[]{"AddHold"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", "AddHold Cannot Be Blank");
 		}
 
 		//set MQ Message configuration details 

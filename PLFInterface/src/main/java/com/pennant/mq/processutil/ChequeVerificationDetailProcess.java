@@ -43,7 +43,7 @@ public class ChequeVerificationDetailProcess extends MQProcess {
 		logger.debug("Entering");
 
 		if (chequeVerification == null) {
-			throw new InterfaceException("PTI3001", new String[]{"Cheque Verification"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", "Cheque Verification Cannot Be Blank");
 		}
 
 		//set MQ Message configuration details
