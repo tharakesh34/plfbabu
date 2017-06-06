@@ -37,7 +37,7 @@ public class DDAUpdateProcess extends MQProcess {
 		logger.debug("Entering");
 
 		if (ddaUpdateReq == null) {
-			throw new InterfaceException("PTI3001", new String[]{"UAEDDSRequest"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", "UAEDDSRequest Cannot Be Blank");
 		}
 
 		//set MQ Message configuration details

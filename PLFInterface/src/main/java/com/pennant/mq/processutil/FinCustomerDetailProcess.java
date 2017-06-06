@@ -30,7 +30,7 @@ public class FinCustomerDetailProcess extends MQProcess {
 		logger.debug("Entering");
 
 		if (financeCustomerDetails == null) {
-			throw new InterfaceException("PTI3001", new String[]{"financeCustomerDetails"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", "financeCustomerDetails Cannot Be Blank");
 		}
 
 		//set MQ Message configuration details

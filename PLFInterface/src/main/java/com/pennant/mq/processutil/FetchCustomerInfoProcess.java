@@ -56,7 +56,7 @@ public class FetchCustomerInfoProcess extends MQProcess {
 		logger.debug("Entering");
 
 		if (custCIF == null || "".equals(custCIF)) {
-			throw new InterfaceException("PTI3001", new String[] { "Customer" }, "&1 Cannot Be Blank");
+			throw new InterfaceException("PTI3001", "Customer Cannot Be Blank");
 		}
 
 		// Set MQ Message configuration details

@@ -237,7 +237,7 @@ public class PFFXmlUtil {
 		BigDecimal tagValue=BigDecimal.ZERO;
 		if (requestElement == null) {
 			if(isMandatory){
-				throw new InterfaceException("PTI2002",parmString," &1 is Mandatory in the request");
+				throw new InterfaceException("PTI2002", parmString + " is Mandatory in the request");
 			}else{
 				return tagValue;
 			}
@@ -246,12 +246,12 @@ public class PFFXmlUtil {
 				tagValue = new BigDecimal(requestElement.getText());
 			} catch (Exception e) {
 				logger.debug("Exception: ", e);
-				throw new InterfaceException("PTI2003",parmString,"Unable to parse &1 in the request");
+				throw new InterfaceException("PTI2003", "Unable to parse " + parmString + " in the request");
 			}
 		}
 
 		if(isNotZero && tagValue.doubleValue()==0){
-			throw new InterfaceException("PTI2004",parmString," should Not be Zero");
+			throw new InterfaceException("PTI2004", parmString + " should Not be Zero");
 		}
 
 		return tagValue;
@@ -274,7 +274,7 @@ public class PFFXmlUtil {
 		OMElement element = PFFXmlUtil.getOMElement(nodePath+elementTagName, requestElement);
 		if(element == null) {
 			if(isMandatory){
-				throw new InterfaceException("PTI2002",parmString," &1 is Mandatory in the request");
+				throw new InterfaceException("PTI2002", parmString + " is Mandatory in the request");
 			}else{
 				return tagValue;
 			}
@@ -283,7 +283,7 @@ public class PFFXmlUtil {
 				tagValue = PFFXmlUtil.formatDate(element.getText());
 			} catch (Exception e) {
 				logger.debug("Exception: ", e);
-				throw new InterfaceException("PTI2003",parmString,"Unable to parse &1 in the request");
+				throw new InterfaceException("PTI2003", "Unable to parse " + parmString + " in the request");
 			}
 		}
 		return tagValue;
@@ -341,7 +341,7 @@ public class PFFXmlUtil {
 			return  formatter.parse(dateInString);
 		} catch (Exception e) {
 			logger.debug("Exception: ", e);
-			throw new InterfaceException("PTI2004",new String[]{dateInString},"Unable to parse &1 Field");
+			throw new InterfaceException("PTI2004", "Unable to parse " + dateInString + " Field");
 		}
 	}
 

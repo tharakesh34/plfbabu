@@ -36,7 +36,7 @@ public class InterfacePropertiesUtil extends PropertyPlaceholderConfigurer {
 
     public static String getProperty(String name) throws InterfaceException {
 		if (propertiesMap.get(name) == null) {
-    		throw new InterfaceException("PTI2001", new String[]{name},"Configuration Not Found for &1");
+			throw new InterfaceException("PTI2001", "Configuration Not Found for " + name);
     	}
     	
         return propertiesMap.get(name);
@@ -44,7 +44,7 @@ public class InterfacePropertiesUtil extends PropertyPlaceholderConfigurer {
 
     public static int getIntProperty(String name) throws InterfaceException {
 		if (propertiesMap.get(name) == null) {
-    		throw new InterfaceException("PTI2001", new String[]{name},"Configuration Not Found for &1");
+			throw new InterfaceException("PTI2001", "Configuration Not Found for " + name);
     	}
     	
         return Integer.parseInt(propertiesMap.get(name));

@@ -30,7 +30,7 @@ public class FetchDepositsProcess extends MQProcess {
 		logger.debug("Entering");
 
 		if (fetchDeposit == null) {
-			throw new InterfaceException("PTI3001", new String[]{"FetchDeposit"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", "FetchDeposit Cannot Be Blank");
 		}
 
 		//set MQ Message configuration details

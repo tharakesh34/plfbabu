@@ -40,7 +40,7 @@ public class FetchAccountDetailProcess extends MQProcess {
 		logger.debug("Entering");
 		
 		if (accountDetail == null || StringUtils.isBlank(accountDetail.getAccountNumber())) {
-			throw new InterfaceException("PTI3001", new String[]{"Account Number"}," Cannot be Blank");	
+			throw new InterfaceException("PTI3001", "Account Number Cannot be Blank");
 		}
 
 		//set MQ Message configuration details

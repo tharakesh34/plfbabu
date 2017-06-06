@@ -39,7 +39,7 @@ public class HandlingInstructionProcess extends MQProcess {
 		logger.debug("Entering");
 
 		if (handlingInstruction == null) {
-			throw new InterfaceException("PTI3001", new String[]{"HandlingInstruction"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", "HandlingInstruction Cannot Be Blank");
 		}
 
 		//set MQ Message configuration details

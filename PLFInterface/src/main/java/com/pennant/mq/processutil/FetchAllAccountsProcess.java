@@ -41,7 +41,7 @@ public class FetchAllAccountsProcess extends MQProcess {
 		logger.debug("Entering");
 		
 		if (accountDetail == null || StringUtils.isBlank(accountDetail.getCustCIF())) {
-			throw new InterfaceException("PTI3001", new String[]{"Customer Number"}," Cannot be Blank");	
+			throw new InterfaceException("PTI3001", "Customer Number Cannot be Blank");
 		}
 
 		//set MQ Message configuration details

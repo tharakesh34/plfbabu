@@ -35,7 +35,7 @@ public class DDACancelProcess extends MQProcess {
 		logger.debug("Entering");
 
 		if (ddaCancelReq == null) {
-			throw new InterfaceException("PTI3001", new String[]{"DDACancellation"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", "DDACancellation Cannot Be Blank");
 		}
 
 		//set MQ Message configuration details

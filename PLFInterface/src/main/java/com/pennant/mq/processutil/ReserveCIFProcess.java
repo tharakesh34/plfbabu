@@ -36,7 +36,7 @@ public class ReserveCIFProcess extends MQProcess {
 		logger.debug("Entering");
 
 		if (customer == null) {
-			throw new InterfaceException("PTI3001", new String[]{"Customer"}," Cannot be Empty");	
+			throw new InterfaceException("PTI3001", "Customer Cannot be Empty");
 		}
 
 		// Set MQ Message configuration details

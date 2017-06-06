@@ -44,7 +44,7 @@ public class CustomerLimitPositionProcess extends MQProcess {
 		logger.debug("Entering");
 
 		if (limitPositionReq == null) {
-			throw new InterfaceException("PTI3001", new String[]{"Customer Limit Summary"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", "Customer Limit Summary Cannot Be Blank");
 		}
 
 		//set MQ Message configuration details
