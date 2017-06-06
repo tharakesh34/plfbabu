@@ -465,5 +465,9 @@ WHERE     NOT EXISTS (SELECT 1 FROM EodConfig_TEMP WHERE EodConfigId = T1.EodCon
 alter table finpftdetails drop constraint FK_FINPFTDETAIL_BMTCUSTSTSCODE;
 </sql>
 </changeSet>
-
+<changeSet id="56" author="satish">
+<sql>
+update ERRORDETAILS set ERRORSEVERITY='E' where ERRORCODE='60311';
+</sql>
+</changeSet>
 </databaseChangeLog>
