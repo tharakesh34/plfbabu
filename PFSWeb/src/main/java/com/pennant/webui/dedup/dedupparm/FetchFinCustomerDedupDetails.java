@@ -96,7 +96,6 @@ public class FetchFinCustomerDedupDetails {
 			 */
 			if (userAction == -1) {
 				aFinanceDetail.getFinScheduleData().getFinanceMain().setSkipDedup(true);
-				//throw new PFFInterfaceException("41001",Labels.getLabel("label_Message_CustomerOverrideAlert_Baj"));
 			} else if (userAction == 1) {
 				aFinanceDetail.setCustomerDedupList(customerDedupList);
 				aFinanceDetail.getFinScheduleData().getFinanceMain().setSkipDedup(true);

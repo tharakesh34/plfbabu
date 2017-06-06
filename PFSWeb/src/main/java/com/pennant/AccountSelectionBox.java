@@ -354,46 +354,7 @@ public class AccountSelectionBox extends Hbox {
 	 * @throws WrongValueException 
 	 */
 	public void validateValue() throws InterruptedException {
-		/*logger.trace(Literal.ENTERING);
-
-		String accountNo = textbox.getValue().replace("-", "");
-
-		if (StringUtils.isEmpty(accountNo)) {
-			return;
-		}
-
-		boolean valid = true;
-		selectedAccount = null;
-
-		try {
-			Pattern pattern = Pattern
-					.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACCOUNT));
-			Matcher matcher = pattern.matcher(accountNo);
-			valid = matcher.matches();
-		} catch (Exception e) {
-			logger.debug(e);
-		}
-
-		if (!valid) {
-			throw new WrongValueException(this.textbox, Labels.getLabel(PennantRegularExpressions.REGEX_ACCOUNT,
-					new String[] { Labels.getLabel("label_FinTypeAccountDialog_AccReceivableAccNumber.value") }));
-		} else {
-			IAccounts accountDetail = null;
-			try {
-				accountDetail = getAccountInterfaceService().fetchAccountAvailableBal(accountNo);
-			} catch (PFFInterfaceException e) {
-				logger.error("Exception: ", e);
-				this.textbox.setFocus(true);
-				this.decimalbox.setValue(BigDecimal.ZERO);
-				Events.postEvent("onFulfill", this, null);
-				throw new WrongValueException(this.button,
-						e.getErrorMessage() + " Please select/enter different account");
-			}
-			this.selectedAccount = accountDetail;
-			doWrite();
-		}
-
-		logger.trace(Literal.LEAVING);*/
+		//
 	}
 	
 	/**

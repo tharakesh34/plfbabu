@@ -95,7 +95,6 @@ public class FetchAccountDetailProcess extends MQProcess {
 				header.setReturnText("Unable to fetch Account details");
 			}
 			accountDetail.setErrorMessage(header.getReturnText());
-			//throw new PFFInterfaceException(header.getReturnCode(), header.getReturnText());
 		}
 		
 		accountDetail.setErrorCode(header.getReturnCode());
