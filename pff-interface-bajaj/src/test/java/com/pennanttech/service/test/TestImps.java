@@ -12,7 +12,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.pennanttech.bajaj.process.DisbursemenIMPSRequestProcess;
-import com.pennanttech.pff.core.App;
 
 public class TestImps {
 
