@@ -85,6 +85,13 @@
 											<textbox id="remarks" multiline="true" rows="3" />
 										</hbox>
 									</row>
+									<row>
+										<label value="${c:l('label_FinAdvancePaymentsDialog_URN.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="uRN" width="155px" />
+										</hbox>
+									</row>
 									<row visible="false">
 										<label id="label_custContribution" value="${c:l('label_FinAdvancePaymentsDialog_CustContribution.value')}" />
 										<hbox id="hbox_custContribution">
