@@ -314,7 +314,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 		if (StringUtils.isEmpty(vasRecording.getRecordType())) {
 			setWorkflowDetails(vasRecording.getProductCode());
 			if (workFlowDetails == null) {
-				MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 				return;
 			}
 			if (StringUtils.isEmpty(userRole)) {
@@ -338,7 +338,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 
 			ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",
 					errParm, valueParm), getUserWorkspace().getUserLanguage());
-			MessageUtil.showErrorMessage(errorDetails.getError());
+			MessageUtil.showError(errorDetails.getError());
 
 			Events.sendEvent(Events.ON_CLICK, this.btnRefresh, null);
 			logger.debug("Leaving");
