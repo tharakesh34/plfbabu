@@ -18,15 +18,8 @@ package com.pennanttech.pff.core;
 public class InterfaceException extends AppException {
 	private static final long	serialVersionUID	= 7376419132045778376L;
 
-	private String				errorCode;
-	private String				errorMessage;
-
-	/**
-	 * Constructs an {@code InterfaceException} with the default detail message.
-	 */
-	public InterfaceException() {
-		super();
-	}
+	private final String		errorCode;
+	private final String		errorMessage;
 
 	/**
 	 * Constructs an {@code InterfaceException} with the specified code and detail message.
@@ -49,10 +42,5 @@ public class InterfaceException extends AppException {
 
 	public String getErrorMessage() {
 		return errorMessage;
-	}
-
-	public InterfaceException(String errorCode, String[] parameters, String message) {
-		super(message);
-		this.errorCode = errorCode;
 	}
 }
