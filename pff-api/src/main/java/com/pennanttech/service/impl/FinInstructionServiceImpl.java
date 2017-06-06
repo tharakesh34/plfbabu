@@ -36,7 +36,6 @@ import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.validation.AddDisbursementGroup;
 import com.pennant.validation.AddRateChangeGroup;
 import com.pennant.validation.AddTermsGroup;
@@ -219,7 +218,6 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 * Method for perform deferments operation
 	 * 
 	 * @param loanServicing
-	 * @throws PFFInterfaceException
 	 * @throws JaxenException
 	 */
 	@Override
@@ -283,7 +281,6 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 * Method for perform addTerms operation
 	 * 
 	 * @param loanServicing
-	 * @throws PFFInterfaceException
 	 * @throws JaxenException
 	 */
 	@Override
@@ -349,7 +346,6 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 * Method for perform removeTerms operation
 	 * 
 	 * @param loanServicing
-	 * @throws PFFInterfaceException
 	 * @throws JaxenException
 	 */
 	@Override
@@ -752,7 +748,6 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 * Method for perform updateLoanBasicDetails
 	 * 
 	 * @param finServiceInstruction
-	 * @throws PFFInterfaceException
 	 * @throws JaxenException
 	 */
 	@Override
@@ -791,7 +786,6 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 * Method for perform updateLoanPenaltyDetails
 	 * 
 	 * @param finServiceInstruction
-	 * @throws PFFInterfaceException
 	 * @throws JaxenException
 	 */
 	@Override
