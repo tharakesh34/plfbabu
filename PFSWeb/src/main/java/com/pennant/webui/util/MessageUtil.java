@@ -61,6 +61,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.AppException;
 import com.pennanttech.pff.core.ErrorCode;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.Literal;
 
 /**
@@ -120,11 +121,26 @@ public final class MessageUtil {
 	 *            The exception.
 	 */
 	public static void showError(Exception e) {
-		if (e instanceof AppException) {
+		if (e instanceof InterfaceException) {
+			show((InterfaceException) e);
+		} else if (e instanceof AppException) {
 			show((AppException) e);
 		} else {
 			show(e);
 		}
+	}
+
+	/**
+	 * Shows an error message box for interface exception and logs the message and cause.
+	 * 
+	 * @param e
+	 *            The exception.
+	 */
+	private static void show(InterfaceException e) {
+		logger.warn(Literal.EXCEPTION, e);
+
+		MultiLineMessageBox.doSetTemplate();
+		MultiLineMessageBox.show(e.getMessage().concat(SUFFIX), App.NAME, OK, ERROR);
 	}
 
 	/**
