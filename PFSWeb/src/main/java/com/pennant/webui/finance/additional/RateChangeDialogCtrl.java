@@ -1044,7 +1044,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if(isDataChanged()){
 				doSave();
 			}else{
-				MessageUtil.showErrorMessage("No Data has been changed.");
+				MessageUtil.showError("No Data has been changed.");
 			}
 		}else{
 			doSave();
@@ -1106,7 +1106,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					if(rateDetail.getErrorDetails() == null){
 						this.rate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(),2));
 					} else {
-							MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
+						MessageUtil.showError(ErrorUtil
+								.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage())
+								.getError());
 						this.rate.setBaseValue("");
 					}
 				}
@@ -1125,7 +1127,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					if(rateDetail.getErrorDetails() == null){
 						this.rate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(),2));
 					} else {
-						MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
+						MessageUtil.showError(ErrorUtil
+								.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage())
+								.getError());
 						this.rate.setSpecialValue("");
 					}
 				}
@@ -1321,7 +1325,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if(rateDetail.getErrorDetails() == null){
 			this.rate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(),2));
 		} else {
-			MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
+			MessageUtil.showError(ErrorUtil
+					.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
 			this.rate.setSpecialValue("");
 		}
 	}

@@ -601,21 +601,21 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			
 			//Check max limit
 			if (getFinScheduleData().getFinanceMain().getAvailedDefRpyChange()+adjTerms > getFinScheduleData().getFinanceMain().getDefferments()) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_PostponementDialog_MaxPostponement.value", 
+				MessageUtil.showError(Labels.getLabel("label_PostponementDialog_MaxPostponement.value",
 						new String[]{String.valueOf(getFinScheduleData().getFinanceMain().getDefferments())}));
 				return;
 			}
 		}else if(StringUtils.equals(FinanceConstants.FINSER_EVENT_UNPLANEMIH, moduleDefiner)){
 			//Check max limit
 			if (getFinScheduleData().getFinanceMain().getAvailedUnPlanEmi()+adjTerms > getFinScheduleData().getFinanceMain().getMaxUnplannedEmi()) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_PostponementDialog_MaxUnPlanEMIH.value", 
+				MessageUtil.showError(Labels.getLabel("label_PostponementDialog_MaxUnPlanEMIH.value",
 						new String[]{String.valueOf(getFinScheduleData().getFinanceMain().getMaxUnplannedEmi())}));
 				return;
 			}
 		}else if(StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, moduleDefiner)){
 			//Check max limit
 			if (getFinScheduleData().getFinanceMain().getAvailedReAgeH()+adjTerms > getFinScheduleData().getFinanceMain().getMaxReAgeHolidays()) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_PostponementDialog_MaxReAgeH.value", 
+				MessageUtil.showError(Labels.getLabel("label_PostponementDialog_MaxReAgeH.value",
 						new String[]{String.valueOf(getFinScheduleData().getFinanceMain().getMaxReAgeHolidays())}));
 				return;
 			}
@@ -737,7 +737,8 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 
 			if (curretnDefCount == perYear) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_PostponementDialog_AllowedPerYear.value",new String[]{String.valueOf(perYear)}));
+				MessageUtil.showError(Labels.getLabel("label_PostponementDialog_AllowedPerYear.value",
+						new String[] { String.valueOf(perYear) }));
 				return false;
 			}
 		}

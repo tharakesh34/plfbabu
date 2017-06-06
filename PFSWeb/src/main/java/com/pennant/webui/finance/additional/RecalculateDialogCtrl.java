@@ -510,7 +510,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (isDataChanged()) {
 				doSave();
 			} else {
-				MessageUtil.showErrorMessage("No Data has been changed.");
+				MessageUtil.showError("No Data has been changed.");
 			}
 		} else {
 			doSave();

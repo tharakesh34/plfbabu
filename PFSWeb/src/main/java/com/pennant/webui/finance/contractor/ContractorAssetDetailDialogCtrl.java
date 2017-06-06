@@ -797,7 +797,8 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 					for (FinanceDisbursement disbursement : list) {
 						if(disbursement.getContractorId() == aContractorAssetDetail.getContractorId() && 
 								!StringUtils.trimToEmpty(disbursement.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)){
-							MessageUtil.showErrorMessage("Not Allowed to Delete This Record. Disbursement Details Exist on this Contractor.");
+							MessageUtil.showError(
+									"Not Allowed to Delete This Record. Disbursement Details Exist on this Contractor.");
 							return;
 						}
 					}

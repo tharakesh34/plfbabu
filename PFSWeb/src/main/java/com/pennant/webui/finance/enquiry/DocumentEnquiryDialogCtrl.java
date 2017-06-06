@@ -235,7 +235,7 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				map.put("documentRef", detail);
 				Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
 		} else {
-			MessageUtil.showErrorMessage("Document Details not Found.");
+			MessageUtil.showError("Document Details not Found.");
 		}
 		logger.debug("Leaving" + event.toString());
 	}

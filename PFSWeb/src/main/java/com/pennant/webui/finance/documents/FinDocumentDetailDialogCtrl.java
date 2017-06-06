@@ -1126,7 +1126,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				docType = PennantConstants.DOC_TYPE_MSG;
 			} else {
 				isSupported = false;
-				MessageUtil.showErrorMessage(Labels.getLabel("UnSupported_Document"));
+				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
 			}
 			if (isSupported) {
 				String fileName = media.getName();
