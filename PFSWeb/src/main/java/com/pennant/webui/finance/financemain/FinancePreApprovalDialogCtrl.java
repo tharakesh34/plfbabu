@@ -216,8 +216,7 @@ public class FinancePreApprovalDialogCtrl extends FinanceMainBaseCtrl {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceReject.zul",
 					window_FinancePreApprovalDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

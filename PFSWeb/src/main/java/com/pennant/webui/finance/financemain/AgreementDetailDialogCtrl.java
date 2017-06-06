@@ -433,8 +433,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 					}
 				}
 			} catch (Exception e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e.getMessage());
+				MessageUtil.showError(e);
 			}
 		}else {
 
@@ -493,8 +492,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		try {
 			getDdaControllerService().validateDDARequest(detail);
 		}  catch (Exception e) {
-			logger.equals(e.getMessage());
-			MessageUtil.showErrorMessage(e.getMessage());
+			MessageUtil.showError(e);
 		}
 		
 	}

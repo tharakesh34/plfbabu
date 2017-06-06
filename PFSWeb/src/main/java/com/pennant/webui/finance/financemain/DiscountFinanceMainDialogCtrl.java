@@ -219,8 +219,7 @@ public class DiscountFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceReject.zul",
 					window_DiscountFinanceMainDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

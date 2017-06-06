@@ -1192,7 +1192,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			}
 		} catch (InterfaceException e) {
 			clearDepositDetails();
-			MessageUtil.showErrorMessage(e.getMessage());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -1257,7 +1257,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 						}
 						
 						// setting response status into status field
-						MessageUtil.showErrorMessage(chkStatus.toString());
+						MessageUtil.showError(chkStatus.toString());
 						return;
 					} else {
 						throw new InterfaceException(chequeVerifyResponse.getReturnCode(),
@@ -1268,7 +1268,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 				throw new InterfaceException("PTI3001",	Labels.getLabel("FAILED_CHEQUE_VERIFICATION"));
 			}
 		} catch (InterfaceException e) {
-			MessageUtil.showErrorMessage(e.getMessage());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());

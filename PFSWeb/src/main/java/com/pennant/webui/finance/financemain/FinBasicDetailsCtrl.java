@@ -166,7 +166,7 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 				MessageUtil.showErrorMessage(e);
 			}
 		}else{
-			MessageUtil.showErrorMessage(Labels.getLabel("listbox.emptyMessage"));
+			MessageUtil.showError(Labels.getLabel("listbox.emptyMessage"));
 		}
 		
 		logger.debug("Leaving ");

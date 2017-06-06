@@ -366,8 +366,7 @@ public class FeePaymentDetailDialogCtrl extends GFCBaseCtrl<FeePaymentDetail> {
 			this.window_FeePaymentDetailDialog.doModal();
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving") ;
 	}

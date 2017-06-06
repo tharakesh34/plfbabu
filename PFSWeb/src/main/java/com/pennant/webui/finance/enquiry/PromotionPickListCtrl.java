@@ -327,7 +327,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 		Rule rule = getRuleService().getApprovedRuleById(promotionElgRule,RuleConstants.MODULE_ELGRULE, RuleConstants.EVENT_ELGRULE);
 		
 		if(rule == null){
-			MessageUtil.showErrorMessage(Labels.getLabel("PromotionPick_ELGRULE_NotDefined"));
+			MessageUtil.showError(Labels.getLabel("PromotionPick_ELGRULE_NotDefined"));
 			return;
 		}
 		

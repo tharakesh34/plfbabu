@@ -265,8 +265,7 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -393,8 +392,7 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinCovenantTypeDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -408,7 +406,7 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		if (listitem != null && listitem.getAttribute("data") != null) {
 			final FinCovenantType aFinCovenantType = (FinCovenantType) listitem.getAttribute("data");
 			if (isDeleteRecord(aFinCovenantType.getRecordType())) {
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			}else{
 				aFinCovenantType.setNewRecord(false);
 
@@ -425,8 +423,7 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 				try {
 					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinCovenantTypeDialog.zul", null, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e.toString());
+					MessageUtil.showError(e);
 				}
 			}
 		}

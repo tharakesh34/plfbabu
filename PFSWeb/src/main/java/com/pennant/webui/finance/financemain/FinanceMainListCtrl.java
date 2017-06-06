@@ -471,7 +471,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 			ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",
 					errParm, valueParm), getUserWorkspace().getUserLanguage());
-			MessageUtil.showErrorMessage(errorDetails.getError());
+			MessageUtil.showError(errorDetails.getError());
 			logger.debug("Leaving " + event.toString());
 			return;
 		}
@@ -511,11 +511,11 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 						validateCustExistance(financeDetail);
 					}
 				} else {
-					MessageUtil.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+					MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					return;
 				}
 			} else {
-				MessageUtil.showErrorMessage(Labels.getLabel("RECORD_IN_REASSIGNMENT_QUEUE"));
+				MessageUtil.showError(Labels.getLabel("RECORD_IN_REASSIGNMENT_QUEUE"));
 				return;
 			}
 		} else {
@@ -547,8 +547,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 					if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_CORP)
 							|| StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_SME)
 							|| customer.isSalariedCustomer()) {
-						MessageUtil.showErrorMessage(Labels
-								.getLabel("label_FinanceMainDialog_Mandatory_Prospect.value"));
+						MessageUtil.showError(Labels.getLabel("label_FinanceMainDialog_Mandatory_Prospect.value"));
 						return;
 					}
 
@@ -715,8 +714,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/SelectFinanceTypeDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		fromEligibleScreen = false;
@@ -799,8 +797,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			Executions.createComponents(fileLocaation.toString(), this.window_FinanceMainList, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

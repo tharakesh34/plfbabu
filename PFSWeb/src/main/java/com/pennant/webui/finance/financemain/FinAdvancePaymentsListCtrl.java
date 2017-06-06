@@ -283,8 +283,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -368,7 +367,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 							parentTab.setSelected(true);
 						}
 						for (ErrorDetails errorDetails : valid) {
-							MessageUtil.showErrorMessage( errorDetails.getError());
+							MessageUtil.showError(errorDetails.getError());
 						}
 
 					}

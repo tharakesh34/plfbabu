@@ -322,7 +322,7 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			if (StringUtils.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN,StringUtils.trimToEmpty(recording.getRecordType()))
 					|| StringUtils.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL,StringUtils.trimToEmpty(recording.getRecordType()))) {
 
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 
 			} else {
 				

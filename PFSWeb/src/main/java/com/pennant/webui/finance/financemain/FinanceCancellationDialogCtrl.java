@@ -1294,12 +1294,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 				}
 			}
 			setOverideMap(auditHeader.getOverideMap());
-
-		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
 		} catch (InterfaceException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getErrorMessage());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("return Value:" + processCompleted);

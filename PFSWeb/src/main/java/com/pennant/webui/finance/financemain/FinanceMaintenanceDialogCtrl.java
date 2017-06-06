@@ -2422,8 +2422,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 
 		} catch (InterfaceException pfe) {
-			logger.error("Exception: ", pfe);
-			MessageUtil.showErrorMessage(pfe.getErrorMessage());
+			MessageUtil.showError(pfe);
 			return;
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -2583,8 +2582,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						try {
 							processCompleted = doDDAProcess(aFinanceDetail);
 						} catch (InterfaceException pfe) {
-							logger.error("Exception: ", pfe);
-							MessageUtil.showErrorMessage(pfe.getErrorMessage());
+							MessageUtil.showError(pfe);
 							processCompleted = false;
 						}
 					} else {
@@ -2598,8 +2596,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						try {
 							processCompleted = doCollateralProcess(aFinanceDetail);
 						} catch (InterfaceException pfe) {
-							logger.error("Exception: ", pfe);
-							MessageUtil.showErrorMessage(pfe.getErrorMessage());
+							MessageUtil.showError(pfe);
 							processCompleted = false;
 						}
 					} else {

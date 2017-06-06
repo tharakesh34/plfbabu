@@ -1210,7 +1210,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			// Set Workflow Details
 			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
 			if(workFlowDetails == null){
-				MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 				return;
 			}
 
@@ -1231,7 +1231,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(
 						PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 				
 				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
 				logger.debug("Leaving");
@@ -1267,7 +1267,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				if(financeDetail.getFinScheduleData().getFinanceMain().getGrcPeriodEndDate().compareTo(validFrom) <= 0){
 					ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(
 							PennantConstants.KEY_FIELD,"41019", errParm,valueParm), getUserWorkspace().getUserLanguage());
-					MessageUtil.showErrorMessage(errorDetails.getError());
+					MessageUtil.showError(errorDetails.getError());
 					
 					logger.debug("Leaving");
 					return;
@@ -1281,7 +1281,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			
 			if(StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)){
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 			}else{
 				
 				if(isWorkFlowEnabled()){
@@ -1292,7 +1292,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					if (userAcces){
 						showDetailView(financeDetail);
 					}else{
-						MessageUtil.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
 				}else{
 					showDetailView(financeDetail);
@@ -1313,7 +1313,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			// Set Workflow Details
 			setWorkflowDetails(aFinanceMain.getFinType() , StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
 			if(workFlowDetails == null){
-				MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 				return;
 			}
 			
@@ -1335,7 +1335,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(
 						PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 				
 				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
 				logger.debug("Leaving");
@@ -1354,7 +1354,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 			}else{
 				
 				if(isWorkFlowEnabled()){
@@ -1365,7 +1365,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					if (userAcces){
 						showMaintainDetailView(financeDetail);
 					}else{
-						MessageUtil.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
 				}else{
 					showMaintainDetailView(financeDetail);
@@ -1393,7 +1393,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			if(!StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_EARLYSTLENQ)){
 				setWorkflowDetails(aFinanceMain.getFinType() , StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
 				if(workFlowDetails == null){
-					MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+					MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 					return;
 				}
 
@@ -1416,7 +1416,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(
 						PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 				
 				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
 				logger.debug("Leaving");
@@ -1436,7 +1436,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm)
 				, getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 			}else{
 				
 				if(isWorkFlowEnabled()){
@@ -1447,7 +1447,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					if (userAcces){
 						showRepayDetailView(repayData);
 					}else{
-						MessageUtil.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
 				}else{
 					showRepayDetailView(repayData);
@@ -1474,7 +1474,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			String userRole = "";
 			setWorkflowDetails(aFinanceMain.getFinType() , StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
 			if(workFlowDetails == null){
-				MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 				return;
 			}
 
@@ -1496,7 +1496,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(
 						PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 				
 				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
 				logger.debug("Leaving");
@@ -1516,7 +1516,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm)
 				, getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 			}else{
 				
 				if(isWorkFlowEnabled()){
@@ -1527,7 +1527,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					if (userAcces){
 						showReceiptDetailView(receiptData);
 					}else{
-						MessageUtil.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
 				}else{
 					showReceiptDetailView(receiptData);
@@ -1553,7 +1553,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			// Set Workflow Details
 			setWorkflowDetails(aFinanceMain.getFinType() , StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
 			if(workFlowDetails == null){
-				MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 				return;
 			}
 
@@ -1575,7 +1575,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(
 						PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 				
 				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
 				logger.debug("Leaving");
@@ -1595,7 +1595,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",
 						errParm,valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 			}else{
 				
 				if(isWorkFlowEnabled()){
@@ -1606,7 +1606,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					if (userAcces){
 						showWriteoffDetailView(writeoffHeader);
 					}else{
-						MessageUtil.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
 				}else{
 					showWriteoffDetailView(writeoffHeader);
@@ -1632,7 +1632,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			// Set Workflow Details
 			setWorkflowDetails(aFinanceMain.getFinType() , StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
 			if(workFlowDetails == null){
-				MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 				return;
 			}
 
@@ -1657,7 +1657,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(
 						PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 				
 				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
 				logger.debug("Leaving");
@@ -1676,7 +1676,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",
 						errParm,valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 			}else{
 				
 				if(isWorkFlowEnabled()){
@@ -1687,7 +1687,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					if (userAcces){
 						showTakafulPremiumExcludefDetailView(feeRule);
 					}else{
-						MessageUtil.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
 				}else{
 					showTakafulPremiumExcludefDetailView(feeRule);
@@ -1713,7 +1713,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			// Set Workflow Details
 			setWorkflowDetails(aFinanceMain.getFinType() , StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
 			if(workFlowDetails == null){
-				MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 				return;
 			}
 
@@ -1735,7 +1735,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(
 						PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 				
 				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
 				logger.debug("Leaving");
@@ -1750,7 +1750,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					
 					ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(
 							PennantConstants.KEY_FIELD,"60407", null,null), getUserWorkspace().getUserLanguage());
-					MessageUtil.showErrorMessage(errorDetails.getError());
+					MessageUtil.showError(errorDetails.getError());
 					
 					logger.debug("Leaving");
 					return;
@@ -1767,7 +1767,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				List<FinanceRepayments> listFinanceRepayments = new ArrayList<FinanceRepayments>();
 				listFinanceRepayments = getFinanceDetailService().getFinanceRepaymentsByFinRef(aFinanceMain.getFinReference(), false);
 				if (listFinanceRepayments != null && listFinanceRepayments.size() > 0) {
-					MessageUtil.showErrorMessage("Repayments done on this Finance. Cannot Proceed Further");
+					MessageUtil.showError("Repayments done on this Finance. Cannot Proceed Further");
 					return;
 				}
 			}
@@ -1780,7 +1780,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",
 						errParm,valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 			}else{
 				
 				if(isWorkFlowEnabled()){
@@ -1791,7 +1791,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					if (userAcces){
 						showCancellationDetailView(financeDetail);
 					}else{
-						MessageUtil.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
 				}else{
 					showCancellationDetailView(financeDetail);
@@ -1817,7 +1817,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			// Set Workflow Details
 			setWorkflowDetails(aFinanceMain.getFinType() , StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
 			if(workFlowDetails == null){
-				MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 				return;
 			}
 
@@ -1838,7 +1838,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(
 						PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 				
 				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
 				logger.debug("Leaving");
@@ -1858,7 +1858,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm)
 				, getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 			}else{
 				
 				if(isWorkFlowEnabled()){
@@ -1869,7 +1869,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					if (userAcces){
 						showRepayCancelView(financeDetail);
 					}else{
-						MessageUtil.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
 				}else{
 					showRepayCancelView(financeDetail);
@@ -2476,8 +2476,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Rollover/SelectRolloverFinanceDialog.zul",null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving " + event.toString());
 	}

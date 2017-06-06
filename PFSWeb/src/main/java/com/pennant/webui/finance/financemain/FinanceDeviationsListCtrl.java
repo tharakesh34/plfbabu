@@ -326,7 +326,7 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41005",
 					errParm, valueParm), getUserWorkspace().getUserLanguage());
-			MessageUtil.showErrorMessage(errorDetails.getError());
+			MessageUtil.showError(errorDetails.getError());
 		} else {
 			doShowDialogPage(financeDetail);
 		}

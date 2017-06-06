@@ -385,8 +385,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -503,8 +502,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FeePaymentDetailDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -519,7 +517,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		if (listitem != null && listitem.getAttribute("data") != null) {
 			final FeePaymentDetail aFeePaymentDetail = (FeePaymentDetail) listitem.getAttribute("data");
 			if (isDeleteRecord(aFeePaymentDetail.getRecordType())) {
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			}else{
 				aFeePaymentDetail.setNewRecord(false);
 
@@ -536,8 +534,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				try {
 					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FeePaymentDetailDialog.zul", null, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e.toString());
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -1537,7 +1534,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		Clients.clearWrongValue(this.listBoxFeeDetail.getChildren());
 		
 		if (!isSchdCal && finScheduleData.getFinanceScheduleDetails().size() <= 0) {
-			MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_GenSchedule"));
+			MessageUtil.showError(Labels.getLabel("label_Finance_GenSchedule"));
 			return;
 		}
 

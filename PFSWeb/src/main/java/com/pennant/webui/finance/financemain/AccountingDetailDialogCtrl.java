@@ -327,11 +327,10 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
 			if(e.getCause().getClass().equals(WrongValuesException.class)){
 				throw e;	
 			}
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");
@@ -927,7 +926,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 						list, true, 1, usrName,window);
 			}
 		} else {
-			MessageUtil.showErrorMessage(Labels.getLabel("btnPrintAccounting.Error_Message"));
+			MessageUtil.showError(Labels.getLabel("btnPrintAccounting.Error_Message"));
 		}
 		logger.debug("Leaving" + event.toString());
 	}

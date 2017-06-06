@@ -316,7 +316,7 @@ public class FinCollateralHeaderDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 					.equalsIgnoreCase(StringUtils.trimToEmpty(finCollateral.getRecordType()))
 					|| PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(StringUtils.trimToEmpty(finCollateral
 							.getRecordType()))) {
-				MessageUtil.showErrorMessage("Not Allowed to maintain This Record");
+				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("financeMainDialogCtrl", getFinanceMainDialogCtrl());

@@ -497,7 +497,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 		}
 
 		if (!valid) {
-			MessageUtil.showErrorMessage("There are some deviation with out deligation. ");
+			MessageUtil.showError("There are some deviation with out deligation.");
 			return;
 		}
 

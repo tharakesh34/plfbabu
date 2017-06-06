@@ -491,9 +491,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.window_FinAdvancePaymentsDialog.doModal();
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
 			this.window_FinAdvancePaymentsDialog.onClose();
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

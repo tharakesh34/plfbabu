@@ -434,7 +434,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			DocumentDetails finDocumentDetail = (DocumentDetails) item.getAttribute("data");
 			if (StringUtils.trimToEmpty(finDocumentDetail.getRecordType()).equalsIgnoreCase(
 					PennantConstants.RECORD_TYPE_CAN)) {
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				updateExistingDocument(finDocumentDetail, 0, false);
 			}

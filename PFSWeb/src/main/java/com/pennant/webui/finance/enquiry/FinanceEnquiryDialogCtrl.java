@@ -1532,7 +1532,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinContributorDetail finContributorDetail = (FinContributorDetail) item.getAttribute("data");
 			if (finContributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				MessageUtil.showErrorMessage("Not Allowed to maintain This Record");
+				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 				int formatter = CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy());
 				
@@ -1886,7 +1886,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			final FinanceDisbursement disbursement = (FinanceDisbursement) item.getAttribute("data");
 
 			if (disbursement.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				MessageUtil.showErrorMessage("Not Allowed to maintain This Record");
+				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 
 				ContractorAssetDetail aContractorAssetDetail = null;

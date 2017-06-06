@@ -220,8 +220,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 			this.listBoxFinElgRef.setHeight(this.borderLayoutHeight- 210 - 52+"px");
 			this.window_EligibilityDetailDialog.setHeight(this.borderLayoutHeight-80+"px");
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
