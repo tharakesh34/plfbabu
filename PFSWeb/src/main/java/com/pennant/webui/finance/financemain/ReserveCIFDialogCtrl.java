@@ -166,7 +166,7 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		try {
 			createAccount();
 		} catch(InterfaceException pfe) {
-			MessageUtil.showErrorMessage(pfe.getErrorMessage());
+			MessageUtil.showError(pfe);
 			return;
 		}
 		logger.debug("Leaving" + event.toString());
@@ -208,7 +208,7 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				return;
 			}
 		} catch(InterfaceException pfe) {
-			MessageUtil.showErrorMessage(pfe.getErrorMessage());
+			MessageUtil.showError(pfe);
 			return;
 		}
 		logger.debug("Leaving" + event.toString());

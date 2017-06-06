@@ -180,8 +180,7 @@ public class QueueAssignmentListCtrl extends GFCBaseListCtrl<QueueAssignmentHead
 				Executions.createComponents(
 						"/WEB-INF/pages/Finance/QueueAssignment/QueueAssignmentDialog.zul", null, map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e.toString());
+				MessageUtil.showError(e);
 			}
 			}
 		logger.debug("Leaving" + event.toString());
