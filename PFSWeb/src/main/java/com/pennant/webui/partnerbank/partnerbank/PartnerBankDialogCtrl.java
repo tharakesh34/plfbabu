@@ -1598,6 +1598,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			this.reqFileDownload.setDisabled(false);
 		}else{
 			this.reqFileDownload.setDisabled(true);
+			this.reqFileDownload.setChecked(false);
 		}
 		if (this.alwDisburment.isChecked()) {
 			this.btnSearchModeDisbursment.setDisabled(false);
@@ -1641,6 +1642,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			this.reqFileDownload.setDisabled(false);
 		} else {
 			this.reqFileDownload.setDisabled(true);
+			this.reqFileDownload.setChecked(false);
 			
 		}
 		if (this.alwReceipts.isChecked()) {
