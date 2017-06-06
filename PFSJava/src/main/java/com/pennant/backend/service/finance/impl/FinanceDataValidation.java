@@ -608,10 +608,9 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90315", valueParm)));
 				}
 			} else {
-				if (!finODPenaltyRate.isODIncGrcDays() || StringUtils.isBlank(finODPenaltyRate.getODChargeType())
+				if (StringUtils.isBlank(finODPenaltyRate.getODChargeType())
 						|| StringUtils.isBlank(finODPenaltyRate.getODChargeCalOn())
-						|| finODPenaltyRate.getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) <= 0
-						|| !finODPenaltyRate.isODAllowWaiver()) {
+						|| finODPenaltyRate.getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) <= 0) {
 					String[] valueParm = new String[1];
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90314", valueParm)));
 				}
@@ -630,14 +629,14 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("91121", valueParm)));
 				}
 			}
-			if (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)) {
+			/*if (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)) {
 				if (finODPenaltyRate.getODChargeAmtOrPerc().compareTo(new BigDecimal(99)) > 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "ODChargeAmtOrPerc";
 					valueParm[1] = "99";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30565", valueParm)));
 				}
-			}
+			}*/
 			if (StringUtils.isNotBlank(finODPenaltyRate.getODChargeType())) {
 				List<ValueLabel> finODChargeType = PennantStaticListUtil.getODCChargeType();
 				boolean finODChargeTypeSts = false;
