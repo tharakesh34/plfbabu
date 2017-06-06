@@ -5928,8 +5928,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 			} catch (InterfaceException pfe) {
-				logger.error("Exception: ", pfe);
-				MessageUtil.showErrorMessage(pfe.getErrorMessage());
+				MessageUtil.showError(pfe);
 				return;
 			}
 		}
@@ -6121,13 +6120,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		} catch (EmptyResultDataAccessException e) {
 			showErrorMessage(getMainWindow(), e);
-			e = null;
 		} catch (final DataAccessException e) {
 			logger.error("Exception: ", e);
 			showErrorMessage(getMainWindow(), e);
 		} catch (InterfaceException pfe) {
-			logger.error("Exception: ", pfe);
-			MessageUtil.showErrorMessage(pfe.getErrorMessage());
+			MessageUtil.showError(pfe);
 		}
 
 		if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
@@ -6665,8 +6662,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							processCompleted = true;
 						}
 					} catch (InterfaceException pfe) {
-						logger.error("Exception: ", pfe);
-						MessageUtil.showErrorMessage(pfe.getErrorMessage());
+						MessageUtil.showError(pfe);
 						processCompleted = false;
 					}
 
@@ -6922,11 +6918,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					.getFinanceMain().getNextUserId());
 		} catch (AppException e) {
 			MessageUtil.showError(e);
-		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
-		} catch (InterfaceException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getErrorMessage());
 		} catch (DataAccessException e) {
 			throw e;
 		} catch (Exception e) {
@@ -13267,8 +13258,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					this.mMAReference.setValue("", "");
 				}
 			} catch (InterfaceException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e.getMessage());
+				MessageUtil.showError(e);
 			}
 
 		}
