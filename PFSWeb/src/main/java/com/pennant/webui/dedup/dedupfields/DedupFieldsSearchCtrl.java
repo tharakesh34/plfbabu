@@ -224,7 +224,7 @@ public class DedupFieldsSearchCtrl extends GFCBaseCtrl<DedupFields>  {
 			// open the dialog in modal mode
 			this.window_DedupFieldsSearch.doModal();
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 	}
 

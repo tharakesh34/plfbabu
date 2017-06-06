@@ -208,7 +208,7 @@ public class DedupFieldsListCtrl extends GFCBaseListCtrl<DedupFields> {
 				parm[0]=PennantJavaUtil.getLabel("label_FieldName")+aDedupFields.getFieldName();
 				valueParm[0] = aDedupFields.getFieldName();
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005",parm,valueParm),getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 			}else{
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND FieldName='"+ dedupFields.getFieldName()+"' AND version=" + dedupFields.getVersion()+" ";
@@ -217,7 +217,7 @@ public class DedupFieldsListCtrl extends GFCBaseListCtrl<DedupFields> {
 					if (userAcces){
 						showDetailView(dedupFields);
 					}else{
-						MessageUtil.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
 				}else{
 					showDetailView(dedupFields);
@@ -271,8 +271,7 @@ public class DedupFieldsListCtrl extends GFCBaseListCtrl<DedupFields> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Dedup/DedupFields/DedupFieldsDialog.zul",null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -311,7 +310,6 @@ public class DedupFieldsListCtrl extends GFCBaseListCtrl<DedupFields> {
 	
 	public void onClick$button_DedupFieldsList_DedupFieldsSearchDialog(Event event) throws Exception {
 		logger.debug("Enterring");
-		logger.debug(event.toString());
 		/*
 		 * we can call our DedupFieldsDialog zul-file with parameters. So we can
 		 * call them with a object of the selected DedupFields. For handed over
@@ -326,8 +324,7 @@ public class DedupFieldsListCtrl extends GFCBaseListCtrl<DedupFields> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Dedup/DedupFields/DedupFieldsSearchDialog.zul",null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

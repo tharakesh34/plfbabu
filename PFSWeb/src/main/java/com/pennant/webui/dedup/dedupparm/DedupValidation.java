@@ -120,8 +120,7 @@ public class DedupValidation implements Serializable {
 			return true;
 
 		} catch (InterfaceException pfe) {
-			logger.error("Exception: ", pfe);
-			MessageUtil.showErrorMessage(pfe.getErrorMessage());
+			MessageUtil.showError(pfe);
 			return false;
 		}
 	}

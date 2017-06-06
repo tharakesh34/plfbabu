@@ -216,8 +216,7 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 			// during user action.
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -250,8 +249,7 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 				formatter = formatter + 3;
 			}
 		} catch (InterfaceException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getErrorMessage());
+			MessageUtil.showError(e);
 		}
 
 		if (list != null) {
@@ -341,8 +339,7 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 					"/WEB-INF/pages/CustomerMasters/CustomerLimit/CustomerLimitCategoryEnquiryList.zul",
 					null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

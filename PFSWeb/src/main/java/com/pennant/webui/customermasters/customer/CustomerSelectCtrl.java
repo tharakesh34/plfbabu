@@ -337,8 +337,7 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 			// open the dialog in modal mode
 			this.window_CustomerSelect.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
