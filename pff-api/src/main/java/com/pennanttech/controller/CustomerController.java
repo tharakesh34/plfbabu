@@ -38,7 +38,6 @@ import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
@@ -62,7 +61,6 @@ public class CustomerController {
 	 * 
 	 * @param customerDetails
 	 * @return
-	 * @throws PFFInterfaceException
 	 */
 	public CustomerDetails createCustomer(CustomerDetails customerDetails) throws ServiceException {
 		logger.debug("Entering");
@@ -104,7 +102,6 @@ public class CustomerController {
 	 * 
 	 * @param customerDetails
 	 * @return
-	 * @throws PFFInterfaceException
 	 */
 	public WSReturnStatus updateCustomer(CustomerDetails customerDetails) throws ServiceException {
 		logger.debug("Entering");

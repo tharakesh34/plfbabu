@@ -130,7 +130,6 @@ public class FinServiceInstController extends SummaryDetailService {
 	 * @param finServiceInstruction
 	 * @param eventCode 
 	 * @return
-	 * @throws PFFInterfaceException
 	 * @throws JaxenException
 	 */
 	public FinanceDetail doAddRateChange(FinServiceInstruction finServiceInst, String eventCode) {
@@ -221,7 +220,6 @@ public class FinServiceInstController extends SummaryDetailService {
 	 * 
 	 * @param finServiceInstruction
 	 * @return
-	 * @throws PFFInterfaceException
 	 * @throws JaxenException
 	 */
 	public FinanceDetail doAddRepayment(FinServiceInstruction finServiceInst, String eventCode) {
@@ -1156,7 +1154,8 @@ public class FinServiceInstController extends SummaryDetailService {
 	}
 
 	private FinanceDetail doProcessReceipt(FinanceDetail aFinanceDetail, FinServiceInstruction finServiceInst,
-			String purpose) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException, AccountNotFoundException {
+			String purpose)
+			throws IllegalAccessException, InvocationTargetException, AccountNotFoundException, PFFInterfaceException {
 		logger.debug("Entering");
 
 		if (finServiceInst.getFromDate() == null) {
@@ -1639,11 +1638,10 @@ public class FinServiceInstController extends SummaryDetailService {
 	 * @return
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
-	 * @throws PFFInterfaceException
 	 * @throws AccountNotFoundException 
 	 */
 	public FinReceiptData doProcessPayments(FinReceiptData receiptData, FinServiceInstruction finServiceInst)
-			throws IllegalAccessException, InvocationTargetException, PFFInterfaceException, AccountNotFoundException {
+			throws IllegalAccessException, InvocationTargetException, AccountNotFoundException {
 		logger.debug("Entering");
 
 		if (finServiceInst.getFromDate() == null) {

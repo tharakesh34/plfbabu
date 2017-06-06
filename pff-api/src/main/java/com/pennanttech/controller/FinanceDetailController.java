@@ -55,7 +55,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.VASConsatnts;
-import com.pennant.exception.PFFInterfaceException;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
@@ -82,12 +81,11 @@ public class FinanceDetailController extends SummaryDetailService {
 	 * @param finCalculatorRequest
 	 * @return
 	 * @throws JaxenException
-	 * @throws PFFInterfaceException
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
 	public FinScheduleData doCreateFinanceSchedule(FinScheduleData finScheduleData)throws JaxenException,
-			PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			IllegalAccessException, InvocationTargetException {
 		logger.debug("Enteing");
 
 		if (finScheduleData != null) {
