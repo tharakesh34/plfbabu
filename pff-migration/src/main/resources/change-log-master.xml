@@ -39,7 +39,6 @@
 	<include file="change-logs/change-log-2.48.0.xml" />
 	<include file="change-logs/change-log-2.49.0.xml" />
 	<include file="change-logs/change-log-2.50.0.xml" />
-	<include file="change-logs/change-log-eod.xml" />
 	<include file="change-logs/change-log-2.51.0.xml" />
 	<include file="change-logs/change-log-2.52.0.xml" />
 	<include file="change-logs/change-log-receipts-2.53.0.xml" />
@@ -58,5 +57,6 @@
 	<include file="change-logs/change-log-3.8.0.xml" />
 	<include file="change-logs/change-log-3.9.0.xml" />
 	<include file="change-logs/change-log-3.10.0.xml" />-->
+	<include file="change-logs/change-log-eod.xml" />
 	<include file="change-logs/change-log-3.11.0.xml" />
 </databaseChangeLog>
