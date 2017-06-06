@@ -1814,7 +1814,14 @@ public class FinanceDataValidation {
 			valueParm[2] = finMain.getFinType();
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90203", valueParm)));
 		}
-
+		if(finMain.isTDSApplicable()){
+			if(!financeType.isTDSApplicable()){
+				String[] valueParm = new String[3];
+				valueParm[0] = "tds";
+				valueParm[1] = financeType.getFinType();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90329", valueParm)));
+			}
+		}
 		//RETURN IF ANY ERROR AFTER VERY BASIC VALIDATION
 		if (!errorDetails.isEmpty()) {
 			return errorDetails;
