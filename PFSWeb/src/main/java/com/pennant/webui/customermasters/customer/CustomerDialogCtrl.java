@@ -886,8 +886,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		try {
 			doSave();
 		} catch (InterfaceException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getErrorMessage());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -927,8 +926,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		try {
 			doDelete();
 		} catch (InterfaceException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getErrorMessage());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Entering" + event.toString());
 	}
@@ -3013,8 +3011,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			setOverideMap(auditHeader.getOverideMap());
 		} catch (InterfaceException pfe) {
-			logger.error("Exception: ", pfe);
-			MessageUtil.showErrorMessage(pfe.getErrorCode() + ":" + pfe.getErrorMessage());
+			MessageUtil.showError(pfe);
 		}
 		logger.debug("Leaving");
 		return processCompleted;

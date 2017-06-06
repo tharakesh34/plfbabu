@@ -221,7 +221,7 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 			doSave();
 		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage("Customer Not Found...");
+			MessageUtil.showError("Customer Not Found.");
 		}
 		logger.debug("Leaving" + event.toString());
 	}

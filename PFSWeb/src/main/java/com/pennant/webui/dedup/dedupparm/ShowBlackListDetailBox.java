@@ -376,8 +376,7 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 			}
 
 			if (getUserAction() == -1) {
-				MessageUtil
-						.showErrorMessage(Labels.getLabel("label_Message_OverrideAlert"));
+				MessageUtil.showError(Labels.getLabel("label_Message_OverrideAlert"));
 			} else {
 				setObject(blackListData);
 				onClose();

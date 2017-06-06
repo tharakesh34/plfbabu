@@ -270,7 +270,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			doSave();
 		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage("Customer Not Created...");
+			MessageUtil.showError("Customer Not Created.");
 		}
 		logger.debug("Leaving" + event.toString());
 	}

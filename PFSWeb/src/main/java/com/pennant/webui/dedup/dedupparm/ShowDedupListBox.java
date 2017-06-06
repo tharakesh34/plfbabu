@@ -350,9 +350,9 @@ public class ShowDedupListBox extends Window implements Serializable {
 						massValues.append(itr.next());
 					}
 					if(dedup.getOverridenMap().keySet().size()==1){
-						MessageUtil.showErrorMessage(massValues.deleteCharAt(0)+" Rule not allowed to overriden.");
+						MessageUtil.showError(massValues.deleteCharAt(0) + " Rule not allowed to overriden.");
 					}else{
-						MessageUtil.showErrorMessage(massValues.deleteCharAt(0)+" Rules are not allowed to overriden.");
+						MessageUtil.showError(massValues.deleteCharAt(0) + " Rules are not allowed to overriden.");
 					}
 					
 				} else {
