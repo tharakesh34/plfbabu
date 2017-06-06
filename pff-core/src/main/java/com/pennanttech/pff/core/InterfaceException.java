@@ -36,10 +36,37 @@ public class InterfaceException extends AppException {
 		this.errorMessage = message;
 	}
 
+	/**
+	 * Constructs an {@code InterfaceException} with the specified code, detail message and cause.
+	 * 
+	 * @param code
+	 *            The code.
+	 * @param message
+	 *            The detail message.
+	 * @param cause
+	 *            The cause. (A null value is permitted, and indicates that the cause is nonexistent or unknown.)
+	 */
+	public InterfaceException(String code, String message, Throwable cause) {
+		super(code.concat(": ").concat(message), cause);
+
+		this.errorCode = code;
+		this.errorMessage = message;
+	}
+
+	/**
+	 * Returns the error code of this throwable.
+	 * 
+	 * @return The error code of this throwable.
+	 */
 	public String getErrorCode() {
 		return errorCode;
 	}
 
+	/**
+	 * Returns the detail message string of this throwable.
+	 * 
+	 * @return The detail message string of this throwable.
+	 */
 	public String getErrorMessage() {
 		return errorMessage;
 	}
