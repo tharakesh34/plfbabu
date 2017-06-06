@@ -67,11 +67,11 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pff.core.InterfaceException;
 import com.rits.cloning.Cloner;
 
 /**

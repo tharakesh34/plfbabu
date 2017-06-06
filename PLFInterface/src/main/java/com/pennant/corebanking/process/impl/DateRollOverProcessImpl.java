@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.process.DateRollOverProcess;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class DateRollOverProcessImpl implements DateRollOverProcess{
 	

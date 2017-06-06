@@ -11,12 +11,12 @@ import com.pennant.coreinterface.model.CoreCustomerDedup;
 import com.pennant.coreinterface.model.customer.InterfaceCustomer;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerDetail;
 import com.pennant.coreinterface.process.CustomerCreationProcess;
-import com.pennant.exception.InterfaceException;
 import com.pennant.mq.processutil.AddNewCustomerProcess;
 import com.pennant.mq.processutil.CustomerDedupProcess;
 import com.pennant.mq.processutil.ReleaseCIFProcess;
 import com.pennant.mq.processutil.ReserveCIFProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class CustomerCreationServiceImpl implements CustomerCreationProcess {
 

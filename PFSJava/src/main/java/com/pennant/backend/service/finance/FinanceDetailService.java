@@ -80,7 +80,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public interface FinanceDetailService {
 	

@@ -6,7 +6,7 @@ import java.util.List;
 import javax.security.auth.login.AccountNotFoundException;
 
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public interface PostingsInterfaceService {
 	/**

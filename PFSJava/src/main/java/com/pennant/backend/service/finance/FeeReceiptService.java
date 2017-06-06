@@ -6,7 +6,7 @@ import java.util.List;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public interface FeeReceiptService {
 

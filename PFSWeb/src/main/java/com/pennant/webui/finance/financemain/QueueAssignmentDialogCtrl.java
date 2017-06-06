@@ -80,7 +80,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.QueueAssignmentService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
-import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -92,6 +91,7 @@ import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * This is the controller class for the

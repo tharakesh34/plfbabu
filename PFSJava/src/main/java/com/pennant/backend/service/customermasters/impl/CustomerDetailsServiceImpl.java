@@ -113,7 +113,7 @@ import com.pennant.backend.service.systemmasters.LovFieldDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.model.ModuleMapping;
 import com.rits.cloning.Cloner;
 

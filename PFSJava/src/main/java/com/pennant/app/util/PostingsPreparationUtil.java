@@ -65,7 +65,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.coreinterface.model.FinanceCancellation;
 import com.pennant.coreinterface.process.FinanceCancellationProcess;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * @author chaitanya.ch

@@ -241,7 +241,6 @@ import com.pennant.constants.InterfaceConstants;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.coreinterface.model.collateral.CollateralMark;
-import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.AgreementGeneration;
 import com.pennant.util.ErrorControl;
@@ -264,6 +263,7 @@ import com.pennant.webui.util.constraint.AdditionalDetailValidation;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.AppException;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 

@@ -2,7 +2,7 @@ package com.pennant.Interface.service;
 
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.coreinterface.model.deposits.FetchDeposit;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public interface DepositInterfaceService {
 

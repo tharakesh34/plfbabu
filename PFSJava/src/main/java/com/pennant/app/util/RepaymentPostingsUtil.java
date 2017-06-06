@@ -90,7 +90,7 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.cache.util.AccountingConfigCache;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class RepaymentPostingsUtil implements Serializable {
 	private static final long			serialVersionUID	= 4165353615228874397L;

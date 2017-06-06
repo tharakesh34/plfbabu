@@ -5,10 +5,10 @@ import org.apache.log4j.Logger;
 import com.pennant.coreinterface.model.deposits.FetchDeposit;
 import com.pennant.coreinterface.model.deposits.FetchDepositDetail;
 import com.pennant.coreinterface.process.DepositDetailProcess;
-import com.pennant.exception.InterfaceException;
 import com.pennant.mq.processutil.FetchDepositDetailProcess;
 import com.pennant.mq.processutil.FetchDepositsProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class DepositDetailServiceImpl implements DepositDetailProcess {
 

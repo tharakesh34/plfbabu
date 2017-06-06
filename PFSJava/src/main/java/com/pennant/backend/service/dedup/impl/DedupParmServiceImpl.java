@@ -80,9 +80,9 @@ import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.exception.InterfaceException;
 import com.pennanttech.model.DedupCustomerDetail;
 import com.pennanttech.model.DedupCustomerResponse;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.service.CustomerDedupService;
 
 /**

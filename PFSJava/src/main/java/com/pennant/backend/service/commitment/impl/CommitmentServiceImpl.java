@@ -104,7 +104,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class CommitmentServiceImpl extends GenericService<Commitment> implements CommitmentService {
 	private final static Logger		logger	= Logger.getLogger(CommitmentServiceImpl.class);

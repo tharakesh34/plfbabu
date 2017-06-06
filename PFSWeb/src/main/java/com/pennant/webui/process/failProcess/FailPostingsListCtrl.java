@@ -61,7 +61,6 @@ import com.pennant.backend.service.dda.DDAProcessService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.constants.InterfaceConstants;
-import com.pennant.exception.InterfaceException;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.process.failProcess.model.FailPostingsListModelItemRenderer;
@@ -69,6 +68,7 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Expenses/LegalExpenses/LegalExpensesList.zul file.

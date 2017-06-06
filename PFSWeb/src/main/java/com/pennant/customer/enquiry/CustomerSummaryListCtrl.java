@@ -80,10 +80,10 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.model.CustomerCollateral;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.process.CustomerDataProcess;
-import com.pennant.exception.InterfaceException;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * This is the controller class for the

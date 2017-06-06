@@ -13,7 +13,7 @@ import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.reports.AvailPastDue;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public interface CustomerDetailsService {
 	CustomerDetails getCustomerById(long id);

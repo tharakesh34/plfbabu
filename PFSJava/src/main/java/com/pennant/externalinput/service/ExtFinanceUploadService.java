@@ -65,8 +65,8 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.exception.InterfaceException;
 import com.pennant.externalinput.ExtFinanceData;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class ExtFinanceUploadService {
 	private final static Logger		logger				= Logger.getLogger(ExtFinanceUploadService.class);

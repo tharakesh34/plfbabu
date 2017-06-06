@@ -4,7 +4,7 @@ import com.pennant.coreinterface.model.dda.DDAAmendment;
 import com.pennant.coreinterface.model.dda.DDACancellation;
 import com.pennant.coreinterface.model.dda.DDARegistration;
 import com.pennant.coreinterface.model.dda.DDAUpdate;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public interface DDAProcess {
 	

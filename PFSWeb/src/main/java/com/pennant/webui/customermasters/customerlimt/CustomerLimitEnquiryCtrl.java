@@ -64,9 +64,9 @@ import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.customermasters.CustomerLimit;
 import com.pennant.backend.model.customermasters.CustomerLimitCategory;
 import com.pennant.backend.service.applicationmaster.CurrencyService;
-import com.pennant.exception.InterfaceException;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * This is the controller class for the

@@ -8,9 +8,9 @@ import org.jaxen.JaxenException;
 
 import com.pennant.coreinterface.model.nbc.NationalBondDetail;
 import com.pennant.coreinterface.process.NationalBondProcess;
-import com.pennant.exception.InterfaceException;
 import com.pennant.mq.processutil.BondDetailProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class NationalBondProcessImpl implements NationalBondProcess {
 	private final static Logger logger = Logger.getLogger(NationalBondProcessImpl.class);

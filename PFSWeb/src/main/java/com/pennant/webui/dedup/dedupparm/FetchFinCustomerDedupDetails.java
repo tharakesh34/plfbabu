@@ -16,7 +16,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class FetchFinCustomerDedupDetails {
 

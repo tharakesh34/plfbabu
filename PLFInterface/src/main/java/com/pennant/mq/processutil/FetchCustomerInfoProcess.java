@@ -23,12 +23,12 @@ import com.pennant.coreinterface.model.customer.InterfaceCustomerDocument;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerEMail;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerPhoneNumber;
 import com.pennant.equation.util.DateUtility;
-import com.pennant.exception.InterfaceException;
 import com.pennant.mq.dao.MQInterfaceDAO;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.mqconnection.MessageQueueClient;
+import com.pennanttech.pff.core.InterfaceException;
 
 enum ADDRESSTYPES {
 	RETAILRESIDENCE,RETAILOFFICE, RETAILHOMECOUNTRY, SMEESTMAIN, SMEESTOTHER, PHONECODES

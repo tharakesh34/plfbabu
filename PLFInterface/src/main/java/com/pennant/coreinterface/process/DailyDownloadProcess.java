@@ -61,7 +61,7 @@ import com.pennant.coreinterface.model.EquationRelationshipOfficer;
 import com.pennant.coreinterface.model.EquationTransactionCode;
 import com.pennant.coreinterface.model.IncomeAccountTransaction;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerDetail;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public interface DailyDownloadProcess {
 	

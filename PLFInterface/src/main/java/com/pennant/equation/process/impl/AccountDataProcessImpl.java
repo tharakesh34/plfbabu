@@ -13,7 +13,7 @@ import com.pennant.coreinterface.model.collateral.CollateralMark;
 import com.pennant.coreinterface.process.AccountDataProcess;
 import com.pennant.equation.util.GenericProcess;
 import com.pennant.equation.util.HostConnection;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class AccountDataProcessImpl extends GenericProcess implements AccountDataProcess{
 	

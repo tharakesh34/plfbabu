@@ -1,4 +1,4 @@
-package com.pennant.exception;
+package com.pennanttech.pff.core;
 
 public class InterfaceException extends Exception {
 	private static final long	serialVersionUID	= 7376419132045778376L;

@@ -10,11 +10,11 @@ import org.apache.log4j.Logger;
 
 import com.pennant.coreinterface.model.limit.CustomerLimitDetail;
 import com.pennant.equation.util.DateUtility;
-import com.pennant.exception.InterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.mqconnection.MessageQueueClient;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class CustomerLimitDetailProcess extends MQProcess {
 

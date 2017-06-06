@@ -110,12 +110,12 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.core.EventManager.Notify;
-import com.pennant.exception.InterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinanceBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Provision/Provision/provisionDialog.zul file.

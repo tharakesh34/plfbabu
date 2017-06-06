@@ -10,7 +10,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennant.coreinterface.process.FinanceMaintenanceProcess;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class HandlingInstructionService {
 

@@ -46,7 +46,7 @@ package com.pennant.backend.service.fees.feepostings;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.fees.FeePostings;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public interface FeePostingService {
 

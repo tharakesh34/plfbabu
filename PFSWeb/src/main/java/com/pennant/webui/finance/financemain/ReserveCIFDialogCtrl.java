@@ -22,11 +22,11 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceMainExtService;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.coreinterface.model.account.InterfaceAccount;
-import com.pennant.exception.InterfaceException;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 

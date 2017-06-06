@@ -3,7 +3,7 @@ package com.pennant.coreinterface.process;
 import java.util.List;
 
 import com.pennant.coreinterface.model.EodFinProfitDetail;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public interface UploadProfitDetailProcess {
 

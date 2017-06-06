@@ -9,11 +9,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.coreinterface.model.dda.DDACancellation;
-import com.pennant.exception.InterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.mqconnection.MessageQueueClient;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class DDACancelProcess extends MQProcess {
 

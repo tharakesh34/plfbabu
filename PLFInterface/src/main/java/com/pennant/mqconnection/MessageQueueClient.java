@@ -19,7 +19,7 @@ import com.ibm.mq.MQQueue;
 import com.ibm.mq.MQQueueManager;
 import com.ibm.mq.constants.CMQC;
 import com.ibm.mq.constants.MQConstants;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class MessageQueueClient {
 	private final static Logger logger = Logger.getLogger(MessageQueueClient.class);

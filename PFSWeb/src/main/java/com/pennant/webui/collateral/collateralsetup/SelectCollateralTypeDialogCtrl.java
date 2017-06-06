@@ -78,12 +78,12 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.App.Database;
 
 public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup> {

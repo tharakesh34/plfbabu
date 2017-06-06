@@ -10,7 +10,7 @@ import com.ibm.as400.access.ConnectionPoolException;
 import com.ibm.as400.data.ProgramCallDocument;
 import com.pennant.coreinterface.process.DateRollOverProcess;
 import com.pennant.equation.util.HostConnection;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class DateRollOverProcessImpl implements DateRollOverProcess{
 	

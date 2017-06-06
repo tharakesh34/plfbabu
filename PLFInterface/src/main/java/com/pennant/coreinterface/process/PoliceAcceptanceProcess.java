@@ -1,7 +1,7 @@
 package com.pennant.coreinterface.process;
 
 import com.pennant.coreinterface.model.customer.InterfaceMortgageDetail;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 
 public interface PoliceAcceptanceProcess {

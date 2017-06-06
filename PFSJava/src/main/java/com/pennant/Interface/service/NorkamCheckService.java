@@ -1,7 +1,7 @@
 package com.pennant.Interface.service;
 
 import com.pennant.coreinterface.model.customer.InterfaceNorkamCheck;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public interface NorkamCheckService {
 	

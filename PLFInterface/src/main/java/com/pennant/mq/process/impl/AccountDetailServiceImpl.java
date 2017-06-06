@@ -9,10 +9,10 @@ import org.jaxen.JaxenException;
 
 import com.pennant.coreinterface.model.CoreBankAccountDetail;
 import com.pennant.coreinterface.process.AccountDetailProcess;
-import com.pennant.exception.InterfaceException;
 import com.pennant.mq.processutil.FetchAccountDetailProcess;
 import com.pennant.mq.processutil.FetchAllAccountsProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class AccountDetailServiceImpl implements AccountDetailProcess {
 

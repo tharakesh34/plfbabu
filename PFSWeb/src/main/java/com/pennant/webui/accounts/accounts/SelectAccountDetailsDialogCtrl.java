@@ -26,13 +26,13 @@ import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Account/Accounts/SelectAccountDetails.zul file.

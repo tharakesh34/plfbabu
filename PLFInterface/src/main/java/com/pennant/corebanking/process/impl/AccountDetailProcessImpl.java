@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.model.CoreBankAccountDetail;
 import com.pennant.coreinterface.process.AccountDetailProcess;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class AccountDetailProcessImpl extends GenericProcess implements AccountDetailProcess{
 

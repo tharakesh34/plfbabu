@@ -12,8 +12,8 @@ import com.pennant.coreinterface.model.CustomerCollateral;
 import com.pennant.coreinterface.model.customer.FinanceCustomerDetails;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerDetail;
 import com.pennant.coreinterface.process.CustomerDataProcess;
-import com.pennant.exception.InterfaceException;
 import com.pennant.mq.util.PFFXmlUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class CustomerDataProcessImpl extends GenericProcess implements CustomerDataProcess {
 	

@@ -89,13 +89,13 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.chequeverification.ChequeStatus;
 import com.pennant.coreinterface.model.chequeverification.ChequeVerification;
-import com.pennant.exception.InterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**

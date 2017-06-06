@@ -60,9 +60,9 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.exception.InterfaceException;
 import com.pennant.webui.finance.payorderissue.FinAdvancePaymentsCtrl;
 import com.pennant.webui.util.MessageUtil;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.Literal;
 
 /**

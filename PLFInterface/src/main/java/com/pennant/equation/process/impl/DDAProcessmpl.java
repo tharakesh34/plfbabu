@@ -7,7 +7,7 @@ import com.pennant.coreinterface.model.dda.DDACancellation;
 import com.pennant.coreinterface.model.dda.DDARegistration;
 import com.pennant.coreinterface.model.dda.DDAUpdate;
 import com.pennant.coreinterface.process.DDAProcess;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class DDAProcessmpl implements DDAProcess {
 

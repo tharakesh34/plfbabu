@@ -84,12 +84,12 @@ import com.pennant.backend.service.rmtmasters.CustomerTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
-import com.pennant.exception.InterfaceException;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * This is the controller class for the

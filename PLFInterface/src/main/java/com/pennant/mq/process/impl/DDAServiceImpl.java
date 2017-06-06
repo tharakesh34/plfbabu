@@ -8,12 +8,12 @@ import com.pennant.coreinterface.model.dda.DDACancellation;
 import com.pennant.coreinterface.model.dda.DDARegistration;
 import com.pennant.coreinterface.model.dda.DDAUpdate;
 import com.pennant.coreinterface.process.DDAProcess;
-import com.pennant.exception.InterfaceException;
 import com.pennant.mq.processutil.DDAAmendmentProcess;
 import com.pennant.mq.processutil.DDACancelProcess;
 import com.pennant.mq.processutil.DDARequestProcess;
 import com.pennant.mq.processutil.DDAUpdateProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class DDAServiceImpl implements DDAProcess {
 	private final static Logger logger = Logger.getLogger(DDAServiceImpl.class);

@@ -11,8 +11,8 @@ import com.pennant.coreinterface.model.deposits.FetchDeposit;
 import com.pennant.coreinterface.model.deposits.FetchDepositDetail;
 import com.pennant.coreinterface.model.deposits.InvestmentContract;
 import com.pennant.coreinterface.process.DepositDetailProcess;
-import com.pennant.exception.InterfaceException;
 import com.pennant.mq.util.PFFXmlUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class DepositDetailProcessImpl implements DepositDetailProcess {
 	

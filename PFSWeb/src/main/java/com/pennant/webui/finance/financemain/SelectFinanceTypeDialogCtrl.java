@@ -116,7 +116,6 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.constants.InterfaceConstants;
-import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -124,6 +123,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.App;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.App.Database;
 import com.pennanttech.pff.core.TableType;
 

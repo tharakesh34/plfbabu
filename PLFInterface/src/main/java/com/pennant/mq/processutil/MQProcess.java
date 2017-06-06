@@ -11,10 +11,10 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.llom.util.AXIOMUtil;
 import org.apache.log4j.Logger;
 
-import com.pennant.exception.InterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.mqconnection.InterfacePropertiesUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public abstract class MQProcess {
 	private final static Logger logger = Logger.getLogger(MQProcess.class);

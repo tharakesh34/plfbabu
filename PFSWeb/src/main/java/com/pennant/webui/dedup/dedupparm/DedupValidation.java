@@ -59,9 +59,9 @@ import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.customer.InterfaceNorkamCheck;
-import com.pennant.exception.InterfaceException;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * Used to specify Date type selection in <b>DedupValidation</b> class.

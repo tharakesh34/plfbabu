@@ -8,11 +8,11 @@ import com.pennant.coreinterface.model.AccountBalance;
 import com.pennant.coreinterface.model.account.InterfaceAccount;
 import com.pennant.coreinterface.model.collateral.CollateralMark;
 import com.pennant.coreinterface.process.AccountDataProcess;
-import com.pennant.exception.InterfaceException;
 import com.pennant.mq.processutil.AddOrRemoveHoldProcess;
 import com.pennant.mq.processutil.CollateralMarkProcess;
 import com.pennant.mq.processutil.CreateAccountProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class AccountDataServiceImpl implements AccountDataProcess {
 

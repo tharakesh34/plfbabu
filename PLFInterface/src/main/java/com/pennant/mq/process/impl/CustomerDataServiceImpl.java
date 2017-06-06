@@ -11,10 +11,10 @@ import com.pennant.coreinterface.model.CustomerCollateral;
 import com.pennant.coreinterface.model.customer.FinanceCustomerDetails;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerDetail;
 import com.pennant.coreinterface.process.CustomerDataProcess;
-import com.pennant.exception.InterfaceException;
 import com.pennant.mq.processutil.FetchCustomerInfoProcess;
 import com.pennant.mq.processutil.FinCustomerDetailProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class CustomerDataServiceImpl implements CustomerDataProcess {
 	private final static Logger logger = Logger.getLogger(CustomerDataServiceImpl.class);

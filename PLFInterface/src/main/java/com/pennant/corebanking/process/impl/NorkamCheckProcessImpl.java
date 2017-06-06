@@ -2,7 +2,7 @@ package com.pennant.corebanking.process.impl;
 
 import com.pennant.coreinterface.model.customer.InterfaceNorkamCheck;
 import com.pennant.coreinterface.process.NorkamCheckProcess;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class NorkamCheckProcessImpl implements NorkamCheckProcess {
 

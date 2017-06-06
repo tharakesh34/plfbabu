@@ -11,11 +11,11 @@ import com.pennant.coreinterface.model.limit.CustomerLimitDetail;
 import com.pennant.coreinterface.model.limit.CustomerLimitPosition;
 import com.pennant.coreinterface.model.limit.CustomerLimitUtilization;
 import com.pennant.coreinterface.process.CustomerLimitProcess;
-import com.pennant.exception.InterfaceException;
 import com.pennant.mq.processutil.CustomerLimitDetailProcess;
 import com.pennant.mq.processutil.CustomerLimitPositionProcess;
 import com.pennant.mq.processutil.CustomerLimitUtilProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class CustomerLimitServiceImpl implements CustomerLimitProcess {
 	private final static Logger logger = Logger.getLogger(CustomerLimitServiceImpl.class);

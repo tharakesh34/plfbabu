@@ -80,7 +80,7 @@ import com.pennant.backend.service.financemanagement.SuspenseService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * Service implementation for methods that depends on <b>FinanceSuspHead</b>.<br>

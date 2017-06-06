@@ -39,8 +39,8 @@ import com.pennant.coreinterface.model.customer.InterfaceCustomerIdentity;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerRating;
 import com.pennant.coreinterface.model.limit.CustomerLimitDetail;
 import com.pennant.equation.util.DateUtility;
-import com.pennant.exception.InterfaceException;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class InterfaceDAOImpl implements InterfaceDAO {
 

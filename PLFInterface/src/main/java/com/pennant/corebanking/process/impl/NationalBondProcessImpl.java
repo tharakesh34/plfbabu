@@ -14,7 +14,7 @@ import com.pennant.coreinterface.model.nbc.BondPurchaseDetail;
 import com.pennant.coreinterface.model.nbc.BondTransferDetail;
 import com.pennant.coreinterface.model.nbc.NationalBondDetail;
 import com.pennant.coreinterface.process.NationalBondProcess;
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class NationalBondProcessImpl implements NationalBondProcess {
 	

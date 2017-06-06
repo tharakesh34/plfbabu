@@ -2,7 +2,7 @@ package com.pennant.coreinterface.process;
 
 import java.util.Map;
 
-import com.pennant.exception.InterfaceException;
+import com.pennanttech.pff.core.InterfaceException;
 
 public interface DateRollOverProcess {
 

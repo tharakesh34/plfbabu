@@ -5,9 +5,9 @@ import org.jaxen.JaxenException;
 
 import com.pennant.coreinterface.model.chequeverification.ChequeVerification;
 import com.pennant.coreinterface.process.ChequeVerificationProcess;
-import com.pennant.exception.InterfaceException;
 import com.pennant.mq.processutil.ChequeVerificationDetailProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
+import com.pennanttech.pff.core.InterfaceException;
 
 public class ChequeVerificationProcessImpl implements ChequeVerificationProcess {
 
