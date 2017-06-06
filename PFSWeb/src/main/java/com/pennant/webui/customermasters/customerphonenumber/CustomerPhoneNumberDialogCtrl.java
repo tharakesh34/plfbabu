@@ -656,6 +656,8 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
 				}
+			}else if(StringUtils.equals(aCustomerPhoneNumber.getRecordType(), PennantConstants.RCD_UPD)){
+				aCustomerPhoneNumber.setNewRecord(true);	
 			}
 
 			try {
@@ -927,7 +929,7 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 					}
 
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
-						if (aCustomerPhoneNumber.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
+						if (aCustomerPhoneNumber.getRecordType().equals(PennantConstants.RCD_UPD)) {
 							aCustomerPhoneNumber.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 							recordAdded = true;
 							customerPhoneNumbers.add(aCustomerPhoneNumber);
