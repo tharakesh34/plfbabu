@@ -185,8 +185,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			// open the dialog in modal mode
 			this.window_SelectVASConfiguration.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -575,7 +574,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			if(vasConfiguration == null){
 				this.productType.setValue("","");
 				this.productType.setObject(null);
-				MessageUtil.showErrorMessage(Labels.getLabel("label_SelectVASConfiguration_Product_NotExists"));
+				MessageUtil.showError(Labels.getLabel("label_SelectVASConfiguration_Product_NotExists"));
 			}else{
 				showProductTypeRow(vasConfiguration.getRecAgainst());
 			}
