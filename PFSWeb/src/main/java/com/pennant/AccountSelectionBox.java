@@ -238,7 +238,8 @@ public class AccountSelectionBox extends Hbox {
 			Events.postEvent("onFulfill", this, null);
 		}else{
 			if(StringUtils.isNotEmpty(this.textbox.getValue())){
-				MessageUtil.showErrorMessage(errormesage1+PennantApplicationUtil.formatAccountNumber(this.textbox.getValue()));
+				MessageUtil
+						.showError(errormesage1 + PennantApplicationUtil.formatAccountNumber(this.textbox.getValue()));
 			}
 			this.setValue("");
 		}
@@ -303,8 +304,7 @@ public class AccountSelectionBox extends Hbox {
 		try {
 			iAccountList = getAccountInterfaceService().fetchExistAccountList(iAccount);
 		}catch (InterfaceException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getErrorMessage());
+			MessageUtil.showError(e);
 			return false;
 		}	
 
@@ -328,9 +328,8 @@ public class AccountSelectionBox extends Hbox {
 		try {
 			return getAccountInterfaceService().getAccountsAvailableBalList(returnAccList);
 		} catch (InterfaceException  e) {
-			logger.debug(e);
 			returnAccList.clear();
-			MessageUtil.showErrorMessage(e.getErrorMessage());
+			MessageUtil.showError(e);
 		}
 		return returnAccList;
 	}
