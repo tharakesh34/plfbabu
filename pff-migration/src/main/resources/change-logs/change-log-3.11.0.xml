@@ -120,5 +120,10 @@ FROM          FinanceMain T1 INNER JOIN
 	</createView>
 	
 	</changeSet>
+	<changeSet id="6" author="Srikanth">
+	<sql>
+	INSERT INTO ErrorDetails VALUES('90329','EN','E','{0} is not applicable for {1}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
 	
 </databaseChangeLog>
