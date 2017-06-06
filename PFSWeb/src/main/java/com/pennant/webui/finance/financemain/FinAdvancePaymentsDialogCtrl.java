@@ -139,7 +139,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected CurrencyBox						custContribution;
 	protected CurrencyBox						sellerContribution;
 	protected Textbox							remarks;
-	protected Textbox							uRN;
+	protected Textbox							transactionRef;
 	protected ExtendedCombobox					bankCode;
 	protected Textbox							payableLoc;
 	protected Textbox							printingLoc;
@@ -485,8 +485,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.btnGetCustBeneficiary.setVisible(false);
 			}
 
-			this.window_FinAdvancePaymentsDialog.setHeight("55%");
-			this.window_FinAdvancePaymentsDialog.setWidth("75%");
+			this.window_FinAdvancePaymentsDialog.setHeight("65%");
+			this.window_FinAdvancePaymentsDialog.setWidth("85%");
 			this.gb_statusDetails.setVisible(false);
 			this.window_FinAdvancePaymentsDialog.doModal();
 
@@ -512,7 +512,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.llDate.setDisabled(isReadOnly("FinAdvancePaymentsDialog_llDate"));
 		this.paymentType.setDisabled(isReadOnly("FinAdvancePaymentsDialog_paymentType"));
 		this.remarks.setReadonly(isReadOnly("FinAdvancePaymentsDialog_remarks"));
-		this.uRN.setReadonly(true);
+		this.transactionRef.setReadonly(true);
 		//2
 		this.bankBranchID.setReadonly(isReadOnly("FinAdvancePaymentsDialog_bankBranchID"));
 		this.beneficiaryAccNo.setReadonly(isReadOnly("FinAdvancePaymentsDialog_beneficiaryAccNo"));
@@ -567,7 +567,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.valueDate.setDisabled(true);
 		this.phoneNumber.setReadonly(true);
 		this.partnerBankID.setReadonly(true);
-		this.uRN.setReadonly(true);
+		this.transactionRef.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -619,7 +619,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.description.setMaxlength(500);
 		this.llReferenceNo.setMaxlength(50);
 		this.remarks.setMaxlength(500);
-		this.uRN.setReadonly(true);;
+		this.transactionRef.setReadonly(true);;
 
 		this.amtToBeReleased.setMandatory(true);
 		this.amtToBeReleased.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
@@ -758,7 +758,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.city.setValue(StringUtils.trimToEmpty(aFinAdvnancePayments.getCity()));
 		this.beneficiaryAccNo.setValue(aFinAdvnancePayments.getBeneficiaryAccNo());
 		this.beneficiaryName.setValue(aFinAdvnancePayments.getBeneficiaryName());
-		this.uRN.setValue(aFinAdvnancePayments.getTransactionRef());
+		this.transactionRef.setValue(aFinAdvnancePayments.getTransactionRef());
 
 		this.phoneNumber.setValue(aFinAdvnancePayments.getPhoneNumber());
 		//other 
@@ -1083,7 +1083,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		}
 		
 		try {
-			aFinAdvancePayments.setTransactionRef(this.uRN.getValue());
+			aFinAdvancePayments.setTransactionRef(this.transactionRef.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1250,7 +1250,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.valueDate.setConstraint("");
 		this.bankBranchID.setConstraint("");
 		this.phoneNumber.setConstraint("");
-		this.uRN.setConstraint("");
+		this.transactionRef.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -1279,7 +1279,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.bankBranchID.setErrorMessage("");
 		this.phoneNumber.setErrorMessage("");
 		this.remarks.setErrorMessage("");
-		this.uRN.setErrorMessage("");
+		this.transactionRef.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -1374,7 +1374,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.bank.setValue("");
 		this.branch.setValue("");
 		this.city.setValue("");
-		this.uRN.setValue("");
+		this.transactionRef.setValue("");
 		this.valueDate.setText("");
 		logger.debug("Leaving");
 	}

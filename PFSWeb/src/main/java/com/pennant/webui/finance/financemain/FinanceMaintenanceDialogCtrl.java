@@ -3629,6 +3629,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		whereCaluse.append("')))");
 		if (!MandateConstants.skipRegistration().contains(repaymethod)) {
 			whereCaluse.append(" AND MANDATEREF IS NOT NULL ");
+		}else{
+			whereCaluse.append(" AND STATUS != '");
+			whereCaluse.append(MandateConstants.STATUS_REJECTED);
+			whereCaluse.append("'");
 		}
 
 		this.mandateRef.setWhereClause(whereCaluse.toString());
