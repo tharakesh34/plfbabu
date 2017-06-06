@@ -60,14 +60,10 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.UserDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.Literal;
@@ -255,7 +251,6 @@ public class UserDAOImpl extends BasisNextidDaoImpl<SecurityUser> implements Use
 	 *            (SecUser)
 	 * @throws DataAccessException
 	 */
-	@SuppressWarnings("serial")
 	public void update(SecurityUser secUser) {
 		logger.debug("Entering ");
 
