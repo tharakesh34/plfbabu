@@ -932,10 +932,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			List<FinanceScheduleDetail> financeScheduleDetails = scheduleData
 					.getFinanceScheduleDetails();
 			
-			// Get Maximum Presentment Schedule Date
-			Date maxPresentmentDate = getPresentmentHeaderService().getMaxSchdPresentment(
-					scheduleData.getFinanceMain().getFinReference());
-			
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
@@ -970,7 +966,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				checkForLastPaid = false;
 				
 				// Excluding Present generated file Schedule Terms
-				if(maxPresentmentDate != null && maxPresentmentDate.compareTo(curSchd.getSchDate()) >= 0){
+				if(curSchd.getPresentmentId() > 0){
 					continue;
 				}
 

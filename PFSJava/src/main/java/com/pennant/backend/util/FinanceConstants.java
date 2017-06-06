@@ -330,8 +330,13 @@ public class FinanceConstants {
 	public static final String	POSTING_AGAINST_COLLATERAL		= "CLT";					//Misc. Postings
 	public static final String	POSTING_AGAINST_LIMIT			= "LMT";					//Misc. Postings
 	
-	public static final String	FEES_AGAINST_LOAN		= "FC";
-	public static final String	FEES_AGAINST_BOUNCE		= "BC";
-	public static final String	FEES_AGAINST_ADVISE		= "AD";
+	public static final String	FEES_AGAINST_LOAN				= "FC";
+	public static final String	FEES_AGAINST_BOUNCE				= "BC";
+	public static final String	FEES_AGAINST_ADVISE				= "AD";
+
+	// Fee Status Details
+	public static final String	FEE_STATUS_CANCEL				= "C";
+	
+	
 
 }

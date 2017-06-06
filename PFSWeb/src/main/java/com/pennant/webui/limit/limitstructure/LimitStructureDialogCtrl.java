@@ -251,8 +251,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 			doSetFieldProperties();
 			doShowDialog(this.limitStructure);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_LimitStructureDialog.onClose();
 		}
 
@@ -421,8 +420,8 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		if (!active.isDisabled()) {
 			doDelete();
 		} else {
-			MessageUtil.showErrorMessage(Labels.getLabel("LIMIT_FIELD_DELETE", new String[] { getLimitStructure()
-					.getStructureCode() }));
+			MessageUtil.showError(
+					Labels.getLabel("LIMIT_FIELD_DELETE", new String[] { getLimitStructure().getStructureCode() }));
 		}
 	}
 
@@ -882,8 +881,8 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 				}
 			}
 		} else {
-			MessageUtil.showErrorMessage(Labels.getLabel("LIMIT_FIELD_MODIFY", new String[] { getLimitStructure()
-					.getStructureCode() }));
+			MessageUtil.showError(
+					Labels.getLabel("LIMIT_FIELD_MODIFY", new String[] { getLimitStructure().getStructureCode() }));
 			return;
 		}
 		logger.debug("Leaving" + event.toString());
@@ -1177,8 +1176,8 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 				this.listBoxLimitStructureDetailItems
 						.setEmptyMessage("Should not be Empty. Please Add Either Groups or Items");
 				if (aLimitStructure.getStructureCode() != null && aLimitStructure.getStructureName() != null) {
-					MessageUtil
-							.showErrorMessage("This Structure doesn't Contain any Item or Group. Please Add Either Item or Group.");
+					MessageUtil.showError(
+							"This Structure doesn't Contain any Item or Group. Please Add Either Item or Group.");
 					throw new WrongValueException();
 				}
 			} else {
@@ -1450,8 +1449,8 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 					showErrorMessage(this.window_LimitStructureDialog, e);
 				}
 			} else {
-				MessageUtil.showErrorMessage(Labels.getLabel("LIMIT_FIELD_DELETE", new String[] { getLimitStructure()
-						.getStructureCode() }));
+				MessageUtil.showError(
+						Labels.getLabel("LIMIT_FIELD_DELETE", new String[] { getLimitStructure().getStructureCode() }));
 				return;
 			}
 		}
@@ -1595,13 +1594,9 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		if (isWorkFlowEnabled()) {
 			if (!"Save".equals(userAction.getSelectedItem().getLabel())) {
 				if (auditingReq) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

@@ -390,8 +390,7 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 			setDialog(DialogType.EMBEDDED);
 			
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving") ;
 	}
@@ -655,13 +654,9 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 				}
 
 				if (isNotesMandatory(taskId, aDedupFields)) {
-					try {
-						if (!notesEntered){
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

@@ -37,11 +37,11 @@ public class IVRFlexiDataMart extends DatabaseDataEngine implements Runnable {
 
 		parmMap = new MapSqlParameterSource();
 
-		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
+		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
 			MapSqlParameterSource map = null;
 
 			@Override
-			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
+			public Long extractData(ResultSet rs) throws SQLException, DataAccessException {
 				String[] filterFields = new String[1];
 				filterFields[0] = "AGREEMENTNO";
 				while (rs.next()) {

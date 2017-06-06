@@ -650,8 +650,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			}
 			
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -861,8 +860,10 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
 				}
+			}else if(StringUtils.equals(aCustomerAddres.getRecordType(), PennantConstants.RCD_UPD)){
+				  aCustomerAddres.setNewRecord(true);	
 			}
-
+		
 			try {
 				if(isNewCustomer()){
 					tranType=PennantConstants.TRAN_DEL;
@@ -1153,7 +1154,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 					
 					
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
-						if(aCustomerAddres.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
+						if(aCustomerAddres.getRecordType().equals(PennantConstants.RCD_UPD)){
 							aCustomerAddres.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 							recordAdded=true;
 							customerAddress.add(aCustomerAddres);
@@ -1229,13 +1230,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				}
 
 				if (isNotesMandatory(taskId, aCustomerAddres)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

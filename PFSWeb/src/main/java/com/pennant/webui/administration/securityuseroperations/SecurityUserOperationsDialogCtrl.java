@@ -687,14 +687,9 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 				}
 
 				if (isNotesMandatory(taskId, aSecurityUser)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels
-									.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.warn("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

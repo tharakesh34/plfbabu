@@ -2662,7 +2662,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 			Executions.createComponents("/WEB-INF/pages/RulesFactory/Rule/RuleResultSimulation.zul", this, map);
 		} else {
-			MessageUtil.showErrorMessage("Please Build the Rule before Simulation");
+			MessageUtil.showError("Please Build the Rule before Simulation");
 		}
 
 		logger.debug("Leaving");

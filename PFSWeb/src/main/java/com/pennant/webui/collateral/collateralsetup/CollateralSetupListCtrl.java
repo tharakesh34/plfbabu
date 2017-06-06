@@ -269,7 +269,7 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 		if(StringUtils.isEmpty(collateralSetup.getRecordType())){
 			setWorkflowDetails(collateralSetup.getCollateralType());
 			if(workFlowDetails == null){
-				MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 				return;
 			}
 			
@@ -295,7 +295,7 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 
 			ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(
 					PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
-			MessageUtil.showErrorMessage(errorDetails.getError());
+			MessageUtil.showError(errorDetails.getError());
 			
 			Events.sendEvent(Events.ON_CLICK, this.btnRefresh, null);
 			logger.debug("Leaving");

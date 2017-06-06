@@ -43,20 +43,16 @@
 package com.pennant.backend.service.eod.impl;
 
 import org.apache.log4j.Logger;
-
 import org.springframework.beans.BeanUtils;
-import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.audit.AuditDetail;
 
+import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.eod.EODConfigDAO;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.eod.EODConfigService;
-import com.pennant.backend.dao.eod.EODConfigDAO;
-import com.pennant.backend.model.eod.EODConfig;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.app.util.ErrorUtil;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 

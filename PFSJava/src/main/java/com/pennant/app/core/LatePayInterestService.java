@@ -67,6 +67,8 @@ public class LatePayInterestService extends ServiceHelper {
 		Date odDate = fod.getFinODSchdDate();
 		String idb = finEODEvent.getFinanceMain().getProfitDaysBasis();
 		BigDecimal lpiMargin = finEODEvent.getFinanceMain().getPastduePftMargin().divide(new BigDecimal(100));
+		String roundingMode = finEODEvent.getFinanceMain().getCalRoundingMode();
+		int roundingTarget = finEODEvent.getFinanceMain().getRoundingTarget();
 
 		BigDecimal odPri = fod.getFinMaxODPri();
 		BigDecimal odPft = fod.getFinMaxODPft();
@@ -134,27 +136,18 @@ public class LatePayInterestService extends ServiceHelper {
 			OverdueChargeRecovery odcrCur = schdODCRecoveries.get(i);
 			OverdueChargeRecovery odcrNext = schdODCRecoveries.get(i + 1);
 
-			//Calculate the Penalty
-			BigDecimal balanceForCal = BigDecimal.ZERO;
-			if (StringUtils.equals(fod.getODChargeCalOn(), FinanceConstants.ODCALON_SPFT)) {
-				balanceForCal = odcrCur.getFinCurODPft();
-			} else if (StringUtils.equals(fod.getODChargeCalOn(), FinanceConstants.ODCALON_SPRI)) {
-				balanceForCal = odcrCur.getFinCurODPri();
-			} else {
-				balanceForCal = odcrCur.getFinCurODAmt();
-			}
-
-			//As same field is used to store both amount and percentage the value is stored in minor units without decimals
 			Date dateCur = odcrCur.getMovementDate();
 			Date dateNext = odcrNext.getMovementDate();
 
 			BigDecimal penaltyRate = getPenaltyRate(finEODEvent.getFinanceScheduleDetails(), dateCur, lpiMargin);
-			BigDecimal penalty = CalculationUtil.calInterest(dateCur, dateNext, balanceForCal, idb, penaltyRate);
+			BigDecimal penalty = CalculationUtil.calInterest(dateCur, dateNext, odcrCur.getFinCurODPri(), idb,
+					penaltyRate);
 
 			odcr.setPenalty(penalty);
-			fod.setLPIAmt(fod.getTotPenaltyAmt().add(penalty));
+			fod.setLPIAmt(fod.getLPIAmt().add(penalty));
 		}
-
+		
+		fod.setLPIAmt(CalculationUtil.roundAmount(fod.getLPIAmt(), roundingMode, roundingTarget));
 		fod.setLPIBal(fod.getLPIAmt().subtract(fod.getLPIPaid()).subtract(fod.getLPIWaived()));
 		logger.debug(" Leaving ");
 	}

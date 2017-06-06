@@ -86,6 +86,32 @@ public final class MessageUtil {
 	}
 
 	/**
+	 * @deprecated Instead use showError();
+	 * @param message
+	 * @throws InterruptedException
+	 */
+	@Deprecated
+	public static void showErrorMessage(String message) {
+		logger.info(message);
+
+		MultiLineMessageBox.doSetTemplate();
+		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, ERROR);
+	}
+
+	/**
+	 * Shows an error message box and logs the message.
+	 * 
+	 * @param message
+	 *            The detail message.
+	 */
+	public static void showError(String message) {
+		logger.info(message);
+
+		MultiLineMessageBox.doSetTemplate();
+		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, ERROR);
+	}
+
+	/**
 	 * Shows an error message box and logs the message and cause. Displays<br/>
 	 * - detail message of the exception for application exception.<br/>
 	 * - generic message for unhandled exception.
@@ -172,22 +198,6 @@ public final class MessageUtil {
 	 * Shows a message box. The message box will be displayed with the following parameters:<br/>
 	 * <b>title</b> - {@link App#NAME} is used.<br/>
 	 * <b>buttons</b> - {@link #OK}.<br/>
-	 * <b>icon</b> - {@link #ERROR} to show an image.<br/>
-	 * <b>focus</b> - {@link #OK} button with focus.
-	 * 
-	 * @param message
-	 *            The message that need to be displayed.
-	 */
-	public static void showError(String message) {
-		MultiLineMessageBox.doSetTemplate();
-
-		MultiLineMessageBox.show(message, App.NAME, OK, ERROR);
-	}
-
-	/**
-	 * Shows a message box. The message box will be displayed with the following parameters:<br/>
-	 * <b>title</b> - {@link App#NAME} is used.<br/>
-	 * <b>buttons</b> - {@link #OK}.<br/>
 	 * <b>icon</b> - {@link #INFORMATION} to show an image.<br/>
 	 * <b>focus</b> - {@link #OK} button with focus.
 	 * 
@@ -198,19 +208,6 @@ public final class MessageUtil {
 		MultiLineMessageBox.doSetTemplate();
 
 		MultiLineMessageBox.show(message, App.NAME, OK, INFORMATION);
-	}
-
-	/**
-	 * Shows a multiline ErrorMessage.<br>
-	 * 
-	 * @param e
-	 * @throws InterruptedException
-	 */
-	public static void showErrorMessage(String e) throws InterruptedException {
-		final String title = Labels.getLabel("message.Error");
-		logger.info("Message : " + e + ", title : " + title);
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(e, title, MultiLineMessageBox.OK, MultiLineMessageBox.ERROR, true);
 	}
 
 	/**

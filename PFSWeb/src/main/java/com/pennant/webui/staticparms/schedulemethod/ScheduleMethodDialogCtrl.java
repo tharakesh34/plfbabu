@@ -665,13 +665,9 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 					nextTaskId = getNextTaskIds(taskId, aScheduleMethod);
 				}
 				if (isNotesMandatory(taskId, aScheduleMethod)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

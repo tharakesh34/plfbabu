@@ -837,12 +837,7 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 			if(aBulkProcessHeader.getBulkProcessDetailsList() != null && aBulkProcessHeader.getBulkProcessDetailsList().size()>0){
 				msg =Labels.getLabel("label_BulkDataMsg");
 			}
-			try {
-				MessageUtil.showErrorMessage(msg);
-			} catch (InterruptedException e) {
-				logger.error("Exception: ", e);
-				return;
-			}
+			MessageUtil.showError(msg);
 			return;
 		}
 		
@@ -929,13 +924,9 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 				}
 
 				if (isNotesMandatory(taskId, aBulkProcessHeader)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
@@ -1295,12 +1286,10 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 
 			if(getBulkProcessHeader().getBulkProcessDetailsList() == null || getBulkProcessHeader().getBulkProcessDetailsList().size() == 0){
 				try {
-					MessageUtil.showErrorMessage(" No records Found with schedule term in between "+
-							DateUtility.formatToLongDate(this.fromDate.getValue())+" AND "+
-							DateUtility.formatToLongDate(this.toDate.getValue())+".");
+					MessageUtil.showError("No records found with schedule term in between "
+							+ DateUtility.formatToLongDate(this.fromDate.getValue()) + " and "
+							+ DateUtility.formatToLongDate(this.toDate.getValue()) + ".");
 				} catch (WrongValueException e) {
-					logger.error("Exception: ", e);
-				} catch (InterruptedException e) {
 					logger.error("Exception: ", e);
 				}
 				return;

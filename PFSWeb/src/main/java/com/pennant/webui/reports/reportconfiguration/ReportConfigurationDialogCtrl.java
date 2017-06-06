@@ -874,14 +874,9 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 				}
 
 				if (isNotesMandatory(taskId, aReportConfiguration)) {
-					try {
-						if (!notesEntered){
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							logger.debug("Leaving");
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

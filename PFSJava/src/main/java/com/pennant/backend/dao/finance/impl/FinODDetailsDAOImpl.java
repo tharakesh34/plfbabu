@@ -166,8 +166,7 @@ public class FinODDetailsDAOImpl extends BasisCodeDAO<FinODDetails> implements F
 
 		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
 		updateSql.append(" Set TotPenaltyAmt= (:TotPenaltyAmt + TotPenaltyAmt), TotWaived= (:TotWaived + TotWaived), ");
-		updateSql.append(" TotPenaltyPaid= (:TotPenaltyPaid + TotPenaltyPaid),  ");
-		updateSql.append(" TotPenaltyBal= (:TotPenaltyBal + TotPenaltyBal) ");
+		updateSql.append(" TotPenaltyPaid= (:TotPenaltyPaid + TotPenaltyPaid),  TotPenaltyBal= (:TotPenaltyBal + TotPenaltyBal) ");
 		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate ");
 
 		logger.debug("updateSql: " + updateSql.toString());

@@ -345,8 +345,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			
 		} catch (Exception e) {
 			closeDialog();
-			logger.error(e);
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -378,8 +377,10 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 *            An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 * @throws PFFInterfaceException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	public void onClick$btnDelete(Event event) throws InterruptedException, PFFInterfaceException {
+	public void onClick$btnDelete(Event event) throws InterruptedException, PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		doDelete();
 	}
 
@@ -498,8 +499,10 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * 
 	 * @throws InterruptedException
 	 * @throws PFFInterfaceException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	private void doDelete() throws InterruptedException, PFFInterfaceException {
+	private void doDelete() throws InterruptedException, PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		
 		final VASRecording aVASRecording = new VASRecording();
@@ -645,7 +648,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		// Accounting Details Validations
 		if (getAccountingDetailDialogCtrl() != null && isAccountingExecuted) {
-			MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Accountings"));
+			MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 			return;
 		}
 		
@@ -824,9 +827,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 				closeDialog();
 			}
-		} catch (final DataAccessException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getMessage());
+		} catch (DataAccessException e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -842,10 +844,12 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * 
 	 * @return boolean
 	 * @throws PFFInterfaceException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 * 
 	 */
 
-	private boolean doProcess(VASRecording aVASRecording, String tranType) throws PFFInterfaceException {
+	private boolean doProcess(VASRecording aVASRecording, String tranType) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -871,13 +875,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				}
 
 				if (isNotesMandatory(taskId, aVASRecording)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
@@ -1008,9 +1008,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 *            (String)
 	 * @return boolean
 	 * @throws PFFInterfaceException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws PFFInterfaceException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -1222,11 +1224,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				
 				// Height Calculation
 				int height = (this.rows.getVisibleItemCount() * 25) + 120;
-				if((borderLayoutHeight*0.8) < height){
-					height = (int) (borderLayoutHeight*0.8);
+				if((borderLayoutHeight*0.95) < height){
+					height = (int) (borderLayoutHeight*0.95);
 				}
 				this.window_VASRecordingDialog.setHeight(height+"px");
-				this.window_VASRecordingDialog.setWidth("80%");
+				this.window_VASRecordingDialog.setWidth("90%");
 				this.groupboxWf.setVisible(false);
 				this.window_VASRecordingDialog.doModal() ;
 			}else if(enqiryModule){
@@ -1236,9 +1238,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				setDialog(DialogType.EMBEDDED);
 			}
 			
-		} catch (final Exception e) {
-			logger.error(e);
-			MessageUtil.showErrorMessage(e.toString());
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1654,8 +1655,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			try {
 				Executions.createComponents("/WEB-INF/pages/notes/notes.zul", getTabpanel(AssetConstants.UNIQUE_ID_RECOMMENDATIONS), map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e.toString());
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");

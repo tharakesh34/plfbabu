@@ -237,7 +237,6 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 				return failedCount;
 			}
 		});
-
 		logger.debug(Literal.LEAVING);
 	}
 

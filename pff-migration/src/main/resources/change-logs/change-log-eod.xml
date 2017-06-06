@@ -422,7 +422,48 @@ update Postings set PostCategory=0 where PostCategory is null;
 INSERT INTO SMTparameters (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, WORKFLOWID) VALUES ('EOD_CHUNK_SIZE', 'Eod Chunk Size', 'int', '1', '5', '3', '0', 'Eod Chunk Size', '1', '1000', CURRENT_TIMESTAMP, 'Approved', '0');
 </sql>
 </changeSet>
+<changeSet id="50" author="satish">
+	<addColumn tableName="EODCONFIG">
+		<column name="InExtMnth" type="bit"></column>
+		<column name="PrvExtMnth" type="datetime"></column>
+	</addColumn>
+</changeSet>
+<changeSet id="51" author="satish">
+		<addColumn tableName="EODCONFIG_TEMP">
+			<column name="InExtMnth" type="bit"></column>
+			<column name="PrvExtMnth" type="datetime"></column>
+		</addColumn>
+</changeSet>
+<changeSet id="52" author="satish">
+<sql>
+update eodconfig set InExtMnth=0 where InExtMnth is null;
+</sql>
+</changeSet>
 
+	<changeSet id="53" author="satish">
+		<createView viewName="EodConfig_AView" replaceIfExists="true">
+SELECT		T1.EodConfigId, T1.ExtMnthRequired, T1.MnthExtTo, T1.Active,T1.InExtMnth,T1.PrvExtMnth		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	EodConfig  T1
+</createView>
+	</changeSet>
+	<changeSet id="54" author="satish">
+		<createView viewName="EodConfig_View" replaceIfExists="true">
+SELECT		T1.EodConfigId, T1.ExtMnthRequired, T1.MnthExtTo, T1.Active,T1.InExtMnth,T1.PrvExtMnth				
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	EodConfig_Temp T1 
+UNION ALL
 
+SELECT		T1.EodConfigId, T1.ExtMnthRequired, T1.MnthExtTo, T1.Active,T1.InExtMnth,T1.PrvExtMnth				
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+FROM    	EodConfig  T1 
+WHERE     NOT EXISTS (SELECT 1 FROM EodConfig_TEMP WHERE EodConfigId = T1.EodConfigId)
+</createView>
+	</changeSet>
+<changeSet id="55" author="satish">
+<sql>
+alter table finpftdetails drop constraint FK_FINPFTDETAIL_BMTCUSTSTSCODE;
+</sql>
+</changeSet>
 
 </databaseChangeLog>

@@ -74,6 +74,7 @@ import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.financemanagement.PresentmentHeaderService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -168,9 +169,8 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			doCheckRights();
 			doShowDialog(this.presentmentHeader);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -188,7 +188,10 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		this.partnerBank.setDescColumn("PartnerBankCode");
 		this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
 		this.partnerBank.setMandatoryStyle(true);
-
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("AlwReceipt", 1, Filter.OP_EQUAL);
+		this.partnerBank.setFilters(filters);
+		
 		this.listBox_Include.setHeight(getListBoxHeight(4));
 		this.listBox_ManualExclude.setHeight(getListBoxHeight(4));
 		this.listBox_AutoExclude.setHeight(getListBoxHeight(4));
@@ -550,7 +553,7 @@ public class PresentmentHeaderDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		try {
 			this.presentmentHeaderService.updatePresentmentDetails(excludeList, afterIncludeList, userAction, aPresentmentHeader.getId(), partnerBankId);
 		} catch (Exception e) {
-			MessageUtil.showError(e.getMessage());
+			MessageUtil.showError(e);
 		}
 
 		refreshList();

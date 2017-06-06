@@ -543,8 +543,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 							.getVersion()), this);
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 
@@ -909,8 +908,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1215,8 +1213,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", tabpanel, map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1379,8 +1376,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/ManagerCheque/DocumentDialog.zul",
 					window_ManagerChequeDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -2459,13 +2455,9 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 
 			if (!"Save".equals(userAction.getSelectedItem().getLabel())) {
 				if (auditingReq) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
@@ -2630,7 +2622,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 			DocumentDetails managerDocumentDetail = (DocumentDetails) item.getAttribute("data");
 			if (StringUtils.trimToEmpty(managerDocumentDetail.getRecordType()).equalsIgnoreCase(
 					PennantConstants.RECORD_TYPE_CAN)) {
-				MessageUtil.showErrorMessage("Not Allowed to maintain This Record");
+				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 				boolean viewProcess = false;
 				if (!StringUtils.trimToEmpty(managerDocumentDetail.getRecordType()).equalsIgnoreCase(
@@ -2664,8 +2656,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 					window_ManagerChequeDialog, map);
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -2747,7 +2738,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 				logger.debug(e);
 			}
 		} else {
-			MessageUtil.showErrorMessage("Document Details not Found.");
+			MessageUtil.showError("Document Details not Found.");
 		}
 		logger.debug("Leaving" + event.toString());
 	}

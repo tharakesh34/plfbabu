@@ -1095,14 +1095,9 @@ public class AgreementDefinitionDialogCtrl extends
 				}
 
 				if (isNotesMandatory(taskId, aAgreementDefinition)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels
-									.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

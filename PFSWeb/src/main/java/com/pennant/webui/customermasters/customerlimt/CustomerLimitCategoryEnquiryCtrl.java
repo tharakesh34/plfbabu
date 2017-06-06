@@ -188,8 +188,7 @@ public class CustomerLimitCategoryEnquiryCtrl extends GFCBaseCtrl<CustLimitCateg
 			// during user action.
 			this.window_CustomerLimitCategoryEnquiry.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

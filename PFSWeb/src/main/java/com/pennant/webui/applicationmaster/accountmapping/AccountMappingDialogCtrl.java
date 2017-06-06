@@ -172,9 +172,8 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 			this.listBoxAccountMap.setHeight(borderLayoutHeight - 75 + "px");
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug(Literal.LEAVING);

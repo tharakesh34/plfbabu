@@ -132,9 +132,8 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 			}
 			doSetFieldProperties();
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 		// Set the page level components.
 		setPageComponents(window_SelectCollateralDialog);
@@ -151,8 +150,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 			// open the dialog in modal mode
 			this.window_SelectCollateralDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

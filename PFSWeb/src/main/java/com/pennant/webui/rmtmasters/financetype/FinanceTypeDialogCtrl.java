@@ -588,8 +588,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			doSetFieldProperties();
 			doShowDialog(getFinanceType());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FinanceTypeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -3631,8 +3630,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					closeDialog();
 				}
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e.getMessage());
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -4205,8 +4203,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				closeDialog();
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getMessage());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -4246,13 +4243,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				}
 
 				if (isNotesMandatory(taskId, aFinanceType)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
@@ -4607,8 +4600,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 						this.financeBaserate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail
 								.getNetRefRateLoan().doubleValue(), 2));
 					} else {
-						MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(),
-								getUserWorkspace().getUserLanguage()).getError());
+						MessageUtil.showError(ErrorUtil
+								.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage())
+								.getError());
 						this.financeBaserate.setBaseValue("");
 					}
 				}
@@ -4631,8 +4625,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 						this.financeBaserate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail
 								.getNetRefRateLoan().doubleValue(), 2));
 					} else {
-						MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(),
-								getUserWorkspace().getUserLanguage()).getError());
+						MessageUtil.showError(ErrorUtil
+								.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage())
+								.getError());
 						this.financeBaserate.setSpecialValue("");
 					}
 				}
@@ -4658,8 +4653,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.financeBaserate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan()
 					.doubleValue(), 2));
 		} else {
-			MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(),
-					getUserWorkspace().getUserLanguage()).getError());
+			MessageUtil.showError(ErrorUtil
+					.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
 			this.financeBaserate.setSpecialValue("");
 		}
 	}
@@ -4690,8 +4685,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 						this.financeGrcBaseRate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail
 								.getNetRefRateLoan().doubleValue(), 2));
 					} else {
-						MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(),
-								getUserWorkspace().getUserLanguage()).getError());
+						MessageUtil.showError(ErrorUtil
+								.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage())
+								.getError());
 						this.financeGrcBaseRate.setBaseValue("");
 					}
 				}
@@ -4712,8 +4708,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 						this.financeGrcBaseRate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail
 								.getNetRefRateLoan().doubleValue(), 2));
 					} else {
-						MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(),
-								getUserWorkspace().getUserLanguage()).getError());
+						MessageUtil.showError(ErrorUtil
+								.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage())
+								.getError());
 						this.financeGrcBaseRate.setSpecialValue("");
 					}
 				}
@@ -4741,8 +4738,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.financeGrcBaseRate.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan()
 					.doubleValue(), 2));
 		} else {
-			MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(),
-					getUserWorkspace().getUserLanguage()).getError());
+			MessageUtil.showError(ErrorUtil
+					.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
 			this.financeGrcBaseRate.setSpecialValue("");
 		}
 	}
@@ -6214,9 +6211,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeAccountDialog.zul", null,
 					map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -6236,8 +6231,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeAccountDialog.zul",
 						null, map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving" + event.toString());

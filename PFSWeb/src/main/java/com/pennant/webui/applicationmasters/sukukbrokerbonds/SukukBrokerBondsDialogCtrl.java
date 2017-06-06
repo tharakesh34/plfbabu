@@ -327,8 +327,7 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 			ScreenCTL.displayNotes(getNotes("SukukBrokerBonds", getSukukBrokerBonds().getBrokerCode(), getSukukBrokerBonds().getVersion()), this);
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 
@@ -360,8 +359,7 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 			this.window_SukukBrokerBondsDialog.doModal() ;
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -827,7 +825,7 @@ public class SukukBrokerBondsDialogCtrl extends GFCBaseCtrl<SukukBrokerBonds> {
 				// Both Current and Existing list rating same
 				if (aSukukBrokerBonds.isNew()) {
 					ErrorDetails details=ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, "41008", errParm, null), getUserWorkspace().getUserLanguage());
-					MessageUtil.showErrorMessage(details.getError());
+					MessageUtil.showError(details.getError());
 					return null;
 				}
 

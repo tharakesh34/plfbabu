@@ -642,13 +642,9 @@ public class CourseTypeDialogCtrl extends GFCBaseCtrl<CourseType> {
 				}
 
 				if (isNotesMandatory(taskId, aCourseType)) {
-					try {
-						if (!notesEntered){
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

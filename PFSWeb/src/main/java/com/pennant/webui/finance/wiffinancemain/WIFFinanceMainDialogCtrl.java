@@ -2596,8 +2596,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			setDialog(DialogType.EMBEDDED);
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -3679,12 +3678,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (rateDetail.getErrorDetails() == null) {
 			effRate.setValue(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
 		} else {
-			try {
-				MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(),
-						getUserWorkspace().getUserLanguage()).getError());
-			} catch (InterruptedException e) {
-				logger.error("Exception: ", e);
-			}
+			MessageUtil.showError(ErrorUtil
+					.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
 			effRate.setValue(BigDecimal.ZERO);
 		}
 	}
@@ -4069,12 +4064,12 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//Schedule details Tab Validation
 		if (isSchdlRegenerate()) {
-			MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_FinDetails_Changed"));
+			MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
 			return;
 		}
 
 		if (aFinanceDetail.getFinScheduleData().getFinanceScheduleDetails().size() <= 0) {
-			MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_GenSchedule"));
+			MessageUtil.showError(Labels.getLabel("label_Finance_GenSchedule"));
 			return;
 		}
 
@@ -4260,13 +4255,9 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			String serviceTasks = getServiceTasks(taskId, afinanceMain, finishedTasks);
 
 			if (isNotesMandatory(taskId, afinanceMain)) {
-				try {
-					if (!notesEntered) {
-						MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-						return false;
-					}
-				} catch (InterruptedException e) {
-					logger.error("Exception: ", e);
+				if (!notesEntered) {
+					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+					return false;
 				}
 			}
 
@@ -7015,8 +7006,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (rateDetail.getErrorDetails() == null) {
 			effectiveRate.setValue(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
 		} else {
-			MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(),
-					getUserWorkspace().getUserLanguage()).getError());
+			MessageUtil.showError(ErrorUtil
+					.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
 			splRate.setValue("");
 			baseRate.setDescription("");
 		}

@@ -234,9 +234,8 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			doCheckRights();
 			doShowDialog(this.collateralStructure);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -638,16 +637,16 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		// Pre Validation Checking for Validated or not
 		if(this.preValidationReq.isChecked() && 
 				StringUtils.isNotEmpty(this.preValidation.getValue().trim()) && !preScriptValidated){
-			MessageUtil.showErrorMessage(Labels.getLabel("label_PrePostValidation_ValidationCheck", 
-					new String[]{ Labels.getLabel("Tab_PreValidation") }));
+			MessageUtil.showError(Labels.getLabel("label_PrePostValidation_ValidationCheck",
+					new String[] { Labels.getLabel("Tab_PreValidation") }));
 			return;
 		}
 
 		// Post Validation Checking for Validated or not
 		if(this.postValidationReq.isChecked() && 
 				StringUtils.isNotEmpty(this.postValidation.getValue().trim()) && !postScriptValidated){
-			MessageUtil.showErrorMessage(Labels.getLabel("label_PrePostValidation_ValidationCheck", 
-					new String[]{ Labels.getLabel("Tab_PostValidation") }));
+			MessageUtil.showError(Labels.getLabel("label_PrePostValidation_ValidationCheck",
+					new String[] { Labels.getLabel("Tab_PostValidation") }));
 			return;
 		}
 
@@ -1223,8 +1222,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 					closeDialog();
 				}
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showError(e.getMessage());
+				MessageUtil.showError(e);
 			}
 		}
 

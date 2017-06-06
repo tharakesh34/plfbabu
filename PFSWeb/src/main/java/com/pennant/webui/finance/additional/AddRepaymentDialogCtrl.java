@@ -407,6 +407,11 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 				
+				// Excluding Present generated file Schedule Terms
+				if(curSchd.getPresentmentId() > 0){
+					continue;
+				}
+				
 				comboitem = new Comboitem();
 				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setAttribute("fromSpecifier", curSchd.getSpecifier());

@@ -80,8 +80,6 @@ public class CompleteEOD implements JobExecutionDecider {
 		// Log the Customer queuing data and threads status
 		customerQueuingDAO.logCustomerQueuing(EodConstants.PROGRESS_SUCCESS);
 
-		//Update value dates check Holiday 
-		dateService.doUpdateValueDate();
 		boolean processed = dateService.doUpdateAftereod(true);
 		if (processed) {
 			//clear the data which is loaded in before  end of day

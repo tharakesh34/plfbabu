@@ -839,7 +839,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			BigDecimal finamt = aFinanceMain.getFinAmount().subtract(aFinanceMain.getDownPayment());
 			if (!StringUtils.equals(this.finCancelAc.getValue(), "")
 					&& finamt.compareTo(finCancelAc.getAcBalance()) > 0) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Cancel_InSufficientBal"));
+				MessageUtil.showError(Labels.getLabel("label_Finance_Cancel_InSufficientBal"));
 				return;
 			}
 		}
@@ -848,12 +848,12 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		if (!recSave && getStageAccountingDetailDialogCtrl() != null) {
 			// check if accounting rules executed or not
 			if (!getStageAccountingDetailDialogCtrl().isStageAccountingsExecuted()) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_StageAccountings"));
+				MessageUtil.showError(Labels.getLabel("label_Finance_Calc_StageAccountings"));
 				return;
 			}
 			if (getStageAccountingDetailDialogCtrl().getStageDisbCrSum().compareTo(
 					getStageAccountingDetailDialogCtrl().getStageDisbDrSum()) != 0) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Acc_NotMatching"));
+				MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
 				return;
 			}
 		} else {
@@ -864,12 +864,12 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		if (!recSave && getAccountingDetailDialogCtrl() != null) {
 			// check if accounting rules executed or not
 			if (!getAccountingDetailDialogCtrl().isAccountingsExecuted()) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Accountings"));
+				MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 				return;
 			}
 			if (getAccountingDetailDialogCtrl().getDisbCrSum()
 					.compareTo(getAccountingDetailDialogCtrl().getDisbDrSum()) != 0) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Acc_NotMatching"));
+				MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
 				return;
 			}
 		}
@@ -1138,13 +1138,9 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			String serviceTasks = getServiceTasks(taskId, afinanceMain, finishedTasks);
 
 			if (isNotesMandatory(taskId, afinanceMain)) {
-				try {
-					if (!notesEntered) {
-						MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-						return false;
-					}
-				} catch (InterruptedException e) {
-					logger.error("Exception: ", e);
+				if (!notesEntered) {
+					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+					return false;
 				}
 			}
 

@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.eod;
 
+import java.util.List;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.eod.EODConfig;
 
@@ -58,5 +60,9 @@ public interface EODConfigDAO extends BasicCrudDao<EODConfig> {
 	 * @return EODConfig
 	 */
 	EODConfig getEODConfig(long eodConfigId,String type);
+
+	List<EODConfig> getEODConfig();
+
+	void updateExtMnthEnd(EODConfig eODConfig);
 	
 }

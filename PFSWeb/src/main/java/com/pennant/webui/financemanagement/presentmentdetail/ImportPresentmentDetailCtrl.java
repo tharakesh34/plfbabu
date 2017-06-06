@@ -24,7 +24,6 @@ import com.pennanttech.pff.core.Literal;
 public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 
 	private static final long serialVersionUID = 4783031677099154138L;
-
 	private final static Logger logger = Logger.getLogger(ImportPresentmentDetailCtrl.class);
 
 	protected Window window_ImportPresentmentDetails;
@@ -70,6 +69,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			this.btnSave.setDisabled(true);
 			this.btnUpload.setDisabled(true);
 		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -95,7 +95,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			renderPannel();
 		} catch (Exception e) {
 			errorMsg = e.getMessage();
-			MessageUtil.showErrorMessage(e.getMessage());
+			MessageUtil.showError(e.getMessage());
 		}
 		
 		logger.debug(Literal.LEAVING);
@@ -132,7 +132,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			doSave();
 		} catch (Exception e) {
 			errorMsg = e.getMessage();
-			MessageUtil.showErrorMessage(e.getMessage());
+			MessageUtil.showError(e.getMessage());
 			return;
 		}
 		

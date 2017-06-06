@@ -112,9 +112,8 @@ public class AcademicDialogCtrl extends GFCBaseCtrl<Academic> {
 			doCheckRights();
 			doShowDialog(this.academic);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");

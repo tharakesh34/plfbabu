@@ -165,9 +165,8 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet>{
 			doCheckRights();
 			doShowDialog(this.builderProjcet);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 		
 		logger.debug(Literal.LEAVING);
@@ -338,6 +337,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet>{
 			this.builderId.setValue(String.valueOf(aBuilderProjcet.getBuilderId()));
 			this.builderId.setDescription(String.valueOf(aBuilderProjcet.getbuilderIdName()));
 		}
+		this.recordStatus.setValue(aBuilderProjcet.getRecordStatus());
 		
 		logger.debug(Literal.LEAVING);
 	}

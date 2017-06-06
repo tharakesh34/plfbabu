@@ -958,13 +958,9 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 				}
 
 				if (isNotesMandatory(taskId, aPFSParameter)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

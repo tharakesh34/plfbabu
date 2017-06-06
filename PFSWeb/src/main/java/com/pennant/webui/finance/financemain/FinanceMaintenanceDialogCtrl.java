@@ -310,8 +310,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			doShowDialog(getFinanceDetail());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FinanceMaintenanceDialog.onClose();
 		}
 		logger.debug("Leaving " + event.toString());
@@ -1178,7 +1177,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		wve = null;
 
 		if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() <= 0) {
-			MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_FinDetails_Changed"));
+			MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
 			return;
 		}
 
@@ -1986,8 +1985,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -2142,12 +2140,12 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (!recSave && getStageAccountingDetailDialogCtrl() != null) {
 			// check if accounting rules executed or not
 			if (!getStageAccountingDetailDialogCtrl().stageAccountingsExecuted) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_StageAccountings"));
+				MessageUtil.showError(Labels.getLabel("label_Finance_Calc_StageAccountings"));
 				return;
 			}
 			if (getStageAccountingDetailDialogCtrl().stageDisbCrSum
 					.compareTo(getStageAccountingDetailDialogCtrl().stageDisbDrSum) != 0) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Acc_NotMatching"));
+				MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
 				return;
 			}
 		} else {
@@ -2211,7 +2209,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				boolean isValid = getCollateralHeaderDialogCtrl().validCollateralValue(utilizedAmt);
 				if (!isValid) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_CollateralAssignment_InSufficient"));
+					MessageUtil.showError(Labels.getLabel("label_CollateralAssignment_InSufficient"));
 					return;
 				}
 			}
@@ -2245,7 +2243,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						collateralTab.setSelected(true);
 					}
 				}
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Collateral_FDAmount"));
+				MessageUtil.showError(Labels.getLabel("label_Collateral_FDAmount"));
 				return;
 			}
 			aFinanceDetail.setFinanceCollaterals(getFinCollateralHeaderDialogCtrl().getFinCollateralDetailsList());
@@ -2428,8 +2426,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			MessageUtil.showErrorMessage(pfe.getErrorMessage());
 			return;
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -2566,13 +2563,9 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			String serviceTasks = getServiceTasks(taskId, afinanceMain, finishedTasks);
 
 			if (isNotesMandatory(taskId, afinanceMain)) {
-				try {
-					if (!notesEntered) {
-						MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-						return false;
-					}
-				} catch (InterruptedException e) {
-					logger.error("Exception: ", e);
+				if (!notesEntered) {
+					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+					return false;
 				}
 			}
 
@@ -3335,8 +3328,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving " + event.toString());
 	}

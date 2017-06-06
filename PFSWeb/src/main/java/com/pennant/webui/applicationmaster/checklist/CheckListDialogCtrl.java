@@ -871,13 +871,9 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 				}
 
 				if (isNotesMandatory(taskId, aCheckList)) {
-					try {
-						if (!notesEntered){
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
@@ -1094,7 +1090,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 			if (checkListDetail.getRecordType() !=null && 
 					(checkListDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL) ||
 							(checkListDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)))) {
-				MessageUtil.showErrorMessage(Labels.getLabel("RECORD_NO_MAINTAIN"));
+				MessageUtil.showError(Labels.getLabel("RECORD_NO_MAINTAIN"));
 			}else {
 				checkListDetail.setNewRecord(false);
 				final HashMap<String, Object> map = new HashMap<String, Object>();

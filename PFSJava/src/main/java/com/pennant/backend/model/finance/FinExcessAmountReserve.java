@@ -6,10 +6,11 @@ public class FinExcessAmountReserve {
 
 	private long excessID = 0;
 	private long receiptSeqID = 0;
+	private String paymentType;
 	private BigDecimal reservedAmt = BigDecimal.ZERO;
-	
+
 	public FinExcessAmountReserve() {
-		
+
 	}
 
 	// ******************************************************//
@@ -19,6 +20,7 @@ public class FinExcessAmountReserve {
 	public long getExcessID() {
 		return excessID;
 	}
+
 	public void setExcessID(long excessID) {
 		this.excessID = excessID;
 	}
@@ -26,6 +28,7 @@ public class FinExcessAmountReserve {
 	public BigDecimal getReservedAmt() {
 		return reservedAmt;
 	}
+
 	public void setReservedAmt(BigDecimal reservedAmt) {
 		this.reservedAmt = reservedAmt;
 	}
@@ -33,8 +36,17 @@ public class FinExcessAmountReserve {
 	public long getReceiptSeqID() {
 		return receiptSeqID;
 	}
+
 	public void setReceiptSeqID(long receiptSeqID) {
 		this.receiptSeqID = receiptSeqID;
+	}
+
+	public String getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(String paymentType) {
+		this.paymentType = paymentType;
 	}
 
 }

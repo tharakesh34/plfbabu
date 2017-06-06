@@ -400,15 +400,15 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 
 		// Pre Validation Checking for Validated or not
 		if(StringUtils.isNotEmpty(this.preValidation.getValue().trim()) && !preScriptValidated){
-			MessageUtil.showErrorMessage(Labels.getLabel("label_PrePostValidation_ValidationCheck", 
-					new String[]{ Labels.getLabel("Tab_PreValidation") }));
+			MessageUtil.showError(Labels.getLabel("label_PrePostValidation_ValidationCheck",
+					new String[] { Labels.getLabel("Tab_PreValidation") }));
 			return;
 		}
 
 		// Post Validation Checking for Validated or not
 		if(StringUtils.isNotEmpty(this.postValidation.getValue().trim()) && !postScriptValidated){
-			MessageUtil.showErrorMessage(Labels.getLabel("label_PrePostValidation_ValidationCheck", 
-					new String[]{ Labels.getLabel("Tab_PostValidation") }));
+			MessageUtil.showError(Labels.getLabel("label_PrePostValidation_ValidationCheck",
+					new String[] { Labels.getLabel("Tab_PostValidation") }));
 			return;
 		}
 
@@ -538,9 +538,8 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			this.preValidation.setHeight(height-160+"px");
 			this.postValidation.setHeight(height-160+"px");
 			setDialog(DialogType.EMBEDDED);
-		} catch (final Exception e) {
-			logger.error(e);
-			MessageUtil.showErrorMessage(e.toString());
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1642,8 +1641,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 				closeDialog();
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getMessage());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1697,13 +1695,9 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 				}
 
 				if (isNotesMandatory(taskId, aVASConfiguration)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

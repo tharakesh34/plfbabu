@@ -410,7 +410,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		if(getStepPolicyDetailList() != null && !getStepPolicyDetailList().isEmpty()){
 			
 			if(getStepPolicyDetailList().size() < 2) {
-				MessageUtil.showErrorMessage(Labels.getLabel("StepPolicyDetail_Count_IS_EQUAL_OR_GREATER"));
+				MessageUtil.showError(Labels.getLabel("StepPolicyDetail_Count_IS_EQUAL_OR_GREATER"));
 				return false;
 			}
 			
@@ -423,25 +423,25 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 				}
 			}
 			if(tenorPercTotal.compareTo(new BigDecimal(100)) != 0) {
-				MessageUtil.showErrorMessage(Labels.getLabel("TenorSplitPerc_IS_EQUAL_OR_LESSER"));
+				MessageUtil.showError(Labels.getLabel("TenorSplitPerc_IS_EQUAL_OR_LESSER"));
 				return false;
 			}
 			
 			if(StringUtils.equals(this.stepType.getSelectedItem().getValue().toString(), FinanceConstants.STEPTYPE_EMI)){
 				BigDecimal emiPerc = emiPercTotal.divide(new BigDecimal(totalSteps),RoundingMode.HALF_UP);
 				if(emiPerc.compareTo(new BigDecimal(100)) != 0) {
-					MessageUtil.showErrorMessage(Labels.getLabel("EMISplitPerc_IS_EQUAL_OR_LESSER"));
+					MessageUtil.showError(Labels.getLabel("EMISplitPerc_IS_EQUAL_OR_LESSER"));
 					return false;
 				}
 			}else if(StringUtils.equals(this.stepType.getSelectedItem().getValue().toString(), FinanceConstants.STEPTYPE_PRIBAL)){
 				BigDecimal priPerc = emiPercTotal;
 				if(priPerc.compareTo(new BigDecimal(100)) != 0) {
-					MessageUtil.showErrorMessage(Labels.getLabel("PRISplitPerc_IS_EQUAL"));
+					MessageUtil.showError(Labels.getLabel("PRISplitPerc_IS_EQUAL"));
 					return false;
 				}
 			}
 		}else{
-			MessageUtil.showErrorMessage(Labels.getLabel("StepDetail_NoEmpty"));
+			MessageUtil.showError(Labels.getLabel("StepDetail_NoEmpty"));
 			return false;
 		}
 		logger.debug("Leaving");
@@ -817,13 +817,9 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 				}
 
 				if (isNotesMandatory(taskId, aStepPolicyHeader)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
@@ -1005,7 +1001,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		StepPolicyDetail stepPolicyDetail = (StepPolicyDetail) item.getAttribute("data");
 
 		if (StringUtils.trimToEmpty(stepPolicyDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) || StringUtils.trimToEmpty(stepPolicyDetail.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-			MessageUtil.showErrorMessage("Not Allowed to maintain This Record");
+			MessageUtil.showError("Not Allowed to maintain This Record");
 		}else{
 			stepPolicyDetail.setPolicyCode(this.policyCode.getValue());
 			stepPolicyDetail.setNewRecord(false);

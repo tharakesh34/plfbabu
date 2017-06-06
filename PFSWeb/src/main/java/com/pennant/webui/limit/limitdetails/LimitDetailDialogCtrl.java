@@ -523,9 +523,8 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 			// stores the initial data for comparing if they are changed during
 			// user action.
 			setDialog(DialogType.EMBEDDED);
-		} catch (final Exception e) {
-			logger.error(e);
-			MessageUtil.showErrorMessage(e.toString());
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1262,13 +1261,9 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 
 			if (!"Save".equals(userAction.getSelectedItem().getLabel())) {
 				if (auditingReq) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

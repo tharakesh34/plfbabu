@@ -329,9 +329,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			doShowDialog(this.collateralSetup);
 
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -884,8 +883,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				Executions.createComponents("/WEB-INF/pages/notes/notes.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_RECOMMENDATIONS), map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e.toString());
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -1673,7 +1671,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			int index = item.getIndex();
 			final CoOwnerDetail coOwnerDetail = (CoOwnerDetail) item.getAttribute("data");
 			if (StringUtils.equalsIgnoreCase(coOwnerDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
-				MessageUtil.showErrorMessage("Not Allowed to maintain This Record");
+				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("coOwnerDetail", coOwnerDetail);
@@ -1693,8 +1691,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CoOwnerDetailDialog.zul",
 							window_CollateralSetupDialog, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e.toString());
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -1724,8 +1721,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CoOwnerDetailDialog.zul",
 					window_CollateralSetupDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1809,7 +1805,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			int index = item.getIndex();
 			final CollateralThirdParty collateralThirdParty = (CollateralThirdParty) item.getAttribute("data");
 			if (StringUtils.equalsIgnoreCase(collateralThirdParty.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
-				MessageUtil.showErrorMessage("Not Allowed to maintain This Record");
+				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("collateralThirdParty", collateralThirdParty);
@@ -1828,8 +1824,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralThirdPartyDialog.zul",
 							window_CollateralSetupDialog, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e.toString());
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -1861,8 +1856,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralThirdPartyDialog.zul",
 					window_CollateralSetupDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1900,7 +1894,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				//Add the Extended Field Detail list
 				if(getCollateralThirdPartyList() == null || getCollateralThirdPartyList().isEmpty()){
 					this.basicDetailsTab.setSelected(true);
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Colateral_ThirdParty_Validation"));
+					MessageUtil.showError(Labels.getLabel("label_Colateral_ThirdParty_Validation"));
 					return;
 				}
 				aCollateralSetup.setCollateralThirdPartyList(getCollateralThirdPartyList());
@@ -1922,7 +1916,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			//Add the Extended Field Detail list
 			if (getExtendedFieldRenderList() == null || getExtendedFieldRenderList().isEmpty()) {
 				this.extendedDetailsTab.setSelected(true);
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Colateral_ExtendedField_Validation"));
+				MessageUtil.showError(Labels.getLabel("label_Colateral_ExtendedField_Validation"));
 				return;
 			}
 			aCollateralSetup.setExtendedFieldRenderList(getExtendedFieldRenderList());

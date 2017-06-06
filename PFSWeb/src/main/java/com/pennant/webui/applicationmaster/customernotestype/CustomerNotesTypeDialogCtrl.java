@@ -716,13 +716,9 @@ public class CustomerNotesTypeDialogCtrl extends GFCBaseCtrl<CustomerNotesType> 
 				}
 
 				if (isNotesMandatory(taskId, aCustomerNotesType)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

@@ -220,11 +220,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		// If include JointAccount is checked then JointAccountList should not
 		// be empty
 		if (this.jountAccountDetailList.size() < 1) {
-			try {
-				MessageUtil.showErrorMessage("Please enter JointAccount Details in JointAccount tab");
-			} catch (InterruptedException e) {
-				logger.error("Exception: ", e);
-			}
+			MessageUtil.showError("Please enter JointAccount Details in JointAccount tab");
 		}
 		logger.debug("Leaving");
 	}
@@ -276,7 +272,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Entering" + event.toString());
 		updateFinanceDetails();
 		if (StringUtils.isEmpty(this.custCIF)) {
-			MessageUtil.showErrorMessage("please Select The Customer");
+			MessageUtil.showError("Please Select The Customer");
 			return;
 		}
 		JointAccountDetail jountAccountDetail = new JointAccountDetail();
@@ -299,8 +295,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		try {
 			Executions.createComponents("/WEB-INF/pages/JointAccountDetail/JointAccountDetailDialog.zul", window_JointAccountDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -353,7 +348,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			// CAST AND STORE THE SELECTED OBJECT
 			final JointAccountDetail jountAccountDetail = (JointAccountDetail) item.getAttribute("data");
 			if (jountAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				MessageUtil.showErrorMessage("Not Allowed to maintain This Record");
+				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("jountAccountDetail", jountAccountDetail);
@@ -369,8 +364,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				try {
 					Executions.createComponents("/WEB-INF/pages/JointAccountDetail/JointAccountDetailDialog.zul", window_JointAccountDetailDialog, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e.toString());
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -382,7 +376,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Entering" + event.toString());
 		updateFinanceDetails();
 		if (StringUtils.isEmpty(this.custCIF)) {
-			MessageUtil.showErrorMessage("please Select The Customer");
+			MessageUtil.showError("Please Select The Customer");
 			return;
 		}
 		FinanceMain financeMain = null;
@@ -406,8 +400,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/GuarantorDetail/GuarantorDetailDialog.zul", window_JointAccountDetailDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -499,7 +492,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				}
 
 			} else {
-				MessageUtil.showErrorMessage("Please Upload an Proof Before View.");
+				MessageUtil.showError("Please Upload an Proof Before View.");
 			}
 
 		}
@@ -515,7 +508,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			// CAST AND STORE THE SELECTED OBJECT
 			final GuarantorDetail guarantorDetail = (GuarantorDetail) item.getAttribute("data");
 			if (StringUtils.equalsIgnoreCase(guarantorDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
-				MessageUtil.showErrorMessage("Not Allowed to maintain This Record");
+				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("guarantorDetail", guarantorDetail);
@@ -530,8 +523,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				try {
 					Executions.createComponents("/WEB-INF/pages/Finance/GuarantorDetail/GuarantorDetailDialog.zul", window_JointAccountDetailDialog, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e.toString());
+					MessageUtil.showError(e);
 				}
 			}
 		}

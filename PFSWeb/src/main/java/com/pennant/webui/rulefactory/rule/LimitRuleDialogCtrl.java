@@ -268,8 +268,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 			doCheckRights();
 			doShowDialog(getLimitFilterQuery());
 		} catch (Exception e) {
-			logger.error(e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_LimitRuleDialog.onClose();
 		}
 
@@ -336,8 +335,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 			logger.error(exp);
 			throw exp;
 		} catch (Exception e) {
-			logger.error(e);
-			MessageUtil.showErrorMessage(e.getMessage());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -387,7 +385,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 		if(!active.isDisabled())
 			doDelete();
 		else{
-			MessageUtil.showErrorMessage(Labels.getLabel("LIMIT_FIELD_DELETE",new String[] {getLimitFilterQuery().getQueryCode()}));
+			MessageUtil.showError(
+					Labels.getLabel("LIMIT_FIELD_DELETE", new String[] { getLimitFilterQuery().getQueryCode() }));
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1583,9 +1582,8 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/DedupParm/SqlViewResult.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			MessageUtil.showErrorMessage(e);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1895,8 +1893,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 					closeDialog();
 				}
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -2084,8 +2081,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 				closeDialog();
 			}
 		} catch (Exception e) {
-			logger.error(e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -2128,13 +2124,9 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery>  implemen
 				}
 
 				if (isNotesMandatory(taskId, aLimitRule)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error(e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

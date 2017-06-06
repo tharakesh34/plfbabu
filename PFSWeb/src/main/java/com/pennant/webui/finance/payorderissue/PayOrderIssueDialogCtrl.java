@@ -713,8 +713,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 					closeDialog();
 				}
 			} else {
-				MessageUtil.showErrorMessage(Labels.getLabel(
-						"List_Error",
+				MessageUtil.showError(Labels.getLabel("List_Error",
 						new String[] { Labels.getLabel("window_PayOrderIssueDialog.title"),
 								Labels.getLabel("window_PayOrderIssueDialog.title") }));
 			}
@@ -758,13 +757,9 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 				}
 
 				if (isNotesMandatory(taskId, aPayOrderIssueHeader)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

@@ -62,18 +62,18 @@ public class ControlDumpRequestProcess extends DatabaseDataEngine {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT * from INT_CF_CONTROL_VIEW");
 		sql.append(" WHERE LOAN_STATUS = :LOAN_STATUS");
-		sql.append(" AND latestRpyDate >= :monthStartDate AND latestRpyDate <= :monthEndDate ");
+		sql.append(" AND LASTREPAYDATE >= :monthStartDate AND LASTREPAYDATE <= :monthEndDate ");
 
 		parmMap = new MapSqlParameterSource();
 		parmMap.addValue("LOAN_STATUS", "A");
 		parmMap.addValue("monthStartDate", monthStartDate);
 		parmMap.addValue("monthEndDate", monthEndDate);
 
-		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
+		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
 			MapSqlParameterSource	map	= null;
 
 			@Override
-			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
+			public Long extractData(ResultSet rs) throws SQLException, DataAccessException {
 				while (rs.next()) {
 					executionStatus.setRemarks("processing the record " + totalRecords++);
 					processedCount++;

@@ -3529,6 +3529,36 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
+		// Save New Finance Object created with DownPayment Support program
+		//=======================================
+		if (financeDetail.getFinScheduleData().getFinanceType() != null
+				&& financeDetail.getFinScheduleData().getFinanceType().isAllowDownpayPgm()
+				&& StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
+			downpayFinApprove(aAuditHeader);
+		}
+
+		// Save Finance Schedule Snapshot
+		//===============================
+		//TODO commented below line which is leading to column miss match exception 
+		//getFinanceMainDAO().saveFinanceSnapshot(financeMain); 
+
+		// Update Task_log and Task_Owners tables
+		//=======================================
+		financeMain.setRoleCode(roleCode);
+		updateTaskLog(financeMain, false);
+
+		// Send Handling instruction to ICCS interface
+		doHandlingInstructionProcess(financeDetail);
+
+		// Save Salaried Posting Details
+		if (ImplementationConstants.ALLOW_FIN_SALARY_PAYMENT && StringUtils.isNotEmpty(financeMain.getRcdMaintainSts())) {
+			saveFinSalPayment(financeDetail.getFinScheduleData(), orgNextSchd, false);
+		}
+		if (!isWIF) {
+			getFinStageAccountingLogDAO()
+					.update(financeMain.getFinReference(), financeDetail.getModuleDefiner(), false);
+		}
+
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
 
@@ -3754,36 +3784,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		//Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(financeDetail);
-
-		// Save New Finance Object created with DownPayment Support program
-		//=======================================
-		if (financeDetail.getFinScheduleData().getFinanceType() != null
-				&& financeDetail.getFinScheduleData().getFinanceType().isAllowDownpayPgm()
-				&& StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
-			downpayFinApprove(aAuditHeader);
-		}
-
-		// Save Finance Schedule Snapshot
-		//===============================
-		//TODO commented below line which is leading to column miss match exception 
-		//getFinanceMainDAO().saveFinanceSnapshot(financeMain); 
-
-		// Update Task_log and Task_Owners tables
-		//=======================================
-		financeMain.setRoleCode(roleCode);
-		updateTaskLog(financeMain, false);
-
-		// Send Handling instruction to ICCS interface
-		doHandlingInstructionProcess(financeDetail);
-
-		// Save Salaried Posting Details
-		if (ImplementationConstants.ALLOW_FIN_SALARY_PAYMENT && StringUtils.isNotEmpty(financeMain.getRcdMaintainSts())) {
-			saveFinSalPayment(financeDetail.getFinScheduleData(), orgNextSchd, false);
-		}
-		if (!isWIF) {
-			getFinStageAccountingLogDAO()
-					.update(financeMain.getFinReference(), financeDetail.getModuleDefiner(), false);
-		}
 
 		logger.debug("Leaving");
 		return auditHeader;

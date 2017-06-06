@@ -2301,8 +2301,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				Executions.createComponents("/WEB-INF/pages/notes/notes.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_RECOMMENDATIONS), map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e.toString());
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -3868,8 +3867,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -5470,7 +5468,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (isOverdraft) {
 					if ((finType.isDroplineOD() || StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD,
 							this.moduleDefiner)) && isSchdlRegenerate()) {
-						MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_FinDetails_Changed"));
+						MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
 						return;
 					} else {
 						if (!recSave && StringUtils.isEmpty(this.moduleDefiner)
@@ -5490,14 +5488,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				} else {
 					if (isSchdlRegenerate()) {
-						MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_FinDetails_Changed"));
+						MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
 						return;
 					}
 				}
 
 				if (!recSave && !(isOverdraft)
 						&& aFinanceDetail.getFinScheduleData().getFinanceScheduleDetails().size() <= 0) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_GenSchedule"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_GenSchedule"));
 					return;
 				}
 
@@ -5514,29 +5512,29 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (!isEndingBal) {
 					Tab tab = (Tab) tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_SCHEDULE));
 					tab.setSelected(true);
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_ManualSchd_Changed"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_ManualSchd_Changed"));
 					return;
 				} else {
 					if (this.btnBuildSchedule.isVisible() && !buildEvent
 							&& getManualScheduleDetailDialogCtrl().isDataChanged()) {
-						MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_FinDetails_Changed"));
+						MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
 						return;
 					}
 				}
 
 				if (isReadOnly("FinanceMainDialog_NoScheduleGeneration") && isSchdlRegenerate()) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_FinDetails_Changed"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
 					return;
 				}
 
 				if (getManualScheduleDetailDialogCtrl().isSchRebuildReq()) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_FinDetails_Changed"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
 					return;
 				}
 
 			} else {
 				if (isReadOnly("FinanceMainDialog_NoScheduleGeneration") && isSchdlRegenerate()) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_FinDetails_Changed"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
 					return;
 				}
 			}
@@ -5575,12 +5573,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (aFinScheduleData.getPlanEMIHmonths() == null || aFinScheduleData.getPlanEMIHmonths().isEmpty()) {
 					Tab tab = (Tab) tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_SCHEDULE));
 					tab.setSelected(true);
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_PlanEMIHoliday"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_PlanEMIHoliday"));
 					return;
 				}
 			} else if (StringUtils.equals(aFinanceMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
 				if (aFinScheduleData.getPlanEMIHDates() == null || aFinScheduleData.getPlanEMIHDates().isEmpty()) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_PlanEMIHoliday"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_PlanEMIHoliday"));
 					return;
 				}
 			}
@@ -5618,12 +5616,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				//Show validation if the user action is  not save.
 				if (!recSave) {
 					scoreexcuted = false;
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Verify_Score"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_Verify_Score"));
 				}
 			} catch (EmptyResultDataAccessException e) {
 				//Show validation if the user action is not save.
 				if (!recSave) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_ScoreInsufficient_Error"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_ScoreInsufficient_Error"));
 					return;
 				}
 			}
@@ -5716,7 +5714,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 									.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_DOCUMENTDETAIL));
 							tab.setSelected(true);
 						}
-						MessageUtil.showErrorMessage(Labels.getLabel("label_CovenantType_Doc_Mandatory",
+						MessageUtil.showError(Labels.getLabel("label_CovenantType_Doc_Mandatory",
 								new String[] { finCovenantType.getCovenantTypeDesc() }));
 						return;
 					}
@@ -5752,7 +5750,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				boolean isValid = collateralHeaderDialogCtrl.validCollateralValue(utilizedAmt);
 				if (!isValid) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_CollateralAssignment_InSufficient"));
+					MessageUtil.showError(Labels.getLabel("label_CollateralAssignment_InSufficient"));
 					return;
 				}
 			}
@@ -5773,7 +5771,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			List<VASRecording> vasRecordings = finVasRecordingDialogCtrl.getVasRecordings();
 			for (VASRecording recording : vasRecordings) {
 				if(StringUtils.isEmpty(recording.getVasReference())){
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_MandatoryVAS_Update"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_MandatoryVAS_Update"));
 					return;
 				}
 			}
@@ -5787,13 +5785,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (accountingDetailDialogCtrl != null && !isOverdraft) {
 				// check if accounting rules executed or not
 				if (!recSave && !accountingDetailDialogCtrl.isAccountingsExecuted()) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_Accountings"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 					return;
 				}
 				if (!recSave
 						&& accountingDetailDialogCtrl.getDisbCrSum().compareTo(
 								accountingDetailDialogCtrl.getDisbDrSum()) != 0) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Acc_NotMatching"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
 					return;
 				}
 			}
@@ -5802,12 +5800,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (!recSave && stageAccountingDetailDialogCtrl != null) {
 				// check if accounting rules executed or not
 				if (!stageAccountingDetailDialogCtrl.stageAccountingsExecuted) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Calc_StageAccountings"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_Calc_StageAccountings"));
 					return;
 				}
 				if (stageAccountingDetailDialogCtrl.stageDisbCrSum
 						.compareTo(stageAccountingDetailDialogCtrl.stageDisbDrSum) != 0) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Acc_NotMatching"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
 					return;
 				}
 			} else {
@@ -5832,7 +5830,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (tab != null) {
 					tab.setSelected(true);
 				}
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Collateral_FDAmount"));
+				MessageUtil.showError(Labels.getLabel("label_Collateral_FDAmount"));
 				return;
 			}
 			aFinanceDetail.setFinanceCollaterals(finCollateralHeaderDialogCtrl.getFinCollateralDetailsList());
@@ -5897,7 +5895,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			Customer customer = aFinanceDetail.getCustomerDetails().getCustomer();
 			if (!validateDDAMobileNumber(customer.getPhoneNumber())) {
 				custDetailTab.focus();
-				MessageUtil.showErrorMessage(Labels.getLabel("DDA_MOB_VALIDATION"));
+				MessageUtil.showError(Labels.getLabel("DDA_MOB_VALIDATION"));
 				return;
 			}
 		}
@@ -6541,13 +6539,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			String serviceTasks = getServiceTasks(taskId, afinanceMain, finishedTasks);
 
 			if (isNotesMandatory(taskId, afinanceMain)) {
-				try {
-					if (!notesEntered) {
-						MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-						return false;
-					}
-				} catch (InterruptedException e) {
-					logger.error("Exception: ", e);
+				if (!notesEntered) {
+					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+					return false;
 				}
 			}
 
@@ -6621,7 +6615,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					if (nextRoleCodes.length > 1) {
 						aFinanceDetail.getFinScheduleData().getFinanceMain().setFundsAvailConfirmed(false);
-						MessageUtil.showErrorMessage(Labels.getLabel("message.Conformation_Check"));
+						MessageUtil.showError(Labels.getLabel("message.Conformation_Check"));
 					} else {
 						aFinanceDetail.getFinScheduleData().getFinanceMain().setFundsAvailConfirmed(true);
 					}
@@ -6630,8 +6624,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					//Prospect Customer Checking
 					if (StringUtils.trimToEmpty(aFinanceDetail.getCustomerDetails().getCustomer().getCustCoreBank())
 							.equals("")) {
-						MessageUtil.showErrorMessage(Labels
-								.getLabel("label_FinanceMainDialog_Mandatory_Prospect.value"));
+						MessageUtil.showError(Labels.getLabel("label_FinanceMainDialog_Mandatory_Prospect.value"));
 						return false;
 					}
 				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckDeviations)) {
@@ -6796,11 +6789,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			CollateralMark collateralMarkRply = getCollateralMarkProcess().markCollateral(list);
 			if (collateralMarkRply != null) {
 				if (!StringUtils.equals(collateralMarkRply.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
-					MessageUtil.showErrorMessage(collateralMarkRply.getReturnText());
+					MessageUtil.showError(collateralMarkRply.getReturnText());
 					processCompleted = false;
 				}
 			} else {
-				MessageUtil.showErrorMessage(Labels.getLabel("COLLATERAL_MARK_FAILED"));
+				MessageUtil.showError(Labels.getLabel("COLLATERAL_MARK_FAILED"));
 				processCompleted = false;
 			}
 		}
@@ -7837,12 +7830,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (rateDetail.getErrorDetails() == null) {
 			effRate.setValue(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
 		} else {
-			try {
-				MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(),
-						getUserWorkspace().getUserLanguage()).getError());
-			} catch (InterruptedException e) {
-				logger.error("Exception: ", e);
-			}
+			MessageUtil.showError(ErrorUtil
+					.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
 			effRate.setValue(BigDecimal.ZERO);
 		}
 	}
@@ -8491,8 +8480,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (rateDetail.getErrorDetails() == null) {
 			effectiveRate.setValue(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
 		} else {
-			MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(rateDetail.getErrorDetails(),
-					getUserWorkspace().getUserLanguage()).getError());
+			MessageUtil.showError(ErrorUtil
+					.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
 			splRate.setValue("");
 			lovFieldTextBox.setDescription("");
 		}
@@ -11298,13 +11287,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		wve = null;
 		if (!isOverdraft) {
 			if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() <= 0) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_FinDetails_Changed"));
+				MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
 				return;
 			}
 		} else {
 			if (getFinanceDetail().getFinScheduleData().getOverdraftScheduleDetails().size() <= 0
 					&& getFinanceDetail().getFinScheduleData().getFinanceType().isDroplineOD()) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_FinDetails_Changed"));
+				MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
 				return;
 			}
 		}
@@ -13779,14 +13768,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (StringUtils.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD, moduleDefiner)) {
 				BigDecimal minFinAssetValue = getFinanceDetailService().getFinAssetValue(finReference.getValue());
 				if (this.finAssetValue.getActualValue().compareTo(minFinAssetValue) < 0) {
-					try {
-						MessageUtil.showErrorMessage(Labels.getLabel("NUMBER_MINVALUE_EQ",
-								new String[] { Labels.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"),
-										PennantAppUtil.amountFormate(minFinAssetValue, format) }));
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					MessageUtil.showError(Labels.getLabel("NUMBER_MINVALUE_EQ",
+							new String[] { Labels.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"),
+									PennantAppUtil.amountFormate(minFinAssetValue, format) }));
 				} else {
 					return;
 				}
@@ -13827,8 +13811,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							&& (effRate.compareTo(new BigDecimal(PennantApplicationUtil.formatRate(commitment
 									.getCmtPftRateMin().doubleValue(), 9))) < 0 || effRate.compareTo(new BigDecimal(
 									PennantApplicationUtil.formatRate(commitment.getCmtPftRateMax().doubleValue(), 9))) > 0)) {
-						MessageUtil.showErrorMessage(Labels.getLabel(
-								"label_Finance_CommitRateOutOfRange",
+						MessageUtil.showError(Labels.getLabel("label_Finance_CommitRateOutOfRange",
 								new String[] { String.valueOf(commitment.getCmtPftRateMin()),
 										String.valueOf(commitment.getCmtPftRateMax()) }));
 						return false;
@@ -13837,21 +13820,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				//Commitment Expire date should be greater than finance start data
 				if (commitment.getCmtExpDate().compareTo(finMain.getFinStartDate()) < 0) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_CommitExpiryDateCheck",
+					MessageUtil.showError(Labels.getLabel("label_Finance_CommitExpiryDateCheck",
 							new String[] { DateUtility.formatToLongDate(commitment.getCmtExpDate()) }));
 					return false;
 				}
 
 				//MultiBranch Utilization
 				if (!commitment.isMultiBranch() && !finMain.getFinBranch().equals(commitment.getCmtBranch())) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_MultiBranchCheck",
+					MessageUtil.showError(Labels.getLabel("label_Finance_MultiBranchCheck",
 							new String[] { commitment.getCmtBranch() }));
 					return false;
 				}
 
 				//Shared Commitment Amount Check
 				if (!commitment.isSharedCmt() && commitment.getCmtUtilizedAmount().compareTo(BigDecimal.ZERO) > 0) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_MultiFinanceCheck"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_MultiFinanceCheck"));
 					return false;
 				}
 
@@ -13875,7 +13858,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							return false;
 						}
 					} else {
-						MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_CommitAmtCheck"));
+						MessageUtil.showError(Labels.getLabel("label_Finance_CommitAmtCheck"));
 						return false;
 					}
 				}
@@ -14496,13 +14479,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//Schedule details Tab Validation
 		if (this.btnBuildSchedule.isVisible() && isSchdlRegenerate()) {
-			MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_FinDetails_Changed"));
+			MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
 			return null;
 		}
 
 		if (this.btnBuildSchedule.isVisible()
 				&& aFinanceDetail.getFinScheduleData().getFinanceScheduleDetails().size() <= 0) {
-			MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_GenSchedule"));
+			MessageUtil.showError(Labels.getLabel("label_Finance_GenSchedule"));
 			return null;
 		}
 
@@ -14516,11 +14499,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (scoringDetailDialogCtrl != null) {
 			if (scoringDetailDialogCtrl.isScoreExecuted()) {
 				if (!scoringDetailDialogCtrl.isSufficientScore()) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Insufficient_Score"));
+					MessageUtil.showError(Labels.getLabel("label_Finance_Insufficient_Score"));
 					return null;
 				}
 			} else {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Finance_Verify_Score"));
+				MessageUtil.showError(Labels.getLabel("label_Finance_Verify_Score"));
 				return null;
 			}
 		}
@@ -14835,7 +14818,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				// Show Error Details in Schedule Calculation
 				if (scheduleData.getErrorDetails() != null && !scheduleData.getErrorDetails().isEmpty()) {
-					MessageUtil.showErrorMessage(scheduleData.getErrorDetails().get(0).getError());
+					MessageUtil.showError(scheduleData.getErrorDetails().get(0).getError());
 					return;
 				}
 
@@ -14877,7 +14860,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				// Show Error Details in Schedule Generation
 				if (getFinanceDetail().getFinScheduleData().getErrorDetails() != null
 						&& !getFinanceDetail().getFinScheduleData().getErrorDetails().isEmpty()) {
-					MessageUtil.showErrorMessage(getFinanceDetail().getFinScheduleData().getErrorDetails().get(0)
+					MessageUtil.showError(getFinanceDetail().getFinScheduleData().getErrorDetails().get(0)
 							.getError());
 					getFinanceDetail().getFinScheduleData().getErrorDetails().clear();
 					return;
@@ -15043,7 +15026,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						&& (tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_SCHEDULE))) != null) {
 					Tab tab = (Tab) tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_SCHEDULE));
 					tab.setSelected(true);
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Endbalvalid"));
+					MessageUtil.showError(Labels.getLabel("label_Endbalvalid"));
 					return financeDetail;
 				}
 			} else if (isBuildEvent() && getManualScheduleDetailDialogCtrl() != null) {
@@ -15055,7 +15038,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						tab.setVisible(true);
 						tab.setSelected(true);
 					}
-					MessageUtil.showErrorMessage(Labels.getLabel("label_Endbalvalid"));
+					MessageUtil.showError(Labels.getLabel("label_Endbalvalid"));
 					return financeDetail;
 				}
 				onChangeFinAndDownpayAmount();
@@ -15070,7 +15053,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (tab != null) {
 					tab.setSelected(true);
 				}
-				MessageUtil.showErrorMessage("Billing & Advance Details must be Added.");
+				MessageUtil.showError("Billing & Advance Details must be Added.");
 				return null;
 			} else {
 
@@ -15090,7 +15073,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				if (!disbVaidated) {
-					MessageUtil.showErrorMessage(Labels.getLabel("label_IstisnaFinanceMainDialog_ValidateAsset.value"));
+					MessageUtil.showError(Labels.getLabel("label_IstisnaFinanceMainDialog_ValidateAsset.value"));
 					return null;
 				}
 			}

@@ -999,15 +999,9 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 				}
 
 				if (isNotesMandatory(taskId, aMMAgreement)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels
-									.getLabel("Notes_NotEmpty"));
-							logger.debug("Leaving");
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
@@ -1938,7 +1932,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 			engine = null;
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(Labels.getLabel("Label_Template"));
+			MessageUtil.showError(Labels.getLabel("Label_Template"));
 		}
 	}
 

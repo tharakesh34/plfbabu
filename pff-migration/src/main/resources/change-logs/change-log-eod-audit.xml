@@ -41,5 +41,12 @@
 
 </changeSet>
 
+	<changeSet id="4" author="satish">
+		<addColumn tableName="ADTEODCONFIG">
+			<column name="InExtMnth" type="bit"></column>
+			<column name="PrvExtMnth" type="datetime"></column>
+		</addColumn>
+	</changeSet>
+
 
 </databaseChangeLog>

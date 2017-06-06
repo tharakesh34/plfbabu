@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.eod.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
@@ -81,7 +83,7 @@ public class EODConfigDAOImpl extends BasisNextidDaoImpl<EODConfig> implements E
 		
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" eodConfigId, extMnthRequired, mnthExtTo, active, ");
+		sql.append(" eodConfigId, extMnthRequired, mnthExtTo, active,InExtMnth,PrvExtMnth, ");
 		
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		sql.append(" From EodConfig");
@@ -115,10 +117,10 @@ public class EODConfigDAOImpl extends BasisNextidDaoImpl<EODConfig> implements E
 		// Prepare the SQL.
 		StringBuilder sql =new StringBuilder(" insert into EodConfig");
 		sql.append(tableType.getSuffix());
-		sql.append(" (eodConfigId, extMnthRequired, mnthExtTo, active, ");
+		sql.append(" (eodConfigId, extMnthRequired, mnthExtTo, active,InExtMnth,PrvExtMnth, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
 		sql.append(" values(");
-		sql.append(" :eodConfigId, :extMnthRequired, :mnthExtTo, :active, ");
+		sql.append(" :eodConfigId, :extMnthRequired, :mnthExtTo, :active,:InExtMnth,:PrvExtMnth, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		
 		if (eODConfig.getEodConfigId() <= 0) {
@@ -195,7 +197,57 @@ public class EODConfigDAOImpl extends BasisNextidDaoImpl<EODConfig> implements E
 
 		logger.debug(Literal.LEAVING);
 	}
+	
+	@Override
+	public List<EODConfig> getEODConfig() {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" EodConfigId, ExtMnthRequired, MnthExtTo, Active, ");
+		sql.append(" InExtMnth, PrvExtMnth ");
+		sql.append(" From EodConfig");
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
 
+		EODConfig eODConfig = new EODConfig();
+		eODConfig.setActive(true);
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(eODConfig);
+		RowMapper<EODConfig> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EODConfig.class);
+
+		List<EODConfig> list = namedParameterJdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		logger.debug(Literal.LEAVING);
+		return list ;
+	}	
+
+	@Override
+	public void updateExtMnthEnd(EODConfig eODConfig){
+
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder	sql =new StringBuilder("update EodConfig" );
+		sql.append("  set InExtMnth=:InExtMnth ,PrvExtMnth=:PrvExtMnth ");
+		sql.append(" where eodConfigId = :eodConfigId ");
+	
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(eODConfig);
+		int recordCount = namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+		
+		logger.debug(Literal.LEAVING);
+	
+	}
+	
+	
 	/**
 	 * Sets a new <code>JDBC Template</code> for the given data source.
 	 * 

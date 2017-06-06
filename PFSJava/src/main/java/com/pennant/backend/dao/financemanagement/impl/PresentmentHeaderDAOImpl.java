@@ -109,7 +109,6 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		}
 		sql.append(" From PresentmentHeader");
 		sql.append(type);
-
 		sql.append(" Where id = :id");
 
 		// Execute the SQL, binding the arguments.
@@ -127,7 +126,6 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 			logger.error("Exception: ", e);
 			presentmentHeader = null;
 		}
-
 		logger.debug(Literal.LEAVING);
 		return presentmentHeader;
 	}
@@ -805,6 +803,5 @@ public class PresentmentHeaderDAOImpl extends BasisNextidDaoImpl<PresentmentHead
 		logger.debug(Literal.LEAVING);
 		return maxSchdate;
 	}
-
 
 }

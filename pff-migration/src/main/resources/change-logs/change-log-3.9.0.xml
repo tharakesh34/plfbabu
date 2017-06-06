@@ -1949,9 +1949,9 @@
 				       BMTRejectCodes T7 ON T1.CancelReason = T7.RejectCode
 		</createView>
 	</changeSet>
-	<changeSet id="72" author="murthy">
-		<!-- <dropTable tableName="DATA_ENGINE_PROCESS_LOG"/>
-		<dropTable tableName="DATA_ENGINE_EXECUTION_FIELDS"/> -->
+     <changeSet id="72" author="murthy">
+		<dropTable tableName="DATA_ENGINE_PROCESS_LOG"/>
+		<dropTable tableName="DATA_ENGINE_EXECUTION_FIELDS"/>
 		<dropTable tableName="DATA_ENGINE_DOWNLOAD_HISTORY"/>
 		<dropTable tableName="DATA_ENGINE_LOG"/>
 		<dropTable tableName="DATA_ENGINE_STATUS" cascadeConstraints="true"/>
@@ -2008,5 +2008,11 @@
 			<column name="USERID" type="bigint" />
 			<column name="DOWNLOADED_DATE" type="datetime" />
 		</createTable>
-	</changeSet>	
+	</changeSet>
+	
+	<changeSet id="73" author="Durgaprasad G">
+		<addColumn tableName="FINEXCESSAMOUNTRESERVE">
+		 <column name="PaymentType" type="char(1)"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

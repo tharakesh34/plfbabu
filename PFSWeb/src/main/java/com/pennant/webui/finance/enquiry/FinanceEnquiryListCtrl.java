@@ -608,7 +608,8 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 					this.menu_filter.setLabel(enquiry.getLabel());
 					break;
 				}
-				if("ODCENQ".equals(this.enquiryType.getValue()) && "ODCFIN".equals(enquiry.getValue())){
+				if(("ODCENQ".equals(this.enquiryType.getValue()) || "LTPPENQ".equals(this.enquiryType.getValue()) || 
+						"ODENQ".equals(this.enquiryType.getValue())) && "ODCFIN".equals(enquiry.getValue())){
 					this.menupopup_filter.getChildren().clear();
 					this.menupopup_filter.appendChild(menuitem);
 					this.menu_filter.setLabel(enquiry.getLabel());

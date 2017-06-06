@@ -238,8 +238,7 @@ public class CustomerLimitListCtrl extends GFCBaseListCtrl<CustomerLimit> {
 					"/WEB-INF/pages/CustomerMasters/CustomerLimit/CustomerLimitEnquiryList.zul",
 					null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -295,8 +294,7 @@ public class CustomerLimitListCtrl extends GFCBaseListCtrl<CustomerLimit> {
 					"/WEB-INF/pages/CustomerMasters/Customer/CustomerSearchDialog.zul",
 							null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

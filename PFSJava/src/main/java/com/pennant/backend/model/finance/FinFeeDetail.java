@@ -108,6 +108,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 	private boolean alwModifyFee;
 	private boolean alwModifyFeeSchdMthd;
 	private String vasReference;
+	private String status;
 
 	private boolean dataModified = false;
 	private boolean rcdVisible = true;
@@ -417,6 +418,14 @@ public class FinFeeDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setFeeCategory(String feeCategory) {
 		this.feeCategory = feeCategory;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 }

@@ -167,9 +167,8 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			}
 			doSetFieldProperties();
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 		// Set the page level components.
 		setPageComponents(window_SelectVASConfiguration);
@@ -186,8 +185,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			// open the dialog in modal mode
 			this.window_SelectVASConfiguration.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -301,10 +299,6 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			vasRecording.setPrimaryLinkRef(this.collteralType.getValue());
 		}
 		
-		// Vas Customer Details
-		vasCustomer = getvASRecordingService().getVasCustomerDetails(vasRecording.getPrimaryLinkRef(), vasRecording.getPostingAgainst());
-		vasRecording.setVasCustomer(vasCustomer);
-		
 		// Setting Workflow Details
 		if (getFinanceWorkFlow() == null && !isFinanceProcess) {
 			FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
@@ -344,6 +338,12 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			vasConfiguration = getVasConfigurationService().getApprovedVASConfigurationByCode(this.productType.getValue());
 		}
 		
+		// Vas Customer Details
+		if(!isFinanceProcess){
+			vasCustomer = getvASRecordingService().getVasCustomerDetails(vasRecording.getPrimaryLinkRef(), vasConfiguration.getRecAgainst());
+			vasRecording.setVasCustomer(vasCustomer);
+		}
+		
 		vasRecording.setVasConfiguration(vasConfiguration);
 		vasRecording.setNewRecord(true);
 		vasRecording.setProductCode(vasConfiguration.getProductCode());
@@ -357,7 +357,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 		vasRecording.setFee(vasConfiguration.getVasFee());
 
 		// Fetching Finance Reference Detail
-		if (getFinanceWorkFlow() != null) {
+		if (getFinanceWorkFlow() != null && !isFinanceProcess) {
 			vasRecording = getvASRecordingService().getProcessEditorDetails(vasRecording, getRole(),
 					FinanceConstants.FINSER_EVENT_ORG);
 		}
@@ -574,7 +574,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			if(vasConfiguration == null){
 				this.productType.setValue("","");
 				this.productType.setObject(null);
-				MessageUtil.showErrorMessage(Labels.getLabel("label_SelectVASConfiguration_Product_NotExists"));
+				MessageUtil.showError(Labels.getLabel("label_SelectVASConfiguration_Product_NotExists"));
 			}else{
 				showProductTypeRow(vasConfiguration.getRecAgainst());
 			}

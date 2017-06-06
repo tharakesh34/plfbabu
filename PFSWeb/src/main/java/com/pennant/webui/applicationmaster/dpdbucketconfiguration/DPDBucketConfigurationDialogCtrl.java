@@ -159,9 +159,8 @@ public class DPDBucketConfigurationDialogCtrl extends GFCBaseCtrl<DPDBucketConfi
 			doCheckRights();
 			doShowDialog(this.dPDBucketConfiguration);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug(Literal.LEAVING);

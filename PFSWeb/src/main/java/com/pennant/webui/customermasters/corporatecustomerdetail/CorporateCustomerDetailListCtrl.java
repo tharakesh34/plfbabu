@@ -253,8 +253,7 @@ public class CorporateCustomerDetailListCtrl extends GFCBaseListCtrl<CorporateCu
 					"/WEB-INF/pages/CustomerMasters/CorporateCustomerDetail/CorporateCustomerDetailSearchDialog.zul",
 							null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

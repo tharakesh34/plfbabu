@@ -98,7 +98,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 * @throws PFFInterfaceException
 	 */
 	public List<Object> recoveryPayment(FinanceMain financeMain, Date dateValueDate, Date schdDate, String finODFor,
-			Date movementDate, BigDecimal penalty, BigDecimal prvPenaltyPaid, BigDecimal waiverAmt, String chargeType,
+			Date movementDate, BigDecimal penaltyPaidNow, BigDecimal penaltyWaived, String chargeType,
 			long linkedTranId, boolean fullyPaidSchd, String postBranch) throws PFFInterfaceException, IllegalAccessException,
 			InvocationTargetException {
 
@@ -109,9 +109,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 		String finReference = financeMain.getFinReference();
 		//Calculate Pending Penalty Balance
-		BigDecimal penaltyPaidNow = penalty.subtract(prvPenaltyPaid);
 
-		if (penaltyPaidNow.compareTo(BigDecimal.ZERO) > 0) {
+		if (penaltyPaidNow.add(penaltyWaived).compareTo(BigDecimal.ZERO) > 0) {
 
 			boolean isPayNow = true;
 			isPaidClear = true;
@@ -126,7 +125,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				aeEvent.setFinReference(financeMain.getFinReference());
 				aeEvent.setPostingUserBranch(postBranch);
 				amountCodes.setPenaltyPaid(penaltyPaidNow);
-				amountCodes.setPenaltyWaived(waiverAmt);
+				amountCodes.setPenaltyWaived(penaltyWaived);
 				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
 				aeEvent.setValueDate(dateValueDate);
 				aeEvent.setSchdDate(schdDate);
@@ -162,8 +161,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 					detail.setFinODFor(finODFor);
 					detail.setTotPenaltyAmt(BigDecimal.ZERO);
 					detail.setTotPenaltyPaid(penaltyPaidNow);
-					detail.setTotPenaltyBal(penaltyPaidNow.negate());
-					detail.setTotWaived(waiverAmt);
+					detail.setTotPenaltyBal((penaltyPaidNow.add(penaltyWaived)).negate());
+					detail.setTotWaived(penaltyWaived);
 					getFinODDetailsDAO().updateTotals(detail);
 
 				}

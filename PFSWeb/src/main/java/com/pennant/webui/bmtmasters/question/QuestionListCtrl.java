@@ -221,7 +221,7 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 				errParm[0]=PennantJavaUtil.getLabel("label_QuestionId")+":"+valueParm[0];
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 			}else{
 				if(isWorkFlowEnabled()){
 					String whereCond =  " AND QuestionId="+ question.getQuestionId()+" AND version=" + question.getVersion()+" ";
@@ -230,7 +230,7 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 					if (userAcces){
 						showDetailView(question);
 					}else{
-						MessageUtil.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
 				}else{
 					showDetailView(question);
@@ -284,8 +284,7 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/BMTMasters/Question/QuestionDialog.zul",null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -339,8 +338,7 @@ public class QuestionListCtrl extends GFCBaseListCtrl<Question> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/BMTMasters/Question/QuestionSearchDialog.zul",null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

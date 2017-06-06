@@ -161,9 +161,8 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 			doCheckRights();
 			doShowDialog(this.beneficiary);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");
@@ -623,8 +622,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.debug("Exception: ", e);
-				MessageUtil.showError(e.getMessage());
+				MessageUtil.showError(e);
 			}
 
 		}

@@ -561,8 +561,7 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 				setDialog(DialogType.EMBEDDED);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving") ;
 	}
@@ -979,13 +978,9 @@ public class CustomerBalanceSheetDialogCtrl extends GFCBaseCtrl<CustomerBalanceS
 				}
 
 				if (isNotesMandatory(taskId, aCustomerBalanceSheet)) {
-					try {
-						if (!notesEntered){
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

@@ -2132,8 +2132,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			try {
 				Executions.createComponents("/WEB-INF/pages/notes/notes.zul", getTabpanel(AssetConstants.UNIQUE_ID_RECOMMENDATIONS), map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e.toString());
+				MessageUtil.showError(e);
 			}
 		}
 
@@ -2207,7 +2206,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				this.cmtAccount.setMandatoryStyle(false);
 			} else {
 				this.openAccount.setChecked(false);
-				MessageUtil.showErrorMessage(Labels.getLabel("COMMITMENT_NEW_ACCOUNT_CREATION_ERROR"));
+				MessageUtil.showError(Labels.getLabel("COMMITMENT_NEW_ACCOUNT_CREATION_ERROR"));
 			}
 		} else {
 			this.cmtAccount.setValue("");
@@ -2844,13 +2843,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 			if (!"Save".equals(userAction.getSelectedItem().getLabel())) {
 				if (auditingReq) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
@@ -3805,7 +3800,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 			if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, commitmentRate.getRecordType())
 					|| StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, commitmentRate.getRecordType())) {
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 
 			} else {
 				if (!enqiryModule) {

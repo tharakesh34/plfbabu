@@ -95,7 +95,7 @@
 		<menuItem id="menu_Item_PartnerBank" zulNavigation="/WEB-INF/pages/PartnerBank/PartnerBank/PartnerBankList.zul"  rightName="menuItem_partnerbank_PartnerBank"/>
 		<!-- <menuItem id="menu_Item_PoliceCaseCustomers" zulNavigation="/WEB-INF/pages/ApplicationMaster/PoliceCase/PoliceCaseList.zul" rightName="menuItem_ApplicationMaster_PoliceCaseCustomers" /> -->
 		<!-- <menuItem id="menu_Item_PresentmentReasonCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/PresentmentReasonCode/PresentmentReasonCodeList.zul" rightName="menuItem_PresentmentReasonCode_PresentmentReasonCode" /> -->
-		<menuItem id="menu_Item_PinCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/PinCode/PinCodeList.zul"  rightName="menuItem_master_PinCode"/>
+		<!-- <menuItem id="menu_Item_PinCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/PinCode/PinCodeList.zul"  rightName="menuItem_master_PinCode"/> -->
 		<menuItem id="menu_Item_RejectDetail" zulNavigation="/WEB-INF/pages/ApplicationMaster/RejectDetail/RejectDetailList.zul"  rightName="menuItem_ApplicationMaster_RejectDetail"/>
 		<menuItem id="menu_Item_RelationshipOfficer" zulNavigation="/WEB-INF/pages/ApplicationMaster/RelationshipOfficer/RelationshipOfficerList.zul"  rightName="menuItem_ApplicationMaster_RelationshipOfficer"/>
 		<!-- <menuItem id="menu_Item_ReturnedCheque" zulNavigation="/WEB-INF/pages/ApplicationMaster/ReturnedCheques/ReturnedChequeList.zul" rightName="menuItem_ApplicationMaster_ReturnedCheque" /> -->
@@ -209,7 +209,7 @@
 		<menuItem id="menu_Item_RefundRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/RefundList.zul"   rightName="menuItem_RulesFactory_RefundRules"/>
 		<menuItem id="menu_Item_ScoringGroup" zulNavigation="/WEB-INF/pages/RulesFactory/ScoringGroup/ScoringGroupList.zul"  rightName="menuItem_RulesFactory_Notifications"/>
 		<menuItem id="menu_Item_ScoringMetrics" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/ScoringRuleList.zul"   rightName="menuItem_RulesFactory_Notifications"/>		
-		<menuItem id="menu_Item_ScoringType" zulNavigation="/WEB-INF/pages/BMTMasters/ScoringType/ScoringTypeList.zul"  rightName="menuItem_RulesFactory_Notifications"/>
+		<!-- <menuItem id="menu_Item_ScoringType" zulNavigation="/WEB-INF/pages/BMTMasters/ScoringType/ScoringTypeList.zul"  rightName="menuItem_RulesFactory_Notifications"/> -->
 		<menuItem id="menu_Item_Query" zulNavigation="/WEB-INF/pages/ApplicationMaster/Query/QueryList.zul" rightName="menuItem_RulesFactory_Query"/>
 		<menuItem id="menu_Item_SubHeadRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/SubHeadRuleList.zul"   rightName="menuItem_RulesFactory_SubHeadRules"/>
 	</menu>
@@ -432,8 +432,8 @@
 		<menuItem id="menu_Item_DocumentEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DocumentEnquiryList.zul"  rightName="menuItem_Enquiry_DocumentEnquiry"/>
 		<menuItem id="menu_Item_PostingEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/PostingEnquiryList.zul"  rightName="menuItem_Enquiry_PostingEnquiry"/>
 		<menuItem id="menu_Item_RepaymentsEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/RepayInquiry/RepayEnquiryList.zul"  rightName="menuItem_Enquiry_RepaymentsEnquiry"/>
-		<menuItem id="menu_Item_OverdueChargeRecoveryInquiry" zulNavigation="/WEB-INF/pages/Enquiry/OverDueInquiry/OverDueEnquiryList.zul"  rightName="menuItem_Enquiry_OverdueChargeRecovery"/>
-		<menuItem id="menu_Item_LatepayProfitRecoveryInquiry" zulNavigation="/WEB-INF/pages/Enquiry/LatepayProfitEnquiry/LatepayProfitEnquiryList.zul"  rightName="menuItem_Enquiry_OverdueChargeRecovery"/>
+		<!-- <menuItem id="menu_Item_OverdueChargeRecoveryInquiry" zulNavigation="/WEB-INF/pages/Enquiry/OverDueInquiry/OverDueEnquiryList.zul"  rightName="menuItem_Enquiry_OverdueChargeRecovery"/>
+		<menuItem id="menu_Item_LatepayProfitRecoveryInquiry" zulNavigation="/WEB-INF/pages/Enquiry/LatepayProfitEnquiry/LatepayProfitEnquiryList.zul"  rightName="menuItem_Enquiry_OverdueChargeRecovery"/> -->
 		<menuItem id="menu_Item_OverdueDetails" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/OverdueEnquiryList.zul"  rightName="menuItem_Enquiry_OverdueDetails"/>
         <menuItem id="menu_Item_ProvisionMovement" zulNavigation="/WEB-INF/pages/Enquiry/ProvisionInquiry/ProvisionInquiryList.zul?rightName=menuItem_Enquiry_ProvisionMovement"  rightName="menuItem_Enquiry_ProvisionMovement"/>
         <menuItem id="menu_Item_SuspDetails" zulNavigation="/WEB-INF/pages/Enquiry/SuspInquiry/SuspEnquiryList.zul"  rightName="menuItem_Enquiry_SuspDetail"/>
@@ -655,32 +655,15 @@
 	<menu id="menu_Category_PresentmentDetails" rightName="menuCat_PresentmentDetails">
 		<menuItem id="menu_Item_PresentmentExtractDetail" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentDetailExtractList.zul" rightName="menuItem_PresentmentDetail_PresentmentExtract"/>
 		<menuItem id="menu_Item_PresentmentBatchCreation" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=N" rightName="menuItem_PresentmentDetail_PresentmentBatchCreation"/>
-		<menuItem id="menu_Item_PresentmentHeaderApprove" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=A" rightName="menuItem_PresentmentDetail_PresentmentReview"/>
-		<menuItem id="menu_Item_PresentmentHeaderEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=E" rightName="menuItem_PresentmentDetail_PresentmentReview"/>
-		<menuItem id="menu_Item_PresentmentFileImport" 	zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/ImportPresentmentDetails.zul" rightName="menuItem_PresentmentDetail_PresentmentReview" />													
+		<menuItem id="menu_Item_PresentmentHeaderApprove" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=A" rightName="menuItem_PresentmentDetail_PresentmentApprove"/>
+		<menuItem id="menu_Item_PresentmentHeaderEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentHeaderList.zul?ModuleType=E" rightName="menuItem_PresentmentDetail_PresentmentEnquiry"/>
+		<menuItem id="menu_Item_PresentmentFileImport" 	zulNavigation="/WEB-INF/pages/FinanceManagement/PresentmentDetail/ImportPresentmentDetails.zul" rightName="menuItem_PresentmentDetail_PresentmentFileImport" />													
 	</menu>												
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ 
+	<!-- PaymentInstructions -->
+   <menu id="menu_Category_PaymentInstructions" rightName="menuCat_payment_PaymentInstructions">
+		<menuItem id="menu_Item_PaymentInstructions" zulNavigation="/WEB-INF/pages/Payment/PaymentHeaderList.zul" rightName="menuItem_payment_PaymentInstructions"/>
+		<menuItem id="menu_Item_PaymentInstructionsEnquiry" zulNavigation="/WEB-INF/pages/Payment/PaymentHeaderList.zul?enqiryModule=Y" rightName="menuItem_payment_PaymentInstructionsEnquiry"/>
+   </menu>
 
 </ns2:XMLRootMenu>

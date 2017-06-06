@@ -677,13 +677,9 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 				}
 
 				if (isNotesMandatory(taskId, aBaseRateCode)) {
-					try {
-						if (!notesEntered){
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

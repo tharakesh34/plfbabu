@@ -11,27 +11,9 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
 
-public class DateService {
+public class DateService extends ServiceHelper {
+	private static final long serialVersionUID = -4861845683077000353L;
 	private static Logger	logger	= Logger.getLogger(DateService.class);
-
-	/**
-	 * to value date will moved to next day
-	 */
-	public void doUpdateValueDate() {
-		logger.debug(" Entering ");
-		Date dateValueDate = DateUtility.getAppValueDate();
-
-		//Value Date Updation 
-		SysParamUtil.updateParamDetails(SysParamUtil.Param.APP_VALUEDATE.getCode(), DateUtility.addDays(dateValueDate, 1)
-				.toString());
-
-		//PURGING_PROCESS Value Updation Based On Month End
-		Date monthEndDate = DateUtility.getMonthEndDate(dateValueDate);
-		String isMonthEnd = DateUtility.addDays(dateValueDate, 1).compareTo(monthEndDate) == 0 ? "Y" : "N";
-
-		SysParamUtil.updateParamDetails("PURGING_PROCESS", isMonthEnd);
-		logger.debug(" Leaving ");
-	}
 
 	/**
 	 * TO update system parameters before start of the end of day
@@ -40,13 +22,10 @@ public class DateService {
 	 */
 	public void doUpdatebeforeEod(boolean updatePhase) {
 		logger.debug(" Entering ");
-		// Value Date updation with Application Date
-		SysParamUtil.updateParamDetails(SysParamUtil.Param.APP_VALUEDATE.getCode(), DateUtility.getAppDate().toString());
-
 		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
 		//Reset Next Business Date after updating Calendar with Core System
 		Calendar calendar = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT,
-				DateUtility.getAppValueDate());
+				DateUtility.getAppDate());
 		String nextBussDate = DateUtility.formatUtilDate(calendar.getTime(), PennantConstants.DBDateFormat);
 
 		//set System Parameter Value
@@ -68,39 +47,57 @@ public class DateService {
 	public boolean doUpdateAftereod(boolean updatePhase) {
 		logger.debug(" Entering ");
 
-		Date valueDate = DateUtility.getAppValueDate();
+		//current next business date
 		Date nextBusinessDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT);
 
-		// If NBD is holiday then loop continues, else end process.
-		boolean update = true;
-		if (valueDate.compareTo(nextBusinessDate) != 0) {
-			update = false;
+		String localccy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+		Date tempnextBussDate = BusinessCalendar
+				.getWorkingBussinessDate(localccy, HolidayHandlerTypes.MOVE_NEXT, nextBusinessDate).getTime();
+		String nextBussDate = DateUtility.formatUtilDate(tempnextBussDate, PennantConstants.DBDateFormat);
+
+		Date tempprevBussDate = BusinessCalendar
+				.getWorkingBussinessDate(localccy, HolidayHandlerTypes.MOVE_PREVIOUS, nextBusinessDate).getTime();
+		String prevBussDate = DateUtility.formatUtilDate(tempprevBussDate, PennantConstants.DBDateFormat);
+		SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_NEXT, nextBussDate);
+		SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_LAST, prevBussDate);
+
+		Date appDate = DateUtility.getAppDate();
+		Date montEndDate = DateUtility.getMonthEndDate(appDate);
+		boolean updatevalueDate = true;
+
+		//check month extension required
+		if (appDate.compareTo(montEndDate) == 0) {
+			if (getEodConfig() != null) {
+				if (getEodConfig().isExtMnthRequired() && getEodConfig().getMnthExtTo().compareTo(montEndDate) > 0) {
+					getEodConfig().setInExtMnth(true);
+					getEodConfigDAO().updateExtMnthEnd(getEodConfig());
+					updatevalueDate = false;
+				}
+			}
 		}
 
-		if (update) {
-
-			String localccy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
-
-			Date tempnextBussDate = BusinessCalendar.getWorkingBussinessDate(localccy, HolidayHandlerTypes.MOVE_NEXT,
-					nextBusinessDate).getTime();
-			String nextBussDate = DateUtility.formatUtilDate(tempnextBussDate, PennantConstants.DBDateFormat);
-
-			Date tempprevBussDate = BusinessCalendar.getWorkingBussinessDate(localccy,
-					HolidayHandlerTypes.MOVE_PREVIOUS, nextBusinessDate).getTime();
-			String prevBussDate = DateUtility.formatUtilDate(tempprevBussDate, PennantConstants.DBDateFormat);
-
-			SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_NEXT, nextBussDate);
-			SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_LAST, prevBussDate);
-			SysParamUtil.updateParamDetails(SysParamUtil.Param.APP_DATE.getCode(), nextBusinessDate.toString());
-
-			// phase
-			if (updatePhase) {
-				SysParamUtil.setParmDetails(PennantConstants.APP_PHASE, PennantConstants.APP_PHASE_DAY);
+		if (getEodConfig() != null && getEodConfig().isInExtMnth()) {
+			if (getEodConfig().getMnthExtTo().compareTo(appDate) == 0) {
+				updatevalueDate = true;
+				getEodConfig().setInExtMnth(false);
+				getEodConfig().setPrvExtMnth(appDate);
+				getEodConfigDAO().updateExtMnthEnd(getEodConfig());
+			} else {
+				updatevalueDate = false;
 			}
-			return true;
+		}
 
+		if (updatevalueDate) {
+			SysParamUtil.updateParamDetails(SysParamUtil.Param.APP_VALUEDATE.getCode(), nextBusinessDate.toString());
+		}
+
+		SysParamUtil.updateParamDetails(SysParamUtil.Param.APP_DATE.getCode(), nextBusinessDate.toString());
+		// phase
+		if (updatePhase) {
+			SysParamUtil.setParmDetails(PennantConstants.APP_PHASE, PennantConstants.APP_PHASE_DAY);
 		}
 		logger.debug(" Leaving ");
-		return false;
+		return true;
 	}
+
 }

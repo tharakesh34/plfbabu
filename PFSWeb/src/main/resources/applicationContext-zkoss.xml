@@ -4536,6 +4536,7 @@
 		class="com.pennant.webui.finance.manualadvise.ManualAdviseDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="manualAdviseService" ref="manualAdviseService" />
+		<property name="eventManager" ref="eventManager" />
 	</bean>
 
 	<!-- FinanceStatusCode -->
@@ -4758,6 +4759,25 @@
 		parent="basisListCtrl" scope="prototype">
 		<property name="eODConfigService" ref="eODConfigService" />
 	</bean>
+  		
+	<!-- PaymentHeader -->
+	<bean id="paymentHeaderListCtrl" class="com.pennant.webui.payment.paymentheader.PaymentHeaderListCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="paymentHeaderService" ref="paymentHeaderService" />
+	</bean>
+	<bean id="paymentHeaderDialogCtrl" class="com.pennant.webui.payment.paymentheader.PaymentHeaderDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="paymentHeaderService" ref="paymentHeaderService"/>
+	</bean>
+
+	<!-- SelectPaymentHeaderDialogCtrl --> 
+	<bean id="selectPaymentHeaderDialogCtrl" class="com.pennant.webui.payment.paymentheader.SelectPaymentHeaderDialogCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="paymentHeaderService" ref="paymentHeaderService"/>
+	</bean>
+
+	<!-- DisbursementsInstructionsDialogCtrl -->
+	<bean id="disbursementsInstructionsDialogCtrl" class="com.pennant.webui.payment.paymentheader.DisbursementInstructionsDialogCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="bankDetailService" ref="bankDetailService" />
+	</bean>
+ 
 	<bean id="eODConfigDialogCtrl" class="com.pennant.webui.eod.eodconfig.EODConfigDialogCtrl" parent="basisCtrl" scope="prototype">
 		<property name="eODConfigService" ref="eODConfigService"/>
 	</bean>

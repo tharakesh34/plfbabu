@@ -431,10 +431,9 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 
 			Executions.createComponents("/chart.zul", null, map);	 
 			logger.debug("Leaving"+event.toString());
-		}catch (DataAccessException e) {
+		} catch (DataAccessException e) {
 			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(Labels.getLabel("label_DashboardConfigurationDialog_UnCategorizedSQLException"));
-
+			MessageUtil.showError(Labels.getLabel("label_DashboardConfigurationDialog_UnCategorizedSQLException"));
 		}
 	}
 
@@ -1022,13 +1021,9 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 				}
 
 				if (isNotesMandatory(taskId, aDashboardConfiguration)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

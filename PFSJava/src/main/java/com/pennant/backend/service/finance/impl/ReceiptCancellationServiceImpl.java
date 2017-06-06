@@ -683,9 +683,14 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 				for (int j = rpyHeaders.size() - 1; j >= 0; j--) {
 
 					FinRepayHeader rpyHeader = rpyHeaders.get(j);
+					linkedTranId = rpyHeader.getLinkedTranId();
+					
 					if (!StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_SCHDRPY)
 							&& !StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYRPY)
 							&& !StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+						
+						// Accounting Reversals
+						
 
 						// Fetch Excess Amount Details
 						FinExcessAmount excess = getFinExcessAmountDAO().getExcessAmountsByRefAndType(finReference,
@@ -697,6 +702,12 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 									PennantConstants.default_Language);
 							return errorDetail.getErrorMessage();
 						}
+						
+						// Posting Reversal Case Program Calling in Equation
+						// ============================================
+						getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranId);
+						
+						// Excess Amounts reversal Updations
 						getFinExcessAmountDAO().updateExcessBal(excess.getExcessID(),
 								rpyHeader.getRepayAmount().negate());
 
@@ -708,7 +719,6 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 						totalPriAmount = totalPriAmount.add(rpyHeader.getPriAmount());
 					}
 
-					linkedTranId = rpyHeader.getLinkedTranId();
 					isRcdFound = true;
 
 					// Posting Reversal Case Program Calling in Equation

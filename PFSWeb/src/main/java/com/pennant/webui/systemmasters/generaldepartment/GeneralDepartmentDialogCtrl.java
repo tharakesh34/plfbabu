@@ -679,15 +679,9 @@ public class GeneralDepartmentDialogCtrl extends GFCBaseCtrl<GeneralDepartment> 
 				}
 
 				if (isNotesMandatory(taskId, aGeneralDepartment)) {
-					try {
-						if (!notesEntered){
-							MessageUtil.showErrorMessage(Labels
-									.getLabel("Notes_NotEmpty"));
-							logger.debug("Leaving");
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}

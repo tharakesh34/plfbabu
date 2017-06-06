@@ -37,11 +37,11 @@ public class ForeClosureChargesDataMart extends DatabaseDataEngine implements Ru
 
 		parmMap = new MapSqlParameterSource();
 
-		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Integer>() {
+		jdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
 			MapSqlParameterSource map = null;
 
 			@Override
-			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
+			public Long extractData(ResultSet rs) throws SQLException, DataAccessException {
 				String[] filterFields = new String[1];
 				filterFields[0] = "AGREEMENTID";
 				while (rs.next()) {

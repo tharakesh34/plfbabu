@@ -1046,7 +1046,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 
 		if((this.totLibAsstDiff.getValue() == null ? BigDecimal.ZERO : this.totLibAsstDiff.getValue()).compareTo(BigDecimal.ZERO) != 0
 				&& userAction.getSelectedItem().getValue().toString().equals(PennantConstants.RCD_STATUS_SUBMITTED)){
-			MessageUtil.showErrorMessage("Total Assets and Total Liabilities & Net Worth not Matched..");
+			MessageUtil.showError("Total Assets and Total Liabilities & Net Worth not Matched..");
 
 			return;
 		}
@@ -1143,13 +1143,9 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 				}
 
 				if (isNotesMandatory(taskId, aCreditReviewDetails)) {
-					try {
-						if (!notesEntered) {
-							MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
-					} catch (InterruptedException e) {
-						logger.error("Exception: ", e);
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
 					}
 				}
 			}
@@ -1709,7 +1705,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 			final CustomerDocument customerDocument = (CustomerDocument) item.getAttribute("docData"); 
 			customerDocument.setLovDescCustCIF(this.custCIF.getValue());
 			if (StringUtils.trimToEmpty(customerDocument.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {                                         
-				MessageUtil.showErrorMessage("Not Allowed to maintain This Record");                                                        
+				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {                                                                                                                           
 				final HashMap<String, Object> map = new HashMap<String, Object>();                                                             
 				map.put("customerDocument", customerDocument);                                                                                 

@@ -277,8 +277,7 @@ public class QuestionSearchCtrl extends GFCBaseCtrl<Question>  {
 			// open the dialog in modal mode
 			this.window_QuestionSearch.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 	}
 

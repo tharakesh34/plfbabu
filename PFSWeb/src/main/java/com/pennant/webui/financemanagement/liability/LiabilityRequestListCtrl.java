@@ -411,8 +411,7 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 						arg);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

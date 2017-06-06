@@ -201,9 +201,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			doCheckRights();
 			doShowDialog(this.partnerBank);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");
@@ -218,7 +217,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		//Empty sent any required attributes
 		this.partnerBankCode.setMaxlength(8);
 		this.partnerBankName.setMaxlength(50);
-		this.fileName.setMaxlength(15);
+		this.fileName.setMaxlength(30);
 		
 		this.bankCode.setModuleName("BankDetail");
 		this.bankCode.setMandatoryStyle(true);
@@ -811,7 +810,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		if (!this.fileName.isReadonly()) {
 			this.fileName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_FileName.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM, !this.reqFileDownload.isChecked()));
+							PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, !this.reqFileDownload.isChecked()));
 		}
 		
 		

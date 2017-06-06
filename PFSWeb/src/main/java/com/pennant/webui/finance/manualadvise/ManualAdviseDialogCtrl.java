@@ -55,6 +55,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Groupbox;
@@ -83,6 +84,8 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.core.EventManager;
+import com.pennant.core.EventManager.Notify;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -130,6 +133,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 	private transient ManualAdviseListCtrl manualAdviseListCtrl;
 	private transient ManualAdviseService manualAdviseService;
+	private EventManager eventManager;
 
 	private List<ValueLabel> listAdviseType = PennantStaticListUtil.getManualAdviseTypes();
 	
@@ -197,9 +201,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			doCheckRights();
 			doShowDialog(this.manualAdvise);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
 			closeDialog();
-			MessageUtil.showError(e.toString());
+			MessageUtil.showError(e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -948,6 +951,44 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		try {
 			if (doProcess(aManualAdvise, tranType)) {
 				refreshList();
+				
+				//Customer Notification for Role Identification
+				if (StringUtils.isBlank(aManualAdvise.getNextTaskId())) {
+					aManualAdvise.setNextRoleCode("");
+				}
+				String msg = PennantApplicationUtil.getSavingStatus(aManualAdvise.getRoleCode(),
+						aManualAdvise.getNextRoleCode(), aManualAdvise.getFinReference(), " Manual Advise ",
+						aManualAdvise.getRecordStatus());
+				Clients.showNotification(msg, "info", null, null, -1);
+				
+				// User Notifications Message/Alert
+				try {
+					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
+
+						String reference = aManualAdvise.getFinReference();
+						if (StringUtils.isNotEmpty(aManualAdvise.getNextRoleCode())) {
+							if (!PennantConstants.RCD_STATUS_CANCELLED.equals(aManualAdvise.getRecordStatus())) {
+								Notify notify = Notify.valueOf("ROLE");
+								String[] to = aManualAdvise.getNextRoleCode().split(",");
+								String message;
+
+								if (StringUtils.isBlank(aManualAdvise.getNextTaskId())) {
+									message = Labels.getLabel("REC_FINALIZED_MESSAGE");
+								} else {
+									message = Labels.getLabel("REC_PENDING_MESSAGE");
+								}
+								message += " with Manual Advise Reference" + ":" + reference;
+
+								getEventManager().publish(message, notify, to);
+							}
+						}
+					}
+				} catch (Exception e) {
+					logger.error("Exception: ", e);
+				}
+				
 				closeDialog();
 			}
 
@@ -1141,6 +1182,14 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
 		this.manualAdviseService = manualAdviseService;
+	}
+
+	public EventManager getEventManager() {
+		return eventManager;
+	}
+
+	public void setEventManager(EventManager eventManager) {
+		this.eventManager = eventManager;
 	}
 
 }

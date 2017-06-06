@@ -594,8 +594,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.window_CustomerDialog.doModal();
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			closeDialog();
 		}
 
@@ -2410,8 +2409,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 				logger.debug(" Calling doDelete method completed Successfully ");
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
@@ -2885,13 +2883,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			aCustomer.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 			// Check whether required auditing notes entered or not
 			if (isNotesMandatory(taskId, aCustomer)) {
-				try {
-					if (!notesEntered) {
-						MessageUtil.showErrorMessage(Labels.getLabel("Notes_NotEmpty"));
-						return false;
-					}
-				} catch (InterruptedException e) {
-					logger.error("Exception: ", e);
+				if (!notesEntered) {
+					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+					return false;
 				}
 			}
 			// Check for service tasks. If one exists perform the task(s)
@@ -4127,8 +4121,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerRating/CustomerRatingDialog.zul",
 					window_CustomerDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -4141,7 +4134,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			// CAST AND STORE THE SELECTED OBJECT
 			final CustomerRating customerRating = (CustomerRating) item.getAttribute("data");
 			if (isDeleteRecord(customerRating.getRecordType())) {
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("customerRating", customerRating);
@@ -4153,8 +4146,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 							"/WEB-INF/pages/CustomerMasters/CustomerRating/CustomerRatingDialog.zul",
 							window_CustomerDialog, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -4184,8 +4176,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					"/WEB-INF/pages/CustomerMasters/CustomerEmploymentDetail/CustomerEmploymentDetailDialog.zul",
 					window_CustomerDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -4211,7 +4202,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			final CustomerEmploymentDetail customerEmploymentDetail = (CustomerEmploymentDetail) item
 					.getAttribute("data");
 			if (isDeleteRecord(customerEmploymentDetail.getRecordType())) {
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("customerEmploymentDetail", customerEmploymentDetail);
@@ -4227,8 +4218,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 									"/WEB-INF/pages/CustomerMasters/CustomerEmploymentDetail/CustomerEmploymentDetailDialog.zul",
 									window_CustomerDialog, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -4257,8 +4247,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/DirectorDetail/DirectorDetailDialog.zul", null,
 					map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -4271,7 +4260,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			// CAST AND STORE THE SELECTED OBJECT
 			final DirectorDetail directorDetail = (DirectorDetail) item.getAttribute("data");
 			if (isDeleteRecord(directorDetail.getRecordType())) {
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("directorDetail", directorDetail);
@@ -4291,8 +4280,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					Executions.createComponents(
 							"/WEB-INF/pages/CustomerMasters/DirectorDetail/DirectorDetailDialog.zul", null, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -4330,8 +4318,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerIncome/CustomerIncomeDialog.zul", null,
 					map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -4344,7 +4331,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			// CAST AND STORE THE SELECTED OBJECT
 			final CustomerIncome customerIncome = (CustomerIncome) item.getAttribute("data");
 			if (isDeleteRecord(customerIncome.getRecordType())) {
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("customerIncome", customerIncome);
@@ -4357,8 +4344,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					Executions.createComponents(
 							"/WEB-INF/pages/CustomerMasters/CustomerIncome/CustomerIncomeDialog.zul", null, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -4425,8 +4411,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerDocument/CustomerDocumentDialog.zul",
 					null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -4439,7 +4424,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			// CAST AND STORE THE SELECTED OBJECT
 			final CustomerDocument customerDocument = (CustomerDocument) item.getAttribute("data");
 			if (isDeleteRecord(customerDocument.getRecordType())) {
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				if (customerDocument.getCustDocImage() == null && customerDocument.getDocRefId() != Long.MIN_VALUE) {
@@ -4461,8 +4446,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					Executions.createComponents(
 							"/WEB-INF/pages/CustomerMasters/CustomerDocument/CustomerDocumentDialog.zul", null, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -4547,8 +4531,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerAddres/CustomerAddresDialog.zul", null,
 					map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -4561,7 +4544,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			// CAST AND STORE THE SELECTED OBJECT
 			final CustomerAddres customerAddress = (CustomerAddres) item.getAttribute("data");
 			if (isDeleteRecord(customerAddress.getRecordType())) {
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				customerAddress.setLovDescCustCIF(this.custCIF.getValue());
@@ -4576,8 +4559,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					Executions.createComponents(
 							"/WEB-INF/pages/CustomerMasters/CustomerAddres/CustomerAddresDialog.zul", null, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -4633,8 +4615,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			Executions.createComponents(
 					"/WEB-INF/pages/CustomerMasters/CustomerPhoneNumber/CustomerPhoneNumberDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -4647,7 +4628,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			// CAST AND STORE THE SELECTED OBJECT
 			final CustomerPhoneNumber customerPhoneNumber = (CustomerPhoneNumber) item.getAttribute("data");
 			if (isDeleteRecord(customerPhoneNumber.getRecordType())) {
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				customerPhoneNumber.setLovDescCustCIF(this.custCIF.getValue());
@@ -4663,8 +4644,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 							"/WEB-INF/pages/CustomerMasters/CustomerPhoneNumber/CustomerPhoneNumberDialog.zul", null,
 							map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -4715,8 +4695,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerEMail/CustomerEMailDialog.zul", null,
 					map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -4729,7 +4708,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			// CAST AND STORE THE SELECTED OBJECT
 			final CustomerEMail customerEmail = (CustomerEMail) item.getAttribute("data");
 			if (isDeleteRecord(customerEmail.getRecordType())) {
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				customerEmail.setLovDescCustCIF(this.custCIF.getValue());
@@ -4744,8 +4723,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerEMail/CustomerEMailDialog.zul",
 							null, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -4802,8 +4780,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			Executions
 					.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerBankInfoDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -4816,7 +4793,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			// CAST AND STORE THE SELECTED OBJECT
 			final CustomerBankInfo custBankInfo = (CustomerBankInfo) item.getAttribute("data");
 			if (isDeleteRecord(custBankInfo.getRecordType())) {
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				custBankInfo.setLovDescCustCIF(this.custCIF.getValue());
@@ -4834,8 +4811,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerBankInfoDialog.zul",
 							null, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -4890,8 +4866,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerChequeInfoDialog.zul", null,
 					map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -4904,7 +4879,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			// CAST AND STORE THE SELECTED OBJECT
 			final CustomerChequeInfo custChequeInfo = (CustomerChequeInfo) item.getAttribute("data");
 			if (isDeleteRecord(custChequeInfo.getRecordType())) {
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				custChequeInfo.setLovDescCustCIF(this.custCIF.getValue());
@@ -4920,8 +4895,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerChequeInfoDialog.zul",
 							null, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -4984,8 +4958,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerExtLiabilityDialog.zul", null,
 					map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -4998,7 +4971,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			// CAST AND STORE THE SELECTED OBJECT
 			final CustomerExtLiability custExtLiability = (CustomerExtLiability) item.getAttribute("data");
 			if (isDeleteRecord(custExtLiability.getRecordType())) {
-				MessageUtil.showErrorMessage(Labels.getLabel("common_NoMaintainance"));
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				custExtLiability.setLovDescCustCIF(this.custCIF.getValue());
@@ -5014,8 +4987,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					Executions.createComponents(
 							"/WEB-INF/pages/CustomerMasters/Customer/CustomerExtLiabilityDialog.zul", null, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -5427,8 +5399,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

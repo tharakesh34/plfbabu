@@ -155,8 +155,6 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 			super.tableName = "LMTFinanceWorkFlowDef_AView";
 			super.queueTableName = "LMTFinanceWorkFlowDef_View";
 		}
-
-		
 		
 	}
 

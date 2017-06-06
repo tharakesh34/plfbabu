@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.service.configuration;
 
+import java.lang.reflect.InvocationTargetException;
+
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.configuration.VASRecording;
@@ -61,7 +63,7 @@ public interface VASRecordingService {
 
 	AuditHeader delete(AuditHeader auditHeader);
 
-	AuditHeader doApprove(AuditHeader auditHeader) throws PFFInterfaceException;
+	AuditHeader doApprove(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
 
 	AuditHeader doReject(AuditHeader auditHeader);
 

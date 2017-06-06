@@ -2723,57 +2723,55 @@ public class ScheduleCalculator {
 		BigDecimal cal_XIRR = BigDecimal.ZERO;
 		BigDecimal cal_XIRR_WithFee = BigDecimal.ZERO;
 		BigDecimal calcAmount = BigDecimal.ZERO;
-		if (finMain.getTotalProfit().compareTo(BigDecimal.ZERO) > 0) {
+		
+		List<BigDecimal> schAmountList = new ArrayList<BigDecimal>(1);
+		List<Date> repayDateList = new ArrayList<Date>(1);
+		List<BigDecimal> schAmountListWithFee = new ArrayList<BigDecimal>(1);
+		List<FinFeeDetail> finFeeDList = finSchdData.getFinFeeDetailList();
 
-			List<BigDecimal> schAmountList = new ArrayList<BigDecimal>(1);
-			List<Date> repayDateList = new ArrayList<Date>(1);
-			List<BigDecimal> schAmountListWithFee = new ArrayList<BigDecimal>(1);
-			List<FinFeeDetail> finFeeDList = finSchdData.getFinFeeDetailList();
-
-			BigDecimal feeAmount = BigDecimal.ZERO;
-			for (FinFeeDetail finFeeDetail : finFeeDList) {
-				if (!StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT,
-						finFeeDetail.getFeeScheduleMethod())
-						&& !StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR,
-								finFeeDetail.getFeeScheduleMethod())
-						&& !StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS,
-								finFeeDetail.getFeeScheduleMethod())) {
-					feeAmount = feeAmount.add(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount()));
-				}
+		BigDecimal feeAmount = BigDecimal.ZERO;
+		for (FinFeeDetail finFeeDetail : finFeeDList) {
+			if (!StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT,
+					finFeeDetail.getFeeScheduleMethod())
+					&& !StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR,
+							finFeeDetail.getFeeScheduleMethod())
+					&& !StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS,
+							finFeeDetail.getFeeScheduleMethod())) {
+				feeAmount = feeAmount.add(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount()));
 			}
-
-			//FIXME CH Servicing Fees should be handled
-			for (FinanceScheduleDetail finScheduleDetail : finSchdData.getFinanceScheduleDetails()) {
-
-				if (finScheduleDetail.isDisbOnSchDate()) {
-					repayDateList.add(finScheduleDetail.getSchDate());
-
-					calcAmount = finScheduleDetail.getDisbAmount().subtract(finScheduleDetail.getDownPaymentAmount());
-					calcAmount = calcAmount.multiply(new BigDecimal(-1));
-					schAmountList.add(calcAmount);
-
-					if (DateUtility.compare(finScheduleDetail.getSchDate(), finMain.getFinStartDate()) == 0) {
-						calcAmount = calcAmount.add(feeAmount);
-					}
-
-					schAmountListWithFee.add(calcAmount);
-				}
-
-				if (finScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
-					schAmountList.add(finScheduleDetail.getRepayAmount());
-					schAmountListWithFee.add(finScheduleDetail.getRepayAmount().add(finScheduleDetail.getFeeSchd()));
-					repayDateList.add(finScheduleDetail.getSchDate());
-				}
-			}
-			/*
-			 * cal_IRR = RateCalculation.calculateIRR(schAmountList); int termsPerYear =
-			 * CalculationUtil.getTermsPerYear(finMain.getRepayPftFrq()); calculated_IRR = calculated_IRR.multiply(new
-			 * BigDecimal(termsPerYear));
-			 */
-
-			cal_XIRR = RateCalculation.calculateXIRR(schAmountList, repayDateList);
-			cal_XIRR_WithFee = RateCalculation.calculateXIRR(schAmountListWithFee, repayDateList);
 		}
+
+		//FIXME CH Servicing Fees should be handled
+		for (FinanceScheduleDetail finScheduleDetail : finSchdData.getFinanceScheduleDetails()) {
+
+			if (finScheduleDetail.isDisbOnSchDate()) {
+				repayDateList.add(finScheduleDetail.getSchDate());
+
+				calcAmount = finScheduleDetail.getDisbAmount().subtract(finScheduleDetail.getDownPaymentAmount());
+				calcAmount = calcAmount.multiply(new BigDecimal(-1));
+				schAmountList.add(calcAmount);
+
+				if (DateUtility.compare(finScheduleDetail.getSchDate(), finMain.getFinStartDate()) == 0) {
+					calcAmount = calcAmount.add(feeAmount);
+				}
+
+				schAmountListWithFee.add(calcAmount);
+			}
+
+			if (finScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
+				schAmountList.add(finScheduleDetail.getRepayAmount());
+				schAmountListWithFee.add(finScheduleDetail.getRepayAmount().add(finScheduleDetail.getFeeSchd()));
+				repayDateList.add(finScheduleDetail.getSchDate());
+			}
+		}
+		/*
+		 * cal_IRR = RateCalculation.calculateIRR(schAmountList); int termsPerYear =
+		 * CalculationUtil.getTermsPerYear(finMain.getRepayPftFrq()); calculated_IRR = calculated_IRR.multiply(new
+		 * BigDecimal(termsPerYear));
+		 */
+
+		cal_XIRR = RateCalculation.calculateXIRR(schAmountList, repayDateList);
+		cal_XIRR_WithFee = RateCalculation.calculateXIRR(schAmountListWithFee, repayDateList);
 
 		finMain.setAnualizedPercRate(cal_XIRR.setScale(9));
 		finMain.setEffectiveRateOfReturn(cal_XIRR_WithFee.setScale(9));

@@ -341,12 +341,8 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
 
 			if (validationCount > 0) {
 				errorMsg.append(" please process it");
-				try {
-					MessageUtil.showErrorMessage(errorMsg.toString());
-					return;
-				} catch (InterruptedException e) {
-					logger.error("Exception: ", e);
-				}
+				MessageUtil.showError(errorMsg.toString());
+				return;
 			} else {
 				getCreditApplicationRevDialog();
 			}
@@ -392,13 +388,10 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
 		    	if(customer != null){
 		    		finCreditReviewDetailsList = getCreditApplicationReviewService().getFinCreditRevDetailsByCustomerId(customer.getCustID(), "_Temp");
 		    		if(finCreditReviewDetailsList.size() >= 3){
-		    			try {
-		    				String errorMsg = "3 Years Credit Review For The Customer with CIF Number: "+ customer.getCustCIF() + " is already in process please process it";
-							MessageUtil.showErrorMessage(errorMsg);
-							return;
-						} catch (InterruptedException e) {
-							logger.error("Exception: ", e);
-						}
+					String errorMsg = "3 Years Credit Review For The Customer with CIF Number: " + customer.getCustCIF()
+							+ " is already in process please process it";
+					MessageUtil.showError(errorMsg);
+					return;
 		    		} 
 		    		creditReviewDetail.setLovDescCustCIF(this.lovDescCustCIF.getValue());
 		    	} else {
