@@ -342,9 +342,14 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if(StringUtils.isNotBlank(custCPRCR)){
 					String custCIF = getCustomerService().getCustomerByCRCPR(custCPRCR,"_View");
 					if(custCIF != null){
-						MessageUtil.showErrorMessage(Labels.getLabel("label_CoreCustomerDialog_ProspectExist", new String[]{
-								isCustCatIndividual ? Labels.getLabel("label_CoreCustomerDialog_EIDNumber.value") : 
-									Labels.getLabel("label_CoreCustomerDialog_TradeLicenseNumber.value"),custCIF}));
+						MessageUtil
+								.showError(Labels.getLabel("label_CoreCustomerDialog_ProspectExist",
+										new String[] {
+												isCustCatIndividual
+														? Labels.getLabel("label_CoreCustomerDialog_EIDNumber.value")
+														: Labels.getLabel(
+																"label_CoreCustomerDialog_TradeLicenseNumber.value"),
+												custCIF }));
 						return;
 					}
 				}

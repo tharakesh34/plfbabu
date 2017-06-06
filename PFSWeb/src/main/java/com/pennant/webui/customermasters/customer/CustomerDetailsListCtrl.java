@@ -235,7 +235,7 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(
 						new ErrorDetails(PennantConstants.KEY_FIELD, "41005",
 								errParm, valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 
 			} else {
 				String whereCond = " AND CustID='" + aCustomer.getCustID()
@@ -247,7 +247,7 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 					if (userAcces) {
 						showDetailView(aCustomer);
 					} else {
-						MessageUtil.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
 				} else {
 					showDetailView(aCustomer);
@@ -297,8 +297,7 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul",null, map);
 			}*/
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -354,8 +353,7 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 			Executions.createComponents(
 					"/WEB-INF/pages/CustomerMasters/Customer/CustomerSearchDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
