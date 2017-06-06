@@ -240,8 +240,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 			doSetFieldProperties();
 			doShowDialog(getFacilityDetail());
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e.toString());
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 			window_FacilityDetailDialog.onClose();
 		}
 		logger.debug("Leaving");
@@ -782,8 +781,7 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 			doWriteBeanToComponents(aFacilityDetail);
 			setDialog(DialogType.OVERLAPPED);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1210,7 +1208,8 @@ public class FacilityDetailDialogCtrl extends GFCBaseCtrl<FacilityDetail> {
 		try {
 			if (aFacilityDetail.isNewRecord()) {
 				if (getFacilityDetailByRef(aFacilityDetail.getFacilityRef()) != null) {
-					MessageUtil.showErrorMessage(Labels.getLabel("DATA_ALREADY_EXISTS",new String[]{Labels.getLabel("label_FacilityRef")+":"+aFacilityDetail.getFacilityRef()}));
+					MessageUtil.showError(Labels.getLabel("DATA_ALREADY_EXISTS", new String[] {
+							Labels.getLabel("label_FacilityRef") + ":" + aFacilityDetail.getFacilityRef() }));
 					return;
 				}
 			}

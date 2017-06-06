@@ -241,7 +241,7 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 					MessageUtil.showErrorMessage(e);
 				}
 			}else{
-				MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 			}
 		}
 		logger.debug("Leaving " + event.toString());

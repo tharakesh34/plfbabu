@@ -966,7 +966,7 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 			if(ratingCode != null){
 				creditWorth = ratingCode.getRatingCode() +"-"+ratingCode.getRatingCodeDesc();
 			}else{
-				MessageUtil.showErrorMessage("Rating Code Details Not Defined Properly.");
+				MessageUtil.showError("Rating Code Details Not Defined Properly.");
 			}
 		}
 		

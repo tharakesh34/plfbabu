@@ -180,8 +180,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 			doSetFieldProperties();
 			doShowDialog(getCollateral());
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e.toString());
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 			window_CollateralDialog.onClose();
 		}
 		logger.debug("Leaving");
@@ -488,8 +487,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 			
 			this.window_CollateralDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
