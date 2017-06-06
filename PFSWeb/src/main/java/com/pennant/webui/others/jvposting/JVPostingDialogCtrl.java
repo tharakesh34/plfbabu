@@ -104,7 +104,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -1896,7 +1896,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onClick$btnValidate(Event event) throws Exception,PFFInterfaceException {
+	public void onClick$btnValidate(Event event) throws Exception,InterfaceException {
 		logger.debug("Entering" + event.toString());
 		final JVPosting aJVPosting = new JVPosting();
 		BeanUtils.copyProperties(getJVPosting(), aJVPosting);

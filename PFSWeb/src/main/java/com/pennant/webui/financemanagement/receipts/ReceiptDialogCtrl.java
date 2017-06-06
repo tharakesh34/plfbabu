@@ -168,7 +168,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartUtil;
 import com.pennant.fusioncharts.ChartsConfig;
@@ -921,7 +921,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @throws AccountNotFoundException
 	 * @throws WrongValueException
 	 */
-	public void onClick$btnCalcReceipts(Event event) throws InterruptedException, WrongValueException, PFFInterfaceException {
+	public void onClick$btnCalcReceipts(Event event) throws InterruptedException, WrongValueException, InterfaceException {
 		logger.debug("Entering" + event.toString());
 
 		// Validate Required Fields Data
@@ -2370,7 +2370,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				doProcessReceipt();
 			}
 
-		} catch (PFFInterfaceException pfe) {
+		} catch (InterfaceException pfe) {
 			logger.error("Exception: ", pfe);
 			MessageUtil.showErrorMessage(pfe.getErrorMessage());
 			return;
@@ -4298,7 +4298,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		} catch (InterruptedException e) {
 			logger.error("Exception: ", e);
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			MessageUtil.showErrorMessage(e.getErrorMessage());
 		} catch (IllegalAccessException e) {
@@ -4607,7 +4607,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 * @throws AccountNotFoundException
 	 */
-	private boolean isValidateData(boolean isCalProcess) throws InterruptedException, PFFInterfaceException {
+	private boolean isValidateData(boolean isCalProcess) throws InterruptedException, InterfaceException {
  		logger.debug("Entering");
 		
 		// Validate Field Details

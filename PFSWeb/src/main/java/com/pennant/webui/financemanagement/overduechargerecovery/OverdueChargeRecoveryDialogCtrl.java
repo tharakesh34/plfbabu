@@ -90,7 +90,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -1380,9 +1380,9 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 					this.doSave();
 				}
 			}
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException(e.getErrorCode(), e.getMessage()) {
+			throw new InterfaceException(e.getErrorCode(), e.getMessage()) {
 			};
 		} catch (IllegalAccessException e) {
 			logger.error("Exception: ", e);

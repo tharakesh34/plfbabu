@@ -23,7 +23,7 @@ import com.pennant.backend.service.finance.ReceiptRealizationService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -78,7 +78,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException,
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
 	InvocationTargetException {
 		logger.debug("Entering");
 
@@ -127,10 +127,10 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException {
+	public AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "doReject");
@@ -168,7 +168,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException,
+	public AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
 	InvocationTargetException {
 		logger.debug("Entering");
 

@@ -77,7 +77,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -476,7 +476,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	public void onFulfill$bankName(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());

@@ -15,7 +15,7 @@ import com.pennant.coreinterface.model.account.AccountDetail;
 import com.pennant.coreinterface.model.collateral.CollateralMark;
 import com.pennant.coreinterface.model.collateral.DepositDetail;
 import com.pennant.equation.util.DateUtility;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
@@ -35,11 +35,11 @@ public class CollateralMarkProcess extends MQProcess {
 		super();
 	}
 
-	public CollateralMark markCollateral(CollateralMark collateralMarking, String msgFormat) throws PFFInterfaceException {
+	public CollateralMark markCollateral(CollateralMark collateralMarking, String msgFormat) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (collateralMarking == null) {
-			throw new PFFInterfaceException("PTI3001", new String[]{"CollateralMark"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", new String[]{"CollateralMark"},"&1 Cannot Be Blank");	
 		}
 
 		//set MQ Message configuration details 
@@ -54,7 +54,7 @@ public class CollateralMarkProcess extends MQProcess {
 			OMElement requestElement = getRequestElement(collateralMarking, referenceNum, factory, msgFormat);
 			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
 			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
-		} catch (PFFInterfaceException pffe) {
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -70,10 +70,10 @@ public class CollateralMarkProcess extends MQProcess {
 	 * @param header
 	 * @param msgFormat 
 	 * @return
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
 	private CollateralMark setCollateralMarkReplyInfo(OMElement responseElement, AHBMQHeader header, String msgFormat) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -93,7 +93,7 @@ public class CollateralMarkProcess extends MQProcess {
 
 			if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
 				logger.info("ReturnStatus is Failure");
-				throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+				throw new InterfaceException("PTI3002", header.getErrorMessage());
 			}
 
 			OMElement rootElement = OMAbstractFactory.getOMFactory().createOMElement(new QName(COLLATERAL_MARK));
@@ -105,7 +105,7 @@ public class CollateralMarkProcess extends MQProcess {
 			collateralReply = new CollateralMark();
 			collateralReply = (CollateralMark) doUnMarshalling(rootElement, collateralReply);
 
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -123,10 +123,10 @@ public class CollateralMarkProcess extends MQProcess {
 	 * @param factory
 	 * @param msgFormat 
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	private OMElement getRequestElement(CollateralMark collateralMark, String referenceNum, OMFactory factory, String msgFormat) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));

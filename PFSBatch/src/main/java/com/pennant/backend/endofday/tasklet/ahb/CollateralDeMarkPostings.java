@@ -18,7 +18,7 @@ import com.pennant.app.core.CollateralService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.constants.EodConstants;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class CollateralDeMarkPostings implements Tasklet {
 	private Logger logger = Logger.getLogger(CollateralDeMarkPostings.class);
@@ -76,7 +76,7 @@ public class CollateralDeMarkPostings implements Tasklet {
 
 				try {
 					getCollateralService().doCollateralDemarking(resultSet);
-				} catch (PFFInterfaceException e) {
+				} catch (InterfaceException e) {
 					logger.error("Exception: ", e);
 					continue;
 				}

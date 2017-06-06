@@ -26,7 +26,7 @@ import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -310,7 +310,7 @@ public class SelectAccountDetailsDialogCtrl extends GFCBaseCtrl<Accounts> {
 				logger.error("Exception: ", e);
 				MessageUtil.showErrorMessage(e);
 			}
-		} catch (PFFInterfaceException e1) {
+		} catch (InterfaceException e1) {
 			logger.error("Exception: ", e1);
 			MultiLineMessageBox.show("Account Number Not Created", 
 					Labels.getLabel("message.Error"), MultiLineMessageBox.ABORT, MultiLineMessageBox.ERROR);

@@ -115,7 +115,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -723,7 +723,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			//If Schedule Re-modified Save into DB or else only add Repayments Details
 			doProcessReceipt();
 
-		} catch (PFFInterfaceException pfe) {
+		} catch (InterfaceException pfe) {
 			logger.error("Exception: ", pfe);
 			MessageUtil.showErrorMessage(pfe.getErrorMessage());
 			return;
@@ -1489,7 +1489,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		} catch (InterruptedException e) {
 			logger.error("Exception: ", e);
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			MessageUtil.showErrorMessage(e.getErrorMessage());
 		} catch (IllegalAccessException e) {

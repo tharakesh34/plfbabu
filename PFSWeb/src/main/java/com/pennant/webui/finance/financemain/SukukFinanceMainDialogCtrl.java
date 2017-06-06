@@ -77,7 +77,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -355,7 +355,7 @@ public class SukukFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	 * @throws AccountNotFoundException 
 	 */
 	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws ParseException, InterruptedException, 
-	PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		aFinanceDetail.getFinScheduleData().getFinanceMain().setFinRepayPftOnFrq(true);

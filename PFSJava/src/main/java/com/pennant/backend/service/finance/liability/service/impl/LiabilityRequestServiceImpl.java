@@ -78,7 +78,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 /**
  * Service implementation for methods that depends on <b>LiabilityRequest</b>.<br>
@@ -150,12 +150,12 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 	 * 3)	Audit the record in to AuditHeader and AdtFinLiabilityReq by using auditHeaderDAO.addAudit(auditHeader)
 	 * @param AuditHeader (auditHeader)    
 	 * @return auditHeader
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader saveOrUpdate(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		return saveOrUpdate(auditHeader, false);
 	}
 
@@ -172,11 +172,11 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 	 * @param AuditHeader (auditHeader)    
 	 * @param boolean onlineRequest
 	 * @return auditHeader
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	private AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean online) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	private AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean online) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");	
 		auditHeader = businessValidation(auditHeader,"saveOrUpdate",online);
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -310,12 +310,12 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 	 * 5)  	Audit the record in to AuditHeader and AdtFinLiabilityReq by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * @param AuditHeader (auditHeader)    
 	 * @return auditHeader
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
 
-		public AuditHeader doApprove(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+		public AuditHeader doApprove(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		String tranType="";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -446,12 +446,12 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 	 * 3)	Audit the record in to AuditHeader and AdtFinLiabilityReq by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * @param AuditHeader (auditHeader)    
 	 * @return auditHeader
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
 
-	public AuditHeader  doReject(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader  doReject(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		auditHeader = businessValidation(auditHeader,"doApprove",false);
 		if (!auditHeader.isNextProcess()) {

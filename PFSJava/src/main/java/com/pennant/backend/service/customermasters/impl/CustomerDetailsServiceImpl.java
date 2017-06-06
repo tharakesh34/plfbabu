@@ -113,7 +113,7 @@ import com.pennant.backend.service.systemmasters.LovFieldDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennanttech.pff.core.model.ModuleMapping;
 import com.rits.cloning.Cloner;
 
@@ -659,9 +659,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws PFFInterfaceException {
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -818,7 +818,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	@Override
-	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, String tableType) throws PFFInterfaceException {
+	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, String tableType) throws InterfaceException {
 		logger.debug("Entering");
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -4627,9 +4627,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 * 
 	 * @param customer
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public Customer fetchCoreCustomerDetails(Customer customer) throws PFFInterfaceException {
+	public Customer fetchCoreCustomerDetails(Customer customer) throws InterfaceException {
 		return getCustomerInterfaceService().fetchCustomerDetails(customer);
 	}
 

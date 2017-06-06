@@ -7,7 +7,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class InterfacePropertiesUtil extends PropertyPlaceholderConfigurer {
 
@@ -34,17 +34,17 @@ public class InterfacePropertiesUtil extends PropertyPlaceholderConfigurer {
 		}
 	}
 
-    public static String getProperty(String name) throws PFFInterfaceException {
+    public static String getProperty(String name) throws InterfaceException {
 		if (propertiesMap.get(name) == null) {
-    		throw new PFFInterfaceException("PTI2001", new String[]{name},"Configuration Not Found for &1");
+    		throw new InterfaceException("PTI2001", new String[]{name},"Configuration Not Found for &1");
     	}
     	
         return propertiesMap.get(name);
     }
 
-    public static int getIntProperty(String name) throws PFFInterfaceException {
+    public static int getIntProperty(String name) throws InterfaceException {
 		if (propertiesMap.get(name) == null) {
-    		throw new PFFInterfaceException("PTI2001", new String[]{name},"Configuration Not Found for &1");
+    		throw new InterfaceException("PTI2001", new String[]{name},"Configuration Not Found for &1");
     	}
     	
         return Integer.parseInt(propertiesMap.get(name));

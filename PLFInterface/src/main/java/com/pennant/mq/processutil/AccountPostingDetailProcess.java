@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import com.pennant.coreinterface.model.accountposting.AccountPostingDetail;
 import com.pennant.coreinterface.model.accountposting.SecondaryDebitAccount;
 import com.pennant.equation.util.DateUtility;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
@@ -25,11 +25,11 @@ public class AccountPostingDetailProcess extends MQProcess {
 		super();
 	}
 
-	public AccountPostingDetail doFillPostingDetails(AccountPostingDetail accPostingReq, String msgFormat) throws PFFInterfaceException {
+	public AccountPostingDetail doFillPostingDetails(AccountPostingDetail accPostingReq, String msgFormat) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (accPostingReq == null) {
-			throw new PFFInterfaceException("PTI3001", new String[]{"AccountPostingRequest"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", new String[]{"AccountPostingRequest"},"&1 Cannot Be Blank");	
 		}
 
 		//set MQ Message configuration details 
@@ -44,7 +44,7 @@ public class AccountPostingDetailProcess extends MQProcess {
 			OMElement requestElement = getRequestElement(accPostingReq, referenceNum, factory, msgFormat);
 			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
 			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
-		} catch (PFFInterfaceException pffe) {
+		} catch (InterfaceException pffe) {
 			logger.warn(pffe.getErrorCode() + ":" + pffe.getErrorMessage());
 			throw pffe;
 		}
@@ -59,10 +59,10 @@ public class AccountPostingDetailProcess extends MQProcess {
 	 * @param responseElement
 	 * @param header
 	 * @return
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
 	private AccountPostingDetail setAccountPostingReplyInfo(OMElement responseElement, AHBMQHeader header, String msgFormat) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -83,7 +83,7 @@ public class AccountPostingDetailProcess extends MQProcess {
 
 			if (StringUtils.isBlank(header.getReturnCode())) {
 				logger.info("ReturnStatus is Failure");
-				throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+				throw new InterfaceException("PTI3002", header.getErrorMessage());
 			}
 
 			accAccountPosting = new AccountPostingDetail();
@@ -110,7 +110,7 @@ public class AccountPostingDetailProcess extends MQProcess {
 				accAccountPosting.setTransactionAmount(PFFXmlUtil.getBigDecimalValue(detailElement, "TransactionAmount"));
 				accAccountPosting.setReturnCode(PFFXmlUtil.getStringValue(detailElement, "ReturnCode"));
 			}
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.warn(e.getErrorCode() + ":" + e.getErrorMessage());
 			throw e;
 		}
@@ -127,10 +127,10 @@ public class AccountPostingDetailProcess extends MQProcess {
 	 * @param referenceNum
 	 * @param factory
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	private OMElement getRequestElement(AccountPostingDetail accPostingReq, String referenceNum, OMFactory factory, String msgFormat) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));

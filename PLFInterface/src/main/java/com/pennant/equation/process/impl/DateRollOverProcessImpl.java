@@ -10,7 +10,7 @@ import com.ibm.as400.access.ConnectionPoolException;
 import com.ibm.as400.data.ProgramCallDocument;
 import com.pennant.coreinterface.process.DateRollOverProcess;
 import com.pennant.equation.util.HostConnection;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class DateRollOverProcessImpl implements DateRollOverProcess{
 	
@@ -28,7 +28,7 @@ public class DateRollOverProcessImpl implements DateRollOverProcess{
 	 * @throws EquationInterfaceException 
 	 */
 	@Override
-	public Map<String, String> getCalendarWorkingDays() throws PFFInterfaceException{
+	public Map<String, String> getCalendarWorkingDays() throws InterfaceException{
 		logger.debug("Entering");
 		
 		AS400 as400 = null;
@@ -66,15 +66,15 @@ public class DateRollOverProcessImpl implements DateRollOverProcess{
 				}
 			}else{
 				logger.info("Account Details Not found");				
-				throw new PFFInterfaceException("9999",pcmlDoc.getValue(pcml + ".@ERPRM").toString());
+				throw new InterfaceException("9999",pcmlDoc.getValue(pcml + ".@ERPRM").toString());
 			}
 			
 		} catch (ConnectionPoolException e){
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999","Host Connection Failed.. Please contact administrator ");
+			throw new InterfaceException("9999","Host Connection Failed.. Please contact administrator ");
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		} finally{
 				this.hostConnection.closeConnection(as400);
 		}

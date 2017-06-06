@@ -22,7 +22,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceMainExtService;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.coreinterface.model.account.InterfaceAccount;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -165,7 +165,7 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		// create new customer Account in T24
 		try {
 			createAccount();
-		} catch(PFFInterfaceException pfe) {
+		} catch(InterfaceException pfe) {
 			MessageUtil.showErrorMessage(pfe.getErrorMessage());
 			return;
 		}
@@ -207,7 +207,7 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			} else {
 				return;
 			}
-		} catch(PFFInterfaceException pfe) {
+		} catch(InterfaceException pfe) {
 			MessageUtil.showErrorMessage(pfe.getErrorMessage());
 			return;
 		}
@@ -238,10 +238,10 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * Method for send Create Account request to MDM interface and update in FinanceMainExt table
 	 * 
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws InterruptedException
 	 */
-	private void createAccount() throws PFFInterfaceException, InterruptedException {
+	private void createAccount() throws InterfaceException, InterruptedException {
 		logger.debug("Entering");
 		
 		Customer customer = getFinanceDetail().getCustomerDetails().getCustomer();
@@ -332,9 +332,9 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * Send Release CIF request to MDM interface
 	 * 
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	private void doReleaseCIF() throws PFFInterfaceException {
+	private void doReleaseCIF() throws InterfaceException {
 		logger.debug("Entering");
 		
 		Customer customer = getFinanceDetail().getCustomerDetails().getCustomer();
@@ -342,8 +342,8 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		
 		try {
 			getCustomerInterfaceService().releaseCIF(customer, RESERVE_REFNUM);
-		} catch(PFFInterfaceException pfe) {
-			throw new PFFInterfaceException("PTI3001", Labels.getLabel("FAILED_RELEASE_CIF"));
+		} catch(InterfaceException pfe) {
+			throw new InterfaceException("PTI3001", Labels.getLabel("FAILED_RELEASE_CIF"));
 		}
 		logger.debug("Leaving");
 	}
@@ -352,9 +352,9 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * Send Create CIF request to MDM interface
 	 * 
 	 * @param resReturnCode 
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	private String doCreateCIF(String resReturnCode) throws PFFInterfaceException {
+	private String doCreateCIF(String resReturnCode) throws InterfaceException {
 		logger.debug("Entering");
 		CustomerDetails customerDetails = getFinanceDetail().getCustomerDetails();
 		customerDetails.setCoreReferenceNum(resReturnCode);
@@ -363,12 +363,12 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		String returnCode = null;
 		try {
 			returnCode = getCustomerInterfaceService().createNewCustomer(customerDetails);
-		} catch(PFFInterfaceException pfe) {
+		} catch(InterfaceException pfe) {
 			String createCIFErrMsg = pfe.getErrorMessage() == null?"":pfe.getErrorMessage();
 			try {
 				doReleaseCIF();
-			} catch(PFFInterfaceException pfe2) {
-				throw new PFFInterfaceException(pfe.getErrorCode(), createCIFErrMsg+":"+pfe2.getErrorMessage());
+			} catch(InterfaceException pfe2) {
+				throw new InterfaceException(pfe.getErrorCode(), createCIFErrMsg+":"+pfe2.getErrorMessage());
 			}
 			throw pfe;
 		}
@@ -380,9 +380,9 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * Send Reserve CIF request to MDM interface
 	 * @param newCustCIF 
 	 * 
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	private String doReserveCIF(String newCustCIF) throws PFFInterfaceException {
+	private String doReserveCIF(String newCustCIF) throws InterfaceException {
 		logger.debug("Entering");
 
 		if(!isCustomerExists(newCustCIF)) {

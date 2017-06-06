@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.coreinterface.model.account.InterfaceAccount;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.dao.MQInterfaceDAO;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
@@ -31,13 +31,13 @@ public class CreateAccountProcess extends MQProcess {
 	 * @param accountdetail
 	 * @param msgFormat
 	 * @return CoreBankAccountDetail
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public InterfaceAccount createAccount(InterfaceAccount accountdetail, String msgFormat) throws PFFInterfaceException {
+	public InterfaceAccount createAccount(InterfaceAccount accountdetail, String msgFormat) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (accountdetail == null) {
-			throw new PFFInterfaceException("PTI3001", new String[]{"Customer"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", new String[]{"Customer"},"&1 Cannot Be Blank");	
 		}
 
 		//set MQ Message configuration details 
@@ -52,7 +52,7 @@ public class CreateAccountProcess extends MQProcess {
 		try {
 			OMElement request = PFFXmlUtil.generateRequest(header, factory,getRequestElement(accountdetail, referenceNum, factory));
 			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
-		} catch (PFFInterfaceException pffe) {
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -67,9 +67,9 @@ public class CreateAccountProcess extends MQProcess {
 	 * @param referenceNum
 	 * @param factory
 	 * @return OMElement
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	private OMElement getRequestElement(InterfaceAccount accountdetail,String referenceNum,OMFactory factory) throws PFFInterfaceException{
+	private OMElement getRequestElement(InterfaceAccount accountdetail,String referenceNum,OMFactory factory) throws InterfaceException{
 		logger.debug("Entering");
 
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));
@@ -122,9 +122,9 @@ public class CreateAccountProcess extends MQProcess {
 	 * @param responseElement
 	 * @param header
 	 * @return CoreBankAccountDetail
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	private InterfaceAccount setCreateAccResponse(OMElement responseElement,AHBMQHeader header) throws PFFInterfaceException{
+	private InterfaceAccount setCreateAccResponse(OMElement responseElement,AHBMQHeader header) throws InterfaceException{
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -136,7 +136,7 @@ public class CreateAccountProcess extends MQProcess {
 		header= getReturnStatus(detailElement, header, responseElement);
 
 		if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
-			throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+			throw new InterfaceException("PTI3002", header.getErrorMessage());
 		}
 
 		InterfaceAccount accountDetail = new InterfaceAccount();

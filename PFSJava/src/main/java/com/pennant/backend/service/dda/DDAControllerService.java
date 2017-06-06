@@ -26,7 +26,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.constants.InterfaceConstants;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class DDAControllerService {
 
@@ -71,9 +71,9 @@ public class DDAControllerService {
 	 * 
 	 * @param aFinanceDetail
 	 * @param ahbDpEnable
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public void doDDARequestProcess(FinanceDetail aFinanceDetail, boolean ahbDpSpEnable) throws PFFInterfaceException {
+	public void doDDARequestProcess(FinanceDetail aFinanceDetail, boolean ahbDpSpEnable) throws InterfaceException {
 		logger.debug("Entering");
 		
 		this.AHB_DPSP = ahbDpSpEnable;
@@ -88,7 +88,7 @@ public class DDAControllerService {
 			for (DocumentDetails documentDetails : list) {
 				if(StringUtils.equals(documentDetails.getDocCategory(), PennantConstants.DOCCTG_DDA_FORM)) {
 					if(!StringUtils.equals(documentDetails.getDoctype(), FORM_TYPE)) {
-						throw new PFFInterfaceException("PTI9001", Labels.getLabel("DDA_DOCUMENT_PDF"));
+						throw new InterfaceException("PTI9001", Labels.getLabel("DDA_DOCUMENT_PDF"));
 					}
 					
 					ddaValidateRes.setDdaRegFormName(DDA_FORM_NAME);
@@ -103,7 +103,7 @@ public class DDAControllerService {
 			}
 			
 			if(ddaRegForm == null) {
-				throw new PFFInterfaceException("PTI9001", Labels.getLabel("NO_DOCUMENT_FOUND"));
+				throw new InterfaceException("PTI9001", Labels.getLabel("NO_DOCUMENT_FOUND"));
 			}
 
 			ddaValidateRes.setDdaRegFormData(PennantApplicationUtil.encode(ddaRegForm));
@@ -128,10 +128,10 @@ public class DDAControllerService {
 	 * 
 	 * @param aFinanceDetail
 	 * @return DDAProcessData
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws InterruptedException 
 	 */
-	public DDAProcessData validateDDARequest(FinanceDetail aFinanceDetail) throws PFFInterfaceException {
+	public DDAProcessData validateDDARequest(FinanceDetail aFinanceDetail) throws InterfaceException {
 		logger.debug("Entering");
 		
 		DDAProcessData ddaProcessRequest = prepareDDARegRequest(aFinanceDetail.getFinScheduleData().getFinanceMain(),
@@ -150,7 +150,7 @@ public class DDAControllerService {
 			ddaProcessResponse = getDdaInterfaceService().sendDDARegistrationReq(aDDAProcessRequest);
 			
 			if(!StringUtils.equals(ddaProcessResponse.getReturnCode(), PennantConstants.RES_TYPE_SUCCESS)) {
-				throw new PFFInterfaceException(ddaProcessResponse.getErrorCode(), ddaProcessResponse.getValidation());
+				throw new InterfaceException(ddaProcessResponse.getErrorCode(), ddaProcessResponse.getValidation());
 			}
 			//save the request and response data
 			doSaveDDAProcess(ddaProcessRequest, ddaProcessResponse);
@@ -179,7 +179,7 @@ public class DDAControllerService {
 		}
 	}
 
-	private DDAProcessData doDDAReRegistration(DDAProcessData ddaProcessRequest) throws PFFInterfaceException {
+	private DDAProcessData doDDAReRegistration(DDAProcessData ddaProcessRequest) throws InterfaceException {
 		logger.debug("Entering");
 		
 		DDAProcessData ddaResponse = new DDAProcessData();
@@ -191,7 +191,7 @@ public class DDAControllerService {
 		ddaResponse = getDdaInterfaceService().sendDDARegistrationReq(ddaProcessRequest);
 
 		if(!StringUtils.equals(ddaResponse.getReturnCode(), PennantConstants.RES_TYPE_SUCCESS)) {
-			throw new PFFInterfaceException(ddaResponse.getErrorCode(), ddaResponse.getValidation());
+			throw new InterfaceException(ddaResponse.getErrorCode(), ddaResponse.getValidation());
 		}
 		
 		//save the request and response data
@@ -205,10 +205,10 @@ public class DDAControllerService {
 	 * Method for send Cancel DDA Registration Request to interface
 	 * 
 	 * @param financeMain
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	
-	public void cancelDDARegistration(String finReference) throws PFFInterfaceException  {
+	public void cancelDDARegistration(String finReference) throws InterfaceException  {
 		logger.debug("Entering");
 		DDAFTransactionLog ddaFTransactionLog;
 		
@@ -238,7 +238,7 @@ public class DDAControllerService {
 							getDdaProcessService().save(ddaCancelReply);
 						}
 					}
-				} catch (PFFInterfaceException e) {
+				} catch (InterfaceException e) {
 					
 					//Saving DDA cancellation failed cases to process further
 					ddaFTransactionLog=getEodFailPostingService().getDDAFTranDetailsById(finReference);
@@ -270,9 +270,9 @@ public class DDAControllerService {
 	 * 
 	 * @param finReference
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public boolean validateDDAStatus(String finReference) throws PFFInterfaceException {
+	public boolean validateDDAStatus(String finReference) throws InterfaceException {
 		logger.debug("Entering");
 
 		// Fetch DDA Registration details
@@ -285,11 +285,11 @@ public class DDAControllerService {
 				
 			} else if (!StringUtils.isBlank(ddaProcessData.getDdaAckStatus())) {
 				String errMessage = Labels.getLabel("DDA_APPROVAL_REJECTED", new String[] {finReference});
-				throw new PFFInterfaceException("PTIDDS03", errMessage);
+				throw new InterfaceException("PTIDDS03", errMessage);
 				
 			} else {
 				String errMessage = Labels.getLabel("DDA_APPROVAL_PENDING", new String[] {finReference});
-				throw new PFFInterfaceException(PennantConstants.DDA_PENDING_CODE, errMessage);
+				throw new InterfaceException(PennantConstants.DDA_PENDING_CODE, errMessage);
 			}
 		}
 		return true;
@@ -426,9 +426,9 @@ public class DDAControllerService {
 	 * @param detail
 	 * @param purpose
 	 * @return
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	public DDAProcessData prepareDDARegRequest(FinanceDetail detail,String purpose) throws PFFInterfaceException {
+	public DDAProcessData prepareDDARegRequest(FinanceDetail detail,String purpose) throws InterfaceException {
 		FinanceMain aFinMain=detail.getFinScheduleData().getFinanceMain();
 		CustomerDetails customerDetails=detail.getCustomerDetails();
 		return prepareDDARegRequest(aFinMain,customerDetails,purpose);
@@ -440,10 +440,10 @@ public class DDAControllerService {
 	 * @param aFinanceDetail
 	 * @param purpose
 	 * @return DDARegistration
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
 	private DDAProcessData prepareDDARegRequest(FinanceMain aFinMain, CustomerDetails customerDetails, 
-			String purpose) throws PFFInterfaceException {
+			String purpose) throws InterfaceException {
 		logger.debug("Entering");
 		
 		if (aFinMain == null || customerDetails == null) {
@@ -462,7 +462,7 @@ public class DDAControllerService {
 			}
 		} else {
 			ddaProcessData.setCustomerType("");
-			throw new PFFInterfaceException("PTIDDS01", Labels.getLabel("CUST_TYPE_MAND"));
+			throw new InterfaceException("PTIDDS01", Labels.getLabel("CUST_TYPE_MAND"));
 		}
 		
 		ddaProcessData.setCustCIF(customer.getCustCIF());
@@ -474,7 +474,7 @@ public class DDAControllerService {
 			if(StringUtils.equals(mobileNum[0], "+971")) {
 				ddaProcessData.setMobileNum(mobileNum[0]+mobileNum[1]+mobileNum[2]);
 			} else {
-				throw new PFFInterfaceException("PTIDDS02", Labels.getLabel("DDA_MOB_VALIDATION"));
+				throw new InterfaceException("PTIDDS02", Labels.getLabel("DDA_MOB_VALIDATION"));
 			}
 		}
 		

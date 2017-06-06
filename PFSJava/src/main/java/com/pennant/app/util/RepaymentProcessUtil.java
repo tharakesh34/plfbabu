@@ -61,7 +61,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.cache.util.AccountingConfigCache;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennanttech.pff.core.TableType;
 
 public class RepaymentProcessUtil {
@@ -97,14 +97,14 @@ public class RepaymentProcessUtil {
 	 * @param receiptData
 	 * @param scheduleData
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
 	public void calcualteAndPayReceipt(FinanceMain financeMain, Customer customer,
 			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail profitDetail,
 			FinReceiptHeader receiptHeader, String repayHierarchy, Date valuedate) throws IllegalAccessException,
-			InvocationTargetException, PFFInterfaceException {
+			InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 		
 		String finrefer = financeMain.getFinReference();
@@ -324,7 +324,7 @@ public class RepaymentProcessUtil {
 	@SuppressWarnings("unchecked")
 	public List<FinanceScheduleDetail> doProcessReceipts(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
 			FinanceProfitDetail profitDetail, FinReceiptHeader receiptHeader, FinScheduleData logScheduleData, Date valueDate)
-					throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+					throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 
 		List<FinReceiptDetail> receiptDetailList = sortReceiptDetails(receiptHeader.getReceiptDetails());
@@ -492,7 +492,7 @@ public class RepaymentProcessUtil {
 
 				if (!(Boolean) returnList.get(0)) {
 					String errParm = (String) returnList.get(1);
-					throw new PFFInterfaceException("9999", errParm);
+					throw new InterfaceException("9999", errParm);
 				}
 
 				//Update Linked Transaction ID
@@ -873,7 +873,7 @@ public class RepaymentProcessUtil {
 	private List<Object> doRepayPostings(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
 			FinanceProfitDetail profitDetail, List<RepayScheduleDetail> repaySchdList, String eventCode,
 			Date valuedate, FinReceiptDetail receiptDetail, String postBranch) throws IllegalAccessException,
-			PFFInterfaceException, InvocationTargetException {
+			InterfaceException, InvocationTargetException {
 		logger.debug("Entering");
 
 		List<Object> returnList = new ArrayList<Object>();
@@ -947,7 +947,7 @@ public class RepaymentProcessUtil {
 			returnList = getRepayPostingUtil().postingProcess(financeMain, scheduleDetails, profitDetail,
 					rpyQueueHeader, eventCode, valuedate);
 
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		} catch (IllegalAccessException e) {

@@ -54,7 +54,7 @@ import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 /**
  * Service declaration for methods that depends on <b>DedupParm</b>.<br>
@@ -78,7 +78,7 @@ public interface DedupParmService {
 	List<PoliceCaseDetail> fetchPoliceCaseCustomers(String userRole,String finType,PoliceCaseDetail policeCaseData,String curUser);
 	List<FinanceReferenceDetail> getQueryCodeList(FinanceReferenceDetail financeRefDetail,
             String queryCode);
-	List<CustomerDedup> fetchCustomerDedupDetails(String nextRoleCode, CustomerDedup aCustomerDedup, String curLoginUser, String finType) throws PFFInterfaceException;
-	List<CustomerDedup> getCustomerDedup(CustomerDedup customerDedup, List<DedupParm> dedupParmList) throws PFFInterfaceException;
+	List<CustomerDedup> fetchCustomerDedupDetails(String nextRoleCode, CustomerDedup aCustomerDedup, String curLoginUser, String finType) throws InterfaceException;
+	List<CustomerDedup> getCustomerDedup(CustomerDedup customerDedup, List<DedupParm> dedupParmList) throws InterfaceException;
 	List<CustomerDedup> getDedupCustomerDetails(FinanceDetail financeDetail); 
 }

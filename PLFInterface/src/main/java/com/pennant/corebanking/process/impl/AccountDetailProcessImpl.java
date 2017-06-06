@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import com.pennant.corebanking.dao.InterfaceDAO;
 import com.pennant.coreinterface.model.CoreBankAccountDetail;
 import com.pennant.coreinterface.process.AccountDetailProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class AccountDetailProcessImpl extends GenericProcess implements AccountDetailProcess{
 
@@ -31,7 +31,7 @@ public class AccountDetailProcessImpl extends GenericProcess implements AccountD
 	 * @throws AccountNotFoundException
 	 */
 	@Override
-	public List<CoreBankAccountDetail> fetchCustomerAccounts(CoreBankAccountDetail coreAcct) throws PFFInterfaceException {
+	public List<CoreBankAccountDetail> fetchCustomerAccounts(CoreBankAccountDetail coreAcct) throws InterfaceException {
 		logger.debug("Entering");
 
 		List<CoreBankAccountDetail> accountList = null;	
@@ -39,7 +39,7 @@ public class AccountDetailProcessImpl extends GenericProcess implements AccountD
 			accountList = getInterfaceDAO().fetchAccountDetails(coreAcct);			
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999", e.getMessage());
+			throw new InterfaceException("9999", e.getMessage());
 		}
 
 		logger.debug("Leaving");
@@ -55,7 +55,7 @@ public class AccountDetailProcessImpl extends GenericProcess implements AccountD
 	 * @throws AccountNotFoundException
 	 */
 	@Override
-	public List<CoreBankAccountDetail> fetchAccount(List<CoreBankAccountDetail> bankAccountDetails, String createNow) throws PFFInterfaceException {
+	public List<CoreBankAccountDetail> fetchAccount(List<CoreBankAccountDetail> bankAccountDetails, String createNow) throws InterfaceException {
 		logger.debug("Entering");
 	
 		List<CoreBankAccountDetail> list = new ArrayList<CoreBankAccountDetail>();
@@ -70,7 +70,7 @@ public class AccountDetailProcessImpl extends GenericProcess implements AccountD
 			
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		}
 
 		logger.debug("Leaving");
@@ -86,7 +86,7 @@ public class AccountDetailProcessImpl extends GenericProcess implements AccountD
 	 * @throws AccountNotFoundException
 	 */
 	@Override
-	public CoreBankAccountDetail fetchAccountAvailableBal(CoreBankAccountDetail coreAcct) throws PFFInterfaceException {
+	public CoreBankAccountDetail fetchAccountAvailableBal(CoreBankAccountDetail coreAcct) throws InterfaceException {
 		logger.debug("Entering");
 		
 		try {
@@ -101,11 +101,11 @@ public class AccountDetailProcessImpl extends GenericProcess implements AccountD
 			
 		} catch (Exception e) { 
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		}
 		
 		if (coreAcct == null){
-			throw new PFFInterfaceException("9999","Account not found.");
+			throw new InterfaceException("9999","Account not found.");
 		}
 		logger.debug("Leaving");
 		return coreAcct;
@@ -114,7 +114,7 @@ public class AccountDetailProcessImpl extends GenericProcess implements AccountD
 	@Override
 	public List<CoreBankAccountDetail> fetchAccountsListAvailableBal(
 			List<CoreBankAccountDetail> coreAcctList, boolean isCcyCheck)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 		
 		List<String> accNumList = new ArrayList<String>();
@@ -140,7 +140,7 @@ public class AccountDetailProcessImpl extends GenericProcess implements AccountD
 	 * 
 	 */
 	@Override
-	public List<CoreBankAccountDetail> fetchAccountDetails(CoreBankAccountDetail accountDetail) throws PFFInterfaceException {
+	public List<CoreBankAccountDetail> fetchAccountDetails(CoreBankAccountDetail accountDetail) throws InterfaceException {
 		logger.debug("Entering");
 		
 		List<CoreBankAccountDetail>  list = getInterfaceDAO().fetchAccountBalance(accountDetail.getAccountNumber());

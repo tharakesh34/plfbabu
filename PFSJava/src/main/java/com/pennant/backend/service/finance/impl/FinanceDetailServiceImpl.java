@@ -184,7 +184,7 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
@@ -1674,7 +1674,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * @throws AccountNotFoundException
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader, boolean isWIF) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate", isWIF);
@@ -2853,7 +2853,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 */
 	@SuppressWarnings("unused")
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader, boolean isWIF) throws PFFInterfaceException, JaxenException {
+	public AuditHeader doApprove(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException, JaxenException {
 		logger.debug("Entering");
 
 		String tranType = "";
@@ -2939,7 +2939,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					errorDetails.add(new ErrorDetails("RolledOver", PennantConstants.ERR_UNDEF, "E", e.getMessage(),
 							new String[] {}, new String[] {}));
 					auditHeader.setErrorList(errorDetails);
-				} catch (PFFInterfaceException e) {
+				} catch (InterfaceException e) {
 					logger.debug("Exception: ", e);
 					ArrayList<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
 					errorDetails.add(new ErrorDetails(e.getErrorCode(), PennantConstants.ERR_UNDEF, "E", e
@@ -3794,10 +3794,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * Method for process Finance Maintenance and sending handling instruction request to ICCS interface
 	 * 
 	 * @param financeDetail
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * 
 	 */
-	private void doHandlingInstructionProcess(FinanceDetail financeDetail) throws PFFInterfaceException {
+	private void doHandlingInstructionProcess(FinanceDetail financeDetail) throws InterfaceException {
 		logger.debug("Entering");
 
 		HandlingInstruction handlingInstruction = new HandlingInstruction();
@@ -3851,7 +3851,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * @throws AccountNotFoundException
 	 */
 	@Override
-	public AuditHeader doPreApprove(AuditHeader aAuditHeader, boolean isWIF) throws PFFInterfaceException {
+	public AuditHeader doPreApprove(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException {
 		logger.debug("Entering");
 
 		String tranType = "";
@@ -4419,7 +4419,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader, boolean isWIF) throws PFFInterfaceException, JaxenException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doReject(AuditHeader auditHeader, boolean isWIF) throws InterfaceException, JaxenException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -5620,7 +5620,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 */
 	@Override
 	public boolean bulkRateChangeFinances(List<BulkProcessDetails> bulkRateChangeFinances, String recalType,
-			BigDecimal rateChange) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			BigDecimal rateChange) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		//Bulk Rate Changes applied for fetched list
@@ -5676,7 +5676,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Override
 	public boolean bulkDefermentChanges(List<BulkDefermentChange> defermentChangeFinances, String recalType,
 			boolean excludeDeferment, String addTermAfter, Date calFromDate, Date calToDate)
-			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		//Bulk Deferment Changes applied for fetched list
@@ -7603,7 +7603,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	@SuppressWarnings("unchecked")
 	private void doRolledOverFinancePostings(String finReference, BigDecimal custPayAmount, String accNumber)
-			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 
 		//Finance Details
 		FinanceMain main = getFinanceMainDAO().getFinanceMainById(finReference, "", false);
@@ -7702,7 +7702,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			if (!(Boolean) returnList.get(0)) {
 				String errParm = (String) returnList.get(1);
-				throw new PFFInterfaceException("9999", errParm);
+				throw new InterfaceException("9999", errParm);
 			}
 
 			long linkedTranId = (Long) returnList.get(1);
@@ -7748,7 +7748,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			getFinanceScheduleDetailDAO().deleteByFinReference(finReference, "", false, 0);
 			getFinanceScheduleDetailDAO().saveList(scheduleDetails, "", false);
 
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		} catch (IllegalAccessException e) {

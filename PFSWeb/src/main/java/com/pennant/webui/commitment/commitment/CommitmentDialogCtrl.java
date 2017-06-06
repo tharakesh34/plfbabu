@@ -158,7 +158,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -613,9 +613,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	public void onChange$custCIF(Event event) throws InterruptedException, PFFInterfaceException{
+	public void onChange$custCIF(Event event) throws InterruptedException, InterfaceException{
 		logger.debug("Entering" + event.toString());
 
 		List<Filter> filterList = new ArrayList<>();
@@ -692,9 +692,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * @param nCustomer
 	 * @param newSearchObject
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException, PFFInterfaceException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 
 		doClearMessage();
@@ -720,9 +720,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * 
 	 * @param details
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	private void doChangeCustomer(Customer details) throws InterruptedException, PFFInterfaceException {
+	private void doChangeCustomer(Customer details) throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 
 		CaluculateSummary();
@@ -807,10 +807,10 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws Exception
 	 */
-	public CustomerDetails fetchCustomerData(String cif) throws InterruptedException, PFFInterfaceException {
+	public CustomerDetails fetchCustomerData(String cif) throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 
 		CustomerDetails customerDetails = null;

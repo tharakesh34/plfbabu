@@ -91,7 +91,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 import com.rits.cloning.Cloner;
@@ -1155,7 +1155,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 	private FinanceDetail doProcessReceipt(FinanceDetail aFinanceDetail, FinServiceInstruction finServiceInst,
 			String purpose)
-			throws IllegalAccessException, InvocationTargetException, AccountNotFoundException, PFFInterfaceException {
+			throws IllegalAccessException, InvocationTargetException, AccountNotFoundException, InterfaceException {
 		logger.debug("Entering");
 
 		if (finServiceInst.getFromDate() == null) {
@@ -1496,11 +1496,11 @@ public class FinServiceInstController extends SummaryDetailService {
 	 * @param financeDetail
 	 * @param finServiceInst
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws JaxenException
 	 */
 	private FinanceDetail getResponse(FinanceDetail financeDetail, FinServiceInstruction finServiceInst)
-			throws JaxenException, PFFInterfaceException {
+			throws JaxenException, InterfaceException {
 		logger.debug("Entering");
 		
 		// fees calculation

@@ -80,7 +80,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.model.CustomerCollateral;
 import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.process.CustomerDataProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -406,11 +406,11 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 	 * 
 	 * @param custlimitCategoryList
 	 * @throws JaxenException 
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws CustomerLimitProcessException
 	 * @throws InterruptedException
 	 */
-	public void fillLimitListBox(String custMnemonic, String custBranch) throws JaxenException, PFFInterfaceException {
+	public void fillLimitListBox(String custMnemonic, String custBranch) throws JaxenException, InterfaceException {
 		logger.debug("Entering");
 		this.listBoxCustomerLimit.getItems().clear();
 		CustomerLimit limit = new CustomerLimit();
@@ -425,7 +425,7 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 		List<com.pennant.coreinterface.model.CustomerLimit> list = null;
 		try {
 			list = getCustomerLimitIntefaceService().fetchLimitEnquiryDetails(limit);
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}

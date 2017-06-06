@@ -106,7 +106,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.component.Uppercasebox;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -1466,7 +1466,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 
 		} catch (InterruptedException e) {
 			logger.error("Exception: ", e);
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			MessageUtil.showErrorMessage(e.getErrorMessage());
 		} catch (IllegalAccessException e) {

@@ -110,7 +110,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.core.EventManager.Notify;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -1098,7 +1098,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	 * @throws AccountNotFoundException
 	 */
 	private boolean doProcess(Provision aProvision, String tranType) throws InterruptedException,
-			PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		logger.debug("Entering");
@@ -1268,7 +1268,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws PFFInterfaceException,
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException,
 			IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		boolean processCompleted = false;

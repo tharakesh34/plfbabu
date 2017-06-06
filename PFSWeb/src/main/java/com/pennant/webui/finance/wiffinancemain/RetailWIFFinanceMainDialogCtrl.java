@@ -159,7 +159,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -1027,7 +1027,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws AccountNotFoundException
 	 */
 	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws ParseException,
-			InterruptedException, PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
@@ -4802,7 +4802,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		} catch (InterruptedException e) {
 			logger.error("Exception: ", e);
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 		}
 

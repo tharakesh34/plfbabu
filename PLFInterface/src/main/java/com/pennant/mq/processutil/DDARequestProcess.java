@@ -14,7 +14,7 @@ import org.jaxen.JaxenException;
 
 import com.pennant.coreinterface.model.dda.DDARegistration;
 import com.pennant.equation.util.DateUtility;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
@@ -36,14 +36,14 @@ public class DDARequestProcess extends MQProcess {
 	 * @param ddsRequest
 	 * @param msgFormat
 	 * @return DDARequestReply
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws JaxenException 
 	 */
-	public DDARegistration sendDDARequest(DDARegistration ddsRequest, String msgFormat) throws PFFInterfaceException, JaxenException  {
+	public DDARegistration sendDDARequest(DDARegistration ddsRequest, String msgFormat) throws InterfaceException, JaxenException  {
 		logger.debug("Entering");
 
 		if (ddsRequest == null) {
-			throw new PFFInterfaceException("PTI3001", new String[]{"DDARequest"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", new String[]{"DDARequest"},"&1 Cannot Be Blank");	
 		}
 
 		//set MQ Message configuration details
@@ -62,7 +62,7 @@ public class DDARequestProcess extends MQProcess {
 			OMElement requestElement = getRequestElement(ddsRequest, referenceNum, factory);
 			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
 			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
-		} catch (PFFInterfaceException pffe) {
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -79,7 +79,7 @@ public class DDARequestProcess extends MQProcess {
 	 * @return
 	 * @throws JaxenException 
 	 */
-	private DDARegistration setDDAReplyInfo(OMElement responseElement, AHBMQHeader header) throws PFFInterfaceException, JaxenException {
+	private DDARegistration setDDAReplyInfo(OMElement responseElement, AHBMQHeader header) throws InterfaceException, JaxenException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -94,7 +94,7 @@ public class DDARequestProcess extends MQProcess {
 
 			if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
 				logger.info("ReturnStatus is Failure");
-				throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+				throw new InterfaceException("PTI3002", header.getErrorMessage());
 			}
 
 			ddsReply = new DDARegistration();
@@ -122,7 +122,7 @@ public class DDARequestProcess extends MQProcess {
 			
 			ddsReply.setValidation(builder.toString());
 			
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -140,7 +140,7 @@ public class DDARequestProcess extends MQProcess {
 	 * @param factory
 	 * @return
 	 */
-	private OMElement getRequestElement(DDARegistration ddsRequest, String referenceNum, OMFactory factory) throws PFFInterfaceException {
+	private OMElement getRequestElement(DDARegistration ddsRequest, String referenceNum, OMFactory factory) throws InterfaceException {
 		logger.debug("Entering");
 
 		

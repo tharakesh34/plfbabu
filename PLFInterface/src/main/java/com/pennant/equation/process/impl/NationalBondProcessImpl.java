@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import com.pennant.coreinterface.model.nbc.BondPurchaseDetail;
 import com.pennant.coreinterface.model.nbc.NationalBondDetail;
 import com.pennant.coreinterface.process.NationalBondProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class NationalBondProcessImpl implements NationalBondProcess {
 	private final static Logger logger = Logger.getLogger(NationalBondProcessImpl.class);
@@ -19,7 +19,7 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 	}
 	
 	@Override
-	public NationalBondDetail doBondPurchase(String refNumConsumer,	BigDecimal amount) throws PFFInterfaceException {
+	public NationalBondDetail doBondPurchase(String refNumConsumer,	BigDecimal amount) throws InterfaceException {
 		logger.debug("Entering");
 
 		NationalBondDetail detail = new NationalBondDetail();
@@ -41,7 +41,7 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 	}
 
 	@Override
-	public NationalBondDetail doBondTransfer(NationalBondDetail nationalBondDetail) throws PFFInterfaceException {
+	public NationalBondDetail doBondTransfer(NationalBondDetail nationalBondDetail) throws InterfaceException {
 		logger.debug("Entering");
 
 		NationalBondDetail detail = new NationalBondDetail();
@@ -54,7 +54,7 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 
 	@Override
 	public NationalBondDetail cancelBondTransfer(String refNumProvider, String refNumConsumer) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		NationalBondDetail detail = new NationalBondDetail();
@@ -67,7 +67,7 @@ public class NationalBondProcessImpl implements NationalBondProcess {
 
 	@Override
 	public NationalBondDetail cancelBondPurchase(String refNumProvider,	String refNumConsumer)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		NationalBondDetail detail = new NationalBondDetail();

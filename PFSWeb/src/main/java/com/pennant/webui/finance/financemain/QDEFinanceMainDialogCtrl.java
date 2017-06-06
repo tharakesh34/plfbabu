@@ -103,7 +103,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -484,7 +484,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @throws AccountNotFoundException
 	 */
 	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws ParseException,
-			InterruptedException, PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
@@ -1610,7 +1610,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	// WorkFlow Creations
 
-	private boolean doCustomerDedupe(FinanceDetail aFinanceDetail) throws PFFInterfaceException {
+	private boolean doCustomerDedupe(FinanceDetail aFinanceDetail) throws InterfaceException {
 		logger.debug("Entering");
 
 		String corebank = aFinanceDetail.getCustomerDetails().getCustomer().getCustCoreBank();
@@ -2066,7 +2066,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		} catch (InterruptedException e) {
 			logger.error("Exception: ", e);
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 		} catch (DataAccessException e) {
 			throw e;
@@ -2164,9 +2164,9 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public void onFulfill$commitmentRef(Event event) throws InterruptedException, PFFInterfaceException {
+	public void onFulfill$commitmentRef(Event event) throws InterruptedException, InterfaceException {
 		logger.debug("Entering " + event.toString());
 
 		//fetch Limit Details from ACP Interface

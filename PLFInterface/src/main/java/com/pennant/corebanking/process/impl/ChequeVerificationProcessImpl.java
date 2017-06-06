@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import com.pennant.coreinterface.model.chequeverification.ChequeStatus;
 import com.pennant.coreinterface.model.chequeverification.ChequeVerification;
 import com.pennant.coreinterface.process.ChequeVerificationProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class ChequeVerificationProcessImpl implements ChequeVerificationProcess {
 	
@@ -20,7 +20,7 @@ public class ChequeVerificationProcessImpl implements ChequeVerificationProcess 
 	
 	@Override
 	public ChequeVerification sendChequeVerificationReq(ChequeVerification chequeVerification) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		
 		logger.debug("Entering");
 		

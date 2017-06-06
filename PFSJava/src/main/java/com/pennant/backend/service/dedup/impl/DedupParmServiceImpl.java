@@ -80,7 +80,7 @@ import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennanttech.model.DedupCustomerDetail;
 import com.pennanttech.model.DedupCustomerResponse;
 import com.pennanttech.service.CustomerDedupService;
@@ -267,7 +267,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	@Override
-	public List<CustomerDedup> fetchCustomerDedupDetails(String userRole, CustomerDedup customerDedup, String curLoginUser, String finType) throws PFFInterfaceException {
+	public List<CustomerDedup> fetchCustomerDedupDetails(String userRole, CustomerDedup customerDedup, String curLoginUser, String finType) throws InterfaceException {
 
 		List<CustomerDedup> customerDedupList = new ArrayList<CustomerDedup>();
 		List<CustomerDedup> overridedCustDedupList =  new ArrayList<CustomerDedup>();
@@ -436,7 +436,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	@Override
-	public List<CustomerDedup> getCustomerDedup(CustomerDedup customerDedup, List<DedupParm> dedupParmList) throws PFFInterfaceException {
+	public List<CustomerDedup> getCustomerDedup(CustomerDedup customerDedup, List<DedupParm> dedupParmList) throws InterfaceException {
 		logger.debug("Entering");
 
 		List<CustomerDedup> customerDedupList = new ArrayList<CustomerDedup>();

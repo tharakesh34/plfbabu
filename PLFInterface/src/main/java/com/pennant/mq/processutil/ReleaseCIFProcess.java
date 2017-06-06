@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.coreinterface.model.customer.InterfaceCustomer;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
@@ -30,9 +30,9 @@ public class ReleaseCIFProcess extends MQProcess {
 	 * @param msgFormat
 	 * @param reserveRefNum 
 	 * @return String
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public String releaseCIF(InterfaceCustomer customer, String reserveRefNum, String msgFormat)throws PFFInterfaceException {
+	public String releaseCIF(InterfaceCustomer customer, String reserveRefNum, String msgFormat)throws InterfaceException {
 		logger.debug("Entering");
 
 		OMElement request = null;
@@ -50,9 +50,9 @@ public class ReleaseCIFProcess extends MQProcess {
 				response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(), getWaitTime());
 			}
 
-		} catch (PFFInterfaceException pfe) {
+		} catch (InterfaceException pfe) {
 			logger.error("Exception: ", pfe);
-			throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+			throw new InterfaceException("PTI3002", header.getErrorMessage());
 		}
 
 		logger.debug("Leaving");
@@ -65,9 +65,9 @@ public class ReleaseCIFProcess extends MQProcess {
 	 * @param responseElement
 	 * @param header
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	private String processReleaseCIFResponse(OMElement responseElement, AHBMQHeader header) throws PFFInterfaceException {
+	private String processReleaseCIFResponse(OMElement responseElement, AHBMQHeader header) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -83,7 +83,7 @@ public class ReleaseCIFProcess extends MQProcess {
 		if(StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
 			return header.getReturnCode();
 		} else {
-			throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+			throw new InterfaceException("PTI3002", header.getErrorMessage());
 		}
 	}
 

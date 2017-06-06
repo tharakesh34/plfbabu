@@ -158,7 +158,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -1947,7 +1947,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	 * @throws AccountNotFoundException
 	 */
 	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws ParseException,
-			InterruptedException, PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();

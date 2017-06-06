@@ -80,21 +80,21 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public interface FinanceDetailService {
 	
 	FinanceDetail getFinanceDetail(boolean isWIF);
 	FinanceDetail getNewFinanceDetail(boolean isWIF);
-	AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean isWIF) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
+	AuditHeader saveOrUpdate(AuditHeader auditHeader,boolean isWIF) throws InterfaceException, IllegalAccessException, InvocationTargetException;
 	FinanceDetail getOriginationFinance(String financeReference,String nextRoleCode,String procEdtEvent,String userrole);
 	FinanceDetail getServicingFinance(String financeReference, String eventCode, String procEdtEvent,String userrole);
 	FinanceDetail getWIFFinance(String financeReference, boolean reqCustDetail, String procEdtEvent);
 	FinanceDetail getFinanceDetailById(String financeReference,boolean isWIF, String eventCode, boolean reqCustDetail, String procEdtEvent,String userrole);
 	FinanceDetail getApprovedFinanceDetailById(String financeReference,boolean isWIF);
 	AuditHeader delete(AuditHeader auditHeader,boolean isWIF);
-	AuditHeader doApprove(AuditHeader auditHeader,boolean isWIF) throws PFFInterfaceException, JaxenException;
-	AuditHeader doReject(AuditHeader auditHeader,boolean isWIF) throws PFFInterfaceException, JaxenException, IllegalAccessException, InvocationTargetException;
+	AuditHeader doApprove(AuditHeader auditHeader,boolean isWIF) throws InterfaceException, JaxenException;
+	AuditHeader doReject(AuditHeader auditHeader,boolean isWIF) throws InterfaceException, JaxenException, IllegalAccessException, InvocationTargetException;
 	FinanceDetail getFinanceReferenceDetails(FinanceDetail financeDetail, String userRole,String screenCode, String eventCode, String procEdtEvent, boolean extFieldsReq);
 	boolean isFinReferenceExits(String financeReference, String tableType, boolean isWIF);
 	FinScheduleData getFinSchDataByFinRef(String financeReference, String type, long logKey);
@@ -118,10 +118,10 @@ public interface FinanceDetailService {
 	List<BulkProcessDetails> getIjaraBulkRateFinList(Date fromDate, Date toDate);
 
 	boolean bulkRateChangeFinances(List<BulkProcessDetails> bulkRateChangeFinances, 
-	String recalType, BigDecimal rateChange) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
+	String recalType, BigDecimal rateChange) throws InterfaceException, IllegalAccessException, InvocationTargetException;
 	List<BulkDefermentChange> getBulkDefermentFinList(Date fromDate, Date toDate);
 	boolean bulkDefermentChanges(List<BulkDefermentChange> defermentChangeFinances, String recalType, boolean excludeDeferment, 
-	String addTermAfter, Date calFromDate, Date calToDate) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException;
+	String addTermAfter, Date calFromDate, Date calToDate) throws InterfaceException, IllegalAccessException, InvocationTargetException;
 	
 	FinanceMain fetchConvertedAmounts(FinanceMain financeMain, boolean calAllAmounts);
 	FinanceProfitDetail getFinProfitDetailsById(String finReference);
@@ -149,7 +149,7 @@ public interface FinanceDetailService {
 	void updateFinApprovalStatus(String finReference, String approvalStatus);
 	String getNextRoleCodeByRef(String finReference, String type);
 	FinanceMain getFinanceMain(String finReference, String type);
-	AuditHeader doPreApprove(AuditHeader aAuditHeader, boolean isWIF) throws PFFInterfaceException;
+	AuditHeader doPreApprove(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException;
 
 	List<String> getRollOverLimitRefList();
 	List<String> getRollOverFinTypeList(String limitRef);

@@ -100,7 +100,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -727,7 +727,7 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 				incomeDetailMap = getCustomerIncomeService().getCustomerIncomeByCustomer(wifcustomer.getCustID(), false);
 				try {
 					wifcustomer = fetchCustomerData();
-				} catch (PFFInterfaceException e) {
+				} catch (InterfaceException e) {
 					logger.error("Exception: ", e);
 				}
 			}
@@ -802,10 +802,10 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException 
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws Exception
 	 */
-	public WIFCustomer fetchCustomerData() throws InterruptedException, PFFInterfaceException {
+	public WIFCustomer fetchCustomerData() throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 		
 		// Get the data of Customer from Core Banking Customer

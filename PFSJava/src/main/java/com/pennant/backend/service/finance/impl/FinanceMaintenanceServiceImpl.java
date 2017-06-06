@@ -53,7 +53,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -253,7 +253,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate");
@@ -602,12 +602,12 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
@@ -739,7 +739,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException,
+	public AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
 
@@ -801,7 +801,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		if (!aeEvent.isPostingSucess()) {
 			String errParm = aeEvent.getErrorMessage();
-			throw new PFFInterfaceException("9999", errParm);
+			throw new InterfaceException("9999", errParm);
 		}
 
 		long linkedTranId = aeEvent.getLinkedTranId();

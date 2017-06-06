@@ -241,7 +241,7 @@ import com.pennant.constants.InterfaceConstants;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.coreinterface.model.collateral.CollateralMark;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.AgreementGeneration;
 import com.pennant.util.ErrorControl;
@@ -2661,7 +2661,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @throws AccountNotFoundException
 	 */
 	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws ParseException,
-			InterruptedException, PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
@@ -5927,7 +5927,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					return;
 				}
 
-			} catch (PFFInterfaceException pfe) {
+			} catch (InterfaceException pfe) {
 				logger.error("Exception: ", pfe);
 				MessageUtil.showErrorMessage(pfe.getErrorMessage());
 				return;
@@ -6125,7 +6125,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (final DataAccessException e) {
 			logger.error("Exception: ", e);
 			showErrorMessage(getMainWindow(), e);
-		} catch (PFFInterfaceException pfe) {
+		} catch (InterfaceException pfe) {
 			logger.error("Exception: ", pfe);
 			MessageUtil.showErrorMessage(pfe.getErrorMessage());
 		}
@@ -6331,10 +6331,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param role
 	 * @param aFinanceDetail
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws InterruptedException
 	 */
-	private boolean doLimitCheckProcess(String role, FinanceDetail aFinanceDetail) throws PFFInterfaceException,
+	private boolean doLimitCheckProcess(String role, FinanceDetail aFinanceDetail) throws InterfaceException,
 			InterruptedException {
 		logger.debug("Entering");
 
@@ -6461,7 +6461,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @return
 	 * @throws Exception
 	 */
-	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception, PFFInterfaceException {
+	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception, InterfaceException {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -6594,7 +6594,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							if (ddaStatus && ddaDpSpStatus) {
 								processCompleted = true;
 							}
-						} catch (PFFInterfaceException pfe) {
+						} catch (InterfaceException pfe) {
 							logger.error("Exception: ", pfe);
 							MessageUtil.showInfoMessage(pfe.getErrorMessage());
 							processCompleted = false;
@@ -6664,7 +6664,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							this.repayAcctId.setMandatoryStyle(false);
 							processCompleted = true;
 						}
-					} catch (PFFInterfaceException pfe) {
+					} catch (InterfaceException pfe) {
 						logger.error("Exception: ", pfe);
 						MessageUtil.showErrorMessage(pfe.getErrorMessage());
 						processCompleted = false;
@@ -6726,7 +6726,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							String linkedRef = afinanceMain.getFinReference() + "_DP";
 							getDdaControllerService().validateDDAStatus(linkedRef);
 						}
-					} catch (PFFInterfaceException pfe) {
+					} catch (InterfaceException pfe) {
 						logger.error("Exception: ", pfe);
 						if (StringUtils.equals(pfe.getErrorCode(), PennantConstants.DDA_PENDING_CODE)) {
 							MessageUtil.showInfoMessage(Labels.getLabel("DDA_APPROVAL_PENDING",
@@ -6777,10 +6777,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param list
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws InterruptedException
 	 */
-	private boolean doCollateralMark(List<FinCollaterals> list) throws PFFInterfaceException, InterruptedException {
+	private boolean doCollateralMark(List<FinCollaterals> list) throws InterfaceException, InterruptedException {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -6924,7 +6924,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			MessageUtil.showError(e);
 		} catch (InterruptedException e) {
 			logger.error("Exception: ", e);
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			MessageUtil.showErrorMessage(e.getErrorMessage());
 		} catch (DataAccessException e) {
@@ -13245,9 +13245,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public void onFulfill$finLimitRef(Event event) throws InterruptedException, PFFInterfaceException {
+	public void onFulfill$finLimitRef(Event event) throws InterruptedException, InterfaceException {
 		logger.debug("Entering " + event.toString());
 		this.mMAReference.setValue("");
 		if (!StringUtils.isBlank(getFinanceDetail().getCustomerDetails().getCustomer().getCustCoreBank())) {
@@ -13266,7 +13266,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					this.facilityNotes.setValue("");
 					this.mMAReference.setValue("", "");
 				}
-			} catch (PFFInterfaceException e) {
+			} catch (InterfaceException e) {
 				logger.error("Exception: ", e);
 				MessageUtil.showErrorMessage(e.getMessage());
 			}
@@ -13281,9 +13281,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public void onFulfill$commitmentRef(Event event) throws InterruptedException, PFFInterfaceException {
+	public void onFulfill$commitmentRef(Event event) throws InterruptedException, InterfaceException {
 		logger.debug("Entering " + event.toString());
 
 		Filter[] filters = new Filter[1];
@@ -13310,9 +13310,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public void onFulfill$mMAReference(Event event) throws InterruptedException, PFFInterfaceException {
+	public void onFulfill$mMAReference(Event event) throws InterruptedException, InterfaceException {
 		logger.debug("Entering " + event.toString());
 
 		Object dataObject = mMAReference.getObject();
@@ -13348,9 +13348,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	/**
 	 * Method for Filling Commitment data using Interface call or Existing Data
 	 * 
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	protected void processLimitData() throws PFFInterfaceException {
+	protected void processLimitData() throws InterfaceException {
 		logger.debug("Entering");
 		LimitDetail limitDetail = getLimitCheckDetails().getLimitDetails(this.finLimitRef.getValue(),
 				this.finBranch.getValue());

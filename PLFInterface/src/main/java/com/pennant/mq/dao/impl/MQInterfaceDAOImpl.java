@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.dao.MQInterfaceDAO;
 
 public class MQInterfaceDAOImpl implements MQInterfaceDAO {
@@ -29,7 +29,7 @@ public class MQInterfaceDAOImpl implements MQInterfaceDAO {
 	 * Mapping MDM code with PFF code
 	 * 
 	 */
-    public String getMDMCode(String code,String tableName) throws PFFInterfaceException {
+    public String getMDMCode(String code,String tableName) throws InterfaceException {
 		logger.debug("Entering");
 		String value =new String();
 		StringBuilder selectSql = new StringBuilder("Select value From "+tableName);
@@ -41,7 +41,7 @@ public class MQInterfaceDAOImpl implements MQInterfaceDAO {
 			value = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),parameterSource,String.class); 
 		} catch(Exception e) {
 			logger.warn("Exception: ", e);
-			throw new PFFInterfaceException("PTI7001", "MDM Code not found");
+			throw new InterfaceException("PTI7001", "MDM Code not found");
 		}
 			
 		logger.debug("Leaving");
@@ -53,7 +53,7 @@ public class MQInterfaceDAOImpl implements MQInterfaceDAO {
 	 * Mapping PFF code with MDM code
 	 * 
 	 */
-	public String getPFFCode(String value,String tableName) throws PFFInterfaceException {
+	public String getPFFCode(String value,String tableName) throws InterfaceException {
 		logger.debug("Entering");
 		String mdmCode =new String();
 		StringBuilder selectSql = new StringBuilder("Select code From "+tableName);
@@ -66,7 +66,7 @@ public class MQInterfaceDAOImpl implements MQInterfaceDAO {
 			mdmCode = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(),parameterSource,String.class); 
 		} catch(Exception e) {
 			logger.warn("Exception: ", e);
-			throw new PFFInterfaceException("PTI7001", "PFF Code not found");
+			throw new InterfaceException("PTI7001", "PFF Code not found");
 		}
 		logger.debug("Leaving");
 

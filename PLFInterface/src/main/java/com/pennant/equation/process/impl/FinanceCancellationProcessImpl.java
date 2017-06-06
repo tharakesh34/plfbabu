@@ -12,7 +12,7 @@ import com.pennant.coreinterface.model.FinanceCancellation;
 import com.pennant.coreinterface.process.FinanceCancellationProcess;
 import com.pennant.equation.util.GenericProcess;
 import com.pennant.equation.util.HostConnection;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class FinanceCancellationProcessImpl extends GenericProcess implements FinanceCancellationProcess{
 
@@ -33,7 +33,7 @@ public class FinanceCancellationProcessImpl extends GenericProcess implements Fi
 	 * @throws Exception  
 	 */
 	@Override
-	public List<FinanceCancellation> fetchCancelledFinancePostings(String finReference, String linkedTranId) throws PFFInterfaceException{
+	public List<FinanceCancellation> fetchCancelledFinancePostings(String finReference, String linkedTranId) throws InterfaceException{
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -82,17 +82,17 @@ public class FinanceCancellationProcessImpl extends GenericProcess implements Fi
 					list.add(item);
 				}
 			} else {
-				throw new PFFInterfaceException("9999",pcmlDoc.getValue(pcml + ".@ERCOD").toString() + " : "+pcmlDoc.getValue(pcml + ".@ERPRM").toString());
+				throw new InterfaceException("9999",pcmlDoc.getValue(pcml + ".@ERCOD").toString() + " : "+pcmlDoc.getValue(pcml + ".@ERPRM").toString());
 			} 
 		}catch (ConnectionPoolException e){
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999","Host Connection Failed.. Please contact administrator ");
-		}  catch (PFFInterfaceException e) {
+			throw new InterfaceException("9999","Host Connection Failed.. Please contact administrator ");
+		}  catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		} finally {
 			this.hostConnection.closeConnection(as400);
 		}

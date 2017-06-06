@@ -12,7 +12,7 @@ import com.pennant.coreinterface.model.CustomerCollateral;
 import com.pennant.coreinterface.model.customer.FinanceCustomerDetails;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerDetail;
 import com.pennant.coreinterface.process.CustomerDataProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.util.PFFXmlUtil;
 
 public class CustomerDataProcessImpl extends GenericProcess implements CustomerDataProcess {
@@ -25,7 +25,7 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 	}
 	
 	@Override
-	public InterfaceCustomerDetail getCustomerFullDetails(String custCIF,String custLoc) throws PFFInterfaceException {
+	public InterfaceCustomerDetail getCustomerFullDetails(String custCIF,String custLoc) throws InterfaceException {
 		logger.debug("Entering");
 		InterfaceCustomerDetail interfaceData = getInterfaceDAO().getCustDetails(custCIF, custLoc);
 		logger.debug("Leaving");
@@ -34,7 +34,7 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 	
 	@Override
 	public List<CustomerCollateral> getCustomerCollateral(String custCIF)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		logger.debug("Leaving");
@@ -49,7 +49,7 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 	 * @Return Customer-- unused
 	 */
 	@Override
-	public CoreBankAvailCustomer fetchAvailInformation(CoreBankAvailCustomer coreCust) throws PFFInterfaceException{	
+	public CoreBankAvailCustomer fetchAvailInformation(CoreBankAvailCustomer coreCust) throws InterfaceException{	
 		logger.debug("Entering");
 		
 		logger.debug("Leaving");
@@ -58,18 +58,18 @@ public class CustomerDataProcessImpl extends GenericProcess implements CustomerD
 	
 	@Override
 	public CoreBankingCustomer fetchInformation(CoreBankingCustomer coreCust)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		
 		InterfaceCustomerDetail interfaceData = getInterfaceDAO().getCustDetails(coreCust.getCustomerMnemonic(), coreCust.getCustomerLocation());
 		if(interfaceData == null){
-			throw new PFFInterfaceException("9999","Customer Details Not found. Invalid Core Banking Customer."); 
+			throw new InterfaceException("9999","Customer Details Not found. Invalid Core Banking Customer."); 
 		}
 		return coreCust;
 	}
 
 	@Override
 	public FinanceCustomerDetails fetchFinCustDetails(FinanceCustomerDetails financeCustomerDetails)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 		
 		FinanceCustomerDetails finCustDetail = new FinanceCustomerDetails();

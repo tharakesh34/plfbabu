@@ -11,7 +11,7 @@ import org.jaxen.JaxenException;
 
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennant.equation.util.DateUtility;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
@@ -31,15 +31,15 @@ public class HandlingInstructionProcess extends MQProcess {
 	 * @param handlingInstruction
 	 * @param msgFormat
 	 * @return DDARegistration
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws JaxenException 
 	 */
 	public HandlingInstruction sendHandlingInstruction(HandlingInstruction handlingInstruction, String msgFormat) 
-			throws PFFInterfaceException, JaxenException  {
+			throws InterfaceException, JaxenException  {
 		logger.debug("Entering");
 
 		if (handlingInstruction == null) {
-			throw new PFFInterfaceException("PTI3001", new String[]{"HandlingInstruction"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", new String[]{"HandlingInstruction"},"&1 Cannot Be Blank");	
 		}
 
 		//set MQ Message configuration details
@@ -54,7 +54,7 @@ public class HandlingInstructionProcess extends MQProcess {
 			OMElement requestElement = getRequestElement(handlingInstruction, factory);
 			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
 			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
-		} catch(PFFInterfaceException pffe) {
+		} catch(InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -69,10 +69,10 @@ public class HandlingInstructionProcess extends MQProcess {
 	 * @param responseElement
 	 * @param header
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	private HandlingInstruction processHandlInstResponse(OMElement responseElement, AHBMQHeader header)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -87,7 +87,7 @@ public class HandlingInstructionProcess extends MQProcess {
 
 			if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
 				logger.info("ReturnStatus is Failure");
-				throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+				throw new InterfaceException("PTI3002", header.getErrorMessage());
 			}
 
 			handlingInstResponse = new HandlingInstruction();
@@ -96,7 +96,7 @@ public class HandlingInstructionProcess extends MQProcess {
 			handlingInstResponse.setReturnText(PFFXmlUtil.getStringValue(detailElement, "ReturnText"));
 			handlingInstResponse.setTimeStamp(Long.parseLong(PFFXmlUtil.getStringValue(detailElement, "TimeStamp")));
 
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -114,7 +114,7 @@ public class HandlingInstructionProcess extends MQProcess {
 	 * @return OMElement
 	 */
 	private OMElement getRequestElement(HandlingInstruction handlingInstruction, OMFactory factory)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));

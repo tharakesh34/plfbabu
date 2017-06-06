@@ -16,7 +16,7 @@ import org.jaxen.JaxenException;
 import com.pennant.coreinterface.model.limit.CustomerLimitPosition;
 import com.pennant.coreinterface.model.limit.CustomerLimitSummary;
 import com.pennant.equation.util.DateUtility;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
@@ -36,15 +36,15 @@ public class CustomerLimitPositionProcess extends MQProcess {
 	 * @param limitPositionReq
 	 * @param msgFormat
 	 * @return CustomerLimitPositionReply
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws JaxenException 
 	 */
 	public CustomerLimitPosition getCustomerLimitSummary(CustomerLimitPosition limitPositionReq, String msgFormat) 
-			throws PFFInterfaceException, JaxenException {
+			throws InterfaceException, JaxenException {
 		logger.debug("Entering");
 
 		if (limitPositionReq == null) {
-			throw new PFFInterfaceException("PTI3001", new String[]{"Customer Limit Summary"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", new String[]{"Customer Limit Summary"},"&1 Cannot Be Blank");	
 		}
 
 		//set MQ Message configuration details
@@ -60,7 +60,7 @@ public class CustomerLimitPositionProcess extends MQProcess {
 			OMElement requestElement = getRequestElement(limitPositionReq, referenceNum, factory);
 			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
 			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
-		} catch (PFFInterfaceException pffe) {
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -75,11 +75,11 @@ public class CustomerLimitPositionProcess extends MQProcess {
 	 * @param responseElement
 	 * @param header
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws JaxenException 
 	 */
 	private CustomerLimitPosition setLimitPositionResponse(OMElement responseElement, AHBMQHeader header) 
-			throws PFFInterfaceException, JaxenException {
+			throws InterfaceException, JaxenException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -97,7 +97,7 @@ public class CustomerLimitPositionProcess extends MQProcess {
 
 			if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
 				logger.info("ReturnStatus is Failure");
-				throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+				throw new InterfaceException("PTI3002", header.getErrorMessage());
 			}
 
 			List<CustomerLimitSummary> limitSummaryList = getLimitSummary(limitElement, path+"/Limits/Summary");
@@ -108,7 +108,7 @@ public class CustomerLimitPositionProcess extends MQProcess {
 			if(limitPosition != null) {
 				limitPosition.setLimitSummary(limitSummaryList);
 			}
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -155,10 +155,10 @@ public class CustomerLimitPositionProcess extends MQProcess {
 	 * @param referenceNum
 	 * @param factory
 	 * @return OMElement
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	private OMElement getRequestElement(CustomerLimitPosition limitPositionReq, String referenceNum,
-			OMFactory factory) throws PFFInterfaceException {
+			OMFactory factory) throws InterfaceException {
 
 		logger.debug("Entering");
 

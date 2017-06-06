@@ -19,7 +19,7 @@ import com.pennant.backend.model.smtmasters.HolidayMaster;
 import com.pennant.backend.model.smtmasters.WeekendMaster;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.process.DateRollOverProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class CalendarInterfaceServiceImpl implements CalendarInterfaceService {
 
@@ -35,7 +35,7 @@ public class CalendarInterfaceServiceImpl implements CalendarInterfaceService {
 	 * Method for Calendar holiday List updation by getting list of data From CoreBanking system
 	 * @throws EquationInterfaceException 
 	 */
-	public boolean calendarUpdate() throws PFFInterfaceException {
+	public boolean calendarUpdate() throws InterfaceException {
 		logger.debug("Entering");
 
 		// Connecting to CoreBanking Interface

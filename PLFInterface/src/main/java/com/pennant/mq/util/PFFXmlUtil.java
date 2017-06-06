@@ -14,7 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
 
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 
 public class PFFXmlUtil {
@@ -63,10 +63,10 @@ public class PFFXmlUtil {
 	 * @param factory
 	 * @param requesteBody
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	public static OMElement generateRequest(AHBMQHeader header,	OMFactory factory, OMElement requesteBody)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 
 		OMElement requestElement = factory.createOMElement("HB_EAI_REQUEST", null);
 		requestElement.addChild(generateHeader(header, factory));
@@ -101,9 +101,9 @@ public class PFFXmlUtil {
 	 * @param responseElement
 	 * @param header
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public static AHBMQHeader parseHeader(OMElement responseElement, AHBMQHeader header) throws PFFInterfaceException{
+	public static AHBMQHeader parseHeader(OMElement responseElement, AHBMQHeader header) throws InterfaceException{
 		OMElement headerElement = getOMElement("/HB_EAI_REPLY/HB_EAI_HEADER", responseElement);
 		
 		if (headerElement.getFirstChildWithName(new QName("MsgFormat")).getText() != null) {
@@ -144,7 +144,7 @@ public class PFFXmlUtil {
 		return omeEle;
 	}
 
-	public static OMElement getOMElement(String nodePath,OMElement requestData) throws PFFInterfaceException{
+	public static OMElement getOMElement(String nodePath,OMElement requestData) throws InterfaceException{
 
 		AXIOMXPath xpath;
 		OMElement elementData=null;
@@ -154,13 +154,13 @@ public class PFFXmlUtil {
 			elementData = (OMElement) xpath.selectSingleNode(requestData);
 		} catch (JaxenException e) {
 			logger.debug("Exception: ", e);
-			throw new PFFInterfaceException("PTI9999", e.getMessage());
+			throw new InterfaceException("PTI9999", e.getMessage());
 		}
 
 		return elementData;
 	}
 
-	public static OMElement getOMElements(String nodePath,OMElement requestData) throws PFFInterfaceException{
+	public static OMElement getOMElements(String nodePath,OMElement requestData) throws InterfaceException{
 
 		AXIOMXPath xpath;
 		OMElement elementData=null;
@@ -169,7 +169,7 @@ public class PFFXmlUtil {
 			elementData = (OMElement) xpath.selectNodes(requestData);
 		} catch (JaxenException e) {
 			logger.debug("Exception: ", e);
-			throw new PFFInterfaceException("PTI9999", e.getMessage());
+			throw new InterfaceException("PTI9999", e.getMessage());
 		}
 
 		return elementData;
@@ -216,7 +216,7 @@ public class PFFXmlUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	public static BigDecimal getBigDecimalValue(OMElement requestElement, boolean isMandatory,boolean isNotZero,String elementTagName, String nodePath) throws PFFInterfaceException  {
+	public static BigDecimal getBigDecimalValue(OMElement requestElement, boolean isMandatory,boolean isNotZero,String elementTagName, String nodePath) throws InterfaceException  {
 		OMElement element = PFFXmlUtil.getOMElement(nodePath+elementTagName, requestElement);
 		return getBigDecimalValue(element, isMandatory, isNotZero, elementTagName);
 	}
@@ -231,13 +231,13 @@ public class PFFXmlUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	public static BigDecimal getBigDecimalValue(OMElement requestElement, boolean isMandatory,boolean isNotZero,String elementTagName) throws PFFInterfaceException  {
+	public static BigDecimal getBigDecimalValue(OMElement requestElement, boolean isMandatory,boolean isNotZero,String elementTagName) throws InterfaceException  {
 		String[] parmString =  new String[]{elementTagName};
 
 		BigDecimal tagValue=BigDecimal.ZERO;
 		if (requestElement == null) {
 			if(isMandatory){
-				throw new PFFInterfaceException("PTI2002",parmString," &1 is Mandatory in the request");
+				throw new InterfaceException("PTI2002",parmString," &1 is Mandatory in the request");
 			}else{
 				return tagValue;
 			}
@@ -246,12 +246,12 @@ public class PFFXmlUtil {
 				tagValue = new BigDecimal(requestElement.getText());
 			} catch (Exception e) {
 				logger.debug("Exception: ", e);
-				throw new PFFInterfaceException("PTI2003",parmString,"Unable to parse &1 in the request");
+				throw new InterfaceException("PTI2003",parmString,"Unable to parse &1 in the request");
 			}
 		}
 
 		if(isNotZero && tagValue.doubleValue()==0){
-			throw new PFFInterfaceException("PTI2004",parmString," should Not be Zero");
+			throw new InterfaceException("PTI2004",parmString," should Not be Zero");
 		}
 
 		return tagValue;
@@ -267,14 +267,14 @@ public class PFFXmlUtil {
 	 *  @String nodePath 
 	 *  If isNotEmpty is false then it will not check isNotEmpty conditions  
 	 */
-	public static Date getDateValue(OMElement requestElement, boolean isMandatory, boolean isNotEmpty, String elementTagName, String nodePath) throws PFFInterfaceException {
+	public static Date getDateValue(OMElement requestElement, boolean isMandatory, boolean isNotEmpty, String elementTagName, String nodePath) throws InterfaceException {
 		String[] parmString =  new String[]{elementTagName};
 		Date tagValue= new java.util.Date();
 
 		OMElement element = PFFXmlUtil.getOMElement(nodePath+elementTagName, requestElement);
 		if(element == null) {
 			if(isMandatory){
-				throw new PFFInterfaceException("PTI2002",parmString," &1 is Mandatory in the request");
+				throw new InterfaceException("PTI2002",parmString," &1 is Mandatory in the request");
 			}else{
 				return tagValue;
 			}
@@ -283,7 +283,7 @@ public class PFFXmlUtil {
 				tagValue = PFFXmlUtil.formatDate(element.getText());
 			} catch (Exception e) {
 				logger.debug("Exception: ", e);
-				throw new PFFInterfaceException("PTI2003",parmString,"Unable to parse &1 in the request");
+				throw new InterfaceException("PTI2003",parmString,"Unable to parse &1 in the request");
 			}
 		}
 		return tagValue;
@@ -334,14 +334,14 @@ public class PFFXmlUtil {
 	}
 
 
-	private static Date formatDate(String dateInString) throws PFFInterfaceException {
+	private static Date formatDate(String dateInString) throws InterfaceException {
 		SimpleDateFormat formatter = new SimpleDateFormat(InterfaceMasterConfigUtil.DBDateFormat);
 
 		try {
 			return  formatter.parse(dateInString);
 		} catch (Exception e) {
 			logger.debug("Exception: ", e);
-			throw new PFFInterfaceException("PTI2004",new String[]{dateInString},"Unable to parse &1 Field");
+			throw new InterfaceException("PTI2004",new String[]{dateInString},"Unable to parse &1 Field");
 		}
 	}
 

@@ -20,7 +20,7 @@ import com.pennant.coreinterface.process.CustomerLimitProcess;
 import com.pennant.equation.util.DateUtility;
 import com.pennant.equation.util.GenericProcess;
 import com.pennant.equation.util.HostConnection;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class CustomerLimitProcessImpl extends GenericProcess implements CustomerLimitProcess {
 
@@ -40,7 +40,7 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 	 * @throws CustomerLimitProcessException 
 	 */
 	@Override
-	public Map<String, Object> fetchCustLimitEnqList(int pageNo, int pageSize) throws PFFInterfaceException {
+	public Map<String, Object> fetchCustLimitEnqList(int pageNo, int pageSize) throws InterfaceException {
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -101,15 +101,15 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 
 			} else {
 				errorMessage = pcmlDoc.getValue(pcml + ".@ERPRM").toString();
-				throw new PFFInterfaceException("9999",errorMessage);
+				throw new InterfaceException("9999",errorMessage);
 			}
 
 		}catch (ConnectionPoolException e){
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999","Host Connection Failed.. Please contact administrator ");
+			throw new InterfaceException("9999","Host Connection Failed.. Please contact administrator ");
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		} finally {	
 				this.hostConnection.closeConnection(as400);
 		}
@@ -125,7 +125,7 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 	 * @throws 	CustomerLimitProcessException
 	 * */
 	@Override
-	public List<CustomerLimit> fetchLimitDetails(CustomerLimit custLimit) throws PFFInterfaceException {
+	public List<CustomerLimit> fetchLimitDetails(CustomerLimit custLimit) throws InterfaceException {
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -186,15 +186,15 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 
 			} else {
 				errorMessage = pcmlDoc.getValue(pcml + ".@ERPRM").toString();
-				throw new PFFInterfaceException("9999",errorMessage);
+				throw new InterfaceException("9999",errorMessage);
 			}
 
 		}catch (ConnectionPoolException e){
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999","Host Connection Failed.. Please contact administrator ");
+			throw new InterfaceException("9999","Host Connection Failed.. Please contact administrator ");
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		} finally {	
 				this.hostConnection.closeConnection(as400);
 		}
@@ -204,7 +204,7 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 	}
 	
 	@Override
-	public CustomerLimitPosition fetchLimitEnqDetails(CustomerLimitPosition custLimitSummary) throws PFFInterfaceException {
+	public CustomerLimitPosition fetchLimitEnqDetails(CustomerLimitPosition custLimitSummary) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		return null;
@@ -304,7 +304,7 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 	 * @throws 	CustomerLimitProcessException
 	 * */
 	@Override
-	public List<CustomerLimit> fetchGroupLimitDetails(CustomerLimit custLimit) throws PFFInterfaceException {
+	public List<CustomerLimit> fetchGroupLimitDetails(CustomerLimit custLimit) throws InterfaceException {
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -365,12 +365,12 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 
 			} else {
 				errorMessage = pcmlDoc.getValue(pcml + ".@ERPRM").toString();
-				throw new PFFInterfaceException("9999",errorMessage);
+				throw new InterfaceException("9999",errorMessage);
 			}
 
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		} finally {	
 				this.hostConnection.closeConnection(as400);
 		}
@@ -384,55 +384,55 @@ public class CustomerLimitProcessImpl extends GenericProcess implements Customer
 	 * 
 	 */
 	@Override
-	public CustomerLimitDetail getLimitDetails(String limitRef,	String branchCode) throws PFFInterfaceException {
+	public CustomerLimitDetail getLimitDetails(String limitRef,	String branchCode) throws InterfaceException {
 		return null;
 	}
 
 	@Override
 	public CustomerLimitUtilization doPredealCheck(
-			CustomerLimitUtilization limitUtilReq) throws PFFInterfaceException {
+			CustomerLimitUtilization limitUtilReq) throws InterfaceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public CustomerLimitUtilization doReserveUtilization(
-			CustomerLimitUtilization limitUtilReq) throws PFFInterfaceException {
+			CustomerLimitUtilization limitUtilReq) throws InterfaceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public CustomerLimitUtilization doOverrideAndReserveUtil(
-			CustomerLimitUtilization limitUtilReq) throws PFFInterfaceException {
+			CustomerLimitUtilization limitUtilReq) throws InterfaceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public CustomerLimitUtilization doConfirmReservation(
-			CustomerLimitUtilization limitUtilReq) throws PFFInterfaceException {
+			CustomerLimitUtilization limitUtilReq) throws InterfaceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public CustomerLimitUtilization doCancelReservation(
-			CustomerLimitUtilization limitUtilReq) throws PFFInterfaceException {
+			CustomerLimitUtilization limitUtilReq) throws InterfaceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public CustomerLimitUtilization doCancelUtilization(
-			CustomerLimitUtilization limitUtilReq) throws PFFInterfaceException {
+			CustomerLimitUtilization limitUtilReq) throws InterfaceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	@Override
 	public CustomerLimitUtilization doLimitAmendment(
-			CustomerLimitUtilization limitUtilReq) throws PFFInterfaceException {
+			CustomerLimitUtilization limitUtilReq) throws InterfaceException {
 		// TODO Auto-generated method stub
 		return null;
 	}

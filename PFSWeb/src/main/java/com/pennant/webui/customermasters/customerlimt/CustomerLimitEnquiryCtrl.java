@@ -64,7 +64,7 @@ import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.customermasters.CustomerLimit;
 import com.pennant.backend.model.customermasters.CustomerLimitCategory;
 import com.pennant.backend.service.applicationmaster.CurrencyService;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 
@@ -179,7 +179,7 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 	 * @throws InterruptedException 
 	 * @throws JaxenException 
 	 */
-	public void doWriteBeanToComponents(CustomerLimit customerLimit) throws PFFInterfaceException, InterruptedException, JaxenException {
+	public void doWriteBeanToComponents(CustomerLimit customerLimit) throws InterfaceException, InterruptedException, JaxenException {
 		logger.debug("Entering");
 		
 		this.custCIF.setValue(customerLimit.getCustCIF());
@@ -230,7 +230,7 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 	 * @throws InterruptedException 
 	 * @throws JaxenException 
 	 */
-	public void doFilllistbox(String custMnemonic) throws PFFInterfaceException, InterruptedException, JaxenException {
+	public void doFilllistbox(String custMnemonic) throws InterfaceException, InterruptedException, JaxenException {
 		logger.debug("Entering");
 		
 		com.pennant.coreinterface.model.CustomerLimit limit = new com.pennant.coreinterface.model.CustomerLimit();
@@ -249,7 +249,7 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 			if(getCustomerLimit().isRepeatThousands()){
 				formatter = formatter + 3;
 			}
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			MessageUtil.showErrorMessage(e.getErrorMessage());
 		}

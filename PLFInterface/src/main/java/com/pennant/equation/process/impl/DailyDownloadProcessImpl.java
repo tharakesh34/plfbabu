@@ -77,7 +77,7 @@ import com.pennant.coreinterface.process.DailyDownloadProcess;
 import com.pennant.equation.util.DateUtility;
 import com.pennant.equation.util.GenericProcess;
 import com.pennant.equation.util.HostConnection;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class DailyDownloadProcessImpl extends GenericProcess implements DailyDownloadProcess{
 	private static Logger logger = Logger.getLogger(DailyDownloadProcessImpl.class);
@@ -91,7 +91,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 	/**
 	 * Method for Importing Currency Details
 	 */
-	public List<EquationCurrency>  importCurrencyDetails() throws PFFInterfaceException{
+	public List<EquationCurrency>  importCurrencyDetails() throws InterfaceException{
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -141,7 +141,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999", e.getMessage());
+			throw new InterfaceException("9999", e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -155,7 +155,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 	 * Method for Importing Relation Ship Officer Details
 	 */
 	@Override
-	public List<EquationRelationshipOfficer> importRelationShipOfficersDetails() throws PFFInterfaceException {
+	public List<EquationRelationshipOfficer> importRelationShipOfficersDetails() throws InterfaceException {
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -196,7 +196,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999", e.getMessage());
+			throw new InterfaceException("9999", e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -211,7 +211,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 	 * Method for Importing Customer Type Details
 	 */
 	@Override
-	public List<EquationCustomerType> importCustomerTypeDetails() throws PFFInterfaceException {
+	public List<EquationCustomerType> importCustomerTypeDetails() throws InterfaceException {
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -250,7 +250,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999", e.getMessage());
+			throw new InterfaceException("9999", e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -265,7 +265,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 	 * Method for Importing Department Details
 	 */
 	@Override
-	public List<EquationDepartment> importDepartmentDetails() throws PFFInterfaceException {
+	public List<EquationDepartment> importDepartmentDetails() throws InterfaceException {
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -303,7 +303,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999", e.getMessage());
+			throw new InterfaceException("9999", e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -318,7 +318,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 	 * Method for Importing Customer Group Details
 	 */
 	@Override
-	public List<EquationCustomerGroup> importCustomerGroupDetails() throws PFFInterfaceException {
+	public List<EquationCustomerGroup> importCustomerGroupDetails() throws InterfaceException {
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -358,7 +358,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999", e.getMessage());
+			throw new InterfaceException("9999", e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -373,7 +373,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 	 * Method for Importing Account Type Details
 	 */
 	@Override
-	public List<EquationAccountType> importAccountTypeDetails() throws PFFInterfaceException {
+	public List<EquationAccountType> importAccountTypeDetails() throws InterfaceException {
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -426,7 +426,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999", e.getMessage());
+			throw new InterfaceException("9999", e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -442,7 +442,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 	 * Method for Importing Customer Rating Details
 	 */
 	@Override
-	public List<EquationCustomerRating> importCustomerRatingDetails() throws PFFInterfaceException {
+	public List<EquationCustomerRating> importCustomerRatingDetails() throws InterfaceException {
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -487,7 +487,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999", e.getMessage());
+			throw new InterfaceException("9999", e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -502,7 +502,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 	/**
 	 * Method for Importing Country Details
 	 */
-	public List<EquationCountry>  importCountryDetails() throws PFFInterfaceException{
+	public List<EquationCountry>  importCountryDetails() throws InterfaceException{
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -539,7 +539,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999", e.getMessage());
+			throw new InterfaceException("9999", e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -552,7 +552,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 	/**
 	 * Method for Importing Customer Status Code Details
 	 */
-	public List<EquationCustStatusCode>  importCustStausCodeDetails() throws PFFInterfaceException{
+	public List<EquationCustStatusCode>  importCustStausCodeDetails() throws InterfaceException{
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -591,7 +591,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999", e.getMessage());
+			throw new InterfaceException("9999", e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -604,7 +604,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 	/**
 	 * Method for Importing Industry Details
 	 */
-	public List<EquationIndustry>  importIndustryDetails() throws PFFInterfaceException{
+	public List<EquationIndustry>  importIndustryDetails() throws InterfaceException{
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -641,7 +641,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999", e.getMessage());
+			throw new InterfaceException("9999", e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -655,7 +655,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 	/**
 	 * Method for Importing Branch Details
 	 */
-	public List<EquationBranch>  importBranchDetails() throws PFFInterfaceException{
+	public List<EquationBranch>  importBranchDetails() throws InterfaceException{
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -701,7 +701,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999", e.getMessage());
+			throw new InterfaceException("9999", e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -714,7 +714,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 	/**
 	 * Method for Importing Internal Account Details
 	 */
-	public List<EquationInternalAccount>  importInternalAccDetails() throws PFFInterfaceException{
+	public List<EquationInternalAccount>  importInternalAccDetails() throws InterfaceException{
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -754,7 +754,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999", e.getMessage());
+			throw new InterfaceException("9999", e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -769,7 +769,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 	/**
 	 * Method for Importing Abuser Details
 	 */
-	public List<EquationAbuser>  importAbuserDetails() throws PFFInterfaceException{
+	public List<EquationAbuser>  importAbuserDetails() throws InterfaceException{
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -806,7 +806,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999", e.getMessage());
+			throw new InterfaceException("9999", e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -817,7 +817,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 	}
 
 	@Override
-	public  void processCustomerNumbers(List<String> existingCustomers) throws PFFInterfaceException{
+	public  void processCustomerNumbers(List<String> existingCustomers) throws InterfaceException{
 		logger.debug("Entering");
 		AS400 as400 = null;
 		ProgramCallDocument pcmlDoc = null;
@@ -837,7 +837,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 			logger.debug(" After PCML Call");
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999", e.getMessage());
+			throw new InterfaceException("9999", e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -849,7 +849,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 	/**
 	 * Method for Importing Customer Details
 	 */
-	public List<InterfaceCustomerDetail>  importCustomerDetails() throws PFFInterfaceException{
+	public List<InterfaceCustomerDetail>  importCustomerDetails() throws InterfaceException{
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -1036,7 +1036,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999", e.getMessage());
+			throw new InterfaceException("9999", e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -1051,7 +1051,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 	 * Method for Importing Transaction Code Details
 	 */
 	@Override
-	public List<EquationTransactionCode> importTransactionCodeDetails() throws PFFInterfaceException {
+	public List<EquationTransactionCode> importTransactionCodeDetails() throws InterfaceException {
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -1088,7 +1088,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999", e.getMessage());
+			throw new InterfaceException("9999", e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -1103,7 +1103,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 	 * Method for Importing Transaction Code Details
 	 */
 	@Override
-	public List<EquationIdentityType> importIdentityTypeDetails() throws PFFInterfaceException {
+	public List<EquationIdentityType> importIdentityTypeDetails() throws InterfaceException {
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -1140,7 +1140,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999", e.getMessage());
+			throw new InterfaceException("9999", e.getMessage());
 		}  finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc  =  null;
@@ -1360,7 +1360,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 	 * Method for Importing Income Account Transactions
 	 */
 	@Override
-	public List<IncomeAccountTransaction>  importIncomeAccTransactions(List<IncomeAccountTransaction> finIncomeAccounts) throws PFFInterfaceException{
+	public List<IncomeAccountTransaction>  importIncomeAccTransactions(List<IncomeAccountTransaction> finIncomeAccounts) throws InterfaceException{
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -1403,7 +1403,7 @@ public class DailyDownloadProcessImpl extends GenericProcess implements DailyDow
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999", e.getMessage());
+			throw new InterfaceException("9999", e.getMessage());
 		} finally {
 			getHostConnection().closeConnection(as400);
 			pcmlDoc = null;

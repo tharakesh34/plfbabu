@@ -7,32 +7,32 @@ import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.coreinterface.model.limit.CustomerLimitDetail;
 import com.pennant.coreinterface.model.limit.CustomerLimitPosition;
 import com.pennant.coreinterface.model.limit.CustomerLimitUtilization;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public interface CustomerLimitProcess {
 
-	Map<String, Object> fetchCustLimitEnqList(int pageNo, int pageSize) throws PFFInterfaceException;
+	Map<String, Object> fetchCustLimitEnqList(int pageNo, int pageSize) throws InterfaceException;
 
-	List<CustomerLimit> fetchLimitDetails(CustomerLimit custLimit) throws PFFInterfaceException;
+	List<CustomerLimit> fetchLimitDetails(CustomerLimit custLimit) throws InterfaceException;
 
-	CustomerLimitPosition fetchLimitEnqDetails(CustomerLimitPosition custLimitSummary) throws PFFInterfaceException;
+	CustomerLimitPosition fetchLimitEnqDetails(CustomerLimitPosition custLimitSummary) throws InterfaceException;
 
-	List<CustomerLimit> fetchGroupLimitDetails(CustomerLimit custLimit)	throws PFFInterfaceException;
+	List<CustomerLimit> fetchGroupLimitDetails(CustomerLimit custLimit)	throws InterfaceException;
 
-	CustomerLimitDetail getLimitDetails(String limitRef, String branchCode) throws PFFInterfaceException;
+	CustomerLimitDetail getLimitDetails(String limitRef, String branchCode) throws InterfaceException;
 	
-	CustomerLimitUtilization doPredealCheck(CustomerLimitUtilization limitUtilReq) throws PFFInterfaceException;
+	CustomerLimitUtilization doPredealCheck(CustomerLimitUtilization limitUtilReq) throws InterfaceException;
 
-	CustomerLimitUtilization doReserveUtilization(CustomerLimitUtilization limitUtilReq) throws PFFInterfaceException;
+	CustomerLimitUtilization doReserveUtilization(CustomerLimitUtilization limitUtilReq) throws InterfaceException;
 
-	CustomerLimitUtilization doOverrideAndReserveUtil(CustomerLimitUtilization limitUtilReq) throws PFFInterfaceException;
+	CustomerLimitUtilization doOverrideAndReserveUtil(CustomerLimitUtilization limitUtilReq) throws InterfaceException;
 
-	CustomerLimitUtilization doConfirmReservation(CustomerLimitUtilization limitUtilReq) throws PFFInterfaceException;
+	CustomerLimitUtilization doConfirmReservation(CustomerLimitUtilization limitUtilReq) throws InterfaceException;
 
-	CustomerLimitUtilization doCancelReservation(CustomerLimitUtilization limitUtilReq) throws PFFInterfaceException;
+	CustomerLimitUtilization doCancelReservation(CustomerLimitUtilization limitUtilReq) throws InterfaceException;
 
-	CustomerLimitUtilization doCancelUtilization(CustomerLimitUtilization limitUtilReq) throws PFFInterfaceException;
+	CustomerLimitUtilization doCancelUtilization(CustomerLimitUtilization limitUtilReq) throws InterfaceException;
 
-	CustomerLimitUtilization doLimitAmendment(CustomerLimitUtilization coreLimitUtilReq) throws PFFInterfaceException;
+	CustomerLimitUtilization doLimitAmendment(CustomerLimitUtilization coreLimitUtilReq) throws InterfaceException;
 
 }

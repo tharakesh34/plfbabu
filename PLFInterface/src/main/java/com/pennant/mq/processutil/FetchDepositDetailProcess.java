@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.coreinterface.model.deposits.FetchDepositDetail;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
@@ -24,11 +24,11 @@ public class FetchDepositDetailProcess extends MQProcess {
 	}
 	
 	public FetchDepositDetail fetchDepositDetails(FetchDepositDetail fetchDepositDetail, String msgFormat) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		if (fetchDepositDetail == null) {
-			throw new PFFInterfaceException("PTI3001", new String[]{"FetchDeposit"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", new String[]{"FetchDeposit"},"&1 Cannot Be Blank");	
 		}
 
 		//set MQ Message configuration details
@@ -44,7 +44,7 @@ public class FetchDepositDetailProcess extends MQProcess {
 			OMElement requestElement = getRequestElement(fetchDepositDetail, referenceNum, factory);
 			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
 			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
-		} catch (PFFInterfaceException pffe) {
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -54,7 +54,7 @@ public class FetchDepositDetailProcess extends MQProcess {
 	}
 
 	private FetchDepositDetail setFetchDepositDetailRply(OMElement responseElement, AHBMQHeader header) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -69,12 +69,12 @@ public class FetchDepositDetailProcess extends MQProcess {
 			header = getReturnStatus(detailElement, header, responseElement);
 
 			if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
-				throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+				throw new InterfaceException("PTI3002", header.getErrorMessage());
 			}
 
 			fetchDepositDetail = new FetchDepositDetail();
 			fetchDepositDetail = (FetchDepositDetail) doUnMarshalling(detailElement, fetchDepositDetail);
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -85,7 +85,7 @@ public class FetchDepositDetailProcess extends MQProcess {
 	}
 
 	private OMElement getRequestElement(FetchDepositDetail fetchDepositDetail, String referenceNum, OMFactory factory) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 		
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));

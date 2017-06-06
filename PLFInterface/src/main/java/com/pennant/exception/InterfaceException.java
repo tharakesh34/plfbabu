@@ -1,6 +1,6 @@
 package com.pennant.exception;
 
-public class PFFInterfaceException extends Exception {
+public class InterfaceException extends Exception {
 	private static final long	serialVersionUID	= 7376419132045778376L;
 
 	public String				errorMessage;
@@ -14,7 +14,7 @@ public class PFFInterfaceException extends Exception {
 		return errorMessage;
 	}
 
-	public PFFInterfaceException(String errorCode, String message) {
+	public InterfaceException(String errorCode, String message) {
 		super(message);
 		this.errorCode = errorCode;
 		this.errorMessage = message;
@@ -28,7 +28,7 @@ public class PFFInterfaceException extends Exception {
 	 * @param parameters
 	 * @param message
 	 */
-	public PFFInterfaceException(String errorCode, String[] parameters, String message) {
+	public InterfaceException(String errorCode, String[] parameters, String message) {
 		super(message);
 		this.errorCode = errorCode;
 		this.parameters = parameters;

@@ -80,7 +80,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.model.EquationMasterMissedDetail;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -196,9 +196,9 @@ public class UpdateCoreCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * @throws NoSuchFieldException 
 	 * @throws IllegalArgumentException 
 	 * @throws SecurityException 
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	public void onFulfill$custCIF(Event event) throws WrongValueException, PFFInterfaceException, SecurityException, IllegalArgumentException, NoSuchFieldException, IllegalAccessException, PFFInterfaceException {
+	public void onFulfill$custCIF(Event event) throws WrongValueException, InterfaceException, SecurityException, IllegalArgumentException, NoSuchFieldException, IllegalAccessException, InterfaceException {
 		logger.debug("Entering");
 		Object dataObject = custCIF.getObject();
 		if (dataObject instanceof String) {
@@ -225,7 +225,7 @@ public class UpdateCoreCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 		logger.debug("Leaving");
 	}
 
-	private void doFillCustomerDetails() throws PFFInterfaceException, SecurityException, IllegalArgumentException, NoSuchFieldException, IllegalAccessException, PFFInterfaceException{
+	private void doFillCustomerDetails() throws InterfaceException, SecurityException, IllegalArgumentException, NoSuchFieldException, IllegalAccessException, InterfaceException{
 		logger.debug("Entering");
 		pffCustomerDetails = getCustomerDetailsService().getCustomerById(customer.getId());
 		coreCustomerDetails = getCustomerInterfaceService().getCustomerInfoByInterface(this.custCIF.getValue(), "");	

@@ -16,7 +16,7 @@ import com.pennant.coreinterface.model.accountposting.AccountPostingDetail;
 import com.pennant.coreinterface.model.accountposting.SecondaryDebitAccount;
 import com.pennant.coreinterface.process.AccountDetailProcess;
 import com.pennant.coreinterface.process.AccountPostingProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.processutil.AccountPostingDetailProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 
@@ -49,7 +49,7 @@ public class AccountPostingServiceImpl implements AccountPostingProcess {
 	 */
 	@Override
 	public List<CoreBankAccountPosting> doPostings(List<CoreBankAccountPosting> accountPostings,String postBranch,
-			String createNow) throws PFFInterfaceException {
+			String createNow) throws InterfaceException {
 		logger.debug("Entering");
 		List<CoreBankAccountPosting> coreBankAccountPostings = new ArrayList<>();
 		coreBankAccountPostings.addAll(accountPostings);
@@ -59,7 +59,7 @@ public class AccountPostingServiceImpl implements AccountPostingProcess {
 	    isError = validateCrandDrAmount(coreBankAccountPostings);
 		
 		if(isError){
-			throw new PFFInterfaceException(RETURNCODE_FAILED, "Credit and Debits not matching."); 		
+			throw new InterfaceException(RETURNCODE_FAILED, "Credit and Debits not matching."); 		
 		}
 		
 		//Validate the Core Accounts 
@@ -119,9 +119,9 @@ public class AccountPostingServiceImpl implements AccountPostingProcess {
 	 * Validate the Account Details
 	 * @param coreBankAccountPosting
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public boolean validateAccount(List<CoreBankAccountPosting> coreBankAccountPosting) throws PFFInterfaceException{
+	public boolean validateAccount(List<CoreBankAccountPosting> coreBankAccountPosting) throws InterfaceException{
 		logger.debug("Entering");
  
 		boolean iserror = false;
@@ -156,9 +156,9 @@ public class AccountPostingServiceImpl implements AccountPostingProcess {
 	 * Call interface postings module to post the accounting transactions 
 	 * @param coreBankAccountPosting
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public boolean doSetAccountPostingRequest(List<CoreBankAccountPosting> coreBankAccountPosting) throws PFFInterfaceException{
+	public boolean doSetAccountPostingRequest(List<CoreBankAccountPosting> coreBankAccountPosting) throws InterfaceException{
 		logger.debug("Entering");
 		int i;
 		boolean isError = false;
@@ -247,7 +247,7 @@ public class AccountPostingServiceImpl implements AccountPostingProcess {
 	 */
 	@Override
 	public List<CoreBankAccountPosting> doReversalPostings(List<CoreBankAccountPosting> accountPostings,String postBranch,
-			String createNow) throws PFFInterfaceException {
+			String createNow) throws InterfaceException {
 		logger.debug("Entering");
 
 		for (int i = 0; i < accountPostings.size(); i = i + 2) {
@@ -311,7 +311,7 @@ public class AccountPostingServiceImpl implements AccountPostingProcess {
 	 * @throws Exception
 	 */
 	@Override
-	public List<CoreBankAccountPosting> doUploadAccruals(List<CoreBankAccountPosting> postings,  Date valueDate, String postBranch, String isDummy)  throws PFFInterfaceException{
+	public List<CoreBankAccountPosting> doUploadAccruals(List<CoreBankAccountPosting> postings,  Date valueDate, String postBranch, String isDummy)  throws InterfaceException{
 		logger.debug("Entering");
 		
 		/*AccountPostingReply accPostingReply = getAccPostingProcess().doFillPostingDetails(null, 

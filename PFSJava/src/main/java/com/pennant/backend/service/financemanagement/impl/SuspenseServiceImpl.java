@@ -80,7 +80,7 @@ import com.pennant.backend.service.financemanagement.SuspenseService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 /**
  * Service implementation for methods that depends on <b>FinanceSuspHead</b>.<br>
@@ -247,7 +247,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 	 * @throws AccountNotFoundException
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException,
+	public AuditHeader saveOrUpdate(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
 
@@ -301,7 +301,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 
 			if (!aeEvent.isPostingSucess()) {
 				String errParm = aeEvent.getErrorMessage();
-				throw new PFFInterfaceException("9999", errParm);
+				throw new InterfaceException("9999", errParm);
 			}
 
 		}
@@ -399,7 +399,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 	 * @throws AccountNotFoundException
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException,
+	public AuditHeader doApprove(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
 		String tranType = "";
@@ -540,12 +540,12 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "doReject");

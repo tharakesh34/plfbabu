@@ -135,7 +135,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.VASConsatnts;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -494,12 +494,12 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
 
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		String tranType = "";
@@ -1669,7 +1669,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * @throws IllegalAccessException 
 	 * @throws AccountNotFoundException
 	 */
-	public void executeAccountingProcess(AuditHeader auditHeader, Date curBDay) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException{
+	public void executeAccountingProcess(AuditHeader auditHeader, Date curBDay) throws InterfaceException, IllegalAccessException, InvocationTargetException{
 		logger.debug("Entering");
 
 		VASRecording vASRecording = new VASRecording("");

@@ -19,7 +19,7 @@ import com.ibm.mq.MQQueue;
 import com.ibm.mq.MQQueueManager;
 import com.ibm.mq.constants.CMQC;
 import com.ibm.mq.constants.MQConstants;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class MessageQueueClient {
 	private final static Logger logger = Logger.getLogger(MessageQueueClient.class);
@@ -40,7 +40,7 @@ public class MessageQueueClient {
 	private String sslKeyStorePassword;
 	private String sslCipherSuite;
 	
-	public MessageQueueClient(String configKey) throws PFFInterfaceException {
+	public MessageQueueClient(String configKey) throws InterfaceException {
 		
 		try {
 
@@ -75,14 +75,14 @@ public class MessageQueueClient {
 			
 		} catch (Exception e) {
 			logger.debug("Exception: ", e);
-			throw new PFFInterfaceException("PTI9001", "Failed to load MQ configuration");
+			throw new InterfaceException("PTI9001", "Failed to load MQ configuration");
 		}
 	}
 	
 	
 	@SuppressWarnings("unchecked")
 	private MQQueueManager getMQQueueManager() throws MQException,
-			PFFInterfaceException {
+			InterfaceException {
 		logger.info("getMQQueueManager()");
 
 		try {
@@ -101,20 +101,20 @@ public class MessageQueueClient {
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("PTI9000", e.getMessage());
+			throw new InterfaceException("PTI9000", e.getMessage());
 		}
 		logger.info("getMQQueueManager()");
 
 		return queueManager;
 	} 
 
-	public boolean setRequest(String request, String requestQueue) throws PFFInterfaceException {
+	public boolean setRequest(String request, String requestQueue) throws InterfaceException {
 		logger.info("Entering");
 
 		try {
 			sendRequest(request, requestQueue, null);
 
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		} finally {
@@ -137,10 +137,10 @@ public class MessageQueueClient {
 	 * @param responseQueue
 	 * @param waitTime
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	public OMElement getRequestResponse(String request, String requestQueue,
-										String responseQueue, int waitTime) throws PFFInterfaceException {
+										String responseQueue, int waitTime) throws InterfaceException {
 		logger.info("entering");
 
 		OMElement responseElement = null;
@@ -157,7 +157,7 @@ public class MessageQueueClient {
 
 		} catch (XMLStreamException e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException(String.valueOf("PTI9999"), "Exception while parsing response xml");
+			throw new InterfaceException(String.valueOf("PTI9999"), "Exception while parsing response xml");
 		} finally {
 			try {
 				queueManager.disconnect();
@@ -181,7 +181,7 @@ public class MessageQueueClient {
 	 * @throws MQException
 	 * @throws Exception
 	 */
-	protected byte[] sendRequest(String content,String requestQueue,String responseQueue) throws PFFInterfaceException{
+	protected byte[] sendRequest(String content,String requestQueue,String responseQueue) throws InterfaceException{
 		logger.info("sendRequest()");
 		
 		MQQueue queue=null;
@@ -227,10 +227,10 @@ public class MessageQueueClient {
 			if (e.reasonCode != MQConstants.MQRC_NO_MSG_AVAILABLE) {
 				logger.error("Exception: ", e);
 			}
-			throw new PFFInterfaceException(String.valueOf(e.reasonCode), e.getMessage());
+			throw new InterfaceException(String.valueOf(e.reasonCode), e.getMessage());
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException(String.valueOf("PTI9999"), "MQ Exception, Failed to send request");
+			throw new InterfaceException(String.valueOf("PTI9999"), "MQ Exception, Failed to send request");
 		} finally {
 			closeQueue(queue);
 		}
@@ -240,7 +240,7 @@ public class MessageQueueClient {
 	}
 
 
-	protected String receiveResponse(String responseQueue,int waitTime, byte[] messageId) throws PFFInterfaceException{
+	protected String receiveResponse(String responseQueue,int waitTime, byte[] messageId) throws InterfaceException{
 		logger.info("receiveResponse()"+responseQueue);
 
 		String result = null;
@@ -274,10 +274,10 @@ public class MessageQueueClient {
 			
 		} catch (MQException e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException(String.valueOf(e.reasonCode), e.getMessage());
+			throw new InterfaceException(String.valueOf(e.reasonCode), e.getMessage());
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException(String.valueOf("PTI9999"), "MQ Exception, Failed to receive response");
+			throw new InterfaceException(String.valueOf("PTI9999"), "MQ Exception, Failed to receive response");
 		} finally {
 			closeQueue(queue);
 		}

@@ -10,7 +10,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennant.coreinterface.process.FinanceMaintenanceProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class HandlingInstructionService {
 
@@ -24,9 +24,9 @@ public class HandlingInstructionService {
 	 * Method for send Handling Instruction to ICCS interface and save the request and response details
 	 * 
 	 * @param handlingInstruction
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public void sendFinanceMaintenanceRequest(HandlingInstruction handlingInstruction) throws PFFInterfaceException {
+	public void sendFinanceMaintenanceRequest(HandlingInstruction handlingInstruction) throws InterfaceException {
 		logger.debug("Entering");
 		
 		// Validate Security cheque is taken as collateral or not
@@ -41,7 +41,7 @@ public class HandlingInstructionService {
 			HandlingInstruction handlInstResponse = getFinanceMaintenanceProcess().sendHandlingInstruction(handlingInstruction);
 
 			if(handlInstResponse == null) {
-				throw new PFFInterfaceException("PTI7001", Labels.getLabel("FAILED_HANDLINST"));
+				throw new InterfaceException("PTI7001", Labels.getLabel("FAILED_HANDLINST"));
 			}
 			if(StringUtils.equals(handlInstResponse.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
 
@@ -52,7 +52,7 @@ public class HandlingInstructionService {
 				// Save Request and Response details
 				saveHandlingInstructionLogDetails(handlingInstruction);
 			} else {
-				throw new PFFInterfaceException(handlInstResponse.getReturnCode(), handlingInstruction.getReturnText());
+				throw new InterfaceException(handlInstResponse.getReturnCode(), handlingInstruction.getReturnText());
 			}
 
 		}

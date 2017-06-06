@@ -2,7 +2,7 @@ package com.pennant.mq.process.impl;
 
 import com.pennant.coreinterface.model.customer.InterfaceMortgageDetail;
 import com.pennant.coreinterface.process.PoliceAcceptanceProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.processutil.PoliceAcceptanceUtilProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 
@@ -15,12 +15,12 @@ public class PoliceAcceptanceServiceImpl implements PoliceAcceptanceProcess {
 	}
 
 	@Override
-	public InterfaceMortgageDetail getPoliceAcceptance(InterfaceMortgageDetail mortgageDetail) throws PFFInterfaceException {
+	public InterfaceMortgageDetail getPoliceAcceptance(InterfaceMortgageDetail mortgageDetail) throws InterfaceException {
 		return getPoliceAcceptanceUtilProcess().getPoliceAcceptance(mortgageDetail, InterfaceMasterConfigUtil.CREATE_MORTGAGE);
 	}
 	
 	@Override
-	public InterfaceMortgageDetail cancelMortage(String transactionId) throws PFFInterfaceException {
+	public InterfaceMortgageDetail cancelMortage(String transactionId) throws InterfaceException {
 		return getPoliceAcceptanceUtilProcess().cancelMortage(transactionId, InterfaceMasterConfigUtil.CANCEL_MORTGAGE);
 	}
 	

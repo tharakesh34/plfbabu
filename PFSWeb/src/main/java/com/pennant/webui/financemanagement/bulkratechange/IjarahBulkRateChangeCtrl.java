@@ -73,7 +73,7 @@ import com.pennant.backend.model.finance.BulkProcessDetails;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.enquiry.model.BulkRateChangeListModelItemRenderer;
@@ -297,7 +297,7 @@ public class IjarahBulkRateChangeCtrl extends GFCBaseListCtrl<BulkProcessDetails
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	public void onClick$btnProceed(Event event) throws InterruptedException, WrongValueException, PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public void onClick$btnProceed(Event event) throws InterruptedException, WrongValueException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering" +event.toString());
 		throwValidation();		
 		

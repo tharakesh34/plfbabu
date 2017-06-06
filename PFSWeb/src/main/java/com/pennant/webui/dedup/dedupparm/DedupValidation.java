@@ -59,7 +59,7 @@ import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.customer.InterfaceNorkamCheck;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
 
@@ -119,7 +119,7 @@ public class DedupValidation implements Serializable {
 
 			return true;
 
-		} catch (PFFInterfaceException pfe) {
+		} catch (InterfaceException pfe) {
 			logger.error("Exception: ", pfe);
 			MessageUtil.showErrorMessage(pfe.getErrorMessage());
 			return false;
@@ -134,7 +134,7 @@ public class DedupValidation implements Serializable {
 	 * @param curLoginUser
 	 * @return
 	 */
-	private boolean doCustomerDedupe(FinanceDetail aFinanceDetail,String role,Window window,String curLoginUser) throws PFFInterfaceException {
+	private boolean doCustomerDedupe(FinanceDetail aFinanceDetail,String role,Window window,String curLoginUser) throws InterfaceException {
 		logger.debug("Entering");
 
 		String corebank = aFinanceDetail.getCustomerDetails().getCustomer().getCustCoreBank();
@@ -226,9 +226,9 @@ public class DedupValidation implements Serializable {
 	 * @param role
 	 * @param window
 	 * @param curLoginUser
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	private boolean doBlacklistCheck(FinanceDetail aFinanceDetail,String role,Window window,String curLoginUser) throws PFFInterfaceException {
+	private boolean doBlacklistCheck(FinanceDetail aFinanceDetail,String role,Window window,String curLoginUser) throws InterfaceException {
 
 		boolean isProcessCompleted;
 
@@ -258,9 +258,9 @@ public class DedupValidation implements Serializable {
 	 * @param customerDetails 
 	 * 
 	 * @return
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	private boolean doNorkomCheck(CustomerDetails customerDetails) throws PFFInterfaceException {
+	private boolean doNorkomCheck(CustomerDetails customerDetails) throws InterfaceException {
 		logger.debug("Entering");
 
 		boolean isProcessCompleted = false;

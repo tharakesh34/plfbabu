@@ -83,7 +83,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.webui.finance.financemain.FinVasRecordingDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -459,10 +459,10 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws Exception
 	 */
-	public boolean isCustomerExists() throws InterruptedException, PFFInterfaceException {
+	public boolean isCustomerExists() throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 
 		boolean isCustExists = true;

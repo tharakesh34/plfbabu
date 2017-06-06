@@ -82,7 +82,7 @@ import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -268,7 +268,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Entering" + event.toString());
 		try {
 			doSave();
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			MessageUtil.showErrorMessage("Customer Not Created...");
 		}
@@ -366,7 +366,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @throws ParseException
 	 * @throws CustomerNotFoundException 
 	 */
-	public void doSave() throws InterruptedException, ParseException, PFFInterfaceException {
+	public void doSave() throws InterruptedException, ParseException, InterfaceException {
 		logger.debug("Entering");
 		
 		final CustomerDetails aCustomerDetails = new CustomerDetails();
@@ -519,7 +519,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @return boolean
 	 * @throws CustomerNotFoundException 
 	 * */
-	private boolean doProcess(CustomerDetails aCustomerDetails, String tranType) throws PFFInterfaceException {
+	private boolean doProcess(CustomerDetails aCustomerDetails, String tranType) throws InterfaceException {
 		logger.debug("Entering");
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
@@ -612,7 +612,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @return boolean
 	 * @throws CustomerNotFoundException 
 	 * */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws PFFInterfaceException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;

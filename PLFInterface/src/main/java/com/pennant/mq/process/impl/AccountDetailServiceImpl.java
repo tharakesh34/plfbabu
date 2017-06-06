@@ -9,7 +9,7 @@ import org.jaxen.JaxenException;
 
 import com.pennant.coreinterface.model.CoreBankAccountDetail;
 import com.pennant.coreinterface.process.AccountDetailProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.processutil.FetchAccountDetailProcess;
 import com.pennant.mq.processutil.FetchAllAccountsProcess;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
@@ -36,7 +36,7 @@ public class AccountDetailServiceImpl implements AccountDetailProcess {
 	 */
 	@Override
 	public List<CoreBankAccountDetail> fetchCustomerAccounts(CoreBankAccountDetail accountDetail)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		List<CoreBankAccountDetail> accDetail = null;
@@ -61,7 +61,7 @@ public class AccountDetailServiceImpl implements AccountDetailProcess {
 	 * @return CoreBankAccountDetail
 	 */
 	@Override
-	public List<CoreBankAccountDetail> fetchAccountDetails(CoreBankAccountDetail accountDetail) throws PFFInterfaceException {
+	public List<CoreBankAccountDetail> fetchAccountDetails(CoreBankAccountDetail accountDetail) throws InterfaceException {
 		logger.debug("Entering");
 
 		List<CoreBankAccountDetail> accDetailList = null;
@@ -81,7 +81,7 @@ public class AccountDetailServiceImpl implements AccountDetailProcess {
 	 */
 	@Override
 	public List<CoreBankAccountDetail> fetchAccount(List<CoreBankAccountDetail> bankAccountDetails, String createNow)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 
 		List<CoreBankAccountDetail> accountList = new ArrayList<CoreBankAccountDetail>();
 		int count = 0;
@@ -94,7 +94,7 @@ public class AccountDetailServiceImpl implements AccountDetailProcess {
 	}
 
 	@Override
-	public CoreBankAccountDetail fetchAccountAvailableBal(CoreBankAccountDetail coreAcct) throws PFFInterfaceException {
+	public CoreBankAccountDetail fetchAccountAvailableBal(CoreBankAccountDetail coreAcct) throws InterfaceException {
 		logger.debug("Entering");
 
 		List<CoreBankAccountDetail> coreAcctList = new ArrayList<CoreBankAccountDetail>();
@@ -111,7 +111,7 @@ public class AccountDetailServiceImpl implements AccountDetailProcess {
 
 	@Override
 	public List<CoreBankAccountDetail> fetchAccountsListAvailableBal(List<CoreBankAccountDetail> coreAcctList,
-			boolean isCcyCheck) throws PFFInterfaceException {
+			boolean isCcyCheck) throws InterfaceException {
 		logger.debug("Entering");
 
 		List<CoreBankAccountDetail> accDetailList = null;

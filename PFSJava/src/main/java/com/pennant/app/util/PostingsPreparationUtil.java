@@ -65,7 +65,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.coreinterface.model.FinanceCancellation;
 import com.pennant.coreinterface.process.FinanceCancellationProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 /**
  * @author chaitanya.ch
@@ -94,7 +94,7 @@ public class PostingsPreparationUtil implements Serializable {
 	}
 	
 	public AEEvent processPostingDetails(AEEvent aeEvent, HashMap<String, Object> dataMap)
-			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 
 		return processPostings(aeEvent, dataMap);
 	}
@@ -108,13 +108,13 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @param dateAppDate
 	 * @param acSetEvent
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 *             List<Object>
 	 */
 	public AEEvent processCmtPostingDetails(Commitment commitment, Date dateAppDate, String acSetEvent)
-			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 
 		return procCmtPostingDetails(commitment, dateAppDate, acSetEvent);
 	}
@@ -147,13 +147,13 @@ public class PostingsPreparationUtil implements Serializable {
 	}
 
 	public List<ReturnDataSet> processEntryList(List<JVPostingEntry> jvPostingEntryList, JVPosting jVPosting)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		return procJVPostingEntryList(jvPostingEntryList, jVPosting);
 	}
  
 
 	public AEEvent processPostings(AEEvent aeEvent) throws AccountNotFoundException, IllegalAccessException,
-	InvocationTargetException, PFFInterfaceException {
+	InvocationTargetException, InterfaceException {
 		return processPostingDetails(aeEvent);
 	}
 
@@ -161,7 +161,7 @@ public class PostingsPreparationUtil implements Serializable {
 	// ****************** Process Methods *******************//
 	// ******************************************************//
 
-	public AEEvent processPostingDetails(AEEvent aeEvent) throws AccountNotFoundException, PFFInterfaceException {
+	public AEEvent processPostingDetails(AEEvent aeEvent) throws AccountNotFoundException, InterfaceException {
 		// Preparation for Commitment Postings
 		long linkedTranId = getPostingsDAO().getLinkedTransId();
 		aeEvent.setLinkedTranId(linkedTranId);
@@ -176,7 +176,7 @@ public class PostingsPreparationUtil implements Serializable {
 		return aeEvent;
 	}
 
-	private AEEvent processPostings(AEEvent aeEvent, HashMap<String, Object> dataMap) throws PFFInterfaceException,
+	private AEEvent processPostings(AEEvent aeEvent, HashMap<String, Object> dataMap) throws InterfaceException,
 	IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -249,13 +249,13 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @param dateAppDate
 	 * @param acSetEvent
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 *             List<Object>
 	 */
 	private AEEvent procCmtPostingDetails(Commitment commitment, Date dateAppDate, String acSetEvent)
-			throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
@@ -345,7 +345,7 @@ public class PostingsPreparationUtil implements Serializable {
 
 	}
 
-	private AEEvent postingsExecProcess(AEEvent aeEvent) throws PFFInterfaceException {
+	private AEEvent postingsExecProcess(AEEvent aeEvent) throws InterfaceException {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> list = aeEvent.getReturnDataSet();
@@ -410,7 +410,7 @@ public class PostingsPreparationUtil implements Serializable {
 					postingSuccess = true;
 				}
 			}
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.debug(e);
 			errorMsg = e.getErrorMessage();
 		} catch (Exception e) {
@@ -577,7 +577,7 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @param JVPostingEntry
 	 */
 	private List<ReturnDataSet> procJVPostingEntryList(List<JVPostingEntry> jvPostingEntryList, JVPosting jVPosting)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
@@ -646,9 +646,9 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @return
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public AEEvent postAccounting(AEEvent aeEvent) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	public AEEvent postAccounting(AEEvent aeEvent) throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 
 		if (aeEvent.getLinkedTranId() <= 0) {
@@ -681,9 +681,9 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @return
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public AEEvent getAccounting(AEEvent aeEvent, HashMap<String, Object> dataMap) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	public AEEvent getAccounting(AEEvent aeEvent, HashMap<String, Object> dataMap) throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 		
 		if (aeEvent.getLinkedTranId() <= 0) {
@@ -697,7 +697,7 @@ public class PostingsPreparationUtil implements Serializable {
 	}
  
  
-	public AEEvent postAccountingEOD(AEEvent aeEvent) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	public AEEvent postAccountingEOD(AEEvent aeEvent) throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 
 		if (aeEvent.getLinkedTranId() <= 0) {
@@ -731,9 +731,9 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @return
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> postReveralsByFinreference(String finReference) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	public List<ReturnDataSet> postReveralsByFinreference(String finReference) throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> returnDataSets =  getReveralsByFinreference(finReference);
@@ -754,9 +754,9 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @return
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> postReversalsByLinkedTranID(long linkedTranId) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	public List<ReturnDataSet> postReversalsByLinkedTranID(long linkedTranId) throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> returnDataSets =  getReversalsByLinkedTranID(linkedTranId);
@@ -778,9 +778,9 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @return
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> getReversalsByLinkedTranID(long linkedTranId) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	public List<ReturnDataSet> getReversalsByLinkedTranID(long linkedTranId) throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> returnDataSets =  getPostingsDAO().getPostingsByLinkTransId(linkedTranId);
@@ -798,9 +798,9 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @return
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> getReveralsByFinreference(String finReference) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+	public List<ReturnDataSet> getReveralsByFinreference(String finReference) throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> returnDataSets =  getPostingsDAO().getPostingsByFinRef(finReference);

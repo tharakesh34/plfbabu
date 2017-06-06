@@ -18,7 +18,7 @@ import com.pennant.coreinterface.process.AccountPostingProcess;
 import com.pennant.equation.util.DateUtility;
 import com.pennant.equation.util.GenericProcess;
 import com.pennant.equation.util.HostConnection;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class AccountPostingProcessImpl extends GenericProcess implements AccountPostingProcess {
 
@@ -38,7 +38,7 @@ public class AccountPostingProcessImpl extends GenericProcess implements Account
 	 */
 	@Override
 	public List<CoreBankAccountPosting> doPostings(List<CoreBankAccountPosting> accountPostings,String postBranch,
-			String createNow) throws PFFInterfaceException {
+			String createNow) throws InterfaceException {
 		logger.debug("Entering");
 				
 		AS400 as400 = null;
@@ -121,10 +121,10 @@ public class AccountPostingProcessImpl extends GenericProcess implements Account
 			
 		} catch (ConnectionPoolException e){
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999","Host Connection Failed.. Please contact administrator ");
+			throw new InterfaceException("9999","Host Connection Failed.. Please contact administrator ");
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		}  finally {			
 				this.hostConnection.closeConnection(as400);
 		}
@@ -143,7 +143,7 @@ public class AccountPostingProcessImpl extends GenericProcess implements Account
 	 * @throws Exception
 	 */
 	@Override
-	public List<CoreBankAccountPosting> doUploadAccruals(List<CoreBankAccountPosting> postings,  Date valueDate, String postBranch, String isDummy)  throws PFFInterfaceException{
+	public List<CoreBankAccountPosting> doUploadAccruals(List<CoreBankAccountPosting> postings,  Date valueDate, String postBranch, String isDummy)  throws InterfaceException{
 		logger.debug("Entering");
 
 		AS400 as400 = null;
@@ -233,10 +233,10 @@ public class AccountPostingProcessImpl extends GenericProcess implements Account
 			
 		}catch (ConnectionPoolException e){
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999","Host Connection Failed.. Please contact administrator ");
+			throw new InterfaceException("9999","Host Connection Failed.. Please contact administrator ");
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		}  finally {			
 			getHostConnection().closeConnection(as400);
 		}
@@ -246,7 +246,7 @@ public class AccountPostingProcessImpl extends GenericProcess implements Account
 
 	@Override
 	public List<CoreBankAccountPosting> doReversalPostings(List<CoreBankAccountPosting> accountPostings, String postBranch,
-			String createNow) throws PFFInterfaceException {
+			String createNow) throws InterfaceException {
 		return new ArrayList<CoreBankAccountPosting>();
 	}
 

@@ -100,7 +100,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.constants.InterfaceConstants;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
@@ -796,10 +796,10 @@ public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinan
 	 * 
 	 * @param event
 	 * @throws InterruptedException 
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws Exception
 	 */
-	public CustomerDetails fetchCustomerData() throws InterruptedException, PFFInterfaceException {
+	public CustomerDetails fetchCustomerData() throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 
 		CustomerDetails customerDetails = new CustomerDetails();
@@ -824,7 +824,7 @@ public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinan
 				customerDetails.setNewRecord(true);
 				customerDetails = getCustomerInterfaceService().getCustomerInfoByInterface(cif, "");
 				if (customerDetails == null) {
-					throw new PFFInterfaceException("9999", "Customer Not found.");
+					throw new InterfaceException("9999", "Customer Not found.");
 				}
 			}
 
@@ -832,7 +832,7 @@ public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinan
 				customerDetails = getCustomerDetailsService().getCustomerDetailsById(customer.getId(), true, "_View" );
 			}
 
-		} catch (PFFInterfaceException pfe) {
+		} catch (InterfaceException pfe) {
 			if(StringUtils.equals(pfe.getErrorCode(), InterfaceConstants.CUST_NOT_FOUND)) {
 				int conf = MultiLineMessageBox.show(Labels.getLabel("Cust_NotFound_NewCustomer"), Labels.getLabel("message.Information"), 
 						MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);

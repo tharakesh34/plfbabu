@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.customer.InterfaceNorkamCheck;
 import com.pennant.equation.util.DateUtility;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
@@ -24,7 +24,7 @@ public class NorkamCheckUtilProcess extends MQProcess {
 		super();
 	}
 	
-	public InterfaceNorkamCheck doNorkamCheck(InterfaceNorkamCheck norkamCheck, String msgFormat) throws PFFInterfaceException {
+	public InterfaceNorkamCheck doNorkamCheck(InterfaceNorkamCheck norkamCheck, String msgFormat) throws InterfaceException {
 		// Set MQ Message configuration details
 		setConfigDetails(InterfaceMasterConfigUtil.MQ_CONFIG_KEY);
 
@@ -37,7 +37,7 @@ public class NorkamCheckUtilProcess extends MQProcess {
 			OMElement requestElement = getRequestElement(norkamCheck, referenceNum, factory);
 			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
 			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
-		} catch (PFFInterfaceException pffe) {
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -53,10 +53,10 @@ public class NorkamCheckUtilProcess extends MQProcess {
 	 * @param referenceNum
 	 * @param factory
 	 * @return OMElement
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	private OMElement getRequestElement(InterfaceNorkamCheck norkamCheck, String referenceNum, OMFactory factory) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));
@@ -85,10 +85,10 @@ public class NorkamCheckUtilProcess extends MQProcess {
 	 * @param responseElement
 	 * @param header
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	private InterfaceNorkamCheck setBlackListDetails(OMElement responseElement, AHBMQHeader header) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -110,7 +110,7 @@ public class NorkamCheckUtilProcess extends MQProcess {
 			case InterfaceConstants.SUCCESS_CODE:
 				break;
 			default:
-				throw new PFFInterfaceException(header.getReturnCode(), header.getErrorMessage());
+				throw new InterfaceException(header.getReturnCode(), header.getErrorMessage());
 			}	
 
 			interfaceNorkamCheck = new InterfaceNorkamCheck();
@@ -120,7 +120,7 @@ public class NorkamCheckUtilProcess extends MQProcess {
 			interfaceNorkamCheck.setReturnText(PFFXmlUtil.getStringValue(detailElement, "ReturnText"));
 			interfaceNorkamCheck.setTimeStamp(Long.parseLong(PFFXmlUtil.getStringValue(detailElement, "TimeStamp")));
 
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}

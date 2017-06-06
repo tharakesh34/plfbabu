@@ -16,7 +16,7 @@ import com.pennant.coreinterface.model.customer.InterfaceCustomerDocument;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerEMail;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerPhoneNumber;
 import com.pennant.equation.util.DateUtility;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.dao.MQInterfaceDAO;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
@@ -42,7 +42,7 @@ public class AddNewCustomerProcess extends MQProcess {
 	 * @return String
 	 * @throws Exception 
 	 */
-	public String createNewCustomer(InterfaceCustomerDetail customerDetail, String msgFormat) throws PFFInterfaceException {
+	public String createNewCustomer(InterfaceCustomerDetail customerDetail, String msgFormat) throws InterfaceException {
 		logger.debug("Entering");
 
 		setConfigDetails(InterfaceMasterConfigUtil.MQ_CONFIG_KEY);
@@ -62,9 +62,9 @@ public class AddNewCustomerProcess extends MQProcess {
 	 * 
 	 * @param customerDetail
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	public void updateCustomer(InterfaceCustomerDetail customerDetail, String msgFormat) throws PFFInterfaceException {
+	public void updateCustomer(InterfaceCustomerDetail customerDetail, String msgFormat) throws InterfaceException {
 		logger.debug("Entering");
 
 		setConfigDetails(InterfaceMasterConfigUtil.MQ_CONFIG_KEY);
@@ -79,7 +79,7 @@ public class AddNewCustomerProcess extends MQProcess {
 	}
 
 	private String createOrUpdateCustomer(InterfaceCustomerDetail customerDetail, MessageQueueClient client,
-			OMFactory factory, String msgFormat) throws PFFInterfaceException {
+			OMFactory factory, String msgFormat) throws InterfaceException {
 		logger.debug("Entering");
 
 		OMElement request = null;
@@ -96,7 +96,7 @@ public class AddNewCustomerProcess extends MQProcess {
 				response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(), getWaitTime());
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
-				throw new PFFInterfaceException("PTI3003",e.getMessage());
+				throw new InterfaceException("PTI3003",e.getMessage());
 			}
 
 			logger.debug("Leaving");
@@ -115,10 +115,10 @@ public class AddNewCustomerProcess extends MQProcess {
 	 * @param referenceNum
 	 * @param factory
 	 * @return
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
 	private OMElement getCreateRequestElement(InterfaceCustomerDetail customerDetail,
-			OMFactory factory, String msgFormat) throws PFFInterfaceException {
+			OMFactory factory, String msgFormat) throws InterfaceException {
 		logger.debug("Entering");
 		String newRefNumber = PFFXmlUtil.getReferenceNumber();
  		int custType = 2;
@@ -266,9 +266,9 @@ public class AddNewCustomerProcess extends MQProcess {
 	 * @param customerDetail
 	 * @param factory
 	 * @return
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	private OMNode generateAddressInfo(InterfaceCustomerDetail customerDetail, OMFactory factory) throws PFFInterfaceException {
+	private OMNode generateAddressInfo(InterfaceCustomerDetail customerDetail, OMFactory factory) throws InterfaceException {
 		logger.debug("Entering");
 
 		OMElement addressInfo = factory.createOMElement("AddressInfo",null);
@@ -281,7 +281,7 @@ public class AddNewCustomerProcess extends MQProcess {
 		return addressInfo;
 	}
 
-	private OMNode getAddress(OMElement addressInfo, InterfaceCustomerDetail custDetail, OMFactory factory) throws PFFInterfaceException {
+	private OMNode getAddress(OMElement addressInfo, InterfaceCustomerDetail custDetail, OMFactory factory) throws InterfaceException {
 		logger.debug("Entering");
 
 		String type = "";
@@ -328,7 +328,7 @@ public class AddNewCustomerProcess extends MQProcess {
 	}
 
 	private OMElement setAddressInfoRequest(InterfaceCustomerDetail custDetail, InterfaceCustomerAddress custAddr, 
-			OMElement addressInfo, OMFactory factory, String type) throws PFFInterfaceException {
+			OMElement addressInfo, OMFactory factory, String type) throws InterfaceException {
 		logger.debug("Entering");
 
 		PFFXmlUtil.setOMChildElement(factory, addressInfo, type+"POBox",custAddr.getCustPOBox());
@@ -662,9 +662,9 @@ public class AddNewCustomerProcess extends MQProcess {
 	 * @param customerDetail
 	 * @param factory
 	 * @return
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
-	private OMNode generatePersonalInfo(InterfaceCustomerDetail customerDetail, OMFactory factory) throws PFFInterfaceException {
+	private OMNode generatePersonalInfo(InterfaceCustomerDetail customerDetail, OMFactory factory) throws InterfaceException {
 		logger.debug("Entering");
 
 		OMElement personalInfo = factory.createOMElement("PersonalInfo",null);
@@ -834,9 +834,9 @@ public class AddNewCustomerProcess extends MQProcess {
 	 * @param response
 	 * @param header
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	private String setCustResponseDetails(OMElement response, AHBMQHeader header, String tagName)throws PFFInterfaceException {
+	private String setCustResponseDetails(OMElement response, AHBMQHeader header, String tagName)throws InterfaceException {
 		logger.debug("Entering");
 
 		if (response == null) {
@@ -848,7 +848,7 @@ public class AddNewCustomerProcess extends MQProcess {
 		header= getReturnStatus(detailElement, header, response);
 
 		if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
-			throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+			throw new InterfaceException("PTI3002", header.getErrorMessage());
 		}
 
 		return header.getReturnCode();

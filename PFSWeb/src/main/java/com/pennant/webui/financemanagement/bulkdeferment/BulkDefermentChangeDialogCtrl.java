@@ -98,7 +98,7 @@ import com.pennant.backend.model.finance.ScheduleMapDetails;
 import com.pennant.backend.service.finance.BulkDefermentChangeProcessService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -1316,7 +1316,7 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 	 * @throws AccountNotFoundException 
 	 * @throws WrongValueException 
 	 */
-	public void onClick$btnProceed(Event event) throws InterruptedException, WrongValueException, PFFInterfaceException {
+	public void onClick$btnProceed(Event event) throws InterruptedException, WrongValueException, InterfaceException {
 		logger.debug("Entering" +event.toString());
 		this.btnProceed.setDisabled(true);
 

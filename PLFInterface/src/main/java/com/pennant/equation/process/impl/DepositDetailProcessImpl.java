@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 import com.pennant.coreinterface.model.deposits.FetchDeposit;
 import com.pennant.coreinterface.model.deposits.FetchDepositDetail;
 import com.pennant.coreinterface.process.DepositDetailProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class DepositDetailProcessImpl implements DepositDetailProcess {
 
@@ -16,14 +16,14 @@ public class DepositDetailProcessImpl implements DepositDetailProcess {
 	}
 	
 	@Override
-	public FetchDeposit fetchDeposits(FetchDeposit fetchDeposit) throws PFFInterfaceException {
+	public FetchDeposit fetchDeposits(FetchDeposit fetchDeposit) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		return null;
 	}
 
 	@Override
-	public FetchDepositDetail fetchDepositDetails(FetchDepositDetail fetchDepositDetail) throws PFFInterfaceException {
+	public FetchDepositDetail fetchDepositDetails(FetchDepositDetail fetchDepositDetail) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		return null;

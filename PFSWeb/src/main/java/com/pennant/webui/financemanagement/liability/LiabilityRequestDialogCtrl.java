@@ -101,7 +101,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
@@ -620,7 +620,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		} catch (final DataAccessException e) {
 			logger.error("Exception: ", e);
 			showErrorMessage(getMainWindow(), e);
-		} catch (PFFInterfaceException pfe) {
+		} catch (InterfaceException pfe) {
 			showErrorMessage(getMainWindow(), pfe);
 			pfe = null;
 		}
@@ -641,7 +641,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	 * @return
 	 * @throws Exception
 	 */
-	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception, PFFInterfaceException {
+	private boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception, InterfaceException {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -1013,7 +1013,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	 * @throws AccountNotFoundException
 	 */
 	public void doWriteBeanToComponents(FinanceDetail aFinanceDetail, boolean onLoadProcess) throws ParseException,
-			InterruptedException, PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+			InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();

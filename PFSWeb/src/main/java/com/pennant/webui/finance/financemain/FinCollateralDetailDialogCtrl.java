@@ -89,7 +89,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.chequeverification.ChequeStatus;
 import com.pennant.coreinterface.model.chequeverification.ChequeVerification;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -1167,7 +1167,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	}
 
 	public void onChange$FDReference(Event event) throws InterruptedException, WrongValueException, 
-														PFFInterfaceException, ParseException {
+														InterfaceException, ParseException {
 		logger.debug("Entering" + event.toString());
 
 		FinCollaterals finCollaterals = null;
@@ -1190,7 +1190,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			} else {
 				clearDepositDetails();
 			}
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			clearDepositDetails();
 			MessageUtil.showErrorMessage(e.getMessage());
 		}
@@ -1213,11 +1213,11 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	 * @param event
 	 * @throws InterruptedException
 	 * @throws WrongValueException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws ParseException
 	 */
 	public void onClick$btnVerifyCheque(Event event) throws InterruptedException, WrongValueException, 
-			PFFInterfaceException, ParseException {
+			InterfaceException, ParseException {
 		logger.debug("Entering" + event.toString());
 
 		// Validate the mandatory fields
@@ -1260,14 +1260,14 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 						MessageUtil.showErrorMessage(chkStatus.toString());
 						return;
 					} else {
-						throw new PFFInterfaceException(chequeVerifyResponse.getReturnCode(),
+						throw new InterfaceException(chequeVerifyResponse.getReturnCode(),
 								chequeVerifyResponse.getReturnText());
 					}
 				}
 			} else {
-				throw new PFFInterfaceException("PTI3001",	Labels.getLabel("FAILED_CHEQUE_VERIFICATION"));
+				throw new InterfaceException("PTI3001",	Labels.getLabel("FAILED_CHEQUE_VERIFICATION"));
 			}
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			MessageUtil.showErrorMessage(e.getMessage());
 		}
 
@@ -1278,9 +1278,9 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	 * Method for prepare capture cheque details and send to middleware to validate
 	 * 
 	 * @return ChequeVerification
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
-	private ChequeVerification doChequeVerification() throws PFFInterfaceException {
+	private ChequeVerification doChequeVerification() throws InterfaceException {
 		logger.debug("Entering");
 
 		CustomerDetails customerDetails = getFinCollateralHeaderDialogCtrl().getFinanceDetail().getCustomerDetails();

@@ -69,7 +69,7 @@ import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class ProvisionCalculationUtil implements Serializable {
 	private static final long			serialVersionUID	= 193855810060181970L;
@@ -96,11 +96,11 @@ public class ProvisionCalculationUtil implements Serializable {
 	 * @param isProvRelated
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	public ErrorDetails processProvCalculations(Provision procProvision, Date dateValueDate, boolean isProvRelated,
 			boolean isScrnLvlProc, boolean isFromCore) throws IllegalAccessException,
-			InvocationTargetException, PFFInterfaceException {
+			InvocationTargetException, InterfaceException {
 
 		logger.debug("Entering");
 

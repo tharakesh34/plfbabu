@@ -61,28 +61,28 @@ import com.pennant.coreinterface.model.EquationRelationshipOfficer;
 import com.pennant.coreinterface.model.EquationTransactionCode;
 import com.pennant.coreinterface.model.IncomeAccountTransaction;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerDetail;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public interface DailyDownloadProcess {
 	
-	 List<EquationCurrency>  importCurrencyDetails() throws PFFInterfaceException;
-	 List<EquationRelationshipOfficer>  importRelationShipOfficersDetails() throws PFFInterfaceException;
-	 List<EquationCustomerType>   importCustomerTypeDetails() throws PFFInterfaceException;
-	 List<EquationDepartment>  importDepartmentDetails() throws PFFInterfaceException;
-	 List<EquationCustomerGroup>  importCustomerGroupDetails() throws PFFInterfaceException;
-	 List<EquationAccountType>  importAccountTypeDetails() throws PFFInterfaceException;
-	 List<EquationCustomerRating> importCustomerRatingDetails() throws PFFInterfaceException;
-	 List<EquationCountry> importCountryDetails() throws PFFInterfaceException;
-	 List<EquationCustStatusCode> importCustStausCodeDetails() throws PFFInterfaceException;
-	 List<EquationIndustry> importIndustryDetails() throws PFFInterfaceException;
-	 List<EquationBranch> importBranchDetails() throws PFFInterfaceException;
-	 List<EquationInternalAccount> importInternalAccDetails() throws PFFInterfaceException;
-	 List<EquationAbuser> importAbuserDetails() throws PFFInterfaceException; 
-	 List<InterfaceCustomerDetail> importCustomerDetails() throws PFFInterfaceException;
-	 List<EquationTransactionCode> importTransactionCodeDetails() throws PFFInterfaceException;
-	 List<EquationIdentityType> importIdentityTypeDetails() throws PFFInterfaceException;
+	 List<EquationCurrency>  importCurrencyDetails() throws InterfaceException;
+	 List<EquationRelationshipOfficer>  importRelationShipOfficersDetails() throws InterfaceException;
+	 List<EquationCustomerType>   importCustomerTypeDetails() throws InterfaceException;
+	 List<EquationDepartment>  importDepartmentDetails() throws InterfaceException;
+	 List<EquationCustomerGroup>  importCustomerGroupDetails() throws InterfaceException;
+	 List<EquationAccountType>  importAccountTypeDetails() throws InterfaceException;
+	 List<EquationCustomerRating> importCustomerRatingDetails() throws InterfaceException;
+	 List<EquationCountry> importCountryDetails() throws InterfaceException;
+	 List<EquationCustStatusCode> importCustStausCodeDetails() throws InterfaceException;
+	 List<EquationIndustry> importIndustryDetails() throws InterfaceException;
+	 List<EquationBranch> importBranchDetails() throws InterfaceException;
+	 List<EquationInternalAccount> importInternalAccDetails() throws InterfaceException;
+	 List<EquationAbuser> importAbuserDetails() throws InterfaceException; 
+	 List<InterfaceCustomerDetail> importCustomerDetails() throws InterfaceException;
+	 List<EquationTransactionCode> importTransactionCodeDetails() throws InterfaceException;
+	 List<EquationIdentityType> importIdentityTypeDetails() throws InterfaceException;
 	 List<IncomeAccountTransaction> importIncomeAccTransactions(
-			List<IncomeAccountTransaction> finIncomeAccounts) throws PFFInterfaceException;
+			List<IncomeAccountTransaction> finIncomeAccounts) throws InterfaceException;
 	void processCustomerNumbers(List<String> existingCustomers)
-			throws PFFInterfaceException;
+			throws InterfaceException;
 }

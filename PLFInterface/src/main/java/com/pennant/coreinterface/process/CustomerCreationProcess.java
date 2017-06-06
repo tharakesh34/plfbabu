@@ -6,19 +6,19 @@ import com.pennant.coreinterface.model.CoreBankNewCustomer;
 import com.pennant.coreinterface.model.CoreCustomerDedup;
 import com.pennant.coreinterface.model.customer.InterfaceCustomer;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerDetail;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public interface CustomerCreationProcess {
 
-	String generateNewCIF(CoreBankNewCustomer customer)	throws PFFInterfaceException;
+	String generateNewCIF(CoreBankNewCustomer customer)	throws InterfaceException;
 	
-	String createNewCustomer(InterfaceCustomerDetail customerDetail) throws PFFInterfaceException;
+	String createNewCustomer(InterfaceCustomerDetail customerDetail) throws InterfaceException;
 	
-	List<CoreCustomerDedup> fetchCustomerDedupDetails(CoreCustomerDedup customerDedup) throws PFFInterfaceException;
+	List<CoreCustomerDedup> fetchCustomerDedupDetails(CoreCustomerDedup customerDedup) throws InterfaceException;
 
-	void updateCoreCustomer(InterfaceCustomerDetail interfaceCustomerDetail) throws PFFInterfaceException;
+	void updateCoreCustomer(InterfaceCustomerDetail interfaceCustomerDetail) throws InterfaceException;
 
-	String reserveCIF(InterfaceCustomer coreCusomer) throws PFFInterfaceException;
+	String reserveCIF(InterfaceCustomer coreCusomer) throws InterfaceException;
 
-	String releaseCIF(InterfaceCustomer coreCustomer, String reserveRefNum) throws PFFInterfaceException;
+	String releaseCIF(InterfaceCustomer coreCustomer, String reserveRefNum) throws InterfaceException;
 }

@@ -8,7 +8,7 @@ import com.pennant.coreinterface.model.AccountBalance;
 import com.pennant.coreinterface.model.account.InterfaceAccount;
 import com.pennant.coreinterface.model.collateral.CollateralMark;
 import com.pennant.coreinterface.process.AccountDataProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.processutil.AddOrRemoveHoldProcess;
 import com.pennant.mq.processutil.CollateralMarkProcess;
 import com.pennant.mq.processutil.CreateAccountProcess;
@@ -37,7 +37,7 @@ public class AccountDataServiceImpl implements AccountDataProcess {
 	 * @return RemoveHoldReply
 	 */
 	@Override
-	public int removeAccountHolds() throws PFFInterfaceException {
+	public int removeAccountHolds() throws InterfaceException {
 		logger.debug("Enering");
 		/*RemoveHoldReply removeAccHold = removeHoldProcess.sendRemoveHoldRequest(removeHold, 
 				InterfaceMasterConfigUtil.REMOVE_HOLD);
@@ -58,7 +58,7 @@ public class AccountDataServiceImpl implements AccountDataProcess {
 	 */
 	@Override
 	public List<AccountBalance> addAccountHolds(List<AccountBalance> accountslist, String holdType)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Enering");
 
 		/*AddHoldReply accHoldStatus = addHoldProcess.sendAddHoldRequest(holdStatus,
@@ -79,7 +79,7 @@ public class AccountDataServiceImpl implements AccountDataProcess {
 	 * @return CoreBankAccountDetail
 	 */
 	@Override
-	public InterfaceAccount createAccount(InterfaceAccount accountdetail) throws PFFInterfaceException {
+	public InterfaceAccount createAccount(InterfaceAccount accountdetail) throws InterfaceException {
 		logger.debug("Entering");
 
 		InterfaceAccount interfaceAccount = getCreateAccountProcess().createAccount(accountdetail, 
@@ -101,7 +101,7 @@ public class AccountDataServiceImpl implements AccountDataProcess {
 	 * 
 	 */
 	@Override
-	public CollateralMark collateralMarking(CollateralMark collateralMarking) throws PFFInterfaceException {
+	public CollateralMark collateralMarking(CollateralMark collateralMarking) throws InterfaceException {
 		logger.debug("Entering");
 
 		CollateralMark coolateralMarkReply = getCollateralMarkProcess().markCollateral(collateralMarking, 
@@ -123,7 +123,7 @@ public class AccountDataServiceImpl implements AccountDataProcess {
 	 */
 	@Override
 	public CollateralMark collateralDeMarking(CollateralMark collateralDeMarking)	
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		CollateralMark collateralDeMarkReply = getCollateralMarkProcess().markCollateral(collateralDeMarking, 

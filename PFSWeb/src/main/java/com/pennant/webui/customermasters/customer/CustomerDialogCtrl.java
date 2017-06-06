@@ -141,7 +141,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -885,7 +885,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Entering" + event.toString());
 		try {
 			doSave();
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			MessageUtil.showErrorMessage(e.getErrorMessage());
 		}
@@ -926,7 +926,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Entering" + event.toString());
 		try {
 			doDelete();
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			MessageUtil.showErrorMessage(e.getErrorMessage());
 		}
@@ -2367,7 +2367,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @throws InterruptedException
 	 * @throws CustomerNotFoundException
 	 */
-	private void doDelete() throws InterruptedException, PFFInterfaceException {
+	private void doDelete() throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 		Cloner cloner = new Cloner();
 		CustomerDetails aCustomerDetails = new CustomerDetails();
@@ -2701,7 +2701,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @throws ParseException
 	 * @throws CustomerNotFoundException
 	 */
-	public void doSave() throws InterruptedException, ParseException, PFFInterfaceException {
+	public void doSave() throws InterruptedException, ParseException, InterfaceException {
 		logger.debug("Entering");
 		Cloner cloner = new Cloner();
 		CustomerDetails aCustomerDetails = new CustomerDetails();
@@ -2788,7 +2788,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	private boolean doCustomerDedupe(CustomerDetails customerDetails) throws PFFInterfaceException {
+	private boolean doCustomerDedupe(CustomerDetails customerDetails) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (!customerDetails.getCustomer().isSkipDedup()) {
@@ -2866,7 +2866,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		aCustomer.setNextRoleCode(nextRoleCode);
 	}
 
-	private boolean doProcess(CustomerDetails aCustomerDetails, String tranType) throws PFFInterfaceException,
+	private boolean doProcess(CustomerDetails aCustomerDetails, String tranType) throws InterfaceException,
 			InterruptedException {
 		logger.debug("Entering");
 		boolean processCompleted = true;
@@ -2961,7 +2961,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		return processCompleted;
 	}
 
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws PFFInterfaceException,
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException,
 			InterruptedException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
@@ -3014,7 +3014,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			setOverideMap(auditHeader.getOverideMap());
 		} catch (InterruptedException e) {
 			logger.error("Exception: ", e);
-		} catch (PFFInterfaceException pfe) {
+		} catch (InterfaceException pfe) {
 			logger.error("Exception: ", pfe);
 			MessageUtil.showErrorMessage(pfe.getErrorCode() + ":" + pfe.getErrorMessage());
 		}

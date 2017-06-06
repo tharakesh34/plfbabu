@@ -67,7 +67,7 @@ import com.pennant.backend.model.rmtmasters.FinTypeAccount;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
@@ -302,7 +302,7 @@ public class AccountSelectionBox extends Hbox {
 
 		try {
 			iAccountList = getAccountInterfaceService().fetchExistAccountList(iAccount);
-		}catch (PFFInterfaceException e) {
+		}catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			MessageUtil.showErrorMessage(e.getErrorMessage());
 			return false;
@@ -327,7 +327,7 @@ public class AccountSelectionBox extends Hbox {
 	private List<IAccounts> getCoreBankAccountDetails(List<IAccounts> returnAccList) throws InterruptedException {
 		try {
 			return getAccountInterfaceService().getAccountsAvailableBalList(returnAccList);
-		} catch (PFFInterfaceException  e) {
+		} catch (InterfaceException  e) {
 			logger.debug(e);
 			returnAccList.clear();
 			MessageUtil.showErrorMessage(e.getErrorMessage());

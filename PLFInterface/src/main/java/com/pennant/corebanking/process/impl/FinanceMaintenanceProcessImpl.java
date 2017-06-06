@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennant.coreinterface.process.FinanceMaintenanceProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class FinanceMaintenanceProcessImpl implements FinanceMaintenanceProcess {
 
@@ -16,7 +16,7 @@ private final static Logger logger = Logger.getLogger(FinanceMaintenanceProcessI
 	
 	@Override
 	public HandlingInstruction sendHandlingInstruction(HandlingInstruction handlingInstruction)
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 		HandlingInstruction handlInstResponse = new HandlingInstruction();
 		handlInstResponse.setReferenceNum(handlingInstruction.getFinanceRef());

@@ -6,7 +6,7 @@ import java.util.List;
 import javax.security.auth.login.AccountNotFoundException;
 
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public interface PostingsInterfaceService {
 	/**
@@ -16,9 +16,9 @@ public interface PostingsInterfaceService {
 	 * @throws AccountNotFoundException
 	 */
 	List<ReturnDataSet> doFillPostingDetails(List<ReturnDataSet> setDetails,String finBranch,
-			long linkTransId, boolean isCreateNow) throws PFFInterfaceException;
+			long linkTransId, boolean isCreateNow) throws InterfaceException;
 
 	List<ReturnDataSet> doAccrualPosting(List<ReturnDataSet> list, Date valueDate,
-            String postBranch, long linkedTranId, boolean isCreateNow, String isDummy) throws PFFInterfaceException;
+            String postBranch, long linkedTranId, boolean isCreateNow, String isDummy) throws InterfaceException;
 
 }

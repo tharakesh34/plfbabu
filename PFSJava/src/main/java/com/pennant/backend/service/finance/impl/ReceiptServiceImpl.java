@@ -72,7 +72,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -382,7 +382,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException,
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
 
@@ -628,12 +628,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "doReject");
@@ -773,7 +773,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException,
+	public AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
 
@@ -1427,13 +1427,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * Method for Schedule Modifications with Effective Schedule Method
 	 * 
 	 * @param receiptData
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
 	@Override
 	public FinReceiptData recalEarlypaySchdl(FinReceiptData receiptData, FinServiceInstruction finServiceInstruction, 
-			String recptPurpose) throws IllegalAccessException, InvocationTargetException, PFFInterfaceException {
+			String recptPurpose) throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug("Entering");
 
 		//Schedule Recalculation Depends on Earlypay Effective Schedule method

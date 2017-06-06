@@ -78,7 +78,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -349,10 +349,10 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws Exception
 	 */
-	public CustomerDetails fetchCustomerData() throws InterruptedException, PFFInterfaceException {
+	public CustomerDetails fetchCustomerData() throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 
 		CustomerDetails customerDetails = null;

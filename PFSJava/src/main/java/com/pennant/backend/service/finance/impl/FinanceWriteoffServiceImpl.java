@@ -44,7 +44,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.cache.util.AccountingConfigCache;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -198,7 +198,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException,
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
 
@@ -264,7 +264,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 			if (!aeEvent.isPostingSucess()) {
 				String errParm = aeEvent.getErrorMessage();
-				throw new PFFInterfaceException("9999", errParm);
+				throw new InterfaceException("9999", errParm);
 			}
 
 			linkedTranId = aeEvent.getLinkedTranId();
@@ -385,12 +385,12 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "doReject");
@@ -468,7 +468,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException, IllegalAccessException,
+	public AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
 
@@ -717,7 +717,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			e.printStackTrace();
 		}
  

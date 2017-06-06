@@ -13,7 +13,7 @@ import com.pennant.coreinterface.model.collateral.CollateralMark;
 import com.pennant.coreinterface.process.AccountDataProcess;
 import com.pennant.equation.util.GenericProcess;
 import com.pennant.equation.util.HostConnection;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class AccountDataProcessImpl extends GenericProcess implements AccountDataProcess{
 	
@@ -31,7 +31,7 @@ public class AccountDataProcessImpl extends GenericProcess implements AccountDat
 	 * @throws EquationInterfaceException 
 	 */
 	@Override
-	public int removeAccountHolds() throws PFFInterfaceException {
+	public int removeAccountHolds() throws InterfaceException {
 		logger.debug("Entering");
 		
 		AS400 as400 = null;
@@ -55,15 +55,15 @@ public class AccountDataProcessImpl extends GenericProcess implements AccountDat
 				dsRspCount = Integer.parseInt(pcmlDoc.getValue(pcml + ".@RSPDTA.RSPCOUNT").toString());  
 			}else{
 				logger.info(pcmlDoc.getValue(pcml + ".@ERPRM").toString());				
-				throw new PFFInterfaceException("9999",pcmlDoc.getValue(pcml + ".@ERPRM").toString());
+				throw new InterfaceException("9999",pcmlDoc.getValue(pcml + ".@ERPRM").toString());
 			}
 
 		} catch (ConnectionPoolException e){
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999","Host Connection Failed.. Please contact administrator ");
+			throw new InterfaceException("9999","Host Connection Failed.. Please contact administrator ");
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		} finally {			
 			this.hostConnection.closeConnection(as400);
 		}
@@ -79,7 +79,7 @@ public class AccountDataProcessImpl extends GenericProcess implements AccountDat
 	 * @throws EquationInterfaceException 
 	 */
 	@Override
-	public List<AccountBalance> addAccountHolds(List<AccountBalance> accountsList, String holdType) throws PFFInterfaceException {
+	public List<AccountBalance> addAccountHolds(List<AccountBalance> accountsList, String holdType) throws InterfaceException {
 		logger.debug("Entering");
 		
 		AS400 as400 = null;
@@ -121,10 +121,10 @@ public class AccountDataProcessImpl extends GenericProcess implements AccountDat
 
 		}  catch (ConnectionPoolException e){
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999","Host Connection Failed.. Please contact administrator ");
+			throw new InterfaceException("9999","Host Connection Failed.. Please contact administrator ");
 		}catch (Exception e) {
 			logger.error("Exception: ", e);
-			throw new PFFInterfaceException("9999",e.getMessage());
+			throw new InterfaceException("9999",e.getMessage());
 		} finally {			
 			this.hostConnection.closeConnection(as400);
 		}
@@ -137,19 +137,19 @@ public class AccountDataProcessImpl extends GenericProcess implements AccountDat
 	 * Method to create new customer Account in Equation
 	 */
 	@Override
-	public InterfaceAccount createAccount(InterfaceAccount accountdetail) throws PFFInterfaceException {
+	public InterfaceAccount createAccount(InterfaceAccount accountdetail) throws InterfaceException {
 		return null;
 	}
 	
 	
 	
 	@Override
-	public CollateralMark collateralMarking(CollateralMark collateralMark) throws PFFInterfaceException {
+	public CollateralMark collateralMarking(CollateralMark collateralMark) throws InterfaceException {
 		return new CollateralMark();
 	}
 
 	@Override
-	public CollateralMark collateralDeMarking(CollateralMark collateralMark) throws PFFInterfaceException {
+	public CollateralMark collateralDeMarking(CollateralMark collateralMark) throws InterfaceException {
 		return new CollateralMark();
 	}
 	

@@ -10,7 +10,7 @@ import com.pennant.coreinterface.model.dda.DDACancellation;
 import com.pennant.coreinterface.model.dda.DDARegistration;
 import com.pennant.coreinterface.model.dda.DDAUpdate;
 import com.pennant.coreinterface.process.DDAProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class DDAInterfaceServiceImpl implements DDAInterfaceService {
 
@@ -29,7 +29,7 @@ public class DDAInterfaceServiceImpl implements DDAInterfaceService {
 	 * @return DDARegistration
 	 */
 	@Override
-    public DDAProcessData sendDDARegistrationReq(DDAProcessData ddaProcessRequest) throws PFFInterfaceException {
+    public DDAProcessData sendDDARegistrationReq(DDAProcessData ddaProcessRequest) throws InterfaceException {
 		logger.debug("Entering");
 
 		DDARegistration ddaRegistration = new DDARegistration();
@@ -49,10 +49,10 @@ public class DDAInterfaceServiceImpl implements DDAInterfaceService {
 	 * 
 	 * @param ddaAmendment
 	 * @return DDAAmendment
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
 	@Override
-    public DDAAmendment sendDDAAmendmentReq(DDAAmendment ddaAmendment) throws PFFInterfaceException {
+    public DDAAmendment sendDDAAmendmentReq(DDAAmendment ddaAmendment) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving"); 
 		return getDdaProcess().sendDDAAmendment(ddaAmendment);
@@ -63,10 +63,10 @@ public class DDAInterfaceServiceImpl implements DDAInterfaceService {
 	 * 
 	 * @param ddaUpdate
 	 * @return DDAUpdate
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
 	@Override
-    public DDAUpdate sendDDAUpdateReq(DDAUpdate ddaUpdate) throws PFFInterfaceException {
+    public DDAUpdate sendDDAUpdateReq(DDAUpdate ddaUpdate) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		return getDdaProcess().sendDDAUpdate(ddaUpdate);
@@ -77,10 +77,10 @@ public class DDAInterfaceServiceImpl implements DDAInterfaceService {
 	 * 
 	 * @param ddaUpdate
 	 * @return DDAUpdate
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
 	@Override
-    public DDAProcessData cancelDDARegistration(DDAProcessData ddaProcessData) throws PFFInterfaceException {
+    public DDAProcessData cancelDDARegistration(DDAProcessData ddaProcessData) throws InterfaceException {
 		logger.debug("Entering");
 		
 		DDACancellation ddaCancellation = new DDACancellation();

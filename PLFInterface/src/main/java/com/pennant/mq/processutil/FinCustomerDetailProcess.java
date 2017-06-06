@@ -11,7 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.coreinterface.model.customer.FinanceCustomerDetails;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
@@ -26,11 +26,11 @@ public class FinCustomerDetailProcess extends MQProcess {
 	}
 
 	public FinanceCustomerDetails fetchFinCustomerDetails(FinanceCustomerDetails financeCustomerDetails, 
-			String msgFormat) throws PFFInterfaceException {
+			String msgFormat) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (financeCustomerDetails == null) {
-			throw new PFFInterfaceException("PTI3001", new String[]{"financeCustomerDetails"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", new String[]{"financeCustomerDetails"},"&1 Cannot Be Blank");	
 		}
 
 		//set MQ Message configuration details
@@ -46,7 +46,7 @@ public class FinCustomerDetailProcess extends MQProcess {
 			OMElement requestElement = getRequestElement(financeCustomerDetails, referenceNum, factory);
 			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
 			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
-		} catch (PFFInterfaceException pffe) {
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -55,7 +55,7 @@ public class FinCustomerDetailProcess extends MQProcess {
 		return setFetchFinCustomerDetailReply(response, header);
 	}
 
-	private FinanceCustomerDetails setFetchFinCustomerDetailReply(OMElement responseElement, AHBMQHeader header) throws PFFInterfaceException {
+	private FinanceCustomerDetails setFetchFinCustomerDetailReply(OMElement responseElement, AHBMQHeader header) throws InterfaceException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -71,12 +71,12 @@ public class FinCustomerDetailProcess extends MQProcess {
 
 			if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
 				logger.info("ReturnStatus is Failure");
-				throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+				throw new InterfaceException("PTI3002", header.getErrorMessage());
 			}
 
 			financeCustomerDetails = new FinanceCustomerDetails();
 			financeCustomerDetails = (FinanceCustomerDetails) doUnMarshalling(detailElement, financeCustomerDetails);
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -87,7 +87,7 @@ public class FinCustomerDetailProcess extends MQProcess {
 	}
 
 	private OMElement getRequestElement(FinanceCustomerDetails financeCustomerDetails, String referenceNum,
-			OMFactory factory) throws PFFInterfaceException {
+			OMFactory factory) throws InterfaceException {
 		logger.debug("Entering");
 
 		OMElement requestElement = null;

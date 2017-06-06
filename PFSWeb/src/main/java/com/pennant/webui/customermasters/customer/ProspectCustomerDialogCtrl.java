@@ -67,7 +67,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -219,7 +219,7 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 		logger.debug("Entering" + event.toString());
 		try {
 			doSave();
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			MessageUtil.showErrorMessage("Customer Not Found...");
 		}
@@ -278,7 +278,7 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * @throws CustomerNotFoundException
 	 */
 	public void doWriteComponentsToBean(Customer aCustomer)
-			throws ParseException, PFFInterfaceException {
+			throws ParseException, InterfaceException {
 		logger.debug("Entering");
 		doSetValidation();
 
@@ -438,7 +438,7 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 	 * @throws IllegalAccessException
 	 */
 	public void doSave() throws InterruptedException, ParseException,
-	PFFInterfaceException, IllegalAccessException,
+	InterfaceException, IllegalAccessException,
 			InvocationTargetException {
 		logger.debug("Entering");
 

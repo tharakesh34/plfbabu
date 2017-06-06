@@ -61,7 +61,7 @@ import com.pennant.backend.service.dda.DDAProcessService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.constants.InterfaceConstants;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.util.PFFXmlUtil;
 import com.pennant.search.Filter;
 import com.pennant.webui.process.failProcess.model.FailPostingsListModelItemRenderer;
@@ -222,7 +222,7 @@ public class FailPostingsListCtrl extends GFCBaseListCtrl<DDAFTransactionLog> {
 							successCount++;
 
 						}
-					} catch (PFFInterfaceException e) {
+					} catch (InterfaceException e) {
 
 						ddaFTransactionLog.setErrorCode(e.getErrorCode());
 						ddaFTransactionLog.setErrorDesc(e.getErrorMessage());

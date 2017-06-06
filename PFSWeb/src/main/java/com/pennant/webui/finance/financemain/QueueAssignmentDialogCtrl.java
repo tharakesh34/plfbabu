@@ -80,7 +80,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.QueueAssignmentService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -1130,7 +1130,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 	}
 
 	public void onChangeToUser(ForwardEvent event) throws InterruptedException, IllegalAccessException,
-			InvocationTargetException, PFFInterfaceException {
+			InvocationTargetException, InterfaceException {
 		logger.debug("Entering" + event.toString());
 		Clients.clearWrongValue(this.listbox_AssignmentRecords);
 		ExtendedCombobox combo = (ExtendedCombobox) event.getOrigin().getTarget();

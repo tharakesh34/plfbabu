@@ -89,7 +89,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -509,7 +509,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 */
 	public void onFulfill$finReference(Event event){
 		logger.debug("Entering");
@@ -531,7 +531,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 *//*
 	public void onValueChange$finAmount(Event event){
 		logger.debug("Entering");

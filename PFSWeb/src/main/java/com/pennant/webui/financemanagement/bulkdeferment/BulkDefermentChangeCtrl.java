@@ -72,7 +72,7 @@ import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.finance.enquiry.model.BulkDefermentChangeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -306,7 +306,7 @@ public class BulkDefermentChangeCtrl extends GFCBaseListCtrl<BulkDefermentChange
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	public void onClick$btnProceed(Event event) throws InterruptedException, WrongValueException, PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public void onClick$btnProceed(Event event) throws InterruptedException, WrongValueException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering" +event.toString());
 		throwValidation();		
 

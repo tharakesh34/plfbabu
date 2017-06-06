@@ -11,7 +11,7 @@ import com.pennant.coreinterface.model.CoreCustomerDedup;
 import com.pennant.coreinterface.model.customer.InterfaceCustomer;
 import com.pennant.coreinterface.model.customer.InterfaceCustomerDetail;
 import com.pennant.coreinterface.process.CustomerCreationProcess;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.processutil.AddNewCustomerProcess;
 import com.pennant.mq.processutil.CustomerDedupProcess;
 import com.pennant.mq.processutil.ReleaseCIFProcess;
@@ -32,7 +32,7 @@ public class CustomerCreationServiceImpl implements CustomerCreationProcess {
 	}
 	
 	@Override
-	public String generateNewCIF(CoreBankNewCustomer customer) throws PFFInterfaceException {
+	public String generateNewCIF(CoreBankNewCustomer customer) throws InterfaceException {
 		return null;
 	}
 
@@ -47,7 +47,7 @@ public class CustomerCreationServiceImpl implements CustomerCreationProcess {
 	 * @return String
 	 */
 	@Override
-	public String createNewCustomer(InterfaceCustomerDetail customerDetail)	throws PFFInterfaceException {
+	public String createNewCustomer(InterfaceCustomerDetail customerDetail)	throws InterfaceException {
 		logger.debug("Entering");
 
 		if (customerDetail.getCustomer() != null) {
@@ -66,12 +66,12 @@ public class CustomerCreationServiceImpl implements CustomerCreationProcess {
 	 * 
 	 * @return String
 	 */
-	public void updateCoreCustomer(InterfaceCustomerDetail customerDetail) throws PFFInterfaceException {
+	public void updateCoreCustomer(InterfaceCustomerDetail customerDetail) throws InterfaceException {
 		logger.debug("Entering");
 
 		if(customerDetail != null) {
 			if(StringUtils.equalsIgnoreCase(InterfaceMasterConfigUtil.CUST_SME, customerDetail.getCustomer().getCustCtgCode())) {
-				throw new PFFInterfaceException("PTI6001", "Can not Update SME Customer");
+				throw new InterfaceException("PTI6001", "Can not Update SME Customer");
 			}
 			getAddNewCustomerProcess().updateCustomer(customerDetail, InterfaceMasterConfigUtil.UPDATE_CUST_RETAIL);
 		}
@@ -85,11 +85,11 @@ public class CustomerCreationServiceImpl implements CustomerCreationProcess {
 	 * customerDedupCheck method do the following steps.<br>
 	 * 1) Send CheckDuplicate Request to MQ<br>
 	 * 2) Receive Response from MQ
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * 
 	 */
 	@Override
-	public List<CoreCustomerDedup> fetchCustomerDedupDetails(CoreCustomerDedup customerDedup) throws PFFInterfaceException {
+	public List<CoreCustomerDedup> fetchCustomerDedupDetails(CoreCustomerDedup customerDedup) throws InterfaceException {
 		logger.debug("Entering");
 		
 		List<CoreCustomerDedup> coreCustDedupList = null;
@@ -104,14 +104,14 @@ public class CustomerCreationServiceImpl implements CustomerCreationProcess {
 	}
 
 	@Override
-	public String reserveCIF(InterfaceCustomer coreCusomer) throws PFFInterfaceException {
+	public String reserveCIF(InterfaceCustomer coreCusomer) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		return getReserveCIFProcess().reserveCIF(coreCusomer, InterfaceMasterConfigUtil.RESERVE_CIF);
 	}
 
 	@Override
-	public String releaseCIF(InterfaceCustomer coreCustomer, String reserveRefNum) throws PFFInterfaceException {
+	public String releaseCIF(InterfaceCustomer coreCustomer, String reserveRefNum) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 		String returnCode = null;

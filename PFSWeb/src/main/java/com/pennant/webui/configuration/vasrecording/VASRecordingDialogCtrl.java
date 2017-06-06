@@ -139,7 +139,7 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennant.component.extendedfields.ExtendedFieldsGenerator;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -376,11 +376,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	public void onClick$btnDelete(Event event) throws InterruptedException, PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public void onClick$btnDelete(Event event) throws InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		doDelete();
 	}
 
@@ -498,11 +498,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * Deletes a VASConfiguration object from database.<br>
 	 * 
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	private void doDelete() throws InterruptedException, PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	private void doDelete() throws InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		
 		final VASRecording aVASRecording = new VASRecording();
@@ -843,13 +843,13 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 *            (String)
 	 * 
 	 * @return boolean
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 * 
 	 */
 
-	private boolean doProcess(VASRecording aVASRecording, String tranType) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	private boolean doProcess(VASRecording aVASRecording, String tranType) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1007,12 +1007,12 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @param method
 	 *            (String)
 	 * @return boolean
-	 * @throws PFFInterfaceException 
+	 * @throws InterfaceException 
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 * 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;

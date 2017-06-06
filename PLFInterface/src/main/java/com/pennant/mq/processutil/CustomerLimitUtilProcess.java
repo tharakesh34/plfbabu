@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
 
 import com.pennant.coreinterface.model.limit.CustomerLimitUtilization;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
@@ -33,15 +33,15 @@ public class CustomerLimitUtilProcess extends MQProcess {
 	 * @param custLimitUtilReq
 	 * @param msgType
 	 * @return CustomerLimitUtilReply
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws JaxenException 
 	 */
 	public CustomerLimitUtilization getLimitUtilizationDetails(CustomerLimitUtilization limitUtilization, String msgType)
-			throws PFFInterfaceException, JaxenException {
+			throws InterfaceException, JaxenException {
 		logger.debug("Entering");
 
 		if (limitUtilization == null) {
-			throw new PFFInterfaceException("PTI3001", new String[] { "Customer Limit Details" }, "&1 Cannot Be Blank");
+			throw new InterfaceException("PTI3001", new String[] { "Customer Limit Details" }, "&1 Cannot Be Blank");
 		}
 
 		// set MQ Message configuration details
@@ -58,7 +58,7 @@ public class CustomerLimitUtilProcess extends MQProcess {
 			OMElement requestElement = getRequestElement(limitUtilization, referenceNum, factory, msgType);
 			OMElement request = PFFXmlUtil.generateRequest(header, factory,	requestElement);
 			response = client.getRequestResponse(request.toString(), getRequestQueue(), getResponseQueue(), getWaitTime());
-		} catch (PFFInterfaceException pffe) {
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -75,11 +75,11 @@ public class CustomerLimitUtilProcess extends MQProcess {
 	 * @param header
 	 * @param msgType
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws JaxenException 
 	 */
 	private CustomerLimitUtilization setLimitUtilDetailsResponse(OMElement responseElement, AHBMQHeader header, String msgType)
-			throws PFFInterfaceException, JaxenException {
+			throws InterfaceException, JaxenException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -123,10 +123,10 @@ public class CustomerLimitUtilProcess extends MQProcess {
 				
 				custLimitUtil.setRequestType(msgType);
 			} else {
-				throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+				throw new InterfaceException("PTI3002", header.getErrorMessage());
 			}
 
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -159,10 +159,10 @@ public class CustomerLimitUtilProcess extends MQProcess {
 	 * @param factory
 	 * @param msgType
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	private OMElement getRequestElement(CustomerLimitUtilization limitUtilization, String referenceNum,
-			OMFactory factory, String msgType) throws PFFInterfaceException {
+			OMFactory factory, String msgType) throws InterfaceException {
 		logger.debug("Entering");
 		
 		OMElement rootElement = null;

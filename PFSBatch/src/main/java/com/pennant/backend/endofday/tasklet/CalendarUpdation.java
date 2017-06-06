@@ -53,7 +53,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import com.pennant.Interface.service.CalendarInterfaceService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.accounts.AccountsDAO;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class CalendarUpdation implements Tasklet {
 
@@ -86,7 +86,7 @@ public class CalendarUpdation implements Tasklet {
 				//BETTER TO MAKE SURE NEXT BUSINESS DATE AND COONFIRM WITH EOD USER
 			}
 
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		} 

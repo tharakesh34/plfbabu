@@ -116,7 +116,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.constants.InterfaceConstants;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -1418,10 +1418,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * 
 	 * @param event
 	 * @throws InterruptedException
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 * @throws Exception
 	 */
-	public CustomerDetails fetchCustomerData() throws InterruptedException, PFFInterfaceException {
+	public CustomerDetails fetchCustomerData() throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 
 		CustomerDetails customerDetails = new CustomerDetails();
@@ -1451,10 +1451,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 						customerDetails.setNewRecord(true);
 						customerDetails = this.customerInterfaceService.getCustomerInfoByInterface(cif, "");
 						if (customerDetails == null) {
-							throw new PFFInterfaceException("9999", "Customer Not found.");
+							throw new InterfaceException("9999", "Customer Not found.");
 						}
 					} else {
-						throw new PFFInterfaceException(InterfaceConstants.CUST_NOT_FOUND, "Customer Not found.");
+						throw new InterfaceException(InterfaceConstants.CUST_NOT_FOUND, "Customer Not found.");
 					}
 				}
 
@@ -1480,7 +1480,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				customerDetails = getNewCustomerDetail();
 			}
 
-		} catch (PFFInterfaceException pfe) {
+		} catch (InterfaceException pfe) {
 			if (StringUtils.equals(pfe.getErrorCode(), InterfaceConstants.CUST_NOT_FOUND)) {
 				if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 					int conf = MultiLineMessageBox.show(Labels.getLabel("Cust_NotFound_NewCustomer"),

@@ -89,7 +89,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
@@ -365,7 +365,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 	}
 
 	@SuppressWarnings("unchecked")
-	public void doSetStageAccounting() throws PFFInterfaceException, IllegalAccessException, InvocationTargetException {
+	public void doSetStageAccounting() throws InterfaceException, IllegalAccessException, InvocationTargetException {
 
 		if (StringUtils.trimToEmpty(getFinanceMain().getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)) {
 			getFinanceMain().setCurDisbursementAmt(getFinanceMain().getFinAmount());

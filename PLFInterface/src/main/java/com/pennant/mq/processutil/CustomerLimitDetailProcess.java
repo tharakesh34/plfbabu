@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.coreinterface.model.limit.CustomerLimitDetail;
 import com.pennant.equation.util.DateUtility;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.mq.model.AHBMQHeader;
 import com.pennant.mq.util.InterfaceMasterConfigUtil;
 import com.pennant.mq.util.PFFXmlUtil;
@@ -30,14 +30,14 @@ public class CustomerLimitDetailProcess extends MQProcess {
 	 * @param limitDetail
 	 * @param msgFormat
 	 * @return CustomerLimitDetailReply
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	public CustomerLimitDetail getCustomerLimitDetails(CustomerLimitDetail limitDetail, String msgFormat) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		if (limitDetail == null) {
-			throw new PFFInterfaceException("PTI3001", new String[]{"Customer Limit Details"},"&1 Cannot Be Blank");	
+			throw new InterfaceException("PTI3001", new String[]{"Customer Limit Details"},"&1 Cannot Be Blank");	
 		}
 
 		//set MQ Message configuration details 
@@ -53,7 +53,7 @@ public class CustomerLimitDetailProcess extends MQProcess {
 			OMElement requestElement = getRequestElement(limitDetail, referenceNum, factory);
 			OMElement request = PFFXmlUtil.generateRequest(header, factory,requestElement);
 			response = client.getRequestResponse(request.toString(), getRequestQueue(),getResponseQueue(),getWaitTime());
-		} catch (PFFInterfaceException pffe) {
+		} catch (InterfaceException pffe) {
 			logger.error("Exception: ", pffe);
 			throw pffe;
 		}
@@ -68,10 +68,10 @@ public class CustomerLimitDetailProcess extends MQProcess {
 	 * @param responseElement
 	 * @param header
 	 * @return
-	 * @throws PFFInterfaceException
+	 * @throws InterfaceException
 	 */
 	private CustomerLimitDetail setLimitDetailsResponse(OMElement responseElement, AHBMQHeader header) 
-			throws PFFInterfaceException {
+			throws InterfaceException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
@@ -86,7 +86,7 @@ public class CustomerLimitDetailProcess extends MQProcess {
 
 			if (!StringUtils.equals(PFFXmlUtil.SUCCESS, header.getReturnCode())) {
 				logger.info("ReturnStatus is Failure");
-				throw new PFFInterfaceException("PTI3002", header.getErrorMessage());
+				throw new InterfaceException("PTI3002", header.getErrorMessage());
 			}
 
 			custLimitDetail = new CustomerLimitDetail();
@@ -130,7 +130,7 @@ public class CustomerLimitDetailProcess extends MQProcess {
 			custLimitDetail.setTermsConditions(PFFXmlUtil.getStringValue(detailElement, "TermsConditions"));
 			custLimitDetail.setNotes(PFFXmlUtil.getStringValue(detailElement, "Note"));
 						
-		} catch (PFFInterfaceException e) {
+		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -149,7 +149,7 @@ public class CustomerLimitDetailProcess extends MQProcess {
 	 * @return
 	 */
 	private OMElement getRequestElement(CustomerLimitDetail limitDetail, String referenceNum, 
-			OMFactory factory) throws PFFInterfaceException {
+			OMFactory factory) throws InterfaceException {
 		logger.debug("Entering");
 		
 		OMElement requestElement = factory.createOMElement(new QName(InterfaceMasterConfigUtil.REQUEST));

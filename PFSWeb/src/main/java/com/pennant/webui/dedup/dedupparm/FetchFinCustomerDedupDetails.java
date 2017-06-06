@@ -16,7 +16,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 
 public class FetchFinCustomerDedupDetails {
 
@@ -34,7 +34,7 @@ public class FetchFinCustomerDedupDetails {
 	
 	
 	@SuppressWarnings("unchecked")
-	public static FinanceDetail getFinCustomerDedup(String userRole, FinanceDetail aFinanceDetail, Window parentWindow, String curLoginUser) throws PFFInterfaceException {
+	public static FinanceDetail getFinCustomerDedup(String userRole, FinanceDetail aFinanceDetail, Window parentWindow, String curLoginUser) throws InterfaceException {
 		logger.debug("Entering");
 		List<CustomerDedup> customerDedupList=null;
 		int userAction= -1;
@@ -104,7 +104,7 @@ public class FetchFinCustomerDedupDetails {
 			}else if (userAction == 2) {
 				aFinanceDetail.getFinScheduleData().getFinanceMain().setDedupFound(true);
 				aFinanceDetail.getFinScheduleData().getFinanceMain().setSkipDedup(false);
-				throw new PFFInterfaceException("41002",Labels.getLabel("label_Message_CustomerMultiOverrideAlert_Baj"));
+				throw new InterfaceException("41002",Labels.getLabel("label_Message_CustomerMultiOverrideAlert_Baj"));
 			} else {
 				aFinanceDetail.getFinScheduleData().getFinanceMain().setDedupFound(true);
 			}

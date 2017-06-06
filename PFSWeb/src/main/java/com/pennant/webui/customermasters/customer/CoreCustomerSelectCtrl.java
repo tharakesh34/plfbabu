@@ -84,7 +84,7 @@ import com.pennant.backend.service.rmtmasters.CustomerTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
-import com.pennant.exception.PFFInterfaceException;
+import com.pennant.exception.InterfaceException;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -280,7 +280,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					newRecord = true;
 					customerDetails = getCustomerInterfaceService().getCustomerInfoByInterface(cif, "");
 					if (customerDetails == null) {
-						throw new PFFInterfaceException("9999",Labels.getLabel("Cust_NotFound"));
+						throw new InterfaceException("9999",Labels.getLabel("Cust_NotFound"));
 					}
 				}//If  prospect customer  is checked
 			} else  if (this.prospect.isChecked()) {
@@ -374,7 +374,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 						newRecord = true;
 						customerDetails = getCustomerInterfaceService().getCustomerInfoByInterface(custCIF, "");
 						if (customerDetails == null) {
-							throw new PFFInterfaceException("9999",Labels.getLabel("Cust_NotFound"));
+							throw new InterfaceException("9999",Labels.getLabel("Cust_NotFound"));
 						}
 					}
 				}else{
@@ -429,7 +429,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.window_CoreCustomer.onClose();
 		} catch (WrongValuesException wve) {
 			throw wve;
-		} catch (PFFInterfaceException pfe) {
+		} catch (InterfaceException pfe) {
 			logger.error("Exception: ", pfe);
 			MultiLineMessageBox.doSetTemplate();
 			MultiLineMessageBox.show(pfe.getErrorMessage(), Labels.getLabel("message.Error"), MultiLineMessageBox.ABORT, MultiLineMessageBox.ERROR);
