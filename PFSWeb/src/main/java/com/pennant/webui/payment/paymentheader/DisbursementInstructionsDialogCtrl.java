@@ -416,8 +416,7 @@ public class DisbursementInstructionsDialogCtrl extends GFCBaseCtrl<PaymentInstr
 		}
 
 		try {
-			paymentInstruction.setPaymentAmount(PennantAppUtil.unFormateAmount(this.paymentAmount.isReadonly() ? this.paymentAmount.getActualValue() : this.paymentAmount
-							.getValidateValue(), ccyFormatter));
+			paymentInstruction.setPaymentAmount(PennantAppUtil.unFormateAmount(this.paymentAmount.getActualValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -555,7 +554,7 @@ public class DisbursementInstructionsDialogCtrl extends GFCBaseCtrl<PaymentInstr
 			this.paymentType.setConstraint(new PTListValidator(Labels.getLabel("label_DisbInstructionsDialog_DisbType.value"),  PennantStaticListUtil.getPaymentTypes(false) ,true));
 		}
 
-		if (!this.paymentAmount.isDisabled()) {
+		if (this.paymentAmount.isDisabled()) {
 			this.paymentAmount.setConstraint(new PTDecimalValidator(Labels.getLabel("label_DisbInstructionsDialog_DisbAmount.value"), ccyFormatter, true, false));
 		}
 
@@ -773,6 +772,8 @@ public class DisbursementInstructionsDialogCtrl extends GFCBaseCtrl<PaymentInstr
 		filters[2] = new Filter("PaymentMode", dType, Filter.OP_EQUAL);
 		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.partnerBankID.setFilters(filters);
+		this.partnerBankID.setConstraint("");
+		this.partnerBankID.setErrorMessage("");
 		this.partnerBankID.setValue("");
 		this.partnerBankID.setDescription("");
 
