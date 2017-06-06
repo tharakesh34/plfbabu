@@ -51,11 +51,13 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -92,6 +94,9 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 	protected Listbox sortOperator_finType;
 	protected Textbox screenCode;
 	protected Listbox sortOperator_screenCode;
+	protected Combobox  finEvent;  
+	protected Listbox  sortOperator_finEvent;
+	protected Row row_finevent;
 	protected Textbox workFlowType;
 	protected Listbox sortOperator_workFlowType;
 	
@@ -207,15 +212,20 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 		registerField("finType", listheader_FinType, SortOrder.ASC, finType, sortOperator_finType, Operators.STRING);
 		registerField("screenCode", listheader_ScreenCode, SortOrder.NONE, screenCode, sortOperator_screenCode,
 				Operators.STRING);
-		registerField("finEvent", listheader_FinEvent, SortOrder.NONE);
+		
+		registerField("finEvent", listheader_FinEvent,SortOrder.ASC, finEvent, sortOperator_finEvent,Operators.STRING);
+		fillComboBox(finEvent, null, PennantStaticListUtil.getFinServiceEvents(true), "");
+		
 		registerField("workFlowType", listheader_WorkFlowType, SortOrder.NONE, workFlowType, sortOperator_workFlowType,
 				Operators.STRING);
 		registerField("ModuleName");
 
 		if (FinanceConstants.FINSER_EVENT_ORG.equals(eventAction)) {
 			listheader_FinEvent.setVisible(false);
+			this.row_finevent.setVisible(false);
 		} else {
 			listheader_FinEvent.setVisible(true);
+			this.row_finevent.setVisible(true);
 		}
 
 		// Render the page and display the data.

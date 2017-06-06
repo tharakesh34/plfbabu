@@ -78,7 +78,7 @@
 									<listbox id="sortOperator_finType"
 										width="43px" mold="select" rows="1" />
 									<uppercasebox id="finType"
-										width="72px" maxlength="8" />
+										width="250px" maxlength="50" />
 									<label
 										id="label_FinanceWorkFlowSearch_WorkFlowType"
 										value="${c:l('label_FinanceWorkFlowSearch_WorkFlowType.value')}" />
@@ -98,6 +98,16 @@
 									<textbox id="screenCode"
 										width="40px" maxlength="3" />
 									<label value="" />
+								</row>
+								
+								<row id="row_finevent">
+									<label
+										id="label_FinanceWorkFlowSearch_FinEvent"
+										value="${c:l('label_FinanceWorkFlowSearch_FinEvent.value')}" />
+									<listbox id="sortOperator_finEvent"
+										width="43px" mold="select" rows="1" />
+									<combobox id="finEvent"
+										width="250px" maxlength="50" />
 								</row>
 								<row id="row_AlwWorkflow">
 									<label
