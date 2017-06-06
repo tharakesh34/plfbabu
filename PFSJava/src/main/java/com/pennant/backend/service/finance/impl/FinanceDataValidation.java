@@ -454,7 +454,7 @@ public class FinanceDataValidation {
 					if (relationshipOfficer == null) {
 						String[] valueParm = new String[1];
 						valueParm[0] = detail.getDsaId();
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
 						return errorDetails;
 					}
 				}
@@ -469,7 +469,7 @@ public class FinanceDataValidation {
 					if (dmaCode == null) {
 						String[] valueParm = new String[1];
 						valueParm[0] = detail.getDmaId();
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
 						return errorDetails;
 					}
 				}
@@ -499,7 +499,7 @@ public class FinanceDataValidation {
 					if (referralId == null) {
 						String[] valueParm = new String[1];
 						valueParm[0] = detail.getReferralId();
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90501", valueParm)));
 						return errorDetails;
 					}
 				}
@@ -548,7 +548,7 @@ public class FinanceDataValidation {
 								if (!isFeild) {
 									String[] valueParm = new String[1];
 									valueParm[0] = "vas setup";
-									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm)));
+									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90265", valueParm)));
 									return errorDetails;
 								}
 							}

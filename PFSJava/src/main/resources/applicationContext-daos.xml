@@ -2591,6 +2591,7 @@
 		<property name="customerDocumentService" ref="customerDocumentService" />
 		<property name="lovFieldDetailService" ref="lovFieldDetailService" />
 		<property name="bankDetailService" ref="bankDetailService" />
+		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 	</bean>
 
 	<!--============ CoreCustomers ============== -->
