@@ -369,7 +369,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		if (!financeMain.isWorkflow()) {
 			financeMain.setRepayAccountId(finRepayHeader.getRepayAccountId());
 
-			profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
+			profitDetail = getProfitDetailsDAO().getFinProfitDetailsById(finReference);
 
 			List<RepayScheduleDetail> repaySchdList = repayData.getRepayScheduleDetails();
 			List<Object> returnList = processRepaymentPostings(financeMain, scheduleData.getFinanceScheduleDetails(),
@@ -681,7 +681,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		//Repayments Posting Process Execution
 		//=====================================
 		financeMain.setRepayAccountId(finRepayHeader.getRepayAccountId());
-		profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
+		profitDetail = getProfitDetailsDAO().getFinProfitDetailsById(finReference);
 
 		List<RepayScheduleDetail> repaySchdList = repayData.getRepayScheduleDetails();
 		List<Object> returnList = processRepaymentPostings(financeMain, scheduleData.getFinanceScheduleDetails(),

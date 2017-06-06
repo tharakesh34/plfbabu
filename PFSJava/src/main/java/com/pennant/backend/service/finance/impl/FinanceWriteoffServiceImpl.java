@@ -247,7 +247,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		FinScheduleData scheduleData = header.getFinanceDetail().getFinScheduleData();
 
 		if (!financeMain.isWorkflow()) {
-			profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
+			profitDetail = getProfitDetailsDAO().getFinProfitDetailsById(finReference);
 
 			AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, scheduleData.getFinanceScheduleDetails(),
 					profitDetail, AccountEventConstants.ACCEVENT_WRITEOFF, curBDay, financeMain.getMaturityDate());

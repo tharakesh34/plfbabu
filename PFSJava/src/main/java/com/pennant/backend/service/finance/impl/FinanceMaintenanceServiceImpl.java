@@ -19,7 +19,6 @@ import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
@@ -770,7 +769,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		//Finance Write off Posting Process Execution
 		//=====================================
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		FinanceProfitDetail profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(financeMain.getFinReference());
+		FinanceProfitDetail profitDetail = getProfitDetailsDAO().getFinProfitDetailsById(financeMain.getFinReference());
 
 		String accEventCode = "";
 		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {

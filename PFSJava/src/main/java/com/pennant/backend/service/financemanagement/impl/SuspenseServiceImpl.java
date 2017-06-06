@@ -282,7 +282,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 
 		FinanceProfitDetail profitDetail = null;
 		if (!financeSuspHead.isWorkflow()) {
-			profitDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
+			profitDetail = getProfitDetailsDAO().getFinProfitDetailsById(finReference);
 
 			AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, financeSuspHead.getFinanceDetail().getFinScheduleData()
 					.getFinanceScheduleDetails(), profitDetail, AccountEventConstants.ACCEVENT_WRITEOFF, curBDay,
@@ -474,7 +474,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 		}
 
 		//Finance Profit Details Updation
-		FinanceProfitDetail finPftDetail = getProfitDetailsDAO().getFinPftDetailForBatch(finReference);
+		FinanceProfitDetail finPftDetail = getProfitDetailsDAO().getFinProfitDetailsById(finReference);
 		Date curBussDate = DateUtility.getAppDate();
 
 		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(finReference, "", false);

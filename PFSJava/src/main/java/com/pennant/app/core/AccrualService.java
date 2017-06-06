@@ -299,8 +299,6 @@ public class AccrualService extends ServiceHelper {
 		Date nextSchdDate = null;
 		Date accrualDate = DateUtility.addDays(valueDate, 1);
 		Date pdDate = pftDetail.getPrvODDate();
-		Date pdAccrualDate = DateUtility.addDays(pdDate, 1);
-		;
 
 		for (int i = 0; i < schdDetails.size(); i++) {
 			curSchd = schdDetails.get(i);
@@ -425,7 +423,7 @@ public class AccrualService extends ServiceHelper {
 				pftDetail.setNOPaidInst(pftDetail.getNOPaidInst() + 1);
 			}
 
-			//First Repayment Date and Amount
+			//First Repayments Date and Amount
 			if (curSchd.getSchDate().compareTo(pftDetail.getFinStartDate()) > 0) {
 				if (pftDetail.getFirstRepayDate().compareTo(pftDetail.getFinStartDate()) == 0) {
 					pftDetail.setFirstRepayDate(curSchd.getSchDate());
@@ -435,7 +433,7 @@ public class AccrualService extends ServiceHelper {
 
 		}
 
-		//Final Repayment Amount
+		//Final Repayments Amount
 		if (curSchd.getSchDate().compareTo(pftDetail.getMaturityDate()) == 0) {
 			pftDetail.setFinalRepayAmt(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
 		}

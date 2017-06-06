@@ -962,7 +962,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 				updateInsList = null;
 
 				// Deletion of Finance Schedule Related Details From Main Table
-				FinanceProfitDetail pftDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(finReference);
+				FinanceProfitDetail pftDetail = getFinanceProfitDetailDAO().getFinProfitDetailsById(finReference);
 				if(alwSchdReversalByLog){
 					listDeletion(finReference, "", false, 0);
 

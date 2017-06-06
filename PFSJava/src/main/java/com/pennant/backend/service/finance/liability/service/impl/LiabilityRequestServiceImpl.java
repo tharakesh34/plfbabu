@@ -601,7 +601,7 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 			}
 		}
 		if(StringUtils.equals(liabilityRequest.getFinEvent(),FinanceConstants.FINSER_EVENT_INSCLAIM)){
-			FinanceProfitDetail financeProfitDetail =getProfitDetailsDAO().getFinPftDetailForBatch(liabilityRequest.getFinReference());
+			FinanceProfitDetail financeProfitDetail =getProfitDetailsDAO().getFinProfitDetailsById(liabilityRequest.getFinReference());
 			if(financeProfitDetail!=null){
 				BigDecimal outStanding=financeProfitDetail.getTotalpriSchd().add(financeProfitDetail.getTotalPftSchd()).
 						subtract(financeProfitDetail.getTotalPriPaid()).subtract(financeProfitDetail.getTotalPftPaid());

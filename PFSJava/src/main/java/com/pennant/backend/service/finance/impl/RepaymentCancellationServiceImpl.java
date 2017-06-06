@@ -633,7 +633,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			//============================================
 			List<FinanceScheduleDetail> finSchedeuleDetails = getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(
 					finReference);
-			FinanceProfitDetail profitDetail = getFinanceProfitDetailDAO().getFinPftDetailForBatch(finReference);
+			FinanceProfitDetail profitDetail = getFinanceProfitDetailDAO().getFinProfitDetailsById(finReference);
 			profitDetail = accrualService.calProfitDetails(financeMain, finSchedeuleDetails, profitDetail, curAppDate);
 			String worstSts = getCustomerStatusCodeDAO().getFinanceStatus(profitDetail.getFinReference(), false);
 			profitDetail.setFinWorstStatus(worstSts);
