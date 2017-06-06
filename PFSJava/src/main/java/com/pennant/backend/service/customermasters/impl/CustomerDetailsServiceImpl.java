@@ -1235,55 +1235,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return auditDetails;
 	}
 
-	/*
-	 * private void processUpdateCustData(CustomerDetails customerDetails) throws PFFInterfaceException {
-	 * logger.debug("Entering");
-	 * 
-	 * final String HOME_RC="HOME_RC"; // Fetch customer details from core interface CustomerDetails coreCustDetails =
-	 * getCustomerInterfaceService().getCustomerInfoByInterface(customerDetails.getCustomer().getCustCIF(), "");
-	 * 
-	 * coreCustDetails.getCustID(); if(coreCustDetails != null) { // update core interface customer personal info
-	 * coreCustDetails.getCustomer().setCustMaritalSts(customerDetails.getCustomer().getCustMaritalSts());
-	 * 
-	 * // update core Interface customer Employee details
-	 * BeanUtils.copyProperties(customerDetails.getCustEmployeeDetail(), coreCustDetails.getCustEmployeeDetail());
-	 * 
-	 * // update core Interface customer Address details CustomerAddres coreCustAddress =
-	 * getAddress(coreCustDetails.getAddressList(), HOME_RC); CustomerAddres pffCustAddress =
-	 * getAddress(customerDetails.getAddressList(), HOME_RC);
-	 * 
-	 * if (coreCustAddress != null && pffCustAddress != null) { BeanUtils.copyProperties(pffCustAddress,
-	 * coreCustAddress); }
-	 * 
-	 * // update core Interface customer Phone details final String SMS_MOB = "SMSMOB"; CustomerPhoneNumber
-	 * coreCustPhone = getPhoneNumbers(coreCustDetails.getCustomerPhoneNumList(), SMS_MOB); CustomerPhoneNumber
-	 * custPhone = getPhoneNumbers(customerDetails.getCustomerPhoneNumList(), SMS_MOB);
-	 * 
-	 * if (coreCustPhone != null && custPhone != null) { BeanUtils.copyProperties(custPhone, coreCustPhone); }
-	 * 
-	 * // update core Interface customer Email details final String RECIDENCE_MAIL = "PERSON1"; CustomerEMail
-	 * coreCustEmail = getCustEmail(coreCustDetails.getCustomerEMailList(), RECIDENCE_MAIL); CustomerEMail custEmail =
-	 * getCustEmail(customerDetails.getCustomerEMailList(), RECIDENCE_MAIL);
-	 * 
-	 * if (coreCustEmail != null && custEmail != null) { BeanUtils.copyProperties(custEmail, coreCustEmail); }
-	 * 
-	 * // update core customer getCustomerInterfaceService().updateCoreCustomer(coreCustDetails); }
-	 * 
-	 * logger.debug("Leaving"); }
-	 * 
-	 * private CustomerEMail getCustEmail(List<CustomerEMail> customerEMailList, String emailType) { for(CustomerEMail
-	 * custEmail:customerEMailList) { if (StringUtils.equals(custEmail.getCustEMailTypeCode(), emailType)) { return
-	 * custEmail; } } return null; }
-	 * 
-	 * private CustomerPhoneNumber getPhoneNumbers(List<CustomerPhoneNumber> customerPhoneNumList, String phoneType) {
-	 * for(CustomerPhoneNumber address:customerPhoneNumList) { if (StringUtils.equals(address.getPhoneTypeCode(),
-	 * phoneType)) { return address; } } return null; }
-	 * 
-	 * public CustomerAddres getAddress(List<CustomerAddres> coreCustAddresList,String type){ for(CustomerAddres
-	 * coreCustAddress:coreCustAddresList) { if (StringUtils.equals(coreCustAddress.getCustAddrType(), type)) { return
-	 * coreCustAddress; } } return null; }
-	 */
-
 	@Override
 	public List<AuditDetail> validate(CustomerDetails customerDetails, long workflowId, String method,
 			String usrLanguage) {

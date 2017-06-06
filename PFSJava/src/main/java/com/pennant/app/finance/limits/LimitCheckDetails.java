@@ -188,8 +188,6 @@ public class LimitCheckDetails {
 				
 				// Sent mail to RM
 				sendMailNotification(limitUtilReq);
-				
-				//throw new PFFInterfaceException(limitUtilReq.getReturnCode(), limitUtilReq.getMsgBreach());
 			}
 		} catch (InterfaceException pfe) {
 			throw pfe;
