@@ -91,6 +91,9 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 
 		//Finance Schedule Details
 		scheduleData.setFinanceScheduleDetails(getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
+		
+		//Finance Disbursement Details
+		scheduleData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
 
 		//Finance Accounting Fee Charge Details
 		scheduleData.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finReference,procEdtEvent, false, "_TView"));
@@ -694,9 +697,7 @@ public class FinanceCancellationServiceImpl  extends GenericFinanceDetailService
 							"60406", errParm, valueParm), usrLanguage));
 				}
 			}
-			
 		}
-		
 		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 

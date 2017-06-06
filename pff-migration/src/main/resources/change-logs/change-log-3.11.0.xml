@@ -20,6 +20,7 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 	
+
 	 <changeSet id="01" author="Surekha">
 	 	<createView viewName="FINADVANCEPAYMENTS_VIEW" replaceIfExists="true">
 	 		 SELECT   T1.FinReference,T1.paymentId, T1.PaymentSeq, T1.PaymentDetail, T1.AmtToBeReleased, T1.LiabilityHoldName,T1.TransactionRef,
@@ -92,5 +93,11 @@
 				 PARTNERBANKS T5 ON T5.PartnerBankId=T1.PartnerbankId
 			</createView>
 	</changeSet>
+
+	 <changeSet id="4" author="Siva">
+	 	<sql>
+	 		INSERT INTO ErrorDetails VALUES('60407','EN','E','Loan cannot be cancelled since First installment was crossed.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	 	</sql>
+	 </changeSet>
 	
 </databaseChangeLog>

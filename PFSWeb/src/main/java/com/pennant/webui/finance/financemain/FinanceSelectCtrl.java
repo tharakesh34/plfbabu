@@ -1742,6 +1742,21 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				return;
 			}
 			
+			// Schedule Date verification, As Installment date crossed or not
+			List<FinanceScheduleDetail> schdList = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
+			for (int i = 1; i < schdList.size(); i++) {
+				FinanceScheduleDetail curSchd = schdList.get(i);
+				if(curSchd.getSchDate().compareTo(DateUtility.getAppDate()) <= 0){
+					
+					ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(
+							PennantConstants.KEY_FIELD,"60407", null,null), getUserWorkspace().getUserLanguage());
+					MessageUtil.showErrorMessage(errorDetails.getError());
+					
+					logger.debug("Leaving");
+					return;
+				}
+			}
+			
 			String maintainSts = "";
 			if(financeDetail.getFinScheduleData().getFinanceMain() != null){
 				maintainSts = StringUtils.trimToEmpty(financeDetail.getFinScheduleData().getFinanceMain().getRcdMaintainSts());

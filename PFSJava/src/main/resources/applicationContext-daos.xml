@@ -5995,6 +5995,7 @@
 		<property name="finTypeFeesDAO" ref="finTypeFeesDAO" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
