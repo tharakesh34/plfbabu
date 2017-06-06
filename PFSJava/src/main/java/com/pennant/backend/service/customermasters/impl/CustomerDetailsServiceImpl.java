@@ -2151,7 +2151,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 * @return auditHeader
 	 * @throws CustomerNotFoundException
 	 */
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws PFFInterfaceException {
+	public AuditHeader doApprove(AuditHeader aAuditHeader) {
 		logger.debug("Entering");
 
 		String tranType = "";

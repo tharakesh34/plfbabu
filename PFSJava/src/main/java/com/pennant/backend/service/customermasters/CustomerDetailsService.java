@@ -28,7 +28,7 @@ public interface CustomerDetailsService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	AuditHeader doApprove(AuditHeader auditHeader) throws PFFInterfaceException;
+	AuditHeader doApprove(AuditHeader auditHeader);
 
 	Customer fetchCustomerDetails(Customer customer);
 
