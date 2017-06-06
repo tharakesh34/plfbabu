@@ -590,6 +590,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			// Summaries
 			this.totalDisb.setMaxlength(18);
 			this.totalDisb.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+			this.finCurrentAssetValue.setProperties(true, formatter);
 			this.totalDownPayment.setMaxlength(18);
 			this.totalDownPayment.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 			this.totalCapitalize.setMaxlength(18);
@@ -1068,7 +1069,9 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			
 			this.finOverDueDays.setValue(financeSummary.getFinCurODDays());
 
-			this.totalDisb.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalDisbursement(),formatter));
+			this.totalDisb.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinCurrAssetValue(),formatter));
+			this.finCurrentAssetValue.setValue(PennantAppUtil.formateAmount(
+					aFinanceMain.getFinCurrAssetValue().subtract(aFinanceMain.getFeeChargeAmt()), formatter));
 			this.totalDownPayment.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalDownPayment(),formatter));
 			this.totalCapitalize.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalCpz(),formatter));
 			this.totalSchdPrincipal.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalPriSchd(),formatter));
