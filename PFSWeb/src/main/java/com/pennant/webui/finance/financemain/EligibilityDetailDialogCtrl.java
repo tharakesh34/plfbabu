@@ -368,7 +368,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 		} else {
 			finElgDet.setEligibleWithDevaition(false);
 			String ruleResult = StringUtils.trimToEmpty(finElgDet.getRuleResult());
-			if (StringUtils.isEmpty(ruleResult) || "0.0".equals(ruleResult) || "0.00".equals(ruleResult)) {
+			if (StringUtils.isEmpty(ruleResult) || "0".equals(ruleResult) || "0.0".equals(ruleResult) || "0.00".equals(ruleResult)) {
 				finElgDet.setEligible(false);
 			} else {
 				finElgDet.setEligible(true);
