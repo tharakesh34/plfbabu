@@ -665,8 +665,7 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 			} 
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		// Update the Customer table
 		//getCustomerService().updateCustSuspenseDetails(aCustomer);
