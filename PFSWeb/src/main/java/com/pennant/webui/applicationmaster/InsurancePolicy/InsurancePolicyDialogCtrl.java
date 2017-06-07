@@ -62,7 +62,6 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -657,15 +656,7 @@ public class InsurancePolicyDialogCtrl extends GFCBaseCtrl<InsurancePolicy> impl
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ aInsurancePolicy.getInsuranceProvider();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if ("".equals(StringUtils.trimToEmpty(aInsurancePolicy.getRecordType()))) {
 				aInsurancePolicy.setVersion(aInsurancePolicy.getVersion() + 1);
 				aInsurancePolicy.setRecordType(PennantConstants.RECORD_TYPE_DEL);
