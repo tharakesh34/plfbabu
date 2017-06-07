@@ -62,22 +62,26 @@ import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.Literal;
 
 /**
- * A suite of utilities surrounding the use of the {@link org.zkoss.zul.Messagebox} object.
+ * A suite of utilities surrounding the use of the {@link org.zkoss.zul.Messagebox Messagebox} object.
  */
 public final class MessageUtil {
-	private static final Logger	logger	= Logger.getLogger(MessageUtil.class);
+	private static final Logger	logger		= Logger.getLogger(MessageUtil.class);
 
 	/**
 	 * A symbol consisting of a white X in a circle with a red background.
 	 */
-	public static final String	ERROR	= Messagebox.ERROR;
+	public static final String	ERROR		= Messagebox.ERROR;
+	/**
+	 * A symbol of a lower case letter i in a circle.
+	 */
+	public static final String	INFORMATION	= Messagebox.INFORMATION;
 
 	/**
 	 * A OK button.
 	 */
-	public static final int		OK		= Messagebox.OK;
+	public static final int		OK			= Messagebox.OK;
 
-	public static final String	SUFFIX	= "\n\n";
+	public static final String	SUFFIX		= "\n\n";
 
 	private MessageUtil() {
 		super();
@@ -174,10 +178,21 @@ public final class MessageUtil {
 
 	// TODO: Re-factor below code.
 
+	public static void showMessage(String message) {
+		logger.info(message);
+
+		MultiLineMessageBox.doSetTemplate();
+		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, INFORMATION);
+	}
+
+	public static void showInfoMessage(String e) throws InterruptedException {
+		final String title = Labels.getLabel("message.Information");
+		MultiLineMessageBox.doSetTemplate();
+		MultiLineMessageBox.show(e, title, MultiLineMessageBox.OK, "Info", true);
+	}
+
 	/** A symbol consisting of an exclamation point in a triangle with a yellow background. */
 	public static final String	EXCLAMATION	= Messagebox.EXCLAMATION;
-	/** A symbol of a lower case letter i in a circle. */
-	public static final String	INFORMATION	= Messagebox.INFORMATION;
 	/** A Cancel button. */
 	public static final int		CANCEL		= Messagebox.CANCEL;
 	/** A Yes button. */
@@ -209,22 +224,6 @@ public final class MessageUtil {
 		return MultiLineMessageBox.show(message, App.NAME, YES | NO, EXCLAMATION, NO);
 	}
 
-	/**
-	 * Shows a message box. The message box will be displayed with the following parameters:<br/>
-	 * <b>title</b> - {@link App#NAME} is used.<br/>
-	 * <b>buttons</b> - {@link #OK}.<br/>
-	 * <b>icon</b> - {@link #INFORMATION} to show an image.<br/>
-	 * <b>focus</b> - {@link #OK} button with focus.
-	 * 
-	 * @param message
-	 *            The message that need to be displayed.
-	 */
-	public static void showMessage(String message) {
-		MultiLineMessageBox.doSetTemplate();
-
-		MultiLineMessageBox.show(message, App.NAME, OK, INFORMATION);
-	}
-
 	public static void showHelpWindow(Event event, Window parentWindow) {
 		Component comp = ((ForwardEvent) event).getOrigin().getTarget();
 
@@ -237,17 +236,5 @@ public final class MessageUtil {
 		// button in this application and can often appears.
 		Events.getRealOrigin((ForwardEvent) event).stopPropagation();
 		event.stopPropagation();
-	}
-
-	/**
-	 * Shows a multiline ErrorMessage.<br>
-	 * 
-	 * @param e
-	 * @throws InterruptedException
-	 */
-	public static void showInfoMessage(String e) throws InterruptedException {
-		final String title = Labels.getLabel("message.Information");
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(e, title, MultiLineMessageBox.OK, "Info", true);
 	}
 }
