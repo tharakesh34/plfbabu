@@ -307,8 +307,7 @@ public class SelectAccountDetailsDialogCtrl extends GFCBaseCtrl<Accounts> {
 			try {
 				Executions.createComponents("/WEB-INF/pages/Account/Accounts/AccountsDialog.zul",null,map);
 			} catch (Exception e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		} catch (InterfaceException e1) {
 			logger.error("Exception: ", e1);

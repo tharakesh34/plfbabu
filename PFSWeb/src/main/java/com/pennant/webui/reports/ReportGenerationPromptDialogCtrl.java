@@ -1656,8 +1656,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				Executions.createComponents(
 						"/WEB-INF/pages/Reports/ReportSearchTemplatePromptDialog.zul", null, map);
 			} catch (Exception e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 
 		}else{
