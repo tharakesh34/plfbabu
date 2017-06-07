@@ -3864,8 +3864,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				for (RepayScheduleDetail rsd : repaySchdList) {
 
 					//Set Repay Amount Codes
-					amountCodes.setRpTot(amountCodes.getRpTot().add(amountCodes.getRpPri().add(
-							rsd.getPrincipalSchdPayNow()).add(rsd.getProfitSchdPayNow()).add(rsd.getLatePftSchdPayNow())));
+					amountCodes.setRpTot(amountCodes.getRpTot().add(rsd.getPrincipalSchdPayNow()).add(rsd.getProfitSchdPayNow()).add(rsd.getLatePftSchdPayNow()));
 					amountCodes.setRpPft(amountCodes.getRpPft().add(rsd.getProfitSchdPayNow()).add(rsd.getLatePftSchdPayNow()));
 					amountCodes.setRpPri(amountCodes.getRpPri().add(rsd.getPrincipalSchdPayNow()));
 					amountCodes.setRpTds(amountCodes.getRpTds().add(rsd.getTdsSchdPayNow()));
