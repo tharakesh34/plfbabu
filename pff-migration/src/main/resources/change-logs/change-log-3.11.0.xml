@@ -366,4 +366,50 @@ FROM          FinanceMain T1 INNER JOIN
 			
 		</createView>
 	</changeSet>
+	<changeSet id="11" author="Irfan">
+	<createView viewName="FINODCRECOVERYENQUIRY_VIEW" replaceIfExists="true">
+		SELECT     T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.NumberOfTerms, T1.CustID, T1.FinAmount, 
+                      T1.GrcPeriodEndDate, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive, T1.AllowGrcPeriod,T1.DownPayment, 
+                      T1.MigratedFinance,T1.LastRepayDate, T1.LastRepayPftDate, 
+                      T5.FinTypeDesc LovDescFinTypeName, T6.CustCIF LovDescCustCIF, T6.CustShrtName LovDescCustShrtName, T7.BranchDesc LovDescFinBranchName, 
+                      T1.Blacklisted, T5.FinScheduleOn LovDescFinScheduleOn, T1.FeeChargeAmt, T1.ClosingStatus, T8.CustTypeCtg, 
+                      T1.GraceTerms, T5.FinDivision lovDescFinDivision, T5.FinCategory lovDescProductCodeName, 
+                      T5.FinIsAlwMD lovDescFinIsAlwMD, T5.FinIsAlwDifferment lovDescFinAlwDeferment,T1.Defferments,
+                     (T1.FinAmount-T1.DownPayment+ T1.FeeChargeAmt -  T1.FinRepaymentAmount) CurFinAmount,
+                     (T1.FinAmount- T1.DownPayment+ T1.FeeChargeAmt) FinancingAmount, T1.FinStatus 
+FROM          FinanceMain T1 INNER JOIN
+                       RMTFinanceTypes T5 ON T1.FinType = T5.FinType INNER JOIN
+                       Customers T6 ON T1.CustID = T6.CustID INNER JOIN
+                       RMTBranches T7 ON T1.FinBranch = T7.BranchCode INNER JOIN
+                       RMTCustTypes T8 ON T6.CustTypeCode = T8.CustTypeCode
+                      Where FinReference in (Select FinReference From FinODCRecovery)
+	
+	</createView>
+	
+	</changeSet>
+	
+	<changeSet id="12" author="Irfan">
+	
+	<createView viewName="FinODCRecovery_View" replaceIfExists="true">
+		SELECT   T1.FinReference, T1.SchDate FinODSchdDate, T1.SchdFor FinODFor, T3.ValueDate MovementDate, T1.RepaySchID SeqNo, T1.DaysLate ODDays, 
+  (T1.PrincipalSchdBal + T1.ProfitSchdBal) FinCurODAmt, T1.PrincipalSchdBal FinCurODPri, T1.ProfitSchdBal FinCurODPft, 
+                      T5.ODChargeType PenaltyType, T5.ODChargeCalOn PenaltyCalOn, T5.ODChargeAmtOrPerc PenaltyAmtPerc, T5.TotPenaltyAmt Penalty, 
+                      T1.MaxWaiver, T1.WaivedAmt, T1.PenaltyPayNow PenaltyPaid,(T5.TotPenaltyAmt -T1.PenaltyPayNow - T1.WaivedAmt)  PenaltyBal, 0 RcdCanDel, 
+                      T4.CustCIF lovDescCustCIF, T4.CustShrtName lovDescCustShrtName
+                      , T2.FinStartDate lovDescFinStartDate, T2.MaturityDate lovDescMaturityDate, T2.FinAmount lovDescFinAmount
+                      , T2.FinAmount-T2.FinRepaymentAmount lovDescCurFinAmt,T2.FinCcy
+					  , FinCurODPri LovDescCurSchPriDue
+					  , FinCurODPft LovDescCurSchPftDue
+					  , T5.TotPenaltyAmt LovDescTotOvrDueChrg
+					  , TotWaived LovDescTotOvrDueChrgWaived
+					  , TotPenaltyPaid LovDescTotOvrDueChrgPaid
+FROM          finrepayscheduledetail T1 INNER JOIN
+                       FinanceMain T2 ON T1.FinReference = T2.FinReference INNER JOIN
+                       Customers T4 on T4.CustID=T2.CustID INNER JOIN
+                       FinRepayHeader T3 ON T1.RepayID = T3.RepayID INNER JOIN
+                       FINODDetails T5 ON T1.FinReference = T5.FinReference AND T1.SchDate  = T5.FinODSchdDate
+		
+	
+	</createView>
+	</changeSet>
 </databaseChangeLog>
