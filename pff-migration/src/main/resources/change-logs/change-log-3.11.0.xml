@@ -726,4 +726,24 @@ FROM          finrepayscheduledetail T1 INNER JOIN
 	  </addColumn>
 	 
 	 </changeSet>
+	 	<changeSet id="24" author="Chaitanya.ch">
+		<createView viewName="Postings_View" replaceIfExists="true">
+	  		SELECT     T1.LinkedTranId, T1.Postref, T1.PostingId, T1.finReference, T1.FinEvent, T1.PostDate, T1.ValueDate,
+	  		T1.AppValueDate,T1.AppDate, T1.TranCode, T1.RevTranCode, T1.DrOrCr, 
+                    T1.Account, T1.PostAmount, T1.PostStatus, T1.ErrorId, T1.ErrorMsg, T2.AEEventCodeDesc LovDescEventCodeName, 
+                    T1.ShadowPosting, T1.TranDesc, T1.AmountType, T1.AcCcy, T1.PostBranch, T1.Userbranch, T1.TranOrderID, T1.TransOrder
+				FROM          Postings T1 INNER JOIN
+                     BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode
+                       	
+		</createView>
+	</changeSet>
+	<changeSet id="25" author="Chaitanya.ch">
+		<sql>
+			Delete from BMTAmountCodes where AllowedEvent = 'REPAY' and AmountCode = 'ae_RpTds';
+			Insert into BMTAmountCodes Values ('REPAY','0','ae_rpTds', 'TDS Amount', '1', 1, 1005, 
+			Current_TimeStamp, 'Approved', null, null, null, null, null, 0 );
+		</sql>
+	</changeSet>
+	
+	
 </databaseChangeLog>
