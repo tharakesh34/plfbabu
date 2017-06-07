@@ -177,8 +177,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 			doSetFieldProperties();
 			doShowDialog(getRelationshipOfficer());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_RelationshipOfficerDialog.onClose();
 		}
 		logger.debug("Leaving");

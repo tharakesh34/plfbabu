@@ -176,8 +176,7 @@ public class InterestRateTypeDialogCtrl extends GFCBaseCtrl<InterestRateType> {
 			doSetFieldProperties();
 			doShowDialog(getInterestRateType());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_InterestRateTypeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

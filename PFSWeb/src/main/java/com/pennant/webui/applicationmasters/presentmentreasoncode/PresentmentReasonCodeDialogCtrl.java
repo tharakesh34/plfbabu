@@ -118,8 +118,7 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 			doSetFieldProperties();
 			doShowDialog(getPresentmentReasonCode());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_PresentmentReasonCodeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -242,8 +241,7 @@ public class PresentmentReasonCodeDialogCtrl extends GFCBaseCtrl<PresentmentReas
 
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_PresentmentReasonCodeDialog.onClose();
 		}
 		logger.debug("Leaving");

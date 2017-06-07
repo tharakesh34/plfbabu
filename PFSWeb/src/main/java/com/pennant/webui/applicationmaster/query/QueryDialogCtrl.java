@@ -251,8 +251,7 @@ public class QueryDialogCtrl extends GFCBaseCtrl<Query> {
 			doSetFieldProperties();
 			doShowDialog(getQuery());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_QueryDialog.onClose();
 		}
 

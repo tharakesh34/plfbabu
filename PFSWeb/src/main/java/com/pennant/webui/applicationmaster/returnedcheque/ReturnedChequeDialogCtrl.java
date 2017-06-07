@@ -150,8 +150,7 @@ public class ReturnedChequeDialogCtrl extends GFCBaseCtrl<ReturnedChequeDetails>
 			doSetFieldProperties();
 			doShowDialog(getReturnedCheque());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ReturnedChequeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

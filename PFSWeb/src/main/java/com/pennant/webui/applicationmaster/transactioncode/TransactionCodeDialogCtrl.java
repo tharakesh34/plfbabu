@@ -178,8 +178,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 			doSetFieldProperties();
 			doShowDialog(getTransactionCode());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_TransactionCodeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

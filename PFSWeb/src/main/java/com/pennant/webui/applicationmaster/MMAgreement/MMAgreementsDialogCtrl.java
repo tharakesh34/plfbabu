@@ -203,8 +203,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 			doSetFieldProperties();
 			doShowDialog(getMMAgreement());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_MMAgreementDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

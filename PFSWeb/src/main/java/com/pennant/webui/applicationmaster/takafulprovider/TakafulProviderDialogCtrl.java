@@ -223,8 +223,7 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl<TakafulProvider> {
 			doSetFieldProperties();
 			doShowDialog(getTakafulProvider());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_TakafulProviderDialog.onClose();
 		}
 

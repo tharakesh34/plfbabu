@@ -171,8 +171,7 @@ public class RejectDetailDialogCtrl extends GFCBaseCtrl<RejectDetail> {
 			doSetFieldProperties();
 			doShowDialog(getRejectDetail());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_RejectDetailDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
