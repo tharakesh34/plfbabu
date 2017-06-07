@@ -175,8 +175,7 @@ public class PhoneTypeDialogCtrl extends GFCBaseCtrl<PhoneType> {
 			doSetFieldProperties();
 			doShowDialog(getPhoneType());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_PhoneTypeDialog.onClose();
 		}
 

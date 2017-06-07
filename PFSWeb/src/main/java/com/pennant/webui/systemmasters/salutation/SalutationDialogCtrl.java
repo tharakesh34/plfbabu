@@ -179,8 +179,7 @@ public class SalutationDialogCtrl extends GFCBaseCtrl<Salutation> {
 			doSetFieldProperties();
 			doShowDialog(getSalutation());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_SalutationDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

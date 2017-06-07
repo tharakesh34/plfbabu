@@ -154,8 +154,7 @@ public class WorkFlowDialogCtrl extends GFCBaseCtrl<WorkFlowDetails> {
 			doSetFieldProperties();
 			doShowDialog(getWorkFlowDetails());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_workFlowDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

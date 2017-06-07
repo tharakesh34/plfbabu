@@ -178,8 +178,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			doSetFieldProperties();
 			doShowDialog(getProvince());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ProvinceDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

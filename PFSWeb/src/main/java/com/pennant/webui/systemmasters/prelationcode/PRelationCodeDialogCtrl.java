@@ -168,8 +168,7 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 			doSetFieldProperties();
 			doShowDialog(getMPRelationCode());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_PRelationCodeDialog.onClose();
 		}
 		logger.debug("Leaving"+event.toString());

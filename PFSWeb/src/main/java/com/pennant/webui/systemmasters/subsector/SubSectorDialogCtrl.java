@@ -171,8 +171,7 @@ public class SubSectorDialogCtrl extends GFCBaseCtrl<SubSector> {
 			doSetFieldProperties();
 			doShowDialog(getSubSector());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_SubSectorDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
