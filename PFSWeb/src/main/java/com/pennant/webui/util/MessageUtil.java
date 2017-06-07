@@ -96,6 +96,15 @@ public final class MessageUtil {
 		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, ERROR);
 	}
 
+	public static void showErrorMessage(ErrorDetails error) throws InterruptedException {
+		String message = error.getErrorCode().concat(": ").concat(error.getErrorMessage());
+
+		logger.info(message);
+
+		MultiLineMessageBox.doSetTemplate();
+		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, ERROR, true);
+	}
+
 	/**
 	 * Shows an error message box and logs the message and cause. Displays<br/>
 	 * - detail message of the exception for application exception.<br/>
@@ -158,15 +167,6 @@ public final class MessageUtil {
 	}
 
 	// TODO: Re-factor below code.
-
-	public static void showErrorMessage(ErrorDetails error) throws InterruptedException {
-		String message = error.getErrorCode().concat(": ").concat(error.getErrorMessage());
-
-		logger.info(message);
-
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, ERROR, true);
-	}
 
 	/** A symbol consisting of an exclamation point in a triangle with a yellow background. */
 	public static final String	EXCLAMATION	= Messagebox.EXCLAMATION;
