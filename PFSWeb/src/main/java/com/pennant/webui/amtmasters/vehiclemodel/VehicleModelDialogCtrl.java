@@ -610,8 +610,7 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

@@ -1056,8 +1056,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

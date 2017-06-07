@@ -248,8 +248,7 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup>  {
 			// open the dialog in modal mode
 			this.window_SecurityGroupSearch.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving ");
 	}
