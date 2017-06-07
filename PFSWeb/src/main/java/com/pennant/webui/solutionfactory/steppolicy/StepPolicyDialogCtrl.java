@@ -1017,8 +1017,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 				Executions.createComponents(
 						"/WEB-INF/pages/SolutionFactory/StepPolicy/StepPolicyDetailDialog.zul", null, map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving" + event.toString());

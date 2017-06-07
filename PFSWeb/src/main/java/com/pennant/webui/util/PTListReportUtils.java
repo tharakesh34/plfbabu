@@ -150,7 +150,7 @@ public class PTListReportUtils implements Serializable {
 					MessageUtil.showError(Labels.getLabel("message.error.reportNotImpl"));
 				}
 			} catch (JRException e) {
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}finally{
 				
 				fields = null;
