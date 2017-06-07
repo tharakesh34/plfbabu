@@ -32,6 +32,7 @@ import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.applicationmaster.FlagDAO;
 import com.pennant.backend.dao.applicationmaster.SplRateDAO;
+import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -87,6 +88,7 @@ import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
+import com.pennant.backend.service.collateral.impl.ExtendedFieldDetailsValidation;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -134,6 +136,10 @@ public class FinanceDataValidation {
 	private CityDAO						cityDAO;
 	private FinanceDetail 				financeDetail;
 	private CustomerDocumentService 	customerDocumentService;
+	private ExtendedFieldDetailsValidation	extendedFieldDetailsValidation;
+	private ExtendedFieldRenderDAO			extendedFieldRenderDAO;
+
+
 	public FinanceDataValidation() {
 		super();
 	}
@@ -371,7 +377,7 @@ public class FinanceDataValidation {
 		
 		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
 		
-		if (finScheduleData.getVasRecordingList() != null && !finScheduleData.getVasRecordingList().isEmpty()) {
+		
 			FinanceType financeType = finScheduleData.getFinanceType();
 			//fetch the vasProduct list based on the FinanceType
 			financeType.setFinTypeVASProductsList(finTypeVASProductsDAO.getVASProductsByFinType(financeType.getFinType(), ""));
@@ -411,7 +417,7 @@ public class FinanceDataValidation {
 				return errorDetails;
 			}
 			
-
+			if (finScheduleData.getVasRecordingList() != null && !finScheduleData.getVasRecordingList().isEmpty()) {
 			for (VASRecording detail : finScheduleData.getVasRecordingList()) {
 				if (StringUtils.isBlank(detail.getProductCode())) {
 					String[] valueParm = new String[1];
@@ -631,6 +637,7 @@ public class FinanceDataValidation {
 								return errorDetails;
 							}
 						}
+						int exdMandConfigCount = 0;
 						for (ExtendedFieldData extendedFieldData : details.getExtendedFieldDataList()) {
 							if (StringUtils.isBlank(extendedFieldData.getFieldName())) {
 								String[] valueParm = new String[1];
@@ -650,6 +657,11 @@ public class FinanceDataValidation {
 										.getExtendedFieldDetails()) {
 									if (StringUtils.equals(extendedDetail.getFieldName(),
 											extendedFieldData.getFieldName())) {
+										if(extendedDetail.isFieldMandatory()) {
+											exdMandConfigCount++;
+										}
+										List<ErrorDetails> errList = getExtendedFieldDetailsValidation().validateExtendedFieldData(extendedDetail, extendedFieldData);
+										errorDetails.addAll(errList);
 										isFeild = true;
 									}
 								}
@@ -660,6 +672,10 @@ public class FinanceDataValidation {
 									return errorDetails;
 								}
 							}
+						}
+						if (extendedDetailsCount != exdMandConfigCount) {
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90297", "", null)));
+							return errorDetails;
 						}
 					}
 
@@ -690,6 +706,7 @@ public class FinanceDataValidation {
 		return errorDetails;
 
 	}
+
 
 	/**
 	 * 
@@ -4053,5 +4070,20 @@ public class FinanceDataValidation {
 	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
 		this.customerDocumentService = customerDocumentService;
 	}
+	public void setExtendedFieldDetailsValidation(ExtendedFieldDetailsValidation extendedFieldDetailsValidation) {
+		this.extendedFieldDetailsValidation = extendedFieldDetailsValidation;
+	}
+	public ExtendedFieldDetailsValidation getExtendedFieldDetailsValidation() {
+		if (extendedFieldDetailsValidation == null) {
+			this.extendedFieldDetailsValidation = new ExtendedFieldDetailsValidation(extendedFieldRenderDAO);
+		}
+		return extendedFieldDetailsValidation;
+	}
+	public ExtendedFieldRenderDAO getExtendedFieldRenderDAO() {
+		return extendedFieldRenderDAO;
+	}
 
+	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
+		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
+	}
 }

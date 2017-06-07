@@ -4227,6 +4227,7 @@
 		<property name="provinceDAO" ref="provinceDAO" />
 		<property name="cityDAO" ref="cityDAO" />
 		<property name="customerDocumentService" ref="customerDocumentService" />
+		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->
