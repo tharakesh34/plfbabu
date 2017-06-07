@@ -834,8 +834,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		try {
 			Executions.createComponents("/WEB-INF/pages/Administration/SecuritySearchDialog.zul",this.win_Operation_Roles_Dialog,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving " + event.toString());
 	}

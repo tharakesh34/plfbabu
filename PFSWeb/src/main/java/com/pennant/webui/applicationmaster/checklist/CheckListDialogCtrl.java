@@ -1064,8 +1064,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/CheckList/CheckListDetailDialog.zul",null,map);
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving " + event.toString());
 	}

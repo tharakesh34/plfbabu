@@ -309,8 +309,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 							String.valueOf(getAuthorization().getAuthUserId()),
 							getAuthorization().getVersion()), this);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

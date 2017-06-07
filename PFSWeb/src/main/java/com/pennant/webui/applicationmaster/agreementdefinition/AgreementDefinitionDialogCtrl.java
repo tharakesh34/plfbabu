@@ -1302,8 +1302,7 @@ public class AgreementDefinitionDialogCtrl extends
 			Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null,
 					map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
