@@ -659,8 +659,7 @@ public class IstisnaDisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisb
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_IstisnaDisbursement.onClose();
 		}
 		logger.debug("Leaving");

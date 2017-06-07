@@ -159,8 +159,7 @@ public class TakafulRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.window_TakafulRateChangeDialog.doModal();
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_TakafulRateChangeDialog.onClose();
 		}
 		logger.debug("Leaving");

@@ -158,8 +158,7 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			doShowDialog(getFinScheduleData());
 			this.window_ChangeProfitDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ChangeProfitDialog.onClose();
 		}
 		logger.debug("Leaving");

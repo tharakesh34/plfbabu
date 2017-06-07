@@ -176,8 +176,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 			setDialog(DialogType.MODAL);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_AddRmvTermsDialog.onClose();
 		}
 		logger.debug("Leaving");

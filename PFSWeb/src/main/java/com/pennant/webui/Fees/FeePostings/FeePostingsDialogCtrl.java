@@ -245,8 +245,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 			//this.listBoxJVPostingAccounting.setHeight(this.borderLayoutHeight - 350 + "px");
 			doShowDialog(getFeePostings());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_feePostingsDialog.onClose();
 		}
 

@@ -147,8 +147,7 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 			}
 			showSelectFinanceTypeDialog();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_SelectFacilityTypeDialog.onClose();
 		}
 		logger.debug("Leaving " + event.toString());

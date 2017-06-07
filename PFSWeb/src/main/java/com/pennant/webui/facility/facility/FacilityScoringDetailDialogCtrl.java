@@ -197,8 +197,7 @@ public class FacilityScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDet
 			// set Field Properties
 			doShowDialog();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ScoringDetailDialog.onClose();
 		}
 		logger.debug("Leaving " + event.toString());

@@ -148,8 +148,7 @@ public class SuplRentIncrCostDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			doShowDialog(getFinScheduleData());
 			this.window_SuplRentIncrCostDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_SuplRentIncrCostDialog.onClose();
 		}
 		logger.debug("Leaving");

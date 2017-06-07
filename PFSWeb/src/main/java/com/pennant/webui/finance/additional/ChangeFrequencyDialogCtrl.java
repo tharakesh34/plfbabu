@@ -158,8 +158,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			doShowDialog(getFinScheduleData());
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ChangeFrequencyDialog.onClose();
 		}
 		logger.debug("Leaving");

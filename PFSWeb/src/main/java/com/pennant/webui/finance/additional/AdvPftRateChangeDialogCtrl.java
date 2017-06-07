@@ -166,8 +166,7 @@ public class AdvPftRateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			doShowDialog(getFinScheduleData());
 			this.window_AdvPftRateChangeDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_AdvPftRateChangeDialog.onClose();
 		}
 		logger.debug("Leaving");

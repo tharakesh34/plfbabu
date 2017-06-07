@@ -183,8 +183,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			doSetFieldProperties();
 			doShowDialog(getFinScheduleData());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ReScheduleDialog.onClose();
 		}
 		logger.debug("Leaving");

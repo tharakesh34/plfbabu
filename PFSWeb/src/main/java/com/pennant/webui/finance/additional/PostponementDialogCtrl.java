@@ -168,8 +168,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			doSetFieldProperties();
 			doShowDialog(getFinScheduleData());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_PostponementDialog.onClose();
 		}
 		logger.debug("Leaving");
