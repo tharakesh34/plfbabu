@@ -499,8 +499,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 						null,map);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

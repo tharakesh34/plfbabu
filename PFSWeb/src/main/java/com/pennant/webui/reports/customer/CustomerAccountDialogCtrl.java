@@ -234,8 +234,7 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 				tab.setSelected(true);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

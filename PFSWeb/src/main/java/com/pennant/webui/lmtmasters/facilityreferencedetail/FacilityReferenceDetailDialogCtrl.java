@@ -1090,8 +1090,7 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 		try {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FacilityReferenceDetail/FacilityReferenceDetailDialogLink.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 
@@ -1111,8 +1110,7 @@ public class FacilityReferenceDetailDialogCtrl extends GFCBaseCtrl<FacilityRefer
 		try {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FacilityReferenceDetail/FacilityReferenceDetailDialogLink.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
