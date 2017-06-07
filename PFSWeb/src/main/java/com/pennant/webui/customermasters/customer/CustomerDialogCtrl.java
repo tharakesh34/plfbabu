@@ -2377,12 +2377,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ Labels.getLabel("label_CustomerDialog_CustCIF.value") + " : " + aCustomer.getCustCIF();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true);
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCustomer.getRecordType())) {
 				aCustomer.setVersion(aCustomer.getVersion() + 1);
 				aCustomer.setRecordType(PennantConstants.RECORD_TYPE_DEL);
