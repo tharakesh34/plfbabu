@@ -39,7 +39,7 @@ public class DDARequestProcess extends MQProcess {
 	 * @throws InterfaceException
 	 * @throws JaxenException 
 	 */
-	public DDARegistration sendDDARequest(DDARegistration ddsRequest, String msgFormat) throws InterfaceException, JaxenException  {
+	public DDARegistration sendDDARequest(DDARegistration ddsRequest, String msgFormat) throws JaxenException {
 		logger.debug("Entering");
 
 		if (ddsRequest == null) {
@@ -79,7 +79,7 @@ public class DDARequestProcess extends MQProcess {
 	 * @return
 	 * @throws JaxenException 
 	 */
-	private DDARegistration setDDAReplyInfo(OMElement responseElement, AHBMQHeader header) throws InterfaceException, JaxenException {
+	private DDARegistration setDDAReplyInfo(OMElement responseElement, AHBMQHeader header) throws JaxenException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {

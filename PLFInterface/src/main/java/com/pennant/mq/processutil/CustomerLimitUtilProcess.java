@@ -36,8 +36,8 @@ public class CustomerLimitUtilProcess extends MQProcess {
 	 * @throws InterfaceException
 	 * @throws JaxenException 
 	 */
-	public CustomerLimitUtilization getLimitUtilizationDetails(CustomerLimitUtilization limitUtilization, String msgType)
-			throws InterfaceException, JaxenException {
+	public CustomerLimitUtilization getLimitUtilizationDetails(CustomerLimitUtilization limitUtilization,
+			String msgType) throws JaxenException {
 		logger.debug("Entering");
 
 		if (limitUtilization == null) {
@@ -78,8 +78,8 @@ public class CustomerLimitUtilProcess extends MQProcess {
 	 * @throws InterfaceException
 	 * @throws JaxenException 
 	 */
-	private CustomerLimitUtilization setLimitUtilDetailsResponse(OMElement responseElement, AHBMQHeader header, String msgType)
-			throws InterfaceException, JaxenException {
+	private CustomerLimitUtilization setLimitUtilDetailsResponse(OMElement responseElement, AHBMQHeader header,
+			String msgType) throws JaxenException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {

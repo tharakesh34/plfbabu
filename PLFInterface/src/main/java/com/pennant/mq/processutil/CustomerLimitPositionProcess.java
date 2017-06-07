@@ -39,8 +39,8 @@ public class CustomerLimitPositionProcess extends MQProcess {
 	 * @throws InterfaceException
 	 * @throws JaxenException 
 	 */
-	public CustomerLimitPosition getCustomerLimitSummary(CustomerLimitPosition limitPositionReq, String msgFormat) 
-			throws InterfaceException, JaxenException {
+	public CustomerLimitPosition getCustomerLimitSummary(CustomerLimitPosition limitPositionReq, String msgFormat)
+			throws JaxenException {
 		logger.debug("Entering");
 
 		if (limitPositionReq == null) {
@@ -78,8 +78,8 @@ public class CustomerLimitPositionProcess extends MQProcess {
 	 * @throws InterfaceException
 	 * @throws JaxenException 
 	 */
-	private CustomerLimitPosition setLimitPositionResponse(OMElement responseElement, AHBMQHeader header) 
-			throws InterfaceException, JaxenException {
+	private CustomerLimitPosition setLimitPositionResponse(OMElement responseElement, AHBMQHeader header)
+			throws JaxenException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {

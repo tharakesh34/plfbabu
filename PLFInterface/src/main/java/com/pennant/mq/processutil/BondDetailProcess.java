@@ -39,10 +39,10 @@ public class BondDetailProcess extends MQProcess {
 	 * @param msgFormat
 	 * @return NationalBondDetail
 	 * @throws InterfaceException
-	 * @throws JaxenException 
+	 * @throws JaxenException
 	 */
-	public NationalBondDetail doNationalBondProcess(NationalBondDetail nationalBondDetail, String msgFormat) 
-			throws InterfaceException, JaxenException  {
+	public NationalBondDetail doNationalBondProcess(NationalBondDetail nationalBondDetail, String msgFormat)
+			throws JaxenException {
 		logger.debug("Entering");
 
 		if (nationalBondDetail == null) {
@@ -79,8 +79,8 @@ public class BondDetailProcess extends MQProcess {
 	 * @throws InterfaceException
 	 * @throws JaxenException 
 	 */
-	private NationalBondDetail processBondDetailResponse(OMElement responseElement, AHBMQHeader header, String msgFormat)
-			throws InterfaceException, JaxenException {
+	private NationalBondDetail processBondDetailResponse(OMElement responseElement, AHBMQHeader header,
+			String msgFormat) throws JaxenException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {

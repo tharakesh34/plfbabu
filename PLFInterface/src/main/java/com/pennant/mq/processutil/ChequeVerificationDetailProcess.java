@@ -38,8 +38,8 @@ public class ChequeVerificationDetailProcess extends MQProcess {
 	 * @throws InterfaceException
 	 * @throws JaxenException 
 	 */
-	public ChequeVerification sendChequeVerificationReq(ChequeVerification chequeVerification, String msgFormat) 
-			throws InterfaceException, JaxenException  {
+	public ChequeVerification sendChequeVerificationReq(ChequeVerification chequeVerification, String msgFormat)
+			throws JaxenException {
 		logger.debug("Entering");
 
 		if (chequeVerification == null) {
@@ -77,7 +77,7 @@ public class ChequeVerificationDetailProcess extends MQProcess {
 	 * @throws JaxenException 
 	 */
 	private ChequeVerification processChequeVerificationResponse(OMElement responseElement, AHBMQHeader header)
-			throws InterfaceException, JaxenException {
+			throws JaxenException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {

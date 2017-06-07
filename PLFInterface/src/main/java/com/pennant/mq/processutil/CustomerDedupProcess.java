@@ -31,8 +31,8 @@ public class CustomerDedupProcess extends MQProcess  {
 	
 	private String CUST_CTG_CODE = null;
 	
-	public List<CoreCustomerDedup> customerDedupCheck(CoreCustomerDedup dedupCustomer, String msgFormat) 
-			throws InterfaceException, JaxenException {
+	public List<CoreCustomerDedup> customerDedupCheck(CoreCustomerDedup dedupCustomer, String msgFormat)
+			throws JaxenException {
 		logger.debug("Entering");
 
 		if (dedupCustomer == null) {
@@ -72,8 +72,8 @@ public class CustomerDedupProcess extends MQProcess  {
 	 * @throws InterfaceException
 	 * @throws JaxenException 
 	 */
-	private List<CoreCustomerDedup> setCustomerDedupResponse(OMElement responseElement, AHBMQHeader header) 
-			throws InterfaceException, JaxenException {
+	private List<CoreCustomerDedup> setCustomerDedupResponse(OMElement responseElement, AHBMQHeader header)
+			throws JaxenException {
 		logger.debug("Entering");
 
 		if (responseElement == null) {
