@@ -59,6 +59,7 @@ public class MultiLineMessageBox extends Messagebox implements Serializable {
 	private transient static String	_temp2				= "/WEB-INF/pages/util/multiLineErrorMessageBox.zul";
 
 	public MultiLineMessageBox() {
+		super();
 	}
 
 	public static void doSetTemplate() {
