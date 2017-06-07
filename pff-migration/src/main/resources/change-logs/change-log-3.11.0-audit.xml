@@ -14,4 +14,9 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="02" author="durgaprasad G">
+	 <addColumn tableName="ADTPAYMENTINSTRUCTIONS">
+	    <column name="STATUS" type="VARCHAR(50)"/>
+	 </addColumn>
+	</changeSet>
 </databaseChangeLog>
