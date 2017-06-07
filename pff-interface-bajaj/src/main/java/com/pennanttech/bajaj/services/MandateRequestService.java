@@ -23,10 +23,11 @@ import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.Literal;
 import com.pennanttech.pff.core.services.MandateRequest;
+import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 public class MandateRequestService extends BajajService implements MandateRequest {
-	private final Logger logger = Logger.getLogger(getClass());
+	private final Logger	logger	= Logger.getLogger(getClass());
 
 	@Override
 	public void sendReqest(Object... params) throws Exception {
@@ -87,6 +88,7 @@ public class MandateRequestService extends BajajService implements MandateReques
 		sql.append(" CUSTSHRTNAME CUSTOMER_NAME,");
 		sql.append(" FINTYPE,");
 		sql.append(" FINREFERENCE,");
+		sql.append(" CUST_EMI,");
 		sql.append(" EMI,");
 		sql.append(" OPENMANDATE OPENFLAG,");
 		sql.append(" ACCNUMBER ACCT_NUMBER,");
@@ -119,29 +121,55 @@ public class MandateRequestService extends BajajService implements MandateReques
 					Map<String, Object> rowMap = rowMapper.mapRow(rs, rowNum);
 					rowMap.put("BATCH_ID", 0);
 					rowMap.put("BANK_SEQ", getSequence((String) rowMap.get("BANK_CODE"), bankCodeSeq));
-					
+
 					BigDecimal UPPER_LIMIT = (BigDecimal) rowMap.get("UPPER_LIMIT");
 					BigDecimal minorccyunits = (BigDecimal) rowMap.get("CCYMINORCCYUNITS");
-					
+
 					if (UPPER_LIMIT == null || minorccyunits == null) {
 						rowMap.put("UPPER_LIMIT", BigDecimal.ZERO);
 					} else {
 						rowMap.put("UPPER_LIMIT", UPPER_LIMIT.divide(minorccyunits));
 					}
-					
+
 					rowMap.put("EXTRACTION_DATE", getAppDate());
 					String appId = null;
 					String finReference = StringUtils.trimToNull(rs.getString("FINREFERENCE"));
-					if(finReference!= null){
-						appId =  StringUtils.substring(finReference, finReference.length()-8, finReference.length());
+					if (finReference != null) {
+						appId = StringUtils.substring(finReference, finReference.length() - 8, finReference.length());
 						appId = StringUtils.trim(appId);
 						rowMap.put("APPLICATION_NUMBER", Integer.parseInt(appId));
 					} else {
 						rowMap.put("APPLICATION_NUMBER", null);
 
 					}
+
+					if (StringUtils.trimToNull((String) rowMap.get("FINREFERENCE")) == null) {
+						BigDecimal CUST_EMI = (BigDecimal) rowMap.get("CUST_EMI");
+
+						if (CUST_EMI != null && UPPER_LIMIT != null) {
+							if (UPPER_LIMIT.compareTo(CUST_EMI) > 0) {
+								rowMap.put("EMI", UPPER_LIMIT);
+							} else {
+								rowMap.put("EMI", CUST_EMI);
+							}
+						}
+
+						if (CUST_EMI != null && UPPER_LIMIT != null) {
+							if (UPPER_LIMIT.compareTo(CUST_EMI) > 0) {
+								rowMap.put("DEBIT_AMOUNT", UPPER_LIMIT);
+							} else {
+								rowMap.put("DEBIT_AMOUNT", CUST_EMI);
+							}
+						}
+
+						Date startDate = (Date) rowMap.get("START_DATE");
+						startDate = DateUtil.addMonths(startDate, 240);
+						rowMap.put("EMI_ENDDATE", startDate);
+					}
+
 					rowMap.remove("CCYMINORCCYUNITS");
-					
+					rowMap.remove("CUST_EMI");
+
 					id = String.valueOf(insertData(rowMap));
 					rowMap = null;
 					return id;
@@ -162,7 +190,7 @@ public class MandateRequestService extends BajajService implements MandateReques
 		String sql = QueryUtil.getInsertQuery(rowMap.keySet(), "MANDATE_REQUESTS");
 		final KeyHolder keyHolder = new GeneratedKeyHolder();
 		try {
-			namedJdbcTemplate.update(sql, getMapSqlParameterSource(rowMap), keyHolder, new String[] {"ID"});
+			namedJdbcTemplate.update(sql, getMapSqlParameterSource(rowMap), keyHolder, new String[] { "ID" });
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -177,10 +205,10 @@ public class MandateRequestService extends BajajService implements MandateReques
 		} else {
 			seq = bankCodeSeq.get(bankCode);
 		}
-		
-		seq = seq+1;
+
+		seq = seq + 1;
 		bankCodeSeq.put(bankCode, seq);
-		
+
 		return bankCode + "-" + seq;
 	}
 
