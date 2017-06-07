@@ -55,7 +55,6 @@ import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ErrorDetails;
-import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.AppException;
 import com.pennanttech.pff.core.ErrorCode;
@@ -160,6 +159,15 @@ public final class MessageUtil {
 
 	// TODO: Re-factor below code.
 
+	public static void showErrorMessage(ErrorDetails error) throws InterruptedException {
+		String message = error.getErrorCode().concat(": ").concat(error.getErrorMessage());
+
+		logger.info(message);
+
+		MultiLineMessageBox.doSetTemplate();
+		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, ERROR, true);
+	}
+
 	/** A symbol consisting of an exclamation point in a triangle with a yellow background. */
 	public static final String	EXCLAMATION	= Messagebox.EXCLAMATION;
 	/** A symbol of a lower case letter i in a circle. */
@@ -209,22 +217,6 @@ public final class MessageUtil {
 		MultiLineMessageBox.doSetTemplate();
 
 		MultiLineMessageBox.show(message, App.NAME, OK, INFORMATION);
-	}
-
-	/**
-	 * Shows a multiline ErrorMessage.<br>
-	 * 
-	 * @param e
-	 * @throws InterruptedException
-	 */
-	public static void showErrorMessage(ErrorDetails errorDetail) throws InterruptedException {
-		final String title = Labels.getLabel("message.Error");
-		logger.info("Message : " + errorDetail.getErrorCode() + PennantConstants.KEY_SEPERATOR
-				+ errorDetail.getErrorMessage() + ", title : " + title);
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(
-				errorDetail.getErrorCode() + PennantConstants.KEY_SEPERATOR + errorDetail.getErrorMessage(), title,
-				MultiLineMessageBox.OK, "ERROR", true);
 	}
 
 	public static void showHelpWindow(Event event, Window parentWindow) {
