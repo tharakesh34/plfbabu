@@ -6724,8 +6724,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					} catch (InterfaceException pfe) {
 						logger.error("Exception: ", pfe);
 						if (StringUtils.equals(pfe.getErrorCode(), PennantConstants.DDA_PENDING_CODE)) {
-							MessageUtil.showInfoMessage(Labels.getLabel("DDA_APPROVAL_PENDING",
-									new String[] { finReference }));
+							MessageUtil.showMessage(
+									Labels.getLabel("DDA_APPROVAL_PENDING", new String[] { finReference }));
 							processCompleted = false;
 						}
 					}
