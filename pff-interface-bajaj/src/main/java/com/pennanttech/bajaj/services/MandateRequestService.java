@@ -121,17 +121,8 @@ public class MandateRequestService extends BajajService implements MandateReques
 					Map<String, Object> rowMap = rowMapper.mapRow(rs, rowNum);
 					rowMap.put("BATCH_ID", 0);
 					rowMap.put("BANK_SEQ", getSequence((String) rowMap.get("BANK_CODE"), bankCodeSeq));
-
-					BigDecimal UPPER_LIMIT = (BigDecimal) rowMap.get("UPPER_LIMIT");
-					BigDecimal minorccyunits = (BigDecimal) rowMap.get("CCYMINORCCYUNITS");
-
-					if (UPPER_LIMIT == null || minorccyunits == null) {
-						rowMap.put("UPPER_LIMIT", BigDecimal.ZERO);
-					} else {
-						rowMap.put("UPPER_LIMIT", UPPER_LIMIT.divide(minorccyunits));
-					}
-
 					rowMap.put("EXTRACTION_DATE", getAppDate());
+
 					String appId = null;
 					String finReference = StringUtils.trimToNull(rs.getString("FINREFERENCE"));
 					if (finReference != null) {
@@ -143,23 +134,24 @@ public class MandateRequestService extends BajajService implements MandateReques
 
 					}
 
+					BigDecimal UPPER_LIMIT = (BigDecimal) rowMap.get("UPPER_LIMIT");
+					BigDecimal CUST_EMI = (BigDecimal) rowMap.get("CUST_EMI");
+
+					if (UPPER_LIMIT == null) {
+						UPPER_LIMIT = BigDecimal.ZERO;
+					}
+
+					if (CUST_EMI == null) {
+						CUST_EMI = BigDecimal.ZERO;
+					}
+
 					if (StringUtils.trimToNull((String) rowMap.get("FINREFERENCE")) == null) {
-						BigDecimal CUST_EMI = (BigDecimal) rowMap.get("CUST_EMI");
-
-						if (CUST_EMI != null && UPPER_LIMIT != null) {
-							if (UPPER_LIMIT.compareTo(CUST_EMI) > 0) {
-								rowMap.put("EMI", UPPER_LIMIT);
-							} else {
-								rowMap.put("EMI", CUST_EMI);
-							}
-						}
-
-						if (CUST_EMI != null && UPPER_LIMIT != null) {
-							if (UPPER_LIMIT.compareTo(CUST_EMI) > 0) {
-								rowMap.put("DEBIT_AMOUNT", UPPER_LIMIT);
-							} else {
-								rowMap.put("DEBIT_AMOUNT", CUST_EMI);
-							}
+						if (UPPER_LIMIT.compareTo(CUST_EMI) > 0) {
+							rowMap.put("EMI", UPPER_LIMIT);
+							rowMap.put("DEBIT_AMOUNT", UPPER_LIMIT);
+						} else {
+							rowMap.put("EMI", CUST_EMI);
+							rowMap.put("DEBIT_AMOUNT", CUST_EMI);
 						}
 
 						Date startDate = (Date) rowMap.get("START_DATE");
