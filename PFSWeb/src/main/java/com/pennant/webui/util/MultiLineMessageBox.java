@@ -53,12 +53,12 @@ import org.zkoss.zul.Messagebox;
  * <br>
  */
 public class MultiLineMessageBox extends Messagebox implements Serializable {
-	private static final long serialVersionUID = 1L;
+	private static final long		serialVersionUID	= 1L;
 
 	// path of the messagebox zul-template
-	private transient static String _templ = "/WEB-INF/pages/util/multiLineMessageBox.zul";
-	private transient static String _temp2 = "/WEB-INF/pages/util/multiLineErrorMessageBox.zul";
-	
+	private transient static String	_templ				= "/WEB-INF/pages/util/multiLineMessageBox.zul";
+	private transient static String	_temp2				= "/WEB-INF/pages/util/multiLineErrorMessageBox.zul";
+
 	public MultiLineMessageBox() {
 	}
 
@@ -71,8 +71,7 @@ public class MultiLineMessageBox extends Messagebox implements Serializable {
 	}
 
 	/**
-	 * Shows a message box and returns what button is pressed. A shortcut to
-	 * show(message, null, OK, INFORMATION). <br>
+	 * Shows a message box and returns what button is pressed. A shortcut to show(message, null, OK, INFORMATION). <br>
 	 * <br>
 	 * Simple MessageBox with customizable message and title. <br>
 	 * 
@@ -121,8 +120,7 @@ public class MultiLineMessageBox extends Messagebox implements Serializable {
 	}
 
 	/**
-	 * Shows a message box and returns what button is pressed. A shortcut to
-	 * show(message, null, OK, INFORMATION). <br>
+	 * Shows a message box and returns what button is pressed. A shortcut to show(message, null, OK, INFORMATION). <br>
 	 * <br>
 	 * Simple MessageBox with customizable message and title. <br>
 	 * 
@@ -150,7 +148,8 @@ public class MultiLineMessageBox extends Messagebox implements Serializable {
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static final int show(String message, String title, int buttons, String icon, boolean padding, EventListener listener) {
+	public static final int show(String message, String title, int buttons, String icon, boolean padding,
+			EventListener listener) {
 
 		String msg = message;
 

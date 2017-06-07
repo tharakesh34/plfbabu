@@ -18,11 +18,11 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zul.Messagebox;
 
 public class MultiLineMessageBox extends Messagebox implements Serializable {
-	private static final long serialVersionUID = 1L;
+	private static final long		serialVersionUID	= 1L;
 
 	// path of the messagebox zul-template
-	private transient static String _templ = "/WEB-INF/pages/util/multiLineMessageBox.zul";
-	private transient static String _temp2 = "/WEB-INF/pages/util/multiLineErrorMessageBox.zul";
+	private transient static String	_templ				= "/WEB-INF/pages/util/multiLineMessageBox.zul";
+	private transient static String	_temp2				= "/WEB-INF/pages/util/multiLineErrorMessageBox.zul";
 
 	public MultiLineMessageBox() {
 	}
