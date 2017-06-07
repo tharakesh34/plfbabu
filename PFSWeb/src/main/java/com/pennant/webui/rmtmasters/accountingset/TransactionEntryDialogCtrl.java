@@ -707,8 +707,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			getAccountingSetDialogCtrl().window_AccountingSetDialog.getParent().appendChild(
 					window_TransactionEntryDialog);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");
@@ -1726,8 +1725,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			Executions.createComponents("/WEB-INF/pages/RulesFactory/TransactionEntry/TransactionEntryRuleResult.zul",
 					null, map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

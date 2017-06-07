@@ -1028,8 +1028,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 				closeDialog();
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1479,8 +1478,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Mail/MailTemplate/TemplatePreview.zul", null, argsMap);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

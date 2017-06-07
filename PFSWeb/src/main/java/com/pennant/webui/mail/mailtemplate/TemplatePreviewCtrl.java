@@ -196,8 +196,7 @@ public class TemplatePreviewCtrl  extends GFCBaseCtrl<Object> {
 			this.previewTabDiv.setHeight(this.dialogHeight-100+"px");
 			this.window_TemplatePreview.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

@@ -415,8 +415,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 							getJVPosting().getVersion()), this);
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 
@@ -499,8 +498,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			}
 			Executions.createComponents(fileName, window_JVPostingDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

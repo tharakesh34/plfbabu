@@ -323,8 +323,7 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 			arg.put("jVPosting", aJVPosting);
 			Executions.createComponents(zulPage, null, arg);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

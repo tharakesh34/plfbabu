@@ -937,8 +937,7 @@ public class ReportListDialogCtrl extends GFCBaseCtrl<ReportList> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Reports/ReportList/FieldsListSelect.zul",null, map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 
