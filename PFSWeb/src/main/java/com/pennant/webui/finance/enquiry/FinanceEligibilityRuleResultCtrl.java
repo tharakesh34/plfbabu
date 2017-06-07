@@ -290,8 +290,7 @@ public class FinanceEligibilityRuleResultCtrl extends GFCBaseCtrl<EligibilityRul
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceMainList.zul",tabpanel,map);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

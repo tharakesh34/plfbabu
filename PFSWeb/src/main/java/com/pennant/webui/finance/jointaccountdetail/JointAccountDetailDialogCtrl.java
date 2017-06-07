@@ -419,8 +419,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		try {
 			ScreenCTL.displayNotes(getNotes("JountAccountDetail", String.valueOf(getJountAccountDetail().getJointAccountId()), getJountAccountDetail().getVersion()), this);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

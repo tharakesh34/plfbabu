@@ -291,8 +291,7 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -420,8 +419,7 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

@@ -1964,8 +1964,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			Executions.createComponents(fileLocaation.toString(), null,map);
 			
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -2008,8 +2007,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceMaintenanceDialog.zul", null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -2045,8 +2043,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Payments/ManualPayment.zul",null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -2082,8 +2079,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/ReceiptDialog.zul",null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -2121,8 +2117,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Payments/FinanceWriteoffDialog.zul",null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -2155,8 +2150,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Payments/TakaFulPremiumExcludeDialog.zul",null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -2193,8 +2187,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceCancellationDialog.zul",null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -2231,8 +2224,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Cancellation/RepayCancellationDialog.zul",null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		
 		logger.debug("Leaving");

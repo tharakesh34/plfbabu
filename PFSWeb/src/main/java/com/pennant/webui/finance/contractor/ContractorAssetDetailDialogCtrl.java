@@ -373,8 +373,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 					getFinReference(),getContractorAssetDetail().getVersion()),this);
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" +event.toString());
 

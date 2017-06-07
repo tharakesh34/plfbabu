@@ -447,8 +447,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		try {
 			ScreenCTL.displayNotes(getNotes("GuarantorDetail", String.valueOf(getGuarantorDetail().getGuarantorId()), getGuarantorDetail().getVersion()), this);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
