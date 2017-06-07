@@ -297,7 +297,6 @@ public class AccrualService extends ServiceHelper {
 		Date prvSchdDate = null;
 		Date curSchdDate = null;
 		Date nextSchdDate = null;
-		Date accrualDate = DateUtility.addDays(valueDate, 1);
 		Date pdDate = pftDetail.getPrvODDate();
 
 		for (int i = 0; i < schdDetails.size(); i++) {
@@ -346,10 +345,10 @@ public class AccrualService extends ServiceHelper {
 			BigDecimal acrNormal = BigDecimal.ZERO;
 
 			// Amortization
-			if (curSchdDate.compareTo(accrualDate) < 0) {
+			if (curSchdDate.compareTo(valueDate) < 0) {
 				pftAmz = curSchd.getProfitCalc();
-			} else if (accrualDate.compareTo(prvSchdDate) > 0 && accrualDate.compareTo(nextSchdDate) <= 0) {
-				int days = getNoDays(prvSchdDate, accrualDate);
+			} else if (valueDate.compareTo(prvSchdDate) > 0 && valueDate.compareTo(nextSchdDate) <= 0) {
+				int days = getNoDays(prvSchdDate, valueDate);
 				int daysInCurPeriod = curSchd.getNoOfDays();
 				pftAmz = curSchd.getProfitCalc().multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod),
 						0, RoundingMode.HALF_DOWN);

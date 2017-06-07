@@ -7,7 +7,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 
@@ -19,7 +18,6 @@ public class DateRollOverService extends ServiceHelper {
 	public CustEODEvent process(CustEODEvent custEODEvent) throws Exception {
 		logger.debug(" Entering ");
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
-		custEODEvent.setEodValueDate(DateUtility.addDays(custEODEvent.getEodValueDate(), 1));
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 

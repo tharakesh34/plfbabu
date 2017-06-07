@@ -16,6 +16,8 @@ import com.pennant.app.core.LoadFinanceData;
 import com.pennant.app.core.NPAService;
 import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.ReceiptPaymentService;
+import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.customermasters.Customer;
 
 public class EodService {
 
@@ -34,11 +36,29 @@ public class EodService {
 
 	private PlatformTransactionManager	transactionManager;
 
-
 	public EodService() {
 		super();
 	}
+
 	
+	
+	public void doUpdate(CustEODEvent custEODEvent) throws Exception {
+		Customer customer = custEODEvent.getCustomer();
+		//update customer EOD
+		getLoadFinanceData().updateFinEODEvents(custEODEvent);
+		//receipt postings
+		if (custEODEvent.isCheckPresentment()) {
+			getReceiptPaymentService().processrReceipts(custEODEvent);
+		}
+		//customer Date update
+		String newCustStatus = null;
+		if (custEODEvent.isUpdCustomer()) {
+			newCustStatus = customer.getCustSts();
+		}
+
+		getLoadFinanceData().updateCustomerDate(customer.getCustID(), custEODEvent.getEodValueDate(), newCustStatus);
+
+	}
 
 	public void doProcess(CustEODEvent custEODEvent, Date date) throws Exception {
 
@@ -62,6 +82,9 @@ public class EodService {
 		custEODEvent = npaService.processNPABuckets(custEODEvent);
 
 		/**************** SOD ***********/
+		//moving customer date to sod
+		custEODEvent.setEodValueDate(DateUtility.addDays(custEODEvent.getEodValueDate(), 1));
+		
 		//Date rollover
 		if (custEODEvent.isDateRollover()) {
 			custEODEvent = dateRollOverService.process(custEODEvent);
