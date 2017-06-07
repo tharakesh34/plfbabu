@@ -488,4 +488,19 @@ FROM          finrepayscheduledetail T1 INNER JOIN
 	<changeSet id="16" author="Durgaprasad G">
 	 <dropTable tableName="SeqPaymentInstructions"/>
 	</changeSet>
+	
+	<changeSet id="17" author="Durgaprasad G">
+	 <addColumn tableName="DISBURSEMENT_REQUESTS">
+	   <column name="PaymentType" type="char(1)"/>
+	 </addColumn>
+	 
+	  <addColumn tableName="INT_DSBIMPS_RESPONSE">
+	   <column name="PaymentType" type="char(1)"/>
+	 </addColumn>
+	 
+	  <addColumn tableName="INT_DSBIMPS_REQUEST">
+	   <column name="PaymentType" type="char(1)"/>
+	 </addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
