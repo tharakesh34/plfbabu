@@ -1044,8 +1044,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 					closeDialog();
 				}
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 
