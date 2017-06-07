@@ -449,8 +449,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		try {
 			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralStructure/ScriptValidationResult.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

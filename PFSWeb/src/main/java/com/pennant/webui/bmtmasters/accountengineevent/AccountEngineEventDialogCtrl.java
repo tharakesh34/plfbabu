@@ -611,8 +611,7 @@ public class AccountEngineEventDialogCtrl extends GFCBaseCtrl<AccountEngineEvent
 				closeDialog();
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

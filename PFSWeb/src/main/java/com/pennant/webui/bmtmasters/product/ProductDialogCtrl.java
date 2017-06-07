@@ -747,8 +747,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 						new String[] { Labels.getLabel("ProductAsset"), Labels.getLabel("Product") }));
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

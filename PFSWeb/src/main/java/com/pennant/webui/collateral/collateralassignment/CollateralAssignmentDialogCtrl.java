@@ -284,8 +284,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 			this.groupboxWf.setVisible(false);
 			this.window_CollateralAssignmentDetailDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

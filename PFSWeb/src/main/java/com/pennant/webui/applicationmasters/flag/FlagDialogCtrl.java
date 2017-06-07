@@ -326,8 +326,7 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 			
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving") ;
 	}

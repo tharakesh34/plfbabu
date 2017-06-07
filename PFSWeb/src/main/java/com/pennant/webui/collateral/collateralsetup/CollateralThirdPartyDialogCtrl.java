@@ -351,8 +351,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 			}
 			this.window_CollateralThirdPartyDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
