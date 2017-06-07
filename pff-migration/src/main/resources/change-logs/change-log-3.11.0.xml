@@ -412,4 +412,14 @@ FROM          finrepayscheduledetail T1 INNER JOIN
 	
 	</createView>
 	</changeSet>
+	
+	<changeSet id="13" author="durgaprasad g">
+	 <addColumn tableName="PAYMENTINSTRUCTIONS">
+	    <column name="STATUS" type="VARCHAR(50)"/>
+	 </addColumn>
+	<addColumn tableName="PAYMENTINSTRUCTIONS_TEMP">
+	    <column name="STATUS" type="VARCHAR(50)"/>
+	 </addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
