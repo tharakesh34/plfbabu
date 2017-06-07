@@ -1410,8 +1410,7 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

@@ -329,8 +329,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 					this);
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 
