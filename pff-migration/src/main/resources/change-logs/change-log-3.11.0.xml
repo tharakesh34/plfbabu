@@ -422,4 +422,70 @@ FROM          finrepayscheduledetail T1 INNER JOIN
 	 </addColumn>
 	</changeSet>
 	
+	
+ <changeSet id="14" author="Durgaprasad g">
+		<createView viewName="PaymentInstructions_View"
+			replaceIfExists="true">
+		SELECT	 T1.PAYMENTINSTRUCTIONID, T1.PAYMENTID, T1.PAYMENTTYPE, T1.PAYMENTAMOUNT, T1.REMARKS, T1.PARTNERBANKID,
+				 T1.IssuingBank, T1.FavourName, T1.FavourNumber, T1.PayableLoc, T1.PrintingLoc, T1.ValueDate, T1.PostDate,
+				 T1.BankBranchID, T1.AcctHolderName, T1.AccountNo, T1.PhoneCountryCode, T1.PhoneNumber, 
+				 T1.Clearingdate, T1.Active, T1.PaymentCCy,
+				 T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode,
+				 T1.TASKID, T1.NEXTTASKID, T1.RECORDTYPE, T1.WORKFLOWID, T1.Status,
+				 T5.PARTNERBANKCODE, T5.PARTNERBANKNAME,
+				 T3.BANKCODE BRANCHBANKCODE,T3.BRANCHCODE BANKBRANCHCODE, T3.IFSC BANKBRANCHIFSC, T3.CITY,
+				 T4.BANKNAME ISSUINGBANKNAME, 
+				 T6.PcCityName PCCityName, T3.BranchDesc, T2.BankName
+				 FROM     PaymentInstructions_Temp  T1 LEFT OUTER JOIN
+				 BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID  LEFT OUTER JOIN
+				 BMTBANKDETAIL T2 ON T2.BANKCODE = T3.BANKCODE LEFT OUTER JOIN		 
+				 BMTBANKDETAIL T4  ON T1.ISSUINGBANK = T4.BANKCODE	LEFT OUTER JOIN
+				 PARTNERBANKS T5 ON T5.PARTNERBANKID=T1.PARTNERBANKID LEFT OUTER JOIN
+				 RMTPROVINCEVSCITY T6 ON T6.PCCITY = T3.CITY   
+		UNION ALL
+				SELECT	 T1.PAYMENTINSTRUCTIONID, T1.PAYMENTID, T1.PAYMENTTYPE, T1.PAYMENTAMOUNT, T1.REMARKS, T1.PARTNERBANKID,
+				 T1.IssuingBank, T1.FavourName, T1.FavourNumber, T1.PayableLoc, T1.PrintingLoc, T1.ValueDate, T1.PostDate,
+				 T1.BankBranchID, T1.AcctHolderName, T1.AccountNo, T1.PhoneCountryCode, T1.PhoneNumber, 
+				 T1.Clearingdate, T1.Active, T1.PaymentCCy,
+				 T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode,
+				 T1.TASKID, T1.NEXTTASKID, T1.RECORDTYPE, T1.WORKFLOWID, T1.Status,
+				 T5.PARTNERBANKCODE, T5.PARTNERBANKNAME,
+				 T3.BANKCODE BRANCHBANKCODE,T3.BRANCHCODE BANKBRANCHCODE, T3.IFSC BANKBRANCHIFSC, T3.CITY,
+				 T4.BANKNAME ISSUINGBANKNAME, 
+				 T6.PcCityName PCCityName, T3.BranchDesc, T2.BankName
+				 FROM  PaymentInstructions  T1 LEFT OUTER JOIN
+				 BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID  LEFT OUTER JOIN
+				 BMTBANKDETAIL T2 ON T2.BANKCODE = T3.BANKCODE LEFT OUTER JOIN		 
+				 BMTBANKDETAIL T4  ON T1.ISSUINGBANK = T4.BANKCODE	LEFT OUTER JOIN
+				 PARTNERBANKS T5 ON T5.PARTNERBANKID=T1.PARTNERBANKID LEFT OUTER JOIN
+				 RMTPROVINCEVSCITY T6 ON T6.PCCITY = T3.CITY 
+				WHERE NOT EXISTS ( SELECT 1  FROM PaymentInstructions_Temp WHERE PaymentInstructionId = T1.PaymentInstructionId)
+		</createView>
+	</changeSet>
+
+	<changeSet id="15" author="Durgaprasad g">
+		<createView viewName="PaymentInstructions_AView"
+			replaceIfExists="true">
+		SELECT	 T1.PAYMENTINSTRUCTIONID, T1.PAYMENTID, T1.PAYMENTTYPE, T1.PAYMENTAMOUNT, T1.REMARKS, T1.PARTNERBANKID,
+				 T1.IssuingBank, T1.FavourName, T1.FavourNumber, T1.PayableLoc, T1.PrintingLoc, T1.ValueDate, T1.PostDate,
+				 T1.BankBranchID, T1.AcctHolderName, T1.AccountNo, T1.PhoneCountryCode, T1.PhoneNumber, 
+				 T1.Clearingdate, T1.Active, T1.PaymentCCy,
+				 T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode,
+				 T1.TASKID, T1.NEXTTASKID, T1.RECORDTYPE, T1.WORKFLOWID,  T1.Status,
+				 T5.PARTNERBANKCODE, T5.PARTNERBANKNAME,
+				 T3.BANKCODE BRANCHBANKCODE,T3.BRANCHCODE BANKBRANCHCODE, T3.IFSC BANKBRANCHIFSC, T3.CITY,
+				 T4.BANKNAME ISSUINGBANKNAME, 
+				 T6.PcCityName PCCityName, T3.BranchDesc, T2.BankName
+				 FROM  PaymentInstructions  T1 LEFT OUTER JOIN
+				 BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID  LEFT OUTER JOIN
+				 BMTBANKDETAIL T2 ON T2.BANKCODE = T3.BANKCODE LEFT OUTER JOIN		 
+				 BMTBANKDETAIL T4  ON T1.ISSUINGBANK = T4.BANKCODE	LEFT OUTER JOIN
+				 PARTNERBANKS T5 ON T5.PARTNERBANKID=T1.PARTNERBANKID LEFT OUTER JOIN
+				 RMTPROVINCEVSCITY T6 ON T6.PCCITY = T3.CITY 
+		</createView>
+	</changeSet>
+	
+	<changeSet id="16" author="Durgaprasad G">
+	 <dropTable tableName="SeqPaymentInstructions"/>
+	</changeSet>
 </databaseChangeLog>
