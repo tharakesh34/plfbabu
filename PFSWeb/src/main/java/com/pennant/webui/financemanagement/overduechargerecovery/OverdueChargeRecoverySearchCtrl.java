@@ -296,7 +296,7 @@ public class OverdueChargeRecoverySearchCtrl extends GFCBaseCtrl<OverdueChargeRe
 			// open the dialog in modal mode
 			this.window_OverdueChargeRecoverySearch.doModal();
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 	}
 

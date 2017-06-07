@@ -348,7 +348,7 @@ public class FinCreditRevSubCategorySearchCtrl extends GFCBaseCtrl<FinCreditRevS
 			// open the dialog in modal mode
 			this.window_FinCreditRevSubCategorySearch.doModal();
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 	}
 

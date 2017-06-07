@@ -486,7 +486,7 @@ public class AccountsSearchCtrl extends GFCBaseCtrl<Accounts>  {
 			// open the dialog in modal mode
 			this.window_AcountsSearch.doModal();
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving ");
 	}

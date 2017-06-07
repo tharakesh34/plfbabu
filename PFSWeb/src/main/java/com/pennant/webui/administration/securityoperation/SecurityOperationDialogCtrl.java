@@ -387,7 +387,7 @@ public class SecurityOperationDialogCtrl extends GFCBaseCtrl<SecurityOperation> 
 			
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving ");
 	}

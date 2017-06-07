@@ -565,7 +565,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				this.tab_JVSummary.setSelected(true);
 			} 
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

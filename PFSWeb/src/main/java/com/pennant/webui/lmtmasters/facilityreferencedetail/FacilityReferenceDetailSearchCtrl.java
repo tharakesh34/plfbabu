@@ -274,7 +274,7 @@ public class FacilityReferenceDetailSearchCtrl extends GFCBaseCtrl<FacilityRefer
 			// open the dialog in modal mode
 			this.window_FacilityReferenceDetailSearch.doModal();
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 	}
 

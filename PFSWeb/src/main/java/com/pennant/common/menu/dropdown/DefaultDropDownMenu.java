@@ -84,7 +84,7 @@ class DefaultDropDownMenu extends Menu implements Serializable, ILabelElement, E
 			Executions.createComponents(getZulNavigation(), center, null);
 
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 	}
 
