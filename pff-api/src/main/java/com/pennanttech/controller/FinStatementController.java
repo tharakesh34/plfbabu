@@ -181,8 +181,7 @@ public class FinStatementController extends SummaryDetailService {
 					}
 
 					// calculate advPaymentAmount, outstandingPri, overduePft and tdPftAccured
-					FinanceProfitDetail finPftDetail = getFinanceProfitDetailDAO()
-							.getFinProfitDetailsForSummary(finReference);
+					FinanceProfitDetail finPftDetail = getFinanceProfitDetailDAO().getFinProfitDetailsForSummary(finReference);
 					if (finPftDetail == null) {
 						finPftDetail = new FinanceProfitDetail();
 						finPftDetail.setFinStartDate(finScheduleData.getFinanceMain().getFinStartDate());

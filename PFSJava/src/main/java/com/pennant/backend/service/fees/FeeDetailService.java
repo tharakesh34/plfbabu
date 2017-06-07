@@ -287,6 +287,17 @@ public class FeeDetailService {
 			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
 					.subtract(finFeeDetail.getWaivedAmount()));
 
+			if(!finFeeDetail.isOriginationFee()) {
+				if (finFeeDetail.getRemainingFee().compareTo(BigDecimal.ZERO) != 0) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "Sum of waiver and paid amounts";
+					valueParm[1] = "Actual fee amount:" + String.valueOf(finFeeDetail.getActualAmount());
+					valueParm[2] = finFeeDetail.getFeeTypeCode();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90268", valueParm)));
+					finScheduleData.setErrorDetails(errorDetails);
+				}
+			}
+			
 			if (finFeeDetail.getRemainingFee().compareTo(BigDecimal.ZERO) < 0) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "Sum of waiver and paid amounts";

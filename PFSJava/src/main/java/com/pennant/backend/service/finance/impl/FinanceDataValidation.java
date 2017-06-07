@@ -3649,18 +3649,6 @@ public class FinanceDataValidation {
 								return errorDetails;
 							}
 
-							// validate actual fee amount with waiver+paid amount
-							BigDecimal remainingFee = feeDetail.getActualAmount().subtract(feeDetail.getWaivedAmount().add(feeDetail.getPaidAmount()));
-							if(StringUtils.equals(PennantConstants.VLD_SRV_LOAN, vldGroup)) {
-								if (remainingFee.compareTo(BigDecimal.ZERO) != 0) {
-									String[] valueParm = new String[3];
-									valueParm[0] = "Sum of waiver and paid amounts";
-									valueParm[1] = "Actual fee amount:" + String.valueOf(feeDetail.getActualAmount());
-									valueParm[2] = feeDetail.getFeeTypeCode();
-									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90268", valueParm)));
-									return errorDetails;
-								}
-							}
 							// validate paid by Customer method
 							if (StringUtils.equals(finTypeFee.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
 								if (feeDetail.getPaidAmount().compareTo(finTypeFee.getAmount()) != 0) {

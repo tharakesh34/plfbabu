@@ -1364,7 +1364,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		receiptDetail.getRepayHeaders().clear();
 
 		// Prepare Allocation Details
-		List<String> allocateTypes = new ArrayList<>(finReceiptData.getAllocationMap().keySet());
+		List<String> allocateTypes = new ArrayList<String>();
+		if(finReceiptData.getAllocationMap() != null && !finReceiptData.getAllocationMap().isEmpty()) {
+			allocateTypes = new ArrayList<>(finReceiptData.getAllocationMap().keySet());
+		}
 		ReceiptAllocationDetail allocationDetail = null;
 		BigDecimal totalPaid = BigDecimal.ZERO;
 		for (int i = 0; i < allocateTypes.size(); i++) {
@@ -1392,7 +1395,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		
 		// Setting Valid Components to open based upon Remaining Balance
-		BigDecimal totReceiptAmount = receiptHeader.getReceiptAmount();
+		BigDecimal totReceiptAmount = receiptHeader.getReceiptAmount().subtract(receiptHeader.getTotFeeAmount());
 		BigDecimal remBal = totReceiptAmount.subtract(totalPaid);
 		if(remBal.compareTo(BigDecimal.ZERO) < 0){
 			remBal = BigDecimal.ZERO;
@@ -1455,7 +1458,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			method = CalculationConstants.EARLYPAY_ADJMUR;
 		}
 		
-		BigDecimal totalBal = receiptData.getReceiptHeader().getReceiptAmount().subtract( receiptData.getReceiptHeader().getTotFeeAmount());
+		BigDecimal totalBal = receiptData.getReceiptHeader().getReceiptAmount().subtract(receiptData.getReceiptHeader().getTotFeeAmount());
 		if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 			if(receiptData.getAllocationMap() != null && !receiptData.getAllocationMap().isEmpty()){
 				List<String> allocationKeys = new ArrayList<>(receiptData.getAllocationMap().keySet());

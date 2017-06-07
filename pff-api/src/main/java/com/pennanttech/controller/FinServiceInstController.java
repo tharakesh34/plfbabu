@@ -2,6 +2,7 @@ package com.pennanttech.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,14 +21,16 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.APIHeader;
+import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeScheduleCalculator;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
-import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
 import com.pennant.backend.financeservice.AddRepaymentService;
@@ -109,7 +112,6 @@ public class FinServiceInstController extends SummaryDetailService {
 	private ChangeFrequencyService		changeFrequencyService;
 	private ReScheduleService			reScheduleService;
 	private PostponementService			postponementService;
-	private FinanceScheduleDetailDAO	financeScheduleDetailDAO;
 	private RemoveTermsService			rmvTermsService;
 	private FinanceMainService			financeMainService;
 	private FinODPenaltyRateDAO			finODPenaltyRateDAO;
@@ -123,6 +125,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	private ManualPaymentService		manualPaymentService;
 	private RepayCalculator				repayCalculator;
 	private FinFeeDetailService			finFeeDetailService;
+	private FinanceProfitDetailDAO		profitDetailsDAO;
 
 	/**
 	 * Method for process AddRateChange request and re-calculate schedule details
@@ -1026,19 +1029,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		FinanceDetail financeDetail = getFinanceDetails(finServiceInst, eventCode);
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 
-		//Fetch Total Repayment Amount till Maturity date for Early Settlement
-		BigDecimal repayAmt = financeScheduleDetailDAO.getTotalRepayAmount(finServiceInst.getFinReference());
-		if(finServiceInst.getAmount().compareTo(repayAmt) < 0) {
-			FinanceDetail response = new FinanceDetail();
-			doEmptyResponseObject(response);
-			String[] valueParm = new String[2];
-			valueParm[0] = "Amount:"+finServiceInst.getAmount();
-			valueParm[1] = "Total outstandin amount:"+repayAmt;
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90205", valueParm));
-			return response;
-		}
 		finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYSETTLE);
-		finServiceInst.setAmount(repayAmt);
 
 		if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_INQUIRY)) {
 			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYSTLENQ);
@@ -1224,6 +1215,14 @@ public class FinServiceInstController extends SummaryDetailService {
 				totReceiptAmt, receiptHeader.getReceiptPurpose());
 		finReceiptData.setAllocationMap(allocationMap);
 
+		// validate repayment amount
+		WSReturnStatus returnStatus = validateRepayAmount(finScheduleData, finServiceInst, totReceiptAmt);
+		if(StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+				FinanceDetail response = new FinanceDetail();
+				doEmptyResponseObject(response);
+				response.setReturnStatus(returnStatus);
+				return response;
+		}
 		if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYRPY)
 				|| StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 			finReceiptData = receiptService.recalEarlypaySchdl(finReceiptData, finServiceInst, purpose);
@@ -1355,6 +1354,118 @@ public class FinServiceInstController extends SummaryDetailService {
 		}
 		logger.debug("Leaving");
 		return financeDetail;
+	}
+
+	private WSReturnStatus validateRepayAmount(FinScheduleData finScheduleData, FinServiceInstruction finServiceInst,
+			BigDecimal totReceiptAmt) {
+		// validate repayment amount
+		BigDecimal pftBalance = BigDecimal.ZERO;
+		BigDecimal priBalance = BigDecimal.ZERO;
+		BigDecimal schFeeBal = BigDecimal.ZERO;
+		BigDecimal tdsReturns = BigDecimal.ZERO;
+
+		Date curBussniessDate = DateUtility.getAppDate();
+		boolean partAccrualReq = true;
+		FinanceScheduleDetail curSchd = null;
+		FinanceScheduleDetail prvSchd = null;
+
+		if(totReceiptAmt.compareTo(BigDecimal.ZERO) <= 0) {
+			if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSTLENQ)
+					|| StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+				return APIErrorHandlerService.getFailedStatus("90330");
+			} else if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYRPY)
+					||StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+				return APIErrorHandlerService.getFailedStatus("90331");
+			}
+		}
+		
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		BigDecimal tdsMultiplier = BigDecimal.ONE;
+		if (financeMain.isTDSApplicable()) {
+			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+			if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
+				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20,
+						RoundingMode.HALF_DOWN);
+			}
+		}
+
+		List<FinanceScheduleDetail> tempScheduleDetails = finScheduleData.getFinanceScheduleDetails();
+		for (int i = 0; i < tempScheduleDetails.size(); i++) {
+			curSchd = tempScheduleDetails.get(i);
+			if (i != 0) {
+				prvSchd = tempScheduleDetails.get(i - 1);
+			}
+			Date schdDate = curSchd.getSchDate();
+
+			schFeeBal = schFeeBal.add(curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid()));
+
+			if (DateUtility.compare(schdDate, curBussniessDate) < 0) {
+				pftBalance = pftBalance.add(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
+				priBalance = priBalance.add(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
+				if (financeMain.isTDSApplicable()) {
+					BigDecimal pft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
+					BigDecimal actualPft = pft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+					tdsReturns = tdsReturns.add(pft.subtract(actualPft));
+				}
+			} else if (DateUtility.compare(curBussniessDate, schdDate) == 0) {
+
+				BigDecimal remPft = curSchd.getProfitCalc().subtract(curSchd.getSchdPftPaid());
+				pftBalance = pftBalance.add(curSchd.getProfitCalc().subtract(curSchd.getSchdPftPaid()));
+				if (prvSchd != null) {
+					remPft = remPft.add(prvSchd.getProfitBalance());
+					pftBalance = pftBalance.add(prvSchd.getProfitBalance());
+				}
+				if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)
+						|| StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
+					priBalance = priBalance.add(curSchd.getPrincipalSchd().add(curSchd.getClosingBalance()))
+							.subtract(curSchd.getCpzAmount()).subtract(curSchd.getSchdPriPaid());
+				} else {
+					priBalance = priBalance.add(curSchd.getPrincipalSchd()).subtract(curSchd.getCpzAmount())
+							.subtract(curSchd.getSchdPriPaid());
+				}
+
+				if (financeMain.isTDSApplicable()) {
+					BigDecimal actualPft = remPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+					tdsReturns = tdsReturns.add(remPft.subtract(actualPft));
+				}
+				partAccrualReq = false;
+
+			} else {
+				if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+					if (partAccrualReq && prvSchd != null) {
+						partAccrualReq = false;
+						BigDecimal accruedPft = CalculationUtil.calInterest(prvSchd.getSchDate(), curBussniessDate,
+								curSchd.getBalanceForPftCal(), prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
+						accruedPft = accruedPft.add(prvSchd.getProfitFraction());
+						accruedPft = CalculationUtil.roundAmount(accruedPft, financeMain.getCalRoundingMode(),
+								financeMain.getRoundingTarget());
+						pftBalance = pftBalance.add(accruedPft).add(prvSchd.getProfitBalance());
+
+						priBalance = priBalance.add(prvSchd.getClosingBalance());
+
+						if (financeMain.isTDSApplicable()) {
+							BigDecimal actualPft = (accruedPft.add(prvSchd.getProfitBalance())).divide(tdsMultiplier,
+									0, RoundingMode.HALF_DOWN);
+							tdsReturns = tdsReturns.add(accruedPft.add(prvSchd.getProfitBalance()).subtract(actualPft));
+						}
+					} else {
+						priBalance = priBalance.add(curSchd.getDisbAmount());
+					}
+				} else {
+					break;
+				}
+			}
+		}
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		if (totReceiptAmt.compareTo(priBalance.add(pftBalance).add(schFeeBal).subtract(tdsReturns)) < 0) {
+			if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSTLENQ)
+					|| StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+				return APIErrorHandlerService.getFailedStatus("90330");
+			} else if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+				return APIErrorHandlerService.getFailedStatus("90331");
+			}
+		}
+		return returnStatus;
 	}
 
 	private BigDecimal getTotalFeePaid(List<FinFeeDetail> finFeeDetailList) {
@@ -1679,8 +1790,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		financeMain.setRepayAccountId(finRepayHeader.getRepayAccountId());
 		Date valuedate = finServiceInst.getFromDate();
 
-		FinanceProfitDetail tempPftDetail = new FinanceProfitDetail();
-		tempPftDetail.setFinStartDate(financeMain.getFinStartDate());
+		FinanceProfitDetail tempPftDetail = profitDetailsDAO.getFinProfitDetailsById(financeMain.getFinReference());
 		getAccrualService().calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(), tempPftDetail, valuedate);
 
 		List<RepayScheduleDetail> repaySchdList = repayData.getRepayScheduleDetails();
@@ -1751,10 +1861,6 @@ public class FinServiceInstController extends SummaryDetailService {
 		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
 	}
 
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
 	public void setPostponementService(PostponementService postponementService) {
 		this.postponementService = postponementService;
 	}
@@ -1798,4 +1904,9 @@ public class FinServiceInstController extends SummaryDetailService {
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
 		this.finFeeDetailService = finFeeDetailService;
 	}
+	
+	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
+		this.profitDetailsDAO = profitDetailsDAO;
+	}
+
 }
