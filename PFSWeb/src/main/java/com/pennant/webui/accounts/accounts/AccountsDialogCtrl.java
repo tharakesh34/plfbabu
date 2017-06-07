@@ -227,8 +227,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 			doSetFieldProperties();
 			doShowDialog(getAcounts());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_AccountsDialog.onClose();
 		}
 		logger.debug("Leaving " + event.toString());

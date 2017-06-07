@@ -172,8 +172,7 @@ public class VehicleManufacturerDialogCtrl extends GFCBaseCtrl<VehicleManufactur
 			doSetFieldProperties();
 			doShowDialog(getVehicleManufacturer());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_VehicleManufacturerDialog.onClose();
 		}
 		logger.debug("Leaving");

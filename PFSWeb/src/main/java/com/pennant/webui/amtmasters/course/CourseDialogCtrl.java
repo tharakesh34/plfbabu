@@ -169,8 +169,7 @@ public class CourseDialogCtrl extends GFCBaseCtrl<Course> {
 			doSetFieldProperties();
 			doShowDialog(getCourse());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_CourseDialog.onClose();
 		}
 		logger.debug("Leaving");

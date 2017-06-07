@@ -179,8 +179,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 			fillComboBox(cb_expenceFor, "", expenseForList, "");
 			doShowDialog(getExpenseType());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ExpenseTypeDialog.onClose();
 		}
 		logger.debug("Leaving");

@@ -244,8 +244,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			doSetFieldProperties();
 			doShowDialog(getVehicleDealer());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_VehicleDealerDialog.onClose();
 		}
 

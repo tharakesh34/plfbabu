@@ -176,8 +176,7 @@ public class VehicleModelDialogCtrl extends GFCBaseCtrl<VehicleModel> {
 			doSetFieldProperties();
 			doShowDialog(getVehicleModel());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_VehicleModelDialog.onClose();
 		}
 		logger.debug("Leaving");

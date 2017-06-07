@@ -250,8 +250,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.rowSecurityUserDialogUsrPwd.setVisible(false);
 			doShowDialog(getSecurityUser());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_SecurityUserDialog.onClose();
 		}
 		logger.debug("Leaving " + event.toString());

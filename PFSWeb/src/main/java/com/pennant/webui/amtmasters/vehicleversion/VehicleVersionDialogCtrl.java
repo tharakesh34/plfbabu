@@ -179,8 +179,7 @@ public class VehicleVersionDialogCtrl extends GFCBaseCtrl<VehicleVersion> {
 			doSetFieldProperties();
 			doShowDialog(getVehicleVersion());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_VehicleVersionDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

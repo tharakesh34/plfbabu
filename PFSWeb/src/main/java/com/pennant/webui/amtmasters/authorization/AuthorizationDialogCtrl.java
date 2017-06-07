@@ -218,8 +218,7 @@ public class AuthorizationDialogCtrl extends GFCBaseCtrl<Authorization> {
 			doSetFieldProperties();
 			doShowDialog(getAuthorization());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_AuthorizationDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
