@@ -476,6 +476,10 @@ public class FinAdvancePaymentsCtrl {
 			}
 			return false;
 		}
+		
+		if (StringUtils.equals(DisbursementConstants.STATUS_PAID, aFinAdvancePayments.getStatus())) {
+			return false;
+		}
 
 		return true;
 	}

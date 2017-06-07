@@ -265,10 +265,9 @@ public class FinMandateServiceImpl implements FinMandateService {
 	 */
 	public void validateMandate(AuditDetail auditDetail, FinanceDetail financeDetail) {
 		Mandate mandate = financeDetail.getMandate();
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
-		if (!financeDetail.isActionSave() && mandate != null) {
-
-			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		if (checkRepayMethod(financeMain) && !financeDetail.isActionSave() && mandate != null) {
 
 			if (mandate.getMaxLimit() != null && mandate.getMaxLimit().compareTo(BigDecimal.ZERO) > 0) {
 				BigDecimal exposure = BigDecimal.ZERO;
@@ -333,7 +332,8 @@ public class FinMandateServiceImpl implements FinMandateService {
 
 	public void promptMandate(AuditDetail auditDetail, FinanceDetail financeDetail) {
 		Mandate mandate = financeDetail.getMandate();
-		if (!financeDetail.isActionSave() && mandate != null) {
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		if (checkRepayMethod(financeMain) && !financeDetail.isActionSave() && mandate != null) {
 			if (!mandate.isUseExisting()) {
 				// prompt for Open Mandate
 				int count = getMnadateByCustID(mandate.getCustID(), mandate.getMandateID()).size();
