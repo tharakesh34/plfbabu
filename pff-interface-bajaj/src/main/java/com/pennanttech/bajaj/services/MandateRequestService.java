@@ -153,10 +153,13 @@ public class MandateRequestService extends BajajService implements MandateReques
 							rowMap.put("EMI", CUST_EMI);
 							rowMap.put("DEBIT_AMOUNT", CUST_EMI);
 						}
-
+						
 						Date startDate = (Date) rowMap.get("START_DATE");
-						startDate = DateUtil.addMonths(startDate, 240);
-						rowMap.put("EMI_ENDDATE", startDate);
+						Date endDate = DateUtil.addMonths(startDate, 240);
+						
+						rowMap.put("EFFECTIVE_DATE", startDate);
+						rowMap.put("EMI_ENDDATE", endDate);
+						
 					}
 
 					rowMap.remove("CCYMINORCCYUNITS");
