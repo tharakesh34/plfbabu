@@ -59,7 +59,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
@@ -77,7 +76,6 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -535,15 +533,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl<SplRate> {
 		final String msg = Labels
 				.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
 				Labels.getLabel("label_SplRateDialog_SRType.value")+" : "+aSplRate.getSRType();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title,
-				MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-		if (conf==MultiLineMessageBox.YES){
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aSplRate.getRecordType())){
 				aSplRate.setVersion(aSplRate.getVersion()+1);
 				aSplRate.setRecordType(PennantConstants.RECORD_TYPE_DEL);
