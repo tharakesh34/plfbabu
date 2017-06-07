@@ -758,7 +758,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 					String nextFinEvent = getLiabilityRequestService().getProceedingWorkflow(this.finType.getValue(),
 							this.moduleDefiner);
 					if (StringUtils.isNotBlank(nextFinEvent)) {
-						MessageUtil.showInfoMessage(Labels.getLabel("menu_Item_" + nextFinEvent));
+						MessageUtil.showMessage(Labels.getLabel("menu_Item_" + nextFinEvent));
 					}
 
 

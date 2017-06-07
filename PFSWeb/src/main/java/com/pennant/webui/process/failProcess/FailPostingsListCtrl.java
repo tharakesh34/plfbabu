@@ -230,8 +230,8 @@ public class FailPostingsListCtrl extends GFCBaseListCtrl<DDAFTransactionLog> {
 						failCount++;
 						getEodFailPostingService().updateFailPostings(ddaFTransactionLog);
 					}
-					MessageUtil.showInfoMessage("Total Processed  :" + count + "," + "Successfully posted :"
-							+ successCount + "," + "failed :" + failCount);
+					MessageUtil.showMessage("Total Processed  :" + count + "," + "Successfully posted :" + successCount
+							+ "," + "failed :" + failCount);
 					search();
 				}
 			}

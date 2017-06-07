@@ -6592,8 +6592,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								processCompleted = true;
 							}
 						} catch (InterfaceException pfe) {
-							logger.error("Exception: ", pfe);
-							MessageUtil.showInfoMessage(pfe.getErrorMessage());
+							MessageUtil.showError(pfe);
 							processCompleted = false;
 						}
 					} else {

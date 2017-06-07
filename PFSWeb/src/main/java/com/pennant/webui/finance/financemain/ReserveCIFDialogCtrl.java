@@ -198,7 +198,7 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			// create CIF process
 			boolean isCreateCIF = doCreateCIFProcess(newCustCIF);
 			if(isCreateCIF) {
-				MessageUtil.showInfoMessage(Labels.getLabel("CUSTOMER_CREATE"));
+				MessageUtil.showMessage(Labels.getLabel("CUSTOMER_CREATE"));
 				
 				// check whether customer account created or not
 				validateCreateAccount();
@@ -248,7 +248,7 @@ public class ReserveCIFDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		if(!StringUtils.isBlank(interfaceAccount.getAccountNumber())) {
 			updateExtensionDetail(interfaceAccount);
-			MessageUtil.showInfoMessage(Labels.getLabel("ACCOUNT_CREATED"));
+			MessageUtil.showMessage(Labels.getLabel("ACCOUNT_CREATED"));
 			try {
 				this.window_ReserveCIFDialog.detach();
 				getFinanceMainListCtrl().showDetailView(getFinanceDetail());
