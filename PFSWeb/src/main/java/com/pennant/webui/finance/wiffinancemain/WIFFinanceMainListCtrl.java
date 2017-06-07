@@ -298,7 +298,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				errParm[0]=PennantJavaUtil.getLabel("label_FinReference")+":"+valueParm[0];
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 			}else{
 				showDetailView(financeDetail);
 			}	

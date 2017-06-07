@@ -219,8 +219,7 @@ public class BulkRateChangeSearchCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 			// open the dialog in modal mode
 			this.window_BulkRateChangeSearch.doModal();
 		}  catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

@@ -383,8 +383,7 @@ public class FinAdvancePaymentsCtrl {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinAdvancePaymentsDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 
 	}
