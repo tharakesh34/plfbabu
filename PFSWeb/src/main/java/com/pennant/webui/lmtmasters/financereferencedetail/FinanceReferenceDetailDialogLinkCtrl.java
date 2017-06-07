@@ -790,8 +790,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 				// Set parent window visible
 				getFinanceReferenceDetailDialogCtrl().window_FinanceReferenceDetailDialog.setVisible(true);
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 
 		}

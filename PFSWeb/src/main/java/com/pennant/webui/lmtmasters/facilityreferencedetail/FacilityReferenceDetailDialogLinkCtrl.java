@@ -678,8 +678,7 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 				// Set parent window visible
 				getFacilityReferenceDetailDialogCtrl().window_FacilityReferenceDetailDialog.setVisible(true);
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 
 		}

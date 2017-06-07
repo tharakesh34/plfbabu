@@ -831,9 +831,8 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 					}	
 				}
 
-			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+			} catch (DataAccessException e) {
+				MessageUtil.showError(e);
 			}
 
 		}
