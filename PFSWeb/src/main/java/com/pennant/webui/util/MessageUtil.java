@@ -42,7 +42,6 @@
  */
 package com.pennant.webui.util;
 
-import java.util.Collection;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
@@ -53,7 +52,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ErrorDetails;
@@ -161,33 +159,6 @@ public final class MessageUtil {
 	}
 
 	// TODO: Re-factor below code.
-
-	/**
-	 * @deprecated
-	 * @param e
-	 * @throws InterruptedException
-	 */
-	@Deprecated
-	public static void showErrorMessage(Exception e) throws InterruptedException {
-		final String title = Labels.getLabel("message.Error");
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(Labels.getLabel("message.SystemError"), title, MultiLineMessageBox.OK, "ERROR", true,
-				new org.zkoss.zk.ui.event.EventListener<Event>() {
-					public void onEvent(Event evt) throws InterruptedException {
-						Collection<Component> list = Executions.getCurrent().getDesktop().getComponents();
-
-						for (Component component : list) {
-							if (component instanceof Tab) {
-								Tab tab = (Tab) component;
-								if (tab.isSelected()) {
-									tab.close();
-									break;
-								}
-							}
-						}
-					}
-				});
-	}
 
 	/** A symbol consisting of an exclamation point in a triangle with a yellow background. */
 	public static final String	EXCLAMATION	= Messagebox.EXCLAMATION;
