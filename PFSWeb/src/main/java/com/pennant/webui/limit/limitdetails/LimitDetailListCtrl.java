@@ -314,7 +314,7 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 		if (!isWorkFlowEnabled() && wfAvailable) {
 			this.button_LimitDetailsList_NewLimitDetails.setVisible(false);
 			this.button_LimitDetailsList_LimitDetailsSearch.setVisible(false);
-			MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
+			MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW CONFIG NOT FOUND"));
 		} else {
 			doSearch();
 			if (this.workFlowFrom != null && !isWorkFlowEnabled()) {
@@ -586,9 +586,8 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 		// call the zul-file with the parameters packed in a map
 		try {
 			Executions.createComponents("/WEB-INF/pages/Limit/LimitDetails/LimtDetailsHeaderDialog.zul", null, map);
-		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / " + e.getMessage());
-			MessageUtil.showErrorMessage(e.toString());
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

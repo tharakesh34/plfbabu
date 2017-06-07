@@ -62,7 +62,7 @@ public class ImportDataTablesListCtrl extends GFCBaseCtrl<Object> {
 			List<String> tableNamesList = new ArrayList<String>();
 
 			if(selectedItems.isEmpty()){
-				MessageUtil.showErrorMessage(Labels.getLabel("ImportDataList_NoEmpty"));
+				MessageUtil.showError(Labels.getLabel("ImportDataList_NoEmpty"));
 				return;
 			}
 			

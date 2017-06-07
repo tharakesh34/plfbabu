@@ -211,10 +211,10 @@ public class FacilityReferenceDetailListCtrl extends GFCBaseListCtrl<CAFFacility
 				errParm[0]=PennantJavaUtil.getLabel("label_FinType")+":"+valueParm[0];
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 			}
 			if(facilityReference.getLovDescWorkFlowRolesName()==null || StringUtils.isEmpty(facilityReference.getLovDescWorkFlowRolesName())){
-				MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 			}else{
 				facilityReference.setLovDescFinTypeDescName(aFacilityType.getFacilityDesc());
 			showDetailView(facilityReference);

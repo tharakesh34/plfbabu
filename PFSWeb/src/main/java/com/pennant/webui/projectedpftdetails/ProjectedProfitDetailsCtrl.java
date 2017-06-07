@@ -8,12 +8,6 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.export.JRXlsExporter;
-import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
-
 import org.apache.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.media.AMedia;
@@ -45,6 +39,12 @@ import com.pennant.search.Filter;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
+
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
 public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet>{
 
@@ -177,7 +177,7 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet>{
 		logger.debug("Entering " + event.toString());
 		reportConfiguration = getReportConfiguration("ProjectedProfitDetails");
 		if(reportConfiguration == null || (reportConfiguration.isPromptRequired()&& reportConfiguration.getListReportFieldsDetails().size()==0)){
-			MessageUtil.showErrorMessage(Labels.getLabel("label_ReportNotConfigured.error"));	
+			MessageUtil.showError(Labels.getLabel("label_ReportNotConfigured.error"));
 		}else {
 			
 			if (reportConfiguration.getReportName().startsWith(EXCEL_TYPE)) {
@@ -310,12 +310,12 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet>{
 				}
 
 			}else{
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Error_ReportNotImplementedYet.vlaue"));
+				MessageUtil.showError(Labels.getLabel("label_Error_ReportNotImplementedYet.vlaue"));
 			}
 
 		} catch (Exception e) {
 			logger.error("Error while Preparing jasper Report", e);
-			MessageUtil.showErrorMessage("Error in Configuring the " + reportName + " report");
+			MessageUtil.showError("Error in Configuring the " + reportName + " report");
 		} finally {
 			if(con!=null){
 				con.close();

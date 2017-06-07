@@ -228,7 +228,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			}
 
 			if(reportConfiguration == null || (reportConfiguration.isPromptRequired()&& reportConfiguration.getListReportFieldsDetails().size()==0)){
-				MessageUtil.showErrorMessage(Labels.getLabel("label_ReportNotConfigured.error"));	
+				MessageUtil.showError(Labels.getLabel("label_ReportNotConfigured.error"));
 				closeDialog();
 			}else {
 				
@@ -253,7 +253,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(Labels.getLabel("label_ReportConfiguredError.error"));
+			MessageUtil.showError(Labels.getLabel("label_ReportConfiguredError.error"));
 			closeDialog();
 		}
 
@@ -1615,13 +1615,13 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				}
 
 			}else{
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Error_ReportNotImplementedYet.vlaue"));
+				MessageUtil.showError(Labels.getLabel("label_Error_ReportNotImplementedYet.vlaue"));
 				closeDialog();
 			}
 
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage("Error in Configuring the " +reportName+ " report");
+			MessageUtil.showError("Error in Configuring the " + reportName + " report");
 			closeDialog();
 		}finally{
 			if(con!=null){
@@ -1662,7 +1662,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 		}else{
 
-			MessageUtil.showErrorMessage(Labels.getLabel("label_Empty_Filter.error"));
+			MessageUtil.showError(Labels.getLabel("label_Empty_Filter.error"));
 
 		}
 		logger.debug("Leaving" + event.toString());
@@ -1720,7 +1720,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		logger.debug("Entering");
 		int recordCount = getReportConfigurationService().getRecordCountByTemplateName(reportId, usrId, templateName);
 		if(recordCount>0){
-			MessageUtil.showErrorMessage(Labels.getLabel("label_TemplateName_AlreadyExist.error"));
+			MessageUtil.showError(Labels.getLabel("label_TemplateName_AlreadyExist.error"));
 			return false;
 
 		}else{
@@ -2271,7 +2271,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(Labels.getLabel("label_ReportConfiguredError.error"));
+			MessageUtil.showError(Labels.getLabel("label_ReportConfiguredError.error"));
 		}
 		logger.debug("Leaving" + event.toString());
 	}

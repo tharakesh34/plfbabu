@@ -316,7 +316,7 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl<Customer> {
 	private void printTicket() throws InterfaceException, InterruptedException{
 		logger.debug("Entering");
 		if(this.custID.longValue() == 0){
-			MessageUtil.showErrorMessage("Customer must be selected.");
+			MessageUtil.showError("Customer must be selected.");
 			return;
 		}
 		AvailCustomer availCustomer = new AvailCustomer();
@@ -372,7 +372,7 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl<Customer> {
 			
 		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(Labels.getLabel("label_Error_ReportNotImplementedYet.vlaue"));
+			MessageUtil.showError(Labels.getLabel("label_Error_ReportNotImplementedYet.vlaue"));
 			return;
 		}
 		

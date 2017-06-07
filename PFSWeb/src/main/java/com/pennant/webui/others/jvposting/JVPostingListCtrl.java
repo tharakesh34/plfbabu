@@ -236,8 +236,7 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 			// detailed view is not allowed.
 			if (aJVPosting.getValidationStatus() != null
 					&& aJVPosting.getValidationStatus().equalsIgnoreCase(PennantConstants.POSTSTS_INPROGRESS)) {
-				MessageUtil.showErrorMessage(Labels.getLabel("label_ACValidationProcessInprogress")
-						+ aJVPosting.getId());
+				MessageUtil.showError(Labels.getLabel("label_ACValidationProcessInprogress") + aJVPosting.getId());
 				// Method for Refreshing List after Account Validation
 				// Process
 				refreshList();
@@ -257,7 +256,7 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 
 					ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD,
 							"41005", errParm, valueParm), getUserWorkspace().getUserLanguage());
-					MessageUtil.showErrorMessage(errorDetails.getError());
+					MessageUtil.showError(errorDetails.getError());
 				} else {
 					/*
 					 * if (isWorkFlowEnabled() && (this.moduleType == null || this.moduleType .getValue()

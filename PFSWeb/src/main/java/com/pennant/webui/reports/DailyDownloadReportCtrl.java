@@ -133,7 +133,7 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 			this.toDate.setValue(DateUtility.today());*/
 			setModuleNamesList();
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e.getMessage());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -396,13 +396,13 @@ public class DailyDownloadReportCtrl extends  GFCBaseListCtrl<ReportsMonthEndCon
 				}
 					
 			}else{
-				MessageUtil.showErrorMessage(Labels.getLabel("label_Error_ReportNotImplementedYet.vlaue"));
+				MessageUtil.showError(Labels.getLabel("label_Error_ReportNotImplementedYet.vlaue"));
 			}
 			
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			if(!bulkReportProc){
-				MessageUtil.showErrorMessage("Error in Configuring the " +reportName+ " report");
+				MessageUtil.showError("Error in Configuring the " + reportName + " report");
 			}
 			return false;
 		}finally{

@@ -203,11 +203,11 @@ public class MandateFileUploadListCtrl extends GFCBaseListCtrl<Mandate> implemen
 			mandateStatusUpdate.setFail(failedCount);
 			mandateService.processStatusUpdate(mandateStatusUpdate);
 		} else {
-			MessageUtil.showErrorMessage(fileName.getValue() + " already updated");
+				MessageUtil.showError(fileName.getValue() + " already updated");
 			fileName.setValue("");
 		}
 		}else{
-			MessageUtil.showErrorMessage(Labels.getLabel("Mandate_Supported_Document"));
+			MessageUtil.showError(Labels.getLabel("Mandate_Supported_Document"));
 		}
 
 		logger.debug("Leaving" + event.toString());
