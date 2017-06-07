@@ -426,7 +426,9 @@ public class RepaymentProcessUtil {
 						aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 
 						// Accounting Entry Execution
-						getPostingsPreparationUtil().postAccounting(aeEvent);
+						aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
+						repayHeader.setLinkedTranId(aeEvent.getLinkedTranId());
+						repayHeader.setValueDate(postDate);
 						
 						if (receiptDetail.getPayAgainstID() != 0 && receiptDetail.getPayAgainstID() != Long.MIN_VALUE) {
 							getFinExcessAmountDAO().updateExcessBal(receiptDetail.getPayAgainstID(),
@@ -445,6 +447,15 @@ public class RepaymentProcessUtil {
 								excess.setReservedAmt(BigDecimal.ZERO);
 								getFinExcessAmountDAO().saveExcess(excess);
 							}
+							
+							// Excess Movement Creation
+							/*FinExcessMovement movement = new FinExcessMovement();
+							movement.setExcessID(payAgainstID);
+							movement.setReceiptID(receiptSeqID);
+							movement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
+							movement.setTranType(AccountConstants.TRANTYPE_CREDIT);
+							movement.setAmount(repayHeader.getRepayAmount());
+							getFinExcessAmountDAO().saveExcessMovement(movement);*/
 						}
 					}
 					

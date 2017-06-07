@@ -313,7 +313,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		Date dateValueDate = DateUtility.getAppValueDate();
 
 		// Total Payment Amount
-		BigDecimal rpyTotal = rpyQueueHeader.getPrincipal().add(rpyQueueHeader.getProfit()).add(rpyQueueHeader.getFee())
+		BigDecimal rpyTotal = rpyQueueHeader.getPrincipal().add(rpyQueueHeader.getProfit()).add(rpyQueueHeader.getFee()).add(rpyQueueHeader.getLateProfit())
 				.add(rpyQueueHeader.getInsurance()).add(rpyQueueHeader.getSuplRent()).add(rpyQueueHeader.getIncrCost());
 
 		// If Postings Process only for Excess Accounts

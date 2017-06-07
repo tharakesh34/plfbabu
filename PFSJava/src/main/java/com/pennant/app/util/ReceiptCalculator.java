@@ -275,6 +275,9 @@ public class ReceiptCalculator implements Serializable {
 				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
 			}
 		}
+		
+		// Fee Amount
+		BigDecimal eventFeeBal = receiptData.getReceiptHeader().getTotFeeAmount();
 
 		// Start Receipt Details Rendering Process using allocation Details
 		for (int i = 0; i < receiptDetailList.size(); i++) {
@@ -287,13 +290,22 @@ public class ReceiptCalculator implements Serializable {
 			}
 			
 			BigDecimal totalReceiptAmt = receiptDetail.getAmount();
-			repayHeaderList = new ArrayList<>();
+			if(eventFeeBal.compareTo(BigDecimal.ZERO) > 0){
+				if(eventFeeBal.compareTo(totalReceiptAmt) > 0){
+					eventFeeBal = eventFeeBal.subtract(totalReceiptAmt);
+					totalReceiptAmt = BigDecimal.ZERO;
+				}else{
+					totalReceiptAmt = totalReceiptAmt.subtract(eventFeeBal);
+					eventFeeBal = BigDecimal.ZERO;
+				}
+			}
 
 			// If no balance for repayment then return with out calculation
 			if (totalReceiptAmt.compareTo(BigDecimal.ZERO) == 0) {
 				continue;
 			}
 			
+			repayHeaderList = new ArrayList<>();
 			// Making Waived amount to total Receipts to set payment on Schedule cleared
 			if(i == receiptDetailList.size() -1){
 				totalReceiptAmt = totalReceiptAmt.add(totalWaivedAmt);

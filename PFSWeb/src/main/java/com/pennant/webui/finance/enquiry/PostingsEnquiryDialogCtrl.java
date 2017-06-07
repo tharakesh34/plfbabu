@@ -58,6 +58,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ReportGenerationUtil;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.rmtmasters.TransactionDetail;
@@ -277,7 +278,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			detail.setTransDesc(dataSet.getTranDesc());
 			detail.setCcy(dataSet.getAcCcy());
 			detail.setAccount(PennantApplicationUtil.formatAccountNumber(dataSet.getAccount()));
-			detail.setPostAmount(PennantAppUtil.amountFormate(dataSet.getPostAmount(), dataSet.getFormatter()));
+			detail.setPostAmount(PennantAppUtil.amountFormate(dataSet.getPostAmount(), CurrencyUtil.getFormat(dataSet.getAcCcy())));
 			accountingDetails.add(detail);
 		}
 

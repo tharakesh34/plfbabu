@@ -1077,7 +1077,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 	 */
 	private List<FinReceiptDetail> sortReceiptDetails(List<FinReceiptDetail> receipts) {
 
-		if (receipts != null && receipts.size() > 0) {
+		if (receipts != null && receipts.size() > 1) {
 			Collections.sort(receipts, new Comparator<FinReceiptDetail>() {
 				@Override
 				public int compare(FinReceiptDetail detail1, FinReceiptDetail detail2) {
