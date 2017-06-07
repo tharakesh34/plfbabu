@@ -68,7 +68,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -102,7 +101,6 @@ import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -1257,15 +1255,7 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
 				Labels.getLabel("label_CommodityBrokerDetailDialog_BrokerCode.value")+" : "+aCommodityBrokerDetail.getBrokerCode();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf =  MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES
-				| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-		if (conf==MultiLineMessageBox.YES){
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCommodityBrokerDetail.getRecordType())){
 				aCommodityBrokerDetail.setVersion(aCommodityBrokerDetail.getVersion()+1);
 				aCommodityBrokerDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
