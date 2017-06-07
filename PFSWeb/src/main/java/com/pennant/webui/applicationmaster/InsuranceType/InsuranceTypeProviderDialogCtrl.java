@@ -167,8 +167,7 @@ public class InsuranceTypeProviderDialogCtrl extends GFCBaseCtrl<InsuranceTypePr
 
 			this.window_InsuranceTypeProviderDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

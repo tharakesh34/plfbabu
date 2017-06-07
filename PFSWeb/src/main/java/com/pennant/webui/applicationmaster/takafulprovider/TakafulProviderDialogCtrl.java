@@ -315,8 +315,7 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl<TakafulProvider> {
 							getTakafulProvider().getVersion()), this);
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 
@@ -1227,8 +1226,7 @@ public class TakafulProviderDialogCtrl extends GFCBaseCtrl<TakafulProvider> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

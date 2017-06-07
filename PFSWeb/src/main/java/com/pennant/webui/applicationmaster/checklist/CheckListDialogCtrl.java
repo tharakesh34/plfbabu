@@ -827,8 +827,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
