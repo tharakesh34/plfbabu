@@ -290,12 +290,14 @@ public class ReceiptCalculator implements Serializable {
 			}
 			
 			BigDecimal totalReceiptAmt = receiptDetail.getAmount();
+			BigDecimal actualReceiptAmt = receiptDetail.getAmount();
 			if(eventFeeBal.compareTo(BigDecimal.ZERO) > 0){
 				if(eventFeeBal.compareTo(totalReceiptAmt) > 0){
 					eventFeeBal = eventFeeBal.subtract(totalReceiptAmt);
 					totalReceiptAmt = BigDecimal.ZERO;
 				}else{
 					totalReceiptAmt = totalReceiptAmt.subtract(eventFeeBal);
+					actualReceiptAmt = actualReceiptAmt.subtract(eventFeeBal);
 					eventFeeBal = BigDecimal.ZERO;
 				}
 			}
@@ -723,14 +725,14 @@ public class ReceiptCalculator implements Serializable {
 			}
 			
 			FinRepayHeader repayHeader = null;
-			BigDecimal balAmount = receiptDetail.getAmount().subtract(totalReceiptAmt).subtract(partialSettleAmount);
-			if(receiptDetail.getAmount().compareTo(totalReceiptAmt) > 0 && 
-					receiptDetail.getAmount().compareTo(partialSettleAmount) > 0 && isSchdPaid && balAmount.compareTo(advAmountPaid) != 0){
+			BigDecimal balAmount = actualReceiptAmt.subtract(totalReceiptAmt).subtract(partialSettleAmount);
+			if(actualReceiptAmt.compareTo(totalReceiptAmt) > 0 && 
+					actualReceiptAmt.compareTo(partialSettleAmount) > 0 && isSchdPaid && balAmount.compareTo(advAmountPaid) != 0){
 				// Prepare Repay Header Details
 				repayHeader = new FinRepayHeader();
 				repayHeader.setFinReference(receiptData.getFinReference());
 				repayHeader.setValueDate(DateUtility.getAppDate());
-				repayHeader.setRepayAmount(receiptDetail.getAmount().subtract(totalReceiptAmt).subtract(partialSettleAmount));
+				repayHeader.setRepayAmount(actualReceiptAmt.subtract(totalReceiptAmt).subtract(partialSettleAmount));
 				if(StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)){
 					repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_EARLYSETTLE);
 				}else{
