@@ -227,8 +227,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 					getNotes("CollateralThirdParty", String.valueOf(getCollateralThirdParty().getCustomerId()),
 							getCollateralThirdParty().getVersion()), this);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

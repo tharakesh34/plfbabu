@@ -903,8 +903,7 @@ public class SukukBrokerDialogCtrl extends GFCBaseCtrl<SukukBroker> {
 			Executions.createComponents(
 					"/WEB-INF/pages/ApplicationMaster/SukukBrokerBonds/SukukBrokerBondsDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -932,8 +931,7 @@ public class SukukBrokerDialogCtrl extends GFCBaseCtrl<SukukBroker> {
 			Executions.createComponents(
 					"/WEB-INF/pages/ApplicationMaster/SukukBrokerBonds/SukukBrokerBondsDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

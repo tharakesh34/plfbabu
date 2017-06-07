@@ -346,8 +346,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			ScreenCTL.displayNotes(getNotes("CoOwnerDetail", String.valueOf(getCoOwnerDetail().getCoOwnerId()), getCoOwnerDetail()
 							.getVersion()), this);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

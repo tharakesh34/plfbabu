@@ -276,8 +276,7 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 			ScreenCTL.displayNotes(getNotes("Flag",getFlag().getFlagCode(),getFlag().getVersion()),this);
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" +event.toString());
 	

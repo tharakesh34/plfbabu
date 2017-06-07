@@ -588,8 +588,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			ScreenCTL.displayNotes(getNotes("Commitment", getCommitment().getCmtReference(), getCommitment().getVersion()), this);
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 
@@ -3778,8 +3777,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/Commitment/Commitment/CommitmentRateDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");

@@ -266,8 +266,7 @@ public class FinCreditRevSubCategoryListCtrl extends GFCBaseListCtrl<FinCreditRe
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/FinCreditRevSubCategory/FinCreditRevSubCategoryDialog.zul",null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -322,8 +321,7 @@ public class FinCreditRevSubCategoryListCtrl extends GFCBaseListCtrl<FinCreditRe
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/FinCreditRevSubCategory/FinCreditRevSubCategorySearchDialog.zul",null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

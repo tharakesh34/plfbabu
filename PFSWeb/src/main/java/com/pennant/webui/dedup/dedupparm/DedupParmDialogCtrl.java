@@ -1308,8 +1308,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/DedupParm/SqlViewResult.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

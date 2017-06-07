@@ -381,8 +381,7 @@ public class QueryDialogCtrl extends GFCBaseCtrl<Query> {
 			ScreenCTL.displayNotes(getNotes("Query", getQuery().getQueryCode(), getQuery().getVersion()), this);
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 

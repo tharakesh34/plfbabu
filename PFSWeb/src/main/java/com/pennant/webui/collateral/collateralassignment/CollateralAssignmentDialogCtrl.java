@@ -231,8 +231,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 					getNotes("CollateralAssignment", String.valueOf(getCollateralAssignment().getCollateralRef()),
 							getCollateralAssignment().getVersion()), this);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
