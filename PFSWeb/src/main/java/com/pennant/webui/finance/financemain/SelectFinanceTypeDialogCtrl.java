@@ -123,8 +123,8 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -1136,8 +1136,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_SUKUK)) {
 					fileLocation.append("SukukFinanceMainDialog.zul");
 				} else {
-					MessageUtil.showErrorMessage(Labels.getLabel("message.error.productNotFound",
-							new String[] { productType }));
+					MessageUtil
+							.showError(Labels.getLabel("message.error.productNotFound", new String[] { productType }));
 					return;
 				}
 			}
@@ -1152,15 +1152,14 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				Executions.createComponents(fileLocation.toString(), null, map);
 				this.window_SelectFinanceTypeDialog.onClose();
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e.toString());
+				MessageUtil.showError(e);
 			}
 		} else {
 			logger.fatal("work flow not found");
 			if (isPromotionPick) {
 				this.window_SelectFinanceTypeDialog.onClose();
 			}
-			MessageUtil.showErrorMessage(Labels.getLabel("Workflow_Not_Found")
+			MessageUtil.showError(Labels.getLabel("Workflow_Not_Found")
 					+ financeDetail.getFinScheduleData().getFinanceMain().getFinType());
 
 		}
@@ -1175,8 +1174,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			// open the dialog in modal mode
 			this.window_SelectFinanceTypeDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1498,12 +1496,11 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					throw new WrongValueException(this.custCIF, Labels.getLabel("Cust_NotFound_System"));
 				}
 			} else {
-				MessageUtil.showErrorMessage(pfe.getErrorMessage());
+				MessageUtil.showError(pfe);
 				return null;
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(Labels.getLabel("error.unhandled"));
+			MessageUtil.showError(e);
 			customerDetails = null;
 		}
 		logger.debug("Leaving");

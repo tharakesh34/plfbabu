@@ -225,8 +225,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -452,7 +451,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 
 			ReportGenerationUtil.generateReport("FINENQ_AccountingDetail", financeMain, list, true, 1, usrName, window);
 		} else {
-			MessageUtil.showErrorMessage(Labels.getLabel("btnPrintStageAccounting.Error_Message"));
+			MessageUtil.showError(Labels.getLabel("btnPrintStageAccounting.Error_Message"));
 		}
 		logger.debug("Leaving" + event.toString());
 	}

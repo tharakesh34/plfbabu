@@ -449,7 +449,7 @@ public class FinStepPolicyDetailDialogCtrl extends
 			this.window_FinStepPolicyDialog.doModal();
 
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 	}
 

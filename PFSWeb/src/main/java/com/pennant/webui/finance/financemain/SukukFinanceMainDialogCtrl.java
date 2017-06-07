@@ -305,8 +305,7 @@ public class SukukFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		try{
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceReject.zul", window_SukukFinanceMainDialog, map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

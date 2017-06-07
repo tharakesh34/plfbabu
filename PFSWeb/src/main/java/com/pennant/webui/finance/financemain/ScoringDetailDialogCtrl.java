@@ -1104,7 +1104,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 			if(ratingCode != null){
 				creditWorth = ratingCode.getRatingCode() +"-"+ratingCode.getRatingCodeDesc();
 			}else{
-				MessageUtil.showErrorMessage("Rating Code Details Not Defined Properly.");
+				MessageUtil.showError("Rating Code Details Not Defined Properly.");
 			}
 		}
 		logger.debug("Leaving");
