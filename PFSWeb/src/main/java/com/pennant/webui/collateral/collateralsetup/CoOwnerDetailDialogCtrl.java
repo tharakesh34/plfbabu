@@ -64,7 +64,6 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hlayout;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
@@ -98,7 +97,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
@@ -1225,11 +1223,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 						+ " : " + this.coOwnerCIF.getValue() : Labels .getLabel("label_CoOwnerDetailDialog_CoOwnerIDType.value")
 						+ " : " + aCoOwnerDetail.getCoOwnerIDTypeName());
 
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aCoOwnerDetail.getRecordType())) {
 				aCoOwnerDetail.setVersion(aCoOwnerDetail.getVersion() + 1);
 				aCoOwnerDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);

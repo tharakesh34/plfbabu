@@ -1194,15 +1194,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 				+ "\n\n --> "
 				+ Labels.getLabel("label_AcademicDialog_AcademicLevel.value")
 				+ " : " + collateralStructure.getCollateralType();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES
-				| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(collateralStructure.getRecordType())) {
 				collateralStructure.setVersion(collateralStructure.getVersion() + 1);
 				collateralStructure.setRecordType(PennantConstants.RECORD_TYPE_DEL);
