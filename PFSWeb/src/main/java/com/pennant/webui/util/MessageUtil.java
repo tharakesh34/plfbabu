@@ -87,19 +87,6 @@ public final class MessageUtil {
 	}
 
 	/**
-	 * @deprecated Instead use showError();
-	 * @param message
-	 * @throws InterruptedException
-	 */
-	@Deprecated
-	public static void showErrorMessage(String message) {
-		logger.info(message);
-
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, ERROR);
-	}
-
-	/**
 	 * Shows an error message box and logs the message.
 	 * 
 	 * @param message
@@ -174,6 +161,27 @@ public final class MessageUtil {
 	}
 
 	// TODO: Re-factor below code.
+
+	public static void showErrorMessage(Exception e) throws InterruptedException {
+		final String title = Labels.getLabel("message.Error");
+		MultiLineMessageBox.doSetTemplate();
+		MultiLineMessageBox.show(Labels.getLabel("message.SystemError"), title, MultiLineMessageBox.OK, "ERROR", true,
+				new org.zkoss.zk.ui.event.EventListener<Event>() {
+					public void onEvent(Event evt) throws InterruptedException {
+						Collection<Component> list = Executions.getCurrent().getDesktop().getComponents();
+
+						for (Component component : list) {
+							if (component instanceof Tab) {
+								Tab tab = (Tab) component;
+								if (tab.isSelected()) {
+									tab.close();
+									break;
+								}
+							}
+						}
+					}
+				});
+	}
 
 	/** A symbol consisting of an exclamation point in a triangle with a yellow background. */
 	public static final String	EXCLAMATION	= Messagebox.EXCLAMATION;
@@ -254,27 +262,6 @@ public final class MessageUtil {
 		// button in this application and can often appears.
 		Events.getRealOrigin((ForwardEvent) event).stopPropagation();
 		event.stopPropagation();
-	}
-
-	public static void showErrorMessage(Exception e) throws InterruptedException {
-		final String title = Labels.getLabel("message.Error");
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(Labels.getLabel("message.SystemError"), title, MultiLineMessageBox.OK, "ERROR", true,
-				new org.zkoss.zk.ui.event.EventListener<Event>() {
-					public void onEvent(Event evt) throws InterruptedException {
-						Collection<Component> list = Executions.getCurrent().getDesktop().getComponents();
-
-						for (Component component : list) {
-							if (component instanceof Tab) {
-								Tab tab = (Tab) component;
-								if (tab.isSelected()) {
-									tab.close();
-									break;
-								}
-							}
-						}
-					}
-				});
 	}
 
 	/**
