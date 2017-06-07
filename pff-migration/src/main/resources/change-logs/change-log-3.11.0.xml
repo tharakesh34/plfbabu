@@ -503,4 +503,24 @@ FROM          finrepayscheduledetail T1 INNER JOIN
 	 </addColumn>
 	</changeSet>
 	
+	<changeSet id="18" author="Durgaprasad G">
+	 <dropColumn tableName="DISBURSEMENT_REQUESTS" columnName="PaymentType"/>
+	 <dropColumn tableName="INT_DSBIMPS_RESPONSE" columnName="PaymentType"/>
+	 <dropColumn tableName="INT_DSBIMPS_REQUEST" columnName="PaymentType"/>
+	</changeSet>
+	
+	
+	<changeSet id="19" author="Durgaprasad G">
+	 <addColumn tableName="DISBURSEMENT_REQUESTS">
+	   <column name="Channel" type="char(1)"/>
+	 </addColumn>
+	 
+	  <addColumn tableName="INT_DSBIMPS_RESPONSE">
+	   <column name="Channel" type="char(1)"/>
+	 </addColumn>
+	 
+	  <addColumn tableName="INT_DSBIMPS_REQUEST">
+	   <column name="Channel" type="char(1)"/>
+	 </addColumn>
+	</changeSet>
 </databaseChangeLog>
