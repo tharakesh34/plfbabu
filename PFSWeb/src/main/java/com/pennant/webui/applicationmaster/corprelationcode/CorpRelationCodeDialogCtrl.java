@@ -171,8 +171,7 @@ public class CorpRelationCodeDialogCtrl extends GFCBaseCtrl<CorpRelationCode> {
 			doSetFieldProperties();
 			doShowDialog(getMCorpRelationCode());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_CorpRelationCodeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

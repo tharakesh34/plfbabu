@@ -175,8 +175,7 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 			doSetFieldProperties();
 			doShowDialog(getBaseRateCode());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_BaseRateCodeDialog.onClose();
 		}
 		logger.debug("Leaving"+event.toString());

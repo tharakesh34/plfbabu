@@ -169,8 +169,7 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode
 		doSetFieldProperties();
 		doShowDialog(getCustomerStatusCode());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_CustomerStatusCodeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

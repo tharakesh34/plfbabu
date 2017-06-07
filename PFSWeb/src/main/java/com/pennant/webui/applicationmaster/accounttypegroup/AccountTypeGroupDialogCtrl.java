@@ -121,8 +121,7 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 			doCheckRights();
 			doShowDialog(getAccountTypeGroup());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_AccounTypeGroupDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

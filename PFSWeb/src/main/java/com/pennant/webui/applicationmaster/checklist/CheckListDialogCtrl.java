@@ -231,8 +231,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 			doSetFieldProperties();
 			doShowDialog(getCheckList());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_CheckListDialog.onClose();
 		}
 

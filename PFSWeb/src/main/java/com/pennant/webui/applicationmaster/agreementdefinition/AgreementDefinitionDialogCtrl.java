@@ -214,8 +214,7 @@ public class AgreementDefinitionDialogCtrl extends
 			doSetFieldProperties();
 			doShowDialog(getAgreementDefinition());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_AgreementDefinitionDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

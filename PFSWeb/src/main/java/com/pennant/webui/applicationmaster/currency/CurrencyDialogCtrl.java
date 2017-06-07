@@ -194,8 +194,7 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl<Currency> {
 			doSetFieldProperties();
 			doShowDialog(getCurrency());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_CurrencyDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

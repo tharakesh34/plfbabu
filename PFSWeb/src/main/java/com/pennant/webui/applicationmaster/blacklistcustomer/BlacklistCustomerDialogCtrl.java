@@ -145,8 +145,7 @@ public class BlacklistCustomerDialogCtrl extends GFCBaseCtrl<BlackListCustomers>
 			doSetFieldProperties();
 			doShowDialog(getBlacklistCustomer());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_BlacklistCustomerDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

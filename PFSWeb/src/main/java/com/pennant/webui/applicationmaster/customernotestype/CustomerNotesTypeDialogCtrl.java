@@ -171,8 +171,7 @@ public class CustomerNotesTypeDialogCtrl extends GFCBaseCtrl<CustomerNotesType> 
 			doSetFieldProperties();
 			doShowDialog(getCustomerNotesType());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_CustomerNotesTypeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
