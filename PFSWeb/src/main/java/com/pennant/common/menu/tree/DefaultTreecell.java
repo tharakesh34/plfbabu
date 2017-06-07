@@ -186,8 +186,7 @@ class DefaultTreecell extends Treecell implements EventListener<Event>, Serializ
 			Executions.createComponents(zulPage, tabpanel, mapParams);
 			tab.setSelected(true);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 	}
 
