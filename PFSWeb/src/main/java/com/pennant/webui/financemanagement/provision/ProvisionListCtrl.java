@@ -381,7 +381,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 				try {
 					doLoadWorkflow(aProvision.getFinType(), moduleDefiner);
 				} catch (Exception e) {
-					MessageUtil.showErrorMessage(e.getMessage());
+					MessageUtil.showError(e);
 					return;
 				}
 				if (StringUtils.isBlank(userRole)) {
@@ -400,7 +400,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 
 				ErrorDetails errorDetails = ErrorUtil.getErrorDetail(new ErrorDetails(
 						PennantConstants.KEY_FIELD,"41005", errParm,valueParm), getUserWorkspace().getUserLanguage());
-				MessageUtil.showErrorMessage(errorDetails.getError());
+				MessageUtil.showError(errorDetails.getError());
 			}else{
 
 				//Fetch Total Finance Details Object
@@ -425,7 +425,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 					if (userAcces){
 						showDetailView(provision);
 					}else{
-						MessageUtil.showErrorMessage(Labels.getLabel("RECORD_NOTALLOWED"));
+						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 					}
 				}else{
 					showDetailView(provision);

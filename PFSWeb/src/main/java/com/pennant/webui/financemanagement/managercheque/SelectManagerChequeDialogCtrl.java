@@ -209,8 +209,7 @@ public class SelectManagerChequeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/ManagerCheque/ManagerChequeDialog.zul",null,map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 	}
 
@@ -249,8 +248,7 @@ public class SelectManagerChequeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			// open the dialog in modal mode
 			this.window_SelectManagerChequeTypeDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

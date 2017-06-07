@@ -672,7 +672,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			
 			// If Fee Details not exists against Reference , not allowed to proceed further
 			if(!feesExists){
-				MessageUtil.showErrorMessage(Labels.getLabel("label_FeeReceiptDialog_NoFees.value"));
+				MessageUtil.showError(Labels.getLabel("label_FeeReceiptDialog_NoFees.value"));
 				return;
 			}
 
@@ -724,8 +724,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			doProcessReceipt();
 
 		} catch (InterfaceException pfe) {
-			logger.error("Exception: ", pfe);
-			MessageUtil.showErrorMessage(pfe.getErrorMessage());
+			MessageUtil.showError(pfe);
 			return;
 		} catch (WrongValuesException we) {
 			throw we;
@@ -1487,14 +1486,9 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 			setOverideMap(auditHeader.getOverideMap());
 
-		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
 		} catch (InterfaceException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.getErrorMessage());
-		} catch (IllegalAccessException e) {
-			logger.error("Exception: ", e);
-		} catch (InvocationTargetException e) {
+			MessageUtil.showError(e);
+		} catch (IllegalAccessException | InvocationTargetException e) {
 			logger.error("Exception: ", e);
 		}
 

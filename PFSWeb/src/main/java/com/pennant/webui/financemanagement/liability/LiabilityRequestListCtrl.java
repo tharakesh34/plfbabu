@@ -338,7 +338,7 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 				setWorkflowDetails(aLiabilityRequest.getFinType());
 
 				if (workFlowDetails == null) {
-					MessageUtil.showErrorMessage(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+					MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 					return;
 				}
 

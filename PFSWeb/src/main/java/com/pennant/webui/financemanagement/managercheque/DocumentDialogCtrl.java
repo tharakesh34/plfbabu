@@ -585,8 +585,7 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -1141,8 +1140,7 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 			} else {
 				isSupported = false;
-				MessageUtil.showErrorMessage(Labels
-						.getLabel("UnSupported_Document"));
+				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
 			}
 			if (isSupported) {
 				String fileName = media.getName();

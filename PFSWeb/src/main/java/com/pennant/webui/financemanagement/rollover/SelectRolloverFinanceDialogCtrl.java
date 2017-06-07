@@ -107,8 +107,8 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
 import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.App;
-import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.App.Database;
+import com.pennanttech.pff.core.InterfaceException;
 
 /**
  * This is the controller class for the
@@ -524,7 +524,7 @@ public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinan
 		
 		//Validating Rollover Date finances List
 		if(rolloverDateList.isEmpty()){
-			MessageUtil.showErrorMessage(Labels.getLabel("NO_PROCEED_ROLLOVER"));
+			MessageUtil.showError(Labels.getLabel("NO_PROCEED_ROLLOVER"));
 			return;
 		}
 		
@@ -669,12 +669,11 @@ public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinan
 				Executions.createComponents(fileLocaation.toString(),null,map);
 				this.window_SelectRolloverFinanceDialog.onClose();
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e.toString());
+				MessageUtil.showError(e);
 			}
 		} else {
-			logger.fatal("work flow not found");
-			MessageUtil.showErrorMessage(Labels.getLabel("Workflow_Not_Found")+financeDetail.getFinScheduleData().getFinanceMain().getFinType());
+			MessageUtil.showError(Labels.getLabel("Workflow_Not_Found")
+					+ financeDetail.getFinScheduleData().getFinanceMain().getFinType());
 		}
 
 		logger.debug("Leaving " + event.toString());
@@ -693,11 +692,10 @@ public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinan
 				this.window_SelectRolloverFinanceDialog.doModal();
 			}else{
 				this.window_SelectRolloverFinanceDialog.onClose();
-				MessageUtil.showErrorMessage(Labels.getLabel("NO_PROCEED_ROLLOVER"));
+				MessageUtil.showError(Labels.getLabel("NO_PROCEED_ROLLOVER"));
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e.toString());
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
@@ -842,7 +840,7 @@ public class SelectRolloverFinanceDialogCtrl extends GFCBaseCtrl<RolledoverFinan
 					return null;
 				}
 			} else {
-				MessageUtil.showErrorMessage(pfe.getErrorMessage());
+				MessageUtil.showError(pfe);
 				return null;
 			}
 		} catch (Exception e) {
