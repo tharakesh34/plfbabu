@@ -194,6 +194,20 @@ public class FinanceDataValidation {
 			return finScheduleData;
 		}
 
+		// Vas Recording validations
+		errorDetails = vasRecordingValidations(vldGroup, finScheduleData, isAPICall, "");
+		if (!errorDetails.isEmpty()) {
+			finScheduleData.setErrorDetails(errorDetails);
+			return finScheduleData;
+		}
+		
+		// Vas Fee validations
+/*		errorDetails = vasFeeValidations(vldGroup, finScheduleData);
+		if (!errorDetails.isEmpty()) {
+			finScheduleData.setErrorDetails(errorDetails);
+			return finScheduleData;
+		}*/
+		
 		// Fee validations
 		errorDetails = feeValidations(vldGroup, finScheduleData, isAPICall, "");
 		if (!errorDetails.isEmpty()) {
@@ -201,12 +215,6 @@ public class FinanceDataValidation {
 			return finScheduleData;
 		}
 
-		// Vas Recording validations
-		errorDetails = vasRecordingValidations(vldGroup, finScheduleData, isAPICall, "");
-		if (!errorDetails.isEmpty()) {
-			finScheduleData.setErrorDetails(errorDetails);
-			return finScheduleData;
-		}
 		// Insurance validations
 		if (finScheduleData.getInsuranceList() != null && !finScheduleData.getInsuranceList().isEmpty()) {
 			errorDetails = insuranceValidations(vldGroup, finScheduleData, isAPICall);
@@ -257,6 +265,106 @@ public class FinanceDataValidation {
 		}
 
 		return finScheduleData;
+	}
+
+	private List<ErrorDetails> vasFeeValidations(String vldGroup, FinScheduleData finScheduleData) {
+		List<ErrorDetails> errorDetails = finScheduleData.getErrorDetails();
+		int vasFeeCount = 0;
+		if (finScheduleData.getFinFeeDetailList() != null && !finScheduleData.getFinFeeDetailList().isEmpty()) {
+			for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
+				if (StringUtils.contains(feeDetail.getFeeTypeCode(), "{")) {
+					feeDetail.setFinEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+					vasFeeCount++;
+				}
+			}
+			if (finScheduleData.getVasRecordingList().size() > 0 && vasFeeCount <= 0) {
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90326", null)));
+			} else if (finScheduleData.getVasRecordingList().size() <= 0 && vasFeeCount > 0) {
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90327", null)));
+			} else if (finScheduleData.getVasRecordingList().size() != vasFeeCount) {
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90328", null)));
+			}
+
+			if (errorDetails.size() > 0) {
+				return errorDetails;
+			}
+		}
+
+		for (FinFeeDetail finFeeDetail : finScheduleData.getFinFeeDetailList()) {
+			// validate feeMethod
+			if (!StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), FinanceConstants.BPI_NO)
+					&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_PART_OF_DISBURSE)
+					&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_PART_OF_SALE_PRICE)
+					&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
+					&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
+					&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)
+					&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_PAID_BY_CUSTOMER)
+					&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = finFeeDetail.getFeeScheduleMethod();
+				valueParm[1] = CalculationConstants.REMFEE_PART_OF_DISBURSE + ","
+						+ CalculationConstants.REMFEE_PART_OF_SALE_PRICE + ","
+						+ CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT + ","
+						+ CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR + ","
+						+ CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS + ","
+						+ CalculationConstants.REMFEE_PAID_BY_CUSTOMER + ","
+						+ CalculationConstants.REMFEE_WAIVED_BY_BANK;
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90243", valueParm)));
+			}
+
+			// validate scheduleTerms
+			if (StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS,
+					finFeeDetail.getFeeScheduleMethod())
+					&& finFeeDetail.getTerms() <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "ScheduleTerms";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90221", valueParm)));
+			}
+
+			if (StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS,
+					finFeeDetail.getFeeScheduleMethod())
+					&& finFeeDetail.getTerms() > finScheduleData.getFinanceMain().getNumberOfTerms()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Schedule Terms";
+				valueParm[1] = "Number of terms:" + finScheduleData.getFinanceMain().getNumberOfTerms();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30551", valueParm)));
+			}
+		}
+		for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
+			for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
+				if (StringUtils.equals(feeDetail.getFeeTypeCode(), "{" + vasRecording.getProductCode() + "}")) {
+					// validate negative values
+					if (feeDetail.getActualAmount().compareTo(BigDecimal.ZERO) < 0
+							|| feeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) < 0
+							|| feeDetail.getWaivedAmount().compareTo(BigDecimal.ZERO) < 0) {
+						String[] valueParm = new String[1];
+						valueParm[0] = feeDetail.getFeeTypeCode();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90259", valueParm)));
+						return errorDetails;
+					}
+
+					// validate actual fee amount with waiver+paid amount
+					BigDecimal remainingFee = feeDetail.getActualAmount().subtract(
+							feeDetail.getWaivedAmount().add(feeDetail.getPaidAmount()));
+					if (remainingFee.compareTo(BigDecimal.ZERO) < 0) {
+						String[] valueParm = new String[3];
+						valueParm[0] = "Sum of waiver and paid amounts";
+						valueParm[1] = "Actual fee amount:" + String.valueOf(feeDetail.getActualAmount());
+						valueParm[2] = feeDetail.getFeeTypeCode();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90268", valueParm)));
+						return errorDetails;
+					}
+				}
+			}
+		}
+		return errorDetails;
 	}
 
 	private List<ErrorDetails> vasRecordingValidations(String vldGroup, FinScheduleData finScheduleData, boolean isAPICall, String string) {

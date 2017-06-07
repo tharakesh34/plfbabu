@@ -1383,7 +1383,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			allocationDetail.setPaidAmount(finReceiptData.getAllocationMap().get(allocateTypes.get(i)));
 			if (allocationDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
 				receiptHeader.getAllocations().add(allocationDetail);
-				totalPaid = totalPaid.add(allocationDetail.getPaidAmount());
+				if(!StringUtils.equals(allocationType, RepayConstants.ALLOCATION_TDS)){
+					totalPaid = totalPaid.add(allocationDetail.getPaidAmount());
+				}else{
+					totalPaid = totalPaid.subtract(allocationDetail.getPaidAmount());
+				}
 			}
 		}
 		
@@ -1451,13 +1455,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			method = CalculationConstants.EARLYPAY_ADJMUR;
 		}
 		
-		BigDecimal totalBal = receiptData.getReceiptHeader().getReceiptAmount();
+		BigDecimal totalBal = receiptData.getReceiptHeader().getReceiptAmount().subtract( receiptData.getReceiptHeader().getTotFeeAmount());
 		if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 			if(receiptData.getAllocationMap() != null && !receiptData.getAllocationMap().isEmpty()){
 				List<String> allocationKeys = new ArrayList<>(receiptData.getAllocationMap().keySet());
 				for (int i = 0; i < allocationKeys.size(); i++) {
 					if(!StringUtils.equals(allocationKeys.get(i), RepayConstants.ALLOCATION_TDS)){
 						totalBal = totalBal.subtract(receiptData.getAllocationMap().get(allocationKeys.get(i)));
+					}else{
+						totalBal = totalBal.add(receiptData.getAllocationMap().get(allocationKeys.get(i)));
 					}
 				}
 			}
@@ -1515,6 +1521,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 			receiptData.getRepayMain().setEarlyPayOnSchDate(DateUtility.getAppDate());
 			boolean isSchdDateFound = false;
+			FinanceScheduleDetail prvSchd = null;
 			for (FinanceScheduleDetail detail : finScheduleData.getFinanceScheduleDetails()) {
 				if (detail.getSchDate().compareTo(receiptData.getRepayMain().getEarlyPayOnSchDate()) == 0) {
 					if (StringUtils.equals(method, CalculationConstants.EARLYPAY_RECPFI)) {
@@ -1531,6 +1538,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				if (detail.getSchDate().compareTo(receiptData.getRepayMain().getEarlyPayOnSchDate()) >= 0) {
 					detail.setEarlyPaid(BigDecimal.ZERO);
 					detail.setEarlyPaidBal(BigDecimal.ZERO);
+				} else{
+					prvSchd = detail;
 				}
 			}
 
@@ -1539,22 +1548,50 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 			// Finding Next Repay Schedule on date
 			Date nextRepaySchDate = receiptData.getRepayMain().getEarlyPayNextSchDate();
-			if (isSchdDateFound) {
-				for (FinanceScheduleDetail curSchd : finScheduleData.getFinanceScheduleDetails()) {
-					if (DateUtility.compare(curSchd.getSchDate(), receiptData.getRepayMain().getEarlyPayOnSchDate()) <= 0) {
-						finScheduleData.getFinanceMain().setRecalSchdMethod(curSchd.getSchdMethod());
-						if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY) &&
-								DateUtility.compare(curSchd.getSchDate(), receiptData.getRepayMain().getEarlyPayOnSchDate()) == 0){
-							receiptData.getRepayMain().setEarlyPayAmount(receiptData.getRepayMain().getEarlyPayAmount().add(
-									curSchd.getProfitSchd()));
+			if(!isSchdDateFound){
+				FinanceScheduleDetail newSchdlEP = new FinanceScheduleDetail(finScheduleData.getFinanceMain().getFinReference());
+				newSchdlEP.setDefSchdDate(DateUtility.getAppDate());
+				newSchdlEP.setSchDate(DateUtility.getAppDate());
+				newSchdlEP.setSchSeq(1);
+				newSchdlEP.setSpecifier(CalculationConstants.SCH_SPECIFIER_REPAY);
+				newSchdlEP.setRepayOnSchDate(true);
+				newSchdlEP.setPftOnSchDate(true);
+				newSchdlEP.setSchdMethod(prvSchd.getSchdMethod());
+				newSchdlEP.setBaseRate(prvSchd.getBaseRate());
+				newSchdlEP.setSplRate(prvSchd.getSplRate());
+				newSchdlEP.setMrgRate(prvSchd.getMrgRate());
+				newSchdlEP.setActRate(prvSchd.getActRate());
+				newSchdlEP.setCalculatedRate(prvSchd.getCalculatedRate());
+				newSchdlEP.setPftDaysBasis(prvSchd.getPftDaysBasis());
+				finScheduleData.getFinanceScheduleDetails().add(newSchdlEP);
+				sortSchdDetails(finScheduleData.getFinanceScheduleDetails());
+			}
+
+			for (FinanceScheduleDetail curSchd : finScheduleData.getFinanceScheduleDetails()) {
+				if (DateUtility.compare(curSchd.getSchDate(), receiptData.getRepayMain().getEarlyPayOnSchDate()) <= 0) {
+					if(DateUtility.compare(curSchd.getSchDate(), aFinanceMain.getGrcPeriodEndDate()) <= 0){
+						if(StringUtils.equals(curSchd.getSchdMethod(), CalculationConstants.SCHMTHD_PFT)){
+							finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI_PFT);
+						}else{
+							finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI);
 						}
-					} else {
-						nextRepaySchDate = curSchd.getSchDate();
-						break;
+					}else{
+						if(!isSchdDateFound){
+							finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI);
+						}else{
+							finScheduleData.getFinanceMain().setRecalSchdMethod(curSchd.getSchdMethod());
+						}
 					}
+
+					if(StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY) &&
+							DateUtility.compare(curSchd.getSchDate(), receiptData.getRepayMain().getEarlyPayOnSchDate()) == 0){
+						receiptData.getRepayMain().setEarlyPayAmount(receiptData.getRepayMain().getEarlyPayAmount().add(
+								curSchd.getProfitSchd()));
+					}
+				} else {
+					nextRepaySchDate = curSchd.getSchDate();
+					break;
 				}
-			}else{
-				finScheduleData.getFinanceMain().setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI);
 			}
 
 			//Calculation of Schedule Changes for Early Payment to change Schedule Effects Depends On Method

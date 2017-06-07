@@ -1179,6 +1179,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		receiptHeader.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		receiptHeader.setReceiptDate(DateUtility.getAppDate());
 		receiptHeader.setReceiptPurpose(purpose);
+		receiptHeader.setEffectSchdMethod(finServiceInst.getRecalType());
 		if (StringUtils.isBlank(receiptHeader.getExcessAdjustTo())) {
 			receiptHeader.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 		}
