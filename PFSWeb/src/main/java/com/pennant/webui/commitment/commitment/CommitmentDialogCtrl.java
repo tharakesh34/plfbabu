@@ -492,8 +492,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			doSetFieldProperties();
 			doShowDialog(getCommitment());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_CommitmentDialog.onClose();
 		}
 

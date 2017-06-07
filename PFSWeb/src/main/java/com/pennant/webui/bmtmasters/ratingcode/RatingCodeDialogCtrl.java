@@ -183,8 +183,7 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 			doSetFieldProperties();
 			doShowDialog(getRatingCode());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_RatingCodeDialog.onClose();
 		}
 

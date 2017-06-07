@@ -386,8 +386,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				btnDelete.setVisible(false);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_CustomerDocumentDialog.onClose();
 		}
 		logger.debug("Leaving" +event.toString());

@@ -218,8 +218,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			doSetFieldProperties();
 			doShowDialog(getCustomerBankInfo());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_CustomerBankInfoDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

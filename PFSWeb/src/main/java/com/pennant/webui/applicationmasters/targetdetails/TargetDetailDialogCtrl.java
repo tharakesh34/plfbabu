@@ -118,8 +118,7 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 			doSetFieldProperties();
 			doShowDialog(getTargetDetail());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_TargetDetailDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -242,8 +241,7 @@ public class TargetDetailDialogCtrl extends GFCBaseCtrl<TargetDetail> {
 
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_TargetDetailDialog.onClose();
 		}
 		logger.debug("Leaving");

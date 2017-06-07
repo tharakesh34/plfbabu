@@ -141,8 +141,7 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 			// Hegiht Setting
 			doShowDialog(this.customer);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ProspectCustomerDialog.onClose();
 		}
 		logger.debug("Leaving");
