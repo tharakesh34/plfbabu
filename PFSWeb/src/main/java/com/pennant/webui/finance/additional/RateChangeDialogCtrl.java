@@ -952,7 +952,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
 		//Show Error Details in Schedule Maintainance
 		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
-			MessageUtil.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
 			getFinScheduleData().getErrorDetails().clear();
 		}else{
 			getFinScheduleData().setSchduleGenerated(true);

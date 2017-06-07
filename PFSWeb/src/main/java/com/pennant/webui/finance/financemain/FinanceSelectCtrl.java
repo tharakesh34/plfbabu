@@ -1097,7 +1097,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			
 			// If Customer Exists in EOD Processing, Not allowed to Maintenance till completion
 			if(eodProgressCount > 0){
-				MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(new ErrorDetails("60203", null)));
+				MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetails("60203", null)));
 				logger.debug("Leaving");
 				return;
 			}

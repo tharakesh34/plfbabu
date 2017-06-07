@@ -688,7 +688,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		
 		// Show Error Details in Schedule Maintenance
 		if (aFinScheduleData.getErrorDetails() != null && !aFinScheduleData.getErrorDetails().isEmpty()) {
-			MessageUtil.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
 			aFinScheduleData.getErrorDetails().clear();
 		} else {
 			aFinScheduleData.setSchduleGenerated(true);

@@ -14880,7 +14880,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					// Show Error Details in Schedule Calculation
 					if (getFinanceDetail().getFinScheduleData().getErrorDetails() != null
 							&& !getFinanceDetail().getFinScheduleData().getErrorDetails().isEmpty()) {
-						MessageUtil.showErrorMessage(getFinanceDetail().getFinScheduleData().getErrorDetails().get(0));
+						MessageUtil.showError(getFinanceDetail().getFinScheduleData().getErrorDetails().get(0));
 						getFinanceDetail().getFinScheduleData().getErrorDetails().clear();
 						return;
 					}

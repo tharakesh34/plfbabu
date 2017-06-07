@@ -96,13 +96,19 @@ public final class MessageUtil {
 		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, ERROR);
 	}
 
-	public static void showErrorMessage(ErrorDetails error) throws InterruptedException {
+	/**
+	 * Shows an error message box and logs the message.
+	 * 
+	 * @param error
+	 *            The {@link ErrorDetails error} object.
+	 */
+	public static void showError(ErrorDetails error) {
 		String message = error.getErrorCode().concat(": ").concat(error.getErrorMessage());
 
 		logger.info(message);
 
 		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, ERROR, true);
+		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, ERROR);
 	}
 
 	/**

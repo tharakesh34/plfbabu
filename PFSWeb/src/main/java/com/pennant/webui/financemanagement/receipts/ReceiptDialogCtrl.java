@@ -1628,7 +1628,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			for (int i = 0; i < disbList.size(); i++) {
 				FinanceDisbursement curDisb = disbList.get(i);
 				if(curDisb.getDisbDate().compareTo(actualMaturity) >= 0){
-					MessageUtil.showErrorMessage(ErrorUtil.getErrorDetail(new ErrorDetails("30577", null)));
+					MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetails("30577", null)));
 					Events.sendEvent(Events.ON_CLICK, this.btnChangeReceipt, null);
 					logger.debug("Leaving");
 					return;

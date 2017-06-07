@@ -543,7 +543,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		//Show Error Details in Schedule Maintenance
 		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
-			MessageUtil.showErrorMessage(getFinScheduleData().getErrorDetails().get(0));
+			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
 			getFinScheduleData().getErrorDetails().clear();
 		} else {
 			getFinScheduleData().setSchduleGenerated(true);
