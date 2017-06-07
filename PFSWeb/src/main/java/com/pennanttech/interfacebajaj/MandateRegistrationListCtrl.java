@@ -102,7 +102,6 @@ import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.bajaj.services.MandateRequestService;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
-import com.pennanttech.framework.web.components.MultiLineMessageBox;
 import com.pennanttech.framework.web.components.SearchFilterControl;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
@@ -664,7 +663,6 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		// Show a confirm box
 		String msg = "You have selected " + this.mandateIdMap.size() + " Mandate(s) out of "
 				+ this.pagingMandateList.getTotalSize() + ".\nDo you want to continue?";
-		MultiLineMessageBox.doSetTemplate();
 		int conf = MessageUtil.confirm(msg);
 		if (conf == MessageUtil.NO) {
 			return;
