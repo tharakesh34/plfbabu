@@ -299,8 +299,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 			ScreenCTL.displayNotes(getNotes("DivisionDetail",getDivisionDetail().getDivisionCode(),getDivisionDetail().getVersion()),this);
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" +event.toString());
 	

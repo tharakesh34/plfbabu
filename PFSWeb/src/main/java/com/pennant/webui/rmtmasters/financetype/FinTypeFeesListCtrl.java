@@ -381,8 +381,7 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeFeesDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 	}
 	

@@ -302,8 +302,7 @@ public class DeviationParamDialogCtrl extends GFCBaseCtrl<DeviationParam> {
 					getNotes("DeviationParam", getDeviationParam().getCode(), getDeviationParam().getVersion()), this);
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 

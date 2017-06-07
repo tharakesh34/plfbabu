@@ -361,8 +361,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/HolidayMaster/HolidayMasterDetailsDialog.zul",
 					null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

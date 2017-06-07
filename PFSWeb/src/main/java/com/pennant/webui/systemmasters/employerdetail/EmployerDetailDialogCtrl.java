@@ -422,8 +422,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 					getEmployerDetail().getVersion()),this);
 
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving" +event.toString());
 
