@@ -67,7 +67,6 @@ import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
@@ -100,7 +99,6 @@ import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -1014,15 +1012,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		}
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ Labels.getLabel("label_DirectorDetailDialog_ShortName.value") + " : " + name;
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aDirectorDetail.getRecordType())) {
 				aDirectorDetail.setVersion(aDirectorDetail.getVersion() + 1);
 				aDirectorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
