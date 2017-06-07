@@ -190,8 +190,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail>{
 			
 			doShowDialog(getExtendedFieldHeader());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			window_ExtendedFieldDialog.onClose();
 		}
 

@@ -196,8 +196,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 			doSetFieldProperties();
 			doShowDialog(getWeekendMaster());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_WeekendMasterDialog.onClose();
 		}
 		logger.debug("Leaving");

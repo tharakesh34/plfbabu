@@ -202,8 +202,7 @@ public class ProductAssetDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 			doSetFieldProperties();
 			doShowDialog(getProductAsset());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ProductAssetDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

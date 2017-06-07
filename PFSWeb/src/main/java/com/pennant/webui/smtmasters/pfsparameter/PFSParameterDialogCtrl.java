@@ -216,8 +216,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 			doShowDialog(getPFSParameter());
 			
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_PFSParameterDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

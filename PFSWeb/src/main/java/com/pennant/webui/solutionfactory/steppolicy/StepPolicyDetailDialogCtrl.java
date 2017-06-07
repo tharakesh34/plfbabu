@@ -181,8 +181,7 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 			doSetFieldProperties();
 			doShowDialog(getStepPolicyDetail());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_StepPolicyDetailDialog.onClose();
 		}
 		logger.debug("Leaving");

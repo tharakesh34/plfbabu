@@ -177,8 +177,7 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 			this.configureMode = arguments.get("btnConfigure").toString();
 			doShowDialog(this.reportList);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FieldsListSelect.onClose();
 		}
 		logger.debug("Leaving" +event.toString());

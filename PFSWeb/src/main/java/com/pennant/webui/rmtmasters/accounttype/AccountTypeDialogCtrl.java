@@ -211,8 +211,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			doSetFieldProperties();
 			doShowDialog(getAccountType());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_AccountTypeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

@@ -226,8 +226,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			disableNewTransactionEntry();
 			checkListboxcount();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_AccountingSetDialog.onClose();
 		}
 

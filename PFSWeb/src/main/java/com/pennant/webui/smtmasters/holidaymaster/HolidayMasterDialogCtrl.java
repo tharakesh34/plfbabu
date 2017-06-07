@@ -212,8 +212,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 			doSetFieldProperties();
 			doShowDialog(getHolidayMaster());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_HolidayMasterDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
