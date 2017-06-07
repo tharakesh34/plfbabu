@@ -601,9 +601,8 @@ public class CommodityDetailDialogCtrl extends GFCBaseCtrl<CommodityDetail> {
 					closeDialog(); 
 				}
 
-			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+			} catch (DataAccessException e) {
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");

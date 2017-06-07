@@ -1090,8 +1090,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}  else if(conf == MultiLineMessageBox.YES && this.creditApplicationReviewDialogCtrl != null){
 			this.creditApplicationReviewDialogCtrl.custDocList.remove(aCustomerDocument);

@@ -900,9 +900,7 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 					}
 				}
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
-
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");

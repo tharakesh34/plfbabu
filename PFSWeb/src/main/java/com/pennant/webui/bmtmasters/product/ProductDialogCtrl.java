@@ -612,8 +612,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 
 		}

@@ -2508,8 +2508,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 
 		}
