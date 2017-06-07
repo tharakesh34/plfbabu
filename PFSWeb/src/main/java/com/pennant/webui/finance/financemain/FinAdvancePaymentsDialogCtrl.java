@@ -615,7 +615,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.liabilityHoldName.setMaxlength(100);
 		this.beneficiaryName.setMaxlength(100);
 		this.description.setMaxlength(500);
-		this.llReferenceNo.setMaxlength(50);
+		this.llReferenceNo.setMaxlength(6);
 		this.remarks.setMaxlength(500);
 		this.transactionRef.setReadonly(true);;
 
