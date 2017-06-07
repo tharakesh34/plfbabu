@@ -67,7 +67,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
@@ -488,15 +487,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignment> {
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record");
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aQueueAssignmentHeader.getRecordType())) {
 				aQueueAssignmentHeader.setVersion(aQueueAssignmentHeader.getVersion() + 1);
 				aQueueAssignmentHeader.setRecordType(PennantConstants.RECORD_TYPE_DEL);
