@@ -269,4 +269,37 @@ FROM          FinanceMain T1 INNER JOIN
 	 	</createView>
 	</changeSet>
 	
+	<changeSet id="9" author="Manoj.P">
+		<createView viewName="INT_POSIDEX_CUST_ADDR_VIEW" replaceIfExists="true">
+			SELECT C.CUSTID CUSTOMER_NO,
+		  '' SOURCE_SYS_ID,
+		  'CF' SEGMENT,
+		  CA.CUSTADDRTYPE ADDRESS_TYPE,
+		  CA.CUSTADDRHNBR ADDRESS_1,
+		  CA.CUSTFLATNBR ADDRESS_2,
+		   CA.CUSTADDRLINE1 ADDRESS_3,
+		   CA.CUSTADDRPROVINCE STATE,
+		   CA.CUSTADDRCITY CITY,
+		   coalesce(CA.CUSTADDRZIP, '0') PIN,
+		   '' LANDLINE_1,
+       '' LANDLINE_2,
+			 '' MOBILE,
+        CA.CUSTADDRSTREET AREA,
+			  CA.CUSTADDRLINE1 LANDMARK,
+		   '' STD,	 
+		   '' PROCESS_TYPE,
+		   '' EMAIL,
+		   'N' PROCESS_FLAG,
+		    '' ERROR_CODE,
+		  '' ERROR_DESC,
+		  C.CUSTCIF CUSTOMER_ID,
+		  '' SOURCE_SYSTEM,
+     '' PSX_BATCH_ID,
+		 '' EOD_BATCH_ID,
+     CA.LASTMNTON
+		FROM CUSTOMERS C
+		INNER JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = C.CUSTID
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
