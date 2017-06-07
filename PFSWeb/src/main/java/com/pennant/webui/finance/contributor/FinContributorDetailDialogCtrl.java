@@ -100,7 +100,6 @@ import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.finance.financemain.ContributorDetailsDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -720,15 +719,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_value",
 				new String[] {Labels.getLabel("Contributor")})
 		+ "\n\n --> " + this.contributorCIF.getText();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf =  MultiLineMessageBox.show(msg, title, 
-				MultiLineMessageBox.YES| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-		if (conf==MultiLineMessageBox.YES){
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFinContributorDetail.getRecordType())){
 				aFinContributorDetail.setVersion(aFinContributorDetail.getVersion()+1);
 				aFinContributorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);

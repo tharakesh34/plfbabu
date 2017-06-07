@@ -58,7 +58,6 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hlayout;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
@@ -77,7 +76,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.ScreenCTL;
 
 /**
@@ -714,14 +712,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
 				Labels.getLabel("label_DivisionDetailDialog_DivisionCode.value")+" : "+aDivisionDetail.getDivisionCode();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-		
-		int conf =  MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-		if (conf==MultiLineMessageBox.YES){
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aDivisionDetail.getRecordType())){
 				aDivisionDetail.setVersion(aDivisionDetail.getVersion()+1);
 				aDivisionDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);

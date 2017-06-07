@@ -64,7 +64,6 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
@@ -104,7 +103,6 @@ import com.pennant.webui.finance.payorderissue.PayOrderIssueDialogCtrl;
 import com.pennant.webui.finance.payorderissue.PayOrderIssueListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
@@ -1299,15 +1297,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				+ Labels.getLabel("label_FinAdvancePaymentsDialog_PaymentSequence.value") + " : "
 				+ aFinAdvancePayments.getPaymentSeq();
 
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFinAdvancePayments.getRecordType())) {
 				aFinAdvancePayments.setVersion(aFinAdvancePayments.getVersion() + 1);
 				aFinAdvancePayments.setRecordType(PennantConstants.RECORD_TYPE_DEL);

@@ -65,7 +65,6 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -92,7 +91,6 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 
 /**
@@ -535,11 +533,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 				Labels.getLabel("label_FinTypeAccountDialog_FinCcy.value")+" : "+aFinTypeAccount.getFinCcy()+","+
 				Labels.getLabel("label_FinTypeAccountDialog_Event.value")+" : "+ 
 				PennantAppUtil.getlabelDesc(aFinTypeAccount.getEvent(), eventList);
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFinTypeAccount.getRecordType())) {
 				aFinTypeAccount.setVersion(aFinTypeAccount.getVersion() + 1);
 				aFinTypeAccount.setRecordType(PennantConstants.RECORD_TYPE_DEL);

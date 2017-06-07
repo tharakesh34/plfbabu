@@ -70,7 +70,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Window;
 
@@ -101,7 +100,6 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
@@ -346,11 +344,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + 
 				Labels.getLabel("label_FinanceFlagsDialog_finReference.value")+" : "+afinanceFlags.getFinReference();
 		
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(afinanceFlags.getRecordType())){
 				afinanceFlags.setVersion(afinanceFlags.getVersion()+1);
 				afinanceFlags.setRecordType(PennantConstants.RECORD_TYPE_DEL);

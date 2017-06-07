@@ -745,15 +745,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 		// Show a confirm box
 		final String msg = Labels.getLabel(
 				"message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + getValidationMsg();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title,
-				MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFinSuspHold.getRecordType())) {
 				aFinSuspHold.setVersion(aFinSuspHold.getVersion() + 1);
 				aFinSuspHold.setRecordType(PennantConstants.RECORD_TYPE_DEL);

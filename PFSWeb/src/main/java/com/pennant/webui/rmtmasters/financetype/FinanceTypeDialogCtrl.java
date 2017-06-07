@@ -147,7 +147,6 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionStaticListBox;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -3607,12 +3606,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				+ "\n\n --> "
 				+ (isPromotion ? Labels.getLabel("label_FinanceTypeDialog_PromoCode.value") : Labels
 						.getLabel("label_FinanceTypeDialog_FinType.value")) + " : " + aFinanceType.getFinType();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true);
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aFinanceType.getRecordType())) {
 				aFinanceType.setVersion(aFinanceType.getVersion() + 1);
 				aFinanceType.setRecordType(PennantConstants.RECORD_TYPE_DEL);
