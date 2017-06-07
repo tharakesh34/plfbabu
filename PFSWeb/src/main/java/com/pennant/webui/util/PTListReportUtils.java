@@ -147,7 +147,7 @@ public class PTListReportUtils implements Serializable {
 					// call the ZUL-file with the parameters packed in a map
 					Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul",null,map);
 				}else{
-					MessageUtil.showErrorMessage(Labels.getLabel("message.error.reportNotImpl"));
+					MessageUtil.showError(Labels.getLabel("message.error.reportNotImpl"));
 				}
 			} catch (JRException e) {
 				MessageUtil.showErrorMessage(e);
@@ -166,7 +166,7 @@ public class PTListReportUtils implements Serializable {
 			}
 		}else{
 			// Display Error for Configuration
-			MessageUtil.showErrorMessage(Labels.getLabel("message.error.reportNotFound"));
+			MessageUtil.showError(Labels.getLabel("message.error.reportNotFound"));
 		}
 		logger.debug("Leaving");
 	}

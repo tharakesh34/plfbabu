@@ -666,8 +666,10 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 		// fill the FinTypeAccount object with the components data
 		doWriteComponentsToBean(aFinTypeAccount);
 		if(!this.alwManualEntry.isChecked() && StringUtils.isEmpty(getAccountNumberDetails(getAccounts())) && StringUtils.isEmpty(this.custAccountTypes.getValue())){
-        	MessageUtil.showErrorMessage("Please Enter Either Of The Fields   :  "+Labels.getLabel("label_FinTypeAccountDialog_AlwManualEntry.value")+" , "
-        			+Labels.getLabel("label_FinTypeAccountDialog_CustAccountTypes.value")+" , "+Labels.getLabel("label_FinTypeAccountDialog_AccountReceivable.value"));
+			MessageUtil.showError("Please Enter Either Of The Fields   :  "
+					+ Labels.getLabel("label_FinTypeAccountDialog_AlwManualEntry.value") + " , "
+					+ Labels.getLabel("label_FinTypeAccountDialog_CustAccountTypes.value") + " , "
+					+ Labels.getLabel("label_FinTypeAccountDialog_AccountReceivable.value"));
         	return;
         }
 		// Write the additional validations as per below example
@@ -880,16 +882,18 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 		} else {
 			CoreBankAccountDetail accountDetail = validateAccountInEquation(accno);
 			if (accountDetail == null) {
-				MessageUtil.showErrorMessage(Labels.getLabel("ACCOUNT_INVALID",new String[]{accno}));
+				MessageUtil.showError(Labels.getLabel("ACCOUNT_INVALID", new String[] { accno }));
 			} else {
 				if (!accountDetail.getAcCcy().equals(ccy)) {
-					MessageUtil.showErrorMessage(Labels.getLabel("ACCOUNT_CCY_MISMATCH",new String[]{accountDetail.getAcCcy(),Labels.getLabel("label_FinTypeAccountDialog_FinCcy.value"),ccy }));
+					MessageUtil
+							.showError(Labels.getLabel("ACCOUNT_CCY_MISMATCH", new String[] { accountDetail.getAcCcy(),
+									Labels.getLabel("label_FinTypeAccountDialog_FinCcy.value"), ccy }));
 					return;
 				}
 				if (!isAccAlreadyInList(accno)) {
 					accounts.add(accountDetail);
 				}else{
-					MessageUtil.showErrorMessage(Labels.getLabel("ACCOUNT_EXISTS",new String[]{accno}));
+					MessageUtil.showError(Labels.getLabel("ACCOUNT_EXISTS", new String[] { accno }));
 				}
 				doFillAccountReceivables(accounts, getFinTypeAccount().getDefaultAccNum());
 			}

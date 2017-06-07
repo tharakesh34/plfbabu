@@ -221,11 +221,11 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 				thread.start();
 			} catch (Exception e) {
-				MessageUtil.showErrorMessage(e.getMessage());
+				MessageUtil.showError(e);
 				return;
 			}
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e.getMessage());
+			MessageUtil.showError(e);
 			return;
 		}
 	}
@@ -234,7 +234,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		fileConfiguration.setValue(PennantConstants.List_Select);
 		fileConfiguration.setSelectedIndex(0);
 		this.btnImport.setDisabled(true);
-		MessageUtil.showErrorMessage(e.getMessage());
+		MessageUtil.showError(e);
 	}
 
 	/**

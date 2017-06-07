@@ -355,8 +355,8 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 		if(!error){
 			
 			if (selectedCount != reportColCount){
-				MessageUtil.showErrorMessage(Labels.getLabel(
-						"SELECTED_COUNT",new String[] {String.valueOf(this.sequenceList.size())}));
+				MessageUtil.showError(
+						Labels.getLabel("SELECTED_COUNT", new String[] { String.valueOf(this.sequenceList.size()) }));
 				return;
 			}
 		}

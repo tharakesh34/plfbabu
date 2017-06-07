@@ -105,7 +105,7 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 			this.window_ImageView.doModal();
 		} catch (Exception e) {
 			this.window_ImageView.onClose();
-			MessageUtil.showErrorMessage("Document Not Found");
+			MessageUtil.showError("Document Not Found");
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving" + event.toString());
