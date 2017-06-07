@@ -188,7 +188,6 @@ public class RepaymentPostingsUtil implements Serializable {
 			actReturnList.clear();
 			actReturnList.add(true); // Postings Success
 			actReturnList.add(Long.MIN_VALUE); // Linked Transaction ID
-			actReturnList.add(null); // Finance Account
 			actReturnList.add(scheduleDetails); // Schedule Details
 		}
 

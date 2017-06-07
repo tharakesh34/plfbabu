@@ -1171,8 +1171,10 @@ public class FinServiceInstController extends SummaryDetailService {
 		receiptHeader.setReceiptDate(DateUtility.getAppDate());
 		receiptHeader.setReceiptPurpose(purpose);
 		receiptHeader.setEffectSchdMethod(finServiceInst.getRecalType());
-		if (StringUtils.isBlank(receiptHeader.getExcessAdjustTo())) {
+		if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_SCHDRPY) && StringUtils.isBlank(receiptHeader.getExcessAdjustTo())) {
 			receiptHeader.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		} else {
+			receiptHeader.setExcessAdjustTo(PennantConstants.List_Select);
 		}
 		receiptHeader.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 		receiptHeader.setReceiptAmount(finServiceInst.getAmount());
@@ -1368,7 +1370,8 @@ public class FinServiceInstController extends SummaryDetailService {
 		boolean partAccrualReq = true;
 		FinanceScheduleDetail curSchd = null;
 		FinanceScheduleDetail prvSchd = null;
-
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		
 		if(totReceiptAmt.compareTo(BigDecimal.ZERO) <= 0) {
 			if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSTLENQ)
 					|| StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
@@ -1379,90 +1382,99 @@ public class FinServiceInstController extends SummaryDetailService {
 			}
 		}
 		
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		BigDecimal tdsMultiplier = BigDecimal.ONE;
-		if (financeMain.isTDSApplicable()) {
-			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-			if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
-				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20,
-						RoundingMode.HALF_DOWN);
+		if(!StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+			FinanceMain financeMain = finScheduleData.getFinanceMain();
+			BigDecimal tdsMultiplier = BigDecimal.ONE;
+			if (financeMain.isTDSApplicable()) {
+				BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+				if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
+					tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20,
+							RoundingMode.HALF_DOWN);
+				}
 			}
-		}
 
-		List<FinanceScheduleDetail> tempScheduleDetails = finScheduleData.getFinanceScheduleDetails();
-		for (int i = 0; i < tempScheduleDetails.size(); i++) {
-			curSchd = tempScheduleDetails.get(i);
-			if (i != 0) {
-				prvSchd = tempScheduleDetails.get(i - 1);
-			}
-			Date schdDate = curSchd.getSchDate();
-
-			schFeeBal = schFeeBal.add(curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid()));
-
-			if (DateUtility.compare(schdDate, curBussniessDate) < 0) {
-				pftBalance = pftBalance.add(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
-				priBalance = priBalance.add(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
-				if (financeMain.isTDSApplicable()) {
-					BigDecimal pft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
-					BigDecimal actualPft = pft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-					tdsReturns = tdsReturns.add(pft.subtract(actualPft));
+			List<FinanceScheduleDetail> tempScheduleDetails = finScheduleData.getFinanceScheduleDetails();
+			for (int i = 0; i < tempScheduleDetails.size(); i++) {
+				curSchd = tempScheduleDetails.get(i);
+				if (i != 0) {
+					prvSchd = tempScheduleDetails.get(i - 1);
 				}
-			} else if (DateUtility.compare(curBussniessDate, schdDate) == 0) {
+				Date schdDate = curSchd.getSchDate();
 
-				BigDecimal remPft = curSchd.getProfitCalc().subtract(curSchd.getSchdPftPaid());
-				pftBalance = pftBalance.add(curSchd.getProfitCalc().subtract(curSchd.getSchdPftPaid()));
-				if (prvSchd != null) {
-					remPft = remPft.add(prvSchd.getProfitBalance());
-					pftBalance = pftBalance.add(prvSchd.getProfitBalance());
-				}
-				if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)
-						|| StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
-					priBalance = priBalance.add(curSchd.getPrincipalSchd().add(curSchd.getClosingBalance()))
-							.subtract(curSchd.getCpzAmount()).subtract(curSchd.getSchdPriPaid());
-				} else {
-					priBalance = priBalance.add(curSchd.getPrincipalSchd()).subtract(curSchd.getCpzAmount())
-							.subtract(curSchd.getSchdPriPaid());
-				}
+				schFeeBal = schFeeBal.add(curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid()));
 
-				if (financeMain.isTDSApplicable()) {
-					BigDecimal actualPft = remPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-					tdsReturns = tdsReturns.add(remPft.subtract(actualPft));
-				}
-				partAccrualReq = false;
+				if (DateUtility.compare(schdDate, curBussniessDate) < 0) {
+					pftBalance = pftBalance.add(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
+					priBalance = priBalance.add(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
+					if (financeMain.isTDSApplicable()) {
+						BigDecimal pft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
+						BigDecimal actualPft = pft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+						tdsReturns = tdsReturns.add(pft.subtract(actualPft));
+					}
+				} else if (DateUtility.compare(curBussniessDate, schdDate) == 0) {
+					
+					if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)
+							|| StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
 
-			} else {
-				if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
-					if (partAccrualReq && prvSchd != null) {
-						partAccrualReq = false;
-						BigDecimal accruedPft = CalculationUtil.calInterest(prvSchd.getSchDate(), curBussniessDate,
-								curSchd.getBalanceForPftCal(), prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
-						accruedPft = accruedPft.add(prvSchd.getProfitFraction());
-						accruedPft = CalculationUtil.roundAmount(accruedPft, financeMain.getCalRoundingMode(),
-								financeMain.getRoundingTarget());
-						pftBalance = pftBalance.add(accruedPft).add(prvSchd.getProfitBalance());
+						BigDecimal remPft = curSchd.getProfitCalc().subtract(curSchd.getSchdPftPaid());
+						pftBalance = pftBalance.add(curSchd.getProfitCalc().subtract(curSchd.getSchdPftPaid()));
+						if (prvSchd != null) {
+							remPft = remPft.add(prvSchd.getProfitBalance());
+							pftBalance = pftBalance.add(prvSchd.getProfitBalance());
+						}
 
-						priBalance = priBalance.add(prvSchd.getClosingBalance());
+						priBalance = priBalance.add(curSchd.getPrincipalSchd().add(curSchd.getClosingBalance()))
+								.subtract(curSchd.getCpzAmount()).subtract(curSchd.getSchdPriPaid());
 
 						if (financeMain.isTDSApplicable()) {
-							BigDecimal actualPft = (accruedPft.add(prvSchd.getProfitBalance())).divide(tdsMultiplier,
-									0, RoundingMode.HALF_DOWN);
-							tdsReturns = tdsReturns.add(accruedPft.add(prvSchd.getProfitBalance()).subtract(actualPft));
+							BigDecimal actualPft = remPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+							tdsReturns = tdsReturns.add(remPft.subtract(actualPft));
 						}
-					} else {
-						priBalance = priBalance.add(curSchd.getDisbAmount());
+						partAccrualReq = false;
+					}else{
+						pftBalance = pftBalance.add(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
+						priBalance = priBalance.add(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
+						if (financeMain.isTDSApplicable()) {
+							BigDecimal pft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
+							BigDecimal actualPft = pft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+							tdsReturns = tdsReturns.add(pft.subtract(actualPft));
+						}
 					}
 				} else {
-					break;
+					if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+						if (partAccrualReq && prvSchd != null) {
+							partAccrualReq = false;
+							BigDecimal accruedPft = CalculationUtil.calInterest(prvSchd.getSchDate(), curBussniessDate,
+									curSchd.getBalanceForPftCal(), prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
+							accruedPft = accruedPft.add(prvSchd.getProfitFraction());
+							accruedPft = CalculationUtil.roundAmount(accruedPft, financeMain.getCalRoundingMode(),
+									financeMain.getRoundingTarget());
+							pftBalance = pftBalance.add(accruedPft).add(prvSchd.getProfitBalance());
+
+							priBalance = priBalance.add(prvSchd.getClosingBalance());
+
+							if (financeMain.isTDSApplicable()) {
+								BigDecimal actualPft = (accruedPft.add(prvSchd.getProfitBalance())).divide(tdsMultiplier,
+										0, RoundingMode.HALF_DOWN);
+								tdsReturns = tdsReturns.add(accruedPft.add(prvSchd.getProfitBalance()).subtract(actualPft));
+							}
+						} else {
+							priBalance = priBalance.add(curSchd.getDisbAmount());
+						}
+					} else {
+						break;
+					}
 				}
 			}
-		}
-		WSReturnStatus returnStatus = new WSReturnStatus();
-		if (totReceiptAmt.compareTo(priBalance.add(pftBalance).add(schFeeBal).subtract(tdsReturns)) < 0) {
 			if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSTLENQ)
 					|| StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
-				return APIErrorHandlerService.getFailedStatus("90330");
+				if (totReceiptAmt.compareTo(priBalance.add(pftBalance).add(schFeeBal).subtract(tdsReturns)) < 0) {
+					return APIErrorHandlerService.getFailedStatus("90330");
+				}
 			} else if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
-				return APIErrorHandlerService.getFailedStatus("90331");
+				if (totReceiptAmt.compareTo(priBalance.add(pftBalance).add(schFeeBal).subtract(tdsReturns)) < 0) {
+					return APIErrorHandlerService.getFailedStatus("90332");
+				}
 			}
 		}
 		return returnStatus;
