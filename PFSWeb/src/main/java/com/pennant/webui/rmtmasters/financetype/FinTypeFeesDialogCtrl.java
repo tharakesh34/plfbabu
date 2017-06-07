@@ -205,8 +205,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			doSetFieldProperties();
 			doShowDialog(getFinTypeFees());
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 			window_FinTypeFeesDialog.onClose();
 		}
 		logger.debug("Leaving");

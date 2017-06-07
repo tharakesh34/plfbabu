@@ -544,8 +544,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 						creditApplicationReviewListCtrl.doReset();
 					} 
 				} catch (Exception e) {
-					logger.error("Exception: ", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			} 
 		}

@@ -300,7 +300,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 
 			doShowDialog(getCreditReviewDetails());
 		} catch(Exception e){
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			closeDialog();
 		} 
 		logger.debug("Leaving" + event.toString());
@@ -1712,8 +1712,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 				try {                                                                                                                          
 					Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerDocument/CustomerDocumentDialog.zul", null, map);      
 				} catch (Exception e) {                                                                                                  
-					logger.error("Exception: Opening window", e);                                                   
-					MessageUtil.showErrorMessage(e);                                                                             
+					MessageUtil.showError(e);
 				}                                                                                                                              
 			}                                                                                                                                  
 		}                                                                                                                                      
@@ -1737,12 +1736,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		try {                                                                                                                     
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerDocument/CustomerDocumentDialog.zul", null, map); 
 		} catch (Exception e) {                                                                                             
-			logger.error("Exception: Opening window", e);                                              
-			try {
-				MessageUtil.showErrorMessage(e);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}                                                                        
+			MessageUtil.showError(e);
 		}                                                                                                                         
 	}
 

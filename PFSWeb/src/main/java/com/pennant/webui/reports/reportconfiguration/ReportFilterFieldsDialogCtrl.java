@@ -306,8 +306,7 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 				doSetFieldProperties();
 				doShowDialog(getReportFilterFields());
 			} catch (Exception e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 				this.window_ReportFilterFieldsDialog.onClose();
 			}
 			logger.debug("Leaving" + event.toString());
@@ -906,8 +905,7 @@ public class ReportFilterFieldsDialogCtrl extends GFCBaseCtrl<ReportFilterFields
 					}
 
 				}catch (DataAccessException e){
-					logger.error("Exception: ", e);
-					MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 				}
 
 			}

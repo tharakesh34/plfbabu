@@ -201,8 +201,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 			doSetFieldProperties();
 			doShowDialog(getFinTypeAccount());
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 			window_FinTypeAccountDialog.onClose();
 		}
 		logger.debug("Leaving");

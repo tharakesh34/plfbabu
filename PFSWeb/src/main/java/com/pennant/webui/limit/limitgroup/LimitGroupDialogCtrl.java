@@ -240,8 +240,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 			doSetFieldProperties();
 			doShowDialog(getLimitGroup());
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
-			logger.error(e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving" + event.toString());

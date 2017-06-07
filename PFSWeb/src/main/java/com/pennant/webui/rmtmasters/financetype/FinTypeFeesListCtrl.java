@@ -172,8 +172,7 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 			doSetFieldProperties();
 			doShowDialog();
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 			window_FinTypeFeesList.onClose();
 		}
 		

@@ -249,8 +249,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 			doSetFieldProperties();
 			doShowDialog(getInvestmentFinHeader());
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 			this.window_TreasuaryFinHeaderDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -1104,8 +1103,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 						"/WEB-INF/pages/Finance/FinanceMain/InvestmentDealDialog.zul",
 						window_TreasuaryFinHeaderDialog, map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -1146,8 +1144,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 							"/WEB-INF/pages/Finance/FinanceMain/InvestmentDealDialog.zul",
 							window_TreasuaryFinHeaderDialog, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}

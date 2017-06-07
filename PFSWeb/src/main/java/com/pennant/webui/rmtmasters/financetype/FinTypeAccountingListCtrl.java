@@ -173,8 +173,7 @@ public class FinTypeAccountingListCtrl  extends GFCBaseCtrl<FinTypeAccounting> {
 			doSetFieldProperties();
 			doShowDialog();
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 			window_FinTypeAccountingList.onClose();
 		}
 		

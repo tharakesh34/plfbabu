@@ -367,12 +367,7 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewDialog.zul", null, map);
 		} catch (Exception e) {
-			logger.error("Exception: Opening window", e);
-			try {
-				MessageUtil.showErrorMessage(e);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
+			MessageUtil.showError(e);
 		}
 	}
 	

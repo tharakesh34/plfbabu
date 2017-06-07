@@ -294,8 +294,7 @@ public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery>  {
 			Executions.createComponents(
 					"/WEB-INF/pages/RulesFactory/Rule/LimitRuleDialog.zul", null,arg);
 		} catch (final Exception e) {
-			logger.error("onOpenWindow:: error opening window / "+ e.getMessage());
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
