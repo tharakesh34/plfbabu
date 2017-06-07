@@ -708,7 +708,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 						getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranId);
 						
 						// Excess Amounts reversal Updations
-						getFinExcessAmountDAO().updateExcessAmount(excess.getExcessID(), "U",
+						getFinExcessAmountDAO().updateExcessBal(excess.getExcessID(),
 								rpyHeader.getRepayAmount().negate());
 
 						isRcdFound = true;
@@ -1016,6 +1016,22 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 								.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DD))) {
 					getFinReceiptDetailDAO().updateReceiptStatus(receiptDetail.getReceiptID(),
 							receiptDetail.getReceiptSeqID(), receiptHeader.getReceiptModeStatus());
+					
+					// Receipt Reversal for Excess or Payable
+					if (!isBounceProcess) {
+						
+						if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)
+								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
+							
+							// Excess utilize Reversals
+							getFinExcessAmountDAO().updateExcessAmount(receiptDetail.getPayAgainstID(), "U", receiptDetail.getAmount().negate());
+							
+						}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
+							
+							// Payable Utilize reversals
+							getManualAdviseDAO().reverseUtilise(receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
+						}
+					}
 				}
 			}
 		}
