@@ -377,7 +377,7 @@ public class FinanceDataValidation {
 		
 		List<ErrorDetails> errorDetails = new ArrayList<ErrorDetails>();
 		
-		
+		if (finScheduleData.getVasRecordingList() != null && !finScheduleData.getVasRecordingList().isEmpty()) {
 			FinanceType financeType = finScheduleData.getFinanceType();
 			//fetch the vasProduct list based on the FinanceType
 			financeType.setFinTypeVASProductsList(finTypeVASProductsDAO.getVASProductsByFinType(financeType.getFinType(), ""));
@@ -703,6 +703,7 @@ public class FinanceDataValidation {
 				}
 			}
 		}
+	}
 		return errorDetails;
 
 	}
