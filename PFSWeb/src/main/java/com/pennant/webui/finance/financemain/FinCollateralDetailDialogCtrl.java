@@ -250,8 +250,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			doSetFieldProperties();
 			doShowDialog(getFinCollateral());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FinCollateralDetailDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

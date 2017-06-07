@@ -232,8 +232,7 @@ public class ContractorAssetDetailDialogCtrl extends GFCBaseCtrl<ContractorAsset
 			doSetFieldProperties();
 			doShowDialog(getContractorAssetDetail());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ContractorAssetDetailDialog.onClose();
 		}
 		logger.debug("Leaving" +event.toString());

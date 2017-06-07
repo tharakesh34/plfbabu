@@ -97,8 +97,7 @@ public class RepayEnquiryDialogCtrl extends GFCBaseCtrl<FinanceRepayments> {
 			// Render List in Listbox
 			doShowDialog();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_RepayEnquiryDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

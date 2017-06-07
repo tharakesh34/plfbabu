@@ -151,8 +151,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 
 			doShowDialog();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_PostingsEnquiryDialog.onClose();
 		}
 		logger.debug("Leaving " + event.toString());

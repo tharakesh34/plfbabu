@@ -148,8 +148,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 			}
 			doShowDialog();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_deviationDetailDialog.onClose();
 		}
 		logger.debug("Leaving " + event.toString());

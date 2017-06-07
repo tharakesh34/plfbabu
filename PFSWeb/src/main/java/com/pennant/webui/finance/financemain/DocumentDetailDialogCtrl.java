@@ -198,8 +198,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			
 			doShowDialog();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			closeDialog();
 		}
 		logger.debug("Leaving " + event.toString());

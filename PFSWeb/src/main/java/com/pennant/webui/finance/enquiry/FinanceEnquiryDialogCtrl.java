@@ -526,8 +526,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			doSetFieldProperties();
 			doShowDialog();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FinanceEnquiryDialog.onClose();
 		}
 

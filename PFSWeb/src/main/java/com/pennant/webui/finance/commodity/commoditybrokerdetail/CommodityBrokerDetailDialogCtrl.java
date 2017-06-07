@@ -253,8 +253,7 @@ public class CommodityBrokerDetailDialogCtrl extends GFCBaseCtrl<CommodityBroker
 			doSetFieldProperties();
 			doShowDialog(getCommodityBrokerDetail());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_CommodityBrokerDetailDialog.onClose();
 		}
 		logger.debug("Leaving");

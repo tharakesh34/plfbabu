@@ -156,8 +156,7 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			doShowDialog();
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FinVasRecordingDialog.onClose();
 		}
 		logger.debug("Leaving " + event.toString());

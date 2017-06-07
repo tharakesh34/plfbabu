@@ -153,8 +153,7 @@ public class FinCollateralHeaderDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			doCheckRights();
 			doShowDialog();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_finCollateralHeaderDialog.onClose();
 		}
 		logger.debug("Leaving " + event.toString());

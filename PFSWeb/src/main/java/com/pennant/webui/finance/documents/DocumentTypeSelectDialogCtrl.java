@@ -179,8 +179,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			
 			doShowDialog();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_DocumentTypeSelectDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

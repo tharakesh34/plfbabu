@@ -254,8 +254,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			doSetFieldProperties();
 			doShowDialog(getDocumentDetails());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FinDocumentDetailDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
