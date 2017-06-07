@@ -65,7 +65,6 @@ import org.zkoss.zul.Grid;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
@@ -87,7 +86,6 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.rmtmasters.productAsset.model.ProductAssetListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 
 /**
@@ -581,15 +579,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 				+ "\n\n --> "
 				+ Labels.getLabel("label_ProductDialog_ProductCode.value")
 				+ " : " + aProduct.getProductCode();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES
-				| MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			doWriteBeanToComponents(aProduct);
 
 			if (StringUtils.isBlank(aProduct.getRecordType())) {

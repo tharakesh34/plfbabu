@@ -73,7 +73,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
@@ -109,7 +108,6 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pff.core.InterfaceException;
 
@@ -1268,13 +1266,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		final String msg = Labels
 				.getLabel("message.Question.Are_you_sure_to_delete_this_record")
 				+ "\n\n --> " + aJVPosting.getBatchReference();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-		int conf = MultiLineMessageBox.show(msg, title,
-				MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true);
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aJVPosting.getRecordType())) {
 				aJVPosting.setVersion(aJVPosting.getVersion() + 1);
 				aJVPosting.setRecordType(PennantConstants.RECORD_TYPE_DEL);

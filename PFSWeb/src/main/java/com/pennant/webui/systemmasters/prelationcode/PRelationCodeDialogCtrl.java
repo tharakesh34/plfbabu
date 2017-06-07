@@ -55,7 +55,6 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -70,7 +69,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 /**
  * This is the controller class for the
@@ -470,15 +468,7 @@ public class PRelationCodeDialogCtrl extends GFCBaseCtrl<PRelationCode> {
 		final String msg = Labels.getLabel(
 		"message.Question.Are_you_sure_to_delete_this_record")+ "\n\n --> " + 
 		Labels.getLabel("label_PRelationCodeDialog_PRelationCode.value")+" : "+aPRelationCode.getPRelationCode();
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title,
-				MultiLineMessageBox.YES | MultiLineMessageBox.NO,Messagebox.QUESTION, true);
-
-		if (conf==MultiLineMessageBox.YES){
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aPRelationCode.getRecordType())){
 				aPRelationCode.setVersion(aPRelationCode.getVersion()+1);
 				aPRelationCode.setRecordType(PennantConstants.RECORD_TYPE_DEL);

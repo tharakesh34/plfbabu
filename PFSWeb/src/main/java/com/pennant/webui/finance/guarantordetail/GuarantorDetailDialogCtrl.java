@@ -68,7 +68,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
@@ -108,7 +107,6 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.finance.financemain.JointAccountDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 
@@ -1776,11 +1774,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 						aGuarantorDetail.getGuarantorCIF() : Labels.getLabel("label_GuarantorDetailDialog_GuarantorIDType.value") + " : " + 
 						aGuarantorDetail.getGuarantorIDTypeName());
 		
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO, Messagebox.QUESTION, true);
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aGuarantorDetail.getRecordType())) {
 				aGuarantorDetail.setVersion(aGuarantorDetail.getVersion() + 1);
 				aGuarantorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
