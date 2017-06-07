@@ -45,7 +45,6 @@ package com.pennant.webui.util;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -183,12 +182,6 @@ public final class MessageUtil {
 
 		MultiLineMessageBox.doSetTemplate();
 		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, INFORMATION);
-	}
-
-	public static void showInfoMessage(String e) throws InterruptedException {
-		final String title = Labels.getLabel("message.Information");
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(e, title, MultiLineMessageBox.OK, "Info", true);
 	}
 
 	/** A symbol consisting of an exclamation point in a triangle with a yellow background. */
