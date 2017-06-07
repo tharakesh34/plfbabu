@@ -718,4 +718,12 @@ FROM          finrepayscheduledetail T1 INNER JOIN
 			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS)
 	 	</createView>
 	 </changeSet>
+	 
+	 <changeSet id="23" author="Durgaprasad g">
+	   <addColumn tableName="PAYMENTINSTRUCTIONS">
+		   <column name="TRANSACTIONREF" type="varchar(20)"/>
+		   <column name="REJECTREASON" type="varchar(100)"/>
+	  </addColumn>
+	 
+	 </changeSet>
 </databaseChangeLog>
