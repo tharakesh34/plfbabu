@@ -630,8 +630,7 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl<DispatchMode> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}

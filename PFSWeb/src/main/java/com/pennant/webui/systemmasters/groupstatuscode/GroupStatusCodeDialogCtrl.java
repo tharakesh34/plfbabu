@@ -622,8 +622,7 @@ public class GroupStatusCodeDialogCtrl extends GFCBaseCtrl<GroupStatusCode> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 	}
