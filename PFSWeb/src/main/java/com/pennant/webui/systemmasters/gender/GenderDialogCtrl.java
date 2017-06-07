@@ -168,8 +168,7 @@ public class GenderDialogCtrl extends GFCBaseCtrl<Gender> {
 			doSetFieldProperties();
 			doShowDialog(getGender());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_GenderDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

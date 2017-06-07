@@ -170,8 +170,7 @@ public class IndustryDialogCtrl extends GFCBaseCtrl<Industry> {
 			doSetFieldProperties();
 			doShowDialog(getIndustry());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_IndustryDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

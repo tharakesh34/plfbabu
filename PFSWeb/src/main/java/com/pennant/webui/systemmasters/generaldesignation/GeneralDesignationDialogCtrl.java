@@ -173,8 +173,7 @@ public class GeneralDesignationDialogCtrl extends GFCBaseCtrl<GeneralDesignation
 			doSetFieldProperties();
 			doShowDialog(getGeneralDesignation());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_GeneralDesignationDialog.onClose();
 		}
 		logger.debug("Leaving"+event.toString());

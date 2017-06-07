@@ -173,8 +173,7 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 			doSetFieldProperties();
 			doShowDialog(getLovFieldDetail());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_LovFieldDetailDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

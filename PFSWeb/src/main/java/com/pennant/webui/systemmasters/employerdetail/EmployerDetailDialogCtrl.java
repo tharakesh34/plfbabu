@@ -327,8 +327,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 			doSetFieldProperties();
 			doShowDialog(getEmployerDetail());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_EmployerDetailDialog.onClose();
 		}
 		

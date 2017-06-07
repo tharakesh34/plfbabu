@@ -180,8 +180,7 @@ public class IncomeTypeDialogCtrl extends GFCBaseCtrl<IncomeType> {
 			doSetFieldProperties();
 			doShowDialog(getIncomeType());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_IncomeTypeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

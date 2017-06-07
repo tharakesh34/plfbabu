@@ -167,8 +167,7 @@ public class EmpStsCodeDialogCtrl extends GFCBaseCtrl<EmpStsCode> {
 			doSetFieldProperties();
 			doShowDialog(getStsCode());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_EmpStsCodeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

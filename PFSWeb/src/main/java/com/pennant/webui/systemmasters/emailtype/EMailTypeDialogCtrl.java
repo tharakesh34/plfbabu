@@ -178,8 +178,7 @@ public class EMailTypeDialogCtrl extends GFCBaseCtrl<EMailType> {
 			doSetFieldProperties();
 			doShowDialog(getEMailType());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_EMailTypeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

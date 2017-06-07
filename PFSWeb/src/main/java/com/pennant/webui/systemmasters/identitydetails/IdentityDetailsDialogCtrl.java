@@ -169,8 +169,7 @@ public class IdentityDetailsDialogCtrl extends GFCBaseCtrl<IdentityDetails> {
 			doSetFieldProperties();
 			doShowDialog(getIdentityDetails());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_IdentityDetailsDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
