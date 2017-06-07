@@ -168,8 +168,7 @@ public class AddressTypeDialogCtrl extends GFCBaseCtrl<AddressType> {
 			doSetFieldProperties();
 			doShowDialog(getAddressType());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_AddressTypeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

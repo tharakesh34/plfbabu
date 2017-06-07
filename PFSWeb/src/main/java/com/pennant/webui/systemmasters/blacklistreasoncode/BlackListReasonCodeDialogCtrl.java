@@ -174,8 +174,7 @@ public class BlackListReasonCodeDialogCtrl extends GFCBaseCtrl<BlackListReasonCo
 			doSetFieldProperties();
 			doShowDialog(getBlackListReasonCode());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_BlackListReasonCodeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

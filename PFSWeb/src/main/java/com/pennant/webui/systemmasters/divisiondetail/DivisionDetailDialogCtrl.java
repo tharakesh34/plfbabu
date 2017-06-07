@@ -205,8 +205,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 			doSetFieldProperties();
 			doShowDialog(getDivisionDetail());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_DivisionDetailDialog.onClose();
 		}
 		

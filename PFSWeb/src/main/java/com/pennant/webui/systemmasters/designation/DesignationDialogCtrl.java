@@ -170,8 +170,7 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 			doSetFieldProperties();
 			doShowDialog(getDesignation());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_DesignationDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
@@ -633,9 +632,8 @@ public class DesignationDialogCtrl extends GFCBaseCtrl<Designation> {
 				closeDialog();
 			}
 
-		}catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");

@@ -176,8 +176,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 			doSetFieldProperties();
 			doShowDialog(getDocumentType());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_DocumentTypeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

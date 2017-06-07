@@ -171,8 +171,7 @@ public class DepartmentDialogCtrl extends GFCBaseCtrl<Department> {
 			doSetFieldProperties();
 			doShowDialog(getDepartment());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_DepartmentDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

@@ -170,8 +170,7 @@ public class DispatchModeDialogCtrl extends GFCBaseCtrl<DispatchMode> {
 			doSetFieldProperties();
 			doShowDialog(getDispatchMode());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_DispatchModeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

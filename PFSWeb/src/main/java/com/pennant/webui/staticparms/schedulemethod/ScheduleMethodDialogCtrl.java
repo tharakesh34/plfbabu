@@ -172,8 +172,7 @@ public class ScheduleMethodDialogCtrl extends GFCBaseCtrl<ScheduleMethod> {
 			doShowDialog(getScheduleMethod());
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ScheduleMethodDialog.onClose();
 		}
 		logger.debug("Leaving");

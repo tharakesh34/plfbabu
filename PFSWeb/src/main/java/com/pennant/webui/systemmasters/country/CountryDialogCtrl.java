@@ -180,8 +180,7 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 			doSetFieldProperties();
 			doShowDialog(getCountry());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_CountryDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
