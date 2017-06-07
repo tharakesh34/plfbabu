@@ -162,6 +162,12 @@ public final class MessageUtil {
 
 	// TODO: Re-factor below code.
 
+	/**
+	 * @deprecated
+	 * @param e
+	 * @throws InterruptedException
+	 */
+	@Deprecated
 	public static void showErrorMessage(Exception e) throws InterruptedException {
 		final String title = Labels.getLabel("message.Error");
 		MultiLineMessageBox.doSetTemplate();

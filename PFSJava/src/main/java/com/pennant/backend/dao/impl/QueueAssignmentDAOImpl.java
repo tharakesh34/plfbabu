@@ -63,10 +63,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.StoredProcedureUtil;
 import com.pennant.backend.dao.QueueAssignmentDAO;
-import com.pennant.backend.model.ErrorDetails;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.QueueAssignmentHeader;
 import com.pennant.backend.util.PennantConstants;
@@ -368,25 +366,6 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * This method for getting the error details
-	 * 
-	 * @param errorId
-	 *            (String)
-	 * @param Id
-	 *            (String)
-	 * @param userLanguage
-	 *            (String)
-	 * @return ErrorDetails
-	 */
-	private ErrorDetails getError(String errorId, String reference, String userLanguage) {
-		String[][] parms = new String[1][1];
-		parms[1][0] = reference;
-		parms[0][0] = PennantJavaUtil.getLabel("label_Reference") + ":" + parms[1][0];
-		return ErrorUtil.getErrorDetail(new ErrorDetails(PennantConstants.KEY_FIELD, errorId, parms[0], parms[1]),
-				userLanguage);
-	}
-
 	@Override
 	public void delete(QueueAssignment queueDetail, String type) {
 		logger.debug("Entering");
@@ -461,7 +440,7 @@ public class QueueAssignmentDAOImpl implements QueueAssignmentDAO {
 		}
 	}
 
-	@SuppressWarnings("serial")
+	@Override
 	public void updateHeader(QueueAssignmentHeader queueAssignmentHeader, String tableType) {
 		logger.debug("Entering");
 		int recordCount = 0;
