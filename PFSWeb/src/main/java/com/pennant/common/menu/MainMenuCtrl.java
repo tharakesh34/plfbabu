@@ -378,8 +378,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 				tab.setSelected(true);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving ");
 	}
