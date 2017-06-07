@@ -187,8 +187,7 @@ public class FinInsuranceDialogCtrl extends GFCBaseCtrl<FinInsurances> {
 
 			this.window_FinInsurnaceDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
 
