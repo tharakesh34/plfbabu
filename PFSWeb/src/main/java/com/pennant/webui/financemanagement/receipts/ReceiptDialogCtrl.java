@@ -3868,7 +3868,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					amountCodes.setRpPft(amountCodes.getRpPft().add(rsd.getProfitSchdPayNow()).add(rsd.getLatePftSchdPayNow()));
 					amountCodes.setRpPri(amountCodes.getRpPri().add(rsd.getPrincipalSchdPayNow()));
 					amountCodes.setRpTds(amountCodes.getRpTds().add(rsd.getTdsSchdPayNow()));
-					amountCodes.setRpTds(amountCodes.getRpTds().add(rsd.getTdsSchdPayNow()));
 					amountCodes.setPenaltyWaived(BigDecimal.ZERO);
 					totRpyPri = totRpyPri.add(rsd.getPrincipalSchdPayNow());
 					
@@ -3893,13 +3892,19 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				amountCodes.setEmiInAdvance(BigDecimal.ZERO);
 				amountCodes.setPayableAdvise(BigDecimal.ZERO);
 				if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EXCESS)){
-					amountCodes.setExcessAmt(repayHeader.getRepayAmount());
+					amountCodes.setExcessAmt(amountCodes.getRpTot());
+					amountCodes.setRpExcessTds(amountCodes.getRpTds());
+					amountCodes.setRpTds(BigDecimal.ZERO);
 					amountCodes.setRpTot(BigDecimal.ZERO);
 				}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_EMIINADV)){
-					amountCodes.setEmiInAdvance(repayHeader.getRepayAmount());
+					amountCodes.setEmiInAdvance(amountCodes.getRpTot());
+					amountCodes.setRpEmiAdvTds(amountCodes.getRpTds());
+					amountCodes.setRpTds(BigDecimal.ZERO);
 					amountCodes.setRpTot(BigDecimal.ZERO);
 				}else if(StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.PAYTYPE_PAYABLE)){
-					amountCodes.setPayableAdvise(repayHeader.getRepayAmount());
+					amountCodes.setPayableAdvise(amountCodes.getRpTot());
+					amountCodes.setRpPayableTds(amountCodes.getRpTds());
+					amountCodes.setRpTds(BigDecimal.ZERO);
 					amountCodes.setRpTot(BigDecimal.ZERO);
 				}
 				

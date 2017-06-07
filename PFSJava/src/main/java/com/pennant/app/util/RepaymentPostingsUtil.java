@@ -559,12 +559,18 @@ public class RepaymentPostingsUtil implements Serializable {
 		amountCodes.setPayableAdvise(BigDecimal.ZERO);
 		if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_EXCESS)){
 			amountCodes.setExcessAmt(amountCodes.getRpTot());
+			amountCodes.setRpExcessTds(amountCodes.getRpTds());
+			amountCodes.setRpTds(BigDecimal.ZERO);
 			amountCodes.setRpTot(BigDecimal.ZERO);
 		}else if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_EMIINADV)){
 			amountCodes.setEmiInAdvance(amountCodes.getRpTot());
+			amountCodes.setRpEmiAdvTds(amountCodes.getRpTds());
+			amountCodes.setRpTds(BigDecimal.ZERO);
 			amountCodes.setRpTot(BigDecimal.ZERO);
 		}else if(StringUtils.equals(rpyQueueHeader.getPayType(), RepayConstants.PAYTYPE_PAYABLE)){
 			amountCodes.setPayableAdvise(amountCodes.getRpTot());
+			amountCodes.setRpPayableTds(amountCodes.getRpTds());
+			amountCodes.setRpTds(BigDecimal.ZERO);
 			amountCodes.setRpTot(BigDecimal.ZERO);
 		}
 		

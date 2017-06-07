@@ -50,6 +50,9 @@ public class AEAmountCodes {
 	private BigDecimal	priSP				= BigDecimal.ZERO;
 	private BigDecimal	rpPft				= BigDecimal.ZERO;
 	private BigDecimal	rpTds				= BigDecimal.ZERO;
+	private BigDecimal	rpExcessTds			= BigDecimal.ZERO;
+	private BigDecimal	rpEmiAdvTds			= BigDecimal.ZERO;
+	private BigDecimal	rpPayableTds		= BigDecimal.ZERO;
 	private BigDecimal	rpPri				= BigDecimal.ZERO;
 	private BigDecimal	rpTot				= BigDecimal.ZERO;
 	private BigDecimal	instpft				= BigDecimal.ZERO;
@@ -890,6 +893,30 @@ public class AEAmountCodes {
 
 	public void setToEmiAdvance(BigDecimal toEmiAdvance) {
 		this.toEmiAdvance = toEmiAdvance;
+	}
+
+	public BigDecimal getRpExcessTds() {
+		return rpExcessTds;
+	}
+
+	public void setRpExcessTds(BigDecimal rpExcessTds) {
+		this.rpExcessTds = rpExcessTds;
+	}
+
+	public BigDecimal getRpEmiAdvTds() {
+		return rpEmiAdvTds;
+	}
+
+	public void setRpEmiAdvTds(BigDecimal rpEmiAdvTds) {
+		this.rpEmiAdvTds = rpEmiAdvTds;
+	}
+
+	public BigDecimal getRpPayableTds() {
+		return rpPayableTds;
+	}
+
+	public void setRpPayableTds(BigDecimal rpPayableTds) {
+		this.rpPayableTds = rpPayableTds;
 	}
 
 }
