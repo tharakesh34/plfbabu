@@ -214,8 +214,7 @@ public class ReceiptRealizationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader>
 			this.borderlayout_Realization.setHeight(getBorderLayoutHeight());
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ReceiptRealizationDialog.onClose();
 		}
 

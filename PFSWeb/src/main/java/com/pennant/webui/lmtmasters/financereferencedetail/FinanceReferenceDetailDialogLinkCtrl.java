@@ -281,8 +281,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			doSetFieldProperties();
 			doShowDialog(getFinanceReferenceDetail());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FinanceReferenceDetailDialogLink.onClose();
 		}
 		logger.debug("Leaving");

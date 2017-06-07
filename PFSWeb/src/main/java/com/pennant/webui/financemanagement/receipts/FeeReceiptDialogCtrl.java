@@ -271,8 +271,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			// Setting tile Name based on Service Action
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FeeReceiptDialog.onClose();
 		}
 

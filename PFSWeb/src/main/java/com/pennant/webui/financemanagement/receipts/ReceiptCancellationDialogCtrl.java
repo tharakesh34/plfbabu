@@ -302,8 +302,7 @@ public class ReceiptCancellationDialogCtrl  extends GFCBaseCtrl<FinReceiptHeader
 			this.listBoxPosting.setHeight(getListBoxHeight(6));
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ReceiptCancellationDialog.onClose();
 		}
 

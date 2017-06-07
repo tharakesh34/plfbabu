@@ -371,8 +371,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 			doSetFieldProperties();
 			doShowDialog(getJVPostingEntry());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_JVPostingEntryDialog.onClose();
 		}
 

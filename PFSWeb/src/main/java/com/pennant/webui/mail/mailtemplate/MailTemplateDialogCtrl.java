@@ -253,8 +253,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 			doShowDialog(getMailTemplate());
 			this.btnDelete.setVisible(false);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_MailTemplateDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

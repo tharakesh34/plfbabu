@@ -319,8 +319,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			this.listBoxJVPostingAccounting.setHeight(this.borderLayoutHeight - 350 + "px");
 			doShowDialog(getJVPosting());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_JVPostingDialog.onClose();
 		}
 
@@ -1408,8 +1407,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_JVPostingDialog.onClose();
 		}
 		logger.debug("Leaving");

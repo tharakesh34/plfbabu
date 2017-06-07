@@ -201,8 +201,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 			doSetFieldProperties();
 			doShowDialog(this.notifications);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_NotificationsDialog.onClose();
 		}
 

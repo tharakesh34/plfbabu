@@ -231,8 +231,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 			doSetFieldProperties();
 			doShowDialog(getFinanceWorkFlow());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FinanceWorkFlowDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

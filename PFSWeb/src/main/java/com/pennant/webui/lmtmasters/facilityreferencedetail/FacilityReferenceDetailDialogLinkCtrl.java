@@ -249,8 +249,7 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 			doSetFieldProperties();
 			doShowDialog(getFacilityReferenceDetail());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FacilityReferenceDetailDialogLink.onClose();
 		}
 

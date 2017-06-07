@@ -141,8 +141,7 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 				this.dftBranch.setValue(String.valueOf(arguments.get("dftBranch")));
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_CustomerAccountDialog.onClose();
 		}
 		logger.debug("Leaving");
