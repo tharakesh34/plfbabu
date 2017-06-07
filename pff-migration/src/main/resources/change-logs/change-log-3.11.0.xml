@@ -842,5 +842,38 @@ FROM          finrepayscheduledetail T1 INNER JOIN
 			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS)
 		</createView>
 	</changeSet>
+		<changeSet id="28" author="Chaitanya.ch">
+		<sql>
+			Delete from BMTAmountCodes where AllowedEvent = 'EARLYSTL' and AmountCode = 'ae_rpExcessTds';
+			Insert into BMTAmountCodes Values ('EARLYSTL','0','ae_rpExcessTds', 'TDS Amount', '1', 1, 1005, 
+			Current_TimeStamp, 'Approved', null, null, null, null, null, 0 );
+			Delete from BMTAmountCodes where AllowedEvent = 'EARLYSTL' and AmountCode = 'ae_rpEmiAdvTds';
+			Insert into BMTAmountCodes Values ('EARLYSTL','0','ae_rpEmiAdvTds', 'TDS Amount', '1', 1, 1005, 
+			Current_TimeStamp, 'Approved', null, null, null, null, null, 0 );
+			Delete from BMTAmountCodes where AllowedEvent = 'EARLYSTL' and AmountCode = 'ae_rpPayableTds';
+			Insert into BMTAmountCodes Values ('EARLYSTL','0','ae_rpPayableTds', 'TDS Amount', '1', 1, 1005, 
+			Current_TimeStamp, 'Approved', null, null, null, null, null, 0 );
+			 
+			 Delete from BMTAmountCodes where AllowedEvent = 'EARLYPAY' and AmountCode = 'ae_rpExcessTds';
+			Insert into BMTAmountCodes Values ('EARLYPAY','0','ae_rpExcessTds', 'TDS Amount', '1', 1, 1005, 
+			Current_TimeStamp, 'Approved', null, null, null, null, null, 0 );
+			Delete from BMTAmountCodes where AllowedEvent = 'EARLYPAY' and AmountCode = 'ae_rpEmiAdvTds';
+			Insert into BMTAmountCodes Values ('EARLYPAY','0','ae_rpEmiAdvTds', 'TDS Amount', '1', 1, 1005, 
+			Current_TimeStamp, 'Approved', null, null, null, null, null, 0 );
+			Delete from BMTAmountCodes where AllowedEvent = 'EARLYPAY' and AmountCode = 'ae_rpPayableTds';
+			Insert into BMTAmountCodes Values ('EARLYPAY','0','ae_rpPayableTds', 'TDS Amount', '1', 1, 1005, 
+			Current_TimeStamp, 'Approved', null, null, null, null, null, 0 );
+			
+			Delete from BMTAmountCodes where AllowedEvent = 'REPAY' and AmountCode = 'ae_rpExcessTds';
+			Insert into BMTAmountCodes Values ('REPAY','0','ae_rpExcessTds', 'TDS Amount', '1', 1, 1005, 
+			Current_TimeStamp, 'Approved', null, null, null, null, null, 0 );
+			Delete from BMTAmountCodes where AllowedEvent = 'REPAY' and AmountCode = 'ae_rpEmiAdvTds';
+			Insert into BMTAmountCodes Values ('REPAY','0','ae_rpEmiAdvTds', 'TDS Amount', '1', 1, 1005, 
+			Current_TimeStamp, 'Approved', null, null, null, null, null, 0 );
+			Delete from BMTAmountCodes where AllowedEvent = 'REPAY' and AmountCode = 'ae_rpPayableTds';
+			Insert into BMTAmountCodes Values ('REPAY','0','ae_rpPayableTds', 'TDS Amount', '1', 1, 1005, 
+			Current_TimeStamp, 'Approved', null, null, null, null, null, 0 );			
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
