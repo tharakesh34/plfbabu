@@ -3334,7 +3334,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					CurrencyBox allocateTDSPaid = (CurrencyBox) this.listBoxPastdues.getFellowIfAny("AllocatePaid_"+RepayConstants.ALLOCATION_TDS);
 					BigDecimal actPftAdjust = paidAllocateAmt.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
 					tdsCalculated = paidAllocateAmt.subtract(actPftAdjust);
-					allocateTDSPaid.setValue(PennantApplicationUtil.amountFormate(tdsCalculated, finFormatter));
+					allocateTDSPaid.setValue(PennantApplicationUtil.formateAmount(tdsCalculated, finFormatter));
 
 					if(paidAllocationMap != null){ 
 						if(paidAllocationMap.containsKey(allocateTDSPaid.getId())){
