@@ -11373,12 +11373,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		BigDecimal totalPftSchdOld = BigDecimal.ZERO;
 		BigDecimal totalPftCpzOld = BigDecimal.ZERO;
+		BigDecimal totalPriSchdOld = BigDecimal.ZERO;
 		//For New Records Profit Details will be set inside the AEAmounts 
 		FinanceProfitDetail newProfitDetail = new FinanceProfitDetail();
 		if (profitDetail != null) {//FIXME
 			BeanUtils.copyProperties(profitDetail, newProfitDetail);
 			totalPftSchdOld = profitDetail.getTotalPftSchd();
 			totalPftCpzOld = profitDetail.getTotalPftCpz();
+			totalPriSchdOld = profitDetail.getTotalpriSchd();
 		}
 
 		AEEvent aeEvent = AEAmounts.procAEAmounts(finMain, finSchdDetails, profitDetail, eventCode, curBDay, curBDay);
@@ -11398,8 +11400,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
 		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
 
-		aeEvent.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
-		amountCodes.setDisburse(finMain.getFinCurrAssetValue());
+		aeEvent.setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
+		if(StringUtils.isEmpty(moduleDefiner)){
+			amountCodes.setDisburse(finMain.getFinCurrAssetValue().add(finMain.getDownPayment()));
+		}else{
+			amountCodes.setDisburse(newProfitDetail.getTotalpriSchd().subtract(totalPriSchdOld));
+		}
 
 		if (finMain.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(finMain.getRecordType())) {
 			aeEvent.setNewRecord(true);
