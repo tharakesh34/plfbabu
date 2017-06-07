@@ -198,8 +198,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 			doSetFieldProperties();
 			doShowDialog(getFinSuspHold());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FinSuspHoldDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

@@ -246,8 +246,7 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 			doShowDialog(getBulkProcessHeader());
 			
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_BulkRateChangeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

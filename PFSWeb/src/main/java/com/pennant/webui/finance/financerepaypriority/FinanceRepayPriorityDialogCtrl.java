@@ -182,8 +182,7 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 			doSetFieldProperties();
 			doShowDialog(getFinanceRepayPriority());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_FinanceRepayPriorityDialog.onClose();
 		}
 		logger.debug("Leaving");

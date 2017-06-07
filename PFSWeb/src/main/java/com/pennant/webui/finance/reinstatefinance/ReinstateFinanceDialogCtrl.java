@@ -253,8 +253,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 				doShowDialog(getReinstateFinance());
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ReinstateFinanceDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

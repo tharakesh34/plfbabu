@@ -257,8 +257,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 			//createListHeaders(this.listBox_SelectedFinList);
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_BulkRateChangeDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());

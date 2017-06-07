@@ -178,8 +178,7 @@ public class ProvisionMovementEnquiryDialogCtrl extends GFCBaseCtrl<ProvisionMov
 
 			doShowDialog(getProvision());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 			this.window_ProvisionMovementList.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
