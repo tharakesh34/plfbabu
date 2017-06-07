@@ -13,7 +13,6 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Intbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -30,7 +29,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 
 public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 	private static final long					serialVersionUID	= -210929672381582779L;
@@ -477,15 +475,7 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 				+ Labels.getLabel("label_AccountTypeGroupSearch_GroupCode.value") + " : "
 				+ aAccountTypeGroup.getGroupCode();
 
-		final String title = Labels.getLabel("message.Deleting.Record");
-		MultiLineMessageBox.doSetTemplate();
-
-		int conf = MultiLineMessageBox.show(msg, title, MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-				Messagebox.QUESTION, true);
-
-		if (conf == MultiLineMessageBox.YES) {
-			logger.debug("doDelete: Yes");
-
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(aAccountTypeGroup.getRecordType())) {
 				aAccountTypeGroup.setVersion(aAccountTypeGroup.getVersion() + 1);
 				aAccountTypeGroup.setRecordType(PennantConstants.RECORD_TYPE_DEL);
