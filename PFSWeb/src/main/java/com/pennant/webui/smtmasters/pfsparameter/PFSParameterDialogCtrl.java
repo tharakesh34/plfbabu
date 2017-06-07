@@ -753,7 +753,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 				}
 
 			} catch (DataAccessException e) {
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 
 		}

@@ -525,8 +525,8 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 					closeDialog(); 
 				}
 
-			}catch (DataAccessException e){
-				MessageUtil.showErrorMessage(e);
+			} catch (DataAccessException e) {
+				MessageUtil.showError(e);
 			}
 
 		}

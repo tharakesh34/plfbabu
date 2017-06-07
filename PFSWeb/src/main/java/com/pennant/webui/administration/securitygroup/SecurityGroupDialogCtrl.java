@@ -506,7 +506,7 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 				}
 
 			} catch (DataAccessException e) {
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving ");

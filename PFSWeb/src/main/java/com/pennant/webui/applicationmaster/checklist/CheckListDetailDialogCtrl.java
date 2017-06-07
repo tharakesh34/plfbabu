@@ -625,8 +625,8 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 					this.window_CheckListDetailDialog.onClose();
 				}
 
-			}catch (DataAccessException e){
-				MessageUtil.showErrorMessage(e);
+			} catch (DataAccessException e) {
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");
