@@ -315,8 +315,7 @@ public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 			Executions.createComponents("/WEB-INF/pages/RulesFactory/Rule/RuleResultView.zul", null,
 					map);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");

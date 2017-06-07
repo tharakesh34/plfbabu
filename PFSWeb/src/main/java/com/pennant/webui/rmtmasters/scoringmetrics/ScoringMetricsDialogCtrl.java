@@ -426,8 +426,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 
 			this.window_ScoringMetricsDialog.doModal();
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving") ;
 	}
