@@ -523,4 +523,8 @@ FROM          finrepayscheduledetail T1 INNER JOIN
 	   <column name="Channel" type="char(1)"/>
 	 </addColumn>
 	</changeSet>
+	
+	<changeSet id="20" author="Durgapraad G">
+	 <dropTable tableName="DATA_ENGINE_TABLES"/>
+	</changeSet>
 </databaseChangeLog>
