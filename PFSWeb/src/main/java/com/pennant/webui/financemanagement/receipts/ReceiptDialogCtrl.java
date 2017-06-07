@@ -3955,6 +3955,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				amountCodes.setPayableAdvise(BigDecimal.ZERO);
 				amountCodes.setPenaltyPaid(BigDecimal.ZERO);
 				amountCodes.setPenaltyWaived(BigDecimal.ZERO);
+				amountCodes.setRpTds(BigDecimal.ZERO);
+				amountCodes.setRpExcessTds(BigDecimal.ZERO);
+				amountCodes.setRpEmiAdvTds(BigDecimal.ZERO);
+				amountCodes.setRpPayableTds(BigDecimal.ZERO);
 			}
 		}
 
