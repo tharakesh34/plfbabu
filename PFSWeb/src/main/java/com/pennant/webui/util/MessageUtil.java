@@ -45,7 +45,6 @@ package com.pennant.webui.util;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
-import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
@@ -67,23 +66,60 @@ public final class MessageUtil {
 	private static final Logger	logger		= Logger.getLogger(MessageUtil.class);
 
 	/**
+	 * A symbol consisting of an exclamation point in a triangle with a yellow background.
+	 */
+	private static final String	EXCLAMATION	= Messagebox.EXCLAMATION;
+	/**
 	 * A symbol consisting of a white X in a circle with a red background.
 	 */
-	public static final String	ERROR		= Messagebox.ERROR;
+	private static final String	ERROR		= Messagebox.ERROR;
 	/**
 	 * A symbol of a lower case letter i in a circle.
 	 */
-	public static final String	INFORMATION	= Messagebox.INFORMATION;
+	private static final String	INFORMATION	= Messagebox.INFORMATION;
 
 	/**
 	 * A OK button.
 	 */
-	public static final int		OK			= Messagebox.OK;
+	private static final int	OK			= Messagebox.OK;
+	/**
+	 * A Yes button.
+	 */
+	public static final int		YES			= Messagebox.YES;
+	/**
+	 * A No button.
+	 */
+	public static final int		NO			= Messagebox.NO;
 
-	public static final String	SUFFIX		= "\n\n";
+	private static final String	SUFFIX		= "\n\n";
 
 	private MessageUtil() {
 		super();
+	}
+
+	/**
+	 * Shows a confirmation message box and returns the button that has been chosen.
+	 * 
+	 * @param message
+	 *            The detail message.
+	 * @return The button being pressed.
+	 */
+	public static int confirm(String message) {
+		MultiLineMessageBox.doSetTemplate();
+		return MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, YES | NO, EXCLAMATION, NO);
+	}
+
+	/**
+	 * Shows an information message box and logs the message.
+	 * 
+	 * @param message
+	 *            The detail message.
+	 */
+	public static void showMessage(String message) {
+		logger.info(message);
+
+		MultiLineMessageBox.doSetTemplate();
+		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, INFORMATION);
 	}
 
 	/**
@@ -175,58 +211,21 @@ public final class MessageUtil {
 		MultiLineMessageBox.show(ErrorCode.PPS_900.getMessage().concat(SUFFIX), App.NAME, OK, ERROR);
 	}
 
-	// TODO: Re-factor below code.
-
-	public static void showMessage(String message) {
-		logger.info(message);
-
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(message.concat(SUFFIX), App.NAME, OK, INFORMATION);
-	}
-
-	/** A symbol consisting of an exclamation point in a triangle with a yellow background. */
-	public static final String	EXCLAMATION	= Messagebox.EXCLAMATION;
-	/** A Cancel button. */
-	public static final int		CANCEL		= Messagebox.CANCEL;
-	/** A Yes button. */
-	public static final int		YES			= Messagebox.YES;
-	/** A No button. */
-	public static final int		NO			= Messagebox.NO;
-	/** A Abort button. */
-	public static final int		ABORT		= Messagebox.ABORT;
-	/** A Retry button. */
-	public static final int		RETRY		= Messagebox.RETRY;
-	/** A IGNORE button. */
-	public static final int		IGNORE		= Messagebox.IGNORE;
-
 	/**
-	 * Shows a message box and returns what button is pressed. The message box will be displayed with the following
-	 * parameters:<br/>
-	 * <b>title</b> - {@link App#NAME} is used.<br/>
-	 * <b>buttons</b> - a combination of {@link #YES} and {@link #NO}.<br/>
-	 * <b>icon</b> - {@link #EXCLAMATION} to show an image.<br/>
-	 * <b>focus</b> - {@link #NO} button with focus.
+	 * Shows help window.
 	 * 
-	 * @param message
-	 *            The message that need to be displayed.
-	 * @return the button being pressed.
+	 * @param event
+	 *            The event.
+	 * @param parent
+	 *            The parent component.
 	 */
-	public static int confirm(String message) {
-		MultiLineMessageBox.doSetTemplate();
+	public static void showHelpWindow(Event event, Window parent) {
+		HashMap<String, Object> arg = new HashMap<>();
+		arg.put("parentComponent", ((ForwardEvent) event).getOrigin().getTarget());
 
-		return MultiLineMessageBox.show(message, App.NAME, YES | NO, EXCLAMATION, NO);
-	}
+		Executions.createComponents("/WEB-INF/pages/util/helpWindow.zul", parent, arg);
 
-	public static void showHelpWindow(Event event, Window parentWindow) {
-		Component comp = ((ForwardEvent) event).getOrigin().getTarget();
-
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("parentComponent", comp);
-		Executions.createComponents("/WEB-INF/pages/util/helpWindow.zul", parentWindow, map);
-
-		// we stop the propagation of the event, because zk will call ALL events
-		// with the same name in the namespace and 'btnHelp' is a standard
-		// button in this application and can often appears.
+		// Stop the propagation for this event as 'btnHelp' is a standard button and appears in different modules.
 		Events.getRealOrigin((ForwardEvent) event).stopPropagation();
 		event.stopPropagation();
 	}
