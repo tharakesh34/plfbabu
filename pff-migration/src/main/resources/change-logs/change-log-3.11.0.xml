@@ -125,5 +125,29 @@ FROM          FinanceMain T1 INNER JOIN
 	INSERT INTO ErrorDetails VALUES('90329','EN','E','{0} is not applicable for {1}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 	</sql>
 	</changeSet>
+	<changeSet id="7" author="Irfan">
+		<createView viewName="FINODCRECOVERYENQUIRY_VIEW" replaceIfExists="true">
+			  SELECT     T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.FinStartDate, T1.NumberOfTerms, T1.CustID, T1.FinAmount, 
+                      T1.GrcPeriodEndDate, T1.MaturityDate, T1.FinRepaymentAmount, T1.FinIsActive, T1.AllowGrcPeriod,T1.DownPayment, 
+                      T1.MigratedFinance,T1.LastRepayDate, T1.LastRepayPftDate, 
+                      T5.FinTypeDesc LovDescFinTypeName, T6.CustCIF LovDescCustCIF, T6.CustShrtName LovDescCustShrtName, T7.BranchDesc LovDescFinBranchName, 
+                      T1.Blacklisted, T5.FinScheduleOn LovDescFinScheduleOn, T1.FeeChargeAmt, T1.ClosingStatus, T8.CustTypeCtg, 
+                      T1.GraceTerms, T5.FinDivision lovDescFinDivision, T5.FinCategory lovDescProductCodeName, 
+                      T5.FinIsAlwMD lovDescFinIsAlwMD, T5.FinIsAlwDifferment lovDescFinAlwDeferment,T1.Defferments,
+                     (T1.FinAmount-T1.DownPayment+ T1.FeeChargeAmt -  T1.FinRepaymentAmount) CurFinAmount,
+                     (T1.FinAmount- T1.DownPayment+ T1.FeeChargeAmt) FinancingAmount, T1.FinStatus , T10.ValueDate MovementDate, T9.DaysLate ODDays
+                     ,T9.PRINCIPALSCHDBAL FinCurODPri,T9.PROFITSCHDBAL FinCurODPft, (T9.PRINCIPALSCHDBAL + PROFITSCHDBAL) FinCurODAmt ,T9.PENALTYAMT , T9.WAIVEDAMT, T9.PENALTYPAYNOW PenaltyPaid, (T9.PENALTYAMT - T9.PENALTYPAYNOW -T9.WAIVEDAMT) PenaltyBal
+                      
+FROM          FinanceMain T1 INNER JOIN
+                       RMTFinanceTypes T5 ON T1.FinType = T5.FinType INNER JOIN
+                       Customers T6 ON T1.CustID = T6.CustID INNER JOIN
+                       RMTBranches T7 ON T1.FinBranch = T7.BranchCode INNER JOIN
+                       RMTCustTypes T8 ON T6.CustTypeCode = T8.CustTypeCode INNER JOIN
+                       FINREPAYSCHEDULEDETAIL T9 ON T1.FinReference = T9.FinReference INNER JOIN
+                       FINREPAYHEADER T10 ON T9.RepayId = T10.RepayId
+		
+		</createView>
+	
+	</changeSet>
 	
 </databaseChangeLog>
