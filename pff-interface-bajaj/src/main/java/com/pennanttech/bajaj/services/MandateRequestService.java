@@ -129,7 +129,7 @@ public class MandateRequestService extends BajajService implements MandateReques
 						rowMap.put("UPPER_LIMIT", UPPER_LIMIT.divide(minorccyunits));
 					}
 					
-					rowMap.put("EXTRACTION_DATE", getValueDate());
+					rowMap.put("EXTRACTION_DATE", getAppDate());
 					String appId = null;
 					String finReference = StringUtils.trimToNull(rs.getString("FINREFERENCE"));
 					if(finReference!= null){
