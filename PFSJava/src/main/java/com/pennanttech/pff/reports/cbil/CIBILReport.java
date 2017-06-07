@@ -24,14 +24,14 @@ import com.pennanttech.pff.core.util.DateUtil;
 
 public class CIBILReport {
 	protected final static Logger	logger	= LoggerFactory.getLogger(CIBILReport.class);
-	private String	CBIL_REPORT_PATH;
-	private String	CBIL_REPORT_MEMBER_ID;
-	private String	ADDRESS_TYPE_PERMANENT;
-	private String	ADDRESS_TYPE_RESIDENCE;
-	private String	ADDRESS_TYPE_OFFICE;
-	private String	PHONE_TYPE_MOBILE;
-	private String	PHONE_TYPE_HOME;
-	private String	PHONE_TYPE_OFFICE;
+	private String					CBIL_REPORT_PATH;
+	private String					CBIL_REPORT_MEMBER_ID;
+	private String					ADDRESS_TYPE_PERMANENT;
+	private String					ADDRESS_TYPE_RESIDENCE;
+	private String					ADDRESS_TYPE_OFFICE;
+	private String					PHONE_TYPE_MOBILE;
+	private String					PHONE_TYPE_HOME;
+	private String					PHONE_TYPE_OFFICE;
 
 	public CIBILReport() {
 		super();
@@ -39,19 +39,25 @@ public class CIBILReport {
 
 	public void generateReport() throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		initlize();
-		
-		
+
 		File reportName = createFile();
 
 		BufferedWriter writer = new BufferedWriter(new FileWriter(reportName));
 
 		try {
 			new CBILHeader(writer).write();
+			
+			
+			
+			
 			new NameSegment(writer, new Customer()).write();
 			new IdentificationSegment(writer, new ArrayList<CustomerDocument>());
-			new IdentificationSegment(writer, new ArrayList<CustomerDocument>());
+			new TelephoneSegment(writer, new ArrayList<CustomerPhoneNumber>());
+			new EmailContactSegment(writer, new ArrayList<CustomerEMail>());
+			new AddressSegment(writer, new ArrayList<CustomerAddres>());
+			new AccountSegment(writer, new ArrayList<FinanceMain>());
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		} finally {
@@ -59,21 +65,9 @@ public class CIBILReport {
 				writer.flush();
 				writer.close();
 			}
-
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	private void initlize() {
-		CBIL_REPORT_PATH = SysParamUtil.getValueAsString("CBIL_REPORT_PATH");
-		CBIL_REPORT_MEMBER_ID = SysParamUtil.getValueAsString("CBIL_REPORT_MEMBER_ID");
-		ADDRESS_TYPE_PERMANENT = SysParamUtil.getValueAsString("ADDRESS_TYPE_PERMANENT");
-		ADDRESS_TYPE_RESIDENCE = SysParamUtil.getValueAsString("ADDRESS_TYPE_RESIDENCE");
-		ADDRESS_TYPE_OFFICE = SysParamUtil.getValueAsString("ADDRESS_TYPE_OFFICE");
-		PHONE_TYPE_MOBILE = SysParamUtil.getValueAsString("PHONE_TYPE_MOBILE");
-		PHONE_TYPE_HOME = SysParamUtil.getValueAsString("PHONE_TYPE_HOME");
-		PHONE_TYPE_OFFICE = SysParamUtil.getValueAsString("PHONE_TYPE_OFFICE");
 	}
 
 	private File createFile() throws Exception {
@@ -284,14 +278,14 @@ public class CIBILReport {
 				} else {
 					writeValue(writer, "08", "04");
 				}
-				
+
 				//Residence Code FIXME
 			}
 		}
 	}
-	
+
 	public class AccountSegment {
-		private BufferedWriter			writer;
+		private BufferedWriter		writer;
 		private List<FinanceMain>	loans;
 
 		public AccountSegment(BufferedWriter writer, List<FinanceMain> loans) {
@@ -317,6 +311,17 @@ public class CIBILReport {
 		length = value.length();
 
 		writer.write(fieldTag + String.valueOf(length) + value);
+	}
+
+	private void initlize() {
+		this.CBIL_REPORT_PATH = SysParamUtil.getValueAsString("CBIL_REPORT_PATH");
+		this.CBIL_REPORT_MEMBER_ID = SysParamUtil.getValueAsString("CBIL_REPORT_MEMBER_ID");
+		this.ADDRESS_TYPE_PERMANENT = SysParamUtil.getValueAsString("ADDRESS_TYPE_PERMANENT");
+		this.ADDRESS_TYPE_RESIDENCE = SysParamUtil.getValueAsString("ADDRESS_TYPE_RESIDENCE");
+		this.ADDRESS_TYPE_OFFICE = SysParamUtil.getValueAsString("ADDRESS_TYPE_OFFICE");
+		this.PHONE_TYPE_MOBILE = SysParamUtil.getValueAsString("PHONE_TYPE_MOBILE");
+		this.PHONE_TYPE_HOME = SysParamUtil.getValueAsString("PHONE_TYPE_HOME");
+		this.PHONE_TYPE_OFFICE = SysParamUtil.getValueAsString("PHONE_TYPE_OFFICE");
 	}
 
 }
