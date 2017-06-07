@@ -25,7 +25,7 @@ public class TestPosidexRequestService  {
 	@Test
 	public void process() {
 		try {
-			requestService.sendReqest(new Long(1000),DateUtil.getSysDate(),DateUtil.getSysDate());
+			requestService.sendReqest(new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
