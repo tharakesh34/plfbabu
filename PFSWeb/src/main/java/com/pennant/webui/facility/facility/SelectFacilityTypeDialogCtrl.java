@@ -236,8 +236,7 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 				try {
 					Executions.createComponents("/WEB-INF/pages/Facility/Facility/FacilityDialog.zul", null, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}else{
 				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));

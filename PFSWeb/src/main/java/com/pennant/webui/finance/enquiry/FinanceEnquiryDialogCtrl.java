@@ -1551,8 +1551,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					Executions.createComponents("/WEB-INF/pages/Finance/FinanceContributor/FinContributorDetailDialog.zul",
 							window_FinanceEnquiryDialog, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -1910,8 +1909,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					Executions.createComponents(getZULPath(disbursement.getDisbType()), window_FinanceEnquiryDialog,
 							map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}
@@ -1932,8 +1930,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceContractor/ContractorAssetDetailDialog.zul",
 						window_FinanceEnquiryDialog, map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 	}

@@ -410,8 +410,7 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 				
 				
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving" + event.toString());
@@ -824,8 +823,7 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeAccountDialog.zul",
 						null, map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving" + event.toString());

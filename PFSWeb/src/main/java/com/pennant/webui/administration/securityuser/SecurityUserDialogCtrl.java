@@ -1191,9 +1191,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.usrPwd.setValue("");
 			this.usrConfirmPwd.setValue("");
 			this.usrPwd.setFocus(true);
-			logger.debug("error in save method");
-			logger.error("Exception: ", e);
-			MessageUtil.showErrorMessage(e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving ");

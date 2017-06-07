@@ -192,8 +192,7 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 			try {
 				Executions.createComponents("/WEB-INF/pages/Facility/Facility/FacilityDetailDialog.zul", null, map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving" + event.toString());

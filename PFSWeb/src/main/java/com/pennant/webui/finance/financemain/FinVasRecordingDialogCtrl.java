@@ -347,8 +347,7 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					Executions.createComponents(
 							"/WEB-INF/pages/VASRecording/VASRecordingDialog.zul", null, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}

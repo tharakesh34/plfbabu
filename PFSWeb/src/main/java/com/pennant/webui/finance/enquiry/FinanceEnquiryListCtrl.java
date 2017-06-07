@@ -1067,8 +1067,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 					Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
 							null, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			} else {
 				ReinstateFinance aReinstateFinance = reinstateFinanceService.getFinanceDetailsById(aFinanceEnquiry

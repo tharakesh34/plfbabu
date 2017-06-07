@@ -230,8 +230,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 			doShowDialog();
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 			win_Operation_Roles_Dialog.onClose();
 		}
 

@@ -316,8 +316,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 			doShowDialog(getFinCreditRevSubCategory());
 			
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
-			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 			window_FinCreditRevSubCategoryDialog.onClose();
 		}
 		logger.debug("Leaving");

@@ -329,8 +329,7 @@ public class FinCollateralHeaderDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinCollateralDetailDialog.zul",
 							window_finCollateralHeaderDialog, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}

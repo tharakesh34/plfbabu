@@ -610,8 +610,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 					if(e.getCause().getClass().equals(WrongValuesException.class)){
 						throw e;	
 					}
-					logger.error("Exception: ", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 

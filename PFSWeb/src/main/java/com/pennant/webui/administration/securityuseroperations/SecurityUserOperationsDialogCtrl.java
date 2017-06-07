@@ -241,8 +241,7 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 			doShowDialog();
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
-			MessageUtil.showErrorMessage(e);
-			logger.warn("Exception: ", e);
+			MessageUtil.showError(e);
 			win_SecurityUserOperationsDialog.onClose();
 		}
 

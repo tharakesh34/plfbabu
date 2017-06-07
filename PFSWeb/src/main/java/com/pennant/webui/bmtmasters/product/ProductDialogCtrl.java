@@ -952,8 +952,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 								"/WEB-INF/pages/RMTMasters/ProductAsset/ProductAssetDialog.zul",
 								window_ProductDialog, map);
 			} catch (Exception e) {
-				logger.error("Exception: Opening window", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 

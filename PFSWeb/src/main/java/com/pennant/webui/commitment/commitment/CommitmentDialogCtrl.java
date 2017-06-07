@@ -3817,8 +3817,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				try {
 					Executions.createComponents("/WEB-INF/pages/Commitment/Commitment/CommitmentRateDialog.zul", null, map);
 				} catch (Exception e) {
-					logger.error("Exception: Opening window", e);
-					MessageUtil.showErrorMessage(e);
+					MessageUtil.showError(e);
 				}
 			}
 		}
