@@ -708,7 +708,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 						getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranId);
 						
 						// Excess Amounts reversal Updations
-						getFinExcessAmountDAO().updateExcessBal(excess.getExcessID(),
+						getFinExcessAmountDAO().updateExcessAmount(excess.getExcessID(), "U",
 								rpyHeader.getRepayAmount().negate());
 
 						isRcdFound = true;
