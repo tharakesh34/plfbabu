@@ -1654,6 +1654,16 @@ public class FinanceDataValidation {
 						String[] valueParm = new String[1];
 						valueParm[0] = "valueDate";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90214", valueParm)));
+					} else {
+						Date todate = DateUtility.addMonths(DateUtility.getAppDate(), 6);
+						if (advPayment.getValueDate().compareTo(DateUtility.getAppDate()) < 0
+								|| advPayment.getValueDate().after(todate)) {
+							String[] valueParm = new String[3];
+							valueParm[0] = "disbursement ValueDate";
+							valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
+							valueParm[2] = DateUtility.formatToLongDate(todate);
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90318", "", valueParm)));
+						}
 					}
 				} else if (StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IMPS)
 						|| StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_NEFT)
