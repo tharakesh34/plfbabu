@@ -941,9 +941,8 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 					closeDialog(); 
 				}
 
-			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+			} catch (DataAccessException e) {
+				MessageUtil.showError(e);
 			}
 
 		}

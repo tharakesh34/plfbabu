@@ -797,8 +797,7 @@ public class QueryDialogCtrl extends GFCBaseCtrl<Query> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 
 		}

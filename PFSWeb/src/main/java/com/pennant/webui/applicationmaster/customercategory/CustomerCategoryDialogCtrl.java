@@ -551,8 +551,7 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");

@@ -650,9 +650,8 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 					refreshList();
 					closeDialog(); 
 				}
-			}catch (DataAccessException e){
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+			} catch (DataAccessException e) {
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug("Leaving");

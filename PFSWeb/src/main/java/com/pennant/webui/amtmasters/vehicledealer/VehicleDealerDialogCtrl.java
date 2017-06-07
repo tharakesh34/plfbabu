@@ -1070,8 +1070,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 				}
 
 			} catch (DataAccessException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showErrorMessage(e);
+				MessageUtil.showError(e);
 			}
 
 		}
