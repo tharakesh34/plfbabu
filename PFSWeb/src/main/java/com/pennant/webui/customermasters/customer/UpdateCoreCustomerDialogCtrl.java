@@ -57,7 +57,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
@@ -83,7 +82,7 @@ import com.pennant.coreinterface.model.EquationMasterMissedDetail;
 import com.pennant.search.Filter;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennant.webui.util.MultiLineMessageBox;
+import com.pennant.webui.util.MessageUtil;
 import com.pennanttech.pff.core.InterfaceException;
 import com.rits.cloning.Cloner;
 
@@ -276,9 +275,7 @@ public class UpdateCoreCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 			}catch(Exception e){
 				logger.error("Exception: ", e);
 				this.custCIFTemp = "";
-				MultiLineMessageBox.doSetTemplate();
-				MultiLineMessageBox.show("Record Updation Failed",Labels.getLabel("UpdateCoreCustomer_Message_Title"),
-						MultiLineMessageBox.OK, Messagebox.ERROR, true);
+				MessageUtil.showError("Record Updation Failed");
 			}
 			this.listBoxUpdateCustomer.getItems().clear();
 			this.listBoxNewCustomer.getItems().clear();
@@ -291,30 +288,23 @@ public class UpdateCoreCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 
 	private boolean validate() throws InterruptedException{
 		logger.debug("Entering");
-		MultiLineMessageBox.doSetTemplate();
 		if(coreCustomerDetails == null || coreCustomerDetails.getCustomer() == null){
-			MultiLineMessageBox.show(Labels.getLabel("UpdateCoreCustomer_EmptyDetails"),Labels.getLabel("UpdateCoreCustomer_Message_Title"),
-					MultiLineMessageBox.OK, Messagebox.INFORMATION, true);
+			MessageUtil.showMessage(Labels.getLabel("UpdateCoreCustomer_EmptyDetails"));
 			return false;
 		}
 		if(listBoxNewCustomer.getItems() == null || listBoxNewCustomer.getItems().isEmpty()){
 			if(listBoxUpdateCustomer.getItems() == null || listBoxUpdateCustomer.getItems().isEmpty()){
-				MultiLineMessageBox.show(Labels.getLabel("UpdateCoreCustomer_EmptyDetails"),Labels.getLabel("UpdateCoreCustomer_Message_Title"),
-						MultiLineMessageBox.OK, Messagebox.INFORMATION, true);
+				MessageUtil.showMessage(Labels.getLabel("UpdateCoreCustomer_EmptyDetails"));
 				logger.debug("Leaving");
 				return false;
 			}else if(listBoxUpdateCustomer.getSelectedItems() == null || listBoxUpdateCustomer.getSelectedItems().isEmpty()){
-				MultiLineMessageBox.show(Labels.getLabel("UpdateCoreCustomer_NoFieldSelected"),Labels.getLabel("UpdateCoreCustomer_Message_Title"),
-						MultiLineMessageBox.OK, Messagebox.INFORMATION, true);
+				MessageUtil.showMessage(Labels.getLabel("UpdateCoreCustomer_NoFieldSelected"));
 				logger.debug("Leaving");
 				return false;
 			}
 		}else if((listBoxUpdateCustomer.getItems() != null && !listBoxUpdateCustomer.getItems().isEmpty()) && 
 				(listBoxUpdateCustomer.getSelectedItems() == null || listBoxUpdateCustomer.getSelectedItems().isEmpty())){
-			int conf = MultiLineMessageBox.show(Labels.getLabel("UpdateCoreCustomer_NoUpdateFieldSelected"),Labels.getLabel("UpdateCoreCustomer_Message_Title"),
-					MultiLineMessageBox.YES|MultiLineMessageBox.NO, Messagebox.INFORMATION, true);
-			logger.debug("Leaving");
-			if (conf != MultiLineMessageBox.YES) {
+			if (MessageUtil.confirm(Labels.getLabel("UpdateCoreCustomer_NoUpdateFieldSelected")) != MessageUtil.YES) {
 				return false;
 			}
 		}
@@ -340,8 +330,7 @@ public class UpdateCoreCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 		tempCustomerDetails = null;
 		if(StringUtils.isNotEmpty(errMsg)){
 			errMsg = errMsg + "  value does not exists in Master Table";
-			MultiLineMessageBox.show(errMsg,Labels.getLabel("UpdateCoreCustomer_Message_Title"),
-					MultiLineMessageBox.OK, Messagebox.ERROR, true);
+			MessageUtil.showError(errMsg);
 			return false;
 		}
 		

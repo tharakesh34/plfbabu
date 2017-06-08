@@ -88,7 +88,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pff.core.InterfaceException;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -394,11 +393,8 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		
 		// Show a confirm box
 		final String msg = "Generated Customer CIF "+aCustomer.getCustCIF();
-		final String title = Labels.getLabel("message.Information");
 
-		MultiLineMessageBox.doSetTemplate();
-		MultiLineMessageBox.show(msg, title,MultiLineMessageBox.OK,
-				MultiLineMessageBox.INFORMATION, true);
+		MessageUtil.showMessage(msg);
 
 		isNew = aCustomerDetails.isNewRecord();
 
