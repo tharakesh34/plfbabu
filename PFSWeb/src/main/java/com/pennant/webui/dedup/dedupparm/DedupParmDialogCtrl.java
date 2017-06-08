@@ -98,7 +98,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.dedup.dedupfields.BuilderUtilListbox;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.App;
 import com.pennanttech.pff.core.App.Database;
 
@@ -602,17 +601,11 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 				}
 				if(StringUtils.isNotEmpty(cb.getValue()) || StringUtils.isNotEmpty(tb.getValue())){
 					final String msg = Labels.getLabel("RuleDialog_message_Data_Modified");
-					final String title = Labels.getLabel("message.Information");
 
-					MultiLineMessageBox.doSetTemplate();
-					int conf = MultiLineMessageBox.show(msg, title,
-							MultiLineMessageBox.YES | MultiLineMessageBox.NO,
-							MultiLineMessageBox.QUESTION, true);
-
-					if (conf == MultiLineMessageBox.YES) {
+					if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 						clearAndBuildTree(this.custCtgCode.getSelectedItem().getValue().toString());
 						this.sQLQuery.setValue("");
-					}else if(conf == MultiLineMessageBox.NO){}
+					}
 				}else{
 					clearAndBuildTree(this.custCtgCode.getSelectedItem().getValue().toString()); 
 				}
@@ -905,8 +898,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 				}
 			}
 		} else {
-			MultiLineMessageBox.show(msg, title, MultiLineMessageBox.OK,
-					MultiLineMessageBox.INFORMATION, true);
+			MessageUtil.showMessage(msg);
 		}
 		logger.debug("Leaving");
 	}
@@ -980,7 +972,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 					// TODO Here 3 is hard coded to Restrict the No of Conditions
 					// which has to be Parameterized
 				}else if (child.size() == 3) {
-					MultiLineMessageBox.show(msg, title, MultiLineMessageBox.OK, MultiLineMessageBox.INFORMATION, true);
+					MessageUtil.showMessage(msg);
 					childReq = true;
 				}
 			} else {

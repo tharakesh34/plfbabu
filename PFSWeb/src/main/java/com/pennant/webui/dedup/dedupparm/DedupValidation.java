@@ -48,7 +48,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
 import com.pennant.Interface.service.NorkamCheckService;
@@ -60,7 +59,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.customer.InterfaceNorkamCheck;
 import com.pennant.webui.util.MessageUtil;
-import com.pennant.webui.util.MultiLineMessageBox;
 import com.pennanttech.pff.core.InterfaceException;
 
 /**
@@ -279,14 +277,8 @@ public class DedupValidation implements Serializable {
 		if(StringUtils.equals(norkomCheck.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
 			isProcessCompleted = true;
 		} else if(StringUtils.equals(norkomCheck.getReturnCode(), InterfaceConstants.BLACKLIST_HIT)) {
-			MultiLineMessageBox.doSetTemplate();
-			int conf;
 			try {
-				conf = MultiLineMessageBox.show(Labels.getLabel("NORKOM_BLACKLIST"), Labels.getLabel("NORKOM_BLACKLIST_TITLE"),
-						MultiLineMessageBox.YES
-						| MultiLineMessageBox.NO,
-						Messagebox.QUESTION, true);
-				if (conf == MultiLineMessageBox.YES) {
+				if (MessageUtil.confirm(Labels.getLabel("NORKOM_BLACKLIST")) == MessageUtil.YES) {
 					isProcessCompleted = true;
 				} else {
 					isProcessCompleted = false;
