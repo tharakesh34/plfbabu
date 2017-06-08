@@ -1213,7 +1213,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			schCalRvwOn = CalculationConstants.RPYCHG_ADJMDT;
 		}
 		fillComboBox(this.cbfinSchCalCodeOnRvw, schCalRvwOn, PennantStaticListUtil.getSchCalCodes(),
-				",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+				",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,CURPRD,");
 		this.applyRpyPricing.setChecked(aFinanceType.isApplyRpyPricing());
 		if (aFinanceType.isApplyRpyPricing()) {
 			this.rpyPricingMethod.setButtonDisabled(isCompReadonly);
