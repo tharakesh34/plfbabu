@@ -62,7 +62,6 @@ import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.impl.BasisNextidDaoImpl;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
-import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pff.core.ConcurrencyException;
 import com.pennanttech.pff.core.DependencyFoundException;
@@ -426,11 +425,11 @@ public class FinAdvancePaymentsDAOImpl extends BasisNextidDaoImpl<FinAdvancePaym
 		sql.append(" Set STATUS = :STATUS, CLEARINGDATE = :CLEARINGDATE, TRANSACTIONREF = :TRANSACTIONREF");
 		sql.append(", REJECTREASON = :REJECTREASON");
 		
-		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(disbursement.getPaymentType()) || DisbursementConstants.PAYMENT_TYPE_DD.equals(disbursement.getPaymentType())) {
+		/*if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(disbursement.getPaymentType()) || DisbursementConstants.PAYMENT_TYPE_DD.equals(disbursement.getPaymentType())) {
 			sql.append(", LLREFERENCENO = :LLREFERENCENO, LLDATE = :LLDATE");
 			paramMap.addValue("LLREFERENCENO", disbursement.getLlReferenceNo());
 			paramMap.addValue("LLDATE", disbursement.getClearingDate());
-		}
+		}*/
 		
 		sql.append("  Where PAYMENTID = :PAYMENTID");
 		
