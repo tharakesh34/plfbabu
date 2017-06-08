@@ -220,5 +220,10 @@
 			      Inner Join  FINRECEIPTHEADER T4 on T1.RECEIPTID = T4.RECEIPTID
 		</createView>	
 	</changeSet>
+	<changeSet id="14" author="Irfan">
+	<sql>
+		update FinanceMain set DueBucket=0 where DueBucket is null;
+	</sql>
+	</changeSet>
 			
 </databaseChangeLog>
