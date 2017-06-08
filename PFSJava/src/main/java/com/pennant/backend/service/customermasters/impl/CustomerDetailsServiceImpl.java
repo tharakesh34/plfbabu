@@ -1538,6 +1538,17 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90319", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 					}
+					if (empDetail.getCustEmpFrom() != null && customerDetails.getCustomer() != null) {
+						if (empDetail.getCustEmpFrom().before(customerDetails.getCustomer().getCustDOB())) {
+							ErrorDetails errorDetail = new ErrorDetails();
+							String[] valueParm = new String[1];
+							valueParm[0] = "employment startDate";
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90332", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+					}
+					
 				}
 			}
 		} else {
@@ -2026,9 +2037,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			int count=0;
 			if(filters !=null){
 			 count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0], filters[0][0], fieldValue);
-			} else {
-				 count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0],"", fieldValue);
-			}
+			} 
 			if(count <= 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = lovFields[0];

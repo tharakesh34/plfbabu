@@ -345,7 +345,7 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 				return getErrorDetails("90207", valueParm);
 			}
 		} 
-
+		boolean isValidBranch=true;
 		// validate Mandate fields
 		if (StringUtils.isNotBlank(mandate.getIFSC())) {
 			BankBranch bankBranch = bankBranchService.getBankBrachByIFSC(mandate.getIFSC());
@@ -354,6 +354,10 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 				valueParm[0] = mandate.getIFSC();
 				return getErrorDetails("90301", valueParm);
 			} else{
+				isValidBranch = validateBranchCode(mandate, isValidBranch, bankBranch);
+				 if(returnStatus.getReturnCode()!=null){
+					 return returnStatus;
+				 }
 				mandate.setBankCode(bankBranch.getBankCode());
 				if(StringUtils.isBlank(mandate.getMICR())){
 					mandate.setMICR(bankBranch.getMICR());
@@ -375,6 +379,10 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 				valueParm[1] = mandate.getBranchCode();
 				return getErrorDetails("90302", valueParm);
 			} else {
+				isValidBranch = validateBranchCode(mandate, isValidBranch, bankBranch);
+				 if(returnStatus.getReturnCode()!=null){
+					 return returnStatus;
+				 }
 				mandate.setBankCode(bankBranch.getBankCode());
 				if(StringUtils.isBlank(mandate.getMICR())){
 					mandate.setMICR(bankBranch.getMICR());
@@ -387,6 +395,11 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 					}
 				}
 			}
+		}
+		if(!isValidBranch){
+			String[] valueParm = new String[1];
+			valueParm[0] = mandate.getMandateType();
+			 return getErrorDetails("90333", valueParm);
 		}
 		//validate AccNumber length
 		if(StringUtils.isNotBlank(mandate.getBankCode())){
@@ -407,6 +420,23 @@ public class MandateWebServiceImpl implements MandateRestService,MandateSoapServ
 		}
 		logger.debug("Leaving");
 		return returnStatus;
+	}
+
+	private boolean validateBranchCode(Mandate mandate, boolean isValidBranch, BankBranch bankBranch) {
+		if(StringUtils.equals(MandateConstants.TYPE_ECS, mandate.getMandateType())){
+			if(!bankBranch.isEcs()){
+				isValidBranch = false;
+			}
+		} else if(StringUtils.equals(MandateConstants.TYPE_DDM, mandate.getMandateType())){
+			if(!bankBranch.isDda()){
+				isValidBranch = false;
+			}
+		}else if(StringUtils.equals(MandateConstants.TYPE_NACH, mandate.getMandateType())){
+			if(!bankBranch.isNach()){
+				isValidBranch = false;
+			}
+		}
+		return isValidBranch;
 	}
 
 	/**

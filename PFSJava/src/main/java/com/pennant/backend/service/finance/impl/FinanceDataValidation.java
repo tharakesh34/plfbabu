@@ -1434,6 +1434,7 @@ public class FinanceDataValidation {
 					valueParm[1] = DateUtility.formatDate(mandate.getStartDate(), PennantConstants.XMLDateFormat);
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90205", valueParm)));
 				}
+				boolean isValidBranch = true;
 				if (StringUtils.isNotBlank(mandate.getIFSC())) {
 					BankBranch bankBranch = bankBranchService.getBankBrachByIFSC(mandate.getIFSC());
 					if (bankBranch == null) {
@@ -1441,6 +1442,7 @@ public class FinanceDataValidation {
 						valueParm[0] = mandate.getIFSC();
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90301", valueParm)));
 					}else{
+						isValidBranch = validateBranchCode(mandate, isValidBranch, bankBranch);
 						mandate.setBankCode(bankBranch.getBankCode());
 						if(StringUtils.isBlank(mandate.getMICR())){
 							mandate.setMICR(bankBranch.getMICR());
@@ -1463,6 +1465,7 @@ public class FinanceDataValidation {
 						valueParm[1] = mandate.getBranchCode();
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90302", valueParm)));
 					} else {
+						isValidBranch = validateBranchCode(mandate, isValidBranch, bankBranch);
 						mandate.setBankCode(bankBranch.getBankCode());
 						if(StringUtils.isBlank(mandate.getMICR())){
 							mandate.setMICR(bankBranch.getMICR());
@@ -1471,13 +1474,19 @@ public class FinanceDataValidation {
 								String[] valueParm = new String[2];
 								valueParm[0] = "MICR";
 								valueParm[1] = mandate.getMICR();
-								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90701", valueParm)));
+								 errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90701", valueParm)));
+								 return errorDetails;
 							}
 						}
 					
 					}
 				}
-
+				if(!isValidBranch){
+					String[] valueParm = new String[1];
+					valueParm[0] = mandate.getMandateType();
+					 errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90333", valueParm)));
+					 return errorDetails;
+				}
 				//validate AccNumber length
 				if(StringUtils.isNotBlank(mandate.getBankCode())){
 					int accNoLength = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
@@ -1588,6 +1597,23 @@ public class FinanceDataValidation {
 			}
 		}
 		return errorDetails;
+	}
+
+	private boolean validateBranchCode(Mandate mandate, boolean isValidBranch, BankBranch bankBranch) {
+		if(StringUtils.equals(MandateConstants.TYPE_ECS, mandate.getMandateType())){
+			if(!bankBranch.isEcs()){
+				isValidBranch = false;
+			}
+		} else if(StringUtils.equals(MandateConstants.TYPE_DDM, mandate.getMandateType())){
+			if(!bankBranch.isDda()){
+				isValidBranch = false;
+			}
+		}else if(StringUtils.equals(MandateConstants.TYPE_NACH, mandate.getMandateType())){
+			if(!bankBranch.isNach()){
+				isValidBranch = false;
+			}
+		}
+		return isValidBranch;
 	}
 
 	public List<ErrorDetails> disbursementValidation(FinanceDetail financeDetail) {

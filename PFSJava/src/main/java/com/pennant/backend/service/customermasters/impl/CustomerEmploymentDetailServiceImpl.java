@@ -368,6 +368,8 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90319", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
+			} else {
+				custEmpDetails.setCurrentEmployer(true);
 			}
 			
 			if (custEmpDetails.getCustEmpFrom() != null && custEmpDetails.getCustEmpFrom().compareTo(DateUtility.getAppDate()) != -1 || SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(custEmpDetails.getCustEmpFrom()) >= 0) {
